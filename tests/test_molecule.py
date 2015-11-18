@@ -72,8 +72,10 @@ class TestStringMethods(testtools.TestCase):
 
     def test_parse_provisioning_output_failure_00(self):
         res = self.molecule._parse_provisioning_output(TestStringMethods.OUTPUT_MIXED_FAILED)
+
         self.assertFalse(res)
 
     def test_parse_provisioning_output_success_00(self):
         res = self.molecule._parse_provisioning_output(TestStringMethods.OUTPUT_MIXED_SUCCESS)
+
         self.assertTrue(res)
