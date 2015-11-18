@@ -105,16 +105,16 @@ vagrant:
 #        cpus: 2
 
   instances:
-    - name: aio-01
+    - name: vagrant-01
       ansible_groups:
-        - aio
-        - network
+        - group_1
+        - group_2
       interfaces:
         - network_name: private_network
           type: dhcp
           auto_config: true
       options:
-        # prevents aio-01 from becoming aio-01-rhel-7 (platform is appended by default)
+        # prevents vagrant-01 from becoming vagrant-01-rhel-7 (platform is appended by default)
         append_platform_to_hostname: no
       # vagrant arguments specific to this instance
 #      raw_config_args:
@@ -122,7 +122,8 @@ vagrant:
 
 #    - name: network-01
 #      ansible_groups:
-#        - network
+#        - group_1
+#        - group_2
 #      interfaces:
 #        - network_name: private_network
 #          type: dhcp
