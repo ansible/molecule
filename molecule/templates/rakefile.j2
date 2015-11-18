@@ -1,0 +1,46 @@
+# encoding: UTF-8
+
+require 'rake'
+require 'rspec/core/rake_task'
+require 'yaml'
+require 'fileutils'
+
+task spec: 'serverspec:all'
+task default: :spec
+
+env = YAML.load_file('{{ molecule_file }}')['vagrant']
+instances = env['instances']
+
+instances_to_test = {}
+instances.each do |instance|
+  instance_name = instance['name'] + '-{{ current_platform }}'
+  if instance.key?('options') && instance['options'].nil? == false
+    if instance['options'].key?('append_platform_to_hostname')
+      unless instance['options']['append_platform_to_hostname']
+        instance_name = instance['name']
+      end
+    end
+  end
+  instances_to_test[instance_name] = instance
+end
+
+namespace :serverspec do
+  task all: instances_to_test.keys.map { |h| h }
+  instances_to_test.each do |vm_name, instance|
+    desc "Run serverspec on #{vm_name}"
+    pattern = ['spec/*_spec.rb', "spec/#{instance['name']}/*_spec.rb", "spec/hosts/#{instance['name']}/*_spec.rb"]
+
+    if instance.key?('ansible_groups') && instance['ansible_groups'].nil? == false
+      instance['ansible_groups'].each do |group|
+        pattern << "spec/#{group}/*_spec.rb"
+        pattern << "spec/groups/#{group}/*_spec.rb"
+    end
+
+    end
+
+    RSpec::Core::RakeTask.new(vm_name.to_sym) do |target|
+      ENV['TARGET_HOST'] = vm_name
+      target.pattern = pattern.join(',')
+    end
+  end
+end
