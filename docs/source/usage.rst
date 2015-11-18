@@ -269,7 +269,7 @@ Note: You can specify an options section for an instance. Currently, the
 only key supported here is `append\_platform\_to\_hostname.` By setting
 this to 'no' the platform name won't be appended to hostnames
 automatically, which is the default. So, for example, an instance will
-simply be named mcp-01 instead of mcp-01-rhel-7.
+simply be named vagrant-01 instead of vagrant-01-rhel-7.
 
 .. code:: yaml
 
@@ -291,10 +291,10 @@ simply be named mcp-01 instead of mcp-01-rhel-7.
             cpus: 2
 
       instances:
-        - name: mcp-01
+        - name: vagrant-01
           ansible_groups:
-            - mcp
-            - mongo_primary
+            - group_1
+            - group_2
           interfaces:
             - network_name: private_network
               type: dhcp

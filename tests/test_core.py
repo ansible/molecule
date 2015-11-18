@@ -35,7 +35,7 @@ class TestCore(testtools.TestCase):
     def test_parse_provisioning_output_failure_00(self):
         failed_output = """
         PLAY RECAP ********************************************************************
-        aio-01-ubuntu              : ok=36   changed=29   unreachable=0    failed=0
+        vagrant-01-ubuntu              : ok=36   changed=29   unreachable=0    failed=0
         """
         res = self._molecule._parse_provisioning_output(failed_output)
 
@@ -44,7 +44,7 @@ class TestCore(testtools.TestCase):
     def test_parse_provisioning_output_success_00(self):
         success_output = """
         PLAY RECAP ********************************************************************
-        aio-01-ubuntu              : ok=36   changed=0    unreachable=0    failed=0
+        vagrant-01-ubuntu              : ok=36   changed=0    unreachable=0    failed=0
         """
         res = self._molecule._parse_provisioning_output(success_output)
 
