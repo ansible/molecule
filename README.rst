@@ -1,4 +1,4 @@
-.. image:: ./molecule.png
+.. image:: https://cloud.githubusercontent.com/assets/9895/11250011/11e827d0-8ddf-11e5-80f5-259036d868c2.png
    :align: center
    :height: 100px
    :width: 200 px
