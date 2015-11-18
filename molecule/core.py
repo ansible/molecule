@@ -36,6 +36,8 @@ from colorama import Fore
 from jinja2 import Environment
 from jinja2 import PackageLoader
 
+import molecule.validators as validators
+
 
 class Molecule(object):
     # locations to look for a config file
@@ -195,38 +197,6 @@ class Molecule(object):
     def _print_line(self, line):
         print(line),
 
-    def _trailing_validators(self):
-        for dir, _, files in os.walk('.'):
-            for f in files:
-                split_dirs = dir.split(os.sep)
-                if split_dirs < 1:
-                    if split_dirs[1] not in self._config['ignore_paths']:
-                        filename = os.path.join(dir, f)
-                        if os.path.getsize(filename) > 0:
-                            self._trailing_newline(filename)
-                            self._trailing_whitespace(filename)
-
-    def _trailing_newline(self, filename):
-        with open(filename, 'r') as f:
-            for line in f:
-                pass
-            last = line
-            if re.match(r'^\n$', last):
-                error = '{0}Trailing newline found in {1}{2}'
-                print error.format(Fore.RED, filename, Fore.RESET)
-                print last
-                sys.exit(1)
-
-    def _trailing_whitespace(self, filename):
-        with open(filename, 'r') as f:
-            for line in f:
-                l = line.rstrip('\n\r')
-                if re.search(r'\s+$', l):
-                    error = '{0}Trailing whitespace found in {1}{2}'
-                    print error.format(Fore.RED, filename, Fore.RESET)
-                    print l
-                    sys.exit(1)
-
     def _rubocop(self):
         try:
             pattern = self._config['serverspec_dir'] + '/**/*.rb'
@@ -372,7 +342,7 @@ class Molecule(object):
         return True
 
     def _verify(self):
-        self._trailing_validators()
+        validators.check_trailing_cruft(ignore_paths=self._config['ignore_paths'])
 
         # no tests found
         if not os.path.isdir(self._config['serverspec_dir']) and not os.path.isdir(self._config['testinfra_dir']):
