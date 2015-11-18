@@ -128,7 +128,7 @@ class Ansible(Molecule):
 
         # merge defaults with molecule.yml values
         if 'ansible' in self._molecule_file:
-            merged_args = utilities.deep_merge(merged_args, self._molecule_file['ansible'])
+            merged_args = utilities.merge_dicts(merged_args, self._molecule_file['ansible'])
 
             # set raw environment variables if any are found
             if 'raw_env_vars' in self._molecule_file['ansible']:

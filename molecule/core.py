@@ -166,13 +166,13 @@ class Molecule(object):
             # if molecule file has a molecule section, merge that into our config as
             # an override with the highest precedence
             if 'molecule' in molecule_file:
-                config = utilities.deep_merge(config, molecule_file['molecule'])
+                config = utilities.merge_dicts(config, molecule_file['molecule'])
 
             # merge virtualbox provider options from molecule file with our defaults
             for provider in molecule_file['vagrant']['providers']:
                 if provider['type'] in config['providers']:
                     if 'options' in provider:
-                        config['providers'][provider['type']]['options'] = utilities.deep_merge(
+                        config['providers'][provider['type']]['options'] = utilities.merge_dicts(
                             config['providers'][provider['type']]['options'], provider['options'])
 
         # append molecule_dir to filenames so they're easier to use later
@@ -191,7 +191,7 @@ class Molecule(object):
         for path in Molecule.CONFIG_PATHS:
             if path and os.path.isfile(path):
                 with open(path, 'r') as stream:
-                    merged_config = utilities.deep_merge(merged_config, yaml.load(stream))
+                    merged_config = utilities.merge_dicts(merged_config, yaml.load(stream))
                     return merged_config
 
         return Molecule.CONFIG_DEFAULTS

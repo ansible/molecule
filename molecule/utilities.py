@@ -18,22 +18,43 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-from collections import MutableMapping
+import copy
 
 
-def deep_merge(d1, d2):
+def merge_dicts(a, b, raise_conflicts=False, path=None):
     """
-    Performs a recursive merge of two dictionaries. If either mapping has leaves that are non-dicts, the value from the
-    second leaf overwrites the first.
-
-    :param d1: source dictionary used as base during merge
-    :param d2: dictionary to be merged into source, overwriting its shared keys
-    :return: merged dictionary
+    Merges the values of B into A.
+    If the raise_conflicts flag is set to True, a LookupError will be raised if the keys are conflicting.
+    :param a: the target dictionary
+    :param b: the dictionary to import
+    :param raise_conflicts: flag to raise an exception if two keys are colliding
+    :param path: the dictionary path. Used to show where the keys are conflicting when an exception is raised.
+    :return: The dictionary A with the values of the dictionary B merged into it.
     """
-    for k, v in d1.iteritems():
-        if k in d2:
-            if all(isinstance(e, MutableMapping) for e in (v, d2[k])):
-                d2[k] = deep_merge(v, d2[k])
-    d3 = d1.copy()
-    d3.update(d2)
-    return d3
+    # Set path.
+    if path is None:
+        path = []
+
+    # Go through the keys of the 2 dictionaries.
+    for key in b:
+        # If the key exist in both dictionary, check whether we must update or not.
+        if key in a:
+            # Dig deeper for keys that have dictionary values.
+            if isinstance(a[key], dict) and isinstance(b[key], dict):
+                merge_dicts(a[key], b[key], raise_conflicts=raise_conflicts, path=(path + [str(key)]))
+
+            # Skip the identical values.
+            elif a[key] == b[key]:
+                pass
+            else:
+                # Otherwise raise an error if the same keys have different values.
+                if raise_conflicts:
+                    raise LookupError("Conflict at '{path}'".format(path='.'.join(path + [str(key)])))
+
+                # Or replace the value of A with the value of B.
+                a[key] = b[key]
+        else:
+            # If the key does not exist in A, import it.
+            a[key] = copy.deepcopy(b[key]) if isinstance(b[key], dict) else b[key]
+
+    return a
