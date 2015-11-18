@@ -37,6 +37,7 @@ from jinja2 import Environment
 from jinja2 import PackageLoader
 
 import molecule.validators as validators
+import molecule.utilities as utilities
 
 
 class Molecule(object):
@@ -165,13 +166,14 @@ class Molecule(object):
             # if molecule file has a molecule section, merge that into our config as
             # an override with the highest precedence
             if 'molecule' in molecule_file:
-                config.update(molecule_file['molecule'])
+                config = utilities.deep_merge(config, molecule_file['molecule'])
 
             # merge virtualbox provider options from molecule file with our defaults
             for provider in molecule_file['vagrant']['providers']:
                 if provider['type'] in config['providers']:
                     if 'options' in provider:
-                        config['providers'][provider['type']]['options'].update(provider['options'])
+                        config['providers'][provider['type']]['options'] = utilities.deep_merge(
+                            config['providers'][provider['type']]['options'], provider['options'])
 
         # append molecule_dir to filenames so they're easier to use later
         config['state_file'] = '/'.join([config['molecule_dir'], config['state_file']])
@@ -189,7 +191,7 @@ class Molecule(object):
         for path in Molecule.CONFIG_PATHS:
             if path and os.path.isfile(path):
                 with open(path, 'r') as stream:
-                    merged_config.update(yaml.load(stream))
+                    merged_config = utilities.deep_merge(merged_config, yaml.load(stream))
                     return merged_config
 
         return Molecule.CONFIG_DEFAULTS
