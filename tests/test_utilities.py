@@ -28,4 +28,5 @@ class TestUtilities(testtools.TestCase):
         merged_dict_2 = {'test1': 'd2', 'test2': {'test3': 'd1', 'test4': {'test5': 'd2'}, 'test6': 'd2'}}
         merged_dict_final = {'test1': 'd2', 'test2': {'test3': 'd1', 'test4': {'test5': 'd2'}, 'test6': 'd2'}}
         res = utilities.deep_merge(merged_dict_1, merged_dict_2)
+
         self.assertItemsEqual(res, merged_dict_final)
