@@ -32,50 +32,77 @@ def check_trailing_cruft(ignore_paths=[]):
     :param ignore_paths: list of paths to ignore during checks
     :return:
     """
-    for dir, _, files in os.walk('.'):
-        for f in files:
-            split_dirs = dir.split(os.sep)
-            if split_dirs < 1:
-                if split_dirs[1] not in ignore_paths:
-                    filename = os.path.join(dir, f)
-                    if os.path.getsize(filename) > 0:
-                        with open(filename, 'r') as f:
-                            newline = trailing_newline(source=f)
-                            # whitespace = trailing_whitespace(source=f)
-                            whitespace = True
+    filenames = []
+    pruned_filenames = []
+    found_error = False
+    for root, dirs, files in os.walk('.'):
+        # gets ./subdirectory/filename
+        for name in files:
+            filenames.append(os.path.join(root, name))
 
-                            if newline:
-                                error = '{}Trailing newline found in {}{}'
-                                print(error.format(Fore.RED, filename, Fore.RESET))
-                                print(newline)
+        # gets ./filename
+        for name in dirs:
+            filenames.append(os.path.join(root, name))
 
-                            # if whitespace:
-                            #     error = '{}Trailing whitespace found in {}{}'
-                            #     print(error.format(Fore.RED, filename, Fore.RESET))
-                            #     print(whitespace)
+    # only work on files not in our ignore paths
+    for f in filenames:
+        f_parts = f.split(os.sep)
 
-                            if newline or whitespace:
-                                sys.exit(1)
+        try:
+            if f_parts[1] in ignore_paths:
+                continue
+        except IndexError:
+            continue
 
+        # don't add directories
+        if os.path.isfile(f):
+            pruned_filenames.append(f)
+
+    for filename in pruned_filenames:
+        # don't process blank files
+        if os.path.getsize(filename) < 1:
+            continue
+
+        data = [line for line in open(filename, 'r')]
+        newline = trailing_newline(source=data)
+        whitespace = trailing_whitespace(source=data)
+
+        if newline:
+            error = '{}Trailing newline found at the end of {}{}'
+            print(error.format(Fore.RED, filename, Fore.RESET))
+            found_error = True
+
+        if whitespace:
+            error = '{}Trailing whitespace found in {} on lines: {}{}'
+            lines = ', '.join(str(x) for x in whitespace)
+            print(error.format(Fore.RED, filename, lines, Fore.RESET))
+            found_error = True
+
+    if found_error:
+        sys.exit(1)
 
 def trailing_newline(source):
     """
-    Checks source for a trailing newline
+    Checks last item in source list for a trailing newline
 
-    :param source: string to check for trailing newline
-    :return: the offending line, if found
+    :param source: list to check for trailing newline
+    :return: True if a trailing newline is found, otherwise None
     """
-    last = source.split('/n')[:-1]
-    if re.match(r'^\n$', last):
-        return last
+    if re.match(r'^\n$', source[-1]):
+        return True
     return
 
-def _trailing_whitespace(source):
-    with open(filename, 'r') as f:
-        for line in f:
-            l = line.rstrip('\n\r')
-            if re.search(r'\s+$', l):
-                error = '{}Trailing whitespace found in {}{}'
-                print error.format(Fore.RED, filename, Fore.RESET)
-                print l
-                sys.exit(1)
+def trailing_whitespace(source):
+    """
+    Checks each item in source list for a trailing whitespace
+
+    :param source: list of lines to check for trailing whitespace
+    :return: List of offending line numbers with trailing whitespace, otherwise None
+    """
+    lines = []
+    for counter, line in enumerate(source):
+        l = line.rstrip('\n\r')
+        if re.search(r'\s+$', l):
+            lines.append(counter+1)
+
+    return lines if lines else None

@@ -341,7 +341,7 @@ class Molecule(object):
         return True
 
     def _verify(self):
-        validators.check_trailing_cruft()
+        validators.check_trailing_cruft(ignore_paths=self._config['ignore_paths'])
 
         # no tests found
         if not os.path.isdir(self._config['serverspec_dir']) and not os.path.isdir(self._config['testinfra_dir']):
