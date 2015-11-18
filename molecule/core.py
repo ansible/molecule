@@ -36,8 +36,8 @@ from colorama import Fore
 from jinja2 import Environment
 from jinja2 import PackageLoader
 
-import molecule.validators as validators
 import molecule.utilities as utilities
+import molecule.validators as validators
 
 
 class Molecule(object):

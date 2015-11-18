@@ -19,7 +19,6 @@
 #  THE SOFTWARE.
 
 from collections import MutableMapping
-from functools import reduce
 
 
 def deep_merge(d1, d2):

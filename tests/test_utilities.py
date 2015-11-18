@@ -22,6 +22,7 @@ import testtools
 
 import molecule.utilities as utilities
 
+
 class TestUtilities(testtools.TestCase):
     def test_deep_merge(self):
         merged_dict_1 = {'test1': 'd1', 'test2': {'test3': 'd1', 'test4': {'test5': 'd1'}}}
