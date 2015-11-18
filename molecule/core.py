@@ -28,7 +28,6 @@ import sys
 import termios
 from subprocess import CalledProcessError
 
-import molecule.validators as validators
 import prettytable
 import sh
 import vagrant
@@ -36,6 +35,8 @@ import yaml
 from colorama import Fore
 from jinja2 import Environment
 from jinja2 import PackageLoader
+
+import molecule.validators as validators
 
 
 class Molecule(object):
