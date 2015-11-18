@@ -64,8 +64,8 @@ def check_trailing_cruft(ignore_paths=[]):
             continue
 
         data = [line for line in open(filename, 'r')]
-        newline = trailing_newline(source=data)
-        whitespace = trailing_whitespace(source=data)
+        newline = trailing_newline(data)
+        whitespace = trailing_whitespace(data)
 
         if newline:
             error = '{}Trailing newline found at the end of {}{}'
@@ -81,6 +81,7 @@ def check_trailing_cruft(ignore_paths=[]):
     if found_error:
         sys.exit(1)
 
+
 def trailing_newline(source):
     """
     Checks last item in source list for a trailing newline
@@ -91,6 +92,7 @@ def trailing_newline(source):
     if re.match(r'^\n$', source[-1]):
         return True
     return
+
 
 def trailing_whitespace(source):
     """
@@ -103,6 +105,6 @@ def trailing_whitespace(source):
     for counter, line in enumerate(source):
         l = line.rstrip('\n\r')
         if re.search(r'\s+$', l):
-            lines.append(counter+1)
+            lines.append(counter + 1)
 
     return lines if lines else None
