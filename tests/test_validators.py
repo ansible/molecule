@@ -24,29 +24,32 @@ import molecule.validators as validators
 
 
 class TestValidators(testtools.TestCase):
-
-    TRAILING_NEWLINE_FAILED = ['line1', 'line2', '\n']
-    TRAILING_NEWLINE_SUCCESS = ['line1', 'line2', '']
-    TRAILING_WHITESPACE_FAILED = ['line1', 'line2', 'line3    ']
-    TRAILING_WHITESPACE_FAILED_MULTILINE = ['line1', 'line2    ', 'line3', 'line4    ']
-    TRAILING_WHITESPACE_SUCCESS = ['line1', 'line2', 'line3']
-
     def test_trailing_newline_failed(self):
-        res = validators.trailing_newline(TestValidators.TRAILING_NEWLINE_FAILED)
+        line = ['line1', 'line2', '\n']
+        res = validators.trailing_newline(line)
+
         self.assertTrue(res)
 
     def test_trailing_newline_success(self):
-        res = validators.trailing_newline(TestValidators.TRAILING_NEWLINE_SUCCESS)
+        line = ['line1', 'line2', '']
+        res = validators.trailing_newline(line)
+
         self.assertIsNone(res)
 
     def test_trailing_whitespace_failed(self):
-        res = validators.trailing_whitespace(TestValidators.TRAILING_WHITESPACE_FAILED)
+        line = ['line1', 'line2', 'line3    ']
+        res = validators.trailing_whitespace(line)
+
         self.assertTrue(res)
 
     def test_trailing_whitespace_failed_multiline(self):
-        res = validators.trailing_whitespace(TestValidators.TRAILING_WHITESPACE_FAILED_MULTILINE)
+        line = ['line1', 'line2    ', 'line3', 'line4    ']
+        res = validators.trailing_whitespace(line)
+
         self.assertItemsEqual(res, [2, 4])
 
     def test_trailing_whitespace_success(self):
-        res = validators.trailing_whitespace(TestValidators.TRAILING_WHITESPACE_SUCCESS)
+        line = ['line1', 'line2', 'line3']
+        res = validators.trailing_whitespace(line)
+
         self.assertIsNone(res)
