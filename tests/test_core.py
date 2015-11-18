@@ -20,36 +20,32 @@
 
 import testtools
 
-import molecule.validators as validators
+from molecule.core import Molecule
+
+from mock import patch
 
 
-class TestValidators(testtools.TestCase):
-    def test_trailing_newline_failed(self):
-        line = ['line1', 'line2', '\n']
-        res = validators.trailing_newline(line)
+class TestCore(testtools.TestCase):
+    def setUp(self):
+        super(TestCore, self).setUp()
+        with patch('molecule.core.Molecule._main') as mocked:
+            mocked.return_value = None
+            self._molecule = Molecule(None)
+
+    def test_parse_provisioning_output_failure_00(self):
+        failed_output = """
+        PLAY RECAP ********************************************************************
+        aio-01-ubuntu              : ok=36   changed=29   unreachable=0    failed=0
+        """
+        res = self._molecule._parse_provisioning_output(failed_output)
+
+        self.assertFalse(res)
+
+    def test_parse_provisioning_output_success_00(self):
+        success_output = """
+        PLAY RECAP ********************************************************************
+        aio-01-ubuntu              : ok=36   changed=0    unreachable=0    failed=0
+        """
+        res = self._molecule._parse_provisioning_output(success_output)
 
         self.assertTrue(res)
-
-    def test_trailing_newline_success(self):
-        line = ['line1', 'line2', '']
-        res = validators.trailing_newline(line)
-
-        self.assertIsNone(res)
-
-    def test_trailing_whitespace_failed(self):
-        line = ['line1', 'line2', 'line3    ']
-        res = validators.trailing_whitespace(line)
-
-        self.assertTrue(res)
-
-    def test_trailing_whitespace_failed_multiline(self):
-        line = ['line1', 'line2    ', 'line3', 'line4    ']
-        res = validators.trailing_whitespace(line)
-
-        self.assertItemsEqual(res, [2, 4])
-
-    def test_trailing_whitespace_success(self):
-        line = ['line1', 'line2', 'line3']
-        res = validators.trailing_whitespace(line)
-
-        self.assertIsNone(res)
