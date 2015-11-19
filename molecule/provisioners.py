@@ -24,8 +24,6 @@ import sys
 import sh
 import yaml
 from colorama import Fore
-from jinja2 import Environment
-from jinja2 import PackageLoader
 
 from molecule.core import Molecule
 import molecule.utilities as utilities
@@ -58,24 +56,21 @@ class Ansible(Molecule):
         os.remove(self._config['ansible']['config_file'])
 
     def _create_templates(self):
-        env = Environment(loader=PackageLoader('molecule', 'templates'))
         self._populate_instance_names()
 
-        vagrantfile = env.get_template(self._config['vagrantfile_template'])
-        with open(self._config['vagrantfile_file'], 'w') as f:
-            f.write(vagrantfile.render(molecule=self._molecule_file['vagrant'],
-                                       config=self._config,
-                                       current_platform=self._env['MOLECULE_PLATFORM'],
-                                       current_provider=self._env['VAGRANT_DEFAULT_PROVIDER']))
+        # vagrantfile
+        kwargs = {'molecule': self._molecule_file['vagrant'],
+                'config': self._config,
+                'current_platform': self._env['MOLECULE_PLATFORM'],
+                'current_provider': self._env['VAGRANT_DEFAULT_PROVIDER']}
+        utilities.write_template(self._config['vagrantfile_template'], self._config['vagrantfile_file'], kwargs=kwargs)
 
-        ansible_cfg = env.get_template(self._config['ansible_config_template'])
-        with open(self._config['ansible']['config_file'], 'w') as f:
-            f.write(ansible_cfg.render())
+        # ansible.cfg
+        utilities.write_template(self._config['ansible_config_template'], self._config['ansible']['config_file'])
 
-        rakefile = env.get_template(self._config['rakefile_template'])
-        with open(self._config['rakefile_file'], 'w') as f:
-            f.write(rakefile.render(molecule_file=self._config['molecule_file'],
-                                    current_platform=self._env['MOLECULE_PLATFORM']))
+        # rakefile
+        kwargs = {'molecule_file': self._config['molecule_file'], 'current_platform': self._env['MOLECULE_PLATFORM']}
+        utilities.write_template(self._config['rakefile_template'], self._config['rakefile_file'], kwargs=kwargs)
 
     def _format_instance_name(self, name):
         for instance in self._molecule_file['vagrant']['instances']:
@@ -115,7 +110,7 @@ class Ansible(Molecule):
                 inventory += "{0}\n".format(self._format_instance_name(instance))
 
         inventory_file = self._config['ansible']['inventory_file']
-        self._write_file(inventory_file, inventory)
+        utilities.write_file(inventory_file, inventory)
 
     def _create_playbook_args(self):
         merged_args = self._config['ansible'].copy()
@@ -159,8 +154,8 @@ class Ansible(Molecule):
             args.append('-' + merged_args['verbose'])
 
         kwargs['_env'] = self._env
-        kwargs['_out'] = self._print_line
-        kwargs['_err'] = self._print_line
+        kwargs['_out'] = utilities.print_line
+        kwargs['_err'] = utilities.print_line
 
         return merged_args['playbook'], args, kwargs
 
