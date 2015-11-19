@@ -28,6 +28,7 @@ from jinja2 import Environment
 from jinja2 import PackageLoader
 
 from molecule.core import Molecule
+import molecule.utilities as utilities
 
 
 class Ansible(Molecule):
@@ -127,7 +128,7 @@ class Ansible(Molecule):
 
         # merge defaults with molecule.yml values
         if 'ansible' in self._molecule_file:
-            merged_args.update(self._molecule_file['ansible'])
+            merged_args = utilities.merge_dicts(merged_args, self._molecule_file['ansible'])
 
             # set raw environment variables if any are found
             if 'raw_env_vars' in self._molecule_file['ansible']:
