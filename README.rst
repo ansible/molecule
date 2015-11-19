@@ -1,8 +1,8 @@
-.. image:: https://cloud.githubusercontent.com/assets/9895/11250011/11e827d0-8ddf-11e5-80f5-259036d868c2.png
+.. image:: https://cloud.githubusercontent.com/assets/9895/11258895/12a1bb40-8e12-11e5-9adf-9a7aea1ddda9.png
+   :alt: Molecule
+   :width: 500
+   :height: 132
    :align: center
-   :height: 100px
-   :width: 200 px
-   :scale: 50 %
 
 Molecule
 ========
