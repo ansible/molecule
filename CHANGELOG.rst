@@ -1,6 +1,11 @@
 CHANGELOG for molecule
 ======================
 
+1.0.2
+----
+
+* Switched to deep merging of config dicts rather than using update().
+
 1.0.1
 ----
 
