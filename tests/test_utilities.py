@@ -18,13 +18,15 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import unittest
+import testtools
 
 import molecule.utilities as utilities
 
 
-class TestCore(unittest.TestCase):
+class TestUtilities(testtools.TestCase):
     def setUp(self):
+        super(TestUtilities, self).setUp()
+
         self.simple_dict_a = {"name": "remy", "city": "Berkeley", "age": 21}
         self.simple_dict_b = {"name": "remy", "city": "Austin"}
         self.deep_dict_a = {"users": {"remy": {"email": "remy@cisco.com", "office": "San Jose", "age": 21}}}
