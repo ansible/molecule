@@ -18,7 +18,13 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
+from __future__ import print_function
+
 import copy
+import sys
+
+from jinja2 import Environment
+from jinja2 import PackageLoader
 
 
 def merge_dicts(a, b, raise_conflicts=False, path=None):
@@ -58,3 +64,51 @@ def merge_dicts(a, b, raise_conflicts=False, path=None):
             a[key] = copy.deepcopy(b[key]) if isinstance(b[key], dict) else b[key]
 
     return a
+
+
+def write_template(src, dest, kwargs={}, _module='molecule', _dir='templates'):
+    """
+    Writes a file from a jinja2 template
+    :param src: the target template files to use
+    :param dest: destination of the templatized file to be written
+    :param kwargs: dictionary of arguments passed to jinja2 when rendering template
+    :param _module: module (to look for template files) passed to jinja2 PackageLoader
+    :param _dir: directory (to look for template files) passed to jinja2 PackageLoader
+    :return: None
+    """
+    env = Environment(loader=PackageLoader(_module, _dir))
+    template = env.get_template(src)
+
+    with open(dest, 'w') as f:
+        f.write(template.render(**kwargs))
+
+
+def write_file(filename, content):
+    """
+    Writes a file with the given filename using the given content. Overwrites, does not append.
+    :param filename: the target filename
+    :param content: what gets written into the file
+    :return: None
+    """
+    with open(filename, 'w') as f:
+        f.write(content)
+
+
+def print_stdout(line):
+    """
+    Prints a line to stdout without a \n at the end.
+    :param line: what gets printed
+    :return: None
+    """
+    print(line, file=sys.stdout, end='')
+    sys.stdout.flush()
+
+
+def print_stderr(line):
+    """
+    Prints a line to stderr without a \n at the end.
+    :param line: what gets printed
+    :return: None
+    """
+    print(line, file=sys.stderr, end='')
+    sys.stderr.flush()

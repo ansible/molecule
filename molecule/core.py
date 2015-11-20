@@ -196,13 +196,10 @@ class Molecule(object):
 
         return Molecule.CONFIG_DEFAULTS
 
-    def _print_line(self, line):
-        print(line),
-
     def _rubocop(self):
         try:
             pattern = self._config['serverspec_dir'] + '/**/*.rb'
-            output = sh.rubocop(pattern, _env=self._env, _out=self._print_line, _err=self._print_line)
+            output = sh.rubocop(pattern, _env=self._env, _out=utilities.print_stdout, _err=utilities.print_stderr)
             return output.exit_code
         except sh.ErrorReturnCode as e:
             print("ERROR: {0}".format(e))
@@ -217,7 +214,7 @@ class Molecule(object):
             return True
 
     def _write_state_file(self):
-        self._write_file(self._config['state_file'], yaml.dump(self._state, default_flow_style=False))
+        utilities.write_file(self._config['state_file'], yaml.dump(self._state, default_flow_style=False))
 
     def _write_ssh_config(self):
         try:
@@ -227,11 +224,7 @@ class Molecule(object):
             print("ERROR: {0}".format(e))
             print("Does your vagrant VM exist?")
             sys.exit(e.returncode)
-        self._write_file(ssh_config, out)
-
-    def _write_file(self, filename, content):
-        with open(filename, 'w') as f:
-            f.write(content)
+        utilities.write_file(ssh_config, out)
 
     def _get_vagrant_ssh_config(self):
         return '.vagrant/ssh-config'
@@ -353,7 +346,7 @@ class Molecule(object):
             return
 
         self._write_ssh_config()
-        kwargs = {'_env': self._env, '_out': self._print_line, '_err': self._print_line}
+        kwargs = {'_env': self._env, '_out': utilities.print_stdout, '_err': utilities.print_stderr}
         args = []
 
         # testinfra
