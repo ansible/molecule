@@ -18,7 +18,10 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
+from __future__ import print_function
+
 import copy
+import sys
 
 from jinja2 import Environment
 from jinja2 import PackageLoader
@@ -91,10 +94,21 @@ def write_file(filename, content):
         f.write(content)
 
 
-def print_line(line):
+def print_stdout(line):
     """
-    Prints a line without a \n at the end.
+    Prints a line to stdout without a \n at the end.
     :param line: what gets printed
     :return: None
     """
-    print(line),
+    print(line, file=sys.stdout, end='')
+    sys.stdout.flush()
+
+
+def print_stderr(line):
+    """
+    Prints a line to stderr without a \n at the end.
+    :param line: what gets printed
+    :return: None
+    """
+    print(line, file=sys.stderr, end='')
+    sys.stderr.flush()
