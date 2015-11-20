@@ -18,9 +18,12 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-from StringIO import StringIO
+import StringIO
 
+import binascii
+import os
 import testtools
+from mock import patch
 
 import molecule.utilities as utilities
 
@@ -83,15 +86,7 @@ class TestUtilities(testtools.TestCase):
         self.assertEqual(expected, actual)
 
     def test_merge_deep_deep_01(self):
-        expected = {
-            "users": {"remy": {"age": 21,
-                               "email": "remy@cisco.com",
-                               "office": "Austin",
-                               "position": "python master"}}
-        }
         self.assertRaises(LookupError, utilities.merge_dicts, self.deep_dict_a, self.deep_dict_b, raise_conflicts=True)
-        actual = utilities.merge_dicts(self.deep_dict_a, self.deep_dict_b)
-        self.assertEqual(expected, actual)
 
     def test_merge_deep_deep_02(self):
         expected = {
@@ -103,3 +98,36 @@ class TestUtilities(testtools.TestCase):
         }
         actual = utilities.merge_dicts(self.deep_dict_b, self.deep_dict_a)
         self.assertEqual(expected, actual)
+
+    def test_write_template(self):
+        tmp_file = '/tmp/test_utilities_write_template.tmp'
+        utilities.write_template('test.j2', tmp_file, {'test': 'chicken'})
+        with open(tmp_file, 'r') as f:
+            data = f.read()
+        os.remove(tmp_file)
+
+        self.assertEqual(data, 'this is a chicken')
+
+    def test_write_file(self):
+        tmp_file = '/tmp/test_utilities_write_file.tmp'
+        contents = binascii.b2a_hex(os.urandom(15))
+        utilities.write_file(tmp_file, contents)
+        with open(tmp_file, 'r') as f:
+            data = f.read()
+        os.remove(tmp_file)
+
+        self.assertEqual(data, contents)
+
+    def test_print_stdout(self):
+        with patch('sys.stdout', StringIO.StringIO()) as mocked_stdout:
+            utilities.print_stdout('test stdout')
+            stdout = mocked_stdout.getvalue()
+
+            self.assertEqual(stdout, 'test stdout')
+
+    def test_print_stderr(self):
+        with patch('sys.stderr', StringIO.StringIO()) as mocked_stderr:
+            utilities.print_stderr('test stderr')
+            stderr = mocked_stderr.getvalue()
+
+            self.assertEqual(stderr, 'test stderr')
