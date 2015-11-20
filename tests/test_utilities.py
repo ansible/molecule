@@ -18,6 +18,8 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
+from StringIO import StringIO
+
 import testtools
 
 import molecule.utilities as utilities
@@ -87,9 +89,9 @@ class TestUtilities(testtools.TestCase):
                                "office": "Austin",
                                "position": "python master"}}
         }
-        with self.assertRaises(LookupError):
-            actual = utilities.merge_dicts(self.deep_dict_a, self.deep_dict_b, raise_conflicts=True)
-            self.assertEqual(expected, actual)
+        self.assertRaises(LookupError, utilities.merge_dicts, self.deep_dict_a, self.deep_dict_b, raise_conflicts=True)
+        actual = utilities.merge_dicts(self.deep_dict_a, self.deep_dict_b)
+        self.assertEqual(expected, actual)
 
     def test_merge_deep_deep_02(self):
         expected = {
