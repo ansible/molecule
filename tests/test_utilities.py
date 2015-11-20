@@ -87,7 +87,15 @@ class TestUtilities(testtools.TestCase):
         self.assertEqual(expected, actual)
 
     def test_merge_deep_deep_01(self):
-        self.assertRaises(LookupError, utilities.merge_dicts, self.deep_dict_a, self.deep_dict_b, raise_conflicts=True)
+        expected = {
+            "users": {"remy": {"age": 21,
+                               "email": "remy@cisco.com",
+                               "office": "Austin",
+                               "position": "python master"}}
+        }
+        with testtools.ExpectedException(LookupError):
+            actual = utilities.merge_dicts(self.deep_dict_a, self.deep_dict_b, raise_conflicts=True)
+            self.assertEqual(expected, actual)
 
     def test_merge_deep_deep_02(self):
         expected = {
