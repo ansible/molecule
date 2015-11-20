@@ -199,7 +199,7 @@ class Molecule(object):
     def _rubocop(self):
         try:
             pattern = self._config['serverspec_dir'] + '/**/*.rb'
-            output = sh.rubocop(pattern, _env=self._env, _out=utilities.print_line, _err=utilities.print_line)
+            output = sh.rubocop(pattern, _env=self._env, _out=utilities.print_stdout, _err=utilities.print_stderr)
             return output.exit_code
         except sh.ErrorReturnCode as e:
             print("ERROR: {0}".format(e))
@@ -346,7 +346,7 @@ class Molecule(object):
             return
 
         self._write_ssh_config()
-        kwargs = {'_env': self._env, '_out': utilities.print_line, '_err': utilities.print_line}
+        kwargs = {'_env': self._env, '_out': utilities.print_stdout, '_err': utilities.print_stderr}
         args = []
 
         # testinfra

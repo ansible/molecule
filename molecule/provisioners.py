@@ -60,9 +60,9 @@ class Ansible(Molecule):
 
         # vagrantfile
         kwargs = {'molecule': self._molecule_file['vagrant'],
-                'config': self._config,
-                'current_platform': self._env['MOLECULE_PLATFORM'],
-                'current_provider': self._env['VAGRANT_DEFAULT_PROVIDER']}
+                  'config': self._config,
+                  'current_platform': self._env['MOLECULE_PLATFORM'],
+                  'current_provider': self._env['VAGRANT_DEFAULT_PROVIDER']}
         utilities.write_template(self._config['vagrantfile_template'], self._config['vagrantfile_file'], kwargs=kwargs)
 
         # ansible.cfg
@@ -154,8 +154,8 @@ class Ansible(Molecule):
             args.append('-' + merged_args['verbose'])
 
         kwargs['_env'] = self._env
-        kwargs['_out'] = utilities.print_line
-        kwargs['_err'] = utilities.print_line
+        kwargs['_out'] = utilities.print_stdout
+        kwargs['_err'] = utilities.print_stderr
 
         return merged_args['playbook'], args, kwargs
 
