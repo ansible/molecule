@@ -18,10 +18,11 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import StringIO
 
 import binascii
 import os
+import StringIO
+
 import testtools
 from mock import patch
 
@@ -101,7 +102,7 @@ class TestUtilities(testtools.TestCase):
 
     def test_write_template(self):
         tmp_file = '/tmp/test_utilities_write_template.tmp'
-        utilities.write_template('test.j2', tmp_file, {'test': 'chicken'})
+        utilities.write_template('test_write_template.j2', tmp_file, {'test': 'chicken'},  _dir='templates/tests')
         with open(tmp_file, 'r') as f:
             data = f.read()
         os.remove(tmp_file)
