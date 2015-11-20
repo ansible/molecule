@@ -106,7 +106,7 @@ class TestUtilities(testtools.TestCase):
             data = f.read()
         os.remove(tmp_file)
 
-        self.assertEqual(data, 'this is a chicken')
+        self.assertEqual(data, 'this is a chicken\n')
 
     def test_write_file(self):
         tmp_file = '/tmp/test_utilities_write_file.tmp'
