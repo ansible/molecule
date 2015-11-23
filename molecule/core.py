@@ -117,6 +117,9 @@ class Molecule(object):
         self._main()
 
     def _main(self):
+        # load molecule defaults
+        self._config.load_defaults_file()
+
         # merge in any molecule config files found (eg: ~/.configs/molecule/config.yml)
         self._config.merge_molecule_config_files()
 

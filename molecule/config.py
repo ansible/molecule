@@ -32,30 +32,27 @@ class Config(object):
     CONFIG_PATHS = [os.environ.get('MOLECULE_CONFIG'), os.path.expanduser('~/.config/molecule/config.yml'),
                     '/etc/molecule/config.yml']
 
-    def __init__(self, defaults=None, defaults_file=None):
+    def __init__(self):
         """
-        Loads config from a provided dict, file, or defaults file (within module)
+        Sets up object defaults
 
-        :param defaults: optional dictionary of config values to load
-        :param defaults_file: optional YAML file to open and read defaults from
         :return: None
         """
         self.molecule = None
 
-        # load defaults from provided dict
-        if defaults:
-            self.config = defaults
+    def load_defaults_file(self, defaults_file=None):
+        """
+        Loads config from a file
 
+        :param defaults_file: optional YAML file to open and read defaults from
+        :return: None
+        """
         # load defaults from provided file
-        if defaults_file:
-            with open(defaults_file, 'r') as stream:
-                self.config = yaml.load(stream)
+        if defaults_file is None:
+            defaults_file = os.path.join(os.path.dirname(__file__), 'conf/defaults.yml')
 
-        # load defaults from module file if none are specified
-        if defaults is None and defaults_file is None:
-            defaults = os.path.join(os.path.dirname(__file__), 'conf/defaults.yml')
-            with open(defaults, 'r') as stream:
-                self.config = yaml.load(stream)
+        with open(defaults_file, 'r') as stream:
+            self.config = yaml.load(stream)
 
     def merge_molecule_config_files(self, paths=CONFIG_PATHS):
         """
@@ -73,18 +70,13 @@ class Config(object):
                     return path
         return
 
-    def merge_molecule_file(self, molecule_file=None, molecule_dict=None):
+    def merge_molecule_file(self, molecule_file=None):
         """
         Looks for a molecule file in the local path and merges it into our config
 
         :param molecule_file: path and name of molecule file to look for
-        :param molecule_dict: optionally pass in a config dict rather than a file to be used
         :return: None
         """
-        if molecule_dict:
-            self.config = utilities.merge_dicts(self.config, molecule_dict)
-            return
-
         if molecule_file is None:
             molecule_file = self.config['molecule_file']
 
@@ -114,18 +106,16 @@ class Config(object):
                         self.config['providers'][provider['type']]['options'] = utilities.merge_dicts(
                             self.config['providers'][provider['type']]['options'], provider['options'])
 
-    def build_easy_paths(self, config=None):
+    def build_easy_paths(self):
         """
         Convenience function to build up paths from our config values
 
-        :param config: optionally use a config dict other than self.config
         :return: None
         """
-        if config is None:
-            config = self.config
-
-        config['state_file'] = '/'.join([config['molecule_dir'], config['state_file']])
-        config['vagrantfile_file'] = '/'.join([config['molecule_dir'], config['vagrantfile_file']])
-        config['rakefile_file'] = '/'.join([config['molecule_dir'], config['rakefile_file']])
-        config['ansible']['config_file'] = '/'.join([config['molecule_dir'], config['ansible']['config_file']])
-        config['ansible']['inventory_file'] = '/'.join([config['molecule_dir'], config['ansible']['inventory_file']])
+        self.config['state_file'] = '/'.join([self.config['molecule_dir'], self.config['state_file']])
+        self.config['vagrantfile_file'] = '/'.join([self.config['molecule_dir'], self.config['vagrantfile_file']])
+        self.config['rakefile_file'] = '/'.join([self.config['molecule_dir'], self.config['rakefile_file']])
+        self.config['ansible']['config_file'] = '/'.join([self.config['molecule_dir'], self.config['ansible'][
+            'config_file']])
+        self.config['ansible']['inventory_file'] = '/'.join([self.config['molecule_dir'], self.config['ansible'][
+            'inventory_file']])
