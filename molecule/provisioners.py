@@ -22,7 +22,6 @@ import os
 import sys
 
 import sh
-import yaml
 from colorama import Fore
 
 from molecule.core import Molecule
@@ -32,48 +31,40 @@ import molecule.utilities as utilities
 class Ansible(Molecule):
     def __init__(self, args):
         super(self.__class__, self).__init__(args)
-        self._env['VAGRANT_VAGRANTFILE'] = self._config['vagrantfile_file']
-
-    def _load_molecule_file(self, config):
-        if not os.path.isfile(config['molecule_file']):
-            error = "\n{0}Unable to find {1}. Exiting.{2}"
-            print(error.format(Fore.RED, config['molecule_file'], Fore.RESET))
-            sys.exit(1)
-
-        with open(config['molecule_file'], 'r') as env:
-            try:
-                config = yaml.load(env)
-            except Exception as e:
-                error = "\n{0}{1} isn't properly formatted: {2}{3}"
-                print(error.format(Fore.RED, config['molecule_file'], e, Fore.RESET))
-                sys.exit(1)
-
-        return config
+        self._env['VAGRANT_VAGRANTFILE'] = self._config.config['vagrantfile_file']
 
     def _remove_templates(self):
-        os.remove(self._config['vagrantfile_file'])
-        os.remove(self._config['rakefile_file'])
-        os.remove(self._config['ansible']['config_file'])
+        os.remove(self._config.config['vagrantfile_file'])
+        os.remove(self._config.config['rakefile_file'])
+        os.remove(self._config.config['ansible']['config_file'])
 
     def _create_templates(self):
         self._populate_instance_names()
 
         # vagrantfile
-        kwargs = {'molecule': self._molecule_file['vagrant'],
-                  'config': self._config,
-                  'current_platform': self._env['MOLECULE_PLATFORM'],
-                  'current_provider': self._env['VAGRANT_DEFAULT_PROVIDER']}
-        utilities.write_template(self._config['vagrantfile_template'], self._config['vagrantfile_file'], kwargs=kwargs)
+        kwargs = {
+            'molecule': self._config.molecule['vagrant'],
+            'config': self._config.config,
+            'current_platform': self._env['MOLECULE_PLATFORM'],
+            'current_provider': self._env['VAGRANT_DEFAULT_PROVIDER']
+        }
+        utilities.write_template(self._config.config['vagrantfile_template'],
+                                 self._config.config['vagrantfile_file'],
+                                 kwargs=kwargs)
 
         # ansible.cfg
-        utilities.write_template(self._config['ansible_config_template'], self._config['ansible']['config_file'])
+        utilities.write_template(self._config.config['ansible_config_template'],
+                                 self._config.config['ansible']['config_file'])
 
         # rakefile
-        kwargs = {'molecule_file': self._config['molecule_file'], 'current_platform': self._env['MOLECULE_PLATFORM']}
-        utilities.write_template(self._config['rakefile_template'], self._config['rakefile_file'], kwargs=kwargs)
+        kwargs = {'molecule_file': self._config.config['molecule_file'],
+                  'current_platform': self._env['MOLECULE_PLATFORM']}
+        utilities.write_template(self._config.config['rakefile_template'],
+                                 self._config.config['rakefile_file'],
+                                 kwargs=kwargs)
 
     def _format_instance_name(self, name):
-        for instance in self._molecule_file['vagrant']['instances']:
+        for instance in self._config.molecule['vagrant']['instances']:
             if instance['name'] == name:
                 if 'options' in instance and instance['options'] is not None:
                     if 'append_platform_to_hostname' in instance['options']:
@@ -82,7 +73,7 @@ class Ansible(Molecule):
         return name + '-' + self._env['MOLECULE_PLATFORM']
 
     def _populate_instance_names(self):
-        for instance in self._molecule_file['vagrant']['instances']:
+        for instance in self._config.molecule['vagrant']['instances']:
             instance['vm_name'] = self._format_instance_name(instance['name'])
 
     def _create_inventory_file(self):
@@ -90,14 +81,14 @@ class Ansible(Molecule):
         # TODO: for Ansiblev2, the following line must have s/ssh_//
         host_template = \
             "{0} ansible_ssh_host={1} ansible_ssh_port={2} ansible_ssh_private_key_file={3} ansible_ssh_user={4}\n"
-        for instance in self._molecule_file['vagrant']['instances']:
+        for instance in self._config.molecule['vagrant']['instances']:
             ssh = self._vagrant.conf(vm_name=self._format_instance_name(instance['name']))
             inventory += host_template.format(ssh['Host'], ssh['HostName'], ssh['Port'], ssh['IdentityFile'],
                                               ssh['User'])
 
         # get a list of all groups and hosts in those groups
         groups = {}
-        for instance in self._molecule_file['vagrant']['instances']:
+        for instance in self._config.molecule['vagrant']['instances']:
             if 'ansible_groups' in instance:
                 for group in instance['ansible_groups']:
                     if group not in groups:
@@ -109,11 +100,11 @@ class Ansible(Molecule):
             for instance in instances:
                 inventory += "{0}\n".format(self._format_instance_name(instance))
 
-        inventory_file = self._config['ansible']['inventory_file']
+        inventory_file = self._config.config['ansible']['inventory_file']
         utilities.write_file(inventory_file, inventory)
 
     def _create_playbook_args(self):
-        merged_args = self._config['ansible'].copy()
+        merged_args = self._config.config['ansible'].copy()
 
         # don't pass these to molecule-playbook CLI
         env_args = ['raw_ssh_args', 'host_key_checking', 'config_file', 'raw_env_vars']
@@ -122,12 +113,12 @@ class Ansible(Molecule):
         special_args = ['playbook', 'verbose']
 
         # merge defaults with molecule.yml values
-        if 'ansible' in self._molecule_file:
-            merged_args = utilities.merge_dicts(merged_args, self._molecule_file['ansible'])
+        if 'ansible' in self._config.molecule:
+            merged_args = utilities.merge_dicts(merged_args, self._config.molecule['ansible'])
 
             # set raw environment variables if any are found
-            if 'raw_env_vars' in self._molecule_file['ansible']:
-                for key, value in self._molecule_file['ansible']['raw_env_vars'].iteritems():
+            if 'raw_env_vars' in self._config.molecule['ansible']:
+                for key, value in self._config.molecule['ansible']['raw_env_vars'].iteritems():
                     self._env[key] = value
 
         self._env['PYTHONUNBUFFERED'] = '1'
