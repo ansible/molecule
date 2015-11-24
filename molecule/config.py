@@ -94,10 +94,13 @@ class Config(object):
 
         :return: None
         """
-        self.config['molecule']['state_file'] = '/'.join([self.config['molecule']['molecule_dir'], self.config['molecule']['state_file']])
-        self.config['molecule']['vagrantfile_file'] = '/'.join([self.config['molecule']['molecule_dir'], self.config['molecule']['vagrantfile_file']])
-        self.config['molecule']['rakefile_file'] = '/'.join([self.config['molecule']['molecule_dir'], self.config['molecule']['rakefile_file']])
-        self.config['ansible']['config_file'] = '/'.join([self.config['molecule']['molecule_dir'], self.config['ansible'][
-            'config_file']])
-        self.config['ansible']['inventory_file'] = '/'.join([self.config['molecule']['molecule_dir'], self.config['ansible'][
-            'inventory_file']])
+        self.config['molecule']['state_file'] = '/'.join([self.config['molecule']['molecule_dir'], self.config[
+            'molecule']['state_file']])
+        self.config['molecule']['vagrantfile_file'] = '/'.join([self.config['molecule']['molecule_dir'], self.config[
+            'molecule']['vagrantfile_file']])
+        self.config['molecule']['rakefile_file'] = '/'.join([self.config['molecule']['molecule_dir'], self.config[
+            'molecule']['rakefile_file']])
+        self.config['ansible']['config_file'] = '/'.join([self.config['molecule']['molecule_dir'], self.config[
+            'ansible']['config_file']])
+        self.config['ansible']['inventory_file'] = '/'.join([self.config['molecule']['molecule_dir'], self.config[
+            'ansible']['inventory_file']])

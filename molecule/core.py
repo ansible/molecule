@@ -119,7 +119,9 @@ class Molecule(object):
             return True
 
     def _write_state_file(self):
-        utilities.write_file(self._config.config['molecule']['state_file'], yaml.dump(self._state, default_flow_style=False))
+        utilities.write_file(self._config.config['molecule']['state_file'],
+                             yaml.dump(self._state,
+                                       default_flow_style=False))
 
     def _write_ssh_config(self):
         try:
@@ -245,11 +247,12 @@ class Molecule(object):
         validators.check_trailing_cruft(ignore_paths=self._config.config['molecule']['ignore_paths'])
 
         # no tests found
-        if not os.path.isdir(self._config.config['molecule']['serverspec_dir']) and not os.path.isdir(self._config.config['molecule'][
-                'testinfra_dir']):
+        if not os.path.isdir(self._config.config['molecule']['serverspec_dir']) and not os.path.isdir(
+                self._config.config['molecule'][
+                    'testinfra_dir']):
             msg = '{}Skipping tests, could not find {}/ or {}/.{}'
-            print(msg.format(Fore.YELLOW, self._config.config['molecule']['serverspec_dir'], self._config.config['molecule']['testinfra_dir'],
-                             Fore.RESET))
+            print(msg.format(Fore.YELLOW, self._config.config['molecule']['serverspec_dir'], self._config.config[
+                'molecule']['testinfra_dir'], Fore.RESET))
             return
 
         self._write_ssh_config()
@@ -291,6 +294,11 @@ class Molecule(object):
         self._print_valid_platforms()
 
     def status(self):
+        if not os.path.isfile(self._config.config['molecule']['vagrantfile_file']):
+            errmsg = '{}ERROR: No instances created. Try `{} create` first.{}'
+            print(errmsg.format(Fore.RED, os.path.basename(sys.argv[0]), Fore.RESET))
+            sys.exit(1)
+
         try:
             status = self._vagrant.status()
         except CalledProcessError as e:
