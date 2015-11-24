@@ -42,72 +42,6 @@ import molecule.config as config
 
 
 class Molecule(object):
-    # locations to look for a config file
-    CONFIG_PATHS = [os.environ.get('MOLECULE_CONFIG'), os.path.expanduser('~/.config/molecule/config.yml'),
-                    '/etc/molecule/config.yml']
-
-    # these defaults will be overwritten if a config file is found in CONFIG_PATHS
-    CONFIG_DEFAULTS = {
-        'molecule_file': 'molecule.yml',
-        'molecule_dir': '.molecule',
-        'state_file': 'state',
-        'vagrantfile_file': 'vagrantfile',
-        'vagrantfile_template': 'vagrantfile.j2',
-        'ansible_config_template': 'ansible.cfg.j2',
-        'rakefile_file': 'rakefile',
-        'rakefile_template': 'rakefile.j2',
-        'ignore_paths': ['.git', '.vagrant', '.molecule'],
-        'serverspec_dir': 'spec',
-        'testinfra_dir': 'tests',
-        'raw_ssh_args': ['-o StrictHostKeyChecking=no', '-o UserKnownHostsFile=/dev/null'],
-        'test': {
-            'sequence': ['destroy', 'create', 'converge', 'idempotence', 'verify', 'destroy']
-        },
-        'init': {
-            'platform': {
-                'name': 'trusty64',
-                'box': 'trusty64',
-                'box_url': 'https://vagrantcloud.com/ubuntu/boxes/trusty64/versions/14.04/providers/virtualbox.box'
-            },
-            'templates': {
-                'molecule': 'molecule.yml.j2',
-                'playbook': 'playbook.yml.j2',
-                'spec_helper': 'spec_helper.rb.j2',
-                'default_spec': 'default_spec.rb.j2'
-            }
-        },
-        'providers': {
-            'virtualbox': {
-                'options': {
-                    'memory': 512,
-                    'cpus': 2
-                }
-            }
-        },
-        'ansible': {
-            'config_file': 'ansible.cfg',
-            'user': 'vagrant',
-            'connection': 'ssh',
-            'timeout': '30',
-            'playbook': 'playbook.yml',
-            'sudo': True,
-            'sudo_user': False,
-            'ask_sudo_pass': False,
-            'ask_vault_pass': False,
-            'vault_password_file': False,
-            'limit': 'all',
-            'verbose': False,
-            'diff': True,
-            'tags': False,
-            'host_key_checking': False,
-            'inventory_file': 'ansible_inventory',
-            'raw_ssh_args': [
-                '-o UserKnownHostsFile=/dev/null', '-o IdentitiesOnly=yes', '-o ControlMaster=auto',
-                '-o ControlPersist=60s'
-            ]
-        }
-    }
-
     def __init__(self, args):
         self._created = False
         self._provisioned = False
@@ -133,8 +67,8 @@ class Molecule(object):
         # concatentate file names and paths within config so they're more convenient to use
         self._config.build_easy_paths()
 
-        if not os.path.exists(self._config.config['molecule_dir']):
-            os.makedirs(self._config.config['molecule_dir'])
+        if not os.path.exists(self._config.config['molecule']['molecule_dir']):
+            os.makedirs(self._config.config['molecule']['molecule_dir'])
 
         self._vagrant = vagrant.Vagrant(quiet_stdout=False, quiet_stderr=False)
 
@@ -143,9 +77,9 @@ class Molecule(object):
 
         if self._args['--provider']:
             if not [item
-                    for item in self._config.molecule['vagrant']['providers']
+                    for item in self._config.config['vagrant']['providers']
                     if item['name'] == self._args['--provider']]:
-                print("\n{0}Invalid provider '{1}'\n".format(Fore.RED, self._args['--provider'], Fore.RESET))
+                print("\n{}Invalid provider '{}'\n".format(Fore.RED, self._args['--provider'], Fore.RESET))
                 self._print_valid_providers()
                 sys.exit(1)
             self._set_default_provider(provider=self._args['--provider'])
@@ -155,9 +89,9 @@ class Molecule(object):
 
         if self._args['--platform']:
             if not [item
-                    for item in self._config.molecule['vagrant']['platforms']
+                    for item in self._config.config['vagrant']['platforms']
                     if item['name'] == self._args['--platform']]:
-                print("\n{0}Invalid platform '{1}'\n".format(Fore.RED, self._args['--platform'], Fore.RESET))
+                print("\n{}Invalid platform '{}'\n".format(Fore.RED, self._args['--platform'], Fore.RESET))
                 self._print_valid_platforms()
                 sys.exit(1)
             self._set_default_platform(platform=self._args['--platform'])
@@ -169,30 +103,30 @@ class Molecule(object):
 
     def _rubocop(self):
         try:
-            pattern = self._config.config['serverspec_dir'] + '/**/*.rb'
+            pattern = self._config.config['molecule']['serverspec_dir'] + '/**/*.rb'
             output = sh.rubocop(pattern, _env=self._env, _out=utilities.print_stdout, _err=utilities.print_stderr)
             return output.exit_code
         except sh.ErrorReturnCode as e:
-            print("ERROR: {0}".format(e))
+            print('ERROR: {}'.format(e))
             sys.exit(e.exit_code)
 
     def _load_state_file(self):
-        if not os.path.isfile(self._config.config['state_file']):
+        if not os.path.isfile(self._config.config['molecule']['state_file']):
             return False
 
-        with open(self._config.config['state_file'], 'r') as env:
+        with open(self._config.config['molecule']['state_file'], 'r') as env:
             self._state = yaml.load(env)
             return True
 
     def _write_state_file(self):
-        utilities.write_file(self._config.config['state_file'], yaml.dump(self._state, default_flow_style=False))
+        utilities.write_file(self._config.config['molecule']['state_file'], yaml.dump(self._state, default_flow_style=False))
 
     def _write_ssh_config(self):
         try:
             out = self._vagrant.ssh_config()
             ssh_config = self._get_vagrant_ssh_config()
         except CalledProcessError as e:
-            print("ERROR: {0}".format(e))
+            print('ERROR: {}'.format(e))
             print("Does your vagrant VM exist?")
             sys.exit(e.returncode)
         utilities.write_file(ssh_config, out)
@@ -201,7 +135,7 @@ class Molecule(object):
         return '.vagrant/ssh-config'
 
     def _get_default_platform(self):
-        default_platform = self._config.molecule['vagrant']['platforms'][0]['name']
+        default_platform = self._config.config['vagrant']['platforms'][0]['name']
 
         if not (self._load_state_file()):
             return default_platform
@@ -227,12 +161,12 @@ class Molecule(object):
     def _print_valid_platforms(self):
         print(Fore.CYAN + "AVAILABLE PLATFORMS" + Fore.RESET)
         default_platform = self._get_default_platform()
-        for platform in self._config.molecule['vagrant']['platforms']:
+        for platform in self._config.config['vagrant']['platforms']:
             default = ' (default)' if platform['name'] == default_platform else ''
             print(platform['name'] + default)
 
     def _get_default_provider(self):
-        default_provider = self._config.molecule['vagrant']['providers'][0]['name']
+        default_provider = self._config.config['vagrant']['providers'][0]['name']
 
         if not (self._load_state_file()):
             return default_provider
@@ -258,7 +192,7 @@ class Molecule(object):
     def _print_valid_providers(self):
         print(Fore.CYAN + "AVAILABLE PLATFORMS" + Fore.RESET)
         default_provider = self._get_default_provider()
-        for provider in self._config.molecule['vagrant']['providers']:
+        for provider in self._config.config['vagrant']['providers']:
             default = ' (default)' if provider['name'] == default_provider else ''
             print(provider['name'] + default)
 
@@ -276,7 +210,7 @@ class Molecule(object):
             self._vagrant.destroy()
             self._set_default_platform(platform=False)
         except CalledProcessError as e:
-            print("ERROR: {0}".format(e))
+            print('ERROR: {}'.format(e))
             sys.exit(e.returncode)
 
     def _create(self):
@@ -285,7 +219,7 @@ class Molecule(object):
                 self._vagrant.up(no_provision=True)
                 self._created = True
             except CalledProcessError as e:
-                print("ERROR: {0}".format(e))
+                print('ERROR: {}'.format(e))
                 sys.exit(e.returncode)
 
     def _parse_provisioning_output(self, output):
@@ -308,13 +242,13 @@ class Molecule(object):
         return True
 
     def _verify(self):
-        validators.check_trailing_cruft(ignore_paths=self._config.config['ignore_paths'])
+        validators.check_trailing_cruft(ignore_paths=self._config.config['molecule']['ignore_paths'])
 
         # no tests found
-        if not os.path.isdir(self._config.config['serverspec_dir']) and not os.path.isdir(self._config.config[
+        if not os.path.isdir(self._config.config['molecule']['serverspec_dir']) and not os.path.isdir(self._config.config['molecule'][
                 'testinfra_dir']):
             msg = '{}Skipping tests, could not find {}/ or {}/.{}'
-            print(msg.format(Fore.YELLOW, self._config.config['serverspec_dir'], self._config.config['testinfra_dir'],
+            print(msg.format(Fore.YELLOW, self._config.config['molecule']['serverspec_dir'], self._config.config['molecule']['testinfra_dir'],
                              Fore.RESET))
             return
 
@@ -323,20 +257,20 @@ class Molecule(object):
         args = []
 
         # testinfra
-        if os.path.isdir(self._config.config['testinfra_dir']):
-            ssh_config = '--ssh-config={0}'.format(self._get_vagrant_ssh_config())
+        if os.path.isdir(self._config.config['molecule']['testinfra_dir']):
+            ssh_config = '--ssh-config={}'.format(self._get_vagrant_ssh_config())
             try:
-                output = sh.testinfra(ssh_config, '--sudo', self._config.config['testinfra_dir'], **kwargs)
+                output = sh.testinfra(ssh_config, '--sudo', self._config.config['molecule']['testinfra_dir'], **kwargs)
                 return output.exit_code
             except sh.ErrorReturnCode as e:
                 print('ERROR: {}'.format(e))
                 sys.exit(e.exit_code)
 
         # serverspec
-        if os.path.isdir(self._config.config['serverspec_dir']):
+        if os.path.isdir(self._config.config['molecule']['serverspec_dir']):
             self._rubocop()
-            if 'rakefile_file' in self._config.config:
-                kwargs['rakefile'] = self._config.config['rakefile_file']
+            if 'rakefile_file' in self._config.config['molecule']:
+                kwargs['rakefile'] = self._config.config['molecule']['rakefile_file']
             if self._args['--debug']:
                 args.append('--trace')
             try:
@@ -348,7 +282,7 @@ class Molecule(object):
                 sys.exit(e.exit_code)
 
     def test(self):
-        for task in self._config.config['test']['sequence']:
+        for task in self._config.config['molecule']['test']['sequence']:
             m = getattr(self, task)
             m()
 
@@ -360,7 +294,7 @@ class Molecule(object):
         try:
             status = self._vagrant.status()
         except CalledProcessError as e:
-            print("ERROR: {0}".format(e))
+            print('ERROR: {}'.format(e))
             return e.returncode
 
         x = prettytable.PrettyTable(['Name', 'State', 'Provider'])
@@ -381,7 +315,7 @@ class Molecule(object):
     def login(self):
         # make sure host argument is specified
         host_format = [Fore.RED, self._args['<host>'], Fore.RESET, Fore.YELLOW, Fore.RESET]
-        host_errmsg = "\nTry molecule {3}molecule status{4} to see available hosts.\n".format(*host_format)
+        host_errmsg = '\nTry molecule {}molecule status{} to see available hosts.\n'.format(*host_format)
         if not self._args['<host>']:
             print('You must specify a host when using login')
             print(host_errmsg)
@@ -391,12 +325,12 @@ class Molecule(object):
         try:
             conf = self._vagrant.conf(vm_name=self._args['<host>'])
             ssh_args = [conf['HostName'], conf['User'], conf['Port'], conf['IdentityFile'],
-                        ' '.join(self._config.config['raw_ssh_args'])]
-            ssh_cmd = 'ssh {0} -l {1} -p {2} -i {3} {4}'
+                        ' '.join(self._config.config['molecule']['raw_ssh_args'])]
+            ssh_cmd = 'ssh {} -l {} -p {} -i {} {}'
         except CalledProcessError:
             # gets appended to python-vagrant's error message
             conf_format = [Fore.RED, self._args['<host>'], Fore.RESET, Fore.YELLOW, Fore.RESET]
-            print("\nTry molecule {3}molecule status{4} to see available hosts.\n".format(*conf_format))
+            print('\nTry molecule {}molecule status{} to see available hosts.\n'.format(*conf_format))
             sys.exit(1)
 
         lines, columns = os.popen('stty size', 'r').read().split()
@@ -427,18 +361,18 @@ class Molecule(object):
 
         env = Environment(loader=PackageLoader('molecule', 'templates'), keep_trailing_newline=True)
 
-        t_molecule = env.get_template(self._config.config['init']['templates']['molecule'])
-        t_playbook = env.get_template(self._config.config['init']['templates']['playbook'])
-        t_default_spec = env.get_template(self._config.config['init']['templates']['default_spec'])
-        t_spec_helper = env.get_template(self._config.config['init']['templates']['spec_helper'])
+        t_molecule = env.get_template(self._config.config['molecule']['init']['templates']['molecule'])
+        t_playbook = env.get_template(self._config.config['molecule']['init']['templates']['playbook'])
+        t_default_spec = env.get_template(self._config.config['molecule']['init']['templates']['default_spec'])
+        t_spec_helper = env.get_template(self._config.config['molecule']['init']['templates']['spec_helper'])
 
-        with open(role_path + self._config.config['molecule_file'], 'w') as f:
+        with open(role_path + self._config.config['molecule']['molecule_file'], 'w') as f:
             f.write(t_molecule.render(config=self._config.config))
 
         with open(role_path + self._config.config['ansible']['playbook'], 'w') as f:
             f.write(t_playbook.render(role=role))
 
-        serverspec_path = role_path + self._config.config['serverspec_dir'] + '/'
+        serverspec_path = role_path + self._config.config['molecule']['serverspec_dir'] + '/'
         os.makedirs(serverspec_path)
         os.makedirs(serverspec_path + 'hosts')
         os.makedirs(serverspec_path + 'groups')

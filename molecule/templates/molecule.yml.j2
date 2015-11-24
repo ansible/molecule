@@ -93,9 +93,9 @@ vagrant:
 
   # molecule's --platform option will look for these names
   platforms:
-    - name: {{ config.init.platform.name }}
-      box: {{ config.init.platform.box }}
-      box_url: {{ config.init.platform.box_url }}
+    - name: {{ config.molecule.init.platform.name }}
+      box: {{ config.molecule.init.platform.box }}
+      box_url: {{ config.molecule.init.platform.box_url }}
 
   providers:
     - name: virtualbox

@@ -1,6 +1,6 @@
 Vagrant.configure('2') do |config|
   config.cache.scope = 'machine' if Vagrant.has_plugin?('vagrant-cachier')
-  {%- for platform in molecule.platforms %}
+  {%- for platform in config.vagrant.platforms %}
     {%- if platform.name == current_platform %}
   config.vm.box = '{{ platform.box }}'
       {%- if 'box_url' in platform %}
@@ -9,17 +9,17 @@ Vagrant.configure('2') do |config|
     {%- endif %}
   {%- endfor %}
 
-  {%- if 'raw_config_args' in molecule %}
-    {%- for line in molecule.raw_config_args %}
+  {%- if 'raw_config_args' in config.molecule %}
+    {%- for line in config.molecule.raw_config_args %}
   config.{{ line }}
     {%- endfor %}
   {%- endif %}
 
-  {%- for provider in molecule.providers %}
+  {%- for provider in config.vagrant.providers %}
     {%- if provider.type is defined and provider.type == 'virtualbox' and provider.name == current_provider %}
   config.vm.provider :virtualbox do |vb|
-    {%- if config.providers['virtualbox'].options %}
-      {%- for k, v in config.providers['virtualbox'].options.iteritems()|sort %}
+    {%- if provider.options %}
+      {%- for k, v in provider.options.iteritems()|sort %}
     vb.{{ k }} = {{ v }}
       {%- endfor %}
     {%- endif %}
@@ -80,7 +80,7 @@ Vagrant.configure('2') do |config|
     {%- endif %}
   {%- endfor %}
 
-  {% for instance in molecule.instances -%}
+  {% for instance in config.vagrant.instances -%}
   config.vm.define '{{ instance.vm_name }}' do |c|
     c.vm.hostname = '{{ instance.vm_name }}'
     {%- for interface in instance.interfaces %}

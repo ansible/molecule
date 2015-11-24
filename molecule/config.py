@@ -32,14 +32,6 @@ class Config(object):
     CONFIG_PATHS = [os.environ.get('MOLECULE_CONFIG'), os.path.expanduser('~/.config/molecule/config.yml'),
                     '/etc/molecule/config.yml']
 
-    def __init__(self):
-        """
-        Sets up object defaults
-
-        :return: None
-        """
-        self.molecule = None
-
     def load_defaults_file(self, defaults_file=None):
         """
         Loads config from a file
@@ -78,33 +70,23 @@ class Config(object):
         :return: None
         """
         if molecule_file is None:
-            molecule_file = self.config['molecule_file']
+            molecule_file = self.config['molecule']['molecule_file']
 
         if not os.path.isfile(molecule_file):
             error = '\n{}Unable to find {}. Exiting.{}'
-            print(error.format(Fore.RED, self.config['molecule_file'], Fore.RESET))
+            print(error.format(Fore.RED, self.config['molecule']['molecule_file'], Fore.RESET))
             sys.exit(1)
 
         with open(molecule_file, 'r') as env:
             try:
-                self.molecule = yaml.load(env)
+                molecule_yml = yaml.load(env)
             except Exception as e:
                 error = "\n{}{} isn't properly formatted: {}{}"
-                print(error.format(Fore.RED, self.molecule, e, Fore.RESET))
+                print(error.format(Fore.RED, molecule_file, e, Fore.RESET))
                 sys.exit(1)
 
-            # if molecule file has a molecule section, merge that into our config as
-            # an override with the highest precedence
-            if 'molecule' in self.molecule:
-                self.config = utilities.merge_dicts(self.config, self.molecule['molecule'])
-
-            # merge virtualbox provider options from molecule file with our defaults
-            # the format of these data structures is slightly different so we have more logic around it
-            for provider in self.molecule['vagrant']['providers']:
-                if provider['type'] in self.config['providers']:
-                    if 'options' in provider:
-                        self.config['providers'][provider['type']]['options'] = utilities.merge_dicts(
-                            self.config['providers'][provider['type']]['options'], provider['options'])
+            interim = utilities.merge_dicts(self.config, molecule_yml)
+            self.config = interim
 
     def build_easy_paths(self):
         """
@@ -112,10 +94,10 @@ class Config(object):
 
         :return: None
         """
-        self.config['state_file'] = '/'.join([self.config['molecule_dir'], self.config['state_file']])
-        self.config['vagrantfile_file'] = '/'.join([self.config['molecule_dir'], self.config['vagrantfile_file']])
-        self.config['rakefile_file'] = '/'.join([self.config['molecule_dir'], self.config['rakefile_file']])
-        self.config['ansible']['config_file'] = '/'.join([self.config['molecule_dir'], self.config['ansible'][
+        self.config['molecule']['state_file'] = '/'.join([self.config['molecule']['molecule_dir'], self.config['molecule']['state_file']])
+        self.config['molecule']['vagrantfile_file'] = '/'.join([self.config['molecule']['molecule_dir'], self.config['molecule']['vagrantfile_file']])
+        self.config['molecule']['rakefile_file'] = '/'.join([self.config['molecule']['molecule_dir'], self.config['molecule']['rakefile_file']])
+        self.config['ansible']['config_file'] = '/'.join([self.config['molecule']['molecule_dir'], self.config['ansible'][
             'config_file']])
-        self.config['ansible']['inventory_file'] = '/'.join([self.config['molecule_dir'], self.config['ansible'][
+        self.config['ansible']['inventory_file'] = '/'.join([self.config['molecule']['molecule_dir'], self.config['ansible'][
             'inventory_file']])
