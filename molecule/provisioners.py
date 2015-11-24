@@ -31,7 +31,6 @@ import molecule.utilities as utilities
 class Ansible(Molecule):
     def __init__(self, args):
         super(self.__class__, self).__init__(args)
-        self._env['VAGRANT_VAGRANTFILE'] = self._config.config['molecule']['vagrantfile_file']
 
     def _remove_templates(self):
         os.remove(self._config.config['molecule']['vagrantfile_file'])

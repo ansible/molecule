@@ -48,9 +48,8 @@ class Molecule(object):
         self._env = os.environ.copy()
         self._args = args
         self._config = config.Config()
-        self._main()
 
-    def _main(self):
+    def main(self):
         # load molecule defaults
         self._config.load_defaults_file()
 
@@ -71,6 +70,8 @@ class Molecule(object):
             os.makedirs(self._config.config['molecule']['molecule_dir'])
 
         self._vagrant = vagrant.Vagrant(quiet_stdout=False, quiet_stderr=False)
+
+        self._env['VAGRANT_VAGRANTFILE'] = self._config.config['molecule']['vagrantfile_file']
 
         if self._args['--tags']:
             self._env['MOLECULE_TAGS'] = self._args['--tags']

@@ -22,15 +22,11 @@ import testtools
 
 from molecule.core import Molecule
 
-from mock import patch
-
 
 class TestCore(testtools.TestCase):
     def setUp(self):
         super(TestCore, self).setUp()
-        with patch('molecule.core.Molecule._main') as mocked:
-            mocked.return_value = None
-            self._molecule = Molecule(None)
+        self._molecule = Molecule(None)
 
     def test_parse_provisioning_output_failure_00(self):
         failed_output = """
