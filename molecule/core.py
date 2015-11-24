@@ -190,7 +190,7 @@ class Molecule(object):
         self._write_state_file()
 
     def _print_valid_providers(self):
-        print(Fore.CYAN + "AVAILABLE PLATFORMS" + Fore.RESET)
+        print(Fore.CYAN + "AVAILABLE PROVIDERS" + Fore.RESET)
         default_provider = self._get_default_provider()
         for provider in self._config.config['vagrant']['providers']:
             default = ' (default)' if provider['name'] == default_provider else ''
