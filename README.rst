@@ -28,15 +28,66 @@ Molecule supports `Serverspec`_ or `Testinfra`_ to run tests.  Molecule uses an 
 .. _`Serverspec`: http://serverspec.org
 .. _`Testinfra`: http://testinfra.readthedocs.org
 
-Documentation
--------------
+Quick Start
+-----------
 
-The documentation is built with ``Sphinx`` and uses the ``bootswatch``
-theme ``flatly``.
+Install molecule using pip:
 
 .. code-block:: bash
 
-  $ tox -e docs
+  $ pip install molecule
+
+Create a new role:
+
+.. code-block:: bash
+
+  $ molecule init foo
+  Successfully initialized new role in ./foo/
+
+Update the role with needed functionality and tests.  Now test it:
+
+.. code-block:: bash
+
+  $ cd foo
+  $ molecule test
+  ==> vagrant-01: VM not created. Moving on...
+  ==> vagrant-01: VM not created. Moving on...
+  Bringing machine 'vagrant-01' up with 'virtualbox' provider...
+  ==> vagrant-01: Importing base box 'hashicorp/precise64'...
+  ...
+  ==> vagrant-01: Machine not provisioned because `--no-provision` is specified.
+
+  PLAY [all] ********************************************************************
+
+  GATHERING FACTS ***************************************************************
+
+  ok: [vagrant-01]
+
+  TASK: [foo | install curl] ****************************************************
+
+  changed: [vagrant-01]
+
+  PLAY RECAP ********************************************************************
+  vagrant-01                 : ok=2    changed=1    unreachable=0    failed=0
+
+  Idempotence test in progress... OKAY
+  Inspecting 2 files
+  ..
+
+  2 files inspected, no offenses detected
+  /Users/jodewey/.rvm/rubies/ruby-2.2.0/bin/ruby -I/Users/jodewey/.rvm/gems/ruby-2.2.0/gems/rspec-support-3.3.0/lib:/Users/jodewey/.rvm/gems/ruby-2.2.0/gems/rspec-core-3.3.2/lib /Users/jodewey/.rvm/gems/ruby-2.2.0/gems/rspec-core-3.3.2/exe/rspec --pattern spec/\*_spec.rb,spec/vagrant-01/\*_spec.rb,spec/hosts/vagrant-01/\*_spec.rb,spec/group_1/\*_spec.rb,spec/groups/group_1/\*_spec.rb,spec/group_2/\*_spec.rb,spec/groups/group_2/\*_spec.rb
+
+  Package Installation
+    Package "curl"
+      should be installed
+
+  Finished in 0.40244 seconds (files took 0.90459 seconds to load)
+  1 example, 0 failures
+
+Documentation
+-------------
+
+http://molecule.readthedocs.org/en/latest/
 
 License
 -------
