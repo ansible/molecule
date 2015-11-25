@@ -70,6 +70,7 @@ class CLI(object):
             sys.exit(0)
 
         m = Ansible(args)
+        m.main()
         commands = ['create', 'converge', 'idempotence', 'test', 'verify', 'destroy', 'status', 'list', 'login', 'init']
         for command in commands:
             if args[command]:
