@@ -7,6 +7,10 @@
 Molecule
 ========
 
+.. image:: https://badge.fury.io/py/molecule.svg
+   :target: https://badge.fury.io/py/molecule
+   :alt: PyPI Package
+
 .. image:: https://readthedocs.org/projects/molecule/badge/?version=latest
    :target: https://molecule.readthedocs.org/en/latest/
    :alt: Documentation Status
