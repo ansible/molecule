@@ -84,6 +84,9 @@ Update the role with needed functionality and tests.  Now test it:
   Finished in 0.40244 seconds (files took 0.90459 seconds to load)
   1 example, 0 failures
 
+  ==> vagrant-01: Attempting graceful shutdown of VM...
+  ==> vagrant-01: Destroying VM and associated drives...
+
 Documentation
 -------------
 
