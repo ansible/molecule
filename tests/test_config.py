@@ -64,7 +64,11 @@ class TestConfig(testtools.TestCase):
         c.load_defaults_file()
         c.build_easy_paths()
 
-        self.assertEqual(c.config['molecule']['state_file'], '.molecule/state')
+        self.assertEqual(c.config['molecule']['state_file'], os.path.join('.molecule', 'state'))
+        self.assertEqual(c.config['molecule']['vagrantfile_file'], os.path.join('.molecule', 'vagrantfile'))
+        self.assertEqual(c.config['molecule']['rakefile_file'], os.path.join('.molecule', 'rakefile'))
+        self.assertEqual(c.config['ansible']['config_file'], os.path.join('.molecule', 'ansible.cfg'))
+        self.assertEqual(c.config['ansible']['inventory_file'], os.path.join('.molecule', 'ansible_inventory'))
 
     def tearDown(self):
         super(TestConfig, self).tearDown()
