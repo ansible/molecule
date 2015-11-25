@@ -207,23 +207,115 @@ class Molecule(object):
         a = struct.unpack('HHHH', fcntl.ioctl(sys.stdout.fileno(), TIOCGWINSZ, s))
         self._pt.setwinsize(a[0], a[1])
 
-    def _destroy(self):
-        try:
-            self._vagrant.halt()
-            self._vagrant.destroy()
-            self._set_default_platform(platform=False)
-        except CalledProcessError as e:
-            print('ERROR: {}'.format(e))
-            sys.exit(e.returncode)
+    def _remove_templates(self):
+        os.remove(self._config.config['molecule']['vagrantfile_file'])
+        os.remove(self._config.config['molecule']['rakefile_file'])
+        os.remove(self._config.config['ansible']['config_file'])
 
-    def _create(self):
-        if not self._created:
-            try:
-                self._vagrant.up(no_provision=True)
-                self._created = True
-            except CalledProcessError as e:
-                print('ERROR: {}'.format(e))
-                sys.exit(e.returncode)
+    def _create_templates(self):
+        self._populate_instance_names()
+
+        # vagrantfile
+        kwargs = {
+            'config': self._config.config,
+            'current_platform': self._env['MOLECULE_PLATFORM'],
+            'current_provider': self._env['VAGRANT_DEFAULT_PROVIDER']
+        }
+        utilities.write_template(self._config.config['molecule']['vagrantfile_template'],
+                                 self._config.config['molecule']['vagrantfile_file'],
+                                 kwargs=kwargs)
+
+        # ansible.cfg
+        utilities.write_template(self._config.config['molecule']['ansible_config_template'],
+                                 self._config.config['ansible']['config_file'])
+
+        # rakefile
+        kwargs = {'molecule_file': self._config.config['molecule']['molecule_file'],
+                  'current_platform': self._env['MOLECULE_PLATFORM']}
+        utilities.write_template(self._config.config['molecule']['rakefile_template'],
+                                 self._config.config['molecule']['rakefile_file'],
+                                 kwargs=kwargs)
+
+    def _format_instance_name(self, name):
+        for instance in self._config.config['vagrant']['instances']:
+            if instance['name'] == name:
+                if 'options' in instance and instance['options'] is not None:
+                    if 'append_platform_to_hostname' in instance['options']:
+                        if not instance['options']['append_platform_to_hostname']:
+                            return name
+        return name + '-' + self._env['MOLECULE_PLATFORM']
+
+    def _populate_instance_names(self):
+        for instance in self._config.config['vagrant']['instances']:
+            instance['vm_name'] = self._format_instance_name(instance['name'])
+
+    def _create_inventory_file(self):
+        inventory = ''
+        # TODO: for Ansiblev2, the following line must have s/ssh_//
+        host_template = \
+            '{} ansible_ssh_host={} ansible_ssh_port={} ansible_ssh_private_key_file={} ansible_ssh_user={}\n'
+        for instance in self._config.config['vagrant']['instances']:
+            ssh = self._vagrant.conf(vm_name=self._format_instance_name(instance['name']))
+            inventory += host_template.format(ssh['Host'], ssh['HostName'], ssh['Port'], ssh['IdentityFile'],
+                                              ssh['User'])
+
+        # get a list of all groups and hosts in those groups
+        groups = {}
+        for instance in self._config.config['vagrant']['instances']:
+            if 'ansible_groups' in instance:
+                for group in instance['ansible_groups']:
+                    if group not in groups:
+                        groups[group] = []
+                    groups[group].append(instance['name'])
+
+        for group, instances in groups.iteritems():
+            inventory += '\n[{}]\n'.format(group)
+            for instance in instances:
+                inventory += '{}\n'.format(self._format_instance_name(instance))
+
+        inventory_file = self._config.config['ansible']['inventory_file']
+        utilities.write_file(inventory_file, inventory)
+
+    def _create_playbook_args(self):
+        # don't pass these to molecule-playbook CLI
+        env_args = ['raw_ssh_args', 'host_key_checking', 'config_file', 'raw_env_vars']
+
+        # args that molecule-playbook doesn't accept as --arg=value
+        special_args = ['playbook', 'verbose']
+
+        # set raw environment variables if any are found
+        if 'raw_env_vars' in self._config.config['ansible']:
+            for key, value in self._config.config['ansible']['raw_env_vars'].iteritems():
+                self._env[key] = value
+
+        self._env['PYTHONUNBUFFERED'] = '1'
+        self._env['ANSIBLE_FORCE_COLOR'] = 'true'
+        self._env['ANSIBLE_HOST_KEY_CHECKING'] = str(self._config.config['ansible']['host_key_checking']).lower()
+        self._env['ANSIBLE_SSH_ARGS'] = ' '.join(self._config.config['ansible']['raw_ssh_args'])
+        self._env['ANSIBLE_CONFIG'] = self._config.config['ansible']['config_file']
+
+        kwargs = {}
+        args = []
+
+        # pull in values passed to molecule CLI
+        if '--tags' in self._args:
+            self._config.config['ansible']['tags'] = self._args['--tags']
+
+        # pass supported --arg=value args
+        for arg, value in self._config.config['ansible'].iteritems():
+            # don't pass False arguments to ansible-playbook
+            if value and arg not in (env_args + special_args):
+                kwargs[arg] = value
+
+        # verbose is weird -vvvv
+        if self._config.config['ansible']['verbose']:
+            args.append('-' + self._config.config['ansible']['verbose'])
+
+        kwargs['_env'] = self._env
+        kwargs['_out'] = utilities.print_stdout
+        kwargs['_err'] = utilities.print_stderr
+
+        return self._config.config['ansible']['playbook'], args, kwargs
 
     def _parse_provisioning_output(self, output):
         """
@@ -244,7 +336,28 @@ class Molecule(object):
 
         return True
 
-    def _verify(self):
+    def destroy(self):
+        self._create_templates()
+        try:
+            self._vagrant.halt()
+            self._vagrant.destroy()
+            self._set_default_platform(platform=False)
+        except CalledProcessError as e:
+            print('ERROR: {}'.format(e))
+            sys.exit(e.returncode)
+        self._remove_templates()
+
+    def create(self):
+        self._create_templates()
+        if not self._created:
+            try:
+                self._vagrant.up(no_provision=True)
+                self._created = True
+            except CalledProcessError as e:
+                print('ERROR: {}'.format(e))
+                sys.exit(e.returncode)
+
+    def verify(self):
         validators.check_trailing_cruft(ignore_paths=self._config.config['molecule']['ignore_paths'])
 
         # no tests found
@@ -284,6 +397,44 @@ class Molecule(object):
             except sh.ErrorReturnCode as e:
                 print('ERROR: {}'.format(e))
                 sys.exit(e.exit_code)
+
+    def idempotence(self):
+        print('{}Idempotence test in progress...{}'.format(Fore.CYAN, Fore.RESET)),
+
+        output = self.converge(idempotent=True)
+        idempotent = self._parse_provisioning_output(output.stdout)
+
+        if idempotent:
+            print('{}OKAY{}'.format(Fore.GREEN, Fore.RESET))
+            return
+
+        print('{}FAILED{}'.format(Fore.RED, Fore.RESET))
+        sys.exit(1)
+
+    def converge(self, idempotent=False):
+        if not idempotent:
+            self.create()
+
+        self._create_inventory_file()
+        playbook, args, kwargs = self._create_playbook_args()
+
+        if idempotent:
+            kwargs.pop('_out', None)
+            kwargs.pop('_err', None)
+            kwargs['_env']['ANSIBLE_NOCOLOR'] = 'true'
+            kwargs['_env']['ANSIBLE_FORCE_COLOR'] = 'false'
+            try:
+                output = sh.ansible_playbook(playbook, *args, **kwargs)
+                return output
+            except sh.ErrorReturnCode as e:
+                print('ERROR: {}'.format(e))
+                sys.exit(e.exit_code)
+        try:
+            output = sh.ansible_playbook(playbook, *args, **kwargs)
+            return output.exit_code
+        except sh.ErrorReturnCode as e:
+            print('ERROR: {}'.format(e))
+            sys.exit(e.exit_code)
 
     def test(self):
         for task in self._config.config['molecule']['test']['sequence']:
