@@ -207,7 +207,8 @@ class Molecule(object):
         a = struct.unpack('HHHH', fcntl.ioctl(sys.stdout.fileno(), TIOCGWINSZ, s))
         self._pt.setwinsize(a[0], a[1])
 
-    def _destroy(self):
+    def destroy(self):
+        self._create_templates()
         try:
             self._vagrant.halt()
             self._vagrant.destroy()
@@ -215,8 +216,10 @@ class Molecule(object):
         except CalledProcessError as e:
             print('ERROR: {}'.format(e))
             sys.exit(e.returncode)
+        self._remove_templates()
 
-    def _create(self):
+    def create(self):
+        self._create_templates()
         if not self._created:
             try:
                 self._vagrant.up(no_provision=True)
@@ -244,7 +247,7 @@ class Molecule(object):
 
         return True
 
-    def _verify(self):
+    def verify(self):
         validators.check_trailing_cruft(ignore_paths=self._config.config['molecule']['ignore_paths'])
 
         # no tests found
