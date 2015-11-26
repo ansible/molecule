@@ -179,15 +179,3 @@ class Ansible(Molecule):
         except sh.ErrorReturnCode as e:
             print('ERROR: {}'.format(e))
             sys.exit(e.exit_code)
-
-    def verify(self):
-        self._verify()
-
-    def create(self):
-        self._create_templates()
-        self._create()
-
-    def destroy(self):
-        self._create_templates()
-        self._destroy()
-        self._remove_templates()
