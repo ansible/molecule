@@ -55,8 +55,10 @@ class Ansible(Molecule):
                                  self._config.config['ansible']['config_file'])
 
         # rakefile
-        kwargs = {'molecule_file': self._config.config['molecule']['molecule_file'],
-                  'current_platform': self._env['MOLECULE_PLATFORM']}
+        kwargs = {
+            'molecule_file': self._config.config['molecule']['molecule_file'],
+            'current_platform': self._env['MOLECULE_PLATFORM']
+        }
         utilities.write_template(self._config.config['molecule']['rakefile_template'],
                                  self._config.config['molecule']['rakefile_file'],
                                  kwargs=kwargs)
@@ -171,17 +173,12 @@ class Ansible(Molecule):
             kwargs['_env']['ANSIBLE_NOCOLOR'] = 'true'
             kwargs['_env']['ANSIBLE_FORCE_COLOR'] = 'false'
             try:
-                print "Executing ansible_playbook"
-                print "Playbook: %s\nArgs%s\nkwargs%s" % (playbook, args, kwargs)
                 output = sh.ansible_playbook(playbook, *args, **kwargs)
                 return output
             except sh.ErrorReturnCode as e:
                 print('ERROR: {}'.format(e))
                 sys.exit(e.exit_code)
         try:
-            print "Executing ansible_playbook"
-            print "Playbook: %s\nArgs%s\nkwargs%s" % (playbook, args, kwargs)
-            # kwargs['inventory_file'] = '../../inventory_fusion'
             output = sh.ansible_playbook(playbook, *args, **kwargs)
             return output.exit_code
         except sh.ErrorReturnCode as e:

@@ -95,14 +95,10 @@ class Config(object):
         :return: None
         """
         vals = [
-            ('molecule', 'state_file'),
-            ('molecule', 'vagrantfile_file'),
-            ('molecule', 'rakefile_file'),
-            ('ansible', 'config_file'),
-            ('ansible', 'inventory_file')
+            ('molecule', 'state_file'), ('molecule', 'vagrantfile_file'), ('molecule', 'rakefile_file'),
+            ('ansible', 'config_file'), ('ansible', 'inventory_file')
         ]
 
         for k, v in vals:
             if not self.config[k][v].startswith("../"):
-                self.config[k][v] = os.path.join(self.config['molecule']['molecule_dir'],
-                                                            self.config[k][v])
+                self.config[k][v] = os.path.join(self.config['molecule']['molecule_dir'], self.config[k][v])
