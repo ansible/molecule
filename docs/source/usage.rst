@@ -234,7 +234,7 @@ variables. There are only a few currently in use.
 .. code-block:: yaml
 
     ansible:
-      ansible_config_file: /path/to/your/ansible.cfg
+      config_file: /path/to/your/ansible.cfg
       playbook: /path/to/some/other_playbook.yml
       host_key_checking: False
       raw_ssh_args:
