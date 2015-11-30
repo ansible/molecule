@@ -90,11 +90,8 @@ def write_file(filename, content):
     :param content: what gets written into the file
     :return: None
     """
-    try:
-        with open(filename, 'w') as f:
-            f.write(content)
-    except Exception as e:
-        raise
+    with open(filename, 'w') as f:
+        f.write(content)
 
 
 def print_stdout(line):
