@@ -99,7 +99,10 @@ class Ansible(Molecule):
                 inventory += '{}\n'.format(self._format_instance_name(instance))
 
         inventory_file = self._config.config['ansible']['inventory_file']
-        utilities.write_file(inventory_file, inventory)
+        try:
+            utilities.write_file(inventory_file, inventory)
+        except IOError as e:
+            print("WARNING: could not write inventory file (%s)" % (inventory_file))
 
     def _create_playbook_args(self):
         # don't pass these to molecule-playbook CLI
@@ -168,12 +171,17 @@ class Ansible(Molecule):
             kwargs['_env']['ANSIBLE_NOCOLOR'] = 'true'
             kwargs['_env']['ANSIBLE_FORCE_COLOR'] = 'false'
             try:
+                print "Executing ansible_playbook"
+                print "Playbook: %s\nArgs%s\nkwargs%s" % (playbook, args, kwargs)
                 output = sh.ansible_playbook(playbook, *args, **kwargs)
                 return output
             except sh.ErrorReturnCode as e:
                 print('ERROR: {}'.format(e))
                 sys.exit(e.exit_code)
         try:
+            print "Executing ansible_playbook"
+            print "Playbook: %s\nArgs%s\nkwargs%s" % (playbook, args, kwargs)
+            # kwargs['inventory_file'] = '../../inventory_fusion'
             output = sh.ansible_playbook(playbook, *args, **kwargs)
             return output.exit_code
         except sh.ErrorReturnCode as e:
