@@ -63,18 +63,10 @@ class Ansible(Molecule):
                                  self._config.config['molecule']['rakefile_file'],
                                  kwargs=kwargs)
 
-    def _format_instance_name(self, name):
-        for instance in self._config.config['vagrant']['instances']:
-            if instance['name'] == name:
-                if 'options' in instance and instance['options'] is not None:
-                    if 'append_platform_to_hostname' in instance['options']:
-                        if not instance['options']['append_platform_to_hostname']:
-                            return name
-        return name + '-' + self._env['MOLECULE_PLATFORM']
-
     def _populate_instance_names(self):
         for instance in self._config.config['vagrant']['instances']:
-            instance['vm_name'] = self._format_instance_name(instance['name'])
+            instance['vm_name'] = utilities.format_instance_name(instance['name'], self._env['MOLECULE_PLATFORM'],
+                                                                 self._config.config['vagrant']['instances'])
 
     def _create_inventory_file(self):
         inventory = ''
@@ -82,7 +74,8 @@ class Ansible(Molecule):
         host_template = \
             '{} ansible_ssh_host={} ansible_ssh_port={} ansible_ssh_private_key_file={} ansible_ssh_user={}\n'
         for instance in self._config.config['vagrant']['instances']:
-            ssh = self._vagrant.conf(vm_name=self._format_instance_name(instance['name']))
+            ssh = self._vagrant.conf(vm_name=utilities.format_instance_name(instance['name'], self._env[
+                'MOLECULE_PLATFORM'], self._config.config['vagrant']['instances']))
             inventory += host_template.format(ssh['Host'], ssh['HostName'], ssh['Port'], ssh['IdentityFile'],
                                               ssh['User'])
 
@@ -98,7 +91,8 @@ class Ansible(Molecule):
         for group, instances in groups.iteritems():
             inventory += '\n[{}]\n'.format(group)
             for instance in instances:
-                inventory += '{}\n'.format(self._format_instance_name(instance))
+                inventory += '{}\n'.format(utilities.format_instance_name(instance, self._env['MOLECULE_PLATFORM'],
+                                                                          self._config.config['vagrant']['instances']))
 
         inventory_file = self._config.config['molecule']['inventory_file']
         try:

@@ -140,3 +140,27 @@ class TestUtilities(testtools.TestCase):
             stderr = mocked_stderr.getvalue()
 
             self.assertEqual(stderr, 'test stderr')
+
+    def test_format_instance_name_00(self):
+        instances = [{'name': 'test-01'}]
+        expected = None
+        actual = utilities.format_instance_name('test-02', 'rhel-7', instances)
+        self.assertEqual(expected, actual)
+
+    def test_format_instance_name_01(self):
+        instances = [{'name': 'test-01'}]
+        expected = 'test-01-rhel-7'
+        actual = utilities.format_instance_name('test-01', 'rhel-7', instances)
+        self.assertEqual(expected, actual)
+
+    def test_format_instance_name_02(self):
+        instances = [{'name': 'test-01', 'options': {'append_platform_to_hostname': False}}]
+        expected = 'test-01'
+        actual = utilities.format_instance_name('test-01', 'rhel-7', instances)
+        self.assertEqual(expected, actual)
+
+    def test_format_instance_name_03(self):
+        instances = [{'name': 'test-01', 'options': {'chicken': False}}]
+        expected = 'test-01-rhel-7'
+        actual = utilities.format_instance_name('test-01', 'rhel-7', instances)
+        self.assertEqual(expected, actual)
