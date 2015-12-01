@@ -66,6 +66,9 @@ class Molecule(object):
         # concatentate file names and paths within config so they're more convenient to use
         self._config.build_easy_paths()
 
+        # get defaults for inventory/ansible.cfg from molecule if none are specified
+        self._config.update_ansible_defaults()
+
         if not os.path.exists(self._config.config['molecule']['molecule_dir']):
             os.makedirs(self._config.config['molecule']['molecule_dir'])
 
