@@ -21,6 +21,7 @@
 import os
 
 import testtools
+import yaml
 
 import molecule.config as config
 
@@ -30,8 +31,18 @@ class TestConfig(testtools.TestCase):
         super(TestConfig, self).setUp()
 
         self.temp = '/tmp/test_config_load_defaults_external_file.yml'
+        data = {
+            'molecule': {
+                'molecule_dir': '.test_molecule'
+            },
+            'ansible': {
+                'config_file': 'test_config',
+                'inventory_file': 'test_inventory'
+            }
+        }
+
         with open(self.temp, 'w') as f:
-            f.write('molecule:\n  molecule_dir: .test_molecule')
+            f.write(yaml.dump(data, default_flow_style=True))
 
     def test_load_defaults_file(self):
         c = config.Config()
@@ -69,6 +80,14 @@ class TestConfig(testtools.TestCase):
         self.assertEqual(c.config['molecule']['rakefile_file'], os.path.join('.molecule', 'rakefile'))
         self.assertEqual(c.config['molecule']['config_file'], os.path.join('.molecule', 'ansible.cfg'))
         self.assertEqual(c.config['molecule']['inventory_file'], os.path.join('.molecule', 'ansible_inventory'))
+
+    def test_update_ansible_defaults(self):
+        c = config.Config()
+        c.load_defaults_file()
+        c.merge_molecule_file(molecule_file=self.temp)
+
+        self.assertEqual(c.config['ansible']['inventory_file'], 'test_inventory')
+        self.assertEqual(c.config['ansible']['config_file'], 'test_config')
 
     def tearDown(self):
         super(TestConfig, self).tearDown()

@@ -99,3 +99,17 @@ class Config(object):
         for item in values_to_update:
             self.config['molecule'][item] = os.path.join(self.config['molecule']['molecule_dir'],
                                                          self.config['molecule'][item])
+
+    def update_ansible_defaults(self):
+        """
+        Copies certain default values from molecule to ansible if none are specified in molecule.yml
+
+        :return: None
+        """
+        # grab inventory_file default from molecule if it's not set in the user-supplied ansible options
+        if 'inventory_file' not in self.config['ansible']:
+            self.config['ansible']['inventory_file'] = self.config['molecule']['inventory_file']
+
+        # grab config_file default from molecule if it's not set in the user-supplied ansible options
+        if 'config_file' not in self.config['ansible']:
+            self.config['ansible']['config_file'] = self.config['molecule']['config_file']

@@ -118,14 +118,6 @@ class Ansible(Molecule):
             for key, value in self._config.config['ansible']['raw_env_vars'].iteritems():
                 self._env[key] = value
 
-        # grab inventory_file default from molecule if it's not set in the user-supplied ansible options
-        if 'inventory_file' not in self._config.config['ansible']:
-            self._config.config['ansible']['inventory_file'] = self._config.config['molecule']['inventory_file']
-
-        # grab config_file default from molecule if it's not set in the user-supplied ansible options
-        if 'config_file' not in self._config.config['ansible']:
-            self._config.config['ansible']['config_file'] = self._config.config['molecule']['config_file']
-
         self._env['PYTHONUNBUFFERED'] = '1'
         self._env['ANSIBLE_FORCE_COLOR'] = 'true'
         self._env['ANSIBLE_HOST_KEY_CHECKING'] = str(self._config.config['ansible']['host_key_checking']).lower()
