@@ -94,13 +94,12 @@ class Config(object):
 
         :return: None
         """
-        self.config['molecule']['state_file'] = os.path.join(self.config['molecule']['molecule_dir'],
-                                                             self.config['molecule']['state_file'])
-        self.config['molecule']['vagrantfile_file'] = os.path.join(self.config['molecule']['molecule_dir'],
-                                                                   self.config['molecule']['vagrantfile_file'])
-        self.config['molecule']['rakefile_file'] = os.path.join(self.config['molecule']['molecule_dir'],
-                                                                self.config['molecule']['rakefile_file'])
-        self.config['ansible']['config_file'] = os.path.join(self.config['molecule']['molecule_dir'],
-                                                             self.config['ansible']['config_file'])
-        self.config['ansible']['inventory_file'] = os.path.join(self.config['molecule']['molecule_dir'],
-                                                                self.config['ansible']['inventory_file'])
+        values_to_update = [
+            ('molecule', 'state_file'), ('molecule', 'vagrantfile_file'), ('molecule', 'rakefile_file'),
+            ('ansible', 'config_file'), ('ansible', 'inventory_file')
+        ]
+
+        for section, item in values_to_update:
+            if not self.config[section][item].startswith("../"):
+                self.config[section][item] = os.path.join(self.config['molecule']['molecule_dir'],
+                                                          self.config[section][item])

@@ -55,8 +55,10 @@ class Ansible(Molecule):
                                  self._config.config['ansible']['config_file'])
 
         # rakefile
-        kwargs = {'molecule_file': self._config.config['molecule']['molecule_file'],
-                  'current_platform': self._env['MOLECULE_PLATFORM']}
+        kwargs = {
+            'molecule_file': self._config.config['molecule']['molecule_file'],
+            'current_platform': self._env['MOLECULE_PLATFORM']
+        }
         utilities.write_template(self._config.config['molecule']['rakefile_template'],
                                  self._config.config['molecule']['rakefile_file'],
                                  kwargs=kwargs)
@@ -99,7 +101,10 @@ class Ansible(Molecule):
                 inventory += '{}\n'.format(self._format_instance_name(instance))
 
         inventory_file = self._config.config['ansible']['inventory_file']
-        utilities.write_file(inventory_file, inventory)
+        try:
+            utilities.write_file(inventory_file, inventory)
+        except IOError as e:
+            print("WARNING: could not write inventory file (%s)" % (inventory_file))
 
     def _create_playbook_args(self):
         # don't pass these to molecule-playbook CLI
