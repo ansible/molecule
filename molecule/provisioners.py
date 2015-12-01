@@ -35,7 +35,7 @@ class Ansible(Molecule):
     def _remove_templates(self):
         os.remove(self._config.config['molecule']['vagrantfile_file'])
         os.remove(self._config.config['molecule']['rakefile_file'])
-        os.remove(self._config.config['ansible']['config_file'])
+        os.remove(self._config.config['molecule']['config_file'])
 
     def _create_templates(self):
         self._populate_instance_names()
@@ -52,7 +52,7 @@ class Ansible(Molecule):
 
         # ansible.cfg
         utilities.write_template(self._config.config['molecule']['ansible_config_template'],
-                                 self._config.config['ansible']['config_file'])
+                                 self._config.config['molecule']['config_file'])
 
         # rakefile
         kwargs = {
@@ -100,11 +100,11 @@ class Ansible(Molecule):
             for instance in instances:
                 inventory += '{}\n'.format(self._format_instance_name(instance))
 
-        inventory_file = self._config.config['ansible']['inventory_file']
+        inventory_file = self._config.config['molecule']['inventory_file']
         try:
             utilities.write_file(inventory_file, inventory)
-        except IOError as e:
-            print("WARNING: could not write inventory file (%s)" % (inventory_file))
+        except IOError:
+            print('{}WARNING: could not write inventory file {}{}'.format(Fore.YELLOW, inventory_file, Fore.RESET))
 
     def _create_playbook_args(self):
         # don't pass these to molecule-playbook CLI
@@ -117,6 +117,14 @@ class Ansible(Molecule):
         if 'raw_env_vars' in self._config.config['ansible']:
             for key, value in self._config.config['ansible']['raw_env_vars'].iteritems():
                 self._env[key] = value
+
+        # grab inventory_file default from molecule if it's not set in the user-supplied ansible options
+        if 'inventory_file' not in self._config.config['ansible']:
+            self._config.config['ansible']['inventory_file'] = self._config.config['molecule']['inventory_file']
+
+        # grab config_file default from molecule if it's not set in the user-supplied ansible options
+        if 'config_file' not in self._config.config['ansible']:
+            self._config.config['ansible']['config_file'] = self._config.config['molecule']['config_file']
 
         self._env['PYTHONUNBUFFERED'] = '1'
         self._env['ANSIBLE_FORCE_COLOR'] = 'true'

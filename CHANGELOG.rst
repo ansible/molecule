@@ -1,5 +1,10 @@
 CHANGELOG for molecule
 ======================
+1.0.4
+----
+
+* Fixed a bug where specifying an inventory script was causing molecule to create it
+* config_file and inventory_file specified in ansible block are now treated as overrides for molecule defaults
 
 1.0.3
 ----
