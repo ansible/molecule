@@ -77,8 +77,9 @@ class Molecule(object):
             self._env['MOLECULE_TAGS'] = self._args['--tags']
 
         if self._args['--provider']:
-            if not [item for item in self._config.config['vagrant']['providers']
-                        if item['name'] == self._args['--provider']]:
+            if not [item
+                    for item in self._config.config['vagrant']['providers']
+                    if item['name'] == self._args['--provider']]:
                 print("\n{}Invalid provider '{}'\n".format(Fore.RED, self._args['--provider'], Fore.RESET))
                 self._print_valid_providers()
                 sys.exit(1)
@@ -88,8 +89,9 @@ class Molecule(object):
             self._env['VAGRANT_DEFAULT_PROVIDER'] = self._get_default_provider()
 
         if self._args['--platform']:
-            if not [item for item in self._config.config['vagrant']['platforms']
-                        if item['name'] == self._args['--platform']]:
+            if not [item
+                    for item in self._config.config['vagrant']['platforms']
+                    if item['name'] == self._args['--platform']]:
                 print("\n{}Invalid platform '{}'\n".format(Fore.RED, self._args['--platform'], Fore.RESET))
                 self._print_valid_platforms()
                 sys.exit(1)
@@ -251,8 +253,7 @@ class Molecule(object):
         # no tests found
         if not os.path.isdir(self._config.config['molecule']['serverspec_dir']) and not os.path.isdir(
                 self._config.config['molecule'][
-                        'testinfra_dir'
-                ]):
+                    'testinfra_dir']):
             msg = '{}Skipping tests, could not find {}/ or {}/.{}'
             print(msg.format(Fore.YELLOW, self._config.config['molecule']['serverspec_dir'], self._config.config[
                 'molecule']['testinfra_dir'], Fore.RESET))
