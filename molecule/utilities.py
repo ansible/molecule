@@ -94,6 +94,37 @@ def write_file(filename, content):
         f.write(content)
 
 
+def format_instance_name(name, platform, instances):
+    """
+    Takes an instance name and formats it according to options specified in the instance's config
+    :param name: the name of the instance
+    :param platform: the current molecule platform in use
+    :param instances: the current molecule instances dict in use
+    :return: formatted instance name if found in instances, otherwise None
+    """
+    working_instance = None
+
+    # search instances for given name
+    for instance in instances:
+        if instance['name'] == name:
+            working_instance = instance
+
+    # no instance found with given name
+    if working_instance is None:
+        return
+
+    # return the default name if no options are specified for instance
+    if working_instance.get('options') is None:
+        return name + '-' + platform
+
+    # don't add platform to name
+    if working_instance['options'].get('append_platform_to_hostname') is False:
+        return name
+
+    # if we fall through, return the default name
+    return name + '-' + platform
+
+
 def print_stdout(line):
     """
     Prints a line to stdout without a \n at the end.

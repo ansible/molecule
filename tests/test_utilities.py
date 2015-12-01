@@ -140,3 +140,25 @@ class TestUtilities(testtools.TestCase):
             stderr = mocked_stderr.getvalue()
 
             self.assertEqual(stderr, 'test stderr')
+
+    def test_format_instance_name_00(self):
+        expected = None
+        instances = {'name': 'test-01'}
+        actual = utilities.format_instance_name('test-02', 'rhel-7', instances)
+        self.assertEqual(expected, actual)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
