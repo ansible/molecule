@@ -108,6 +108,7 @@ def format_instance_name(name, platform, instances):
     for instance in instances:
         if instance['name'] == name:
             working_instance = instance
+            break
 
     # no instance found with given name
     if working_instance is None:
