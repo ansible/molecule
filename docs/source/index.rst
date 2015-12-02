@@ -18,6 +18,7 @@ Contents:
    :maxdepth: 3
 
    usage
+   providers
 
 .. _`Ansible`: https://docs.ansible.com
 .. _`Vagrant`: http://docs.vagrantup.com/v2
