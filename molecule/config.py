@@ -118,6 +118,7 @@ class Config(object):
         """
         Updates instances section of config with an additional key containing the full instance name
 
+        :param platform: platform name to pass to underlying format_instance_name call
         :return: None
         """
         for instance in self.config['vagrant']['instances']:
