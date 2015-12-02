@@ -268,9 +268,12 @@ class Molecule(object):
 
         # testinfra
         if os.path.isdir(self._config.config['molecule']['testinfra_dir']):
-            ssh_config = '--ssh-config={}'.format(self._get_vagrant_ssh_config())
             try:
-                output = sh.testinfra(ssh_config, '--sudo', self._config.config['molecule']['testinfra_dir'], **kwargs)
+                ti_args = [
+                    '--sudo', '--connection=ansible',
+                    '--ansible-inventory=' + self._config.config['ansible']['inventory_file']
+                ]
+                output = sh.testinfra(*ti_args, **kwargs)
                 return output.exit_code
             except sh.ErrorReturnCode as e:
                 print('ERROR: {}'.format(e))
