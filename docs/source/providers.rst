@@ -161,7 +161,7 @@ Other Notes
 
 * `private_key_path`, as with several other values, can be any valid Ruby because it will appear in the Vagrantfile that molecule will generate.
 
-* `box_version`, defaults to '=', can include an constrains like '<, >, >=, <=, ~.' as listed in the `Versioning`_ docs.
+* `box_version`, defaults to '=', can include an constraints like '<, >, >=, <=, ~.' as listed in the `Versioning`_ docs.
 
 ..  _`configuration for vagrant-openstack-provider`: https://github.com/ggiamarchi/vagrant-openstack-provider/blob/master/README.md#configuration
 .. _`VirtualBox`: http://docs.vagrantup.com/v2/virtualbox/index.html

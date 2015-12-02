@@ -96,6 +96,8 @@ vagrant:
     - name: {{ config.molecule.init.platform.name }}
       box: {{ config.molecule.init.platform.box }}
       box_url: {{ config.molecule.init.platform.box_url }}
+      # Optional item, box_version - support for vagrant versioning
+      # box_version: {{ config.molecule.init.platform.box_version }}
 
   providers:
     - name: virtualbox
