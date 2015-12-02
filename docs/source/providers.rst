@@ -113,6 +113,7 @@ This example is far more extensive than you likely need and it demonstrates lots
             box: ubuntu/precise32
           - name: trusty64
             box: trusty64
+            box_version: "~> 20151130.0.0"
             box_url: https://vagrantcloud.com/ubuntu/boxes/trusty64/versions/14.04/providers/virtualbox.box
 
         providers:
@@ -160,6 +161,7 @@ Other Notes
 
 * `private_key_path`, as with several other values, can be any valid Ruby because it will appear in the Vagrantfile that molecule will generate.
 
+* `box_version`, defaults to '=', can include an constrains like '<, >, >=, <=, ~.' as listed in the `Versioning`_ docs.
 
 ..  _`configuration for vagrant-openstack-provider`: https://github.com/ggiamarchi/vagrant-openstack-provider/blob/master/README.md#configuration
 .. _`VirtualBox`: http://docs.vagrantup.com/v2/virtualbox/index.html
@@ -168,3 +170,4 @@ Other Notes
 .. _`Networks`: https://github.com/ggiamarchi/vagrant-openstack-provider/blob/master/README.md#networks
 .. _`Volumes`: https://github.com/ggiamarchi/vagrant-openstack-provider/blob/master/README.md#volumes
 .. _`Stacks`: https://github.com/ggiamarchi/vagrant-openstack-provider/blob/master/README.md#orchestration-stacks
+.. _`Versioning`: https://docs.vagrantup.com/v2/boxes/versioning.html
