@@ -18,7 +18,6 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-
 import binascii
 import os
 import StringIO
@@ -99,18 +98,17 @@ class TestUtilities(testtools.TestCase):
 
     def test_merge_deep_deep_02(self):
         expected = {
-            "users":
-            {"remy": {"age": 21,
-                      "email": "remy@cisco.com",
-                      "office": "San Jose",
-                      "position": "python master"}}
+            "users": {"remy": {"age": 21,
+                               "email": "remy@cisco.com",
+                               "office": "San Jose",
+                               "position": "python master"}}
         }
         actual = utilities.merge_dicts(self.deep_dict_b, self.deep_dict_a)
         self.assertEqual(expected, actual)
 
     def test_write_template(self):
         tmp_file = '/tmp/test_utilities_write_template.tmp'
-        utilities.write_template('test_write_template.j2', tmp_file, {'test': 'chicken'},  _dir='templates/tests')
+        utilities.write_template('test_write_template.j2', tmp_file, {'test': 'chicken'}, _dir='templates/tests')
         with open(tmp_file, 'r') as f:
             data = f.read()
         os.remove(tmp_file)

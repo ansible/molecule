@@ -33,6 +33,7 @@ class TestCore(testtools.TestCase):
         PLAY RECAP ********************************************************************
         vagrant-01-ubuntu              : ok=36   changed=29   unreachable=0    failed=0
         """
+
         res = self._molecule._parse_provisioning_output(failed_output)
 
         self.assertFalse(res)
@@ -42,6 +43,7 @@ class TestCore(testtools.TestCase):
         PLAY RECAP ********************************************************************
         vagrant-01-ubuntu              : ok=36   changed=0    unreachable=0    failed=0
         """
+
         res = self._molecule._parse_provisioning_output(success_output)
 
         self.assertTrue(res)

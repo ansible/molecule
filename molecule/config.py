@@ -113,3 +113,13 @@ class Config(object):
         # grab config_file default from molecule if it's not set in the user-supplied ansible options
         if 'config_file' not in self.config['ansible']:
             self.config['ansible']['config_file'] = self.config['molecule']['config_file']
+
+    def populate_instance_names(self, platform):
+        """
+        Updates instances section of config with an additional key containing the full instance name
+
+        :return: None
+        """
+        for instance in self.config['vagrant']['instances']:
+            instance['vm_name'] = utilities.format_instance_name(instance['name'], platform,
+                                                                 self.config['vagrant']['instances'])

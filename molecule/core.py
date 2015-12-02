@@ -105,6 +105,9 @@ class Molecule(object):
 
         self._vagrant.env = self._env
 
+        # updates instances config with full machine names
+        self._config.populate_instance_names(self._env['MOLECULE_PLATFORM'])
+
     def _rubocop(self):
         try:
             pattern = self._config.config['molecule']['serverspec_dir'] + '/**/*.rb'

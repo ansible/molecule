@@ -35,6 +35,11 @@ class TestConfig(testtools.TestCase):
             'molecule': {
                 'molecule_dir': '.test_molecule'
             },
+            'vagrant': {
+                'instances': [
+                    {'name': 'aio-01'}
+                ]
+            },
             'ansible': {
                 'config_file': 'test_config',
                 'inventory_file': 'test_inventory'
@@ -88,6 +93,14 @@ class TestConfig(testtools.TestCase):
 
         self.assertEqual(c.config['ansible']['inventory_file'], 'test_inventory')
         self.assertEqual(c.config['ansible']['config_file'], 'test_config')
+
+    def test_populate_instance_names(self):
+        c = config.Config()
+        c.load_defaults_file()
+        c.merge_molecule_file(molecule_file=self.temp)
+        c.populate_instance_names('rhel-7')
+
+        self.assertEqual(c.config['vagrant']['instances'][0]['vm_name'], 'aio-01-rhel-7')
 
     def tearDown(self):
         super(TestConfig, self).tearDown()

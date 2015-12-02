@@ -38,8 +38,6 @@ class Ansible(Molecule):
         os.remove(self._config.config['molecule']['config_file'])
 
     def _create_templates(self):
-        self._populate_instance_names()
-
         # vagrantfile
         kwargs = {
             'config': self._config.config,
@@ -62,11 +60,6 @@ class Ansible(Molecule):
         utilities.write_template(self._config.config['molecule']['rakefile_template'],
                                  self._config.config['molecule']['rakefile_file'],
                                  kwargs=kwargs)
-
-    def _populate_instance_names(self):
-        for instance in self._config.config['vagrant']['instances']:
-            instance['vm_name'] = utilities.format_instance_name(instance['name'], self._env['MOLECULE_PLATFORM'],
-                                                                 self._config.config['vagrant']['instances'])
 
     def _create_inventory_file(self):
         inventory = ''
