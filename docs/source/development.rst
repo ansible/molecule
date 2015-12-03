@@ -30,12 +30,14 @@ Upload to `PyPI`_
 
 * You will require credentials to upload to `PyPI`_. Create a `~/.pypirc`:
 
-      [distutils]
-      index-servers = pypi
-      [pypi]
-      repository = https://pypi.python.org/pypi/molecule
-      username = XXXXXXX
-      password = XXXXXXX
+      .. code-block:: ini
+
+         [distutils]
+         index-servers = pypi
+         [pypi]
+         repository = https://pypi.python.org/pypi/molecule
+         username = XXXXXXX
+         password = XXXXXXX
 
 * Install `twine`_ using `pip`.
 * Upload to  `PyPI`_.
