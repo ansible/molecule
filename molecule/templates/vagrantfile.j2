@@ -3,6 +3,9 @@ Vagrant.configure('2') do |config|
   {%- for platform in config.vagrant.platforms %}
     {%- if platform.name == current_platform %}
   config.vm.box = '{{ platform.box }}'
+      {%- if 'box_version' in platform %}
+  config.vm.box_version = "{{ platform.box_version }}"
+      {%- endif %}
       {%- if 'box_url' in platform %}
   config.vm.box_url = '{{ platform.box_url }}'
       {%- endif %}
