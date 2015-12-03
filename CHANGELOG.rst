@@ -1,5 +1,10 @@
 CHANGELOG for molecule
 ======================
+1.0.5
+----
+
+* Added support for Vagrant box versioning. This allows teams to ensure all members are using the correct version in their development environments
+
 1.0.4
 ----
 
