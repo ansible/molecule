@@ -334,14 +334,6 @@ class Molecule(object):
         self._print_valid_platforms()
 
     def login(self):
-        # make sure host argument is specified
-        host_format = [Fore.RED, self._args['<host>'], Fore.RESET, Fore.YELLOW, Fore.RESET]
-        host_errmsg = '\nTry molecule {}molecule status{} to see available hosts.\n'.format(*host_format)
-        if not self._args['<host>']:
-            print('You must specify a host when using login')
-            print(host_errmsg)
-            sys.exit(1)
-
         # make sure vagrant knows about this host
         try:
             conf = self._vagrant.conf(vm_name=self._args['<host>'])
@@ -350,8 +342,9 @@ class Molecule(object):
             ssh_cmd = 'ssh {} -l {} -p {} -i {} {}'
         except CalledProcessError:
             # gets appended to python-vagrant's error message
-            conf_format = [Fore.RED, self._args['<host>'], Fore.RESET, Fore.YELLOW, Fore.RESET]
-            print('\nTry molecule {}molecule status{} to see available hosts.\n'.format(*conf_format))
+            conf_format = [Fore.RED, self._args['<host>'], Fore.YELLOW, Fore.RESET]
+            conf_errmsg = '\n{0}Unknown host {1}. Try {2}molecule status{0} to see available hosts.{3}'
+            print(conf_errmsg.format(*conf_format))
             sys.exit(1)
 
         lines, columns = os.popen('stty size', 'r').read().split()
