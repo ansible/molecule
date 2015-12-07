@@ -153,6 +153,9 @@ class Ansible(Molecule):
 
         self._create_inventory_file()
         playbook, args, kwargs = self._create_playbook_args()
+        print playbook
+        print args
+        print kwargs
 
         if idempotent:
             kwargs.pop('_out', None)

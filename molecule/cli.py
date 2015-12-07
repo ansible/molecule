@@ -59,6 +59,7 @@ from docopt import docopt
 from docopt import DocoptExit
 
 import molecule
+from commands import Commands
 from provisioners import Ansible
 
 
@@ -69,7 +70,7 @@ class CLI(object):
             print molecule.__version__
             sys.exit(0)
 
-        m = Ansible(args)
+        m = Commands(args)
         m.main()
         commands = ['create', 'converge', 'idempotence', 'test', 'verify', 'destroy', 'status', 'list', 'login', 'init']
         for command in commands:

@@ -45,6 +45,7 @@ class Molecule(object):
     def __init__(self, args):
         self._created = False
         self._provisioned = False
+        self._provider = None
         self._env = os.environ.copy()
         self._args = args
         self._config = config.Config()
@@ -88,8 +89,10 @@ class Molecule(object):
                 sys.exit(1)
             self._set_default_provider(provider=self._args['--provider'])
             self._env['VAGRANT_DEFAULT_PROVIDER'] = self._args['--provider']
+            self._provider = self._env['VAGRANT_DEFAULT_PROVIDER']
         else:
             self._env['VAGRANT_DEFAULT_PROVIDER'] = self._get_default_provider()
+            self._provider = self._env['VAGRANT_DEFAULT_PROVIDER']
 
         if self._args['--platform']:
             if not [item
