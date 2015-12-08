@@ -32,7 +32,7 @@ from jinja2 import PackageLoader
 
 import molecule.utilities as utilities
 import molecule.validators as validators
-from provisioners import Ansible
+from molecule.core import Molecule
 
 
 class Commands(object):
@@ -40,7 +40,7 @@ class Commands(object):
         self.args = args
 
     def main(self):
-        self.molecule = Ansible(self.args)
+        self.molecule = Molecule(self.args)
         self.molecule.main()
 
         if self.molecule._provider in ['virtualbox', 'openstack', None]:

@@ -1,5 +1,10 @@
 CHANGELOG for molecule
 ======================
+1.0.7.dev1
+----
+
+* Moved remaining logic in provisioners to core. Added docstrings.
+
 1.0.6
 ----
 
