@@ -27,8 +27,6 @@ from subprocess import CalledProcessError
 import prettytable
 import sh
 from colorama import Fore
-from jinja2 import Environment
-from jinja2 import PackageLoader
 
 import molecule.utilities as utilities
 import molecule.validators as validators
@@ -75,9 +73,6 @@ class Commands(object):
 
     def login(self):
         self.commands.login()
-
-    def init(self):
-        self.commands.init()
 
 
 class BaseCommands(object):
@@ -189,7 +184,7 @@ class BaseCommands(object):
                 sys.exit(e.exit_code)
 
     def test(self):
-        for task in self._config.config['molecule']['test']['sequence']:
+        for task in self.molecule._config.config['molecule']['test']['sequence']:
             m = getattr(self, task)
             m()
 
@@ -233,7 +228,7 @@ class BaseCommands(object):
             ssh_cmd = 'ssh {} -l {} -p {} -i {} {}'
         except CalledProcessError:
             # gets appended to python-vagrant's error message
-            conf_format = [Fore.RED, self._args['<host>'], Fore.YELLOW, Fore.RESET]
+            conf_format = [Fore.RED, self.molecule._args['<host>'], Fore.YELLOW, Fore.RESET]
             conf_errmsg = '\n{0}Unknown host {1}. Try {2}molecule status{0} to see available hosts.{3}'
             print(conf_errmsg.format(*conf_format))
             sys.exit(1)
@@ -243,54 +238,6 @@ class BaseCommands(object):
         self.molecule._pt = pexpect.spawn('/usr/bin/env ' + ssh_cmd.format(*ssh_args), dimensions=dimensions)
         signal.signal(signal.SIGWINCH, self.molecule._sigwinch_passthrough)
         self.molecule._pt.interact()
-
-    def init(self):
-        role = self.molecule._args['<role>']
-        role_path = './' + role + '/'
-
-        if not role:
-            msg = '{}The init command requires a role name. Try:\n\n{}{} init <role>{}'
-            print(msg.format(Fore.RED, Fore.YELLOW, os.path.basename(sys.argv[0]), Fore.RESET))
-            sys.exit(1)
-
-        if os.path.isdir(role):
-            msg = '{}The directory {} already exists. Cannot create new role.{}'
-            print(msg.format(Fore.RED, role_path, Fore.RESET))
-            sys.exit(1)
-
-        try:
-            sh.ansible_galaxy('init', role)
-        except (CalledProcessError, sh.ErrorReturnCode_1) as e:
-            print('ERROR: {}'.format(e))
-            sys.exit(e.returncode)
-
-        env = Environment(loader=PackageLoader('molecule', 'templates'), keep_trailing_newline=True)
-
-        t_molecule = env.get_template(self.molecule._config.config['molecule']['init']['templates']['molecule'])
-        t_playbook = env.get_template(self.molecule._config.config['molecule']['init']['templates']['playbook'])
-        t_default_spec = env.get_template(self.molecule._config.config['molecule']['init']['templates']['default_spec'])
-        t_spec_helper = env.get_template(self.molecule._config.config['molecule']['init']['templates']['spec_helper'])
-
-        with open(role_path + self.molecule._config.config['molecule']['molecule_file'], 'w') as f:
-            f.write(t_molecule.render(config=self.molecule._config.config))
-
-        with open(role_path + self.molecule._config.config['ansible']['playbook'], 'w') as f:
-            f.write(t_playbook.render(role=role))
-
-        serverspec_path = role_path + self.molecule._config.config['molecule']['serverspec_dir'] + '/'
-        os.makedirs(serverspec_path)
-        os.makedirs(serverspec_path + 'hosts')
-        os.makedirs(serverspec_path + 'groups')
-
-        with open(serverspec_path + 'default_spec.rb', 'w') as f:
-            f.write(t_default_spec.render())
-
-        with open(serverspec_path + 'spec_helper.rb', 'w') as f:
-            f.write(t_spec_helper.render())
-
-        msg = '{}Successfully initialized new role in {}{}'
-        print(msg.format(Fore.GREEN, role_path, Fore.RESET))
-        sys.exit(0)
 
 
 class MetalCommands(BaseCommands):

@@ -30,6 +30,8 @@ import sh
 import vagrant
 import yaml
 from colorama import Fore
+from jinja2 import Environment
+from jinja2 import PackageLoader
 
 import molecule.config as config
 import molecule.utilities as utilities
@@ -53,7 +55,7 @@ class Molecule(object):
 
         # init command doesn't need to load molecule.yml
         if self._args['init']:
-            return  # exits program
+            self.init()  # exits program
 
         # merge in molecule.yml
         self._config.merge_molecule_file()
@@ -228,3 +230,51 @@ class Molecule(object):
             return False
 
         return True
+
+    def init(self):
+        role = self._args['<role>']
+        role_path = './' + role + '/'
+
+        if not role:
+            msg = '{}The init command requires a role name. Try:\n\n{}{} init <role>{}'
+            print(msg.format(Fore.RED, Fore.YELLOW, os.path.basename(sys.argv[0]), Fore.RESET))
+            sys.exit(1)
+
+        if os.path.isdir(role):
+            msg = '{}The directory {} already exists. Cannot create new role.{}'
+            print(msg.format(Fore.RED, role_path, Fore.RESET))
+            sys.exit(1)
+
+        try:
+            sh.ansible_galaxy('init', role)
+        except (CalledProcessError, sh.ErrorReturnCode_1) as e:
+            print('ERROR: {}'.format(e))
+            sys.exit(e.returncode)
+
+        env = Environment(loader=PackageLoader('molecule', 'templates'), keep_trailing_newline=True)
+
+        t_molecule = env.get_template(self._config.config['molecule']['init']['templates']['molecule'])
+        t_playbook = env.get_template(self._config.config['molecule']['init']['templates']['playbook'])
+        t_default_spec = env.get_template(self._config.config['molecule']['init']['templates']['default_spec'])
+        t_spec_helper = env.get_template(self._config.config['molecule']['init']['templates']['spec_helper'])
+
+        with open(role_path + self._config.config['molecule']['molecule_file'], 'w') as f:
+            f.write(t_molecule.render(config=self._config.config))
+
+        with open(role_path + self._config.config['ansible']['playbook'], 'w') as f:
+            f.write(t_playbook.render(role=role))
+
+        serverspec_path = role_path + self._config.config['molecule']['serverspec_dir'] + '/'
+        os.makedirs(serverspec_path)
+        os.makedirs(serverspec_path + 'hosts')
+        os.makedirs(serverspec_path + 'groups')
+
+        with open(serverspec_path + 'default_spec.rb', 'w') as f:
+            f.write(t_default_spec.render())
+
+        with open(serverspec_path + 'spec_helper.rb', 'w') as f:
+            f.write(t_spec_helper.render())
+
+        msg = '{}Successfully initialized new role in {}{}'
+        print(msg.format(Fore.GREEN, role_path, Fore.RESET))
+        sys.exit(0)
