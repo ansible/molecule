@@ -272,7 +272,7 @@ class Molecule(object):
 
     def _create_inventory_file(self):
         """
-        Creates the inventory file used by molecule and later passed to ansible-playbook
+        Creates the inventory file used by molecule and later passed to ansible-playbook.
 
         :return: None
         """
