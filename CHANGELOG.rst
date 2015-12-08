@@ -4,6 +4,11 @@ CHANGELOG for molecule
 ----
 
 * Fixed a bug preventing vagrant raw_config_args from being written to vagrantfile template.
+* Cleaned up error messaging when attempting to `molecule login` to a non-existent host.
+* Added release engineering documentation.
+* Moved commands into a separate module.
+* Switched to using yaml.safe_load().
+* Added more debugging output.
 
 1.0.5
 ----
