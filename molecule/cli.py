@@ -59,7 +59,7 @@ from docopt import docopt
 from docopt import DocoptExit
 
 import molecule
-from commands import Commands
+from molecule.commands import Commands
 
 
 class CLI(object):
