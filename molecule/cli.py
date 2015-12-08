@@ -60,7 +60,6 @@ from docopt import DocoptExit
 
 import molecule
 from commands import Commands
-from provisioners import Ansible
 
 
 class CLI(object):

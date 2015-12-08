@@ -20,25 +20,19 @@
 
 import fcntl
 import os
-import pexpect
 import re
-import signal
 import struct
 import sys
 import termios
 from subprocess import CalledProcessError
 
-import prettytable
 import sh
 import vagrant
 import yaml
 from colorama import Fore
-from jinja2 import Environment
-from jinja2 import PackageLoader
 
-import molecule.utilities as utilities
-import molecule.validators as validators
 import molecule.config as config
+import molecule.utilities as utilities
 
 
 class Molecule(object):
@@ -59,7 +53,7 @@ class Molecule(object):
 
         # init command doesn't need to load molecule.yml
         if self._args['init']:
-            self.init()  # exits program
+            return  # exits program
 
         # merge in molecule.yml
         self._config.merge_molecule_file()
@@ -216,27 +210,6 @@ class Molecule(object):
         a = struct.unpack('HHHH', fcntl.ioctl(sys.stdout.fileno(), TIOCGWINSZ, s))
         self._pt.setwinsize(a[0], a[1])
 
-    def destroy(self):
-        self._create_templates()
-        try:
-            self._vagrant.halt()
-            self._vagrant.destroy()
-            self._set_default_platform(platform=False)
-        except CalledProcessError as e:
-            print('ERROR: {}'.format(e))
-            sys.exit(e.returncode)
-        self._remove_templates()
-
-    def create(self):
-        self._create_templates()
-        if not self._created:
-            try:
-                self._vagrant.up(no_provision=True)
-                self._created = True
-            except CalledProcessError as e:
-                print('ERROR: {}'.format(e))
-                sys.exit(e.returncode)
-
     def _parse_provisioning_output(self, output):
         """
         Parses the output of the provisioning method.
@@ -255,151 +228,3 @@ class Molecule(object):
             return False
 
         return True
-
-    def verify(self):
-        validators.check_trailing_cruft(ignore_paths=self._config.config['molecule']['ignore_paths'])
-
-        # no tests found
-        if not os.path.isdir(self._config.config['molecule']['serverspec_dir']) and not os.path.isdir(
-                self._config.config['molecule'][
-                    'testinfra_dir']):
-            msg = '{}Skipping tests, could not find {}/ or {}/.{}'
-            print(msg.format(Fore.YELLOW, self._config.config['molecule']['serverspec_dir'], self._config.config[
-                'molecule']['testinfra_dir'], Fore.RESET))
-            return
-
-        self._write_ssh_config()
-        kwargs = {'_env': self._env, '_out': utilities.print_stdout, '_err': utilities.print_stderr}
-        args = []
-
-        # testinfra
-        if os.path.isdir(self._config.config['molecule']['testinfra_dir']):
-            try:
-                ti_args = [
-                    '--sudo', '--connection=ansible',
-                    '--ansible-inventory=' + self._config.config['ansible']['inventory_file']
-                ]
-                output = sh.testinfra(*ti_args, **kwargs)
-                return output.exit_code
-            except sh.ErrorReturnCode as e:
-                print('ERROR: {}'.format(e))
-                sys.exit(e.exit_code)
-
-        # serverspec
-        if os.path.isdir(self._config.config['molecule']['serverspec_dir']):
-            self._rubocop()
-            if 'rakefile_file' in self._config.config['molecule']:
-                kwargs['rakefile'] = self._config.config['molecule']['rakefile_file']
-            if self._args['--debug']:
-                args.append('--trace')
-            try:
-                rakecmd = sh.Command("rake")
-                output = rakecmd(*args, **kwargs)
-                return output.exit_code
-            except sh.ErrorReturnCode as e:
-                print('ERROR: {}'.format(e))
-                sys.exit(e.exit_code)
-
-    def test(self):
-        for task in self._config.config['molecule']['test']['sequence']:
-            m = getattr(self, task)
-            m()
-
-    def list(self):
-        print
-        self._print_valid_platforms()
-
-    def status(self):
-        if not os.path.isfile(self._config.config['molecule']['vagrantfile_file']):
-            errmsg = '{}ERROR: No instances created. Try `{} create` first.{}'
-            print(errmsg.format(Fore.RED, os.path.basename(sys.argv[0]), Fore.RESET))
-            sys.exit(1)
-
-        try:
-            status = self._vagrant.status()
-        except CalledProcessError as e:
-            print('ERROR: {}'.format(e))
-            return e.returncode
-
-        x = prettytable.PrettyTable(['Name', 'State', 'Provider'])
-        x.align = 'l'
-
-        for item in status:
-            if item.state != 'not_created':
-                state = Fore.GREEN + item.state + Fore.RESET
-            else:
-                state = item.state
-
-            x.add_row([item.name, state, item.provider])
-
-        print(x)
-        print
-        self._print_valid_platforms()
-
-    def login(self):
-        # make sure vagrant knows about this host
-        try:
-            conf = self._vagrant.conf(vm_name=self._args['<host>'])
-            ssh_args = [conf['HostName'], conf['User'], conf['Port'], conf['IdentityFile'],
-                        ' '.join(self._config.config['molecule']['raw_ssh_args'])]
-            ssh_cmd = 'ssh {} -l {} -p {} -i {} {}'
-        except CalledProcessError:
-            # gets appended to python-vagrant's error message
-            conf_format = [Fore.RED, self._args['<host>'], Fore.YELLOW, Fore.RESET]
-            conf_errmsg = '\n{0}Unknown host {1}. Try {2}molecule status{0} to see available hosts.{3}'
-            print(conf_errmsg.format(*conf_format))
-            sys.exit(1)
-
-        lines, columns = os.popen('stty size', 'r').read().split()
-        dimensions = (int(lines), int(columns))
-        self._pt = pexpect.spawn('/usr/bin/env ' + ssh_cmd.format(*ssh_args), dimensions=dimensions)
-        signal.signal(signal.SIGWINCH, self._sigwinch_passthrough)
-        self._pt.interact()
-
-    def init(self):
-        role = self._args['<role>']
-        role_path = './' + role + '/'
-
-        if not role:
-            msg = '{}The init command requires a role name. Try:\n\n{}{} init <role>{}'
-            print(msg.format(Fore.RED, Fore.YELLOW, os.path.basename(sys.argv[0]), Fore.RESET))
-            sys.exit(1)
-
-        if os.path.isdir(role):
-            msg = '{}The directory {} already exists. Cannot create new role.{}'
-            print(msg.format(Fore.RED, role_path, Fore.RESET))
-            sys.exit(1)
-
-        try:
-            sh.ansible_galaxy('init', role)
-        except (CalledProcessError, sh.ErrorReturnCode_1) as e:
-            print('ERROR: {}'.format(e))
-            sys.exit(e.returncode)
-
-        env = Environment(loader=PackageLoader('molecule', 'templates'), keep_trailing_newline=True)
-
-        t_molecule = env.get_template(self._config.config['molecule']['init']['templates']['molecule'])
-        t_playbook = env.get_template(self._config.config['molecule']['init']['templates']['playbook'])
-        t_default_spec = env.get_template(self._config.config['molecule']['init']['templates']['default_spec'])
-        t_spec_helper = env.get_template(self._config.config['molecule']['init']['templates']['spec_helper'])
-
-        with open(role_path + self._config.config['molecule']['molecule_file'], 'w') as f:
-            f.write(t_molecule.render(config=self._config.config))
-
-        with open(role_path + self._config.config['ansible']['playbook'], 'w') as f:
-            f.write(t_playbook.render(role=role))
-
-        serverspec_path = role_path + self._config.config['molecule']['serverspec_dir'] + '/'
-        os.makedirs(serverspec_path)
-        os.makedirs(serverspec_path + 'hosts')
-        os.makedirs(serverspec_path + 'groups')
-
-        with open(serverspec_path + 'default_spec.rb', 'w') as f:
-            f.write(t_default_spec.render())
-
-        with open(serverspec_path + 'spec_helper.rb', 'w') as f:
-            f.write(t_spec_helper.render())
-
-        msg = '{}Successfully initialized new role in {}{}'
-        print(msg.format(Fore.GREEN, role_path, Fore.RESET))
-        sys.exit(0)

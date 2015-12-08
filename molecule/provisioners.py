@@ -19,9 +19,7 @@
 #  THE SOFTWARE.
 
 import os
-import sys
 
-import sh
 from colorama import Fore
 
 from molecule.core import Molecule
@@ -133,44 +131,3 @@ class Ansible(Molecule):
         kwargs['_err'] = utilities.print_stderr
 
         return self._config.config['ansible']['playbook'], args, kwargs
-
-    def idempotence(self):
-        print('{}Idempotence test in progress...{}'.format(Fore.CYAN, Fore.RESET)),
-
-        output = self.converge(idempotent=True)
-        idempotent = self._parse_provisioning_output(output.stdout)
-
-        if idempotent:
-            print('{}OKAY{}'.format(Fore.GREEN, Fore.RESET))
-            return
-
-        print('{}FAILED{}'.format(Fore.RED, Fore.RESET))
-        sys.exit(1)
-
-    def converge(self, idempotent=False):
-        if not idempotent:
-            self.create()
-
-        self._create_inventory_file()
-        playbook, args, kwargs = self._create_playbook_args()
-        print playbook
-        print args
-        print kwargs
-
-        if idempotent:
-            kwargs.pop('_out', None)
-            kwargs.pop('_err', None)
-            kwargs['_env']['ANSIBLE_NOCOLOR'] = 'true'
-            kwargs['_env']['ANSIBLE_FORCE_COLOR'] = 'false'
-            try:
-                output = sh.ansible_playbook(playbook, *args, **kwargs)
-                return output
-            except sh.ErrorReturnCode as e:
-                print('ERROR: {}'.format(e))
-                sys.exit(e.exit_code)
-        try:
-            output = sh.ansible_playbook(playbook, *args, **kwargs)
-            return output.exit_code
-        except sh.ErrorReturnCode as e:
-            print('ERROR: {}'.format(e))
-            sys.exit(e.exit_code)
