@@ -104,6 +104,8 @@ class Molecule(object):
 
         # updates instances config with full machine names
         self._config.populate_instance_names(self._env['MOLECULE_PLATFORM'])
+        if self._args['--debug']:
+            print yaml.dump(self._config.config, indent=4)
 
     def _rubocop(self):
         try:
@@ -119,7 +121,7 @@ class Molecule(object):
             return False
 
         with open(self._config.config['molecule']['state_file'], 'r') as env:
-            self._state = yaml.load(env)
+            self._state = yaml.safe_load(env)
             return True
 
     def _write_state_file(self):
