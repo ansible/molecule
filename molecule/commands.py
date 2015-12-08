@@ -27,6 +27,8 @@ from subprocess import CalledProcessError
 import prettytable
 import sh
 from colorama import Fore
+from jinja2 import Environment
+from jinja2 import PackageLoader
 
 import molecule.utilities as utilities
 import molecule.validators as validators
@@ -41,7 +43,7 @@ class Commands(object):
         self.molecule = Ansible(self.args)
         self.molecule.main()
 
-        if self.molecule._provider in ['virtualbox', 'openstack']:
+        if self.molecule._provider in ['virtualbox', 'openstack', None]:
             self.commands = BaseCommands(self.molecule)
 
         if self.molecule._provider is 'metal':
@@ -74,12 +76,38 @@ class Commands(object):
     def login(self):
         self.commands.login()
 
+    def init(self):
+        self.commands.init()
+
 
 class BaseCommands(object):
     def __init__(self, molecule):
         self.molecule = molecule
 
+    def create(self):
+        """
+        Creates all instances defined in molecule.yml.
+        Creates all template files used by molecule, vagrant, ansible-playbook.
+
+        :return: None
+        """
+        self.molecule._create_templates()
+        if not self.molecule._created:
+            try:
+                self.molecule._vagrant.up(no_provision=True)
+                self.molecule._created = True
+            except CalledProcessError as e:
+                print('ERROR: {}'.format(e))
+                sys.exit(e.returncode)
+
     def destroy(self):
+        """
+        Halts and destroys all instances created by molecule.
+        Removes template files.
+        Clears state file of all info (default platform).
+
+        :return: None
+        """
         self.molecule._create_templates()
         try:
             self.molecule._vagrant.halt()
@@ -90,17 +118,13 @@ class BaseCommands(object):
             sys.exit(e.returncode)
         self.molecule._remove_templates()
 
-    def create(self):
-        self.molecule._create_templates()
-        if not self.molecule._created:
-            try:
-                self.molecule._vagrant.up(no_provision=True)
-                self.molecule._created = True
-            except CalledProcessError as e:
-                print('ERROR: {}'.format(e))
-                sys.exit(e.returncode)
-
     def converge(self, idempotent=False):
+        """
+        Provisions all instances using ansible-playbook.
+
+        :param idempotent: Optionally provision servers quietly so output can be parsed for idempotence
+        :return: Provisioning output if idempotent=True, otherwise return code of underlying call to ansible-playbook
+        """
         if not idempotent:
             self.create()
 
@@ -126,6 +150,11 @@ class BaseCommands(object):
             sys.exit(e.exit_code)
 
     def idempotence(self):
+        """
+        Provisions instances and parses output to determine idempotence
+
+        :return: None
+        """
         print('{}Idempotence test in progress...{}'.format(Fore.CYAN, Fore.RESET)),
 
         output = self.converge(idempotent=True)
@@ -139,6 +168,14 @@ class BaseCommands(object):
         sys.exit(1)
 
     def verify(self):
+        """
+        Performs verification steps on running instances, including:
+        * Checks files for trailing whitespace and newlines
+        * Runs testinfra against instances
+        * Runs serverspec against instances (also calls rubocop on spec files)
+
+        :return: None if no tests are found, otherwise return code of underlying command
+        """
         validators.check_trailing_cruft(ignore_paths=self.molecule._config.config['molecule']['ignore_paths'])
 
         # no tests found
@@ -184,15 +221,30 @@ class BaseCommands(object):
                 sys.exit(e.exit_code)
 
     def test(self):
+        """
+        Runs a series of commands (defined in config) against instances for a full test/verify run
+
+        :return: None
+        """
         for task in self.molecule._config.config['molecule']['test']['sequence']:
             m = getattr(self, task)
             m()
 
     def list(self):
+        """
+        Prints a list of currently available platforms
+
+        :return: None
+        """
         print
         self.molecule._print_valid_platforms()
 
     def status(self):
+        """
+        Prints status of currently converged instances, similar to `vagrant status`
+
+        :return: Return code of underlying command if there's an exception, otherwise None
+        """
         if not os.path.isfile(self.molecule._config.config['molecule']['vagrantfile_file']):
             errmsg = '{}ERROR: No instances created. Try `{} create` first.{}'
             print(errmsg.format(Fore.RED, os.path.basename(sys.argv[0]), Fore.RESET))
@@ -220,6 +272,11 @@ class BaseCommands(object):
         self.molecule._print_valid_platforms()
 
     def login(self):
+        """
+        Initiates an interactive ssh session with a given instance name.
+
+        :return: None
+        """
         # make sure vagrant knows about this host
         try:
             conf = self.molecule._vagrant.conf(vm_name=self.molecule._args['<host>'])
@@ -238,6 +295,59 @@ class BaseCommands(object):
         self.molecule._pt = pexpect.spawn('/usr/bin/env ' + ssh_cmd.format(*ssh_args), dimensions=dimensions)
         signal.signal(signal.SIGWINCH, self.molecule._sigwinch_passthrough)
         self.molecule._pt.interact()
+
+    def init(self):
+        """
+        Creates the scaffolding for a new role intended for use with molecule
+
+        :return: None
+        """
+        role = self.molecule._args['<role>']
+        role_path = './' + role + '/'
+
+        if not role:
+            msg = '{}The init command requires a role name. Try:\n\n{}{} init <role>{}'
+            print(msg.format(Fore.RED, Fore.YELLOW, os.path.basename(sys.argv[0]), Fore.RESET))
+            sys.exit(1)
+
+        if os.path.isdir(role):
+            msg = '{}The directory {} already exists. Cannot create new role.{}'
+            print(msg.format(Fore.RED, role_path, Fore.RESET))
+            sys.exit(1)
+
+        try:
+            sh.ansible_galaxy('init', role)
+        except (CalledProcessError, sh.ErrorReturnCode_1) as e:
+            print('ERROR: {}'.format(e))
+            sys.exit(e.returncode)
+
+        env = Environment(loader=PackageLoader('molecule', 'templates'), keep_trailing_newline=True)
+
+        t_molecule = env.get_template(self.molecule._config.config['molecule']['init']['templates']['molecule'])
+        t_playbook = env.get_template(self.molecule._config.config['molecule']['init']['templates']['playbook'])
+        t_default_spec = env.get_template(self.molecule._config.config['molecule']['init']['templates']['default_spec'])
+        t_spec_helper = env.get_template(self.molecule._config.config['molecule']['init']['templates']['spec_helper'])
+
+        with open(role_path + self.molecule._config.config['molecule']['molecule_file'], 'w') as f:
+            f.write(t_molecule.render(config=self.molecule._config.config))
+
+        with open(role_path + self.molecule._config.config['ansible']['playbook'], 'w') as f:
+            f.write(t_playbook.render(role=role))
+
+        serverspec_path = role_path + self.molecule._config.config['molecule']['serverspec_dir'] + '/'
+        os.makedirs(serverspec_path)
+        os.makedirs(serverspec_path + 'hosts')
+        os.makedirs(serverspec_path + 'groups')
+
+        with open(serverspec_path + 'default_spec.rb', 'w') as f:
+            f.write(t_default_spec.render())
+
+        with open(serverspec_path + 'spec_helper.rb', 'w') as f:
+            f.write(t_spec_helper.render())
+
+        msg = '{}Successfully initialized new role in {}{}'
+        print(msg.format(Fore.GREEN, role_path, Fore.RESET))
+        sys.exit(0)
 
 
 class MetalCommands(BaseCommands):
