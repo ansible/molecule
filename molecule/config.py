@@ -44,7 +44,7 @@ class Config(object):
             defaults_file = os.path.join(os.path.dirname(__file__), 'conf/defaults.yml')
 
         with open(defaults_file, 'r') as stream:
-            self.config = yaml.load(stream)
+            self.config = yaml.safe_load(stream)
 
     def merge_molecule_config_files(self, paths=CONFIG_PATHS):
         """
@@ -58,7 +58,7 @@ class Config(object):
         for path in paths:
             if path and os.path.isfile(path):
                 with open(path, 'r') as stream:
-                    self.config = utilities.merge_dicts(self.config, yaml.load(stream))
+                    self.config = utilities.merge_dicts(self.config, yaml.safe_load(stream))
                     return path
         return
 
@@ -79,7 +79,7 @@ class Config(object):
 
         with open(molecule_file, 'r') as env:
             try:
-                molecule_yml = yaml.load(env)
+                molecule_yml = yaml.safe_load(env)
             except Exception as e:
                 error = "\n{}{} isn't properly formatted: {}{}"
                 print(error.format(Fore.RED, molecule_file, e, Fore.RESET))

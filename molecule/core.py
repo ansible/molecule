@@ -124,7 +124,7 @@ class Molecule(object):
             return False
 
         with open(self._config.config['molecule']['state_file'], 'r') as env:
-            self._state = yaml.load(env)
+            self._state = yaml.safe_load(env)
             return True
 
     def _write_state_file(self):
