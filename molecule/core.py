@@ -39,7 +39,6 @@ class Molecule(object):
     def __init__(self, args):
         self._created = False
         self._provisioned = False
-        self._provider = None
         self._env = os.environ.copy()
         self._args = args
         self._config = config.Config()
@@ -83,10 +82,8 @@ class Molecule(object):
                 sys.exit(1)
             self._set_default_provider(provider=self._args['--provider'])
             self._env['VAGRANT_DEFAULT_PROVIDER'] = self._args['--provider']
-            self._provider = self._env['VAGRANT_DEFAULT_PROVIDER']
         else:
             self._env['VAGRANT_DEFAULT_PROVIDER'] = self._get_default_provider()
-            self._provider = self._env['VAGRANT_DEFAULT_PROVIDER']
 
         if self._args['--platform']:
             if not [item
@@ -143,6 +140,14 @@ class Molecule(object):
         return '.vagrant/ssh-config'
 
     def _get_default_platform(self):
+        # assume static inventory if there's no vagrant section
+        if self._config.config.get('vagrant') is None:
+            return 'static'
+
+        # assume static inventory if no platforms are listed
+        if self._config.config['vagrant'].get('platforms') is None:
+            return 'static'
+
         default_platform = self._config.config['vagrant']['platforms'][0]['name']
 
         if not (self._load_state_file()):
@@ -174,6 +179,14 @@ class Molecule(object):
             print(platform['name'] + default)
 
     def _get_default_provider(self):
+        # assume static inventory if there's no vagrant section
+        if self._config.config.get('vagrant') is None:
+            return 'static'
+
+        # assume static inventory if no providers are listed
+        if self._config.config['vagrant'].get('providers') is None:
+            return 'static'
+
         default_provider = self._config.config['vagrant']['providers'][0]['name']
 
         if not (self._load_state_file()):
