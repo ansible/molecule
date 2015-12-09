@@ -1,5 +1,11 @@
 CHANGELOG for molecule
 ======================
+1.1.0
+----
+
+* Added support for static inventory where molecule can manage existing sites, not just vagrant instances.
+
+
 1.0.6
 ----
 

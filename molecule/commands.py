@@ -129,8 +129,8 @@ class BaseCommands(object):
         Provisions all instances using ansible-playbook.
 
         :param idempotent: Optionally provision servers quietly so output can be parsed for idempotence
-        :param create_inventory: Toggle inventory creation (not used by some providers)
-        :param create_instances: Toggle instance creation (not used by some providers)
+        :param create_inventory: Toggle inventory creation
+        :param create_instances: Toggle instance creation
         :return: Provisioning output if idempotent=True, otherwise return code of underlying call to ansible-playbook
         """
         if create_instances and not idempotent:
