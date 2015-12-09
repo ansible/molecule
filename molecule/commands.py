@@ -53,7 +53,6 @@ class Commands(object):
             self.commands = StaticCommands(self.molecule)
             return
 
-        # use base commands by default
         self.commands = BaseCommands(self.molecule)
 
     def destroy(self):
