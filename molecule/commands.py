@@ -136,6 +136,7 @@ class BaseCommands(object):
         # support fast converging
         if self.molecule._args['--fast']:
             create_instances = False
+            create_inventory = False
 
         if create_instances and not idempotent:
             self.create()
