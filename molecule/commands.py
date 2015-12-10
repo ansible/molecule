@@ -344,7 +344,7 @@ class BaseCommands(object):
         t_spec_helper = env.get_template(self.molecule._config.config['molecule']['init']['templates']['spec_helper'])
 
         with open(role_path + self.molecule._config.config['molecule']['molecule_file'], 'w') as f:
-            f.write(t_molecule.render(config=self.molecule._config.config,role=role))
+            f.write(t_molecule.render(config=self.molecule._config.config, role=role))
 
         with open(role_path + self.molecule._config.config['ansible']['playbook'], 'w') as f:
             f.write(t_playbook.render(role=role))

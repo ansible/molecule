@@ -4,7 +4,7 @@ CHANGELOG for molecule
 ----
 
 * Added support for static inventory where molecule can manage existing sites, not just vagrant instances.
-* Added support for skipping instance creation during ``molecule converge`` by passing it --fast. MUCH faster.
+* Added support for skipping instance/inventory creation during ``molecule converge`` by passing it --fast. MUCH faster.
 
 1.0.6
 ----
