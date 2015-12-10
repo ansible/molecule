@@ -133,6 +133,10 @@ class BaseCommands(object):
         :param create_instances: Toggle instance creation
         :return: Provisioning output if idempotent=True, otherwise return code of underlying call to ansible-playbook
         """
+        # support fast converging
+        if self.molecule._args['--fast']:
+            create_instances = False
+
         if create_instances and not idempotent:
             self.create()
 
