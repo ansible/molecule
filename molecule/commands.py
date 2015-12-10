@@ -43,11 +43,17 @@ class Commands(object):
         self.molecule = Molecule(self.args)
         self.molecule.main()
 
-        if self.molecule._provider in ['virtualbox', 'openstack', None]:
-            self.commands = BaseCommands(self.molecule)
+        # assume static inventory if no vagrant config block is defined
+        if self.molecule._config.config.get('vagrant') is None:
+            self.commands = StaticCommands(self.molecule)
+            return
 
-        if self.molecule._provider is 'metal':
-            self.commands = MetalCommands(self.molecule)
+        # assume static inventory if no instances are defined in vagrant config block
+        if self.molecule._config.config['vagrant'].get('instances') is None:
+            self.commands = StaticCommands(self.molecule)
+            return
+
+        self.commands = BaseCommands(self.molecule)
 
     def destroy(self):
         self.commands.destroy()
@@ -118,17 +124,21 @@ class BaseCommands(object):
             sys.exit(e.returncode)
         self.molecule._remove_templates()
 
-    def converge(self, idempotent=False):
+    def converge(self, idempotent=False, create_instances=True, create_inventory=True):
         """
         Provisions all instances using ansible-playbook.
 
         :param idempotent: Optionally provision servers quietly so output can be parsed for idempotence
+        :param create_inventory: Toggle inventory creation
+        :param create_instances: Toggle instance creation
         :return: Provisioning output if idempotent=True, otherwise return code of underlying call to ansible-playbook
         """
-        if not idempotent:
+        if create_instances and not idempotent:
             self.create()
 
-        self.molecule._create_inventory_file()
+        if create_inventory:
+            self.molecule._create_inventory_file()
+
         playbook, args, kwargs = self.molecule._create_playbook_args()
 
         if idempotent:
@@ -169,10 +179,10 @@ class BaseCommands(object):
 
     def verify(self):
         """
-        Performs verification steps on running instances, including:
-        * Checks files for trailing whitespace and newlines
-        * Runs testinfra against instances
-        * Runs serverspec against instances (also calls rubocop on spec files)
+        Performs verification steps on running instances.
+        Checks files for trailing whitespace and newlines.
+        Runs testinfra against instances.
+        Runs serverspec against instances (also calls rubocop on spec files).
 
         :return: None if no tests are found, otherwise return code of underlying command
         """
@@ -350,6 +360,90 @@ class BaseCommands(object):
         sys.exit(0)
 
 
-class MetalCommands(BaseCommands):
+class StaticCommands(BaseCommands):
     def __init__(self, molecule):
         super(self.__class__, self).__init__(molecule)
+
+    def _disabled(self, cmd):
+        """
+        Prints 'command disabled' message and exits program.
+
+        :param cmd: Name of the disabled command to print.
+        :return: None
+        """
+        fmt = [Fore.RED, cmd, Fore.RESET]
+        errmsg = "\n{}The `{}` command isn't supported with static inventory.{}"
+        print(errmsg.format(*fmt))
+        sys.exit(1)
+
+    def converge(self):
+        """
+        Calls parent converge method without instance and inventory creation.
+
+        :return: Output of parent's converge method.
+        """
+        return super(self.__class__, self).converge(create_instances=False, create_inventory=False)
+
+    def create(self):
+        """
+        Overrides parent method and prints an error message.
+
+        :return: None
+        """
+        self._disabled('create')
+
+    def destroy(self):
+        """
+        Overrides parent method and prints an error message.
+
+        :return: None
+        """
+        self._disabled('destroy')
+
+    def login(self):
+        """
+        Overrides parent method and prints an error message.
+
+        :return: None
+        """
+        self._disabled('login')
+
+    def idempotence(self):
+        """
+        Overrides parent method and prints an error message.
+
+        :return: None
+        """
+        self._disabled('idempotence')
+
+    def verify(self):
+        """
+        Overrides parent method and prints an error message.
+
+        :return: None
+        """
+        self._disabled('verify')
+
+    def test(self):
+        """
+        Overrides parent method and prints an error message.
+
+        :return: None
+        """
+        self._disabled('test')
+
+    def list(self):
+        """
+        Overrides parent method and prints an error message.
+
+        :return: None
+        """
+        self._disabled('list')
+
+    def status(self):
+        """
+        Overrides parent method and prints an error message.
+
+        :return: None
+        """
+        self._disabled('status')

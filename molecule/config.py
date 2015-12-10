@@ -121,6 +121,14 @@ class Config(object):
         :param platform: platform name to pass to underlying format_instance_name call
         :return: None
         """
+        # assume static inventory if there's no vagrant section
+        if self.config.get('vagrant') is None:
+            return
+
+        # assume static inventory if no instances are listed
+        if self.config['vagrant'].get('instances') is None:
+            return
+
         for instance in self.config['vagrant']['instances']:
             instance['vm_name'] = utilities.format_instance_name(instance['name'], platform,
                                                                  self.config['vagrant']['instances'])

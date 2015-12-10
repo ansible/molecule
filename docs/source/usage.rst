@@ -346,6 +346,25 @@ However, you can also specify settings in the `molecule.yml` file for a role und
 the *ansible* section. These will be the most specific settings and will
 override settings from all other files.
 
+Using Molecule For Deployment
+-----------------------------
+
+In some cases, it may be desirable to use molecule to manage existing inventory, such as a lab.
+Molecule has limited support for this concept by allowing a user to omit the ``vagrant`` block
+in molecule.yml, and then specifying a path to ansible.cfg and inventory files. Molecule will
+skip instance management in this scenario and only call ansible-playbook. Currently, only
+molecule's ``converge`` command works in this configuration.
+
+A molecule.yml such as this will trigger the described behavior:
+
+.. code-block:: yaml
+
+    ansible:
+      playbook: playbook.yml
+      config_file: /path/to/ansible.cfg
+      inventory_file: /path/to/ansible_inventory
+      extra_vars: my_var1=var1 my_var2=var2
+
 Usage
 -----
 

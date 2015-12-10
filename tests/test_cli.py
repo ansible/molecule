@@ -45,8 +45,6 @@ class TestCLI(testtools.TestCase):
                 self.assertEqual(result.code, 0)
                 self.assertThat(stdout, MatchesRegex('^\d\.\d\.\d\.'))
 
-    @patch('molecule.provisioners.Ansible.__init__')
-    def test_cli_raises_usage_with_invalid_sub_command(self, mocked_clazz):
-        mocked_clazz.return_value = None
+    def test_cli_raises_usage_with_invalid_sub_command(self):
         with patch('sys.argv', ['bin/molecule', 'invalid-subcommand']):
             self.assertRaises(DocoptExit, lambda: self._cli.main())
