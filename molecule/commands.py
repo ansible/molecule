@@ -133,6 +133,11 @@ class BaseCommands(object):
         :param create_instances: Toggle instance creation
         :return: Provisioning output if idempotent=True, otherwise return code of underlying call to ansible-playbook
         """
+        # support fast converging
+        if self.molecule._args['--fast']:
+            create_instances = False
+            create_inventory = False
+
         if create_instances and not idempotent:
             self.create()
 
@@ -339,7 +344,7 @@ class BaseCommands(object):
         t_spec_helper = env.get_template(self.molecule._config.config['molecule']['init']['templates']['spec_helper'])
 
         with open(role_path + self.molecule._config.config['molecule']['molecule_file'], 'w') as f:
-            f.write(t_molecule.render(config=self.molecule._config.config,role=role))
+            f.write(t_molecule.render(config=self.molecule._config.config, role=role))
 
         with open(role_path + self.molecule._config.config['ansible']['playbook'], 'w') as f:
             f.write(t_playbook.render(role=role))
