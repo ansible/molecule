@@ -100,7 +100,6 @@ class BaseCommands(object):
         self.molecule._create_templates()
         try:
             self.molecule._vagrant.up(no_provision=True)
-            self.molecule._created = True
             self.molecule._state['created'] = True
             self.molecule._write_state_file()
         except CalledProcessError as e:
