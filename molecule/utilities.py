@@ -88,7 +88,7 @@ def write_template(src, dest, kwargs={}, _module='molecule', _dir='templates'):
         print('\n{}Unable to locate template file: {}{}'.format(Fore.RED, src, Fore.RESET))
         sys.exit(1)
 
-    # look for template in filesystem, them molecule package
+    # look for template in filesystem, then molecule package
     loader = ChoiceLoader([FileSystemLoader(path, followlinks=True), PackageLoader(_module, _dir)])
 
     env = Environment(loader=loader)
