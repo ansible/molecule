@@ -138,7 +138,7 @@ class BaseCommands(object):
         :return: Provisioning output if idempotent=True, otherwise return code of underlying call to ansible-playbook
         """
 
-        if self.molecule._state['created']:
+        if self.molecule._state.get('created'):
             create_instances = False
             create_inventory = False
 
