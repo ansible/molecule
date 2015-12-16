@@ -20,7 +20,7 @@
 """
 Usage:
   molecule create      [--platform=<platform>] [--provider=<provider>] [--debug]
-  molecule converge    [--platform=<platform>] [--provider=<provider>] [--tags=<tag1,tag2>] [--debug] [--fast]
+  molecule converge    [--platform=<platform>] [--provider=<provider>] [--tags=<tag1,tag2>] [--debug]
   molecule idempotence [--platform=<platform>] [--provider=<provider>] [--debug]
   molecule test        [--platform=<platform>] [--provider=<provider>] [--debug]
   molecule verify      [--platform=<platform>] [--provider=<provider>] [--debug]

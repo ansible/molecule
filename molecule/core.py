@@ -37,7 +37,6 @@ import molecule.utilities as utilities
 
 class Molecule(object):
     def __init__(self, args):
-        self._created = False
         self._provisioned = False
         self._env = os.environ.copy()
         self._args = args
@@ -63,6 +62,8 @@ class Molecule(object):
         # get defaults for inventory/ansible.cfg from molecule if none are specified
         self._config.update_ansible_defaults()
 
+        self._state = self._load_state_file()
+
         if not os.path.exists(self._config.config['molecule']['molecule_dir']):
             os.makedirs(self._config.config['molecule']['molecule_dir'])
 
@@ -80,7 +81,7 @@ class Molecule(object):
                 print("\n{}Invalid provider '{}'\n".format(Fore.RED, self._args['--provider'], Fore.RESET))
                 self._print_valid_providers()
                 sys.exit(1)
-            self._set_default_provider(provider=self._args['--provider'])
+            self._state['default_provider'] = self._args['--provider']
             self._env['VAGRANT_DEFAULT_PROVIDER'] = self._args['--provider']
         else:
             self._env['VAGRANT_DEFAULT_PROVIDER'] = self._get_default_provider()
@@ -92,7 +93,7 @@ class Molecule(object):
                 print("\n{}Invalid platform '{}'\n".format(Fore.RED, self._args['--platform'], Fore.RESET))
                 self._print_valid_platforms()
                 sys.exit(1)
-            self._set_default_platform(platform=self._args['--platform'])
+            self._state['default_platform'] = self._args['--platform']
             self._env['MOLECULE_PLATFORM'] = self._args['--platform']
         else:
             self._env['MOLECULE_PLATFORM'] = self._get_default_platform()
@@ -104,6 +105,8 @@ class Molecule(object):
         if self._args['--debug']:
             print yaml.dump(self._config.config, indent=4)
 
+        self._write_state_file()
+
     def _rubocop(self):
         try:
             pattern = self._config.config['molecule']['serverspec_dir'] + '/**/*.rb'
@@ -114,12 +117,16 @@ class Molecule(object):
             sys.exit(e.exit_code)
 
     def _load_state_file(self):
+        """
+        Looks for a molecule state file and loads it.
+
+        :return: Contents of state file as a dict if found, otherwise empty dict.
+        """
         if not os.path.isfile(self._config.config['molecule']['state_file']):
-            return False
+            return {}
 
         with open(self._config.config['molecule']['state_file'], 'r') as env:
-            self._state = yaml.safe_load(env)
-            return True
+            return yaml.safe_load(env)
 
     def _write_state_file(self):
         utilities.write_file(self._config.config['molecule']['state_file'],
@@ -150,26 +157,11 @@ class Molecule(object):
 
         default_platform = self._config.config['vagrant']['platforms'][0]['name']
 
-        if not (self._load_state_file()):
-            return default_platform
-
-        # default to first entry if no entry for platform exists
-        if 'default_platform' not in self._state:
-            return default_platform
-
-        # key exists but is falsy
-        if not self._state['default_platform']:
+        # default to first entry if no entry for platform exists or platform is false
+        if not self._state.get('default_platform'):
             return default_platform
 
         return self._state['default_platform']
-
-    def _set_default_platform(self, platform=False):
-        if not hasattr(self, '_state'):
-            if not self._load_state_file():
-                self._state = {}
-
-        self._state['default_platform'] = platform
-        self._write_state_file()
 
     def _print_valid_platforms(self):
         print(Fore.CYAN + "AVAILABLE PLATFORMS" + Fore.RESET)
@@ -189,26 +181,11 @@ class Molecule(object):
 
         default_provider = self._config.config['vagrant']['providers'][0]['name']
 
-        if not (self._load_state_file()):
-            return default_provider
-
-        # default to first entry if no entry for provider exists
-        if 'default_provider' not in self._state:
-            return default_provider
-
-        # key exists but is falsy
-        if not self._state['default_provider']:
+        # default to first entry if no entry for provider exists or provider is false
+        if not self._state.get('default_provider'):
             return default_provider
 
         return self._state['default_provider']
-
-    def _set_default_provider(self, provider=False):
-        if not hasattr(self, '_state'):
-            if not self._load_state_file():
-                self._state = {}
-
-        self._state['default_provider'] = provider
-        self._write_state_file()
 
     def _print_valid_providers(self):
         print(Fore.CYAN + "AVAILABLE PROVIDERS" + Fore.RESET)

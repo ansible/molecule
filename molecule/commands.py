@@ -98,13 +98,14 @@ class BaseCommands(object):
         :return: None
         """
         self.molecule._create_templates()
-        if not self.molecule._created:
-            try:
-                self.molecule._vagrant.up(no_provision=True)
-                self.molecule._created = True
-            except CalledProcessError as e:
-                print('ERROR: {}'.format(e))
-                sys.exit(e.returncode)
+        try:
+            self.molecule._vagrant.up(no_provision=True)
+            self.molecule._created = True
+            self.molecule._state['created'] = True
+            self.molecule._write_state_file()
+        except CalledProcessError as e:
+            print('ERROR: {}'.format(e))
+            sys.exit(e.returncode)
 
     def destroy(self):
         """
@@ -118,7 +119,10 @@ class BaseCommands(object):
         try:
             self.molecule._vagrant.halt()
             self.molecule._vagrant.destroy()
-            self.molecule._set_default_platform(platform=False)
+            self.molecule._state['default_platform'] = False
+            self.molecule._state['default_provider'] = False
+            self.molecule._state['created'] = False
+            self.molecule._write_state_file()
         except CalledProcessError as e:
             print('ERROR: {}'.format(e))
             sys.exit(e.returncode)
@@ -133,8 +137,8 @@ class BaseCommands(object):
         :param create_instances: Toggle instance creation
         :return: Provisioning output if idempotent=True, otherwise return code of underlying call to ansible-playbook
         """
-        # support fast converging
-        if self.molecule._args['--fast']:
+
+        if self.molecule._state['created']:
             create_instances = False
             create_inventory = False
 

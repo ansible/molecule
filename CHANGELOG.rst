@@ -1,5 +1,12 @@
 CHANGELOG for molecule
 ======================
+1.1.1
+----
+
+* Cleaned up state file management logic to be more concise, functional for other purposes.
+* Removed --fast flag from converge in favor of using state file for fast converging.
+* Instance hostname is now printed during serverspec runs.
+
 1.1.0
 ----
 
