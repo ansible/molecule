@@ -21,9 +21,13 @@
 from __future__ import print_function
 
 import copy
+import os
 import sys
 
+from colorama import Fore
 from jinja2 import Environment
+from jinja2 import ChoiceLoader
+from jinja2 import FileSystemLoader
 from jinja2 import PackageLoader
 
 
@@ -76,8 +80,19 @@ def write_template(src, dest, kwargs={}, _module='molecule', _dir='templates'):
     :param _dir: directory (to look for template files) passed to jinja2 PackageLoader
     :return: None
     """
-    env = Environment(loader=PackageLoader(_module, _dir))
-    template = env.get_template(src)
+    path = os.path.dirname(src)
+    filename = os.path.basename(src)
+
+    # template file doesn't exist
+    if path and not os.path.isfile(src):
+        print('\n{}Unable to locate template file: {}{}'.format(Fore.RED, src, Fore.RESET))
+        sys.exit(1)
+
+    # look for template in filesystem, then molecule package
+    loader = ChoiceLoader([FileSystemLoader(path, followlinks=True), PackageLoader(_module, _dir)])
+
+    env = Environment(loader=loader)
+    template = env.get_template(filename)
 
     with open(dest, 'w') as f:
         f.write(template.render(**kwargs))
