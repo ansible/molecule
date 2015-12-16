@@ -39,6 +39,7 @@ namespace :serverspec do
     end
 
     RSpec::Core::RakeTask.new(vm_name.to_sym) do |target|
+      puts "*** Run serverspec on #{vm_name} instance ***"
       ENV['TARGET_HOST'] = vm_name
       target.pattern = pattern.join(',')
     end
