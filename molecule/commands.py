@@ -115,8 +115,13 @@ class BaseCommands(object):
         :return: None
         """
         self.molecule._create_templates()
+        if self.molecule._args['--fast']:
+            shutdown_politely = False
+        else:
+            shutdown_politely = True
         try:
-            self.molecule._vagrant.halt()
+            if shutdown_politely:
+                self.molecule._vagrant.halt()
             self.molecule._vagrant.destroy()
             self.molecule._set_default_platform(platform=False)
         except CalledProcessError as e:
