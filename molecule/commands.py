@@ -26,6 +26,7 @@ from subprocess import CalledProcessError
 
 import prettytable
 import sh
+import yaml
 from colorama import Fore
 from jinja2 import Environment
 from jinja2 import PackageLoader
@@ -134,7 +135,7 @@ class BaseCommands(object):
         :param idempotent: Optionally provision servers quietly so output can be parsed for idempotence
         :param create_inventory: Toggle inventory creation
         :param create_instances: Toggle instance creation
-        :return: Provisioning output if idempotent=True, otherwise return code of underlying call to ansible-playbook
+        :return: Provisioning output
         """
 
         if self.molecule._state.get('created'):
@@ -154,15 +155,13 @@ class BaseCommands(object):
             kwargs.pop('_err', None)
             kwargs['_env']['ANSIBLE_NOCOLOR'] = 'true'
             kwargs['_env']['ANSIBLE_FORCE_COLOR'] = 'false'
-            try:
-                output = sh.ansible_playbook(playbook, *args, **kwargs)
-                return output
-            except sh.ErrorReturnCode as e:
-                print('ERROR: {}'.format(e))
-                sys.exit(e.exit_code)
+
         try:
             output = sh.ansible_playbook(playbook, *args, **kwargs)
-            return output.exit_code
+            if self.molecule._args['--debug']:
+                utilities.debug('ENVIRONMENT', yaml.dump(kwargs['_env'], default_flow_style=False, indent=2))
+                utilities.debug('ANSIBLE PLAYBOOK', output.ran)
+            return output
         except sh.ErrorReturnCode as e:
             print('ERROR: {}'.format(e))
             sys.exit(e.exit_code)

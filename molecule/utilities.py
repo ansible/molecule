@@ -25,6 +25,8 @@ import os
 import sys
 
 from colorama import Fore
+from colorama import Back
+from colorama import Style
 from jinja2 import Environment
 from jinja2 import ChoiceLoader
 from jinja2 import FileSystemLoader
@@ -159,3 +161,14 @@ def print_stderr(line):
     """
     print(line, file=sys.stderr, end='')
     sys.stderr.flush()
+
+
+def debug(title, data):
+    """
+    Prints colorized output for use when debugging portions of molecule
+    :param title: title of debug output
+    :param data: data of debug output
+    :return: None
+    """
+    print(''.join([Back.WHITE, Style.BRIGHT, Fore.BLACK, 'DEBUG: ' + title, Fore.RESET, Back.RESET, Style.RESET_ALL]))
+    print(''.join([Fore.BLACK, Style.BRIGHT, data, Style.RESET_ALL, Fore.RESET]))

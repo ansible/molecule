@@ -103,7 +103,7 @@ class Molecule(object):
         # updates instances config with full machine names
         self._config.populate_instance_names(self._env['MOLECULE_PLATFORM'])
         if self._args['--debug']:
-            print yaml.dump(self._config.config, indent=4)
+            utilities.debug('RUNNING CONFIG', yaml.dump(self._config.config, default_flow_style=False, indent=2))
 
         self._write_state_file()
 
