@@ -95,6 +95,7 @@ Here is a commented example:
         - .git
         - .vagrant
         - .molecule
+        - .cache
 
       # directory to look for serverspec tests
       serverspec_dir: spec
