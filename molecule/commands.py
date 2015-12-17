@@ -157,13 +157,14 @@ class BaseCommands(object):
             kwargs['_env']['ANSIBLE_FORCE_COLOR'] = 'false'
 
         try:
-            output = sh.ansible_playbook(playbook, *args, **kwargs)
+            ansible = sh.ansible_playbook.bake(playbook, *args, **kwargs)
             if self.molecule._args['--debug']:
                 ansible_env = {k: v for (k, v) in kwargs['_env'].items() if 'ANSIBLE' in k}
                 other_env = {k: v for (k, v) in kwargs['_env'].items() if 'ANSIBLE' not in k}
                 utilities.debug('OTHER ENVIRONMENT', yaml.dump(other_env, default_flow_style=False, indent=2))
                 utilities.debug('ANSIBLE ENVIRONMENT', yaml.dump(ansible_env, default_flow_style=False, indent=2))
-                utilities.debug('ANSIBLE PLAYBOOK', output.ran)
+                utilities.debug('ANSIBLE PLAYBOOK', str(ansible.bake.im_self))
+            output = ansible()
             return output
         except sh.ErrorReturnCode as e:
             print('ERROR: {}'.format(e))

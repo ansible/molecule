@@ -24,8 +24,8 @@ import copy
 import os
 import sys
 
-from colorama import Fore
 from colorama import Back
+from colorama import Fore
 from colorama import Style
 from jinja2 import Environment
 from jinja2 import ChoiceLoader
