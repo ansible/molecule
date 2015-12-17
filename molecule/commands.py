@@ -163,7 +163,7 @@ class BaseCommands(object):
                 other_env = {k: v for (k, v) in kwargs['_env'].items() if 'ANSIBLE' not in k}
                 utilities.debug('OTHER ENVIRONMENT', yaml.dump(other_env, default_flow_style=False, indent=2))
                 utilities.debug('ANSIBLE ENVIRONMENT', yaml.dump(ansible_env, default_flow_style=False, indent=2))
-                utilities.debug('ANSIBLE PLAYBOOK', str(ansible.bake.im_self))
+                utilities.debug('ANSIBLE PLAYBOOK', str(ansible))
             output = ansible()
             return output
         except sh.ErrorReturnCode as e:
