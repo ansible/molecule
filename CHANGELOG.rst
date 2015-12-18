@@ -1,5 +1,10 @@
 CHANGELOG for molecule
 ======================
+1.1.2
+----
+
+* Fixed a bug where calling ``create`` separately from ``converge`` wasn't generating an inventory file.
+
 1.1.1
 ----
 

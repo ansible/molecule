@@ -140,6 +140,8 @@ class BaseCommands(object):
 
         if self.molecule._state.get('created'):
             create_instances = False
+
+        if self.molecule._state.get('converged'):
             create_inventory = False
 
         if create_instances and not idempotent:
@@ -164,7 +166,13 @@ class BaseCommands(object):
                 utilities.debug('OTHER ENVIRONMENT', yaml.dump(other_env, default_flow_style=False, indent=2))
                 utilities.debug('ANSIBLE ENVIRONMENT', yaml.dump(ansible_env, default_flow_style=False, indent=2))
                 utilities.debug('ANSIBLE PLAYBOOK', str(ansible))
+
             output = ansible()
+
+            if not self.molecule._state.get('converged'):
+                self.molecule._state['converged'] = True
+                self.molecule._write_state_file()
+
             return output
         except sh.ErrorReturnCode as e:
             print('ERROR: {}'.format(e))
