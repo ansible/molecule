@@ -219,6 +219,7 @@ class BaseCommands(object):
 
         self.molecule._write_ssh_config()
         kwargs = {'_env': self.molecule._env, '_out': utilities.print_stdout, '_err': utilities.print_stderr}
+        kwargs['_env']['PYTHONDONTWRITEBYTECODE'] = '1'
         args = []
 
         # testinfra
