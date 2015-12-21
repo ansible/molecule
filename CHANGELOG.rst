@@ -1,5 +1,13 @@
 CHANGELOG for molecule
 ======================
+1.1.3
+----
+
+* Fixed a bug where inventory wasn't getting created on a new converge.
+* Linting now targets a specific list of file extensions.
+* Hostname created during ``init`` is now sanitized.
+* Creattion of python cache directory is now disabled by default.
+
 1.1.2
 ----
 
