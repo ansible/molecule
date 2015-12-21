@@ -123,6 +123,7 @@ class BaseCommands(object):
             self.molecule._state['default_platform'] = False
             self.molecule._state['default_provider'] = False
             self.molecule._state['created'] = False
+            self.molecule._state['converged'] = False
             self.molecule._write_state_file()
         except CalledProcessError as e:
             print('ERROR: {}'.format(e))
