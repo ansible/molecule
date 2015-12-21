@@ -35,14 +35,19 @@ def check_trailing_cruft(ignore_paths=[]):
     filenames = []
     pruned_filenames = []
     found_error = False
+    valid_extensions = ['py', 'yml', 'rb']
     for root, dirs, files in os.walk('.'):
         # gets ./subdirectory/filename
         for name in files:
-            filenames.append(os.path.join(root, name))
+            extension = name.split(os.extsep)[-1]
+            if extension in valid_extensions:
+                filenames.append(os.path.join(root, name))
 
         # gets ./filename
         for name in dirs:
-            filenames.append(os.path.join(root, name))
+            extension = name.split(os.extsep)[-1]
+            if extension in valid_extensions:
+                filenames.append(os.path.join(root, name))
 
     # only work on files not in our ignore paths
     for f in filenames:
