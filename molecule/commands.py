@@ -20,6 +20,7 @@
 
 import os
 import pexpect
+import re
 import signal
 import sys
 from subprocess import CalledProcessError
@@ -357,8 +358,9 @@ class BaseCommands(object):
         t_default_spec = env.get_template(self.molecule._config.config['molecule']['init']['templates']['default_spec'])
         t_spec_helper = env.get_template(self.molecule._config.config['molecule']['init']['templates']['spec_helper'])
 
+        sanitized_role = re.sub('[._]', '-', role)
         with open(role_path + self.molecule._config.config['molecule']['molecule_file'], 'w') as f:
-            f.write(t_molecule.render(config=self.molecule._config.config, role=role))
+            f.write(t_molecule.render(config=self.molecule._config.config, role=sanitized_role))
 
         with open(role_path + self.molecule._config.config['ansible']['playbook'], 'w') as f:
             f.write(t_playbook.render(role=role))
