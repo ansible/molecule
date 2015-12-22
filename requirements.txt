@@ -1,10 +1,10 @@
 colorama==0.3.3
 docopt==0.6.2
-jinja2
+Jinja2
 paramiko
 pbr
 pexpect==4.0.1
-prettytable==0.7.2
+PrettyTable==0.7.2
 python-vagrant==0.5.9
 PyYAML==3.11
 sh==1.11
