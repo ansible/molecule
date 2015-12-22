@@ -66,7 +66,7 @@ class CLI(object):
     def main(self):
         args = docopt(__doc__)
         if args['--version']:
-            print molecule.__version__
+            print(molecule.__version__)
             sys.exit(0)
 
         m = Commands(args)
