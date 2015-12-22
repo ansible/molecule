@@ -1,0 +1,9 @@
+language: python
+env:
+  matrix:
+    - TOXENV=flake8
+    - TOXENV=yapf
+    - TOXENV=docs
+    - TOXENV=py27
+install: "pip install -r test-requirements.txt"
+script: tox

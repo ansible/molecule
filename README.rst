@@ -15,6 +15,10 @@ Molecule
    :target: https://molecule.readthedocs.org/en/latest/
    :alt: Documentation Status
 
+.. image:: https://travis-ci.org/rgreinho/molecule.svg?branch=master
+   :target: https://travis-ci.org/rgreinho/molecule
+   :alt: Build Status
+
 Molecule is designed to aid in the development and testing of
 `Ansible`_ roles including support for multiple instances,
 operating system distributions, virtualization providers and test frameworks.
