@@ -43,7 +43,7 @@ class TestCLI(testtools.TestCase):
                 stdout = mocked_stdout.getvalue().strip()
 
                 self.assertEqual(result.code, 0)
-                self.assertThat(stdout, MatchesRegex('^\d\.\d\.\d\.'))
+                self.assertThat(stdout, MatchesRegex('^\d\.\d\.\d'))
 
     def test_cli_raises_usage_with_invalid_sub_command(self):
         with patch('sys.argv', ['bin/molecule', 'invalid-subcommand']):
