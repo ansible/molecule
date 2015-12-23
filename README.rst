@@ -43,7 +43,7 @@ Install molecule using pip:
 
 .. code-block:: bash
 
-  $ pip install molecule
+  pip install molecule
 
 Create a new role:
 
