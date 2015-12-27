@@ -216,10 +216,14 @@ class Molecule(object):
         # look for any non-zero changed lines
         changed = re.search(r'(changed=[1-9][0-9]*)', output)
 
-        if changed:
-            return False
+        # Look for the tasks that have changed.
+        p = re.compile(ur'NI: (.*$)', re.MULTILINE | re.IGNORECASE)
+        changed_tasks = re.findall(p, output)
 
-        return True
+        if changed:
+            return False, changed_tasks
+
+        return True, []
 
     def _remove_templates(self):
         """

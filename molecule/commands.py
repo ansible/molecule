@@ -159,6 +159,8 @@ class BaseCommands(object):
             kwargs.pop('_err', None)
             kwargs['_env']['ANSIBLE_NOCOLOR'] = 'true'
             kwargs['_env']['ANSIBLE_FORCE_COLOR'] = 'false'
+            kwargs['_env']['ANSIBLE_CALLBACK_PLUGINS'] = os.path.join(
+                sys.prefix, 'share/molecule/ansible/plugins/callback/idempotence')
 
         try:
             ansible = sh.ansible_playbook.bake(playbook, *args, **kwargs)
@@ -186,16 +188,22 @@ class BaseCommands(object):
 
         :return: None
         """
-        print('{}Idempotence test in progress...{}'.format(Fore.CYAN, Fore.RESET)),
+        print('{}Idempotence test in progress (can take a few minutes)...{}'.format(Fore.CYAN, Fore.RESET))
 
         output = self.converge(idempotent=True)
-        idempotent = self.molecule._parse_provisioning_output(output.stdout)
+        idempotent, changed_tasks = self.molecule._parse_provisioning_output(output.stdout)
 
         if idempotent:
-            print('{}OKAY{}'.format(Fore.GREEN, Fore.RESET))
+            print('{}Idempotence test passed.{}'.format(Fore.GREEN, Fore.RESET))
             return
 
-        print('{}FAILED{}'.format(Fore.RED, Fore.RESET))
+        # Display the details of the idempotence test.
+        if changed_tasks:
+            print('{}Idempotence test failed because of the following tasks{}:'.format(Fore.RED, Fore.RESET))
+            print('{}\t{}{}'.format(Fore.RED, '\n'.join(changed_tasks), Fore.RESET))
+        else:
+            # But in case the idempotence callback plugin was not found, we just display an error message.
+            print('{}Idempotence test failed.{}'.format(Fore.RED, Fore.RESET))
         sys.exit(1)
 
     def verify(self):
