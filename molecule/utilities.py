@@ -82,6 +82,7 @@ def write_template(src, dest, kwargs={}, _module='molecule', _dir='templates'):
     :param _dir: directory (to look for template files) passed to jinja2 PackageLoader
     :return: None
     """
+    src = os.path.expanduser(src)
     path = os.path.dirname(src)
     filename = os.path.basename(src)
 
