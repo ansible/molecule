@@ -117,8 +117,13 @@ class BaseCommands(object):
         :return: None
         """
         self.molecule._create_templates()
+        if self.molecule._args['--fast']:
+            shutdown_politely = False
+        else:
+            shutdown_politely = True
         try:
-            self.molecule._vagrant.halt()
+            if shutdown_politely:
+                self.molecule._vagrant.halt()
             self.molecule._vagrant.destroy()
             self.molecule._state['default_platform'] = False
             self.molecule._state['default_provider'] = False

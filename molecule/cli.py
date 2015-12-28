@@ -24,7 +24,7 @@ Usage:
   molecule idempotence [--platform=<platform>] [--provider=<provider>] [--debug]
   molecule test        [--platform=<platform>] [--provider=<provider>] [--debug]
   molecule verify      [--platform=<platform>] [--provider=<provider>] [--debug]
-  molecule destroy     [--platform=<platform>] [--provider=<provider>] [--debug]
+  molecule destroy     [--platform=<platform>] [--provider=<provider>] [--debug] [--fast]
   molecule status      [--platform=<platform>] [--provider=<provider>] [--debug]
   molecule list        [--platform=<platform>] [--provider=<provider>] [--debug]
   molecule login <host>
