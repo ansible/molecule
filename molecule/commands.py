@@ -159,6 +159,11 @@ class BaseCommands(object):
             kwargs.pop('_err', None)
             kwargs['_env']['ANSIBLE_NOCOLOR'] = 'true'
             kwargs['_env']['ANSIBLE_FORCE_COLOR'] = 'false'
+
+            # Save the previous callback plugin if any.
+            callback_plugin = kwargs.get('_env', {}).get('ANSIBLE_CALLBACK_PLUGINS', None)
+
+            # Set the idempotence plugin.
             kwargs['_env']['ANSIBLE_CALLBACK_PLUGINS'] = os.path.join(
                 sys.prefix, 'share/molecule/ansible/plugins/callback/idempotence')
 
@@ -176,6 +181,10 @@ class BaseCommands(object):
             if not self.molecule._state.get('converged'):
                 self.molecule._state['converged'] = True
                 self.molecule._write_state_file()
+
+            if idempotent:
+                # Reset the callback plugin to the previous value.
+                kwargs['_env']['ANSIBLE_CALLBACK_PLUGINS'] = callback_plugin
 
             return output
         except sh.ErrorReturnCode as e:
@@ -199,11 +208,15 @@ class BaseCommands(object):
 
         # Display the details of the idempotence test.
         if changed_tasks:
-            print('{}Idempotence test failed because of the following tasks{}:'.format(Fore.RED, Fore.RESET))
-            print('{}\t{}{}'.format(Fore.RED, '\n'.join(changed_tasks), Fore.RESET))
+            print('{}Idempotence test failed because of the following tasks:{}'.format(Fore.RED, Fore.RESET))
+            print('{}{}{}'.format(Fore.RED, '\n'.join(changed_tasks), Fore.RESET))
         else:
             # But in case the idempotence callback plugin was not found, we just display an error message.
             print('{}Idempotence test failed.{}'.format(Fore.RED, Fore.RESET))
+            warning_msg = "The idempotence plugin was not found or did not provide the required information. " \
+                "Therefore the failure details cannot be displayed."
+
+            print('{}{}{}'.format(Fore.YELLOW, warning_msg, Fore.RESET))
         sys.exit(1)
 
     def verify(self):
