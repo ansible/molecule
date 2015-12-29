@@ -161,10 +161,10 @@ class BaseCommands(object):
             kwargs['_env']['ANSIBLE_FORCE_COLOR'] = 'false'
 
             # Save the previous callback plugin if any.
-            callback_plugin = kwargs.get('_env', {}).get('ANSIBLE_CALLBACK_PLUGINS', None)
+            callback_plugin = kwargs.get('_env', {}).get('ANSIBLE_CALLBACK_PLUGINS', '')
 
             # Set the idempotence plugin.
-            kwargs['_env']['ANSIBLE_CALLBACK_PLUGINS'] = os.path.join(
+            kwargs['_env']['ANSIBLE_CALLBACK_PLUGINS'] = callback_plugin + os.path.join(
                 sys.prefix, 'share/molecule/ansible/plugins/callback/idempotence')
 
         try:
