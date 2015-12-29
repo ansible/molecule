@@ -34,9 +34,21 @@ class TestCore(testtools.TestCase):
         vagrant-01-ubuntu              : ok=36   changed=29   unreachable=0    failed=0
         """
 
-        res = self._molecule._parse_provisioning_output(failed_output)
+        res, changed_tasks = self._molecule._parse_provisioning_output(failed_output)
 
         self.assertFalse(res)
+
+    def test_parse_provisioning_output_failure_01(self):
+        failed_output = """
+        PLAY RECAP ********************************************************************
+        NI: cisco.common | Non idempotent task for testing
+        common-01-rhel-7           : ok=18   changed=14   unreachable=0    failed=0
+        """
+
+        res, changed_tasks = self._molecule._parse_provisioning_output(failed_output)
+
+        self.assertFalse(res)
+        self.assertEqual(1, len(changed_tasks))
 
     def test_parse_provisioning_output_success_00(self):
         success_output = """
@@ -44,6 +56,7 @@ class TestCore(testtools.TestCase):
         vagrant-01-ubuntu              : ok=36   changed=0    unreachable=0    failed=0
         """
 
-        res = self._molecule._parse_provisioning_output(success_output)
+        res, changed_tasks = self._molecule._parse_provisioning_output(success_output)
 
         self.assertTrue(res)
+        self.assertEqual([], changed_tasks)
