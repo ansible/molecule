@@ -1,5 +1,13 @@
 CHANGELOG for molecule
 ======================
+1.2.0
+----
+* Added support for Vagrant 1.8's linked_clone option.
+* Updated idempotence test to use an Ansible callback plugin that will print failed tasks.
+* Path to templates can now be relative to a user's home directory.
+* box_url in Vagrantfile is no longer set if box_version is defined.
+* Uses the latest version of python-vagrant.
+
 1.1.3
 ----
 
