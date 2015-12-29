@@ -19,6 +19,10 @@ Molecule
    :target: https://travis-ci.org/rgreinho/molecule
    :alt: Build Status
 
+.. image:: https://requires.io/github/rgreinho/molecule/requirements.svg?branch=master
+   :target: https://requires.io/github/rgreinho/molecule/requirements/?branch=master
+   :alt: Requirements Status
+
 Molecule is designed to aid in the development and testing of
 `Ansible`_ roles including support for multiple instances,
 operating system distributions, virtualization providers and test frameworks.
