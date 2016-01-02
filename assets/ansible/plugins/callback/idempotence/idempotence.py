@@ -8,12 +8,15 @@ class CallbackModule(object):
     """
 
     def __init__(self):
-        self.changed_items = []
+        self.changed_items = set()
         self.current = None
 
     def runner_on_ok(self, host, res):
-        if res['changed']:
-            self.changed_items.append(self.current)
+        if not res:
+            return
+
+        if res.get('changed'):
+            self.changed_items.add(self.current)
 
     def playbook_on_task_start(self, name, is_conditional):
         self.current = name
