@@ -289,8 +289,8 @@ class BaseCommands(object):
 
         :return: None
         """
-        is_quiet = self.molecule._args['-q']
-        self.molecule._print_valid_platforms(quiet=is_quiet)
+        is_machine_readable = self.molecule._args['-m']
+        self.molecule._print_valid_platforms(machine_readable=is_machine_readable)
 
     def status(self):
         """

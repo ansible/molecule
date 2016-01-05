@@ -26,7 +26,7 @@ Usage:
   molecule verify      [--platform=<platform>] [--provider=<provider>] [--debug]
   molecule destroy     [--platform=<platform>] [--provider=<provider>] [--debug]
   molecule status      [--platform=<platform>] [--provider=<provider>] [--debug]
-  molecule list        [--debug] [-q]
+  molecule list        [--debug] [-m]
   molecule login <host>
   molecule init  <role>
   molecule -v | --version
@@ -51,7 +51,7 @@ Options:
    --provider <provider>  specify a provider
    --tags <tag1,tag2>     comma separated list of ansible tags to target
    --debug                get more detail
-   -q                     quiet output
+   -m                     machine readable output
 """
 
 import sys

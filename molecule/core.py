@@ -163,12 +163,12 @@ class Molecule(object):
 
         return self._state['default_platform']
 
-    def _print_valid_platforms(self, quiet=False):
-        if not quiet:
+    def _print_valid_platforms(self, machine_readable=False):
+        if not machine_readable:
             print(Fore.CYAN + "AVAILABLE PLATFORMS" + Fore.RESET)
         default_platform = self._get_default_platform()
         for platform in self._config.config['vagrant']['platforms']:
-            default = ' (default)' if platform['name'] == default_platform and not quiet else ''
+            default = ' (default)' if platform['name'] == default_platform and not machine_readable else ''
             print(platform['name'] + default)
 
     def _get_default_provider(self):
