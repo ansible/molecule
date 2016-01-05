@@ -1,7 +1,14 @@
 CHANGELOG for molecule
 ======================
+1.2.1
+----
+
+* Updated idempotence plugin path to be appended to existing plugin path rather than overwriting it.
+* Fixed case where idempotence plugin would crash when unable to read response dictionary.
+
 1.2.0
 ----
+
 * Added support for Vagrant 1.8's linked_clone option.
 * Updated idempotence test to use an Ansible callback plugin that will print failed tasks.
 * Path to templates can now be relative to a user's home directory.
