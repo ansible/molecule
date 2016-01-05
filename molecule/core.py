@@ -50,7 +50,7 @@ class Molecule(object):
         self._config.merge_molecule_config_files()
 
         # init command doesn't need to load molecule.yml
-        if self._args['init']:
+        if self._args['<command>'] == 'init':
             return  # exits program
 
         # merge in molecule.yml
@@ -329,7 +329,7 @@ class Molecule(object):
         args = []
 
         # pull in values passed to molecule CLI
-        if '--tags' in self._args:
+        if self._args['--tags']:
             self._config.config['ansible']['tags'] = self._args['--tags']
 
         # pass supported --arg=value args

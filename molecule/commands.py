@@ -332,13 +332,13 @@ class BaseCommands(object):
         """
         # make sure vagrant knows about this host
         try:
-            conf = self.molecule._vagrant.conf(vm_name=self.molecule._args['<host>'])
+            conf = self.molecule._vagrant.conf(vm_name=self.molecule._args['<args>'])
             ssh_args = [conf['HostName'], conf['User'], conf['Port'], conf['IdentityFile'],
                         ' '.join(self.molecule._config.config['molecule']['raw_ssh_args'])]
             ssh_cmd = 'ssh {} -l {} -p {} -i {} {}'
         except CalledProcessError:
             # gets appended to python-vagrant's error message
-            conf_format = [Fore.RED, self.molecule._args['<host>'], Fore.YELLOW, Fore.RESET]
+            conf_format = [Fore.RED, self.molecule._args['<args>'], Fore.YELLOW, Fore.RESET]
             conf_errmsg = '\n{0}Unknown host {1}. Try {2}molecule status{0} to see available hosts.{3}'
             print(conf_errmsg.format(*conf_format))
             sys.exit(1)
@@ -355,7 +355,7 @@ class BaseCommands(object):
 
         :return: None
         """
-        role = self.molecule._args['<role>']
+        role = self.molecule._args['<args>']
         role_path = './' + role + '/'
 
         if not role:

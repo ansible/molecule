@@ -19,18 +19,7 @@
 #  THE SOFTWARE.
 """
 Usage:
-  molecule create      [--platform=<platform>] [--provider=<provider>] [--debug]
-  molecule converge    [--platform=<platform>] [--provider=<provider>] [--tags=<tag1,tag2>] [--debug]
-  molecule idempotence [--platform=<platform>] [--provider=<provider>] [--debug]
-  molecule test        [--platform=<platform>] [--provider=<provider>] [--debug]
-  molecule verify      [--platform=<platform>] [--provider=<provider>] [--debug]
-  molecule destroy     [--platform=<platform>] [--provider=<provider>] [--debug]
-  molecule status      [--platform=<platform>] [--provider=<provider>] [--debug]
-  molecule list        [--debug] [-m]
-  molecule login <host>
-  molecule init  <role>
-  molecule -v | --version
-  molecule -h | --help
+  molecule [-hvm] [--platform=<platform>] [--provider=<provider>] [--tags=<tag1,tag2>] [--debug] <command> [<args>]
 
 Commands:
    create      create instances
@@ -65,23 +54,17 @@ from molecule.commands import Commands
 
 class CLI(object):
     def main(self):
-        args = docopt(__doc__)
-        if args['--version']:
-            print(molecule.__version__)
-            sys.exit(0)
-
+        args = docopt(__doc__, version=molecule.__version__, options_first=True)
         m = Commands(args)
         m.main()
-        commands = ['create', 'converge', 'idempotence', 'test', 'verify', 'destroy', 'status', 'list', 'login', 'init']
-        for command in commands:
-            if args[command]:
-                try:
-                    method = getattr(m, command)
-                except AttributeError:
-                    raise DocoptExit()
 
-                if callable(method):
-                    sys.exit(method())
+        try:
+            method = getattr(m, args['<command>'])
+        except AttributeError:
+            raise DocoptExit()
+
+        if callable(method):
+            sys.exit(method())
 
 
 def main():
