@@ -19,52 +19,51 @@
 #  THE SOFTWARE.
 """
 Usage:
-  molecule [-hvm] [--platform=<platform>] [--provider=<provider>] [--tags=<tag1,tag2>] [--debug] <command> [<args>]
+    molecule [-hvm] <command> [<args>]
 
 Commands:
-   create      create instances
-   converge    create and provision instances
-   idempotence converge and check the output for changes
-   test        run a full test cycle: destroy, create, converge, idempotency-check, verify and destroy instances
-   verify      create, provision and test instances
-   destroy     destroy instances
-   status      show status of instances
-   list        show available platforms, providers
-   login       connects to instance via SSH
-   init        creates the directory structure and files for a new Ansible role compatible with molecule
+    create      create instances
+    converge    create and provision instances
+    idempotence converge and check the output for changes
+    test        run a full test cycle: destroy, create, converge, idempotency-check, verify and destroy instances
+    verify      create, provision and test instances
+    destroy     destroy instances
+    status      show status of instances
+    list        show available platforms, providers
+    login       connects to instance via SSH
+    init        creates the directory structure and files for a new Ansible role compatible with molecule
 
 Options:
    -h, --help             shows this screen
    -v, --version          shows the version
-   --platform <platform>  specify a platform
-   --provider <provider>  specify a provider
-   --tags <tag1,tag2>     comma separated list of ansible tags to target
-   --debug                get more detail
    -m                     machine readable output
 """
-
+# molecule [-hvm] [--platform=<platform>] [--provider=<provider>] [--tags=<tag1,tag2>] [--debug] <command> [<args>]
 import sys
 
 from docopt import docopt
 from docopt import DocoptExit
 
 import molecule
-from molecule.commands import Commands
+import molecule.commands as commands
 
 
 class CLI(object):
     def main(self):
         args = docopt(__doc__, version=molecule.__version__, options_first=True)
-        m = Commands(args)
-        m.main()
+
+        command_name = args.pop('<command>').capitalize()
+        command_args = args.pop('<args>')
+        if command_args is None:
+            command_args = {}
 
         try:
-            method = getattr(m, args['<command>'])
+            command_class = getattr(commands, command_name)
         except AttributeError:
             raise DocoptExit()
 
-        if callable(method):
-            sys.exit(method())
+        command = command_class(command_args, args)
+        sys.exit(command.execute())
 
 
 def main():
