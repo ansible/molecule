@@ -26,7 +26,7 @@ Usage:
   molecule verify      [--platform=<platform>] [--provider=<provider>] [--debug]
   molecule destroy     [--platform=<platform>] [--provider=<provider>] [--debug]
   molecule status      [--platform=<platform>] [--provider=<provider>] [--debug]
-  molecule list        [--platform=<platform>] [--provider=<provider>] [--debug] [-q]
+  molecule list        [--debug] [-q]
   molecule login <host>
   molecule init  <role>
   molecule -v | --version
