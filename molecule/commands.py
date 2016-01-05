@@ -289,8 +289,8 @@ class BaseCommands(object):
 
         :return: None
         """
-        print
-        self.molecule._print_valid_platforms()
+        is_machine_readable = self.molecule._args['-m']
+        self.molecule._print_valid_platforms(machine_readable=is_machine_readable)
 
     def status(self):
         """
