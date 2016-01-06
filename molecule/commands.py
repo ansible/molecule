@@ -29,7 +29,6 @@ import prettytable
 import sh
 import yaml
 from colorama import Fore
-from docopt import docopt
 from jinja2 import Environment
 from jinja2 import PackageLoader
 
@@ -39,36 +38,21 @@ from molecule.core import Molecule
 
 
 class AbstractCommand:
-    def __init__(self, command_args, global_args):
+    def __init__(self, args):
         """
         Initialize commands
 
-        :param command_args: arguments of the command
-        :param global_args: arguments of the program
+        :param command_args: arguments from the CLI
         """
-        self.args = docopt(self.__doc__, argv=command_args)
-        self.global_args = global_args
+        self.args = args
         self.molecule = Molecule(self.args)
         self.molecule._command = self.__class__.__name__.lower()
         self.molecule.main()
-
     def execute(self):
         raise NotImplementedError
 
 
 class Create(AbstractCommand):
-    """
-    Create instances
-
-    Usage:
-        create [--platform=<platform>] [--provider=<provider>] [--debug]
-
-    Options:
-        --platform <platform>  specify a platform
-        --provider <provider>  specify a provider
-        --debug                get more detail
-    """
-
     def execute(self):
         """
         Creates all instances defined in molecule.yml.
