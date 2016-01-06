@@ -41,7 +41,6 @@ class Molecule(object):
         self._env = os.environ.copy()
         self._args = args
         self._config = config.Config()
-        self._command = None
 
     def main(self):
         # load molecule defaults
@@ -51,7 +50,7 @@ class Molecule(object):
         self._config.merge_molecule_config_files()
 
         # init command doesn't need to load molecule.yml
-        if self._command == 'init':
+        if self._args['init']:
             return  # exits program
 
         # merge in molecule.yml
@@ -72,10 +71,10 @@ class Molecule(object):
 
         self._env['VAGRANT_VAGRANTFILE'] = self._config.config['molecule']['vagrantfile_file']
 
-        if '--tags' in self._args:
+        if self._args['--tags']:
             self._env['MOLECULE_TAGS'] = self._args['--tags']
 
-        if '--provider' in self._args and self._args['--provider']:
+        if self._args['--provider']:
             if not [item
                     for item in self._config.config['vagrant']['providers']
                     if item['name'] == self._args['--provider']]:
@@ -87,7 +86,7 @@ class Molecule(object):
         else:
             self._env['VAGRANT_DEFAULT_PROVIDER'] = self._get_default_provider()
 
-        if '--platform' in self._args and self._args['--platform']:
+        if self._args['--platform']:
             if not [item
                     for item in self._config.config['vagrant']['platforms']
                     if item['name'] == self._args['--platform']]:
@@ -103,7 +102,7 @@ class Molecule(object):
 
         # updates instances config with full machine names
         self._config.populate_instance_names(self._env['MOLECULE_PLATFORM'])
-        if '--debug' in self._args and self._args['--debug']:
+        if self._args['--debug']:
             utilities.debug('RUNNING CONFIG', yaml.dump(self._config.config, default_flow_style=False, indent=2))
 
         self._write_state_file()

@@ -65,7 +65,11 @@ import molecule.commands
 
 class CLI(object):
     def main(self):
-        args = docopt(__doc__, version=molecule.__version__)
+        args = docopt(__doc__)
+        if args['--version']:
+            print(molecule.__version__)
+            sys.exit(0)
+
         commands = ['create', 'converge', 'idempotence', 'test', 'verify', 'destroy', 'status', 'list', 'login', 'init']
         for command in commands:
             if args[command]:
@@ -74,8 +78,7 @@ class CLI(object):
                 except AttributeError:
                     raise DocoptExit()
 
-        c = command_class(args)
-        sys.exit(c.execute())
+        sys.exit(command_class(args).execute())
 
 
 def main():
