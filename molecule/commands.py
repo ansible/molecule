@@ -56,11 +56,11 @@ class AbstractCommand:
             self.molecule = molecule
 
         # assume static inventory if no vagrant config block is defined
-        if self.molecule._config.config.get('vagrant') is None:
+        if self.molecule._provisioner is None:
             self.static = True
 
         # assume static inventory if no instances are defined in vagrant config block
-        if self.molecule._config.config['vagrant'].get('instances') is None:
+        if self.molecule._provisioner.instances is None:
             self.static = True
 
     def disabled(self, cmd):
@@ -92,7 +92,7 @@ class Create(AbstractCommand):
 
         self.molecule._create_templates()
         try:
-            self.molecule._vagrant.up(no_provision=True)
+            self.molecule._provisioner.up(no_provision=True)
             self.molecule._state['created'] = True
             self.molecule._write_state_file()
         except CalledProcessError as e:
@@ -114,8 +114,8 @@ class Destroy(AbstractCommand):
 
         self.molecule._create_templates()
         try:
-            self.molecule._vagrant.halt()
-            self.molecule._vagrant.destroy()
+            self.molecule._provisioner.halt()
+            self.molecule._provisioner.destroy()
             self.molecule._state['default_platform'] = False
             self.molecule._state['default_provider'] = False
             self.molecule._state['created'] = False
@@ -332,13 +332,13 @@ class Status(AbstractCommand):
         if self.static:
             self.disabled('status')
 
-        if not os.path.isfile(self.molecule._config.config['molecule']['vagrantfile_file']):
+        if not self.molecule._state.get('created'):
             errmsg = '{}ERROR: No instances created. Try `{} create` first.{}'
             print(errmsg.format(Fore.RED, os.path.basename(sys.argv[0]), Fore.RESET))
             sys.exit(1)
 
         try:
-            status = self.molecule._vagrant.status()
+            status = self.molecule._provisioner.status()
         except CalledProcessError as e:
             print('ERROR: {}'.format(e))
             return e.returncode
@@ -357,6 +357,7 @@ class Status(AbstractCommand):
         print(x)
         print
         self.molecule._print_valid_platforms()
+        self.molecule._print_valid_providers()
 
 
 class Login(AbstractCommand):
@@ -371,7 +372,7 @@ class Login(AbstractCommand):
 
         # make sure vagrant knows about this host
         try:
-            conf = self.molecule._vagrant.conf(vm_name=self.molecule._args['<host>'])
+            conf = self.molecule._provisioner.ssh_config(vm_name=self.molecule._args['<host>'])
             ssh_args = [conf['HostName'], conf['User'], conf['Port'], conf['IdentityFile'],
                         ' '.join(self.molecule._config.config['molecule']['raw_ssh_args'])]
             ssh_cmd = 'ssh {} -l {} -p {} -i {} {}'
