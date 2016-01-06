@@ -149,7 +149,8 @@ class Converge(AbstractCommand):
             create_inventory = False
 
         if create_instances and not idempotent:
-            Create(self.args, self.molecule).execute()
+            c = Create(self.args, self.molecule)
+            c.execute()
 
         if create_inventory:
             self.molecule._create_inventory_file()
@@ -206,7 +207,8 @@ class Idempotence(AbstractCommand):
 
         print('{}Idempotence test in progress (can take a few minutes)...{}'.format(Fore.CYAN, Fore.RESET))
 
-        output = Converge(self.args, self.molecule).execute(idempotent=True)
+        c = Converge(self.args, self.molecule)
+        output = c.execute(idempotent=True)
         idempotent, changed_tasks = self.molecule._parse_provisioning_output(output.stdout)
 
         if idempotent:
@@ -297,8 +299,9 @@ class Test(AbstractCommand):
             self.disabled('test')
 
         for task in self.molecule._config.config['molecule']['test']['sequence']:
-            m = getattr(sys.modules[__name__], task.capitalize())
-            m(self.args, self.molecule).execute()
+            command = getattr(sys.modules[__name__], task.capitalize())
+            c = command(self.args, self.molecule)
+            c.execute()
 
 
 class List(AbstractCommand):

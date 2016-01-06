@@ -78,7 +78,8 @@ class CLI(object):
                 except AttributeError:
                     raise DocoptExit()
 
-        sys.exit(command_class(args).execute())
+        c = command_class(args)
+        sys.exit(c.execute())
 
 
 def main():
