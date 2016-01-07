@@ -37,68 +37,59 @@ import molecule.validators as validators
 from molecule.core import Molecule
 
 
-class Commands(object):
-    def __init__(self, args):
-        self.args = args
+class AbstractCommand:
+    def __init__(self, args, molecule=False):
+        """
+        Initialize commands
 
-    def main(self):
-        self.molecule = Molecule(self.args)
-        self.molecule.main()
+        :param args: arguments from the CLI
+        :param molecule: molecule instance
+        """
+        self.args = args
+        self.static = False
+
+        # only create a molecule instance if one doesn't exist
+        if not molecule:
+            self.molecule = Molecule(self.args)
+            self.molecule.main()
+        else:
+            self.molecule = molecule
 
         # assume static inventory if no vagrant config block is defined
         if self.molecule._config.config.get('vagrant') is None:
-            self.commands = StaticCommands(self.molecule)
-            return
+            self.static = True
 
         # assume static inventory if no instances are defined in vagrant config block
         if self.molecule._config.config['vagrant'].get('instances') is None:
-            self.commands = StaticCommands(self.molecule)
-            return
+            self.static = True
 
-        self.commands = BaseCommands(self.molecule)
+    def disabled(self, cmd):
+        """
+        Prints 'command disabled' message and exits program.
 
-    def destroy(self):
-        self.commands.destroy()
+        :param cmd: Name of the disabled command to print.
+        :return: None
+        """
+        fmt = [Fore.RED, cmd, Fore.RESET]
+        errmsg = "{}The `{}` command isn't supported with static inventory.{}"
+        print(errmsg.format(*fmt))
+        sys.exit(1)
 
-    def create(self):
-        self.commands.create()
-
-    def converge(self):
-        self.commands.converge()
-
-    def idempotence(self):
-        self.commands.idempotence()
-
-    def verify(self):
-        self.commands.verify()
-
-    def test(self):
-        self.commands.test()
-
-    def list(self):
-        self.commands.list()
-
-    def status(self):
-        self.commands.status()
-
-    def login(self):
-        self.commands.login()
-
-    def init(self):
-        self.commands.init()
+    def execute(self):
+        raise NotImplementedError
 
 
-class BaseCommands(object):
-    def __init__(self, molecule):
-        self.molecule = molecule
-
-    def create(self):
+class Create(AbstractCommand):
+    def execute(self):
         """
         Creates all instances defined in molecule.yml.
         Creates all template files used by molecule, vagrant, ansible-playbook.
 
         :return: None
         """
+        if self.static:
+            self.disabled('create')
+
         self.molecule._create_templates()
         try:
             self.molecule._vagrant.up(no_provision=True)
@@ -108,7 +99,9 @@ class BaseCommands(object):
             print('ERROR: {}'.format(e))
             sys.exit(e.returncode)
 
-    def destroy(self):
+
+class Destroy(AbstractCommand):
+    def execute(self):
         """
         Halts and destroys all instances created by molecule.
         Removes template files.
@@ -116,6 +109,9 @@ class BaseCommands(object):
 
         :return: None
         """
+        if self.static:
+            self.disabled('destroy')
+
         self.molecule._create_templates()
         try:
             self.molecule._vagrant.halt()
@@ -130,7 +126,9 @@ class BaseCommands(object):
             sys.exit(e.returncode)
         self.molecule._remove_templates()
 
-    def converge(self, idempotent=False, create_instances=True, create_inventory=True):
+
+class Converge(AbstractCommand):
+    def execute(self, idempotent=False, create_instances=True, create_inventory=True):
         """
         Provisions all instances using ansible-playbook.
 
@@ -146,8 +144,13 @@ class BaseCommands(object):
         if self.molecule._state.get('converged'):
             create_inventory = False
 
+        if self.static:
+            create_instances = False
+            create_inventory = False
+
         if create_instances and not idempotent:
-            self.create()
+            c = Create(self.args, self.molecule)
+            c.execute()
 
         if create_inventory:
             self.molecule._create_inventory_file()
@@ -191,15 +194,21 @@ class BaseCommands(object):
             print('ERROR: {}'.format(e))
             sys.exit(e.exit_code)
 
-    def idempotence(self):
+
+class Idempotence(AbstractCommand):
+    def execute(self):
         """
         Provisions instances and parses output to determine idempotence
 
         :return: None
         """
+        if self.static:
+            self.disabled('idempotence')
+
         print('{}Idempotence test in progress (can take a few minutes)...{}'.format(Fore.CYAN, Fore.RESET))
 
-        output = self.converge(idempotent=True)
+        c = Converge(self.args, self.molecule)
+        output = c.execute(idempotent=True)
         idempotent, changed_tasks = self.molecule._parse_provisioning_output(output.stdout)
 
         if idempotent:
@@ -219,7 +228,9 @@ class BaseCommands(object):
             print('{}{}{}'.format(Fore.YELLOW, warning_msg, Fore.RESET))
         sys.exit(1)
 
-    def verify(self):
+
+class Verify(AbstractCommand):
+    def execute(self):
         """
         Performs verification steps on running instances.
         Checks files for trailing whitespace and newlines.
@@ -228,6 +239,9 @@ class BaseCommands(object):
 
         :return: None if no tests are found, otherwise return code of underlying command
         """
+        if self.static:
+            self.disabled('verify')
+
         validators.check_trailing_cruft(ignore_paths=self.molecule._config.config['molecule']['ignore_paths'])
 
         # no tests found
@@ -273,31 +287,47 @@ class BaseCommands(object):
                 print('ERROR: {}'.format(e))
                 sys.exit(e.exit_code)
 
-    def test(self):
+
+class Test(AbstractCommand):
+    def execute(self):
         """
         Runs a series of commands (defined in config) against instances for a full test/verify run
 
         :return: None
         """
-        for task in self.molecule._config.config['molecule']['test']['sequence']:
-            m = getattr(self, task)
-            m()
+        if self.static:
+            self.disabled('test')
 
-    def list(self):
+        for task in self.molecule._config.config['molecule']['test']['sequence']:
+            command = getattr(sys.modules[__name__], task.capitalize())
+            c = command(self.args, self.molecule)
+            c.execute()
+
+
+class List(AbstractCommand):
+    def execute(self):
         """
         Prints a list of currently available platforms
 
         :return: None
         """
+        if self.static:
+            self.disabled('list')
+
         is_machine_readable = self.molecule._args['-m']
         self.molecule._print_valid_platforms(machine_readable=is_machine_readable)
 
-    def status(self):
+
+class Status(AbstractCommand):
+    def execute(self):
         """
         Prints status of currently converged instances, similar to `vagrant status`
 
         :return: Return code of underlying command if there's an exception, otherwise None
         """
+        if self.static:
+            self.disabled('status')
+
         if not os.path.isfile(self.molecule._config.config['molecule']['vagrantfile_file']):
             errmsg = '{}ERROR: No instances created. Try `{} create` first.{}'
             print(errmsg.format(Fore.RED, os.path.basename(sys.argv[0]), Fore.RESET))
@@ -324,12 +354,17 @@ class BaseCommands(object):
         print
         self.molecule._print_valid_platforms()
 
-    def login(self):
+
+class Login(AbstractCommand):
+    def execute(self):
         """
         Initiates an interactive ssh session with a given instance name.
 
         :return: None
         """
+        if self.static:
+            self.disabled('login')
+
         # make sure vagrant knows about this host
         try:
             conf = self.molecule._vagrant.conf(vm_name=self.molecule._args['<host>'])
@@ -349,7 +384,9 @@ class BaseCommands(object):
         signal.signal(signal.SIGWINCH, self.molecule._sigwinch_passthrough)
         self.molecule._pt.interact()
 
-    def init(self):
+
+class Init(AbstractCommand):
+    def execute(self):
         """
         Creates the scaffolding for a new role intended for use with molecule
 
@@ -402,92 +439,3 @@ class BaseCommands(object):
         msg = '{}Successfully initialized new role in {}{}'
         print(msg.format(Fore.GREEN, role_path, Fore.RESET))
         sys.exit(0)
-
-
-class StaticCommands(BaseCommands):
-    def __init__(self, molecule):
-        super(self.__class__, self).__init__(molecule)
-
-    def _disabled(self, cmd):
-        """
-        Prints 'command disabled' message and exits program.
-
-        :param cmd: Name of the disabled command to print.
-        :return: None
-        """
-        fmt = [Fore.RED, cmd, Fore.RESET]
-        errmsg = "\n{}The `{}` command isn't supported with static inventory.{}"
-        print(errmsg.format(*fmt))
-        sys.exit(1)
-
-    def converge(self):
-        """
-        Calls parent converge method without instance and inventory creation.
-
-        :return: Output of parent's converge method.
-        """
-        return super(self.__class__, self).converge(create_instances=False, create_inventory=False)
-
-    def create(self):
-        """
-        Overrides parent method and prints an error message.
-
-        :return: None
-        """
-        self._disabled('create')
-
-    def destroy(self):
-        """
-        Overrides parent method and prints an error message.
-
-        :return: None
-        """
-        self._disabled('destroy')
-
-    def login(self):
-        """
-        Overrides parent method and prints an error message.
-
-        :return: None
-        """
-        self._disabled('login')
-
-    def idempotence(self):
-        """
-        Overrides parent method and prints an error message.
-
-        :return: None
-        """
-        self._disabled('idempotence')
-
-    def verify(self):
-        """
-        Overrides parent method and prints an error message.
-
-        :return: None
-        """
-        self._disabled('verify')
-
-    def test(self):
-        """
-        Overrides parent method and prints an error message.
-
-        :return: None
-        """
-        self._disabled('test')
-
-    def list(self):
-        """
-        Overrides parent method and prints an error message.
-
-        :return: None
-        """
-        self._disabled('list')
-
-    def status(self):
-        """
-        Overrides parent method and prints an error message.
-
-        :return: None
-        """
-        self._disabled('status')
