@@ -1,5 +1,14 @@
 CHANGELOG for molecule
 ======================
+1.2.2
+----
+
+* Added a CLI option for the ``list`` command to make the output machine readable.
+* Refactored commands.py to be more conducive to dispatch from DocOpt (#76).
+* Fixed issue #82 where callback plugin path wasn't being properly merged with user-defined values.
+* Fixed issue #84 where ``molecule init`` would produce a molecule.yml that contained trailing whitespace.
+* Fixed issue #85 preventing user-defined serverspec directory from being used.
+
 1.2.1
 ----
 
