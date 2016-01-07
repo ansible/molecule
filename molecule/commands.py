@@ -167,8 +167,12 @@ class Converge(AbstractCommand):
             callback_plugin = kwargs.get('_env', {}).get('ANSIBLE_CALLBACK_PLUGINS', '')
 
             # Set the idempotence plugin.
-            kwargs['_env']['ANSIBLE_CALLBACK_PLUGINS'] = callback_plugin + os.path.join(
-                sys.prefix, 'share/molecule/ansible/plugins/callback/idempotence')
+            if callback_plugin:
+                kwargs['_env']['ANSIBLE_CALLBACK_PLUGINS'] = callback_plugin + ':' + os.path.join(
+                    sys.prefix, 'share/molecule/ansible/plugins/callback/idempotence')
+            else:
+                kwargs['_env']['ANSIBLE_CALLBACK_PLUGINS'] = os.path.join(
+                    sys.prefix, 'share/molecule/ansible/plugins/callback/idempotence')
 
         try:
             ansible = sh.ansible_playbook.bake(playbook, *args, **kwargs)
