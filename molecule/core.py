@@ -259,7 +259,8 @@ class Molecule(object):
         # rakefile
         kwargs = {
             'molecule_file': self._config.config['molecule']['molecule_file'],
-            'current_platform': self._env['MOLECULE_PLATFORM']
+            'current_platform': self._env['MOLECULE_PLATFORM'],
+            'serverspec_dir': self._config.config['molecule']['serverspec_dir']
         }
         utilities.write_template(self._config.config['molecule']['rakefile_template'],
                                  self._config.config['molecule']['rakefile_file'],

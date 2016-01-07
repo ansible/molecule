@@ -28,12 +28,12 @@ namespace :serverspec do
   task all: instances_to_test.keys.map { |h| h }
   instances_to_test.each do |vm_name, instance|
     desc "Run serverspec on #{vm_name}"
-    pattern = ['spec/*_spec.rb', "spec/#{instance['name']}/*_spec.rb", "spec/hosts/#{instance['name']}/*_spec.rb"]
+    pattern = ['{{ serverspec_dir }}/*_spec.rb', "{{ serverspec_dir }}/#{instance['name']}/*_spec.rb", "{{ serverspec_dir }}/hosts/#{instance['name']}/*_spec.rb"]
 
     if instance.key?('ansible_groups') && instance['ansible_groups'].nil? == false
       instance['ansible_groups'].each do |group|
-        pattern << "spec/#{group}/*_spec.rb"
-        pattern << "spec/groups/#{group}/*_spec.rb"
+        pattern << "{{ serverspec_dir }}/#{group}/*_spec.rb"
+        pattern << "{{ serverspec_dir }}/groups/#{group}/*_spec.rb"
     end
 
     end
