@@ -168,7 +168,7 @@ class Converge(AbstractCommand):
             ansible.add_env_arg('ANSIBLE_FORCE_COLOR', 'false')
 
             # Save the previous callback plugin if any.
-            callback_plugin = ansible.env.get('ANSIBLE_CALLBACK_PLUGINS', '')
+            callback_plugin = ansible.env.get('ANSIBLE_CALLBACK_PLUGINS')
 
             # Set the idempotence plugin.
             if callback_plugin:
