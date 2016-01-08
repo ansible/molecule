@@ -34,8 +34,8 @@ from jinja2 import PackageLoader
 
 import molecule.utilities as utilities
 import molecule.validators as validators
-from molecule.core import Molecule
 from molecule.ansible_playbook import AnsiblePlaybook
+from molecule.core import Molecule
 
 
 class AbstractCommand:
