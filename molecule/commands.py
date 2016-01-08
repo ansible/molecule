@@ -156,14 +156,14 @@ class Converge(AbstractCommand):
         if create_inventory:
             self.molecule._create_inventory_file()
 
-        ansible = AnsiblePlaybook(args=self.molecule._config.config['ansible'])
+        ansible = AnsiblePlaybook(self.molecule._config.config['ansible'])
 
         # target tags passed in via CLI
         ansible.add_cli_arg('tags', self.molecule._args.get('--tags'))
 
         if idempotent:
-            ansible.add_cli_arg('_out', None)
-            ansible.add_cli_arg('_err', None)
+            ansible.remove_cli_arg('_out')
+            ansible.remove_cli_arg('_err')
             ansible.add_env_arg('ANSIBLE_NOCOLOR', 'true')
             ansible.add_env_arg('ANSIBLE_FORCE_COLOR', 'false')
 

@@ -28,7 +28,7 @@ from utilities import print_stdout
 
 
 class AnsiblePlaybook:
-    def __init__(self, args={}, _env=None, _out=print_stdout, _err=print_stderr):
+    def __init__(self, args, _env=None, _out=print_stdout, _err=print_stderr):
         """
         Sets up requirements for ansible-playbook
 
@@ -108,11 +108,17 @@ class AnsiblePlaybook:
         :param value: Value of argument to be added
         :return: None
         """
-        if not value:
-            self.cli.pop(name, None)
-            return
+        if value:
+            self.cli[name] = value
 
-        self.cli[name] = value
+    def remove_cli_arg(self, name):
+        """
+        Removes CLI argument
+
+        :param name: Key name of CLI argument to remove
+        :return: None
+        """
+        self.cli.pop(name, None)
 
     def add_env_arg(self, name, value):
         """
@@ -124,11 +130,21 @@ class AnsiblePlaybook:
         """
         self.env[name] = value
 
+    def remove_env_arg(self, name):
+        """
+        Removes environment argument
+
+        :param name: Key name of environment argument to remove
+        :return: None
+        """
+        self.env.pop(name, None)
+
     def execute(self):
         """
         Executes ansible-playbook
 
-        :return: sh stdout on success, else None
+        :return: sh.stdout on success, else None
+        :return: None
         """
         if self.ansible is None:
             self.bake()
