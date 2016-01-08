@@ -22,7 +22,11 @@ import os
 import sys
 import re
 
+import sh
 from colorama import Fore
+
+from utilities import print_stderr
+from utilities import print_stdout
 
 
 def check_trailing_cruft(ignore_paths=[]):
@@ -106,3 +110,13 @@ def trailing_whitespace(source):
             lines.append(counter + 1)
 
     return lines if lines else None
+
+
+def rubocop(serverspec_dir, env):
+    try:
+        pattern = serverspec_dir + '/**/*.rb'
+        output = sh.rubocop(pattern, _env=env, _out=print_stdout, _err=print_stderr)
+        return output.exit_code
+    except sh.ErrorReturnCode as e:
+        print('ERROR: {}'.format(e))
+        sys.exit(e.exit_code)

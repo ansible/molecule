@@ -278,7 +278,7 @@ class Verify(AbstractCommand):
 
         # serverspec
         if os.path.isdir(self.molecule._config.config['molecule']['serverspec_dir']):
-            self.molecule._rubocop()
+            validators.rubocop(self.molecule._config.config['molecule']['serverspec_dir'], self.molecule._env)
             if 'rakefile_file' in self.molecule._config.config['molecule']:
                 kwargs['rakefile'] = self.molecule._config.config['molecule']['rakefile_file']
             if self.molecule._args['--debug']:
