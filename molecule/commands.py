@@ -161,53 +161,38 @@ class Converge(AbstractCommand):
         # target tags passed in via CLI
         ansible.add_cli_arg('tags', self.molecule._args.get('--tags'))
 
+        if idempotent:
+            ansible.add_cli_arg('_out', None)
+            ansible.add_cli_arg('_err', None)
+            ansible.add_env_arg('ANSIBLE_NOCOLOR', 'true')
+            ansible.add_env_arg('ANSIBLE_FORCE_COLOR', 'false')
+
+            # Save the previous callback plugin if any.
+            callback_plugin = ansible.env.get('ANSIBLE_CALLBACK_PLUGINS', '')
+
+            # Set the idempotence plugin.
+            if callback_plugin:
+                ansible.add_env_arg('ANSIBLE_CALLBACK_PLUGINS', callback_plugin + ':' + os.path.join(
+                    sys.prefix, 'share/molecule/ansible/plugins/callback/idempotence'))
+            else:
+                ansible.add_env_arg('ANSIBLE_CALLBACK_PLUGINS',
+                                    os.path.join(sys.prefix, 'share/molecule/ansible/plugins/callback/idempotence'))
+
         ansible.bake()
-        utilities.debug('TEST', str(ansible.ansible))
-        utilities.debug('TEST', yaml.dump(ansible.cli, default_flow_style=False, indent=2))
-        ansible.execute()
+        if self.molecule._args['--debug']:
+            ansible_env = {k: v for (k, v) in ansible.env.items() if 'ANSIBLE' in k}
+            other_env = {k: v for (k, v) in ansible.env.items() if 'ANSIBLE' not in k}
+            utilities.debug('OTHER ENVIRONMENT', yaml.dump(other_env, default_flow_style=False, indent=2))
+            utilities.debug('ANSIBLE ENVIRONMENT', yaml.dump(ansible_env, default_flow_style=False, indent=2))
+            utilities.debug('ANSIBLE PLAYBOOK', str(ansible.ansible))
 
-        # playbook, args, kwargs = self.molecule._create_playbook_args()
+        output = ansible.execute()
 
-        # if idempotent:
-        #     kwargs.pop('_out', None)
-        #     kwargs.pop('_err', None)
-        #     kwargs['_env']['ANSIBLE_NOCOLOR'] = 'true'
-        #     kwargs['_env']['ANSIBLE_FORCE_COLOR'] = 'false'
+        if not self.molecule._state.get('converged'):
+            self.molecule._state['converged'] = True
+            self.molecule._write_state_file()
 
-        #     # Save the previous callback plugin if any.
-        #     callback_plugin = kwargs.get('_env', {}).get('ANSIBLE_CALLBACK_PLUGINS', '')
-
-        #     # Set the idempotence plugin.
-        #     if callback_plugin:
-        #         kwargs['_env']['ANSIBLE_CALLBACK_PLUGINS'] = callback_plugin + ':' + os.path.join(
-        #             sys.prefix, 'share/molecule/ansible/plugins/callback/idempotence')
-        #     else:
-        #         kwargs['_env']['ANSIBLE_CALLBACK_PLUGINS'] = os.path.join(
-        #             sys.prefix, 'share/molecule/ansible/plugins/callback/idempotence')
-
-        # try:
-        #     ansible = sh.ansible_playbook.bake(playbook, *args, **kwargs)
-        #     if self.molecule._args['--debug']:
-        #         ansible_env = {k: v for (k, v) in kwargs['_env'].items() if 'ANSIBLE' in k}
-        #         other_env = {k: v for (k, v) in kwargs['_env'].items() if 'ANSIBLE' not in k}
-        #         utilities.debug('OTHER ENVIRONMENT', yaml.dump(other_env, default_flow_style=False, indent=2))
-        #         utilities.debug('ANSIBLE ENVIRONMENT', yaml.dump(ansible_env, default_flow_style=False, indent=2))
-        #         utilities.debug('ANSIBLE PLAYBOOK', str(ansible))
-
-        #     output = ansible()
-
-        #     if not self.molecule._state.get('converged'):
-        #         self.molecule._state['converged'] = True
-        #         self.molecule._write_state_file()
-
-        #     if idempotent:
-        #         # Reset the callback plugin to the previous value.
-        #         kwargs['_env']['ANSIBLE_CALLBACK_PLUGINS'] = callback_plugin
-
-        #     return output
-        # except sh.ErrorReturnCode as e:
-        #     print('ERROR: {}'.format(e))
-        #     sys.exit(e.exit_code)
+        return output
 
 
 class Idempotence(AbstractCommand):
@@ -224,7 +209,7 @@ class Idempotence(AbstractCommand):
 
         c = Converge(self.args, self.molecule)
         output = c.execute(idempotent=True)
-        idempotent, changed_tasks = self.molecule._parse_provisioning_output(output.stdout)
+        idempotent, changed_tasks = self.molecule._parse_provisioning_output(output)
 
         if idempotent:
             print('{}Idempotence test passed.{}'.format(Fore.GREEN, Fore.RESET))

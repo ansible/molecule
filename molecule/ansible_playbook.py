@@ -19,14 +19,16 @@
 #  THE SOFTWARE.
 
 import os
+import sys
 
 import sh
 
-import molecule.utilities as utilities
+from utilities import print_stderr
+from utilities import print_stdout
 
 
 class AnsiblePlaybook:
-    def __init__(self, args={}, _env=None, _out=utilities.print_stdout, _err=utilities.print_stderr):
+    def __init__(self, args={}, _env=None, _out=print_stdout, _err=print_stderr):
         """
         Sets up requirements for ansible-playbook
 
@@ -34,24 +36,23 @@ class AnsiblePlaybook:
         :param _env: Environment dictionary to use. os.environ.copy() is used by default
         :param _out: Function passed to sh for STDOUT
         :param _err: Function passed to sh for STDERR
-
         :return: None
         """
-
         self.cli = {}
         self.cli_pos = []
         self.env = _env if _env else os.environ.copy()
         self.playbook = None
         self.ansible = None
 
+        # process arguments passed in (typically from molecule.yml's ansible block)
         for k, v in args.iteritems():
             self.parse_arg(k, v)
 
-        # these can be overridden with calls to add_env_arg()
+        # defaults can be redefined with call to add_env_arg() before baking
         self.add_env_arg('PYTHONUNBUFFERED', '1')
         self.add_env_arg('ANSIBLE_FORCE_COLOR', 'true')
 
-        # these get passed through to sh, not ansible-playbook
+        # passed through to sh, not ansible-playbook
         self.add_cli_arg('_out', _out)
         self.add_cli_arg('_err', _err)
 
@@ -65,13 +66,12 @@ class AnsiblePlaybook:
 
     def parse_arg(self, name, value):
         """
-        Sanitizes and adds CLI arguments to be passed to ansible-playbook
+        Parses argument and adds to CLI or environment
 
-        :param name: Name of CLI argument to be added
-        :param value: Value of CLI argument to be added
+        :param name: Name of argument to be added
+        :param value: Value of argument to be added
         :return: None
         """
-
         if name == 'raw_env_vars':
             for k, v in value.iteritems():
                 self.add_env_arg(k, v)
@@ -93,26 +93,48 @@ class AnsiblePlaybook:
             self.playbook = value
             return
 
-        # don't pass False values to ansible-playbook
-        if not value:
-            return
-
         # verbose is weird, must be -vvvv not verbose=vvvv
-        if name == 'verbose':
+        if name == 'verbose' and value:
             self.cli_pos.append('-' + value)
             return
 
         self.add_cli_arg(name, value)
 
     def add_cli_arg(self, name, value):
-        if value:
-            self.cli[name] = value
+        """
+        Adds argument to CLI passed to ansible-playbook
+
+        :param name: Name of argument to be added
+        :param value: Value of argument to be added
+        :return: None
+        """
+        if not value:
+            self.cli.pop(name, None)
+            return
+
+        self.cli[name] = value
 
     def add_env_arg(self, name, value):
+        """
+        Adds argument to environment passed to ansible-playbook
+
+        :param name: Name of argument to be added
+        :param value: Value of argument to be added
+        :return: None
+        """
         self.env[name] = value
 
     def execute(self):
+        """
+        Executes ansible-playbook
+
+        :return: sh stdout on success, else None
+        """
         if self.ansible is None:
             self.bake()
 
-        self.ansible()
+        try:
+            return self.ansible().stdout
+        except sh.ErrorReturnCode as e:
+            print('ERROR: {}'.format(e))
+            sys.exit(e.exit_code)
