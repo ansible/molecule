@@ -155,7 +155,7 @@ class BaseProvisioner(object):
         return
 
     @abc.abstractmethod
-    def ssh_config(self):
+    def conf(self, vm_name=None, ssh_config=False):
         """
         SSH config required for logging into a VM
         :return:
@@ -284,8 +284,11 @@ class VagrantProvisioner(BaseProvisioner):
     def status(self):
         return self._vagrant.status()
 
-    def ssh_config(self, vm_name=None):
-        return self._vagrant.conf(vm_name=vm_name)
+    def conf(self, vm_name=None, ssh_config=False):
+        if ssh_config:
+            return self._vagrant.ssh_config(vm_name=vm_name)
+        else:
+            return self._vagrant.conf(vm_name=vm_name)
 
 
 # Place holder for Proxmox, partially implemented
