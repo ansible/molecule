@@ -372,7 +372,7 @@ class Login(AbstractCommand):
 
         # make sure vagrant knows about this host
         try:
-            conf = self.molecule._provisioner.ssh_config(vm_name=self.molecule._args['<host>'])
+            conf = self.molecule._provisioner.conf(vm_name=self.molecule._args['<host>'])
             ssh_args = [conf['HostName'], conf['User'], conf['Port'], conf['IdentityFile'],
                         ' '.join(self.molecule._config.config['molecule']['raw_ssh_args'])]
             ssh_cmd = 'ssh {} -l {} -p {} -i {} {}'

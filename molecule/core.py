@@ -117,8 +117,8 @@ class Molecule(object):
 
     def _write_ssh_config(self):
         try:
-            out = self._provisioner.ssh_config()
-            ssh_config = self._provisioner.get_ssh_config_file()
+            out = self._provisioner.conf(ssh_config=True)
+            ssh_config = self._provisioner.ssh_config_file
         except CalledProcessError as e:
             print('ERROR: {}'.format(e))
             print("Does your vagrant VM exist?")
@@ -211,7 +211,7 @@ class Molecule(object):
         host_template = \
             '{} ansible_ssh_host={} ansible_ssh_port={} ansible_ssh_private_key_file={} ansible_ssh_user={}\n'
         for instance in self._provisioner.instances:
-            ssh = self._provisioner.ssh_config(vm_name=utilities.format_instance_name(instance['name'], self._env[
+            ssh = self._provisioner.conf(vm_name=utilities.format_instance_name(instance['name'], self._env[
                 'MOLECULE_PLATFORM'], self._provisioner.instances))
             inventory += host_template.format(ssh['Host'], ssh['HostName'], ssh['Port'], ssh['IdentityFile'],
                                               ssh['User'])
