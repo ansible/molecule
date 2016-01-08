@@ -39,6 +39,7 @@ class AnsiblePlaybook:
         """
 
         self.cli = {}
+        self.cli_pos = []
         self.env = _env if _env else os.environ.copy()
         self.playbook = None
         self.ansible = None
@@ -60,7 +61,7 @@ class AnsiblePlaybook:
 
         :return: None
         """
-        self.ansible = sh.ansible_playbook.bake(self.playbook, _env=self.env, **self.cli)
+        self.ansible = sh.ansible_playbook.bake(self.playbook, *self.cli_pos, _env=self.env, **self.cli)
 
     def parse_arg(self, name, value):
         """
@@ -96,15 +97,16 @@ class AnsiblePlaybook:
         if not value:
             return
 
+        # verbose is weird, must be -vvvv not verbose=vvvv
+        if name == 'verbose':
+            self.cli_pos.append('-' + value)
+            return
+
         self.add_cli_arg(name, value)
 
-        ### make sure verbose: vvvv works as --verbose ###
-        # verbose is weird -vvvv
-        # if self._config.config['ansible']['verbose']:
-        #     args.append('-' + self._config.config['ansible']['verbose'])
-
     def add_cli_arg(self, name, value):
-        self.cli[name] = value
+        if value:
+            self.cli[name] = value
 
     def add_env_arg(self, name, value):
         self.env[name] = value

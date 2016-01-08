@@ -79,9 +79,6 @@ class Molecule(object):
         if not os.path.exists(self._config.config['molecule']['molecule_dir']):
             os.makedirs(self._config.config['molecule']['molecule_dir'])
 
-        if self._args['--tags']:
-            self._env['MOLECULE_TAGS'] = self._args['--tags']
-
         # updates instances config with full machine names
         self._config.populate_instance_names(self._env['MOLECULE_PLATFORM'])
         if self._args['--debug']:
@@ -236,49 +233,3 @@ class Molecule(object):
             utilities.write_file(inventory_file, inventory)
         except IOError:
             print('{}WARNING: could not write inventory file {}{}'.format(Fore.YELLOW, inventory_file, Fore.RESET))
-
-    def _create_playbook_args(self):
-        """
-        Builds up CLI and ENV arguments from various config files to be passed to ansible-playbook.
-
-        :return: None
-        """
-        # don't pass these to molecule-playbook CLI
-        env_args = ['raw_ssh_args', 'host_key_checking', 'config_file', 'raw_env_vars']
-
-        # args that molecule-playbook doesn't accept as --arg=value
-        special_args = ['playbook', 'verbose']
-
-        # set raw environment variables if any are found
-        if 'raw_env_vars' in self._config.config['ansible']:
-            for key, value in self._config.config['ansible']['raw_env_vars'].iteritems():
-                self._env[key] = value
-
-        self._env['PYTHONUNBUFFERED'] = '1'
-        self._env['ANSIBLE_FORCE_COLOR'] = 'true'
-        self._env['ANSIBLE_HOST_KEY_CHECKING'] = str(self._config.config['ansible']['host_key_checking']).lower()
-        self._env['ANSIBLE_SSH_ARGS'] = ' '.join(self._config.config['ansible']['raw_ssh_args'])
-        self._env['ANSIBLE_CONFIG'] = self._config.config['ansible']['config_file']
-
-        kwargs = {}
-        args = []
-
-        # pull in values passed to molecule CLI
-        if '--tags' in self._args:
-            self._config.config['ansible']['tags'] = self._args['--tags']
-
-        # pass supported --arg=value args
-        for arg, value in self._config.config['ansible'].iteritems():
-            # don't pass False arguments to ansible-playbook
-            if value and arg not in (env_args + special_args):
-                kwargs[arg] = value
-
-        # verbose is weird -vvvv
-        if self._config.config['ansible']['verbose']:
-            args.append('-' + self._config.config['ansible']['verbose'])
-
-        kwargs['_env'] = self._env
-        kwargs['_out'] = utilities.print_stdout
-        kwargs['_err'] = utilities.print_stderr
-
-        return self._config.config['ansible']['playbook'], args, kwargs

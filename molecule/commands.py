@@ -35,6 +35,7 @@ from jinja2 import PackageLoader
 import molecule.utilities as utilities
 import molecule.validators as validators
 from molecule.core import Molecule
+from molecule.ansible_playbook import AnsiblePlaybook
 
 
 class AbstractCommand:
@@ -155,48 +156,58 @@ class Converge(AbstractCommand):
         if create_inventory:
             self.molecule._create_inventory_file()
 
-        playbook, args, kwargs = self.molecule._create_playbook_args()
+        ansible = AnsiblePlaybook(args=self.molecule._config.config['ansible'])
 
-        if idempotent:
-            kwargs.pop('_out', None)
-            kwargs.pop('_err', None)
-            kwargs['_env']['ANSIBLE_NOCOLOR'] = 'true'
-            kwargs['_env']['ANSIBLE_FORCE_COLOR'] = 'false'
+        # target tags passed in via CLI
+        ansible.add_cli_arg('tags', self.molecule._args.get('--tags'))
 
-            # Save the previous callback plugin if any.
-            callback_plugin = kwargs.get('_env', {}).get('ANSIBLE_CALLBACK_PLUGINS', '')
+        ansible.bake()
+        utilities.debug('TEST', str(ansible.ansible))
+        utilities.debug('TEST', yaml.dump(ansible.cli, default_flow_style=False, indent=2))
+        ansible.execute()
 
-            # Set the idempotence plugin.
-            if callback_plugin:
-                kwargs['_env']['ANSIBLE_CALLBACK_PLUGINS'] = callback_plugin + ':' + os.path.join(
-                    sys.prefix, 'share/molecule/ansible/plugins/callback/idempotence')
-            else:
-                kwargs['_env']['ANSIBLE_CALLBACK_PLUGINS'] = os.path.join(
-                    sys.prefix, 'share/molecule/ansible/plugins/callback/idempotence')
+        # playbook, args, kwargs = self.molecule._create_playbook_args()
 
-        try:
-            ansible = sh.ansible_playbook.bake(playbook, *args, **kwargs)
-            if self.molecule._args['--debug']:
-                ansible_env = {k: v for (k, v) in kwargs['_env'].items() if 'ANSIBLE' in k}
-                other_env = {k: v for (k, v) in kwargs['_env'].items() if 'ANSIBLE' not in k}
-                utilities.debug('OTHER ENVIRONMENT', yaml.dump(other_env, default_flow_style=False, indent=2))
-                utilities.debug('ANSIBLE ENVIRONMENT', yaml.dump(ansible_env, default_flow_style=False, indent=2))
-                utilities.debug('ANSIBLE PLAYBOOK', str(ansible))
+        # if idempotent:
+        #     kwargs.pop('_out', None)
+        #     kwargs.pop('_err', None)
+        #     kwargs['_env']['ANSIBLE_NOCOLOR'] = 'true'
+        #     kwargs['_env']['ANSIBLE_FORCE_COLOR'] = 'false'
 
-            output = ansible()
+        #     # Save the previous callback plugin if any.
+        #     callback_plugin = kwargs.get('_env', {}).get('ANSIBLE_CALLBACK_PLUGINS', '')
 
-            if not self.molecule._state.get('converged'):
-                self.molecule._state['converged'] = True
-                self.molecule._write_state_file()
+        #     # Set the idempotence plugin.
+        #     if callback_plugin:
+        #         kwargs['_env']['ANSIBLE_CALLBACK_PLUGINS'] = callback_plugin + ':' + os.path.join(
+        #             sys.prefix, 'share/molecule/ansible/plugins/callback/idempotence')
+        #     else:
+        #         kwargs['_env']['ANSIBLE_CALLBACK_PLUGINS'] = os.path.join(
+        #             sys.prefix, 'share/molecule/ansible/plugins/callback/idempotence')
 
-            if idempotent:
-                # Reset the callback plugin to the previous value.
-                kwargs['_env']['ANSIBLE_CALLBACK_PLUGINS'] = callback_plugin
+        # try:
+        #     ansible = sh.ansible_playbook.bake(playbook, *args, **kwargs)
+        #     if self.molecule._args['--debug']:
+        #         ansible_env = {k: v for (k, v) in kwargs['_env'].items() if 'ANSIBLE' in k}
+        #         other_env = {k: v for (k, v) in kwargs['_env'].items() if 'ANSIBLE' not in k}
+        #         utilities.debug('OTHER ENVIRONMENT', yaml.dump(other_env, default_flow_style=False, indent=2))
+        #         utilities.debug('ANSIBLE ENVIRONMENT', yaml.dump(ansible_env, default_flow_style=False, indent=2))
+        #         utilities.debug('ANSIBLE PLAYBOOK', str(ansible))
 
-            return output
-        except sh.ErrorReturnCode as e:
-            print('ERROR: {}'.format(e))
-            sys.exit(e.exit_code)
+        #     output = ansible()
+
+        #     if not self.molecule._state.get('converged'):
+        #         self.molecule._state['converged'] = True
+        #         self.molecule._write_state_file()
+
+        #     if idempotent:
+        #         # Reset the callback plugin to the previous value.
+        #         kwargs['_env']['ANSIBLE_CALLBACK_PLUGINS'] = callback_plugin
+
+        #     return output
+        # except sh.ErrorReturnCode as e:
+        #     print('ERROR: {}'.format(e))
+        #     sys.exit(e.exit_code)
 
 
 class Idempotence(AbstractCommand):
