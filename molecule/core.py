@@ -27,12 +27,12 @@ import termios
 from subprocess import CalledProcessError
 
 import sh
-import vagrant
 import yaml
 from colorama import Fore
 
 import molecule.config as config
 import molecule.utilities as utilities
+import molecule.provisioners as provisioners
 
 
 class Molecule(object):
@@ -41,6 +41,7 @@ class Molecule(object):
         self._env = os.environ.copy()
         self._args = args
         self._config = config.Config()
+        self._provisioner = None
 
     def main(self):
         # load molecule defaults
@@ -64,41 +65,22 @@ class Molecule(object):
 
         self._state = self._load_state_file()
 
+        try:
+            self._provisioner = provisioners.get_provisioner(self)
+        except provisioners.InvalidProviderSpecified:
+            print("\n{}Invalid provider '{}'\n".format(Fore.RED, self._args['--provider'], Fore.RESET))
+            self._print_valid_providers()
+            sys.exit(1)
+        except provisioners.InvalidPlatformSpecified:
+            print("\n{}Invalid platform '{}'\n".format(Fore.RED, self._args['--platform'], Fore.RESET))
+            self._print_valid_platforms()
+            sys.exit(1)
+
         if not os.path.exists(self._config.config['molecule']['molecule_dir']):
             os.makedirs(self._config.config['molecule']['molecule_dir'])
 
-        self._vagrant = vagrant.Vagrant(quiet_stdout=False, quiet_stderr=False)
-
-        self._env['VAGRANT_VAGRANTFILE'] = self._config.config['molecule']['vagrantfile_file']
-
         if self._args['--tags']:
             self._env['MOLECULE_TAGS'] = self._args['--tags']
-
-        if self._args['--provider']:
-            if not [item
-                    for item in self._config.config['vagrant']['providers']
-                    if item['name'] == self._args['--provider']]:
-                print("\n{}Invalid provider '{}'\n".format(Fore.RED, self._args['--provider'], Fore.RESET))
-                self._print_valid_providers()
-                sys.exit(1)
-            self._state['default_provider'] = self._args['--provider']
-            self._env['VAGRANT_DEFAULT_PROVIDER'] = self._args['--provider']
-        else:
-            self._env['VAGRANT_DEFAULT_PROVIDER'] = self._get_default_provider()
-
-        if self._args['--platform']:
-            if not [item
-                    for item in self._config.config['vagrant']['platforms']
-                    if item['name'] == self._args['--platform']]:
-                print("\n{}Invalid platform '{}'\n".format(Fore.RED, self._args['--platform'], Fore.RESET))
-                self._print_valid_platforms()
-                sys.exit(1)
-            self._state['default_platform'] = self._args['--platform']
-            self._env['MOLECULE_PLATFORM'] = self._args['--platform']
-        else:
-            self._env['MOLECULE_PLATFORM'] = self._get_default_platform()
-
-        self._vagrant.env = self._env
 
         # updates instances config with full machine names
         self._config.populate_instance_names(self._env['MOLECULE_PLATFORM'])
@@ -135,63 +117,26 @@ class Molecule(object):
 
     def _write_ssh_config(self):
         try:
-            out = self._vagrant.ssh_config()
-            ssh_config = self._get_vagrant_ssh_config()
+            out = self._provisioner.ssh_config()
+            ssh_config = self._provisioner.get_ssh_config_file()
         except CalledProcessError as e:
             print('ERROR: {}'.format(e))
             print("Does your vagrant VM exist?")
             sys.exit(e.returncode)
         utilities.write_file(ssh_config, out)
 
-    def _get_vagrant_ssh_config(self):
-        return '.vagrant/ssh-config'
-
-    def _get_default_platform(self):
-        # assume static inventory if there's no vagrant section
-        if self._config.config.get('vagrant') is None:
-            return 'static'
-
-        # assume static inventory if no platforms are listed
-        if self._config.config['vagrant'].get('platforms') is None:
-            return 'static'
-
-        default_platform = self._config.config['vagrant']['platforms'][0]['name']
-
-        # default to first entry if no entry for platform exists or platform is false
-        if not self._state.get('default_platform'):
-            return default_platform
-
-        return self._state['default_platform']
-
     def _print_valid_platforms(self, machine_readable=False):
         if not machine_readable:
             print(Fore.CYAN + "AVAILABLE PLATFORMS" + Fore.RESET)
-        default_platform = self._get_default_platform()
-        for platform in self._config.config['vagrant']['platforms']:
+        default_platform = self._provisioner.default_platform
+        for platform in self._provisioner.valid_platforms:
             default = ' (default)' if platform['name'] == default_platform and not machine_readable else ''
             print(platform['name'] + default)
 
-    def _get_default_provider(self):
-        # assume static inventory if there's no vagrant section
-        if self._config.config.get('vagrant') is None:
-            return 'static'
-
-        # assume static inventory if no providers are listed
-        if self._config.config['vagrant'].get('providers') is None:
-            return 'static'
-
-        default_provider = self._config.config['vagrant']['providers'][0]['name']
-
-        # default to first entry if no entry for provider exists or provider is false
-        if not self._state.get('default_provider'):
-            return default_provider
-
-        return self._state['default_provider']
-
     def _print_valid_providers(self):
         print(Fore.CYAN + "AVAILABLE PROVIDERS" + Fore.RESET)
-        default_provider = self._get_default_provider()
-        for provider in self._config.config['vagrant']['providers']:
+        default_provider = self._provisioner.default_provider
+        for provider in self._provisioner.valid_providers:
             default = ' (default)' if provider['name'] == default_provider else ''
             print(provider['name'] + default)
 
@@ -232,7 +177,6 @@ class Molecule(object):
 
         :return: None
         """
-        os.remove(self._config.config['molecule']['vagrantfile_file'])
         os.remove(self._config.config['molecule']['rakefile_file'])
         os.remove(self._config.config['molecule']['config_file'])
 
@@ -242,16 +186,6 @@ class Molecule(object):
 
         :return: None
         """
-        # vagrantfile
-        kwargs = {
-            'config': self._config.config,
-            'current_platform': self._env['MOLECULE_PLATFORM'],
-            'current_provider': self._env['VAGRANT_DEFAULT_PROVIDER']
-        }
-        utilities.write_template(self._config.config['molecule']['vagrantfile_template'],
-                                 self._config.config['molecule']['vagrantfile_file'],
-                                 kwargs=kwargs)
-
         # ansible.cfg
         utilities.write_template(self._config.config['molecule']['ansible_config_template'],
                                  self._config.config['molecule']['config_file'])
@@ -276,15 +210,15 @@ class Molecule(object):
         # TODO: for Ansiblev2, the following line must have s/ssh_//
         host_template = \
             '{} ansible_ssh_host={} ansible_ssh_port={} ansible_ssh_private_key_file={} ansible_ssh_user={}\n'
-        for instance in self._config.config['vagrant']['instances']:
-            ssh = self._vagrant.conf(vm_name=utilities.format_instance_name(instance['name'], self._env[
-                'MOLECULE_PLATFORM'], self._config.config['vagrant']['instances']))
+        for instance in self._provisioner.instances:
+            ssh = self._provisioner.ssh_config(vm_name=utilities.format_instance_name(instance['name'], self._env[
+                'MOLECULE_PLATFORM'], self._provisioner.instances))
             inventory += host_template.format(ssh['Host'], ssh['HostName'], ssh['Port'], ssh['IdentityFile'],
                                               ssh['User'])
 
         # get a list of all groups and hosts in those groups
         groups = {}
-        for instance in self._config.config['vagrant']['instances']:
+        for instance in self._provisioner.instances:
             if 'ansible_groups' in instance:
                 for group in instance['ansible_groups']:
                     if group not in groups:
@@ -295,7 +229,7 @@ class Molecule(object):
             inventory += '\n[{}]\n'.format(group)
             for instance in instances:
                 inventory += '{}\n'.format(utilities.format_instance_name(instance, self._env['MOLECULE_PLATFORM'],
-                                                                          self._config.config['vagrant']['instances']))
+                                                                          self._provisioner.instances))
 
         inventory_file = self._config.config['molecule']['inventory_file']
         try:
