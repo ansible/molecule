@@ -18,12 +18,34 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
+import os
+
+import sh
 import testtools
 
 import molecule.validators as validators
 
 
 class TestValidators(testtools.TestCase):
+    def setUp(self):
+        super(TestValidators, self).setUp()
+        self.good_path = '/tmp/test_validators_good/'
+        self.bad_path = '/tmp/test_validators_bad/'
+        self.good_file = 'good_ruby.rb'
+        self.bad_file = 'bad_ruby.rb'
+        good_ruby = "myvar = 'foo'\nputs myvar\n"
+        bad_ruby = 'myvar = "foo"'
+
+        if not os.path.exists(self.good_path):
+            os.makedirs(self.good_path)
+        with open(self.good_path + self.good_file, 'w') as f:
+            f.write(good_ruby)
+
+        if not os.path.exists(self.bad_path):
+            os.makedirs(self.bad_path)
+        with open(self.bad_path + self.bad_file, 'w') as f:
+            f.write(bad_ruby)
+
     def test_trailing_newline_failed(self):
         line = ['line1', 'line2', '\n']
         res = validators.trailing_newline(line)
@@ -53,3 +75,17 @@ class TestValidators(testtools.TestCase):
         res = validators.trailing_whitespace(line)
 
         self.assertIsNone(res)
+
+    def test_rubocop_good_ruby(self):
+        result = validators.rubocop(self.good_path, out='/dev/null', err='/dev/null')
+        self.assertEqual(result.exit_code, 0)
+
+    def test_rubocop_bad_ruby(self):
+        self.assertRaises(sh.ErrorReturnCode_1, validators.rubocop, self.bad_path, out='/dev/null', err='/dev/null')
+
+    def tearDown(self):
+        super(TestValidators, self).tearDown()
+        os.remove(self.good_path + self.good_file)
+        os.remove(self.bad_path + self.bad_file)
+        os.rmdir(self.good_path)
+        os.rmdir(self.bad_path)
