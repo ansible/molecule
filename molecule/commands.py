@@ -272,9 +272,14 @@ class Verify(AbstractCommand):
                 print('ERROR: {}'.format(e))
                 sys.exit(e.exit_code)
 
-        # serverspec
+        # serverspec (includes rubocop)
         if os.path.isdir(self.molecule._config.config['molecule']['serverspec_dir']):
-            validators.rubocop(self.molecule._config.config['molecule']['serverspec_dir'], self.molecule._env)
+            try:
+                validators.rubocop(self.molecule._config.config['molecule']['serverspec_dir'], env=self.molecule._env)
+            except sh.ErrorReturnCode as e:
+                print('ERROR: {}'.format(e))
+                sys.exit(e.exit_code)
+
             if 'rakefile_file' in self.molecule._config.config['molecule']:
                 kwargs['rakefile'] = self.molecule._config.config['molecule']['rakefile_file']
             if self.molecule._args['--debug']:

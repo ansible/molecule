@@ -112,11 +112,24 @@ def trailing_whitespace(source):
     return lines if lines else None
 
 
-def rubocop(serverspec_dir, env):
-    try:
-        pattern = serverspec_dir + '/**/*.rb'
-        output = sh.rubocop(pattern, _env=env, _out=print_stdout, _err=print_stderr)
-        return output.exit_code
-    except sh.ErrorReturnCode as e:
-        print('ERROR: {}'.format(e))
-        sys.exit(e.exit_code)
+def rubocop(serverspec_dir, env=None, pattern='/**/*.rb', out=print_stdout, err=print_stderr):
+    """
+    Runs rubocop against specified directory with specified pattern
+
+    :param serverspec_dir: Directory to search for files to lint
+    :param pattern: Search pattern to pass to rubocop
+    :param env: Environment to pass to underlying sh call
+    :param out: Function to process STDOUT for underlying sh call
+    :param err: Function to process STDERR for underlying sh call
+    :return: sh response object
+    """
+    kwargs = {}
+    kwargs['_env'] = env if env else os.environ.copy()
+    if 'HOME' not in kwargs['_env']:
+        kwargs['_env']['HOME'] = os.path.expanduser('~')
+
+    kwargs['_out'] = out
+    kwargs['_err'] = err
+
+    match = serverspec_dir + pattern
+    return sh.rubocop(match, **kwargs)
