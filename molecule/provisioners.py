@@ -279,6 +279,7 @@ class VagrantProvisioner(BaseProvisioner):
         os.remove(self.m._config.config['molecule']['vagrantfile_file'])
 
     def halt(self):
+        self._write_vagrant_file()
         self._vagrant.halt()
 
     def status(self):
