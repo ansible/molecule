@@ -1,5 +1,13 @@
 CHANGELOG for molecule
 ======================
+1.2.3
+----
+
+* Fixed a bug where ``destroy`` would fail on VMs that hadn't been created. Caused errors running ``test``.
+* Moved rubocop, rake, and testinfra into validators. Added tests.
+* Moved ansible-playbook logic out of core, commands and into a dedicated class. Added tests.
+* Provisioner logic moved to its own class outside of core.
+
 1.2.2
 ----
 
