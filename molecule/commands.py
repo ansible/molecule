@@ -275,6 +275,7 @@ class Verify(AbstractCommand):
             print('ERROR: {}'.format(e))
             sys.exit(e.exit_code)
 
+
 class Test(AbstractCommand):
     def execute(self):
         """

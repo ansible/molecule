@@ -111,6 +111,7 @@ def trailing_whitespace(source):
 
     return lines if lines else None
 
+
 def rubocop(serverspec_dir, debug=False, env=os.environ.copy(), pattern='/**/*.rb', out=print_stdout, err=print_stderr):
     """
     Runs rubocop against specified directory with specified pattern
@@ -123,18 +124,14 @@ def rubocop(serverspec_dir, debug=False, env=os.environ.copy(), pattern='/**/*.r
     :param err: Function to process STDERR for underlying sh call
     :return: sh response object
     """
-    kwargs = {
-        '_env': env,
-        '_out': out,
-        '_err': err,
-        'debug': debug
-    }
+    kwargs = {'_env': env, '_out': out, '_err': err, 'debug': debug}
 
     if 'HOME' not in kwargs['_env']:
         kwargs['_env']['HOME'] = os.path.expanduser('~')
 
     match = serverspec_dir + pattern
     return sh.rubocop(match, **kwargs)
+
 
 def rake(rakefile, debug=False, env=os.environ.copy(), out=print_stdout, err=print_stderr):
     """
@@ -147,18 +144,13 @@ def rake(rakefile, debug=False, env=os.environ.copy(), out=print_stdout, err=pri
     :param err: Function to process STDERR for underlying sh call
     :return: sh response object
     """
-    kwargs = {
-        '_env': env,
-        '_out': out,
-        '_err': err,
-        'trace': debug,
-        'rakefile': rakefile
-    }
+    kwargs = {'_env': env, '_out': out, '_err': err, 'trace': debug, 'rakefile': rakefile}
 
     if 'HOME' not in kwargs['_env']:
         kwargs['_env']['HOME'] = os.path.expanduser('~')
 
     return sh.rake(**kwargs)
+
 
 def testinfra(inventory, debug=False, env=None, out=print_stdout, err=print_stderr):
     """
