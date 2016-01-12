@@ -242,50 +242,38 @@ class Verify(AbstractCommand):
         if self.static:
             self.disabled('verify')
 
-        validators.check_trailing_cruft(ignore_paths=self.molecule._config.config['molecule']['ignore_paths'])
+        serverspec_dir = self.molecule._config.config['molecule']['serverspec_dir']
+        testinfra_dir = self.molecule._config.config['molecule']['testinfra_dir']
+        inventory_file = self.molecule._config.config['ansible']['inventory_file']
+        rakefile = self.molecule._config.config['molecule']['rakefile_file']
+        ignore_paths = self.molecule._config.config['molecule']['ignore_paths']
 
-        # no tests found
-        if not os.path.isdir(self.molecule._config.config['molecule']['serverspec_dir']) and not os.path.isdir(
-                self.molecule._config.config['molecule'][
-                    'testinfra_dir']):
+        # whitespace & trailing newline check
+        validators.check_trailing_cruft(ignore_paths=ignore_paths)
+
+        # no serverspec or testinfra
+        if not os.path.isdir(serverspec_dir) and not os.path.isdir(testinfra_dir):
             msg = '{}Skipping tests, could not find {}/ or {}/.{}'
-            print(msg.format(Fore.YELLOW, self.molecule._config.config['molecule']['serverspec_dir'],
-                             self.molecule._config.config[
-                                 'molecule']['testinfra_dir'], Fore.RESET))
+            print(msg.format(Fore.YELLOW, serverspec_dir, testinfra_dir, Fore.RESET))
             return
 
         self.molecule._write_ssh_config()
-        kwargs = {'_env': self.molecule._env, '_out': utilities.print_stdout, '_err': utilities.print_stderr}
-        kwargs['_env']['PYTHONDONTWRITEBYTECODE'] = '1'
-        args = []
+        kwargs = {'env': self.molecule._env}
+        kwargs['env']['PYTHONDONTWRITEBYTECODE'] = '1'
+        kwargs['debug'] = True if self.molecule._args['--debug'] else False
 
-        # testinfra
-        if os.path.isdir(self.molecule._config.config['molecule']['testinfra_dir']):
-            try:
-                ti_args = [
-                    '--sudo', '--connection=ansible',
-                    '--ansible-inventory=' + self.molecule._config.config['ansible']['inventory_file']
-                ]
-                output = sh.testinfra(*ti_args, **kwargs)
-                return output.exit_code
-            except sh.ErrorReturnCode as e:
-                print('ERROR: {}'.format(e))
-                sys.exit(e.exit_code)
+        try:
+            # testinfra
+            if os.path.isdir(testinfra_dir):
+                validators.testinfra(inventory_file, **kwargs)
 
-        # serverspec
-        if os.path.isdir(self.molecule._config.config['molecule']['serverspec_dir']):
-            self.molecule._rubocop()
-            if 'rakefile_file' in self.molecule._config.config['molecule']:
-                kwargs['rakefile'] = self.molecule._config.config['molecule']['rakefile_file']
-            if self.molecule._args['--debug']:
-                args.append('--trace')
-            try:
-                rakecmd = sh.Command("rake")
-                output = rakecmd(*args, **kwargs)
-                return output.exit_code
-            except sh.ErrorReturnCode as e:
-                print('ERROR: {}'.format(e))
-                sys.exit(e.exit_code)
+            # serverspec / rubocop
+            if os.path.isdir(serverspec_dir):
+                validators.rubocop(serverspec_dir, **kwargs)
+                validators.rake(rakefile, **kwargs)
+        except sh.ErrorReturnCode as e:
+            print('ERROR: {}'.format(e))
+            sys.exit(e.exit_code)
 
 
 class Test(AbstractCommand):

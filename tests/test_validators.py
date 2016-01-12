@@ -19,6 +19,7 @@
 #  THE SOFTWARE.
 
 import testtools
+from mock import patch
 
 import molecule.validators as validators
 
@@ -53,3 +54,24 @@ class TestValidators(testtools.TestCase):
         res = validators.trailing_whitespace(line)
 
         self.assertIsNone(res)
+
+    @patch('molecule.validators.rubocop')
+    def test_rubocop(self, mocked):
+        args = ['/tmp']
+        kwargs = {'pattern': '**/**/**/*', 'out': '/dev/null', 'err': None}
+        validators.rubocop(*args, **kwargs)
+        mocked.assert_called_once_with(*args, **kwargs)
+
+    @patch('molecule.validators.rake')
+    def test_rake(self, mocked):
+        args = ['/tmp/rakefile']
+        kwargs = {'debug': True, 'out': None, 'err': '/dev/null'}
+        validators.rake(*args, **kwargs)
+        mocked.assert_called_once_with(*args, **kwargs)
+
+    @patch('molecule.validators.testinfra')
+    def test_testinfra(self, mocked):
+        args = ['/tmp/ansible-inventory']
+        kwargs = {'debug': True, 'out': None, 'err': None}
+        validators.testinfra(*args, **kwargs)
+        mocked.assert_called_once_with(*args, **kwargs)

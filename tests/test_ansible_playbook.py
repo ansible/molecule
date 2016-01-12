@@ -109,7 +109,3 @@ class TestConfig(testtools.TestCase):
     def test_remove_env_arg(self):
         self.ansible.remove_env_arg('TEST_1')
         self.assertNotIn('TEST_1', self.ansible.env)
-
-    def test_bake(self):
-        self.ansible.bake()
-        self.assertIn('playbook.yml -vvvv --diff --limit=all', str(self.ansible.ansible))

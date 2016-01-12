@@ -26,7 +26,6 @@ import sys
 import termios
 from subprocess import CalledProcessError
 
-import sh
 import yaml
 from colorama import Fore
 
@@ -85,15 +84,6 @@ class Molecule(object):
             utilities.debug('RUNNING CONFIG', yaml.dump(self._config.config, default_flow_style=False, indent=2))
 
         self._write_state_file()
-
-    def _rubocop(self):
-        try:
-            pattern = self._config.config['molecule']['serverspec_dir'] + '/**/*.rb'
-            output = sh.rubocop(pattern, _env=self._env, _out=utilities.print_stdout, _err=utilities.print_stderr)
-            return output.exit_code
-        except sh.ErrorReturnCode as e:
-            print('ERROR: {}'.format(e))
-            sys.exit(e.exit_code)
 
     def _load_state_file(self):
         """
