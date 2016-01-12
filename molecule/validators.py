@@ -111,25 +111,77 @@ def trailing_whitespace(source):
 
     return lines if lines else None
 
-
-def rubocop(serverspec_dir, env=None, pattern='/**/*.rb', out=print_stdout, err=print_stderr):
+def rubocop(serverspec_dir, debug=False, env=os.environ.copy(), pattern='/**/*.rb', out=print_stdout, err=print_stderr):
     """
     Runs rubocop against specified directory with specified pattern
 
     :param serverspec_dir: Directory to search for files to lint
+    :param debug: Pass debug flag to rubocop
     :param pattern: Search pattern to pass to rubocop
     :param env: Environment to pass to underlying sh call
     :param out: Function to process STDOUT for underlying sh call
     :param err: Function to process STDERR for underlying sh call
     :return: sh response object
     """
-    kwargs = {}
-    kwargs['_env'] = env if env else os.environ.copy()
+    kwargs = {
+        '_env': env,
+        '_out': out,
+        '_err': err,
+        'debug': debug
+    }
+
     if 'HOME' not in kwargs['_env']:
         kwargs['_env']['HOME'] = os.path.expanduser('~')
 
-    kwargs['_out'] = out
-    kwargs['_err'] = err
-
     match = serverspec_dir + pattern
     return sh.rubocop(match, **kwargs)
+
+def rake(rakefile, debug=False, env=os.environ.copy(), out=print_stdout, err=print_stderr):
+    """
+    Runs rake with specified rakefile
+
+    :param rakefile: Path to rakefile
+    :param debug: Pass trace flag to rake
+    :param env: Environment to pass to underlying sh call
+    :param out: Function to process STDOUT for underlying sh call
+    :param err: Function to process STDERR for underlying sh call
+    :return: sh response object
+    """
+    kwargs = {
+        '_env': env,
+        '_out': out,
+        '_err': err,
+        'trace': debug,
+        'rakefile': rakefile
+    }
+
+    if 'HOME' not in kwargs['_env']:
+        kwargs['_env']['HOME'] = os.path.expanduser('~')
+
+    return sh.rake(**kwargs)
+
+def testinfra(inventory, debug=False, env=None, out=print_stdout, err=print_stderr):
+    """
+    Runs testinfra against specified ansible inventory file
+
+    :param inventory: Path to ansible inventory file
+    :param debug: Pass debug flag to testinfra
+    :param env: Environment to pass to underlying sh call
+    :param out: Function to process STDOUT for underlying sh call
+    :param err: Function to process STDERR for underlying sh call
+    :return: sh response object
+    """
+    kwargs = {
+        '_env': env,
+        '_out': out,
+        '_err': err,
+        'debug': debug,
+        'ansible_inventory': inventory,
+        'sudo': True,
+        'connection': 'ansible'
+    }
+
+    if 'HOME' not in kwargs['_env']:
+        kwargs['_env']['HOME'] = os.path.expanduser('~')
+
+    return sh.testinfra(**kwargs)
