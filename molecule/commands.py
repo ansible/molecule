@@ -56,6 +56,10 @@ class AbstractCommand:
         else:
             self.molecule = molecule
 
+        # init doesn't need to load molecule files
+        if self.__class__.__name__ == 'Init':
+            return
+
         # assume static inventory if no vagrant config block is defined
         if self.molecule._provisioner is None:
             self.static = True
