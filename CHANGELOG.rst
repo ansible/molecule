@@ -1,5 +1,10 @@
 CHANGELOG for molecule
 ======================
+1.2.4
+----
+
+* Fixed a bug introduced in 1.2.3 preventing ``init`` from working.
+
 1.2.3
 ----
 
