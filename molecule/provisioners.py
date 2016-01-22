@@ -274,7 +274,6 @@ class VagrantProvisioner(BaseProvisioner):
         self._vagrant.up(no_provision)
 
     def destroy(self):
-        self._vagrant.halt()
         self._vagrant.destroy()
         os.remove(self.m._config.config['molecule']['vagrantfile_file'])
 
