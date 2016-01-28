@@ -17,7 +17,13 @@ Vagrant.configure('2') do |config|
   config.{{ line }}
     {%- endfor %}
   {%- endif %}
-
+  {%- if 'triggers' in config.vagrant %}
+    {%- for trigger in config.vagrant.triggers %}
+  config.trigger.{{ trigger.trigger }} :{{ trigger.action }} do
+    {{ trigger.cmd }}
+  end
+    {%- endfor %}
+  {%- endif %}
   {%- for provider in config.vagrant.providers %}
     {%- if provider.type is defined and provider.type == 'virtualbox' and provider.name == current_provider %}
   config.vm.provider :virtualbox do |vb|
