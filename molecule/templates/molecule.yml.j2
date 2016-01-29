@@ -96,8 +96,13 @@ vagrant:
     - name: {{ config.molecule.init.platform.name }}
       box: {{ config.molecule.init.platform.box }}
       box_url: {{ config.molecule.init.platform.box_url }}
-      # Optional item, box_version - support for vagrant versioning
+      # Optional: box_version - support for vagrant versioning
       # box_version: {{ config.molecule.init.platform.box_version }}
+      # Optional: very basic support for vagrant-triggers plugin
+      # triggers:
+      #  - trigger: before
+      #    action: destroy
+      #    cmd: run_remote 'subscription-manager unregister'
 
   providers:
     - name: virtualbox

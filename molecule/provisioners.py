@@ -139,14 +139,6 @@ class BaseProvisioner(object):
         return
 
     @abc.abstractmethod
-    def halt(self):
-        """
-        Halts the VMs
-        :return:
-        """
-        return
-
-    @abc.abstractmethod
     def status(self):
         """
         Returns the running status of the VMs
@@ -274,13 +266,11 @@ class VagrantProvisioner(BaseProvisioner):
         self._vagrant.up(no_provision)
 
     def destroy(self):
-        self._vagrant.halt()
-        self._vagrant.destroy()
-        os.remove(self.m._config.config['molecule']['vagrantfile_file'])
-
-    def halt(self):
         self._write_vagrant_file()
-        self._vagrant.halt()
+        if self.m._state.get('created'):
+            self._vagrant.destroy()
+
+        os.remove(self.m._config.config['molecule']['vagrantfile_file'])
 
     def status(self):
         return self._vagrant.status()

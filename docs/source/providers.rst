@@ -115,6 +115,12 @@ This example is far more extensive than you likely need and it demonstrates lots
             box: trusty64
             box_version: "~> 20151130.0.0"
             box_url: https://vagrantcloud.com/ubuntu/boxes/trusty64/versions/14.04/providers/virtualbox.box
+          - name: rhel-7
+            box: rhel/rhel-7
+            triggers:
+              - trigger: before
+                action: destroy
+                cmd: run_remote 'subscription-manager unregister'
 
         providers:
           - name: virtualbox
@@ -162,6 +168,8 @@ Other Notes
 * `private_key_path`, as with several other values, can be any valid Ruby because it will appear in the Vagrantfile that molecule will generate.
 
 * `box_version`, defaults to '=', can include an constraints like '<, >, >=, <=, ~.' as listed in the `Versioning`_ docs.
+
+* `triggers` enables very basic support for the vagrant-triggers plugin
 
 ..  _`configuration for vagrant-openstack-provider`: https://github.com/ggiamarchi/vagrant-openstack-provider/blob/master/README.md#configuration
 .. _`VirtualBox`: http://docs.vagrantup.com/v2/virtualbox/index.html

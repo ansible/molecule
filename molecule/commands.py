@@ -119,7 +119,6 @@ class Destroy(AbstractCommand):
 
         self.molecule._create_templates()
         try:
-            self.molecule._provisioner.halt()
             self.molecule._provisioner.destroy()
             self.molecule._state['default_platform'] = False
             self.molecule._state['default_provider'] = False

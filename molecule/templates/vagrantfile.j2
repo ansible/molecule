@@ -9,6 +9,13 @@ Vagrant.configure('2') do |config|
       {%- if 'box_url' in platform and 'box_version' not in platform %}
   config.vm.box_url = '{{ platform.box_url }}'
       {%- endif %}
+      {%- if 'triggers' in platform %}
+        {%- for trigger in platform.triggers %}
+  config.trigger.{{ trigger.trigger }} :{{ trigger.action }}, :force => true do
+    {{ trigger.cmd }}
+  end
+        {%- endfor %}
+      {%- endif %}
     {%- endif %}
   {%- endfor %}
 
