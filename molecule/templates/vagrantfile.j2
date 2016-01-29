@@ -24,6 +24,7 @@ Vagrant.configure('2') do |config|
   config.{{ line }}
     {%- endfor %}
   {%- endif %}
+
   {%- for provider in config.vagrant.providers %}
     {%- if provider.type is defined and provider.type == 'virtualbox' and provider.name == current_provider %}
   config.vm.provider :virtualbox do |vb|
