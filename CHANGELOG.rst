@@ -3,7 +3,7 @@ CHANGELOG for molecule
 1.3.0
 ----
 
-* Added very basic support for the vagrant-triggers plugin
+* Added very basic support for the vagrant-triggers plugin.
 
 1.2.4
 ----
