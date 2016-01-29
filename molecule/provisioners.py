@@ -267,7 +267,10 @@ class VagrantProvisioner(BaseProvisioner):
 
     def destroy(self):
         self._write_vagrant_file()
-        self._vagrant.destroy()
+        for status in self._vagrant.status():
+            if status[1] == 'running':
+                self._vagrant.destroy(vm_name=status[0])
+
         os.remove(self.m._config.config['molecule']['vagrantfile_file'])
 
     def status(self):
