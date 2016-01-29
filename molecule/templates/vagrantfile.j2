@@ -11,7 +11,7 @@ Vagrant.configure('2') do |config|
       {%- endif %}
       {%- if 'triggers' in platform %}
         {%- for trigger in platform.triggers %}
-  config.trigger.{{ trigger.trigger }} :{{ trigger.action }} do
+  config.trigger.{{ trigger.trigger }} :{{ trigger.action }}, :force => true do
     {{ trigger.cmd }}
   end
         {%- endfor %}
