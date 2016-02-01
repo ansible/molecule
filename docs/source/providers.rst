@@ -169,7 +169,7 @@ Other Notes
 
 * `box_version`, defaults to '=', can include an constraints like '<, >, >=, <=, ~.' as listed in the `Versioning`_ docs.
 
-* `triggers` enables very basic support for the vagrant-triggers plugin
+* `triggers` enables very basic support for the vagrant-triggers plugin. During `molecule create`, if the plugin is not found it will be automatically installed.
 
 ..  _`configuration for vagrant-openstack-provider`: https://github.com/ggiamarchi/vagrant-openstack-provider/blob/master/README.md#configuration
 .. _`VirtualBox`: http://docs.vagrantup.com/v2/virtualbox/index.html

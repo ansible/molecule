@@ -1,3 +1,13 @@
+{%- for platform in config.vagrant.platforms %}
+  {%- if platform.name == current_platform %}
+    {%- if 'triggers' in platform %}
+unless Vagrant.has_plugin?('vagrant-triggers')
+  system "vagrant plugin install vagrant-triggers"
+  exec "vagrant #{ARGV.join' '}"
+end
+    {%- endif %}
+  {%- endif %}
+{%- endfor %}
 Vagrant.configure('2') do |config|
   config.cache.scope = 'machine' if Vagrant.has_plugin?('vagrant-cachier')
   {%- for platform in config.vagrant.platforms %}
