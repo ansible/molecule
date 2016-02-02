@@ -68,10 +68,14 @@ class Molecule(object):
             self._provisioner = provisioners.get_provisioner(self)
         except provisioners.InvalidProviderSpecified:
             print("\n{}Invalid provider '{}'\n".format(Fore.RED, self._args['--provider'], Fore.RESET))
+            self._args['--provider'] = None
+            self._provisioner = provisioners.get_provisioner(self)
             self._print_valid_providers()
             sys.exit(1)
         except provisioners.InvalidPlatformSpecified:
             print("\n{}Invalid platform '{}'\n".format(Fore.RED, self._args['--platform'], Fore.RESET))
+            self._args['--platform'] = None
+            self._provisioner = provisioners.get_provisioner(self)
             self._print_valid_platforms()
             sys.exit(1)
 
