@@ -72,6 +72,10 @@ class AnsiblePlaybook:
         :param value: Value of argument to be added
         :return: None
         """
+        # skip `requirements_file` since it used by ansible-galaxy only
+        if name == 'requirements_file':
+            return
+
         if name == 'raw_env_vars':
             for k, v in value.iteritems():
                 self.add_env_arg(k, v)
