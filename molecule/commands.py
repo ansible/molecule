@@ -385,7 +385,7 @@ class Init(AbstractCommand):
         :return: None
         """
         role = self.molecule._args['<role>']
-        role_path = './' + role + '/'
+        role_path = os.path.join(os.curdir, role)
 
         if not role:
             msg = '{}The init command requires a role name. Try:\n\n{}{} init <role>{}'
@@ -411,21 +411,21 @@ class Init(AbstractCommand):
         t_spec_helper = env.get_template(self.molecule._config.config['molecule']['init']['templates']['spec_helper'])
 
         sanitized_role = re.sub('[._]', '-', role)
-        with open(role_path + self.molecule._config.config['molecule']['molecule_file'], 'w') as f:
+        with open(os.path.join(role_path, self.molecule._config.config['molecule']['molecule_file']), 'w') as f:
             f.write(t_molecule.render(config=self.molecule._config.config, role=sanitized_role))
 
-        with open(role_path + self.molecule._config.config['ansible']['playbook'], 'w') as f:
+        with open(os.path.join(role_path, self.molecule._config.config['ansible']['playbook']), 'w') as f:
             f.write(t_playbook.render(role=role))
 
-        serverspec_path = role_path + self.molecule._config.config['molecule']['serverspec_dir'] + '/'
+        serverspec_path = os.path.join(role_path, self.molecule._config.config['molecule']['serverspec_dir'])
         os.makedirs(serverspec_path)
-        os.makedirs(serverspec_path + 'hosts')
-        os.makedirs(serverspec_path + 'groups')
+        os.makedirs(os.path.join(serverspec_path, 'hosts'))
+        os.makedirs(os.path.join(serverspec_path, 'groups'))
 
-        with open(serverspec_path + 'default_spec.rb', 'w') as f:
+        with open(os.path.join(serverspec_path, 'default_spec.rb'), 'w') as f:
             f.write(t_default_spec.render())
 
-        with open(serverspec_path + 'spec_helper.rb', 'w') as f:
+        with open(os.path.join(serverspec_path, 'spec_helper.rb'), 'w') as f:
             f.write(t_spec_helper.render())
 
         msg = '{}Successfully initialized new role in {}{}'
