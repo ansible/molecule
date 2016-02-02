@@ -174,8 +174,10 @@ class Molecule(object):
         :return: None
         """
         # ansible.cfg
+        kwargs = {'molecule_dir': self._config.config['molecule']['molecule_dir']}
         utilities.write_template(self._config.config['molecule']['ansible_config_template'],
-                                 self._config.config['molecule']['config_file'])
+                                 self._config.config['molecule']['config_file'],
+                                 kwargs=kwargs)
 
         # rakefile
         kwargs = {
