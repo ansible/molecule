@@ -34,6 +34,7 @@ from jinja2 import PackageLoader
 
 import molecule.utilities as utilities
 import molecule.validators as validators
+from molecule.ansible_galaxy_install import AnsibleGalaxyInstall
 from molecule.ansible_playbook import AnsiblePlaybook
 from molecule.core import Molecule
 
@@ -158,6 +159,14 @@ class Converge(AbstractCommand):
 
         if create_inventory:
             self.molecule._create_inventory_file()
+
+        # install role dependencies only during `molecule converge`
+        if not idempotent and 'requirements_file' in self.molecule._config.config['ansible']:
+            print('{}Installing role dependencies ...{}'.format(Fore.CYAN, Fore.RESET))
+            galaxy_install = AnsibleGalaxyInstall(self.molecule._config.config['ansible']['requirements_file'])
+            galaxy_install.add_env_arg('ANSIBLE_CONFIG', self.molecule._config.config['ansible']['config_file'])
+            galaxy_install.bake()
+            output = galaxy_install.execute()
 
         ansible = AnsiblePlaybook(self.molecule._config.config['ansible'])
 
