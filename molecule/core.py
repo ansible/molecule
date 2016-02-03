@@ -50,7 +50,7 @@ class Molecule(object):
         self._config.merge_molecule_config_files()
 
         # init command doesn't need to load molecule.yml
-        if self._args['init']:
+        if self._args['<command>'] == 'init':
             return  # exits program
 
         # merge in molecule.yml

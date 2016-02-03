@@ -29,6 +29,7 @@ import prettytable
 import sh
 import yaml
 from colorama import Fore
+from docopt import docopt
 from jinja2 import Environment
 from jinja2 import PackageLoader
 
@@ -40,14 +41,16 @@ from molecule.core import Molecule
 
 
 class AbstractCommand:
-    def __init__(self, args, molecule=False):
+    def __init__(self, command_args, global_args, molecule=False):
         """
         Initialize commands
 
-        :param args: arguments from the CLI
+        :param command_args: arguments of the command
+        :param global_args: arguments from the CLI
         :param molecule: molecule instance
         """
-        self.args = args
+        self.args = docopt(self.__doc__, argv=command_args)
+        self.global_args = global_args
         self.static = False
 
         # only create a molecule instance if one doesn't exist
@@ -321,9 +324,15 @@ class List(AbstractCommand):
 class Status(AbstractCommand):
     def execute(self):
         """
-        Prints status of currently converged instances, similar to `vagrant status`
+        Prints status of configured instances.
 
-        :return: Return code of underlying command if there's an exception, otherwise None
+        Usage:
+            status [--platform=<platform>] [--provider=<provider>] [--debug]
+
+        Options:
+            --platform=<platform>  specify a platform
+            --provider=<provider>  specify a provider
+            --debug                get more detail
         """
         if self.static:
             self.disabled('status')
