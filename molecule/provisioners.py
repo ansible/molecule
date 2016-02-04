@@ -165,7 +165,7 @@ class VagrantProvisioner(BaseProvisioner):
         self._vagrant.env = molecule._env
 
     def _get_provider(self):
-        if self.m._args['--provider']:
+        if self.m._args.get('--provider'):
             if not [item
                     for item in self.m._config.config['vagrant']['providers']
                     if item['name'] == self.m._args['--provider']]:
@@ -178,7 +178,7 @@ class VagrantProvisioner(BaseProvisioner):
         return self.m._env['VAGRANT_DEFAULT_PROVIDER']
 
     def _get_platform(self):
-        if self.m._args['--platform']:
+        if self.m._args.get('--platform'):
             if not [item
                     for item in self.m._config.config['vagrant']['platforms']
                     if item['name'] == self.m._args['--platform']]:

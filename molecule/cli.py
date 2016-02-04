@@ -19,39 +19,23 @@
 #  THE SOFTWARE.
 """
 Usage:
-    molecule create      [--platform=<platform>] [--provider=<provider>] [--debug]
-    molecule converge    [--platform=<platform>] [--provider=<provider>] [--tags=<tag1,tag2>] [--debug]
-    molecule idempotence [--platform=<platform>] [--provider=<provider>] [--debug]
-    molecule test        [--platform=<platform>] [--provider=<provider>] [--debug]
-    molecule verify      [--platform=<platform>] [--provider=<provider>] [--debug]
-    molecule destroy     [--platform=<platform>] [--provider=<provider>] [--debug]
-    molecule status      [--platform=<platform>] [--provider=<provider>] [--debug]
-    molecule list        [--debug] [-m]
-    molecule login <host>
-    molecule init <role>
-    molecule -v | --version
-    molecule -h | --help
+    molecule [-hv] <command> [<args>...]
 
 Commands:
-    create       create instances
-    converge     create and provision instances
-    idempotence  converge and check the output for changes
-    test         run a full test cycle: destroy, create, converge, idempotency-check, verify and destroy instances
-    verify       create, provision and test instances
-    destroy      destroy instances
-    status       show status of instances
-    list         show available platforms, providers
-    login        connects to instance via SSH
-    init         creates the directory structure and files for a new Ansible role compatible with molecule
+    create        create instances
+    converge      create and provision instances
+    idempotence   converge and check the output for changes
+    test          run a full test cycle: destroy, create, converge, idempotency-check, verify and destroy instances
+    verify        create, provision and test instances
+    destroy       destroy instances
+    status        show status of instances
+    list          show available platforms, providers
+    login         connects to instance via SSH
+    init          creates the directory structure and files for a new Ansible role compatible with molecule
 
 Options:
-    -h --help              shows this screen
-    -v --version           shows the version
-    --platform=<platform>  specify a platform
-    --provider=<provider>  specify a provider
-    --tags=<tag1,tag2>     comma separated list of ansible tags to target
-    --debug                get more detail
-    -m                     machine readable output
+    -h --help     shows this screen
+    -v --version  shows the version
 """
 
 import sys
@@ -65,20 +49,16 @@ import molecule.commands
 
 class CLI(object):
     def main(self):
-        args = docopt(__doc__)
-        if args['--version']:
-            print(molecule.__version__)
-            sys.exit(0)
+        args = docopt(__doc__, version=molecule.__version__, options_first=True)
+        command_name = args.get('<command>').capitalize()
+        command_args = {} if args.get('<args>') is None else args.pop('<args>')
 
-        commands = ['create', 'converge', 'idempotence', 'test', 'verify', 'destroy', 'status', 'list', 'login', 'init']
-        for command in commands:
-            if args[command]:
-                try:
-                    command_class = getattr(molecule.commands, command.capitalize())
-                except AttributeError:
-                    raise DocoptExit()
+        try:
+            command_class = getattr(molecule.commands, command_name)
+        except AttributeError:
+            raise DocoptExit()
 
-        c = command_class(args)
+        c = command_class(command_args, args)
         sys.exit(c.execute())
 
 
