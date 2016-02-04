@@ -42,7 +42,7 @@ class TestCLI(testtools.TestCase):
                 result = self.assertRaises(SystemExit, lambda: self._cli.main())
                 stdout = mocked_stdout.getvalue().strip()
 
-                self.assertEqual(result.code, 0)
+                self.assertEqual(result.code, None)
                 self.assertThat(stdout, MatchesRegex('^\d\.\d\.\d'))
 
     def test_cli_raises_usage_with_invalid_sub_command(self):
