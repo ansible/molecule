@@ -159,12 +159,12 @@ class Converge(AbstractCommand):
     Provisions all instances defined in molecule.yml.
 
     Usage:
-        converge [--platform=<platform>] [--provider=<provider>] [--tags=<tag1,tag2>] [--debug]
+        converge [--platform=<platform>] [--provider=<provider>] [--tags=<tags>...] [--debug]
 
     Options:
         --platform=<platform>  specify a platform
         --provider=<provider>  specify a provider
-        --tags=<tag1,tag2>     comma separated list of ansible tags to target
+        --tags=<tags>          comma separated list of ansible tags to target
         --debug                get more detail
     """
 
@@ -203,7 +203,8 @@ class Converge(AbstractCommand):
         ansible = AnsiblePlaybook(self.molecule._config.config['ansible'])
 
         # target tags passed in via CLI
-        ansible.add_cli_arg('tags', self.molecule._args.get('--tags'))
+        if self.molecule._args.get('--tags'):
+            ansible.add_cli_arg('tags', self.molecule._args.pop('--tags'))
 
         if idempotent:
             ansible.remove_cli_arg('_out')
