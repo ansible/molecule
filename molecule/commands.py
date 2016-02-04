@@ -50,10 +50,12 @@ class AbstractCommand:
         :param molecule: molecule instance
         """
         self.args = docopt(self.__doc__, argv=command_args)
-        self.global_args = global_args
+        self.args['<command>'] = self.__class__.__name__.lower()
+        self.command_args = command_args
+
         self.static = False
 
-        # only create a molecule instance if one doesn't exist
+        # give us the option to reuse an existing molecule instance
         if not molecule:
             self.molecule = Molecule(self.args)
             self.molecule.main()
@@ -89,13 +91,19 @@ class AbstractCommand:
 
 
 class Create(AbstractCommand):
-    def execute(self):
-        """
-        Creates all instances defined in molecule.yml.
-        Creates all template files used by molecule, vagrant, ansible-playbook.
+    """
+    Creates all instances defined in molecule.yml.
 
-        :return: None
-        """
+    Usage:
+        create [--platform=<platform>] [--provider=<provider>] [--debug]
+
+    Options:
+        --platform=<platform>  specify a platform
+        --provider=<provider>  specify a provider
+        --debug                get more detail
+    """
+
+    def execute(self):
         if self.static:
             self.disabled('create')
 
@@ -110,9 +118,20 @@ class Create(AbstractCommand):
 
 
 class Destroy(AbstractCommand):
+    """
+    Destroys all instances created by molecule.
+
+    Usage:
+        destroy [--platform=<platform>] [--provider=<provider>] [--debug]
+
+    Options:
+        --platform=<platform>  specify a platform
+        --provider=<provider>  specify a provider
+        --debug                get more detail
+    """
+
     def execute(self):
         """
-        Halts and destroys all instances created by molecule.
         Removes template files.
         Clears state file of all info (default platform).
 
@@ -136,16 +155,26 @@ class Destroy(AbstractCommand):
 
 
 class Converge(AbstractCommand):
+    """
+    Provisions all instances defined in molecule.yml.
+
+    Usage:
+        converge [--platform=<platform>] [--provider=<provider>] [--tags=<tag1,tag2>] [--debug]
+
+    Options:
+        --platform=<platform>  specify a platform
+        --provider=<provider>  specify a provider
+        --tags=<tag1,tag2>     comma separated list of ansible tags to target
+        --debug                get more detail
+    """
+
     def execute(self, idempotent=False, create_instances=True, create_inventory=True):
         """
-        Provisions all instances using ansible-playbook.
-
         :param idempotent: Optionally provision servers quietly so output can be parsed for idempotence
         :param create_inventory: Toggle inventory creation
         :param create_instances: Toggle instance creation
         :return: Provisioning output
         """
-
         if self.molecule._state.get('created'):
             create_instances = False
 
@@ -157,7 +186,7 @@ class Converge(AbstractCommand):
             create_inventory = False
 
         if create_instances and not idempotent:
-            c = Create(self.args, self.molecule)
+            c = Create(self.command_args, self.args, self.molecule)
             c.execute()
 
         if create_inventory:
@@ -194,7 +223,7 @@ class Converge(AbstractCommand):
                                     os.path.join(sys.prefix, 'share/molecule/ansible/plugins/callback/idempotence'))
 
         ansible.bake()
-        if self.molecule._args['--debug']:
+        if self.molecule._args.get('--debug'):
             ansible_env = {k: v for (k, v) in ansible.env.items() if 'ANSIBLE' in k}
             other_env = {k: v for (k, v) in ansible.env.items() if 'ANSIBLE' not in k}
             utilities.debug('OTHER ENVIRONMENT', yaml.dump(other_env, default_flow_style=False, indent=2))
@@ -211,18 +240,25 @@ class Converge(AbstractCommand):
 
 
 class Idempotence(AbstractCommand):
-    def execute(self):
-        """
-        Provisions instances and parses output to determine idempotence
+    """
+    Provisions instances and parses output to determine idempotence.
 
-        :return: None
-        """
+    Usage:
+        idempotence [--platform=<platform>] [--provider=<provider>] [--debug]
+
+    Options:
+        --platform=<platform>  specify a platform
+        --provider=<provider>  specify a provide
+        --debug                get more detail
+    """
+
+    def execute(self):
         if self.static:
             self.disabled('idempotence')
 
         print('{}Idempotence test in progress (can take a few minutes)...{}'.format(Fore.CYAN, Fore.RESET))
 
-        c = Converge(self.args, self.molecule)
+        c = Converge(self.command_args, self.args, self.molecule)
         output = c.execute(idempotent=True)
         idempotent, changed_tasks = self.molecule._parse_provisioning_output(output)
 
@@ -245,15 +281,19 @@ class Idempotence(AbstractCommand):
 
 
 class Verify(AbstractCommand):
-    def execute(self):
-        """
-        Performs verification steps on running instances.
-        Checks files for trailing whitespace and newlines.
-        Runs testinfra against instances.
-        Runs serverspec against instances (also calls rubocop on spec files).
+    """
+    Performs verification steps on running instances.
 
-        :return: None if no tests are found, otherwise return code of underlying command
-        """
+    Usage:
+        verify [--platform=<platform>] [--provider=<provider>] [--debug]
+
+    Options:
+        --platform=<platform>  specify a platform
+        --provider=<provider>  specify a provider
+        --debug                get more detail
+    """
+
+    def execute(self):
         if self.static:
             self.disabled('verify')
 
@@ -275,7 +315,7 @@ class Verify(AbstractCommand):
         self.molecule._write_ssh_config()
         kwargs = {'env': self.molecule._env}
         kwargs['env']['PYTHONDONTWRITEBYTECODE'] = '1'
-        kwargs['debug'] = True if self.molecule._args['--debug'] else False
+        kwargs['debug'] = True if self.molecule._args.get('--debug') else False
 
         try:
             # testinfra
@@ -292,28 +332,41 @@ class Verify(AbstractCommand):
 
 
 class Test(AbstractCommand):
-    def execute(self):
-        """
-        Runs a series of commands (defined in config) against instances for a full test/verify run
+    """
+    Runs a series of commands (defined in config) against instances for a full test/verify run.
 
-        :return: None
-        """
+    Usage:
+        test [--platform=<platform>] [--provider=<provider>] [--debug]
+
+    Options:
+        --platform=<platform>  specify a platform
+        --provider=<provider>  specify a provider
+        --debug                get more detail
+    """
+
+    def execute(self):
         if self.static:
             self.disabled('test')
 
         for task in self.molecule._config.config['molecule']['test']['sequence']:
             command = getattr(sys.modules[__name__], task.capitalize())
-            c = command(self.args, self.molecule)
+            c = command(self.command_args, self.args)
             c.execute()
 
 
 class List(AbstractCommand):
-    def execute(self):
-        """
-        Prints a list of currently available platforms
+    """
+    Prints a list of currently available platforms
 
-        :return: None
-        """
+    Usage:
+        list [--debug] [-m]
+
+    Options:
+        --debug  get more detail
+        -m       machine readable output
+    """
+
+    def execute(self):
         if self.static:
             self.disabled('list')
 
@@ -322,18 +375,17 @@ class List(AbstractCommand):
 
 
 class Status(AbstractCommand):
+    """
+    Prints status of configured instances.
+
+    Usage:
+        status [--debug]
+
+    Options:
+        --debug  get more detail
+    """
+
     def execute(self):
-        """
-        Prints status of configured instances.
-
-        Usage:
-            status [--platform=<platform>] [--provider=<provider>] [--debug]
-
-        Options:
-            --platform=<platform>  specify a platform
-            --provider=<provider>  specify a provider
-            --debug                get more detail
-        """
         if self.static:
             self.disabled('status')
 
@@ -366,12 +418,14 @@ class Status(AbstractCommand):
 
 
 class Login(AbstractCommand):
-    def execute(self):
-        """
-        Initiates an interactive ssh session with a given instance name.
+    """
+    Initiates an interactive ssh session with the given host.
 
-        :return: None
-        """
+    Usage:
+        login <host>
+    """
+
+    def execute(self):
         if self.static:
             self.disabled('login')
 
@@ -396,12 +450,14 @@ class Login(AbstractCommand):
 
 
 class Init(AbstractCommand):
-    def execute(self):
-        """
-        Creates the scaffolding for a new role intended for use with molecule
+    """
+    Creates the scaffolding for a new role intended for use with molecule.
 
-        :return: None
-        """
+    Usage:
+        init <role>
+    """
+
+    def execute(self):
         role = self.molecule._args['<role>']
         role_path = os.path.join(os.curdir, role)
 

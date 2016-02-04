@@ -50,7 +50,7 @@ class Molecule(object):
         self._config.merge_molecule_config_files()
 
         # init command doesn't need to load molecule.yml
-        if self._args['<command>'] == 'init':
+        if self._args.get('<command>') == 'init':
             return  # exits program
 
         # merge in molecule.yml
@@ -69,11 +69,13 @@ class Molecule(object):
         except provisioners.InvalidProviderSpecified:
             print("\n{}Invalid provider '{}'\n".format(Fore.RED, self._args['--provider'], Fore.RESET))
             self._args['--provider'] = None
+            self._args['--platform'] = None
             self._provisioner = provisioners.get_provisioner(self)
             self._print_valid_providers()
             sys.exit(1)
         except provisioners.InvalidPlatformSpecified:
             print("\n{}Invalid platform '{}'\n".format(Fore.RED, self._args['--platform'], Fore.RESET))
+            self._args['--provider'] = None
             self._args['--platform'] = None
             self._provisioner = provisioners.get_provisioner(self)
             self._print_valid_platforms()
@@ -84,7 +86,7 @@ class Molecule(object):
 
         # updates instances config with full machine names
         self._config.populate_instance_names(self._env['MOLECULE_PLATFORM'])
-        if self._args['--debug']:
+        if self._args.get('--debug'):
             utilities.debug('RUNNING CONFIG', yaml.dump(self._config.config, default_flow_style=False, indent=2))
 
         self._write_state_file()
