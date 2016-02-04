@@ -204,7 +204,7 @@ class Converge(AbstractCommand):
 
         # target tags passed in via CLI
         if self.molecule._args.get('--tags'):
-            ansible.add_cli_arg('tags', self.molecule._args.pop('--tags'))
+            ansible.add_cli_arg('tags', self.molecule._args['--tags'].pop(0))
 
         if idempotent:
             ansible.remove_cli_arg('_out')
