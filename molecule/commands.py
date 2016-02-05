@@ -40,6 +40,10 @@ from molecule.ansible_playbook import AnsiblePlaybook
 from molecule.core import Molecule
 
 
+class InvalidHost(Exception):
+    pass
+
+
 class AbstractCommand:
     def __init__(self, command_args, global_args, molecule=False):
         """
@@ -423,7 +427,7 @@ class Login(AbstractCommand):
     Initiates an interactive ssh session with the given host.
 
     Usage:
-        login <host>
+        login [<host>]
     """
 
     def execute(self):
@@ -432,7 +436,38 @@ class Login(AbstractCommand):
 
         # make sure vagrant knows about this host
         try:
-            conf = self.molecule._provisioner.conf(vm_name=self.molecule._args['<host>'])
+
+            # Check whether a host was specified.
+            if self.molecule._args['<host>'] is None:
+
+                # If not, collect the list of running hosts.
+                try:
+                    status = self.molecule._provisioner.status()
+                except Exception as e:
+                    status = []
+
+                # Nowhere to log into if there is no running host.
+                if len(status) == 0:
+                    raise InvalidHost("There is no running host.")
+
+                # One running host is perfect. Log into it.
+                elif len(status) == 1:
+                    hostname = status[0].name
+
+                # But too many hosts is trouble as well.
+                else:
+                    raise InvalidHost("There are {} running hosts. You can only log into one at a time.".format(len(
+                        status)))
+
+            else:
+
+                # If the host was specified, try to use it.
+                hostname = self.molecule._args['<host>']
+
+            # Try to retrieve the SSH configuration of the host.
+            conf = self.molecule._provisioner.conf(vm_name=hostname)
+
+            # Prepare the command to SSH into the host.
             ssh_args = [conf['HostName'], conf['User'], conf['Port'], conf['IdentityFile'],
                         ' '.join(self.molecule._config.config['molecule']['raw_ssh_args'])]
             ssh_cmd = 'ssh {} -l {} -p {} -i {} {}'
@@ -440,6 +475,11 @@ class Login(AbstractCommand):
             # gets appended to python-vagrant's error message
             conf_format = [Fore.RED, self.molecule._args['<host>'], Fore.YELLOW, Fore.RESET]
             conf_errmsg = '\n{0}Unknown host {1}. Try {2}molecule status{0} to see available hosts.{3}'
+            print(conf_errmsg.format(*conf_format))
+            sys.exit(1)
+        except InvalidHost as e:
+            conf_format = [Fore.RED, e.message, Fore.RESET]
+            conf_errmsg = '{}{}{}'
             print(conf_errmsg.format(*conf_format))
             sys.exit(1)
 
