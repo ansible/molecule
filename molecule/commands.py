@@ -326,11 +326,17 @@ class Verify(AbstractCommand):
             # testinfra
             if os.path.isdir(testinfra_dir):
                 validators.testinfra(inventory_file, **kwargs)
+            else:
+                msg = '{}No testinfra tests found in {}/. {}'
+                print(msg.format(Fore.YELLOW, testinfra_dir, Fore.RESET))
 
             # serverspec / rubocop
             if os.path.isdir(serverspec_dir):
                 validators.rubocop(serverspec_dir, **kwargs)
                 validators.rake(rakefile, **kwargs)
+            else:
+                msg = '{}No serverspec tests found in {}/. {}'
+                print(msg.format(Fore.YELLOW, serverspec_dir, Fore.RESET))
         except sh.ErrorReturnCode as e:
             print('ERROR: {}'.format(e))
             sys.exit(e.exit_code)
