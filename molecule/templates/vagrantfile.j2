@@ -1,3 +1,13 @@
+{%- for platform in config.vagrant.platforms %}
+  {%- if platform.name == current_platform %}
+    {%- if 'triggers' in platform %}
+unless Vagrant.has_plugin?('vagrant-triggers')
+  system "vagrant plugin install vagrant-triggers"
+  exec "vagrant #{ARGV.join' '}"
+end
+    {%- endif %}
+  {%- endif %}
+{%- endfor %}
 Vagrant.configure('2') do |config|
   config.cache.scope = 'machine' if Vagrant.has_plugin?('vagrant-cachier')
   {%- for platform in config.vagrant.platforms %}
@@ -6,14 +16,21 @@ Vagrant.configure('2') do |config|
       {%- if 'box_version' in platform %}
   config.vm.box_version = "{{ platform.box_version }}"
       {%- endif %}
-      {%- if 'box_url' in platform %}
+      {%- if 'box_url' in platform and 'box_version' not in platform %}
   config.vm.box_url = '{{ platform.box_url }}'
+      {%- endif %}
+      {%- if 'triggers' in platform %}
+        {%- for trigger in platform.triggers %}
+  config.trigger.{{ trigger.trigger }} :{{ trigger.action }}, :force => true do
+    {{ trigger.cmd }}
+  end
+        {%- endfor %}
       {%- endif %}
     {%- endif %}
   {%- endfor %}
 
-  {%- if 'raw_config_args' in config.molecule %}
-    {%- for line in config.molecule.raw_config_args %}
+  {%- if 'raw_config_args' in config.vagrant %}
+    {%- for line in config.vagrant.raw_config_args %}
   config.{{ line }}
     {%- endfor %}
   {%- endif %}
@@ -31,9 +48,13 @@ Vagrant.configure('2') do |config|
       {%- if not provider.options.cpus %}
     vb.cpus = 2
       {%- endif %}
+      {%- if not provider.options.linked_clone %}
+    vb.linked_clone = true if Vagrant::VERSION =~ /^1.8/
+      {%- endif %}
     {%- else %}
     vb.memory = 512
     vb.cpus = 2
+    vb.linked_clone = true if Vagrant::VERSION =~ /^1.8/
     {%- endif %}
   end
     {%- endif %}
