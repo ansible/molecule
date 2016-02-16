@@ -30,8 +30,8 @@ import yaml
 from colorama import Fore
 
 import molecule.config as config
-import molecule.utilities as utilities
 import molecule.provisioners as provisioners
+import molecule.utilities as utilities
 
 
 class Molecule(object):
@@ -43,24 +43,9 @@ class Molecule(object):
         self._provisioner = None
 
     def main(self):
-        # load molecule defaults
-        self._config.load_defaults_file()
-
-        # merge in any molecule config files found (eg: ~/.configs/molecule/config.yml)
-        self._config.merge_molecule_config_files()
-
         # init command doesn't need to load molecule.yml
         if self._args.get('<command>') == 'init':
             return  # exits program
-
-        # merge in molecule.yml
-        self._config.merge_molecule_file()
-
-        # concatentate file names and paths within config so they're more convenient to use
-        self._config.build_easy_paths()
-
-        # get defaults for inventory/ansible.cfg from molecule if none are specified
-        self._config.update_ansible_defaults()
 
         self._state = self._load_state_file()
 
@@ -85,7 +70,7 @@ class Molecule(object):
             os.makedirs(self._config.config['molecule']['molecule_dir'])
 
         # updates instances config with full machine names
-        self._config.populate_instance_names(self._env['MOLECULE_PLATFORM'])
+        self._config._populate_instance_names(self._env['MOLECULE_PLATFORM'])
         if self._args.get('--debug'):
             utilities.debug('RUNNING CONFIG', yaml.dump(self._config.config, default_flow_style=False, indent=2))
 
