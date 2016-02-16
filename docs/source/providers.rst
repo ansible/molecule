@@ -203,7 +203,7 @@ Provider options
 ^^^^^^^^^^^^^^^^
 These options are described in the `provider options`_ section of the vagrant-libvirt project site:
 
-Although it should work without any configuration for most people, this provider exposes quite a few provider-specific configuration options. The following options allow you to configure how vagrant-libvirt connects to libvirt, and are used to generate the [libvirt connection URI](http://libvirt.org/uri.html):
+Although it should work without any configuration for most people, this provider exposes quite a few provider-specific configuration options. The following options allow you to configure how vagrant-libvirt connects to libvirt, and are used to generate the `libvirt connection URI`_:
 
 * `driver` - A hypervisor name to access. For now only kvm and qemu are supported.
 * `host` - The name of the server, where libvirtd is running. You want to use this option when creating the VM in a remote host.
@@ -219,6 +219,7 @@ Connection-independent options:
 * `storage_pool_name` - Libvirt storage pool name, where box image and instance snapshots will be stored.
 
 .. _`provider options`: https://github.com/pradels/vagrant-libvirt#provider-options
+.. _`libvirt connection URI`: http://libvirt.org/uri.html
 
 Here is an example of how could look like your molecule.yml file:
 
@@ -227,13 +228,18 @@ Here is an example of how could look like your molecule.yml file:
 Domain Specific Options
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-* `disk_bus` - The type of disk device to emulate. Defaults to virtio if not set. Possible values are documented in libvirt's [description for _target_](http://libvirt.org/formatdomain.html#elementsDisks).
-* `nic_model_type` - parameter specifies the model of the network adapter when you create a domain value by default virtio KVM believe possible values, see the [documentation for libvirt](https://libvirt.org/formatdomain.html#elementsNICSModel).
+* `disk_bus` - The type of `disk device`_ to emulate. Defaults to virtio if not set.
+* `nic_model_type` - parameter specifies the model of the network adapter when you create a domain value by default virtio KVM believe possible values, see the `nics documentation`_.
 * `memory` - Amount of memory in MBytes. Defaults to 512 if not set.
-* `cpus` - Number of virtual cpus. Defaults to 1 if not set.
-* `nested` - [Enable nested virtualization](https://github.com/torvalds/linux/blob/master/Documentation/virtual/kvm/nested-vmx.txt). Default is false.
-* `cpu_mode` - [CPU emulation mode](https://libvirt.org/formatdomain.html#elementsCPU). Defaults to 'host-model' if not set. Allowed values: host-model, host-passthrough.
+* `cpus` - Number of virtual cpus. Defaults to 2 if not set.
+* `nested` - `Enable nested virtualization`_. Default is false.
+* `cpu_mode` - `CPU emulation mode`_. Defaults to 'host-model' if not set. Allowed values: host-model, host-passthrough.
 * `Other options` - Such as graphics_port, suspend_mode, boot, etc. Please, take a look at the `vagrant-libvirt`_ documentation for seeing all available options.
+
+.. _`disk device`: http://libvirt.org/formatdomain.html#elementsDisks
+.. _`nics documentation`: https://libvirt.org/formatdomain.html#elementsNICSModel
+.. _`Enable nested virtualization`: https://github.com/torvalds/linux/blob/master/Documentation/virtual/kvm/nested-vmx.txt
+.. _`CPU emulation mode`: https://libvirt.org/formatdomain.html#elementsCPU
 
 Usage
 ^^^^^
