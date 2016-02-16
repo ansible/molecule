@@ -261,7 +261,7 @@ class Idempotence(AbstractCommand):
         if self.static:
             self.disabled('idempotence')
 
-        print('{}Idempotence test in progress (can take a few minutes)...{}'.format(Fore.CYAN, Fore.RESET))
+        print('{}Idempotence test in progress (can take a few minutes)...{}'.format(Fore.MAGENTA, Fore.RESET))
 
         c = Converge(self.command_args, self.args, self.molecule)
         output = c.execute(idempotent=True)
@@ -269,6 +269,7 @@ class Idempotence(AbstractCommand):
 
         if idempotent:
             print('{}Idempotence test passed.{}'.format(Fore.GREEN, Fore.RESET))
+            print
             return
 
         # Display the details of the idempotence test.
@@ -325,17 +326,27 @@ class Verify(AbstractCommand):
         try:
             # testinfra
             if os.path.isdir(testinfra_dir):
+                msg = '\n{}Executing testinfra tests found in {}/.{}'
+                print(msg.format(Fore.MAGENTA, serverspec_dir, Fore.RESET))
                 validators.testinfra(inventory_file, **kwargs)
+                print
             else:
-                msg = '{}No testinfra tests found in {}/. {}'
+                msg = '{}No testinfra tests found in {}/.\n{}'
                 print(msg.format(Fore.YELLOW, testinfra_dir, Fore.RESET))
 
             # serverspec / rubocop
             if os.path.isdir(serverspec_dir):
+                msg = '{}Executing rubocop on *.rb files found in {}/.{}'
+                print(msg.format(Fore.MAGENTA, serverspec_dir, Fore.RESET))
                 validators.rubocop(serverspec_dir, **kwargs)
+                print
+
+                msg = '{}Executing serverspec tests found in {}/.{}'
+                print(msg.format(Fore.MAGENTA, serverspec_dir, Fore.RESET))
                 validators.rake(rakefile, **kwargs)
+                print
             else:
-                msg = '{}No serverspec tests found in {}/. {}'
+                msg = '{}No serverspec tests found in {}/.\n{}'
                 print(msg.format(Fore.YELLOW, serverspec_dir, Fore.RESET))
         except sh.ErrorReturnCode as e:
             print('ERROR: {}'.format(e))
