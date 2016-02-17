@@ -436,6 +436,7 @@ class Status(AbstractCommand):
         print(x)
         print
         self.molecule._print_valid_platforms()
+        print
         self.molecule._print_valid_providers()
 
 
