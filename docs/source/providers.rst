@@ -276,7 +276,7 @@ There is an example:
 	    - name: ansible-role
 	      raw_config_args:
 		- "ssh.pty = true"
-		- "vm.synced_folder './', '/vagrant', type: '9p', disabled: true"
+		- "vm.synced_folder './', '/vagrant', disabled: true"
 		- "vm.network :private_network, :libvirt__dhcp_enabled=> false ,:libvirt__tunnel_type => 'server', :libvirt__tunnel_port => '11111'"
 	      options:
 		append_platform_to_hostname: no
@@ -284,7 +284,3 @@ There is an example:
 	      ansible_groups:
 		- group_1
 
-Notes
-^^^^^
-
-* Molecule destroy does not seem to work well. It removes some molecule files but not always destroys de VM. You may have to do it manually by using the virsh command.
