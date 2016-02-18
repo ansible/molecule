@@ -515,6 +515,16 @@ class Init(AbstractCommand):
         init <role>
     """
 
+    def clean_meta_main(self, role_path):
+        main_path = os.path.join(role_path, 'meta', 'main.yml')
+        temp_path = os.path.join(role_path, 'meta', 'main.yml.tmp')
+        with open(temp_path, 'w') as temp:
+            for line in file(main_path):
+                line = re.sub(r'[ \t]*$', '', line)
+                if line != '\n':
+                    temp.write(line)
+        os.rename(temp_path, main_path)
+
     def execute(self):
         role = self.molecule._args['<role>']
         role_path = os.path.join(os.curdir, role)
@@ -534,6 +544,8 @@ class Init(AbstractCommand):
         except (CalledProcessError, sh.ErrorReturnCode_1) as e:
             print('ERROR: {}'.format(e))
             sys.exit(e.returncode)
+
+        self.clean_meta_main(role_path)
 
         env = Environment(loader=PackageLoader('molecule', 'templates'), keep_trailing_newline=True)
 
