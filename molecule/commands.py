@@ -99,7 +99,7 @@ class Create(AbstractCommand):
     Creates all instances defined in molecule.yml.
 
     Usage:
-        create [--platform=<platform>] [--provider=<provider>] [--tags=<tag1,tag2>...] [--debug]
+        create [--platform=<platform>] [--provider=<provider>] [--debug]
 
     Options:
         --platform=<platform>  specify a platform
@@ -190,7 +190,14 @@ class Converge(AbstractCommand):
             create_inventory = False
 
         if create_instances and not idempotent:
-            c = Create(self.command_args, self.args, self.molecule)
+            # remove args Create doesn't support
+            command_args = list(self.command_args)
+            args = dict(self.args)
+            pos = command_args.index('--tags')
+            del (command_args[pos:pos + 2])
+            del (args['--tags'])
+
+            c = Create(command_args, args, self.molecule)
             c.execute()
 
         if create_inventory:
