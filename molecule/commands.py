@@ -99,7 +99,7 @@ class Create(AbstractCommand):
     Creates all instances defined in molecule.yml.
 
     Usage:
-        create [--platform=<platform>] [--provider=<provider>] [--debug]
+        create [--platform=<platform>] [--provider=<provider>] [--tags=<tag1,tag2>...] [--debug]
 
     Options:
         --platform=<platform>  specify a platform
