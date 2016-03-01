@@ -190,7 +190,22 @@ class Converge(AbstractCommand):
             create_inventory = False
 
         if create_instances and not idempotent:
-            c = Create(self.command_args, self.args, self.molecule)
+            # remove args Create doesn't support
+            command_args = []
+            skip_next = False
+            for item in self.command_args:
+                if skip_next:
+                    skip_next = False
+                    continue
+                if item.lower() == '--tags':
+                    skip_next = True
+                    continue
+                command_args.append(item)
+
+            args = dict(self.args)
+            del (args['--tags'])
+
+            c = Create(command_args, args, self.molecule)
             c.execute()
 
         if create_inventory:
