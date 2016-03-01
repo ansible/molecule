@@ -143,6 +143,7 @@ def format_instance_name(name, platform, instances):
     # if we fall through, return the default name
     return name + '-' + platform
 
+
 def remove_args(command_args, args, kill):
     """
     Removes args so commands can be passed around easily.
@@ -167,7 +168,7 @@ def remove_args(command_args, args, kill):
         new_command_args.append(item)
 
     # remove killed command args
-    for k, v in new_args.iteritems():
+    for k, v in args.iteritems():
         if k not in kill:
             new_args[k] = v
 

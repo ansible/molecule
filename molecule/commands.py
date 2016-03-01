@@ -180,7 +180,7 @@ class Converge(AbstractCommand):
         --debug                get more detail
     """
 
-    def execute(self, idempotent=False, create_instances=True, create_inventory=True, exit=True):
+    def execute(self, idempotent=False, create_instances=True, create_inventory=True, exit=True, hide_errors=True):
         """
         :param idempotent: Optionally provision servers quietly so output can be parsed for idempotence
         :param create_inventory: Toggle inventory creation
@@ -244,8 +244,10 @@ class Converge(AbstractCommand):
             utilities.debug('ANSIBLE ENVIRONMENT', yaml.dump(ansible_env, default_flow_style=False, indent=2))
             utilities.debug('ANSIBLE PLAYBOOK', str(ansible.ansible))
 
-        status, output = ansible.execute(exit=exit)
+        status, output = ansible.execute(hide_errors=hide_errors)
         if status is not None:
+            if exit:
+                sys.exit(status)
             return status, None
 
         if not self.molecule._state.get('converged'):
@@ -275,9 +277,12 @@ class Idempotence(AbstractCommand):
         print('{}Idempotence test in progress (can take a few minutes)...{}'.format(Fore.MAGENTA, Fore.RESET))
 
         c = Converge(self.command_args, self.args, self.molecule)
-        status, output = c.execute(idempotent=True, exit=exit)
+        status, output = c.execute(idempotent=True, exit=False, hide_errors=True)
         if status is not None:
+            msg = '{}Skipping due to errors during converge.\n{}'
+            print(msg.format(Fore.YELLOW, Fore.RESET))
             return status, None
+
         idempotent, changed_tasks = self.molecule._parse_provisioning_output(output)
 
         if idempotent:
@@ -325,13 +330,13 @@ class Verify(AbstractCommand):
         ignore_paths = self.molecule._config.config['molecule']['ignore_paths']
 
         # whitespace & trailing newline check
-        validators.check_trailing_cruft(ignore_paths=ignore_paths)
+        validators.check_trailing_cruft(ignore_paths=ignore_paths, exit=exit)
 
         # no serverspec or testinfra
         if not os.path.isdir(serverspec_dir) and not os.path.isdir(testinfra_dir):
             msg = '{}Skipping tests, could not find {}/ or {}/.{}'
             print(msg.format(Fore.YELLOW, serverspec_dir, testinfra_dir, Fore.RESET))
-            return
+            return None, None
 
         self.molecule._write_ssh_config()
         kwargs = {'env': self.molecule._env}
@@ -400,19 +405,19 @@ class Test(AbstractCommand):
         if self.args.get('--destroy') == 'always':
             c = Destroy(command_args, args)
             c.execute()
-            return
+            return None, None
 
         if self.args.get('--destroy') == 'never':
-            return
+            return None, None
 
         # passing (default)
         if status is None:
             c = Destroy(command_args, args)
             c.execute()
-            return
+            return None, None
 
         # error encountered during test
-        sys.exit(result.exit_code)
+        sys.exit(status)
 
 
 class List(AbstractCommand):
@@ -433,6 +438,7 @@ class List(AbstractCommand):
 
         is_machine_readable = self.molecule._args['-m']
         self.molecule._print_valid_platforms(machine_readable=is_machine_readable)
+        return None, None
 
 
 class Status(AbstractCommand):
@@ -459,7 +465,7 @@ class Status(AbstractCommand):
             status = self.molecule._provisioner.status()
         except CalledProcessError as e:
             print('ERROR: {}'.format(e))
-            return e.returncode
+            return e.exit_code, None
 
         x = prettytable.PrettyTable(['Name', 'State', 'Provider'])
         x.align = 'l'
@@ -477,6 +483,7 @@ class Status(AbstractCommand):
         self.molecule._print_valid_platforms()
         print()
         self.molecule._print_valid_providers()
+        return None, None
 
 
 class Login(AbstractCommand):
@@ -545,6 +552,7 @@ class Login(AbstractCommand):
         self.molecule._pt = pexpect.spawn('/usr/bin/env ' + ssh_cmd.format(*ssh_args), dimensions=dimensions)
         signal.signal(signal.SIGWINCH, self.molecule._sigwinch_passthrough)
         self.molecule._pt.interact()
+        return None, None
 
 
 class Init(AbstractCommand):
@@ -568,7 +576,6 @@ class Init(AbstractCommand):
     def execute(self):
         role = self.molecule._args['<role>']
         role_path = os.path.join(os.curdir, role)
-
         if not role:
             msg = '{}The init command requires a role name. Try:\n\n{}{} init <role>{}'
             print(msg.format(Fore.RED, Fore.YELLOW, os.path.basename(sys.argv[0]), Fore.RESET))

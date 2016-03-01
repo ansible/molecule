@@ -21,7 +21,6 @@
 from __future__ import print_function
 
 import os
-import sys
 
 import sh
 
@@ -145,7 +144,7 @@ class AnsiblePlaybook:
         """
         self.env.pop(name, None)
 
-    def execute(self, exit=True):
+    def execute(self, hide_errors=False):
         """
         Executes ansible-playbook
 
@@ -156,8 +155,8 @@ class AnsiblePlaybook:
 
         try:
             return None, self.ansible().stdout
-        except sh.ErrorReturnCode as e:
-            print('ERROR: {}'.format(e))
-            if exit:
-                sys.exit(e.exit_code)
+        except (sh.ErrorReturnCode, sh.ErrorReturnCode_2) as e:
+            if not hide_errors:
+                print('ERROR: {}'.format(e))
+
             return e.exit_code, None
