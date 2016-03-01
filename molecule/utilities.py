@@ -74,7 +74,7 @@ def merge_dicts(a, b, raise_conflicts=False, path=None):
 
 def write_template(src, dest, kwargs={}, _module='molecule', _dir='templates'):
     """
-    Writes a file from a jinja2 template
+    Writes a file from a jinja2 template.
     :param src: the target template files to use
     :param dest: destination of the templatized file to be written
     :param kwargs: dictionary of arguments passed to jinja2 when rendering template
@@ -114,7 +114,7 @@ def write_file(filename, content):
 
 def format_instance_name(name, platform, instances):
     """
-    Takes an instance name and formats it according to options specified in the instance's config
+    Takes an instance name and formats it according to options specified in the instance's config.
     :param name: the name of the instance
     :param platform: the current molecule platform in use
     :param instances: the current molecule instances dict in use
@@ -143,6 +143,36 @@ def format_instance_name(name, platform, instances):
     # if we fall through, return the default name
     return name + '-' + platform
 
+def remove_args(command_args, args, kill):
+    """
+    Removes args so commands can be passed around easily.
+    :param command_args: list of command args from DocOpt
+    :param args: dict of arguments from DocOpt
+    :kill: list of args to remove from returned values
+    :return: pruned command_args list, pruned args dict
+    """
+
+    new_args = {}
+    new_command_args = []
+    skip_next = False
+
+    # remove killed command args and their adjacent items
+    for item in command_args:
+        if skip_next:
+            skip_next = False
+            continue
+        if item.lower() in kill:
+            skip_next = True
+            continue
+        new_command_args.append(item)
+
+    # remove killed command args
+    for k, v in new_args.iteritems():
+        if k not in kill:
+            new_args[k] = v
+
+    return new_command_args, new_args
+
 
 def print_stdout(line):
     """
@@ -166,7 +196,7 @@ def print_stderr(line):
 
 def debug(title, data):
     """
-    Prints colorized output for use when debugging portions of molecule
+    Prints colorized output for use when debugging portions of molecule.
     :param title: title of debug output
     :param data: data of debug output
     :return: None

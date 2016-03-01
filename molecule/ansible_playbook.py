@@ -145,18 +145,19 @@ class AnsiblePlaybook:
         """
         self.env.pop(name, None)
 
-    def execute(self):
+    def execute(self, exit=True):
         """
         Executes ansible-playbook
 
-        :return: sh.stdout on success, else None
-        :return: None
+        :returns: exit code if any, output of command as string
         """
         if self.ansible is None:
             self.bake()
 
         try:
-            return self.ansible().stdout
+            return None, self.ansible().stdout
         except sh.ErrorReturnCode as e:
             print('ERROR: {}'.format(e))
-            sys.exit(e.exit_code)
+            if exit:
+                sys.exit(e.exit_code)
+            return e.exit_code, None

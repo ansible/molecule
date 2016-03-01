@@ -121,8 +121,9 @@ class Create(AbstractCommand):
         except CalledProcessError as e:
             print('ERROR: {}'.format(e))
             if exit:
-                sys.exit(e.returncode)
-            return e.returncode
+                sys.exit(e.exit_code)
+            return e.exit_code, None
+        return None, None
 
 
 class Destroy(AbstractCommand):
@@ -159,9 +160,10 @@ class Destroy(AbstractCommand):
         except CalledProcessError as e:
             print('ERROR: {}'.format(e))
             if exit:
-                sys.exit(e.returncode)
-            return e.returncode
+                sys.exit(e.exit_code)
+            return e.exit_code, None
         self.molecule._remove_templates()
+        return None, None
 
 
 class Converge(AbstractCommand):
@@ -196,21 +198,7 @@ class Converge(AbstractCommand):
             create_inventory = False
 
         if create_instances and not idempotent:
-            # remove args Create doesn't support
-            command_args = []
-            skip_next = False
-            for item in self.command_args:
-                if skip_next:
-                    skip_next = False
-                    continue
-                if item.lower() == '--tags':
-                    skip_next = True
-                    continue
-                command_args.append(item)
-
-            args = dict(self.args)
-            del (args['--tags'])
-
+            command_args, args = utilities.remove_args(self.command_args, self.args, ['--tags'])
             c = Create(command_args, args, self.molecule)
             c.execute()
 
@@ -256,13 +244,15 @@ class Converge(AbstractCommand):
             utilities.debug('ANSIBLE ENVIRONMENT', yaml.dump(ansible_env, default_flow_style=False, indent=2))
             utilities.debug('ANSIBLE PLAYBOOK', str(ansible.ansible))
 
-        output = ansible.execute()
+        status, output = ansible.execute(exit=exit)
+        if status is not None:
+            return status, None
 
         if not self.molecule._state.get('converged'):
             self.molecule._state['converged'] = True
             self.molecule._write_state_file()
 
-        return output
+        return None, output
 
 
 class Idempotence(AbstractCommand):
@@ -285,13 +275,15 @@ class Idempotence(AbstractCommand):
         print('{}Idempotence test in progress (can take a few minutes)...{}'.format(Fore.MAGENTA, Fore.RESET))
 
         c = Converge(self.command_args, self.args, self.molecule)
-        output = c.execute(idempotent=True)
+        status, output = c.execute(idempotent=True, exit=exit)
+        if status is not None:
+            return status, None
         idempotent, changed_tasks = self.molecule._parse_provisioning_output(output)
 
         if idempotent:
             print('{}Idempotence test passed.{}'.format(Fore.GREEN, Fore.RESET))
             print()
-            return
+            return None, None
 
         # Display the details of the idempotence test.
         if changed_tasks:
@@ -306,7 +298,7 @@ class Idempotence(AbstractCommand):
             print('{}{}{}'.format(Fore.YELLOW, warning_msg, Fore.RESET))
         if exit:
             sys.exit(1)
-        return 1
+        return 1, None
 
 
 class Verify(AbstractCommand):
@@ -375,7 +367,9 @@ class Verify(AbstractCommand):
             print('ERROR: {}'.format(e))
             if exit:
                 sys.exit(e.exit_code)
-            return e.exit_code
+            return e.exit_code, None
+
+        return None, None
 
 
 class Test(AbstractCommand):
@@ -383,11 +377,12 @@ class Test(AbstractCommand):
     Runs a series of commands (defined in config) against instances for a full test/verify run.
 
     Usage:
-        test [--platform=<platform>] [--provider=<provider>] [--debug]
+        test [--platform=<platform>] [--provider=<provider>] [--destroy=<destroy>] [--debug]
 
     Options:
         --platform=<platform>  specify a platform
         --provider=<provider>  specify a provider
+        --destroy=<destroy>    destroy behavior (passing, always, never)
         --debug                get more detail
     """
 
@@ -395,10 +390,29 @@ class Test(AbstractCommand):
         if self.static:
             self.disabled('test')
 
+        command_args, args = utilities.remove_args(self.command_args, self.args, ['--destroy'])
+
         for task in self.molecule._config.config['molecule']['test']['sequence']:
             command = getattr(sys.modules[__name__], task.capitalize())
-            c = command(self.command_args, self.args)
+            c = command(command_args, args)
+            status, output = c.execute(exit=False)
+
+        if self.args.get('--destroy') == 'always':
+            c = Destroy(command_args, args)
             c.execute()
+            return
+
+        if self.args.get('--destroy') == 'never':
+            return
+
+        # passing (default)
+        if status is None:
+            c = Destroy(command_args, args)
+            c.execute()
+            return
+
+        # error encountered during test
+        sys.exit(result.exit_code)
 
 
 class List(AbstractCommand):
@@ -569,7 +583,7 @@ class Init(AbstractCommand):
             sh.ansible_galaxy('init', role)
         except (CalledProcessError, sh.ErrorReturnCode_1) as e:
             print('ERROR: {}'.format(e))
-            sys.exit(e.returncode)
+            sys.exit(e.exit_code)
 
         self.clean_meta_main(role_path)
 
