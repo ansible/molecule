@@ -162,3 +162,12 @@ class TestUtilities(testtools.TestCase):
         expected = 'test-01-rhel-7'
         actual = utilities.format_instance_name('test-01', 'rhel-7', instances)
         self.assertEqual(expected, actual)
+
+    def test_remove_args(self):
+        test_list = ['tags', 'molecule1', 'platform', 'ubuntu', 'tags', 'molecule2']
+        test_dict = {'tags': 'molecule1', 'platform': 'ubuntu'}
+        expected_list = ['platform', 'ubuntu']
+        expected_dict = {'platform': 'ubuntu'}
+        actual_list, actual_dict = utilities.remove_args(test_list, test_dict, ['tags'])
+        self.assertEqual(actual_list, expected_list)
+        self.assertEqual(actual_dict, expected_dict)
