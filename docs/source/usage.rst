@@ -137,7 +137,6 @@ Here is a commented example:
           - converge
           - idempotence
           - verify
-          - destroy
 
       init:
         # default platform to populate when doing `molecule init`
@@ -391,8 +390,13 @@ directory of your role.
   role compatible with molecule.
 * ``molecule test``: Runs a series of commands to create, verify and destroy instances.
 
-Note: The exact sequence of commands run during the ``test`` command can be configured
+The exact sequence of commands run during the ``test`` command can be configured
 in the `test['sequence']` config option.
+
+The ``test`` command supports a ``--destroy`` argument that will accept the values
+always, never, and passing. Use these to tune the behavior for various use cases.
+For example, ``--destroy=always`` might be useful when using molecule for CI/CD.
+
 
 Integration Testing
 --------------------
