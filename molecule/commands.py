@@ -109,7 +109,7 @@ class Create(AbstractCommand):
         --debug                get more detail
     """
 
-    def execute(self):
+    def execute(self, exit=True):
         if self.static:
             self.disabled('create')
 
@@ -120,7 +120,9 @@ class Create(AbstractCommand):
             self.molecule._write_state_file()
         except CalledProcessError as e:
             print('ERROR: {}'.format(e))
-            sys.exit(e.returncode)
+            if exit:
+                sys.exit(e.returncode)
+            return e.returncode
 
 
 class Destroy(AbstractCommand):
@@ -136,7 +138,7 @@ class Destroy(AbstractCommand):
         --debug                get more detail
     """
 
-    def execute(self):
+    def execute(self, exit=True):
         """
         Removes template files.
         Clears state file of all info (default platform).
@@ -156,7 +158,9 @@ class Destroy(AbstractCommand):
             self.molecule._write_state_file()
         except CalledProcessError as e:
             print('ERROR: {}'.format(e))
-            sys.exit(e.returncode)
+            if exit:
+                sys.exit(e.returncode)
+            return e.returncode
         self.molecule._remove_templates()
 
 
@@ -174,7 +178,7 @@ class Converge(AbstractCommand):
         --debug                get more detail
     """
 
-    def execute(self, idempotent=False, create_instances=True, create_inventory=True):
+    def execute(self, idempotent=False, create_instances=True, create_inventory=True, exit=True):
         """
         :param idempotent: Optionally provision servers quietly so output can be parsed for idempotence
         :param create_inventory: Toggle inventory creation
@@ -274,7 +278,7 @@ class Idempotence(AbstractCommand):
         --debug                get more detail
     """
 
-    def execute(self):
+    def execute(self, exit=True):
         if self.static:
             self.disabled('idempotence')
 
@@ -300,7 +304,9 @@ class Idempotence(AbstractCommand):
                 "Therefore the failure details cannot be displayed."
 
             print('{}{}{}'.format(Fore.YELLOW, warning_msg, Fore.RESET))
-        sys.exit(1)
+        if exit:
+            sys.exit(1)
+        return 1
 
 
 class Verify(AbstractCommand):
@@ -316,7 +322,7 @@ class Verify(AbstractCommand):
         --debug                get more detail
     """
 
-    def execute(self):
+    def execute(self, exit=True):
         if self.static:
             self.disabled('verify')
 
@@ -367,7 +373,9 @@ class Verify(AbstractCommand):
                 print(msg.format(Fore.YELLOW, serverspec_dir, Fore.RESET))
         except sh.ErrorReturnCode as e:
             print('ERROR: {}'.format(e))
-            sys.exit(e.exit_code)
+            if exit:
+                sys.exit(e.exit_code)
+            return e.exit_code
 
 
 class Test(AbstractCommand):
