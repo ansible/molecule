@@ -18,6 +18,8 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
+from __future__ import print_function
+
 import os
 import pexpect
 import re
@@ -284,7 +286,7 @@ class Idempotence(AbstractCommand):
 
         if idempotent:
             print('{}Idempotence test passed.{}'.format(Fore.GREEN, Fore.RESET))
-            print
+            print()
             return
 
         # Display the details of the idempotence test.
@@ -342,9 +344,9 @@ class Verify(AbstractCommand):
             # testinfra
             if os.path.isdir(testinfra_dir):
                 msg = '\n{}Executing testinfra tests found in {}/.{}'
-                print(msg.format(Fore.MAGENTA, serverspec_dir, Fore.RESET))
+                print(msg.format(Fore.MAGENTA, testinfra_dir, Fore.RESET))
                 validators.testinfra(inventory_file, **kwargs)
-                print
+                print()
             else:
                 msg = '{}No testinfra tests found in {}/.\n{}'
                 print(msg.format(Fore.YELLOW, testinfra_dir, Fore.RESET))
@@ -354,12 +356,12 @@ class Verify(AbstractCommand):
                 msg = '{}Executing rubocop on *.rb files found in {}/.{}'
                 print(msg.format(Fore.MAGENTA, serverspec_dir, Fore.RESET))
                 validators.rubocop(serverspec_dir, **kwargs)
-                print
+                print()
 
                 msg = '{}Executing serverspec tests found in {}/.{}'
                 print(msg.format(Fore.MAGENTA, serverspec_dir, Fore.RESET))
                 validators.rake(rakefile, **kwargs)
-                print
+                print()
             else:
                 msg = '{}No serverspec tests found in {}/.\n{}'
                 print(msg.format(Fore.YELLOW, serverspec_dir, Fore.RESET))
@@ -449,8 +451,9 @@ class Status(AbstractCommand):
             x.add_row([item.name, state, item.provider])
 
         print(x)
-        print
+        print()
         self.molecule._print_valid_platforms()
+        print()
         self.molecule._print_valid_providers()
 
 
