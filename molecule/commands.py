@@ -191,10 +191,18 @@ class Converge(AbstractCommand):
 
         if create_instances and not idempotent:
             # remove args Create doesn't support
-            command_args = list(self.command_args)
+            command_args = []
+            skip_next = False
+            for item in self.command_args:
+                if skip_next:
+                    skip_next = False
+                    continue
+                if item.lower() == '--tags':
+                    skip_next = True
+                    continue
+                command_args.append(item)
+
             args = dict(self.args)
-            pos = command_args.index('--tags')
-            del (command_args[pos:pos + 2])
             del (args['--tags'])
 
             c = Create(command_args, args, self.molecule)
