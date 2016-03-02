@@ -1,0 +1,81 @@
+properties:
+  ansible:
+    properties:
+      ask_sudo_pass: {type: boolean}
+      ask_vault_pass: {type: boolean}
+      connection: {type: string}
+      diff: {type: boolean}
+      host_key_checking: {type: boolean}
+      limit: {type: string}
+      playbook: {type: string}
+      raw_ssh_args:
+        items: {type: string}
+        type: array
+      sudo: {type: boolean}
+      sudo_user: {type: boolean}
+      tags: {type: boolean}
+      timeout: {type: integer}
+      user: {type: string}
+      vault_password_file: {type: boolean}
+      verbose: {type: boolean}
+    type: object
+  molecule:
+    properties:
+      ansible_config_template: {type: string}
+      config_file: {type: string}
+      ignore_paths:
+        items: {type: string}
+        type: array
+      init:
+        properties:
+          platform:
+            properties:
+              box: {type: string}
+              box_url: {type: string}
+              box_version: {type: string}
+              name: {type: string}
+            type: object
+          templates:
+            properties:
+              default_spec: {type: string}
+              molecule: {type: string}
+              playbook: {type: string}
+              spec_helper: {type: string}
+            type: object
+        type: object
+      inventory_file: {type: string}
+      molecule_dir: {type: string}
+      molecule_file: {type: string}
+      rakefile_file: {type: string}
+      rakefile_template: {type: string}
+      raw_ssh_args:
+        items: {type: string}
+        type: array
+      serverspec_dir: {type: string}
+      state_file: {type: string}
+      test:
+        properties:
+          sequence:
+            items: {type: string}
+            type: array
+        type: object
+      testinfra_dir: {type: string}
+      vagrantfile_file: {type: string}
+      vagrantfile_template: {type: string}
+    type: object
+  vagrant:
+    properties:
+      providers:
+        items:
+          properties:
+            name: {type: string}
+            options:
+              properties:
+                cpus: {type: integer}
+                memory: {type: integer}
+              type: object
+            type: {type: string}
+          type: object
+        type: array
+    type: object
+type: object

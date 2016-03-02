@@ -21,78 +21,44 @@
 from __future__ import print_function
 
 import os
-import sys
 
-import yaml
-from colorama import Fore
+import anyconfig
 
 import molecule.utilities as utilities
 
 
 class Config(object):
-    # locations to look for molecule config files
     CONFIG_PATHS = [os.environ.get('MOLECULE_CONFIG'), os.path.expanduser('~/.config/molecule/config.yml'),
                     '/etc/molecule/config.yml']
+    DEFAULTS_FILE = os.path.join(os.path.dirname(__file__), 'conf/defaults.yml')
 
-    def load_defaults_file(self, defaults_file=None):
+    def __init__(self, configs=CONFIG_PATHS):
+        self.config = self._get_config(configs)
+        self._build_easy_paths()
+        self._update_ansible_defaults()
+
+    def _get_first_config(self, configs):
+        l = [f for f in configs if f and os.path.isfile(f)]
+        if l:
+            return l.pop(0)
+        return l
+
+    def _get_config(self, configs):
         """
-        Loads config from a file
+        Loads a config from a file, and returns a dict.
 
-        :param defaults_file: optional YAML file to open and read defaults from
-        :return: None
+        Only the first file that's found will be merged ontop of the next.
+
+        :param configs: A list containing configs to load.
+        :return: `type: dict`
         """
-        # load defaults from provided file
-        if defaults_file is None:
-            defaults_file = os.path.join(os.path.dirname(__file__), 'conf/defaults.yml')
+        c = self._get_first_config(configs)
 
-        with open(defaults_file, 'r') as stream:
-            self.config = yaml.safe_load(stream)
+        return anyconfig.load([c, self.DEFAULTS_FILE], ignore_missing=True)
 
-    def merge_molecule_config_files(self, paths=CONFIG_PATHS):
+    def _build_easy_paths(self):
         """
-        Looks for a molecule config file in paths and merges it with current config if found
-
-        Only the first file that's found will be merged in.
-        :param paths: list of places to look for config files
-        :return: Path of file that was merged into config, if found, otherwise None
-        """
-        # merge defaults with a config file if found
-        for path in paths:
-            if path and os.path.isfile(path):
-                with open(path, 'r') as stream:
-                    self.config = utilities.merge_dicts(self.config, yaml.safe_load(stream))
-                    return path
-        return
-
-    def merge_molecule_file(self, molecule_file=None):
-        """
-        Looks for a molecule file in the local path and merges it into our config
-
-        :param molecule_file: path and name of molecule file to look for
-        :return: None
-        """
-        if molecule_file is None:
-            molecule_file = self.config['molecule']['molecule_file']
-
-        if not os.path.isfile(molecule_file):
-            error = '\n{}Unable to find {}. Exiting.{}'
-            print(error.format(Fore.RED, self.config['molecule']['molecule_file'], Fore.RESET))
-            sys.exit(1)
-
-        with open(molecule_file, 'r') as env:
-            try:
-                molecule_yml = yaml.safe_load(env)
-            except Exception as e:
-                error = "\n{}{} isn't properly formatted: {}{}"
-                print(error.format(Fore.RED, molecule_file, e, Fore.RESET))
-                sys.exit(1)
-
-            interim = utilities.merge_dicts(self.config, molecule_yml)
-            self.config = interim
-
-    def build_easy_paths(self):
-        """
-        Convenience function to build up paths from our config values
+        Build paths from our config.
 
         :return: None
         """
@@ -102,9 +68,9 @@ class Config(object):
             self.config['molecule'][item] = os.path.join(self.config['molecule']['molecule_dir'],
                                                          self.config['molecule'][item])
 
-    def update_ansible_defaults(self):
+    def _update_ansible_defaults(self):
         """
-        Copies certain default values from molecule to ansible if none are specified in molecule.yml
+        Copies certain default values from molecule to ansible if none are specified in molecule.yml.
 
         :return: None
         """
@@ -116,11 +82,11 @@ class Config(object):
         if 'config_file' not in self.config['ansible']:
             self.config['ansible']['config_file'] = self.config['molecule']['config_file']
 
-    def populate_instance_names(self, platform):
+    def _populate_instance_names(self, platform):
         """
-        Updates instances section of config with an additional key containing the full instance name
+        Updates instances section of config with an additional key containing the full instance name.
 
-        :param platform: platform name to pass to underlying format_instance_name call
+        :param platform: platform name to pass to underlying format_instance_name call.
         :return: None
         """
         # assume static inventory if there's no vagrant section

@@ -1,0 +1,11 @@
+---
+molecule:
+  molecule_dir: .test_molecule
+
+vagrant:
+  instances:
+    - name: aio-01
+
+ansible:
+  config_file: test_config
+  inventory_file: test_inventory
