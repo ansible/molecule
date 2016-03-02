@@ -121,8 +121,8 @@ class Create(AbstractCommand):
         except CalledProcessError as e:
             print('ERROR: {}'.format(e))
             if exit:
-                sys.exit(e.exit_code)
-            return e.exit_code, None
+                sys.exit(e.returncode)
+            return e.returncode, None
         return None, None
 
 
@@ -160,8 +160,8 @@ class Destroy(AbstractCommand):
         except CalledProcessError as e:
             print('ERROR: {}'.format(e))
             if exit:
-                sys.exit(e.exit_code)
-            return e.exit_code, None
+                sys.exit(e.returncode)
+            return e.returncode, None
         self.molecule._remove_templates()
         return None, None
 
@@ -465,7 +465,7 @@ class Status(AbstractCommand):
             status = self.molecule._provisioner.status()
         except CalledProcessError as e:
             print('ERROR: {}'.format(e))
-            return e.exit_code, None
+            return e.returncode, None
 
         x = prettytable.PrettyTable(['Name', 'State', 'Provider'])
         x.align = 'l'
@@ -590,7 +590,7 @@ class Init(AbstractCommand):
             sh.ansible_galaxy('init', role)
         except (CalledProcessError, sh.ErrorReturnCode_1) as e:
             print('ERROR: {}'.format(e))
-            sys.exit(e.exit_code)
+            sys.exit(e.returncode)
 
         self.clean_meta_main(role_path)
 
