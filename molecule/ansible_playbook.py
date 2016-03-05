@@ -100,8 +100,9 @@ class AnsiblePlaybook:
             return
 
         # verbose is weird, must be -vvvv not verbose=vvvv
+        # since it value is bool and only -vvv, -vvvv and --verbose work
         if name == 'verbose' and value:
-            self.cli_pos.append('-' + value)
+            self.cli_pos.append('-vvvv')
             return
 
         self.add_cli_arg(name, value)
