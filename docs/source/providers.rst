@@ -67,7 +67,7 @@ Simple Example
       ansible:
         playbook: playbook.yml
         sudo: True
-        verbose: True
+        verbose: vvvv
 
       vagrant:
         raw_config_args:
@@ -102,7 +102,7 @@ This example is far more extensive than you likely need and it demonstrates lots
         playbook: playbook.yml
         sudo: True
         sudo_user: False
-        verbose: True
+        verbose: vvvv
 
       vagrant:
         raw_config_args:
