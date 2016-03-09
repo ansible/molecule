@@ -58,6 +58,28 @@ Vagrant.configure('2') do |config|
     {%- endif %}
   end
     {%- endif %}
+    {%- if provider.type is defined and provider.type == 'libvirt' and provider.name == current_provider %}
+  config.vm.provider :libvirt do |libvirt|
+    {%- if provider.options %}
+      {%- for k, v in provider.options.iteritems()|sort %}
+      {%- if  v  is number %}  
+    libvirt.{{ k }} = {{ v }}
+      {%- else %}
+    libvirt.{{ k }} = "{{ v }}"
+      {%- endif %}
+      {%- endfor %}
+      {%- if not provider.options.memory %}
+    libvirt.memory = 512
+      {%- endif %}
+      {%- if not provider.options.cpus %}
+    libvirt.cpus = 2
+      {%- endif %}
+    {%- else %}
+    libvirt.memory = 512
+    libvirt.cpus = 2
+    {%- endif %}
+  end
+    {%- endif %}
     {%- if provider.type is defined and provider.type == 'openstack' and provider.name == current_provider %}
     {%- for pform in provider.platforms %}
       {%- if pform.name == current_platform and 'username' in pform %}
