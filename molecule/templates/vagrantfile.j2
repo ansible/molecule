@@ -36,8 +36,9 @@ Vagrant.configure('2') do |config|
   {%- endif %}
 
   {%- for provider in config.vagrant.providers %}
+    {# --- virtualbox --- #}
     {%- if provider.type is defined and provider.type == 'virtualbox' and provider.name == current_provider %}
-  config.vm.provider :virtualbox do |vb|
+  config.vm.provider 'virtualbox' do |vb|
     {%- if provider.options %}
       {%- for k, v in provider.options.iteritems()|sort %}
     vb.{{ k }} = {{ v }}
@@ -58,59 +59,47 @@ Vagrant.configure('2') do |config|
     {%- endif %}
   end
     {%- endif %}
-    {%- if provider.type is defined and provider.type == 'openstack' and provider.name == current_provider %}
-    {%- for pform in provider.platforms %}
-      {%- if pform.name == current_platform and 'username' in pform %}
-  config.ssh.username    = '{{ pform.username|default('vagrant') }}'
-      {%- endif %}
-    {%- endfor %}
-    {%- if 'private_key_path' in provider %}
-  config.ssh.private_key_path   = {{ provider.private_key_path }}
-    {%- endif %}
-  config.vm.provider :openstack do |os|
-    {%- if 'endpoints' in provider %}
-      {%- for ep in ['auth_url', 'compute_url', 'image_url', 'network_url', 'volume_url'] %}
-        {%- if ep in provider['endpoints'] %}
-    os.openstack_{{ ep }} = '{{ provider['endpoints'][ep] }}'
-        {%- endif %}
+
+    {# --- parallels --- #}
+    {%- if provider.type is defined and provider.type == 'parallels' and provider.name == current_provider %}
+  config.vm.provider 'parallels' do |prl|
+    {%- if provider.options %}
+      {%- for k, v in provider.options.iteritems()|sort %}
+    prl.{{ k }} = {{ v }}
       {%- endfor %}
-      {%- if 'auth_url' not in provider.endpoints %}
-    os.openstack_auth_url = ENV['OS_AUTH_URL']
+      {%- if not provider.options.memory %}
+    prl.memory = 512
+      {%- endif %}
+      {%- if not provider.options.cpus %}
+    prl.cpus = 2
       {%- endif %}
     {%- else %}
-    os.openstack_auth_url = ENV['OS_AUTH_URL']
-    {%- endif %}
-
-    os.username           = {{ provider.username|default('ENV[\'OS_USERNAME\']') }}
-    os.password           = {{ provider.password|default('ENV[\'OS_PASSWORD\']') }}
-    os.tenant_name        = {{ provider.tenant_name|default('ENV[\'OS_TENANT_NAME\']') }}
-    os.region             = {{ provider.region_name|default('ENV[\'OS_REGION_NAME\']') }}
-    os.flavor             = '{{ provider.flavor }}'
-    os.security_groups    = {{ provider.security_groups|default(['default']) }}
-    {#- These next conditional blocks are for provider config that varies by platform #}
-    {%- for pform in provider.platforms %}
-      {%- if pform.name == current_platform %}
-        {%- if 'image' in pform %}
-    os.image              = '{{ pform.image }}'
-        {%- endif %}
-        {%- if 'volume_boot' in pform %}
-    os.volume_boot              = '{{ pform.volume_boot }}'
-        {%- endif %}
-      {%- endif %}
-    {%- endfor %}
-    {#- Ending platform-specific provider config #}
-    {%- for k in ['keypair_name', 'server_name'] %}
-    {%- if provider[k] is defined %}
-    os.{{ k }}       = '{{ provider[k] }}'
-      {%- endif %}
-    {%- endfor %}
-    {%- if provider.raw_options is defined %}
-      {%- for k, v in provider.raw_options.iteritems()|sort %}
-    os.{{ k }} = '{{ v }}'
-      {%- endfor %}
+    prl.memory = 512
+    prl.cpus = 2
     {%- endif %}
   end
     {%- endif %}
+
+    {# --- fusion --- #}
+    {%- if provider.type is defined and provider.type == 'vmware_fusion' and provider.name == current_provider %}
+  config.vm.provider 'vmware_fusion' do |v|
+    {%- if provider.options %}
+      {%- for k, v in provider.options.iteritems()|sort %}
+    v.{{ k }} = {{ v }}
+      {%- endfor %}
+      {%- if not provider.options.memory %}
+    v.vmx["memsize"] = 512
+      {%- endif %}
+      {%- if not provider.options.cpus %}
+    v.vmx["numvcpus"] = 2
+      {%- endif %}
+    {%- else %}
+    v.vmx["memsize"] = 512
+    v.vmx["numvcpus"] = 2
+    {%- endif %}
+  end
+    {%- endif %}
+
   {%- endfor %}
 
   {% for instance in config.vagrant.instances -%}
