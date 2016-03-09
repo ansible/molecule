@@ -101,6 +101,9 @@ class AnsiblePlaybook:
 
         # verbose is weird, must be -vvvv not verbose=vvvv
         if name == 'verbose' and value:
+            # for cases where someone passes in verbose: True
+            if value is True:
+                value = 'vvvv'
             self.cli_pos.append('-' + value)
             return
 
