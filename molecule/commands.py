@@ -109,7 +109,7 @@ class Create(AbstractCommand):
         --debug                get more detail
     """
 
-    def execute(self):
+    def execute(self, exit=True):
         if self.static:
             self.disabled('create')
 
@@ -120,7 +120,10 @@ class Create(AbstractCommand):
             self.molecule._write_state_file()
         except CalledProcessError as e:
             print('ERROR: {}'.format(e))
-            sys.exit(e.returncode)
+            if exit:
+                sys.exit(e.returncode)
+            return e.returncode, None
+        return None, None
 
 
 class Destroy(AbstractCommand):
@@ -136,7 +139,7 @@ class Destroy(AbstractCommand):
         --debug                get more detail
     """
 
-    def execute(self):
+    def execute(self, exit=True):
         """
         Removes template files.
         Clears state file of all info (default platform).
@@ -156,8 +159,11 @@ class Destroy(AbstractCommand):
             self.molecule._write_state_file()
         except CalledProcessError as e:
             print('ERROR: {}'.format(e))
-            sys.exit(e.returncode)
+            if exit:
+                sys.exit(e.returncode)
+            return e.returncode, None
         self.molecule._remove_templates()
+        return None, None
 
 
 class Converge(AbstractCommand):
@@ -174,7 +180,7 @@ class Converge(AbstractCommand):
         --debug                get more detail
     """
 
-    def execute(self, idempotent=False, create_instances=True, create_inventory=True):
+    def execute(self, idempotent=False, create_instances=True, create_inventory=True, exit=True, hide_errors=True):
         """
         :param idempotent: Optionally provision servers quietly so output can be parsed for idempotence
         :param create_inventory: Toggle inventory creation
@@ -192,21 +198,7 @@ class Converge(AbstractCommand):
             create_inventory = False
 
         if create_instances and not idempotent:
-            # remove args Create doesn't support
-            command_args = []
-            skip_next = False
-            for item in self.command_args:
-                if skip_next:
-                    skip_next = False
-                    continue
-                if item.lower() == '--tags':
-                    skip_next = True
-                    continue
-                command_args.append(item)
-
-            args = dict(self.args)
-            del (args['--tags'])
-
+            command_args, args = utilities.remove_args(self.command_args, self.args, ['--tags'])
             c = Create(command_args, args, self.molecule)
             c.execute()
 
@@ -252,13 +244,17 @@ class Converge(AbstractCommand):
             utilities.debug('ANSIBLE ENVIRONMENT', yaml.dump(ansible_env, default_flow_style=False, indent=2))
             utilities.debug('ANSIBLE PLAYBOOK', str(ansible.ansible))
 
-        output = ansible.execute()
+        status, output = ansible.execute(hide_errors=hide_errors)
+        if status is not None:
+            if exit:
+                sys.exit(status)
+            return status, None
 
         if not self.molecule._state.get('converged'):
             self.molecule._state['converged'] = True
             self.molecule._write_state_file()
 
-        return output
+        return None, output
 
 
 class Idempotence(AbstractCommand):
@@ -274,20 +270,25 @@ class Idempotence(AbstractCommand):
         --debug                get more detail
     """
 
-    def execute(self):
+    def execute(self, exit=True):
         if self.static:
             self.disabled('idempotence')
 
         print('{}Idempotence test in progress (can take a few minutes)...{}'.format(Fore.MAGENTA, Fore.RESET))
 
         c = Converge(self.command_args, self.args, self.molecule)
-        output = c.execute(idempotent=True)
+        status, output = c.execute(idempotent=True, exit=False, hide_errors=True)
+        if status is not None:
+            msg = '{}Skipping due to errors during converge.\n{}'
+            print(msg.format(Fore.YELLOW, Fore.RESET))
+            return status, None
+
         idempotent, changed_tasks = self.molecule._parse_provisioning_output(output)
 
         if idempotent:
             print('{}Idempotence test passed.{}'.format(Fore.GREEN, Fore.RESET))
             print()
-            return
+            return None, None
 
         # Display the details of the idempotence test.
         if changed_tasks:
@@ -300,7 +301,9 @@ class Idempotence(AbstractCommand):
                 "Therefore the failure details cannot be displayed."
 
             print('{}{}{}'.format(Fore.YELLOW, warning_msg, Fore.RESET))
-        sys.exit(1)
+        if exit:
+            sys.exit(1)
+        return 1, None
 
 
 class Verify(AbstractCommand):
@@ -316,7 +319,7 @@ class Verify(AbstractCommand):
         --debug                get more detail
     """
 
-    def execute(self):
+    def execute(self, exit=True):
         if self.static:
             self.disabled('verify')
 
@@ -327,13 +330,13 @@ class Verify(AbstractCommand):
         ignore_paths = self.molecule._config.config['molecule']['ignore_paths']
 
         # whitespace & trailing newline check
-        validators.check_trailing_cruft(ignore_paths=ignore_paths)
+        validators.check_trailing_cruft(ignore_paths=ignore_paths, exit=exit)
 
         # no serverspec or testinfra
         if not os.path.isdir(serverspec_dir) and not os.path.isdir(testinfra_dir):
             msg = '{}Skipping tests, could not find {}/ or {}/.{}'
             print(msg.format(Fore.YELLOW, serverspec_dir, testinfra_dir, Fore.RESET))
-            return
+            return None, None
 
         self.molecule._write_ssh_config()
         kwargs = {'env': self.molecule._env}
@@ -367,7 +370,11 @@ class Verify(AbstractCommand):
                 print(msg.format(Fore.YELLOW, serverspec_dir, Fore.RESET))
         except sh.ErrorReturnCode as e:
             print('ERROR: {}'.format(e))
-            sys.exit(e.exit_code)
+            if exit:
+                sys.exit(e.exit_code)
+            return e.exit_code, None
+
+        return None, None
 
 
 class Test(AbstractCommand):
@@ -375,11 +382,12 @@ class Test(AbstractCommand):
     Runs a series of commands (defined in config) against instances for a full test/verify run.
 
     Usage:
-        test [--platform=<platform>] [--provider=<provider>] [--debug]
+        test [--platform=<platform>] [--provider=<provider>] [--destroy=<destroy>] [--debug]
 
     Options:
         --platform=<platform>  specify a platform
         --provider=<provider>  specify a provider
+        --destroy=<destroy>    destroy behavior (passing, always, never)
         --debug                get more detail
     """
 
@@ -387,10 +395,29 @@ class Test(AbstractCommand):
         if self.static:
             self.disabled('test')
 
+        command_args, args = utilities.remove_args(self.command_args, self.args, ['--destroy'])
+
         for task in self.molecule._config.config['molecule']['test']['sequence']:
             command = getattr(sys.modules[__name__], task.capitalize())
-            c = command(self.command_args, self.args)
+            c = command(command_args, args)
+            status, output = c.execute(exit=False)
+
+        if self.args.get('--destroy') == 'always':
+            c = Destroy(command_args, args)
             c.execute()
+            return None, None
+
+        if self.args.get('--destroy') == 'never':
+            return None, None
+
+        # passing (default)
+        if status is None:
+            c = Destroy(command_args, args)
+            c.execute()
+            return None, None
+
+        # error encountered during test
+        sys.exit(status)
 
 
 class List(AbstractCommand):
@@ -411,6 +438,7 @@ class List(AbstractCommand):
 
         is_machine_readable = self.molecule._args['-m']
         self.molecule._print_valid_platforms(machine_readable=is_machine_readable)
+        return None, None
 
 
 class Status(AbstractCommand):
@@ -437,7 +465,7 @@ class Status(AbstractCommand):
             status = self.molecule._provisioner.status()
         except CalledProcessError as e:
             print('ERROR: {}'.format(e))
-            return e.returncode
+            return e.returncode, None
 
         x = prettytable.PrettyTable(['Name', 'State', 'Provider'])
         x.align = 'l'
@@ -455,6 +483,7 @@ class Status(AbstractCommand):
         self.molecule._print_valid_platforms()
         print()
         self.molecule._print_valid_providers()
+        return None, None
 
 
 class Login(AbstractCommand):
@@ -523,6 +552,7 @@ class Login(AbstractCommand):
         self.molecule._pt = pexpect.spawn('/usr/bin/env ' + ssh_cmd.format(*ssh_args), dimensions=dimensions)
         signal.signal(signal.SIGWINCH, self.molecule._sigwinch_passthrough)
         self.molecule._pt.interact()
+        return None, None
 
 
 class Init(AbstractCommand):
@@ -546,7 +576,6 @@ class Init(AbstractCommand):
     def execute(self):
         role = self.molecule._args['<role>']
         role_path = os.path.join(os.curdir, role)
-
         if not role:
             msg = '{}The init command requires a role name. Try:\n\n{}{} init <role>{}'
             print(msg.format(Fore.RED, Fore.YELLOW, os.path.basename(sys.argv[0]), Fore.RESET))

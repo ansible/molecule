@@ -59,7 +59,7 @@ class CLI(object):
             raise DocoptExit()
 
         c = command_class(command_args, args)
-        sys.exit(c.execute())
+        sys.exit(c.execute()[0])
 
 
 def main():

@@ -31,7 +31,7 @@ from utilities import print_stderr
 from utilities import print_stdout
 
 
-def check_trailing_cruft(ignore_paths=[]):
+def check_trailing_cruft(ignore_paths=[], exit=True):
     """
     Recursively finds all files relative to CWD and checks them for trailing whitespace and newlines
 
@@ -72,17 +72,17 @@ def check_trailing_cruft(ignore_paths=[]):
         whitespace = trailing_whitespace(data)
 
         if newline:
-            error = '{}Trailing newline found at the end of {}{}'
+            error = '{}Trailing newline found at the end of {}{}\n'
             print(error.format(Fore.RED, filename, Fore.RESET))
             found_error = True
 
         if whitespace:
-            error = '{}Trailing whitespace found in {} on lines: {}{}'
+            error = '{}Trailing whitespace found in {} on lines: {}{}\n'
             lines = ', '.join(str(x) for x in whitespace)
             print(error.format(Fore.RED, filename, lines, Fore.RESET))
             found_error = True
 
-    if found_error:
+    if exit and found_error:
         sys.exit(1)
 
 

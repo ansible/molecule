@@ -50,7 +50,6 @@ molecule:
       - converge
       - idempotence
       - verify
-      - destroy
 
   init:
     # default platform to populate when doing `molecule init`
