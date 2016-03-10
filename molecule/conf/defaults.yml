@@ -37,6 +37,14 @@ molecule:
   ansible_config_template: ansible.cfg.j2
   rakefile_template: rakefile.j2
 
+  # default provider to use when no --provider flag is specified
+  # comment this out to default to the first in the provider list
+  # default_provider: virtualbox
+
+  # default platform to use when no --platform flag is specified
+  # comment this out to default to the first in the platform list
+  # default_platform: rhel-7
+
   # ssh arguments passed to molecule login command
   raw_ssh_args:
     - -o StrictHostKeyChecking=no
