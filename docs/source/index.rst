@@ -5,7 +5,7 @@ Molecule is designed to aid in the development and testing of
 `Ansible`_ roles including support for multiple instances, distributions, platforms and test frameworks.
 
 It leverages `Vagrant`_ to manage virtual machines,
-with support for multiple Vagrant providers (currently VirtualBox and OpenStack)
+with support for multiple Vagrant providers (currently VirtualBox, Parallels and VMware Fusion)
 and `Serverspec`_ or `Testinfra`_ to run tests.  Molecule uses an `Ansible`_
 `playbook`_ (``playbook.yml``), to execute the `role`_ and its tests.
 
