@@ -498,24 +498,23 @@ class Login(AbstractCommand):
         if self.static:
             self.disabled('login')
 
+        # Collect the list of running hosts.
+        try:
+            status = self.molecule._provisioner.status()
+        except Exception as e:
+            status = []
+
         # make sure vagrant knows about this host
         try:
+            # Nowhere to log into if there is no running host.
+            if len(status) == 0:
+                raise InvalidHost("There is no running host.")
 
             # Check whether a host was specified.
             if self.molecule._args['<host>'] is None:
 
-                # If not, collect the list of running hosts.
-                try:
-                    status = self.molecule._provisioner.status()
-                except Exception as e:
-                    status = []
-
-                # Nowhere to log into if there is no running host.
-                if len(status) == 0:
-                    raise InvalidHost("There is no running host.")
-
                 # One running host is perfect. Log into it.
-                elif len(status) == 1:
+                if len(status) == 1:
                     hostname = status[0].name
 
                 # But too many hosts is trouble as well.
@@ -527,6 +526,13 @@ class Login(AbstractCommand):
 
                 # If the host was specified, try to use it.
                 hostname = self.molecule._args['<host>']
+                match = [x.name for x in status if x.name.startswith(hostname)]
+                if len(match) == 0:
+                    raise CalledProcessError(1, None)
+                elif len(match) != 1:
+                    raise InvalidHost("There are {} hosts that match '{}'.  You can only log into one at a time.\n"
+                                      "Try {}molecule status{} to see available hosts.".format(len(match), hostname, Fore.YELLOW, Fore.RED))
+                hostname = match[0]
 
             # Try to retrieve the SSH configuration of the host.
             conf = self.molecule._provisioner.conf(vm_name=hostname)
