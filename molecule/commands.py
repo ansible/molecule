@@ -531,7 +531,8 @@ class Login(AbstractCommand):
                     raise CalledProcessError(1, None)
                 elif len(match) != 1:
                     raise InvalidHost("There are {} hosts that match '{}'.  You can only log into one at a time.\n"
-                                      "Try {}molecule status{} to see available hosts.".format(len(match), hostname, Fore.YELLOW, Fore.RED))
+                                      "Try {}molecule status{} to see available hosts.".format(
+                                          len(match), hostname, Fore.YELLOW, Fore.RED))
                 hostname = match[0]
 
             # Try to retrieve the SSH configuration of the host.
