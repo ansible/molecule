@@ -1,5 +1,16 @@
 CHANGELOG for molecule
 ======================
+1.4.0
+----
+
+* Updated ``init`` to install role dependencies from Ansible Galaxy.
+* Now using DocOpt subcommands to dispatch commands internally.
+* Updated ``login`` command to take no hostname (for single instances) and partial hostnames.
+* Improved visibility when running (and not running) tests.
+* Can now pass multiple instances of --tags for specifying more than one tag.
+* Can now pass --destroy flag to ``test`` with various options suitable for use in CI.
+* Numerous small bug fixes.
+
 1.3.0
 ----
 
