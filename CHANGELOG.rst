@@ -1,5 +1,10 @@
 CHANGELOG for molecule
 ======================
+1.4.1
+----
+
+* Fixed bug where testinfra wasn't using the testinfra_dir config option.
+
 1.4.0
 ----
 
