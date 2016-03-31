@@ -348,7 +348,7 @@ class Verify(AbstractCommand):
             if os.path.isdir(testinfra_dir):
                 msg = '\n{}Executing testinfra tests found in {}/.{}'
                 print(msg.format(Fore.MAGENTA, testinfra_dir, Fore.RESET))
-                validators.testinfra(inventory_file, **kwargs)
+                validators.testinfra(inventory_file, testinfra_dir, **kwargs)
                 print()
             else:
                 msg = '{}No testinfra tests found in {}/.\n{}'

@@ -154,11 +154,12 @@ def rake(rakefile, debug=False, env=os.environ.copy(), out=print_stdout, err=pri
     return sh.rake(**kwargs)
 
 
-def testinfra(inventory, debug=False, env=None, out=print_stdout, err=print_stderr):
+def testinfra(inventory, testinfra_dir, debug=False, env=None, out=print_stdout, err=print_stderr):
     """
     Runs testinfra against specified ansible inventory file
 
     :param inventory: Path to ansible inventory file
+    :param testinfra_dir: Path to the testinfra tests
     :param debug: Pass debug flag to testinfra
     :param env: Environment to pass to underlying sh call
     :param out: Function to process STDOUT for underlying sh call
@@ -178,4 +179,4 @@ def testinfra(inventory, debug=False, env=None, out=print_stdout, err=print_stde
     if 'HOME' not in kwargs['_env']:
         kwargs['_env']['HOME'] = os.path.expanduser('~')
 
-    return sh.testinfra(**kwargs)
+    return sh.testinfra(testinfra_dir, **kwargs)
