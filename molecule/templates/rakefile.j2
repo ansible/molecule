@@ -13,11 +13,11 @@ instances = env['instances']
 
 instances_to_test = {}
 instances.each do |instance|
-  instance_name = instance['name'] + '-{{ current_platform }}'
-  if instance.key?('options') && instance['options'].nil? == false
+  instance_name = instance['name']
+  if instance.key?('options')
     if instance['options'].key?('append_platform_to_hostname')
-      unless instance['options']['append_platform_to_hostname']
-        instance_name = instance['name']
+      if instance['options']['append_platform_to_hostname']
+        instance_name = instance['name'] + '-{{ current_platform }}'
       end
     end
   end

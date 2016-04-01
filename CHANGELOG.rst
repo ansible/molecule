@@ -1,5 +1,11 @@
 CHANGELOG for molecule
 ======================
+1.4.1
+----
+
+* Fixed a bug where testinfra_dir wasn't being used.
+* Changed append_platform_to_hostname to default to False.
+
 1.4.0
 ----
 

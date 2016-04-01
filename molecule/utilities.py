@@ -134,14 +134,14 @@ def format_instance_name(name, platform, instances):
 
     # return the default name if no options are specified for instance
     if working_instance.get('options') is None:
-        return name + '-' + platform
-
-    # don't add platform to name
-    if working_instance['options'].get('append_platform_to_hostname') is False:
         return name
 
+    # add platform to name
+    if working_instance['options'].get('append_platform_to_hostname'):
+        return name + '-' + platform
+
     # if we fall through, return the default name
-    return name + '-' + platform
+    return name
 
 
 def remove_args(command_args, args, kill):
