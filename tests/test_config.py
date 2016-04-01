@@ -37,7 +37,7 @@ class TestConfig(testtools.TestCase):
             },
             'vagrant': {
                 'instances': [
-                    {'name': 'aio-01'}
+                    {'name': 'aio-01', 'options': {'append_platform_to_hostname': True}}
                 ]
             },
             'ansible': {
