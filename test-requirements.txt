@@ -5,4 +5,3 @@ testtools
 tox
 wheel
 yapf
-testinfra
