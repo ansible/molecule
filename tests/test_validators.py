@@ -25,43 +25,6 @@ import molecule.validators as validators
 
 
 class TestValidators(testtools.TestCase):
-    def test_trailing_newline_failed(self):
-        line = ['line1', 'line2', '\n']
-        res = validators.trailing_newline(line)
-
-        self.assertTrue(res)
-
-    def test_trailing_newline_success(self):
-        line = ['line1', 'line2', '']
-        res = validators.trailing_newline(line)
-
-        self.assertIsNone(res)
-
-    def test_trailing_whitespace_failed(self):
-        line = ['line1', 'line2', 'line3    ']
-        res = validators.trailing_whitespace(line)
-
-        self.assertTrue(res)
-
-    def test_trailing_whitespace_failed_multiline(self):
-        line = ['line1', 'line2    ', 'line3', 'line4    ']
-        res = validators.trailing_whitespace(line)
-
-        self.assertItemsEqual(res, [2, 4])
-
-    def test_trailing_whitespace_success(self):
-        line = ['line1', 'line2', 'line3']
-        res = validators.trailing_whitespace(line)
-
-        self.assertIsNone(res)
-
-    @patch('molecule.validators.rubocop')
-    def test_rubocop(self, mocked):
-        args = ['/tmp']
-        kwargs = {'pattern': '**/**/**/*', 'out': '/dev/null', 'err': None}
-        validators.rubocop(*args, **kwargs)
-        mocked.assert_called_once_with(*args, **kwargs)
-
     @patch('molecule.validators.rake')
     def test_rake(self, mocked):
         args = ['/tmp/rakefile']
