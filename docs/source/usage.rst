@@ -315,6 +315,9 @@ simply be named vagrant-01 instead of vagrant-01-rhel-7.
               type: dhcp
               auto_config: true
               auto_config: false
+            - network_name: private_network
+              type: static
+              ip: 192.168.0.1
           options:
             append_platform_to_hostname: no
           raw_config_args:
