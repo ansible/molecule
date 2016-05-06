@@ -90,12 +90,6 @@ Here is a commented example:
       # file to look for in CWD when using ansible-playbook directly
       molecule_file: molecule.yml
 
-      # directories to ignore when doing trailing whitespace checks on files during verify command
-      ignore_paths:
-        - .git
-        - .vagrant
-        - .molecule
-
       # directory to look for serverspec tests
       serverspec_dir: spec
 

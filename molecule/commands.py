@@ -327,10 +327,6 @@ class Verify(AbstractCommand):
         testinfra_dir = self.molecule._config.config['molecule']['testinfra_dir']
         inventory_file = self.molecule._config.config['ansible']['inventory_file']
         rakefile = self.molecule._config.config['molecule']['rakefile_file']
-        ignore_paths = self.molecule._config.config['molecule']['ignore_paths']
-
-        # whitespace & trailing newline check
-        validators.check_trailing_cruft(ignore_paths=ignore_paths, exit=exit)
 
         # no serverspec or testinfra
         if not os.path.isdir(serverspec_dir) and not os.path.isdir(testinfra_dir):
@@ -350,17 +346,9 @@ class Verify(AbstractCommand):
                 print(msg.format(Fore.MAGENTA, testinfra_dir, Fore.RESET))
                 validators.testinfra(inventory_file, testinfra_dir, **kwargs)
                 print()
-            else:
-                msg = '{}No testinfra tests found in {}/.\n{}'
-                print(msg.format(Fore.YELLOW, testinfra_dir, Fore.RESET))
 
             # serverspec / rubocop
             if os.path.isdir(serverspec_dir):
-                msg = '{}Executing rubocop on *.rb files found in {}/.{}'
-                print(msg.format(Fore.MAGENTA, serverspec_dir, Fore.RESET))
-                validators.rubocop(serverspec_dir, **kwargs)
-                print()
-
                 msg = '{}Executing serverspec tests found in {}/.{}'
                 print(msg.format(Fore.MAGENTA, serverspec_dir, Fore.RESET))
                 validators.rake(rakefile, **kwargs)
