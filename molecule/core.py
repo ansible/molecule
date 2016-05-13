@@ -69,16 +69,14 @@ class Molecule(object):
         try:
             self._provisioner = provisioners.get_provisioner(self)
         except provisioners.InvalidProviderSpecified:
-            print("\n{}Invalid provider '{}'\n".format(Fore.RED, self._args[
-                '--provider'], Fore.RESET))
+            print("\n{}Invalid provider '{}'\n".format(Fore.RED, self._args['--provider'], Fore.RESET))
             self._args['--provider'] = None
             self._args['--platform'] = None
             self._provisioner = provisioners.get_provisioner(self)
             self._print_valid_providers()
             sys.exit(1)
         except provisioners.InvalidPlatformSpecified:
-            print("\n{}Invalid platform '{}'\n".format(Fore.RED, self._args[
-                '--platform'], Fore.RESET))
+            print("\n{}Invalid platform '{}'\n".format(Fore.RED, self._args['--platform'], Fore.RESET))
             self._args['--provider'] = None
             self._args['--platform'] = None
             self._provisioner = provisioners.get_provisioner(self)
@@ -91,10 +89,7 @@ class Molecule(object):
         # updates instances config with full machine names
         self._config.populate_instance_names(self._env['MOLECULE_PLATFORM'])
         if self._args.get('--debug'):
-            utilities.debug('RUNNING CONFIG',
-                            yaml.dump(self._config.config,
-                                      default_flow_style=False,
-                                      indent=2))
+            utilities.debug('RUNNING CONFIG', yaml.dump(self._config.config, default_flow_style=False, indent=2))
 
         self._write_state_file()
 
@@ -130,16 +125,14 @@ class Molecule(object):
             print(Fore.CYAN + "AVAILABLE PLATFORMS" + Fore.RESET)
         default_platform = self._provisioner.default_platform
         for platform in self._provisioner.valid_platforms:
-            default = ' (default)' if platform[
-                'name'] == default_platform and not machine_readable else ''
+            default = ' (default)' if platform['name'] == default_platform and not machine_readable else ''
             print(platform['name'] + default)
 
     def _print_valid_providers(self):
         print(Fore.CYAN + "AVAILABLE PROVIDERS" + Fore.RESET)
         default_provider = self._provisioner.default_provider
         for provider in self._provisioner.valid_providers:
-            default = ' (default)' if provider[
-                'name'] == default_provider else ''
+            default = ' (default)' if provider['name'] == default_provider else ''
             print(provider['name'] + default)
 
     def _sigwinch_passthrough(self, sig, data):
@@ -147,8 +140,7 @@ class Molecule(object):
         if 'TIOCGWINSZ' in dir(termios):
             TIOCGWINSZ = termios.TIOCGWINSZ
         s = struct.pack('HHHH', 0, 0, 0, 0)
-        a = struct.unpack('HHHH', fcntl.ioctl(sys.stdout.fileno(), TIOCGWINSZ,
-                                              s))
+        a = struct.unpack('HHHH', fcntl.ioctl(sys.stdout.fileno(), TIOCGWINSZ, s))
         self._pt.setwinsize(a[0], a[1])
 
     def _parse_provisioning_output(self, output):
@@ -190,11 +182,10 @@ class Molecule(object):
         :return: None
         """
         # ansible.cfg
-        kwargs = {'molecule_dir':
-                  self._config.config['molecule']['molecule_dir']}
-        utilities.write_template(
-            self._config.config['molecule']['ansible_config_template'],
-            self._config.config['molecule']['config_file'], kwargs=kwargs)
+        kwargs = {'molecule_dir': self._config.config['molecule']['molecule_dir']}
+        utilities.write_template(self._config.config['molecule']['ansible_config_template'],
+                                 self._config.config['molecule']['config_file'],
+                                 kwargs=kwargs)
 
         # rakefile
         kwargs = {
@@ -202,9 +193,9 @@ class Molecule(object):
             'current_platform': self._env['MOLECULE_PLATFORM'],
             'serverspec_dir': self._config.config['molecule']['serverspec_dir']
         }
-        utilities.write_template(
-            self._config.config['molecule']['rakefile_template'],
-            self._config.config['molecule']['rakefile_file'], kwargs=kwargs)
+        utilities.write_template(self._config.config['molecule']['rakefile_template'],
+                                 self._config.config['molecule']['rakefile_file'],
+                                 kwargs=kwargs)
 
     def _create_inventory_file(self):
         """
@@ -217,12 +208,9 @@ class Molecule(object):
         host_template = \
             '{} ansible_ssh_host={} ansible_ssh_port={} ansible_ssh_private_key_file={} ansible_ssh_user={}\n'
         for instance in self._provisioner.instances:
-            ssh = self._provisioner.conf(
-                vm_name=utilities.format_instance_name(
-                    instance['name'], self._env[
-                        'MOLECULE_PLATFORM'], self._provisioner.instances))
-            inventory += host_template.format(ssh['Host'], ssh['HostName'],
-                                              ssh['Port'], ssh['IdentityFile'],
+            ssh = self._provisioner.conf(vm_name=utilities.format_instance_name(instance['name'], self._env[
+                'MOLECULE_PLATFORM'], self._provisioner.instances))
+            inventory += host_template.format(ssh['Host'], ssh['HostName'], ssh['Port'], ssh['IdentityFile'],
                                               ssh['User'])
 
         # get a list of all groups and hosts in those groups
@@ -237,13 +225,11 @@ class Molecule(object):
         for group, instances in groups.iteritems():
             inventory += '\n[{}]\n'.format(group)
             for instance in instances:
-                inventory += '{}\n'.format(utilities.format_instance_name(
-                    instance, self._env[
-                        'MOLECULE_PLATFORM'], self._provisioner.instances))
+                inventory += '{}\n'.format(utilities.format_instance_name(instance, self._env['MOLECULE_PLATFORM'],
+                                                                          self._provisioner.instances))
 
         inventory_file = self._config.config['molecule']['inventory_file']
         try:
             utilities.write_file(inventory_file, inventory)
         except IOError:
-            print('{}WARNING: could not write inventory file {}{}'.format(
-                Fore.YELLOW, inventory_file, Fore.RESET))
+            print('{}WARNING: could not write inventory file {}{}'.format(Fore.YELLOW, inventory_file, Fore.RESET))

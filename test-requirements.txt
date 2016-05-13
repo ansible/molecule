@@ -4,4 +4,4 @@ testrepository
 testtools
 tox
 wheel
-yapf==0.8.0
+yapf

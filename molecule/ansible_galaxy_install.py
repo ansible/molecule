@@ -30,11 +30,7 @@ from utilities import print_stdout
 
 
 class AnsibleGalaxyInstall:
-    def __init__(self,
-                 requirements_file,
-                 _env=None,
-                 _out=print_stdout,
-                 _err=print_stderr):
+    def __init__(self, requirements_file, _env=None, _out=print_stdout, _err=print_stderr):
         """
         Sets up requirements for ansible-galaxy
 

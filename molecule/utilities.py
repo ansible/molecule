@@ -53,10 +53,7 @@ def merge_dicts(a, b, raise_conflicts=False, path=None):
         if key in a:
             # Dig deeper for keys that have dictionary values.
             if isinstance(a[key], dict) and isinstance(b[key], dict):
-                merge_dicts(a[key],
-                            b[key],
-                            raise_conflicts=raise_conflicts,
-                            path=(path + [str(key)]))
+                merge_dicts(a[key], b[key], raise_conflicts=raise_conflicts, path=(path + [str(key)]))
 
             # Skip the identical values.
             elif a[key] == b[key]:
@@ -64,15 +61,13 @@ def merge_dicts(a, b, raise_conflicts=False, path=None):
             else:
                 # Otherwise raise an error if the same keys have different values.
                 if raise_conflicts:
-                    raise LookupError("Conflict at '{path}'".format(
-                        path='.'.join(path + [str(key)])))
+                    raise LookupError("Conflict at '{path}'".format(path='.'.join(path + [str(key)])))
 
                 # Or replace the value of A with the value of B.
                 a[key] = b[key]
         else:
             # If the key does not exist in A, import it.
-            a[key] = copy.deepcopy(b[key]) if isinstance(b[key],
-                                                         dict) else b[key]
+            a[key] = copy.deepcopy(b[key]) if isinstance(b[key], dict) else b[key]
 
     return a
 
@@ -93,13 +88,11 @@ def write_template(src, dest, kwargs={}, _module='molecule', _dir='templates'):
 
     # template file doesn't exist
     if path and not os.path.isfile(src):
-        print('\n{}Unable to locate template file: {}{}'.format(Fore.RED, src,
-                                                                Fore.RESET))
+        print('\n{}Unable to locate template file: {}{}'.format(Fore.RED, src, Fore.RESET))
         sys.exit(1)
 
     # look for template in filesystem, then molecule package
-    loader = ChoiceLoader([FileSystemLoader(path, followlinks=True),
-                           PackageLoader(_module, _dir)])
+    loader = ChoiceLoader([FileSystemLoader(path, followlinks=True), PackageLoader(_module, _dir)])
 
     env = Environment(loader=loader)
     template = env.get_template(filename)
@@ -209,7 +202,5 @@ def debug(title, data):
     :param data: data of debug output
     :return: None
     """
-    print(''.join([Back.WHITE, Style.BRIGHT, Fore.BLACK, 'DEBUG: ' + title,
-                   Fore.RESET, Back.RESET, Style.RESET_ALL]))
-    print(''.join([Fore.BLACK, Style.BRIGHT, data, Style.RESET_ALL, Fore.RESET
-                   ]))
+    print(''.join([Back.WHITE, Style.BRIGHT, Fore.BLACK, 'DEBUG: ' + title, Fore.RESET, Back.RESET, Style.RESET_ALL]))
+    print(''.join([Fore.BLACK, Style.BRIGHT, data, Style.RESET_ALL, Fore.RESET]))

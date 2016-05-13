@@ -27,8 +27,6 @@ From the root for the project, run:
 
 .. code-block:: bash
 
-  $ tox -r yapf
-  $ source .tox/py27/bin/activate
   $ yapf -i -r molecule/
 
 .. _`YAPF`: https://github.com/google/yapf

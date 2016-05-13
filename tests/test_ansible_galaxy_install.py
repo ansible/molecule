@@ -32,12 +32,10 @@ class TestConfig(testtools.TestCase):
             'requirements_file': 'requirements.yml'
         }
 
-        self.galaxy_install = AnsibleGalaxyInstall(self.data[
-            'requirements_file'])
+        self.galaxy_install = AnsibleGalaxyInstall(self.data['requirements_file'])
 
     def test_requirements_file_loading(self):
-        self.assertEqual(self.galaxy_install.requirements_file,
-                         self.data['requirements_file'])
+        self.assertEqual(self.galaxy_install.requirements_file, self.data['requirements_file'])
 
     def test_add_env_arg(self):
         self.galaxy_install.add_env_arg('MOLECULE_1', 'test')

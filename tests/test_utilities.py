@@ -34,9 +34,7 @@ class TestUtilities(testtools.TestCase):
 
         self.simple_dict_a = {"name": "remy", "city": "Berkeley", "age": 21}
         self.simple_dict_b = {"name": "remy", "city": "Austin"}
-        self.deep_dict_a = {"users": {"remy": {"email": "remy@cisco.com",
-                                               "office": "San Jose",
-                                               "age": 21}}}
+        self.deep_dict_a = {"users": {"remy": {"email": "remy@cisco.com", "office": "San Jose", "age": 21}}}
         self.deep_dict_b = {
             "users": {"remy": {"email": "remy@cisco.com",
                                "office": "Austin",
@@ -95,9 +93,7 @@ class TestUtilities(testtools.TestCase):
                                "position": "python master"}}
         }
         with testtools.ExpectedException(LookupError):
-            actual = utilities.merge_dicts(self.deep_dict_a,
-                                           self.deep_dict_b,
-                                           raise_conflicts=True)
+            actual = utilities.merge_dicts(self.deep_dict_a, self.deep_dict_b, raise_conflicts=True)
             self.assertEqual(expected, actual)
 
     def test_merge_deep_deep_02(self):
@@ -112,9 +108,7 @@ class TestUtilities(testtools.TestCase):
 
     def test_write_template(self):
         tmp_file = '/tmp/test_utilities_write_template.tmp'
-        utilities.write_template('test_write_template.j2',
-                                 tmp_file, {'test': 'chicken'},
-                                 _dir='templates/tests')
+        utilities.write_template('test_write_template.j2', tmp_file, {'test': 'chicken'}, _dir='templates/tests')
         with open(tmp_file, 'r') as f:
             data = f.read()
         os.remove(tmp_file)
@@ -158,8 +152,7 @@ class TestUtilities(testtools.TestCase):
         self.assertEqual(expected, actual)
 
     def test_format_instance_name_02(self):
-        instances = [{'name': 'test-01',
-                      'options': {'append_platform_to_hostname': True}}]
+        instances = [{'name': 'test-01', 'options': {'append_platform_to_hostname': True}}]
         expected = 'test-01-rhel-7'
         actual = utilities.format_instance_name('test-01', 'rhel-7', instances)
         self.assertEqual(expected, actual)
@@ -171,12 +164,10 @@ class TestUtilities(testtools.TestCase):
         self.assertEqual(expected, actual)
 
     def test_remove_args(self):
-        test_list = ['tags', 'molecule1', 'platform', 'ubuntu', 'tags',
-                     'molecule2']
+        test_list = ['tags', 'molecule1', 'platform', 'ubuntu', 'tags', 'molecule2']
         test_dict = {'tags': 'molecule1', 'platform': 'ubuntu'}
         expected_list = ['platform', 'ubuntu']
         expected_dict = {'platform': 'ubuntu'}
-        actual_list, actual_dict = utilities.remove_args(test_list, test_dict,
-                                                         ['tags'])
+        actual_list, actual_dict = utilities.remove_args(test_list, test_dict, ['tags'])
         self.assertEqual(actual_list, expected_list)
         self.assertEqual(actual_dict, expected_dict)

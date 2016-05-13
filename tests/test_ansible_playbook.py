@@ -35,8 +35,8 @@ class TestConfig(testtools.TestCase):
             'diff': True,
             'host_key_checking': False,
             'raw_ssh_args': [
-                '-o UserKnownHostsFile=/dev/null', '-o IdentitiesOnly=yes',
-                '-o ControlMaster=auto', '-o ControlPersist=60s'
+                '-o UserKnownHostsFile=/dev/null', '-o IdentitiesOnly=yes', '-o ControlMaster=auto',
+                '-o ControlPersist=60s'
             ],
             'raw_env_vars': {
                 'TEST_1': 'test_1'
@@ -58,23 +58,19 @@ class TestConfig(testtools.TestCase):
     def test_parse_arg_special_cases(self):
         # raw environment variables are set
         self.assertIsNone(self.ansible.cli.get('raw_env_vars'))
-        self.assertEqual(self.ansible.env['TEST_1'],
-                         self.data['raw_env_vars']['TEST_1'])
+        self.assertEqual(self.ansible.env['TEST_1'], self.data['raw_env_vars']['TEST_1'])
 
         # raw_ssh_args set
         self.assertIsNone(self.ansible.cli.get('raw_ssh_args'))
-        self.assertEqual(self.ansible.env['ANSIBLE_SSH_ARGS'],
-                         ' '.join(self.data['raw_ssh_args']))
+        self.assertEqual(self.ansible.env['ANSIBLE_SSH_ARGS'], ' '.join(self.data['raw_ssh_args']))
 
         # host_key_checking gets set in environment as string 'false'
         self.assertIsNone(self.ansible.cli.get('host_key_checking'))
-        self.assertEqual(self.ansible.env['ANSIBLE_HOST_KEY_CHECKING'],
-                         'false')
+        self.assertEqual(self.ansible.env['ANSIBLE_HOST_KEY_CHECKING'], 'false')
 
         # config_file is set in environment
         self.assertIsNone(self.ansible.cli.get('config_file'))
-        self.assertEqual(self.ansible.env['ANSIBLE_CONFIG'],
-                         self.data['config_file'])
+        self.assertEqual(self.ansible.env['ANSIBLE_CONFIG'], self.data['config_file'])
 
         # playbook is set as attribute
         self.assertIsNone(self.ansible.cli.get('playbook'))
