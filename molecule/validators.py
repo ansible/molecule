@@ -44,9 +44,11 @@ def check_trailing_cruft(ignore_paths=[], exit=True):
     valid_extensions = ['py', 'yml', 'rb']
     for root, dirs, files in os.walk('.'):
         # gets ./subdirectory/filename
-        filenames.extend([os.path.join(root, name) for name in files if name.split(os.extsep)[-1] in valid_extensions])
+        filenames.extend([os.path.join(root, name) for name in files
+                          if name.split(os.extsep)[-1] in valid_extensions])
         # gets ./filename
-        filenames.extend([os.path.join(root, name) for name in dirs if name.split(os.extsep)[-1] in valid_extensions])
+        filenames.extend([os.path.join(root, name) for name in dirs
+                          if name.split(os.extsep)[-1] in valid_extensions])
 
     # only work on files not in our ignore paths
     for f in filenames:
@@ -114,7 +116,12 @@ def trailing_whitespace(source):
     return lines if lines else None
 
 
-def rubocop(serverspec_dir, debug=False, env=os.environ.copy(), pattern='/**/*.rb', out=print_stdout, err=print_stderr):
+def rubocop(serverspec_dir,
+            debug=False,
+            env=os.environ.copy(),
+            pattern='/**/*.rb',
+            out=print_stdout,
+            err=print_stderr):
     """
     Runs rubocop against specified directory with specified pattern
 
@@ -135,7 +142,11 @@ def rubocop(serverspec_dir, debug=False, env=os.environ.copy(), pattern='/**/*.r
     return sh.rubocop(match, **kwargs)
 
 
-def rake(rakefile, debug=False, env=os.environ.copy(), out=print_stdout, err=print_stderr):
+def rake(rakefile,
+         debug=False,
+         env=os.environ.copy(),
+         out=print_stdout,
+         err=print_stderr):
     """
     Runs rake with specified rakefile
 
@@ -146,7 +157,11 @@ def rake(rakefile, debug=False, env=os.environ.copy(), out=print_stdout, err=pri
     :param err: Function to process STDERR for underlying sh call
     :return: sh response object
     """
-    kwargs = {'_env': env, '_out': out, '_err': err, 'trace': debug, 'rakefile': rakefile}
+    kwargs = {'_env': env,
+              '_out': out,
+              '_err': err,
+              'trace': debug,
+              'rakefile': rakefile}
 
     if 'HOME' not in kwargs['_env']:
         kwargs['_env']['HOME'] = os.path.expanduser('~')
@@ -154,7 +169,12 @@ def rake(rakefile, debug=False, env=os.environ.copy(), out=print_stdout, err=pri
     return sh.rake(**kwargs)
 
 
-def testinfra(inventory, testinfra_dir, debug=False, env=None, out=print_stdout, err=print_stderr):
+def testinfra(inventory,
+              testinfra_dir,
+              debug=False,
+              env=None,
+              out=print_stdout,
+              err=print_stderr):
     """
     Runs testinfra against specified ansible inventory file
 

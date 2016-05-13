@@ -39,7 +39,8 @@ class TestCLI(testtools.TestCase):
     def test_cli_prints_version(self):
         with patch('sys.argv', ['bin/molecule', '--version']):
             with patch('sys.stdout', StringIO.StringIO()) as mocked_stdout:
-                result = self.assertRaises(SystemExit, lambda: self._cli.main())
+                result = self.assertRaises(SystemExit,
+                                           lambda: self._cli.main())
                 stdout = mocked_stdout.getvalue().strip()
 
                 self.assertEqual(result.code, None)
