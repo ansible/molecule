@@ -161,7 +161,8 @@ class VagrantProvisioner(BaseProvisioner):
         self._vagrant = vagrant.Vagrant(quiet_stdout=False, quiet_stderr=False)
         self._provider = self._get_provider()
         self._platform = self._get_platform()
-        molecule._env['VAGRANT_VAGRANTFILE'] = molecule._config.config['molecule']['vagrantfile_file']
+        molecule._env['VAGRANT_VAGRANTFILE'] = molecule._config.config[
+            'molecule']['vagrantfile_file']
         self._vagrant.env = molecule._env
 
     def _get_provider(self):
@@ -171,7 +172,8 @@ class VagrantProvisioner(BaseProvisioner):
                     if item['name'] == self.m._args['--provider']]:
                 raise InvalidProviderSpecified()
             self.m._state['default_provider'] = self.m._args['--provider']
-            self.m._env['VAGRANT_DEFAULT_PROVIDER'] = self.m._args['--provider']
+            self.m._env['VAGRANT_DEFAULT_PROVIDER'] = self.m._args[
+                '--provider']
         else:
             self.m._env['VAGRANT_DEFAULT_PROVIDER'] = self.default_provider
 
@@ -191,7 +193,9 @@ class VagrantProvisioner(BaseProvisioner):
         return self.m._env['MOLECULE_PLATFORM']
 
     def _write_vagrant_file(self):
-        kwargs = {'config': self.m._config.config, 'current_platform': self.platform, 'current_provider': self.provider}
+        kwargs = {'config': self.m._config.config,
+                  'current_platform': self.platform,
+                  'current_provider': self.provider}
 
         template = self.m._config.config['molecule']['vagrantfile_template']
         dest = self.m._config.config['molecule']['vagrantfile_file']
@@ -216,9 +220,11 @@ class VagrantProvisioner(BaseProvisioner):
             return 'static'
 
         # take config's default_provider if specified, otherwise use the first in the provider list
-        default_provider = self.m._config.config['molecule'].get('default_provider')
+        default_provider = self.m._config.config['molecule'].get(
+            'default_provider')
         if default_provider is None:
-            default_provider = self.m._config.config['vagrant']['providers'][0]['name']
+            default_provider = self.m._config.config['vagrant']['providers'][
+                0]['name']
 
         # default to first entry if no entry for provider exists or provider is false
         if not self.m._state.get('default_provider'):
@@ -237,9 +243,11 @@ class VagrantProvisioner(BaseProvisioner):
             return 'static'
 
         # take config's default_platform if specified, otherwise use the first in the platform list
-        default_platform = self.m._config.config['molecule'].get('default_platform')
+        default_platform = self.m._config.config['molecule'].get(
+            'default_platform')
         if default_platform is None:
-            default_platform = self.m._config.config['vagrant']['platforms'][0]['name']
+            default_platform = self.m._config.config['vagrant']['platforms'][
+                0]['name']
 
         # default to first entry if no entry for platform exists or platform is false
         if not self.m._state.get('default_platform'):

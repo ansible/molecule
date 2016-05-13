@@ -31,7 +31,8 @@ import molecule.utilities as utilities
 
 class Config(object):
     # locations to look for molecule config files
-    CONFIG_PATHS = [os.environ.get('MOLECULE_CONFIG'), os.path.expanduser('~/.config/molecule/config.yml'),
+    CONFIG_PATHS = [os.environ.get('MOLECULE_CONFIG'),
+                    os.path.expanduser('~/.config/molecule/config.yml'),
                     '/etc/molecule/config.yml']
 
     def load_defaults_file(self, defaults_file=None):
@@ -43,7 +44,8 @@ class Config(object):
         """
         # load defaults from provided file
         if defaults_file is None:
-            defaults_file = os.path.join(os.path.dirname(__file__), 'conf/defaults.yml')
+            defaults_file = os.path.join(
+                os.path.dirname(__file__), 'conf/defaults.yml')
 
         with open(defaults_file, 'r') as stream:
             self.config = yaml.safe_load(stream)
@@ -60,7 +62,8 @@ class Config(object):
         for path in paths:
             if path and os.path.isfile(path):
                 with open(path, 'r') as stream:
-                    self.config = utilities.merge_dicts(self.config, yaml.safe_load(stream))
+                    self.config = utilities.merge_dicts(self.config,
+                                                        yaml.safe_load(stream))
                     return path
         return
 
@@ -76,7 +79,8 @@ class Config(object):
 
         if not os.path.isfile(molecule_file):
             error = '\n{}Unable to find {}. Exiting.{}'
-            print(error.format(Fore.RED, self.config['molecule']['molecule_file'], Fore.RESET))
+            print(error.format(Fore.RED, self.config['molecule'][
+                'molecule_file'], Fore.RESET))
             sys.exit(1)
 
         with open(molecule_file, 'r') as env:
@@ -96,11 +100,13 @@ class Config(object):
 
         :return: None
         """
-        values_to_update = ['state_file', 'vagrantfile_file', 'rakefile_file', 'config_file', 'inventory_file']
+        values_to_update = ['state_file', 'vagrantfile_file', 'rakefile_file',
+                            'config_file', 'inventory_file']
 
         for item in values_to_update:
-            self.config['molecule'][item] = os.path.join(self.config['molecule']['molecule_dir'],
-                                                         self.config['molecule'][item])
+            self.config['molecule'][item] = os.path.join(
+                self.config['molecule']['molecule_dir'],
+                self.config['molecule'][item])
 
     def update_ansible_defaults(self):
         """
@@ -110,11 +116,13 @@ class Config(object):
         """
         # grab inventory_file default from molecule if it's not set in the user-supplied ansible options
         if 'inventory_file' not in self.config['ansible']:
-            self.config['ansible']['inventory_file'] = self.config['molecule']['inventory_file']
+            self.config['ansible']['inventory_file'] = self.config['molecule'][
+                'inventory_file']
 
         # grab config_file default from molecule if it's not set in the user-supplied ansible options
         if 'config_file' not in self.config['ansible']:
-            self.config['ansible']['config_file'] = self.config['molecule']['config_file']
+            self.config['ansible']['config_file'] = self.config['molecule'][
+                'config_file']
 
     def populate_instance_names(self, platform):
         """
@@ -132,5 +140,6 @@ class Config(object):
             return
 
         for instance in self.config['vagrant']['instances']:
-            instance['vm_name'] = utilities.format_instance_name(instance['name'], platform,
-                                                                 self.config['vagrant']['instances'])
+            instance['vm_name'] = utilities.format_instance_name(
+                instance['name'], platform,
+                self.config['vagrant']['instances'])

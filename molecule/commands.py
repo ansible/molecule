@@ -180,7 +180,12 @@ class Converge(AbstractCommand):
         --debug                get more detail
     """
 
-    def execute(self, idempotent=False, create_instances=True, create_inventory=True, exit=True, hide_errors=True):
+    def execute(self,
+                idempotent=False,
+                create_instances=True,
+                create_inventory=True,
+                exit=True,
+                hide_errors=True):
         """
         :param idempotent: Optionally provision servers quietly so output can be parsed for idempotence
         :param create_inventory: Toggle inventory creation
@@ -198,7 +203,8 @@ class Converge(AbstractCommand):
             create_inventory = False
 
         if create_instances and not idempotent:
-            command_args, args = utilities.remove_args(self.command_args, self.args, ['--tags'])
+            command_args, args = utilities.remove_args(self.command_args,
+                                                       self.args, ['--tags'])
             c = Create(command_args, args, self.molecule)
             c.execute()
 
@@ -206,10 +212,15 @@ class Converge(AbstractCommand):
             self.molecule._create_inventory_file()
 
         # install role dependencies only during `molecule converge`
-        if not idempotent and 'requirements_file' in self.molecule._config.config['ansible']:
-            print('{}Installing role dependencies ...{}'.format(Fore.CYAN, Fore.RESET))
-            galaxy_install = AnsibleGalaxyInstall(self.molecule._config.config['ansible']['requirements_file'])
-            galaxy_install.add_env_arg('ANSIBLE_CONFIG', self.molecule._config.config['ansible']['config_file'])
+        if not idempotent and 'requirements_file' in self.molecule._config.config[
+                'ansible']:
+            print('{}Installing role dependencies ...{}'.format(Fore.CYAN,
+                                                                Fore.RESET))
+            galaxy_install = AnsibleGalaxyInstall(self.molecule._config.config[
+                'ansible']['requirements_file'])
+            galaxy_install.add_env_arg(
+                'ANSIBLE_CONFIG',
+                self.molecule._config.config['ansible']['config_file'])
             galaxy_install.bake()
             output = galaxy_install.execute()
 
@@ -230,18 +241,31 @@ class Converge(AbstractCommand):
 
             # Set the idempotence plugin.
             if callback_plugin:
-                ansible.add_env_arg('ANSIBLE_CALLBACK_PLUGINS', callback_plugin + ':' + os.path.join(
-                    sys.prefix, 'share/molecule/ansible/plugins/callback/idempotence'))
+                ansible.add_env_arg(
+                    'ANSIBLE_CALLBACK_PLUGINS',
+                    callback_plugin + ':' + os.path.join(
+                        sys.prefix,
+                        'share/molecule/ansible/plugins/callback/idempotence'))
             else:
-                ansible.add_env_arg('ANSIBLE_CALLBACK_PLUGINS',
-                                    os.path.join(sys.prefix, 'share/molecule/ansible/plugins/callback/idempotence'))
+                ansible.add_env_arg('ANSIBLE_CALLBACK_PLUGINS', os.path.join(
+                    sys.prefix,
+                    'share/molecule/ansible/plugins/callback/idempotence'))
 
         ansible.bake()
         if self.molecule._args.get('--debug'):
-            ansible_env = {k: v for (k, v) in ansible.env.items() if 'ANSIBLE' in k}
-            other_env = {k: v for (k, v) in ansible.env.items() if 'ANSIBLE' not in k}
-            utilities.debug('OTHER ENVIRONMENT', yaml.dump(other_env, default_flow_style=False, indent=2))
-            utilities.debug('ANSIBLE ENVIRONMENT', yaml.dump(ansible_env, default_flow_style=False, indent=2))
+            ansible_env = {k: v
+                           for (k, v) in ansible.env.items() if 'ANSIBLE' in k}
+            other_env = {k: v
+                         for (k, v) in ansible.env.items()
+                         if 'ANSIBLE' not in k}
+            utilities.debug('OTHER ENVIRONMENT',
+                            yaml.dump(other_env,
+                                      default_flow_style=False,
+                                      indent=2))
+            utilities.debug('ANSIBLE ENVIRONMENT',
+                            yaml.dump(ansible_env,
+                                      default_flow_style=False,
+                                      indent=2))
             utilities.debug('ANSIBLE PLAYBOOK', str(ansible.ansible))
 
         status, output = ansible.execute(hide_errors=hide_errors)
@@ -274,26 +298,35 @@ class Idempotence(AbstractCommand):
         if self.static:
             self.disabled('idempotence')
 
-        print('{}Idempotence test in progress (can take a few minutes)...{}'.format(Fore.MAGENTA, Fore.RESET))
+        print(
+            '{}Idempotence test in progress (can take a few minutes)...{}'.format(
+                Fore.MAGENTA, Fore.RESET))
 
         c = Converge(self.command_args, self.args, self.molecule)
-        status, output = c.execute(idempotent=True, exit=False, hide_errors=True)
+        status, output = c.execute(idempotent=True,
+                                   exit=False,
+                                   hide_errors=True)
         if status is not None:
             msg = '{}Skipping due to errors during converge.\n{}'
             print(msg.format(Fore.YELLOW, Fore.RESET))
             return status, None
 
-        idempotent, changed_tasks = self.molecule._parse_provisioning_output(output)
+        idempotent, changed_tasks = self.molecule._parse_provisioning_output(
+            output)
 
         if idempotent:
-            print('{}Idempotence test passed.{}'.format(Fore.GREEN, Fore.RESET))
+            print('{}Idempotence test passed.{}'.format(Fore.GREEN,
+                                                        Fore.RESET))
             print()
             return None, None
 
         # Display the details of the idempotence test.
         if changed_tasks:
-            print('{}Idempotence test failed because of the following tasks:{}'.format(Fore.RED, Fore.RESET))
-            print('{}{}{}'.format(Fore.RED, '\n'.join(changed_tasks), Fore.RESET))
+            print(
+                '{}Idempotence test failed because of the following tasks:{}'.format(
+                    Fore.RED, Fore.RESET))
+            print('{}{}{}'.format(Fore.RED, '\n'.join(changed_tasks),
+                                  Fore.RESET))
         else:
             # But in case the idempotence callback plugin was not found, we just display an error message.
             print('{}Idempotence test failed.{}'.format(Fore.RED, Fore.RESET))
@@ -323,9 +356,12 @@ class Verify(AbstractCommand):
         if self.static:
             self.disabled('verify')
 
-        serverspec_dir = self.molecule._config.config['molecule']['serverspec_dir']
-        testinfra_dir = self.molecule._config.config['molecule']['testinfra_dir']
-        inventory_file = self.molecule._config.config['ansible']['inventory_file']
+        serverspec_dir = self.molecule._config.config['molecule'][
+            'serverspec_dir']
+        testinfra_dir = self.molecule._config.config['molecule'][
+            'testinfra_dir']
+        inventory_file = self.molecule._config.config['ansible'][
+            'inventory_file']
         rakefile = self.molecule._config.config['molecule']['rakefile_file']
         ignore_paths = self.molecule._config.config['molecule']['ignore_paths']
 
@@ -333,9 +369,11 @@ class Verify(AbstractCommand):
         validators.check_trailing_cruft(ignore_paths=ignore_paths, exit=exit)
 
         # no serverspec or testinfra
-        if not os.path.isdir(serverspec_dir) and not os.path.isdir(testinfra_dir):
+        if not os.path.isdir(serverspec_dir) and not os.path.isdir(
+                testinfra_dir):
             msg = '{}Skipping tests, could not find {}/ or {}/.{}'
-            print(msg.format(Fore.YELLOW, serverspec_dir, testinfra_dir, Fore.RESET))
+            print(msg.format(Fore.YELLOW, serverspec_dir, testinfra_dir,
+                             Fore.RESET))
             return None, None
 
         self.molecule._write_ssh_config()
@@ -395,9 +433,11 @@ class Test(AbstractCommand):
         if self.static:
             self.disabled('test')
 
-        command_args, args = utilities.remove_args(self.command_args, self.args, ['--destroy'])
+        command_args, args = utilities.remove_args(self.command_args,
+                                                   self.args, ['--destroy'])
 
-        for task in self.molecule._config.config['molecule']['test']['sequence']:
+        for task in self.molecule._config.config['molecule']['test'][
+                'sequence']:
             command = getattr(sys.modules[__name__], task.capitalize())
             c = command(command_args, args)
             status, output = c.execute(exit=False)
@@ -437,7 +477,8 @@ class List(AbstractCommand):
             self.disabled('list')
 
         is_machine_readable = self.molecule._args['-m']
-        self.molecule._print_valid_platforms(machine_readable=is_machine_readable)
+        self.molecule._print_valid_platforms(
+            machine_readable=is_machine_readable)
         return None, None
 
 
@@ -458,7 +499,8 @@ class Status(AbstractCommand):
 
         if not self.molecule._state.get('created'):
             errmsg = '{}ERROR: No instances created. Try `{} create` first.{}'
-            print(errmsg.format(Fore.RED, os.path.basename(sys.argv[0]), Fore.RESET))
+            print(errmsg.format(Fore.RED, os.path.basename(sys.argv[0]),
+                                Fore.RESET))
             sys.exit(1)
 
         try:
@@ -519,8 +561,9 @@ class Login(AbstractCommand):
 
                 # But too many hosts is trouble as well.
                 else:
-                    raise InvalidHost("There are {} running hosts. You can only log into one at a time.".format(len(
-                        status)))
+                    raise InvalidHost(
+                        "There are {} running hosts. You can only log into one at a time.".format(
+                            len(status)))
 
             else:
 
@@ -530,21 +573,25 @@ class Login(AbstractCommand):
                 if len(match) == 0:
                     raise CalledProcessError(1, None)
                 elif len(match) != 1:
-                    raise InvalidHost("There are {} hosts that match '{}'.  You can only log into one at a time.\n"
-                                      "Try {}molecule status{} to see available hosts.".format(
-                                          len(match), hostname, Fore.YELLOW, Fore.RED))
+                    raise InvalidHost(
+                        "There are {} hosts that match '{}'.  You can only log into one at a time.\n"
+                        "Try {}molecule status{} to see available hosts.".format(
+                            len(match), hostname, Fore.YELLOW, Fore.RED))
                 hostname = match[0]
 
             # Try to retrieve the SSH configuration of the host.
             conf = self.molecule._provisioner.conf(vm_name=hostname)
 
             # Prepare the command to SSH into the host.
-            ssh_args = [conf['HostName'], conf['User'], conf['Port'], conf['IdentityFile'],
-                        ' '.join(self.molecule._config.config['molecule']['raw_ssh_args'])]
+            ssh_args = [conf['HostName'], conf['User'], conf['Port'],
+                        conf['IdentityFile'],
+                        ' '.join(self.molecule._config.config['molecule'][
+                            'raw_ssh_args'])]
             ssh_cmd = 'ssh {} -l {} -p {} -i {} {}'
         except CalledProcessError:
             # gets appended to python-vagrant's error message
-            conf_format = [Fore.RED, self.molecule._args['<host>'], Fore.YELLOW, Fore.RESET]
+            conf_format = [Fore.RED, self.molecule._args['<host>'],
+                           Fore.YELLOW, Fore.RESET]
             conf_errmsg = '\n{0}Unknown host {1}. Try {2}molecule status{0} to see available hosts.{3}'
             print(conf_errmsg.format(*conf_format))
             sys.exit(1)
@@ -556,7 +603,9 @@ class Login(AbstractCommand):
 
         lines, columns = os.popen('stty size', 'r').read().split()
         dimensions = (int(lines), int(columns))
-        self.molecule._pt = pexpect.spawn('/usr/bin/env ' + ssh_cmd.format(*ssh_args), dimensions=dimensions)
+        self.molecule._pt = pexpect.spawn(
+            '/usr/bin/env ' + ssh_cmd.format(*ssh_args),
+            dimensions=dimensions)
         signal.signal(signal.SIGWINCH, self.molecule._sigwinch_passthrough)
         self.molecule._pt.interact()
         return None, None
@@ -585,7 +634,8 @@ class Init(AbstractCommand):
         role_path = os.path.join(os.curdir, role)
         if not role:
             msg = '{}The init command requires a role name. Try:\n\n{}{} init <role>{}'
-            print(msg.format(Fore.RED, Fore.YELLOW, os.path.basename(sys.argv[0]), Fore.RESET))
+            print(msg.format(Fore.RED, Fore.YELLOW, os.path.basename(sys.argv[
+                0]), Fore.RESET))
             sys.exit(1)
 
         if os.path.isdir(role):
@@ -601,21 +651,37 @@ class Init(AbstractCommand):
 
         self.clean_meta_main(role_path)
 
-        env = Environment(loader=PackageLoader('molecule', 'templates'), keep_trailing_newline=True)
+        env = Environment(loader=PackageLoader('molecule', 'templates'),
+                          keep_trailing_newline=True)
 
-        t_molecule = env.get_template(self.molecule._config.config['molecule']['init']['templates']['molecule'])
-        t_playbook = env.get_template(self.molecule._config.config['molecule']['init']['templates']['playbook'])
-        t_default_spec = env.get_template(self.molecule._config.config['molecule']['init']['templates']['default_spec'])
-        t_spec_helper = env.get_template(self.molecule._config.config['molecule']['init']['templates']['spec_helper'])
+        t_molecule = env.get_template(self.molecule._config.config['molecule'][
+            'init']['templates']['molecule'])
+        t_playbook = env.get_template(self.molecule._config.config['molecule'][
+            'init']['templates']['playbook'])
+        t_default_spec = env.get_template(self.molecule._config.config[
+            'molecule']['init']['templates']['default_spec'])
+        t_spec_helper = env.get_template(self.molecule._config.config[
+            'molecule']['init']['templates']['spec_helper'])
 
         sanitized_role = re.sub('[._]', '-', role)
-        with open(os.path.join(role_path, self.molecule._config.config['molecule']['molecule_file']), 'w') as f:
-            f.write(t_molecule.render(config=self.molecule._config.config, role=sanitized_role))
+        with open(
+                os.path.join(
+                    role_path,
+                    self.molecule._config.config['molecule']['molecule_file']),
+                'w') as f:
+            f.write(t_molecule.render(config=self.molecule._config.config,
+                                      role=sanitized_role))
 
-        with open(os.path.join(role_path, self.molecule._config.config['ansible']['playbook']), 'w') as f:
+        with open(
+                os.path.join(
+                    role_path,
+                    self.molecule._config.config['ansible']['playbook']),
+                'w') as f:
             f.write(t_playbook.render(role=role))
 
-        serverspec_path = os.path.join(role_path, self.molecule._config.config['molecule']['serverspec_dir'])
+        serverspec_path = os.path.join(
+            role_path,
+            self.molecule._config.config['molecule']['serverspec_dir'])
         os.makedirs(serverspec_path)
         os.makedirs(os.path.join(serverspec_path, 'hosts'))
         os.makedirs(os.path.join(serverspec_path, 'groups'))

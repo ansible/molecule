@@ -37,7 +37,8 @@ class TestConfig(testtools.TestCase):
             },
             'vagrant': {
                 'instances': [
-                    {'name': 'aio-01', 'options': {'append_platform_to_hostname': True}}
+                    {'name': 'aio-01',
+                     'options': {'append_platform_to_hostname': True}}
                 ]
             },
             'ansible': {
@@ -59,39 +60,48 @@ class TestConfig(testtools.TestCase):
         c = config.Config()
         c.load_defaults_file(defaults_file=self.temp)
 
-        self.assertEqual(c.config['molecule']['molecule_dir'], '.test_molecule')
+        self.assertEqual(c.config['molecule']['molecule_dir'],
+                         '.test_molecule')
 
     def test_merge_molecule_config_files(self):
         c = config.Config()
         c.load_defaults_file()
         c.merge_molecule_config_files(paths=[self.temp])
 
-        self.assertEqual(c.config['molecule']['molecule_dir'], '.test_molecule')
+        self.assertEqual(c.config['molecule']['molecule_dir'],
+                         '.test_molecule')
 
     def test_merge_molecule_file(self):
         c = config.Config()
         c.load_defaults_file()
         c.merge_molecule_file(molecule_file=self.temp)
 
-        self.assertEqual(c.config['molecule']['molecule_dir'], '.test_molecule')
+        self.assertEqual(c.config['molecule']['molecule_dir'],
+                         '.test_molecule')
 
     def test_build_easy_paths(self):
         c = config.Config()
         c.load_defaults_file()
         c.build_easy_paths()
 
-        self.assertEqual(c.config['molecule']['state_file'], os.path.join('.molecule', 'state'))
-        self.assertEqual(c.config['molecule']['vagrantfile_file'], os.path.join('.molecule', 'vagrantfile'))
-        self.assertEqual(c.config['molecule']['rakefile_file'], os.path.join('.molecule', 'rakefile'))
-        self.assertEqual(c.config['molecule']['config_file'], os.path.join('.molecule', 'ansible.cfg'))
-        self.assertEqual(c.config['molecule']['inventory_file'], os.path.join('.molecule', 'ansible_inventory'))
+        self.assertEqual(c.config['molecule']['state_file'], os.path.join(
+            '.molecule', 'state'))
+        self.assertEqual(c.config['molecule']['vagrantfile_file'],
+                         os.path.join('.molecule', 'vagrantfile'))
+        self.assertEqual(c.config['molecule']['rakefile_file'], os.path.join(
+            '.molecule', 'rakefile'))
+        self.assertEqual(c.config['molecule']['config_file'], os.path.join(
+            '.molecule', 'ansible.cfg'))
+        self.assertEqual(c.config['molecule']['inventory_file'], os.path.join(
+            '.molecule', 'ansible_inventory'))
 
     def test_update_ansible_defaults(self):
         c = config.Config()
         c.load_defaults_file()
         c.merge_molecule_file(molecule_file=self.temp)
 
-        self.assertEqual(c.config['ansible']['inventory_file'], 'test_inventory')
+        self.assertEqual(c.config['ansible']['inventory_file'],
+                         'test_inventory')
         self.assertEqual(c.config['ansible']['config_file'], 'test_config')
 
     def test_populate_instance_names(self):
@@ -100,7 +110,8 @@ class TestConfig(testtools.TestCase):
         c.merge_molecule_file(molecule_file=self.temp)
         c.populate_instance_names('rhel-7')
 
-        self.assertEqual(c.config['vagrant']['instances'][0]['vm_name'], 'aio-01-rhel-7')
+        self.assertEqual(c.config['vagrant']['instances'][0]['vm_name'],
+                         'aio-01-rhel-7')
 
     def tearDown(self):
         super(TestConfig, self).tearDown()

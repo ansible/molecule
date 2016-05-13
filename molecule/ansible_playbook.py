@@ -63,7 +63,10 @@ class AnsiblePlaybook:
 
         :return: None
         """
-        self.ansible = sh.ansible_playbook.bake(self.playbook, *self.cli_pos, _env=self.env, **self.cli)
+        self.ansible = sh.ansible_playbook.bake(self.playbook,
+                                                *self.cli_pos,
+                                                _env=self.env,
+                                                **self.cli)
 
     def parse_arg(self, name, value):
         """
