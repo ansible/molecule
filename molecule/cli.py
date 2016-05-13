@@ -49,7 +49,9 @@ import molecule.commands
 
 class CLI(object):
     def main(self):
-        args = docopt(__doc__, version=molecule.__version__, options_first=True)
+        args = docopt(__doc__,
+                      version=molecule.__version__,
+                      options_first=True)
         command_name = args.get('<command>').capitalize()
         command_args = {} if args.get('<args>') is None else args.pop('<args>')
 
