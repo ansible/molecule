@@ -173,7 +173,8 @@ def testinfra(inventory, testinfra_dir, debug=False, env=None, out=print_stdout,
         'debug': debug,
         'ansible_inventory': inventory,
         'sudo': True,
-        'connection': 'ansible'
+        'connection': 'ansible',
+        'n': 3
     }
 
     if 'HOME' not in kwargs['_env']:
