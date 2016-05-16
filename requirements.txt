@@ -5,6 +5,7 @@ paramiko
 pbr
 pexpect==4.0.1
 PrettyTable==0.7.2
+pytest-xdist
 python-vagrant==0.5.10
 PyYAML==3.11
 sh==1.11
