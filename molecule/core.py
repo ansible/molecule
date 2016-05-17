@@ -213,9 +213,12 @@ class Molecule(object):
         :return: None
         """
         inventory = ''
+        ssh_extra_args = \
+            '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
         # TODO: for Ansiblev2, the following line must have s/ssh_//
-        host_template = \
-            '{} ansible_ssh_host={} ansible_ssh_port={} ansible_ssh_private_key_file={} ansible_ssh_user={} ansible_ssh_extra_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"\n'
+        host_template = ('{} ansible_ssh_host={} ansible_ssh_port={} '
+                         'ansible_ssh_private_key_file={} ansible_ssh_user={} '
+                         'ansible_ssh_extra_args="{}"\n')
         for instance in self._provisioner.instances:
             ssh = self._provisioner.conf(
                 vm_name=utilities.format_instance_name(
@@ -223,7 +226,7 @@ class Molecule(object):
                         'MOLECULE_PLATFORM'], self._provisioner.instances))
             inventory += host_template.format(ssh['Host'], ssh['HostName'],
                                               ssh['Port'], ssh['IdentityFile'],
-                                              ssh['User'])
+                                              ssh['User'], ssh_extra_args)
 
         # get a list of all groups and hosts in those groups
         groups = {}
