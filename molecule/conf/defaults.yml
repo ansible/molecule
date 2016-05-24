@@ -72,15 +72,6 @@ molecule:
       playbook: playbook.yml.j2
       test_default: test_default.py.j2
 
-# defaults for providers passed to Vagrant
-vagrant:
-  providers:
-    - name: virtualbox
-      type: virtualbox
-      options:
-        memory: 512
-        cpus: 2
-
 # defaults passed to ansible-playbook
 ansible:
   user: vagrant
