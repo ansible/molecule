@@ -309,9 +309,18 @@ class DockerProvisioner(BaseProvisioner):
         super(DockerProvisioner, self).__init__(molecule)
         self._docker = docker.from_env(assert_hostname=False)
         self._containers = self.m._config.config['docker']['containers']
+        self._provider = self._get_provider()
+        self._platform = self._get_platform()
         self.status()
         self.build_image()
         print "Docker client initialized..."
+
+    def _get_platform(self):
+        self.m._env['MOLECULE_PLATFORM'] = 'Docker'
+        return self.m._env['MOLECULE_PLATFORM']
+
+    def _get_provider(self):
+        return 'Docker'
 
     @property
     def name(self):
