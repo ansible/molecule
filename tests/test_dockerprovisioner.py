@@ -1,0 +1,137 @@
+#  Copyright (c) 2015 Cisco Systems
+#
+#  Permission is hereby granted, free of charge, to any person obtaining a copy
+#  of this software and associated documentation files (the "Software"), to deal
+#  in the Software without restriction, including without limitation the rights
+#  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#  copies of the Software, and to permit persons to whom the Software is
+#  furnished to do so, subject to the following conditions:
+#
+#  The above copyright notice and this permission notice shall be included in
+#  all copies or substantial portions of the Software.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#  THE SOFTWARE.
+
+import testtools
+
+import molecule.provisioners as provisioners
+from molecule.core import Molecule
+import yaml
+from molecule.ansible_playbook import AnsiblePlaybook
+
+
+class TestDockerProvisioner(testtools.TestCase):
+    def setUp(self):
+        super(TestDockerProvisioner, self).setUp()
+        # Setup mock molecule
+        self._mock_molecule = Molecule(dict())
+
+        self.temp = '/tmp/test_config_load_defaults_external_file.yml'
+        data = {
+            'molecule': {
+                'molecule_dir': '.test_molecule',
+                'inventory_file': 'tests/ansible_inventory'
+            },
+
+            'docker': {
+                'containers': [
+                    {'name': 'test1',
+                     'image': 'ubuntu'},
+                    {'name': 'test2',
+                     'image': 'ubuntu'}
+                ]
+            },
+            'ansible': {
+                'config_file': 'test_config',
+                'inventory_file': 'test_inventory'
+            }
+        }
+
+        with open(self.temp, 'w') as f:
+            f.write(yaml.dump(data, default_flow_style=True))
+
+        self._mock_molecule._config.load_defaults_file(defaults_file=self.temp)
+
+        self._mock_molecule._state = dict()
+
+    def test_name(self):
+        docker_provisioner = provisioners.DockerProvisioner(self._mock_molecule)
+        # false values don't exist in arg dict at all
+        self.assertEqual(docker_provisioner.name, 'docker')
+
+    def test_get_provisioner(self):
+        self.assertEqual(provisioners.get_provisioner(self._mock_molecule).name, 'docker')
+
+    def test_up(self):
+        docker_provisioner = provisioners.DockerProvisioner(self._mock_molecule)
+        docker_provisioner.up()
+        docker_provisioner.destroy()
+
+    def test_instances(self):
+        docker_provisioner = provisioners.DockerProvisioner(self._mock_molecule)
+        self.assertEqual(docker_provisioner.instances[0]['name'], 'test1')
+        self.assertEqual(docker_provisioner.instances[1]['name'], 'test2')
+
+    def test_status(self):
+        docker_provisioner = provisioners.DockerProvisioner(self._mock_molecule)
+
+        docker_provisioner.up()
+
+        self.assertIn('Up', docker_provisioner.status()['test1'])
+        self.assertIn('Up', docker_provisioner.status()['test2'])
+
+    def test_destroy(self):
+        docker_provisioner = provisioners.DockerProvisioner(self._mock_molecule)
+
+        docker_provisioner.up()
+
+        self.assertIn('Up', docker_provisioner.status()['test1'])
+        self.assertIn('Up', docker_provisioner.status()['test2'])
+
+        docker_provisioner.destroy()
+
+        self.assertIn('Not Created', docker_provisioner.status()['test1'])
+        self.assertIn('Not Created', docker_provisioner.status()['test2'])
+
+    def test_provision(self):
+
+        docker_provisioner = provisioners.DockerProvisioner(self._mock_molecule)
+        docker_provisioner.destroy()
+        docker_provisioner.up()
+
+        self.book = {
+            'playbook': 'tests/playbook.yml',
+            'inventory': 'test1,test2,',
+            'user': 'root',
+            'connection': 'docker',
+        }
+
+        self.ansible = AnsiblePlaybook(self.book)
+
+        self.assertEqual((None, ''), self.ansible.execute())
+
+        docker_provisioner.destroy()
+
+    def test_inventory_generation(self):
+        self._mock_molecule._provisioner = provisioners.get_provisioner(self._mock_molecule)
+        self._mock_molecule._provisioner.destroy()
+        self._mock_molecule._provisioner.up()
+
+        self._mock_molecule._create_inventory_file()
+
+        self.book = {
+            'playbook': 'tests/playbook.yml',
+            'inventory': 'tests/ansible_inventory',
+            'user': 'root',
+            'connection': 'docker',
+        }
+
+        self.ansible = AnsiblePlaybook(self.book)
+
+        self.assertEqual((None, ''), self.ansible.execute())

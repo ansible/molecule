@@ -1,0 +1,6 @@
+---
+- hosts: all
+
+  tasks:
+    - name: TestCase
+      command: echo test

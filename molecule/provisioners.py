@@ -20,9 +20,9 @@
 
 import abc
 import os
-
 import vagrant
-
+import docker
+from io import BytesIO
 import utilities
 
 
@@ -39,6 +39,8 @@ def get_provisioner(molecule):
         return VagrantProvisioner(molecule)
     elif 'proxmox' in molecule._config.config:
         return ProxmoxProvisioner(molecule)
+    elif 'docker' in molecule._config.config:
+        return DockerProvisioner(molecule)
     else:
         return None
 
@@ -300,3 +302,104 @@ class VagrantProvisioner(BaseProvisioner):
 class ProxmoxProvisioner(BaseProvisioner):
     def __init__(self):
         super(ProxmoxProvisioner, self).__init__()
+
+
+class DockerProvisioner(BaseProvisioner):
+    def __init__(self, molecule):
+        super(DockerProvisioner, self).__init__(molecule)
+        self._docker = docker.from_env(assert_hostname=False)
+        self._containers = self.m._config.config['docker']['containers']
+        self.status()
+        self.build_image()
+        print "Docker client initialized..."
+
+    @property
+    def name(self):
+        return 'docker'
+
+    @property
+    def instances(self):
+        return self._containers
+
+    @property
+    def default_provider(self):
+        pass
+
+    @property
+    def default_platform(self):
+        pass
+
+    @property
+    def provider(self):
+        pass
+
+    @property
+    def platform(self):
+        pass
+
+    @property
+    def valid_providers(self):
+        pass
+
+    @property
+    def valid_platforms(self):
+        pass
+
+    @property
+    def ssh_config_file(self):
+        pass
+
+    def build_image(self):
+        dockerfile = '''
+        # Shared Volume
+        FROM ubuntu
+        RUN apt-get update && apt-get install -y python
+        '''
+        f = BytesIO(dockerfile.encode('utf-8'))
+        for line in self._docker.build(fileobj=f, tag='ansible_local'):
+            print line.encode('utf-8')
+
+    def up(self, no_provision=True):
+        for container in self.instances:
+            if (container['Created'] is not True):
+                container = self._docker.create_container(
+                    image='ansible_local',
+                    tty=True,
+                    command='bash -c "sleep infinity"',
+                    detach=False,
+                    name=container['name'])
+                self._docker.start(container=container.get('Id'))
+                container['Created'] = True
+
+    def destroy(self):
+        for container in self.instances:
+            if (container['Created']):
+                self._docker.stop(container['name'])
+                self._docker.remove_container(container['name'])
+                container['Created'] = False
+
+    def status(self):
+
+        instance_names = [x['name'] for x in self.instances]
+        created_containers = self._docker.containers(all=True)
+        status_dict = {}
+
+        for container in created_containers:
+            container_name = container.get('Names')[0][1:]
+            if container_name in instance_names:
+                status_dict[container_name] = container.get('Status')
+
+        # Check the created status of all the tracked instances
+        for container in self.instances:
+            if (container['name'] in status_dict):
+                container['Created'] = True
+                container['Status'] = status_dict[container['name']]
+            else:
+                container['Created'] = False
+                container['Status'] = "Not created"
+                status_dict[container['name']] = "Not Created"
+
+        return status_dict
+
+    def conf(self, vm_name=None, ssh_config=False):
+        pass

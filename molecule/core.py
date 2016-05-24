@@ -216,14 +216,20 @@ class Molecule(object):
         # TODO: for Ansiblev2, the following line must have s/ssh_//
         host_template = \
             '{} ansible_ssh_host={} ansible_ssh_port={} ansible_ssh_private_key_file={} ansible_ssh_user={}\n'
+        host_template_docker = \
+            '{} connection=docker\n'
         for instance in self._provisioner.instances:
-            ssh = self._provisioner.conf(
-                vm_name=utilities.format_instance_name(
-                    instance['name'], self._env['MOLECULE_PLATFORM'],
-                    self._provisioner.instances))
-            inventory += host_template.format(ssh['Host'], ssh['HostName'],
-                                              ssh['Port'], ssh['IdentityFile'],
-                                              ssh['User'])
+            if (self._provisioner.name is 'docker'):
+                container_name = instance['name']
+                inventory += host_template_docker.format(container_name)
+            else:
+                ssh = self._provisioner.conf(
+                    vm_name=utilities.format_instance_name(
+                        instance['name'], self._env['MOLECULE_PLATFORM'],
+                        self._provisioner.instances))
+                inventory += host_template.format(
+                    ssh['Host'], ssh['HostName'], ssh['Port'],
+                    ssh['IdentityFile'], ssh['User'])
 
         # get a list of all groups and hosts in those groups
         groups = {}
