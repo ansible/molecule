@@ -379,6 +379,12 @@ class Verify(AbstractCommand):
                              Fore.RESET))
             return None, None
 
+        # no docker support with testinfra or serverspec
+        if self.molecule._provisioner.name is 'docker':
+            msg = '{}Skipping tests, docker provisioner does not support integration testing'
+            print(msg.format(Fore.YELLOW))
+            return None, None
+
         self.molecule._write_ssh_config()
         # testinfra's Ansible calls get same env vars as ansible-playbook
         ansible = AnsiblePlaybook(self.molecule._config.config['ansible'],
@@ -588,12 +594,17 @@ class Login(AbstractCommand):
             # Try to retrieve the SSH configuration of the host.
             conf = self.molecule._provisioner.conf(vm_name=hostname)
 
-            # Prepare the command to SSH into the host.
-            ssh_args = [conf['HostName'], conf['User'], conf['Port'],
-                        conf['IdentityFile'],
-                        ' '.join(self.molecule._config.config['molecule'][
-                            'raw_ssh_args'])]
-            ssh_cmd = 'ssh {} -l {} -p {} -i {} {}'
+            if self.molecule._provisioner.name is 'docker':
+                ssh_cmd = 'docker exec -ti {} bash'
+                ssh_args = [self.molecule._args['<host>']]
+            else:
+                # Prepare the command to SSH into the host.
+                ssh_args = [conf['HostName'], conf['User'], conf['Port'],
+                            conf['IdentityFile'],
+                            ' '.join(self.molecule._config.config['molecule'][
+                                'raw_ssh_args'])]
+                ssh_cmd = 'ssh {} -l {} -p {} -i {} {}'
+
         except CalledProcessError:
             # gets appended to python-vagrant's error message
             conf_format = [Fore.RED, self.molecule._args['<host>'],

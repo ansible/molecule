@@ -22,6 +22,7 @@ import abc
 import os
 import vagrant
 import docker
+import collections
 from io import BytesIO
 import utilities
 
@@ -305,6 +306,7 @@ class ProxmoxProvisioner(BaseProvisioner):
 
 
 class DockerProvisioner(BaseProvisioner):
+
     def __init__(self, molecule):
         super(DockerProvisioner, self).__init__(molecule)
         self._docker = docker.from_env(assert_hostname=False)
@@ -313,7 +315,6 @@ class DockerProvisioner(BaseProvisioner):
         self._platform = self._get_platform()
         self.status()
         self.build_image()
-        print "Docker client initialized..."
 
     def _get_platform(self):
         self.m._env['MOLECULE_PLATFORM'] = 'Docker'
@@ -348,15 +349,15 @@ class DockerProvisioner(BaseProvisioner):
 
     @property
     def valid_providers(self):
-        pass
+        return [{'name': 'Docker'}]
 
     @property
     def valid_platforms(self):
-        pass
+        return [{'name': 'Docker'}]
 
     @property
     def ssh_config_file(self):
-        pass
+        return 'Nofile'
 
     def build_image(self):
         dockerfile = '''
@@ -366,7 +367,7 @@ class DockerProvisioner(BaseProvisioner):
         '''
         f = BytesIO(dockerfile.encode('utf-8'))
         for line in self._docker.build(fileobj=f, tag='ansible_local'):
-            print line.encode('utf-8')
+            pass
 
     def up(self, no_provision=True):
         for container in self.instances:
@@ -389,26 +390,30 @@ class DockerProvisioner(BaseProvisioner):
 
     def status(self):
 
+        Status = collections.namedtuple('Status', ['name', 'state', 'provider'])
         instance_names = [x['name'] for x in self.instances]
         created_containers = self._docker.containers(all=True)
-        status_dict = {}
+        created_container_names = []
+        status_list = []
 
         for container in created_containers:
             container_name = container.get('Names')[0][1:]
+            created_container_names.append(container_name)
             if container_name in instance_names:
-                status_dict[container_name] = container.get('Status')
+                status_list.append(Status(name=container_name,state=container.get('Status'),provider='docker'))
+
+
 
         # Check the created status of all the tracked instances
         for container in self.instances:
-            if (container['name'] in status_dict):
+            if (container['name'] in created_container_names):
                 container['Created'] = True
-                container['Status'] = status_dict[container['name']]
             else:
                 container['Created'] = False
-                container['Status'] = "Not created"
-                status_dict[container['name']] = "Not Created"
+                status_list.append(Status(name=container_name,state="Not Created",provider='docker'))
 
-        return status_dict
+
+        return status_list
 
     def conf(self, vm_name=None, ssh_config=False):
         pass
