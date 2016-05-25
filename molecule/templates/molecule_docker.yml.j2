@@ -1,0 +1,18 @@
+---
+  ansible:
+    playbook: playbook.yml
+    user: root
+    connection: docker
+
+  docker:
+    containers:
+      - name: Container1
+        ansible_groups:
+          - group1
+        image: ubuntu
+        image_version: latest
+      - name: Container2
+        ansible_groups:
+          - group2
+        image: ubuntu
+        image_version: latest

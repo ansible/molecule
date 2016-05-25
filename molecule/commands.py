@@ -633,7 +633,7 @@ class Init(AbstractCommand):
     Creates the scaffolding for a new role intended for use with molecule.
 
     Usage:
-        init <role>
+        init <role> [--docker]
     """
 
     def clean_meta_main(self, role_path):
@@ -677,6 +677,10 @@ class Init(AbstractCommand):
             'init']['templates']['playbook'])
         t_test_default = env.get_template(self.molecule._config.config[
             'molecule']['init']['templates']['test_default'])
+
+        if(self.molecule._args['--docker']):
+            t_molecule = env.get_template(self.molecule._config.config['molecule'][
+                'init']['templates']['molecule_docker'])
 
         sanitized_role = re.sub('[._]', '-', role)
         with open(

@@ -69,6 +69,7 @@ molecule:
     # templates to use when creating files during `molecule init`
     templates:
       molecule: molecule.yml.j2
+      molecule_docker: molecule_docker.yml.j2
       playbook: playbook.yml.j2
       test_default: test_default.py.j2
 
