@@ -23,7 +23,9 @@ import os
 import vagrant
 import docker
 import collections
+import json
 from io import BytesIO
+from colorama import Fore
 import utilities
 
 
@@ -306,7 +308,6 @@ class ProxmoxProvisioner(BaseProvisioner):
 
 
 class DockerProvisioner(BaseProvisioner):
-
     def __init__(self, molecule):
         super(DockerProvisioner, self).__init__(molecule)
         self._docker = docker.from_env(assert_hostname=False)
@@ -314,7 +315,8 @@ class DockerProvisioner(BaseProvisioner):
         self._provider = self._get_provider()
         self._platform = self._get_platform()
         self.status()
-        self.build_image()
+
+        self.image_tag = 'molecule_local/{}:{}'
 
     def _get_platform(self):
         self.m._env['MOLECULE_PLATFORM'] = 'Docker'
@@ -360,38 +362,48 @@ class DockerProvisioner(BaseProvisioner):
         return 'Nofile'
 
     def build_image(self):
-
-        available_images = [tag.encode('utf-8') for image in self._docker.images() for tag in image.get('RepoTags')]
-
-        image_tag = "molecule_local/{}:{}"
+        available_images = [tag.encode('utf-8')
+                            for image in self._docker.images()
+                            for tag in image.get('RepoTags')]
 
         for container in self.instances:
-            container_image_data = (container['image'],container['image_version'])
+            container_image_data = (container['image'],
+                                    container['image_version'])
 
             dockerfile = '''
             FROM {}:{}
-            RUN apt-get update && apt-get install -y python
+            RUN bash -c 'if [ -x "$(command -v apt-get)" ]; then  apt-get update && apt-get install -y python; fi'
+            RUN bash -c 'if [ -x "$(command -v yum)" ]; then  yum update && yum install -y python; fi'
+
             '''
             dockerfile = dockerfile.format(*container_image_data)
 
             f = BytesIO(dockerfile.encode('utf-8'))
 
-            if(image_tag.format(*container_image_data) not in available_images):
-                print('Building ansible compatible image ...')
-                for line in self._docker.build(fileobj=f, tag=image_tag.format(*container_image_data)):
-                    pass
-                print('Finished building {}'.format(image_tag.format(*container_image_data)))
+            tag_string = self.image_tag.format(*container_image_data)
+
+            if tag_string not in available_images:
+                print '{} Building ansible compatible image ...'.format(
+                    Fore.YELLOW),
+                for line in self._docker.build(fileobj=f, tag=tag_string):
+                    for line_split in line.split('\n'):
+                        if len(line_split) > 0:
+                            line = json.loads(line_split)
+                            print('{} {}'.format(Fore.LIGHTBLUE_EX,
+                                                 line['stream']))
+                print '{} Finished building {}'.format(Fore.GREEN, tag_string)
 
     def up(self, no_provision=True):
-        image_tag = "molecule_local/{}:{}"
+        self.build_image()
 
         for container in self.instances:
             if (container['Created'] is not True):
-                print('Creating container {} with base image {}:{} ...'.format(container['name'],
-                                                                                 container['image'],
-                                                                                 container['image_version']))
+                print '{} Creating container {} with base image {}:{} ...'.format(
+                    Fore.YELLOW, container['name'], container['image'],
+                    container['image_version']),
                 container = self._docker.create_container(
-                    image=image_tag.format(container['image'],container['image_version']),
+                    image=self.image_tag.format(container['image'],
+                                                container['image_version']),
                     tty=True,
                     command='bash -c "sleep infinity"',
                     detach=False,
@@ -399,31 +411,37 @@ class DockerProvisioner(BaseProvisioner):
                 self._docker.start(container=container.get('Id'))
                 container['Created'] = True
 
+                print '{} Container created.\n{}'.format(Fore.GREEN,
+                                                         Fore.RESET)
+
     def destroy(self):
 
         for container in self.instances:
             if (container['Created']):
-                print('Stopping container {} ...'.format(container['name']))
-                self._docker.stop(container['name'])
+                print '{} Stopping container {} ...'.format(Fore.YELLOW,
+                                                            container['name']),
+                self._docker.stop(container['name'], timeout=0)
                 self._docker.remove_container(container['name'])
-                print('Removed container.'.format(container['name']))
+                print '{} Removed container {}.\n'.format(Fore.GREEN,
+                                                          container['name'])
                 container['Created'] = False
 
     def status(self):
 
-        Status = collections.namedtuple('Status', ['name', 'state', 'provider'])
+        Status = collections.namedtuple('Status', ['name', 'state',
+                                                   'provider'])
         instance_names = [x['name'] for x in self.instances]
         created_containers = self._docker.containers(all=True)
         created_container_names = []
         status_list = []
 
         for container in created_containers:
-            container_name = container.get('Names')[0][1:]
+            container_name = container.get('Names')[0][1:].encode('utf-8')
             created_container_names.append(container_name)
             if container_name in instance_names:
-                status_list.append(Status(name=container_name,state=container.get('Status'),provider='docker'))
-
-
+                status_list.append(Status(name=container_name,
+                                          state=container.get('Status'),
+                                          provider='docker'))
 
         # Check the created status of all the tracked instances
         for container in self.instances:
@@ -431,8 +449,9 @@ class DockerProvisioner(BaseProvisioner):
                 container['Created'] = True
             else:
                 container['Created'] = False
-                status_list.append(Status(name=container_name,state="Not Created",provider='docker'))
-
+                status_list.append(Status(name=container_name,
+                                          state="Not Created",
+                                          provider='docker'))
 
         return status_list
 

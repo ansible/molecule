@@ -42,9 +42,13 @@ class TestDockerProvisioner(testtools.TestCase):
             'docker': {
                 'containers': [
                     {'name': 'test1',
-                     'image': 'ubuntu'},
+                     'image': 'ubuntu',
+                     'image_version': 'latest',
+                     'ansible_groups': ['group1']},
                     {'name': 'test2',
-                     'image': 'ubuntu'}
+                     'image': 'ubuntu',
+                     'image_version': 'latest',
+                     'ansible_groups': ['group2']}
                 ]
             },
             'ansible': {
@@ -83,21 +87,30 @@ class TestDockerProvisioner(testtools.TestCase):
 
         docker_provisioner.up()
 
-        self.assertIn('Up', docker_provisioner.status()['test1'])
-        self.assertIn('Up', docker_provisioner.status()['test2'])
+        self.assertEquals('test1', docker_provisioner.status()[1].name)
+        self.assertEquals('test2', docker_provisioner.status()[0].name)
+
+        self.assertIn('Up', docker_provisioner.status()[1].state)
+        self.assertIn('Up', docker_provisioner.status()[0].state)
+
+        self.assertEqual('docker', docker_provisioner.status()[0].provider)
+        self.assertEqual('docker', docker_provisioner.status()[1].provider)
 
     def test_destroy(self):
         docker_provisioner = provisioners.DockerProvisioner(self._mock_molecule)
 
         docker_provisioner.up()
 
-        self.assertIn('Up', docker_provisioner.status()['test1'])
-        self.assertIn('Up', docker_provisioner.status()['test2'])
+        self.assertEquals('test1', docker_provisioner.status()[1].name)
+        self.assertEquals('test2', docker_provisioner.status()[0].name)
+
+        self.assertIn('Up', docker_provisioner.status()[1].state)
+        self.assertIn('Up', docker_provisioner.status()[0].state)
 
         docker_provisioner.destroy()
 
-        self.assertIn('Not Created', docker_provisioner.status()['test1'])
-        self.assertIn('Not Created', docker_provisioner.status()['test2'])
+        self.assertIn('Not Created', docker_provisioner.status()[1].state)
+        self.assertIn('Not Created', docker_provisioner.status()[0].state)
 
     def test_provision(self):
 
