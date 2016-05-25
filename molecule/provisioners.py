@@ -160,9 +160,25 @@ class BaseProvisioner(object):
         return
 
     @abc.abstractmethod
-    def inventory_entry(self, *args):
+    def inventory_entry(self, instance):
         """
         Returns an inventory entry with the given arguments
+        :return:
+        """
+        return
+
+    @abc.abstractmethod
+    def login_cmd(self, instance_name):
+        """
+        Returns the command string to login to a host
+        :return:
+        """
+        return
+
+    @abc.abstractmethod
+    def login_args(self, instance_name):
+        """
+        Returns the arguments used in the login command
         :return:
         """
         return
@@ -316,13 +332,23 @@ class VagrantProvisioner(BaseProvisioner):
         # TODO: for Ansiblev2, the following line must have s/ssh_//
         template = '{} ansible_ssh_host={} ansible_ssh_port={} ansible_ssh_private_key_file={} ansible_ssh_user={}\n'
 
-        ssh = self.conf(
-            vm_name=utilities.format_instance_name(
-                instance['name'], self._platform,
-                self.instances))
-        return template.format(
-            ssh['Host'], ssh['HostName'], ssh['Port'],
-            ssh['IdentityFile'], ssh['User'])
+        ssh = self.conf(vm_name=utilities.format_instance_name(
+            instance['name'], self._platform, self.instances))
+        return template.format(ssh['Host'], ssh['HostName'], ssh['Port'],
+                               ssh['IdentityFile'], ssh['User'])
+
+    def login_cmd(self, instance_name):
+        return 'ssh {} -l {} -p {} -i {} {}'
+
+    def login_args(self, instance_name):
+
+        # Try to retrieve the SSH configuration of the host.
+        conf = self.conf(vm_name=instance_name)
+
+        return [
+            conf['HostName'], conf['User'], conf['Port'], conf['IdentityFile'],
+            ' '.join(self.m._config.config['molecule']['raw_ssh_args'])
+        ]
 
 
 # Place holder for Proxmox, partially implemented
@@ -486,3 +512,9 @@ class DockerProvisioner(BaseProvisioner):
         template = '{} connection=docker\n'
 
         return template.format(instance['name'])
+
+    def login_cmd(self, instance):
+        return 'docker exec -ti {} bash'
+
+    def login_args(self, instance):
+        return [instance]

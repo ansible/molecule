@@ -591,19 +591,8 @@ class Login(AbstractCommand):
                             len(match), hostname, Fore.YELLOW, Fore.RED))
                 hostname = match[0]
 
-            # Try to retrieve the SSH configuration of the host.
-            conf = self.molecule._provisioner.conf(vm_name=hostname)
-
-            if self.molecule._provisioner.name is 'docker':
-                ssh_cmd = 'docker exec -ti {} bash'
-                ssh_args = [self.molecule._args['<host>']]
-            else:
-                # Prepare the command to SSH into the host.
-                ssh_args = [conf['HostName'], conf['User'], conf['Port'],
-                            conf['IdentityFile'],
-                            ' '.join(self.molecule._config.config['molecule'][
-                                'raw_ssh_args'])]
-                ssh_cmd = 'ssh {} -l {} -p {} -i {} {}'
+                login_cmd = self.molecule._provisioner.login_cmd(hostname)
+                login_args = self.molecule._provisioner.login_args(hostname)
 
         except CalledProcessError:
             # gets appended to python-vagrant's error message
@@ -621,7 +610,7 @@ class Login(AbstractCommand):
         lines, columns = os.popen('stty size', 'r').read().split()
         dimensions = (int(lines), int(columns))
         self.molecule._pt = pexpect.spawn(
-            '/usr/bin/env ' + ssh_cmd.format(*ssh_args),
+            '/usr/bin/env ' + login_cmd.format(*login_args),
             dimensions=dimensions)
         signal.signal(signal.SIGWINCH, self.molecule._sigwinch_passthrough)
         self.molecule._pt.interact()
@@ -680,8 +669,7 @@ class Init(AbstractCommand):
 
         if (self.molecule._args['--docker']):
             t_molecule = env.get_template(self.molecule._config.config[
-                'molecule'][
-                    'init']['templates']['molecule_docker'])
+                'molecule']['init']['templates']['molecule_docker'])
 
         sanitized_role = re.sub('[._]', '-', role)
         with open(
