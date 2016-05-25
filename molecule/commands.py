@@ -678,9 +678,10 @@ class Init(AbstractCommand):
         t_test_default = env.get_template(self.molecule._config.config[
             'molecule']['init']['templates']['test_default'])
 
-        if(self.molecule._args['--docker']):
-            t_molecule = env.get_template(self.molecule._config.config['molecule'][
-                'init']['templates']['molecule_docker'])
+        if (self.molecule._args['--docker']):
+            t_molecule = env.get_template(self.molecule._config.config[
+                'molecule'][
+                    'init']['templates']['molecule_docker'])
 
         sanitized_role = re.sub('[._]', '-', role)
         with open(

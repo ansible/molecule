@@ -159,6 +159,14 @@ class BaseProvisioner(object):
         """
         return
 
+    @abc.abstractmethod
+    def inventory_entry(self, *args):
+        """
+        Returns an inventory entry with the given arguments
+        :return:
+        """
+        return
+
 
 class VagrantProvisioner(BaseProvisioner):
     def __init__(self, molecule):
@@ -269,6 +277,10 @@ class VagrantProvisioner(BaseProvisioner):
         return self._platform
 
     @property
+    def host_template(self):
+        return '{} ansible_ssh_host={} ansible_ssh_port={} ansible_ssh_private_key_file={} ansible_ssh_user={}\n'
+
+    @property
     def valid_providers(self):
         return self.m._config.config['vagrant']['providers']
 
@@ -299,6 +311,18 @@ class VagrantProvisioner(BaseProvisioner):
             return self._vagrant.ssh_config(vm_name=vm_name)
         else:
             return self._vagrant.conf(vm_name=vm_name)
+
+    def inventory_entry(self, instance):
+        # TODO: for Ansiblev2, the following line must have s/ssh_//
+        template = '{} ansible_ssh_host={} ansible_ssh_port={} ansible_ssh_private_key_file={} ansible_ssh_user={}\n'
+
+        ssh = self.conf(
+            vm_name=utilities.format_instance_name(
+                instance['name'], self._platform,
+                self.instances))
+        return template.format(
+            ssh['Host'], ssh['HostName'], ssh['Port'],
+            ssh['IdentityFile'], ssh['User'])
 
 
 # Place holder for Proxmox, partially implemented
@@ -457,3 +481,8 @@ class DockerProvisioner(BaseProvisioner):
 
     def conf(self, vm_name=None, ssh_config=False):
         pass
+
+    def inventory_entry(self, instance):
+        template = '{} connection=docker\n'
+
+        return template.format(instance['name'])
