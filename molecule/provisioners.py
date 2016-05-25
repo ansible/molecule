@@ -360,20 +360,38 @@ class DockerProvisioner(BaseProvisioner):
         return 'Nofile'
 
     def build_image(self):
-        dockerfile = '''
-        # Shared Volume
-        FROM ubuntu
-        RUN apt-get update && apt-get install -y python
-        '''
-        f = BytesIO(dockerfile.encode('utf-8'))
-        for line in self._docker.build(fileobj=f, tag='ansible_local'):
-            pass
+
+        available_images = [tag.encode('utf-8') for image in self._docker.images() for tag in image.get('RepoTags')]
+
+        image_tag = "molecule_local/{}:{}"
+
+        for container in self.instances:
+            container_image_data = (container['image'],container['image_version'])
+
+            dockerfile = '''
+            FROM {}:{}
+            RUN apt-get update && apt-get install -y python
+            '''
+            dockerfile = dockerfile.format(*container_image_data)
+
+            f = BytesIO(dockerfile.encode('utf-8'))
+
+            if(image_tag.format(*container_image_data) not in available_images):
+                print('Building ansible compatible image ...')
+                for line in self._docker.build(fileobj=f, tag=image_tag.format(*container_image_data)):
+                    pass
+                print('Finished building {}'.format(image_tag.format(*container_image_data)))
 
     def up(self, no_provision=True):
+        image_tag = "molecule_local/{}:{}"
+
         for container in self.instances:
             if (container['Created'] is not True):
+                print('Creating container {} with base image {}:{} ...'.format(container['name'],
+                                                                                 container['image'],
+                                                                                 container['image_version']))
                 container = self._docker.create_container(
-                    image='ansible_local',
+                    image=image_tag.format(container['image'],container['image_version']),
                     tty=True,
                     command='bash -c "sleep infinity"',
                     detach=False,
@@ -382,10 +400,13 @@ class DockerProvisioner(BaseProvisioner):
                 container['Created'] = True
 
     def destroy(self):
+
         for container in self.instances:
             if (container['Created']):
+                print('Stopping container {} ...'.format(container['name']))
                 self._docker.stop(container['name'])
                 self._docker.remove_container(container['name'])
+                print('Removed container.'.format(container['name']))
                 container['Created'] = False
 
     def status(self):
