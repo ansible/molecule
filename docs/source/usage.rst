@@ -61,22 +61,22 @@ structure.
 
     role_name/
     ├── molecule.yml
-    └─── playbook.yml
+    └── playbook.yml
 
 Optionally, if you want to test with `Serverspec`_, you will need::
 
     role_name/
     ├── ...
-    ├── spec/
-    ├────── spec_helper.rb
-    └────── default_spec.rb
+    └── spec/
+        ├── spec_helper.rb
+        └── default_spec.rb
 
 Optionally, if you want to test with `Testinfra`_, you will need::
 
     role_name/
     ├── ...
-    ├── tests/
-    └────── my_test.py
+    └── tests/
+        └── my_test.py
 
 
 Molecule attempts to pick sane default configuration options (set
