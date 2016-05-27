@@ -436,16 +436,36 @@ class DockerProvisioner(BaseProvisioner):
             container['image'] = container['registry'].replace('/', '_').replace(':', '_') + container['image']
             tag_string = self.image_tag.format(container['image'], container['image_version'])
 
+            errors = False
+
             if tag_string not in available_images:
                 print '{} Building ansible compatible image ...'.format(
-                    Fore.YELLOW),
+                    Fore.YELLOW)
+                previous_line = ''
                 for line in self._docker.build(fileobj=f, tag=tag_string):
                     for line_split in line.split('\n'):
                         if len(line_split) > 0:
                             line = json.loads(line_split)
-                            print('{} {}'.format(Fore.LIGHTBLUE_EX,
-                                                 line['stream']))
-                print '{} Finished building {}'.format(Fore.GREEN, tag_string)
+                            if 'stream' in line:
+                                print('{} {} {}'.format(Fore.LIGHTBLUE_EX,
+                                                        line['stream'],
+                                                        Fore.RESET))
+                            if 'errorDetail' in line:
+                                print('{} {} {}'.format(Fore.LIGHTRED_EX,
+                                                        line['errorDetail']['message'],
+                                                        Fore.RESET))
+                                errors = True
+                            if 'status' in line:
+                                if previous_line not in line['status']:
+                                    print ('{} {} ... {}'.format(Fore.LIGHTYELLOW_EX,
+                                                            line['status'],
+                                                            Fore.RESET))
+                                previous_line = line['status']
+
+                if errors:
+                    print '{} Build failed for {}'.format(Fore.RED, tag_string)
+                else:
+                    print '{} Finished building {}'.format(Fore.GREEN, tag_string)
 
     def up(self, no_provision=True):
         self.build_image()
@@ -499,11 +519,11 @@ class DockerProvisioner(BaseProvisioner):
 
         # Check the created status of all the tracked instances
         for container in self.instances:
-            if (container['name'] in created_container_names):
+            if container['name'] in created_container_names:
                 container['Created'] = True
             else:
                 container['Created'] = False
-                status_list.append(Status(name=container_name,
+                status_list.append(Status(name=container['name'],
                                           state="Not Created",
                                           provider='docker'))
 
