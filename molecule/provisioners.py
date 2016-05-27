@@ -417,8 +417,11 @@ class DockerProvisioner(BaseProvisioner):
                             for tag in image.get('RepoTags')]
 
         for container in self.instances:
-            container_image_data = (container['image'],
-                                    container['image_version'])
+
+            if 'registry' in container:
+                container['registry'] += '/'
+            else:
+                container['registry'] = ''
 
             dockerfile = '''
             FROM {}:{}
@@ -426,11 +429,12 @@ class DockerProvisioner(BaseProvisioner):
             RUN bash -c 'if [ -x "$(command -v yum)" ]; then  yum update && yum install -y python; fi'
 
             '''
-            dockerfile = dockerfile.format(*container_image_data)
+            dockerfile = dockerfile.format(container['registry'] + container['image'], container['image_version'])
 
             f = BytesIO(dockerfile.encode('utf-8'))
 
-            tag_string = self.image_tag.format(*container_image_data)
+            container['image'] = container['registry'].replace('/', '_').replace(':', '_') + container['image']
+            tag_string = self.image_tag.format(container['image'], container['image_version'])
 
             if tag_string not in available_images:
                 print '{} Building ansible compatible image ...'.format(
