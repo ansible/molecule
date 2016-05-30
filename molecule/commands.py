@@ -658,10 +658,8 @@ class Init(AbstractCommand):
             'init']['templates']['molecule'])
         t_playbook = env.get_template(self.molecule._config.config['molecule'][
             'init']['templates']['playbook'])
-        t_default_spec = env.get_template(self.molecule._config.config[
-            'molecule']['init']['templates']['default_spec'])
-        t_spec_helper = env.get_template(self.molecule._config.config[
-            'molecule']['init']['templates']['spec_helper'])
+        t_test_default = env.get_template(self.molecule._config.config[
+            'molecule']['init']['templates']['test_default'])
 
         sanitized_role = re.sub('[._]', '-', role)
         with open(
@@ -679,18 +677,13 @@ class Init(AbstractCommand):
                 'w') as f:
             f.write(t_playbook.render(role=role))
 
-        serverspec_path = os.path.join(
+        testinfra_path = os.path.join(
             role_path,
-            self.molecule._config.config['molecule']['serverspec_dir'])
-        os.makedirs(serverspec_path)
-        os.makedirs(os.path.join(serverspec_path, 'hosts'))
-        os.makedirs(os.path.join(serverspec_path, 'groups'))
+            self.molecule._config.config['molecule']['testinfra_dir'])
+        os.makedirs(testinfra_path)
 
-        with open(os.path.join(serverspec_path, 'default_spec.rb'), 'w') as f:
-            f.write(t_default_spec.render())
-
-        with open(os.path.join(serverspec_path, 'spec_helper.rb'), 'w') as f:
-            f.write(t_spec_helper.render())
+        with open(os.path.join(testinfra_path, 'test_default.py'), 'w') as f:
+            f.write(t_test_default.render())
 
         msg = '{}Successfully initialized new role in {}{}'
         print(msg.format(Fore.GREEN, role_path, Fore.RESET))
