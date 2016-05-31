@@ -379,17 +379,20 @@ class Verify(AbstractCommand):
                              Fore.RESET))
             return None, None
 
-        # no docker support with testinfra or serverspec
-        if self.molecule._provisioner.name is 'docker':
-            msg = '{}Skipping tests, docker provisioner does not support integration testing'
-            print(msg.format(Fore.YELLOW))
-            return None, None
+        # # no docker support with testinfra or serverspec
+        # if self.molecule._provisioner.name is 'docker':
+        #     msg = '{}Skipping tests, docker provisioner does not support integration testing'
+        #     print(msg.format(Fore.YELLOW))
+        #     return None, None
 
         self.molecule._write_ssh_config()
+
         # testinfra's Ansible calls get same env vars as ansible-playbook
         ansible = AnsiblePlaybook(self.molecule._config.config['ansible'],
                                   _env=self.molecule._env)
-        kwargs = {'env': ansible.env}
+
+        kwargs = self.molecule._provisioner.testinfra_args
+        kwargs['env'] = ansible.env
         kwargs['env']['PYTHONDONTWRITEBYTECODE'] = '1'
         kwargs['debug'] = True if self.molecule._args.get('--debug') else False
 
@@ -398,7 +401,7 @@ class Verify(AbstractCommand):
             if os.path.isdir(testinfra_dir):
                 msg = '\n{}Executing testinfra tests found in {}/.{}'
                 print(msg.format(Fore.MAGENTA, testinfra_dir, Fore.RESET))
-                validators.testinfra(inventory_file, testinfra_dir, **kwargs)
+                validators.testinfra(testinfra_dir, **kwargs)
                 print()
             else:
                 msg = '{}No testinfra tests found in {}/.\n{}'

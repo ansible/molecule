@@ -119,6 +119,8 @@ class Molecule(object):
         try:
             out = self._provisioner.conf(ssh_config=True)
             ssh_config = self._provisioner.ssh_config_file
+            if ssh_config is None:
+                return
         except CalledProcessError as e:
             print('ERROR: {}'.format(e))
             print("Does your vagrant VM exist?")

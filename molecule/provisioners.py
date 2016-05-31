@@ -183,6 +183,13 @@ class BaseProvisioner(object):
         """
         return
 
+    @abc.abstractmethod
+    def testinfra_args(self):
+        """
+        Returns the kwards used when invoking the testinfra validator
+        :return:
+        """
+        return
 
 class VagrantProvisioner(BaseProvisioner):
     def __init__(self, molecule):
@@ -308,6 +315,18 @@ class VagrantProvisioner(BaseProvisioner):
     def ssh_config_file(self):
         return '.vagrant/ssh-config'
 
+    @property
+    def testinfra_args(self):
+        kwargs = {
+            'env': self.m._env,
+            'sudo': True,
+            'ansible-inventory': self.m._config.config['ansible']['inventory_file'],
+            'connection': 'ansible',
+            'n': 3
+        }
+
+        return kwargs
+
     def up(self, no_provision=True):
         self._write_vagrant_file()
         self._vagrant.up(no_provision)
@@ -409,7 +428,7 @@ class DockerProvisioner(BaseProvisioner):
 
     @property
     def ssh_config_file(self):
-        return 'Nofile'
+        return None
 
     def build_image(self):
         available_images = [tag.encode('utf-8')
@@ -425,8 +444,8 @@ class DockerProvisioner(BaseProvisioner):
 
             dockerfile = '''
             FROM {}:{}
-            RUN bash -c 'if [ -x "$(command -v apt-get)" ]; then  apt-get update && apt-get install -y python; fi'
-            RUN bash -c 'if [ -x "$(command -v yum)" ]; then  yum update && yum install -y python; fi'
+            RUN bash -c 'if [ -x "$(command -v apt-get)" ]; then  apt-get update && apt-get install -y python sudo; fi'
+            RUN bash -c 'if [ -x "$(command -v yum)" ]; then  yum update && yum install -y python sudo; fi'
 
             '''
             dockerfile = dockerfile.format(container['registry'] + container['image'], container['image_version'])
@@ -464,6 +483,7 @@ class DockerProvisioner(BaseProvisioner):
 
                 if errors:
                     print '{} Build failed for {}'.format(Fore.RED, tag_string)
+                    return
                 else:
                     print '{} Finished building {}'.format(Fore.GREEN, tag_string)
 
@@ -542,3 +562,20 @@ class DockerProvisioner(BaseProvisioner):
 
     def login_args(self, instance):
         return [instance]
+
+    @property
+    def testinfra_args(self):
+        hosts_string = ""
+
+        for container in self.instances:
+            hosts_string += container['name'] + ','
+
+        kwargs = {
+            'env': self.m._env,
+            'sudo': True,
+            'connection': 'docker',
+            'hosts' : hosts_string.rstrip(','),
+            'n': 3
+        }
+
+        return kwargs
