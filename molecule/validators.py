@@ -169,10 +169,7 @@ def rake(rakefile,
     return sh.rake(**kwargs)
 
 
-def testinfra(testinfra_dir,
-              env=None,
-              debug=False,
-              **kwargs):
+def testinfra(testinfra_dir, env=None, debug=False, **kwargs):
     """
     Runs testinfra against specified ansible inventory file
 

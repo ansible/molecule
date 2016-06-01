@@ -1,3 +1,5 @@
+.. _providers:
+
 Providers
 =========
 
@@ -77,3 +79,4 @@ Other Notes
 
 .. _`VirtualBox`: http://docs.vagrantup.com/v2/virtualbox/index.html
 .. _`Versioning`: https://docs.vagrantup.com/v2/boxes/versioning.html
+.. _`provider plugins`: https://www.vagrantup.com/docs/providers/

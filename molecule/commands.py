@@ -693,7 +693,6 @@ class Init(AbstractCommand):
         testinfra_path = os.path.join(
             role_path,
             self.molecule._config.config['molecule']['testinfra_dir'])
-        os.makedirs(testinfra_path)
 
         with open(os.path.join(testinfra_path, 'test_default.py'), 'w') as f:
             f.write(t_test_default.render())

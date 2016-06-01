@@ -19,6 +19,7 @@ Contents:
 
    usage
    providers
+   provisioners
    development
 
 .. _`Ansible`: https://docs.ansible.com

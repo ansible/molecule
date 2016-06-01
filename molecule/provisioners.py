@@ -191,6 +191,7 @@ class BaseProvisioner(object):
         """
         return
 
+
 class VagrantProvisioner(BaseProvisioner):
     def __init__(self, molecule):
         super(VagrantProvisioner, self).__init__(molecule)
@@ -320,7 +321,8 @@ class VagrantProvisioner(BaseProvisioner):
         kwargs = {
             'env': self.m._env,
             'sudo': True,
-            'ansible-inventory': self.m._config.config['ansible']['inventory_file'],
+            'ansible-inventory':
+            self.m._config.config['ansible']['inventory_file'],
             'connection': 'ansible',
             'n': 3
         }
@@ -448,12 +450,16 @@ class DockerProvisioner(BaseProvisioner):
             RUN bash -c 'if [ -x "$(command -v yum)" ]; then  yum update && yum install -y python sudo; fi'
 
             '''
-            dockerfile = dockerfile.format(container['registry'] + container['image'], container['image_version'])
+            dockerfile = dockerfile.format(
+                container['registry'] + container['image'],
+                container['image_version'])
 
             f = BytesIO(dockerfile.encode('utf-8'))
 
-            container['image'] = container['registry'].replace('/', '_').replace(':', '_') + container['image']
-            tag_string = self.image_tag.format(container['image'], container['image_version'])
+            container['image'] = container['registry'].replace(
+                '/', '_').replace(':', '_') + container['image']
+            tag_string = self.image_tag.format(container['image'],
+                                               container['image_version'])
 
             errors = False
 
@@ -470,22 +476,24 @@ class DockerProvisioner(BaseProvisioner):
                                                         line['stream'],
                                                         Fore.RESET))
                             if 'errorDetail' in line:
-                                print('{} {} {}'.format(Fore.LIGHTRED_EX,
-                                                        line['errorDetail']['message'],
-                                                        Fore.RESET))
+                                print('{} {} {}'.format(
+                                    Fore.LIGHTRED_EX,
+                                    line['errorDetail']['message'],
+                                    Fore.RESET))
                                 errors = True
                             if 'status' in line:
                                 if previous_line not in line['status']:
-                                    print ('{} {} ... {}'.format(Fore.LIGHTYELLOW_EX,
-                                                            line['status'],
-                                                            Fore.RESET))
+                                    print('{} {} ... {}'.format(
+                                        Fore.LIGHTYELLOW_EX, line['status'],
+                                        Fore.RESET))
                                 previous_line = line['status']
 
                 if errors:
                     print '{} Build failed for {}'.format(Fore.RED, tag_string)
                     return
                 else:
-                    print '{} Finished building {}'.format(Fore.GREEN, tag_string)
+                    print '{} Finished building {}'.format(Fore.GREEN,
+                                                           tag_string)
 
     def up(self, no_provision=True):
         self.build_image()
@@ -574,7 +582,7 @@ class DockerProvisioner(BaseProvisioner):
             'env': self.m._env,
             'sudo': True,
             'connection': 'docker',
-            'hosts' : hosts_string.rstrip(','),
+            'hosts': hosts_string.rstrip(','),
             'n': 3
         }
 
