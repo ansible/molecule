@@ -379,12 +379,6 @@ class Verify(AbstractCommand):
                              Fore.RESET))
             return None, None
 
-        # # no docker support with testinfra or serverspec
-        # if self.molecule._provisioner.name is 'docker':
-        #     msg = '{}Skipping tests, docker provisioner does not support integration testing'
-        #     print(msg.format(Fore.YELLOW))
-        #     return None, None
-
         self.molecule._write_ssh_config()
 
         # testinfra's Ansible calls get same env vars as ansible-playbook

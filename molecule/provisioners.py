@@ -515,6 +515,10 @@ class DockerProvisioner(BaseProvisioner):
 
                 print '{} Container created.\n{}'.format(Fore.GREEN,
                                                          Fore.RESET)
+            else:
+                self._docker.start(container['name'])
+                print '{} Starting container {} ...'.format(Fore.GREEN,
+                                                            Fore.RESET)
 
     def destroy(self):
 

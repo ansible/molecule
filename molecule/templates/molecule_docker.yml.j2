@@ -1,18 +1,18 @@
 ---
-  ansible:
-    playbook: playbook.yml
-    user: root
-    connection: docker
+ansible:
+  playbook: playbook.yml
+  user: root
+  connection: docker
 
-  docker:
-    containers:
-      - name: {{role}}-01
-        ansible_groups:
-          - group1
-        image: ubuntu
-        image_version: latest
-      - name: {{role}}-02
-        ansible_groups:
-          - group2
-        image: ubuntu
-        image_version: latest
+docker:
+  containers:
+  - name: {{role}}-01
+    ansible_groups:
+      - group1
+    image: ubuntu
+    image_version: latest
+  - name: {{role}}-02
+    ansible_groups:
+      - group2
+    image: ubuntu
+    image_version: latest

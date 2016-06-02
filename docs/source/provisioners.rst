@@ -34,11 +34,11 @@ Docker Example
 .. code-block:: yaml
 
     ---
-      docker:
-        containers:
-          - name: foo-01
-            ansible_groups:
-              - group1
+    docker:
+      containers:
+        - name: foo-01
+          ansible_groups:
+          - group1
             image: ubuntu
             image_version: latest
           - name: foo-02
@@ -74,22 +74,22 @@ provider, see :ref:`providers`.
 .. code-block:: yaml
 
     ---
-      instances:
-        - name: vagrant-test-01
-          ansible_groups:
-            - group_1
-          interfaces:
-            - network_name: private_network
-              type: dhcp
-              auto_config: true
-          options:
-            append_platform_to_hostname: no
-        - name: vagrant-test-02
-          ansible_groups:
-            - group_2
-          interfaces:
-            - network_name: private_network
-              type: dhcp
-              auto_config: true
-          options:
-            append_platform_to_hostname: no
+    instances:
+      - name: vagrant-test-01
+        ansible_groups:
+          - group_1
+        interfaces:
+          - network_name: private_network
+            type: dhcp
+            auto_config: true
+        options:
+          append_platform_to_hostname: no
+      - name: vagrant-test-02
+        ansible_groups:
+          - group_2
+        interfaces:
+          - network_name: private_network
+            type: dhcp
+            auto_config: true
+        options:
+          append_platform_to_hostname: no
