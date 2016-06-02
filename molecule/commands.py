@@ -377,7 +377,10 @@ class Verify(AbstractCommand):
             return None, None
 
         self.molecule._write_ssh_config()
-        kwargs = {'env': self.molecule._env}
+        # testinfra's Ansible calls get same env vars as ansible-playbook
+        ansible = AnsiblePlaybook(self.molecule._config.config['ansible'],
+                                  _env=self.molecule._env)
+        kwargs = {'env': ansible.env}
         kwargs['env']['PYTHONDONTWRITEBYTECODE'] = '1'
         kwargs['debug'] = True if self.molecule._args.get('--debug') else False
 
