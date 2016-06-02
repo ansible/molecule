@@ -76,7 +76,7 @@ Optionally, if you want to test with `Testinfra`_, you will need::
     role_name/
     ├── ...
     └── tests/
-        └── my_test.py
+        └── test_*.py
 
 
 Molecule attempts to pick sane default configuration options (set
@@ -156,8 +156,7 @@ Here is a commented example:
         templates:
           molecule: molecule.yml.j2
           playbook: playbook.yml.j2
-          spec_helper: spec_helper.rb.j2
-          default_spec: default_spec.rb.j2
+          test_default: test_default.py.j2
 
     # defaults for providers passed to Vagrant
     vagrant:

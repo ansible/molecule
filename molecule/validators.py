@@ -200,4 +200,7 @@ def testinfra(inventory,
     if 'HOME' not in kwargs['_env']:
         kwargs['_env']['HOME'] = os.path.expanduser('~')
 
-    return sh.testinfra(testinfra_dir, **kwargs)
+    tests = '{}/test_*.py'.format(testinfra_dir)
+    tests_glob = sh.glob(tests)
+
+    return sh.testinfra(tests_glob, **kwargs)

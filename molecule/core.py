@@ -219,8 +219,8 @@ class Molecule(object):
         for instance in self._provisioner.instances:
             ssh = self._provisioner.conf(
                 vm_name=utilities.format_instance_name(
-                    instance['name'], self._env[
-                        'MOLECULE_PLATFORM'], self._provisioner.instances))
+                    instance['name'], self._env['MOLECULE_PLATFORM'],
+                    self._provisioner.instances))
             inventory += host_template.format(ssh['Host'], ssh['HostName'],
                                               ssh['Port'], ssh['IdentityFile'],
                                               ssh['User'])
