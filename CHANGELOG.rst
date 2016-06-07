@@ -1,5 +1,13 @@
 CHANGELOG for molecule
 ======================
+1.4.2
+----
+
+* Made "append_platform_to_hostname" False by default.
+* Testinfra tests now run in parallel.
+* ``init`` now generates testinfra tests by default.
+* Testinfra env vars (including ssh) are now consistent with what is passed to ansible-playbook.
+
 1.4.1
 ----
 
