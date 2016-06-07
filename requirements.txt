@@ -11,3 +11,4 @@ PyYAML==3.11
 sh==1.11
 docker-py
 testinfra
+ansible
