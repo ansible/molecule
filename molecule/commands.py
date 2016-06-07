@@ -229,6 +229,11 @@ class Converge(AbstractCommand):
 
         ansible = AnsiblePlaybook(self.molecule._config.config['ansible'])
 
+        # params to work with provisioner
+        for k, v in self.molecule._provisioner.ansible_connection_params.items(
+        ):
+            ansible.add_cli_arg(k, v)
+
         # target tags passed in via CLI
         if self.molecule._args.get('--tags'):
             ansible.add_cli_arg('tags', self.molecule._args['--tags'].pop(0))

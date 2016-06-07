@@ -126,6 +126,13 @@ class BaseProvisioner(object):
         """
         return
 
+    @abc.abstractproperty
+    def ansible_connection_params(self):
+        """
+        Returns the parameters used for connecting with ansible.
+        :return:
+        """
+
     @abc.abstractmethod
     def up(no_provision=True):
         """
@@ -329,6 +336,12 @@ class VagrantProvisioner(BaseProvisioner):
 
         return kwargs
 
+    @property
+    def ansible_connection_params(self):
+        params = {'user': 'vagrant', 'connection': 'ssh'}
+
+        return params
+
     def up(self, no_provision=True):
         self._write_vagrant_file()
         self._vagrant.up(no_provision)
@@ -431,6 +444,12 @@ class DockerProvisioner(BaseProvisioner):
     @property
     def ssh_config_file(self):
         return None
+
+    @property
+    def ansible_connection_params(self):
+        params = {'user': 'root', 'connection': 'docker'}
+
+        return params
 
     def build_image(self):
         available_images = [tag.encode('utf-8')

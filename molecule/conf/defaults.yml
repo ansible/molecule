@@ -75,8 +75,6 @@ molecule:
 
 # defaults passed to ansible-playbook
 ansible:
-  user: vagrant
-  connection: ssh
   timeout: 30
   playbook: playbook.yml
   sudo: True

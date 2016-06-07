@@ -118,12 +118,9 @@ class TestDockerProvisioner(testtools.TestCase):
         docker_provisioner.destroy()
         docker_provisioner.up()
 
-        self.book = {
-            'playbook': 'tests/playbook.yml',
-            'inventory': 'test1,test2,',
-            'user': 'root',
-            'connection': 'docker',
-        }
+        self.book = docker_provisioner.ansible_connection_params
+        self.book['playbook'] = 'tests/playbook.yml'
+        self.book['inventory'] = 'test1,test2,'
 
         self.ansible = AnsiblePlaybook(self.book)
 
@@ -138,12 +135,9 @@ class TestDockerProvisioner(testtools.TestCase):
 
         self._mock_molecule._create_inventory_file()
 
-        self.book = {
-            'playbook': 'tests/playbook.yml',
-            'inventory': 'tests/ansible_inventory',
-            'user': 'root',
-            'connection': 'docker',
-        }
+        self.book = self._mock_molecule._provisioner.ansible_connection_params
+        self.book['playbook'] = 'tests/playbook.yml'
+        self.book['inventory'] = 'tests/ansible_inventory'
 
         self.ansible = AnsiblePlaybook(self.book)
 
