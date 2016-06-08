@@ -80,6 +80,9 @@ class AbstractCommand:
         if self.molecule._provisioner.instances is None:
             self.static = True
 
+        # Add or update the group_vars if needed.
+        self.molecule._add_or_update_group_vars()
+
     def disabled(self, cmd):
         """
         Prints 'command disabled' message and exits program.

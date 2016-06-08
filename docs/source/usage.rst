@@ -132,6 +132,9 @@ Here is a commented example:
       # comment this out to default to the first in the platform list
       # default_platform: rhel-7
 
+      # directory containing group_vars to use with ansible
+      # group_vars: ../../../inventory/my_az/group_vars/
+
       # ssh arguments passed to molecule login command
       raw_ssh_args:
         - -o StrictHostKeyChecking=no
