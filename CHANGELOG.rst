@@ -1,5 +1,11 @@
 CHANGELOG for molecule
 ======================
+1.5.0
+----
+
+* Added support for Docker provisioner.
+* Added support for group_vars.
+
 1.4.2
 ----
 
