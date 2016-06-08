@@ -283,7 +283,7 @@ order to test this particular role.
         - role: demo.molecule
 
 Override Configuration
-------------------------
+----------------------
 
 You can specify a configuration file in the following places, in this order:
 
@@ -321,6 +321,35 @@ A molecule.yml such as this will trigger the described behavior:
       inventory_file: /path/to/ansible_inventory
       extra_vars: my_var1=var1 my_var2=var2
 
+Using Molecule In Travis
+------------------------
+
+`Travis`_ is an excellent CI platform for testing Ansible roles. With the docker provisioner,
+molecule can easily be used to test multiple configurations on Travis. Here is an example of a
+``.travis.yml`` that is used to test a role named foo1. In this example, the role ``foo1`` uses the docker
+provisioner and is assumed to be in the directory ``roledir/foo1`` with the proper ``molecule.yml``.
+
+.. code-block:: yaml
+
+  sudo: required
+
+  language: python
+
+  services:
+    - docker
+
+  before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -o Dpkg::Options::="--force-confold" --force-yes -y docker-engine
+
+  install:
+  - pip install molecule
+
+  script:
+  - cd roledir/foo1
+  - molecule test
+
+
 Usage
 -----
 
@@ -356,7 +385,7 @@ For example, ``--destroy=always`` might be useful when using molecule for CI/CD.
 
 
 Integration Testing
---------------------
+-------------------
 
 Molecule supports testing using both `Serverspec`_ and `Testinfra`_. Tests
 located in the ``spec/`` directory will be run by serverspec and tests
@@ -388,3 +417,4 @@ this functionality.
 .. _`Rubocop`: https://github.com/bbatsov/rubocop
 .. _`development`: http://pythonhosted.org/setuptools/setuptools.html#development-mode
 .. _`pip pattern`: http://python-packaging-user-guide.readthedocs.org/en/latest/distributing/#working-in-development-mode
+.. _`Travis`: https://travis-ci.org/
