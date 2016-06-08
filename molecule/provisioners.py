@@ -193,7 +193,15 @@ class BaseProvisioner(object):
     @abc.abstractmethod
     def testinfra_args(self):
         """
-        Returns the kwards used when invoking the testinfra validator
+        Returns the kwargs used when invoking the testinfra validator
+        :return:
+        """
+        return
+
+    @abc.abstractmethod
+    def serverspec_args(self):
+        """
+        Returns the kwargs used when invoking the serverspec validator
         :return:
         """
         return
@@ -326,7 +334,6 @@ class VagrantProvisioner(BaseProvisioner):
     @property
     def testinfra_args(self):
         kwargs = {
-            'env': self.m._env,
             'sudo': True,
             'ansible-inventory':
             self.m._config.config['ansible']['inventory_file'],
@@ -335,6 +342,10 @@ class VagrantProvisioner(BaseProvisioner):
         }
 
         return kwargs
+
+    @property
+    def serverspec_args(self):
+        return dict()
 
     @property
     def ansible_connection_params(self):
@@ -469,6 +480,7 @@ class DockerProvisioner(BaseProvisioner):
             RUN bash -c 'if [ -x "$(command -v yum)" ]; then  yum update && yum install -y python sudo; fi'
 
             '''
+
             dockerfile = dockerfile.format(
                 container['registry'] + container['image'],
                 container['image_version'])
@@ -602,7 +614,6 @@ class DockerProvisioner(BaseProvisioner):
             hosts_string += container['name'] + ','
 
         kwargs = {
-            'env': self.m._env,
             'sudo': True,
             'connection': 'docker',
             'hosts': hosts_string.rstrip(','),
@@ -610,3 +621,7 @@ class DockerProvisioner(BaseProvisioner):
         }
 
         return kwargs
+
+    @property
+    def serverspec_args(self):
+        return dict()

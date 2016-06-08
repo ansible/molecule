@@ -388,17 +388,21 @@ class Verify(AbstractCommand):
         ansible = AnsiblePlaybook(self.molecule._config.config['ansible'],
                                   _env=self.molecule._env)
 
-        kwargs = self.molecule._provisioner.testinfra_args
-        kwargs['env'] = ansible.env
-        kwargs['env']['PYTHONDONTWRITEBYTECODE'] = '1'
-        kwargs['debug'] = True if self.molecule._args.get('--debug') else False
+        testinfra_kwargs = self.molecule._provisioner.testinfra_args
+        serverspec_kwargs = self.molecule._provisioner.serverspec_args
+        testinfra_kwargs['env'] = ansible.env
+        testinfra_kwargs['env']['PYTHONDONTWRITEBYTECODE'] = '1'
+        testinfra_kwargs['debug'] = True if self.molecule._args.get(
+            '--debug') else False
+        serverspec_kwargs['env'] = testinfra_kwargs['env']
+        serverspec_kwargs['debug'] = testinfra_kwargs['debug']
 
         try:
             # testinfra
             if os.path.isdir(testinfra_dir):
                 msg = '\n{}Executing testinfra tests found in {}/.{}'
                 print(msg.format(Fore.MAGENTA, testinfra_dir, Fore.RESET))
-                validators.testinfra(testinfra_dir, **kwargs)
+                validators.testinfra(testinfra_dir, **testinfra_kwargs)
                 print()
             else:
                 msg = '{}No testinfra tests found in {}/.\n{}'
@@ -408,12 +412,12 @@ class Verify(AbstractCommand):
             if os.path.isdir(serverspec_dir):
                 msg = '{}Executing rubocop on *.rb files found in {}/.{}'
                 print(msg.format(Fore.MAGENTA, serverspec_dir, Fore.RESET))
-                validators.rubocop(serverspec_dir, **kwargs)
+                validators.rubocop(serverspec_dir, **serverspec_kwargs)
                 print()
 
                 msg = '{}Executing serverspec tests found in {}/.{}'
                 print(msg.format(Fore.MAGENTA, serverspec_dir, Fore.RESET))
-                validators.rake(rakefile, **kwargs)
+                validators.rake(rakefile, **serverspec_kwargs)
                 print()
             else:
                 msg = '{}No serverspec tests found in {}/.\n{}'
