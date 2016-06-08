@@ -20,9 +20,12 @@
 
 import abc
 import os
-
 import vagrant
-
+import docker
+import collections
+import json
+from io import BytesIO
+from colorama import Fore
 import utilities
 
 
@@ -39,6 +42,8 @@ def get_provisioner(molecule):
         return VagrantProvisioner(molecule)
     elif 'proxmox' in molecule._config.config:
         return ProxmoxProvisioner(molecule)
+    elif 'docker' in molecule._config.config:
+        return DockerProvisioner(molecule)
     else:
         return None
 
@@ -121,6 +126,13 @@ class BaseProvisioner(object):
         """
         return
 
+    @abc.abstractproperty
+    def ansible_connection_params(self):
+        """
+        Returns the parameters used for connecting with ansible.
+        :return:
+        """
+
     @abc.abstractmethod
     def up(no_provision=True):
         """
@@ -150,6 +162,38 @@ class BaseProvisioner(object):
     def conf(self, vm_name=None, ssh_config=False):
         """
         SSH config required for logging into a VM
+        :return:
+        """
+        return
+
+    @abc.abstractmethod
+    def inventory_entry(self, instance):
+        """
+        Returns an inventory entry with the given arguments
+        :return:
+        """
+        return
+
+    @abc.abstractmethod
+    def login_cmd(self, instance_name):
+        """
+        Returns the command string to login to a host
+        :return:
+        """
+        return
+
+    @abc.abstractmethod
+    def login_args(self, instance_name):
+        """
+        Returns the arguments used in the login command
+        :return:
+        """
+        return
+
+    @abc.abstractmethod
+    def testinfra_args(self):
+        """
+        Returns the kwards used when invoking the testinfra validator
         :return:
         """
         return
@@ -264,6 +308,10 @@ class VagrantProvisioner(BaseProvisioner):
         return self._platform
 
     @property
+    def host_template(self):
+        return '{} ansible_ssh_host={} ansible_ssh_port={} ansible_ssh_private_key_file={} ansible_ssh_user={}\n'
+
+    @property
     def valid_providers(self):
         return self.m._config.config['vagrant']['providers']
 
@@ -274,6 +322,25 @@ class VagrantProvisioner(BaseProvisioner):
     @property
     def ssh_config_file(self):
         return '.vagrant/ssh-config'
+
+    @property
+    def testinfra_args(self):
+        kwargs = {
+            'env': self.m._env,
+            'sudo': True,
+            'ansible-inventory':
+            self.m._config.config['ansible']['inventory_file'],
+            'connection': 'ansible',
+            'n': 3
+        }
+
+        return kwargs
+
+    @property
+    def ansible_connection_params(self):
+        params = {'user': 'vagrant', 'connection': 'ssh'}
+
+        return params
 
     def up(self, no_provision=True):
         self._write_vagrant_file()
@@ -295,8 +362,251 @@ class VagrantProvisioner(BaseProvisioner):
         else:
             return self._vagrant.conf(vm_name=vm_name)
 
+    def inventory_entry(self, instance):
+        # TODO: for Ansiblev2, the following line must have s/ssh_//
+        template = '{} ansible_ssh_host={} ansible_ssh_port={} ansible_ssh_private_key_file={} ansible_ssh_user={}\n'
+
+        ssh = self.conf(vm_name=utilities.format_instance_name(
+            instance['name'], self._platform, self.instances))
+        return template.format(ssh['Host'], ssh['HostName'], ssh['Port'],
+                               ssh['IdentityFile'], ssh['User'])
+
+    def login_cmd(self, instance_name):
+        return 'ssh {} -l {} -p {} -i {} {}'
+
+    def login_args(self, instance_name):
+
+        # Try to retrieve the SSH configuration of the host.
+        conf = self.conf(vm_name=instance_name)
+
+        return [
+            conf['HostName'], conf['User'], conf['Port'], conf['IdentityFile'],
+            ' '.join(self.m._config.config['molecule']['raw_ssh_args'])
+        ]
+
 
 # Place holder for Proxmox, partially implemented
 class ProxmoxProvisioner(BaseProvisioner):
     def __init__(self):
         super(ProxmoxProvisioner, self).__init__()
+
+
+class DockerProvisioner(BaseProvisioner):
+    def __init__(self, molecule):
+        super(DockerProvisioner, self).__init__(molecule)
+        self._docker = docker.from_env(assert_hostname=False)
+        self._containers = self.m._config.config['docker']['containers']
+        self._provider = self._get_provider()
+        self._platform = self._get_platform()
+        self.status()
+
+        self.image_tag = 'molecule_local/{}:{}'
+
+    def _get_platform(self):
+        self.m._env['MOLECULE_PLATFORM'] = 'Docker'
+        return self.m._env['MOLECULE_PLATFORM']
+
+    def _get_provider(self):
+        return 'Docker'
+
+    @property
+    def name(self):
+        return 'docker'
+
+    @property
+    def instances(self):
+        return self._containers
+
+    @property
+    def default_provider(self):
+        pass
+
+    @property
+    def default_platform(self):
+        pass
+
+    @property
+    def provider(self):
+        pass
+
+    @property
+    def platform(self):
+        pass
+
+    @property
+    def valid_providers(self):
+        return [{'name': 'Docker'}]
+
+    @property
+    def valid_platforms(self):
+        return [{'name': 'Docker'}]
+
+    @property
+    def ssh_config_file(self):
+        return None
+
+    @property
+    def ansible_connection_params(self):
+        params = {'user': 'root', 'connection': 'docker'}
+
+        return params
+
+    def build_image(self):
+        available_images = [tag.encode('utf-8')
+                            for image in self._docker.images()
+                            for tag in image.get('RepoTags')]
+
+        for container in self.instances:
+
+            if 'registry' in container:
+                container['registry'] += '/'
+            else:
+                container['registry'] = ''
+
+            dockerfile = '''
+            FROM {}:{}
+            RUN bash -c 'if [ -x "$(command -v apt-get)" ]; then  apt-get update && apt-get install -y python sudo; fi'
+            RUN bash -c 'if [ -x "$(command -v yum)" ]; then  yum update && yum install -y python sudo; fi'
+
+            '''
+            dockerfile = dockerfile.format(
+                container['registry'] + container['image'],
+                container['image_version'])
+
+            f = BytesIO(dockerfile.encode('utf-8'))
+
+            container['image'] = container['registry'].replace(
+                '/', '_').replace(':', '_') + container['image']
+            tag_string = self.image_tag.format(container['image'],
+                                               container['image_version'])
+
+            errors = False
+
+            if tag_string not in available_images:
+                print '{} Building ansible compatible image ...'.format(
+                    Fore.YELLOW)
+                previous_line = ''
+                for line in self._docker.build(fileobj=f, tag=tag_string):
+                    for line_split in line.split('\n'):
+                        if len(line_split) > 0:
+                            line = json.loads(line_split)
+                            if 'stream' in line:
+                                print('{} {} {}'.format(Fore.LIGHTBLUE_EX,
+                                                        line['stream'],
+                                                        Fore.RESET))
+                            if 'errorDetail' in line:
+                                print('{} {} {}'.format(
+                                    Fore.LIGHTRED_EX,
+                                    line['errorDetail']['message'],
+                                    Fore.RESET))
+                                errors = True
+                            if 'status' in line:
+                                if previous_line not in line['status']:
+                                    print('{} {} ... {}'.format(
+                                        Fore.LIGHTYELLOW_EX, line['status'],
+                                        Fore.RESET))
+                                previous_line = line['status']
+
+                if errors:
+                    print '{} Build failed for {}'.format(Fore.RED, tag_string)
+                    return
+                else:
+                    print '{} Finished building {}'.format(Fore.GREEN,
+                                                           tag_string)
+
+    def up(self, no_provision=True):
+        self.build_image()
+
+        for container in self.instances:
+            if (container['Created'] is not True):
+                print '{} Creating container {} with base image {}:{} ...'.format(
+                    Fore.YELLOW, container['name'], container['image'],
+                    container['image_version']),
+                container = self._docker.create_container(
+                    image=self.image_tag.format(container['image'],
+                                                container['image_version']),
+                    tty=True,
+                    command='bash -c "sleep infinity"',
+                    detach=False,
+                    name=container['name'])
+                self._docker.start(container=container.get('Id'))
+                container['Created'] = True
+
+                print '{} Container created.\n{}'.format(Fore.GREEN,
+                                                         Fore.RESET)
+            else:
+                self._docker.start(container['name'])
+                print '{} Starting container {} ...'.format(Fore.GREEN,
+                                                            Fore.RESET)
+
+    def destroy(self):
+
+        for container in self.instances:
+            if (container['Created']):
+                print '{} Stopping container {} ...'.format(Fore.YELLOW,
+                                                            container['name']),
+                self._docker.stop(container['name'], timeout=0)
+                self._docker.remove_container(container['name'])
+                print '{} Removed container {}.\n'.format(Fore.GREEN,
+                                                          container['name'])
+                container['Created'] = False
+
+    def status(self):
+
+        Status = collections.namedtuple('Status', ['name', 'state',
+                                                   'provider'])
+        instance_names = [x['name'] for x in self.instances]
+        created_containers = self._docker.containers(all=True)
+        created_container_names = []
+        status_list = []
+
+        for container in created_containers:
+            container_name = container.get('Names')[0][1:].encode('utf-8')
+            created_container_names.append(container_name)
+            if container_name in instance_names:
+                status_list.append(Status(name=container_name,
+                                          state=container.get('Status'),
+                                          provider='docker'))
+
+        # Check the created status of all the tracked instances
+        for container in self.instances:
+            if container['name'] in created_container_names:
+                container['Created'] = True
+            else:
+                container['Created'] = False
+                status_list.append(Status(name=container['name'],
+                                          state="Not Created",
+                                          provider='docker'))
+
+        return status_list
+
+    def conf(self, vm_name=None, ssh_config=False):
+        pass
+
+    def inventory_entry(self, instance):
+        template = '{} connection=docker\n'
+
+        return template.format(instance['name'])
+
+    def login_cmd(self, instance):
+        return 'docker exec -ti {} bash'
+
+    def login_args(self, instance):
+        return [instance]
+
+    @property
+    def testinfra_args(self):
+        hosts_string = ""
+
+        for container in self.instances:
+            hosts_string += container['name'] + ','
+
+        kwargs = {
+            'env': self.m._env,
+            'sudo': True,
+            'connection': 'docker',
+            'hosts': hosts_string.rstrip(','),
+            'n': 3
+        }
+
+        return kwargs

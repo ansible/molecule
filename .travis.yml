@@ -1,9 +1,21 @@
+sudo: required
+
 language: python
-env:
-  matrix:
-    - TOXENV=flake8
-    - TOXENV=yapf
-    - TOXENV=docs
-    - TOXENV=py27
-install: "pip install -r test-requirements.txt"
-script: tox
+
+services:
+  - docker
+
+before_install:
+- sudo apt-get -qq update
+- sudo apt-get install -o Dpkg::Options::="--force-confold" --force-yes -y docker-engine
+
+install:
+- pip install -r test-requirements.txt
+- pip install -r requirements.txt
+- python setup.py install
+
+script:
+- tox
+- molecule init foo1 --docker
+- cd foo1
+- molecule test

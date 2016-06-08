@@ -229,6 +229,11 @@ class Converge(AbstractCommand):
 
         ansible = AnsiblePlaybook(self.molecule._config.config['ansible'])
 
+        # params to work with provisioner
+        for k, v in self.molecule._provisioner.ansible_connection_params.items(
+        ):
+            ansible.add_cli_arg(k, v)
+
         # target tags passed in via CLI
         if self.molecule._args.get('--tags'):
             ansible.add_cli_arg('tags', self.molecule._args['--tags'].pop(0))
@@ -363,8 +368,6 @@ class Verify(AbstractCommand):
             'serverspec_dir']
         testinfra_dir = self.molecule._config.config['molecule'][
             'testinfra_dir']
-        inventory_file = self.molecule._config.config['ansible'][
-            'inventory_file']
         rakefile = self.molecule._config.config['molecule']['rakefile_file']
         ignore_paths = self.molecule._config.config['molecule']['ignore_paths']
 
@@ -380,10 +383,13 @@ class Verify(AbstractCommand):
             return None, None
 
         self.molecule._write_ssh_config()
+
         # testinfra's Ansible calls get same env vars as ansible-playbook
         ansible = AnsiblePlaybook(self.molecule._config.config['ansible'],
                                   _env=self.molecule._env)
-        kwargs = {'env': ansible.env}
+
+        kwargs = self.molecule._provisioner.testinfra_args
+        kwargs['env'] = ansible.env
         kwargs['env']['PYTHONDONTWRITEBYTECODE'] = '1'
         kwargs['debug'] = True if self.molecule._args.get('--debug') else False
 
@@ -392,7 +398,7 @@ class Verify(AbstractCommand):
             if os.path.isdir(testinfra_dir):
                 msg = '\n{}Executing testinfra tests found in {}/.{}'
                 print(msg.format(Fore.MAGENTA, testinfra_dir, Fore.RESET))
-                validators.testinfra(inventory_file, testinfra_dir, **kwargs)
+                validators.testinfra(testinfra_dir, **kwargs)
                 print()
             else:
                 msg = '{}No testinfra tests found in {}/.\n{}'
@@ -585,15 +591,9 @@ class Login(AbstractCommand):
                             len(match), hostname, Fore.YELLOW, Fore.RED))
                 hostname = match[0]
 
-            # Try to retrieve the SSH configuration of the host.
-            conf = self.molecule._provisioner.conf(vm_name=hostname)
+                login_cmd = self.molecule._provisioner.login_cmd(hostname)
+                login_args = self.molecule._provisioner.login_args(hostname)
 
-            # Prepare the command to SSH into the host.
-            ssh_args = [conf['HostName'], conf['User'], conf['Port'],
-                        conf['IdentityFile'],
-                        ' '.join(self.molecule._config.config['molecule'][
-                            'raw_ssh_args'])]
-            ssh_cmd = 'ssh {} -l {} -p {} -i {} {}'
         except CalledProcessError:
             # gets appended to python-vagrant's error message
             conf_format = [Fore.RED, self.molecule._args['<host>'],
@@ -610,7 +610,7 @@ class Login(AbstractCommand):
         lines, columns = os.popen('stty size', 'r').read().split()
         dimensions = (int(lines), int(columns))
         self.molecule._pt = pexpect.spawn(
-            '/usr/bin/env ' + ssh_cmd.format(*ssh_args),
+            '/usr/bin/env ' + login_cmd.format(*login_args),
             dimensions=dimensions)
         signal.signal(signal.SIGWINCH, self.molecule._sigwinch_passthrough)
         self.molecule._pt.interact()
@@ -622,7 +622,7 @@ class Init(AbstractCommand):
     Creates the scaffolding for a new role intended for use with molecule.
 
     Usage:
-        init <role>
+        init <role> [--docker]
     """
 
     def clean_meta_main(self, role_path):
@@ -667,6 +667,10 @@ class Init(AbstractCommand):
         t_test_default = env.get_template(self.molecule._config.config[
             'molecule']['init']['templates']['test_default'])
 
+        if (self.molecule._args['--docker']):
+            t_molecule = env.get_template(self.molecule._config.config[
+                'molecule']['init']['templates']['molecule_docker'])
+
         sanitized_role = re.sub('[._]', '-', role)
         with open(
                 os.path.join(
@@ -686,7 +690,6 @@ class Init(AbstractCommand):
         testinfra_path = os.path.join(
             role_path,
             self.molecule._config.config['molecule']['testinfra_dir'])
-        os.makedirs(testinfra_path)
 
         with open(os.path.join(testinfra_path, 'test_default.py'), 'w') as f:
             f.write(t_test_default.render())
