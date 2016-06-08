@@ -18,6 +18,10 @@ before_install:
 
 install:
 - pip install -r test-requirements.txt
+- python setup.py install
 
 script:
 - tox
+- molecule init foo1 --docker
+- cd foo1
+- molecule test

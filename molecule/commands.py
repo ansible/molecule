@@ -368,8 +368,6 @@ class Verify(AbstractCommand):
             'serverspec_dir']
         testinfra_dir = self.molecule._config.config['molecule'][
             'testinfra_dir']
-        inventory_file = self.molecule._config.config['ansible'][
-            'inventory_file']
         rakefile = self.molecule._config.config['molecule']['rakefile_file']
         ignore_paths = self.molecule._config.config['molecule']['ignore_paths']
 
