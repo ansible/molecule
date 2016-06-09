@@ -33,6 +33,7 @@ import prettytable
 import sh
 import yaml
 from docopt import docopt
+import glob
 
 import molecule.utilities as utilities
 import molecule.validators as validators
@@ -353,12 +354,13 @@ class Verify(AbstractCommand):
     Performs verification steps on running instances.
 
     Usage:
-        verify [--platform=<platform>] [--provider=<provider>] [--debug]
+        verify [--platform=<platform>] [--provider=<provider>] [--debug] [--sudo]
 
     Options:
         --platform=<platform>  specify a platform
         --provider=<provider>  specify a provider
         --debug                get more detail
+        --sudo                 runs tests with sudo
     """
 
     def execute(self, exit=True):
@@ -395,12 +397,14 @@ class Verify(AbstractCommand):
         testinfra_kwargs['env']['PYTHONDONTWRITEBYTECODE'] = '1'
         testinfra_kwargs['debug'] = True if self.molecule._args.get(
             '--debug') else False
+        testinfra_kwargs['sudo'] = True if self.molecule._args.get(
+            '--sudo') else False
         serverspec_kwargs['env'] = testinfra_kwargs['env']
         serverspec_kwargs['debug'] = testinfra_kwargs['debug']
 
         try:
             # testinfra
-            if os.path.isdir(testinfra_dir):
+            if len(glob.glob1(testinfra_dir, "test_*.py")) > 0:
                 msg = '\n{}Executing testinfra tests found in {}/.{}'
                 print(msg.format(colorama.Fore.MAGENTA, testinfra_dir,
                                  colorama.Fore.RESET))
@@ -442,26 +446,32 @@ class Test(AbstractCommand):
     Runs a series of commands (defined in config) against instances for a full test/verify run.
 
     Usage:
-        test [--platform=<platform>] [--provider=<provider>] [--destroy=<destroy>] [--debug]
+        test [--platform=<platform>] [--provider=<provider>] [--destroy=<destroy>] [--debug] [--sudo]
 
     Options:
         --platform=<platform>  specify a platform
         --provider=<provider>  specify a provider
         --destroy=<destroy>    destroy behavior (passing, always, never)
         --debug                get more detail
+        --sudo                 run tests with sudo
     """
 
     def execute(self):
         if self.static:
             self.disabled('test')
 
-        command_args, args = utilities.remove_args(self.command_args,
-                                                   self.args, ['--destroy'])
+        command_args, args = utilities.remove_args(
+            self.command_args, self.args, self.command_args)
 
         for task in self.molecule._config.config['molecule']['test'][
                 'sequence']:
             command = getattr(sys.modules[__name__], task.capitalize())
             c = command(command_args, args)
+
+            for argument in self.command_args:
+                if argument in c.args:
+                    c.args[argument] = self.args[argument]
+
             status, output = c.execute(exit=False)
 
         if self.args.get('--destroy') == 'always':

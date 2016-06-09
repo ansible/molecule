@@ -135,6 +135,22 @@ class BaseProvisioner(object):
         :return:
         """
 
+    @abc.abstractproperty
+    def testinfra_args(self):
+        """
+        Returns the kwargs used when invoking the testinfra validator
+        :return:
+        """
+        return
+
+    @abc.abstractproperty
+    def serverspec_args(self):
+        """
+        Returns the kwargs used when invoking the serverspec validator
+        :return:
+        """
+        return
+
     @abc.abstractmethod
     def up(no_provision=True):
         """
@@ -188,22 +204,6 @@ class BaseProvisioner(object):
     def login_args(self, instance_name):
         """
         Returns the arguments used in the login command
-        :return:
-        """
-        return
-
-    @abc.abstractmethod
-    def testinfra_args(self):
-        """
-        Returns the kwargs used when invoking the testinfra validator
-        :return:
-        """
-        return
-
-    @abc.abstractmethod
-    def serverspec_args(self):
-        """
-        Returns the kwargs used when invoking the serverspec validator
         :return:
         """
         return
@@ -336,7 +336,6 @@ class VagrantProvisioner(BaseProvisioner):
     @property
     def testinfra_args(self):
         kwargs = {
-            'sudo': True,
             'ansible-inventory':
             self.m._config.config['ansible']['inventory_file'],
             'connection': 'ansible',
@@ -617,7 +616,6 @@ class DockerProvisioner(BaseProvisioner):
             hosts_string += container['name'] + ','
 
         kwargs = {
-            'sudo': True,
             'connection': 'docker',
             'hosts': hosts_string.rstrip(','),
             'n': 3
