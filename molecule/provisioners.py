@@ -19,13 +19,15 @@
 #  THE SOFTWARE.
 
 import abc
-import os
-import vagrant
-import docker
 import collections
 import json
+import os
+
+import colorama
+import docker
+import vagrant
 from io import BytesIO
-from colorama import Fore
+
 import utilities
 
 
@@ -495,34 +497,35 @@ class DockerProvisioner(BaseProvisioner):
 
             if tag_string not in available_images:
                 print '{} Building ansible compatible image ...'.format(
-                    Fore.YELLOW)
+                    colorama.Fore.YELLOW)
                 previous_line = ''
                 for line in self._docker.build(fileobj=f, tag=tag_string):
                     for line_split in line.split('\n'):
                         if len(line_split) > 0:
                             line = json.loads(line_split)
                             if 'stream' in line:
-                                print('{} {} {}'.format(Fore.LIGHTBLUE_EX,
-                                                        line['stream'],
-                                                        Fore.RESET))
+                                print('{} {} {}'.format(
+                                    colorama.Fore.LIGHTBLUE_EX, line['stream'],
+                                    colorama.Fore.RESET))
                             if 'errorDetail' in line:
                                 print('{} {} {}'.format(
-                                    Fore.LIGHTRED_EX,
+                                    colorama.Fore.LIGHTRED_EX,
                                     line['errorDetail']['message'],
-                                    Fore.RESET))
+                                    colorama.Fore.RESET))
                                 errors = True
                             if 'status' in line:
                                 if previous_line not in line['status']:
                                     print('{} {} ... {}'.format(
-                                        Fore.LIGHTYELLOW_EX, line['status'],
-                                        Fore.RESET))
+                                        colorama.Fore.LIGHTYELLOW_EX,
+                                        line['status'], colorama.Fore.RESET))
                                 previous_line = line['status']
 
                 if errors:
-                    print '{} Build failed for {}'.format(Fore.RED, tag_string)
+                    print '{} Build failed for {}'.format(colorama.Fore.RED,
+                                                          tag_string)
                     return
                 else:
-                    print '{} Finished building {}'.format(Fore.GREEN,
+                    print '{} Finished building {}'.format(colorama.Fore.GREEN,
                                                            tag_string)
 
     def up(self, no_provision=True):
@@ -531,8 +534,8 @@ class DockerProvisioner(BaseProvisioner):
         for container in self.instances:
             if (container['Created'] is not True):
                 print '{} Creating container {} with base image {}:{} ...'.format(
-                    Fore.YELLOW, container['name'], container['image'],
-                    container['image_version']),
+                    colorama.Fore.YELLOW, container['name'],
+                    container['image'], container['image_version']),
                 container = self._docker.create_container(
                     image=self.image_tag.format(container['image'],
                                                 container['image_version']),
@@ -543,22 +546,22 @@ class DockerProvisioner(BaseProvisioner):
                 self._docker.start(container=container.get('Id'))
                 container['Created'] = True
 
-                print '{} Container created.\n{}'.format(Fore.GREEN,
-                                                         Fore.RESET)
+                print '{} Container created.\n{}'.format(colorama.Fore.GREEN,
+                                                         colorama.Fore.RESET)
             else:
                 self._docker.start(container['name'])
-                print '{} Starting container {} ...'.format(Fore.GREEN,
-                                                            Fore.RESET)
+                print '{} Starting container {} ...'.format(
+                    colorama.Fore.GREEN, colorama.Fore.RESET)
 
     def destroy(self):
 
         for container in self.instances:
             if (container['Created']):
-                print '{} Stopping container {} ...'.format(Fore.YELLOW,
-                                                            container['name']),
+                print '{} Stopping container {} ...'.format(
+                    colorama.Fore.YELLOW, container['name']),
                 self._docker.stop(container['name'], timeout=0)
                 self._docker.remove_container(container['name'])
-                print '{} Removed container {}.\n'.format(Fore.GREEN,
+                print '{} Removed container {}.\n'.format(colorama.Fore.GREEN,
                                                           container['name'])
                 container['Created'] = False
 

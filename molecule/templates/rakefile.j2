@@ -9,8 +9,13 @@ task spec: 'serverspec:all'
 task default: :spec
 
 env = YAML.load_file('{{ molecule_file }}')['vagrant']
-instances = env['instances']
 
+if env.nil?
+	puts "No vagrant instances defined. "
+	instances = {}
+else
+	instances = env['instances']
+end
 instances_to_test = {}
 instances.each do |instance|
   instance_name = instance['name']
