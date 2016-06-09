@@ -28,8 +28,8 @@ import sys
 import termios
 from subprocess import CalledProcessError
 
+import colorama
 import yaml
-from colorama import Fore
 
 import molecule.config as config
 import molecule.utilities as utilities
@@ -69,16 +69,18 @@ class Molecule(object):
         try:
             self._provisioner = provisioners.get_provisioner(self)
         except provisioners.InvalidProviderSpecified:
-            print("\n{}Invalid provider '{}'\n".format(Fore.RED, self._args[
-                '--provider'], Fore.RESET))
+            print("\n{}Invalid provider '{}'\n".format(
+                colorama.Fore.RED, self._args[
+                    '--provider'], colorama.Fore.RESET))
             self._args['--provider'] = None
             self._args['--platform'] = None
             self._provisioner = provisioners.get_provisioner(self)
             self._print_valid_providers()
             sys.exit(1)
         except provisioners.InvalidPlatformSpecified:
-            print("\n{}Invalid platform '{}'\n".format(Fore.RED, self._args[
-                '--platform'], Fore.RESET))
+            print("\n{}Invalid platform '{}'\n".format(
+                colorama.Fore.RED, self._args[
+                    '--platform'], colorama.Fore.RESET))
             self._args['--provider'] = None
             self._args['--platform'] = None
             self._provisioner = provisioners.get_provisioner(self)
@@ -129,7 +131,8 @@ class Molecule(object):
 
     def _print_valid_platforms(self, machine_readable=False):
         if not machine_readable:
-            print(Fore.CYAN + "AVAILABLE PLATFORMS" + Fore.RESET)
+            print(colorama.Fore.CYAN + "AVAILABLE PLATFORMS" +
+                  colorama.Fore.RESET)
         default_platform = self._provisioner.default_platform
         for platform in self._provisioner.valid_platforms:
             default = ' (default)' if platform[
@@ -137,7 +140,7 @@ class Molecule(object):
             print(platform['name'] + default)
 
     def _print_valid_providers(self):
-        print(Fore.CYAN + "AVAILABLE PROVIDERS" + Fore.RESET)
+        print(colorama.Fore.CYAN + "AVAILABLE PROVIDERS" + colorama.Fore.RESET)
         default_provider = self._provisioner.default_provider
         for provider in self._provisioner.valid_providers:
             default = ' (default)' if provider[
@@ -240,7 +243,7 @@ class Molecule(object):
             utilities.write_file(inventory_file, inventory)
         except IOError:
             print('{}WARNING: could not write inventory file {}{}'.format(
-                Fore.YELLOW, inventory_file, Fore.RESET))
+                colorama.Fore.YELLOW, inventory_file, colorama.Fore.RESET))
 
     def _add_or_update_group_vars(self):
         """Creates or updates the symlink to group_vars if needed."""

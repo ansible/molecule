@@ -1,8 +1,6 @@
 *.egg-info/
 *.py[cod]
 .eggs/
-.idea/
 .tox/
-build/
-dist/
 docs/build/
+tests/ansible_inventory

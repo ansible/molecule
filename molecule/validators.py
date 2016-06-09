@@ -24,8 +24,8 @@ import os
 import sys
 import re
 
+import colorama
 import sh
-from colorama import Fore
 
 from utilities import print_stderr
 from utilities import print_stdout
@@ -75,13 +75,15 @@ def check_trailing_cruft(ignore_paths=[], exit=True):
 
         if newline:
             error = '{}Trailing newline found at the end of {}{}\n'
-            print(error.format(Fore.RED, filename, Fore.RESET))
+            print(error.format(colorama.Fore.RED, filename,
+                               colorama.Fore.RESET))
             found_error = True
 
         if whitespace:
             error = '{}Trailing whitespace found in {} on lines: {}{}\n'
             lines = ', '.join(str(x) for x in whitespace)
-            print(error.format(Fore.RED, filename, lines, Fore.RESET))
+            print(error.format(colorama.Fore.RED, filename, lines,
+                               colorama.Fore.RESET))
             found_error = True
 
     if exit and found_error:

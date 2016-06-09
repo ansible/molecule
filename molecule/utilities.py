@@ -24,13 +24,8 @@ import copy
 import os
 import sys
 
-from colorama import Back
-from colorama import Fore
-from colorama import Style
-from jinja2 import Environment
-from jinja2 import ChoiceLoader
-from jinja2 import FileSystemLoader
-from jinja2 import PackageLoader
+import colorama
+import jinja2
 
 
 def merge_dicts(a, b, raise_conflicts=False, path=None):
@@ -93,15 +88,16 @@ def write_template(src, dest, kwargs={}, _module='molecule', _dir='templates'):
 
     # template file doesn't exist
     if path and not os.path.isfile(src):
-        print('\n{}Unable to locate template file: {}{}'.format(Fore.RED, src,
-                                                                Fore.RESET))
+        print('\n{}Unable to locate template file: {}{}'.format(
+            colorama.Fore.RED, src, colorama.Fore.RESET))
         sys.exit(1)
 
     # look for template in filesystem, then molecule package
-    loader = ChoiceLoader([FileSystemLoader(path, followlinks=True),
-                           PackageLoader(_module, _dir)])
+    loader = jinja2.ChoiceLoader(
+        [jinja2.FileSystemLoader(path, followlinks=True),
+         jinja2.PackageLoader(_module, _dir)])
 
-    env = Environment(loader=loader)
+    env = jinja2.Environment(loader=loader)
     template = env.get_template(filename)
 
     with open(dest, 'w') as f:
@@ -209,7 +205,8 @@ def debug(title, data):
     :param data: data of debug output
     :return: None
     """
-    print(''.join([Back.WHITE, Style.BRIGHT, Fore.BLACK, 'DEBUG: ' + title,
-                   Fore.RESET, Back.RESET, Style.RESET_ALL]))
-    print(''.join([Fore.BLACK, Style.BRIGHT, data, Style.RESET_ALL, Fore.RESET
-                   ]))
+    print(''.join([colorama.Back.WHITE, colorama.Style.BRIGHT,
+                   colorama.Fore.BLACK, 'DEBUG: ' + title, colorama.Fore.RESET,
+                   colorama.Back.RESET, colorama.Style.RESET_ALL]))
+    print(''.join([colorama.Fore.BLACK, colorama.Style.BRIGHT, data,
+                   colorama.Style.RESET_ALL, colorama.Fore.RESET]))
