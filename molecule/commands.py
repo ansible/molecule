@@ -602,8 +602,8 @@ class Login(AbstractCommand):
                             colorama.Fore.RED))
                 hostname = match[0]
 
-                login_cmd = self.molecule._provisioner.login_cmd(hostname)
-                login_args = self.molecule._provisioner.login_args(hostname)
+            login_cmd = self.molecule._provisioner.login_cmd(hostname)
+            login_args = self.molecule._provisioner.login_args(hostname)
 
         except CalledProcessError:
             # gets appended to python-vagrant's error message
