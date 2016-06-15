@@ -20,6 +20,7 @@
 
 from __future__ import print_function
 
+import glob
 import os
 import pexpect
 import re
@@ -28,12 +29,10 @@ import sys
 from subprocess import CalledProcessError
 
 import colorama
+from docopt import docopt
 import jinja2
-import prettytable
 import sh
 import yaml
-from docopt import docopt
-import glob
 
 import molecule.utilities as utilities
 import molecule.validators as validators
@@ -497,20 +496,21 @@ class List(AbstractCommand):
     Prints a list of currently available platforms
 
     Usage:
-        list [--debug] [-m]
+        list [--debug] ([-m]|[--porcelain])
 
     Options:
-        --debug  get more detail
-        -m       machine readable output
+        --debug         get more detail
+        -m              synonym for '--porcelain' (deprecated)
+        --porcelain     machine readable output
     """
 
     def execute(self):
         if self.static:
             self.disabled('list')
 
-        is_machine_readable = self.molecule._args['-m']
-        self.molecule._print_valid_platforms(
-            machine_readable=is_machine_readable)
+        porcelain = self.molecule._args['-m'] or self.molecule._args[
+            '--porcelain']
+        self.molecule._print_valid_platforms(porcelain=porcelain)
         return None, None
 
 
@@ -519,44 +519,66 @@ class Status(AbstractCommand):
     Prints status of configured instances.
 
     Usage:
-        status [--debug]
+        status [--debug][--porcelain] ([-a] | [--hosts][--platforms][--providers])
 
     Options:
-        --debug  get more detail
+        -a              display all available items
+        --debug         get more detail
+        --hosts         display the available hosts
+        --platforms     display the available platforms
+        --providers     display the available providers
+        --porcelain     machine readable output
     """
 
     def execute(self):
         if self.static:
             self.disabled('status')
 
+        # Check that an instance is created.
         if not self.molecule._state.get('created'):
             errmsg = '{}ERROR: No instances created. Try `{} create` first.{}'
             print(errmsg.format(colorama.Fore.RED, os.path.basename(sys.argv[
                 0]), colorama.Fore.RESET))
             sys.exit(1)
 
+        # Retrieve the status.
         try:
             status = self.molecule._provisioner.status()
         except CalledProcessError as e:
             print('ERROR: {}'.format(e))
             return e.returncode, None
 
-        x = prettytable.PrettyTable(['Name', 'State', 'Provider'])
-        x.align = 'l'
+        # Display the results in procelain mode.
+        porcelain = self.molecule._args['--porcelain']
 
-        for item in status:
-            if item.state != 'not_created':
-                state = colorama.Fore.GREEN + item.state + colorama.Fore.RESET
-            else:
-                state = item.state
+        # Display hosts information.
+        if self.molecule._args['-a'] or self.molecule._args['--hosts']:
 
-            x.add_row([item.name, state, item.provider])
+            # Prepare the table for the results.
+            headers = [] if porcelain else ['Name', 'State', 'Provider']
+            data = []
 
-        print(x)
-        print()
-        self.molecule._print_valid_platforms()
-        print()
-        self.molecule._print_valid_providers()
+            for item in status:
+                if item.state != 'not_created':
+                    state = colorama.Fore.GREEN + item.state + colorama.Fore.RESET
+                else:
+                    state = item.state
+
+                data.append([item.name, state, item.provider])
+
+            # Print the results.
+            self.molecule._display_tabulate_data(data, headers=headers)
+            print()
+
+        # Display the platforms.
+        if self.molecule._args['-a'] or self.molecule._args['--platforms']:
+            self.molecule._print_valid_platforms(porcelain=porcelain)
+            print()
+
+        # Display the providers.
+        if self.molecule._args['-a'] or self.molecule._args['--providers']:
+            self.molecule._print_valid_providers(porcelain=porcelain)
+
         return None, None
 
 
@@ -662,8 +684,8 @@ class Init(AbstractCommand):
         if not role:
             msg = '{}The init command requires a role name. Try:\n\n{}{} init <role>{}'
             print(msg.format(colorama.Fore.RED, colorama.Fore.YELLOW,
-                             os.path.basename(sys.argv[
-                                 0]), colorama.Fore.RESET))
+                             os.path.basename(sys.argv[0]),
+                             colorama.Fore.RESET))
             sys.exit(1)
 
         if os.path.isdir(role):

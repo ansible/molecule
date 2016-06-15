@@ -29,6 +29,7 @@ import termios
 from subprocess import CalledProcessError
 
 import colorama
+from tabulate import tabulate
 import yaml
 
 import molecule.config as config
@@ -70,8 +71,8 @@ class Molecule(object):
             self._provisioner = provisioners.get_provisioner(self)
         except provisioners.InvalidProviderSpecified:
             print("\n{}Invalid provider '{}'\n".format(
-                colorama.Fore.RED, self._args[
-                    '--provider'], colorama.Fore.RESET))
+                colorama.Fore.RED, self._args['--provider'],
+                colorama.Fore.RESET))
             self._args['--provider'] = None
             self._args['--platform'] = None
             self._provisioner = provisioners.get_provisioner(self)
@@ -79,8 +80,8 @@ class Molecule(object):
             sys.exit(1)
         except provisioners.InvalidPlatformSpecified:
             print("\n{}Invalid platform '{}'\n".format(
-                colorama.Fore.RED, self._args[
-                    '--platform'], colorama.Fore.RESET))
+                colorama.Fore.RED, self._args['--platform'],
+                colorama.Fore.RESET))
             self._args['--provider'] = None
             self._args['--platform'] = None
             self._provisioner = provisioners.get_provisioner(self)
@@ -129,23 +130,40 @@ class Molecule(object):
             sys.exit(e.returncode)
         utilities.write_file(ssh_config, out)
 
-    def _print_valid_platforms(self, machine_readable=False):
-        if not machine_readable:
+    def _print_valid_platforms(self, porcelain=False):
+        if not porcelain:
             print(colorama.Fore.CYAN + "AVAILABLE PLATFORMS" +
                   colorama.Fore.RESET)
+
+        data = []
         default_platform = self._provisioner.default_platform
         for platform in self._provisioner.valid_platforms:
-            default = ' (default)' if platform[
-                'name'] == default_platform and not machine_readable else ''
-            print(platform['name'] + default)
+            if porcelain:
+                default = 'd' if platform['name'] == default_platform else ''
+            else:
+                default = ' (default)' if platform[
+                    'name'] == default_platform else ''
+            data.append([platform['name'], default])
 
-    def _print_valid_providers(self):
-        print(colorama.Fore.CYAN + "AVAILABLE PROVIDERS" + colorama.Fore.RESET)
+        self._display_tabulate_data(data)
+
+    def _print_valid_providers(self, porcelain=False):
+        if not porcelain:
+            print(colorama.Fore.CYAN + "AVAILABLE PROVIDERS" +
+                  colorama.Fore.RESET)
+
+        data = []
         default_provider = self._provisioner.default_provider
         for provider in self._provisioner.valid_providers:
-            default = ' (default)' if provider[
-                'name'] == default_provider else ''
-            print(provider['name'] + default)
+            if porcelain:
+                default = 'd' if provider['name'] == default_provider else ''
+            else:
+                default = ' (default)' if provider[
+                    'name'] == default_provider else ''
+
+            data.append([provider['name'], default])
+
+        self._display_tabulate_data(data)
 
     def _sigwinch_passthrough(self, sig, data):
         TIOCGWINSZ = 1074295912  # assume
@@ -235,8 +253,8 @@ class Molecule(object):
             inventory += '\n[{}]\n'.format(group)
             for instance in instances:
                 inventory += '{}\n'.format(utilities.format_instance_name(
-                    instance, self._env[
-                        'MOLECULE_PLATFORM'], self._provisioner.instances))
+                    instance, self._env['MOLECULE_PLATFORM'],
+                    self._provisioner.instances))
 
         inventory_file = self._config.config['molecule']['inventory_file']
         try:
@@ -270,3 +288,23 @@ class Molecule(object):
                     group_vars_target))
             sys.exit(1)
         os.symlink(group_vars_target, group_vars_link_path)
+
+    def _display_tabulate_data(self, data, headers=None):
+        """
+        Shows the tabulate data on the screen.
+
+        If not header is defined, only the data is displayed, otherwise, the results will be shown in a table.
+        """
+        # Nothing to display if there is no data.
+        if not data:
+            return
+
+        # Initialize empty headers if none are provided.
+        if not headers:
+            headers = []
+
+        # Define the table format based on the headers content.
+        table_format = "fancy_grid" if headers else "plain"
+
+        # Print the results.
+        print(tabulate(data, headers, tablefmt=table_format))
