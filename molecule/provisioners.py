@@ -540,7 +540,6 @@ class DockerProvisioner(BaseProvisioner):
                     image=self.image_tag.format(container['image'],
                                                 container['image_version']),
                     tty=True,
-                    command='bash -c "sleep infinity"',
                     detach=False,
                     name=container['name'])
                 self._docker.start(container=container.get('Id'))
