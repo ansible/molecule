@@ -11,7 +11,6 @@ and `Serverspec`_ or `Testinfra`_ to run tests.  Molecule uses an `Ansible`_
 
 Some of the UI was inspired by `Test Kitchen`_.
 
-
 Contents:
 
 .. toctree::
