@@ -353,13 +353,14 @@ class Verify(AbstractCommand):
     Performs verification steps on running instances.
 
     Usage:
-        verify [--platform=<platform>] [--provider=<provider>] [--debug] [--sudo]
+        verify [--platform=<platform>] [--provider=<provider>] [--debug] [--sudo] [--no-trail]
 
     Options:
         --platform=<platform>  specify a platform
         --provider=<provider>  specify a provider
         --debug                get more detail
         --sudo                 runs tests with sudo
+        --no-trail             do not perform trailing spaces check
     """
 
     def execute(self, exit=True):
@@ -374,7 +375,8 @@ class Verify(AbstractCommand):
         ignore_paths = self.molecule._config.config['molecule']['ignore_paths']
 
         # whitespace & trailing newline check
-        validators.check_trailing_cruft(ignore_paths=ignore_paths, exit=exit)
+        if not self.molecule._args.get('--no-trail'):
+            validators.check_trailing_cruft(ignore_paths=ignore_paths, exit=exit)
 
         # no serverspec or testinfra
         if not os.path.isdir(serverspec_dir) and not os.path.isdir(
