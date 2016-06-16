@@ -532,6 +532,13 @@ class DockerProvisioner(BaseProvisioner):
         self.build_image()
 
         for container in self.instances:
+
+            if 'privileged' not in container:
+                container['privileged'] = False
+
+            docker_host_config = self._docker.create_host_config(
+                privileged=container['privileged'])
+
             if (container['Created'] is not True):
                 print '{} Creating container {} with base image {}:{} ...'.format(
                     colorama.Fore.YELLOW, container['name'],
@@ -541,7 +548,8 @@ class DockerProvisioner(BaseProvisioner):
                                                 container['image_version']),
                     tty=True,
                     detach=False,
-                    name=container['name'])
+                    name=container['name'],
+                    host_config=docker_host_config)
                 self._docker.start(container=container.get('Id'))
                 container['Created'] = True
 

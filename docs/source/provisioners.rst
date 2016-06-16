@@ -29,6 +29,7 @@ The available params for docker containers are:
 * ``ansible_groups`` - groups the container belongs to in Ansible
 * ``image`` - name of the image
 * ``image_version`` - version of the image
+# ``privileged`` - whether or not to run the container in privileged mode
 * ``registry`` - **(OPTIONAL)** the registry to obtain the image
 
 Docker Example
@@ -44,6 +45,7 @@ Docker Example
           - group1
             image: ubuntu
             image_version: latest
+            privileged: True
           - name: foo-02
             ansible_groups:
               - group2
