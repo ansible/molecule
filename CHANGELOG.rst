@@ -1,5 +1,13 @@
 CHANGELOG for molecule
 ======================
+1.5.1
+----
+
+* Fixed issue with testinfra and serverspec attempting to share args.
+* Added --sudo option for testinfra.
+* Added tab completion support.
+* Misc. Docker updates and fixes.
+
 1.5.0
 ----
 
