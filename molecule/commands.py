@@ -91,7 +91,7 @@ class AbstractCommand:
         """
         fmt = [colorama.Fore.RED, cmd, colorama.Fore.RESET]
         errmsg = "{}The `{}` command isn't supported with static inventory.{}"
-        print(errmsg.format(*fmt))
+        print(errmsg.format(*fmt), file=sys.stderr)
         sys.exit(1)
 
     def execute(self):
@@ -121,10 +121,10 @@ class Create(AbstractCommand):
             self.molecule._state['created'] = True
             self.molecule._write_state_file()
         except CalledProcessError as e:
-            print('ERROR: {}'.format(e))
+            print('ERROR: {}'.format(e), file=sys.stderr)
             if exit:
                 sys.exit(e.returncode)
-            return e.returncode, None
+            return e.returncode, e.message
         return None, None
 
 
@@ -160,10 +160,10 @@ class Destroy(AbstractCommand):
             self.molecule._state['converged'] = False
             self.molecule._write_state_file()
         except CalledProcessError as e:
-            print('ERROR: {}'.format(e))
+            print('ERROR: {}'.format(e), file=sys.stderr)
             if exit:
                 sys.exit(e.returncode)
-            return e.returncode, None
+            return e.returncode, e.message
         self.molecule._remove_templates()
         return None, None
 
@@ -432,10 +432,10 @@ class Verify(AbstractCommand):
                 print(msg.format(colorama.Fore.YELLOW, serverspec_dir,
                                  colorama.Fore.RESET))
         except sh.ErrorReturnCode as e:
-            print('ERROR: {}'.format(e))
+            print('ERROR: {}'.format(e), file=sys.stderr)
             if exit:
                 sys.exit(e.exit_code)
-            return e.exit_code, None
+            return e.exit_code, e.stdout
 
         return None, None
 
@@ -472,6 +472,11 @@ class Test(AbstractCommand):
                     c.args[argument] = self.args[argument]
 
             status, output = c.execute(exit=False)
+
+            # Fail fast
+            if status is not 0 and status is not None:
+                print(output, file=sys.stderr)
+                sys.exit(status)
 
         if self.args.get('--destroy') == 'always':
             c = Destroy(command_args, args)
@@ -537,16 +542,18 @@ class Status(AbstractCommand):
         # Check that an instance is created.
         if not self.molecule._state.get('created'):
             errmsg = '{}ERROR: No instances created. Try `{} create` first.{}'
-            print(errmsg.format(colorama.Fore.RED, os.path.basename(sys.argv[
-                0]), colorama.Fore.RESET))
+            print(errmsg.format(colorama.Fore.RED,
+                                os.path.basename(sys.argv[0]),
+                                colorama.Fore.RESET),
+                  file=sys.stderr)
             sys.exit(1)
 
         # Retrieve the status.
         try:
             status = self.molecule._provisioner.status()
         except CalledProcessError as e:
-            print('ERROR: {}'.format(e))
-            return e.returncode, None
+            print(e.message, file=sys.stderr)
+            return e.returncode, e.message
 
         # Display the results in procelain mode.
         porcelain = self.molecule._args['--porcelain']
@@ -642,12 +649,12 @@ class Login(AbstractCommand):
             conf_format = [colorama.Fore.RED, self.molecule._args['<host>'],
                            colorama.Fore.YELLOW, colorama.Fore.RESET]
             conf_errmsg = '\n{0}Unknown host {1}. Try {2}molecule status{0} to see available hosts.{3}'
-            print(conf_errmsg.format(*conf_format))
+            print(conf_errmsg.format(*conf_format), file=sys.stderr)
             sys.exit(1)
         except InvalidHost as e:
             conf_format = [colorama.Fore.RED, e.message, colorama.Fore.RESET]
             conf_errmsg = '{}{}{}'
-            print(conf_errmsg.format(*conf_format))
+            print(conf_errmsg.format(*conf_format), file=sys.stderr)
             sys.exit(1)
 
         lines, columns = os.popen('stty size', 'r').read().split()
@@ -700,7 +707,7 @@ class Init(AbstractCommand):
             else:
                 sh.ansible_galaxy('init', role)
         except (CalledProcessError, sh.ErrorReturnCode_1) as e:
-            print('ERROR: {}'.format(e))
+            print('ERROR: {}'.format(e), file=sys.stderr)
             sys.exit(e.returncode)
 
         self.clean_meta_main(role_path)

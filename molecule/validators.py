@@ -185,8 +185,6 @@ def testinfra(testinfra_dir, env=None, debug=False, **kwargs):
     """
     kwargs['debug'] = debug
     kwargs['_env'] = env
-    kwargs['_out'] = print_stdout
-    kwargs['_err'] = print_stderr
 
     if 'HOME' not in kwargs['_env']:
         kwargs['_env']['HOME'] = os.path.expanduser('~')
