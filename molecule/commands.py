@@ -519,12 +519,11 @@ class Status(AbstractCommand):
     Prints status of configured instances.
 
     Usage:
-        status [--debug][--porcelain] ([-a] | [--hosts][--platforms][--providers])
+        status [--debug][--porcelain] ([-a] [--platforms][--providers])
 
     Options:
         -a              display all available items
         --debug         get more detail
-        --hosts         display the available hosts
         --platforms     display the available platforms
         --providers     display the available providers
         --porcelain     machine readable output
@@ -551,24 +550,21 @@ class Status(AbstractCommand):
         # Display the results in procelain mode.
         porcelain = self.molecule._args['--porcelain']
 
+        # Prepare the table for the results.
+        headers = [] if porcelain else ['Name', 'State', 'Provider']
+        data = []
+
+        for item in status:
+            if item.state != 'not_created':
+                state = colorama.Fore.GREEN + item.state + colorama.Fore.RESET
+            else:
+                state = item.state
+
+            data.append([item.name, state, item.provider])
+
         # Display hosts information.
-        if self.molecule._args['-a'] or self.molecule._args['--hosts']:
-
-            # Prepare the table for the results.
-            headers = [] if porcelain else ['Name', 'State', 'Provider']
-            data = []
-
-            for item in status:
-                if item.state != 'not_created':
-                    state = colorama.Fore.GREEN + item.state + colorama.Fore.RESET
-                else:
-                    state = item.state
-
-                data.append([item.name, state, item.provider])
-
-            # Print the results.
-            self.molecule._display_tabulate_data(data, headers=headers)
-            print()
+        self.molecule._display_tabulate_data(data, headers=headers)
+        print()
 
         # Display the platforms.
         if self.molecule._args['-a'] or self.molecule._args['--platforms']:
