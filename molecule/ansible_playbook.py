@@ -21,15 +21,14 @@
 from __future__ import print_function
 
 import os
-
 import sh
 
-from utilities import print_stderr
-from utilities import print_stdout
+from utilities import print_error
+from utilities import print_warning
 
 
 class AnsiblePlaybook:
-    def __init__(self, args, _env=None, _out=print_stdout, _err=print_stderr):
+    def __init__(self, args, _env=None, _out=print_warning, _err=print_error):
         """
         Sets up requirements for ansible-playbook
 
@@ -163,6 +162,6 @@ class AnsiblePlaybook:
             return None, self.ansible().stdout
         except (sh.ErrorReturnCode, sh.ErrorReturnCode_2) as e:
             if not hide_errors:
-                print('ERROR: {}'.format(e))
+                print_error('ERROR: {}'.format(e))
 
             return e.exit_code, None

@@ -22,19 +22,18 @@ from __future__ import print_function
 
 import os
 import sys
-
 import sh
 
-from utilities import print_stderr
-from utilities import print_stdout
+from utilities import print_error
+from utilities import print_warning
 
 
 class AnsibleGalaxyInstall:
     def __init__(self,
                  requirements_file,
                  _env=None,
-                 _out=print_stdout,
-                 _err=print_stderr):
+                 _out=print_warning,
+                 _err=print_error):
         """
         Sets up requirements for ansible-galaxy
 
@@ -91,5 +90,5 @@ class AnsibleGalaxyInstall:
         try:
             return self.galaxy().stdout
         except sh.ErrorReturnCode as e:
-            print('ERROR: {}'.format(e))
+            print_error('ERROR: {}'.format(e))
             sys.exit(e.exit_code)

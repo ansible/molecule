@@ -24,8 +24,13 @@ import copy
 import os
 import sys
 
+import logging
+
 import colorama
 import jinja2
+
+log = logging.getLogger()
+log.addHandler(logging.NullHandler())
 
 
 def merge_dicts(a, b, raise_conflicts=False, path=None):
@@ -88,7 +93,7 @@ def write_template(src, dest, kwargs={}, _module='molecule', _dir='templates'):
 
     # template file doesn't exist
     if path and not os.path.isfile(src):
-        print('\n{}Unable to locate template file: {}{}'.format(
+        log.error('\n{}Unable to locate template file: {}{}'.format(
             colorama.Fore.RED, src, colorama.Fore.RESET))
         sys.exit(1)
 
@@ -178,24 +183,22 @@ def remove_args(command_args, args, kill):
     return new_command_args, new_args
 
 
-def print_stdout(line):
+def print_warning(line):
     """
     Prints a line to stdout without a \n at the end.
     :param line: what gets printed
     :return: None
     """
-    print(line, file=sys.stdout, end='')
-    sys.stdout.flush()
+    log.warning(line)
 
 
-def print_stderr(line):
+def print_error(line):
     """
     Prints a line to stderr without a \n at the end.
     :param line: what gets printed
     :return: None
     """
-    print(line, file=sys.stderr, end='')
-    sys.stderr.flush()
+    log.error(line)
 
 
 def debug(title, data):

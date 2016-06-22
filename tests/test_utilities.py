@@ -24,7 +24,6 @@ import StringIO
 
 import testtools
 from mock import patch
-
 import molecule.utilities as utilities
 
 
@@ -133,14 +132,14 @@ class TestUtilities(testtools.TestCase):
 
     def test_print_stdout(self):
         with patch('sys.stdout', StringIO.StringIO()) as mocked_stdout:
-            utilities.print_stdout('test stdout')
+            utilities.print_warning('test stdout')
             stdout = mocked_stdout.getvalue()
 
             self.assertEqual(stdout, 'test stdout')
 
     def test_print_stderr(self):
         with patch('sys.stderr', StringIO.StringIO()) as mocked_stderr:
-            utilities.print_stderr('test stderr')
+            utilities.print_error('test stderr')
             stderr = mocked_stderr.getvalue()
 
             self.assertEqual(stderr, 'test stderr')

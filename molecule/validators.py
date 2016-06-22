@@ -27,8 +27,8 @@ import re
 import colorama
 import sh
 
-from utilities import print_stderr
-from utilities import print_stdout
+from utilities import print_error
+from utilities import print_warning
 
 
 def check_trailing_cruft(ignore_paths=[], exit=True):
@@ -122,8 +122,8 @@ def rubocop(serverspec_dir,
             debug=False,
             env=os.environ.copy(),
             pattern='/**/*.rb',
-            out=print_stdout,
-            err=print_stderr):
+            out=print_warning,
+            err=print_error):
     """
     Runs rubocop against specified directory with specified pattern
 
@@ -147,8 +147,8 @@ def rubocop(serverspec_dir,
 def rake(rakefile,
          debug=False,
          env=os.environ.copy(),
-         out=print_stdout,
-         err=print_stderr):
+         out=print_warning,
+         err=print_error):
     """
     Runs rake with specified rakefile
 

@@ -521,8 +521,8 @@ class DockerProvisioner(BaseProvisioner):
                                 previous_line = line['status']
 
                 if errors:
-                    print '{} Build failed for {}'.format(colorama.Fore.RED,
-                                                          tag_string)
+                    utilities.print_error('{} Build failed for {}'.format(
+                        colorama.Fore.RED, tag_string))
                     return
                 else:
                     print '{} Finished building {}'.format(colorama.Fore.GREEN,
