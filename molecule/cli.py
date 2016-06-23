@@ -22,6 +22,7 @@ Usage:
     molecule [-hv] <command> [<args>...]
 
 Commands:
+    check         check playbook syntax
     create        create instances
     converge      create and provision instances
     idempotence   converge and check the output for changes
