@@ -665,7 +665,7 @@ class Init(AbstractCommand):
     Creates the scaffolding for a new role intended for use with molecule.
 
     Usage:
-        init <role> [--docker]
+        init <role> [--docker] [--offline]
     """
 
     def clean_meta_main(self, role_path):
@@ -695,7 +695,10 @@ class Init(AbstractCommand):
             sys.exit(1)
 
         try:
-            sh.ansible_galaxy('init', role)
+            if self.molecule._args['--offline']:
+                sh.ansible_galaxy('init', '--offline', role)
+            else:
+                sh.ansible_galaxy('init', role)
         except (CalledProcessError, sh.ErrorReturnCode_1) as e:
             print('ERROR: {}'.format(e))
             sys.exit(e.returncode)
