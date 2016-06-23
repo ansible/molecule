@@ -29,8 +29,30 @@ import logging
 import colorama
 import jinja2
 
-log = logging.getLogger()
-log.addHandler(logging.NullHandler())
+
+class LogFilter(object):
+    def __init__(self, level):
+        self.__level = level
+
+    def filter(self, logRecord):
+        return logRecord.levelno <= self.__level
+
+
+logger = logging.getLogger(__name__)
+warn = logging.StreamHandler()
+warn.setLevel(logging.WARN)
+warn.addFilter(LogFilter(logging.WARN))
+warn.setFormatter(logging.Formatter('{}{} --> {}{} %(message)s'.format(
+    colorama.Style.BRIGHT, colorama.Fore.BLUE, colorama.Fore.RESET,
+    colorama.Style.RESET_ALL)))
+
+error = logging.StreamHandler()
+error.setLevel(logging.ERROR)
+error.setFormatter(logging.Formatter('{}{} --> {}{} %(message)s'.format(
+    colorama.Style.BRIGHT, colorama.Fore.RED, colorama.Fore.RESET,
+    colorama.Style.RESET_ALL)))
+logger.addHandler(error)
+logger.addHandler(warn)
 
 
 def merge_dicts(a, b, raise_conflicts=False, path=None):
@@ -93,7 +115,7 @@ def write_template(src, dest, kwargs={}, _module='molecule', _dir='templates'):
 
     # template file doesn't exist
     if path and not os.path.isfile(src):
-        log.error('\n{}Unable to locate template file: {}{}'.format(
+        logger.error('\n{}Unable to locate template file: {}{}'.format(
             colorama.Fore.RED, src, colorama.Fore.RESET))
         sys.exit(1)
 
@@ -189,7 +211,7 @@ def print_warning(line):
     :param line: what gets printed
     :return: None
     """
-    log.warning(line)
+    logger.warning(line)
 
 
 def print_error(line):
@@ -198,7 +220,7 @@ def print_error(line):
     :param line: what gets printed
     :return: None
     """
-    log.error(line)
+    logger.error(line)
 
 
 def debug(title, data):
