@@ -205,24 +205,6 @@ def remove_args(command_args, args, kill):
     return new_command_args, new_args
 
 
-def print_warning(line):
-    """
-    Prints a line to stdout without a \n at the end.
-    :param line: what gets printed
-    :return: None
-    """
-    logger.warning(line)
-
-
-def print_error(line):
-    """
-    Prints a line to stderr without a \n at the end.
-    :param line: what gets printed
-    :return: None
-    """
-    logger.error(line)
-
-
 def debug(title, data):
     """
     Prints colorized output for use when debugging portions of molecule.

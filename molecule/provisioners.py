@@ -496,7 +496,7 @@ class DockerProvisioner(BaseProvisioner):
             errors = False
 
             if tag_string not in available_images:
-                utilities.print_warning(
+                utilities.logger.warning(
                     '{} Building ansible compatible image ...'.format(
                         colorama.Fore.YELLOW))
                 previous_line = ''
@@ -505,18 +505,18 @@ class DockerProvisioner(BaseProvisioner):
                         if len(line_split) > 0:
                             line = json.loads(line_split)
                             if 'stream' in line:
-                                utilities.print_warning('{} {} {}'.format(
+                                utilities.logger.warning('{} {} {}'.format(
                                     colorama.Fore.LIGHTBLUE_EX, line['stream'],
                                     colorama.Fore.RESET))
                             if 'errorDetail' in line:
-                                utilities.print_warning('{} {} {}'.format(
+                                utilities.logger.warning('{} {} {}'.format(
                                     colorama.Fore.LIGHTRED_EX, line[
                                         'errorDetail']['message'],
                                     colorama.Fore.RESET))
                                 errors = True
                             if 'status' in line:
                                 if previous_line not in line['status']:
-                                    utilities.print_warning(
+                                    utilities.logger.warning(
                                         '{} {} ... {}'.format(
                                             colorama.Fore.LIGHTYELLOW_EX, line[
                                                 'status'],
@@ -524,11 +524,11 @@ class DockerProvisioner(BaseProvisioner):
                                 previous_line = line['status']
 
                 if errors:
-                    utilities.print_error('{} Build failed for {}'.format(
+                    utilities.logger.error('{} Build failed for {}'.format(
                         colorama.Fore.RED, tag_string))
                     return
                 else:
-                    utilities.print_warning('{} Finished building {}'.format(
+                    utilities.logger.warning('{} Finished building {}'.format(
                         colorama.Fore.GREEN, tag_string))
 
     def up(self, no_provision=True):
@@ -543,7 +543,7 @@ class DockerProvisioner(BaseProvisioner):
                 privileged=container['privileged'])
 
             if (container['Created'] is not True):
-                utilities.print_warning(
+                utilities.logger.warning(
                     '{} Creating container {} with base image {}:{} ...'.format(
                         colorama.Fore.YELLOW, container['name'],
                         container['image'], container['image_version']), )
@@ -557,22 +557,22 @@ class DockerProvisioner(BaseProvisioner):
                 self._docker.start(container=container.get('Id'))
                 container['Created'] = True
 
-                utilities.print_warning('{} Container created.\n{}'.format(
+                utilities.logger.warning('{} Container created.\n{}'.format(
                     colorama.Fore.GREEN, colorama.Fore.RESET))
             else:
                 self._docker.start(container['name'])
-                utilities.print_warning('{} Starting container {} ...'.format(
+                utilities.logger.warning('{} Starting container {} ...'.format(
                     colorama.Fore.GREEN, colorama.Fore.RESET))
 
     def destroy(self):
 
         for container in self.instances:
             if (container['Created']):
-                utilities.print_warning('{} Stopping container {} ...'.format(
+                utilities.logger.warning('{} Stopping container {} ...'.format(
                     colorama.Fore.YELLOW, container['name']), )
                 self._docker.stop(container['name'], timeout=0)
                 self._docker.remove_container(container['name'])
-                utilities.print_warning('{} Removed container {}.\n'.format(
+                utilities.logger.warning('{} Removed container {}.\n'.format(
                     colorama.Fore.GREEN, container['name']))
                 container['Created'] = False
 

@@ -125,8 +125,8 @@ class Molecule(object):
             if ssh_config is None:
                 return
         except CalledProcessError as e:
-            utilities.print_error('ERROR: {}'.format(e))
-            utilities.print_error("Does your vagrant VM exist?")
+            utilities.logger.error('ERROR: {}'.format(e))
+            utilities.logger.error("Does your vagrant VM exist?")
             sys.exit(e.returncode)
         utilities.write_file(ssh_config, out)
 
@@ -260,7 +260,7 @@ class Molecule(object):
         try:
             utilities.write_file(inventory_file, inventory)
         except IOError:
-            utilities.print_warning(
+            utilities.logger.warning(
                 '{}WARNING: could not write inventory file {}{}'.format(
                     colorama.Fore.YELLOW, inventory_file, colorama.Fore.RESET))
 
@@ -284,7 +284,7 @@ class Molecule(object):
         symlink = os.path.join(
             os.path.abspath(molecule_dir), group_vars_target)
         if not os.path.exists(symlink):
-            utilities.print_error(
+            utilities.logger.error(
                 'ERROR: the group_vars path {} does not exist. Check your configuration file'.format(
                     group_vars_target))
 

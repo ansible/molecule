@@ -78,7 +78,7 @@ class Config(object):
 
         if not os.path.isfile(molecule_file):
             error = '\n{}Unable to find {}. Exiting.{}'
-            utilities.print_error(error.format(colorama.Fore.RED, self.config[
+            utilities.logger.error(error.format(colorama.Fore.RED, self.config[
                 'molecule']['molecule_file'], colorama.Fore.RESET))
             sys.exit(1)
 
@@ -87,7 +87,7 @@ class Config(object):
                 molecule_yml = yaml.safe_load(env)
             except Exception as e:
                 error = "\n{}{} isn't properly formatted: {}{}"
-                utilities.print_error(error.format(
+                utilities.logger.error(error.format(
                     colorama.Fore.RED, molecule_file, e, colorama.Fore.RESET))
                 sys.exit(1)
 

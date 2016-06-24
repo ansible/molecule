@@ -22,7 +22,6 @@ import binascii
 import os
 
 import testtools
-from mock import patch
 import molecule.utilities as utilities
 
 
@@ -128,16 +127,6 @@ class TestUtilities(testtools.TestCase):
         os.remove(tmp_file)
 
         self.assertEqual(data, contents)
-
-    def test_print_warning(self):
-        with patch('molecule.utilities.logger') as log_mock:
-            utilities.print_warning('test warning')
-            log_mock.warning.assert_called_with('test warning')
-
-    def test_print_error(self):
-        with patch('molecule.utilities.logger') as log_mock:
-            utilities.print_error('test error')
-            log_mock.error.assert_called_with('test error')
 
     def test_format_instance_name_00(self):
         instances = [{'name': 'test-01'}]

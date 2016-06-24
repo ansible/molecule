@@ -24,16 +24,15 @@ import os
 import sys
 import sh
 
-from utilities import print_error
-from utilities import print_warning
+from utilities import logger
 
 
 class AnsibleGalaxyInstall:
     def __init__(self,
                  requirements_file,
                  _env=None,
-                 _out=print_warning,
-                 _err=print_error):
+                 _out=logger.warning,
+                 _err=logger.error):
         """
         Sets up requirements for ansible-galaxy
 
@@ -90,5 +89,5 @@ class AnsibleGalaxyInstall:
         try:
             return self.galaxy().stdout
         except sh.ErrorReturnCode as e:
-            print_error('ERROR: {}'.format(e))
+            logger.error('ERROR: {}'.format(e))
             sys.exit(e.exit_code)
