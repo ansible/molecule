@@ -264,32 +264,28 @@ class Molecule(object):
                 '{}WARNING: could not write inventory file {}{}'.format(
                     colorama.Fore.YELLOW, inventory_file, colorama.Fore.RESET))
 
-    def _add_or_update_group_vars(self):
-        """Creates or updates the symlink to group_vars if needed."""
-        SYMLINK_NAME = 'group_vars'
-        group_vars_target = self._config.config.get('molecule',
-                                                    {}).get('group_vars')
-        molecule_dir = self._config.config['molecule']['molecule_dir']
-        group_vars_link_path = os.path.join(molecule_dir, SYMLINK_NAME)
+    def _add_or_update_vars(self, target):
+        """Creates or updates to group_vars if needed."""
 
-        # Remove any previous symlink.
-        if os.path.lexists(group_vars_link_path):
-            os.unlink(group_vars_link_path)
-
-        # Do not create the symlink if nothing is specified in the config.
-        if not group_vars_target:
+        if target in self._config.config['ansible']:
+            vars_target = self._config.config['ansible'][target]
+        else:
             return
 
-        # Otherwise create the new symlink.
-        symlink = os.path.join(
-            os.path.abspath(molecule_dir), group_vars_target)
-        if not os.path.exists(symlink):
-            utilities.logger.error(
-                'ERROR: the group_vars path {} does not exist. Check your configuration file'.format(
-                    group_vars_target))
+        molecule_dir = self._config.config['molecule']['molecule_dir']
+        target_vars_path = os.path.join(molecule_dir, target)
 
-            sys.exit(1)
-        os.symlink(group_vars_target, group_vars_link_path)
+        if not os.path.exists(os.path.abspath(target_vars_path)):
+            os.mkdir(os.path.abspath(target_vars_path))
+
+        for target in vars_target.keys():
+            target_var_content = vars_target[target][0]
+
+            utilities.write_file(
+                os.path.join(
+                    os.path.abspath(target_vars_path), target),
+                "---\n" + yaml.dump(target_var_content,
+                                    default_flow_style=False))
 
     def _display_tabulate_data(self, data, headers=None):
         """

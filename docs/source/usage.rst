@@ -138,6 +138,7 @@ is where you give molecule role-specific behavior.
         - -o StrictHostKeyChecking=false
         - -o UserKnownHostsFile=/dev/null
 
+
 Ansible
 -------
 
@@ -186,6 +187,32 @@ The `raw_env_vars` section allows you to pass arbitrary environment
 variables to ansible-playbook. This can be useful, for example, if you
 want to do a role level override of a value normally found in
 ansible.cfg.
+
+
+Host/Group Vars
+^^^^^^^^^^^^^^^
+
+Some playbooks require hosts/groups to have certain variables set. If you are in this situation - simply add the
+`host_vars` and/or `group_vars` to the ansible section. For example,
+
+.. code-block:: yaml
+
+    ansible:
+      playbook: playbook.yml
+      group_vars:
+        foo1:
+          - test: key
+            var2: value
+        foo2:
+          - test: key
+            var: value
+      host_vars:
+        foo1-01:
+          - set_this_value: True
+
+This example will set the variables for the ansible groups `foo1` and `foo2`. For hosts `foo1-01` the value `set_this_value`
+will be set to True.
+
 
 Vagrant
 -------
