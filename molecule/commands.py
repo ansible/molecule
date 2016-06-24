@@ -390,7 +390,9 @@ class Verify(AbstractCommand):
         ansible = AnsiblePlaybook(self.molecule._config.config['ansible'],
                                   _env=self.molecule._env)
 
-        testinfra_kwargs = self.molecule._provisioner.testinfra_args
+        testinfra_kwargs = utilities.merge_dicts(
+            self.molecule._provisioner.testinfra_args,
+            self.molecule._config.config['testinfra'])
         serverspec_kwargs = self.molecule._provisioner.serverspec_args
         testinfra_kwargs['env'] = ansible.env
         testinfra_kwargs['env']['PYTHONDONTWRITEBYTECODE'] = '1'
