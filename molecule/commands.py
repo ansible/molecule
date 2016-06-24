@@ -519,20 +519,22 @@ class Status(AbstractCommand):
     Prints status of configured instances.
 
     Usage:
-        status [--debug][--porcelain] ([-a] | [--hosts][--platforms][--providers])
+        status [--debug][--porcelain] ([--hosts] [--platforms][--providers])
 
     Options:
-        -a              display all available items
         --debug         get more detail
+        --porcelain     machine readable output
         --hosts         display the available hosts
         --platforms     display the available platforms
         --providers     display the available providers
-        --porcelain     machine readable output
     """
 
     def execute(self):
         if self.static:
             self.disabled('status')
+
+        display_all = not any([self.args['--hosts'], self.args['--platforms'],
+                               self.args['--providers']])
 
         # Check that an instance is created.
         if not self.molecule._state.get('created'):
@@ -552,7 +554,7 @@ class Status(AbstractCommand):
         porcelain = self.molecule._args['--porcelain']
 
         # Display hosts information.
-        if self.molecule._args['-a'] or self.molecule._args['--hosts']:
+        if display_all or self.molecule._args['--hosts']:
 
             # Prepare the table for the results.
             headers = [] if porcelain else ['Name', 'State', 'Provider']
@@ -566,17 +568,16 @@ class Status(AbstractCommand):
 
                 data.append([item.name, state, item.provider])
 
-            # Print the results.
             self.molecule._display_tabulate_data(data, headers=headers)
             print()
 
         # Display the platforms.
-        if self.molecule._args['-a'] or self.molecule._args['--platforms']:
+        if display_all or self.molecule._args['--platforms']:
             self.molecule._print_valid_platforms(porcelain=porcelain)
             print()
 
         # Display the providers.
-        if self.molecule._args['-a'] or self.molecule._args['--providers']:
+        if display_all or self.molecule._args['--providers']:
             self.molecule._print_valid_providers(porcelain=porcelain)
 
         return None, None

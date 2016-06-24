@@ -34,7 +34,7 @@ _molecule(){
   INIT_OPTIONS="--docker"
   LIST_OPTIONS="--debug -m"
   LOGIN_OPTIONS=""
-  STATUS_OPTIONS="-a --debug --hosts --platforms --porcelain --providers"
+  STATUS_OPTIONS="--debug --hosts --platforms --porcelain --providers"
   TEST_OPTIONS="--debug --platform --provider --tags --sudo"
   VERIFY_OPTIONS="--debug --platform --provider --tags --sudo"
 
