@@ -522,18 +522,19 @@ class Status(AbstractCommand):
         status [--debug][--porcelain] ([--hosts] [--platforms][--providers])
 
     Options:
-        --hosts         display the available hosts
         --debug         get more detail
+        --porcelain     machine readable output
+        --hosts         display the available hosts
         --platforms     display the available platforms
         --providers     display the available providers
-        --porcelain     machine readable output
     """
 
     def execute(self):
         if self.static:
             self.disabled('status')
 
-        display_all = True if len(sys.argv) < 3 else False
+        display_all = not any([self.args['--hosts'], self.args['--platforms'],
+                               self.args['--providers']])
 
         # Check that an instance is created.
         if not self.molecule._state.get('created'):
