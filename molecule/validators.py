@@ -27,8 +27,7 @@ import re
 import colorama
 import sh
 
-from utilities import print_stderr
-from utilities import print_stdout
+from utilities import logger
 
 
 def check_trailing_cruft(ignore_paths=[], exit=True):
@@ -75,15 +74,15 @@ def check_trailing_cruft(ignore_paths=[], exit=True):
 
         if newline:
             error = '{}Trailing newline found at the end of {}{}\n'
-            print(error.format(colorama.Fore.RED, filename,
-                               colorama.Fore.RESET))
+            logger.error(error.format(colorama.Fore.RED, filename,
+                                      colorama.Fore.RESET))
             found_error = True
 
         if whitespace:
             error = '{}Trailing whitespace found in {} on lines: {}{}\n'
             lines = ', '.join(str(x) for x in whitespace)
-            print(error.format(colorama.Fore.RED, filename, lines,
-                               colorama.Fore.RESET))
+            logger.error(error.format(colorama.Fore.RED, filename, lines,
+                                      colorama.Fore.RESET))
             found_error = True
 
     if exit and found_error:
@@ -122,8 +121,8 @@ def rubocop(serverspec_dir,
             debug=False,
             env=os.environ.copy(),
             pattern='/**/*.rb',
-            out=print_stdout,
-            err=print_stderr):
+            out=logger.warning,
+            err=logger.error):
     """
     Runs rubocop against specified directory with specified pattern
 
@@ -147,8 +146,8 @@ def rubocop(serverspec_dir,
 def rake(rakefile,
          debug=False,
          env=os.environ.copy(),
-         out=print_stdout,
-         err=print_stderr):
+         out=logger.warning,
+         err=logger.error):
     """
     Runs rake with specified rakefile
 
@@ -185,8 +184,6 @@ def testinfra(testinfra_dir, env=None, debug=False, **kwargs):
     """
     kwargs['debug'] = debug
     kwargs['_env'] = env
-    kwargs['_out'] = print_stdout
-    kwargs['_err'] = print_stderr
 
     if 'HOME' not in kwargs['_env']:
         kwargs['_env']['HOME'] = os.path.expanduser('~')

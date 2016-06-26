@@ -20,11 +20,8 @@
 
 import binascii
 import os
-import StringIO
 
 import testtools
-from mock import patch
-
 import molecule.utilities as utilities
 
 
@@ -130,20 +127,6 @@ class TestUtilities(testtools.TestCase):
         os.remove(tmp_file)
 
         self.assertEqual(data, contents)
-
-    def test_print_stdout(self):
-        with patch('sys.stdout', StringIO.StringIO()) as mocked_stdout:
-            utilities.print_stdout('test stdout')
-            stdout = mocked_stdout.getvalue()
-
-            self.assertEqual(stdout, 'test stdout')
-
-    def test_print_stderr(self):
-        with patch('sys.stderr', StringIO.StringIO()) as mocked_stderr:
-            utilities.print_stderr('test stderr')
-            stderr = mocked_stderr.getvalue()
-
-            self.assertEqual(stderr, 'test stderr')
 
     def test_format_instance_name_00(self):
         instances = [{'name': 'test-01'}]
