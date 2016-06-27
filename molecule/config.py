@@ -22,7 +22,6 @@ from __future__ import print_function
 
 import os
 import sys
-
 import colorama
 import yaml
 
@@ -79,8 +78,8 @@ class Config(object):
 
         if not os.path.isfile(molecule_file):
             error = '\n{}Unable to find {}. Exiting.{}'
-            print(error.format(colorama.Fore.RED, self.config['molecule'][
-                'molecule_file'], colorama.Fore.RESET))
+            utilities.logger.error(error.format(colorama.Fore.RED, self.config[
+                'molecule']['molecule_file'], colorama.Fore.RESET))
             sys.exit(1)
 
         with open(molecule_file, 'r') as env:
@@ -88,8 +87,8 @@ class Config(object):
                 molecule_yml = yaml.safe_load(env)
             except Exception as e:
                 error = "\n{}{} isn't properly formatted: {}{}"
-                print(error.format(colorama.Fore.RED, molecule_file, e,
-                                   colorama.Fore.RESET))
+                utilities.logger.error(error.format(
+                    colorama.Fore.RED, molecule_file, e, colorama.Fore.RESET))
                 sys.exit(1)
 
             interim = utilities.merge_dicts(self.config, molecule_yml)

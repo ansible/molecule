@@ -1,13 +1,13 @@
 ansible
-colorama==0.3.6
+colorama==0.3.7
 docopt==0.6.2
 docker-py
 Jinja2>=2.8
 paramiko
 pbr
-pexpect==4.0.1
+pexpect==4.1.0
 pytest-xdist
-python-vagrant==0.5.10
+python-vagrant==0.5.14
 PyYAML==3.11
 sh==1.11
 tabulate==0.7.5
