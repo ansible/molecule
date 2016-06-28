@@ -98,6 +98,24 @@ class AbstractCommand:
         raise NotImplementedError
 
 
+class Check(AbstractCommand):
+    """
+    Performs a syntax check on the current role.
+
+    Usage:
+        check
+    """
+
+    def execute(self, exit=True):
+
+        self.molecule._create_templates()
+
+        ansible = AnsiblePlaybook(self.molecule._config.config['ansible'])
+        ansible.add_cli_arg('syntax-check', True)
+
+        return ansible.execute(hide_errors=True)
+
+
 class Create(AbstractCommand):
     """
     Creates all instances defined in molecule.yml.
