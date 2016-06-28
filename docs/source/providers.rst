@@ -149,37 +149,40 @@ There is an example:
 
 .. code-block:: yaml
 
-    ---
-    vagrant:
+      ---
+      vagrant:
+        raw_config_args:
+          - "ssh.pty = true"
+          - "vm.network :private_network, :libvirt__dhcp_enabled=> false ,:libvirt__tunnel_type => 'server', :libvirt__tunnel_port => '11111'"
 
-      platforms:
-        - name: rhel6
-          box: rhel/rhel-6
-        - name: rhel7
-          box: rhel/rhel-7
-        - name: centos7
-          box: centos/7
+        platforms:
+          - name: rhel6
+            box: rhel/rhel-6
+          - name: rhel7
+            box: rhel/rhel-7
+          - name: centos7
+            box: centos/7
 
-      providers:
-        - name: libvirt
-          type: libvirt
-          options:
-        memory: 1024
-        cpus: 2
-        driver: kvm #Note that the two available drivers are kvm and qemu(refer to the vagrant-libvirt doc).
-        video_type: vga
+        providers:
+          - name: libvirt
+            type: libvirt
+            options:
+              memory: 1024
+              cpus: 2
+              driver: kvm #Note that the two available drivers are kvm and qemu (refer to the vagrant-libvirt doc).
+              video_type: vga
 
-      instances:
-        - name: ansible-role
-          raw_config_args:
-        - "ssh.pty = true"
-        - "vm.synced_folder './', '/vagrant', disabled: true"
-        - "vm.network :private_network, :libvirt__dhcp_enabled=> false ,:libvirt__tunnel_type => 'server', :libvirt__tunnel_port => '11111'"
-          options:
-        append_platform_to_hostname: no
+        instances:
+          - name: ansible-role
+            raw_config_args:
+              - "ssh.pty = true"
+              - "vm.synced_folder './', '/vagrant', disabled: true"
+              - "vm.network :private_network, :libvirt__dhcp_enabled=> false ,:libvirt__tunnel_type => 'server', :libvirt__tunnel_port => '11111'"
+            options:
+              append_platform_to_hostname: no
 
-          ansible_groups:
-        - group_1
+            ansible_groups:
+              - group_1
 
 .. _`VirtualBox`: http://docs.vagrantup.com/v2/virtualbox/index.html
 .. _`Versioning`: https://docs.vagrantup.com/v2/boxes/versioning.html
