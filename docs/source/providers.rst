@@ -169,18 +169,17 @@ There is an example:
             options:
               memory: 1024
               cpus: 2
-              driver: kvm #Note that the two available drivers are kvm and qemu (refer to the vagrant-libvirt doc).
+              # There are two available drivers: kvm and qemu.
+              # Refer to the vagrant-libvirt docs for more info.
+              driver: kvm
               video_type: vga
 
         instances:
           - name: ansible-role
             raw_config_args:
-              - "ssh.pty = true"
               - "vm.synced_folder './', '/vagrant', disabled: true"
-              - "vm.network :private_network, :libvirt__dhcp_enabled=> false ,:libvirt__tunnel_type => 'server', :libvirt__tunnel_port => '11111'"
             options:
               append_platform_to_hostname: no
-
             ansible_groups:
               - group_1
 
