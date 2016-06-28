@@ -40,8 +40,12 @@ Vagrant.configure('2') do |config|
     {%- if provider.type is defined and provider.type == 'virtualbox' and provider.name == current_provider %}
   config.vm.provider 'virtualbox' do |vb|
     {%- if provider.options %}
-      {%- for k, v in provider.options.iteritems()|sort %}
+      {%- for k, v in provider.options.iteritems() | sort %}
+        {%- if v == true or v == false %}
+    vb.{{ k }} = {{ v | lower }}
+        {%- else %}
     vb.{{ k }} = {{ v }}
+        {%- endif %}
       {%- endfor %}
       {%- if not provider.options.memory %}
     vb.memory = 512
@@ -49,7 +53,7 @@ Vagrant.configure('2') do |config|
       {%- if not provider.options.cpus %}
     vb.cpus = 2
       {%- endif %}
-      {%- if not provider.options.linked_clone %}
+      {%- if provider.options.linked_clone == none %}
     vb.linked_clone = true if Vagrant::VERSION =~ /^1.8/
       {%- endif %}
     {%- else %}
