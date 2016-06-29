@@ -136,6 +136,9 @@ Vagrant.configure('2') do |config|
   {%- endfor %}
 
   {% for instance in config.vagrant.instances -%}
+    {% if instance.platform %}
+  config.vm.box = '{{ instance.platform }}'
+    {% endif %}
   config.vm.define '{{ instance.vm_name }}' do |c|
     {%- if 'libvirt' not in config.vagrant.providers|map(attribute='type')|list %}
     c.vm.hostname = '{{ instance.vm_name }}'

@@ -22,7 +22,7 @@ import abc
 import collections
 import json
 import os
-
+import copy
 import colorama
 import docker
 import vagrant
@@ -235,10 +235,12 @@ class VagrantProvisioner(BaseProvisioner):
 
     def _get_platform(self):
         if self.m._args.get('--platform'):
-            if not [item
-                    for item in self.m._config.config['vagrant']['platforms']
-                    if item['name'] == self.m._args['--platform']]:
-                raise InvalidPlatformSpecified()
+            if self.m._args['--platform'] != 'all':
+                if not [item
+                        for item in self.m._config.config['vagrant'][
+                            'platforms']
+                        if item['name'] == self.m._args['--platform']]:
+                    raise InvalidPlatformSpecified()
             self.m._state['default_platform'] = self.m._args['--platform']
             self.m._env['MOLECULE_PLATFORM'] = self.m._args['--platform']
         else:
@@ -354,15 +356,16 @@ class VagrantProvisioner(BaseProvisioner):
         return params
 
     def up(self, no_provision=True):
+        self.populate_platform_instances()
         self._write_vagrant_file()
         self._vagrant.up(no_provision)
 
     def destroy(self):
-        self._write_vagrant_file()
         if self.m._state.get('created'):
             self._vagrant.destroy()
 
-        os.remove(self.m._config.config['molecule']['vagrantfile_file'])
+        if os._exists(self.m._config.config['molecule']['vagrantfile_file']):
+            os.remove(self.m._config.config['molecule']['vagrantfile_file'])
 
     def status(self):
         return self._vagrant.status()
@@ -394,6 +397,25 @@ class VagrantProvisioner(BaseProvisioner):
             conf['HostName'], conf['User'], conf['Port'], conf['IdentityFile'],
             ' '.join(self.m._config.config['molecule']['raw_ssh_args'])
         ]
+
+    def populate_platform_instances(self):
+        if self.m._args.get('--platform'):
+            if len(self.m._config.config['vagrant'][
+                    'platforms']) > 1 and self.m._args['--platform'] == 'all':
+                new_instances = []
+
+                for instance in self.m._config.config['vagrant']['instances']:
+                    for platform in self.m._config.config['vagrant'][
+                            'platforms']:
+                        platform_instance = copy.deepcopy(instance)
+                        platform_instance['platform'] = platform['box']
+                        platform_instance['name'] = instance[
+                            'name'] + '-' + platform['name']
+                        platform_instance['vm_name'] = instance[
+                            'name'] + '-' + platform['name']
+                        new_instances.append(platform_instance)
+
+                self.m._config.config['vagrant']['instances'] = new_instances
 
 
 # Place holder for Proxmox, partially implemented
