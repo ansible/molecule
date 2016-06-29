@@ -174,15 +174,6 @@ There is an example:
               driver: kvm
               video_type: vga
 
-        instances:
-          - name: ansible-role
-            raw_config_args:
-              - "vm.synced_folder './', '/vagrant', disabled: true"
-            options:
-              append_platform_to_hostname: no
-            ansible_groups:
-              - group_1
-
 .. _`VirtualBox`: http://docs.vagrantup.com/v2/virtualbox/index.html
 .. _`Versioning`: https://docs.vagrantup.com/v2/boxes/versioning.html
 .. _`provider plugins`: https://www.vagrantup.com/docs/providers/
