@@ -1,5 +1,17 @@
 CHANGELOG for molecule
 ======================
+1.6.0
+----
+
+* Added --offline option to ``molecule init``.
+* ``molecule status`` now shows hosts by default.
+* ``molecule test`` will now fail immediately when encountering an error.
+* Switched to Python's logging module for displaying STDOUT, STDERR.
+* Added support for libvirt provider.
+* Added ``molecule check`` to check playbook syntax.
+* Testinfra parameters can now be set as vars in molecule.yml.
+* Running testinfra tests in parallel is no longer the default behavior.
+
 1.5.1
 ----
 
