@@ -170,7 +170,12 @@ def rake(rakefile,
     return sh.rake(**kwargs)
 
 
-def testinfra(testinfra_dir, env=None, debug=False, **kwargs):
+def testinfra(testinfra_dir,
+              debug=False,
+              env=os.environ.copy(),
+              out=logger.warning,
+              err=logger.error,
+              **kwargs):
     """
     Runs testinfra against specified ansible inventory file
 
@@ -184,6 +189,8 @@ def testinfra(testinfra_dir, env=None, debug=False, **kwargs):
     """
     kwargs['debug'] = debug
     kwargs['_env'] = env
+    kwargs['_out'] = out
+    kwargs['_err'] = err
 
     if 'HOME' not in kwargs['_env']:
         kwargs['_env']['HOME'] = os.path.expanduser('~')
