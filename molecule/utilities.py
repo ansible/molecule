@@ -38,19 +38,21 @@ class LogFilter(object):
         return logRecord.levelno <= self.__level
 
 
+class TrailingNewlineFormatter(logging.Formatter):
+    def format(self, record):
+        record.msg = record.msg.rstrip()
+        return super(TrailingNewlineFormatter, self).format(record)
+
+
 logger = logging.getLogger(__name__)
 warn = logging.StreamHandler()
 warn.setLevel(logging.WARN)
 warn.addFilter(LogFilter(logging.WARN))
-warn.setFormatter(logging.Formatter('{}{} --> {}{} %(message)s'.format(
-    colorama.Style.BRIGHT, colorama.Fore.BLUE, colorama.Fore.RESET,
-    colorama.Style.RESET_ALL)))
+warn.setFormatter(TrailingNewlineFormatter('%(message)s'))
 
 error = logging.StreamHandler()
 error.setLevel(logging.ERROR)
-error.setFormatter(logging.Formatter('{}{} --> {}{} %(message)s'.format(
-    colorama.Style.BRIGHT, colorama.Fore.RED, colorama.Fore.RESET,
-    colorama.Style.RESET_ALL)))
+error.setFormatter(TrailingNewlineFormatter('%(message)s'))
 logger.addHandler(error)
 logger.addHandler(warn)
 
