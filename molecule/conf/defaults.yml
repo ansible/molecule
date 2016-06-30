@@ -93,3 +93,6 @@ ansible:
     - -o IdentitiesOnly=yes
     - -o ControlMaster=auto
     - -o ControlPersist=60s
+
+testinfra:
+  n: 3

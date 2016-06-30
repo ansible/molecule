@@ -338,8 +338,7 @@ class VagrantProvisioner(BaseProvisioner):
         kwargs = {
             'ansible-inventory':
             self.m._config.config['ansible']['inventory_file'],
-            'connection': 'ansible',
-            'n': 3
+            'connection': 'ansible'
         }
 
         return kwargs
@@ -626,11 +625,7 @@ class DockerProvisioner(BaseProvisioner):
         for container in self.instances:
             hosts_string += container['name'] + ','
 
-        kwargs = {
-            'connection': 'docker',
-            'hosts': hosts_string.rstrip(','),
-            'n': 3
-        }
+        kwargs = {'connection': 'docker', 'hosts': hosts_string.rstrip(',')}
 
         return kwargs
 
