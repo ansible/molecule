@@ -29,7 +29,7 @@ From the root for the project, run:
 
   $ tox -r yapf
   $ source .tox/py27/bin/activate
-  $ yapf -i -r molecule/
+  $ yapf -i -r molecule/ tests/
 
 .. _`YAPF`: https://github.com/google/yapf
 .. _`Tox`: https://tox.readthedocs.org/en/latest
