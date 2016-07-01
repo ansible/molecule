@@ -1,0 +1,21 @@
+---
+# ansible:
+#   config_file: ../../.molecule/ansible.cfg
+
+vagrant:
+  platforms:
+    - name: ubuntu
+      box: ubuntu/trusty64
+
+  providers:
+    - name: virtualbox
+      type: virtualbox
+
+  instances:
+    - name: demo-01
+      ansible_groups:
+        - demo
+      interfaces:
+        - network_name: private_network
+          type: dhcp
+          auto_config: true

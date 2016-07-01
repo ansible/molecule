@@ -1,6 +1,8 @@
 *.egg-info/
 *.py[cod]
 .eggs/
+.molecule/
 .tox/
+.vagrant/
 docs/build/
 tests/ansible_inventory
