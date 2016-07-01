@@ -1,0 +1,23 @@
+---
+- include: rhel.yml
+  when: ansible_os_family == 'RedHat'
+
+- include: debian.yml
+  when: ansible_os_family == 'Debian'
+
+- name: Create a file so we can test something with serverspec
+  copy: dest=/etc/molecule
+        group=root
+        owner=root
+        mode=0644
+        content="molecule test file"
+
+- name: Test ability to target ansible tags (molecule1)
+  shell: /bin/true
+  changed_when: False
+  tags: molecule1
+
+- name: Test ability to target ansible tags (molecule2)
+  shell: /bin/true
+  changed_when: False
+  tags: molecule2
