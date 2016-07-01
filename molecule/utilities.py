@@ -40,7 +40,8 @@ class LogFilter(object):
 
 class TrailingNewlineFormatter(logging.Formatter):
     def format(self, record):
-        record.msg = record.msg.rstrip()
+        if record.msg:
+            record.msg = record.msg.rstrip()
         return super(TrailingNewlineFormatter, self).format(record)
 
 
