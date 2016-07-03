@@ -38,17 +38,16 @@ class TestDockerProvisioner(testtools.TestCase):
                 'molecule_dir': '.test_molecule',
                 'inventory_file': 'tests/ansible_inventory'
             },
-
             'docker': {
                 'containers': [
                     {'name': 'test1',
                      'image': 'ubuntu',
                      'image_version': 'latest',
-                     'ansible_groups': ['group1']},
-                    {'name': 'test2',
-                     'image': 'ubuntu',
-                     'image_version': 'latest',
-                     'ansible_groups': ['group2']}
+                     'ansible_groups': ['group1']}, {'name': 'test2',
+                                                     'image': 'ubuntu',
+                                                     'image_version': 'latest',
+                                                     'ansible_groups':
+                                                     ['group2']}
                 ]
             },
             'ansible': {
@@ -65,25 +64,30 @@ class TestDockerProvisioner(testtools.TestCase):
         self._mock_molecule._state = dict()
 
     def test_name(self):
-        docker_provisioner = provisioners.DockerProvisioner(self._mock_molecule)
+        docker_provisioner = provisioners.DockerProvisioner(
+            self._mock_molecule)
         # false values don't exist in arg dict at all
         self.assertEqual(docker_provisioner.name, 'docker')
 
     def test_get_provisioner(self):
-        self.assertEqual(provisioners.get_provisioner(self._mock_molecule).name, 'docker')
+        self.assertEqual(
+            provisioners.get_provisioner(self._mock_molecule).name, 'docker')
 
     def test_up(self):
-        docker_provisioner = provisioners.DockerProvisioner(self._mock_molecule)
+        docker_provisioner = provisioners.DockerProvisioner(
+            self._mock_molecule)
         docker_provisioner.up()
         docker_provisioner.destroy()
 
     def test_instances(self):
-        docker_provisioner = provisioners.DockerProvisioner(self._mock_molecule)
+        docker_provisioner = provisioners.DockerProvisioner(
+            self._mock_molecule)
         self.assertEqual(docker_provisioner.instances[0]['name'], 'test1')
         self.assertEqual(docker_provisioner.instances[1]['name'], 'test2')
 
     def test_status(self):
-        docker_provisioner = provisioners.DockerProvisioner(self._mock_molecule)
+        docker_provisioner = provisioners.DockerProvisioner(
+            self._mock_molecule)
 
         docker_provisioner.up()
 
@@ -97,7 +101,8 @@ class TestDockerProvisioner(testtools.TestCase):
         self.assertEqual('docker', docker_provisioner.status()[1].provider)
 
     def test_destroy(self):
-        docker_provisioner = provisioners.DockerProvisioner(self._mock_molecule)
+        docker_provisioner = provisioners.DockerProvisioner(
+            self._mock_molecule)
 
         docker_provisioner.up()
 
@@ -114,7 +119,8 @@ class TestDockerProvisioner(testtools.TestCase):
 
     def test_provision(self):
 
-        docker_provisioner = provisioners.DockerProvisioner(self._mock_molecule)
+        docker_provisioner = provisioners.DockerProvisioner(
+            self._mock_molecule)
         docker_provisioner.destroy()
         docker_provisioner.up()
 
@@ -129,7 +135,8 @@ class TestDockerProvisioner(testtools.TestCase):
         docker_provisioner.destroy()
 
     def test_inventory_generation(self):
-        self._mock_molecule._provisioner = provisioners.get_provisioner(self._mock_molecule)
+        self._mock_molecule._provisioner = provisioners.get_provisioner(
+            self._mock_molecule)
         self._mock_molecule._provisioner.destroy()
         self._mock_molecule._provisioner.up()
 
