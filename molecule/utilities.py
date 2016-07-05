@@ -28,6 +28,7 @@ import logging
 
 import colorama
 import jinja2
+import molecule.Provisioners as provisioners
 
 
 class LogFilter(object):
@@ -208,6 +209,17 @@ def remove_args(command_args, args, kill):
 
     return new_command_args, new_args
 
+def get_provisioner(molecule):
+    if 'vagrant' in molecule._config.config:
+        return provisioners.VagrantProvisioner(molecule)
+    elif 'proxmox' in molecule._config.config:
+        return provisioners.ProxmoxProvisioner(molecule)
+    elif 'docker' in molecule._config.config:
+        return provisioners.DockerProvisioner(molecule)
+    elif 'openstack' in molecule._config.config:
+        return provisioners.OpenStackProvisioner(molecule)
+    else:
+        return None
 
 def debug(title, data):
     """

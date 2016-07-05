@@ -34,8 +34,6 @@ import yaml
 
 import molecule.config as config
 import molecule.utilities as utilities
-import molecule.provisioners as provisioners
-
 
 class Molecule(object):
     def __init__(self, args):
@@ -68,14 +66,14 @@ class Molecule(object):
         self._state = self._load_state_file()
 
         try:
-            self._provisioner = provisioners.get_provisioner(self)
+            self._provisioner = get_provisioner(self)
         except provisioners.InvalidProviderSpecified:
             print("\n{}Invalid provider '{}'\n".format(
                 colorama.Fore.RED, self._args['--provider'],
                 colorama.Fore.RESET))
             self._args['--provider'] = None
             self._args['--platform'] = None
-            self._provisioner = provisioners.get_provisioner(self)
+            self._provisioner = get_provisioner(self)
             self._print_valid_providers()
             sys.exit(1)
         except provisioners.InvalidPlatformSpecified:
@@ -84,7 +82,7 @@ class Molecule(object):
                 colorama.Fore.RESET))
             self._args['--provider'] = None
             self._args['--platform'] = None
-            self._provisioner = provisioners.get_provisioner(self)
+            self._provisioner = get_provisioner(self)
             self._print_valid_platforms()
             sys.exit(1)
 
