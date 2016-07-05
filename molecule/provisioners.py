@@ -30,7 +30,6 @@ from io import BytesIO
 
 import utilities
 
-
 colorama.init(autoreset=True)
 
 
@@ -508,7 +507,8 @@ class DockerProvisioner(BaseProvisioner):
                             line = json.loads(line_split)
                             if 'stream' in line:
                                 utilities.logger.warning('{} {}'.format(
-                                    colorama.Fore.LIGHTBLUE_EX, line['stream']))
+                                    colorama.Fore.LIGHTBLUE_EX, line[
+                                        'stream']))
                             if 'errorDetail' in line:
                                 utilities.logger.warning('{} {}'.format(
                                     colorama.Fore.LIGHTRED_EX, line[

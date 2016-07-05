@@ -29,7 +29,6 @@ import logging
 import colorama
 import jinja2
 
-
 colorama.init(autoreset=True)
 
 

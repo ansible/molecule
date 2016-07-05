@@ -36,7 +36,6 @@ import molecule.config as config
 import molecule.utilities as utilities
 import molecule.provisioners as provisioners
 
-
 colorama.init(autoreset=True)
 
 

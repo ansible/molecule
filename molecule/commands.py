@@ -40,7 +40,6 @@ from molecule.ansible_galaxy_install import AnsibleGalaxyInstall
 from molecule.ansible_playbook import AnsiblePlaybook
 from molecule.core import Molecule
 
-
 colorama.init(autoreset=True)
 
 
@@ -352,8 +351,8 @@ class Idempotence(AbstractCommand):
             utilities.logger.error(
                 '{}Idempotence test failed because of the following tasks:'.format(
                     colorama.Fore.RED))
-            utilities.logger.error('{}{}'.format(colorama.Fore.RED,
-                                                   '\n'.join(changed_tasks)))
+            utilities.logger.error('{}{}'.format(colorama.Fore.RED, '\n'.join(
+                changed_tasks)))
         else:
             # But in case the idempotence callback plugin was not found, we just display an error message.
             utilities.logger.error('{}Idempotence test failed.'.format(
@@ -361,8 +360,8 @@ class Idempotence(AbstractCommand):
             warning_msg = "The idempotence plugin was not found or did not provide the required information. " \
                           "Therefore the failure details cannot be displayed."
 
-            utilities.logger.warning('{}{}'.format(
-                colorama.Fore.YELLOW, warning_msg))
+            utilities.logger.warning('{}{}'.format(colorama.Fore.YELLOW,
+                                                   warning_msg))
         if exit:
             sys.exit(1)
         return 1, None
@@ -432,8 +431,8 @@ class Verify(AbstractCommand):
                 print()
             else:
                 msg = '{}No testinfra tests found in {}/.\n'
-                utilities.logger.warning(msg.format(
-                    colorama.Fore.YELLOW, testinfra_dir))
+                utilities.logger.warning(msg.format(colorama.Fore.YELLOW,
+                                                    testinfra_dir))
 
             # serverspec / rubocop
             if os.path.isdir(serverspec_dir):
@@ -448,8 +447,8 @@ class Verify(AbstractCommand):
                 print()
             else:
                 msg = '{}No serverspec tests found in {}/.\n'
-                utilities.logger.warning(msg.format(
-                    colorama.Fore.YELLOW, serverspec_dir))
+                utilities.logger.warning(msg.format(colorama.Fore.YELLOW,
+                                                    serverspec_dir))
         except sh.ErrorReturnCode as e:
             utilities.logger.error('ERROR: {}'.format(e))
             if exit:
@@ -563,8 +562,8 @@ class Status(AbstractCommand):
         # Check that an instance is created.
         if not self.molecule._state.get('created'):
             errmsg = '{}ERROR: No instances created. Try `{} create` first.'
-            utilities.logger.error(errmsg.format(colorama.Fore.RED,
-                                                 os.path.basename(sys.argv[0])))
+            utilities.logger.error(errmsg.format(
+                colorama.Fore.RED, os.path.basename(sys.argv[0])))
             sys.exit(1)
 
         # Retrieve the status.

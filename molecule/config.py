@@ -27,7 +27,6 @@ import yaml
 
 import molecule.utilities as utilities
 
-
 colorama.init(autoreset=True)
 
 
@@ -90,8 +89,8 @@ class Config(object):
                 molecule_yml = yaml.safe_load(env)
             except Exception as e:
                 error = "\n{}{} isn't properly formatted: {}"
-                utilities.logger.error(error.format(
-                    colorama.Fore.RED, molecule_file, e))
+                utilities.logger.error(error.format(colorama.Fore.RED,
+                                                    molecule_file, e))
                 sys.exit(1)
 
             interim = utilities.merge_dicts(self.config, molecule_yml)
