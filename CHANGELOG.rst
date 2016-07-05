@@ -1,5 +1,11 @@
 CHANGELOG for molecule
 ======================
+1.6.1
+----
+
+* Fixed a bug preventing ``molecule test`` from working.
+* Added a demo role for functional testing.
+
 1.6.0
 ----
 
