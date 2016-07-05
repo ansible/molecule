@@ -112,6 +112,7 @@ class Check(AbstractCommand):
 
         ansible = AnsiblePlaybook(self.molecule._config.config['ansible'])
         ansible.add_cli_arg('syntax-check', True)
+        ansible.add_cli_arg('inventory-file', 'localhost,')
 
         return ansible.execute(hide_errors=True)
 
