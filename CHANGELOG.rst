@@ -1,5 +1,10 @@
 CHANGELOG for molecule
 ======================
+1.6.2
+----
+
+* Added inventory-file flag to ``molecule check`` to address Ansible 1.9.x specific issue.
+
 1.6.1
 ----
 
