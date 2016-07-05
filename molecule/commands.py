@@ -85,6 +85,9 @@ class AbstractCommand:
         # Add or update the host_vars if needed
         self.molecule._add_or_update_vars('host_vars')
 
+        # Update symlinks
+        self.molecule._symlink_vars()
+
     def disabled(self, cmd):
         """
         Prints 'command disabled' message and exits program.

@@ -265,7 +265,7 @@ class Molecule(object):
                     colorama.Fore.YELLOW, inventory_file, colorama.Fore.RESET))
 
     def _add_or_update_vars(self, target):
-        """Creates or updates to group_vars if needed."""
+        """Creates or updates to host/group variables if needed."""
 
         if target in self._config.config['ansible']:
             vars_target = self._config.config['ansible'][target]
@@ -286,6 +286,33 @@ class Molecule(object):
                     os.path.abspath(target_vars_path), target),
                 "---\n" + yaml.dump(target_var_content,
                                     default_flow_style=False))
+
+    def _symlink_vars(self):
+        """Creates or updates the symlink to group_vars if needed."""
+        SYMLINK_NAME = 'group_vars'
+        group_vars_target = self._config.config.get('molecule',
+                                                    {}).get('group_vars')
+        molecule_dir = self._config.config['molecule']['molecule_dir']
+        group_vars_link_path = os.path.join(molecule_dir, SYMLINK_NAME)
+
+        # Remove any previous symlink.
+        if os.path.lexists(group_vars_link_path):
+            os.unlink(group_vars_link_path)
+
+        # Do not create the symlink if nothing is specified in the config.
+        if not group_vars_target:
+            return
+
+        # Otherwise create the new symlink.
+        symlink = os.path.join(
+            os.path.abspath(molecule_dir), group_vars_target)
+        if not os.path.exists(symlink):
+            utilities.logger.error(
+                'ERROR: the group_vars path {} does not exist. Check your configuration file'.format(
+                    group_vars_target))
+
+            sys.exit(1)
+        os.symlink(group_vars_target, group_vars_link_path)
 
     def _display_tabulate_data(self, data, headers=None):
         """
