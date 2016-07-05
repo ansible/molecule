@@ -31,6 +31,9 @@ from io import BytesIO
 import utilities
 
 
+colorama.init(autoreset=True)
+
+
 class InvalidProviderSpecified(Exception):
     pass
 
@@ -504,22 +507,19 @@ class DockerProvisioner(BaseProvisioner):
                         if len(line_split) > 0:
                             line = json.loads(line_split)
                             if 'stream' in line:
-                                utilities.logger.warning('{} {} {}'.format(
-                                    colorama.Fore.LIGHTBLUE_EX, line['stream'],
-                                    colorama.Fore.RESET))
+                                utilities.logger.warning('{} {}'.format(
+                                    colorama.Fore.LIGHTBLUE_EX, line['stream']))
                             if 'errorDetail' in line:
-                                utilities.logger.warning('{} {} {}'.format(
+                                utilities.logger.warning('{} {}'.format(
                                     colorama.Fore.LIGHTRED_EX, line[
-                                        'errorDetail']['message'],
-                                    colorama.Fore.RESET))
+                                        'errorDetail']['message']))
                                 errors = True
                             if 'status' in line:
                                 if previous_line not in line['status']:
                                     utilities.logger.warning(
-                                        '{} {} ... {}'.format(
+                                        '{} {} ...'.format(
                                             colorama.Fore.LIGHTYELLOW_EX, line[
-                                                'status'],
-                                            colorama.Fore.RESET))
+                                                'status']))
                                 previous_line = line['status']
 
                 if errors:
@@ -556,12 +556,12 @@ class DockerProvisioner(BaseProvisioner):
                 self._docker.start(container=container.get('Id'))
                 container['Created'] = True
 
-                utilities.logger.warning('{} Container created.\n{}'.format(
-                    colorama.Fore.GREEN, colorama.Fore.RESET))
+                utilities.logger.warning('{} Container created.\n'.format(
+                    colorama.Fore.GREEN))
             else:
                 self._docker.start(container['name'])
-                utilities.logger.warning('{} Starting container {} ...'.format(
-                    colorama.Fore.GREEN, colorama.Fore.RESET))
+                utilities.logger.warning('{} Starting container ...'.format(
+                    colorama.Fore.GREEN))
 
     def destroy(self):
 

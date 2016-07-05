@@ -30,6 +30,9 @@ import colorama
 import jinja2
 
 
+colorama.init(autoreset=True)
+
+
 class LogFilter(object):
     def __init__(self, level):
         self.__level = level
@@ -117,8 +120,8 @@ def write_template(src, dest, kwargs={}, _module='molecule', _dir='templates'):
 
     # template file doesn't exist
     if path and not os.path.isfile(src):
-        logger.error('\n{}Unable to locate template file: {}{}'.format(
-            colorama.Fore.RED, src, colorama.Fore.RESET))
+        logger.error('\n{}Unable to locate template file: {}'.format(
+            colorama.Fore.RED, src))
         sys.exit(1)
 
     # look for template in filesystem, then molecule package
