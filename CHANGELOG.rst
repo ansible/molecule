@@ -1,5 +1,11 @@
 CHANGELOG for molecule
 ======================
+1.6.3
+----
+
+* Updated config parsing so that testinfra.sudo and testinfra.debug can be set in molecule.yml.
+* Demo role now pulls in correct serverspec config.
+
 1.6.2
 ----
 
