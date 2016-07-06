@@ -417,12 +417,12 @@ class Verify(AbstractCommand):
         serverspec_kwargs = self.molecule._provisioner.serverspec_args
         testinfra_kwargs['env'] = ansible.env
         testinfra_kwargs['env']['PYTHONDONTWRITEBYTECODE'] = '1'
-        testinfra_kwargs['debug'] = True if self.molecule._args.get(
-            '--debug') else False
-        testinfra_kwargs['sudo'] = True if self.molecule._args.get(
-            '--sudo') else False
+        if self.molecule._args.get('--debug'):
+            testinfra_kwargs['debug'] = True
+        if self.molecule._args.get('--sudo'):
+            testinfra_kwargs['sudo'] = True
         serverspec_kwargs['env'] = testinfra_kwargs['env']
-        serverspec_kwargs['debug'] = testinfra_kwargs['debug']
+        serverspec_kwargs['debug'] = testinfra_kwargs.get('debug')
 
         try:
             # testinfra
