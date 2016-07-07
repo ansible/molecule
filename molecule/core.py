@@ -264,7 +264,30 @@ class Molecule(object):
                 '{}WARNING: could not write inventory file {}{}'.format(
                     colorama.Fore.YELLOW, inventory_file, colorama.Fore.RESET))
 
-    def _add_or_update_group_vars(self):
+    def _add_or_update_vars(self, target):
+        """Creates or updates to host/group variables if needed."""
+
+        if target in self._config.config['ansible']:
+            vars_target = self._config.config['ansible'][target]
+        else:
+            return
+
+        molecule_dir = self._config.config['molecule']['molecule_dir']
+        target_vars_path = os.path.join(molecule_dir, target)
+
+        if not os.path.exists(os.path.abspath(target_vars_path)):
+            os.mkdir(os.path.abspath(target_vars_path))
+
+        for target in vars_target.keys():
+            target_var_content = vars_target[target][0]
+
+            utilities.write_file(
+                os.path.join(
+                    os.path.abspath(target_vars_path), target),
+                "---\n" + yaml.dump(target_var_content,
+                                    default_flow_style=False))
+
+    def _symlink_vars(self):
         """Creates or updates the symlink to group_vars if needed."""
         SYMLINK_NAME = 'group_vars'
         group_vars_target = self._config.config.get('molecule',

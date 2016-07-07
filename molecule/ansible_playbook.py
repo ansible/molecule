@@ -103,6 +103,9 @@ class AnsiblePlaybook:
             self.playbook = value
             return
 
+        if name == 'host_vars' or name == 'group_vars':
+            return
+
         # verbose is weird, must be -vvvv not verbose=vvvv
         if name == 'verbose' and value:
             # for cases where someone passes in verbose: True

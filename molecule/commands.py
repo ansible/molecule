@@ -80,7 +80,13 @@ class AbstractCommand:
             self.static = True
 
         # Add or update the group_vars if needed.
-        self.molecule._add_or_update_group_vars()
+        self.molecule._add_or_update_vars('group_vars')
+
+        # Add or update the host_vars if needed
+        self.molecule._add_or_update_vars('host_vars')
+
+        # Update symlinks
+        self.molecule._symlink_vars()
 
     def disabled(self, cmd):
         """
