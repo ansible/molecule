@@ -1,33 +1,57 @@
+#  Copyright (c) 2015 Cisco Systems
+#
+#  Permission is hereby granted, free of charge, to any person obtaining a copy
+#  of this software and associated documentation files (the "Software"), to deal
+#  in the Software without restriction, including without limitation the rights
+#  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#  copies of the Software, and to permit persons to whom the Software is
+#  furnished to do so, subject to the following conditions:
+#
+#  The above copyright notice and this permission notice shall be included in
+#  all copies or substantial portions of the Software.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#  THE SOFTWARE.
 
-import os
+from baseprovsioner import BaseProvisioner
+import molecule.utilities
+from shade import openstack_cloud
+import collections
+import colorama
 
-import vagrant
-from baseprovsioner import *
-import molecule.utilities as utilities
+colorama.init(autoreset=True)
 
 
-class VagrantProvisioner(BaseProvisioner):
+class OpenstackProvisioner(BaseProvisioner):
     def __init__(self, molecule):
-        super(VagrantProvisioner, self).__init__(molecule)
-        self._vagrant = vagrant.Vagrant(quiet_stdout=False, quiet_stderr=False)
+        super(OpenstackProvisioner, self).__init__(molecule)
         self._provider = self._get_provider()
         self._platform = self._get_platform()
-        self._vagrant.env = molecule._env
+        self._openstack = openstack_cloud()
+
+    def set_keypair(self):
+        keypair_name = self.m._config.config['openstack']['keypair']
+        pub_key_file = self.m._config.config['openstack']['keyfile']
+
+        if self._openstack.search_keypairs(keypair_name):
+            molecule.utilities.logger.info(
+                'Keypair already exists. Skipping import.')
+        else:
+            molecule.utilities.logger.warning('Adding keypair...')
+            self._openstack.create_keypair(keypair_name, open(
+                pub_key_file, 'r').read().strip())
 
     def _get_provider(self):
         return 'openstack'
 
     def _get_platform(self):
-        return 'openstack'
-
-    def _write_vagrant_file(self):
-        kwargs = {'config': self.m._config.config,
-                  'current_platform': self.platform,
-                  'current_provider': self.provider}
-
-        template = self.m._config.config['molecule']['vagrantfile_template']
-        dest = self.m._config.config['molecule']['vagrantfile_file']
-        utilities.write_template(template, dest, kwargs=kwargs)
+        self.m._env['MOLECULE_PLATFORM'] = 'openstack'
+        return self.m._env['MOLECULE_PLATFORM']
 
     @property
     def name(self):
@@ -43,26 +67,7 @@ class VagrantProvisioner(BaseProvisioner):
 
     @property
     def default_platform(self):
-        # assume static inventory if there's no vagrant section
-        if self.m._config.config.get('vagrant') is None:
-            return 'static'
-
-        # assume static inventory if no platforms are listed
-        if self.m._config.config['vagrant'].get('platforms') is None:
-            return 'static'
-
-        # take config's default_platform if specified, otherwise use the first in the platform list
-        default_platform = self.m._config.config['molecule'].get(
-            'default_platform')
-        if default_platform is None:
-            default_platform = self.m._config.config['vagrant']['platforms'][
-                0]['name']
-
-        # default to first entry if no entry for platform exists or platform is false
-        if not self.m._state.get('default_platform'):
-            return default_platform
-
-        return self.m._state['default_platform']
+        return 'openstack'
 
     @property
     def provider(self):
@@ -74,19 +79,19 @@ class VagrantProvisioner(BaseProvisioner):
 
     @property
     def host_template(self):
-        return '{} ansible_ssh_host={} ansible_ssh_port={} ansible_ssh_private_key_file={} ansible_ssh_user={}\n'
+        return '{} ansible_ssh_host={} ansible_ssh_user={} ansible_ssh_extra_args="-o ConnectionAttempts=5"\n'
 
     @property
     def valid_providers(self):
-        return self.m._config.config['vagrant']['providers']
+        return [{'name': 'Openstack'}]
 
     @property
     def valid_platforms(self):
-        return self.m._config.config['vagrant']['platforms']
+        return [{'name': 'Openstack'}]
 
     @property
     def ssh_config_file(self):
-        return '.vagrant/ssh-config'
+        return None
 
     @property
     def testinfra_args(self):
@@ -104,48 +109,121 @@ class VagrantProvisioner(BaseProvisioner):
 
     @property
     def ansible_connection_params(self):
-        params = {'user': 'vagrant', 'connection': 'ssh'}
+        params = {'connection': 'ssh'}
 
         return params
 
     def up(self, no_provision=True):
-        self._write_vagrant_file()
-        self._vagrant.up(no_provision)
+
+        self.set_keypair()
+
+        active_instances = self._openstack.list_servers()
+        active_instance_names = {instance['name']: instance['status']
+                                 for instance in active_instances}
+
+        molecule.utilities.logger.warning(
+            "{} Creating openstack instances ...".format(colorama.Fore.YELLOW))
+        for instance in self.instances:
+            if instance['name'] not in active_instance_names:
+                molecule.utilities.logger.warning("{}\tBringing up {}".format(
+                    colorama.Fore.GREEN, instance['name']))
+                server = self._openstack.create_server(
+                    name=instance['name'],
+                    image=self._openstack.get_image(instance['image']),
+                    flavor=self._openstack.get_flavor(instance['flavor']),
+                    auto_ip=True,
+                    wait=True,
+                    key_name=self.m._config.config['openstack']['keypair'])
+                molecule.utilities.reset_known_host_key(server['interface_ip'])
+                instance['created'] = True
+                num_retries = 0
+                while not molecule.utilities.check_ssh_availability(
+                        server['interface_ip'],
+                        instance['sshuser'],
+                        timeout=6) or num_retries == 5:
+                    molecule.utilities.logger.warning(
+                        "{}\t Waiting for ssh availability...".format(
+                            colorama.Fore.LIGHTYELLOW_EX))
+                    num_retries += 1
 
     def destroy(self):
-        self._write_vagrant_file()
-        if self.m._state.get('created'):
-            self._vagrant.destroy()
 
-        os.remove(self.m._config.config['molecule']['vagrantfile_file'])
+        molecule.utilities.logger.warning(
+            "{}Deleting openstack instances ...".format(colorama.Fore.YELLOW))
+
+        active_instances = self._openstack.list_servers()
+        active_instance_names = {instance['name']: instance['id']
+                                 for instance in active_instances}
+
+        for instance in self.instances:
+            molecule.utilities.logger.warning("\t{}Removing {} ...".format(
+                colorama.Fore.RED, instance['name']))
+            if instance['name'] in active_instance_names:
+                if not self._openstack.delete_server(
+                        active_instance_names[instance['name']],
+                        wait=True):
+                    molecule.utilities.logger.error(
+                        "Unable to remove {}!".format(instance['name']))
+                instance['created'] = False
 
     def status(self):
-        return self._vagrant.status()
 
-    def conf(self, vm_name=None, ssh_config=False):
-        if ssh_config:
-            return self._vagrant.ssh_config(vm_name=vm_name)
-        else:
-            return self._vagrant.conf(vm_name=vm_name)
+        Status = collections.namedtuple('Status', ['name', 'state',
+                                                   'provider'])
+        status_list = []
+
+        for instance in self.instances:
+            if self.instance_is_accessible(instance):
+                status_list.append(Status(name=instance['name'],
+                                          state='UP',
+                                          provider='Openstack'))
+            else:
+                status_list.append(Status(name=instance['name'],
+                                          state='DOWN',
+                                          provider='Openstack'))
+
+        return status_list
+
+    def conf(self, name=None, ssh_config=False):
+
+        with open(self.m._config.config['molecule'][
+                'inventory_file']) as instance:
+            for line in instance:
+                if line.split()[0] == name:
+                    ansible_host = line.split()[1]
+                    host_address = ansible_host.split('=')[1]
+                    return host_address
+        return None
+
+    def instance_is_accessible(self, instance):
+        instance_ip = self.conf(instance['name'])
+        if instance_ip is not None:
+            return molecule.utilities.check_ssh_availability(
+                instance_ip, instance['sshuser'],
+                timeout=0)
+        return False
 
     def inventory_entry(self, instance):
-        # TODO: for Ansiblev2, the following line must have s/ssh_//
-        template = '{} ansible_ssh_host={} ansible_ssh_port={} ansible_ssh_private_key_file={} ansible_ssh_user={}\n'
+        template = self.host_template
 
-        ssh = self.conf(vm_name=utilities.format_instance_name(
-            instance['name'], self._platform, self.instances))
-        return template.format(ssh['Host'], ssh['HostName'], ssh['Port'],
-                               ssh['IdentityFile'], ssh['User'])
+        for server in self._openstack.list_servers(detailed=False):
+            if server['name'] == instance['name']:
+                return template.format(instance['name'],
+                                       server['interface_ip'],
+                                       instance['sshuser'])
+        return ''
 
     def login_cmd(self, instance_name):
-        return 'ssh {} -l {} -p {} -i {} {}'
+        return 'ssh {} -l {}'
 
     def login_args(self, instance_name):
 
         # Try to retrieve the SSH configuration of the host.
-        conf = self.conf(vm_name=instance_name)
+        conf = self.conf(name=instance_name)
+        user = ''
 
-        return [
-            conf['HostName'], conf['User'], conf['Port'], conf['IdentityFile'],
-            ' '.join(self.m._config.config['molecule']['raw_ssh_args'])
-        ]
+        for instance in self.instances:
+            if instance_name == instance['name']:
+                user = instance['sshuser']
+
+        return [conf, user]

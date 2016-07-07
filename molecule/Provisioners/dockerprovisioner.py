@@ -1,4 +1,31 @@
-import baseprovsioner as BaseProvisioner
+#  Copyright (c) 2015 Cisco Systems
+#
+#  Permission is hereby granted, free of charge, to any person obtaining a copy
+#  of this software and associated documentation files (the "Software"), to deal
+#  in the Software without restriction, including without limitation the rights
+#  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+#  copies of the Software, and to permit persons to whom the Software is
+#  furnished to do so, subject to the following conditions:
+#
+#  The above copyright notice and this permission notice shall be included in
+#  all copies or substantial portions of the Software.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+#  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+#  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+#  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+#  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+#  THE SOFTWARE.
+
+from baseprovsioner import BaseProvisioner
+import molecule.utilities
+import colorama
+from io import BytesIO
+import docker
+import json
+import collections
+
 
 class DockerProvisioner(BaseProvisioner):
     def __init__(self, molecule):
@@ -93,7 +120,7 @@ class DockerProvisioner(BaseProvisioner):
             errors = False
 
             if tag_string not in available_images:
-                utilities.logger.warning(
+                molecule.utilities.logger.warning(
                     '{} Building ansible compatible image ...'.format(
                         colorama.Fore.YELLOW))
                 previous_line = ''
@@ -102,18 +129,20 @@ class DockerProvisioner(BaseProvisioner):
                         if len(line_split) > 0:
                             line = json.loads(line_split)
                             if 'stream' in line:
-                                utilities.logger.warning('{} {} {}'.format(
-                                    colorama.Fore.LIGHTBLUE_EX, line['stream'],
-                                    colorama.Fore.RESET))
+                                molecule.utilities.logger.warning(
+                                    '{} {} {}'.format(
+                                        colorama.Fore.LIGHTBLUE_EX, line[
+                                            'stream'], colorama.Fore.RESET))
                             if 'errorDetail' in line:
-                                utilities.logger.warning('{} {} {}'.format(
-                                    colorama.Fore.LIGHTRED_EX, line[
-                                        'errorDetail']['message'],
-                                    colorama.Fore.RESET))
+                                molecule.utilities.logger.warning(
+                                    '{} {} {}'.format(
+                                        colorama.Fore.LIGHTRED_EX, line[
+                                            'errorDetail']['message'],
+                                        colorama.Fore.RESET))
                                 errors = True
                             if 'status' in line:
                                 if previous_line not in line['status']:
-                                    utilities.logger.warning(
+                                    molecule.utilities.logger.warning(
                                         '{} {} ... {}'.format(
                                             colorama.Fore.LIGHTYELLOW_EX, line[
                                                 'status'],
@@ -121,12 +150,14 @@ class DockerProvisioner(BaseProvisioner):
                                 previous_line = line['status']
 
                 if errors:
-                    utilities.logger.error('{} Build failed for {}'.format(
-                        colorama.Fore.RED, tag_string))
+                    molecule.utilities.logger.error(
+                        '{} Build failed for {}'.format(colorama.Fore.RED,
+                                                        tag_string))
                     return
                 else:
-                    utilities.logger.warning('{} Finished building {}'.format(
-                        colorama.Fore.GREEN, tag_string))
+                    molecule.utilities.logger.warning(
+                        '{} Finished building {}'.format(colorama.Fore.GREEN,
+                                                         tag_string))
 
     def up(self, no_provision=True):
         self.build_image()
@@ -140,7 +171,7 @@ class DockerProvisioner(BaseProvisioner):
                 privileged=container['privileged'])
 
             if (container['Created'] is not True):
-                utilities.logger.warning(
+                molecule.utilities.logger.warning(
                     '{} Creating container {} with base image {}:{} ...'.format(
                         colorama.Fore.YELLOW, container['name'],
                         container['image'], container['image_version']), )
@@ -154,23 +185,27 @@ class DockerProvisioner(BaseProvisioner):
                 self._docker.start(container=container.get('Id'))
                 container['Created'] = True
 
-                utilities.logger.warning('{} Container created.\n{}'.format(
-                    colorama.Fore.GREEN, colorama.Fore.RESET))
+                molecule.utilities.logger.warning(
+                    '{} Container created.\n{}'.format(colorama.Fore.GREEN,
+                                                       colorama.Fore.RESET))
             else:
                 self._docker.start(container['name'])
-                utilities.logger.warning('{} Starting container {} ...'.format(
-                    colorama.Fore.GREEN, colorama.Fore.RESET))
+                molecule.utilities.logger.warning(
+                    '{} Starting container {} ...'.format(colorama.Fore.GREEN,
+                                                          colorama.Fore.RESET))
 
     def destroy(self):
 
         for container in self.instances:
             if (container['Created']):
-                utilities.logger.warning('{} Stopping container {} ...'.format(
-                    colorama.Fore.YELLOW, container['name']), )
+                molecule.utilities.logger.warning(
+                    '{} Stopping container {} ...'.format(colorama.Fore.YELLOW,
+                                                          container['name']), )
                 self._docker.stop(container['name'], timeout=0)
                 self._docker.remove_container(container['name'])
-                utilities.logger.warning('{} Removed container {}.\n'.format(
-                    colorama.Fore.GREEN, container['name']))
+                molecule.utilities.logger.warning(
+                    '{} Removed container {}.\n'.format(colorama.Fore.GREEN,
+                                                        container['name']))
                 container['Created'] = False
 
     def status(self):

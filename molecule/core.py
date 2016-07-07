@@ -34,6 +34,8 @@ import yaml
 
 import molecule.config as config
 import molecule.utilities as utilities
+import molecule.Provisioners.baseprovsioner as provisioners
+
 
 class Molecule(object):
     def __init__(self, args):
@@ -66,14 +68,14 @@ class Molecule(object):
         self._state = self._load_state_file()
 
         try:
-            self._provisioner = get_provisioner(self)
+            self._provisioner = utilities.get_provisioner(self)
         except provisioners.InvalidProviderSpecified:
             print("\n{}Invalid provider '{}'\n".format(
                 colorama.Fore.RED, self._args['--provider'],
                 colorama.Fore.RESET))
             self._args['--provider'] = None
             self._args['--platform'] = None
-            self._provisioner = get_provisioner(self)
+            self._provisioner = utilities.get_provisioner(self)
             self._print_valid_providers()
             sys.exit(1)
         except provisioners.InvalidPlatformSpecified:
@@ -82,7 +84,7 @@ class Molecule(object):
                 colorama.Fore.RESET))
             self._args['--provider'] = None
             self._args['--platform'] = None
-            self._provisioner = get_provisioner(self)
+            self._provisioner = utilities.get_provisioner(self)
             self._print_valid_platforms()
             sys.exit(1)
 
@@ -91,6 +93,7 @@ class Molecule(object):
 
         # updates instances config with full machine names
         self._config.populate_instance_names(self._env['MOLECULE_PLATFORM'])
+
         if self._args.get('--debug'):
             utilities.debug('RUNNING CONFIG',
                             yaml.dump(self._config.config,
@@ -113,8 +116,9 @@ class Molecule(object):
 
     def _write_state_file(self):
         utilities.write_file(self._config.config['molecule']['state_file'],
-                             yaml.dump(self._state,
-                                       default_flow_style=False))
+                             yaml.safe_dump(self._state,
+                                            default_flow_style=False,
+                                            encoding='utf-8'))
 
     def _write_ssh_config(self):
         try:
@@ -233,6 +237,7 @@ class Molecule(object):
 
         :return: None
         """
+
         inventory = ''
 
         for instance in self._provisioner.instances:
@@ -334,3 +339,7 @@ class Molecule(object):
 
         # Print the results.
         print(tabulate(data, headers, tablefmt=table_format))
+
+    def _remove_inventory_file(self):
+        if os._exists(self._config.config['molecule']['inventory_file']):
+            os.remove(self._config.config['molecule']['inventory_file'])

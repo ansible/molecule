@@ -83,8 +83,9 @@ class Config(object):
             sys.exit(1)
 
         with open(molecule_file, 'r') as env:
+
             try:
-                molecule_yml = yaml.safe_load(env)
+                molecule_yml = yaml.load(env)
             except Exception as e:
                 error = "\n{}{} isn't properly formatted: {}{}"
                 utilities.logger.error(error.format(

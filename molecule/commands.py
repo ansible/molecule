@@ -34,11 +34,11 @@ import jinja2
 import sh
 import yaml
 
-import molecule.utilities as utilities
 import molecule.validators as validators
 from molecule.ansible_galaxy_install import AnsibleGalaxyInstall
 from molecule.ansible_playbook import AnsiblePlaybook
 from molecule.core import Molecule
+import molecule.utilities as utilities
 
 
 class InvalidHost(Exception):
@@ -140,6 +140,7 @@ class Create(AbstractCommand):
         if self.static:
             self.disabled('create')
 
+        self.molecule._remove_inventory_file()
         self.molecule._create_templates()
         try:
             self.molecule._provisioner.up(no_provision=True)
@@ -154,6 +155,7 @@ class Create(AbstractCommand):
             if exit:
                 sys.exit(e.returncode)
             return e.returncode, e.message
+        self.molecule._create_inventory_file()
         return None, None
 
 
@@ -195,6 +197,7 @@ class Destroy(AbstractCommand):
                 sys.exit(e.returncode)
             return e.returncode, e.message
         self.molecule._remove_templates()
+        self.molecule._remove_inventory_file()
         return None, None
 
 
@@ -685,6 +688,8 @@ class Login(AbstractCommand):
 
             login_cmd = self.molecule._provisioner.login_cmd(hostname)
             login_args = self.molecule._provisioner.login_args(hostname)
+
+            print(login_cmd.format(*login_args))
 
         except CalledProcessError:
             # gets appended to python-vagrant's error message

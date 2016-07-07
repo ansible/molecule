@@ -25,10 +25,11 @@ import os
 import sys
 
 import logging
-
+import paramiko
 import colorama
 import jinja2
-import molecule.Provisioners as provisioners
+from Provisioners import DockerProvisioner, VagrantProvisioner, ProxmoxProvisioner, OpenstackProvisioner
+import time
 
 
 class LogFilter(object):
@@ -57,6 +58,7 @@ error.setLevel(logging.ERROR)
 error.setFormatter(TrailingNewlineFormatter('%(message)s'))
 logger.addHandler(error)
 logger.addHandler(warn)
+logger.propagate = False
 
 
 def merge_dicts(a, b, raise_conflicts=False, path=None):
@@ -209,17 +211,37 @@ def remove_args(command_args, args, kill):
 
     return new_command_args, new_args
 
+
 def get_provisioner(molecule):
     if 'vagrant' in molecule._config.config:
-        return provisioners.VagrantProvisioner(molecule)
+        return VagrantProvisioner(molecule)
     elif 'proxmox' in molecule._config.config:
-        return provisioners.ProxmoxProvisioner(molecule)
+        return ProxmoxProvisioner(molecule)
     elif 'docker' in molecule._config.config:
-        return provisioners.DockerProvisioner(molecule)
+        return DockerProvisioner(molecule)
     elif 'openstack' in molecule._config.config:
-        return provisioners.OpenStackProvisioner(molecule)
+        return OpenstackProvisioner(molecule)
     else:
         return None
+
+
+def reset_known_host_key(hostname):
+    return os.system('ssh-keygen -R {}'.format(hostname))
+
+
+def check_ssh_availability(hostip, user, timeout):
+    import socket
+    ssh = paramiko.SSHClient()
+    ssh.load_system_host_keys()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    try:
+        ssh.connect(hostip, username=user)
+        return True
+    except (paramiko.BadHostKeyException, paramiko.AuthenticationException,
+            paramiko.SSHException, socket.error):
+        time.sleep(timeout)
+        return False
+
 
 def debug(title, data):
     """
