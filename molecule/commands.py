@@ -719,7 +719,7 @@ class Init(AbstractCommand):
     Creates the scaffolding for a new role intended for use with molecule.
 
     Usage:
-        init <role> [--docker] [--offline]
+        init <role> [--docker | --openstack] [--offline]
     """
 
     def clean_meta_main(self, role_path):
@@ -773,6 +773,9 @@ class Init(AbstractCommand):
         if (self.molecule._args['--docker']):
             t_molecule = env.get_template(self.molecule._config.config[
                 'molecule']['init']['templates']['molecule_docker'])
+        if (self.molecule._args['--docker']):
+            t_molecule = env.get_template(self.molecule._config.config[
+                'molecule']['init']['templates']['molecule_openstack'])
 
         sanitized_role = re.sub('[._]', '-', role)
         with open(

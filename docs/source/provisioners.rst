@@ -98,5 +98,43 @@ provider, see :ref:`providers`.
         options:
           append_platform_to_hostname: no
 
+Openstack Provisioner
+---------------------
+
+The openstack provisioner will create instances in your openstack service. The environment variables required
+to use this provisioner can be found in the RC file provided on your openstack site.
+
+The available parameters for openstack instances are:
+
+# ``name`` - name of the openstack instance
+# ``image`` - openstack image to use for instance
+# ``flavor`` - openstack flavor to use for instance
+# ``sshuser`` - user to access ssh with
+# ``ansible_groups`` - groups the instance belongs to in ansible
+
+The ``keypair`` and ``keyfile`` options must also be given to specify the keypair to use when accessing your openstack
+service. Usage can be seen in th example below.
+
+
+Openstack instance example
+--------------------------
+
+.. code-block:: yaml
+
+---
+openstack:
+  keypair: KeyName
+  keyfile: ~/.ssh/id_rsa
+  instances:
+    - name: my_instance
+      image: 'CentOS 7'
+      flavor: m1.xlarge
+      sshuser: centos
+      ansible_groups:
+        - ansiblegroup
+
+
 Implementing Provisioners
 -------------------------
+
+
