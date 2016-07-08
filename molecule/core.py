@@ -249,6 +249,9 @@ class Molecule(object):
                         groups[group] = []
                     groups[group].append(instance['name'])
 
+        if self._args.get('--platform') == 'all':
+            self._env['MOLECULE_PLATFORM'] = 'all'
+
         for group, instances in groups.iteritems():
             inventory += '\n[{}]\n'.format(group)
             for instance in instances:

@@ -6,6 +6,8 @@ vagrant:
   platforms:
     - name: ubuntu
       box: ubuntu/trusty64
+    - name: centos7
+      box: centos/7
 
   providers:
     - name: virtualbox
@@ -19,3 +21,7 @@ vagrant:
         - network_name: private_network
           type: dhcp
           auto_config: true
+      options:
+        append_platform_to_hostname: yes
+
+
