@@ -773,7 +773,7 @@ class Init(AbstractCommand):
         if (self.molecule._args['--docker']):
             t_molecule = env.get_template(self.molecule._config.config[
                 'molecule']['init']['templates']['molecule_docker'])
-        if (self.molecule._args['--docker']):
+        if (self.molecule._args['--openstack']):
             t_molecule = env.get_template(self.molecule._config.config[
                 'molecule']['init']['templates']['molecule_openstack'])
 
