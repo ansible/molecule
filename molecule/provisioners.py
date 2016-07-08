@@ -218,7 +218,7 @@ class VagrantProvisioner(BaseProvisioner):
         molecule._env['VAGRANT_VAGRANTFILE'] = molecule._config.config[
             'molecule']['vagrantfile_file']
         self._vagrant.env = molecule._env
-        self._update_instances = True
+        self._updated_multiplatform = False
 
     def _get_provider(self):
         if self.m._args.get('--provider'):
@@ -384,8 +384,13 @@ class VagrantProvisioner(BaseProvisioner):
         # TODO: for Ansiblev2, the following line must have s/ssh_//
         template = '{} ansible_ssh_host={} ansible_ssh_port={} ansible_ssh_private_key_file={} ansible_ssh_user={}\n'
 
-        ssh = self.conf(vm_name=utilities.format_instance_name(
-            instance['name'], self._platform, self.instances))
+        if not self._updated_multiplatform:
+            ssh = self.conf(vm_name=utilities.format_instance_name(
+                instance['name'], self._platform, self.instances))
+        else:
+            ssh = self.conf(vm_name=utilities.format_instance_name(
+                instance['name'], 'all', self.instances))
+
         return template.format(ssh['Host'], ssh['HostName'], ssh['Port'],
                                ssh['IdentityFile'], ssh['User'])
 
@@ -403,11 +408,10 @@ class VagrantProvisioner(BaseProvisioner):
         ]
 
     def populate_platform_instances(self):
-        print(self.m._config.config['vagrant']['instances'])
         if self.m._args.get('--platform'):
             if len(self.m._config.config['vagrant'][
                     'platforms']) > 1 and self.m._args[
-                        '--platform'] == 'all' and self._update_instances:
+                        '--platform'] == 'all' and not self._updated_multiplatform:
                 new_instances = []
 
                 for instance in self.m._config.config['vagrant']['instances']:
@@ -422,7 +426,7 @@ class VagrantProvisioner(BaseProvisioner):
                         new_instances.append(platform_instance)
 
                 self.m._config.config['vagrant']['instances'] = new_instances
-                self._update_instances = False
+                self._updated_multiplatform = True
 
 
 # Place holder for Proxmox, partially implemented

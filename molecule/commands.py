@@ -144,6 +144,10 @@ class Create(AbstractCommand):
         try:
             self.molecule._provisioner.up(no_provision=True)
             self.molecule._state['created'] = True
+            if self.args['--platform'] == 'all':
+                self.molecule._state['multiple_platforms'] = True
+            else:
+                self.molecule._state['multiple_platforms'] = False
             self.molecule._write_state_file()
         except CalledProcessError as e:
             utilities.logger.error('ERROR: {}'.format(e))
@@ -224,6 +228,9 @@ class Converge(AbstractCommand):
 
         if self.molecule._state.get('converged'):
             create_inventory = False
+
+        if self.molecule._state.get('multiple_platforms'):
+            self.args['--platform'] = 'all'
 
         if self.static:
             create_instances = False

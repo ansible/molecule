@@ -237,8 +237,6 @@ class Molecule(object):
         """
         inventory = ''
 
-        print(self._provisioner.instances)
-
         for instance in self._provisioner.instances:
             inventory += self._provisioner.inventory_entry(instance)
 
@@ -250,6 +248,9 @@ class Molecule(object):
                     if group not in groups:
                         groups[group] = []
                     groups[group].append(instance['name'])
+
+        if self._args.get('--platform') == 'all':
+            self._env['MOLECULE_PLATFORM'] = 'all'
 
         for group, instances in groups.iteritems():
             inventory += '\n[{}]\n'.format(group)
