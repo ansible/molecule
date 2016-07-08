@@ -218,6 +218,7 @@ class VagrantProvisioner(BaseProvisioner):
         molecule._env['VAGRANT_VAGRANTFILE'] = molecule._config.config[
             'molecule']['vagrantfile_file']
         self._vagrant.env = molecule._env
+        self._update_instances = True
 
     def _get_provider(self):
         if self.m._args.get('--provider'):
@@ -263,6 +264,7 @@ class VagrantProvisioner(BaseProvisioner):
 
     @property
     def instances(self):
+        self.populate_platform_instances()
         return self.m._config.config['vagrant']['instances']
 
     @property
@@ -367,6 +369,8 @@ class VagrantProvisioner(BaseProvisioner):
         if os._exists(self.m._config.config['molecule']['vagrantfile_file']):
             os.remove(self.m._config.config['molecule']['vagrantfile_file'])
 
+        self.m._state['platformcloned'] = False
+
     def status(self):
         return self._vagrant.status()
 
@@ -399,9 +403,11 @@ class VagrantProvisioner(BaseProvisioner):
         ]
 
     def populate_platform_instances(self):
+        print(self.m._config.config['vagrant']['instances'])
         if self.m._args.get('--platform'):
             if len(self.m._config.config['vagrant'][
-                    'platforms']) > 1 and self.m._args['--platform'] == 'all':
+                    'platforms']) > 1 and self.m._args[
+                        '--platform'] == 'all' and self._update_instances:
                 new_instances = []
 
                 for instance in self.m._config.config['vagrant']['instances']:
@@ -416,6 +422,7 @@ class VagrantProvisioner(BaseProvisioner):
                         new_instances.append(platform_instance)
 
                 self.m._config.config['vagrant']['instances'] = new_instances
+                self._update_instances = False
 
 
 # Place holder for Proxmox, partially implemented

@@ -237,6 +237,8 @@ class Molecule(object):
         """
         inventory = ''
 
+        print(self._provisioner.instances)
+
         for instance in self._provisioner.instances:
             inventory += self._provisioner.inventory_entry(instance)
 
