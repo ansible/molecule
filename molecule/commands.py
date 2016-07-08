@@ -233,7 +233,8 @@ class Converge(AbstractCommand):
         if self.molecule._state.get('multiple_platforms'):
             self.args['--platform'] = 'all'
         else:
-            if self.args['--platform'] == 'all' and self.molecule._state.get('created'):
+            if self.args['--platform'] == 'all' and self.molecule._state.get(
+                    'created'):
                 create_instances = True
                 create_inventory = True
 
