@@ -187,6 +187,7 @@ class Destroy(AbstractCommand):
             self.molecule._state['default_provider'] = False
             self.molecule._state['created'] = False
             self.molecule._state['converged'] = False
+            self.molecule._state['multiple_platforms'] = False
             self.molecule._write_state_file()
         except CalledProcessError as e:
             utilities.logger.error('ERROR: {}'.format(e))
@@ -231,6 +232,10 @@ class Converge(AbstractCommand):
 
         if self.molecule._state.get('multiple_platforms'):
             self.args['--platform'] = 'all'
+        else:
+            if self.args['--platform'] == 'all' and self.molecule._state.get('created'):
+                create_instances = True
+                create_inventory = True
 
         if self.static:
             create_instances = False
