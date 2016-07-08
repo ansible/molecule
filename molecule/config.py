@@ -27,6 +27,8 @@ import yaml
 
 import molecule.utilities as utilities
 
+colorama.init(autoreset=True)
+
 
 class Config(object):
     # locations to look for molecule config files
@@ -77,18 +79,18 @@ class Config(object):
             molecule_file = self.config['molecule']['molecule_file']
 
         if not os.path.isfile(molecule_file):
-            error = '\n{}Unable to find {}. Exiting.{}'
+            error = '\n{}Unable to find {}. Exiting.'
             utilities.logger.error(error.format(colorama.Fore.RED, self.config[
-                'molecule']['molecule_file'], colorama.Fore.RESET))
+                'molecule']['molecule_file']))
             sys.exit(1)
 
         with open(molecule_file, 'r') as env:
             try:
                 molecule_yml = yaml.safe_load(env)
             except Exception as e:
-                error = "\n{}{} isn't properly formatted: {}{}"
-                utilities.logger.error(error.format(
-                    colorama.Fore.RED, molecule_file, e, colorama.Fore.RESET))
+                error = "\n{}{} isn't properly formatted: {}"
+                utilities.logger.error(error.format(colorama.Fore.RED,
+                                                    molecule_file, e))
                 sys.exit(1)
 
             interim = utilities.merge_dicts(self.config, molecule_yml)

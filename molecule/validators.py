@@ -29,6 +29,8 @@ import sh
 
 from utilities import logger
 
+colorama.init(autoreset=True)
+
 
 def check_trailing_cruft(ignore_paths=[], exit=True):
     """
@@ -73,16 +75,14 @@ def check_trailing_cruft(ignore_paths=[], exit=True):
         whitespace = trailing_whitespace(data)
 
         if newline:
-            error = '{}Trailing newline found at the end of {}{}\n'
-            logger.error(error.format(colorama.Fore.RED, filename,
-                                      colorama.Fore.RESET))
+            error = '{}Trailing newline found at the end of {}\n'
+            logger.error(error.format(colorama.Fore.RED, filename))
             found_error = True
 
         if whitespace:
-            error = '{}Trailing whitespace found in {} on lines: {}{}\n'
+            error = '{}Trailing whitespace found in {} on lines: {}\n'
             lines = ', '.join(str(x) for x in whitespace)
-            logger.error(error.format(colorama.Fore.RED, filename, lines,
-                                      colorama.Fore.RESET))
+            logger.error(error.format(colorama.Fore.RED, filename, lines))
             found_error = True
 
     if exit and found_error:

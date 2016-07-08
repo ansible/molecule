@@ -36,6 +36,8 @@ import molecule.config as config
 import molecule.utilities as utilities
 import molecule.provisioners as provisioners
 
+colorama.init(autoreset=True)
+
 
 class Molecule(object):
     def __init__(self, args):
@@ -71,8 +73,7 @@ class Molecule(object):
             self._provisioner = provisioners.get_provisioner(self)
         except provisioners.InvalidProviderSpecified:
             print("\n{}Invalid provider '{}'\n".format(
-                colorama.Fore.RED, self._args['--provider'],
-                colorama.Fore.RESET))
+                colorama.Fore.RED, self._args['--provider']))
             self._args['--provider'] = None
             self._args['--platform'] = None
             self._provisioner = provisioners.get_provisioner(self)
@@ -80,8 +81,7 @@ class Molecule(object):
             sys.exit(1)
         except provisioners.InvalidPlatformSpecified:
             print("\n{}Invalid platform '{}'\n".format(
-                colorama.Fore.RED, self._args['--platform'],
-                colorama.Fore.RESET))
+                colorama.Fore.RED, self._args['--platform']))
             self._args['--provider'] = None
             self._args['--platform'] = None
             self._provisioner = provisioners.get_provisioner(self)
@@ -132,8 +132,7 @@ class Molecule(object):
 
     def _print_valid_platforms(self, porcelain=False):
         if not porcelain:
-            print(colorama.Fore.CYAN + "AVAILABLE PLATFORMS" +
-                  colorama.Fore.RESET)
+            print(colorama.Fore.CYAN + "AVAILABLE PLATFORMS")
 
         data = []
         default_platform = self._provisioner.default_platform
@@ -149,8 +148,7 @@ class Molecule(object):
 
     def _print_valid_providers(self, porcelain=False):
         if not porcelain:
-            print(colorama.Fore.CYAN + "AVAILABLE PROVIDERS" +
-                  colorama.Fore.RESET)
+            print(colorama.Fore.CYAN + "AVAILABLE PROVIDERS")
 
         data = []
         default_provider = self._provisioner.default_provider
@@ -264,8 +262,8 @@ class Molecule(object):
             utilities.write_file(inventory_file, inventory)
         except IOError:
             utilities.logger.warning(
-                '{}WARNING: could not write inventory file {}{}'.format(
-                    colorama.Fore.YELLOW, inventory_file, colorama.Fore.RESET))
+                '{}WARNING: could not write inventory file {}'.format(
+                    colorama.Fore.YELLOW, inventory_file))
 
     def _add_or_update_vars(self, target):
         """Creates or updates to host/group variables if needed."""
