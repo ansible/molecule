@@ -133,7 +133,8 @@ class OpenstackProvisioner(BaseProvisioner):
                     flavor=self._openstack.get_flavor(instance['flavor']),
                     auto_ip=True,
                     wait=True,
-                    key_name=self.m._config.config['openstack']['keypair'])
+                    key_name=self.m._config.config['openstack']['keypair'],
+                    security_groups=instance['security_groups'])
                 molecule.utilities.reset_known_host_key(server['interface_ip'])
                 instance['created'] = True
                 num_retries = 0

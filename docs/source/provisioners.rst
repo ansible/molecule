@@ -111,6 +111,7 @@ The available parameters for openstack instances are:
 # ``flavor`` - openstack flavor to use for instance
 # ``sshuser`` - user to access ssh with
 # ``ansible_groups`` - groups the instance belongs to in ansible
+# ``security_groups`` - security groups the instance belongs to in openstack
 
 The ``keypair`` and ``keyfile`` options must also be given to specify the keypair to use when accessing your openstack
 service. Usage can be seen in th example below.
