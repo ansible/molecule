@@ -20,7 +20,6 @@
 
 from baseprovsioner import BaseProvisioner
 import molecule.utilities
-import colorama
 from io import BytesIO
 import docker
 import json
@@ -121,8 +120,7 @@ class DockerProvisioner(BaseProvisioner):
 
             if tag_string not in available_images:
                 molecule.utilities.logger.warning(
-                    '{} Building ansible compatible image ...'.format(
-                        colorama.Fore.YELLOW))
+                    'Building ansible compatible image ...')
                 previous_line = ''
                 for line in self._docker.build(fileobj=f, tag=tag_string):
                     for line_split in line.split('\n'):
@@ -130,34 +128,25 @@ class DockerProvisioner(BaseProvisioner):
                             line = json.loads(line_split)
                             if 'stream' in line:
                                 molecule.utilities.logger.warning(
-                                    '{} {} {}'.format(
-                                        colorama.Fore.LIGHTBLUE_EX, line[
-                                            'stream'], colorama.Fore.RESET))
+                                    '\t{}'.format(line['stream']))
                             if 'errorDetail' in line:
                                 molecule.utilities.logger.warning(
-                                    '{} {} {}'.format(
-                                        colorama.Fore.LIGHTRED_EX, line[
-                                            'errorDetail']['message'],
-                                        colorama.Fore.RESET))
+                                    '\t{}'.format(line['errorDetail'][
+                                        'message']))
                                 errors = True
                             if 'status' in line:
                                 if previous_line not in line['status']:
                                     molecule.utilities.logger.warning(
-                                        '{} {} ... {}'.format(
-                                            colorama.Fore.LIGHTYELLOW_EX, line[
-                                                'status'],
-                                            colorama.Fore.RESET))
+                                        '\t{} ...'.format(line['status']))
                                 previous_line = line['status']
 
                 if errors:
                     molecule.utilities.logger.error(
-                        '{} Build failed for {}'.format(colorama.Fore.RED,
-                                                        tag_string))
+                        'Build failed for {}'.format(tag_string))
                     return
                 else:
-                    molecule.utilities.logger.warning(
-                        '{} Finished building {}'.format(colorama.Fore.GREEN,
-                                                         tag_string))
+                    molecule.utilities.print_success(
+                        'Finished building {}'.format(tag_string))
 
     def up(self, no_provision=True):
         self.build_image()
@@ -172,9 +161,9 @@ class DockerProvisioner(BaseProvisioner):
 
             if (container['Created'] is not True):
                 molecule.utilities.logger.warning(
-                    '{} Creating container {} with base image {}:{} ...'.format(
-                        colorama.Fore.YELLOW, container['name'],
-                        container['image'], container['image_version']), )
+                    'Creating container {} with base image {}:{} ...'.format(
+                        container['name'], container['image'],
+                        container['image_version']), )
                 container = self._docker.create_container(
                     image=self.image_tag.format(container['image'],
                                                 container['image_version']),
@@ -185,27 +174,21 @@ class DockerProvisioner(BaseProvisioner):
                 self._docker.start(container=container.get('Id'))
                 container['Created'] = True
 
-                molecule.utilities.logger.warning(
-                    '{} Container created.\n{}'.format(colorama.Fore.GREEN,
-                                                       colorama.Fore.RESET))
+                molecule.utilities.print_success('Container created.\n{}')
             else:
                 self._docker.start(container['name'])
-                molecule.utilities.logger.warning(
-                    '{} Starting container {} ...'.format(colorama.Fore.GREEN,
-                                                          colorama.Fore.RESET))
+                molecule.utilities.print_success('Starting container {} ...')
 
     def destroy(self):
 
         for container in self.instances:
             if (container['Created']):
                 molecule.utilities.logger.warning(
-                    '{} Stopping container {} ...'.format(colorama.Fore.YELLOW,
-                                                          container['name']), )
+                    'Stopping container {} ...'.format(container['name']))
                 self._docker.stop(container['name'], timeout=0)
                 self._docker.remove_container(container['name'])
-                molecule.utilities.logger.warning(
-                    '{} Removed container {}.\n'.format(colorama.Fore.GREEN,
-                                                        container['name']))
+                molecule.utilities.print_success(
+                    'Removed container {}.\n'.format(container['name']))
                 container['Created'] = False
 
     def status(self):

@@ -22,9 +22,6 @@ from baseprovsioner import BaseProvisioner
 import molecule.utilities
 from shade import openstack_cloud
 import collections
-import colorama
-
-colorama.init(autoreset=True)
 
 
 class OpenstackProvisioner(BaseProvisioner):
@@ -42,7 +39,7 @@ class OpenstackProvisioner(BaseProvisioner):
             molecule.utilities.logger.info(
                 'Keypair already exists. Skipping import.')
         else:
-            molecule.utilities.logger.warning('Adding keypair...')
+            molecule.utilities.logger.info('Adding keypair...')
             self._openstack.create_keypair(keypair_name, open(
                 pub_key_file, 'r').read().strip())
 
@@ -120,13 +117,11 @@ class OpenstackProvisioner(BaseProvisioner):
         active_instances = self._openstack.list_servers()
         active_instance_names = {instance['name']: instance['status']
                                  for instance in active_instances}
-
-        molecule.utilities.logger.warning(
-            "{} Creating openstack instances ...".format(colorama.Fore.YELLOW))
+        molecule.utilities.logger.warning("Creating openstack instances ...")
         for instance in self.instances:
             if instance['name'] not in active_instance_names:
-                molecule.utilities.logger.warning("{}\tBringing up {}".format(
-                    colorama.Fore.GREEN, instance['name']))
+                molecule.utilities.logger.info("\tBringing up {}".format(
+                    instance['name']))
                 server = self._openstack.create_server(
                     name=instance['name'],
                     image=self._openstack.get_image(instance['image']),
@@ -142,30 +137,31 @@ class OpenstackProvisioner(BaseProvisioner):
                         server['interface_ip'],
                         instance['sshuser'],
                         timeout=6) or num_retries == 5:
-                    molecule.utilities.logger.warning(
-                        "{}\t Waiting for ssh availability...".format(
-                            colorama.Fore.LIGHTYELLOW_EX))
+                    molecule.utilities.logger.info(
+                        "\t Waiting for ssh availability...")
                     num_retries += 1
 
     def destroy(self):
 
-        molecule.utilities.logger.warning(
-            "{}Deleting openstack instances ...".format(colorama.Fore.YELLOW))
+        molecule.utilities.logger.info("Deleting openstack instances ...")
 
         active_instances = self._openstack.list_servers()
         active_instance_names = {instance['name']: instance['id']
                                  for instance in active_instances}
 
         for instance in self.instances:
-            molecule.utilities.logger.warning("\t{}Removing {} ...".format(
-                colorama.Fore.RED, instance['name']))
+            molecule.utilities.logger.warning("\tRemoving {} ...".format(
+                instance['name']))
             if instance['name'] in active_instance_names:
                 if not self._openstack.delete_server(
                         active_instance_names[instance['name']],
                         wait=True):
                     molecule.utilities.logger.error(
                         "Unable to remove {}!".format(instance['name']))
-                instance['created'] = False
+                else:
+                    molecule.utilities.print_success('\tRemoved {}'.format(
+                        instance['name']))
+                    instance['created'] = False
 
     def status(self):
 

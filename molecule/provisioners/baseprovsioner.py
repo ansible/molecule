@@ -130,7 +130,7 @@ class BaseProvisioner(object):
         return
 
     @abc.abstractmethod
-    def up(no_provision=True):
+    def up(self, no_provision=True):
         """
         Starts the configured VMs in within the provisioner
         :param no_provision:

@@ -73,7 +73,7 @@ logger.propagate = False
 
 
 def print_success(msg):
-    print('{}{}'.format(colorama.Fore.GREEN, msg))
+    print('{}{}'.format(colorama.Fore.GREEN, msg.rstrip()))
 
 
 def merge_dicts(a, b, raise_conflicts=False, path=None):
