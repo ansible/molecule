@@ -20,8 +20,7 @@
 
 import testtools
 
-from molecule.Provisioners import DockerProvisioner
-import molecule.utilities
+from molecule.provisioners import DockerProvisioner
 from molecule.core import Molecule
 import yaml
 from molecule.ansible_playbook import AnsiblePlaybook
@@ -70,9 +69,7 @@ class TestDockerProvisioner(testtools.TestCase):
         self.assertEqual(docker_provisioner.name, 'docker')
 
     def test_get_provisioner(self):
-        self.assertEqual(
-            molecule.utilities.get_provisioner(self._mock_molecule).name,
-            'docker')
+        self.assertEqual(self._mock_molecule.get_provisioner().name, 'docker')
 
     def test_up(self):
         docker_provisioner = DockerProvisioner(self._mock_molecule)
@@ -131,7 +128,7 @@ class TestDockerProvisioner(testtools.TestCase):
         docker_provisioner.destroy()
 
     def test_inventory_generation(self):
-        self._mock_molecule._provisioner = molecule.utilities.get_provisioner(
+        self._mock_molecule._provisioner = DockerProvisioner(
             self._mock_molecule)
         self._mock_molecule._provisioner.destroy()
         self._mock_molecule._provisioner.up()

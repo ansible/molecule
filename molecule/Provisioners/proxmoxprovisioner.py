@@ -23,5 +23,6 @@ from baseprovsioner import BaseProvisioner
 
 # Place holder for Proxmox, partially implemented
 class ProxmoxProvisioner(BaseProvisioner):
-    def __init__(self):
+    def __init__(self, molecule):
         super(ProxmoxProvisioner, self).__init__()
+        self.m = molecule

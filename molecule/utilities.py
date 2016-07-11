@@ -28,7 +28,6 @@ import logging
 import paramiko
 import colorama
 import jinja2
-from Provisioners import DockerProvisioner, VagrantProvisioner, ProxmoxProvisioner, OpenstackProvisioner
 import time
 
 
@@ -47,18 +46,34 @@ class TrailingNewlineFormatter(logging.Formatter):
         return super(TrailingNewlineFormatter, self).format(record)
 
 
+colorama.init(autoreset=True)
+
 logger = logging.getLogger(__name__)
+
+info = logging.StreamHandler()
+info.setLevel(logging.INFO)
+info.addFilter(LogFilter(logging.INFO))
+info.setFormatter(TrailingNewlineFormatter('{}%(message)s'.format(
+    colorama.Fore.CYAN)))
+
 warn = logging.StreamHandler()
 warn.setLevel(logging.WARN)
 warn.addFilter(LogFilter(logging.WARN))
-warn.setFormatter(TrailingNewlineFormatter('%(message)s'))
+warn.setFormatter(TrailingNewlineFormatter('{}%(message)s'.format(
+    colorama.Fore.YELLOW)))
 
 error = logging.StreamHandler()
 error.setLevel(logging.ERROR)
-error.setFormatter(TrailingNewlineFormatter('%(message)s'))
+error.setFormatter(TrailingNewlineFormatter('{}%(message)s'.format(
+    colorama.Fore.RED)))
 logger.addHandler(error)
 logger.addHandler(warn)
+logger.addHandler(info)
 logger.propagate = False
+
+
+def print_success(msg):
+    print('{}{}'.format(colorama.Fore.GREEN, msg))
 
 
 def merge_dicts(a, b, raise_conflicts=False, path=None):
@@ -210,19 +225,6 @@ def remove_args(command_args, args, kill):
             new_args[k] = v
 
     return new_command_args, new_args
-
-
-def get_provisioner(molecule):
-    if 'vagrant' in molecule._config.config:
-        return VagrantProvisioner(molecule)
-    elif 'proxmox' in molecule._config.config:
-        return ProxmoxProvisioner(molecule)
-    elif 'docker' in molecule._config.config:
-        return DockerProvisioner(molecule)
-    elif 'openstack' in molecule._config.config:
-        return OpenstackProvisioner(molecule)
-    else:
-        return None
 
 
 def reset_known_host_key(hostname):
