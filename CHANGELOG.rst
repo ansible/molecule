@@ -1,5 +1,12 @@
 CHANGELOG for molecule
 ======================
+1.7.0
+----
+
+* It's now possible to define host_vars and group_vars in ansible section of molecule.yml.
+* The --platform CLI option now supports ``all``.
+* Corrected issue with specifying serverspec args in molecule.yml.
+
 1.6.3
 ----
 
