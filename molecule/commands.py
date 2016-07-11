@@ -430,18 +430,18 @@ class Verify(AbstractCommand):
         ansible = AnsiblePlaybook(self.molecule._config.config['ansible'],
                                   _env=self.molecule._env)
 
+        debug = self.molecule._args.get('--debug', False)
+
         testinfra_kwargs = utilities.merge_dicts(
             self.molecule._provisioner.testinfra_args,
             self.molecule._config.config['testinfra'])
-        serverspec_kwargs = self.molecule._provisioner.serverspec_args
         testinfra_kwargs['env'] = ansible.env
         testinfra_kwargs['env']['PYTHONDONTWRITEBYTECODE'] = '1'
-        if self.molecule._args.get('--debug'):
-            testinfra_kwargs['debug'] = True
-        if self.molecule._args.get('--sudo'):
-            testinfra_kwargs['sudo'] = True
-        serverspec_kwargs['env'] = testinfra_kwargs['env']
-        serverspec_kwargs['debug'] = testinfra_kwargs.get('debug')
+        testinfra_kwargs['debug'] = debug
+        testinfra_kwargs['sudo'] = self.molecule._args.get('--sudo', False)
+
+        serverspec_kwargs = self.molecule._provisioner.serverspec_args
+        serverspec_kwargs['debug'] = debug
 
         try:
             # testinfra
