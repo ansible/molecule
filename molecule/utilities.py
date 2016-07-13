@@ -50,12 +50,6 @@ colorama.init(autoreset=True)
 
 logger = logging.getLogger(__name__)
 
-info = logging.StreamHandler()
-info.setLevel(logging.INFO)
-info.addFilter(LogFilter(logging.INFO))
-info.setFormatter(TrailingNewlineFormatter('{}%(message)s'.format(
-    colorama.Fore.CYAN)))
-
 warn = logging.StreamHandler()
 warn.setLevel(logging.WARN)
 warn.addFilter(LogFilter(logging.WARN))
@@ -68,12 +62,15 @@ error.setFormatter(TrailingNewlineFormatter('{}%(message)s'.format(
     colorama.Fore.RED)))
 logger.addHandler(error)
 logger.addHandler(warn)
-logger.addHandler(info)
 logger.propagate = False
 
 
 def print_success(msg):
     print('{}{}'.format(colorama.Fore.GREEN, msg.rstrip()))
+
+
+def print_info(msg):
+    print('--> {}{}'.format(colorama.Fore.CYAN, msg.rstrip()))
 
 
 def merge_dicts(a, b, raise_conflicts=False, path=None):

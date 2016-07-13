@@ -116,6 +116,8 @@ class Check(AbstractCommand):
         ansible.add_cli_arg('syntax-check', True)
         ansible.add_cli_arg('inventory-file', 'localhost,')
 
+        utilities.print_info("Checking playbooks syntax ...")
+
         return ansible.execute(hide_errors=True)
 
 
@@ -139,6 +141,7 @@ class Create(AbstractCommand):
         self.molecule._remove_inventory_file()
         self.molecule._create_templates()
         try:
+            utilities.print_info("Creating instances ...")
             self.molecule._provisioner.up(no_provision=True)
             self.molecule._state['created'] = True
             if self.args['--platform'] == 'all':
@@ -180,6 +183,7 @@ class Destroy(AbstractCommand):
 
         self.molecule._create_templates()
         try:
+            utilities.print_info("Destroying instances ...")
             self.molecule._provisioner.destroy()
             self.molecule._state['default_platform'] = False
             self.molecule._state['default_provider'] = False
@@ -253,7 +257,7 @@ class Converge(AbstractCommand):
         # install role dependencies only during `molecule converge`
         if not idempotent and 'requirements_file' in self.molecule._config.config[
                 'ansible']:
-            utilities.logger.info('Installing role dependencies ...')
+            utilities.print_info('Installing role dependencies ...')
             galaxy_install = AnsibleGalaxyInstall(self.molecule._config.config[
                 'ansible']['requirements_file'])
             galaxy_install.add_env_arg(
@@ -311,7 +315,7 @@ class Converge(AbstractCommand):
                                       indent=2))
             utilities.debug('ANSIBLE PLAYBOOK', str(ansible.ansible))
 
-        utilities.logger.info("STARTING ANSIBLE RUN...\n")
+        utilities.print_info("Starting Ansible Run ...")
         status, output = ansible.execute(hide_errors=hide_errors)
         if status is not None:
             if exit:
@@ -342,7 +346,7 @@ class Idempotence(AbstractCommand):
         if self.static:
             self.disabled('idempotence')
 
-        utilities.logger.info(
+        utilities.print_info(
             'Idempotence test in progress (can take a few minutes)...')
 
         c = Converge(self.command_args, self.args, self.molecule)
@@ -351,7 +355,7 @@ class Idempotence(AbstractCommand):
                                    hide_errors=True)
         if status is not None:
             msg = 'Skipping due to errors during converge.\n'
-            utilities.logger.info(msg)
+            utilities.print_info(msg)
             return status, None
 
         idempotent, changed_tasks = self.molecule._parse_provisioning_output(
@@ -435,8 +439,8 @@ class Verify(AbstractCommand):
         try:
             # testinfra
             if len(glob.glob1(testinfra_dir, "test_*.py")) > 0:
-                msg = '\nExecuting testinfra tests found in {}/.'
-                utilities.logger.info(msg.format(testinfra_dir))
+                msg = 'Executing testinfra tests found in {}/.'
+                utilities.print_info(msg.format(testinfra_dir))
                 validators.testinfra(testinfra_dir, **testinfra_kwargs)
             else:
                 msg = 'No testinfra tests found in {}/.\n'
@@ -445,11 +449,11 @@ class Verify(AbstractCommand):
             # serverspec / rubocop
             if os.path.isdir(serverspec_dir):
                 msg = 'Executing rubocop on *.rb files found in {}/.'
-                utilities.logger.info(msg.format(serverspec_dir))
+                utilities.print_info(msg.format(serverspec_dir))
                 validators.rubocop(serverspec_dir, **serverspec_kwargs)
 
                 msg = 'Executing serverspec tests found in {}/.'
-                utilities.logger.info(msg.format(serverspec_dir))
+                utilities.print_info(msg.format(serverspec_dir))
                 validators.rake(rakefile, **serverspec_kwargs)
             else:
                 msg = 'No serverspec tests found in {}/.\n'

@@ -20,7 +20,7 @@
 
 from pbr import version
 
-from baseprovsioner import BaseProvisioner
+from baseprovisioner import BaseProvisioner
 from dockerprovisioner import DockerProvisioner
 from openstackprovisioner import OpenstackProvisioner
 from proxmoxprovisioner import ProxmoxProvisioner
