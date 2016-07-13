@@ -22,7 +22,7 @@ import collections
 
 from shade import openstack_cloud
 
-from baseprovsioner import BaseProvisioner
+from baseprovisioner import BaseProvisioner
 import molecule.utilities
 
 

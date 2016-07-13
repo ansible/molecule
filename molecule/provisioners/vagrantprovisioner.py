@@ -22,7 +22,7 @@ import os
 
 import vagrant
 
-from baseprovsioner import BaseProvisioner, InvalidPlatformSpecified, InvalidProviderSpecified
+from baseprovisioner import BaseProvisioner, InvalidPlatformSpecified, InvalidProviderSpecified
 import molecule.utilities
 
 

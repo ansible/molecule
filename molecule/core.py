@@ -31,7 +31,7 @@ import yaml
 
 import molecule.config as config
 import molecule.utilities as utilities
-import molecule.provisioners.baseprovsioner as provisioners
+import molecule.provisioners.baseprovisioner as provisioners
 from provisioners.dockerprovisioner import DockerProvisioner
 from provisioners.openstackprovisioner import OpenstackProvisioner
 from provisioners.proxmoxprovisioner import ProxmoxProvisioner

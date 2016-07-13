@@ -24,7 +24,7 @@ import collections
 
 import docker
 
-from baseprovsioner import BaseProvisioner
+from baseprovisioner import BaseProvisioner
 import molecule.utilities
 
 
@@ -176,10 +176,11 @@ class DockerProvisioner(BaseProvisioner):
                 self._docker.start(container=container.get('Id'))
                 container['Created'] = True
 
-                molecule.utilities.print_success('Container created.\n{}')
+                molecule.utilities.print_success('Container created.\n')
             else:
                 self._docker.start(container['name'])
-                molecule.utilities.print_success('Starting container {} ...')
+                molecule.utilities.print_success(
+                    'Starting container {}...'.format(container['name']))
 
     def destroy(self):
 

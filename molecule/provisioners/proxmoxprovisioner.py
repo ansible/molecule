@@ -18,7 +18,7 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-from baseprovsioner import BaseProvisioner
+from baseprovisioner import BaseProvisioner
 
 
 # Place holder for Proxmox, partially implemented
