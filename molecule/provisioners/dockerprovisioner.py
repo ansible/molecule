@@ -18,12 +18,14 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-from baseprovsioner import BaseProvisioner
-import molecule.utilities
 from io import BytesIO
-import docker
 import json
 import collections
+
+import docker
+
+from baseprovsioner import BaseProvisioner
+import molecule.utilities
 
 
 class DockerProvisioner(BaseProvisioner):

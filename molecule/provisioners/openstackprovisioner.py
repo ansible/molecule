@@ -18,10 +18,12 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
+import collections
+
+from shade import openstack_cloud
+
 from baseprovsioner import BaseProvisioner
 import molecule.utilities
-from shade import openstack_cloud
-import collections
 
 
 class OpenstackProvisioner(BaseProvisioner):

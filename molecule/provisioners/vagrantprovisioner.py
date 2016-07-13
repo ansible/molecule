@@ -18,10 +18,12 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
+import os
+
 import vagrant
+
 from baseprovsioner import BaseProvisioner, InvalidPlatformSpecified, InvalidProviderSpecified
 import molecule.utilities
-import os
 
 
 class VagrantProvisioner(BaseProvisioner):
