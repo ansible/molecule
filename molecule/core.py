@@ -312,7 +312,10 @@ class Molecule(object):
 
         # Remove any previous symlink.
         if os.path.lexists(group_vars_link_path):
-            os.unlink(group_vars_link_path)
+            try:
+                os.unlink(group_vars_link_path)
+            except:
+                pass
 
         # Do not create the symlink if nothing is specified in the config.
         if not group_vars_target:
