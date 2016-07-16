@@ -18,98 +18,107 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import testtools
+import pytest
 
 from molecule.ansible_playbook import AnsiblePlaybook
 
 
-class TestConfig(testtools.TestCase):
-    def setUp(self):
-        super(TestConfig, self).setUp()
-
-        self.data = {
-            'playbook': 'playbook.yml',
-            'config_file': 'test.cfg',
-            'limit': 'all',
-            'verbose': 'vvvv',
-            'diff': True,
-            'host_key_checking': False,
-            'raw_ssh_args': [
-                '-o UserKnownHostsFile=/dev/null', '-o IdentitiesOnly=yes',
-                '-o ControlMaster=auto', '-o ControlPersist=60s'
-            ],
-            'raw_env_vars': {
-                'TEST_1': 'test_1'
-            }
+@pytest.fixture()
+def ansible():
+    data = {
+        'playbook': 'playbook.yml',
+        'config_file': 'test.cfg',
+        'limit': 'all',
+        'verbose': 'vvvv',
+        'diff': True,
+        'host_key_checking': False,
+        'raw_ssh_args': [
+            '-o UserKnownHostsFile=/dev/null', '-o IdentitiesOnly=yes',
+            '-o ControlMaster=auto', '-o ControlPersist=60s'
+        ],
+        'raw_env_vars': {
+            'TEST_1': 'test_1'
         }
+    }
 
-        self.ansible = AnsiblePlaybook(self.data)
+    return AnsiblePlaybook(data)
 
-    def test_arg_loading(self):
-        # string value set
-        self.assertEqual(self.ansible.cli['limit'], self.data['limit'])
 
-        # true value set
-        self.assertEqual(self.ansible.cli['diff'], self.data['diff'])
+def test_arg_loading(ansible):
+    # string value set
+    assert 'all' == ansible.cli['limit']
 
-        # false values don't exist in arg dict at all
-        self.assertIsNone(self.ansible.cli.get('sudo_user'))
+    # true value set
+    assert ansible.cli['diff']
 
-    def test_parse_arg_special_cases(self):
-        # raw environment variables are set
-        self.assertIsNone(self.ansible.cli.get('raw_env_vars'))
-        self.assertEqual(self.ansible.env['TEST_1'],
-                         self.data['raw_env_vars']['TEST_1'])
+    # false values don't exist in arg dict at all
+    assert ansible.cli.get('sudo_user') is None
 
-        # raw_ssh_args set
-        self.assertIsNone(self.ansible.cli.get('raw_ssh_args'))
-        self.assertEqual(self.ansible.env['ANSIBLE_SSH_ARGS'],
-                         ' '.join(self.data['raw_ssh_args']))
 
-        # host_key_checking gets set in environment as string 'false'
-        self.assertIsNone(self.ansible.cli.get('host_key_checking'))
-        self.assertEqual(self.ansible.env['ANSIBLE_HOST_KEY_CHECKING'],
-                         'false')
+def test_parse_arg_special_cases(ansible):
+    # raw environment variables are set
+    assert ansible.cli.get('raw_env_vars') is None
+    assert 'test_1' == ansible.env['TEST_1']
 
-        # config_file is set in environment
-        self.assertIsNone(self.ansible.cli.get('config_file'))
-        self.assertEqual(self.ansible.env['ANSIBLE_CONFIG'],
-                         self.data['config_file'])
+    # raw_ssh_args set
+    assert ansible.cli.get('raw_ssh_args') is None
+    expected = ('-o UserKnownHostsFile=/dev/null -o IdentitiesOnly=yes '
+                '-o ControlMaster=auto -o ControlPersist=60s')
+    assert expected == ansible.env['ANSIBLE_SSH_ARGS']
 
-        # playbook is set as attribute
-        self.assertIsNone(self.ansible.cli.get('playbook'))
-        self.assertEqual(self.ansible.playbook, self.data['playbook'])
+    # host_key_checking gets set in environment as string 'false'
+    assert ansible.cli.get('host_key_checking') is None
+    assert 'false' == ansible.env['ANSIBLE_HOST_KEY_CHECKING']
 
-        # verbose is set in the right place
-        self.assertIsNone(self.ansible.cli.get('verbose'))
-        self.assertIn('-' + self.data['verbose'], self.ansible.cli_pos)
+    # config_file is set in environment
+    assert ansible.cli.get('config_file') is None
+    assert 'test.cfg' == ansible.env['ANSIBLE_CONFIG']
 
-    def test_add_cli_arg(self):
-        # redefine a previously defined value
-        self.ansible.add_cli_arg('limit', 'test')
-        self.assertEqual(self.ansible.cli['limit'], 'test')
+    # playbook is set as attribute
+    assert ansible.cli.get('playbook') is None
+    assert 'playbook.yml' == ansible.playbook
 
-        # add a new value
-        self.ansible.add_cli_arg('molecule_1', 'test')
-        self.assertEqual(self.ansible.cli['molecule_1'], 'test')
+    # verbose is set in the right place
+    assert ansible.cli.get('verbose') is None
+    assert '-vvvv' in ansible.cli_pos
 
-        # values set as false shouldn't get added
-        self.ansible.add_cli_arg('molecule_2', None)
-        self.assertNotIn('molecule_2', self.ansible.cli)
 
-    def test_remove_cli_arg(self):
-        self.ansible.remove_cli_arg('limit')
-        self.assertNotIn('limit', self.ansible.cli)
+def test_add_cli_arg(ansible):
+    # redefine a previously defined value
+    ansible.add_cli_arg('limit', 'test')
 
-    def test_add_env_arg(self):
-        # redefine a previously defined value
-        self.ansible.add_env_arg('TEST_1', 'now')
-        self.assertEqual(self.ansible.env['TEST_1'], 'now')
+    assert 'test' == ansible.cli['limit']
 
-        # add a new value
-        self.ansible.add_env_arg('MOLECULE_1', 'test')
-        self.assertEqual(self.ansible.env['MOLECULE_1'], 'test')
+    # add a new value
+    ansible.add_cli_arg('molecule_1', 'test')
 
-    def test_remove_env_arg(self):
-        self.ansible.remove_env_arg('TEST_1')
-        self.assertNotIn('TEST_1', self.ansible.env)
+    assert 'test' == ansible.cli['molecule_1']
+
+    # values set as false shouldn't get added
+    ansible.add_cli_arg('molecule_2', None)
+
+    assert 'molecule_2' not in ansible.cli
+
+
+def test_remove_cli_arg(ansible):
+    ansible.remove_cli_arg('limit')
+
+    assert 'limit' not in ansible.cli
+
+
+def test_add_env_arg(ansible):
+    # redefine a previously defined value
+    ansible.add_env_arg('TEST_1', 'now')
+
+    assert 'now' == ansible.env['TEST_1']
+
+    # add a new value
+    ansible.add_env_arg('MOLECULE_1', 'test')
+
+    assert 'test' == ansible.env['MOLECULE_1']
+
+
+def test_remove_env_arg(ansible):
+    ansible.remove_env_arg('TEST_1')
+
+    assert 'TEST_1' not in ansible.env

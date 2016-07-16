@@ -1,7 +1,7 @@
 flake8
 mock
-testrepository
-testtools
+pytest
+pytest-mock
 tox
 wheel
 yapf==0.10.0
