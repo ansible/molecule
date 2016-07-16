@@ -54,7 +54,7 @@ molecule:
     # sequence of commands to run when performing `molecule test`
     sequence:
       - destroy
-      - check
+      - syntax
       - create
       - converge
       - idempotence

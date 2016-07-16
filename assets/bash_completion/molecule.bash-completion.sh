@@ -24,9 +24,9 @@ _molecule(){
 	prev=${COMP_WORDS[COMP_CWORD-1]}
 	firstword=$(_get_firstword)
 
-  GLOBAL_COMMANDS="check create converge destroy idempotence init list login status test verify"
+  GLOBAL_COMMANDS="syntax create converge destroy idempotence init list login status test verify"
   GLOBAL_OPTIONS="-h -v"
-  CHECK_OPTIONS=""
+  SYNTAX_OPTIONS=""
   CREATE_OPTIONS="--debug --platform --provider --tags"
   CONVERGE_OPTIONS="--debug --platform --provider --tags"
   DESTROY_OPTIONS="--debug --platform --provider --tags"

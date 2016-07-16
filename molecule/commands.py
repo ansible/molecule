@@ -104,12 +104,12 @@ class AbstractCommand:
         raise NotImplementedError
 
 
-class Check(AbstractCommand):
+class Syntax(AbstractCommand):
     """
     Performs a syntax check on the current role.
 
     Usage:
-        check
+        syntax
     """
 
     def execute(self, exit=True):
