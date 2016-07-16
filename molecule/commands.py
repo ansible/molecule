@@ -410,13 +410,6 @@ class Verify(AbstractCommand):
         # whitespace & trailing newline check
         validators.check_trailing_cruft(ignore_paths=ignore_paths, exit=exit)
 
-        # no serverspec or testinfra
-        if not os.path.isdir(serverspec_dir) and not os.path.isdir(
-                testinfra_dir):
-            msg = 'Skipping tests, could not find {}/ or {}/.'
-            utilities.logger.warning(msg.format(serverspec_dir, testinfra_dir))
-            return None, None
-
         self.molecule._write_ssh_config()
 
         # testinfra's Ansible calls get same env vars as ansible-playbook
@@ -438,10 +431,12 @@ class Verify(AbstractCommand):
 
         try:
             # testinfra
-            if len(glob.glob1(testinfra_dir, "test_*.py")) > 0:
+            tests = '{}/test_*.py'.format(testinfra_dir)
+            tests_glob = glob.glob(tests)
+            if len(tests_glob) > 0:
                 msg = 'Executing testinfra tests found in {}/.'
                 utilities.print_info(msg.format(testinfra_dir))
-                validators.testinfra(testinfra_dir, **testinfra_kwargs)
+                validators.testinfra(tests_glob, **testinfra_kwargs)
             else:
                 msg = 'No testinfra tests found in {}/.\n'
                 utilities.logger.warning(msg.format(testinfra_dir))
