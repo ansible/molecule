@@ -23,8 +23,10 @@ import copy
 
 import vagrant
 
-from baseprovisioner import BaseProvisioner, InvalidPlatformSpecified, InvalidProviderSpecified
 import molecule.utilities
+from baseprovisioner import BaseProvisioner
+from baseprovisioner import InvalidPlatformSpecified
+from baseprovisioner import InvalidProviderSpecified
 
 
 class VagrantProvisioner(BaseProvisioner):

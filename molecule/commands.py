@@ -26,16 +26,16 @@ import signal
 import sys
 from subprocess import CalledProcessError
 
-from docopt import docopt
 import jinja2
 import sh
 import yaml
+from docopt import docopt
 
+import molecule.utilities as utilities
 import molecule.validators as validators
 from molecule.ansible_galaxy_install import AnsibleGalaxyInstall
 from molecule.ansible_playbook import AnsiblePlaybook
 from molecule.core import Molecule
-import molecule.utilities as utilities
 
 
 class InvalidHost(Exception):

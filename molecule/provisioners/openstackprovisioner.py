@@ -22,8 +22,8 @@ import collections
 
 from shade import openstack_cloud
 
-from baseprovisioner import BaseProvisioner
 import molecule.utilities
+from baseprovisioner import BaseProvisioner
 
 
 class OpenstackProvisioner(BaseProvisioner):
