@@ -18,8 +18,6 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-from __future__ import print_function
-
 import os
 import sh
 
@@ -78,6 +76,7 @@ class AnsiblePlaybook:
         :param value: Value of argument to be added
         :return: None
         """
+
         # skip `requirements_file` since it used by ansible-galaxy only
         if name == 'requirements_file':
             return

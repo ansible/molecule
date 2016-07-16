@@ -18,8 +18,6 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-from __future__ import print_function
-
 import fcntl
 import os
 import re
@@ -28,13 +26,16 @@ import sys
 import termios
 from subprocess import CalledProcessError
 
-import colorama
 from tabulate import tabulate
 import yaml
 
 import molecule.config as config
 import molecule.utilities as utilities
-import molecule.provisioners as provisioners
+import molecule.provisioners.baseprovisioner as provisioners
+from provisioners.dockerprovisioner import DockerProvisioner
+from provisioners.openstackprovisioner import OpenstackProvisioner
+from provisioners.proxmoxprovisioner import ProxmoxProvisioner
+from provisioners.vagrantprovisioner import VagrantProvisioner
 
 
 class Molecule(object):
@@ -68,23 +69,21 @@ class Molecule(object):
         self._state = self._load_state_file()
 
         try:
-            self._provisioner = provisioners.get_provisioner(self)
+            self._provisioner = self.get_provisioner()
         except provisioners.InvalidProviderSpecified:
-            print("\n{}Invalid provider '{}'\n".format(
-                colorama.Fore.RED, self._args['--provider'],
-                colorama.Fore.RESET))
+            utilities.logger.error("\nInvalid provider '{}'\n".format(
+                self._args['--provider']))
             self._args['--provider'] = None
             self._args['--platform'] = None
-            self._provisioner = provisioners.get_provisioner(self)
+            self._provisioner = self.get_provisioner()
             self._print_valid_providers()
             sys.exit(1)
         except provisioners.InvalidPlatformSpecified:
-            print("\n{}Invalid platform '{}'\n".format(
-                colorama.Fore.RED, self._args['--platform'],
-                colorama.Fore.RESET))
+            utilities.logger.error("\nInvalid platform '{}'\n".format(
+                self._args['--platform']))
             self._args['--provider'] = None
             self._args['--platform'] = None
-            self._provisioner = provisioners.get_provisioner(self)
+            self._provisioner = self.get_provisioner()
             self._print_valid_platforms()
             sys.exit(1)
 
@@ -93,6 +92,7 @@ class Molecule(object):
 
         # updates instances config with full machine names
         self._config.populate_instance_names(self._env['MOLECULE_PLATFORM'])
+
         if self._args.get('--debug'):
             utilities.debug('RUNNING CONFIG',
                             yaml.dump(self._config.config,
@@ -100,6 +100,18 @@ class Molecule(object):
                                       indent=2))
 
         self._write_state_file()
+
+    def get_provisioner(self):
+        if 'vagrant' in self._config.config:
+            return VagrantProvisioner(self)
+        elif 'proxmox' in self._config.config:
+            return ProxmoxProvisioner(self)
+        elif 'docker' in self._config.config:
+            return DockerProvisioner(self)
+        elif 'openstack' in self._config.config:
+            return OpenstackProvisioner(self)
+        else:
+            return None
 
     def _load_state_file(self):
         """
@@ -115,8 +127,9 @@ class Molecule(object):
 
     def _write_state_file(self):
         utilities.write_file(self._config.config['molecule']['state_file'],
-                             yaml.dump(self._state,
-                                       default_flow_style=False))
+                             yaml.safe_dump(self._state,
+                                            default_flow_style=False,
+                                            encoding='utf-8'))
 
     def _write_ssh_config(self):
         try:
@@ -132,8 +145,7 @@ class Molecule(object):
 
     def _print_valid_platforms(self, porcelain=False):
         if not porcelain:
-            print(colorama.Fore.CYAN + "AVAILABLE PLATFORMS" +
-                  colorama.Fore.RESET)
+            utilities.logger.info("AVAILABLE PLATFORMS")
 
         data = []
         default_platform = self._provisioner.default_platform
@@ -149,8 +161,7 @@ class Molecule(object):
 
     def _print_valid_providers(self, porcelain=False):
         if not porcelain:
-            print(colorama.Fore.CYAN + "AVAILABLE PROVIDERS" +
-                  colorama.Fore.RESET)
+            utilities.logger.info("AVAILABLE PROVIDERS")
 
         data = []
         default_provider = self._provisioner.default_provider
@@ -235,6 +246,7 @@ class Molecule(object):
 
         :return: None
         """
+
         inventory = ''
 
         for instance in self._provisioner.instances:
@@ -264,8 +276,8 @@ class Molecule(object):
             utilities.write_file(inventory_file, inventory)
         except IOError:
             utilities.logger.warning(
-                '{}WARNING: could not write inventory file {}{}'.format(
-                    colorama.Fore.YELLOW, inventory_file, colorama.Fore.RESET))
+                'WARNING: could not write inventory file {}'.format(
+                    inventory_file))
 
     def _add_or_update_vars(self, target):
         """Creates or updates to host/group variables if needed."""
@@ -300,7 +312,10 @@ class Molecule(object):
 
         # Remove any previous symlink.
         if os.path.lexists(group_vars_link_path):
-            os.unlink(group_vars_link_path)
+            try:
+                os.unlink(group_vars_link_path)
+            except:
+                pass
 
         # Do not create the symlink if nothing is specified in the config.
         if not group_vars_target:
@@ -336,3 +351,7 @@ class Molecule(object):
 
         # Print the results.
         print(tabulate(data, headers, tablefmt=table_format))
+
+    def _remove_inventory_file(self):
+        if os._exists(self._config.config['molecule']['inventory_file']):
+            os.remove(self._config.config['molecule']['inventory_file'])

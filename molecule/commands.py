@@ -18,8 +18,6 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-from __future__ import print_function
-
 import glob
 import os
 import pexpect
@@ -28,17 +26,16 @@ import signal
 import sys
 from subprocess import CalledProcessError
 
-import colorama
 from docopt import docopt
 import jinja2
 import sh
 import yaml
 
-import molecule.utilities as utilities
 import molecule.validators as validators
 from molecule.ansible_galaxy_install import AnsibleGalaxyInstall
 from molecule.ansible_playbook import AnsiblePlaybook
 from molecule.core import Molecule
+import molecule.utilities as utilities
 
 
 class InvalidHost(Exception):
@@ -95,9 +92,8 @@ class AbstractCommand:
         :param cmd: Name of the disabled command to print.
         :return: None
         """
-        fmt = [colorama.Fore.RED, cmd, colorama.Fore.RESET]
-        errmsg = "{}The `{}` command isn't supported with static inventory.{}"
-        utilities.logger.error(errmsg.format(*fmt))
+        errmsg = "The `{}` command isn't supported with static inventory."
+        utilities.logger.error(errmsg.format(cmd))
         sys.exit(1)
 
     def execute(self):
@@ -120,6 +116,8 @@ class Check(AbstractCommand):
         ansible.add_cli_arg('syntax-check', True)
         ansible.add_cli_arg('inventory-file', 'localhost,')
 
+        utilities.print_info("Checking playbooks syntax ...")
+
         return ansible.execute(hide_errors=True)
 
 
@@ -140,8 +138,10 @@ class Create(AbstractCommand):
         if self.static:
             self.disabled('create')
 
+        self.molecule._remove_inventory_file()
         self.molecule._create_templates()
         try:
+            utilities.print_info("Creating instances ...")
             self.molecule._provisioner.up(no_provision=True)
             self.molecule._state['created'] = True
             if self.args['--platform'] == 'all':
@@ -154,6 +154,7 @@ class Create(AbstractCommand):
             if exit:
                 sys.exit(e.returncode)
             return e.returncode, e.message
+        self.molecule._create_inventory_file()
         return None, None
 
 
@@ -182,6 +183,7 @@ class Destroy(AbstractCommand):
 
         self.molecule._create_templates()
         try:
+            utilities.print_info("Destroying instances ...")
             self.molecule._provisioner.destroy()
             self.molecule._state['default_platform'] = False
             self.molecule._state['default_provider'] = False
@@ -195,6 +197,7 @@ class Destroy(AbstractCommand):
                 sys.exit(e.returncode)
             return e.returncode, e.message
         self.molecule._remove_templates()
+        self.molecule._remove_inventory_file()
         return None, None
 
 
@@ -254,8 +257,7 @@ class Converge(AbstractCommand):
         # install role dependencies only during `molecule converge`
         if not idempotent and 'requirements_file' in self.molecule._config.config[
                 'ansible']:
-            print('{}Installing role dependencies ...{}'.format(
-                colorama.Fore.CYAN, colorama.Fore.RESET))
+            utilities.print_info('Installing role dependencies ...')
             galaxy_install = AnsibleGalaxyInstall(self.molecule._config.config[
                 'ansible']['requirements_file'])
             galaxy_install.add_env_arg(
@@ -313,6 +315,7 @@ class Converge(AbstractCommand):
                                       indent=2))
             utilities.debug('ANSIBLE PLAYBOOK', str(ansible.ansible))
 
+        utilities.print_info("Starting Ansible Run ...")
         status, output = ansible.execute(hide_errors=hide_errors)
         if status is not None:
             if exit:
@@ -343,45 +346,37 @@ class Idempotence(AbstractCommand):
         if self.static:
             self.disabled('idempotence')
 
-        print(
-            '{}Idempotence test in progress (can take a few minutes)...{}'.format(
-                colorama.Fore.MAGENTA, colorama.Fore.RESET))
+        utilities.print_info(
+            'Idempotence test in progress (can take a few minutes)...')
 
         c = Converge(self.command_args, self.args, self.molecule)
         status, output = c.execute(idempotent=True,
                                    exit=False,
                                    hide_errors=True)
         if status is not None:
-            msg = '{}Skipping due to errors during converge.\n{}'
-            print(msg.format(colorama.Fore.YELLOW, colorama.Fore.RESET))
+            msg = 'Skipping due to errors during converge.\n'
+            utilities.print_info(msg)
             return status, None
 
         idempotent, changed_tasks = self.molecule._parse_provisioning_output(
             output)
 
         if idempotent:
-            print('{}Idempotence test passed.{}'.format(colorama.Fore.GREEN,
-                                                        colorama.Fore.RESET))
-            print()
+            utilities.print_success('Idempotence test passed.')
             return None, None
 
         # Display the details of the idempotence test.
         if changed_tasks:
             utilities.logger.error(
-                '{}Idempotence test failed because of the following tasks:{}'.format(
-                    colorama.Fore.RED, colorama.Fore.RESET))
-            utilities.logger.error('{}{}{}'.format(colorama.Fore.RED,
-                                                   '\n'.join(changed_tasks),
-                                                   colorama.Fore.RESET))
+                'Idempotence test failed because of the following tasks:')
+            utilities.logger.error('{}'.format('\n'.join(changed_tasks)))
         else:
             # But in case the idempotence callback plugin was not found, we just display an error message.
-            utilities.logger.error('{}Idempotence test failed.{}'.format(
-                colorama.Fore.RED, colorama.Fore.RESET))
+            utilities.logger.error('Idempotence test failed.')
             warning_msg = "The idempotence plugin was not found or did not provide the required information. " \
                           "Therefore the failure details cannot be displayed."
 
-            utilities.logger.warning('{}{}{}'.format(
-                colorama.Fore.YELLOW, warning_msg, colorama.Fore.RESET))
+            utilities.logger.warning(warning_msg)
         if exit:
             sys.exit(1)
         return 1, None
@@ -418,10 +413,8 @@ class Verify(AbstractCommand):
         # no serverspec or testinfra
         if not os.path.isdir(serverspec_dir) and not os.path.isdir(
                 testinfra_dir):
-            msg = '{}Skipping tests, could not find {}/ or {}/.{}'
-            utilities.logger.warning(msg.format(colorama.Fore.YELLOW,
-                                                serverspec_dir, testinfra_dir,
-                                                colorama.Fore.RESET))
+            msg = 'Skipping tests, could not find {}/ or {}/.'
+            utilities.logger.warning(msg.format(serverspec_dir, testinfra_dir))
             return None, None
 
         self.molecule._write_ssh_config()
@@ -446,33 +439,25 @@ class Verify(AbstractCommand):
         try:
             # testinfra
             if len(glob.glob1(testinfra_dir, "test_*.py")) > 0:
-                msg = '\n{}Executing testinfra tests found in {}/.{}'
-                print(msg.format(colorama.Fore.MAGENTA, testinfra_dir,
-                                 colorama.Fore.RESET))
+                msg = 'Executing testinfra tests found in {}/.'
+                utilities.print_info(msg.format(testinfra_dir))
                 validators.testinfra(testinfra_dir, **testinfra_kwargs)
-                print()
             else:
-                msg = '{}No testinfra tests found in {}/.\n{}'
-                utilities.logger.warning(msg.format(
-                    colorama.Fore.YELLOW, testinfra_dir, colorama.Fore.RESET))
+                msg = 'No testinfra tests found in {}/.\n'
+                utilities.logger.warning(msg.format(testinfra_dir))
 
             # serverspec / rubocop
             if os.path.isdir(serverspec_dir):
-                msg = '{}Executing rubocop on *.rb files found in {}/.{}'
-                print(msg.format(colorama.Fore.MAGENTA, serverspec_dir,
-                                 colorama.Fore.RESET))
+                msg = 'Executing rubocop on *.rb files found in {}/.'
+                utilities.print_info(msg.format(serverspec_dir))
                 validators.rubocop(serverspec_dir, **serverspec_kwargs)
-                print()
 
-                msg = '{}Executing serverspec tests found in {}/.{}'
-                print(msg.format(colorama.Fore.MAGENTA, serverspec_dir,
-                                 colorama.Fore.RESET))
+                msg = 'Executing serverspec tests found in {}/.'
+                utilities.print_info(msg.format(serverspec_dir))
                 validators.rake(rakefile, **serverspec_kwargs)
-                print()
             else:
-                msg = '{}No serverspec tests found in {}/.\n{}'
-                utilities.logger.warning(msg.format(
-                    colorama.Fore.YELLOW, serverspec_dir, colorama.Fore.RESET))
+                msg = 'No serverspec tests found in {}/.\n'
+                utilities.logger.warning(msg.format(serverspec_dir))
         except sh.ErrorReturnCode as e:
             utilities.logger.error('ERROR: {}'.format(e))
             if exit:
@@ -585,10 +570,9 @@ class Status(AbstractCommand):
 
         # Check that an instance is created.
         if not self.molecule._state.get('created'):
-            errmsg = '{}ERROR: No instances created. Try `{} create` first.{}'
-            utilities.logger.error(errmsg.format(colorama.Fore.RED,
-                                                 os.path.basename(sys.argv[0]),
-                                                 colorama.Fore.RESET))
+            errmsg = 'ERROR: No instances created. Try `{} create` first.'
+            utilities.logger.error(errmsg.format(os.path.basename(sys.argv[
+                0])))
             sys.exit(1)
 
         # Retrieve the status.
@@ -610,19 +594,17 @@ class Status(AbstractCommand):
 
             for item in status:
                 if item.state != 'not_created':
-                    state = colorama.Fore.GREEN + item.state + colorama.Fore.RESET
+                    state = item.state
                 else:
                     state = item.state
 
                 data.append([item.name, state, item.provider])
 
             self.molecule._display_tabulate_data(data, headers=headers)
-            print()
 
         # Display the platforms.
         if display_all or self.molecule._args['--platforms']:
             self.molecule._print_valid_platforms(porcelain=porcelain)
-            print()
 
         # Display the providers.
         if display_all or self.molecule._args['--providers']:
@@ -678,9 +660,8 @@ class Login(AbstractCommand):
                 elif len(match) != 1:
                     raise InvalidHost(
                         "There are {} hosts that match '{}'.  You can only log into one at a time.\n"
-                        "Try {}molecule status{} to see available hosts.".format(
-                            len(match), hostname, colorama.Fore.YELLOW,
-                            colorama.Fore.RED))
+                        "Try molecule status to see available hosts.".format(
+                            len(match), hostname))
                 hostname = match[0]
 
             login_cmd = self.molecule._provisioner.login_cmd(hostname)
@@ -688,15 +669,12 @@ class Login(AbstractCommand):
 
         except CalledProcessError:
             # gets appended to python-vagrant's error message
-            conf_format = [colorama.Fore.RED, self.molecule._args['<host>'],
-                           colorama.Fore.YELLOW, colorama.Fore.RESET]
-            conf_errmsg = '\n{0}Unknown host {1}. Try {2}molecule status{0} to see available hosts.{3}'
-            utilities.logger.error(conf_errmsg.format(*conf_format))
+            conf_errmsg = '\nUnknown host {}. Try molecule status to see available hosts.'
+            utilities.logger.error(conf_errmsg.format(self.molecule._args[
+                '<host>']))
             sys.exit(1)
         except InvalidHost as e:
-            conf_format = [colorama.Fore.RED, e.message, colorama.Fore.RESET]
-            conf_errmsg = '{}{}{}'
-            utilities.logger.error(conf_errmsg.format(*conf_format))
+            utilities.logger.error(e.message)
             sys.exit(1)
 
         lines, columns = os.popen('stty size', 'r').read().split()
@@ -714,7 +692,7 @@ class Init(AbstractCommand):
     Creates the scaffolding for a new role intended for use with molecule.
 
     Usage:
-        init <role> [--docker] [--offline]
+        init <role> [--docker | --openstack] [--offline]
     """
 
     def clean_meta_main(self, role_path):
@@ -731,16 +709,13 @@ class Init(AbstractCommand):
         role = self.molecule._args['<role>']
         role_path = os.path.join(os.curdir, role)
         if not role:
-            msg = '{}The init command requires a role name. Try:\n\n{}{} init <role>{}'
-            utilities.logger.error(msg.format(
-                colorama.Fore.RED, colorama.Fore.YELLOW, os.path.basename(
-                    sys.argv[0]), colorama.Fore.RESET))
+            msg = 'The init command requires a role name. Try:\n\n{} init <role>'
+            utilities.logger.error(msg.format(os.path.basename(sys.argv[0])))
             sys.exit(1)
 
         if os.path.isdir(role):
-            msg = '{}The directory {} already exists. Cannot create new role.{}'
-            utilities.logger.error(msg.format(colorama.Fore.RED, role_path,
-                                              colorama.Fore.RESET))
+            msg = 'The directory {} already exists. Cannot create new role.'
+            utilities.logger.error(msg.format(role_path))
             sys.exit(1)
 
         try:
@@ -768,6 +743,9 @@ class Init(AbstractCommand):
         if (self.molecule._args['--docker']):
             t_molecule = env.get_template(self.molecule._config.config[
                 'molecule']['init']['templates']['molecule_docker'])
+        if (self.molecule._args['--openstack']):
+            t_molecule = env.get_template(self.molecule._config.config[
+                'molecule']['init']['templates']['molecule_openstack'])
 
         sanitized_role = re.sub('[._]', '-', role)
         with open(
@@ -792,6 +770,6 @@ class Init(AbstractCommand):
         with open(os.path.join(testinfra_path, 'test_default.py'), 'w') as f:
             f.write(t_test_default.render())
 
-        msg = '{}Successfully initialized new role in {}{}'
-        print(msg.format(colorama.Fore.GREEN, role_path, colorama.Fore.RESET))
+        msg = 'Successfully initialized new role in {}'
+        utilities.print_success(msg.format(role_path))
         sys.exit(0)

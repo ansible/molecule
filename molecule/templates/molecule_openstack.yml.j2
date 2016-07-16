@@ -1,0 +1,14 @@
+---
+ansible:
+  playbook: playbook.yml
+
+openstack:
+  keyfile: ~/.ssh/id_rsa
+  keypair: NameKey
+  instances:
+    - name: test-molecule
+      image: 'CentOS 7'
+      flavor: m1.xlarge
+      sshuser: centos
+      ansible_groups:
+        - ansib1
