@@ -1,0 +1,8 @@
+test1 connection=docker
+test2 connection=docker
+
+[group1]
+test1
+
+[group2]
+test2

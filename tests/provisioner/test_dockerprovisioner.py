@@ -36,7 +36,7 @@ def molecule_file(tmpdir, request):
     data = {
         'molecule': {
             'molecule_dir': '.test_molecule',
-            'inventory_file': 'tests/ansible_inventory'
+            'inventory_file': 'tests/support/ansible_inventory'
         },
         'docker': {
             'containers': [
@@ -142,7 +142,7 @@ def test_provision(molecule):
     docker_provisioner.up()
 
     pb = docker_provisioner.ansible_connection_params
-    pb['playbook'] = 'tests/playbook.yml'
+    pb['playbook'] = 'tests/support/playbook.yml'
     pb['inventory'] = 'test1,test2,'
     ansible = AnsiblePlaybook(pb)
 
@@ -159,8 +159,8 @@ def test_inventory_generation(molecule):
     molecule._create_inventory_file()
 
     pb = molecule._provisioner.ansible_connection_params
-    pb['playbook'] = 'tests/playbook.yml'
-    pb['inventory'] = 'tests/ansible_inventory'
+    pb['playbook'] = 'tests/support/playbook.yml'
+    pb['inventory'] = 'tests/support/ansible_inventory'
     ansible = AnsiblePlaybook(pb)
 
     assert (None, '') == ansible.execute()
