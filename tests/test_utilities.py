@@ -131,11 +131,12 @@ def test_merge_deep_deep_02(deep_dict_b, deep_dict_a):
     assert expected == actual
 
 
+# TODO(retr0h): Cleanup how we deal with temp files
 def test_write_template():
+    d = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'support')
+    src = os.path.join(d, 'test_write_template.j2')
     tmp_file = '/tmp/test_utilities_write_template.tmp'
-    utilities.write_template('test_write_template.j2',
-                             tmp_file, {'test': 'chicken'},
-                             _dir='templates/tests')
+    utilities.write_template(src, tmp_file, {'test': 'chicken'})
     with open(tmp_file, 'r') as f:
         data = f.read()
     os.remove(tmp_file)
@@ -143,6 +144,7 @@ def test_write_template():
     assert data == 'this is a chicken\n'
 
 
+# TODO(retr0h): Cleanup how we deal with temp files
 def test_write_file():
     tmp_file = '/tmp/test_utilities_write_file.tmp'
     contents = binascii.b2a_hex(os.urandom(15))
