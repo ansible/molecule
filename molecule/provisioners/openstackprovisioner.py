@@ -112,7 +112,6 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
         return params
 
     def up(self, no_provision=True):
-
         self.set_keypair()
 
         active_instances = self._openstack.list_servers()
@@ -142,7 +141,6 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
                     num_retries += 1
 
     def destroy(self):
-
         utilities.logger.info("Deleting openstack instances ...")
 
         active_instances = self._openstack.list_servers()
@@ -164,7 +162,6 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
                     instance['created'] = False
 
     def status(self):
-
         Status = collections.namedtuple('Status', ['name', 'state',
                                                    'provider'])
         status_list = []
@@ -182,7 +179,6 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
         return status_list
 
     def conf(self, name=None, ssh_config=False):
-
         with open(self.m._config.config['molecule'][
                 'inventory_file']) as instance:
             for line in instance:
@@ -214,7 +210,6 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
         return 'ssh {} -l {}'
 
     def login_args(self, instance_name):
-
         # Try to retrieve the SSH configuration of the host.
         conf = self.conf(name=instance_name)
         user = ''

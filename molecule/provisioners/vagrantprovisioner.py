@@ -44,7 +44,8 @@ class VagrantProvisioner(baseprovisioner.BaseProvisioner):
                     for item in self.m._config.config['vagrant']['providers']
                     if item['name'] == self.m._args['--provider']]:
                 raise baseprovisioner.InvalidProviderSpecified()
-            self.m._state['default_provider'] = self.m._args['--provider']
+            self.m._state.change_state('default_provider',
+                                       self.m._args['--provider'])
             self.m._env['VAGRANT_DEFAULT_PROVIDER'] = self.m._args[
                 '--provider']
         else:
@@ -60,7 +61,8 @@ class VagrantProvisioner(baseprovisioner.BaseProvisioner):
                             'platforms']
                         if item['name'] == self.m._args['--platform']]:
                     raise baseprovisioner.InvalidPlatformSpecified()
-            self.m._state['default_platform'] = self.m._args['--platform']
+            self.m._state.change_state('default_platform',
+                                       self.m._args['--platform'])
             self.m._env['MOLECULE_PLATFORM'] = self.m._args['--platform']
         else:
             self.m._env['MOLECULE_PLATFORM'] = self.default_platform
@@ -103,10 +105,10 @@ class VagrantProvisioner(baseprovisioner.BaseProvisioner):
                 0]['name']
 
         # default to first entry if no entry for provider exists or provider is false
-        if not self.m._state.get('default_provider'):
+        if not self.m._state.default_provider:
             return default_provider
 
-        return self.m._state['default_provider']
+        return self.m._state.default_provider
 
     @property
     def default_platform(self):
@@ -126,10 +128,10 @@ class VagrantProvisioner(baseprovisioner.BaseProvisioner):
                 0]['name']
 
         # default to first entry if no entry for platform exists or platform is false
-        if not self.m._state.get('default_platform'):
+        if not self.m._state.default_platform:
             return default_platform
 
-        return self.m._state['default_platform']
+        return self.m._state.default_platform
 
     @property
     def provider(self):
@@ -181,13 +183,11 @@ class VagrantProvisioner(baseprovisioner.BaseProvisioner):
         self._vagrant.up(no_provision)
 
     def destroy(self):
-        if self.m._state.get('created'):
+        if self.m._state.created:
             self._vagrant.destroy()
 
         if os._exists(self.m._config.config['molecule']['vagrantfile_file']):
             os.remove(self.m._config.config['molecule']['vagrantfile_file'])
-
-        self.m._state['platformcloned'] = False
 
     def status(self):
         return self._vagrant.status()
@@ -216,7 +216,6 @@ class VagrantProvisioner(baseprovisioner.BaseProvisioner):
         return 'ssh {} -l {} -p {} -i {} {}'
 
     def login_args(self, instance_name):
-
         # Try to retrieve the SSH configuration of the host.
         conf = self.conf(vm_name=instance_name)
 

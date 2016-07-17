@@ -144,12 +144,9 @@ class Create(AbstractCommand):
         try:
             utilities.print_info("Creating instances ...")
             self.molecule._provisioner.up(no_provision=True)
-            self.molecule._state['created'] = True
+            self.molecule._state.change_state('created', True)
             if self.args['--platform'] == 'all':
-                self.molecule._state['multiple_platforms'] = True
-            else:
-                self.molecule._state['multiple_platforms'] = False
-            self.molecule._write_state_file()
+                self.molecule._state.change_state('multiple_platforms', True)
         except subprocess.CalledProcessError as e:
             utilities.logger.error('ERROR: {}'.format(e))
             if exit:
@@ -186,12 +183,7 @@ class Destroy(AbstractCommand):
         try:
             utilities.print_info("Destroying instances ...")
             self.molecule._provisioner.destroy()
-            self.molecule._state['default_platform'] = False
-            self.molecule._state['default_provider'] = False
-            self.molecule._state['created'] = False
-            self.molecule._state['converged'] = False
-            self.molecule._state['multiple_platforms'] = False
-            self.molecule._write_state_file()
+            self.molecule._state.reset()
         except subprocess.CalledProcessError as e:
             utilities.logger.error('ERROR: {}'.format(e))
             if exit:
@@ -228,17 +220,17 @@ class Converge(AbstractCommand):
         :param create_instances: Toggle instance creation
         :return: Provisioning output
         """
-        if self.molecule._state.get('created'):
+        if self.molecule._state.created:
             create_instances = False
 
-        if self.molecule._state.get('converged'):
+        if self.molecule._state.converged:
             create_inventory = False
 
-        if self.molecule._state.get('multiple_platforms'):
+        if self.molecule._state.multiple_platforms:
             self.args['--platform'] = 'all'
         else:
-            if self.args['--platform'] == 'all' and self.molecule._state.get(
-                    'created'):
+            if self.args[
+                    '--platform'] == 'all' and self.molecule._state.created:
                 create_instances = True
                 create_inventory = True
 
@@ -324,9 +316,8 @@ class Converge(AbstractCommand):
                 sys.exit(status)
             return status, None
 
-        if not self.molecule._state.get('converged'):
-            self.molecule._state['converged'] = True
-            self.molecule._write_state_file()
+        if not self.molecule._state.converged:
+            self.molecule._state.change_state('converged', True)
 
         return None, output
 
@@ -567,7 +558,7 @@ class Status(AbstractCommand):
                                self.args['--providers']])
 
         # Check that an instance is created.
-        if not self.molecule._state.get('created'):
+        if not self.molecule._state.created:
             errmsg = 'ERROR: No instances created. Try `{} create` first.'
             utilities.logger.error(errmsg.format(os.path.basename(sys.argv[
                 0])))

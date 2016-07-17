@@ -70,7 +70,6 @@ def molecule_file(tmpdir, request):
 def molecule(molecule_file):
     m = core.Molecule(dict())
     m._config.load_defaults_file(defaults_file=molecule_file)
-    m._state = dict()
 
     return m
 
