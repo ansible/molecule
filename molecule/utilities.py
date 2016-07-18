@@ -21,14 +21,14 @@
 from __future__ import print_function
 
 import copy
+import logging
 import os
 import sys
+import time
 
-import logging
 import paramiko
 import colorama
 import jinja2
-import time
 
 
 class LogFilter(object):
