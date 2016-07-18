@@ -653,10 +653,16 @@ class Login(AbstractCommand):
                 if len(match) == 0:
                     raise CalledProcessError(1, None)
                 elif len(match) != 1:
-                    raise InvalidHost(
-                        "There are {} hosts that match '{}'.  You can only log into one at a time.\n"
-                        "Try molecule status to see available hosts.".format(
-                            len(match), hostname))
+                    # If there are multiple matches, but one of them is an
+                    # exact string match, assume this is the one they're
+                    # looking for and use it
+                    if hostname in match:
+                        match = [hostname,]
+                    else:
+                        raise InvalidHost(
+                            "There are {} hosts that match '{}'.  You can only log into one at a time.\n"
+                            "Try molecule status to see available hosts.".format(
+                                len(match), hostname))
                 hostname = match[0]
 
             login_cmd = self.molecule._provisioner.login_cmd(hostname)
