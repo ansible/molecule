@@ -20,12 +20,12 @@
 
 import pytest
 
-from molecule.core import Molecule
+from molecule import core
 
 
 @pytest.fixture()
 def molecule():
-    return Molecule(dict())
+    return core.Molecule(dict())
 
 
 def test_parse_provisioning_output_failure_00(molecule):

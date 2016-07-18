@@ -24,18 +24,18 @@ import re
 import struct
 import sys
 import termios
-from subprocess import CalledProcessError
+import subprocess
 
-from tabulate import tabulate
+import tabulate
 import yaml
 
-import molecule.config as config
-import molecule.utilities as utilities
-import molecule.provisioners.baseprovisioner as provisioners
-from provisioners.dockerprovisioner import DockerProvisioner
-from provisioners.openstackprovisioner import OpenstackProvisioner
-from provisioners.proxmoxprovisioner import ProxmoxProvisioner
-from provisioners.vagrantprovisioner import VagrantProvisioner
+from molecule import config
+from molecule import utilities
+from molecule.provisioners import baseprovisioner
+from molecule.provisioners import dockerprovisioner
+from molecule.provisioners import openstackprovisioner
+from molecule.provisioners import proxmoxprovisioner
+from molecule.provisioners import vagrantprovisioner
 
 
 class Molecule(object):
@@ -70,7 +70,7 @@ class Molecule(object):
 
         try:
             self._provisioner = self.get_provisioner()
-        except provisioners.InvalidProviderSpecified:
+        except baseprovisioner.InvalidProviderSpecified:
             utilities.logger.error("\nInvalid provider '{}'\n".format(
                 self._args['--provider']))
             self._args['--provider'] = None
@@ -78,7 +78,7 @@ class Molecule(object):
             self._provisioner = self.get_provisioner()
             self._print_valid_providers()
             sys.exit(1)
-        except provisioners.InvalidPlatformSpecified:
+        except baseprovisioner.InvalidPlatformSpecified:
             utilities.logger.error("\nInvalid platform '{}'\n".format(
                 self._args['--platform']))
             self._args['--provider'] = None
@@ -103,13 +103,13 @@ class Molecule(object):
 
     def get_provisioner(self):
         if 'vagrant' in self._config.config:
-            return VagrantProvisioner(self)
+            return vagrantprovisioner.VagrantProvisioner(self)
         elif 'proxmox' in self._config.config:
-            return ProxmoxProvisioner(self)
+            return proxmoxprovisioner.ProxmoxProvisioner(self)
         elif 'docker' in self._config.config:
-            return DockerProvisioner(self)
+            return dockerprovisioner.DockerProvisioner(self)
         elif 'openstack' in self._config.config:
-            return OpenstackProvisioner(self)
+            return openstackprovisioner.OpenstackProvisioner(self)
         else:
             return None
 
@@ -137,7 +137,7 @@ class Molecule(object):
             ssh_config = self._provisioner.ssh_config_file
             if ssh_config is None:
                 return
-        except CalledProcessError as e:
+        except subprocess.CalledProcessError as e:
             utilities.logger.error('ERROR: {}'.format(e))
             utilities.logger.error("Does your vagrant VM exist?")
             sys.exit(e.returncode)
@@ -350,7 +350,7 @@ class Molecule(object):
         table_format = "fancy_grid" if headers else "plain"
 
         # Print the results.
-        print(tabulate(data, headers, tablefmt=table_format))
+        print(tabulate.tabulate(data, headers, tablefmt=table_format))
 
     def _remove_inventory_file(self):
         if os._exists(self._config.config['molecule']['inventory_file']):

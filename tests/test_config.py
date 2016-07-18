@@ -22,7 +22,7 @@ import os
 
 import pytest
 
-import molecule.config as config
+from molecule import config
 
 
 @pytest.fixture()

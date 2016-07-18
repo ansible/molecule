@@ -22,9 +22,9 @@ import os
 
 import pytest
 
-from molecule.ansible_playbook import AnsiblePlaybook
-from molecule.core import Molecule
-from molecule.provisioners import DockerProvisioner
+from molecule import core
+from molecule import ansible_playbook
+from molecule.provisioners import dockerprovisioner
 
 # TODO(retr0h): Implement finalizer (teardown).
 
@@ -68,7 +68,7 @@ def molecule_file(tmpdir, request):
 
 @pytest.fixture()
 def molecule(molecule_file):
-    m = Molecule(dict())
+    m = core.Molecule(dict())
     m._config.load_defaults_file(defaults_file=molecule_file)
     m._state = dict()
 
@@ -76,7 +76,7 @@ def molecule(molecule_file):
 
 
 def test_name(molecule):
-    docker_provisioner = DockerProvisioner(molecule)
+    docker_provisioner = dockerprovisioner.DockerProvisioner(molecule)
 
     # false values don't exist in arg dict at all
     assert 'docker' == docker_provisioner.name
@@ -87,13 +87,13 @@ def test_get_provisioner(molecule):
 
 
 def test_up(molecule):
-    docker_provisioner = DockerProvisioner(molecule)
+    docker_provisioner = dockerprovisioner.DockerProvisioner(molecule)
     docker_provisioner.up()
     docker_provisioner.destroy()
 
 
 def test_instances(molecule):
-    docker_provisioner = DockerProvisioner(molecule)
+    docker_provisioner = dockerprovisioner.DockerProvisioner(molecule)
 
     assert 'test1' == docker_provisioner.instances[0]['name']
     assert 'test2' == docker_provisioner.instances[1]['name']
@@ -102,7 +102,7 @@ def test_instances(molecule):
 
 
 def test_status(molecule):
-    docker_provisioner = DockerProvisioner(molecule)
+    docker_provisioner = dockerprovisioner.DockerProvisioner(molecule)
 
     docker_provisioner.up()
 
@@ -119,7 +119,7 @@ def test_status(molecule):
 
 
 def test_destroy(molecule):
-    docker_provisioner = DockerProvisioner(molecule)
+    docker_provisioner = dockerprovisioner.DockerProvisioner(molecule)
 
     docker_provisioner.up()
 
@@ -136,7 +136,7 @@ def test_destroy(molecule):
 
 
 def test_provision(molecule):
-    docker_provisioner = DockerProvisioner(molecule)
+    docker_provisioner = dockerprovisioner.DockerProvisioner(molecule)
 
     docker_provisioner.destroy()
     docker_provisioner.up()
@@ -144,7 +144,7 @@ def test_provision(molecule):
     pb = docker_provisioner.ansible_connection_params
     pb['playbook'] = 'tests/support/playbook.yml'
     pb['inventory'] = 'test1,test2,'
-    ansible = AnsiblePlaybook(pb)
+    ansible = ansible_playbook.AnsiblePlaybook(pb)
 
     # TODO(retr0h): Understand why provisioner is None
     assert (None, '') == ansible.execute()
@@ -153,7 +153,7 @@ def test_provision(molecule):
 
 
 def test_inventory_generation(molecule):
-    molecule._provisioner = DockerProvisioner(molecule)
+    molecule._provisioner = dockerprovisioner.DockerProvisioner(molecule)
 
     molecule._provisioner.up()
     molecule._create_inventory_file()
@@ -161,7 +161,7 @@ def test_inventory_generation(molecule):
     pb = molecule._provisioner.ansible_connection_params
     pb['playbook'] = 'tests/support/playbook.yml'
     pb['inventory'] = 'tests/support/ansible_inventory'
-    ansible = AnsiblePlaybook(pb)
+    ansible = ansible_playbook.AnsiblePlaybook(pb)
 
     assert (None, '') == ansible.execute()
 

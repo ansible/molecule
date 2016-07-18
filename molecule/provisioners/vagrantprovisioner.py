@@ -23,13 +23,11 @@ import copy
 
 import vagrant
 
-import molecule.utilities
-from baseprovisioner import BaseProvisioner
-from baseprovisioner import InvalidPlatformSpecified
-from baseprovisioner import InvalidProviderSpecified
+from molecule import utilities
+from molecule.provisioners import baseprovisioner
 
 
-class VagrantProvisioner(BaseProvisioner):
+class VagrantProvisioner(baseprovisioner.BaseProvisioner):
     def __init__(self, molecule):
         super(VagrantProvisioner, self).__init__(molecule)
         self._vagrant = vagrant.Vagrant(quiet_stdout=False, quiet_stderr=False)
@@ -45,7 +43,7 @@ class VagrantProvisioner(BaseProvisioner):
             if not [item
                     for item in self.m._config.config['vagrant']['providers']
                     if item['name'] == self.m._args['--provider']]:
-                raise InvalidProviderSpecified()
+                raise baseprovisioner.InvalidProviderSpecified()
             self.m._state['default_provider'] = self.m._args['--provider']
             self.m._env['VAGRANT_DEFAULT_PROVIDER'] = self.m._args[
                 '--provider']
@@ -61,7 +59,7 @@ class VagrantProvisioner(BaseProvisioner):
                         for item in self.m._config.config['vagrant'][
                             'platforms']
                         if item['name'] == self.m._args['--platform']]:
-                    raise InvalidPlatformSpecified()
+                    raise baseprovisioner.InvalidPlatformSpecified()
             self.m._state['default_platform'] = self.m._args['--platform']
             self.m._env['MOLECULE_PLATFORM'] = self.m._args['--platform']
         else:
@@ -76,7 +74,7 @@ class VagrantProvisioner(BaseProvisioner):
 
         template = self.m._config.config['molecule']['vagrantfile_template']
         dest = self.m._config.config['molecule']['vagrantfile_file']
-        molecule.utilities.write_template(template, dest, kwargs=kwargs)
+        utilities.write_template(template, dest, kwargs=kwargs)
 
     @property
     def name(self):
@@ -205,10 +203,10 @@ class VagrantProvisioner(BaseProvisioner):
         template = '{} ansible_ssh_host={} ansible_ssh_port={} ansible_ssh_private_key_file={} ansible_ssh_user={}\n'
 
         if not self._updated_multiplatform:
-            ssh = self.conf(vm_name=molecule.utilities.format_instance_name(
+            ssh = self.conf(vm_name=utilities.format_instance_name(
                 instance['name'], self._platform, self.instances))
         else:
-            ssh = self.conf(vm_name=molecule.utilities.format_instance_name(
+            ssh = self.conf(vm_name=utilities.format_instance_name(
                 instance['name'], 'all', self.instances))
 
         return template.format(ssh['Host'], ssh['HostName'], ssh['Port'],

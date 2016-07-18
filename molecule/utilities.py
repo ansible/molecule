@@ -26,9 +26,9 @@ import os
 import sys
 import time
 
-import paramiko
 import colorama
 import jinja2
+import paramiko
 
 
 class LogFilter(object):

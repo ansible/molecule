@@ -18,17 +18,17 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-from io import BytesIO
-import json
 import collections
+import io
+import json
 
 import docker
 
-from baseprovisioner import BaseProvisioner
-import molecule.utilities
+from molecule import utilities
+from molecule.provisioners import baseprovisioner
 
 
-class DockerProvisioner(BaseProvisioner):
+class DockerProvisioner(baseprovisioner.BaseProvisioner):
     def __init__(self, molecule):
         super(DockerProvisioner, self).__init__(molecule)
         self._docker = docker.from_env(assert_hostname=False)
@@ -102,7 +102,7 @@ class DockerProvisioner(BaseProvisioner):
                     'install_python'] is False:
                 continue
             else:
-                molecule.utilities.print_info(
+                utilities.print_info(
                     "Creating Ansible compatible image of {}:{} ...".format(
                         container['image'], container['image_version']))
 
@@ -122,7 +122,7 @@ class DockerProvisioner(BaseProvisioner):
                 container['registry'] + container['image'],
                 container['image_version'])
 
-            f = BytesIO(dockerfile.encode('utf-8'))
+            f = io.BytesIO(dockerfile.encode('utf-8'))
 
             container['image'] = container['registry'].replace(
                 '/', '_').replace(':', '_') + container['image']
@@ -132,7 +132,7 @@ class DockerProvisioner(BaseProvisioner):
             errors = False
 
             if tag_string not in available_images:
-                molecule.utilities.logger.warning(
+                utilities.logger.warning(
                     'Building ansible compatible image ...')
                 previous_line = ''
                 for line in self._docker.build(fileobj=f, tag=tag_string):
@@ -140,26 +140,25 @@ class DockerProvisioner(BaseProvisioner):
                         if len(line_split) > 0:
                             line = json.loads(line_split)
                             if 'stream' in line:
-                                molecule.utilities.logger.warning(
-                                    '\t{}'.format(line['stream']))
+                                utilities.logger.warning('\t{}'.format(line[
+                                    'stream']))
                             if 'errorDetail' in line:
-                                molecule.utilities.logger.warning(
-                                    '\t{}'.format(line['errorDetail'][
-                                        'message']))
+                                utilities.logger.warning('\t{}'.format(line[
+                                    'errorDetail']['message']))
                                 errors = True
                             if 'status' in line:
                                 if previous_line not in line['status']:
-                                    molecule.utilities.logger.warning(
-                                        '\t{} ...'.format(line['status']))
+                                    utilities.logger.warning('\t{} ...'.format(
+                                        line['status']))
                                 previous_line = line['status']
 
                 if errors:
-                    molecule.utilities.logger.error(
-                        'Build failed for {}'.format(tag_string))
+                    utilities.logger.error('Build failed for {}'.format(
+                        tag_string))
                     return
                 else:
-                    molecule.utilities.print_success(
-                        'Finished building {}'.format(tag_string))
+                    utilities.print_success('Finished building {}'.format(
+                        tag_string))
 
     def up(self, no_provision=True):
 
@@ -177,7 +176,7 @@ class DockerProvisioner(BaseProvisioner):
                 privileged=container['privileged'])
 
             if (container['Created'] is not True):
-                molecule.utilities.logger.warning(
+                utilities.logger.warning(
                     'Creating container {} with base image {}:{} ...'.format(
                         container['name'], container['image'],
                         container['image_version']), )
@@ -191,22 +190,22 @@ class DockerProvisioner(BaseProvisioner):
                 self._docker.start(container=container.get('Id'))
                 container['Created'] = True
 
-                molecule.utilities.print_success('Container created.\n')
+                utilities.print_success('Container created.\n')
             else:
                 self._docker.start(container['name'])
-                molecule.utilities.print_success(
-                    'Starting container {}...'.format(container['name']))
+                utilities.print_success('Starting container {}...'.format(
+                    container['name']))
 
     def destroy(self):
 
         for container in self.instances:
             if (container['Created']):
-                molecule.utilities.logger.warning(
-                    'Stopping container {} ...'.format(container['name']))
+                utilities.logger.warning('Stopping container {} ...'.format(
+                    container['name']))
                 self._docker.stop(container['name'], timeout=0)
                 self._docker.remove_container(container['name'])
-                molecule.utilities.print_success(
-                    'Removed container {}.\n'.format(container['name']))
+                utilities.print_success('Removed container {}.\n'.format(
+                    container['name']))
                 container['Created'] = False
 
     def status(self):

@@ -20,14 +20,15 @@
 
 import pytest
 
-from molecule.ansible_galaxy_install import AnsibleGalaxyInstall
+from molecule import ansible_galaxy_install
 
 
 @pytest.fixture()
 def galaxy_install():
     data = {'config_file': 'test.cfg', 'requirements_file': 'requirements.yml'}
 
-    return AnsibleGalaxyInstall(data['requirements_file'])
+    return ansible_galaxy_install.AnsibleGalaxyInstall(data[
+        'requirements_file'])
 
 
 def test_requirements_file_loading(galaxy_install):

@@ -22,7 +22,8 @@ import binascii
 import os
 
 import pytest
-import molecule.utilities as utilities
+
+from molecule import utilities
 
 
 @pytest.fixture()

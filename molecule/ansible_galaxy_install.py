@@ -23,15 +23,15 @@ import sys
 
 import sh
 
-from utilities import logger
+from molecule import utilities
 
 
 class AnsibleGalaxyInstall:
     def __init__(self,
                  requirements_file,
                  _env=None,
-                 _out=logger.warning,
-                 _err=logger.error):
+                 _out=utilities.logger.warning,
+                 _err=utilities.logger.error):
         """
         Sets up requirements for ansible-galaxy
 
@@ -88,5 +88,5 @@ class AnsibleGalaxyInstall:
         try:
             return self.galaxy().stdout
         except sh.ErrorReturnCode as e:
-            logger.error('ERROR: {}'.format(e))
+            utilities.logger.error('ERROR: {}'.format(e))
             sys.exit(e.exit_code)
