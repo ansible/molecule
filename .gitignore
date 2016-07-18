@@ -6,4 +6,4 @@
 .tox/
 .vagrant/
 docs/build/
-tests/ansible_inventory
+tests/support/ansible_inventory
