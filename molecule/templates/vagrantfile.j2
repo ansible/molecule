@@ -1,13 +1,3 @@
-{%- for platform in config.vagrant.platforms %}
-  {%- if platform.name == current_platform %}
-    {%- if 'triggers' in platform %}
-unless Vagrant.has_plugin?('vagrant-triggers')
-  system "vagrant plugin install vagrant-triggers"
-  exec "vagrant #{ARGV.join' '}"
-end
-    {%- endif %}
-  {%- endif %}
-{%- endfor %}
 Vagrant.configure('2') do |config|
   config.cache.scope = 'machine' if Vagrant.has_plugin?('vagrant-cachier')
   {%- for platform in config.vagrant.platforms %}
@@ -18,13 +8,6 @@ Vagrant.configure('2') do |config|
       {%- endif %}
       {%- if 'box_url' in platform and 'box_version' not in platform %}
   config.vm.box_url = '{{ platform.box_url }}'
-      {%- endif %}
-      {%- if 'triggers' in platform %}
-        {%- for trigger in platform.triggers %}
-  config.trigger.{{ trigger.trigger }} :{{ trigger.action }}, :force => true do
-    {{ trigger.cmd }}
-  end
-        {%- endfor %}
       {%- endif %}
     {%- endif %}
   {%- endfor %}
