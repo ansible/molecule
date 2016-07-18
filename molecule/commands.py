@@ -23,19 +23,19 @@ import os
 import pexpect
 import re
 import signal
+import subprocess
 import sys
-from subprocess import CalledProcessError
 
+import docopt
 import jinja2
 import sh
 import yaml
-from docopt import docopt
 
-import molecule.utilities as utilities
-import molecule.validators as validators
-from molecule.ansible_galaxy_install import AnsibleGalaxyInstall
-from molecule.ansible_playbook import AnsiblePlaybook
-from molecule.core import Molecule
+from molecule import ansible_galaxy_install
+from molecule import ansible_playbook
+from molecule import core
+from molecule import utilities
+from molecule import validators
 
 
 class InvalidHost(Exception):
@@ -51,7 +51,7 @@ class AbstractCommand:
         :param global_args: arguments from the CLI
         :param molecule: molecule instance
         """
-        self.args = docopt(self.__doc__, argv=command_args)
+        self.args = docopt.docopt(self.__doc__, argv=command_args)
         self.args['<command>'] = self.__class__.__name__.lower()
         self.command_args = command_args
 
@@ -59,7 +59,7 @@ class AbstractCommand:
 
         # give us the option to reuse an existing molecule instance
         if not molecule:
-            self.molecule = Molecule(self.args)
+            self.molecule = core.Molecule(self.args)
             self.molecule.main()
         else:
             self.molecule = molecule
@@ -112,7 +112,8 @@ class Syntax(AbstractCommand):
 
         self.molecule._create_templates()
 
-        ansible = AnsiblePlaybook(self.molecule._config.config['ansible'])
+        ansible = ansible_playbook.AnsiblePlaybook(
+            self.molecule._config.config['ansible'])
         ansible.add_cli_arg('syntax-check', True)
         ansible.add_cli_arg('inventory-file', 'localhost,')
 
@@ -149,7 +150,7 @@ class Create(AbstractCommand):
             else:
                 self.molecule._state['multiple_platforms'] = False
             self.molecule._write_state_file()
-        except CalledProcessError as e:
+        except subprocess.CalledProcessError as e:
             utilities.logger.error('ERROR: {}'.format(e))
             if exit:
                 sys.exit(e.returncode)
@@ -191,7 +192,7 @@ class Destroy(AbstractCommand):
             self.molecule._state['converged'] = False
             self.molecule._state['multiple_platforms'] = False
             self.molecule._write_state_file()
-        except CalledProcessError as e:
+        except subprocess.CalledProcessError as e:
             utilities.logger.error('ERROR: {}'.format(e))
             if exit:
                 sys.exit(e.returncode)
@@ -258,15 +259,16 @@ class Converge(AbstractCommand):
         if not idempotent and 'requirements_file' in self.molecule._config.config[
                 'ansible']:
             utilities.print_info('Installing role dependencies ...')
-            galaxy_install = AnsibleGalaxyInstall(self.molecule._config.config[
-                'ansible']['requirements_file'])
+            galaxy_install = ansible_galaxy_install.AnsibleGalaxyInstall(
+                self.molecule._config.config['ansible']['requirements_file'])
             galaxy_install.add_env_arg(
                 'ANSIBLE_CONFIG',
                 self.molecule._config.config['ansible']['config_file'])
             galaxy_install.bake()
             output = galaxy_install.execute()
 
-        ansible = AnsiblePlaybook(self.molecule._config.config['ansible'])
+        ansible = ansible_playbook.AnsiblePlaybook(
+            self.molecule._config.config['ansible'])
 
         # params to work with provisioner
         for k, v in self.molecule._provisioner.ansible_connection_params.items(
@@ -413,8 +415,9 @@ class Verify(AbstractCommand):
         self.molecule._write_ssh_config()
 
         # testinfra's Ansible calls get same env vars as ansible-playbook
-        ansible = AnsiblePlaybook(self.molecule._config.config['ansible'],
-                                  _env=self.molecule._env)
+        ansible = ansible_playbook.AnsiblePlaybook(
+            self.molecule._config.config['ansible'],
+            _env=self.molecule._env)
 
         debug = self.molecule._args.get('--debug', False)
 
@@ -573,7 +576,7 @@ class Status(AbstractCommand):
         # Retrieve the status.
         try:
             status = self.molecule._provisioner.status()
-        except CalledProcessError as e:
+        except subprocess.CalledProcessError as e:
             utilities.logger.error(e.message)
             return e.returncode, e.message
 
@@ -651,7 +654,7 @@ class Login(AbstractCommand):
                 hostname = self.molecule._args['<host>']
                 match = [x.name for x in status if x.name.startswith(hostname)]
                 if len(match) == 0:
-                    raise CalledProcessError(1, None)
+                    raise subprocess.CalledProcessError(1, None)
                 elif len(match) != 1:
                     # If there are multiple matches, but one of them is an
                     # exact string match, assume this is the one they're
@@ -668,7 +671,7 @@ class Login(AbstractCommand):
             login_cmd = self.molecule._provisioner.login_cmd(hostname)
             login_args = self.molecule._provisioner.login_args(hostname)
 
-        except CalledProcessError:
+        except subprocess.CalledProcessError:
             # gets appended to python-vagrant's error message
             conf_errmsg = '\nUnknown host {}. Try molecule status to see available hosts.'
             utilities.logger.error(conf_errmsg.format(self.molecule._args[
@@ -733,7 +736,7 @@ class Init(AbstractCommand):
                     sh.ansible_galaxy('init', '--offline', role)
                 else:
                     sh.ansible_galaxy('init', role)
-            except (CalledProcessError, sh.ErrorReturnCode_1) as e:
+            except (subprocess.CalledProcessError, sh.ErrorReturnCode_1) as e:
                 utilities.logger.error('ERROR: {}'.format(e))
                 sys.exit(e.returncode)
 

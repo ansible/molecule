@@ -20,28 +20,27 @@
 
 import collections
 
-from shade import openstack_cloud
+import shade
 
-import molecule.utilities
-from baseprovisioner import BaseProvisioner
+from molecule import utilities
+from molecule.provisioners import baseprovisioner
 
 
-class OpenstackProvisioner(BaseProvisioner):
+class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
     def __init__(self, molecule):
         super(OpenstackProvisioner, self).__init__(molecule)
         self._provider = self._get_provider()
         self._platform = self._get_platform()
-        self._openstack = openstack_cloud()
+        self._openstack = shade.openstack_cloud()
 
     def set_keypair(self):
         keypair_name = self.m._config.config['openstack']['keypair']
         pub_key_file = self.m._config.config['openstack']['keyfile']
 
         if self._openstack.search_keypairs(keypair_name):
-            molecule.utilities.logger.info(
-                'Keypair already exists. Skipping import.')
+            utilities.logger.info('Keypair already exists. Skipping import.')
         else:
-            molecule.utilities.logger.info('Adding keypair...')
+            utilities.logger.info('Adding keypair...')
             self._openstack.create_keypair(keypair_name, open(
                 pub_key_file, 'r').read().strip())
 
@@ -119,11 +118,11 @@ class OpenstackProvisioner(BaseProvisioner):
         active_instances = self._openstack.list_servers()
         active_instance_names = {instance['name']: instance['status']
                                  for instance in active_instances}
-        molecule.utilities.logger.warning("Creating openstack instances ...")
+        utilities.logger.warning("Creating openstack instances ...")
         for instance in self.instances:
             if instance['name'] not in active_instance_names:
-                molecule.utilities.logger.info("\tBringing up {}".format(
-                    instance['name']))
+                utilities.logger.info("\tBringing up {}".format(instance[
+                    'name']))
                 server = self._openstack.create_server(
                     name=instance['name'],
                     image=self._openstack.get_image(instance['image']),
@@ -132,37 +131,36 @@ class OpenstackProvisioner(BaseProvisioner):
                     wait=True,
                     key_name=self.m._config.config['openstack']['keypair'],
                     security_groups=instance['security_groups'])
-                molecule.utilities.reset_known_host_key(server['interface_ip'])
+                utilities.reset_known_host_key(server['interface_ip'])
                 instance['created'] = True
                 num_retries = 0
-                while not molecule.utilities.check_ssh_availability(
+                while not utilities.check_ssh_availability(
                         server['interface_ip'],
                         instance['sshuser'],
                         timeout=6) or num_retries == 5:
-                    molecule.utilities.logger.info(
-                        "\t Waiting for ssh availability...")
+                    utilities.logger.info("\t Waiting for ssh availability...")
                     num_retries += 1
 
     def destroy(self):
 
-        molecule.utilities.logger.info("Deleting openstack instances ...")
+        utilities.logger.info("Deleting openstack instances ...")
 
         active_instances = self._openstack.list_servers()
         active_instance_names = {instance['name']: instance['id']
                                  for instance in active_instances}
 
         for instance in self.instances:
-            molecule.utilities.logger.warning("\tRemoving {} ...".format(
-                instance['name']))
+            utilities.logger.warning("\tRemoving {} ...".format(instance[
+                'name']))
             if instance['name'] in active_instance_names:
                 if not self._openstack.delete_server(
                         active_instance_names[instance['name']],
                         wait=True):
-                    molecule.utilities.logger.error(
-                        "Unable to remove {}!".format(instance['name']))
-                else:
-                    molecule.utilities.print_success('\tRemoved {}'.format(
+                    utilities.logger.error("Unable to remove {}!".format(
                         instance['name']))
+                else:
+                    utilities.print_success('\tRemoved {}'.format(instance[
+                        'name']))
                     instance['created'] = False
 
     def status(self):
@@ -197,9 +195,9 @@ class OpenstackProvisioner(BaseProvisioner):
     def instance_is_accessible(self, instance):
         instance_ip = self.conf(instance['name'])
         if instance_ip is not None:
-            return molecule.utilities.check_ssh_availability(
-                instance_ip, instance['sshuser'],
-                timeout=0)
+            return utilities.check_ssh_availability(instance_ip,
+                                                    instance['sshuser'],
+                                                    timeout=0)
         return False
 
     def inventory_entry(self, instance):

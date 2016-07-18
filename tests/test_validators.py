@@ -18,7 +18,7 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import molecule.validators as validators
+from molecule import validators
 
 
 def test_trailing_newline_failed():

@@ -20,7 +20,7 @@
 
 import pytest
 
-from molecule.ansible_playbook import AnsiblePlaybook
+from molecule import ansible_playbook
 
 
 @pytest.fixture()
@@ -41,7 +41,7 @@ def ansible():
         }
     }
 
-    return AnsiblePlaybook(data)
+    return ansible_playbook.AnsiblePlaybook(data)
 
 
 def test_arg_loading(ansible):

@@ -20,17 +20,20 @@
 
 from pbr import version
 
-from baseprovisioner import BaseProvisioner
-from dockerprovisioner import DockerProvisioner
-from openstackprovisioner import OpenstackProvisioner
-from proxmoxprovisioner import ProxmoxProvisioner
-from vagrantprovisioner import VagrantProvisioner
+from molecule.provisioners import baseprovisioner
+from molecule.provisioners import dockerprovisioner
+from molecule.provisioners import openstackprovisioner
+from molecule.provisioners import proxmoxprovisioner
+from molecule.provisioners import vagrantprovisioner
 
 try:
     version_info = version.VersionInfo('molecule')
     __version__ = version_info.release_string()
-    __all__ = ['BaseProvisioner', 'DockerProvisioner', 'OpenstackProvisioner',
-               'ProxmoxProvisioner', 'VagrantProvisioner']
+    __all__ = ['baseprovisioner.BaseProvisioner',
+               'dockerprovisioner.DockerProvisioner',
+               'openstackprovisioner.OpenstackProvisioner',
+               'proxmoxprovisioner.ProxmoxProvisioner',
+               'vagrantprovisioner.VagrantProvisioner']
 
 except AttributeError:
     __version__ = None

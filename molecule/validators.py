@@ -19,12 +19,12 @@
 #  THE SOFTWARE.
 
 import os
-import sys
 import re
+import sys
 
 import sh
 
-from utilities import logger
+from molecule import utilities
 
 
 def check_trailing_cruft(ignore_paths=[], exit=True):
@@ -71,14 +71,14 @@ def check_trailing_cruft(ignore_paths=[], exit=True):
 
         if newline:
             error = 'Trailing newline found at the end of {}\n'
-            logger.error(error.format(filename))
+            utilities.logger.error(error.format(filename))
             found_error = True
 
         if whitespace:
             error = 'Trailing whitespace found in {} on lines: {}\n'
             lines = ', '.join(str(x) for x in whitespace)
-            logger.error(error.format(filename,
-                                      lines, ))
+            utilities.logger.error(error.format(filename,
+                                                lines, ))
             found_error = True
 
     if exit and found_error:
@@ -117,8 +117,8 @@ def rubocop(serverspec_dir,
             debug=False,
             env=os.environ.copy(),
             pattern='/**/*.rb',
-            out=logger.warning,
-            err=logger.error):
+            out=utilities.logger.warning,
+            err=utilities.logger.error):
     """
     Runs rubocop against specified directory with specified pattern
 
@@ -142,8 +142,8 @@ def rubocop(serverspec_dir,
 def rake(rakefile,
          debug=False,
          env=os.environ.copy(),
-         out=logger.warning,
-         err=logger.error):
+         out=utilities.logger.warning,
+         err=utilities.logger.error):
     """
     Runs rake with specified rakefile
 
@@ -169,8 +169,8 @@ def rake(rakefile,
 def testinfra(tests,
               debug=False,
               env=os.environ.copy(),
-              out=logger.warning,
-              err=logger.error,
+              out=utilities.logger.warning,
+              err=utilities.logger.error,
               **kwargs):
     """
     Runs testinfra against specified ansible inventory file

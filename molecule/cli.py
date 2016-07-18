@@ -41,8 +41,7 @@ Options:
 
 import sys
 
-from docopt import docopt
-from docopt import DocoptExit
+import docopt
 
 import molecule
 import molecule.commands
@@ -50,16 +49,16 @@ import molecule.commands
 
 class CLI(object):
     def main(self):
-        args = docopt(__doc__,
-                      version=molecule.__version__,
-                      options_first=True)
+        args = docopt.docopt(__doc__,
+                             version=molecule.__version__,
+                             options_first=True)
         command_name = args.get('<command>').capitalize()
         command_args = {} if args.get('<args>') is None else args.pop('<args>')
 
         try:
             command_class = getattr(molecule.commands, command_name)
         except AttributeError:
-            raise DocoptExit()
+            raise docopt.DocoptExit()
 
         c = command_class(command_args, args)
         sys.exit(c.execute()[0])

@@ -21,20 +21,20 @@
 import docopt
 import pytest
 
-from molecule.cli import CLI
+from molecule import cli
 
 
 @pytest.fixture()
-def cli():
-    return CLI()
+def cli_instance():
+    return cli.CLI()
 
 
-def test_cli_raises_usage_without_arguments(cli):
+def test_cli_raises_usage_without_arguments(cli_instance):
     with pytest.raises(docopt.DocoptExit):
-        cli.main()
+        cli_instance.main()
 
 
-def test_cli_raises_usage_with_invalid_sub_command(cli, mocker):
+def test_cli_raises_usage_with_invalid_sub_command(cli_instance, mocker):
     mocker.patch('sys.argv', ['bin/molecule', 'invalid-subcommand'])
     with pytest.raises(docopt.DocoptExit):
-        cli.main()
+        cli_instance.main()

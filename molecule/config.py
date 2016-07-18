@@ -24,7 +24,7 @@ import sys
 import colorama
 import yaml
 
-import molecule.utilities as utilities
+from molecule import utilities
 
 
 class Config(object):
