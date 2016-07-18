@@ -18,48 +18,44 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import testtools
+import pytest
 
 from molecule.core import Molecule
 
 
-class TestCore(testtools.TestCase):
-    def setUp(self):
-        super(TestCore, self).setUp()
-        self._molecule = Molecule(None)
+@pytest.fixture()
+def molecule():
+    return Molecule(dict())
 
-    def test_parse_provisioning_output_failure_00(self):
-        failed_output = """
-        PLAY RECAP ********************************************************************
-        vagrant-01-ubuntu              : ok=36   changed=29   unreachable=0    failed=0
-        """
 
-        res, changed_tasks = self._molecule._parse_provisioning_output(
-            failed_output)
+def test_parse_provisioning_output_failure_00(molecule):
+    failed_output = """
+PLAY RECAP ********************************************************************
+vagrant-01-ubuntu              : ok=36   changed=29   unreachable=0    failed=0
+    """
+    res, changed_tasks = molecule._parse_provisioning_output(failed_output)
 
-        self.assertFalse(res)
+    assert not res
 
-    def test_parse_provisioning_output_failure_01(self):
-        failed_output = """
-        PLAY RECAP ********************************************************************
-        NI: cisco.common | Non idempotent task for testing
-        common-01-rhel-7           : ok=18   changed=14   unreachable=0    failed=0
-        """
 
-        res, changed_tasks = self._molecule._parse_provisioning_output(
-            failed_output)
+def test_parse_provisioning_output_failure_01(molecule):
+    failed_output = """
+PLAY RECAP ********************************************************************
+NI: common | Non idempotent task for testing
+common-01-rhel-7           : ok=18   changed=14   unreachable=0    failed=0
+    """
+    res, changed_tasks = molecule._parse_provisioning_output(failed_output)
 
-        self.assertFalse(res)
-        self.assertEqual(1, len(changed_tasks))
+    assert not res
+    assert 1 == len(changed_tasks)
 
-    def test_parse_provisioning_output_success_00(self):
-        success_output = """
-        PLAY RECAP ********************************************************************
-        vagrant-01-ubuntu              : ok=36   changed=0    unreachable=0    failed=0
-        """
 
-        res, changed_tasks = self._molecule._parse_provisioning_output(
-            success_output)
+def test_parse_provisioning_output_success_00(molecule):
+    success_output = """
+PLAY RECAP ********************************************************************
+vagrant-01-ubuntu              : ok=36   changed=0    unreachable=0    failed=0
+    """
+    res, changed_tasks = molecule._parse_provisioning_output(success_output)
 
-        self.assertTrue(res)
-        self.assertEqual([], changed_tasks)
+    assert res
+    assert [] == changed_tasks

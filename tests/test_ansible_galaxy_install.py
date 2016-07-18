@@ -18,27 +18,23 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import testtools
+import pytest
 
 from molecule.ansible_galaxy_install import AnsibleGalaxyInstall
 
 
-class TestConfig(testtools.TestCase):
-    def setUp(self):
-        super(TestConfig, self).setUp()
+@pytest.fixture()
+def galaxy_install():
+    data = {'config_file': 'test.cfg', 'requirements_file': 'requirements.yml'}
 
-        self.data = {
-            'config_file': 'test.cfg',
-            'requirements_file': 'requirements.yml'
-        }
+    return AnsibleGalaxyInstall(data['requirements_file'])
 
-        self.galaxy_install = AnsibleGalaxyInstall(self.data[
-            'requirements_file'])
 
-    def test_requirements_file_loading(self):
-        self.assertEqual(self.galaxy_install.requirements_file,
-                         self.data['requirements_file'])
+def test_requirements_file_loading(galaxy_install):
+    assert 'requirements.yml' == galaxy_install.requirements_file
 
-    def test_add_env_arg(self):
-        self.galaxy_install.add_env_arg('MOLECULE_1', 'test')
-        self.assertEqual(self.galaxy_install.env['MOLECULE_1'], 'test')
+
+def test_add_env_arg(galaxy_install):
+    galaxy_install.add_env_arg('MOLECULE_1', 'test')
+
+    assert 'test' == galaxy_install.env['MOLECULE_1']

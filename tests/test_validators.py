@@ -18,60 +18,66 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import testtools
-from mock import patch
-
 import molecule.validators as validators
 
 
-class TestValidators(testtools.TestCase):
-    def test_trailing_newline_failed(self):
-        line = ['line1', 'line2', '\n']
-        res = validators.trailing_newline(line)
+def test_trailing_newline_failed():
+    line = ['line1', 'line2', '\n']
+    res = validators.trailing_newline(line)
 
-        self.assertTrue(res)
+    assert res
 
-    def test_trailing_newline_success(self):
-        line = ['line1', 'line2', '']
-        res = validators.trailing_newline(line)
 
-        self.assertIsNone(res)
+def test_trailing_newline_success():
+    line = ['line1', 'line2', '']
+    res = validators.trailing_newline(line)
 
-    def test_trailing_whitespace_failed(self):
-        line = ['line1', 'line2', 'line3    ']
-        res = validators.trailing_whitespace(line)
+    assert res is None
 
-        self.assertTrue(res)
 
-    def test_trailing_whitespace_failed_multiline(self):
-        line = ['line1', 'line2    ', 'line3', 'line4    ']
-        res = validators.trailing_whitespace(line)
+def test_trailing_whitespace_failed():
+    line = ['line1', 'line2', 'line3    ']
+    res = validators.trailing_whitespace(line)
 
-        self.assertItemsEqual(res, [2, 4])
+    assert res
 
-    def test_trailing_whitespace_success(self):
-        line = ['line1', 'line2', 'line3']
-        res = validators.trailing_whitespace(line)
 
-        self.assertIsNone(res)
+def test_trailing_whitespace_failed_multiline():
+    line = ['line1', 'line2    ', 'line3', 'line4    ']
+    res = validators.trailing_whitespace(line)
 
-    @patch('molecule.validators.rubocop')
-    def test_rubocop(self, mocked):
-        args = ['/tmp']
-        kwargs = {'pattern': '**/**/**/*', 'out': '/dev/null', 'err': None}
-        validators.rubocop(*args, **kwargs)
-        mocked.assert_called_once_with(*args, **kwargs)
+    assert [2, 4] == res
 
-    @patch('molecule.validators.rake')
-    def test_rake(self, mocked):
-        args = ['/tmp/rakefile']
-        kwargs = {'debug': True, 'out': None, 'err': '/dev/null'}
-        validators.rake(*args, **kwargs)
-        mocked.assert_called_once_with(*args, **kwargs)
 
-    @patch('molecule.validators.testinfra')
-    def test_testinfra(self, mocked):
-        args = ['/tmp/ansible-inventory']
-        kwargs = {'debug': True, 'out': None, 'err': None}
-        validators.testinfra(*args, **kwargs)
-        mocked.assert_called_once_with(*args, **kwargs)
+def test_trailing_whitespace_success():
+    line = ['line1', 'line2', 'line3']
+    res = validators.trailing_whitespace(line)
+
+    assert res is None
+
+
+def test_rubocop(mocker):
+    mocked = mocker.patch('molecule.validators.rubocop')
+    args = ['/tmp']
+    kwargs = {'pattern': '**/**/**/*', 'out': '/dev/null', 'err': None}
+    validators.rubocop(*args, **kwargs)
+
+    mocked.assert_called_once_with(*args, **kwargs)
+
+
+def test_rake(mocker):
+    mocked = mocker.patch('molecule.validators.rake')
+    args = ['/tmp/rakefile']
+    kwargs = {'debug': True, 'out': None, 'err': '/dev/null'}
+    validators.rake(*args, **kwargs)
+
+    mocked.assert_called_once_with(*args, **kwargs)
+
+
+def test_testinfra(mocker):
+    mocked = mocker.patch('molecule.validators.testinfra')
+    args = ['/tmp/ansible-inventory']
+    kwargs = {'debug': True, 'out': None, 'err': None}
+    validators.testinfra(*args, **kwargs)
+
+    mocked.assert_called_once_with(*args, **kwargs)

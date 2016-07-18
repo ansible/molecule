@@ -21,145 +21,178 @@
 import binascii
 import os
 
-import testtools
+import pytest
 import molecule.utilities as utilities
 
 
-class TestUtilities(testtools.TestCase):
-    def setUp(self):
-        super(TestUtilities, self).setUp()
+@pytest.fixture()
+def simple_dict_a():
+    return {"name": "remy", "city": "Berkeley", "age": 21}
 
-        self.simple_dict_a = {"name": "remy", "city": "Berkeley", "age": 21}
-        self.simple_dict_b = {"name": "remy", "city": "Austin"}
-        self.deep_dict_a = {"users": {"remy": {"email": "remy@cisco.com",
-                                               "office": "San Jose",
-                                               "age": 21}}}
-        self.deep_dict_b = {
-            "users": {"remy": {"email": "remy@cisco.com",
-                               "office": "Austin",
-                               "position": "python master"}}
-        }
 
-    def test_merge_simple_simple_00(self):
-        expected = {"name": "remy", "city": "Austin", "age": 21}
-        actual = utilities.merge_dicts(self.simple_dict_a, self.simple_dict_b)
-        self.assertEqual(expected, actual)
+@pytest.fixture()
+def simple_dict_b():
+    return {"name": "remy", "city": "Austin"}
 
-    def test_merge_simple_simple_01(self):
-        expected = {"name": "remy", "city": "Berkeley", "age": 21}
-        actual = utilities.merge_dicts(self.simple_dict_b, self.simple_dict_a)
-        self.assertEqual(expected, actual)
 
-    def test_merge_simple_deep_00(self):
-        expected = {
-            "name": "remy",
-            "city": "Berkeley",
-            "age": 21,
-            "users": {"remy": {"email": "remy@cisco.com",
+@pytest.fixture()
+def deep_dict_a():
+    return {"users": {"remy": {"email": "remy@cisco.com",
                                "office": "San Jose",
-                               "age": 21}}
-        }
-        actual = utilities.merge_dicts(self.simple_dict_a, self.deep_dict_a)
-        self.assertEqual(expected, actual)
+                               "age": 21}}}
 
-    def test_merge_simple_deep_01(self):
-        expected = {
-            "name": "remy",
-            "city": "Berkeley",
-            "age": 21,
-            "users": {"remy": {"email": "remy@cisco.com",
-                               "office": "San Jose",
-                               "age": 21}}
-        }
-        actual = utilities.merge_dicts(self.deep_dict_a, self.simple_dict_a)
-        self.assertEqual(expected, actual)
 
-    def test_merge_deep_deep_00(self):
-        expected = {
-            "users": {"remy": {"age": 21,
-                               "email": "remy@cisco.com",
-                               "office": "Austin",
-                               "position": "python master"}}
-        }
-        actual = utilities.merge_dicts(self.deep_dict_a, self.deep_dict_b)
-        self.assertEqual(expected, actual)
+@pytest.fixture()
+def deep_dict_b():
+    return {
+        "users": {"remy": {"email": "remy@cisco.com",
+                           "office": "Austin",
+                           "position": "python master"}}
+    }
 
-    def test_merge_deep_deep_01(self):
-        expected = {
-            "users": {"remy": {"age": 21,
-                               "email": "remy@cisco.com",
-                               "office": "Austin",
-                               "position": "python master"}}
-        }
-        with testtools.ExpectedException(LookupError):
-            actual = utilities.merge_dicts(self.deep_dict_a,
-                                           self.deep_dict_b,
-                                           raise_conflicts=True)
-            self.assertEqual(expected, actual)
 
-    def test_merge_deep_deep_02(self):
-        expected = {
-            "users": {"remy": {"age": 21,
-                               "email": "remy@cisco.com",
-                               "office": "San Jose",
-                               "position": "python master"}}
-        }
-        actual = utilities.merge_dicts(self.deep_dict_b, self.deep_dict_a)
-        self.assertEqual(expected, actual)
+def test_merge_simple_simple_00(simple_dict_a, simple_dict_b):
+    expected = {"name": "remy", "city": "Austin", "age": 21}
+    actual = utilities.merge_dicts(simple_dict_a, simple_dict_b)
 
-    def test_write_template(self):
-        tmp_file = '/tmp/test_utilities_write_template.tmp'
-        utilities.write_template('test_write_template.j2',
-                                 tmp_file, {'test': 'chicken'},
-                                 _dir='templates/tests')
-        with open(tmp_file, 'r') as f:
-            data = f.read()
-        os.remove(tmp_file)
+    expected == actual
 
-        self.assertEqual(data, 'this is a chicken\n')
 
-    def test_write_file(self):
-        tmp_file = '/tmp/test_utilities_write_file.tmp'
-        contents = binascii.b2a_hex(os.urandom(15))
-        utilities.write_file(tmp_file, contents)
-        with open(tmp_file, 'r') as f:
-            data = f.read()
-        os.remove(tmp_file)
+def test_merge_simple_simple_01(simple_dict_b, simple_dict_a):
+    expected = {"name": "remy", "city": "Berkeley", "age": 21}
+    actual = utilities.merge_dicts(simple_dict_b, simple_dict_a)
 
-        self.assertEqual(data, contents)
+    assert expected == actual
 
-    def test_format_instance_name_00(self):
-        instances = [{'name': 'test-01'}]
-        expected = None
-        actual = utilities.format_instance_name('test-02', 'rhel-7', instances)
-        self.assertEqual(expected, actual)
 
-    def test_format_instance_name_01(self):
-        instances = [{'name': 'test-01'}]
-        expected = 'test-01'
-        actual = utilities.format_instance_name('test-01', 'rhel-7', instances)
-        self.assertEqual(expected, actual)
+def test_merge_simple_deep_00(simple_dict_a, deep_dict_a):
+    expected = {
+        "name": "remy",
+        "city": "Berkeley",
+        "age": 21,
+        "users": {"remy": {"email": "remy@cisco.com",
+                           "office": "San Jose",
+                           "age": 21}}
+    }
+    actual = utilities.merge_dicts(simple_dict_a, deep_dict_a)
 
-    def test_format_instance_name_02(self):
-        instances = [{'name': 'test-01',
-                      'options': {'append_platform_to_hostname': True}}]
-        expected = 'test-01-rhel-7'
-        actual = utilities.format_instance_name('test-01', 'rhel-7', instances)
-        self.assertEqual(expected, actual)
+    assert expected == actual
 
-    def test_format_instance_name_03(self):
-        instances = [{'name': 'test-01', 'options': {'chicken': False}}]
-        expected = 'test-01'
-        actual = utilities.format_instance_name('test-01', 'rhel-7', instances)
-        self.assertEqual(expected, actual)
 
-    def test_remove_args(self):
-        test_list = ['tags', 'molecule1', 'platform', 'ubuntu', 'tags',
-                     'molecule2']
-        test_dict = {'tags': 'molecule1', 'platform': 'ubuntu'}
-        expected_list = ['platform', 'ubuntu']
-        expected_dict = {'platform': 'ubuntu'}
-        actual_list, actual_dict = utilities.remove_args(test_list, test_dict,
-                                                         ['tags'])
-        self.assertEqual(actual_list, expected_list)
-        self.assertEqual(actual_dict, expected_dict)
+def test_merge_simple_deep_01(deep_dict_a, simple_dict_a):
+    expected = {
+        "name": "remy",
+        "city": "Berkeley",
+        "age": 21,
+        "users": {"remy": {"email": "remy@cisco.com",
+                           "office": "San Jose",
+                           "age": 21}}
+    }
+    actual = utilities.merge_dicts(deep_dict_a, simple_dict_a)
+
+    assert expected == actual
+
+
+def test_merge_deep_deep_00(deep_dict_a, deep_dict_b):
+    expected = {
+        "users": {"remy": {"age": 21,
+                           "email": "remy@cisco.com",
+                           "office": "Austin",
+                           "position": "python master"}}
+    }
+    actual = utilities.merge_dicts(deep_dict_a, deep_dict_b)
+
+    assert expected == actual
+
+
+def test_merge_deep_deep_01(deep_dict_a, deep_dict_b):
+    expected = {
+        "users": {"remy": {"age": 21,
+                           "email": "remy@cisco.com",
+                           "office": "Austin",
+                           "position": "python master"}}
+    }
+    with pytest.raises(LookupError):
+        actual = utilities.merge_dicts(deep_dict_a,
+                                       deep_dict_b,
+                                       raise_conflicts=True)
+        assert expected == actual
+
+
+def test_merge_deep_deep_02(deep_dict_b, deep_dict_a):
+    expected = {
+        "users": {"remy": {"age": 21,
+                           "email": "remy@cisco.com",
+                           "office": "San Jose",
+                           "position": "python master"}}
+    }
+    actual = utilities.merge_dicts(deep_dict_b, deep_dict_a)
+
+    assert expected == actual
+
+
+# TODO(retr0h): Cleanup how we deal with temp files
+def test_write_template():
+    d = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'support')
+    src = os.path.join(d, 'test_write_template.j2')
+    tmp_file = '/tmp/test_utilities_write_template.tmp'
+    utilities.write_template(src, tmp_file, {'test': 'chicken'})
+    with open(tmp_file, 'r') as f:
+        data = f.read()
+    os.remove(tmp_file)
+
+    assert data == 'this is a chicken\n'
+
+
+# TODO(retr0h): Cleanup how we deal with temp files
+def test_write_file():
+    tmp_file = '/tmp/test_utilities_write_file.tmp'
+    contents = binascii.b2a_hex(os.urandom(15))
+    utilities.write_file(tmp_file, contents)
+    with open(tmp_file, 'r') as f:
+        data = f.read()
+    os.remove(tmp_file)
+
+    assert data == contents
+
+
+def test_format_instance_name_00():
+    instances = [{'name': 'test-01'}]
+    actual = utilities.format_instance_name('test-02', 'rhel-7', instances)
+
+    assert actual is None
+
+
+def test_format_instance_name_01():
+    instances = [{'name': 'test-01'}]
+    actual = utilities.format_instance_name('test-01', 'rhel-7', instances)
+
+    assert 'test-01' == actual
+
+
+def test_format_instance_name_02():
+    instances = [{'name': 'test-01',
+                  'options': {'append_platform_to_hostname': True}}]
+    actual = utilities.format_instance_name('test-01', 'rhel-7', instances)
+
+    assert 'test-01-rhel-7' == actual
+
+
+def test_format_instance_name_03():
+    instances = [{'name': 'test-01', 'options': {'chicken': False}}]
+    actual = utilities.format_instance_name('test-01', 'rhel-7', instances)
+
+    assert 'test-01' == actual
+
+
+def test_remove_args():
+    test_list = ['tags', 'molecule1', 'platform', 'ubuntu', 'tags',
+                 'molecule2']
+    test_dict = {'tags': 'molecule1', 'platform': 'ubuntu'}
+    expected_list = ['platform', 'ubuntu']
+    expected_dict = {'platform': 'ubuntu'}
+    actual_list, actual_dict = utilities.remove_args(test_list, test_dict,
+                                                     ['tags'])
+
+    assert expected_list == actual_list
+    assert expected_dict == actual_dict
