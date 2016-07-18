@@ -657,7 +657,7 @@ class Login(AbstractCommand):
                     # exact string match, assume this is the one they're
                     # looking for and use it
                     if hostname in match:
-                        match = [hostname,]
+                        match = [hostname, ]
                     else:
                         raise InvalidHost(
                             "There are {} hosts that match '{}'.  You can only log into one at a time.\n"
@@ -712,8 +712,9 @@ class Init(AbstractCommand):
         if not role:
             role = os.getcwd().split(os.sep)[-1]
             role_path = os.getcwd()
-            utilities.print_info("Initializing molecule in current directory...")
-            if not os.path.isdir(os.path.join(role_path,"tests")):
+            utilities.print_info(
+                "Initializing molecule in current directory...")
+            if not os.path.isdir(os.path.join(role_path, "tests")):
                 os.mkdir(os.path.join(role_path, "tests"))
 
         else:
@@ -775,8 +776,6 @@ class Init(AbstractCommand):
         testinfra_path = os.path.join(
             role_path,
             self.molecule._config.config['molecule']['testinfra_dir'])
-
-
 
         with open(os.path.join(testinfra_path, 'test_default.py'), 'w') as f:
             f.write(t_test_default.render())
