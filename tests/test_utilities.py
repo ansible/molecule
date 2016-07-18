@@ -113,8 +113,9 @@ def test_merge_deep_deep_01(deep_dict_a, deep_dict_b):
                            "position": "python master"}}
     }
     with pytest.raises(LookupError):
-        actual = utilities.merge_dicts(
-            deep_dict_a, deep_dict_b, raise_conflicts=True)
+        actual = utilities.merge_dicts(deep_dict_a,
+                                       deep_dict_b,
+                                       raise_conflicts=True)
         assert expected == actual
 
 
