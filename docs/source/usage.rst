@@ -360,6 +360,35 @@ order to test this particular role.
       roles:
         - role: demo.molecule
 
+Triggers
+------------
+
+Triggers are optional Ansible playbooks that are tied to the commands ``molecule create`` and ``molecule destroy``.
+This can be useful for performing tasks on an instance outside of what is applied as part of your playbook.yml.
+
+For example, if you wanted to make a RHEL instance unregister itself from subscription manager before being
+destroyed, you would create a playbook that looks like this:
+
+.. code-block:: yaml
+
+    - hosts: all
+      tasks:
+        - name: Unregister from subscription manager
+          command: subscription-manager unregister
+
+You can target your instances using the hosts portion of your trigger playbooks just like you would in playbook.yml.
+
+Trigger playbooks should be created under the triggers subdirectory:
+
+::
+
+    role_name/
+    ├── ...
+    └── triggers/
+        ├── create.yml
+        └── destroy.yml
+
+
 Override Configuration
 ----------------------
 

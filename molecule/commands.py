@@ -155,6 +155,14 @@ class Create(AbstractCommand):
                 sys.exit(e.returncode)
             return e.returncode, e.message
         self.molecule._create_inventory_file()
+
+        if self.molecule._has_trigger('create'):
+            c = Converge(self.command_args, self.args, self.molecule)
+            c.execute(create_instances=False,
+                      playbook=self.molecule._config.config['molecule'][
+                          'triggers_dir'] + '/create.yml',
+                      msg='Executing create triggers ...')
+
         return None, None
 
 
@@ -182,6 +190,15 @@ class Destroy(AbstractCommand):
             self.disabled('destroy')
 
         self.molecule._create_templates()
+
+        if self.molecule._has_trigger('destroy') and self.molecule._state.get(
+                'created'):
+            c = Converge(self.command_args, self.args, self.molecule)
+            c.execute(create_instances=False,
+                      playbook=self.molecule._config.config['molecule'][
+                          'triggers_dir'] + '/destroy.yml',
+                      msg='Executing destroy triggers ...')
+
         try:
             utilities.print_info("Destroying instances ...")
             self.molecule._provisioner.destroy()
@@ -220,11 +237,15 @@ class Converge(AbstractCommand):
                 create_instances=True,
                 create_inventory=True,
                 exit=True,
-                hide_errors=True):
+                hide_errors=True,
+                playbook=None,
+                msg='Starting Ansible Run ...'):
         """
         :param idempotent: Optionally provision servers quietly so output can be parsed for idempotence
         :param create_inventory: Toggle inventory creation
         :param create_instances: Toggle instance creation
+        :param playbook: Playbook file to pass to ansible-playbook call
+        :param msg: Informational message to print when converging
         :return: Provisioning output
         """
         if self.molecule._state.get('created'):
@@ -266,7 +287,12 @@ class Converge(AbstractCommand):
             galaxy_install.bake()
             output = galaxy_install.execute()
 
-        ansible = AnsiblePlaybook(self.molecule._config.config['ansible'])
+        # create a copy of the args so we can change the playbook for triggers
+        ansible_playbook_args = self.molecule._config.config['ansible'].copy()
+        if playbook:
+            ansible_playbook_args['playbook'] = playbook
+
+        ansible = AnsiblePlaybook(ansible_playbook_args)
 
         # params to work with provisioner
         for k, v in self.molecule._provisioner.ansible_connection_params.items(
@@ -315,7 +341,7 @@ class Converge(AbstractCommand):
                                       indent=2))
             utilities.debug('ANSIBLE PLAYBOOK', str(ansible.ansible))
 
-        utilities.print_info("Starting Ansible Run ...")
+        utilities.print_info(msg)
         status, output = ansible.execute(hide_errors=hide_errors)
         if status is not None:
             if exit:

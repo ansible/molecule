@@ -332,6 +332,18 @@ class Molecule(object):
             sys.exit(1)
         os.symlink(group_vars_target, group_vars_link_path)
 
+    def _has_trigger(self, trigger):
+        """
+        Check to see if specified trigger playbook exists.
+
+        :param trigger: Name of trigger
+        :return: True if the trigger exists, otherwise False
+        """
+
+        if os.path.isfile('{}/{}.yml'.format(self._config.config['molecule'][
+                'triggers_dir'], trigger)):
+            return True
+
     def _display_tabulate_data(self, data, headers=None):
         """
         Shows the tabulate data on the screen.
