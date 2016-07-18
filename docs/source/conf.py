@@ -59,7 +59,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Molecule'
-copyright = u'2015, Adam Brown, John Dewey, Rémy Greinhofer, Duncan Hutty, Abel Lopez'
+copyright = u'2015-2016, Adam Brown, John Dewey, Rémy Greinhofer, Duncan Hutty, Abel Lopez'
 author = u'Adam Brown, John Dewey, Rémy Greinhofer, Duncan Hutty, Abel Lopez, Erik Nadel'
 
 # The version info for the project you're documenting, acts as replacement for
