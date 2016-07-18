@@ -693,7 +693,7 @@ class Init(AbstractCommand):
     Creates the scaffolding for a new role intended for use with molecule.
 
     Usage:
-        init <role> [--docker | --openstack] [--offline]
+        init [<role>] [--docker | --openstack] [--offline]
     """
 
     def clean_meta_main(self, role_path):
@@ -708,27 +708,35 @@ class Init(AbstractCommand):
 
     def execute(self):
         role = self.molecule._args['<role>']
-        role_path = os.path.join(os.curdir, role)
+
         if not role:
-            msg = 'The init command requires a role name. Try:\n\n{} init <role>'
-            utilities.logger.error(msg.format(os.path.basename(sys.argv[0])))
-            sys.exit(1)
+            role = os.getcwd().split(os.sep)[-1]
+            role_path = os.getcwd()
+            utilities.print_info("Initializing molecule in current directory...")
+            if not os.path.isdir(os.path.join(role_path,"tests")):
+                os.mkdir(os.path.join(role_path, "tests"))
 
-        if os.path.isdir(role):
-            msg = 'The directory {} already exists. Cannot create new role.'
-            utilities.logger.error(msg.format(role_path))
-            sys.exit(1)
+        else:
 
-        try:
-            if self.molecule._args['--offline']:
-                sh.ansible_galaxy('init', '--offline', role)
-            else:
-                sh.ansible_galaxy('init', role)
-        except (CalledProcessError, sh.ErrorReturnCode_1) as e:
-            utilities.logger.error('ERROR: {}'.format(e))
-            sys.exit(e.returncode)
+            if os.path.isdir(role):
+                msg = 'The directory {} already exists. Cannot create new role.'
+                utilities.logger.error(msg.format(role))
+                sys.exit(1)
 
-        self.clean_meta_main(role_path)
+            role_path = os.path.join(os.curdir, role)
+
+            utilities.print_info("Initializing role {}...".format(role))
+
+            try:
+                if self.molecule._args['--offline']:
+                    sh.ansible_galaxy('init', '--offline', role)
+                else:
+                    sh.ansible_galaxy('init', role)
+            except (CalledProcessError, sh.ErrorReturnCode_1) as e:
+                utilities.logger.error('ERROR: {}'.format(e))
+                sys.exit(e.returncode)
+
+            self.clean_meta_main(role_path)
 
         env = jinja2.Environment(
             loader=jinja2.PackageLoader('molecule', 'templates'),
@@ -767,6 +775,8 @@ class Init(AbstractCommand):
         testinfra_path = os.path.join(
             role_path,
             self.molecule._config.config['molecule']['testinfra_dir'])
+
+
 
         with open(os.path.join(testinfra_path, 'test_default.py'), 'w') as f:
             f.write(t_test_default.render())
