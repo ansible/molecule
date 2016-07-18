@@ -39,6 +39,9 @@ class DockerProvisioner(BaseProvisioner):
 
         self.image_tag = 'molecule_local/{}:{}'
 
+        if 'install_python' not in self.m._config.config['docker']:
+            self.m._config.config['docker']['install_python'] = True
+
     def _get_platform(self):
         self.m._env['MOLECULE_PLATFORM'] = 'Docker'
         return self.m._env['MOLECULE_PLATFORM']
@@ -94,6 +97,14 @@ class DockerProvisioner(BaseProvisioner):
                             for tag in image.get('RepoTags')]
 
         for container in self.instances:
+
+            if 'install_python' in container and container[
+                    'install_python'] is False:
+                continue
+            else:
+                molecule.utilities.print_info(
+                    "Creating Ansible compatible image of {}:{} ...".format(
+                        container['image'], container['image_version']))
 
             if 'registry' in container:
                 container['registry'] += '/'
@@ -151,7 +162,11 @@ class DockerProvisioner(BaseProvisioner):
                         'Finished building {}'.format(tag_string))
 
     def up(self, no_provision=True):
-        self.build_image()
+
+        if self.m._config.config['docker']['install_python']:
+            self.build_image()
+        else:
+            self.image_tag = '{}:{}'
 
         for container in self.instances:
 

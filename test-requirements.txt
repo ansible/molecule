@@ -4,4 +4,3 @@ pytest
 pytest-mock
 tox
 wheel
-yapf==0.10.0

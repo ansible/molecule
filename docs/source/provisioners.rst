@@ -29,8 +29,12 @@ The available params for docker containers are:
 * ``ansible_groups`` - groups the container belongs to in Ansible
 * ``image`` - name of the image
 * ``image_version`` - version of the image
-* ``privileged`` - whether or not to run the container in privileged mode (boolean)
+* ``privileged`` - **(OPTIONAL)** whether or not to run the container in privileged mode (boolean)
 * ``registry`` - **(OPTIONAL)** the registry to obtain the image
+* ``install_python`` - **(default=yes)** install python onto the image being used
+
+The available param for the docker provisioner itself is:
+* ``install_python`` - **(default=yes)** install python onto all images for all containers
 
 Docker Example
 --------------
