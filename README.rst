@@ -56,6 +56,14 @@ Create a new role:
   $ molecule init foo
   Successfully initialized new role in ./foo/
 
+Or add molecule to an existing role:
+
+.. code-block:: bash
+
+  $ cd foo
+  $ molecule init
+  Successfully initialized new role in ./foo/
+
 Update the role with needed functionality and tests.  Now test it:
 
 .. code-block:: bash
