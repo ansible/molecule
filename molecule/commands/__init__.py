@@ -18,5 +18,8 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-__all__ = ['BaseProvisioner', 'DockerProvisioner', 'OpenstackProvisioner',
-           'ProxmoxProvisioner', 'VagrantProvisioner']
+__all__ = ['converge', 'create', 'destroy', 'idempotence', 'init', 'list',
+           'login', 'status', 'syntax', 'test', 'verify']
+
+# Import __all__ into the molecule.commands namespace
+from molecule.commands import *  # noqa

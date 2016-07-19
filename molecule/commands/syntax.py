@@ -18,5 +18,27 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-__all__ = ['BaseProvisioner', 'DockerProvisioner', 'OpenstackProvisioner',
-           'ProxmoxProvisioner', 'VagrantProvisioner']
+from molecule import ansible_playbook
+from molecule import utilities
+from molecule.commands import base
+
+
+class Syntax(base.BaseCommand):
+    """
+    Performs a syntax check on the current role.
+
+    Usage:
+        syntax
+    """
+
+    def execute(self, exit=True):
+        self.molecule._create_templates()
+
+        ansible = ansible_playbook.AnsiblePlaybook(
+            self.molecule._config.config['ansible'])
+        ansible.add_cli_arg('syntax-check', True)
+        ansible.add_cli_arg('inventory-file', 'localhost,')
+
+        utilities.print_info("Checking playbooks syntax ...")
+
+        return ansible.execute(hide_errors=True)
