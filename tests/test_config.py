@@ -90,7 +90,7 @@ def test_build_easy_paths():
     c.load_defaults_file()
     c.build_easy_paths()
 
-    assert '.molecule/state' == c.config['molecule']['state_file']
+    assert '.molecule/state.yml' == c.config['molecule']['state_file']
     assert '.molecule/vagrantfile' == c.config['molecule']['vagrantfile_file']
     assert '.molecule/rakefile' == c.config['molecule']['rakefile_file']
     assert '.molecule/ansible.cfg' == c.config['molecule']['config_file']

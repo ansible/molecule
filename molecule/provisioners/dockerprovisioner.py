@@ -161,7 +161,6 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
                         tag_string))
 
     def up(self, no_provision=True):
-
         if self.m._config.config['docker']['install_python']:
             self.build_image()
         else:
@@ -197,7 +196,6 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
                     container['name']))
 
     def destroy(self):
-
         for container in self.instances:
             if (container['Created']):
                 utilities.logger.warning('Stopping container {} ...'.format(
@@ -209,7 +207,6 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
                 container['Created'] = False
 
     def status(self):
-
         Status = collections.namedtuple('Status', ['name', 'state',
                                                    'provider'])
         instance_names = [x['name'] for x in self.instances]

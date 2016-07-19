@@ -30,6 +30,7 @@ import tabulate
 import yaml
 
 from molecule import config
+from molecule import state
 from molecule import utilities
 from molecule.provisioners import baseprovisioner
 from molecule.provisioners import dockerprovisioner
@@ -66,7 +67,8 @@ class Molecule(object):
         # get defaults for inventory/ansible.cfg from molecule if none are specified
         self._config.update_ansible_defaults()
 
-        self._state = self._load_state_file()
+        self._state = state.State(
+            state_file=self._config.config.get('molecule').get('state_file'))
 
         try:
             self._provisioner = self.get_provisioner()
@@ -99,8 +101,6 @@ class Molecule(object):
                                       default_flow_style=False,
                                       indent=2))
 
-        self._write_state_file()
-
     def get_provisioner(self):
         if 'vagrant' in self._config.config:
             return vagrantprovisioner.VagrantProvisioner(self)
@@ -112,24 +112,6 @@ class Molecule(object):
             return openstackprovisioner.OpenstackProvisioner(self)
         else:
             return None
-
-    def _load_state_file(self):
-        """
-        Looks for a molecule state file and loads it.
-
-        :return: Contents of state file as a dict if found, otherwise empty dict.
-        """
-        if not os.path.isfile(self._config.config['molecule']['state_file']):
-            return {}
-
-        with open(self._config.config['molecule']['state_file'], 'r') as env:
-            return yaml.safe_load(env)
-
-    def _write_state_file(self):
-        utilities.write_file(self._config.config['molecule']['state_file'],
-                             yaml.safe_dump(self._state,
-                                            default_flow_style=False,
-                                            encoding='utf-8'))
 
     def _write_ssh_config(self):
         try:

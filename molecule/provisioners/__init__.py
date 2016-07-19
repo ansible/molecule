@@ -20,12 +20,6 @@
 
 from pbr import version
 
-from molecule.provisioners import baseprovisioner
-from molecule.provisioners import dockerprovisioner
-from molecule.provisioners import openstackprovisioner
-from molecule.provisioners import proxmoxprovisioner
-from molecule.provisioners import vagrantprovisioner
-
 try:
     version_info = version.VersionInfo('molecule')
     __version__ = version_info.release_string()
