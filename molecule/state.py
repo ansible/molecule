@@ -19,9 +19,9 @@
 #  THE SOFTWARE.
 """
 A class which manages the state file.  Intended to be used as a singleton
-throughout molecule.  The classes' initial state is serialized to disk if the
-file does not exist, otherwise is deserialized from the existing state file.
-Changes made to the object are immediately serialized.
+throughout molecule.  The initial state is serialized to disk if the file does
+not exist, otherwise is deserialized from the existing state file.  Changesmade
+to the object are immediately serialized.
 """
 
 import os
