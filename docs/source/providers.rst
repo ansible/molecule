@@ -59,10 +59,6 @@ This example is far more extensive than you likely need and it demonstrates lots
             box_url: https://vagrantcloud.com/ubuntu/boxes/trusty64/versions/14.04/providers/virtualbox.box
           - name: rhel-7
             box: rhel/rhel-7
-            triggers:
-              - trigger: before
-                action: destroy
-                cmd: run_remote 'subscription-manager unregister'
 
         providers:
           - name: virtualbox
@@ -74,8 +70,6 @@ Other Notes
 ^^^^^^^^^^^
 
 * `box_version`, defaults to '=', can include an constraints like '<, >, >=, <=, ~.' as listed in the `Versioning`_ docs.
-
-* `triggers` enables very basic support for the vagrant-triggers plugin. During `molecule create`, if the plugin is not found it will be automatically installed.
 
 Libvirt
 ---------
