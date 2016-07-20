@@ -1,5 +1,10 @@
 CHANGELOG for molecule
 ======================
+1.8.2
+----
+
+* Fixed a bad reference to the molecule_dir config variable.
+
 1.8.1
 ----
 
