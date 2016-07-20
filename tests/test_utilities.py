@@ -21,6 +21,7 @@
 import binascii
 import os
 
+import colorama
 import pytest
 
 from molecule import utilities
@@ -50,6 +51,26 @@ def deep_dict_b():
                            "office": "Austin",
                            "position": "python master"}}
     }
+
+
+def test_print_success(capsys):
+    utilities.print_success('test')
+    result, _ = capsys.readouterr()
+
+    print '{}{}'.format(colorama.Fore.GREEN, 'test'.rstrip())
+    expected, _ = capsys.readouterr()
+
+    assert expected == result
+
+
+def test_print_info(capsys):
+    utilities.print_info('test')
+    result, _ = capsys.readouterr()
+
+    print '--> {}{}'.format(colorama.Fore.CYAN, 'test'.rstrip())
+    expected, _ = capsys.readouterr()
+
+    assert expected == result
 
 
 def test_merge_simple_simple_00(simple_dict_a, simple_dict_b):
@@ -197,3 +218,44 @@ def test_remove_args():
 
     assert expected_list == actual_list
     assert expected_dict == actual_dict
+
+
+def test_reset_known_hosts(mocker):
+    mocked = mocker.patch('os.system')
+    utilities.reset_known_host_key('test')
+
+    mocked.assert_called_once_with('ssh-keygen -R test')
+
+
+@pytest.mark.skipif(reason="determine how to test such a function")
+def test_check_ssh_availability():
+    pass
+
+
+def test_debug(capsys):
+    utilities.debug('test_title', 'test_data')
+    result_title, _ = capsys.readouterr()
+
+    print(''.join([colorama.Back.WHITE, colorama.Style.BRIGHT,
+                   colorama.Fore.BLACK, 'DEBUG: ' + 'test_title',
+                   colorama.Fore.RESET, colorama.Back.RESET,
+                   colorama.Style.RESET_ALL]))
+    print(''.join([colorama.Fore.BLACK, colorama.Style.BRIGHT, 'test_data',
+                   colorama.Style.RESET_ALL, colorama.Fore.RESET]))
+    expected_title, _ = capsys.readouterr()
+
+    assert expected_title == result_title
+
+
+def test_sysexit():
+    with pytest.raises(SystemExit) as e:
+        utilities.sysexit()
+
+    assert 1 == e.value.code
+
+
+def test_sysexit_with_custom_code():
+    with pytest.raises(SystemExit) as e:
+        utilities.sysexit(2)
+
+    assert 2 == e.value.code

@@ -18,5 +18,19 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-__all__ = ['BaseProvisioner', 'DockerProvisioner', 'OpenstackProvisioner',
-           'ProxmoxProvisioner', 'VagrantProvisioner']
+# NOTE: Importing into the ``molecule.commands`` namespace, to prevent
+# collisions (e.g. ``list``).  The CLI usage may conflict with reserved words
+# or builtins.
+
+from molecule.commands import base  # noqa
+from molecule.commands import converge  # noqa
+from molecule.commands import create  # noqa
+from molecule.commands import destroy  # noqa
+from molecule.commands import idempotence  # noqa
+from molecule.commands import init  # noqa
+from molecule.commands import list  # noqa
+from molecule.commands import login  # noqa
+from molecule.commands import status  # noqa
+from molecule.commands import syntax  # noqa
+from molecule.commands import test  # noqa
+from molecule.commands import verify  # noqa

@@ -18,5 +18,27 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-__all__ = ['BaseProvisioner', 'DockerProvisioner', 'OpenstackProvisioner',
-           'ProxmoxProvisioner', 'VagrantProvisioner']
+from molecule.commands import base
+
+
+class List(base.BaseCommand):
+    """
+    Prints a list of currently available platforms
+
+    Usage:
+        list [--debug] ([-m]|[--porcelain])
+
+    Options:
+        --debug         get more detail
+        -m              synonym for '--porcelain' (deprecated)
+        --porcelain     machine readable output
+    """
+
+    def execute(self):
+        if self.static:
+            self.disabled('list')
+
+        porcelain = self.molecule._args['-m'] or self.molecule._args[
+            '--porcelain']
+        self.molecule._print_valid_platforms(porcelain=porcelain)
+        return None, None
