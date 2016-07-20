@@ -63,8 +63,8 @@ class Molecule(object):
 
         # ensure the .molecule directory exists
         if not os.path.isdir(os.path.join(os.curdir, self._config.config[
-                'molecule_dir'])):
-            os.mkdir(os.path.join(os.curdir, self._config.config[
+                'molecule']['molecule_dir'])):
+            os.mkdir(os.path.join(os.curdir, self._config.config['molecule'][
                 'molecule_dir']))
 
         # concatentate file names and paths within config so they're more convenient to use
