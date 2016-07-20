@@ -55,8 +55,6 @@ class Init(base.BaseCommand):
             role_path = os.getcwd()
             utilities.print_info(
                 "Initializing molecule in current directory...")
-            if not os.path.isdir(os.path.join(role_path, "tests")):
-                os.mkdir(os.path.join(role_path, "tests"))
 
         else:
 
@@ -117,6 +115,9 @@ class Init(base.BaseCommand):
         testinfra_path = os.path.join(
             role_path,
             self.molecule._config.config['molecule']['testinfra_dir'])
+
+        if not os.path.isdir(testinfra_path):
+            os.mkdir(testinfra_path)
 
         with open(os.path.join(testinfra_path, 'test_default.py'), 'w') as f:
             f.write(t_test_default.render())
