@@ -1,5 +1,12 @@
 CHANGELOG for molecule
 ======================
+1.8.0
+----
+
+* Added native support for OpenStack provider.
+* Fixed a bug where testinfra_dir config option wasn't being handled.
+* Fixed a bug with ``molecule login`` where its host matching didn't work with overlapping names.
+
 1.7.0
 ----
 
