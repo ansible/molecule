@@ -1,5 +1,10 @@
 CHANGELOG for molecule
 ======================
+1.8.1
+----
+
+* Fixed a bug where molecule would fail if .molecule/ didn't already exist.
+
 1.8.0
 ----
 
