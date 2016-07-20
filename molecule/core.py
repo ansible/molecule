@@ -61,6 +61,12 @@ class Molecule(object):
         # merge in molecule.yml
         self._config.merge_molecule_file()
 
+        # ensure the .molecule directory exists
+        if not os.path.isdir(os.path.join(os.curdir, self._config.config[
+                'molecule_dir'])):
+            os.mkdir(os.path.join(os.curdir, self._config.config[
+                'molecule_dir']))
+
         # concatentate file names and paths within config so they're more convenient to use
         self._config.build_easy_paths()
 
