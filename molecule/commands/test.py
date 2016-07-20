@@ -18,7 +18,7 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import molecule.commands
+import molecule.commands  # prevent circular dependencies
 from molecule import utilities
 from molecule.commands import base
 
