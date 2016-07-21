@@ -51,6 +51,9 @@ class State(object):
 
         return wrapper
 
+    def __str__(self):
+        return yaml.safe_dump(self._data, default_flow_style=False, indent=2)
+
     @property
     def converged(self):
         return self._data.get('converged')
