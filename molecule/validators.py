@@ -20,7 +20,6 @@
 
 import os
 import re
-import sys
 
 import sh
 
@@ -82,7 +81,7 @@ def check_trailing_cruft(ignore_paths=[], exit=True):
             found_error = True
 
     if exit and found_error:
-        sys.exit(1)
+        utilities.sysexit()
 
 
 def trailing_newline(source):

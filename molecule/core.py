@@ -48,18 +48,8 @@ class Molecule(object):
         self._provisioner = None
 
     def main(self):
-        # load molecule defaults
-        self._config.load_defaults_file()
-
-        # merge in any molecule config files found (eg: ~/.configs/molecule/config.yml)
-        self._config.merge_molecule_config_files()
-
-        # init command doesn't need to load molecule.yml
         if self._args.get('<command>') == 'init':
             return  # exits program
-
-        # merge in molecule.yml
-        self._config.merge_molecule_file()
 
         # ensure the .molecule directory exists
         if not os.path.isdir(os.path.join(os.curdir, self._config.config[
@@ -85,7 +75,7 @@ class Molecule(object):
             self._args['--platform'] = None
             self._provisioner = self.get_provisioner()
             self._print_valid_providers()
-            sys.exit(1)
+            utilities.sysexit()
         except baseprovisioner.InvalidPlatformSpecified:
             utilities.logger.error("\nInvalid platform '{}'\n".format(
                 self._args['--platform']))
@@ -93,7 +83,7 @@ class Molecule(object):
             self._args['--platform'] = None
             self._provisioner = self.get_provisioner()
             self._print_valid_platforms()
-            sys.exit(1)
+            utilities.sysexit()
 
         if not os.path.exists(self._config.config['molecule']['molecule_dir']):
             os.makedirs(self._config.config['molecule']['molecule_dir'])
@@ -128,7 +118,7 @@ class Molecule(object):
         except subprocess.CalledProcessError as e:
             utilities.logger.error('ERROR: {}'.format(e))
             utilities.logger.error("Does your vagrant VM exist?")
-            sys.exit(e.returncode)
+            utilities.sysexit(e.returncode)
         utilities.write_file(ssh_config, out)
 
     def _print_valid_platforms(self, porcelain=False):
@@ -220,7 +210,7 @@ class Molecule(object):
 
         # rakefile
         kwargs = {
-            'molecule_file': self._config.config['molecule']['molecule_file'],
+            'molecule_file': self._config.molecule_file,
             'current_platform': self._env['MOLECULE_PLATFORM'],
             'serverspec_dir': self._config.config['molecule']['serverspec_dir']
         }
@@ -317,7 +307,7 @@ class Molecule(object):
                 'ERROR: the group_vars path {} does not exist. Check your configuration file'.format(
                     group_vars_target))
 
-            sys.exit(1)
+            utilities.sysexit()
         os.symlink(group_vars_target, group_vars_link_path)
 
     def _display_tabulate_data(self, data, headers=None):

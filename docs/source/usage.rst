@@ -363,22 +363,13 @@ order to test this particular role.
 Override Configuration
 ----------------------
 
-You can specify a configuration file in the following places, in this order:
+1. local config (``~/.config/molecule/config.yml``)
+2. project config
+3. default config (``molecule.yml``)
 
-1. MOLECULE\_CONFIG environment variable
-2. ~/.config/molecule/config.yml
-3. /etc/molecule/config.yml
-
-Molecule looks for configuration file and will stop looking for files once one of these is found,
-so you *cannot* load settings from more than one of these locations.
-
-Options specified in the (first found) configuration file will merge with (and
-override) the defaults. Options not specified in the file will fall back
-to defaults.
-
-However, you can also specify settings in the `molecule.yml` file for a role under
-the *ansible* section. These will be the most specific settings and will
-override settings from all other files.
+The merge order is default -> project -> local, meaning that elements at
+the top of the above list will be merged last, and have greater precedence
+than elements at the bottom of the list.
 
 Using Molecule For Deployment
 -----------------------------

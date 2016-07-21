@@ -19,80 +19,24 @@
 #  THE SOFTWARE.
 
 import os
-import sys
+import os.path
 
-import colorama
-import yaml
+import anyconfig
 
 from molecule import utilities
 
+CONFIG_PATHS = [os.path.join(
+    os.path.dirname(__file__), 'conf/defaults.yml'), 'molecule.yml',
+                '~/.config/molecule/config.yml']
+
 
 class Config(object):
-    # locations to look for molecule config files
-    CONFIG_PATHS = [os.environ.get('MOLECULE_CONFIG'),
-                    os.path.expanduser('~/.config/molecule/config.yml'),
-                    '/etc/molecule/config.yml']
+    def __init__(self, configs=CONFIG_PATHS):
+        self.config = self._get_config(configs)
 
-    def load_defaults_file(self, defaults_file=None):
-        """
-        Loads config from a file
-
-        :param defaults_file: optional YAML file to open and read defaults from
-        :return: None
-        """
-        # load defaults from provided file
-        if defaults_file is None:
-            defaults_file = os.path.join(
-                os.path.dirname(__file__), 'conf/defaults.yml')
-
-        with open(defaults_file, 'r') as stream:
-            self.config = yaml.safe_load(stream)
-
-    def merge_molecule_config_files(self, paths=CONFIG_PATHS):
-        """
-        Looks for a molecule config file in paths and merges it with current config if found
-
-        Only the first file that's found will be merged in.
-        :param paths: list of places to look for config files
-        :return: Path of file that was merged into config, if found, otherwise None
-        """
-        # merge defaults with a config file if found
-        for path in paths:
-            if path and os.path.isfile(path):
-                with open(path, 'r') as stream:
-                    self.config = utilities.merge_dicts(self.config,
-                                                        yaml.safe_load(stream))
-                    return path
-        return
-
-    def merge_molecule_file(self, molecule_file=None):
-        """
-        Looks for a molecule file in the local path and merges it into our config
-
-        :param molecule_file: path and name of molecule file to look for
-        :return: None
-        """
-        if molecule_file is None:
-            molecule_file = self.config['molecule']['molecule_file']
-
-        if not os.path.isfile(molecule_file):
-            error = '\n{}Unable to find {}. Exiting.{}'
-            utilities.logger.error(error.format(colorama.Fore.RED, self.config[
-                'molecule']['molecule_file'], colorama.Fore.RESET))
-            sys.exit(1)
-
-        with open(molecule_file, 'r') as env:
-
-            try:
-                molecule_yml = yaml.load(env)
-            except Exception as e:
-                error = "\n{}{} isn't properly formatted: {}{}"
-                utilities.logger.error(error.format(
-                    colorama.Fore.RED, molecule_file, e, colorama.Fore.RESET))
-                sys.exit(1)
-
-            interim = utilities.merge_dicts(self.config, molecule_yml)
-            self.config = interim
+    @property
+    def molecule_file(self):
+        return 'molecule.yml'
 
     def build_easy_paths(self):
         """
@@ -143,3 +87,30 @@ class Config(object):
             instance['vm_name'] = utilities.format_instance_name(
                 instance['name'], platform,
                 self.config['vagrant']['instances'])
+
+    def _get_config(self, configs):
+        if not self._has_molecule_file():
+            error = '\nUnable to find {}. Exiting.'
+            utilities.logger.error(error.format(self.molecule_file))
+            utilities.sysexit()
+
+        return self._combine(configs)
+
+    def _has_molecule_file(self):
+        return os.path.isfile(self.molecule_file)
+
+    def _combine(self, configs):
+        """ Perform a prioritized recursive merge of serveral source files,
+        and return a new dict.
+
+        The merge order is based on the index of the list, meaning that elements
+        at the end of the list will be merged last, and have greater precedence
+        than elements at the beginning.
+
+        :param configs: A list containing the yaml files to load.
+        :return: dict
+        """
+
+        return anyconfig.load(configs,
+                              ignore_missing=True,
+                              ac_merge=anyconfig.MS_DICTS_AND_LISTS)
