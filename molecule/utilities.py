@@ -256,8 +256,9 @@ def debug(title, data):
     print(''.join([colorama.Back.WHITE, colorama.Style.BRIGHT,
                    colorama.Fore.BLACK, 'DEBUG: ' + title, colorama.Fore.RESET,
                    colorama.Back.RESET, colorama.Style.RESET_ALL]))
-    print(''.join([colorama.Fore.BLACK, colorama.Style.BRIGHT, data,
+    print(''.join([colorama.Fore.BLACK, colorama.Style.BRIGHT, data.strip(),
                    colorama.Style.RESET_ALL, colorama.Fore.RESET]))
+    print('')
 
 
 def sysexit(code=1):

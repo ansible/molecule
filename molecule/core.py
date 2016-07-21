@@ -103,9 +103,9 @@ class Molecule(object):
 
         if self._args.get('--debug'):
             utilities.debug('RUNNING CONFIG',
-                            yaml.dump(self._config.config,
-                                      default_flow_style=False,
-                                      indent=2))
+                            yaml.safe_dump(self._config.config,
+                                           default_flow_style=False,
+                                           indent=2))
 
     def get_provisioner(self):
         if 'vagrant' in self._config.config:

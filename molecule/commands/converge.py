@@ -136,14 +136,15 @@ class Converge(base.BaseCommand):
                          for (k, v) in ansible.env.items()
                          if 'ANSIBLE' not in k}
             utilities.debug('OTHER ENVIRONMENT',
-                            yaml.dump(other_env,
-                                      default_flow_style=False,
-                                      indent=2))
+                            yaml.safe_dump(other_env,
+                                           default_flow_style=False,
+                                           indent=2))
             utilities.debug('ANSIBLE ENVIRONMENT',
-                            yaml.dump(ansible_env,
-                                      default_flow_style=False,
-                                      indent=2))
+                            yaml.safe_dump(ansible_env,
+                                           default_flow_style=False,
+                                           indent=2))
             utilities.debug('ANSIBLE PLAYBOOK', str(ansible.ansible))
+            utilities.debug('CURRENT STATE', str(self.molecule._state))
 
         utilities.print_info("Starting Ansible Run ...")
         status, output = ansible.execute(hide_errors=hide_errors)
