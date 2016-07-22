@@ -49,20 +49,23 @@ Install molecule using pip:
 
   $ pip install molecule
 
-Create a new role:
+Create a new role with the docker provisioner:
 
 .. code-block:: bash
 
-  $ molecule init foo
-  Successfully initialized new role in ./foo/
+  $ molecule init foo --docker
+  --> Initializing role foo...
+  Successfully initialized new role in ./foo
+
 
 Or add molecule to an existing role:
 
 .. code-block:: bash
 
   $ cd foo
-  $ molecule init
-  Successfully initialized new role in ./foo/
+  $ molecule init --docker
+  --> Initializing molecule in current directory...
+  Successfully initialized new role in /private/tmp
 
 Update the role with needed functionality and tests.  Now test it:
 
@@ -70,42 +73,48 @@ Update the role with needed functionality and tests.  Now test it:
 
   $ cd foo
   $ molecule test
-  ==> vagrant-01: VM not created. Moving on...
-  ==> vagrant-01: VM not created. Moving on...
-  Bringing machine 'vagrant-01' up with 'virtualbox' provider...
-  ==> vagrant-01: Importing base box 'hashicorp/precise64'...
-  ...
-  ==> vagrant-01: Machine not provisioned because `--no-provision` is specified.
+  --> Destroying instances ...
+  --> Checking playbooks syntax ...
 
-  PLAY [all] ********************************************************************
+  playbook: playbook.yml
+  --> Creating instances ...
+  --> Creating Ansible compatible image of ubuntu:latest ...
+  --> Creating Ansible compatible image of ubuntu:latest ...
+  Creating container foo-01 with base image ubuntu:latest ...
+  Container created.
+  Creating container foo-02 with base image ubuntu:latest ...
+  Container created.
+  --> Starting Ansible Run ...
 
-  GATHERING FACTS ***************************************************************
+  PLAY [all] *********************************************************************
 
-  ok: [vagrant-01]
+  TASK [setup] *******************************************************************
+  ok: [foo-01]
+  ok: [foo-02]
 
-  TASK: [foo | install curl] ****************************************************
+  PLAY RECAP *********************************************************************
+  foo-01                     : ok=1    changed=0    unreachable=0    failed=0
+  foo-02                     : ok=1    changed=0    unreachable=0    failed=0
 
-  changed: [vagrant-01]
+  --> Idempotence test in progress (can take a few minutes)...
+  --> Starting Ansible Run ...
+  Idempotence test passed.
+  --> Executing testinfra tests found in tests/.
+  ============================= test session starts ==============================
+  platform darwin -- Python 2.7.11, pytest-2.9.2, py-1.4.31, pluggy-0.3.1
+  rootdir: /private/tmp/foo/tests, inifile:
+  plugins: mock-1.1, xdist-1.14, testinfra-1.3.1
+  collected 2 itemss
 
-  PLAY RECAP ********************************************************************
-  vagrant-01                 : ok=2    changed=1    unreachable=0    failed=0
+  tests/test_default.py ..
 
-  Idempotence test in progress... OKAY
-  Inspecting 2 files
-  ..
-
-  2 files inspected, no offenses detected
-  /Users/jodewey/.rvm/rubies/ruby-2.2.0/bin/ruby -I/Users/jodewey/.rvm/gems/ruby-2.2.0/gems/rspec-support-3.3.0/lib:/Users/jodewey/.rvm/gems/ruby-2.2.0/gems/rspec-core-3.3.2/lib /Users/jodewey/.rvm/gems/ruby-2.2.0/gems/rspec-core-3.3.2/exe/rspec --pattern spec/\*_spec.rb,spec/vagrant-01/\*_spec.rb,spec/hosts/vagrant-01/\*_spec.rb,spec/group_1/\*_spec.rb,spec/groups/group_1/\*_spec.rb,spec/group_2/\*_spec.rb,spec/groups/group_2/\*_spec.rb
-
-  Package Installation
-    Package "curl"
-      should be installed
-
-  Finished in 0.40244 seconds (files took 0.90459 seconds to load)
-  1 example, 0 failures
-
-  ==> vagrant-01: Attempting graceful shutdown of VM...
-  ==> vagrant-01: Destroying VM and associated drives...
+  =========================== 2 passed in 1.11 seconds ===========================
+  No serverspec tests found in spec/.
+  --> Destroying instances ...
+  Stopping container foo-01 ...
+  Removed container foo-01.
+  Stopping container foo-02 ...
+  Removed container foo-02.
 
 Documentation
 -------------
