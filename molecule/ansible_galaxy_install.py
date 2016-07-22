@@ -19,7 +19,6 @@
 #  THE SOFTWARE.
 
 import os
-import sys
 
 import sh
 
@@ -89,4 +88,4 @@ class AnsibleGalaxyInstall:
             return self.galaxy().stdout
         except sh.ErrorReturnCode as e:
             utilities.logger.error('ERROR: {}'.format(e))
-            sys.exit(e.exit_code)
+            utilities.sysexit(e.exit_code)

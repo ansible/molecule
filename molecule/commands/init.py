@@ -98,9 +98,7 @@ class Init(base.BaseCommand):
 
         sanitized_role = re.sub('[._]', '-', role)
         with open(
-                os.path.join(
-                    role_path,
-                    self.molecule._config.config['molecule']['molecule_file']),
+                os.path.join(role_path, self.molecule._config.molecule_file),
                 'w') as f:
             f.write(t_molecule.render(config=self.molecule._config.config,
                                       role=sanitized_role))

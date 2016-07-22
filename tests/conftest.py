@@ -17,3 +17,39 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
+
+import os
+import os.path
+
+import pytest
+
+
+@pytest.fixture()
+def temp_files(tmpdir, request):
+    def wrapper(content=[]):
+        d = tmpdir.mkdir('molecule')
+        confs = []
+        for index, item in enumerate(content):
+            c = d.join(os.extsep.join((str(index), 'yml')))
+            c.write(item)
+            confs.append(c.strpath)
+
+        def cleanup():
+            for c in confs:
+                os.remove(c)
+            os.rmdir(d.strpath)
+
+        request.addfinalizer(cleanup)
+
+        return confs
+
+    return wrapper
+
+
+@pytest.fixture()
+def mock_molecule_file_exists(monkeypatch):
+    def mockreturn(m):
+        return True
+
+    return monkeypatch.setattr('molecule.config.Config._has_molecule_file',
+                               mockreturn)

@@ -27,32 +27,6 @@ import pytest
 from molecule import utilities
 
 
-@pytest.fixture()
-def simple_dict_a():
-    return {"name": "remy", "city": "Berkeley", "age": 21}
-
-
-@pytest.fixture()
-def simple_dict_b():
-    return {"name": "remy", "city": "Austin"}
-
-
-@pytest.fixture()
-def deep_dict_a():
-    return {"users": {"remy": {"email": "remy@cisco.com",
-                               "office": "San Jose",
-                               "age": 21}}}
-
-
-@pytest.fixture()
-def deep_dict_b():
-    return {
-        "users": {"remy": {"email": "remy@cisco.com",
-                           "office": "Austin",
-                           "position": "python master"}}
-    }
-
-
 def test_print_success(capsys):
     utilities.print_success('test')
     result, _ = capsys.readouterr()
@@ -71,86 +45,6 @@ def test_print_info(capsys):
     expected, _ = capsys.readouterr()
 
     assert expected == result
-
-
-def test_merge_simple_simple_00(simple_dict_a, simple_dict_b):
-    expected = {"name": "remy", "city": "Austin", "age": 21}
-    actual = utilities.merge_dicts(simple_dict_a, simple_dict_b)
-
-    expected == actual
-
-
-def test_merge_simple_simple_01(simple_dict_b, simple_dict_a):
-    expected = {"name": "remy", "city": "Berkeley", "age": 21}
-    actual = utilities.merge_dicts(simple_dict_b, simple_dict_a)
-
-    assert expected == actual
-
-
-def test_merge_simple_deep_00(simple_dict_a, deep_dict_a):
-    expected = {
-        "name": "remy",
-        "city": "Berkeley",
-        "age": 21,
-        "users": {"remy": {"email": "remy@cisco.com",
-                           "office": "San Jose",
-                           "age": 21}}
-    }
-    actual = utilities.merge_dicts(simple_dict_a, deep_dict_a)
-
-    assert expected == actual
-
-
-def test_merge_simple_deep_01(deep_dict_a, simple_dict_a):
-    expected = {
-        "name": "remy",
-        "city": "Berkeley",
-        "age": 21,
-        "users": {"remy": {"email": "remy@cisco.com",
-                           "office": "San Jose",
-                           "age": 21}}
-    }
-    actual = utilities.merge_dicts(deep_dict_a, simple_dict_a)
-
-    assert expected == actual
-
-
-def test_merge_deep_deep_00(deep_dict_a, deep_dict_b):
-    expected = {
-        "users": {"remy": {"age": 21,
-                           "email": "remy@cisco.com",
-                           "office": "Austin",
-                           "position": "python master"}}
-    }
-    actual = utilities.merge_dicts(deep_dict_a, deep_dict_b)
-
-    assert expected == actual
-
-
-def test_merge_deep_deep_01(deep_dict_a, deep_dict_b):
-    expected = {
-        "users": {"remy": {"age": 21,
-                           "email": "remy@cisco.com",
-                           "office": "Austin",
-                           "position": "python master"}}
-    }
-    with pytest.raises(LookupError):
-        actual = utilities.merge_dicts(deep_dict_a,
-                                       deep_dict_b,
-                                       raise_conflicts=True)
-        assert expected == actual
-
-
-def test_merge_deep_deep_02(deep_dict_b, deep_dict_a):
-    expected = {
-        "users": {"remy": {"age": 21,
-                           "email": "remy@cisco.com",
-                           "office": "San Jose",
-                           "position": "python master"}}
-    }
-    actual = utilities.merge_dicts(deep_dict_b, deep_dict_a)
-
-    assert expected == actual
 
 
 # TODO(retr0h): Cleanup how we deal with temp files
@@ -259,3 +153,16 @@ def test_sysexit_with_custom_code():
         utilities.sysexit(2)
 
     assert 2 == e.value.code
+
+
+def test_merge_dicts():
+    # Example taken from python-anyconfig/anyconfig/__init__.py
+    a = {'b': [{'c': 0}, {'c': 2}], 'd': {'e': 'aaa', 'f': 3}}
+    b = {'a': 1, 'b': [{'c': 3}], 'd': {'e': 'bbb'}}
+    expected = {'a': 1,
+                'b': [{'c': 0}, {'c': 2}, {'c': 3}],
+                'd': {'e': "bbb",
+                      'f': 3}}
+    result = utilities.merge_dicts(a, b)
+
+    assert expected == result
