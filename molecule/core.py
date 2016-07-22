@@ -48,14 +48,8 @@ class Molecule(object):
         self._provisioner = None
 
     def main(self):
-        if self._args.get('<command>') == 'init':
-            return  # exits program
-
-        # ensure the .molecule directory exists
-        if not os.path.isdir(os.path.join(os.curdir, self._config.config[
-                'molecule']['molecule_dir'])):
-            os.mkdir(os.path.join(os.curdir, self._config.config['molecule'][
-                'molecule_dir']))
+        if not os.path.exists(self._config.config['molecule']['molecule_dir']):
+            os.makedirs(self._config.config['molecule']['molecule_dir'])
 
         # concatentate file names and paths within config so they're more convenient to use
         self._config.build_easy_paths()
@@ -85,9 +79,6 @@ class Molecule(object):
             self._print_valid_platforms()
             utilities.sysexit()
 
-        if not os.path.exists(self._config.config['molecule']['molecule_dir']):
-            os.makedirs(self._config.config['molecule']['molecule_dir'])
-
         # updates instances config with full machine names
         self._config.populate_instance_names(self._env['MOLECULE_PLATFORM'])
 
@@ -96,6 +87,9 @@ class Molecule(object):
                             yaml.dump(self._config.config,
                                       default_flow_style=False,
                                       indent=2))
+        self._add_or_update_vars('group_vars')
+        self._add_or_update_vars('host_vars')
+        self._symlink_vars()
 
     def get_provisioner(self):
         if 'vagrant' in self._config.config:

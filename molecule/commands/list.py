@@ -35,9 +35,6 @@ class List(base.BaseCommand):
     """
 
     def execute(self):
-        if self.static:
-            self.disabled('list')
-
         porcelain = self.molecule._args['-m'] or self.molecule._args[
             '--porcelain']
         self.molecule._print_valid_platforms(porcelain=porcelain)

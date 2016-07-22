@@ -70,10 +70,6 @@ class Converge(base.BaseCommand):
                 create_instances = True
                 create_inventory = True
 
-        if self.static:
-            create_instances = False
-            create_inventory = False
-
         if create_instances and not idempotent:
             command_args, args = utilities.remove_args(self.command_args,
                                                        self.args, ['--tags'])

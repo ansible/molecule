@@ -89,14 +89,6 @@ class VagrantProvisioner(baseprovisioner.BaseProvisioner):
 
     @property
     def default_provider(self):
-        # assume static inventory if there's no vagrant section
-        if self.m._config.config.get('vagrant') is None:
-            return 'static'
-
-        # assume static inventory if no providers are listed
-        if self.m._config.config['vagrant'].get('providers') is None:
-            return 'static'
-
         # take config's default_provider if specified, otherwise use the first in the provider list
         default_provider = self.m._config.config['molecule'].get(
             'default_provider')

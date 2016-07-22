@@ -44,9 +44,6 @@ class Destroy(base.BaseCommand):
 
         :return: None
         """
-        if self.static:
-            self.disabled('destroy')
-
         self.molecule._create_templates()
         try:
             utilities.print_info("Destroying instances ...")

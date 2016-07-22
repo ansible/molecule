@@ -32,58 +32,28 @@ class InvalidHost(Exception):
 class BaseCommand:
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, command_args, global_args, molecule=False):
+    def __init__(self, command_args, args, molecule=False):
         """
         Initialize commands
 
         :param command_args: arguments of the command
-        :param global_args: arguments from the CLI
+        :param args: arguments from the CLI
         :param molecule: molecule instance
         """
         self.args = docopt.docopt(self.__doc__, argv=command_args)
         self.args['<command>'] = self.__class__.__name__.lower()
         self.command_args = command_args
 
-        self.static = False
+        self.molecule = core.Molecule(self.args)
+        self.main()
 
-        # give us the option to reuse an existing molecule instance
-        if not molecule:
-            self.molecule = core.Molecule(self.args)
-            self.molecule.main()
-        else:
-            self.molecule = molecule
-
-        # init doesn't need to load molecule files
-        if self.__class__.__name__ == 'Init':
-            return
-
-        # assume static inventory if no vagrant config block is defined
-        if self.molecule._provisioner is None:
-            self.static = True
-
-        # assume static inventory if no instances are defined in vagrant config block
-        if self.molecule._provisioner.instances is None:
-            self.static = True
-
-        # Add or update the group_vars if needed.
-        self.molecule._add_or_update_vars('group_vars')
-
-        # Add or update the host_vars if needed
-        self.molecule._add_or_update_vars('host_vars')
-
-        # Update symlinks
-        self.molecule._symlink_vars()
-
-    def disabled(self, cmd):
-        """
-        Prints 'command disabled' message and exits program.
-
-        :param cmd: Name of the disabled command to print.
-        :return: None
-        """
-        errmsg = "The `{}` command isn't supported with static inventory."
-        utilities.logger.error(errmsg.format(cmd))
-        utilities.sysexit()
+    def main(self):
+        c = self.molecule._config
+        if not c.molecule_file_exists():
+            error = '\nUnable to find {}. Exiting.'
+            utilities.logger.error(error.format(c.molecule_file))
+            utilities.sysexit()
+        self.molecule.main()
 
     @abc.abstractproperty
     def execute(self):

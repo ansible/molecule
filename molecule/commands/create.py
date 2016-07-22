@@ -38,9 +38,6 @@ class Create(base.BaseCommand):
     """
 
     def execute(self, exit=True):
-        if self.static:
-            self.disabled('create')
-
         self.molecule._remove_inventory_file()
         self.molecule._create_templates()
         try:

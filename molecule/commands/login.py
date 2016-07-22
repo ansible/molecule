@@ -36,9 +36,6 @@ class Login(base.BaseCommand):
     """
 
     def execute(self):
-        if self.static:
-            self.disabled('login')
-
         # Collect the list of running hosts.
         try:
             status = self.molecule._provisioner.status()

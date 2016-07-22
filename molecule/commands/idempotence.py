@@ -37,9 +37,6 @@ class Idempotence(base.BaseCommand):
     """
 
     def execute(self, exit=True):
-        if self.static:
-            self.disabled('idempotence')
-
         utilities.print_info(
             'Idempotence test in progress (can take a few minutes)...')
 

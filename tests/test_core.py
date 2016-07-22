@@ -24,7 +24,7 @@ from molecule import core
 
 
 @pytest.fixture()
-def molecule(mock_molecule_file_exists):
+def molecule():
     return core.Molecule(dict())
 
 
