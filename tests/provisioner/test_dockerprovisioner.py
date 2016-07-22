@@ -40,6 +40,10 @@ def docker_data():
                 {'name': 'test1',
                  'image': 'ubuntu',
                  'image_version': 'latest',
+                 'port_bindings': {
+                     80: 80,
+                     443: 443
+                 },
                  'ansible_groups': ['group1']}, {'name': 'test2',
                                                  'image': 'ubuntu',
                                                  'image_version': 'latest',
@@ -98,6 +102,27 @@ def test_status(docker_instance):
 
     assert 'docker' in docker_instance.status()[0].provider
     assert 'docker' in docker_instance.status()[1].provider
+
+    docker_instance.destroy()
+
+
+def test_port_bindings(docker_instance):
+    docker_instance.up()
+
+    assert docker_instance.status()[0].ports == []
+    assert docker_instance.status()[1].ports == [
+        {
+            'PublicPort': 443,
+            'PrivatePort': 443,
+            'IP': '0.0.0.0',
+            'Type': 'tcp'
+        }, {
+            'PublicPort': 80,
+            'PrivatePort': 80,
+            'IP': '0.0.0.0',
+            'Type': 'tcp'
+        }
+    ]
 
     docker_instance.destroy()
 

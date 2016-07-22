@@ -171,8 +171,12 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
             if 'privileged' not in container:
                 container['privileged'] = False
 
+            if 'port_bindings' not in container:
+                container['port_bindings'] = {}
+
             docker_host_config = self._docker.create_host_config(
-                privileged=container['privileged'])
+                privileged=container['privileged'],
+                port_bindings=container['port_bindings'])
 
             if (container['Created'] is not True):
                 utilities.logger.warning(
@@ -185,6 +189,7 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
                     tty=True,
                     detach=False,
                     name=container['name'],
+                    ports=container['port_bindings'].keys(),
                     host_config=docker_host_config)
                 self._docker.start(container=container.get('Id'))
                 container['Created'] = True
@@ -207,8 +212,8 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
                 container['Created'] = False
 
     def status(self):
-        Status = collections.namedtuple('Status', ['name', 'state',
-                                                   'provider'])
+        Status = collections.namedtuple('Status', ['name', 'state', 'provider',
+                                                   'ports'])
         instance_names = [x['name'] for x in self.instances]
         created_containers = self._docker.containers(all=True)
         created_container_names = []
@@ -216,11 +221,13 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
 
         for container in created_containers:
             container_name = container.get('Names')[0][1:].encode('utf-8')
+            ports = container.get('Ports')
             created_container_names.append(container_name)
             if container_name in instance_names:
                 status_list.append(Status(name=container_name,
                                           state=container.get('Status'),
-                                          provider='docker'))
+                                          provider='docker',
+                                          ports=ports))
 
         # Check the created status of all the tracked instances
         for container in self.instances:
@@ -230,7 +237,8 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
                 container['Created'] = False
                 status_list.append(Status(name=container['name'],
                                           state="Not Created",
-                                          provider='docker'))
+                                          provider='docker',
+                                          ports=[]))
 
         return status_list
 
