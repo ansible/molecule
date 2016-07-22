@@ -4,6 +4,15 @@ Developer Information
 * Please read the `CONTRIBUTING`_ guidelines.
 * You probably want to `install from source`_.
 
+Branches
+--------
+
+* The ``master`` branch is currently a development branch until we have enough
+  testing to ensure it's stability.
+
+* The ``stable/1.x`` branch was cut when ``1.8.2`` was released, and will be used
+  for hotfixes.
+
 Release Engineering
 -------------------
 
@@ -20,14 +29,15 @@ Release
 Tag the release and push to github.com
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  .. code-block:: bash
+.. code-block:: bash
 
-      $ git tag -a 1.0.5 -m "Version 1.0.5"
-      $ git push origin 1.0.5
+  $ git tag -a 1.0.5 -m "Version 1.0.5"
+  $ git push origin 1.0.5
 
 Upload to `PyPI`_
 ~~~~~~~~~~~~~~~~~
 
+* Install `twine`_ using `pip`.
 * You will require credentials to upload to `PyPI`_. Create a `~/.pypirc`:
 
       .. code-block:: ini
@@ -39,7 +49,6 @@ Upload to `PyPI`_
          username = XXXXXXX
          password = XXXXXXX
 
-* Install `twine`_ using `pip`.
 * Upload to  `PyPI`_.
 
       .. code-block:: bash
@@ -53,8 +62,7 @@ Upload to `PyPI`_
 Update Molecule.ReadTheDocs.org
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-* `curl -X POST https://readthedocs.org/build/molecule` causes a rebuild of the docsite.
-* This will be a post-commit hook from the public git repository.
+Docs are updated through a github webhook.
 
 Post-release
 ^^^^^^^^^^^^
