@@ -45,9 +45,7 @@ def config_data():
             'state_file': 'state_file.yml',
             'vagrantfile_file': 'vagrantfile_file',
             'rakefile_file': 'rakefile_file',
-            'config_file': 'config_file',
-            'inventory_file': 'inventory_file',
-            'molecule_dir': 'test',
+            'molecule_dir': 'test'
         },
         'vagrant': {
             'instances': [
@@ -56,6 +54,8 @@ def config_data():
             ]
         },
         'ansible': {
+            'config_file': 'config_file',
+            'inventory_file': 'inventory_file'
         }
     }
 
@@ -81,28 +81,16 @@ def test_molecule_file(config_instance):
 
 
 def test_build_easy_paths(config_instance):
-    config_instance.build_easy_paths()
-
     assert 'test/state_file.yml' == config_instance.config['molecule'][
         'state_file']
     assert 'test/vagrantfile_file' == config_instance.config['molecule'][
         'vagrantfile_file']
     assert 'test/rakefile_file' == config_instance.config['molecule'][
         'rakefile_file']
-    assert 'test/config_file' == config_instance.config['molecule'][
+    assert 'test/config_file' == config_instance.config['ansible'][
         'config_file']
-    assert 'test/inventory_file' == config_instance.config['molecule'][
+    assert 'test/inventory_file' == config_instance.config['ansible'][
         'inventory_file']
-
-
-def test_update_ansible_defaults(config_instance):
-    config_instance.build_easy_paths()
-    config_instance.update_ansible_defaults()
-
-    assert 'test/inventory_file' == config_instance.config['molecule'][
-        'inventory_file']
-    assert 'test/config_file' == config_instance.config['molecule'][
-        'config_file']
 
 
 def test_populate_instance_names(config_instance):

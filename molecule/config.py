@@ -33,46 +33,18 @@ LOCAL_CONFIG = '~/.config/molecule/config.yml'
 class Config(object):
     def __init__(self, configs=[DEFAULT_CONFIG, PROJECT_CONFIG, LOCAL_CONFIG]):
         self.config = self._get_config(configs)
+        self._build_config_paths()
 
     @property
     def molecule_file(self):
         return PROJECT_CONFIG
 
-    def build_easy_paths(self):
-        """
-        Convenience function to build up paths from our config values
-
-        :return: None
-        """
-        values_to_update = ['state_file', 'vagrantfile_file', 'rakefile_file',
-                            'config_file', 'inventory_file']
-
-        for item in values_to_update:
-            self.config['molecule'][item] = os.path.join(
-                self.config['molecule']['molecule_dir'],
-                self.config['molecule'][item])
-
-    def update_ansible_defaults(self):
-        """
-        Copies certain default values from molecule to ansible if none are specified in molecule.yml
-
-        :return: None
-        """
-        # grab inventory_file default from molecule if it's not set in the user-supplied ansible options
-        if 'inventory_file' not in self.config['ansible']:
-            self.config['ansible']['inventory_file'] = self.config['molecule'][
-                'inventory_file']
-
-        # grab config_file default from molecule if it's not set in the user-supplied ansible options
-        if 'config_file' not in self.config['ansible']:
-            self.config['ansible']['config_file'] = self.config['molecule'][
-                'config_file']
-
     def populate_instance_names(self, platform):
         """
-        Updates instances section of config with an additional key containing the full instance name
+        Updates instances section of config with an additional key containing
+        the full instance name
 
-        :param platform: platform name to pass to underlying format_instance_name call
+        :param platform: platform name to pass to ``format_instance_name`` call
         :return: None
         """
         for instance in self.config['vagrant']['instances']:
@@ -90,9 +62,9 @@ class Config(object):
         """ Perform a prioritized recursive merge of serveral source files,
         and return a new dict.
 
-        The merge order is based on the index of the list, meaning that elements
-        at the end of the list will be merged last, and have greater precedence
-        than elements at the beginning.
+        The merge order is based on the index of the list, meaning that
+        elements at the end of the list will be merged last, and have greater
+        precedence than elements at the beginning.
 
         :param configs: A list containing the yaml files to load.
         :return: dict
@@ -101,3 +73,21 @@ class Config(object):
         return anyconfig.load(configs,
                               ignore_missing=True,
                               ac_merge=anyconfig.MS_DICTS_AND_LISTS)
+
+    def _build_config_paths(self):
+        """
+        Convenience function to build up paths from our config values
+
+        :return: None
+        """
+        for item in ['state_file', 'vagrantfile_file', 'rakefile_file']:
+            d = self.config.get('molecule')
+            if d:
+                d[item] = os.path.join(self.config['molecule']['molecule_dir'],
+                                       self.config['molecule'][item])
+
+        for item in ['config_file', 'inventory_file']:
+            d = self.config.get('ansible')
+            if d:
+                d[item] = os.path.join(self.config['molecule']['molecule_dir'],
+                                       self.config['ansible'][item])

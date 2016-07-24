@@ -33,7 +33,9 @@ def docker_data():
     return {
         'molecule': {
             'molecule_dir': '.test_molecule',
-            'inventory_file': 'tests/support/ansible_inventory'
+            'state_file': 'state_file.yml',
+            'vagrantfile_file': 'vagrantfile_file',
+            'rakefile_file': 'rakefile_file',
         },
         'docker': {
             'containers': [
@@ -50,6 +52,10 @@ def docker_data():
                                                  'ansible_groups':
                                                  ['group2']}
             ]
+        },
+        'ansible': {
+            'config_file': 'config_file',
+            'inventory_file': 'inventory_file'
         }
     }
 
