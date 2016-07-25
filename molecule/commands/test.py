@@ -46,7 +46,7 @@ class Test(base.BaseCommand):
                 'sequence']:
             command_module = getattr(molecule.commands, task)
             command = getattr(command_module, task.capitalize())
-            c = command(command_args, args)
+            c = command(command_args, args, self.molecule)
 
             for argument in self.command_args:
                 if argument in c.args:
