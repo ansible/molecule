@@ -55,7 +55,7 @@ def docker_data():
 
 
 @pytest.fixture()
-def molecule_instance(temp_files, docker_data, mock_molecule_file_exists):
+def molecule_instance(temp_files, docker_data):
     c = temp_files(content=[docker_data])
     m = core.Molecule(dict())
     m._config = config.Config(configs=c)

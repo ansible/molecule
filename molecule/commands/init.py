@@ -37,6 +37,9 @@ class Init(base.BaseCommand):
         init [<role>] [--docker | --openstack] [--offline]
     """
 
+    def main(self):
+        pass
+
     def clean_meta_main(self, role_path):
         main_path = os.path.join(role_path, 'meta', 'main.yml')
         temp_path = os.path.join(role_path, 'meta', 'main.yml.tmp')

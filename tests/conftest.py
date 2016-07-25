@@ -44,12 +44,3 @@ def temp_files(tmpdir, request):
         return confs
 
     return wrapper
-
-
-@pytest.fixture()
-def mock_molecule_file_exists(monkeypatch):
-    def mockreturn(m):
-        return True
-
-    return monkeypatch.setattr('molecule.config.Config._has_molecule_file',
-                               mockreturn)

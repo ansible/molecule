@@ -25,18 +25,18 @@ import anyconfig
 
 from molecule import utilities
 
-CONFIG_PATHS = [os.path.join(
-    os.path.dirname(__file__), 'conf/defaults.yml'), 'molecule.yml',
-                '~/.config/molecule/config.yml']
+DEFAULT_CONFIG = os.path.join(os.path.dirname(__file__), 'conf/defaults.yml')
+PROJECT_CONFIG = 'molecule.yml'
+LOCAL_CONFIG = '~/.config/molecule/config.yml'
 
 
 class Config(object):
-    def __init__(self, configs=CONFIG_PATHS):
+    def __init__(self, configs=[DEFAULT_CONFIG, PROJECT_CONFIG, LOCAL_CONFIG]):
         self.config = self._get_config(configs)
 
     @property
     def molecule_file(self):
-        return 'molecule.yml'
+        return PROJECT_CONFIG
 
     def build_easy_paths(self):
         """
@@ -75,29 +75,16 @@ class Config(object):
         :param platform: platform name to pass to underlying format_instance_name call
         :return: None
         """
-        # assume static inventory if there's no vagrant section
-        if self.config.get('vagrant') is None:
-            return
-
-        # assume static inventory if no instances are listed
-        if self.config['vagrant'].get('instances') is None:
-            return
-
         for instance in self.config['vagrant']['instances']:
             instance['vm_name'] = utilities.format_instance_name(
                 instance['name'], platform,
                 self.config['vagrant']['instances'])
 
-    def _get_config(self, configs):
-        if not self._has_molecule_file():
-            error = '\nUnable to find {}. Exiting.'
-            utilities.logger.error(error.format(self.molecule_file))
-            utilities.sysexit()
-
-        return self._combine(configs)
-
-    def _has_molecule_file(self):
+    def molecule_file_exists(self):
         return os.path.isfile(self.molecule_file)
+
+    def _get_config(self, configs):
+        return self._combine(configs)
 
     def _combine(self, configs):
         """ Perform a prioritized recursive merge of serveral source files,

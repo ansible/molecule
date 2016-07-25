@@ -39,9 +39,6 @@ class Test(base.BaseCommand):
     """
 
     def execute(self):
-        if self.static:
-            self.disabled('test')
-
         command_args, args = utilities.remove_args(
             self.command_args, self.args, self.command_args)
 

@@ -42,9 +42,6 @@ class Status(base.BaseCommand):
     """
 
     def execute(self):
-        if self.static:
-            self.disabled('status')
-
         display_all = not any([self.args['--hosts'], self.args['--platforms'],
                                self.args['--providers']])
 

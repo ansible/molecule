@@ -61,10 +61,19 @@ def config_data():
 
 
 @pytest.fixture()
-def config_instance(temp_files, config_data, mock_molecule_file_exists):
+def config_instance(temp_files, config_data):
     c = temp_files(content=[config_data])
 
     return config.Config(configs=c)
+
+
+@pytest.fixture()
+def mock_molecule_file_exists(monkeypatch):
+    def mockreturn(m):
+        return True
+
+    return monkeypatch.setattr('molecule.config.Config.molecule_file_exists',
+                               mockreturn)
 
 
 def test_molecule_file(config_instance):
@@ -103,17 +112,23 @@ def test_populate_instance_names(config_instance):
         0]['vm_name']
 
 
+def test_molecule_file_exists(temp_files, config_data,
+                              mock_molecule_file_exists):
+    configs = temp_files(content=[config_data])
+    c = config.Config(configs=configs)
+
+    assert c.molecule_file_exists()
+
+
+def test_molecule_file_does_not_exist(config_instance):
+    assert not config_instance.molecule_file_exists()
+
+
 def test_get_config(config_instance):
     assert isinstance(config_instance.config, dict)
 
 
-def test_get_config_raises_when_missing_molecule_file():
-    with pytest.raises(SystemExit):
-        config.Config()
-
-
-def test_combine_default_config(temp_files, default_config_data,
-                                mock_molecule_file_exists):
+def test_combine_default_config(temp_files, default_config_data):
     c = temp_files(content=[default_config_data])
     config_instance = config.Config(configs=c).config
 
@@ -122,8 +137,7 @@ def test_combine_default_config(temp_files, default_config_data,
 
 
 def test_combine_project_config_overrides_default_config(
-        temp_files, default_config_data, project_config_data,
-        mock_molecule_file_exists):
+        temp_files, default_config_data, project_config_data):
     c = temp_files(content=[default_config_data, project_config_data])
     config_instance = config.Config(configs=c).config
 
@@ -133,7 +147,7 @@ def test_combine_project_config_overrides_default_config(
 
 def test_combine_local_config_overrides_default_and_project_config(
         temp_files, default_config_data, project_config_data,
-        local_config_data, mock_molecule_file_exists):
+        local_config_data):
     c = temp_files(
         content=[default_config_data, project_config_data, local_config_data])
     config_instance = config.Config(configs=c).config
