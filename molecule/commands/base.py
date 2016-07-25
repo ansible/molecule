@@ -44,8 +44,12 @@ class BaseCommand:
         self.args['<command>'] = self.__class__.__name__.lower()
         self.command_args = command_args
 
-        self.molecule = core.Molecule(self.args)
-        self.main()
+        # allow us to reuse an existing molecule instance
+        if not molecule:
+            self.molecule = core.Molecule(self.args)
+            self.main()
+        else:
+            self.molecule = molecule
 
     def main(self):
         c = self.molecule._config
