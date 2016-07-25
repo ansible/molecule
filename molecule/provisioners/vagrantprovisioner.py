@@ -63,11 +63,8 @@ class VagrantProvisioner(baseprovisioner.BaseProvisioner):
                     raise baseprovisioner.InvalidPlatformSpecified()
             self.m._state.change_state('default_platform',
                                        self.m._args['--platform'])
-            self.m._env['MOLECULE_PLATFORM'] = self.m._args['--platform']
-        else:
-            self.m._env['MOLECULE_PLATFORM'] = self.default_platform
-
-        return self.m._env['MOLECULE_PLATFORM']
+            return self.m._args['--platform']
+        return self.default_platform
 
     def _write_vagrant_file(self):
         kwargs = {'config': self.m._config.config,

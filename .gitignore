@@ -1,5 +1,6 @@
 *.egg-info/
 *.py[cod]
+*.retry
 .cache/
 .eggs/
 .molecule/

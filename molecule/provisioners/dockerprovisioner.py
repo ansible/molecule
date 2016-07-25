@@ -43,8 +43,7 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
             self.m._config.config['docker']['install_python'] = True
 
     def _get_platform(self):
-        self.m._env['MOLECULE_PLATFORM'] = 'Docker'
-        return self.m._env['MOLECULE_PLATFORM']
+        return 'Docker'
 
     def _get_provider(self):
         return 'Docker'

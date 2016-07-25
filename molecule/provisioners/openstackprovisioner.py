@@ -48,8 +48,7 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
         return 'openstack'
 
     def _get_platform(self):
-        self.m._env['MOLECULE_PLATFORM'] = 'openstack'
-        return self.m._env['MOLECULE_PLATFORM']
+        return 'openstack'
 
     @property
     def name(self):

@@ -51,12 +51,6 @@ class Molecule(object):
         if not os.path.exists(self._config.config['molecule']['molecule_dir']):
             os.makedirs(self._config.config['molecule']['molecule_dir'])
 
-        # concatentate file names and paths within config so they're more convenient to use
-        self._config.build_easy_paths()
-
-        # get defaults for inventory/ansible.cfg from molecule if none are specified
-        self._config.update_ansible_defaults()
-
         self._state = state.State(
             state_file=self._config.config.get('molecule').get('state_file'))
 
@@ -80,7 +74,7 @@ class Molecule(object):
             utilities.sysexit()
 
         # updates instances config with full machine names
-        self._config.populate_instance_names(self._env['MOLECULE_PLATFORM'])
+        self._config.populate_instance_names(self._provisioner._platform)
 
         if self._args.get('--debug'):
             utilities.debug('RUNNING CONFIG',
@@ -187,7 +181,7 @@ class Molecule(object):
         :return: None
         """
         os.remove(self._config.config['molecule']['rakefile_file'])
-        os.remove(self._config.config['molecule']['config_file'])
+        os.remove(self._config.config['ansible']['config_file'])
 
     def _create_templates(self):
         """
@@ -200,12 +194,12 @@ class Molecule(object):
                   self._config.config['molecule']['molecule_dir']}
         utilities.write_template(
             self._config.config['molecule']['ansible_config_template'],
-            self._config.config['molecule']['config_file'], kwargs=kwargs)
+            self._config.config['ansible']['config_file'], kwargs=kwargs)
 
         # rakefile
         kwargs = {
             'molecule_file': self._config.molecule_file,
-            'current_platform': self._env['MOLECULE_PLATFORM'],
+            'current_platform': self._provisioner._platform,
             'serverspec_dir': self._config.config['molecule']['serverspec_dir']
         }
         utilities.write_template(
@@ -234,16 +228,16 @@ class Molecule(object):
                     groups[group].append(instance['name'])
 
         if self._args.get('--platform') == 'all':
-            self._env['MOLECULE_PLATFORM'] = 'all'
+            self._provisioner._platform = 'all'
 
         for group, instances in groups.iteritems():
             inventory += '\n[{}]\n'.format(group)
             for instance in instances:
                 inventory += '{}\n'.format(utilities.format_instance_name(
-                    instance, self._env['MOLECULE_PLATFORM'],
+                    instance, self._provisioner._platform,
                     self._provisioner.instances))
 
-        inventory_file = self._config.config['molecule']['inventory_file']
+        inventory_file = self._config.config['ansible']['inventory_file']
         try:
             utilities.write_file(inventory_file, inventory)
         except IOError:
@@ -325,5 +319,5 @@ class Molecule(object):
         print(tabulate.tabulate(data, headers, tablefmt=table_format))
 
     def _remove_inventory_file(self):
-        if os._exists(self._config.config['molecule']['inventory_file']):
-            os.remove(self._config.config['molecule']['inventory_file'])
+        if os._exists(self._config.config['ansible']['inventory_file']):
+            os.remove(self._config.config['ansible']['inventory_file'])
