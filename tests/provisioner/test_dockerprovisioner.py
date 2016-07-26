@@ -47,13 +47,12 @@ def docker_data():
                      443: 443
                  },
                  'volume_mounts': ['/tmp/test1:/inside:rw'],
-                 'ansible_groups': ['group1']},
-                {'name': 'test2',
+                 'ansible_groups': ['group1']}, {'name': 'test2',
                                                  'image': 'ubuntu',
                                                  'image_version': 'latest',
                                                  'ansible_groups':
                                                  ['group2'],
-                 'command': '/bin/sh'}
+                                                 'command': '/bin/sh'}
             ]
         },
         'ansible': {
@@ -140,11 +139,14 @@ def test_port_bindings(docker_instance):
 
     docker_instance.destroy()
 
+
 def test_start_command(docker_instance):
     docker_instance.up()
 
-    assert "/bin/sh" in docker_instance._docker.inspect_container('test2')['Config']['Cmd']
-    assert "/bin/bash" in docker_instance._docker.inspect_container('test1')['Config']['Cmd']
+    assert "/bin/sh" in docker_instance._docker.inspect_container('test2')[
+        'Config']['Cmd']
+    assert "/bin/bash" in docker_instance._docker.inspect_container('test1')[
+        'Config']['Cmd']
 
     docker_instance.destroy()
 
@@ -152,10 +154,13 @@ def test_start_command(docker_instance):
 def test_volume_mounts(docker_instance):
     docker_instance.up()
 
-    assert "/tmp/test1" in docker_instance._docker.inspect_container('test1')['Mounts'][0]['Source']
-    assert "/inside" in docker_instance._docker.inspect_container('test1')['Mounts'][0]['Destination']
+    assert "/tmp/test1" in docker_instance._docker.inspect_container('test1')[
+        'Mounts'][0]['Source']
+    assert "/inside" in docker_instance._docker.inspect_container('test1')[
+        'Mounts'][0]['Destination']
 
     docker_instance.destroy()
+
 
 def test_destroy(docker_instance):
     docker_instance.up()
