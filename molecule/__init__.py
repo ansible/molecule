@@ -18,8 +18,9 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import signal
-import sys
+from signal import SIGINT
+from signal import signal
+from sys import exit
 
 from pbr import version
 
@@ -27,10 +28,10 @@ from pbr import version
 def signal_handler(signal, frame):
     msg = '{red}Exiting molecule on Ctrl+c.{reset}'
     print(msg.format(red='\033[31m', reset='\033[0m'))
-    sys.exit()
+    exit()
 
 
-signal.signal(signal.SIGINT, signal_handler)
+signal(SIGINT, signal_handler)
 
 try:
     version_info = version.VersionInfo('molecule')
