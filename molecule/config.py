@@ -47,10 +47,12 @@ class Config(object):
         :param platform: platform name to pass to ``format_instance_name`` call
         :return: None
         """
-        for instance in self.config['vagrant']['instances']:
-            instance['vm_name'] = utilities.format_instance_name(
-                instance['name'], platform,
-                self.config['vagrant']['instances'])
+
+        if 'vagrant' in self.config:
+            for instance in self.config['vagrant']['instances']:
+                instance['vm_name'] = utilities.format_instance_name(
+                    instance['name'], platform,
+                    self.config['vagrant']['instances'])
 
     def molecule_file_exists(self):
         return os.path.isfile(self.molecule_file)
