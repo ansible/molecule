@@ -73,9 +73,6 @@ class Molecule(object):
             self._print_valid_platforms()
             utilities.sysexit()
 
-        # updates instances config with full machine names
-        self._config.populate_instance_names(self._provisioner._platform)
-
         if self._args.get('--debug'):
             utilities.debug('RUNNING CONFIG',
                             yaml.dump(self._config.config,
@@ -181,7 +178,8 @@ class Molecule(object):
         :return: None
         """
         os.remove(self._config.config['molecule']['rakefile_file'])
-        os.remove(self._config.config['ansible']['config_file'])
+        if self._state.customconf is False:
+            os.remove(self._config.config['ansible']['config_file'])
 
     def _create_templates(self):
         """
@@ -189,12 +187,16 @@ class Molecule(object):
 
         :return: None
         """
-        # ansible.cfg
+        # # ansible.cfg
         kwargs = {'molecule_dir':
                   self._config.config['molecule']['molecule_dir']}
-        utilities.write_template(
-            self._config.config['molecule']['ansible_config_template'],
-            self._config.config['ansible']['config_file'], kwargs=kwargs)
+        if not os.path.isfile(self._config.config['ansible']['config_file']):
+            utilities.write_template(
+                self._config.config['molecule']['ansible_config_template'],
+                self._config.config['ansible']['config_file'], kwargs=kwargs)
+            self._state.change_state('customconf', False)
+        else:
+            self._state.change_state('customconf', True)
 
         # rakefile
         kwargs = {
