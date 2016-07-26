@@ -116,7 +116,7 @@ def rubocop(serverspec_dir,
             debug=False,
             env=os.environ.copy(),
             pattern='/**/*.rb',
-            out=utilities.logger.warning,
+            out=utilities.logger.info,
             err=utilities.logger.error):
     """
     Runs rubocop against specified directory with specified pattern
@@ -168,7 +168,7 @@ def rake(rakefile,
 def testinfra(tests,
               debug=False,
               env=os.environ.copy(),
-              out=utilities.logger.warning,
+              out=utilities.logger.info,
               err=utilities.logger.error,
               **kwargs):
     """
