@@ -29,7 +29,7 @@ class AnsibleGalaxyInstall:
     def __init__(self,
                  requirements_file,
                  _env=None,
-                 _out=utilities.logger.warning,
+                 _out=utilities.logger.info,
                  _err=utilities.logger.error):
         """
         Sets up requirements for ansible-galaxy

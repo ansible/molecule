@@ -49,6 +49,18 @@ class TrailingNewlineFormatter(logging.Formatter):
 colorama.init(autoreset=True)
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+debug = logging.StreamHandler()
+debug.setLevel(logging.DEBUG)
+debug.addFilter(LogFilter(logging.DEBUG))
+debug.setFormatter(TrailingNewlineFormatter('{}%(message)s'.format(
+    colorama.Fore.BLUE)))
+
+info = logging.StreamHandler()
+info.setLevel(logging.INFO)
+info.addFilter(LogFilter(logging.INFO))
+info.setFormatter(TrailingNewlineFormatter('%(message)s'))
 
 warn = logging.StreamHandler()
 warn.setLevel(logging.WARN)
@@ -60,6 +72,9 @@ error = logging.StreamHandler()
 error.setLevel(logging.ERROR)
 error.setFormatter(TrailingNewlineFormatter('{}%(message)s'.format(
     colorama.Fore.RED)))
+
+logger.addHandler(debug)
+logger.addHandler(info)
 logger.addHandler(error)
 logger.addHandler(warn)
 logger.propagate = False
