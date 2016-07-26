@@ -175,6 +175,9 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
             if 'volume_mounts' not in container:
                 container['volume_mounts'] = []
 
+            if 'command' not in container:
+                container['command'] = ""
+
             docker_host_config = self._docker.create_host_config(
                 privileged=container['privileged'],
                 port_bindings=container['port_bindings'],
@@ -192,7 +195,8 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
                     detach=False,
                     name=container['name'],
                     ports=container['port_bindings'].keys(),
-                    host_config=docker_host_config)
+                    host_config=docker_host_config,
+                    command=container['command'])
                 self._docker.start(container=container.get('Id'))
                 container['Created'] = True
 
