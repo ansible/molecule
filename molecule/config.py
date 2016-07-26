@@ -21,7 +21,9 @@
 import os
 import os.path
 
+from molecule import utilities
 import anyconfig
+
 
 DEFAULT_CONFIG = os.path.join(os.path.dirname(__file__), 'conf/defaults.yml')
 PROJECT_CONFIG = 'molecule.yml'
@@ -36,6 +38,21 @@ class Config(object):
     @property
     def molecule_file(self):
         return PROJECT_CONFIG
+
+    def populate_instance_names(self, platform):
+        """
+        Updates instances section of config with an additional key containing
+        the full instance name
+
+        :param platform: platform name to pass to ``format_instance_name`` call
+        :return: None
+        """
+
+        if 'vagrant' in self.config:
+            for instance in self.config['vagrant']['instances']:
+                instance['vm_name'] = utilities.format_instance_name(
+                    instance['name'], platform,
+                    self.config['vagrant']['instances'])
 
     def molecule_file_exists(self):
         return os.path.isfile(self.molecule_file)

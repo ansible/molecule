@@ -18,24 +18,22 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
+import os
+
 import pytest
 
-from molecule import config
 from molecule import core
 from molecule import ansible_playbook
 from molecule.provisioners import dockerprovisioner
 
-# TODO(retr0h): Implement finalizer (teardown).
-
-
 @pytest.fixture()
-def docker_data():
-    return {
+def molecule_file(tmpdir, request):
+    d = tmpdir.mkdir('molecule')
+    c = d.join(os.extsep.join(('molecule', 'yml')))
+    data = {
         'molecule': {
             'molecule_dir': '.test_molecule',
-            'state_file': 'state_file.yml',
-            'vagrantfile_file': 'vagrantfile_file',
-            'rakefile_file': 'rakefile_file',
+            'inventory_file': 'tests/support/ansible_inventory'
         },
         'docker': {
             'containers': [
@@ -47,26 +45,35 @@ def docker_data():
                      443: 443
                  },
                  'volume_mounts': ['/tmp/test1:/inside:rw'],
-                 'ansible_groups': ['group1']}, {'name': 'test2',
+                 'ansible_groups': ['group1']},
+                {'name': 'test2',
                                                  'image': 'ubuntu',
                                                  'image_version': 'latest',
                                                  'ansible_groups':
                                                  ['group2'],
-                                                 'command': '/bin/sh'}
+                 'command': '/bin/sh'}
             ]
         },
         'ansible': {
-            'config_file': 'config_file',
-            'inventory_file': 'inventory_file'
+            'config_file': 'test_config',
+            'inventory_file': 'test_inventory'
         }
     }
+    c.write(data)
+
+    def cleanup():
+        os.remove(c.strpath)
+        os.rmdir(d.strpath)
+
+    request.addfinalizer(cleanup)
+
+    return c.strpath
 
 
 @pytest.fixture()
-def molecule_instance(temp_files, docker_data):
-    c = temp_files(content=[docker_data])
+def molecule_instance(molecule_file):
     m = core.Molecule(dict())
-    m._config = config.Config(configs=c)
+    m._config.load_defaults_file(defaults_file=molecule_file)
 
     return m
 
@@ -94,14 +101,11 @@ def test_get_provisioner(molecule_instance):
 
 def test_up(docker_instance):
     docker_instance.up()
-    docker_instance.destroy()
 
 
 def test_instances(docker_instance):
     assert 'test1' == docker_instance.instances[0]['name']
     assert 'test2' == docker_instance.instances[1]['name']
-
-    docker_instance.destroy()
 
 
 def test_status(docker_instance):
@@ -115,8 +119,6 @@ def test_status(docker_instance):
 
     assert 'docker' in docker_instance.status()[0].provider
     assert 'docker' in docker_instance.status()[1].provider
-
-    docker_instance.destroy()
 
 
 def test_port_bindings(docker_instance):
@@ -137,30 +139,19 @@ def test_port_bindings(docker_instance):
         }
     ]
 
-    docker_instance.destroy()
-
-
 def test_start_command(docker_instance):
     docker_instance.up()
 
-    assert "/bin/sh" in docker_instance._docker.inspect_container('test2')[
-        'Config']['Cmd']
-    assert "/bin/bash" in docker_instance._docker.inspect_container('test1')[
-        'Config']['Cmd']
+    assert "/bin/sh" in docker_instance._docker.inspect_container('test2')['Config']['Cmd']
+    assert "/bin/bash" in docker_instance._docker.inspect_container('test1')['Config']['Cmd']
 
-    docker_instance.destroy()
 
 
 def test_volume_mounts(docker_instance):
     docker_instance.up()
 
-    assert "/tmp/test1" in docker_instance._docker.inspect_container('test1')[
-        'Mounts'][0]['Source']
-    assert "/inside" in docker_instance._docker.inspect_container('test1')[
-        'Mounts'][0]['Destination']
-
-    docker_instance.destroy()
-
+    assert "/tmp/test1" in docker_instance._docker.inspect_container('test1')['Mounts'][0]['Source']
+    assert "/inside" in docker_instance._docker.inspect_container('test1')['Mounts'][0]['Destination']
 
 def test_destroy(docker_instance):
     docker_instance.up()
@@ -187,8 +178,6 @@ def test_provision(docker_instance):
     # TODO(retr0h): Understand why provisioner is None
     assert (None, '') == ansible.execute()
 
-    docker_instance.destroy()
-
 
 def test_inventory_generation(molecule_instance, docker_instance):
     molecule_instance._provisioner = docker_instance
@@ -201,7 +190,7 @@ def test_inventory_generation(molecule_instance, docker_instance):
     pb['inventory'] = 'tests/support/ansible_inventory'
     ansible = ansible_playbook.AnsiblePlaybook(pb)
 
+    # TODO(retr0h): Understand why provisioner is None
     assert (None, '') == ansible.execute()
 
-    # TODO(retr0h): Understand why provisioner is None
-    molecule_instance._provisioner.destroy()
+

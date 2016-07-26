@@ -27,15 +27,22 @@ from molecule import state
 
 
 @pytest.fixture()
-def state_data():
-    return {}
+def state_file(tmpdir, request):
+    d = tmpdir.mkdir('molecule')
+    c = d.join(os.extsep.join(('state', 'yml')))
+
+    def cleanup():
+        os.remove(c.strpath)
+        os.rmdir(d.strpath)
+
+    request.addfinalizer(cleanup)
+
+    return c.strpath
 
 
 @pytest.fixture()
-def state_instance(temp_files, state_data):
-    c = temp_files(content=[state_data])[0]
-
-    return state.State(state_file=c)
+def state_instance(state_file):
+    return state.State(state_file=state_file)
 
 
 def test_converged(state_instance):

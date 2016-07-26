@@ -73,6 +73,9 @@ class Molecule(object):
             self._print_valid_platforms()
             utilities.sysexit()
 
+        # updates instances config with full machine names
+        self._config.populate_instance_names(self._provisioner._platform)
+
         if self._args.get('--debug'):
             utilities.debug('RUNNING CONFIG',
                             yaml.dump(self._config.config,

@@ -23,7 +23,6 @@ import pytest
 
 from molecule import cli
 
-
 @pytest.fixture()
 def cli_instance():
     return cli.CLI()
