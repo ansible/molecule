@@ -12,11 +12,11 @@ instances = YAML.load_file('{{ state_file }}')['instances']
 
 namespace :serverspec do
   task all: instances.keys
-  instances.each do |name, groups|
+  instances.each do |name, instance|
     desc "Run serverspec on #{name}"
     pattern = ['{{ serverspec_dir }}/*_spec.rb', "{{ serverspec_dir }}/#{name}/*_spec.rb", "{{ serverspec_dir }}/hosts/#{name}/*_spec.rb"]
 
-    groups.each do |group|
+    instance['ansible_groups'].each do |group|
       pattern << "{{ serverspec_dir }}/#{group}/*_spec.rb"
       pattern << "{{ serverspec_dir }}/groups/#{group}/*_spec.rb"
     end

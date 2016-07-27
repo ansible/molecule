@@ -5,12 +5,12 @@
 - include: debian.yml
   when: ansible_os_family == 'Debian'
 
-- name: Create a file so we can test something with serverspec
-  copy: dest=/etc/molecule
+- name: Create /etc/molecule on all hosts
+  file: dest=/etc/molecule
         group=root
         owner=root
-        mode=0644
-        content="molecule test file"
+        mode=0755
+        state=directory
 
 - name: Test ability to target ansible tags (molecule1)
   shell: /bin/true

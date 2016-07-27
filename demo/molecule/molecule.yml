@@ -17,6 +17,15 @@ vagrant:
     - name: demo-01
       ansible_groups:
         - demo
+        - demo1
+      interfaces:
+        - network_name: private_network
+          type: dhcp
+          auto_config: true
+    - name: demo-02
+      ansible_groups:
+        - demo
+        - demo2
       interfaces:
         - network_name: private_network
           type: dhcp

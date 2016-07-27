@@ -1,5 +1,16 @@
-def test_hosts_file(File):
-    hosts = File('/etc/hosts')
+def test_etc_molecule(File):
+    f = File('/etc/molecule')
 
-    assert hosts.user == 'root'
-    assert hosts.group == 'root'
+    assert f.is_directory
+    assert f.user == 'root'
+    assert f.group == 'root'
+    assert f.mode == 0o755
+
+def test_etc_molecule_demo(File):
+    f = File('/etc/molecule/demo')
+
+    assert f.is_file
+    assert f.user == 'root'
+    assert f.group == 'root'
+    assert f.mode == 0o644
+    assert f.contains('molecule demo file')

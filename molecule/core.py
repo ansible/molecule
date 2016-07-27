@@ -224,10 +224,10 @@ class Molecule(object):
             instance_name = utilities.format_instance_name(
                 instance['name'], self._provisioner._platform,
                 self._provisioner.instances)
-            instances[instance_name] = []
+            instances[instance_name]['ansible_groups'] = []
             if 'ansible_groups' in instance:
                 for group in instance['ansible_groups']:
-                    instances[instance_name].append(group)
+                    instances[instance_name]['ansible_groups'].append(group)
 
         self._state.change_state('instances', instances)
 
