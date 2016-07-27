@@ -48,6 +48,7 @@ class Molecule(object):
         self._provisioner = None
 
     def main(self):
+
         if not os.path.exists(self._config.config['molecule']['molecule_dir']):
             os.makedirs(self._config.config['molecule']['molecule_dir'])
 
