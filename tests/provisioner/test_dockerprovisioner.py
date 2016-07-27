@@ -18,22 +18,27 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import os
-
 import pytest
+import logging
 
+from molecule import config
 from molecule import core
 from molecule import ansible_playbook
 from molecule.provisioners import dockerprovisioner
 
+logging.getLogger("sh").setLevel(logging.WARNING)
+
+# TODO(retr0h): Implement finalizer (teardown).
+
+
 @pytest.fixture()
-def molecule_file(tmpdir, request):
-    d = tmpdir.mkdir('molecule')
-    c = d.join(os.extsep.join(('molecule', 'yml')))
-    data = {
+def docker_data():
+    return {
         'molecule': {
             'molecule_dir': '.test_molecule',
-            'inventory_file': 'tests/support/ansible_inventory'
+            'state_file': 'state_file.yml',
+            'vagrantfile_file': 'vagrantfile_file',
+            'rakefile_file': 'rakefile_file',
         },
         'docker': {
             'containers': [
@@ -45,35 +50,26 @@ def molecule_file(tmpdir, request):
                      443: 443
                  },
                  'volume_mounts': ['/tmp/test1:/inside:rw'],
-                 'ansible_groups': ['group1']},
-                {'name': 'test2',
+                 'ansible_groups': ['group1']}, {'name': 'test2',
                                                  'image': 'ubuntu',
                                                  'image_version': 'latest',
                                                  'ansible_groups':
                                                  ['group2'],
-                 'command': '/bin/sh'}
+                                                 'command': '/bin/sh'}
             ]
         },
         'ansible': {
-            'config_file': 'test_config',
-            'inventory_file': 'test_inventory'
+            'config_file': 'config_file',
+            'inventory_file': 'inventory_file'
         }
     }
-    c.write(data)
-
-    def cleanup():
-        os.remove(c.strpath)
-        os.rmdir(d.strpath)
-
-    request.addfinalizer(cleanup)
-
-    return c.strpath
 
 
 @pytest.fixture()
-def molecule_instance(molecule_file):
+def molecule_instance(temp_files, docker_data):
+    c = temp_files(content=[docker_data])
     m = core.Molecule(dict())
-    m._config.load_defaults_file(defaults_file=molecule_file)
+    m._config = config.Config(configs=c)
 
     return m
 
@@ -139,19 +135,24 @@ def test_port_bindings(docker_instance):
         }
     ]
 
+
 def test_start_command(docker_instance):
     docker_instance.up()
 
-    assert "/bin/sh" in docker_instance._docker.inspect_container('test2')['Config']['Cmd']
-    assert "/bin/bash" in docker_instance._docker.inspect_container('test1')['Config']['Cmd']
-
+    assert "/bin/sh" in docker_instance._docker.inspect_container('test2')[
+        'Config']['Cmd']
+    assert "/bin/bash" in docker_instance._docker.inspect_container('test1')[
+        'Config']['Cmd']
 
 
 def test_volume_mounts(docker_instance):
     docker_instance.up()
 
-    assert "/tmp/test1" in docker_instance._docker.inspect_container('test1')['Mounts'][0]['Source']
-    assert "/inside" in docker_instance._docker.inspect_container('test1')['Mounts'][0]['Destination']
+    assert "/tmp/test1" in docker_instance._docker.inspect_container('test1')[
+        'Mounts'][0]['Source']
+    assert "/inside" in docker_instance._docker.inspect_container('test1')[
+        'Mounts'][0]['Destination']
+
 
 def test_destroy(docker_instance):
     docker_instance.up()
@@ -171,7 +172,7 @@ def test_destroy(docker_instance):
 def test_provision(docker_instance):
     docker_instance.up()
     pb = docker_instance.ansible_connection_params
-    pb['playbook'] = 'tests/support/playbook.yml'
+    pb['playbook'] = 'playbook.yml'
     pb['inventory'] = 'test1,test2,'
     ansible = ansible_playbook.AnsiblePlaybook(pb)
 
@@ -186,11 +187,9 @@ def test_inventory_generation(molecule_instance, docker_instance):
     molecule_instance._create_inventory_file()
 
     pb = molecule_instance._provisioner.ansible_connection_params
-    pb['playbook'] = 'tests/support/playbook.yml'
-    pb['inventory'] = 'tests/support/ansible_inventory'
+    pb['playbook'] = 'playbook.yml'
+    pb['inventory'] = 'test1,test2,'
     ansible = ansible_playbook.AnsiblePlaybook(pb)
 
     # TODO(retr0h): Understand why provisioner is None
     assert (None, '') == ansible.execute()
-
-

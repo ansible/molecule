@@ -31,6 +31,7 @@ import logging
 
 logging.getLogger("sh").setLevel(logging.WARNING)
 
+
 @pytest.fixture()
 def molecule_file(tmpdir, request):
     d = tmpdir.mkdir('molecule')
@@ -59,24 +60,19 @@ def molecule_file(tmpdir, request):
     }
     c.write(data)
 
-    pbook = d.join(os.extsep.join(('playbook','yml')))
-    data = [
-        {'hosts': 'all',
-        'tasks': [
-            {'command': 'echo'}
-        ]
-         }
-    ]
+    pbook = d.join(os.extsep.join(('playbook', 'yml')))
+    data = [{'hosts': 'all', 'tasks': [{'command': 'echo'}]}]
 
     pbook.write(data)
 
     os.chdir(d.strpath)
 
-
-
     def cleanup():
         os.chdir(os.path.join(d.strpath, '.molecule'))
-        v = vagrant.Vagrant(os.path.abspath(os.curdir), quiet_stdout=False, quiet_stderr=False)
+        v = vagrant.Vagrant(
+            os.path.abspath(os.curdir),
+            quiet_stdout=False,
+            quiet_stderr=False)
         v.destroy()
         os.remove(c.strpath)
         shutil.rmtree(d.strpath)
@@ -96,6 +92,7 @@ def test_vagrant_create(molecule_file):
         assert f.code == 0
 
     assert os.path.isdir('.vagrant')
+
 
 def test_vagrant_converge(molecule_file):
     assert os.path.isfile(molecule_file)

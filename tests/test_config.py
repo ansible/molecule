@@ -18,20 +18,34 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import os
-
 import pytest
 
 from molecule import config
 
 
 @pytest.fixture()
-def molecule_file(tmpdir, request):
-    d = tmpdir.mkdir('molecule')
-    c = d.join(os.extsep.join(('molecule', 'yml')))
-    data = {
+def default_config_data():
+    return {'foo': 'bar', 'baz': 'qux'}
+
+
+@pytest.fixture()
+def project_config_data():
+    return {'foo': 'bar', 'baz': 'project-override'}
+
+
+@pytest.fixture()
+def local_config_data():
+    return {'foo': 'local-override', 'baz': 'local-override'}
+
+
+@pytest.fixture()
+def config_data():
+    return {
         'molecule': {
-            'molecule_dir': '.test_molecule'
+            'state_file': 'state_file.yml',
+            'vagrantfile_file': 'vagrantfile_file',
+            'rakefile_file': 'rakefile_file',
+            'molecule_dir': 'test'
         },
         'vagrant': {
             'instances': [
@@ -40,77 +54,91 @@ def molecule_file(tmpdir, request):
             ]
         },
         'ansible': {
-            'config_file': 'test_config',
-            'inventory_file': 'test_inventory'
+            'config_file': 'config_file',
+            'inventory_file': 'inventory_file'
         }
     }
-    c.write(data)
-
-    def cleanup():
-        os.remove(c.strpath)
-        os.rmdir(d.strpath)
-
-    request.addfinalizer(cleanup)
-
-    return c.strpath
 
 
-def test_load_defaults_file():
-    c = config.Config()
-    c.load_defaults_file()
+@pytest.fixture()
+def config_instance(temp_files, config_data):
+    c = temp_files(content=[config_data])
 
-    assert '.molecule' == c.config['molecule']['molecule_dir']
-
-
-def test_load_defaults_external_file(molecule_file):
-    c = config.Config()
-    c.load_defaults_file(defaults_file=molecule_file)
-
-    assert '.test_molecule' == c.config['molecule']['molecule_dir']
+    return config.Config(configs=c)
 
 
-def test_merge_molecule_config_files(molecule_file):
-    c = config.Config()
-    c.load_defaults_file()
-    c.merge_molecule_config_files(paths=[molecule_file])
+@pytest.fixture()
+def mock_molecule_file_exists(monkeypatch):
+    def mockreturn(m):
+        return True
 
-    assert '.test_molecule' == c.config['molecule']['molecule_dir']
-
-
-def test_merge_molecule_file(molecule_file):
-    c = config.Config()
-    c.load_defaults_file()
-    c.merge_molecule_file(molecule_file=molecule_file)
-
-    assert '.test_molecule' == c.config['molecule']['molecule_dir']
+    return monkeypatch.setattr('molecule.config.Config.molecule_file_exists',
+                               mockreturn)
 
 
-def test_build_easy_paths():
-    c = config.Config()
-    c.load_defaults_file()
-    c.build_easy_paths()
+def test_molecule_file(config_instance):
+    assert 'molecule.yml' == config_instance.molecule_file
 
-    assert '.molecule/state.yml' == c.config['molecule']['state_file']
-    assert '.molecule/vagrantfile' == c.config['molecule']['vagrantfile_file']
-    assert '.molecule/rakefile' == c.config['molecule']['rakefile_file']
-    assert '.molecule/ansible.cfg' == c.config['molecule']['config_file']
-    assert '.molecule/ansible_inventory' == c.config['molecule'][
+
+def test_build_easy_paths(config_instance):
+    assert 'test/state_file.yml' == config_instance.config['molecule'][
+        'state_file']
+    assert 'test/vagrantfile_file' == config_instance.config['molecule'][
+        'vagrantfile_file']
+    assert 'test/rakefile_file' == config_instance.config['molecule'][
+        'rakefile_file']
+    assert 'test/config_file' == config_instance.config['ansible'][
+        'config_file']
+    assert 'test/inventory_file' == config_instance.config['ansible'][
         'inventory_file']
 
 
-def test_update_ansible_defaults(molecule_file):
-    c = config.Config()
-    c.load_defaults_file()
-    c.merge_molecule_file(molecule_file=molecule_file)
+def test_populate_instance_names(config_instance):
+    config_instance.populate_instance_names('rhel-7')
 
-    assert 'test_inventory' == c.config['ansible']['inventory_file']
-    assert 'test_config' == c.config['ansible']['config_file']
+    assert 'aio-01-rhel-7' == config_instance.config['vagrant']['instances'][
+        0]['vm_name']
 
 
-def test_populate_instance_names(molecule_file):
-    c = config.Config()
-    c.load_defaults_file()
-    c.merge_molecule_file(molecule_file=molecule_file)
-    c.populate_instance_names('rhel-7')
+def test_molecule_file_exists(temp_files, config_data,
+                              mock_molecule_file_exists):
+    configs = temp_files(content=[config_data])
+    c = config.Config(configs=configs)
 
-    assert 'aio-01-rhel-7' == c.config['vagrant']['instances'][0]['vm_name']
+    assert c.molecule_file_exists()
+
+
+def test_molecule_file_does_not_exist(config_instance):
+    assert not config_instance.molecule_file_exists()
+
+
+def test_get_config(config_instance):
+    assert isinstance(config_instance.config, dict)
+
+
+def test_combine_default_config(temp_files, default_config_data):
+    c = temp_files(content=[default_config_data])
+    config_instance = config.Config(configs=c).config
+
+    assert 'bar' == config_instance['foo']
+    assert 'qux' == config_instance['baz']
+
+
+def test_combine_project_config_overrides_default_config(
+        temp_files, default_config_data, project_config_data):
+    c = temp_files(content=[default_config_data, project_config_data])
+    config_instance = config.Config(configs=c).config
+
+    assert 'bar' == config_instance['foo']
+    assert 'project-override' == config_instance['baz']
+
+
+def test_combine_local_config_overrides_default_and_project_config(
+        temp_files, default_config_data, project_config_data,
+        local_config_data):
+    c = temp_files(
+        content=[default_config_data, project_config_data, local_config_data])
+    config_instance = config.Config(configs=c).config
+
+    assert 'local-override' == config_instance['foo']
+    assert 'local-override' == config_instance['baz']

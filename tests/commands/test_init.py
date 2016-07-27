@@ -24,15 +24,11 @@ import pytest
 
 from molecule.commands.init import Init
 
+
 @pytest.fixture()
-def molecule_dir(tmpdir, request):
+def molecule_dir(tmpdir):
     d = tmpdir.mkdir('test_molecule')
-
-    def cleanup():
-        os.rmdir(d.strpath)
-
     os.chdir(d.strpath)
-    request.addfinalizer(cleanup)
 
     return d.strpath
 
@@ -43,17 +39,20 @@ def test_create_role(molecule_dir):
         i.execute()
 
     assert os.path.isdir(os.path.join(molecule_dir, 'unit_test1'))
-    assert os.path.isfile(os.path.join(molecule_dir, 'unit_test1', 'molecule.yml'))
+    assert os.path.isfile(os.path.join(molecule_dir, 'unit_test1',
+                                       'molecule.yml'))
+
 
 def test_create_role_in_existing_directory(molecule_dir):
-    i = Init(dict(),dict())
+    i = Init(dict(), dict())
     with pytest.raises(SystemExit):
         i.execute()
 
     assert os.path.isdir(os.path.join(molecule_dir, 'tests'))
 
+
 def test_create_role_docker_flag(molecule_dir):
-    i = Init(['docker_test', '--docker'],dict())
+    i = Init(['docker_test', '--docker'], dict())
     with pytest.raises(SystemExit):
         i.execute()
 
@@ -62,8 +61,9 @@ def test_create_role_docker_flag(molecule_dir):
     with open('molecule.yml') as f:
         assert 'docker' in f.read()
 
+
 def test_create_role_offline_flag():
-    i = Init(['offline_test','--offline'],dict())
+    i = Init(['offline_test', '--offline'], dict())
     with pytest.raises(SystemExit):
         i.execute()
 
@@ -73,8 +73,9 @@ def test_create_role_offline_flag():
     assert os.path.isdir('tasks')
     assert os.path.isfile('molecule.yml')
 
+
 def test_create_role_openstack_flag(molecule_dir):
-    i = Init(['docker_test', '--openstack'],dict())
+    i = Init(['docker_test', '--openstack'], dict())
     with pytest.raises(SystemExit):
         i.execute()
 
@@ -82,6 +83,7 @@ def test_create_role_openstack_flag(molecule_dir):
 
     with open('molecule.yml') as f:
         assert 'openstack' in f.read()
+
 
 def test_create_role_existing_dir_error():
     os.mkdir('test1')
