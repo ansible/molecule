@@ -1,8 +1,0 @@
-test1 connection=docker
-test2 connection=docker
-
-[group2]
-test2
-
-[group1]
-test1

@@ -190,7 +190,7 @@ class Molecule(object):
 
         :return: None
         """
-        # # ansible.cfg
+        # ansible.cfg
         kwargs = {'molecule_dir':
                   self._config.config['molecule']['molecule_dir']}
         if not os.path.isfile(self._config.config['ansible']['config_file']):
