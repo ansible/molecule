@@ -8,44 +8,22 @@ require 'fileutils'
 task spec: 'serverspec:all'
 task default: :spec
 
-env = YAML.load_file('{{ molecule_file }}')['vagrant']
-
-if env.nil?
-	puts "No vagrant instances defined. "
-	instances = {}
-else
-	instances = env['instances']
-end
-instances_to_test = {}
-instances.each do |instance|
-  instance_name = instance['name']
-  if instance.key?('options')
-    if instance['options'].key?('append_platform_to_hostname')
-      if instance['options']['append_platform_to_hostname']
-        instance_name = instance['name'] + '-{{ current_platform }}'
-      end
-    end
-  end
-  instances_to_test[instance_name] = instance
-end
+instances = YAML.load_file('{{ state_file }}')['instances']
 
 namespace :serverspec do
-  task all: instances_to_test.keys.map { |h| h }
-  instances_to_test.each do |vm_name, instance|
-    desc "Run serverspec on #{vm_name}"
-    pattern = ['{{ serverspec_dir }}/*_spec.rb', "{{ serverspec_dir }}/#{instance['name']}/*_spec.rb", "{{ serverspec_dir }}/hosts/#{instance['name']}/*_spec.rb"]
+  task all: instances.keys
+  instances.each do |name, groups|
+    desc "Run serverspec on #{name}"
+    pattern = ['{{ serverspec_dir }}/*_spec.rb', "{{ serverspec_dir }}/#{name}/*_spec.rb", "{{ serverspec_dir }}/hosts/#{name}/*_spec.rb"]
 
-    if instance.key?('ansible_groups') && instance['ansible_groups'].nil? == false
-      instance['ansible_groups'].each do |group|
-        pattern << "{{ serverspec_dir }}/#{group}/*_spec.rb"
-        pattern << "{{ serverspec_dir }}/groups/#{group}/*_spec.rb"
+    groups.each do |group|
+      pattern << "{{ serverspec_dir }}/#{group}/*_spec.rb"
+      pattern << "{{ serverspec_dir }}/groups/#{group}/*_spec.rb"
     end
 
-    end
-
-    RSpec::Core::RakeTask.new(vm_name.to_sym) do |target|
-      puts "*** Run serverspec on #{vm_name} instance ***"
-      ENV['TARGET_HOST'] = vm_name
+    RSpec::Core::RakeTask.new(name.to_sym) do |target|
+      puts "*** Run serverspec on #{name} instance ***"
+      ENV['TARGET_HOST'] = name
       target.pattern = pattern.join(',')
     end
   end

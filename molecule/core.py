@@ -204,13 +204,32 @@ class Molecule(object):
 
         # rakefile
         kwargs = {
-            'molecule_file': self._config.molecule_file,
-            'current_platform': self._provisioner._platform,
+            'state_file': self._config.config['molecule']['state_file'],
             'serverspec_dir': self._config.config['molecule']['serverspec_dir']
         }
         utilities.write_template(
             self._config.config['molecule']['rakefile_template'],
             self._config.config['molecule']['rakefile_file'], kwargs=kwargs)
+
+    def _create_instances_state(self):
+        """
+        Creates a dict of formatted instances names and the group(s) they're
+        part of to be added to state.
+
+        :return: None
+        """
+
+        instances = {}
+        for instance in self._provisioner.instances:
+            instance_name = utilities.format_instance_name(
+                instance['name'], self._provisioner._platform,
+                self._provisioner.instances)
+            instances[instance_name] = []
+            if 'ansible_groups' in instance:
+                for group in instance['ansible_groups']:
+                    instances[instance_name].append(group)
+
+        self._state.change_state('instances', instances)
 
     def _create_inventory_file(self):
         """
@@ -244,6 +263,7 @@ class Molecule(object):
                     self._provisioner.instances))
 
         inventory_file = self._config.config['ansible']['inventory_file']
+        self._create_instances_state()
         try:
             utilities.write_file(inventory_file, inventory)
         except IOError:

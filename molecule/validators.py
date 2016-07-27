@@ -141,7 +141,7 @@ def rubocop(serverspec_dir,
 def rake(rakefile,
          debug=False,
          env=os.environ.copy(),
-         out=utilities.logger.warning,
+         out=utilities.logger.info,
          err=utilities.logger.error):
     """
     Runs rake with specified rakefile

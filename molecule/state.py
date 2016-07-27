@@ -30,8 +30,7 @@ import yaml
 
 from molecule import utilities
 
-VALID_KEYS = ['converged', 'created', 'default_platform', 'default_provider',
-              'multiple_platforms', 'customconf']
+VALID_KEYS = ['converged', 'created', 'customconf', 'default_platform', 'default_provider', 'instances', 'multiple_platforms']
 
 
 class InvalidState(Exception):
@@ -66,6 +65,10 @@ class State(object):
     @property
     def default_provider(self):
         return self._data.get('default_provider')
+
+    @property
+    def instances(self):
+        return self._data.get('instances')
 
     @property
     def multiple_platforms(self):
@@ -106,6 +109,7 @@ class State(object):
             "created": None,
             "default_platform": None,
             "default_provider": None,
+            "instances": None,
             "multiple_platforms": None
         }
 
