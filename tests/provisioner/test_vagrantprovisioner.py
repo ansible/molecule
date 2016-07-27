@@ -82,6 +82,7 @@ def molecule_file(tmpdir, request):
     return c.strpath
 
 
+@pytest.mark.skipif(vagrant.get_vagrant_executable() is None)
 def test_vagrant_create(molecule_file):
     assert os.path.isfile(molecule_file)
     c = Create([], [])
@@ -94,6 +95,7 @@ def test_vagrant_create(molecule_file):
     assert os.path.isdir('.vagrant')
 
 
+@pytest.mark.skipif(vagrant.get_vagrant_executable() is None)
 def test_vagrant_converge(molecule_file):
     assert os.path.isfile(molecule_file)
     c = Converge([], [])
