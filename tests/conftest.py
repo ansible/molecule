@@ -20,6 +20,7 @@
 
 import os
 import os.path
+import shutil
 
 import pytest
 
@@ -34,10 +35,14 @@ def temp_files(tmpdir, request):
             c.write(item)
             confs.append(c.strpath)
 
+        pbook = d.join(os.extsep.join(('playbook', 'yml')))
+        data = [{'hosts': 'all', 'tasks': [{'command': 'echo'}]}]
+
+        pbook.write(data)
+        os.chdir(d.strpath)
+
         def cleanup():
-            for c in confs:
-                os.remove(c)
-            os.rmdir(d.strpath)
+            shutil.rmtree(d.strpath)
 
         request.addfinalizer(cleanup)
 

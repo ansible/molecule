@@ -48,6 +48,7 @@ class Molecule(object):
         self._provisioner = None
 
     def main(self):
+
         if not os.path.exists(self._config.config['molecule']['molecule_dir']):
             os.makedirs(self._config.config['molecule']['molecule_dir'])
 
@@ -181,7 +182,8 @@ class Molecule(object):
         :return: None
         """
         os.remove(self._config.config['molecule']['rakefile_file'])
-        os.remove(self._config.config['ansible']['config_file'])
+        if self._state.customconf is False:
+            os.remove(self._config.config['ansible']['config_file'])
 
     def _create_templates(self):
         """
@@ -192,9 +194,13 @@ class Molecule(object):
         # ansible.cfg
         kwargs = {'molecule_dir':
                   self._config.config['molecule']['molecule_dir']}
-        utilities.write_template(
-            self._config.config['molecule']['ansible_config_template'],
-            self._config.config['ansible']['config_file'], kwargs=kwargs)
+        if not os.path.isfile(self._config.config['ansible']['config_file']):
+            utilities.write_template(
+                self._config.config['molecule']['ansible_config_template'],
+                self._config.config['ansible']['config_file'], kwargs=kwargs)
+            self._state.change_state('customconf', False)
+        else:
+            self._state.change_state('customconf', True)
 
         # rakefile
         kwargs = {

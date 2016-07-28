@@ -131,8 +131,7 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
             errors = False
 
             if tag_string not in available_images:
-                utilities.logger.warning(
-                    'Building ansible compatible image ...')
+                utilities.print_info('Building ansible compatible image ...')
                 previous_line = ''
                 for line in self._docker.build(fileobj=f, tag=tag_string):
                     for line_split in line.split('\n'):
@@ -173,9 +172,16 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
             if 'port_bindings' not in container:
                 container['port_bindings'] = {}
 
+            if 'volume_mounts' not in container:
+                container['volume_mounts'] = []
+
+            if 'command' not in container:
+                container['command'] = ""
+
             docker_host_config = self._docker.create_host_config(
                 privileged=container['privileged'],
-                port_bindings=container['port_bindings'])
+                port_bindings=container['port_bindings'],
+                binds=container['volume_mounts'])
 
             if (container['Created'] is not True):
                 utilities.logger.warning(
@@ -189,7 +195,8 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
                     detach=False,
                     name=container['name'],
                     ports=container['port_bindings'].keys(),
-                    host_config=docker_host_config)
+                    host_config=docker_host_config,
+                    command=container['command'])
                 self._docker.start(container=container.get('Id'))
                 container['Created'] = True
 

@@ -31,7 +31,7 @@ import yaml
 from molecule import utilities
 
 VALID_KEYS = ['converged', 'created', 'default_platform', 'default_provider',
-              'multiple_platforms']
+              'multiple_platforms', 'customconf']
 
 
 class InvalidState(Exception):
@@ -70,6 +70,10 @@ class State(object):
     @property
     def multiple_platforms(self):
         return self._data.get('multiple_platforms')
+
+    @property
+    def customconf(self):
+        return self._data.get('customconf')
 
     @marshal
     def reset(self):

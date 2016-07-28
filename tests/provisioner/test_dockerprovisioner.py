@@ -19,11 +19,14 @@
 #  THE SOFTWARE.
 
 import pytest
+import logging
 
 from molecule import config
 from molecule import core
 from molecule import ansible_playbook
 from molecule.provisioners import dockerprovisioner
+
+logging.getLogger("sh").setLevel(logging.WARNING)
 
 # TODO(retr0h): Implement finalizer (teardown).
 
@@ -46,11 +49,13 @@ def docker_data():
                      80: 80,
                      443: 443
                  },
+                 'volume_mounts': ['/tmp/test1:/inside:rw'],
                  'ansible_groups': ['group1']}, {'name': 'test2',
                                                  'image': 'ubuntu',
                                                  'image_version': 'latest',
                                                  'ansible_groups':
-                                                 ['group2']}
+                                                 ['group2'],
+                                                 'command': '/bin/sh'}
             ]
         },
         'ansible': {
@@ -70,8 +75,13 @@ def molecule_instance(temp_files, docker_data):
 
 
 @pytest.fixture()
-def docker_instance(molecule_instance):
+def docker_instance(molecule_instance, request):
     d = dockerprovisioner.DockerProvisioner(molecule_instance)
+
+    def cleanup():
+        d.destroy()
+
+    request.addfinalizer(cleanup)
 
     return d
 
@@ -87,14 +97,11 @@ def test_get_provisioner(molecule_instance):
 
 def test_up(docker_instance):
     docker_instance.up()
-    docker_instance.destroy()
 
 
 def test_instances(docker_instance):
     assert 'test1' == docker_instance.instances[0]['name']
     assert 'test2' == docker_instance.instances[1]['name']
-
-    docker_instance.destroy()
 
 
 def test_status(docker_instance):
@@ -108,8 +115,6 @@ def test_status(docker_instance):
 
     assert 'docker' in docker_instance.status()[0].provider
     assert 'docker' in docker_instance.status()[1].provider
-
-    docker_instance.destroy()
 
 
 def test_port_bindings(docker_instance):
@@ -130,7 +135,23 @@ def test_port_bindings(docker_instance):
         }
     ]
 
-    docker_instance.destroy()
+
+def test_start_command(docker_instance):
+    docker_instance.up()
+
+    assert "/bin/sh" in docker_instance._docker.inspect_container('test2')[
+        'Config']['Cmd']
+    assert "/bin/bash" in docker_instance._docker.inspect_container('test1')[
+        'Config']['Cmd']
+
+
+def test_volume_mounts(docker_instance):
+    docker_instance.up()
+
+    assert "/tmp/test1" in docker_instance._docker.inspect_container('test1')[
+        'Mounts'][0]['Source']
+    assert "/inside" in docker_instance._docker.inspect_container('test1')[
+        'Mounts'][0]['Destination']
 
 
 def test_destroy(docker_instance):
@@ -151,14 +172,12 @@ def test_destroy(docker_instance):
 def test_provision(docker_instance):
     docker_instance.up()
     pb = docker_instance.ansible_connection_params
-    pb['playbook'] = 'tests/support/playbook.yml'
+    pb['playbook'] = 'playbook.yml'
     pb['inventory'] = 'test1,test2,'
     ansible = ansible_playbook.AnsiblePlaybook(pb)
 
     # TODO(retr0h): Understand why provisioner is None
     assert (None, '') == ansible.execute()
-
-    docker_instance.destroy()
 
 
 def test_inventory_generation(molecule_instance, docker_instance):
@@ -168,11 +187,9 @@ def test_inventory_generation(molecule_instance, docker_instance):
     molecule_instance._create_inventory_file()
 
     pb = molecule_instance._provisioner.ansible_connection_params
-    pb['playbook'] = 'tests/support/playbook.yml'
-    pb['inventory'] = 'tests/support/ansible_inventory'
+    pb['playbook'] = 'playbook.yml'
+    pb['inventory'] = 'test1,test2,'
     ansible = ansible_playbook.AnsiblePlaybook(pb)
 
-    assert (None, '') == ansible.execute()
-
     # TODO(retr0h): Understand why provisioner is None
-    molecule_instance._provisioner.destroy()
+    assert (None, '') == ansible.execute()
