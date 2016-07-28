@@ -6,6 +6,7 @@ def test_etc_molecule(File):
     assert f.group == 'root'
     assert f.mode == 0o755
 
+
 def test_etc_molecule_demo(File):
     f = File('/etc/molecule/demo')
 

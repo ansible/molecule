@@ -1,5 +1,6 @@
 testinfra_hosts = ['demo1']
 
+
 def test_etc_molecule_demo1(File):
     f = File('/etc/molecule/demo1')
 

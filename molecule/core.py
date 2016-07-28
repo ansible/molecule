@@ -212,7 +212,6 @@ class Molecule(object):
             self._config.config['molecule']['rakefile_template'],
             self._config.config['molecule']['rakefile_file'], kwargs=kwargs)
 
-    @property
     def _instances_state(self):
         """
         Creates a dict of formatted instances names and the group(s) they're
@@ -267,7 +266,7 @@ class Molecule(object):
                     self._provisioner.instances))
 
         inventory_file = self._config.config['ansible']['inventory_file']
-        self._state.change_state('hosts', self._instances_state)
+        self._state.change_state('hosts', self._instances_state())
         try:
             utilities.write_file(inventory_file, inventory)
         except IOError:
