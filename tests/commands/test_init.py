@@ -24,7 +24,7 @@ import logging
 import pytest
 
 from molecule.commands.init import Init
-from molecule.core import Molecule
+
 logging.getLogger("sh").setLevel(logging.WARNING)
 
 

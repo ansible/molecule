@@ -25,7 +25,6 @@ from molecule import config
 from molecule import core
 from molecule import ansible_playbook
 from molecule.provisioners import dockerprovisioner
-from molecule.commands.create import Create
 
 logging.getLogger("sh").setLevel(logging.WARNING)
 
@@ -194,7 +193,3 @@ def test_inventory_generation(molecule_instance, docker_instance):
 
     # TODO(retr0h): Understand why provisioner is None
     assert (None, '') == ansible.execute()
-
-
-def test_create(molecule_instance):
-    pass
