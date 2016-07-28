@@ -57,6 +57,15 @@ def test_default_provider(state_instance):
 def test_multiple_platforms(state_instance):
     assert not state_instance.multiple_platforms
 
+def test_customconf(state_instance):
+    assert not state_instance.customconf
+
+    state_instance.change_state('customconf', True)
+    assert state_instance.customconf
+
+    state_instance.reset()
+    assert not state_instance.customconf
+
 
 def test_reset(state_instance):
     assert not state_instance.created
