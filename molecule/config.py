@@ -21,8 +21,9 @@
 import os
 import os.path
 
-from molecule import utilities
 import anyconfig
+
+from molecule import utilities
 
 DEFAULT_CONFIG = os.path.join(os.path.dirname(__file__), 'conf/defaults.yml')
 PROJECT_CONFIG = 'molecule.yml'
