@@ -18,6 +18,7 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
+import collections
 import fcntl
 import os
 import re
@@ -211,25 +212,28 @@ class Molecule(object):
             self._config.config['molecule']['rakefile_template'],
             self._config.config['molecule']['rakefile_file'], kwargs=kwargs)
 
-    def _create_instances_state(self):
+    @property
+    def _instances_state(self):
         """
         Creates a dict of formatted instances names and the group(s) they're
         part of to be added to state.
 
-        :return: None
+        :return: Dict containing state information about current instances
         """
 
-        instances = {}
+        instances = collections.defaultdict(dict)
         for instance in self._provisioner.instances:
             instance_name = utilities.format_instance_name(
                 instance['name'], self._provisioner._platform,
                 self._provisioner.instances)
-            instances[instance_name]['ansible_groups'] = []
-            if 'ansible_groups' in instance:
-                for group in instance['ansible_groups']:
-                    instances[instance_name]['ansible_groups'].append(group)
 
-        self._state.change_state('instances', instances)
+            if 'ansible_groups' in instance:
+                instances[instance_name][
+                    'groups'] = [x for x in instance['ansible_groups']]
+            else:
+                instances[instance_name]['groups'] = []
+
+        return dict(instances)
 
     def _create_inventory_file(self):
         """
@@ -263,7 +267,7 @@ class Molecule(object):
                     self._provisioner.instances))
 
         inventory_file = self._config.config['ansible']['inventory_file']
-        self._create_instances_state()
+        self._state.change_state('hosts', self._instances_state)
         try:
             utilities.write_file(inventory_file, inventory)
         except IOError:

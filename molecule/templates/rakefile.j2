@@ -8,21 +8,21 @@ require 'fileutils'
 task spec: 'serverspec:all'
 task default: :spec
 
-instances = YAML.load_file('{{ state_file }}')['instances']
+hosts = YAML.load_file('{{ state_file }}')['hosts']
 
 namespace :serverspec do
-  task all: instances.keys
-  instances.each do |name, instance|
+  task all: hosts.keys
+  hosts.each do |name, host|
     desc "Run serverspec on #{name}"
     pattern = ['{{ serverspec_dir }}/*_spec.rb', "{{ serverspec_dir }}/#{name}/*_spec.rb", "{{ serverspec_dir }}/hosts/#{name}/*_spec.rb"]
 
-    instance['ansible_groups'].each do |group|
+    host['groups'].each do |group|
       pattern << "{{ serverspec_dir }}/#{group}/*_spec.rb"
       pattern << "{{ serverspec_dir }}/groups/#{group}/*_spec.rb"
     end
 
     RSpec::Core::RakeTask.new(name.to_sym) do |target|
-      puts "*** Run serverspec on #{name} instance ***"
+      puts "*** Run serverspec on #{name} ***"
       ENV['TARGET_HOST'] = name
       target.pattern = pattern.join(',')
     end
