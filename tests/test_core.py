@@ -23,9 +23,19 @@ import pytest
 from molecule import core
 
 
+class TestProvisioner():
+    def __init__(self):
+        self.instances = [{'name': 'demo-01',
+                           'ansible_groups': ['demo', 'demo1'],
+                           'options': {'append_platform_to_hostname': True}}]
+        self._platform = 'centos7'
+
+
 @pytest.fixture()
 def molecule():
-    return core.Molecule(dict())
+    m = core.Molecule(dict())
+    m._provisioner = TestProvisioner()
+    return m
 
 
 def test_parse_provisioning_output_failure_00(molecule):
@@ -59,3 +69,8 @@ vagrant-01-ubuntu              : ok=36   changed=0    unreachable=0    failed=0
 
     assert res
     assert [] == changed_tasks
+
+
+def test_instances_state_00(molecule):
+    success_output = {'demo-01-centos7': {'groups': ['demo', 'demo1']}}
+    assert success_output == molecule._instances_state()

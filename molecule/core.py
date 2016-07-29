@@ -234,6 +234,9 @@ class Molecule(object):
 
         return dict(instances)
 
+    def _write_instances_state(self):
+        self._state.change_state('hosts', self._instances_state())
+
     def _create_inventory_file(self):
         """
         Creates the inventory file used by molecule and later passed to ansible-playbook.
@@ -266,7 +269,6 @@ class Molecule(object):
                     self._provisioner.instances))
 
         inventory_file = self._config.config['ansible']['inventory_file']
-        self._state.change_state('hosts', self._instances_state())
         try:
             utilities.write_file(inventory_file, inventory)
         except IOError:
