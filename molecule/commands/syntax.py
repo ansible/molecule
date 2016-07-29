@@ -34,8 +34,8 @@ class Syntax(base.BaseCommand):
     def execute(self, exit=True):
         self.molecule._create_templates()
 
-        ansible = ansible_playbook.AnsiblePlaybook(
-            self.molecule._config.config['ansible'])
+        ansible = ansible_playbook.AnsiblePlaybook(self.molecule.config.config[
+            'ansible'])
         ansible.add_cli_arg('syntax-check', True)
         ansible.add_cli_arg('inventory-file', 'localhost,')
 

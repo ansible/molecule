@@ -25,4 +25,4 @@ from molecule.provisioners import baseprovisioner
 class ProxmoxProvisioner(baseprovisioner.BaseProvisioner):
     def __init__(self, molecule):
         super(ProxmoxProvisioner, self).__init__()
-        self.m = molecule
+        self.molecule = molecule

@@ -42,7 +42,7 @@ class Test(base.BaseCommand):
         command_args, args = utilities.remove_args(
             self.command_args, self.args, self.command_args)
 
-        for task in self.molecule._config.config['molecule']['test'][
+        for task in self.molecule.config.config['molecule']['test'][
                 'sequence']:
             command_module = getattr(molecule.commands, task)
             command = getattr(command_module, task.capitalize())

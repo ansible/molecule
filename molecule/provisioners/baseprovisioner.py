@@ -32,7 +32,7 @@ class BaseProvisioner(object):
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, molecule):
-        self.m = molecule
+        self.molecule = molecule
 
     @abc.abstractproperty
     def name(self):
@@ -76,6 +76,15 @@ class BaseProvisioner(object):
 
     @abc.abstractproperty
     def platform(self):
+        """
+        Platform that is used for creating VMs
+        :return:
+        """
+        return
+
+    @platform.setter
+    @abc.abstractproperty
+    def platform(self, val):
         """
         Platform that is used for creating VMs
         :return:

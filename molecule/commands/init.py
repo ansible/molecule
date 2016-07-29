@@ -85,37 +85,37 @@ class Init(base.BaseCommand):
             loader=jinja2.PackageLoader('molecule', 'templates'),
             keep_trailing_newline=True)
 
-        t_molecule = env.get_template(self.molecule._config.config['molecule'][
+        t_molecule = env.get_template(self.molecule.config.config['molecule'][
             'init']['templates']['molecule'])
-        t_playbook = env.get_template(self.molecule._config.config['molecule'][
+        t_playbook = env.get_template(self.molecule.config.config['molecule'][
             'init']['templates']['playbook'])
-        t_test_default = env.get_template(self.molecule._config.config[
+        t_test_default = env.get_template(self.molecule.config.config[
             'molecule']['init']['templates']['test_default'])
 
         if (self.molecule._args['--docker']):
-            t_molecule = env.get_template(self.molecule._config.config[
+            t_molecule = env.get_template(self.molecule.config.config[
                 'molecule']['init']['templates']['molecule_docker'])
         if (self.molecule._args['--openstack']):
-            t_molecule = env.get_template(self.molecule._config.config[
+            t_molecule = env.get_template(self.molecule.config.config[
                 'molecule']['init']['templates']['molecule_openstack'])
 
         sanitized_role = re.sub('[._]', '-', role)
         with open(
-                os.path.join(role_path, self.molecule._config.molecule_file),
+                os.path.join(role_path, self.molecule.config.molecule_file),
                 'w') as f:
-            f.write(t_molecule.render(config=self.molecule._config.config,
+            f.write(t_molecule.render(config=self.molecule.config.config,
                                       role=sanitized_role))
 
         with open(
                 os.path.join(
                     role_path,
-                    self.molecule._config.config['ansible']['playbook']),
+                    self.molecule.config.config['ansible']['playbook']),
                 'w') as f:
             f.write(t_playbook.render(role=role))
 
         testinfra_path = os.path.join(
             role_path,
-            self.molecule._config.config['molecule']['testinfra_dir'])
+            self.molecule.config.config['molecule']['testinfra_dir'])
 
         if not os.path.isdir(testinfra_path):
             os.mkdir(testinfra_path)

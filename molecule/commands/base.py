@@ -52,7 +52,7 @@ class BaseCommand:
             self.molecule = molecule
 
     def main(self):
-        c = self.molecule._config
+        c = self.molecule.config
         if not c.molecule_file_exists():
             error = '\nUnable to find {}. Exiting.'
             utilities.logger.error(error.format(c.molecule_file))

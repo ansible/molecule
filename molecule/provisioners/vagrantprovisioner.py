@@ -33,46 +33,49 @@ class VagrantProvisioner(baseprovisioner.BaseProvisioner):
         self._vagrant = vagrant.Vagrant(quiet_stdout=False, quiet_stderr=False)
         self._provider = self._get_provider()
         self._platform = self._get_platform()
-        molecule._env['VAGRANT_VAGRANTFILE'] = molecule._config.config[
+        molecule._env['VAGRANT_VAGRANTFILE'] = molecule.config.config[
             'molecule']['vagrantfile_file']
         self._vagrant.env = molecule._env
         self._updated_multiplatform = False
 
     def _get_provider(self):
-        if self.m._args.get('--provider'):
+        if self.molecule._args.get('--provider'):
             if not [item
-                    for item in self.m._config.config['vagrant']['providers']
-                    if item['name'] == self.m._args['--provider']]:
+                    for item in self.molecule.config.config['vagrant'][
+                        'providers']
+                    if item['name'] == self.molecule._args['--provider']]:
                 raise baseprovisioner.InvalidProviderSpecified()
-            self.m._state.change_state('default_provider',
-                                       self.m._args['--provider'])
-            self.m._env['VAGRANT_DEFAULT_PROVIDER'] = self.m._args[
-                '--provider']
+            self.molecule._state.change_state(
+                'default_provider', self.molecule._args['--provider'])
+            self.molecule._env[
+                'VAGRANT_DEFAULT_PROVIDER'] = self.molecule._args['--provider']
         else:
-            self.m._env['VAGRANT_DEFAULT_PROVIDER'] = self.default_provider
+            self.molecule._env[
+                'VAGRANT_DEFAULT_PROVIDER'] = self.default_provider
 
-        return self.m._env['VAGRANT_DEFAULT_PROVIDER']
+        return self.molecule._env['VAGRANT_DEFAULT_PROVIDER']
 
     def _get_platform(self):
-        if self.m._args.get('--platform'):
-            if self.m._args['--platform'] != 'all':
+        if self.molecule._args.get('--platform'):
+            if self.molecule._args['--platform'] != 'all':
                 if not [item
-                        for item in self.m._config.config['vagrant'][
+                        for item in self.molecule.config.config['vagrant'][
                             'platforms']
-                        if item['name'] == self.m._args['--platform']]:
+                        if item['name'] == self.molecule._args['--platform']]:
                     raise baseprovisioner.InvalidPlatformSpecified()
-            self.m._state.change_state('default_platform',
-                                       self.m._args['--platform'])
-            return self.m._args['--platform']
+            self.molecule._state.change_state(
+                'default_platform', self.molecule._args['--platform'])
+            return self.molecule._args['--platform']
         return self.default_platform
 
     def _write_vagrant_file(self):
-        kwargs = {'config': self.m._config.config,
+        kwargs = {'config': self.molecule.config.config,
                   'current_platform': self.platform,
                   'current_provider': self.provider}
 
-        template = self.m._config.config['molecule']['vagrantfile_template']
-        dest = self.m._config.config['molecule']['vagrantfile_file']
+        template = self.molecule.config.config['molecule'][
+            'vagrantfile_template']
+        dest = self.molecule.config.config['molecule']['vagrantfile_file']
         utilities.write_template(template, dest, kwargs=kwargs)
 
     @property
@@ -82,45 +85,45 @@ class VagrantProvisioner(baseprovisioner.BaseProvisioner):
     @property
     def instances(self):
         self.populate_platform_instances()
-        return self.m._config.config['vagrant']['instances']
+        return self.molecule.config.config['vagrant']['instances']
 
     @property
     def default_provider(self):
         # take config's default_provider if specified, otherwise use the first in the provider list
-        default_provider = self.m._config.config['molecule'].get(
+        default_provider = self.molecule.config.config['molecule'].get(
             'default_provider')
         if default_provider is None:
-            default_provider = self.m._config.config['vagrant']['providers'][
-                0]['name']
+            default_provider = self.molecule.config.config['vagrant'][
+                'providers'][0]['name']
 
         # default to first entry if no entry for provider exists or provider is false
-        if not self.m._state.default_provider:
+        if not self.molecule._state.default_provider:
             return default_provider
 
-        return self.m._state.default_provider
+        return self.molecule._state.default_provider
 
     @property
     def default_platform(self):
         # assume static inventory if there's no vagrant section
-        if self.m._config.config.get('vagrant') is None:
+        if self.molecule.config.config.get('vagrant') is None:
             return 'static'
 
         # assume static inventory if no platforms are listed
-        if self.m._config.config['vagrant'].get('platforms') is None:
+        if self.molecule.config.config['vagrant'].get('platforms') is None:
             return 'static'
 
         # take config's default_platform if specified, otherwise use the first in the platform list
-        default_platform = self.m._config.config['molecule'].get(
+        default_platform = self.molecule.config.config['molecule'].get(
             'default_platform')
         if default_platform is None:
-            default_platform = self.m._config.config['vagrant']['platforms'][
-                0]['name']
+            default_platform = self.molecule.config.config['vagrant'][
+                'platforms'][0]['name']
 
         # default to first entry if no entry for platform exists or platform is false
-        if not self.m._state.default_platform:
+        if not self.molecule._state.default_platform:
             return default_platform
 
-        return self.m._state.default_platform
+        return self.molecule._state.default_platform
 
     @property
     def provider(self):
@@ -130,17 +133,21 @@ class VagrantProvisioner(baseprovisioner.BaseProvisioner):
     def platform(self):
         return self._platform
 
+    @platform.setter
+    def platform(self, val):
+        self._platform = val
+
     @property
     def host_template(self):
         return '{} ansible_ssh_host={} ansible_ssh_port={} ansible_ssh_private_key_file={} ansible_ssh_user={}\n'
 
     @property
     def valid_providers(self):
-        return self.m._config.config['vagrant']['providers']
+        return self.molecule.config.config['vagrant']['providers']
 
     @property
     def valid_platforms(self):
-        return self.m._config.config['vagrant']['platforms']
+        return self.molecule.config.config['vagrant']['platforms']
 
     @property
     def ssh_config_file(self):
@@ -150,7 +157,7 @@ class VagrantProvisioner(baseprovisioner.BaseProvisioner):
     def testinfra_args(self):
         kwargs = {
             'ansible-inventory':
-            self.m._config.config['ansible']['inventory_file'],
+            self.molecule.config.config['ansible']['inventory_file'],
             'connection': 'ansible'
         }
 
@@ -172,11 +179,13 @@ class VagrantProvisioner(baseprovisioner.BaseProvisioner):
         self._vagrant.up(no_provision)
 
     def destroy(self):
-        if self.m._state.created:
+        if self.molecule._state.created:
             self._vagrant.destroy()
 
-        if os._exists(self.m._config.config['molecule']['vagrantfile_file']):
-            os.remove(self.m._config.config['molecule']['vagrantfile_file'])
+        if os._exists(self.molecule.config.config['molecule'][
+                'vagrantfile_file']):
+            os.remove(self.molecule.config.config['molecule'][
+                'vagrantfile_file'])
 
     def status(self):
         return self._vagrant.status()
@@ -193,7 +202,7 @@ class VagrantProvisioner(baseprovisioner.BaseProvisioner):
 
         if not self._updated_multiplatform:
             ssh = self.conf(vm_name=utilities.format_instance_name(
-                instance['name'], self._platform, self.instances))
+                instance['name'], self.platform, self.instances))
         else:
             ssh = self.conf(vm_name=utilities.format_instance_name(
                 instance['name'], 'all', self.instances))
@@ -210,18 +219,19 @@ class VagrantProvisioner(baseprovisioner.BaseProvisioner):
 
         return [
             conf['HostName'], conf['User'], conf['Port'], conf['IdentityFile'],
-            ' '.join(self.m._config.config['molecule']['raw_ssh_args'])
+            ' '.join(self.molecule.config.config['molecule']['raw_ssh_args'])
         ]
 
     def populate_platform_instances(self):
-        if self.m._args.get('--platform'):
-            if len(self.m._config.config['vagrant'][
-                    'platforms']) > 1 and self.m._args[
+        if self.molecule._args.get('--platform'):
+            if len(self.molecule.config.config['vagrant'][
+                    'platforms']) > 1 and self.molecule._args[
                         '--platform'] == 'all' and not self._updated_multiplatform:
                 new_instances = []
 
-                for instance in self.m._config.config['vagrant']['instances']:
-                    for platform in self.m._config.config['vagrant'][
+                for instance in self.molecule.config.config['vagrant'][
+                        'instances']:
+                    for platform in self.molecule.config.config['vagrant'][
                             'platforms']:
                         platform_instance = copy.deepcopy(instance)
                         platform_instance['platform'] = platform['box']
@@ -231,5 +241,6 @@ class VagrantProvisioner(baseprovisioner.BaseProvisioner):
                             'name'] + '-' + platform['name']
                         new_instances.append(platform_instance)
 
-                self.m._config.config['vagrant']['instances'] = new_instances
+                self.molecule.config.config['vagrant'][
+                    'instances'] = new_instances
                 self._updated_multiplatform = True
