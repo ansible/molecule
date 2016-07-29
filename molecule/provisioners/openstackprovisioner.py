@@ -116,6 +116,7 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
         active_instances = self._openstack.list_servers()
         active_instance_names = {instance['name']: instance['status']
                                  for instance in active_instances}
+
         utilities.logger.warning("Creating openstack instances ...")
         for instance in self.instances:
             if instance['name'] not in active_instance_names:
@@ -128,7 +129,8 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
                     auto_ip=True,
                     wait=True,
                     key_name=self.m._config.config['openstack']['keypair'],
-                    security_groups=instance['security_groups'])
+                    security_groups=instance['security_groups']
+                    if 'security_groups' in instance else None)
                 utilities.reset_known_host_key(server['interface_ip'])
                 instance['created'] = True
                 num_retries = 0
@@ -178,10 +180,11 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
         return status_list
 
     def conf(self, name=None, ssh_config=False):
-        with open(self.m._config.config['molecule'][
+
+        with open(self.m._config.config['ansible'][
                 'inventory_file']) as instance:
             for line in instance:
-                if line.split()[0] == name:
+                if len(line.split()) > 0 and line.split()[0] == name:
                     ansible_host = line.split()[1]
                     host_address = ansible_host.split('=')[1]
                     return host_address
