@@ -2,3 +2,30 @@
 - hosts: all
   roles:
     - role: molecule
+
+- hosts: demo
+  tasks:
+    - name: Create /etc/molecule/demo to test tasks targeting demo group
+      copy: dest=/etc/molecule/demo
+            group=root
+            owner=root
+            mode=0644
+            content="molecule demo file should appear on all instances in demo group"
+
+- hosts: demo1
+  tasks:
+    - name: Create /etc/molecule/demo1 to test tasks targeting demo1 group
+      copy: dest=/etc/molecule/demo1
+            group=root
+            owner=root
+            mode=0644
+            content="molecule demo1 file should appear on instances in demo1 group"
+
+- hosts: demo2
+  tasks:
+    - name: Create /etc/molecule/demo2 to test tasks targeting demo2 group
+      copy: dest=/etc/molecule/demo2
+            group=root
+            owner=root
+            mode=0644
+            content="molecule demo2 file should appear on instances in demo2 group"

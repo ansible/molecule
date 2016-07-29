@@ -68,6 +68,16 @@ def test_customconf(state_instance):
     assert not state_instance.customconf
 
 
+def test_hosts(state_instance):
+    assert not state_instance.hosts
+
+    state_instance.change_state('hosts', {'test-01': {'groups': ['group1']}})
+    assert state_instance.hosts
+
+    state_instance.reset()
+    assert not state_instance.hosts
+
+
 def test_reset(state_instance):
     assert not state_instance.created
 

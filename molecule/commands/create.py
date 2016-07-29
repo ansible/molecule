@@ -52,4 +52,5 @@ class Create(base.BaseCommand):
                 utilities.sysexit(e.returncode)
             return e.returncode, e.message
         self.molecule._create_inventory_file()
+        self.molecule._write_instances_state()
         return None, None
