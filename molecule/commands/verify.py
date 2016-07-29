@@ -44,6 +44,7 @@ class Verify(base.BaseCommand):
     """
 
     def execute(self, exit=True):
+
         serverspec_dir = self.molecule._config.config['molecule'][
             'serverspec_dir']
         testinfra_dir = self.molecule._config.config['molecule'][
