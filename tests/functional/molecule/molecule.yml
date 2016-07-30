@@ -1,7 +1,4 @@
 ---
-# ansible:
-#   config_file: ../../.molecule/ansible.cfg
-
 vagrant:
   platforms:
     - name: ubuntu
