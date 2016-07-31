@@ -2,6 +2,7 @@
 *.py[cod]
 *.retry
 .cache/
+.coverage
 .eggs/
 .molecule/
 .tox/

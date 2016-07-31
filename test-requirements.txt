@@ -1,6 +1,7 @@
 flake8
 mock
 pytest
+pytest-cov
 pytest-mock
 tox
 wheel
