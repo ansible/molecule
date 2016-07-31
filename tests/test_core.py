@@ -23,18 +23,23 @@ import pytest
 from molecule import core
 
 
-class TestProvisioner():
-    def __init__(self):
-        self.instances = [{'name': 'demo-01',
-                           'ansible_groups': ['demo', 'demo1'],
-                           'options': {'append_platform_to_hostname': True}}]
-        self._platform = 'centos7'
+@pytest.fixture()
+def provisioner():
+    class TestProvisioner():
+        def __init__(self):
+            self.instances = [{'name': 'demo-01',
+                               'ansible_groups': ['demo', 'demo1'],
+                               'options':
+                               {'append_platform_to_hostname': True}}]
+            self._platform = 'centos7'
+
+    return TestProvisioner()
 
 
 @pytest.fixture()
-def molecule():
+def molecule(provisioner):
     m = core.Molecule(dict())
-    m._provisioner = TestProvisioner()
+    m._provisioner = provisioner
     return m
 
 
