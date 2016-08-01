@@ -67,7 +67,7 @@ def molecule_file(tmpdir, request):
 
     pbook = d.join(os.extsep.join(('playbook', 'yml')))
     data = [{'hosts': 'all', 'tasks': [{'command': 'echo'}]}]
-    pbook.write(yaml.dump(data))
+    pbook.write(yaml.safe_dump(data))
 
     os.chdir(d.strpath)
 
