@@ -44,6 +44,14 @@ virtual machines/containers, with support for multiple Vagrant providers
 .. _`OpenStack`: https://www.openstack.org
 .. _`libvirt`: http://libvirt.org
 
+Ansible Support
+---------------
+
+* 1.9.6 - Limited (`Docker`_ and `OpenStack`_ provisioners not-supported)
+* 2.0.2.0 - Supported
+* 2.1.0.0 - Supported
+* 2.1.1.0 - In progress (#297)
+
 Quick Start
 -----------
 

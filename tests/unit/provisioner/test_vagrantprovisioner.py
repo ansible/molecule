@@ -18,16 +18,16 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
+import logging
 import os
 import shutil
 
 import pytest
 import vagrant
 
-from molecule.commands.create import Create
-from molecule.commands.converge import Converge
-
-import logging
+from molecule.commands import converge
+from molecule.commands import create
+from molecule.commands import destroy
 
 logging.getLogger("sh").setLevel(logging.WARNING)
 
@@ -68,12 +68,11 @@ def molecule_file(tmpdir, request):
     os.chdir(d.strpath)
 
     def cleanup():
-        os.chdir(os.path.join(d.strpath, '.molecule'))
-        v = vagrant.Vagrant(
-            os.path.abspath(os.curdir),
-            quiet_stdout=False,
-            quiet_stderr=False)
-        v.destroy()
+        try:
+            des = destroy.Destroy([], [])
+            des.execute()
+        except SystemExit as f:
+            pass
         os.remove(c.strpath)
         shutil.rmtree(d.strpath)
 
@@ -86,27 +85,21 @@ def molecule_file(tmpdir, request):
     vagrant.get_vagrant_executable() is None,
     reason='No vagrant executable found - skipping vagrant tests')
 def test_vagrant_create(molecule_file):
-    assert os.path.isfile(molecule_file)
-    c = Create([], [])
+    c = create.Create([], [])
 
     try:
         c.execute()
     except SystemExit as f:
         assert f.code == 0
-
-    assert os.path.isdir('.vagrant')
 
 
 @pytest.mark.skipif(
     vagrant.get_vagrant_executable() is None,
     reason='No vagrant executable found - skipping vagrant tests')
 def test_vagrant_converge(molecule_file):
-    assert os.path.isfile(molecule_file)
-    c = Converge([], [])
+    c = converge.Converge([], [])
 
     try:
         c.execute()
     except SystemExit as f:
         assert f.code == 0
-
-    assert os.path.isdir('.vagrant')
