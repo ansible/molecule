@@ -24,12 +24,17 @@ import shutil
 
 import pytest
 import vagrant
+import yaml
 
 from molecule.commands import converge
 from molecule.commands import create
 from molecule.commands import destroy
 
 logging.getLogger("sh").setLevel(logging.WARNING)
+
+pytestmark = pytest.mark.skipif(
+    vagrant.get_vagrant_executable() is None,
+    reason='No vagrant executable found - skipping vagrant tests')
 
 
 @pytest.fixture()
@@ -62,8 +67,7 @@ def molecule_file(tmpdir, request):
 
     pbook = d.join(os.extsep.join(('playbook', 'yml')))
     data = [{'hosts': 'all', 'tasks': [{'command': 'echo'}]}]
-
-    pbook.write(data)
+    pbook.write(yaml.safe_dump(data))
 
     os.chdir(d.strpath)
 
@@ -71,7 +75,7 @@ def molecule_file(tmpdir, request):
         try:
             des = destroy.Destroy([], [])
             des.execute()
-        except SystemExit as f:
+        except SystemExit:
             pass
         os.remove(c.strpath)
         shutil.rmtree(d.strpath)
@@ -81,9 +85,6 @@ def molecule_file(tmpdir, request):
     return c.strpath
 
 
-@pytest.mark.skipif(
-    vagrant.get_vagrant_executable() is None,
-    reason='No vagrant executable found - skipping vagrant tests')
 def test_vagrant_create(molecule_file):
     c = create.Create([], [])
 
@@ -93,9 +94,6 @@ def test_vagrant_create(molecule_file):
         assert f.code == 0
 
 
-@pytest.mark.skipif(
-    vagrant.get_vagrant_executable() is None,
-    reason='No vagrant executable found - skipping vagrant tests')
 def test_vagrant_converge(molecule_file):
     c = converge.Converge([], [])
 

@@ -18,15 +18,23 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
+import distutils.version
 import logging
 import pytest
 
+import ansible
+
+from molecule import ansible_playbook
 from molecule import config
 from molecule import core
-from molecule import ansible_playbook
 from molecule.provisioners import dockerprovisioner
 
 logging.getLogger("sh").setLevel(logging.WARNING)
+
+pytestmark = pytest.mark.skipif(
+    distutils.version.LooseVersion(ansible.__version__) <
+    distutils.version.LooseVersion('2.0'),
+    reason='No Ansible v2 executable found - skipping docker tests')
 
 
 @pytest.fixture()

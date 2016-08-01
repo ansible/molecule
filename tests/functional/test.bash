@@ -26,13 +26,14 @@ set -e
 
 export FUNCTIONAL_TEST_BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/"
 export TMP_DIR=$(mktemp -d /tmp/tmp.XXXXXXXXXX)
+ANSIBLE_MAJOR_VERSION=$(ansible --version|head -1|awk '{print $NF}'|cut -d\. -f1)
 
 source ${VIRTUAL_ENV}/bin/activate
 
-ansible --version
-
-echo "### Docker driver"
-source ${FUNCTIONAL_TEST_BASE_DIR}/test_docker_init.bash
+if [ ${ANSIBLE_MAJOR_VERSION} != 1 ]; then
+	echo "### Docker driver"
+	source ${FUNCTIONAL_TEST_BASE_DIR}/test_docker_init.bash
+fi
 
 echo "### Vagrant driver"
 source ${FUNCTIONAL_TEST_BASE_DIR}/test_vagrant_test.bash
