@@ -18,8 +18,8 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import pytest
 import logging
+import pytest
 
 from molecule import config
 from molecule import core
@@ -27,8 +27,6 @@ from molecule import ansible_playbook
 from molecule.provisioners import dockerprovisioner
 
 logging.getLogger("sh").setLevel(logging.WARNING)
-
-# TODO(retr0h): Implement finalizer (teardown).
 
 
 @pytest.fixture()
