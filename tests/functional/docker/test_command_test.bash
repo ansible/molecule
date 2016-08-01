@@ -20,29 +20,7 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-# NOTE(retr0h): A very basic functional test.  Will expand upon this.
-
-set -e
-
-export FUNCTIONAL_TEST_BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-export VAGRANT_FUNCTIONAL_TEST_BASE_DIR="${FUNCTIONAL_TEST_BASE_DIR}/vagrant"
-export DOCKER_FUNCTIONAL_TEST_BASE_DIR="${FUNCTIONAL_TEST_BASE_DIR}/docker"
-ANSIBLE_MAJOR_VERSION=$(ansible --version|head -1|awk '{print $NF}'|cut -d\. -f1)
-
-source ${VIRTUAL_ENV}/bin/activate
-
-if [ ${ANSIBLE_MAJOR_VERSION} != 1 ]; then
-	echo "### Docker driver"
-	for test in ${DOCKER_FUNCTIONAL_TEST_BASE_DIR}/test_*.bash; do
-		echo "### Testing -> ${test}"
-		source ${test}
-	done
-else
-	echo "### Docker driver not supported by ansible version -- skipping"
-fi
-
-echo "### Vagrant driver"
-for test in ${VAGRANT_FUNCTIONAL_TEST_BASE_DIR}/test_*.bash; do
-	echo "### Testing -> ${test}"
-	source ${test}
-done
+(
+	cd ${DOCKER_FUNCTIONAL_TEST_BASE_DIR}/scenarios/full
+	molecule test
+)
