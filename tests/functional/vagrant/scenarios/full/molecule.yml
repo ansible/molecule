@@ -1,4 +1,8 @@
 ---
+ansible:
+  raw_env_vars:
+    ANSIBLE_ROLES_PATH: ../../../roles
+
 vagrant:
   platforms:
     - name: ubuntu
@@ -11,18 +15,18 @@ vagrant:
       type: virtualbox
 
   instances:
-    - name: demo-01
+    - name: full-01
       ansible_groups:
-        - demo
-        - demo1
+        - example-group
+        - example-group1
       interfaces:
         - network_name: private_network
           type: dhcp
           auto_config: true
-    - name: demo-02
+    - name: full-02
       ansible_groups:
-        - demo
-        - demo2
+        - example-group
+        - example-group2
       interfaces:
         - network_name: private_network
           type: dhcp

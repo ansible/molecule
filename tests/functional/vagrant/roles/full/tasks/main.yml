@@ -1,7 +1,0 @@
----
-- name: Create /etc/molecule on all hosts
-  file: dest=/etc/molecule
-        group=root
-        owner=root
-        mode=0755
-        state=directory

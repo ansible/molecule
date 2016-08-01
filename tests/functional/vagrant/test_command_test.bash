@@ -21,6 +21,6 @@
 #  THE SOFTWARE.
 
 (
-	cd ${VAGRANT_FUNCTIONAL_TEST_BASE_DIR}/roles/full
+	cd ${VAGRANT_FUNCTIONAL_TEST_BASE_DIR}/scenarios/full
 	molecule test
 )
