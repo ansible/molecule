@@ -20,7 +20,7 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-echo "### Testing 'molecule init'"
+TMP_DIR=$(mktemp -d /tmp/tmp.XXXXXXXXXX)
 
 (
 	cd ${TMP_DIR}
@@ -28,5 +28,5 @@ echo "### Testing 'molecule init'"
 	cd foo
 	molecule test
 )
-# Safely delete the temporary directory
+
 rm -rf /tmp/$(basename ${TMP_DIR})
