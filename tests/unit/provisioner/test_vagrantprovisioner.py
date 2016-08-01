@@ -75,7 +75,7 @@ def molecule_file(tmpdir, request):
         try:
             des = destroy.Destroy([], [])
             des.execute()
-        except SystemExit as f:
+        except SystemExit:
             pass
         os.remove(c.strpath)
         shutil.rmtree(d.strpath)
