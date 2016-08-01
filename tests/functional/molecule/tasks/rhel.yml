@@ -1,3 +1,0 @@
----
-- name: Make sure ethtool is installed for our tests
-  yum: name=ethtool

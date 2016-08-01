@@ -20,9 +20,7 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-echo "### Testing 'molecule test'"
-
 (
-	cd ${FUNCTIONAL_TEST_BASE_DIR}/molecule
+	cd ${VAGRANT_FUNCTIONAL_TEST_BASE_DIR}/roles/full
 	molecule test
 )
