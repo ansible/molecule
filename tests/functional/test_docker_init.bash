@@ -20,9 +20,7 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-echo
 echo "### Testing 'molecule init'"
-echo
 
 (
 	cd ${TMP_DIR}
