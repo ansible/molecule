@@ -31,18 +31,34 @@ ANSIBLE_MAJOR_VERSION=$(ansible --version|head -1|awk '{print $NF}'|cut -d\. -f1
 
 source ${VIRTUAL_ENV}/bin/activate
 
+echo_info() {
+	msg=$1
+	cyan=`tput setaf 6`
+	reset=`tput sgr0`
+
+	echo "### ${cyan}${msg}${reset}"
+}
+
+echo_warn() {
+	msg=$1
+	yellow=`tput setaf 3`
+	reset=`tput sgr0`
+
+	echo "### ${yellow}${msg}${reset}"
+}
+
 if [ ${ANSIBLE_MAJOR_VERSION} != 1 ]; then
-	echo "### Docker driver"
+	echo_info "Docker driver"
 	for test in ${DOCKER_FUNCTIONAL_TEST_BASE_DIR}/test_*.bash; do
-		echo "### Testing -> ${test}"
+		echo_info "Testing -> ${test}"
 		source ${test}
 	done
 else
-	echo "### Docker driver not supported by ansible version -- skipping"
+	echo_warn "Docker driver not supported by ansible version -- skipping!"
 fi
 
-echo "### Vagrant driver"
+echo_info "Vagrant driver"
 for test in ${VAGRANT_FUNCTIONAL_TEST_BASE_DIR}/test_*.bash; do
-	echo "### Testing -> ${test}"
+	echo_info "Testing -> ${test}"
 	source ${test}
 done
