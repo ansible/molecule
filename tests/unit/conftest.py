@@ -18,11 +18,14 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
+import logging
 import os
 import os.path
 import shutil
 
 import pytest
+
+logging.getLogger("sh").setLevel(logging.WARNING)
 
 
 @pytest.fixture()

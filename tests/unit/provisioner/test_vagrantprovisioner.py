@@ -18,7 +18,6 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import logging
 import os
 import shutil
 
@@ -29,8 +28,6 @@ import yaml
 from molecule.commands import converge
 from molecule.commands import create
 from molecule.commands import destroy
-
-logging.getLogger("sh").setLevel(logging.WARNING)
 
 pytestmark = pytest.mark.skipif(
     vagrant.get_vagrant_executable() is None,

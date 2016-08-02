@@ -20,7 +20,6 @@
 
 import distutils.spawn
 import distutils.version
-import logging
 import pytest
 
 import ansible
@@ -29,8 +28,6 @@ from molecule import ansible_playbook
 from molecule import config
 from molecule import core
 from molecule.provisioners import dockerprovisioner
-
-logging.getLogger("sh").setLevel(logging.WARNING)
 
 
 def ansible_v1():

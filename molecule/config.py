@@ -31,7 +31,7 @@ LOCAL_CONFIG = '~/.config/molecule/config.yml'
 
 
 class Config(object):
-    def __init__(self, configs=[DEFAULT_CONFIG, PROJECT_CONFIG, LOCAL_CONFIG]):
+    def __init__(self, configs=[DEFAULT_CONFIG, LOCAL_CONFIG, PROJECT_CONFIG]):
         self.config = self._get_config(configs)
         self._build_config_paths()
 
