@@ -268,12 +268,7 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
 
     @property
     def testinfra_args(self):
-        hosts_string = ""
-
-        for container in self.instances:
-            hosts_string += container['name'] + ','
-
-        kwargs = {'connection': 'docker', 'hosts': hosts_string.rstrip(',')}
+        kwargs = {'connection': 'docker'}
 
         return kwargs
 

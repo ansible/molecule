@@ -1,10 +1,7 @@
-import pytest
+from testinfra.utils.ansible_runner import AnsibleRunner
 
-testinfra_hosts = ['example-group1']
-
-pytestmark = pytest.mark.skip(reason=(
-    'Cannot target hosts/groups '
-    'https://github.com/metacloud/molecule/issues/300'))
+testinfra_hosts = AnsibleRunner('.molecule/ansible_inventory').get_hosts(
+    'example-group1')
 
 
 def test_etc_molecule_example_group1(File):
