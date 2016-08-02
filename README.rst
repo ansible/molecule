@@ -15,10 +15,6 @@ Molecule
    :target: https://molecule.readthedocs.org/en/latest/
    :alt: Documentation Status
 
-.. image:: https://travis-ci.org/rgreinho/molecule.svg?branch=master
-   :target: https://travis-ci.org/rgreinho/molecule
-   :alt: Build Status
-
 .. image:: https://requires.io/github/rgreinho/molecule/requirements.svg?branch=master
    :target: https://requires.io/github/rgreinho/molecule/requirements/?branch=master
    :alt: Requirements Status
