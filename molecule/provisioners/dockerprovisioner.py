@@ -32,15 +32,15 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
     def __init__(self, molecule):
         super(DockerProvisioner, self).__init__(molecule)
         self._docker = docker.from_env(assert_hostname=False)
-        self._containers = self.m._config.config['docker']['containers']
+        self._containers = self.molecule.config.config['docker']['containers']
         self._provider = self._get_provider()
         self._platform = self._get_platform()
         self.status()
 
         self.image_tag = 'molecule_local/{}:{}'
 
-        if 'install_python' not in self.m._config.config['docker']:
-            self.m._config.config['docker']['install_python'] = True
+        if 'install_python' not in self.molecule.config.config['docker']:
+            self.molecule.config.config['docker']['install_python'] = True
 
     def _get_platform(self):
         return 'Docker'
@@ -71,6 +71,10 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
     @property
     def platform(self):
         pass
+
+    @platform.setter
+    def platform(self, val):
+        return
 
     @property
     def valid_providers(self):
@@ -159,7 +163,7 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
                         tag_string))
 
     def up(self, no_provision=True):
-        if self.m._config.config['docker']['install_python']:
+        if self.molecule.config.config['docker']['install_python']:
             self.build_image()
         else:
             self.image_tag = '{}:{}'

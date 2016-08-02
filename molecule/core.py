@@ -45,16 +45,16 @@ class Molecule(object):
         self._provisioned = False
         self._env = os.environ.copy()
         self._args = args
-        self._config = config.Config()
+        self.config = config.Config()
         self._provisioner = None
 
     def main(self):
 
-        if not os.path.exists(self._config.config['molecule']['molecule_dir']):
-            os.makedirs(self._config.config['molecule']['molecule_dir'])
+        if not os.path.exists(self.config.config['molecule']['molecule_dir']):
+            os.makedirs(self.config.config['molecule']['molecule_dir'])
 
         self._state = state.State(
-            state_file=self._config.config.get('molecule').get('state_file'))
+            state_file=self.config.config.get('molecule').get('state_file'))
 
         try:
             self._provisioner = self.get_provisioner()
@@ -76,11 +76,11 @@ class Molecule(object):
             utilities.sysexit()
 
         # updates instances config with full machine names
-        self._config.populate_instance_names(self._provisioner._platform)
+        self.config.populate_instance_names(self._provisioner.platform)
 
         if self._args.get('--debug'):
             utilities.debug('RUNNING CONFIG',
-                            yaml.dump(self._config.config,
+                            yaml.dump(self.config.config,
                                       default_flow_style=False,
                                       indent=2))
         self._add_or_update_vars('group_vars')
@@ -88,13 +88,13 @@ class Molecule(object):
         self._symlink_vars()
 
     def get_provisioner(self):
-        if 'vagrant' in self._config.config:
+        if 'vagrant' in self.config.config:
             return vagrantprovisioner.VagrantProvisioner(self)
-        elif 'proxmox' in self._config.config:
+        elif 'proxmox' in self.config.config:
             return proxmoxprovisioner.ProxmoxProvisioner(self)
-        elif 'docker' in self._config.config:
+        elif 'docker' in self.config.config:
             return dockerprovisioner.DockerProvisioner(self)
-        elif 'openstack' in self._config.config:
+        elif 'openstack' in self.config.config:
             return openstackprovisioner.OpenstackProvisioner(self)
         else:
             return None
@@ -182,9 +182,9 @@ class Molecule(object):
 
         :return: None
         """
-        os.remove(self._config.config['molecule']['rakefile_file'])
+        os.remove(self.config.config['molecule']['rakefile_file'])
         if self._state.customconf is False:
-            os.remove(self._config.config['ansible']['config_file'])
+            os.remove(self.config.config['ansible']['config_file'])
 
     def _create_templates(self):
         """
@@ -194,23 +194,23 @@ class Molecule(object):
         """
         # ansible.cfg
         kwargs = {'molecule_dir':
-                  self._config.config['molecule']['molecule_dir']}
-        if not os.path.isfile(self._config.config['ansible']['config_file']):
+                  self.config.config['molecule']['molecule_dir']}
+        if not os.path.isfile(self.config.config['ansible']['config_file']):
             utilities.write_template(
-                self._config.config['molecule']['ansible_config_template'],
-                self._config.config['ansible']['config_file'], kwargs=kwargs)
+                self.config.config['molecule']['ansible_config_template'],
+                self.config.config['ansible']['config_file'], kwargs=kwargs)
             self._state.change_state('customconf', False)
         else:
             self._state.change_state('customconf', True)
 
         # rakefile
         kwargs = {
-            'state_file': self._config.config['molecule']['state_file'],
-            'serverspec_dir': self._config.config['molecule']['serverspec_dir']
+            'state_file': self.config.config['molecule']['state_file'],
+            'serverspec_dir': self.config.config['molecule']['serverspec_dir']
         }
         utilities.write_template(
-            self._config.config['molecule']['rakefile_template'],
-            self._config.config['molecule']['rakefile_file'], kwargs=kwargs)
+            self.config.config['molecule']['rakefile_template'],
+            self.config.config['molecule']['rakefile_file'], kwargs=kwargs)
 
     def _instances_state(self):
         """
@@ -259,16 +259,16 @@ class Molecule(object):
                     groups[group].append(instance['name'])
 
         if self._args.get('--platform') == 'all':
-            self._provisioner._platform = 'all'
+            self._provisioner.platform = 'all'
 
         for group, instances in groups.iteritems():
             inventory += '\n[{}]\n'.format(group)
             for instance in instances:
                 inventory += '{}\n'.format(utilities.format_instance_name(
-                    instance, self._provisioner._platform,
+                    instance, self._provisioner.platform,
                     self._provisioner.instances))
 
-        inventory_file = self._config.config['ansible']['inventory_file']
+        inventory_file = self.config.config['ansible']['inventory_file']
         try:
             utilities.write_file(inventory_file, inventory)
         except IOError:
@@ -279,12 +279,12 @@ class Molecule(object):
     def _add_or_update_vars(self, target):
         """Creates or updates to host/group variables if needed."""
 
-        if target in self._config.config['ansible']:
-            vars_target = self._config.config['ansible'][target]
+        if target in self.config.config['ansible']:
+            vars_target = self.config.config['ansible'][target]
         else:
             return
 
-        molecule_dir = self._config.config['molecule']['molecule_dir']
+        molecule_dir = self.config.config['molecule']['molecule_dir']
         target_vars_path = os.path.join(molecule_dir, target)
 
         if not os.path.exists(os.path.abspath(target_vars_path)):
@@ -302,9 +302,9 @@ class Molecule(object):
     def _symlink_vars(self):
         """Creates or updates the symlink to group_vars if needed."""
         SYMLINK_NAME = 'group_vars'
-        group_vars_target = self._config.config.get('molecule',
-                                                    {}).get('group_vars')
-        molecule_dir = self._config.config['molecule']['molecule_dir']
+        group_vars_target = self.config.config.get('molecule',
+                                                   {}).get('group_vars')
+        molecule_dir = self.config.config['molecule']['molecule_dir']
         group_vars_link_path = os.path.join(molecule_dir, SYMLINK_NAME)
 
         # Remove any previous symlink.
@@ -350,5 +350,5 @@ class Molecule(object):
         print(tabulate.tabulate(data, headers, tablefmt=table_format))
 
     def _remove_inventory_file(self):
-        if os._exists(self._config.config['ansible']['inventory_file']):
-            os.remove(self._config.config['ansible']['inventory_file'])
+        if os._exists(self.config.config['ansible']['inventory_file']):
+            os.remove(self.config.config['ansible']['inventory_file'])

@@ -75,7 +75,7 @@ def docker_data():
 def molecule_instance(temp_files, docker_data):
     c = temp_files(content=[docker_data])
     m = core.Molecule(dict())
-    m._config = config.Config(configs=c)
+    m.config = config.Config(configs=c)
 
     return m
 

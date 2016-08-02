@@ -34,8 +34,8 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
         self._openstack = shade.openstack_cloud()
 
     def set_keypair(self):
-        keypair_name = self.m._config.config['openstack']['keypair']
-        pub_key_file = self.m._config.config['openstack']['keyfile']
+        keypair_name = self.molecule.config.config['openstack']['keypair']
+        pub_key_file = self.molecule.config.config['openstack']['keyfile']
 
         if self._openstack.search_keypairs(keypair_name):
             utilities.logger.info('Keypair already exists. Skipping import.')
@@ -56,7 +56,7 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
 
     @property
     def instances(self):
-        return self.m._config.config['openstack']['instances']
+        return self.molecule.config.config['openstack']['instances']
 
     @property
     def default_provider(self):
@@ -73,6 +73,10 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
     @property
     def platform(self):
         return self._platform
+
+    @platform.setter
+    def platform(self, val):
+        self._platform = val
 
     @property
     def host_template(self):
@@ -94,7 +98,7 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
     def testinfra_args(self):
         kwargs = {
             'ansible-inventory':
-            self.m._config.config['ansible']['inventory_file'],
+            self.molecule.config.config['ansible']['inventory_file'],
             'connection': 'ansible'
         }
 
@@ -128,8 +132,8 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
                     flavor=self._openstack.get_flavor(instance['flavor']),
                     auto_ip=True,
                     wait=True,
-                    key_name=self.m._config.config['openstack']['keypair'],
-                    security_groups=instance['security_groups']
+                    key_name=self.molecule.config.config['openstack'][
+                        'keypair'], security_groups=instance['security_groups']
                     if 'security_groups' in instance else None)
                 utilities.reset_known_host_key(server['interface_ip'])
                 instance['created'] = True
@@ -180,8 +184,7 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
         return status_list
 
     def conf(self, name=None, ssh_config=False):
-
-        with open(self.m._config.config['ansible'][
+        with open(self.molecule.config.config['molecule'][
                 'inventory_file']) as instance:
             for line in instance:
                 if len(line.split()) > 0 and line.split()[0] == name:

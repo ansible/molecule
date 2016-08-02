@@ -44,13 +44,12 @@ class Verify(base.BaseCommand):
     """
 
     def execute(self, exit=True):
-
-        serverspec_dir = self.molecule._config.config['molecule'][
+        serverspec_dir = self.molecule.config.config['molecule'][
             'serverspec_dir']
-        testinfra_dir = self.molecule._config.config['molecule'][
+        testinfra_dir = self.molecule.config.config['molecule'][
             'testinfra_dir']
-        rakefile = self.molecule._config.config['molecule']['rakefile_file']
-        ignore_paths = self.molecule._config.config['molecule']['ignore_paths']
+        rakefile = self.molecule.config.config['molecule']['rakefile_file']
+        ignore_paths = self.molecule.config.config['molecule']['ignore_paths']
 
         # whitespace & trailing newline check
         validators.check_trailing_cruft(ignore_paths=ignore_paths, exit=exit)
@@ -59,14 +58,14 @@ class Verify(base.BaseCommand):
 
         # testinfra's Ansible calls get same env vars as ansible-playbook
         ansible = ansible_playbook.AnsiblePlaybook(
-            self.molecule._config.config['ansible'],
+            self.molecule.config.config['ansible'],
             _env=self.molecule._env)
 
         debug = self.molecule._args.get('--debug', False)
 
         testinfra_kwargs = utilities.merge_dicts(
             self.molecule._provisioner.testinfra_args,
-            self.molecule._config.config['testinfra'])
+            self.molecule.config.config['testinfra'])
         testinfra_kwargs['env'] = ansible.env
         testinfra_kwargs['env']['PYTHONDONTWRITEBYTECODE'] = '1'
         testinfra_kwargs['debug'] = debug
