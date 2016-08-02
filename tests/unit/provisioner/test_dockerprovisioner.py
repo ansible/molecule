@@ -39,10 +39,10 @@ def ansible_v1():
 
 
 def get_docker_executable():
-    return distutils.spawn.find_executable('docker') is None
+    return distutils.spawn.find_executable('docker')
 
 
-if get_docker_executable():
+if not get_docker_executable():
     pytestmark = pytest.mark.skip(
         'No docker executable found - skipping docker tests')
 elif ansible_v1():
