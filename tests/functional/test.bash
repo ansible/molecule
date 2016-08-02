@@ -57,8 +57,12 @@ else
 	echo_warn "Docker driver not supported by ansible version -- skipping!"
 fi
 
-echo_info "Vagrant driver"
-for test in ${VAGRANT_FUNCTIONAL_TEST_BASE_DIR}/test_*.bash; do
-	echo_info "Testing -> ${test}"
-	source ${test}
-done
+if [ $(which vagrant) ]; then
+	echo_info "Vagrant driver"
+	for test in ${VAGRANT_FUNCTIONAL_TEST_BASE_DIR}/test_*.bash; do
+		echo_info "Testing -> ${test}"
+		source ${test}
+	done
+else
+	echo_warn "Vagrant executable not found -- skipping!"
+fi
