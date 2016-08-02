@@ -8,14 +8,13 @@ services:
 before_install:
 - sudo apt-get -qq update
 - sudo apt-get install -o Dpkg::Options::="--force-confold" --force-yes -y docker-engine
+- sudo apt-get install -y ruby bundler rake
 
 install:
 - pip install -r test-requirements.txt
 - pip install -r requirements.txt
 - python setup.py install
+- bundle install
 
 script:
 - tox
-- molecule init foo1 --docker
-- cd foo1
-- molecule test

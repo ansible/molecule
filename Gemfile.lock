@@ -1,0 +1,61 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    ast (2.3.0)
+    diff-lcs (1.2.5)
+    multi_json (1.12.1)
+    net-scp (1.2.1)
+      net-ssh (>= 2.6.5)
+    net-ssh (3.2.0)
+    net-telnet (0.1.1)
+    parser (2.3.1.2)
+      ast (~> 2.2)
+    powerpack (0.1.1)
+    rainbow (2.1.0)
+    rake (11.2.2)
+    rspec (3.5.0)
+      rspec-core (~> 3.5.0)
+      rspec-expectations (~> 3.5.0)
+      rspec-mocks (~> 3.5.0)
+    rspec-core (3.5.2)
+      rspec-support (~> 3.5.0)
+    rspec-expectations (3.5.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.5.0)
+    rspec-its (1.2.0)
+      rspec-core (>= 3.0.0)
+      rspec-expectations (>= 3.0.0)
+    rspec-mocks (3.5.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.5.0)
+    rspec-support (3.5.0)
+    rubocop (0.42.0)
+      parser (>= 2.3.1.1, < 3.0)
+      powerpack (~> 0.1)
+      rainbow (>= 1.99.1, < 3.0)
+      ruby-progressbar (~> 1.7)
+      unicode-display_width (~> 1.0, >= 1.0.1)
+    ruby-progressbar (1.8.1)
+    serverspec (2.36.0)
+      multi_json
+      rspec (~> 3.0)
+      rspec-its
+      specinfra (~> 2.53)
+    sfl (2.2)
+    specinfra (2.60.2)
+      net-scp
+      net-ssh (>= 2.7, < 4.0)
+      net-telnet
+      sfl
+    unicode-display_width (1.1.0)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  rake (~> 11.2)
+  rubocop (~> 0.42)
+  serverspec (~> 2.36)
+
+BUNDLED WITH
+   1.12.5
