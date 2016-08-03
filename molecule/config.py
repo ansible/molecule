@@ -84,14 +84,15 @@ class Config(object):
 
         :return: None
         """
+        md = self.config.get('molecule')
+        ad = self.config.get('ansible')
         for item in ['state_file', 'vagrantfile_file', 'rakefile_file']:
-            d = self.config.get('molecule')
-            if d:
-                d[item] = os.path.join(self.config['molecule']['molecule_dir'],
-                                       self.config['molecule'][item])
+            if md and not self._is_path(md[item]):
+                md[item] = os.path.join(md['molecule_dir'], md[item])
 
         for item in ['config_file', 'inventory_file']:
-            d = self.config.get('ansible')
-            if d:
-                d[item] = os.path.join(self.config['molecule']['molecule_dir'],
-                                       self.config['ansible'][item])
+            if ad and not self._is_path(ad[item]):
+                ad[item] = os.path.join(md['molecule_dir'], ad[item])
+
+    def _is_path(self, pathname):
+        return os.path.sep in pathname
