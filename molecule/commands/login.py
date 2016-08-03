@@ -36,36 +36,34 @@ class Login(base.BaseCommand):
     """
 
     def execute(self):
-        # Collect the list of running hosts.
-        try:
-            status = self.molecule._provisioner.status()
-        except Exception as e:
-            status = []
+        # get list of running hosts from state
+        if self.molecule._state.hosts:
+            hosts = [k for k, v in self.molecule._state.hosts.iteritems()]
+        else:
+            # Nowhere to log into if there is no running host.
+            raise base.InvalidHost("There are no running hosts.")
 
         # make sure vagrant knows about this host
         try:
-            # Nowhere to log into if there is no running host.
-            if len(status) == 0:
-                raise base.InvalidHost("There is no running host.")
-
             # Check whether a host was specified.
             if self.molecule._args['<host>'] is None:
 
                 # One running host is perfect. Log into it.
-                if len(status) == 1:
-                    hostname = status[0].name
+                if len(hosts) == 1:
+                    hostname = hosts[0]
 
                 # But too many hosts is trouble as well.
                 else:
                     raise base.InvalidHost(
-                        "There are {} running hosts. You can only log into one at a time.".format(
-                            len(status)))
+                        "There are {} running hosts. You can only login to one at a time.\n\n"
+                        "Available hosts:\n{}".format(
+                            len(hosts), "\n".join(hosts)))
 
             else:
 
                 # If the host was specified, try to use it.
                 hostname = self.molecule._args['<host>']
-                match = [x.name for x in status if x.name.startswith(hostname)]
+                match = [x for x in hosts if x.startswith(hostname)]
                 if len(match) == 0:
                     raise subprocess.CalledProcessError(1, None)
                 elif len(match) != 1:
@@ -76,9 +74,9 @@ class Login(base.BaseCommand):
                         match = [hostname, ]
                     else:
                         raise base.InvalidHost(
-                            "There are {} hosts that match '{}'.  You can only log into one at a time.\n"
-                            "Try molecule status to see available hosts.".format(
-                                len(match), hostname))
+                            "There are {} hosts that match '{}'. You can only login to one at a time.\n\n"
+                            "Available hosts:\n{}".format(
+                                len(match), hostname, "\n".join(hosts)))
                 hostname = match[0]
 
             login_cmd = self.molecule._provisioner.login_cmd(hostname)
@@ -86,9 +84,9 @@ class Login(base.BaseCommand):
 
         except subprocess.CalledProcessError:
             # gets appended to python-vagrant's error message
-            conf_errmsg = '\nUnknown host {}. Try molecule status to see available hosts.'
+            conf_errmsg = "\nUnknown host '{}'.\n\nAvailable hosts:\n{}"
             utilities.logger.error(conf_errmsg.format(self.molecule._args[
-                '<host>']))
+                '<host>'], "\n".join(hosts)))
             utilities.sysexit()
         except base.InvalidHost as e:
             utilities.logger.error(e.message)
