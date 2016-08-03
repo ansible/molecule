@@ -21,28 +21,38 @@
 import logging
 import os
 import os.path
+import random
 import shutil
+import string
 
 import pytest
+
+from molecule import utilities
 
 logging.getLogger("sh").setLevel(logging.WARNING)
 
 
+def random_string(l=5):
+    return ''.join(random.choice(string.ascii_uppercase) for _ in range(l))
+
+
 @pytest.fixture()
 def temp_files(tmpdir, request):
-    def wrapper(content=[]):
-        d = tmpdir.mkdir('molecule')
+    def wrapper(fixtures=[]):
+        d = tmpdir.mkdir(random_string())
         confs = []
-        for index, item in enumerate(content):
-            c = d.join(os.extsep.join((str(index), 'yml')))
-            c.write(item)
+        for index, fixture in enumerate(fixtures):
+            c = d.join(os.extsep.join((fixture, 'yml')))
+            c.write(request.getfuncargvalue(fixtures[index]))
             confs.append(c.strpath)
 
+        # TODO(retr0h): Remove - belongs elsewhere
         pbook = d.join(os.extsep.join(('playbook', 'yml')))
         data = [{'hosts': 'all', 'tasks': [{'command': 'echo'}]}]
-
         pbook.write(data)
         os.chdir(d.strpath)
+
+        # TODO(retr0h): Remove - belongs elsewhere
 
         def cleanup():
             shutil.rmtree(d.strpath)
@@ -52,3 +62,129 @@ def temp_files(tmpdir, request):
         return confs
 
     return wrapper
+
+
+@pytest.fixture()
+def molecule_vagrant_config(molecule_section_data, vagrant_section_data,
+                            ansible_section_data):
+    return reduce(
+        lambda x, y: utilities.merge_dicts(x, y),
+        [molecule_section_data, vagrant_section_data, ansible_section_data])
+
+
+@pytest.fixture()
+def molecule_docker_config(molecule_section_data, docker_section_data,
+                           ansible_section_data):
+    return reduce(
+        lambda x, y: utilities.merge_dicts(x, y),
+        [molecule_section_data, docker_section_data, ansible_section_data])
+
+
+@pytest.fixture()
+def molecule_section_data(state_path):
+    return {
+        'molecule': {
+            'ignore_paths': [
+                '.git', '.vagrant', '.molecule'
+            ],
+            'serverspec_dir': 'spec',
+            'testinfra_dir': 'tests',
+            'molecule_dir': 'test',
+            'state_file': state_path,
+            'vagrantfile_file': 'vagrantfile_file',
+            'rakefile_file': 'rakefile_file',
+            'vagrantfile_template': 'vagrantfile.j2',
+            'ansible_config_template': 'ansible.cfg.j2',
+            'rakefile_template': 'rakefile.j2',
+            'raw_ssh_args': [
+                '-o StrictHostKeyChecking=no',
+                '-o UserKnownHostsFile=/dev/null'
+            ],
+            'test': {
+                'sequence': [
+                    'destroy', 'syntax', 'create', 'converge', 'idempotence',
+                    'verify'
+                ]
+            }
+        }
+    }
+
+
+@pytest.fixture()
+def vagrant_section_data():
+    return {
+        'vagrant': {
+            'platforms': [
+                {'name': 'ubuntu',
+                 'box': 'ubuntu/trusty64'}
+            ],
+            'providers': [
+                {'name': 'virtualbox',
+                 'type': 'virtualbox'}
+            ],
+            'instances': [
+                {'name': 'aio-01',
+                 'options': {'append_platform_to_hostname': True}}
+            ]
+        }
+    }
+
+
+@pytest.fixture()
+def docker_section_data():
+    return {
+        'docker': {
+            'containers': [
+                {'name': 'test1',
+                 'image': 'ubuntu',
+                 'image_version': 'latest',
+                 'port_bindings': {
+                     80: 80,
+                     443: 443
+                 },
+                 'volume_mounts': ['/tmp/test1:/inside:rw'],
+                 'ansible_groups': ['group1']}, {'name': 'test2',
+                                                 'image': 'ubuntu',
+                                                 'image_version': 'latest',
+                                                 'ansible_groups':
+                                                 ['group2'],
+                                                 'command': '/bin/sh'}
+            ]
+        }
+    }
+
+
+@pytest.fixture()
+def ansible_section_data():
+    return {
+        'ansible': {
+            'timeout': 30,
+            'sudo': True,
+            'sudo_user': False,
+            'ask_sudo_pass': False,
+            'ask_vault_pass': False,
+            'vault_password_file': False,
+            'limit': 'all',
+            'verbose': False,
+            'diff': True,
+            'tags': False,
+            'host_key_checking': False,
+            'raw_ssh_args': [
+                '-o UserKnownHostsFile=/dev/null', '-o IdentitiesOnly=yes',
+                '-o ControlMaster=auto', '-o ControlPersist=60s'
+            ],
+            'config_file': 'config_file',
+            'inventory_file': 'inventory_file',
+            'playbook': 'playbook.yml'
+        }
+    }
+
+
+@pytest.fixture()
+def state_data():
+    return {}
+
+
+@pytest.fixture()
+def state_path(temp_files):
+    return temp_files(fixtures=['state_data'])[0]

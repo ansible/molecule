@@ -39,30 +39,11 @@ def local_config_data():
 
 
 @pytest.fixture()
-def config_data():
-    return {
-        'molecule': {
-            'state_file': 'state_file.yml',
-            'vagrantfile_file': 'vagrantfile_file',
-            'rakefile_file': 'rakefile_file',
-            'molecule_dir': 'test'
-        },
-        'vagrant': {
-            'instances': [
-                {'name': 'aio-01',
-                 'options': {'append_platform_to_hostname': True}}
-            ]
-        },
-        'ansible': {
-            'config_file': 'config_file',
-            'inventory_file': 'inventory_file'
-        }
-    }
-
-
-@pytest.fixture()
-def config_instance(temp_files, config_data):
-    c = temp_files(content=[config_data])
+def config_instance(temp_files):
+    # TODO(retr0h): Rework molecule config so we can pass a generic
+    # config here.  Molecule currently expects to find a 'vagrant'
+    # key in this dict.
+    c = temp_files(fixtures=['molecule_vagrant_config'])
 
     return config.Config(configs=c)
 
@@ -80,9 +61,10 @@ def test_molecule_file(config_instance):
     assert 'molecule.yml' == config_instance.molecule_file
 
 
-def test_build_easy_paths(config_instance):
-    assert 'test/state_file.yml' == config_instance.config['molecule'][
-        'state_file']
+def test_build_config_paths(config_instance):
+    # Full path provided to ``state_file``
+    assert 'state_data.yml' == config_instance.config['molecule'][
+        'state_file'].split('/')[-1]
     assert 'test/vagrantfile_file' == config_instance.config['molecule'][
         'vagrantfile_file']
     assert 'test/rakefile_file' == config_instance.config['molecule'][
@@ -100,9 +82,8 @@ def test_populate_instance_names(config_instance):
         0]['vm_name']
 
 
-def test_molecule_file_exists(temp_files, config_data,
-                              mock_molecule_file_exists):
-    configs = temp_files(content=[config_data])
+def test_molecule_file_exists(temp_files, mock_molecule_file_exists):
+    configs = temp_files(fixtures=['molecule_vagrant_config'])
     c = config.Config(configs=configs)
 
     assert c.molecule_file_exists()
@@ -116,28 +97,25 @@ def test_get_config(config_instance):
     assert isinstance(config_instance.config, dict)
 
 
-def test_combine_default_config(temp_files, default_config_data):
-    c = temp_files(content=[default_config_data])
+def test_combine_default_config(temp_files):
+    c = temp_files(fixtures=['default_config_data'])
     config_instance = config.Config(configs=c).config
 
     assert 'bar' == config_instance['foo']
     assert 'qux' == config_instance['baz']
 
 
-def test_combine_project_config_overrides_default_config(
-        temp_files, default_config_data, project_config_data):
-    c = temp_files(content=[default_config_data, project_config_data])
+def test_combine_project_config_overrides_default_config(temp_files):
+    c = temp_files(fixtures=['default_config_data', 'project_config_data'])
     config_instance = config.Config(configs=c).config
 
     assert 'bar' == config_instance['foo']
     assert 'project-override' == config_instance['baz']
 
 
-def test_combine_local_config_overrides_default_and_project_config(
-        temp_files, default_config_data, project_config_data,
-        local_config_data):
-    c = temp_files(
-        content=[default_config_data, project_config_data, local_config_data])
+def test_combine_local_config_overrides_default_and_project_config(temp_files):
+    c = temp_files(fixtures=['default_config_data', 'project_config_data',
+                             'local_config_data'])
     config_instance = config.Config(configs=c).config
 
     assert 'local-override' == config_instance['foo']
