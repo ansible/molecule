@@ -43,7 +43,6 @@ class Login(base.BaseCommand):
             # Nowhere to log into if there is no running host.
             raise base.InvalidHost("There are no running hosts.")
 
-        # make sure vagrant knows about this host
         try:
             # Check whether a host was specified.
             if self.molecule._args['<host>'] is None:
@@ -83,7 +82,6 @@ class Login(base.BaseCommand):
             login_args = self.molecule._provisioner.login_args(hostname)
 
         except subprocess.CalledProcessError:
-            # gets appended to python-vagrant's error message
             conf_errmsg = "\nUnknown host '{}'.\n\nAvailable hosts:\n{}"
             utilities.logger.error(conf_errmsg.format(self.molecule._args[
                 '<host>'], "\n".join(hosts)))
