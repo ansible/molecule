@@ -1,5 +1,16 @@
 CHANGELOG for molecule
 ======================
+
+1.8.4
+----
+
+* Fixed role_path with ansible 2.1.1.
+
+1.8.3
+----
+
+* Fixed passing flags to molecule test.
+
 1.8.2
 ----
 
