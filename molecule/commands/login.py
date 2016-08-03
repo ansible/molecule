@@ -40,7 +40,7 @@ class Login(base.BaseCommand):
         if self.molecule._state.hosts:
             hosts = [k for k, v in self.molecule._state.hosts.iteritems()]
         else:
-            hosts =[]
+            hosts = []
 
         try:
             # Nowhere to log into if there is no running host.
