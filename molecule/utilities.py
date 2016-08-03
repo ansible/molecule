@@ -30,6 +30,8 @@ import jinja2
 import m9dicts
 import paramiko
 
+colorama.init(autoreset=True)
+
 
 class LogFilter(object):
     def __init__(self, level):
@@ -46,38 +48,23 @@ class TrailingNewlineFormatter(logging.Formatter):
         return super(TrailingNewlineFormatter, self).format(record)
 
 
-colorama.init(autoreset=True)
+def get_logger(name=None):
+    """Build a logger with the given name.
 
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.DEBUG)
+    :param name: The name for the logger. This is usually the module
+                 name, ``__name__``.
+    """
 
-debug = logging.StreamHandler()
-debug.setLevel(logging.DEBUG)
-debug.addFilter(LogFilter(logging.DEBUG))
-debug.setFormatter(TrailingNewlineFormatter('{}%(message)s'.format(
-    colorama.Fore.BLUE)))
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.DEBUG)
 
-info = logging.StreamHandler()
-info.setLevel(logging.INFO)
-info.addFilter(LogFilter(logging.INFO))
-info.setFormatter(TrailingNewlineFormatter('%(message)s'))
+    logger.addHandler(_get_info_logger())
+    logger.addHandler(_get_warn_logger())
+    logger.addHandler(_get_error_logger())
+    logger.addHandler(_get_debug_logger())
+    logger.propagate = False
 
-warn = logging.StreamHandler()
-warn.setLevel(logging.WARN)
-warn.addFilter(LogFilter(logging.WARN))
-warn.setFormatter(TrailingNewlineFormatter('{}%(message)s'.format(
-    colorama.Fore.YELLOW)))
-
-error = logging.StreamHandler()
-error.setLevel(logging.ERROR)
-error.setFormatter(TrailingNewlineFormatter('{}%(message)s'.format(
-    colorama.Fore.RED)))
-
-logger.addHandler(debug)
-logger.addHandler(info)
-logger.addHandler(error)
-logger.addHandler(warn)
-logger.propagate = False
+    return logger
 
 
 def print_success(msg):
@@ -102,10 +89,11 @@ def write_template(src, dest, kwargs={}, _module='molecule', _dir='templates'):
     src = os.path.expanduser(src)
     path = os.path.dirname(src)
     filename = os.path.basename(src)
+    log = get_logger(__name__)
 
     # template file doesn't exist
     if path and not os.path.isfile(src):
-        logger.error('\nUnable to locate template file: {}\n'.format(src))
+        log.error('Unable to locate template file: {}'.format(src))
         sysexit()
 
     # look for template in filesystem, then molecule package
@@ -268,3 +256,41 @@ def merge_dicts(a, b):
     md.update(b)
 
     return md
+
+
+def _get_info_logger():
+    info = logging.StreamHandler()
+    info.setLevel(logging.INFO)
+    info.addFilter(LogFilter(logging.INFO))
+    info.setFormatter(TrailingNewlineFormatter('%(message)s'))
+
+    return info
+
+
+def _get_warn_logger():
+    warn = logging.StreamHandler()
+    warn.setLevel(logging.WARN)
+    warn.addFilter(LogFilter(logging.WARN))
+    warn.setFormatter(TrailingNewlineFormatter('{}%(message)s'.format(
+        colorama.Fore.YELLOW)))
+
+    return warn
+
+
+def _get_debug_logger():
+    debug = logging.StreamHandler()
+    debug.setLevel(logging.DEBUG)
+    debug.addFilter(LogFilter(logging.DEBUG))
+    debug.setFormatter(TrailingNewlineFormatter('{}%(message)s'.format(
+        colorama.Fore.BLUE)))
+
+    return debug
+
+
+def _get_error_logger():
+    error = logging.StreamHandler()
+    error.setLevel(logging.ERROR)
+    error.setFormatter(TrailingNewlineFormatter('{}%(message)s'.format(
+        colorama.Fore.RED)))
+
+    return error

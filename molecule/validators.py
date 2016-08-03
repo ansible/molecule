@@ -25,6 +25,8 @@ import sh
 
 from molecule import utilities
 
+LOG = utilities.get_logger(__name__)
+
 
 def check_trailing_cruft(ignore_paths=[], exit=True):
     """
@@ -69,15 +71,15 @@ def check_trailing_cruft(ignore_paths=[], exit=True):
         whitespace = trailing_whitespace(data)
 
         if newline:
-            error = 'Trailing newline found at the end of {}\n'
-            utilities.logger.error(error.format(filename))
+            msg = 'Trailing newline found at the end of {}'
+            LOG.error(msg.format(filename))
             found_error = True
 
         if whitespace:
-            error = 'Trailing whitespace found in {} on lines: {}\n'
+            msg = 'Trailing whitespace found in {} on lines: {}'
             lines = ', '.join(str(x) for x in whitespace)
-            utilities.logger.error(error.format(filename,
-                                                lines, ))
+            LOG.error(msg.format(filename,
+                                 lines, ))
             found_error = True
 
     if exit and found_error:
@@ -116,8 +118,8 @@ def rubocop(serverspec_dir,
             debug=False,
             env=os.environ.copy(),
             pattern='/**/*.rb',
-            out=utilities.logger.info,
-            err=utilities.logger.error):
+            out=LOG.info,
+            err=LOG.error):
     """
     Runs rubocop against specified directory with specified pattern
 
@@ -141,8 +143,8 @@ def rubocop(serverspec_dir,
 def rake(rakefile,
          debug=False,
          env=os.environ.copy(),
-         out=utilities.logger.info,
-         err=utilities.logger.error):
+         out=LOG.info,
+         err=LOG.error):
     """
     Runs rake with specified rakefile
 
@@ -168,8 +170,8 @@ def rake(rakefile,
 def testinfra(tests,
               debug=False,
               env=os.environ.copy(),
-              out=utilities.logger.info,
-              err=utilities.logger.error,
+              out=LOG.info,
+              err=LOG.error,
               **kwargs):
     """
     Runs testinfra against specified ansible inventory file

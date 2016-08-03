@@ -25,6 +25,8 @@ import shade
 from molecule import utilities
 from molecule.provisioners import baseprovisioner
 
+LOG = utilities.get_logger(__name__)
+
 
 class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
     def __init__(self, molecule):
@@ -38,9 +40,9 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
         pub_key_file = self.molecule.config.config['openstack']['keyfile']
 
         if self._openstack.search_keypairs(keypair_name):
-            utilities.logger.info('Keypair already exists. Skipping import.')
+            LOG.info('Keypair already exists. Skipping import.')
         else:
-            utilities.logger.info('Adding keypair...')
+            LOG.info('Adding keypair...')
             self._openstack.create_keypair(keypair_name, open(
                 pub_key_file, 'r').read().strip())
 
@@ -121,11 +123,10 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
         active_instance_names = {instance['name']: instance['status']
                                  for instance in active_instances}
 
-        utilities.logger.warning("Creating openstack instances ...")
+        LOG.warning("Creating openstack instances ...")
         for instance in self.instances:
             if instance['name'] not in active_instance_names:
-                utilities.logger.info("\tBringing up {}".format(instance[
-                    'name']))
+                LOG.info("\tBringing up {}".format(instance['name']))
                 server = self._openstack.create_server(
                     name=instance['name'],
                     image=self._openstack.get_image(instance['image']),
@@ -142,25 +143,23 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
                         server['interface_ip'],
                         instance['sshuser'],
                         timeout=6) or num_retries == 5:
-                    utilities.logger.info("\t Waiting for ssh availability...")
+                    LOG.info("\t Waiting for ssh availability...")
                     num_retries += 1
 
     def destroy(self):
-        utilities.logger.info("Deleting openstack instances ...")
+        LOG.info("Deleting openstack instances ...")
 
         active_instances = self._openstack.list_servers()
         active_instance_names = {instance['name']: instance['id']
                                  for instance in active_instances}
 
         for instance in self.instances:
-            utilities.logger.warning("\tRemoving {} ...".format(instance[
-                'name']))
+            LOG.warning("\tRemoving {} ...".format(instance['name']))
             if instance['name'] in active_instance_names:
                 if not self._openstack.delete_server(
                         active_instance_names[instance['name']],
                         wait=True):
-                    utilities.logger.error("Unable to remove {}!".format(
-                        instance['name']))
+                    LOG.error("Unable to remove {}!".format(instance['name']))
                 else:
                     utilities.print_success('\tRemoved {}'.format(instance[
                         'name']))

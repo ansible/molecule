@@ -25,6 +25,8 @@ import sys
 from molecule import utilities
 from molecule.commands import base
 
+LOG = utilities.get_logger(__name__)
+
 
 class Status(base.BaseCommand):
     """
@@ -47,16 +49,15 @@ class Status(base.BaseCommand):
 
         # Check that an instance is created.
         if not self.molecule._state.created:
-            errmsg = 'ERROR: No instances created. Try `{} create` first.'
-            utilities.logger.error(errmsg.format(os.path.basename(sys.argv[
-                0])))
+            msg = 'ERROR: No instances created. Try `{} create` first.'
+            LOG.error(msg.format(os.path.basename(sys.argv[0])))
             utilities.sysexit()
 
         # Retrieve the status.
         try:
             status = self.molecule._provisioner.status()
         except subprocess.CalledProcessError as e:
-            utilities.logger.error(e.message)
+            LOG.error(e.message)
             return e.returncode, e.message
 
         # Display the results in procelain mode.

@@ -23,6 +23,8 @@ import subprocess
 from molecule import utilities
 from molecule.commands import base
 
+LOG = utilities.get_logger(__name__)
+
 
 class Destroy(base.BaseCommand):
     """
@@ -50,7 +52,7 @@ class Destroy(base.BaseCommand):
             self.molecule._provisioner.destroy()
             self.molecule._state.reset()
         except subprocess.CalledProcessError as e:
-            utilities.logger.error('ERROR: {}'.format(e))
+            LOG.error('ERROR: {}'.format(e))
             if exit:
                 utilities.sysexit(e.returncode)
             return e.returncode, e.message

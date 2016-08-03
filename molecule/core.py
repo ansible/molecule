@@ -39,6 +39,8 @@ from molecule.provisioners import openstackprovisioner
 from molecule.provisioners import proxmoxprovisioner
 from molecule.provisioners import vagrantprovisioner
 
+LOG = utilities.get_logger(__name__)
+
 
 class Molecule(object):
     def __init__(self, args):
@@ -59,16 +61,14 @@ class Molecule(object):
         try:
             self._provisioner = self.get_provisioner()
         except baseprovisioner.InvalidProviderSpecified:
-            utilities.logger.error("\nInvalid provider '{}'\n".format(
-                self._args['--provider']))
+            LOG.error("Invalid provider '{}'".format(self._args['--provider']))
             self._args['--provider'] = None
             self._args['--platform'] = None
             self._provisioner = self.get_provisioner()
             self._print_valid_providers()
             utilities.sysexit()
         except baseprovisioner.InvalidPlatformSpecified:
-            utilities.logger.error("\nInvalid platform '{}'\n".format(
-                self._args['--platform']))
+            LOG.error("Invalid platform '{}'".format(self._args['--platform']))
             self._args['--provider'] = None
             self._args['--platform'] = None
             self._provisioner = self.get_provisioner()
@@ -106,14 +106,14 @@ class Molecule(object):
             if ssh_config is None:
                 return
         except subprocess.CalledProcessError as e:
-            utilities.logger.error('ERROR: {}'.format(e))
-            utilities.logger.error("Does your vagrant VM exist?")
+            LOG.error('ERROR: {}'.format(e))
+            LOG.error("Does your vagrant VM exist?")
             utilities.sysexit(e.returncode)
         utilities.write_file(ssh_config, out)
 
     def _print_valid_platforms(self, porcelain=False):
         if not porcelain:
-            utilities.logger.info("AVAILABLE PLATFORMS")
+            LOG.info("AVAILABLE PLATFORMS")
 
         data = []
         default_platform = self._provisioner.default_platform
@@ -129,7 +129,7 @@ class Molecule(object):
 
     def _print_valid_providers(self, porcelain=False):
         if not porcelain:
-            utilities.logger.info("AVAILABLE PROVIDERS")
+            LOG.info("AVAILABLE PROVIDERS")
 
         data = []
         default_provider = self._provisioner.default_provider
@@ -272,9 +272,8 @@ class Molecule(object):
         try:
             utilities.write_file(inventory_file, inventory)
         except IOError:
-            utilities.logger.warning(
-                'WARNING: could not write inventory file {}'.format(
-                    inventory_file))
+            LOG.warning('WARNING: could not write inventory file {}'.format(
+                inventory_file))
 
     def _add_or_update_vars(self, target):
         """Creates or updates to host/group variables if needed."""
@@ -322,7 +321,7 @@ class Molecule(object):
         symlink = os.path.join(
             os.path.abspath(molecule_dir), group_vars_target)
         if not os.path.exists(symlink):
-            utilities.logger.error(
+            LOG.error(
                 'ERROR: the group_vars path {} does not exist. Check your configuration file'.format(
                     group_vars_target))
 

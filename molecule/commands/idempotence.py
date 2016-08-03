@@ -22,6 +22,8 @@ from molecule import utilities
 from molecule.commands import base
 from molecule.commands import converge
 
+LOG = utilities.get_logger(__name__)
+
 
 class Idempotence(base.BaseCommand):
     """
@@ -45,7 +47,7 @@ class Idempotence(base.BaseCommand):
                                    exit=False,
                                    hide_errors=True)
         if status is not None:
-            msg = 'Skipping due to errors during converge.\n'
+            msg = 'Skipping due to errors during converge.'
             utilities.print_info(msg)
             return status, None
 
@@ -58,16 +60,16 @@ class Idempotence(base.BaseCommand):
 
         # Display the details of the idempotence test.
         if changed_tasks:
-            utilities.logger.error(
+            LOG.error(
                 'Idempotence test failed because of the following tasks:')
-            utilities.logger.error('{}'.format('\n'.join(changed_tasks)))
+            LOG.error('{}'.format('\n'.join(changed_tasks)))
         else:
             # But in case the idempotence callback plugin was not found, we just display an error message.
-            utilities.logger.error('Idempotence test failed.')
+            LOG.error('Idempotence test failed.')
             warning_msg = "The idempotence plugin was not found or did not provide the required information. " \
                           "Therefore the failure details cannot be displayed."
 
-            utilities.logger.warning(warning_msg)
+            LOG.warning(warning_msg)
         if exit:
             utilities.sysexit()
         return 1, None

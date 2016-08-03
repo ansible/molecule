@@ -26,6 +26,8 @@ import subprocess
 from molecule import utilities
 from molecule.commands import base
 
+LOG = utilities.get_logger(__name__)
+
 
 class Login(base.BaseCommand):
     """
@@ -85,12 +87,12 @@ class Login(base.BaseCommand):
             login_args = self.molecule._provisioner.login_args(hostname)
 
         except subprocess.CalledProcessError:
-            conf_errmsg = "\nUnknown host '{}'.\n\nAvailable hosts:\n{}"
-            utilities.logger.error(conf_errmsg.format(self.molecule._args[
-                '<host>'], "\n".join(hosts)))
+            msg = "Unknown host '{}'.\n\nAvailable hosts:\n{}"
+            LOG.error(msg.format(self.molecule._args['<host>'], "\n".join(
+                hosts)))
             utilities.sysexit()
         except base.InvalidHost as e:
-            utilities.logger.error(e.message)
+            LOG.error(e.message)
             utilities.sysexit()
 
         lines, columns = os.popen('stty size', 'r').read().split()

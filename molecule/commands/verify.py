@@ -28,6 +28,8 @@ from molecule import utilities
 from molecule import validators
 from molecule.commands import base
 
+LOG = utilities.get_logger(__name__)
+
 
 class Verify(base.BaseCommand):
     """
@@ -83,8 +85,8 @@ class Verify(base.BaseCommand):
                 utilities.print_info(msg.format(testinfra_dir))
                 validators.testinfra(tests_glob, **testinfra_kwargs)
             else:
-                msg = 'No testinfra tests found in {}/.\n'
-                utilities.logger.warning(msg.format(testinfra_dir))
+                msg = 'No testinfra tests found in {}/.'
+                LOG.warning(msg.format(testinfra_dir))
 
             # serverspec / rubocop
             if os.path.isdir(serverspec_dir):
@@ -96,10 +98,10 @@ class Verify(base.BaseCommand):
                 utilities.print_info(msg.format(serverspec_dir))
                 validators.rake(rakefile, **serverspec_kwargs)
             else:
-                msg = 'No serverspec tests found in {}/.\n'
-                utilities.logger.warning(msg.format(serverspec_dir))
+                msg = 'No serverspec tests found in {}/.'
+                LOG.warning(msg.format(serverspec_dir))
         except sh.ErrorReturnCode as e:
-            utilities.logger.error('ERROR: {}'.format(e))
+            LOG.error('ERROR: {}'.format(e))
             if exit:
                 utilities.sysexit(e.exit_code)
             return e.exit_code, e.stdout

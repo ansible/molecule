@@ -28,6 +28,8 @@ import sh
 from molecule import utilities
 from molecule.commands import base
 
+LOG = utilities.get_logger(__name__)
+
 
 class Init(base.BaseCommand):
     """
@@ -63,7 +65,7 @@ class Init(base.BaseCommand):
 
             if os.path.isdir(role):
                 msg = 'The directory {} already exists. Cannot create new role.'
-                utilities.logger.error(msg.format(role))
+                LOG.error(msg.format(role))
                 utilities.sysexit()
 
             role_path = os.path.join(os.curdir, role)
@@ -76,7 +78,7 @@ class Init(base.BaseCommand):
                 else:
                     sh.ansible_galaxy('init', role)
             except (subprocess.CalledProcessError, sh.ErrorReturnCode_1) as e:
-                utilities.logger.error('ERROR: {}'.format(e))
+                LOG.error('ERROR: {}'.format(e))
                 utilities.sysexit(e.returncode)
 
             self.clean_meta_main(role_path)
