@@ -43,14 +43,14 @@ class Login(base.BaseCommand):
             hosts = []
 
         try:
-            # Nowhere to log into if there is no running host.
+            # Nowhere to login to if there is no running host.
             if len(hosts) == 0:
                 raise base.InvalidHost("There are no running hosts.")
 
             # Check whether a host was specified.
             if self.molecule._args['<host>'] is None:
 
-                # One running host is perfect. Log into it.
+                # One running host is perfect. Login to it.
                 if len(hosts) == 1:
                     hostname = hosts[0]
 
