@@ -62,7 +62,8 @@ def test_molecule_file(config_instance):
 
 
 def test_build_config_paths(config_instance):
-    # Full path provided to ``state_file``
+    # Full path provided to ``state_file``.  Tested further in subsequent
+    # tests.
     assert 'state_data.yml' == config_instance.config['molecule'][
         'state_file'].split('/')[-1]
     assert 'test/vagrantfile_file' == config_instance.config['molecule'][
@@ -73,6 +74,40 @@ def test_build_config_paths(config_instance):
         'config_file']
     assert 'test/inventory_file' == config_instance.config['ansible'][
         'inventory_file']
+
+
+@pytest.fixture()
+def build_config_paths_molecule_data():
+    return {
+        'molecule': {
+            'state_file': 'state_path',
+            'vagrantfile_file': '/full/path/vagrantfile_file',
+            'rakefile_file': 'relative/path/rakefile_file',
+            'molecule_dir': 'test'
+        },
+        'ansible': {
+            'config_file': 'config_file',
+            'inventory_file': 'inventory_file',
+            'playbook': 'playbook.yml'
+        }
+    }
+
+
+# NOTE(retr0h): ``os.path.join`` does this for us.
+def test_build_config_paths_preserves_full_path(temp_files):
+    confs = temp_files(fixtures=['build_config_paths_molecule_data'])
+    c = config.Config(configs=confs)
+
+    assert '/full/path/vagrantfile_file' == c.config['molecule'][
+        'vagrantfile_file']
+
+
+def test_build_config_paths_preserves_relative_path(temp_files):
+    confs = temp_files(fixtures=['build_config_paths_molecule_data'])
+    c = config.Config(configs=confs)
+
+    assert 'relative/path/rakefile_file' == c.config['molecule'][
+        'rakefile_file']
 
 
 def test_populate_instance_names(config_instance):
