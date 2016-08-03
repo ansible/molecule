@@ -23,13 +23,11 @@ import sh
 
 from molecule import utilities
 
+LOG = utilities.get_logger(__name__)
+
 
 class AnsiblePlaybook:
-    def __init__(self,
-                 args,
-                 _env=None,
-                 _out=utilities.logger.info,
-                 _err=utilities.logger.error):
+    def __init__(self, args, _env=None, _out=LOG.info, _err=LOG.error):
         """
         Sets up requirements for ansible-playbook
 
@@ -167,6 +165,6 @@ class AnsiblePlaybook:
             return None, self.ansible().stdout
         except (sh.ErrorReturnCode, sh.ErrorReturnCode_2) as e:
             if not hide_errors:
-                utilities.logger.error('ERROR: {}'.format(e))
+                LOG.error('ERROR: {}'.format(e))
 
             return e.exit_code, None

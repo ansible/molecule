@@ -27,6 +27,8 @@ import docker
 from molecule import utilities
 from molecule.provisioners import baseprovisioner
 
+LOG = utilities.get_logger(__name__)
+
 
 class DockerProvisioner(baseprovisioner.BaseProvisioner):
     def __init__(self, molecule):
@@ -142,21 +144,19 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
                         if len(line_split) > 0:
                             line = json.loads(line_split)
                             if 'stream' in line:
-                                utilities.logger.warning('\t{}'.format(line[
-                                    'stream']))
+                                LOG.warning('\t{}'.format(line['stream']))
                             if 'errorDetail' in line:
-                                utilities.logger.warning('\t{}'.format(line[
-                                    'errorDetail']['message']))
+                                LOG.warning('\t{}'.format(line['errorDetail'][
+                                    'message']))
                                 errors = True
                             if 'status' in line:
                                 if previous_line not in line['status']:
-                                    utilities.logger.warning('\t{} ...'.format(
-                                        line['status']))
+                                    LOG.warning('\t{} ...'.format(line[
+                                        'status']))
                                 previous_line = line['status']
 
                 if errors:
-                    utilities.logger.error('Build failed for {}'.format(
-                        tag_string))
+                    LOG.error('Build failed for {}'.format(tag_string))
                     return
                 else:
                     utilities.print_success('Finished building {}'.format(
@@ -188,7 +188,7 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
                 binds=container['volume_mounts'])
 
             if (container['Created'] is not True):
-                utilities.logger.warning(
+                LOG.warning(
                     'Creating container {} with base image {}:{} ...'.format(
                         container['name'], container['image'],
                         container['image_version']), )
@@ -204,7 +204,7 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
                 self._docker.start(container=container.get('Id'))
                 container['Created'] = True
 
-                utilities.print_success('Container created.\n')
+                utilities.print_success('Container created.')
             else:
                 self._docker.start(container['name'])
                 utilities.print_success('Starting container {}...'.format(
@@ -213,11 +213,11 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
     def destroy(self):
         for container in self.instances:
             if (container['Created']):
-                utilities.logger.warning('Stopping container {} ...'.format(
-                    container['name']))
+                LOG.warning('Stopping container {} ...'.format(container[
+                    'name']))
                 self._docker.stop(container['name'], timeout=0)
                 self._docker.remove_container(container['name'])
-                utilities.print_success('Removed container {}.\n'.format(
+                utilities.print_success('Removed container {}.'.format(
                     container['name']))
                 container['Created'] = False
 

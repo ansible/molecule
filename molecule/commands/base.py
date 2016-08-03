@@ -24,6 +24,8 @@ import docopt
 from molecule import core
 from molecule import utilities
 
+LOG = utilities.get_logger(__name__)
+
 
 class InvalidHost(Exception):
     pass
@@ -54,8 +56,8 @@ class BaseCommand:
     def main(self):
         c = self.molecule.config
         if not c.molecule_file_exists():
-            error = '\nUnable to find {}. Exiting.'
-            utilities.logger.error(error.format(c.molecule_file))
+            msg = 'Unable to find {}. Exiting.'
+            LOG.error(msg.format(c.molecule_file))
             utilities.sysexit()
         self.molecule.main()
 
