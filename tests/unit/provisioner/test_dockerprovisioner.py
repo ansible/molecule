@@ -48,42 +48,8 @@ elif ansible_v1():
 
 
 @pytest.fixture()
-def docker_data():
-    return {
-        'molecule': {
-            'molecule_dir': '.test_molecule',
-            'state_file': 'state_file.yml',
-            'vagrantfile_file': 'vagrantfile_file',
-            'rakefile_file': 'rakefile_file',
-        },
-        'docker': {
-            'containers': [
-                {'name': 'test1',
-                 'image': 'ubuntu',
-                 'image_version': 'latest',
-                 'port_bindings': {
-                     80: 80,
-                     443: 443
-                 },
-                 'volume_mounts': ['/tmp/test1:/inside:rw'],
-                 'ansible_groups': ['group1']}, {'name': 'test2',
-                                                 'image': 'ubuntu',
-                                                 'image_version': 'latest',
-                                                 'ansible_groups':
-                                                 ['group2'],
-                                                 'command': '/bin/sh'}
-            ]
-        },
-        'ansible': {
-            'config_file': 'config_file',
-            'inventory_file': 'inventory_file'
-        }
-    }
-
-
-@pytest.fixture()
-def molecule_instance(temp_files, docker_data):
-    c = temp_files(content=[docker_data])
+def molecule_instance(temp_files):
+    c = temp_files(fixtures=['molecule_docker_config'])
     m = core.Molecule(dict())
     m.config = config.Config(configs=c)
 

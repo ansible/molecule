@@ -78,7 +78,9 @@ class Config(object):
 
     def _build_config_paths(self):
         """
-        Convenience function to build up paths from our config values
+        Convenience function to build up paths from our config values.  Path
+        will not be relative to ``molecule_dir``, when a full path was provided
+        in the config.
 
         :return: None
         """

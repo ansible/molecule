@@ -35,31 +35,10 @@ pytestmark = pytest.mark.skipif(
 
 
 @pytest.fixture()
-def molecule_file(tmpdir, request):
+def molecule_file(tmpdir, request, molecule_vagrant_config):
     d = tmpdir.mkdir('molecule')
     c = d.join(os.extsep.join(('molecule', 'yml')))
-    data = {
-        'molecule': {
-            'molecule_dir': '.molecule'
-        },
-        'vagrant': {
-            'platforms': [
-                {'name': 'ubuntu',
-                 'box': 'ubuntu/trusty64'}
-            ],
-            'providers': [
-                {'name': 'virtualbox',
-                 'type': 'virtualbox'}
-            ],
-            'instances': [
-                {'name': 'aio-01'}
-            ]
-        },
-        'ansible': {
-            'config_file': 'test_config',
-            'inventory_file': 'test_inventory',
-        }
-    }
+    data = molecule_vagrant_config
     c.write(data)
 
     pbook = d.join(os.extsep.join(('playbook', 'yml')))

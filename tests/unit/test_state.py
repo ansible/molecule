@@ -27,15 +27,8 @@ from molecule import state
 
 
 @pytest.fixture()
-def state_data():
-    return {}
-
-
-@pytest.fixture()
-def state_instance(temp_files, state_data):
-    c = temp_files(content=[state_data])[0]
-
-    return state.State(state_file=c)
+def state_instance(state_path):
+    return state.State(state_file=state_path)
 
 
 def test_converged(state_instance):
