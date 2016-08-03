@@ -47,10 +47,9 @@ virtual machines/containers, with support for multiple Vagrant providers
 Ansible Support
 ---------------
 
-* 1.9.6 - Limited (`Docker`_ and `OpenStack`_ provisioners not-supported)
+* 1.9.6 - Limited (`Docker`_ provisioner not-supported by `Ansible`_)
 * 2.0.2.0 - Supported
-* 2.1.0.0 - Supported
-* 2.1.1.0 - In progress (#297)
+* 2.1.1.0 - Supported
 
 Quick Start
 -----------

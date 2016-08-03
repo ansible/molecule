@@ -363,11 +363,11 @@ order to test this particular role.
 Override Configuration
 ----------------------
 
-1. local config (``~/.config/molecule/config.yml``)
-2. project config
+1. project config
+2. local config (``~/.config/molecule/config.yml``)
 3. default config (``molecule.yml``)
 
-The merge order is default -> project -> local, meaning that elements at
+The merge order is default -> local -> project, meaning that elements at
 the top of the above list will be merged last, and have greater precedence
 than elements at the bottom of the list.
 

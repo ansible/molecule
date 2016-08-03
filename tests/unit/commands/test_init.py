@@ -19,13 +19,10 @@
 #  THE SOFTWARE.
 
 import os
-import logging
 
 import pytest
 
 from molecule.commands.init import Init
-
-logging.getLogger("sh").setLevel(logging.WARNING)
 
 
 @pytest.fixture()
