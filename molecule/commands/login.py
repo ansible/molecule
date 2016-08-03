@@ -43,8 +43,8 @@ class Login(base.BaseCommand):
             hosts =[]
 
         try:
+            # Nowhere to log into if there is no running host.
             if len(hosts) == 0:
-                # Nowhere to log into if there is no running host.
                 raise base.InvalidHost("There are no running hosts.")
 
             # Check whether a host was specified.
