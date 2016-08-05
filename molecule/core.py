@@ -44,14 +44,12 @@ LOG = utilities.get_logger(__name__)
 
 class Molecule(object):
     def __init__(self, args):
-        self._provisioned = False
         self._env = os.environ.copy()
         self._args = args
-        self.config = config.Config()
         self._provisioner = None
+        self.config = config.Config()
 
     def main(self):
-
         if not os.path.exists(self.config.config['molecule']['molecule_dir']):
             os.makedirs(self.config.config['molecule']['molecule_dir'])
 

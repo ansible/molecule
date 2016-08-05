@@ -20,57 +20,66 @@
 
 import pytest
 
+from molecule import config
 from molecule import core
 
 
-class TestProvisioner():
-    def __init__(self):
-        self.instances = [{'name': 'demo-01',
-                           'ansible_groups': ['demo', 'demo1'],
-                           'options': {'append_platform_to_hostname': True}}]
-        self._platform = 'centos7'
+@pytest.fixture()
+def molecule_args():
+    return {'--debug': False,
+            '--destroy': None,
+            '--platform': None,
+            '--provider': None,
+            '--sudo': False,
+            '<command>': 'test_command'}
 
 
 @pytest.fixture()
-def molecule():
-    m = core.Molecule(dict())
-    m._provisioner = TestProvisioner()
+def molecule_instance(temp_files, molecule_args):
+    c = temp_files(fixtures=['molecule_vagrant_config'])
+    m = core.Molecule(molecule_args)
+    m.config = config.Config(configs=c)
+    m.main()
+
     return m
 
 
-def test_parse_provisioning_output_failure_00(molecule):
+def test_parse_provisioning_output_failure_00(molecule_instance):
     failed_output = """
 PLAY RECAP ********************************************************************
 vagrant-01-ubuntu              : ok=36   changed=29   unreachable=0    failed=0
     """
-    res, changed_tasks = molecule._parse_provisioning_output(failed_output)
+    res, _ = molecule_instance._parse_provisioning_output(failed_output)
 
     assert not res
 
 
-def test_parse_provisioning_output_failure_01(molecule):
+def test_parse_provisioning_output_failure_01(molecule_instance):
     failed_output = """
 PLAY RECAP ********************************************************************
 NI: common | Non idempotent task for testing
 common-01-rhel-7           : ok=18   changed=14   unreachable=0    failed=0
     """
-    res, changed_tasks = molecule._parse_provisioning_output(failed_output)
+    res, changed_tasks = molecule_instance._parse_provisioning_output(
+        failed_output)
 
     assert not res
     assert 1 == len(changed_tasks)
 
 
-def test_parse_provisioning_output_success_00(molecule):
+def test_parse_provisioning_output_success_00(molecule_instance):
     success_output = """
 PLAY RECAP ********************************************************************
 vagrant-01-ubuntu              : ok=36   changed=0    unreachable=0    failed=0
     """
-    res, changed_tasks = molecule._parse_provisioning_output(success_output)
+    res, changed_tasks = molecule_instance._parse_provisioning_output(
+        success_output)
 
     assert res
     assert [] == changed_tasks
 
 
-def test_instances_state_00(molecule):
-    success_output = {'demo-01-centos7': {'groups': ['demo', 'demo1']}}
-    assert success_output == molecule._instances_state()
+def test_instances_state_00(molecule_instance):
+    expected = {'aio-01-ubuntu': {'groups': ['example', 'example1']}}
+
+    assert expected == molecule_instance._instances_state()
