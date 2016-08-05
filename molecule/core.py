@@ -25,7 +25,6 @@ import re
 import struct
 import sys
 import termios
-import subprocess
 
 import tabulate
 import yaml
@@ -97,20 +96,20 @@ class Molecule(object):
         else:
             return None
 
+    def _get_ssh_config(self):
+        return self._provisioner.ssh_config_file
+
     def _write_ssh_config(self):
-        try:
-            out = self._provisioner.conf(ssh_config=True)
-            ssh_config = self._provisioner.ssh_config_file
-            if ssh_config is None:
-                return
-        except subprocess.CalledProcessError as e:
-            LOG.error('ERROR: {}'.format(e))
-            LOG.error("Does your vagrant VM exist?")
-            utilities.sysexit(e.returncode)
+        ssh_config = self._get_ssh_config()
+        if ssh_config is None:
+            return
+        out = self._provisioner.conf(ssh_config=True)
         utilities.write_file(ssh_config, out)
 
     def _print_valid_platforms(self, porcelain=False):
         if not porcelain:
+            # NOTE(retr0h): Should we log here, when ``_display_tabulate_data``
+            # prints?
             LOG.info("AVAILABLE PLATFORMS")
 
         data = []
@@ -127,6 +126,8 @@ class Molecule(object):
 
     def _print_valid_providers(self, porcelain=False):
         if not porcelain:
+            # NOTE(retr0h): Should we log here, when ``_display_tabulate_data``
+            # prints?
             LOG.info("AVAILABLE PROVIDERS")
 
         data = []
@@ -237,13 +238,13 @@ class Molecule(object):
 
     def _create_inventory_file(self):
         """
-        Creates the inventory file used by molecule and later passed to ansible-playbook.
+        Creates the inventory file used by molecule and later passed to
+        ansible-playbook.
 
         :return: None
         """
 
         inventory = ''
-
         for instance in self._provisioner.instances:
             inventory += self._provisioner.inventory_entry(instance)
 
@@ -272,6 +273,10 @@ class Molecule(object):
         except IOError:
             LOG.warning('WARNING: could not write inventory file {}'.format(
                 inventory_file))
+
+    def _remove_inventory_file(self):
+        if os._exists(self.config.config['ansible']['inventory_file']):
+            os.remove(self.config.config['ansible']['inventory_file'])
 
     def _add_or_update_vars(self, target):
         """Creates or updates to host/group variables if needed."""
@@ -345,7 +350,3 @@ class Molecule(object):
 
         # Print the results.
         print(tabulate.tabulate(data, headers, tablefmt=table_format))
-
-    def _remove_inventory_file(self):
-        if os._exists(self.config.config['ansible']['inventory_file']):
-            os.remove(self.config.config['ansible']['inventory_file'])

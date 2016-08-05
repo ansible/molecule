@@ -183,7 +183,7 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
         return status_list
 
     def conf(self, name=None, ssh_config=False):
-        with open(self.molecule.config.config['molecule'][
+        with open(self.molecule.config.config['ansible'][
                 'inventory_file']) as instance:
             for line in instance:
                 if len(line.split()) > 0 and line.split()[0] == name:

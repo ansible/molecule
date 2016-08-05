@@ -147,7 +147,7 @@ def format_instance_name(name, platform, instances):
 
     # add platform to name
     if working_instance['options'].get('append_platform_to_hostname'):
-        if (platform != 'all'):
+        if platform and platform != 'all':
             return name + '-' + platform
 
     # if we fall through, return the default name

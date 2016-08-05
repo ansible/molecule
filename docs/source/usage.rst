@@ -308,16 +308,15 @@ Here is an example of a complete ``molecule.yml`` with 2 containers.
   docker:
     containers:
       - name: foo-01
-      ansible_groups:
-        - group1
-      image: ubuntu
-      image_version: latest
+        ansible_groups:
+          - group1
+        image: ubuntu
+        image_version: latest
       - name: foo-02
-      ansible_groups:
-        - group2
-      image: ubuntu
-      image_version: '14.04'
-
+        ansible_groups:
+          - group2
+        image: ubuntu
+        image_version: '14.04'
 
 Note: numeric versions need to be put in quotes. If the image version tag is not
 a number, it does not need to be in quotes.
