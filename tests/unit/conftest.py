@@ -124,6 +124,7 @@ def vagrant_section_data():
             ],
             'instances': [
                 {'name': 'aio-01',
+                 'ansible_groups': ['example', 'example1'],
                  'options': {'append_platform_to_hostname': True}}
             ]
         }
