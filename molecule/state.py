@@ -31,7 +31,8 @@ import yaml
 from molecule import utilities
 
 VALID_KEYS = ['converged', 'created', 'customconf', 'default_platform',
-              'default_provider', 'hosts', 'multiple_platforms']
+              'default_provider', 'hosts', 'multiple_platforms',
+              'installed_deps']
 
 
 class InvalidState(Exception):
@@ -78,6 +79,10 @@ class State(object):
     @property
     def customconf(self):
         return self._data.get('customconf')
+
+    @property
+    def installed_deps(self):
+        return self._data.get('installed_deps')
 
     @marshal
     def reset(self):

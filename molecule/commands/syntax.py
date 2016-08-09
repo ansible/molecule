@@ -34,6 +34,10 @@ class Syntax(base.BaseCommand):
     def execute(self, exit=True):
         self.molecule._create_templates()
 
+        if 'requirements_file' in self.molecule.config.config['ansible']:
+            self.molecule.download_dependencies(self.molecule.config.config[
+                'ansible']['requirements_file'])
+
         ansible = ansible_playbook.AnsiblePlaybook(self.molecule.config.config[
             'ansible'])
         ansible.add_cli_arg('syntax-check', True)
