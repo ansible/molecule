@@ -91,3 +91,9 @@ class AnsibleGalaxyInstall:
         except sh.ErrorReturnCode as e:
             LOG.error('ERROR: {}'.format(e))
             utilities.sysexit(e.exit_code)
+
+    def download(self, config_file):
+        utilities.print_info('Installing role dependencies ...')
+        self.add_env_arg('ANSIBLE_CONFIG', config_file)
+        self.bake()
+        self.execute()

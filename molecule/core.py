@@ -33,7 +33,6 @@ import yaml
 from molecule import config
 from molecule import state
 from molecule import utilities
-from molecule import ansible_galaxy_install
 from molecule.provisioners import baseprovisioner
 from molecule.provisioners import dockerprovisioner
 from molecule.provisioners import openstackprovisioner
@@ -235,18 +234,6 @@ class Molecule(object):
 
     def _write_instances_state(self):
         self._state.change_state('hosts', self._instances_state())
-
-    def download_dependencies(self, requirements_file):
-
-        if not self._state.installed_deps:
-            utilities.print_info('Installing role dependencies ...')
-            galaxy_install = ansible_galaxy_install.AnsibleGalaxyInstall(
-                requirements_file)
-            galaxy_install.add_env_arg(
-                'ANSIBLE_CONFIG', self.config.config['ansible']['config_file'])
-            galaxy_install.bake()
-            galaxy_install.execute()
-            self._state.change_state('installed_deps', True)
 
     def _create_inventory_file(self):
         """

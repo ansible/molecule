@@ -118,6 +118,16 @@ def test_change_state_persists(state_instance):
 
         assert d.get('created')
 
+def test_change_state_deps_installed(state_instance):
+    assert not state_instance.created
+
+    state_instance.change_state('installed_deps', True)
+    assert state_instance.created
+
+    with open(state_instance._state_file) as stream:
+        d = yaml.safe_load(stream)
+
+        assert d.get('installed_deps')
 
 def test_get_data():
     # Already tested through the property tests
