@@ -73,11 +73,27 @@ def molecule_vagrant_config(molecule_section_data, vagrant_section_data,
 
 
 @pytest.fixture()
+def molecule_proxmox_config(molecule_section_data, proxmox_section_data,
+                            ansible_section_data):
+    return reduce(
+        lambda x, y: utilities.merge_dicts(x, y),
+        [molecule_section_data, proxmox_section_data, ansible_section_data])
+
+
+@pytest.fixture()
 def molecule_docker_config(molecule_section_data, docker_section_data,
                            ansible_section_data):
     return reduce(
         lambda x, y: utilities.merge_dicts(x, y),
         [molecule_section_data, docker_section_data, ansible_section_data])
+
+
+@pytest.fixture()
+def molecule_openstack_config(molecule_section_data, openstack_section_data,
+                              ansible_section_data):
+    return reduce(
+        lambda x, y: utilities.merge_dicts(x, y),
+        [molecule_section_data, openstack_section_data, ansible_section_data])
 
 
 @pytest.fixture()
@@ -132,6 +148,11 @@ def vagrant_section_data():
 
 
 @pytest.fixture()
+def proxmox_section_data():
+    return {'proxmox': {}}
+
+
+@pytest.fixture()
 def docker_section_data():
     return {
         'docker': {
@@ -143,16 +164,29 @@ def docker_section_data():
                      80: 80,
                      443: 443
                  },
+                 'options': {'append_platform_to_hostname': True},
                  'volume_mounts': ['/tmp/test1:/inside:rw'],
-                 'ansible_groups': ['group1']}, {'name': 'test2',
-                                                 'image': 'ubuntu',
-                                                 'image_version': 'latest',
-                                                 'ansible_groups':
-                                                 ['group2'],
-                                                 'command': '/bin/sh'}
+                 'ansible_groups': ['group1']},
+                {'name': 'test2',
+                 'image': 'ubuntu',
+                 'image_version': 'latest',
+                 'ansible_groups': ['group2'],
+                 'command': '/bin/sh',
+                 'options': {'append_platform_to_hostname': True}, }
             ]
         }
     }
+
+
+@pytest.fixture()
+def openstack_section_data():
+    return {'openstack': {
+        'instances': [
+            {'name': 'aio-01',
+             'ansible_groups': ['example', 'example1'],
+             'options': {'append_platform_to_hostname': True}}
+        ]
+    }}
 
 
 @pytest.fixture()

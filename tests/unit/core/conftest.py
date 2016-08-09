@@ -22,6 +22,7 @@ import pytest
 
 from molecule import config
 from molecule import core
+from molecule import utilities
 
 
 @pytest.fixture()
@@ -35,7 +36,7 @@ def molecule_args():
 
 
 @pytest.fixture()
-def molecule_instance(temp_files, molecule_args):
+def molecule_default_provider_instance(temp_files, molecule_args):
     c = temp_files(fixtures=['molecule_vagrant_config'])
     m = core.Molecule(molecule_args)
     m.config = config.Config(configs=c)
@@ -44,42 +45,14 @@ def molecule_instance(temp_files, molecule_args):
     return m
 
 
-def test_parse_provisioning_output_failure_00(molecule_instance):
-    failed_output = """
-PLAY RECAP ********************************************************************
-vagrant-01-ubuntu              : ok=36   changed=29   unreachable=0    failed=0
-    """
-    res, _ = molecule_instance._parse_provisioning_output(failed_output)
-
-    assert not res
+@pytest.fixture()
+def molecule_invalid_provisioner_config(
+        molecule_section_data, invalid_section_data, ansible_section_data):
+    return reduce(
+        lambda x, y: utilities.merge_dicts(x, y),
+        [molecule_section_data, invalid_section_data, ansible_section_data])
 
 
-def test_parse_provisioning_output_failure_01(molecule_instance):
-    failed_output = """
-PLAY RECAP ********************************************************************
-NI: common | Non idempotent task for testing
-common-01-rhel-7           : ok=18   changed=14   unreachable=0    failed=0
-    """
-    res, changed_tasks = molecule_instance._parse_provisioning_output(
-        failed_output)
-
-    assert not res
-    assert 1 == len(changed_tasks)
-
-
-def test_parse_provisioning_output_success_00(molecule_instance):
-    success_output = """
-PLAY RECAP ********************************************************************
-vagrant-01-ubuntu              : ok=36   changed=0    unreachable=0    failed=0
-    """
-    res, changed_tasks = molecule_instance._parse_provisioning_output(
-        success_output)
-
-    assert res
-    assert [] == changed_tasks
-
-
-def test_instances_state_00(molecule_instance):
-    expected = {'aio-01-ubuntu': {'groups': ['example', 'example1']}}
-
-    assert expected == molecule_instance._instances_state()
+@pytest.fixture()
+def invalid_section_data():
+    return {}
