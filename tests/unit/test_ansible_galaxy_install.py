@@ -18,6 +18,8 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
+import re
+
 import pytest
 
 from molecule import ansible_galaxy_install
@@ -39,3 +41,13 @@ def test_add_env_arg(galaxy_install):
     galaxy_install.add_env_arg('MOLECULE_1', 'test')
 
     assert 'test' == galaxy_install.env['MOLECULE_1']
+
+
+def test_download(mocker, galaxy_install, ansible_section_data):
+    mocked = mocker.patch(
+        'molecule.ansible_galaxy_install.AnsibleGalaxyInstall.execute')
+    galaxy_install.download(ansible_section_data['ansible']['config_file'])
+
+    mocked.assert_called_once
+    assert re.search(r'ansible-galaxy install -f -r requirements.yml',
+                     str(galaxy_install.galaxy))

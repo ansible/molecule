@@ -30,9 +30,14 @@ import yaml
 
 from molecule import utilities
 
-VALID_KEYS = ['converged', 'created', 'customconf', 'default_platform',
-              'default_provider', 'hosts', 'multiple_platforms',
-              'installed_deps']
+VALID_KEYS = ['converged',
+              'created',
+              'customconf',
+              'default_platform',
+              'default_provider',
+              'hosts',
+              'installed_deps',
+              'multiple_platforms', ]
 
 
 class InvalidState(Exception):

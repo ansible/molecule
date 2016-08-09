@@ -39,6 +39,10 @@ def test_created(state_instance):
     assert not state_instance.created
 
 
+def test_customconf(state_instance):
+    assert not state_instance.customconf
+
+
 def test_default_platform(state_instance):
     assert not state_instance.default_platform
 
@@ -47,28 +51,16 @@ def test_default_provider(state_instance):
     assert not state_instance.default_provider
 
 
-def test_multiple_platforms(state_instance):
-    assert not state_instance.multiple_platforms
-
-
-def test_customconf(state_instance):
-    assert not state_instance.customconf
-
-    state_instance.change_state('customconf', True)
-    assert state_instance.customconf
-
-    state_instance.reset()
-    assert not state_instance.customconf
-
-
 def test_hosts(state_instance):
     assert not state_instance.hosts
 
-    state_instance.change_state('hosts', {'test-01': {'groups': ['group1']}})
-    assert state_instance.hosts
 
-    state_instance.reset()
-    assert not state_instance.hosts
+def test_installed_deps(state_instance):
+    assert not state_instance.installed_deps
+
+
+def test_multiple_platforms(state_instance):
+    assert not state_instance.multiple_platforms
 
 
 def test_reset(state_instance):
@@ -118,16 +110,6 @@ def test_change_state_persists(state_instance):
 
         assert d.get('created')
 
-def test_change_state_deps_installed(state_instance):
-    assert not state_instance.created
-
-    state_instance.change_state('installed_deps', True)
-    assert state_instance.created
-
-    with open(state_instance._state_file) as stream:
-        d = yaml.safe_load(stream)
-
-        assert d.get('installed_deps')
 
 def test_get_data():
     # Already tested through the property tests
