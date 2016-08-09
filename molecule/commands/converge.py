@@ -81,15 +81,12 @@ class Converge(base.BaseCommand):
 
         # install role dependencies only during `molecule converge`
         if not idempotent and 'requirements_file' in self.molecule.config.config[
-                'ansible']:
-            utilities.print_info('Installing role dependencies ...')
-            galaxy_install = ansible_galaxy_install.AnsibleGalaxyInstall(
+                'ansible'] and not self.molecule._state.installed_deps:
+            galaxy = ansible_galaxy_install.AnsibleGalaxyInstall(
                 self.molecule.config.config['ansible']['requirements_file'])
-            galaxy_install.add_env_arg(
-                'ANSIBLE_CONFIG',
-                self.molecule.config.config['ansible']['config_file'])
-            galaxy_install.bake()
-            output = galaxy_install.execute()
+            galaxy.download(self.molecule.config.config['ansible'][
+                'config_file'])
+            self.molecule._state.change_state('installed_deps', True)
 
         ansible = ansible_playbook.AnsiblePlaybook(self.molecule.config.config[
             'ansible'])
