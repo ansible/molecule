@@ -19,6 +19,7 @@
 #  THE SOFTWARE.
 
 from molecule import ansible_playbook
+from molecule.ansible_galaxy_install import AnsibleGalaxyInstall
 from molecule import utilities
 from molecule.commands import base
 
@@ -33,6 +34,14 @@ class Syntax(base.BaseCommand):
 
     def execute(self, exit=True):
         self.molecule._create_templates()
+
+        if 'requirements_file' in self.molecule.config.config[
+                'ansible'] and not self.molecule._state.installed_deps:
+            galaxy = AnsibleGalaxyInstall(self.molecule.config.config[
+                'ansible']['requirements_file'])
+            galaxy.download(self.molecule.config.config['ansible'][
+                'config_file'])
+            self.molecule._state.change_state('installed_deps', True)
 
         ansible = ansible_playbook.AnsiblePlaybook(self.molecule.config.config[
             'ansible'])
