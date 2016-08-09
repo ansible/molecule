@@ -22,32 +22,30 @@ import re
 
 import pytest
 
-from molecule import ansible_galaxy_install
+from molecule import ansible_galaxy
 
 
 @pytest.fixture()
-def galaxy_install():
+def galaxy_instance():
     data = {'config_file': 'test.cfg', 'requirements_file': 'requirements.yml'}
 
-    return ansible_galaxy_install.AnsibleGalaxyInstall(data[
-        'requirements_file'])
+    return ansible_galaxy.AnsibleGalaxy(data['requirements_file'])
 
 
-def test_requirements_file_loading(galaxy_install):
-    assert 'requirements.yml' == galaxy_install.requirements_file
+def test_requirements_file_loading(galaxy_instance):
+    assert 'requirements.yml' == galaxy_instance.requirements_file
 
 
-def test_add_env_arg(galaxy_install):
-    galaxy_install.add_env_arg('MOLECULE_1', 'test')
+def test_add_env_arg(galaxy_instance):
+    galaxy_instance.add_env_arg('MOLECULE_1', 'test')
 
-    assert 'test' == galaxy_install.env['MOLECULE_1']
+    assert 'test' == galaxy_instance.env['MOLECULE_1']
 
 
-def test_download(mocker, galaxy_install, ansible_section_data):
-    mocked = mocker.patch(
-        'molecule.ansible_galaxy_install.AnsibleGalaxyInstall.execute')
-    galaxy_install.download(ansible_section_data['ansible']['config_file'])
+def test_install(mocker, galaxy_instance, ansible_section_data):
+    mocked = mocker.patch('molecule.ansible_galaxy.AnsibleGalaxy.execute')
+    galaxy_instance.install(ansible_section_data['ansible']['config_file'])
 
     mocked.assert_called_once
     assert re.search(r'ansible-galaxy install -f -r requirements.yml',
-                     str(galaxy_install.galaxy))
+                     str(galaxy_instance.galaxy))

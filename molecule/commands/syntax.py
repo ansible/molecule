@@ -18,8 +18,8 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
+from molecule import ansible_galaxy
 from molecule import ansible_playbook
-from molecule.ansible_galaxy_install import AnsibleGalaxyInstall
 from molecule import utilities
 from molecule.commands import base
 
@@ -37,9 +37,9 @@ class Syntax(base.BaseCommand):
 
         if 'requirements_file' in self.molecule.config.config[
                 'ansible'] and not self.molecule._state.installed_deps:
-            galaxy = AnsibleGalaxyInstall(self.molecule.config.config[
+            galaxy = ansible_galaxy.AnsibleGalaxy(self.molecule.config.config[
                 'ansible']['requirements_file'])
-            galaxy.download(self.molecule.config.config['ansible'][
+            galaxy.install(self.molecule.config.config['ansible'][
                 'config_file'])
             self.molecule._state.change_state('installed_deps', True)
 
