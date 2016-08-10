@@ -27,7 +27,7 @@ from molecule import utilities
 LOG = utilities.get_logger(__name__)
 
 
-class AnsibleGalaxyInstall:
+class AnsibleGalaxy(object):
     def __init__(self,
                  requirements_file,
                  _env=None,
@@ -92,7 +92,7 @@ class AnsibleGalaxyInstall:
             LOG.error('ERROR: {}'.format(e))
             utilities.sysexit(e.exit_code)
 
-    def download(self, config_file):
+    def install(self, config_file):
         utilities.print_info('Installing role dependencies ...')
         self.add_env_arg('ANSIBLE_CONFIG', config_file)
         self.bake()

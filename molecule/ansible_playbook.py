@@ -26,7 +26,7 @@ from molecule import utilities
 LOG = utilities.get_logger(__name__)
 
 
-class AnsiblePlaybook:
+class AnsiblePlaybook(object):
     def __init__(self, args, _env=None, _out=LOG.info, _err=LOG.error):
         """
         Sets up requirements for ansible-playbook
