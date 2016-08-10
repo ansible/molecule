@@ -28,24 +28,20 @@ LOG = utilities.get_logger(__name__)
 
 
 class AnsibleGalaxy(object):
-    def __init__(self,
-                 requirements_file,
-                 _env=None,
-                 _out=LOG.info,
-                 _err=LOG.error):
+    def __init__(self, config, _env=None, _out=LOG.info, _err=LOG.error):
         """
         Sets up requirements for ansible-galaxy
 
-        :param requirements_file: Path to requirements file for ansible-galaxy
+        :param config: Molecule config object
         :param _env: Environment dictionary to use. os.environ.copy() is used by default
         :param _out: Function passed to sh for STDOUT
         :param _err: Function passed to sh for STDERR
         :return: None
         """
+        self._config = config
         self.env = _env if _env else os.environ.copy()
         self.out = _out
         self.err = _err
-        self.requirements_file = requirements_file
         self.galaxy = None
 
         # defaults can be redefined with call to add_env_arg() before baking
@@ -58,10 +54,11 @@ class AnsibleGalaxy(object):
 
         :return: None
         """
+        requirements_file = self._config['ansible']['requirements_file']
         self.galaxy = sh.ansible_galaxy.bake('install',
                                              '-f',
                                              '-r',
-                                             self.requirements_file,
+                                             requirements_file,
                                              _env=self.env,
                                              _out=self.out,
                                              _err=self.err)
@@ -92,7 +89,8 @@ class AnsibleGalaxy(object):
             LOG.error('ERROR: {}'.format(e))
             utilities.sysexit(e.exit_code)
 
-    def install(self, config_file):
+    def install(self):
+        config_file = self._config['ansible']['config_file']
         utilities.print_info('Installing role dependencies ...')
         self.add_env_arg('ANSIBLE_CONFIG', config_file)
         self.bake()

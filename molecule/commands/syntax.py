@@ -37,10 +37,8 @@ class Syntax(base.BaseCommand):
 
         if 'requirements_file' in self.molecule.config.config[
                 'ansible'] and not self.molecule._state.installed_deps:
-            galaxy = ansible_galaxy.AnsibleGalaxy(self.molecule.config.config[
-                'ansible']['requirements_file'])
-            galaxy.install(self.molecule.config.config['ansible'][
-                'config_file'])
+            galaxy = ansible_galaxy.AnsibleGalaxy(self.molecule.config.config)
+            galaxy.install()
             self.molecule._state.change_state('installed_deps', True)
 
         ansible = ansible_playbook.AnsiblePlaybook(self.molecule.config.config[

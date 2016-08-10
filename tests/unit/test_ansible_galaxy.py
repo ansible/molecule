@@ -23,17 +23,16 @@ import re
 import pytest
 
 from molecule import ansible_galaxy
+from molecule import config
 
 
 @pytest.fixture()
-def galaxy_instance():
-    data = {'config_file': 'test.cfg', 'requirements_file': 'requirements.yml'}
+def galaxy_instance(temp_files):
+    confs = temp_files(fixtures=['molecule_vagrant_config'])
+    c = config.Config(configs=confs)
+    c.config['ansible']['requirements_file'] = 'requirements.yml'
 
-    return ansible_galaxy.AnsibleGalaxy(data['requirements_file'])
-
-
-def test_requirements_file_loading(galaxy_instance):
-    assert 'requirements.yml' == galaxy_instance.requirements_file
+    return ansible_galaxy.AnsibleGalaxy(c.config)
 
 
 def test_add_env_arg(galaxy_instance):
@@ -42,9 +41,9 @@ def test_add_env_arg(galaxy_instance):
     assert 'test' == galaxy_instance.env['MOLECULE_1']
 
 
-def test_install(mocker, galaxy_instance, ansible_section_data):
+def test_install(mocker, galaxy_instance):
     mocked = mocker.patch('molecule.ansible_galaxy.AnsibleGalaxy.execute')
-    galaxy_instance.install(ansible_section_data['ansible']['config_file'])
+    galaxy_instance.install()
 
     mocked.assert_called_once
     assert re.search(r'ansible-galaxy install -f -r requirements.yml',
