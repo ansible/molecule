@@ -89,11 +89,11 @@ def test_instances(docker_instance):
 def test_status(docker_instance):
     docker_instance.up()
 
-    assert 'test1' == docker_instance.status()[1].name
-    assert 'test2' == docker_instance.status()[0].name
+    assert 'test1' == docker_instance.status()[0].name
+    assert 'test2' == docker_instance.status()[1].name
 
-    assert 'Up' in docker_instance.status()[1].state
     assert 'Up' in docker_instance.status()[0].state
+    assert 'Up' in docker_instance.status()[1].state
 
     assert 'docker' in docker_instance.status()[0].provider
     assert 'docker' in docker_instance.status()[1].provider
@@ -102,8 +102,7 @@ def test_status(docker_instance):
 def test_port_bindings(docker_instance):
     docker_instance.up()
 
-    assert docker_instance.status()[0].ports == []
-    assert docker_instance.status()[1].ports == [
+    assert docker_instance.status()[0].ports == [
         {
             'PublicPort': 443,
             'PrivatePort': 443,
@@ -116,6 +115,7 @@ def test_port_bindings(docker_instance):
             'Type': 'tcp'
         }
     ]
+    assert docker_instance.status()[1].ports == []
 
 
 def test_start_command(docker_instance):
@@ -139,16 +139,16 @@ def test_volume_mounts(docker_instance):
 def test_destroy(docker_instance):
     docker_instance.up()
 
-    assert 'test1' == docker_instance.status()[1].name
-    assert 'test2' == docker_instance.status()[0].name
+    assert 'test1' == docker_instance.status()[0].name
+    assert 'test2' == docker_instance.status()[1].name
 
-    assert 'Up' in docker_instance.status()[1].state
     assert 'Up' in docker_instance.status()[0].state
+    assert 'Up' in docker_instance.status()[1].state
 
     docker_instance.destroy()
 
-    assert 'Not Created' in docker_instance.status()[1].state
-    assert 'Not Created' in docker_instance.status()[0].state
+    assert 'not_created' in docker_instance.status()[0].state
+    assert 'not_created' in docker_instance.status()[1].state
 
 
 def test_provision(docker_instance):

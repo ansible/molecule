@@ -177,7 +177,7 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
                                           provider='Openstack'))
             else:
                 status_list.append(Status(name=instance['name'],
-                                          state='DOWN',
+                                          state='not_created',
                                           provider='Openstack'))
 
         return status_list
