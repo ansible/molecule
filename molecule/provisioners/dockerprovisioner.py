@@ -37,7 +37,6 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
         self._containers = self.molecule.config.config['docker']['containers']
         self._provider = self._get_provider()
         self._platform = self._get_platform()
-        self.status()
 
         self.image_tag = 'molecule_local/{}:{}'
 
@@ -56,6 +55,17 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
 
     @property
     def instances(self):
+        created_containers = self._docker.containers(all=True)
+        created_container_names = [
+            container.get('Names')[0][1:].encode('utf-8')
+            for container in created_containers
+        ]
+        for container in self._containers:
+            if container.get('name') in created_container_names:
+                container['created'] = True
+            else:
+                container['created'] = False
+
         return self._containers
 
     @property
@@ -102,7 +112,6 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
                             for tag in image.get('RepoTags')]
 
         for container in self.instances:
-
             if 'install_python' in container and container[
                     'install_python'] is False:
                 continue
@@ -187,7 +196,7 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
                 port_bindings=container['port_bindings'],
                 binds=container['volume_mounts'])
 
-            if (container['Created'] is not True):
+            if (container['created'] is not True):
                 LOG.warning(
                     'Creating container {} with base image {}:{} ...'.format(
                         container['name'], container['image'],
@@ -202,7 +211,7 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
                     host_config=docker_host_config,
                     command=container['command'])
                 self._docker.start(container=container.get('Id'))
-                container['Created'] = True
+                container['created'] = True
 
                 utilities.print_success('Container created.')
             else:
@@ -212,41 +221,30 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
 
     def destroy(self):
         for container in self.instances:
-            if (container['Created']):
+            if (container['created']):
                 LOG.warning('Stopping container {} ...'.format(container[
                     'name']))
                 self._docker.stop(container['name'], timeout=0)
                 self._docker.remove_container(container['name'])
                 utilities.print_success('Removed container {}.'.format(
                     container['name']))
-                container['Created'] = False
+                container['created'] = False
 
     def status(self):
         Status = collections.namedtuple('Status', ['name', 'state', 'provider',
                                                    'ports'])
-        instance_names = [x['name'] for x in self.instances]
-        created_containers = self._docker.containers(all=True)
-        created_container_names = []
         status_list = []
-
-        for container in created_containers:
-            container_name = container.get('Names')[0][1:].encode('utf-8')
-            ports = container.get('Ports')
-            created_container_names.append(container_name)
-            if container_name in instance_names:
-                status_list.append(Status(name=container_name,
-                                          state=container.get('Status'),
-                                          provider='docker',
-                                          ports=ports))
-
-        # Check the created status of all the tracked instances
         for container in self.instances:
-            if container['name'] in created_container_names:
-                container['Created'] = True
+            name = container.get('name')
+            if container.get('created'):
+                cd = self._docker.containers(filters={'name': name})[0]
+                status_list.append(Status(name=name,
+                                          state=cd.get('Status'),
+                                          provider='docker',
+                                          ports=cd.get('Ports')))
             else:
-                container['Created'] = False
-                status_list.append(Status(name=container['name'],
-                                          state="Not Created",
+                status_list.append(Status(name=name,
+                                          state="not_created",
                                           provider='docker',
                                           ports=[]))
 

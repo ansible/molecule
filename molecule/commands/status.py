@@ -18,9 +18,7 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import os
 import subprocess
-import sys
 
 from molecule import utilities
 from molecule.commands import base
@@ -46,12 +44,6 @@ class Status(base.BaseCommand):
     def execute(self):
         display_all = not any([self.args['--hosts'], self.args['--platforms'],
                                self.args['--providers']])
-
-        # Check that an instance is created.
-        if not self.molecule._state.created:
-            msg = 'ERROR: No instances created. Try `{} create` first.'
-            LOG.error(msg.format(os.path.basename(sys.argv[0])))
-            utilities.sysexit()
 
         # Retrieve the status.
         try:
