@@ -46,5 +46,15 @@ def test_install(mocker, galaxy_instance):
     galaxy_instance.install()
 
     mocked.assert_called_once
-    assert re.search(r'ansible-galaxy install -f -r requirements.yml',
-                     str(galaxy_instance.galaxy))
+
+    # NOTE(retr0h): The following is a somewhat gross test, but need to
+    # handle **kwargs expansion being unordered.
+    pieces = str(galaxy_instance.galaxy).split()
+    cmd = pieces.pop(0)
+    subcmd = pieces.pop(0)
+    expected = ['--force', '--role-file=requirements.yml',
+                '--roles-path=test/roles']
+
+    assert re.search(r'ansible-galaxy', cmd)
+    assert 'install' == subcmd
+    assert expected == sorted(pieces)
