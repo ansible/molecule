@@ -84,6 +84,7 @@ ansible:
     - -o IdentitiesOnly=yes
     - -o ControlMaster=auto
     - -o ControlPersist=60s
+  galaxy: {}
   inventory_file: ansible_inventory
   config_file: ansible.cfg
   playbook: playbook.yml
