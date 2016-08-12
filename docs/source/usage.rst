@@ -4,7 +4,8 @@ Usage
 Installation
 ------------
 
-Molecule is distributed as a python package, so you can use familiar methods to manage your installation:
+Molecule is distributed as a python package, so you can use familiar methods to
+manage your installation:
 
 * Install from `PyPI`_ with `pip`
 
@@ -42,7 +43,9 @@ There is also a `pip pattern` for development mode:
 Bash Completion
 ^^^^^^^^^^^^^^^
 
-A bash completion script is provided in the assets directory. It auto-completes the subcommands, options and dynamic arguments such as platform, providers, and hosts.
+A bash completion script is provided in the assets directory. It auto-completes
+the subcommands, options and dynamic arguments such as platform, providers, and
+hosts.
 
 Linux users
 """""""""""
@@ -67,7 +70,8 @@ and in ``~/.bash_profile``, add the following:
     . ~/bash_completion.d/*
   fi
 
-if you are using ``brew`` you can use ``${BASH_COMPLETION_DIR}`` instead of ``${USER_BASH_COMPLETION_DIR}``.
+if you are using ``brew`` you can use ``${BASH_COMPLETION_DIR}`` instead of
+``${USER_BASH_COMPLETION_DIR}``.
 
 Dependencies
 ------------
@@ -123,8 +127,8 @@ molecule.yml
 This file, located in the role directory, contains all the molecule-specific
 information for the role in the directory in
 which it's located. It allows you to configure how molecule, vagrant and
-ansible will behave. This information is contained in 3 top level YAML sections: molecule,
-ansible and vagrant.
+ansible will behave. This information is contained in 3 top level YAML
+sections: molecule, ansible and vagrant.
 
 The molecule section allows you to override molecule defaults, much like you
 might do in a `config.yml` for molecule. This is is the most specific setting
@@ -192,8 +196,9 @@ ansible.cfg.
 Host/Group Vars
 ^^^^^^^^^^^^^^^
 
-Some playbooks require hosts/groups to have certain variables set. If you are in this situation - simply add the
-`host_vars` and/or `group_vars` to the ansible section. For example,
+Some playbooks require hosts/groups to have certain variables set. If you are
+in this situation - simply add the `host_vars` and/or `group_vars` to the
+ansible section. For example,
 
 .. code-block:: yaml
 
@@ -210,9 +215,30 @@ Some playbooks require hosts/groups to have certain variables set. If you are in
         foo1-01:
           - set_this_value: True
 
-This example will set the variables for the ansible groups `foo1` and `foo2`. For hosts `foo1-01` the value `set_this_value`
-will be set to True.
+This example will set the variables for the ansible groups `foo1`
+and `foo2`. For hosts `foo1-01` the value `set_this_value` will be
+set to True.
 
+Role Requirements
+^^^^^^^^^^^^^^^^^
+
+Testing roles may rely upon additional roles.  In this case adding
+``requirements_file`` to the ansible section, will cause molecule to download
+roles using `Ansible Galaxy`_.
+
+Additional options can be passed to ``ansible-galaxy`` through the ``galaxy``
+option under the ansible section.  Any option set in this section will override
+the defaults.
+
+.. _`Ansible Galaxy`: http://docs.ansible.com/ansible/galaxy.html
+
+.. code-block:: yaml
+
+    ansible:
+      requirements_file: requirements.yml
+      galaxy:
+          ignore-certs: True
+          ignore-errors: True
 
 Vagrant
 -------
@@ -276,9 +302,9 @@ simply be named vagrant-01 instead of vagrant-01-rhel-7.
           raw_config_args:
             - "vm.network 'private_network', type: 'dhcp', auto_config: false"
 
-A ``box_url`` is not required - if the vagrant box is available on hashicorp, it
-can be specified in ``box``. For example, the same image in the previous example
-can be invoked like so:
+A ``box_url`` is not required - if the vagrant box is available on hashicorp,
+it can be specified in ``box``. For example, the same image in the previous
+example can be invoked like so:
 
 .. code:: yaml
 
@@ -289,12 +315,14 @@ can be invoked like so:
 Docker
 ------
 Molecule supports docker too. If you want to test roles on containers, remove
-the vagrant option or initialize your role with the ``--docker`` flag. Docker, of course must be installed
-onto your system. The daemon does not need to be running on your machine. Molecule will simply pull the environment
-variables from your docker client. Also, the Ansible ``connection`` must be set to docker with user root.
+the vagrant option or initialize your role with the ``--docker`` flag. Docker,
+of course must be installed onto your system. The daemon does not need to be
+running on your machine. Molecule will simply pull the environment variables
+from your docker client. Also, the Ansible ``connection`` must be set to docker
+with user root.
 
-In order to use the docker provisioner, the image used must have at least one of
-the following:
+In order to use the docker provisioner, the image used must have at least one
+of the following:
 
 - apt-get/yum
 - python 2.5+
@@ -318,12 +346,12 @@ Here is an example of a complete ``molecule.yml`` with 2 containers.
         image: ubuntu
         image_version: '14.04'
 
-Note: numeric versions need to be put in quotes. If the image version tag is not
-a number, it does not need to be in quotes.
+Note: numeric versions need to be put in quotes. If the image version tag is
+not a number, it does not need to be in quotes.
 
-A specific registry can also be defined with the ``registry`` option in the container.
-When accessing a private registry, ensure your docker client is logged into whichever
-registry you are trying to access.
+A specific registry can also be defined with the ``registry`` option in the
+container.  When accessing a private registry, ensure your docker client is
+logged into whichever registry you are trying to access.
 
 Testinfra
 ---------
@@ -373,10 +401,12 @@ than elements at the bottom of the list.
 Using Molecule In Travis
 ------------------------
 
-`Travis`_ is an excellent CI platform for testing Ansible roles. With the docker provisioner,
-molecule can easily be used to test multiple configurations on Travis. Here is an example of a
-``.travis.yml`` that is used to test a role named foo1. In this example, the role ``foo1`` uses the docker
-provisioner and is assumed to be in the directory ``roledir/foo1`` with the proper ``molecule.yml``.
+`Travis`_ is an excellent CI platform for testing Ansible roles. With the
+docker provisioner, molecule can easily be used to test multiple configurations
+on Travis. Here is an example of a ``.travis.yml`` that is used to test a role
+named foo1. In this example, the role ``foo1`` uses the docker provisioner and
+is assumed to be in the directory ``roledir/foo1`` with the proper
+``molecule.yml``.
 
 .. code-block:: yaml
 

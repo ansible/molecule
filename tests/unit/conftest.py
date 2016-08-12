@@ -208,6 +208,7 @@ def ansible_section_data():
                 '-o UserKnownHostsFile=/dev/null', '-o IdentitiesOnly=yes',
                 '-o ControlMaster=auto', '-o ControlPersist=60s'
             ],
+            'galaxy': {},
             'config_file': 'config_file',
             'inventory_file': 'inventory_file',
             'playbook': 'playbook.yml'

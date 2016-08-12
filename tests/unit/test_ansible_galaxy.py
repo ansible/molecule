@@ -50,11 +50,24 @@ def test_install(mocker, galaxy_instance):
     # NOTE(retr0h): The following is a somewhat gross test, but need to
     # handle **kwargs expansion being unordered.
     pieces = str(galaxy_instance.galaxy).split()
-    cmd = pieces.pop(0)
-    subcmd = pieces.pop(0)
     expected = ['--force', '--role-file=requirements.yml',
                 '--roles-path=test/roles']
 
-    assert re.search(r'ansible-galaxy', cmd)
-    assert 'install' == subcmd
-    assert expected == sorted(pieces)
+    assert re.search(r'ansible-galaxy', pieces[0])
+    assert 'install' == pieces[1]
+    assert expected == sorted(pieces[2:])
+
+
+def test_install_overrides(mocker, galaxy_instance):
+    galaxy_instance._config['ansible']['galaxy'] = {'foo': 'bar',
+                                                    'force': False}
+    mocked = mocker.patch('molecule.ansible_galaxy.AnsibleGalaxy.execute')
+    galaxy_instance.install()
+
+    mocked.assert_called_once
+
+    pieces = str(galaxy_instance.galaxy).split()
+    expected = ['--foo=bar', '--role-file=requirements.yml',
+                '--roles-path=test/roles']
+
+    assert expected == sorted(pieces[2:])
