@@ -20,16 +20,11 @@
 
 import pytest
 
-from molecule import config
-from molecule import core
 
+def test_get_provisioner_invalid_instance(molecule_default_provider_instance):
+    del molecule_default_provider_instance.config.config['vagrant']
 
-def test_get_provisioner_invalid_instance(temp_files, molecule_args):
-    c = temp_files(fixtures=['molecule_invalid_provisioner_config'])
-    m = core.Molecule(molecule_args)
-    m.config = config.Config(configs=c)
-
-    assert m.get_provisioner() is None
+    assert molecule_default_provider_instance.get_provisioner() is None
 
 
 def test_parse_provisioning_output_failure_00(

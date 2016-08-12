@@ -22,7 +22,6 @@ import pytest
 
 from molecule import config
 from molecule import core
-from molecule import utilities
 
 
 @pytest.fixture()
@@ -43,16 +42,3 @@ def molecule_default_provider_instance(temp_files, molecule_args):
     m.main()
 
     return m
-
-
-@pytest.fixture()
-def molecule_invalid_provisioner_config(
-        molecule_section_data, invalid_section_data, ansible_section_data):
-    return reduce(
-        lambda x, y: utilities.merge_dicts(x, y),
-        [molecule_section_data, invalid_section_data, ansible_section_data])
-
-
-@pytest.fixture()
-def invalid_section_data():
-    return {}
