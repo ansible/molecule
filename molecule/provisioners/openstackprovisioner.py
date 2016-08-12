@@ -36,23 +36,6 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
         self._platform = self._get_platform()
         self._openstack = shade.openstack_cloud()
 
-    def set_keypair(self):
-        keypair_name = self.molecule.config.config['openstack']['keypair']
-        pub_key_file = self.molecule.config.config['openstack']['keyfile']
-
-        if self._openstack.search_keypairs(keypair_name):
-            LOG.info('Keypair already exists. Skipping import.')
-        else:
-            LOG.info('Adding keypair...')
-            self._openstack.create_keypair(keypair_name, open(
-                pub_key_file, 'r').read().strip())
-
-    def _get_provider(self):
-        return 'openstack'
-
-    def _get_platform(self):
-        return 'openstack'
-
     @property
     def name(self):
         return 'openstack'
@@ -63,11 +46,11 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
 
     @property
     def default_provider(self):
-        return 'openstack'
+        return self._provider
 
     @property
     def default_platform(self):
-        return 'openstack'
+        return self._platform
 
     @property
     def provider(self):
@@ -82,43 +65,35 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
         self._platform = val
 
     @property
-    def host_template(self):
-        return '{} ansible_ssh_host={} ansible_ssh_user={} ansible_ssh_extra_args="-o ConnectionAttempts=5"\n'
-
-    @property
     def valid_providers(self):
-        return [{'name': 'Openstack'}]
+        return [{'name': self.provider}]
 
     @property
     def valid_platforms(self):
-        return [{'name': 'Openstack'}]
+        return [{'name': self.platform}]
 
     @property
     def ssh_config_file(self):
         return None
 
     @property
+    def ansible_connection_params(self):
+        return {'connection': 'ssh'}
+
+    @property
     def testinfra_args(self):
-        kwargs = {
+        return {
             'ansible-inventory':
             self.molecule.config.config['ansible']['inventory_file'],
             'connection': 'ansible'
         }
 
-        return kwargs
-
     @property
     def serverspec_args(self):
         return dict()
 
-    @property
-    def ansible_connection_params(self):
-        params = {'connection': 'ssh'}
-
-        return params
-
     def up(self, no_provision=True):
-        self.set_keypair()
+        self._set_keypair()
 
         active_instances = self._openstack.list_servers()
         active_instance_names = {instance['name']: instance['status']
@@ -172,14 +147,14 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
         status_list = []
 
         for instance in self.instances:
-            if self.instance_is_accessible(instance):
+            if self._instance_is_accessible(instance):
                 status_list.append(Status(name=instance['name'],
                                           state='UP',
-                                          provider='openstack'))
+                                          provider=self.provider))
             else:
                 status_list.append(Status(name=instance['name'],
                                           state='not_created',
-                                          provider='openstack'))
+                                          provider=self.provider))
 
         return status_list
 
@@ -195,16 +170,8 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
                         return host_address
         return None
 
-    def instance_is_accessible(self, instance):
-        instance_ip = self.conf(instance['name'])
-        if instance_ip is not None:
-            return utilities.check_ssh_availability(instance_ip,
-                                                    instance['sshuser'],
-                                                    timeout=0)
-        return False
-
     def inventory_entry(self, instance):
-        template = self.host_template
+        template = self._host_template()
 
         for server in self._openstack.list_servers(detailed=False):
             if server['name'] == instance['name']:
@@ -226,3 +193,31 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
                 user = instance['sshuser']
 
         return [conf, user]
+
+    def _get_provider(self):
+        return 'openstack'
+
+    def _get_platform(self):
+        return 'openstack'
+
+    def _set_keypair(self):
+        keypair_name = self.molecule.config.config['openstack']['keypair']
+        pub_key_file = self.molecule.config.config['openstack']['keyfile']
+
+        if self._openstack.search_keypairs(keypair_name):
+            LOG.info('Keypair already exists. Skipping import.')
+        else:
+            LOG.info('Adding keypair...')
+            self._openstack.create_keypair(keypair_name, open(
+                pub_key_file, 'r').read().strip())
+
+    def _host_template(self):
+        return '{} ansible_ssh_host={} ansible_ssh_user={} ansible_ssh_extra_args="-o ConnectionAttempts=5"\n'
+
+    def _instance_is_accessible(self, instance):
+        instance_ip = self.conf(instance['name'])
+        if instance_ip is not None:
+            return utilities.check_ssh_availability(instance_ip,
+                                                    instance['sshuser'],
+                                                    timeout=0)
+        return False

@@ -38,53 +38,13 @@ class VagrantProvisioner(baseprovisioner.BaseProvisioner):
         self._vagrant.env = molecule._env
         self._updated_multiplatform = False
 
-    def _get_provider(self):
-        if self.molecule._args.get('--provider'):
-            if not [item
-                    for item in self.molecule.config.config['vagrant'][
-                        'providers']
-                    if item['name'] == self.molecule._args['--provider']]:
-                raise baseprovisioner.InvalidProviderSpecified()
-            self.molecule._state.change_state(
-                'default_provider', self.molecule._args['--provider'])
-            self.molecule._env[
-                'VAGRANT_DEFAULT_PROVIDER'] = self.molecule._args['--provider']
-        else:
-            self.molecule._env[
-                'VAGRANT_DEFAULT_PROVIDER'] = self.default_provider
-
-        return self.molecule._env['VAGRANT_DEFAULT_PROVIDER']
-
-    def _get_platform(self):
-        if self.molecule._args.get('--platform'):
-            if self.molecule._args['--platform'] != 'all':
-                if not [item
-                        for item in self.molecule.config.config['vagrant'][
-                            'platforms']
-                        if item['name'] == self.molecule._args['--platform']]:
-                    raise baseprovisioner.InvalidPlatformSpecified()
-            self.molecule._state.change_state(
-                'default_platform', self.molecule._args['--platform'])
-            return self.molecule._args['--platform']
-        return self.default_platform
-
-    def _write_vagrant_file(self):
-        kwargs = {'config': self.molecule.config.config,
-                  'current_platform': self.platform,
-                  'current_provider': self.provider}
-
-        template = self.molecule.config.config['molecule'][
-            'vagrantfile_template']
-        dest = self.molecule.config.config['molecule']['vagrantfile_file']
-        utilities.write_template(template, dest, kwargs=kwargs)
-
     @property
     def name(self):
         return 'vagrant'
 
     @property
     def instances(self):
-        self.populate_platform_instances()
+        self._populate_platform_instances()
         return self.molecule.config.config['vagrant']['instances']
 
     @property
@@ -138,10 +98,6 @@ class VagrantProvisioner(baseprovisioner.BaseProvisioner):
         self._platform = val
 
     @property
-    def host_template(self):
-        return '{} ansible_ssh_host={} ansible_ssh_port={} ansible_ssh_private_key_file={} ansible_ssh_user={}\n'
-
-    @property
     def valid_providers(self):
         return self.molecule.config.config['vagrant']['providers']
 
@@ -154,27 +110,23 @@ class VagrantProvisioner(baseprovisioner.BaseProvisioner):
         return '.vagrant/ssh-config'
 
     @property
+    def ansible_connection_params(self):
+        return {'user': 'vagrant', 'connection': 'ssh'}
+
+    @property
     def testinfra_args(self):
-        kwargs = {
+        return {
             'ansible-inventory':
             self.molecule.config.config['ansible']['inventory_file'],
             'connection': 'ansible'
         }
 
-        return kwargs
-
     @property
     def serverspec_args(self):
         return dict()
 
-    @property
-    def ansible_connection_params(self):
-        params = {'user': 'vagrant', 'connection': 'ssh'}
-
-        return params
-
     def up(self, no_provision=True):
-        self.populate_platform_instances()
+        self._populate_platform_instances()
         self._write_vagrant_file()
         self._vagrant.up(no_provision)
 
@@ -222,7 +174,7 @@ class VagrantProvisioner(baseprovisioner.BaseProvisioner):
             ' '.join(self.molecule.config.config['molecule']['raw_ssh_args'])
         ]
 
-    def populate_platform_instances(self):
+    def _populate_platform_instances(self):
         if self.molecule._args.get('--platform'):
             if len(self.molecule.config.config['vagrant'][
                     'platforms']) > 1 and self.molecule._args[
@@ -244,3 +196,43 @@ class VagrantProvisioner(baseprovisioner.BaseProvisioner):
                 self.molecule.config.config['vagrant'][
                     'instances'] = new_instances
                 self._updated_multiplatform = True
+
+    def _get_provider(self):
+        if self.molecule._args.get('--provider'):
+            if not [item
+                    for item in self.molecule.config.config['vagrant'][
+                        'providers']
+                    if item['name'] == self.molecule._args['--provider']]:
+                raise baseprovisioner.InvalidProviderSpecified()
+            self.molecule._state.change_state(
+                'default_provider', self.molecule._args['--provider'])
+            self.molecule._env[
+                'VAGRANT_DEFAULT_PROVIDER'] = self.molecule._args['--provider']
+        else:
+            self.molecule._env[
+                'VAGRANT_DEFAULT_PROVIDER'] = self.default_provider
+
+        return self.molecule._env['VAGRANT_DEFAULT_PROVIDER']
+
+    def _get_platform(self):
+        if self.molecule._args.get('--platform'):
+            if self.molecule._args['--platform'] != 'all':
+                if not [item
+                        for item in self.molecule.config.config['vagrant'][
+                            'platforms']
+                        if item['name'] == self.molecule._args['--platform']]:
+                    raise baseprovisioner.InvalidPlatformSpecified()
+            self.molecule._state.change_state(
+                'default_platform', self.molecule._args['--platform'])
+            return self.molecule._args['--platform']
+        return self.default_platform
+
+    def _write_vagrant_file(self):
+        kwargs = {'config': self.molecule.config.config,
+                  'current_platform': self.platform,
+                  'current_provider': self.provider}
+
+        template = self.molecule.config.config['molecule'][
+            'vagrantfile_template']
+        dest = self.molecule.config.config['molecule']['vagrantfile_file']
+        utilities.write_template(template, dest, kwargs=kwargs)

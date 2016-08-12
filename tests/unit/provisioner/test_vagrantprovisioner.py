@@ -18,62 +18,83 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import os
-import shutil
-
 import pytest
-import vagrant
-import yaml
 
-from molecule.commands import converge
-from molecule.commands import create
-from molecule.commands import destroy
+from molecule import config
+from molecule import core
+from molecule import state
+from molecule.provisioners import vagrantprovisioner
 
-pytestmark = pytest.mark.skipif(
-    vagrant.get_vagrant_executable() is None,
-    reason='No vagrant executable found - skipping vagrant tests')
+# TODO(retr0h): Test instance create/delete through the vagrant instance.
 
 
 @pytest.fixture()
-def molecule_file(tmpdir, request, molecule_vagrant_config):
-    d = tmpdir.mkdir('molecule')
-    c = d.join(os.extsep.join(('molecule', 'yml')))
-    data = molecule_vagrant_config
-    c.write(data)
+def molecule_instance(temp_files, state_path):
+    c = temp_files(fixtures=['molecule_vagrant_config'])
+    m = core.Molecule(dict())
+    m.config = config.Config(configs=c)
+    m._state = state.State(state_file=state_path)
 
-    pbook = d.join(os.extsep.join(('playbook', 'yml')))
-    data = [{'hosts': 'all', 'tasks': [{'command': 'echo'}]}]
-    pbook.write(yaml.safe_dump(data))
-
-    os.chdir(d.strpath)
-
-    def cleanup():
-        try:
-            des = destroy.Destroy([], [])
-            des.execute()
-        except SystemExit:
-            pass
-        os.remove(c.strpath)
-        shutil.rmtree(d.strpath)
-
-    request.addfinalizer(cleanup)
-
-    return c.strpath
+    return m
 
 
-def test_vagrant_create(molecule_file):
-    c = create.Create([], [])
-
-    try:
-        c.execute()
-    except SystemExit as f:
-        assert f.code == 0
+@pytest.fixture()
+def vagrant_instance(molecule_instance, request):
+    return vagrantprovisioner.VagrantProvisioner(molecule_instance)
 
 
-def test_vagrant_converge(molecule_file):
-    c = converge.Converge([], [])
+def test_name(vagrant_instance):
+    assert 'vagrant' == vagrant_instance.name
 
-    try:
-        c.execute()
-    except SystemExit as f:
-        assert f.code == 0
+
+def test_instances(vagrant_instance):
+    assert 'aio-01' == vagrant_instance.instances[0]['name']
+
+
+def test_default_provider(vagrant_instance):
+    assert 'virtualbox' == vagrant_instance.default_provider
+
+
+def test_default_platform(vagrant_instance):
+    assert 'ubuntu' == vagrant_instance.default_platform
+
+
+def test_provider(vagrant_instance):
+    assert 'virtualbox' == vagrant_instance.provider
+
+
+def test_platform(vagrant_instance):
+    assert 'ubuntu' == vagrant_instance.platform
+
+
+def test_platform_setter(vagrant_instance):
+    vagrant_instance.platform = 'foo_platform'
+
+    assert 'foo_platform' == vagrant_instance.platform
+
+
+def test_valid_providers(vagrant_instance):
+    expected = [{'type': 'virtualbox', 'name': 'virtualbox'}]
+
+    assert expected == vagrant_instance.valid_providers
+
+
+def test_valid_platforms(vagrant_instance):
+    expected = [{'box': 'ubuntu/trusty64', 'name': 'ubuntu'}]
+
+    assert expected == vagrant_instance.valid_platforms
+
+
+def test_ssh_config_file(vagrant_instance):
+    assert '.vagrant/ssh-config' == vagrant_instance.ssh_config_file
+
+
+def test_ansible_connection_params(vagrant_instance):
+    d = vagrant_instance.ansible_connection_params
+
+    assert 'vagrant' == d['user']
+    assert 'ssh' == d['connection']
+
+
+def test_serverspec_args(vagrant_instance):
+    assert {} == vagrant_instance.serverspec_args

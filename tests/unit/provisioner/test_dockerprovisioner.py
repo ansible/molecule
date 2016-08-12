@@ -69,21 +69,61 @@ def docker_instance(molecule_instance, request):
 
 
 def test_name(docker_instance):
-    # false values don't exist in arg dict at all
     assert 'docker' == docker_instance.name
-
-
-def test_get_provisioner(molecule_instance):
-    assert 'docker' == molecule_instance.get_provisioner().name
-
-
-def test_up(docker_instance):
-    docker_instance.up()
 
 
 def test_instances(docker_instance):
     assert 'test1' == docker_instance.instances[0]['name']
     assert 'test2' == docker_instance.instances[1]['name']
+
+
+def test_default_provider(docker_instance):
+    assert 'docker' == docker_instance.default_provider
+
+
+def test_default_platform(docker_instance):
+    assert 'docker' == docker_instance.default_platform
+
+
+def test_provider(docker_instance):
+    assert 'docker' == docker_instance.provider
+
+
+def test_platform(docker_instance):
+    assert 'docker' == docker_instance.platform
+
+
+def test_platform_setter(docker_instance):
+    docker_instance.platform = 'foo_platform'
+
+    assert 'foo_platform' == docker_instance.platform
+
+
+def test_valid_providers(docker_instance):
+    assert [{'name': 'docker'}] == docker_instance.valid_providers
+
+
+def test_valid_platforms(docker_instance):
+    assert [{'name': 'docker'}] == docker_instance.valid_platforms
+
+
+def test_ssh_config_file(docker_instance):
+    assert docker_instance.ssh_config_file is None
+
+
+def test_ansible_connection_params(docker_instance):
+    d = docker_instance.ansible_connection_params
+
+    assert 'root' == d['user']
+    assert 'docker' == d['connection']
+
+
+def test_serverspec_args(docker_instance):
+    assert {} == docker_instance.serverspec_args
+
+
+def test_up(docker_instance):
+    docker_instance.up()
 
 
 def test_status(docker_instance):
@@ -102,6 +142,8 @@ def test_status(docker_instance):
 def test_port_bindings(docker_instance):
     docker_instance.up()
 
+    # TODO(retr0h): This test intermittently fails due to
+    # dicts being unordered.
     assert docker_instance.status()[0].ports == [
         {
             'PublicPort': 443,

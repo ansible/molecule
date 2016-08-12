@@ -55,28 +55,28 @@ def test_print_valid_platforms(capsys, molecule_instance):
     molecule_instance._print_valid_platforms()
     out, _ = capsys.readouterr()
 
-    assert 'Openstack\n' == out
+    assert 'openstack  (default)\n' == out
 
 
 def test_print_valid_platforms_with_porcelain(capsys, molecule_instance):
     molecule_instance._print_valid_platforms(porcelain=True)
     out, _ = capsys.readouterr()
 
-    assert 'Openstack\n' == out
+    assert 'openstack  d\n' == out
 
 
 def test_print_valid_providers(capsys, molecule_instance):
     molecule_instance._print_valid_providers()
     out, _ = capsys.readouterr()
 
-    assert 'Openstack\n' == out
+    assert 'openstack  (default)\n' == out
 
 
 def test_print_valid_providers_with_porcelain(capsys, molecule_instance):
     molecule_instance._print_valid_providers(porcelain=True)
     out, _ = capsys.readouterr()
 
-    assert 'Openstack\n' == out
+    assert 'openstack  d\n' == out
 
 
 def test_instances_state(molecule_instance):
