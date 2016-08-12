@@ -1,0 +1,23 @@
+---
+ansible:
+  raw_env_vars:
+    ANSIBLE_ROLES_PATH: ../../../roles:../../../../roles
+
+openstack:
+  keypair: KeyName
+  keyfile: ~/.ssh/id_rsa
+  instances:
+    - name: full-01
+      image: 'CentOS 7'
+      flavor: m1.xlarge
+      sshuser: centos
+      ansible_groups:
+        - example-group
+        - example-group1
+    - name: full-02
+      image: 'CentOS 7'
+      flavor: m1.xlarge
+      sshuser: centos
+      ansible_groups:
+        - example-group
+        - example-group2
