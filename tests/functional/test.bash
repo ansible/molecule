@@ -27,6 +27,7 @@ set -e
 export FUNCTIONAL_TEST_BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export VAGRANT_FUNCTIONAL_TEST_BASE_DIR="${FUNCTIONAL_TEST_BASE_DIR}/vagrant"
 export DOCKER_FUNCTIONAL_TEST_BASE_DIR="${FUNCTIONAL_TEST_BASE_DIR}/docker"
+export OPENSTACK_FUNCTIONAL_TEST_BASE_DIR="${FUNCTIONAL_TEST_BASE_DIR}/openstack"
 ANSIBLE_MAJOR_VERSION=$(ansible --version|head -1|awk '{print $NF}'|cut -d\. -f1)
 
 source ${VIRTUAL_ENV}/bin/activate
@@ -66,3 +67,9 @@ if [ $(which vagrant) ]; then
 else
 	echo_warn "Vagrant executable not found -- skipping!"
 fi
+
+echo_info "OpenStack driver"
+for test in ${OPENSTACK_FUNCTIONAL_TEST_BASE_DIR}/test_*.bash; do
+	echo_info "Testing -> ${test}"
+	source ${test}
+done

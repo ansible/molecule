@@ -19,6 +19,7 @@
 #  THE SOFTWARE.
 
 import collections
+import os
 
 import shade
 
@@ -174,22 +175,24 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
             if self.instance_is_accessible(instance):
                 status_list.append(Status(name=instance['name'],
                                           state='UP',
-                                          provider='Openstack'))
+                                          provider='openstack'))
             else:
                 status_list.append(Status(name=instance['name'],
                                           state='not_created',
-                                          provider='Openstack'))
+                                          provider='openstack'))
 
         return status_list
 
     def conf(self, name=None, ssh_config=False):
-        with open(self.molecule.config.config['ansible'][
-                'inventory_file']) as instance:
-            for line in instance:
-                if len(line.split()) > 0 and line.split()[0] == name:
-                    ansible_host = line.split()[1]
-                    host_address = ansible_host.split('=')[1]
-                    return host_address
+        inventory_file = self.molecule.config.config['ansible'][
+            'inventory_file']
+        if os.path.exists(inventory_file):
+            with open(inventory_file) as stream:
+                for line in stream:
+                    if len(line.split()) > 0 and line.split()[0] == name:
+                        ansible_host = line.split()[1]
+                        host_address = ansible_host.split('=')[1]
+                        return host_address
         return None
 
     def instance_is_accessible(self, instance):
