@@ -55,13 +55,19 @@ class AnsibleGalaxy(object):
         :return: None
         """
         requirements_file = self._config['ansible']['requirements_file']
+        roles_path = os.path.join(self._config['molecule']['molecule_dir'],
+                                  'roles')
+        galaxy_options = {
+            'force': True,
+            'role-file': requirements_file,
+            'roles-path': roles_path
+        }
+
         self.galaxy = sh.ansible_galaxy.bake('install',
-                                             '-f',
-                                             '-r',
-                                             requirements_file,
                                              _env=self.env,
                                              _out=self.out,
-                                             _err=self.err)
+                                             _err=self.err,
+                                             **galaxy_options)
 
     def add_env_arg(self, name, value):
         """
@@ -90,8 +96,6 @@ class AnsibleGalaxy(object):
             utilities.sysexit(e.exit_code)
 
     def install(self):
-        config_file = self._config['ansible']['config_file']
         utilities.print_info('Installing role dependencies ...')
-        self.add_env_arg('ANSIBLE_CONFIG', config_file)
         self.bake()
         self.execute()
