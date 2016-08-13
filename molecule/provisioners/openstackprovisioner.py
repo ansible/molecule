@@ -145,7 +145,6 @@ class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
         Status = collections.namedtuple('Status', ['name', 'state',
                                                    'provider'])
         status_list = []
-
         for instance in self.instances:
             if self._instance_is_accessible(instance):
                 status_list.append(Status(name=instance['name'],

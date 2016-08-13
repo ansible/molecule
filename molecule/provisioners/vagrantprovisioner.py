@@ -18,8 +18,10 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import os
+import collections
 import copy
+import os
+import subprocess
 
 import vagrant
 
@@ -140,7 +142,10 @@ class VagrantProvisioner(baseprovisioner.BaseProvisioner):
                 'vagrantfile_file'])
 
     def status(self):
-        return self._vagrant.status()
+        try:
+            return self._vagrant.status()
+        except subprocess.CalledProcessError:
+            return self._fallback_status()
 
     def conf(self, vm_name=None, ssh_config=False):
         if ssh_config:
@@ -236,3 +241,10 @@ class VagrantProvisioner(baseprovisioner.BaseProvisioner):
             'vagrantfile_template']
         dest = self.molecule.config.config['molecule']['vagrantfile_file']
         utilities.write_template(template, dest, kwargs=kwargs)
+
+    def _fallback_status(self):
+        Status = collections.namedtuple('Status', ['name', 'state',
+                                                   'provider'])
+        return [Status(name=instance['name'],
+                       state='not_created',
+                       provider=self.provider) for instance in self.instances]
