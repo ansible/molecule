@@ -27,7 +27,7 @@ from molecule import config
 
 
 @pytest.fixture()
-def galaxy_instance(temp_files):
+def ansible_galaxy_instance(temp_files):
     confs = temp_files(fixtures=['molecule_vagrant_config'])
     c = config.Config(configs=confs)
     c.config['ansible']['requirements_file'] = 'requirements.yml'
@@ -35,21 +35,21 @@ def galaxy_instance(temp_files):
     return ansible_galaxy.AnsibleGalaxy(c.config)
 
 
-def test_add_env_arg(galaxy_instance):
-    galaxy_instance.add_env_arg('MOLECULE_1', 'test')
+def test_add_env_arg(ansible_galaxy_instance):
+    ansible_galaxy_instance.add_env_arg('MOLECULE_1', 'test')
 
-    assert 'test' == galaxy_instance.env['MOLECULE_1']
+    assert 'test' == ansible_galaxy_instance.env['MOLECULE_1']
 
 
-def test_install(mocker, galaxy_instance):
+def test_install(mocker, ansible_galaxy_instance):
     mocked = mocker.patch('molecule.ansible_galaxy.AnsibleGalaxy.execute')
-    galaxy_instance.install()
+    ansible_galaxy_instance.install()
 
     mocked.assert_called_once
 
     # NOTE(retr0h): The following is a somewhat gross test, but need to
     # handle **kwargs expansion being unordered.
-    pieces = str(galaxy_instance.galaxy).split()
+    pieces = str(ansible_galaxy_instance._galaxy).split()
     expected = ['--force', '--role-file=requirements.yml',
                 '--roles-path=test/roles']
 
@@ -58,15 +58,15 @@ def test_install(mocker, galaxy_instance):
     assert expected == sorted(pieces[2:])
 
 
-def test_install_overrides(mocker, galaxy_instance):
-    galaxy_instance._config['ansible']['galaxy'] = {'foo': 'bar',
-                                                    'force': False}
+def test_install_overrides(mocker, ansible_galaxy_instance):
+    ansible_galaxy_instance._config['ansible']['galaxy'] = {'foo': 'bar',
+                                                            'force': False}
     mocked = mocker.patch('molecule.ansible_galaxy.AnsibleGalaxy.execute')
-    galaxy_instance.install()
+    ansible_galaxy_instance.install()
 
     mocked.assert_called_once
 
-    pieces = str(galaxy_instance.galaxy).split()
+    pieces = str(ansible_galaxy_instance._galaxy).split()
     expected = ['--foo=bar', '--role-file=requirements.yml',
                 '--roles-path=test/roles']
 

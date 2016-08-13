@@ -24,101 +24,100 @@ from molecule import ansible_playbook
 
 
 @pytest.fixture()
-def ansible():
-    data = {
-        'playbook': 'playbook.yml',
-        'config_file': 'test.cfg',
-        'limit': 'all',
-        'verbose': 'vvvv',
-        'diff': True,
-        'host_key_checking': False,
-        'raw_ssh_args': [
-            '-o UserKnownHostsFile=/dev/null', '-o IdentitiesOnly=yes',
-            '-o ControlMaster=auto', '-o ControlPersist=60s'
-        ],
-        'raw_env_vars': {
-            'TEST_1': 'test_1'
-        }
-    }
-
-    return ansible_playbook.AnsiblePlaybook(data)
+def ansible_playbook_instance(ansible_section_data):
+    return ansible_playbook.AnsiblePlaybook(ansible_section_data['ansible'])
 
 
-def test_arg_loading(ansible):
-    # string value set
-    assert 'all' == ansible.cli['limit']
-
-    # true value set
-    assert ansible.cli['diff']
-
-    # false values don't exist in arg dict at all
-    assert ansible.cli.get('sudo_user') is None
+def test_init_arg_loading_string(ansible_playbook_instance):
+    assert 'all' == ansible_playbook_instance._cli.get('limit')
 
 
-def test_parse_arg_special_cases(ansible):
-    # raw environment variables are set
-    assert ansible.cli.get('raw_env_vars') is None
-    assert 'test_1' == ansible.env['TEST_1']
+def test_init_arg_loading_bool_true(ansible_playbook_instance):
+    assert ansible_playbook_instance._cli.get('diff')
 
-    # raw_ssh_args set
-    assert ansible.cli.get('raw_ssh_args') is None
+
+def test_init_arg_loading_bool_false_not_added(ansible_playbook_instance):
+    assert ansible_playbook_instance._cli.get('sudo_user') is None
+
+
+def test_parse_arg_raw_env(ansible_playbook_instance):
+    assert ansible_playbook_instance._cli.get('raw_env_vars') is None
+    assert 'bar' == ansible_playbook_instance.env.get('FOO')
+
+
+def test_parse_arg_host_key_checking(ansible_playbook_instance):
+    assert ansible_playbook_instance._cli.get('host_key_checking') is None
+    assert 'false' == ansible_playbook_instance.env.get(
+        'ANSIBLE_HOST_KEY_CHECKING')
+
+
+def test_parse_arg_raw_ssh_args(ansible_playbook_instance):
+    assert ansible_playbook_instance._cli.get('raw_ssh_args') is None
     expected = ('-o UserKnownHostsFile=/dev/null -o IdentitiesOnly=yes '
                 '-o ControlMaster=auto -o ControlPersist=60s')
-    assert expected == ansible.env['ANSIBLE_SSH_ARGS']
-
-    # host_key_checking gets set in environment as string 'false'
-    assert ansible.cli.get('host_key_checking') is None
-    assert 'false' == ansible.env['ANSIBLE_HOST_KEY_CHECKING']
-
-    # config_file is set in environment
-    assert ansible.cli.get('config_file') is None
-    assert 'test.cfg' == ansible.env['ANSIBLE_CONFIG']
-
-    # playbook is set as attribute
-    assert ansible.cli.get('playbook') is None
-    assert 'playbook.yml' == ansible.playbook
-
-    # verbose is set in the right place
-    assert ansible.cli.get('verbose') is None
-    assert '-vvvv' in ansible.cli_pos
+    assert expected == ansible_playbook_instance.env.get('ANSIBLE_SSH_ARGS')
 
 
-def test_add_cli_arg(ansible):
-    # redefine a previously defined value
-    ansible.add_cli_arg('limit', 'test')
-
-    assert 'test' == ansible.cli['limit']
-
-    # add a new value
-    ansible.add_cli_arg('molecule_1', 'test')
-
-    assert 'test' == ansible.cli['molecule_1']
-
-    # values set as false shouldn't get added
-    ansible.add_cli_arg('molecule_2', None)
-
-    assert 'molecule_2' not in ansible.cli
+def test_parse_arg_config_file(ansible_playbook_instance):
+    assert ansible_playbook_instance._cli.get('config_file') is None
+    assert 'config_file' == ansible_playbook_instance.env.get('ANSIBLE_CONFIG')
 
 
-def test_remove_cli_arg(ansible):
-    ansible.remove_cli_arg('limit')
-
-    assert 'limit' not in ansible.cli
-
-
-def test_add_env_arg(ansible):
-    # redefine a previously defined value
-    ansible.add_env_arg('TEST_1', 'now')
-
-    assert 'now' == ansible.env['TEST_1']
-
-    # add a new value
-    ansible.add_env_arg('MOLECULE_1', 'test')
-
-    assert 'test' == ansible.env['MOLECULE_1']
+def test_parse_arg_playbook(ansible_playbook_instance):
+    assert ansible_playbook_instance._cli.get('playbook') is None
+    assert 'playbook.yml' == ansible_playbook_instance._playbook
 
 
-def test_remove_env_arg(ansible):
-    ansible.remove_env_arg('TEST_1')
+def test_parse_arg_host_vars(ansible_playbook_instance):
+    assert ansible_playbook_instance._cli.get('host_vars') is None
 
-    assert 'TEST_1' not in ansible.env
+
+def test_parse_arg_group_vars(ansible_playbook_instance):
+    assert ansible_playbook_instance._cli.get('group_vars') is None
+
+
+def test_parse_arg_verbose(ansible_playbook_instance):
+    assert ansible_playbook_instance._cli.get('verbose') is None
+    assert '-vvvv' in ansible_playbook_instance._cli_pos
+
+
+def test_add_cli_arg(ansible_playbook_instance):
+    ansible_playbook_instance.add_cli_arg('foo', 'bar')
+
+    assert 'bar' == ansible_playbook_instance._cli.get('foo')
+
+
+def test_add_cli_arg_redefine_existing(ansible_playbook_instance):
+    ansible_playbook_instance.add_cli_arg('foo', 'baz')
+
+    assert 'baz' == ansible_playbook_instance._cli.get('foo')
+
+
+def test_add_cli_arg_bool_false_not_added(ansible_playbook_instance):
+    ansible_playbook_instance.add_cli_arg('bar', None)
+
+    assert 'bar' not in ansible_playbook_instance._cli
+
+
+def test_remove_cli_arg(ansible_playbook_instance):
+    ansible_playbook_instance.remove_cli_arg('foo')
+
+    assert 'foo' not in ansible_playbook_instance._cli
+
+
+def test_add_env_arg(ansible_playbook_instance):
+    ansible_playbook_instance.add_env_arg('FOO', 'bar')
+
+    assert 'bar' == ansible_playbook_instance.env['FOO']
+
+
+def test_add_env_arg_redefine_existing(ansible_playbook_instance):
+    ansible_playbook_instance.add_env_arg('FOO', 'baz')
+
+    assert 'baz' == ansible_playbook_instance.env['FOO']
+
+
+def test_remove_env_arg(ansible_playbook_instance):
+    ansible_playbook_instance.remove_env_arg('FOO')
+
+    assert 'FOO' not in ansible_playbook_instance.env
