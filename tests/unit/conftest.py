@@ -200,7 +200,7 @@ def ansible_section_data():
             'ask_vault_pass': False,
             'vault_password_file': False,
             'limit': 'all',
-            'verbose': False,
+            'verbose': True,
             'diff': True,
             'tags': False,
             'host_key_checking': False,
@@ -211,7 +211,10 @@ def ansible_section_data():
             'galaxy': {},
             'config_file': 'config_file',
             'inventory_file': 'inventory_file',
-            'playbook': 'playbook.yml'
+            'playbook': 'playbook.yml',
+            'raw_env_vars': {
+                'FOO': 'bar'
+            }
         }
     }
 

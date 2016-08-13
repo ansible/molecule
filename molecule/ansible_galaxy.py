@@ -39,10 +39,10 @@ class AnsibleGalaxy(object):
         :return: None
         """
         self._config = config
+        self._galaxy = None
         self.env = _env if _env else os.environ.copy()
         self.out = _out
         self.err = _err
-        self.galaxy = None
 
         # defaults can be redefined with call to add_env_arg() before baking
         self.add_env_arg('PYTHONUNBUFFERED', '1')
@@ -65,11 +65,11 @@ class AnsibleGalaxy(object):
         galaxy_options = utilities.merge_dicts(
             galaxy_default_options, self._config['ansible']['galaxy'])
 
-        self.galaxy = sh.ansible_galaxy.bake('install',
-                                             _env=self.env,
-                                             _out=self.out,
-                                             _err=self.err,
-                                             **galaxy_options)
+        self._galaxy = sh.ansible_galaxy.bake('install',
+                                              _env=self.env,
+                                              _out=self.out,
+                                              _err=self.err,
+                                              **galaxy_options)
 
     def add_env_arg(self, name, value):
         """
@@ -88,11 +88,11 @@ class AnsibleGalaxy(object):
         :return: sh.stdout on success, else None
         :return: None
         """
-        if self.galaxy is None:
+        if self._galaxy is None:
             self.bake()
 
         try:
-            return self.galaxy().stdout
+            return self._galaxy().stdout
         except sh.ErrorReturnCode as e:
             LOG.error('ERROR: {}'.format(e))
             utilities.sysexit(e.exit_code)

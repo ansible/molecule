@@ -37,11 +37,11 @@ class AnsiblePlaybook(object):
         :param _err: Function passed to sh for STDERR
         :return: None
         """
-        self.cli = {}
-        self.cli_pos = []
+        self._playbook = None
+        self._ansible = None
+        self._cli = {}
+        self._cli_pos = []
         self.env = _env if _env else os.environ.copy()
-        self.playbook = None
-        self.ansible = None
 
         # process arguments passed in (typically from molecule.yml's ansible block)
         for k, v in args.iteritems():
@@ -61,10 +61,10 @@ class AnsiblePlaybook(object):
 
         :return: None
         """
-        self.ansible = sh.ansible_playbook.bake(self.playbook,
-                                                *self.cli_pos,
-                                                _env=self.env,
-                                                **self.cli)
+        self._ansible = sh.ansible_playbook.bake(self._playbook,
+                                                 *self._cli_pos,
+                                                 _env=self.env,
+                                                 **self._cli)
 
     def parse_arg(self, name, value):
         """
@@ -97,7 +97,7 @@ class AnsiblePlaybook(object):
             return
 
         if name == 'playbook':
-            self.playbook = value
+            self._playbook = value
             return
 
         if name == 'host_vars' or name == 'group_vars':
@@ -108,7 +108,7 @@ class AnsiblePlaybook(object):
             # for cases where someone passes in verbose: True
             if value is True:
                 value = 'vvvv'
-            self.cli_pos.append('-' + value)
+            self._cli_pos.append('-' + value)
             return
 
         self.add_cli_arg(name, value)
@@ -122,7 +122,7 @@ class AnsiblePlaybook(object):
         :return: None
         """
         if value:
-            self.cli[name] = value
+            self._cli[name] = value
 
     def remove_cli_arg(self, name):
         """
@@ -131,7 +131,7 @@ class AnsiblePlaybook(object):
         :param name: Key name of CLI argument to remove
         :return: None
         """
-        self.cli.pop(name, None)
+        self._cli.pop(name, None)
 
     def add_env_arg(self, name, value):
         """
@@ -158,11 +158,11 @@ class AnsiblePlaybook(object):
 
         :returns: exit code if any, output of command as string
         """
-        if self.ansible is None:
+        if self._ansible is None:
             self.bake()
 
         try:
-            return None, self.ansible().stdout
+            return None, self._ansible().stdout
         except (sh.ErrorReturnCode, sh.ErrorReturnCode_2) as e:
             if not hide_errors:
                 LOG.error('ERROR: {}'.format(e))

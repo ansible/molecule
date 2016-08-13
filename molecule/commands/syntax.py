@@ -44,8 +44,7 @@ class Syntax(base.BaseCommand):
         ansible = ansible_playbook.AnsiblePlaybook(self.molecule.config.config[
             'ansible'])
         ansible.add_cli_arg('syntax-check', True)
-        ansible.add_cli_arg('inventory-file', 'localhost,')
-
+        ansible.add_cli_arg('inventory_file', 'localhost,')
         utilities.print_info("Checking playbooks syntax ...")
 
         return ansible.execute(hide_errors=True)
