@@ -55,32 +55,32 @@ def test_print_valid_platforms(capsys, molecule_instance):
     molecule_instance._print_valid_platforms()
     out, _ = capsys.readouterr()
 
-    assert 'Docker\n' == out
+    assert 'docker  (default)\n' == out
 
 
 def test_print_valid_platforms_with_porcelain(capsys, molecule_instance):
     molecule_instance._print_valid_platforms(porcelain=True)
     out, _ = capsys.readouterr()
 
-    assert 'Docker\n' == out
+    assert 'docker  d\n' == out
 
 
 def test_print_valid_providers(capsys, molecule_instance):
     molecule_instance._print_valid_providers()
     out, _ = capsys.readouterr()
 
-    assert 'Docker\n' == out
+    assert 'docker  (default)\n' == out
 
 
 def test_print_valid_providers_with_porcelain(capsys, molecule_instance):
     molecule_instance._print_valid_providers(porcelain=True)
     out, _ = capsys.readouterr()
 
-    assert 'Docker\n' == out
+    assert 'docker  d\n' == out
 
 
 def test_instances_state(molecule_instance):
-    expected = {'test1-Docker': {'groups': ['group1']},
-                'test2-Docker': {'groups': ['group2']}}
+    expected = {'test1-docker': {'groups': ['group1']},
+                'test2-docker': {'groups': ['group2']}}
 
     assert expected == molecule_instance._instances_state()

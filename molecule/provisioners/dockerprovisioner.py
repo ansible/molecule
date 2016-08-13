@@ -43,12 +43,6 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
         if 'install_python' not in self.molecule.config.config['docker']:
             self.molecule.config.config['docker']['install_python'] = True
 
-    def _get_platform(self):
-        return 'Docker'
-
-    def _get_provider(self):
-        return 'Docker'
-
     @property
     def name(self):
         return 'docker'
@@ -70,31 +64,31 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
 
     @property
     def default_provider(self):
-        pass
+        return self._provider
 
     @property
     def default_platform(self):
-        pass
+        return self._platform
 
     @property
     def provider(self):
-        pass
+        return self._provider
 
     @property
     def platform(self):
-        pass
+        return self._platform
 
     @platform.setter
     def platform(self, val):
-        return
+        self._platform = val
 
     @property
     def valid_providers(self):
-        return [{'name': 'Docker'}]
+        return [{'name': self.provider}]
 
     @property
     def valid_platforms(self):
-        return [{'name': 'Docker'}]
+        return [{'name': self.platform}]
 
     @property
     def ssh_config_file(self):
@@ -102,11 +96,115 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
 
     @property
     def ansible_connection_params(self):
-        params = {'user': 'root', 'connection': 'docker'}
+        return {'user': 'root', 'connection': 'docker'}
 
-        return params
+    @property
+    def testinfra_args(self):
+        return {'connection': 'docker'}
 
-    def build_image(self):
+    @property
+    def serverspec_args(self):
+        return dict()
+
+    def up(self, no_provision=True):
+        if self.molecule.config.config['docker']['install_python']:
+            self._build_ansible_compatible_image()
+        else:
+            self.image_tag = '{}:{}'
+
+        for container in self.instances:
+            if 'privileged' not in container:
+                container['privileged'] = False
+
+            if 'port_bindings' not in container:
+                container['port_bindings'] = {}
+
+            if 'volume_mounts' not in container:
+                container['volume_mounts'] = []
+
+            if 'command' not in container:
+                container['command'] = ""
+
+            docker_host_config = self._docker.create_host_config(
+                privileged=container['privileged'],
+                port_bindings=container['port_bindings'],
+                binds=container['volume_mounts'])
+
+            if (container['created'] is not True):
+                LOG.warning(
+                    'Creating container {} with base image {}:{} ...'.format(
+                        container['name'], container['image'],
+                        container['image_version']), )
+                container = self._docker.create_container(
+                    image=self.image_tag.format(container['image'],
+                                                container['image_version']),
+                    tty=True,
+                    detach=False,
+                    name=container['name'],
+                    ports=container['port_bindings'].keys(),
+                    host_config=docker_host_config,
+                    command=container['command'])
+                self._docker.start(container=container.get('Id'))
+                container['created'] = True
+
+                utilities.print_success('Container created.')
+            else:
+                self._docker.start(container['name'])
+                utilities.print_success('Starting container {}...'.format(
+                    container['name']))
+
+    def destroy(self):
+        for container in self.instances:
+            if (container['created']):
+                LOG.warning('Stopping container {} ...'.format(container[
+                    'name']))
+                self._docker.stop(container['name'], timeout=0)
+                self._docker.remove_container(container['name'])
+                utilities.print_success('Removed container {}.'.format(
+                    container['name']))
+                container['created'] = False
+
+    def status(self):
+        Status = collections.namedtuple('Status', ['name', 'state', 'provider',
+                                                   'ports'])
+        status_list = []
+        for container in self.instances:
+            name = container.get('name')
+            if container.get('created'):
+                cd = self._docker.containers(filters={'name': name})[0]
+                status_list.append(Status(name=name,
+                                          state=cd.get('Status'),
+                                          provider=self.provider,
+                                          ports=cd.get('Ports')))
+            else:
+                status_list.append(Status(name=name,
+                                          state="not_created",
+                                          provider=self.provider,
+                                          ports=[]))
+
+        return status_list
+
+    def conf(self, vm_name=None, ssh_config=False):
+        pass
+
+    def inventory_entry(self, instance):
+        template = '{} connection=docker\n'
+
+        return template.format(instance['name'])
+
+    def login_cmd(self, instance):
+        return 'docker exec -ti {} bash'
+
+    def login_args(self, instance):
+        return [instance]
+
+    def _get_platform(self):
+        return 'docker'
+
+    def _get_provider(self):
+        return 'docker'
+
+    def _build_ansible_compatible_image(self):
         available_images = [tag.encode('utf-8')
                             for image in self._docker.images()
                             for tag in image.get('RepoTags')]
@@ -170,106 +268,3 @@ class DockerProvisioner(baseprovisioner.BaseProvisioner):
                 else:
                     utilities.print_success('Finished building {}'.format(
                         tag_string))
-
-    def up(self, no_provision=True):
-        if self.molecule.config.config['docker']['install_python']:
-            self.build_image()
-        else:
-            self.image_tag = '{}:{}'
-
-        for container in self.instances:
-
-            if 'privileged' not in container:
-                container['privileged'] = False
-
-            if 'port_bindings' not in container:
-                container['port_bindings'] = {}
-
-            if 'volume_mounts' not in container:
-                container['volume_mounts'] = []
-
-            if 'command' not in container:
-                container['command'] = ""
-
-            docker_host_config = self._docker.create_host_config(
-                privileged=container['privileged'],
-                port_bindings=container['port_bindings'],
-                binds=container['volume_mounts'])
-
-            if (container['created'] is not True):
-                LOG.warning(
-                    'Creating container {} with base image {}:{} ...'.format(
-                        container['name'], container['image'],
-                        container['image_version']), )
-                container = self._docker.create_container(
-                    image=self.image_tag.format(container['image'],
-                                                container['image_version']),
-                    tty=True,
-                    detach=False,
-                    name=container['name'],
-                    ports=container['port_bindings'].keys(),
-                    host_config=docker_host_config,
-                    command=container['command'])
-                self._docker.start(container=container.get('Id'))
-                container['created'] = True
-
-                utilities.print_success('Container created.')
-            else:
-                self._docker.start(container['name'])
-                utilities.print_success('Starting container {}...'.format(
-                    container['name']))
-
-    def destroy(self):
-        for container in self.instances:
-            if (container['created']):
-                LOG.warning('Stopping container {} ...'.format(container[
-                    'name']))
-                self._docker.stop(container['name'], timeout=0)
-                self._docker.remove_container(container['name'])
-                utilities.print_success('Removed container {}.'.format(
-                    container['name']))
-                container['created'] = False
-
-    def status(self):
-        Status = collections.namedtuple('Status', ['name', 'state', 'provider',
-                                                   'ports'])
-        status_list = []
-        for container in self.instances:
-            name = container.get('name')
-            if container.get('created'):
-                cd = self._docker.containers(filters={'name': name})[0]
-                status_list.append(Status(name=name,
-                                          state=cd.get('Status'),
-                                          provider='docker',
-                                          ports=cd.get('Ports')))
-            else:
-                status_list.append(Status(name=name,
-                                          state="not_created",
-                                          provider='docker',
-                                          ports=[]))
-
-        return status_list
-
-    def conf(self, vm_name=None, ssh_config=False):
-        pass
-
-    def inventory_entry(self, instance):
-        template = '{} connection=docker\n'
-
-        return template.format(instance['name'])
-
-    def login_cmd(self, instance):
-        return 'docker exec -ti {} bash'
-
-    def login_args(self, instance):
-        return [instance]
-
-    @property
-    def testinfra_args(self):
-        kwargs = {'connection': 'docker'}
-
-        return kwargs
-
-    @property
-    def serverspec_args(self):
-        return dict()
