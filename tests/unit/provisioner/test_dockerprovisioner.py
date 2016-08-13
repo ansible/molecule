@@ -141,22 +141,23 @@ def test_status(docker_instance):
 
 def test_port_bindings(docker_instance):
     docker_instance.up()
-
-    # TODO(retr0h): This test intermittently fails due to
-    # dicts being unordered.
-    assert docker_instance.status()[0].ports == [
+    ports = sorted(docker_instance.status()[0].ports,
+                   key=lambda k: k['PublicPort'])
+    expected = [
         {
-            'PublicPort': 443,
-            'PrivatePort': 443,
-            'IP': '0.0.0.0',
-            'Type': 'tcp'
-        }, {
             'PublicPort': 80,
             'PrivatePort': 80,
             'IP': '0.0.0.0',
             'Type': 'tcp'
+        }, {
+            'PublicPort': 443,
+            'PrivatePort': 443,
+            'IP': '0.0.0.0',
+            'Type': 'tcp'
         }
     ]
+
+    assert expected == ports
     assert docker_instance.status()[1].ports == []
 
 
