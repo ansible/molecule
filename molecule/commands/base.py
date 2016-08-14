@@ -31,7 +31,7 @@ class InvalidHost(Exception):
     pass
 
 
-class BaseCommand:
+class Base(object):
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, command_args, args, molecule=False):

@@ -21,7 +21,7 @@
 from molecule.commands import base
 
 
-class List(base.BaseCommand):
+class List(base.Base):
     """
     Prints a list of currently available platforms
 

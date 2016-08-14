@@ -30,7 +30,7 @@ from molecule.commands import base
 from molecule.commands import create
 
 
-class Converge(base.BaseCommand):
+class Converge(base.Base):
     """
     Provisions all instances defined in molecule.yml.
 

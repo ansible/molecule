@@ -26,7 +26,7 @@ from molecule.commands import base
 LOG = utilities.get_logger(__name__)
 
 
-class Status(base.BaseCommand):
+class Status(base.Base):
     """
     Prints status of configured instances.
 
