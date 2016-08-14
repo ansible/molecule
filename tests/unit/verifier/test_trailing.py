@@ -18,47 +18,46 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import sh
+import pytest
 
-from molecule import utilities
-from molecule.commands import base
-from molecule.verifier import serverspec
-from molecule.verifier import testinfra
 from molecule.verifier import trailing
 
-LOG = utilities.get_logger(__name__)
+
+@pytest.fixture()
+def trailing_instance(molecule_instance):
+    return trailing.Trailing(molecule_instance)
 
 
-class Verify(base.BaseCommand):
-    """
-    Performs verification steps on running instances.
+def test_trailing_newline(trailing_instance):
+    line = ['line1', 'line2', '']
+    res = trailing_instance._trailing_newline(line)
 
-    Usage:
-        verify [--platform=<platform>] [--provider=<provider>] [--debug] [--sudo]
+    assert res is None
 
-    Options:
-        --platform=<platform>  specify a platform
-        --provider=<provider>  specify a provider
-        --debug                get more detail
-        --sudo                 runs tests with sudo
-    """
 
-    def execute(self, exit=True):
-        tw = trailing.Trailing(self.molecule)
-        tw.execute()
+def test_trailing_newline_matched(trailing_instance):
+    line = ['line1', 'line2', '\n']
+    res = trailing_instance._trailing_newline(line)
 
-        self.molecule._write_ssh_config()
+    assert res
 
-        try:
-            ti = testinfra.Testinfra(self.molecule)
-            ti.execute()
 
-            ss = serverspec.Serverspec(self.molecule)
-            ss.execute()
-        except sh.ErrorReturnCode as e:
-            LOG.error('ERROR: {}'.format(e))
-            if exit:
-                utilities.sysexit(e.exit_code)
-            return e.exit_code, e.stdout
+def test_trailing_whitespace_success(trailing_instance):
+    line = ['line1', 'line2', 'line3']
+    res = trailing_instance._trailing_whitespace(line)
 
-        return None, None
+    assert res is None
+
+
+def test_trailing_whitespace_matched(trailing_instance):
+    line = ['line1', 'line2', 'line3    ']
+    res = trailing_instance._trailing_whitespace(line)
+
+    assert res
+
+
+def test_trailing_whitespace_matched_multiline(trailing_instance):
+    line = ['line1', 'line2    ', 'line3', 'line4    ']
+    res = trailing_instance._trailing_whitespace(line)
+
+    assert [2, 4] == res
