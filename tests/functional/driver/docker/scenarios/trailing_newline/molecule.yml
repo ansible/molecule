@@ -1,0 +1,6 @@
+---
+docker:
+  containers:
+  - name: full-01
+    image: ubuntu
+    image_version: latest
