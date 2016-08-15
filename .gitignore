@@ -8,5 +8,5 @@
 .molecule/
 .tox/
 .vagrant/
-docs/build/
+doc/build/
 tests/unit/support/ansible_inventory
