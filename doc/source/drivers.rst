@@ -1,16 +1,16 @@
-Provisioners
-============
+Drivers
+=======
 
-Molecule uses provisioners to bring up Ansible ready hosts to operate on.
-Currently, Molecule supports two provisioners: Vagrant and Docker.
+Molecule uses drivers to bring up Ansible ready hosts to operate on.
+Currently, Molecule supports three drivers: Vagrant, Docker, and OpenStack.
 
-The provisioner can set when using ``init`` command or through the
+The driver can set when using ``init`` command or through the
 ``molecule.yml`` file.
 
-Docker Provisioner
-------------------
+Docker Driver
+-------------
 
-The docker provisioner is compatible with any image
+The docker driver is compatible with any image
 that has python installed. Molecule will automatically install
 python for images with the yum or apt-get package tools. A new
 docker image will be built with the prefix molecule_local to separate it
@@ -37,7 +37,7 @@ The available params for docker containers are:
 * ``volume_mounts`` - **(OPTIONAL)** the volume mappings between the Docker host and the container.
 * ``command`` - **(OPTIONAL)** the command to launch the container with
 
-The available param for the docker provisioner itself is:
+The available param for the docker driver itself is:
 * ``install_python`` - **(default=yes)** install python onto all images for all containers
 
 Docker Example
@@ -66,12 +66,12 @@ Docker Example
             - '/this/volume:/to/this:rw'
           command: '/bin/sh'
 
-Vagrant Provisioner
--------------------
+Vagrant Driver
+--------------
 
-The vagrant provisioner performs in a similar manner to the docker provisioner.
+The vagrant driver performs in a similar manner to the docker driver.
 Except for using virtual machines instead of containers. Each instance of a vagrantbox
-are defined inside of an instance with similar options to docker. The provisioner is
+are defined inside of an instance with similar options to docker. The driver is
 set to vagrant by default if the ``--docker`` flag is not passed when ``molecule init`` is run.
 
 The available parameters for vagrant instances are:
@@ -111,11 +111,11 @@ provider, see :ref:`providers`.
         options:
           append_platform_to_hostname: no
 
-Openstack Provisioner
----------------------
+Openstack Driver
+----------------
 
-The openstack provisioner will create instances in your openstack service. The environment variables required
-to use this provisioner can be found in the RC file provided on your openstack site.
+The openstack driver will create instances in your openstack service. The environment variables required
+to use this driver can be found in the RC file provided on your openstack site.
 
 The available parameters for openstack instances are:
 
@@ -148,5 +148,5 @@ Openstack instance example
             - ansiblegroup
 
 
-Implementing Provisioners
--------------------------
+Implementing Drivers
+--------------------

@@ -20,7 +20,7 @@ Contents:
 
    usage
    providers
-   provisioners
+   drivers
    development
 
 .. _`Ansible`: https://docs.ansible.com
