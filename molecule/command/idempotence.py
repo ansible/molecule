@@ -18,11 +18,11 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-from molecule import utilities
+from molecule import util
 from molecule.command import base
 from molecule.command import converge
 
-LOG = utilities.get_logger(__name__)
+LOG = util.get_logger(__name__)
 
 
 class Idempotence(base.Base):
@@ -39,7 +39,7 @@ class Idempotence(base.Base):
     """
 
     def execute(self, exit=True):
-        utilities.print_info(
+        util.print_info(
             'Idempotence test in progress (can take a few minutes)...')
 
         c = converge.Converge(self.command_args, self.args, self.molecule)
@@ -48,14 +48,14 @@ class Idempotence(base.Base):
                                    hide_errors=True)
         if status is not None:
             msg = 'Skipping due to errors during converge.'
-            utilities.print_info(msg)
+            util.print_info(msg)
             return status, None
 
         idempotent, changed_tasks = self.molecule._parse_provisioning_output(
             output)
 
         if idempotent:
-            utilities.print_success('Idempotence test passed.')
+            util.print_success('Idempotence test passed.')
             return None, None
 
         # Display the details of the idempotence test.
@@ -71,5 +71,5 @@ class Idempotence(base.Base):
 
             LOG.warning(warning_msg)
         if exit:
-            utilities.sysexit()
+            util.sysexit()
         return 1, None

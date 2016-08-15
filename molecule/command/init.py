@@ -25,10 +25,10 @@ import subprocess
 import jinja2
 import sh
 
-from molecule import utilities
+from molecule import util
 from molecule.command import base
 
-LOG = utilities.get_logger(__name__)
+LOG = util.get_logger(__name__)
 
 
 class Init(base.Base):
@@ -58,19 +58,18 @@ class Init(base.Base):
         if not role:
             role = os.getcwd().split(os.sep)[-1]
             role_path = os.getcwd()
-            utilities.print_info(
-                "Initializing molecule in current directory...")
+            util.print_info("Initializing molecule in current directory...")
 
         else:
 
             if os.path.isdir(role):
                 msg = 'The directory {} already exists. Cannot create new role.'
                 LOG.error(msg.format(role))
-                utilities.sysexit()
+                util.sysexit()
 
             role_path = os.path.join(os.curdir, role)
 
-            utilities.print_info("Initializing role {}...".format(role))
+            util.print_info("Initializing role {}...".format(role))
 
             try:
                 if self.molecule._args['--offline']:
@@ -79,7 +78,7 @@ class Init(base.Base):
                     sh.ansible_galaxy('init', role)
             except (subprocess.CalledProcessError, sh.ErrorReturnCode_1) as e:
                 LOG.error('ERROR: {}'.format(e))
-                utilities.sysexit(e.returncode)
+                util.sysexit(e.returncode)
 
             self.clean_meta_main(role_path)
 
@@ -126,5 +125,5 @@ class Init(base.Base):
             f.write(t_test_default.render())
 
         msg = 'Successfully initialized new role in {}'
-        utilities.print_success(msg.format(role_path))
-        utilities.sysexit(0)
+        util.print_success(msg.format(role_path))
+        util.sysexit(0)

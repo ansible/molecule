@@ -23,10 +23,10 @@ import os
 
 import shade
 
-from molecule import utilities
+from molecule import util
 from molecule.driver import basedriver
 
-LOG = utilities.get_logger(__name__)
+LOG = util.get_logger(__name__)
 
 
 class OpenstackDriver(basedriver.BaseDriver):
@@ -112,10 +112,10 @@ class OpenstackDriver(basedriver.BaseDriver):
                     key_name=self.molecule.config.config['openstack'][
                         'keypair'], security_groups=instance['security_groups']
                     if 'security_groups' in instance else None)
-                utilities.reset_known_host_key(server['interface_ip'])
+                util.reset_known_host_key(server['interface_ip'])
                 instance['created'] = True
                 num_retries = 0
-                while not utilities.check_ssh_availability(
+                while not util.check_ssh_availability(
                         server['interface_ip'],
                         instance['sshuser'],
                         timeout=6) or num_retries == 5:
@@ -137,8 +137,7 @@ class OpenstackDriver(basedriver.BaseDriver):
                         wait=True):
                     LOG.error("Unable to remove {}!".format(instance['name']))
                 else:
-                    utilities.print_success('\tRemoved {}'.format(instance[
-                        'name']))
+                    util.print_success('\tRemoved {}'.format(instance['name']))
                     instance['created'] = False
 
     def status(self):
@@ -216,7 +215,7 @@ class OpenstackDriver(basedriver.BaseDriver):
     def _instance_is_accessible(self, instance):
         instance_ip = self.conf(instance['name'])
         if instance_ip is not None:
-            return utilities.check_ssh_availability(instance_ip,
-                                                    instance['sshuser'],
-                                                    timeout=0)
+            return util.check_ssh_availability(instance_ip,
+                                               instance['sshuser'],
+                                               timeout=0)
         return False

@@ -21,9 +21,9 @@
 import os
 import sh
 
-from molecule import utilities
+from molecule import util
 
-LOG = utilities.get_logger(__name__)
+LOG = util.get_logger(__name__)
 
 
 class AnsiblePlaybook(object):

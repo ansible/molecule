@@ -19,10 +19,10 @@
 #  THE SOFTWARE.
 
 import molecule.command  # prevent circular dependencies
-from molecule import utilities
+from molecule import util
 from molecule.command import base
 
-LOG = utilities.get_logger(__name__)
+LOG = util.get_logger(__name__)
 
 
 class Test(base.Base):
@@ -41,8 +41,8 @@ class Test(base.Base):
     """
 
     def execute(self):
-        command_args, args = utilities.remove_args(
-            self.command_args, self.args, self.command_args)
+        command_args, args = util.remove_args(self.command_args, self.args,
+                                              self.command_args)
 
         for task in self.molecule.config.config['molecule']['test'][
                 'sequence']:
@@ -59,7 +59,7 @@ class Test(base.Base):
             # Fail fast
             if status is not 0 and status is not None:
                 LOG.error(output)
-                utilities.sysexit(status)
+                util.sysexit(status)
 
         if self.args.get('--destroy') == 'always':
             c = molecule.command.destroy.Destroy(command_args, args)
@@ -76,4 +76,4 @@ class Test(base.Base):
             return None, None
 
         # error encountered during test
-        utilities.sysexit(status)
+        util.sysexit(status)

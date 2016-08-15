@@ -20,10 +20,10 @@
 
 import subprocess
 
-from molecule import utilities
+from molecule import util
 from molecule.command import base
 
-LOG = utilities.get_logger(__name__)
+LOG = util.get_logger(__name__)
 
 
 class Status(base.Base):

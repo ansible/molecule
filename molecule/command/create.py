@@ -20,10 +20,10 @@
 
 import subprocess
 
-from molecule import utilities
+from molecule import util
 from molecule.command import base
 
-LOG = utilities.get_logger(__name__)
+LOG = util.get_logger(__name__)
 
 
 class Create(base.Base):
@@ -43,7 +43,7 @@ class Create(base.Base):
         self.molecule._remove_inventory_file()
         self.molecule._create_templates()
         try:
-            utilities.print_info("Creating instances ...")
+            util.print_info("Creating instances ...")
             self.molecule._driver.up(no_provision=True)
             self.molecule._state.change_state('created', True)
             if self.args['--platform'] == 'all':
@@ -51,7 +51,7 @@ class Create(base.Base):
         except subprocess.CalledProcessError as e:
             LOG.error('ERROR: {}'.format(e))
             if exit:
-                utilities.sysexit(e.returncode)
+                util.sysexit(e.returncode)
             return e.returncode, e.message
         self.molecule._create_inventory_file()
         self.molecule._write_instances_state()
