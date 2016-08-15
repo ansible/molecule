@@ -21,7 +21,7 @@
 from molecule import ansible_galaxy
 from molecule import ansible_playbook
 from molecule import utilities
-from molecule.commands import base
+from molecule.command import base
 
 
 class Syntax(base.Base):

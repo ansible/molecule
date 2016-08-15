@@ -18,41 +18,45 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import subprocess
+import sh
 
 from molecule import utilities
-from molecule.commands import base
+from molecule import validators
+from molecule.command import base
 
 LOG = utilities.get_logger(__name__)
 
 
-class Create(base.Base):
+class Verify(base.Base):
     """
-    Creates all instances defined in molecule.yml.
+    Performs verification steps on running instances.
 
     Usage:
-        create [--platform=<platform>] [--provider=<provider>] [--debug]
+        verify [--platform=<platform>] [--provider=<provider>] [--debug] [--sudo]
 
     Options:
         --platform=<platform>  specify a platform
         --provider=<provider>  specify a provider
         --debug                get more detail
+        --sudo                 runs tests with sudo
     """
 
     def execute(self, exit=True):
-        self.molecule._remove_inventory_file()
-        self.molecule._create_templates()
+        tw = trailing.Trailing(self.molecule)
+        tw.execute()
+
+        self.molecule._write_ssh_config()
+
         try:
-            utilities.print_info("Creating instances ...")
-            self.molecule._driver.up(no_provision=True)
-            self.molecule._state.change_state('created', True)
-            if self.args['--platform'] == 'all':
-                self.molecule._state.change_state('multiple_platforms', True)
-        except subprocess.CalledProcessError as e:
+            ti = testinfra.Testinfra(self.molecule)
+            ti.execute()
+
+            ss = serverspec.Serverspec(self.molecule)
+            ss.execute()
+        except sh.ErrorReturnCode as e:
             LOG.error('ERROR: {}'.format(e))
             if exit:
-                utilities.sysexit(e.returncode)
-            return e.returncode, e.message
-        self.molecule._create_inventory_file()
-        self.molecule._write_instances_state()
+                utilities.sysexit(e.exit_code)
+            return e.exit_code, e.stdout
+
         return None, None

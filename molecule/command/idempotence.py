@@ -19,8 +19,8 @@
 #  THE SOFTWARE.
 
 from molecule import utilities
-from molecule.commands import base
-from molecule.commands import converge
+from molecule.command import base
+from molecule.command import converge
 
 LOG = utilities.get_logger(__name__)
 

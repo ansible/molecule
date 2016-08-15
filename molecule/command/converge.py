@@ -26,8 +26,8 @@ import yaml
 from molecule import ansible_galaxy
 from molecule import ansible_playbook
 from molecule import utilities
-from molecule.commands import base
-from molecule.commands import create
+from molecule.command import base
+from molecule.command import create
 
 
 class Converge(base.Base):

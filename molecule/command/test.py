@@ -18,9 +18,9 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import molecule.commands  # prevent circular dependencies
+import molecule.command  # prevent circular dependencies
 from molecule import utilities
-from molecule.commands import base
+from molecule.command import base
 
 LOG = utilities.get_logger(__name__)
 
@@ -46,7 +46,7 @@ class Test(base.Base):
 
         for task in self.molecule.config.config['molecule']['test'][
                 'sequence']:
-            command_module = getattr(molecule.commands, task)
+            command_module = getattr(molecule.command, task)
             command = getattr(command_module, task.capitalize())
             c = command(command_args, args, self.molecule)
 
@@ -62,7 +62,7 @@ class Test(base.Base):
                 utilities.sysexit(status)
 
         if self.args.get('--destroy') == 'always':
-            c = molecule.commands.destroy.Destroy(command_args, args)
+            c = molecule.command.destroy.Destroy(command_args, args)
             c.execute()
             return None, None
 
@@ -71,7 +71,7 @@ class Test(base.Base):
 
         # passing (default)
         if status is None:
-            c = molecule.commands.destroy.Destroy(command_args, args)
+            c = molecule.command.destroy.Destroy(command_args, args)
             c.execute()
             return None, None
 
