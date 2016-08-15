@@ -22,7 +22,7 @@ import os
 
 import pytest
 
-from molecule.commands.init import Init
+from molecule.command import init
 
 
 @pytest.fixture()
@@ -34,7 +34,7 @@ def molecule_dir(tmpdir):
 
 
 def test_create_role(molecule_dir):
-    i = Init('unit_test1', dict())
+    i = init.Init('unit_test1', dict())
     with pytest.raises(SystemExit):
         i.execute()
 
@@ -44,7 +44,7 @@ def test_create_role(molecule_dir):
 
 
 def test_create_role_in_existing_directory(molecule_dir):
-    i = Init(dict(), dict())
+    i = init.Init(dict(), dict())
     with pytest.raises(SystemExit):
         i.execute()
 
@@ -52,7 +52,7 @@ def test_create_role_in_existing_directory(molecule_dir):
 
 
 def test_create_role_docker_flag(molecule_dir):
-    i = Init(['docker_test', '--docker'], dict())
+    i = init.Init(['docker_test', '--docker'], dict())
     with pytest.raises(SystemExit):
         i.execute()
 
@@ -63,7 +63,7 @@ def test_create_role_docker_flag(molecule_dir):
 
 
 def test_create_role_offline_flag():
-    i = Init(['offline_test', '--offline'], dict())
+    i = init.Init(['offline_test', '--offline'], dict())
     with pytest.raises(SystemExit):
         i.execute()
 
@@ -75,7 +75,7 @@ def test_create_role_offline_flag():
 
 
 def test_create_role_openstack_flag(molecule_dir):
-    i = Init(['docker_test', '--openstack'], dict())
+    i = init.Init(['docker_test', '--openstack'], dict())
     with pytest.raises(SystemExit):
         i.execute()
 
@@ -87,7 +87,7 @@ def test_create_role_openstack_flag(molecule_dir):
 
 def test_create_role_existing_dir_error():
     os.mkdir('test1')
-    i = Init(['test1'], dict())
+    i = init.Init(['test1'], dict())
     with pytest.raises(SystemExit) as f:
         i.execute()
         assert 'Cannot create new role.' in f

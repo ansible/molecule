@@ -21,17 +21,17 @@
 import subprocess
 
 from molecule import utilities
-from molecule.commands import base
+from molecule.command import base
 
 LOG = utilities.get_logger(__name__)
 
 
-class Destroy(base.Base):
+class Create(base.Base):
     """
-    Destroys all instances created by molecule.
+    Creates all instances defined in molecule.yml.
 
     Usage:
-        destroy [--platform=<platform>] [--provider=<provider>] [--debug]
+        create [--platform=<platform>] [--provider=<provider>] [--debug]
 
     Options:
         --platform=<platform>  specify a platform
@@ -40,22 +40,19 @@ class Destroy(base.Base):
     """
 
     def execute(self, exit=True):
-        """
-        Removes template files.
-        Clears state file of all info (default platform).
-
-        :return: None
-        """
+        self.molecule._remove_inventory_file()
         self.molecule._create_templates()
         try:
-            utilities.print_info("Destroying instances ...")
-            self.molecule._driver.destroy()
-            self.molecule._state.reset()
+            utilities.print_info("Creating instances ...")
+            self.molecule._driver.up(no_provision=True)
+            self.molecule._state.change_state('created', True)
+            if self.args['--platform'] == 'all':
+                self.molecule._state.change_state('multiple_platforms', True)
         except subprocess.CalledProcessError as e:
             LOG.error('ERROR: {}'.format(e))
             if exit:
                 utilities.sysexit(e.returncode)
             return e.returncode, e.message
-        self.molecule._remove_templates()
-        self.molecule._remove_inventory_file()
+        self.molecule._create_inventory_file()
+        self.molecule._write_instances_state()
         return None, None

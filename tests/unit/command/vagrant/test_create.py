@@ -25,9 +25,9 @@ import pytest
 import vagrant
 import yaml
 
-from molecule.commands import converge
-from molecule.commands import create
-from molecule.commands import destroy
+from molecule.command import converge
+from molecule.command import create
+from molecule.command import destroy
 
 pytestmark = pytest.mark.skipif(
     vagrant.get_vagrant_executable() is None,

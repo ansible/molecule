@@ -18,24 +18,19 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-from molecule.commands import base
+# NOTE: Importing into the ``molecule.command`` namespace, to prevent
+# collisions (e.g. ``list``).  The CLI usage may conflict with reserved words
+# or builtins.
 
-
-class List(base.Base):
-    """
-    Prints a list of currently available platforms
-
-    Usage:
-        list [--debug] ([-m]|[--porcelain])
-
-    Options:
-        --debug         get more detail
-        -m              synonym for '--porcelain' (deprecated)
-        --porcelain     machine readable output
-    """
-
-    def execute(self):
-        porcelain = self.molecule._args['-m'] or self.molecule._args[
-            '--porcelain']
-        self.molecule._print_valid_platforms(porcelain=porcelain)
-        return None, None
+from molecule.command import base  # noqa
+from molecule.command import converge  # noqa
+from molecule.command import create  # noqa
+from molecule.command import destroy  # noqa
+from molecule.command import idempotence  # noqa
+from molecule.command import init  # noqa
+from molecule.command import list  # noqa
+from molecule.command import login  # noqa
+from molecule.command import status  # noqa
+from molecule.command import syntax  # noqa
+from molecule.command import test  # noqa
+from molecule.command import verify  # noqa

@@ -18,47 +18,44 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import sh
+import subprocess
 
 from molecule import utilities
-from molecule.commands import base
-from molecule.verifier import serverspec
-from molecule.verifier import testinfra
-from molecule.verifier import trailing
+from molecule.command import base
 
 LOG = utilities.get_logger(__name__)
 
 
-class Verify(base.Base):
+class Destroy(base.Base):
     """
-    Performs verification steps on running instances.
+    Destroys all instances created by molecule.
 
     Usage:
-        verify [--platform=<platform>] [--provider=<provider>] [--debug] [--sudo]
+        destroy [--platform=<platform>] [--provider=<provider>] [--debug]
 
     Options:
         --platform=<platform>  specify a platform
         --provider=<provider>  specify a provider
         --debug                get more detail
-        --sudo                 runs tests with sudo
     """
 
     def execute(self, exit=True):
-        tw = trailing.Trailing(self.molecule)
-        tw.execute()
+        """
+        Removes template files.
+        Clears state file of all info (default platform).
 
-        self.molecule._write_ssh_config()
-
+        :return: None
+        """
+        self.molecule._create_templates()
         try:
-            ti = testinfra.Testinfra(self.molecule)
-            ti.execute()
-
-            ss = serverspec.Serverspec(self.molecule)
-            ss.execute()
-        except sh.ErrorReturnCode as e:
+            utilities.print_info("Destroying instances ...")
+            self.molecule._driver.destroy()
+            self.molecule._state.reset()
+        except subprocess.CalledProcessError as e:
             LOG.error('ERROR: {}'.format(e))
             if exit:
-                utilities.sysexit(e.exit_code)
-            return e.exit_code, e.stdout
-
+                utilities.sysexit(e.returncode)
+            return e.returncode, e.message
+        self.molecule._remove_templates()
+        self.molecule._remove_inventory_file()
         return None, None

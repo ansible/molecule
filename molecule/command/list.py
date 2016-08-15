@@ -18,19 +18,24 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-# NOTE: Importing into the ``molecule.commands`` namespace, to prevent
-# collisions (e.g. ``list``).  The CLI usage may conflict with reserved words
-# or builtins.
+from molecule.command import base
 
-from molecule.commands import base  # noqa
-from molecule.commands import converge  # noqa
-from molecule.commands import create  # noqa
-from molecule.commands import destroy  # noqa
-from molecule.commands import idempotence  # noqa
-from molecule.commands import init  # noqa
-from molecule.commands import list  # noqa
-from molecule.commands import login  # noqa
-from molecule.commands import status  # noqa
-from molecule.commands import syntax  # noqa
-from molecule.commands import test  # noqa
-from molecule.commands import verify  # noqa
+
+class List(base.Base):
+    """
+    Prints a list of currently available platforms
+
+    Usage:
+        list [--debug] ([-m]|[--porcelain])
+
+    Options:
+        --debug         get more detail
+        -m              synonym for '--porcelain' (deprecated)
+        --porcelain     machine readable output
+    """
+
+    def execute(self):
+        porcelain = self.molecule._args['-m'] or self.molecule._args[
+            '--porcelain']
+        self.molecule._print_valid_platforms(porcelain=porcelain)
+        return None, None

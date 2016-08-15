@@ -21,7 +21,7 @@
 import subprocess
 
 from molecule import utilities
-from molecule.commands import base
+from molecule.command import base
 
 LOG = utilities.get_logger(__name__)
 
