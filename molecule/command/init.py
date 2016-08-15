@@ -83,7 +83,7 @@ class Init(base.Base):
             self.clean_meta_main(role_path)
 
         env = jinja2.Environment(
-            loader=jinja2.PackageLoader('molecule', 'templates'),
+            loader=jinja2.PackageLoader('molecule', 'template'),
             keep_trailing_newline=True)
 
         t_molecule = env.get_template(self.molecule.config.config['molecule'][
