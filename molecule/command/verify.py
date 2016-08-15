@@ -21,8 +21,10 @@
 import sh
 
 from molecule import utilities
-from molecule import validators
 from molecule.command import base
+from molecule.verifier import serverspec
+from molecule.verifier import testinfra
+from molecule.verifier import trailing
 
 LOG = utilities.get_logger(__name__)
 
