@@ -24,11 +24,11 @@ import os
 import colorama
 import pytest
 
-from molecule import utilities
+from molecule import util
 
 
 def test_print_success(capsys):
-    utilities.print_success('test')
+    util.print_success('test')
     result, _ = capsys.readouterr()
 
     print '{}{}'.format(colorama.Fore.GREEN, 'test'.rstrip())
@@ -38,7 +38,7 @@ def test_print_success(capsys):
 
 
 def test_print_info(capsys):
-    utilities.print_info('test')
+    util.print_info('test')
     result, _ = capsys.readouterr()
 
     print '--> {}{}'.format(colorama.Fore.CYAN, 'test'.rstrip())
@@ -51,8 +51,8 @@ def test_print_info(capsys):
 def test_write_template():
     d = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'support')
     src = os.path.join(d, 'test_write_template.j2')
-    tmp_file = '/tmp/test_utilities_write_template.tmp'
-    utilities.write_template(src, tmp_file, {'test': 'chicken'})
+    tmp_file = '/tmp/test_util_write_template.tmp'
+    util.write_template(src, tmp_file, {'test': 'chicken'})
     with open(tmp_file, 'r') as f:
         data = f.read()
     os.remove(tmp_file)
@@ -62,9 +62,9 @@ def test_write_template():
 
 # TODO(retr0h): Cleanup how we deal with temp files
 def test_write_file():
-    tmp_file = '/tmp/test_utilities_write_file.tmp'
+    tmp_file = '/tmp/test_util_write_file.tmp'
     contents = binascii.b2a_hex(os.urandom(15))
-    utilities.write_file(tmp_file, contents)
+    util.write_file(tmp_file, contents)
     with open(tmp_file, 'r') as f:
         data = f.read()
     os.remove(tmp_file)
@@ -74,14 +74,14 @@ def test_write_file():
 
 def test_format_instance_name_00():
     instances = [{'name': 'test-01'}]
-    actual = utilities.format_instance_name('test-02', 'rhel-7', instances)
+    actual = util.format_instance_name('test-02', 'rhel-7', instances)
 
     assert actual is None
 
 
 def test_format_instance_name_01():
     instances = [{'name': 'test-01'}]
-    actual = utilities.format_instance_name('test-01', 'rhel-7', instances)
+    actual = util.format_instance_name('test-01', 'rhel-7', instances)
 
     assert 'test-01' == actual
 
@@ -89,14 +89,14 @@ def test_format_instance_name_01():
 def test_format_instance_name_02():
     instances = [{'name': 'test-01',
                   'options': {'append_platform_to_hostname': True}}]
-    actual = utilities.format_instance_name('test-01', 'rhel-7', instances)
+    actual = util.format_instance_name('test-01', 'rhel-7', instances)
 
     assert 'test-01-rhel-7' == actual
 
 
 def test_format_instance_name_03():
     instances = [{'name': 'test-01', 'options': {'chicken': False}}]
-    actual = utilities.format_instance_name('test-01', 'rhel-7', instances)
+    actual = util.format_instance_name('test-01', 'rhel-7', instances)
 
     assert 'test-01' == actual
 
@@ -107,8 +107,7 @@ def test_remove_args():
     test_dict = {'tags': 'molecule1', 'platform': 'ubuntu'}
     expected_list = ['platform', 'ubuntu']
     expected_dict = {'platform': 'ubuntu'}
-    actual_list, actual_dict = utilities.remove_args(test_list, test_dict,
-                                                     ['tags'])
+    actual_list, actual_dict = util.remove_args(test_list, test_dict, ['tags'])
 
     assert expected_list == actual_list
     assert expected_dict == actual_dict
@@ -116,7 +115,7 @@ def test_remove_args():
 
 def test_reset_known_hosts(mocker):
     mocked = mocker.patch('os.system')
-    utilities.reset_known_host_key('test')
+    util.reset_known_host_key('test')
 
     mocked.assert_called_once_with('ssh-keygen -R test')
 
@@ -127,7 +126,7 @@ def test_check_ssh_availability():
 
 
 def test_debug(capsys):
-    utilities.debug('test_title', 'test_data')
+    util.debug('test_title', 'test_data')
     result_title, _ = capsys.readouterr()
 
     print(''.join([colorama.Back.WHITE, colorama.Style.BRIGHT,
@@ -143,14 +142,14 @@ def test_debug(capsys):
 
 def test_sysexit():
     with pytest.raises(SystemExit) as e:
-        utilities.sysexit()
+        util.sysexit()
 
     assert 1 == e.value.code
 
 
 def test_sysexit_with_custom_code():
     with pytest.raises(SystemExit) as e:
-        utilities.sysexit(2)
+        util.sysexit(2)
 
     assert 2 == e.value.code
 
@@ -163,6 +162,6 @@ def test_merge_dicts():
                 'b': [{'c': 0}, {'c': 2}, {'c': 3}],
                 'd': {'e': "bbb",
                       'f': 3}}
-    result = utilities.merge_dicts(a, b)
+    result = util.merge_dicts(a, b)
 
     assert expected == result

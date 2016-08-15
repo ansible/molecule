@@ -20,13 +20,13 @@
 
 import sh
 
-from molecule import utilities
+from molecule import util
 from molecule.command import base
 from molecule.verifier import serverspec
 from molecule.verifier import testinfra
 from molecule.verifier import trailing
 
-LOG = utilities.get_logger(__name__)
+LOG = util.get_logger(__name__)
 
 
 class Verify(base.Base):
@@ -58,7 +58,7 @@ class Verify(base.Base):
         except sh.ErrorReturnCode as e:
             LOG.error('ERROR: {}'.format(e))
             if exit:
-                utilities.sysexit(e.exit_code)
+                util.sysexit(e.exit_code)
             return e.exit_code, e.stdout
 
         return None, None

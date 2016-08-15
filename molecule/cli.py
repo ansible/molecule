@@ -43,7 +43,7 @@ import docopt
 
 import molecule
 from molecule import command
-from molecule import utilities
+from molecule import util
 
 
 class CLI(object):
@@ -61,7 +61,7 @@ class CLI(object):
             raise docopt.DocoptExit()
 
         c = command_clazz(command_args, args)
-        utilities.sysexit(c.execute()[0])
+        util.sysexit(c.execute()[0])
 
 
 def main():

@@ -20,7 +20,7 @@
 
 from molecule import ansible_galaxy
 from molecule import ansible_playbook
-from molecule import utilities
+from molecule import util
 from molecule.command import base
 
 
@@ -45,6 +45,6 @@ class Syntax(base.Base):
             'ansible'])
         ansible.add_cli_arg('syntax-check', True)
         ansible.add_cli_arg('inventory_file', 'localhost,')
-        utilities.print_info("Checking playbooks syntax ...")
+        util.print_info("Checking playbooks syntax ...")
 
         return ansible.execute(hide_errors=True)

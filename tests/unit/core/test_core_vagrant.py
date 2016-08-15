@@ -48,7 +48,7 @@ def test_write_ssh_config(mocker, molecule_instance):
     mocked_out = mocker.patch(
         'molecule.driver.vagrantdriver.VagrantDriver.conf')
     mocked_out.return_value = 'mocked_out'
-    mocked_write = mocker.patch('molecule.utilities.write_file')
+    mocked_write = mocker.patch('molecule.util.write_file')
     molecule_instance._write_ssh_config()
 
     mocked_write.assert_called_once_with('.vagrant/ssh-config', 'mocked_out')

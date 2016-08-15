@@ -22,10 +22,10 @@ import os
 
 import sh
 
-from molecule import utilities
+from molecule import util
 from molecule.verifier import base
 
-LOG = utilities.get_logger(__name__)
+LOG = util.get_logger(__name__)
 
 
 class Serverspec(base.Base):
@@ -71,7 +71,7 @@ class Serverspec(base.Base):
 
         msg = 'Executing serverspec tests found in {}/.'.format(
             self._serverspec_dir)
-        utilities.print_info(msg)
+        util.print_info(msg)
 
         return sh.rake(**kwargs)
 
@@ -100,7 +100,7 @@ class Serverspec(base.Base):
 
         msg = 'Executing rubocop on *.rb files found in {}/.'.format(
             serverspec_dir)
-        utilities.print_info(msg)
+        util.print_info(msg)
         match = serverspec_dir + pattern
 
         return sh.rubocop(match, **kwargs)

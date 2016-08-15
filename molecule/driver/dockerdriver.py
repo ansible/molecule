@@ -24,10 +24,10 @@ import json
 
 import docker
 
-from molecule import utilities
+from molecule import util
 from molecule.driver import basedriver
 
-LOG = utilities.get_logger(__name__)
+LOG = util.get_logger(__name__)
 
 
 class DockerDriver(basedriver.BaseDriver):
@@ -147,11 +147,11 @@ class DockerDriver(basedriver.BaseDriver):
                 self._docker.start(container=container.get('Id'))
                 container['created'] = True
 
-                utilities.print_success('Container created.')
+                util.print_success('Container created.')
             else:
                 self._docker.start(container['name'])
-                utilities.print_success('Starting container {}...'.format(
-                    container['name']))
+                util.print_success('Starting container {}...'.format(container[
+                    'name']))
 
     def destroy(self):
         for container in self.instances:
@@ -160,8 +160,8 @@ class DockerDriver(basedriver.BaseDriver):
                     'name']))
                 self._docker.stop(container['name'], timeout=0)
                 self._docker.remove_container(container['name'])
-                utilities.print_success('Removed container {}.'.format(
-                    container['name']))
+                util.print_success('Removed container {}.'.format(container[
+                    'name']))
                 container['created'] = False
 
     def status(self):
@@ -214,7 +214,7 @@ class DockerDriver(basedriver.BaseDriver):
                     'install_python'] is False:
                 continue
             else:
-                utilities.print_info(
+                util.print_info(
                     "Creating Ansible compatible image of {}:{} ...".format(
                         container['image'], container['image_version']))
 
@@ -244,7 +244,7 @@ class DockerDriver(basedriver.BaseDriver):
             errors = False
 
             if tag_string not in available_images:
-                utilities.print_info('Building ansible compatible image ...')
+                util.print_info('Building ansible compatible image ...')
                 previous_line = ''
                 for line in self._docker.build(fileobj=f, tag=tag_string):
                     for line_split in line.split('\n'):
@@ -266,5 +266,5 @@ class DockerDriver(basedriver.BaseDriver):
                     LOG.error('Build failed for {}'.format(tag_string))
                     return
                 else:
-                    utilities.print_success('Finished building {}'.format(
+                    util.print_success('Finished building {}'.format(
                         tag_string))

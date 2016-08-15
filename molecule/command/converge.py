@@ -25,7 +25,7 @@ import yaml
 
 from molecule import ansible_galaxy
 from molecule import ansible_playbook
-from molecule import utilities
+from molecule import util
 from molecule.command import base
 from molecule.command import create
 
@@ -71,8 +71,8 @@ class Converge(base.Base):
                 create_inventory = True
 
         if create_instances and not idempotent:
-            command_args, args = utilities.remove_args(self.command_args,
-                                                       self.args, ['--tags'])
+            command_args, args = util.remove_args(self.command_args, self.args,
+                                                  ['--tags'])
             c = create.Create(command_args, args, self.molecule)
             c.execute()
 
@@ -125,21 +125,21 @@ class Converge(base.Base):
             other_env = {k: v
                          for (k, v) in ansible.env.items()
                          if 'ANSIBLE' not in k}
-            utilities.debug('OTHER ENVIRONMENT',
-                            yaml.dump(other_env,
-                                      default_flow_style=False,
-                                      indent=2))
-            utilities.debug('ANSIBLE ENVIRONMENT',
-                            yaml.dump(ansible_env,
-                                      default_flow_style=False,
-                                      indent=2))
-            utilities.debug('ANSIBLE PLAYBOOK', str(ansible.ansible))
+            util.debug('OTHER ENVIRONMENT',
+                       yaml.dump(other_env,
+                                 default_flow_style=False,
+                                 indent=2))
+            util.debug('ANSIBLE ENVIRONMENT',
+                       yaml.dump(ansible_env,
+                                 default_flow_style=False,
+                                 indent=2))
+            util.debug('ANSIBLE PLAYBOOK', str(ansible.ansible))
 
-        utilities.print_info("Starting Ansible Run ...")
+        util.print_info("Starting Ansible Run ...")
         status, output = ansible.execute(hide_errors=hide_errors)
         if status is not None:
             if exit:
-                utilities.sysexit(status)
+                util.sysexit(status)
             return status, None
 
         if not self.molecule._state.converged:

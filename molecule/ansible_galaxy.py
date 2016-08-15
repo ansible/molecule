@@ -22,9 +22,9 @@ import os
 
 import sh
 
-from molecule import utilities
+from molecule import util
 
-LOG = utilities.get_logger(__name__)
+LOG = util.get_logger(__name__)
 
 
 class AnsibleGalaxy(object):
@@ -62,8 +62,8 @@ class AnsibleGalaxy(object):
             'role-file': requirements_file,
             'roles-path': roles_path
         }
-        galaxy_options = utilities.merge_dicts(
-            galaxy_default_options, self._config['ansible']['galaxy'])
+        galaxy_options = util.merge_dicts(galaxy_default_options,
+                                          self._config['ansible']['galaxy'])
 
         self._galaxy = sh.ansible_galaxy.bake('install',
                                               _env=self.env,
@@ -95,9 +95,9 @@ class AnsibleGalaxy(object):
             return self._galaxy().stdout
         except sh.ErrorReturnCode as e:
             LOG.error('ERROR: {}'.format(e))
-            utilities.sysexit(e.exit_code)
+            util.sysexit(e.exit_code)
 
     def install(self):
-        utilities.print_info('Installing role dependencies ...')
+        util.print_info('Installing role dependencies ...')
         self.bake()
         self.execute()

@@ -23,7 +23,7 @@ import os.path
 
 import anyconfig
 
-from molecule import utilities
+from molecule import util
 
 DEFAULT_CONFIG = os.path.join(os.path.dirname(__file__), 'conf/defaults.yml')
 PROJECT_CONFIG = 'molecule.yml'
@@ -50,7 +50,7 @@ class Config(object):
 
         if 'vagrant' in self.config:
             for instance in self.config['vagrant']['instances']:
-                instance['vm_name'] = utilities.format_instance_name(
+                instance['vm_name'] = util.format_instance_name(
                     instance['name'], platform,
                     self.config['vagrant']['instances'])
 

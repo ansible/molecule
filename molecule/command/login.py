@@ -23,10 +23,10 @@ import pexpect
 import signal
 import subprocess
 
-from molecule import utilities
+from molecule import util
 from molecule.command import base
 
-LOG = utilities.get_logger(__name__)
+LOG = util.get_logger(__name__)
 
 
 class Login(base.Base):
@@ -90,10 +90,10 @@ class Login(base.Base):
             msg = "Unknown host '{}'.\n\nAvailable hosts:\n{}"
             LOG.error(msg.format(self.molecule._args['<host>'], "\n".join(
                 hosts)))
-            utilities.sysexit()
+            util.sysexit()
         except base.InvalidHost as e:
             LOG.error(e.message)
-            utilities.sysexit()
+            util.sysexit()
 
         lines, columns = os.popen('stty size', 'r').read().split()
         dimensions = (int(lines), int(columns))

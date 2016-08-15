@@ -45,7 +45,7 @@ def test_get_ssh_config(molecule_instance):
 
 
 def test_write_ssh_config(mocker, molecule_instance):
-    mocked = mocker.patch('molecule.utilities.write_file')
+    mocked = mocker.patch('molecule.util.write_file')
     molecule_instance._write_ssh_config()
 
     assert not mocked.called

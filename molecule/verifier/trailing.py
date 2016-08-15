@@ -21,10 +21,10 @@
 import os
 import re
 
-from molecule import utilities
+from molecule import util
 from molecule.verifier import base
 
-LOG = utilities.get_logger(__name__)
+LOG = util.get_logger(__name__)
 
 
 class Trailing(base.Base):
@@ -90,7 +90,7 @@ class Trailing(base.Base):
                 found_error = True
 
         if exit and found_error:
-            utilities.sysexit()
+            util.sysexit()
 
     def _trailing_newline(self, source):
         """

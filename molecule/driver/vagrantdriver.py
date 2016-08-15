@@ -25,7 +25,7 @@ import subprocess
 
 import vagrant
 
-from molecule import utilities
+from molecule import util
 from molecule.driver import basedriver
 
 
@@ -158,10 +158,10 @@ class VagrantDriver(basedriver.BaseDriver):
         template = '{} ansible_ssh_host={} ansible_ssh_port={} ansible_ssh_private_key_file={} ansible_ssh_user={}\n'
 
         if not self._updated_multiplatform:
-            ssh = self.conf(vm_name=utilities.format_instance_name(
+            ssh = self.conf(vm_name=util.format_instance_name(
                 instance['name'], self.platform, self.instances))
         else:
-            ssh = self.conf(vm_name=utilities.format_instance_name(
+            ssh = self.conf(vm_name=util.format_instance_name(
                 instance['name'], 'all', self.instances))
 
         return template.format(ssh['Host'], ssh['HostName'], ssh['Port'],
@@ -240,7 +240,7 @@ class VagrantDriver(basedriver.BaseDriver):
         template = self.molecule.config.config['molecule'][
             'vagrantfile_template']
         dest = self.molecule.config.config['molecule']['vagrantfile_file']
-        utilities.write_template(template, dest, kwargs=kwargs)
+        util.write_template(template, dest, kwargs=kwargs)
 
     def _fallback_status(self):
         Status = collections.namedtuple('Status', ['name', 'state',

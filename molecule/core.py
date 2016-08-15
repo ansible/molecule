@@ -31,14 +31,14 @@ import yaml
 
 from molecule import config
 from molecule import state
-from molecule import utilities
+from molecule import util
 from molecule.driver import basedriver
 from molecule.driver import dockerdriver
 from molecule.driver import openstackdriver
 from molecule.driver import proxmoxdriver
 from molecule.driver import vagrantdriver
 
-LOG = utilities.get_logger(__name__)
+LOG = util.get_logger(__name__)
 
 
 class Molecule(object):
@@ -63,23 +63,23 @@ class Molecule(object):
             self._args['--platform'] = None
             self._driver = self.get_driver()
             self._print_valid_providers()
-            utilities.sysexit()
+            util.sysexit()
         except basedriver.InvalidDriverSpecified:
             LOG.error("Invalid platform '{}'".format(self._args['--platform']))
             self._args['--provider'] = None
             self._args['--platform'] = None
             self._driver = self.get_driver()
             self._print_valid_platforms()
-            utilities.sysexit()
+            util.sysexit()
 
         # updates instances config with full machine names
         self.config.populate_instance_names(self._driver.platform)
 
         if self._args.get('--debug'):
-            utilities.debug('RUNNING CONFIG',
-                            yaml.dump(self.config.config,
-                                      default_flow_style=False,
-                                      indent=2))
+            util.debug('RUNNING CONFIG',
+                       yaml.dump(self.config.config,
+                                 default_flow_style=False,
+                                 indent=2))
         self._add_or_update_vars('group_vars')
         self._add_or_update_vars('host_vars')
         self._symlink_vars()
@@ -104,7 +104,7 @@ class Molecule(object):
         if ssh_config is None:
             return
         out = self._driver.conf(ssh_config=True)
-        utilities.write_file(ssh_config, out)
+        util.write_file(ssh_config, out)
 
     def _print_valid_platforms(self, porcelain=False):
         if not porcelain:
@@ -195,7 +195,7 @@ class Molecule(object):
         kwargs = {'molecule_dir':
                   self.config.config['molecule']['molecule_dir']}
         if not os.path.isfile(self.config.config['ansible']['config_file']):
-            utilities.write_template(
+            util.write_template(
                 self.config.config['molecule']['ansible_config_template'],
                 self.config.config['ansible']['config_file'], kwargs=kwargs)
             self._state.change_state('customconf', False)
@@ -207,7 +207,7 @@ class Molecule(object):
             'state_file': self.config.config['molecule']['state_file'],
             'serverspec_dir': self.config.config['molecule']['serverspec_dir']
         }
-        utilities.write_template(
+        util.write_template(
             self.config.config['molecule']['rakefile_template'],
             self.config.config['molecule']['rakefile_file'], kwargs=kwargs)
 
@@ -221,9 +221,9 @@ class Molecule(object):
 
         instances = collections.defaultdict(dict)
         for instance in self._driver.instances:
-            instance_name = utilities.format_instance_name(
-                instance['name'], self._driver._platform,
-                self._driver.instances)
+            instance_name = util.format_instance_name(instance['name'],
+                                                      self._driver._platform,
+                                                      self._driver.instances)
 
             if 'ansible_groups' in instance:
                 instances[instance_name][
@@ -263,12 +263,12 @@ class Molecule(object):
         for group, instances in groups.iteritems():
             inventory += '\n[{}]\n'.format(group)
             for instance in instances:
-                inventory += '{}\n'.format(utilities.format_instance_name(
+                inventory += '{}\n'.format(util.format_instance_name(
                     instance, self._driver.platform, self._driver.instances))
 
         inventory_file = self.config.config['ansible']['inventory_file']
         try:
-            utilities.write_file(inventory_file, inventory)
+            util.write_file(inventory_file, inventory)
         except IOError:
             LOG.warning('WARNING: could not write inventory file {}'.format(
                 inventory_file))
@@ -294,7 +294,7 @@ class Molecule(object):
         for target in vars_target.keys():
             target_var_content = vars_target[target][0]
 
-            utilities.write_file(
+            util.write_file(
                 os.path.join(
                     os.path.abspath(target_vars_path), target),
                 "---\n" + yaml.dump(target_var_content,
@@ -327,7 +327,7 @@ class Molecule(object):
                 'ERROR: the group_vars path {} does not exist. Check your configuration file'.format(
                     group_vars_target))
 
-            utilities.sysexit()
+            util.sysexit()
         os.symlink(group_vars_target, group_vars_link_path)
 
     def _display_tabulate_data(self, data, headers=None):

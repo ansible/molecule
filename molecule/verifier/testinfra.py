@@ -24,10 +24,10 @@ import os
 import sh
 
 from molecule import ansible_playbook
-from molecule import utilities
+from molecule import util
 from molecule.verifier import base
 
-LOG = utilities.get_logger(__name__)
+LOG = util.get_logger(__name__)
 
 
 class Testinfra(base.Base):
@@ -41,7 +41,7 @@ class Testinfra(base.Base):
             self._molecule.config.config['ansible'],
             _env=self._molecule._env)
 
-        testinfra_options = utilities.merge_dicts(
+        testinfra_options = util.merge_dicts(
             self._molecule._driver.testinfra_args,
             self._molecule.config.config['testinfra'])
         testinfra_options['env'] = ansible.env
@@ -79,7 +79,7 @@ class Testinfra(base.Base):
 
         msg = 'Executing testinfra tests found in {}/.'.format(
             self._testinfra_dir)
-        utilities.print_info(msg)
+        util.print_info(msg)
 
         return sh.testinfra(tests, **kwargs)
 

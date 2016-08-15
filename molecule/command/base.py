@@ -22,9 +22,9 @@ import abc
 import docopt
 
 from molecule import core
-from molecule import utilities
+from molecule import util
 
-LOG = utilities.get_logger(__name__)
+LOG = util.get_logger(__name__)
 
 
 class InvalidHost(Exception):
@@ -58,7 +58,7 @@ class Base(object):
         if not c.molecule_file_exists():
             msg = 'Unable to find {}. Exiting.'
             LOG.error(msg.format(c.molecule_file))
-            utilities.sysexit()
+            util.sysexit()
         self.molecule.main()
 
     @abc.abstractproperty
