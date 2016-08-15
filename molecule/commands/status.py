@@ -47,7 +47,7 @@ class Status(base.Base):
 
         # Retrieve the status.
         try:
-            status = self.molecule._provisioner.status()
+            status = self.molecule._driver.status()
         except subprocess.CalledProcessError as e:
             LOG.error(e.message)
             return e.returncode, e.message

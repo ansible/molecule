@@ -89,9 +89,8 @@ class Converge(base.Base):
         ansible = ansible_playbook.AnsiblePlaybook(self.molecule.config.config[
             'ansible'])
 
-        # params to work with provisioner
-        for k, v in self.molecule._provisioner.ansible_connection_params.items(
-        ):
+        # params to work with driver
+        for k, v in self.molecule._driver.ansible_connection_params.items():
             ansible.add_cli_arg(k, v)
 
         # target tags passed in via CLI

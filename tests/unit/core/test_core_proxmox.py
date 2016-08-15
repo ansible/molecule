@@ -21,10 +21,10 @@
 import pytest
 
 pytestmark = pytest.mark.skip(
-    reason='Proxmox provisioner not implemented -- skipping')
+    reason='Proxmox driver not implemented -- skipping')
 
 
-def test_get_provisioner():
+def test_get_driver():
     pass
 
 

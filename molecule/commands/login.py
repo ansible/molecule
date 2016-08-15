@@ -83,8 +83,8 @@ class Login(base.Base):
                                 len(match), hostname, "\n".join(hosts)))
                 hostname = match[0]
 
-            login_cmd = self.molecule._provisioner.login_cmd(hostname)
-            login_args = self.molecule._provisioner.login_args(hostname)
+            login_cmd = self.molecule._driver.login_cmd(hostname)
+            login_args = self.molecule._driver.login_args(hostname)
 
         except subprocess.CalledProcessError:
             msg = "Unknown host '{}'.\n\nAvailable hosts:\n{}"

@@ -21,10 +21,10 @@
 import pytest
 
 
-def test_get_provisioner_invalid_instance(molecule_default_provider_instance):
+def test_get_driver_invalid_instance(molecule_default_provider_instance):
     del molecule_default_provider_instance.config.config['vagrant']
 
-    assert molecule_default_provider_instance.get_provisioner() is None
+    assert molecule_default_provider_instance.get_driver() is None
 
 
 def test_parse_provisioning_output_failure_00(

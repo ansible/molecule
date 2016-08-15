@@ -321,7 +321,7 @@ running on your machine. Molecule will simply pull the environment variables
 from your docker client. Also, the Ansible ``connection`` must be set to docker
 with user root.
 
-In order to use the docker provisioner, the image used must have at least one
+In order to use the docker driver, the image used must have at least one
 of the following:
 
 - apt-get/yum
@@ -402,9 +402,9 @@ Using Molecule In Travis
 ------------------------
 
 `Travis`_ is an excellent CI platform for testing Ansible roles. With the
-docker provisioner, molecule can easily be used to test multiple configurations
+docker driver, molecule can easily be used to test multiple configurations
 on Travis. Here is an example of a ``.travis.yml`` that is used to test a role
-named foo1. In this example, the role ``foo1`` uses the docker provisioner and
+named foo1. In this example, the role ``foo1`` uses the docker driver and
 is assumed to be in the directory ``roledir/foo1`` with the proper
 ``molecule.yml``.
 

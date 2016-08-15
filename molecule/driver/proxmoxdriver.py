@@ -18,11 +18,11 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-from molecule.provisioners import baseprovisioner
+from molecule.driver import basedriver
 
 
 # Place holder for Proxmox, partially implemented
-class ProxmoxProvisioner(baseprovisioner.BaseProvisioner):
+class ProxmoxDriver(basedriver.BaseDriver):
     def __init__(self, molecule):
-        super(ProxmoxProvisioner, self).__init__()
+        super(ProxmoxDriver, self).__init__()
         self.molecule = molecule

@@ -27,7 +27,7 @@ import ansible
 from molecule import ansible_playbook
 from molecule import config
 from molecule import core
-from molecule.provisioners import dockerprovisioner
+from molecule.driver import dockerdriver
 
 
 def ansible_v1():
@@ -58,7 +58,7 @@ def molecule_instance(temp_files):
 
 @pytest.fixture()
 def docker_instance(molecule_instance, request):
-    d = dockerprovisioner.DockerProvisioner(molecule_instance)
+    d = dockerdriver.DockerDriver(molecule_instance)
 
     def cleanup():
         d.destroy()
@@ -201,20 +201,20 @@ def test_provision(docker_instance):
     pb['inventory'] = 'test1,test2,'
     ansible = ansible_playbook.AnsiblePlaybook(pb)
 
-    # TODO(retr0h): Understand why provisioner is None
+    # TODO(retr0h): Understand why driver is None
     assert (None, '') == ansible.execute()
 
 
 def test_inventory_generation(molecule_instance, docker_instance):
-    molecule_instance._provisioner = docker_instance
+    molecule_instance._driver = docker_instance
 
-    molecule_instance._provisioner.up()
+    molecule_instance._driver.up()
     molecule_instance._create_inventory_file()
 
-    pb = molecule_instance._provisioner.ansible_connection_params
+    pb = molecule_instance._driver.ansible_connection_params
     pb['playbook'] = 'playbook.yml'
     pb['inventory'] = 'test1,test2,'
     ansible = ansible_playbook.AnsiblePlaybook(pb)
 
-    # TODO(retr0h): Understand why provisioner is None
+    # TODO(retr0h): Understand why driver is None
     assert (None, '') == ansible.execute()

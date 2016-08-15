@@ -24,14 +24,14 @@ import os
 import shade
 
 from molecule import utilities
-from molecule.provisioners import baseprovisioner
+from molecule.driver import basedriver
 
 LOG = utilities.get_logger(__name__)
 
 
-class OpenstackProvisioner(baseprovisioner.BaseProvisioner):
+class OpenstackDriver(basedriver.BaseDriver):
     def __init__(self, molecule):
-        super(OpenstackProvisioner, self).__init__(molecule)
+        super(OpenstackDriver, self).__init__(molecule)
         self._provider = self._get_provider()
         self._platform = self._get_platform()
         self._openstack = shade.openstack_cloud()

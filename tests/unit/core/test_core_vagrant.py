@@ -22,7 +22,7 @@ import pytest
 
 from molecule import config
 from molecule import core
-from molecule.provisioners import vagrantprovisioner
+from molecule.driver import vagrantdriver
 
 
 @pytest.fixture()
@@ -35,9 +35,9 @@ def molecule_instance(temp_files, molecule_args):
     return m
 
 
-def test_get_provisioner(molecule_instance):
-    assert isinstance(molecule_instance.get_provisioner(),
-                      vagrantprovisioner.VagrantProvisioner)
+def test_get_driver(molecule_instance):
+    assert isinstance(molecule_instance.get_driver(),
+                      vagrantdriver.VagrantDriver)
 
 
 def test_get_ssh_config(molecule_instance):
@@ -46,7 +46,7 @@ def test_get_ssh_config(molecule_instance):
 
 def test_write_ssh_config(mocker, molecule_instance):
     mocked_out = mocker.patch(
-        'molecule.provisioners.vagrantprovisioner.VagrantProvisioner.conf')
+        'molecule.driver.vagrantdriver.VagrantDriver.conf')
     mocked_out.return_value = 'mocked_out'
     mocked_write = mocker.patch('molecule.utilities.write_file')
     molecule_instance._write_ssh_config()

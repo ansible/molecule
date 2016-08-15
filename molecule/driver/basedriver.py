@@ -28,7 +28,7 @@ class InvalidPlatformSpecified(Exception):
     pass
 
 
-class BaseProvisioner(object):
+class BaseDriver(object):
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, molecule):
@@ -37,7 +37,7 @@ class BaseProvisioner(object):
     @abc.abstractproperty
     def name(self):
         """
-        Getter for type of provisioner
+        Getter for type of driver
         :return:
         """
         return
@@ -45,7 +45,7 @@ class BaseProvisioner(object):
     @abc.abstractproperty
     def instances(self):
         """
-        Provides the list of instances owned by this provisioner
+        Provides the list of instances owned by this driver
         :return:
         """
         return
@@ -94,7 +94,7 @@ class BaseProvisioner(object):
     @abc.abstractproperty
     def valid_providers(self):
         """
-        List of valid providers supported by provisioner
+        List of valid providers supported by driver
         :return:
         """
         return
@@ -110,7 +110,7 @@ class BaseProvisioner(object):
     @abc.abstractproperty
     def ssh_config_file(self):
         """
-        Returns the ssh config file location for the provisioner
+        Returns the ssh config file location for the driver
         :return:
         """
         return
@@ -141,7 +141,7 @@ class BaseProvisioner(object):
     @abc.abstractmethod
     def up(self, no_provision=True):
         """
-        Starts the configured VMs in within the provisioner
+        Starts the configured VMs in within the driver
         :param no_provision:
         :return:
         """
