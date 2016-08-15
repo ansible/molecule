@@ -24,7 +24,7 @@ from molecule import utilities
 from molecule.commands import base
 
 
-class Syntax(base.BaseCommand):
+class Syntax(base.Base):
     """
     Performs a syntax check on the current role.
 

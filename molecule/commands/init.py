@@ -31,7 +31,7 @@ from molecule.commands import base
 LOG = utilities.get_logger(__name__)
 
 
-class Init(base.BaseCommand):
+class Init(base.Base):
     """
     Creates the scaffolding for a new role intended for use with molecule.
 

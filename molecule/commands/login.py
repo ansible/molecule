@@ -29,7 +29,7 @@ from molecule.commands import base
 LOG = utilities.get_logger(__name__)
 
 
-class Login(base.BaseCommand):
+class Login(base.Base):
     """
     Initiates an interactive ssh session with the given host.
 

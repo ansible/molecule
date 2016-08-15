@@ -25,7 +25,7 @@ from molecule.commands import converge
 LOG = utilities.get_logger(__name__)
 
 
-class Idempotence(base.BaseCommand):
+class Idempotence(base.Base):
     """
     Provisions instances and parses output to determine idempotence.
 

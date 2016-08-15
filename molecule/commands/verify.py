@@ -29,7 +29,7 @@ from molecule.verifier import trailing
 LOG = utilities.get_logger(__name__)
 
 
-class Verify(base.BaseCommand):
+class Verify(base.Base):
     """
     Performs verification steps on running instances.
 

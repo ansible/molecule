@@ -26,7 +26,7 @@ from molecule.commands import base
 LOG = utilities.get_logger(__name__)
 
 
-class Destroy(base.BaseCommand):
+class Destroy(base.Base):
     """
     Destroys all instances created by molecule.
 

@@ -25,7 +25,7 @@ from molecule.commands import base
 LOG = utilities.get_logger(__name__)
 
 
-class Test(base.BaseCommand):
+class Test(base.Base):
     """
     Runs a series of commands (defined in config) against instances for a full test/verify run.
 

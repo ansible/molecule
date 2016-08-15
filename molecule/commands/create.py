@@ -26,7 +26,7 @@ from molecule.commands import base
 LOG = utilities.get_logger(__name__)
 
 
-class Create(base.BaseCommand):
+class Create(base.Base):
     """
     Creates all instances defined in molecule.yml.
 
