@@ -9,4 +9,4 @@
 .tox/
 .vagrant/
 doc/build/
-tests/unit/support/ansible_inventory
+test/unit/support/ansible_inventory
