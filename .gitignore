@@ -3,7 +3,7 @@
 *.retry
 .bundle/
 .cache/
-.coverage
+.coverage*
 .eggs/
 .molecule/
 .tox/
