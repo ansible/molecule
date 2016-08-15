@@ -26,12 +26,12 @@ import subprocess
 import vagrant
 
 from molecule import utilities
-from molecule.provisioners import baseprovisioner
+from molecule.driver import basedriver
 
 
-class VagrantProvisioner(baseprovisioner.BaseProvisioner):
+class VagrantDriver(basedriver.BaseDriver):
     def __init__(self, molecule):
-        super(VagrantProvisioner, self).__init__(molecule)
+        super(VagrantDriver, self).__init__(molecule)
         self._vagrant = vagrant.Vagrant(quiet_stdout=False, quiet_stderr=False)
         self._provider = self._get_provider()
         self._platform = self._get_platform()
@@ -208,7 +208,7 @@ class VagrantProvisioner(baseprovisioner.BaseProvisioner):
                     for item in self.molecule.config.config['vagrant'][
                         'providers']
                     if item['name'] == self.molecule._args['--provider']]:
-                raise baseprovisioner.InvalidProviderSpecified()
+                raise basedriver.InvalidDriverSpecified()
             self.molecule._state.change_state(
                 'default_provider', self.molecule._args['--provider'])
             self.molecule._env[
@@ -226,7 +226,7 @@ class VagrantProvisioner(baseprovisioner.BaseProvisioner):
                         for item in self.molecule.config.config['vagrant'][
                             'platforms']
                         if item['name'] == self.molecule._args['--platform']]:
-                    raise baseprovisioner.InvalidPlatformSpecified()
+                    raise basedriver.InvalidDriverSpecified()
             self.molecule._state.change_state(
                 'default_platform', self.molecule._args['--platform'])
             return self.molecule._args['--platform']

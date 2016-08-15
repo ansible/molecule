@@ -25,14 +25,14 @@ import json
 import docker
 
 from molecule import utilities
-from molecule.provisioners import baseprovisioner
+from molecule.driver import basedriver
 
 LOG = utilities.get_logger(__name__)
 
 
-class DockerProvisioner(baseprovisioner.BaseProvisioner):
+class DockerDriver(basedriver.BaseDriver):
     def __init__(self, molecule):
-        super(DockerProvisioner, self).__init__(molecule)
+        super(DockerDriver, self).__init__(molecule)
         self._docker = docker.from_env(assert_hostname=False)
         self._containers = self.molecule.config.config['docker']['containers']
         self._provider = self._get_provider()

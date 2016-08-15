@@ -23,7 +23,7 @@ import pytest
 from molecule import config
 from molecule import core
 from molecule import state
-from molecule.provisioners import vagrantprovisioner
+from molecule.driver import vagrantdriver
 
 # TODO(retr0h): Test instance create/delete through the vagrant instance.
 
@@ -40,7 +40,7 @@ def molecule_instance(temp_files, state_path):
 
 @pytest.fixture()
 def vagrant_instance(molecule_instance, request):
-    return vagrantprovisioner.VagrantProvisioner(molecule_instance)
+    return vagrantdriver.VagrantDriver(molecule_instance)
 
 
 def test_name(vagrant_instance):

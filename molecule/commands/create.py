@@ -44,7 +44,7 @@ class Create(base.Base):
         self.molecule._create_templates()
         try:
             utilities.print_info("Creating instances ...")
-            self.molecule._provisioner.up(no_provision=True)
+            self.molecule._driver.up(no_provision=True)
             self.molecule._state.change_state('created', True)
             if self.args['--platform'] == 'all':
                 self.molecule._state.change_state('multiple_platforms', True)

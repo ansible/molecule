@@ -22,7 +22,7 @@ import pytest
 
 from molecule import config
 from molecule import core
-from molecule.provisioners import dockerprovisioner
+from molecule.driver import dockerdriver
 
 
 @pytest.fixture()
@@ -35,9 +35,9 @@ def molecule_instance(temp_files, molecule_args):
     return m
 
 
-def test_get_provisioner(molecule_instance):
-    assert isinstance(molecule_instance.get_provisioner(),
-                      dockerprovisioner.DockerProvisioner)
+def test_get_driver(molecule_instance):
+    assert isinstance(molecule_instance.get_driver(),
+                      dockerdriver.DockerDriver)
 
 
 def test_get_ssh_config(molecule_instance):
