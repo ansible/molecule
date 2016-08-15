@@ -215,7 +215,8 @@ def ansible_section_data():
             'raw_env_vars': {
                 'FOO': 'bar'
             }
-        }
+        },
+        'testinfra': {}
     }
 
 
