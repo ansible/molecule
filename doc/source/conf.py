@@ -12,22 +12,19 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys
+import datetime
 import os
 import shlex
+import sys
 
 import molecule
 
-# make this work with RTD
-try:
-    import sphinx_bootstrap_theme
-except ImportError:
-    pass
+import alabaster
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#sys.path.insert(0, os.path.abspath('.'))
+sys.path.insert(0, os.path.abspath('../..'))
 
 # -- General configuration ------------------------------------------------
 
@@ -41,6 +38,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.doctest',
     'sphinx.ext.coverage',
+    'alabaster',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -59,7 +57,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Molecule'
-copyright = u'2015-2016, Adam Brown, John Dewey, Rémy Greinhofer, Duncan Hutty, Abel Lopez'
+copyright = u' %s, Adam Brown, John Dewey' % datetime.date.today().year
 author = u'Adam Brown, John Dewey, Rémy Greinhofer, Duncan Hutty, Abel Lopez, Erik Nadel'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -120,24 +118,27 @@ todo_include_todos = False
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-# html_theme = 'alabaster'
-
-# need to use default theme for readthedocs
-on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
-if on_rtd:
-    html_theme = 'default'
-else:
-    html_theme = 'bootstrap'
-    html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
+html_theme = 'alabaster'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#html_theme_options = {}
+# html_theme_options = {}
+html_theme_options = {
+    'logo': 'logo.png',
+    'github_user': 'metacloud',
+    'github_repo': 'molecule',
+    'github_button': True,
+    'travis_button': False,
+    'show_powered_by': False,
+    'extra_nav_links': {
+        'View on github': 'https://github.com/metacloud/molecule',
+    },
+}
 
 # Add any paths that contain custom themes here, relative to this directory.
 #html_theme_path = []
-#html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
+html_theme_path = [alabaster.get_path()]
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -158,7 +159,7 @@ else:
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-#html_static_path = ['_static']
+html_static_path = ['_static']
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
@@ -175,6 +176,13 @@ else:
 
 # Custom sidebar templates, maps document names to template names.
 #html_sidebars = {}
+html_sidebars = {
+    '**': [
+        'about.html',
+        'navigation.html',
+        'searchbox.html',
+    ],
+}
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
@@ -190,7 +198,7 @@ else:
 #html_split_index = False
 
 # If true, links to the reST sources are added to the pages.
-#html_show_sourcelink = True
+html_show_sourcelink = False
 
 # If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
 #html_show_sphinx = True
@@ -303,15 +311,3 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
-
-
-# Theme options are theme-specific and customize the look and feel of a
-# theme further.
-html_theme_options = {
-    # Bootswatch (http://bootswatch.com/) theme.
-    #
-    # Options are nothing (default) or the name of a valid theme
-    # such as "amelia" or "cosmo".
-    'bootswatch_theme': "flatly",
-    # 'bootswatch_theme': "superhero",
-}
