@@ -75,7 +75,7 @@ def print_info(msg):
     print('--> {}{}'.format(colorama.Fore.CYAN, msg.rstrip()))
 
 
-def write_template(src, dest, kwargs={}, _module='molecule', _dir='templates'):
+def write_template(src, dest, kwargs={}, _module='molecule', _dir='template'):
     """
     Writes a file from a jinja2 template.
 

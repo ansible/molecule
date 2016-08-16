@@ -43,7 +43,7 @@ There is also a `pip pattern` for development mode:
 Bash Completion
 ^^^^^^^^^^^^^^^
 
-A bash completion script is provided in the assets directory. It auto-completes
+A bash completion script is provided in the asset directory. It auto-completes
 the subcommands, options and dynamic arguments such as platform, providers, and
 hosts.
 
@@ -60,7 +60,7 @@ For OS X user, you must do the following to enable the script:
 
   USER_BASH_COMPLETION_DIR=~/bash_completion.d
   mkdir -p "${USER_BASH_COMPLETION_DIR}"
-  wget -O "${USER_BASH_COMPLETION_DIR}/molecule" https://github.com/metacloud/molecule/blob/master/assets/bash_completion/molecule.bash-completion.sh
+  wget -O "${USER_BASH_COMPLETION_DIR}/molecule" https://github.com/metacloud/molecule/blob/master/asset/bash_completion/molecule.bash-completion.sh
 
 and in ``~/.bash_profile``, add the following:
 
