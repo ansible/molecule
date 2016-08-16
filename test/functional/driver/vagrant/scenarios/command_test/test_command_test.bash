@@ -21,7 +21,7 @@
 #  THE SOFTWARE.
 
 (
-	cd ${OPENSTACK_FUNCTIONAL_TEST_BASE_DIR}/scenarios/full
-	molecule status --porcelain | grep 'full-01 .*not_created .*openstack'
-	molecule status --porcelain | grep 'full-02 .*not_created .*openstack'
+	cd ${VAGRANT_FUNCTIONAL_TEST_BASE_DIR}/command_test
+
+	molecule test
 )
