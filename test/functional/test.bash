@@ -25,9 +25,9 @@
 set -e
 
 export FUNCTIONAL_TEST_BASE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-export VAGRANT_FUNCTIONAL_TEST_BASE_DIR="${FUNCTIONAL_TEST_BASE_DIR}/driver/vagrant"
-export DOCKER_FUNCTIONAL_TEST_BASE_DIR="${FUNCTIONAL_TEST_BASE_DIR}/driver/docker"
-export OPENSTACK_FUNCTIONAL_TEST_BASE_DIR="${FUNCTIONAL_TEST_BASE_DIR}/driver/openstack"
+export VAGRANT_FUNCTIONAL_TEST_BASE_DIR="${FUNCTIONAL_TEST_BASE_DIR}/driver/vagrant/scenarios"
+export DOCKER_FUNCTIONAL_TEST_BASE_DIR="${FUNCTIONAL_TEST_BASE_DIR}/driver/docker/scenarios"
+export OPENSTACK_FUNCTIONAL_TEST_BASE_DIR="${FUNCTIONAL_TEST_BASE_DIR}/driver/openstack/scenarios"
 ANSIBLE_MAJOR_VERSION=$(ansible --version|head -1|awk '{print $NF}'|cut -d\. -f1)
 
 source ${VIRTUAL_ENV}/bin/activate
@@ -50,7 +50,7 @@ echo_warn() {
 
 if [ ${ANSIBLE_MAJOR_VERSION} != 1 ]; then
 	echo_info "Docker driver"
-	for test in ${DOCKER_FUNCTIONAL_TEST_BASE_DIR}/test_*.bash; do
+	for test in ${DOCKER_FUNCTIONAL_TEST_BASE_DIR}/*/test_*.bash; do
 		echo_info "Testing -> ${test}"
 		source ${test}
 	done
@@ -60,7 +60,7 @@ fi
 
 if [ $(which vagrant) ]; then
 	echo_info "Vagrant driver"
-	for test in ${VAGRANT_FUNCTIONAL_TEST_BASE_DIR}/test_*.bash; do
+	for test in ${VAGRANT_FUNCTIONAL_TEST_BASE_DIR}/*/test_*.bash; do
 		echo_info "Testing -> ${test}"
 		source ${test}
 	done
@@ -69,7 +69,7 @@ else
 fi
 
 echo_info "OpenStack driver"
-for test in ${OPENSTACK_FUNCTIONAL_TEST_BASE_DIR}/test_*.bash; do
+for test in ${OPENSTACK_FUNCTIONAL_TEST_BASE_DIR}/*/test_*.bash; do
 	echo_info "Testing -> ${test}"
 	source ${test}
 done

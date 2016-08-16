@@ -21,14 +21,7 @@
 #  THE SOFTWARE.
 
 (
-	cd ${DOCKER_FUNCTIONAL_TEST_BASE_DIR}/scenarios/trailing_newline
-	OUT=$(molecule verify 2>&1 || true)
-
-	echo ${OUT} | grep 'Trailing newline found at the end of ./playbook.yml'
-)
-
-(
-	cd ${DOCKER_FUNCTIONAL_TEST_BASE_DIR}/scenarios/trailing_whitespace
+	cd ${DOCKER_FUNCTIONAL_TEST_BASE_DIR}/command_verify_trailing_whitespace
 	OUT=$(molecule verify 2>&1 || true)
 
 	echo ${OUT} | grep 'Trailing whitespace found in ./playbook.yml on lines: 4'

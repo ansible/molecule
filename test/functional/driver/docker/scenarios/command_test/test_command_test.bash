@@ -21,6 +21,7 @@
 #  THE SOFTWARE.
 
 (
-	cd ${DOCKER_FUNCTIONAL_TEST_BASE_DIR}/scenarios/full
+	cd ${DOCKER_FUNCTIONAL_TEST_BASE_DIR}/command_test
+
 	molecule test
 )
