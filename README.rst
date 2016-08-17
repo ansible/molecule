@@ -1,11 +1,6 @@
-.. image:: https://cloud.githubusercontent.com/assets/9895/11258895/12a1bb40-8e12-11e5-9adf-9a7aea1ddda9.png
-   :alt: Molecule
-   :width: 500
-   :height: 132
-   :align: center
-
+********
 Molecule
-========
+********
 
 .. image:: https://badge.fury.io/py/molecule.svg
    :target: https://badge.fury.io/py/molecule
@@ -45,14 +40,14 @@ virtual machines/containers, with support for multiple Vagrant providers
 .. _`libvirt`: http://libvirt.org
 
 Ansible Support
----------------
+===============
 
 * 1.9.6 - Limited (`Docker`_ driver not-supported by `Ansible`_)
 * 2.0.2.0 - Supported
 * 2.1.1.0 - Supported
 
 Quick Start
------------
+===========
 
 Install molecule using pip:
 
@@ -128,12 +123,12 @@ Update the role with needed functionality and tests.  Now test it:
   Removed container foo-02.
 
 Documentation
--------------
+=============
 
 http://molecule.readthedocs.org/en/latest/
 
 License
--------
+=======
 
 MIT
 

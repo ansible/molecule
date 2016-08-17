@@ -1,33 +1,34 @@
+*********************
 Developer Information
-=====================
+*********************
 
 * Please read the `CONTRIBUTING`_ guidelines.
 * You probably want to `install from source`_.
 
 Branches
---------
+========
 
 * The ``master`` branch is currently a development branch until we have enough
   testing to ensure it's stability.
 
-* The ``stable/1.x`` branch was cut when ``1.8.2`` was released, and will be used
-  for hotfixes.
+* The ``stable/1.x`` branch was cut when ``1.8.2`` was released, and will be
+  used for hotfixes.
 
 Release Engineering
--------------------
+===================
 
 Pre-release
-^^^^^^^^^^^
+-----------
 
-* Update version in `docs/source/conf.py`.
+* Update version in `doc/source/conf.py`.
 * Edit the `CHANGELOG`_.
 * Ensure tox tests pass.
 
 Release
-^^^^^^^
+-------
 
 Tag the release and push to github.com
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: bash
 
@@ -35,7 +36,7 @@ Tag the release and push to github.com
   $ git push origin 1.0.5
 
 Upload to `PyPI`_
-~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^
 
 * Install `twine`_ using `pip`.
 * You will require credentials to upload to `PyPI`_. Create a `~/.pypirc`:
@@ -60,18 +61,18 @@ Upload to `PyPI`_
 
 
 Update Molecule.ReadTheDocs.org
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Docs are updated through a github webhook.
 
 Post-release
-^^^^^^^^^^^^
+------------
 
 * Comment/close any relevant `Issues`_.
 * Announce the release.
 
 Roadmap
--------
+=======
 
 * See `Issues`_ on Github.com.
 
