@@ -227,26 +227,35 @@ def merge_dicts(a, b):
     Merges the values of B into A and returns a new dict.  Uses the same merge
     strategy as ``config._combine``.
 
-    dict a
-    ------
-    b:
-       - c: 0
-       - c: 2
-    d:
-       e: "aaa"
-       f: 3
+    ::
 
-    dict b
-    ------
-    a: 1
-    b:
-       - c: 3
-    d:
-       e: "bbb"
+        dict a
 
-    Will give an object such as:
+        b:
+           - c: 0
+           - c: 2
+        d:
+           e: "aaa"
+           f: 3
 
-    {'a': 1, 'b': [{'c': 0}, {'c': 2}, {'c': 3}], 'd': {'e': "bbb", 'f': 3}}
+        dict b
+
+        a: 1
+        b:
+           - c: 3
+        d:
+           e: "bbb"
+
+    Will give an object such as::
+
+        {
+          'a': 1, 'b': [
+            {'c': 0}, {'c': 2}, {'c': 3}
+          ],
+          'd': {
+            'e': "bbb", 'f': 3
+          }
+        }
 
     :param a: the target dictionary
     :param b: the dictionary to import

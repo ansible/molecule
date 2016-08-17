@@ -10,6 +10,7 @@ Contents:
    driver/index
    provider/index
    development
+   autodoc/index
 
 .. _`Ansible`: https://docs.ansible.com
 .. _`Test Kitchen`: http://kitchen.ci
