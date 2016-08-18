@@ -7,8 +7,10 @@ Contents:
    :maxdepth: 3
 
    usage
+   configuration
    driver/index
    provider/index
+   bash
    development
    autodoc/index
 

@@ -1,3 +1,5 @@
+.. _openstack_driver_usage:
+
 Usage
 -----
 
