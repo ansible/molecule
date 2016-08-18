@@ -3,7 +3,6 @@ Development
 ***********
 
 * Please read the `CONTRIBUTING`_ guidelines.
-* You probably want to `install from source`_.
 
 Branches
 ========

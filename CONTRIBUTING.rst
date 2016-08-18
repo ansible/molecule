@@ -1,7 +1,10 @@
+************
 Contributing
-============
+************
 
-* We are interested in various different kinds of improvement for Molecule; please feel free to raise an `Issue`_ if you would like to work on something major to ensure efficient collaboration and avoid duplicate effort.
+* We are interested in various different kinds of improvement for Molecule;
+  please feel free to raise an `Issue`_ if you would like to work on something
+  major to ensure efficient collaboration and avoid duplicate effort.
 * Create a topic branch from where you want to base your work.
 * Check for unnecessary whitespace with ``git diff --check`` before committing.
 * Make sure you have added tests for your changes.
@@ -9,8 +12,44 @@ Contributing
 * Reformat the code by following the formatting section below.
 * Submit a pull request.
 
-Unit Testing
-------------
+Installing from source
+======================
+
+Due to the rapid pace of development on this tool, you might want to install it
+in "`development`_" mode so that new updates can be obtained by simply doing a
+``git pull`` in the repository's directory.
+
+.. code-block:: bash
+
+  $ cd /path/to/repos
+  $ git clone git@github.com:metacloud/molecule.git
+  $ cd molecule
+  $ sudo python setup.py develop
+
+There is also a `pip pattern` for development mode:
+
+.. code-block:: bash
+
+  $ cd /path/to/repos
+  $ git clone git@github.com:metacloud/molecule.git
+  $ pip install -U -e .
+
+.. _`development`: http://pythonhosted.org/setuptools/setuptools.html#development-mode
+
+Testing
+=======
+
+Test Dependencies
+-----------------
+
+Install serverspec dependencies:
+
+.. code-block:: bash
+
+  $ bundle install
+
+Unit
+----
 
 Unit tests are invoked by `Tox`_.
 
@@ -19,8 +58,8 @@ Unit tests are invoked by `Tox`_.
   $ tox -l
   $ py{27}-ansible{19,20,21}-unit
 
-Functional Testing
-------------------
+Functional
+----------
 
 Functional tests are invoked by `Tox`_.
 
@@ -30,7 +69,7 @@ Functional tests are invoked by `Tox`_.
   $ py{27}-ansible{19,20,21}-functional
 
 Formatting
-----------
+==========
 
 The formatting is done using `YAPF`_.
 

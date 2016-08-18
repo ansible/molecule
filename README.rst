@@ -18,22 +18,16 @@ Molecule is designed to aid in the development and testing of
 `Ansible`_ roles including support for multiple instances,
 operating system distributions, virtualization providers and test frameworks.
 
-It leverages `Vagrant`_, `Docker`_, `OpenStack`_, and `libvirt`_ to manage
+It leverages `Vagrant`_, `Docker`_, `OpenStack`_, and `Libvirt`_ to manage
 virtual machines/containers, with support for multiple Vagrant providers
-(currently VirtualBox, Parallels and VMware Fusion).  Molecule supports
-`Serverspec`_ or `Testinfra`_ to run tests.  Molecule uses an `Ansible`_
-`playbook`_ (``playbook.yml``), to execute the `role`_ and its tests.
+(currently `VirtualBox`_, `Parallels`_ and `VMware Fusion`_).  Molecule
+supports `Serverspec`_ or `Testinfra`_ to run tests.  Molecule uses an
+`Ansible`_ `playbook`_ (``playbook.yml``), to execute the `role`_ and its
+tests.
 
-.. _`Ansible`: https://docs.ansible.com
 .. _`Test Kitchen`: http://kitchen.ci
 .. _`playbook`: https://docs.ansible.com/ansible/playbooks.html
 .. _`role`: http://docs.ansible.com/ansible/playbooks_roles.html
-.. _`Serverspec`: http://serverspec.org
-.. _`Testinfra`: http://testinfra.readthedocs.org
-.. _`Vagrant`: http://docs.vagrantup.com/v2
-.. _`Docker`: https://www.docker.com
-.. _`OpenStack`: https://www.openstack.org
-.. _`libvirt`: http://libvirt.org
 
 Ansible Support
 ===============
@@ -41,6 +35,49 @@ Ansible Support
 * 1.9.6 - Limited (`Docker`_ driver not-supported by `Ansible`_)
 * 2.0.2.0 - Supported
 * 2.1.1.0 - Supported
+
+Dependencies
+============
+
+Molecule relies on several outside packages and programs to function.
+
+* `Ansible`_
+* `Rake`_
+* `Rubocop`_
+* `Serverspec`_
+* `Testinfra`_
+
+Driver
+------
+
+Dependant upon driver used
+
+* `Docker`_
+* `Openstack`_
+* `Vagrant`_
+
+Provider
+--------
+
+Dependant upon provider used
+
+* `Libvirt`_
+* `VirtualBox`_
+* `VMware Fusion`_
+* `Parallels`_
+
+.. _`Ansible`: https://docs.ansible.com
+.. _`Docker`: https://www.docker.com
+.. _`Libvirt`: http://libvirt.org
+.. _`OpenStack`: https://www.openstack.org
+.. _`Parallels`: http://www.parallels.com
+.. _`Rake`: https://github.com/ruby/rake
+.. _`Rubocop`: https://github.com/bbatsov/rubocop
+.. _`Serverspec`: http://serverspec.org
+.. _`Testinfra`: http://testinfra.readthedocs.org
+.. _`Vagrant`: http://docs.vagrantup.com/v2
+.. _`VirtualBox`: https://www.virtualbox.org
+.. _`VMware Fusion`: http://www.vmware.com/products/fusion.html
 
 Quick Start
 ===========
