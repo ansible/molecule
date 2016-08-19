@@ -45,7 +45,6 @@ class Molecule(object):
     def __init__(self, args):
         self._env = os.environ.copy()
         self._args = args
-        self._driver = None
         self.config = config.Config()
 
     def main(self):
@@ -56,24 +55,24 @@ class Molecule(object):
             state_file=self.config.config.get('molecule').get('state_file'))
 
         try:
-            self._driver = self.get_driver()
+            self.driver = self._get_driver()
         except basedriver.InvalidDriverSpecified:
             LOG.error("Invalid provider '{}'".format(self._args['--provider']))
             self._args['--provider'] = None
             self._args['--platform'] = None
-            self._driver = self.get_driver()
+            self.driver = self._get_driver()
             self._print_valid_providers()
             util.sysexit()
         except basedriver.InvalidDriverSpecified:
             LOG.error("Invalid platform '{}'".format(self._args['--platform']))
             self._args['--provider'] = None
             self._args['--platform'] = None
-            self._driver = self.get_driver()
+            self.driver = self._get_driver()
             self._print_valid_platforms()
             util.sysexit()
 
         # updates instances config with full machine names
-        self.config.populate_instance_names(self._driver.platform)
+        self.config.populate_instance_names(self.driver.platform)
 
         if self._args.get('--debug'):
             util.debug('RUNNING CONFIG',
@@ -84,7 +83,15 @@ class Molecule(object):
         self._add_or_update_vars('host_vars')
         self._symlink_vars()
 
-    def get_driver(self):
+    @property
+    def driver(self):
+        return self._driver
+
+    @driver.setter
+    def driver(self, val):
+        self._driver = val
+
+    def _get_driver(self):
         if 'vagrant' in self.config.config:
             return vagrantdriver.VagrantDriver(self)
         elif 'proxmox' in self.config.config:
@@ -97,13 +104,13 @@ class Molecule(object):
             return None
 
     def _get_ssh_config(self):
-        return self._driver.ssh_config_file
+        return self.driver.ssh_config_file
 
     def _write_ssh_config(self):
         ssh_config = self._get_ssh_config()
         if ssh_config is None:
             return
-        out = self._driver.conf(ssh_config=True)
+        out = self.driver.conf(ssh_config=True)
         util.write_file(ssh_config, out)
 
     def _print_valid_platforms(self, porcelain=False):
@@ -113,8 +120,8 @@ class Molecule(object):
             LOG.info("AVAILABLE PLATFORMS")
 
         data = []
-        default_platform = self._driver.default_platform
-        for platform in self._driver.valid_platforms:
+        default_platform = self.driver.default_platform
+        for platform in self.driver.valid_platforms:
             if porcelain:
                 default = 'd' if platform['name'] == default_platform else ''
             else:
@@ -131,8 +138,8 @@ class Molecule(object):
             LOG.info("AVAILABLE PROVIDERS")
 
         data = []
-        default_provider = self._driver.default_provider
-        for provider in self._driver.valid_providers:
+        default_provider = self.driver.default_provider
+        for provider in self.driver.valid_providers:
             if porcelain:
                 default = 'd' if provider['name'] == default_provider else ''
             else:
@@ -220,10 +227,9 @@ class Molecule(object):
         """
 
         instances = collections.defaultdict(dict)
-        for instance in self._driver.instances:
-            instance_name = util.format_instance_name(instance['name'],
-                                                      self._driver._platform,
-                                                      self._driver.instances)
+        for instance in self.driver.instances:
+            instance_name = util.format_instance_name(
+                instance['name'], self.driver._platform, self.driver.instances)
 
             if 'ansible_groups' in instance:
                 instances[instance_name][
@@ -245,12 +251,12 @@ class Molecule(object):
         """
 
         inventory = ''
-        for instance in self._driver.instances:
-            inventory += self._driver.inventory_entry(instance)
+        for instance in self.driver.instances:
+            inventory += self.driver.inventory_entry(instance)
 
         # get a list of all groups and hosts in those groups
         groups = {}
-        for instance in self._driver.instances:
+        for instance in self.driver.instances:
             if 'ansible_groups' in instance:
                 for group in instance['ansible_groups']:
                     if group not in groups:
@@ -258,13 +264,13 @@ class Molecule(object):
                     groups[group].append(instance['name'])
 
         if self._args.get('--platform') == 'all':
-            self._driver.platform = 'all'
+            self.driver.platform = 'all'
 
         for group, instances in groups.iteritems():
             inventory += '\n[{}]\n'.format(group)
             for instance in instances:
                 inventory += '{}\n'.format(util.format_instance_name(
-                    instance, self._driver.platform, self._driver.instances))
+                    instance, self.driver.platform, self.driver.instances))
 
         inventory_file = self.config.config['ansible']['inventory_file']
         try:

@@ -206,12 +206,12 @@ def test_provision(docker_instance):
 
 
 def test_inventory_generation(molecule_instance, docker_instance):
-    molecule_instance._driver = docker_instance
+    molecule_instance.driver = docker_instance
 
-    molecule_instance._driver.up()
+    molecule_instance.driver.up()
     molecule_instance._create_inventory_file()
 
-    pb = molecule_instance._driver.ansible_connection_params
+    pb = molecule_instance.driver.ansible_connection_params
     pb['playbook'] = 'playbook.yml'
     pb['inventory'] = 'test1,test2,'
     ansible = ansible_playbook.AnsiblePlaybook(pb)

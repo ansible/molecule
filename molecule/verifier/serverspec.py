@@ -36,7 +36,7 @@ class Serverspec(base.Base):
         self._rakefile = molecule.config.config['molecule']['rakefile_file']
 
     def execute(self):
-        serverspec_options = self._molecule._driver.serverspec_args
+        serverspec_options = self._molecule.driver.serverspec_args
         serverspec_options['debug'] = self._molecule._args.get('--debug',
                                                                False)
 
