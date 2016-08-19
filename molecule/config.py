@@ -74,7 +74,7 @@ class Config(object):
 
         return anyconfig.load(configs,
                               ignore_missing=True,
-                              ac_merge=anyconfig.MS_DICTS_AND_LISTS)
+                              ac_merge=anyconfig.MS_DICTS)
 
     def _build_config_paths(self):
         """

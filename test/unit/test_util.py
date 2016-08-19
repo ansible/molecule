@@ -158,10 +158,7 @@ def test_merge_dicts():
     # Example taken from python-anyconfig/anyconfig/__init__.py
     a = {'b': [{'c': 0}, {'c': 2}], 'd': {'e': 'aaa', 'f': 3}}
     b = {'a': 1, 'b': [{'c': 3}], 'd': {'e': 'bbb'}}
-    expected = {'a': 1,
-                'b': [{'c': 0}, {'c': 2}, {'c': 3}],
-                'd': {'e': "bbb",
-                      'f': 3}}
+    expected = {'a': 1, 'b': [{'c': 3}], 'd': {'e': "bbb", 'f': 3}}
     result = util.merge_dicts(a, b)
 
     assert expected == result
