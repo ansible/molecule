@@ -248,20 +248,14 @@ def merge_dicts(a, b):
 
     Will give an object such as::
 
-        {
-          'a': 1, 'b': [
-            {'c': 0}, {'c': 2}, {'c': 3}
-          ],
-          'd': {
-            'e': "bbb", 'f': 3
-          }
-        }
+        {'a': 1, 'b': [{'c': 3}], 'd': {'e': "bbb", 'f': 3}}
+
 
     :param a: the target dictionary
     :param b: the dictionary to import
     :return: dict
     """
-    md = m9dicts.make(a, merge=m9dicts.MS_DICTS_AND_LISTS)
+    md = m9dicts.make(a, merge=m9dicts.MS_DICTS)
     md.update(b)
 
     return md
