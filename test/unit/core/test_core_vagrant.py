@@ -36,7 +36,7 @@ def molecule_instance(temp_files, molecule_args):
 
 
 def test_get_driver(molecule_instance):
-    assert isinstance(molecule_instance.get_driver(),
+    assert isinstance(molecule_instance._get_driver(),
                       vagrantdriver.VagrantDriver)
 
 

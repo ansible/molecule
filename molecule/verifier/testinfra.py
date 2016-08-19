@@ -42,7 +42,7 @@ class Testinfra(base.Base):
             _env=self._molecule._env)
 
         testinfra_options = util.merge_dicts(
-            self._molecule._driver.testinfra_args,
+            self._molecule.driver.testinfra_args,
             self._molecule.config.config['testinfra'])
         testinfra_options['env'] = ansible.env
         testinfra_options['debug'] = self._molecule._args.get('--debug', False)
