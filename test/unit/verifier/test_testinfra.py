@@ -28,17 +28,23 @@ def testinfra_instance(molecule_instance):
     return testinfra.Testinfra(molecule_instance)
 
 
-def test_execute(mocker, testinfra_instance):
-    mocked_test_stat = mocker.patch(
-        'molecule.verifier.testinfra.Testinfra._get_tests')
-    mocked_testinfra = mocker.patch(
-        'molecule.verifier.testinfra.Testinfra._testinfra')
-    mocked_test_stat.return_value = ['/test/1', '/test/2']
+@pytest.fixture
+def mocked_test_verifier(mocker):
+    return mocker.patch('molecule.verifier.testinfra.Testinfra._testinfra')
+
+
+@pytest.fixture
+def mocked_get_tests(mocker):
+    return mocker.patch('molecule.verifier.testinfra.Testinfra._get_tests')
+
+
+def test_execute(mocked_test_verifier, mocked_get_tests, testinfra_instance):
+    mocked_get_tests.return_value = ['/test/1', '/test/2']
     testinfra_instance.execute()
 
-    assert (['/test/1', '/test/2'], ) == mocked_testinfra.call_args[0]
+    assert (['/test/1', '/test/2'], ) == mocked_test_verifier.call_args[0]
 
-    ca = mocked_testinfra.call_args[1]
+    ca = mocked_test_verifier.call_args[1]
     assert not ca['debug']
     assert not ca['sudo']
     assert 'ansible' == ca['connection']
@@ -46,22 +52,17 @@ def test_execute(mocker, testinfra_instance):
     assert 'env' in ca
 
 
-def test_execute_no_tests(mocker, testinfra_instance):
-    mocked_test_stat = mocker.patch(
-        'molecule.verifier.testinfra.Testinfra._get_tests')
-    mocked_testinfra = mocker.patch(
-        'molecule.verifier.testinfra.Testinfra._testinfra')
-    mocked_test_stat.return_value = []
+def test_execute_no_tests(mocked_test_verifier, mocked_get_tests,
+                          testinfra_instance):
+    mocked_get_tests.return_value = []
     testinfra_instance.execute()
 
-    assert not mocked_testinfra.called
+    assert not mocked_test_verifier.called
 
 
-def test_testinfra(mocker, testinfra_instance):
-    mocked = mocker.patch('molecule.verifier.testinfra.Testinfra._testinfra')
-
+def test_testinfra(mocked_test_verifier, mocked_get_tests, testinfra_instance):
     args = ['/tmp/ansible-inventory']
     kwargs = {'debug': True, 'out': None, 'err': None}
     testinfra_instance._testinfra(*args, **kwargs)
 
-    mocked.assert_called_once_with(*args, **kwargs)
+    mocked_test_verifier.assert_called_once_with(*args, **kwargs)

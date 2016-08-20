@@ -28,43 +28,51 @@ def serverspec_instance(molecule_instance):
     return serverspec.Serverspec(molecule_instance)
 
 
-def test_execute(mocker, serverspec_instance):
-    mocked_test_stat = mocker.patch(
-        'molecule.verifier.serverspec.Serverspec._get_tests')
-    mocked_rake = mocker.patch('molecule.verifier.serverspec.Serverspec._rake')
-    mocked_test_stat.return_value = True
+@pytest.fixture
+def mocked_code_verifier(mocker):
+    return mocker.patch('molecule.verifier.serverspec.Serverspec._rubocop')
+
+
+@pytest.fixture
+def mocked_test_verifier(mocker):
+    return mocker.patch('molecule.verifier.serverspec.Serverspec._rake')
+
+
+@pytest.fixture
+def mocked_get_tests(mocker):
+    return mocker.patch('molecule.verifier.serverspec.Serverspec._get_tests')
+
+
+def test_execute(mocked_code_verifier, mocked_test_verifier, mocked_get_tests,
+                 serverspec_instance):
+    mocked_get_tests.return_value = True
     serverspec_instance.execute()
 
     args = ['test/rakefile_file']
     kwargs = {'debug': False}
-    mocked_rake.assert_called_once_with(*args, **kwargs)
+    mocked_test_verifier.assert_called_once_with(*args, **kwargs)
 
 
-def test_execute_no_tests(mocker, serverspec_instance):
-    mocked_test_stat = mocker.patch(
-        'molecule.verifier.serverspec.Serverspec._get_tests')
-    mocked_rake = mocker.patch('molecule.verifier.serverspec.Serverspec._rake')
-    mocked_test_stat.return_value = False
+def test_execute_no_tests(mocked_code_verifier, mocked_test_verifier,
+                          mocked_get_tests, serverspec_instance):
+    mocked_get_tests.return_value = False
     serverspec_instance.execute()
 
-    assert not mocked_rake.called
+    assert not mocked_test_verifier.called
+    assert not mocked_code_verifier.called
 
 
-def test_rake(mocker, serverspec_instance):
-    mocked = mocker.patch('molecule.verifier.serverspec.Serverspec._rake')
-
+def test_rake(mocked_test_verifier, serverspec_instance):
     args = ['/tmp/rakefile']
     kwargs = {'debug': True, 'out': None, 'err': '/dev/null'}
     serverspec_instance._rake(*args, **kwargs)
 
-    mocked.assert_called_once_with(*args, **kwargs)
+    mocked_test_verifier.assert_called_once_with(*args, **kwargs)
 
 
-def test_rubocop(mocker, serverspec_instance):
-    mocked = mocker.patch('molecule.verifier.serverspec.Serverspec._rubocop')
-
+def test_rubocop(mocked_code_verifier, serverspec_instance):
     args = ['/tmp']
     kwargs = {'pattern': '**/**/**/*', 'out': '/dev/null', 'err': None}
     serverspec_instance._rubocop(*args, **kwargs)
 
-    mocked.assert_called_once_with(*args, **kwargs)
+    mocked_code_verifier.assert_called_once_with(*args, **kwargs)
