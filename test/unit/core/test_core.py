@@ -20,12 +20,11 @@
 
 import pytest
 
-from molecule.driver import vagrantdriver
-
 
 def test_driver(molecule_default_provider_instance):
-    assert isinstance(molecule_default_provider_instance.driver,
-                      vagrantdriver.VagrantDriver)
+    del molecule_default_provider_instance.config.config['vagrant']
+
+    assert molecule_default_provider_instance.driver is None
 
 
 def test_driver_setter(molecule_default_provider_instance):
