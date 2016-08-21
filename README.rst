@@ -158,7 +158,8 @@ Update the role with needed functionality and tests.  Now test it:
 Documentation
 =============
 
-http://molecule.readthedocs.org/en/latest/
+* stable (1.8 release) - http://molecule.readthedocs.io/en/stable/
+* master - http://molecule.readthedocs.org/en/latest/
 
 License
 =======
