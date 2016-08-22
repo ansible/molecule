@@ -50,6 +50,7 @@ class Testinfra(base.Base):
 
         tests_glob = self._get_tests()
         if len(tests_glob) > 0:
+            self._flake8(tests_glob)
             self._testinfra(tests_glob, **testinfra_options)
 
     def _testinfra(self,
@@ -82,6 +83,21 @@ class Testinfra(base.Base):
         util.print_info(msg)
 
         return sh.testinfra(tests, **kwargs)
+
+    def _flake8(self, tests, out=LOG.info, err=LOG.error):
+        """
+        Runs flake8 against specified tests.
+
+        :param tests: List of testinfra tests
+        :param out: Function to process STDOUT for underlying sh call
+        :param err: Function to process STDERR for underlying sh call
+        :return: sh response object
+        """
+        msg = 'Executing flake8 on *.py files found in {}/.'.format(
+            self._testinfra_dir)
+        util.print_info(msg)
+
+        return sh.flake8(tests)
 
     def _get_tests(self):
         tests = '{}/test_*.py'.format(self._testinfra_dir)

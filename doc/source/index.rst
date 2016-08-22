@@ -10,6 +10,7 @@ Contents:
    configuration
    driver/index
    provider/index
+   validator
    bash
    development
    autodoc/index
