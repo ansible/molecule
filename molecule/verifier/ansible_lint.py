@@ -21,44 +21,29 @@
 import sh
 
 from molecule import util
-from molecule.command import base
-from molecule.verifier import ansible_lint
-from molecule.verifier import serverspec
-from molecule.verifier import testinfra
-from molecule.verifier import trailing
+from molecule.verifier import base
 
 LOG = util.get_logger(__name__)
 
 
-class Verify(base.Base):
+class AnsibleLint(base.Base):
     """
-    Performs verification steps on running instances.
-
-    Usage:
-        verify [--platform=<platform>] [--provider=<provider>] [--debug] [--sudo]
-
-    Options:
-        --platform=<platform>  specify a platform
-        --provider=<provider>  specify a provider
-        --debug                get more detail
-        --sudo                 runs tests with sudo
+    This is likely to be the source of issues.  The class was implemented to
+    bring standardization to roles managed by molecule.  How we further refine
+    this class, and its usage is up for discussion.
     """
 
-    def execute(self, exit=True):
-        for v in [ansible_lint.AnsibleLint(self.molecule),
-                  trailing.Trailing(self.molecule)]:
-            v.execute()
+    def __init__(self, molecule):
+        super(AnsibleLint, self).__init__(molecule)
+        self._playbook = molecule.config.config['ansible']['playbook']
 
-        self.molecule._write_ssh_config()
+    def execute(self):
+        """
+        Runs ansible-lint against specified playbook.
 
-        try:
-            for v in [testinfra.Testinfra(self.molecule),
-                      serverspec.Serverspec(self.molecule)]:
-                v.execute()
-        except sh.ErrorReturnCode as e:
-            LOG.error('ERROR: {}'.format(e))
-            if exit:
-                util.sysexit(e.exit_code)
-            return e.exit_code, e.stdout
+        :return: None
+        """
+        msg = 'Executing ansible-lint.'
+        util.print_info(msg)
 
-        return None, None
+        sh.ansible_lint(self._playbook, _out=LOG.info, _err=LOG.error)

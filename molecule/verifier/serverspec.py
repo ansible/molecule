@@ -53,11 +53,11 @@ class Serverspec(base.Base):
         """
         Runs rake with specified rakefile.
 
-        :param rakefile: Path to rakefile
-        :param debug: Pass trace flag to rake
-        :param env: Environment to pass to underlying sh call
-        :param out: Function to process STDOUT for underlying sh call
-        :param err: Function to process STDERR for underlying sh call
+        :param rakefile: Path to rakefile.
+        :param debug: Pass trace flag to rake.
+        :param env: Environment to pass to underlying sh call.
+        :param out: Function to process STDOUT for underlying sh call.
+        :param err: Function to process STDERR for underlying sh call.
         :return: sh response object
         """
         kwargs = {'_env': env,
@@ -85,12 +85,12 @@ class Serverspec(base.Base):
         """
         Runs rubocop against specified directory with specified pattern.
 
-        :param serverspec_dir: Directory to search for files to lint
-        :param debug: Pass debug flag to rubocop
-        :param pattern: Search pattern to pass to rubocop
-        :param env: Environment to pass to underlying sh call
-        :param out: Function to process STDOUT for underlying sh call
-        :param err: Function to process STDERR for underlying sh call
+        :param serverspec_dir: Directory to search for files to lint.
+        :param debug: Pass debug flag to rubocop.
+        :param pattern: Search pattern to pass to rubocop.
+        :param env: Environment to pass to underlying sh call.
+        :param out: Function to process STDOUT for underlying sh call.
+        :param err: Function to process STDERR for underlying sh call.
         :return: sh response object
         """
         kwargs = {'_env': env, '_out': out, '_err': err, 'debug': debug}

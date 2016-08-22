@@ -63,11 +63,11 @@ class Testinfra(base.Base):
         """
         Runs testinfra and returns a sh response object.
 
-        :param tests: List of testinfra tests
-        :param debug: Pass debug flag to testinfra
-        :param env: Environment to pass to underlying sh call
-        :param out: Function to process STDOUT for underlying sh call
-        :param err: Function to process STDERR for underlying sh call
+        :param tests: List of testinfra tests.
+        :param debug: Pass debug flag to testinfra.
+        :param env: Environment to pass to underlying sh call.
+        :param out: Function to process STDOUT for underlying sh call.
+        :param err: Function to process STDERR for underlying sh call.
         :return: sh response object
         """
         kwargs['debug'] = debug
@@ -88,10 +88,10 @@ class Testinfra(base.Base):
         """
         Runs flake8 against specified tests.
 
-        :param tests: List of testinfra tests
-        :param out: Function to process STDOUT for underlying sh call
-        :param err: Function to process STDERR for underlying sh call
-        :return: sh response object
+        :param tests: List of testinfra tests.
+        :param out: Function to process STDOUT for underlying sh call.
+        :param err: Function to process STDERR for underlying sh call.
+        :return: sh response object.
         """
         msg = 'Executing flake8 on *.py files found in {}/.'.format(
             self._testinfra_dir)

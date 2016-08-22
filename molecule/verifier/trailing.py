@@ -37,8 +37,8 @@ class Trailing(base.Base):
         Recursively finds all files relative to CWD, and checks them for
         trailing whitespace and newlines.
 
-        :param ignore_paths: list of paths to ignore during checks
-        :return: A ``sys.exit`` code if found an error, otherwise None
+        :param ignore_paths: List of paths to ignore during checks.
+        :return: A ``sys.exit`` code if found an error, otherwise None.
         """
         filenames = []
         pruned_filenames = []

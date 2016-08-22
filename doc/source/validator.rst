@@ -71,3 +71,11 @@ root.  The trailing validators will ignore the following directories.
       - .git
       - .vagrant
       - .molecule
+
+Ansible Lint
+============
+
+`Ansible Lint`_ checks playbooks for practices, and behaviour that could
+potentially be improved.
+
+.. _`Ansible Lint`: https://github.com/willthames/ansible-lint
