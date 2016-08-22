@@ -23,13 +23,13 @@ Usage:
 
 Commands:
     syntax        check playbook syntax
-    create        create instances
-    converge      create and provision instances
+    create        create instance(s)
+    converge      create and provision instance(s)
     idempotence   converge and check the output for changes
-    test          run a full test cycle: destroy, create, converge, idempotency-check, verify and destroy instances
-    verify        create, provision and test instances
-    destroy       destroy instances
-    status        show status of instances
+    test          run a full test cycle: destroy, syntax, create, converge, idempotency, verify, and destroy instance(s)
+    verify        run verifiers against instance(s)
+    destroy       destroy instance(s)
+    status        show status of instance(s)
     list          show available platforms
     login         connects to instance via SSH
     init          creates the directory structure and files for a new Ansible role compatible with molecule
