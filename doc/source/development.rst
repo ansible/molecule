@@ -7,11 +7,8 @@ Development
 Branches
 ========
 
-* The ``master`` branch is currently a development branch until we have enough
-  testing to ensure it's stability.
-
-* The ``stable/1.x`` branch was cut when ``1.8.2`` was released, and will be
-  used for hotfixes.
+* The ``master`` branch is stable.  Major changes should be performed
+  elsewhere.
 
 Release Engineering
 ===================
