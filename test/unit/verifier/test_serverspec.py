@@ -48,9 +48,10 @@ def test_execute(mocked_code_verifier, mocked_test_verifier, mocked_get_tests,
     mocked_get_tests.return_value = True
     serverspec_instance.execute()
 
-    args = ['test/rakefile_file']
     kwargs = {'debug': False}
-    mocked_test_verifier.assert_called_once_with(*args, **kwargs)
+    mocked_code_verifier.assert_called_once_with('spec', **kwargs)
+    mocked_test_verifier.assert_called_once_with('test/rakefile_file',
+                                                 **kwargs)
 
 
 def test_execute_no_tests(mocked_code_verifier, mocked_test_verifier,
@@ -58,8 +59,8 @@ def test_execute_no_tests(mocked_code_verifier, mocked_test_verifier,
     mocked_get_tests.return_value = False
     serverspec_instance.execute()
 
-    assert not mocked_test_verifier.called
     assert not mocked_code_verifier.called
+    assert not mocked_test_verifier.called
 
 
 def test_rake(mocked_test_verifier, serverspec_instance):

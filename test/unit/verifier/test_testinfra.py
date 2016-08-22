@@ -29,6 +29,11 @@ def testinfra_instance(molecule_instance):
 
 
 @pytest.fixture
+def mocked_code_verifier(mocker):
+    return mocker.patch('molecule.verifier.testinfra.Testinfra._flake8')
+
+
+@pytest.fixture
 def mocked_test_verifier(mocker):
     return mocker.patch('molecule.verifier.testinfra.Testinfra._testinfra')
 
@@ -38,10 +43,12 @@ def mocked_get_tests(mocker):
     return mocker.patch('molecule.verifier.testinfra.Testinfra._get_tests')
 
 
-def test_execute(mocked_test_verifier, mocked_get_tests, testinfra_instance):
+def test_execute(mocked_code_verifier, mocked_test_verifier, mocked_get_tests,
+                 testinfra_instance):
     mocked_get_tests.return_value = ['/test/1', '/test/2']
     testinfra_instance.execute()
 
+    mocked_code_verifier.assert_called_once_with(['/test/1', '/test/2'])
     assert (['/test/1', '/test/2'], ) == mocked_test_verifier.call_args[0]
 
     ca = mocked_test_verifier.call_args[1]
@@ -52,11 +59,12 @@ def test_execute(mocked_test_verifier, mocked_get_tests, testinfra_instance):
     assert 'env' in ca
 
 
-def test_execute_no_tests(mocked_test_verifier, mocked_get_tests,
-                          testinfra_instance):
+def test_execute_no_tests(mocked_code_verifier, mocked_test_verifier,
+                          mocked_get_tests, testinfra_instance):
     mocked_get_tests.return_value = []
     testinfra_instance.execute()
 
+    assert not mocked_code_verifier.called
     assert not mocked_test_verifier.called
 
 
@@ -66,3 +74,10 @@ def test_testinfra(mocked_test_verifier, mocked_get_tests, testinfra_instance):
     testinfra_instance._testinfra(*args, **kwargs)
 
     mocked_test_verifier.assert_called_once_with(*args, **kwargs)
+
+
+def test_flake8(mocked_code_verifier, testinfra_instance):
+    args = ['test1.py', 'test2.py']
+    testinfra_instance._flake8(args)
+
+    mocked_code_verifier.assert_called_once_with(args)
