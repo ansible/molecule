@@ -14,27 +14,30 @@ on the new test VM").
 It is very simple to run tests using the molecule command from the working
 directory of your role.
 
-* ``molecule destroy``: Halts and destroys all instances associated with
-  current role.
-* ``molecule create``: Builds instances specified in molecule.yml.
-* ``molecule converge``: Runs playbook.yml against instances associated with
-  current role.
-* ``molecule idempotence``: Checks output of ansible-playbook for
-  "changed"/"failed".
-* ``molecule verify``: Runs the functional tests (serverspec, testinfra).
-* ``molecule login <host>``: Login to an instance via ssh.
-* ``molecule init <role>``: Creates the directory structure and files for a new
-  Ansible role compatible with molecule.
-* ``molecule test``: Runs a series of commands to create, verify and destroy
-  instances.
+See ``molecule --help``
 
 The exact sequence of commands run during the ``test`` command can be
 configured in the `test['sequence']` config option.
 
-The ``test`` command supports a ``--destroy`` argument that will accept the
-values always, never, and passing. Use these to tune the behavior for various
-use cases.  For example, ``--destroy=always`` might be useful when using
-molecule for CI/CD.
+.. code-block:: yaml
+
+  molecule:
+    test:
+      sequence:
+        - destroy
+        - syntax
+        - create
+        - converge
+        - idempotence
+        - verify
+
+The ``test`` command will destroy the instance(s) after successful completion
+of all test sequences.  The ``test`` command supports a ``--destroy`` argument
+that will accept the values `always` (default), `never`, and `passing`.  Use
+these to tune the behavior for various use cases.
+
+For example, ``--destroy=always`` might be useful when using molecule for
+CI/CD.
 
 Travis CI
 =========
