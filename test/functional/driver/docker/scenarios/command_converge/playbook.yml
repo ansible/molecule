@@ -1,0 +1,6 @@
+---
+- hosts: all
+  tasks:
+    - name: Converge functional scenario
+      shell: /bin/true
+      changed_when: False

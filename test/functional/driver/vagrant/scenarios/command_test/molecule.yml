@@ -1,6 +1,5 @@
 ---
 ansible:
-  requirements_file: requirements.yml
   raw_env_vars:
     ANSIBLE_ROLES_PATH: ../../../../roles:../../../../../roles
 
@@ -16,7 +15,7 @@ vagrant:
       type: virtualbox
 
   instances:
-    - name: full-01
+    - name: test-scenario-01
       ansible_groups:
         - example-group
         - example-group1
@@ -24,7 +23,7 @@ vagrant:
         - network_name: private_network
           type: dhcp
           auto_config: true
-    - name: full-02
+    - name: test-scenario-02
       ansible_groups:
         - example-group
         - example-group2

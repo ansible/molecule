@@ -1,0 +1,9 @@
+---
+ansible:
+  requirements_file: requirements.yml
+
+docker:
+  containers:
+    - name: requirements-file-scenario
+      image: ubuntu
+      image_version: latest

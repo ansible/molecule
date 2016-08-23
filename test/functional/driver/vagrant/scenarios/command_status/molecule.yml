@@ -15,7 +15,7 @@ vagrant:
       type: virtualbox
 
   instances:
-    - name: full-01
+    - name: status-scenario-01
       ansible_groups:
         - example-group
         - example-group1
@@ -23,7 +23,7 @@ vagrant:
         - network_name: private_network
           type: dhcp
           auto_config: true
-    - name: full-02
+    - name: status-scenario-02
       ansible_groups:
         - example-group
         - example-group2

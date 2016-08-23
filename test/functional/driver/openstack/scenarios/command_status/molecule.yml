@@ -7,14 +7,14 @@ openstack:
   keypair: KeyName
   keyfile: ~/.ssh/id_rsa
   instances:
-    - name: full-01
+    - name: status-scenario-01
       image: 'CentOS 7'
       flavor: m1.xlarge
       sshuser: centos
       ansible_groups:
         - example-group
         - example-group1
-    - name: full-02
+    - name: status-scenario-02
       image: 'CentOS 7'
       flavor: m1.xlarge
       sshuser: centos
