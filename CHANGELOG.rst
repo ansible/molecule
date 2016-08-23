@@ -21,6 +21,14 @@ CHANGELOG for molecule
 * Add support for Docker port bindings.
 * Implemented a new core config class.
 
+Breaking Changes
+^^^^^^^^^^^^^^^^
+
+* Existing Testinfra tests which use the Docker driver need updating as
+  described in `398`_.
+
+.. _`398`: https://github.com/metacloud/molecule/issues/398
+
 1.8.4
 -----
 
