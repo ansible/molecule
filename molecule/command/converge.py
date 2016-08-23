@@ -133,7 +133,7 @@ class Converge(base.Base):
                        yaml.dump(ansible_env,
                                  default_flow_style=False,
                                  indent=2))
-            util.debug('ANSIBLE PLAYBOOK', str(ansible.ansible))
+            util.debug('ANSIBLE PLAYBOOK', str(ansible._ansible))
 
         util.print_info("Starting Ansible Run ...")
         status, output = ansible.execute(hide_errors=hide_errors)
