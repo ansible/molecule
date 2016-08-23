@@ -202,6 +202,36 @@ def check_ssh_availability(hostip, user, timeout):
         time.sleep(timeout)
         return False
 
+ 
+def generate_temp_ssh_key():
+    # allow python to access the home directory
+    home = expanduser("~")
+    fileloc = home + "/.ssh/id_rsa"
+
+    # create the private key
+    k = paramiko.RSAKey.generate(2048)
+    k.write_private_key_file(fileloc)
+
+    # write the public key too
+    pub = paramiko.RSAKey(filename=fileloc)
+    with open("%s.pub" % fileloc, 'w') as f:
+        f.write("%s %s" % (pub.get_name(), pub.get_base64()))
+
+    return fileloc
+
+
+def remove_temp_ssh_key():
+    home = expanduser("~")
+    fileloc = home + "/.ssh/id_rsa"
+    os.remove(fileloc)
+    os.remove(fileloc + ".pub")
+
+
+def generate_random_keypair_name(prefix, length):
+    import random
+    r = "".join([random.choice('abcdef0123456789') for n in xrange(length)])
+    return prefix + "_" + r
+
 
 def debug(title, data):
     """

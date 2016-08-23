@@ -140,6 +140,16 @@ def test_debug(capsys):
     assert expected_title == result_title
 
 
+def test_generate_temp_ssh_key():
+    from os.path import expanduser
+    home = expanduser("~")
+    fileloc = home + "/.ssh/id_rsa"
+
+    util.generate_temp_ssh_key()
+    assert os.path.isfile(fileloc)
+    assert os.path.isfile(fileloc + '.pub')
+
+
 def test_sysexit():
     with pytest.raises(SystemExit) as e:
         util.sysexit()
