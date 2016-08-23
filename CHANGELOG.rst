@@ -1,6 +1,12 @@
 CHANGELOG for molecule
 ======================
 
+1.9.1
+-----
+
+* Correct a converge --debug bug.
+* Correct ansible galaxy role path.
+
 1.9
 ---
 
