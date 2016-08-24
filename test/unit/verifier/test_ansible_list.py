@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 #  Copyright (c) 2015-2016 Cisco Systems
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,10 +18,18 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-(
-	cd ${DOCKER_FUNCTIONAL_TEST_BASE_DIR}/command_verify_trailing_whitespace
-	OUT=$(molecule verify 2>&1 || true)
+import pytest
 
-	echo ${OUT} | grep '\[ANSIBLE0002\] Trailing whitespace'
-	echo ${OUT} | grep 'playbook.yml:5'
-)
+from molecule.verifier import ansible_lint
+
+
+@pytest.fixture()
+def ansible_lint_instance(molecule_instance):
+    return ansible_lint.AnsibleLint(molecule_instance)
+
+
+def test_execute(mocker, ansible_lint_instance):
+    mocked = mocker.patch('sh.ansible_lint')
+    ansible_lint_instance.execute()
+
+    assert ('playbook.yml', ) == mocked.call_args[0]
