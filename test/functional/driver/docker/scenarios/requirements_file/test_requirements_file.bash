@@ -21,8 +21,7 @@
 #  THE SOFTWARE.
 
 (
-	cd ${OPENSTACK_FUNCTIONAL_TEST_BASE_DIR}/command_status
+	cd ${DOCKER_FUNCTIONAL_TEST_BASE_DIR}/requirements_file
 
-	molecule status --porcelain | grep 'status-scenario-01 .*not_created .*openstack'
-	molecule status --porcelain | grep 'status-scenario-02 .*not_created .*openstack'
+	molecule test
 )

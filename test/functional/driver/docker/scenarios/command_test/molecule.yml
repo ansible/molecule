@@ -1,20 +1,19 @@
 ---
 ansible:
-  requirements_file: requirements.yml
   raw_env_vars:
     ANSIBLE_ROLES_PATH: ../../../../roles:../../../../../roles
 
 docker:
   containers:
-  - name: full-01
-    ansible_groups:
-      - example-group
-      - example-group1
-    image: ubuntu
-    image_version: latest
-  - name: full-02
-    ansible_groups:
-      - example-group
-      - example-group2
-    image: ubuntu
-    image_version: latest
+    - name: test-scenario-01
+      ansible_groups:
+        - example-group
+        - example-group1
+      image: ubuntu
+      image_version: latest
+    - name: test-scenario-02
+      ansible_groups:
+        - example-group
+        - example-group2
+      image: ubuntu
+      image_version: latest

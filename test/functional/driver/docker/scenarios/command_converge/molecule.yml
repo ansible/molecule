@@ -1,6 +1,6 @@
 ---
 docker:
   containers:
-    - name: verify-whitespace-scenario
+    - name: converge-scenario
       image: ubuntu
       image_version: latest
