@@ -63,17 +63,29 @@ def test_execute_no_tests(mocked_code_verifier, mocked_test_verifier,
     assert not mocked_test_verifier.called
 
 
-def test_rake(mocked_test_verifier, serverspec_instance):
-    args = ['/tmp/rakefile']
+def test_rake(mocker, serverspec_instance):
+    mocked = mocker.patch('sh.rake')
     kwargs = {'debug': True, 'out': None, 'err': '/dev/null'}
-    serverspec_instance._rake(*args, **kwargs)
+    serverspec_instance._rake('/tmp/rakefile', **kwargs)
 
-    mocked_test_verifier.assert_called_once_with(*args, **kwargs)
+    ca = mocked.call_args[1]
+    assert '/tmp/rakefile' == ca.get('rakefile')
+    assert ca.get('trace')
 
 
-def test_rubocop(mocked_code_verifier, serverspec_instance):
-    args = ['/tmp']
-    kwargs = {'pattern': '**/**/**/*', 'out': '/dev/null', 'err': None}
-    serverspec_instance._rubocop(*args, **kwargs)
+def test_rubocop(mocker, serverspec_instance):
+    mocked = mocker.patch('sh.rubocop')
+    kwargs = {'pattern': '**/**/**/*',
+              'debug': True,
+              'out': '/dev/null',
+              'err': None}
+    serverspec_instance._rubocop('spec', **kwargs)
 
-    mocked_code_verifier.assert_called_once_with(*args, **kwargs)
+    assert ('spec**/**/**/*', ) == mocked.call_args[0]
+
+    ca = mocked.call_args[1]
+    assert ca.get('debug')
+
+
+def test_get_tests(serverspec_instance):
+    assert not serverspec_instance._get_tests()

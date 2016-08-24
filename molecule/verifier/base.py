@@ -28,5 +28,5 @@ class Base(object):
         self._molecule = molecule
 
     @abc.abstractproperty
-    def execute(self):
+    def execute(self):  # pragma: no cover
         pass
