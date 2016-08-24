@@ -68,16 +68,25 @@ def test_execute_no_tests(mocked_code_verifier, mocked_test_verifier,
     assert not mocked_test_verifier.called
 
 
-def test_testinfra(mocked_test_verifier, mocked_get_tests, testinfra_instance):
+def test_testinfra(mocker, mocked_get_tests, testinfra_instance):
+    mocked = mocker.patch('sh.testinfra')
     args = ['/tmp/ansible-inventory']
     kwargs = {'debug': True, 'out': None, 'err': None}
     testinfra_instance._testinfra(*args, **kwargs)
 
-    mocked_test_verifier.assert_called_once_with(*args, **kwargs)
+    assert ('/tmp/ansible-inventory', ) == mocked.call_args[0]
+
+    ca = mocked.call_args[1]
+    assert ca.get('debug')
 
 
-def test_flake8(mocked_code_verifier, testinfra_instance):
+def test_flake8(mocker, testinfra_instance):
+    mocked = mocker.patch('sh.flake8')
     args = ['test1.py', 'test2.py']
     testinfra_instance._flake8(args)
 
-    mocked_code_verifier.assert_called_once_with(args)
+    mocked.assert_called_once_with(args)
+
+
+def test_get_tests(testinfra_instance):
+    assert [] == testinfra_instance._get_tests()
