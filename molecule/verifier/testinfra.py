@@ -75,9 +75,6 @@ class Testinfra(base.Base):
         kwargs['_out'] = out
         kwargs['_err'] = err
 
-        if 'HOME' not in kwargs['_env']:
-            kwargs['_env']['HOME'] = os.path.expanduser('~')
-
         msg = 'Executing testinfra tests found in {}/.'.format(
             self._testinfra_dir)
         util.print_info(msg)
