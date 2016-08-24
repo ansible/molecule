@@ -66,9 +66,6 @@ class Serverspec(base.Base):
                   'trace': debug,
                   'rakefile': rakefile}
 
-        if 'HOME' not in kwargs['_env']:
-            kwargs['_env']['HOME'] = os.path.expanduser('~')
-
         msg = 'Executing serverspec tests found in {}/.'.format(
             self._serverspec_dir)
         util.print_info(msg)
@@ -94,9 +91,6 @@ class Serverspec(base.Base):
         :return: sh response object
         """
         kwargs = {'_env': env, '_out': out, '_err': err, 'debug': debug}
-
-        if 'HOME' not in kwargs['_env']:
-            kwargs['_env']['HOME'] = os.path.expanduser('~')
 
         msg = 'Executing rubocop on *.rb files found in {}/.'.format(
             serverspec_dir)
