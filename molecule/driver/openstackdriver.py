@@ -35,21 +35,17 @@ class OpenstackDriver(basedriver.BaseDriver):
         self._provider = self._get_provider()
         self._platform = self._get_platform()
         self._openstack = shade.openstack_cloud()
-        self._keypair_name = self.get_keypair_name()
+        self._keypair_name = None
         self._molecule_generated_ssh_key = False
 
     def get_keyfile(self):
-        # allow python to access the home directory
-        from os.path import expanduser
-        home = expanduser("~")
-        fileloc = home + "/.ssh/id_rsa"
-
         if ('keyfile' in self.molecule.config.config['openstack']):
             return self.molecule.config.config['openstack']['keyfile']
-        elif (os.path.isfile(fileloc)):
-            return fileloc
+        elif self._molecule_generated_ssh_key:
+            return util.generated_ssh_key_file_location()
         else:
-            LOG.info('Keyfile not specified. molecule will generate a temporary one.')
+            LOG.info(
+                'Keyfile not specified. molecule will generate a temporary one.')
             self._molecule_generated_ssh_key = True
             return util.generate_temp_ssh_key()
 
@@ -152,7 +148,8 @@ class OpenstackDriver(basedriver.BaseDriver):
                 while not util.check_ssh_availability(
                         server['interface_ip'],
                         instance['sshuser'],
-                        timeout=6) or num_retries == 5:
+                        timeout=6,
+                        sshkey_filename=self.get_keyfile()) or num_retries == 5:
                     LOG.info("\t Waiting for ssh availability...")
                     num_retries += 1
 
@@ -214,9 +211,13 @@ class OpenstackDriver(basedriver.BaseDriver):
 
         for server in self._openstack.list_servers(detailed=False):
             if server['name'] == instance['name']:
-                return template.format(instance['name'],
-                                       server['interface_ip'],
-                                       instance['sshuser'])
+                server_config = { 'hostname' : instance['name'],
+                                     'interface_ip_address' : server['interface_ip'], 
+                                     'ssh_username' : instance['sshuser']
+                                     }
+                if self._molecule_generated_ssh_key:
+                    server_config['ssh_key_filename'] = 'ansible_ssh_private_key_file={}'.format(util.generated_ssh_key_file_location())
+                return template.format(**server_config)
         return ''
 
     def login_cmd(self, instance_name):
@@ -253,12 +254,13 @@ class OpenstackDriver(basedriver.BaseDriver):
                                                      'r').read().strip())
 
     def _host_template(self):
-        return '{} ansible_ssh_host={} ansible_ssh_user={} ansible_ssh_extra_args="-o ConnectionAttempts=5"\n'
+        return '{hostname} ansible_ssh_host={interface_ip_address} ansible_ssh_user={ssh_username} {ssh_key_filename} ansible_ssh_extra_args="-o ConnectionAttempts=5"\n'
 
     def _instance_is_accessible(self, instance):
         instance_ip = self.conf(instance['name'])
         if instance_ip is not None:
             return util.check_ssh_availability(instance_ip,
                                                instance['sshuser'],
-                                               timeout=0)
+                                               timeout=0,
+                                               sshkey_filename=self.get_keyfile())
         return False

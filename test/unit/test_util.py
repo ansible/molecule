@@ -141,13 +141,17 @@ def test_debug(capsys):
 
 
 def test_generate_temp_ssh_key():
-    from os.path import expanduser
-    home = expanduser("~")
-    fileloc = home + "/.ssh/id_rsa"
+    fileloc = '/tmp/molecule_rsa'
 
     util.generate_temp_ssh_key()
     assert os.path.isfile(fileloc)
     assert os.path.isfile(fileloc + '.pub')
+
+
+def test_generate_random_keypair_name():
+    import re
+    result_keypair = util.generate_random_keypair_name('molecule', 10)
+    assert re.match(r'molecule-[0-9a-fA-F]+', result_keypair)
 
 
 def test_sysexit():

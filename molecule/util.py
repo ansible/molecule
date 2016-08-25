@@ -32,6 +32,8 @@ import paramiko
 
 colorama.init(autoreset=True)
 
+GENERATED_SSH_KEY_LOCATION = '/tmp/molecule_rsa'
+
 
 class LogFilter(object):
     def __init__(self, level):
@@ -189,24 +191,24 @@ def reset_known_host_key(hostname):
     return os.system('ssh-keygen -R {}'.format(hostname))
 
 
-def check_ssh_availability(hostip, user, timeout):
+def check_ssh_availability(hostip, user, timeout, sshkey_filename):
     import socket
     ssh = paramiko.SSHClient()
     ssh.load_system_host_keys()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     try:
-        ssh.connect(hostip, username=user)
+        ssh.connect(hostip, username=user, key_filename=sshkey_filename)
         return True
     except (paramiko.BadHostKeyException, paramiko.AuthenticationException,
             paramiko.SSHException, socket.error):
         time.sleep(timeout)
         return False
 
- 
+def generated_ssh_key_file_location():
+    return GENERATED_SSH_KEY_LOCATION
+
 def generate_temp_ssh_key():
-    # allow python to access the home directory
-    home = expanduser("~")
-    fileloc = home + "/.ssh/id_rsa"
+    fileloc = generated_ssh_key_file_location()
 
     # create the private key
     k = paramiko.RSAKey.generate(2048)
@@ -221,8 +223,7 @@ def generate_temp_ssh_key():
 
 
 def remove_temp_ssh_key():
-    home = expanduser("~")
-    fileloc = home + "/.ssh/id_rsa"
+    fileloc = generated_ssh_key_file_location()
     os.remove(fileloc)
     os.remove(fileloc + ".pub")
 
