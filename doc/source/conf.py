@@ -57,8 +57,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Molecule'
-copyright = u' %s, Adam Brown, John Dewey' % datetime.date.today().year
-author = u'Adam Brown, John Dewey, Rémy Greinhofer, Duncan Hutty, Abel Lopez, Erik Nadel'
+copyright = u' %s, Cisco Systems' % datetime.date.today().year
+author = u'AUTHORS.rst'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -204,7 +204,7 @@ html_show_sourcelink = False
 #html_show_sphinx = True
 
 # If true, "(C) Copyright ..." is shown in the HTML footer. Default is True.
-#html_show_copyright = True
+html_show_copyright = False
 
 # If true, an OpenSearch description file will be output, and all pages will
 # contain a <link> tag referring to it.  The value of this option must be the
@@ -252,7 +252,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
   (master_doc, 'Molecule.tex', u'Molecule Documentation',
-   u'Adam Brown, John Dewey, Rémy Greinhofer, Duncan Hutty', 'manual'),
+   u'AUTHORS.rst', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -296,7 +296,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   (master_doc, 'Molecule', u'Molecule Documentation',
-   author, 'Molecule', 'Automated Testing for Ansible roles',
+   author, 'AUTHORS.rst', 'Automated Testing for Ansible roles',
    'Miscellaneous'),
 ]
 
