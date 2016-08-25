@@ -57,7 +57,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Molecule'
-copyright = u' %s, Cisco Systems' % datetime.date.today().year
+copyright = u' %s, Cisco Systems, Inc.' % datetime.date.today().year
 author = u'AUTHORS.rst'
 
 # The version info for the project you're documenting, acts as replacement for
