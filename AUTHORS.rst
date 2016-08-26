@@ -1,20 +1,23 @@
 *******
-Authors
+Credits
 *******
 
-Project Lead
-============
+Development Leads
+=================
 
-John Dewey <john@dewey.ws>
+* John Dewey <john@dewey.ws>
+
+Core Committers
+===============
+
+* Abel Lopez <abelopez@cisco.com>
+* Adam Brown <adambr2@cisco.com>
+* Duncan Hutty <dhutty@cisco.com>
+* Erik Nadel <einadel@wpi.edu>
+* Rémy Greinhofer <regreinh@cisco.com>
 
 Contributors
 ============
-
-* Adam Brown <adambr2@cisco.com>
-* Abel Lopez <abelopez@cisco.com>
-* Rémy Greinhofer <regreinh@cisco.com>
-* Duncan Hutty <dhutty@cisco.com>
-* Erik Nadel <einadel@wpi.edu>
 
 .. code-block:: bash
 
