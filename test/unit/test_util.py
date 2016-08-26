@@ -148,6 +148,14 @@ def test_generate_temp_ssh_key():
     assert os.path.isfile(fileloc + '.pub')
 
 
+def test_delete_temp_ssh_key():
+    fileloc = '/tmp/molecule_rsa'
+
+    util.remove_temp_ssh_key()
+    assert not os.path.isfile(fileloc)
+    assert not os.path.isfile(fileloc + '.pub')
+
+
 def test_generate_random_keypair_name():
     import re
     result_keypair = util.generate_random_keypair_name('molecule', 10)

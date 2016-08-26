@@ -204,8 +204,10 @@ def check_ssh_availability(hostip, user, timeout, sshkey_filename):
         time.sleep(timeout)
         return False
 
+
 def generated_ssh_key_file_location():
     return GENERATED_SSH_KEY_LOCATION
+
 
 def generate_temp_ssh_key():
     fileloc = generated_ssh_key_file_location()
