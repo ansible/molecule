@@ -13,6 +13,8 @@ Contents:
    validator
    bash
    development
+   contributing
+   authors
    autodoc/index
 
 .. _`Ansible`: https://docs.ansible.com
