@@ -2,7 +2,7 @@
 Development
 ***********
 
-* Please read the `CONTRIBUTING`_ guidelines.
+* Please read the :ref:`contributing` guidelines.
 
 Branches
 ========
@@ -74,7 +74,6 @@ Roadmap
 
 .. _`PyPI`: https://pypi.python.org/pypi/molecule
 .. _`ISSUES`: https://github.com/metacloud/molecule/issues
-.. _`CONTRIBUTING`: https://github.com/metacloud/molecule/blob/master/CONTRIBUTING.rst
 .. _`CHANGELOG`: https://github.com/metacloud/molecule/blob/master/CHANGELOG.rst
 .. _`install from source`: http://molecule.readthedocs.org/en/latest/usage.html#installing-from-source
 .. _`twine`: https://pypi.python.org/pypi/twine
