@@ -35,6 +35,26 @@ class OpenstackDriver(basedriver.BaseDriver):
         self._provider = self._get_provider()
         self._platform = self._get_platform()
         self._openstack = shade.openstack_cloud()
+        self._keypair_name = None
+        self._molecule_generated_ssh_key = False
+
+    def get_keyfile(self):
+        if ('keyfile' in self.molecule.config.config['openstack']):
+            return self.molecule.config.config['openstack']['keyfile']
+        elif self._molecule_generated_ssh_key:
+            return util.generated_ssh_key_file_location()
+        else:
+            LOG.info(
+                'Keyfile not specified. molecule will generate a temporary one.')
+            self._molecule_generated_ssh_key = True
+            return util.generate_temp_ssh_key()
+
+    def get_keypair_name(self):
+        if ('keypair' in self.molecule.config.config['openstack']):
+            return self.molecule.config.config['openstack']['keypair']
+        else:
+            LOG.info('Keypair not specified. molecule will generate one.')
+            return util.generate_random_keypair_name('molecule', 10)
 
     @property
     def name(self):
@@ -64,6 +84,13 @@ class OpenstackDriver(basedriver.BaseDriver):
     def platform(self, val):
         self._platform = val
 
+    def molecule_generated_keypair(self):
+        return 'keypair' not in self.molecule.config.config['openstack']
+
+    @property
+    def molecule_generated_ssh_key(self):
+        return self._molecule_generated_ssh_key
+
     @property
     def valid_providers(self):
         return [{'name': self.provider}]
@@ -79,6 +106,9 @@ class OpenstackDriver(basedriver.BaseDriver):
     @property
     def ansible_connection_params(self):
         return {'connection': 'ssh'}
+
+    def keypair_name(self):
+        return self._keypair_name
 
     @property
     def testinfra_args(self):
@@ -109,8 +139,8 @@ class OpenstackDriver(basedriver.BaseDriver):
                     flavor=self._openstack.get_flavor(instance['flavor']),
                     auto_ip=True,
                     wait=True,
-                    key_name=self.molecule.config.config['openstack'][
-                        'keypair'], security_groups=instance['security_groups']
+                    key_name=self._keypair_name,
+                    security_groups=instance['security_groups']
                     if 'security_groups' in instance else None)
                 util.reset_known_host_key(server['interface_ip'])
                 instance['created'] = True
@@ -118,7 +148,8 @@ class OpenstackDriver(basedriver.BaseDriver):
                 while not util.check_ssh_availability(
                         server['interface_ip'],
                         instance['sshuser'],
-                        timeout=6) or num_retries == 5:
+                        timeout=6,
+                        sshkey_filename=self.get_keyfile()) or num_retries == 5:
                     LOG.info("\t Waiting for ssh availability...")
                     num_retries += 1
 
@@ -139,6 +170,13 @@ class OpenstackDriver(basedriver.BaseDriver):
                 else:
                     util.print_success('\tRemoved {}'.format(instance['name']))
                     instance['created'] = False
+
+        # cleanup any molecule generated files
+        if self.molecule_generated_keypair() and self._keypair_name:
+            self._openstack.delete_keypair(self._keypair_name)
+
+        if self._molecule_generated_ssh_key:
+            util.remove_temp_ssh_key()
 
     def status(self):
         Status = collections.namedtuple('Status', ['name', 'state',
@@ -173,9 +211,13 @@ class OpenstackDriver(basedriver.BaseDriver):
 
         for server in self._openstack.list_servers(detailed=False):
             if server['name'] == instance['name']:
-                return template.format(instance['name'],
-                                       server['interface_ip'],
-                                       instance['sshuser'])
+                server_config = { 'hostname' : instance['name'],
+                                     'interface_ip_address' : server['interface_ip'], 
+                                     'ssh_username' : instance['sshuser']
+                                     }
+                if self._molecule_generated_ssh_key:
+                    server_config['ssh_key_filename'] = 'ansible_ssh_private_key_file={}'.format(util.generated_ssh_key_file_location())
+                return template.format(**server_config)
         return ''
 
     def login_cmd(self, instance_name):
@@ -199,23 +241,26 @@ class OpenstackDriver(basedriver.BaseDriver):
         return 'openstack'
 
     def _set_keypair(self):
-        keypair_name = self.molecule.config.config['openstack']['keypair']
-        pub_key_file = self.molecule.config.config['openstack']['keyfile']
+        self._keypair_name = self.get_keypair_name()
+        kpn = self._keypair_name
 
-        if self._openstack.search_keypairs(keypair_name):
+        pub_key_file = self.get_keyfile() + ".pub"
+
+        if self._openstack.search_keypairs(kpn):
             LOG.info('Keypair already exists. Skipping import.')
         else:
-            LOG.info('Adding keypair...')
-            self._openstack.create_keypair(keypair_name, open(
-                pub_key_file, 'r').read().strip())
+            LOG.info('Adding keypair... ' + kpn)
+            self._openstack.create_keypair(kpn, open(pub_key_file,
+                                                     'r').read().strip())
 
     def _host_template(self):
-        return '{} ansible_ssh_host={} ansible_ssh_user={} ansible_ssh_extra_args="-o ConnectionAttempts=5"\n'
+        return '{hostname} ansible_ssh_host={interface_ip_address} ansible_ssh_user={ssh_username} {ssh_key_filename} ansible_ssh_extra_args="-o ConnectionAttempts=5"\n'
 
     def _instance_is_accessible(self, instance):
         instance_ip = self.conf(instance['name'])
         if instance_ip is not None:
             return util.check_ssh_availability(instance_ip,
                                                instance['sshuser'],
-                                               timeout=0)
+                                               timeout=0,
+                                               sshkey_filename=self.get_keyfile())
         return False
