@@ -4,7 +4,8 @@ testinfra_hosts = AnsibleRunner('.molecule/ansible_inventory').get_hosts('all')
 
 
 def test_hosts_file(File):
-    hosts = File('/etc/hosts')
+    f = File('/etc/hosts')
 
-    assert hosts.user == 'root'
-    assert hosts.group == 'root'
+    assert f.exists
+    assert f.user == 'root'
+    assert f.group == 'root'

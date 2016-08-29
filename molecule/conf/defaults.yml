@@ -58,6 +58,10 @@ molecule:
       box: trusty64
       box_url: https://vagrantcloud.com/ubuntu/boxes/trusty64/versions/14.04/providers/virtualbox.box
       box_version: 0.1.0
+    # default provider to populate when doing `molecule init`
+    provider:
+      name: virtualbox
+      type: virtualbox
     # templates to use when creating files during `molecule init`
     templates:
       molecule: molecule.yml.j2
