@@ -62,13 +62,6 @@ molecule:
     provider:
       name: virtualbox
       type: virtualbox
-    # templates to use when creating files during `molecule init`
-    templates:
-      molecule: molecule.yml.j2
-      molecule_docker: molecule_docker.yml.j2
-      molecule_openstack: molecule_openstack.yml.j2
-      playbook: playbook.yml.j2
-      test_default: test_default.py.j2
 
 # defaults passed to ansible-playbook
 ansible:
