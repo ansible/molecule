@@ -1,7 +1,4 @@
 ---
-ansible:
-  playbook: playbook.yml
-
 openstack:
   keyfile: ~/.ssh/id_rsa
   keypair: NameKey
@@ -11,4 +8,4 @@ openstack:
       flavor: m1.xlarge
       sshuser: centos
       ansible_groups:
-        - ansib1
+        - group1

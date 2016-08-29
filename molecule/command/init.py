@@ -19,11 +19,9 @@
 #  THE SOFTWARE.
 
 import os
-import re
-import subprocess
 
-import jinja2
-import sh
+import cookiecutter
+import cookiecutter.main
 
 from molecule import util
 from molecule.command import base
@@ -42,88 +40,82 @@ class Init(base.Base):
     def main(self):
         pass
 
-    def clean_meta_main(self, role_path):
-        main_path = os.path.join(role_path, 'meta', 'main.yml')
-        temp_path = os.path.join(role_path, 'meta', 'main.yml.tmp')
-        with open(temp_path, 'w') as temp:
-            for line in file(main_path):
-                line = re.sub(r'[ \t]*$', '', line)
-                if line != '\n':
-                    temp.write(line)
-        os.rename(temp_path, main_path)
-
     def execute(self):
         role = self.molecule._args['<role>']
-
+        role_path = os.getcwd()
         if not role:
             role = os.getcwd().split(os.sep)[-1]
-            role_path = os.getcwd()
-            util.print_info("Initializing molecule in current directory...")
-
+            role_path = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
+            self._init_existing_role(role, role_path)
         else:
-
             if os.path.isdir(role):
                 msg = 'The directory {} already exists. Cannot create new role.'
                 LOG.error(msg.format(role))
                 util.sysexit()
+            self._init_new_role(role, role_path)
 
-            role_path = os.path.join(os.curdir, role)
-
-            util.print_info("Initializing role {}...".format(role))
-
-            try:
-                if self.molecule._args['--offline']:
-                    sh.ansible_galaxy('init', '--offline', role)
-                else:
-                    sh.ansible_galaxy('init', role)
-            except (subprocess.CalledProcessError, sh.ErrorReturnCode_1) as e:
-                LOG.error('ERROR: {}'.format(e))
-                util.sysexit(e.returncode)
-
-            self.clean_meta_main(role_path)
-
-        env = jinja2.Environment(
-            loader=jinja2.PackageLoader('molecule', 'template'),
-            keep_trailing_newline=True)
-
-        t_molecule = env.get_template(self.molecule.config.config['molecule'][
-            'init']['templates']['molecule'])
-        t_playbook = env.get_template(self.molecule.config.config['molecule'][
-            'init']['templates']['playbook'])
-        t_test_default = env.get_template(self.molecule.config.config[
-            'molecule']['init']['templates']['test_default'])
-
-        if (self.molecule._args['--docker']):
-            t_molecule = env.get_template(self.molecule.config.config[
-                'molecule']['init']['templates']['molecule_docker'])
-        if (self.molecule._args['--openstack']):
-            t_molecule = env.get_template(self.molecule.config.config[
-                'molecule']['init']['templates']['molecule_openstack'])
-
-        sanitized_role = re.sub('[._]', '-', role)
-        with open(
-                os.path.join(role_path, self.molecule.config.molecule_file),
-                'w') as f:
-            f.write(t_molecule.render(config=self.molecule.config.config,
-                                      role=sanitized_role))
-
-        with open(
-                os.path.join(
-                    role_path,
-                    self.molecule.config.config['ansible']['playbook']),
-                'w') as f:
-            f.write(t_playbook.render(role=role))
-
-        testinfra_path = os.path.join(
-            role_path,
-            self.molecule.config.config['molecule']['testinfra_dir'])
-
-        if not os.path.isdir(testinfra_path):
-            os.mkdir(testinfra_path)
-
-        with open(os.path.join(testinfra_path, 'test_default.py'), 'w') as f:
-            f.write(t_test_default.render())
-
-        msg = 'Successfully initialized new role in {}'
-        util.print_success(msg.format(role_path))
+        msg = 'Successfully initialized new role in {}...'
+        util.print_success(msg.format(os.path.join(role_path, role)))
         util.sysexit(0)
+
+    def _init_existing_role(self, role, role_path):
+        driver = self._get_driver()
+        extra_context = self._get_cookiecutter_context(role, driver)
+
+        util.print_info("Initializing molecule in current directory...")
+        for template in ['playbook', 'driver/{}'.format(driver)]:
+            self._create_template(template, extra_context, role_path)
+
+    def _init_new_role(self, role, role_path):
+        driver = self._get_driver()
+        extra_context = self._get_cookiecutter_context(role, driver)
+
+        util.print_info("Initializing role {}...".format(role))
+        for template in ['galaxy_init', 'playbook', 'driver/{}'.format(driver),
+                         'verifier/testinfra', 'verifier/serverspec']:
+            self._create_template(template, extra_context, role_path)
+
+    def _create_template(self,
+                         template,
+                         extra_context,
+                         output_dir,
+                         no_input=True,
+                         overwrite=True):
+        t = self._get_cookiecutter_template_dir(template)
+
+        cookiecutter.main.cookiecutter(t,
+                                       extra_context=extra_context,
+                                       output_dir=output_dir,
+                                       no_input=no_input,
+                                       overwrite_if_exists=overwrite)
+
+    def _get_cookiecutter_context(self, role, driver):
+        md = self.molecule.config.config['molecule']['init']
+        platform = md.get('platform')
+        provider = md.get('provider')
+
+        d = {
+            'repo_name': role,
+            'role_name': role,
+            'driver': driver,
+        }
+        if driver == 'vagrant':
+            d.update({'platform_name': platform.get('name'),
+                      'platform_box': platform.get('box'),
+                      'platform_box_url': platform.get('box_url'),
+                      'provider_name': provider.get('name'),
+                      'provider_type': provider.get('type')})
+
+        return d
+
+    def _get_cookiecutter_template_dir(self, template):
+        return os.path.join(
+            os.path.dirname(__file__), '..', 'cookiecutter', template)
+
+    def _get_driver(self):
+        if self.molecule._args['--docker']:
+            return 'docker'
+        elif self.molecule._args['--openstack']:
+            return 'openstack'
+        else:
+            return 'vagrant'

@@ -48,7 +48,7 @@ def test_create_role_in_existing_directory(molecule_dir):
     with pytest.raises(SystemExit):
         i.execute()
 
-    assert os.path.isdir(os.path.join(molecule_dir, 'tests'))
+    assert os.path.isdir(os.path.join(molecule_dir))
 
 
 def test_create_role_docker_flag(molecule_dir):

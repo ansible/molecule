@@ -1,0 +1,11 @@
+---
+docker:
+  containers:
+    {%- for n in range(cookiecutter.instances|int) %}
+
+      - name: {{ cookiecutter.role_name }}-{{ '%02d' % loop.index }}
+        image: ubuntu
+        image_version: latest
+        ansible_groups:
+          - group1
+    {%- endfor -%}
