@@ -261,7 +261,7 @@ class OpenstackDriver(basedriver.BaseDriver):
     def reset_known_host_key(self, hostname):
         return os.system('ssh-keygen -R {}'.format(hostname))
 
-    def check_ssh_availability(hostip, user, timeout, sshkey_filename):
+    def check_ssh_availability(self, hostip, user, timeout, sshkey_filename):
         import socket
         ssh = paramiko.SSHClient()
         ssh.load_system_host_keys()
@@ -300,9 +300,7 @@ class OpenstackDriver(basedriver.BaseDriver):
         return prefix + "_" + r
 
     def _host_template(self):
-        return """{hostname} ansible_ssh_host={interface_ip_address}
-                ansible_ssh_user={ssh_username} {ssh_key_filename}
-                ansible_ssh_extra_args="-o ConnectionAttempts=5"\n"""
+        return '{hostname} ansible_ssh_host={interface_ip_address} ansible_ssh_user={ssh_username} {ssh_key_filename} ansible_ssh_extra_args="-o ConnectionAttempts=5"\n'
 
     def generated_ssh_key_location(self):
         return tempfile.gettempdir() + '/molecule_rsa'
