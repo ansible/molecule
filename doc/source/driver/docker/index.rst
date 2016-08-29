@@ -34,7 +34,7 @@ Options
 
 The available param for the docker driver itself is:
 
-* ``install_python`` - **(default=yes)** install python onto all images for all
-  containers
+* ``build_image`` - **(default=yes)** build image with python support or use custom dockerfile
+* ``dockerfile``- **dockerfile to use when building. By default the dockerfile will just install python onto the image given.
 
 .. _`host config`: https://github.com/docker/docker-py/blob/master/docs/port-bindings.md
