@@ -1,0 +1,8 @@
+---
+docker:
+  containers:
+    - name: requirements-file-scenario
+      image: alpine
+      image_version: latest
+      dockerfile: Dockerfile
+      command: /bin/bash

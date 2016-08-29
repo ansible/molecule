@@ -1,0 +1,6 @@
+---
+- hosts: all
+  tasks:
+    - name: Dockerfile functional scenario
+      command: /bin/true
+      changed_when: False
