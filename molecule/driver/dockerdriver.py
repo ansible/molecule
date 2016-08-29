@@ -41,8 +41,8 @@ class DockerDriver(basedriver.BaseDriver):
 
         self.image_tag = 'molecule_local/{}:{}'
 
-        if 'install_python' not in self.molecule.config.config['docker']:
-            self.molecule.config.config['docker']['install_python'] = True
+        if 'build_image' not in self.molecule.config.config['docker']:
+            self.molecule.config.config['docker']['build_image'] = True
 
     @property
     def name(self):
@@ -108,7 +108,7 @@ class DockerDriver(basedriver.BaseDriver):
         return dict()
 
     def up(self, no_provision=True):
-        if self.molecule.config.config['docker']['install_python']:
+        if self.molecule.config.config['docker']['build_image']:
             self._build_ansible_compatible_image()
         else:
             self.image_tag = '{}:{}'
@@ -211,8 +211,8 @@ class DockerDriver(basedriver.BaseDriver):
                             for tag in image.get('RepoTags')]
 
         for container in self.instances:
-            if 'install_python' in container and container[
-                    'install_python'] is False:
+            if 'build_image' in container and container[
+                    'build_image'] is False:
                 continue
             else:
                 util.print_info(
@@ -231,20 +231,26 @@ class DockerDriver(basedriver.BaseDriver):
 
             '''  # noqa
 
-            dockerfile = dockerfile.format(
-                container['registry'] + container['image'],
-                container['image_version'])
+            if 'dockerfile' in container:
+                dockerfile = container['dockerfile']
+                f = io.open(dockerfile)
 
-            f = io.BytesIO(dockerfile.encode('utf-8'))
+            else:
+                dockerfile = dockerfile.format(
+                    container['registry'] + container['image'],
+                    container['image_version'])
 
-            container['image'] = container['registry'].replace(
-                '/', '_').replace(':', '_') + container['image']
+                f = io.BytesIO(dockerfile.encode('utf-8'))
+
+                container['image'] = container['registry'].replace(
+                    '/', '_').replace(':', '_') + container['image']
+
             tag_string = self.image_tag.format(container['image'],
                                                container['image_version'])
 
             errors = False
 
-            if tag_string not in available_images:
+            if tag_string not in available_images or 'dockerfile' in container:
                 util.print_info('Building ansible compatible image ...')
                 previous_line = ''
                 for line in self._docker.build(fileobj=f, tag=tag_string):
