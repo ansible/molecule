@@ -53,10 +53,10 @@ class Status(base.Base):
             return e.returncode, e.message
 
         # Display the results in procelain mode.
-        porcelain = self.molecule._args['--porcelain']
+        porcelain = self.molecule.args['--porcelain']
 
         # Display hosts information.
-        if display_all or self.molecule._args['--hosts']:
+        if display_all or self.molecule.args['--hosts']:
 
             # Prepare the table for the results.
             headers = [] if porcelain else ['Name', 'State', 'Provider']
@@ -73,11 +73,11 @@ class Status(base.Base):
             self.molecule._display_tabulate_data(data, headers=headers)
 
         # Display the platforms.
-        if display_all or self.molecule._args['--platforms']:
+        if display_all or self.molecule.args['--platforms']:
             self.molecule._print_valid_platforms(porcelain=porcelain)
 
         # Display the providers.
-        if display_all or self.molecule._args['--providers']:
+        if display_all or self.molecule.args['--providers']:
             self.molecule._print_valid_providers(porcelain=porcelain)
 
         return None, None

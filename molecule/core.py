@@ -43,8 +43,8 @@ LOG = util.get_logger(__name__)
 
 class Molecule(object):
     def __init__(self, args):
-        self._env = os.environ.copy()
-        self._args = args
+        self.env = os.environ.copy()
+        self.args = args
         self.config = config.Config()
 
     def main(self):
@@ -57,16 +57,16 @@ class Molecule(object):
         try:
             self.driver = self._get_driver()
         except basedriver.InvalidDriverSpecified:
-            LOG.error("Invalid provider '{}'".format(self._args['--provider']))
-            self._args['--provider'] = None
-            self._args['--platform'] = None
+            LOG.error("Invalid provider '{}'".format(self.args['--provider']))
+            self.args['--provider'] = None
+            self.args['--platform'] = None
             self.driver = self._get_driver()
             self._print_valid_providers()
             util.sysexit()
         except basedriver.InvalidDriverSpecified:
-            LOG.error("Invalid platform '{}'".format(self._args['--platform']))
-            self._args['--provider'] = None
-            self._args['--platform'] = None
+            LOG.error("Invalid platform '{}'".format(self.args['--platform']))
+            self.args['--provider'] = None
+            self.args['--platform'] = None
             self.driver = self._get_driver()
             self._print_valid_platforms()
             util.sysexit()
@@ -74,7 +74,7 @@ class Molecule(object):
         # updates instances config with full machine names
         self.config.populate_instance_names(self.driver.platform)
 
-        if self._args.get('--debug'):
+        if self.args.get('--debug'):
             util.debug('RUNNING CONFIG',
                        yaml.dump(self.config.config,
                                  default_flow_style=False,
@@ -263,7 +263,7 @@ class Molecule(object):
                         groups[group] = []
                     groups[group].append(instance['name'])
 
-        if self._args.get('--platform') == 'all':
+        if self.args.get('--platform') == 'all':
             self.driver.platform = 'all'
 
         for group, instances in groups.iteritems():
