@@ -20,11 +20,11 @@
 
 import collections
 import os
-
-import shade
-import paramiko
 import time
 import tempfile
+
+import paramiko
+import shade
 
 from molecule import util
 from molecule.driver import basedriver
@@ -108,9 +108,6 @@ class OpenstackDriver(basedriver.BaseDriver):
     @property
     def ansible_connection_params(self):
         return {'connection': 'ssh'}
-
-    def keypair_name(self):
-        return self._keypair_name
 
     @property
     def testinfra_args(self):
