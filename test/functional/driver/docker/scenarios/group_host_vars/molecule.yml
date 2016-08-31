@@ -1,0 +1,16 @@
+---
+ansible:
+  group_vars:
+    example:
+      - group_host_vars_group_molecule_yml: foo
+  host_vars:
+    group-vars-scenario:
+      - group_host_vars_host_molecule_yml: bar
+
+docker:
+  containers:
+    - name: group-vars-scenario
+      ansible_groups:
+        - example
+      image: ubuntu
+      image_version: latest
