@@ -1,0 +1,18 @@
+---
+- hosts: all
+  tasks:
+    - name: Group host vars scenario test group vars
+      command: echo "{{ group_host_vars_group }}"
+      changed_when: False
+
+    - name: Group host vars scenario test group vars from molecule.yml
+      command: echo "{{ group_host_vars_group_molecule_yml }}"
+      changed_when: False
+
+    - name: Group host vars scenario test host vars
+      command: echo "{{ group_host_vars_host }}"
+      changed_when: False
+
+    - name: Group host vars scenario test host vars from molecule.yml
+      command: echo "{{ group_host_vars_host_molecule_yml }}"
+      changed_when: False

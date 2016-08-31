@@ -79,9 +79,9 @@ class Molecule(object):
                        yaml.dump(self.config.config,
                                  default_flow_style=False,
                                  indent=2))
+
         self._add_or_update_vars('group_vars')
         self._add_or_update_vars('host_vars')
-        self._symlink_vars()
 
     @property
     def driver(self):
@@ -305,36 +305,6 @@ class Molecule(object):
                     os.path.abspath(target_vars_path), target),
                 "---\n" + yaml.dump(target_var_content,
                                     default_flow_style=False))
-
-    def _symlink_vars(self):
-        """Creates or updates the symlink to group_vars if needed."""
-        SYMLINK_NAME = 'group_vars'
-        group_vars_target = self.config.config.get('molecule',
-                                                   {}).get('group_vars')
-        molecule_dir = self.config.config['molecule']['molecule_dir']
-        group_vars_link_path = os.path.join(molecule_dir, SYMLINK_NAME)
-
-        # Remove any previous symlink.
-        if os.path.lexists(group_vars_link_path):
-            try:
-                os.unlink(group_vars_link_path)
-            except:
-                pass
-
-        # Do not create the symlink if nothing is specified in the config.
-        if not group_vars_target:
-            return
-
-        # Otherwise create the new symlink.
-        symlink = os.path.join(
-            os.path.abspath(molecule_dir), group_vars_target)
-        if not os.path.exists(symlink):
-            LOG.error(
-                'ERROR: the group_vars path {} does not exist. Check your configuration file'.format(
-                    group_vars_target))
-
-            util.sysexit()
-        os.symlink(group_vars_target, group_vars_link_path)
 
     def _display_tabulate_data(self, data, headers=None):
         """

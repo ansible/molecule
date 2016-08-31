@@ -3,5 +3,6 @@
   roles:
     # Testing role_path of role brought in via requirements.yml
     - role: timezone
+
     # Testing role_path of local role
     - role: requirements_file
