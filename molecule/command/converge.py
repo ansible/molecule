@@ -94,8 +94,8 @@ class Converge(base.Base):
             ansible.add_cli_arg(k, v)
 
         # target tags passed in via CLI
-        if self.molecule._args.get('--tags'):
-            ansible.add_cli_arg('tags', self.molecule._args['--tags'].pop(0))
+        if self.molecule.args.get('--tags'):
+            ansible.add_cli_arg('tags', self.molecule.args['--tags'].pop(0))
 
         if idempotent:
             ansible.remove_cli_arg('_out')
@@ -119,7 +119,7 @@ class Converge(base.Base):
                     'share/molecule/ansible/plugins/callback/idempotence'))
 
         ansible.bake()
-        if self.molecule._args.get('--debug'):
+        if self.molecule.args.get('--debug'):
             ansible_env = {k: v
                            for (k, v) in ansible.env.items() if 'ANSIBLE' in k}
             other_env = {k: v

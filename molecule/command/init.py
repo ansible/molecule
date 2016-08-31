@@ -41,7 +41,7 @@ class Init(base.Base):
         pass
 
     def execute(self):
-        role = self.molecule._args['<role>']
+        role = self.molecule.args['<role>']
         role_path = os.getcwd()
         if not role:
             role = os.getcwd().split(os.sep)[-1]
@@ -113,9 +113,9 @@ class Init(base.Base):
             os.path.dirname(__file__), '..', 'cookiecutter', template)
 
     def _get_driver(self):
-        if self.molecule._args['--docker']:
+        if self.molecule.args['--docker']:
             return 'docker'
-        elif self.molecule._args['--openstack']:
+        elif self.molecule.args['--openstack']:
             return 'openstack'
         else:
             return 'vagrant'

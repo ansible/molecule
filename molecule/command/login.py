@@ -50,7 +50,7 @@ class Login(base.Base):
                 raise base.InvalidHost("There are no running hosts.")
 
             # Check whether a host was specified.
-            if self.molecule._args['<host>'] is None:
+            if self.molecule.args['<host>'] is None:
 
                 # One running host is perfect. Login to it.
                 if len(hosts) == 1:
@@ -66,7 +66,7 @@ class Login(base.Base):
             else:
 
                 # If the host was specified, try to use it.
-                hostname = self.molecule._args['<host>']
+                hostname = self.molecule.args['<host>']
                 match = [x for x in hosts if x.startswith(hostname)]
                 if len(match) == 0:
                     raise subprocess.CalledProcessError(1, None)
@@ -88,7 +88,7 @@ class Login(base.Base):
 
         except subprocess.CalledProcessError:
             msg = "Unknown host '{}'.\n\nAvailable hosts:\n{}"
-            LOG.error(msg.format(self.molecule._args['<host>'], "\n".join(
+            LOG.error(msg.format(self.molecule.args['<host>'], "\n".join(
                 hosts)))
             util.sysexit()
         except base.InvalidHost as e:
