@@ -1,7 +1,7 @@
 ---
 docker:
   containers:
-    - name: requirements-file-scenario
+    - name: dockerfile-scenario
       image: alpine
       image_version: latest
       dockerfile: Dockerfile

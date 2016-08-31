@@ -1,0 +1,11 @@
+---
+molecule:
+  group_vars: ../group_vars
+
+docker:
+  containers:
+    - name: group-vars-scenario
+      ansible_groups:
+        - example
+      image: ubuntu
+      image_version: latest

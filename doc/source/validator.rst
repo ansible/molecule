@@ -54,6 +54,9 @@ specific instance with the given hostname.
 Tests located in ``spec/groups/<groupname>/*_spec.rb`` will be run against the
 instances in the given group.
 
+For convenience a Gemfile is provided in the root of molecule, which includes
+the necessary serverspec dependencies.  See `.travis.yml` for usage.
+
 .. _`Rake`: https://github.com/ruby/rake
 .. _`Rubocop`: https://github.com/bbatsov/rubocop
 .. _`Serverspec`: http://serverspec.org

@@ -107,6 +107,22 @@ ansible section. For example,
 This example will set the variables for the ansible groups `foo1` and `foo2`.
 For hosts `foo1-01` the value `set_this_value` will be set to True.
 
+Native Inventory
+^^^^^^^^^^^^^^^^
+
+An alternative to the above `Host/Group Vars` is the `group_vars` symlink.
+This creates a symlink to the specified directory in the inventory directory
+(``molecule.molecule_dir``).  This allows ansible to converge utilzing its
+built in group vars resolution.
+
+NOTE(retr0h): Usage will likely change in future versions.
+
+.. code-block:: yaml
+
+  molecule:
+    group_vars: ../../../inventory/my_az/group_vars/
+
+
 Role Requirements
 ^^^^^^^^^^^^^^^^^
 
