@@ -1,0 +1,6 @@
+---
+- hosts: all
+  tasks:
+    - name: Group vars scenario test group vars
+      command: echo "{{ group_vars }}"
+      changed_when: False
