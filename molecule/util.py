@@ -28,7 +28,6 @@ import time
 import colorama
 import jinja2
 import m9dicts
-import paramiko
 
 colorama.init(autoreset=True)
 
@@ -192,24 +191,6 @@ def remove_args(command_args, args, kill):
             new_args[k] = v
 
     return new_command_args, new_args
-
-
-def reset_known_host_key(hostname):
-    return os.system('ssh-keygen -R {}'.format(hostname))
-
-
-def check_ssh_availability(hostip, user, timeout):
-    import socket
-    ssh = paramiko.SSHClient()
-    ssh.load_system_host_keys()
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    try:
-        ssh.connect(hostip, username=user)
-        return True
-    except (paramiko.BadHostKeyException, paramiko.AuthenticationException,
-            paramiko.SSHException, socket.error):
-        time.sleep(timeout)
-        return False
 
 
 def debug(title, data):
