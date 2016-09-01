@@ -2,6 +2,23 @@
 CHANGELOG for molecule
 **********************
 
+1.10
+====
+
+* Added ability to specify custom dockerfile.
+* Added ability to generate and destroy temporary openstack keypair and ssh key
+  file if they are not specified in the molecule.yml.
+* Implemented Cookiecutter for ``molecule init``.
+* Documentation improvements.
+
+Breaking Changes
+----------------
+
+Roles may fail to converge due to the introduction of additional verifiers.
+
+* Added flake8 linter to testinfra verifier.
+* Implemented ansible lint.
+
 1.9.1
 =====
 
