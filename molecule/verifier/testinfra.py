@@ -36,7 +36,15 @@ class Testinfra(base.Base):
         self._testinfra_dir = molecule.config.config['molecule'][
             'testinfra_dir']
 
-    def execute(self, exit=True):
+    def execute(self):
+        """
+        Executes linting/integration tests, and returns None.
+
+        Flake8 performs the code linting.
+        Testinfra executes integration tests.
+
+        :return: None
+        """
         ansible = ansible_playbook.AnsiblePlaybook(
             self._molecule.config.config['ansible'],
             _env=self._molecule.env)
@@ -61,14 +69,19 @@ class Testinfra(base.Base):
                    err=LOG.error,
                    **kwargs):
         """
-        Runs testinfra and returns a sh response object.
+        Executes testinfra against specified tests, and returns a :func:`sh`
+        response object.
 
-        :param tests: List of testinfra tests.
-        :param debug: Pass debug flag to testinfra.
-        :param env: Environment to pass to underlying sh call.
-        :param out: Function to process STDOUT for underlying sh call.
-        :param err: Function to process STDERR for underlying sh call.
-        :return: sh response object
+        :param tests: A list of testinfra tests.
+        :param debug: An optional bool to toggle debug output.
+        :param pattern: A string containing the pattern of files to lint.
+        :param env: An optional environment to pass to underlying :func:`sh`
+         call.
+        :param out: An optional function to process STDOUT for underlying
+         :func:`sh` call.
+        :param err: An optional function to process STDERR for underlying
+         :func:`sh` call.
+        :return: :func:`sh` response object.
         """
         kwargs['debug'] = debug
         kwargs['_env'] = env
@@ -83,12 +96,15 @@ class Testinfra(base.Base):
 
     def _flake8(self, tests, out=LOG.info, err=LOG.error):
         """
-        Runs flake8 against specified tests.
+        Executes flake8 against specified tests, and returns a :func:`sh`
+        response object.
 
         :param tests: List of testinfra tests.
-        :param out: Function to process STDOUT for underlying sh call.
-        :param err: Function to process STDERR for underlying sh call.
-        :return: sh response object.
+        :param out: An optional function to process STDOUT for underlying
+         :func:`sh` call.
+        :param err: An optional function to process STDERR for underlying
+         :func:`sh` call.
+        :return: :func:`sh` response object.
         """
         msg = 'Executing flake8 on *.py files found in {}/.'.format(
             self._testinfra_dir)

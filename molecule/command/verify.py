@@ -45,6 +45,14 @@ class Verify(base.Base):
     """
 
     def execute(self, exit=True):
+        """
+        Execute the actions necessary to perform a `molecule verify` and
+        return a tuple.
+
+        :param exit: An optional flag to toggle the exiting of the module
+         on command failure.
+        :return: Return a tuple of None, otherwise sys.exit on command failure.
+        """
         for v in [ansible_lint.AnsibleLint(self.molecule),
                   trailing.Trailing(self.molecule)]:
             v.execute()

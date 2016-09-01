@@ -33,6 +33,9 @@ Molecule
 State
 =====
 
+.. autoclass:: molecule.state.InvalidState
+   :members:
+
 .. autoclass:: molecule.state.State
    :members:
 

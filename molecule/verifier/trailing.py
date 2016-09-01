@@ -34,11 +34,12 @@ class Trailing(base.Base):
 
     def execute(self, exit=True):
         """
-        Recursively finds all files relative to CWD, and checks them for
-        trailing whitespace and newlines.
+        Executes trailing linters, and returns None, otherwise sys.exit on
+        command failure.
 
+        :return: None
         :param ignore_paths: List of paths to ignore during checks.
-        :return: A ``sys.exit`` code if found an error, otherwise None.
+        :return: None, otherwise sys.exit on command failure.
         """
         filenames = []
         pruned_filenames = []
@@ -82,7 +83,7 @@ class Trailing(base.Base):
                 LOG.error(msg.format(filename))
                 found_error = True
 
-            if whitespace:
+            if len(whitespace) > 0:
                 msg = 'Trailing whitespace found in {} on lines: {}'
                 lines = ', '.join(str(x) for x in whitespace)
                 LOG.error(msg.format(filename,
@@ -94,22 +95,23 @@ class Trailing(base.Base):
 
     def _trailing_newline(self, source):
         """
-        Checks last item in source list for a trailing newline.
+        Checks last item in source list for a trailing newline, and returns
+        a bool.
 
-        :param source: list to check for trailing newline
-        :return: True if a trailing newline is found, otherwise None
+        :param source: A list of strings to check for trailing newline(s).
+        :return: bool
         """
         if re.match(r'^\n$', source[-1]):
             return True
-        return
+        return False
 
     def _trailing_whitespace(self, source):
         """
-        Checks each item in source list for a trailing whitespace.
+        Checks each item in source list for a trailing whitespace, and returns
+        a list.
 
-        :param source: list of lines to check for trailing whitespace
-        :return: List of offending line numbers with trailing whitespace,
-                 otherwise None
+        :param source: A list of lines to check for trailing whitespace.
+        :return: list
         """
         lines = []
         for counter, line in enumerate(source):
@@ -117,4 +119,6 @@ class Trailing(base.Base):
             if re.search(r'\s+$', l):
                 lines.append(counter + 1)
 
-        return lines if lines else None
+        if lines:
+            return lines
+        return []

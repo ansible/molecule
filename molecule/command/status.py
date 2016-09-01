@@ -41,7 +41,14 @@ class Status(base.Base):
         --providers     display the available providers
     """
 
-    def execute(self):
+    def execute(self, exit=True):
+        """
+        Execute the actions necessary to perform a `molecule status` and
+        return a tuple.
+
+        :param exit: (Unused) Provided to complete method signature.
+        :return: Return a tuple of None.
+        """
         display_all = not any([self.args['--hosts'], self.args['--platforms'],
                                self.args['--providers']])
 

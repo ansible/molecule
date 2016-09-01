@@ -1,5 +1,16 @@
+.. _command:
+
 Command
 =======
+
+Base
+----
+
+.. autoclass:: molecule.command.base.InvalidHost
+   :members:
+
+.. autoclass:: molecule.command.base.Base
+   :members:
 
 Converge
 --------

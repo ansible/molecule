@@ -34,7 +34,14 @@ class List(base.Base):
         --porcelain     machine readable output
     """
 
-    def execute(self):
+    def execute(self, exit=True):
+        """
+        Execute the actions necessary to perform a `molecule list` and
+        return a tuple.
+
+        :param exit: (Unused) Provided to complete method signature.
+        :return: Return a tuple of None.
+        """
         porcelain = self.molecule.args['-m'] or self.molecule.args[
             '--porcelain']
         self.molecule._print_valid_platforms(porcelain=porcelain)

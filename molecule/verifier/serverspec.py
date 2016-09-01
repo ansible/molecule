@@ -36,6 +36,14 @@ class Serverspec(base.Base):
         self._rakefile = molecule.config.config['molecule']['rakefile_file']
 
     def execute(self):
+        """
+        Executes linting/integration tests, and returns None.
+
+        Rubocop performs the code linting.
+        Rake executes serverspec integration tests.
+
+        :return: None
+        """
         serverspec_options = self._molecule.driver.serverspec_args
         serverspec_options['debug'] = self._molecule.args.get('--debug', False)
 
@@ -50,14 +58,18 @@ class Serverspec(base.Base):
               out=LOG.info,
               err=LOG.error):
         """
-        Runs rake with specified rakefile.
+        Executes rake against specified rakefile, and returns a :func:`sh`
+        response object.
 
-        :param rakefile: Path to rakefile.
-        :param debug: Pass trace flag to rake.
-        :param env: Environment to pass to underlying sh call.
-        :param out: Function to process STDOUT for underlying sh call.
-        :param err: Function to process STDERR for underlying sh call.
-        :return: sh response object
+        :param rakefile: A string containing path to the rakefile.
+        :param debug: An optional bool to toggle debug output.
+        :param env: An optional environment to pass to underlying :func:`sh`
+         call.
+        :param out: An optional function to process STDOUT for underlying
+         :func:`sh` call.
+        :param err: An optional function to process STDERR for underlying
+         :func:`sh` call.
+        :return: :func:`sh` response object.
         """
         kwargs = {'_env': env,
                   '_out': out,
@@ -79,15 +91,20 @@ class Serverspec(base.Base):
                  out=LOG.info,
                  err=LOG.error):
         """
-        Runs rubocop against specified directory with specified pattern.
+        Executes rubocop against specified directory/pattern, and returns a
+        :func:`sh` response object.
 
-        :param serverspec_dir: Directory to search for files to lint.
-        :param debug: Pass debug flag to rubocop.
-        :param pattern: Search pattern to pass to rubocop.
-        :param env: Environment to pass to underlying sh call.
-        :param out: Function to process STDOUT for underlying sh call.
-        :param err: Function to process STDERR for underlying sh call.
-        :return: sh response object
+        :param serverspec_dir: A string containing the directory with files
+        to lint.
+        :param debug: An optional bool to toggle debug output.
+        :param pattern: A string containing the pattern of files to lint.
+        :param env: An optional environment to pass to underlying :func:`sh`
+         call.
+        :param out: An optional function to process STDOUT for underlying
+         :func:`sh` call.
+        :param err: An optional function to process STDERR for underlying
+         :func:`sh` call.
+        :return: :func:`sh` response object.
         """
         kwargs = {'_env': env, '_out': out, '_err': err, 'debug': debug}
 

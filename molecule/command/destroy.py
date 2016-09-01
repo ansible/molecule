@@ -41,10 +41,14 @@ class Destroy(base.Base):
 
     def execute(self, exit=True):
         """
-        Removes template files.
+        Execute the actions necessary to perform a `molecule destroy` and
+        return a tuple.
+
         Clears state file of all info (default platform).
 
-        :return: None
+        :param exit: An optional flag to toggle the exiting of the module
+         on command failure.
+        :return: Return a tuple of None, otherwise sys.exit on command failure.
         """
         self.molecule._create_templates()
         try:

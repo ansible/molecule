@@ -37,7 +37,14 @@ class Login(base.Base):
         login [<host>]
     """
 
-    def execute(self):
+    def execute(self, exit=True):
+        """
+        Execute the actions necessary to perform a `molecule login` and
+        return a tuple.
+
+        :param exit: (Unused) Provided to complete method signature.
+        :return: Return a tuple of None, otherwise sys.exit on command failure.
+        """
         # get list of running hosts from state
         if self.molecule._state.hosts:
             hosts = [k for k, v in self.molecule._state.hosts.iteritems()]
@@ -64,7 +71,6 @@ class Login(base.Base):
                             len(hosts), "\n".join(hosts)))
 
             else:
-
                 # If the host was specified, try to use it.
                 hostname = self.molecule.args['<host>']
                 match = [x for x in hosts if x.startswith(hostname)]

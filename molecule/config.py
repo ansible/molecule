@@ -32,6 +32,12 @@ LOCAL_CONFIG = '~/.config/molecule/config.yml'
 
 class Config(object):
     def __init__(self, configs=[DEFAULT_CONFIG, LOCAL_CONFIG, PROJECT_CONFIG]):
+        """
+        Initialize a new config class, and returns None.
+
+        :param command_args: A list configs files to merge.
+        :returns: None
+        """
         self.config = self._get_config(configs)
         self._build_config_paths()
 
@@ -62,7 +68,7 @@ class Config(object):
 
     def _combine(self, configs):
         """ Perform a prioritized recursive merge of serveral source files,
-        and return a new dict.
+        and returns a new dict.
 
         The merge order is based on the index of the list, meaning that
         elements at the end of the list will be merged last, and have greater

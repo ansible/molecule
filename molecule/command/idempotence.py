@@ -39,6 +39,15 @@ class Idempotence(base.Base):
     """
 
     def execute(self, exit=True):
+        """
+        Execute the actions necessary to perform a `molecule idempotence` and
+        return a tuple.
+
+        :param exit: An optional flag to toggle the exiting of the module
+         on command failure.
+        :return: Return a tuple of (`exit status`, `command output`), otherwise
+         sys.exit on command failure.
+        """
         util.print_info(
             'Idempotence test in progress (can take a few minutes)...')
 

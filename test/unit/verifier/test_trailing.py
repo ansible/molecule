@@ -32,7 +32,7 @@ def test_trailing_newline(trailing_instance):
     line = ['line1', 'line2', '']
     res = trailing_instance._trailing_newline(line)
 
-    assert res is None
+    assert not res
 
 
 def test_trailing_newline_matched(trailing_instance):
@@ -46,7 +46,7 @@ def test_trailing_whitespace_success(trailing_instance):
     line = ['line1', 'line2', 'line3']
     res = trailing_instance._trailing_whitespace(line)
 
-    assert res is None
+    assert [] == res
 
 
 def test_trailing_whitespace_matched(trailing_instance):

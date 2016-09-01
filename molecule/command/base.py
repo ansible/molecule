@@ -28,25 +28,32 @@ LOG = util.get_logger(__name__)
 
 
 class InvalidHost(Exception):
+    """
+    Exception class raised when an error occurs in :class:`.Login`.
+    """
     pass
 
 
 class Base(object):
+    """
+    An abstract base class used to define the command interface.
+    """
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, command_args, args, molecule=False):
         """
-        Initialize commands
+        Base initializer for all :ref:`Command` classes.
 
-        :param command_args: arguments of the command
-        :param args: arguments from the CLI
-        :param molecule: molecule instance
+        :param command_args: A list of aruments passed to the subcommand from
+         the CLI.
+        :param args: A dict of options, arguments and commands from the CLI.
+        :param molecule: An optional instance of molecule.
+        :returns: None
         """
         self.args = docopt.docopt(self.__doc__, argv=command_args)
         self.args['<command>'] = self.__class__.__name__.lower()
         self.command_args = command_args
 
-        # allow us to reuse an existing molecule instance
         if not molecule:
             self.molecule = core.Molecule(self.args)
             self.main()
@@ -54,6 +61,13 @@ class Base(object):
             self.molecule = molecule
 
     def main(self):
+        """
+        A mechanism to initialize molecule by calling its main method.  This
+        can be redefined by classes which do not want this behavior
+        (:class:`.Init`).
+
+        :returns: None
+        """
         c = self.molecule.config
         if not c.molecule_file_exists():
             msg = 'Unable to find {}. Exiting.'
@@ -62,5 +76,5 @@ class Base(object):
         self.molecule.main()
 
     @abc.abstractproperty
-    def execute(self):
+    def execute(self):  # pragma: no cover
         pass

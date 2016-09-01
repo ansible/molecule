@@ -25,6 +25,12 @@ class Base(object):
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, molecule):
+        """
+        Base initializer for all :ref:`Verifier` classes.
+
+        :param molecule: An instance of molecule.
+        :returns: None
+        """
         self._molecule = molecule
 
     @abc.abstractproperty

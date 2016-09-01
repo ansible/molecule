@@ -40,6 +40,14 @@ class Create(base.Base):
     """
 
     def execute(self, exit=True):
+        """
+        Execute the actions necessary to perform a `molecule create` and
+        return a tuple.
+
+        :param exit: An optional flag to toggle the exiting of the module
+         on command failure.
+        :return: Return a tuple of None, otherwise sys.exit on command failure.
+        """
         self.molecule._remove_inventory_file()
         self.molecule._create_templates()
         try:
