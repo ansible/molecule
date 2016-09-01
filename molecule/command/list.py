@@ -44,5 +44,5 @@ class List(base.Base):
         """
         porcelain = self.molecule.args['-m'] or self.molecule.args[
             '--porcelain']
-        self.molecule._print_valid_platforms(porcelain=porcelain)
+        self.molecule.print_valid_platforms(porcelain=porcelain)
         return None, None

@@ -52,14 +52,14 @@ def test_write_ssh_config(mocker, molecule_instance):
 
 
 def test_print_valid_platforms(capsys, molecule_instance):
-    molecule_instance._print_valid_platforms()
+    molecule_instance.print_valid_platforms()
     out, _ = capsys.readouterr()
 
     assert 'openstack  (default)\n' == out
 
 
 def test_print_valid_platforms_with_porcelain(capsys, molecule_instance):
-    molecule_instance._print_valid_platforms(porcelain=True)
+    molecule_instance.print_valid_platforms(porcelain=True)
     out, _ = capsys.readouterr()
 
     assert 'openstack  d\n' == out
