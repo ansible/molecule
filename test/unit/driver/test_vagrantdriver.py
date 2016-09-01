@@ -33,7 +33,7 @@ def molecule_instance(temp_files, state_path):
     c = temp_files(fixtures=['molecule_vagrant_config'])
     m = core.Molecule(dict())
     m.config = config.Config(configs=c)
-    m._state = state.State(state_file=state_path)
+    m.state = state.State(state_file=state_path)
 
     return m
 

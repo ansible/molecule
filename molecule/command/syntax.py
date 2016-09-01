@@ -43,10 +43,10 @@ class Syntax(base.Base):
         self.molecule._create_templates()
 
         if 'requirements_file' in self.molecule.config.config[
-                'ansible'] and not self.molecule._state.installed_deps:
+                'ansible'] and not self.molecule.state.installed_deps:
             galaxy = ansible_galaxy.AnsibleGalaxy(self.molecule.config.config)
             galaxy.install()
-            self.molecule._state.change_state('installed_deps', True)
+            self.molecule.state.change_state('installed_deps', True)
 
         ansible = ansible_playbook.AnsiblePlaybook(self.molecule.config.config[
             'ansible'])

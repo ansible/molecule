@@ -54,7 +54,7 @@ class Destroy(base.Base):
         try:
             util.print_info("Destroying instances ...")
             self.molecule.driver.destroy()
-            self.molecule._state.reset()
+            self.molecule.state.reset()
         except subprocess.CalledProcessError as e:
             LOG.error('ERROR: {}'.format(e))
             if exit:

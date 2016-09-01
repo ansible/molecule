@@ -61,17 +61,17 @@ class Converge(base.Base):
         :return: Return a tuple of (`exit status`, `command output`), otherwise
          sys.exit on command failure.
         """
-        if self.molecule._state.created:
+        if self.molecule.state.created:
             create_instances = False
 
-        if self.molecule._state.converged:
+        if self.molecule.state.converged:
             create_inventory = False
 
-        if self.molecule._state.multiple_platforms:
+        if self.molecule.state.multiple_platforms:
             self.args['--platform'] = 'all'
         else:
             if self.args[
-                    '--platform'] == 'all' and self.molecule._state.created:
+                    '--platform'] == 'all' and self.molecule.state.created:
                 create_instances = True
                 create_inventory = True
 
@@ -86,10 +86,10 @@ class Converge(base.Base):
 
         # install role dependencies only during `molecule converge`
         if not idempotent and 'requirements_file' in self.molecule.config.config[
-                'ansible'] and not self.molecule._state.installed_deps:
+                'ansible'] and not self.molecule.state.installed_deps:
             galaxy = ansible_galaxy.AnsibleGalaxy(self.molecule.config.config)
             galaxy.install()
-            self.molecule._state.change_state('installed_deps', True)
+            self.molecule.state.change_state('installed_deps', True)
 
         ansible = ansible_playbook.AnsiblePlaybook(self.molecule.config.config[
             'ansible'])
@@ -147,7 +147,7 @@ class Converge(base.Base):
                 util.sysexit(status)
             return status, None
 
-        if not self.molecule._state.converged:
-            self.molecule._state.change_state('converged', True)
+        if not self.molecule.state.converged:
+            self.molecule.state.change_state('converged', True)
 
         return None, output

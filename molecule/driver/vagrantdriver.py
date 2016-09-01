@@ -59,10 +59,10 @@ class VagrantDriver(basedriver.BaseDriver):
                 'providers'][0]['name']
 
         # default to first entry if no entry for provider exists or provider is false
-        if not self.molecule._state.default_provider:
+        if not self.molecule.state.default_provider:
             return default_provider
 
-        return self.molecule._state.default_provider
+        return self.molecule.state.default_provider
 
     @property
     def default_platform(self):
@@ -82,10 +82,10 @@ class VagrantDriver(basedriver.BaseDriver):
                 'platforms'][0]['name']
 
         # default to first entry if no entry for platform exists or platform is false
-        if not self.molecule._state.default_platform:
+        if not self.molecule.state.default_platform:
             return default_platform
 
-        return self.molecule._state.default_platform
+        return self.molecule.state.default_platform
 
     @property
     def provider(self):
@@ -133,7 +133,7 @@ class VagrantDriver(basedriver.BaseDriver):
         self._vagrant.up(no_provision)
 
     def destroy(self):
-        if self.molecule._state.created:
+        if self.molecule.state.created:
             self._vagrant.destroy()
 
         if os._exists(self.molecule.config.config['molecule'][
@@ -209,8 +209,8 @@ class VagrantDriver(basedriver.BaseDriver):
                         'providers']
                     if item['name'] == self.molecule.args['--provider']]:
                 raise basedriver.InvalidDriverSpecified()
-            self.molecule._state.change_state('default_provider',
-                                              self.molecule.args['--provider'])
+            self.molecule.state.change_state('default_provider',
+                                             self.molecule.args['--provider'])
             self.molecule.env['VAGRANT_DEFAULT_PROVIDER'] = self.molecule.args[
                 '--provider']
         else:
@@ -227,8 +227,8 @@ class VagrantDriver(basedriver.BaseDriver):
                             'platforms']
                         if item['name'] == self.molecule.args['--platform']]:
                     raise basedriver.InvalidDriverSpecified()
-            self.molecule._state.change_state('default_platform',
-                                              self.molecule.args['--platform'])
+            self.molecule.state.change_state('default_platform',
+                                             self.molecule.args['--platform'])
             return self.molecule.args['--platform']
         return self.default_platform
 

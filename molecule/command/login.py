@@ -46,8 +46,8 @@ class Login(base.Base):
         :return: Return a tuple of None, otherwise sys.exit on command failure.
         """
         # get list of running hosts from state
-        if self.molecule._state.hosts:
-            hosts = [k for k, v in self.molecule._state.hosts.iteritems()]
+        if self.molecule.state.hosts:
+            hosts = [k for k, v in self.molecule.state.hosts.iteritems()]
         else:
             hosts = []
 
