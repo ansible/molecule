@@ -53,9 +53,9 @@ class Create(base.Base):
         try:
             util.print_info("Creating instances ...")
             self.molecule.driver.up(no_provision=True)
-            self.molecule._state.change_state('created', True)
+            self.molecule.state.change_state('created', True)
             if self.args['--platform'] == 'all':
-                self.molecule._state.change_state('multiple_platforms', True)
+                self.molecule.state.change_state('multiple_platforms', True)
         except subprocess.CalledProcessError as e:
             LOG.error('ERROR: {}'.format(e))
             if exit:
