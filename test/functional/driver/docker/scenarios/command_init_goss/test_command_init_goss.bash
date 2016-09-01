@@ -24,8 +24,8 @@ TMP_DIR=$(mktemp -d /tmp/tmp.XXXXXXXXXX)
 
 (
 	cd ${TMP_DIR}
-	molecule init command-test
-	cd command-test
+	molecule init command-test-goss --docker --goss
+	cd command-test-goss
 	molecule test
 )
 

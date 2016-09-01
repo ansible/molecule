@@ -12,6 +12,10 @@ molecule:
   # directory to look for testinfra tests
   testinfra_dir: tests
 
+  # directory to look for goss tests
+  goss_dir: tests
+  goss_playbook: test_default.yml
+
   # directory in CWD to place all temp files, etc.
   molecule_dir: .molecule
 

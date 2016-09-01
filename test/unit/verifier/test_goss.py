@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 #  Copyright (c) 2015-2016 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,13 +18,47 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-TMP_DIR=$(mktemp -d /tmp/tmp.XXXXXXXXXX)
+import pytest
 
-(
-	cd ${TMP_DIR}
-	molecule init command-test
-	cd command-test
-	molecule test
-)
+from molecule.verifier import goss
 
-rm -rf /tmp/$(basename ${TMP_DIR})
+
+@pytest.fixture()
+def goss_instance(molecule_instance):
+    return goss.Goss(molecule_instance)
+
+
+@pytest.fixture
+def mocked_test_verifier(mocker):
+    return mocker.patch('molecule.verifier.goss.Goss._goss')
+
+
+@pytest.fixture
+def mocked_get_tests(mocker):
+    return mocker.patch('molecule.verifier.goss.Goss._get_tests')
+
+
+def test_execute(mocked_test_verifier, mocked_get_tests, goss_instance):
+    mocked_get_tests.return_value = True
+    goss_instance.execute()
+
+    assert mocked_test_verifier.called
+
+
+def test_execute_no_tests(mocked_test_verifier, mocked_get_tests,
+                          goss_instance):
+    mocked_get_tests.return_value = False
+    goss_instance.execute()
+
+    assert not mocked_test_verifier.called
+
+
+def test_goss(mocker, goss_instance):
+    mocked = mocker.patch('molecule.ansible_playbook.AnsiblePlaybook.execute')
+    goss_instance._goss()
+
+    assert mocked.called
+
+
+def test_get_tests(goss_instance):
+    assert not goss_instance._get_tests()

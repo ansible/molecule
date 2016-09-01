@@ -1,0 +1,37 @@
+# This is an example playbook to execute goss tests.
+# Tests need distributed to the appropriate ansible host/groups
+# prior to execution by `goss validate`.
+#
+# The goss ansible module is installed with molecule.  The ANSIBLE_LIBRARY
+# path is updated appropriately on `molecule verify`.
+
+- name: Testing prerequisites
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Install ca-certificates
+      apt: name=ca-certificates
+      when: ansible_os_family == 'Debian'
+    - name: Download and install goss
+      get_url: url=https://github.com/aelsabbahy/goss/releases/download/{{ cookiecutter.goss_version}}/goss-linux-amd64
+               dest=/usr/local/bin/goss
+               sha256sum={{ cookiecutter.goss_sha256sum }}
+               mode=0755
+{% raw %}
+    - name: Copy tests to remote
+      copy: src="../../files/goss/{{ item }}"
+            dest="/tmp/{{ item }}"
+      with_items:
+        - hosts.yml
+
+- name: Execute goss tests
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: test goss files
+      goss: path="/tmp/{{ item }}"
+            format=documentation
+      with_items:
+        - hosts.yml
+
+{%- endraw -%}

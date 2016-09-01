@@ -1,6 +1,6 @@
-**********
-Validators
-**********
+*********
+Verifiers
+*********
 
 Molecule is `opinionated`.  By being opinionated molecue tries to enforce a
 common way in which roles are maintained.
@@ -11,6 +11,8 @@ Testinfra
 `Testinfra`_ is the default integration testing framework.  The tests are
 linted with `Flake8`_.  Flake8 supports storing its configuration in the
 project root as ``.flake8``.
+
+Example files are created with ``molecule init``.
 
 Usage
 -----
@@ -30,6 +32,8 @@ Serverspec
 
 The tests are linted with `Rubocop`_.  `Rubocop`_ supports storing its
 configuration in the project root as ``.rubocop.yml``.
+
+Example files are created with ``molecule init --serverspec``.
 
 Usage
 -----
@@ -61,11 +65,41 @@ the necessary serverspec dependencies.  See `.travis.yml` for usage.
 .. _`Rubocop`: https://github.com/bbatsov/rubocop
 .. _`Serverspec`: http://serverspec.org
 
+Goss
+====
+
+`Goss`_ is a YAML based serverspec-like tool for validating a server’s
+configuration.
+
+Goss is a bit different than the other verifiers.  The test files must exist
+on the system executing ``goss validate``.  Molecule executes a test playbook
+which is responsible for installing goss, and distributing tests to the
+appropriate ansible hosts/groups.
+
+Example files are created with ``molecule init --goss``.
+
+.. warning:: Concider this verifier experimental.
+
+Usage
+-----
+
+.. code-block:: yaml
+
+    role_name/
+    ├── ...
+    └── files/
+        └── goss/
+            └── \*.yml
+    └── tests/
+        └── test_default.yml
+
+.. _`Goss`: https://github.com/aelsabbahy/goss
+
 Trailing
 ========
 
-Trailing whitespace and newline validators are executed on files in the project
-root.  The trailing validators will ignore the following directories.
+Trailing whitespace and newline verifiers are executed on files in the project
+root.  The trailing verifiers will ignore the following directories.
 
 .. code-block:: yaml
 
