@@ -40,7 +40,15 @@ class Test(base.Base):
         --sudo                 run tests with sudo
     """
 
-    def execute(self):
+    def execute(self, exit=True):
+        """
+        Execute the actions necessary to perform a `molecule test` and
+        return a tuple.
+
+        :param exit: (Unused) Provided to complete method signature.
+        :return: Return a tuple of (`exit status`, `command output`), otherwise
+         sys.exit on command failure.
+        """
         command_args, args = util.remove_args(self.command_args, self.args,
                                               self.command_args)
 

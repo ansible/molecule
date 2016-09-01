@@ -43,6 +43,12 @@ LOG = util.get_logger(__name__)
 
 class Molecule(object):
     def __init__(self, args):
+        """
+        Initialize a new molecule class, and returns None.
+
+        :param args: A dict of options, arguments and commands from the CLI.
+        :returns: None
+        """
         self.env = os.environ.copy()
         self.args = args
         self.config = config.Config()
@@ -184,7 +190,7 @@ class Molecule(object):
 
     def _remove_templates(self):
         """
-        Removes the templates created by molecule.
+        Removes the templates created by molecule, and returns None.
 
         :return: None
         """
@@ -194,7 +200,7 @@ class Molecule(object):
 
     def _create_templates(self):
         """
-        Creates the templates used by molecule.
+        Creates the templates used by molecule, and returns None.
 
         :return: None
         """
@@ -221,9 +227,10 @@ class Molecule(object):
     def _instances_state(self):
         """
         Creates a dict of formatted instances names and the group(s) they're
-        part of to be added to state.
+        part of to be added to state, and returns dict containing state
+        information about current instances.
 
-        :return: Dict containing state information about current instances
+        :return: dict
         """
 
         instances = collections.defaultdict(dict)
@@ -244,8 +251,7 @@ class Molecule(object):
 
     def _create_inventory_file(self):
         """
-        Creates the inventory file used by molecule and later passed to
-        ansible-playbook.
+        Creates the inventory file used by molecule, and returns None.
 
         :return: None
         """
@@ -284,7 +290,14 @@ class Molecule(object):
             os.remove(self.config.config['ansible']['inventory_file'])
 
     def _add_or_update_vars(self, target):
-        """Creates or updates to host/group variables if needed."""
+        """
+        Creates or updates to host/group variables if needed.
+
+        :param target:
+        :returns:
+
+        .. todo:: Document this method.
+        """
 
         if target in self.config.config['ansible']:
             vars_target = self.config.config['ansible'][target]
@@ -308,9 +321,16 @@ class Molecule(object):
 
     def _display_tabulate_data(self, data, headers=None):
         """
-        Shows the tabulate data on the screen.
+        Shows the tabulate data on the screen, and returns None.
 
-        If not header is defined, only the data is displayed, otherwise, the results will be shown in a table.
+        If not header is defined, only the data is displayed, otherwise, the
+        results will be shown in a table.
+
+        :param data:
+        :param headers:
+        :returns: None
+
+        .. todo:: Document this method.
         """
         # Nothing to display if there is no data.
         if not data:

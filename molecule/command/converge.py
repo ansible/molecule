@@ -51,10 +51,15 @@ class Converge(base.Base):
                 exit=True,
                 hide_errors=True):
         """
-        :param idempotent: Optionally provision servers quietly so output can be parsed for idempotence
-        :param create_inventory: Toggle inventory creation
-        :param create_instances: Toggle instance creation
-        :return: Provisioning output
+        Execute the actions necessary to perform a `molecule converge` and
+        return a tuple.
+
+        :param idempotent: An optional flag to perform the converge again, and
+         parse the output for idempotence.
+        :param create_inventory: An optional flag to toggle inventory creation.
+        :param create_instances: An optional flag to toggle instance creation.
+        :return: Return a tuple of (`exit status`, `command output`), otherwise
+         sys.exit on command failure.
         """
         if self.molecule._state.created:
             create_instances = False

@@ -30,12 +30,15 @@ LOG = util.get_logger(__name__)
 class AnsibleGalaxy(object):
     def __init__(self, config, _env=None, _out=LOG.info, _err=LOG.error):
         """
-        Sets up requirements for ansible-galaxy
+        Sets up requirements for ansible-galaxy, and returns None.
 
-        :param config: Molecule config object
-        :param _env: Environment dictionary to use. os.environ.copy() is used by default
-        :param _out: Function passed to sh for STDOUT
-        :param _err: Function passed to sh for STDERR
+        :param config: A molecule config object.
+        :param _env: An optional environment to pass to underlying :func:`sh`
+         call.
+        :param _out: An optional function to process STDOUT for underlying
+         :func:`sh` call.
+        :param _err: An optional function to process STDERR for underlying
+         :func:`sh` call.
         :return: None
         """
         self._config = config
@@ -50,7 +53,7 @@ class AnsibleGalaxy(object):
 
     def bake(self):
         """
-        Bake ansible-galaxy command so it's ready to execute.
+        Bake ansible-galaxy command so it's ready to execute, and returns None.
 
         :return: None
         """
@@ -73,7 +76,7 @@ class AnsibleGalaxy(object):
 
     def add_env_arg(self, name, value):
         """
-        Adds argument to environment passed to ansible-galaxy
+        Adds argument to environment passed to ansible-galaxy, and returns None.
 
         :param name: Name of argument to be added
         :param value: Value of argument to be added
@@ -83,10 +86,9 @@ class AnsibleGalaxy(object):
 
     def execute(self):
         """
-        Executes ansible-galaxy install
-
-        :return: sh.stdout on success, else None
-        :return: None
+        Executes ansible-galaxy install, and returns command's stdout.
+,
+        :return: The command's output, otherwise sys.exit on command failure.
         """
         if self._galaxy is None:
             self.bake()
@@ -98,6 +100,11 @@ class AnsibleGalaxy(object):
             util.sysexit(e.exit_code)
 
     def install(self):
+        """
+        A wrapper to :meth:`.AnsibleGalaxy.execute`.
+,
+        .. todo:: Remove in favor of simply using execute.
+        """
         util.print_info('Installing role dependencies ...')
         self.bake()
         self.execute()

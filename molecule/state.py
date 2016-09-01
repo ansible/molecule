@@ -41,11 +41,21 @@ VALID_KEYS = ['converged',
 
 
 class InvalidState(Exception):
+    """
+    Exception class raised when an error occurs in :class:`.State`.
+    """
     pass
 
 
 class State(object):
     def __init__(self, state_file='state.yml'):
+        """
+        Initialize a new state class, and returns None.
+
+        :param state_file: An optional string containing the path to the state
+        file.
+        :returns: None
+        """
         self._state_file = state_file
         self._data = self._get_data()
         self._write_state_file()

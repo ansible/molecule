@@ -20,177 +20,222 @@
 import abc
 
 
-class InvalidProviderSpecified(Exception):
-    pass
-
-
-class InvalidPlatformSpecified(Exception):
-    pass
-
-
 class BaseDriver(object):
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, molecule):
+        """
+        Base initializer for all :ref:`Driver` classes.
+
+        :param molecule: An instance of molecule.
+        :returns: None
+        """
         self.molecule = molecule
 
     @abc.abstractproperty
     def name(self):
         """
-        Getter for type of driver
-        :return:
+        The name of the driver, returns a string.
+
+        :returns: str
         """
-        return
+        pass  # pragma: no cover
 
     @abc.abstractproperty
     def instances(self):
         """
-        Provides the list of instances owned by this driver
-        :return:
+        List of instance(s) owned by this driver.
+
+        :returns: list
         """
-        return
+        pass  # pragma: no cover
 
     @abc.abstractproperty
     def default_provider(self):
         """
-        Defaut provider used to create VMs for e.g. virtualbox etc
-        :return:
+        Defaut provider used to create instance(s) (e.g. virtualbox), and
+        returns a string.
+
+        :returns: str
         """
-        return
+        pass  # pragma: no cover
 
     @abc.abstractproperty
     def default_platform(self):
         """
-        Default platform used for e.g. RHEL, trusty etc
-        :return:
+        Default platform used (e.g. RHEL), and returns a string.
+
+        :returns: str
         """
-        return
+        pass  # pragma: no cover
 
     @abc.abstractproperty
     def provider(self):
         """
-        Provider that is configured to be used
-        :return:
+        Provider that is configured to be used, and returns a string.
+
+        :returns: str
         """
-        return
+        pass  # pragma: no cover
 
     @abc.abstractproperty
     def platform(self):
         """
-        Platform that is used for creating VMs
-        :return:
+        Platform that is used for creating instance(s), and returns a string.
+
+        :returns: str
         """
-        return
+        pass  # pragma: no cover
 
     @platform.setter
     @abc.abstractproperty
     def platform(self, val):
         """
-        Platform that is used for creating VMs
-        :return:
+        Set the platform used for creating instance(s).
+
+        :param val: A string providing the name of the platform.
+        :returns: None
         """
-        return
+        pass  # pragma: no cover
 
     @abc.abstractproperty
     def valid_providers(self):
         """
-        List of valid providers supported by driver
-        :return:
+        List of valid providers supported by driver.
+
+        :returns: list
         """
-        return
+        pass  # pragma: no cover
 
     @abc.abstractproperty
     def valid_platforms(self):
         """
-        List of valid platforms supported
-        :return:
+        List of valid platforms supported.
+
+        :returns: list
         """
         return self._valid_platforms
 
     @abc.abstractproperty
     def ssh_config_file(self):
         """
-        Returns the ssh config file location for the driver
-        :return:
+        Returns the ssh config file location for the driver, and returns
+        a string.
+
+        :returns: str
         """
-        return
+        pass  # pragma: no cover
 
     @abc.abstractproperty
     def ansible_connection_params(self):
         """
-        Returns the parameters used for connecting with ansible.
-        :return:
+        Returns the parameters used for connecting with ansible, and returns a
+        string.
+
+        :returns: str
         """
+        pass  # pragma: no cover
 
     @abc.abstractproperty
     def testinfra_args(self):
         """
-        Returns the kwargs used when invoking the testinfra validator
-        :return:
+        Returns the kwargs used when invoking the testinfra validator, and
+        returns a dict.
+
+        :returns: dict
         """
-        return
+        pass  # pragma: no cover
 
     @abc.abstractproperty
     def serverspec_args(self):
         """
-        Returns the kwargs used when invoking the serverspec validator
-        :return:
+        Returns the kwargs used when invoking the serverspec validator, and
+        returns a dict.
+
+        :returns: dict
         """
-        return
+        pass  # pragma: no cover
 
     @abc.abstractmethod
     def up(self, no_provision=True):
         """
-        Starts the configured VMs in within the driver
-        :param no_provision:
-        :return:
+        Starts the configured instance(s) within the driver.
+
+        :param no_provision: An optional bool to determine if the driver's
+         provisioner should be invoked.  Only used by :class:`.VagrantDriver`.
+        :returns: None
         """
-        return
+        pass  # pragma: no cover
 
     @abc.abstractmethod
     def destroy(self):
         """
-        Destroys the VMs
-        :return:
+        Destroys the instance(s).
+
+        :returns: None
         """
-        return
+        pass  # pragma: no cover
 
     @abc.abstractmethod
     def status(self):
         """
-        Returns the running status of the VMs
-        :return:
+        List of instance(s) running status.
+
+        :returns: list
         """
-        return
+        pass  # pragma: no cover
 
     @abc.abstractmethod
     def conf(self, vm_name=None, ssh_config=False):
         """
-        SSH config required for logging into a VM
-        :return:
+        SSH config required for logging into a instance(s).
+
+        :param vm_name:
+        :param ssh_config:
+        :returns: None
+
+        .. warning:: The usage of this method seems inconsistent across
+           each driver.
+        .. todo:: The return value of this method is inconsistent across
+                  drivers.
+        .. todo:: The param `vm_name` is inconsistent across drivers.
         """
-        return
+        pass  # pragma: no cover
 
     @abc.abstractmethod
     def inventory_entry(self, instance):
         """
-        Returns an inventory entry with the given arguments
-        :return:
+        Returns an inventory entry for the given instance, and returns a
+        string.
+
+        :param instance: A dict containing a single element provided by
+         :meth:`.instances`.
+
+        :returns: str
         """
-        return
+        pass  # pragma: no cover
 
     @abc.abstractmethod
     def login_cmd(self, instance_name):
         """
-        Returns the command string to login to a host
-        :return:
+        Returns the command string to login to a host.
+
+        :param instance_name:
+        :returns:
         """
-        return
+        pass  # pragma: no cover
 
     @abc.abstractmethod
     def login_args(self, instance_name):
         """
-        Returns the arguments used in the login command
-        :return:
+        Returns the arguments used in the login command.
+
+        :param instance_name:
+        :returns:
+
+        .. warning:: The usage of this method seems inconsistent across
+           each driver.
+        .. todo:: The return value of this method is inconsistent across
+                  drivers.
         """
-        return
+        pass  # pragma: no cover

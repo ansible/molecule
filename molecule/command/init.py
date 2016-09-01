@@ -38,9 +38,21 @@ class Init(base.Base):
     """
 
     def main(self):
+        """
+        Overriden to prevent the initialization of a molecule object, since
+        :class:`.Config` cannot parse a non-existent `molecule.yml`.
+
+        :returns: None
+        """
         pass
 
-    def execute(self):
+    def execute(self, exit=True):
+        """
+        Execute the actions necessary to perform a `molecule init` and exit.
+
+        :param exit: (Unused) Provided to complete method signature.
+        :return: None
+        """
         role = self.molecule.args['<role>']
         role_path = os.getcwd()
         if not role:

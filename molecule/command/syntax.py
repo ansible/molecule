@@ -33,6 +33,13 @@ class Syntax(base.Base):
     """
 
     def execute(self, exit=True):
+        """
+        Execute the actions necessary to perform a `molecule syntax` and
+        return a tuple.
+
+        :param exit: (Unused) Provided to complete method signature.
+        :return: Return a tuple provided by :meth:`.AnsiblePlaybook.execute`.
+        """
         self.molecule._create_templates()
 
         if 'requirements_file' in self.molecule.config.config[

@@ -39,7 +39,8 @@ class AnsibleLint(base.Base):
 
     def execute(self):
         """
-        Runs ansible-lint against specified playbook.
+        Executes ansible-lint against the configured playbook, and returns
+        None.
 
         :return: None
         """

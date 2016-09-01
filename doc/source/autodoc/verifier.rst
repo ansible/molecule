@@ -1,5 +1,13 @@
+.. _verifier:
+
 Verifier
 ========
+
+Base
+----
+
+.. autoclass:: molecule.verifier.base.Base
+   :members:
 
 Serverspec
 ----------

@@ -1,5 +1,13 @@
+.. _driver:
+
 Driver
 ======
+
+Base
+----
+
+.. autoclass:: molecule.driver.basedriver.BaseDriver
+   :members:
 
 Docker
 ------

@@ -49,10 +49,12 @@ class TrailingNewlineFormatter(logging.Formatter):
 
 
 def get_logger(name=None):
-    """Build a logger with the given name.
+    """
+    Build a logger with the given name, and returns the logger.
 
     :param name: The name for the logger. This is usually the module
                  name, ``__name__``.
+    :return: logger object
     """
 
     logger = logging.getLogger(name)
@@ -77,13 +79,17 @@ def print_info(msg):
 
 def write_template(src, dest, kwargs={}, _module='molecule', _dir='template'):
     """
-    Writes a file from a jinja2 template.
+    Writes a file from a jinja2 template, and returns None.
 
-    :param src: the target template files to use
-    :param dest: destination of the templatized file to be written
-    :param kwargs: dictionary of arguments passed to jinja2 when rendering template
-    :param _module: module (to look for template files) passed to jinja2 PackageLoader
-    :param _dir: directory (to look for template files) passed to jinja2 PackageLoader
+    :param src: A string containing the the target template files to use.
+    :param dest: A string containing the destination of the templatized file to
+     be written.
+    :param kwargs: A dict of arguments passed to jinja2 when rendering
+     template.
+    :param _module: An optional module (to look for template files) passed to
+     jinja2 PackageLoader.
+    :param _dir: An optional directory (to look for template files) passed to
+     jinja2 PackageLoader
     :return: None
     """
     src = os.path.expanduser(src)
@@ -110,10 +116,10 @@ def write_template(src, dest, kwargs={}, _module='molecule', _dir='template'):
 
 def write_file(filename, content):
     """
-    Writes a file with the given filename using the given content. Overwrites, does not append.
+    Writes a file with the given filename and content, and returns None.
 
-    :param filename: the target filename
-    :param content: what gets written into the file
+    :param filename: A string containing the target filename.
+    :param content: A string containing the data to be written.
     :return: None
     """
     with open(filename, 'w') as f:
@@ -122,12 +128,13 @@ def write_file(filename, content):
 
 def format_instance_name(name, platform, instances):
     """
-    Takes an instance name and formats it according to options specified in the instance's config.
+    Takes an instance name and formats it according to options specified in the
+    instance's config, and returns a string.
 
-    :param name: the name of the instance
-    :param platform: the current molecule platform in use
-    :param instances: the current molecule instances dict in use
-    :return: formatted instance name if found in instances, otherwise None
+    :param name: A string containg the name of the instance.
+    :param platform: A string containing the current molecule platform in use.
+    :param instances: A dict containing the instance data.
+    :return: str if found, otherwise None.
     """
     working_instance = None
 
@@ -156,11 +163,13 @@ def format_instance_name(name, platform, instances):
 
 def remove_args(command_args, args, kill):
     """
-    Removes args so commands can be passed around easily.
-    :param command_args: list of command args from DocOpt
-    :param args: dict of arguments from DocOpt
-    :kill: list of args to remove from returned values
-    :return: pruned command_args list, pruned args dict
+    Removes args so commands can be passed around easily, and returns a tuple.
+
+    :param command_args: A list of command args from DocOpt.
+    :param args: A dict of arguments from DocOpt.
+    :kill: A list of args to remove from returned values.
+
+    :return: tuple
     """
 
     new_args = {}
@@ -205,10 +214,11 @@ def check_ssh_availability(hostip, user, timeout):
 
 def debug(title, data):
     """
-    Prints colorized output for use when debugging portions of molecule.
+    Prints colorized output for use when debugging portions of molecule, and
+    returns None.
 
-    :param title: title of debug output
-    :param data: data of debug output
+    :param title: A string containing the title of debug output.
+    :param data: A string containing the data of debug output.
     :return: None
     """
     print(''.join([colorama.Back.WHITE, colorama.Style.BRIGHT,
