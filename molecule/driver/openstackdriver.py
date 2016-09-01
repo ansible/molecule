@@ -20,8 +20,10 @@
 
 import collections
 import os
-import time
+import random
+import socket
 import tempfile
+import time
 
 import paramiko
 import shade
@@ -40,24 +42,6 @@ class OpenstackDriver(basedriver.BaseDriver):
         self._openstack = shade.openstack_cloud()
         self._keypair_name = None
         self._molecule_generated_ssh_key = False
-
-    def get_keyfile(self):
-        if ('keyfile' in self.molecule.config.config['openstack']):
-            return self.molecule.config.config['openstack']['keyfile']
-        elif self._molecule_generated_ssh_key:
-            return self.generated_ssh_key_location()
-        else:
-            LOG.info(
-                'Keyfile not specified. molecule will generate a temporary one.')
-            self._molecule_generated_ssh_key = True
-            return self.generate_temp_ssh_key()
-
-    def get_keypair_name(self):
-        if ('keypair' in self.molecule.config.config['openstack']):
-            return self.molecule.config.config['openstack']['keypair']
-        else:
-            LOG.info('Keypair not specified. molecule will generate one.')
-            return self.generate_random_keypair_name('molecule', 10)
 
     @property
     def name(self):
@@ -86,12 +70,6 @@ class OpenstackDriver(basedriver.BaseDriver):
     @platform.setter
     def platform(self, val):
         self._platform = val
-
-    def molecule_generated_keypair(self):
-        return 'keypair' not in self.molecule.config.config['openstack']
-
-    def molecule_generated_ssh_key(self):
-        return self._molecule_generated_ssh_key
 
     @property
     def valid_providers(self):
@@ -141,14 +119,14 @@ class OpenstackDriver(basedriver.BaseDriver):
                     key_name=self._keypair_name,
                     security_groups=instance['security_groups']
                     if 'security_groups' in instance else None)
-                self.reset_known_host_key(server['interface_ip'])
+                self._reset_known_host_key(server['interface_ip'])
                 instance['created'] = True
                 num_retries = 0
-                while not self.check_ssh_availability(
+                while not self._check_ssh_availability(
                         server['interface_ip'],
                         instance['sshuser'],
                         timeout=6,
-                        sshkey_filename=self.get_keyfile(
+                        sshkey_filename=self._get_keyfile(
                         )) or num_retries == 5:
                     LOG.info("\t Waiting for ssh availability...")
                     num_retries += 1
@@ -172,11 +150,11 @@ class OpenstackDriver(basedriver.BaseDriver):
                     instance['created'] = False
 
         # cleanup any molecule generated files
-        if self.molecule_generated_keypair() and self._keypair_name:
+        if self._molecule_generated_keypair() and self._keypair_name:
             self._openstack.delete_keypair(self._keypair_name)
 
         if self._molecule_generated_ssh_key:
-            self.remove_temp_ssh_key()
+            self._remove_temp_ssh_key()
 
     def status(self):
         Status = collections.namedtuple('Status', ['name', 'state',
@@ -218,7 +196,7 @@ class OpenstackDriver(basedriver.BaseDriver):
                 if self._molecule_generated_ssh_key:
                     server_config[
                         'ssh_key_filename'] = 'ansible_ssh_private_key_file={}'.format(
-                            self.generated_ssh_key_location())
+                            self._generated_ssh_key_location())
                 return template.format(**server_config)
         return ''
 
@@ -243,10 +221,10 @@ class OpenstackDriver(basedriver.BaseDriver):
         return 'openstack'
 
     def _set_keypair(self):
-        self._keypair_name = self.get_keypair_name()
+        self._keypair_name = self._get_keypair_name()
         kpn = self._keypair_name
 
-        pub_key_file = self.get_keyfile() + ".pub"
+        pub_key_file = self._get_keyfile() + ".pub"
 
         if self._openstack.search_keypairs(kpn):
             LOG.info('Keypair already exists. Skipping import.')
@@ -255,11 +233,10 @@ class OpenstackDriver(basedriver.BaseDriver):
             self._openstack.create_keypair(kpn, open(pub_key_file,
                                                      'r').read().strip())
 
-    def reset_known_host_key(self, hostname):
+    def _reset_known_host_key(self, hostname):
         return os.system('ssh-keygen -R {}'.format(hostname))
 
-    def check_ssh_availability(self, hostip, user, timeout, sshkey_filename):
-        import socket
+    def _check_ssh_availability(self, hostip, user, timeout, sshkey_filename):
         ssh = paramiko.SSHClient()
         ssh.load_system_host_keys()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -271,8 +248,8 @@ class OpenstackDriver(basedriver.BaseDriver):
             time.sleep(timeout)
             return False
 
-    def generate_temp_ssh_key(self):
-        fileloc = self.generated_ssh_key_location()
+    def _generate_temp_ssh_key(self):
+        fileloc = self._generated_ssh_key_location()
 
         # create the private key
         k = paramiko.RSAKey.generate(2048)
@@ -285,29 +262,51 @@ class OpenstackDriver(basedriver.BaseDriver):
 
         return fileloc
 
-    def remove_temp_ssh_key(self):
-        fileloc = self.generated_ssh_key_location()
+    def _remove_temp_ssh_key(self):
+        fileloc = self._generated_ssh_key_location()
         os.remove(fileloc)
         os.remove(fileloc + ".pub")
 
-    def generate_random_keypair_name(self, prefix, length):
-        import random
+    def _generate_random_keypair_name(self, prefix, length):
         r = "".join(
             [random.choice('abcdef0123456789') for n in xrange(length)])
         return prefix + "_" + r
 
     def _host_template(self):
-        return '{hostname} ansible_ssh_host={interface_ip_address} ansible_ssh_user={ssh_username} {ssh_key_filename} ansible_ssh_extra_args="-o ConnectionAttempts=5"\n'
+        return ('{hostname} ansible_ssh_host={interface_ip_address} '
+                'ansible_ssh_user={ssh_username} {ssh_key_filename} '
+                'ansible_ssh_extra_args="-o ConnectionAttempts=5"\n')
 
-    def generated_ssh_key_location(self):
+    def _generated_ssh_key_location(self):
         return tempfile.gettempdir() + '/molecule_rsa'
 
     def _instance_is_accessible(self, instance):
         instance_ip = self.conf(instance['name'])
         if instance_ip is not None:
-            return self.check_ssh_availability(
+            return self._check_ssh_availability(
                 instance_ip,
                 instance['sshuser'],
                 timeout=0,
-                sshkey_filename=self.get_keyfile())
+                sshkey_filename=self._get_keyfile())
         return False
+
+    def _get_keyfile(self):
+        if ('keyfile' in self.molecule.config.config['openstack']):
+            return self.molecule.config.config['openstack']['keyfile']
+        elif self._molecule_generated_ssh_key:
+            return self._generated_ssh_key_location()
+        else:
+            LOG.info(
+                'Keyfile not specified. molecule will generate a temporary one.')
+            self._molecule_generated_ssh_key = True
+            return self._generate_temp_ssh_key()
+
+    def _get_keypair_name(self):
+        if ('keypair' in self.molecule.config.config['openstack']):
+            return self.molecule.config.config['openstack']['keypair']
+        else:
+            LOG.info('Keypair not specified. molecule will generate one.')
+            return self._generate_random_keypair_name('molecule', 10)
+
+    def _molecule_generated_keypair(self):
+        return 'keypair' not in self.molecule.config.config['openstack']

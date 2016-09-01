@@ -18,9 +18,9 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import pytest
 import os
-import tempfile
+import pytest
+import re
 
 from molecule import config
 from molecule import core
@@ -99,29 +99,28 @@ def test_serverspec_args(openstack_instance):
 
 def test_reset_known_hosts(openstack_instance, mocker):
     mocked = mocker.patch('os.system')
-    openstack_instance.reset_known_host_key('test')
+    openstack_instance._reset_known_host_key('test')
 
     mocked.assert_called_once_with('ssh-keygen -R test')
 
 
 def test_generate_temp_ssh_key(openstack_instance):
-    fileloc = openstack_instance.generated_ssh_key_location()
+    fileloc = openstack_instance._generated_ssh_key_location()
 
-    openstack_instance.generate_temp_ssh_key()
+    openstack_instance._generate_temp_ssh_key()
     assert os.path.isfile(fileloc)
     assert os.path.isfile(fileloc + '.pub')
 
 
 def test_delete_temp_ssh_key(openstack_instance):
-    fileloc = openstack_instance.generated_ssh_key_location()
+    fileloc = openstack_instance._generated_ssh_key_location()
 
-    openstack_instance.remove_temp_ssh_key()
+    openstack_instance._remove_temp_ssh_key()
     assert not os.path.isfile(fileloc)
     assert not os.path.isfile(fileloc + '.pub')
 
 
 def test_generate_random_keypair_name(openstack_instance):
-    import re
-    result_keypair = openstack_instance.generate_random_keypair_name(
+    result_keypair = openstack_instance._generate_random_keypair_name(
         'molecule', 10)
     assert re.match(r'molecule_[0-9a-fA-F]+', result_keypair)

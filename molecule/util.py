@@ -23,7 +23,6 @@ from __future__ import print_function
 import logging
 import os
 import sys
-import time
 
 import colorama
 import jinja2
