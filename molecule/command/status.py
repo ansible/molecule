@@ -81,7 +81,7 @@ class Status(base.Base):
 
         # Display the platforms.
         if display_all or self.molecule.args['--platforms']:
-            self.molecule._print_valid_platforms(porcelain=porcelain)
+            self.molecule.print_valid_platforms(porcelain=porcelain)
 
         # Display the providers.
         if display_all or self.molecule.args['--providers']:

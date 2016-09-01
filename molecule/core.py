@@ -74,7 +74,7 @@ class Molecule(object):
             self.args['--provider'] = None
             self.args['--platform'] = None
             self.driver = self._get_driver()
-            self._print_valid_platforms()
+            self.print_valid_platforms()
             util.sysexit()
 
         # updates instances config with full machine names
@@ -119,7 +119,7 @@ class Molecule(object):
         out = self.driver.conf(ssh_config=True)
         util.write_file(ssh_config, out)
 
-    def _print_valid_platforms(self, porcelain=False):
+    def print_valid_platforms(self, porcelain=False):
         if not porcelain:
             # NOTE(retr0h): Should we log here, when ``_display_tabulate_data``
             # prints?
