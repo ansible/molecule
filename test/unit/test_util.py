@@ -113,13 +113,6 @@ def test_remove_args():
     assert expected_dict == actual_dict
 
 
-def test_reset_known_hosts(mocker):
-    mocked = mocker.patch('os.system')
-    util.reset_known_host_key('test')
-
-    mocked.assert_called_once_with('ssh-keygen -R test')
-
-
 @pytest.mark.skipif(reason="determine how to test such a function")
 def test_check_ssh_availability():
     pass
