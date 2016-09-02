@@ -139,17 +139,18 @@ Update the role with needed functionality and tests.  Now test it:
   --> Idempotence test in progress (can take a few minutes)...
   --> Starting Ansible Run ...
   Idempotence test passed.
+  --> Executing ansible-lint.
+  --> Executing flake8 on \*.py files found in tests/.
   --> Executing testinfra tests found in tests/.
   ============================= test session starts ==============================
   platform darwin -- Python 2.7.11, pytest-2.9.2, py-1.4.31, pluggy-0.3.1
   rootdir: /private/tmp/foo/tests, inifile:
-  plugins: mock-1.1, xdist-1.14, testinfra-1.3.1
+  plugins: xdist-1.14, testinfra-1.4.1
   collected 2 itemss
 
   tests/test_default.py ..
 
-  =========================== 2 passed in 1.11 seconds ===========================
-  No serverspec tests found in spec/.
+  =========================== 2 passed in 1.52 seconds ===========================
   --> Destroying instances ...
   Stopping container foo-01 ...
   Removed container foo-01.
