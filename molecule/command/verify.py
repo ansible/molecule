@@ -23,6 +23,7 @@ import sh
 from molecule import util
 from molecule.command import base
 from molecule.verifier import ansible_lint
+from molecule.verifier import goss
 from molecule.verifier import serverspec
 from molecule.verifier import testinfra
 from molecule.verifier import trailing
@@ -60,8 +61,11 @@ class Verify(base.Base):
         self.molecule._write_ssh_config()
 
         try:
+            # NOTE(retr0h): In v2.0 the verifier will be configured through the
+            # config file.
             for v in [testinfra.Testinfra(self.molecule),
-                      serverspec.Serverspec(self.molecule)]:
+                      serverspec.Serverspec(self.molecule),
+                      goss.Goss(self.molecule)]:
                 v.execute()
         except sh.ErrorReturnCode as e:
             LOG.error('ERROR: {}'.format(e))

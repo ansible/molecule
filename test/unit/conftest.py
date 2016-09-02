@@ -105,6 +105,8 @@ def molecule_section_data(state_path):
             ],
             'serverspec_dir': 'spec',
             'testinfra_dir': 'tests',
+            'goss_dir': 'tests',
+            'goss_playbook': 'test_default.yml',
             'molecule_dir': 'test',
             'state_file': state_path,
             'vagrantfile_file': 'vagrantfile_file',

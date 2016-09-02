@@ -9,6 +9,12 @@ Base
 .. autoclass:: molecule.verifier.base.Base
    :members:
 
+Goss
+----
+
+.. autoclass:: molecule.verifier.goss.Goss
+   :members:
+
 Serverspec
 ----------
 

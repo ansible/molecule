@@ -99,7 +99,7 @@ class Testinfra(base.Base):
         Executes flake8 against specified tests, and returns a :func:`sh`
         response object.
 
-        :param tests: List of testinfra tests.
+        :param tests: A list of testinfra tests.
         :param out: An optional function to process STDOUT for underlying
          :func:`sh` call.
         :param err: An optional function to process STDERR for underlying

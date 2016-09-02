@@ -10,7 +10,7 @@ Contents:
    configuration
    driver/index
    provider/index
-   validator
+   verifier
    bash
    development
    contributing

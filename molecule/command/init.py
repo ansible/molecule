@@ -34,7 +34,7 @@ class Init(base.Base):
     Creates the scaffolding for a new role intended for use with molecule.
 
     Usage:
-        init [<role>] [--docker | --openstack] [--offline]
+        init [<role>] [--docker | --openstack] [--serverspec | --goss] [--offline]
     """
 
     def main(self):
@@ -80,11 +80,12 @@ class Init(base.Base):
 
     def _init_new_role(self, role, role_path):
         driver = self._get_driver()
+        verifier = self._get_verifier()
         extra_context = self._get_cookiecutter_context(role, driver)
 
         util.print_info("Initializing role {}...".format(role))
         for template in ['galaxy_init', 'playbook', 'driver/{}'.format(driver),
-                         'verifier/testinfra', 'verifier/serverspec']:
+                         'verifier/{}'.format(verifier)]:
             self._create_template(template, extra_context, role_path)
 
     def _create_template(self,
@@ -131,3 +132,11 @@ class Init(base.Base):
             return 'openstack'
         else:
             return 'vagrant'
+
+    def _get_verifier(self):
+        if self.molecule.args['--serverspec']:
+            return 'serverspec'
+        elif self.molecule.args['--goss']:
+            return 'goss'
+        else:
+            return 'testinfra'

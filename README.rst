@@ -21,9 +21,9 @@ operating system distributions, virtualization providers and test frameworks.
 It leverages `Vagrant`_, `Docker`_, and `OpenStack`_ to manage virtual
 machines/containers, with support for multiple Vagrant providers (currently
 `VirtualBox`_, `Parallels`_, `VMware Fusion`_, and `Libvirt`_).  Molecule
-supports `Serverspec`_ or `Testinfra`_ to run tests.  Molecule uses an
-`Ansible`_ `playbook`_ (``playbook.yml``), to execute the `role`_ and its
-tests.
+supports `Serverspec`_, `Testinfra`_, or `Goss`_ (beta) to run tests.  Molecule
+uses an `Ansible`_ `playbook`_ (``playbook.yml``), to execute the `role`_ and
+its tests.
 
 .. _`Test Kitchen`: http://kitchen.ci
 .. _`playbook`: https://docs.ansible.com/ansible/playbooks.html
@@ -42,6 +42,7 @@ Dependencies
 Molecule relies on several outside packages and programs to function.
 
 * `Ansible`_
+* `Goss`_
 * `Rake`_
 * `Rubocop`_
 * `Serverspec`_
@@ -68,6 +69,7 @@ Dependant upon provider used
 
 .. _`Ansible`: https://docs.ansible.com
 .. _`Docker`: https://www.docker.com
+.. _`Goss`: https://github.com/aelsabbahy/goss
 .. _`Libvirt`: http://libvirt.org
 .. _`OpenStack`: https://www.openstack.org
 .. _`Parallels`: http://www.parallels.com
