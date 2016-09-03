@@ -9,7 +9,6 @@ Jinja2==2.8
 paramiko==2.0.2
 pbr==1.10.0
 pexpect==4.2.0
-pytest-xdist==1.14
 python-vagrant==0.5.14
 PyYAML==3.11
 sh==1.11
