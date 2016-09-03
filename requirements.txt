@@ -14,5 +14,5 @@ python-vagrant==0.5.14
 PyYAML==3.11
 sh==1.11
 tabulate==0.7.5
-testinfra==1.4.1
+testinfra==1.4.2
 shade==1.9.0
