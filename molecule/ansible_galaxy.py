@@ -68,11 +68,12 @@ class AnsibleGalaxy(object):
         galaxy_options = util.merge_dicts(galaxy_default_options,
                                           self._config['ansible']['galaxy'])
 
-        self._galaxy = sh.ansible_galaxy.bake('install',
-                                              _env=self.env,
-                                              _out=self.out,
-                                              _err=self.err,
-                                              **galaxy_options)
+        self._galaxy = sh.ansible_galaxy.bake(
+            'install',
+            _env=self.env,
+            _out=self.out,
+            _err=self.err,
+            **galaxy_options)
 
     def add_env_arg(self, name, value):
         """

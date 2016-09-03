@@ -7,7 +7,7 @@
 
 - name: Testing prerequisites
   hosts: all
-  gather_facts: no
+  gather_facts: yes
   tasks:
     - name: Install ca-certificates
       apt: name=ca-certificates

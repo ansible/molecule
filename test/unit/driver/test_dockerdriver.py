@@ -141,8 +141,8 @@ def test_status(docker_instance):
 
 def test_port_bindings(docker_instance):
     docker_instance.up()
-    ports = sorted(docker_instance.status()[0].ports,
-                   key=lambda k: k['PublicPort'])
+    ports = sorted(
+        docker_instance.status()[0].ports, key=lambda k: k['PublicPort'])
     expected = [
         {
             'PublicPort': 80,

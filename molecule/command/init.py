@@ -96,11 +96,12 @@ class Init(base.Base):
                          overwrite=True):
         t = self._get_cookiecutter_template_dir(template)
 
-        cookiecutter.main.cookiecutter(t,
-                                       extra_context=extra_context,
-                                       output_dir=output_dir,
-                                       no_input=no_input,
-                                       overwrite_if_exists=overwrite)
+        cookiecutter.main.cookiecutter(
+            t,
+            extra_context=extra_context,
+            output_dir=output_dir,
+            no_input=no_input,
+            overwrite_if_exists=overwrite)
 
     def _get_cookiecutter_context(self, role, driver):
         md = self.molecule.config.config['molecule']['init']

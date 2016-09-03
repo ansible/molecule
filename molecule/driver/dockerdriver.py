@@ -33,8 +33,8 @@ LOG = util.get_logger(__name__)
 class DockerDriver(basedriver.BaseDriver):
     def __init__(self, molecule):
         super(DockerDriver, self).__init__(molecule)
-        self._docker = docker.Client(version='auto',
-                                     **docker.utils.kwargs_from_env())
+        self._docker = docker.Client(
+            version='auto', **docker.utils.kwargs_from_env())
         self._containers = self.molecule.config.config['docker']['containers']
         self._provider = self._get_provider()
         self._platform = self._get_platform()
@@ -173,15 +173,19 @@ class DockerDriver(basedriver.BaseDriver):
             name = container.get('name')
             if container.get('created'):
                 cd = self._docker.containers(filters={'name': name})[0]
-                status_list.append(Status(name=name,
-                                          state=cd.get('Status'),
-                                          provider=self.provider,
-                                          ports=cd.get('Ports')))
+                status_list.append(
+                    Status(
+                        name=name,
+                        state=cd.get('Status'),
+                        provider=self.provider,
+                        ports=cd.get('Ports')))
             else:
-                status_list.append(Status(name=name,
-                                          state="not_created",
-                                          provider=self.provider,
-                                          ports=[]))
+                status_list.append(
+                    Status(
+                        name=name,
+                        state="not_created",
+                        provider=self.provider,
+                        ports=[]))
 
         return status_list
 

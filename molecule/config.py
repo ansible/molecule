@@ -78,9 +78,8 @@ class Config(object):
         :return: dict
         """
 
-        return anyconfig.load(configs,
-                              ignore_missing=True,
-                              ac_merge=anyconfig.MS_DICTS)
+        return anyconfig.load(
+            configs, ignore_missing=True, ac_merge=anyconfig.MS_DICTS)
 
     def _build_config_paths(self):
         """

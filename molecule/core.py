@@ -81,10 +81,10 @@ class Molecule(object):
         self.config.populate_instance_names(self.driver.platform)
 
         if self.args.get('--debug'):
-            util.debug('RUNNING CONFIG',
-                       yaml.dump(self.config.config,
-                                 default_flow_style=False,
-                                 indent=2))
+            util.debug(
+                'RUNNING CONFIG',
+                yaml.dump(
+                    self.config.config, default_flow_style=False, indent=2))
 
         self._add_or_update_vars('group_vars')
         self._add_or_update_vars('host_vars')
@@ -275,8 +275,9 @@ class Molecule(object):
         for group, instances in groups.iteritems():
             inventory += '\n[{}]\n'.format(group)
             for instance in instances:
-                inventory += '{}\n'.format(util.format_instance_name(
-                    instance, self.driver.platform, self.driver.instances))
+                inventory += '{}\n'.format(
+                    util.format_instance_name(instance, self.driver.platform,
+                                              self.driver.instances))
 
         inventory_file = self.config.config['ansible']['inventory_file']
         try:
@@ -314,10 +315,9 @@ class Molecule(object):
             target_var_content = vars_target[target][0]
 
             util.write_file(
-                os.path.join(
-                    os.path.abspath(target_vars_path), target),
-                "---\n" + yaml.dump(target_var_content,
-                                    default_flow_style=False))
+                os.path.join(os.path.abspath(target_vars_path), target),
+                "---\n" + yaml.dump(
+                    target_var_content, default_flow_style=False))
 
     def _display_tabulate_data(self, data, headers=None):
         """

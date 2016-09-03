@@ -39,8 +39,8 @@ def test_create_role(molecule_dir):
         i.execute()
 
     assert os.path.isdir(os.path.join(molecule_dir, 'unit_test1'))
-    assert os.path.isfile(os.path.join(molecule_dir, 'unit_test1',
-                                       'molecule.yml'))
+    assert os.path.isfile(
+        os.path.join(molecule_dir, 'unit_test1', 'molecule.yml'))
 
 
 def test_create_role_in_existing_directory(molecule_dir):

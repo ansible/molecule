@@ -101,9 +101,8 @@ def write_template(src, dest, kwargs={}, _module='molecule', _dir='template'):
         sysexit()
 
     # look for template in filesystem, then molecule package
-    loader = jinja2.ChoiceLoader([jinja2.FileSystemLoader(path,
-                                                          followlinks=True),
-                                  jinja2.PackageLoader(_module, _dir)])
+    loader = jinja2.ChoiceLoader([jinja2.FileSystemLoader(
+        path, followlinks=True), jinja2.PackageLoader(_module, _dir)])
 
     env = jinja2.Environment(loader=loader)
     template = env.get_template(filename)
@@ -264,8 +263,8 @@ def _get_warn_logger():
     warn = logging.StreamHandler()
     warn.setLevel(logging.WARN)
     warn.addFilter(LogFilter(logging.WARN))
-    warn.setFormatter(TrailingNewlineFormatter('{}%(message)s'.format(
-        colorama.Fore.YELLOW)))
+    warn.setFormatter(
+        TrailingNewlineFormatter('{}%(message)s'.format(colorama.Fore.YELLOW)))
 
     return warn
 
@@ -274,8 +273,8 @@ def _get_debug_logger():
     debug = logging.StreamHandler()
     debug.setLevel(logging.DEBUG)
     debug.addFilter(LogFilter(logging.DEBUG))
-    debug.setFormatter(TrailingNewlineFormatter('{}%(message)s'.format(
-        colorama.Fore.BLUE)))
+    debug.setFormatter(
+        TrailingNewlineFormatter('{}%(message)s'.format(colorama.Fore.BLUE)))
 
     return debug
 
@@ -283,7 +282,7 @@ def _get_debug_logger():
 def _get_error_logger():
     error = logging.StreamHandler()
     error.setLevel(logging.ERROR)
-    error.setFormatter(TrailingNewlineFormatter('{}%(message)s'.format(
-        colorama.Fore.RED)))
+    error.setFormatter(
+        TrailingNewlineFormatter('{}%(message)s'.format(colorama.Fore.RED)))
 
     return error
