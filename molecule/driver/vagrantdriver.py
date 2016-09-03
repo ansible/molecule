@@ -147,9 +147,9 @@ class VagrantDriver(basedriver.BaseDriver):
 
         Status = collections.namedtuple('Status', ['name', 'state',
                                                    'provider'])
-        return [Status(name=instance['name'],
-                       state=state,
-                       provider=self.provider) for instance in self.instances]
+        return [Status(
+            name=instance['name'], state=state, provider=self.provider)
+                for instance in self.instances]
 
     def conf(self, vm_name=None, ssh_config=False):
         if ssh_config:
@@ -185,9 +185,9 @@ class VagrantDriver(basedriver.BaseDriver):
 
     def _populate_platform_instances(self):
         if self.molecule.args.get('--platform'):
-            if len(self.molecule.config.config['vagrant'][
-                    'platforms']) > 1 and self.molecule.args[
-                        '--platform'] == 'all' and not self._updated_multiplatform:
+            if len((self.molecule.config.config['vagrant']['platforms']) >
+                   1) and (self.molecule.args['--platform'] == 'all'
+                           ) and not self._updated_multiplatform:
                 new_instances = []
 
                 for instance in self.molecule.config.config['vagrant'][

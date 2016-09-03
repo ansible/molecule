@@ -94,8 +94,8 @@ class Login(base.Base):
 
         except subprocess.CalledProcessError:
             msg = "Unknown host '{}'.\n\nAvailable hosts:\n{}"
-            LOG.error(msg.format(self.molecule.args['<host>'], "\n".join(
-                hosts)))
+            LOG.error(
+                msg.format(self.molecule.args['<host>'], "\n".join(hosts)))
             util.sysexit()
         except base.InvalidHost as e:
             LOG.error(e.message)

@@ -139,8 +139,10 @@ class State(object):
             return yaml.safe_load(stream)
 
     def _write_state_file(self):
-        util.write_file(self._state_file,
-                        yaml.safe_dump(self._data,
-                                       default_flow_style=False,
-                                       explicit_start=True,
-                                       encoding='utf-8'))
+        util.write_file(
+            self._state_file,
+            yaml.safe_dump(
+                self._data,
+                default_flow_style=False,
+                explicit_start=True,
+                encoding='utf-8'))

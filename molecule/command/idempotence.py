@@ -52,9 +52,8 @@ class Idempotence(base.Base):
             'Idempotence test in progress (can take a few minutes)...')
 
         c = converge.Converge(self.command_args, self.args, self.molecule)
-        status, output = c.execute(idempotent=True,
-                                   exit=False,
-                                   hide_errors=True)
+        status, output = c.execute(
+            idempotent=True, exit=False, hide_errors=True)
         if status is not None:
             msg = 'Skipping due to errors during converge.'
             util.print_info(msg)

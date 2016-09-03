@@ -122,10 +122,10 @@ def test_debug(capsys):
     util.debug('test_title', 'test_data')
     result_title, _ = capsys.readouterr()
 
-    print(''.join([colorama.Back.WHITE, colorama.Style.BRIGHT,
-                   colorama.Fore.BLACK, 'DEBUG: ' + 'test_title',
-                   colorama.Fore.RESET, colorama.Back.RESET,
-                   colorama.Style.RESET_ALL]))
+    print(''.join(
+        [colorama.Back.WHITE, colorama.Style.BRIGHT, colorama.Fore.BLACK,
+         'DEBUG: ' + 'test_title', colorama.Fore.RESET, colorama.Back.RESET,
+         colorama.Style.RESET_ALL]))
     print(''.join([colorama.Fore.BLACK, colorama.Style.BRIGHT, 'test_data',
                    colorama.Style.RESET_ALL, colorama.Fore.RESET]))
     expected_title, _ = capsys.readouterr()

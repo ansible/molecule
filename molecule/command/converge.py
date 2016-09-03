@@ -130,14 +130,14 @@ class Converge(base.Base):
             other_env = {k: v
                          for (k, v) in ansible.env.items()
                          if 'ANSIBLE' not in k}
-            util.debug('OTHER ENVIRONMENT',
-                       yaml.dump(other_env,
-                                 default_flow_style=False,
-                                 indent=2))
-            util.debug('ANSIBLE ENVIRONMENT',
-                       yaml.dump(ansible_env,
-                                 default_flow_style=False,
-                                 indent=2))
+            util.debug(
+                'OTHER ENVIRONMENT',
+                yaml.dump(
+                    other_env, default_flow_style=False, indent=2))
+            util.debug(
+                'ANSIBLE ENVIRONMENT',
+                yaml.dump(
+                    ansible_env, default_flow_style=False, indent=2))
             util.debug('ANSIBLE PLAYBOOK', str(ansible._ansible))
 
         util.print_info("Starting Ansible Run ...")

@@ -142,8 +142,7 @@ class OpenstackDriver(basedriver.BaseDriver):
             LOG.warning("\tRemoving {} ...".format(instance['name']))
             if instance['name'] in active_instance_names:
                 if not self._openstack.delete_server(
-                        active_instance_names[instance['name']],
-                        wait=True):
+                        active_instance_names[instance['name']], wait=True):
                     LOG.error("Unable to remove {}!".format(instance['name']))
                 else:
                     util.print_success('\tRemoved {}'.format(instance['name']))
@@ -162,13 +161,17 @@ class OpenstackDriver(basedriver.BaseDriver):
         status_list = []
         for instance in self.instances:
             if self._instance_is_accessible(instance):
-                status_list.append(Status(name=instance['name'],
-                                          state='UP',
-                                          provider=self.provider))
+                status_list.append(
+                    Status(
+                        name=instance['name'],
+                        state='UP',
+                        provider=self.provider))
             else:
-                status_list.append(Status(name=instance['name'],
-                                          state='not_created',
-                                          provider=self.provider))
+                status_list.append(
+                    Status(
+                        name=instance['name'],
+                        state='not_created',
+                        provider=self.provider))
 
         return status_list
 
