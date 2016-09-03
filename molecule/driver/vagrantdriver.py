@@ -21,7 +21,6 @@
 import collections
 import copy
 import os
-import subprocess
 
 import vagrant
 
@@ -142,10 +141,15 @@ class VagrantDriver(basedriver.BaseDriver):
                 'vagrantfile_file'])
 
     def status(self):
-        try:
-            return self._vagrant.status()
-        except subprocess.CalledProcessError:
-            return self._fallback_status()
+        state = 'not_created'
+        if self.molecule.state.created:
+            state = 'running'
+
+        Status = collections.namedtuple('Status', ['name', 'state',
+                                                   'provider'])
+        return [Status(name=instance['name'],
+                       state=state,
+                       provider=self.provider) for instance in self.instances]
 
     def conf(self, vm_name=None, ssh_config=False):
         if ssh_config:
@@ -241,10 +245,3 @@ class VagrantDriver(basedriver.BaseDriver):
             'vagrantfile_template']
         dest = self.molecule.config.config['molecule']['vagrantfile_file']
         util.write_template(template, dest, kwargs=kwargs)
-
-    def _fallback_status(self):
-        Status = collections.namedtuple('Status', ['name', 'state',
-                                                   'provider'])
-        return [Status(name=instance['name'],
-                       state='not_created',
-                       provider=self.provider) for instance in self.instances]
