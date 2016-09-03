@@ -2,6 +2,11 @@
 CHANGELOG for molecule
 **********************
 
+1.10.1
+======
+
+* Pinned to explicit version of testinfra, due to pytest incompatabilities.
+
 1.10
 ====
 
