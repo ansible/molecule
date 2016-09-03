@@ -18,43 +18,44 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
+import os
+import shutil
+
 import pytest
-import vagrant
+import yaml
 
-from molecule.command import converge
-from molecule.command import create
-from molecule.command import destroy
-
-pytestmark = pytest.mark.skipif(
-    vagrant.get_vagrant_executable() is None,
-    reason='No vagrant executable found - skipping vagrant tests')
+from molecule import config
+from molecule import core
+from molecule import state
 
 
 @pytest.fixture()
-def teardown(request):
+def molecule_file(tmpdir, request, molecule_vagrant_config):
+    d = tmpdir.mkdir('molecule')
+    c = d.join(os.extsep.join(('molecule', 'yml')))
+    data = molecule_vagrant_config
+    c.write(data)
+
+    pbook = d.join(os.extsep.join(('playbook', 'yml')))
+    data = [{'hosts': 'all', 'tasks': [{'command': 'echo'}]}]
+    pbook.write(yaml.safe_dump(data))
+
+    os.chdir(d.strpath)
+
     def cleanup():
-        try:
-            des = destroy.Destroy([], [])
-            des.execute()
-        except SystemExit:
-            pass
+        os.remove(c.strpath)
+        shutil.rmtree(d.strpath)
 
     request.addfinalizer(cleanup)
 
-
-def test_vagrant_create(molecule_file, teardown):
-    c = create.Create([], [])
-
-    try:
-        c.execute()
-    except SystemExit as f:
-        assert f.code == 0
+    return c.strpath
 
 
-def test_vagrant_converge(molecule_file, teardown):
-    c = converge.Converge([], [])
+@pytest.fixture()
+def molecule_instance(temp_files, state_path):
+    c = temp_files(fixtures=['molecule_vagrant_config'])
+    m = core.Molecule(dict())
+    m.config = config.Config(configs=c)
+    m.state = state.State(state_file=state_path)
 
-    try:
-        c.execute()
-    except SystemExit as f:
-        assert f.code == 0
+    return m

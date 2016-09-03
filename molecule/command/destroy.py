@@ -52,7 +52,7 @@ class Destroy(base.Base):
         """
         self.molecule._create_templates()
         try:
-            util.print_info("Destroying instances ...")
+            util.print_info('Destroying instances ...')
             self.molecule.driver.destroy()
             self.molecule.state.reset()
         except subprocess.CalledProcessError as e:

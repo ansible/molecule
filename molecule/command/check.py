@@ -18,49 +18,46 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import subprocess
-
+from molecule import ansible_playbook
 from molecule import util
 from molecule.command import base
 
 LOG = util.get_logger(__name__)
 
 
-class Create(base.Base):
+class Check(base.Base):
     """
-    Creates all instances defined in molecule.yml.
+    Performs a check ("Dry Run") on the current role.
 
     Usage:
-        create [--platform=<platform>] [--provider=<provider>] [--debug]
-
-    Options:
-        --platform=<platform>  specify a platform
-        --provider=<provider>  specify a provider
-        --debug                get more detail
+        check
     """
 
     def execute(self, exit=True):
         """
-        Execute the actions necessary to perform a `molecule create` and
+        Execute the actions necessary to perform a `molecule check` and
         return a tuple.
 
-        :param exit: An optional flag to toggle the exiting of the module
-         on command failure.
-        :return: Return a tuple of None, otherwise sys.exit on command failure.
+        :param exit: (Unused) Provided to complete method signature.
+        :return: Return a tuple provided by :meth:`.AnsiblePlaybook.execute`.
         """
-        self.molecule._remove_inventory_file()
-        self.molecule._create_templates()
-        try:
-            util.print_info('Creating instances ...')
-            self.molecule.driver.up(no_provision=True)
-            self.molecule.state.change_state('created', True)
-            if self.args['--platform'] == 'all':
-                self.molecule.state.change_state('multiple_platforms', True)
-        except subprocess.CalledProcessError as e:
-            LOG.error('ERROR: {}'.format(e))
-            if exit:
-                util.sysexit(e.returncode)
-            return e.returncode, e.message
-        self.molecule._create_inventory_file()
-        self.molecule._write_instances_state()
-        return None, None
+        if not self.molecule.state.created:
+            msg = ('Instance(s) not created, `check` should be run '
+                   'against created instance(s)')
+            LOG.error('ERROR: {}'.format(msg))
+            util.sysexit()
+
+        if self.molecule.state.created and not self.molecule.state.converged:
+            msg = ('Instance(s) already converged, `check` should be run '
+                   'against unconverged instance(s)')
+            LOG.error('ERROR: {}'.format(msg))
+            util.sysexit()
+
+        ansible = ansible_playbook.AnsiblePlaybook(self.molecule.config.config[
+            'ansible'])
+        ansible.add_cli_arg('check', True)
+        for k, v in self.molecule.driver.ansible_connection_params.items():
+            ansible.add_cli_arg(k, v)
+
+        util.print_info('Performing a "Dry Run" of playbook ...')
+        return ansible.execute(hide_errors=True)

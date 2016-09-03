@@ -23,6 +23,7 @@ Usage:
 
 Commands:
     syntax        check playbook syntax
+    check         "dry-run" converge
     create        create instance(s)
     converge      create and provision instance(s)
     idempotence   converge and check the output for changes
