@@ -2,6 +2,12 @@
 CHANGELOG for molecule
 **********************
 
+1.10.2
+======
+
+* Removed pytest-xdist from runtime deps.  This allows testinfra's dependency
+  on pytest to properly install.
+
 1.10.1
 ======
 
