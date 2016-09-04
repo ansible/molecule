@@ -1,0 +1,6 @@
+---
+docker:
+  containers:
+    - name: idempotence-scenario
+      image: ubuntu
+      image_version: latest
