@@ -84,7 +84,7 @@ class Idempotence(base.Base):
         output = re.sub("\n\s*\n*", "\n", output)
 
         # Look for any non-zero changed lines
-        changed = re.search(r'(changed=[1-9]+)', output)
+        changed = re.search(r'(changed=[1-9][0-9]*)', output)
 
         if changed:
             # Not idempotent
