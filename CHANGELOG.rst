@@ -8,6 +8,13 @@ CHANGELOG for molecule
 * Reimplemented idempotence handling. Removed the idempotence ansible callback
   plugin, in favor of a native implementation.
 
+Note
+----
+
+There is no change in workflow.  Molecule still reports if a converge was
+idempotent or not.  However, it no longer reports which task(s) are not
+idempotent.
+
 1.10.2
 ======
 
