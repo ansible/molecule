@@ -1,0 +1,6 @@
+---
+- hosts: all
+  tasks:
+    - name: This file will not exist in check mode
+      file: path=/tmp/command_check
+            state=touch
