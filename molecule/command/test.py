@@ -66,7 +66,8 @@ class Test(base.Base):
 
             # Fail fast
             if status is not 0 and status is not None:
-                LOG.error(output)
+                if output:
+                    LOG.error(output)
                 util.sysexit(status)
 
         if self.args.get('--destroy') == 'always':

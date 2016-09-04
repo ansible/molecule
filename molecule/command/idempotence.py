@@ -18,6 +18,8 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
+import re
+
 from molecule import util
 from molecule.command import base
 from molecule.command import converge
@@ -49,7 +51,7 @@ class Idempotence(base.Base):
          sys.exit on command failure.
         """
         util.print_info(
-            'Idempotence test in progress (can take a few minutes)...')
+            'Idempotence test in progress (can take a few minutes) ...')
 
         c = converge.Converge(self.command_args, self.args, self.molecule)
         status, output = c.execute(idempotent=True,
@@ -60,25 +62,33 @@ class Idempotence(base.Base):
             util.print_info(msg)
             return status, None
 
-        idempotent, changed_tasks = self.molecule._parse_provisioning_output(
-            output)
-
+        idempotent = self._is_idempotent(output)
         if idempotent:
             util.print_success('Idempotence test passed.')
             return None, None
-
-        # Display the details of the idempotence test.
-        if changed_tasks:
-            LOG.error(
-                'Idempotence test failed because of the following tasks:')
-            LOG.error('{}'.format('\n'.join(changed_tasks)))
         else:
-            # But in case the idempotence callback plugin was not found, we just display an error message.
             LOG.error('Idempotence test failed.')
-            warning_msg = "The idempotence plugin was not found or did not provide the required information. " \
-                          "Therefore the failure details cannot be displayed."
+            if exit:
+                util.sysexit()
 
-            LOG.warning(warning_msg)
-        if exit:
-            util.sysexit()
-        return 1, None
+            return 1, None
+
+    def _is_idempotent(self, output):
+        """
+        Parses the output of the provisioning for changed, and return a bool.
+
+        :param output: A string containing the output of the ansible run.
+        :return: bool
+        """
+
+        # Remove blank lines to make regex matches easier
+        output = re.sub("\n\s*\n*", "\n", output)
+
+        # Look for any non-zero changed lines
+        changed = re.search(r'(changed=[1-9]+)', output)
+
+        if changed:
+            # Not idempotent
+            return False
+
+        return True

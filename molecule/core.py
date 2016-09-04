@@ -21,7 +21,6 @@
 import collections
 import fcntl
 import os
-import re
 import struct
 import sys
 import termios
@@ -164,29 +163,6 @@ class Molecule(object):
         a = struct.unpack('HHHH', fcntl.ioctl(sys.stdout.fileno(), TIOCGWINSZ,
                                               s))
         self._pt.setwinsize(a[0], a[1])
-
-    def _parse_provisioning_output(self, output):
-        """
-        Parses the output of the provisioning method.
-
-        :param output:
-        :return: True if the playbook is idempotent, otherwise False
-        """
-
-        # remove blank lines to make regex matches easier
-        output = re.sub("\n\s*\n*", "\n", output)
-
-        # look for any non-zero changed lines
-        changed = re.search(r'(changed=[1-9][0-9]*)', output)
-
-        # Look for the tasks that have changed.
-        p = re.compile(ur'NI: (.*$)', re.MULTILINE | re.IGNORECASE)
-        changed_tasks = re.findall(p, output)
-
-        if changed:
-            return False, changed_tasks
-
-        return True, []
 
     def _remove_templates(self):
         """

@@ -18,9 +18,6 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import os
-import sys
-
 import yaml
 
 from molecule import ansible_galaxy
@@ -84,7 +81,7 @@ class Converge(base.Base):
         if create_inventory:
             self.molecule._create_inventory_file()
 
-        # install role dependencies only during `molecule converge`
+        # Install role dependencies only during `molecule converge`
         if not idempotent and 'requirements_file' in self.molecule.config.config[
                 'ansible'] and not self.molecule._state.installed_deps:
             galaxy = ansible_galaxy.AnsibleGalaxy(self.molecule.config.config)
@@ -94,34 +91,21 @@ class Converge(base.Base):
         ansible = ansible_playbook.AnsiblePlaybook(self.molecule.config.config[
             'ansible'])
 
-        # params to work with driver
+        # Params to work with driver
         for k, v in self.molecule.driver.ansible_connection_params.items():
             ansible.add_cli_arg(k, v)
 
-        # target tags passed in via CLI
+        # Target tags passed in via CLI
         if self.molecule.args.get('--tags'):
             ansible.add_cli_arg('tags', self.molecule.args['--tags'].pop(0))
 
         if idempotent:
+            # Don't log stdout/err
             ansible.remove_cli_arg('_out')
             ansible.remove_cli_arg('_err')
+            # Disable color for regexp
             ansible.add_env_arg('ANSIBLE_NOCOLOR', 'true')
             ansible.add_env_arg('ANSIBLE_FORCE_COLOR', 'false')
-
-            # Save the previous callback plugin if any.
-            callback_plugin = ansible.env.get('ANSIBLE_CALLBACK_PLUGINS', '')
-
-            # Set the idempotence plugin.
-            if callback_plugin:
-                ansible.add_env_arg(
-                    'ANSIBLE_CALLBACK_PLUGINS',
-                    callback_plugin + ':' + os.path.join(
-                        sys.prefix,
-                        'share/molecule/ansible/plugins/callback/idempotence'))
-            else:
-                ansible.add_env_arg('ANSIBLE_CALLBACK_PLUGINS', os.path.join(
-                    sys.prefix,
-                    'share/molecule/ansible/plugins/callback/idempotence'))
 
         ansible.bake()
         if self.molecule.args.get('--debug'):

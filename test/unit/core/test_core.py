@@ -40,45 +40,6 @@ def test_get_driver_invalid_instance(molecule_default_provider_instance):
     assert molecule_default_provider_instance._get_driver() is None
 
 
-def test_parse_provisioning_output_failure_00(
-        molecule_default_provider_instance):
-    failed_output = """
-PLAY RECAP ********************************************************************
-vagrant-01-ubuntu              : ok=36   changed=29   unreachable=0    failed=0
-    """
-    res, _ = molecule_default_provider_instance._parse_provisioning_output(
-        failed_output)
-
-    assert not res
-
-
-def test_parse_provisioning_output_failure_01(
-        molecule_default_provider_instance):
-    failed_output = """
-PLAY RECAP ********************************************************************
-NI: common | Non idempotent task for testing
-common-01-rhel-7           : ok=18   changed=14   unreachable=0    failed=0
-    """
-    res, changed_tasks = molecule_default_provider_instance._parse_provisioning_output(
-        failed_output)
-
-    assert not res
-    assert 1 == len(changed_tasks)
-
-
-def test_parse_provisioning_output_success_00(
-        molecule_default_provider_instance):
-    success_output = """
-PLAY RECAP ********************************************************************
-vagrant-01-ubuntu              : ok=36   changed=0    unreachable=0    failed=0
-    """
-    res, changed_tasks = molecule_default_provider_instance._parse_provisioning_output(
-        success_output)
-
-    assert res
-    assert [] == changed_tasks
-
-
 @pytest.mark.skip(reason='TODO(retr0h): Determine best way to test this')
 def test_remove_templates():
     pass
