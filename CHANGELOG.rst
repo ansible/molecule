@@ -2,6 +2,12 @@
 CHANGELOG for molecule
 **********************
 
+1.10.3
+======
+
+* Reimplemented idempotence handling. Removed the idempotence ansible callback
+  plugin, in favor of a native implementation.
+
 1.10.2
 ======
 
