@@ -12,6 +12,12 @@ Base
 .. autoclass:: molecule.command.base.Base
    :members:
 
+Check
+-----
+
+.. autoclass:: molecule.command.converge.Check
+   :members:
+
 Converge
 --------
 

@@ -19,42 +19,31 @@
 #  THE SOFTWARE.
 
 import pytest
-import vagrant
 
-from molecule.command import converge
-from molecule.command import create
-from molecule.command import destroy
-
-pytestmark = pytest.mark.skipif(
-    vagrant.get_vagrant_executable() is None,
-    reason='No vagrant executable found - skipping vagrant tests')
+from molecule.command import check
 
 
-@pytest.fixture()
-def teardown(request):
-    def cleanup():
-        try:
-            des = destroy.Destroy([], [])
-            des.execute()
-        except SystemExit:
-            pass
-
-    request.addfinalizer(cleanup)
+@pytest.fixture
+def mocked_main(mocker):
+    return mocker.patch('molecule.command.check.Check.main')
 
 
-def test_vagrant_create(molecule_file, teardown):
-    c = create.Create([], [])
+def test_raises_when_instance_not_created(mocked_main, molecule_instance):
+    c = check.Check([], dict(), molecule_instance)
 
-    try:
+    with pytest.raises(SystemExit) as e:
         c.execute()
-    except SystemExit as f:
-        assert f.code == 0
+        assert ('ERROR: Instance(s) not created, `check` '
+                'should be run against created instance(s)') in e
 
 
-def test_vagrant_converge(molecule_file, teardown):
-    c = converge.Converge([], [])
+def test_execute(mocker, mocked_main, molecule_instance):
+    molecule_instance.state.change_state('created', True)
+    molecule_instance.state.change_state('converged', True)
+    molecule_instance._driver = mocker.Mock(ansible_connection_params={})
+    mocked = mocker.patch('molecule.ansible_playbook.AnsiblePlaybook.execute')
 
-    try:
-        c.execute()
-    except SystemExit as f:
-        assert f.code == 0
+    c = check.Check([], dict(), molecule_instance)
+    c.execute()
+
+    assert mocked.called_once_with(hide_errors=True)

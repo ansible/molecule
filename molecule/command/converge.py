@@ -124,7 +124,7 @@ class Converge(base.Base):
                     ansible_env, default_flow_style=False, indent=2))
             util.debug('ANSIBLE PLAYBOOK', str(ansible._ansible))
 
-        util.print_info("Starting Ansible Run ...")
+        util.print_info('Starting Ansible Run ...')
         status, output = ansible.execute(hide_errors=hide_errors)
         if status is not None:
             if exit:

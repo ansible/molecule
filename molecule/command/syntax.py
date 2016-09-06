@@ -52,6 +52,6 @@ class Syntax(base.Base):
             'ansible'])
         ansible.add_cli_arg('syntax-check', True)
         ansible.add_cli_arg('inventory_file', 'localhost,')
-        util.print_info("Checking playbooks syntax ...")
+        util.print_info('Checking playbook\'s syntax ...')
 
         return ansible.execute(hide_errors=True)

@@ -74,7 +74,7 @@ class Init(base.Base):
         driver = self._get_driver()
         extra_context = self._get_cookiecutter_context(role, driver)
 
-        util.print_info("Initializing molecule in current directory...")
+        util.print_info('Initializing molecule in current directory...')
         for template in ['playbook', 'driver/{}'.format(driver)]:
             self._create_template(template, extra_context, role_path)
 
@@ -83,7 +83,7 @@ class Init(base.Base):
         verifier = self._get_verifier()
         extra_context = self._get_cookiecutter_context(role, driver)
 
-        util.print_info("Initializing role {}...".format(role))
+        util.print_info('Initializing role {}...'.format(role))
         for template in ['galaxy_init', 'playbook', 'driver/{}'.format(driver),
                          'verifier/{}'.format(verifier)]:
             self._create_template(template, extra_context, role_path)

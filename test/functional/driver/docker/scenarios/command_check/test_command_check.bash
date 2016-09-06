@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 #  Copyright (c) 2015-2016 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -18,43 +20,13 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import pytest
-import vagrant
+(
+	cd ${DOCKER_FUNCTIONAL_TEST_BASE_DIR}/command_check
+	molecule destroy
+	molecule create
+	OUT=$(molecule check 2>&1)
+	molecule verify
+	molecule destroy
 
-from molecule.command import converge
-from molecule.command import create
-from molecule.command import destroy
-
-pytestmark = pytest.mark.skipif(
-    vagrant.get_vagrant_executable() is None,
-    reason='No vagrant executable found - skipping vagrant tests')
-
-
-@pytest.fixture()
-def teardown(request):
-    def cleanup():
-        try:
-            des = destroy.Destroy([], [])
-            des.execute()
-        except SystemExit:
-            pass
-
-    request.addfinalizer(cleanup)
-
-
-def test_vagrant_create(molecule_file, teardown):
-    c = create.Create([], [])
-
-    try:
-        c.execute()
-    except SystemExit as f:
-        assert f.code == 0
-
-
-def test_vagrant_converge(molecule_file, teardown):
-    c = converge.Converge([], [])
-
-    try:
-        c.execute()
-    except SystemExit as f:
-        assert f.code == 0
+	echo ${OUT} | grep 'changed=1'
+)
