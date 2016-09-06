@@ -46,7 +46,7 @@ def test_get_ssh_config(molecule_instance):
 
 def test_write_ssh_config(mocker, molecule_instance):
     mocked = mocker.patch('molecule.util.write_file')
-    molecule_instance._write_ssh_config()
+    molecule_instance.write_ssh_config()
 
     assert not mocked.called
 
@@ -66,14 +66,14 @@ def test_print_valid_platforms_with_porcelain(capsys, molecule_instance):
 
 
 def test_print_valid_providers(capsys, molecule_instance):
-    molecule_instance._print_valid_providers()
+    molecule_instance.print_valid_providers()
     out, _ = capsys.readouterr()
 
     assert 'docker  (default)\n' == out
 
 
 def test_print_valid_providers_with_porcelain(capsys, molecule_instance):
-    molecule_instance._print_valid_providers(porcelain=True)
+    molecule_instance.print_valid_providers(porcelain=True)
     out, _ = capsys.readouterr()
 
     assert 'docker  d\n' == out

@@ -77,7 +77,7 @@ class Status(base.Base):
 
                 data.append([item.name, state, item.provider])
 
-            self.molecule._display_tabulate_data(data, headers=headers)
+            self.molecule.display_tabulate_data(data, headers=headers)
 
         # Display the platforms.
         if display_all or self.molecule.args['--platforms']:
@@ -85,6 +85,6 @@ class Status(base.Base):
 
         # Display the providers.
         if display_all or self.molecule.args['--providers']:
-            self.molecule._print_valid_providers(porcelain=porcelain)
+            self.molecule.print_valid_providers(porcelain=porcelain)
 
         return None, None

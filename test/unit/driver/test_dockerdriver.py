@@ -209,7 +209,7 @@ def test_inventory_generation(molecule_instance, docker_instance):
     molecule_instance.driver = docker_instance
 
     molecule_instance.driver.up()
-    molecule_instance._create_inventory_file()
+    molecule_instance.create_inventory_file()
 
     pb = molecule_instance.driver.ansible_connection_params
     pb['playbook'] = 'playbook.yml'

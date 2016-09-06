@@ -40,7 +40,7 @@ class Syntax(base.Base):
         :param exit: (Unused) Provided to complete method signature.
         :return: Return a tuple provided by :meth:`.AnsiblePlaybook.execute`.
         """
-        self.molecule._create_templates()
+        self.molecule.create_templates()
 
         if 'requirements_file' in self.molecule.config.config[
                 'ansible'] and not self.molecule.state.installed_deps:
