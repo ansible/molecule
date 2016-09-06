@@ -22,6 +22,7 @@
 
 (
 	cd ${DOCKER_FUNCTIONAL_TEST_BASE_DIR}/command_check
+	molecule destroy
 	molecule create
 	OUT=$(molecule check 2>&1)
 	molecule verify

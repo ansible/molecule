@@ -37,18 +37,6 @@ def test_raises_when_instance_not_created(mocked_main, molecule_instance):
                 'should be run against created instance(s)') in e
 
 
-def test_raises_when_instance_created_and_not_converged(mocked_main,
-                                                        molecule_instance):
-    molecule_instance.state.change_state('created', True)
-    molecule_instance.state.change_state('converged', False)
-    c = check.Check([], dict(), molecule_instance)
-
-    with pytest.raises(SystemExit) as e:
-        c.execute()
-        assert ('ERROR: Instance(s) already converged, `check` '
-                'should be run against unconverged instance(s)') in e
-
-
 def test_execute(mocker, mocked_main, molecule_instance):
     molecule_instance.state.change_state('created', True)
     molecule_instance.state.change_state('converged', True)

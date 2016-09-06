@@ -27,7 +27,7 @@ Commands:
     create        create instance(s)
     converge      create and provision instance(s)
     idempotence   converge and check the output for changes
-    test          run a full test cycle: destroy, syntax, create, converge, idempotency, verify, and destroy instance(s)
+    test          run a full test cycle: destroy, syntax, create, converge, idempotency, check, verify, and destroy instance(s)
     verify        run verifiers against instance(s)
     destroy       destroy instance(s)
     status        show status of instance(s)
@@ -38,7 +38,7 @@ Commands:
 Options:
     -h --help     shows this screen
     -v --version  shows the version
-"""
+"""  # noqa
 
 import docopt
 

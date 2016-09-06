@@ -47,12 +47,6 @@ class Check(base.Base):
             LOG.error('ERROR: {}'.format(msg))
             util.sysexit()
 
-        if self.molecule.state.created and not self.molecule.state.converged:
-            msg = ('Instance(s) already converged, `check` should be run '
-                   'against unconverged instance(s)')
-            LOG.error('ERROR: {}'.format(msg))
-            util.sysexit()
-
         ansible = ansible_playbook.AnsiblePlaybook(self.molecule.config.config[
             'ansible'])
         ansible.add_cli_arg('check', True)

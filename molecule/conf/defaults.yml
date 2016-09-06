@@ -53,6 +53,7 @@ molecule:
       - create
       - converge
       - idempotence
+      - check
       - verify
 
   init:
