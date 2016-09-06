@@ -186,25 +186,10 @@ OpenStack Section
 
 See OpenStack :ref:`openstack_driver_usage`
 
-Testinfra Section
------------------
+Verifier Section
+----------------
 
-In the testinfra section, you can configure flags exactly as they're passed to
-`testinfra`. Some flags, such as ``ansible-inventory``, ``connection`` and
-``hosts``, are already set by Molecule. Any flag set in this section will
-override the defaults. See more details on using `testinfra's command line
-arguments`_.
-
-.. code-block:: yaml
-
-  testinfra:
-    n: 1
-
-Note: Testinfra is based on pytest, so additional `pytest arguments`_ can be
-passed through it.
-
-.. _`testinfra's command line arguments`: http://testinfra.readthedocs.io/en/latest/invocation.html
-.. _`PyTest arguments`: http://pytest.org/latest/usage.html#usage
+See OpenStack :ref:`verifiers`
 
 Playbook
 ========

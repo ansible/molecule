@@ -55,33 +55,32 @@ class Init(base.Base):
         """
         role = self.molecule.args['<role>']
         role_path = os.getcwd()
+        driver = self._get_driver()
+        verifier = self._get_verifier()
         if not role:
             role = os.getcwd().split(os.sep)[-1]
             role_path = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
-            self._init_existing_role(role, role_path)
+            self._init_existing_role(role, role_path, driver, verifier)
         else:
             if os.path.isdir(role):
                 msg = 'The directory {} already exists. Cannot create new role.'
                 LOG.error(msg.format(role))
                 util.sysexit()
-            self._init_new_role(role, role_path)
+            self._init_new_role(role, role_path, driver, verifier)
 
         msg = 'Successfully initialized new role in {}...'
         util.print_success(msg.format(os.path.join(role_path, role)))
         util.sysexit(0)
 
-    def _init_existing_role(self, role, role_path):
-        driver = self._get_driver()
-        extra_context = self._get_cookiecutter_context(role, driver)
+    def _init_existing_role(self, role, role_path, driver, verifier):
+        extra_context = self._get_cookiecutter_context(role, driver, verifier)
 
         util.print_info("Initializing molecule in current directory...")
         for template in ['playbook', 'driver/{}'.format(driver)]:
             self._create_template(template, extra_context, role_path)
 
-    def _init_new_role(self, role, role_path):
-        driver = self._get_driver()
-        verifier = self._get_verifier()
-        extra_context = self._get_cookiecutter_context(role, driver)
+    def _init_new_role(self, role, role_path, driver, verifier):
+        extra_context = self._get_cookiecutter_context(role, driver, verifier)
 
         util.print_info("Initializing role {}...".format(role))
         for template in ['galaxy_init', 'playbook', 'driver/{}'.format(driver),
@@ -103,7 +102,7 @@ class Init(base.Base):
             no_input=no_input,
             overwrite_if_exists=overwrite)
 
-    def _get_cookiecutter_context(self, role, driver):
+    def _get_cookiecutter_context(self, role, driver, verifier):
         md = self.molecule.config.config['molecule']['init']
         platform = md.get('platform')
         provider = md.get('provider')
@@ -111,7 +110,8 @@ class Init(base.Base):
         d = {
             'repo_name': role,
             'role_name': role,
-            'driver': driver,
+            'driver_name': driver,
+            'verifier_name': verifier,
         }
         if driver == 'vagrant':
             d.update({'platform_name': platform.get('name'),
