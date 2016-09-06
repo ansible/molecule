@@ -1,9 +1,15 @@
+.. _verifiers:
+
 *********
 Verifiers
 *********
 
 Molecule is `opinionated`.  By being opinionated molecue tries to enforce a
 common way in which roles are maintained.
+
+The verifier section, specifies the verifier to use, with options to override
+the defaults.  Currently `testinfra` is the only verifier which implements this
+override functionality.
 
 Testinfra
 =========
@@ -16,6 +22,25 @@ Example files are created with ``molecule init``.
 
 Usage
 -----
+
+Any flag set in this section will override the defaults. See more details on
+using `testinfra's command line arguments`_.
+
+.. code-block:: yaml
+
+  verifier:
+    name: testinfra
+    options:
+      n: 1
+
+Note: Testinfra is based on pytest, so additional `pytest arguments`_ can be
+passed through it.
+
+.. _`testinfra's command line arguments`: http://testinfra.readthedocs.io/en/latest/invocation.html
+.. _`PyTest arguments`: http://pytest.org/latest/usage.html#usage
+
+Project Structure
+-----------------
 
 .. code-block:: yaml
 
@@ -37,6 +62,14 @@ Example files are created with ``molecule init --serverspec``.
 
 Usage
 -----
+
+.. code-block:: yaml
+
+  verifier:
+    name: serverspec
+
+Project Structure
+-----------------
 
 .. code-block:: yaml
 
@@ -82,6 +115,14 @@ Example files are created with ``molecule init --goss``.
 
 Usage
 -----
+
+.. code-block:: yaml
+
+  verifier:
+    name: goss
+
+Project Structure
+-----------------
 
 .. code-block:: yaml
 

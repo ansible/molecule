@@ -1,4 +1,4 @@
-{% if cookiecutter.driver == 'docker' -%}
+{% if cookiecutter.driver_name == 'docker' -%}
 require 'docker'
 require 'serverspec'
 

@@ -9,3 +9,6 @@ openstack:
       sshuser: centos
       ansible_groups:
         - group1
+
+verifier:
+  name: {{ cookiecutter.verifier_name }}

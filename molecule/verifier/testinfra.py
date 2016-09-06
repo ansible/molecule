@@ -50,7 +50,11 @@ class Testinfra(base.Base):
 
         testinfra_options = util.merge_dicts(
             self._molecule.driver.testinfra_args,
-            self._molecule.config.config['testinfra'])
+            # Preserve backward compatibility with old testinfra override
+            # syntax.
+            self._molecule.config.config.get(
+                'testinfra',
+                self._molecule.config.config['verifier'].get('options', {})))
         testinfra_options['env'] = ansible.env
         testinfra_options['debug'] = self._molecule.args.get('--debug', False)
         testinfra_options['sudo'] = self._molecule.args.get('--sudo', False)

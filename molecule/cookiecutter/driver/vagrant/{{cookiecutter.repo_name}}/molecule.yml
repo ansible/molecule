@@ -18,4 +18,7 @@ vagrant:
       - name: {{ cookiecutter.role_name }}-{{ '%02d' % loop.index }}
         ansible_groups:
           - group1
-    {%- endfor -%}
+    {%- endfor %}
+
+verifier:
+  name: {{ cookiecutter.verifier_name }}

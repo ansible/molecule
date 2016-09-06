@@ -91,4 +91,6 @@ ansible:
   config_file: ansible.cfg
   playbook: playbook.yml
 
-testinfra: {}
+verifier:
+  name: testinfra
+  options: {}

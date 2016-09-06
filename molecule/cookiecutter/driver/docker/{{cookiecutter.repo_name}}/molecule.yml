@@ -8,4 +8,7 @@ docker:
         image_version: latest
         ansible_groups:
           - group1
-    {%- endfor -%}
+    {%- endfor %}
+
+verifier:
+  name: {{ cookiecutter.verifier_name }}
