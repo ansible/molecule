@@ -40,6 +40,31 @@ def test_get_driver_invalid_instance(molecule_default_provider_instance):
     assert molecule_default_provider_instance._get_driver() is None
 
 
+def test_verifier(molecule_default_provider_instance):
+    assert 'testinfra' == molecule_default_provider_instance.verifier
+
+
+def test_verifier_backward_compatible(molecule_default_provider_instance):
+    m = molecule_default_provider_instance
+    m.config.config['testinfra'] = {}
+    m._verifier = m._get_verifier()
+
+    assert 'testinfra' == m.verifier
+
+
+def test_verifier_options(molecule_default_provider_instance):
+    assert {} == molecule_default_provider_instance.verifier_options
+
+
+def test_verifier_options_backward_compatible(
+        molecule_default_provider_instance):
+    m = molecule_default_provider_instance
+    m.config.config['testinfra'] = {'foo': 'bar'}
+    m._verifier_options = m._get_verifier_options()
+
+    assert {'foo': 'bar'} == m.verifier_options
+
+
 @pytest.mark.skip(reason='TODO(retr0h): Determine best way to test this')
 def test_remove_templates():
     pass

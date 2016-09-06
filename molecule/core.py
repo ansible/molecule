@@ -47,6 +47,8 @@ class Molecule(object):
         self.env = os.environ.copy()
         self.args = args
         self.config = config.Config()
+        self._verifier = self._get_verifier()
+        self._verifier_options = self._get_verifier_options()
 
     def main(self):
         if not os.path.exists(self.config.config['molecule']['molecule_dir']):
@@ -91,6 +93,14 @@ class Molecule(object):
     @driver.setter
     def driver(self, val):
         self._driver = val
+
+    @property
+    def verifier(self):
+        return self._verifier
+
+    @property
+    def verifier_options(self):
+        return self._verifier_options
 
     def write_ssh_config(self):
         ssh_config = self._get_ssh_config()
@@ -308,3 +318,14 @@ class Molecule(object):
                 instances[instance_name]['groups'] = []
 
         return dict(instances)
+
+    def _get_verifier(self):
+        if self.config.config.get('testinfra'):
+            return 'testinfra'
+        return self.config.config['verifier']['name']
+
+    def _get_verifier_options(self):
+        # Preserve backward compatibility with old testinfra override
+        # syntax.
+        return self.config.config.get(
+            'testinfra', self.config.config['verifier'].get('options', {}))
