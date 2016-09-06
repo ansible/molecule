@@ -48,8 +48,8 @@ class Create(base.Base):
          on command failure.
         :return: Return a tuple of None, otherwise sys.exit on command failure.
         """
-        self.molecule._remove_inventory_file()
-        self.molecule._create_templates()
+        self.molecule.remove_inventory_file()
+        self.molecule.create_templates()
         try:
             util.print_info('Creating instances ...')
             self.molecule.driver.up(no_provision=True)
@@ -61,6 +61,6 @@ class Create(base.Base):
             if exit:
                 util.sysexit(e.returncode)
             return e.returncode, e.message
-        self.molecule._create_inventory_file()
-        self.molecule._write_instances_state()
+        self.molecule.create_inventory_file()
+        self.molecule.write_instances_state()
         return None, None

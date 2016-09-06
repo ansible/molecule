@@ -19,11 +19,7 @@
 #  THE SOFTWARE.
 
 import collections
-import fcntl
 import os
-import struct
-import sys
-import termios
 
 import tabulate
 import yaml
@@ -66,7 +62,7 @@ class Molecule(object):
             self.args['--provider'] = None
             self.args['--platform'] = None
             self.driver = self._get_driver()
-            self._print_valid_providers()
+            self.print_valid_providers()
             util.sysexit()
         except basedriver.InvalidDriverSpecified:
             LOG.error("Invalid platform '{}'".format(self.args['--platform']))
@@ -96,22 +92,7 @@ class Molecule(object):
     def driver(self, val):
         self._driver = val
 
-    def _get_driver(self):
-        if 'vagrant' in self.config.config:
-            return vagrantdriver.VagrantDriver(self)
-        elif 'proxmox' in self.config.config:
-            return proxmoxdriver.ProxmoxDriver(self)
-        elif 'docker' in self.config.config:
-            return dockerdriver.DockerDriver(self)
-        elif 'openstack' in self.config.config:
-            return openstackdriver.OpenstackDriver(self)
-        else:
-            return None
-
-    def _get_ssh_config(self):
-        return self.driver.ssh_config_file
-
-    def _write_ssh_config(self):
+    def write_ssh_config(self):
         ssh_config = self._get_ssh_config()
         if ssh_config is None:
             return
@@ -120,7 +101,7 @@ class Molecule(object):
 
     def print_valid_platforms(self, porcelain=False):
         if not porcelain:
-            # NOTE(retr0h): Should we log here, when ``_display_tabulate_data``
+            # NOTE(retr0h): Should we log here, when ``display_tabulate_data``
             # prints?
             LOG.info("AVAILABLE PLATFORMS")
 
@@ -134,11 +115,11 @@ class Molecule(object):
                     'name'] == default_platform else ''
             data.append([platform['name'], default])
 
-        self._display_tabulate_data(data)
+        self.display_tabulate_data(data)
 
-    def _print_valid_providers(self, porcelain=False):
+    def print_valid_providers(self, porcelain=False):
         if not porcelain:
-            # NOTE(retr0h): Should we log here, when ``_display_tabulate_data``
+            # NOTE(retr0h): Should we log here, when ``display_tabulate_data``
             # prints?
             LOG.info("AVAILABLE PROVIDERS")
 
@@ -153,18 +134,9 @@ class Molecule(object):
 
             data.append([provider['name'], default])
 
-        self._display_tabulate_data(data)
+        self.display_tabulate_data(data)
 
-    def _sigwinch_passthrough(self, sig, data):
-        TIOCGWINSZ = 1074295912  # assume
-        if 'TIOCGWINSZ' in dir(termios):
-            TIOCGWINSZ = termios.TIOCGWINSZ
-        s = struct.pack('HHHH', 0, 0, 0, 0)
-        a = struct.unpack('HHHH', fcntl.ioctl(sys.stdout.fileno(), TIOCGWINSZ,
-                                              s))
-        self._pt.setwinsize(a[0], a[1])
-
-    def _remove_templates(self):
+    def remove_templates(self):
         """
         Removes the templates created by molecule, and returns None.
 
@@ -174,7 +146,7 @@ class Molecule(object):
         if self.state.customconf is False:
             os.remove(self.config.config['ansible']['config_file'])
 
-    def _create_templates(self):
+    def create_templates(self):
         """
         Creates the templates used by molecule, and returns None.
 
@@ -200,32 +172,10 @@ class Molecule(object):
             self.config.config['molecule']['rakefile_template'],
             self.config.config['molecule']['rakefile_file'], kwargs=kwargs)
 
-    def _instances_state(self):
-        """
-        Creates a dict of formatted instances names and the group(s) they're
-        part of to be added to state, and returns dict containing state
-        information about current instances.
-
-        :return: dict
-        """
-
-        instances = collections.defaultdict(dict)
-        for instance in self.driver.instances:
-            instance_name = util.format_instance_name(
-                instance['name'], self.driver._platform, self.driver.instances)
-
-            if 'ansible_groups' in instance:
-                instances[instance_name][
-                    'groups'] = [x for x in instance['ansible_groups']]
-            else:
-                instances[instance_name]['groups'] = []
-
-        return dict(instances)
-
-    def _write_instances_state(self):
+    def write_instances_state(self):
         self.state.change_state('hosts', self._instances_state())
 
-    def _create_inventory_file(self):
+    def create_inventory_file(self):
         """
         Creates the inventory file used by molecule, and returns None.
 
@@ -262,9 +212,51 @@ class Molecule(object):
             LOG.warning('WARNING: could not write inventory file {}'.format(
                 inventory_file))
 
-    def _remove_inventory_file(self):
+    def remove_inventory_file(self):
         if os._exists(self.config.config['ansible']['inventory_file']):
             os.remove(self.config.config['ansible']['inventory_file'])
+
+    def display_tabulate_data(self, data, headers=None):
+        """
+        Shows the tabulate data on the screen, and returns None.
+
+        If not header is defined, only the data is displayed, otherwise, the
+        results will be shown in a table.
+
+        :param data:
+        :param headers:
+        :returns: None
+
+        .. todo:: Document this method.
+        """
+        # Nothing to display if there is no data.
+        if not data:
+            return
+
+        # Initialize empty headers if none are provided.
+        if not headers:
+            headers = []
+
+        # Define the table format based on the headers content.
+        table_format = "fancy_grid" if headers else "plain"
+
+        # Print the results.
+        print(tabulate.tabulate(data, headers, tablefmt=table_format))
+
+    def _get_driver(self):
+        if 'vagrant' in self.config.config:
+            return vagrantdriver.VagrantDriver(self)
+        elif 'proxmox' in self.config.config:
+            return proxmoxdriver.ProxmoxDriver(self)
+        elif 'docker' in self.config.config:
+            return dockerdriver.DockerDriver(self)
+        elif 'openstack' in self.config.config:
+            return openstackdriver.OpenstackDriver(self)
+        else:
+            return None
+
+    def _get_ssh_config(self):
+        return self.driver.ssh_config_file
 
     def _add_or_update_vars(self, target):
         """
@@ -295,29 +287,24 @@ class Molecule(object):
                 "---\n" + yaml.dump(
                     target_var_content, default_flow_style=False))
 
-    def _display_tabulate_data(self, data, headers=None):
+    def _instances_state(self):
         """
-        Shows the tabulate data on the screen, and returns None.
+        Creates a dict of formatted instances names and the group(s) they're
+        part of to be added to state, and returns dict containing state
+        information about current instances.
 
-        If not header is defined, only the data is displayed, otherwise, the
-        results will be shown in a table.
-
-        :param data:
-        :param headers:
-        :returns: None
-
-        .. todo:: Document this method.
+        :return: dict
         """
-        # Nothing to display if there is no data.
-        if not data:
-            return
 
-        # Initialize empty headers if none are provided.
-        if not headers:
-            headers = []
+        instances = collections.defaultdict(dict)
+        for instance in self.driver.instances:
+            instance_name = util.format_instance_name(
+                instance['name'], self.driver._platform, self.driver.instances)
 
-        # Define the table format based on the headers content.
-        table_format = "fancy_grid" if headers else "plain"
+            if 'ansible_groups' in instance:
+                instances[instance_name][
+                    'groups'] = [x for x in instance['ansible_groups']]
+            else:
+                instances[instance_name]['groups'] = []
 
-        # Print the results.
-        print(tabulate.tabulate(data, headers, tablefmt=table_format))
+        return dict(instances)

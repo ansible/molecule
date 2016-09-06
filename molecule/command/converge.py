@@ -79,7 +79,7 @@ class Converge(base.Base):
             c.execute()
 
         if create_inventory:
-            self.molecule._create_inventory_file()
+            self.molecule.create_inventory_file()
 
         # Install role dependencies only during `molecule converge`
         if not idempotent and 'requirements_file' in self.molecule.config.config[

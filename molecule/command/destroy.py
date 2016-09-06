@@ -50,7 +50,7 @@ class Destroy(base.Base):
          on command failure.
         :return: Return a tuple of None, otherwise sys.exit on command failure.
         """
-        self.molecule._create_templates()
+        self.molecule.create_templates()
         try:
             util.print_info('Destroying instances ...')
             self.molecule.driver.destroy()
@@ -60,6 +60,6 @@ class Destroy(base.Base):
             if exit:
                 util.sysexit(e.returncode)
             return e.returncode, e.message
-        self.molecule._remove_templates()
-        self.molecule._remove_inventory_file()
+        self.molecule.remove_templates()
+        self.molecule.remove_inventory_file()
         return None, None

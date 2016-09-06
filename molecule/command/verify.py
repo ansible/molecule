@@ -58,7 +58,7 @@ class Verify(base.Base):
                   trailing.Trailing(self.molecule)]:
             v.execute()
 
-        self.molecule._write_ssh_config()
+        self.molecule.write_ssh_config()
 
         try:
             # NOTE(retr0h): In v2.0 the verifier will be configured through the

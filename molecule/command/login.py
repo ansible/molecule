@@ -18,10 +18,14 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
+import fcntl
 import os
 import pexpect
 import signal
+import struct
 import subprocess
+import sys
+import termios
 
 from molecule import util
 from molecule.command import base
@@ -106,6 +110,15 @@ class Login(base.Base):
         self.molecule._pt = pexpect.spawn(
             '/usr/bin/env ' + login_cmd.format(*login_args),
             dimensions=dimensions)
-        signal.signal(signal.SIGWINCH, self.molecule._sigwinch_passthrough)
+        signal.signal(signal.SIGWINCH, self._sigwinch_passthrough)
         self.molecule._pt.interact()
         return None, None
+
+    def _sigwinch_passthrough(self, sig, data):
+        TIOCGWINSZ = 1074295912  # assume
+        if 'TIOCGWINSZ' in dir(termios):
+            TIOCGWINSZ = termios.TIOCGWINSZ
+        s = struct.pack('HHHH', 0, 0, 0, 0)
+        a = struct.unpack('HHHH', fcntl.ioctl(sys.stdout.fileno(), TIOCGWINSZ,
+                                              s))
+        self._pt.setwinsize(a[0], a[1])
