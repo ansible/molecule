@@ -61,12 +61,14 @@ class Verify(base.Base):
         self.molecule.write_ssh_config()
 
         try:
-            # NOTE(retr0h): In v2.0 the verifier will be configured through the
-            # config file.
-            for v in [testinfra.Testinfra(self.molecule),
-                      serverspec.Serverspec(self.molecule),
-                      goss.Goss(self.molecule)]:
-                v.execute()
+            if self.molecule.verifier == 'serverspec':
+                v = serverspec.Serverspec(self.molecule)
+            elif self.molecule.verifier == 'goss':
+                v = goss.Goss(self.molecule)
+            else:
+                v = testinfra.Testinfra(self.molecule)
+
+            v.execute()
         except sh.ErrorReturnCode as e:
             LOG.error('ERROR: {}'.format(e))
             if exit:
