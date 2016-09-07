@@ -93,7 +93,7 @@ class DockerDriver(basedriver.BaseDriver):
 
     @property
     def ssh_config_file(self):
-        return None
+        return
 
     @property
     def ansible_connection_params(self):
@@ -108,6 +108,7 @@ class DockerDriver(basedriver.BaseDriver):
         return dict()
 
     def up(self, no_provision=True):
+        self.molecule.state.change_state('driver', self.name)
         if self.molecule.config.config['docker']['build_image']:
             self._build_ansible_compatible_image()
         else:

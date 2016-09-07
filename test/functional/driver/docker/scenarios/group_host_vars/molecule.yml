@@ -1,4 +1,7 @@
 ---
+driver:
+  name: docker
+
 ansible:
   group_vars:
     example:
@@ -14,3 +17,6 @@ docker:
         - example
       image: ubuntu
       image_version: latest
+
+verifier:
+  name: testinfra

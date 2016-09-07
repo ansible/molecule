@@ -22,12 +22,14 @@ import pytest
 
 from molecule import config
 from molecule import core
+from molecule import state
 
 
 @pytest.fixture()
 def molecule_args():
     return {'--debug': False,
             '--destroy': None,
+            '--driver': None,
             '--platform': None,
             '--provider': None,
             '--sudo': False,
@@ -35,10 +37,12 @@ def molecule_args():
 
 
 @pytest.fixture()
-def molecule_default_provider_instance(temp_files, molecule_args):
+def molecule_default_provider_instance(temp_files, state_path_without_data,
+                                       molecule_args):
     c = temp_files(fixtures=['molecule_vagrant_config'])
     m = core.Molecule(molecule_args)
     m.config = config.Config(configs=c)
+    m.state = state.State(state_file=state_path_without_data)
     m.main()
 
     return m

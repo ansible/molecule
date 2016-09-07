@@ -6,6 +6,15 @@ Driver
 Base
 ----
 
+.. autoclass:: molecule.driver.basedriver.InvalidDriverSpecified
+   :members:
+
+.. autoclass:: molecule.driver.basedriver.InvalidProviderSpecified
+   :members:
+
+.. autoclass:: molecule.driver.basedriver.InvalidPlatformSpecified
+   :members:
+
 .. autoclass:: molecule.driver.basedriver.BaseDriver
    :members:
 
@@ -20,11 +29,6 @@ Openstack
 
 .. autoclass:: molecule.driver.openstackdriver.OpenstackDriver
    :members:
-
-Proxmox
--------
-
-Not Implemented
 
 Vagrant
 -------

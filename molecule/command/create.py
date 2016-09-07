@@ -31,7 +31,7 @@ class Create(base.Base):
     Creates all instances defined in molecule.yml.
 
     Usage:
-        create [--platform=<platform>] [--provider=<provider>] [--debug]
+        create [--driver=<driver>] [--platform=<platform>] [--provider=<provider>] [--debug]
 
     Options:
         --platform=<platform>  specify a platform

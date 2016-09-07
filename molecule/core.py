@@ -30,7 +30,6 @@ from molecule import util
 from molecule.driver import basedriver
 from molecule.driver import dockerdriver
 from molecule.driver import openstackdriver
-from molecule.driver import proxmoxdriver
 from molecule.driver import vagrantdriver
 
 LOG = util.get_logger(__name__)
@@ -60,13 +59,17 @@ class Molecule(object):
         try:
             self.driver = self._get_driver()
         except basedriver.InvalidDriverSpecified:
+            LOG.error("Invalid driver '{}'".format(self._get_driver_name()))
+            # TODO(retr0h): Print valid drivers.
+            util.sysexit()
+        except basedriver.InvalidProviderSpecified:
             LOG.error("Invalid provider '{}'".format(self.args['--provider']))
             self.args['--provider'] = None
             self.args['--platform'] = None
             self.driver = self._get_driver()
             self.print_valid_providers()
             util.sysexit()
-        except basedriver.InvalidDriverSpecified:
+        except basedriver.InvalidPlatformSpecified:
             LOG.error("Invalid platform '{}'".format(self.args['--platform']))
             self.args['--provider'] = None
             self.args['--platform'] = None
@@ -253,17 +256,35 @@ class Molecule(object):
         # Print the results.
         print(tabulate.tabulate(data, headers, tablefmt=table_format))
 
-    def _get_driver(self):
-        if 'vagrant' in self.config.config:
-            return vagrantdriver.VagrantDriver(self)
-        elif 'proxmox' in self.config.config:
-            return proxmoxdriver.ProxmoxDriver(self)
+    def _get_driver_name(self):
+        driver = self.args.get('--driver')
+        if driver:
+            return driver
+        elif self.config.config.get('driver'):
+            return self.config.config['driver'].get('name')
+        elif 'vagrant' in self.config.config:
+            return 'vagrant'
         elif 'docker' in self.config.config:
-            return dockerdriver.DockerDriver(self)
+            return 'docker'
         elif 'openstack' in self.config.config:
+            return 'openstack'
+
+    def _get_driver(self):
+        driver = self._get_driver_name()
+
+        if (self.state.driver is not None) and (self.state.driver != driver):
+            msg = ("ERROR: Instance(s) were converged with the '{}' driver, "
+                   "but the subcommand is using '{}' driver.")
+            LOG.error(msg.format(self.state.driver, driver))
+            util.sysexit()
+
+        if driver == 'vagrant':
+            return vagrantdriver.VagrantDriver(self)
+        elif driver == 'docker':
+            return dockerdriver.DockerDriver(self)
+        elif driver == 'openstack':
             return openstackdriver.OpenstackDriver(self)
-        else:
-            return None
+        raise basedriver.InvalidDriverSpecified()
 
     def _get_ssh_config(self):
         return self.driver.ssh_config_file

@@ -1,4 +1,7 @@
 ---
+driver:
+  name: {{ cookiecutter.driver_name }}
+
 vagrant:
   platforms:
     - name: {{ cookiecutter.platform_name }}

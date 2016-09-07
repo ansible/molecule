@@ -24,4 +24,5 @@
 	cd ${VAGRANT_FUNCTIONAL_TEST_BASE_DIR}/command_test
 
 	molecule test
+	molecule test --driver vagrant
 )

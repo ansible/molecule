@@ -81,7 +81,7 @@ class OpenstackDriver(basedriver.BaseDriver):
 
     @property
     def ssh_config_file(self):
-        return None
+        return
 
     @property
     def ansible_connection_params(self):
@@ -100,6 +100,7 @@ class OpenstackDriver(basedriver.BaseDriver):
         return dict()
 
     def up(self, no_provision=True):
+        self.molecule.state.change_state('driver', self.name)
         self._set_keypair()
 
         active_instances = self._openstack.list_servers()
@@ -185,7 +186,7 @@ class OpenstackDriver(basedriver.BaseDriver):
                         ansible_host = line.split()[1]
                         host_address = ansible_host.split('=')[1]
                         return host_address
-        return None
+        return
 
     def inventory_entry(self, instance):
         template = self._host_template()

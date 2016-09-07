@@ -2,5 +2,6 @@
   "repo_name": "OVERRIDEN",
   "role_name": "OVERRIDEN",
   "instances": 2,
-  "verifier_name": "OVERRIDEN"
+  "verifier_name": "OVERRIDEN",
+  "driver_name": "OVERRIDEN"
 }

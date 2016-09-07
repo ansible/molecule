@@ -1,4 +1,7 @@
 ---
+driver:
+  name: docker
+
 docker:
   containers:
     - name: dockerfile-scenario
@@ -6,3 +9,6 @@ docker:
       image_version: latest
       dockerfile: Dockerfile
       command: /bin/bash
+
+verifier:
+  name: testinfra

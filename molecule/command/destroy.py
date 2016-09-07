@@ -31,7 +31,7 @@ class Destroy(base.Base):
     Destroys all instances created by molecule.
 
     Usage:
-        destroy [--platform=<platform>] [--provider=<provider>] [--debug]
+        destroy [--driver=<driver>] [--platform=<platform>] [--provider=<provider>] [--debug]
 
     Options:
         --platform=<platform>  specify a platform

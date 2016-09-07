@@ -1,4 +1,7 @@
 ---
+driver:
+  name: {{ cookiecutter.driver_name }}
+
 docker:
   containers:
     {%- for n in range(cookiecutter.instances|int) %}

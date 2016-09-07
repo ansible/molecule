@@ -20,6 +20,27 @@
 import abc
 
 
+class InvalidDriverSpecified(Exception):
+    """
+    Exception class raised when an invalid driver is specified.
+    """
+    pass
+
+
+class InvalidProviderSpecified(Exception):
+    """
+    Exception class raised when an invalid provider is specified.
+    """
+    pass
+
+
+class InvalidPlatformSpecified(Exception):
+    """
+    Exception class raised when an invalid platform is specified.
+    """
+    pass
+
+
 class BaseDriver(object):
     __metaclass__ = abc.ABCMeta
 

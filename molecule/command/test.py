@@ -30,7 +30,7 @@ class Test(base.Base):
     Runs a series of commands (defined in config) against instances for a full test/verify run.
 
     Usage:
-        test [--platform=<platform>] [--provider=<provider>] [--destroy=<destroy>] [--debug] [--sudo]
+        test [--driver=<driver>] [--platform=<platform>] [--provider=<provider>] [--destroy=<destroy>] [--debug] [--sudo]
 
     Options:
         --platform=<platform>  specify a platform
@@ -38,7 +38,7 @@ class Test(base.Base):
         --destroy=<destroy>    destroy behavior (passing, always, never)
         --debug                get more detail
         --sudo                 run tests with sudo
-    """
+    """  # noqa
 
     def execute(self, exit=True):
         """

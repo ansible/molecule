@@ -1,4 +1,7 @@
 ---
+driver:
+  name: {{ cookiecutter.driver_name }}
+
 openstack:
   keyfile: ~/.ssh/id_rsa
   keypair: NameKey

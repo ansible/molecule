@@ -31,6 +31,16 @@ pytestmark = pytest.mark.skipif(
 
 
 @pytest.fixture()
+def command_args(request):
+    return []
+
+
+@pytest.fixture()
+def args(request):
+    return {'--help': False, '--version': False, '<command>': 'create'}
+
+
+@pytest.fixture()
 def teardown(request):
     def cleanup():
         try:
@@ -42,8 +52,8 @@ def teardown(request):
     request.addfinalizer(cleanup)
 
 
-def test_vagrant_create(molecule_file, teardown):
-    c = create.Create([], [])
+def test_vagrant_create(molecule_file, command_args, args, teardown):
+    c = create.Create(command_args, args)
 
     try:
         c.execute()
@@ -51,8 +61,8 @@ def test_vagrant_create(molecule_file, teardown):
         assert f.code == 0
 
 
-def test_vagrant_converge(molecule_file, teardown):
-    c = converge.Converge([], [])
+def test_vagrant_converge(molecule_file, command_args, args, teardown):
+    c = converge.Converge(command_args, args)
 
     try:
         c.execute()

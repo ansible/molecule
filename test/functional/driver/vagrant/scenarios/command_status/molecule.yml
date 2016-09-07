@@ -1,4 +1,7 @@
 ---
+driver:
+  name: vagrant
+
 ansible:
   raw_env_vars:
     ANSIBLE_ROLES_PATH: ../../../../roles:../../../../../roles
@@ -31,3 +34,6 @@ vagrant:
         - network_name: private_network
           type: dhcp
           auto_config: true
+
+verifier:
+  name: testinfra
