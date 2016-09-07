@@ -31,3 +31,6 @@ vagrant:
         - network_name: private_network
           type: dhcp
           auto_config: true
+
+verifier:
+  name: serverspec
