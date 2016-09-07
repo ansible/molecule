@@ -35,6 +35,7 @@ VALID_KEYS = ['converged',
               'customconf',
               'default_platform',
               'default_provider',
+              'driver',
               'hosts',
               'installed_deps',
               'multiple_platforms', ]
@@ -84,6 +85,10 @@ class State(object):
         return self._data.get('default_provider')
 
     @property
+    def driver(self):
+        return self._data.get('driver')
+
+    @property
     def hosts(self):
         return self._data.get('hosts')
 
@@ -130,7 +135,8 @@ class State(object):
             "created": None,
             "default_platform": None,
             "default_provider": None,
-            "hosts": None,
+            "driver": None,
+            "hosts": {},
             "multiple_platforms": None
         }
 

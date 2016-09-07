@@ -9,5 +9,6 @@
   "provider_type": "virtualbox",
   "provider_options_memory": 512,
   "provider_options_cpu": 2,
-  "verifier_name": "OVERRIDEN"
+  "verifier_name": "OVERRIDEN",
+  "driver_name": "OVERRIDEN"
 }

@@ -35,6 +35,10 @@ def molecule_instance(temp_files, molecule_args):
     return m
 
 
+def test_get_driver_name(molecule_instance):
+    assert 'docker' == molecule_instance._get_driver_name()
+
+
 def test_get_driver(molecule_instance):
     assert isinstance(molecule_instance._get_driver(),
                       dockerdriver.DockerDriver)

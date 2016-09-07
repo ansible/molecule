@@ -1,4 +1,7 @@
 ---
+driver:
+  name: docker
+
 ansible:
   requirements_file: requirements.yml
 
@@ -7,3 +10,6 @@ docker:
     - name: requirements-file-scenario
       image: ubuntu
       image_version: latest
+
+verifier:
+  name: testinfra

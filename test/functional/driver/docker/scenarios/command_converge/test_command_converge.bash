@@ -25,4 +25,7 @@
 
 	molecule converge --debug
 	molecule destroy
+
+	molecule converge --driver docker
+	molecule destroy --driver docker
 )

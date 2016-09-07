@@ -1,4 +1,7 @@
 ---
+driver:
+  name: openstack
+
 ansible:
   raw_env_vars:
     ANSIBLE_ROLES_PATH: ../../../../roles:../../../../../roles
@@ -21,3 +24,6 @@ openstack:
       ansible_groups:
         - example-group
         - example-group2
+
+verifier:
+  name: testinfra

@@ -32,7 +32,7 @@ class Converge(base.Base):
     Provisions all instances defined in molecule.yml.
 
     Usage:
-        converge [--platform=<platform>] [--provider=<provider>] [--tags=<tag1,tag2>...] [--debug]
+        converge [--driver=<driver>] [--platform=<platform>] [--provider=<provider>] [--tags=<tag1,tag2>...] [--debug]
 
     Options:
         --platform=<platform>  specify a platform

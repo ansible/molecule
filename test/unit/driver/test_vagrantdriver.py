@@ -29,11 +29,11 @@ from molecule.driver import vagrantdriver
 
 
 @pytest.fixture()
-def molecule_instance(temp_files, state_path):
+def molecule_instance(temp_files, state_path_without_data):
     c = temp_files(fixtures=['molecule_vagrant_config'])
     m = core.Molecule(dict())
     m.config = config.Config(configs=c)
-    m.state = state.State(state_file=state_path)
+    m.state = state.State(state_file=state_path_without_data)
 
     return m
 

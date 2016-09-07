@@ -27,6 +27,7 @@ import ansible
 from molecule import ansible_playbook
 from molecule import config
 from molecule import core
+from molecule import state
 from molecule.driver import dockerdriver
 
 
@@ -48,10 +49,11 @@ elif ansible_v1():
 
 
 @pytest.fixture()
-def molecule_instance(temp_files):
+def molecule_instance(temp_files, state_path_without_data):
     c = temp_files(fixtures=['molecule_docker_config'])
     m = core.Molecule(dict())
     m.config = config.Config(configs=c)
+    m.state = state.State(state_file=state_path_without_data)
 
     return m
 

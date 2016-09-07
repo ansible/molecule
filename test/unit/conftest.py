@@ -52,8 +52,6 @@ def temp_files(tmpdir, request):
         pbook.write(data)
         os.chdir(d.strpath)
 
-        # TODO(retr0h): Remove - belongs elsewhere
-
         def cleanup():
             shutil.rmtree(d.strpath)
 
@@ -73,14 +71,6 @@ def molecule_vagrant_config(molecule_section_data, vagrant_section_data,
 
 
 @pytest.fixture()
-def molecule_proxmox_config(molecule_section_data, proxmox_section_data,
-                            ansible_section_data):
-    return reduce(
-        lambda x, y: util.merge_dicts(x, y),
-        [molecule_section_data, proxmox_section_data, ansible_section_data])
-
-
-@pytest.fixture()
 def molecule_docker_config(molecule_section_data, docker_section_data,
                            ansible_section_data):
     return reduce(
@@ -97,7 +87,7 @@ def molecule_openstack_config(molecule_section_data, openstack_section_data,
 
 
 @pytest.fixture()
-def molecule_section_data(state_path):
+def molecule_section_data(state_path_without_data):
     return {
         'molecule': {
             'ignore_paths': [
@@ -108,7 +98,7 @@ def molecule_section_data(state_path):
             'goss_dir': 'tests',
             'goss_playbook': 'test_default.yml',
             'molecule_dir': 'test',
-            'state_file': state_path,
+            'state_file': state_path_without_data,
             'vagrantfile_file': 'vagrantfile_file',
             'rakefile_file': 'rakefile_file',
             'vagrantfile_template': 'vagrantfile.j2',
@@ -147,11 +137,6 @@ def vagrant_section_data():
             ]
         }
     }
-
-
-@pytest.fixture()
-def proxmox_section_data():
-    return {'proxmox': {}}
 
 
 @pytest.fixture()
@@ -228,9 +213,30 @@ def ansible_section_data():
 
 @pytest.fixture()
 def state_data():
-    return {}
+    return {
+        'converged': None,
+        'created': True,
+        'default_platform': None,
+        'default_provider': None,
+        'driver': None,
+        'hosts': {},
+        'multiple_platforms': None
+    }
 
 
 @pytest.fixture()
-def state_path(temp_files):
+def state_path_with_data(temp_files):
     return temp_files(fixtures=['state_data'])[0]
+
+
+@pytest.fixture()
+def state_path_without_data(tmpdir, request):
+    d = tmpdir.mkdir(random_string())
+    c = d.join(os.extsep.join(('state', 'yml')))
+
+    def cleanup():
+        shutil.rmtree(d.strpath)
+
+    request.addfinalizer(cleanup)
+
+    return c.strpath

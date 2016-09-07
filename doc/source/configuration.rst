@@ -186,6 +186,32 @@ OpenStack Section
 
 See OpenStack :ref:`openstack_driver_usage`
 
+Driver Section
+--------------
+
+Multiple drivers can be specified in `molecule.yml`.  However, once instance(s)
+are created, all subcommands must be run against the same driver, for the life
+of the instance(s).
+
+Drivers are found in the following order:
+
+1. Supplying ``--driver=<driver>`` to certain subcommands.
+2. The driver section from the config file.
+3. Existing lookup order, by searching the config file for the presence of
+   keys.
+
+Usage
+-----
+
+.. code-block:: yaml
+
+  ---
+  driver:
+    name: docker
+
+.. note:: It is recommend to use the following syntax.  This matches
+          test-kitchen, and will be further enhanced in molecule 2.x.
+
 Verifier Section
 ----------------
 

@@ -64,7 +64,7 @@ def test_molecule_file(config_instance):
 def test_build_config_paths(config_instance):
     # Full path provided to ``state_file``.  Tested further in subsequent
     # tests.
-    assert 'state_data.yml' == config_instance.config['molecule'][
+    assert 'state.yml' == config_instance.config['molecule'][
         'state_file'].split('/')[-1]
     assert 'test/vagrantfile_file' == config_instance.config['molecule'][
         'vagrantfile_file']

@@ -1,4 +1,7 @@
 ---
+driver:
+  name: docker
+
 ansible:
   raw_env_vars:
     ANSIBLE_ROLES_PATH: ../../../../roles:../../../../../roles
@@ -17,3 +20,6 @@ docker:
         - example-group2
       image: ubuntu
       image_version: latest
+
+verifier:
+  name: testinfra

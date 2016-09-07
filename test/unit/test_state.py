@@ -18,8 +18,6 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import os
-
 import pytest
 import yaml
 
@@ -27,85 +25,94 @@ from molecule import state
 
 
 @pytest.fixture()
-def state_instance(state_path):
-    return state.State(state_file=state_path)
+def state_instance_with_data(state_path_with_data):
+    return state.State(state_file=state_path_with_data)
 
 
-def test_converged(state_instance):
-    assert not state_instance.converged
+@pytest.fixture()
+def state_instance_without_data(state_path_without_data):
+    return state.State(state_file=state_path_without_data)
 
 
-def test_created(state_instance):
-    assert not state_instance.created
+def test_converged(state_instance_without_data):
+    assert not state_instance_without_data.converged
 
 
-def test_customconf(state_instance):
-    assert not state_instance.customconf
+def test_created(state_instance_without_data):
+    assert not state_instance_without_data.created
 
 
-def test_default_platform(state_instance):
-    assert not state_instance.default_platform
+def test_customconf(state_instance_without_data):
+    assert not state_instance_without_data.customconf
 
 
-def test_default_provider(state_instance):
-    assert not state_instance.default_provider
+def test_default_platform(state_instance_without_data):
+    assert not state_instance_without_data.default_platform
 
 
-def test_hosts(state_instance):
-    assert not state_instance.hosts
+def test_default_provider(state_instance_without_data):
+    assert not state_instance_without_data.default_provider
 
 
-def test_installed_deps(state_instance):
-    assert not state_instance.installed_deps
+def test_driver(state_instance_without_data):
+    assert not state_instance_without_data.driver
 
 
-def test_multiple_platforms(state_instance):
-    assert not state_instance.multiple_platforms
+def test_hosts(state_instance_without_data):
+    assert {} == state_instance_without_data.hosts
 
 
-def test_reset(state_instance):
-    assert not state_instance.created
-
-    state_instance.change_state('created', True)
-    assert state_instance.created
-
-    state_instance.reset()
-    assert not state_instance.created
+def test_installed_deps(state_instance_without_data):
+    assert not state_instance_without_data.installed_deps
 
 
-def test_reset_persists(state_instance):
-    assert not state_instance.created
+def test_multiple_platforms(state_instance_without_data):
+    assert not state_instance_without_data.multiple_platforms
 
-    state_instance.change_state('created', True)
-    assert state_instance.created
 
-    state_instance.reset()
-    assert not state_instance.created
+def test_reset(state_instance_without_data):
+    assert not state_instance_without_data.created
 
-    with open(state_instance._state_file) as stream:
+    state_instance_without_data.change_state('created', True)
+    assert state_instance_without_data.created
+
+    state_instance_without_data.reset()
+    assert not state_instance_without_data.created
+
+
+def test_reset_persists(state_instance_without_data):
+    assert not state_instance_without_data.created
+
+    state_instance_without_data.change_state('created', True)
+    assert state_instance_without_data.created
+
+    state_instance_without_data.reset()
+    assert not state_instance_without_data.created
+
+    with open(state_instance_without_data._state_file) as stream:
         d = yaml.safe_load(stream)
 
         assert not d.get('created')
 
 
-def test_change_state(state_instance):
-    state_instance.change_state('created', True)
+def test_change_state(state_instance_without_data):
+    state_instance_without_data.change_state('created', True)
 
-    assert state_instance.created
+    assert state_instance_without_data.created
 
 
-def test_change_state_raises(state_instance):
+def test_change_state_raises(state_instance_without_data):
     with pytest.raises(state.InvalidState):
-        state_instance.change_state('invalid-state', True)
+        state_instance_without_data.change_state('invalid-state', True)
 
 
-def test_change_state_persists(state_instance):
-    assert not state_instance.created
+def test_change_state_persists(state_instance_without_data):
+    assert not state_instance_without_data.created
 
-    state_instance.change_state('created', True)
-    assert state_instance.created
+    state_instance_without_data.change_state('created', True)
+    assert state_instance_without_data.created
 
-    with open(state_instance._state_file) as stream:
+    with open(state_instance_without_data._state_file) as stream:
         d = yaml.safe_load(stream)
 
         assert d.get('created')
@@ -116,9 +123,6 @@ def test_get_data():
     pass
 
 
-def test_get_data_loads_existing_state_file():
-    d = os.path.dirname(os.path.abspath(__file__))
-    f = os.path.join(d, 'support', 'state.yml')
-    s = state.State(state_file=f)
+def test_get_data_loads_existing_state_file(state_instance_with_data):
 
-    assert 'test' == s.created
+    assert state_instance_with_data.created

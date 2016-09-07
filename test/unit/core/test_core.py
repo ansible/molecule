@@ -20,6 +20,7 @@
 
 import pytest
 
+from molecule.driver import basedriver
 from molecule.driver import vagrantdriver
 
 
@@ -34,10 +35,24 @@ def test_driver_setter(molecule_default_provider_instance):
     assert 'foo' == molecule_default_provider_instance.driver
 
 
+def test_get_driver_name_from_cli(molecule_default_provider_instance):
+    molecule_default_provider_instance.args.update({'--driver': 'foo'})
+
+    assert 'foo' == molecule_default_provider_instance._get_driver_name()
+
+
+def test_get_driver_name_from_config(molecule_default_provider_instance):
+    m = molecule_default_provider_instance
+    m.config.config['driver'] = {'name': 'foo'}
+
+    assert 'foo' == molecule_default_provider_instance._get_driver_name()
+
+
 def test_get_driver_invalid_instance(molecule_default_provider_instance):
     del molecule_default_provider_instance.config.config['vagrant']
 
-    assert molecule_default_provider_instance._get_driver() is None
+    with pytest.raises(basedriver.InvalidDriverSpecified):
+        molecule_default_provider_instance._get_driver()
 
 
 def test_verifier(molecule_default_provider_instance):
