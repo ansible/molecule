@@ -13,7 +13,7 @@ Options
 * ``flavor`` - openstack flavor to use for instance
 * ``sshuser`` - user to access ssh with
 * ``ansible_groups`` - a list of groups the instance(s) belong to in Ansible
-  and/or a list of lists for assinging the instance(s) to child groups.
+  and/or a list of lists for assigning the instance(s) to child groups.
 * ``security_groups`` - security groups the instance belongs to in openstack
 
 The ``keypair`` and ``keyfile`` options must also be given to specify the
