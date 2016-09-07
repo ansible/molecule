@@ -2,6 +2,48 @@
 CHANGELOG for molecule
 **********************
 
+1.11
+====
+
+* General cleanup of core module.
+* Various documentation updates.
+* Pull molecule status from state file when using Vagrant driver.
+* Added alpha Goss verifier support.
+* Updated runtime requirements to current versions.
+* Implemented ``molecule check`` subcommand.
+* Configure verifier to be test kitchen like.
+
+Breaking Changes
+----------------
+
+Previously molecule would execute a test framework based on the existence of a
+directory structure.  This is no longer the case.  Molecule will execute the
+configured suite, where `testinfra` is the default.  See docs.
+
+1.10.3
+======
+
+* Reimplemented idempotence handling. Removed the idempotence ansible callback
+  plugin, in favor of a native implementation.
+
+Note
+----
+
+There is no change in workflow.  Molecule still reports if a converge was
+idempotent or not.  However, it no longer reports which task(s) are not
+idempotent.
+
+1.10.2
+======
+
+* Removed pytest-xdist from runtime deps.  This allows testinfra's dependency
+  on pytest to properly install.
+
+1.10.1
+======
+
+* Pinned to explicit version of testinfra, due to pytest incompatabilities.
+
 1.10
 ====
 
