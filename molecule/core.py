@@ -199,24 +199,34 @@ class Molecule(object):
         for instance in self.driver.instances:
             inventory += self.driver.inventory_entry(instance)
 
-        # get a list of all groups and hosts in those groups
         groups = {}
         for instance in self.driver.instances:
-            if 'ansible_groups' in instance:
-                for group in instance['ansible_groups']:
-                    if group not in groups:
-                        groups[group] = []
-                    groups[group].append(instance['name'])
+            ansible_groups = instance.get('ansible_groups')
+            if ansible_groups:
+                for group in ansible_groups:
+                    if isinstance(group, str):
+                        if group not in groups:
+                            groups[group] = []
+                        groups[group].append(instance['name'])
+                    elif isinstance(group, dict):
+                        for group_name, group_list in group.iteritems():
+                            for g in group_list:
+                                if group_name not in groups:
+                                    groups[group_name] = []
+                                groups[group_name].append(g)
 
         if self.args.get('--platform') == 'all':
             self.driver.platform = 'all'
 
-        for group, instances in groups.iteritems():
+        for group, subgroups in groups.iteritems():
             inventory += '\n[{}]\n'.format(group)
-            for instance in instances:
-                inventory += '{}\n'.format(
-                    util.format_instance_name(instance, self.driver.platform,
-                                              self.driver.instances))
+            for subgroup in subgroups:
+                instance_name = util.format_instance_name(
+                    subgroup, self.driver.platform, self.driver.instances)
+                if instance_name:
+                    inventory += '{}\n'.format(instance_name)
+                else:
+                    inventory += '{}\n'.format(subgroup)
 
         inventory_file = self.config.config['ansible']['inventory_file']
         try:
@@ -332,11 +342,17 @@ class Molecule(object):
             instance_name = util.format_instance_name(
                 instance['name'], self.driver._platform, self.driver.instances)
 
-            if 'ansible_groups' in instance:
-                instances[instance_name][
-                    'groups'] = [x for x in instance['ansible_groups']]
-            else:
-                instances[instance_name]['groups'] = []
+            groups = set()
+            ansible_groups = instance.get('ansible_groups')
+            if ansible_groups:
+                for group in ansible_groups:
+                    if isinstance(group, str):
+                        groups.add(group)
+                    elif isinstance(group, dict):
+                        for group_name, _ in group.iteritems():
+                            groups.add(group_name.split(':')[0])
+
+            instances[instance_name]['groups'] = list(groups)
 
         return dict(instances)
 

@@ -5,8 +5,12 @@
       command: echo "{{ group_host_vars_group }}"
       changed_when: False
 
-    - name: Group host vars scenario test group vars from molecule.yml
-      command: echo "{{ group_host_vars_group_molecule_yml }}"
+    - name: Group host vars scenario test example group vars from molecule.yml
+      command: echo "{{ group_host_vars_example_group_molecule_yml }}"
+      changed_when: False
+
+    - name: Group host vars scenario test example2:children group vars from molecule.yml
+      command: echo "{{ group_host_vars_example2_group_molecule_yml }}"
       changed_when: False
 
     - name: Group host vars scenario test host vars
