@@ -31,6 +31,8 @@ from molecule import util
 
 logging.getLogger("sh").setLevel(logging.WARNING)
 
+pytest_plugins = ['helpers_namespace']
+
 
 def random_string(l=5):
     return ''.join(random.choice(string.ascii_uppercase) for _ in range(l))
@@ -102,8 +104,6 @@ def molecule_section_data(state_path_without_data):
             'vagrantfile_file': 'vagrantfile_file',
             'rakefile_file': 'rakefile_file',
             'vagrantfile_template': 'vagrantfile.j2',
-            'ansible_config_template': 'ansible.cfg.j2',
-            'rakefile_template': 'rakefile.j2',
             'raw_ssh_args': [
                 '-o StrictHostKeyChecking=no',
                 '-o UserKnownHostsFile=/dev/null'
@@ -240,3 +240,11 @@ def state_path_without_data(tmpdir, request):
     request.addfinalizer(cleanup)
 
     return c.strpath
+
+
+@pytest.helpers.register
+def os_split(s):
+    rest, tail = os.path.split(s)
+    if rest in ('', os.path.sep):
+        return tail,
+    return os_split(rest) + (tail, )

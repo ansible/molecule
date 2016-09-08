@@ -155,3 +155,10 @@ def test_merge_dicts():
     result = util.merge_dicts(a, b)
 
     assert expected == result
+
+
+def test_get_cookiecutter_template_dir():
+    result = util._get_cookiecutter_template_dir('foo')
+    parts = pytest.helpers.os_split(result)
+
+    assert ('molecule', 'cookiecutter', 'foo') == parts[-3:]
