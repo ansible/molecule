@@ -21,6 +21,8 @@
 import collections
 import os
 
+import cookiecutter
+import cookiecutter.main
 import tabulate
 import yaml
 
@@ -155,9 +157,11 @@ class Molecule(object):
 
         :return: None
         """
-        os.remove(self.config.config['molecule']['rakefile_file'])
-        if self.state.customconf is False:
-            os.remove(self.config.config['ansible']['config_file'])
+        if os.path.exists(self.config.config['molecule']['rakefile_file']):
+            os.remove(self.config.config['molecule']['rakefile_file'])
+        if not self.state.customconf:
+            if os.path.exists(self.config.config['ansible']['config_file']):
+                os.remove(self.config.config['ansible']['config_file'])
 
     def create_templates(self):
         """
@@ -165,25 +169,14 @@ class Molecule(object):
 
         :return: None
         """
-        # ansible.cfg
-        kwargs = {'molecule_dir':
-                  self.config.config['molecule']['molecule_dir']}
+        molecule_dir = self.config.config['molecule']['molecule_dir']
+        role_path = os.getcwd()
+        extra_context = self._get_cookiecutter_context(molecule_dir)
         if not os.path.isfile(self.config.config['ansible']['config_file']):
-            util.write_template(
-                self.config.config['molecule']['ansible_config_template'],
-                self.config.config['ansible']['config_file'], kwargs=kwargs)
+            self._create_template('molecule', extra_context, role_path)
             self.state.change_state('customconf', False)
         else:
             self.state.change_state('customconf', True)
-
-        # rakefile
-        kwargs = {
-            'state_file': self.config.config['molecule']['state_file'],
-            'serverspec_dir': self.config.config['molecule']['serverspec_dir']
-        }
-        util.write_template(
-            self.config.config['molecule']['rakefile_template'],
-            self.config.config['molecule']['rakefile_file'], kwargs=kwargs)
 
     def write_instances_state(self):
         self.state.change_state('hosts', self._instances_state())
@@ -352,7 +345,7 @@ class Molecule(object):
                         for group_name, _ in group.iteritems():
                             groups.add(group_name.split(':')[0])
 
-            instances[instance_name]['groups'] = list(groups)
+            instances[instance_name]['groups'] = sorted(list(groups))
 
         return dict(instances)
 
@@ -366,3 +359,30 @@ class Molecule(object):
         # syntax.
         return self.config.config.get(
             'testinfra', self.config.config['verifier'].get('options', {}))
+
+    def _create_template(self,
+                         template,
+                         extra_context,
+                         output_dir,
+                         no_input=True,
+                         overwrite=True):
+        template_path = util._get_cookiecutter_template_dir(template)
+
+        cookiecutter.main.cookiecutter(
+            template_path,
+            extra_context=extra_context,
+            output_dir=output_dir,
+            no_input=no_input,
+            overwrite_if_exists=overwrite)
+
+    def _get_cookiecutter_context(self, molecule_dir):
+        state_file = self.config.config['molecule']['state_file']
+        serverspec_dir = self.config.config['molecule']['serverspec_dir']
+
+        return {
+            'repo_name': molecule_dir,
+            'ansiblecfg_molecule_dir': molecule_dir,
+            'ansiblecfg_ansible_library_path': 'library',
+            'rakefile_state_file': state_file,
+            'rakefile_serverspec_dir': serverspec_dir,
+        }

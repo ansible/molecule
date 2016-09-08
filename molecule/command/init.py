@@ -93,10 +93,10 @@ class Init(base.Base):
                          output_dir,
                          no_input=True,
                          overwrite=True):
-        t = self._get_cookiecutter_template_dir(template)
+        template_path = util._get_cookiecutter_template_dir(template)
 
         cookiecutter.main.cookiecutter(
-            t,
+            template_path,
             extra_context=extra_context,
             output_dir=output_dir,
             no_input=no_input,
@@ -121,10 +121,6 @@ class Init(base.Base):
                       'provider_type': provider.get('type')})
 
         return d
-
-    def _get_cookiecutter_template_dir(self, template):
-        return os.path.join(
-            os.path.dirname(__file__), '..', 'cookiecutter', template)
 
     def _get_driver(self):
         if self.molecule.args['--docker']:

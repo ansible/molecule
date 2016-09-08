@@ -250,6 +250,13 @@ def merge_dicts(a, b):
     return md
 
 
+def os_split(s):
+    rest, tail = os.path.split(s)
+    if rest in ('', os.path.sep):
+        return tail,
+    return os_split(rest) + (tail, )
+
+
 def _get_info_logger():
     info = logging.StreamHandler()
     info.setLevel(logging.INFO)
@@ -286,3 +293,7 @@ def _get_error_logger():
         TrailingNewlineFormatter('{}%(message)s'.format(colorama.Fore.RED)))
 
     return error
+
+
+def _get_cookiecutter_template_dir(template):
+    return os.path.join(os.path.dirname(__file__), 'cookiecutter', template)

@@ -8,17 +8,17 @@ require 'fileutils'
 task spec: 'serverspec:all'
 task default: :spec
 
-hosts = YAML.load_file('{{ state_file }}')['hosts']
+hosts = YAML.load_file('{{ cookiecutter.rakefile_state_file }}')['hosts']
 
 namespace :serverspec do
   task all: hosts.keys
   hosts.each do |name, host|
     desc "Run serverspec on #{name}"
-    pattern = ['{{ serverspec_dir }}/*_spec.rb', "{{ serverspec_dir }}/#{name}/*_spec.rb", "{{ serverspec_dir }}/hosts/#{name}/*_spec.rb"]
+    pattern = ['{{ cookiecutter.rakefile_serverspec_dir }}/*_spec.rb', "{{ cookiecutter.rakefile_serverspec_dir }}/#{name}/*_spec.rb", "{{ cookiecutter.rakefile_serverspec_dir }}/hosts/#{name}/*_spec.rb"]
 
     host['groups'].each do |group|
-      pattern << "{{ serverspec_dir }}/#{group}/*_spec.rb"
-      pattern << "{{ serverspec_dir }}/groups/#{group}/*_spec.rb"
+      pattern << "{{ cookiecutter.rakefile_serverspec_dir }}/#{group}/*_spec.rb"
+      pattern << "{{ cookiecutter.rakefile_serverspec_dir }}/groups/#{group}/*_spec.rb"
     end
 
     RSpec::Core::RakeTask.new(name.to_sym) do |target|

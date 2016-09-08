@@ -133,6 +133,7 @@ class State(object):
         return {
             "converged": None,
             "created": None,
+            "customconf": None,
             "default_platform": None,
             "default_provider": None,
             "driver": None,

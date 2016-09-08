@@ -62,10 +62,9 @@ def test_molecule_file(config_instance):
 
 
 def test_build_config_paths(config_instance):
-    # Full path provided to ``state_file``.  Tested further in subsequent
-    # tests.
-    assert 'state.yml' == config_instance.config['molecule'][
-        'state_file'].split('/')[-1]
+    parts = pytest.helpers.os_split(config_instance.config['molecule'][
+        'state_file'])
+    assert ('state.yml') == parts[-1]
     assert 'test/vagrantfile_file' == config_instance.config['molecule'][
         'vagrantfile_file']
     assert 'test/rakefile_file' == config_instance.config['molecule'][
