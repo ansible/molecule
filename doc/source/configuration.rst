@@ -15,12 +15,6 @@ located. It allows you to configure how molecule, vagrant and ansible will
 behave. This information is contained in 3 top level YAML sections: molecule,
 ansible and vagrant.
 
-Example
--------
-
-.. literalinclude:: ../../molecule/conf/defaults.yml
-   :language: yaml
-
 Molecule Section
 ----------------
 
