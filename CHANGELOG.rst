@@ -12,6 +12,8 @@ CHANGELOG for molecule
 * Updated runtime requirements to current versions.
 * Implemented ``molecule check`` subcommand.
 * Configure verifier to be test kitchen like.
+* Ability to declare multiple drivers in config.
+* Implement ansible groups inheritance.
 
 Breaking Changes
 ----------------
