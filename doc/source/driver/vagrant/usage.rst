@@ -57,6 +57,10 @@ Comprehensive Usage
         ansible_groups:
           - group_1
           - group_2
+          - group_3
+          - group_4:children:
+            - group_1
+            - group_2
         interfaces:
           - network_name: private_network
             type: dhcp

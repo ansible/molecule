@@ -11,7 +11,8 @@ Options
 -------
 
 * ``name`` - name of the vagrant box
-* ``ansible_groups`` - groups the instance belongs to in ansible
+* ``ansible_groups`` - a list of groups the instance(s) belong to in Ansible
+  and/or a list of lists for assigning the instance(s) to child groups.
 * ``interfaces`` - network inferfaces (see ``usage``)
 * ``options`` - Vagrant options supported by Molecule
 * ``raw_config_args`` - Vagrant options unsupported by Molecule

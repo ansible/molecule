@@ -5,7 +5,9 @@ driver:
 ansible:
   group_vars:
     example:
-      - group_host_vars_group_molecule_yml: foo
+      - group_host_vars_example_group_molecule_yml: foo
+    example2:
+      - group_host_vars_example2_group_molecule_yml: foo
   host_vars:
     group-vars-scenario:
       - group_host_vars_host_molecule_yml: bar
@@ -15,6 +17,8 @@ docker:
     - name: group-vars-scenario
       ansible_groups:
         - example
+        - example2:children:
+          - example
       image: ubuntu
       image_version: latest
 

@@ -17,7 +17,8 @@ Options
 -------
 
 * ``name`` - name of the container
-* ``ansible_groups`` - groups the container belongs to in Ansible
+* ``ansible_groups`` - a list of groups the container(s) belong to in Ansible
+  and/or a list of lists for assigning the container(s) to child groups.
 * ``image`` - name of the image
 * ``image_version`` - version of the image
 * ``privileged`` - **(OPTIONAL)** whether or not to run the container in
