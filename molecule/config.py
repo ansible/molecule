@@ -23,15 +23,15 @@ import os.path
 
 import anyconfig
 
+from molecule import MoleculeSettings
 from molecule import util
 
-DEFAULT_CONFIG = os.path.join(os.path.dirname(__file__), 'conf/defaults.yml')
 PROJECT_CONFIG = 'molecule.yml'
 LOCAL_CONFIG = '~/.config/molecule/config.yml'
 
 
 class Config(object):
-    def __init__(self, configs=[DEFAULT_CONFIG, LOCAL_CONFIG, PROJECT_CONFIG]):
+    def __init__(self, configs=[LOCAL_CONFIG, PROJECT_CONFIG]):
         """
         Initialize a new config class, and returns None.
 
@@ -72,14 +72,23 @@ class Config(object):
 
         The merge order is based on the index of the list, meaning that
         elements at the end of the list will be merged last, and have greater
-        precedence than elements at the beginning.
+        precedence than elements at the beginning.  The result is then merged
+        ontop of the defaults.
 
         :param configs: A list containing the yaml files to load.
         :return: dict
         """
 
-        return anyconfig.load(
-            configs, ignore_missing=True, ac_merge=anyconfig.MS_DICTS)
+        default = self._get_defaults()
+        conf = anyconfig.to_container(
+            default, ac_merge=MoleculeSettings.MOLECULE_MERGE_STRATEGY)
+        conf.update(
+            anyconfig.load(
+                configs,
+                ignore_missing=True,
+                ac_merge=MoleculeSettings.MOLECULE_MERGE_STRATEGY))
+
+        return conf
 
     def _build_config_paths(self):
         """
@@ -101,3 +110,69 @@ class Config(object):
 
     def _is_path(self, pathname):
         return os.path.sep in pathname
+
+    def _get_defaults(self):
+        return {
+            'ansible': {
+                'ask_sudo_pass': False,
+                'ask_vault_pass': False,
+                'config_file': 'ansible.cfg',
+                'diff': True,
+                'galaxy': {},
+                'host_key_checking': False,
+                'inventory_file': 'ansible_inventory',
+                'limit': 'all',
+                'playbook': 'playbook.yml',
+                'raw_ssh_args': [
+                    '-o UserKnownHostsFile=/dev/null', '-o IdentitiesOnly=yes',
+                    '-o ControlMaster=auto', '-o ControlPersist=60s'
+                ],
+                'sudo': True,
+                'sudo_user': False,
+                'tags': False,
+                'timeout': 30,
+                'vault_password_file': False,
+                'verbose': False
+            },
+            'molecule': {
+                'goss_dir': 'tests',
+                'goss_playbook': 'test_default.yml',
+                'ignore_paths': [
+                    '.git', '.vagrant', '.molecule'
+                ],
+                'init': {
+                    'platform': {
+                        'box': 'trusty64',
+                        'box_url':
+                        'https://vagrantcloud.com/ubuntu/boxes/trusty64/versions/14.04/providers/virtualbox.box',
+                        'box_version': '0.1.0',
+                        'name': 'trusty64'
+                    },
+                    'provider': {
+                        'name': 'virtualbox',
+                        'type': 'virtualbox'
+                    }
+                },
+                'molecule_dir': '.molecule',
+                'rakefile_file': 'rakefile',
+                'raw_ssh_args': [
+                    '-o StrictHostKeyChecking=no',
+                    '-o UserKnownHostsFile=/dev/null'
+                ],
+                'serverspec_dir': 'spec',
+                'state_file': 'state.yml',
+                'test': {
+                    'sequence': [
+                        'destroy', 'syntax', 'create', 'converge',
+                        'idempotence', 'check', 'verify'
+                    ]
+                },
+                'testinfra_dir': 'tests',
+                'vagrantfile_file': 'vagrantfile',
+                'vagrantfile_template': 'vagrantfile.j2'
+            },
+            'verifier': {
+                'name': 'testinfra',
+                'options': {}
+            }
+        }
