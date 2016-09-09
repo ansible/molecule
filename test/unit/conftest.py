@@ -27,7 +27,7 @@ import string
 
 import pytest
 
-from molecule import util
+from molecule import config
 
 logging.getLogger("sh").setLevel(logging.WARNING)
 
@@ -68,7 +68,7 @@ def temp_files(tmpdir, request):
 def molecule_vagrant_config(molecule_section_data, vagrant_section_data,
                             ansible_section_data):
     return reduce(
-        lambda x, y: util.merge_dicts(x, y),
+        lambda x, y: config.merge_dicts(x, y),
         [molecule_section_data, vagrant_section_data, ansible_section_data])
 
 
@@ -76,7 +76,7 @@ def molecule_vagrant_config(molecule_section_data, vagrant_section_data,
 def molecule_docker_config(molecule_section_data, docker_section_data,
                            ansible_section_data):
     return reduce(
-        lambda x, y: util.merge_dicts(x, y),
+        lambda x, y: config.merge_dicts(x, y),
         [molecule_section_data, docker_section_data, ansible_section_data])
 
 
@@ -84,7 +84,7 @@ def molecule_docker_config(molecule_section_data, docker_section_data,
 def molecule_openstack_config(molecule_section_data, openstack_section_data,
                               ansible_section_data):
     return reduce(
-        lambda x, y: util.merge_dicts(x, y),
+        lambda x, y: config.merge_dicts(x, y),
         [molecule_section_data, openstack_section_data, ansible_section_data])
 
 

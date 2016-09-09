@@ -23,11 +23,11 @@ import os.path
 
 import anyconfig
 
-from molecule import MoleculeSettings
 from molecule import util
 
 PROJECT_CONFIG = 'molecule.yml'
 LOCAL_CONFIG = '~/.config/molecule/config.yml'
+MERGE_STRATEGY = anyconfig.MS_DICTS
 
 
 class Config(object):
@@ -80,13 +80,10 @@ class Config(object):
         """
 
         default = self._get_defaults()
-        conf = anyconfig.to_container(
-            default, ac_merge=MoleculeSettings.MOLECULE_MERGE_STRATEGY)
+        conf = anyconfig.to_container(default, ac_merge=MERGE_STRATEGY)
         conf.update(
             anyconfig.load(
-                configs,
-                ignore_missing=True,
-                ac_merge=MoleculeSettings.MOLECULE_MERGE_STRATEGY))
+                configs, ignore_missing=True, ac_merge=MERGE_STRATEGY))
 
         return conf
 
@@ -176,3 +173,42 @@ class Config(object):
                 'options': {}
             }
         }
+
+
+def merge_dicts(a, b):
+    """
+    Merges the values of B into A and returns a new dict.  Uses the same merge
+    strategy as ``config._combine``.
+
+    ::
+
+        dict a
+
+        b:
+           - c: 0
+           - c: 2
+        d:
+           e: "aaa"
+           f: 3
+
+        dict b
+
+        a: 1
+        b:
+           - c: 3
+        d:
+           e: "bbb"
+
+    Will give an object such as::
+
+        {'a': 1, 'b': [{'c': 3}], 'd': {'e': "bbb", 'f': 3}}
+
+
+    :param a: the target dictionary
+    :param b: the dictionary to import
+    :return: dict
+    """
+    conf = anyconfig.to_container(a, ac_merge=MERGE_STRATEGY)
+    conf.update(b)
+
+    return conf

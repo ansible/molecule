@@ -26,9 +26,6 @@ import sys
 
 import colorama
 import jinja2
-import anyconfig
-
-from molecule import MoleculeSettings
 
 colorama.init(autoreset=True)
 
@@ -211,53 +208,6 @@ def debug(title, data):
 
 def sysexit(code=1):
     sys.exit(code)
-
-
-def merge_dicts(a, b):
-    """
-    Merges the values of B into A and returns a new dict.  Uses the same merge
-    strategy as ``config._combine``.
-
-    ::
-
-        dict a
-
-        b:
-           - c: 0
-           - c: 2
-        d:
-           e: "aaa"
-           f: 3
-
-        dict b
-
-        a: 1
-        b:
-           - c: 3
-        d:
-           e: "bbb"
-
-    Will give an object such as::
-
-        {'a': 1, 'b': [{'c': 3}], 'd': {'e': "bbb", 'f': 3}}
-
-
-    :param a: the target dictionary
-    :param b: the dictionary to import
-    :return: dict
-    """
-    conf = anyconfig.to_container(
-        a, ac_merge=MoleculeSettings.MOLECULE_MERGE_STRATEGY)
-    conf.update(b)
-
-    return conf
-
-
-def os_split(s):
-    rest, tail = os.path.split(s)
-    if rest in ('', os.path.sep):
-        return tail,
-    return os_split(rest) + (tail, )
 
 
 def _get_info_logger():
