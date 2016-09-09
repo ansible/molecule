@@ -23,27 +23,30 @@ import pytest
 from molecule.command import check
 
 
-@pytest.fixture
-def mocked_main(mocker):
-    return mocker.patch('molecule.command.check.Check.main')
-
-
-def test_raises_when_instance_not_created(mocked_main, molecule_instance):
+def test_raises_when_instance_not_created(patched_main, patched_logger_error,
+                                          molecule_instance):
     c = check.Check([], dict(), molecule_instance)
 
-    with pytest.raises(SystemExit) as e:
+    with pytest.raises(SystemExit):
         c.execute()
-        assert ('ERROR: Instance(s) not created, `check` '
-                'should be run against created instance(s)') in e
+
+    msg = ('ERROR: Instance(s) not created, `check` should be run against '
+           'created instance(s)')
+    patched_logger_error.assert_called_once_with(msg)
 
 
-def test_execute(mocker, mocked_main, molecule_instance):
+def test_execute(mocker, patched_main, patched_ansible_playbook,
+                 patched_print_info, molecule_instance):
     molecule_instance.state.change_state('created', True)
     molecule_instance.state.change_state('converged', True)
-    molecule_instance._driver = mocker.Mock(ansible_connection_params={})
-    mocked = mocker.patch('molecule.ansible_playbook.AnsiblePlaybook.execute')
+    molecule_instance._driver = mocker.Mock(
+        ansible_connection_params={'debug': True})
+    patched_ansible_playbook.return_value = 'returned'
 
     c = check.Check([], dict(), molecule_instance)
-    c.execute()
+    result = c.execute()
 
-    assert mocked.called_once_with(hide_errors=True)
+    msg = 'Performing a "Dry Run" of playbook ...'
+    patched_print_info.assert_called_once_with(msg)
+    patched_ansible_playbook.assert_called_once_with(hide_errors=True)
+    assert 'returned' == result

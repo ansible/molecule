@@ -103,9 +103,17 @@ class Molecule(object):
     def verifier(self):
         return self._verifier
 
+    @verifier.setter
+    def verifier(self, val):
+        self._verifier = val
+
     @property
     def verifier_options(self):
         return self._verifier_options
+
+    @verifier_options.setter
+    def verifier_options(self, val):
+        self._verifier_options = val
 
     def write_ssh_config(self):
         ssh_config = self._get_ssh_config()

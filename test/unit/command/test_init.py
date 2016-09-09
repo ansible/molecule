@@ -51,17 +51,6 @@ def test_create_role_in_existing_directory(molecule_dir):
     assert os.path.isdir(os.path.join(molecule_dir))
 
 
-def test_create_role_docker_flag(molecule_dir):
-    i = init.Init(['docker_test', '--docker'], dict())
-    with pytest.raises(SystemExit):
-        i.execute()
-
-    os.chdir(os.path.join(molecule_dir, 'docker_test'))
-
-    with open('molecule.yml') as f:
-        assert 'docker' in f.read()
-
-
 def test_create_role_offline_flag():
     i = init.Init(['offline_test', '--offline'], dict())
     with pytest.raises(SystemExit):
@@ -74,20 +63,35 @@ def test_create_role_offline_flag():
     assert os.path.isfile('molecule.yml')
 
 
-def test_create_role_openstack_flag(molecule_dir):
-    i = init.Init(['docker_test', '--openstack'], dict())
-    with pytest.raises(SystemExit):
-        i.execute()
-
-    os.chdir(os.path.join(molecule_dir, 'docker_test'))
-
-    with open('molecule.yml') as f:
-        assert 'openstack' in f.read()
-
-
 def test_create_role_existing_dir_error():
     os.mkdir('test1')
     i = init.Init(['test1'], dict())
     with pytest.raises(SystemExit) as f:
         i.execute()
         assert 'Cannot create new role.' in f
+
+
+@pytest.mark.parametrize('verifier_flag', ['docker', 'openstack'])
+def test_create_role_with_driver_flag(verifier_flag, molecule_dir):
+    flag = '--{}'.format(verifier_flag)
+    i = init.Init(['docker_test', flag], dict())
+    with pytest.raises(SystemExit):
+        i.execute()
+
+    os.chdir(os.path.join(molecule_dir, 'docker_test'))
+
+    with open('molecule.yml') as f:
+        assert verifier_flag in f.read()
+
+
+@pytest.mark.parametrize('verifier_flag', ['serverspec', 'goss'])
+def test_create_role_with_verifier_flag(verifier_flag, molecule_dir):
+    flag = '--{}'.format(verifier_flag)
+    i = init.Init(['docker_test', flag], dict())
+    with pytest.raises(SystemExit):
+        i.execute()
+
+    os.chdir(os.path.join(molecule_dir, 'docker_test'))
+
+    with open('molecule.yml') as f:
+        assert verifier_flag in f.read()

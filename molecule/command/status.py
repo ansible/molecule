@@ -55,6 +55,8 @@ class Status(base.Base):
         # Retrieve the status.
         try:
             status = self.molecule.driver.status()
+        # TODO(retr0h): Pretty sure this handling is wrong.  We don't always
+        # shell out for status.
         except subprocess.CalledProcessError as e:
             LOG.error(e.message)
             return e.returncode, e.message

@@ -18,53 +18,29 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import pytest
-import vagrant
-
-from molecule.command import converge
-from molecule.command import create
-from molecule.command import destroy
-
-pytestmark = pytest.mark.skipif(
-    vagrant.get_vagrant_executable() is None,
-    reason='No vagrant executable found - skipping vagrant tests')
+from molecule.command import syntax
 
 
-@pytest.fixture()
-def command_args(request):
-    return []
+def test_execute(mocker, patched_main, patched_ansible_playbook,
+                 patched_print_info, molecule_instance):
+    patched_ansible_playbook.return_value = 'returned'
+
+    s = syntax.Syntax([], dict(), molecule_instance)
+    result = s.execute()
+
+    msg = "Checking playbook's syntax ..."
+    patched_print_info.assert_called_once_with(msg)
+    patched_ansible_playbook.assert_called_once_with(hide_errors=True)
+    assert 'returned' == result
 
 
-@pytest.fixture()
-def args(request):
-    return {'--help': False, '--version': False, '<command>': 'create'}
+def test_execute_installs_requirements(patched_main, patched_ansible_playbook,
+                                       patched_ansible_galaxy,
+                                       patched_print_info, molecule_instance):
+    molecule_instance.config.config['ansible']['requirements_file'] = str
 
+    s = syntax.Syntax([], dict(), molecule_instance)
+    s.execute()
 
-@pytest.fixture()
-def teardown(request):
-    def cleanup():
-        try:
-            des = destroy.Destroy([], [])
-            des.execute()
-        except SystemExit:
-            pass
-
-    request.addfinalizer(cleanup)
-
-
-def test_vagrant_create(molecule_file, command_args, args, teardown):
-    c = create.Create(command_args, args)
-
-    try:
-        c.execute()
-    except SystemExit as f:
-        assert f.code == 0
-
-
-def test_vagrant_converge(molecule_file, command_args, args, teardown):
-    c = converge.Converge(command_args, args)
-
-    try:
-        c.execute()
-    except SystemExit as f:
-        assert f.code == 0
+    patched_ansible_galaxy.assert_called_once_with()
+    patched_ansible_playbook.assert_called_once_with(hide_errors=True)

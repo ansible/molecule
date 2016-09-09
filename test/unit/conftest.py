@@ -28,6 +28,8 @@ import string
 import pytest
 
 from molecule import config
+from molecule import core
+from molecule import state
 
 logging.getLogger("sh").setLevel(logging.WARNING)
 
@@ -62,6 +64,17 @@ def temp_files(tmpdir, request):
         return confs
 
     return wrapper
+
+
+@pytest.fixture()
+def molecule_instance(temp_files, state_path_without_data):
+    c = temp_files(fixtures=['molecule_vagrant_config'])
+    m = core.Molecule(dict())
+    m.config = config.Config(configs=c)
+    m.state = state.State(state_file=state_path_without_data)
+    m.main()
+
+    return m
 
 
 @pytest.fixture()
@@ -248,3 +261,13 @@ def os_split(s):
     if rest in ('', os.path.sep):
         return tail,
     return os_split(rest) + (tail, )
+
+
+@pytest.fixture()
+def patched_ansible_playbook(mocker):
+    return mocker.patch('molecule.ansible_playbook.AnsiblePlaybook.execute')
+
+
+@pytest.fixture()
+def patched_ansible_galaxy(mocker):
+    return mocker.patch('molecule.ansible_galaxy.AnsibleGalaxy.execute')
