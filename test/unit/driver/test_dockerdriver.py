@@ -218,5 +218,10 @@ def test_inventory_generation(molecule_instance, docker_instance):
     pb['inventory'] = 'test1,test2,'
     ansible = ansible_playbook.AnsiblePlaybook(pb)
 
+    for instance in molecule_instance.driver.instances:
+        expected = '{} ansible_connection=docker\n'.format(instance['name'])
+
+        assert expected == molecule_instance.driver.inventory_entry(instance)
+
     # TODO(retr0h): Understand why driver is None
     assert (None, '') == ansible.execute()

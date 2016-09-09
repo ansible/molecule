@@ -194,7 +194,7 @@ class DockerDriver(basedriver.BaseDriver):
         pass
 
     def inventory_entry(self, instance):
-        template = '{} connection=docker\n'
+        template = '{} ansible_connection=docker\n'
 
         return template.format(instance['name'])
 
