@@ -14,6 +14,7 @@ Contents:
    bash
    development
    contributing
+   changelog
    authors
    autodoc/index
 
