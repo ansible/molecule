@@ -24,6 +24,7 @@ import os
 import sh
 
 from molecule import ansible_playbook
+from molecule import config
 from molecule import util
 from molecule.verifier import base
 
@@ -48,7 +49,7 @@ class Testinfra(base.Base):
         ansible = ansible_playbook.AnsiblePlaybook(
             self._molecule.config.config['ansible'], _env=self._molecule.env)
 
-        testinfra_options = util.merge_dicts(
+        testinfra_options = config.merge_dicts(
             self._molecule.driver.testinfra_args,
             self._molecule.verifier_options)
         testinfra_options['env'] = ansible.env

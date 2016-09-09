@@ -22,6 +22,7 @@ import os
 
 import sh
 
+from molecule import config
 from molecule import util
 
 LOG = util.get_logger(__name__)
@@ -65,8 +66,8 @@ class AnsibleGalaxy(object):
             'role-file': requirements_file,
             'roles-path': roles_path
         }
-        galaxy_options = util.merge_dicts(galaxy_default_options,
-                                          self._config['ansible']['galaxy'])
+        galaxy_options = config.merge_dicts(galaxy_default_options,
+                                            self._config['ansible']['galaxy'])
 
         self._galaxy = sh.ansible_galaxy.bake(
             'install',
