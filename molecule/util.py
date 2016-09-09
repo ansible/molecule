@@ -26,7 +26,9 @@ import sys
 
 import colorama
 import jinja2
-import m9dicts
+import anyconfig
+
+from molecule import MoleculeSettings
 
 colorama.init(autoreset=True)
 
@@ -244,10 +246,11 @@ def merge_dicts(a, b):
     :param b: the dictionary to import
     :return: dict
     """
-    md = m9dicts.make(a, merge=m9dicts.MS_DICTS)
-    md.update(b)
+    conf = anyconfig.to_container(
+        a, ac_merge=MoleculeSettings.MOLECULE_MERGE_STRATEGY)
+    conf.update(b)
 
-    return md
+    return conf
 
 
 def os_split(s):

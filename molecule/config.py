@@ -23,6 +23,7 @@ import os.path
 
 import anyconfig
 
+from molecule import MoleculeSettings
 from molecule import util
 
 PROJECT_CONFIG = 'molecule.yml'
@@ -79,12 +80,15 @@ class Config(object):
         """
 
         default = self._get_defaults()
-        conf = anyconfig.to_container(default)
-
-        return util.merge_dicts(
-            conf,
+        conf = anyconfig.to_container(
+            default, ac_merge=MoleculeSettings.MOLECULE_MERGE_STRATEGY)
+        conf.update(
             anyconfig.load(
-                configs, ignore_missing=True, ac_merge=anyconfig.MS_DICTS))
+                configs,
+                ignore_missing=True,
+                ac_merge=MoleculeSettings.MOLECULE_MERGE_STRATEGY))
+
+        return conf
 
     def _build_config_paths(self):
         """

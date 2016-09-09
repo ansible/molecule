@@ -18,10 +18,15 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-from pbr import version
+import anyconfig
+import pbr.version
 
 try:
-    version_info = version.VersionInfo('molecule')
-    __version__ = version_info.release_string()
+    version_info = pbr.version.VersionInfo('molecule')
+    __version__ = pbr.version_info.release_string()
 except AttributeError:
     __version__ = None
+
+
+class MoleculeSettings(object):
+    MOLECULE_MERGE_STRATEGY = anyconfig.MS_DICTS
