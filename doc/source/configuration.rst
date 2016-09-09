@@ -11,9 +11,9 @@ Config file
 
 This file (molecule.yml), located in the role directory, contains all the
 molecule-specific information for the role in the directory in which it's
-located. It allows you to configure how molecule, vagrant and ansible will
-behave. This information is contained in 3 top level YAML sections: molecule,
-ansible and vagrant.
+located. It allows you to configure how molecule, ansible, verifiers, and
+drivers will behave. This information is contained in top level YAML sections
+described below.
 
 Molecule Section
 ----------------
