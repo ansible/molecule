@@ -24,10 +24,6 @@ import shutil
 import pytest
 import yaml
 
-from molecule import config
-from molecule import core
-from molecule import state
-
 
 @pytest.fixture()
 def molecule_file(tmpdir, request, molecule_vagrant_config):
@@ -51,11 +47,16 @@ def molecule_file(tmpdir, request, molecule_vagrant_config):
     return c.strpath
 
 
-@pytest.fixture()
-def molecule_instance(temp_files, state_path_without_data):
-    c = temp_files(fixtures=['molecule_vagrant_config'])
-    m = core.Molecule(dict())
-    m.config = config.Config(configs=c)
-    m.state = state.State(state_file=state_path_without_data)
+@pytest.fixture
+def patched_main(mocker):
+    return mocker.patch('molecule.command.check.Check.main')
 
-    return m
+
+@pytest.fixture
+def patched_logger_error(mocker):
+    return mocker.patch('logging.Logger.error')
+
+
+@pytest.fixture
+def patched_print_info(mocker):
+    return mocker.patch('molecule.util.print_info')

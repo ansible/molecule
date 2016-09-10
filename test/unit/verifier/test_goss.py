@@ -42,7 +42,7 @@ def test_execute(mocked_test_verifier, mocked_get_tests, goss_instance):
     mocked_get_tests.return_value = True
     goss_instance.execute()
 
-    assert mocked_test_verifier.called
+    mocked_test_verifier.assert_called_once()
 
 
 def test_execute_no_tests(mocked_test_verifier, mocked_get_tests,
@@ -53,11 +53,10 @@ def test_execute_no_tests(mocked_test_verifier, mocked_get_tests,
     assert not mocked_test_verifier.called
 
 
-def test_goss(mocker, goss_instance):
-    mocked = mocker.patch('molecule.ansible_playbook.AnsiblePlaybook.execute')
+def test_goss(patched_ansible_playbook, goss_instance):
     goss_instance._goss()
 
-    assert mocked.called
+    patched_ansible_playbook.assert_called_once()
 
 
 def test_get_tests(goss_instance):
