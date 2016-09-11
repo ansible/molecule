@@ -95,7 +95,7 @@ Create a new role with the docker driver:
 
 .. code-block:: bash
 
-  $ molecule init foo --docker
+  $ molecule init --role foo --driver docker
   --> Initializing role foo...
   Successfully initialized new role in ./foo
 
@@ -105,7 +105,7 @@ Or add molecule to an existing role:
 .. code-block:: bash
 
   $ cd foo
-  $ molecule init --docker
+  $ molecule init --driver docker
   --> Initializing molecule in current directory...
   Successfully initialized new role in /private/tmp
 

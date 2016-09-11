@@ -18,6 +18,7 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
+import click
 import yaml
 
 from molecule import ansible_galaxy
@@ -26,21 +27,10 @@ from molecule import util
 from molecule.command import base
 from molecule.command import create
 
+LOG = util.get_logger(__name__)
+
 
 class Converge(base.Base):
-    """
-    Provisions all instances defined in molecule.yml.
-
-    Usage:
-        converge [--driver=<driver>] [--platform=<platform>] [--provider=<provider>] [--tags=<tag1,tag2>...] [--debug]
-
-    Options:
-        --platform=<platform>  specify a platform
-        --provider=<provider>  specify a provider
-        --tags=<tag1,tag2>     comma separated list of ansible tags to target
-        --debug                get more detail
-    """
-
     def execute(self,
                 idempotent=False,
                 create_instances=True,
@@ -65,17 +55,15 @@ class Converge(base.Base):
             create_inventory = False
 
         if self.molecule.state.multiple_platforms:
-            self.args['--platform'] = 'all'
+            self.command_args.get('platform') == 'all'
         else:
-            if self.args[
-                    '--platform'] == 'all' and self.molecule.state.created:
+            if ((self.command_args.get('platform') == 'all') and
+                    self.molecule.state.created):
                 create_instances = True
                 create_inventory = True
 
         if create_instances and not idempotent:
-            command_args, args = util.remove_args(self.command_args, self.args,
-                                                  ['--tags'])
-            c = create.Create(command_args, args, self.molecule)
+            c = create.Create(self.command_args, self.args, self.molecule)
             c.execute()
 
         if create_inventory:
@@ -96,8 +84,8 @@ class Converge(base.Base):
             ansible.add_cli_arg(k, v)
 
         # Target tags passed in via CLI
-        if self.molecule.args.get('--tags'):
-            ansible.add_cli_arg('tags', self.molecule.args['--tags'].pop(0))
+        if self.command_args.get('tags'):
+            ansible.add_cli_arg('tags', self.command_args.get('tags'))
 
         if idempotent:
             # Don't log stdout/err
@@ -108,7 +96,7 @@ class Converge(base.Base):
             ansible.add_env_arg('ANSIBLE_FORCE_COLOR', 'false')
 
         ansible.bake()
-        if self.molecule.args.get('--debug'):
+        if self.args.get('debug'):
             ansible_env = {k: v
                            for (k, v) in ansible.env.items() if 'ANSIBLE' in k}
             other_env = {k: v
@@ -135,3 +123,24 @@ class Converge(base.Base):
             self.molecule.state.change_state('converged', True)
 
         return None, output
+
+
+@click.command()
+@click.option('--driver', default=None, help='Specificy a driver.')
+@click.option('--platform', default=None, help='Specify a platform.')
+@click.option('--provider', default=None, help='Specify a provider.')
+@click.option(
+    '--tags',
+    default=None,
+    help='Comma separated group of ansible tags to target.')
+@click.pass_context
+def converge(ctx, driver, platform, provider, tags):
+    """ Provisions all instances defined in molecule.yml. """
+    command_args = {'driver': driver,
+                    'platform': platform,
+                    'provider': provider,
+                    'tags': tags}
+
+    c = Converge(ctx.obj.get('args'), command_args)
+    c.execute
+    util.sysexit(c.execute()[0])

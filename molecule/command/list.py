@@ -18,22 +18,15 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
+import click
+
+from molecule import util
 from molecule.command import base
+
+LOG = util.get_logger(__name__)
 
 
 class List(base.Base):
-    """
-    Prints a list of currently available platforms
-
-    Usage:
-        list [--debug] ([-m]|[--porcelain])
-
-    Options:
-        --debug         get more detail
-        -m              synonym for '--porcelain' (deprecated)
-        --porcelain     machine readable output
-    """
-
     def execute(self, exit=True):
         """
         Execute the actions necessary to perform a `molecule list` and
@@ -42,7 +35,21 @@ class List(base.Base):
         :param exit: (Unused) Provided to complete method signature.
         :return: Return a tuple of None.
         """
-        porcelain = self.molecule.args['-m'] or self.molecule.args[
-            '--porcelain']
+        porcelain = self.command_args.get('porcelain')
         self.molecule.print_valid_platforms(porcelain=porcelain)
         return None, None
+
+
+@click.command()
+@click.option(
+    '--porcelain/--no-porcelain',
+    default=False,
+    help='Machine readable output.')
+@click.pass_context
+def list(ctx, porcelain):
+    """ Prints a list of currently available platforms. """
+    command_args = {'porcelain': porcelain}
+
+    l = List(ctx.obj.get('args'), command_args)
+    l.execute
+    util.sysexit(l.execute()[0])

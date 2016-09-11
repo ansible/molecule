@@ -19,7 +19,6 @@
 #  THE SOFTWARE.
 
 import abc
-import docopt
 
 from molecule import core
 from molecule import util
@@ -40,22 +39,21 @@ class Base(object):
     """
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, command_args, args, molecule=False):
+    def __init__(self, args, command_args, molecule=None):
         """
         Base initializer for all :ref:`Command` classes.
 
-        :param command_args: A list of aruments passed to the subcommand from
-         the CLI.
         :param args: A dict of options, arguments and commands from the CLI.
+        :param command_args: A dict of options passed to the subcommand from
+         the CLI.
         :param molecule: An optional instance of molecule.
         :returns: None
         """
-        self.args = docopt.docopt(self.__doc__, argv=command_args)
-        self.args['<command>'] = self.__class__.__name__.lower()
+        self.args = args
         self.command_args = command_args
 
         if not molecule:
-            self.molecule = core.Molecule(self.args)
+            self.molecule = core.Molecule(self.args, self.command_args)
             self.main()
         else:
             self.molecule = molecule

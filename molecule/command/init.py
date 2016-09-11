@@ -20,6 +20,7 @@
 
 import os
 
+import click
 import cookiecutter
 import cookiecutter.main
 
@@ -30,13 +31,6 @@ LOG = util.get_logger(__name__)
 
 
 class Init(base.Base):
-    """
-    Creates the scaffolding for a new role intended for use with molecule.
-
-    Usage:
-        init [<role>] [--docker | --openstack] [--serverspec | --goss] [--offline]
-    """
-
     def main(self):
         """
         Overriden to prevent the initialization of a molecule object, since
@@ -53,7 +47,7 @@ class Init(base.Base):
         :param exit: (Unused) Provided to complete method signature.
         :return: None
         """
-        role = self.molecule.args['<role>']
+        role = self.command_args.get('role')
         role_path = os.getcwd()
         driver = self._get_driver()
         verifier = self._get_verifier()
@@ -123,17 +117,34 @@ class Init(base.Base):
         return d
 
     def _get_driver(self):
-        if self.molecule.args['--docker']:
-            return 'docker'
-        elif self.molecule.args['--openstack']:
-            return 'openstack'
-        else:
-            return 'vagrant'
+        return self.command_args.get('driver')
 
     def _get_verifier(self):
-        if self.molecule.args['--serverspec']:
-            return 'serverspec'
-        elif self.molecule.args['--goss']:
-            return 'goss'
-        else:
-            return 'testinfra'
+        return self.command_args.get('verifier')
+
+
+@click.command()
+@click.option(
+    '--role',
+    help=('Name of role to create, otherwise initalize molecule inside '
+          'existing directory.'))
+@click.option(
+    '--driver',
+    type=click.Choice(['vagrant', 'docker', 'openstack']),
+    default='vagrant',
+    help='Name of driver to initialize.')
+@click.option(
+    '--verifier',
+    type=click.Choice(['testinfra', 'serverspec', 'goss']),
+    default='testinfra',
+    help='Name of verifier to initialize.')
+@click.pass_context
+def init(ctx, role, driver, verifier):
+    """
+    Creates the scaffolding for a new role intended for use with molecule.
+    """
+    command_args = {'role': role, 'driver': driver, 'verifier': verifier}
+
+    i = Init(ctx.obj.get('args'), command_args)
+    i.execute
+    util.sysexit(i.execute()[0])

@@ -23,7 +23,7 @@
 (
 	cd ${DOCKER_FUNCTIONAL_TEST_BASE_DIR}/command_converge
 
-	molecule converge --debug
+	molecule --debug converge
 	molecule destroy
 
 	molecule converge --driver docker

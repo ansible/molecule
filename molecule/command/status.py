@@ -20,6 +20,8 @@
 
 import subprocess
 
+import click
+
 from molecule import util
 from molecule.command import base
 
@@ -27,20 +29,6 @@ LOG = util.get_logger(__name__)
 
 
 class Status(base.Base):
-    """
-    Prints status of configured instances.
-
-    Usage:
-        status [--debug][--porcelain] ([--hosts] [--platforms][--providers])
-
-    Options:
-        --debug         get more detail
-        --porcelain     machine readable output
-        --hosts         display the available hosts
-        --platforms     display the available platforms
-        --providers     display the available providers
-    """
-
     def execute(self, exit=True):
         """
         Execute the actions necessary to perform a `molecule status` and
@@ -49,8 +37,9 @@ class Status(base.Base):
         :param exit: (Unused) Provided to complete method signature.
         :return: Return a tuple of None.
         """
-        display_all = not any([self.args['--hosts'], self.args['--platforms'],
-                               self.args['--providers']])
+        display_all = not any([self.command_args.get('hosts'),
+                               self.command_args.get('platforms'),
+                               self.command_args.get('providers')])
 
         # Retrieve the status.
         try:
@@ -62,11 +51,10 @@ class Status(base.Base):
             return e.returncode, e.message
 
         # Display the results in procelain mode.
-        porcelain = self.molecule.args['--porcelain']
+        porcelain = self.command_args.get('porcelain')
 
         # Display hosts information.
-        if display_all or self.molecule.args['--hosts']:
-
+        if display_all or self.command_args.get('hosts'):
             # Prepare the table for the results.
             headers = [] if porcelain else ['Name', 'State', 'Provider']
             data = []
@@ -82,11 +70,35 @@ class Status(base.Base):
             self.molecule.display_tabulate_data(data, headers=headers)
 
         # Display the platforms.
-        if display_all or self.molecule.args['--platforms']:
+        if display_all or self.command_args.get('platforms'):
             self.molecule.print_valid_platforms(porcelain=porcelain)
 
         # Display the providers.
-        if display_all or self.molecule.args['--providers']:
+        if display_all or self.command_args.get('providers'):
             self.molecule.print_valid_providers(porcelain=porcelain)
 
         return None, None
+
+
+@click.command()
+@click.option(
+    '--platforms/--no-platforms', default=False, help='Specify a platform.')
+@click.option(
+    '--providers/--no-providers', default=False, help='Specify a provider.')
+@click.option(
+    '--hosts/--no-hosts', default=False, help='Display the available hosts.')
+@click.option(
+    '--porcelain/--no-porcelain',
+    default=False,
+    help='Machine readable output.')
+@click.pass_context
+def status(ctx, platforms, providers, hosts, porcelain):
+    """ Prints status of configured instances. """
+    command_args = {'platforms': platforms,
+                    'providers': providers,
+                    'hosts': hosts,
+                    'porcelain': porcelain}
+
+    s = Status(ctx.obj.get('args'), command_args)
+    s.execute
+    util.sysexit(s.execute()[0])

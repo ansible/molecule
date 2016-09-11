@@ -18,6 +18,7 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
+import click
 import subprocess
 
 from molecule import util
@@ -27,18 +28,6 @@ LOG = util.get_logger(__name__)
 
 
 class Create(base.Base):
-    """
-    Creates all instances defined in molecule.yml.
-
-    Usage:
-        create [--driver=<driver>] [--platform=<platform>] [--provider=<provider>] [--debug]
-
-    Options:
-        --platform=<platform>  specify a platform
-        --provider=<provider>  specify a provider
-        --debug                get more detail
-    """
-
     def execute(self, exit=True):
         """
         Execute the actions necessary to perform a `molecule create` and
@@ -54,7 +43,7 @@ class Create(base.Base):
             util.print_info('Creating instances ...')
             self.molecule.driver.up(no_provision=True)
             self.molecule.state.change_state('created', True)
-            if self.args['--platform'] == 'all':
+            if self.command_args.get('platform') == 'all':
                 self.molecule.state.change_state('multiple_platforms', True)
         except subprocess.CalledProcessError as e:
             LOG.error('ERROR: {}'.format(e))
@@ -64,3 +53,19 @@ class Create(base.Base):
         self.molecule.create_inventory_file()
         self.molecule.write_instances_state()
         return None, None
+
+
+@click.command()
+@click.option('--driver', default=None, help='Specificy a driver.')
+@click.option('--platform', default=None, help='Specify a platform.')
+@click.option('--provider', default=None, help='Specify a provider.')
+@click.pass_context
+def create(ctx, driver, platform, provider):
+    """ Creates all instances defined in molecule.yml. """
+    command_args = {'driver': driver,
+                    'platform': platform,
+                    'provider': provider}
+
+    c = Create(ctx.obj.get('args'), command_args)
+    c.execute
+    util.sysexit(c.execute()[0])

@@ -1,5 +1,7 @@
 .. _openstack_driver_usage:
 
+Example files are created with ``molecule init --driver openstack``.
+
 Usage
 -----
 

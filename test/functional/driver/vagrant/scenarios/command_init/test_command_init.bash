@@ -24,7 +24,7 @@ TMP_DIR=$(mktemp -d /tmp/tmp.XXXXXXXXXX)
 
 (
 	cd ${TMP_DIR}
-	molecule init command-test
+	molecule init --role command-test
 	cd command-test
 	molecule test
 )
