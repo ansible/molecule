@@ -31,6 +31,10 @@ Options
   `host config`_.
 * ``volume_mounts`` - **(OPTIONAL)** the volume mappings between the Docker
   host and the container.
+* ``cap_add`` - **(OPTIONAL)** add Linux Kernel `capability`_ to the Docker
+  host.
+* ``cap_drop`` - **(OPTIONAL)** drop Linux Kernel `capability`_ from the Docker
+  host.
 * ``command`` - **(OPTIONAL)** the command to launch the container with
 
 The available param for the docker driver itself is:
@@ -39,3 +43,4 @@ The available param for the docker driver itself is:
 * ``dockerfile`` - **dockerfile** to use when building. By default the dockerfile will just install python onto the image given.
 
 .. _`host config`: https://github.com/docker/docker-py/blob/master/docs/port-bindings.md
+.. _`capability`: https://docs.docker.com/engine/reference/run/#/runtime-privilege-and-linux-capabilities

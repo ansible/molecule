@@ -166,6 +166,8 @@ def docker_section_data():
                  },
                  'options': {'append_platform_to_hostname': True},
                  'volume_mounts': ['/tmp/test1:/inside:rw'],
+                 'cap_add': ['SYS_ADMIN', 'SETPCAP'],
+                 'cap_drop': ['MKNOD'],
                  'ansible_groups': ['group1']}, {
                      'name': 'test2',
                      'image': 'ubuntu',
