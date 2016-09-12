@@ -181,6 +181,22 @@ def test_volume_mounts(docker_instance):
         'Mounts'][0]['Destination']
 
 
+def test_cap_add(docker_instance):
+    docker_instance.up()
+
+    assert "SYS_ADMIN" in docker_instance._docker.inspect_container('test1')[
+        'HostConfig']['CapAdd']
+    assert "SETPCAP" in docker_instance._docker.inspect_container('test1')[
+        'HostConfig']['CapAdd']
+
+
+def test_cap_drop(docker_instance):
+    docker_instance.up()
+
+    assert "MKNOD" in docker_instance._docker.inspect_container('test1')[
+        'HostConfig']['CapDrop']
+
+
 def test_destroy(docker_instance):
     docker_instance.up()
 
