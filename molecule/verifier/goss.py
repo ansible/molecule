@@ -19,7 +19,6 @@
 #  THE SOFTWARE.
 
 import os
-import sys
 
 from molecule import ansible_playbook
 from molecule import util
@@ -82,10 +81,14 @@ class Goss(base.Base):
 
     def _set_library_path(self):
         library_path = self._ansible.env.get('ANSIBLE_LIBRARY', '')
+        goss_path = self._get_library_path()
         if library_path:
-            self._ansible.add_env_arg(
-                'ANSIBLE_LIBRARY', library_path + ':' + os.path.join(
-                    sys.prefix, 'share/molecule/ansible/library'))
+            self._ansible.add_env_arg('ANSIBLE_LIBRARY',
+                                      '{}:{}'.format(library_path, goss_path))
         else:
-            self._ansible.add_env_arg('ANSIBLE_LIBRARY', os.path.join(
-                sys.prefix, 'share/molecule/ansible/library'))
+            self._ansible.add_env_arg('ANSIBLE_LIBRARY', goss_path)
+
+    def _get_library_path(self):
+        return os.path.join(
+            os.path.dirname(__file__), '..', '..', 'molecule', 'verifier',
+            'ansible', 'library')

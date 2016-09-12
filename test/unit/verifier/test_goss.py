@@ -61,3 +61,11 @@ def test_goss(patched_ansible_playbook, goss_instance):
 
 def test_get_tests(goss_instance):
     assert not goss_instance._get_tests()
+
+
+def test_goss_path(goss_instance):
+    path = goss_instance._get_library_path()
+    parts = pytest.helpers.os_split(path)
+
+    assert ('verifier', '..', '..', 'molecule', 'verifier', 'ansible',
+            'library') == parts[-7:]
