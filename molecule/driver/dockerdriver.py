@@ -124,13 +124,21 @@ class DockerDriver(basedriver.BaseDriver):
             if 'volume_mounts' not in container:
                 container['volume_mounts'] = []
 
+            if 'cap_add' not in container:
+                container['cap_add'] = []
+
+            if 'cap_drop' not in container:
+                container['cap_drop'] = []
+
             if 'command' not in container:
                 container['command'] = ""
 
             docker_host_config = self._docker.create_host_config(
                 privileged=container['privileged'],
                 port_bindings=container['port_bindings'],
-                binds=container['volume_mounts'])
+                binds=container['volume_mounts'],
+                cap_add=container['cap_add'],
+                cap_drop=container['cap_drop'])
 
             if (container['created'] is not True):
                 LOG.warning(
