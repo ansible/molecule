@@ -2,6 +2,27 @@
 History
 *******
 
+1.NEXT
+======
+
+* Additional command tests.
+* Changed connection to ansible_connection.
+* Implemented click vs docopt.  This slightly changes the CLI's semantics.
+
+Breaking Changes
+----------------
+
+* The ``--debug`` flag is no longer passed to the subcommand.  The command and
+  subcommand args were getting munged together, and passed to the core.  They
+  are now handled separately.
+* Removed the ``--debug`` subcommand flag from all usage -- it was never used.
+* The ``init`` subcommand requires an optional ``--role`` flag vs a role
+  argument when naming the role to initialize.
+* The ``init`` subcommand requires a ``--driver`` flag when creating a driver
+  other than vagrant.
+* The ``init`` subcommand requires a ``--verifier`` flag when creating a
+  verifier other than testinfra.
+
 1.11
 ====
 

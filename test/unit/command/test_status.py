@@ -26,7 +26,7 @@ from molecule.command import status
 def test_execute(capsys, patched_main, molecule_instance):
     molecule_instance.args = {'--porcelain': False}
 
-    s = status.Status([], dict(), molecule_instance)
+    s = status.Status({}, {}, molecule_instance)
     result = s.execute()
 
     out, err = capsys.readouterr()
@@ -37,9 +37,9 @@ def test_execute(capsys, patched_main, molecule_instance):
 
 
 def test_execute_with_porcelain(capsys, patched_main, molecule_instance):
-    molecule_instance.args = {'--porcelain': True}
+    command_args = {'porcelain': True}
 
-    s = status.Status([], dict(), molecule_instance)
+    s = status.Status({}, command_args, molecule_instance)
     result = s.execute()
 
     out, err = capsys.readouterr()
@@ -51,11 +51,12 @@ def test_execute_with_porcelain(capsys, patched_main, molecule_instance):
 
 def test_exits_when_command_fails_and_exit_flag_set(
         patched_logger_error, mocker, patched_main, molecule_instance):
+    command_args = {'porcelain': True}
     patched_status = mocker.patch(
         'molecule.driver.vagrantdriver.VagrantDriver.status')
     patched_status.side_effect = subprocess.CalledProcessError(1, None, None)
 
-    s = status.Status([], dict(), molecule_instance)
+    s = status.Status({}, command_args, molecule_instance)
     result = s.execute()
 
     patched_logger_error.assert_called_once_with('')

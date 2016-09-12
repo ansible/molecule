@@ -18,6 +18,7 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
+import click
 import sh
 
 from molecule import util
@@ -32,19 +33,6 @@ LOG = util.get_logger(__name__)
 
 
 class Verify(base.Base):
-    """
-    Performs verification steps on running instances.
-
-    Usage:
-        verify [--platform=<platform>] [--provider=<provider>] [--debug] [--sudo]
-
-    Options:
-        --platform=<platform>  specify a platform
-        --provider=<provider>  specify a provider
-        --debug                get more detail
-        --sudo                 runs tests with sudo
-    """
-
     def execute(self, exit=True):
         """
         Execute the actions necessary to perform a `molecule verify` and
@@ -76,3 +64,20 @@ class Verify(base.Base):
             return e.exit_code, e.stdout
 
         return None, None
+
+
+@click.command()
+@click.option('--platform', default=None, help='Specify a platform.')
+@click.option('--provider', default=None, help='Specify a provider.')
+@click.option(
+    '--sudo/--no-sudo',
+    default=False,
+    help='Enable or disable running tests with sudo. Default is disabled.')
+@click.pass_context
+def verify(ctx, platform, provider, sudo):
+    """ Performs verification steps on running instances. """
+    command_args = {'platform': platform, 'provider': provider, 'sudo': sudo}
+
+    v = Verify(ctx.obj.get('args'), command_args)
+    v.execute
+    util.sysexit(v.execute()[0])

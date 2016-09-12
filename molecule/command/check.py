@@ -18,6 +18,8 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
+import click
+
 from molecule import ansible_playbook
 from molecule import util
 from molecule.command import base
@@ -26,13 +28,6 @@ LOG = util.get_logger(__name__)
 
 
 class Check(base.Base):
-    """
-    Performs a check ("Dry Run") on the current role.
-
-    Usage:
-        check
-    """
-
     def execute(self, exit=True):
         """
         Execute the actions necessary to perform a `molecule check` and
@@ -55,3 +50,12 @@ class Check(base.Base):
 
         util.print_info('Performing a "Dry Run" of playbook ...')
         return ansible.execute(hide_errors=True)
+
+
+@click.command()
+@click.pass_context
+def check(ctx):
+    """ Performs a check ("Dry Run") on the current role. """
+    c = Check(ctx.obj.get('args'), {})
+    c.execute
+    util.sysexit(c.execute()[0])

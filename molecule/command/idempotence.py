@@ -20,6 +20,8 @@
 
 import re
 
+import click
+
 from molecule import util
 from molecule.command import base
 from molecule.command import converge
@@ -28,18 +30,6 @@ LOG = util.get_logger(__name__)
 
 
 class Idempotence(base.Base):
-    """
-    Provisions instances and parses output to determine idempotence.
-
-    Usage:
-        idempotence [--platform=<platform>] [--provider=<provider>] [--debug]
-
-    Options:
-        --platform=<platform>  specify a platform
-        --provider=<provider>  specify a provide
-        --debug                get more detail
-    """
-
     def execute(self, exit=True):
         """
         Execute the actions necessary to perform a `molecule idempotence` and
@@ -91,3 +81,16 @@ class Idempotence(base.Base):
             return False
 
         return True
+
+
+@click.command()
+@click.option('--platform', default=None, help='Specify a platform.')
+@click.option('--provider', default=None, help='Specify a provider.')
+@click.pass_context
+def idempotence(ctx, platform, provider):
+    """ Provisions instances and parses output to determine idempotence. """
+    command_args = {'platform': platform, 'provider': provider}
+
+    i = Idempotence(ctx.obj.get('args'), command_args)
+    i.execute
+    util.sysexit(i.execute()[0])

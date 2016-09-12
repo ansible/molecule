@@ -1,5 +1,7 @@
 .. _docker_driver_usage:
 
+Example files are created with ``molecule init --driver docker``.
+
 Usage
 -----
 

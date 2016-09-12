@@ -157,39 +157,6 @@ def format_instance_name(name, platform, instances):
     return name
 
 
-def remove_args(command_args, args, kill):
-    """
-    Removes args so commands can be passed around easily, and returns a tuple.
-
-    :param command_args: A list of command args from DocOpt.
-    :param args: A dict of arguments from DocOpt.
-    :kill: A list of args to remove from returned values.
-
-    :return: tuple
-    """
-
-    new_args = {}
-    new_command_args = []
-    skip_next = False
-
-    # remove killed command args and their adjacent items
-    for item in command_args:
-        if skip_next:
-            skip_next = False
-            continue
-        if item.lower() in kill:
-            skip_next = True
-            continue
-        new_command_args.append(item)
-
-    # remove killed command args
-    for k, v in args.iteritems():
-        if k not in kill:
-            new_args[k] = v
-
-    return new_command_args, new_args
-
-
 def debug(title, data):
     """
     Prints colorized output for use when debugging portions of molecule, and

@@ -25,7 +25,7 @@ from molecule.command import check
 
 def test_raises_when_instance_not_created(patched_main, patched_logger_error,
                                           molecule_instance):
-    c = check.Check([], dict(), molecule_instance)
+    c = check.Check({}, {}, molecule_instance)
 
     with pytest.raises(SystemExit):
         c.execute()
@@ -43,7 +43,7 @@ def test_execute(mocker, patched_main, patched_ansible_playbook,
         ansible_connection_params={'debug': True})
     patched_ansible_playbook.return_value = 'returned'
 
-    c = check.Check([], dict(), molecule_instance)
+    c = check.Check({}, {}, molecule_instance)
     result = c.execute()
 
     msg = 'Performing a "Dry Run" of playbook ...'

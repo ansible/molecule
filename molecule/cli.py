@@ -17,56 +17,39 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
-"""
-Usage:
-    molecule [-hv] <command> [<args>...]
 
-Commands:
-    syntax        check playbook syntax
-    check         "dry-run" converge
-    create        create instance(s)
-    converge      create and provision instance(s)
-    idempotence   converge and check the output for changes
-    test          run a full test cycle: destroy, syntax, create, converge, idempotency, check, verify, and destroy instance(s)
-    verify        run verifiers against instance(s)
-    destroy       destroy instance(s)
-    status        show status of instance(s)
-    list          show available platforms
-    login         connects to instance via SSH
-    init          creates the directory structure and files for a new Ansible role compatible with molecule
-
-Options:
-    -h --help     shows this screen
-    -v --version  shows the version
-"""  # noqa
-
-import docopt
+import click
 
 import molecule
 from molecule import command
-from molecule import util
 
 
-class CLI(object):
-    def main(self):
-        args = docopt.docopt(
-            __doc__, version=molecule.__version__, options_first=True)
-        command_name = args.get('<command>')
-        command_args = {} if args.get('<args>') is None else args.pop('<args>')
-
-        try:
-            command_module = getattr(command, command_name)
-            command_clazz = getattr(command_module, command_name.capitalize())
-        except AttributeError:
-            raise docopt.DocoptExit()
-
-        c = command_clazz(command_args, args)
-        util.sysexit(c.execute()[0])
+@click.group()
+@click.option(
+    '--debug/--no-debug',
+    default=False,
+    help='Enable or disable debug mode. Default is disabled.')
+@click.version_option(version=molecule.__version__)
+@click.pass_context
+def cli(ctx, debug):  # pragma: no cover
+    ctx.obj['args'] = {}
+    ctx.obj['args']['debug'] = debug
 
 
-def main():
-    CLI().main()
+def main():  # pragma: no cover
+    """ Molecule aids in the development, and testing of Ansible roles. """
+    cli(obj={})
 
 
-if __name__ == '__main__':
-    main()
+cli.add_command(command.create.create)
+cli.add_command(command.check.check)
+cli.add_command(command.converge.converge)
+cli.add_command(command.destroy.destroy)
+cli.add_command(command.idempotence.idempotence)
+cli.add_command(command.init.init)
+cli.add_command(command.list.list)
+cli.add_command(command.login.login)
+cli.add_command(command.syntax.syntax)
+cli.add_command(command.test.test)
+cli.add_command(command.status.status)
+cli.add_command(command.verify.verify)

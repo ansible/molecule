@@ -97,7 +97,7 @@ class OpenstackDriver(basedriver.BaseDriver):
 
     @property
     def serverspec_args(self):
-        return dict()
+        return {}
 
     def up(self, no_provision=True):
         self.molecule.state.change_state('driver', self.name)

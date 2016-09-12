@@ -43,6 +43,8 @@ class Molecule(object):
         Initialize a new molecule class, and returns None.
 
         :param args: A dict of options, arguments and commands from the CLI.
+        :param command_args: A dict of options passed to the subcommand from
+         the CLI.
         :returns: None
         """
         self.env = os.environ.copy()

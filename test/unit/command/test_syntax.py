@@ -25,7 +25,7 @@ def test_execute(mocker, patched_main, patched_ansible_playbook,
                  patched_print_info, molecule_instance):
     patched_ansible_playbook.return_value = 'returned'
 
-    s = syntax.Syntax([], dict(), molecule_instance)
+    s = syntax.Syntax({}, {}, molecule_instance)
     result = s.execute()
 
     msg = "Checking playbook's syntax ..."
@@ -39,7 +39,7 @@ def test_execute_installs_requirements(patched_main, patched_ansible_playbook,
                                        patched_print_info, molecule_instance):
     molecule_instance.config.config['ansible']['requirements_file'] = str
 
-    s = syntax.Syntax([], dict(), molecule_instance)
+    s = syntax.Syntax({}, {}, molecule_instance)
     s.execute()
 
     patched_ansible_galaxy.assert_called_once_with()

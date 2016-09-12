@@ -45,7 +45,7 @@ class Serverspec(base.Base):
         :return: None
         """
         serverspec_options = self._molecule.driver.serverspec_args
-        serverspec_options['debug'] = self._molecule.args.get('--debug', False)
+        serverspec_options['debug'] = self._molecule.args.get('debug', False)
 
         if self._get_tests():
             self._rubocop(self._serverspec_dir, **serverspec_options)

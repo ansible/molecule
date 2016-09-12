@@ -18,20 +18,17 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
+import click
+
 from molecule import ansible_galaxy
 from molecule import ansible_playbook
 from molecule import util
 from molecule.command import base
 
+LOG = util.get_logger(__name__)
+
 
 class Syntax(base.Base):
-    """
-    Performs a syntax check on the current role.
-
-    Usage:
-        syntax
-    """
-
     def execute(self, exit=True):
         """
         Execute the actions necessary to perform a `molecule syntax` and
@@ -55,3 +52,12 @@ class Syntax(base.Base):
         util.print_info('Checking playbook\'s syntax ...')
 
         return ansible.execute(hide_errors=True)
+
+
+@click.command()
+@click.pass_context
+def syntax(ctx):
+    """ Performs a syntax check on the current role. """
+    s = Syntax(ctx.obj.get('args'), {})
+    s.execute
+    util.sysexit(s.execute()[0])

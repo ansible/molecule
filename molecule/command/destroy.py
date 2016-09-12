@@ -18,6 +18,7 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
+import click
 import subprocess
 
 from molecule import util
@@ -27,18 +28,6 @@ LOG = util.get_logger(__name__)
 
 
 class Destroy(base.Base):
-    """
-    Destroys all instances created by molecule.
-
-    Usage:
-        destroy [--driver=<driver>] [--platform=<platform>] [--provider=<provider>] [--debug]
-
-    Options:
-        --platform=<platform>  specify a platform
-        --provider=<provider>  specify a provider
-        --debug                get more detail
-    """
-
     def execute(self, exit=True):
         """
         Execute the actions necessary to perform a `molecule destroy` and
@@ -62,3 +51,19 @@ class Destroy(base.Base):
         self.molecule.remove_templates()
         self.molecule.remove_inventory_file()
         return None, None
+
+
+@click.command()
+@click.option('--driver', default=None, help='Specificy a driver.')
+@click.option('--platform', default=None, help='Specify a platform.')
+@click.option('--provider', default=None, help='Specify a provider.')
+@click.pass_context
+def destroy(ctx, driver, platform, provider):
+    """ Destroys all instances created by molecule. """
+    command_args = {'driver': driver,
+                    'platform': platform,
+                    'provider': provider}
+
+    d = Destroy(ctx.obj.get('args'), command_args)
+    d.execute
+    util.sysexit(d.execute()[0])

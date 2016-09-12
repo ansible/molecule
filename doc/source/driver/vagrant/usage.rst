@@ -1,5 +1,7 @@
 .. _vagrant_driver_usage:
 
+Example files are created with ``molecule init``.
+
 Usage
 -----
 

@@ -58,7 +58,7 @@ Serverspec
 The tests are linted with `Rubocop`_.  `Rubocop`_ supports storing its
 configuration in the project root as ``.rubocop.yml``.
 
-Example files are created with ``molecule init --serverspec``.
+Example files are created with ``molecule init --verifier serverspec``.
 
 Usage
 -----
@@ -109,7 +109,7 @@ on the system executing ``goss validate``.  Molecule executes a test playbook
 which is responsible for installing goss, and distributing tests to the
 appropriate ansible hosts/groups.
 
-Example files are created with ``molecule init --goss``.
+Example files are created with ``molecule init --verifier goss``.
 
 .. warning:: Concider this verifier experimental.
 

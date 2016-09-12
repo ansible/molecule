@@ -101,18 +101,6 @@ def test_format_instance_name_03():
     assert 'test-01' == actual
 
 
-def test_remove_args():
-    test_list = ['tags', 'molecule1', 'platform', 'ubuntu', 'tags',
-                 'molecule2']
-    test_dict = {'tags': 'molecule1', 'platform': 'ubuntu'}
-    expected_list = ['platform', 'ubuntu']
-    expected_dict = {'platform': 'ubuntu'}
-    actual_list, actual_dict = util.remove_args(test_list, test_dict, ['tags'])
-
-    assert expected_list == actual_list
-    assert expected_dict == actual_dict
-
-
 @pytest.mark.skipif(reason="determine how to test such a function")
 def test_check_ssh_availability():
     pass

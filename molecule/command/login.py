@@ -27,6 +27,8 @@ import subprocess
 import sys
 import termios
 
+import click
+
 from molecule import util
 from molecule.command import base
 
@@ -34,13 +36,6 @@ LOG = util.get_logger(__name__)
 
 
 class Login(base.Base):
-    """
-    Initiates an interactive ssh session with the given host.
-
-    Usage:
-        login [<host>]
-    """
-
     def execute(self, exit=True):
         """
         Execute the actions necessary to perform a `molecule login` and
@@ -61,7 +56,7 @@ class Login(base.Base):
                 raise base.InvalidHost("There are no running hosts.")
 
             # Check whether a host was specified.
-            if self.molecule.args['<host>'] is None:
+            if self.command_args.get('host') is None:
 
                 # One running host is perfect. Login to it.
                 if len(hosts) == 1:
@@ -76,7 +71,7 @@ class Login(base.Base):
 
             else:
                 # If the host was specified, try to use it.
-                hostname = self.molecule.args['<host>']
+                hostname = self.command_args.get('host')
                 match = [x for x in hosts if x.startswith(hostname)]
                 if len(match) == 0:
                     raise subprocess.CalledProcessError(1, None)
@@ -99,7 +94,7 @@ class Login(base.Base):
         except subprocess.CalledProcessError:
             msg = "Unknown host '{}'.\n\nAvailable hosts:\n{}"
             LOG.error(
-                msg.format(self.molecule.args['<host>'], "\n".join(hosts)))
+                msg.format(self.command_args.get('host'), "\n".join(hosts)))
             util.sysexit()
         except base.InvalidHost as e:
             LOG.error(e.message)
@@ -122,3 +117,21 @@ class Login(base.Base):
         a = struct.unpack('HHHH', fcntl.ioctl(sys.stdout.fileno(), TIOCGWINSZ,
                                               s))
         self._pt.setwinsize(a[0], a[1])
+
+
+@click.command()
+@click.argument('host')
+@click.pass_context
+def login(ctx, host):
+    """
+    Initiates an interactive ssh session with the given host.
+
+    \b
+    Usage:
+        login [<host>]
+    """
+    command_args = {'host': host}
+
+    l = Login(ctx.obj.get('args'), command_args)
+    l.execute
+    util.sysexit(l.execute()[0])

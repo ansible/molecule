@@ -124,7 +124,7 @@ class VagrantDriver(basedriver.BaseDriver):
 
     @property
     def serverspec_args(self):
-        return dict()
+        return {}
 
     def up(self, no_provision=True):
         self.molecule.state.change_state('driver', self.name)
@@ -185,10 +185,11 @@ class VagrantDriver(basedriver.BaseDriver):
         ]
 
     def _populate_platform_instances(self):
-        if self.molecule.args.get('--platform'):
-            if len((self.molecule.config.config['vagrant']['platforms']) >
-                   1) and (self.molecule.args['--platform'] == 'all'
-                           ) and not self._updated_multiplatform:
+        if self.molecule.args.get('platform'):
+            if (len(
+                (self.molecule.config.config['vagrant']['platforms']) > 1) and
+                (self.molecule.args.get('platform') == 'all') and
+                    not self._updated_multiplatform):
                 new_instances = []
 
                 for instance in self.molecule.config.config['vagrant'][
@@ -208,16 +209,17 @@ class VagrantDriver(basedriver.BaseDriver):
                 self._updated_multiplatform = True
 
     def _get_provider(self):
-        if self.molecule.args.get('--provider'):
+        if self.molecule.args.get('provider'):
             if not [item
                     for item in self.molecule.config.config['vagrant'][
                         'providers']
-                    if item['name'] == self.molecule.args['--provider']]:
+                    if item['name'] == self.molecule.args.get('provider')]:
                 raise basedriver.InvalidProviderSpecified()
-            self.molecule.state.change_state('default_provider',
-                                             self.molecule.args['--provider'])
-            self.molecule.env['VAGRANT_DEFAULT_PROVIDER'] = self.molecule.args[
-                '--provider']
+            self.molecule.state.change_state(
+                'default_provider', self.molecule.args.get('provider'))
+            self.molecule.env[
+                'VAGRANT_DEFAULT_PROVIDER'] = self.molecule.args.get(
+                    'provider')
         else:
             self.molecule.env[
                 'VAGRANT_DEFAULT_PROVIDER'] = self.default_provider
@@ -225,16 +227,16 @@ class VagrantDriver(basedriver.BaseDriver):
         return self.molecule.env['VAGRANT_DEFAULT_PROVIDER']
 
     def _get_platform(self):
-        if self.molecule.args.get('--platform'):
-            if self.molecule.args['--platform'] != 'all':
+        if self.molecule.args.get('platform'):
+            if self.molecule.args.get('platform') != 'all':
                 if not [item
                         for item in self.molecule.config.config['vagrant'][
                             'platforms']
-                        if item['name'] == self.molecule.args['--platform']]:
+                        if item['name'] == self.molecule.args.get('platform')]:
                     raise basedriver.InvalidPlatformSpecified()
-            self.molecule.state.change_state('default_platform',
-                                             self.molecule.args['--platform'])
-            return self.molecule.args['--platform']
+            self.molecule.state.change_state(
+                'default_platform', self.molecule.args.get('platform'))
+            return self.molecule.args.get('platform')
         return self.default_platform
 
     def _write_vagrant_file(self):
