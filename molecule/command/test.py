@@ -78,7 +78,10 @@ class Test(base.Base):
     type=click.Choice(['passing', 'always', 'never']),
     default=None,
     help='Destroy behavior.')
-@click.option('--sudo/--no-sudo', default=False, help='Run tests with sudo.')
+@click.option(
+    '--sudo/--no-sudo',
+    default=False,
+    help='Enable or disable running tests with sudo. Default is disabled.')
 @click.pass_context
 def test(ctx, driver, platform, provider, destroy, sudo):
     """

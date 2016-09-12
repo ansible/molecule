@@ -82,15 +82,21 @@ class Status(base.Base):
 
 @click.command()
 @click.option(
-    '--platforms/--no-platforms', default=False, help='Specify a platform.')
+    '--platforms/--no-platforms',
+    default=False,
+    help='Enable or disable displaying only platforms. Default is disabled.')
 @click.option(
-    '--providers/--no-providers', default=False, help='Specify a provider.')
+    '--providers/--no-providers',
+    default=False,
+    help='Enable or disable displaying only providers. Default is disabled.')
 @click.option(
-    '--hosts/--no-hosts', default=False, help='Display the available hosts.')
+    '--hosts/--no-hosts',
+    default=False,
+    help='Enable or disable displaying only hosts. Default is disabled.')
 @click.option(
     '--porcelain/--no-porcelain',
     default=False,
-    help='Machine readable output.')
+    help='Machine readable output.  Default is disabled.')
 @click.pass_context
 def status(ctx, platforms, providers, hosts, porcelain):
     """ Prints status of configured instances. """

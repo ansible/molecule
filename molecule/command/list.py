@@ -44,7 +44,7 @@ class List(base.Base):
 @click.option(
     '--porcelain/--no-porcelain',
     default=False,
-    help='Machine readable output.')
+    help='Machine readable output.  Default is disabled.')
 @click.pass_context
 def list(ctx, porcelain):
     """ Prints a list of currently available platforms. """

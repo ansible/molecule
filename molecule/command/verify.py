@@ -69,7 +69,10 @@ class Verify(base.Base):
 @click.command()
 @click.option('--platform', default=None, help='Specify a platform.')
 @click.option('--provider', default=None, help='Specify a provider.')
-@click.option('--sudo/--no-sudo', default=False, help='Run tests with sudo.')
+@click.option(
+    '--sudo/--no-sudo',
+    default=False,
+    help='Enable or disable running tests with sudo. Default is disabled.')
 @click.pass_context
 def verify(ctx, platform, provider, sudo):
     """ Performs verification steps on running instances. """

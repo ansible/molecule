@@ -25,7 +25,10 @@ from molecule import command
 
 
 @click.group()
-@click.option('--debug/--no-debug', default=False)
+@click.option(
+    '--debug/--no-debug',
+    default=False,
+    help='Enable or disable debug mode. Default is disabled.')
 @click.version_option(version=molecule.__version__)
 @click.pass_context
 def cli(ctx, debug):  # pragma: no cover
