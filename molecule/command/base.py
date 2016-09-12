@@ -52,8 +52,11 @@ class Base(object):
         self.args = args
         self.command_args = command_args
 
+        options = args.copy()
+        options.update(command_args)
+
         if not molecule:
-            self.molecule = core.Molecule(self.args, self.command_args)
+            self.molecule = core.Molecule(options)
             self.main()
         else:
             self.molecule = molecule

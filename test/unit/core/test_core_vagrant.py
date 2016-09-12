@@ -26,9 +26,9 @@ from molecule.driver import vagrantdriver
 
 
 @pytest.fixture()
-def molecule_instance(temp_files, molecule_args, molecule_command_args):
+def molecule_instance(temp_files, molecule_args):
     c = temp_files(fixtures=['molecule_vagrant_config'])
-    m = core.Molecule(molecule_args, molecule_command_args)
+    m = core.Molecule(molecule_args)
     m.config = config.Config(configs=c)
     m.main()
 

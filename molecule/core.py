@@ -38,7 +38,7 @@ LOG = util.get_logger(__name__)
 
 
 class Molecule(object):
-    def __init__(self, args, command_args={}):
+    def __init__(self, args):
         """
         Initialize a new molecule class, and returns None.
 
@@ -49,7 +49,6 @@ class Molecule(object):
         """
         self.env = os.environ.copy()
         self.args = args
-        self.command_args = command_args
         self.config = config.Config()
         self._verifier = self._get_verifier()
         self._verifier_options = self._get_verifier_options()

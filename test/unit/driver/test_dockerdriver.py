@@ -51,7 +51,7 @@ elif ansible_v1():
 @pytest.fixture()
 def molecule_instance(temp_files, state_path_without_data):
     c = temp_files(fixtures=['molecule_docker_config'])
-    m = core.Molecule({}, {})
+    m = core.Molecule({})
     m.config = config.Config(configs=c)
     m.state = state.State(state_file=state_path_without_data)
 
