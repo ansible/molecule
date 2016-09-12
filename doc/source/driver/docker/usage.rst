@@ -14,6 +14,9 @@ Usage
         image: ubuntu
         image_version: latest
         privileged: True
+        cap_add:
+          - SYS_ADMIN
+          - MKNOD
         port_bindings:
           80: 80
       - name: foo-02
