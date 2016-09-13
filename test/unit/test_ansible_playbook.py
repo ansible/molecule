@@ -25,7 +25,8 @@ from molecule import ansible_playbook
 
 @pytest.fixture()
 def ansible_playbook_instance(ansible_section_data):
-    return ansible_playbook.AnsiblePlaybook(ansible_section_data['ansible'])
+    return ansible_playbook.AnsiblePlaybook(ansible_section_data['ansible'],
+                                            {})
 
 
 def test_init_arg_loading_string(ansible_playbook_instance):

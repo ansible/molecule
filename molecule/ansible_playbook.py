@@ -27,11 +27,18 @@ LOG = util.get_logger(__name__)
 
 
 class AnsiblePlaybook(object):
-    def __init__(self, args, _env=None, _out=LOG.info, _err=LOG.error):
+    def __init__(self,
+                 args,
+                 connection_params,
+                 _env=None,
+                 _out=LOG.info,
+                 _err=LOG.error):
         """
         Sets up requirements for ansible-playbook, and returns None.
 
         :param args: A dict containing arguments to pass to ansible-playbook.
+        :param connection_params: A dict containing driver specific connection
+         params to pass to ansible-playbook.
         :param _env: An optional environment to pass to underlying :func:`sh`
          call.
         :param _out: An optional function to process STDOUT for underlying
@@ -46,9 +53,11 @@ class AnsiblePlaybook(object):
         self._cli_pos = []
         self.env = _env if _env else os.environ.copy()
 
-        # process arguments passed in (typically from molecule.yml's ansible block)
         for k, v in args.iteritems():
             self.parse_arg(k, v)
+
+        for k, v in connection_params.items():
+            self.add_cli_arg(k, v)
 
         # defaults can be redefined with call to add_env_arg() before baking
         self.add_env_arg('PYTHONUNBUFFERED', '1')

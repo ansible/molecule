@@ -45,8 +45,8 @@ class Syntax(base.Base):
             galaxy.install()
             self.molecule.state.change_state('installed_deps', True)
 
-        ansible = ansible_playbook.AnsiblePlaybook(self.molecule.config.config[
-            'ansible'])
+        ansible = ansible_playbook.AnsiblePlaybook(
+            self.molecule.config.config['ansible'], {})
         ansible.add_cli_arg('syntax-check', True)
         ansible.add_cli_arg('inventory_file', 'localhost,')
         util.print_info('Checking playbook\'s syntax ...')
