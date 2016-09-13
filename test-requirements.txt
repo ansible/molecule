@@ -3,5 +3,4 @@ pytest
 pytest-cov
 pytest-helpers-namespace
 pytest-mock
-tox
 wheel

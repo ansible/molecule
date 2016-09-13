@@ -42,28 +42,26 @@ Dependencies
 Molecule relies on several outside packages and programs to function.
 
 * `Ansible`_
+
+Verifier
+--------
+
 * `Goss`_
-* `Rake`_
-* `Rubocop`_
 * `Serverspec`_
-* `Testinfra`_
+* `Testinfra`_ (default)
 
 Driver
 ------
 
-Dependant upon driver used
-
 * `Docker`_
 * `Openstack`_
-* `Vagrant`_
+* `Vagrant`_ (default)
 
 Provider
 --------
 
-Dependant upon provider used
-
 * `Libvirt`_
-* `VirtualBox`_
+* `VirtualBox`_ (default)
 * `VMware Fusion`_
 * `Parallels`_
 
@@ -73,8 +71,6 @@ Dependant upon provider used
 .. _`Libvirt`: http://libvirt.org
 .. _`OpenStack`: https://www.openstack.org
 .. _`Parallels`: http://www.parallels.com
-.. _`Rake`: https://github.com/ruby/rake
-.. _`Rubocop`: https://github.com/bbatsov/rubocop
 .. _`Serverspec`: http://serverspec.org
 .. _`Testinfra`: http://testinfra.readthedocs.org
 .. _`Vagrant`: http://docs.vagrantup.com/v2
