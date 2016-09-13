@@ -23,6 +23,7 @@
 (
 	cd ${VAGRANT_FUNCTIONAL_TEST_BASE_DIR}/command_test
 
+	bundle install
 	molecule test
 	molecule test --driver vagrant
 )

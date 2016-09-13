@@ -9,4 +9,5 @@
 .tox/
 .vagrant/
 doc/build/
+test/functional/driver/*/scenarios/command_*/Gemfile.lock
 test/unit/support/ansible_inventory

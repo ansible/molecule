@@ -23,9 +23,16 @@
 TMP_DIR=$(mktemp -d /tmp/tmp.XXXXXXXXXX)
 
 (
+	cd ${DOCKER_FUNCTIONAL_TEST_BASE_DIR}/command_init_serverspec
+
+	bundle install
+)
+
+(
 	cd ${TMP_DIR}
 	molecule init --role command-test-serverspec --driver docker --verifier serverspec
 	cd command-test-serverspec
+
 	molecule test
 )
 
