@@ -39,19 +39,26 @@ There is also a `pip pattern` for development mode:
 Testing
 =======
 
-Test Dependencies
------------------
+Dependencies
+------------
 
-Install serverspec dependencies:
+Tests will be skipped when the driver's binary is not present. `Serverspec`
+scenarios do require a working ruby, `Bunder`_, and `Rake`_.
+
+Install the test framework `Tox`_.
 
 .. code-block:: bash
 
-  $ bundle install
+  $ pip install tox
+
+.. _`Bundler`: http://bundler.io
+.. _`Rake`: https://github.com/ruby/rake
+.. _`Serverspec`: http://serverspec.org
 
 Unit
 ----
 
-Unit tests are invoked by `Tox`_.
+Unit tests are invoked by `Tox`_, and composed of a generative envlist.
 
 .. code-block:: bash
 
@@ -61,7 +68,7 @@ Unit tests are invoked by `Tox`_.
 Functional
 ----------
 
-Functional tests are invoked by `Tox`_.
+Functional tests are invoked by `Tox`_, and composed of a generative envlist.
 
 .. code-block:: bash
 
