@@ -213,11 +213,11 @@ def test_destroy(docker_instance):
 
 
 def test_provision(docker_instance):
+    molecule_instance.driver = docker_instance
     docker_instance.up()
-    pb = docker_instance.ansible_connection_params
-    pb['playbook'] = 'playbook.yml'
-    pb['inventory'] = 'test1,test2,'
-    ansible = ansible_playbook.AnsiblePlaybook(pb)
+    args = {'playbook': 'playbook.yml', 'inventory': 'test1,test2,'}
+    ansible = ansible_playbook.AnsiblePlaybook(
+        args, molecule_instance.driver.ansible_connection_params)
 
     # TODO(retr0h): Understand why driver is None
     assert (None, '') == ansible.execute()
@@ -229,10 +229,9 @@ def test_inventory_generation(molecule_instance, docker_instance):
     molecule_instance.driver.up()
     molecule_instance.create_inventory_file()
 
-    pb = molecule_instance.driver.ansible_connection_params
-    pb['playbook'] = 'playbook.yml'
-    pb['inventory'] = 'test1,test2,'
-    ansible = ansible_playbook.AnsiblePlaybook(pb)
+    args = {'playbook': 'playbook.yml', 'inventory': 'test1,test2,'}
+    ansible = ansible_playbook.AnsiblePlaybook(
+        args, molecule_instance.driver.ansible_connection_params)
 
     for instance in molecule_instance.driver.instances:
         expected = '{} ansible_connection=docker\n'.format(instance['name'])

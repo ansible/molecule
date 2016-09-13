@@ -47,7 +47,8 @@ class Testinfra(base.Base):
         :return: None
         """
         ansible = ansible_playbook.AnsiblePlaybook(
-            self._molecule.config.config['ansible'], _env=self._molecule.env)
+            self._molecule.config.config['ansible'], {},
+            _env=self._molecule.env)
 
         testinfra_options = config.merge_dicts(
             self._molecule.driver.testinfra_args,

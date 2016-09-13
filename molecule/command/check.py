@@ -42,11 +42,10 @@ class Check(base.Base):
             LOG.error('ERROR: {}'.format(msg))
             util.sysexit()
 
-        ansible = ansible_playbook.AnsiblePlaybook(self.molecule.config.config[
-            'ansible'])
+        ansible = ansible_playbook.AnsiblePlaybook(
+            self.molecule.config.config['ansible'],
+            self.molecule.driver.ansible_connection_params)
         ansible.add_cli_arg('check', True)
-        for k, v in self.molecule.driver.ansible_connection_params.items():
-            ansible.add_cli_arg(k, v)
 
         util.print_info('Performing a "Dry Run" of playbook ...')
         return ansible.execute(hide_errors=True)

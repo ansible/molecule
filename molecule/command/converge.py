@@ -76,12 +76,9 @@ class Converge(base.Base):
             galaxy.install()
             self.molecule.state.change_state('installed_deps', True)
 
-        ansible = ansible_playbook.AnsiblePlaybook(self.molecule.config.config[
-            'ansible'])
-
-        # Params to work with driver
-        for k, v in self.molecule.driver.ansible_connection_params.items():
-            ansible.add_cli_arg(k, v)
+        ansible = ansible_playbook.AnsiblePlaybook(
+            self.molecule.config.config['ansible'],
+            self.molecule.driver.ansible_connection_params)
 
         # Target tags passed in via CLI
         if self.command_args.get('tags'):
