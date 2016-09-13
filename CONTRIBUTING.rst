@@ -51,6 +51,12 @@ Install the test framework `Tox`_.
 
   $ pip install tox
 
+Install the remaining requirements in a venv (optional):
+
+.. code-block:: bash
+
+  $ pip install -r test-requirements.txt -r requirements.txt
+
 .. _`Bundler`: http://bundler.io
 .. _`Rake`: https://github.com/ruby/rake
 .. _`Serverspec`: http://serverspec.org
