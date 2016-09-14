@@ -66,7 +66,8 @@ def test_parse_arg_config_file(ansible_playbook_instance):
 
 def test_parse_arg_playbook(ansible_playbook_instance):
     assert ansible_playbook_instance._cli.get('playbook') is None
-    assert 'playbook.yml' == ansible_playbook_instance._playbook
+    assert 'playbook_data.yml' == pytest.helpers.os_split(
+        ansible_playbook_instance._playbook)[-1]
 
 
 def test_parse_arg_host_vars(ansible_playbook_instance):
