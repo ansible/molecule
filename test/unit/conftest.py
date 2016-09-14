@@ -40,6 +40,27 @@ def random_string(l=5):
     return ''.join(random.choice(string.ascii_uppercase) for _ in range(l))
 
 
+@pytest.helpers.register
+def os_split(s):
+    rest, tail = os.path.split(s)
+    if rest in ('', os.path.sep):
+        return tail,
+    return os_split(rest) + (tail, )
+
+
+@pytest.fixture()
+def temp_dir(tmpdir, request):
+    d = tmpdir.mkdir(random_string())
+    os.chdir(d.strpath)
+
+    def cleanup():
+        shutil.rmtree(d.strpath)
+
+    request.addfinalizer(cleanup)
+
+    return d.strpath
+
+
 @pytest.fixture()
 def temp_files(tmpdir, request):
     def wrapper(fixtures=[]):
@@ -49,12 +70,6 @@ def temp_files(tmpdir, request):
             c = d.join(os.extsep.join((fixture, 'yml')))
             c.write(request.getfuncargvalue(fixtures[index]))
             confs.append(c.strpath)
-
-        # TODO(retr0h): Remove - belongs elsewhere
-        pbook = d.join(os.extsep.join(('playbook', 'yml')))
-        data = [{'hosts': 'all', 'tasks': [{'command': 'echo'}]}]
-        pbook.write(data)
-        os.chdir(d.strpath)
 
         def cleanup():
             shutil.rmtree(d.strpath)
@@ -67,7 +82,7 @@ def temp_files(tmpdir, request):
 
 
 @pytest.fixture()
-def molecule_instance(temp_files, state_path_without_data):
+def molecule_instance(temp_dir, temp_files, state_path_without_data):
     c = temp_files(fixtures=['molecule_vagrant_config'])
     m = core.Molecule({})
     m.config = config.Config(configs=c)
@@ -193,7 +208,7 @@ def openstack_section_data():
 
 
 @pytest.fixture()
-def ansible_section_data():
+def ansible_section_data(playbook):
     return {
         'ansible': {
             'timeout': 30,
@@ -214,7 +229,7 @@ def ansible_section_data():
             'galaxy': {},
             'config_file': 'config_file',
             'inventory_file': 'inventory_file',
-            'playbook': 'playbook.yml',
+            'playbook': playbook,
             'raw_env_vars': {
                 'FOO': 'bar'
             }
@@ -257,12 +272,14 @@ def state_path_without_data(tmpdir, request):
     return c.strpath
 
 
-@pytest.helpers.register
-def os_split(s):
-    rest, tail = os.path.split(s)
-    if rest in ('', os.path.sep):
-        return tail,
-    return os_split(rest) + (tail, )
+@pytest.fixture()
+def playbook_data():
+    return [{'hosts': 'all', 'tasks': [{'command': 'echo'}]}]
+
+
+@pytest.fixture()
+def playbook(temp_files):
+    return temp_files(fixtures=['playbook_data'])[0]
 
 
 @pytest.fixture()

@@ -25,14 +25,6 @@ import pytest
 from molecule.command import init
 
 
-@pytest.fixture()
-def molecule_dir(tmpdir):
-    d = tmpdir.mkdir('test_molecule')
-    os.chdir(d.strpath)
-
-    return d.strpath
-
-
 @pytest.fixture
 def init_command_args():
     return {'role': 'docker_test',
@@ -40,27 +32,26 @@ def init_command_args():
             'verifier': 'testinfra'}
 
 
-def test_create_role(molecule_dir, init_command_args):
+def test_create_role(temp_dir, init_command_args):
     init_command_args.update({'role': 'unit_test1'})
     i = init.Init({}, init_command_args)
     with pytest.raises(SystemExit):
         i.execute()
 
-    assert os.path.isdir(os.path.join(molecule_dir, 'unit_test1'))
-    assert os.path.isfile(
-        os.path.join(molecule_dir, 'unit_test1', 'molecule.yml'))
+    assert os.path.isdir(os.path.join(temp_dir, 'unit_test1'))
+    assert os.path.isfile(os.path.join(temp_dir, 'unit_test1', 'molecule.yml'))
 
 
-def test_create_role_in_existing_directory(molecule_dir, init_command_args):
+def test_create_role_in_existing_directory(temp_dir, init_command_args):
     del init_command_args['role']
     i = init.Init({}, init_command_args)
     with pytest.raises(SystemExit):
         i.execute()
 
-    assert os.path.isdir(os.path.join(molecule_dir))
+    assert os.path.isdir(os.path.join(temp_dir))
 
 
-def test_create_role_existing_dir_error(init_command_args):
+def test_create_role_existing_dir_error(temp_dir, init_command_args):
     os.mkdir('test1')
     init_command_args.update({'role': 'test1'})
     i = init.Init({}, init_command_args)
@@ -70,27 +61,26 @@ def test_create_role_existing_dir_error(init_command_args):
 
 
 @pytest.mark.parametrize('driver', ['vagrant', 'docker', 'openstack'])
-def test_create_role_with_driver_flag(driver, molecule_dir, init_command_args):
+def test_create_role_with_driver_flag(driver, temp_dir, init_command_args):
     init_command_args.update({'driver': driver})
     i = init.Init({}, init_command_args)
     with pytest.raises(SystemExit):
         i.execute()
 
-    os.chdir(os.path.join(molecule_dir, 'docker_test'))
+    os.chdir(os.path.join(temp_dir, 'docker_test'))
 
     with open('molecule.yml') as f:
         assert driver in f.read()
 
 
 @pytest.mark.parametrize('verifier', ['testinfra', 'serverspec', 'goss'])
-def test_create_role_with_verifier_flag(verifier, molecule_dir,
-                                        init_command_args):
+def test_create_role_with_verifier_flag(verifier, temp_dir, init_command_args):
     init_command_args.update({'verifier': verifier})
     i = init.Init({}, init_command_args)
     with pytest.raises(SystemExit):
         i.execute()
 
-    os.chdir(os.path.join(molecule_dir, 'docker_test'))
+    os.chdir(os.path.join(temp_dir, 'docker_test'))
 
     with open('molecule.yml') as f:
         assert verifier in f.read()

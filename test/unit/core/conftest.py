@@ -35,8 +35,8 @@ def molecule_args():
 
 
 @pytest.fixture()
-def molecule_default_provider_instance(temp_files, state_path_without_data,
-                                       molecule_args):
+def molecule_default_provider_instance(temp_dir, temp_files,
+                                       state_path_without_data, molecule_args):
     c = temp_files(fixtures=['molecule_vagrant_config'])
     m = core.Molecule(molecule_args)
     m.config = config.Config(configs=c)

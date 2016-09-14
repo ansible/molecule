@@ -26,7 +26,7 @@ from molecule.driver import dockerdriver
 
 
 @pytest.fixture()
-def molecule_instance(temp_files, molecule_args):
+def molecule_instance(temp_dir, temp_files, molecule_args):
     c = temp_files(fixtures=['molecule_docker_config'])
     m = core.Molecule(molecule_args)
     m.config = config.Config(configs=c)

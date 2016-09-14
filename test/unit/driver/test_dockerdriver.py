@@ -49,7 +49,7 @@ elif ansible_v1():
 
 
 @pytest.fixture()
-def molecule_instance(temp_files, state_path_without_data):
+def molecule_instance(temp_dir, temp_files, state_path_without_data):
     c = temp_files(fixtures=['molecule_docker_config'])
     m = core.Molecule({})
     m.config = config.Config(configs=c)
@@ -212,31 +212,31 @@ def test_destroy(docker_instance):
     assert 'not_created' in docker_instance.status()[1].state
 
 
-def test_provision(docker_instance):
+def test_provision(molecule_instance, docker_instance):
     molecule_instance.driver = docker_instance
+    molecule_instance.config.config['ansible'].update(
+        {'inventory': 'test1,test2,'})
     docker_instance.up()
-    args = {'playbook': 'playbook.yml', 'inventory': 'test1,test2,'}
     ansible = ansible_playbook.AnsiblePlaybook(
-        args, molecule_instance.driver.ansible_connection_params)
+        molecule_instance.config.config['ansible'],
+        molecule_instance.driver.ansible_connection_params)
 
-    # TODO(retr0h): Understand why driver is None
     assert (None, '') == ansible.execute()
 
 
 def test_inventory_generation(molecule_instance, docker_instance):
     molecule_instance.driver = docker_instance
-
+    molecule_instance.config.config['ansible'].update(
+        {'inventory': 'test1,test2,'})
     molecule_instance.driver.up()
     molecule_instance.create_inventory_file()
-
-    args = {'playbook': 'playbook.yml', 'inventory': 'test1,test2,'}
     ansible = ansible_playbook.AnsiblePlaybook(
-        args, molecule_instance.driver.ansible_connection_params)
+        molecule_instance.config.config['ansible'],
+        molecule_instance.driver.ansible_connection_params)
 
     for instance in molecule_instance.driver.instances:
         expected = '{} ansible_connection=docker\n'.format(instance['name'])
 
         assert expected == molecule_instance.driver.inventory_entry(instance)
 
-    # TODO(retr0h): Understand why driver is None
     assert (None, '') == ansible.execute()

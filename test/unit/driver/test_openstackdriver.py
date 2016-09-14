@@ -31,7 +31,7 @@ from molecule.driver import openstackdriver
 
 
 @pytest.fixture()
-def molecule_instance(temp_files, state_path_without_data):
+def molecule_instance(temp_dir, temp_files, state_path_without_data):
     c = temp_files(fixtures=['molecule_openstack_config'])
     m = core.Molecule({})
     m.config = config.Config(configs=c)

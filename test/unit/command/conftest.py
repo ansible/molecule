@@ -18,33 +18,7 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import os
-import shutil
-
 import pytest
-import yaml
-
-
-@pytest.fixture()
-def molecule_file(tmpdir, request, molecule_vagrant_config):
-    d = tmpdir.mkdir('molecule')
-    c = d.join(os.extsep.join(('molecule', 'yml')))
-    data = molecule_vagrant_config
-    c.write(data)
-
-    pbook = d.join(os.extsep.join(('playbook', 'yml')))
-    data = [{'hosts': 'all', 'tasks': [{'command': 'echo'}]}]
-    pbook.write(yaml.safe_dump(data))
-
-    os.chdir(d.strpath)
-
-    def cleanup():
-        os.remove(c.strpath)
-        shutil.rmtree(d.strpath)
-
-    request.addfinalizer(cleanup)
-
-    return c.strpath
 
 
 @pytest.fixture
