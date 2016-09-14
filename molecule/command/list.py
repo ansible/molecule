@@ -46,7 +46,7 @@ class List(base.Base):
     default=False,
     help='Machine readable output.  Default is disabled.')
 @click.pass_context
-def list(ctx, porcelain):
+def list(ctx, porcelain):  # pragma: no cover
     """ Prints a list of currently available platforms. """
     command_args = {'porcelain': porcelain}
 

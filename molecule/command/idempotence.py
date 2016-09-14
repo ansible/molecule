@@ -87,7 +87,7 @@ class Idempotence(base.Base):
 @click.option('--platform', default=None, help='Specify a platform.')
 @click.option('--provider', default=None, help='Specify a provider.')
 @click.pass_context
-def idempotence(ctx, platform, provider):
+def idempotence(ctx, platform, provider):  # pragma: no cover
     """ Provisions instances and parses output to determine idempotence. """
     command_args = {'platform': platform, 'provider': provider}
 

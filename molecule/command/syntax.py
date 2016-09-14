@@ -56,7 +56,7 @@ class Syntax(base.Base):
 
 @click.command()
 @click.pass_context
-def syntax(ctx):
+def syntax(ctx):  # pragma: no cover
     """ Performs a syntax check on the current role. """
     s = Syntax(ctx.obj.get('args'), {})
     s.execute

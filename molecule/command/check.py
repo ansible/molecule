@@ -53,7 +53,7 @@ class Check(base.Base):
 
 @click.command()
 @click.pass_context
-def check(ctx):
+def check(ctx):  # pragma: no cover
     """ Performs a check ("Dry Run") on the current role. """
     c = Check(ctx.obj.get('args'), {})
     c.execute

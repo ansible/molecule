@@ -74,7 +74,7 @@ class Verify(base.Base):
     default=False,
     help='Enable or disable running tests with sudo. Default is disabled.')
 @click.pass_context
-def verify(ctx, platform, provider, sudo):
+def verify(ctx, platform, provider, sudo):  # pragma: no cover
     """ Performs verification steps on running instances. """
     command_args = {'platform': platform, 'provider': provider, 'sudo': sudo}
 

@@ -131,7 +131,7 @@ class Converge(base.Base):
     default=None,
     help='Comma separated group of ansible tags to target.')
 @click.pass_context
-def converge(ctx, driver, platform, provider, tags):
+def converge(ctx, driver, platform, provider, tags):  # pragma: no cover
     """ Provisions all instances defined in molecule.yml. """
     command_args = {'driver': driver,
                     'platform': platform,

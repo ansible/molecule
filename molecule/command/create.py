@@ -60,7 +60,7 @@ class Create(base.Base):
 @click.option('--platform', default=None, help='Specify a platform.')
 @click.option('--provider', default=None, help='Specify a provider.')
 @click.pass_context
-def create(ctx, driver, platform, provider):
+def create(ctx, driver, platform, provider):  # pragma: no cover
     """ Creates all instances defined in molecule.yml. """
     command_args = {'driver': driver,
                     'platform': platform,
