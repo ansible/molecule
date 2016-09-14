@@ -29,61 +29,61 @@ def serverspec_instance(molecule_instance):
 
 
 @pytest.fixture
-def mocked_code_verifier(mocker):
+def patched_code_verifier(mocker):
     return mocker.patch('molecule.verifier.serverspec.Serverspec._rubocop')
 
 
 @pytest.fixture
-def mocked_test_verifier(mocker):
+def patched_test_verifier(mocker):
     return mocker.patch('molecule.verifier.serverspec.Serverspec._rake')
 
 
 @pytest.fixture
-def mocked_get_tests(mocker):
+def patched_get_tests(mocker):
     return mocker.patch('molecule.verifier.serverspec.Serverspec._get_tests')
 
 
-def test_execute(mocked_code_verifier, mocked_test_verifier, mocked_get_tests,
-                 serverspec_instance):
-    mocked_get_tests.return_value = True
+def test_execute(patched_code_verifier, patched_test_verifier,
+                 patched_get_tests, serverspec_instance):
+    patched_get_tests.return_value = True
     serverspec_instance.execute()
 
     kwargs = {'debug': False}
-    mocked_code_verifier.assert_called_once_with('spec', **kwargs)
-    mocked_test_verifier.assert_called_once_with('test/rakefile_file',
-                                                 **kwargs)
+    patched_code_verifier.assert_called_once_with('spec', **kwargs)
+    patched_test_verifier.assert_called_once_with('test/rakefile_file',
+                                                  **kwargs)
 
 
-def test_execute_no_tests(mocked_code_verifier, mocked_test_verifier,
-                          mocked_get_tests, serverspec_instance):
-    mocked_get_tests.return_value = False
+def test_execute_no_tests(patched_code_verifier, patched_test_verifier,
+                          patched_get_tests, serverspec_instance):
+    patched_get_tests.return_value = False
     serverspec_instance.execute()
 
-    assert not mocked_code_verifier.called
-    assert not mocked_test_verifier.called
+    assert not patched_code_verifier.called
+    assert not patched_test_verifier.called
 
 
 def test_rake(mocker, serverspec_instance):
-    mocked = mocker.patch('sh.rake')
+    patched_rake = mocker.patch('sh.rake')
     kwargs = {'debug': True, 'out': None, 'err': '/dev/null'}
     serverspec_instance._rake('/tmp/rakefile', **kwargs)
 
-    ca = mocked.call_args[1]
+    ca = patched_rake.call_args[1]
     assert '/tmp/rakefile' == ca.get('rakefile')
     assert ca.get('trace')
 
 
 def test_rubocop(mocker, serverspec_instance):
-    mocked = mocker.patch('sh.rubocop')
+    patched_rubocop = mocker.patch('sh.rubocop')
     kwargs = {'pattern': '**/**/**/*',
               'debug': True,
               'out': '/dev/null',
               'err': None}
     serverspec_instance._rubocop('spec', **kwargs)
 
-    assert ('spec**/**/**/*', ) == mocked.call_args[0]
+    assert ('spec**/**/**/*', ) == patched_rubocop.call_args[0]
 
-    ca = mocked.call_args[1]
+    ca = patched_rubocop.call_args[1]
     assert ca.get('debug')
 
 

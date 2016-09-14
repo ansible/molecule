@@ -29,29 +29,29 @@ def testinfra_instance(molecule_instance):
 
 
 @pytest.fixture
-def mocked_code_verifier(mocker):
+def patched_code_verifier(mocker):
     return mocker.patch('molecule.verifier.testinfra.Testinfra._flake8')
 
 
 @pytest.fixture
-def mocked_test_verifier(mocker):
+def patched_test_verifier(mocker):
     return mocker.patch('molecule.verifier.testinfra.Testinfra._testinfra')
 
 
 @pytest.fixture
-def mocked_get_tests(mocker):
+def patched_get_tests(mocker):
     return mocker.patch('molecule.verifier.testinfra.Testinfra._get_tests')
 
 
-def test_execute(mocked_code_verifier, mocked_test_verifier, mocked_get_tests,
-                 testinfra_instance):
-    mocked_get_tests.return_value = ['/test/1', '/test/2']
+def test_execute(patched_code_verifier, patched_test_verifier,
+                 patched_get_tests, testinfra_instance):
+    patched_get_tests.return_value = ['/test/1', '/test/2']
     testinfra_instance.execute()
 
-    mocked_code_verifier.assert_called_once_with(['/test/1', '/test/2'])
-    assert (['/test/1', '/test/2'], ) == mocked_test_verifier.call_args[0]
+    patched_code_verifier.assert_called_once_with(['/test/1', '/test/2'])
+    assert (['/test/1', '/test/2'], ) == patched_test_verifier.call_args[0]
 
-    ca = mocked_test_verifier.call_args[1]
+    ca = patched_test_verifier.call_args[1]
     assert not ca['debug']
     assert not ca['sudo']
     assert 'ansible' == ca['connection']
@@ -59,33 +59,33 @@ def test_execute(mocked_code_verifier, mocked_test_verifier, mocked_get_tests,
     assert 'env' in ca
 
 
-def test_execute_no_tests(mocked_code_verifier, mocked_test_verifier,
-                          mocked_get_tests, testinfra_instance):
-    mocked_get_tests.return_value = []
+def test_execute_no_tests(patched_code_verifier, patched_test_verifier,
+                          patched_get_tests, testinfra_instance):
+    patched_get_tests.return_value = []
     testinfra_instance.execute()
 
-    assert not mocked_code_verifier.called
-    assert not mocked_test_verifier.called
+    assert not patched_code_verifier.called
+    assert not patched_test_verifier.called
 
 
-def test_testinfra(mocker, mocked_get_tests, testinfra_instance):
-    mocked = mocker.patch('sh.testinfra')
+def test_testinfra(mocker, patched_get_tests, testinfra_instance):
+    patched_testinfra = mocker.patch('sh.testinfra')
     args = ['/tmp/ansible-inventory']
     kwargs = {'debug': True, 'out': None, 'err': None}
     testinfra_instance._testinfra(*args, **kwargs)
 
-    assert ('/tmp/ansible-inventory', ) == mocked.call_args[0]
+    assert ('/tmp/ansible-inventory', ) == patched_testinfra.call_args[0]
 
-    ca = mocked.call_args[1]
+    ca = patched_testinfra.call_args[1]
     assert ca.get('debug')
 
 
 def test_flake8(mocker, testinfra_instance):
-    mocked = mocker.patch('sh.flake8')
+    patched_flake8 = mocker.patch('sh.flake8')
     args = ['test1.py', 'test2.py']
     testinfra_instance._flake8(args)
 
-    mocked.assert_called_once_with(args)
+    patched_flake8.assert_called_once_with(args)
 
 
 def test_get_tests(testinfra_instance):

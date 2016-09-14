@@ -49,13 +49,14 @@ def test_get_ssh_config(molecule_instance):
 
 
 def test_write_ssh_config(mocker, molecule_instance):
-    mocked_out = mocker.patch(
+    patched_conf = mocker.patch(
         'molecule.driver.vagrantdriver.VagrantDriver.conf')
-    mocked_out.return_value = 'mocked_out'
-    mocked_write = mocker.patch('molecule.util.write_file')
+    patched_conf.return_value = 'patched'
+    patched_write_file = mocker.patch('molecule.util.write_file')
     molecule_instance.write_ssh_config()
 
-    mocked_write.assert_called_once_with('.vagrant/ssh-config', 'mocked_out')
+    patched_write_file.assert_called_once_with('.vagrant/ssh-config',
+                                               'patched')
 
 
 def test_print_valid_platforms(capsys, molecule_instance):
