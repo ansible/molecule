@@ -29,28 +29,28 @@ def goss_instance(molecule_instance):
 
 
 @pytest.fixture
-def mocked_test_verifier(mocker):
+def patched_test_verifier(mocker):
     return mocker.patch('molecule.verifier.goss.Goss._goss')
 
 
 @pytest.fixture
-def mocked_get_tests(mocker):
+def patched_get_tests(mocker):
     return mocker.patch('molecule.verifier.goss.Goss._get_tests')
 
 
-def test_execute(mocked_test_verifier, mocked_get_tests, goss_instance):
-    mocked_get_tests.return_value = True
+def test_execute(patched_test_verifier, patched_get_tests, goss_instance):
+    patched_get_tests.return_value = True
     goss_instance.execute()
 
-    mocked_test_verifier.assert_called_once()
+    patched_test_verifier.assert_called_once()
 
 
-def test_execute_no_tests(mocked_test_verifier, mocked_get_tests,
+def test_execute_no_tests(patched_test_verifier, patched_get_tests,
                           goss_instance):
-    mocked_get_tests.return_value = False
+    patched_get_tests.return_value = False
     goss_instance.execute()
 
-    assert not mocked_test_verifier.called
+    assert not patched_test_verifier.called
 
 
 def test_goss(patched_ansible_playbook, goss_instance):

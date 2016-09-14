@@ -98,10 +98,10 @@ def test_serverspec_args(openstack_instance):
 
 
 def test_reset_known_hosts(openstack_instance, mocker):
-    mocked = mocker.patch('os.system')
+    patched_os = mocker.patch('os.system')
     openstack_instance._reset_known_host_key('test')
 
-    mocked.assert_called_once_with('ssh-keygen -R test')
+    patched_os.assert_called_once_with('ssh-keygen -R test')
 
 
 def test_generate_temp_ssh_key(openstack_instance):
