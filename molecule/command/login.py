@@ -120,15 +120,15 @@ class Login(base.Base):
 
 
 @click.command()
-@click.argument('host')
+@click.option('--host', default=None, help='Host to access.')
 @click.pass_context
 def login(ctx, host):
     """
     Initiates an interactive ssh session with the given host.
 
     \b
-    Usage:
-        login [<host>]
+    If no `--host` flag provided, will login to the instance.  If more than
+    once instance exists, the `--host` flag must be provided.
     """
     command_args = {'host': host}
 

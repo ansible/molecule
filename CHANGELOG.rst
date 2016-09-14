@@ -22,6 +22,8 @@ Breaking Changes
   other than vagrant.
 * The ``init`` subcommand requires a ``--verifier`` flag when creating a
   verifier other than testinfra.
+* The ``login`` subcommand requires a ``--host`` flag when more than one
+  instance exists.
 
 1.11
 ====
