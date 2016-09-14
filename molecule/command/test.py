@@ -83,7 +83,7 @@ class Test(base.Base):
     default=False,
     help='Enable or disable running tests with sudo. Default is disabled.')
 @click.pass_context
-def test(ctx, driver, platform, provider, destroy, sudo):
+def test(ctx, driver, platform, provider, destroy, sudo):  # pragma: no cover
     """
     Runs a series of commands (defined in config) against instances for a full
     test/verify run.

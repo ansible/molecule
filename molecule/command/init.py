@@ -139,7 +139,7 @@ class Init(base.Base):
     default='testinfra',
     help='Name of verifier to initialize.')
 @click.pass_context
-def init(ctx, role, driver, verifier):
+def init(ctx, role, driver, verifier):  # pragma: no cover
     """
     Creates the scaffolding for a new role intended for use with molecule.
     """

@@ -53,11 +53,10 @@ class Login(base.Base):
         try:
             # Nowhere to login to if there is no running host.
             if len(hosts) == 0:
-                raise base.InvalidHost("There are no running hosts.")
+                raise base.InvalidHost('There are no running hosts.')
 
             # Check whether a host was specified.
             if self.command_args.get('host') is None:
-
                 # One running host is perfect. Login to it.
                 if len(hosts) == 1:
                     hostname = hosts[0]
@@ -65,9 +64,9 @@ class Login(base.Base):
                 # But too many hosts is trouble as well.
                 else:
                     raise base.InvalidHost(
-                        "There are {} running hosts. You can only login to one at a time.\n\n"
-                        "Available hosts:\n{}".format(
-                            len(hosts), "\n".join(hosts)))
+                        'There are {} running hosts. You can only login to one at a time.\n\n'
+                        'Available hosts:\n{}'.format(
+                            len(hosts), '\n'.join(sorted(hosts))))
 
             else:
                 # If the host was specified, try to use it.
@@ -84,32 +83,36 @@ class Login(base.Base):
                     else:
                         raise base.InvalidHost(
                             "There are {} hosts that match '{}'. You can only login to one at a time.\n\n"
-                            "Available hosts:\n{}".format(
-                                len(match), hostname, "\n".join(hosts)))
+                            'Available hosts:\n{}'.format(
+                                len(match), hostname, '\n'.join(sorted(
+                                    hosts))))
                 hostname = match[0]
-
-            login_cmd = self.molecule.driver.login_cmd(hostname)
-            login_args = self.molecule.driver.login_args(hostname)
 
         except subprocess.CalledProcessError:
             msg = "Unknown host '{}'.\n\nAvailable hosts:\n{}"
             LOG.error(
-                msg.format(self.command_args.get('host'), "\n".join(hosts)))
+                msg.format(self.command_args.get('host'), '\n'.join(hosts)))
             util.sysexit()
         except base.InvalidHost as e:
             LOG.error(e.message)
             util.sysexit()
 
+        self._get_login(hostname)
+        return None, None
+
+    def _get_login(self, hostname):  # pragma: no cover
+        login_cmd = self.molecule.driver.login_cmd(hostname)
+        login_args = self.molecule.driver.login_args(hostname)
+
         lines, columns = os.popen('stty size', 'r').read().split()
         dimensions = (int(lines), int(columns))
-        self.molecule._pt = pexpect.spawn(
+        self._pt = pexpect.spawn(
             '/usr/bin/env ' + login_cmd.format(*login_args),
             dimensions=dimensions)
         signal.signal(signal.SIGWINCH, self._sigwinch_passthrough)
-        self.molecule._pt.interact()
-        return None, None
+        self._pt.interact()
 
-    def _sigwinch_passthrough(self, sig, data):
+    def _sigwinch_passthrough(self, sig, data):  # pragma: no cover
         TIOCGWINSZ = 1074295912  # assume
         if 'TIOCGWINSZ' in dir(termios):
             TIOCGWINSZ = termios.TIOCGWINSZ
@@ -122,7 +125,7 @@ class Login(base.Base):
 @click.command()
 @click.option('--host', default=None, help='Host to access.')
 @click.pass_context
-def login(ctx, host):
+def login(ctx, host):  # pragma: no cover
     """
     Initiates an interactive ssh session with the given host.
 

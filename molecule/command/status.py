@@ -60,7 +60,7 @@ class Status(base.Base):
             data = []
 
             for item in status:
-                if item.state != 'not_created':
+                if item.state != 'not_created':  # pragma: no cover
                     state = item.state
                 else:
                     state = item.state
@@ -98,7 +98,7 @@ class Status(base.Base):
     default=False,
     help='Machine readable output.  Default is disabled.')
 @click.pass_context
-def status(ctx, platforms, providers, hosts, porcelain):
+def status(ctx, platforms, providers, hosts, porcelain):  # pragma: no cover
     """ Prints status of configured instances. """
     command_args = {'platforms': platforms,
                     'providers': providers,

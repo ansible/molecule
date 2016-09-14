@@ -24,7 +24,7 @@ from molecule.command import status
 
 
 def test_execute(capsys, patched_main, molecule_instance):
-    molecule_instance.args = {'--porcelain': False}
+    molecule_instance.args = {'porcelain': False}
 
     s = status.Status({}, {}, molecule_instance)
     result = s.execute()
