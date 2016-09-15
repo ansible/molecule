@@ -18,44 +18,26 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import subprocess
-
-from molecule.command import status
+from molecule.command import list as command_list
 
 
 def test_execute(capsys, patched_main, molecule_instance):
-    s = status.Status({}, {}, molecule_instance)
-    result = s.execute()
+    l = command_list.List({}, {}, molecule_instance)
+    result = l.execute()
 
     out, _ = capsys.readouterr()
 
     assert 'ubuntu  (default)' in out
-    assert 'virtualbox  (default)' in out
-    (None, None) == result
+    assert (None, None) == result
 
 
 def test_execute_with_porcelain(capsys, patched_main, molecule_instance):
     command_args = {'porcelain': True}
 
-    s = status.Status({}, command_args, molecule_instance)
-    result = s.execute()
+    l = command_list.List({}, command_args, molecule_instance)
+    result = l.execute()
 
     out, _ = capsys.readouterr()
 
     assert 'ubuntu  d' in out
-    assert 'virtualbox  d' in out
-    (None, None) == result
-
-
-def test_execute_exits_when_command_fails_and_exit_flag_set(
-        patched_logger_error, mocker, patched_main, molecule_instance):
-    command_args = {'porcelain': True}
-    patched_status = mocker.patch(
-        'molecule.driver.vagrantdriver.VagrantDriver.status')
-    patched_status.side_effect = subprocess.CalledProcessError(1, None, None)
-
-    s = status.Status({}, command_args, molecule_instance)
-    result = s.execute()
-
-    patched_logger_error.assert_called_once_with('')
-    assert (1, '') == result
+    assert (None, None) == result
