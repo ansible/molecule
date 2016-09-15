@@ -20,6 +20,8 @@
 
 import binascii
 import os
+import tempfile
+import uuid
 
 import colorama
 import pytest
@@ -135,8 +137,34 @@ def test_sysexit_with_custom_code():
     assert 2 == e.value.code
 
 
-def test_get_cookiecutter_template_dir():
-    result = util._get_cookiecutter_template_dir('foo')
+def test_resolve_template_dir_relative():
+    result = util._resolve_template_dir('foo')
+
     parts = pytest.helpers.os_split(result)
 
     assert ('molecule', 'cookiecutter', 'foo') == parts[-3:]
+
+
+def test_resolve_template_dir_absolute():
+    result = util._resolve_template_dir('/foo/bar')
+
+    parts = pytest.helpers.os_split(result)
+
+    assert ('foo', 'bar') == parts[-2:]
+
+
+def test_process_templates():
+    template_dir = os.path.join(os.path.dirname(__file__), '../resources/templates')
+    temp_dir = tempfile.gettempdir()
+    repo_name = str(uuid.uuid4())
+
+    context = {'repo_name': repo_name}
+
+    util.process_templates(template_dir, context, temp_dir)
+
+    expected_file = os.path.join(temp_dir, repo_name, 'template.yml')
+    expected_contents = '- value: foo'
+
+    with open(expected_file) as f:
+        for line in f.readlines():
+            assert line.strip() in expected_contents

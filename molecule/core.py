@@ -21,8 +21,6 @@
 import collections
 import os
 
-import cookiecutter
-import cookiecutter.main
 import tabulate
 import yaml
 
@@ -183,7 +181,7 @@ class Molecule(object):
         role_path = os.getcwd()
         extra_context = self._get_cookiecutter_context(molecule_dir)
         if not os.path.isfile(self.config.config['ansible']['config_file']):
-            self._create_template('molecule', extra_context, role_path)
+            util.process_templates('molecule', extra_context, role_path)
             self.state.change_state('customconf', False)
         else:
             self.state.change_state('customconf', True)
@@ -369,21 +367,6 @@ class Molecule(object):
         # syntax.
         return self.config.config.get(
             'testinfra', self.config.config['verifier'].get('options', {}))
-
-    def _create_template(self,
-                         template,
-                         extra_context,
-                         output_dir,
-                         no_input=True,
-                         overwrite=True):
-        template_path = util._get_cookiecutter_template_dir(template)
-
-        cookiecutter.main.cookiecutter(
-            template_path,
-            extra_context=extra_context,
-            output_dir=output_dir,
-            no_input=no_input,
-            overwrite_if_exists=overwrite)
 
     def _get_cookiecutter_context(self, molecule_dir):
         state_file = self.config.config['molecule']['state_file']
