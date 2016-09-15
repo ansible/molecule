@@ -21,8 +21,6 @@
 import os
 
 import click
-import cookiecutter
-import cookiecutter.main
 
 from molecule import util
 from molecule.command import base
@@ -71,7 +69,7 @@ class Init(base.Base):
 
         util.print_info('Initializing molecule in current directory...')
         for template in ['playbook', 'driver/{}'.format(driver)]:
-            self._create_template(template, extra_context, role_path)
+            util.process_templates(template, extra_context, role_path)
 
     def _init_new_role(self, role, role_path, driver, verifier):
         extra_context = self._get_cookiecutter_context(role, driver, verifier)
@@ -79,22 +77,7 @@ class Init(base.Base):
         util.print_info('Initializing role {}...'.format(role))
         for template in ['galaxy_init', 'playbook', 'driver/{}'.format(driver),
                          'verifier/{}'.format(verifier)]:
-            self._create_template(template, extra_context, role_path)
-
-    def _create_template(self,
-                         template,
-                         extra_context,
-                         output_dir,
-                         no_input=True,
-                         overwrite=True):
-        template_path = util._get_cookiecutter_template_dir(template)
-
-        cookiecutter.main.cookiecutter(
-            template_path,
-            extra_context=extra_context,
-            output_dir=output_dir,
-            no_input=no_input,
-            overwrite_if_exists=overwrite)
+            util.process_templates(template, extra_context, role_path)
 
     def _get_cookiecutter_context(self, role, driver, verifier):
         md = self.molecule.config.config['molecule']['init']

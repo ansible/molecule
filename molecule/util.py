@@ -20,6 +20,9 @@
 
 from __future__ import print_function
 
+import cookiecutter
+import cookiecutter.main
+
 import logging
 import os
 import sys
@@ -126,6 +129,44 @@ def write_template(src, dest, kwargs={}, _module='molecule', _dir='template'):
         f.write(template.render(**kwargs))
 
 
+def process_templates(template_dir, extra_context, output_dir, overwrite=True):
+    """
+    Process templates as found in the named directory.
+
+    :param template_dir: An absolute or relative path to a directory where the
+     templates are located. If the provided directory is a relative path, it
+     is resolved using a known location.
+    :type template_dir: str
+    :param extra_context: A set of values that are used to override default
+     or user specified values.
+    :type extra_context: dict or None
+    :param output_dir: An absolute path to a directory where the templates
+     should be written to.
+    :type output_dir: str
+    :param overwrite: Whether or not to overwrite existing templates.
+     Defaults to True.
+    :type overwrite: bool
+    :return: None
+    """
+
+    template_dir = _resolve_template_dir(template_dir)
+
+    cookiecutter.main.cookiecutter(
+        template_dir,
+        extra_context=extra_context,
+        output_dir=output_dir,
+        overwrite_if_exists=overwrite,
+        no_input=True, )
+
+
+def _resolve_template_dir(template_dir):
+    if not os.path.isabs(template_dir):
+        template_dir = os.path.join(
+            os.path.dirname(__file__), 'cookiecutter', template_dir)
+
+    return template_dir
+
+
 def write_file(filename, content):
     """
     Writes a file with the given filename and content, and returns None.
@@ -213,7 +254,3 @@ def _get_error_logger():
         TrailingNewlineFormatter('{}%(message)s'.format(colorama.Fore.RED)))
 
     return error
-
-
-def _get_cookiecutter_template_dir(template):
-    return os.path.join(os.path.dirname(__file__), 'cookiecutter', template)
