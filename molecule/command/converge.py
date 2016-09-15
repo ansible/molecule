@@ -55,7 +55,7 @@ class Converge(base.Base):
             create_inventory = False
 
         if self.molecule.state.multiple_platforms:
-            self.command_args.get('platform') == 'all'
+            self.command_args['platform'] = 'all'
         else:
             if ((self.command_args.get('platform') == 'all') and
                     self.molecule.state.created):
@@ -99,15 +99,15 @@ class Converge(base.Base):
             other_env = {k: v
                          for (k, v) in ansible.env.items()
                          if 'ANSIBLE' not in k}
-            util.debug(
+            util.print_debug(
                 'OTHER ENVIRONMENT',
                 yaml.dump(
                     other_env, default_flow_style=False, indent=2))
-            util.debug(
+            util.print_debug(
                 'ANSIBLE ENVIRONMENT',
                 yaml.dump(
                     ansible_env, default_flow_style=False, indent=2))
-            util.debug('ANSIBLE PLAYBOOK', str(ansible._ansible))
+            util.print_debug('ANSIBLE PLAYBOOK', str(ansible._ansible))
 
         util.print_info('Starting Ansible Run ...')
         status, output = ansible.execute(hide_errors=hide_errors)

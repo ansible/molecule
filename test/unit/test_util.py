@@ -107,7 +107,7 @@ def test_check_ssh_availability():
 
 
 def test_debug(capsys):
-    util.debug('test_title', 'test_data')
+    util.print_debug('test_title', 'test_data')
     result_title, _ = capsys.readouterr()
 
     print(''.join(

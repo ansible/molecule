@@ -32,5 +32,5 @@ def test_execute(mocker, ansible_lint_instance):
     patched_ansible_lint = mocker.patch('sh.ansible_lint')
     ansible_lint_instance.execute()
 
-    pieces = pytest.helpers.os_split(patched_ansible_lint.call_args[0][0])
-    assert 'playbook_data.yml' == pieces[-1]
+    parts = pytest.helpers.os_split(patched_ansible_lint.call_args[0][0])
+    assert 'playbook_data.yml' == parts[-1]
