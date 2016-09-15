@@ -39,3 +39,61 @@ def patched_print_info(mocker):
 @pytest.fixture
 def patched_print_debug(mocker):
     return mocker.patch('molecule.util.print_debug')
+
+
+@pytest.fixture
+def patched_create_inventory(mocker):
+    return mocker.patch('molecule.core.Molecule.create_inventory_file')
+
+
+@pytest.fixture
+def patched_remove_inventory(mocker):
+    return mocker.patch('molecule.core.Molecule.remove_inventory_file')
+
+
+@pytest.fixture
+def patched_create_templates(mocker):
+    return mocker.patch('molecule.core.Molecule.create_templates')
+
+
+@pytest.fixture
+def patched_add_cli_arg(mocker):
+    return mocker.patch(
+        'molecule.ansible_playbook.AnsiblePlaybook.add_cli_arg')
+
+
+@pytest.fixture
+def patched_remove_cli_arg(mocker):
+    return mocker.patch(
+        'molecule.ansible_playbook.AnsiblePlaybook.remove_cli_arg')
+
+
+@pytest.fixture
+def patched_add_env_arg(mocker):
+    return mocker.patch(
+        'molecule.ansible_playbook.AnsiblePlaybook.add_env_arg')
+
+
+@pytest.fixture
+def patched_ansible_lint(mocker):
+    return mocker.patch('molecule.verifier.ansible_lint.AnsibleLint')
+
+
+@pytest.fixture
+def patched_trailing(mocker):
+    return mocker.patch('molecule.verifier.trailing.Trailing')
+
+
+@pytest.fixture
+def patched_ssh_config(mocker):
+    return mocker.patch('molecule.core.Molecule.write_ssh_config')
+
+
+@pytest.fixture
+def patched_write_instances_state(mocker):
+    return mocker.patch('molecule.core.Molecule.write_instances_state')
+
+
+@pytest.fixture
+def patched_driver_up(mocker):
+    return mocker.patch('molecule.driver.vagrantdriver.VagrantDriver.up')

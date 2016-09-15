@@ -24,21 +24,6 @@ import sh
 from molecule.command import verify
 
 
-@pytest.fixture
-def patched_ansible_lint(mocker):
-    return mocker.patch('molecule.verifier.ansible_lint.AnsibleLint')
-
-
-@pytest.fixture
-def patched_trailing(mocker):
-    return mocker.patch('molecule.verifier.trailing.Trailing')
-
-
-@pytest.fixture
-def patched_ssh_config(mocker):
-    return mocker.patch('molecule.core.Molecule.write_ssh_config')
-
-
 def test_execute(mocker, patched_ansible_lint, patched_trailing,
                  patched_ssh_config, patched_main, molecule_instance):
     patched_testinfra = mocker.patch('molecule.verifier.testinfra.Testinfra')
