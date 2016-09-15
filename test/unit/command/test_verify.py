@@ -84,7 +84,7 @@ def test_execute_with_goss(mocker, patched_ansible_lint, patched_trailing,
     patched_ssh_config.assert_called_once()
 
 
-def test_exits_when_command_fails_and_exit_flag_set(
+def test_execute_exits_when_command_fails_and_exit_flag_set(
         mocker, patched_main, patched_ansible_lint, patched_trailing,
         patched_ssh_config, patched_logger_error, molecule_instance):
     patched_testinfra = mocker.patch('molecule.verifier.testinfra.Testinfra')
@@ -99,7 +99,7 @@ def test_exits_when_command_fails_and_exit_flag_set(
     patched_logger_error.assert_called_once_with(msg)
 
 
-def test_returns_when_command_fails_and_exit_flag_unset(
+def test_execute_returns_when_command_fails_and_exit_flag_unset(
         mocker, patched_main, patched_ansible_lint, patched_trailing,
         patched_ssh_config, patched_logger_error, molecule_instance):
     patched_testinfra = mocker.patch('molecule.verifier.testinfra.Testinfra')

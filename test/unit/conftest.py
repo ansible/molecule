@@ -284,7 +284,10 @@ def playbook(temp_files):
 
 @pytest.fixture()
 def patched_ansible_playbook(mocker):
-    return mocker.patch('molecule.ansible_playbook.AnsiblePlaybook.execute')
+    m = mocker.patch('molecule.ansible_playbook.AnsiblePlaybook.execute')
+    m.return_value = (None, None)
+
+    return m
 
 
 @pytest.fixture()

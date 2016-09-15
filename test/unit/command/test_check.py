@@ -23,8 +23,8 @@ import pytest
 from molecule.command import check
 
 
-def test_raises_when_instance_not_created(patched_main, patched_logger_error,
-                                          molecule_instance):
+def test_execute_raises_when_instance_not_created(
+        patched_main, patched_logger_error, molecule_instance):
     c = check.Check({}, {}, molecule_instance)
 
     with pytest.raises(SystemExit):

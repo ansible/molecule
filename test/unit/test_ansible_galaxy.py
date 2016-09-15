@@ -48,13 +48,13 @@ def test_install(patched_ansible_galaxy, ansible_galaxy_instance):
 
     # NOTE(retr0h): The following is a somewhat gross test, but need to
     # handle **kwargs expansion being unordered.
-    pieces = str(ansible_galaxy_instance._galaxy).split()
+    parts = str(ansible_galaxy_instance._galaxy).split()
     expected = ['--force', '--role-file=requirements.yml',
                 '--roles-path=test/roles']
 
-    assert re.search(r'ansible-galaxy', pieces[0])
-    assert 'install' == pieces[1]
-    assert expected == sorted(pieces[2:])
+    assert re.search(r'ansible-galaxy', parts[0])
+    assert 'install' == parts[1]
+    assert expected == sorted(parts[2:])
 
 
 def test_install_overrides(patched_ansible_galaxy, ansible_galaxy_instance):
@@ -64,8 +64,8 @@ def test_install_overrides(patched_ansible_galaxy, ansible_galaxy_instance):
 
     patched_ansible_galaxy.assert_called_once
 
-    pieces = str(ansible_galaxy_instance._galaxy).split()
+    parts = str(ansible_galaxy_instance._galaxy).split()
     expected = ['--foo=bar', '--role-file=requirements.yml',
                 '--roles-path=test/roles']
 
-    assert expected == sorted(pieces[2:])
+    assert expected == sorted(parts[2:])
