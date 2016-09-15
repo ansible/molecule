@@ -77,6 +77,22 @@ def print_info(msg):
     print('--> {}{}'.format(colorama.Fore.CYAN, msg.rstrip()))
 
 
+def print_debug(title, data):
+    """
+    Prints colorized output for use when debugging portions of molecule, and
+    returns None.
+
+    :param title: A string containing the title of debug output.
+    :param data: A string containing the data of debug output.
+    :return: None
+    """
+    print(''.join([colorama.Back.WHITE, colorama.Style.BRIGHT,
+                   colorama.Fore.BLACK, 'DEBUG: ' + title, colorama.Fore.RESET,
+                   colorama.Back.RESET, colorama.Style.RESET_ALL]))
+    print(''.join([colorama.Fore.BLACK, colorama.Style.BRIGHT, data,
+                   colorama.Style.RESET_ALL, colorama.Fore.RESET]))
+
+
 def write_template(src, dest, kwargs={}, _module='molecule', _dir='template'):
     """
     Writes a file from a jinja2 template, and returns None.
@@ -191,22 +207,6 @@ def format_instance_name(name, platform, instances):
 
     # if we fall through, return the default name
     return name
-
-
-def debug(title, data):
-    """
-    Prints colorized output for use when debugging portions of molecule, and
-    returns None.
-
-    :param title: A string containing the title of debug output.
-    :param data: A string containing the data of debug output.
-    :return: None
-    """
-    print(''.join([colorama.Back.WHITE, colorama.Style.BRIGHT,
-                   colorama.Fore.BLACK, 'DEBUG: ' + title, colorama.Fore.RESET,
-                   colorama.Back.RESET, colorama.Style.RESET_ALL]))
-    print(''.join([colorama.Fore.BLACK, colorama.Style.BRIGHT, data,
-                   colorama.Style.RESET_ALL, colorama.Fore.RESET]))
 
 
 def sysexit(code=1):

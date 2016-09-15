@@ -18,35 +18,26 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import pytest
-
-from molecule.command import check
+from molecule.command import list as command_list
 
 
-def test_execute_raises_when_instance_not_created(
-        patched_main, patched_logger_error, molecule_instance):
-    c = check.Check({}, {}, molecule_instance)
+def test_execute(capsys, patched_main, molecule_instance):
+    l = command_list.List({}, {}, molecule_instance)
+    result = l.execute()
 
-    with pytest.raises(SystemExit):
-        c.execute()
+    out, _ = capsys.readouterr()
 
-    msg = ('ERROR: Instance(s) not created, `check` should be run against '
-           'created instance(s)')
-    patched_logger_error.assert_called_once_with(msg)
+    assert 'ubuntu  (default)' in out
+    assert (None, None) == result
 
 
-def test_execute(mocker, patched_main, patched_ansible_playbook,
-                 patched_print_info, molecule_instance):
-    molecule_instance.state.change_state('created', True)
-    molecule_instance.state.change_state('converged', True)
-    molecule_instance._driver = mocker.Mock(
-        ansible_connection_params={'debug': True})
-    patched_ansible_playbook.return_value = 'returned'
+def test_execute_with_porcelain(capsys, patched_main, molecule_instance):
+    command_args = {'porcelain': True}
 
-    c = check.Check({}, {}, molecule_instance)
-    result = c.execute()
+    l = command_list.List({}, command_args, molecule_instance)
+    result = l.execute()
 
-    msg = 'Performing a "Dry Run" of playbook ...'
-    patched_print_info.assert_called_once_with(msg)
-    patched_ansible_playbook.assert_called_once_with(hide_errors=True)
-    assert 'returned' == result
+    out, _ = capsys.readouterr()
+
+    assert 'ubuntu  d' in out
+    assert (None, None) == result

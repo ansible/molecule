@@ -36,7 +36,7 @@ def cli(ctx, debug):  # pragma: no cover
     ctx.obj['args']['debug'] = debug
 
 
-def main():  # pragma: no cover
+def main():
     """ Molecule aids in the development, and testing of Ansible roles. """
     cli(obj={})
 

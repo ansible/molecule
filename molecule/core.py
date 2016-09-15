@@ -83,7 +83,7 @@ class Molecule(object):
         self.config.populate_instance_names(self.driver.platform)
 
         if self.args.get('--debug'):
-            util.debug(
+            util.print_debug(
                 'RUNNING CONFIG',
                 yaml.dump(
                     self.config.config, default_flow_style=False, indent=2))
