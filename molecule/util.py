@@ -133,14 +133,18 @@ def process_templates(template_dir, extra_context, output_dir, overwrite=True):
     """
     Process templates as found in the named directory.
 
-    :param template_dir: An absolute or relative path to a directory where the templates are located. If the provided
-                         directory is a relative path, it is resolved using a known location.
+    :param template_dir: An absolute or relative path to a directory where the
+     templates are located. If the provided directory is a relative path, it
+     is resolved using a known location.
     :type template_dir: str
-    :param extra_context: A set of values that are used to override default or user specified values.
+    :param extra_context: A set of values that are used to override default
+     or user specified values.
     :type extra_context: dict or None
-    :param output_dir: An absolute path to a directory where the templates should be written to.
+    :param output_dir: An absolute path to a directory where the templates
+     should be written to.
     :type output_dir: str
-    :param overwrite: Whether or not to overwrite existing templates. Defaults to true.
+    :param overwrite: Whether or not to overwrite existing templates.
+     Defaults to True.
     :type overwrite: bool
     :return: None
     """

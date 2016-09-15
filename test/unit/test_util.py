@@ -20,7 +20,6 @@
 
 import binascii
 import os
-import tempfile
 import uuid
 
 import colorama
@@ -153,10 +152,9 @@ def test_resolve_template_dir_absolute():
     assert ('foo', 'bar') == parts[-2:]
 
 
-def test_process_templates():
+def test_process_templates(temp_dir):
     template_dir = os.path.join(
         os.path.dirname(__file__), '../resources/templates')
-    temp_dir = tempfile.gettempdir()
     repo_name = str(uuid.uuid4())
 
     context = {'repo_name': repo_name}
