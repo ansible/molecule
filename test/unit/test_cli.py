@@ -18,38 +18,11 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 #  THE SOFTWARE.
 
-import click
+import pytest
 
-import molecule
-from molecule import command
-
-
-@click.group()
-@click.option(
-    '--debug/--no-debug',
-    default=False,
-    help='Enable or disable debug mode. Default is disabled.')
-@click.version_option(version=molecule.__version__)
-@click.pass_context
-def cli(ctx, debug):  # pragma: no cover
-    ctx.obj['args'] = {}
-    ctx.obj['args']['debug'] = debug
+from molecule import cli
 
 
-def main():
-    """ Molecule aids in the development, and testing of Ansible roles. """
-    cli(obj={})
-
-
-cli.add_command(command.create.create)
-cli.add_command(command.check.check)
-cli.add_command(command.converge.converge)
-cli.add_command(command.destroy.destroy)
-cli.add_command(command.idempotence.idempotence)
-cli.add_command(command.init.init)
-cli.add_command(command.list.list)
-cli.add_command(command.login.login)
-cli.add_command(command.syntax.syntax)
-cli.add_command(command.test.test)
-cli.add_command(command.status.status)
-cli.add_command(command.verify.verify)
+def test_cli():
+    with pytest.raises(SystemExit):
+        cli.main()
