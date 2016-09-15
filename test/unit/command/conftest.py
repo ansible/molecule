@@ -57,6 +57,11 @@ def patched_create_templates(mocker):
 
 
 @pytest.fixture
+def patched_remove_templates(mocker):
+    return mocker.patch('molecule.core.Molecule.remove_templates')
+
+
+@pytest.fixture
 def patched_add_cli_arg(mocker):
     return mocker.patch(
         'molecule.ansible_playbook.AnsiblePlaybook.add_cli_arg')
@@ -97,3 +102,8 @@ def patched_write_instances_state(mocker):
 @pytest.fixture
 def patched_driver_up(mocker):
     return mocker.patch('molecule.driver.vagrantdriver.VagrantDriver.up')
+
+
+@pytest.fixture
+def patched_driver_destroy(mocker):
+    return mocker.patch('molecule.driver.vagrantdriver.VagrantDriver.destroy')
