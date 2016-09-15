@@ -152,12 +152,13 @@ def process_templates(template_dir, extra_context, output_dir, overwrite=True):
         extra_context=extra_context,
         output_dir=output_dir,
         overwrite_if_exists=overwrite,
-        no_input=True,)
+        no_input=True, )
 
 
 def _resolve_template_dir(template_dir):
     if not os.path.isabs(template_dir):
-        template_dir = os.path.join(os.path.dirname(__file__), 'cookiecutter', template_dir)
+        template_dir = os.path.join(
+            os.path.dirname(__file__), 'cookiecutter', template_dir)
 
     return template_dir
 

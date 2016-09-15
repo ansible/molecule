@@ -154,7 +154,8 @@ def test_resolve_template_dir_absolute():
 
 
 def test_process_templates():
-    template_dir = os.path.join(os.path.dirname(__file__), '../resources/templates')
+    template_dir = os.path.join(
+        os.path.dirname(__file__), '../resources/templates')
     temp_dir = tempfile.gettempdir()
     repo_name = str(uuid.uuid4())
 
