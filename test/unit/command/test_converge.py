@@ -30,29 +30,6 @@ def patched_create(mocker):
     return mocker.patch('molecule.command.create.Create.execute')
 
 
-@pytest.fixture
-def patched_create_inventory(mocker):
-    return mocker.patch('molecule.core.Molecule.create_inventory_file')
-
-
-@pytest.fixture
-def patched_add_cli_arg(mocker):
-    return mocker.patch(
-        'molecule.ansible_playbook.AnsiblePlaybook.add_cli_arg')
-
-
-@pytest.fixture
-def patched_remove_cli_arg(mocker):
-    return mocker.patch(
-        'molecule.ansible_playbook.AnsiblePlaybook.remove_cli_arg')
-
-
-@pytest.fixture
-def patched_add_env_arg(mocker):
-    return mocker.patch(
-        'molecule.ansible_playbook.AnsiblePlaybook.add_env_arg')
-
-
 def test_execute_creates_instances(patched_create, patched_ansible_playbook,
                                    patched_create_inventory,
                                    patched_print_info, molecule_instance):
