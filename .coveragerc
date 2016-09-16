@@ -1,4 +1,3 @@
 [run]
-
 omit =
   */molecule/cookiecutter/*
