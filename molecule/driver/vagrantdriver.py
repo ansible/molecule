@@ -1,10 +1,10 @@
 #  Copyright (c) 2015-2016 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
-#  of this software and associated documentation files (the "Software"), to deal
-#  in the Software without restriction, including without limitation the rights
-#  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#  copies of the Software, and to permit persons to whom the Software is
+#  of this software and associated documentation files (the "Software"), to
+#  deal in the Software without restriction, including without limitation the
+#  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+#  sell copies of the Software, and to permit persons to whom the Software is
 #  furnished to do so, subject to the following conditions:
 #
 #  The above copyright notice and this permission notice shall be included in
@@ -14,9 +14,9 @@
 #  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 #  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 #  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-#  THE SOFTWARE.
+#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+#  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+#  DEALINGS IN THE SOFTWARE.
 
 import collections
 import copy
@@ -50,14 +50,16 @@ class VagrantDriver(basedriver.BaseDriver):
 
     @property
     def default_provider(self):
-        # take config's default_provider if specified, otherwise use the first in the provider list
+        # take config's default_provider if specified, otherwise use the
+        # first in the provider list
         default_provider = self.molecule.config.config['molecule'].get(
             'default_provider')
         if default_provider is None:
             default_provider = self.molecule.config.config['vagrant'][
                 'providers'][0]['name']
 
-        # default to first entry if no entry for provider exists or provider is false
+        # default to first entry if no entry for provider exists or provider
+        # is false
         if not self.molecule.state.default_provider:
             return default_provider
 
@@ -73,14 +75,16 @@ class VagrantDriver(basedriver.BaseDriver):
         if self.molecule.config.config['vagrant'].get('platforms') is None:
             return 'static'
 
-        # take config's default_platform if specified, otherwise use the first in the platform list
+        # take config's default_platform if specified, otherwise use the first
+        # in the platform list
         default_platform = self.molecule.config.config['molecule'].get(
             'default_platform')
         if default_platform is None:
             default_platform = self.molecule.config.config['vagrant'][
                 'platforms'][0]['name']
 
-        # default to first entry if no entry for platform exists or platform is false
+        # default to first entry if no entry for platform exists or platform
+        # is false
         if not self.molecule.state.default_platform:
             return default_platform
 
@@ -160,7 +164,8 @@ class VagrantDriver(basedriver.BaseDriver):
 
     def inventory_entry(self, instance):
         # TODO: for Ansiblev2, the following line must have s/ssh_//
-        template = '{} ansible_ssh_host={} ansible_ssh_port={} ansible_ssh_private_key_file={} ansible_ssh_user={}\n'
+        template = ('{} ansible_ssh_host={} ansible_ssh_port={} '
+                    'ansible_ssh_private_key_file={} ansible_ssh_user={}\n')
 
         if not self._updated_multiplatform:
             ssh = self.conf(vm_name=util.format_instance_name(
