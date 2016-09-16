@@ -15,6 +15,7 @@ Core Committers
 * Duncan Hutty <dhutty@cisco.com>
 * Erik Nadel <einadel@wpi.edu>
 * Rémy Greinhofer <regreinh@cisco.com>
+* Matthew Montgomery <matthew@signed8bit.com>
 
 Contributors
 ============
