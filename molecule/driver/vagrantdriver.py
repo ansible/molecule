@@ -186,9 +186,8 @@ class VagrantDriver(basedriver.BaseDriver):
 
     def _populate_platform_instances(self):
         if self.molecule.args.get('platform'):
-            if (len(
-                (self.molecule.config.config['vagrant']['platforms']) > 1) and
-                (self.molecule.args.get('platform') == 'all') and
+            if ((self.molecule.config.config['vagrant']['platforms'] > 1) and
+                (self.molecule.args['platform'] == 'all') and
                     not self._updated_multiplatform):
                 new_instances = []
 
