@@ -65,16 +65,16 @@ class Molecule(object):
             # TODO(retr0h): Print valid drivers.
             util.sysexit()
         except basedriver.InvalidProviderSpecified:
-            LOG.error("Invalid provider '{}'".format(self.args['--provider']))
-            self.args['--provider'] = None
-            self.args['--platform'] = None
+            LOG.error("Invalid provider '{}'".format(self.args['provider']))
+            self.args['provider'] = None
+            self.args['platform'] = None
             self.driver = self._get_driver()
             self.print_valid_providers()
             util.sysexit()
         except basedriver.InvalidPlatformSpecified:
-            LOG.error("Invalid platform '{}'".format(self.args['--platform']))
-            self.args['--provider'] = None
-            self.args['--platform'] = None
+            LOG.error("Invalid platform '{}'".format(self.args['platform']))
+            self.args['provider'] = None
+            self.args['platform'] = None
             self.driver = self._get_driver()
             self.print_valid_platforms()
             util.sysexit()
@@ -82,7 +82,7 @@ class Molecule(object):
         # updates instances config with full machine names
         self.config.populate_instance_names(self.driver.platform)
 
-        if self.args.get('--debug'):
+        if self.args.get('debug'):
             util.print_debug(
                 'RUNNING CONFIG',
                 yaml.dump(
@@ -216,7 +216,7 @@ class Molecule(object):
                                     groups[group_name] = []
                                 groups[group_name].append(g)
 
-        if self.args.get('--platform') == 'all':
+        if self.args.get('platform') == 'all':
             self.driver.platform = 'all'
 
         for group, subgroups in groups.iteritems():
@@ -268,7 +268,7 @@ class Molecule(object):
         print(tabulate.tabulate(data, headers, tablefmt=table_format))
 
     def _get_driver_name(self):
-        driver = self.args.get('--driver')
+        driver = self.args.get('driver')
         if driver:
             return driver
         elif self.config.config.get('driver'):

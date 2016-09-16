@@ -26,4 +26,6 @@
 	bundle install
 	molecule test
 	molecule test --driver vagrant
+	molecule test --platform centos7
+	molecule test --platform all
 )

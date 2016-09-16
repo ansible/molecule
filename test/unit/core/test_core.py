@@ -36,7 +36,7 @@ def test_driver_setter(molecule_default_provider_instance):
 
 
 def test_get_driver_name_from_cli(molecule_default_provider_instance):
-    molecule_default_provider_instance.args.update({'--driver': 'foo'})
+    molecule_default_provider_instance.args.update({'driver': 'foo'})
 
     assert 'foo' == molecule_default_provider_instance._get_driver_name()
 
