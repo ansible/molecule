@@ -141,8 +141,8 @@ class Config(object):
                     'platform': {
                         'box': 'trusty64',
                         'box_url':
-                        'https://vagrantcloud.com/ubuntu/boxes/trusty64/'
-                        'versions/14.04/providers/virtualbox.box',
+                        ('https://vagrantcloud.com/ubuntu/boxes/trusty64/'
+                            'versions/14.04/providers/virtualbox.box'),
                         'box_version': '0.1.0',
                         'name': 'trusty64'
                     },
