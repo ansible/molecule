@@ -32,7 +32,7 @@ class Trailing(base.Base):
         super(Trailing, self).__init__(molecule)
         self._ignore_paths = molecule.config.config['molecule']['ignore_paths']
 
-    def execute(self, exit=True):
+    def execute(self, exit=True):  # pragma: no cover
         """
         Executes trailing linters, and returns None, otherwise sys.exit on
         command failure.
