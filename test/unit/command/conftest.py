@@ -107,3 +107,19 @@ def patched_driver_up(mocker):
 @pytest.fixture
 def patched_driver_destroy(mocker):
     return mocker.patch('molecule.driver.vagrantdriver.VagrantDriver.destroy')
+
+
+@pytest.fixture
+def patched_create(mocker):
+    m = mocker.patch('molecule.command.create.Create.execute')
+    m.return_value = (None, None)
+
+    return m
+
+
+@pytest.fixture
+def patched_converge(mocker):
+    m = mocker.patch('molecule.command.converge.Converge.execute')
+    m.return_value = (None, '')
+
+    return m

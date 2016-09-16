@@ -25,11 +25,6 @@ import pytest
 from molecule.command import converge
 
 
-@pytest.fixture
-def patched_create(mocker):
-    return mocker.patch('molecule.command.create.Create.execute')
-
-
 def test_execute_creates_instances(patched_create, patched_ansible_playbook,
                                    patched_create_inventory,
                                    patched_print_info, molecule_instance):
