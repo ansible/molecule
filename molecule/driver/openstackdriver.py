@@ -1,10 +1,10 @@
 #  Copyright (c) 2015-2016 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
-#  of this software and associated documentation files (the "Software"), to deal
-#  in the Software without restriction, including without limitation the rights
-#  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-#  copies of the Software, and to permit persons to whom the Software is
+#  of this software and associated documentation files (the "Software"), to
+#  deal in the Software without restriction, including without limitation the
+#  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+#  sell copies of the Software, and to permit persons to whom the Software is
 #  furnished to do so, subject to the following conditions:
 #
 #  The above copyright notice and this permission notice shall be included in
@@ -14,9 +14,9 @@
 #  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 #  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 #  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-#  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-#  THE SOFTWARE.
+#  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+#  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+#  DEALINGS IN THE SOFTWARE.
 
 import collections
 import os
@@ -199,7 +199,8 @@ class OpenstackDriver(basedriver.BaseDriver):
                                  'ssh_username': instance['sshuser']}
                 if self._molecule_generated_ssh_key:
                     server_config[
-                        'ssh_key_filename'] = 'ansible_ssh_private_key_file={}'.format(
+                        'ssh_key_filename'] = \
+                        'ansible_ssh_private_key_file={}'.format(
                             self._generated_ssh_key_location())
                 return template.format(**server_config)
         return ''
@@ -300,8 +301,8 @@ class OpenstackDriver(basedriver.BaseDriver):
         elif self._molecule_generated_ssh_key:
             return self._generated_ssh_key_location()
         else:
-            LOG.info(
-                'Keyfile not specified. molecule will generate a temporary one.')
+            LOG.info('Keyfile not specified. molecule will generate a '
+                     'temporary one.')
             self._molecule_generated_ssh_key = True
             return self._generate_temp_ssh_key()
 
