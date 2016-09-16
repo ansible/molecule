@@ -27,6 +27,11 @@ Breaking Changes
   instance exists.
 * One must install the appropriate python package based on the driver used.
 
+1.11.1
+======
+
+* Corrected bug when passing the ``--platform`` flag.
+
 1.11
 ====
 
