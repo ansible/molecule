@@ -2,6 +2,11 @@
 History
 *******
 
+1.11.1
+======
+
+* Corrected bug when passing the ``--platform`` flag.
+
 1.11
 ====
 
