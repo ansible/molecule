@@ -54,7 +54,8 @@ class Testinfra(base.Base):
             self._molecule.driver.testinfra_args,
             self._molecule.verifier_options)
         testinfra_options['env'] = ansible.env
-        testinfra_options['debug'] = self._molecule.args.get('debug', False)
+        if self._molecule.args.get('debug'):
+            testinfra_options['debug'] = True
         if self._molecule.args.get('sudo'):
             testinfra_options['sudo'] = True
 

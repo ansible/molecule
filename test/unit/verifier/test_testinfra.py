@@ -52,8 +52,6 @@ def test_execute(patched_code_verifier, patched_test_verifier,
     assert (['/test/1', '/test/2'], ) == patched_test_verifier.call_args[0]
 
     ca = patched_test_verifier.call_args[1]
-    assert not ca['debug']
-    assert not ca['sudo']
     assert 'ansible' == ca['connection']
     assert 'test/inventory_file' == ca['ansible-inventory']
     assert 'env' in ca
