@@ -8,6 +8,7 @@ History
 * Additional command tests.
 * Changed connection to ansible_connection.
 * Implemented click vs docopt.  This slightly changes the CLI's semantics.
+* Removed the driver python packages from installing with molecule.
 
 Breaking Changes
 ----------------
@@ -24,6 +25,7 @@ Breaking Changes
   verifier other than testinfra.
 * The ``login`` subcommand requires a ``--host`` flag when more than one
   instance exists.
+* One must install the appropriate python package based on the driver used.
 
 1.11
 ====
