@@ -209,7 +209,7 @@ Usage
 Verifier Section
 ----------------
 
-See OpenStack :ref:`verifiers`
+See OpenStack :ref:`verifier_index`
 
 Playbook
 ========

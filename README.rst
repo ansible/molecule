@@ -80,11 +80,16 @@ Provider
 Quick Start
 ===========
 
+.. important::
+
+  `Ansible`_ and the driver's python package require installation.
+
 Install molecule using pip:
 
 .. code-block:: bash
 
   $ pip install ansible
+  $ pip install docker-py
   $ pip install molecule
 
 Create a new role with the docker driver:

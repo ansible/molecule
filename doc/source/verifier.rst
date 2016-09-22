@@ -1,4 +1,4 @@
-.. _verifiers:
+.. _verifier_index:
 
 *********
 Verifiers

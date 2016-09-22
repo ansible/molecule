@@ -2,15 +2,12 @@ ansible-lint==3.2.5
 anyconfig==0.6.0
 colorama==0.3.7
 cookiecutter==1.4.0
-docker-py==1.9.0
 flake8==3.0.4
 Jinja2==2.8
 paramiko==2.0.2
 pbr==1.10.0
 pexpect==4.2.1
-python-vagrant==0.5.14
 PyYAML==3.12
 sh==1.11
 tabulate==0.7.5
 testinfra==1.4.2
-shade==1.11.1
