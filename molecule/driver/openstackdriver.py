@@ -22,6 +22,7 @@ import collections
 import os
 import random
 import socket
+import sys
 import tempfile
 import time
 
@@ -29,7 +30,7 @@ import paramiko
 try:
     import shade
 except ImportError:
-    LOG.error('Driver missing, install shade!')
+    sys.exit('ERROR: Driver missing, install shade!')
 
 from molecule import util
 from molecule.driver import basedriver
