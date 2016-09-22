@@ -2,6 +2,12 @@
 History
 *******
 
+1.11.3
+======
+
+* Handle when a container is stopped outside of molecule, when running
+  ``molecule status``.
+
 1.11.2
 ======
 
