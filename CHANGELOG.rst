@@ -27,6 +27,12 @@ Breaking Changes
   instance exists.
 * One must install the appropriate python package based on the driver used.
 
+1.11.3
+======
+
+* Handle when a container is stopped outside of molecule, when running
+  ``molecule status``.
+
 1.11.2
 ======
 
