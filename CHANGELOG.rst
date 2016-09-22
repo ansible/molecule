@@ -2,6 +2,11 @@
 History
 *******
 
+1.11.2
+======
+
+* Preserve sudo passed in verifier options.
+
 1.11.1
 ======
 
