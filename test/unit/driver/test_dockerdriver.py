@@ -141,6 +141,14 @@ def test_status(docker_instance):
     assert 'docker' in docker_instance.status()[1].provider
 
 
+def test_status_dirty_shutdown(docker_instance):
+    docker_instance.up()
+    docker_instance._docker.stop('test1', timeout=0)
+
+    assert 'not_created' in docker_instance.status()[0].state
+    assert 'Up' in docker_instance.status()[1].state
+
+
 def test_port_bindings(docker_instance):
     docker_instance.up()
     ports = sorted(
