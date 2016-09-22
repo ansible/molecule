@@ -52,8 +52,6 @@ def test_execute(mocked_code_verifier, mocked_test_verifier, mocked_get_tests,
     assert (['/test/1', '/test/2'], ) == mocked_test_verifier.call_args[0]
 
     ca = mocked_test_verifier.call_args[1]
-    assert not ca['debug']
-    assert not ca['sudo']
     assert 'ansible' == ca['connection']
     assert 'test/inventory_file' == ca['ansible-inventory']
     assert 'env' in ca
