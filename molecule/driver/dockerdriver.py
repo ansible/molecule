@@ -22,7 +22,10 @@ import collections
 import io
 import json
 
-import docker
+try:
+    import docker
+except ImportError:
+    LOG.error('Driver missing, install docker-py!')
 
 from molecule import util
 from molecule.driver import basedriver

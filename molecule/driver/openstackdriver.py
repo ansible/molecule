@@ -26,7 +26,10 @@ import tempfile
 import time
 
 import paramiko
-import shade
+try:
+    import shade
+except ImportError:
+    LOG.error('Driver missing, install shade!')
 
 from molecule import util
 from molecule.driver import basedriver
