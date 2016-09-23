@@ -5,8 +5,8 @@ History
 1.11.3
 ======
 
-* Handle when a container is stopped outside of molecule, when running
-  ``molecule status``.
+* Allow ``molecule status`` to handle the case where a container is stopped
+  outside of molecule.
 
 1.11.2
 ======
