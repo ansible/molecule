@@ -28,9 +28,6 @@ from molecule import config
 from molecule import state
 from molecule import util
 from molecule.driver import basedriver
-from molecule.driver import dockerdriver
-from molecule.driver import openstackdriver
-from molecule.driver import vagrantdriver
 
 LOG = util.get_logger(__name__)
 
@@ -281,6 +278,11 @@ class Molecule(object):
             return 'openstack'
 
     def _get_driver(self):
+        """
+        Return an instance of the driver as returned by `_get_driver_name()`.
+
+        .. todo:: Implement a pluggable solution vs inline imports.
+        """
         driver = self._get_driver_name()
 
         if (self.state.driver is not None) and (self.state.driver != driver):
@@ -290,10 +292,13 @@ class Molecule(object):
             util.sysexit()
 
         if driver == 'vagrant':
+            from molecule.driver import vagrantdriver
             return vagrantdriver.VagrantDriver(self)
         elif driver == 'docker':
+            from molecule.driver import dockerdriver
             return dockerdriver.DockerDriver(self)
         elif driver == 'openstack':
+            from molecule.driver import openstackdriver
             return openstackdriver.OpenstackDriver(self)
         raise basedriver.InvalidDriverSpecified()
 
