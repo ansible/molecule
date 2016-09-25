@@ -28,9 +28,11 @@ def test_execute(capsys, patched_main, molecule_instance):
     result = s.execute()
 
     out, _ = capsys.readouterr()
+    decoded_out = out.encode('ascii', 'ignore').decode('ascii')
 
-    assert 'ubuntu  (default)' in out
-    assert 'virtualbox  (default)' in out
+    assert 'ubuntu   (default)' in decoded_out
+    assert 'centos7' in decoded_out
+    assert 'virtualbox  (default)' in decoded_out
     (None, None) == result
 
 
@@ -42,7 +44,8 @@ def test_execute_with_porcelain(capsys, patched_main, molecule_instance):
 
     out, _ = capsys.readouterr()
 
-    assert 'ubuntu  d' in out
+    assert 'ubuntu   d' in out
+    assert 'centos7' in out
     assert 'virtualbox  d' in out
     (None, None) == result
 

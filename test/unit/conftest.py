@@ -152,7 +152,8 @@ def vagrant_section_data():
         'vagrant': {
             'platforms': [
                 {'name': 'ubuntu',
-                 'box': 'ubuntu/trusty64'}
+                 'box': 'ubuntu/trusty64'}, {'name': 'centos7',
+                                             'box': 'centos/7'}
             ],
             'providers': [
                 {'name': 'virtualbox',
@@ -160,6 +161,9 @@ def vagrant_section_data():
             ],
             'instances': [
                 {'name': 'aio-01',
+                 'ansible_groups': ['example', 'example1'],
+                 'options': {'append_platform_to_hostname': True}},
+                {'name': 'aio-02',
                  'ansible_groups': ['example', 'example1'],
                  'options': {'append_platform_to_hostname': True}}
             ]
