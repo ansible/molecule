@@ -5,6 +5,10 @@ Example files are created with ``molecule init --driver openstack``.
 Usage
 -----
 
+.. code-block:: bash
+
+  $ pip install shade
+
 .. code-block:: yaml
 
   ---

@@ -1,6 +1,9 @@
+docker-py==1.9.0
 mock
 pytest
 pytest-cov
 pytest-helpers-namespace
 pytest-mock
+python-vagrant==0.5.14
+shade==1.11.1
 wheel

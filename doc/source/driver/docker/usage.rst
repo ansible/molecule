@@ -5,6 +5,10 @@ Example files are created with ``molecule init --driver docker``.
 Usage
 -----
 
+.. code-block:: bash
+
+  $ pip install docker-py
+
 .. code-block:: yaml
 
   ---

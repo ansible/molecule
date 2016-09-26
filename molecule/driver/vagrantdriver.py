@@ -21,8 +21,12 @@
 import collections
 import copy
 import os
+import sys
 
-import vagrant
+try:
+    import vagrant
+except ImportError:
+    sys.exit('ERROR: Driver missing, install python-vagrant!')
 
 from molecule import util
 from molecule.driver import basedriver

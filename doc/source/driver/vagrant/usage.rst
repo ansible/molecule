@@ -6,7 +6,11 @@ Usage
 -----
 
 This is an example of a set of vagrant instance - for information on specifying
-the platform/provider, see :ref:`providers`.
+the platform/provider, see :ref:`provider_index`.
+
+.. code-block:: bash
+
+  $ pip install python-vagrant
 
 .. code-block:: yaml
 

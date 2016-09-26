@@ -22,11 +22,15 @@ import collections
 import os
 import random
 import socket
+import sys
 import tempfile
 import time
 
 import paramiko
-import shade
+try:
+    import shade
+except ImportError:
+    sys.exit('ERROR: Driver missing, install shade!')
 
 from molecule import util
 from molecule.driver import basedriver

@@ -1,4 +1,4 @@
-.. _providers:
+.. _provider_index:
 
 *********
 Providers
