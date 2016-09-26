@@ -49,7 +49,7 @@ def config_instance(temp_files):
 
 
 @pytest.fixture()
-def mock_molecule_file_exists(monkeypatch):
+def patch_molecule_file_exists(monkeypatch):
     def mockreturn(m):
         return True
 
@@ -116,7 +116,7 @@ def test_populate_instance_names(config_instance):
         0]['vm_name']
 
 
-def test_molecule_file_exists(temp_files, mock_molecule_file_exists):
+def test_molecule_file_exists(temp_files, patch_molecule_file_exists):
     configs = temp_files(fixtures=['molecule_vagrant_config'])
     c = config.Config(configs=configs)
 
