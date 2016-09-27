@@ -62,14 +62,16 @@ def test_print_valid_platforms(capsys, molecule_instance):
     molecule_instance.print_valid_platforms()
     out, _ = capsys.readouterr()
 
-    assert 'ubuntu  (default)\n' == out
+    assert 'ubuntu   (default)' in out
+    assert 'centos7' in out
 
 
 def test_print_valid_platforms_with_porcelain(capsys, molecule_instance):
     molecule_instance.print_valid_platforms(porcelain=True)
     out, _ = capsys.readouterr()
 
-    assert 'ubuntu  d\n' == out
+    assert 'ubuntu   d' in out
+    assert 'centos7' in out
 
 
 def test_print_valid_providers(capsys, molecule_instance):
@@ -87,6 +89,7 @@ def test_print_valid_providers_with_porcelain(capsys, molecule_instance):
 
 
 def test_instances_state(molecule_instance):
-    expected = {'aio-01-ubuntu': {'groups': ['example', 'example1']}}
+    expected = {'aio-01-ubuntu': {'groups': ['example', 'example1']},
+                'aio-02-ubuntu': {'groups': ['example', 'example1']}}
 
     assert expected == molecule_instance._instances_state()
