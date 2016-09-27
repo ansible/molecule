@@ -80,7 +80,9 @@ def test_valid_providers(vagrant_instance):
 
 
 def test_valid_platforms(vagrant_instance):
-    expected = [{'box': 'ubuntu/trusty64', 'name': 'ubuntu'}]
+    expected = [{'box': 'ubuntu/trusty64',
+                 'name': 'ubuntu'}, {'box': 'centos/7',
+                                     'name': 'centos7'}]
 
     assert expected == vagrant_instance.valid_platforms
 
@@ -98,3 +100,23 @@ def test_ansible_connection_params(vagrant_instance):
 
 def test_serverspec_args(vagrant_instance):
     assert {} == vagrant_instance.serverspec_args
+
+
+def test_status(vagrant_instance):
+    assert 'aio-01' == vagrant_instance.status()[0].name
+    assert 'aio-02' == vagrant_instance.status()[1].name
+
+    assert 'not_created' in vagrant_instance.status()[0].state
+    assert 'not_created' in vagrant_instance.status()[1].state
+
+    assert 'virtualbox' in vagrant_instance.status()[0].provider
+    assert 'virtualbox' in vagrant_instance.status()[1].provider
+
+
+def test_status_multiplatform(vagrant_instance):
+    vagrant_instance.molecule.state.change_state('default_platform', 'all')
+
+    assert 'aio-01-ubuntu' == vagrant_instance.status()[0].name
+    assert 'aio-01-centos7' == vagrant_instance.status()[1].name
+    assert 'aio-02-ubuntu' == vagrant_instance.status()[2].name
+    assert 'aio-02-centos7' == vagrant_instance.status()[3].name
