@@ -54,9 +54,13 @@ class Verify(base.Base):
          on command failure.
         :return: Return a tuple of None, otherwise sys.exit on command failure.
         """
-        for v in [ansible_lint.AnsibleLint(self.molecule),
-                  trailing.Trailing(self.molecule)]:
+        try:
+            v = ansible_lint.AnsibleLint(self.molecule)
             v.execute()
+        except sh.ErrorReturnCode_2:
+            util.sysexit()
+        v = trailing.Trailing(self.molecule)
+        v.execute()
 
         self.molecule.write_ssh_config()
 

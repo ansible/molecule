@@ -1,0 +1,10 @@
+---
+- hosts: all
+  tasks:
+    - name: Verify functional scenario
+      command: /bin/true
+      changed_when: False
+
+    - command: /bin/true
+      changed_when: False
+      tags: skip_ansible_lint

@@ -203,8 +203,7 @@ class VagrantDriver(basedriver.BaseDriver):
                     platform_instance['vm_name'] = combined_name
                     new_instances.append(platform_instance)
 
-            self.molecule.config.config['vagrant'][
-                'instances'] = new_instances
+            self.molecule.config.config['vagrant']['instances'] = new_instances
             self._updated_multiplatform = True
 
     def _get_provider(self):
