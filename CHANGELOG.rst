@@ -2,6 +2,12 @@
 History
 *******
 
+1.11.4
+======
+
+* Hide ansible-lint stacktrace on ``molecule verify``.
+* Corrected linked clone platform options checking.
+
 1.11.3
 ======
 
