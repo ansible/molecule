@@ -38,6 +38,18 @@ def test_execute(mocker, patched_ansible_lint, patched_trailing,
     assert (None, None) == result
 
 
+def test_execute_exits_when_ansible_lint_fails(mocker, patched_ansible_lint,
+                                               patched_trailing, patched_main,
+                                               molecule_instance):
+    patched_ansible_lint.side_effect = sh.ErrorReturnCode_2(sh.ls, None, None)
+
+    v = verify.Verify({}, {}, molecule_instance)
+    with pytest.raises(SystemExit):
+        v.execute()
+
+    patched_ansible_lint.assert_called_once_with(molecule_instance)
+
+
 def test_execute_with_serverspec(mocker, patched_ansible_lint,
                                  patched_trailing, patched_ssh_config,
                                  patched_main, molecule_instance):
