@@ -27,6 +27,28 @@ Breaking Changes
   instance exists.
 * One must install the appropriate python package based on the driver used.
 
+1.11.4
+======
+
+* Hide ansible-lint stacktrace on ``molecule verify``.
+* Corrected linked clone platform options checking.
+
+1.11.3
+======
+
+* Handle when a container is stopped outside of molecule, when running
+  ``molecule status``.
+
+1.11.2
+======
+
+* Preserve sudo passed in verifier options.
+
+1.11.1
+======
+
+* Corrected bug when passing the ``--platform`` flag.
+
 1.11
 ====
 
