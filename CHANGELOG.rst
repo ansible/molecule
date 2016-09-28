@@ -27,6 +27,12 @@ Breaking Changes
   instance exists.
 * One must install the appropriate python package based on the driver used.
 
+1.11.4
+======
+
+* Hide ansible-lint stacktrace on ``molecule verify``.
+* Corrected linked clone platform options checking.
+
 1.11.3
 ======
 
