@@ -201,6 +201,10 @@ class OpenstackDriver(basedriver.BaseDriver):
                     server_config[
                         'ssh_key_filename'] = 'ansible_ssh_private_key_file={}'.format(
                             self._generated_ssh_key_location())
+                else:
+                    ssh_line = 'ansible_ssh_private_key_file={}'.format(
+                        self._get_keyfile())
+                    server_config['ssh_key_filename'] = ssh_line
                 return template.format(**server_config)
         return ''
 
