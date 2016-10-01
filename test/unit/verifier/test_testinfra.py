@@ -43,18 +43,23 @@ def patched_get_tests(mocker):
     return mocker.patch('molecule.verifier.testinfra.Testinfra._get_tests')
 
 
-def test_execute(patched_code_verifier, patched_test_verifier,
-                 patched_get_tests, testinfra_instance):
+@pytest.fixture
+def patched_ansible(mocker):
+    return mocker.patch('molecule.ansible_playbook.AnsiblePlaybook')
+
+
+def test_execute(mocker, patched_code_verifier, patched_test_verifier,
+                 patched_get_tests, patched_ansible, testinfra_instance):
     patched_get_tests.return_value = ['/test/1', '/test/2']
+    patched_ansible.return_value = mocker.Mock(env={})
     testinfra_instance.execute()
 
     patched_code_verifier.assert_called_once_with(['/test/1', '/test/2'])
-    assert (['/test/1', '/test/2'], ) == patched_test_verifier.call_args[0]
-
-    ca = patched_test_verifier.call_args[1]
-    assert 'ansible' == ca['connection']
-    assert 'test/inventory_file' == ca['ansible-inventory']
-    assert 'env' in ca
+    patched_test_verifier.assert_called_once_with(
+        ['/test/1', '/test/2'],
+        ansible_inventory='test/inventory_file',
+        ansible_env={},
+        connection='ansible')
 
 
 def test_execute_no_tests(patched_code_verifier, patched_test_verifier,
@@ -72,10 +77,8 @@ def test_testinfra(mocker, patched_get_tests, testinfra_instance):
     kwargs = {'debug': True, 'out': None, 'err': None}
     testinfra_instance._testinfra(*args, **kwargs)
 
-    assert ('/tmp/ansible-inventory', ) == patched_testinfra.call_args[0]
-
-    ca = patched_testinfra.call_args[1]
-    assert ca.get('debug')
+    patched_testinfra.assert_called_once_with(
+        '/tmp/ansible-inventory', _env={}, _err=None, _out=None, debug=True)
 
 
 def test_flake8(mocker, testinfra_instance):
