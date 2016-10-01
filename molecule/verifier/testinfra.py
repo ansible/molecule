@@ -53,7 +53,8 @@ class Testinfra(base.Base):
         testinfra_options = config.merge_dicts(
             self._molecule.driver.testinfra_args,
             self._molecule.verifier_options)
-        testinfra_options['env'] = ansible.env
+
+        testinfra_options['ansible_env'] = ansible.env
         if self._molecule.args.get('debug'):
             testinfra_options['debug'] = True
         if self._molecule.args.get('sudo'):
@@ -67,7 +68,7 @@ class Testinfra(base.Base):
     def _testinfra(self,
                    tests,
                    debug=False,
-                   env=os.environ.copy(),
+                   ansible_env={},
                    out=LOG.info,
                    err=LOG.error,
                    **kwargs):
@@ -78,8 +79,8 @@ class Testinfra(base.Base):
         :param tests: A list of testinfra tests.
         :param debug: An optional bool to toggle debug output.
         :param pattern: A string containing the pattern of files to lint.
-        :param env: An optional environment to pass to underlying :func:`sh`
-         call.
+        :param ansible_env: An optional environment to pass to underlying
+         :func:`sh` call.
         :param out: An optional function to process STDOUT for underlying
          :func:`sh` call.
         :param err: An optional function to process STDERR for underlying
@@ -87,7 +88,7 @@ class Testinfra(base.Base):
         :return: :func:`sh` response object.
         """
         kwargs['debug'] = debug
-        kwargs['_env'] = env
+        kwargs['_env'] = ansible_env
         kwargs['_out'] = out
         kwargs['_err'] = err
 

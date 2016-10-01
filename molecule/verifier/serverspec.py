@@ -54,7 +54,6 @@ class Serverspec(base.Base):
     def _rake(self,
               rakefile,
               debug=False,
-              env=os.environ.copy(),
               out=LOG.info,
               err=LOG.error):
         """
@@ -63,16 +62,13 @@ class Serverspec(base.Base):
 
         :param rakefile: A string containing path to the rakefile.
         :param debug: An optional bool to toggle debug output.
-        :param env: An optional environment to pass to underlying :func:`sh`
-         call.
         :param out: An optional function to process STDOUT for underlying
          :func:`sh` call.
         :param err: An optional function to process STDERR for underlying
          :func:`sh` call.
         :return: :func:`sh` response object.
         """
-        kwargs = {'_env': env,
-                  '_out': out,
+        kwargs = {'_out': out,
                   '_err': err,
                   'trace': debug,
                   'rakefile': rakefile}
@@ -86,7 +82,6 @@ class Serverspec(base.Base):
     def _rubocop(self,
                  serverspec_dir,
                  debug=False,
-                 env=os.environ.copy(),
                  pattern='/**/*.rb',
                  out=LOG.info,
                  err=LOG.error):
@@ -98,15 +93,13 @@ class Serverspec(base.Base):
         to lint.
         :param debug: An optional bool to toggle debug output.
         :param pattern: A string containing the pattern of files to lint.
-        :param env: An optional environment to pass to underlying :func:`sh`
-         call.
         :param out: An optional function to process STDOUT for underlying
          :func:`sh` call.
         :param err: An optional function to process STDERR for underlying
          :func:`sh` call.
         :return: :func:`sh` response object.
         """
-        kwargs = {'_env': env, '_out': out, '_err': err, 'debug': debug}
+        kwargs = {'_out': out, '_err': err, 'debug': debug}
 
         msg = 'Executing rubocop on *.rb files found in {}/.'.format(
             serverspec_dir)

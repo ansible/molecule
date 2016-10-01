@@ -125,7 +125,7 @@ class VagrantDriver(basedriver.BaseDriver):
     @property
     def testinfra_args(self):
         return {
-            'ansible-inventory':
+            'ansible_inventory':
             self.molecule.config.config['ansible']['inventory_file'],
             'connection': 'ansible'
         }

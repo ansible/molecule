@@ -65,26 +65,20 @@ def test_execute_no_tests(patched_code_verifier, patched_test_verifier,
 
 def test_rake(mocker, serverspec_instance):
     patched_rake = mocker.patch('sh.rake')
-    kwargs = {'debug': True, 'out': None, 'err': '/dev/null'}
+    kwargs = {'debug': True, 'out': None, 'err': None}
     serverspec_instance._rake('/tmp/rakefile', **kwargs)
 
-    ca = patched_rake.call_args[1]
-    assert '/tmp/rakefile' == ca.get('rakefile')
-    assert ca.get('trace')
+    patched_rake.assert_called_once_with(
+        _err=None, _out=None, rakefile='/tmp/rakefile', trace=True)
 
 
 def test_rubocop(mocker, serverspec_instance):
     patched_rubocop = mocker.patch('sh.rubocop')
-    kwargs = {'pattern': '**/**/**/*',
-              'debug': True,
-              'out': '/dev/null',
-              'err': None}
+    kwargs = {'pattern': '**/**/**/*', 'debug': True, 'out': None, 'err': None}
     serverspec_instance._rubocop('spec', **kwargs)
 
-    assert ('spec**/**/**/*', ) == patched_rubocop.call_args[0]
-
-    ca = patched_rubocop.call_args[1]
-    assert ca.get('debug')
+    patched_rubocop.assert_called_once_with(
+        'spec**/**/**/*', _err=None, _out=None, debug=True)
 
 
 def test_get_tests(serverspec_instance):
