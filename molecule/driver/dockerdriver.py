@@ -243,6 +243,7 @@ class DockerDriver(basedriver.BaseDriver):
             FROM {}:{}
             RUN bash -c 'if [ -x "$(command -v apt-get)" ]; then apt-get update && apt-get install -y python sudo; fi'
             RUN bash -c 'if [ -x "$(command -v yum)" ]; then yum makecache fast && yum update -y && yum install -y python sudo; fi'
+            RUN bash -c 'if [ -x "$(command -v zypper)" ]; then zypper refresh && zypper update -y && zypper install -y python sudo; fi'
 
             '''  # noqa
 
