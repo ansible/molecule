@@ -36,6 +36,8 @@ class AnsibleLint(base.Base):
     def __init__(self, molecule):
         super(AnsibleLint, self).__init__(molecule)
         self._playbook = molecule.config.config['ansible']['playbook']
+        self._env = {'ANSIBLE_CONFIG':
+                     molecule.config.config['ansible']['config_file']}
 
     def execute(self):
         """
@@ -46,5 +48,5 @@ class AnsibleLint(base.Base):
         """
         msg = 'Executing ansible-lint.'
         util.print_info(msg)
-
-        sh.ansible_lint(self._playbook, _out=LOG.info, _err=LOG.error)
+        sh.ansible_lint(
+            self._playbook, _env=self._env, _out=LOG.info, _err=LOG.error)
