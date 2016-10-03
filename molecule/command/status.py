@@ -81,6 +81,7 @@ class Status(base.Base):
 
 
 @click.command()
+@click.option('--driver', default=None, help='Specificy a driver.')
 @click.option(
     '--platforms/--no-platforms',
     default=False,
@@ -98,9 +99,11 @@ class Status(base.Base):
     default=False,
     help='Machine readable output.  Default is disabled.')
 @click.pass_context
-def status(ctx, platforms, providers, hosts, porcelain):  # pragma: no cover
+def status(ctx, driver, platforms, providers, hosts,
+           porcelain):  # pragma: no cover
     """ Prints status of configured instances. """
-    command_args = {'platforms': platforms,
+    command_args = {'driver': driver,
+                    'platforms': platforms,
                     'providers': providers,
                     'hosts': hosts,
                     'porcelain': porcelain}

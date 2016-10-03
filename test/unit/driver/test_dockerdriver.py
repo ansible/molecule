@@ -18,11 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import distutils.spawn
-import distutils.version
 import pytest
-
-import ansible
 
 from molecule import ansible_playbook
 from molecule import config
@@ -30,22 +26,7 @@ from molecule import core
 from molecule import state
 from molecule.driver import dockerdriver
 
-
-def ansible_v1():
-    d = distutils.version
-    return (d.LooseVersion(ansible.__version__) < d.LooseVersion('2.0'))
-
-
-def get_docker_executable():
-    return distutils.spawn.find_executable('docker')
-
-
-if not get_docker_executable():
-    pytestmark = pytest.mark.skip(
-        'No docker executable found - skipping docker tests')
-elif ansible_v1():
-    pytestmark = pytest.mark.skip(
-        'No Ansible v2 executable found - skipping docker tests')
+pytestmark = pytest.helpers.supports_docker()
 
 
 @pytest.fixture()
