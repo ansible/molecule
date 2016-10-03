@@ -51,11 +51,7 @@ class Serverspec(base.Base):
             self._rubocop(self._serverspec_dir, **serverspec_options)
             self._rake(self._rakefile, **serverspec_options)
 
-    def _rake(self,
-              rakefile,
-              debug=False,
-              out=LOG.info,
-              err=LOG.error):
+    def _rake(self, rakefile, debug=False, out=LOG.info, err=LOG.error):
         """
         Executes rake against specified rakefile, and returns a :func:`sh`
         response object.
