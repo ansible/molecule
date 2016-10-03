@@ -18,9 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import re
-
 import pytest
+import sh
 
 from molecule.command import converge
 
@@ -116,14 +115,15 @@ def test_execute_with_debug(patched_create, patched_ansible_playbook,
     c = converge.Converge(args, {}, molecule_instance)
     c.execute()
 
-    parts = patched_print_debug.call_args[0][1].split()
+    executable = sh.ansible_playbook
+    playbook = molecule_instance.config.config['ansible']['playbook']
     expected = ['--connection=ssh', '--diff',
                 '--inventory-file=test/inventory_file', '--limit=all',
-                '--sudo', '--timeout=30', '--user=vagrant', '-vvvv']
+                '--sudo', '--timeout=30', '--user=vagrant', '-vvvv',
+                executable, playbook]
 
-    assert re.search(r'ansible-playbook', parts[0])
-    assert re.search(r'playbook_data.yml', parts[1])
-    assert expected == sorted(parts[2:])
+    args, _ = patched_print_debug.call_args
+    assert expected == sorted(args[1].split())
 
 
 def test_execute_raises_on_exit(patched_create, patched_ansible_playbook,

@@ -19,7 +19,6 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import glob
-import os
 
 import sh
 
