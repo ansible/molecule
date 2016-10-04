@@ -10,7 +10,6 @@ History
 * Implemented click vs docopt.  This slightly changes the CLI's semantics.
 * Removed the driver python packages from installing with molecule.
 * Set ssh key if specified in OpenStack driver.
-* Pass ANSIBLE_CONFIG when executing ansible-lint.
 * Using py.test as functional test runner.
 
 Breaking Changes
@@ -29,6 +28,12 @@ Breaking Changes
 * The ``login`` subcommand requires a ``--host`` flag when more than one
   instance exists.
 * One must install the appropriate python package based on the driver used.
+
+1.11.5
+======
+
+* Set ssh key if specified with the OpenStack driver.
+* Pass ANSIBLE_CONFIG when executing ansible-lint
 
 1.11.4
 ======
