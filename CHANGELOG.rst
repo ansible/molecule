@@ -13,6 +13,7 @@ History
 * Using py.test as functional test runner.
 * Added a Gemfile to ``molecule init`` serverspec verifier.
 * Added SUSE docker driver support.
+* Display the list of non-idempotent tasks with ``molecule idempotence``.
 
 Breaking Changes
 ----------------
