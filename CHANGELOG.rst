@@ -9,6 +9,9 @@ History
 * Changed connection to ansible_connection.
 * Implemented click vs docopt.  This slightly changes the CLI's semantics.
 * Removed the driver python packages from installing with molecule.
+* Set ssh key if specified in OpenStack driver.
+* Pass ANSIBLE_CONFIG when executing ansible-lint.
+* Using py.test as functional test runner.
 
 Breaking Changes
 ----------------
