@@ -42,10 +42,6 @@ def test_created(state_instance_without_data):
     assert not state_instance_without_data.created
 
 
-def test_customconf(state_instance_without_data):
-    assert not state_instance_without_data.customconf
-
-
 def test_default_platform(state_instance_without_data):
     assert not state_instance_without_data.default_platform
 
