@@ -56,7 +56,9 @@ class Idempotence(base.Base):
             util.print_success('Idempotence test passed.')
             return None, None
         else:
-            LOG.error('Idempotence test failed.')
+            LOG.error(
+                'Idempotence test failed because of the following tasks:')
+            LOG.error('\n'.join(self._non_idempotent_tasks(output)))
             if exit:
                 util.sysexit()
 
@@ -81,6 +83,27 @@ class Idempotence(base.Base):
             return False
 
         return True
+
+    def _non_idempotent_tasks(self, output):
+        """
+        Parses the output to identify the non idempotent tasks.
+
+        :param (str) output: A string containing the output of the ansible run.
+        :return: A list containing the names of the non idempotent tasks.
+        """
+        # Remove blank lines to make regex matches easier.
+        output = re.sub("\n\s*\n*", "\n", output)
+
+        # Split the output into a list and go through it.
+        output_lines = output.split('\n')
+        res = []
+        for idx, line in enumerate(output_lines):
+            if line.startswith('changed'):
+                guilty_line = output_lines[idx - 1]
+                task_name = re.search(r'\[(.*)\]', guilty_line)
+                res.append('* {}'.format(task_name.groups()[0]))
+
+        return res
 
 
 @click.command()

@@ -18,6 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import textwrap
+
 import pytest
 
 from molecule.command import idempotence
@@ -49,24 +51,66 @@ def test_execute_does_not_raise_on_converge_error(
 
 
 def test_execute_does_not_raise_on_idempotence_failure(
-        patched_converge, patched_logger_error, molecule_instance):
-    patched_converge.return_value = None, 'changed=2'
+        mocker, patched_converge, patched_logger_error, molecule_instance):
+    output = 'check-command-01: ok=2    changed=1    unreachable=0    failed=0'
+    patched_converge.return_value = None, output
 
     i = idempotence.Idempotence({}, {}, molecule_instance)
     result = i.execute(exit=False)
 
-    msg = 'Idempotence test failed.'
-    patched_logger_error.assert_called_with(msg)
+    expected_calls = [
+        mocker.call('Idempotence test failed because of the following tasks:'),
+        mocker.call('')
+    ]
+    assert patched_logger_error.mock_calls == expected_calls
     assert (1, None) == result
 
 
 def test_execute_raises_on_idempotence_failure(
-        patched_converge, patched_logger_error, molecule_instance):
-    patched_converge.return_value = None, 'changed=2'
+        mocker, patched_converge, patched_logger_error, molecule_instance):
+    output = 'check-command-01: ok=2    changed=1    unreachable=0    failed=0'
+    patched_converge.return_value = None, output
 
     i = idempotence.Idempotence({}, {}, molecule_instance)
     with pytest.raises(SystemExit):
         i.execute()
 
-    msg = 'Idempotence test failed.'
-    patched_logger_error.assert_called_with(msg)
+    expected_calls = [
+        mocker.call('Idempotence test failed because of the following tasks:'),
+        mocker.call('')
+    ]
+    assert patched_logger_error.mock_calls == expected_calls
+
+
+def test_non_idempotent_tasks_00(molecule_instance):
+    """Ensures an empty list is returned when the playbook is idempotent."""
+    output = textwrap.dedent("""\
+        PLAY [all] ***********************************************************
+        GATHERING FACTS ******************************************************
+        ok: [check-command-01]
+        TASK: [Idempotence test] *********************************************
+        ok: [check-command-01]
+        PLAY RECAP ***********************************************************
+        check-command-01: ok=3    changed=0    unreachable=0    failed=0
+        """)
+    i = idempotence.Idempotence({}, {}, molecule_instance)
+    ret = i._non_idempotent_tasks(output)
+
+    assert ret == []
+
+
+def test_non_idempotent_tasks_01(molecule_instance):
+    """Ensures a non-idempotent task is detected."""
+    output = textwrap.dedent("""\
+        PLAY [all] ***********************************************************
+        GATHERING FACTS ******************************************************
+        ok: [check-command-01]
+        TASK: [Idempotence test] *********************************************
+        changed: [check-command-01]
+        PLAY RECAP ***********************************************************
+        check-command-01: ok=2    changed=1    unreachable=0    failed=0
+        """)
+    i = idempotence.Idempotence({}, {}, molecule_instance)
+    ret = i._non_idempotent_tasks(output)
+
+    assert ret == ['* Idempotence test']
