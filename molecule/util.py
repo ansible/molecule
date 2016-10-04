@@ -219,7 +219,7 @@ def sysexit(code=1):
 
 
 def _get_info_logger():
-    info = logging.StreamHandler()
+    info = logging.StreamHandler(sys.stdout)
     info.setLevel(logging.INFO)
     info.addFilter(LogFilter(logging.INFO))
     info.setFormatter(TrailingNewlineFormatter('%(message)s'))
@@ -228,7 +228,7 @@ def _get_info_logger():
 
 
 def _get_warn_logger():
-    warn = logging.StreamHandler()
+    warn = logging.StreamHandler(sys.stdout)
     warn.setLevel(logging.WARN)
     warn.addFilter(LogFilter(logging.WARN))
     warn.setFormatter(
@@ -238,7 +238,7 @@ def _get_warn_logger():
 
 
 def _get_debug_logger():
-    debug = logging.StreamHandler()
+    debug = logging.StreamHandler(sys.stdout)
     debug.setLevel(logging.DEBUG)
     debug.addFilter(LogFilter(logging.DEBUG))
     debug.setFormatter(
@@ -248,7 +248,7 @@ def _get_debug_logger():
 
 
 def _get_error_logger():
-    error = logging.StreamHandler()
+    error = logging.StreamHandler(sys.stderr)
     error.setLevel(logging.ERROR)
     error.setFormatter(
         TrailingNewlineFormatter('{}%(message)s'.format(colorama.Fore.RED)))
