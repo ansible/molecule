@@ -18,26 +18,15 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import logging
 import os
 import os.path
-import random
 import shutil
-import string
 
 import pytest
 
 from molecule import config
 from molecule import core
 from molecule import state
-
-logging.getLogger("sh").setLevel(logging.WARNING)
-
-pytest_plugins = ['helpers_namespace']
-
-
-def random_string(l=5):
-    return ''.join(random.choice(string.ascii_uppercase) for _ in range(l))
 
 
 @pytest.helpers.register
@@ -49,22 +38,9 @@ def os_split(s):
 
 
 @pytest.fixture()
-def temp_dir(tmpdir, request):
-    d = tmpdir.mkdir(random_string())
-    os.chdir(d.strpath)
-
-    def cleanup():
-        shutil.rmtree(d.strpath)
-
-    request.addfinalizer(cleanup)
-
-    return d.strpath
-
-
-@pytest.fixture()
 def temp_files(tmpdir, request):
     def wrapper(fixtures=[]):
-        d = tmpdir.mkdir(random_string())
+        d = tmpdir.mkdir(pytest.helpers.random_string())
         confs = []
         for index, fixture in enumerate(fixtures):
             c = d.join(os.extsep.join((fixture, 'yml')))
@@ -265,7 +241,7 @@ def state_path_with_data(temp_files):
 
 @pytest.fixture()
 def state_path_without_data(tmpdir, request):
-    d = tmpdir.mkdir(random_string())
+    d = tmpdir.mkdir(pytest.helpers.random_string())
     c = d.join(os.extsep.join(('state', 'yml')))
 
     def cleanup():
