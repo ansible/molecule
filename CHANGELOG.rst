@@ -2,6 +2,12 @@
 History
 *******
 
+1.11.5
+======
+
+* Set ssh key if specified with the OpenStack driver.
+* Pass ANSIBLE_CONFIG when executing ansible-lint
+
 1.11.4
 ======
 
