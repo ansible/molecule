@@ -27,11 +27,20 @@ import sh
 pytestmark = pytest.helpers.supports_docker()
 
 
+def ansi_escape(s):
+    ansi_escape = re.compile(r'\x1b[^m]*m')
+
+    return ansi_escape.sub('', s)
+
+
 @pytest.mark.parametrize(
     'scenario_setup', ['command_check'], indirect=['scenario_setup'])
 def test_command_check(scenario_setup):
     sh.molecule('create')
-    sh.molecule('check')
+    out = sh.molecule('check')
+    sh.molecule('verify')
+
+    assert re.search('changed=1', ansi_escape(out.stdout))
 
 
 @pytest.mark.parametrize(
@@ -117,8 +126,10 @@ def test_command_verify_trailing_whitespace(scenario_setup):
     try:
         sh.molecule('verify')
     except sh.ErrorReturnCode_1 as e:
-        assert re.search('\[ANSIBLE0002\] Trailing whitespace', e.message)
-        assert re.search('playbook.yml:5', e.message)
+        message = ansi_escape(e.message)
+
+        assert re.search('\[ANSIBLE0002\] Trailing whitespace', message)
+        assert re.search('playbook.yml:5', message)
 
 
 @pytest.mark.parametrize(
