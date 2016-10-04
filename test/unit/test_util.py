@@ -48,27 +48,24 @@ def test_print_info(capsys):
     assert expected == result
 
 
-# TODO(retr0h): Cleanup how we deal with temp files
-def test_write_template():
-    d = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'support')
-    src = os.path.join(d, 'test_write_template.j2')
-    tmp_file = '/tmp/test_util_write_template.tmp'
-    util.write_template(src, tmp_file, {'test': 'chicken'})
-    with open(tmp_file, 'r') as f:
+def test_write_template(temp_dir):
+    source_file = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), '..', 'resources',
+        'test_write_template.j2')
+    dest_file = os.path.join(temp_dir, 'test_util_write_template.tmp')
+    util.write_template(source_file, dest_file, {'test': 'chicken'})
+    with open(dest_file, 'r') as f:
         data = f.read()
-    os.remove(tmp_file)
 
     assert data == 'this is a chicken\n'
 
 
-# TODO(retr0h): Cleanup how we deal with temp files
-def test_write_file():
-    tmp_file = '/tmp/test_util_write_file.tmp'
+def test_write_file(temp_dir):
+    dest_file = os.path.join(temp_dir, 'test_util_write_file.tmp')
     contents = binascii.b2a_hex(os.urandom(15))
-    util.write_file(tmp_file, contents)
-    with open(tmp_file, 'r') as f:
+    util.write_file(dest_file, contents)
+    with open(dest_file, 'r') as f:
         data = f.read()
-    os.remove(tmp_file)
 
     assert data == contents
 
