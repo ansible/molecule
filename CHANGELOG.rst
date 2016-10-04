@@ -2,8 +2,8 @@
 History
 *******
 
-1.NEXT
-======
+1.12
+====
 
 * Additional command tests.
 * Changed connection to ansible_connection.
@@ -11,6 +11,8 @@ History
 * Removed the driver python packages from installing with molecule.
 * Set ssh key if specified in OpenStack driver.
 * Using py.test as functional test runner.
+* Added a Gemfile to ``molecule init`` serverspec verifier.
+* Added SUSE docker driver support.
 
 Breaking Changes
 ----------------
@@ -33,7 +35,7 @@ Breaking Changes
 ======
 
 * Set ssh key if specified with the OpenStack driver.
-* Pass ANSIBLE_CONFIG when executing ansible-lint
+* Pass ANSIBLE_CONFIG when executing ansible-lint.
 
 1.11.4
 ======
