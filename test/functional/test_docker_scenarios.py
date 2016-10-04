@@ -84,6 +84,7 @@ def test_command_init_verifier_serverspec(temp_dir):
     sh.molecule('init', '--role', 'command-test-serverspec', '--driver',
                 'docker', '--verifier', 'serverspec')
     os.chdir(d)
+    sh.bundle('install')
     sh.molecule('test')
 
 
