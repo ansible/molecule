@@ -2,6 +2,11 @@
 History
 *******
 
+1.12.2
+======
+
+* Removed default multiple-instances from init.
+
 1.12.1
 ======
 
