@@ -1,7 +1,6 @@
 ---
 driver:
   name: {{ cookiecutter.driver_name }}
-
 openstack:
   keyfile: ~/.ssh/id_rsa
   keypair: NameKey
@@ -12,6 +11,5 @@ openstack:
       sshuser: centos
       ansible_groups:
         - group1
-
 verifier:
   name: {{ cookiecutter.verifier_name }}
