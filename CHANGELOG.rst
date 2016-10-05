@@ -2,6 +2,11 @@
 History
 *******
 
+1.12.1
+======
+
+* Preserve ansible.cfg when supplying a custom one.
+
 1.12
 ====
 
