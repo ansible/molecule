@@ -32,7 +32,6 @@ from molecule import util
 
 VALID_KEYS = ['converged',
               'created',
-              'customconf',
               'default_platform',
               'default_provider',
               'driver',
@@ -97,10 +96,6 @@ class State(object):
         return self._data.get('multiple_platforms')
 
     @property
-    def customconf(self):
-        return self._data.get('customconf')
-
-    @property
     def installed_deps(self):
         return self._data.get('installed_deps')
 
@@ -133,7 +128,6 @@ class State(object):
         return {
             "converged": None,
             "created": None,
-            "customconf": None,
             "default_platform": None,
             "default_provider": None,
             "driver": None,
