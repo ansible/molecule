@@ -1,27 +1,20 @@
 ---
 driver:
   name: {{ cookiecutter.driver_name }}
-
 vagrant:
   platforms:
     - name: {{ cookiecutter.platform_name }}
       box: {{ cookiecutter.platform_box }}
       box_url: {{ cookiecutter.platform_box_url }}
-
   providers:
     - name: {{ cookiecutter.provider_name }}
       type: {{ cookiecutter.provider_type }}
       options:
         memory: {{ cookiecutter.provider_options_memory }}
         cpus: {{ cookiecutter.provider_options_cpu }}
-
   instances:
-    {%- for n in range(cookiecutter.instances|int) %}
-
-      - name: {{ cookiecutter.role_name }}-{{ '%02d' % loop.index }}
-        ansible_groups:
-          - group1
-    {%- endfor %}
-
+    - name: {{ cookiecutter.role_name }}
+      ansible_groups:
+        - group1
 verifier:
   name: {{ cookiecutter.verifier_name }}
