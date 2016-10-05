@@ -164,9 +164,13 @@ class Molecule(object):
         """
         if os.path.exists(self.config.config['molecule']['rakefile_file']):
             os.remove(self.config.config['molecule']['rakefile_file'])
-        if not self.state.customconf:
-            if os.path.exists(self.config.config['ansible']['config_file']):
-                os.remove(self.config.config['ansible']['config_file'])
+
+        config = self.config.config['ansible']['config_file']
+        if os.path.exists(config):
+            with open(config, 'r') as stream:
+                data = stream.read().splitlines()
+                if '# Molecule managed' in data:
+                    os.remove(config)
 
     def create_templates(self):
         """
@@ -179,9 +183,6 @@ class Molecule(object):
         extra_context = self._get_cookiecutter_context(molecule_dir)
         if not os.path.isfile(self.config.config['ansible']['config_file']):
             util.process_templates('molecule', extra_context, role_path)
-            self.state.change_state('customconf', False)
-        else:
-            self.state.change_state('customconf', True)
 
     def write_instances_state(self):
         self.state.change_state('hosts', self._instances_state())

@@ -1,4 +1,4 @@
-# encoding: UTF-8
+# Molecule managed
 
 require 'rake'
 require 'rspec/core/rake_task'
