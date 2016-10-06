@@ -1,7 +1,7 @@
-from testinfra.utils.ansible_runner import AnsibleRunner
+import testinfra.utils.ansible_runner
 
-testinfra_hosts = AnsibleRunner('.molecule/ansible_inventory').get_hosts(
-    'example-group2')
+testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
+    '.molecule/ansible_inventory').get_hosts('example-group2')
 
 
 def test_etc_molecule_example_group2(File):
