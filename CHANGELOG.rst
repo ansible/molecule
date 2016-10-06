@@ -2,6 +2,11 @@
 History
 *******
 
+1.12.3
+======
+
+* Write templates even when a custom ansible.cfg is specified.
+
 1.12.2
 ======
 
