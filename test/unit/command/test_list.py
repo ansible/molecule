@@ -21,7 +21,7 @@
 from molecule.command import list as command_list
 
 
-def test_execute(capsys, patched_main, molecule_instance):
+def test_execute(capsys, molecule_instance):
     l = command_list.List({}, {}, molecule_instance)
     result = l.execute()
 
@@ -32,7 +32,7 @@ def test_execute(capsys, patched_main, molecule_instance):
     assert (None, None) == result
 
 
-def test_execute_with_porcelain(capsys, patched_main, molecule_instance):
+def test_execute_with_porcelain(capsys, molecule_instance):
     command_args = {'porcelain': True}
 
     l = command_list.List({}, command_args, molecule_instance)

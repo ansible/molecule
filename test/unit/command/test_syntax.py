@@ -21,8 +21,8 @@
 from molecule.command import syntax
 
 
-def test_execute(mocker, patched_main, patched_ansible_playbook,
-                 patched_print_info, molecule_instance):
+def test_execute(mocker, patched_ansible_playbook, patched_print_info,
+                 molecule_instance):
     patched_ansible_playbook.return_value = 'returned'
 
     s = syntax.Syntax({}, {}, molecule_instance)
@@ -34,7 +34,7 @@ def test_execute(mocker, patched_main, patched_ansible_playbook,
     assert 'returned' == result
 
 
-def test_execute_installs_requirements(patched_main, patched_ansible_playbook,
+def test_execute_installs_requirements(patched_ansible_playbook,
                                        patched_ansible_galaxy,
                                        patched_print_info, molecule_instance):
     molecule_instance.config.config['ansible']['requirements_file'] = str()
