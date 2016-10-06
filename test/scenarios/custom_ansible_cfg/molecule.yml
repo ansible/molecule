@@ -1,0 +1,14 @@
+---
+ansible:
+  config_file: ../ansible.cfg
+driver:
+  name: docker
+
+docker:
+  containers:
+    - name: custom-ansible-cfg-scenario
+      image: ubuntu
+      image_version: latest
+
+verifier:
+  name: testinfra
