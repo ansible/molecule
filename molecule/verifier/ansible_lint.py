@@ -46,7 +46,8 @@ class AnsibleLint(base.Base):
 
         :return: None
         """
-        msg = 'Executing ansible-lint.'
-        util.print_info(msg)
-        sh.ansible_lint(
-            self._playbook, _env=self._env, _out=LOG.info, _err=LOG.error)
+        if 'ansible_lint' not in self._molecule.disabled:
+            msg = 'Executing ansible-lint.'
+            util.print_info(msg)
+            sh.ansible_lint(
+                self._playbook, _env=self._env, _out=LOG.info, _err=LOG.error)

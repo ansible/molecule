@@ -217,7 +217,8 @@ def ansible_section_data(playbook):
         'verifier': {
             'name': 'testinfra',
             'options': {}
-        }
+        },
+        '_disabled': []
     }
 
 

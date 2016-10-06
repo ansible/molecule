@@ -47,6 +47,7 @@ class Molecule(object):
         self.config = config.Config()
         self._verifier = self._get_verifier()
         self._verifier_options = self._get_verifier_options()
+        self._disabled = self._get_disabled()
 
     def main(self):
         if not os.path.exists(self.config.config['molecule']['molecule_dir']):
@@ -111,6 +112,14 @@ class Molecule(object):
     @verifier_options.setter
     def verifier_options(self, val):
         self._verifier_options = val
+
+    @property
+    def disabled(self):
+        return self._disabled
+
+    @disabled.setter
+    def disabled(self, val):
+        self._disabled = val
 
     def write_ssh_config(self):
         ssh_config = self._get_ssh_config()
@@ -372,6 +381,10 @@ class Molecule(object):
         # syntax.
         return self.config.config.get(
             'testinfra', self.config.config['verifier'].get('options', {}))
+
+    def _get_disabled(self):
+        # Ability to turn off features until we roll them out.
+        return self.config.config.get('_disabled', [])
 
     def _get_cookiecutter_context(self, molecule_dir):
         state_file = self.config.config['molecule']['state_file']
