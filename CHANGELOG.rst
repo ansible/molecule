@@ -2,6 +2,14 @@
 History
 *******
 
+1.12.4
+======
+
+* Added a private disabled top level key.  Do not use or rely on this key.
+  Added for our molecule adoption.
+* Added a coverage minimum.
+* More unit and functional coverage.
+
 1.12.3
 ======
 
