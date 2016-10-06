@@ -181,8 +181,7 @@ class Molecule(object):
         molecule_dir = self.config.config['molecule']['molecule_dir']
         role_path = os.getcwd()
         extra_context = self._get_cookiecutter_context(molecule_dir)
-        if not os.path.isfile(self.config.config['ansible']['config_file']):
-            util.process_templates('molecule', extra_context, role_path)
+        util.process_templates('molecule', extra_context, role_path)
 
     def write_instances_state(self):
         self.state.change_state('hosts', self._instances_state())
