@@ -24,7 +24,7 @@ from molecule.command import check
 
 
 def test_execute_raises_when_instance_not_created(
-        patched_main, patched_logger_error, molecule_instance):
+        patched_check_main, patched_logger_error, molecule_instance):
     c = check.Check({}, {}, molecule_instance)
 
     with pytest.raises(SystemExit):
@@ -35,7 +35,7 @@ def test_execute_raises_when_instance_not_created(
     patched_logger_error.assert_called_once_with(msg)
 
 
-def test_execute(mocker, patched_main, patched_ansible_playbook,
+def test_execute(mocker, patched_check_main, patched_ansible_playbook,
                  patched_print_info, molecule_instance):
     molecule_instance.state.change_state('created', True)
     molecule_instance.state.change_state('converged', True)

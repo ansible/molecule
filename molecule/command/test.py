@@ -65,9 +65,6 @@ class Test(base.Base):
             c.execute()
             return None, None
 
-        # error encountered during test
-        util.sysexit(status)
-
 
 @click.command()
 @click.option('--driver', default=None, help='Specificy a driver.')
