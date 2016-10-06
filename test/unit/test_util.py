@@ -60,6 +60,12 @@ def test_write_template(temp_dir):
     assert data == 'this is a chicken\n'
 
 
+def test_write_template_template_does_not_exist(temp_dir):
+    dest_file = os.path.join(temp_dir, 'test_util_write_template.tmp')
+    with pytest.raises(SystemExit):
+        util.write_template('/non/existent', dest_file, {'foo': 'bar'})
+
+
 def test_write_file(temp_dir):
     dest_file = os.path.join(temp_dir, 'test_util_write_file.tmp')
     contents = binascii.b2a_hex(os.urandom(15))

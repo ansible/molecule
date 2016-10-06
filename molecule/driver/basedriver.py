@@ -135,7 +135,7 @@ class BaseDriver(object):
 
         :returns: list
         """
-        return self._valid_platforms
+        pass  # pragma: no cover
 
     @abc.abstractproperty
     def ssh_config_file(self):

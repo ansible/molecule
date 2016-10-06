@@ -38,6 +38,14 @@ def patched_get_tests(mocker):
     return mocker.patch('molecule.verifier.goss.Goss._get_tests')
 
 
+@pytest.fixture
+def patched_get_library_path(mocker):
+    m = mocker.patch('molecule.verifier.goss.Goss._get_library_path')
+    m.return_value = 'foo/bar'
+
+    return m
+
+
 def test_execute(patched_test_verifier, patched_get_tests, goss_instance):
     patched_get_tests.return_value = True
     goss_instance.execute()
@@ -69,3 +77,24 @@ def test_goss_path(goss_instance):
 
     assert ('verifier', '..', '..', 'molecule', 'verifier', 'ansible',
             'library') == parts[-7:]
+
+
+def test_set_library_path_appends(patched_get_library_path, goss_instance):
+    goss_instance._ansible.env['ANSIBLE_LIBRARY'] = 'existing/path'
+    goss_instance._set_library_path()
+
+    assert 'existing/path:foo/bar' == goss_instance._ansible.env.get(
+        'ANSIBLE_LIBRARY')
+
+
+def test_set_library_path(patched_get_library_path, goss_instance):
+    goss_instance._set_library_path()
+
+    assert 'foo/bar' == goss_instance._ansible.env.get('ANSIBLE_LIBRARY')
+
+
+def test_get_library_path(goss_instance):
+    path = goss_instance._get_library_path()
+    parts = pytest.helpers.os_split(path)
+
+    assert ('molecule', 'verifier', 'ansible', 'library') == parts[-4:]
