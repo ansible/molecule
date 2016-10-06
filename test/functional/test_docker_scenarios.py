@@ -110,6 +110,17 @@ def test_command_verify(scenario_setup):
 
 
 @pytest.mark.parametrize(
+    'scenario_setup', ['custom_ansible_cfg'], indirect=['scenario_setup'])
+def test_custom_ansible_cfg(scenario_setup):
+    sh.molecule('create')
+    assert os.path.exists('.molecule/ansible.cfg')
+
+    sh.molecule('destroy')
+    assert os.path.exists('.molecule/ansible.cfg')
+    assert os.path.exists('ansible.cfg')
+
+
+@pytest.mark.parametrize(
     'scenario_setup', ['command_verify_trailing_newline'],
     indirect=['scenario_setup'])
 def test_command_verify_trailing_newline(scenario_setup):

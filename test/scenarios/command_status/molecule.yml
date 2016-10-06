@@ -37,15 +37,9 @@ openstack:
 docker:
   containers:
     - name: status-scenario-01
-      ansible_groups:
-        - example-group
-        - example-group1
       image: ubuntu
       image_version: latest
     - name: status-scenario-02
-      ansible_groups:
-        - example-group
-        - example-group2
       image: ubuntu
       image_version: latest
 
