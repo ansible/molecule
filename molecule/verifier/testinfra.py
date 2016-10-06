@@ -61,7 +61,8 @@ class Testinfra(base.Base):
 
         tests_glob = self._get_tests()
         if len(tests_glob) > 0:
-            self._flake8(tests_glob)
+            if 'flake8' not in self._molecule.disabled:
+                self._flake8(tests_glob)
             self._testinfra(tests_glob, **testinfra_options)
 
     def _testinfra(self,

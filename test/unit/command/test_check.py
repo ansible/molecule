@@ -50,3 +50,17 @@ def test_execute(mocker, patched_main, patched_ansible_playbook,
     patched_print_info.assert_called_once_with(msg)
     patched_ansible_playbook.assert_called_once_with(hide_errors=True)
     assert 'returned' == result
+
+
+def test_execute_does_not_execute(patched_check_main, patched_ansible_playbook,
+                                  molecule_instance):
+    molecule_instance.disabled = ['command_check']
+    molecule_instance.state.change_state('created', True)
+    molecule_instance.state.change_state('converged', True)
+
+    c = check.Check({}, {}, molecule_instance)
+    result = c.execute()
+
+    assert not patched_ansible_playbook.called
+
+    assert (None, None) == result

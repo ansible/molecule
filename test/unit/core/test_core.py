@@ -91,6 +91,16 @@ def test_verifier_options_backward_compatible(
     assert {'foo': 'bar'} == m.verifier_options
 
 
+def test_verifier_disabled_setter(molecule_default_provider_instance):
+    molecule_default_provider_instance.disabled = 'foo'
+
+    assert 'foo' == molecule_default_provider_instance.disabled
+
+
+def test_verifier_disabled(molecule_default_provider_instance):
+    assert [] == molecule_default_provider_instance.disabled
+
+
 @pytest.mark.skip(reason='TODO(retr0h): Determine best way to test this')
 def test_remove_templates():
     pass

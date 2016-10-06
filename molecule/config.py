@@ -172,7 +172,8 @@ class Config(object):
             'verifier': {
                 'name': 'testinfra',
                 'options': {}
-            }
+            },
+            '_disabled': [],
         }
 
 
