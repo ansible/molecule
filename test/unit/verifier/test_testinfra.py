@@ -52,6 +52,7 @@ def test_execute(mocker, patched_code_verifier, patched_test_verifier,
                  patched_get_tests, patched_ansible, testinfra_instance):
     patched_get_tests.return_value = ['/test/1', '/test/2']
     patched_ansible.return_value = mocker.Mock(env={})
+    testinfra_instance._molecule.args = {'debug': True, 'sudo': True}
     testinfra_instance.execute()
 
     patched_code_verifier.assert_called_once_with(['/test/1', '/test/2'])
@@ -59,7 +60,9 @@ def test_execute(mocker, patched_code_verifier, patched_test_verifier,
         ['/test/1', '/test/2'],
         ansible_inventory='test/inventory_file',
         ansible_env={},
-        connection='ansible')
+        connection='ansible',
+        debug=True,
+        sudo=True)
 
 
 def test_execute_no_tests(patched_code_verifier, patched_test_verifier,

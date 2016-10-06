@@ -37,12 +37,12 @@ class LogFilter(object):
     def __init__(self, level):
         self.__level = level
 
-    def filter(self, logRecord):
+    def filter(self, logRecord):  # pragma: no cover
         return logRecord.levelno <= self.__level
 
 
 class TrailingNewlineFormatter(logging.Formatter):
-    def format(self, record):
+    def format(self, record):  # pragma: no cover
         if record.msg:
             record.msg = record.msg.rstrip()
         return super(TrailingNewlineFormatter, self).format(record)
