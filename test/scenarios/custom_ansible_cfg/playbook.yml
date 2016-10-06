@@ -1,0 +1,6 @@
+---
+- hosts: all
+  tasks:
+    - name: Custom ansible cfg functional scenario
+      command: /bin/true
+      changed_when: False
