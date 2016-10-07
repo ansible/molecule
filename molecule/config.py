@@ -22,6 +22,7 @@ import os
 import os.path
 
 import anyconfig
+import m9dicts
 
 from molecule import util
 
@@ -85,7 +86,7 @@ class Config(object):
             anyconfig.load(
                 configs, ignore_missing=True, ac_merge=MERGE_STRATEGY))
 
-        return conf
+        return m9dicts.convert_to(conf)
 
     def _build_config_paths(self):
         """
