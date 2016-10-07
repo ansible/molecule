@@ -19,6 +19,7 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import pytest
+import sh
 
 from molecule import ansible_playbook
 
@@ -39,6 +40,14 @@ def test_init_arg_loading_bool_true(ansible_playbook_instance):
 
 def test_init_arg_loading_bool_false_not_added(ansible_playbook_instance):
     assert ansible_playbook_instance._cli.get('sudo_user') is None
+
+
+def test_init_connection_params(ansible_section_data,
+                                ansible_playbook_instance):
+    connection_params = {'foo': 'bar'}
+    a = ansible_playbook.AnsiblePlaybook(ansible_section_data['ansible'],
+                                         connection_params)
+    assert 'bar' == a._cli.get('foo')
 
 
 def test_parse_arg_raw_env(ansible_playbook_instance):
@@ -123,3 +132,47 @@ def test_remove_env_arg(ansible_playbook_instance):
     ansible_playbook_instance.remove_env_arg('FOO')
 
     assert 'FOO' not in ansible_playbook_instance.env
+
+
+def test_bake(ansible_playbook_instance):
+    ansible_playbook_instance.bake()
+    executable = sh.ansible_playbook
+    expected = [
+        '--diff', '--inventory-file=inventory_file', '--limit=all', '--sudo',
+        '--timeout=30', '-vvvv', executable,
+        ansible_playbook_instance._playbook
+    ]
+
+    assert expected == sorted(str(ansible_playbook_instance._ansible).split())
+
+
+def test_ignores_requirements_file():
+    a = ansible_playbook.AnsiblePlaybook({'requirements_file': 'foo/bar'}, {})
+
+    assert not a._cli.get('requirements_file')
+
+
+def test_ignores_host_group_vars():
+    a = ansible_playbook.AnsiblePlaybook({'host_vars': 'foo',
+                                          'group_vars': 'bar'}, {})
+
+    assert not a._cli.get('host_vars')
+    assert not a._cli.get('group_vars')
+
+
+def test_execute(mocker, ansible_playbook_instance):
+    mocker.patch('sh.ansible_playbook')
+    result = ansible_playbook_instance.execute()
+
+    assert isinstance(result, tuple)
+
+
+def test_execute_exits_with_return_code_and_logs(patched_logger_error,
+                                                 ansible_playbook_instance):
+    ansible_playbook_instance._ansible = sh.false.bake()
+    result = ansible_playbook_instance.execute()
+
+    msg = "ERROR: \n\n  RAN: '/usr/bin/false'\n\n  STDOUT:\n\n\n  STDERR:\n"
+    patched_logger_error.assert_called_once_with(msg)
+
+    assert (1, None) == result

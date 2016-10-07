@@ -88,11 +88,6 @@ def patched_verify(mocker):
 
 
 @pytest.fixture
-def patched_logger_error(mocker):
-    return mocker.patch('logging.Logger.error')
-
-
-@pytest.fixture
 def patched_print_info(mocker):
     return mocker.patch('molecule.util.print_info')
 
