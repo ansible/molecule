@@ -274,3 +274,8 @@ def patched_ansible_playbook(mocker):
 @pytest.fixture()
 def patched_ansible_galaxy(mocker):
     return mocker.patch('molecule.ansible_galaxy.AnsibleGalaxy.execute')
+
+
+@pytest.fixture
+def patched_logger_error(mocker):
+    return mocker.patch('logging.Logger.error')
