@@ -337,11 +337,14 @@ class Molecule(object):
 
         for target in vars_target.keys():
             target_var_content = vars_target[target][0]
+            path = os.path.join(os.path.abspath(target_vars_path), target)
 
             util.write_file(
-                os.path.join(os.path.abspath(target_vars_path), target),
-                "---\n" + yaml.dump(
-                    target_var_content, default_flow_style=False))
+                path,
+                yaml.dump(
+                    target_var_content,
+                    default_flow_style=False,
+                    explicit_start=True))
 
     def _instances_state(self):
         """

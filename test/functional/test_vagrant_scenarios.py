@@ -61,3 +61,9 @@ def test_command_test_platform_centos(scenario_setup):
     'scenario_setup', ['command_test'], indirect=['scenario_setup'])
 def test_command_test_platform_all(scenario_setup):
     sh.molecule('test', '--driver', 'vagrant', '--platform', 'all')
+
+
+@pytest.mark.parametrize(
+    'scenario_setup', ['group_host_vars'], indirect=['scenario_setup'])
+def test_group_host_vars(scenario_setup):
+    sh.molecule('test', '--driver', 'vagrant')

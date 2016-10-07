@@ -22,5 +22,21 @@ docker:
       image: ubuntu
       image_version: latest
 
+vagrant:
+  platforms:
+    - name: ubuntu
+      box: ubuntu/trusty64
+
+  providers:
+    - name: virtualbox
+      type: virtualbox
+
+  instances:
+    - name: group-vars-scenario
+      ansible_groups:
+        - example
+        - example2:children:
+          - example
+
 verifier:
   name: testinfra
