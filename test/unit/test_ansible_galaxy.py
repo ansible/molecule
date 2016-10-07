@@ -80,7 +80,7 @@ def test_execute(mocker, ansible_galaxy_instance):
 
 
 def test_execute_exits_with_return_code_and_logs(patched_logger_error,
-                                                  ansible_galaxy_instance):
+                                                 ansible_galaxy_instance):
     ansible_galaxy_instance._galaxy = sh.false.bake()
     with pytest.raises(SystemExit) as e:
         ansible_galaxy_instance.execute()

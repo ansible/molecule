@@ -168,7 +168,7 @@ def test_execute(mocker, ansible_playbook_instance):
 
 
 def test_execute_exits_with_return_code_and_logs(patched_logger_error,
-                                                  ansible_playbook_instance):
+                                                 ansible_playbook_instance):
     ansible_playbook_instance._ansible = sh.false.bake()
     result = ansible_playbook_instance.execute()
 
