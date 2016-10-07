@@ -21,6 +21,7 @@
 import re
 
 import pytest
+import sh
 
 from molecule import ansible_galaxy
 from molecule import config
@@ -69,3 +70,22 @@ def test_install_overrides(patched_ansible_galaxy, ansible_galaxy_instance):
                 '--roles-path=test/roles']
 
     assert expected == sorted(parts[2:])
+
+
+def test_execute(mocker, ansible_galaxy_instance):
+    mocker.patch('sh.ansible_galaxy')
+    result = ansible_galaxy_instance.execute()
+
+    assert isinstance(result, mocker.Mock)
+
+
+def test_execute_exits_with_return_code_and_logs(patched_logger_error,
+                                                 ansible_galaxy_instance):
+    ansible_galaxy_instance._galaxy = sh.false.bake()
+    with pytest.raises(SystemExit) as e:
+        ansible_galaxy_instance.execute()
+
+    assert 1 == e.value.code
+
+    msg = "ERROR: \n\n  RAN: '/usr/bin/false'\n\n  STDOUT:\n\n\n  STDERR:\n"
+    patched_logger_error.assert_called_once_with(msg)
