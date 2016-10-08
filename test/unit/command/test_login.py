@@ -39,8 +39,7 @@ def test_execute_raises_when_no_host_privided_but_multiple_instances_exist(
     l = login.Login({}, {}, molecule_instance)
     with pytest.raises(SystemExit):
         l.execute()
-
-    msg = ('There are 2 running hosts. You can only login to one at a time.\n'
+    msg = ('There are 2 running hosts. Please specify which with --host .\n'
            '\nAvailable hosts:\nbaz\nfoo')
     patched_logger_error.assert_called_once_with(msg)
 
