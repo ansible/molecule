@@ -28,7 +28,8 @@ def ansible_lint_instance(molecule_instance):
     return ansible_lint.AnsibleLint(molecule_instance)
 
 
-def test_execute(mocker, ansible_lint_instance):
+def test_execute(monkeypatch, mocker, ansible_lint_instance):
+    monkeypatch.setenv('HOME', '/foo/bar')
     patched_ansible_lint = mocker.patch('sh.ansible_lint')
     ansible_lint_instance.execute()
 
@@ -37,6 +38,7 @@ def test_execute(mocker, ansible_lint_instance):
 
     patched_ansible_lint.assert_called_once_with(
         ansible_lint_instance._playbook,
-        _env={'ANSIBLE_CONFIG': 'test/config_file'},
+        _env={'ANSIBLE_CONFIG': 'test/config_file',
+              'HOME': '/foo/bar'},
         _out=ansible_lint.LOG.info,
         _err=ansible_lint.LOG.error)
