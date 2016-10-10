@@ -64,7 +64,7 @@ class Login(base.Base):
                 # But too many hosts is trouble as well.
                 else:
                     message = ('There are {} running hosts. Please specify '
-                               'which with --host .\n\n'
+                               'which with --host.\n\n'
                                'Available hosts:\n{}'.format(
                                    len(hosts), '\n'.join(sorted(hosts))))
                     raise base.InvalidHost(message)
