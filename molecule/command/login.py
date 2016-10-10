@@ -125,9 +125,10 @@ class Login(base.Base):
 
 
 @click.command()
+@click.option('--driver', default=None, help='Specificy a driver.')
 @click.option('--host', default=None, help='Host to access.')
 @click.pass_context
-def login(ctx, host):  # pragma: no cover
+def login(ctx, driver, host):  # pragma: no cover
     """
     Initiates an interactive ssh session with the given host.
 
@@ -135,7 +136,7 @@ def login(ctx, host):  # pragma: no cover
     If no `--host` flag provided, will login to the instance.  If more than
     once instance exists, the `--host` flag must be provided.
     """
-    command_args = {'host': host}
+    command_args = {'driver': driver, 'host': host}
 
     l = Login(ctx.obj.get('args'), command_args)
     l.execute
