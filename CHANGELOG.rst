@@ -2,6 +2,15 @@
 History
 *******
 
+1.12.5
+======
+
+* Increased test coverage.
+* Allow group/host vars in molecule.yml to work with ansible 1.9.
+* Pass HOME to ansible-lint environment.
+* Expose driver to login.
+* Improved login error message messaging.
+
 1.12.4
 ======
 
