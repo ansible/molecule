@@ -93,5 +93,5 @@ From the root for the project, run:
   $ tox -e syntax
 
 .. _`YAPF`: https://github.com/google/yapf
-.. _`Tox`: https://tox.readthedocs.org/en/latest
+.. _`Tox`: https://tox.readthedocs.io/en/latest
 .. _`Issue`: https://github.com/metacloud/molecule/issues

@@ -7,7 +7,7 @@ Molecule
    :alt: PyPI Package
 
 .. image:: https://readthedocs.org/projects/molecule/badge/?version=latest
-   :target: https://molecule.readthedocs.org/en/latest/
+   :target: https://molecule.readthedocs.io/en/latest/
    :alt: Documentation Status
 
 Molecule is designed to aid in the development and testing of
@@ -68,7 +68,7 @@ Provider
 .. _`OpenStack`: https://www.openstack.org
 .. _`Parallels`: http://www.parallels.com
 .. _`Serverspec`: http://serverspec.org
-.. _`Testinfra`: http://testinfra.readthedocs.org
+.. _`Testinfra`: https://testinfra.readthedocs.io
 .. _`Vagrant`: http://docs.vagrantup.com/v2
 .. _`VirtualBox`: https://www.virtualbox.org
 .. _`VMware Fusion`: http://www.vmware.com/products/fusion.html
@@ -159,7 +159,7 @@ Update the role with needed functionality and tests.  Now test it:
 Documentation
 =============
 
-http://molecule.readthedocs.org/en/latest/
+https://molecule.readthedocs.io/en/latest/
 
 License
 =======
