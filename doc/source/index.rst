@@ -23,7 +23,7 @@ Contents:
 .. _`playbook`: https://docs.ansible.com/ansible/playbooks.html
 .. _`role`: http://docs.ansible.com/ansible/playbooks_roles.html
 .. _`Serverspec`: http://serverspec.org
-.. _`Testinfra`: http://testinfra.readthedocs.org
+.. _`Testinfra`: https://testinfra.readthedocs.io
 .. _`Vagrant`: http://docs.vagrantup.com/v2
 .. _`Docker`: https://www.docker.com
 .. _`OpenStack`: https://www.openstack.org

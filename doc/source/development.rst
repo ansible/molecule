@@ -75,5 +75,5 @@ Roadmap
 .. _`PyPI`: https://pypi.python.org/pypi/molecule
 .. _`ISSUES`: https://github.com/metacloud/molecule/issues
 .. _`CHANGELOG`: https://github.com/metacloud/molecule/blob/master/CHANGELOG.rst
-.. _`install from source`: http://molecule.readthedocs.org/en/latest/usage.html#installing-from-source
+.. _`install from source`: https://molecule.readthedocs.io/en/latest/usage.html#installing-from-source
 .. _`twine`: https://pypi.python.org/pypi/twine
