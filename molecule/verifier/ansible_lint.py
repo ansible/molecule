@@ -38,6 +38,7 @@ class AnsibleLint(base.Base):
     def __init__(self, molecule):
         super(AnsibleLint, self).__init__(molecule)
         self._playbook = molecule.config.config['ansible']['playbook']
+        self._ignore_paths = molecule.config.config['molecule']['ignore_paths']
 
     def execute(self):
         """
@@ -53,5 +54,6 @@ class AnsibleLint(base.Base):
         if 'ansible_lint' not in self._molecule.disabled:
             msg = 'Executing ansible-lint.'
             util.print_info(msg)
-            sh.ansible_lint(
-                self._playbook, _env=env, _out=LOG.info, _err=LOG.error)
+            args = [self._playbook]
+            [args.extend(["--exclude", path]) for path in self._ignore_paths]
+            sh.ansible_lint(*args, _env=env, _out=LOG.info, _err=LOG.error)
