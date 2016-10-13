@@ -36,7 +36,7 @@ using `testinfra's command line arguments`_.
 Note: Testinfra is based on pytest, so additional `pytest arguments`_ can be
 passed through it.
 
-.. _`testinfra's command line arguments`: http://testinfra.readthedocs.io/en/latest/invocation.html
+.. _`testinfra's command line arguments`: https://testinfra.readthedocs.io/en/latest/invocation.html
 .. _`PyTest arguments`: http://pytest.org/latest/usage.html#usage
 
 Project Structure
@@ -49,7 +49,7 @@ Project Structure
     └── tests/
         └── test_*.py
 
-.. _`Testinfra`: http://testinfra.readthedocs.org
+.. _`Testinfra`: https://testinfra.readthedocs.io
 .. _`Flake8`: http://flake8.pycqa.org/en/latest/
 
 Serverspec
