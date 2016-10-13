@@ -38,6 +38,9 @@ def test_execute(monkeypatch, mocker, ansible_lint_instance):
 
     patched_ansible_lint.assert_called_once_with(
         ansible_lint_instance._playbook,
+        '--exclude', '.git',
+        '--exclude', '.vagrant',
+        '--exclude', '.molecule',
         _env={'ANSIBLE_CONFIG': 'test/config_file',
               'HOME': '/foo/bar'},
         _out=ansible_lint.LOG.info,

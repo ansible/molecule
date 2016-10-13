@@ -55,6 +55,5 @@ class AnsibleLint(base.Base):
             msg = 'Executing ansible-lint.'
             util.print_info(msg)
             args = [self._playbook]
-            for path in self._ignore_paths:
-                args.append(["--exclude", path])
+            [args.extend(["--exclude", path]) for path in self._ignore_paths]
             sh.ansible_lint(*args, _env=env, _out=LOG.info, _err=LOG.error)
