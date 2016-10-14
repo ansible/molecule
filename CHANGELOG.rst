@@ -2,6 +2,13 @@
 History
 *******
 
+1.12.6
+======
+
+* Disable diff when executing idempotent check.
+* Make sure ansible-lint respects the molecule ignore_paths.
+* Convert readthedocs links for their .org->.io migration for hosted projects.
+
 1.12.5
 ======
 
