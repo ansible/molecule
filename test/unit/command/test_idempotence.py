@@ -18,8 +18,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import textwrap
-
 import pytest
 
 from molecule.command import idempotence
@@ -82,34 +80,32 @@ def test_execute_raises_on_idempotence_failure(
     assert patched_logger_error.mock_calls == expected_calls
 
 
-def test_non_idempotent_tasks_00(molecule_instance):
-    """Ensures an empty list is returned when the playbook is idempotent."""
-    output = textwrap.dedent("""\
-        PLAY [all] ***********************************************************
-        GATHERING FACTS ******************************************************
-        ok: [check-command-01]
-        TASK: [Idempotence test] *********************************************
-        ok: [check-command-01]
-        PLAY RECAP ***********************************************************
-        check-command-01: ok=3    changed=0    unreachable=0    failed=0
-        """)
+def test_non_idempotent_tasks_idempotent(molecule_instance):
+    output = """
+PLAY [all] ***********************************************************
+GATHERING FACTS ******************************************************
+ok: [check-command-01]
+TASK: [Idempotence test] *********************************************
+ok: [check-command-01]
+PLAY RECAP ***********************************************************
+check-command-01: ok=3    changed=0    unreachable=0    failed=0
+"""
     i = idempotence.Idempotence({}, {}, molecule_instance)
     ret = i._non_idempotent_tasks(output)
 
     assert ret == []
 
 
-def test_non_idempotent_tasks_01(molecule_instance):
-    """Ensures a non-idempotent task is detected."""
-    output = textwrap.dedent("""\
-        PLAY [all] ***********************************************************
-        GATHERING FACTS ******************************************************
-        ok: [check-command-01]
-        TASK: [Idempotence test] *********************************************
-        changed: [check-command-01]
-        PLAY RECAP ***********************************************************
-        check-command-01: ok=2    changed=1    unreachable=0    failed=0
-        """)
+def test_non_idempotent_tasks_not_idempotent(molecule_instance):
+    output = """
+PLAY [all] ***********************************************************
+GATHERING FACTS ******************************************************
+ok: [check-command-01]
+TASK: [Idempotence test] *********************************************
+changed: [check-command-01]
+PLAY RECAP ***********************************************************
+check-command-01: ok=2    changed=1    unreachable=0    failed=0
+"""
     i = idempotence.Idempotence({}, {}, molecule_instance)
     ret = i._non_idempotent_tasks(output)
 
