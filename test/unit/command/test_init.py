@@ -27,9 +27,11 @@ from molecule.command import init
 
 @pytest.fixture
 def init_command_args():
-    return {'role': 'docker_test',
-            'driver': 'vagrant',
-            'verifier': 'testinfra'}
+    return {
+        'role': 'docker_test',
+        'driver': 'vagrant',
+        'verifier': 'testinfra'
+    }
 
 
 def test_create_role(temp_dir, init_command_args):

@@ -37,9 +37,10 @@ class Status(base.Base):
         :param exit: (Unused) Provided to complete method signature.
         :return: Return a tuple of None.
         """
-        display_all = not any([self.command_args.get('hosts'),
-                               self.command_args.get('platforms'),
-                               self.command_args.get('providers')])
+        display_all = not any([
+            self.command_args.get('hosts'), self.command_args.get('platforms'),
+            self.command_args.get('providers')
+        ])
 
         # Retrieve the status.
         try:
@@ -102,11 +103,13 @@ class Status(base.Base):
 def status(ctx, driver, platforms, providers, hosts,
            porcelain):  # pragma: no cover
     """ Prints status of configured instances. """
-    command_args = {'driver': driver,
-                    'platforms': platforms,
-                    'providers': providers,
-                    'hosts': hosts,
-                    'porcelain': porcelain}
+    command_args = {
+        'driver': driver,
+        'platforms': platforms,
+        'providers': providers,
+        'hosts': hosts,
+        'porcelain': porcelain
+    }
 
     s = Status(ctx.obj.get('args'), command_args)
     s.execute

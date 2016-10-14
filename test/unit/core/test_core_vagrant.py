@@ -90,7 +90,13 @@ def test_print_valid_providers_with_porcelain(capsys, molecule_instance):
 
 
 def test_instances_state(molecule_instance):
-    expected = {'aio-01-ubuntu': {'groups': ['example', 'example1']},
-                'aio-02-ubuntu': {'groups': ['example', 'example1']}}
+    expected = {
+        'aio-01-ubuntu': {
+            'groups': ['example', 'example1']
+        },
+        'aio-02-ubuntu': {
+            'groups': ['example', 'example1']
+        }
+    }
 
     assert expected == molecule_instance._instances_state()

@@ -85,11 +85,13 @@ def test(ctx, driver, platform, provider, destroy, sudo):  # pragma: no cover
     Runs a series of commands (defined in config) against instances for a full
     test/verify run.
     """
-    command_args = {'driver': driver,
-                    'platform': platform,
-                    'provider': provider,
-                    'destroy': destroy,
-                    'sudo': sudo}
+    command_args = {
+        'driver': driver,
+        'platform': platform,
+        'provider': provider,
+        'destroy': destroy,
+        'sudo': sudo
+    }
 
     t = Test(ctx.obj.get('args'), command_args)
     t.execute

@@ -96,9 +96,7 @@ def molecule_openstack_config(molecule_section_data, openstack_section_data,
 def molecule_section_data(state_path_without_data):
     return {
         'molecule': {
-            'ignore_paths': [
-                '.git', '.vagrant', '.molecule'
-            ],
+            'ignore_paths': ['.git', '.vagrant', '.molecule'],
             'serverspec_dir': 'spec',
             'testinfra_dir': 'tests',
             'goss_dir': 'tests',
@@ -126,23 +124,30 @@ def molecule_section_data(state_path_without_data):
 def vagrant_section_data():
     return {
         'vagrant': {
-            'platforms': [
-                {'name': 'ubuntu',
-                 'box': 'ubuntu/trusty64'}, {'name': 'centos7',
-                                             'box': 'centos/7'}
-            ],
-            'providers': [
-                {'name': 'virtualbox',
-                 'type': 'virtualbox'}
-            ],
-            'instances': [
-                {'name': 'aio-01',
-                 'ansible_groups': ['example', 'example1'],
-                 'options': {'append_platform_to_hostname': True}},
-                {'name': 'aio-02',
-                 'ansible_groups': ['example', 'example1'],
-                 'options': {'append_platform_to_hostname': True}}
-            ]
+            'platforms': [{
+                'name': 'ubuntu',
+                'box': 'ubuntu/trusty64'
+            }, {
+                'name': 'centos7',
+                'box': 'centos/7'
+            }],
+            'providers': [{
+                'name': 'virtualbox',
+                'type': 'virtualbox'
+            }],
+            'instances': [{
+                'name': 'aio-01',
+                'ansible_groups': ['example', 'example1'],
+                'options': {
+                    'append_platform_to_hostname': True
+                }
+            }, {
+                'name': 'aio-02',
+                'ansible_groups': ['example', 'example1'],
+                'options': {
+                    'append_platform_to_hostname': True
+                }
+            }]
         }
     }
 
@@ -151,40 +156,48 @@ def vagrant_section_data():
 def docker_section_data():
     return {
         'docker': {
-            'containers': [
-                {'name': 'test1',
-                 'image': 'ubuntu',
-                 'image_version': 'latest',
-                 'port_bindings': {
-                     80: 80,
-                     443: 443
-                 },
-                 'options': {'append_platform_to_hostname': True},
-                 'volume_mounts': ['/tmp/test1:/inside:rw'],
-                 'cap_add': ['SYS_ADMIN', 'SETPCAP'],
-                 'cap_drop': ['MKNOD'],
-                 'ansible_groups': ['group1']}, {
-                     'name': 'test2',
-                     'image': 'ubuntu',
-                     'image_version': 'latest',
-                     'ansible_groups': ['group2'],
-                     'command': '/bin/sh',
-                     'options': {'append_platform_to_hostname': True},
-                 }
-            ]
+            'containers': [{
+                'name': 'test1',
+                'image': 'ubuntu',
+                'image_version': 'latest',
+                'port_bindings': {
+                    80: 80,
+                    443: 443
+                },
+                'options': {
+                    'append_platform_to_hostname': True
+                },
+                'volume_mounts': ['/tmp/test1:/inside:rw'],
+                'cap_add': ['SYS_ADMIN', 'SETPCAP'],
+                'cap_drop': ['MKNOD'],
+                'ansible_groups': ['group1']
+            }, {
+                'name': 'test2',
+                'image': 'ubuntu',
+                'image_version': 'latest',
+                'ansible_groups': ['group2'],
+                'command': '/bin/sh',
+                'options': {
+                    'append_platform_to_hostname': True
+                },
+            }]
         }
     }
 
 
 @pytest.fixture()
 def openstack_section_data():
-    return {'openstack': {
-        'instances': [
-            {'name': 'aio-01',
-             'ansible_groups': ['example', 'example1'],
-             'options': {'append_platform_to_hostname': True}}
-        ]
-    }}
+    return {
+        'openstack': {
+            'instances': [{
+                'name': 'aio-01',
+                'ansible_groups': ['example', 'example1'],
+                'options': {
+                    'append_platform_to_hostname': True
+                }
+            }]
+        }
+    }
 
 
 @pytest.fixture()

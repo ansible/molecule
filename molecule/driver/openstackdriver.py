@@ -108,8 +108,10 @@ class OpenstackDriver(basedriver.BaseDriver):
         self._set_keypair()
 
         active_instances = self._openstack.list_servers()
-        active_instance_names = {instance['name']: instance['status']
-                                 for instance in active_instances}
+        active_instance_names = {
+            instance['name']: instance['status']
+            for instance in active_instances
+        }
 
         LOG.warning("Creating openstack instances ...")
         for instance in self.instances:
@@ -140,8 +142,10 @@ class OpenstackDriver(basedriver.BaseDriver):
         LOG.info("Deleting openstack instances ...")
 
         active_instances = self._openstack.list_servers()
-        active_instance_names = {instance['name']: instance['id']
-                                 for instance in active_instances}
+        active_instance_names = {
+            instance['name']: instance['id']
+            for instance in active_instances
+        }
 
         for instance in self.instances:
             LOG.warning("\tRemoving {} ...".format(instance['name']))
@@ -161,8 +165,8 @@ class OpenstackDriver(basedriver.BaseDriver):
             self._remove_temp_ssh_key()
 
     def status(self):
-        Status = collections.namedtuple('Status', ['name', 'state',
-                                                   'provider'])
+        Status = collections.namedtuple('Status',
+                                        ['name', 'state', 'provider'])
         status_list = []
         for instance in self.instances:
             if self._instance_is_accessible(instance):
@@ -197,10 +201,11 @@ class OpenstackDriver(basedriver.BaseDriver):
 
         for server in self._openstack.list_servers(detailed=False):
             if server['name'] == instance['name']:
-                server_config = {'hostname': instance['name'],
-                                 'interface_ip_address':
-                                 server['interface_ip'],
-                                 'ssh_username': instance['sshuser']}
+                server_config = {
+                    'hostname': instance['name'],
+                    'interface_ip_address': server['interface_ip'],
+                    'ssh_username': instance['sshuser']
+                }
                 if self._molecule_generated_ssh_key:
                     server_config[
                         'ssh_key_filename'] = \
@@ -243,8 +248,9 @@ class OpenstackDriver(basedriver.BaseDriver):
             LOG.info('Keypair already exists. Skipping import.')
         else:
             LOG.info('Adding keypair... ' + kpn)
-            self._openstack.create_keypair(kpn, open(pub_key_file,
-                                                     'r').read().strip())
+            self._openstack.create_keypair(kpn,
+                                           open(pub_key_file,
+                                                'r').read().strip())
 
     def _reset_known_host_key(self, hostname):
         return os.system('ssh-keygen -R {}'.format(hostname))

@@ -80,9 +80,13 @@ def test_valid_providers(vagrant_instance):
 
 
 def test_valid_platforms(vagrant_instance):
-    expected = [{'box': 'ubuntu/trusty64',
-                 'name': 'ubuntu'}, {'box': 'centos/7',
-                                     'name': 'centos7'}]
+    expected = [{
+        'box': 'ubuntu/trusty64',
+        'name': 'ubuntu'
+    }, {
+        'box': 'centos/7',
+        'name': 'centos7'
+    }]
 
     assert expected == vagrant_instance.valid_platforms
 

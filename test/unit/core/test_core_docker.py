@@ -84,7 +84,13 @@ def test_print_valid_providers_with_porcelain(capsys, molecule_instance):
 
 
 def test_instances_state(molecule_instance):
-    expected = {'test1-docker': {'groups': ['group1']},
-                'test2-docker': {'groups': ['group2']}}
+    expected = {
+        'test1-docker': {
+            'groups': ['group1']
+        },
+        'test2-docker': {
+            'groups': ['group2']
+        }
+    }
 
     assert expected == molecule_instance._instances_state()

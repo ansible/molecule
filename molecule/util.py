@@ -86,11 +86,15 @@ def print_debug(title, data):
     :param data: A string containing the data of debug output.
     :return: None
     """
-    print(''.join([colorama.Back.WHITE, colorama.Style.BRIGHT,
-                   colorama.Fore.BLACK, 'DEBUG: ' + title, colorama.Fore.RESET,
-                   colorama.Back.RESET, colorama.Style.RESET_ALL]))
-    print(''.join([colorama.Fore.BLACK, colorama.Style.BRIGHT, data,
-                   colorama.Style.RESET_ALL, colorama.Fore.RESET]))
+    print(''.join([
+        colorama.Back.WHITE, colorama.Style.BRIGHT, colorama.Fore.BLACK,
+        'DEBUG: ' + title, colorama.Fore.RESET, colorama.Back.RESET,
+        colorama.Style.RESET_ALL
+    ]))
+    print(''.join([
+        colorama.Fore.BLACK, colorama.Style.BRIGHT, data,
+        colorama.Style.RESET_ALL, colorama.Fore.RESET
+    ]))
 
 
 def write_template(src, dest, kwargs={}, _module='molecule', _dir='template'):
@@ -119,8 +123,10 @@ def write_template(src, dest, kwargs={}, _module='molecule', _dir='template'):
         sysexit()
 
     # look for template in filesystem, then molecule package
-    loader = jinja2.ChoiceLoader([jinja2.FileSystemLoader(
-        path, followlinks=True), jinja2.PackageLoader(_module, _dir)])
+    loader = jinja2.ChoiceLoader([
+        jinja2.FileSystemLoader(
+            path, followlinks=True), jinja2.PackageLoader(_module, _dir)
+    ])
 
     env = jinja2.Environment(loader=loader)
     template = env.get_template(filename)

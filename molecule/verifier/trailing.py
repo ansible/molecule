@@ -47,13 +47,15 @@ class Trailing(base.Base):
         valid_extensions = ['py', 'yml', 'rb']
         for root, dirs, files in os.walk('.'):
             # gets ./subdirectory/filename
-            filenames.extend(
-                [os.path.join(root, name) for name in files
-                 if name.split(os.extsep)[-1] in valid_extensions])
+            filenames.extend([
+                os.path.join(root, name) for name in files
+                if name.split(os.extsep)[-1] in valid_extensions
+            ])
             # gets ./filename
-            filenames.extend(
-                [os.path.join(root, name) for name in dirs
-                 if name.split(os.extsep)[-1] in valid_extensions])
+            filenames.extend([
+                os.path.join(root, name) for name in dirs
+                if name.split(os.extsep)[-1] in valid_extensions
+            ])
 
         # only work on files not in our ignore paths
         for f in filenames:
@@ -86,8 +88,9 @@ class Trailing(base.Base):
             if len(whitespace) > 0:
                 msg = 'Trailing whitespace found in {} on lines: {}'
                 lines = ', '.join(str(x) for x in whitespace)
-                LOG.error(msg.format(filename,
-                                     lines, ))
+                LOG.error(msg.format(
+                    filename,
+                    lines, ))
                 found_error = True
 
         if exit and found_error:

@@ -60,9 +60,11 @@ class Destroy(base.Base):
 @click.pass_context
 def destroy(ctx, driver, platform, provider):  # pragma: no cover
     """ Destroys all instances created by molecule. """
-    command_args = {'driver': driver,
-                    'platform': platform,
-                    'provider': provider}
+    command_args = {
+        'driver': driver,
+        'platform': platform,
+        'provider': provider
+    }
 
     d = Destroy(ctx.obj.get('args'), command_args)
     d.execute
