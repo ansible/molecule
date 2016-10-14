@@ -119,8 +119,8 @@ class Login(base.Base):
         if 'TIOCGWINSZ' in dir(termios):
             TIOCGWINSZ = termios.TIOCGWINSZ
         s = struct.pack('HHHH', 0, 0, 0, 0)
-        a = struct.unpack('HHHH', fcntl.ioctl(sys.stdout.fileno(), TIOCGWINSZ,
-                                              s))
+        a = struct.unpack('HHHH',
+                          fcntl.ioctl(sys.stdout.fileno(), TIOCGWINSZ, s))
         self._pt.setwinsize(a[0], a[1])
 
 

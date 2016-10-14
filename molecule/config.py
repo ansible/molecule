@@ -135,9 +135,7 @@ class Config(object):
             'molecule': {
                 'goss_dir': 'tests',
                 'goss_playbook': 'test_default.yml',
-                'ignore_paths': [
-                    '.git', '.vagrant', '.molecule'
-                ],
+                'ignore_paths': ['.git', '.vagrant', '.molecule'],
                 'init': {
                     'platform': {
                         'box': 'trusty64',

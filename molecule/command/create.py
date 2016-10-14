@@ -62,9 +62,11 @@ class Create(base.Base):
 @click.pass_context
 def create(ctx, driver, platform, provider):  # pragma: no cover
     """ Creates all instances defined in molecule.yml. """
-    command_args = {'driver': driver,
-                    'platform': platform,
-                    'provider': provider}
+    command_args = {
+        'driver': driver,
+        'platform': platform,
+        'provider': provider
+    }
 
     c = Create(ctx.obj.get('args'), command_args)
     c.execute

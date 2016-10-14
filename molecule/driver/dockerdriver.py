@@ -179,8 +179,8 @@ class DockerDriver(basedriver.BaseDriver):
                 container['created'] = False
 
     def status(self):
-        Status = collections.namedtuple('Status', ['name', 'state', 'provider',
-                                                   'ports'])
+        Status = collections.namedtuple(
+            'Status', ['name', 'state', 'provider', 'ports'])
         status_list = []
         for container in self.instances:
             name = container.get('name')
@@ -221,9 +221,10 @@ class DockerDriver(basedriver.BaseDriver):
         return 'docker'
 
     def _build_ansible_compatible_image(self):
-        available_images = [tag.encode('utf-8')
-                            for image in self._docker.images()
-                            for tag in image.get('RepoTags')]
+        available_images = [
+            tag.encode('utf-8')
+            for image in self._docker.images() for tag in image.get('RepoTags')
+        ]
 
         for container in self.instances:
             if 'build_image' in container and container[

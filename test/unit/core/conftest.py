@@ -27,11 +27,13 @@ from molecule import state
 
 @pytest.fixture()
 def molecule_args():
-    return {'debug': False,
-            'driver': None,
-            'platform': None,
-            'provider': None,
-            'sudo': False}
+    return {
+        'debug': False,
+        'driver': None,
+        'platform': None,
+        'provider': None,
+        'sudo': False
+    }
 
 
 @pytest.fixture()

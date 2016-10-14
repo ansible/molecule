@@ -91,8 +91,12 @@ def test_format_instance_name_01():
 
 
 def test_format_instance_name_02():
-    instances = [{'name': 'test-01',
-                  'options': {'append_platform_to_hostname': True}}]
+    instances = [{
+        'name': 'test-01',
+        'options': {
+            'append_platform_to_hostname': True
+        }
+    }]
     actual = util.format_instance_name('test-01', 'rhel-7', instances)
 
     assert 'test-01-rhel-7' == actual
@@ -114,12 +118,15 @@ def test_debug(capsys):
     util.print_debug('test_title', 'test_data')
     result_title, _ = capsys.readouterr()
 
-    print(''.join(
-        [colorama.Back.WHITE, colorama.Style.BRIGHT, colorama.Fore.BLACK,
-         'DEBUG: ' + 'test_title', colorama.Fore.RESET, colorama.Back.RESET,
-         colorama.Style.RESET_ALL]))
-    print(''.join([colorama.Fore.BLACK, colorama.Style.BRIGHT, 'test_data',
-                   colorama.Style.RESET_ALL, colorama.Fore.RESET]))
+    print(''.join([
+        colorama.Back.WHITE, colorama.Style.BRIGHT, colorama.Fore.BLACK,
+        'DEBUG: ' + 'test_title', colorama.Fore.RESET, colorama.Back.RESET,
+        colorama.Style.RESET_ALL
+    ]))
+    print(''.join([
+        colorama.Fore.BLACK, colorama.Style.BRIGHT, 'test_data',
+        colorama.Style.RESET_ALL, colorama.Fore.RESET
+    ]))
     expected_title, _ = capsys.readouterr()
 
     assert expected_title == result_title

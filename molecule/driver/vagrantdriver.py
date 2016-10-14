@@ -154,11 +154,13 @@ class VagrantDriver(basedriver.BaseDriver):
         if self.molecule.state.created:
             state = 'running'
 
-        Status = collections.namedtuple('Status', ['name', 'state',
-                                                   'provider'])
-        return [Status(
-            name=instance['name'], state=state, provider=self.provider)
-                for instance in self.instances]
+        Status = collections.namedtuple('Status',
+                                        ['name', 'state', 'provider'])
+        return [
+            Status(
+                name=instance['name'], state=state, provider=self.provider)
+            for instance in self.instances
+        ]
 
     def conf(self, vm_name=None, ssh_config=False):
         if ssh_config:
@@ -217,10 +219,12 @@ class VagrantDriver(basedriver.BaseDriver):
 
     def _get_provider(self):
         if self.molecule.args.get('provider'):
-            if not [item
+            if not [
+                    item
                     for item in self.molecule.config.config['vagrant'][
                         'providers']
-                    if item['name'] == self.molecule.args.get('provider')]:
+                    if item['name'] == self.molecule.args.get('provider')
+            ]:
                 raise basedriver.InvalidProviderSpecified()
             self.molecule.state.change_state(
                 'default_provider', self.molecule.args.get('provider'))
@@ -236,10 +240,12 @@ class VagrantDriver(basedriver.BaseDriver):
     def _get_platform(self):
         if self.molecule.args.get('platform'):
             if self.molecule.args.get('platform') != 'all':
-                if not [item
+                if not [
+                        item
                         for item in self.molecule.config.config['vagrant'][
                             'platforms']
-                        if item['name'] == self.molecule.args.get('platform')]:
+                        if item['name'] == self.molecule.args.get('platform')
+                ]:
                     raise basedriver.InvalidPlatformSpecified()
             self.molecule.state.change_state(
                 'default_platform', self.molecule.args.get('platform'))
@@ -247,9 +253,11 @@ class VagrantDriver(basedriver.BaseDriver):
         return self.default_platform
 
     def _write_vagrant_file(self):
-        kwargs = {'config': self.molecule.config.config,
-                  'current_platform': self.platform,
-                  'current_provider': self.provider}
+        kwargs = {
+            'config': self.molecule.config.config,
+            'current_platform': self.platform,
+            'current_provider': self.provider
+        }
 
         template = self.molecule.config.config['molecule'][
             'vagrantfile_template']

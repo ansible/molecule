@@ -148,8 +148,9 @@ def test_combine_project_config_overrides_default_config(temp_files):
 
 
 def test_combine_local_config_overrides_default_and_project_config(temp_files):
-    c = temp_files(fixtures=['default_config_data', 'project_config_data',
-                             'local_config_data'])
+    c = temp_files(fixtures=[
+        'default_config_data', 'project_config_data', 'local_config_data'
+    ])
     config_instance = config.Config(configs=c).config
 
     assert 'local-override' == config_instance['foo']

@@ -134,19 +134,17 @@ def test_port_bindings(docker_instance):
     docker_instance.up()
     ports = sorted(
         docker_instance.status()[0].ports, key=lambda k: k['PublicPort'])
-    expected = [
-        {
-            'PublicPort': 80,
-            'PrivatePort': 80,
-            'IP': '0.0.0.0',
-            'Type': 'tcp'
-        }, {
-            'PublicPort': 443,
-            'PrivatePort': 443,
-            'IP': '0.0.0.0',
-            'Type': 'tcp'
-        }
-    ]
+    expected = [{
+        'PublicPort': 80,
+        'PrivatePort': 80,
+        'IP': '0.0.0.0',
+        'Type': 'tcp'
+    }, {
+        'PublicPort': 443,
+        'PrivatePort': 443,
+        'IP': '0.0.0.0',
+        'Type': 'tcp'
+    }]
 
     assert expected == ports
     assert docker_instance.status()[1].ports == []
@@ -203,8 +201,9 @@ def test_destroy(docker_instance):
 
 def test_provision(molecule_instance, docker_instance):
     molecule_instance.driver = docker_instance
-    molecule_instance.config.config['ansible'].update(
-        {'inventory': 'test1,test2,'})
+    molecule_instance.config.config['ansible'].update({
+        'inventory': 'test1,test2,'
+    })
     docker_instance.up()
     ansible = ansible_playbook.AnsiblePlaybook(
         molecule_instance.config.config['ansible'],
@@ -215,8 +214,9 @@ def test_provision(molecule_instance, docker_instance):
 
 def test_inventory_generation(molecule_instance, docker_instance):
     molecule_instance.driver = docker_instance
-    molecule_instance.config.config['ansible'].update(
-        {'inventory': 'test1,test2,'})
+    molecule_instance.config.config['ansible'].update({
+        'inventory': 'test1,test2,'
+    })
     molecule_instance.driver.up()
     molecule_instance.create_inventory_file()
     ansible = ansible_playbook.AnsiblePlaybook(

@@ -153,8 +153,10 @@ def test_ignores_requirements_file():
 
 
 def test_ignores_host_group_vars():
-    a = ansible_playbook.AnsiblePlaybook({'host_vars': 'foo',
-                                          'group_vars': 'bar'}, {})
+    a = ansible_playbook.AnsiblePlaybook({
+        'host_vars': 'foo',
+        'group_vars': 'bar'
+    }, {})
 
     assert not a._cli.get('host_vars')
     assert not a._cli.get('group_vars')

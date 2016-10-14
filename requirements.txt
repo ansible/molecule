@@ -1,5 +1,5 @@
 ansible-lint==3.2.5
-anyconfig==0.6.0
+anyconfig==0.7.0
 colorama==0.3.7
 cookiecutter==1.4.0
 flake8==3.0.4

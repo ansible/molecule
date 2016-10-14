@@ -97,11 +97,14 @@ class Converge(base.Base):
 
         ansible.bake()
         if self.args.get('debug'):
-            ansible_env = {k: v
-                           for (k, v) in ansible.env.items() if 'ANSIBLE' in k}
-            other_env = {k: v
-                         for (k, v) in ansible.env.items()
-                         if 'ANSIBLE' not in k}
+            ansible_env = {
+                k: v
+                for (k, v) in ansible.env.items() if 'ANSIBLE' in k
+            }
+            other_env = {
+                k: v
+                for (k, v) in ansible.env.items() if 'ANSIBLE' not in k
+            }
             util.print_debug(
                 'OTHER ENVIRONMENT',
                 yaml.dump(
@@ -136,10 +139,12 @@ class Converge(base.Base):
 @click.pass_context
 def converge(ctx, driver, platform, provider, tags):  # pragma: no cover
     """ Provisions all instances defined in molecule.yml. """
-    command_args = {'driver': driver,
-                    'platform': platform,
-                    'provider': provider,
-                    'tags': tags}
+    command_args = {
+        'driver': driver,
+        'platform': platform,
+        'provider': provider,
+        'tags': tags
+    }
 
     c = Converge(ctx.obj.get('args'), command_args)
     c.execute

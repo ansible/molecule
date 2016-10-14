@@ -64,10 +64,12 @@ class Serverspec(base.Base):
          :func:`sh` call.
         :return: :func:`sh` response object.
         """
-        kwargs = {'_out': out,
-                  '_err': err,
-                  'trace': debug,
-                  'rakefile': rakefile}
+        kwargs = {
+            '_out': out,
+            '_err': err,
+            'trace': debug,
+            'rakefile': rakefile
+        }
 
         msg = 'Executing serverspec tests found in {}/.'.format(
             self._serverspec_dir)

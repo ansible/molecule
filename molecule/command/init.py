@@ -75,8 +75,10 @@ class Init(base.Base):
         extra_context = self._get_cookiecutter_context(role, driver, verifier)
 
         util.print_info('Initializing role {}...'.format(role))
-        for template in ['galaxy_init', 'playbook', 'driver/{}'.format(driver),
-                         'verifier/{}'.format(verifier)]:
+        for template in [
+                'galaxy_init', 'playbook', 'driver/{}'.format(driver),
+                'verifier/{}'.format(verifier)
+        ]:
             util.process_templates(template, extra_context, role_path)
 
     def _get_cookiecutter_context(self, role, driver, verifier):
@@ -91,11 +93,13 @@ class Init(base.Base):
             'verifier_name': verifier,
         }
         if driver == 'vagrant':
-            d.update({'platform_name': platform.get('name'),
-                      'platform_box': platform.get('box'),
-                      'platform_box_url': platform.get('box_url'),
-                      'provider_name': provider.get('name'),
-                      'provider_type': provider.get('type')})
+            d.update({
+                'platform_name': platform.get('name'),
+                'platform_box': platform.get('box'),
+                'platform_box_url': platform.get('box_url'),
+                'provider_name': provider.get('name'),
+                'provider_type': provider.get('type')
+            })
 
         return d
 
