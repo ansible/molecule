@@ -156,7 +156,7 @@ def test_execute_adds_idempotency_flags(
     c = converge.Converge({}, {}, molecule_instance)
     c.execute(idempotent=True)
 
-    expected = [mocker.call('_out'), mocker.call('_err')]
+    expected = [mocker.call('_out'), mocker.call('_err'), mocker.call('diff')]
     assert expected == patched_remove_cli_arg.mock_calls
 
     assert mocker.call('ANSIBLE_NOCOLOR',
