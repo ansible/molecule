@@ -89,6 +89,8 @@ class Converge(base.Base):
             # Don't log stdout/err
             ansible.remove_cli_arg('_out')
             ansible.remove_cli_arg('_err')
+            # Idempotence task regexp cannot handle diff
+            ansible.remove_cli_arg('diff')
             # Disable color for regexp
             ansible.add_env_arg('ANSIBLE_NOCOLOR', 'true')
             ansible.add_env_arg('ANSIBLE_FORCE_COLOR', 'false')
