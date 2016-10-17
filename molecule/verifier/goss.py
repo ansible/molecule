@@ -42,9 +42,10 @@ class Goss(base.Base):
 
         :return: None
         """
-
         if self._get_tests():
-            self._goss()
+            status, output = self._goss()
+            if status is not None:
+                util.sysexit(status)
 
     def _goss(self, out=LOG.info, err=LOG.error):
         """

@@ -30,7 +30,10 @@ def goss_instance(molecule_instance):
 
 @pytest.fixture
 def patched_test_verifier(mocker):
-    return mocker.patch('molecule.verifier.goss.Goss._goss')
+    m = mocker.patch('molecule.verifier.goss.Goss._goss')
+    m.return_value = None, None
+
+    return m
 
 
 @pytest.fixture
@@ -59,6 +62,16 @@ def test_execute_no_tests(patched_test_verifier, patched_get_tests,
     goss_instance.execute()
 
     assert not patched_test_verifier.called
+
+
+def test_execute_exits_with_return_code(patched_test_verifier,
+                                        patched_get_tests, goss_instance):
+    patched_test_verifier.return_value = (1, None)
+    patched_get_tests.return_value = True
+    with pytest.raises(SystemExit) as e:
+        goss_instance.execute()
+
+    assert 1 == e.value.code
 
 
 def test_goss(patched_ansible_playbook, goss_instance):
