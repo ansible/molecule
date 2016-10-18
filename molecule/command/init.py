@@ -60,21 +60,21 @@ class Init(base.Base):
                 util.sysexit()
             self._init_new_role(role, role_path, driver, verifier)
 
-        msg = 'Successfully initialized new role in {}...'
+        msg = 'Successfully initialized new role in {} ...'
         util.print_success(msg.format(os.path.join(role_path, role)))
         util.sysexit(0)
 
     def _init_existing_role(self, role, role_path, driver, verifier):
         extra_context = self._get_cookiecutter_context(role, driver, verifier)
 
-        util.print_info('Initializing molecule in current directory...')
+        util.print_info('Initializing molecule in current directory ...')
         for template in ['playbook', 'driver/{}'.format(driver)]:
             util.process_templates(template, extra_context, role_path)
 
     def _init_new_role(self, role, role_path, driver, verifier):
         extra_context = self._get_cookiecutter_context(role, driver, verifier)
 
-        util.print_info('Initializing role {}...'.format(role))
+        util.print_info('Initializing role {} ...'.format(role))
         for template in [
                 'galaxy_init', 'playbook', 'driver/{}'.format(driver),
                 'verifier/{}'.format(verifier)

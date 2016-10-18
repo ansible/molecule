@@ -28,8 +28,8 @@ import sh
 def scenario_setup(request):
     scenario = request.param
     d = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), '..', 'scenarios',
-        scenario)
+        os.path.dirname(os.path.abspath(__file__)), os.path.pardir,
+        'scenarios', scenario)
 
     os.chdir(d)
     sh.molecule('destroy')
