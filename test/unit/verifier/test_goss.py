@@ -18,6 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
+
 import pytest
 
 from molecule.verifier import goss
@@ -88,8 +90,8 @@ def test_goss_path(goss_instance):
     path = goss_instance._get_library_path()
     parts = pytest.helpers.os_split(path)
 
-    assert ('verifier', '..', '..', 'molecule', 'verifier', 'ansible',
-            'library') == parts[-7:]
+    assert ('verifier', os.path.pardir, os.path.pardir, 'molecule', 'verifier',
+            'ansible', 'library') == parts[-7:]
 
 
 def test_set_library_path_appends(patched_get_library_path, goss_instance):

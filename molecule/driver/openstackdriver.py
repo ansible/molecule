@@ -135,7 +135,7 @@ class OpenstackDriver(basedriver.BaseDriver):
                         timeout=6,
                         sshkey_filename=self._get_keyfile(
                         )) or num_retries == 5:
-                    LOG.info("\t Waiting for ssh availability...")
+                    LOG.info("\t Waiting for ssh availability ...")
                     num_retries += 1
 
     def destroy(self):
@@ -247,7 +247,7 @@ class OpenstackDriver(basedriver.BaseDriver):
         if self._openstack.search_keypairs(kpn):
             LOG.info('Keypair already exists. Skipping import.')
         else:
-            LOG.info('Adding keypair... ' + kpn)
+            LOG.info('Adding keypair ... ' + kpn)
             self._openstack.create_keypair(kpn,
                                            open(pub_key_file,
                                                 'r').read().strip())

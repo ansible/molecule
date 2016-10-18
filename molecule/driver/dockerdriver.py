@@ -164,8 +164,8 @@ class DockerDriver(basedriver.BaseDriver):
                 util.print_success('Container created.')
             else:
                 self._docker.start(container['name'])
-                util.print_success('Starting container {}...'.format(container[
-                    'name']))
+                util.print_success('Starting container {} ...'.format(
+                    container['name']))
 
     def destroy(self):
         for container in self.instances:

@@ -50,8 +50,8 @@ def test_print_info(capsys):
 
 def test_write_template(temp_dir):
     source_file = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), '..', 'resources',
-        'test_write_template.j2')
+        os.path.dirname(os.path.abspath(__file__)), os.path.pardir,
+        'resources', 'test_write_template.j2')
     dest_file = os.path.join(temp_dir, 'test_util_write_template.tmp')
     util.write_template(source_file, dest_file, {'test': 'chicken'})
     with open(dest_file, 'r') as f:
@@ -164,7 +164,7 @@ def test_resolve_template_dir_absolute():
 
 def test_process_templates(temp_dir):
     template_dir = os.path.join(
-        os.path.dirname(__file__), '../resources/templates')
+        os.path.dirname(__file__), os.path.pardir, 'resources', 'templates')
     repo_name = str(uuid.uuid4())
 
     context = {'repo_name': repo_name}
