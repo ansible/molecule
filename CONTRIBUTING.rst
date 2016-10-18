@@ -12,6 +12,13 @@ Contributing
 * Reformat the code by following the formatting section below.
 * Submit a pull request.
 
+IRC
+===
+
+Join us in the #molecule-users channel on `freenode`_.
+
+.. _`freenode`: https://freenode.net
+
 Installing from source
 ======================
 
