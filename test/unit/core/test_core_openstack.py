@@ -18,72 +18,60 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import pytest
-
-from molecule import config
-from molecule import core
 from molecule.driver import openstackdriver
 
 
-@pytest.fixture()
-def molecule_instance(temp_dir, temp_files, molecule_args):
-    c = temp_files(fixtures=['molecule_openstack_config'])
-    m = core.Molecule(molecule_args)
-    m.config = config.Config(configs=c)
-    m.main()
-
-    return m
+def test_get_driver_name(openstack_molecule_instance):
+    assert 'openstack' == openstack_molecule_instance._get_driver_name()
 
 
-def test_get_driver_name(molecule_instance):
-    assert 'openstack' == molecule_instance._get_driver_name()
-
-
-def test_get_driver(molecule_instance):
-    assert isinstance(molecule_instance._get_driver(),
+def test_get_driver(openstack_molecule_instance):
+    assert isinstance(openstack_molecule_instance._get_driver(),
                       openstackdriver.OpenstackDriver)
 
 
-def test_get_ssh_config(molecule_instance):
-    assert molecule_instance._get_ssh_config() is None
+def test_get_ssh_config(openstack_molecule_instance):
+    assert openstack_molecule_instance._get_ssh_config() is None
 
 
-def test_write_ssh_config(mocker, molecule_instance):
+def test_write_ssh_config(mocker, openstack_molecule_instance):
     patched_write_file = mocker.patch('molecule.util.write_file')
-    molecule_instance.write_ssh_config()
+    openstack_molecule_instance.write_ssh_config()
 
     assert not patched_write_file.called
 
 
-def test_print_valid_platforms(capsys, molecule_instance):
-    molecule_instance.print_valid_platforms()
+def test_print_valid_platforms(capsys, openstack_molecule_instance):
+    openstack_molecule_instance.print_valid_platforms()
     out, _ = capsys.readouterr()
 
     assert 'openstack  (default)\n' == out
 
 
-def test_print_valid_platforms_with_porcelain(capsys, molecule_instance):
-    molecule_instance.print_valid_platforms(porcelain=True)
+def test_print_valid_platforms_with_porcelain(capsys,
+                                              openstack_molecule_instance):
+    openstack_molecule_instance.print_valid_platforms(porcelain=True)
     out, _ = capsys.readouterr()
 
     assert 'openstack  d\n' == out
 
 
-def test_print_valid_providers(capsys, molecule_instance):
-    molecule_instance.print_valid_providers()
+def test_print_valid_providers(capsys, openstack_molecule_instance):
+    openstack_molecule_instance.print_valid_providers()
     out, _ = capsys.readouterr()
 
     assert 'openstack  (default)\n' == out
 
 
-def test_print_valid_providers_with_porcelain(capsys, molecule_instance):
-    molecule_instance.print_valid_providers(porcelain=True)
+def test_print_valid_providers_with_porcelain(capsys,
+                                              openstack_molecule_instance):
+    openstack_molecule_instance.print_valid_providers(porcelain=True)
     out, _ = capsys.readouterr()
 
     assert 'openstack  d\n' == out
 
 
-def test_instances_state(molecule_instance):
+def test_instances_state(openstack_molecule_instance):
     expected = {'aio-01-openstack': {'groups': ['example', 'example1']}}
 
-    assert expected == molecule_instance._instances_state()
+    assert expected == openstack_molecule_instance._instances_state()

@@ -21,27 +21,14 @@
 import pytest
 
 from molecule import ansible_playbook
-from molecule import config
-from molecule import core
-from molecule import state
 from molecule.driver import dockerdriver
 
 pytestmark = pytest.helpers.supports_docker()
 
 
 @pytest.fixture()
-def molecule_instance(temp_dir, temp_files, state_path_without_data):
-    c = temp_files(fixtures=['molecule_docker_config'])
-    m = core.Molecule({})
-    m.config = config.Config(configs=c)
-    m.state = state.State(state_file=state_path_without_data)
-
-    return m
-
-
-@pytest.fixture()
-def docker_instance(molecule_instance, request):
-    d = dockerdriver.DockerDriver(molecule_instance)
+def docker_instance(docker_molecule_instance, request):
+    d = dockerdriver.DockerDriver(docker_molecule_instance)
 
     def cleanup():
         d.destroy()
@@ -199,33 +186,34 @@ def test_destroy(docker_instance):
     assert 'not_created' in docker_instance.status()[1].state
 
 
-def test_provision(molecule_instance, docker_instance):
-    molecule_instance.driver = docker_instance
-    molecule_instance.config.config['ansible'].update({
+def test_provision(docker_molecule_instance, docker_instance):
+    docker_molecule_instance.driver = docker_instance
+    docker_molecule_instance.config.config['ansible'].update({
         'inventory': 'test1,test2,'
     })
     docker_instance.up()
     ansible = ansible_playbook.AnsiblePlaybook(
-        molecule_instance.config.config['ansible'],
-        molecule_instance.driver.ansible_connection_params)
+        docker_molecule_instance.config.config['ansible'],
+        docker_molecule_instance.driver.ansible_connection_params)
 
     assert (None, '') == ansible.execute()
 
 
-def test_inventory_generation(molecule_instance, docker_instance):
-    molecule_instance.driver = docker_instance
-    molecule_instance.config.config['ansible'].update({
+def test_inventory_generation(docker_molecule_instance, docker_instance):
+    docker_molecule_instance.driver = docker_instance
+    docker_molecule_instance.config.config['ansible'].update({
         'inventory': 'test1,test2,'
     })
-    molecule_instance.driver.up()
-    molecule_instance.create_inventory_file()
+    docker_molecule_instance.driver.up()
+    docker_molecule_instance.create_inventory_file()
     ansible = ansible_playbook.AnsiblePlaybook(
-        molecule_instance.config.config['ansible'],
-        molecule_instance.driver.ansible_connection_params)
+        docker_molecule_instance.config.config['ansible'],
+        docker_molecule_instance.driver.ansible_connection_params)
 
-    for instance in molecule_instance.driver.instances:
+    for instance in docker_molecule_instance.driver.instances:
         expected = '{} ansible_connection=docker\n'.format(instance['name'])
 
-        assert expected == molecule_instance.driver.inventory_entry(instance)
+        assert expected == docker_molecule_instance.driver.inventory_entry(
+            instance)
 
     assert (None, '') == ansible.execute()

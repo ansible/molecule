@@ -22,27 +22,14 @@ import os
 import pytest
 import re
 
-from molecule import config
-from molecule import core
-from molecule import state
 from molecule.driver import openstackdriver
 
 # TODO(retr0h): Test instance create/delete through the openstack instance.
 
 
 @pytest.fixture()
-def molecule_instance(temp_dir, temp_files, state_path_without_data):
-    c = temp_files(fixtures=['molecule_openstack_config'])
-    m = core.Molecule({})
-    m.config = config.Config(configs=c)
-    m.state = state.State(state_file=state_path_without_data)
-
-    return m
-
-
-@pytest.fixture()
-def openstack_instance(molecule_instance, request):
-    return openstackdriver.OpenstackDriver(molecule_instance)
+def openstack_instance(openstack_molecule_instance, request):
+    return openstackdriver.OpenstackDriver(openstack_molecule_instance)
 
 
 def test_name(openstack_instance):

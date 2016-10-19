@@ -40,11 +40,23 @@ class Config(object):
         :returns: None
         """
         self.config = self._get_config(configs)
+        self._platforms = None
         self._build_config_paths()
 
     @property
     def molecule_file(self):
         return PROJECT_CONFIG
+
+    @property
+    def platforms(self):
+        return self.config.get('platforms')
+
+    @property
+    def version(self):
+        if self.platforms:
+            return 2
+        else:
+            return 1
 
     def populate_instance_names(self, platform):
         """

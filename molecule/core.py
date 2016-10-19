@@ -24,7 +24,6 @@ import os
 import tabulate
 import yaml
 
-from molecule import config
 from molecule import state
 from molecule import util
 from molecule.driver import basedriver
@@ -33,18 +32,17 @@ LOG = util.get_logger(__name__)
 
 
 class Molecule(object):
-    def __init__(self, args):
+    def __init__(self, config, args):
         """
         Initialize a new molecule class, and returns None.
 
+        :param config: A molecule config object.
         :param args: A dict of options, arguments and commands from the CLI.
-        :param command_args: A dict of options passed to the subcommand from
-         the CLI.
         :returns: None
         """
         self.env = os.environ.copy()
+        self.config = config
         self.args = args
-        self.config = config.Config()
         self._verifier = self._get_verifier()
         self._verifier_options = self._get_verifier_options()
         self._disabled = self._get_disabled()

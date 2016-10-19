@@ -20,6 +20,7 @@
 
 import abc
 
+from molecule import config
 from molecule import core
 from molecule import util
 
@@ -51,13 +52,15 @@ class Base(object):
         """
         self.args = args
         self.command_args = command_args
+        self._config = config.Config()
 
         options = args.copy()
         options.update(command_args)
 
         if not molecule:
-            self.molecule = core.Molecule(options)
-            self.main()
+            if self._config.version == 1:
+                self.molecule = core.Molecule(self._config, options)
+                self.main()
         else:
             self.molecule = molecule
 
@@ -69,10 +72,9 @@ class Base(object):
 
         :returns: None
         """
-        c = self.molecule.config
-        if not c.molecule_file_exists():
+        if not self._config.molecule_file_exists():
             msg = 'Unable to find {}. Exiting.'
-            LOG.error(msg.format(c.molecule_file))
+            LOG.error(msg.format(self._config.molecule_file))
             util.sysexit()
         self.molecule.main()
 
