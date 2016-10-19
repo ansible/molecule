@@ -24,81 +24,79 @@ from molecule.driver import basedriver
 from molecule.driver import vagrantdriver
 
 
-def test_driver(molecule_default_provider_instance):
-    assert isinstance(molecule_default_provider_instance.driver,
-                      vagrantdriver.VagrantDriver)
+def test_driver(molecule_instance):
+    assert isinstance(molecule_instance.driver, vagrantdriver.VagrantDriver)
 
 
-def test_driver_setter(molecule_default_provider_instance):
-    molecule_default_provider_instance.driver = 'foo'
+def test_driver_setter(molecule_instance):
+    molecule_instance.driver = 'foo'
 
-    assert 'foo' == molecule_default_provider_instance.driver
-
-
-def test_get_driver_name_from_cli(molecule_default_provider_instance):
-    molecule_default_provider_instance.args.update({'driver': 'foo'})
-
-    assert 'foo' == molecule_default_provider_instance._get_driver_name()
+    assert 'foo' == molecule_instance.driver
 
 
-def test_get_driver_name_from_config(molecule_default_provider_instance):
-    m = molecule_default_provider_instance
+def test_get_driver_name_from_cli(molecule_instance):
+    molecule_instance.args.update({'driver': 'foo'})
+
+    assert 'foo' == molecule_instance._get_driver_name()
+
+
+def test_get_driver_name_from_config(molecule_instance):
+    m = molecule_instance
     m.config.config['driver'] = {'name': 'foo'}
 
-    assert 'foo' == molecule_default_provider_instance._get_driver_name()
+    assert 'foo' == molecule_instance._get_driver_name()
 
 
-def test_get_driver_invalid_instance(molecule_default_provider_instance):
-    del molecule_default_provider_instance.config.config['vagrant']
+def test_get_driver_invalid_instance(molecule_instance):
+    del molecule_instance.config.config['vagrant']
 
     with pytest.raises(basedriver.InvalidDriverSpecified):
-        molecule_default_provider_instance._get_driver()
+        molecule_instance._get_driver()
 
 
-def test_verifier_setter(molecule_default_provider_instance):
-    molecule_default_provider_instance.verifier = 'foo'
+def test_verifier_setter(molecule_instance):
+    molecule_instance.verifier = 'foo'
 
-    assert 'foo' == molecule_default_provider_instance.verifier
-
-
-def test_verifier(molecule_default_provider_instance):
-    assert 'testinfra' == molecule_default_provider_instance.verifier
+    assert 'foo' == molecule_instance.verifier
 
 
-def test_verifier_backward_compatible(molecule_default_provider_instance):
-    m = molecule_default_provider_instance
+def test_verifier(molecule_instance):
+    assert 'testinfra' == molecule_instance.verifier
+
+
+def test_verifier_backward_compatible(molecule_instance):
+    m = molecule_instance
     m.config.config['testinfra'] = {}
 
     assert 'testinfra' == m.verifier
 
 
-def test_verifier_options_setter(molecule_default_provider_instance):
-    molecule_default_provider_instance.verifier_options = 'foo'
+def test_verifier_options_setter(molecule_instance):
+    molecule_instance.verifier_options = 'foo'
 
-    assert 'foo' == molecule_default_provider_instance.verifier_options
-
-
-def test_verifier_options(molecule_default_provider_instance):
-    assert {} == molecule_default_provider_instance.verifier_options
+    assert 'foo' == molecule_instance.verifier_options
 
 
-def test_verifier_options_backward_compatible(
-        molecule_default_provider_instance):
-    m = molecule_default_provider_instance
+def test_verifier_options(molecule_instance):
+    assert {} == molecule_instance.verifier_options
+
+
+def test_verifier_options_backward_compatible(molecule_instance):
+    m = molecule_instance
     m.config.config['testinfra'] = {'foo': 'bar'}
     m.verifier_options = m._get_verifier_options()
 
     assert {'foo': 'bar'} == m.verifier_options
 
 
-def test_verifier_disabled_setter(molecule_default_provider_instance):
-    molecule_default_provider_instance.disabled = 'foo'
+def test_verifier_disabled_setter(molecule_instance):
+    molecule_instance.disabled = 'foo'
 
-    assert 'foo' == molecule_default_provider_instance.disabled
+    assert 'foo' == molecule_instance.disabled
 
 
-def test_verifier_disabled(molecule_default_provider_instance):
-    assert [] == molecule_default_provider_instance.disabled
+def test_verifier_disabled(molecule_instance):
+    assert [] == molecule_instance.disabled
 
 
 @pytest.mark.skip(reason='TODO(retr0h): Determine best way to test this')

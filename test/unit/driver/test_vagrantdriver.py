@@ -20,27 +20,14 @@
 
 import pytest
 
-from molecule import config
-from molecule import core
-from molecule import state
 from molecule.driver import vagrantdriver
 
 # TODO(retr0h): Test instance create/delete through the vagrant instance.
 
 
 @pytest.fixture()
-def molecule_instance(temp_dir, temp_files, state_path_without_data):
-    c = temp_files(fixtures=['molecule_vagrant_config'])
-    m = core.Molecule({})
-    m.config = config.Config(configs=c)
-    m.state = state.State(state_file=state_path_without_data)
-
-    return m
-
-
-@pytest.fixture()
-def vagrant_instance(molecule_instance, request):
-    return vagrantdriver.VagrantDriver(molecule_instance)
+def vagrant_instance(vagrant_molecule_instance, request):
+    return vagrantdriver.VagrantDriver(vagrant_molecule_instance)
 
 
 def test_name(vagrant_instance):

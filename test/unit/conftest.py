@@ -60,8 +60,37 @@ def temp_files(tmpdir, request):
 @pytest.fixture()
 def molecule_instance(temp_dir, temp_files, state_path_without_data):
     c = temp_files(fixtures=['molecule_vagrant_config'])
-    m = core.Molecule({})
-    m.config = config.Config(configs=c)
+    m = core.Molecule(config.Config(configs=c), {})
+    m.state = state.State(state_file=state_path_without_data)
+    m.main()
+
+    return m
+
+
+@pytest.fixture()
+def docker_molecule_instance(temp_dir, temp_files, state_path_without_data):
+    c = temp_files(fixtures=['molecule_docker_config'])
+    m = core.Molecule(config.Config(configs=c), {})
+    m.state = state.State(state_file=state_path_without_data)
+    m.main()
+
+    return m
+
+
+@pytest.fixture()
+def openstack_molecule_instance(temp_dir, temp_files, state_path_without_data):
+    c = temp_files(fixtures=['molecule_openstack_config'])
+    m = core.Molecule(config.Config(configs=c), {})
+    m.state = state.State(state_file=state_path_without_data)
+    m.main()
+
+    return m
+
+
+@pytest.fixture()
+def vagrant_molecule_instance(temp_dir, temp_files, state_path_without_data):
+    c = temp_files(fixtures=['molecule_vagrant_config'])
+    m = core.Molecule(config.Config(configs=c), {})
     m.state = state.State(state_file=state_path_without_data)
     m.main()
 

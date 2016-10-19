@@ -18,78 +18,66 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import pytest
-
-from molecule import config
-from molecule import core
 from molecule.driver import vagrantdriver
 
 
-@pytest.fixture()
-def molecule_instance(temp_dir, temp_files, molecule_args):
-    c = temp_files(fixtures=['molecule_vagrant_config'])
-    m = core.Molecule(molecule_args)
-    m.config = config.Config(configs=c)
-    m.main()
-
-    return m
+def test_get_driver_name(vagrant_molecule_instance):
+    assert 'vagrant' == vagrant_molecule_instance._get_driver_name()
 
 
-def test_get_driver_name(molecule_instance):
-    assert 'vagrant' == molecule_instance._get_driver_name()
-
-
-def test_get_driver(molecule_instance):
-    assert isinstance(molecule_instance._get_driver(),
+def test_get_driver(vagrant_molecule_instance):
+    assert isinstance(vagrant_molecule_instance._get_driver(),
                       vagrantdriver.VagrantDriver)
 
 
-def test_get_ssh_config(molecule_instance):
-    assert '.vagrant/ssh-config' == molecule_instance._get_ssh_config()
+def test_get_ssh_config(vagrant_molecule_instance):
+    assert '.vagrant/ssh-config' == vagrant_molecule_instance._get_ssh_config()
 
 
-def test_write_ssh_config(mocker, molecule_instance):
+def test_write_ssh_config(mocker, vagrant_molecule_instance):
     patched_conf = mocker.patch(
         'molecule.driver.vagrantdriver.VagrantDriver.conf')
     patched_conf.return_value = 'patched'
     patched_write_file = mocker.patch('molecule.util.write_file')
-    molecule_instance.write_ssh_config()
+    vagrant_molecule_instance.write_ssh_config()
 
     patched_write_file.assert_called_once_with('.vagrant/ssh-config',
                                                'patched')
 
 
-def test_print_valid_platforms(capsys, molecule_instance):
-    molecule_instance.print_valid_platforms()
+def test_print_valid_platforms(capsys, vagrant_molecule_instance):
+    vagrant_molecule_instance.print_valid_platforms()
     out, _ = capsys.readouterr()
 
     assert 'ubuntu   (default)' in out
     assert 'centos7' in out
 
 
-def test_print_valid_platforms_with_porcelain(capsys, molecule_instance):
-    molecule_instance.print_valid_platforms(porcelain=True)
+def test_print_valid_platforms_with_porcelain(capsys,
+                                              vagrant_molecule_instance):
+    vagrant_molecule_instance.print_valid_platforms(porcelain=True)
     out, _ = capsys.readouterr()
 
     assert 'ubuntu   d' in out
     assert 'centos7' in out
 
 
-def test_print_valid_providers(capsys, molecule_instance):
-    molecule_instance.print_valid_providers()
+def test_print_valid_providers(capsys, vagrant_molecule_instance):
+    vagrant_molecule_instance.print_valid_providers()
     out, _ = capsys.readouterr()
 
     assert 'virtualbox  (default)\n' == out
 
 
-def test_print_valid_providers_with_porcelain(capsys, molecule_instance):
-    molecule_instance.print_valid_providers(porcelain=True)
+def test_print_valid_providers_with_porcelain(capsys,
+                                              vagrant_molecule_instance):
+    vagrant_molecule_instance.print_valid_providers(porcelain=True)
     out, _ = capsys.readouterr()
 
     assert 'virtualbox  d\n' == out
 
 
-def test_instances_state(molecule_instance):
+def test_instances_state(vagrant_molecule_instance):
     expected = {
         'aio-01-ubuntu': {
             'groups': ['example', 'example1']
@@ -99,4 +87,4 @@ def test_instances_state(molecule_instance):
         }
     }
 
-    assert expected == molecule_instance._instances_state()
+    assert expected == vagrant_molecule_instance._instances_state()

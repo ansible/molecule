@@ -57,8 +57,24 @@ def patch_molecule_file_exists(monkeypatch):
                                mockreturn)
 
 
-def test_molecule_file(config_instance):
+def test_molecule_file_property(config_instance):
     assert 'molecule.yml' == config_instance.molecule_file
+
+
+def test_platforms_property(config_instance):
+    config_instance.config.update({'platforms': 'foo'})
+
+    assert 'foo' == config_instance.platforms
+
+
+def test_version_property(config_instance):
+    assert 1 == config_instance.version
+
+
+def test_version_property_v2_config(config_instance):
+    config_instance.config.update({'platforms': 'foo'})
+
+    assert 2 == config_instance.version
 
 
 def test_build_config_paths(config_instance):
