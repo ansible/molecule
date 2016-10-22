@@ -22,6 +22,9 @@ Config
 .. autoclass:: molecule.config.Config
    :members:
 
+.. autoclass:: molecule.config.ConfigV1
+   :members:
+
 .. include:: driver.rst
 
 Molecule

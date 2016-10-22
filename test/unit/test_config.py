@@ -45,7 +45,7 @@ def config_instance(temp_files):
     # key in this dict.
     c = temp_files(fixtures=['molecule_vagrant_config'])
 
-    return config.Config(configs=c)
+    return config.ConfigV1(configs=c)
 
 
 @pytest.fixture()
@@ -53,28 +53,12 @@ def patch_molecule_file_exists(monkeypatch):
     def mockreturn(m):
         return True
 
-    return monkeypatch.setattr('molecule.config.Config.molecule_file_exists',
+    return monkeypatch.setattr('molecule.config.ConfigV1.molecule_file_exists',
                                mockreturn)
 
 
 def test_molecule_file_property(config_instance):
     assert 'molecule.yml' == config_instance.molecule_file
-
-
-def test_platforms_property(config_instance):
-    config_instance.config.update({'platforms': 'foo'})
-
-    assert 'foo' == config_instance.platforms
-
-
-def test_version_property(config_instance):
-    assert 1 == config_instance.version
-
-
-def test_version_property_v2_config(config_instance):
-    config_instance.config.update({'platforms': 'foo'})
-
-    assert 2 == config_instance.version
 
 
 def test_build_config_paths(config_instance):
@@ -111,7 +95,7 @@ def build_config_paths_molecule_data():
 # NOTE(retr0h): ``os.path.join`` does this for us.
 def test_build_config_paths_preserves_full_path(temp_files):
     confs = temp_files(fixtures=['build_config_paths_molecule_data'])
-    c = config.Config(configs=confs)
+    c = config.ConfigV1(configs=confs)
 
     assert '/full/path/vagrantfile_file' == c.config['molecule'][
         'vagrantfile_file']
@@ -119,7 +103,7 @@ def test_build_config_paths_preserves_full_path(temp_files):
 
 def test_build_config_paths_preserves_relative_path(temp_files):
     confs = temp_files(fixtures=['build_config_paths_molecule_data'])
-    c = config.Config(configs=confs)
+    c = config.ConfigV1(configs=confs)
 
     assert 'relative/path/rakefile_file' == c.config['molecule'][
         'rakefile_file']
@@ -134,7 +118,7 @@ def test_populate_instance_names(config_instance):
 
 def test_molecule_file_exists(temp_files, patch_molecule_file_exists):
     configs = temp_files(fixtures=['molecule_vagrant_config'])
-    c = config.Config(configs=configs)
+    c = config.ConfigV1(configs=configs)
 
     assert c.molecule_file_exists()
 
@@ -149,7 +133,7 @@ def test_get_config(config_instance):
 
 def test_combine_default_config(temp_files):
     c = temp_files(fixtures=['default_config_data'])
-    config_instance = config.Config(configs=c).config
+    config_instance = config.ConfigV1(configs=c).config
 
     assert 'bar' == config_instance['foo']
     assert 'qux' == config_instance['baz']
@@ -157,7 +141,7 @@ def test_combine_default_config(temp_files):
 
 def test_combine_project_config_overrides_default_config(temp_files):
     c = temp_files(fixtures=['default_config_data', 'project_config_data'])
-    config_instance = config.Config(configs=c).config
+    config_instance = config.ConfigV1(configs=c).config
 
     assert 'bar' == config_instance['foo']
     assert 'project-override' == config_instance['baz']
@@ -167,7 +151,7 @@ def test_combine_local_config_overrides_default_and_project_config(temp_files):
     c = temp_files(fixtures=[
         'default_config_data', 'project_config_data', 'local_config_data'
     ])
-    config_instance = config.Config(configs=c).config
+    config_instance = config.ConfigV1(configs=c).config
 
     assert 'local-override' == config_instance['foo']
     assert 'local-override' == config_instance['baz']

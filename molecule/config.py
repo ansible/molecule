@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import abc
 import os
 import os.path
 
@@ -32,31 +33,21 @@ MERGE_STRATEGY = anyconfig.MS_DICTS
 
 
 class Config(object):
+    __metaclass__ = abc.ABCMeta
+
     def __init__(self, configs=[LOCAL_CONFIG, PROJECT_CONFIG]):
         """
-        Initialize a new config class, and returns None.
+        Base initializer for all Config classes.
 
         :param command_args: A list configs files to merge.
         :returns: None
         """
         self.config = self._get_config(configs)
-        self._platforms = None
         self._build_config_paths()
 
     @property
     def molecule_file(self):
         return PROJECT_CONFIG
-
-    @property
-    def platforms(self):
-        return self.config.get('platforms')
-
-    @property
-    def version(self):
-        if self.platforms:
-            return 2
-        else:
-            return 1
 
     def populate_instance_names(self, platform):
         """
@@ -225,3 +216,11 @@ def merge_dicts(a, b):
     conf.update(b)
 
     return conf
+
+
+class ConfigV1(Config):
+    def __init__(self, configs=[LOCAL_CONFIG, PROJECT_CONFIG]):
+        """
+        Initialize a new config version one class, and returns None.
+        """
+        super(ConfigV1, self).__init__(configs)

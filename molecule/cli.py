@@ -29,11 +29,17 @@ from molecule import command
     '--debug/--no-debug',
     default=False,
     help='Enable or disable debug mode. Default is disabled.')
+@click.option(
+    '--v2/--no-v2',
+    default=False,
+    help=('Enable or disable experimental v2 functionality. '
+          'Default is disabled.'))
 @click.version_option(version=molecule.__version__)
 @click.pass_context
-def cli(ctx, debug):  # pragma: no cover
+def cli(ctx, debug, v2):  # pragma: no cover
     ctx.obj['args'] = {}
     ctx.obj['args']['debug'] = debug
+    ctx.obj['args']['v2'] = v2
 
 
 def main():
