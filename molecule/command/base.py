@@ -52,7 +52,7 @@ class Base(object):
         """
         self.args = args
         self.command_args = command_args
-        self._config = config.ConfigV1()
+        self._config = self._get_config()
 
         options = args.copy()
         options.update(command_args)
@@ -80,3 +80,7 @@ class Base(object):
     @abc.abstractproperty
     def execute(self):  # pragma: no cover
         pass
+
+    def _get_config(self):
+        if not self.args.get('v2'):
+            return config.ConfigV1()
