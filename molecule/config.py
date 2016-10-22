@@ -49,6 +49,10 @@ class Config(object):
     def molecule_file(self):
         return PROJECT_CONFIG
 
+    @abc.abstractmethod
+    def _get_defaults(self):
+        pass  # pragma: no cover
+
     def populate_instance_names(self, platform):
         """
         Updates instances section of config with an additional key containing
@@ -111,6 +115,14 @@ class Config(object):
 
     def _is_path(self, pathname):
         return os.path.sep in pathname
+
+
+class ConfigV1(Config):
+    def __init__(self, configs=[LOCAL_CONFIG, PROJECT_CONFIG]):
+        """
+        Initialize a new config version one class, and returns None.
+        """
+        super(ConfigV1, self).__init__(configs)
 
     def _get_defaults(self):
         return {
@@ -216,11 +228,3 @@ def merge_dicts(a, b):
     conf.update(b)
 
     return conf
-
-
-class ConfigV1(Config):
-    def __init__(self, configs=[LOCAL_CONFIG, PROJECT_CONFIG]):
-        """
-        Initialize a new config version one class, and returns None.
-        """
-        super(ConfigV1, self).__init__(configs)

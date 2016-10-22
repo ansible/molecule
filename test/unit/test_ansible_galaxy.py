@@ -29,7 +29,7 @@ from molecule import config
 
 @pytest.fixture()
 def ansible_galaxy_instance(temp_files):
-    confs = temp_files(fixtures=['molecule_vagrant_config'])
+    confs = temp_files(fixtures=['molecule_vagrant_v1_config'])
     c = config.ConfigV1(configs=confs)
     c.config['ansible']['requirements_file'] = 'requirements.yml'
 
