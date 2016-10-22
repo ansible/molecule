@@ -25,8 +25,8 @@ from molecule import ansible_playbook
 
 
 @pytest.fixture()
-def ansible_playbook_instance(ansible_section_data):
-    return ansible_playbook.AnsiblePlaybook(ansible_section_data['ansible'],
+def ansible_playbook_instance(ansible_v1_section_data):
+    return ansible_playbook.AnsiblePlaybook(ansible_v1_section_data['ansible'],
                                             {})
 
 
@@ -42,10 +42,10 @@ def test_init_arg_loading_bool_false_not_added(ansible_playbook_instance):
     assert ansible_playbook_instance._cli.get('sudo_user') is None
 
 
-def test_init_connection_params(ansible_section_data,
+def test_init_connection_params(ansible_v1_section_data,
                                 ansible_playbook_instance):
     connection_params = {'foo': 'bar'}
-    a = ansible_playbook.AnsiblePlaybook(ansible_section_data['ansible'],
+    a = ansible_playbook.AnsiblePlaybook(ansible_v1_section_data['ansible'],
                                          connection_params)
     assert 'bar' == a._cli.get('foo')
 

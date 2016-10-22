@@ -43,7 +43,7 @@ def config_instance(temp_files):
     # TODO(retr0h): Rework molecule config so we can pass a generic
     # config here.  Molecule currently expects to find a 'vagrant'
     # key in this dict.
-    c = temp_files(fixtures=['molecule_vagrant_config'])
+    c = temp_files(fixtures=['molecule_vagrant_v1_config'])
 
     return config.ConfigV1(configs=c)
 
@@ -117,7 +117,7 @@ def test_populate_instance_names(config_instance):
 
 
 def test_molecule_file_exists(temp_files, patch_molecule_file_exists):
-    configs = temp_files(fixtures=['molecule_vagrant_config'])
+    configs = temp_files(fixtures=['molecule_vagrant_v1_config'])
     c = config.ConfigV1(configs=configs)
 
     assert c.molecule_file_exists()

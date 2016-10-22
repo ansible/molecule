@@ -59,7 +59,7 @@ def temp_files(tmpdir, request):
 
 @pytest.fixture()
 def molecule_instance(temp_dir, temp_files, state_path_without_data):
-    c = temp_files(fixtures=['molecule_vagrant_config'])
+    c = temp_files(fixtures=['molecule_vagrant_v1_config'])
     m = core.Molecule(config.ConfigV1(configs=c), {})
     m.state = state.State(state_file=state_path_without_data)
     m.main()
@@ -69,7 +69,7 @@ def molecule_instance(temp_dir, temp_files, state_path_without_data):
 
 @pytest.fixture()
 def docker_molecule_instance(temp_dir, temp_files, state_path_without_data):
-    c = temp_files(fixtures=['molecule_docker_config'])
+    c = temp_files(fixtures=['molecule_docker_v1_config'])
     m = core.Molecule(config.ConfigV1(configs=c), {})
     m.state = state.State(state_file=state_path_without_data)
     m.main()
@@ -79,7 +79,7 @@ def docker_molecule_instance(temp_dir, temp_files, state_path_without_data):
 
 @pytest.fixture()
 def openstack_molecule_instance(temp_dir, temp_files, state_path_without_data):
-    c = temp_files(fixtures=['molecule_openstack_config'])
+    c = temp_files(fixtures=['molecule_openstack_v1_config'])
     m = core.Molecule(config.ConfigV1(configs=c), {})
     m.state = state.State(state_file=state_path_without_data)
     m.main()
@@ -89,7 +89,7 @@ def openstack_molecule_instance(temp_dir, temp_files, state_path_without_data):
 
 @pytest.fixture()
 def vagrant_molecule_instance(temp_dir, temp_files, state_path_without_data):
-    c = temp_files(fixtures=['molecule_vagrant_config'])
+    c = temp_files(fixtures=['molecule_vagrant_v1_config'])
     m = core.Molecule(config.ConfigV1(configs=c), {})
     m.state = state.State(state_file=state_path_without_data)
     m.main()
@@ -98,31 +98,36 @@ def vagrant_molecule_instance(temp_dir, temp_files, state_path_without_data):
 
 
 @pytest.fixture()
-def molecule_vagrant_config(molecule_section_data, vagrant_section_data,
-                            ansible_section_data):
-    return reduce(
-        lambda x, y: config.merge_dicts(x, y),
-        [molecule_section_data, vagrant_section_data, ansible_section_data])
+def molecule_vagrant_v1_config(molecule_v1_section_data,
+                               vagrant_v1_section_data,
+                               ansible_v1_section_data):
+    return reduce(lambda x, y: config.merge_dicts(x, y), [
+        molecule_v1_section_data, vagrant_v1_section_data,
+        ansible_v1_section_data
+    ])
 
 
 @pytest.fixture()
-def molecule_docker_config(molecule_section_data, docker_section_data,
-                           ansible_section_data):
-    return reduce(
-        lambda x, y: config.merge_dicts(x, y),
-        [molecule_section_data, docker_section_data, ansible_section_data])
+def molecule_docker_v1_config(molecule_v1_section_data, docker_v1_section_data,
+                              ansible_v1_section_data):
+    return reduce(lambda x, y: config.merge_dicts(x, y), [
+        molecule_v1_section_data, docker_v1_section_data,
+        ansible_v1_section_data
+    ])
 
 
 @pytest.fixture()
-def molecule_openstack_config(molecule_section_data, openstack_section_data,
-                              ansible_section_data):
-    return reduce(
-        lambda x, y: config.merge_dicts(x, y),
-        [molecule_section_data, openstack_section_data, ansible_section_data])
+def molecule_openstack_v1_config(molecule_v1_section_data,
+                                 openstack_v1_section_data,
+                                 ansible_v1_section_data):
+    return reduce(lambda x, y: config.merge_dicts(x, y), [
+        molecule_v1_section_data, openstack_v1_section_data,
+        ansible_v1_section_data
+    ])
 
 
 @pytest.fixture()
-def molecule_section_data(state_path_without_data):
+def molecule_v1_section_data(state_path_without_data):
     return {
         'molecule': {
             'ignore_paths': ['.git', '.vagrant', '.molecule'],
@@ -150,7 +155,7 @@ def molecule_section_data(state_path_without_data):
 
 
 @pytest.fixture()
-def vagrant_section_data():
+def vagrant_v1_section_data():
     return {
         'vagrant': {
             'platforms': [{
@@ -182,7 +187,7 @@ def vagrant_section_data():
 
 
 @pytest.fixture()
-def docker_section_data():
+def docker_v1_section_data():
     return {
         'docker': {
             'containers': [{
@@ -215,7 +220,7 @@ def docker_section_data():
 
 
 @pytest.fixture()
-def openstack_section_data():
+def openstack_v1_section_data():
     return {
         'openstack': {
             'instances': [{
@@ -230,7 +235,7 @@ def openstack_section_data():
 
 
 @pytest.fixture()
-def ansible_section_data(playbook):
+def ansible_v1_section_data(playbook):
     return {
         'ansible': {
             'timeout': 30,
