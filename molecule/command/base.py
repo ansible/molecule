@@ -52,15 +52,14 @@ class Base(object):
         """
         self.args = args
         self.command_args = command_args
-        self._config = config.Config()
+        self._config = config.ConfigV1()
 
         options = args.copy()
         options.update(command_args)
 
         if not molecule:
-            if self._config.version == 1:
-                self.molecule = core.Molecule(self._config, options)
-                self.main()
+            self.molecule = core.Molecule(self._config, options)
+            self.main()
         else:
             self.molecule = molecule
 

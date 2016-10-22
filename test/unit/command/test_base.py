@@ -30,7 +30,7 @@ class Foo(base.Base):
 
 def test_main(mocker, molecule_instance):
     patched_file_exists = mocker.patch(
-        'molecule.config.Config.molecule_file_exists')
+        'molecule.config.ConfigV1.molecule_file_exists')
     patched_molecule_main = mocker.patch('molecule.core.Molecule.main')
     patched_file_exists.return_value = True
 
