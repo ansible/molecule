@@ -21,7 +21,6 @@
 import click
 
 import molecule
-from molecule import command
 
 
 @click.group()
@@ -39,17 +38,3 @@ def cli(ctx, debug):  # pragma: no cover
 def main():
     """ Molecule aids in the development, and testing of Ansible roles. """
     cli(obj={})
-
-
-cli.add_command(command.create.create)
-cli.add_command(command.check.check)
-cli.add_command(command.converge.converge)
-cli.add_command(command.destroy.destroy)
-cli.add_command(command.idempotence.idempotence)
-cli.add_command(command.init.init)
-cli.add_command(command.list.list)
-cli.add_command(command.login.login)
-cli.add_command(command.syntax.syntax)
-cli.add_command(command.test.test)
-cli.add_command(command.status.status)
-cli.add_command(command.verify.verify)

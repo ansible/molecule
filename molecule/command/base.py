@@ -58,7 +58,7 @@ class Base(object):
         options.update(command_args)
 
         if not molecule:
-            self.molecule = core.Molecule(self._config, options)
+            self.molecule = self._get_core(options)
             self.main()
         else:
             self.molecule = molecule
@@ -82,5 +82,7 @@ class Base(object):
         pass
 
     def _get_config(self):
-        if not self.args.get('v2'):
-            return config.ConfigV1()
+        return config.ConfigV1()
+
+    def _get_core(self, options):
+        return core.Molecule(self._config, options)
