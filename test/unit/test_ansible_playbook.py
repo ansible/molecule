@@ -19,6 +19,7 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import pytest
+import re
 import sh
 
 from molecule import ansible_playbook
@@ -144,6 +145,13 @@ def test_bake(ansible_playbook_instance):
     ]
 
     assert expected == sorted(str(ansible_playbook_instance._ansible).split())
+
+
+def test_bake_with_raw_ansible_args(mocker, ansible_playbook_instance):
+    ansible_playbook_instance._raw_ansible_args = ('-v', '--foo', 'bar')
+    ansible_playbook_instance.bake()
+
+    assert re.search('-v --foo bar$', str(ansible_playbook_instance._ansible))
 
 
 def test_ignores_requirements_file():

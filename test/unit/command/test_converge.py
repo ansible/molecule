@@ -97,17 +97,6 @@ def test_execute_installs_dependencies(
     assert molecule_instance.state.installed_deps
 
 
-def test_execute_with_tags(mocker, patched_create, patched_ansible_playbook,
-                           patched_add_cli_arg, patched_create_inventory,
-                           molecule_instance):
-    command_args = {'tags': 'foo,bar'}
-
-    c = converge.Converge({}, command_args, molecule_instance)
-    c.execute()
-
-    patched_add_cli_arg.assert_called_with('tags', 'foo,bar')
-
-
 def test_execute_with_debug(patched_create, patched_ansible_playbook,
                             patched_create_inventory, patched_print_debug,
                             molecule_instance):
