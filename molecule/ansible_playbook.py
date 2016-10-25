@@ -30,6 +30,7 @@ class AnsiblePlaybook(object):
     def __init__(self,
                  args,
                  connection_params,
+                 raw_ansible_args=None,
                  _env=None,
                  _out=LOG.info,
                  _err=LOG.error):
@@ -51,6 +52,7 @@ class AnsiblePlaybook(object):
         self._ansible = None
         self._cli = {}
         self._cli_pos = []
+        self._raw_ansible_args = raw_ansible_args
         self.env = _env if _env else os.environ.copy()
 
         for k, v in args.iteritems():
@@ -76,6 +78,8 @@ class AnsiblePlaybook(object):
         """
         self._ansible = sh.ansible_playbook.bake(
             self._playbook, *self._cli_pos, _env=self.env, **self._cli)
+        if self._raw_ansible_args:
+            self._ansible = self._ansible.bake(self._raw_ansible_args)
 
     def parse_arg(self, name, value):
         """

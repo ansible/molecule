@@ -79,11 +79,8 @@ class Converge(base.Base):
 
         ansible = ansible_playbook.AnsiblePlaybook(
             self.molecule.config.config['ansible'],
-            self.molecule.driver.ansible_connection_params)
-
-        # Target tags passed in via CLI
-        if self.command_args.get('tags'):
-            ansible.add_cli_arg('tags', self.command_args.get('tags'))
+            self.molecule.driver.ansible_connection_params,
+            raw_ansible_args=self.command_args.get('ansible_args'))
 
         if idempotent:
             # Don't log stdout/err
@@ -132,18 +129,16 @@ class Converge(base.Base):
 @click.option('--driver', default=None, help='Specificy a driver.')
 @click.option('--platform', default=None, help='Specify a platform.')
 @click.option('--provider', default=None, help='Specify a provider.')
-@click.option(
-    '--tags',
-    default=None,
-    help='Comma separated group of ansible tags to target.')
+@click.argument('ansible_args', nargs=-1, type=click.UNPROCESSED)
 @click.pass_context
-def converge(ctx, driver, platform, provider, tags):  # pragma: no cover
+def converge(ctx, driver, platform, provider,
+             ansible_args):  # pragma: no cover
     """ Provisions all instances defined in molecule.yml. """
     command_args = {
         'driver': driver,
         'platform': platform,
         'provider': provider,
-        'tags': tags
+        'ansible_args': ansible_args
     }
 
     c = Converge(ctx.obj.get('args'), command_args)
