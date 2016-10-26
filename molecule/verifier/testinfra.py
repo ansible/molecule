@@ -18,7 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import glob
+import fnmatch
+import os
 
 import sh
 
@@ -59,11 +60,11 @@ class Testinfra(base.Base):
         if self._molecule.args.get('sudo'):
             testinfra_options['sudo'] = True
 
-        tests_glob = self._get_tests()
-        if len(tests_glob) > 0:
+        tests = self._get_tests()
+        if len(tests) > 0:
             if 'flake8' not in self._molecule.disabled:
-                self._flake8(tests_glob)
-            self._testinfra(tests_glob, **testinfra_options)
+                self._flake8(tests)
+            self._testinfra(tests, **testinfra_options)
 
     def _testinfra(self,
                    tests,
@@ -117,6 +118,16 @@ class Testinfra(base.Base):
         return sh.flake8(tests)
 
     def _get_tests(self):
-        tests = '{}/test_*.py'.format(self._testinfra_dir)
+        return [
+            filename
+            for filename in self._walk(self._testinfra_dir, 'test_*.py')
+        ]
 
-        return glob.glob(tests)
+    def _walk(self, directory, pattern):
+        # Python 3.5 supports a recursive glob without needing os.walk.
+        for root, dirs, files in os.walk(directory):
+            for basename in files:
+                if fnmatch.fnmatch(basename, pattern):
+                    filename = os.path.join(root, basename)
+
+                    yield filename

@@ -18,6 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
+
 import pytest
 
 from molecule.verifier import testinfra
@@ -92,5 +94,16 @@ def test_flake8(mocker, testinfra_instance):
     patched_flake8.assert_called_once_with(args)
 
 
-def test_get_tests(testinfra_instance):
-    assert [] == testinfra_instance._get_tests()
+def test_get_tests(temp_dir, testinfra_instance):
+    testinfra_instance._testinfra_dir = temp_dir
+    dir1 = os.path.join(temp_dir, 'foo')
+    dir2 = os.path.join(temp_dir, 'foo', 'bar')
+
+    os.mkdir(dir1)
+    os.mkdir(dir2)
+
+    test_file = os.path.join(dir2, 'test_default.py')
+    open(test_file, 'a').close()
+
+    assert 1 == len(testinfra_instance._get_tests())
+    assert test_file == testinfra_instance._get_tests()[0]
