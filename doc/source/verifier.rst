@@ -48,6 +48,8 @@ Project Structure
     ├── ...
     └── tests/
         └── test_*.py
+        └── dir/
+            └── test_*.py
 
 .. _`Testinfra`: https://testinfra.readthedocs.io
 .. _`Flake8`: http://flake8.pycqa.org/en/latest/
