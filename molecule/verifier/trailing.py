@@ -34,7 +34,7 @@ class Trailing(base.Base):
 
     def execute(self, exit=True):  # pragma: no cover
         """
-        Executes trailing linters, and returns None, otherwise sys.exit on
+        Executes trailing linters and returns None, otherwise sys.exit on
         command failure.
 
         :return: None
@@ -98,7 +98,7 @@ class Trailing(base.Base):
 
     def _trailing_newline(self, source):
         """
-        Checks last item in source list for a trailing newline, and returns
+        Checks last item in source list for a trailing newline and returns
         a bool.
 
         :param source: A list of strings to check for trailing newline(s).
@@ -110,7 +110,7 @@ class Trailing(base.Base):
 
     def _trailing_whitespace(self, source):
         """
-        Checks each item in source list for a trailing whitespace, and returns
+        Checks each item in source list for a trailing whitespace and returns
         a list.
 
         :param source: A list of lines to check for trailing whitespace.

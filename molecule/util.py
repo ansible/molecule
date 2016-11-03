@@ -50,7 +50,7 @@ class TrailingNewlineFormatter(logging.Formatter):
 
 def get_logger(name=None):
     """
-    Build a logger with the given name, and returns the logger.
+    Build a logger with the given name and returns the logger.
 
     :param name: The name for the logger. This is usually the module
                  name, ``__name__``.
@@ -99,7 +99,7 @@ def print_debug(title, data):
 
 def write_template(src, dest, kwargs={}, _module='molecule', _dir='template'):
     """
-    Writes a file from a jinja2 template, and returns None.
+    Writes a file from a jinja2 template and returns None.
 
     :param src: A string containing the the target template files to use.
     :param dest: A string containing the destination of the templatized file to
@@ -175,7 +175,7 @@ def _resolve_template_dir(template_dir):
 
 def write_file(filename, content):
     """
-    Writes a file with the given filename and content, and returns None.
+    Writes a file with the given filename and content and returns None.
 
     :param filename: A string containing the target filename.
     :param content: A string containing the data to be written.
@@ -188,7 +188,7 @@ def write_file(filename, content):
 def format_instance_name(name, platform, instances):
     """
     Takes an instance name and formats it according to options specified in the
-    instance's config, and returns a string.
+    instance's config and returns a string.
 
     :param name: A string containg the name of the instance.
     :param platform: A string containing the current molecule platform in use.

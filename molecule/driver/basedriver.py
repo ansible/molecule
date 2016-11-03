@@ -85,7 +85,7 @@ class BaseDriver(object):
     @abc.abstractproperty
     def default_platform(self):
         """
-        Default platform used (e.g. RHEL), and returns a string.
+        Default platform used (e.g. RHEL) and returns a string.
 
         :returns: str
         """
@@ -94,7 +94,7 @@ class BaseDriver(object):
     @abc.abstractproperty
     def provider(self):
         """
-        Provider that is configured to be used, and returns a string.
+        Provider that is configured to be used and returns a string.
 
         :returns: str
         """
@@ -103,7 +103,7 @@ class BaseDriver(object):
     @abc.abstractproperty
     def platform(self):
         """
-        Platform that is used for creating instance(s), and returns a string.
+        Platform that is used for creating instance(s) and returns a string.
 
         :returns: str
         """
@@ -141,7 +141,7 @@ class BaseDriver(object):
     @abc.abstractproperty
     def ssh_config_file(self):
         """
-        Returns the ssh config file location for the driver, and returns
+        Returns the ssh config file location for the driver and returns
         a string.
 
         :returns: str
@@ -151,7 +151,7 @@ class BaseDriver(object):
     @abc.abstractproperty
     def ansible_connection_params(self):
         """
-        Returns the parameters used for connecting with ansible, and returns a
+        Returns the parameters used for connecting with ansible and returns a
         string.
 
         :returns: str
@@ -227,7 +227,7 @@ class BaseDriver(object):
     @abc.abstractmethod
     def inventory_entry(self, instance):
         """
-        Returns an inventory entry for the given instance, and returns a
+        Returns an inventory entry for the given instance and returns a
         string.
 
         :param instance: A dict containing a single element provided by

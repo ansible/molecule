@@ -34,7 +34,7 @@ LOG = util.get_logger(__name__)
 class Molecule(object):
     def __init__(self, config, args):
         """
-        Initialize a new molecule class, and returns None.
+        Initialize a new molecule class and returns None.
 
         :param config: A molecule config object.
         :param args: A dict of options, arguments and commands from the CLI.
@@ -165,7 +165,7 @@ class Molecule(object):
 
     def remove_templates(self):
         """
-        Removes the templates created by molecule, and returns None.
+        Removes the templates created by molecule and returns None.
 
         :return: None
         """
@@ -181,7 +181,7 @@ class Molecule(object):
 
     def create_templates(self):
         """
-        Creates the templates used by molecule, and returns None.
+        Creates the templates used by molecule and returns None.
 
         :return: None
         """
@@ -195,7 +195,7 @@ class Molecule(object):
 
     def create_inventory_file(self):
         """
-        Creates the inventory file used by molecule, and returns None.
+        Creates the inventory file used by molecule and returns None.
 
         :return: None
         """
@@ -246,7 +246,7 @@ class Molecule(object):
 
     def display_tabulate_data(self, data, headers=None):
         """
-        Shows the tabulate data on the screen, and returns None.
+        Shows the tabulate data on the screen and returns None.
 
         If not header is defined, only the data is displayed, otherwise, the
         results will be shown in a table.
@@ -347,7 +347,7 @@ class Molecule(object):
     def _instances_state(self):
         """
         Creates a dict of formatted instances names and the group(s) they're
-        part of to be added to state, and returns dict containing state
+        part of to be added to state and returns dict containing state
         information about current instances.
 
         :return: dict

@@ -75,7 +75,7 @@ class Config(object):
         return self._combine(configs)
 
     def _combine(self, configs):
-        """ Perform a prioritized recursive merge of serveral source files,
+        """ Perform a prioritized recursive merge of serveral source files
         and returns a new dict.
 
         The merge order is based on the index of the list, meaning that
@@ -120,7 +120,7 @@ class Config(object):
 class ConfigV1(Config):
     def __init__(self, configs=[LOCAL_CONFIG, PROJECT_CONFIG]):
         """
-        Initialize a new config version one class, and returns None.
+        Initialize a new config version one class and returns None.
         """
         super(ConfigV1, self).__init__(configs)
 

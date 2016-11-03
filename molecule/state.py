@@ -52,7 +52,7 @@ class InvalidState(Exception):
 class State(object):
     def __init__(self, state_file='state.yml'):
         """
-        Initialize a new state class, and returns None.
+        Initialize a new state class and returns None.
 
         :param state_file: An optional string containing the path to the state
         file.
