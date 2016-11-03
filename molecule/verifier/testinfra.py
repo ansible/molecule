@@ -39,7 +39,7 @@ class Testinfra(base.Base):
 
     def execute(self):
         """
-        Executes linting/integration tests, and returns None.
+        Executes linting/integration tests and returns None.
 
         Flake8 performs the code linting.
         Testinfra executes integration tests.
@@ -74,7 +74,7 @@ class Testinfra(base.Base):
                    err=LOG.error,
                    **kwargs):
         """
-        Executes testinfra against specified tests, and returns a :func:`sh`
+        Executes testinfra against specified tests and returns a :func:`sh`
         response object.
 
         :param tests: A list of testinfra tests.
@@ -101,7 +101,7 @@ class Testinfra(base.Base):
 
     def _flake8(self, tests, out=LOG.info, err=LOG.error):
         """
-        Executes flake8 against specified tests, and returns a :func:`sh`
+        Executes flake8 against specified tests and returns a :func:`sh`
         response object.
 
         :param tests: A list of testinfra tests.

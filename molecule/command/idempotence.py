@@ -66,7 +66,7 @@ class Idempotence(base.Base):
 
     def _is_idempotent(self, output):
         """
-        Parses the output of the provisioning for changed, and return a bool.
+        Parses the output of the provisioning for changed and returns a bool.
 
         :param output: A string containing the output of the ansible run.
         :return: bool

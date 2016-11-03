@@ -35,7 +35,7 @@ class AnsiblePlaybook(object):
                  _out=LOG.info,
                  _err=LOG.error):
         """
-        Sets up requirements for ansible-playbook, and returns None.
+        Sets up requirements for ansible-playbook and returns None.
 
         :param args: A dict containing arguments to pass to ansible-playbook.
         :param connection_params: A dict containing driver specific connection
@@ -71,7 +71,7 @@ class AnsiblePlaybook(object):
 
     def bake(self):
         """
-        Bake ansible-playbook command so it's ready to execute, and returns
+        Bake ansible-playbook command so it's ready to execute and returns
         None.
 
         :return: None
@@ -83,7 +83,7 @@ class AnsiblePlaybook(object):
 
     def parse_arg(self, name, value):
         """
-        Adds argument to CLI or environment, and returns None.
+        Adds argument to CLI or environment and returns None.
 
         :param name: A string containing the name of argument to be added.
         :param value: The value of argument to be added.
@@ -130,7 +130,7 @@ class AnsiblePlaybook(object):
 
     def add_cli_arg(self, name, value):
         """
-        Adds argument to CLI passed to ansible-playbook, and returns None.
+        Adds argument to CLI passed to ansible-playbook and returns None.
 
         :param name: A string containing the name of argument to be added.
         :param value: The value of argument to be added.
@@ -141,7 +141,7 @@ class AnsiblePlaybook(object):
 
     def remove_cli_arg(self, name):
         """
-        Removes CLI argument, and returns None.
+        Removes CLI argument and returns None.
 
         :param name: A string containing the name of argument to be removed.
         :return: None
@@ -150,7 +150,7 @@ class AnsiblePlaybook(object):
 
     def add_env_arg(self, name, value):
         """
-        Adds argument to environment passed to ansible-playbook, and returns
+        Adds argument to environment passed to ansible-playbook and returns
         None.
 
         :param name: A string containing the name of argument to be added.
@@ -161,7 +161,7 @@ class AnsiblePlaybook(object):
 
     def remove_env_arg(self, name):
         """
-        Removes environment argument, and returns None.
+        Removes environment argument and returns None.
 
         :param name: A string containing the name of argument to be removed.
         :return: None
@@ -170,7 +170,7 @@ class AnsiblePlaybook(object):
 
     def execute(self, hide_errors=False):
         """
-        Executes ansible-playbook, and returns command's stdout.
+        Executes ansible-playbook and returns command's stdout.
 
         :param hide_errors: An optional bool to toggle output of errors.
         :return: The command's output, otherwise sys.exit on command failure.

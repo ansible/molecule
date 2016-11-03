@@ -37,7 +37,7 @@ class Serverspec(base.Base):
 
     def execute(self):
         """
-        Executes linting/integration tests, and returns None.
+        Executes linting/integration tests and returns None.
 
         Rubocop performs the code linting.
         Rake executes serverspec integration tests.
@@ -53,7 +53,7 @@ class Serverspec(base.Base):
 
     def _rake(self, rakefile, debug=False, out=LOG.info, err=LOG.error):
         """
-        Executes rake against specified rakefile, and returns a :func:`sh`
+        Executes rake against specified rakefile and returns a :func:`sh`
         response object.
 
         :param rakefile: A string containing path to the rakefile.
@@ -84,7 +84,7 @@ class Serverspec(base.Base):
                  out=LOG.info,
                  err=LOG.error):
         """
-        Executes rubocop against specified directory/pattern, and returns a
+        Executes rubocop against specified directory/pattern and returns a
         :func:`sh` response object.
 
         :param serverspec_dir: A string containing the directory with files

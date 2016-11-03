@@ -38,7 +38,7 @@ class Goss(base.Base):
 
     def execute(self):
         """
-        Executes Goss integration tests, and returns None.
+        Executes Goss integration tests and returns None.
 
         :return: None
         """
@@ -49,7 +49,7 @@ class Goss(base.Base):
 
     def _goss(self, out=LOG.info, err=LOG.error):
         """
-        Executes goss against specified playbook, and returns a :func:`sh`
+        Executes goss against specified playbook and returns a :func:`sh`
         response object.
 
         :param out: An optional function to process STDOUT for underlying
