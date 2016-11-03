@@ -98,14 +98,6 @@ class Converge(base.Base):
                 k: v
                 for (k, v) in ansible.env.items() if 'ANSIBLE' in k
             }
-            other_env = {
-                k: v
-                for (k, v) in ansible.env.items() if 'ANSIBLE' not in k
-            }
-            util.print_debug(
-                'OTHER ENVIRONMENT',
-                yaml.dump(
-                    other_env, default_flow_style=False, indent=2))
             util.print_debug(
                 'ANSIBLE ENVIRONMENT',
                 yaml.dump(
