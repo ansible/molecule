@@ -53,7 +53,7 @@ class AnsiblePlaybook(object):
         self._cli = {}
         self._cli_pos = []
         self._raw_ansible_args = raw_ansible_args
-        self.env = _env if _env else os.environ.copy()
+        self._env = _env if _env else os.environ.copy()
 
         for k, v in args.iteritems():
             self.parse_arg(k, v)
@@ -69,6 +69,10 @@ class AnsiblePlaybook(object):
         self.add_cli_arg('_out', _out)
         self.add_cli_arg('_err', _err)
 
+    @property
+    def env(self):
+        return self._env
+
     def bake(self):
         """
         Bake ansible-playbook command so it's ready to execute and returns
@@ -77,7 +81,7 @@ class AnsiblePlaybook(object):
         :return: None
         """
         self._ansible = sh.ansible_playbook.bake(
-            self._playbook, *self._cli_pos, _env=self.env, **self._cli)
+            self._playbook, *self._cli_pos, _env=self._env, **self._cli)
         if self._raw_ansible_args:
             self._ansible = self._ansible.bake(self._raw_ansible_args)
 
@@ -157,7 +161,7 @@ class AnsiblePlaybook(object):
         :param value: The value of argument to be added.
         :return: None
         """
-        self.env[name] = value
+        self._env[name] = value
 
     def remove_env_arg(self, name):
         """
@@ -166,7 +170,7 @@ class AnsiblePlaybook(object):
         :param name: A string containing the name of argument to be removed.
         :return: None
         """
-        self.env.pop(name, None)
+        self._env.pop(name, None)
 
     def execute(self, hide_errors=False):
         """

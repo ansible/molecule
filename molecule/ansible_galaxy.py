@@ -44,9 +44,9 @@ class AnsibleGalaxy(object):
         """
         self._config = config
         self._galaxy = None
-        self.env = _env if _env else os.environ.copy()
-        self.out = _out
-        self.err = _err
+        self._env = _env if _env else os.environ.copy()
+        self._out = _out
+        self._err = _err
 
         # defaults can be redefined with call to add_env_arg() before baking
         self.add_env_arg('PYTHONUNBUFFERED', '1')
@@ -71,9 +71,9 @@ class AnsibleGalaxy(object):
 
         self._galaxy = sh.ansible_galaxy.bake(
             'install',
-            _env=self.env,
-            _out=self.out,
-            _err=self.err,
+            _env=self._env,
+            _out=self._out,
+            _err=self._err,
             **galaxy_options)
 
     def add_env_arg(self, name, value):
@@ -85,7 +85,7 @@ class AnsibleGalaxy(object):
         :param value: Value of argument to be added
         :return: None
         """
-        self.env[name] = value
+        self._env[name] = value
 
     def execute(self):
         """
