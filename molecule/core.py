@@ -75,15 +75,7 @@ class Molecule(object):
             self.print_valid_platforms()
             util.sysexit()
 
-        # updates instances config with full machine names
         self.config.populate_instance_names(self.driver.platform)
-
-        if self.args.get('debug'):
-            util.print_debug(
-                'RUNNING CONFIG',
-                yaml.dump(
-                    self.config.config, default_flow_style=False, indent=2))
-
         self._add_or_update_vars('group_vars')
         self._add_or_update_vars('host_vars')
 
