@@ -39,7 +39,7 @@ def ansible_galaxy_instance(temp_files):
 def test_add_env_arg(ansible_galaxy_instance):
     ansible_galaxy_instance.add_env_arg('MOLECULE_1', 'test')
 
-    assert 'test' == ansible_galaxy_instance.env['MOLECULE_1']
+    assert 'test' == ansible_galaxy_instance._env['MOLECULE_1']
 
 
 def test_install(patched_ansible_galaxy, ansible_galaxy_instance):
