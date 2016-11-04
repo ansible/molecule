@@ -21,6 +21,7 @@
 import os
 
 import pytest
+import sh
 
 from molecule.verifier import testinfra
 
@@ -76,22 +77,21 @@ def test_execute_no_tests(patched_code_verifier, patched_test_verifier,
     assert not patched_test_verifier.called
 
 
-def test_testinfra(mocker, patched_get_tests, testinfra_instance):
-    patched_testinfra = mocker.patch('sh.testinfra')
+def test_testinfra(patched_run_command, patched_get_tests, testinfra_instance):
     args = ['/tmp/ansible-inventory']
-    kwargs = {'debug': True, 'out': None, 'err': None}
+    kwargs = {'debug': False, '_out': None, '_err': None}
     testinfra_instance._testinfra(*args, **kwargs)
 
-    patched_testinfra.assert_called_once_with(
-        '/tmp/ansible-inventory', _env={}, _err=None, _out=None, debug=True)
+    x = sh.testinfra.bake('/tmp/ansible-inventory')
+    patched_run_command.assert_called_once_with(x, debug=None)
 
 
-def test_flake8(mocker, testinfra_instance):
-    patched_flake8 = mocker.patch('sh.flake8')
+def test_flake8(patched_run_command, testinfra_instance):
     args = ['test1.py', 'test2.py']
     testinfra_instance._flake8(args)
 
-    patched_flake8.assert_called_once_with(args)
+    x = sh.flake8.bake('test1.py', 'test2.py')
+    patched_run_command.assert_called_once_with(x, debug=None)
 
 
 def test_get_tests(temp_dir, testinfra_instance):

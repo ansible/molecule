@@ -29,7 +29,12 @@ LOG = util.get_logger(__name__)
 
 
 class AnsibleGalaxy(object):
-    def __init__(self, config, _env=None, _out=LOG.info, _err=LOG.error):
+    def __init__(self,
+                 config,
+                 _env=None,
+                 _out=LOG.info,
+                 _err=LOG.error,
+                 debug=False):
         """
         Sets up requirements for ansible-galaxy and returns None.
 
@@ -40,6 +45,7 @@ class AnsibleGalaxy(object):
          :func:`sh` call.
         :param _err: An optional function to process STDERR for underlying
          :func:`sh` call.
+        :param debug: An optional bool to toggle debug output.
         :return: None
         """
         self._config = config
@@ -47,8 +53,8 @@ class AnsibleGalaxy(object):
         self._env = _env if _env else os.environ.copy()
         self._out = _out
         self._err = _err
+        self._debug = debug
 
-        # defaults can be redefined with call to add_env_arg() before baking
         self.add_env_arg('PYTHONUNBUFFERED', '1')
         self.add_env_arg('ANSIBLE_FORCE_COLOR', 'true')
 
@@ -93,21 +99,12 @@ class AnsibleGalaxy(object):
 ,
         :return: The command's output, otherwise sys.exit on command failure.
         """
+
         if self._galaxy is None:
             self.bake()
 
         try:
-            return self._galaxy().stdout
+            return util.run_command(self._galaxy, debug=self._debug).stdout
         except sh.ErrorReturnCode as e:
             LOG.error('ERROR: {}'.format(e))
             util.sysexit(e.exit_code)
-
-    def install(self):
-        """
-        A wrapper to :meth:`.AnsibleGalaxy.execute`.
-,
-        .. todo:: Remove in favor of simply using execute.
-        """
-        util.print_info('Installing role dependencies ...')
-        self.bake()
-        self.execute()

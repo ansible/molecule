@@ -39,6 +39,7 @@ class AnsibleLint(base.Base):
         super(AnsibleLint, self).__init__(molecule)
         self._playbook = molecule.config.config['ansible']['playbook']
         self._ignore_paths = molecule.config.config['molecule']['ignore_paths']
+        self._debug = molecule.args.get('debug')
 
     def execute(self):
         """
@@ -58,4 +59,6 @@ class AnsibleLint(base.Base):
             util.print_info(msg)
             args = [self._playbook]
             [args.extend(["--exclude", path]) for path in self._ignore_paths]
-            sh.ansible_lint(*args, _env=env, _out=LOG.info, _err=LOG.error)
+            cmd = sh.ansible_lint.bake(
+                *args, _env=env, _out=LOG.info, _err=LOG.error)
+            util.run_command(cmd, debug=self._debug)

@@ -37,16 +37,18 @@ class Syntax(base.Base):
         :param exit: (Unused) Provided to complete method signature.
         :return: Return a tuple provided by :meth:`.AnsiblePlaybook.execute`.
         """
+        debug = self.args.get('debug')
         self.molecule.create_templates()
 
         if 'requirements_file' in self.molecule.config.config[
                 'ansible'] and not self.molecule.state.installed_deps:
-            galaxy = ansible_galaxy.AnsibleGalaxy(self.molecule.config.config)
-            galaxy.install()
+            galaxy = ansible_galaxy.AnsibleGalaxy(
+                self.molecule.config.config, debug=debug)
+            galaxy.execute()
             self.molecule.state.change_state('installed_deps', True)
 
         ansible = ansible_playbook.AnsiblePlaybook(
-            self.molecule.config.config['ansible'], {})
+            self.molecule.config.config['ansible'], {}, debug=debug)
         ansible.add_cli_arg('syntax-check', True)
         ansible.add_cli_arg('inventory_file', 'localhost,')
         util.print_info('Checking playbook\'s syntax ...')

@@ -34,13 +34,13 @@ def test_execute_deletes_instances(
     msg = 'Destroying instances ...'
     patched_print_info.assert_called_once_with(msg)
 
-    patched_driver_destroy.assert_called_once
+    patched_driver_destroy.assert_called_once()
     assert not molecule_instance.state.created
     assert not molecule_instance.state.converged
     (None, None) == result
 
-    patched_remove_templates.assert_called_once
-    patched_remove_inventory.assert_called_once
+    patched_remove_templates.assert_called_once()
+    patched_remove_inventory.assert_called_once()
 
 
 def test_execute_raises_on_exit(patched_driver_destroy, patched_print_info,

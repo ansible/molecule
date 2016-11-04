@@ -18,8 +18,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import re
-
 import pytest
 import sh
 
@@ -42,31 +40,31 @@ def test_add_env_arg(ansible_galaxy_instance):
     assert 'test' == ansible_galaxy_instance._env['MOLECULE_1']
 
 
-def test_install(patched_ansible_galaxy, ansible_galaxy_instance):
-    ansible_galaxy_instance.install()
+def test_execute(patched_ansible_galaxy, ansible_galaxy_instance):
+    ansible_galaxy_instance.execute()
 
     patched_ansible_galaxy.assert_called_once()
 
-    # NOTE(retr0h): The following is a somewhat gross test, but need to
-    # handle **kwargs expansion being unordered.
     parts = str(ansible_galaxy_instance._galaxy).split()
+
+    executable = sh.ansible_galaxy
+    assert executable == parts[0]
+    assert 'install' == parts[1]
+
     expected = [
         '--force', '--role-file=requirements.yml', '--roles-path=test/roles'
     ]
-
-    assert re.search(r'ansible-galaxy', parts[0])
-    assert 'install' == parts[1]
     assert expected == sorted(parts[2:])
 
 
-def test_install_overrides(patched_ansible_galaxy, ansible_galaxy_instance):
+def test_execute_overrides(patched_ansible_galaxy, ansible_galaxy_instance):
     ansible_galaxy_instance._config['ansible']['galaxy'] = {
         'foo': 'bar',
         'force': False
     }
-    ansible_galaxy_instance.install()
+    ansible_galaxy_instance.execute()
 
-    patched_ansible_galaxy.assert_called_once
+    patched_ansible_galaxy.assert_called_once()
 
     parts = str(ansible_galaxy_instance._galaxy).split()
     expected = [
@@ -74,13 +72,6 @@ def test_install_overrides(patched_ansible_galaxy, ansible_galaxy_instance):
     ]
 
     assert expected == sorted(parts[2:])
-
-
-def test_execute(mocker, ansible_galaxy_instance):
-    mocker.patch('sh.ansible_galaxy')
-    result = ansible_galaxy_instance.execute()
-
-    assert isinstance(result, mocker.Mock)
 
 
 def test_execute_exits_with_return_code_and_logs(patched_logger_error,

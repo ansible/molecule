@@ -42,9 +42,11 @@ class Check(base.Base):
             LOG.error('ERROR: {}'.format(msg))
             util.sysexit()
 
+        debug = self.args.get('debug')
         ansible = ansible_playbook.AnsiblePlaybook(
             self.molecule.config.config['ansible'],
-            self.molecule.driver.ansible_connection_params)
+            self.molecule.driver.ansible_connection_params,
+            debug=debug)
         ansible.add_cli_arg('check', True)
 
         if 'command_check' not in self.molecule.disabled:

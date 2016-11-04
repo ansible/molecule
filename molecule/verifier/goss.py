@@ -74,8 +74,9 @@ class Goss(base.Base):
     def _get_ansible_instance(self):
         ac = self._molecule.config.config['ansible']
         ac['playbook'] = self._playbook
+        debug = self._molecule.args.get('debug')
         ansible = ansible_playbook.AnsiblePlaybook(
-            ac, self._molecule.driver.ansible_connection_params)
+            ac, self._molecule.driver.ansible_connection_params, debug=debug)
 
         return ansible
 

@@ -41,7 +41,7 @@ class Test(base.Base):
                 'sequence']:
             command_module = getattr(molecule.command, task)
             command = getattr(command_module, task.capitalize())
-            c = command(self.command_args, self.args, self.molecule)
+            c = command(self.args, self.command_args, self.molecule)
 
             status, output = c.execute(exit=False)
 
@@ -52,7 +52,7 @@ class Test(base.Base):
                 util.sysexit(status)
 
         if self.command_args.get('destroy') == 'always':
-            c = molecule.command.destroy.Destroy(self.command_args, self.args)
+            c = molecule.command.destroy.Destroy(self.args, self.command_args)
             c.execute()
             return None, None
 
@@ -61,7 +61,7 @@ class Test(base.Base):
 
         # passing (default)
         if status is None:
-            c = molecule.command.destroy.Destroy(self.command_args, self.args)
+            c = molecule.command.destroy.Destroy(self.args, self.command_args)
             c.execute()
             return None, None
 

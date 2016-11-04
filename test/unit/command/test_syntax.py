@@ -42,5 +42,5 @@ def test_execute_installs_requirements(patched_ansible_playbook,
     s = syntax.Syntax({}, {}, molecule_instance)
     s.execute()
 
-    patched_ansible_galaxy.assert_called_once_with()
+    patched_ansible_galaxy.assert_called_once()
     patched_ansible_playbook.assert_called_once_with(hide_errors=True)
