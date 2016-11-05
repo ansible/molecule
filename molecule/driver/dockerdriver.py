@@ -223,7 +223,7 @@ class DockerDriver(basedriver.BaseDriver):
     def _build_ansible_compatible_image(self):
         available_images = [
             tag.encode('utf-8')
-            for image in self._docker.images() for tag in image.get('RepoTags')
+            for image in self._docker.images() for tag in image.get('RepoTags', [])
         ]
 
         for container in self.instances:
