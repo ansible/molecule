@@ -48,6 +48,8 @@ class Converge(base.Base):
         :return: Return a tuple of (`exit status`, `command output`), otherwise
          sys.exit on command failure.
         """
+        debug = self.args.get('debug')
+
         if self.molecule.state.created:
             create_instances = False
 
@@ -63,7 +65,7 @@ class Converge(base.Base):
                 create_inventory = True
 
         if create_instances and not idempotent:
-            c = create.Create(self.command_args, self.args, self.molecule)
+            c = create.Create(self.args, self.command_args, self.molecule)
             c.execute()
 
         if create_inventory:
@@ -73,14 +75,16 @@ class Converge(base.Base):
         if not idempotent and 'requirements_file' in \
             self.molecule.config.config['ansible'] and not \
                 self.molecule.state.installed_deps:
-            galaxy = ansible_galaxy.AnsibleGalaxy(self.molecule.config.config)
-            galaxy.install()
+            galaxy = ansible_galaxy.AnsibleGalaxy(
+                self.molecule.config.config, debug=debug)
+            galaxy.execute()
             self.molecule.state.change_state('installed_deps', True)
 
         ansible = ansible_playbook.AnsiblePlaybook(
             self.molecule.config.config['ansible'],
             self.molecule.driver.ansible_connection_params,
-            raw_ansible_args=self.command_args.get('ansible_args'))
+            raw_ansible_args=self.command_args.get('ansible_args'),
+            debug=debug)
 
         if idempotent:
             # Don't log stdout/err
@@ -92,8 +96,7 @@ class Converge(base.Base):
             ansible.add_env_arg('ANSIBLE_NOCOLOR', 'true')
             ansible.add_env_arg('ANSIBLE_FORCE_COLOR', 'false')
 
-        ansible.bake()
-        if self.args.get('debug'):
+        if debug:
             ansible_env = {
                 k: v
                 for (k, v) in ansible.env.items() if 'ANSIBLE' in k
@@ -102,7 +105,6 @@ class Converge(base.Base):
                 'ANSIBLE ENVIRONMENT',
                 yaml.dump(
                     ansible_env, default_flow_style=False, indent=2))
-            util.print_debug('ANSIBLE PLAYBOOK', str(ansible._ansible))
 
         util.print_info('Starting Ansible Run ...')
         status, output = ansible.execute(hide_errors=hide_errors)

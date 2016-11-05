@@ -93,11 +93,6 @@ def patched_print_info(mocker):
 
 
 @pytest.fixture
-def patched_print_debug(mocker):
-    return mocker.patch('molecule.util.print_debug')
-
-
-@pytest.fixture
 def patched_create_inventory(mocker):
     return mocker.patch('molecule.core.Molecule.create_inventory_file')
 

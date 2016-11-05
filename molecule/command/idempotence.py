@@ -43,7 +43,7 @@ class Idempotence(base.Base):
         util.print_info(
             'Idempotence test in progress (can take a few minutes) ...')
 
-        c = converge.Converge(self.command_args, self.args, self.molecule)
+        c = converge.Converge(self.args, self.command_args, self.molecule)
         status, output = c.execute(
             idempotent=True, exit=False, hide_errors=True)
         if status is not None:

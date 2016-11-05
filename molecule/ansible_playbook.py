@@ -33,7 +33,8 @@ class AnsiblePlaybook(object):
                  raw_ansible_args=None,
                  _env=None,
                  _out=LOG.info,
-                 _err=LOG.error):
+                 _err=LOG.error,
+                 debug=False):
         """
         Sets up requirements for ansible-playbook and returns None.
 
@@ -46,6 +47,7 @@ class AnsiblePlaybook(object):
          :func:`sh` call.
         :param _err: An optional function to process STDERR for underlying
          :func:`sh` call.
+        :param debug: An optional bool to toggle debug output.
         :return: None
         """
         self._playbook = None
@@ -54,6 +56,7 @@ class AnsiblePlaybook(object):
         self._cli_pos = []
         self._raw_ansible_args = raw_ansible_args
         self._env = _env if _env else os.environ.copy()
+        self._debug = debug
 
         for k, v in args.iteritems():
             self.parse_arg(k, v)
@@ -61,11 +64,9 @@ class AnsiblePlaybook(object):
         for k, v in connection_params.items():
             self.add_cli_arg(k, v)
 
-        # defaults can be redefined with call to add_env_arg() before baking
         self.add_env_arg('PYTHONUNBUFFERED', '1')
         self.add_env_arg('ANSIBLE_FORCE_COLOR', 'true')
 
-        # passed through to sh, not ansible-playbook
         self.add_cli_arg('_out', _out)
         self.add_cli_arg('_err', _err)
 
@@ -183,7 +184,8 @@ class AnsiblePlaybook(object):
             self.bake()
 
         try:
-            return None, self._ansible().stdout
+            return None, util.run_command(
+                self._ansible, debug=self._debug).stdout
         except (sh.ErrorReturnCode, sh.ErrorReturnCode_2) as e:
             if not hide_errors:
                 LOG.error('ERROR: {}'.format(e))

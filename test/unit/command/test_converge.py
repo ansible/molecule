@@ -19,7 +19,6 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import pytest
-import sh
 
 from molecule.command import converge
 
@@ -69,8 +68,8 @@ def test_execute_create_inventory_and_instances_with_platform_all(
     c = converge.Converge({}, command_args, molecule_instance)
     c.execute()
 
-    patched_create.assert_called_once
-    patched_create_inventory.assert_called_once
+    patched_create.assert_called_once()
+    patched_create_inventory.assert_called_once()
 
 
 def test_execute_create_inventory_and_instances_with_platform_all_state_file(
@@ -81,8 +80,8 @@ def test_execute_create_inventory_and_instances_with_platform_all_state_file(
     c = converge.Converge({}, {}, molecule_instance)
     c.execute()
 
-    patched_create.assert_called_once
-    patched_create_inventory.assert_called_once
+    patched_create.assert_called_once()
+    patched_create_inventory.assert_called_once()
 
 
 def test_execute_installs_dependencies(
@@ -93,7 +92,7 @@ def test_execute_installs_dependencies(
     c = converge.Converge({}, {}, molecule_instance)
     c.execute()
 
-    patched_ansible_galaxy.assert_called_once
+    patched_ansible_galaxy.assert_called_once()
     assert molecule_instance.state.installed_deps
 
 
@@ -104,16 +103,16 @@ def test_execute_with_debug(patched_create, patched_ansible_playbook,
     c = converge.Converge(args, {}, molecule_instance)
     c.execute()
 
-    executable = sh.ansible_playbook
-    playbook = molecule_instance.config.config['ansible']['playbook']
-    expected = [
-        '--connection=ssh', '--diff', '--inventory-file=test/inventory_file',
-        '--limit=all', '--sudo', '--timeout=30', '--user=vagrant', '-vvvv',
-        executable, playbook
-    ]
+    patched_ansible_playbook.assert_called_once()
 
-    args, _ = patched_print_debug.call_args
-    assert expected == sorted(args[1].split())
+    x = ("ANSIBLE_CONFIG: test/config_file\n"
+         "ANSIBLE_FORCE_COLOR: 'true'\n"
+         "ANSIBLE_HOST_KEY_CHECKING: 'false'\n"
+         "ANSIBLE_SSH_ARGS: -o UserKnownHostsFile=/dev/null "
+         "-o IdentitiesOnly=yes "
+         "-o ControlMaster=auto\n  "
+         "-o ControlPersist=60s\n")
+    patched_print_debug.assert_called_with('ANSIBLE ENVIRONMENT', x)
 
 
 def test_execute_raises_on_exit(patched_create, patched_ansible_playbook,

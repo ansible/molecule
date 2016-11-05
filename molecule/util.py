@@ -224,6 +224,19 @@ def sysexit(code=1):
     sys.exit(code)
 
 
+def run_command(cmd, debug=False):
+    """
+    Execute the given command and return None.
+
+    :param cmd: A `sh.Command` object to execute.
+    :param debug: An optional bool to toggle debug output.
+    :return: ``sh`` object
+    """
+    if debug:
+        print_debug('COMMAND', str(cmd))
+    return cmd()
+
+
 def _get_info_logger():
     info = logging.StreamHandler(sys.stdout)
     info.setLevel(logging.INFO)

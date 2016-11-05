@@ -34,6 +34,7 @@ class Serverspec(base.Base):
         self._serverspec_dir = molecule.config.config['molecule'][
             'serverspec_dir']
         self._rakefile = molecule.config.config['molecule']['rakefile_file']
+        self._debug = molecule.args.get('debug')
 
     def execute(self):
         """
@@ -75,7 +76,8 @@ class Serverspec(base.Base):
             self._serverspec_dir)
         util.print_info(msg)
 
-        return sh.rake(**kwargs)
+        cmd = sh.rake.bake(**kwargs)
+        return util.run_command(cmd, debug=self._debug)
 
     def _rubocop(self,
                  serverspec_dir,
@@ -104,7 +106,8 @@ class Serverspec(base.Base):
         util.print_info(msg)
         match = serverspec_dir + pattern
 
-        return sh.rubocop(match, **kwargs)
+        cmd = sh.rubocop.bake(match, **kwargs)
+        return util.run_command(cmd, debug=self._debug)
 
     def _get_tests(self):
         return os.path.isdir(self._serverspec_dir)

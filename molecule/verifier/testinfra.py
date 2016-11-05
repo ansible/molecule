@@ -36,6 +36,7 @@ class Testinfra(base.Base):
         super(Testinfra, self).__init__(molecule)
         self._testinfra_dir = molecule.config.config['molecule'][
             'testinfra_dir']
+        self._debug = molecule.args.get('debug')
 
     def execute(self):
         """
@@ -97,7 +98,8 @@ class Testinfra(base.Base):
             self._testinfra_dir)
         util.print_info(msg)
 
-        return sh.testinfra(tests, **kwargs)
+        cmd = sh.testinfra.bake(tests, **kwargs)
+        return util.run_command(cmd, debug=self._debug)
 
     def _flake8(self, tests, out=LOG.info, err=LOG.error):
         """
@@ -115,7 +117,8 @@ class Testinfra(base.Base):
             self._testinfra_dir)
         util.print_info(msg)
 
-        return sh.flake8(tests)
+        cmd = sh.flake8.bake(tests)
+        return util.run_command(cmd, debug=self._debug)
 
     def _get_tests(self):
         return [

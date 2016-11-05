@@ -24,6 +24,7 @@ import uuid
 
 import colorama
 import pytest
+import sh
 
 from molecule import util
 
@@ -144,6 +145,20 @@ def test_sysexit_with_custom_code():
         util.sysexit(2)
 
     assert 2 == e.value.code
+
+
+def test_run_command():
+    cmd = sh.ls.bake()
+    x = util.run_command(cmd)
+
+    assert 0 == x.exit_code
+
+
+def test_run_command_with_debug(patched_print_debug):
+    cmd = sh.ls.bake()
+    util.run_command(cmd, debug=True)
+
+    patched_print_debug.assert_called_with('COMMAND', '/bin/ls')
 
 
 def test_resolve_template_dir_relative():

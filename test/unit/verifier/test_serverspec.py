@@ -19,6 +19,7 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import pytest
+import sh
 
 from molecule.verifier import serverspec
 
@@ -63,22 +64,25 @@ def test_execute_no_tests(patched_code_verifier, patched_test_verifier,
     assert not patched_test_verifier.called
 
 
-def test_rake(mocker, serverspec_instance):
-    patched_rake = mocker.patch('sh.rake')
-    kwargs = {'debug': True, 'out': None, 'err': None}
+def test_rake(patched_run_command, serverspec_instance):
+    kwargs = {'debug': False, 'out': None, 'err': None}
     serverspec_instance._rake('/tmp/rakefile', **kwargs)
 
-    patched_rake.assert_called_once_with(
-        _err=None, _out=None, rakefile='/tmp/rakefile', trace=True)
+    x = sh.rake.bake(rakefile='/tmp/rakefile')
+    patched_run_command.assert_called_once_with(x, debug=None)
 
 
-def test_rubocop(mocker, serverspec_instance):
-    patched_rubocop = mocker.patch('sh.rubocop')
-    kwargs = {'pattern': '**/**/**/*', 'debug': True, 'out': None, 'err': None}
-    serverspec_instance._rubocop('spec', **kwargs)
+def test_rubocop(patched_run_command, serverspec_instance):
+    kwargs = {
+        'pattern': '**/**/**/*',
+        'debug': False,
+        'out': None,
+        'err': None
+    }
+    serverspec_instance._rubocop('spec/', **kwargs)
 
-    patched_rubocop.assert_called_once_with(
-        'spec**/**/**/*', _err=None, _out=None, debug=True)
+    x = sh.rubocop.bake('spec/**/**/**/*')
+    patched_run_command.assert_called_once_with(x, debug=None)
 
 
 def test_get_tests(serverspec_instance):
