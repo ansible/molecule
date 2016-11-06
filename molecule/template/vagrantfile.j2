@@ -96,9 +96,29 @@ Vagrant.configure('2') do |config|
   end
     {%- endif %}
 
-    {# --- fusion --- #}
+    {# --- vmware_fusion --- #}
     {%- if provider.type is defined and provider.type == 'vmware_fusion' and provider.name == current_provider %}
   config.vm.provider 'vmware_fusion' do |v|
+    {%- if provider.options %}
+      {%- for k, v in provider.options.iteritems()|sort %}
+    v.{{ k }} = {{ v }}
+      {%- endfor %}
+      {%- if not provider.options.memory %}
+    v.vmx["memsize"] = 512
+      {%- endif %}
+      {%- if not provider.options.cpus %}
+    v.vmx["numvcpus"] = 2
+      {%- endif %}
+    {%- else %}
+    v.vmx["memsize"] = 512
+    v.vmx["numvcpus"] = 2
+    {%- endif %}
+  end
+    {%- endif %}
+
+    {# --- vmware_workstation --- #}
+    {%- if provider.type is defined and provider.type == 'vmware_workstation' and provider.name == current_provider %}
+  config.vm.provider 'vmware_workstation' do |v|
     {%- if provider.options %}
       {%- for k, v in provider.options.iteritems()|sort %}
     v.{{ k }} = {{ v }}
