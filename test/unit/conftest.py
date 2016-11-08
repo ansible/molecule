@@ -198,6 +198,10 @@ def docker_v1_section_data():
                     80: 80,
                     443: 443
                 },
+                'environment': {
+                    'FOO': 'BAR',
+                    'BAZ': 'QUX'
+                },
                 'options': {
                     'append_platform_to_hostname': True
                 },

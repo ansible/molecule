@@ -119,30 +119,20 @@ class DockerDriver(basedriver.BaseDriver):
             self.image_tag = '{}:{}'
 
         for container in self.instances:
-            if 'privileged' not in container:
-                container['privileged'] = False
-
-            if 'port_bindings' not in container:
-                container['port_bindings'] = {}
-
-            if 'volume_mounts' not in container:
-                container['volume_mounts'] = []
-
-            if 'cap_add' not in container:
-                container['cap_add'] = []
-
-            if 'cap_drop' not in container:
-                container['cap_drop'] = []
-
-            if 'command' not in container:
-                container['command'] = ""
+            privileged = container.get('privileged', False)
+            port_bindings = container.get('port_bindings', {})
+            volume_mounts = container.get('volume_mounts', [])
+            cap_add = container.get('cap_add', [])
+            cap_drop = container.get('cap_drop', [])
+            command = container.get('command', '')
+            environment = container.get('environment')
 
             docker_host_config = self._docker.create_host_config(
-                privileged=container['privileged'],
-                port_bindings=container['port_bindings'],
-                binds=container['volume_mounts'],
-                cap_add=container['cap_add'],
-                cap_drop=container['cap_drop'])
+                privileged=privileged,
+                port_bindings=port_bindings,
+                binds=volume_mounts,
+                cap_add=cap_add,
+                cap_drop=cap_drop)
 
             if (container['created'] is not True):
                 LOG.warning(
@@ -155,9 +145,10 @@ class DockerDriver(basedriver.BaseDriver):
                     tty=True,
                     detach=False,
                     name=container['name'],
-                    ports=container['port_bindings'].keys(),
+                    ports=port_bindings.keys(),
                     host_config=docker_host_config,
-                    command=container['command'])
+                    environment=environment,
+                    command=command)
                 self._docker.start(container=container.get('Id'))
                 container['created'] = True
 
@@ -223,14 +214,12 @@ class DockerDriver(basedriver.BaseDriver):
     def _build_ansible_compatible_image(self):
         available_images = [
             tag.encode('utf-8')
-            for image in self._docker.images() for tag in image.get('RepoTags', [])
+            for image in self._docker.images()
+            for tag in image.get('RepoTags', [])
         ]
 
         for container in self.instances:
-            if 'build_image' in container and container[
-                    'build_image'] is False:
-                continue
-            else:
+            if container.get('build_image'):
                 util.print_info(
                     "Creating Ansible compatible image of {}:{} ...".format(
                         container['image'], container['image_version']))
@@ -241,7 +230,8 @@ class DockerDriver(basedriver.BaseDriver):
                 container['registry'] = ''
 
             dockerfile = '''
-            FROM {}:{}
+            FROM {container_image}:{container_version}
+            {container_environment}
             RUN bash -c 'if [ -x "$(command -v apt-get)" ]; then apt-get update && apt-get install -y python sudo; fi'
             RUN bash -c 'if [ -x "$(command -v yum)" ]; then yum makecache fast && yum update -y && yum install -y python sudo; fi'
             RUN bash -c 'if [ -x "$(command -v zypper)" ]; then zypper refresh && zypper update -y && zypper install -y python sudo; fi'
@@ -253,9 +243,18 @@ class DockerDriver(basedriver.BaseDriver):
                 f = io.open(dockerfile)
 
             else:
+                environment = container.get('environment')
+                if environment:
+                    environment = '\n'.join(
+                        'ENV {} {}'.format(k, v)
+                        for k, v in environment.iteritems())
+                else:
+                    environment = ''
+
                 dockerfile = dockerfile.format(
-                    container['registry'] + container['image'],
-                    container['image_version'])
+                    container_image=container['registry'] + container['image'],
+                    container_version=container['image_version'],
+                    container_environment=environment)
 
                 f = io.BytesIO(dockerfile.encode('utf-8'))
 
