@@ -217,3 +217,14 @@ def test_inventory_generation(docker_molecule_instance, docker_instance):
             instance)
 
     assert (None, '') == ansible.execute()
+
+
+def test_environment(docker_instance):
+    docker_instance.up()
+    d1 = docker_instance._docker.inspect_container('test1')['Config']['Env']
+    assert 'FOO=BAR' in d1
+    assert 'BAZ=QUX' in d1
+
+    d2 = docker_instance._docker.inspect_container('test2')['Config']['Env']
+    assert 'FOO=BAR' not in d2
+    assert 'BAZ=QUX' not in d2
