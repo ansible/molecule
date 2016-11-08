@@ -2,6 +2,22 @@
 History
 *******
 
+1.13
+====
+
+* Implement environment handling in docker driver.
+* Added vmware_workstation provider to vagrant.
+* Improved overall logging, including logging of `sh` commands when debug flag
+  set.
+* Avoid images with <none> tag.
+* Support and test ansible 2.2 and 2.1.2.
+* Allow nested testinfra test directory structure.
+* Ability to pass arbitrary ansible cli flags to `converge`.
+* Added IRC info to docs.
+* Return exit code from goss verifier.
+* General cleanup of modules and documentation.
+* Bumped requirements versions.
+
 1.12.6
 ======
 
