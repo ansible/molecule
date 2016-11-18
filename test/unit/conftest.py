@@ -229,6 +229,7 @@ def openstack_v1_section_data():
         'openstack': {
             'instances': [{
                 'name': 'aio-01',
+                'sshuser': 'root',
                 'ansible_groups': ['example', 'example1'],
                 'options': {
                     'append_platform_to_hostname': True
