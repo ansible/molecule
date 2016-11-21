@@ -44,7 +44,6 @@ class Molecule(object):
         self.config = config
         self.args = args
         self._verifier = self._get_verifier()
-        self._verifier_options = self._get_verifier_options()
         self._dependencies = self._get_dependencies()
         self._disabled = self._get_disabled()
 
@@ -95,14 +94,6 @@ class Molecule(object):
     @verifier.setter
     def verifier(self, val):
         self._verifier = val
-
-    @property
-    def verifier_options(self):
-        return self._verifier_options
-
-    @verifier_options.setter
-    def verifier_options(self, val):
-        self._verifier_options = val
 
     @property
     def dependencies(self):
@@ -377,12 +368,6 @@ class Molecule(object):
         if self.config.config.get('testinfra'):
             return 'testinfra'
         return self.config.config['verifier']['name']
-
-    def _get_verifier_options(self):
-        # Preserve backward compatibility with old testinfra override
-        # syntax.
-        return self.config.config.get(
-            'testinfra', self.config.config['verifier'].get('options', {}))
 
     def _get_dependencies(self):
         if self.config.config.get('dependencies'):

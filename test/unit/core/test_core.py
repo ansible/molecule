@@ -71,24 +71,6 @@ def test_verifier_backward_compatible(molecule_instance):
     assert 'testinfra' == m.verifier
 
 
-def test_verifier_options_setter(molecule_instance):
-    molecule_instance.verifier_options = 'foo'
-
-    assert 'foo' == molecule_instance.verifier_options
-
-
-def test_verifier_options(molecule_instance):
-    assert {} == molecule_instance.verifier_options
-
-
-def test_verifier_options_backward_compatible(molecule_instance):
-    m = molecule_instance
-    m.config.config['testinfra'] = {'foo': 'bar'}
-    m.verifier_options = m._get_verifier_options()
-
-    assert {'foo': 'bar'} == m.verifier_options
-
-
 def test_verifier_disabled_setter(molecule_instance):
     molecule_instance.disabled = 'foo'
 
