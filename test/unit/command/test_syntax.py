@@ -34,13 +34,14 @@ def test_execute(mocker, patched_ansible_playbook, patched_print_info,
     assert 'returned' == result
 
 
-def test_execute_installs_requirements(patched_ansible_playbook,
-                                       patched_ansible_galaxy,
-                                       patched_print_info, molecule_instance):
-    molecule_instance.config.config['ansible']['requirements_file'] = str()
+def test_execute_installs_dependencies(patched_ansible_playbook,
+                                       patched_dependency, patched_print_info,
+                                       molecule_instance):
+    molecule_instance.config.config['dependencies']['requirements_file'] = str(
+    )
 
     s = syntax.Syntax({}, {}, molecule_instance)
     s.execute()
 
-    patched_ansible_galaxy.assert_called_once()
+    patched_dependency.assert_called_once()
     patched_ansible_playbook.assert_called_once_with(hide_errors=True)

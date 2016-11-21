@@ -1,12 +1,12 @@
 ---
+dependencies:
+  name: galaxy
 driver:
   name: docker
-
 docker:
   containers:
     - name: converge-scenario
       image: ubuntu
       image_version: latest
-
 verifier:
   name: testinfra

@@ -20,41 +20,40 @@
 
 import click
 
-from molecule import ansible_playbook
+from molecule import ansible_galaxy
 from molecule import util
 from molecule.command import base
-from molecule.command import dependency
 
 LOG = util.get_logger(__name__)
 
 
-class Syntax(base.Base):
+class Dependency(base.Base):
     def execute(self, exit=True):
         """
-        Execute the actions necessary to perform a `molecule syntax` and
-        return a tuple.
+        Execute the actions that should run prior to a converge and return a
+        tuple.
 
         :param exit: (Unused) Provided to complete method signature.
         :return: Return a tuple provided by :meth:`.AnsiblePlaybook.execute`.
         """
         debug = self.args.get('debug')
-        self.molecule.create_templates()
-        d = dependency.Dependency(self.args, self.command_args, self.molecule)
-        d.execute()
+        if self.molecule.dependencies == 'galaxy':
+            dd = self.molecule.config.config.get('dependencies')
+            if dd.get('requirements_file'):
+                if self.molecule.state.installed_deps:
+                    return (None, None)
+                galaxy = ansible_galaxy.AnsibleGalaxy(
+                    self.molecule.config.config, debug=debug)
+                galaxy.execute()
+                self.molecule.state.change_state('installed_deps', True)
 
-        ansible = ansible_playbook.AnsiblePlaybook(
-            self.molecule.config.config['ansible'], {}, debug=debug)
-        ansible.add_cli_arg('syntax-check', True)
-        ansible.add_cli_arg('inventory_file', 'localhost,')
-        util.print_info('Checking playbook\'s syntax ...')
-
-        return ansible.execute(hide_errors=True)
+        return (None, None)
 
 
 @click.command()
 @click.pass_context
-def syntax(ctx):  # pragma: no cover
-    """ Performs a syntax check on the current role. """
-    s = Syntax(ctx.obj.get('args'), {})
-    s.execute
-    util.sysexit(s.execute()[0])
+def dependency(ctx):  # pragma: no cover
+    """ Perform dependent actions on the current role. """
+    d = Dependency(ctx.obj.get('args'), {})
+    d.execute
+    util.sysexit(d.execute()[0])

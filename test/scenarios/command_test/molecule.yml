@@ -1,11 +1,11 @@
 ---
+dependencies:
+  name: galaxy
 driver:
   name: docker
-
 ansible:
   raw_env_vars:
     ANSIBLE_ROLES_PATH: ../../roles:../../../roles
-
 docker:
   containers:
     - name: test-scenario-01
@@ -20,7 +20,6 @@ docker:
         - example-group2
       image: ubuntu
       image_version: latest
-
 vagrant:
   platforms:
     - name: ubuntu
@@ -41,6 +40,5 @@ vagrant:
       ansible_groups:
         - example-group
         - example-group2
-
 verifier:
   name: testinfra

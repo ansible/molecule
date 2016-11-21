@@ -37,8 +37,8 @@ class Test(base.Base):
         :return: Return a tuple of (`exit status`, `command output`), otherwise
          sys.exit on command failure.
         """
-        for task in self.molecule.config.config['molecule']['test'][
-                'sequence']:
+        ts = self.molecule.config.config['molecule']['test']['sequence']
+        for task in ts:
             command_module = getattr(molecule.command, task)
             command = getattr(command_module, task.capitalize())
             c = command(self.args, self.command_args, self.molecule)

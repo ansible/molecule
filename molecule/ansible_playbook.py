@@ -95,10 +95,6 @@ class AnsiblePlaybook(object):
         :return: None
         """
 
-        # skip `requirements_file` since it used by ansible-galaxy only
-        if name == 'requirements_file':
-            return
-
         if name == 'raw_env_vars':
             for k, v in value.iteritems():
                 self.add_env_arg(k, v)

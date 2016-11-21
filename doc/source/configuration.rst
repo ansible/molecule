@@ -112,20 +112,21 @@ Role Requirements
 ^^^^^^^^^^^^^^^^^
 
 Testing roles may rely upon additional roles.  In this case adding
-``requirements_file`` to the ansible section, will cause molecule to download
-roles using `Ansible Galaxy`_.
+``requirements_file`` to the ``dependencies`` section, will cause molecule to
+download roles using `Ansible Galaxy`_.
 
-Additional options can be passed to ``ansible-galaxy`` through the ``galaxy``
-option under the ansible section.  Any option set in this section will override
-the defaults.
+Additional options can be passed to ``ansible-galaxy`` through the ``options``
+option under the ``dependencies`` section.  Any option set in this section will
+override the defaults.
 
 .. _`Ansible Galaxy`: http://docs.ansible.com/ansible/galaxy.html
 
 .. code-block:: yaml
 
-  ansible:
+  dependencies:
+    name: galaxy
     requirements_file: requirements.yml
-    galaxy:
+    options:
         ignore-certs: True
         ignore-errors: True
 

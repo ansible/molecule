@@ -45,6 +45,7 @@ class Molecule(object):
         self.args = args
         self._verifier = self._get_verifier()
         self._verifier_options = self._get_verifier_options()
+        self._dependencies = self._get_dependencies()
         self._disabled = self._get_disabled()
 
     def main(self):
@@ -102,6 +103,14 @@ class Molecule(object):
     @verifier_options.setter
     def verifier_options(self, val):
         self._verifier_options = val
+
+    @property
+    def dependencies(self):
+        return self._dependencies
+
+    @dependencies.setter
+    def dependencies(self, val):
+        self._dependencies = val
 
     @property
     def disabled(self):
@@ -374,6 +383,11 @@ class Molecule(object):
         # syntax.
         return self.config.config.get(
             'testinfra', self.config.config['verifier'].get('options', {}))
+
+    def _get_dependencies(self):
+        if self.config.config.get('dependencies'):
+            return 'galaxy'
+        return self.config.config['dependencies']['name']
 
     def _get_disabled(self):
         # Ability to turn off features until we roll them out.
