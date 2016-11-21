@@ -96,6 +96,21 @@ def test_up(docker_instance):
     docker_instance.up()
 
 
+def test_destroy(docker_instance):
+    docker_instance.up()
+
+    assert 'test1' == docker_instance.status()[0].name
+    assert 'test2' == docker_instance.status()[1].name
+
+    assert 'Up' in docker_instance.status()[0].state
+    assert 'Up' in docker_instance.status()[1].state
+
+    docker_instance.destroy()
+
+    assert 'not_created' in docker_instance.status()[0].state
+    assert 'not_created' in docker_instance.status()[1].state
+
+
 def test_status(docker_instance):
     docker_instance.up()
 
@@ -109,12 +124,38 @@ def test_status(docker_instance):
     assert 'docker' in docker_instance.status()[1].provider
 
 
-def test_status_dirty_shutdown(docker_instance):
-    docker_instance.up()
-    docker_instance._docker.stop('test1', timeout=0)
+def test_conf(docker_instance):
+    assert docker_instance.conf() is None
 
-    assert 'not_created' in docker_instance.status()[0].state
-    assert 'Up' in docker_instance.status()[1].state
+
+def test_inventory_entry(docker_instance):
+    result = docker_instance.inventory_entry({'name': 'foo'})
+
+    assert 'foo ansible_connection=docker\n' == result
+
+
+def test_login_cmd(docker_instance):
+    result = docker_instance.login_cmd('foo')
+
+    assert 'docker exec -ti {} bash' == result
+
+
+def test_login_args(docker_instance):
+    result = docker_instance.login_args('foo')
+
+    assert ['foo'] == result
+
+
+def test_get_platform(docker_instance):
+    result = docker_instance._get_platform()
+
+    assert 'docker' == result
+
+
+def test_get_provider(docker_instance):
+    result = docker_instance._get_provider()
+
+    assert 'docker' == result
 
 
 def test_port_bindings(docker_instance):
@@ -169,54 +210,6 @@ def test_cap_drop(docker_instance):
 
     assert "MKNOD" in docker_instance._docker.inspect_container('test1')[
         'HostConfig']['CapDrop']
-
-
-def test_destroy(docker_instance):
-    docker_instance.up()
-
-    assert 'test1' == docker_instance.status()[0].name
-    assert 'test2' == docker_instance.status()[1].name
-
-    assert 'Up' in docker_instance.status()[0].state
-    assert 'Up' in docker_instance.status()[1].state
-
-    docker_instance.destroy()
-
-    assert 'not_created' in docker_instance.status()[0].state
-    assert 'not_created' in docker_instance.status()[1].state
-
-
-def test_provision(docker_molecule_instance, docker_instance):
-    docker_molecule_instance.driver = docker_instance
-    docker_molecule_instance.config.config['ansible'].update({
-        'inventory': 'test1,test2,'
-    })
-    docker_instance.up()
-    ansible = ansible_playbook.AnsiblePlaybook(
-        docker_molecule_instance.config.config['ansible'],
-        docker_molecule_instance.driver.ansible_connection_params)
-
-    assert (None, '') == ansible.execute()
-
-
-def test_inventory_generation(docker_molecule_instance, docker_instance):
-    docker_molecule_instance.driver = docker_instance
-    docker_molecule_instance.config.config['ansible'].update({
-        'inventory': 'test1,test2,'
-    })
-    docker_molecule_instance.driver.up()
-    docker_molecule_instance.create_inventory_file()
-    ansible = ansible_playbook.AnsiblePlaybook(
-        docker_molecule_instance.config.config['ansible'],
-        docker_molecule_instance.driver.ansible_connection_params)
-
-    for instance in docker_molecule_instance.driver.instances:
-        expected = '{} ansible_connection=docker\n'.format(instance['name'])
-
-        assert expected == docker_molecule_instance.driver.inventory_entry(
-            instance)
-
-    assert (None, '') == ansible.execute()
 
 
 def test_environment(docker_instance):
