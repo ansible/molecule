@@ -53,7 +53,7 @@ class Testinfra(base.Base):
 
         testinfra_options = config.merge_dicts(
             self._molecule.driver.testinfra_args,
-            self._molecule.verifier_options)
+            self._molecule.config.config['verifier']['options'])
 
         testinfra_options['ansible_env'] = ansible.env
         if self._molecule.args.get('debug'):
