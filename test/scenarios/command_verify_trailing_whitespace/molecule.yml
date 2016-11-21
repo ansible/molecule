@@ -1,12 +1,12 @@
 ---
+dependencies:
+  name: galaxy
 driver:
   name: docker
-
 docker:
   containers:
     - name: verify-whitespace-scenario
       image: ubuntu
       image_version: latest
-
 verifier:
   name: testinfra

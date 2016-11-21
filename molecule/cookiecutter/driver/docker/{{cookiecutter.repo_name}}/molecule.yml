@@ -1,4 +1,6 @@
 ---
+dependencies:
+  name: {{ cookiecutter.dependencies_name }}
 driver:
   name: {{ cookiecutter.driver_name }}
 docker:

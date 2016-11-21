@@ -18,39 +18,26 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import click
-
-import molecule
-from molecule import command
+from molecule.command import dependency
 
 
-@click.group()
-@click.option(
-    '--debug/--no-debug',
-    default=False,
-    help='Enable or disable debug mode. Default is disabled.')
-@click.version_option(version=molecule.__version__)
-@click.pass_context
-def cli(ctx, debug):  # pragma: no cover
-    ctx.obj['args'] = {}
-    ctx.obj['args']['debug'] = debug
+def test_execute(patched_ansible_playbook, patched_ansible_galaxy,
+                 molecule_instance):
+    molecule_instance.config.config['dependencies']['requirements_file'] = True
+
+    c = dependency.Dependency({}, {}, molecule_instance)
+    c.execute()
+
+    patched_ansible_galaxy.assert_called_once()
+    assert molecule_instance.state.installed_deps
 
 
-def main():
-    """ Molecule aids in the development, and testing of Ansible roles. """
-    cli(obj={})
+def test_execute_does_not_install_when_installed(
+        patched_ansible_playbook, patched_ansible_galaxy, molecule_instance):
+    molecule_instance.config.config['dependencies']['requirements_file'] = True
+    molecule_instance.state.change_state('installed_deps', True)
 
+    c = dependency.Dependency({}, {}, molecule_instance)
+    c.execute()
 
-cli.add_command(command.check.check)
-cli.add_command(command.converge.converge)
-cli.add_command(command.create.create)
-cli.add_command(command.dependency.dependency)
-cli.add_command(command.destroy.destroy)
-cli.add_command(command.idempotence.idempotence)
-cli.add_command(command.init.init)
-cli.add_command(command.list.list)
-cli.add_command(command.login.login)
-cli.add_command(command.status.status)
-cli.add_command(command.syntax.syntax)
-cli.add_command(command.test.test)
-cli.add_command(command.verify.verify)
+    assert not patched_ansible_galaxy.called

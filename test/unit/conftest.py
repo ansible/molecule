@@ -146,8 +146,8 @@ def molecule_v1_section_data(state_path_without_data):
             ],
             'test': {
                 'sequence': [
-                    'destroy', 'syntax', 'create', 'converge', 'idempotence',
-                    'check', 'verify'
+                    'destroy', 'dependency', 'syntax', 'create', 'converge',
+                    'idempotence', 'check', 'verify'
                 ]
             }
         }
@@ -257,7 +257,6 @@ def ansible_v1_section_data(playbook):
                 '-o UserKnownHostsFile=/dev/null', '-o IdentitiesOnly=yes',
                 '-o ControlMaster=auto', '-o ControlPersist=60s'
             ],
-            'galaxy': {},
             'config_file': 'config_file',
             'inventory_file': 'inventory_file',
             'playbook': playbook,
@@ -267,6 +266,10 @@ def ansible_v1_section_data(playbook):
         },
         'verifier': {
             'name': 'testinfra',
+            'options': {}
+        },
+        'dependencies': {
+            'name': 'galaxy',
             'options': {}
         },
         '_disabled': []

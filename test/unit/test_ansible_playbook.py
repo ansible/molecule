@@ -154,12 +154,6 @@ def test_bake_with_raw_ansible_args(mocker, ansible_playbook_instance):
     assert re.search('-v --foo bar$', str(ansible_playbook_instance._ansible))
 
 
-def test_ignores_requirements_file():
-    a = ansible_playbook.AnsiblePlaybook({'requirements_file': 'foo/bar'}, {})
-
-    assert not a._cli.get('requirements_file')
-
-
 def test_ignores_host_group_vars():
     a = ansible_playbook.AnsiblePlaybook({
         'host_vars': 'foo',

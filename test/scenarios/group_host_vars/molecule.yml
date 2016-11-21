@@ -1,7 +1,8 @@
 ---
+dependencies:
+  name: galaxy
 driver:
   name: docker
-
 ansible:
   group_vars:
     example:
@@ -11,7 +12,6 @@ ansible:
   host_vars:
     group-vars-scenario:
       - group_host_vars_host_molecule_yml: bar
-
 docker:
   containers:
     - name: group-vars-scenario
@@ -21,7 +21,6 @@ docker:
           - example
       image: ubuntu
       image_version: latest
-
 vagrant:
   platforms:
     - name: ubuntu
@@ -37,6 +36,5 @@ vagrant:
         - example
         - example2:children:
           - example
-
 verifier:
   name: testinfra

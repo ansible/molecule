@@ -23,13 +23,15 @@ import pytest
 from molecule.command import test
 
 
-def test_execute(mocker, patched_destroy_main, patched_destroy, patched_syntax,
-                 patched_create, patched_converge, patched_idempotence,
-                 patched_check, patched_verify, molecule_instance):
+def test_execute(mocker, patched_destroy_main, patched_destroy,
+                 patched_dependency, patched_syntax, patched_create,
+                 patched_converge, patched_idempotence, patched_check,
+                 patched_verify, molecule_instance):
     t = test.Test({}, {}, molecule_instance)
     result = t.execute()
 
     patched_syntax.assert_called_once_with(exit=False)
+    patched_dependency.assert_called_once_with(exit=False)
     patched_create.assert_called_once_with(exit=False)
     patched_converge.assert_called_once_with(exit=False)
     patched_idempotence.assert_called_once_with(exit=False)

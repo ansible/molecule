@@ -21,11 +21,11 @@
 import click
 import yaml
 
-from molecule import ansible_galaxy
 from molecule import ansible_playbook
 from molecule import util
 from molecule.command import base
 from molecule.command import create
+from molecule.command import dependency
 
 LOG = util.get_logger(__name__)
 
@@ -71,14 +71,8 @@ class Converge(base.Base):
         if create_inventory:
             self.molecule.create_inventory_file()
 
-        # Install role dependencies only during `molecule converge`
-        if not idempotent and 'requirements_file' in \
-            self.molecule.config.config['ansible'] and not \
-                self.molecule.state.installed_deps:
-            galaxy = ansible_galaxy.AnsibleGalaxy(
-                self.molecule.config.config, debug=debug)
-            galaxy.execute()
-            self.molecule.state.change_state('installed_deps', True)
+        d = dependency.Dependency(self.args, self.command_args, self.molecule)
+        d.execute()
 
         ansible = ansible_playbook.AnsiblePlaybook(
             self.molecule.config.config['ansible'],

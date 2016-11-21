@@ -90,6 +90,7 @@ class Init(base.Base):
             'repo_name': role,
             'role_name': role,
             'driver_name': driver,
+            'dependencies_name': 'galaxy',  # static for now
             'verifier_name': verifier,
         }
         if driver == 'vagrant':

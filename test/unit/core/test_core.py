@@ -99,6 +99,16 @@ def test_verifier_disabled(molecule_instance):
     assert [] == molecule_instance.disabled
 
 
+def test_dependencies_setter(molecule_instance):
+    molecule_instance.dependencies = 'foo'
+
+    assert 'foo' == molecule_instance.dependencies
+
+
+def test_dependencies(molecule_instance):
+    assert 'galaxy' == molecule_instance.dependencies
+
+
 @pytest.mark.skip(reason='TODO(retr0h): Determine best way to test this')
 def test_remove_templates():
     pass

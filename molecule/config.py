@@ -131,7 +131,6 @@ class ConfigV1(Config):
                 'ask_vault_pass': False,
                 'config_file': 'ansible.cfg',
                 'diff': True,
-                'galaxy': {},
                 'host_key_checking': False,
                 'inventory_file': 'ansible_inventory',
                 'limit': 'all',
@@ -175,8 +174,8 @@ class ConfigV1(Config):
                 'state_file': 'state.yml',
                 'test': {
                     'sequence': [
-                        'destroy', 'syntax', 'create', 'converge',
-                        'idempotence', 'check', 'verify'
+                        'destroy', 'dependency', 'syntax', 'create',
+                        'converge', 'idempotence', 'check', 'verify'
                     ]
                 },
                 'testinfra_dir': 'tests',
@@ -185,6 +184,10 @@ class ConfigV1(Config):
             },
             'verifier': {
                 'name': 'testinfra',
+                'options': {}
+            },
+            'dependencies': {
+                'name': 'galaxy',
                 'options': {}
             },
             '_disabled': [],

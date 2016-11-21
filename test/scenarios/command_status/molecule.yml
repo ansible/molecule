@@ -1,26 +1,23 @@
 ---
+dependencies:
+  name: galaxy
 driver:
   name: docker
-
 ansible:
   raw_env_vars:
     ANSIBLE_ROLES_PATH: ../../../../roles:../../../../../roles
-
 vagrant:
   platforms:
     - name: ubuntu
       box: ubuntu/trusty64
     - name: centos7
       box: centos/7
-
   providers:
     - name: virtualbox
       type: virtualbox
-
   instances:
     - name: status-scenario-01
     - name: status-scenario-02
-
 openstack:
   keypair: KeyName
   keyfile: ~/.ssh/id_rsa
@@ -33,7 +30,6 @@ openstack:
       image: 'CentOS 7'
       flavor: m1.xlarge
       sshuser: centos
-
 docker:
   containers:
     - name: status-scenario-01
@@ -42,6 +38,5 @@ docker:
     - name: status-scenario-02
       image: ubuntu
       image_version: latest
-
 verifier:
   name: testinfra
