@@ -87,13 +87,6 @@ def test_testinfra_args(openstack_instance):
     assert 'ansible' == d['connection']
 
 
-def test_testinfra_args(openstack_instance):
-    d = openstack_instance.testinfra_args
-
-    # TODO: Test ansible_inventory key
-    assert 'ansible' == d['connection']
-
-
 def test_serverspec_args(openstack_instance):
     assert {} == openstack_instance.serverspec_args
 
