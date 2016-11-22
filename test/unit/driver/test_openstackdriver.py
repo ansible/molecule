@@ -80,8 +80,27 @@ def test_ansible_connection_params(openstack_instance):
     assert 'ssh' == d['connection']
 
 
+def test_testinfra_args(openstack_instance):
+    d = openstack_instance.testinfra_args
+
+    # TODO: Test ansible_inventory key
+    assert 'ansible' == d['connection']
+
+
 def test_serverspec_args(openstack_instance):
     assert {} == openstack_instance.serverspec_args
+
+
+def test_login_cmd(openstack_instance):
+    assert 'ssh {} -l {} -i {}' == openstack_instance.login_cmd('aio-01')
+
+
+def test_login_args(openstack_instance):
+    login_args = openstack_instance.login_args('aio-01')
+
+    assert login_args[0] is None
+    assert 'root' == login_args[1]
+    assert re.match(r'.*\.ssh/molecule_[0-9a-fA-F]+$', login_args[2])
 
 
 def test_reset_known_hosts(openstack_instance, mocker):
@@ -91,23 +110,22 @@ def test_reset_known_hosts(openstack_instance, mocker):
     patched_os.assert_called_once_with('ssh-keygen -R test')
 
 
-def test_generate_temp_ssh_key(openstack_instance):
-    fileloc = openstack_instance._generated_ssh_key_location()
+def test_get_temp_keyfile(openstack_instance):
+    fileloc = openstack_instance._get_temp_keyfile()
 
-    openstack_instance._generate_temp_ssh_key()
     assert os.path.isfile(fileloc)
     assert os.path.isfile(fileloc + '.pub')
 
 
-def test_delete_temp_ssh_key(openstack_instance):
-    fileloc = openstack_instance._generated_ssh_key_location()
+def test_cleanup_temp_keyfile(openstack_instance):
+    fileloc = openstack_instance._get_temp_keyfile()
+    openstack_instance._cleanup_temp_keyfile()
 
-    openstack_instance._remove_temp_ssh_key()
     assert not os.path.isfile(fileloc)
     assert not os.path.isfile(fileloc + '.pub')
 
 
-def test_generate_random_keypair_name(openstack_instance):
-    result_keypair = openstack_instance._generate_random_keypair_name(
-        'molecule', 10)
+def test_get_temp_keyname(openstack_instance):
+    result_keypair = openstack_instance._get_temp_keyname()
+
     assert re.match(r'molecule_[0-9a-fA-F]+', result_keypair)
