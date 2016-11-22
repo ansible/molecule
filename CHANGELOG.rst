@@ -2,6 +2,11 @@
 History
 *******
 
+1.14.1
+======
+
+* Fix openstack driver login and ssh key generation.
+
 1.14
 ====
 
