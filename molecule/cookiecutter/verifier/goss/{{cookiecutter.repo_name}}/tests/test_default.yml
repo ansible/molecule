@@ -19,7 +19,7 @@
                mode=0755
 {% raw %}
     - name: Copy tests to remote
-      copy: src="../../files/goss/{{ item }}"
+      copy: src="{{ playbook_dir }}/../files/goss/{{ item }}"
             dest="/tmp/{{ item }}"
       with_items:
         - hosts.yml
