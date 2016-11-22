@@ -101,12 +101,15 @@ def test_non_idempotent_tasks_not_idempotent(molecule_instance):
 PLAY [all] ***********************************************************
 GATHERING FACTS ******************************************************
 ok: [check-command-01]
+ok: [check-command-02]
 TASK: [Idempotence test] *********************************************
 changed: [check-command-01]
+changed: [check-command-02]
 PLAY RECAP ***********************************************************
 check-command-01: ok=2    changed=1    unreachable=0    failed=0
+check-command-02: ok=2    changed=1    unreachable=0    failed=0
 """
     i = idempotence.Idempotence({}, {}, molecule_instance)
     ret = i._non_idempotent_tasks(output)
 
-    assert ret == ['* Idempotence test']
+    assert ret == ['* [check-command-01] => Idempotence test', '* [check-command-02] => Idempotence test']

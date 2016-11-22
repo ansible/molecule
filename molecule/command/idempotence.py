@@ -97,11 +97,14 @@ class Idempotence(base.Base):
         # Split the output into a list and go through it.
         output_lines = output.split('\n')
         res = []
+        task_line = ''
         for idx, line in enumerate(output_lines):
-            if line.startswith('changed'):
-                guilty_line = output_lines[idx - 1]
-                task_name = re.search(r'\[(.*)\]', guilty_line)
-                res.append('* {}'.format(task_name.groups()[0]))
+            if line.startswith('TASK'):
+                task_line = line
+            elif line.startswith('changed'):
+                host_name = re.search(r'\[(.*)\]', line).groups()[0]
+                task_name = re.search(r'\[(.*)\]', task_line).groups()[0]
+                res.append('* [{}] => {}'.format(host_name, task_name))
 
         return res
 
