@@ -2,6 +2,17 @@
 History
 *******
 
+1.15
+====
+
+* Added a shell dependency manager.
+* Created a CI section to documentation with Tox details.
+
+1.14.1
+======
+
+* Fix openstack driver login and ssh key generation.
+
 1.14
 ====
 
