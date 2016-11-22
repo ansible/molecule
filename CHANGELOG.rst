@@ -7,6 +7,15 @@ History
 
 * Added a shell dependency manager.
 * Created a CI section to documentation with Tox details.
+* Rename dependencies key to dependency.
+
+Breaking Changes
+----------------
+
+* The galaxy override options have been moved to the `dependency` section of
+  molecule's config.  No longer support a top level `dependencies` config key.
+  This functionality was added in 1.14, and this follow-up corrects the usage,
+  before 1.14 was utilized.
 
 1.14.1
 ======
