@@ -22,7 +22,7 @@ from molecule.command import dependency
 
 
 def test_execute(patched_ansible_galaxy, molecule_instance):
-    molecule_instance.config.config['dependencies']['requirements_file'] = True
+    molecule_instance.config.config['dependency']['requirements_file'] = True
 
     d = dependency.Dependency({}, {}, molecule_instance)
     d.execute()
@@ -33,7 +33,7 @@ def test_execute(patched_ansible_galaxy, molecule_instance):
 
 def test_execute_does_not_install_when_installed(patched_ansible_galaxy,
                                                  molecule_instance):
-    molecule_instance.config.config['dependencies']['requirements_file'] = True
+    molecule_instance.config.config['dependency']['requirements_file'] = True
     molecule_instance.state.change_state('installed_deps', True)
 
     d = dependency.Dependency({}, {}, molecule_instance)
@@ -43,8 +43,8 @@ def test_execute_does_not_install_when_installed(patched_ansible_galaxy,
 
 
 def test_execute_shell(patched_shell, molecule_instance):
-    molecule_instance.dependencies = 'shell'
-    molecule_instance.config.config['dependencies']['command'] = True
+    molecule_instance.dependency = 'shell'
+    molecule_instance.config.config['dependency']['command'] = True
 
     d = dependency.Dependency({}, {}, molecule_instance)
     d.execute()
@@ -55,8 +55,8 @@ def test_execute_shell(patched_shell, molecule_instance):
 
 def test_execute_shell_does_not_install_when_installed(patched_shell,
                                                        molecule_instance):
-    molecule_instance.dependencies = 'shell'
-    molecule_instance.config.config['dependencies']['command'] = True
+    molecule_instance.dependency = 'shell'
+    molecule_instance.config.config['dependency']['command'] = True
     molecule_instance.state.change_state('installed_deps', True)
 
     d = dependency.Dependency({}, {}, molecule_instance)

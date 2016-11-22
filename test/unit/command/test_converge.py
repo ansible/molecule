@@ -87,7 +87,7 @@ def test_execute_create_inventory_and_instances_with_platform_all_state_file(
 def test_execute_installs_dependencies(
         patched_create, patched_ansible_playbook, patched_dependency,
         patched_create_inventory, molecule_instance):
-    molecule_instance.config.config['dependencies']['requirements_file'] = True
+    molecule_instance.config.config['dependency']['requirements_file'] = True
 
     c = converge.Converge({}, {}, molecule_instance)
     c.execute()

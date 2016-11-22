@@ -37,7 +37,7 @@ def test_execute(mocker, patched_ansible_playbook, patched_print_info,
 def test_execute_installs_dependencies(patched_ansible_playbook,
                                        patched_dependency, patched_print_info,
                                        molecule_instance):
-    molecule_instance.config.config['dependencies']['requirements_file'] = str(
+    molecule_instance.config.config['dependency']['requirements_file'] = str(
     )
 
     s = syntax.Syntax({}, {}, molecule_instance)

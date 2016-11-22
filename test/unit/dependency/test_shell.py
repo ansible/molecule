@@ -29,7 +29,7 @@ from molecule.dependency import shell
 def shell_instance(temp_files):
     confs = temp_files(fixtures=['molecule_vagrant_v1_config'])
     c = config.ConfigV1(configs=confs)
-    c.config['dependencies']['command'] = 'ls -l -a /tmp'
+    c.config['dependency']['command'] = 'ls -l -a /tmp'
 
     return shell.Shell(c.config)
 

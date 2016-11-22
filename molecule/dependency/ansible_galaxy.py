@@ -64,7 +64,7 @@ class AnsibleGalaxy(object):
 
         :return: None
         """
-        requirements_file = self._config['dependencies']['requirements_file']
+        requirements_file = self._config['dependency']['requirements_file']
         roles_path = os.path.join(self._config['molecule']['molecule_dir'],
                                   'roles')
         galaxy_default_options = {
@@ -73,7 +73,7 @@ class AnsibleGalaxy(object):
             'roles-path': roles_path
         }
         galaxy_options = config.merge_dicts(
-            galaxy_default_options, self._config['dependencies']['options'])
+            galaxy_default_options, self._config['dependency']['options'])
 
         self._galaxy = sh.ansible_galaxy.bake(
             'install',

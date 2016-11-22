@@ -1,5 +1,5 @@
 ---
-dependencies:
+dependency:
   requirements_file: requirements.yml
   name: galaxy
 driver:

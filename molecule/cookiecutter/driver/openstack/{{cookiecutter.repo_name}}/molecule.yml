@@ -1,6 +1,6 @@
 ---
-dependencies:
-  name: {{ cookiecutter.dependencies_name }}
+dependency:
+  name: {{ cookiecutter.dependency_name }}
 driver:
   name: {{ cookiecutter.driver_name }}
 openstack:

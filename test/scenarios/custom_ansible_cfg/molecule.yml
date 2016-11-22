@@ -1,5 +1,5 @@
 ---
-dependencies:
+dependency:
   name: galaxy
 ansible:
   config_file: ../ansible.cfg

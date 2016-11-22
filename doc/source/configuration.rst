@@ -198,18 +198,18 @@ Testing roles may rely upon additional dependencies.
 Ansible Galaxy
 ^^^^^^^^^^^^^^
 
-Adding a ``requirements_file`` key to the ``dependencies`` section, will cause
+Adding a ``requirements_file`` key to the ``dependency`` section, will cause
 molecule to download roles using `Ansible Galaxy`_.
 
 Additional options can be passed to ``ansible-galaxy`` through the ``options``
-option under the ``dependencies`` section.  Any option set in this section will
+dict under the ``dependency`` section.  Any option set in this section will
 override the defaults.
 
 .. _`Ansible Galaxy`: http://docs.ansible.com/ansible/galaxy.html
 
 .. code-block:: yaml
 
-  dependencies:
+  dependency:
     name: galaxy
     requirements_file: requirements.yml
     options:
@@ -219,12 +219,12 @@ override the defaults.
 Shell
 ^^^^^
 
-Adding a ``command`` key to the ``dependencies`` section, will cause molecule
-to download roles using the command provided.
+Adding a ``command`` key to the ``dependency`` section, will cause molecule
+to execute the command provided.
 
 .. code-block:: yaml
 
-  dependencies:
+  dependency:
     name: shell
     command: script --flag1 subcommand --flag2
 

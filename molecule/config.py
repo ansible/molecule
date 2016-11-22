@@ -186,7 +186,7 @@ class ConfigV1(Config):
                 'name': 'testinfra',
                 'options': {}
             },
-            'dependencies': {
+            'dependency': {
                 'name': 'galaxy',
                 'options': {}
             },

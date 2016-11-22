@@ -269,7 +269,7 @@ def ansible_v1_section_data(playbook):
             'name': 'testinfra',
             'options': {}
         },
-        'dependencies': {
+        'dependency': {
             'name': 'galaxy',
             'options': {}
         },
