@@ -365,13 +365,9 @@ class Molecule(object):
         return dict(instances)
 
     def _get_verifier(self):
-        if self.config.config.get('testinfra'):
-            return 'testinfra'
         return self.config.config['verifier']['name']
 
     def _get_dependencies(self):
-        if self.config.config.get('dependencies'):
-            return 'galaxy'
         return self.config.config['dependencies']['name']
 
     def _get_disabled(self):

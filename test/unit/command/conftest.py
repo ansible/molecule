@@ -166,3 +166,8 @@ def patched_driver_up(mocker):
 @pytest.fixture
 def patched_driver_destroy(mocker):
     return mocker.patch('molecule.driver.vagrantdriver.VagrantDriver.destroy')
+
+
+@pytest.fixture
+def patched_shell(mocker):
+    return mocker.patch('molecule.dependency.shell.Shell.execute')

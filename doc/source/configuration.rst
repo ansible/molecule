@@ -108,28 +108,6 @@ An alternative to the above `Host/Group Vars` is the creation of `group_vars`
 and/or `host_vars` directories in the project root.  This allows ansible to
 converge utilzing its built in group/host vars resolution.
 
-Role Requirements
-^^^^^^^^^^^^^^^^^
-
-Testing roles may rely upon additional roles.  In this case adding
-``requirements_file`` to the ``dependencies`` section, will cause molecule to
-download roles using `Ansible Galaxy`_.
-
-Additional options can be passed to ``ansible-galaxy`` through the ``options``
-option under the ``dependencies`` section.  Any option set in this section will
-override the defaults.
-
-.. _`Ansible Galaxy`: http://docs.ansible.com/ansible/galaxy.html
-
-.. code-block:: yaml
-
-  dependencies:
-    name: galaxy
-    requirements_file: requirements.yml
-    options:
-        ignore-certs: True
-        ignore-errors: True
-
 Vagrant Section
 ---------------
 
@@ -211,6 +189,44 @@ Verifier Section
 ----------------
 
 See OpenStack :ref:`verifier_index`
+
+Dependencies Section
+--------------------
+
+Testing roles may rely upon additional dependencies.
+
+Ansible Galaxy
+^^^^^^^^^^^^^^
+
+Adding a ``requirements_file`` key to the ``dependencies`` section, will cause
+molecule to download roles using `Ansible Galaxy`_.
+
+Additional options can be passed to ``ansible-galaxy`` through the ``options``
+option under the ``dependencies`` section.  Any option set in this section will
+override the defaults.
+
+.. _`Ansible Galaxy`: http://docs.ansible.com/ansible/galaxy.html
+
+.. code-block:: yaml
+
+  dependencies:
+    name: galaxy
+    requirements_file: requirements.yml
+    options:
+        ignore-certs: True
+        ignore-errors: True
+
+Shell
+^^^^^
+
+Adding a ``command`` key to the ``dependencies`` section, will cause molecule
+to download roles using the command provided.
+
+.. code-block:: yaml
+
+  dependencies:
+    name: shell
+    command: script --flag1 subcommand --flag2
 
 Playbook
 ========

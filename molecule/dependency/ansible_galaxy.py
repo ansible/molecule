@@ -95,8 +95,8 @@ class AnsibleGalaxy(object):
 
     def execute(self):
         """
-        Executes ansible-galaxy install and returns command's stdout.
-,
+        Executes ansible-galaxy install and returns the command's stdout.
+
         :return: The command's output, otherwise sys.exit on command failure.
         """
 

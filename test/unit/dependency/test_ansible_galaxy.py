@@ -21,8 +21,8 @@
 import pytest
 import sh
 
-from molecule import ansible_galaxy
 from molecule import config
+from molecule.dependency import ansible_galaxy
 
 
 @pytest.fixture()
