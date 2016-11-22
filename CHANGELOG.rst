@@ -2,6 +2,23 @@
 History
 *******
 
+1.14
+====
+
+* Made improvements to unit/functional tests.
+* Fixed Goss verifier under Ansible 2.2.
+* Removed testinfra config backward compatibility.
+* Broke out role dependency into a subcommand.
+
+Breaking Changes
+----------------
+
+* The testinfra override options have been moved to the `verifier` section of
+  molecule's config.  No longer support a top level `testinfra` config key.
+* The galaxy override options have been moved to the `dependencies` section of
+  molecule's config.  No longer support a `galaxy` key inside the top level
+  `ansible` section.
+
 1.13
 ====
 
