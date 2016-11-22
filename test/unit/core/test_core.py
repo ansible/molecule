@@ -81,14 +81,14 @@ def test_verifier_disabled(molecule_instance):
     assert [] == molecule_instance.disabled
 
 
-def test_dependencies_setter(molecule_instance):
-    molecule_instance.dependencies = 'foo'
+def test_dependency_setter(molecule_instance):
+    molecule_instance.dependency = 'foo'
 
-    assert 'foo' == molecule_instance.dependencies
+    assert 'foo' == molecule_instance.dependency
 
 
-def test_dependencies(molecule_instance):
-    assert 'galaxy' == molecule_instance.dependencies
+def test_dependency(molecule_instance):
+    assert 'galaxy' == molecule_instance.dependency
 
 
 @pytest.mark.skip(reason='TODO(retr0h): Determine best way to test this')

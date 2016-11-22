@@ -29,7 +29,7 @@ from molecule.dependency import ansible_galaxy
 def ansible_galaxy_instance(temp_files):
     confs = temp_files(fixtures=['molecule_vagrant_v1_config'])
     c = config.ConfigV1(configs=confs)
-    c.config['dependencies']['requirements_file'] = 'requirements.yml'
+    c.config['dependency']['requirements_file'] = 'requirements.yml'
 
     return ansible_galaxy.AnsibleGalaxy(c.config)
 
@@ -58,7 +58,7 @@ def test_execute(patched_ansible_galaxy, ansible_galaxy_instance):
 
 
 def test_execute_overrides(patched_ansible_galaxy, ansible_galaxy_instance):
-    ansible_galaxy_instance._config['dependencies']['options'] = {
+    ansible_galaxy_instance._config['dependency']['options'] = {
         'foo': 'bar',
         'force': False
     }

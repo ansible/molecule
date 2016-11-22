@@ -44,7 +44,7 @@ class Molecule(object):
         self.config = config
         self.args = args
         self._verifier = self._get_verifier()
-        self._dependencies = self._get_dependencies()
+        self._dependency = self._get_dependency()
         self._disabled = self._get_disabled()
 
     def main(self):
@@ -96,12 +96,12 @@ class Molecule(object):
         self._verifier = val
 
     @property
-    def dependencies(self):
-        return self._dependencies
+    def dependency(self):
+        return self._dependency
 
-    @dependencies.setter
-    def dependencies(self, val):
-        self._dependencies = val
+    @dependency.setter
+    def dependency(self, val):
+        self._dependency = val
 
     @property
     def disabled(self):
@@ -367,8 +367,8 @@ class Molecule(object):
     def _get_verifier(self):
         return self.config.config['verifier']['name']
 
-    def _get_dependencies(self):
-        return self.config.config['dependencies']['name']
+    def _get_dependency(self):
+        return self.config.config['dependency']['name']
 
     def _get_disabled(self):
         # Ability to turn off features until we roll them out.

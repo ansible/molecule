@@ -60,7 +60,7 @@ class Shell(object):
 
         :return: None
         """
-        command = self._config['dependencies']['command'].split(' ')
+        command = self._config['dependency']['command'].split(' ')
         self._command = getattr(sh, command.pop(0))
         self._command = self._command.bake(command)
         self._command = self._command.bake(
