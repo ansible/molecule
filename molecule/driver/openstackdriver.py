@@ -155,7 +155,8 @@ class OpenstackDriver(basedriver.BaseDriver):
                     instance['created'] = False
 
         # cleanup any molecule generated ssh keysfiles
-        self._cleanup_temp_keys()
+        self._cleanup_temp_keypair()
+        self._cleanup_temp_keyfile()
 
     def status(self):
         Status = collections.namedtuple('Status',
@@ -292,7 +293,7 @@ class OpenstackDriver(basedriver.BaseDriver):
             time.sleep(timeout)
             return False
 
-    def _cleanup_temp_keys(self):
+    def _cleanup_temp_keypair(self):
         # if we don't have a keypair config, delete the temp one
         if ('keypair' not in self.molecule.config.config['openstack']):
             kpn = self._get_temp_keyname()
@@ -305,6 +306,7 @@ class OpenstackDriver(basedriver.BaseDriver):
                     util.print_success('\tRemoved openstack keypair {}'.format(
                         kpn))
 
+    def _cleanup_temp_keyfile(self):
         # if we don't have a keyfile config, delete the temp one
         if ('keyfile' not in self.molecule.config.config['openstack']):
             kn = self._get_temp_keyname()
