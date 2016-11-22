@@ -20,9 +20,10 @@
 
 import click
 
-from molecule import ansible_galaxy
 from molecule import util
 from molecule.command import base
+from molecule.dependency import ansible_galaxy
+from molecule.dependency import shell
 
 LOG = util.get_logger(__name__)
 
@@ -37,14 +38,20 @@ class Dependency(base.Base):
         :return: Return a tuple provided by :meth:`.AnsiblePlaybook.execute`.
         """
         debug = self.args.get('debug')
+        if self.molecule.state.installed_deps:
+            return (None, None)
         if self.molecule.dependencies == 'galaxy':
             dd = self.molecule.config.config.get('dependencies')
             if dd.get('requirements_file'):
-                if self.molecule.state.installed_deps:
-                    return (None, None)
-                galaxy = ansible_galaxy.AnsibleGalaxy(
+                g = ansible_galaxy.AnsibleGalaxy(
                     self.molecule.config.config, debug=debug)
-                galaxy.execute()
+                g.execute()
+                self.molecule.state.change_state('installed_deps', True)
+        elif self.molecule.dependencies == 'shell':
+            dd = self.molecule.config.config.get('dependencies')
+            if dd.get('command'):
+                s = shell.Shell(self.molecule.config.config, debug=debug)
+                s.execute()
                 self.molecule.state.change_state('installed_deps', True)
 
         return (None, None)

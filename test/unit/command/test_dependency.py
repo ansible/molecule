@@ -21,23 +21,45 @@
 from molecule.command import dependency
 
 
-def test_execute(patched_ansible_playbook, patched_ansible_galaxy,
-                 molecule_instance):
+def test_execute(patched_ansible_galaxy, molecule_instance):
     molecule_instance.config.config['dependencies']['requirements_file'] = True
 
-    c = dependency.Dependency({}, {}, molecule_instance)
-    c.execute()
+    d = dependency.Dependency({}, {}, molecule_instance)
+    d.execute()
 
     patched_ansible_galaxy.assert_called_once()
     assert molecule_instance.state.installed_deps
 
 
-def test_execute_does_not_install_when_installed(
-        patched_ansible_playbook, patched_ansible_galaxy, molecule_instance):
+def test_execute_does_not_install_when_installed(patched_ansible_galaxy,
+                                                 molecule_instance):
     molecule_instance.config.config['dependencies']['requirements_file'] = True
     molecule_instance.state.change_state('installed_deps', True)
 
-    c = dependency.Dependency({}, {}, molecule_instance)
-    c.execute()
+    d = dependency.Dependency({}, {}, molecule_instance)
+    d.execute()
 
     assert not patched_ansible_galaxy.called
+
+
+def test_execute_shell(patched_shell, molecule_instance):
+    molecule_instance.dependencies = 'shell'
+    molecule_instance.config.config['dependencies']['command'] = True
+
+    d = dependency.Dependency({}, {}, molecule_instance)
+    d.execute()
+
+    patched_shell.assert_called_once()
+    assert molecule_instance.state.installed_deps
+
+
+def test_execute_shell_does_not_install_when_installed(patched_shell,
+                                                       molecule_instance):
+    molecule_instance.dependencies = 'shell'
+    molecule_instance.config.config['dependencies']['command'] = True
+    molecule_instance.state.change_state('installed_deps', True)
+
+    d = dependency.Dependency({}, {}, molecule_instance)
+    d.execute()
+
+    assert not patched_shell.called

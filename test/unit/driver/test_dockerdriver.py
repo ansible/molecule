@@ -20,7 +20,6 @@
 
 import pytest
 
-from molecule import ansible_playbook
 from molecule.driver import dockerdriver
 
 pytestmark = pytest.helpers.supports_docker()
