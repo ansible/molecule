@@ -174,7 +174,7 @@ Drivers are found in the following order:
    keys.
 
 Usage
------
+^^^^^
 
 .. code-block:: yaml
 
