@@ -27,8 +27,6 @@ from molecule.command import base
 from molecule.command import create
 from molecule.command import dependency
 
-LOG = util.get_logger(__name__)
-
 
 class Converge(base.Base):
     def execute(self,

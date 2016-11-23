@@ -23,8 +23,6 @@ import click
 from molecule import util
 from molecule.command import base
 
-LOG = util.get_logger(__name__)
-
 
 class List(base.Base):
     def execute(self, exit=True):

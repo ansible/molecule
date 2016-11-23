@@ -79,5 +79,5 @@ class Shell(object):
         try:
             return util.run_command(self._command, debug=self._debug).stdout
         except sh.ErrorReturnCode as e:
-            LOG.error('ERROR: {}'.format(e))
+            util.print_error(str(e))
             util.sysexit(e.exit_code)

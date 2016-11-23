@@ -24,8 +24,6 @@ from molecule import ansible_playbook
 from molecule import util
 from molecule.command import base
 
-LOG = util.get_logger(__name__)
-
 
 class Check(base.Base):
     def execute(self, exit=True):
@@ -39,7 +37,7 @@ class Check(base.Base):
         if not self.molecule.state.created:
             msg = ('Instance(s) not created, `check` should be run '
                    'against created instance(s)')
-            LOG.error('ERROR: {}'.format(msg))
+            util.print_error(msg)
             util.sysexit()
 
         debug = self.args.get('debug')

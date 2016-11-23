@@ -45,7 +45,7 @@ def test_print_valid_platforms(capsys, docker_molecule_instance):
     docker_molecule_instance.print_valid_platforms()
     out, _ = capsys.readouterr()
 
-    assert 'docker  (default)\n' == out
+    assert 'docker  (default)\n' in out
 
 
 def test_print_valid_platforms_with_porcelain(capsys,
@@ -60,7 +60,7 @@ def test_print_valid_providers(capsys, docker_molecule_instance):
     docker_molecule_instance.print_valid_providers()
     out, _ = capsys.readouterr()
 
-    assert 'docker  (default)\n' == out
+    assert 'docker  (default)\n' in out
 
 
 def test_print_valid_providers_with_porcelain(capsys,

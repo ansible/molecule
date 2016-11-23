@@ -24,8 +24,6 @@ import molecule.command  # prevent circular dependencies
 from molecule import util
 from molecule.command import base
 
-LOG = util.get_logger(__name__)
-
 
 class Test(base.Base):
     def execute(self, exit=True):
@@ -48,7 +46,7 @@ class Test(base.Base):
             # Fail fast
             if status is not 0 and status is not None:
                 if output:
-                    LOG.error(output)
+                    util.print_error(output)
                 util.sysexit(status)
 
         if self.command_args.get('destroy') == 'always':

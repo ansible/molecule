@@ -45,7 +45,7 @@ def test_print_valid_platforms(capsys, openstack_molecule_instance):
     openstack_molecule_instance.print_valid_platforms()
     out, _ = capsys.readouterr()
 
-    assert 'openstack  (default)\n' == out
+    assert 'openstack  (default)\n' in out
 
 
 def test_print_valid_platforms_with_porcelain(capsys,
@@ -60,7 +60,7 @@ def test_print_valid_providers(capsys, openstack_molecule_instance):
     openstack_molecule_instance.print_valid_providers()
     out, _ = capsys.readouterr()
 
-    assert 'openstack  (default)\n' == out
+    assert 'openstack  (default)\n' in out
 
 
 def test_print_valid_providers_with_porcelain(capsys,

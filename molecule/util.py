@@ -61,9 +61,7 @@ def get_logger(name=None):
     logger.setLevel(logging.DEBUG)
 
     logger.addHandler(_get_info_logger())
-    logger.addHandler(_get_warn_logger())
     logger.addHandler(_get_error_logger())
-    logger.addHandler(_get_debug_logger())
     logger.propagate = False
 
     return logger
@@ -97,6 +95,14 @@ def print_debug(title, data):
     ]))
 
 
+def print_warn(msg):
+    print('{}{}'.format(colorama.Fore.YELLOW, msg.rstrip()))
+
+
+def print_error(msg):
+    print('{}ERROR: {}'.format(colorama.Fore.RED, msg.rstrip()))
+
+
 def write_template(src, dest, kwargs={}, _module='molecule', _dir='template'):
     """
     Writes a file from a jinja2 template and returns None.
@@ -115,11 +121,11 @@ def write_template(src, dest, kwargs={}, _module='molecule', _dir='template'):
     src = os.path.expanduser(src)
     path = os.path.dirname(src)
     filename = os.path.basename(src)
-    log = get_logger(__name__)
 
     # template file doesn't exist
     if path and not os.path.isfile(src):
-        log.error('Unable to locate template file: {}'.format(src))
+        msg = 'Unable to locate template file: {}'.format(src)
+        print_error(msg)
         sysexit()
 
     # look for template in filesystem, then molecule package
@@ -244,26 +250,6 @@ def _get_info_logger():
     info.setFormatter(TrailingNewlineFormatter('%(message)s'))
 
     return info
-
-
-def _get_warn_logger():
-    warn = logging.StreamHandler(sys.stdout)
-    warn.setLevel(logging.WARN)
-    warn.addFilter(LogFilter(logging.WARN))
-    warn.setFormatter(
-        TrailingNewlineFormatter('{}%(message)s'.format(colorama.Fore.YELLOW)))
-
-    return warn
-
-
-def _get_debug_logger():
-    debug = logging.StreamHandler(sys.stdout)
-    debug.setLevel(logging.DEBUG)
-    debug.addFilter(LogFilter(logging.DEBUG))
-    debug.setFormatter(
-        TrailingNewlineFormatter('{}%(message)s'.format(colorama.Fore.BLUE)))
-
-    return debug
 
 
 def _get_error_logger():

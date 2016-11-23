@@ -28,8 +28,6 @@ from molecule import state
 from molecule import util
 from molecule.driver import basedriver
 
-LOG = util.get_logger(__name__)
-
 
 class Molecule(object):
     def __init__(self, config, args):
@@ -57,18 +55,21 @@ class Molecule(object):
         try:
             self.driver = self._get_driver()
         except basedriver.InvalidDriverSpecified:
-            LOG.error("Invalid driver '{}'".format(self._get_driver_name()))
+            msg = "Invalid driver '{}'".format(self._get_driver_name())
+            util.print_error(msg)
             # TODO(retr0h): Print valid drivers.
             util.sysexit()
         except basedriver.InvalidProviderSpecified:
-            LOG.error("Invalid provider '{}'".format(self.args['provider']))
+            msg = "Invalid provider '{}'".format(self.args['provider'])
+            util.print_error(msg)
             self.args['provider'] = None
             self.args['platform'] = None
             self.driver = self._get_driver()
             self.print_valid_providers()
             util.sysexit()
         except basedriver.InvalidPlatformSpecified:
-            LOG.error("Invalid platform '{}'".format(self.args['platform']))
+            msg = "Invalid platform '{}'".format(self.args['platform'])
+            util.print_error(msg)
             self.args['provider'] = None
             self.args['platform'] = None
             self.driver = self._get_driver()
@@ -120,9 +121,7 @@ class Molecule(object):
 
     def print_valid_platforms(self, porcelain=False):
         if not porcelain:
-            # NOTE(retr0h): Should we log here, when ``display_tabulate_data``
-            # prints?
-            LOG.info("AVAILABLE PLATFORMS")
+            util.print_info("AVAILABLE PLATFORMS")
 
         data = []
         default_platform = self.driver.default_platform
@@ -138,9 +137,7 @@ class Molecule(object):
 
     def print_valid_providers(self, porcelain=False):
         if not porcelain:
-            # NOTE(retr0h): Should we log here, when ``display_tabulate_data``
-            # prints?
-            LOG.info("AVAILABLE PROVIDERS")
+            util.print_info("AVAILABLE PROVIDERS")
 
         data = []
         default_provider = self.driver.default_provider
@@ -229,8 +226,9 @@ class Molecule(object):
         try:
             util.write_file(inventory_file, inventory)
         except IOError:
-            LOG.warning('WARNING: could not write inventory file {}'.format(
-                inventory_file))
+            msg = 'WARNING: could not write inventory file {}'.format(
+                inventory_file)
+            util.print_warn(msg)
 
     def remove_inventory_file(self):
         if os._exists(self.config.config['ansible']['inventory_file']):
@@ -287,7 +285,7 @@ class Molecule(object):
         if (self.state.driver is not None) and (self.state.driver != driver):
             msg = ("ERROR: Instance(s) were converged with the '{}' driver, "
                    "but the subcommand is using '{}' driver.")
-            LOG.error(msg.format(self.state.driver, driver))
+            util.print_error(msg.format(self.state.driver, driver))
             util.sysexit()
 
         if driver == 'vagrant':

@@ -32,8 +32,6 @@ import click
 from molecule import util
 from molecule.command import base
 
-LOG = util.get_logger(__name__)
-
 
 class Login(base.Base):
     def execute(self, exit=True):
@@ -91,12 +89,13 @@ class Login(base.Base):
                 hostname = match[0]
 
         except subprocess.CalledProcessError:
-            msg = "Unknown host '{}'.\n\nAvailable hosts:\n{}"
-            LOG.error(
-                msg.format(self.command_args.get('host'), '\n'.join(hosts)))
+            msg = ("Unknown host '{}'.\n\n"
+                   "Available hosts:\n{}").format(
+                       self.command_args.get('host'), '\n'.join(hosts))
+            util.print_error(msg)
             util.sysexit()
         except base.InvalidHost as e:
-            LOG.error(e.message)
+            util.print_error(e.message)
             util.sysexit()
 
         self._get_login(hostname)
