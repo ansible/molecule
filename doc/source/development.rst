@@ -51,7 +51,7 @@ Upload to `PyPI`_
       .. code-block:: bash
 
          $ cd /path/to/molecule
-         $ rm -rf dist/
+         $ rm -rf build/ dist/
          $ python setup.py sdist bdist_wheel
          $ twine upload dist/*
 
