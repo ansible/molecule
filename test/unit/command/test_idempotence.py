@@ -112,4 +112,7 @@ check-command-02: ok=2    changed=1    unreachable=0    failed=0
     i = idempotence.Idempotence({}, {}, molecule_instance)
     ret = i._non_idempotent_tasks(output)
 
-    assert ret == ['* [check-command-01] => Idempotence test', '* [check-command-02] => Idempotence test']
+    assert ret == [
+        '* [check-command-01] => Idempotence test',
+        '* [check-command-02] => Idempotence test'
+    ]
