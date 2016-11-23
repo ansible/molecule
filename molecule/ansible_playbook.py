@@ -184,6 +184,6 @@ class AnsiblePlaybook(object):
                 self._ansible, debug=self._debug).stdout
         except (sh.ErrorReturnCode, sh.ErrorReturnCode_2) as e:
             if not hide_errors:
-                LOG.error('ERROR: {}'.format(e))
+                util.print_error(str(e))
 
             return e.exit_code, None

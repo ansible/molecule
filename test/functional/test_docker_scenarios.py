@@ -61,7 +61,7 @@ def test_command_idempotence(scenario_setup):
     try:
         sh.molecule('test')
     except sh.ErrorReturnCode_1 as e:
-        assert re.search('Idempotence test failed.', e.message)
+        assert re.search('Idempotence test failed.', e.stdout)
 
 
 def test_command_init(temp_dir):

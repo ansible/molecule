@@ -25,8 +25,6 @@ from molecule import util
 from molecule.command import base
 from molecule.command import dependency
 
-LOG = util.get_logger(__name__)
-
 
 class Syntax(base.Base):
     def execute(self, exit=True):

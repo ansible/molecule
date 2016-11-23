@@ -28,11 +28,8 @@ def test_execute(mocker, patched_ansible_playbook, patched_print_info,
     s = syntax.Syntax({}, {}, molecule_instance)
     result = s.execute()
 
-    expected = [
-        mocker.call("Downloading dependencies with 'galaxy' ..."),
-        mocker.call("Checking playbook's syntax ...")
-    ]
-    assert expected == patched_print_info.mock_calls
+    msg = "Checking playbook's syntax ..."
+    patched_print_info.assert_called_once_with(msg)
 
     patched_ansible_playbook.assert_called_once_with(hide_errors=True)
     assert 'returned' == result

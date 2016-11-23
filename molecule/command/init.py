@@ -25,8 +25,6 @@ import click
 from molecule import util
 from molecule.command import base
 
-LOG = util.get_logger(__name__)
-
 
 class Init(base.Base):
     def main(self):
@@ -55,13 +53,15 @@ class Init(base.Base):
             self._init_existing_role(role, role_path, driver, verifier)
         else:
             if os.path.isdir(role):
-                msg = 'The directory {} exists. Cannot create new role.'
-                LOG.error(msg.format(role))
+                msg = ('The directory {} exists. '
+                       'Cannot create new role.').format(role)
+                util.print_error(msg)
                 util.sysexit()
             self._init_new_role(role, role_path, driver, verifier)
 
-        msg = 'Successfully initialized new role in {} ...'
-        util.print_success(msg.format(os.path.join(role_path, role)))
+        path = os.path.join(role_path, role)
+        msg = 'Successfully initialized new role in {} ...'.format(path)
+        util.print_success(msg)
         util.sysexit(0)
 
     def _init_existing_role(self, role, role_path, driver, verifier):

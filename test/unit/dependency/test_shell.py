@@ -41,12 +41,12 @@ def test_execute(patched_run_command, shell_instance):
     patched_run_command.assert_called_once_with(cmd, debug=False)
 
 
-def test_execute_raises(patched_logger_error, shell_instance):
+def test_execute_raises(patched_print_error, shell_instance):
     shell_instance._command = sh.false.bake()
     with pytest.raises(SystemExit) as e:
         shell_instance.execute()
 
     assert 1 == e.value.code
 
-    msg = "ERROR: \n\n  RAN: '/usr/bin/false'\n\n  STDOUT:\n\n\n  STDERR:\n"
-    patched_logger_error.assert_called_once_with(msg)
+    msg = "\n\n  RAN: '/usr/bin/false'\n\n  STDOUT:\n\n\n  STDERR:\n"
+    patched_print_error.assert_called_once_with(msg)

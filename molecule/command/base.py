@@ -24,8 +24,6 @@ from molecule import config
 from molecule import core
 from molecule import util
 
-LOG = util.get_logger(__name__)
-
 
 class InvalidHost(Exception):
     """
@@ -72,8 +70,9 @@ class Base(object):
         :returns: None
         """
         if not self._config.molecule_file_exists():
-            msg = 'Unable to find {}. Exiting.'
-            LOG.error(msg.format(self._config.molecule_file))
+            msg = ('Unable to find {}. '
+                   'Exiting.').format(self._config.molecule_file)
+            util.print_error(msg)
             util.sysexit()
         self.molecule.main()
 

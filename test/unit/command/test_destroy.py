@@ -44,7 +44,7 @@ def test_execute_deletes_instances(
 
 
 def test_execute_raises_on_exit(patched_driver_destroy, patched_print_info,
-                                patched_logger_error, patched_remove_templates,
+                                patched_print_error, patched_remove_templates,
                                 patched_remove_inventory, molecule_instance):
     patched_driver_destroy.side_effect = subprocess.CalledProcessError(1, None,
                                                                        None)
@@ -53,16 +53,15 @@ def test_execute_raises_on_exit(patched_driver_destroy, patched_print_info,
     with pytest.raises(SystemExit):
         d.execute()
 
-    msg = "ERROR: Command 'None' returned non-zero exit status 1"
-    patched_logger_error.assert_called_with(msg)
+    msg = "Command 'None' returned non-zero exit status 1"
+    patched_print_error.assert_called_with(msg)
 
     assert not patched_remove_templates.called
     assert not patched_remove_inventory.called
 
 
-def test_execute_does_not_raise_on_exit(
-        patched_driver_destroy, patched_print_info, patched_logger_error,
-        molecule_instance):
+def test_execute_does_not_raise_on_exit(patched_driver_destroy,
+                                        patched_print_info, molecule_instance):
     patched_driver_destroy.side_effect = subprocess.CalledProcessError(1, None,
                                                                        None)
     d = destroy.Destroy({}, {}, molecule_instance)

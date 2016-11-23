@@ -24,15 +24,15 @@ from molecule.command import check
 
 
 def test_execute_raises_when_instance_not_created(
-        patched_check_main, patched_logger_error, molecule_instance):
+        patched_check_main, patched_print_error, molecule_instance):
     c = check.Check({}, {}, molecule_instance)
 
     with pytest.raises(SystemExit):
         c.execute()
 
-    msg = ('ERROR: Instance(s) not created, `check` should be run against '
+    msg = ('Instance(s) not created, `check` should be run against '
            'created instance(s)')
-    patched_logger_error.assert_called_once_with(msg)
+    patched_print_error.assert_called_once_with(msg)
 
 
 def test_execute(mocker, patched_check_main, patched_ansible_playbook,

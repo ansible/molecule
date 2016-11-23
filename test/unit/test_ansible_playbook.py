@@ -171,12 +171,12 @@ def test_execute(mocker, ansible_playbook_instance):
     assert isinstance(result, tuple)
 
 
-def test_execute_exits_with_return_code_and_logs(patched_logger_error,
+def test_execute_exits_with_return_code_and_logs(patched_print_error,
                                                  ansible_playbook_instance):
     ansible_playbook_instance._ansible = sh.false.bake()
     result = ansible_playbook_instance.execute()
 
-    msg = "ERROR: \n\n  RAN: '/usr/bin/false'\n\n  STDOUT:\n\n\n  STDERR:\n"
-    patched_logger_error.assert_called_once_with(msg)
+    msg = "\n\n  RAN: '/usr/bin/false'\n\n  STDOUT:\n\n\n  STDERR:\n"
+    patched_print_error.assert_called_once_with(msg)
 
     assert (1, None) == result

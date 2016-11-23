@@ -24,8 +24,6 @@ import subprocess
 from molecule import util
 from molecule.command import base
 
-LOG = util.get_logger(__name__)
-
 
 class Create(base.Base):
     def execute(self, exit=True):
@@ -46,7 +44,7 @@ class Create(base.Base):
             if self.command_args.get('platform') == 'all':
                 self.molecule.state.change_state('multiple_platforms', True)
         except subprocess.CalledProcessError as e:
-            LOG.error('ERROR: {}'.format(e))
+            util.print_error(str(e))
             if exit:
                 util.sysexit(e.returncode)
             return e.returncode, e.message

@@ -44,7 +44,7 @@ def test_execute(mocker, patched_destroy_main, patched_destroy,
     assert (None, None) == result
 
 
-def test_execute_fail_fast(patched_destroy, patched_logger_error,
+def test_execute_fail_fast(patched_destroy, patched_print_error,
                            molecule_instance):
     patched_destroy.return_value = 1, 'output'
 
@@ -52,7 +52,7 @@ def test_execute_fail_fast(patched_destroy, patched_logger_error,
     with pytest.raises(SystemExit):
         t.execute()
 
-    patched_logger_error.assert_called_once_with('output')
+    patched_print_error.assert_called_once_with('output')
 
 
 def test_execute_always_destroy(
