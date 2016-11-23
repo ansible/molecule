@@ -23,15 +23,19 @@ import pytest
 from molecule.command import converge
 
 
-def test_execute_creates_instances(patched_create, patched_ansible_playbook,
-                                   patched_create_inventory,
-                                   patched_print_info, molecule_instance):
+def test_execute_creates_instances(
+        mocker, patched_create, patched_ansible_playbook,
+        patched_create_inventory, patched_print_info, molecule_instance):
 
     c = converge.Converge({}, {}, molecule_instance)
     result = c.execute()
 
-    msg = 'Starting Ansible Run ...'
-    patched_print_info.assert_called_once_with(msg)
+    expected = [
+        mocker.call("Downloading dependencies with 'galaxy' ..."),
+        mocker.call('Starting Ansible Run ...')
+    ]
+    assert expected == patched_print_info.mock_calls
+
     patched_ansible_playbook.assert_called_once_with(hide_errors=True)
     assert (None, None) == result
     assert molecule_instance.state.converged
