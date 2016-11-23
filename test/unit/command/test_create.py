@@ -34,7 +34,7 @@ def test_execute_creates_instances(
     patched_remove_inventory.assert_called_once()
     patched_create_templates.assert_called_once()
 
-    msg = 'Creating instances ...'
+    msg = 'Creating instances...'
     patched_print_info.assert_called_once_with(msg)
     assert molecule_instance.state.created
     patched_driver_up.assert_called_once_with(no_provision=True)
@@ -54,23 +54,23 @@ def test_execute_creates_instances_with_platform_all(
 
 def test_execute_raises_on_exit(
         patched_driver_up, patched_create_templates, patched_remove_inventory,
-        patched_create_inventory, patched_logger_error,
+        patched_create_inventory, patched_print_error,
         patched_write_instances_state, molecule_instance):
     patched_driver_up.side_effect = subprocess.CalledProcessError(1, None,
                                                                   None)
     c = create.Create({}, {}, molecule_instance)
     with pytest.raises(SystemExit):
         c.execute()
-    msg = "ERROR: Command 'None' returned non-zero exit status 1"
-    patched_logger_error.assert_called_with(msg)
+    msg = "Command 'None' returned non-zero exit status 1"
+    patched_print_error.assert_called_with(msg)
     assert not patched_create_inventory.called
     assert not patched_write_instances_state.called
 
 
 def test_execute_does_not_raise_on_exit(
         patched_driver_up, patched_create_templates, patched_remove_inventory,
-        patched_create_inventory, patched_logger_error,
-        patched_write_instances_state, molecule_instance):
+        patched_create_inventory, patched_write_instances_state,
+        molecule_instance):
     patched_driver_up.side_effect = subprocess.CalledProcessError(1, None,
                                                                   None)
     c = create.Create({}, {}, molecule_instance)

@@ -332,13 +332,18 @@ def patched_ansible_galaxy(patched_run_command):
 
 
 @pytest.fixture
-def patched_logger_error(mocker):
-    return mocker.patch('logging.Logger.error')
+def patched_print_info(mocker):
+    return mocker.patch('molecule.util.print_info')
 
 
 @pytest.fixture
 def patched_print_debug(mocker):
     return mocker.patch('molecule.util.print_debug')
+
+
+@pytest.fixture
+def patched_print_error(mocker):
+    return mocker.patch('molecule.util.print_error')
 
 
 @pytest.fixture()

@@ -25,8 +25,6 @@ import sh
 from molecule import util
 from molecule.verifier import base
 
-LOG = util.get_logger(__name__)
-
 
 class Serverspec(base.Base):
     def __init__(self, molecule):
@@ -52,7 +50,11 @@ class Serverspec(base.Base):
             self._rubocop(self._serverspec_dir, **serverspec_options)
             self._rake(self._rakefile, **serverspec_options)
 
-    def _rake(self, rakefile, debug=False, out=LOG.info, err=LOG.error):
+    def _rake(self,
+              rakefile,
+              debug=False,
+              out=util.callback_info,
+              err=util.callback_error):
         """
         Executes rake against specified rakefile and returns a :func:`sh`
         response object.
@@ -72,15 +74,15 @@ class Serverspec(base.Base):
             'rakefile': rakefile
         }
 
-        msg = 'Executing serverspec tests found in {}/.'.format(
+        msg = 'Executing serverspec tests found in {}/...'.format(
             self._serverspec_dir)
         util.print_info(msg)
 
         try:
             cmd = sh.rake.bake(**kwargs)
         except sh.CommandNotFound:
-            msg = 'ERROR: Verifier missing, gem install rake!'
-            LOG.error(msg)
+            msg = 'Verifier missing, gem install rake.'
+            util.print_error(msg)
             util.sysexit()
         return util.run_command(cmd, debug=self._debug)
 
@@ -88,8 +90,8 @@ class Serverspec(base.Base):
                  serverspec_dir,
                  debug=False,
                  pattern='/**/*.rb',
-                 out=LOG.info,
-                 err=LOG.error):
+                 out=util.callback_info,
+                 err=util.callback_error):
         """
         Executes rubocop against specified directory/pattern and returns a
         :func:`sh` response object.
@@ -106,7 +108,7 @@ class Serverspec(base.Base):
         """
         kwargs = {'_out': out, '_err': err, 'debug': debug}
 
-        msg = 'Executing rubocop on *.rb files found in {}/.'.format(
+        msg = 'Executing rubocop on *.rb files found in {}/...'.format(
             serverspec_dir)
         util.print_info(msg)
         match = serverspec_dir + pattern
@@ -114,8 +116,8 @@ class Serverspec(base.Base):
         try:
             cmd = sh.rubocop.bake(match, **kwargs)
         except sh.CommandNotFound:
-            msg = 'ERROR: Verifier missing, gem install rubocop!'
-            LOG.error(msg)
+            msg = 'Verifier missing, gem install rubocop.'
+            util.print_error(msg)
             util.sysexit()
         return util.run_command(cmd, debug=self._debug)
 

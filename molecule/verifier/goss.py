@@ -24,8 +24,6 @@ from molecule import ansible_playbook
 from molecule import util
 from molecule.verifier import base
 
-LOG = util.get_logger(__name__)
-
 
 class Goss(base.Base):
     def __init__(self, molecule):
@@ -47,7 +45,7 @@ class Goss(base.Base):
             if status is not None:
                 util.sysexit(status)
 
-    def _goss(self, out=LOG.info, err=LOG.error):
+    def _goss(self, out=util.callback_info, err=util.callback_error):
         """
         Executes goss against specified playbook and returns a :func:`sh`
         response object.
@@ -59,7 +57,7 @@ class Goss(base.Base):
         :return: :func:`sh` response object.
         """
 
-        msg = 'Executing goss tests found in {}.'.format(self._playbook)
+        msg = 'Executing goss tests found in {}...'.format(self._playbook)
         util.print_info(msg)
 
         self._set_library_path()

@@ -27,8 +27,6 @@ from molecule.command import base
 from molecule.command import create
 from molecule.command import dependency
 
-LOG = util.get_logger(__name__)
-
 
 class Converge(base.Base):
     def execute(self,
@@ -100,7 +98,7 @@ class Converge(base.Base):
                 yaml.dump(
                     ansible_env, default_flow_style=False, indent=2))
 
-        util.print_info('Starting Ansible Run ...')
+        util.print_info('Starting Ansible Run...')
         status, output = ansible.execute(hide_errors=hide_errors)
         if status is not None:
             if exit:

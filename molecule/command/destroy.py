@@ -24,8 +24,6 @@ import subprocess
 from molecule import util
 from molecule.command import base
 
-LOG = util.get_logger(__name__)
-
 
 class Destroy(base.Base):
     def execute(self, exit=True):
@@ -40,11 +38,11 @@ class Destroy(base.Base):
         :return: Return a tuple of None, otherwise sys.exit on command failure.
         """
         try:
-            util.print_info('Destroying instances ...')
+            util.print_info('Destroying instances...')
             self.molecule.driver.destroy()
             self.molecule.state.reset()
         except subprocess.CalledProcessError as e:
-            LOG.error('ERROR: {}'.format(e))
+            util.print_error(str(e))
             if exit:
                 util.sysexit(e.returncode)
             return e.returncode, e.message

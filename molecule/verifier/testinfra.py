@@ -28,8 +28,6 @@ from molecule import config
 from molecule import util
 from molecule.verifier import base
 
-LOG = util.get_logger(__name__)
-
 
 class Testinfra(base.Base):
     def __init__(self, molecule):
@@ -71,8 +69,8 @@ class Testinfra(base.Base):
                    tests,
                    debug=False,
                    ansible_env={},
-                   out=LOG.info,
-                   err=LOG.error,
+                   out=util.callback_info,
+                   err=util.callback_error,
                    **kwargs):
         """
         Executes testinfra against specified tests and returns a :func:`sh`
@@ -94,14 +92,14 @@ class Testinfra(base.Base):
         kwargs['_out'] = out
         kwargs['_err'] = err
 
-        msg = 'Executing testinfra tests found in {}/.'.format(
+        msg = 'Executing testinfra tests found in {}/...'.format(
             self._testinfra_dir)
         util.print_info(msg)
 
         cmd = sh.testinfra.bake(tests, **kwargs)
         return util.run_command(cmd, debug=self._debug)
 
-    def _flake8(self, tests, out=LOG.info, err=LOG.error):
+    def _flake8(self, tests, out=util.callback_info, err=util.callback_error):
         """
         Executes flake8 against specified tests and returns a :func:`sh`
         response object.
@@ -113,7 +111,7 @@ class Testinfra(base.Base):
          :func:`sh` call.
         :return: :func:`sh` response object.
         """
-        msg = 'Executing flake8 on *.py files found in {}/.'.format(
+        msg = 'Executing flake8 on *.py files found in {}/...'.format(
             self._testinfra_dir)
         util.print_info(msg)
 

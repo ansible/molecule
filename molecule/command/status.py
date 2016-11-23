@@ -25,8 +25,6 @@ import click
 from molecule import util
 from molecule.command import base
 
-LOG = util.get_logger(__name__)
-
 
 class Status(base.Base):
     def execute(self, exit=True):
@@ -48,7 +46,7 @@ class Status(base.Base):
         # TODO(retr0h): Pretty sure this handling is wrong.  We don't always
         # shell out for status.
         except subprocess.CalledProcessError as e:
-            LOG.error(e.message)
+            util.print_error(e.message)
             return e.returncode, e.message
 
         # Display the results in procelain mode.

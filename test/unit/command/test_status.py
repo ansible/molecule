@@ -51,7 +51,7 @@ def test_execute_with_porcelain(capsys, molecule_instance):
 
 
 def test_execute_exits_when_command_fails_and_exit_flag_set(
-        patched_logger_error, mocker, molecule_instance):
+        patched_print_error, mocker, molecule_instance):
     command_args = {'porcelain': True}
     patched_status = mocker.patch(
         'molecule.driver.vagrantdriver.VagrantDriver.status')
@@ -60,5 +60,5 @@ def test_execute_exits_when_command_fails_and_exit_flag_set(
     s = status.Status({}, command_args, molecule_instance)
     result = s.execute()
 
-    patched_logger_error.assert_called_once_with('')
+    patched_print_error.assert_called_once_with('')
     assert (1, '') == result

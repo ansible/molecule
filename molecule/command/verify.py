@@ -29,8 +29,6 @@ from molecule.verifier import serverspec
 from molecule.verifier import testinfra
 from molecule.verifier import trailing
 
-LOG = util.get_logger(__name__)
-
 
 class Verify(base.Base):
     def execute(self, exit=True):
@@ -45,7 +43,7 @@ class Verify(base.Base):
         try:
             v = ansible_lint.AnsibleLint(self.molecule)
             v.execute()
-        except sh.ErrorReturnCode_2:
+        except sh.ErrorReturnCode:
             util.sysexit()
         v = trailing.Trailing(self.molecule)
         v.execute()
@@ -62,7 +60,7 @@ class Verify(base.Base):
 
             v.execute()
         except sh.ErrorReturnCode as e:
-            LOG.error('ERROR: {}'.format(e))
+            util.print_error(str(e))
             if exit:
                 util.sysexit(e.exit_code)
             return e.exit_code, e.stdout

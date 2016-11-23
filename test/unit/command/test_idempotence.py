@@ -28,7 +28,7 @@ def test_execute_with_successful_idempotence(
     i = idempotence.Idempotence({}, {}, molecule_instance)
     result = i.execute()
 
-    msg = 'Idempotence test in progress (can take a few minutes) ...'
+    msg = 'Idempotence test in progress (can take a few minutes)...'
     patched_print_info.assert_called_once_with(msg)
 
     patched_converge.assert_called_with(
@@ -49,7 +49,7 @@ def test_execute_does_not_raise_on_converge_error(
 
 
 def test_execute_does_not_raise_on_idempotence_failure(
-        mocker, patched_converge, patched_logger_error, molecule_instance):
+        mocker, patched_converge, patched_print_error, molecule_instance):
     output = 'check-command-01: ok=2    changed=1    unreachable=0    failed=0'
     patched_converge.return_value = None, output
 
@@ -60,12 +60,12 @@ def test_execute_does_not_raise_on_idempotence_failure(
         mocker.call('Idempotence test failed because of the following tasks:'),
         mocker.call('')
     ]
-    assert patched_logger_error.mock_calls == expected_calls
+    assert patched_print_error.mock_calls == expected_calls
     assert (1, None) == result
 
 
 def test_execute_raises_on_idempotence_failure(
-        mocker, patched_converge, patched_logger_error, molecule_instance):
+        mocker, patched_converge, patched_print_error, molecule_instance):
     output = 'check-command-01: ok=2    changed=1    unreachable=0    failed=0'
     patched_converge.return_value = None, output
 
@@ -77,7 +77,7 @@ def test_execute_raises_on_idempotence_failure(
         mocker.call('Idempotence test failed because of the following tasks:'),
         mocker.call('')
     ]
-    assert patched_logger_error.mock_calls == expected_calls
+    assert patched_print_error.mock_calls == expected_calls
 
 
 def test_non_idempotent_tasks_idempotent(molecule_instance):

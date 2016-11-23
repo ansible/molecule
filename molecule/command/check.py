@@ -24,8 +24,6 @@ from molecule import ansible_playbook
 from molecule import util
 from molecule.command import base
 
-LOG = util.get_logger(__name__)
-
 
 class Check(base.Base):
     def execute(self, exit=True):
@@ -38,8 +36,8 @@ class Check(base.Base):
         """
         if not self.molecule.state.created:
             msg = ('Instance(s) not created, `check` should be run '
-                   'against created instance(s)')
-            LOG.error('ERROR: {}'.format(msg))
+                   'against created instance(s).')
+            util.print_error(msg)
             util.sysexit()
 
         debug = self.args.get('debug')
@@ -50,7 +48,7 @@ class Check(base.Base):
         ansible.add_cli_arg('check', True)
 
         if 'command_check' not in self.molecule.disabled:
-            util.print_info('Performing a "Dry Run" of playbook ...')
+            util.print_info('Performing a "Dry Run" of playbook...')
             return ansible.execute(hide_errors=True)
 
         return (None, None)
