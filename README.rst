@@ -164,7 +164,7 @@ Update the role with needed functionality and tests.  Now test it:
 Documentation
 =============
 
-https://molecule.readthedocs.io/en/latest/
+https://molecule.readthedocs.io/
 
 License
 =======
