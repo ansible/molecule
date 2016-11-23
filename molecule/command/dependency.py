@@ -40,14 +40,21 @@ class Dependency(base.Base):
         debug = self.args.get('debug')
         if self.molecule.state.installed_deps:
             return (None, None)
-        if self.molecule.dependency == 'galaxy':
+        dependency_name = self.molecule.dependency
+        if dependency_name == 'galaxy':
+            msg = "Downloading dependencies with '{}' ...".format(
+                dependency_name)
+            util.print_info(msg)
             dd = self.molecule.config.config.get('dependency')
             if dd.get('requirements_file'):
                 g = ansible_galaxy.AnsibleGalaxy(
                     self.molecule.config.config, debug=debug)
                 g.execute()
                 self.molecule.state.change_state('installed_deps', True)
-        elif self.molecule.dependency == 'shell':
+        elif dependency_name == 'shell':
+            msg = "Downloading dependencies with '{}' ...".format(
+                dependency_name)
+            util.print_info(msg)
             dd = self.molecule.config.config.get('dependency')
             if dd.get('command'):
                 s = shell.Shell(self.molecule.config.config, debug=debug)
