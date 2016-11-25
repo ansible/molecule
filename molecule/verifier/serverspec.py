@@ -76,7 +76,12 @@ class Serverspec(base.Base):
             self._serverspec_dir)
         util.print_info(msg)
 
-        cmd = sh.rake.bake(**kwargs)
+        try:
+            cmd = sh.rake.bake(**kwargs)
+        except sh.CommandNotFound:
+            msg = 'ERROR: Verifier missing, gem install rake!'
+            LOG.error(msg)
+            util.sysexit()
         return util.run_command(cmd, debug=self._debug)
 
     def _rubocop(self,
@@ -106,7 +111,12 @@ class Serverspec(base.Base):
         util.print_info(msg)
         match = serverspec_dir + pattern
 
-        cmd = sh.rubocop.bake(match, **kwargs)
+        try:
+            cmd = sh.rubocop.bake(match, **kwargs)
+        except sh.CommandNotFound:
+            msg = 'ERROR: Verifier missing, gem install rubocop!'
+            LOG.error(msg)
+            util.sysexit()
         return util.run_command(cmd, debug=self._debug)
 
     def _get_tests(self):

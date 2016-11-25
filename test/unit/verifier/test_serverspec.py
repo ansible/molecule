@@ -72,6 +72,19 @@ def test_rake(patched_run_command, serverspec_instance):
     patched_run_command.assert_called_once_with(x, debug=None)
 
 
+def test_rake_logs_missing_binary(mocker, patched_logger_error,
+                                  serverspec_instance):
+    m = mocker.patch('sh.Command.bake')
+    m.side_effect = sh.CommandNotFound
+
+    with pytest.raises(SystemExit) as e:
+        serverspec_instance._rake('/tmp/rakefile')
+    assert 1 == e.value.code
+
+    msg = 'ERROR: Verifier missing, gem install rake!'
+    patched_logger_error.assert_called_once_with(msg)
+
+
 def test_rubocop(patched_run_command, serverspec_instance):
     kwargs = {
         'pattern': '**/**/**/*',
@@ -83,6 +96,19 @@ def test_rubocop(patched_run_command, serverspec_instance):
 
     x = sh.rubocop.bake('spec/**/**/**/*')
     patched_run_command.assert_called_once_with(x, debug=None)
+
+
+def test_rubocop_logs_missing_binary(mocker, patched_logger_error,
+                                     serverspec_instance):
+    m = mocker.patch('sh.Command.bake')
+    m.side_effect = sh.CommandNotFound
+
+    with pytest.raises(SystemExit) as e:
+        serverspec_instance._rubocop('spec/')
+    assert 1 == e.value.code
+
+    msg = 'ERROR: Verifier missing, gem install rubocop!'
+    patched_logger_error.assert_called_once_with(msg)
 
 
 def test_get_tests(serverspec_instance):
