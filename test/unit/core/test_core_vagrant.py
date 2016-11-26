@@ -66,7 +66,7 @@ def test_print_valid_providers(capsys, vagrant_molecule_instance):
     vagrant_molecule_instance.print_valid_providers()
     out, _ = capsys.readouterr()
 
-    assert 'virtualbox  (default)\n' == out
+    assert 'virtualbox  (default)\n' in out
 
 
 def test_print_valid_providers_with_porcelain(capsys,

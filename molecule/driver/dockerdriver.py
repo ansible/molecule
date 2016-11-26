@@ -26,12 +26,10 @@ import sys
 try:
     import docker
 except ImportError:
-    sys.exit('ERROR: Driver missing, install docker-py!')
+    sys.exit('ERROR: Driver missing, install docker-py.')
 
 from molecule import util
 from molecule.driver import basedriver
-
-LOG = util.get_logger(__name__)
 
 
 class DockerDriver(basedriver.BaseDriver):
@@ -135,10 +133,11 @@ class DockerDriver(basedriver.BaseDriver):
                 cap_drop=cap_drop)
 
             if (container['created'] is not True):
-                LOG.warning(
-                    'Creating container {} with base image {}:{} ...'.format(
-                        container['name'], container['image'],
-                        container['image_version']), )
+                msg = ('Creating container {} '
+                       'with base image {}:{}...').format(
+                           container['name'], container['image'],
+                           container['image_version'])
+                util.print_warn(msg)
                 container = self._docker.create_container(
                     image=self.image_tag.format(container['image'],
                                                 container['image_version']),
@@ -155,18 +154,18 @@ class DockerDriver(basedriver.BaseDriver):
                 util.print_success('Container created.')
             else:
                 self._docker.start(container['name'])
-                util.print_success('Starting container {} ...'.format(
-                    container['name']))
+                msg = 'Starting container {}...'.format(container['name'])
+                util.print_info(msg)
 
     def destroy(self):
         for container in self.instances:
             if (container['created']):
-                LOG.warning('Stopping container {} ...'.format(container[
-                    'name']))
+                msg = 'Stopping container {}...'.format(container['name'])
+                util.print_warn(msg)
                 self._docker.stop(container['name'], timeout=0)
                 self._docker.remove_container(container['name'])
-                util.print_success('Removed container {}.'.format(container[
-                    'name']))
+                msg = 'Removed container {}.'.format(container['name'])
+                util.print_success(msg)
                 container['created'] = False
 
     def status(self):
@@ -220,9 +219,10 @@ class DockerDriver(basedriver.BaseDriver):
 
         for container in self.instances:
             if container.get('build_image'):
-                util.print_info(
-                    "Creating Ansible compatible image of {}:{} ...".format(
-                        container['image'], container['image_version']))
+                msg = ('Creating Ansible compatible '
+                       'image of {}:{} ...').format(container['image'],
+                                                    container['image_version'])
+                util.print_info(msg)
 
             if 'registry' in container:
                 container['registry'] += '/'
@@ -267,27 +267,30 @@ class DockerDriver(basedriver.BaseDriver):
             errors = False
 
             if tag_string not in available_images or 'dockerfile' in container:
-                util.print_info('Building ansible compatible image ...')
+                util.print_info('Building ansible compatible image...')
                 previous_line = ''
                 for line in self._docker.build(fileobj=f, tag=tag_string):
                     for line_split in line.split('\n'):
                         if len(line_split) > 0:
                             line = json.loads(line_split)
                             if 'stream' in line:
-                                LOG.warning('\t{}'.format(line['stream']))
+                                msg = '\t{}'.format(line['stream'])
+                                util.print_warn(msg)
                             if 'errorDetail' in line:
-                                LOG.warning('\t{}'.format(line['errorDetail'][
-                                    'message']))
+                                ed = line['errorDetail']['message']
+                                msg = '\t{}'.format(ed)
+                                util.print_warn(msg)
                                 errors = True
                             if 'status' in line:
                                 if previous_line not in line['status']:
-                                    LOG.warning('\t{} ...'.format(line[
-                                        'status']))
+                                    msg = '\t{} ...'.format(line['status'])
+                                    util.print_warn(msg)
                                 previous_line = line['status']
 
                 if errors:
-                    LOG.error('Build failed for {}'.format(tag_string))
+                    msg = 'Build failed for {}.'.format(tag_string)
+                    util.print_error(msg)
                     return
                 else:
-                    util.print_success('Finished building {}'.format(
+                    util.print_success('Finished building {}.'.format(
                         tag_string))

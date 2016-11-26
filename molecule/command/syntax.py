@@ -25,8 +25,6 @@ from molecule import util
 from molecule.command import base
 from molecule.command import dependency
 
-LOG = util.get_logger(__name__)
-
 
 class Syntax(base.Base):
     def execute(self, exit=True):
@@ -46,7 +44,7 @@ class Syntax(base.Base):
             self.molecule.config.config['ansible'], {}, debug=debug)
         ansible.add_cli_arg('syntax-check', True)
         ansible.add_cli_arg('inventory_file', 'localhost,')
-        util.print_info('Checking playbook\'s syntax ...')
+        util.print_info("Checking playbook's syntax...")
 
         return ansible.execute(hide_errors=True)
 

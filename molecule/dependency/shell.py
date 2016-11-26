@@ -24,15 +24,13 @@ import sh
 
 from molecule import util
 
-LOG = util.get_logger(__name__)
-
 
 class Shell(object):
     def __init__(self,
                  config,
                  _env=None,
-                 _out=LOG.info,
-                 _err=LOG.error,
+                 _out=util.callback_info,
+                 _err=util.callback_error,
                  debug=False):
         """
         Sets up requirements via a command and returns None.
@@ -79,5 +77,5 @@ class Shell(object):
         try:
             return util.run_command(self._command, debug=self._debug).stdout
         except sh.ErrorReturnCode as e:
-            LOG.error('ERROR: {}'.format(e))
+            util.print_error(str(e))
             util.sysexit(e.exit_code)

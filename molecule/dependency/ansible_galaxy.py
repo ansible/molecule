@@ -25,15 +25,13 @@ import sh
 from molecule import config
 from molecule import util
 
-LOG = util.get_logger(__name__)
-
 
 class AnsibleGalaxy(object):
     def __init__(self,
                  config,
                  _env=None,
-                 _out=LOG.info,
-                 _err=LOG.error,
+                 _out=util.callback_info,
+                 _err=util.callback_error,
                  debug=False):
         """
         Sets up requirements for ansible-galaxy and returns None.
@@ -106,5 +104,5 @@ class AnsibleGalaxy(object):
         try:
             return util.run_command(self._galaxy, debug=self._debug).stdout
         except sh.ErrorReturnCode as e:
-            LOG.error('ERROR: {}'.format(e))
+            util.print_error(str(e))
             util.sysexit(e.exit_code)

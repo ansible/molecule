@@ -26,8 +26,6 @@ from molecule import util
 from molecule.command import base
 from molecule.command import converge
 
-LOG = util.get_logger(__name__)
-
 
 class Idempotence(base.Base):
     def execute(self, exit=True):
@@ -40,8 +38,8 @@ class Idempotence(base.Base):
         :return: Return a tuple of (`exit status`, `command output`), otherwise
          sys.exit on command failure.
         """
-        util.print_info(
-            'Idempotence test in progress (can take a few minutes) ...')
+        msg = 'Idempotence test in progress (can take a few minutes)...'
+        util.print_info(msg)
 
         c = converge.Converge(self.args, self.command_args, self.molecule)
         status, output = c.execute(
@@ -56,9 +54,9 @@ class Idempotence(base.Base):
             util.print_success('Idempotence test passed.')
             return None, None
         else:
-            LOG.error(
-                'Idempotence test failed because of the following tasks:')
-            LOG.error('\n'.join(self._non_idempotent_tasks(output)))
+            msg = 'Idempotence test failed because of the following tasks:'
+            util.print_error(msg)
+            util.print_error('\n'.join(self._non_idempotent_tasks(output)))
             if exit:
                 util.sysexit()
 

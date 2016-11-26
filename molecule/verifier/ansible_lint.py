@@ -25,8 +25,6 @@ import sh
 from molecule import util
 from molecule.verifier import base
 
-LOG = util.get_logger(__name__)
-
 
 class AnsibleLint(base.Base):
     """
@@ -55,10 +53,13 @@ class AnsibleLint(base.Base):
         }
 
         if 'ansible_lint' not in self._molecule.disabled:
-            msg = 'Executing ansible-lint.'
+            msg = 'Executing ansible-lint...'
             util.print_info(msg)
             args = [self._playbook]
             [args.extend(["--exclude", path]) for path in self._ignore_paths]
             cmd = sh.ansible_lint.bake(
-                *args, _env=env, _out=LOG.info, _err=LOG.error)
+                *args,
+                _env=env,
+                _out=util.callback_info,
+                _err=util.callback_error)
             util.run_command(cmd, debug=self._debug)

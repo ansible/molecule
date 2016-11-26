@@ -25,8 +25,6 @@ from molecule.command import base
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import shell
 
-LOG = util.get_logger(__name__)
-
 
 class Dependency(base.Base):
     def execute(self, exit=True):
@@ -42,21 +40,21 @@ class Dependency(base.Base):
             return (None, None)
         dependency_name = self.molecule.dependency
         if dependency_name == 'galaxy':
-            msg = "Downloading dependencies with '{}' ...".format(
-                dependency_name)
-            util.print_info(msg)
             dd = self.molecule.config.config.get('dependency')
             if dd.get('requirements_file'):
+                msg = "Downloading dependencies with '{}'...".format(
+                    dependency_name)
+                util.print_info(msg)
                 g = ansible_galaxy.AnsibleGalaxy(
                     self.molecule.config.config, debug=debug)
                 g.execute()
                 self.molecule.state.change_state('installed_deps', True)
         elif dependency_name == 'shell':
-            msg = "Downloading dependencies with '{}' ...".format(
-                dependency_name)
-            util.print_info(msg)
             dd = self.molecule.config.config.get('dependency')
             if dd.get('command'):
+                msg = "Downloading dependencies with '{}'...".format(
+                    dependency_name)
+                util.print_info(msg)
                 s = shell.Shell(self.molecule.config.config, debug=debug)
                 s.execute()
                 self.molecule.state.change_state('installed_deps', True)

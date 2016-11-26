@@ -23,7 +23,6 @@ from __future__ import print_function
 import cookiecutter
 import cookiecutter.main
 
-import logging
 import os
 import sys
 
@@ -33,59 +32,20 @@ import jinja2
 colorama.init(autoreset=True)
 
 
-class LogFilter(object):
-    def __init__(self, level):
-        self.__level = level
-
-    def filter(self, logRecord):  # pragma: no cover
-        return logRecord.levelno <= self.__level
-
-
-class TrailingNewlineFormatter(logging.Formatter):
-    def format(self, record):  # pragma: no cover
-        if record.msg:
-            record.msg = record.msg.rstrip()
-        return super(TrailingNewlineFormatter, self).format(record)
-
-
-def get_logger(name=None):
-    """
-    Build a logger with the given name and returns the logger.
-
-    :param name: The name for the logger. This is usually the module
-                 name, ``__name__``.
-    :return: logger object
-    """
-
-    logger = logging.getLogger(name)
-    logger.setLevel(logging.DEBUG)
-
-    logger.addHandler(_get_info_logger())
-    logger.addHandler(_get_warn_logger())
-    logger.addHandler(_get_error_logger())
-    logger.addHandler(_get_debug_logger())
-    logger.propagate = False
-
-    return logger
-
-
 def print_success(msg):
-    print('{}{}'.format(colorama.Fore.GREEN, msg.rstrip()))
+    template = '{}{{}}'.format(colorama.Fore.GREEN)
+    print_msg(template, msg)
 
 
-def print_info(msg):
-    print('--> {}{}'.format(colorama.Fore.CYAN, msg.rstrip()))
+def print_info(msg, pretty=True):
+    if pretty:
+        template = '--> {}{{}}'.format(colorama.Fore.CYAN)
+        print_msg(template, msg)
+    else:
+        print_msg('{}', msg)
 
 
 def print_debug(title, data):
-    """
-    Prints colorized output for use when debugging portions of molecule, and
-    returns None.
-
-    :param title: A string containing the title of debug output.
-    :param data: A string containing the data of debug output.
-    :return: None
-    """
     print(''.join([
         colorama.Back.WHITE, colorama.Style.BRIGHT, colorama.Fore.BLACK,
         'DEBUG: ' + title, colorama.Fore.RESET, colorama.Back.RESET,
@@ -95,6 +55,35 @@ def print_debug(title, data):
         colorama.Fore.BLACK, colorama.Style.BRIGHT, data,
         colorama.Style.RESET_ALL, colorama.Fore.RESET
     ]))
+
+
+def print_warn(msg):
+    template = '{}{{}}'.format(colorama.Fore.YELLOW)
+    print_msg(template, msg)
+
+
+def print_error(msg, pretty=True):
+    color = colorama.Fore.RED
+    if pretty:
+        template = '{}ERROR: {{}}'.format(color)
+        print_msg(template, msg)
+    else:
+        template = '{}{{}}'.format(color)
+        print_msg(template, msg)
+
+
+def print_msg(template, msg):
+    print(template.format(msg.rstrip()))
+
+
+def callback_info(msg):
+    """ A `print_info` wrapper to stream `sh` modules stdout. """
+    print_info(msg, pretty=False)
+
+
+def callback_error(msg):
+    """ A `print_error` wrapper to stream `sh` modules stderr. """
+    print_error(msg, pretty=False)
 
 
 def write_template(src, dest, kwargs={}, _module='molecule', _dir='template'):
@@ -115,11 +104,11 @@ def write_template(src, dest, kwargs={}, _module='molecule', _dir='template'):
     src = os.path.expanduser(src)
     path = os.path.dirname(src)
     filename = os.path.basename(src)
-    log = get_logger(__name__)
 
     # template file doesn't exist
     if path and not os.path.isfile(src):
-        log.error('Unable to locate template file: {}'.format(src))
+        msg = 'Unable to locate template file: {}'.format(src)
+        print_error(msg)
         sysexit()
 
     # look for template in filesystem, then molecule package
@@ -235,41 +224,3 @@ def run_command(cmd, debug=False):
     if debug:
         print_debug('COMMAND', str(cmd))
     return cmd()
-
-
-def _get_info_logger():
-    info = logging.StreamHandler(sys.stdout)
-    info.setLevel(logging.INFO)
-    info.addFilter(LogFilter(logging.INFO))
-    info.setFormatter(TrailingNewlineFormatter('%(message)s'))
-
-    return info
-
-
-def _get_warn_logger():
-    warn = logging.StreamHandler(sys.stdout)
-    warn.setLevel(logging.WARN)
-    warn.addFilter(LogFilter(logging.WARN))
-    warn.setFormatter(
-        TrailingNewlineFormatter('{}%(message)s'.format(colorama.Fore.YELLOW)))
-
-    return warn
-
-
-def _get_debug_logger():
-    debug = logging.StreamHandler(sys.stdout)
-    debug.setLevel(logging.DEBUG)
-    debug.addFilter(LogFilter(logging.DEBUG))
-    debug.setFormatter(
-        TrailingNewlineFormatter('{}%(message)s'.format(colorama.Fore.BLUE)))
-
-    return debug
-
-
-def _get_error_logger():
-    error = logging.StreamHandler(sys.stderr)
-    error.setLevel(logging.ERROR)
-    error.setFormatter(
-        TrailingNewlineFormatter('{}%(message)s'.format(colorama.Fore.RED)))
-
-    return error

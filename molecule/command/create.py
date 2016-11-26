@@ -24,8 +24,6 @@ import subprocess
 from molecule import util
 from molecule.command import base
 
-LOG = util.get_logger(__name__)
-
 
 class Create(base.Base):
     def execute(self, exit=True):
@@ -40,13 +38,13 @@ class Create(base.Base):
         self.molecule.remove_inventory_file()
         self.molecule.create_templates()
         try:
-            util.print_info('Creating instances ...')
+            util.print_info('Creating instances...')
             self.molecule.driver.up(no_provision=True)
             self.molecule.state.change_state('created', True)
             if self.command_args.get('platform') == 'all':
                 self.molecule.state.change_state('multiple_platforms', True)
         except subprocess.CalledProcessError as e:
-            LOG.error('ERROR: {}'.format(e))
+            util.print_error(str(e))
             if exit:
                 util.sysexit(e.returncode)
             return e.returncode, e.message

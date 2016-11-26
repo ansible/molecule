@@ -40,11 +40,11 @@ def test_main(mocker, molecule_instance):
     patched_molecule_main.assert_called_once()
 
 
-def test_main_exits_when_missing_config(patched_logger_error,
+def test_main_exits_when_missing_config(patched_print_error,
                                         molecule_instance):
     foo = Foo({}, {}, molecule_instance)
     with pytest.raises(SystemExit):
         foo.main()
 
     msg = 'Unable to find molecule.yml. Exiting.'
-    patched_logger_error.assert_called_once_with(msg)
+    patched_print_error.assert_called_once_with(msg)

@@ -24,8 +24,6 @@ import re
 from molecule import util
 from molecule.verifier import base
 
-LOG = util.get_logger(__name__)
-
 
 class Trailing(base.Base):
     def __init__(self, molecule):
@@ -81,16 +79,15 @@ class Trailing(base.Base):
             whitespace = self._trailing_whitespace(data)
 
             if newline:
-                msg = 'Trailing newline found at the end of {}'
-                LOG.error(msg.format(filename))
+                msg = 'Trailing newline found at the end of {}.'.format(
+                    filename)
+                util.print_error(msg)
                 found_error = True
 
             if len(whitespace) > 0:
                 msg = 'Trailing whitespace found in {} on lines: {}'
                 lines = ', '.join(str(x) for x in whitespace)
-                LOG.error(msg.format(
-                    filename,
-                    lines, ))
+                util.print_error(msg.format(filename, lines))
                 found_error = True
 
         if exit and found_error:

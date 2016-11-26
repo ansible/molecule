@@ -20,7 +20,6 @@
 
 import distutils.spawn
 import distutils.version
-import logging
 import os
 import random
 import shutil
@@ -28,8 +27,6 @@ import string
 
 import ansible
 import pytest
-
-logging.getLogger("sh").setLevel(logging.WARNING)
 
 pytest_plugins = ['helpers_namespace']
 

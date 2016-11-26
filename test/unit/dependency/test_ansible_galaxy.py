@@ -74,7 +74,7 @@ def test_execute_overrides(patched_ansible_galaxy, ansible_galaxy_instance):
     assert expected == sorted(parts[2:])
 
 
-def test_execute_exits_with_return_code_and_logs(patched_logger_error,
+def test_execute_exits_with_return_code_and_logs(patched_print_error,
                                                  ansible_galaxy_instance):
     ansible_galaxy_instance._galaxy = sh.false.bake()
     with pytest.raises(SystemExit) as e:
@@ -82,5 +82,5 @@ def test_execute_exits_with_return_code_and_logs(patched_logger_error,
 
     assert 1 == e.value.code
 
-    msg = "ERROR: \n\n  RAN: '/usr/bin/false'\n\n  STDOUT:\n\n\n  STDERR:\n"
-    patched_logger_error.assert_called_once_with(msg)
+    msg = "\n\n  RAN: '/usr/bin/false'\n\n  STDOUT:\n\n\n  STDERR:\n"
+    patched_print_error.assert_called_once_with(msg)

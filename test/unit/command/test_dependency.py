@@ -28,7 +28,7 @@ def test_execute(patched_ansible_galaxy, patched_print_info,
     d = dependency.Dependency({}, {}, molecule_instance)
     d.execute()
 
-    msg = "Downloading dependencies with 'galaxy' ..."
+    msg = "Downloading dependencies with 'galaxy'..."
     patched_print_info.assert_called_once_with(msg)
 
     patched_ansible_galaxy.assert_called_once()
@@ -53,7 +53,7 @@ def test_execute_shell(patched_shell, patched_print_info, molecule_instance):
     d = dependency.Dependency({}, {}, molecule_instance)
     d.execute()
 
-    msg = "Downloading dependencies with 'shell' ..."
+    msg = "Downloading dependencies with 'shell'..."
     patched_print_info.assert_called_once_with(msg)
 
     patched_shell.assert_called_once()

@@ -30,11 +30,8 @@ def test_execute_creates_instances(
     c = converge.Converge({}, {}, molecule_instance)
     result = c.execute()
 
-    expected = [
-        mocker.call("Downloading dependencies with 'galaxy' ..."),
-        mocker.call('Starting Ansible Run ...')
-    ]
-    assert expected == patched_print_info.mock_calls
+    msg = 'Starting Ansible Run...'
+    patched_print_info.assert_called_with(msg)
 
     patched_ansible_playbook.assert_called_once_with(hide_errors=True)
     assert (None, None) == result

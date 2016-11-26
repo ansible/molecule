@@ -23,8 +23,6 @@ import sh
 
 from molecule import util
 
-LOG = util.get_logger(__name__)
-
 
 class AnsiblePlaybook(object):
     def __init__(self,
@@ -32,8 +30,8 @@ class AnsiblePlaybook(object):
                  connection_params,
                  raw_ansible_args=None,
                  _env=None,
-                 _out=LOG.info,
-                 _err=LOG.error,
+                 _out=util.callback_info,
+                 _err=util.callback_error,
                  debug=False):
         """
         Sets up requirements for ansible-playbook and returns None.
@@ -182,8 +180,8 @@ class AnsiblePlaybook(object):
         try:
             return None, util.run_command(
                 self._ansible, debug=self._debug).stdout
-        except (sh.ErrorReturnCode, sh.ErrorReturnCode_2) as e:
+        except sh.ErrorReturnCode as e:
             if not hide_errors:
-                LOG.error('ERROR: {}'.format(e))
+                util.print_error(str(e))
 
             return e.exit_code, None
