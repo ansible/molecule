@@ -58,9 +58,9 @@ Provider
 --------
 
 * `Libvirt`_
+* `Parallels`_
 * `VirtualBox`_ (default)
 * `VMware Fusion`_
-* `Parallels`_
 
 .. _`Ansible`: https://docs.ansible.com
 .. _`Docker`: https://www.docker.com
