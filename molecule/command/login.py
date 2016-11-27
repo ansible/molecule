@@ -90,7 +90,7 @@ class Login(base.Base):
 
         except subprocess.CalledProcessError:
             msg = ("Unknown host '{}'.\n\n"
-                   "Available hosts:\n{}").format(
+                   'Available hosts:\n{}').format(
                        self.command_args.get('host'), '\n'.join(hosts))
             util.print_error(msg)
             util.sysexit()

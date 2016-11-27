@@ -108,10 +108,10 @@ class OpenstackDriver(basedriver.BaseDriver):
             for instance in active_instances
         }
 
-        util.print_warn("Creating openstack instances...")
+        util.print_warn('Creating openstack instances...')
         for instance in self.instances:
             if instance['name'] not in active_instance_names:
-                msg = "\tBringing up {}".format(instance['name'])
+                msg = '\tBringing up {}...'.format(instance['name'])
                 util.print_info(msg)
                 server = self._openstack.create_server(
                     name=instance['name'],
@@ -131,11 +131,11 @@ class OpenstackDriver(basedriver.BaseDriver):
                         timeout=6,
                         sshkey_filename=self._get_keyfile(
                         )) or num_retries == 5:
-                    util.print_info("\t Waiting for ssh availability...")
+                    util.print_info('\t Waiting for ssh availability...')
                     num_retries += 1
 
     def destroy(self):
-        util.print_info("Deleting openstack instances...")
+        util.print_info('Deleting openstack instances...')
 
         active_instances = self._openstack.list_servers()
         active_instance_names = {
@@ -144,11 +144,11 @@ class OpenstackDriver(basedriver.BaseDriver):
         }
 
         for instance in self.instances:
-            util.print_warn("\tRemoving {}...".format(instance['name']))
+            util.print_warn('\tRemoving {}...'.format(instance['name']))
             if instance['name'] in active_instance_names:
                 if not self._openstack.delete_server(
                         active_instance_names[instance['name']], wait=True):
-                    msg = "Unable to remove {}.".format(instance['name'])
+                    msg = 'Unable to remove {}.'.format(instance['name'])
                     util.print_error(msg)
                 else:
                     util.print_success('\tRemoved {}.'.format(instance[
@@ -243,7 +243,7 @@ class OpenstackDriver(basedriver.BaseDriver):
         kpn = self._get_temp_keyname()
 
         if not self._openstack.search_keypairs(kpn):
-            msg = "\tCreating openstack keypair {}...".format(kpn)
+            msg = '\tCreating openstack keypair {}...'.format(kpn)
             util.print_info(msg)
             pub_key_file = self._get_keyfile() + '.pub'
             self._openstack.create_keypair(kpn,
@@ -259,7 +259,7 @@ class OpenstackDriver(basedriver.BaseDriver):
         publoc = kl + '/' + kn + '.pub'
 
         if not os.path.exists(pvtloc):
-            util.print_info("\tCreating local ssh key {}...".format(pvtloc))
+            util.print_info('\tCreating local ssh key {}...'.format(pvtloc))
             k = paramiko.RSAKey.generate(2048)
             k.write_private_key_file(pvtloc)
             # write the public key too
@@ -300,10 +300,10 @@ class OpenstackDriver(basedriver.BaseDriver):
         if ('keypair' not in self.molecule.config.config['openstack']):
             kpn = self._get_temp_keyname()
             if self._openstack.search_keypairs(kpn):
-                msg = "\tRemoving openstack keypair {}...".format(kpn)
+                msg = '\tRemoving openstack keypair {}...'.format(kpn)
                 util.print_warn(msg)
                 if not self._openstack.delete_keypair(kpn):
-                    msg = "Unable to remove openstack keypair {}.".format(kpn)
+                    msg = 'Unable to remove openstack keypair {}.'.format(kpn)
                     util.print_error(msg)
                 else:
                     msg = '\tRemoved openstack keypair {}.'.format(kpn)
@@ -317,10 +317,10 @@ class OpenstackDriver(basedriver.BaseDriver):
             pvtloc = kl + '/' + kn
             publoc = kl + '/' + kn + '.pub'
             if os.path.exists(pvtloc):
-                util.print_warn("\tRemoving {}...".format(pvtloc))
+                util.print_warn('\tRemoving {}...'.format(pvtloc))
                 os.remove(pvtloc)
             if os.path.exists(publoc):
-                util.print_warn("\tRemoving {}...".format(publoc))
+                util.print_warn('\tRemoving {}...'.format(publoc))
                 os.remove(publoc)
 
     def _host_template(self):

@@ -48,7 +48,7 @@ class Check(base.Base):
         ansible.add_cli_arg('check', True)
 
         if 'command_check' not in self.molecule.disabled:
-            util.print_info('Performing a "Dry Run" of playbook...')
+            util.print_info("Performing a 'Dry Run' of playbook...")
             return ansible.execute(hide_errors=True)
 
         return (None, None)
