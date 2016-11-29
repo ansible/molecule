@@ -228,6 +228,22 @@ to execute the command provided.
     name: shell
     command: script --flag1 subcommand --flag2
 
+`Gilt`_ can be used to manage dependencies, by creating a ``gilt.yml`` in the
+root of the role, and configuring molecule as follows.
+
+.. code-block:: yaml
+
+  ---
+  dependency:
+    name: shell
+    command: gilt overlay
+
+.. note::
+
+  `Gilt`_ is not yet a first class citizen of molecule.
+
+.. _`Gilt`: http://gilt.readthedocs.io
+
 Playbook
 ========
 
