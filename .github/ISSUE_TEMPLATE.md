@@ -16,7 +16,7 @@ molecule --version
 # Desired Behaviour
 
 Please give some details of the feature being requested or what
-should happen if providing a bug report
+should happen if providing a bug report.
 
 # Actual Behaviour (Bug report only)
 
