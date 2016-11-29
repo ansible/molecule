@@ -229,7 +229,7 @@ to execute the command provided.
     command: script --flag1 subcommand --flag2
 
 `Gilt`_ can be used to manage dependencies, by creating a ``gilt.yml`` in the
-root of the role, and configuring molecule as follows.
+root of the role, and configuring molecule as follows:
 
 .. code-block:: yaml
 
