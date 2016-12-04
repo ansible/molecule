@@ -25,7 +25,7 @@ import sys
 
 try:
     import vagrant
-except ImportError:
+except ImportError:  # pragma: no cover
     sys.exit('ERROR: Driver missing, install python-vagrant.')
 
 from molecule import util

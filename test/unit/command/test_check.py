@@ -46,7 +46,7 @@ def test_execute(mocker, patched_check_main, patched_ansible_playbook,
     c = check.Check({}, {}, molecule_instance)
     result = c.execute()
 
-    msg = 'Performing a "Dry Run" of playbook...'
+    msg = "Performing a 'Dry Run' of playbook..."
     patched_print_info.assert_called_once_with(msg)
     patched_ansible_playbook.assert_called_once_with(hide_errors=True)
     assert 'returned' == result

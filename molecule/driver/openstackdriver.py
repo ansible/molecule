@@ -28,7 +28,7 @@ import time
 import paramiko
 try:
     import shade
-except ImportError:
+except ImportError:  # pragma: no cover
     sys.exit('ERROR: Driver missing, install shade.')
 
 from molecule import util
