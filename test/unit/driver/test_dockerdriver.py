@@ -87,6 +87,12 @@ def test_ansible_connection_params(docker_instance):
     assert 'docker' == d['connection']
 
 
+def test_testinfra_args(docker_instance):
+    d = docker_instance.testinfra_args
+
+    assert 'docker' == d['connection']
+
+
 def test_serverspec_args(docker_instance):
     assert {} == docker_instance.serverspec_args
 
