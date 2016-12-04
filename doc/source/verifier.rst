@@ -7,8 +7,8 @@ Verifiers
 Molecule is `opinionated`.  By being opinionated molecue tries to enforce a
 common way in which roles are maintained.
 
-The verifier section, specifies the verifier to use, with options to override
-the defaults.  Currently `testinfra` is the only verifier which implements this
+The `verifier` section, specifies the verifier to use, with options to override
+the defaults.  Currently Testinfra is the only verifier which implements this
 override functionality.
 
 Testinfra
@@ -24,7 +24,7 @@ Usage
 -----
 
 Any flag set in this section will override the defaults. See more details on
-using `testinfra's command line arguments`_.
+using `Testinfra's command line arguments`_.
 
 .. code-block:: yaml
 
@@ -36,7 +36,7 @@ using `testinfra's command line arguments`_.
 Note: Testinfra is based on pytest, so additional `pytest arguments`_ can be
 passed through it.
 
-.. _`testinfra's command line arguments`: https://testinfra.readthedocs.io/en/latest/invocation.html
+.. _`Testinfra's command line arguments`: https://testinfra.readthedocs.io/en/latest/invocation.html
 .. _`PyTest arguments`: http://pytest.org/latest/usage.html#usage
 
 Project Structure
@@ -81,7 +81,7 @@ Project Structure
         ├── spec_helper.rb
         └── default_spec.rb
 
-When using serverspec, it's possible to target tests at the following levels:
+When using Serverspec, it's possible to target tests at the following levels:
 all instances, specific groups, specific instances.
 
 All files matching the pattern ``spec/*_spec.rb`` will be run against every
@@ -93,8 +93,8 @@ specific instance with the given hostname.
 Tests located in ``spec/groups/<groupname>/*_spec.rb`` will be run against the
 instances in the given group.
 
-For convenience a Gemfile is provided in the root of molecule, which includes
-the necessary serverspec dependencies.  See `.travis.yml` for usage.
+For convenience a Gemfile is provided in the root of Molecule, which includes
+the necessary Serverspec dependencies.  See `.travis.yml` for usage.
 
 .. _`Rake`: https://github.com/ruby/rake
 .. _`Rubocop`: https://github.com/bbatsov/rubocop
@@ -108,7 +108,7 @@ configuration.
 
 Goss is a bit different than the other verifiers.  The test files must exist
 on the system executing ``goss validate``.  Molecule executes a test playbook
-which is responsible for installing goss, and distributing tests to the
+which is responsible for installing Goss, and distributing tests to the
 appropriate ansible hosts/groups.
 
 Example files are created with ``molecule init --verifier goss``.

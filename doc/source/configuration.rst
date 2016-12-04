@@ -4,23 +4,23 @@ Configuration
 
 Molecule attempts to pick sane default configuration options (set internally),
 however it's also possible to `override configuration`_, for example in
-`~/.config/molecule/config.yml`.
+``~/.config/molecule/config.yml``.
 
 Config file
 ===========
 
-This file (molecule.yml), located in the role directory, contains all the
+This file (``molecule.yml``), located in the role directory, contains all the
 molecule-specific information for the role in the directory in which it's
-located. It allows you to configure how molecule, ansible, verifiers, and
+located. It allows you to configure how Molecule, Ansible, verifiers, and
 drivers will behave. This information is contained in top level YAML sections
 described below.
 
 Molecule Section
 ----------------
 
-The molecule section allows you to override molecule defaults.  This is is the
-most specific setting for molecule and will override the contents of all other
-config files. This is where you give molecule role-specific behavior.
+The `molecule` section allows you to override Molecule defaults.  This is is
+the most specific setting for Molecule and will override the contents of all
+other config files. This is where you give Molecule role-specific behavior.
 
 .. code-block:: yaml
 
@@ -32,14 +32,14 @@ config files. This is where you give molecule role-specific behavior.
 Ansible Section
 ---------------
 
-In the ansible section, you can configure flags exactly as they're passed to
-ansible-playbook. Please note, however, that commands that normally contain a
-hyphen (-) will need to be replaced with an underscore (\_) to remain
+In the `ansible` section, you can configure flags exactly as they're passed
+to ``ansible-playbook``. Please note, however, that commands that normally
+contain a hyphen (-) will need to be replaced with an underscore (\_) to remain
 compatible with YAML.
 
-Values set to *False* will **NOT** be passed to `ansible-playbook`, but rather
-will be skipped entirely. An example ansible section of `molecule.yml` may look
-something like this:
+Values set to *False* will **NOT** be passed to ``ansible-playbook``, but
+rather will be skipped entirely. An example Ansible section of ``molecule.yml``
+may look something like this:
 
 .. code-block:: yaml
 
@@ -50,13 +50,13 @@ something like this:
     vault_password_file: ~/.vault
 
 As you can see, the names of these values correspond to what the underlying
-`ansible-playbook` accepts. As such, as the functionality of Ansible grows,
+``ansible-playbook`` accepts. As such, as the functionality of Ansible grows,
 support for new CLI options will be supported simply by adding its name: value
-combination to the ansible section of your configuration.
+combination to the `ansible` section of your configuration.
 
-The ansible section also supports a few values that aren't passed to
-ansible-playbook in this way, but rather are passed as environment variables.
-There are only a few currently in use.
+The `ansible` section also supports a few values that aren't passed to
+``ansible-playbook`` in this way, but rather are passed as environment
+variables.  There are only a few currently in use.
 
 .. code-block:: yaml
 
@@ -73,15 +73,15 @@ There are only a few currently in use.
       ANSIBLE_ACTION_PLUGINS: ../plugins
 
 The `raw_env_vars` section allows you to pass arbitrary environment variables
-to ansible-playbook. This can be useful, for example, if you want to do a role
-level override of a value normally found in ansible.cfg.
+to ``ansible-playbook``. This can be useful, for example, if you want to do a
+role level override of a value normally found in ``ansible.cfg``.
 
 Host/Group Vars
 ^^^^^^^^^^^^^^^
 
 Some playbooks require hosts/groups to have certain variables set. If you are
 in this situation - simply add the `host_vars` and/or `group_vars` to the
-ansible section. For example,
+`ansible` section. For example,
 
 .. code-block:: yaml
 
@@ -98,22 +98,22 @@ ansible section. For example,
       foo1-01:
         - set_this_value: True
 
-This example will set the variables for the ansible groups `foo1` and `foo2`.
+This example will set the variables for the Ansible groups `foo1` and `foo2`.
 For hosts `foo1-01` the value `set_this_value` will be set to True.
 
 Native Inventory
 ^^^^^^^^^^^^^^^^
 
 An alternative to the above `Host/Group Vars` is the creation of `group_vars`
-and/or `host_vars` directories in the project root.  This allows ansible to
+and/or `host_vars` directories in the project root.  This allows Ansible to
 converge utilzing its built in group/host vars resolution.
 
 Vagrant Section
 ---------------
 
-The other part of the configuration is the vagrant section. This is where you
+The other part of the configuration is the `vagrant` section. This is where you
 will define what instances will be created, and how they will be configured.
-Under the hood, molecule creates a Vagrantfile from a template and populates it
+Under the hood, Molecule creates a Vagrantfile from a template and populates it
 with the data you specify in this config.
 
 Because it's impossible to support every Vagrant option, there are two places
@@ -138,14 +138,14 @@ See Vagrant :ref:`vagrant_driver_usage`
 Docker Section
 --------------
 
-Molecule supports docker too. If you want to test roles on containers, remove
+Molecule supports Docker too. If you want to test roles on containers, remove
 the vagrant option or initialize your role with the ``--docker`` flag. Docker,
 of course must be installed onto your system. The daemon does not need to be
 running on your machine. Molecule will simply pull the environment variables
-from your docker client. Also, the Ansible ``connection`` must be set to docker
-with user root.
+from your docker client. Also, the Ansible `connection` must be set to
+`docker` with user `root`.
 
-In order to use the docker driver, the image used must have at least one of the
+In order to use the Docker driver, the image used must have at least one of the
 following:
 
 - apt-get/yum
@@ -162,9 +162,9 @@ See OpenStack :ref:`openstack_driver_usage`
 Driver Section
 --------------
 
-Multiple drivers can be specified in `molecule.yml`.  However, once instance(s)
-are created, all subcommands must be run against the same driver, for the life
-of the instance(s).
+Multiple drivers can be specified in ``molecule.yml``.  However, once
+instance(s) are created, all subcommands must be run against the same driver,
+for the life of the instance(s).
 
 Drivers are found in the following order:
 
@@ -183,7 +183,7 @@ Usage
     name: docker
 
 .. note:: It is recommend to use the following syntax.  This matches
-          test-kitchen, and will be further enhanced in molecule 2.x.
+          test-kitchen, and will be further enhanced in Molecule 2.x.
 
 Verifier Section
 ----------------
@@ -198,11 +198,11 @@ Testing roles may rely upon additional dependencies.
 Ansible Galaxy
 ^^^^^^^^^^^^^^
 
-Adding a ``requirements_file`` key to the ``dependency`` section, will cause
-molecule to download roles using `Ansible Galaxy`_.
+Adding a `requirements_file` key to the `dependency` section, will cause
+Molecule to download roles using `Ansible Galaxy`_.
 
-Additional options can be passed to ``ansible-galaxy`` through the ``options``
-dict under the ``dependency`` section.  Any option set in this section will
+Additional options can be passed to ``ansible-galaxy`` through the `options`
+dict under the `dependency` section.  Any option set in this section will
 override the defaults.
 
 .. _`Ansible Galaxy`: http://docs.ansible.com/ansible/galaxy.html
@@ -219,7 +219,7 @@ override the defaults.
 Shell
 ^^^^^
 
-Adding a ``command`` key to the ``dependency`` section, will cause molecule
+Adding a `command` key to the `dependency` section, will cause Molecule
 to execute the command provided.
 
 .. code-block:: yaml
@@ -229,7 +229,7 @@ to execute the command provided.
     command: script --flag1 subcommand --flag2
 
 `Gilt`_ can be used to manage dependencies, by creating a ``gilt.yml`` in the
-root of the role, and configuring molecule as follows:
+root of the role, and configuring Molecule as follows:
 
 .. code-block:: yaml
 
@@ -240,16 +240,16 @@ root of the role, and configuring molecule as follows:
 
 .. note::
 
-  `Gilt`_ is not yet a first class citizen of molecule.
+  `Gilt`_ is not yet a first class citizen of Molecule.
 
 .. _`Gilt`: http://gilt.readthedocs.io
 
 Playbook
 ========
 
-In general, your playbook.yml shouldn't require anything specific to molecule.
-Rather, it should contain the logic you would like to apply in order to test
-this particular role.
+In general, your ``playbook.yml`` shouldn't require anything specific to
+Molecule.  Rather, it should contain the logic you would like to apply in order
+to test this particular role.
 
 .. code-block:: yaml
 

@@ -39,5 +39,5 @@ Note: numeric versions need to be put in quotes. If the image version tag is
 not a number, it does not need to be in quotes.
 
 A specific registry can also be defined with the ``registry`` option in the
-container.  When accessing a private registry, ensure your docker client is
+container.  When accessing a private registry, ensure your Docker client is
 logged into whichever registry you are trying to access.

@@ -10,9 +10,9 @@ such as `VirtualBox`_ and VMware Fusion/Workstation and cloud-based providers
 such as AWS/EC2.
 
 Molecule can be configured to give provider-specific configuration data in
-`molecule.yml` - in the `vagrant.providers` hash. Necessarily, the configuration
-requirements/options are much more complicated for cloud-based providers than they
-are for workstation-local virtualization provider plugins.
+``molecule.yml`` - in the `vagrant.providers` hash. Necessarily, the
+configuration requirements/options are much more complicated for cloud-based
+providers than they are for workstation-local virtualization provider plugins.
 
 .. include:: libvirt/index.rst
 .. include:: libvirt/usage.rst

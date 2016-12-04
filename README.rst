@@ -81,7 +81,7 @@ Quick Start
 
   `Ansible`_ and the driver's python package require installation.
 
-Install molecule using pip:
+Install Molecule using pip:
 
 .. code-block:: bash
 
@@ -97,7 +97,7 @@ Create a new role with the docker driver:
   --> Initializing role foo...
   Successfully initialized new role in /private/tmp/foo.
 
-Or add molecule to an existing role:
+Or add Molecule to an existing role:
 
 .. code-block:: bash
 

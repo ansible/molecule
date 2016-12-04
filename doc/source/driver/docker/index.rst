@@ -3,16 +3,16 @@
 Docker
 ======
 
-The docker driver is compatible with any image that has python installed.
-Molecule will automatically install python for images with the yum or apt-get
-package tools. A new docker image will be built with the prefix molecule_local
+The Docker driver is compatible with any image that has python installed.
+Molecule will automatically install python for images with the appropriate
+package tools. A new Docker image will be built with the prefix molecule_local
 to separate it from the other images on your system.
 
 The image being used is responsible for implementing the command to execute on
 ``docker run``.
 
-Below is an example of a ``molecule.yml`` file using two containers ``foo-01``
-and ``foo-02``. ``foo-01`` is running the latest image of ubuntu and ``foo-02``
+Below is an example of a ``molecule.yml`` file using two containers `foo-01`
+and `foo-02`. `foo-01` is running the latest image of ubuntu and `foo-02`
 is running the latest image of ubuntu from a custom registry.
 
 Options
@@ -39,11 +39,11 @@ Options
 * ``environment`` - **(default=None)** the environment variables passed to the
   container.
 
-The available param for the docker driver itself is:
+The available param for the Docker driver itself is:
 
-* ``build_image`` - **(default=True)** build an image for use with molecule.
+* ``build_image`` - **(default=True)** build an image for use with Molecule.
 * ``dockerfile`` - **(default=dockerfile)** supply a custom Dockerfile instead
-  of molecule provided image.
+  of Molecule provided image.
 
 .. _`host config`: https://github.com/docker/docker-py/blob/master/docs/port-bindings.md
 .. _`capability`: https://docs.docker.com/engine/reference/run/#/runtime-privilege-and-linux-capabilities
