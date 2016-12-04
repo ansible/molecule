@@ -89,6 +89,18 @@ def test_print_error_without_pretty(capsys):
     assert expected == result
 
 
+def test_callback_info(patched_print_info):
+    util.callback_info('test')
+
+    patched_print_info.assert_called_with('test', pretty=False)
+
+
+def test_callback_error(patched_print_error):
+    util.callback_error('test')
+
+    patched_print_error.assert_called_with('test', pretty=False)
+
+
 def test_print_debug(capsys):
     util.print_debug('test_title', 'test_data')
     result_title, _ = capsys.readouterr()

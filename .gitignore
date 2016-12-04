@@ -10,3 +10,4 @@
 .tox/
 .vagrant/
 doc/build/
+htmlcov/
