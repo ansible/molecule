@@ -11,7 +11,7 @@ CFEngine or just shell). Molecule uses the term 'converge' (as does Test
 Kitchen) to refer to this latter meaning of 'provisioning' (i.e. "Run Ansible
 on the new test VM").
 
-It is very simple to run tests using the molecule command from the working
+It is very simple to run tests using the Molecule command from the working
 directory of your role.
 
 See ``molecule --help``
@@ -36,7 +36,7 @@ of all test sequences.  The ``test`` command supports a ``--destroy`` argument
 that will accept the values `always` (default), `never`, and `passing`.  Use
 these to tune the behavior for various use cases.
 
-For example, ``--destroy=always`` might be useful when using molecule for
+For example, ``--destroy=always`` might be useful when using Molecule for
 CI/CD.
 
 Continuous integration
@@ -47,7 +47,7 @@ Travis CI
 
 `Travis`_ is a CI platform, which can be used to test Ansible roles.
 
-A ``.travis.yml`` testing a role named foo1 with the docker driver.
+A ``.travis.yml`` testing a role named foo1 with the Docker driver.
 
 .. code-block:: yaml
 
@@ -86,7 +86,7 @@ Tox
 can be used in conjunction with `Factors`_ and Molecule, to perform scenario
 tests.
 
-To test the role against multiple versions of ansible.
+To test the role against multiple versions of Ansible.
 
 .. code-block:: ini
 

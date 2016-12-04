@@ -1,11 +1,11 @@
 Usage
 -----
 
-All libvirt specific options(such as the one above, provider specific
+All Libvirt specific options(such as the one above, provider specific
 and domain options) must be specified in the providers section.  Nevertheless,
 other options such as synced or network settings should be added to the
 raw_config_args, as they are vagrant generic parameters. Note that you
-can use special libvirt parameters such as "libvirt__tunnel_type", as it
+can use special Libvirt parameters such as "libvirt__tunnel_type", as it
 is shown in the example below.
 
 Please, refer to the `vagrant-libvirt`_ documentation for getting a better
