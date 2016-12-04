@@ -2,6 +2,18 @@
 History
 *******
 
+1.16
+====
+
+* Slightly improved unit test coverage.
+* Various doc improvements.
+* Added Gilt usage to docs.
+* Reimplemented info, error, debug message handling.
+* Nice error message when rake and/or rubocop missing.
+* Fix task determination on idempotence failure.
+* Added a github issue template.
+* Logging of dependency command execution.
+
 1.15
 ====
 
