@@ -18,22 +18,27 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-# NOTE: Importing into the ``molecule.command`` namespace, to prevent
-# collisions (e.g. ``list``).  The CLI usage may conflict with reserved words
-# or builtins.
+import abc
 
-from molecule.command import base  # noqa
-#  from molecule.command import check  # noqa
-from molecule.command import converge  # noqa
-from molecule.command import create  # noqa
-#  from molecule.command import dependency  # noqa
-from molecule.command import destroy  # noqa
-#  from molecule.command import idempotence  # noqa
-#  from molecule.command import init  # noqa
-from molecule.command import lint  # noqa
-#  from molecule.command import list  # noqa
-#  from molecule.command import login  # noqa
-#  from molecule.command import status  # noqa
-#  from molecule.command import syntax  # noqa
-#  from molecule.command import test  # noqa
-from molecule.command import verify  # noqa
+
+class Base(object):
+    __metaclass__ = abc.ABCMeta
+
+    def __init__(self, config):
+        """
+        Base initializer for all :ref:`Driver` classes.
+
+        :param config: An instance of a Molecule config.
+        :returns: None
+        """
+        self._config = config
+
+    @abc.abstractproperty
+    def testinfra_options(self):
+        """
+        Returns the kwargs used when invoking the testinfra validator, and
+        returns a dict.
+
+        :returns: dict
+        """
+        pass  # pragma: no cover

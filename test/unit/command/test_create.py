@@ -18,62 +18,25 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import subprocess
-
-import pytest
+import os
 
 from molecule.command import create
 
 
-def test_execute_creates_instances(
-        patched_driver_up, patched_create_templates, patched_remove_inventory,
-        patched_create_inventory, patched_print_info, molecule_instance):
-    c = create.Create({}, {}, molecule_instance)
-    result = c.execute()
-
-    patched_remove_inventory.assert_called_once()
-    patched_create_templates.assert_called_once()
-
-    msg = 'Creating instances...'
-    patched_print_info.assert_called_once_with(msg)
-    assert molecule_instance.state.created
-    patched_driver_up.assert_called_once_with(no_provision=True)
-    (None, None) == result
-
-
-def test_execute_creates_instances_with_platform_all(
-        patched_driver_up, patched_create_templates, patched_remove_inventory,
-        patched_create_inventory, molecule_instance):
-    command_args = {'platform': 'all'}
-    c = create.Create({}, command_args, molecule_instance)
+def test_execute(mocker, patched_print_info, patched_ansible_playbook,
+                 patched_ansible_playbook_execute, config_instance):
+    c = create.Create(config_instance)
     c.execute()
+    x = [
+        mocker.call('Scenario: [default]'),
+        mocker.call('Provisioner: [ansible]'),
+        mocker.call('Playbook: [create.yml]')
+    ]
 
-    patched_driver_up.assert_called_once_with(no_provision=True)
-    assert molecule_instance.state.multiple_platforms
+    assert x == patched_print_info.mock_calls
 
+    pb = os.path.join(config_instance.scenario_directory, 'create.yml')
+    patched_ansible_playbook.assert_called_once_with(
+        pb, config_instance.inventory_file, config_instance)
 
-def test_execute_raises_on_exit(
-        patched_driver_up, patched_create_templates, patched_remove_inventory,
-        patched_create_inventory, patched_print_error,
-        patched_write_instances_state, molecule_instance):
-    patched_driver_up.side_effect = subprocess.CalledProcessError(1, None,
-                                                                  None)
-    c = create.Create({}, {}, molecule_instance)
-    with pytest.raises(SystemExit):
-        c.execute()
-    msg = "Command 'None' returned non-zero exit status 1"
-    patched_print_error.assert_called_with(msg)
-    assert not patched_create_inventory.called
-    assert not patched_write_instances_state.called
-
-
-def test_execute_does_not_raise_on_exit(
-        patched_driver_up, patched_create_templates, patched_remove_inventory,
-        patched_create_inventory, patched_write_instances_state,
-        molecule_instance):
-    patched_driver_up.side_effect = subprocess.CalledProcessError(1, None,
-                                                                  None)
-    c = create.Create({}, {}, molecule_instance)
-    result = c.execute(exit=False)
-
-    assert (1, '') == result
+    patched_ansible_playbook_execute.assert_called_once

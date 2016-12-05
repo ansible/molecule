@@ -18,117 +18,71 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import fnmatch
-import os
-
 import sh
 
-from molecule import ansible_playbook
-from molecule import config
 from molecule import util
 from molecule.verifier import base
+from molecule.verifier import flake8
 
 
 class Testinfra(base.Base):
-    def __init__(self, molecule):
-        super(Testinfra, self).__init__(molecule)
-        self._testinfra_dir = molecule.config.config['molecule'][
-            'testinfra_dir']
-        self._debug = molecule.args.get('debug')
+    def __init__(self, config):
+        super(Testinfra, self).__init__(config)
+        self._testinfra_command = None
+        self._tests = self._get_tests()
 
-    def execute(self):
+    @property
+    def options(self):
+        d = self._config.driver.testinfra_options
+        if self._config.args.get('debug'):
+            d['debug'] = True
+        if self._config.args.get('sudo'):
+            d['sudo'] = True
+
+        return d
+
+    def bake(self):
         """
-        Executes linting/integration tests and returns None.
-
-        Flake8 performs the code linting.
-        Testinfra executes integration tests.
+        Bake a `testinfra` command so it's ready to execute and returns None.
 
         :return: None
         """
-        ansible = ansible_playbook.AnsiblePlaybook(
-            self._molecule.config.config['ansible'], {},
-            _env=self._molecule.env)
+        self._testinfra_command = sh.testinfra.bake(
+            self._config.verifier_options,
+            self._tests,
+            _out=util.callback_info,
+            _err=util.callback_error)
 
-        testinfra_options = config.merge_dicts(
-            self._molecule.driver.testinfra_args,
-            self._molecule.config.config['verifier']['options'])
-
-        testinfra_options['ansible_env'] = ansible.env
-        if self._molecule.args.get('debug'):
-            testinfra_options['debug'] = True
-        if self._molecule.args.get('sudo'):
-            testinfra_options['sudo'] = True
-
-        tests = self._get_tests()
-        if len(tests) > 0:
-            if 'flake8' not in self._molecule.disabled:
-                self._flake8(tests)
-            self._testinfra(tests, **testinfra_options)
-
-    def _testinfra(self,
-                   tests,
-                   debug=False,
-                   ansible_env={},
-                   out=util.callback_info,
-                   err=util.callback_error,
-                   **kwargs):
+    def execute(self):
         """
-        Executes testinfra against specified tests and returns a :func:`sh`
-        response object.
+        Executes `testinfra` and returns None.
 
-        :param tests: A list of testinfra tests.
-        :param debug: An optional bool to toggle debug output.
-        :param pattern: A string containing the pattern of files to lint.
-        :param ansible_env: An optional environment to pass to underlying
-         :func:`sh` call.
-        :param out: An optional function to process STDOUT for underlying
-         :func:`sh` call.
-        :param err: An optional function to process STDERR for underlying
-         :func:`sh` call.
-        :return: :func:`sh` response object.
+        :return: None
         """
-        kwargs['debug'] = debug
-        kwargs['_env'] = ansible_env
-        kwargs['_out'] = out
-        kwargs['_err'] = err
+        if not self._config.verifier_enabled:
+            return
 
-        msg = 'Executing testinfra tests found in {}/...'.format(
-            self._testinfra_dir)
-        util.print_info(msg)
+        if self._testinfra_command is None:
+            self.bake()
 
-        cmd = sh.testinfra.bake(tests, **kwargs)
-        return util.run_command(cmd, debug=self._debug)
+        if len(self._tests) > 0:
+            f = flake8.Flake8(self._config)
+            f.execute()
 
-    def _flake8(self, tests, out=util.callback_info, err=util.callback_error):
-        """
-        Executes flake8 against specified tests and returns a :func:`sh`
-        response object.
+            msg = 'Executing testinfra tests found in {}/...'.format(
+                self._config.verifier_directory)
+            util.print_info(msg)
 
-        :param tests: A list of testinfra tests.
-        :param out: An optional function to process STDOUT for underlying
-         :func:`sh` call.
-        :param err: An optional function to process STDERR for underlying
-         :func:`sh` call.
-        :return: :func:`sh` response object.
-        """
-        msg = 'Executing flake8 on *.py files found in {}/...'.format(
-            self._testinfra_dir)
-        util.print_info(msg)
-
-        cmd = sh.flake8.bake(tests)
-        return util.run_command(cmd, debug=self._debug)
+            try:
+                util.run_command(
+                    self._testinfra_command,
+                    debug=self._config.args.get('debug'))
+            except sh.ErrorReturnCode as e:
+                util.sysexit(e.exit_code)
 
     def _get_tests(self):
         return [
             filename
-            for filename in self._walk(self._testinfra_dir, 'test_*.py')
+            for filename in util.os_walk(self._config.verifier_directory,
+                                         'test_*.py')
         ]
-
-    def _walk(self, directory, pattern):
-        # Python 3.5 supports a recursive glob without needing os.walk.
-        for root, dirs, files in os.walk(directory):
-            for basename in files:
-                if fnmatch.fnmatch(basename, pattern):
-                    filename = os.path.join(root, basename)
-
-                    yield filename

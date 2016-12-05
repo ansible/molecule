@@ -18,44 +18,53 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import os
-
-import click
+import sh
 
 from molecule import util
-from molecule.command import base
-from molecule.provisioner import ansible_playbook
+from molecule.verifier import base
 
 
-class Create(base.Base):
-    def execute(self):
+class Flake8(base.Base):
+    def __init__(self, config):
+        super(Flake8, self).__init__(config)
+        self._flake8_command = None
+        self._tests = self._get_tests()
+
+    @property
+    def options(self):
+        pass
+
+    def bake(self):
         """
-        Execute the actions necessary to perform a `molecule create` and
-        returns None.
+        Bake a `flake8` command so it's ready to execute and returns None.
 
         :return: None
         """
-        msg = "Scenario: [{}]".format(self._config.scenario_name)
+        self._flake8_command = sh.flake8.bake(
+            self._tests, _out=util.callback_info, _err=util.callback_error)
+
+    def execute(self):
+        """
+        Executes `flake8` and returns None.
+
+        :return: None
+        """
+        if self._flake8_command is None:
+            self.bake()
+
+        msg = 'Executing flake8 on files found in {}/...'.format(
+            self._config.verifier_directory)
         util.print_info(msg)
-        msg = "Provisioner: [{}]".format(self._config.provisioner_name)
-        util.print_info(msg)
-        msg = "Playbook: [{}]".format(
-            os.path.basename(self._config.scenario_setup))
-        util.print_info(msg)
 
-        ansible = ansible_playbook.AnsiblePlaybook(self._config.scenario_setup,
-                                                   self._config.inventory_file,
-                                                   self._config)
-        ansible.execute()
+        try:
+            util.run_command(
+                self._flake8_command, debug=self._config.args.get('debug'))
+        except sh.ErrorReturnCode as e:
+            util.sysexit(e.exit_code)
 
-
-@click.command()
-@click.pass_context
-def create(ctx):  # pragma: no cover
-    """ Create instance(s) defined in molecule.yml. """
-    args = ctx.obj.get('args')
-    command_args = {}
-
-    for config in base.get_configs(args, command_args):
-        c = Create(config)
-        c.execute()
+    def _get_tests(self):
+        return [
+            filename
+            for filename in util.os_walk(self._config.verifier_directory,
+                                         'test_*.py')
+        ]

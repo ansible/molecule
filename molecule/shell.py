@@ -18,22 +18,40 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-# NOTE: Importing into the ``molecule.command`` namespace, to prevent
-# collisions (e.g. ``list``).  The CLI usage may conflict with reserved words
-# or builtins.
+import click
 
-from molecule.command import base  # noqa
-#  from molecule.command import check  # noqa
-from molecule.command import converge  # noqa
-from molecule.command import create  # noqa
-#  from molecule.command import dependency  # noqa
-from molecule.command import destroy  # noqa
-#  from molecule.command import idempotence  # noqa
-#  from molecule.command import init  # noqa
-from molecule.command import lint  # noqa
-#  from molecule.command import list  # noqa
-#  from molecule.command import login  # noqa
-#  from molecule.command import status  # noqa
-#  from molecule.command import syntax  # noqa
-#  from molecule.command import test  # noqa
-from molecule.command import verify  # noqa
+import molecule
+from molecule import command
+
+
+def main():
+    """ Molecule aids in the development, and testing of Ansible roles. """
+    cli(obj={})
+
+
+@click.group()
+@click.option(
+    '--debug/--no-debug',
+    default=False,
+    help='Enable or disable debug mode. Default is disabled.')
+@click.version_option(version=molecule.__version__)
+@click.pass_context
+def cli(ctx, debug):  # pragma: no cover
+    ctx.obj['args'] = {}
+    ctx.obj['args']['debug'] = debug
+
+
+#  cli.add_command(command.check.check)
+cli.add_command(command.converge.converge)
+cli.add_command(command.create.create)
+#  cli.add_command(command.dependency.dependency)
+cli.add_command(command.destroy.destroy)
+#  cli.add_command(command.idempotence.idempotence)
+#  cli.add_command(command.init.init)
+#  cli.add_command(command.list.list)
+cli.add_command(command.lint.lint)
+#  cli.add_command(command.login.login)
+#  cli.add_command(command.status.status)
+#  cli.add_command(command.syntax.syntax)
+#  cli.add_command(command.test.test)
+cli.add_command(command.verify.verify)

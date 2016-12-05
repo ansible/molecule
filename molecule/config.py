@@ -18,72 +18,179 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import abc
+import collections
 import os
-import os.path
 
 import anyconfig
-import m9dicts
+import jinja2
 
 from molecule import util
+from molecule.dependency import ansible_galaxy
+from molecule.driver import docker
+from molecule.lint import ansible_lint
+from molecule.provisioner import ansible
+from molecule.verifier import testinfra
 
-PROJECT_CONFIG = 'molecule.yml'
 LOCAL_CONFIG = '~/.config/molecule/config.yml'
 MERGE_STRATEGY = anyconfig.MS_DICTS
 
 
 class Config(object):
-    __metaclass__ = abc.ABCMeta
-
-    def __init__(self, configs=[LOCAL_CONFIG, PROJECT_CONFIG]):
-        """
-        Base initializer for all Config classes.
-
-        :param command_args: A list configs files to merge.
-        :returns: None
-        """
-        self.config = self._get_config(configs)
-
-    @property
-    def molecule_file(self):
-        return PROJECT_CONFIG
-
-    @abc.abstractmethod
-    def _get_config(self, configs):
-        pass  # pragma: no cover
-
-
-class ConfigV1(Config):
-    def __init__(self, configs=[LOCAL_CONFIG, PROJECT_CONFIG]):
+    def __init__(self, molecule_file, args={}, command_args={}, configs=[]):
         """
         Initialize a new config version one class and returns None.
+
+        :param molecule_file: A string containing the path to the Molecule file
+         parsed.
+        :param args: A dict of options, arguments and commands from the CLI.
+        :param command_args: A dict of options passed to the subcommand from
+         the CLI.
+        :param configs: A list of dicts to merge.
+        :returns: None
         """
-        super(ConfigV1, self).__init__(configs)
-        self._build_config_paths()
+        self.molecule_file = molecule_file
+        self.args = args
+        self.command_args = command_args
+        self.config = self._combine(configs)
 
-    def molecule_file_exists(self):
-        return os.path.isfile(self.molecule_file)
+    @property
+    def inventory(self):
+        return self.driver.inventory
 
-    def populate_instance_names(self, platform):
-        """
-        Updates instances section of config with an additional key containing
-        the full instance name
+    @property
+    def inventory_file(self):
+        return os.path.join(self.scenario_directory, '.molecule',
+                            'ansible_inventory')
 
-        :param platform: platform name to pass to ``format_instance_name`` call
-        :return: None
-        """
+    @property
+    def dependency(self):
+        if self.dependency_name == 'galaxy':
+            return ansible_galaxy.AnsibleGalaxy(self)
 
-        if 'vagrant' in self.config:
-            for instance in self.config['vagrant']['instances']:
-                instance['vm_name'] = util.format_instance_name(
-                    instance['name'], platform,
-                    self.config['vagrant']['instances'])
+    @property
+    def dependency_name(self):
+        return self.config['dependency']['name']
 
-    def _get_config(self, configs):
-        return self._combine(configs)
+    @property
+    def dependency_enabled(self):
+        return self.config['dependency']['enabled']
+
+    @property
+    def dependency_options(self):
+        return merge_dicts(self.dependency.options,
+                           self.config['dependency']['options'])
+
+    @property
+    def driver(self):
+        if self.driver_name == 'docker':
+            return docker.Docker(self)
+
+    @property
+    def driver_name(self):
+        return self.config['driver']['name']
+
+    @property
+    def driver_options(self):
+        return self.config['driver']['options']
+
+    @property
+    def lint(self):
+        if self.lint_name == 'ansible-lint':
+            return ansible_lint.AnsibleLint(self)
+
+    @property
+    def lint_name(self):
+        return self.config['lint']['name']
+
+    @property
+    def lint_enabled(self):
+        return self.config['lint']['enabled']
+
+    @property
+    def lint_options(self):
+        return merge_dicts(self.lint.options, self.config['lint']['options'])
+
+    @property
+    def platforms(self):
+        return self.config['platforms']
+
+    @property
+    def platform_groups(self):
+        #  [baz]
+        #  instance-2
+        #  [foo]
+        #  instance-1
+        #  instance-2
+        #  [bar]
+        #  instance-1
+        dd = collections.defaultdict(list)
+        for platform in self.config['platforms']:
+            for group in platform.get('groups', []):
+                dd[group].append(platform['name'])
+
+        return dict(dd)
+
+    @property
+    def provisioner(self):
+        if self.provisioner_name == 'ansible':
+            return ansible.Ansible(self)
+
+    @property
+    def provisioner_name(self):
+        return self.config['provisioner']['name']
+
+    @property
+    def provisioner_options(self):
+        return self.config['provisioner']['options']
+
+    @property
+    def scenario_name(self):
+        return self.config['scenario']['name']
+
+    @property
+    def scenario_directory(self):
+        return os.path.dirname(self.molecule_file)
+
+    @property
+    def scenario_setup(self):
+        return os.path.join(self.scenario_directory,
+                            self.config['scenario']['setup'])
+
+    @property
+    def scenario_converge(self):
+        return os.path.join(self.scenario_directory,
+                            self.config['scenario']['converge'])
+
+    @property
+    def scenario_teardown(self):
+        return os.path.join(self.scenario_directory,
+                            self.config['scenario']['teardown'])
+
+    @property
+    def verifier(self):
+        if self.verifier_name == 'testinfra':
+            return testinfra.Testinfra(self)
+
+    @property
+    def verifier_name(self):
+        return self.config['verifier']['name']
+
+    @property
+    def verifier_enabled(self):
+        return self.config['verifier']['enabled']
+
+    @property
+    def verifier_directory(self):
+        return os.path.join(self.scenario_directory,
+                            self.config['verifier']['directory'])
+
+    @property
+    def verifier_options(self):
+        return merge_dicts(self.verifier.options,
+                           self.config['verifier']['options'])
 
     def _combine(self, configs):
-        """ Perform a prioritized recursive merge of serveral source files
+        """ Perform a prioritized recursive merge of serveral source dicts
         and returns a new dict.
 
         The merge order is based on the index of the list, meaning that
@@ -91,107 +198,71 @@ class ConfigV1(Config):
         precedence than elements at the beginning.  The result is then merged
         ontop of the defaults.
 
-        :param configs: A list containing the yaml files to load.
+        :param configs: A list containing the dicts to load.
         :return: dict
         """
 
-        default = self._get_defaults()
-        conf = anyconfig.to_container(default, ac_merge=MERGE_STRATEGY)
-        conf.update(
-            anyconfig.load(
-                configs, ignore_missing=True, ac_merge=MERGE_STRATEGY))
+        base = self._get_defaults()
+        for config in configs:
+            base = merge_dicts(base, config)
 
-        return m9dicts.convert_to(conf)
+        return base
 
     def _get_defaults(self):
         return {
-            'ansible': {
-                'ask_sudo_pass': False,
-                'ask_vault_pass': False,
-                'config_file': 'ansible.cfg',
-                'diff': True,
-                'host_key_checking': False,
-                'inventory_file': 'ansible_inventory',
-                'limit': 'all',
-                'playbook': 'playbook.yml',
-                'raw_ssh_args': [
-                    '-o UserKnownHostsFile=/dev/null', '-o IdentitiesOnly=yes',
-                    '-o ControlMaster=auto', '-o ControlPersist=60s'
-                ],
-                'sudo': True,
-                'sudo_user': False,
-                'tags': False,
-                'timeout': 30,
-                'vault_password_file': False,
-                'verbose': False
+            'dependency': {
+                'name': 'galaxy',
+                'options': {},
+                'enabled': True,
             },
-            'molecule': {
-                'goss_dir': 'tests',
-                'goss_playbook': 'test_default.yml',
-                'ignore_paths': ['.git', '.vagrant', '.molecule'],
-                'init': {
-                    'platform': {
-                        'box': 'trusty64',
-                        'box_url':
-                        ('https://vagrantcloud.com/ubuntu/boxes/trusty64/'
-                         'versions/14.04/providers/virtualbox.box'),
-                        'box_version': '0.1.0',
-                        'name': 'trusty64'
-                    },
-                    'provider': {
-                        'name': 'virtualbox',
-                        'type': 'virtualbox'
-                    }
+            'driver': {
+                'name': 'docker',
+                'options': {},
+            },
+            'lint': {
+                'name': 'ansible-lint',
+                'enabled': True,
+                'options': {},
+            },
+            'platforms': [],
+            'provisioner': {
+                'name': 'ansible',
+                'options': {
+                    'ask_sudo_pass': False,
+                    'ask_vault_pass': False,
+                    'config_file': 'ansible.cfg',
+                    'diff': True,
+                    'host_key_checking': False,
+                    'inventory_file': 'ansible_inventory',
+                    'limit': 'all',
+                    'playbook': 'playbook.yml',
+                    'raw_ssh_args': [
+                        '-o UserKnownHostsFile=/dev/null',
+                        '-o IdentitiesOnly=yes',
+                        '-o ControlMaster=auto',
+                        '-o ControlPersist=60s',
+                    ],
+                    'sudo': True,
+                    'sudo_user': False,
+                    'tags': False,
+                    'timeout': 30,
+                    'vault_password_file': False,
+                    'verbose': False,
                 },
-                'molecule_dir': '.molecule',
-                'rakefile_file': 'rakefile',
-                'raw_ssh_args': [
-                    '-o StrictHostKeyChecking=no',
-                    '-o UserKnownHostsFile=/dev/null'
-                ],
-                'serverspec_dir': 'spec',
-                'state_file': 'state.yml',
-                'test': {
-                    'sequence': [
-                        'destroy', 'dependency', 'syntax', 'create',
-                        'converge', 'idempotence', 'verify'
-                    ]
-                },
-                'testinfra_dir': 'tests',
-                'vagrantfile_file': 'vagrantfile',
-                'vagrantfile_template': 'vagrantfile.j2'
+            },
+            'scenario': {
+                'name': 'default',
+                'setup': 'create.yml',
+                'converge': 'playbook.yml',
+                'teardown': 'destroy.yml',
             },
             'verifier': {
                 'name': 'testinfra',
-                'options': {}
+                'enabled': True,
+                'directory': 'tests',
+                'options': {},
             },
-            'dependency': {
-                'name': 'galaxy',
-                'options': {}
-            },
-            '_disabled': [],
         }
-
-    def _build_config_paths(self):
-        """
-        Convenience function to build up paths from our config values.  Path
-        will not be relative to ``molecule_dir``, when a full path was provided
-        in the config.
-
-        :return: None
-        """
-        md = self.config.get('molecule')
-        ad = self.config.get('ansible')
-        for item in ['state_file', 'vagrantfile_file', 'rakefile_file']:
-            if md and not self._is_path(md[item]):
-                md[item] = os.path.join(md['molecule_dir'], md[item])
-
-        for item in ['config_file', 'inventory_file']:
-            if ad and not self._is_path(ad[item]):
-                ad[item] = os.path.join(md['molecule_dir'], ad[item])
-
-    def _is_path(self, pathname):
-        return os.path.sep in pathname
 
 
 def merge_dicts(a, b):

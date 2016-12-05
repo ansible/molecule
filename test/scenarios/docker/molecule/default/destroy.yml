@@ -1,0 +1,11 @@
+---
+- hosts: localhost
+  connection: local
+  vars:
+    molecule_yml: "{{ lookup('file','molecule.yml') | from_yaml }}"
+  tasks:
+    - name: Destroy molecule instance(s)
+      docker_container:
+        name: "{{ item.name }}"
+        state: absent
+      with_items: "{{ molecule_yml.platforms }}"

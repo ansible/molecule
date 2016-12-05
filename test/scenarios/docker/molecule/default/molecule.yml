@@ -1,0 +1,22 @@
+---
+dependency:
+    name: galaxy
+driver:
+    name: docker
+lint:
+    name: ansible-lint
+platforms:
+  - name: instance-1
+    groups:
+      - foo
+      - bar
+  - name: instance-2
+    groups:
+      - foo
+      - baz
+provisioner:
+    name: ansible
+scenario:
+    name: default
+verifier:
+    name: testinfra

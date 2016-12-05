@@ -18,22 +18,27 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-# NOTE: Importing into the ``molecule.command`` namespace, to prevent
-# collisions (e.g. ``list``).  The CLI usage may conflict with reserved words
-# or builtins.
+import collections
 
-from molecule.command import base  # noqa
-#  from molecule.command import check  # noqa
-from molecule.command import converge  # noqa
-from molecule.command import create  # noqa
-#  from molecule.command import dependency  # noqa
-from molecule.command import destroy  # noqa
-#  from molecule.command import idempotence  # noqa
-#  from molecule.command import init  # noqa
-from molecule.command import lint  # noqa
-#  from molecule.command import list  # noqa
-#  from molecule.command import login  # noqa
-#  from molecule.command import status  # noqa
-#  from molecule.command import syntax  # noqa
-#  from molecule.command import test  # noqa
-from molecule.command import verify  # noqa
+from molecule.driver import base
+
+
+class Docker(base.Base):
+    def __init__(self, config):
+        super(Docker, self).__init__(config)
+
+    @property
+    def testinfra_options(self):
+        return {'connection': 'docker'}
+
+    @property
+    def inventory(self):
+        # server-1 ansible_connection=docker
+        # server-2 ansible_connection=docker
+        host_options = 'ansible_connection=docker'
+        dd = collections.defaultdict(list)
+        for d in self._config.platforms:
+            name = d['name']
+            dd[name].append(host_options)
+
+        return dict(dd)

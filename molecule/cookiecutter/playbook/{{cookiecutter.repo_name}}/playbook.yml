@@ -1,4 +1,0 @@
----
-- hosts: all
-  roles:
-    - role: {{ cookiecutter.role_name }}

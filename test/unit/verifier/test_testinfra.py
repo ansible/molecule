@@ -18,92 +18,74 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import os
-
 import pytest
 import sh
 
 from molecule.verifier import testinfra
 
 
-@pytest.fixture()
-def testinfra_instance(molecule_instance):
-    return testinfra.Testinfra(molecule_instance)
-
-
 @pytest.fixture
-def patched_code_verifier(mocker):
-    return mocker.patch('molecule.verifier.testinfra.Testinfra._flake8')
+def testinfra_instance(config_instance):
+    return testinfra.Testinfra(config_instance)
 
 
-@pytest.fixture
-def patched_test_verifier(mocker):
-    return mocker.patch('molecule.verifier.testinfra.Testinfra._testinfra')
+def test_options_property(testinfra_instance):
+    assert {'connection': 'docker'} == testinfra_instance.options
 
 
-@pytest.fixture
-def patched_get_tests(mocker):
-    return mocker.patch('molecule.verifier.testinfra.Testinfra._get_tests')
+def test_bake(testinfra_instance):
+    testinfra_instance._tests = ['test1', 'test2', 'test3']
+    testinfra_instance.bake()
+    x = '{} --connection=docker test1 test2 test3'.format(str(sh.testinfra))
+
+    assert x == testinfra_instance._testinfra_command
 
 
-@pytest.fixture
-def patched_ansible(mocker):
-    return mocker.patch('molecule.ansible_playbook.AnsiblePlaybook')
-
-
-def test_execute(mocker, patched_code_verifier, patched_test_verifier,
-                 patched_get_tests, patched_ansible, testinfra_instance):
-    patched_get_tests.return_value = ['/test/1', '/test/2']
-    patched_ansible.return_value = mocker.Mock(env={})
-    testinfra_instance._molecule.args = {'debug': True, 'sudo': True}
+def test_execute(patched_flake8, patched_print_info, patched_run_command,
+                 patched_testinfra_get_tests, testinfra_instance):
+    testinfra_instance._testinfra_command = 'patched-command'
     testinfra_instance.execute()
 
-    patched_code_verifier.assert_called_once_with(['/test/1', '/test/2'])
-    patched_test_verifier.assert_called_once_with(
-        ['/test/1', '/test/2'],
-        ansible_inventory='test/inventory_file',
-        ansible_env={},
-        connection='ansible',
-        debug=True,
-        sudo=True)
+    patched_run_command.assert_called_once_with('patched-command', debug=None)
+
+    patched_flake8.assert_called_once
+
+    msg = 'Executing testinfra tests found in {}/...'.format(
+        testinfra_instance._config.verifier_directory)
+    patched_print_info.assert_called_with(msg)
 
 
-def test_execute_no_tests(patched_code_verifier, patched_test_verifier,
-                          patched_get_tests, testinfra_instance):
-    patched_get_tests.return_value = []
+def test_execute_does_not_execute(patched_run_command, testinfra_instance):
+    testinfra_instance._config.config['verifier']['enabled'] = False
     testinfra_instance.execute()
 
-    assert not patched_code_verifier.called
-    assert not patched_test_verifier.called
+    assert not patched_run_command.called
 
 
-def test_testinfra(patched_run_command, patched_get_tests, testinfra_instance):
-    args = ['/tmp/ansible-inventory']
-    kwargs = {'debug': False, '_out': None, '_err': None}
-    testinfra_instance._testinfra(*args, **kwargs)
+def test_does_not_execute_without_tests(patched_run_command,
+                                        testinfra_instance):
+    testinfra_instance.execute()
 
-    x = sh.testinfra.bake('/tmp/ansible-inventory')
-    patched_run_command.assert_called_once_with(x, debug=None)
+    assert not patched_run_command.called
 
 
-def test_flake8(patched_run_command, testinfra_instance):
-    args = ['test1.py', 'test2.py']
-    testinfra_instance._flake8(args)
+def test_execute_bakes(patched_flake8, patched_run_command,
+                       patched_testinfra_get_tests, testinfra_instance):
+    testinfra_instance.execute()
 
-    x = sh.flake8.bake('test1.py', 'test2.py')
-    patched_run_command.assert_called_once_with(x, debug=None)
+    assert testinfra_instance._testinfra_command is not None
+
+    patched_flake8.assert_called_once
+
+    cmd = '{} --connection=docker test1 test2 test3'.format(str(sh.testinfra))
+    patched_run_command.assert_called_once_with(cmd, debug=None)
 
 
-def test_get_tests(temp_dir, testinfra_instance):
-    testinfra_instance._testinfra_dir = temp_dir
-    dir1 = os.path.join(temp_dir, 'foo')
-    dir2 = os.path.join(temp_dir, 'foo', 'bar')
+def test_executes_catches_and_exits_return_code(
+        patched_run_command, patched_testinfra_get_tests, testinfra_instance):
+    patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.ansible_playbook,
+                                                           None, None)
+    with pytest.raises(SystemExit) as e:
+        testinfra_instance.execute()
 
-    os.mkdir(dir1)
-    os.mkdir(dir2)
-
-    test_file = os.path.join(dir2, 'test_default.py')
-    open(test_file, 'a').close()
-
-    assert 1 == len(testinfra_instance._get_tests())
-    assert test_file == testinfra_instance._get_tests()[0]
+    assert 1 == e.value.code

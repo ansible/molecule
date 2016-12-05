@@ -18,67 +18,57 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import abc
 import os
 
-import yaml
+import jinja2
+import sh
 
-from molecule import config
 from molecule import util
 
 
-class Base(object):
-    """
-    An abstract base class used to define the command interface.
-    """
-    __metaclass__ = abc.ABCMeta
-
+class Ansible(object):
     def __init__(self, config):
         """
-        Base initializer for all :ref:`Command` classes.
+        Sets up the Ansible provisioner requirements and returns None.
 
+        #  :param playbook: A string containing the path to the playbook.
+        #  :param inventory: A string containing the path to the inventory.
         :param config: An instance of a Molecule config.
         :returns: None
         """
         self._config = config
-        config.provisioner.write_inventory()
 
-    @abc.abstractmethod
-    def execute(self):  # pragma: no cover
-        pass
+    def write_inventory(self):
+        self._verify_inventory()
 
+        inventory_directory = os.path.dirname(self._config.inventory_file)
+        if not os.path.isdir(inventory_directory):
+            os.mkdir(inventory_directory)
 
-def _get_local_config():
-    expanded_path = os.path.expanduser(config.LOCAL_CONFIG)
-    try:
-        return _load_config(expanded_path)
-    except IOError:
-        return {}
+        template = jinja2.Environment().from_string(
+            self._get_inventory_template()).render(
+                host_data=self._config.inventory,
+                groups_data=self._config.platform_groups)
+        with open(self._config.inventory_file, 'w') as f:
+            f.write(template)
 
+    def _verify_inventory(self):
+        if not self._config.inventory:
+            msg = ("Instances missing from the 'platform' "
+                   "section of molecule.yml.")
+            util.print_error(msg)
+            util.sysexit()
 
-def _load_config(config):
-    with open(config, 'r') as stream:
-        return yaml.load(stream) or {}
+    def _get_inventory_template(self):
+        return """
+# Molecule managed
 
+{% for k, v in host_data.iteritems() -%}
+{{ k }} {{ v|join(' ') }}
+{% endfor -%}
 
-def _verify_configs(configs):
-    if not configs:
-        msg = ('Unable to find a molecule.yml.  Exiting.')
-        util.print_error(msg)
-        util.sysexit()
-
-
-def get_configs(args, command_args):
-    current_directory = os.path.join(os.getcwd(), 'molecule')
-    local_config = _get_local_config()
-    configs = [
-        config.Config(
-            molecule_file=c,
-            args=args,
-            command_args=command_args,
-            configs=[local_config, _load_config(c)])
-        for c in util.os_walk(current_directory, 'molecule.yml')
-    ]
-    _verify_configs(configs)
-
-    return configs
+{% for k, v in groups_data.iteritems() %}
+[{{ k }}]
+{{ v|join('\n') }}
+{% endfor -%}
+""".strip()

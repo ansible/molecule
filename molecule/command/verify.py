@@ -19,67 +19,34 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import click
-import sh
 
 from molecule import util
 from molecule.command import base
-from molecule.verifier import ansible_lint
-from molecule.verifier import goss
-from molecule.verifier import serverspec
-from molecule.verifier import testinfra
-from molecule.verifier import trailing
 
 
 class Verify(base.Base):
-    def execute(self, exit=True):
+    def execute(self):
         """
         Execute the actions necessary to perform a `molecule verify` and
-        return a tuple.
+        returns None.
 
-        :param exit: An optional flag to toggle the exiting of the module
-         on command failure.
-        :return: Return a tuple of None, otherwise sys.exit on command failure.
+        :return: None
         """
-        try:
-            v = ansible_lint.AnsibleLint(self.molecule)
-            v.execute()
-        except sh.ErrorReturnCode:
-            util.sysexit()
-        v = trailing.Trailing(self.molecule)
-        v.execute()
+        msg = "Scenario: [{}]".format(self._config.scenario_name)
+        util.print_info(msg)
+        msg = "Verifier: [{}]".format(self._config.verifier_name)
+        util.print_info(msg)
 
-        self.molecule.write_ssh_config()
-
-        try:
-            if self.molecule.verifier == 'serverspec':
-                v = serverspec.Serverspec(self.molecule)
-            elif self.molecule.verifier == 'goss':
-                v = goss.Goss(self.molecule)
-            else:
-                v = testinfra.Testinfra(self.molecule)
-
-            v.execute()
-        except sh.ErrorReturnCode as e:
-            util.print_error(str(e))
-            if exit:
-                util.sysexit(e.exit_code)
-            return e.exit_code, e.stdout
-
-        return None, None
+        self._config.verifier.execute()
 
 
 @click.command()
-@click.option('--platform', default=None, help='Specify a platform.')
-@click.option('--provider', default=None, help='Specify a provider.')
-@click.option(
-    '--sudo/--no-sudo',
-    default=False,
-    help='Enable or disable running tests with sudo. Default is disabled.')
 @click.pass_context
-def verify(ctx, platform, provider, sudo):  # pragma: no cover
-    """ Performs verification steps on running instances. """
-    command_args = {'platform': platform, 'provider': provider, 'sudo': sudo}
+def verify(ctx):  # pragma: no cover
+    """ Verify instance(s) defined in molecule.yml. """
+    args = ctx.obj.get('args')
+    command_args = {}
 
-    v = Verify(ctx.obj.get('args'), command_args)
-    v.execute
-    util.sysexit(v.execute()[0])
+    for config in base.get_configs(args, command_args):
+        v = Verify(config)
+        v.execute()

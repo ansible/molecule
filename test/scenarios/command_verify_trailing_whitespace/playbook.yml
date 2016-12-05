@@ -1,6 +1,0 @@
----
-- hosts: all
-  tasks:
-    - name: Verify trailing whitespace functional scenario
-      command: /bin/true 
-      changed_when: False

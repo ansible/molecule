@@ -18,22 +18,35 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-# NOTE: Importing into the ``molecule.command`` namespace, to prevent
-# collisions (e.g. ``list``).  The CLI usage may conflict with reserved words
-# or builtins.
+import click
 
-from molecule.command import base  # noqa
-#  from molecule.command import check  # noqa
-from molecule.command import converge  # noqa
-from molecule.command import create  # noqa
-#  from molecule.command import dependency  # noqa
-from molecule.command import destroy  # noqa
-#  from molecule.command import idempotence  # noqa
-#  from molecule.command import init  # noqa
-from molecule.command import lint  # noqa
-#  from molecule.command import list  # noqa
-#  from molecule.command import login  # noqa
-#  from molecule.command import status  # noqa
-#  from molecule.command import syntax  # noqa
-#  from molecule.command import test  # noqa
-from molecule.command import verify  # noqa
+from molecule import util
+from molecule.command import base
+
+
+class Lint(base.Base):
+    def execute(self):
+        """
+        Execute the actions necessary to perform a `molecule lint` and
+        returns None.
+
+        :return: None
+        """
+        msg = "Scenario: [{}]".format(self._config.scenario_name)
+        util.print_info(msg)
+        msg = "Lint: [{}]".format(self._config.lint_name)
+        util.print_info(msg)
+
+        self._config.lint.execute()
+
+
+@click.command()
+@click.pass_context
+def lint(ctx):  # pragma: no cover
+    """ Lint the role(s). """
+    args = ctx.obj.get('args')
+    command_args = {}
+
+    for config in base.get_configs(args, command_args):
+        l = Lint(config)
+        l.execute()

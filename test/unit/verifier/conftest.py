@@ -18,22 +18,17 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-# NOTE: Importing into the ``molecule.command`` namespace, to prevent
-# collisions (e.g. ``list``).  The CLI usage may conflict with reserved words
-# or builtins.
+import pytest
 
-from molecule.command import base  # noqa
-#  from molecule.command import check  # noqa
-from molecule.command import converge  # noqa
-from molecule.command import create  # noqa
-#  from molecule.command import dependency  # noqa
-from molecule.command import destroy  # noqa
-#  from molecule.command import idempotence  # noqa
-#  from molecule.command import init  # noqa
-from molecule.command import lint  # noqa
-#  from molecule.command import list  # noqa
-#  from molecule.command import login  # noqa
-#  from molecule.command import status  # noqa
-#  from molecule.command import syntax  # noqa
-#  from molecule.command import test  # noqa
-from molecule.command import verify  # noqa
+
+@pytest.fixture
+def patched_testinfra_get_tests(mocker):
+    m = mocker.patch('molecule.verifier.testinfra.Testinfra._get_tests')
+    m.return_value = ['test1', 'test2', 'test3']
+
+    return m
+
+
+@pytest.fixture
+def patched_flake8(mocker):
+    return mocker.patch('molecule.verifier.flake8.Flake8.execute')

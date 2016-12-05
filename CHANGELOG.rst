@@ -2,6 +2,18 @@
 History
 *******
 
+2.0
+===
+
+* Overhaul of all of molecule.
+
+
+Breaking Changes
+----------------
+
+* What you expect to work most likely does not work.
+
+
 1.16
 ====
 

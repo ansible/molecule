@@ -18,52 +18,44 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
+
 import click
-import subprocess
 
 from molecule import util
 from molecule.command import base
+from molecule.provisioner import ansible_playbook
 
 
 class Destroy(base.Base):
-    def execute(self, exit=True):
+    def execute(self):
         """
         Execute the actions necessary to perform a `molecule destroy` and
-        return a tuple.
+        returns None.
 
-        Clears state file of all info (default platform).
-
-        :param exit: An optional flag to toggle the exiting of the module
-         on command failure.
-        :return: Return a tuple of None, otherwise sys.exit on command failure.
+        :return: None
         """
-        try:
-            util.print_info('Destroying instances...')
-            self.molecule.driver.destroy()
-            self.molecule.state.reset()
-        except subprocess.CalledProcessError as e:
-            util.print_error(str(e))
-            if exit:
-                util.sysexit(e.returncode)
-            return e.returncode, e.message
-        self.molecule.remove_templates()
-        self.molecule.remove_inventory_file()
-        return None, None
+        msg = "Scenario: [{}]".format(self._config.scenario_name)
+        util.print_info(msg)
+        msg = "Provisioner: [{}]".format(self._config.provisioner_name)
+        util.print_info(msg)
+        msg = "Playbook: [{}]".format(
+            os.path.basename(self._config.scenario_teardown))
+        util.print_info(msg)
+
+        ansible = ansible_playbook.AnsiblePlaybook(
+            self._config.scenario_teardown, self._config.inventory_file,
+            self._config)
+        ansible.execute()
 
 
 @click.command()
-@click.option('--driver', default=None, help='Specificy a driver.')
-@click.option('--platform', default=None, help='Specify a platform.')
-@click.option('--provider', default=None, help='Specify a provider.')
 @click.pass_context
-def destroy(ctx, driver, platform, provider):  # pragma: no cover
-    """ Destroys all instances created by molecule. """
-    command_args = {
-        'driver': driver,
-        'platform': platform,
-        'provider': provider
-    }
+def destroy(ctx):  # pragma: no cover
+    """ Destroy instance(s) defined in molecule.yml. """
+    args = ctx.obj.get('args')
+    command_args = {}
 
-    d = Destroy(ctx.obj.get('args'), command_args)
-    d.execute
-    util.sysexit(d.execute()[0])
+    for config in base.get_configs(args, command_args):
+        d = Destroy(config)
+        d.execute()

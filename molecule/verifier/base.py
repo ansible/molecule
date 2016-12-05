@@ -24,14 +24,18 @@ import abc
 class Base(object):
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, molecule):
+    def __init__(self, config):
         """
         Base initializer for all :ref:`Verifier` classes.
 
-        :param molecule: An instance of molecule.
+        :param config: An instance of a Molecule config.
         :returns: None
         """
-        self._molecule = molecule
+        self._config = config
+
+    @abc.abstractproperty
+    def options(self):  # pragma: no cover
+        pass
 
     @abc.abstractproperty
     def execute(self):  # pragma: no cover

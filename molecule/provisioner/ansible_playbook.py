@@ -18,70 +18,53 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import os
-
 import sh
 
 from molecule import util
-from molecule.dependency import base
 
 
-class AnsibleGalaxy(base.Base):
-    def __init__(self, config):
+class AnsiblePlaybook(object):
+    def __init__(self, playbook, inventory, config):
         """
-        Sets up the requirements to execute `ansible-galaxy` and returns None.
+        Sets up the requirements to execute `ansible-playbook` and returns
+        None.
 
+        :param playbook: A string containing the path to the playbook.
+        :param inventory: A string containing the path to the inventory.
         :param config: An instance of a Molecule config.
-        :return: None
+        :returns: None
         """
-        super(AnsibleGalaxy, self).__init__(config)
-        self._ansible_galaxy_command = None
-
-    @property
-    def options(self):
-        roles_path = os.path.join('.molecule', 'roles')
-        return {
-            'force': True,
-            'role_file': 'requirements.yml',
-            'roles_path': roles_path
-        }
+        self._ansible_playbook_command = None
+        self._playbook = playbook
+        self._inventory = inventory
+        self._config = config
 
     def bake(self):
         """
-        Bake an `ansible-galaxy` command so it's ready to execute and returns
+        Bake an `ansible-playbook` command so it's ready to execute and returns
         None.
 
         :return: None
         """
-        self._ansible_galaxy_command = sh.ansible_galaxy.bake(
-            'install',
-            self._config.dependency_options,
+        options = {'inventory': self._inventory}
+        self._ansible_playbook_command = sh.ansible_playbook.bake(
+            options,
+            self._playbook,
             _out=util.callback_info,
             _err=util.callback_error)
 
     def execute(self):
         """
-        Executes `ansible-galaxy` and returns None.
+        Executes `ansible-playbook` and returns None.
 
         :return: None
         """
-        if not self._config.dependency_enabled:
-            return
-
-        if self._ansible_galaxy_command is None:
+        if self._ansible_playbook_command is None:
             self.bake()
 
-        self._role_setup()
         try:
             util.run_command(
-                self._ansible_galaxy_command,
+                self._ansible_playbook_command,
                 debug=self._config.args.get('debug'))
         except sh.ErrorReturnCode as e:
             util.sysexit(e.exit_code)
-
-    def _role_setup(self):
-        role_directory = os.path.join(
-            self._config.scenario_directory,
-            self._config.dependency_options['roles_path'])
-        if not os.path.isdir(role_directory):
-            os.makedirs(role_directory)

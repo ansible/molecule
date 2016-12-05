@@ -11,3 +11,6 @@
 .vagrant/
 doc/build/
 htmlcov/
+
+### FIX
+molecule/cli2.py

@@ -18,33 +18,85 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
+
 import pytest
 
+from molecule import config
 from molecule.command import base
 
 
-class Foo(base.Base):
-    def execute(self, exit=True):
-        pass
+@pytest.fixture()
+def base_instance(config_instance):
+    class ExtendedBase(base.Base):
+        def execute():
+            pass
+
+    return ExtendedBase(config_instance)
 
 
-def test_main(mocker, molecule_instance):
-    patched_file_exists = mocker.patch(
-        'molecule.config.ConfigV1.molecule_file_exists')
-    patched_molecule_main = mocker.patch('molecule.core.Molecule.main')
-    patched_file_exists.return_value = True
-
-    foo = Foo({}, {}, molecule_instance)
-    foo.main()
-
-    patched_molecule_main.assert_called_once()
+def test_config_private_member(base_instance):
+    assert isinstance(base_instance._config, config.Config)
 
 
-def test_main_exits_when_missing_config(patched_print_error,
-                                        molecule_instance):
-    foo = Foo({}, {}, molecule_instance)
-    with pytest.raises(SystemExit):
-        foo.main()
+def test_config_write_inventory(base_instance):
+    assert os.path.exists(base_instance._config.inventory_file)
 
-    msg = 'Unable to find molecule.yml. Exiting.'
-    patched_print_error.assert_called_once_with(msg)
+
+def test_get_local_config(mocker):
+    m = mocker.patch('molecule.command.base._load_config')
+    m.return_value = {'foo': 'bar'}
+
+    assert {'foo': 'bar'} == base._get_local_config()
+
+
+def test_get_local_config_returns_empty_dict_on_ioerror(monkeypatch):
+    def mockreturn(path):
+        return '/foo/bar/baz'
+
+    monkeypatch.setattr('os.path.expanduser', mockreturn)
+
+    assert {} == base._get_local_config()
+
+
+def test_load_config(temp_dir):
+    inventory_file = os.path.join(temp_dir.strpath, 'inventory_file')
+    with open(inventory_file, 'w') as outfile:
+        outfile.write('foo: bar')
+
+    assert {'foo': 'bar'} == base._load_config(inventory_file)
+
+
+def test_load_config_returns_empty_dict_on_empty_file(temp_dir):
+    inventory_file = os.path.join(temp_dir.strpath, 'inventory_file')
+    with open(inventory_file, 'w') as outfile:
+        outfile.write('')
+
+    assert {} == base._load_config(inventory_file)
+
+
+def test_verify_configs():
+    assert base._verify_configs([{}, {}]) is None
+
+
+def test_verify_configs_raises(patched_print_error):
+    with pytest.raises(SystemExit) as e:
+        base._verify_configs([])
+
+    assert 1 == e.value.code
+
+    msg = 'Unable to find a molecule.yml.  Exiting.'
+    patched_print_error.assert_called_with(msg)
+
+
+def test_get_configs(temp_dir):
+    molecule_directory = os.path.join(temp_dir.strpath, 'molecule')
+    scenario_directory = os.path.join(molecule_directory, 'scenario')
+    molecule_file = os.path.join(scenario_directory, 'molecule.yml')
+    os.makedirs(scenario_directory)
+    open(molecule_file, 'a').close()
+
+    result = base.get_configs({}, {})
+    assert 1 == len(result)
+    assert isinstance(result, list)
+    assert isinstance(result[0], config.Config)

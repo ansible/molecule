@@ -18,150 +18,471 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
+import re
+
 import pytest
 
 from molecule import config
-
-
-@pytest.fixture()
-def default_config_data():
-    return {'foo': 'bar', 'baz': 'qux'}
+from molecule.dependency import ansible_galaxy
+from molecule.driver import docker
+from molecule.lint import ansible_lint
+from molecule.provisioner import ansible
+from molecule.verifier import testinfra
 
 
 @pytest.fixture()
 def project_config_data():
-    return {'foo': 'bar', 'baz': 'project-override'}
+    return {'driver': {'name': 'project-override'}}
 
 
 @pytest.fixture()
 def local_config_data():
-    return {'foo': 'local-override', 'baz': 'local-override'}
+    return {'driver': {'name': 'local-override', 'options': {'foo': 'bar'}}}
 
 
 @pytest.fixture()
-def config_instance(temp_files):
-    # TODO(retr0h): Rework molecule config so we can pass a generic
-    # config here.  Molecule currently expects to find a 'vagrant'
-    # key in this dict.
-    c = temp_files(fixtures=['molecule_vagrant_v1_config'])
+def config_instance(temp_dir, request):
+    configs = []
+    params = request.param
+    for fixture in params.get('configs', []):
+        if isinstance(fixture, str):
+            configs.append(request.getfuncargvalue(fixture))
+        else:
+            configs.append(fixture)
+    params['configs'] = configs
+    defaults = {
+        'molecule_file': os.path.join(temp_dir.strpath, 'molecule.yml'),
+        'args': {},
+        'command_args': {},
+        'configs': configs
+    }
+    defaults.update(params)
 
-    return config.ConfigV1(configs=c)
-
-
-@pytest.fixture()
-def patch_molecule_file_exists(monkeypatch):
-    def mockreturn(m):
-        return True
-
-    return monkeypatch.setattr('molecule.config.ConfigV1.molecule_file_exists',
-                               mockreturn)
-
-
-def test_molecule_file_property(config_instance):
-    assert 'molecule.yml' == config_instance.molecule_file
+    return config.Config(**defaults)
 
 
-def test_build_config_paths(config_instance):
-    parts = pytest.helpers.os_split(config_instance.config['molecule'][
-        'state_file'])
-    assert ('state.yml') == parts[-1]
-    assert 'test/vagrantfile_file' == config_instance.config['molecule'][
-        'vagrantfile_file']
-    assert 'test/rakefile_file' == config_instance.config['molecule'][
-        'rakefile_file']
-    assert 'test/config_file' == config_instance.config['ansible'][
-        'config_file']
-    assert 'test/inventory_file' == config_instance.config['ansible'][
-        'inventory_file']
+@pytest.mark.parametrize(
+    'config_instance', [{
+        'molecule_file': '/foo/bar/molecule/default/molecule.yml'
+    }],
+    indirect=['config_instance'])
+def test_molecule_file_private_member(config_instance):
+    x = '/foo/bar/molecule/default/molecule.yml'
+
+    assert x == config_instance.molecule_file
 
 
-@pytest.fixture()
-def build_config_paths_molecule_data():
-    return {
-        'molecule': {
-            'state_file': 'state_path',
-            'vagrantfile_file': '/full/path/vagrantfile_file',
-            'rakefile_file': 'relative/path/rakefile_file',
-            'molecule_dir': 'test'
-        },
-        'ansible': {
-            'config_file': 'config_file',
-            'inventory_file': 'inventory_file',
-            'playbook': 'playbook.yml'
-        }
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_args_member(config_instance):
+    assert {} == config_instance.args
+
+
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_command_args_member(config_instance):
+    assert {} == config_instance.command_args
+
+
+@pytest.mark.parametrize(
+    'config_instance', [{
+        'configs': [{
+            'platforms': [
+                {
+                    'name': 'instance-1',
+                },
+                {
+                    'name': 'instance-2',
+                },
+            ]
+        }]
+    }],
+    indirect=['config_instance'])
+def test_inventory_property(config_instance):
+    x = {
+        'instance-1': ['ansible_connection=docker'],
+        'instance-2': ['ansible_connection=docker']
     }
 
-
-# NOTE(retr0h): ``os.path.join`` does this for us.
-def test_build_config_paths_preserves_full_path(temp_files):
-    confs = temp_files(fixtures=['build_config_paths_molecule_data'])
-    c = config.ConfigV1(configs=confs)
-
-    assert '/full/path/vagrantfile_file' == c.config['molecule'][
-        'vagrantfile_file']
+    assert x == config_instance.inventory
 
 
-def test_build_config_paths_preserves_relative_path(temp_files):
-    confs = temp_files(fixtures=['build_config_paths_molecule_data'])
-    c = config.ConfigV1(configs=confs)
+@pytest.mark.parametrize(
+    'config_instance', [{
+        'molecule_file': '/foo/bar/molecule/default/molecule.yml'
+    }],
+    indirect=['config_instance'])
+def test_inventory_file_property(config_instance):
+    x = '/foo/bar/molecule/default/.molecule/ansible_inventory'
 
-    assert 'relative/path/rakefile_file' == c.config['molecule'][
-        'rakefile_file']
-
-
-def test_populate_instance_names(config_instance):
-    config_instance.populate_instance_names('rhel-7')
-
-    assert 'aio-01-rhel-7' == config_instance.config['vagrant']['instances'][
-        0]['vm_name']
+    assert x == config_instance.inventory_file
 
 
-def test_molecule_file_exists(temp_files, patch_molecule_file_exists):
-    configs = temp_files(fixtures=['molecule_vagrant_v1_config'])
-    c = config.ConfigV1(configs=configs)
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_default_dict(config_instance):
+    c = config_instance.config
 
-    assert c.molecule_file_exists()
-
-
-def test_molecule_file_does_not_exist(config_instance):
-    assert not config_instance.molecule_file_exists()
+    assert 'galaxy' == c['dependency']['name']
+    assert [] == c['platforms']
+    assert 'testinfra' == c['verifier']['name']
 
 
-def test_get_config(config_instance):
-    assert isinstance(config_instance.config, dict)
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_dependency_property(config_instance):
+    assert isinstance(config_instance.dependency, ansible_galaxy.AnsibleGalaxy)
 
 
-def test_combine_default_config(temp_files):
-    c = temp_files(fixtures=['default_config_data'])
-    config_instance = config.ConfigV1(configs=c).config
-
-    assert 'bar' == config_instance['foo']
-    assert 'qux' == config_instance['baz']
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_dependency_name_property(config_instance):
+    assert 'galaxy' == config_instance.dependency_name
 
 
-def test_combine_project_config_overrides_default_config(temp_files):
-    c = temp_files(fixtures=['default_config_data', 'project_config_data'])
-    config_instance = config.ConfigV1(configs=c).config
-
-    assert 'bar' == config_instance['foo']
-    assert 'project-override' == config_instance['baz']
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_dependency_enabled_property(config_instance):
+    assert config_instance.dependency_enabled
 
 
-def test_combine_local_config_overrides_default_and_project_config(temp_files):
-    c = temp_files(fixtures=[
-        'default_config_data', 'project_config_data', 'local_config_data'
-    ])
-    config_instance = config.ConfigV1(configs=c).config
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_dependency_options_property(config_instance):
+    x = {
+        'force': True,
+        'role_file': 'requirements.yml',
+        'roles_path': '.molecule/roles'
+    }
 
-    assert 'local-override' == config_instance['foo']
-    assert 'local-override' == config_instance['baz']
+    assert x == config_instance.dependency_options
+
+
+@pytest.mark.parametrize(
+    'config_instance', [{
+        'configs': [{
+            'dependency': {
+                'name': 'galaxy',
+                'options': {
+                    'foo': 'bar'
+                }
+            }
+        }]
+    }],
+    indirect=['config_instance'])
+def test_dependency_options_property_handles_dependency_options(
+        config_instance):
+    x = {
+        'role_file': 'requirements.yml',
+        'roles_path': '.molecule/roles',
+        'foo': 'bar',
+        'force': True
+    }
+
+    assert x == config_instance.dependency_options
+
+
+@pytest.mark.parametrize(
+    'config_instance', [{
+        'args': {
+            'debug': True
+        },
+    }],
+    indirect=['config_instance'])
+def test_dependency_options_property_handles_cli_args(config_instance):
+    # Does nothing.  The `ansible-galaxy` command does not support
+    # a `debug` flag.
+    x = {
+        'force': True,
+        'role_file': 'requirements.yml',
+        'roles_path': '.molecule/roles'
+    }
+
+    assert x == config_instance.dependency_options
+
+
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_driver_property(config_instance):
+    assert isinstance(config_instance.driver, docker.Docker)
+
+
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_driver_name_property(config_instance):
+    assert 'docker' == config_instance.driver_name
+
+
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_driver_options_property(config_instance):
+    assert {} == config_instance.driver_options
+
+
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_lint_property(config_instance):
+    assert isinstance(config_instance.lint, ansible_lint.AnsibleLint)
+
+
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_lint_name_property(config_instance):
+    assert 'ansible-lint' == config_instance.lint_name
+
+
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_lint_enabled_property(config_instance):
+    assert config_instance.lint_enabled
+
+
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_lint_options_property(config_instance):
+    assert {} == config_instance.lint_options
+
+
+@pytest.mark.parametrize(
+    'config_instance', [{
+        'configs': [{
+            'lint': {
+                'name': 'ansible-lint',
+                'options': {
+                    'foo': 'bar'
+                }
+            }
+        }]
+    }],
+    indirect=['config_instance'])
+def test_lint_options_property_handles_lint_options(config_instance):
+    assert {'foo': 'bar'} == config_instance.lint_options
+
+
+@pytest.mark.parametrize(
+    'config_instance', [{
+        'args': {
+            'debug': True
+        },
+    }],
+    indirect=['config_instance'])
+def test_lint_options_property_handles_cli_args(config_instance):
+    # Does nothing.  The `ansible-galaxy` command does not support
+    # a `debug` flag.
+    assert {} == config_instance.lint_options
+
+
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_platforms_property(config_instance):
+    assert [] == config_instance.platforms
+
+
+@pytest.mark.parametrize(
+    'config_instance', [{
+        'configs': [{
+            'platforms': [
+                {
+                    'name': 'instance-1',
+                    'groups': ['foo', 'bar'],
+                },
+                {
+                    'name': 'instance-2',
+                    'groups': ['baz'],
+                },
+            ]
+        }]
+    }],
+    indirect=['config_instance'])
+def test_platform_groups_property(config_instance):
+    x = {'bar': ['instance-1'], 'foo': ['instance-1'], 'baz': ['instance-2']}
+
+    assert x == config_instance.platform_groups
+
+
+@pytest.mark.parametrize(
+    'config_instance', [{
+        'configs': [{
+            'platforms': [
+                {
+                    'name': 'instance-1',
+                    'groups': ['foo', 'bar'],
+                },
+                {
+                    'name': 'instance-2',
+                },
+            ]
+        }]
+    }],
+    indirect=['config_instance'])
+def test_platform_groups_property_handles_missing_group(config_instance):
+    x = {'foo': ['instance-1'], 'bar': ['instance-1']}
+
+    assert x == config_instance.platform_groups
+
+
+@pytest.mark.parametrize(
+    'config_instance', [{
+        'configs': [{
+            'platforms': [
+                {
+                    'name': 'instance-1',
+                },
+                {
+                    'name': 'instance-2',
+                },
+            ]
+        }]
+    }],
+    indirect=['config_instance'])
+def test_platform_groups_property_handles_no_groups(config_instance):
+    assert {} == config_instance.platform_groups
+
+
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_provisioner_property(config_instance):
+    assert isinstance(config_instance.provisioner, ansible.Ansible)
+
+
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_provisioner_name_property(config_instance):
+    assert 'ansible' == config_instance.provisioner_name
+
+
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_provisioner_options_property(config_instance):
+    x = {
+        'ask_sudo_pass': False,
+        'ask_vault_pass': False,
+        'config_file': 'ansible.cfg',
+        'diff': True,
+        'host_key_checking': False,
+        'inventory_file': 'ansible_inventory',
+        'limit': 'all',
+        'playbook': 'playbook.yml',
+        'raw_ssh_args': [
+            '-o UserKnownHostsFile=/dev/null', '-o IdentitiesOnly=yes',
+            '-o ControlMaster=auto', '-o ControlPersist=60s'
+        ],
+        'sudo': True,
+        'sudo_user': False,
+        'tags': False,
+        'timeout': 30,
+        'vault_password_file': False,
+        'verbose': False
+    }
+
+    assert x == config_instance.provisioner_options
+
+
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_scenario_name_property(config_instance):
+    assert 'default' == config_instance.scenario_name
+
+
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_scenario_setup_property(config_instance):
+    x = os.path.join(config_instance.scenario_directory, 'create.yml')
+
+    assert x == config_instance.scenario_setup
+
+
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_scenario_converge_property(config_instance):
+    x = os.path.join(config_instance.scenario_directory, 'playbook.yml')
+
+    assert x == config_instance.scenario_converge
+
+
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_scenario_teardown_property(config_instance):
+    x = os.path.join(config_instance.scenario_directory, 'destroy.yml')
+
+    assert x == config_instance.scenario_teardown
+
+
+@pytest.mark.parametrize(
+    'config_instance', [{
+        'molecule_file': '/foo/bar/molecule/default/molecule.yml'
+    }],
+    indirect=['config_instance'])
+def test_scenario_directory_property(config_instance):
+    assert '/foo/bar/molecule/default' == config_instance.scenario_directory
+
+
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_verifier_property(config_instance):
+    assert isinstance(config_instance.verifier, testinfra.Testinfra)
+
+
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_verifier_name_property(config_instance):
+    assert 'testinfra' == config_instance.verifier_name
+
+
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_verifier_enabled_property(config_instance):
+    assert config_instance.verifier_enabled
+
+
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_verifier_directory_property(config_instance):
+    parts = config_instance.verifier_directory.split(os.path.sep)
+    assert 'tests' == parts[-1]
+
+
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_verifier_options_property(config_instance):
+    assert {'connection': 'docker'} == config_instance.verifier_options
+
+
+@pytest.mark.parametrize(
+    'config_instance', [{
+        'configs': [{
+            'verifier': {
+                'name': 'testinfra',
+                'options': {
+                    'foo': 'bar'
+                }
+            }
+        }]
+    }],
+    indirect=['config_instance'])
+def test_verifier_options_property_handles_verifier_options(config_instance):
+    x = {'connection': 'docker', 'foo': 'bar'}
+
+    assert x == config_instance.verifier_options
+
+
+@pytest.mark.parametrize(
+    'config_instance', [{
+        'args': {
+            'debug': True
+        },
+    }],
+    indirect=['config_instance'])
+def test_verifier_options_property_handles_cli_args(config_instance):
+    assert {
+        'debug': True,
+        'connection': 'docker'
+    } == config_instance.verifier_options
+
+
+@pytest.mark.parametrize(
+    'config_instance', [{
+        'configs': ['project_config_data']
+    }],
+    indirect=['config_instance'])
+def test_combine_default_and_project_dicts(config_instance):
+    c = config_instance.config
+
+    assert 'project-override' == c['driver']['name']
+    assert {} == c['driver']['options']
+
+
+@pytest.mark.parametrize(
+    'config_instance', [{
+        'configs': ['project_config_data', 'local_config_data']
+    }],
+    indirect=['config_instance'])
+def test_combine_default_project_and_local_dicts(config_instance):
+    c = config_instance.config
+
+    assert 'local-override' == c['driver']['name']
+    return {'foo': 'bar'} == c['driver']['options']
 
 
 def test_merge_dicts():
-    # Example taken from python-anyconfig/anyconfig/__init__.py
+    # example taken from python-anyconfig/anyconfig/__init__.py
     a = {'b': [{'c': 0}, {'c': 2}], 'd': {'e': 'aaa', 'f': 3}}
     b = {'a': 1, 'b': [{'c': 3}], 'd': {'e': 'bbb'}}
-    expected = {'a': 1, 'b': [{'c': 3}], 'd': {'e': "bbb", 'f': 3}}
-    result = config.merge_dicts(a, b)
+    x = {'a': 1, 'b': [{'c': 3}], 'd': {'e': "bbb", 'f': 3}}
 
-    assert expected == result
+    result = config.merge_dicts(a, b)
+    assert x == result

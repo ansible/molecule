@@ -18,87 +18,76 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import binascii
-import os
-import uuid
+from __future__ import print_function
 
 import colorama
+import os
 import pytest
 import sh
 
 from molecule import util
+
+colorama.init(autoreset=True)
 
 
 def test_print_success(capsys):
     util.print_success('test')
     result, _ = capsys.readouterr()
 
-    print '{}{}'.format(colorama.Fore.GREEN, 'test'.rstrip())
-    expected, _ = capsys.readouterr()
+    print('{}{}'.format(colorama.Fore.GREEN, 'test'.rstrip()))
+    x, _ = capsys.readouterr()
 
-    assert expected == result
+    assert x == result
 
 
 def test_print_info(capsys):
     util.print_info('test')
     result, _ = capsys.readouterr()
 
-    print '--> {}{}'.format(colorama.Fore.CYAN, 'test'.rstrip())
-    expected, _ = capsys.readouterr()
+    print('--> {}{}'.format(colorama.Fore.CYAN, 'test'.rstrip()))
+    x, _ = capsys.readouterr()
 
-    assert expected == result
+    assert x == result
 
 
 def test_print_info_without_pretty(capsys):
     util.print_info('test', pretty=False)
     result, _ = capsys.readouterr()
 
-    print '{}'.format('test'.rstrip())
-    expected, _ = capsys.readouterr()
+    print('{}'.format('test'.rstrip()))
+    x, _ = capsys.readouterr()
 
-    assert expected == result
+    assert x == result
 
 
 def test_print_warn(capsys):
     util.print_warn('test')
     result, _ = capsys.readouterr()
 
-    print '{}{}'.format(colorama.Fore.YELLOW, 'test'.rstrip())
-    expected, _ = capsys.readouterr()
+    print('{}{}'.format(colorama.Fore.YELLOW, 'test'.rstrip()))
+    x, _ = capsys.readouterr()
 
-    assert expected == result
+    assert x == result
 
 
 def test_print_error(capsys):
     util.print_error('test')
-    result, _ = capsys.readouterr()
+    _, result = capsys.readouterr()
 
-    print '{}ERROR: {}'.format(colorama.Fore.RED, 'test'.rstrip())
-    expected, _ = capsys.readouterr()
+    print('{}ERROR: {}'.format(colorama.Fore.RED, 'test'.rstrip()))
+    x, _ = capsys.readouterr()
 
-    assert expected == result
+    assert x == result
 
 
 def test_print_error_without_pretty(capsys):
     util.print_error('test', pretty=False)
-    result, _ = capsys.readouterr()
+    x, result = capsys.readouterr()
 
-    print '{}{}'.format(colorama.Fore.RED, 'test'.rstrip())
-    expected, _ = capsys.readouterr()
+    print('{}{}'.format(colorama.Fore.RED, 'test'.rstrip()))
+    x, _ = capsys.readouterr()
 
-    assert expected == result
-
-
-def test_callback_info(patched_print_info):
-    util.callback_info('test')
-
-    patched_print_info.assert_called_with('test', pretty=False)
-
-
-def test_callback_error(patched_print_error):
-    util.callback_error('test')
-
-    patched_print_error.assert_called_with('test', pretty=False)
+    assert x == result
 
 
 def test_print_debug(capsys):
@@ -119,70 +108,16 @@ def test_print_debug(capsys):
     assert expected_title == result_title
 
 
-def test_write_template(temp_dir):
-    source_file = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), os.path.pardir,
-        'resources', 'test_write_template.j2')
-    dest_file = os.path.join(temp_dir, 'test_util_write_template.tmp')
-    util.write_template(source_file, dest_file, {'test': 'chicken'})
-    with open(dest_file, 'r') as f:
-        data = f.read()
+def test_callback_info(patched_print_info):
+    util.callback_info('test')
 
-    assert data == 'this is a chicken\n'
+    patched_print_info.assert_called_with('test', pretty=False)
 
 
-def test_write_template_template_does_not_exist(temp_dir):
-    dest_file = os.path.join(temp_dir, 'test_util_write_template.tmp')
-    with pytest.raises(SystemExit):
-        util.write_template('/non/existent', dest_file, {'foo': 'bar'})
+def test_callback_error(patched_print_error):
+    util.callback_error('test')
 
-
-def test_write_file(temp_dir):
-    dest_file = os.path.join(temp_dir, 'test_util_write_file.tmp')
-    contents = binascii.b2a_hex(os.urandom(15))
-    util.write_file(dest_file, contents)
-    with open(dest_file, 'r') as f:
-        data = f.read()
-
-    assert data == contents
-
-
-def test_format_instance_name_00():
-    instances = [{'name': 'test-01'}]
-    actual = util.format_instance_name('test-02', 'rhel-7', instances)
-
-    assert actual is None
-
-
-def test_format_instance_name_01():
-    instances = [{'name': 'test-01'}]
-    actual = util.format_instance_name('test-01', 'rhel-7', instances)
-
-    assert 'test-01' == actual
-
-
-def test_format_instance_name_02():
-    instances = [{
-        'name': 'test-01',
-        'options': {
-            'append_platform_to_hostname': True
-        }
-    }]
-    actual = util.format_instance_name('test-01', 'rhel-7', instances)
-
-    assert 'test-01-rhel-7' == actual
-
-
-def test_format_instance_name_03():
-    instances = [{'name': 'test-01', 'options': {'chicken': False}}]
-    actual = util.format_instance_name('test-01', 'rhel-7', instances)
-
-    assert 'test-01' == actual
-
-
-@pytest.mark.skipif(reason="determine how to test such a function")
-def test_check_ssh_availability():
-    pass
+    patched_print_error.assert_called_with('test', pretty=False)
 
 
 def test_sysexit():
@@ -213,34 +148,14 @@ def test_run_command_with_debug(patched_print_debug):
     patched_print_debug.assert_called_with('COMMAND', '/bin/ls')
 
 
-def test_resolve_template_dir_relative():
-    result = util._resolve_template_dir('foo')
+def test_os_walk(temp_dir):
+    scenarios = ['scenario1', 'scenario2', 'scenario3']
+    molecule_directory = os.path.join(temp_dir.strpath, 'molecule')
+    for scenario in scenarios:
+        scenario_directory = os.path.join(molecule_directory, scenario)
+        molecule_file = os.path.join(scenario_directory, 'molecule.yml')
+        os.makedirs(scenario_directory)
+        open(molecule_file, 'a').close()
 
-    parts = pytest.helpers.os_split(result)
-
-    assert ('molecule', 'cookiecutter', 'foo') == parts[-3:]
-
-
-def test_resolve_template_dir_absolute():
-    result = util._resolve_template_dir('/foo/bar')
-
-    parts = pytest.helpers.os_split(result)
-
-    assert ('foo', 'bar') == parts[-2:]
-
-
-def test_process_templates(temp_dir):
-    template_dir = os.path.join(
-        os.path.dirname(__file__), os.path.pardir, 'resources', 'templates')
-    repo_name = str(uuid.uuid4())
-
-    context = {'repo_name': repo_name}
-
-    util.process_templates(template_dir, context, temp_dir)
-
-    expected_file = os.path.join(temp_dir, repo_name, 'template.yml')
-    expected_contents = '- value: foo'
-
-    with open(expected_file) as f:
-        for line in f.readlines():
-            assert line.strip() in expected_contents
+    result = [f for f in util.os_walk(molecule_directory, 'molecule.yml')]
+    assert 3 == len(result)

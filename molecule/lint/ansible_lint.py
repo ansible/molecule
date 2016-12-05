@@ -18,44 +18,55 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import os
-
-import click
+import sh
 
 from molecule import util
-from molecule.command import base
-from molecule.provisioner import ansible_playbook
+from molecule.lint import base
 
 
-class Create(base.Base):
-    def execute(self):
+class AnsibleLint(base.Base):
+    def __init__(self, config):
         """
-        Execute the actions necessary to perform a `molecule create` and
-        returns None.
+        Sets up the requirements to execute `ansible-lint` and returns None.
+
+        :param config: An instance of a Molecule config.
+        :return: None
+        """
+        super(AnsibleLint, self).__init__(config)
+        self._ansible_lint_command = None
+
+    @property
+    def options(self):
+        return {}
+
+    def bake(self):
+        """
+        Bake an `ansible-lint` command so it's ready to execute and returns
+        None.
 
         :return: None
         """
-        msg = "Scenario: [{}]".format(self._config.scenario_name)
-        util.print_info(msg)
-        msg = "Provisioner: [{}]".format(self._config.provisioner_name)
-        util.print_info(msg)
-        msg = "Playbook: [{}]".format(
-            os.path.basename(self._config.scenario_setup))
-        util.print_info(msg)
+        self._ansible_lint_command = sh.ansible_lint.bake(
+            self._config.scenario_converge,
+            self._config.lint_options,
+            _out=util.callback_info,
+            _err=util.callback_error)
 
-        ansible = ansible_playbook.AnsiblePlaybook(self._config.scenario_setup,
-                                                   self._config.inventory_file,
-                                                   self._config)
-        ansible.execute()
+    def execute(self):
+        """
+        Executes `ansible-lint` and returns None.
 
+        :return: None
+        """
+        if not self._config.lint_enabled:
+            return
 
-@click.command()
-@click.pass_context
-def create(ctx):  # pragma: no cover
-    """ Create instance(s) defined in molecule.yml. """
-    args = ctx.obj.get('args')
-    command_args = {}
+        if self._ansible_lint_command is None:
+            self.bake()
 
-    for config in base.get_configs(args, command_args):
-        c = Create(config)
-        c.execute()
+        try:
+            util.run_command(
+                self._ansible_lint_command,
+                debug=self._config.args.get('debug'))
+        except sh.ErrorReturnCode as e:
+            util.sysexit(e.exit_code)
