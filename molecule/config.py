@@ -43,15 +43,26 @@ class Config(object):
         :returns: None
         """
         self.config = self._get_config(configs)
-        self._build_config_paths()
 
     @property
     def molecule_file(self):
         return PROJECT_CONFIG
 
     @abc.abstractmethod
-    def _get_defaults(self):
+    def _get_config(self, configs):
         pass  # pragma: no cover
+
+
+class ConfigV1(Config):
+    def __init__(self, configs=[LOCAL_CONFIG, PROJECT_CONFIG]):
+        """
+        Initialize a new config version one class and returns None.
+        """
+        super(ConfigV1, self).__init__(configs)
+        self._build_config_paths()
+
+    def molecule_file_exists(self):
+        return os.path.isfile(self.molecule_file)
 
     def populate_instance_names(self, platform):
         """
@@ -67,9 +78,6 @@ class Config(object):
                 instance['vm_name'] = util.format_instance_name(
                     instance['name'], platform,
                     self.config['vagrant']['instances'])
-
-    def molecule_file_exists(self):
-        return os.path.isfile(self.molecule_file)
 
     def _get_config(self, configs):
         return self._combine(configs)
@@ -94,35 +102,6 @@ class Config(object):
                 configs, ignore_missing=True, ac_merge=MERGE_STRATEGY))
 
         return m9dicts.convert_to(conf)
-
-    def _build_config_paths(self):
-        """
-        Convenience function to build up paths from our config values.  Path
-        will not be relative to ``molecule_dir``, when a full path was provided
-        in the config.
-
-        :return: None
-        """
-        md = self.config.get('molecule')
-        ad = self.config.get('ansible')
-        for item in ['state_file', 'vagrantfile_file', 'rakefile_file']:
-            if md and not self._is_path(md[item]):
-                md[item] = os.path.join(md['molecule_dir'], md[item])
-
-        for item in ['config_file', 'inventory_file']:
-            if ad and not self._is_path(ad[item]):
-                ad[item] = os.path.join(md['molecule_dir'], ad[item])
-
-    def _is_path(self, pathname):
-        return os.path.sep in pathname
-
-
-class ConfigV1(Config):
-    def __init__(self, configs=[LOCAL_CONFIG, PROJECT_CONFIG]):
-        """
-        Initialize a new config version one class and returns None.
-        """
-        super(ConfigV1, self).__init__(configs)
 
     def _get_defaults(self):
         return {
@@ -192,6 +171,27 @@ class ConfigV1(Config):
             },
             '_disabled': [],
         }
+
+    def _build_config_paths(self):
+        """
+        Convenience function to build up paths from our config values.  Path
+        will not be relative to ``molecule_dir``, when a full path was provided
+        in the config.
+
+        :return: None
+        """
+        md = self.config.get('molecule')
+        ad = self.config.get('ansible')
+        for item in ['state_file', 'vagrantfile_file', 'rakefile_file']:
+            if md and not self._is_path(md[item]):
+                md[item] = os.path.join(md['molecule_dir'], md[item])
+
+        for item in ['config_file', 'inventory_file']:
+            if ad and not self._is_path(ad[item]):
+                ad[item] = os.path.join(md['molecule_dir'], ad[item])
+
+    def _is_path(self, pathname):
+        return os.path.sep in pathname
 
 
 def merge_dicts(a, b):
