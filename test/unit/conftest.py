@@ -147,7 +147,7 @@ def molecule_v1_section_data(state_path_without_data):
             'test': {
                 'sequence': [
                     'destroy', 'dependency', 'syntax', 'create', 'converge',
-                    'idempotence', 'check', 'verify'
+                    'idempotence', 'verify'
                 ]
             }
         }

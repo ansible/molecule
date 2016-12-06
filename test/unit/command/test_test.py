@@ -25,8 +25,8 @@ from molecule.command import test
 
 def test_execute(mocker, patched_destroy_main, patched_destroy,
                  patched_dependency, patched_syntax, patched_create,
-                 patched_converge, patched_idempotence, patched_check,
-                 patched_verify, molecule_instance):
+                 patched_converge, patched_idempotence, patched_verify,
+                 molecule_instance):
     t = test.Test({}, {}, molecule_instance)
     result = t.execute()
 
@@ -35,7 +35,6 @@ def test_execute(mocker, patched_destroy_main, patched_destroy,
     patched_create.assert_called_once_with(exit=False)
     patched_converge.assert_called_once_with(exit=False)
     patched_idempotence.assert_called_once_with(exit=False)
-    patched_check.assert_called_once_with(exit=False)
     patched_verify.assert_called_once_with(exit=False)
 
     expected = [mocker.call(exit=False), mocker.call()]
@@ -55,10 +54,10 @@ def test_execute_fail_fast(patched_destroy, patched_print_error,
     patched_print_error.assert_called_once_with('output')
 
 
-def test_execute_always_destroy(
-        mocker, patched_destroy_main, patched_destroy, patched_syntax,
-        patched_create, patched_converge, patched_idempotence, patched_check,
-        patched_verify, molecule_instance):
+def test_execute_always_destroy(mocker, patched_destroy_main, patched_destroy,
+                                patched_syntax, patched_create,
+                                patched_converge, patched_idempotence,
+                                patched_verify, molecule_instance):
     command_args = {'destroy': 'always'}
     t = test.Test({}, command_args, molecule_instance)
     result = t.execute()
@@ -69,10 +68,10 @@ def test_execute_always_destroy(
     assert (None, None) == result
 
 
-def test_execute_never_destroy(
-        patched_destroy_main, patched_destroy, patched_syntax, patched_create,
-        patched_converge, patched_idempotence, patched_check, patched_verify,
-        molecule_instance):
+def test_execute_never_destroy(patched_destroy_main, patched_destroy,
+                               patched_syntax, patched_create,
+                               patched_converge, patched_idempotence,
+                               patched_verify, molecule_instance):
     command_args = {'destroy': 'never'}
     t = test.Test({}, command_args, molecule_instance)
     result = t.execute()

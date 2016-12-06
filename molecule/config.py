@@ -154,7 +154,7 @@ class ConfigV1(Config):
                 'test': {
                     'sequence': [
                         'destroy', 'dependency', 'syntax', 'create',
-                        'converge', 'idempotence', 'check', 'verify'
+                        'converge', 'idempotence', 'verify'
                     ]
                 },
                 'testinfra_dir': 'tests',
