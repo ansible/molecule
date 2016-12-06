@@ -27,8 +27,10 @@ _molecule(){
   GLOBAL_COMMANDS="syntax create converge destroy idempotence init list login status test verify"
   GLOBAL_OPTIONS="-h -v"
   SYNTAX_OPTIONS=""
+  CHECK_OPTIONS=""
   CREATE_OPTIONS="--debug --platform --provider --tags"
   CONVERGE_OPTIONS="--debug --platform --provider --tags"
+  DEPENDENCY_OPTIONS=""
   DESTROY_OPTIONS="--debug --platform --provider --tags"
   IDEMPOTENCE_OPTIONS="--debug --platform --provider --tags"
   INIT_OPTIONS="--docker"
@@ -42,6 +44,9 @@ _molecule(){
   # echo -e "\nprev = $prev, cur = $cur, firstword = $firstword.\n"
 
   case "${firstword}" in
+    check)
+      complete_options="${CHECK_OPTIONS}"
+      ;;
     create)
       case "${prev}" in
         --platform)
@@ -67,6 +72,9 @@ _molecule(){
           complete_options="${CONVERGE_OPTIONS}"
           ;;
       esac
+      ;;
+    dependency)
+      complete_options="${CHECK_OPTIONS}"
       ;;
     destroy)
       case "${prev}" in
@@ -105,6 +113,9 @@ _molecule(){
       complete_words=$(_hosts)
       ;;
     status)
+      complete_options="${STATUS_OPTIONS}"
+      ;;
+    syntax)
       complete_options="${STATUS_OPTIONS}"
       ;;
     test)
