@@ -116,7 +116,7 @@ _molecule(){
       complete_options="${STATUS_OPTIONS}"
       ;;
     syntax)
-      complete_options="${STATUS_OPTIONS}"
+      complete_options="${SYNTAX_OPTIONS}"
       ;;
     test)
       case "${prev}" in
