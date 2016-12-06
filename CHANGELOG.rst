@@ -2,6 +2,18 @@
 History
 *******
 
+1.16.1
+======
+
+Removed check mode from running in test cycle.
+
+Breaking Changes
+----------------
+
+* Molecule no longer runs in "Dry Mode" as part of `molecule test`.  If one
+  wishes to incorporate check as part of `test`, molecule.yml can be updated
+  to include this as part of the test sequence.
+
 1.16
 ====
 
