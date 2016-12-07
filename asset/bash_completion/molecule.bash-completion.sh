@@ -74,7 +74,7 @@ _molecule(){
       esac
       ;;
     dependency)
-      complete_options="${CHECK_OPTIONS}"
+      complete_options="${DEPENDENCY_OPTIONS}"
       ;;
     destroy)
       case "${prev}" in
