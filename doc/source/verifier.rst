@@ -113,7 +113,7 @@ appropriate ansible hosts/groups.
 
 Example files are created with ``molecule init --verifier goss``.
 
-.. warning:: Concider this verifier experimental.
+.. warning:: Consider this verifier experimental.
 
 Usage
 -----
