@@ -109,6 +109,7 @@ class ConfigV1(Config):
                 'ask_sudo_pass': False,
                 'ask_vault_pass': False,
                 'config_file': 'ansible.cfg',
+                'ansiblecfg_defaults': {},
                 'diff': True,
                 'host_key_checking': False,
                 'inventory_file': 'ansible_inventory',

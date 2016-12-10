@@ -372,9 +372,23 @@ class Molecule(object):
         # Ability to turn off features until we roll them out.
         return self.config.config.get('_disabled', [])
 
+    def _dict_to_inisection_string(self, data, padding=15):
+        result = ''
+        for key, value in data.iteritems():
+            result += '\n%s = %s' % (key.ljust(padding), value)
+
+        return result
+
     def _get_cookiecutter_context(self, molecule_dir):
         state_file = self.config.config['molecule']['state_file']
         serverspec_dir = self.config.config['molecule']['serverspec_dir']
+        ansiblecfg_defaults = self.config.config['ansible'][
+            'ansiblecfg_defaults']
+
+        # This is required because cookiecutter apparently casts all of its
+        # context to str, thus we can not do any looping in the template
+        ansiblecfg_defaults_string = self._dict_to_inisection_string(
+            ansiblecfg_defaults)
 
         return {
             'repo_name': molecule_dir,
@@ -382,4 +396,5 @@ class Molecule(object):
             'ansiblecfg_ansible_library_path': 'library',
             'rakefile_state_file': state_file,
             'rakefile_serverspec_dir': serverspec_dir,
+            'ansiblecfg_defaults': ansiblecfg_defaults_string,
         }
