@@ -384,11 +384,15 @@ class Molecule(object):
         serverspec_dir = self.config.config['molecule']['serverspec_dir']
         ansiblecfg_defaults = self.config.config['ansible'][
             'ansiblecfg_defaults']
+        ansiblecfg_ssh_connection = self.config.config['ansible'][
+            'ansiblecfg_ssh_connection']
 
         # This is required because cookiecutter apparently casts all of its
         # context to str, thus we can not do any looping in the template
         ansiblecfg_defaults_string = self._dict_to_inisection_string(
             ansiblecfg_defaults)
+        ansiblecfg_ssh_connection_string = self._dict_to_inisection_string(
+            ansiblecfg_ssh_connection)
 
         return {
             'repo_name': molecule_dir,
@@ -397,4 +401,5 @@ class Molecule(object):
             'rakefile_state_file': state_file,
             'rakefile_serverspec_dir': serverspec_dir,
             'ansiblecfg_defaults': ansiblecfg_defaults_string,
+            'ansiblecfg_ssh_connection': ansiblecfg_ssh_connection_string
         }

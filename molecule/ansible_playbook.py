@@ -114,7 +114,10 @@ class AnsiblePlaybook(object):
             self._playbook = value
             return
 
-        if name in ['host_vars', 'group_vars', 'ansiblecfg_defaults']:
+        if name in [
+                'host_vars', 'group_vars', 'ansiblecfg_defaults',
+                'ansiblecfg_ssh_connection'
+        ]:
             return
 
         # verbose is weird, must be -vvvv not verbose=vvvv

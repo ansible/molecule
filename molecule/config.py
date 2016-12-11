@@ -112,6 +112,7 @@ class ConfigV1(Config):
                 'ansiblecfg_defaults': {
                     'retry_files_enabled': False,
                 },
+                'ansiblecfg_ssh_connection': {},
                 'diff': True,
                 'host_key_checking': False,
                 'inventory_file': 'ansible_inventory',
