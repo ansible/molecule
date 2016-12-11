@@ -73,14 +73,16 @@ variables.  There are only a few currently in use.
       ANSIBLE_ACTION_PLUGINS: ../plugins
     ansiblecfg_defaults:
       retry_files_enabled: False
+    ansiblecfg_ssh_connection:
+      pipelining: True
 
 The `raw_env_vars` section allows you to pass arbitrary environment variables
 to ``ansible-playbook``. This can be useful, for example, if you want to do a
 role level override of a value normally found in ``ansible.cfg``.
 
-The `ansiblecfg_defaults` section can be used to pass arbitrary key value pairs
-which will then be written to the `defaults` section of the ``ansible-cfg`` file
-used by moluecule.
+The `ansiblecfg_defaults` and `ansiblecfg_ssh_connection`` sections both take
+arbitrary key value pairs. Those key value pairs will then be written to the
+`defaults` and `ssh_connection` section of ``ansible.cfg``, respectively.
 
 Host/Group Vars
 ^^^^^^^^^^^^^^^
