@@ -51,6 +51,10 @@ class OpenstackDriver(basedriver.BaseDriver):
         return self.molecule.config.config['openstack']['instances']
 
     @property
+    def ip_pool(self):
+        return self.molecule.config.config['openstack'].get('ip_pool')
+
+    @property
     def default_provider(self):
         return self._provider
 
@@ -120,6 +124,8 @@ class OpenstackDriver(basedriver.BaseDriver):
                     auto_ip=True,
                     wait=True,
                     key_name=kpn,
+                    ip_pool=instance.get('ip_pool')
+                    if instance.get('ip_pool') else self.ip_pool,
                     security_groups=instance['security_groups']
                     if 'security_groups' in instance else None)
                 self._reset_known_host_key(server['interface_ip'])
