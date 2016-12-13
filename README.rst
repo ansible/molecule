@@ -85,14 +85,19 @@ Quick Start
 
   `Ansible`_ and the driver's python package require installation.
 
-Install OS dependencies
-
-CentOS 6/7
+Install OS dependencies on CentOS 6/7
 
 .. code-block:: bash
 
   $ yum install -y epel-release
   $ yum install gcc python-devel openssl-devel
+
+Install OS dependencies on Ubuntu 16.x
+
+.. code-block:: bash
+
+  $ apt-get update
+  $ apt-get install python-pip libssl-dev
 
 Install Molecule using pip:
 
