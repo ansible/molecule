@@ -10,6 +10,10 @@ Molecule
    :target: https://molecule.readthedocs.io/en/latest/
    :alt: Documentation Status
 
+.. image:: https://img.shields.io/badge/license-MIT-brightgreen.svg
+   :target: [!LICENSE]
+   :alt: Repository License
+
 Molecule is designed to aid in the development and testing of
 `Ansible`_ roles including support for multiple instances,
 operating system distributions, virtualization providers and test frameworks.
@@ -81,7 +85,19 @@ Quick Start
 
   `Ansible`_ and the driver's python package require installation.
 
+Install OS dependencies
+=====
+
+CentOS 6/7
+===
+
+.. code-block:: bash
+
+  $ yum install -y epel-release
+  $ yum install gcc python-devel openssl-devel
+
 Install Molecule using pip:
+=====
 
 .. code-block:: bash
 
@@ -90,6 +106,7 @@ Install Molecule using pip:
   $ pip install molecule
 
 Create a new role with the docker driver:
+=====
 
 .. code-block:: bash
 
@@ -98,6 +115,7 @@ Create a new role with the docker driver:
   Successfully initialized new role in /private/tmp/foo.
 
 Or add Molecule to an existing role:
+=====
 
 .. code-block:: bash
 
@@ -107,6 +125,7 @@ Or add Molecule to an existing role:
   Successfully initialized new role in /private/tmp/foo.
 
 Update the role with needed functionality and tests.  Now test it:
+=====
 
 .. code-block:: bash
 
