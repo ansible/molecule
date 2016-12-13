@@ -10,6 +10,10 @@ Molecule
    :target: https://molecule.readthedocs.io/en/latest/
    :alt: Documentation Status
 
+.. image:: https://img.shields.io/badge/license-MIT-brightgreen.svg
+   :target: LICENSE
+   :alt: Repository License
+
 Molecule is designed to aid in the development and testing of
 `Ansible`_ roles including support for multiple instances,
 operating system distributions, virtualization providers and test frameworks.
@@ -80,6 +84,20 @@ Quick Start
 .. important::
 
   `Ansible`_ and the driver's python package require installation.
+
+Install OS dependencies on CentOS 6/7
+
+.. code-block:: bash
+
+  $ yum install -y epel-release
+  $ yum install gcc python-devel openssl-devel
+
+Install OS dependencies on Ubuntu 16.x
+
+.. code-block:: bash
+
+  $ apt-get update
+  $ apt-get install python-pip libssl-dev
 
 Install Molecule using pip:
 
