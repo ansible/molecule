@@ -11,7 +11,7 @@ Molecule
    :alt: Documentation Status
 
 .. image:: https://img.shields.io/badge/license-MIT-brightgreen.svg
-   :target: [!LICENSE]
+   :target: LICENSE
    :alt: Repository License
 
 Molecule is designed to aid in the development and testing of
