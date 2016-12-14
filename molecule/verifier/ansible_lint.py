@@ -49,6 +49,7 @@ class AnsibleLint(base.Base):
         env = {
             'ANSIBLE_CONFIG':
             self._molecule.config.config['ansible']['config_file'],
+            'PYTHONPATH': os.environ.get('PYTHONPATH'),
             'HOME': os.environ.get('HOME')
         }
 
