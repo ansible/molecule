@@ -50,7 +50,7 @@ Dependencies
 ------------
 
 Tests will be skipped when the driver's binary is not present. `Serverspec`
-scenarios do require a working ruby, `Bunder`_, and `Rake`_.
+scenarios do require a working ruby, `Bundler`_, and `Rake`_.
 
 Install the test framework `Tox`_.
 
