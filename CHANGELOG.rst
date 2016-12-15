@@ -2,10 +2,21 @@
 History
 *******
 
+1.17
+====
+
+* Cleanup sphinx doc generation.
+* Bumped testinfra requirement which drops the now useless installation of
+  which in centos and fedora images.
+* Made OpenStack's ip pool configurable.
+* Corrected Docker's overlayfs for RPM based distros.
+* Fixed OpenStack's security_groups default for newer shade versions.
+* Added missing bash completion targets.
+
 1.16.1
 ======
 
-Removed check mode from running in test cycle.
+* Removed check mode from running in test cycle.
 
 Breaking Changes
 ----------------
