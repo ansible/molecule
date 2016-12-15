@@ -45,7 +45,7 @@ class Verify(base.Base):
         v.execute(exit=exit)
 
         v = trailing.Trailing(self.molecule)
-        v.execute()
+        v.execute(exit=exit)
 
         self.molecule.write_ssh_config()
 

@@ -24,7 +24,7 @@ import os
 import pytest
 import sh
 
-pytestmark = pytest.helpers.supports_vagrant()
+pytestmark = pytest.helpers.supports_vagrant_virtualbox()
 
 
 def test_command_init(temp_dir):
