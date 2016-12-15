@@ -19,7 +19,6 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import pytest
-import sh
 
 from molecule.verifier import ansible_lint
 
@@ -27,15 +26,3 @@ from molecule.verifier import ansible_lint
 @pytest.fixture()
 def ansible_lint_instance(molecule_instance):
     return ansible_lint.AnsibleLint(molecule_instance)
-
-
-def test_execute(monkeypatch, patched_run_command, ansible_lint_instance):
-    monkeypatch.setenv('HOME', '/foo/bar')
-    ansible_lint_instance.execute()
-
-    parts = pytest.helpers.os_split(ansible_lint_instance._playbook)
-    assert 'playbook_data.yml' == parts[-1]
-
-    x = sh.ansible_lint.bake(ansible_lint_instance._playbook, '--exclude .git',
-                             '--exclude .vagrant', '--exclude .molecule')
-    patched_run_command.assert_called_once_with(x, debug=None)

@@ -327,6 +327,11 @@ def patched_ansible_playbook(mocker):
 
 
 @pytest.fixture()
+def patched_ansiblelint(mocker):
+    return mocker.patch('molecule.verifier.ansible_lint.AnsibleLint.execute')
+
+
+@pytest.fixture()
 def patched_ansible_galaxy(patched_run_command):
     return patched_run_command
 

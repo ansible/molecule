@@ -18,9 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import os
-
-import sh
+import ansiblelint
+from ansiblelint import RulesCollection, formatters
 
 from molecule import util
 from molecule.verifier import base
@@ -39,27 +38,35 @@ class AnsibleLint(base.Base):
         self._ignore_paths = molecule.config.config['molecule']['ignore_paths']
         self._debug = molecule.args.get('debug')
 
-    def execute(self):
+    def execute(self, exit=True):
         """
         Executes ansible-lint against the configured playbook and returns
         None.
 
         :return: None
         """
-        env = {
-            'ANSIBLE_CONFIG':
-            self._molecule.config.config['ansible']['config_file'],
-            'HOME': os.environ.get('HOME')
-        }
-
         if 'ansible_lint' not in self._molecule.disabled:
             msg = 'Executing ansible-lint...'
             util.print_info(msg)
             args = [self._playbook]
             [args.extend(["--exclude", path]) for path in self._ignore_paths]
-            cmd = sh.ansible_lint.bake(
-                *args,
-                _env=env,
-                _out=util.callback_info,
-                _err=util.callback_error)
-            util.run_command(cmd, debug=self._debug)
+            util.print_info(str(args))
+
+            rules = RulesCollection().create_from_directory(
+                ansiblelint.default_rulesdir)
+            playbook = self._playbook
+            tags = skip_list = []
+            exclude_paths = self._ignore_paths
+            verbosity = 0
+            runner = ansiblelint.Runner(rules, playbook, tags, skip_list,
+                                        exclude_paths, verbosity)
+            results = runner.run()
+
+            formatter = formatters.Formatter()
+            found_error = False
+            for result in results:
+                util.print_error(formatter.format(result, True))
+                found_error = True
+
+            if exit and found_error:
+                util.sysexit()

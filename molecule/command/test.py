@@ -41,13 +41,14 @@ class Test(base.Base):
             command = getattr(command_module, task.capitalize())
             c = command(self.args, self.command_args, self.molecule)
 
-            status, output = c.execute(exit=False)
+            status, output = c.execute(exit=exit)
 
             # Fail fast
             if status is not 0 and status is not None:
                 if output:
                     util.print_error(output)
-                util.sysexit(status)
+                if exit:
+                    util.sysexit(status)
 
         if self.command_args.get('destroy') == 'always':
             c = molecule.command.destroy.Destroy(self.args, self.command_args)
@@ -77,8 +78,13 @@ class Test(base.Base):
     '--sudo/--no-sudo',
     default=False,
     help='Enable or disable running tests with sudo. Default is disabled.')
+@click.option(
+    '--exit/--no-exit',
+    default=False,
+    help='Enable or disable exiting on failed tests. Default is enabled.')
 @click.pass_context
-def test(ctx, driver, platform, provider, destroy, sudo):  # pragma: no cover
+def test(ctx, driver, platform, provider, destroy, sudo,
+         exit):  # pragma: no cover
     """
     Runs a series of commands (defined in config) against instances for a full
     test/verify run.
@@ -92,5 +98,5 @@ def test(ctx, driver, platform, provider, destroy, sudo):  # pragma: no cover
     }
 
     t = Test(ctx.obj.get('args'), command_args)
-    t.execute
+    t.execute(exit=exit)
     util.sysexit(t.execute()[0])

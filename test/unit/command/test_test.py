@@ -30,14 +30,14 @@ def test_execute(mocker, patched_destroy_main, patched_destroy,
     t = test.Test({}, {}, molecule_instance)
     result = t.execute()
 
-    patched_syntax.assert_called_once_with(exit=False)
-    patched_dependency.assert_called_once_with(exit=False)
-    patched_create.assert_called_once_with(exit=False)
-    patched_converge.assert_called_once_with(exit=False)
-    patched_idempotence.assert_called_once_with(exit=False)
-    patched_verify.assert_called_once_with(exit=False)
+    patched_syntax.assert_called_once_with(exit=True)
+    patched_dependency.assert_called_once_with(exit=True)
+    patched_create.assert_called_once_with(exit=True)
+    patched_converge.assert_called_once_with(exit=True)
+    patched_idempotence.assert_called_once_with(exit=True)
+    patched_verify.assert_called_once_with(exit=True)
 
-    expected = [mocker.call(exit=False), mocker.call()]
+    expected = [mocker.call(exit=True), mocker.call()]
     assert patched_destroy.mock_calls == expected
 
     assert (None, None) == result
@@ -62,7 +62,7 @@ def test_execute_always_destroy(mocker, patched_destroy_main, patched_destroy,
     t = test.Test({}, command_args, molecule_instance)
     result = t.execute()
 
-    expected = [mocker.call(exit=False), mocker.call()]
+    expected = [mocker.call(exit=True), mocker.call()]
     assert patched_destroy.mock_calls == expected
 
     assert (None, None) == result
@@ -76,6 +76,6 @@ def test_execute_never_destroy(patched_destroy_main, patched_destroy,
     t = test.Test({}, command_args, molecule_instance)
     result = t.execute()
 
-    patched_destroy.assert_called_once_with(exit=False)
+    patched_destroy.assert_called_once_with(exit=True)
 
     assert (None, None) == result

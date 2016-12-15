@@ -40,11 +40,10 @@ class Verify(base.Base):
          on command failure.
         :return: Return a tuple of None, otherwise sys.exit on command failure.
         """
-        try:
-            v = ansible_lint.AnsibleLint(self.molecule)
-            v.execute()
-        except sh.ErrorReturnCode:
-            util.sysexit()
+
+        v = ansible_lint.AnsibleLint(self.molecule)
+        v.execute(exit=exit)
+
         v = trailing.Trailing(self.molecule)
         v.execute()
 
@@ -75,11 +74,15 @@ class Verify(base.Base):
     '--sudo/--no-sudo',
     default=False,
     help='Enable or disable running tests with sudo. Default is disabled.')
+@click.option(
+    '--exit/--no-exit',
+    default=True,
+    help='Enable or disable exiting on failed verifiers. Default is enabled.')
 @click.pass_context
-def verify(ctx, platform, provider, sudo):  # pragma: no cover
+def verify(ctx, platform, provider, sudo, exit):  # pragma: no cover
     """ Performs verification steps on running instances. """
     command_args = {'platform': platform, 'provider': provider, 'sudo': sudo}
 
     v = Verify(ctx.obj.get('args'), command_args)
-    v.execute
+    v.execute(exit)
     util.sysexit(v.execute()[0])
