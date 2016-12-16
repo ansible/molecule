@@ -46,7 +46,8 @@ class Syntax(base.Base):
         ansible.add_cli_arg('inventory_file', 'localhost,')
         util.print_info("Checking playbook's syntax...")
 
-        return ansible.execute(hide_errors=True)
+        ret_code, output = ansible.execute(hide_errors=True)
+        return ret_code, '', ''
 
 
 @click.command()

@@ -69,8 +69,8 @@ class Testinfra(base.Base):
                    tests,
                    debug=False,
                    ansible_env={},
-                   out=util.callback_info,
-                   err=util.callback_error,
+                   out=None,
+                   err=None,
                    **kwargs):
         """
         Executes testinfra against specified tests and returns a :func:`sh`
@@ -89,8 +89,8 @@ class Testinfra(base.Base):
         """
         kwargs['debug'] = debug
         kwargs['_env'] = ansible_env
-        kwargs['_out'] = out
-        kwargs['_err'] = err
+        kwargs['_out'] = out if out is not None else self._info_callback
+        kwargs['_err'] = err if err is not None else self._error_callback
 
         msg = 'Executing testinfra tests found in {}/...'.format(
             self._testinfra_dir)

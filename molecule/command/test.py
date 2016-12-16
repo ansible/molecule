@@ -36,33 +36,33 @@ class Test(base.Base):
          sys.exit on command failure.
         """
         ts = self.molecule.config.config['molecule']['test']['sequence']
+        failed = False
+        errors = ''
+        warnings = ''
         for task in ts:
             command_module = getattr(molecule.command, task)
             command = getattr(command_module, task.capitalize())
             c = command(self.args, self.command_args, self.molecule)
 
-            status, output = c.execute(exit=exit)
+            status, cmd_err, cmd_warn = c.execute(exit=exit)
+            errors += cmd_err
+            warnings += cmd_warn
 
             # Fail fast
             if status is not 0 and status is not None:
-                if output:
-                    util.print_error(output)
+                failed = True
+
                 if exit:
                     util.sysexit(status)
 
-        if self.command_args.get('destroy') == 'always':
+        if self.command_args.get('destroy') == 'always' or not failed:
             c = molecule.command.destroy.Destroy(self.args, self.command_args)
-            c.execute()
-            return None, None
+            status, cmd_err, cmd_warn = c.execute(exit=exit)
+            errors += cmd_err
+            warnings += cmd_warn
 
-        if self.command_args.get('destroy') == 'never':
-            return None, None
-
-        # passing (default)
-        if status is None:
-            c = molecule.command.destroy.Destroy(self.args, self.command_args)
-            c.execute()
-            return None, None
+        ret_code = 1 if failed else 0
+        return ret_code, errors, warnings
 
 
 @click.command()
@@ -98,5 +98,4 @@ def test(ctx, driver, platform, provider, destroy, sudo,
     }
 
     t = Test(ctx.obj.get('args'), command_args)
-    t.execute(exit=exit)
-    util.sysexit(t.execute()[0])
+    util.sysexit(t.execute(exit=exit)[0])

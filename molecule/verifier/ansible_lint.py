@@ -40,10 +40,10 @@ class AnsibleLint(base.Base):
 
     def execute(self, exit=True):
         """
-        Executes ansible-lint against the configured playbook and returns
-        None.
+        Executes ansible-lint against the configured playbook and return a
+        tuple
 
-        :return: None
+        :return: Return a tuple of (`exit status`, `errors`, `warnings`)
         """
         if 'ansible_lint' not in self._molecule.disabled:
             msg = 'Executing ansible-lint...'
@@ -60,13 +60,17 @@ class AnsibleLint(base.Base):
             verbosity = 0
             runner = ansiblelint.Runner(rules, playbook, tags, skip_list,
                                         exclude_paths, verbosity)
-            results = runner.run()
+            matches = runner.run()
 
+            errors = []
+            warnings =  []
             formatter = formatters.Formatter()
-            found_error = False
-            for result in results:
-                util.print_error(formatter.format(result, True))
-                found_error = True
+            for match in matches:
+                util.print_error(formatter.format(match, True))
+                errors.append("{}:{}: [{}] {} - {}".format(match.filename,
+                    match.linenumber, match.rule.id, match.message, match.line))
 
-            if exit and found_error:
+            if exit and len(matches) > 0:
                 util.sysexit()
+
+            return (len(matches) > 0, errors, warnings)

@@ -47,7 +47,7 @@ class Status(base.Base):
         # shell out for status.
         except subprocess.CalledProcessError as e:
             util.print_error(e.message)
-            return e.returncode, e.message
+            return e.returncode, e.message, ''
 
         # Display the results in procelain mode.
         porcelain = self.command_args.get('porcelain')
@@ -76,7 +76,7 @@ class Status(base.Base):
         if display_all or self.command_args.get('providers'):
             self.molecule.print_valid_providers(porcelain=porcelain)
 
-        return None, None
+        return 0, '', ''
 
 
 @click.command()

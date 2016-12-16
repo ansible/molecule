@@ -40,7 +40,7 @@ def print_success(msg):
 def print_info(msg, pretty=True):
     if pretty:
         msg = msg.replace('\n', '\n    ')
-        template = '--> {}{{}}'.format(colorama.Fore.CYAN)
+        template = '--> {}{{}}'.format(colorama.Fore.RESET)
         print_msg(template, msg)
     else:
         print_msg('{}', msg)

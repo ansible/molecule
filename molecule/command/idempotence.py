@@ -42,17 +42,17 @@ class Idempotence(base.Base):
         util.print_info(msg)
 
         c = converge.Converge(self.args, self.command_args, self.molecule)
-        status, output = c.execute(
+        status, errors, warnings = c.execute(
             idempotent=True, exit=False, hide_errors=True)
         if status is not None:
             msg = 'Skipping due to errors during converge.'
             util.print_info(msg)
-            return status, None
+            return status, errors, warnings
 
         idempotent = self._is_idempotent(output)
         if idempotent:
             util.print_success('Idempotence test passed.')
-            return None, None
+            return 0, errors, warnings
         else:
             msg = 'Idempotence test failed because of the following tasks:'
             util.print_error(msg)
@@ -60,7 +60,7 @@ class Idempotence(base.Base):
             if exit:
                 util.sysexit()
 
-            return 1, None
+            return 1, msg, ''
 
     def _is_idempotent(self, output):
         """

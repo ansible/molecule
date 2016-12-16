@@ -37,7 +37,7 @@ class Dependency(base.Base):
         """
         debug = self.args.get('debug')
         if self.molecule.state.installed_deps:
-            return (None, None)
+            return 0, '', ''
         dependency_name = self.molecule.dependency
         if dependency_name == 'galaxy':
             dd = self.molecule.config.config.get('dependency')
@@ -59,7 +59,7 @@ class Dependency(base.Base):
                 s.execute()
                 self.molecule.state.change_state('installed_deps', True)
 
-        return (None, None)
+        return 0, '', ''
 
 
 @click.command()

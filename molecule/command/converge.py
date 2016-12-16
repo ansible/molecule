@@ -47,6 +47,7 @@ class Converge(base.Base):
          sys.exit on command failure.
         """
         debug = self.args.get('debug')
+        failed = False
 
         if self.molecule.state.created:
             create_instances = False
@@ -100,15 +101,17 @@ class Converge(base.Base):
 
         util.print_info('Starting Ansible Run...')
         status, output = ansible.execute(hide_errors=hide_errors)
+        if output is None:
+            output = ''
         if status is not None:
             if exit:
                 util.sysexit(status)
-            return status, None
+            return status, '', ''
 
         if not self.molecule.state.converged:
             self.molecule.state.change_state('converged', True)
 
-        return None, output
+        return 0, '', ''
 
 
 @click.command()

@@ -99,7 +99,7 @@ class Login(base.Base):
             util.sysexit()
 
         self._get_login(hostname)
-        return None, None
+        return 0, '', ''
 
     def _get_login(self, hostname):  # pragma: no cover
         login_cmd = self.molecule.driver.login_cmd(hostname)

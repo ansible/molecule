@@ -41,13 +41,28 @@ class Verify(base.Base):
         :return: Return a tuple of None, otherwise sys.exit on command failure.
         """
 
+        failed = False
+        errors = ''
+        warnings = ''
+
         v = ansible_lint.AnsibleLint(self.molecule)
-        v.execute(exit=exit)
+        test_failed, lint_err, lint_warn = v.execute(exit=exit)
+        if test_failed:
+            failed = True
+        errors += '\n'.join(lint_err)
+        warnings += '\n'.join(lint_warn)
+
 
         v = trailing.Trailing(self.molecule)
-        v.execute(exit=exit)
+        test_failed, trail_err, trail_warn = v.execute(exit=exit)
+        if test_failed:
+            failed = True
+        errors += '\n'.join(lint_err)
+        warnings += '\n'.join(lint_warn)
 
         self.molecule.write_ssh_config()
+
+        ret_code = 1 if failed else 0
 
         try:
             if self.molecule.verifier == 'serverspec':
@@ -58,13 +73,14 @@ class Verify(base.Base):
                 v = testinfra.Testinfra(self.molecule)
 
             v.execute()
+
         except sh.ErrorReturnCode as e:
-            util.print_error(str(e))
             if exit:
                 util.sysexit(e.exit_code)
-            return e.exit_code, e.stdout
+            ret_code = e.exit_code
+            errors += v.errors
 
-        return None, None
+        return ret_code, errors, warnings
 
 
 @click.command()
@@ -84,5 +100,4 @@ def verify(ctx, platform, provider, sudo, exit):  # pragma: no cover
     command_args = {'platform': platform, 'provider': provider, 'sudo': sudo}
 
     v = Verify(ctx.obj.get('args'), command_args)
-    v.execute(exit)
-    util.sysexit(v.execute()[0])
+    util.sysexit(v.execute(exit=exit)[0])
