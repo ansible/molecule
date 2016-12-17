@@ -95,6 +95,8 @@ class AnsiblePlaybook(object):
 
         if name == 'raw_env_vars':
             for k, v in value.iteritems():
+                if not isinstance(v, basestring):
+                    v = unicode(v)
                 self.add_env_arg(k, v)
             return
 
