@@ -60,5 +60,6 @@ def test_execute_exits_when_command_fails_and_exit_flag_set(
     s = status.Status({}, command_args, molecule_instance)
     result = s.execute()
 
-    patched_print_error.assert_called_once_with('')
+    patched_print_error.assert_called_once_with(
+        "Command 'None' returned non-zero exit status 1")
     assert (1, '', '') == result

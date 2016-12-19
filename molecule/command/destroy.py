@@ -45,7 +45,7 @@ class Destroy(base.Base):
             util.print_error(str(e))
             if exit:
                 util.sysexit(e.returncode)
-            return e.returncode, e.message, ''
+            return e.returncode, '', ''
         self.molecule.remove_templates()
         self.molecule.remove_inventory_file()
         return 0, '', ''

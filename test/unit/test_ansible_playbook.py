@@ -177,7 +177,7 @@ def test_execute_exits_with_return_code_and_logs(patched_print_error,
     false_path = sh.which('false')
     result = ansible_playbook_instance.execute()
 
-    msg = "\n\n  RAN: '{0}'\n\n  STDOUT:\n\n\n  STDERR:\n".format(false_path)
+    msg = "\n\n  RAN: {0}\n\n  STDOUT:\n\n\n  STDERR:\n".format(false_path)
     patched_print_error.assert_called_once_with(msg)
 
     assert (1, None) == result

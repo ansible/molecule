@@ -47,7 +47,7 @@ class Create(base.Base):
             util.print_error(str(e))
             if exit:
                 util.sysexit(e.returncode)
-            return e.returncode, e.message, ''
+            return e.returncode, '', ''
         self.molecule.create_inventory_file()
         self.molecule.write_instances_state()
         return 0, '', ''

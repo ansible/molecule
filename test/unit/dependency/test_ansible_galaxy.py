@@ -43,7 +43,7 @@ def test_add_env_arg(ansible_galaxy_instance):
 def test_execute(patched_ansible_galaxy, ansible_galaxy_instance):
     ansible_galaxy_instance.execute()
 
-    patched_ansible_galaxy.assert_called_once()
+    assert patched_ansible_galaxy.call_count == 1
 
     parts = str(ansible_galaxy_instance._galaxy).split()
 
@@ -64,7 +64,7 @@ def test_execute_overrides(patched_ansible_galaxy, ansible_galaxy_instance):
     }
     ansible_galaxy_instance.execute()
 
-    patched_ansible_galaxy.assert_called_once()
+    assert patched_ansible_galaxy.call_count == 1
 
     parts = str(ansible_galaxy_instance._galaxy).split()
     expected = [
@@ -83,5 +83,5 @@ def test_execute_exits_with_return_code_and_logs(patched_print_error,
     assert 1 == e.value.code
 
     false_path = sh.which('false')
-    msg = "\n\n  RAN: '{0}'\n\n  STDOUT:\n\n\n  STDERR:\n".format(false_path)
+    msg = "\n\n  RAN: {0}\n\n  STDOUT:\n\n\n  STDERR:\n".format(false_path)
     patched_print_error.assert_called_once_with(msg)

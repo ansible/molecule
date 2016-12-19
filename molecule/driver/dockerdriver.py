@@ -144,7 +144,7 @@ class DockerDriver(basedriver.BaseDriver):
                     tty=True,
                     detach=False,
                     name=container['name'],
-                    ports=port_bindings.keys(),
+                    ports=list(port_bindings.keys()),
                     host_config=docker_host_config,
                     environment=environment,
                     command=command)
@@ -163,7 +163,7 @@ class DockerDriver(basedriver.BaseDriver):
                 msg = 'Stopping container {}...'.format(container['name'])
                 util.print_warn(msg)
                 self._docker.stop(container['name'], timeout=0)
-                self._docker.remove_container(container['name'])
+                self._docker.remove(container['name'])
                 msg = 'Removed container {}.'.format(container['name'])
                 util.print_success(msg)
                 container['created'] = False
@@ -272,7 +272,7 @@ class DockerDriver(basedriver.BaseDriver):
                 for line in self._docker.build(fileobj=f, tag=tag_string):
                     for line_split in line.splitlines():
                         if len(line_split) > 0:
-                            line = json.loads(line_split)
+                            line = json.loads(line_split.decode())
                             if 'stream' in line:
                                 msg = '\t{}'.format(line['stream'])
                                 util.print_warn(msg)

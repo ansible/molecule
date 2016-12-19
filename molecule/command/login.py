@@ -95,7 +95,7 @@ class Login(base.Base):
             util.print_error(msg)
             util.sysexit()
         except base.InvalidHost as e:
-            util.print_error(e.message)
+            util.print_error(str(e))
             util.sysexit()
 
         self._get_login(hostname)

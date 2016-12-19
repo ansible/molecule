@@ -43,5 +43,5 @@ def test_execute_installs_dependencies(patched_ansible_playbook,
     s = syntax.Syntax({}, {}, molecule_instance)
     s.execute()
 
-    patched_dependency.assert_called_once()
+    assert patched_dependency.call_count == 1
     patched_ansible_playbook.assert_called_once_with(hide_errors=True)
