@@ -33,12 +33,12 @@ class Docker(base.Base):
 
     @property
     def inventory(self):
-        # server-1 ansible_connection=docker
-        # server-2 ansible_connection=docker
+        # instance-1-default ansible_connection=docker
+        # instance-2-default ansible_connection=docker
         host_options = 'ansible_connection=docker'
         dd = collections.defaultdict(list)
         for d in self._config.platforms:
-            name = d['name']
+            name = '{}-{}'.format(d['name'], self._config.scenario_name)
             dd[name].append(host_options)
 
         return dict(dd)

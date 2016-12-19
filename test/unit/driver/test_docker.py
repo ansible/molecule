@@ -39,8 +39,8 @@ def test_testinfra_options_property(docker_instance):
 
 def test_inventory_property(docker_instance):
     x = {
-        'instance-1': ['ansible_connection=docker'],
-        'instance-2': ['ansible_connection=docker']
+        'instance-1-default': ['ansible_connection=docker'],
+        'instance-2-default': ['ansible_connection=docker']
     }
 
     assert x == docker_instance.inventory

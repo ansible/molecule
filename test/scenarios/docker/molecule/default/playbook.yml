@@ -3,18 +3,3 @@
   tasks:
     - name: Install curl
       yum: name=curl
-
-- hosts: bar
-  tasks:
-    - name: Install curl
-      yum: name=curl
-
-- hosts: foo
-  tasks:
-    - name: Install curl
-      yum: name=curl
-
-- hosts: baz
-  tasks:
-    - name: Install curl
-      yum: name=curl

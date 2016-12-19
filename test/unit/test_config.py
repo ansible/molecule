@@ -98,8 +98,8 @@ def test_command_args_member(config_instance):
     indirect=['config_instance'])
 def test_inventory_property(config_instance):
     x = {
-        'instance-1': ['ansible_connection=docker'],
-        'instance-2': ['ansible_connection=docker']
+        'instance-1-default': ['ansible_connection=docker'],
+        'instance-2-default': ['ansible_connection=docker']
     }
 
     assert x == config_instance.inventory
@@ -280,7 +280,11 @@ def test_platforms_property(config_instance):
     }],
     indirect=['config_instance'])
 def test_platform_groups_property(config_instance):
-    x = {'bar': ['instance-1'], 'foo': ['instance-1'], 'baz': ['instance-2']}
+    x = {
+        'bar': ['instance-1-default'],
+        'foo': ['instance-1-default'],
+        'baz': ['instance-2-default']
+    }
 
     assert x == config_instance.platform_groups
 
@@ -301,7 +305,7 @@ def test_platform_groups_property(config_instance):
     }],
     indirect=['config_instance'])
 def test_platform_groups_property_handles_missing_group(config_instance):
-    x = {'foo': ['instance-1'], 'bar': ['instance-1']}
+    x = {'foo': ['instance-1-default'], 'bar': ['instance-1-default']}
 
     assert x == config_instance.platform_groups
 

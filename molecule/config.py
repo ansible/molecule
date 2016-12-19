@@ -115,16 +115,17 @@ class Config(object):
     @property
     def platform_groups(self):
         #  [baz]
-        #  instance-2
+        #  instance-2-default
         #  [foo]
-        #  instance-1
-        #  instance-2
+        #  instance-1-default
+        #  instance-2-default
         #  [bar]
-        #  instance-1
+        #  instance-1-default
         dd = collections.defaultdict(list)
         for platform in self.config['platforms']:
             for group in platform.get('groups', []):
-                dd[group].append(platform['name'])
+                name = '{}-{}'.format(platform['name'], self.scenario_name)
+                dd[group].append(name)
 
         return dict(dd)
 

@@ -52,13 +52,16 @@ def test_write_inventory(temp_dir, ansible_instance):
 
     content = open(ansible_instance._config.inventory_file, 'r').read()
     assert re.search(r'# Molecule managed', content)
-    assert re.search(r'instance-1 ansible_connection=docker', content)
-    assert re.search(r'instance-2 ansible_connection=docker', content)
+    assert re.search(r'instance-1-default ansible_connection=docker', content)
+    assert re.search(r'instance-2-default ansible_connection=docker', content)
 
-    assert re.search(r'\[bar\].*?instance-1.*?(\[\w+])?', content, re.DOTALL)
-    assert re.search(r'\[foo\].*?instance-1.*?instance-2.*?(\[\w+])?', content,
+    assert re.search(r'\[bar\].*?instance-1-default.*?(\[\w+])?', content,
                      re.DOTALL)
-    assert re.search(r'\[baz\].*?instance-2.*?(\[\w+])?', content, re.DOTALL)
+    assert re.search(
+        r'\[foo\].*?instance-1-default.*?instance-2-default.*?(\[\w+])?',
+        content, re.DOTALL)
+    assert re.search(r'\[baz\].*?instance-2-default.*?(\[\w+])?', content,
+                     re.DOTALL)
 
 
 def test_write_inventory_handles_missing_groups(temp_dir, ansible_instance):
