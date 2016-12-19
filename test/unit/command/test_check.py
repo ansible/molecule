@@ -41,7 +41,7 @@ def test_execute(mocker, patched_check_main, patched_ansible_playbook,
     molecule_instance.state.change_state('converged', True)
     molecule_instance._driver = mocker.Mock(
         ansible_connection_params={'debug': True})
-    patched_ansible_playbook.return_value = (0,'returned')
+    patched_ansible_playbook.return_value = (0, 'returned')
 
     c = check.Check({}, {}, molecule_instance)
     result, error, warn = c.execute()

@@ -247,7 +247,7 @@ class DockerDriver(basedriver.BaseDriver):
                 if environment:
                     environment = '\n'.join(
                         'ENV {} {}'.format(k, v)
-                        for k, v in environment.iteritems())
+                        for k, v in environment.items())
                 else:
                     environment = ''
 

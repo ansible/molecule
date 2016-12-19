@@ -23,7 +23,7 @@ Vagrant.configure('2') do |config|
     {%- if provider.type is defined and provider.type == 'virtualbox' and provider.name == current_provider %}
   config.vm.provider 'virtualbox' do |vb|
     {%- if provider.options %}
-      {%- for k, v in provider.options.iteritems() | sort %}
+      {%- for k, v in provider.options.items() | sort %}
         {%- if v == true or v == false %}
     vb.{{ k }} = {{ v | lower }}
         {%- else %}
@@ -56,7 +56,7 @@ Vagrant.configure('2') do |config|
     {%- if provider.type is defined and provider.type == 'libvirt' and provider.name == current_provider %}
   config.vm.provider :libvirt do |libvirt|
     {%- if provider.options %}
-      {%- for k, v in provider.options.iteritems()|sort %}
+      {%- for k, v in provider.options.items()|sort %}
       {%- if  v  is number %}
     libvirt.{{ k }} = {{ v }}
       {%- else %}
@@ -80,7 +80,7 @@ Vagrant.configure('2') do |config|
     {%- if provider.type is defined and provider.type == 'parallels' and provider.name == current_provider %}
   config.vm.provider 'parallels' do |prl|
     {%- if provider.options %}
-      {%- for k, v in provider.options.iteritems()|sort %}
+      {%- for k, v in provider.options.items()|sort %}
     prl.{{ k }} = {{ v }}
       {%- endfor %}
       {%- if not provider.options.memory %}
@@ -100,7 +100,7 @@ Vagrant.configure('2') do |config|
     {%- if provider.type is defined and provider.type == 'vmware_fusion' and provider.name == current_provider %}
   config.vm.provider 'vmware_fusion' do |v|
     {%- if provider.options %}
-      {%- for k, v in provider.options.iteritems()|sort %}
+      {%- for k, v in provider.options.items()|sort %}
     v.{{ k }} = {{ v }}
       {%- endfor %}
       {%- if not provider.options.memory %}
@@ -120,7 +120,7 @@ Vagrant.configure('2') do |config|
     {%- if provider.type is defined and provider.type == 'vmware_workstation' and provider.name == current_provider %}
   config.vm.provider 'vmware_workstation' do |v|
     {%- if provider.options %}
-      {%- for k, v in provider.options.iteritems()|sort %}
+      {%- for k, v in provider.options.items()|sort %}
     v.{{ k }} = {{ v }}
       {%- endfor %}
       {%- if not provider.options.memory %}
