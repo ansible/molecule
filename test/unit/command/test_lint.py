@@ -18,8 +18,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import os
-
 from molecule.command import lint
 
 
@@ -28,8 +26,7 @@ def test_execute(mocker, patched_print_info, patched_ansible_lint,
     l = lint.Lint(config_instance)
     l.execute()
     x = [
-        mocker.call('Scenario: [default]'),
-        mocker.call('Lint: [ansible-lint]')
+        mocker.call('Scenario: [default]'), mocker.call('Lint: [ansible-lint]')
     ]
 
     assert x == patched_print_info.mock_calls

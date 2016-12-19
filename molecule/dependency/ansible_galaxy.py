@@ -56,6 +56,7 @@ class AnsibleGalaxy(base.Base):
         self._ansible_galaxy_command = sh.ansible_galaxy.bake(
             'install',
             self._config.dependency_options,
+            _env=os.environ,
             _out=util.callback_info,
             _err=util.callback_error)
 

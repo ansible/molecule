@@ -18,13 +18,15 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
+
 import sh
 
 from molecule import util
 
 
 class AnsiblePlaybook(object):
-    def __init__(self, playbook, inventory, config):
+    def __init__(self, inventory, playbook, config):
         """
         Sets up the requirements to execute `ansible-playbook` and returns
         None.
@@ -50,6 +52,7 @@ class AnsiblePlaybook(object):
         self._ansible_playbook_command = sh.ansible_playbook.bake(
             options,
             self._playbook,
+            _env=os.environ,
             _out=util.callback_info,
             _err=util.callback_error)
 

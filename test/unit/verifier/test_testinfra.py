@@ -21,12 +21,17 @@
 import pytest
 import sh
 
+from molecule import config
 from molecule.verifier import testinfra
 
 
 @pytest.fixture
 def testinfra_instance(config_instance):
     return testinfra.Testinfra(config_instance)
+
+
+def test_config_private_member(testinfra_instance):
+    assert isinstance(testinfra_instance._config, config.Config)
 
 
 def test_options_property(testinfra_instance):

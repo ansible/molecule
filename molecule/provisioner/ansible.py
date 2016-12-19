@@ -21,9 +21,9 @@
 import os
 
 import jinja2
-import sh
 
 from molecule import util
+from molecule.provisioner import ansible_playbook
 
 
 class Ansible(object):
@@ -31,12 +31,20 @@ class Ansible(object):
         """
         Sets up the Ansible provisioner requirements and returns None.
 
-        #  :param playbook: A string containing the path to the playbook.
-        #  :param inventory: A string containing the path to the inventory.
         :param config: An instance of a Molecule config.
         :returns: None
         """
         self._config = config
+
+    def converge(self, inventory, playbook):
+        """
+        TODO ... and returns None.
+
+        :return: None
+        """
+        apb = ansible_playbook.AnsiblePlaybook(inventory, playbook,
+                                               self._config)
+        apb.execute()
 
     def write_inventory(self):
         self._verify_inventory()

@@ -24,7 +24,6 @@ import click
 
 from molecule import util
 from molecule.command import base
-from molecule.provisioner import ansible_playbook
 
 
 class Destroy(base.Base):
@@ -43,10 +42,8 @@ class Destroy(base.Base):
             os.path.basename(self._config.scenario_teardown))
         util.print_info(msg)
 
-        ansible = ansible_playbook.AnsiblePlaybook(
-            self._config.scenario_teardown, self._config.inventory_file,
-            self._config)
-        ansible.execute()
+        self._config.provisioner.converge(self._config.inventory_file,
+                                          self._config.scenario_teardown)
 
 
 @click.command()

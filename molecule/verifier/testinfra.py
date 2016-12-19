@@ -18,6 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
+
 import sh
 
 from molecule import util
@@ -50,6 +52,7 @@ class Testinfra(base.Base):
         self._testinfra_command = sh.testinfra.bake(
             self._config.verifier_options,
             self._tests,
+            _env=os.environ,
             _out=util.callback_info,
             _err=util.callback_error)
 

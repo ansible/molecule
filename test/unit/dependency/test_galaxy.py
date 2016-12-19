@@ -23,12 +23,17 @@ import os
 import pytest
 import sh
 
+from molecule import config
 from molecule.dependency import ansible_galaxy
 
 
 @pytest.fixture
 def ansible_galaxy_instance(config_instance):
     return ansible_galaxy.AnsibleGalaxy(config_instance)
+
+
+def test_config_private_member(ansible_galaxy_instance):
+    assert isinstance(ansible_galaxy_instance._config, config.Config)
 
 
 def test_options_property(ansible_galaxy_instance):

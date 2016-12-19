@@ -22,20 +22,13 @@ import pytest
 
 
 @pytest.fixture
+def patched_ansible_converge(mocker):
+    return mocker.patch('molecule.provisioner.ansible.Ansible.converge')
+
+
+@pytest.fixture
 def patched_ansible_lint(mocker):
     return mocker.patch('molecule.lint.ansible_lint.AnsibleLint.execute')
-
-
-@pytest.fixture
-def patched_ansible_playbook(mocker):
-    return mocker.patch(
-        'molecule.provisioner.ansible_playbook.AnsiblePlaybook')
-
-
-@pytest.fixture
-def patched_ansible_playbook_execute(mocker):
-    return mocker.patch(
-        'molecule.provisioner.ansible_playbook.AnsiblePlaybook.execute')
 
 
 @pytest.fixture

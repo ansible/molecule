@@ -77,7 +77,8 @@ def config_instance(create_scenario):
     return config.Config(molecule_file, configs=configs)
 
 
-### Mocks
+# Mocks
+
 
 @pytest.fixture
 def patched_print_debug(mocker):

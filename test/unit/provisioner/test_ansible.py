@@ -22,14 +22,18 @@ import os
 import re
 
 import pytest
-import sh
 
+from molecule import config
 from molecule.provisioner import ansible
 
 
 @pytest.fixture
 def ansible_instance(config_instance):
     return ansible.Ansible(config_instance)
+
+
+def test_config_private_member(ansible_instance):
+    assert isinstance(ansible_instance._config, config.Config)
 
 
 def test_write_inventory(temp_dir, ansible_instance):

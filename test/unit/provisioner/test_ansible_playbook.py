@@ -21,13 +21,30 @@
 import pytest
 import sh
 
+from molecule import config
 from molecule.provisioner import ansible_playbook
 
 
 @pytest.fixture
 def ansible_playbook_instance(config_instance):
-    return ansible_playbook.AnsiblePlaybook('playbook', 'inventory',
+    return ansible_playbook.AnsiblePlaybook('inventory', 'playbook',
                                             config_instance)
+
+
+def test_ansible_playbook_command_private_member(ansible_playbook_instance):
+    assert ansible_playbook_instance._ansible_playbook_command is None
+
+
+def test_ansible_playbook_private_member(ansible_playbook_instance):
+    assert 'playbook' == ansible_playbook_instance._playbook
+
+
+def test_playbook_private_member(ansible_playbook_instance):
+    assert 'inventory' == ansible_playbook_instance._inventory
+
+
+def test_config_private_member(ansible_playbook_instance):
+    assert isinstance(ansible_playbook_instance._config, config.Config)
 
 
 def test_bake(ansible_playbook_instance):

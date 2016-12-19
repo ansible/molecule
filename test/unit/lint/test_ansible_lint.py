@@ -21,12 +21,17 @@
 import pytest
 import sh
 
+from molecule import config
 from molecule.lint import ansible_lint
 
 
 @pytest.fixture
 def ansible_lint_instance(config_instance):
     return ansible_lint.AnsibleLint(config_instance)
+
+
+def test_config_private_member(ansible_lint_instance):
+    assert isinstance(ansible_lint_instance._config, config.Config)
 
 
 def test_options_property(ansible_lint_instance):

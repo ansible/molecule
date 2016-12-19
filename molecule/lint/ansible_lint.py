@@ -18,6 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
+
 import sh
 
 from molecule import util
@@ -49,6 +51,7 @@ class AnsibleLint(base.Base):
         self._ansible_lint_command = sh.ansible_lint.bake(
             self._config.scenario_converge,
             self._config.lint_options,
+            _env=os.environ,
             _out=util.callback_info,
             _err=util.callback_error)
 

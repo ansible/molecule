@@ -19,7 +19,6 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import os
-import re
 
 import pytest
 

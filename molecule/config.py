@@ -22,9 +22,7 @@ import collections
 import os
 
 import anyconfig
-import jinja2
 
-from molecule import util
 from molecule.dependency import ansible_galaxy
 from molecule.driver import docker
 from molecule.lint import ansible_lint

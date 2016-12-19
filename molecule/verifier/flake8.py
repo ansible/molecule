@@ -18,6 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
+
 import sh
 
 from molecule import util
@@ -41,7 +43,10 @@ class Flake8(base.Base):
         :return: None
         """
         self._flake8_command = sh.flake8.bake(
-            self._tests, _out=util.callback_info, _err=util.callback_error)
+            self._tests,
+            _env=os.environ,
+            _out=util.callback_info,
+            _err=util.callback_error)
 
     def execute(self):
         """

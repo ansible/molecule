@@ -18,13 +18,11 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import os
-
 from molecule.command import create
 
 
-def test_execute(mocker, patched_print_info, patched_ansible_playbook,
-                 patched_ansible_playbook_execute, config_instance):
+def test_execute(mocker, patched_print_info, patched_ansible_converge,
+                 config_instance):
     c = create.Create(config_instance)
     c.execute()
     x = [
@@ -35,8 +33,5 @@ def test_execute(mocker, patched_print_info, patched_ansible_playbook,
 
     assert x == patched_print_info.mock_calls
 
-    pb = os.path.join(config_instance.scenario_directory, 'create.yml')
-    patched_ansible_playbook.assert_called_once_with(
-        pb, config_instance.inventory_file, config_instance)
-
-    patched_ansible_playbook_execute.assert_called_once
+    patched_ansible_converge.assert_called_once_with(
+        config_instance.inventory_file, config_instance.scenario_setup)

@@ -21,12 +21,17 @@
 import pytest
 import sh
 
+from molecule import config
 from molecule.verifier import flake8
 
 
 @pytest.fixture
 def flake8_instance(config_instance):
     return flake8.Flake8(config_instance)
+
+
+def test_config_private_member(flake8_instance):
+    assert isinstance(flake8_instance._config, config.Config)
 
 
 def test_options_property(flake8_instance):
