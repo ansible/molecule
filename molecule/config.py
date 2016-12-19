@@ -25,6 +25,8 @@ import os.path
 import anyconfig
 import m9dicts
 
+from re import sub
+
 from molecule import util
 
 PROJECT_CONFIG = 'molecule.yml'
@@ -101,7 +103,51 @@ class ConfigV1(Config):
             anyconfig.load(
                 configs, ignore_missing=True, ac_merge=MERGE_STRATEGY))
 
-        return m9dicts.convert_to(conf)
+        return self._expand_env_vars(m9dicts.convert_to(conf))
+
+    def _expand_env_vars(self, config):
+        """ Recursively searches for occurences of ${} and expands
+        them to a corresponding environment variable or an empty
+        string.
+
+        :param config: An iterable containing the merged config
+        :return: dict
+        """
+
+        def __get_env_var(matchobj):
+            return os.environ.get(matchobj.group(1), '')
+
+        def __replace_matches(line):
+            if not isinstance(line, basestring):
+                return line
+            return sub('\$\{([^\}]*)\}', __get_env_var, line)
+
+        def __recursive_string_replace(config):
+            if isinstance(config, dict):
+                # Replace dict keys
+                for i in list(config):
+                    new_name = __replace_matches(i)
+                    if i != new_name:
+                        val = config[i]
+                        del config[i]
+                        config[new_name] = val
+                # Replace dict values
+                for k, v in config.iteritems():
+                    if isinstance(v, (dict, list)):
+                        __recursive_string_replace(v)
+                    else:
+                        config[k] = __replace_matches(v)
+            else:
+                # Replace list items
+                for i, v in enumerate(config):
+                    if isinstance(v, (dict, list)):
+                        __recursive_string_replace(v)
+                    else:
+                        config[i] = __replace_matches(v)
+
+        __recursive_string_replace(config)
+
+        return config
 
     def _get_defaults(self):
         return {
