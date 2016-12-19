@@ -147,5 +147,4 @@ class State(object):
             yaml.safe_dump(
                 self._data,
                 default_flow_style=False,
-                explicit_start=True,
-                encoding='utf-8'))
+                explicit_start=True))
