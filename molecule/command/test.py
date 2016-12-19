@@ -22,37 +22,21 @@ import os
 
 import click
 
-from molecule import util
+import molecule.command
 from molecule.command import base
-
-
-class Create(base.Base):
-    def execute(self):
-        """
-        Execute the actions necessary to perform a `molecule create` and
-        returns None.
-
-        :return: None
-        """
-        msg = "Scenario: [{}]".format(self._config.scenario_name)
-        util.print_info(msg)
-        msg = "Provisioner: [{}]".format(self._config.provisioner_name)
-        util.print_info(msg)
-        msg = "Playbook: [{}]".format(
-            os.path.basename(self._config.scenario_setup))
-        util.print_info(msg)
-
-        self._config.provisioner.converge(self._config.inventory_file,
-                                          self._config.scenario_setup)
 
 
 @click.command()
 @click.pass_context
-def create(ctx):  # pragma: no cover
-    """ Start instances. """
+def test(ctx):  # pragma: no cover
+    """ Test (destroy, create, converge, lint, verify, destroy) """
     args = ctx.obj.get('args')
     command_args = {}
 
+    commands = ['destroy', 'create', 'converge', 'lint', 'verify', 'destroy']
     for config in base.get_configs(args, command_args):
-        c = Create(config)
-        c.execute()
+        for task in commands:
+            command_module = getattr(molecule.command, task)
+            command = getattr(command_module, task.capitalize())
+            c = command(config)
+            c.execute()

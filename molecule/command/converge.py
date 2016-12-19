@@ -22,9 +22,9 @@ import os
 
 import click
 
+import molecule.command
 from molecule import util
 from molecule.command import base
-from molecule.command import create
 
 
 class Converge(base.Base):
@@ -50,12 +50,14 @@ class Converge(base.Base):
 @click.command()
 @click.pass_context
 def converge(ctx):  # pragma: no cover
-    """ Converge the instance(s) with Ansible. """
+    """ Use a provisioner to configure instances. """
     args = ctx.obj.get('args')
     command_args = {}
 
+    commands = ['create', 'converge']
     for config in base.get_configs(args, command_args):
-        c = create.Create(config)
-        c.execute()
-        c = Converge(config)
-        c.execute()
+        for task in commands:
+            command_module = getattr(molecule.command, task)
+            command = getattr(command_module, task.capitalize())
+            c = command(config)
+            c.execute()

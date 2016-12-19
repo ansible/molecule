@@ -43,7 +43,7 @@ class Lint(base.Base):
 @click.command()
 @click.pass_context
 def lint(ctx):  # pragma: no cover
-    """ Lint the role(s). """
+    """ Lint the role. """
     args = ctx.obj.get('args')
     command_args = {}
 

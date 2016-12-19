@@ -43,7 +43,7 @@ class Verify(base.Base):
 @click.command()
 @click.pass_context
 def verify(ctx):  # pragma: no cover
-    """ Verify instance(s) defined in molecule.yml. """
+    """ Run automated tests against instances. """
     args = ctx.obj.get('args')
     command_args = {}
 

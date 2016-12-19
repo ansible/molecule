@@ -49,7 +49,7 @@ class Destroy(base.Base):
 @click.command()
 @click.pass_context
 def destroy(ctx):  # pragma: no cover
-    """ Destroy instance(s) defined in molecule.yml. """
+    """ Destroy instances. """
     args = ctx.obj.get('args')
     command_args = {}
 

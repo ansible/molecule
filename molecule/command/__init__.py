@@ -35,5 +35,5 @@ from molecule.command import lint  # noqa
 #  from molecule.command import login  # noqa
 #  from molecule.command import status  # noqa
 #  from molecule.command import syntax  # noqa
-#  from molecule.command import test  # noqa
+from molecule.command import test  # noqa
 from molecule.command import verify  # noqa

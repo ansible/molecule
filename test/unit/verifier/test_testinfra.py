@@ -38,6 +38,20 @@ def test_options_property(testinfra_instance):
     assert {'connection': 'docker'} == testinfra_instance.options
 
 
+def test_options_property_updates_debug(testinfra_instance):
+    testinfra_instance._config.args = {'debug': True}
+    assert {
+        'connection': 'docker',
+        'debug': True
+    } == testinfra_instance.options
+
+
+def test_options_property_updates_sudo(testinfra_instance,
+                                       patched_testinfra_get_tests):
+    testinfra_instance._config.args = {'sudo': True}
+    assert {'connection': 'docker', 'sudo': True} == testinfra_instance.options
+
+
 def test_bake(testinfra_instance):
     testinfra_instance._tests = ['test1', 'test2', 'test3']
     testinfra_instance.bake()
@@ -87,9 +101,10 @@ def test_execute_bakes(patched_flake8, patched_run_command,
 
 
 def test_executes_catches_and_exits_return_code(
-        patched_run_command, patched_testinfra_get_tests, testinfra_instance):
-    patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.ansible_playbook,
-                                                           None, None)
+        patched_flake8, patched_run_command, patched_testinfra_get_tests,
+        testinfra_instance):
+    patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.testinfra, None,
+                                                           None)
     with pytest.raises(SystemExit) as e:
         testinfra_instance.execute()
 

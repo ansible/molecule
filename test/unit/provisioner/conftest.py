@@ -18,41 +18,16 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import os
-
-import click
-
-from molecule import util
-from molecule.command import base
+import pytest
 
 
-class Create(base.Base):
-    def execute(self):
-        """
-        Execute the actions necessary to perform a `molecule create` and
-        returns None.
-
-        :return: None
-        """
-        msg = "Scenario: [{}]".format(self._config.scenario_name)
-        util.print_info(msg)
-        msg = "Provisioner: [{}]".format(self._config.provisioner_name)
-        util.print_info(msg)
-        msg = "Playbook: [{}]".format(
-            os.path.basename(self._config.scenario_setup))
-        util.print_info(msg)
-
-        self._config.provisioner.converge(self._config.inventory_file,
-                                          self._config.scenario_setup)
+@pytest.fixture
+def patched_ansible_playbook(mocker):
+    return mocker.patch(
+        'molecule.provisioner.ansible_playbook.AnsiblePlaybook')
 
 
-@click.command()
-@click.pass_context
-def create(ctx):  # pragma: no cover
-    """ Start instances. """
-    args = ctx.obj.get('args')
-    command_args = {}
-
-    for config in base.get_configs(args, command_args):
-        c = Create(config)
-        c.execute()
+@pytest.fixture
+def patched_ansible_playbook_execute(mocker):
+    return mocker.patch(
+        'molecule.provisioner.ansible_playbook.AnsiblePlaybook.execute')

@@ -36,6 +36,15 @@ def test_config_private_member(ansible_instance):
     assert isinstance(ansible_instance._config, config.Config)
 
 
+def test_converge(ansible_instance, patched_ansible_playbook,
+                  patched_ansible_playbook_execute):
+    ansible_instance.converge('inventory', 'playbook')
+
+    patched_ansible_playbook.assert_called_once_with('inventory', 'playbook',
+                                                     ansible_instance._config)
+    patched_ansible_playbook_execute.assert_called_once
+
+
 def test_write_inventory(temp_dir, ansible_instance):
     ansible_instance.write_inventory()
 
