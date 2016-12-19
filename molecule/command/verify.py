@@ -52,7 +52,6 @@ class Verify(base.Base):
         errors += '\n'.join(lint_err)
         warnings += '\n'.join(lint_warn)
 
-
         v = trailing.Trailing(self.molecule)
         test_failed, trail_err, trail_warn = v.execute(exit=exit)
         if test_failed:

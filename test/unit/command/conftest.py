@@ -29,7 +29,7 @@ def patched_check_main(mocker):
 @pytest.fixture
 def patched_check(mocker):
     m = mocker.patch('molecule.command.check.Check.execute')
-    m.return_value = None, None
+    m.return_value = 0, '', ''
 
     return m
 
@@ -37,7 +37,7 @@ def patched_check(mocker):
 @pytest.fixture
 def patched_create(mocker):
     m = mocker.patch('molecule.command.create.Create.execute')
-    m.return_value = None, None
+    m.return_value = 0, '', ''
 
     return m
 
@@ -45,7 +45,7 @@ def patched_create(mocker):
 @pytest.fixture
 def patched_converge(mocker):
     m = mocker.patch('molecule.command.converge.Converge.execute')
-    m.return_value = None, ''
+    m.return_value = 0, '', ''
 
     return m
 
@@ -53,7 +53,7 @@ def patched_converge(mocker):
 @pytest.fixture
 def patched_dependency(mocker):
     m = mocker.patch('molecule.command.dependency.Dependency.execute')
-    m.return_value = None, None
+    m.return_value = 0, '', ''
 
     return m
 
@@ -66,7 +66,7 @@ def patched_destroy_main(mocker):
 @pytest.fixture
 def patched_destroy(mocker):
     m = mocker.patch('molecule.command.destroy.Destroy.execute')
-    m.return_value = None, None
+    m.return_value = 0, '', ''
 
     return m
 
@@ -74,7 +74,7 @@ def patched_destroy(mocker):
 @pytest.fixture
 def patched_idempotence(mocker):
     m = mocker.patch('molecule.command.idempotence.Idempotence.execute')
-    m.return_value = None, None
+    m.return_value = 0, '', ''
 
     return m
 
@@ -82,7 +82,7 @@ def patched_idempotence(mocker):
 @pytest.fixture
 def patched_syntax(mocker):
     m = mocker.patch('molecule.command.syntax.Syntax.execute')
-    m.return_value = None, None
+    m.return_value = 0, '', ''
 
     return m
 
@@ -90,7 +90,7 @@ def patched_syntax(mocker):
 @pytest.fixture
 def patched_verify(mocker):
     m = mocker.patch('molecule.command.verify.Verify.execute')
-    m.return_value = None, None
+    m.return_value = 0, '', ''
 
     return m
 

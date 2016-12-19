@@ -46,7 +46,7 @@ def test_print_info(capsys):
     util.print_info('test')
     result, _ = capsys.readouterr()
 
-    print('--> {}{}'.format(colorama.Fore.CYAN, 'test'.rstrip()))
+    print('--> {}{}'.format(colorama.Fore.RESET, 'test'.rstrip()))
     expected, _ = capsys.readouterr()
 
     assert expected == result

@@ -41,12 +41,12 @@ def test_execute(mocker, patched_check_main, patched_ansible_playbook,
     molecule_instance.state.change_state('converged', True)
     molecule_instance._driver = mocker.Mock(
         ansible_connection_params={'debug': True})
-    patched_ansible_playbook.return_value = 'returned'
+    patched_ansible_playbook.return_value = (0,'returned')
 
     c = check.Check({}, {}, molecule_instance)
-    result = c.execute()
+    result, error, warn = c.execute()
 
     msg = "Performing a 'Dry Run' of playbook..."
     patched_print_info.assert_called_once_with(msg)
     patched_ansible_playbook.assert_called_once_with(hide_errors=True)
-    assert 'returned' == result
+    assert 0 == result

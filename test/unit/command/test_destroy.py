@@ -67,4 +67,4 @@ def test_execute_does_not_raise_on_exit(patched_driver_destroy,
     d = destroy.Destroy({}, {}, molecule_instance)
     result = d.execute(exit=False)
 
-    assert (1, '') == result
+    assert (1, '', '') == result

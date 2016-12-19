@@ -18,8 +18,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import re
-
 import click
 
 from molecule import util
@@ -45,66 +43,7 @@ class Idempotence(base.Base):
         status, errors, warnings = c.execute(
             idempotent=True, exit=False, hide_errors=True)
         if status is not None:
-            msg = 'Skipping due to errors during converge.'
-            util.print_info(msg)
             return status, errors, warnings
-
-        idempotent = self._is_idempotent(output)
-        if idempotent:
-            util.print_success('Idempotence test passed.')
-            return 0, errors, warnings
-        else:
-            msg = 'Idempotence test failed because of the following tasks:'
-            util.print_error(msg)
-            util.print_error('\n'.join(self._non_idempotent_tasks(output)))
-            if exit:
-                util.sysexit()
-
-            return 1, msg, ''
-
-    def _is_idempotent(self, output):
-        """
-        Parses the output of the provisioning for changed and returns a bool.
-
-        :param output: A string containing the output of the ansible run.
-        :return: bool
-        """
-
-        # Remove blank lines to make regex matches easier
-        output = re.sub("\n\s*\n*", "\n", output)
-
-        # Look for any non-zero changed lines
-        changed = re.search(r'(changed=[1-9][0-9]*)', output)
-
-        if changed:
-            # Not idempotent
-            return False
-
-        return True
-
-    def _non_idempotent_tasks(self, output):
-        """
-        Parses the output to identify the non idempotent tasks.
-
-        :param (str) output: A string containing the output of the ansible run.
-        :return: A list containing the names of the non idempotent tasks.
-        """
-        # Remove blank lines to make regex matches easier.
-        output = re.sub("\n\s*\n*", "\n", output)
-
-        # Split the output into a list and go through it.
-        output_lines = output.split('\n')
-        res = []
-        task_line = ''
-        for idx, line in enumerate(output_lines):
-            if line.startswith('TASK'):
-                task_line = line
-            elif line.startswith('changed'):
-                host_name = re.search(r'\[(.*)\]', line).groups()[0]
-                task_name = re.search(r'\[(.*)\]', task_line).groups()[0]
-                res.append('* [{}] => {}'.format(host_name, task_name))
-
-        return res
 
 
 @click.command()

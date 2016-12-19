@@ -63,12 +63,13 @@ class AnsibleLint(base.Base):
             matches = runner.run()
 
             errors = []
-            warnings =  []
+            warnings = []
             formatter = formatters.Formatter()
             for match in matches:
                 util.print_error(formatter.format(match, True))
-                errors.append("{}:{}: [{}] {} - {}".format(match.filename,
-                    match.linenumber, match.rule.id, match.message, match.line))
+                errors.append("{}:{}: [{}] {} - {}".format(
+                    match.filename, match.linenumber, match.rule.id,
+                    match.message, match.line))
 
             if exit and len(matches) > 0:
                 util.sysexit()

@@ -88,4 +88,5 @@ def supports_vagrant():
 @pytest.helpers.register
 def supports_vagrant_virtualbox():
     return pytest.mark.skipif(
-        get_vagrant_executable() or get_virtualbox_executable(), reason='VirtualBox not supported')
+        get_vagrant_executable() or get_virtualbox_executable(),
+        reason='VirtualBox not supported')

@@ -76,4 +76,4 @@ def test_execute_does_not_raise_on_exit(
     c = create.Create({}, {}, molecule_instance)
     result = c.execute(exit=False)
 
-    assert (1, '') == result
+    assert (1, '', '') == result
