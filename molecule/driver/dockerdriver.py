@@ -270,7 +270,7 @@ class DockerDriver(basedriver.BaseDriver):
                 util.print_info('Building ansible compatible image...')
                 previous_line = ''
                 for line in self._docker.build(fileobj=f, tag=tag_string):
-                    for line_split in line.split('\n'):
+                    for line_split in line.splitlines():
                         if len(line_split) > 0:
                             line = json.loads(line_split)
                             if 'stream' in line:

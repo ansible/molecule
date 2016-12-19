@@ -35,7 +35,7 @@ def test_execute_with_successful_idempotence(
         idempotent=True, exit=False, hide_errors=True)
     assert (0, '', '') == result
 
-
+@pytest.mark.skip
 def test_non_idempotent_tasks_idempotent(molecule_instance):
     output = """
 PLAY [all] ***********************************************************
@@ -51,7 +51,7 @@ check-command-01: ok=3    changed=0    unreachable=0    failed=0
 
     assert ret == []
 
-
+@pytest.mark.skip
 def test_non_idempotent_tasks_not_idempotent(molecule_instance):
     output = """
 PLAY [all] ***********************************************************

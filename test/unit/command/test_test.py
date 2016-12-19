@@ -37,21 +37,19 @@ def test_execute(mocker, patched_destroy_main, patched_destroy,
     patched_idempotence.assert_called_once_with(exit=True)
     patched_verify.assert_called_once_with(exit=True)
 
-    expected = [mocker.call(exit=True), mocker.call()]
+    expected = [mocker.call(exit=True), mocker.call(exit=True)]
     assert patched_destroy.mock_calls == expected
 
-    assert (None, None) == result
+    assert (0, '', '') == result
 
 
 def test_execute_fail_fast(patched_destroy, patched_print_error,
                            molecule_instance):
-    patched_destroy.return_value = 1, 'output'
+    patched_destroy.return_value = 1, '', ''
 
     t = test.Test({}, {}, molecule_instance)
     with pytest.raises(SystemExit):
         t.execute()
-
-    patched_print_error.assert_called_once_with('output')
 
 
 def test_execute_always_destroy(mocker, patched_destroy_main, patched_destroy,
@@ -62,10 +60,10 @@ def test_execute_always_destroy(mocker, patched_destroy_main, patched_destroy,
     t = test.Test({}, command_args, molecule_instance)
     result = t.execute()
 
-    expected = [mocker.call(exit=True), mocker.call()]
+    expected = [mocker.call(exit=True), mocker.call(exit=True)]
     assert patched_destroy.mock_calls == expected
 
-    assert (None, None) == result
+    assert (0, '', '') == result
 
 
 def test_execute_never_destroy(patched_destroy_main, patched_destroy,
@@ -78,4 +76,4 @@ def test_execute_never_destroy(patched_destroy_main, patched_destroy,
 
     patched_destroy.assert_called_once_with(exit=True)
 
-    assert (None, None) == result
+    assert (0, '', '') == result

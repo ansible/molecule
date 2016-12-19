@@ -139,9 +139,25 @@ def patched_ansible_lint(mocker):
 
 
 @pytest.fixture
+def patched_ansible_lint_execute(mocker):
+    m =  mocker.patch(
+        'molecule.verifier.ansible_lint.AnsibleLint.execute')
+    m.return_value = (0, '', '')
+
+    return m
+
+@pytest.fixture
 def patched_trailing(mocker):
     return mocker.patch('molecule.verifier.trailing.Trailing')
 
+
+@pytest.fixture
+def patched_trailing_execute(mocker):
+    m = mocker.patch(
+        'molecule.verifier.trailing.Trailing.execute')
+    m.return_value = (0, '', '')
+
+    return m
 
 @pytest.fixture
 def patched_ssh_config(mocker):

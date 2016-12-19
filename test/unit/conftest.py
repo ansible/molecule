@@ -24,6 +24,8 @@ import shutil
 
 import pytest
 
+from six.moves import reduce
+
 from molecule import config
 from molecule import core
 from molecule import state

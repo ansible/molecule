@@ -61,4 +61,4 @@ def test_execute_exits_when_command_fails_and_exit_flag_set(
     result = s.execute()
 
     patched_print_error.assert_called_once_with('')
-    assert (1, '') == result
+    assert (1, '', '') == result

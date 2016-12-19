@@ -55,11 +55,12 @@ class Test(base.Base):
                 if exit:
                     util.sysexit(status)
 
-        if self.command_args.get('destroy') == 'always' or not failed:
-            c = molecule.command.destroy.Destroy(self.args, self.command_args)
-            status, cmd_err, cmd_warn = c.execute(exit=exit)
-            errors += cmd_err
-            warnings += cmd_warn
+        if self.command_args.get('destroy') != 'never':
+            if self.command_args.get('destroy') == 'always' or not failed:
+                c = molecule.command.destroy.Destroy(self.args, self.command_args)
+                status, cmd_err, cmd_warn = c.execute(exit=exit)
+                errors += cmd_err
+                warnings += cmd_warn
 
         ret_code = 1 if failed else 0
         return ret_code, errors, warnings

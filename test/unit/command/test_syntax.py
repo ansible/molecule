@@ -23,7 +23,7 @@ from molecule.command import syntax
 
 def test_execute(mocker, patched_ansible_playbook, patched_print_info,
                  molecule_instance):
-    patched_ansible_playbook.return_value = 'returned'
+    patched_ansible_playbook.return_value = (0, 'returned')
 
     s = syntax.Syntax({}, {}, molecule_instance)
     result = s.execute()
@@ -32,7 +32,7 @@ def test_execute(mocker, patched_ansible_playbook, patched_print_info,
     patched_print_info.assert_called_once_with(msg)
 
     patched_ansible_playbook.assert_called_once_with(hide_errors=True)
-    assert 'returned' == result
+    assert (0, '', '') == result
 
 
 def test_execute_installs_dependencies(patched_ansible_playbook,
