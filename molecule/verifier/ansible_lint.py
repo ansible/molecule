@@ -46,12 +46,11 @@ class AnsibleLint(base.Base):
 
         :return: None
         """
-        env = {
+        env = os.environ.copy()
+        env.update({
             'ANSIBLE_CONFIG':
-            self._molecule.config.config['ansible']['config_file'],
-            'HOME': os.environ.get('HOME')
-        }
-
+            self._molecule.config.config['ansible']['config_file']
+        })
         if 'ansible_lint' not in self._molecule.disabled:
             msg = 'Executing ansible-lint...'
             util.print_info(msg)
