@@ -163,7 +163,7 @@ class DockerDriver(basedriver.BaseDriver):
                 msg = 'Stopping container {}...'.format(container['name'])
                 util.print_warn(msg)
                 self._docker.stop(container['name'], timeout=0)
-                self._docker.remove(container['name'])
+                self._docker.remove_container(container['name'])
                 msg = 'Removed container {}.'.format(container['name'])
                 util.print_success(msg)
                 container['created'] = False

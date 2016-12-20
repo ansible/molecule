@@ -1,4 +1,4 @@
-docker-py==1.10.3
+docker-py==1.10.6
 mock
 pytest
 pytest-cov
