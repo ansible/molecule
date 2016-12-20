@@ -2,6 +2,15 @@
 History
 *******
 
+1.17.1
+======
+
+* Correct functional tests.
+* Correct locale issues with print class of methods.
+* Correct ansible-lint exit error when role dependency is in newer dictionary
+  format.
+* Pass env to `ansible-lint`.
+
 1.17
 ====
 
