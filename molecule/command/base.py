@@ -41,11 +41,16 @@ class Base(object):
         :returns: None
         """
         self._config = config
-        config.provisioner.write_inventory()
+        self._setup_provisioner()
 
     @abc.abstractmethod
     def execute(self):  # pragma: no cover
         pass
+
+    # TODO(retr0h): Test it
+    def _setup_provisioner(self):
+        self._config.provisioner.write_inventory()
+        self._config.provisioner.write_config()
 
 
 def _get_local_config():

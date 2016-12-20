@@ -49,10 +49,12 @@ class AnsiblePlaybook(object):
         :return: None
         """
         options = {'inventory': self._inventory}
+        env = os.environ.copy()
+        env['ANSIBLE_CONFIG'] = self._config.config_file
         self._ansible_playbook_command = sh.ansible_playbook.bake(
             options,
             self._playbook,
-            _env=os.environ,
+            _env=env,
             _out=util.callback_info,
             _err=util.callback_error)
 

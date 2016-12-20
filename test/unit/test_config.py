@@ -51,7 +51,7 @@ def config_instance(temp_dir, request):
             configs.append(fixture)
     params['configs'] = configs
     defaults = {
-        'molecule_file': os.path.join(temp_dir.strpath, 'molecule.yml'),
+        'molecule_file': config.molecule_file(temp_dir.strpath),
         'args': {},
         'command_args': {},
         'configs': configs
@@ -63,7 +63,7 @@ def config_instance(temp_dir, request):
 
 @pytest.mark.parametrize(
     'config_instance', [{
-        'molecule_file': '/foo/bar/molecule/default/molecule.yml'
+        'molecule_file': config.molecule_file('/foo/bar/molecule/default')
     }],
     indirect=['config_instance'])
 def test_molecule_file_private_member(config_instance):
@@ -80,6 +80,15 @@ def test_args_member(config_instance):
 @pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
 def test_command_args_member(config_instance):
     assert {} == config_instance.command_args
+
+
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_ephemeral_directory_property(config_instance):
+    x = os.path.join(
+        config.molecule_ephemeral_directory(
+            config_instance.scenario_directory))
+
+    assert x == config_instance.ephemeral_directory
 
 
 @pytest.mark.parametrize(
@@ -105,15 +114,18 @@ def test_inventory_property(config_instance):
     assert x == config_instance.inventory
 
 
-@pytest.mark.parametrize(
-    'config_instance', [{
-        'molecule_file': '/foo/bar/molecule/default/molecule.yml'
-    }],
-    indirect=['config_instance'])
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
 def test_inventory_file_property(config_instance):
-    x = '/foo/bar/molecule/default/.molecule/ansible_inventory'
+    x = os.path.join(config_instance.ephemeral_directory, 'ansible_inventory')
 
     assert x == config_instance.inventory_file
+
+
+@pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
+def test_config_file_property(config_instance):
+    x = os.path.join(config_instance.ephemeral_directory, 'ansible.cfg')
+
+    assert x == config_instance.config_file
 
 
 @pytest.mark.parametrize('config_instance', [{}], indirect=['config_instance'])
@@ -392,7 +404,7 @@ def test_scenario_teardown_property(config_instance):
 
 @pytest.mark.parametrize(
     'config_instance', [{
-        'molecule_file': '/foo/bar/molecule/default/molecule.yml'
+        'molecule_file': config.molecule_file('/foo/bar/molecule/default/')
     }],
     indirect=['config_instance'])
 def test_scenario_directory_property(config_instance):
@@ -489,3 +501,15 @@ def test_merge_dicts():
 
     result = config.merge_dicts(a, b)
     assert x == result
+
+
+def test_molecule_directory():
+    assert '/foo/molecule' == config.molecule_directory('/foo')
+
+
+def test_molecule_ephemeral_directory():
+    assert '/foo/.molecule' == config.molecule_ephemeral_directory('/foo')
+
+
+def test_molecule_file():
+    assert '/foo/molecule.yml' == config.molecule_file('/foo')

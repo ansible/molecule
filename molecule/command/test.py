@@ -18,8 +18,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import os
-
 import click
 
 import molecule.command
@@ -31,7 +29,7 @@ from molecule.command import base
 def test(ctx):  # pragma: no cover
     """ Test (destroy, create, converge, lint, verify, destroy) """
     args = ctx.obj.get('args')
-    command_args = {}
+    command_args = {'subcommand': __name__}
 
     commands = ['destroy', 'create', 'converge', 'lint', 'verify', 'destroy']
     for config in base.get_configs(args, command_args):

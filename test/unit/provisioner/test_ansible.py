@@ -36,6 +36,14 @@ def test_config_private_member(ansible_instance):
     assert isinstance(ansible_instance._config, config.Config)
 
 
+def test_init_calls_setup(mocker, config_instance):
+    patched_setup = mocker.patch('molecule.provisioner.ansible.Ansible._setup')
+
+    ansible.Ansible(config_instance)
+
+    patched_setup.assert_called_once
+
+
 def test_converge(ansible_instance, patched_ansible_playbook,
                   patched_ansible_playbook_execute):
     ansible_instance.converge('inventory', 'playbook')
@@ -82,3 +90,16 @@ def test_write_inventory_prints_error_when_missing_hosts(
 
     msg = "Instances missing from the 'platform' section of molecule.yml."
     patched_print_error.assert_called_once_with(msg)
+
+
+def test_write_config(temp_dir, ansible_instance):
+    ansible_instance.write_config()
+
+    assert os.path.exists(ansible_instance._config.config_file)
+
+
+def test_setup(temp_dir, ansible_instance):
+    ansible_instance._setup()
+
+    assert os.path.exists(
+        os.path.dirname(ansible_instance._config.inventory_file))

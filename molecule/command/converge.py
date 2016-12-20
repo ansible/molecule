@@ -52,7 +52,7 @@ class Converge(base.Base):
 def converge(ctx):  # pragma: no cover
     """ Use a provisioner to configure instances. """
     args = ctx.obj.get('args')
-    command_args = {}
+    command_args = {'subcommand': __name__}
 
     commands = ['create', 'converge']
     for config in base.get_configs(args, command_args):

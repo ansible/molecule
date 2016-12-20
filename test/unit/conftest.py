@@ -19,10 +19,6 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import os
-import os.path
-import random
-import shutil
-import string
 
 import pytest
 import yaml
@@ -30,28 +26,19 @@ import yaml
 from molecule import config
 
 
-def random_string(l=5):
-    return ''.join(random.choice(string.ascii_uppercase) for _ in range(l))
-
-
-@pytest.fixture()
-def temp_dir(tmpdir, request):
-    directory = tmpdir.mkdir(random_string())
-    os.chdir(directory.strpath)
-
-    def cleanup():
-        shutil.rmtree(directory.strpath)
-
-    request.addfinalizer(cleanup)
-
-    return directory
+@pytest.helpers.register
+def os_split(s):
+    rest, tail = os.path.split(s)
+    if rest in ('', os.path.sep):
+        return tail,
+    return os_split(rest) + (tail, )
 
 
 @pytest.fixture
 def create_scenario(temp_dir):
-    molecule_file = os.path.join(temp_dir.strpath, 'molecule', 'default',
-                                 'molecule.yml')
-    scenario_directory = os.path.dirname(molecule_file)
+    molecule_directory = config.molecule_directory(temp_dir.strpath)
+    scenario_directory = os.path.join(molecule_directory, 'default')
+    molecule_file = config.molecule_file(scenario_directory)
     os.makedirs(scenario_directory)
 
     d = {
@@ -93,6 +80,11 @@ def patched_print_error(mocker):
 @pytest.fixture
 def patched_print_info(mocker):
     return mocker.patch('molecule.util.print_info')
+
+
+@pytest.fixture
+def patched_print_success(mocker):
+    return mocker.patch('molecule.util.print_success')
 
 
 @pytest.fixture

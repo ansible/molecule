@@ -18,35 +18,28 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import click
+import os
+import random
+import shutil
+import string
 
-from molecule import util
-from molecule.command import base
+import pytest
 
-
-class Verify(base.Base):
-    def execute(self):
-        """
-        Execute the actions necessary to perform a `molecule verify` and
-        returns None.
-
-        :return: None
-        """
-        msg = "Scenario: [{}]".format(self._config.scenario_name)
-        util.print_info(msg)
-        msg = "Verifier: [{}]".format(self._config.verifier_name)
-        util.print_info(msg)
-
-        self._config.verifier.execute()
+pytest_plugins = ['helpers_namespace']
 
 
-@click.command()
-@click.pass_context
-def verify(ctx):  # pragma: no cover
-    """ Run automated tests against instances. """
-    args = ctx.obj.get('args')
-    command_args = {'subcommand': __name__}
+def random_string(l=5):
+    return ''.join(random.choice(string.ascii_uppercase) for _ in range(l))
 
-    for config in base.get_configs(args, command_args):
-        v = Verify(config)
-        v.execute()
+
+@pytest.fixture()
+def temp_dir(tmpdir, request):
+    directory = tmpdir.mkdir(random_string())
+    os.chdir(directory.strpath)
+
+    def cleanup():
+        shutil.rmtree(directory.strpath)
+
+    request.addfinalizer(cleanup)
+
+    return directory

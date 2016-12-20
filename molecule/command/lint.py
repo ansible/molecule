@@ -45,7 +45,7 @@ class Lint(base.Base):
 def lint(ctx):  # pragma: no cover
     """ Lint the role. """
     args = ctx.obj.get('args')
-    command_args = {}
+    command_args = {'subcommand': __name__}
 
     for config in base.get_configs(args, command_args):
         l = Lint(config)

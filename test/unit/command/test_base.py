@@ -27,20 +27,42 @@ from molecule.command import base
 
 
 @pytest.fixture()
-def base_instance(config_instance):
+def base_class(config_instance):
     class ExtendedBase(base.Base):
         def execute():
             pass
 
-    return ExtendedBase(config_instance)
+    return ExtendedBase
+
+
+@pytest.fixture()
+def base_instance(base_class, config_instance):
+    return base_class(config_instance)
 
 
 def test_config_private_member(base_instance):
     assert isinstance(base_instance._config, config.Config)
 
 
-def test_config_write_inventory(base_instance):
-    assert os.path.exists(base_instance._config.inventory_file)
+def test_init_calls_setup_provisioner(mocker, base_class, config_instance):
+    patched_setup_provisioner = mocker.patch(
+        'molecule.command.base.Base._setup_provisioner')
+
+    base_class(config_instance)
+
+    patched_setup_provisioner.assert_called_once
+
+
+def test_setup_provisioner(mocker, base_instance):
+    patched_provisioner_write_inventory = mocker.patch(
+        'molecule.provisioner.ansible.Ansible.write_inventory')
+    patched_provisioner_write_config = mocker.patch(
+        'molecule.provisioner.ansible.Ansible.write_config')
+
+    base_instance._setup_provisioner()
+
+    patched_provisioner_write_inventory.assert_called_once
+    patched_provisioner_write_config.assert_called_once
 
 
 def test_get_local_config(mocker):
@@ -90,9 +112,9 @@ def test_verify_configs_raises(patched_print_error):
 
 
 def test_get_configs(temp_dir):
-    molecule_directory = os.path.join(temp_dir.strpath, 'molecule')
+    molecule_directory = config.molecule_directory(temp_dir.strpath)
     scenario_directory = os.path.join(molecule_directory, 'scenario')
-    molecule_file = os.path.join(scenario_directory, 'molecule.yml')
+    molecule_file = config.molecule_file(scenario_directory)
     os.makedirs(scenario_directory)
     open(molecule_file, 'a').close()
 

@@ -1,5 +1,4 @@
 ---
 - hosts: all
-  tasks:
-    - name: Install curl
-      yum: name=curl
+  roles:
+    - role: docker

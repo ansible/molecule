@@ -25,6 +25,7 @@ import os
 import pytest
 import sh
 
+from molecule import config
 from molecule import util
 
 colorama.init(autoreset=True)
@@ -150,10 +151,10 @@ def test_run_command_with_debug(patched_print_debug):
 
 def test_os_walk(temp_dir):
     scenarios = ['scenario1', 'scenario2', 'scenario3']
-    molecule_directory = os.path.join(temp_dir.strpath, 'molecule')
+    molecule_directory = config.molecule_directory(temp_dir.strpath)
     for scenario in scenarios:
         scenario_directory = os.path.join(molecule_directory, scenario)
-        molecule_file = os.path.join(scenario_directory, 'molecule.yml')
+        molecule_file = config.molecule_file(scenario_directory)
         os.makedirs(scenario_directory)
         open(molecule_file, 'a').close()
 

@@ -18,8 +18,12 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
+
 import pytest
 import sh
+
+from molecule import config
 
 
 @pytest.mark.parametrize(
@@ -38,6 +42,47 @@ def test_command_create(with_scenario):
     'with_scenario', ['docker'], indirect=['with_scenario'])
 def test_command_destroy(with_scenario):
     sh.molecule('destroy')
+
+
+def test_command_init_role(temp_dir):
+    role_directory = os.path.join(temp_dir.strpath, 'test-init')
+    sh.molecule('init', 'role', '--role-name', 'test-init')
+    os.chdir(role_directory)
+
+    sh.molecule('test')
+
+
+def test_command_init_role_errors_when_exists(temp_dir):
+    sh.molecule('init', 'role', '--role-name', 'test-role')
+
+    try:
+        sh.molecule('init', 'role', '--role-name', 'test-role')
+    except sh.ErrorReturnCode_1 as e:
+        msg = ('ERROR: The directory test-role exists. '
+               'Cannot create new role.')
+        assert msg in e.stderr
+
+
+def test_command_init_scenario(temp_dir):
+    molecule_directory = config.molecule_directory(temp_dir.strpath)
+    scenario_directory = os.path.join(molecule_directory, 'test-scenario')
+    sh.molecule('init', 'scenario', '--scenario-name', 'test-scenario',
+                '--role-name', 'test-init')
+
+    assert os.path.isdir(scenario_directory)
+
+
+def test_command_init_scenario_errors_when_exists(temp_dir):
+    sh.molecule('init', 'scenario', '--scenario-name', 'test-scenario',
+                '--role-name', 'test-init')
+    try:
+        sh.molecule('init', 'scenario', '--scenario-name', 'test-scenario',
+                    '--role-name', 'test-init')
+    except sh.ErrorReturnCode_1 as e:
+        msg = ('ERROR: The directory molecule/test-scenario exists. '
+               'Cannot create new scenario.')
+
+        assert msg in e.stderr
 
 
 @pytest.mark.parametrize(

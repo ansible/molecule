@@ -31,6 +31,9 @@ from molecule.verifier import testinfra
 
 LOCAL_CONFIG = '~/.config/molecule/config.yml'
 MERGE_STRATEGY = anyconfig.MS_DICTS
+MOLECULE_DIRECTORY = 'molecule'
+MOLECULE_EPHEMERAL_DIRECTORY = '.molecule'
+MOLECULE_FILE = 'molecule.yml'
 
 
 class Config(object):
@@ -52,13 +55,20 @@ class Config(object):
         self.config = self._combine(configs)
 
     @property
+    def ephemeral_directory(self):
+        return molecule_ephemeral_directory(self.scenario_directory)
+
+    @property
     def inventory(self):
         return self.driver.inventory
 
     @property
     def inventory_file(self):
-        return os.path.join(self.scenario_directory, '.molecule',
-                            'ansible_inventory')
+        return os.path.join(self.ephemeral_directory, 'ansible_inventory')
+
+    @property
+    def config_file(self):
+        return os.path.join(self.ephemeral_directory, 'ansible.cfg')
 
     @property
     def dependency(self):
@@ -301,3 +311,15 @@ def merge_dicts(a, b):
     conf.update(b)
 
     return conf
+
+
+def molecule_directory(path):
+    return os.path.join(path, MOLECULE_DIRECTORY)
+
+
+def molecule_ephemeral_directory(path):
+    return os.path.join(path, '.molecule')
+
+
+def molecule_file(path):
+    return os.path.join(path, MOLECULE_FILE)

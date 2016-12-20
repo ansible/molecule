@@ -1,3 +1,4 @@
+docker-py
 mock
 pytest
 pytest-cov
