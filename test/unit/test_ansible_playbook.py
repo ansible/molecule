@@ -174,9 +174,10 @@ def test_execute(mocker, ansible_playbook_instance):
 def test_execute_exits_with_return_code_and_logs(patched_print_error,
                                                  ansible_playbook_instance):
     ansible_playbook_instance._ansible = sh.false.bake()
+    false_path = sh.which('false')
     result = ansible_playbook_instance.execute()
 
-    msg = "\n\n  RAN: '/usr/bin/false'\n\n  STDOUT:\n\n\n  STDERR:\n"
+    msg = "\n\n  RAN: {0}\n\n  STDOUT:\n\n\n  STDERR:\n".format(false_path)
     patched_print_error.assert_called_once_with(msg)
 
     assert (1, None) == result

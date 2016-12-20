@@ -24,23 +24,26 @@ import sh
 from molecule.command import verify
 
 
-def test_execute(mocker, patched_ansible_lint, patched_trailing,
+def test_execute(mocker, patched_ansible_lint_execute,
+                 patched_trailing_execute,
                  patched_ssh_config, molecule_instance):
     patched_testinfra = mocker.patch('molecule.verifier.testinfra.Testinfra')
 
     v = verify.Verify({}, {}, molecule_instance)
     result = v.execute()
 
-    patched_ansible_lint.assert_called_once_with(molecule_instance)
-    patched_trailing.assert_called_once_with(molecule_instance)
+    patched_ansible_lint_execute.assert_called_once_with(exit=True)
+    patched_trailing_execute.assert_called_once_with(exit=True)
     patched_testinfra.assert_called_once_with(molecule_instance)
-    patched_ssh_config.assert_called_once()
-    assert (None, None) == result
+    patched_ssh_config.assert_called_once_with()
+    assert (0, '', '') == result
 
 
 def test_execute_exits_when_ansible_lint_fails(
-        mocker, patched_ansible_lint, patched_trailing, molecule_instance):
-    patched_ansible_lint.side_effect = sh.ErrorReturnCode_2(sh.ls, None, None)
+        mocker, patched_ansible_lint, patched_trailing, patched_ssh_config,
+        molecule_instance):
+
+    patched_ansible_lint.side_effect = SystemExit(1)
 
     v = verify.Verify({}, {}, molecule_instance)
     with pytest.raises(SystemExit):
@@ -49,8 +52,8 @@ def test_execute_exits_when_ansible_lint_fails(
     patched_ansible_lint.assert_called_once_with(molecule_instance)
 
 
-def test_execute_with_serverspec(mocker, patched_ansible_lint,
-                                 patched_trailing, patched_ssh_config,
+def test_execute_with_serverspec(mocker, patched_ansible_lint_execute,
+                                 patched_trailing_execute, patched_ssh_config,
                                  molecule_instance):
     molecule_instance.verifier = 'serverspec'
     patched_serverspec = mocker.patch(
@@ -59,13 +62,14 @@ def test_execute_with_serverspec(mocker, patched_ansible_lint,
     v = verify.Verify({}, {}, molecule_instance)
     v.execute()
 
-    patched_ansible_lint.assert_called_once_with(molecule_instance)
-    patched_trailing.assert_called_once_with(molecule_instance)
+    patched_ansible_lint_execute.assert_called_once_with(exit=True)
+    patched_trailing_execute.assert_called_once_with(exit=True)
     patched_serverspec.assert_called_once_with(molecule_instance)
-    patched_ssh_config.assert_called_once()
+    patched_ssh_config.assert_called_once_with()
 
 
-def test_execute_with_goss(mocker, patched_ansible_lint, patched_trailing,
+def test_execute_with_goss(mocker, patched_ansible_lint_execute,
+                           patched_trailing_execute,
                            patched_ssh_config, molecule_instance):
     molecule_instance.verifier = 'goss'
     patched_goss = mocker.patch('molecule.verifier.goss.Goss')
@@ -73,35 +77,32 @@ def test_execute_with_goss(mocker, patched_ansible_lint, patched_trailing,
     v = verify.Verify({}, {}, molecule_instance)
     v.execute()
 
-    patched_ansible_lint.assert_called_once_with(molecule_instance)
-    patched_trailing.assert_called_once_with(molecule_instance)
+    patched_ansible_lint_execute.assert_called_once_with(exit=True)
+    patched_trailing_execute.assert_called_once_with(exit=True)
     patched_goss.assert_called_once_with(molecule_instance)
-    patched_ssh_config.assert_called_once()
+    patched_ssh_config.assert_called_once_with()
 
 
 def test_execute_exits_when_command_fails_and_exit_flag_set(
-        mocker, patched_ansible_lint, patched_trailing, patched_ssh_config,
+        mocker, patched_ansible_lint_execute,
+        patched_trailing_execute, patched_ssh_config,
         patched_print_error, molecule_instance):
     patched_testinfra = mocker.patch('molecule.verifier.testinfra.Testinfra')
-    patched_testinfra.side_effect = sh.ErrorReturnCode_1(sh.ls, None, None)
+    patched_testinfra.side_effect = sh.ErrorReturnCode_1(sh.ls, b'', b'')
 
     v = verify.Verify({}, {}, molecule_instance)
     with pytest.raises(SystemExit):
         v.execute()
 
-    msg = ("\n\n  RAN: <Command '/bin/ls'>\n\n  "
-           "STDOUT:\n<redirected>\n\n  STDERR:\n<redirected>")
-    patched_print_error.assert_called_once_with(msg)
-
 
 def test_execute_returns_when_command_fails_and_exit_flag_unset(
-        mocker, patched_ansible_lint, patched_trailing, patched_ssh_config,
+        mocker, patched_ansible_lint_execute,
+        patched_trailing_execute, patched_ssh_config,
         patched_print_error, molecule_instance):
     patched_testinfra = mocker.patch('molecule.verifier.testinfra.Testinfra')
-    patched_testinfra.side_effect = sh.ErrorReturnCode_1(sh.ls, None, None)
+    patched_testinfra.side_effect = sh.ErrorReturnCode_1(sh.ls, b'', b'')
 
     v = verify.Verify({}, {}, molecule_instance)
     result = v.execute(exit=False)
 
-    patched_print_error.assert_called()
-    assert (1, None) == result
+    assert (1, '', '') == result

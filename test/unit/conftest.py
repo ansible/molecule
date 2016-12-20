@@ -24,6 +24,8 @@ import shutil
 
 import pytest
 
+from six.moves import reduce
+
 from molecule import config
 from molecule import core
 from molecule import state
@@ -324,6 +326,11 @@ def patched_ansible_playbook(mocker):
     m.return_value = (None, None)
 
     return m
+
+
+@pytest.fixture()
+def patched_ansiblelint(mocker):
+    return mocker.patch('molecule.verifier.ansible_lint.AnsibleLint.execute')
 
 
 @pytest.fixture()

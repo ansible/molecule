@@ -34,7 +34,7 @@ def test_execute_creates_instances(
     patched_print_info.assert_called_with(msg)
 
     patched_ansible_playbook.assert_called_once_with(hide_errors=True)
-    assert (None, None) == result
+    assert (0, '', '') == result
     assert molecule_instance.state.converged
 
 
@@ -69,8 +69,8 @@ def test_execute_create_inventory_and_instances_with_platform_all(
     c = converge.Converge({}, command_args, molecule_instance)
     c.execute()
 
-    patched_create.assert_called_once()
-    patched_create_inventory.assert_called_once()
+    patched_create.assert_called_once_with()
+    patched_create_inventory.assert_called_once_with()
 
 
 def test_execute_create_inventory_and_instances_with_platform_all_state_file(
@@ -81,8 +81,8 @@ def test_execute_create_inventory_and_instances_with_platform_all_state_file(
     c = converge.Converge({}, {}, molecule_instance)
     c.execute()
 
-    patched_create.assert_called_once()
-    patched_create_inventory.assert_called_once()
+    patched_create.assert_called_once_with()
+    patched_create_inventory.assert_called_once_with()
 
 
 def test_execute_installs_dependencies(
@@ -93,7 +93,7 @@ def test_execute_installs_dependencies(
     c = converge.Converge({}, {}, molecule_instance)
     c.execute()
 
-    patched_dependency.assert_called_once()
+    patched_dependency.assert_called_once_with()
 
 
 def test_execute_with_debug(patched_create, patched_ansible_playbook,
@@ -103,7 +103,7 @@ def test_execute_with_debug(patched_create, patched_ansible_playbook,
     c = converge.Converge(args, {}, molecule_instance)
     c.execute()
 
-    patched_ansible_playbook.assert_called_once()
+    patched_ansible_playbook.assert_called_once_with(hide_errors=True)
 
     x = ("ANSIBLE_CONFIG: test/config_file\n"
          "ANSIBLE_FORCE_COLOR: 'true'\n"
@@ -134,7 +134,37 @@ def test_execute_does_not_raise_on_exit(
     c = converge.Converge({}, {}, molecule_instance)
     result = c.execute(exit=False)
 
-    assert (1, None) == result
+    assert (1, '', '') == result
+
+
+def test_execute_does_not_raise_on_converge_error_idempotent(
+        patched_create, patched_ansible_playbook, patched_create_inventory,
+        patched_print_info, molecule_instance):
+    patched_ansible_playbook.return_value = (1, None)
+
+    c = converge.Converge({}, {}, molecule_instance)
+    result = c.execute(idempotent=True)
+
+    msg = 'Skipping due to errors during converge.'
+    patched_print_info.assert_called_with(msg)
+    assert (1, '', '') == result
+
+@pytest.mark.skip
+def test_execute_raises_on_idempotence_failure(
+        mocker, patched_create, patched_ansible_playbook,
+        patched_create_inventory, patched_print_error, molecule_instance):
+    output = 'check-command-01: ok=2    changed=1    unreachable=0    failed=0'
+    patched_ansible_playbook.return_value = None, output
+
+    c = converge.Converge({}, {}, molecule_instance)
+    with pytest.raises(SystemExit):
+        c.execute(idempotent=True)
+
+    expected_calls = [
+        mocker.call('Idempotence test failed because of the following tasks:'),
+        mocker.call('')
+    ]
+    assert patched_print_error.mock_calls == expected_calls
 
 
 def test_execute_adds_idempotency_flags(
@@ -143,7 +173,7 @@ def test_execute_adds_idempotency_flags(
         molecule_instance):
 
     c = converge.Converge({}, {}, molecule_instance)
-    c.execute(idempotent=True)
+    c.execute(idempotent=True, exit=False)
 
     expected = [mocker.call('_out'), mocker.call('_err'), mocker.call('diff')]
     assert expected == patched_remove_cli_arg.mock_calls

@@ -44,7 +44,7 @@ class Login(base.Base):
         """
         # get list of running hosts from state
         if self.molecule.state.hosts:
-            hosts = [k for k, v in self.molecule.state.hosts.iteritems()]
+            hosts = [k for k, v in self.molecule.state.hosts.items()]
         else:
             hosts = []
 
@@ -95,11 +95,11 @@ class Login(base.Base):
             util.print_error(msg)
             util.sysexit()
         except base.InvalidHost as e:
-            util.print_error(e.message)
+            util.print_error(str(e))
             util.sysexit()
 
         self._get_login(hostname)
-        return None, None
+        return 0, '', ''
 
     def _get_login(self, hostname):  # pragma: no cover
         login_cmd = self.molecule.driver.login_cmd(hostname)

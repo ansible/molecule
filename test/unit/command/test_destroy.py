@@ -34,13 +34,13 @@ def test_execute_deletes_instances(
     msg = 'Destroying instances...'
     patched_print_info.assert_called_once_with(msg)
 
-    patched_driver_destroy.assert_called_once()
+    patched_driver_destroy.assert_called_once_with()
     assert not molecule_instance.state.created
     assert not molecule_instance.state.converged
     (None, None) == result
 
-    patched_remove_templates.assert_called_once()
-    patched_remove_inventory.assert_called_once()
+    patched_remove_templates.assert_called_once_with()
+    patched_remove_inventory.assert_called_once_with()
 
 
 def test_execute_raises_on_exit(patched_driver_destroy, patched_print_info,
@@ -67,4 +67,4 @@ def test_execute_does_not_raise_on_exit(patched_driver_destroy,
     d = destroy.Destroy({}, {}, molecule_instance)
     result = d.execute(exit=False)
 
-    assert (1, '') == result
+    assert (1, '', '') == result

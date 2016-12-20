@@ -36,32 +36,34 @@ class Test(base.Base):
          sys.exit on command failure.
         """
         ts = self.molecule.config.config['molecule']['test']['sequence']
+        failed = False
+        errors = ''
+        warnings = ''
         for task in ts:
             command_module = getattr(molecule.command, task)
             command = getattr(command_module, task.capitalize())
             c = command(self.args, self.command_args, self.molecule)
 
-            status, output = c.execute(exit=False)
+            status, cmd_err, cmd_warn = c.execute(exit=exit)
+            errors += cmd_err
+            warnings += cmd_warn
 
             # Fail fast
             if status is not 0 and status is not None:
-                if output:
-                    util.print_error(output)
-                util.sysexit(status)
+                failed = True
 
-        if self.command_args.get('destroy') == 'always':
-            c = molecule.command.destroy.Destroy(self.args, self.command_args)
-            c.execute()
-            return None, None
+                if exit:
+                    util.sysexit(status)
 
-        if self.command_args.get('destroy') == 'never':
-            return None, None
+        if self.command_args.get('destroy') != 'never':
+            if self.command_args.get('destroy') == 'always' or not failed:
+                c = molecule.command.destroy.Destroy(self.args, self.command_args)
+                status, cmd_err, cmd_warn = c.execute(exit=exit)
+                errors += cmd_err
+                warnings += cmd_warn
 
-        # passing (default)
-        if status is None:
-            c = molecule.command.destroy.Destroy(self.args, self.command_args)
-            c.execute()
-            return None, None
+        ret_code = 1 if failed else 0
+        return ret_code, errors, warnings
 
 
 @click.command()
@@ -77,8 +79,13 @@ class Test(base.Base):
     '--sudo/--no-sudo',
     default=False,
     help='Enable or disable running tests with sudo. Default is disabled.')
+@click.option(
+    '--exit/--no-exit',
+    default=False,
+    help='Enable or disable exiting on failed tests. Default is enabled.')
 @click.pass_context
-def test(ctx, driver, platform, provider, destroy, sudo):  # pragma: no cover
+def test(ctx, driver, platform, provider, destroy, sudo,
+         exit):  # pragma: no cover
     """
     Runs a series of commands (defined in config) against instances for a full
     test/verify run.
@@ -92,5 +99,4 @@ def test(ctx, driver, platform, provider, destroy, sudo):  # pragma: no cover
     }
 
     t = Test(ctx.obj.get('args'), command_args)
-    t.execute
-    util.sysexit(t.execute()[0])
+    util.sysexit(t.execute(exit=exit)[0])

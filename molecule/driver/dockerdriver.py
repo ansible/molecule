@@ -144,7 +144,7 @@ class DockerDriver(basedriver.BaseDriver):
                     tty=True,
                     detach=False,
                     name=container['name'],
-                    ports=port_bindings.keys(),
+                    ports=list(port_bindings.keys()),
                     host_config=docker_host_config,
                     environment=environment,
                     command=command)
@@ -247,7 +247,7 @@ class DockerDriver(basedriver.BaseDriver):
                 if environment:
                     environment = '\n'.join(
                         'ENV {} {}'.format(k, v)
-                        for k, v in environment.iteritems())
+                        for k, v in environment.items())
                 else:
                     environment = ''
 
@@ -270,9 +270,9 @@ class DockerDriver(basedriver.BaseDriver):
                 util.print_info('Building ansible compatible image...')
                 previous_line = ''
                 for line in self._docker.build(fileobj=f, tag=tag_string):
-                    for line_split in line.split('\n'):
+                    for line_split in line.splitlines():
                         if len(line_split) > 0:
-                            line = json.loads(line_split)
+                            line = json.loads(line_split.decode())
                             if 'stream' in line:
                                 msg = '\t{}'.format(line['stream'])
                                 util.print_warn(msg)

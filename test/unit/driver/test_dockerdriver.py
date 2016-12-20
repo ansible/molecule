@@ -25,11 +25,12 @@ from molecule.driver import dockerdriver
 pytestmark = pytest.helpers.supports_docker()
 
 
-@pytest.fixture()
+@pytest.fixture(scope="function")
 def docker_instance(docker_molecule_instance, request):
     d = dockerdriver.DockerDriver(docker_molecule_instance)
 
     def cleanup():
+        print ("destroying instances")
         d.destroy()
 
     request.addfinalizer(cleanup)

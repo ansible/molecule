@@ -18,9 +18,12 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+from __future__ import print_function
+
 import binascii
 import os
 import uuid
+import sys
 
 import colorama
 import pytest
@@ -33,7 +36,7 @@ def test_print_success(capsys):
     util.print_success('test')
     result, _ = capsys.readouterr()
 
-    print '{}{}'.format(colorama.Fore.GREEN, 'test'.rstrip())
+    print('{}{}'.format(colorama.Fore.GREEN, 'test'.rstrip()))
     expected, _ = capsys.readouterr()
 
     assert expected == result
@@ -43,7 +46,7 @@ def test_print_info(capsys):
     util.print_info('test')
     result, _ = capsys.readouterr()
 
-    print '--> {}{}'.format(colorama.Fore.CYAN, 'test'.rstrip())
+    print('--> {}{}'.format(colorama.Fore.RESET, 'test'.rstrip()))
     expected, _ = capsys.readouterr()
 
     assert expected == result
@@ -53,7 +56,7 @@ def test_print_info_without_pretty(capsys):
     util.print_info('test', pretty=False)
     result, _ = capsys.readouterr()
 
-    print '{}'.format('test'.rstrip())
+    print('{}'.format('test'.rstrip()))
     expected, _ = capsys.readouterr()
 
     assert expected == result
@@ -63,7 +66,7 @@ def test_print_warn(capsys):
     util.print_warn('test')
     result, _ = capsys.readouterr()
 
-    print '{}{}'.format(colorama.Fore.YELLOW, 'test'.rstrip())
+    print('{}{}'.format(colorama.Fore.YELLOW, 'test'.rstrip()))
     expected, _ = capsys.readouterr()
 
     assert expected == result
@@ -71,20 +74,22 @@ def test_print_warn(capsys):
 
 def test_print_error(capsys):
     util.print_error('test')
-    result, _ = capsys.readouterr()
+    _, result = capsys.readouterr()
 
-    print '{}ERROR: {}'.format(colorama.Fore.RED, 'test'.rstrip())
-    expected, _ = capsys.readouterr()
+    print(
+        '{}ERROR: {}'.format(colorama.Fore.RED, 'test'.rstrip()),
+        file=sys.stderr)
+    _, expected = capsys.readouterr()
 
     assert expected == result
 
 
 def test_print_error_without_pretty(capsys):
     util.print_error('test', pretty=False)
-    result, _ = capsys.readouterr()
+    _, result = capsys.readouterr()
 
-    print '{}{}'.format(colorama.Fore.RED, 'test'.rstrip())
-    expected, _ = capsys.readouterr()
+    print('{}{}'.format(colorama.Fore.RED, 'test'.rstrip()), file=sys.stderr)
+    _, expected = capsys.readouterr()
 
     assert expected == result
 
@@ -139,7 +144,7 @@ def test_write_template_template_does_not_exist(temp_dir):
 
 def test_write_file(temp_dir):
     dest_file = os.path.join(temp_dir, 'test_util_write_file.tmp')
-    contents = binascii.b2a_hex(os.urandom(15))
+    contents = binascii.b2a_hex(os.urandom(15)).decode()
     util.write_file(dest_file, contents)
     with open(dest_file, 'r') as f:
         data = f.read()

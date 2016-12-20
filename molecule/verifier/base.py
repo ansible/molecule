@@ -20,6 +20,8 @@
 
 import abc
 
+from molecule import util
+
 
 class Base(object):
     __metaclass__ = abc.ABCMeta
@@ -32,6 +34,18 @@ class Base(object):
         :returns: None
         """
         self._molecule = molecule
+        self.errors = ""
+        self.warnings = ""
+
+        def error_callback(msg):
+            util.print_error(msg, pretty=False)
+            self.errors += msg
+
+        def info_callback(msg):
+            util.print_info(msg, pretty=False)
+
+        self._error_callback = error_callback
+        self._info_callback = info_callback
 
     @abc.abstractproperty
     def execute(self):  # pragma: no cover

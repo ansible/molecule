@@ -39,13 +39,15 @@ def print_success(msg):
 
 def print_info(msg, pretty=True):
     if pretty:
-        template = '--> {}{{}}'.format(colorama.Fore.CYAN)
+        msg = msg.replace('\n', '\n    ')
+        template = '--> {}{{}}'.format(colorama.Fore.RESET)
         print_msg(template, msg)
     else:
         print_msg('{}', msg)
 
 
 def print_debug(title, data):
+    data = data.replace('\n', '\n       ')
     print(''.join([
         colorama.Back.WHITE, colorama.Style.BRIGHT, colorama.Fore.BLACK,
         'DEBUG: ' + title, colorama.Fore.RESET, colorama.Back.RESET,
@@ -64,16 +66,17 @@ def print_warn(msg):
 
 def print_error(msg, pretty=True):
     color = colorama.Fore.RED
+    template = '{}{{}}'.format(color)
+    msg = msg.replace('\n', '\n       ')
+
     if pretty:
         template = '{}ERROR: {{}}'.format(color)
-        print_msg(template, msg)
-    else:
-        template = '{}{{}}'.format(color)
-        print_msg(template, msg)
+
+    print_msg(template, msg, file=sys.stderr)
 
 
-def print_msg(template, msg):
-    print(template.format(msg.rstrip()))
+def print_msg(template, msg, **kwargs):
+    print(template.format(msg.rstrip()), **kwargs)
 
 
 def callback_info(msg):

@@ -145,7 +145,4 @@ class State(object):
         util.write_file(
             self._state_file,
             yaml.safe_dump(
-                self._data,
-                default_flow_style=False,
-                explicit_start=True,
-                encoding='utf-8'))
+                self._data, default_flow_style=False, explicit_start=True))

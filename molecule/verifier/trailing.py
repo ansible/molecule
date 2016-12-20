@@ -82,16 +82,22 @@ class Trailing(base.Base):
                 msg = 'Trailing newline found at the end of {}.'.format(
                     filename)
                 util.print_error(msg)
+                self.errors += msg
                 found_error = True
 
             if len(whitespace) > 0:
-                msg = 'Trailing whitespace found in {} on lines: {}'
                 lines = ', '.join(str(x) for x in whitespace)
-                util.print_error(msg.format(filename, lines))
+                msg = 'Trailing whitespace found in {} on lines: {}'.format(
+                    filename, lines)
+                util.print_error(msg)
+                self.errors += msg
                 found_error = True
 
         if exit and found_error:
             util.sysexit()
+
+        ret_code = 1 if found_error else 0
+        return (ret_code, self.errors, self.warnings)
 
     def _trailing_newline(self, source):
         """

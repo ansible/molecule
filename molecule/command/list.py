@@ -35,7 +35,7 @@ class List(base.Base):
         """
         porcelain = self.command_args.get('porcelain')
         self.molecule.print_valid_platforms(porcelain=porcelain)
-        return None, None
+        return 0, '', ''
 
 
 @click.command()

@@ -18,6 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import re
+
 import click
 import yaml
 
@@ -100,15 +102,75 @@ class Converge(base.Base):
 
         util.print_info('Starting Ansible Run...')
         status, output = ansible.execute(hide_errors=hide_errors)
+
+        if idempotent:
+            if output is None:
+                util.print_info('Skipping due to errors during converge.')
+                return 1, '', ''
+            if self._is_idempotent(output):
+                util.print_success('Idempotence test passed.')
+                return 0, '', ''
+            else:
+                msg = ('Idempotence test failed because of the following '
+                       'tasks:\n{}')
+                err_tasks = '\n'.join(self._non_idempotent_tasks(output))
+                util.print_error(msg.format(err_tasks))
+                errors = msg.format(err_tasks)
+                return 1, errors, ''
+
         if status is not None:
             if exit:
                 util.sysexit(status)
-            return status, None
+            return status, '', ''
 
         if not self.molecule.state.converged:
             self.molecule.state.change_state('converged', True)
 
-        return None, output
+        return 0, '', ''
+
+    def _is_idempotent(self, output):
+        """
+        Parses the output of the provisioning for changed and returns a bool.
+
+        :param output: A string containing the output of the ansible run.
+        :return: bool
+        """
+
+        # Remove blank lines to make regex matches easier
+        output = re.sub("\n\s*\n*", "\n", output)
+
+        # Look for any non-zero changed lines
+        changed = re.search(r'(changed=[1-9][0-9]*)', output)
+
+        if changed:
+            # Not idempotent
+            return False
+
+        return True
+
+    def _non_idempotent_tasks(self, output):
+        """
+        Parses the output to identify the non idempotent tasks.
+
+        :param (str) output: A string containing the output of the ansible run.
+        :return: A list containing the names of the non idempotent tasks.
+        """
+        # Remove blank lines to make regex matches easier.
+        output = re.sub("\n\s*\n*", "\n", output)
+
+        # Split the output into a list and go through it.
+        output_lines = output.split('\n')
+        res = []
+        task_line = ''
+        for idx, line in enumerate(output_lines):
+            if line.startswith('TASK'):
+                task_line = line
+            elif line.startswith('changed'):
+                host_name = re.search(r'\[(.*)\]', line).groups()[0]
+                task_name = re.search(r'\[(.*)\]', task_line).groups()[0]
+                res.append('* [{}] => {}'.format(host_name, task_name))
+
+        return res
 
 
 @click.command()

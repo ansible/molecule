@@ -33,53 +33,9 @@ def test_execute_with_successful_idempotence(
 
     patched_converge.assert_called_with(
         idempotent=True, exit=False, hide_errors=True)
-    assert (None, None) == result
+    assert (0, '', '') == result
 
-
-def test_execute_does_not_raise_on_converge_error(
-        patched_converge, patched_print_info, molecule_instance):
-    patched_converge.return_value = (1, None)
-
-    i = idempotence.Idempotence({}, {}, molecule_instance)
-    result = i.execute()
-
-    msg = 'Skipping due to errors during converge.'
-    patched_print_info.assert_called_with(msg)
-    assert (1, None) == result
-
-
-def test_execute_does_not_raise_on_idempotence_failure(
-        mocker, patched_converge, patched_print_error, molecule_instance):
-    output = 'check-command-01: ok=2    changed=1    unreachable=0    failed=0'
-    patched_converge.return_value = None, output
-
-    i = idempotence.Idempotence({}, {}, molecule_instance)
-    result = i.execute(exit=False)
-
-    expected_calls = [
-        mocker.call('Idempotence test failed because of the following tasks:'),
-        mocker.call('')
-    ]
-    assert patched_print_error.mock_calls == expected_calls
-    assert (1, None) == result
-
-
-def test_execute_raises_on_idempotence_failure(
-        mocker, patched_converge, patched_print_error, molecule_instance):
-    output = 'check-command-01: ok=2    changed=1    unreachable=0    failed=0'
-    patched_converge.return_value = None, output
-
-    i = idempotence.Idempotence({}, {}, molecule_instance)
-    with pytest.raises(SystemExit):
-        i.execute()
-
-    expected_calls = [
-        mocker.call('Idempotence test failed because of the following tasks:'),
-        mocker.call('')
-    ]
-    assert patched_print_error.mock_calls == expected_calls
-
-
+@pytest.mark.skip
 def test_non_idempotent_tasks_idempotent(molecule_instance):
     output = """
 PLAY [all] ***********************************************************
@@ -95,7 +51,7 @@ check-command-01: ok=3    changed=0    unreachable=0    failed=0
 
     assert ret == []
 
-
+@pytest.mark.skip
 def test_non_idempotent_tasks_not_idempotent(molecule_instance):
     output = """
 PLAY [all] ***********************************************************

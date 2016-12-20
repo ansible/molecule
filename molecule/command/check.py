@@ -48,9 +48,8 @@ class Check(base.Base):
         ansible.add_cli_arg('check', True)
 
         util.print_info("Performing a 'Dry Run' of playbook...")
-        return ansible.execute(hide_errors=True)
-
-        return (None, None)
+        (ret_code, output) = ansible.execute(hide_errors=True)
+        return ret_code, '', ''
 
 
 @click.command()

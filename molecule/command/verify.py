@@ -40,15 +40,28 @@ class Verify(base.Base):
          on command failure.
         :return: Return a tuple of None, otherwise sys.exit on command failure.
         """
-        try:
-            v = ansible_lint.AnsibleLint(self.molecule)
-            v.execute()
-        except sh.ErrorReturnCode:
-            util.sysexit()
+
+        failed = False
+        errors = ''
+        warnings = ''
+
+        v = ansible_lint.AnsibleLint(self.molecule)
+        test_failed, lint_err, lint_warn = v.execute(exit=exit)
+        if test_failed:
+            failed = True
+        errors += '\n'.join(lint_err)
+        warnings += '\n'.join(lint_warn)
+
         v = trailing.Trailing(self.molecule)
-        v.execute()
+        test_failed, trail_err, trail_warn = v.execute(exit=exit)
+        if test_failed:
+            failed = True
+        errors += '\n'.join(lint_err)
+        warnings += '\n'.join(lint_warn)
 
         self.molecule.write_ssh_config()
+
+        ret_code = 1 if failed else 0
 
         try:
             if self.molecule.verifier == 'serverspec':
@@ -59,13 +72,14 @@ class Verify(base.Base):
                 v = testinfra.Testinfra(self.molecule)
 
             v.execute()
+
         except sh.ErrorReturnCode as e:
-            util.print_error(str(e))
             if exit:
                 util.sysexit(e.exit_code)
-            return e.exit_code, e.stdout
+            ret_code = e.exit_code
+            errors += v.errors
 
-        return None, None
+        return ret_code, errors, warnings
 
 
 @click.command()
@@ -75,11 +89,14 @@ class Verify(base.Base):
     '--sudo/--no-sudo',
     default=False,
     help='Enable or disable running tests with sudo. Default is disabled.')
+@click.option(
+    '--exit/--no-exit',
+    default=True,
+    help='Enable or disable exiting on failed verifiers. Default is enabled.')
 @click.pass_context
-def verify(ctx, platform, provider, sudo):  # pragma: no cover
+def verify(ctx, platform, provider, sudo, exit):  # pragma: no cover
     """ Performs verification steps on running instances. """
     command_args = {'platform': platform, 'provider': provider, 'sudo': sudo}
 
     v = Verify(ctx.obj.get('args'), command_args)
-    v.execute
-    util.sysexit(v.execute()[0])
+    util.sysexit(v.execute(exit=exit)[0])

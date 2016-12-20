@@ -11,3 +11,4 @@
 .vagrant/
 doc/build/
 htmlcov/
+.*.swp

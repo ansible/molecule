@@ -48,5 +48,6 @@ def test_execute_raises(patched_print_error, shell_instance):
 
     assert 1 == e.value.code
 
-    msg = "\n\n  RAN: '/usr/bin/false'\n\n  STDOUT:\n\n\n  STDERR:\n"
+    false_path = sh.which('false')
+    msg = "\n\n  RAN: {0}\n\n  STDOUT:\n\n\n  STDERR:\n".format(false_path)
     patched_print_error.assert_called_once_with(msg)

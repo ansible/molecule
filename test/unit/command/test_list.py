@@ -29,7 +29,7 @@ def test_execute(capsys, molecule_instance):
 
     assert 'ubuntu   (default)' in out
     assert 'centos7' in out
-    assert (None, None) == result
+    assert (0, '', '') == result
 
 
 def test_execute_with_porcelain(capsys, molecule_instance):
@@ -42,4 +42,4 @@ def test_execute_with_porcelain(capsys, molecule_instance):
 
     assert 'ubuntu   d' in out
     assert 'centos7' in out
-    assert (None, None) == result
+    assert (0, '', '') == result
