@@ -36,6 +36,7 @@ VALID_KEYS = [
     'default_platform',
     'default_provider',
     'driver',
+    'driver_config',
     'hosts',
     'installed_deps',
     'multiple_platforms',
@@ -90,6 +91,10 @@ class State(object):
         return self._data.get('driver')
 
     @property
+    def driver_config(self):
+        return self._data.get('driver_config')
+
+    @property
     def hosts(self):
         return self._data.get('hosts')
 
@@ -133,6 +138,7 @@ class State(object):
             "default_platform": None,
             "default_provider": None,
             "driver": None,
+            "driver_config": {},
             "hosts": {},
             "multiple_platforms": None
         }

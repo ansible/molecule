@@ -23,6 +23,8 @@ import copy
 import os
 import sys
 
+from m9dicts import convert_to
+
 try:
     import vagrant
 except ImportError:  # pragma: no cover
@@ -137,6 +139,7 @@ class VagrantDriver(basedriver.BaseDriver):
     def up(self, no_provision=True):
         self.molecule.state.change_state('driver', self.name)
         self._populate_platform_instances()
+        self._write_vagrant_state_file()
         self._write_vagrant_file()
         self._vagrant.up(no_provision)
 
@@ -144,7 +147,7 @@ class VagrantDriver(basedriver.BaseDriver):
         if self.molecule.state.created:
             self._vagrant.destroy()
 
-        if os._exists(self.molecule.config.config['molecule'][
+        if os.path.exists(self.molecule.config.config['molecule'][
                 'vagrantfile_file']):
             os.remove(self.molecule.config.config['molecule'][
                 'vagrantfile_file'])
@@ -252,14 +255,23 @@ class VagrantDriver(basedriver.BaseDriver):
             return self.molecule.args.get('platform')
         return self.default_platform
 
+    def _write_vagrant_state_file(self):
+        driver_config = convert_to(self.molecule.config.config['vagrant'])
+        driver_config['current_platform'] = self.platform
+        driver_config['current_provider'] = self.provider
+
+        self.molecule.state.change_state('driver_config', driver_config)
+
     def _write_vagrant_file(self):
-        kwargs = {
-            'config': self.molecule.config.config,
-            'current_platform': self.platform,
-            'current_provider': self.provider
+        molecule_dir = self.molecule.config.config['molecule']['molecule_dir']
+        state_file = self.molecule.config.config['molecule']['state_file']
+
+        output_dir = os.getcwd()
+
+        extra_context = {
+            'repo_name': molecule_dir,
+            'vagrantfile_state_file': state_file
         }
 
-        template = self.molecule.config.config['molecule'][
-            'vagrantfile_template']
-        dest = self.molecule.config.config['molecule']['vagrantfile_file']
-        util.write_template(template, dest, kwargs=kwargs)
+        util.process_templates('driver/vagrant-runtime', extra_context,
+                               output_dir)
