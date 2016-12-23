@@ -14,6 +14,8 @@ molecule-specific information for the role in the directory in which it's
 located. It allows you to configure how Molecule, Ansible, verifiers, and
 drivers will behave. This information is contained in top level YAML sections
 described below.
+It is also possible to use environment variables by embbedding them in a
+string like this: ``playbook: "${envvar_containing_playbook_name}"``
 
 Molecule Section
 ----------------
