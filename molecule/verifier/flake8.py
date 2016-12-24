@@ -33,7 +33,7 @@ class Flake8(base.Base):
         self._tests = self._get_tests()
 
     @property
-    def options(self):
+    def default_options(self):
         pass
 
     def bake(self):
@@ -58,7 +58,7 @@ class Flake8(base.Base):
             self.bake()
 
         msg = 'Executing flake8 on files found in {}/...'.format(
-            self._config.verifier_directory)
+            self.directory)
         util.print_info(msg)
 
         try:
@@ -69,7 +69,5 @@ class Flake8(base.Base):
 
     def _get_tests(self):
         return [
-            filename
-            for filename in util.os_walk(self._config.verifier_directory,
-                                         'test_*.py')
+            filename for filename in util.os_walk(self.directory, 'test_*.py')
         ]

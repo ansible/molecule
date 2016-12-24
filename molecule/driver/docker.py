@@ -38,7 +38,7 @@ class Docker(base.Base):
         host_options = 'ansible_connection=docker'
         dd = collections.defaultdict(list)
         for d in self._config.platforms:
-            name = '{}-{}'.format(d['name'], self._config.scenario_name)
+            name = '{}-{}'.format(d['name'], self._config.scenario.name)
             dd[name].append(host_options)
 
         return dict(dd)

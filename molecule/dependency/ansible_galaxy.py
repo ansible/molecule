@@ -38,7 +38,7 @@ class AnsibleGalaxy(base.Base):
         self._ansible_galaxy_command = None
 
     @property
-    def options(self):
+    def default_options(self):
         roles_path = os.path.join('.molecule', 'roles')
         return {
             'force': True,
@@ -55,7 +55,7 @@ class AnsibleGalaxy(base.Base):
         """
         self._ansible_galaxy_command = sh.ansible_galaxy.bake(
             'install',
-            self._config.dependency_options,
+            self.options,
             _env=os.environ,
             _out=util.callback_info,
             _err=util.callback_error)
@@ -66,7 +66,7 @@ class AnsibleGalaxy(base.Base):
 
         :return: None
         """
-        if not self._config.dependency_enabled:
+        if not self.enabled:
             return
 
         if self._ansible_galaxy_command is None:
@@ -81,8 +81,7 @@ class AnsibleGalaxy(base.Base):
             util.sysexit(e.exit_code)
 
     def _role_setup(self):
-        role_directory = os.path.join(
-            self._config.scenario_directory,
-            self._config.dependency_options['roles_path'])
+        role_directory = os.path.join(self._config.scenario.directory,
+                                      self.options['roles_path'])
         if not os.path.isdir(role_directory):
             os.makedirs(role_directory)

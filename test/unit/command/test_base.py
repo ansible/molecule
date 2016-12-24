@@ -55,9 +55,9 @@ def test_init_calls_setup_provisioner(mocker, base_class, config_instance):
 
 def test_setup_provisioner(mocker, base_instance):
     patched_provisioner_write_inventory = mocker.patch(
-        'molecule.provisioner.ansible.Ansible.write_inventory')
+        'molecule.provisioner.Ansible.write_inventory')
     patched_provisioner_write_config = mocker.patch(
-        'molecule.provisioner.ansible.Ansible.write_config')
+        'molecule.provisioner.Ansible.write_config')
 
     base_instance._setup_provisioner()
 

@@ -54,7 +54,7 @@ class Base(object):
 
 
 def _get_local_config():
-    expanded_path = os.path.expanduser(config.LOCAL_CONFIG)
+    expanded_path = os.path.expanduser(config.MOLECULE_LOCAL_CONFIG)
     try:
         return _load_config(expanded_path)
     except IOError:

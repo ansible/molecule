@@ -38,7 +38,7 @@ class AnsibleLint(base.Base):
         self._ansible_lint_command = None
 
     @property
-    def options(self):
+    def default_options(self):
         return {}
 
     def bake(self):
@@ -49,8 +49,8 @@ class AnsibleLint(base.Base):
         :return: None
         """
         self._ansible_lint_command = sh.ansible_lint.bake(
-            self._config.scenario_converge,
-            self._config.lint_options,
+            self._config.scenario.converge,
+            self.options,
             _env=os.environ,
             _out=util.callback_info,
             _err=util.callback_error)
@@ -61,7 +61,7 @@ class AnsibleLint(base.Base):
 
         :return: None
         """
-        if not self._config.lint_enabled:
+        if not self.enabled:
             return
 
         if self._ansible_lint_command is None:

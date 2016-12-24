@@ -34,9 +34,22 @@ class Base(object):
         self._config = config
 
     @abc.abstractproperty
-    def options(self):  # pragma: no cover
+    def default_options(self):  # pragma: no cover
         pass
 
     @abc.abstractproperty
     def execute(self):  # pragma: no cover
         pass
+
+    @property
+    def name(self):
+        return self._config.config['lint']['name']
+
+    @property
+    def enabled(self):
+        return self._config.config['lint']['enabled']
+
+    @property
+    def options(self):
+        return self._config.merge_dicts(self.default_options,
+                                        self._config.config['lint']['options'])

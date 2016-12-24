@@ -37,6 +37,14 @@ def test_testinfra_options_property(docker_instance):
     assert {'connection': 'docker'} == docker_instance.testinfra_options
 
 
+def test_name_property(docker_instance):
+    assert 'docker' == docker_instance.name
+
+
+def test_options_property(docker_instance):
+    assert {} == docker_instance.options
+
+
 def test_inventory_property(docker_instance):
     x = {
         'instance-1-default': ['ansible_connection=docker'],

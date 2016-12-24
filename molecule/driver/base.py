@@ -42,3 +42,11 @@ class Base(object):
         :returns: dict
         """
         pass  # pragma: no cover
+
+    @property
+    def name(self):
+        return self._config.config['driver']['name']
+
+    @property
+    def options(self):
+        return self._config.config['driver']['options']

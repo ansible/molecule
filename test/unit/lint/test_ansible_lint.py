@@ -34,14 +34,59 @@ def test_config_private_member(ansible_lint_instance):
     assert isinstance(ansible_lint_instance._config, config.Config)
 
 
+def test_default_options_property(ansible_lint_instance):
+    assert {} == ansible_lint_instance.options
+
+
+def test_name_property(ansible_lint_instance):
+    assert 'ansible-lint' == ansible_lint_instance.name
+
+
+def test_enabled_property(ansible_lint_instance):
+    assert ansible_lint_instance.enabled
+
+
 def test_options_property(ansible_lint_instance):
     assert {} == ansible_lint_instance.options
+
+
+@pytest.mark.parametrize(
+    'config_instance', [{
+        'configs': [{
+            'lint': {
+                'name': 'ansible-lint',
+                'options': {
+                    'foo': 'bar'
+                }
+            }
+        }]
+    }],
+    indirect=['config_instance'])
+def test_options_property_handles_lint_options(config_instance):
+    i = ansible_lint.AnsibleLint(config_instance)
+
+    assert {'foo': 'bar'} == i.options
+
+
+@pytest.mark.parametrize(
+    'config_instance', [{
+        'args': {
+            'debug': True
+        },
+    }],
+    indirect=['config_instance'])
+def test_options_property_handles_cli_args(config_instance):
+    i = ansible_lint.AnsibleLint(config_instance)
+
+    # Does nothing.  The `ansible-lint` command does not support
+    # a `debug` flag.
+    assert {} == i.options
 
 
 def test_bake(ansible_lint_instance):
     ansible_lint_instance.bake()
     x = '{} {}'.format(
-        str(sh.ansible_lint), ansible_lint_instance._config.scenario_converge)
+        str(sh.ansible_lint), ansible_lint_instance._config.scenario.converge)
 
     assert x == ansible_lint_instance._ansible_lint_command
 
@@ -66,7 +111,7 @@ def test_execute_bakes(patched_run_command, ansible_lint_instance):
     assert ansible_lint_instance._ansible_lint_command is not None
 
     cmd = '{} {}'.format(
-        str(sh.ansible_lint), ansible_lint_instance._config.scenario_converge)
+        str(sh.ansible_lint), ansible_lint_instance._config.scenario.converge)
     patched_run_command.assert_called_once_with(cmd, debug=None)
 
 

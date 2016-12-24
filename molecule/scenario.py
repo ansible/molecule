@@ -18,16 +18,32 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import pytest
+import os
 
 
-@pytest.fixture
-def patched_ansible_playbook(mocker):
-    return mocker.patch(
-        'molecule.provisioner.ansible_playbook.AnsiblePlaybook')
+class Scenario(object):
+    def __init__(self, config):
+        self._config = config
 
+    @property
+    def name(self):
+        return self._config.config['scenario']['name']
 
-@pytest.fixture
-def patched_ansible_playbook_execute(mocker):
-    return mocker.patch(
-        'molecule.provisioner.ansible_playbook.AnsiblePlaybook.execute')
+    @property
+    def directory(self):
+        return os.path.dirname(self._config.molecule_file)
+
+    @property
+    def setup(self):
+        return os.path.join(self.directory,
+                            self._config.config['scenario']['setup'])
+
+    @property
+    def converge(self):
+        return os.path.join(self.directory,
+                            self._config.config['scenario']['converge'])
+
+    @property
+    def teardown(self):
+        return os.path.join(self.directory,
+                            self._config.config['scenario']['teardown'])

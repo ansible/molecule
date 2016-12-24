@@ -32,9 +32,9 @@ class Lint(base.Base):
 
         :return: None
         """
-        msg = "Scenario: [{}]".format(self._config.scenario_name)
+        msg = "Scenario: [{}]".format(self._config.scenario.name)
         util.print_info(msg)
-        msg = "Lint: [{}]".format(self._config.lint_name)
+        msg = "Lint: [{}]".format(self._config.lint.name)
         util.print_info(msg)
 
         self._config.lint.execute()

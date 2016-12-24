@@ -18,6 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
+
 import abc
 
 
@@ -34,9 +36,27 @@ class Base(object):
         self._config = config
 
     @abc.abstractproperty
-    def options(self):  # pragma: no cover
+    def default_options(self):  # pragma: no cover
         pass
 
     @abc.abstractproperty
     def execute(self):  # pragma: no cover
         pass
+
+    @property
+    def name(self):
+        return self._config.config['verifier']['name']
+
+    @property
+    def enabled(self):
+        return self._config.config['verifier']['enabled']
+
+    @property
+    def directory(self):
+        return os.path.join(self._config.scenario.directory,
+                            self._config.config['verifier']['directory'])
+
+    @property
+    def options(self):
+        return self._config.merge_dicts(
+            self.default_options, self._config.config['verifier']['options'])

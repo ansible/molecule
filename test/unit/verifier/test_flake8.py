@@ -18,6 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
+
 import pytest
 import sh
 
@@ -34,8 +36,59 @@ def test_config_private_member(flake8_instance):
     assert isinstance(flake8_instance._config, config.Config)
 
 
+def test_default_options_property(flake8_instance):
+    assert flake8_instance.default_options is None
+
+
+def test_name_property(flake8_instance):
+    assert 'testinfra' == flake8_instance.name
+
+
+def test_enabled_property(flake8_instance):
+    assert flake8_instance.enabled
+
+
+def test_directory_property(flake8_instance):
+    parts = flake8_instance.directory.split(os.path.sep)
+    assert 'tests' == parts[-1]
+
+
 def test_options_property(flake8_instance):
-    assert flake8_instance.options is None
+    assert {} == flake8_instance.options
+
+
+@pytest.mark.parametrize(
+    'config_instance', [{
+        'configs': [{
+            'verifier': {
+                'name': 'testinfra',
+                'options': {
+                    'foo': 'bar'
+                }
+            }
+        }]
+    }],
+    indirect=['config_instance'])
+def test_options_property_handles_verifier_options(config_instance):
+    i = flake8.Flake8(config_instance)
+    x = {'foo': 'bar'}
+
+    assert x == i.options
+
+
+@pytest.mark.parametrize(
+    'config_instance', [{
+        'args': {
+            'debug': True
+        },
+    }],
+    indirect=['config_instance'])
+def test_options_property_handles_cli_args(config_instance):
+    i = flake8.Flake8(config_instance)
+
+    # Does nothing.  The `flake8` command does not support
+    # a `debug` flag.
+    assert {} == i.options
 
 
 def test_bake(flake8_instance):
@@ -55,7 +108,7 @@ def test_execute(patched_print_info, patched_run_command,
     patched_run_command.assert_called_once_with('patched-command', debug=None)
 
     msg = 'Executing flake8 on files found in {}/...'.format(
-        flake8_instance._config.verifier_directory)
+        flake8_instance.directory)
     patched_print_info.assert_called_with(msg)
 
 

@@ -32,9 +32,9 @@ class Verify(base.Base):
 
         :return: None
         """
-        msg = "Scenario: [{}]".format(self._config.scenario_name)
+        msg = "Scenario: [{}]".format(self._config.scenario.name)
         util.print_info(msg)
-        msg = "Verifier: [{}]".format(self._config.verifier_name)
+        msg = "Verifier: [{}]".format(self._config.verifier.name)
         util.print_info(msg)
 
         self._config.verifier.execute()

@@ -20,40 +20,43 @@
 
 import os
 
-import click
+import pytest
 
-from molecule import util
-from molecule.command import base
-
-
-class Create(base.Base):
-    def execute(self):
-        """
-        Execute the actions necessary to perform a `molecule create` and
-        returns None.
-
-        :return: None
-        """
-        msg = "Scenario: [{}]".format(self._config.scenario.name)
-        util.print_info(msg)
-        msg = "Provisioner: [{}]".format(self._config.provisioner.name)
-        util.print_info(msg)
-        msg = "Playbook: [{}]".format(
-            os.path.basename(self._config.scenario.setup))
-        util.print_info(msg)
-
-        self._config.provisioner.converge(
-            self._config.provisioner.inventory_file,
-            self._config.scenario.setup)
+from molecule import config
+from molecule import scenario
 
 
-@click.command()
-@click.pass_context
-def create(ctx):  # pragma: no cover
-    """ Start instances. """
-    args = ctx.obj.get('args')
-    command_args = {'subcommand': __name__}
+@pytest.fixture
+def scenario_instance(config_instance):
+    return scenario.Scenario(config_instance)
 
-    for config in base.get_configs(args, command_args):
-        c = Create(config)
-        c.execute()
+
+def test_name_property(scenario_instance):
+    assert 'default' == scenario_instance.name
+
+
+def test_setup_property(scenario_instance):
+    x = os.path.join(scenario_instance.directory, 'create.yml')
+
+    assert x == scenario_instance.setup
+
+
+def test_converge_property(scenario_instance):
+    x = os.path.join(scenario_instance.directory, 'playbook.yml')
+
+    assert x == scenario_instance.converge
+
+
+def test_teardown_property(scenario_instance):
+    x = os.path.join(scenario_instance.directory, 'destroy.yml')
+
+    assert x == scenario_instance.teardown
+
+
+@pytest.mark.parametrize(
+    'config_instance', [{
+        'molecule_file': config.molecule_file('/foo/bar/molecule/default/')
+    }],
+    indirect=['config_instance'])
+def test_directory_property(config_instance):
+    assert '/foo/bar/molecule/default' == config_instance.scenario.directory

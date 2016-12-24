@@ -26,6 +26,19 @@ import yaml
 from molecule import config
 
 
+def create_scenario_directory(basedir):
+    molecule_directory = config.molecule_directory(basedir)
+    scenario_directory = os.path.join(molecule_directory, 'default')
+    os.makedirs(scenario_directory)
+
+    return scenario_directory
+
+
+def create_molecule_file(molecule_file, data):
+    with open(molecule_file, 'w') as outfile:
+        outfile.write(yaml.dump(data))
+
+
 @pytest.helpers.register
 def os_split(s):
     rest, tail = os.path.split(s)
@@ -35,13 +48,8 @@ def os_split(s):
 
 
 @pytest.fixture
-def create_scenario(temp_dir):
-    molecule_directory = config.molecule_directory(temp_dir.strpath)
-    scenario_directory = os.path.join(molecule_directory, 'default')
-    molecule_file = config.molecule_file(scenario_directory)
-    os.makedirs(scenario_directory)
-
-    d = {
+def platforms_data():
+    return {
         'platforms': [{
             'name': 'instance-1',
             'groups': ['foo', 'bar']
@@ -50,21 +58,55 @@ def create_scenario(temp_dir):
             'groups': ['baz', 'foo']
         }]
     }
-    with open(molecule_file, 'w') as outfile:
-        outfile.write(yaml.dump(d))
-
-    return molecule_file
 
 
 @pytest.fixture()
-def config_instance(create_scenario):
-    molecule_file = create_scenario
-    configs = [(yaml.load(open(molecule_file, 'r')))]
+def config_instance(temp_dir, platforms_data, request):
+    configs = []
+    scenario_directory = create_scenario_directory(temp_dir.strpath)
+    molecule_file = config.molecule_file(scenario_directory)
+    factory_data = {
+        'molecule_file': molecule_file,
+        'args': {},
+        'command_args': {},
+    }
+    params = {}
+    # handle parameterized tests
+    if hasattr(request, 'param'):
+        params = request.param
+        for fixture in params.get('configs', []):
+            # merge platform data onto provided dict
+            if isinstance(fixture, dict):
+                platforms_data.update(fixture)
+                configs.append(platforms_data)
+            # merge platform data onto fixture lookup data
+            else:
+                fixture_data = request.getfuncargvalue(fixture)
+                platforms_data.update(fixture_data)
+                configs.append(platforms_data)
+        params['configs'] = configs
+        factory_data['configs'] = configs
+    # non-parameterized
+    else:
+        factory_data['configs'] = [platforms_data]
 
-    return config.Config(molecule_file, configs=configs)
+    factory_data.update(params)
+    create_molecule_file(molecule_file, factory_data)
+
+    return config.Config(**factory_data)
 
 
 # Mocks
+
+
+@pytest.fixture
+def patched_ansible_playbook(mocker):
+    return mocker.patch('molecule.ansible_playbook.AnsiblePlaybook')
+
+
+@pytest.fixture
+def patched_ansible_playbook_execute(mocker):
+    return mocker.patch('molecule.ansible_playbook.AnsiblePlaybook.execute')
 
 
 @pytest.fixture

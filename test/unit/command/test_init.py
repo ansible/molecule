@@ -112,8 +112,8 @@ def init_new_scenario_command_args():
     }
 
 
-def test_init_new_role(temp_dir, init_new_scenario_command_args,
-                       patched_print_info, patched_print_success):
+def test_init_new_scenario(temp_dir, init_new_scenario_command_args,
+                           patched_print_info, patched_print_success):
     init._init_new_scenario(init_new_scenario_command_args)
 
     msg = 'Initializing new scenario test-scenario...'

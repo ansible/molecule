@@ -36,3 +36,20 @@ class Base(object):
     @abc.abstractproperty
     def execute(self):  # pragma: no cover
         pass
+
+    @abc.abstractproperty
+    def default_options(self):  # pragma: no cover
+        pass
+
+    @property
+    def name(self):
+        return self._config.config['dependency']['name']
+
+    @property
+    def enabled(self):
+        return self._config.config['dependency']['enabled']
+
+    @property
+    def options(self):
+        return self._config.merge_dicts(
+            self.default_options, self._config.config['dependency']['options'])

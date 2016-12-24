@@ -34,16 +34,17 @@ class Destroy(base.Base):
 
         :return: None
         """
-        msg = "Scenario: [{}]".format(self._config.scenario_name)
+        msg = "Scenario: [{}]".format(self._config.scenario.name)
         util.print_info(msg)
-        msg = "Provisioner: [{}]".format(self._config.provisioner_name)
+        msg = "Provisioner: [{}]".format(self._config.provisioner.name)
         util.print_info(msg)
         msg = "Playbook: [{}]".format(
-            os.path.basename(self._config.scenario_teardown))
+            os.path.basename(self._config.scenario.teardown))
         util.print_info(msg)
 
-        self._config.provisioner.converge(self._config.inventory_file,
-                                          self._config.scenario_teardown)
+        self._config.provisioner.converge(
+            self._config.provisioner.inventory_file,
+            self._config.scenario.teardown)
 
 
 @click.command()

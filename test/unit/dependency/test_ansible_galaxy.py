@@ -36,7 +36,7 @@ def test_config_private_member(ansible_galaxy_instance):
     assert isinstance(ansible_galaxy_instance._config, config.Config)
 
 
-def test_options_property(ansible_galaxy_instance):
+def test_default_options_property(ansible_galaxy_instance):
     x = {
         'role_file': 'requirements.yml',
         'roles_path': '.molecule/roles',
@@ -44,6 +44,68 @@ def test_options_property(ansible_galaxy_instance):
     }
 
     assert x == ansible_galaxy_instance.options
+
+
+def test_name_property(ansible_galaxy_instance):
+    assert 'galaxy' == ansible_galaxy_instance.name
+
+
+def test_enabled_property(ansible_galaxy_instance):
+    assert ansible_galaxy_instance.enabled
+
+
+def test_options_property(ansible_galaxy_instance):
+    x = {
+        'force': True,
+        'role_file': 'requirements.yml',
+        'roles_path': '.molecule/roles'
+    }
+
+    assert x == ansible_galaxy_instance.options
+
+
+@pytest.mark.parametrize(
+    'config_instance', [{
+        'configs': [{
+            'dependency': {
+                'name': 'galaxy',
+                'options': {
+                    'foo': 'bar'
+                }
+            }
+        }]
+    }],
+    indirect=['config_instance'])
+def test_options_property_handles_dependency_options(config_instance):
+    i = ansible_galaxy.AnsibleGalaxy(config_instance)
+    x = {
+        'role_file': 'requirements.yml',
+        'roles_path': '.molecule/roles',
+        'foo': 'bar',
+        'force': True
+    }
+
+    assert x == i.options
+
+
+@pytest.mark.parametrize(
+    'config_instance', [{
+        'args': {
+            'debug': True
+        },
+    }],
+    indirect=['config_instance'])
+def test_options_property_handles_cli_args(config_instance):
+    i = ansible_galaxy.AnsibleGalaxy(config_instance)
+    x = {
+        'force': True,
+        'role_file': 'requirements.yml',
+        'roles_path': '.molecule/roles'
+    }
+
+    # Does nothing.  The `ansible-galaxy` command does not support
+    # a `debug` flag.
+    assert x == i.options
 
 
 def test_bake(ansible_galaxy_instance):
@@ -62,8 +124,8 @@ def test_execute(patched_run_command, ansible_galaxy_instance):
     ansible_galaxy_instance.execute()
 
     role_directory = os.path.join(
-        ansible_galaxy_instance._config.scenario_directory,
-        ansible_galaxy_instance._config.dependency_options['roles_path'])
+        ansible_galaxy_instance._config.scenario.directory,
+        ansible_galaxy_instance.options['roles_path'])
     assert os.path.isdir(role_directory)
 
     patched_run_command.assert_called_once_with('patched-command', debug=None)
@@ -102,8 +164,8 @@ def test_executes_catches_and_exits_return_code(patched_run_command,
 
 def test_role_setup(ansible_galaxy_instance):
     role_directory = os.path.join(
-        ansible_galaxy_instance._config.scenario_directory,
-        ansible_galaxy_instance._config.dependency_options['roles_path'])
+        ansible_galaxy_instance._config.scenario.directory,
+        ansible_galaxy_instance.options['roles_path'])
     assert not os.path.isdir(role_directory)
 
     ansible_galaxy_instance._role_setup()

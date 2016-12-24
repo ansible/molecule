@@ -34,4 +34,5 @@ def test_execute(mocker, patched_print_info, patched_ansible_converge,
     assert x == patched_print_info.mock_calls
 
     patched_ansible_converge.assert_called_once_with(
-        config_instance.inventory_file, config_instance.scenario_converge)
+        config_instance.provisioner.inventory_file,
+        config_instance.scenario.converge)

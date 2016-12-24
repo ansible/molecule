@@ -23,20 +23,22 @@ import os
 
 import anyconfig
 
+from molecule import provisioner
+from molecule import scenario
 from molecule.dependency import ansible_galaxy
 from molecule.driver import docker
 from molecule.lint import ansible_lint
-from molecule.provisioner import ansible
 from molecule.verifier import testinfra
 
-LOCAL_CONFIG = '~/.config/molecule/config.yml'
-MERGE_STRATEGY = anyconfig.MS_DICTS
+MOLECULE_LOCAL_CONFIG = '~/.config/molecule/config.yml'
 MOLECULE_DIRECTORY = 'molecule'
 MOLECULE_EPHEMERAL_DIRECTORY = '.molecule'
 MOLECULE_FILE = 'molecule.yml'
 
 
 class Config(object):
+    MERGE_STRATEGY = anyconfig.MS_DICTS
+
     def __init__(self, molecule_file, args={}, command_args={}, configs=[]):
         """
         Initialize a new config version one class and returns None.
@@ -56,67 +58,22 @@ class Config(object):
 
     @property
     def ephemeral_directory(self):
-        return molecule_ephemeral_directory(self.scenario_directory)
-
-    @property
-    def inventory(self):
-        return self.driver.inventory
-
-    @property
-    def inventory_file(self):
-        return os.path.join(self.ephemeral_directory, 'ansible_inventory')
-
-    @property
-    def config_file(self):
-        return os.path.join(self.ephemeral_directory, 'ansible.cfg')
+        return molecule_ephemeral_directory(self.scenario.directory)
 
     @property
     def dependency(self):
-        if self.dependency_name == 'galaxy':
+        if self.config['dependency']['name'] == 'galaxy':
             return ansible_galaxy.AnsibleGalaxy(self)
 
     @property
-    def dependency_name(self):
-        return self.config['dependency']['name']
-
-    @property
-    def dependency_enabled(self):
-        return self.config['dependency']['enabled']
-
-    @property
-    def dependency_options(self):
-        return merge_dicts(self.dependency.options,
-                           self.config['dependency']['options'])
-
-    @property
     def driver(self):
-        if self.driver_name == 'docker':
+        if self.config['driver']['name'] == 'docker':
             return docker.Docker(self)
 
     @property
-    def driver_name(self):
-        return self.config['driver']['name']
-
-    @property
-    def driver_options(self):
-        return self.config['driver']['options']
-
-    @property
     def lint(self):
-        if self.lint_name == 'ansible-lint':
+        if self.config['lint']['name'] == 'ansible-lint':
             return ansible_lint.AnsibleLint(self)
-
-    @property
-    def lint_name(self):
-        return self.config['lint']['name']
-
-    @property
-    def lint_enabled(self):
-        return self.config['lint']['enabled']
-
-    @property
-    def lint_options(self):
-        return merge_dicts(self.lint.options, self.config['lint']['options'])
 
     @property
     def platforms(self):
@@ -134,69 +91,24 @@ class Config(object):
         dd = collections.defaultdict(list)
         for platform in self.config['platforms']:
             for group in platform.get('groups', []):
-                name = '{}-{}'.format(platform['name'], self.scenario_name)
+                name = '{}-{}'.format(platform['name'], self.scenario.name)
                 dd[group].append(name)
 
         return dict(dd)
 
     @property
     def provisioner(self):
-        if self.provisioner_name == 'ansible':
-            return ansible.Ansible(self)
+        if self.config['provisioner']['name'] == 'ansible':
+            return provisioner.Ansible(self)
 
     @property
-    def provisioner_name(self):
-        return self.config['provisioner']['name']
-
-    @property
-    def provisioner_options(self):
-        return self.config['provisioner']['options']
-
-    @property
-    def scenario_name(self):
-        return self.config['scenario']['name']
-
-    @property
-    def scenario_directory(self):
-        return os.path.dirname(self.molecule_file)
-
-    @property
-    def scenario_setup(self):
-        return os.path.join(self.scenario_directory,
-                            self.config['scenario']['setup'])
-
-    @property
-    def scenario_converge(self):
-        return os.path.join(self.scenario_directory,
-                            self.config['scenario']['converge'])
-
-    @property
-    def scenario_teardown(self):
-        return os.path.join(self.scenario_directory,
-                            self.config['scenario']['teardown'])
+    def scenario(self):
+        return scenario.Scenario(self)
 
     @property
     def verifier(self):
-        if self.verifier_name == 'testinfra':
+        if self.config['verifier']['name'] == 'testinfra':
             return testinfra.Testinfra(self)
-
-    @property
-    def verifier_name(self):
-        return self.config['verifier']['name']
-
-    @property
-    def verifier_enabled(self):
-        return self.config['verifier']['enabled']
-
-    @property
-    def verifier_directory(self):
-        return os.path.join(self.scenario_directory,
-                            self.config['verifier']['directory'])
-
-    @property
-    def verifier_options(self):
-        return merge_dicts(self.verifier.options,
-                           self.config['verifier']['options'])
 
     def _combine(self, configs):
         """ Perform a prioritized recursive merge of serveral source dicts
@@ -213,7 +125,7 @@ class Config(object):
 
         base = self._get_defaults()
         for config in configs:
-            base = merge_dicts(base, config)
+            base = self.merge_dicts(base, config)
 
         return base
 
@@ -273,44 +185,43 @@ class Config(object):
             },
         }
 
+    def merge_dicts(self, a, b):
+        """
+        Merges the values of B into A and returns a new dict.  Uses the same
+        merge strategy as ``config._combine``.
 
-def merge_dicts(a, b):
-    """
-    Merges the values of B into A and returns a new dict.  Uses the same merge
-    strategy as ``config._combine``.
+        ::
 
-    ::
+            dict a
 
-        dict a
+            b:
+               - c: 0
+               - c: 2
+            d:
+               e: "aaa"
+               f: 3
 
-        b:
-           - c: 0
-           - c: 2
-        d:
-           e: "aaa"
-           f: 3
+            dict b
 
-        dict b
+            a: 1
+            b:
+               - c: 3
+            d:
+               e: "bbb"
 
-        a: 1
-        b:
-           - c: 3
-        d:
-           e: "bbb"
+        Will give an object such as::
 
-    Will give an object such as::
-
-        {'a': 1, 'b': [{'c': 3}], 'd': {'e': "bbb", 'f': 3}}
+            {'a': 1, 'b': [{'c': 3}], 'd': {'e': "bbb", 'f': 3}}
 
 
-    :param a: the target dictionary
-    :param b: the dictionary to import
-    :return: dict
-    """
-    conf = anyconfig.to_container(a, ac_merge=MERGE_STRATEGY)
-    conf.update(b)
+        :param a: the target dictionary
+        :param b: the dictionary to import
+        :return: dict
+        """
+        conf = anyconfig.to_container(a, ac_merge=self.MERGE_STRATEGY)
+        conf.update(b)
 
-    return conf
+        return conf
 
 
 def molecule_directory(path):

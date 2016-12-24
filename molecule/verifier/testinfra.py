@@ -34,7 +34,7 @@ class Testinfra(base.Base):
         self._tests = self._get_tests()
 
     @property
-    def options(self):
+    def default_options(self):
         d = self._config.driver.testinfra_options
         if self._config.args.get('debug'):
             d['debug'] = True
@@ -50,9 +50,9 @@ class Testinfra(base.Base):
         :return: None
         """
         self._testinfra_command = sh.testinfra.bake(
-            self._config.verifier_options,
+            self.options,
             self._tests,
-            _cwd=self._config.scenario_directory,
+            _cwd=self._config.scenario.directory,
             _env=os.environ,
             _out=util.callback_info,
             _err=util.callback_error)
@@ -63,7 +63,7 @@ class Testinfra(base.Base):
 
         :return: None
         """
-        if not self._config.verifier_enabled:
+        if not self.enabled:
             return
 
         if self._testinfra_command is None:
@@ -74,7 +74,7 @@ class Testinfra(base.Base):
             f.execute()
 
             msg = 'Executing testinfra tests found in {}/...'.format(
-                self._config.verifier_directory)
+                self.directory)
             util.print_info(msg)
 
             try:
@@ -86,7 +86,5 @@ class Testinfra(base.Base):
 
     def _get_tests(self):
         return [
-            filename
-            for filename in util.os_walk(self._config.verifier_directory,
-                                         'test_*.py')
+            filename for filename in util.os_walk(self.directory, 'test_*.py')
         ]

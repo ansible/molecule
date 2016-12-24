@@ -18,6 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
+
 import pytest
 import sh
 
@@ -34,22 +36,75 @@ def test_config_private_member(testinfra_instance):
     assert isinstance(testinfra_instance._config, config.Config)
 
 
-def test_options_property(testinfra_instance):
-    assert {'connection': 'docker'} == testinfra_instance.options
+def test_default_options_property(testinfra_instance):
+    assert {'connection': 'docker'} == testinfra_instance.default_options
 
 
-def test_options_property_updates_debug(testinfra_instance):
+def test_default_options_property_updates_debug(testinfra_instance):
     testinfra_instance._config.args = {'debug': True}
     assert {
         'connection': 'docker',
         'debug': True
-    } == testinfra_instance.options
+    } == testinfra_instance.default_options
 
 
-def test_options_property_updates_sudo(testinfra_instance,
-                                       patched_testinfra_get_tests):
+def test_default_options_property_updates_sudo(testinfra_instance,
+                                               patched_testinfra_get_tests):
     testinfra_instance._config.args = {'sudo': True}
-    assert {'connection': 'docker', 'sudo': True} == testinfra_instance.options
+    assert {
+        'connection': 'docker',
+        'sudo': True
+    } == testinfra_instance.default_options
+
+
+def test_name_property(testinfra_instance):
+    assert 'testinfra' == testinfra_instance.name
+
+
+def test_enabled_property(testinfra_instance):
+    assert testinfra_instance.enabled
+
+
+def test_directory_property(testinfra_instance):
+    parts = testinfra_instance.directory.split(os.path.sep)
+    assert 'tests' == parts[-1]
+
+
+def test_options_property(testinfra_instance):
+    assert {'connection': 'docker'} == testinfra_instance.options
+
+
+@pytest.mark.parametrize(
+    'config_instance', [{
+        'configs': [{
+            'verifier': {
+                'name': 'testinfra',
+                'options': {
+                    'foo': 'bar'
+                }
+            }
+        }]
+    }],
+    indirect=['config_instance'])
+def test_options_property_handles_verifier_options(config_instance):
+    i = testinfra.Testinfra(config_instance)
+    x = {'connection': 'docker', 'foo': 'bar'}
+
+    assert x == i.options
+
+
+@pytest.mark.parametrize(
+    'config_instance', [{
+        'args': {
+            'debug': True
+        },
+    }],
+    indirect=['config_instance'])
+def test_options_property_handles_cli_args(config_instance):
+    i = testinfra.Testinfra(config_instance)
+    x = {'debug': True, 'connection': 'docker'}
+
+    assert x == i.options
 
 
 def test_bake(testinfra_instance):
@@ -70,7 +125,7 @@ def test_execute(patched_flake8, patched_print_info, patched_run_command,
     patched_flake8.assert_called_once
 
     msg = 'Executing testinfra tests found in {}/...'.format(
-        testinfra_instance._config.verifier_directory)
+        testinfra_instance.directory)
     patched_print_info.assert_called_with(msg)
 
 

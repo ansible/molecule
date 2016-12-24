@@ -23,7 +23,7 @@ import pytest
 
 @pytest.fixture
 def patched_ansible_converge(mocker):
-    return mocker.patch('molecule.provisioner.ansible.Ansible.converge')
+    return mocker.patch('molecule.provisioner.Ansible.converge')
 
 
 @pytest.fixture

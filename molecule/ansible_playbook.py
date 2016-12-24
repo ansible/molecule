@@ -50,7 +50,7 @@ class AnsiblePlaybook(object):
         """
         options = {'inventory': self._inventory}
         env = os.environ.copy()
-        env['ANSIBLE_CONFIG'] = self._config.config_file
+        env['ANSIBLE_CONFIG'] = self._config.provisioner.config_file
         self._ansible_playbook_command = sh.ansible_playbook.bake(
             options,
             self._playbook,
