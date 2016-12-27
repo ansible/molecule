@@ -149,7 +149,7 @@ class Config(object):
             'provisioner': {
                 'name': 'ansible',
                 'options': {
-                    'ask_sudo_pass': False,
+                    'ask_become_pass': False,
                     'ask_vault_pass': False,
                     'config_file': 'ansible.cfg',
                     'diff': True,
@@ -163,8 +163,8 @@ class Config(object):
                         '-o ControlMaster=auto',
                         '-o ControlPersist=60s',
                     ],
-                    'sudo': True,
-                    'sudo_user': False,
+                    'become': True,
+                    'become_user': False,
                     'tags': False,
                     'timeout': 30,
                     'vault_password_file': False,

@@ -28,13 +28,14 @@ import pytest
 pytest_plugins = ['helpers_namespace']
 
 
+@pytest.fixture
 def random_string(l=5):
     return ''.join(random.choice(string.ascii_uppercase) for _ in range(l))
 
 
 @pytest.fixture()
-def temp_dir(tmpdir, request):
-    directory = tmpdir.mkdir(random_string())
+def temp_dir(tmpdir, random_string, request):
+    directory = tmpdir.mkdir(random_string)
     os.chdir(directory.strpath)
 
     def cleanup():

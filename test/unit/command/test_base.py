@@ -50,7 +50,7 @@ def test_init_calls_setup_provisioner(mocker, base_class, config_instance):
 
     base_class(config_instance)
 
-    patched_setup_provisioner.assert_called_once
+    patched_setup_provisioner.assert_called_once_with()
 
 
 def test_setup_provisioner(mocker, base_instance):
@@ -61,8 +61,8 @@ def test_setup_provisioner(mocker, base_instance):
 
     base_instance._setup_provisioner()
 
-    patched_provisioner_write_inventory.assert_called_once
-    patched_provisioner_write_config.assert_called_once
+    patched_provisioner_write_inventory.assert_called_once_with()
+    patched_provisioner_write_config.assert_called_once_with()
 
 
 def test_get_local_config(mocker):

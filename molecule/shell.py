@@ -44,7 +44,7 @@ def cli(ctx, debug):  # pragma: no cover
 #  cli.add_command(command.check.check)
 cli.add_command(command.converge.converge)
 cli.add_command(command.create.create)
-#  cli.add_command(command.dependency.dependency)
+cli.add_command(command.dependency.dependency)
 cli.add_command(command.destroy.destroy)
 #  cli.add_command(command.idempotence.idempotence)
 cli.add_command(command.init.init)

@@ -28,22 +28,38 @@ from molecule.dependency import ansible_galaxy
 
 
 @pytest.fixture
-def ansible_galaxy_instance(config_instance):
-    return ansible_galaxy.AnsibleGalaxy(config_instance)
+def dependency_data():
+    return {'dependency': {'name': 'galaxy', 'options': {'foo': 'bar'}}}
+
+
+@pytest.fixture
+def ansible_galaxy_instance(molecule_file, dependency_data):
+    c = config.Config(molecule_file, configs=[dependency_data])
+
+    return ansible_galaxy.AnsibleGalaxy(c)
+
+
+@pytest.fixture
+def role_file(ansible_galaxy_instance):
+    return os.path.join(ansible_galaxy_instance._config.scenario.directory,
+                        'requirements.yml')
+
+
+@pytest.fixture
+def roles_path(ansible_galaxy_instance):
+    return os.path.join(ansible_galaxy_instance._config.ephemeral_directory,
+                        'roles')
 
 
 def test_config_private_member(ansible_galaxy_instance):
     assert isinstance(ansible_galaxy_instance._config, config.Config)
 
 
-def test_default_options_property(ansible_galaxy_instance):
-    x = {
-        'role_file': 'requirements.yml',
-        'roles_path': '.molecule/roles',
-        'force': True
-    }
+def test_default_options_property(ansible_galaxy_instance, role_file,
+                                  roles_path):
+    x = {'role-file': role_file, 'roles-path': roles_path, 'force': True}
 
-    assert x == ansible_galaxy_instance.options
+    assert x == ansible_galaxy_instance.default_options
 
 
 def test_name_property(ansible_galaxy_instance):
@@ -54,67 +70,38 @@ def test_enabled_property(ansible_galaxy_instance):
     assert ansible_galaxy_instance.enabled
 
 
-def test_options_property(ansible_galaxy_instance):
+def test_options_property(ansible_galaxy_instance, role_file, roles_path):
     x = {
         'force': True,
-        'role_file': 'requirements.yml',
-        'roles_path': '.molecule/roles'
+        'role-file': role_file,
+        'roles-path': roles_path,
+        'foo': 'bar'
     }
 
     assert x == ansible_galaxy_instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', [{
-        'configs': [{
-            'dependency': {
-                'name': 'galaxy',
-                'options': {
-                    'foo': 'bar'
-                }
-            }
-        }]
-    }],
-    indirect=['config_instance'])
-def test_options_property_handles_dependency_options(config_instance):
-    i = ansible_galaxy.AnsibleGalaxy(config_instance)
-    x = {
-        'role_file': 'requirements.yml',
-        'roles_path': '.molecule/roles',
-        'foo': 'bar',
-        'force': True
-    }
-
-    assert x == i.options
-
-
-@pytest.mark.parametrize(
-    'config_instance', [{
-        'args': {
-            'debug': True
-        },
-    }],
-    indirect=['config_instance'])
-def test_options_property_handles_cli_args(config_instance):
-    i = ansible_galaxy.AnsibleGalaxy(config_instance)
+def test_options_property_handles_cli_args(molecule_file, role_file,
+                                           roles_path, dependency_data):
+    c = config.Config(
+        molecule_file, args={'debug': True}, configs=[dependency_data])
+    d = ansible_galaxy.AnsibleGalaxy(c)
     x = {
         'force': True,
-        'role_file': 'requirements.yml',
-        'roles_path': '.molecule/roles'
+        'role-file': role_file,
+        'roles-path': roles_path,
+        'foo': 'bar'
     }
 
     # Does nothing.  The `ansible-galaxy` command does not support
     # a `debug` flag.
-    assert x == i.options
+    assert x == d.options
 
 
-def test_bake(ansible_galaxy_instance):
+def test_bake(ansible_galaxy_instance, role_file, roles_path):
     ansible_galaxy_instance.bake()
-    x = ('{} '
-         'install '
-         '--role_file=requirements.yml '
-         '--roles_path=.molecule/roles '
-         '--force').format(str(sh.ansible_galaxy))
+    x = '{} install --role-file={} --roles-path={} --force --foo=bar'.format(
+        str(sh.ansible_galaxy), role_file, roles_path)
 
     assert x == ansible_galaxy_instance._ansible_galaxy_command
 
@@ -125,7 +112,7 @@ def test_execute(patched_run_command, ansible_galaxy_instance):
 
     role_directory = os.path.join(
         ansible_galaxy_instance._config.scenario.directory,
-        ansible_galaxy_instance.options['roles_path'])
+        ansible_galaxy_instance.options['roles-path'])
     assert os.path.isdir(role_directory)
 
     patched_run_command.assert_called_once_with('patched-command', debug=None)
@@ -139,17 +126,15 @@ def test_execute_does_not_execute(patched_run_command,
     assert not patched_run_command.called
 
 
-def test_execute_bakes(patched_run_command, ansible_galaxy_instance):
+def test_execute_bakes(patched_run_command, ansible_galaxy_instance, role_file,
+                       roles_path):
     ansible_galaxy_instance.execute()
-
     assert ansible_galaxy_instance._ansible_galaxy_command is not None
 
-    cmd = ('{} '
-           'install '
-           '--role_file=requirements.yml '
-           '--roles_path=.molecule/roles '
-           '--force').format(str(sh.ansible_galaxy))
-    patched_run_command.assert_called_once_with(cmd, debug=None)
+    cmd = '{} install --role-file={} --roles-path={} --force --foo=bar'.format(
+        str(sh.ansible_galaxy), role_file, roles_path)
+
+    patched_run_command.assert_called_with(cmd, debug=None)
 
 
 def test_executes_catches_and_exits_return_code(patched_run_command,
@@ -165,7 +150,7 @@ def test_executes_catches_and_exits_return_code(patched_run_command,
 def test_role_setup(ansible_galaxy_instance):
     role_directory = os.path.join(
         ansible_galaxy_instance._config.scenario.directory,
-        ansible_galaxy_instance.options['roles_path'])
+        ansible_galaxy_instance.options['roles-path'])
     assert not os.path.isdir(role_directory)
 
     ansible_galaxy_instance._role_setup()

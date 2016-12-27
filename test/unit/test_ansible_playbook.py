@@ -26,9 +26,15 @@ from molecule import config
 
 
 @pytest.fixture
-def ansible_playbook_instance(config_instance):
-    return ansible_playbook.AnsiblePlaybook('inventory', 'playbook',
-                                            config_instance)
+def ansible_playbook_data():
+    return {}
+
+
+@pytest.fixture
+def ansible_playbook_instance(molecule_file, ansible_playbook_data):
+    c = config.Config(molecule_file, configs=[ansible_playbook_data])
+
+    return ansible_playbook.AnsiblePlaybook('inventory', 'playbook', c)
 
 
 def test_ansible_playbook_command_private_member(ansible_playbook_instance):

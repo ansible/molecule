@@ -26,7 +26,7 @@ from molecule.command import base  # noqa
 #  from molecule.command import check  # noqa
 from molecule.command import converge  # noqa
 from molecule.command import create  # noqa
-#  from molecule.command import dependency  # noqa
+from molecule.command import dependency  # noqa
 from molecule.command import destroy  # noqa
 #  from molecule.command import idempotence  # noqa
 from molecule.command import init  # noqa

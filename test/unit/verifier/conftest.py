@@ -22,6 +22,11 @@ import pytest
 
 
 @pytest.fixture
+def verifier_data():
+    return {'verifier': {'name': 'testinfra', 'options': {'foo': 'bar'}}}
+
+
+@pytest.fixture
 def patched_testinfra_get_tests(mocker):
     m = mocker.patch('molecule.verifier.testinfra.Testinfra._get_tests')
     m.return_value = ['test1', 'test2', 'test3']

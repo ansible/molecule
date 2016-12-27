@@ -26,8 +26,15 @@ from molecule.lint import ansible_lint
 
 
 @pytest.fixture
-def ansible_lint_instance(config_instance):
-    return ansible_lint.AnsibleLint(config_instance)
+def lint_data():
+    return {'lint': {'name': 'ansible-lint', 'options': {'foo': 'bar'}}}
+
+
+@pytest.fixture
+def ansible_lint_instance(molecule_file, lint_data):
+    c = config.Config(molecule_file, configs=[lint_data])
+
+    return ansible_lint.AnsibleLint(c)
 
 
 def test_config_private_member(ansible_lint_instance):
@@ -35,7 +42,7 @@ def test_config_private_member(ansible_lint_instance):
 
 
 def test_default_options_property(ansible_lint_instance):
-    assert {} == ansible_lint_instance.options
+    assert {} == ansible_lint_instance.default_options
 
 
 def test_name_property(ansible_lint_instance):
@@ -47,45 +54,23 @@ def test_enabled_property(ansible_lint_instance):
 
 
 def test_options_property(ansible_lint_instance):
-    assert {} == ansible_lint_instance.options
+    assert {'foo': 'bar'} == ansible_lint_instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', [{
-        'configs': [{
-            'lint': {
-                'name': 'ansible-lint',
-                'options': {
-                    'foo': 'bar'
-                }
-            }
-        }]
-    }],
-    indirect=['config_instance'])
-def test_options_property_handles_lint_options(config_instance):
-    i = ansible_lint.AnsibleLint(config_instance)
-
-    assert {'foo': 'bar'} == i.options
-
-
-@pytest.mark.parametrize(
-    'config_instance', [{
-        'args': {
-            'debug': True
-        },
-    }],
-    indirect=['config_instance'])
-def test_options_property_handles_cli_args(config_instance):
-    i = ansible_lint.AnsibleLint(config_instance)
+def test_options_property_handles_cli_args(molecule_file,
+                                           ansible_lint_instance, lint_data):
+    c = config.Config(molecule_file, args={'debug': True}, configs=[lint_data])
+    l = ansible_lint.AnsibleLint(c)
+    x = {'foo': 'bar'}
 
     # Does nothing.  The `ansible-lint` command does not support
     # a `debug` flag.
-    assert {} == i.options
+    assert x == l.options
 
 
 def test_bake(ansible_lint_instance):
     ansible_lint_instance.bake()
-    x = '{} {}'.format(
+    x = '{} --foo=bar {}'.format(
         str(sh.ansible_lint), ansible_lint_instance._config.scenario.converge)
 
     assert x == ansible_lint_instance._ansible_lint_command
@@ -110,7 +95,7 @@ def test_execute_bakes(patched_run_command, ansible_lint_instance):
 
     assert ansible_lint_instance._ansible_lint_command is not None
 
-    cmd = '{} {}'.format(
+    cmd = '{} --foo=bar {}'.format(
         str(sh.ansible_lint), ansible_lint_instance._config.scenario.converge)
     patched_run_command.assert_called_once_with(cmd, debug=None)
 

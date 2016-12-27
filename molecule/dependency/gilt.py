@@ -26,64 +26,53 @@ from molecule import util
 from molecule.dependency import base
 
 
-class AnsibleGalaxy(base.Base):
+class Gilt(base.Base):
     def __init__(self, config):
         """
-        Sets up the requirements to execute `ansible-galaxy` and returns None.
+        Sets up the requirements to execute `gilt` and returns None.
 
         :param config: An instance of a Molecule config.
         :return: None
         """
-        super(AnsibleGalaxy, self).__init__(config)
-        self._ansible_galaxy_command = None
+        super(Gilt, self).__init__(config)
+        self._gilt_command = None
 
     @property
     def default_options(self):
-        role_file = os.path.join(self._config.scenario.directory,
-                                 'requirements.yml')
-        roles_path = os.path.join(self._config.ephemeral_directory, 'roles')
-        return {
-            'force': True,
-            'role-file': role_file,
-            'roles-path': roles_path
-        }
+        config = os.path.join(self._config.scenario.directory, 'gilt.yml')
+        d = {'config': config}
+        if self._config.args.get('debug'):
+            d['debug'] = True
+
+        return d
 
     def bake(self):
         """
-        Bake an `ansible-galaxy` command so it's ready to execute and returns
-        None.
+        Bake a `gilt` command so it's ready to execute and returns None.
 
         :return: None
         """
-        self._ansible_galaxy_command = sh.ansible_galaxy.bake(
-            'install',
+        self._gilt_command = sh.gilt.bake(
             self.options,
+            'overlay',
             _env=os.environ,
             _out=util.callback_info,
             _err=util.callback_error)
 
     def execute(self):
         """
-        Executes `ansible-galaxy` and returns None.
+        Executes `gilt` and returns None.
 
         :return: None
         """
         if not self.enabled:
             return
 
-        if self._ansible_galaxy_command is None:
+        if self._gilt_command is None:
             self.bake()
 
-        self._role_setup()
         try:
             util.run_command(
-                self._ansible_galaxy_command,
-                debug=self._config.args.get('debug'))
+                self._gilt_command, debug=self._config.args.get('debug'))
         except sh.ErrorReturnCode as e:
             util.sysexit(e.exit_code)
-
-    def _role_setup(self):
-        role_directory = os.path.join(self._config.scenario.directory,
-                                      self.options['roles-path'])
-        if not os.path.isdir(role_directory):
-            os.makedirs(role_directory)

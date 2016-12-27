@@ -28,8 +28,16 @@ from molecule import config
 
 
 @pytest.fixture
-def provisioner_instance(config_instance):
-    return provisioner.Ansible(config_instance)
+def provisioner_data():
+    return {'provisioner': {'name': 'ansible', 'options': {'foo': 'bar'}}}
+
+
+@pytest.fixture
+def provisioner_instance(platforms_data, molecule_file, provisioner_data):
+    c = config.Config(
+        molecule_file, configs=[platforms_data, provisioner_data])
+
+    return provisioner.Ansible(c)
 
 
 def test_config_private_member(provisioner_instance):
@@ -46,7 +54,7 @@ def test_name_property(provisioner_instance):
 
 def test_options_property(provisioner_instance):
     x = {
-        'ask_sudo_pass': False,
+        'ask_become_pass': False,
         'ask_vault_pass': False,
         'config_file': 'ansible.cfg',
         'diff': True,
@@ -58,46 +66,27 @@ def test_options_property(provisioner_instance):
             '-o UserKnownHostsFile=/dev/null', '-o IdentitiesOnly=yes',
             '-o ControlMaster=auto', '-o ControlPersist=60s'
         ],
-        'sudo': True,
-        'sudo_user': False,
+        'become': True,
+        'become_user': False,
         'tags': False,
         'timeout': 30,
         'vault_password_file': False,
-        'verbose': False
+        'verbose': False,
+        'foo': 'bar'
     }
 
     assert x == provisioner_instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', [{
-        'configs': [{
-            'provisioner': {
-                'name': 'ansible',
-                'options': {
-                    'foo': 'bar'
-                }
-            }
-        }]
-    }],
-    indirect=['config_instance'])
-def test_options_property_handles_verifier_options(config_instance):
-    i = provisioner.Ansible(config_instance)
+def test_options_property_handles_cli_args(
+        molecule_file, platforms_data, provisioner_data, provisioner_instance):
+    c = config.Config(
+        molecule_file,
+        args={'debug': True},
+        configs=[platforms_data, provisioner_data])
+    p = provisioner.Ansible(c)
 
-    assert 'bar' == i.options['foo']
-
-
-@pytest.mark.parametrize(
-    'config_instance', [{
-        'args': {
-            'debug': True
-        },
-    }],
-    indirect=['config_instance'])
-def test_options_property_handles_cli_args(config_instance):
-    i = provisioner.Ansible(config_instance)
-
-    assert i.options['debug']
+    assert p.options['debug']
 
 
 def test_inventory_property(provisioner_instance):
@@ -123,21 +112,24 @@ def test_config_file_property(provisioner_instance):
     assert x == provisioner_instance.config_file
 
 
-def test_init_calls_setup(mocker, config_instance):
+def test_init_calls_setup(mocker, molecule_file, platforms_data,
+                          provisioner_data):
     patched_setup = mocker.patch('molecule.provisioner.Ansible._setup')
+    c = config.Config(
+        molecule_file,
+        args={'debug': True},
+        configs=[platforms_data, provisioner_data])
+    provisioner.Ansible(c)
 
-    provisioner.Ansible(config_instance)
-
-    patched_setup.assert_called_once
+    patched_setup.assert_called_once_with()
 
 
-def test_converge(provisioner_instance, patched_ansible_playbook,
-                  patched_ansible_playbook_execute):
+def test_converge(provisioner_instance, patched_ansible_playbook):
     provisioner_instance.converge('inventory', 'playbook')
 
     patched_ansible_playbook.assert_called_once_with(
         'inventory', 'playbook', provisioner_instance._config)
-    patched_ansible_playbook_execute.assert_called_once
+    patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
 def test_write_inventory(temp_dir, provisioner_instance):

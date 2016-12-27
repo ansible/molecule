@@ -32,4 +32,4 @@ def test_execute(mocker, patched_print_info, patched_testinfra,
 
     assert x == patched_print_info.mock_calls
 
-    patched_testinfra.assert_called_once
+    patched_testinfra.assert_called_once_with()

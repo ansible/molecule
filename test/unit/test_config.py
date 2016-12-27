@@ -31,25 +31,24 @@ from molecule.lint import ansible_lint
 from molecule.verifier import testinfra
 
 
-@pytest.fixture()
-def project_config_data():
-    return {'driver': {'name': 'project-override'}}
+@pytest.fixture
+def config_data():
+    return {}
 
 
-@pytest.fixture()
-def local_config_data():
-    return {'driver': {'name': 'local-override', 'options': {'foo': 'bar'}}}
+@pytest.fixture
+def config_instance(platforms_data, molecule_file, config_data):
+    configs = [platforms_data, config_data]
+
+    return config.Config(molecule_file, configs=configs)
 
 
-@pytest.mark.parametrize(
-    'config_instance', [{
-        'molecule_file': config.molecule_file('/foo/bar/molecule/default')
-    }],
-    indirect=['config_instance'])
-def test_molecule_file_private_member(config_instance):
-    x = '/foo/bar/molecule/default/molecule.yml'
+def test_molecule_file_private_member(platforms_data, config_data):
+    configs = [platforms_data, config_data]
+    c = config.Config('/foo/bar/default/molecule.yml', configs=configs)
+    x = '/foo/bar/default/molecule.yml'
 
-    assert x == config_instance.molecule_file
+    assert x == c.molecule_file
 
 
 def test_args_member(config_instance):
@@ -80,80 +79,61 @@ def test_lint_property(config_instance):
     assert isinstance(config_instance.lint, ansible_lint.AnsibleLint)
 
 
-@pytest.mark.parametrize(
-    'config_instance', [{
-        'configs': [{
-            'platforms': []
-        }]
-    }],
-    indirect=['config_instance'])
 def test_platforms_property(config_instance):
-    assert [] == config_instance.platforms
+    x = [{
+        'groups': ['foo', 'bar'],
+        'name': 'instance-1'
+    }, {
+        'groups': ['baz', 'foo'],
+        'name': 'instance-2'
+    }]
+
+    assert x == config_instance.platforms
 
 
-@pytest.mark.parametrize(
-    'config_instance', [{
-        'configs': [{
-            'platforms': [
-                {
-                    'name': 'instance-1',
-                    'groups': ['foo', 'bar'],
-                },
-                {
-                    'name': 'instance-2',
-                    'groups': ['baz'],
-                },
-            ]
-        }]
-    }],
-    indirect=['config_instance'])
 def test_platform_groups_property(config_instance):
     x = {
         'bar': ['instance-1-default'],
-        'foo': ['instance-1-default'],
+        'foo': ['instance-1-default', 'instance-2-default'],
         'baz': ['instance-2-default']
     }
 
     assert x == config_instance.platform_groups
 
 
-@pytest.mark.parametrize(
-    'config_instance', [{
-        'configs': [{
-            'platforms': [
-                {
-                    'name': 'instance-1',
-                    'groups': ['foo', 'bar'],
-                },
-                {
-                    'name': 'instance-2',
-                },
-            ]
+@pytest.fixture
+def platforms_data_incomplete_groups():
+    return {
+        'platforms': [{
+            'name': 'instance-1',
+            'groups': ['foo', 'bar'],
+        }, {
+            'name': 'instance-2',
         }]
-    }],
-    indirect=['config_instance'])
-def test_platform_groups_property_handles_missing_group(config_instance):
+    }
+
+
+def test_platform_groups_property_handles_missing_group(
+        platforms_data_incomplete_groups, molecule_file, config_data):
+    configs = [platforms_data_incomplete_groups, config_data]
+    c = config.Config(molecule_file, configs=configs)
+
     x = {'foo': ['instance-1-default'], 'bar': ['instance-1-default']}
 
-    assert x == config_instance.platform_groups
+    assert x == c.platform_groups
 
 
-@pytest.mark.parametrize(
-    'config_instance', [{
-        'configs': [{
-            'platforms': [
-                {
-                    'name': 'instance-1',
-                },
-                {
-                    'name': 'instance-2',
-                },
-            ]
-        }]
-    }],
-    indirect=['config_instance'])
-def test_platform_groups_property_handles_no_groups(config_instance):
-    assert {} == config_instance.platform_groups
+@pytest.fixture
+def platforms_data_no_groups():
+    return {'platforms': [{'name': 'instance-1', }, {'name': 'instance-2', }]}
+
+
+def test_platform_groups_property_handles_no_groups(
+        platforms_data_no_groups, molecule_file, config_data):
+    configs = [platforms_data_no_groups, config_data]
+    c = config.Config(molecule_file, configs=configs)
+
+    assert {} == c.platform_groups
 
 
 def test_provisioner_property(config_instance):
@@ -168,28 +148,32 @@ def test_verifier_property(config_instance):
     assert isinstance(config_instance.verifier, testinfra.Testinfra)
 
 
-@pytest.mark.parametrize(
-    'config_instance', [{
-        'configs': ['project_config_data']
-    }],
-    indirect=['config_instance'])
-def test_combine_default_and_project_dicts(config_instance):
-    c = config_instance.config
-
-    assert 'project-override' == c['driver']['name']
-    assert {} == c['driver']['options']
+@pytest.fixture()
+def project_config_data():
+    return {'driver': {'name': 'project-override'}}
 
 
-@pytest.mark.parametrize(
-    'config_instance', [{
-        'configs': ['project_config_data', 'local_config_data']
-    }],
-    indirect=['config_instance'])
-def test_combine_default_project_and_local_dicts(config_instance):
-    c = config_instance.config
+@pytest.fixture()
+def local_config_data():
+    return {'driver': {'name': 'local-override', 'options': {'foo': 'bar'}}}
 
-    assert 'local-override' == c['driver']['name']
-    return {'foo': 'bar'} == c['driver']['options']
+
+def test_combine_default_and_project_dicts(project_config_data, molecule_file,
+                                           config_data):
+    configs = [project_config_data, config_data]
+    c = config.Config(molecule_file, configs=configs)
+
+    assert 'project-override' == c.config['driver']['name']
+    assert {} == c.config['driver']['options']
+
+
+def test_combine_default_and_project_dicts(
+        project_config_data, local_config_data, molecule_file, config_data):
+    configs = [project_config_data, local_config_data]
+    c = config.Config(molecule_file, configs=configs)
+
+    assert 'local-override' == c.config['driver']['name']
+    return {'foo': 'bar'} == c.config['driver']['options']
 
 
 def test_merge_dicts(config_instance):

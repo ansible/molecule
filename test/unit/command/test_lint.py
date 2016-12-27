@@ -31,4 +31,4 @@ def test_execute(mocker, patched_print_info, patched_ansible_lint,
 
     assert x == patched_print_info.mock_calls
 
-    patched_ansible_lint.assert_called_once
+    patched_ansible_lint.assert_called_once_with()

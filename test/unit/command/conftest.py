@@ -20,6 +20,20 @@
 
 import pytest
 
+from molecule import config
+
+
+@pytest.fixture
+def command_data():
+    return {}
+
+
+@pytest.fixture
+def config_instance(molecule_file, platforms_data, command_data):
+    configs = [platforms_data, command_data]
+
+    return config.Config(molecule_file, configs=configs)
+
 
 @pytest.fixture
 def patched_ansible_converge(mocker):
@@ -29,6 +43,12 @@ def patched_ansible_converge(mocker):
 @pytest.fixture
 def patched_ansible_lint(mocker):
     return mocker.patch('molecule.lint.ansible_lint.AnsibleLint.execute')
+
+
+@pytest.fixture
+def patched_ansible_galaxy(mocker):
+    return mocker.patch(
+        'molecule.dependency.ansible_galaxy.AnsibleGalaxy.execute')
 
 
 @pytest.fixture

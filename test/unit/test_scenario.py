@@ -27,8 +27,16 @@ from molecule import scenario
 
 
 @pytest.fixture
-def scenario_instance(config_instance):
-    return scenario.Scenario(config_instance)
+def scenario_data():
+    return {}
+
+
+@pytest.fixture
+def scenario_instance(scenario_data):
+    molecule_file = config.molecule_file('/foo/bar/molecule/default')
+    c = config.Config(molecule_file, configs=[scenario_data])
+
+    return scenario.Scenario(c)
 
 
 def test_name_property(scenario_instance):
@@ -53,13 +61,8 @@ def test_teardown_property(scenario_instance):
     assert x == scenario_instance.teardown
 
 
-@pytest.mark.parametrize(
-    'config_instance', [{
-        'molecule_file': config.molecule_file('/foo/bar/molecule/default/')
-    }],
-    indirect=['config_instance'])
-def test_directory_property(config_instance):
-    assert '/foo/bar/molecule/default' == config_instance.scenario.directory
+def test_directory_property(scenario_instance):
+    assert '/foo/bar/molecule/default' == scenario_instance.directory
 
 
 def test_converge_sequence_property(scenario_instance):

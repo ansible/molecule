@@ -18,25 +18,17 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import os
-
-import pytest
-import sh
+from molecule.command import dependency
 
 
-@pytest.fixture()
-def with_scenario(request):
-    scenario = request.param
-    scenario_directory = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), os.path.pardir,
-        'scenarios', scenario)
+def test_execute(mocker, patched_print_info, patched_ansible_galaxy,
+                 config_instance):
+    d = dependency.Dependency(config_instance)
+    d.execute()
+    x = [
+        mocker.call('Scenario: [default]'), mocker.call('Dependency: [galaxy]')
+    ]
 
-    os.chdir(scenario_directory)
+    assert x == patched_print_info.mock_calls
 
-    def cleanup():
-        try:
-            sh.molecule('destroy')
-        except:
-            pass
-
-    request.addfinalizer(cleanup)
+    patched_ansible_galaxy.assert_called_once_with()

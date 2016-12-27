@@ -28,8 +28,10 @@ from molecule.verifier import testinfra
 
 
 @pytest.fixture
-def testinfra_instance(config_instance):
-    return testinfra.Testinfra(config_instance)
+def testinfra_instance(molecule_file, verifier_data):
+    c = config.Config(molecule_file, configs=[verifier_data])
+
+    return testinfra.Testinfra(c)
 
 
 def test_config_private_member(testinfra_instance):
@@ -37,7 +39,9 @@ def test_config_private_member(testinfra_instance):
 
 
 def test_default_options_property(testinfra_instance):
-    assert {'connection': 'docker'} == testinfra_instance.default_options
+    x = {'connection': 'docker'}
+
+    assert x == testinfra_instance.default_options
 
 
 def test_default_options_property_updates_debug(testinfra_instance):
@@ -71,46 +75,26 @@ def test_directory_property(testinfra_instance):
 
 
 def test_options_property(testinfra_instance):
-    assert {'connection': 'docker'} == testinfra_instance.options
-
-
-@pytest.mark.parametrize(
-    'config_instance', [{
-        'configs': [{
-            'verifier': {
-                'name': 'testinfra',
-                'options': {
-                    'foo': 'bar'
-                }
-            }
-        }]
-    }],
-    indirect=['config_instance'])
-def test_options_property_handles_verifier_options(config_instance):
-    i = testinfra.Testinfra(config_instance)
     x = {'connection': 'docker', 'foo': 'bar'}
 
-    assert x == i.options
+    assert x == testinfra_instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', [{
-        'args': {
-            'debug': True
-        },
-    }],
-    indirect=['config_instance'])
-def test_options_property_handles_cli_args(config_instance):
-    i = testinfra.Testinfra(config_instance)
-    x = {'debug': True, 'connection': 'docker'}
+def test_options_property_handles_cli_args(molecule_file, testinfra_instance,
+                                           verifier_data):
+    c = config.Config(
+        molecule_file, args={'debug': True}, configs=[verifier_data])
+    v = testinfra.Testinfra(c)
+    x = {'debug': True, 'connection': 'docker', 'foo': 'bar'}
 
-    assert x == i.options
+    assert x == v.options
 
 
 def test_bake(testinfra_instance):
     testinfra_instance._tests = ['test1', 'test2', 'test3']
     testinfra_instance.bake()
-    x = '{} --connection=docker test1 test2 test3'.format(str(sh.testinfra))
+    x = '{} --connection=docker --foo=bar test1 test2 test3'.format(
+        str(sh.testinfra))
 
     assert x == testinfra_instance._testinfra_command
 
@@ -122,7 +106,7 @@ def test_execute(patched_flake8, patched_print_info, patched_run_command,
 
     patched_run_command.assert_called_once_with('patched-command', debug=None)
 
-    patched_flake8.assert_called_once
+    patched_flake8.assert_called_once_with()
 
     msg = 'Executing testinfra tests found in {}/...'.format(
         testinfra_instance.directory)
@@ -149,9 +133,10 @@ def test_execute_bakes(patched_flake8, patched_run_command,
 
     assert testinfra_instance._testinfra_command is not None
 
-    patched_flake8.assert_called_once
+    patched_flake8.assert_called_once_with()
 
-    cmd = '{} --connection=docker test1 test2 test3'.format(str(sh.testinfra))
+    cmd = '{} --connection=docker --foo=bar test1 test2 test3'.format(
+        str(sh.testinfra))
     patched_run_command.assert_called_once_with(cmd, debug=None)
 
 

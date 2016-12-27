@@ -28,8 +28,10 @@ from molecule.verifier import flake8
 
 
 @pytest.fixture
-def flake8_instance(config_instance):
-    return flake8.Flake8(config_instance)
+def flake8_instance(molecule_file, verifier_data):
+    c = config.Config(molecule_file, configs=[verifier_data])
+
+    return flake8.Flake8(c)
 
 
 def test_config_private_member(flake8_instance):
@@ -37,7 +39,7 @@ def test_config_private_member(flake8_instance):
 
 
 def test_default_options_property(flake8_instance):
-    assert flake8_instance.default_options is None
+    assert {} == flake8_instance.default_options
 
 
 def test_name_property(flake8_instance):
@@ -54,47 +56,25 @@ def test_directory_property(flake8_instance):
 
 
 def test_options_property(flake8_instance):
-    assert {} == flake8_instance.options
+    assert {'foo': 'bar'} == flake8_instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', [{
-        'configs': [{
-            'verifier': {
-                'name': 'testinfra',
-                'options': {
-                    'foo': 'bar'
-                }
-            }
-        }]
-    }],
-    indirect=['config_instance'])
-def test_options_property_handles_verifier_options(config_instance):
-    i = flake8.Flake8(config_instance)
+def test_options_property_handles_cli_args(molecule_file, flake8_instance,
+                                           verifier_data):
+    c = config.Config(
+        molecule_file, args={'debug': True}, configs=[verifier_data])
+    v = flake8.Flake8(c)
     x = {'foo': 'bar'}
-
-    assert x == i.options
-
-
-@pytest.mark.parametrize(
-    'config_instance', [{
-        'args': {
-            'debug': True
-        },
-    }],
-    indirect=['config_instance'])
-def test_options_property_handles_cli_args(config_instance):
-    i = flake8.Flake8(config_instance)
 
     # Does nothing.  The `flake8` command does not support
     # a `debug` flag.
-    assert {} == i.options
+    assert x == v.options
 
 
 def test_bake(flake8_instance):
     flake8_instance._tests = ['test1', 'test2', 'test3']
     flake8_instance.bake()
-    x = '{} test1 test2 test3'.format(str(sh.flake8))
+    x = '{} --foo=bar test1 test2 test3'.format(str(sh.flake8))
 
     assert x == flake8_instance._flake8_command
 
@@ -118,7 +98,7 @@ def test_execute_bakes(patched_run_command, flake8_instance):
 
     assert flake8_instance._flake8_command is not None
 
-    cmd = '{} test1 test2 test3'.format(str(sh.flake8))
+    cmd = '{} --foo=bar test1 test2 test3'.format(str(sh.flake8))
     patched_run_command.assert_called_once_with(cmd, debug=None)
 
 

@@ -18,25 +18,35 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import os
+import click
 
-import pytest
-import sh
+from molecule import util
+from molecule.command import base
 
 
-@pytest.fixture()
-def with_scenario(request):
-    scenario = request.param
-    scenario_directory = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), os.path.pardir,
-        'scenarios', scenario)
+class Dependency(base.Base):
+    def execute(self):
+        """
+        Execute the actions necessary to perform a `molecule dependency` and
+        returns None.
 
-    os.chdir(scenario_directory)
+        :return: None
+        """
+        msg = "Scenario: [{}]".format(self._config.scenario.name)
+        util.print_info(msg)
+        msg = "Dependency: [{}]".format(self._config.dependency.name)
+        util.print_info(msg)
 
-    def cleanup():
-        try:
-            sh.molecule('destroy')
-        except:
-            pass
+        self._config.dependency.execute()
 
-    request.addfinalizer(cleanup)
+
+@click.command()
+@click.pass_context
+def dependency(ctx):  # pragma: no cover
+    """ Start instances. """
+    args = ctx.obj.get('args')
+    command_args = {'subcommand': __name__}
+
+    for config in base.get_configs(args, command_args):
+        d = Dependency(config)
+        d.execute()

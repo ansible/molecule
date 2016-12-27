@@ -49,8 +49,8 @@ class AnsibleLint(base.Base):
         :return: None
         """
         self._ansible_lint_command = sh.ansible_lint.bake(
-            self._config.scenario.converge,
             self.options,
+            self._config.scenario.converge,
             _env=os.environ,
             _out=util.callback_info,
             _err=util.callback_error)

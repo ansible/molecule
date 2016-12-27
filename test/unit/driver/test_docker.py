@@ -25,8 +25,16 @@ from molecule.driver import docker
 
 
 @pytest.fixture
-def docker_instance(config_instance):
-    return docker.Docker(config_instance)
+def driver_data():
+    return {'driver': {'name': 'docker', 'options': {}}}
+
+
+@pytest.fixture
+def docker_instance(molecule_file, platforms_data, driver_data):
+    configs = [platforms_data, driver_data]
+    c = config.Config(molecule_file, configs=configs)
+
+    return docker.Docker(c)
 
 
 def test_config_private_member(docker_instance):
