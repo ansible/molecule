@@ -47,3 +47,11 @@ class Scenario(object):
     def teardown(self):
         return os.path.join(self.directory,
                             self._config.config['scenario']['teardown'])
+
+    @property
+    def converge_sequence(self):
+        return self._config.config['scenario']['converge_sequence']
+
+    @property
+    def test_sequence(self):
+        return self._config.config['scenario']['test_sequence']

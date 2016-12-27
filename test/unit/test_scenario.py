@@ -60,3 +60,15 @@ def test_teardown_property(scenario_instance):
     indirect=['config_instance'])
 def test_directory_property(config_instance):
     assert '/foo/bar/molecule/default' == config_instance.scenario.directory
+
+
+def test_converge_sequence_property(scenario_instance):
+    x = ['create', 'converge']
+
+    assert x == scenario_instance.converge_sequence
+
+
+def test_test_sequence_property(scenario_instance):
+    x = ['destroy', 'create', 'converge', 'lint', 'verify', 'destroy']
+
+    assert x == scenario_instance.test_sequence

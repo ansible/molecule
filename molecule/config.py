@@ -176,6 +176,9 @@ class Config(object):
                 'setup': 'create.yml',
                 'converge': 'playbook.yml',
                 'teardown': 'destroy.yml',
+                'converge_sequence': ['create', 'converge'],
+                'test_sequence':
+                ['destroy', 'create', 'converge', 'lint', 'verify', 'destroy'],
             },
             'verifier': {
                 'name': 'testinfra',

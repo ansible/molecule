@@ -33,7 +33,7 @@ def test(ctx):  # pragma: no cover
 
     commands = ['destroy', 'create', 'converge', 'lint', 'verify', 'destroy']
     for config in base.get_configs(args, command_args):
-        for task in commands:
+        for task in config.scenario.test_sequence:
             command_module = getattr(molecule.command, task)
             command = getattr(command_module, task.capitalize())
             c = command(config)

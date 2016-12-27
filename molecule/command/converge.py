@@ -55,9 +55,8 @@ def converge(ctx):  # pragma: no cover
     args = ctx.obj.get('args')
     command_args = {'subcommand': __name__}
 
-    commands = ['create', 'converge']
     for config in base.get_configs(args, command_args):
-        for task in commands:
+        for task in config.scenario.converge_sequence:
             command_module = getattr(molecule.command, task)
             command = getattr(command_module, task.capitalize())
             c = command(config)
