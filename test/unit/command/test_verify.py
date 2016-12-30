@@ -20,6 +20,7 @@
 
 import pytest
 import sh
+import os
 
 from molecule.command import verify
 
@@ -89,8 +90,10 @@ def test_execute_exits_when_command_fails_and_exit_flag_set(
     with pytest.raises(SystemExit):
         v.execute()
 
-    msg = ("\n\n  RAN: <Command '/bin/ls'>\n\n  "
-           "STDOUT:\n<redirected>\n\n  STDERR:\n<redirected>")
+    ls_path = '/usr/bin/ls' if os.path.exists('/usr/bin/ls') \
+                else '/bin/ls'
+    msg = ("\n\n  RAN: <Command '%s'>\n\n  "
+           "STDOUT:\n<redirected>\n\n  STDERR:\n<redirected>" % ls_path)
     patched_print_error.assert_called_once_with(msg)
 
 
