@@ -1,0 +1,13 @@
+---
+dependency:
+  name: galaxy
+ansible:
+  raw_env_vars:
+    RETRY_FILES_ENABLED: 0
+driver:
+  name: docker
+docker:
+  containers:
+    - name: non-string-env-scenario
+      image: ubuntu
+      image_version: latest
