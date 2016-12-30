@@ -145,14 +145,6 @@ def test_custom_ansible_cfg(scenario_setup):
 
 
 @pytest.mark.parametrize(
-    'scenario_setup', ['non_string_env'], indirect=['scenario_setup'])
-def test_non_string_env(scenario_setup):
-    sh.molecule('create')
-    sh.molecule('syntax')
-    sh.molecule('destroy')
-
-
-@pytest.mark.parametrize(
     'scenario_setup', ['dockerfile'], indirect=['scenario_setup'])
 def test_dockerfile(scenario_setup):
     sh.molecule('test')
