@@ -40,8 +40,11 @@ def test_create_role(temp_dir, init_command_args):
     with pytest.raises(SystemExit):
         i.execute()
 
-    assert os.path.isdir(os.path.join(temp_dir, 'unit_test1'))
-    assert os.path.isfile(os.path.join(temp_dir, 'unit_test1', 'molecule.yml'))
+    role_directory = os.path.join(temp_dir, 'unit_test1')
+    assert os.path.isdir(role_directory)
+    assert os.path.isdir(os.path.join(role_directory, 'tests'))
+    assert os.path.isfile(os.path.join(role_directory, 'molecule.yml'))
+    assert os.path.isfile(os.path.join(role_directory, 'playbook.yml'))
 
 
 def test_create_role_in_existing_directory(temp_dir, init_command_args):
@@ -50,7 +53,11 @@ def test_create_role_in_existing_directory(temp_dir, init_command_args):
     with pytest.raises(SystemExit):
         i.execute()
 
-    assert os.path.isdir(os.path.join(temp_dir))
+    role_directory = os.path.join(temp_dir)
+    assert os.path.isdir(role_directory)
+    assert os.path.isdir(os.path.join(role_directory, 'tests'))
+    assert os.path.isfile(os.path.join(role_directory, 'molecule.yml'))
+    assert os.path.isfile(os.path.join(role_directory, 'playbook.yml'))
 
 
 def test_create_role_existing_dir_error(temp_dir, init_command_args):
