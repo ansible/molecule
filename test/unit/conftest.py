@@ -262,7 +262,8 @@ def ansible_v1_section_data(playbook):
             'inventory_file': 'inventory_file',
             'playbook': playbook,
             'raw_env_vars': {
-                'FOO': 'bar'
+                'FOO': 'bar',
+                'RETRY_FILES_ENABLED': 0,
             }
         },
         'verifier': {

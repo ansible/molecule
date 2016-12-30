@@ -56,6 +56,11 @@ def test_parse_arg_raw_env(ansible_playbook_instance):
     assert 'bar' == ansible_playbook_instance.env.get('FOO')
 
 
+def test_parse_arg_raw_env_ensures_string_values(ansible_playbook_instance):
+    assert ansible_playbook_instance._cli.get('raw_env_vars') is None
+    assert '0' == ansible_playbook_instance.env.get('RETRY_FILES_ENABLED')
+
+
 def test_parse_arg_host_key_checking(ansible_playbook_instance):
     assert ansible_playbook_instance._cli.get('host_key_checking') is None
     assert 'false' == ansible_playbook_instance.env.get(

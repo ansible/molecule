@@ -1,6 +1,0 @@
----
-- hosts: all
-  tasks:
-    - name: Non string environment functional scenario
-      command: /bin/true
-      changed_when: False
