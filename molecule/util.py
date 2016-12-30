@@ -73,7 +73,7 @@ def print_error(msg, pretty=True):
 
 
 def print_msg(template, msg):
-    print(template.format(msg.rstrip()))
+    print(template.format(msg.rstrip().encode('utf-8')))
 
 
 def callback_info(msg):
