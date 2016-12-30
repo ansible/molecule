@@ -18,9 +18,11 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
+import re
+
 import pytest
 import sh
-import os
 
 from molecule.command import verify
 
@@ -90,11 +92,8 @@ def test_execute_exits_when_command_fails_and_exit_flag_set(
     with pytest.raises(SystemExit):
         v.execute()
 
-    ls_path = '/usr/bin/ls' if os.path.exists('/usr/bin/ls') \
-                else '/bin/ls'
-    msg = ("\n\n  RAN: <Command '%s'>\n\n  "
-           "STDOUT:\n<redirected>\n\n  STDERR:\n<redirected>" % ls_path)
-    patched_print_error.assert_called_once_with(msg)
+    command = patched_print_error.call_args[0][0]
+    assert re.search(r"RAN: <Command \'(\/usr)?\/bin\/ls\'>", command)
 
 
 def test_execute_returns_when_command_fails_and_exit_flag_unset(

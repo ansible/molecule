@@ -22,6 +22,7 @@
 
 import binascii
 import os
+import re
 import uuid
 
 import colorama
@@ -226,9 +227,9 @@ def test_run_command_with_debug(patched_print_debug):
     cmd = sh.ls.bake()
     util.run_command(cmd, debug=True)
 
-    ls_path = '/usr/bin/ls' if os.path.exists('/usr/bin/ls') \
-                else '/bin/ls'
-    patched_print_debug.assert_called_with('COMMAND', ls_path)
+    msg, command = patched_print_debug.call_args[0]
+    assert 'COMMAND' == msg
+    assert re.search(r'(\/usr)?\/bin\/ls', command)
 
 
 def test_resolve_template_dir_relative():
