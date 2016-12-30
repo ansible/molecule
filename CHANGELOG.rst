@@ -2,6 +2,12 @@
 History
 *******
 
+1.17.2
+======
+
+* Fix unittests to allow ls to be in both /usr/bin and /bin.
+* Force raw_env_vars to string for `ansible-playbook`.
+
 1.17.1
 ======
 
