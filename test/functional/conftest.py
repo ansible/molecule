@@ -35,6 +35,9 @@ def scenario_setup(request):
     sh.molecule('destroy')
 
     def cleanup():
-        sh.molecule('destroy')
+        try:
+            sh.molecule('destroy')
+        except:
+            pass
 
     request.addfinalizer(cleanup)
