@@ -2,6 +2,12 @@
 History
 *******
 
+1.17.3
+======
+
+* Create test skeleton with `molecule init` when initializing a role in current
+  directory.
+
 1.17.2
 ======
 
