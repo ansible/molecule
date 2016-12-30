@@ -40,7 +40,7 @@ def test_init_arg_loading_bool_true(ansible_playbook_instance):
 
 
 def test_init_arg_loading_bool_false_not_added(ansible_playbook_instance):
-    assert ansible_playbook_instance._cli.get('sudo_user') is None
+    assert ansible_playbook_instance._cli.get('become_user') is None
 
 
 def test_init_connection_params(ansible_v1_section_data,
@@ -144,7 +144,7 @@ def test_bake(ansible_playbook_instance):
     ansible_playbook_instance.bake()
     executable = sh.ansible_playbook
     expected = [
-        '--diff', '--inventory-file=inventory_file', '--limit=all', '--sudo',
+        '--become', '--diff', '--inventory-file=inventory_file', '--limit=all',
         '--timeout=30', '-vvvv', executable,
         ansible_playbook_instance._playbook
     ]
