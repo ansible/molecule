@@ -18,6 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import re
+
 import pytest
 import sh
 
@@ -89,9 +91,8 @@ def test_execute_exits_when_command_fails_and_exit_flag_set(
     with pytest.raises(SystemExit):
         v.execute()
 
-    msg = ("\n\n  RAN: <Command '/bin/ls'>\n\n  "
-           "STDOUT:\n<redirected>\n\n  STDERR:\n<redirected>")
-    patched_print_error.assert_called_once_with(msg)
+    command = patched_print_error.call_args[0][0]
+    assert re.search(r"RAN: <Command \'(\/usr)?\/bin\/ls\'>", command)
 
 
 def test_execute_returns_when_command_fails_and_exit_flag_unset(
