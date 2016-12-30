@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 #  Copyright (c) 2015-2016 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -117,6 +119,20 @@ def test_print_debug(capsys):
     expected_title, _ = capsys.readouterr()
 
     assert expected_title == result_title
+
+
+def test_print_msg(capsys):
+    util.print_msg('{}', 'test')
+    result, _ = capsys.readouterr()
+
+    assert 'test\n' == result
+
+
+def test_print_msg_handles_utf8(capsys):
+    util.print_msg('{}', u'voil\u00e0')
+    result, _ = capsys.readouterr()
+
+    assert u'voilà\n' == result
 
 
 def test_write_template(temp_dir):
