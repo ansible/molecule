@@ -26,8 +26,8 @@ of options that you probably don't want to set.
   ---
   ansible:
     playbook: playbook.yml
-    sudo: True
-    sudo_user: False
+    become: True
+    become_user: False
     verbose: vvvv
 
   vagrant:

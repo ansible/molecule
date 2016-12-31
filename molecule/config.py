@@ -106,8 +106,10 @@ class ConfigV1(Config):
     def _get_defaults(self):
         return {
             'ansible': {
-                'ask_sudo_pass': False,
+                'ask_become_pass': False,
                 'ask_vault_pass': False,
+                'become': True,
+                'become_user': False,
                 'config_file': 'ansible.cfg',
                 'diff': True,
                 'host_key_checking': False,
@@ -118,8 +120,6 @@ class ConfigV1(Config):
                     '-o UserKnownHostsFile=/dev/null', '-o IdentitiesOnly=yes',
                     '-o ControlMaster=auto', '-o ControlPersist=60s'
                 ],
-                'sudo': True,
-                'sudo_user': False,
                 'tags': False,
                 'timeout': 30,
                 'vault_password_file': False,
