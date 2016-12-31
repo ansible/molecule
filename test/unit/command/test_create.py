@@ -31,8 +31,8 @@ def test_execute_creates_instances(
     c = create.Create({}, {}, molecule_instance)
     result = c.execute()
 
-    patched_remove_inventory.assert_called_once()
-    patched_create_templates.assert_called_once()
+    patched_remove_inventory.assert_called_once_with()
+    patched_create_templates.assert_called_once_with()
 
     msg = 'Creating instances...'
     patched_print_info.assert_called_once_with(msg)

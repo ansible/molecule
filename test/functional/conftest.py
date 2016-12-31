@@ -32,7 +32,6 @@ def scenario_setup(request):
         'scenarios', scenario)
 
     os.chdir(d)
-    sh.molecule('destroy')
 
     def cleanup():
         try:

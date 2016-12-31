@@ -18,8 +18,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import re
-
 import pytest
 import sh
 
@@ -36,7 +34,7 @@ def test_execute(mocker, patched_ansible_lint, patched_trailing,
     patched_ansible_lint.assert_called_once_with(molecule_instance)
     patched_trailing.assert_called_once_with(molecule_instance)
     patched_testinfra.assert_called_once_with(molecule_instance)
-    patched_ssh_config.assert_called_once()
+    patched_ssh_config.assert_called_once_with()
     assert (None, None) == result
 
 
@@ -64,7 +62,7 @@ def test_execute_with_serverspec(mocker, patched_ansible_lint,
     patched_ansible_lint.assert_called_once_with(molecule_instance)
     patched_trailing.assert_called_once_with(molecule_instance)
     patched_serverspec.assert_called_once_with(molecule_instance)
-    patched_ssh_config.assert_called_once()
+    patched_ssh_config.assert_called_once_with()
 
 
 def test_execute_with_goss(mocker, patched_ansible_lint, patched_trailing,
@@ -78,7 +76,7 @@ def test_execute_with_goss(mocker, patched_ansible_lint, patched_trailing,
     patched_ansible_lint.assert_called_once_with(molecule_instance)
     patched_trailing.assert_called_once_with(molecule_instance)
     patched_goss.assert_called_once_with(molecule_instance)
-    patched_ssh_config.assert_called_once()
+    patched_ssh_config.assert_called_once_with()
 
 
 def test_execute_exits_when_command_fails_and_exit_flag_set(
@@ -91,8 +89,10 @@ def test_execute_exits_when_command_fails_and_exit_flag_set(
     with pytest.raises(SystemExit):
         v.execute()
 
-    command = patched_print_error.call_args[0][0]
-    assert re.search(r"RAN: <Command \'(\/usr)?\/bin\/ls\'>", command)
+    ls_path = sh.which('ls')
+    msg = ("\n\n  RAN: <Command '{}'>\n\n  "
+           "STDOUT:\n<redirected>\n\n  STDERR:\n<redirected>").format(ls_path)
+    patched_print_error.assert_called_once_with(msg)
 
 
 def test_execute_returns_when_command_fails_and_exit_flag_unset(
