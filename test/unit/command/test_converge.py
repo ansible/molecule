@@ -69,8 +69,8 @@ def test_execute_create_inventory_and_instances_with_platform_all(
     c = converge.Converge({}, command_args, molecule_instance)
     c.execute()
 
-    patched_create.assert_called_once()
-    patched_create_inventory.assert_called_once()
+    patched_create.assert_called_once_with()
+    patched_create_inventory.assert_called_once_with()
 
 
 def test_execute_create_inventory_and_instances_with_platform_all_state_file(
@@ -81,8 +81,8 @@ def test_execute_create_inventory_and_instances_with_platform_all_state_file(
     c = converge.Converge({}, {}, molecule_instance)
     c.execute()
 
-    patched_create.assert_called_once()
-    patched_create_inventory.assert_called_once()
+    patched_create.assert_called_once_with()
+    patched_create_inventory.assert_called_once_with()
 
 
 def test_execute_installs_dependencies(
@@ -93,7 +93,7 @@ def test_execute_installs_dependencies(
     c = converge.Converge({}, {}, molecule_instance)
     c.execute()
 
-    patched_dependency.assert_called_once()
+    patched_dependency.assert_called_once_with()
 
 
 def test_execute_with_debug(patched_create, patched_ansible_playbook,

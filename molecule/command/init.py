@@ -69,8 +69,8 @@ class Init(base.Base):
 
         util.print_info('Initializing molecule in current directory...')
         for template in [
-                'playbook', 'driver/{}'.format(driver), 'verifier/{}'.format(
-                    verifier)
+                'playbook', 'driver/{}'.format(driver),
+                'verifier/{}'.format(verifier)
         ]:
             util.process_templates(template, extra_context, role_path)
 

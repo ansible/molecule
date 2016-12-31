@@ -24,6 +24,7 @@ import os
 import random
 import shutil
 import string
+import sys
 
 import ansible
 import pytest
@@ -62,6 +63,16 @@ def get_vagrant_executable():
     not distutils.spawn.find_executable('vagrant')
 
 
+def get_virtualbox_executable():
+    not distutils.spawn.find_executable('VBoxManage')
+
+
+@pytest.helpers.register
+def supports_openstack():
+    return pytest.mark.skipif(
+        'shade' not in sys.modules, reason='OpenStack not supported')
+
+
 @pytest.helpers.register
 def supports_docker():
     return pytest.mark.skipif(
@@ -69,6 +80,7 @@ def supports_docker():
 
 
 @pytest.helpers.register
-def supports_vagrant():
+def supports_vagrant_virtualbox():
     return pytest.mark.skipif(
-        get_vagrant_executable(), reason='Vagrant not supported')
+        get_vagrant_executable() or get_virtualbox_executable(),
+        reason='VirtualBox not supported')

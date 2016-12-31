@@ -82,5 +82,6 @@ def test_execute_exits_with_return_code_and_logs(patched_print_error,
 
     assert 1 == e.value.code
 
-    msg = "\n\n  RAN: '/usr/bin/false'\n\n  STDOUT:\n\n\n  STDERR:\n"
+    false_path = sh.which('false')
+    msg = "\n\n  RAN: '{}'\n\n  STDOUT:\n\n\n  STDERR:\n".format(false_path)
     patched_print_error.assert_called_once_with(msg)

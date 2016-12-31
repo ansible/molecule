@@ -181,7 +181,8 @@ def test_execute_exits_with_return_code_and_logs(patched_print_error,
     ansible_playbook_instance._ansible = sh.false.bake()
     result = ansible_playbook_instance.execute()
 
-    msg = "\n\n  RAN: '/usr/bin/false'\n\n  STDOUT:\n\n\n  STDERR:\n"
+    false_path = sh.which('false')
+    msg = "\n\n  RAN: '{}'\n\n  STDOUT:\n\n\n  STDERR:\n".format(false_path)
     patched_print_error.assert_called_once_with(msg)
 
     assert (1, None) == result
