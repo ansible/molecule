@@ -30,6 +30,12 @@ class Dependency(base.Base):
         Execute the actions necessary to perform a `molecule dependency` and
         returns None.
 
+        >>> molecule dependency
+
+        Executing with `debug`:
+
+        >>> molecule --debug dependency
+
         :return: None
         """
         msg = "Scenario: [{}]".format(self._config.scenario.name)

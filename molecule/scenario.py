@@ -22,6 +22,38 @@ import os
 
 
 class Scenario(object):
+    """
+    Scenarios allow Molecule test a role in various ways.  Scenarios are a
+    fundamental change from Molecule v1.
+
+    Molecule will search the `molecule/` directory for directories representing
+    scenarios.  These scenario directories contain everything necessary for
+    managing the instances, and converging/testing the role.
+
+    Molecule's provisioner manages the instances lifecycle.  However, the user
+    must provide the setup, teardown, and converge playbooks.  Molecule's
+    `init` subcommand will provide the necessary files for convenience.
+
+    Any option set in this section will override the defaults.
+
+    .. code-block:: yaml
+
+        scenario:
+          name: default
+          setup: create.yml
+          converge: playbook.yml
+          teardown: destroy.yml
+          converge_sequence:
+            - create
+            - converge
+          test_sequence:
+            - destroy
+            - create
+            - converge
+            - lint
+            - verify
+            - destroy
+    """
     def __init__(self, config):
         """
         A class encapsulating a scenario.

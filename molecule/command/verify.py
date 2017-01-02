@@ -30,6 +30,12 @@ class Verify(base.Base):
         Execute the actions necessary to perform a `molecule verify` and
         returns None.
 
+        >>> molecule verify
+
+        Executing with `debug`:
+
+        >>> molecule --debug verify
+
         :return: None
         """
         msg = "Scenario: [{}]".format(self._config.scenario.name)

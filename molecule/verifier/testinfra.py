@@ -28,6 +28,30 @@ from molecule.verifier import flake8
 
 
 class Testinfra(base.Base):
+    """
+    `Testinfra`_ is the default test runner.
+
+    Additional options can be passed to `testinfra` through the options
+    dict.  Any option set in this section will override the defaults.
+
+    .. code-block:: yaml
+
+        verifier:
+          name: testinfra
+          options:
+            n: 1
+
+    The testing can be disabled by setting `enabled` to False.
+
+    .. code-block:: yaml
+
+        verifier:
+          name: testinfra
+          enabled: False
+
+    .. _`Testinfra`: http://testinfra.readthedocs.io
+    """
+
     def __init__(self, config):
         """
         Sets up the requirements to execute `testinfra` and returns None.

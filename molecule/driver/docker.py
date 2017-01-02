@@ -24,6 +24,20 @@ from molecule.driver import base
 
 
 class Docker(base.Base):
+    """
+    `Docker`_ is the default driver.
+
+    .. code-block:: yaml
+
+        driver:
+          name: docker
+
+    .. code-block:: bash
+
+        $ pip install docker-py
+
+    .. _`Docker`: https://www.docker.com
+    """
     def __init__(self, config):
         super(Docker, self).__init__(config)
 

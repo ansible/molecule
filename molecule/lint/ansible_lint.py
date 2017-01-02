@@ -27,6 +27,35 @@ from molecule.lint import base
 
 
 class AnsibleLint(base.Base):
+    """
+    `Ansible Lint`_ is the default role linter.
+
+    `Ansible Lint`_ checks playbooks for practices, and behaviour that could
+    potentially be improved.
+
+    Additional options can be passed to `ansible-lint` through the options
+    dict.  Any option set in this section will override the defaults.
+
+    .. code-block:: yaml
+
+        lint:
+          name: ansible-lint
+          options:
+            excludes:
+              - path/exclude1
+              - path/exclude2
+            force-color: True
+
+    The role linting can be disabled by setting `enabled` to False.
+
+    .. code-block:: yaml
+
+        lint:
+          name: ansible-lint
+          enabled: False
+
+    .. _`Ansible Lint`: https://github.com/willthames/ansible-lint
+    """
     def __init__(self, config):
         """
         Sets up the requirements to execute `ansible-lint` and returns None.
@@ -44,7 +73,7 @@ class AnsibleLint(base.Base):
 
         :return: dict
         """
-        return {}
+        return {'excludes': [self._config.ephemeral_directory]}
 
     def bake(self):
         """
@@ -53,8 +82,12 @@ class AnsibleLint(base.Base):
 
         :return: None
         """
+        options = self.options
+        excludes = options.pop('excludes')
+        exclude_args = ['--exclude={}'.format(exclude) for exclude in excludes]
         self._ansible_lint_command = sh.ansible_lint.bake(
-            self.options,
+            options,
+            exclude_args,
             self._config.scenario.converge,
             _env=os.environ,
             _out=util.callback_info,

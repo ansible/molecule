@@ -27,6 +27,30 @@ from molecule.dependency import base
 
 
 class Gilt(base.Base):
+    """
+    `Gilt`_ is an alternate dependency manager.
+
+    Additional options can be passed to `gilt` through the options
+    dict.  Any option set in this section will override the defaults.
+
+    .. code-block:: yaml
+
+        dependency:
+          name: gilt
+          options:
+            debug: True
+
+
+    The dependency manager can be disabled by setting `enabled` to False.
+
+    .. code-block:: yaml
+
+        dependency:
+          name: gilt
+          enabled: False
+
+    .. _`Gilt`: http://gilt.readthedocs.io
+    """
     def __init__(self, config):
         super(Gilt, self).__init__(config)
         self._gilt_command = None

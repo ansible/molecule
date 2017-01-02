@@ -32,6 +32,12 @@ class Create(base.Base):
         Execute the actions necessary to perform a `molecule create` and
         returns None.
 
+        >>> molecule create
+
+        Executing with `debug`:
+
+        >>> molecule --debug create
+
         :return: None
         """
         msg = "Scenario: [{}]".format(self._config.scenario.name)

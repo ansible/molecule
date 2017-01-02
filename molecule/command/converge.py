@@ -33,6 +33,12 @@ class Converge(base.Base):
         Execute the actions necessary to perform a `molecule converge` and
         returns None.
 
+        >>> molecule converge
+
+        Executing with `debug`:
+
+        >>> molecule --debug converge
+
         :return: None
         """
         msg = "Scenario: [{}]".format(self._config.scenario.name)

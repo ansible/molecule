@@ -27,6 +27,31 @@ from molecule.dependency import base
 
 
 class AnsibleGalaxy(base.Base):
+    """
+    `Ansible Galaxy`_ is the default dependency manager.
+
+    Additional options can be passed to `ansible-galaxy` through the options
+    dict.  Any option set in this section will override the defaults.
+
+    .. code-block:: yaml
+
+        dependency:
+          name: galaxy
+          options:
+            ignore-certs: True
+            ignore-errors: True
+
+
+    The dependency manager can be disabled by setting `enabled` to False.
+
+    .. code-block:: yaml
+
+        dependency:
+          name: galaxy
+          enabled: False
+
+    .. _`Ansible Galaxy`: http://docs.ansible.com/ansible/galaxy.html
+    """
     def __init__(self, config):
         super(AnsibleGalaxy, self).__init__(config)
         self._ansible_galaxy_command = None

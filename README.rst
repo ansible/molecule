@@ -16,7 +16,9 @@ Molecule
 
 Molecule is designed to aid in the development and testing of `Ansible`_ roles
 including support for multiple instances, operating system distributions,
-virtualization providers, scenarios, and test frameworks.
+virtualization providers, scenarios, and test frameworks.  Molecule is
+opinionated. By being opinionated Molecue aims to enforce a common way in
+which roles are written and maintained.
 
 Molecule uses `Ansible`_ `playbooks`_ to exercise the `role`_ and its
 associated tests.  Molecule supports any provider [#]_ `Ansible`_ supports.
@@ -33,83 +35,14 @@ associated tests.  Molecule supports any provider [#]_ `Ansible`_ supports.
 Documentation
 =============
 
-https://molecule.readthedocs.io/
+https://molecule.readthedocs.io
 
 Ansible Support
 ===============
 
 * 2.2.0.0 - Supported
 
-Requirements
-============
-
-Molecule relies on several outside packages and programs to function.
-
-Dependency
-----------
-
-* `Ansible Galaxy`_
-
-Driver
-------
-
-* `Docker`_
-
-Lint
-----
-
-* `Ansible Lint`_
-
-Provisioner
------------
-
-* `Ansible`_
-
-Verifier
---------
-
-* `Testinfra`_
-
-.. _`Ansible Galaxy`: http://docs.ansible.com/ansible/galaxy.html
-.. _`Docker`: https://www.docker.com
-.. _`Ansible Lint`: https://github.com/willthames/ansible-lint
 .. _`Ansible`: https://docs.ansible.com
-.. _`Testinfra`: https://testinfra.readthedocs.io
-
-Quick Start
-===========
-
-Install Molecule using pip:
-
-.. code-block:: bash
-
-  $ pip install ansible
-  $ pip install molecule --pre
-
-Create a new role with the docker driver:
-
-.. code-block:: bash
-
-  $ molecule init --role foo --driver docker
-  --> Initializing role foo...
-  Successfully initialized new role in /private/tmp/foo.
-
-Or add Molecule to an existing role:
-
-.. code-block:: bash
-
-  $ cd foo
-  $ molecule init --driver docker
-  --> Initializing molecule in current directory...
-  Successfully initialized new role in /private/tmp/foo.
-
-Update the role with needed functionality and tests.  Now test it:
-
-.. code-block:: bash
-
-  $ cd foo
-  $ molecule test
-  ...
 
 License
 =======

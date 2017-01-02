@@ -27,6 +27,12 @@ from molecule.verifier import base
 
 
 class Flake8(base.Base):
+    """
+    `Flake8`_ is the default code linter when using the testinfra verifier.
+    It cannot be disabled without disabling the Testinfra verifier.
+
+    .. _`Flake8`: http://flake8.pycqa.org/en/latest/
+    """
     def __init__(self, config):
         """
         Sets up the requirements to execute `flake8` and returns None.

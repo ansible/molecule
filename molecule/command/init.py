@@ -27,7 +27,6 @@ import cookiecutter.main
 from molecule import config
 from molecule import util
 
-
 def _process_templates(template_dir,
                        extra_context,
                        output_dir,
@@ -66,6 +65,9 @@ def _resolve_template_dir(template_dir):
 
 
 def _init_new_role(command_args):
+    """
+    >>> molecule init role --role-name foo
+    """
     role_name = command_args['role_name']
     role_directory = os.getcwd()
     util.print_info('Initializing new role {}...'.format(role_name))
@@ -89,6 +91,9 @@ def _init_new_role(command_args):
 
 
 def _init_new_scenario(command_args):
+    """
+    >>> molecule init scenario --scenario-name default --role-name foo
+    """
     scenario_name = command_args['scenario_name']
     role_name = os.getcwd().split(os.sep)[-1]
     role_directory = os.path.abspath(os.path.join(os.getcwd(), os.pardir))

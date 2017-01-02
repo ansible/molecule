@@ -42,7 +42,9 @@ def test_config_private_member(ansible_lint_instance):
 
 
 def test_default_options_property(ansible_lint_instance):
-    assert {} == ansible_lint_instance.default_options
+    x = {'excludes': [ansible_lint_instance._config.ephemeral_directory]}
+
+    assert x == ansible_lint_instance.default_options
 
 
 def test_name_property(ansible_lint_instance):
@@ -54,14 +56,22 @@ def test_enabled_property(ansible_lint_instance):
 
 
 def test_options_property(ansible_lint_instance):
-    assert {'foo': 'bar'} == ansible_lint_instance.options
+    x = {
+        'excludes': [ansible_lint_instance._config.ephemeral_directory],
+        'foo': 'bar'
+    }
+
+    assert x == ansible_lint_instance.options
 
 
 def test_options_property_handles_cli_args(molecule_file,
                                            ansible_lint_instance, lint_data):
     c = config.Config(molecule_file, args={'debug': True}, configs=[lint_data])
     l = ansible_lint.AnsibleLint(c)
-    x = {'foo': 'bar'}
+    x = {
+        'excludes': [ansible_lint_instance._config.ephemeral_directory],
+        'foo': 'bar'
+    }
 
     # Does nothing.  The `ansible-lint` command does not support
     # a `debug` flag.
@@ -70,8 +80,10 @@ def test_options_property_handles_cli_args(molecule_file,
 
 def test_bake(ansible_lint_instance):
     ansible_lint_instance.bake()
-    x = '{} --foo=bar {}'.format(
-        str(sh.ansible_lint), ansible_lint_instance._config.scenario.converge)
+    x = '{} --foo=bar --exclude={} {}'.format(
+        str(sh.ansible_lint),
+        ansible_lint_instance._config.ephemeral_directory,
+        ansible_lint_instance._config.scenario.converge)
 
     assert x == ansible_lint_instance._ansible_lint_command
 
@@ -95,8 +107,10 @@ def test_execute_bakes(patched_run_command, ansible_lint_instance):
 
     assert ansible_lint_instance._ansible_lint_command is not None
 
-    cmd = '{} --foo=bar {}'.format(
-        str(sh.ansible_lint), ansible_lint_instance._config.scenario.converge)
+    cmd = '{} --foo=bar --exclude={} {}'.format(
+        str(sh.ansible_lint),
+        ansible_lint_instance._config.ephemeral_directory,
+        ansible_lint_instance._config.scenario.converge)
     patched_run_command.assert_called_once_with(cmd, debug=None)
 
 

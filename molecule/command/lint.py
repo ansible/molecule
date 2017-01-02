@@ -30,6 +30,12 @@ class Lint(base.Base):
         Execute the actions necessary to perform a `molecule lint` and
         returns None.
 
+        >>> molecule lint
+
+        Executing with `debug`:
+
+        >>> molecule --debug lint
+
         :return: None
         """
         msg = "Scenario: [{}]".format(self._config.scenario.name)

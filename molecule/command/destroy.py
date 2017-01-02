@@ -32,6 +32,12 @@ class Destroy(base.Base):
         Execute the actions necessary to perform a `molecule destroy` and
         returns None.
 
+        >>> molecule destroy
+
+        Executing with `debug`:
+
+        >>> molecule --debug destroy
+
         :return: None
         """
         msg = "Scenario: [{}]".format(self._config.scenario.name)

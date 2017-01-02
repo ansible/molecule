@@ -24,6 +24,22 @@ import molecule.command
 from molecule.command import base
 
 
+class Test(base.Base):
+    def execute(self):
+        """
+        Execute the actions necessary to perform a `molecule test` and
+        returns None.
+
+        >>> molecule test
+
+        Executing with `debug`:
+
+        >>> molecule --debug test
+
+        :return: None
+        """
+
+
 @click.command()
 @click.pass_context
 def test(ctx):  # pragma: no cover

@@ -8,15 +8,8 @@ Contents:
 
    usage
    configuration
-   driver/index
-   provider/index
-   verifier
-   bash
-   development
-   contributing
    changelog
    authors
-   autodoc/index
 
 .. _`Ansible`: https://docs.ansible.com
 .. _`Test Kitchen`: http://kitchen.ci

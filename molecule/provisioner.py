@@ -27,6 +27,21 @@ from molecule import util
 
 
 class Ansible(object):
+    """
+    `Ansible`_ is the default provisioner.  No other provisioner will be
+    supported.
+
+    Additional options can be passed to `ansible-playbook` through the options
+    dict.  Any option set in this section will override the defaults.
+
+    .. code-block:: yaml
+
+        provisioner:
+          name: ansible
+          options:
+            debug: True
+
+    """
     def __init__(self, config):
         """
         A class encapsulating the provisioner.
