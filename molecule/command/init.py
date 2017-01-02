@@ -31,23 +31,19 @@ from molecule import util
 def _process_templates(template_dir,
                        extra_context,
                        output_dir,
-                       debug=True,
                        overwrite=True):
     """
     Process templates as found in the named directory.
-    :param template_dir: An absolute or relative path to a directory where
-     the templates are located. If the provided directory is a relative
-     path, it is resolved using a known location.
-    :type template_dir: str
-    :param extra_context: A set of values that are used to override default
+
+    :param template_dir: A string containing an absolute or relative path to a
+     directory where the templates are located. If the provided directory is a
+     relative path, it is resolved using a known location.
+    :param extra_context: A dict of values that are used to override default
      or user specified values.
-    :type extra_context: dict or None
-    :param output_dir: An absolute path to a directory where the templates
-     should be written to.
-    :type output_dir: str
-    :param overwrite: Whether or not to overwrite existing templates.
-     Defaults to True.
-    :type overwrite: bool
+    :param output_dir: An string with an absolute path to a directory where the
+     templates should be written to.
+    :param overwrite: An optional bool whether or not to overwrite existing
+     templates.
     :return: None
     """
     template_dir = _resolve_template_dir(template_dir)
@@ -83,10 +79,9 @@ def _init_new_role(command_args):
     extra_context = command_args
     _process_templates('role', extra_context, role_directory)
     scenario_base_directory = os.path.join(role_directory, role_name)
-    _process_templates('scenario/driver/docker', extra_context,
-                       scenario_base_directory)
-    _process_templates('scenario/verifier/testinfra', extra_context,
-                       scenario_base_directory)
+    templates = ['scenario/driver/docker', 'scenario/verifier/testinfra']
+    for template in templates:
+        _process_templates(template, extra_context, scenario_base_directory)
 
     role_directory = os.path.join(role_directory, role_name)
     msg = 'Successfully initialized role in {}.'.format(role_directory)
@@ -112,10 +107,9 @@ def _init_new_scenario(command_args):
 
     extra_context = command_args
     scenario_base_directory = os.path.join(role_directory, role_name)
-    _process_templates('scenario/driver/docker', extra_context,
-                       scenario_base_directory)
-    _process_templates('scenario/verifier/testinfra', extra_context,
-                       scenario_base_directory)
+    templates = ['scenario/driver/docker', 'scenario/verifier/testinfra']
+    for template in templates:
+        _process_templates(template, extra_context, scenario_base_directory)
 
     role_directory = os.path.join(role_directory, role_name)
     msg = 'Successfully initialized scenario in {}.'.format(scenario_directory)
