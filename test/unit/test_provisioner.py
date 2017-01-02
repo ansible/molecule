@@ -178,7 +178,14 @@ def test_write_config(temp_dir, provisioner_instance):
     assert os.path.exists(provisioner_instance.config_file)
 
 
-def test_setup(temp_dir, provisioner_instance):
+def test_setup(mocker, temp_dir, provisioner_instance):
+    patched_provisioner_write_inventory = mocker.patch(
+        'molecule.provisioner.Ansible.write_inventory')
+    patched_provisioner_write_config = mocker.patch(
+        'molecule.provisioner.Ansible.write_config')
     provisioner_instance._setup()
 
     assert os.path.exists(os.path.dirname(provisioner_instance.inventory_file))
+
+    patched_provisioner_write_inventory.assert_called_once_with()
+    patched_provisioner_write_config.assert_called_once_with()

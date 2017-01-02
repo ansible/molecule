@@ -147,12 +147,12 @@ def test_executes_catches_and_exits_return_code(patched_run_command,
     assert 1 == e.value.code
 
 
-def test_role_setup(ansible_galaxy_instance):
+def test_setup(ansible_galaxy_instance):
     role_directory = os.path.join(
         ansible_galaxy_instance._config.scenario.directory,
         ansible_galaxy_instance.options['roles-path'])
     assert not os.path.isdir(role_directory)
 
-    ansible_galaxy_instance._role_setup()
+    ansible_galaxy_instance._setup()
 
     assert os.path.isdir(role_directory)

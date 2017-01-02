@@ -29,16 +29,22 @@ from molecule import util
 class Ansible(object):
     def __init__(self, config):
         """
-        Sets up the Ansible provisioner requirements and returns None.
+        A class encapsulating the provisioner.
 
         :param config: An instance of a Molecule config.
-        :returns: None
+        :return: None
         """
         self._config = config
         self._setup()
 
     @property
     def default_options(self):
+        """
+        Default CLI arguments provided to `ansible-playbook` and returns a
+        dict.
+
+        :return: dict
+        """
         d = {}
         if self._config.args.get('debug'):
             d['debug'] = True
@@ -70,7 +76,7 @@ class Ansible(object):
 
     def converge(self, inventory, playbook):
         """
-        TODO ... and returns None.
+        Executes `ansible-playbook` and returns None.
 
         :return: None
         """
@@ -79,6 +85,12 @@ class Ansible(object):
         apb.execute()
 
     def write_inventory(self):
+        """
+        Writes the provisioner's inventory file to disk and returns None.
+
+        :return: None
+        """
+
         self._verify_inventory()
 
         template = jinja2.Environment().from_string(
@@ -89,6 +101,11 @@ class Ansible(object):
             f.write(template)
 
     def write_config(self):
+        """
+        Writes the provisioner's config file to disk and returns None.
+
+        :return: None
+        """
         # self._verify_config()
 
         template = jinja2.Environment().from_string(self._get_config_template(
@@ -97,11 +114,22 @@ class Ansible(object):
             f.write(template)
 
     def _setup(self):
-        temp_directory = os.path.dirname(self.inventory_file)
-        if not os.path.isdir(temp_directory):
-            os.mkdir(temp_directory)
+        """
+        Prepare the system for using the provisioner and returns None.
+
+        :return: None
+        """
+        if not os.path.isdir(self._config.ephemeral_directory):
+            os.mkdir(self._config.ephemeral_directory)
+        self.write_inventory()
+        self.write_config()
 
     def _verify_inventory(self):
+        """
+        Verify the inventory is valid and returns None.
+
+        :return: None
+        """
         if not self.inventory:
             msg = ("Instances missing from the 'platform' "
                    "section of molecule.yml.")
@@ -109,6 +137,11 @@ class Ansible(object):
             util.sysexit()
 
     def _get_inventory_template(self):
+        """
+        Returns an inventory template string.
+
+        :return: str
+        """
         return """
 # Molecule managed
 
@@ -123,6 +156,11 @@ class Ansible(object):
 """.strip()
 
     def _get_config_template(self):
+        """
+        Returns a config template string.
+
+        :return: str
+        """
         return """
 # Molecule managed
 

@@ -39,6 +39,11 @@ class AnsibleLint(base.Base):
 
     @property
     def default_options(self):
+        """
+        Default CLI arguments provided to `ansible-lint` and returns a dict.
+
+        :return: dict
+        """
         return {}
 
     def bake(self):

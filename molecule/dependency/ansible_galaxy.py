@@ -28,17 +28,16 @@ from molecule.dependency import base
 
 class AnsibleGalaxy(base.Base):
     def __init__(self, config):
-        """
-        Sets up the requirements to execute `ansible-galaxy` and returns None.
-
-        :param config: An instance of a Molecule config.
-        :return: None
-        """
         super(AnsibleGalaxy, self).__init__(config)
         self._ansible_galaxy_command = None
 
     @property
     def default_options(self):
+        """
+        Default CLI arguments provided to `ansible-galaxy` and returns a dict.
+
+        :return: dict
+        """
         role_file = os.path.join(self._config.scenario.directory,
                                  'requirements.yml')
         roles_path = os.path.join(self._config.ephemeral_directory, 'roles')
@@ -74,7 +73,7 @@ class AnsibleGalaxy(base.Base):
         if self._ansible_galaxy_command is None:
             self.bake()
 
-        self._role_setup()
+        self._setup()
         try:
             util.run_command(
                 self._ansible_galaxy_command,
@@ -82,7 +81,12 @@ class AnsibleGalaxy(base.Base):
         except sh.ErrorReturnCode as e:
             util.sysexit(e.exit_code)
 
-    def _role_setup(self):
+    def _setup(self):
+        """
+        Prepare the system for using `ansible-galaxy` and returns None.
+
+        :return: None
+        """
         role_directory = os.path.join(self._config.scenario.directory,
                                       self.options['roles-path'])
         if not os.path.isdir(role_directory):

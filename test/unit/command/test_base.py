@@ -44,27 +44,6 @@ def test_config_private_member(base_instance):
     assert isinstance(base_instance._config, config.Config)
 
 
-def test_init_calls_setup_provisioner(mocker, base_class, config_instance):
-    patched_setup_provisioner = mocker.patch(
-        'molecule.command.base.Base._setup_provisioner')
-
-    base_class(config_instance)
-
-    patched_setup_provisioner.assert_called_once_with()
-
-
-def test_setup_provisioner(mocker, base_instance):
-    patched_provisioner_write_inventory = mocker.patch(
-        'molecule.provisioner.Ansible.write_inventory')
-    patched_provisioner_write_config = mocker.patch(
-        'molecule.provisioner.Ansible.write_config')
-
-    base_instance._setup_provisioner()
-
-    patched_provisioner_write_inventory.assert_called_once_with()
-    patched_provisioner_write_config.assert_called_once_with()
-
-
 def test_get_local_config(mocker):
     m = mocker.patch('molecule.command.base._load_config')
     m.return_value = {'foo': 'bar'}

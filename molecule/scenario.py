@@ -23,6 +23,12 @@ import os
 
 class Scenario(object):
     def __init__(self, config):
+        """
+        A class encapsulating a scenario.
+
+        :param config: An instance of a Molecule config.
+        :return: None
+        """
         self._config = config
 
     @property

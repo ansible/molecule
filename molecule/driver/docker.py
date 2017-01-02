@@ -29,10 +29,21 @@ class Docker(base.Base):
 
     @property
     def testinfra_options(self):
+        """
+        Returns Testinfra specific options dict.
+
+        :returns: dict
+        """
         return {'connection': 'docker'}
 
     @property
     def inventory(self):
+        # TODO: This should belong in provisioner.
+        """
+        Construct a dict of hosts/connection options and returns a dict.
+
+        :returns: dict
+        """
         # instance-1-default ansible_connection=docker
         # instance-2-default ansible_connection=docker
         host_options = 'ansible_connection=docker'

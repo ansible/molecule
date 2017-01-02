@@ -31,8 +31,10 @@ def ansible_playbook_data():
 
 
 @pytest.fixture
-def ansible_playbook_instance(molecule_file, ansible_playbook_data):
-    c = config.Config(molecule_file, configs=[ansible_playbook_data])
+def ansible_playbook_instance(molecule_file, platforms_data,
+                              ansible_playbook_data):
+    configs = [ansible_playbook_data, platforms_data]
+    c = config.Config(molecule_file, configs=configs)
 
     return ansible_playbook.AnsiblePlaybook('inventory', 'playbook', c)
 

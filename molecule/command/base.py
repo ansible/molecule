@@ -41,19 +41,18 @@ class Base(object):
         :returns: None
         """
         self._config = config
-        self._setup_provisioner()
 
     @abc.abstractmethod
     def execute(self):  # pragma: no cover
         pass
 
-    # TODO(retr0h): Test it
-    def _setup_provisioner(self):
-        self._config.provisioner.write_inventory()
-        self._config.provisioner.write_config()
-
 
 def _get_local_config():
+    """
+    Load and return Molecule's local config and returns a dict.
+
+    :return: dict
+    """
     expanded_path = os.path.expanduser(config.MOLECULE_LOCAL_CONFIG)
     try:
         return _load_config(expanded_path)
@@ -62,11 +61,23 @@ def _get_local_config():
 
 
 def _load_config(config):
+    """
+    Open and YAML parse the provided file and returns a dict.
+
+    :param config: A string containing an absolute path to a Molecule config.
+    :return: dict
+    """
     with open(config, 'r') as stream:
-        return yaml.load(stream) or {}
+        return yaml.safe_load(stream) or {}
 
 
 def _verify_configs(configs):
+    """
+    Verify a Molecule config was found and returns None.
+
+    :param configs: A list containing absolute paths to Molecule config files.
+    :return: None
+    """
     if not configs:
         msg = ('Unable to find a molecule.yml.  Exiting.')
         util.print_error(msg)
@@ -74,6 +85,14 @@ def _verify_configs(configs):
 
 
 def get_configs(args, command_args):
+    """
+    Walk the current directory for Molecule config files and returns a list.
+
+    :param args: A dict of options, arguments and commands from the CLI.
+    :param command_args: A dict of options passed to the subcommand from
+     the CLI.
+    :return: list
+    """
     current_directory = os.path.join(os.getcwd(), 'molecule')
     local_config = _get_local_config()
     configs = [

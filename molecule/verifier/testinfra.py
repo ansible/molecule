@@ -29,12 +29,23 @@ from molecule.verifier import flake8
 
 class Testinfra(base.Base):
     def __init__(self, config):
+        """
+        Sets up the requirements to execute `testinfra` and returns None.
+
+        :param config: An instance of a Molecule config.
+        :return: None
+        """
         super(Testinfra, self).__init__(config)
         self._testinfra_command = None
         self._tests = self._get_tests()
 
     @property
     def default_options(self):
+        """
+        Default CLI arguments provided to `testinfra` and returns a dict.
+
+        :return: dict
+        """
         d = self._config.driver.testinfra_options
         if self._config.args.get('debug'):
             d['debug'] = True
@@ -85,6 +96,11 @@ class Testinfra(base.Base):
                 util.sysexit(e.exit_code)
 
     def _get_tests(self):
+        """
+        Walk the verifier's directory for tests and returns a list.
+
+        :return: list
+        """
         return [
             filename for filename in util.os_walk(self.directory, 'test_*.py')
         ]

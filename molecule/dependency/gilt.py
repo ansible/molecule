@@ -28,17 +28,16 @@ from molecule.dependency import base
 
 class Gilt(base.Base):
     def __init__(self, config):
-        """
-        Sets up the requirements to execute `gilt` and returns None.
-
-        :param config: An instance of a Molecule config.
-        :return: None
-        """
         super(Gilt, self).__init__(config)
         self._gilt_command = None
 
     @property
     def default_options(self):
+        """
+        Default CLI arguments provided to `gilt` and returns a dict.
+
+        :return: dict
+        """
         config = os.path.join(self._config.scenario.directory, 'gilt.yml')
         d = {'config': config}
         if self._config.args.get('debug'):
