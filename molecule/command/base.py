@@ -47,19 +47,6 @@ class Base(object):
         pass
 
 
-def _get_local_config():
-    """
-    Load and return Molecule's local config and returns a dict.
-
-    :return: dict
-    """
-    expanded_path = os.path.expanduser(config.MOLECULE_LOCAL_CONFIG)
-    try:
-        return _load_config(expanded_path)
-    except IOError:
-        return {}
-
-
 def _load_config(config):
     """
     Open and YAML parse the provided file and returns a dict.
@@ -94,13 +81,12 @@ def get_configs(args, command_args):
     :return: list
     """
     current_directory = os.path.join(os.getcwd(), 'molecule')
-    local_config = _get_local_config()
     configs = [
         config.Config(
             molecule_file=c,
             args=args,
             command_args=command_args,
-            configs=[local_config, _load_config(c)])
+            configs=[_load_config(c)])
         for c in util.os_walk(current_directory, 'molecule.yml')
     ]
 

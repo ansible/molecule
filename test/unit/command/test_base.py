@@ -44,22 +44,6 @@ def test_config_private_member(base_instance):
     assert isinstance(base_instance._config, config.Config)
 
 
-def test_get_local_config(mocker):
-    m = mocker.patch('molecule.command.base._load_config')
-    m.return_value = {'foo': 'bar'}
-
-    assert {'foo': 'bar'} == base._get_local_config()
-
-
-def test_get_local_config_returns_empty_dict_on_ioerror(monkeypatch):
-    def mockreturn(path):
-        return '/foo/bar/baz'
-
-    monkeypatch.setattr('os.path.expanduser', mockreturn)
-
-    assert {} == base._get_local_config()
-
-
 def test_load_config(temp_dir):
     inventory_file = os.path.join(temp_dir.strpath, 'inventory_file')
     with open(inventory_file, 'w') as outfile:

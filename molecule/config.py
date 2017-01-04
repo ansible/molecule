@@ -30,7 +30,6 @@ from molecule.driver import docker
 from molecule.lint import ansible_lint
 from molecule.verifier import testinfra
 
-MOLECULE_LOCAL_CONFIG = '~/.config/molecule/config.yml'
 MOLECULE_DIRECTORY = 'molecule'
 MOLECULE_EPHEMERAL_DIRECTORY = '.molecule'
 MOLECULE_FILE = 'molecule.yml'
