@@ -19,6 +19,7 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import abc
+import collections
 import os
 
 import yaml
@@ -65,8 +66,17 @@ def _verify_configs(configs):
     :param configs: A list containing absolute paths to Molecule config files.
     :return: None
     """
-    if not configs:
-        msg = ('Unable to find a molecule.yml.  Exiting.')
+    if configs:
+        scenario_names = [config.scenario.name for config in configs]
+        for scenario_name, n in collections.Counter(scenario_names).items():
+            if n > 1:
+                msg = ("Duplicate scenario name '{}' found.  "
+                       'Exiting.').format(scenario_name)
+                util.print_error(msg)
+                util.sysexit()
+
+    else:
+        msg = 'Unable to find a molecule.yml.  Exiting.'
         util.print_error(msg)
         util.sysexit()
 

@@ -67,4 +67,4 @@ def create(ctx, scenario_name):  # pragma: no cover
 
     for config in base.get_configs(args, command_args):
         c = Create(config)
-        c.execute()
+        #c.execute()
