@@ -57,8 +57,8 @@ def _process_templates(template_dir, extra_context, output_dir,
 def _resolve_template_dir(template_dir):
     if not os.path.isabs(template_dir):
         template_dir = os.path.join(
-            os.path.dirname(__file__), os.path.pardir, os.path.pardir,
-            'cookiecutter', template_dir)
+            os.path.dirname(__file__), os.path.pardir, 'cookiecutter',
+            template_dir)
 
     return template_dir
 
