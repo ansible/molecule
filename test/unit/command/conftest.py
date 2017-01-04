@@ -54,3 +54,8 @@ def patched_ansible_galaxy(mocker):
 @pytest.fixture
 def patched_testinfra(mocker):
     return mocker.patch('molecule.verifier.testinfra.Testinfra.execute')
+
+
+@pytest.fixture
+def patched_verify_configs(mocker):
+    return mocker.patch('molecule.command.base._verify_configs')

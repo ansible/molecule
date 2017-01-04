@@ -32,6 +32,10 @@ class Dependency(base.Base):
 
         >>> molecule dependency
 
+        Targeting a specific scenario:
+
+        >>> molecule dependency --scenario-name foo
+
         Executing with `debug`:
 
         >>> molecule --debug dependency
@@ -48,10 +52,11 @@ class Dependency(base.Base):
 
 @click.command()
 @click.pass_context
-def dependency(ctx):  # pragma: no cover
+@click.option('--scenario-name', help='Name of the scenario to target.')
+def dependency(ctx, scenario_name):  # pragma: no cover
     """ Start instances. """
     args = ctx.obj.get('args')
-    command_args = {'subcommand': __name__}
+    command_args = {'subcommand': __name__, 'scenario_name': scenario_name}
 
     for config in base.get_configs(args, command_args):
         d = Dependency(config)
