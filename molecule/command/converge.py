@@ -35,6 +35,10 @@ class Converge(base.Base):
 
         >>> molecule converge
 
+        Targeting a specific scenario:
+
+        >>> molecule converge --scenario-name foo
+
         Executing with `debug`:
 
         >>> molecule --debug converge
@@ -56,10 +60,11 @@ class Converge(base.Base):
 
 @click.command()
 @click.pass_context
-def converge(ctx):  # pragma: no cover
+@click.option('--scenario-name', help='Name of the scenario to target.')
+def converge(ctx, scenario_name):  # pragma: no cover
     """ Use a provisioner to configure instances. """
     args = ctx.obj.get('args')
-    command_args = {'subcommand': __name__}
+    command_args = {'subcommand': __name__, 'scenario_name': scenario_name}
 
     for config in base.get_configs(args, command_args):
         for task in config.scenario.converge_sequence:

@@ -32,6 +32,10 @@ class Lint(base.Base):
 
         >>> molecule lint
 
+        Targeting a specific scenario:
+
+        >>> molecule lint --scenario-name foo
+
         Executing with `debug`:
 
         >>> molecule --debug lint
@@ -48,10 +52,11 @@ class Lint(base.Base):
 
 @click.command()
 @click.pass_context
-def lint(ctx):  # pragma: no cover
+@click.option('--scenario-name', help='Name of the scenario to target.')
+def lint(ctx, scenario_name):  # pragma: no cover
     """ Lint the role. """
     args = ctx.obj.get('args')
-    command_args = {'subcommand': __name__}
+    command_args = {'subcommand': __name__, 'scenario_name': scenario_name}
 
     for config in base.get_configs(args, command_args):
         l = Lint(config)

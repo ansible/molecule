@@ -101,3 +101,27 @@ def test_get_configs(temp_dir):
     assert 1 == len(result)
     assert isinstance(result, list)
     assert isinstance(result[0], config.Config)
+
+
+def test_get_configs_verify_configs(patched_verify_configs, temp_dir):
+    base.get_configs({}, {})
+
+    patched_verify_configs.assert_called_once_with([])
+
+
+def test_get_configs_filter_configs_for_scenario(
+        mocker, patched_verify_configs, temp_dir):
+    m = mocker.patch('molecule.command.base._filter_configs_for_scenario')
+    base.get_configs({}, {'scenario_name': 'default'})
+
+    m.assert_called_with('default', [])
+
+
+def test_filter_configs_for_scenario(config_instance):
+    configs = [config_instance, config_instance]
+
+    result = base._filter_configs_for_scenario('default', configs)
+    assert 2 == len(result)
+
+    result = base._filter_configs_for_scenario('invalid', configs)
+    assert [] == result

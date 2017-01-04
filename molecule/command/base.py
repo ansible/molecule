@@ -103,6 +103,26 @@ def get_configs(args, command_args):
             configs=[local_config, _load_config(c)])
         for c in util.os_walk(current_directory, 'molecule.yml')
     ]
+
+    scenario_name = command_args.get('scenario_name')
+    if scenario_name:
+        configs = _filter_configs_for_scenario(scenario_name, configs)
+
     _verify_configs(configs)
 
     return configs
+
+
+def _filter_configs_for_scenario(scenario_name, configs):
+    """
+    Find the config matching the provided scenario name and return a list.
+
+    :param scenario_name: A string representing the name of the scenario's
+     config to return
+    :param configs: A list containing Molecule config instances.
+    :return: list
+    """
+
+    return [
+        config for config in configs if config.scenario.name == scenario_name
+    ]

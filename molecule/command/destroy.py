@@ -34,6 +34,10 @@ class Destroy(base.Base):
 
         >>> molecule destroy
 
+        Targeting a specific scenario:
+
+        >>> molecule destroy --scenario-name foo
+
         Executing with `debug`:
 
         >>> molecule --debug destroy
@@ -55,10 +59,11 @@ class Destroy(base.Base):
 
 @click.command()
 @click.pass_context
-def destroy(ctx):  # pragma: no cover
+@click.option('--scenario-name', help='Name of the scenario to target.')
+def destroy(ctx, scenario_name):  # pragma: no cover
     """ Destroy instances. """
     args = ctx.obj.get('args')
-    command_args = {'subcommand': __name__}
+    command_args = {'subcommand': __name__, 'scenario_name': scenario_name}
 
     for config in base.get_configs(args, command_args):
         d = Destroy(config)
