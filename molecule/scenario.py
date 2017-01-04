@@ -54,6 +54,7 @@ class Scenario(object):
             - verify
             - destroy
     """
+
     def __init__(self, config):
         """
         A class encapsulating a scenario.

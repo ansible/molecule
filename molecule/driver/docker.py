@@ -38,6 +38,7 @@ class Docker(base.Base):
 
     .. _`Docker`: https://www.docker.com
     """
+
     def __init__(self, config):
         super(Docker, self).__init__(config)
 

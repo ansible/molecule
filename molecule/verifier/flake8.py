@@ -33,6 +33,7 @@ class Flake8(base.Base):
 
     .. _`Flake8`: http://flake8.pycqa.org/en/latest/
     """
+
     def __init__(self, config):
         """
         Sets up the requirements to execute `flake8` and returns None.

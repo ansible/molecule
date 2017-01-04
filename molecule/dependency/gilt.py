@@ -51,6 +51,7 @@ class Gilt(base.Base):
 
     .. _`Gilt`: http://gilt.readthedocs.io
     """
+
     def __init__(self, config):
         super(Gilt, self).__init__(config)
         self._gilt_command = None

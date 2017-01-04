@@ -146,7 +146,7 @@ def test_run_command_with_debug(patched_print_debug):
     cmd = sh.ls.bake()
     util.run_command(cmd, debug=True)
 
-    patched_print_debug.assert_called_with('COMMAND', '/bin/ls')
+    patched_print_debug.assert_called_with('COMMAND', sh.which('ls'))
 
 
 def test_os_walk(temp_dir):

@@ -56,6 +56,7 @@ class AnsibleLint(base.Base):
 
     .. _`Ansible Lint`: https://github.com/willthames/ansible-lint
     """
+
     def __init__(self, config):
         """
         Sets up the requirements to execute `ansible-lint` and returns None.

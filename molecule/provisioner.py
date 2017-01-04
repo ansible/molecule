@@ -42,6 +42,7 @@ class Ansible(object):
             debug: True
 
     """
+
     def __init__(self, config):
         """
         A class encapsulating the provisioner.

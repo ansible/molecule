@@ -52,6 +52,7 @@ class AnsibleGalaxy(base.Base):
 
     .. _`Ansible Galaxy`: http://docs.ansible.com/ansible/galaxy.html
     """
+
     def __init__(self, config):
         super(AnsibleGalaxy, self).__init__(config)
         self._ansible_galaxy_command = None
