@@ -27,9 +27,8 @@ import cookiecutter.main
 from molecule import config
 from molecule import util
 
-def _process_templates(template_dir,
-                       extra_context,
-                       output_dir,
+
+def _process_templates(template_dir, extra_context, output_dir,
                        overwrite=True):
     """
     Process templates as found in the named directory.

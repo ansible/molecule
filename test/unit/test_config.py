@@ -167,7 +167,7 @@ def test_combine_default_and_project_dicts(project_config_data, molecule_file,
     assert {} == c.config['driver']['options']
 
 
-def test_combine_default_and_project_dicts(
+def test_combine_default_local_and_project_dicts(
         project_config_data, local_config_data, molecule_file, config_data):
     configs = [project_config_data, local_config_data]
     c = config.Config(molecule_file, configs=configs)

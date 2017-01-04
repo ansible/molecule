@@ -1,4 +1,5 @@
 docker-py
+gilt-python
 mock
 pytest
 pytest-cov
