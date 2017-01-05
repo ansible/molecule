@@ -19,9 +19,9 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import os
-import re
 
 import pytest
+import yaml
 
 from molecule import provisioner
 from molecule import config
@@ -59,7 +59,7 @@ def test_options_property(provisioner_instance):
         'config_file': 'ansible.cfg',
         'diff': True,
         'host_key_checking': False,
-        'inventory_file': 'ansible_inventory',
+        'inventory_file': 'ansible_inventory.yml',
         'limit': 'all',
         'playbook': 'playbook.yml',
         'raw_ssh_args': [
@@ -91,8 +91,51 @@ def test_options_property_handles_cli_args(
 
 def test_inventory_property(provisioner_instance):
     x = {
-        'instance-1-default': ['ansible_connection=docker'],
-        'instance-2-default': ['ansible_connection=docker']
+        'bar': {
+            'hosts': {
+                'instance-1-default': {
+                    'ansible_connection': 'docker'
+                }
+            }
+        },
+        'foo': {
+            'hosts': {
+                'instance-1-default': {
+                    'ansible_connection': 'docker'
+                },
+                'instance-2-default': {
+                    'ansible_connection': 'docker'
+                }
+            }
+        },
+        'baz': {
+            'hosts': {
+                'instance-2-default': {
+                    'ansible_connection': 'docker'
+                }
+            }
+        }
+    }
+
+    assert x == provisioner_instance.inventory
+
+
+def test_inventory_property_handles_missing_groups(temp_dir,
+                                                   provisioner_instance):
+    platforms = [{'name': 'instance-1'}, {'name': 'instance-2'}]
+    provisioner_instance._config.config['platforms'] = platforms
+
+    x = {
+        'ungrouped': {
+            'hosts': {
+                'instance-1-default': {
+                    'ansible_connection': 'docker'
+                },
+                'instance-2-default': {
+                    'ansible_connection': 'docker'
+                }
+            }
+        }
     }
 
     assert x == provisioner_instance.inventory
@@ -100,7 +143,7 @@ def test_inventory_property(provisioner_instance):
 
 def test_inventory_file_property(provisioner_instance):
     x = os.path.join(provisioner_instance._config.ephemeral_directory,
-                     'ansible_inventory')
+                     'ansible_inventory.yml')
 
     assert x == provisioner_instance.inventory_file
 
@@ -137,39 +180,36 @@ def test_write_inventory(temp_dir, provisioner_instance):
 
     assert os.path.exists(provisioner_instance.inventory_file)
 
-    content = open(provisioner_instance.inventory_file, 'r').read()
-    assert re.search(r'# Molecule managed', content)
-    assert re.search(r'instance-1-default ansible_connection=docker', content)
-    assert re.search(r'instance-2-default ansible_connection=docker', content)
+    with open(provisioner_instance.inventory_file, 'r') as stream:
+        data = yaml.load(stream)
+        x = {
+            'bar': {
+                'hosts': {
+                    'instance-1-default': {
+                        'ansible_connection': 'docker'
+                    }
+                }
+            },
+            'foo': {
+                'hosts': {
+                    'instance-1-default': {
+                        'ansible_connection': 'docker'
+                    },
+                    'instance-2-default': {
+                        'ansible_connection': 'docker'
+                    }
+                }
+            },
+            'baz': {
+                'hosts': {
+                    'instance-2-default': {
+                        'ansible_connection': 'docker'
+                    }
+                }
+            }
+        }
 
-    assert re.search(r'\[bar\].*?instance-1-default.*?(\[\w+])?', content,
-                     re.DOTALL)
-    assert re.search(
-        r'\[foo\].*?instance-1-default.*?instance-2-default.*?(\[\w+])?',
-        content, re.DOTALL)
-    assert re.search(r'\[baz\].*?instance-2-default.*?(\[\w+])?', content,
-                     re.DOTALL)
-
-
-def test_write_inventory_handles_missing_groups(temp_dir,
-                                                provisioner_instance):
-    platforms = [{'name': 'instance-1'}, {'name': 'instance-2'}]
-    provisioner_instance._config.config['platforms'] = platforms
-    provisioner_instance.write_inventory()
-
-    assert os.path.exists(provisioner_instance.inventory_file)
-
-
-def test_write_inventory_prints_error_when_missing_hosts(
-        temp_dir, patched_print_error, provisioner_instance):
-    provisioner_instance._config.config['platforms'] = []
-    with pytest.raises(SystemExit) as e:
-        provisioner_instance.write_inventory()
-
-    assert 1 == e.value.code
-
-    msg = "Instances missing from the 'platform' section of molecule.yml."
-    patched_print_error.assert_called_once_with(msg)
+        assert x == data
 
 
 def test_write_config(temp_dir, provisioner_instance):
@@ -189,3 +229,26 @@ def test_setup(mocker, temp_dir, provisioner_instance):
 
     patched_provisioner_write_inventory.assert_called_once_with()
     patched_provisioner_write_config.assert_called_once_with()
+
+
+def test_verify_inventory(provisioner_instance):
+    provisioner_instance._verify_inventory()
+
+
+def test_verify_inventory_raises_when_missing_hosts(
+        temp_dir, patched_print_error, provisioner_instance):
+    provisioner_instance._config.config['platforms'] = []
+    with pytest.raises(SystemExit) as e:
+        provisioner_instance._verify_inventory()
+
+    assert 1 == e.value.code
+
+    msg = "Instances missing from the 'platform' section of molecule.yml."
+    patched_print_error.assert_called_once_with(msg)
+
+
+def test_vivify():
+    d = provisioner.vivify()
+    d['bar']['baz'] = 'qux'
+
+    assert 'qux' == str(d['bar']['baz'])

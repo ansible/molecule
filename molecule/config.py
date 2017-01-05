@@ -18,7 +18,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import collections
 import os
 
 import anyconfig
@@ -79,23 +78,6 @@ class Config(object):
         return self.config['platforms']
 
     @property
-    def platform_groups(self):
-        #  [baz]
-        #  instance-2-default
-        #  [foo]
-        #  instance-1-default
-        #  instance-2-default
-        #  [bar]
-        #  instance-1-default
-        dd = collections.defaultdict(list)
-        for platform in self.config['platforms']:
-            for group in platform.get('groups', []):
-                name = '{}-{}'.format(platform['name'], self.scenario.name)
-                dd[group].append(name)
-
-        return dict(dd)
-
-    @property
     def provisioner(self):
         if self.config['provisioner']['name'] == 'ansible':
             return provisioner.Ansible(self)
@@ -153,7 +135,7 @@ class Config(object):
                     'config_file': 'ansible.cfg',
                     'diff': True,
                     'host_key_checking': False,
-                    'inventory_file': 'ansible_inventory',
+                    'inventory_file': 'ansible_inventory.yml',
                     'limit': 'all',
                     'playbook': 'playbook.yml',
                     'raw_ssh_args': [
