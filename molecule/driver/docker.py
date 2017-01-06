@@ -18,8 +18,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import collections
-
 from molecule.driver import base
 
 
@@ -45,26 +43,17 @@ class Docker(base.Base):
     @property
     def testinfra_options(self):
         """
-        Returns Testinfra specific options dict.
+        Returns a Testinfra specific options dict.
 
         :returns: dict
         """
         return {'connection': 'docker'}
 
     @property
-    def inventory(self):
-        # TODO: This should belong in provisioner.
+    def connection_options(self):
         """
-        Construct a dict of hosts/connection options and returns a dict.
+        Returns a driver specific connection options dict.
 
-        :returns: dict
+        :returns: str
         """
-        # instance-1-default ansible_connection=docker
-        # instance-2-default ansible_connection=docker
-        host_options = 'ansible_connection=docker'
-        dd = collections.defaultdict(list)
-        for d in self._config.platforms:
-            name = '{}-{}'.format(d['name'], self._config.scenario.name)
-            dd[name].append(host_options)
-
-        return dict(dd)
+        return {'ansible_connection': 'docker'}

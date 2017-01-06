@@ -91,51 +91,6 @@ def test_platforms_property(config_instance):
     assert x == config_instance.platforms
 
 
-def test_platform_groups_property(config_instance):
-    x = {
-        'bar': ['instance-1-default'],
-        'foo': ['instance-1-default', 'instance-2-default'],
-        'baz': ['instance-2-default']
-    }
-
-    assert x == config_instance.platform_groups
-
-
-@pytest.fixture
-def platforms_data_incomplete_groups():
-    return {
-        'platforms': [{
-            'name': 'instance-1',
-            'groups': ['foo', 'bar'],
-        }, {
-            'name': 'instance-2',
-        }]
-    }
-
-
-def test_platform_groups_property_handles_missing_group(
-        platforms_data_incomplete_groups, molecule_file, config_data):
-    configs = [platforms_data_incomplete_groups, config_data]
-    c = config.Config(molecule_file, configs=configs)
-
-    x = {'foo': ['instance-1-default'], 'bar': ['instance-1-default']}
-
-    assert x == c.platform_groups
-
-
-@pytest.fixture
-def platforms_data_no_groups():
-    return {'platforms': [{'name': 'instance-1', }, {'name': 'instance-2', }]}
-
-
-def test_platform_groups_property_handles_no_groups(
-        platforms_data_no_groups, molecule_file, config_data):
-    configs = [platforms_data_no_groups, config_data]
-    c = config.Config(molecule_file, configs=configs)
-
-    assert {} == c.platform_groups
-
-
 def test_provisioner_property(config_instance):
     assert isinstance(config_instance.provisioner, provisioner.Ansible)
 
