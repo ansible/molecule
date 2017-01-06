@@ -247,8 +247,8 @@ def test_verify_inventory_raises_when_missing_hosts(
     patched_print_error.assert_called_once_with(msg)
 
 
-def test_vivify():
-    d = provisioner.vivify()
+def test_vivify(provisioner_instance):
+    d = provisioner_instance._vivify()
     d['bar']['baz'] = 'qux'
 
     assert 'qux' == str(d['bar']['baz'])
