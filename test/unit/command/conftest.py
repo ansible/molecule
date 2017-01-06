@@ -36,8 +36,12 @@ def config_instance(molecule_file, platforms_data, command_data):
 
 
 @pytest.fixture
+# TODO patched_provisioner_coverge
 def patched_ansible_converge(mocker):
-    return mocker.patch('molecule.provisioner.Ansible.converge')
+    m = mocker.patch('molecule.provisioner.Ansible.converge')
+    m.return_value = 'patched-ansible-converge-stdout'
+
+    return m
 
 
 @pytest.fixture
@@ -49,6 +53,12 @@ def patched_ansible_lint(mocker):
 def patched_ansible_galaxy(mocker):
     return mocker.patch(
         'molecule.dependency.ansible_galaxy.AnsibleGalaxy.execute')
+
+
+@pytest.fixture
+def patched_command_idempotence_is_idempotent(mocker):
+    return mocker.patch(
+        'molecule.command.idempotence.Idempotence._is_idempotent')
 
 
 @pytest.fixture

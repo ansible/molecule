@@ -167,12 +167,12 @@ def test_init_calls_setup(mocker, molecule_file, platforms_data,
     patched_setup.assert_called_once_with()
 
 
-def test_converge(provisioner_instance, patched_ansible_playbook):
-    provisioner_instance.converge('inventory', 'playbook')
+def test_converge(provisioner_instance, mocker, patched_ansible_playbook):
+    result = provisioner_instance.converge('inventory', 'playbook')
 
     patched_ansible_playbook.assert_called_once_with(
         'inventory', 'playbook', provisioner_instance._config)
-    patched_ansible_playbook.return_value.execute.assert_called_once_with()
+    assert result == 'patched-ansible-playbook-stdout'
 
 
 def test_write_inventory(temp_dir, provisioner_instance):

@@ -77,7 +77,10 @@ def platforms_data():
 
 @pytest.fixture
 def patched_ansible_playbook(mocker):
-    return mocker.patch('molecule.ansible_playbook.AnsiblePlaybook')
+    m = mocker.patch('molecule.ansible_playbook.AnsiblePlaybook')
+    m.return_value.execute.return_value = 'patched-ansible-playbook-stdout'
+
+    return m
 
 
 @pytest.fixture
@@ -102,4 +105,7 @@ def patched_print_success(mocker):
 
 @pytest.fixture
 def patched_run_command(mocker):
-    return mocker.patch('molecule.util.run_command')
+    m = mocker.patch('molecule.util.run_command')
+    m.return_value = mocker.Mock(stdout='patched-run-command-stdout')
+
+    return m

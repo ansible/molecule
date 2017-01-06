@@ -64,9 +64,10 @@ def test_bake(ansible_playbook_instance):
 
 def test_execute(patched_run_command, ansible_playbook_instance):
     ansible_playbook_instance._ansible_playbook_command = 'patched-command'
-    ansible_playbook_instance.execute()
+    result = ansible_playbook_instance.execute()
 
     patched_run_command.assert_called_once_with('patched-command', debug=None)
+    assert 'patched-run-command-stdout' == result
 
 
 def test_execute_bakes(patched_run_command, ansible_playbook_instance):
