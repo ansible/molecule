@@ -25,6 +25,7 @@ import pytest
 from molecule import config
 from molecule import provisioner
 from molecule import scenario
+from molecule import state
 from molecule.dependency import ansible_galaxy
 from molecule.driver import docker
 from molecule.lint import ansible_lint
@@ -103,6 +104,10 @@ def test_provisioner_property(config_instance):
 
 def test_scenario_property(config_instance):
     assert isinstance(config_instance.scenario, scenario.Scenario)
+
+
+def test_state_property(config_instance):
+    assert isinstance(config_instance.state, state.State)
 
 
 def test_verifier_property(config_instance):

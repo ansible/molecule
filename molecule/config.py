@@ -24,6 +24,7 @@ import anyconfig
 
 from molecule import provisioner
 from molecule import scenario
+from molecule import state
 from molecule.dependency import ansible_galaxy
 from molecule.driver import docker
 from molecule.lint import ansible_lint
@@ -86,6 +87,10 @@ class Config(object):
     @property
     def scenario(self):
         return scenario.Scenario(self)
+
+    @property
+    def state(self):
+        return state.State(self)
 
     @property
     def verifier(self):
