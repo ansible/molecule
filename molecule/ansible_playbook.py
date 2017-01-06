@@ -26,7 +26,12 @@ from molecule import util
 
 
 class AnsiblePlaybook(object):
-    def __init__(self, inventory, playbook, config):
+    def __init__(self,
+                 inventory,
+                 playbook,
+                 config,
+                 out=util.callback_info,
+                 err=util.callback_error):
         """
         Sets up the requirements to execute `ansible-playbook` and returns
         None.
@@ -34,12 +39,18 @@ class AnsiblePlaybook(object):
         :param playbook: A string containing the path to the playbook.
         :param inventory: A string containing the path to the inventory.
         :param config: An instance of a Molecule config.
+        :param out: An optional function to process STDOUT for underlying
+         :func:`sh` call.
+        :param err: An optional function to process STDERR for underlying
+         :func:`sh` call.
         :returns: None
         """
         self._ansible_playbook_command = None
         self._playbook = playbook
         self._inventory = inventory
         self._config = config
+        self._out = out
+        self._err = err
 
     def bake(self):
         """
@@ -52,24 +63,21 @@ class AnsiblePlaybook(object):
         env = os.environ.copy()
         env['ANSIBLE_CONFIG'] = self._config.provisioner.config_file
         self._ansible_playbook_command = sh.ansible_playbook.bake(
-            options,
-            self._playbook,
-            _env=env,
-            _out=util.callback_info,
-            _err=util.callback_error)
+            options, self._playbook, _env=env, _out=self._out, _err=self._err)
 
     def execute(self):
         """
-        Executes `ansible-playbook` and returns None.
+        Executes `ansible-playbook` and returns a string.
 
-        :return: None
+        :return: str
         """
         if self._ansible_playbook_command is None:
             self.bake()
 
         try:
-            util.run_command(
+            cmd = util.run_command(
                 self._ansible_playbook_command,
                 debug=self._config.args.get('debug'))
+            return cmd.stdout
         except sh.ErrorReturnCode as e:
             util.sysexit(e.exit_code)

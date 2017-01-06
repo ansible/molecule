@@ -72,6 +72,13 @@ Destroy
    :undoc-members:
    :members: execute
 
+Idempotence
+^^^^^^^^^^^
+
+.. autoclass:: molecule.command.idempotence.Idempotence
+   :undoc-members:
+   :members: execute
+
 Init
 ^^^^
 

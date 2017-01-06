@@ -50,6 +50,12 @@ def test_command_destroy(with_scenario):
     sh.molecule('destroy')
 
 
+@pytest.mark.parametrize(
+    'with_scenario', ['docker'], indirect=['with_scenario'])
+def test_command_idempotence(with_scenario):
+    sh.molecule('idempotence')
+
+
 def test_command_init_role(temp_dir):
     role_directory = os.path.join(temp_dir.strpath, 'test-init')
     sh.molecule('init', 'role', '--role-name', 'test-init')

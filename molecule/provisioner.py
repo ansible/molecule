@@ -43,7 +43,6 @@ class Ansible(object):
           name: ansible
           options:
             debug: True
-
     """
 
     def __init__(self, config):
@@ -111,15 +110,20 @@ class Ansible(object):
     def config_file(self):
         return os.path.join(self._config.ephemeral_directory, 'ansible.cfg')
 
-    def converge(self, inventory, playbook):
+    def converge(self, inventory, playbook, **kwargs):
         """
-        Executes `ansible-playbook` and returns None.
+        Executes `ansible-playbook` and returns a string.
 
-        :return: None
+        :param inventory: A string containing an absolute path to a
+         provisioner's inventory file.
+        :param playbook: A string containing an absolute path to a
+         provisioner's playbook.
+        :param kwargs: Optional keyword arguments.
+        :return: str
         """
         apb = ansible_playbook.AnsiblePlaybook(inventory, playbook,
-                                               self._config)
-        apb.execute()
+                                               self._config, **kwargs)
+        return apb.execute()
 
     def write_inventory(self):
         """

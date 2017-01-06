@@ -160,6 +160,7 @@ class Config(object):
                 'converge_sequence': ['create', 'converge'],
                 'test_sequence':
                 ['destroy', 'create', 'converge', 'lint', 'verify', 'destroy'],
+                'idempotence_sequence': ['create', 'converge', 'idempotence'],
             },
             'verifier': {
                 'name': 'testinfra',
