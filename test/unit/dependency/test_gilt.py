@@ -78,8 +78,8 @@ def test_options_property_handles_cli_args(molecule_file, gilt_config,
     assert x == d.options
 
 
-@pytest.mark.skip(reason="baked command does not always return arguments in"
-                  "the same order")
+@pytest.mark.skip(reason='baked command does not always return arguments in'
+                  'the same order')
 def test_bake(gilt_config, gilt_instance):
     gilt_instance.bake()
     x = '{} --foo=bar --config={} overlay'.format(str(sh.gilt), gilt_config)
@@ -101,8 +101,8 @@ def test_execute_does_not_execute(patched_run_command, gilt_instance):
     assert not patched_run_command.called
 
 
-@pytest.mark.skip(reason="baked command does not always return arguments in"
-                  "the same order")
+@pytest.mark.skip(reason='baked command does not always return arguments in'
+                  'the same order')
 def test_execute_bakes(patched_run_command, gilt_config, gilt_instance):
     gilt_instance.execute()
     assert gilt_instance._gilt_command is not None

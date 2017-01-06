@@ -45,11 +45,11 @@ class Converge(base.Base):
 
         :return: None
         """
-        msg = "Scenario: [{}]".format(self._config.scenario.name)
+        msg = 'Scenario: [{}]'.format(self._config.scenario.name)
         util.print_info(msg)
-        msg = "Provisioner: [{}]".format(self._config.provisioner.name)
+        msg = 'Provisioner: [{}]'.format(self._config.provisioner.name)
         util.print_info(msg)
-        msg = "Playbook: [{}]".format(
+        msg = 'Playbook: [{}]'.format(
             os.path.basename(self._config.scenario.converge))
         util.print_info(msg)
 

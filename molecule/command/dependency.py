@@ -42,9 +42,9 @@ class Dependency(base.Base):
 
         :return: None
         """
-        msg = "Scenario: [{}]".format(self._config.scenario.name)
+        msg = 'Scenario: [{}]'.format(self._config.scenario.name)
         util.print_info(msg)
-        msg = "Dependency: [{}]".format(self._config.dependency.name)
+        msg = 'Dependency: [{}]'.format(self._config.dependency.name)
         util.print_info(msg)
 
         self._config.dependency.execute()

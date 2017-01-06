@@ -46,11 +46,11 @@ class Idempotence(base.Base):
 
         :return: None
         """
-        msg = "Scenario: [{}]".format(self._config.scenario.name)
+        msg = 'Scenario: [{}]'.format(self._config.scenario.name)
         util.print_info(msg)
-        msg = "Provisioner: [{}]".format(self._config.provisioner.name)
+        msg = 'Provisioner: [{}]'.format(self._config.provisioner.name)
         util.print_info(msg)
-        msg = "Idempotence Verification of Playbook: [{}]".format(
+        msg = 'Idempotence Verification of Playbook: [{}]'.format(
             os.path.basename(self._config.scenario.converge))
         util.print_info(msg)
 
@@ -78,7 +78,7 @@ class Idempotence(base.Base):
         """
 
         # Remove blank lines to make regex matches easier
-        output = re.sub("\n\s*\n*", "\n", output)
+        output = re.sub('\n\s*\n*', '\n', output)
 
         # Look for any non-zero changed lines
         changed = re.search(r'(changed=[1-9][0-9]*)', output)
