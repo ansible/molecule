@@ -135,8 +135,13 @@ class Ansible(object):
         yaml.add_representer(collections.defaultdict,
                              yaml.representer.Representer.represent_dict)
 
-        with open(self.inventory_file, 'w') as f:
-            f.write(yaml.dump(self.inventory))
+        util.write_file(self.inventory_file, yaml.dump(self.inventory))
+        # TODO(retr0h): Move to safe dump
+        #  yaml.safe_dump(
+        #      self.inventory,
+        #      default_flow_style=False,
+        #      explicit_start=True,
+        #      encoding='utf-8'))
 
     def write_config(self):
         """
@@ -146,10 +151,10 @@ class Ansible(object):
         """
         # self._verify_config()
 
-        template = jinja2.Environment().from_string(self._get_config_template(
-        )).render()
-        with open(self.config_file, 'w') as f:
-            f.write(template)
+        template = jinja2.Environment()
+        template = template.from_string(self._get_config_template())
+        template = template.render()
+        util.write_file(self.config_file, template)
 
     def _setup(self):
         """
@@ -157,8 +162,6 @@ class Ansible(object):
 
         :return: None
         """
-        if not os.path.isdir(self._config.ephemeral_directory):
-            os.mkdir(self._config.ephemeral_directory)
         self.write_inventory()
         self.write_config()
 

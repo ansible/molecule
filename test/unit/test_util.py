@@ -20,6 +20,8 @@
 
 from __future__ import print_function
 
+import binascii
+
 import colorama
 import os
 import pytest
@@ -160,3 +162,13 @@ def test_os_walk(temp_dir):
 
     result = [f for f in util.os_walk(molecule_directory, 'molecule.yml')]
     assert 3 == len(result)
+
+
+def test_write_file(temp_dir):
+    dest_file = os.path.join(temp_dir.strpath, 'test_util_write_file.tmp')
+    contents = binascii.b2a_hex(os.urandom(15))
+    util.write_file(dest_file, contents)
+    with open(dest_file, 'r') as f:
+        data = f.read()
+
+    assert data == contents

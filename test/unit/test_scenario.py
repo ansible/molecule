@@ -32,8 +32,7 @@ def scenario_data():
 
 
 @pytest.fixture
-def scenario_instance(scenario_data):
-    molecule_file = config.molecule_file('/foo/bar/molecule/default')
+def scenario_instance(molecule_file, scenario_data):
     c = config.Config(molecule_file, configs=[scenario_data])
 
     return scenario.Scenario(c)
@@ -61,8 +60,8 @@ def test_teardown_property(scenario_instance):
     assert x == scenario_instance.teardown
 
 
-def test_directory_property(scenario_instance):
-    assert '/foo/bar/molecule/default' == scenario_instance.directory
+def test_directory_property(molecule_scenario_directory, scenario_instance):
+    assert molecule_scenario_directory == scenario_instance.directory
 
 
 def test_converge_sequence_property(scenario_instance):

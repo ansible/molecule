@@ -157,14 +157,14 @@ def test_config_file_property(provisioner_instance):
 
 def test_init_calls_setup(mocker, molecule_file, platforms_data,
                           provisioner_data):
-    patched_setup = mocker.patch('molecule.provisioner.Ansible._setup')
+    m = mocker.patch('molecule.provisioner.Ansible._setup')
     c = config.Config(
         molecule_file,
         args={'debug': True},
         configs=[platforms_data, provisioner_data])
     provisioner.Ansible(c)
 
-    patched_setup.assert_called_once_with()
+    m.assert_called_once_with()
 
 
 def test_converge(provisioner_instance, mocker, patched_ansible_playbook):

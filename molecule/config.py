@@ -53,6 +53,7 @@ class Config(object):
         self.args = args
         self.command_args = command_args
         self.config = self._combine(configs)
+        self._setup()
 
     @property
     def ephemeral_directory(self):
@@ -207,6 +208,15 @@ class Config(object):
         conf.update(b)
 
         return conf
+
+    def _setup(self):
+        """
+        Prepare the system for Molecule and return None.
+
+        :return: None
+        """
+        if not os.path.isdir(self.ephemeral_directory):
+            os.mkdir(self.ephemeral_directory)
 
 
 def molecule_directory(path):

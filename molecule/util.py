@@ -105,3 +105,15 @@ def os_walk(directory, pattern):
                 filename = os.path.join(root, basename)
 
                 yield filename
+
+
+def write_file(filename, content):
+    """
+    Writes a file with the given filename and content and returns None.
+
+    :param filename: A string containing the target filename.
+    :param content: A string containing the data to be written.
+    :return: None
+    """
+    with open(filename, 'w') as f:
+        f.write(content)
