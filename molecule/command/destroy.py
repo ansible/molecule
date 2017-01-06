@@ -56,6 +56,8 @@ class Destroy(base.Base):
             self._config.provisioner.inventory_file,
             self._config.scenario.teardown)
 
+        self._config.state.reset()
+
 
 @click.command()
 @click.pass_context

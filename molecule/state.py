@@ -24,7 +24,10 @@ import yaml
 
 from molecule import util
 
-VALID_KEYS = ['created', ]
+VALID_KEYS = [
+    'created',
+    'converged',
+]
 
 
 class InvalidState(Exception):
@@ -67,6 +70,10 @@ class State(object):
         return self._state_file
 
     @property
+    def converged(self):
+        return self._data.get('converged')
+
+    @property
     def created(self):
         return self._data.get('created')
 
@@ -96,7 +103,10 @@ class State(object):
         return self._default_data()
 
     def _default_data(self):
-        return {"created": None, }
+        return {
+            'converged': None,
+            'created': None,
+        }
 
     def _load_file(self):
         with open(self.state_file) as stream:

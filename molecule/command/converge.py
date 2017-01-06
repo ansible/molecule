@@ -57,6 +57,8 @@ class Converge(base.Base):
             self._config.provisioner.inventory_file,
             self._config.scenario.converge)
 
+        self._config.state.change_state('converged', True)
+
 
 @click.command()
 @click.pass_context

@@ -41,39 +41,43 @@ def test_state_file_property(state_instance):
     assert x == state_instance.state_file
 
 
+def test_converged(state_instance):
+    assert not state_instance.converged
+
+
 def test_created(state_instance):
     assert not state_instance.created
 
 
 def test_reset(state_instance):
-    assert not state_instance.created
+    assert not state_instance.converged
 
-    state_instance.change_state('created', True)
-    assert state_instance.created
+    state_instance.change_state('converged', True)
+    assert state_instance.converged
 
     state_instance.reset()
-    assert not state_instance.created
+    assert not state_instance.converged
 
 
 def test_reset_persists(state_instance):
-    assert not state_instance.created
+    assert not state_instance.converged
 
-    state_instance.change_state('created', True)
-    assert state_instance.created
+    state_instance.change_state('converged', True)
+    assert state_instance.converged
 
     state_instance.reset()
-    assert not state_instance.created
+    assert not state_instance.converged
 
     with open(state_instance.state_file) as stream:
         d = yaml.safe_load(stream)
 
-        assert not d.get('created')
+        assert not d.get('converged')
 
 
 def test_change_state(state_instance):
-    state_instance.change_state('created', True)
+    state_instance.change_state('converged', True)
 
-    assert state_instance.created
+    assert state_instance.converged
 
 
 def test_change_state_raises(state_instance):
@@ -91,10 +95,11 @@ def test_get_data_loads_existing_state_file(temp_dir):
 
     os.makedirs(ephemeral_directory)
 
-    data = {'created': True}
+    data = {'converged': False, 'created': True}
     util.write_file(state_file, yaml.safe_dump(data))
 
     c = config.Config(molecule_file)
     s = state.State(c)
 
+    assert not s.converged
     assert s.created

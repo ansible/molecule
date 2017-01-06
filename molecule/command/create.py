@@ -56,6 +56,8 @@ class Create(base.Base):
             self._config.provisioner.inventory_file,
             self._config.scenario.setup)
 
+        self._config.state.change_state('created', True)
+
 
 @click.command()
 @click.pass_context
