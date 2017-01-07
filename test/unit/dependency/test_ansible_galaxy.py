@@ -108,7 +108,9 @@ def test_bake(ansible_galaxy_instance, role_file, roles_path):
     assert x == ansible_galaxy_instance._ansible_galaxy_command
 
 
-def test_execute(patched_run_command, ansible_galaxy_instance):
+def test_execute(patched_run_command,
+                 patched_ansible_galaxy_has_requirements_file,
+                 ansible_galaxy_instance):
     ansible_galaxy_instance._ansible_galaxy_command = 'patched-command'
     ansible_galaxy_instance.execute()
 
@@ -120,9 +122,18 @@ def test_execute(patched_run_command, ansible_galaxy_instance):
     patched_run_command.assert_called_once_with('patched-command', debug=None)
 
 
-def test_execute_does_not_execute(patched_run_command,
-                                  ansible_galaxy_instance):
+def test_execute_does_not_execute_when_disabled(patched_run_command,
+                                                ansible_galaxy_instance):
     ansible_galaxy_instance._config.config['dependency']['enabled'] = False
+    ansible_galaxy_instance.execute()
+
+    assert not patched_run_command.called
+
+
+def test_execute_does_not_execute_when_no_requirements_file(
+        patched_run_command, patched_ansible_galaxy_has_requirements_file,
+        ansible_galaxy_instance):
+    patched_ansible_galaxy_has_requirements_file.return_value = False
     ansible_galaxy_instance.execute()
 
     assert not patched_run_command.called
@@ -141,8 +152,9 @@ def test_execute_bakes(patched_run_command, ansible_galaxy_instance, role_file,
     patched_run_command.assert_called_with(cmd, debug=None)
 
 
-def test_executes_catches_and_exits_return_code(patched_run_command,
-                                                ansible_galaxy_instance):
+def test_executes_catches_and_exits_return_code(
+        patched_run_command, patched_ansible_galaxy_has_requirements_file,
+        ansible_galaxy_instance):
     patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.ansible_galaxy,
                                                            None, None)
     with pytest.raises(SystemExit) as e:
@@ -160,3 +172,7 @@ def test_setup(ansible_galaxy_instance):
     ansible_galaxy_instance._setup()
 
     assert os.path.isdir(role_directory)
+
+
+def test_has_requirements_file(ansible_galaxy_instance):
+    assert not ansible_galaxy_instance._has_requirements_file()

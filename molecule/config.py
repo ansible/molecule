@@ -26,6 +26,7 @@ from molecule import provisioner
 from molecule import scenario
 from molecule import state
 from molecule.dependency import ansible_galaxy
+from molecule.dependency import gilt
 from molecule.driver import docker
 from molecule.lint import ansible_lint
 from molecule.verifier import testinfra
@@ -64,6 +65,8 @@ class Config(object):
     def dependency(self):
         if self.config['dependency']['name'] == 'galaxy':
             return ansible_galaxy.AnsibleGalaxy(self)
+        elif self.config['dependency']['name'] == 'gilt':
+            return gilt.Gilt(self)
 
     @property
     def driver(self):

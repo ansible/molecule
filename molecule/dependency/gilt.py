@@ -92,6 +92,9 @@ class Gilt(base.Base):
         if not self.enabled:
             return
 
+        if not self._has_requirements_file():
+            return
+
         if self._gilt_command is None:
             self.bake()
 
@@ -100,3 +103,8 @@ class Gilt(base.Base):
                 self._gilt_command, debug=self._config.args.get('debug'))
         except sh.ErrorReturnCode as e:
             util.sysexit(e.exit_code)
+
+    def _has_requirements_file(self):
+        config_file = self.options.get('config')
+
+        return config_file and os.path.isfile(config_file)
