@@ -23,7 +23,6 @@ import re
 
 import click
 
-import molecule.command
 from molecule import util
 from molecule.command import base
 

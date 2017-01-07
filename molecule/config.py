@@ -164,8 +164,10 @@ class Config(object):
                 'converge': 'playbook.yml',
                 'teardown': 'destroy.yml',
                 'converge_sequence': ['create', 'converge'],
-                'test_sequence':
-                ['destroy', 'create', 'converge', 'lint', 'verify', 'destroy'],
+                'test_sequence': [
+                    'destroy', 'create', 'converge', 'idempotence', 'lint',
+                    'verify', 'destroy'
+                ],
             },
             'verifier': {
                 'name': 'testinfra',

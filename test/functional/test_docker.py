@@ -53,6 +53,8 @@ def test_command_destroy(with_scenario):
 @pytest.mark.parametrize(
     'with_scenario', ['docker'], indirect=['with_scenario'])
 def test_command_idempotence(with_scenario):
+    sh.molecule('create')
+    sh.molecule('converge')
     sh.molecule('idempotence')
 
 
