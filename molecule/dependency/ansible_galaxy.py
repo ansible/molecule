@@ -96,6 +96,9 @@ class AnsibleGalaxy(base.Base):
         if not self.enabled:
             return
 
+        if not self._has_requirements_file():
+            return
+
         if self._ansible_galaxy_command is None:
             self.bake()
 
@@ -117,3 +120,8 @@ class AnsibleGalaxy(base.Base):
                                       self.options['roles-path'])
         if not os.path.isdir(role_directory):
             os.makedirs(role_directory)
+
+    def _has_requirements_file(self):
+        role_file = self.options.get('role-file')
+
+        return role_file and os.path.isfile(role_file)

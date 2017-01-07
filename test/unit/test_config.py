@@ -27,6 +27,7 @@ from molecule import provisioner
 from molecule import scenario
 from molecule import state
 from molecule.dependency import ansible_galaxy
+from molecule.dependency import gilt
 from molecule.driver import docker
 from molecule.lint import ansible_lint
 from molecule.verifier import testinfra
@@ -76,6 +77,14 @@ def test_ephemeral_directory_property(config_instance):
 
 def test_dependency_property(config_instance):
     assert isinstance(config_instance.dependency, ansible_galaxy.AnsibleGalaxy)
+
+
+def test_dependency_property_is_gilt(config_instance, molecule_file):
+    gilt_data = {'dependency': {'name': 'gilt'}}
+    configs = [gilt_data]
+    c = config.Config(molecule_file, configs=configs)
+
+    assert isinstance(c.dependency, gilt.Gilt)
 
 
 def test_driver_property(config_instance):

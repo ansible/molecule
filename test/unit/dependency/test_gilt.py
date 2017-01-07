@@ -87,15 +87,26 @@ def test_bake(gilt_config, gilt_instance):
     assert x == gilt_instance._gilt_command
 
 
-def test_execute(patched_run_command, gilt_instance):
+def test_execute(patched_run_command, patched_gilt_has_requirements_file,
+                 gilt_instance):
     gilt_instance._gilt_command = 'patched-command'
     gilt_instance.execute()
 
     patched_run_command.assert_called_once_with('patched-command', debug=None)
 
 
-def test_execute_does_not_execute(patched_run_command, gilt_instance):
+def test_execute_does_not_execute_when_disabled(patched_run_command,
+                                                gilt_instance):
     gilt_instance._config.config['dependency']['enabled'] = False
+    gilt_instance.execute()
+
+    assert not patched_run_command.called
+
+
+def test_execute_does_not_execute_when_no_requirements_file(
+        patched_run_command, patched_gilt_has_requirements_file,
+        gilt_instance):
+    patched_gilt_has_requirements_file.return_value = False
     gilt_instance.execute()
 
     assert not patched_run_command.called
@@ -112,11 +123,16 @@ def test_execute_bakes(patched_run_command, gilt_config, gilt_instance):
     patched_run_command.assert_called_with(cmd, debug=None)
 
 
-def test_executes_catches_and_exits_return_code(patched_run_command,
-                                                gilt_instance):
+def test_executes_catches_and_exits_return_code(
+        patched_run_command, patched_gilt_has_requirements_file,
+        gilt_instance):
     patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.ansible_galaxy,
                                                            None, None)
     with pytest.raises(SystemExit) as e:
         gilt_instance.execute()
 
     assert 1 == e.value.code
+
+
+def test_has_requirements_file(gilt_instance):
+    assert not gilt_instance._has_requirements_file()
