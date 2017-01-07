@@ -54,6 +54,11 @@ class Idempotence(base.Base):
             os.path.basename(self._config.scenario.converge))
         util.print_info(msg)
 
+        if not self._config.state.converged:
+            msg = 'Instances not converged.  Please converge instances first.'
+            util.print_error(msg)
+            util.sysexit()
+
         output = self._config.provisioner.converge(
             self._config.provisioner.inventory_file,
             self._config.scenario.converge,
@@ -129,8 +134,5 @@ def idempotence(ctx, scenario_name):  # pragma: no cover
     command_args = {'subcommand': __name__, 'scenario_name': scenario_name}
 
     for config in base.get_configs(args, command_args):
-        for task in config.scenario.idempotence_sequence:
-            command_module = getattr(molecule.command, task)
-            command = getattr(command_module, task.capitalize())
-            c = command(config)
-            c.execute()
+        i = Idempotence(config)
+        i.execute()

@@ -94,7 +94,3 @@ class Scenario(object):
     @property
     def test_sequence(self):
         return self._config.config['scenario']['test_sequence']
-
-    @property
-    def idempotence_sequence(self):
-        return self._config.config['scenario']['idempotence_sequence']
