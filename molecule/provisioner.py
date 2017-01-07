@@ -121,9 +121,25 @@ class Ansible(object):
         :param kwargs: Optional keyword arguments.
         :return: str
         """
-        apb = ansible_playbook.AnsiblePlaybook(inventory, playbook,
-                                               self._config, **kwargs)
-        return apb.execute()
+        pb = ansible_playbook.AnsiblePlaybook(inventory, playbook,
+                                              self._config, **kwargs)
+        return pb.execute()
+
+    def syntax(self, inventory, playbook, **kwargs):
+        """
+        Executes `ansible-playbook` syntax check and returns a string.
+
+        :param inventory: A string containing an absolute path to a
+         provisioner's inventory file.
+        :param playbook: A string containing an absolute path to a
+         provisioner's playbook.
+        :param kwargs: Optional keyword arguments.
+        :return: str
+        """
+        pb = ansible_playbook.AnsiblePlaybook(inventory, playbook,
+                                              self._config)
+        pb.add_cli_arg('syntax-check', True)
+        return pb.execute()
 
     def write_inventory(self):
         """

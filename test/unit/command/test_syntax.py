@@ -18,39 +18,20 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import click
-
-import molecule
-from molecule import command
+from molecule.command import syntax
 
 
-def main():
-    """ Molecule aids in the development, and testing of Ansible roles. """
-    cli(obj={})
+def test_execute(mocker, patched_print_info, patched_ansible_syntax,
+                 config_instance):
+    s = syntax.Syntax(config_instance)
+    s.execute()
+    x = [
+        mocker.call('Scenario: [default]'),
+        mocker.call('Syntax Verification of Playbook: [playbook.yml]')
+    ]
 
+    assert x == patched_print_info.mock_calls
 
-@click.group()
-@click.option(
-    '--debug/--no-debug',
-    default=False,
-    help='Enable or disable debug mode. Default is disabled.')
-@click.version_option(version=molecule.__version__)
-@click.pass_context
-def cli(ctx, debug):  # pragma: no cover
-    ctx.obj['args'] = {}
-    ctx.obj['args']['debug'] = debug
-
-
-#  cli.add_command(command.check.check)
-cli.add_command(command.converge.converge)
-cli.add_command(command.create.create)
-cli.add_command(command.dependency.dependency)
-cli.add_command(command.destroy.destroy)
-cli.add_command(command.idempotence.idempotence)
-cli.add_command(command.init.init)
-cli.add_command(command.lint.lint)
-#  cli.add_command(command.login.login)
-#  cli.add_command(command.status.status)
-cli.add_command(command.syntax.syntax)
-cli.add_command(command.test.test)
-cli.add_command(command.verify.verify)
+    patched_ansible_syntax.assert_called_once_with(
+        config_instance.provisioner.inventory_file,
+        config_instance.scenario.converge)

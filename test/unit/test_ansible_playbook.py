@@ -87,3 +87,17 @@ def test_executes_catches_and_exits_return_code(patched_run_command,
         ansible_playbook_instance.execute()
 
     assert 1 == e.value.code
+
+
+def test_add_cli_arg(ansible_playbook_instance):
+    assert {} == ansible_playbook_instance._cli
+
+    ansible_playbook_instance.add_cli_arg('foo', 'bar')
+    assert {'foo': 'bar'} == ansible_playbook_instance._cli
+
+
+def test_add_env_arg(ansible_playbook_instance):
+    assert 'foo' not in ansible_playbook_instance._env
+
+    ansible_playbook_instance.add_env_arg('foo', 'bar')
+    assert 'bar' == ansible_playbook_instance._env['foo']

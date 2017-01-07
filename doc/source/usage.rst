@@ -97,6 +97,13 @@ Lint
    :undoc-members:
    :members: execute
 
+Syntax
+^^^^^^
+
+.. autoclass:: molecule.command.syntax.Syntax
+   :undoc-members:
+   :members: execute
+
 Test
 ^^^^
 
