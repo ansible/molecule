@@ -168,8 +168,8 @@ class Config(object):
                 'teardown': 'destroy.yml',
                 'converge_sequence': ['create', 'converge'],
                 'test_sequence': [
-                    'destroy', 'create', 'converge', 'idempotence', 'lint',
-                    'verify', 'destroy'
+                    'destroy', 'dependency', 'create', 'converge',
+                    'idempotence', 'lint', 'verify', 'destroy'
                 ],
             },
             'verifier': {

@@ -72,8 +72,8 @@ def test_converge_sequence_property(scenario_instance):
 
 def test_test_sequence_property(scenario_instance):
     x = [
-        'destroy', 'create', 'converge', 'idempotence', 'lint', 'verify',
-        'destroy'
+        'destroy', 'dependency', 'create', 'converge', 'idempotence', 'lint',
+        'verify', 'destroy'
     ]
 
     assert x == scenario_instance.test_sequence
