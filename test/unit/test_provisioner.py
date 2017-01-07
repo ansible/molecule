@@ -174,6 +174,19 @@ def test_converge(provisioner_instance, mocker, patched_ansible_playbook):
         'inventory', 'playbook', provisioner_instance._config)
     assert result == 'patched-ansible-playbook-stdout'
 
+    patched_ansible_playbook.return_value.execute.assert_called_once_with()
+
+
+def test_syntax(provisioner_instance, mocker, patched_ansible_playbook):
+    provisioner_instance.syntax('inventory', 'playbook')
+
+    patched_ansible_playbook.assert_called_once_with(
+        'inventory', 'playbook', provisioner_instance._config)
+    patched_ansible_playbook
+    patched_ansible_playbook.return_value.add_cli_arg.assert_called_once_with(
+        'syntax-check', True)
+    patched_ansible_playbook.return_value.execute.assert_called_once_with()
+
 
 def test_write_inventory(temp_dir, provisioner_instance):
     provisioner_instance.write_inventory()

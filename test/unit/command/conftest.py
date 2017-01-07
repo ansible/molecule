@@ -56,6 +56,11 @@ def patched_ansible_galaxy(mocker):
 
 
 @pytest.fixture
+def patched_ansible_syntax(mocker):
+    return mocker.patch('molecule.provisioner.Ansible.syntax')
+
+
+@pytest.fixture
 def patched_command_idempotence_is_idempotent(mocker):
     return mocker.patch(
         'molecule.command.idempotence.Idempotence._is_idempotent')

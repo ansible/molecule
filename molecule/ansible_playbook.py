@@ -51,6 +51,8 @@ class AnsiblePlaybook(object):
         self._config = config
         self._out = out
         self._err = err
+        self._cli = {}
+        self._env = os.environ.copy()
 
     def bake(self):
         """
@@ -59,11 +61,16 @@ class AnsiblePlaybook(object):
 
         :return: None
         """
-        options = {'inventory': self._inventory}
-        env = os.environ.copy()
-        env['ANSIBLE_CONFIG'] = self._config.provisioner.config_file
+        self.add_cli_arg('inventory', self._inventory)
+        self.add_env_arg('ANSIBLE_CONFIG',
+                         self._config.provisioner.config_file)
+
         self._ansible_playbook_command = sh.ansible_playbook.bake(
-            options, self._playbook, _env=env, _out=self._out, _err=self._err)
+            self._cli,
+            self._playbook,
+            _env=self._env,
+            _out=self._out,
+            _err=self._err)
 
     def execute(self):
         """
@@ -81,3 +88,25 @@ class AnsiblePlaybook(object):
             return cmd.stdout
         except sh.ErrorReturnCode as e:
             util.sysexit(e.exit_code)
+
+    def add_cli_arg(self, name, value):
+        """
+        Adds argument to CLI passed to ansible-playbook and returns None.
+
+        :param name: A string containing the name of argument to be added.
+        :param value: The value of argument to be added.
+        :return: None
+        """
+        if value:
+            self._cli[name] = value
+
+    def add_env_arg(self, name, value):
+        """
+        Adds argument to environment passed to ansible-playbook and returns
+        None.
+
+        :param name: A string containing the name of argument to be added.
+        :param value: The value of argument to be added.
+        :return: None
+        """
+        self._env[name] = value
