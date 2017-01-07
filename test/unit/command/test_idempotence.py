@@ -28,6 +28,7 @@ from molecule.command import idempotence
 def idempotence_instance(molecule_file, platforms_data):
     configs = [platforms_data]
     c = config.Config(molecule_file, configs=configs)
+    c.state.change_state('converged', True)
 
     return idempotence.Idempotence(c)
 
@@ -56,7 +57,19 @@ def test_execute(mocker, patched_print_info, patched_ansible_converge,
     patched_print_success.assert_called_once_with(msg)
 
 
-def test_execute_fails_idempotence(
+def test_execute_raises_when_not_converged(
+        patched_print_error, patched_ansible_converge, idempotence_instance):
+    idempotence_instance._config.state.change_state('converged', False)
+    with pytest.raises(SystemExit) as e:
+        idempotence_instance.execute()
+
+    assert 1 == e.value.code
+
+    msg = 'Instances not converged.  Please converge instances first.'
+    patched_print_error.assert_called_with(msg)
+
+
+def test_execute_raises_when_fails_idempotence(
         mocker, patched_print_error, patched_ansible_converge,
         patched_command_idempotence_is_idempotent, idempotence_instance):
     patched_command_idempotence_is_idempotent.return_value = False
