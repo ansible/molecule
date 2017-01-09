@@ -52,9 +52,7 @@ class Destroy(base.Base):
             os.path.basename(self._config.scenario.teardown))
         util.print_info(msg)
 
-        self._config.provisioner.converge(
-            self._config.provisioner.inventory_file,
-            self._config.scenario.teardown)
+        self._config.provisioner.converge(self._config.scenario.teardown)
 
         self._config.state.reset()
 

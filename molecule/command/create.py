@@ -52,9 +52,7 @@ class Create(base.Base):
             os.path.basename(self._config.scenario.setup))
         util.print_info(msg)
 
-        self._config.provisioner.converge(
-            self._config.provisioner.inventory_file,
-            self._config.scenario.setup)
+        self._config.provisioner.converge(self._config.scenario.setup)
 
         self._config.state.change_state('created', True)
 

@@ -41,7 +41,7 @@ def cli(ctx, debug):  # pragma: no cover
     ctx.obj['args']['debug'] = debug
 
 
-#  cli.add_command(command.check.check)
+cli.add_command(command.check.check)
 cli.add_command(command.converge.converge)
 cli.add_command(command.create.create)
 cli.add_command(command.dependency.dependency)

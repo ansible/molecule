@@ -18,22 +18,20 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-from molecule.command import converge
+from molecule.command import check
 
 
-def test_execute(mocker, patched_print_info, patched_ansible_converge,
+def test_execute(mocker, patched_print_info, patched_ansible_check,
                  config_instance):
-    c = converge.Converge(config_instance)
+    c = check.Check(config_instance)
     c.execute()
     x = [
         mocker.call('Scenario: [default]'),
         mocker.call('Provisioner: [ansible]'),
-        mocker.call('Playbook: [playbook.yml]')
+        mocker.call('Dry-Run of Playbook: [playbook.yml]')
     ]
 
     assert x == patched_print_info.mock_calls
 
-    patched_ansible_converge.assert_called_once_with(
+    patched_ansible_check.assert_called_once_with(
         config_instance.scenario.converge)
-
-    assert config_instance.state.converged

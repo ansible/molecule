@@ -42,6 +42,13 @@ Update the role with needed functionality and tests.  Now test it:
   $ molecule test
   ...
 
+Check
+^^^^^
+
+.. autoclass:: molecule.command.check.Check
+   :undoc-members:
+   :members: execute
+
 Converge
 ^^^^^^^^
 

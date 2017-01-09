@@ -18,46 +18,55 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
+
 import click
 
+import molecule.command
 from molecule import util
 from molecule.command import base
 
 
-class Dependency(base.Base):
+class Check(base.Base):
     def execute(self):
         """
-        Execute the actions necessary to perform a `molecule dependency` and
+        Execute the actions necessary to perform a `molecule check` and
         returns None.
 
-        >>> molecule dependency
+        >>> molecule check
 
         Targeting a specific scenario:
 
-        >>> molecule dependency --scenario-name foo
+        >>> molecule check --scenario-name foo
 
         Executing with `debug`:
 
-        >>> molecule --debug dependency
+        >>> molecule --debug check
 
         :return: None
         """
         msg = 'Scenario: [{}]'.format(self._config.scenario.name)
         util.print_info(msg)
-        msg = 'Dependency: [{}]'.format(self._config.dependency.name)
+        msg = 'Provisioner: [{}]'.format(self._config.provisioner.name)
+        util.print_info(msg)
+        msg = 'Dry-Run of Playbook: [{}]'.format(
+            os.path.basename(self._config.scenario.converge))
         util.print_info(msg)
 
-        self._config.dependency.execute()
+        self._config.provisioner.check(self._config.scenario.converge)
 
 
 @click.command()
 @click.pass_context
 @click.option('--scenario-name', help='Name of the scenario to target.')
-def dependency(ctx, scenario_name):  # pragma: no cover
-    """ Mange the role's dependencies. """
+def check(ctx, scenario_name):  # pragma: no cover
+    """ Use a provisioner to perform a Dry-Run. """
     args = ctx.obj.get('args')
     command_args = {'subcommand': __name__, 'scenario_name': scenario_name}
 
     for config in base.get_configs(args, command_args):
-        d = Dependency(config)
-        d.execute()
+        for task in config.scenario.check_sequence:
+            command_module = getattr(molecule.command, task)
+            command = getattr(command_module, task.capitalize())
+            c = command(config)
+            c.execute()

@@ -45,10 +45,7 @@ def test_execute(mocker, patched_print_info, patched_ansible_converge,
     assert x == patched_print_info.mock_calls
 
     patched_ansible_converge.assert_called_once_with(
-        idempotence_instance._config.provisioner.inventory_file,
-        idempotence_instance._config.scenario.converge,
-        out=None,
-        err=None)
+        idempotence_instance._config.scenario.converge, out=None, err=None)
 
     patched_command_idempotence_is_idempotent.assert_called_once_with(
         'patched-ansible-converge-stdout')

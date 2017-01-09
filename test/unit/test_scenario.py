@@ -64,6 +64,12 @@ def test_directory_property(molecule_scenario_directory, scenario_instance):
     assert molecule_scenario_directory == scenario_instance.directory
 
 
+def test_check_sequence_property(scenario_instance):
+    x = ['create', 'converge', 'check']
+
+    assert x == scenario_instance.check_sequence
+
+
 def test_converge_sequence_property(scenario_instance):
     x = ['create', 'converge']
 

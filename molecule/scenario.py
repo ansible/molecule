@@ -88,6 +88,10 @@ class Scenario(object):
                             self._config.config['scenario']['teardown'])
 
     @property
+    def check_sequence(self):
+        return self._config.config['scenario']['check_sequence']
+
+    @property
     def converge_sequence(self):
         return self._config.config['scenario']['converge_sequence']
 

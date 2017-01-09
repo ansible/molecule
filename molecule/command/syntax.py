@@ -29,7 +29,7 @@ from molecule.command import base
 class Syntax(base.Base):
     def execute(self):
         """
-        Execute the actions necessary to perform a `molecule lint` and
+        Execute the actions necessary to perform a `molecule syntax` and
         returns None.
 
         >>> molecule syntax
@@ -46,20 +46,20 @@ class Syntax(base.Base):
         """
         msg = 'Scenario: [{}]'.format(self._config.scenario.name)
         util.print_info(msg)
+        msg = 'Provisioner: [{}]'.format(self._config.provisioner.name)
+        util.print_info(msg)
         msg = 'Syntax Verification of Playbook: [{}]'.format(
             os.path.basename(self._config.scenario.converge))
         util.print_info(msg)
 
-        self._config.provisioner.syntax(
-            self._config.provisioner.inventory_file,
-            self._config.scenario.converge)
+        self._config.provisioner.syntax(self._config.scenario.converge)
 
 
 @click.command()
 @click.pass_context
 @click.option('--scenario-name', help='Name of the scenario to target.')
 def syntax(ctx, scenario_name):  # pragma: no cover
-    """ Syntax check the role. """
+    """ Use a provisioner to syntax check the role. """
     args = ctx.obj.get('args')
     command_args = {'subcommand': __name__, 'scenario_name': scenario_name}
 

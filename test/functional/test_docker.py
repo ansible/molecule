@@ -28,6 +28,12 @@ from molecule import config
 
 @pytest.mark.parametrize(
     'with_scenario', ['docker'], indirect=['with_scenario'])
+def test_command_check(with_scenario):
+    sh.molecule('check')
+
+
+@pytest.mark.parametrize(
+    'with_scenario', ['docker'], indirect=['with_scenario'])
 def test_command_converge(with_scenario):
     sh.molecule('converge')
 
@@ -79,6 +85,12 @@ def test_command_init_scenario(temp_dir):
     'with_scenario', ['docker'], indirect=['with_scenario'])
 def test_command_lint(with_scenario):
     sh.molecule('lint')
+
+
+@pytest.mark.parametrize(
+    'with_scenario', ['docker'], indirect=['with_scenario'])
+def test_command_syntax(with_scenario):
+    sh.molecule('syntax')
 
 
 @pytest.mark.parametrize(
