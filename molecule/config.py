@@ -27,7 +27,7 @@ from molecule import scenario
 from molecule import state
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
-from molecule.driver import docker
+from molecule.driver import dockr
 from molecule.lint import ansible_lint
 from molecule.verifier import testinfra
 
@@ -71,7 +71,7 @@ class Config(object):
     @property
     def driver(self):
         if self.config['driver']['name'] == 'docker':
-            return docker.Docker(self)
+            return dockr.Dockr(self)
 
     @property
     def lint(self):

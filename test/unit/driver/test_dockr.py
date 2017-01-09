@@ -21,7 +21,7 @@
 import pytest
 
 from molecule import config
-from molecule.driver import docker
+from molecule.driver import dockr
 
 
 @pytest.fixture
@@ -34,7 +34,7 @@ def docker_instance(molecule_file, platforms_data, driver_data):
     configs = [platforms_data, driver_data]
     c = config.Config(molecule_file, configs=configs)
 
-    return docker.Docker(c)
+    return dockr.Dockr(c)
 
 
 def test_config_private_member(docker_instance):
@@ -57,3 +57,45 @@ def test_name_property(docker_instance):
 
 def test_options_property(docker_instance):
     assert {} == docker_instance.options
+
+
+def test_status(mocker, docker_instance):
+    def side_effect(filters):
+        instance_name = filters['name']
+
+        return [{
+            u'Status': u'Up About an hour',
+            u'State': u'running',
+            u'Command': u'sleep infinity',
+            u'Names': [u'/{}'.format(instance_name)],
+        }]
+
+    m = mocker.patch('docker.client.Client.containers')
+    m.side_effect = side_effect
+    result = docker_instance.status()
+
+    assert 2 == len(result)
+
+    assert result[0].name == 'instance-1-default'
+    assert result[0].state == 'Up About an hour'
+    assert result[0].driver == 'Docker'
+
+    assert result[1].name == 'instance-2-default'
+    assert result[1].state == 'Up About an hour'
+    assert result[1].driver == 'Docker'
+
+
+def test_status_not_created(mocker, docker_instance):
+    m = mocker.patch('docker.client.Client.containers')
+    m.return_value = []
+    result = docker_instance.status()
+
+    assert 2 == len(result)
+
+    assert result[0].name == 'instance-1-default'
+    assert result[0].state == 'Not Created'
+    assert result[0].driver == 'Docker'
+
+    assert result[1].name == 'instance-2-default'
+    assert result[1].state == 'Not Created'
+    assert result[1].driver == 'Docker'
