@@ -40,7 +40,93 @@ Update the role with needed functionality and tests.  Now test it:
 
   $ cd foo
   $ molecule test
-  ...
+  --> Scenario: [default]
+  --> Provisioner: [ansible]
+  --> Playbook: [destroy.yml]
+
+  PLAY [localhost] ***************************************************************
+
+  TASK [setup] *******************************************************************
+  ok: [localhost]
+
+  TASK [Destroy molecule instance(s)] ********************************************
+  changed: [localhost] => (item={'name': u'instance-1'})
+
+  PLAY RECAP *********************************************************************
+  localhost                  : ok=2    changed=1    unreachable=0    failed=0
+
+  --> Scenario: [default]
+  --> Dependency: [galaxy]
+  --> Scenario: [default]
+  --> Provisioner: [ansible]
+  --> Syntax Verification of Playbook: [playbook.yml]
+
+  playbook: /Users/jodewey/git/molecule_2/test/scenarios/docker/molecule/default/playbook.yml
+  --> Scenario: [default]
+  --> Provisioner: [ansible]
+  --> Playbook: [create.yml]
+
+  PLAY [localhost] ***************************************************************
+
+  TASK [setup] *******************************************************************
+  ok: [localhost]
+
+  TASK [Build an Ansible compatible image] ***************************************
+  ok: [localhost]
+
+  TASK [Create molecule instance(s)] *********************************************
+  changed: [localhost] => (item={'name': u'instance-1'})
+
+  PLAY RECAP *********************************************************************
+  localhost                  : ok=3    changed=1    unreachable=0    failed=0
+
+  --> Scenario: [default]
+  --> Provisioner: [ansible]
+  --> Playbook: [playbook.yml]
+
+  PLAY [all] *********************************************************************
+
+  TASK [setup] *******************************************************************
+  ok: [instance-1-default]
+
+  PLAY RECAP *********************************************************************
+  instance-1-default         : ok=1    changed=0    unreachable=0    failed=0
+
+  --> Scenario: [default]
+  --> Provisioner: [ansible]
+  --> Idempotence Verification of Playbook: [playbook.yml]
+  Idempotence test passed.
+  --> Scenario: [default]
+  --> Lint: [ansible-lint]
+  --> Scenario: [default]
+  --> Verifier: [testinfra]
+  --> Executing flake8 on files found in /Users/jodewey/git/molecule_2/test/scenarios/docker/molecule/default/tests/...
+  --> Executing testinfra tests found in /Users/jodewey/git/molecule_2/test/scenarios/docker/molecule/default/tests/...
+  ============================= test session starts ==============================
+  platform darwin -- Python 2.7.12, pytest-3.0.5, py-1.4.31, pluggy-0.4.0
+  rootdir: /Users/jodewey/git/molecule_2, inifile: pytest.ini
+  plugins: testinfra-1.4.2, mock-1.5.0, helpers-namespace-2016.7.10, cov-2.4.0
+  collecting 0 items collecting 1 items collected 1 items
+
+  tests/test_default.py .
+
+  ============================ pytest-warning summary ============================
+  WP1 None Module already imported so can not be re-written: testinfra
+  ================= 1 skipped, 1 pytest-warnings in 0.18 seconds =================
+  --> Scenario: [default]
+  --> Provisioner: [ansible]
+  --> Playbook: [destroy.yml]
+
+  PLAY [localhost] ***************************************************************
+
+  TASK [setup] *******************************************************************
+  ok: [localhost]
+
+  TASK [Destroy molecule instance(s)] ********************************************
+  changed: [localhost] => (item={'name': u'instance-1'})
+
+  PLAY RECAP *********************************************************************
+  localhost                  : ok=2    changed=1    unreachable=0    failed=0
 
 Check
 ^^^^^
