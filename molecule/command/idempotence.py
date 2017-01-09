@@ -59,10 +59,7 @@ class Idempotence(base.Base):
             util.sysexit()
 
         output = self._config.provisioner.converge(
-            self._config.provisioner.inventory_file,
-            self._config.scenario.converge,
-            out=None,
-            err=None)
+            self._config.scenario.converge, out=None, err=None)
 
         idempotent = self._is_idempotent(output)
         if idempotent:

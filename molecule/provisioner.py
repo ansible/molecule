@@ -110,36 +110,41 @@ class Ansible(object):
     def config_file(self):
         return os.path.join(self._config.ephemeral_directory, 'ansible.cfg')
 
-    def converge(self, inventory, playbook, **kwargs):
+    def converge(self, playbook, **kwargs):
         """
         Executes `ansible-playbook` and returns a string.
 
-        :param inventory: A string containing an absolute path to a
-         provisioner's inventory file.
         :param playbook: A string containing an absolute path to a
          provisioner's playbook.
         :param kwargs: Optional keyword arguments.
         :return: str
         """
-        pb = ansible_playbook.AnsiblePlaybook(inventory, playbook,
-                                              self._config, **kwargs)
+        pb = self._get_ansible_playbook(playbook, **kwargs)
         return pb.execute()
 
-    def syntax(self, inventory, playbook, **kwargs):
+    def syntax(self, playbook):
         """
-        Executes `ansible-playbook` syntax check and returns a string.
+        Executes `ansible-playbook` syntax check and returns None.
 
-        :param inventory: A string containing an absolute path to a
-         provisioner's inventory file.
         :param playbook: A string containing an absolute path to a
          provisioner's playbook.
-        :param kwargs: Optional keyword arguments.
-        :return: str
+        :return: None
         """
-        pb = ansible_playbook.AnsiblePlaybook(inventory, playbook,
-                                              self._config)
+        pb = self._get_ansible_playbook(playbook)
         pb.add_cli_arg('syntax-check', True)
-        return pb.execute()
+        pb.execute()
+
+    def check(self, playbook):
+        """
+        Executes `ansible-playbook` check and returns None.
+
+        :param playbook: A string containing an absolute path to a
+         provisioner's playbook.
+        :return: None
+        """
+        pb = self._get_ansible_playbook(playbook)
+        pb.add_cli_arg('check', True)
+        pb.execute()
 
     def write_inventory(self):
         """
@@ -171,6 +176,18 @@ class Ansible(object):
         template = template.from_string(self._get_config_template())
         template = template.render()
         util.write_file(self.config_file, template)
+
+    def _get_ansible_playbook(self, playbook, **kwargs):
+        """
+        Get an instance of AnsiblePlaybook and returns it.
+
+        :param playbook: A string containing an absolute path to a
+         provisioner's playbook.
+        :param kwargs: Optional keyword arguments.
+        :return: object
+        """
+        return ansible_playbook.AnsiblePlaybook(self.inventory_file, playbook,
+                                                self._config, **kwargs)
 
     def _setup(self):
         """

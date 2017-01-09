@@ -27,11 +27,11 @@ def test_execute(mocker, patched_print_info, patched_ansible_syntax,
     s.execute()
     x = [
         mocker.call('Scenario: [default]'),
+        mocker.call('Provisioner: [ansible]'),
         mocker.call('Syntax Verification of Playbook: [playbook.yml]')
     ]
 
     assert x == patched_print_info.mock_calls
 
     patched_ansible_syntax.assert_called_once_with(
-        config_instance.provisioner.inventory_file,
         config_instance.scenario.converge)

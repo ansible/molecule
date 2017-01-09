@@ -53,9 +53,7 @@ class Converge(base.Base):
             os.path.basename(self._config.scenario.converge))
         util.print_info(msg)
 
-        self._config.provisioner.converge(
-            self._config.provisioner.inventory_file,
-            self._config.scenario.converge)
+        self._config.provisioner.converge(self._config.scenario.converge)
 
         self._config.state.change_state('converged', True)
 

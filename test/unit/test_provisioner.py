@@ -168,23 +168,35 @@ def test_init_calls_setup(mocker, molecule_file, platforms_data,
 
 
 def test_converge(provisioner_instance, mocker, patched_ansible_playbook):
-    result = provisioner_instance.converge('inventory', 'playbook')
+    result = provisioner_instance.converge('playbook')
 
+    inventory_file = provisioner_instance._config.provisioner.inventory_file
     patched_ansible_playbook.assert_called_once_with(
-        'inventory', 'playbook', provisioner_instance._config)
+        inventory_file, 'playbook', provisioner_instance._config)
     assert result == 'patched-ansible-playbook-stdout'
 
     patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
 def test_syntax(provisioner_instance, mocker, patched_ansible_playbook):
-    provisioner_instance.syntax('inventory', 'playbook')
+    provisioner_instance.syntax('playbook')
 
+    inventory_file = provisioner_instance._config.provisioner.inventory_file
     patched_ansible_playbook.assert_called_once_with(
-        'inventory', 'playbook', provisioner_instance._config)
-    patched_ansible_playbook
+        inventory_file, 'playbook', provisioner_instance._config)
     patched_ansible_playbook.return_value.add_cli_arg.assert_called_once_with(
         'syntax-check', True)
+    patched_ansible_playbook.return_value.execute.assert_called_once_with()
+
+
+def test_check(provisioner_instance, mocker, patched_ansible_playbook):
+    provisioner_instance.check('playbook')
+
+    inventory_file = provisioner_instance._config.provisioner.inventory_file
+    patched_ansible_playbook.assert_called_once_with(
+        inventory_file, 'playbook', provisioner_instance._config)
+    patched_ansible_playbook.return_value.add_cli_arg.assert_called_once_with(
+        'check', True)
     patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 

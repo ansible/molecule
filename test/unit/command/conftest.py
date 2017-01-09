@@ -36,6 +36,11 @@ def config_instance(molecule_file, platforms_data, command_data):
 
 
 @pytest.fixture
+def patched_ansible_check(mocker):
+    return mocker.patch('molecule.provisioner.Ansible.check')
+
+
+@pytest.fixture
 # TODO patched_provisioner_coverge
 def patched_ansible_converge(mocker):
     m = mocker.patch('molecule.provisioner.Ansible.converge')

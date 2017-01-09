@@ -166,6 +166,7 @@ class Config(object):
                 'setup': 'create.yml',
                 'converge': 'playbook.yml',
                 'teardown': 'destroy.yml',
+                'check_sequence': ['create', 'converge', 'check'],
                 'converge_sequence': ['create', 'converge'],
                 'test_sequence': [
                     'destroy', 'dependency', 'syntax', 'create', 'converge',
