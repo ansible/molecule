@@ -1,7 +1,7 @@
 import testinfra.utils.ansible_runner
 
 testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
-    '.molecule/ansible_inventory').get_hosts('bar')
+    '.molecule/ansible_inventory.yml').get_hosts('bar')
 
 
 def test_hostname(SystemInfo):
