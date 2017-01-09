@@ -60,7 +60,7 @@ class Check(base.Base):
 @click.pass_context
 @click.option('--scenario-name', help='Name of the scenario to target.')
 def check(ctx, scenario_name):  # pragma: no cover
-    """ Use a provisioner to perform a Dry-Run. """
+    """ Use a provisioner to perform a Dry-Run (create, converge, create). """
     args = ctx.obj.get('args')
     command_args = {'subcommand': __name__, 'scenario_name': scenario_name}
 
