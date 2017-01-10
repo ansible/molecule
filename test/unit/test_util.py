@@ -35,62 +35,62 @@ colorama.init(autoreset=True)
 
 def test_print_success(capsys):
     util.print_success('test')
-    result, _ = capsys.readouterr()
+    stdout, _ = capsys.readouterr()
 
     print('{}{}'.format(colorama.Fore.GREEN, 'test'.rstrip()))
     x, _ = capsys.readouterr()
 
-    assert x == result
+    assert x == stdout
 
 
 def test_print_info(capsys):
     util.print_info('test')
-    result, _ = capsys.readouterr()
+    stdout, _ = capsys.readouterr()
 
     print('--> {}{}'.format(colorama.Fore.CYAN, 'test'.rstrip()))
     x, _ = capsys.readouterr()
 
-    assert x == result
+    assert x == stdout
 
 
 def test_print_info_without_pretty(capsys):
     util.print_info('test', pretty=False)
-    result, _ = capsys.readouterr()
+    stdout, _ = capsys.readouterr()
 
     print('{}'.format('test'.rstrip()))
     x, _ = capsys.readouterr()
 
-    assert x == result
+    assert x == stdout
 
 
 def test_print_warn(capsys):
     util.print_warn('test')
-    result, _ = capsys.readouterr()
+    stdout, _ = capsys.readouterr()
 
     print('{}{}'.format(colorama.Fore.YELLOW, 'test'.rstrip()))
     x, _ = capsys.readouterr()
 
-    assert x == result
+    assert x == stdout
 
 
 def test_print_error(capsys):
     util.print_error('test')
-    _, result = capsys.readouterr()
+    _, stderr = capsys.readouterr()
 
     print('{}ERROR: {}'.format(colorama.Fore.RED, 'test'.rstrip()))
     x, _ = capsys.readouterr()
 
-    assert x == result
+    assert x == stderr
 
 
 def test_print_error_without_pretty(capsys):
     util.print_error('test', pretty=False)
-    x, result = capsys.readouterr()
+    x, stderr = capsys.readouterr()
 
     print('{}{}'.format(colorama.Fore.RED, 'test'.rstrip()))
     x, _ = capsys.readouterr()
 
-    assert x == result
+    assert x == stderr
 
 
 def test_print_debug(capsys):

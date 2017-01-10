@@ -28,7 +28,7 @@ from molecule import scenario
 from molecule import state
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
-from molecule.driver import docker
+from molecule.driver import dockr
 from molecule.lint import ansible_lint
 from molecule.verifier import testinfra
 
@@ -88,7 +88,7 @@ def test_dependency_property_is_gilt(config_instance, molecule_file):
 
 
 def test_driver_property(config_instance):
-    assert isinstance(config_instance.driver, docker.Docker)
+    assert isinstance(config_instance.driver, dockr.Dockr)
 
 
 def test_lint_property(config_instance):

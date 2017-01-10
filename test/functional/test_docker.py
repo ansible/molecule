@@ -19,6 +19,7 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import os
+import re
 
 import pytest
 import sh
@@ -85,6 +86,17 @@ def test_command_init_scenario(temp_dir):
     'with_scenario', ['docker'], indirect=['with_scenario'])
 def test_command_lint(with_scenario):
     sh.molecule('lint')
+
+
+@pytest.mark.parametrize(
+    'with_scenario', ['docker'], indirect=['with_scenario'])
+def test_command_status(with_scenario):
+    out = sh.molecule('status', '--scenario-name', 'default')
+    assert re.search('instance-1-default.*Not Created.*Docker', out.stdout)
+
+    out = sh.molecule('status', '--scenario-name', 'multi-node')
+    assert re.search('instance-1-multi-node', out.stdout)
+    assert re.search('instance-2-multi-node', out.stdout)
 
 
 @pytest.mark.parametrize(

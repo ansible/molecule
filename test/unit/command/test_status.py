@@ -18,21 +18,21 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-# NOTE: Importing into the ``molecule.command`` namespace, to prevent
-# collisions (e.g. ``list``).  The CLI usage may conflict with reserved words
-# or builtins.
+from molecule.command import status
 
-from molecule.command import base  # noqa
-from molecule.command import check  # noqa
-from molecule.command import converge  # noqa
-from molecule.command import create  # noqa
-from molecule.command import dependency  # noqa
-from molecule.command import destroy  # noqa
-from molecule.command import idempotence  # noqa
-from molecule.command import init  # noqa
-from molecule.command import lint  # noqa
-#  from molecule.command import login  # noqa
-from molecule.command import status  # noqa
-from molecule.command import syntax  # noqa
-from molecule.command import test  # noqa
-from molecule.command import verify  # noqa
+
+def test_execute(capsys, patched_print_info, config_instance):
+    s = status.Status(config_instance)
+    s.execute()
+
+    msg = 'Scenario: [default]'
+    patched_print_info.assert_called_once_with(msg)
+
+    stdout, _ = capsys.readouterr()
+
+    assert 'Name' in stdout
+    assert 'State' in stdout
+    assert 'Driver' in stdout
+
+    assert 'instance-1-default' in stdout
+    assert 'instance-2-default' in stdout

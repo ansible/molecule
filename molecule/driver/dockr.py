@@ -18,10 +18,13 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import collections
+import sys
+
 from molecule.driver import base
 
 
-class Docker(base.Base):
+class Dockr(base.Base):
     """
     `Docker`_ is the default driver.
 
@@ -38,7 +41,10 @@ class Docker(base.Base):
     """
 
     def __init__(self, config):
-        super(Docker, self).__init__(config)
+        super(Dockr, self).__init__(config)
+        docker = self._delayed_import()
+        self._docker = docker.Client(
+            version='auto', **docker.utils.kwargs_from_env())
 
     @property
     def testinfra_options(self):
@@ -57,3 +63,30 @@ class Docker(base.Base):
         :returns: str
         """
         return {'ansible_connection': 'docker'}
+
+    def status(self):
+        Status = collections.namedtuple('Status', ['name', 'state', 'driver'])
+        status_list = []
+        for instance in self._config.platforms:
+            instance_name = '{}-{}'.format(
+                instance.get('name'), self._config.scenario.name)
+            try:
+                d = self._docker.containers(filters={'name': instance_name})[0]
+                state = d.get('Status')
+            except IndexError:
+                state = 'Not Created'
+            status_list.append(
+                Status(
+                    name=instance_name,
+                    state=state,
+                    driver=self.name.capitalize()))
+
+        return status_list
+
+    def _delayed_import(self):
+        try:
+            import docker
+
+            return docker
+        except ImportError:  # pragma: no cover
+            sys.exit('ERROR: Driver missing, install docker-py.')

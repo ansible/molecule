@@ -190,6 +190,13 @@ Lint
    :undoc-members:
    :members: execute
 
+Status
+^^^^^^
+
+.. autoclass:: molecule.command.status.Status
+   :undoc-members:
+   :members: execute
+
 Syntax
 ^^^^^^
 
