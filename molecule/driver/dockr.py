@@ -67,9 +67,8 @@ class Dockr(base.Base):
     def status(self):
         Status = collections.namedtuple('Status', ['name', 'state', 'driver'])
         status_list = []
-        for instance in self._config.platforms:
-            instance_name = '{}-{}'.format(
-                instance.get('name'), self._config.scenario.name)
+        for platform in self._config.platforms_with_scenario_name:
+            instance_name = platform['name']
             try:
                 d = self._docker.containers(filters={'name': instance_name})[0]
                 state = d.get('Status')
