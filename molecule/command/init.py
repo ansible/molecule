@@ -68,7 +68,10 @@ class Init(base.Base):
         extra_context = self._get_cookiecutter_context(role, driver, verifier)
 
         util.print_info('Initializing molecule in current directory...')
-        for template in ['playbook', 'driver/{}'.format(driver)]:
+        for template in [
+                'playbook', 'driver/{}'.format(driver),
+                'verifier/{}'.format(verifier)
+        ]:
             util.process_templates(template, extra_context, role_path)
 
     def _init_new_role(self, role, role_path, driver, verifier):

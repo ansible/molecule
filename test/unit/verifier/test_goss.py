@@ -55,7 +55,7 @@ def test_execute(patched_test_verifier, patched_get_tests, goss_instance):
     patched_get_tests.return_value = True
     goss_instance.execute()
 
-    patched_test_verifier.assert_called_once()
+    patched_test_verifier.assert_called_once_with()
 
 
 def test_execute_no_tests(patched_test_verifier, patched_get_tests,
@@ -79,7 +79,7 @@ def test_execute_exits_with_return_code(patched_test_verifier,
 def test_goss(patched_ansible_playbook, goss_instance):
     goss_instance._goss()
 
-    patched_ansible_playbook.assert_called_once()
+    patched_ansible_playbook.assert_called_once_with()
 
 
 def test_get_tests(goss_instance):

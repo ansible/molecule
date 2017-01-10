@@ -23,6 +23,8 @@ import re
 import pytest
 import sh
 
+pytestmark = pytest.helpers.supports_openstack()
+
 
 @pytest.mark.parametrize(
     'scenario_setup', ['command_status'], indirect=['scenario_setup'])

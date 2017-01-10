@@ -1,4 +1,4 @@
-ansible-lint==3.2.5
+ansible-lint==3.4.8
 anyconfig==0.7.0
 colorama==0.3.7
 cookiecutter==1.4.0
@@ -10,4 +10,4 @@ pexpect==4.2.1
 PyYAML==3.12
 sh==1.11
 tabulate==0.7.5
-testinfra==1.4.2
+testinfra==1.4.5

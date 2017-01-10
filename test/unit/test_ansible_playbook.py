@@ -40,7 +40,7 @@ def test_init_arg_loading_bool_true(ansible_playbook_instance):
 
 
 def test_init_arg_loading_bool_false_not_added(ansible_playbook_instance):
-    assert ansible_playbook_instance._cli.get('sudo_user') is None
+    assert ansible_playbook_instance._cli.get('become_user') is None
 
 
 def test_init_connection_params(ansible_v1_section_data,
@@ -54,6 +54,11 @@ def test_init_connection_params(ansible_v1_section_data,
 def test_parse_arg_raw_env(ansible_playbook_instance):
     assert ansible_playbook_instance._cli.get('raw_env_vars') is None
     assert 'bar' == ansible_playbook_instance.env.get('FOO')
+
+
+def test_parse_arg_raw_env_ensures_string_values(ansible_playbook_instance):
+    assert ansible_playbook_instance._cli.get('raw_env_vars') is None
+    assert '0' == ansible_playbook_instance.env.get('RETRY_FILES_ENABLED')
 
 
 def test_parse_arg_host_key_checking(ansible_playbook_instance):
@@ -139,7 +144,7 @@ def test_bake(ansible_playbook_instance):
     ansible_playbook_instance.bake()
     executable = sh.ansible_playbook
     expected = [
-        '--diff', '--inventory-file=inventory_file', '--limit=all', '--sudo',
+        '--become', '--diff', '--inventory-file=inventory_file', '--limit=all',
         '--timeout=30', '-vvvv', executable,
         ansible_playbook_instance._playbook
     ]
@@ -176,7 +181,8 @@ def test_execute_exits_with_return_code_and_logs(patched_print_error,
     ansible_playbook_instance._ansible = sh.false.bake()
     result = ansible_playbook_instance.execute()
 
-    msg = "\n\n  RAN: '/usr/bin/false'\n\n  STDOUT:\n\n\n  STDERR:\n"
+    false_path = sh.which('false')
+    msg = "\n\n  RAN: '{}'\n\n  STDOUT:\n\n\n  STDERR:\n".format(false_path)
     patched_print_error.assert_called_once_with(msg)
 
     assert (1, None) == result

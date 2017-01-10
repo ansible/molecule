@@ -32,9 +32,11 @@ def scenario_setup(request):
         'scenarios', scenario)
 
     os.chdir(d)
-    sh.molecule('destroy')
 
     def cleanup():
-        sh.molecule('destroy')
+        try:
+            sh.molecule('destroy')
+        except:
+            pass
 
     request.addfinalizer(cleanup)

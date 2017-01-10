@@ -244,9 +244,9 @@ def ansible_v1_section_data(playbook):
     return {
         'ansible': {
             'timeout': 30,
-            'sudo': True,
-            'sudo_user': False,
-            'ask_sudo_pass': False,
+            'become': True,
+            'become_user': False,
+            'ask_become_pass': False,
             'ask_vault_pass': False,
             'vault_password_file': False,
             'limit': 'all',
@@ -262,7 +262,8 @@ def ansible_v1_section_data(playbook):
             'inventory_file': 'inventory_file',
             'playbook': playbook,
             'raw_env_vars': {
-                'FOO': 'bar'
+                'FOO': 'bar',
+                'RETRY_FILES_ENABLED': 0,
             }
         },
         'verifier': {

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 #  Copyright (c) 2015-2016 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -119,6 +121,20 @@ def test_print_debug(capsys):
     assert expected_title == result_title
 
 
+def test_print_msg(capsys):
+    util.print_msg('{}', 'test')
+    result, _ = capsys.readouterr()
+
+    assert 'test\n' == result
+
+
+def test_print_msg_handles_utf8(capsys):
+    util.print_msg('{}', u'voil\u00e0')
+    result, _ = capsys.readouterr()
+
+    assert u'voilà\n' == result
+
+
 def test_write_template(temp_dir):
     source_file = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), os.path.pardir,
@@ -210,7 +226,8 @@ def test_run_command_with_debug(patched_print_debug):
     cmd = sh.ls.bake()
     util.run_command(cmd, debug=True)
 
-    patched_print_debug.assert_called_with('COMMAND', '/bin/ls')
+    ls_path = sh.which('ls')
+    patched_print_debug.assert_called_with('COMMAND', ls_path)
 
 
 def test_resolve_template_dir_relative():

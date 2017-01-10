@@ -2,6 +2,50 @@
 History
 *******
 
+1.17.3
+======
+
+* Create test skeleton with `molecule init` when initializing a role in current
+  directory.
+
+1.17.2
+======
+
+* Fix unittests to allow ls to be in both /usr/bin and /bin.
+* Force raw_env_vars to string for `ansible-playbook`.
+
+1.17.1
+======
+
+* Correct functional tests.
+* Correct locale issues with print class of methods.
+* Correct ansible-lint exit error when role dependency is in newer dictionary
+  format.
+* Pass env to `ansible-lint`.
+
+1.17
+====
+
+* Cleanup sphinx doc generation.
+* Bumped testinfra requirement which drops the now useless installation of
+  which in centos and fedora images.
+* Made OpenStack's ip pool configurable.
+* Corrected Docker's overlayfs for RPM based distros.
+* Fixed OpenStack's security_groups default for newer shade versions.
+* Added missing bash completion targets.
+
+1.16.1
+======
+
+* Removed check mode from running in test cycle.
+
+Breaking Changes
+----------------
+
+* Molecule no longer runs in "Dry Mode" as part of `molecule test`.  If one
+  wishes to incorporate check as part of `test`, molecule.yml can be updated
+  to include this as part of the test sequence.
+
 1.16
 ====
 

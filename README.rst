@@ -90,14 +90,14 @@ Install OS dependencies on CentOS 6/7
 .. code-block:: bash
 
   $ yum install -y epel-release
-  $ yum install gcc python-devel openssl-devel
+  $ yum install gcc python-devel openssl-devel libffi-devel
 
 Install OS dependencies on Ubuntu 16.x
 
 .. code-block:: bash
 
   $ apt-get update
-  $ apt-get install python-pip libssl-dev
+  $ apt-get install gcc python-pip python-vagrant libssl-dev libffi-dev
 
 Install Molecule using pip:
 

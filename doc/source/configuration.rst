@@ -46,7 +46,7 @@ may look something like this:
   ansible:
     inventory_file: ../../inventory/
     diff: False
-    sudo: True
+    become: True
     vault_password_file: ~/.vault
 
 As you can see, the names of these values correspond to what the underlying
