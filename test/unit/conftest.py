@@ -212,6 +212,9 @@ def docker_v1_section_data():
             }, {
                 'name': 'test2',
                 'image': 'ubuntu',
+                'links': {
+                    'test1': '80',
+                },
                 'image_version': 'latest',
                 'ansible_groups': ['group2'],
                 'command': '/bin/sh',
