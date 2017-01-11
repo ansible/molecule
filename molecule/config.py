@@ -18,17 +18,18 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import copy
 import os
 
 import anyconfig
 
-from molecule import provisioner
 from molecule import scenario
 from molecule import state
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
 from molecule.driver import dockr
 from molecule.lint import ansible_lint
+from molecule.provisioner import ansible
 from molecule.verifier import testinfra
 
 MOLECULE_DIRECTORY = 'molecule'
@@ -83,9 +84,20 @@ class Config(object):
         return self.config['platforms']
 
     @property
+    def platforms_with_scenario_name(self):
+        platforms = copy.deepcopy(self.platforms)
+        for platform in platforms:
+            instance_name = platform['name']
+            scenario_name = self.scenario.name
+            platform['name'] = instance_with_scenario_name(instance_name,
+                                                           scenario_name)
+
+        return platforms
+
+    @property
     def provisioner(self):
         if self.config['provisioner']['name'] == 'ansible':
-            return provisioner.Ansible(self)
+            return ansible.Ansible(self)
 
     @property
     def scenario(self):
@@ -239,3 +251,7 @@ def molecule_ephemeral_directory(path):
 
 def molecule_file(path):
     return os.path.join(path, MOLECULE_FILE)
+
+
+def instance_with_scenario_name(instance_name, scenario_name):
+    return '{}-{}'.format(instance_name, scenario_name)
