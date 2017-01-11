@@ -25,6 +25,7 @@ import os
 import sys
 
 import colorama
+import yaml
 
 colorama.init(autoreset=True)
 
@@ -117,3 +118,8 @@ def write_file(filename, content):
     """
     with open(filename, 'w') as f:
         f.write(content)
+
+
+def safe_dump(data):
+    return yaml.safe_dump(
+        data, default_flow_style=False, explicit_start=True, encoding='utf-8')

@@ -114,8 +114,6 @@ def test_command_test(with_scenario):
 @pytest.mark.parametrize(
     'with_scenario', ['docker'], indirect=['with_scenario'])
 def test_command_verify(with_scenario):
-    # TODO(retr0h): How should we best handle verify?
-    # Should verify call converge first?
     sh.molecule('create')
     sh.molecule('converge')
     sh.molecule('verify')

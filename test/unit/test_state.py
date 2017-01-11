@@ -68,7 +68,7 @@ def test_reset_persists(state_instance):
     state_instance.reset()
     assert not state_instance.converged
 
-    with open(state_instance.state_file) as stream:
+    with open(state_instance.state_file, 'r') as stream:
         d = yaml.safe_load(stream)
 
         assert not d.get('converged')
@@ -96,7 +96,7 @@ def test_get_data_loads_existing_state_file(temp_dir):
     os.makedirs(ephemeral_directory)
 
     data = {'converged': False, 'created': True}
-    util.write_file(state_file, yaml.safe_dump(data))
+    util.write_file(state_file, util.safe_dump(data))
 
     c = config.Config(molecule_file)
     s = state.State(c)

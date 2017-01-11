@@ -23,6 +23,7 @@ import os
 import pytest
 
 from molecule import config
+from molecule import util
 from molecule.command import base
 
 
@@ -46,16 +47,14 @@ def test_config_private_member(base_instance):
 
 def test_load_config(temp_dir):
     inventory_file = os.path.join(temp_dir.strpath, 'inventory_file')
-    with open(inventory_file, 'w') as outfile:
-        outfile.write('foo: bar')
+    util.write_file(inventory_file, 'foo: bar')
 
     assert {'foo': 'bar'} == base._load_config(inventory_file)
 
 
 def test_load_config_returns_empty_dict_on_empty_file(temp_dir):
     inventory_file = os.path.join(temp_dir.strpath, 'inventory_file')
-    with open(inventory_file, 'w') as outfile:
-        outfile.write('')
+    util.write_file(inventory_file, '')
 
     assert {} == base._load_config(inventory_file)
 

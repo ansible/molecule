@@ -157,11 +157,7 @@ class Ansible(object):
 
         util.write_file(self.inventory_file, yaml.dump(self.inventory))
         # TODO(retr0h): Move to safe dump
-        #  yaml.safe_dump(
-        #      self.inventory,
-        #      default_flow_style=False,
-        #      explicit_start=True,
-        #      encoding='utf-8'))
+        #  util.write_file(self.inventory_file, util.safe_dump(self.inventory))
 
     def write_config(self):
         """

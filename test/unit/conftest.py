@@ -28,8 +28,7 @@ from molecule import config
 
 @pytest.helpers.register
 def create_molecule_file(molecule_file, config):
-    with open(molecule_file, 'w') as outfile:
-        outfile.write(yaml.dump(config.config))
+    util.write_file(molecule_file, util.safe_dump(config.config))
 
 
 @pytest.helpers.register

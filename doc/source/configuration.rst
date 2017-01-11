@@ -1,7 +1,7 @@
 Configuration
 =============
 
-TODO: Talk about config loading...
+TODO(retr0h): Talk about config loading...
 How it finds files
 and scenarios
 

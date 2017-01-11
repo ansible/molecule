@@ -37,8 +37,8 @@ def test_process_templates(temp_dir):
     expected_file = os.path.join(temp_dir.strpath, repo_name, 'template.yml')
     expected_contents = '- value: foo'
 
-    with open(expected_file) as f:
-        for line in f.readlines():
+    with open(expected_file, 'r') as stream:
+        for line in stream.readlines():
             assert line.strip() in expected_contents
 
 
