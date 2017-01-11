@@ -38,7 +38,8 @@ Options
 * ``command`` - **(default='')** the command to launch the container.
 * ``environment`` - **(default=None)** the environment variables passed to the
   container.
-* ``links`` - **(default=[])** the link mapping to allow containers to discover each other.
+* ``links`` - **(default=[])** the link mapping to allow containers to discover
+  each other.
 
 The available param for the Docker driver itself is:
 
