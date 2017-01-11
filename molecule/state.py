@@ -113,9 +113,7 @@ class State(object):
             return yaml.safe_load(stream)
 
     def _write_state_file(self):
-        util.write_file(
-            self.state_file,
-            util.safe_dump(self._data))
+        util.write_file(self.state_file, util.safe_dump(self._data))
 
     def _get_state_file(self):
         return os.path.join(self._config.ephemeral_directory, 'state.yml')
