@@ -226,3 +226,10 @@ def test_environment(docker_instance):
     d2 = docker_instance._docker.inspect_container('test2')['Config']['Env']
     assert 'FOO=BAR' not in d2
     assert 'BAZ=QUX' not in d2
+
+
+def test_links(docker_instance):
+    docker_instance.up()
+    d2 = docker_instance._docker.inspect_container('test2')['HostConfig']['Links']
+    assert '/test1:/test2/80' in d2
+
