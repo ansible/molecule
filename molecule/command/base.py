@@ -25,6 +25,7 @@ import os
 import yaml
 
 from molecule import config
+from molecule import interpolation
 from molecule import util
 
 
@@ -50,13 +51,17 @@ class Base(object):
 
 def _load_config(config):
     """
-    Open and YAML parse the provided file and returns a dict.
+    Open, interpolate, and YAML parse the provided file and returns a dict.
 
     :param config: A string containing an absolute path to a Molecule config.
     :return: dict
     """
+    i = interpolation.Interpolator(interpolation.TemplateWithDefaults,
+                                   os.environ)
     with open(config, 'r') as stream:
-        return yaml.safe_load(stream) or {}
+        interpolated_config = i.interpolate(stream.read())
+
+        return yaml.safe_load(interpolated_config) or {}
 
 
 def _verify_configs(configs):
