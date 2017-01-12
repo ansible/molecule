@@ -96,7 +96,6 @@ def get_configs(args, command_args):
      the CLI.
     :return: list
     """
-    current_directory = os.path.join(os.getcwd(), 'molecule')
     configs = [
         config.Config(
             molecule_file=os.path.abspath(c),
