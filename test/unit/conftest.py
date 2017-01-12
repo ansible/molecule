@@ -68,6 +68,22 @@ def molecule_instance(temp_dir, temp_files, state_path_without_data):
 
 
 @pytest.fixture()
+def molecule_instance_with_env_expansion(temp_dir, temp_files,
+                                         state_path_without_data):
+    os.environ['MOLECULE_TEST_01'] = 'vagrant'
+    os.environ['MOLECULE_TEST_02'] = 'ubuntu'
+    os.environ['MOLECULE_TEST_03'] = 'trusty64'
+    os.environ['MOLECULE_TEST_04'] = 'example1'
+    os.environ['MOLECULE_TEST_05'] = 'append_platform_to_hostname'
+    c = temp_files(fixtures=['molecule_vagrant_v1_config_using_env'])
+    m = core.Molecule(config.ConfigV1(configs=c), {})
+    m.state = state.State(state_file=state_path_without_data)
+    m.main()
+
+    return m
+
+
+@pytest.fixture()
 def docker_molecule_instance(temp_dir, temp_files, state_path_without_data):
     c = temp_files(fixtures=['molecule_docker_v1_config'])
     m = core.Molecule(config.ConfigV1(configs=c), {})
@@ -103,6 +119,16 @@ def molecule_vagrant_v1_config(molecule_v1_section_data,
                                ansible_v1_section_data):
     return reduce(lambda x, y: config.merge_dicts(x, y), [
         molecule_v1_section_data, vagrant_v1_section_data,
+        ansible_v1_section_data
+    ])
+
+
+@pytest.fixture()
+def molecule_vagrant_v1_config_using_env(molecule_v1_section_data,
+                                         vagrant_v1_section_data_using_env,
+                                         ansible_v1_section_data):
+    return reduce(lambda x, y: config.merge_dicts(x, y), [
+        molecule_v1_section_data, vagrant_v1_section_data_using_env,
         ansible_v1_section_data
     ])
 
@@ -174,6 +200,38 @@ def vagrant_v1_section_data():
                 'ansible_groups': ['example', 'example1'],
                 'options': {
                     'append_platform_to_hostname': True
+                }
+            }, {
+                'name': 'aio-02',
+                'ansible_groups': ['example', 'example1'],
+                'options': {
+                    'append_platform_to_hostname': True
+                }
+            }]
+        }
+    }
+
+
+@pytest.fixture()
+def vagrant_v1_section_data_using_env():
+    return {
+        '${MOLECULE_TEST_01}': {
+            'platforms': [{
+                'name': 'ubuntu',
+                'box': '${MOLECULE_TEST_02}/${MOLECULE_TEST_03}'
+            }, {
+                'name': 'centos7',
+                'box': 'centos/7'
+            }],
+            'providers': [{
+                'name': 'virtualbox',
+                'type': 'virtualbox'
+            }],
+            'instances': [{
+                'name': 'aio-01',
+                'ansible_groups': ['example', '${MOLECULE_TEST_04}'],
+                'options': {
+                    '${MOLECULE_TEST_05}': True
                 }
             }, {
                 'name': 'aio-02',

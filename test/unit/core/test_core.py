@@ -91,6 +91,28 @@ def test_dependency(molecule_instance):
     assert 'galaxy' == molecule_instance.dependency
 
 
+def test_envvar_expansion_dictkey(molecule_instance_with_env_expansion):
+    assert 'vagrant' == molecule_instance_with_env_expansion._get_driver_name()
+
+
+def test_envvar_expansion_multiple_vars(molecule_instance_with_env_expansion):
+    m = molecule_instance_with_env_expansion
+    assert 'ubuntu/trusty64' == m.config.config['vagrant']['platforms'][0][
+            'box']
+
+
+def test_envvar_expansion_in_list(molecule_instance_with_env_expansion):
+    m = molecule_instance_with_env_expansion
+    assert 'example1' == m.config.config['vagrant']['instances'][0][
+            'ansible_groups'][1]
+
+
+def test_envvar_expansion_deeply_nested(molecule_instance_with_env_expansion):
+    m = molecule_instance_with_env_expansion
+    assert 'append_platform_to_hostname' in m.config.config['vagrant'][
+            'instances'][0]['options']
+
+
 @pytest.mark.skip(reason='TODO(retr0h): Determine best way to test this')
 def test_remove_templates():
     pass
