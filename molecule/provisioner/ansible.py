@@ -43,6 +43,35 @@ class Ansible(object):
           name: ansible
           options:
             debug: True
+
+    Modifying ansible.cfg.
+
+    .. code-block:: yaml
+
+        provisioner:
+          name: ansible
+          config_options:
+            defaults:
+              fact_caching: jsonfile
+            ssh_connection:
+              scp_if_ssh: True
+
+    Roles which require host/groups to have certain variables set.
+
+    .. code-block:: yaml
+
+        provisioner:
+          name: ansible
+          group_vars:
+            foo1:
+              - test: key
+                var2: value
+            foo2:
+              - test: key
+                var: value
+          host_vars:
+            foo1-01:
+              - set_this_value: True
     """
 
     def __init__(self, config):
