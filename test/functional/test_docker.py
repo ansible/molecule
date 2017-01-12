@@ -125,6 +125,12 @@ def test_command_test(with_scenario):
 
 
 @pytest.mark.parametrize(
+    'with_scenario', ['host_group_vars'], indirect=['with_scenario'])
+def test_command_test_with_host_group_vars(with_scenario):
+    sh.molecule('test')
+
+
+@pytest.mark.parametrize(
     'with_scenario', ['docker'], indirect=['with_scenario'])
 def test_command_verify(with_scenario):
     sh.molecule('create')

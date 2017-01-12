@@ -104,6 +104,14 @@ class Ansible(object):
             self._config.config['provisioner']['options'])
 
     @property
+    def host_vars(self):
+        return self._config.config['provisioner']['host_vars']
+
+    @property
+    def group_vars(self):
+        return self._config.config['provisioner']['group_vars']
+
+    @property
     def inventory(self):
         # ungrouped:
         #   hosts:
@@ -196,6 +204,32 @@ class Ansible(object):
         template = template.render(config_options=self.config_options)
         util.write_file(self.config_file, template)
 
+    def _add_or_update_vars(self, target):
+        """
+        Creates host and/or group vars and returns None.
+
+        :param target: A string containing either `host_vars` or `group_vars`.
+        :returns: None
+        """
+        if target == 'host_vars':
+            vars_target = self.host_vars
+        elif target == 'group_vars':
+            vars_target = self.group_vars
+
+        if not vars_target:
+            return
+
+        ephemeral_directory = self._config.ephemeral_directory
+        target_vars_directory = os.path.join(ephemeral_directory, target)
+
+        if not os.path.isdir(os.path.abspath(target_vars_directory)):
+            os.mkdir(os.path.abspath(target_vars_directory))
+
+        for target in vars_target.keys():
+            target_var_content = vars_target[target][0]
+            path = os.path.join(os.path.abspath(target_vars_directory), target)
+            util.write_file(path, util.safe_dump(target_var_content))
+
     def _get_ansible_playbook(self, playbook, **kwargs):
         """
         Get an instance of AnsiblePlaybook and returns it.
@@ -216,6 +250,8 @@ class Ansible(object):
         """
         self.write_inventory()
         self.write_config()
+        self._add_or_update_vars('host_vars')
+        self._add_or_update_vars('group_vars')
 
     def _verify_inventory(self):
         """
