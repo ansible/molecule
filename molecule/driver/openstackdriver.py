@@ -130,7 +130,7 @@ class OpenstackDriver(basedriver.BaseDriver):
                     key_name=kpn,
                     ip_pool=instance.get('ip_pool')
                     if instance.get('ip_pool') else self.ip_pool,
-                    network=instance.get('networks', []),                    
+                    network=instance.get('networks', []),
                     security_groups=instance.get('security_groups', []))
                 self._reset_known_host_key(server['interface_ip'])
                 instance['created'] = True
