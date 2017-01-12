@@ -209,7 +209,7 @@ def test_check(ansible_instance, mocker, patched_ansible_playbook):
 def test_write_inventory(temp_dir, ansible_instance):
     ansible_instance.write_inventory()
 
-    assert os.path.exists(ansible_instance.inventory_file)
+    assert os.path.isfile(ansible_instance.inventory_file)
 
     with open(ansible_instance.inventory_file, 'r') as stream:
         data = yaml.load(stream)
@@ -246,7 +246,7 @@ def test_write_inventory(temp_dir, ansible_instance):
 def test_write_config(temp_dir, ansible_instance):
     ansible_instance.write_config()
 
-    assert os.path.exists(ansible_instance.config_file)
+    assert os.path.isfile(ansible_instance.config_file)
 
 
 def test_setup(mocker, temp_dir, ansible_instance):
@@ -256,7 +256,7 @@ def test_setup(mocker, temp_dir, ansible_instance):
         'molecule.provisioner.ansible.Ansible.write_config')
     ansible_instance._setup()
 
-    assert os.path.exists(os.path.dirname(ansible_instance.inventory_file))
+    assert os.path.isdir(os.path.dirname(ansible_instance.inventory_file))
 
     patched_provisioner_write_inventory.assert_called_once_with()
     patched_provisioner_write_config.assert_called_once_with()
