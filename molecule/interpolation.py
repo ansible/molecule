@@ -39,8 +39,8 @@ class Interpolator(object):
 
     .. warning::
 
-        If an environment variable is not set, Molecule substitutes with an empty
-        string.
+        If an environment variable is not set, Molecule substitutes with an
+        empty string.
 
     Both `$VARIABLE` and `${VARIABLE}` syntax are supported. Extended
     shell-style features, such as `${VARIABLE-default}` and
