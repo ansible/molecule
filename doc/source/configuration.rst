@@ -1,15 +1,18 @@
 Configuration
 =============
 
-TODO(retr0h): Talk about config loading...
-How it finds files
-and scenarios
+Config
+------
+
+.. autoclass:: molecule.config.Config
+   :undoc-members:
 
 Variable Substitution
 ---------------------
 
 .. autoclass:: molecule.interpolation.Interpolator
    :undoc-members:
+
 
 Dependency
 ----------

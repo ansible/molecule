@@ -38,6 +38,19 @@ MOLECULE_FILE = 'molecule.yml'
 
 
 class Config(object):
+    """
+    Molecule searches the current directory for `molecule.yml` files by
+    globbing `molecule/*/molecule.yml`.  The files are instantiated into
+    a list of Molecule :class:`.Config` objects, and each Molecule subcommand
+    operates on this list.
+
+    The directory in which the `molecule.yml` resides is the Scenario's
+    directory.  Molecule performs most functions within this directory.
+
+    The :class:`.Config` object has instantiated Dependency_, Driver_, Lint_,
+    Provisioner_, Verifier_, :class:`.Scenario`, and State references.
+    """
+
     MERGE_STRATEGY = anyconfig.MS_DICTS
 
     def __init__(self, molecule_file, args={}, command_args={}, configs=[]):
