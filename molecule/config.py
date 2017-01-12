@@ -111,6 +111,10 @@ class ConfigV1(Config):
                 'become': True,
                 'become_user': False,
                 'config_file': 'ansible.cfg',
+                'ansiblecfg_defaults': {
+                    'retry_files_enabled': False,
+                },
+                'ansiblecfg_ssh_connection': {},
                 'diff': True,
                 'host_key_checking': False,
                 'inventory_file': 'ansible_inventory',
