@@ -1,0 +1,24 @@
+---
+dependency:
+    name: galaxy
+driver:
+    name: docker
+lint:
+    name: ansible-lint
+platforms:
+  - name: host-group-vars
+    groups:
+      - example
+provisioner:
+    name: ansible
+    host_vars:
+      # TODO(retr0h): We may wish to handle the scenario_name appended.
+      host-group-vars-default:
+        - host_group_vars_host_molecule_yml: True
+    group_vars:
+      example:
+        - host_group_vars_example_group_molecule_yml: True
+scenario:
+    name: default
+verifier:
+    name: testinfra

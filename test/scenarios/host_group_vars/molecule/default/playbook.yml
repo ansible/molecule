@@ -1,0 +1,23 @@
+---
+- hosts: all
+  tasks:
+    - name: Host vars host_var for host host-group-vars from molecule.yml
+      command: echo "{{ host_group_vars_host_molecule_yml }}"
+      changed_when: False
+
+    - name: Host vars from host_vars existing directory
+      command: echo "{{ host_group_vars_host_vars_dir }}"
+      changed_when: False
+
+    - name: Group vars group_var for group example from molecule.yml
+      command: echo "{{ host_group_vars_example_group_molecule_yml }}"
+      changed_when: False
+
+    - name: Group vars from group_vars existing directory
+      command: echo "{{ host_group_vars_group_vars_dir }}"
+      changed_when: False
+
+    # TODO(retr0h): Implement children functionality.
+    # - name: Group host vars scenario test example2:children group vars from molecule.yml
+    #   command: echo "{{ group_host_vars_example2_group_molecule_yml }}"
+    #   changed_when: False

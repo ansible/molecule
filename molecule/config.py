@@ -152,6 +152,8 @@ class Config(object):
                 'name': 'ansible',
                 'config_options': {},
                 'options': {},
+                'host_vars': {},
+                'group_vars': {},
             },
             'scenario': {
                 'name': 'default',
