@@ -59,6 +59,14 @@ def test_options_property(docker_instance):
     assert {} == docker_instance.options
 
 
+def test_login_cmd_template(docker_instance):
+    assert 'docker exec -ti {} bash' == docker_instance.login_cmd_template
+
+
+def test_login_args(docker_instance):
+    assert ['foo'] == docker_instance.login_args('foo')
+
+
 def test_status(mocker, docker_instance):
     def side_effect(filters):
         instance_name = filters['name']

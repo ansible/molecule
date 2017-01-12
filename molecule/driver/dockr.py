@@ -48,21 +48,18 @@ class Dockr(base.Base):
 
     @property
     def testinfra_options(self):
-        """
-        Returns a Testinfra specific options dict.
-
-        :returns: dict
-        """
         return {'connection': 'docker'}
 
     @property
     def connection_options(self):
-        """
-        Returns a driver specific connection options dict.
-
-        :returns: str
-        """
         return {'ansible_connection': 'docker'}
+
+    @property
+    def login_cmd_template(self):
+        return 'docker exec -ti {} bash'
+
+    def login_args(self, instance):
+        return [instance]
 
     def status(self):
         Status = collections.namedtuple('Status', ['name', 'state', 'driver'])

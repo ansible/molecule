@@ -21,6 +21,7 @@
 import os
 import re
 
+import pexpect
 import pytest
 import sh
 
@@ -86,6 +87,18 @@ def test_command_init_scenario(temp_dir):
     'with_scenario', ['docker'], indirect=['with_scenario'])
 def test_command_lint(with_scenario):
     sh.molecule('lint')
+
+
+@pytest.mark.parametrize(
+    'with_scenario', ['docker'], indirect=['with_scenario'])
+def test_command_login(with_scenario):
+    sh.molecule('create')
+
+    child = pexpect.spawn(
+        'molecule login --host instance  --scenario-name default')
+    child.expect('.*instance-[12].*')
+    # If the test returns and doesn't hang it succeeded.
+    child.sendline('exit')
 
 
 @pytest.mark.parametrize(
