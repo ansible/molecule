@@ -35,7 +35,7 @@ associated tests.  Molecule supports any provider [#]_ `Ansible`_ supports.
 Documentation
 =============
 
-https://molecule.readthedocs.io
+http://molecule.readthedocs.io/en/v2/
 
 Ansible Support
 ===============
