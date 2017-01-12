@@ -20,6 +20,7 @@
 
 import abc
 import collections
+import glob
 import os
 
 import yaml
@@ -98,11 +99,11 @@ def get_configs(args, command_args):
     current_directory = os.path.join(os.getcwd(), 'molecule')
     configs = [
         config.Config(
-            molecule_file=c,
+            molecule_file=os.path.abspath(c),
             args=args,
             command_args=command_args,
             configs=[_load_config(c)])
-        for c in util.os_walk(current_directory, 'molecule.yml')
+        for c in glob.glob('molecule/*/molecule.yml')
     ]
 
     scenario_name = command_args.get('scenario_name')
