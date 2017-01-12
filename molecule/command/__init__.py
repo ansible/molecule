@@ -31,7 +31,7 @@ from molecule.command import destroy  # noqa
 from molecule.command import idempotence  # noqa
 from molecule.command import init  # noqa
 from molecule.command import lint  # noqa
-#  from molecule.command import login  # noqa
+from molecule.command import login  # noqa
 from molecule.command import status  # noqa
 from molecule.command import syntax  # noqa
 from molecule.command import test  # noqa

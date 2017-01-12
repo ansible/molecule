@@ -36,10 +36,37 @@ class Base(object):
     @abc.abstractproperty
     def testinfra_options(self):
         """
-        Returns the kwargs used when invoking the testinfra validator, and
-        returns a dict.
+        Returns a Testinfra specific options dict.
 
         :returns: dict
+        """
+        pass  # pragma: no cover
+
+    @abc.abstractproperty
+    def connection_options(self):
+        """
+        Returns a driver specific connection options dict.
+
+        :returns: str
+        """
+        pass  # pragma: no cover
+
+    @abc.abstractproperty
+    def login_cmd_template(self):
+        """
+        Returns the command string to login to a host.
+
+        :returns: str
+        """
+        pass  # pragma: no cover
+
+    @abc.abstractmethod
+    def login_args(self, instance_name):
+        """
+        Returns the arguments used in the login command and returns a list.
+
+        :param instance_name: A string containing the instance to login to.
+        :returns: list
         """
         pass  # pragma: no cover
 

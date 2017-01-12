@@ -10,7 +10,7 @@ Install Molecule using pip:
 
   $ pip install molecule --pre
 
-.. warn::
+.. warning::
 
     This install method is not yet available.  We will cut a pre-release
     candidate once ready.
@@ -192,6 +192,13 @@ Lint
 ^^^^
 
 .. autoclass:: molecule.command.lint.Lint
+   :undoc-members:
+   :members: execute
+
+Login
+^^^^^
+
+.. autoclass:: molecule.command.login.Login
    :undoc-members:
    :members: execute
 
