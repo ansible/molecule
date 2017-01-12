@@ -10,6 +10,11 @@ Install Molecule using pip:
 
   $ pip install molecule --pre
 
+.. warn::
+
+    This install method is not yet available.  We will cut a pre-release
+    candidate once ready.
+
 Install dependencies using pip:
 
 .. code-block:: bash
