@@ -21,8 +21,8 @@
 import os
 
 import pytest
-import yaml
 
+from molecule import util
 from molecule import config
 
 

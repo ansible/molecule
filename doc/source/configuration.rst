@@ -5,6 +5,11 @@ TODO(retr0h): Talk about config loading...
 How it finds files
 and scenarios
 
+Variable Substitution
+---------------------
+
+.. autoclass:: molecule.interpolation.Interpolator
+   :undoc-members:
 
 Dependency
 ----------
@@ -43,7 +48,7 @@ any provider `Ansible`_ supports.  This work is offloaded to the `provisioner`.
 Docker
 ^^^^^^
 
-.. autoclass:: molecule.driver.docker.Docker
+.. autoclass:: molecule.driver.dockr.Dockr
    :undoc-members:
 
 Lint
@@ -85,7 +90,7 @@ Molecule handles provisioning and converging the role.
 Ansible
 ^^^^^^^
 
-.. autoclass:: molecule.provisioner.Ansible
+.. autoclass:: molecule.provisioner.ansible.Ansible
    :undoc-members:
 
 Scenario
