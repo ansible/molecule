@@ -79,6 +79,21 @@ def test_dependency_property(config_instance):
     assert isinstance(config_instance.dependency, ansible_galaxy.AnsibleGalaxy)
 
 
+def test_dependency_property_raises(patched_print_error, platforms_data,
+                                    molecule_file):
+    config_data = {'dependency': {'name': 'invalid'}}
+    configs = [platforms_data, config_data]
+    c = config.Config(molecule_file, configs=configs)
+
+    with pytest.raises(SystemExit) as e:
+        c.dependency
+
+    assert 1 == e.value.code
+
+    msg = "Invalid dependency named 'invalid' configured."
+    patched_print_error.assert_called_once_with(msg)
+
+
 def test_dependency_property_is_gilt(config_instance, molecule_file):
     gilt_data = {'dependency': {'name': 'gilt'}}
     configs = [gilt_data]
@@ -91,8 +106,38 @@ def test_driver_property(config_instance):
     assert isinstance(config_instance.driver, dockr.Dockr)
 
 
+def test_driver_property_raises(patched_print_error, platforms_data,
+                                molecule_file):
+    config_data = {'driver': {'name': 'invalid'}}
+    configs = [platforms_data, config_data]
+    c = config.Config(molecule_file, configs=configs)
+
+    with pytest.raises(SystemExit) as e:
+        c.driver
+
+    assert 1 == e.value.code
+
+    msg = "Invalid driver named 'invalid' configured."
+    patched_print_error.assert_called_once_with(msg)
+
+
 def test_lint_property(config_instance):
     assert isinstance(config_instance.lint, ansible_lint.AnsibleLint)
+
+
+def test_lint_property_raises(patched_print_error, platforms_data,
+                              molecule_file):
+    config_data = {'lint': {'name': 'invalid'}}
+    configs = [platforms_data, config_data]
+    c = config.Config(molecule_file, configs=configs)
+
+    with pytest.raises(SystemExit) as e:
+        c.lint
+
+    assert 1 == e.value.code
+
+    msg = "Invalid lint named 'invalid' configured."
+    patched_print_error.assert_called_once_with(msg)
 
 
 def test_platforms_property(config_instance):
@@ -123,6 +168,21 @@ def test_provisioner_property(config_instance):
     assert isinstance(config_instance.provisioner, ansible.Ansible)
 
 
+def test_provisioner_property_raises(patched_print_error, platforms_data,
+                                     molecule_file):
+    config_data = {'provisioner': {'name': 'invalid'}}
+    configs = [platforms_data, config_data]
+    c = config.Config(molecule_file, configs=configs)
+
+    with pytest.raises(SystemExit) as e:
+        c.provisioner
+
+    assert 1 == e.value.code
+
+    msg = "Invalid provisioner named 'invalid' configured."
+    patched_print_error.assert_called_once_with(msg)
+
+
 def test_scenario_property(config_instance):
     assert isinstance(config_instance.scenario, scenario.Scenario)
 
@@ -133,6 +193,21 @@ def test_state_property(config_instance):
 
 def test_verifier_property(config_instance):
     assert isinstance(config_instance.verifier, testinfra.Testinfra)
+
+
+def test_verifier_property_raises(patched_print_error, platforms_data,
+                                  molecule_file):
+    config_data = {'verifier': {'name': 'invalid'}}
+    configs = [platforms_data, config_data]
+    c = config.Config(molecule_file, configs=configs)
+
+    with pytest.raises(SystemExit) as e:
+        c.verifier
+
+    assert 1 == e.value.code
+
+    msg = "Invalid verifier named 'invalid' configured."
+    patched_print_error.assert_called_once_with(msg)
 
 
 @pytest.fixture()
@@ -176,6 +251,16 @@ def test_setup(config_instance):
     config_instance._setup()
 
     assert os.path.isdir(config_instance.ephemeral_directory)
+
+
+def test_exit_with_invalid_section(config_instance, patched_print_error):
+    with pytest.raises(SystemExit) as e:
+        config_instance._exit_with_invalid_section('section', 'name')
+
+    assert 1 == e.value.code
+
+    msg = "Invalid section named 'name' configured."
+    patched_print_error.assert_called_once_with(msg)
 
 
 def test_molecule_directory():

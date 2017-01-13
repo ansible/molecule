@@ -25,6 +25,7 @@ import anyconfig
 
 from molecule import scenario
 from molecule import state
+from molecule import util
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
 from molecule.driver import dockr
@@ -82,16 +83,24 @@ class Config(object):
             return ansible_galaxy.AnsibleGalaxy(self)
         elif dependency_name == 'gilt':
             return gilt.Gilt(self)
+        else:
+            self._exit_with_invalid_section('dependency', dependency_name)
 
     @property
     def driver(self):
-        if self.config['driver']['name'] == 'docker':
+        driver_name = self.config['driver']['name']
+        if driver_name == 'docker':
             return dockr.Dockr(self)
+        else:
+            self._exit_with_invalid_section('driver', driver_name)
 
     @property
     def lint(self):
-        if self.config['lint']['name'] == 'ansible-lint':
+        lint_name = self.config['lint']['name']
+        if lint_name == 'ansible-lint':
             return ansible_lint.AnsibleLint(self)
+        else:
+            self._exit_with_invalid_section('lint', lint_name)
 
     @property
     def platforms(self):
@@ -110,8 +119,11 @@ class Config(object):
 
     @property
     def provisioner(self):
-        if self.config['provisioner']['name'] == 'ansible':
+        provisioner_name = self.config['provisioner']['name']
+        if provisioner_name == 'ansible':
             return ansible.Ansible(self)
+        else:
+            self._exit_with_invalid_section('provisioner', provisioner_name)
 
     @property
     def scenario(self):
@@ -123,8 +135,11 @@ class Config(object):
 
     @property
     def verifier(self):
-        if self.config['verifier']['name'] == 'testinfra':
+        verifier_name = self.config['verifier']['name']
+        if verifier_name == 'testinfra':
             return testinfra.Testinfra(self)
+        else:
+            self._exit_with_invalid_section('verifier', verifier_name)
 
     def _combine(self, configs):
         """ Perform a prioritized recursive merge of serveral source dicts
@@ -235,6 +250,10 @@ class Config(object):
         """
         if not os.path.isdir(self.ephemeral_directory):
             os.mkdir(self.ephemeral_directory)
+
+    def _exit_with_invalid_section(self, section, name):
+        msg = "Invalid {} named '{}' configured.".format(section, name)
+        util.sysexit_with_message(msg)
 
 
 def molecule_directory(path):
