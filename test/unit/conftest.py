@@ -63,10 +63,12 @@ def platforms_data():
     return {
         'platforms': [{
             'name': 'instance-1',
-            'groups': ['foo', 'bar']
+            'groups': ['foo', 'bar'],
+            'children': ['child1'],
         }, {
             'name': 'instance-2',
-            'groups': ['baz', 'foo']
+            'groups': ['baz', 'foo'],
+            'children': ['child2'],
         }]
     }
 

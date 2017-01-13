@@ -22,6 +22,7 @@ from __future__ import print_function
 
 import fnmatch
 import os
+import re
 import sys
 
 import colorama
@@ -94,7 +95,7 @@ def sysexit_with_message(msg, code=1):
 
 def run_command(cmd, debug=False):
     """
-    Execute the given command and return None.
+    Execute the given command and returns None.
     :param cmd: A `sh.Command` object to execute.
     :param debug: An optional bool to toggle debug output.
     :return: ``sh`` object
@@ -128,3 +129,11 @@ def write_file(filename, content):
 def safe_dump(data):
     return yaml.safe_dump(
         data, default_flow_style=False, explicit_start=True, encoding='utf-8')
+
+
+def instance_with_scenario_name(instance_name, scenario_name):
+    return '{}-{}'.format(instance_name, scenario_name)
+
+
+def ansi_escape(string):
+    return re.sub(r'\x1b[^m]*m', '', string)

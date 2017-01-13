@@ -46,7 +46,10 @@ class Login(base.Base):
             msg = 'Instances not created.  Please create instances first.'
             util.sysexit_with_message(msg)
 
-        hosts = [d['name'] for d in self._config.platforms_with_scenario_name]
+        hosts = [
+            d['name']
+            for d in self._config.platforms.instances_with_scenario_name
+        ]
         hostname = self._get_hostname(hosts)
         self._get_login(hostname)
 

@@ -18,11 +18,11 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import copy
 import os
 
 import anyconfig
 
+from molecule import platforms
 from molecule import scenario
 from molecule import state
 from molecule import util
@@ -49,7 +49,8 @@ class Config(object):
     directory.  Molecule performs most functions within this directory.
 
     The :class:`.Config` object has instantiated Dependency_, Driver_, Lint_,
-    Provisioner_, Verifier_, :class:`.Scenario`, and State references.
+    Platforms_, Provisioner_, Verifier_, :class:`.Scenario`, and State
+    references.
     """
 
     MERGE_STRATEGY = anyconfig.MS_DICTS
@@ -104,18 +105,7 @@ class Config(object):
 
     @property
     def platforms(self):
-        return self.config['platforms']
-
-    @property
-    def platforms_with_scenario_name(self):
-        platforms = copy.deepcopy(self.platforms)
-        for platform in platforms:
-            instance_name = platform['name']
-            scenario_name = self.scenario.name
-            platform['name'] = instance_with_scenario_name(instance_name,
-                                                           scenario_name)
-
-        return platforms
+        return platforms.Platforms(self)
 
     @property
     def provisioner(self):
@@ -183,6 +173,7 @@ class Config(object):
                 'options': {},
                 'host_vars': {},
                 'group_vars': {},
+                'children': {},
             },
             'scenario': {
                 'name': 'default',
@@ -244,7 +235,7 @@ class Config(object):
 
     def _setup(self):
         """
-        Prepare the system for Molecule and return None.
+        Prepare the system for Molecule and returns None.
 
         :return: None
         """
@@ -266,7 +257,3 @@ def molecule_ephemeral_directory(path):
 
 def molecule_file(path):
     return os.path.join(path, MOLECULE_FILE)
-
-
-def instance_with_scenario_name(instance_name, scenario_name):
-    return '{}-{}'.format(instance_name, scenario_name)

@@ -114,7 +114,7 @@ def get_configs(args, command_args):
 
 def _filter_configs_for_scenario(scenario_name, configs):
     """
-    Find the config matching the provided scenario name and return a list.
+    Find the config matching the provided scenario name and returns a list.
 
     :param scenario_name: A string representing the name of the scenario's
      config to return

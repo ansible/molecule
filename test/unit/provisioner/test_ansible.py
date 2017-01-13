@@ -52,7 +52,7 @@ def ansible_data():
                 'example_group2': [{
                     'foo': 'bar'
                 }],
-            }
+            },
         }
     }
 
@@ -154,7 +154,7 @@ def test_inventory_property(ansible_instance):
                     'ansible_connection': 'docker'
                 }
             }
-        }
+        },
     }
 
     assert x == ansible_instance.inventory

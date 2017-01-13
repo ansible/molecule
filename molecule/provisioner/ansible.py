@@ -21,9 +21,8 @@
 import collections
 import os
 
-import yaml
-import yaml.representer
 import jinja2
+import m9dicts
 
 from molecule import ansible_playbook
 from molecule import util
@@ -177,23 +176,43 @@ class Ansible(object):
         return self._config.config['provisioner']['group_vars']
 
     @property
+    def children(self):
+        return self._config.config['provisioner']['children']
+
+    @property
     def inventory(self):
-        # ungrouped:
-        #   hosts:
-        #     instance-1-default:
-        #     instance-2-default:
-        # $group_name:
-        #   hosts:
-        #     instance-1-default:
-        #       ansible_connection: docker
-        #     instance-2-default:
-        #       ansible_connection: docker
+        """
+        Create an inventory structure and returns a dict.
+
+        .. code-block:: yaml
+            ungrouped:
+             hosts:
+               instance-1-default:
+               instance-2-default:
+             children:
+               $child_group_name:
+                 hosts:
+                   instance-1-default:
+                   instance-2-default:
+            $group_name:
+             hosts:
+               instance-1-default:
+                 ansible_connection: docker
+               instance-2-default:
+                 ansible_connection: docker
+
+        :return: str
+        """
         dd = self._vivify()
-        for platform in self._config.platforms_with_scenario_name:
+        for platform in self._config.platforms.instances_with_scenario_name:
             for group in platform.get('groups', ['ungrouped']):
                 instance_name = platform['name']
                 connection_options = self._config.driver.connection_options
                 dd[group]['hosts'][instance_name] = connection_options
+                # Child groups
+                for child_group in platform.get('children', []):
+                    dd[group]['children'][child_group]['hosts'][
+                        instance_name] = connection_options
 
         return dd
 
@@ -249,12 +268,10 @@ class Ansible(object):
         :return: None
         """
         self._verify_inventory()
-        yaml.add_representer(collections.defaultdict,
-                             yaml.representer.Representer.represent_dict)
 
-        util.write_file(self.inventory_file, yaml.dump(self.inventory))
-        # TODO(retr0h): Move to safe dump
-        #  util.write_file(self.inventory_file, util.safe_dump(self.inventory))
+        # Convert the dictlike object to a dict for safe dumping.
+        inventory = m9dicts.convert_to(self.inventory)
+        util.write_file(self.inventory_file, util.safe_dump(inventory))
 
     def write_config(self):
         """

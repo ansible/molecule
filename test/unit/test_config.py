@@ -23,6 +23,7 @@ import os
 import pytest
 
 from molecule import config
+from molecule import platforms
 from molecule import scenario
 from molecule import state
 from molecule.dependency import ansible_galaxy
@@ -141,27 +142,7 @@ def test_lint_property_raises(patched_print_error, platforms_data,
 
 
 def test_platforms_property(config_instance):
-    x = [{
-        'groups': ['foo', 'bar'],
-        'name': 'instance-1'
-    }, {
-        'groups': ['baz', 'foo'],
-        'name': 'instance-2'
-    }]
-
-    assert x == config_instance.platforms
-
-
-def test_platforms_with_scenario_name(config_instance):
-    x = [{
-        'groups': ['foo', 'bar'],
-        'name': 'instance-1-default'
-    }, {
-        'groups': ['baz', 'foo'],
-        'name': 'instance-2-default'
-    }]
-
-    assert x == config_instance.platforms_with_scenario_name
+    assert isinstance(config_instance.platforms, platforms.Platforms)
 
 
 def test_provisioner_property(config_instance):
@@ -273,7 +254,3 @@ def test_molecule_ephemeral_directory():
 
 def test_molecule_file():
     assert '/foo/molecule.yml' == config.molecule_file('/foo')
-
-
-def test_instance_with_scenario_name():
-    assert 'foo-bar' == config.instance_with_scenario_name('foo', 'bar')

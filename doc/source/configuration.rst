@@ -65,25 +65,12 @@ Ansible Lint
 .. autoclass:: molecule.lint.ansible_lint.AnsibleLint
    :undoc-members:
 
+
 Platforms
 ---------
 
-Platforms define the instances to be tested, and the groups to which the
-instances belong.
-
-Groups are primarially used by the provisioner as Ansible groups in playbooks.
-
-.. code-block:: yaml
-
-    platforms:
-      - name: instance-1
-        groups:
-          - foo
-          - bar
-      - name: instance-2
-        groups:
-          - baz
-          - foo
+.. autoclass:: molecule.platforms.Platforms
+   :undoc-members:
 
 Provisioner
 -----------

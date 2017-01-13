@@ -21,9 +21,9 @@
 from __future__ import print_function
 
 import binascii
+import os
 
 import colorama
-import os
 import pytest
 import sh
 
@@ -196,3 +196,13 @@ def test_safe_dump():
     x = '---\nfoo: bar\n'
 
     assert x == util.safe_dump({'foo': 'bar'})
+
+
+def test_instance_with_scenario_name():
+    assert 'foo-bar' == util.instance_with_scenario_name('foo', 'bar')
+
+
+def test_ansi_escape():
+    string = 'ls\r\n\x1b[00m\x1b[01;31mfoo\x1b[00m\r\n\x1b[01;31m'
+
+    assert 'ls\r\nfoo\r\n' == util.ansi_escape(string)

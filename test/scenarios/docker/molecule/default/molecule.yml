@@ -7,6 +7,10 @@ lint:
     name: ansible-lint
 platforms:
   - name: instance-1
+    groups:
+      - group_1
+    children:
+      - child_1
 provisioner:
     name: ansible
 scenario:

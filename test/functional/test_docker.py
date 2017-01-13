@@ -26,6 +26,7 @@ import pytest
 import sh
 
 from molecule import config
+from molecule import util
 
 
 @pytest.mark.parametrize(
@@ -122,6 +123,19 @@ def test_command_syntax(with_scenario):
     'with_scenario', ['docker'], indirect=['with_scenario'])
 def test_command_test(with_scenario):
     sh.molecule('test')
+
+
+@pytest.mark.parametrize(
+    'with_scenario', ['docker'], indirect=['with_scenario'])
+def test_command_test_with_groups(with_scenario):
+    out = sh.molecule('test', '--scenario-name', 'default')
+    out = util.ansi_escape(out.stdout)
+
+    assert re.search('\[all\].*?ok: \[instance-1-default\]', out, re.DOTALL)
+    assert re.search('\[group_1\].*?ok: \[instance-1-default\]', out,
+                     re.DOTALL)
+    assert re.search('\[child_1\].*?ok: \[instance-1-default\]', out,
+                     re.DOTALL)
 
 
 @pytest.mark.parametrize(

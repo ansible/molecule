@@ -73,7 +73,7 @@ class Base(object):
     @abc.abstractmethod
     def status(self):
         """
-        Determine instances status and return a list.
+        Determine instances status and returns a list.
 
         :returns: list
         """
@@ -82,7 +82,7 @@ class Base(object):
     @abc.abstractmethod
     def _delayed_import(self):
         """
-        Delay driver module imports and return a module.  By delaying the
+        Delay driver module imports and returns a module.  By delaying the
         import, Molecule can import all drivers in the config module, and only
         instantiate the configured one.  Otherwise, Molecule would require
         each driver's packages be installed.

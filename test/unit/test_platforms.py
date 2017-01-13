@@ -18,17 +18,42 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import molecule
-import molecule.util
+import pytest
+
+from molecule import config
+from molecule import platforms
 
 
-def instance_with_scenario_name(instance_name, scenario_name):
-    return molecule.util.instance_with_scenario_name(instance_name,
-                                                     scenario_name)
+@pytest.fixture
+def platform_instance(molecule_file, platforms_data):
+    c = config.Config(molecule_file, configs=[platforms_data])
+
+    return platforms.Platforms(c)
 
 
-class FilterModule(object):
-    """ Core Molecule filter plugins. """
+def test_instances_property(platform_instance):
+    x = [{
+        'groups': ['foo', 'bar'],
+        'name': 'instance-1',
+        'children': ['child1'],
+    }, {
+        'groups': ['baz', 'foo'],
+        'name': 'instance-2',
+        'children': ['child2'],
+    }]
 
-    def filters(self):
-        return {'instance_with_scenario_name': instance_with_scenario_name}
+    assert x == platform_instance.instances
+
+
+def test_platforms_with_scenario_name(platform_instance):
+    x = [{
+        'groups': ['foo', 'bar'],
+        'name': 'instance-1-default',
+        'children': ['child1'],
+    }, {
+        'groups': ['baz', 'foo'],
+        'name': 'instance-2-default',
+        'children': ['child2'],
+    }]
+
+    assert x == platform_instance.instances_with_scenario_name
