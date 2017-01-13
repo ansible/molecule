@@ -87,6 +87,11 @@ def sysexit(code=1):
     sys.exit(code)
 
 
+def sysexit_with_message(msg, code=1):
+    print_error(msg)
+    sysexit(code)
+
+
 def run_command(cmd, debug=False):
     """
     Execute the given command and return None.

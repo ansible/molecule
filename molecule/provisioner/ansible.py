@@ -327,8 +327,7 @@ class Ansible(object):
         if not self.inventory:
             msg = ("Instances missing from the 'platform' "
                    "section of molecule.yml.")
-            util.print_error(msg)
-            util.sysexit()
+            util.sysexit_with_message(msg)
 
     def _get_config_template(self):
         """

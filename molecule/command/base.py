@@ -78,13 +78,11 @@ def _verify_configs(configs):
             if n > 1:
                 msg = ("Duplicate scenario name '{}' found.  "
                        'Exiting.').format(scenario_name)
-                util.print_error(msg)
-                util.sysexit()
+                util.sysexit_with_message(msg)
 
     else:
         msg = 'Unable to find a molecule.yml.  Exiting.'
-        util.print_error(msg)
-        util.sysexit()
+        util.sysexit_with_message(msg)
 
 
 def get_configs(args, command_args):

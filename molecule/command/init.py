@@ -74,8 +74,7 @@ def _init_new_role(command_args):
     if os.path.isdir(role_name):
         msg = ('The directory {} exists. '
                'Cannot create new role.').format(role_name)
-        util.print_error(msg)
-        util.sysexit()
+        util.sysexit_with_message(msg)
 
     extra_context = command_args
     _process_templates('role', extra_context, role_directory)
@@ -106,8 +105,7 @@ def _init_new_scenario(command_args):
     if os.path.isdir(scenario_directory):
         msg = ('The directory molecule/{} exists. '
                'Cannot create new scenario.').format(scenario_name)
-        util.print_error(msg)
-        util.sysexit()
+        util.sysexit_with_message(msg)
 
     extra_context = command_args
     scenario_base_directory = os.path.join(role_directory, role_name)

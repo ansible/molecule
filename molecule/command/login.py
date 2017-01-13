@@ -44,8 +44,7 @@ class Login(base.Base):
         """
         if not self._config.state.created:
             msg = 'Instances not created.  Please create instances first.'
-            util.print_error(msg)
-            util.sysexit()
+            util.sysexit_with_message(msg)
 
         hosts = [d['name'] for d in self._config.platforms_with_scenario_name]
         hostname = self._get_hostname(hosts)
@@ -57,8 +56,7 @@ class Login(base.Base):
         if len(match) == 0:
             msg = ("There are no hosts that match '{}'.  You "
                    'can only login to valid hosts.').format(hostname)
-            util.print_error(msg)
-            util.sysexit()
+            util.sysexit_with_message(msg)
         elif len(match) != 1:
             # If there are multiple matches, but one of them is an exact string
             # match, assume this is the one they're looking for and use it.
@@ -69,8 +67,7 @@ class Login(base.Base):
                        'can only login to one at a time.\n\n'
                        'Available hosts:\n{}'.format(
                            len(match), hostname, '\n'.join(sorted(hosts))))
-                util.print_error(msg)
-                util.sysexit()
+                util.sysexit_with_message(msg)
 
         return match[0]
 

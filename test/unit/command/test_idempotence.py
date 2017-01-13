@@ -75,12 +75,8 @@ def test_execute_raises_when_fails_idempotence(
 
     assert 1 == e.value.code
 
-    x = [
-        mocker.call('Idempotence test failed because of the following tasks:'),
-        mocker.call('')
-    ]
-
-    assert x == patched_print_error.mock_calls
+    msg = 'Idempotence test failed because of the following tasks:\n'
+    patched_print_error.assert_called_once_with(msg)
 
 
 def test_is_idempotent(idempotence_instance):

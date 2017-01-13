@@ -137,6 +137,24 @@ def test_sysexit_with_custom_code():
     assert 2 == e.value.code
 
 
+def test_sysexit_with_message(patched_print_error):
+    with pytest.raises(SystemExit) as e:
+        util.sysexit_with_message('foo')
+
+    assert 1 == e.value.code
+
+    patched_print_error.assert_called_once_with('foo')
+
+
+def test_sysexit_with_message_and_custom_code(patched_print_error):
+    with pytest.raises(SystemExit) as e:
+        util.sysexit_with_message('foo', 2)
+
+    assert 2 == e.value.code
+
+    patched_print_error.assert_called_once_with('foo')
+
+
 def test_run_command():
     cmd = sh.ls.bake()
     x = util.run_command(cmd)

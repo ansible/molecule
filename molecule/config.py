@@ -77,9 +77,10 @@ class Config(object):
 
     @property
     def dependency(self):
-        if self.config['dependency']['name'] == 'galaxy':
+        dependency_name = self.config['dependency']['name']
+        if dependency_name == 'galaxy':
             return ansible_galaxy.AnsibleGalaxy(self)
-        elif self.config['dependency']['name'] == 'gilt':
+        elif dependency_name == 'gilt':
             return gilt.Gilt(self)
 
     @property

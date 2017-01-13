@@ -55,8 +55,7 @@ class Idempotence(base.Base):
 
         if not self._config.state.converged:
             msg = 'Instances not converged.  Please converge instances first.'
-            util.print_error(msg)
-            util.sysexit()
+            util.sysexit_with_message(msg)
 
         output = self._config.provisioner.converge(
             self._config.scenario.converge, out=None, err=None)
@@ -65,10 +64,9 @@ class Idempotence(base.Base):
         if idempotent:
             util.print_success('Idempotence test passed.')
         else:
-            msg = 'Idempotence test failed because of the following tasks:'
-            util.print_error(msg)
-            util.print_error('\n'.join(self._non_idempotent_tasks(output)))
-            util.sysexit()
+            msg = ('Idempotence test failed because of the following tasks:\n'
+                   '{}').format('\n'.join(self._non_idempotent_tasks(output)))
+            util.sysexit_with_message(msg)
 
     def _is_idempotent(self, output):
         """
