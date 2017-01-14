@@ -103,13 +103,6 @@ def test_login_args(openstack_instance):
     assert re.match(r'.*\.ssh/molecule_[0-9a-fA-F]+$', login_args[2])
 
 
-def test_reset_known_hosts(openstack_instance, mocker):
-    patched_os = mocker.patch('os.system')
-    openstack_instance._reset_known_host_key('test')
-
-    patched_os.assert_called_once_with('ssh-keygen -R test')
-
-
 def test_get_temp_keyfile(openstack_instance):
     fileloc = openstack_instance._get_temp_keyfile()
 
