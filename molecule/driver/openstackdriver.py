@@ -134,15 +134,21 @@ class OpenstackDriver(basedriver.BaseDriver):
                     security_groups=instance.get('security_groups', []))
                 self._reset_known_host_key(server['interface_ip'])
                 instance['created'] = True
-                num_retries = 0
-                while not self._check_ssh_availability(
-                        server['interface_ip'],
-                        instance['sshuser'],
-                        timeout=6,
-                        sshkey_filename=self._get_keyfile(
-                        )) or num_retries == 5:
+                instance['reachable'] = False
+                for _ in range(5):
                     util.print_info('\t Waiting for ssh availability...')
-                    num_retries += 1
+                    if self._check_ssh_availability(
+                            server['interface_ip'],
+                            instance['sshuser'],
+                            timeout=6,
+                            sshkey_filename=self._get_keyfile()):
+                        instance['reachable'] = True
+                        break
+                if not instance['reachable']:
+                    util.print_error('Could not reach instance %s'
+                                     ' within limit of 30 seconds' %
+                                     instance['name'])
+                    util.sysexit()
 
     def destroy(self):
         util.print_info('Deleting openstack instances...')
