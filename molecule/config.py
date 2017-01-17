@@ -49,7 +49,7 @@ class Config(object):
     directory.  Molecule performs most functions within this directory.
 
     The :class:`.Config` object has instantiated Dependency_, Driver_, Lint_,
-    Platforms_, Provisioner_, Verifier_, :class:`.Scenario`, and State
+    Platforms_, Provisioner_, Verifier_, :class:`.Scenario`, and State_
     references.
     """
 

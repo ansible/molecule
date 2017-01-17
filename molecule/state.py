@@ -44,6 +44,14 @@ class State(object):
     disk if the file does not exist, otherwise is deserialized from the
     existing state file.  Changes made to the object are immediately
     serialized.
+
+    State is not a top level option in Molecule's config.  It's purpose is for
+    bookkeeping, and each Config_ object has a reference to a State_ object.
+
+    .. note::
+
+        Currently, it's use is significantly smaller than it was in v1 of
+        Molecule.
     """
 
     def __init__(self, config):

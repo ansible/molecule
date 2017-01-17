@@ -92,6 +92,12 @@ configuration syntax.
 .. autoclass:: molecule.scenario.Scenario
    :undoc-members:
 
+State
+-----
+
+.. autoclass:: molecule.state.State
+   :undoc-members:
+
 Verifier
 --------
 
