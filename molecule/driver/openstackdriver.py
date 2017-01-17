@@ -21,9 +21,10 @@
 import collections
 import hashlib
 import os
-import socket
 import sys
 import time
+
+from subprocess import check_output, CalledProcessError, STDOUT
 
 import paramiko
 try:
@@ -132,7 +133,6 @@ class OpenstackDriver(basedriver.BaseDriver):
                     if instance.get('ip_pool') else self.ip_pool,
                     network=instance.get('networks', []),
                     security_groups=instance.get('security_groups', []))
-                self._reset_known_host_key(server['interface_ip'])
                 instance['created'] = True
                 num_retries = 0
                 while not self._check_ssh_availability(
@@ -290,18 +290,16 @@ class OpenstackDriver(basedriver.BaseDriver):
             os.makedirs(loc)
         return os.path.abspath(loc)
 
-    def _reset_known_host_key(self, hostname):
-        return os.system('ssh-keygen -R {}'.format(hostname))
-
     def _check_ssh_availability(self, hostip, user, timeout, sshkey_filename):
-        ssh = paramiko.SSHClient()
-        ssh.load_system_host_keys()
-        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         try:
-            ssh.connect(hostip, username=user, key_filename=sshkey_filename)
+            command = [
+                'ssh', '-o', 'StrictHostKeyChecking=no', '-o',
+                'UserKnownHostsFile=/dev/null', '-o', 'BatchMode=yes', '-l',
+                user, hostip, 'exit'
+            ]
+            check_output(command, stderr=STDOUT)
             return True
-        except (paramiko.BadHostKeyException, paramiko.AuthenticationException,
-                paramiko.SSHException, socket.error):
+        except CalledProcessError:
             time.sleep(timeout)
             return False
 
