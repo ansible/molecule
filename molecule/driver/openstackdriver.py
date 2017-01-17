@@ -144,22 +144,32 @@ class OpenstackDriver(basedriver.BaseDriver):
                     image=self._openstack.get_image(instance['image']),
                     flavor=self._openstack.get_flavor(instance['flavor']),
                     auto_ip=True,
-                    wait=True,
+                    wait=False,
                     key_name=kpn,
                     ip_pool=instance.get('ip_pool')
                     if instance.get('ip_pool') else self.ip_pool,
                     network=instance.get('networks', []),
                     security_groups=instance.get('security_groups', []))
                 instance['created'] = True
-                instance['address'] = server['interface_ip']
                 instance['reachable'] = False
+                instance['server'] = server
             else:
                 instance['address'] = active_instance_names[instance['name']]
                 instance['reachable'] = True
 
         for instance in self.instances:
+            if not instance.get('server'):
+                instance['server'] = self._openstack.get_server(instance['name'])
+            if not instance.get('address'):
+                util.print_info('\t Waiting for instance %s to be in state active...'
+                                % instance['name'])
+                server = self._openstack.wait_for_server(instance['server'],
+                                                         auto_ip=True)
+                instance['address'] = server['interface_ip']
+
+        for instance in self.instances:
             for _ in range(ssh_timeout):
-                util.print_info('\t Waiting for ssh availability of instance %s...'
+                util.print_info('\t  Waiting for ssh availability of instance %s...'
                         % instance['name'])
                 if self._check_ssh_availability(
                         instance['address'],
