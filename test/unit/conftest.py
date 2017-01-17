@@ -353,6 +353,11 @@ def state_data():
 
 
 @pytest.fixture()
+def galaxy_meta_file():
+    return {'dependencies': [{'role': 'molecule'}]}
+
+
+@pytest.fixture()
 def state_path_with_data(temp_files):
     return temp_files(fixtures=['state_data'])[0]
 
