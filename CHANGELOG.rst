@@ -2,6 +2,17 @@
 History
 *******
 
+1.18
+====
+
+* Fix availability timeout in Openstack driver.
+* Do not alter users known_hosts file in Openstack driver.
+* Allow using environment variables in molecule.ym.
+* Make ansible.cfg settings configurable through molecule.yml.
+* Add multiple network support in Openstack driver.
+* Add links functionality to Docker driver.
+* Switched options from 'sudo' to 'become'.
+
 1.17.3
 ======
 
