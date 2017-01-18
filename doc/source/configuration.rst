@@ -226,6 +226,12 @@ override the defaults.
         ignore-certs: True
         ignore-errors: True
 
+
+The requirements file can be in a form that can be read directly by ``ansible-galaxy``, or it can be a `Ansible role meta file`_ (`meta/main.yml`) containing a `dependencies` key.
+
+.. _`Ansible role meta file`: http://docs.ansible.com/ansible/playbooks_roles.html#role-dependencies
+
+
 Shell
 ^^^^^
 
