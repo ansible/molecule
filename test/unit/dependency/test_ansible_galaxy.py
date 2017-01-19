@@ -156,7 +156,7 @@ def test_executes_catches_and_exits_return_code(
         patched_run_command, patched_ansible_galaxy_has_requirements_file,
         ansible_galaxy_instance):
     patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.ansible_galaxy,
-                                                           None, None)
+                                                           b'', b'')
     with pytest.raises(SystemExit) as e:
         ansible_galaxy_instance.execute()
 

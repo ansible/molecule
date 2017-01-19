@@ -184,7 +184,7 @@ def test_os_walk(temp_dir):
 
 def test_write_file(temp_dir):
     dest_file = os.path.join(temp_dir.strpath, 'test_util_write_file.tmp')
-    contents = binascii.b2a_hex(os.urandom(15))
+    contents = binascii.b2a_hex(os.urandom(15)).decode()
     util.write_file(dest_file, contents)
     with open(dest_file, 'r') as stream:
         data = stream.read()

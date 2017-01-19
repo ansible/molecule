@@ -18,6 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+from __future__ import print_function
+
 import click
 import tabulate
 
@@ -71,4 +73,4 @@ def _print_tabulate_data(data, headers):  # pragma: no cover
     :param headers:
     :returns: None
     """
-    print tabulate.tabulate(data, headers, tablefmt='orgtbl')
+    print(tabulate.tabulate(data, headers, tablefmt='orgtbl'))

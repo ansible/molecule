@@ -117,7 +117,7 @@ def test_execute_bakes(patched_run_command, ansible_lint_instance):
 def test_executes_catches_and_exits_return_code(patched_run_command,
                                                 ansible_lint_instance):
     patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.ansible_lint,
-                                                           None, None)
+                                                           b'', b'')
     with pytest.raises(SystemExit) as e:
         ansible_lint_instance.execute()
 

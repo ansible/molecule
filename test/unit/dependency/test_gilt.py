@@ -127,7 +127,7 @@ def test_executes_catches_and_exits_return_code(
         patched_run_command, patched_gilt_has_requirements_file,
         gilt_instance):
     patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.ansible_galaxy,
-                                                           None, None)
+                                                           b'', b'')
     with pytest.raises(SystemExit) as e:
         gilt_instance.execute()
 

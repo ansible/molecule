@@ -127,8 +127,10 @@ def write_file(filename, content):
 
 
 def safe_dump(data):
-    return yaml.safe_dump(
-        data, default_flow_style=False, explicit_start=True, encoding='utf-8')
+    return yaml.safe_dump(data, default_flow_style=False, explicit_start=True)
+    # TODO(retr0h): Do we need to encode?
+    # yaml.dump(data) produces the document as a str object in both python
+    # 2 and 3.
 
 
 def instance_with_scenario_name(instance_name, scenario_name):

@@ -352,9 +352,9 @@ class Ansible(object):
 # Molecule managed
 
 
-{% for section, section_dict in config_options.iteritems() -%}
+{% for section, section_dict in config_options.items() -%}
 [{{ section }}]
-{% for k, v in section_dict.iteritems() -%}
+{% for k, v in section_dict.items() -%}
 {{ k }} = {{ v }}
 {% endfor -%}
 {% endfor -%}
