@@ -195,17 +195,17 @@ Lint
    :undoc-members:
    :members: execute
 
+List
+^^^^
+
+.. autoclass:: molecule.command.list.List
+   :undoc-members:
+   :members: execute
+
 Login
 ^^^^^
 
 .. autoclass:: molecule.command.login.Login
-   :undoc-members:
-   :members: execute
-
-Status
-^^^^^^
-
-.. autoclass:: molecule.command.status.Status
    :undoc-members:
    :members: execute
 

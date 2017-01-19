@@ -18,12 +18,12 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-from molecule.command import status
+from molecule.command import list
 from molecule.driver import base
 
 
 def test_execute(capsys, config_instance):
-    s = status.Status(config_instance)
+    l = list.List(config_instance)
     x = [
         base.Status(
             instance_name='instance-1-default',
@@ -39,4 +39,4 @@ def test_execute(capsys, config_instance):
             state='Not Created'),
     ]
 
-    assert x == s.execute()
+    assert x == l.execute()

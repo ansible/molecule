@@ -92,6 +92,23 @@ def test_command_lint(with_scenario):
 
 @pytest.mark.parametrize(
     'with_scenario', ['docker'], indirect=['with_scenario'])
+def test_command_list(with_scenario):
+    out = sh.molecule('list', '--scenario-name', 'default')
+    assert re.search(
+        'instance-1-default.*Docker.*Ansible.*default.*Not Created',
+        out.stdout)
+
+    out = sh.molecule('list', '--scenario-name', 'multi-node')
+    assert re.search(
+        'instance-1-multi-node.*Docker.*Ansible.*multi-node.*Not Created',
+        out.stdout)
+    assert re.search(
+        'instance-2-multi-node.*Docker.*Ansible.*multi-node.*Not Created',
+        out.stdout)
+
+
+@pytest.mark.parametrize(
+    'with_scenario', ['docker'], indirect=['with_scenario'])
 def test_command_login(with_scenario):
     sh.molecule('create')
 
@@ -100,23 +117,6 @@ def test_command_login(with_scenario):
     child.expect('.*instance-[12].*')
     # If the test returns and doesn't hang it succeeded.
     child.sendline('exit')
-
-
-@pytest.mark.parametrize(
-    'with_scenario', ['docker'], indirect=['with_scenario'])
-def test_command_status(with_scenario):
-    out = sh.molecule('status', '--scenario-name', 'default')
-    assert re.search(
-        'instance-1-default.*Docker.*Ansible.*default.*Not Created',
-        out.stdout)
-
-    out = sh.molecule('status', '--scenario-name', 'multi-node')
-    assert re.search(
-        'instance-1-multi-node.*Docker.*Ansible.*multi-node.*Not Created',
-        out.stdout)
-    assert re.search(
-        'instance-2-multi-node.*Docker.*Ansible.*multi-node.*Not Created',
-        out.stdout)
 
 
 @pytest.mark.parametrize(

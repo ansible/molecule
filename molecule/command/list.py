@@ -24,21 +24,21 @@ import tabulate
 from molecule.command import base
 
 
-class Status(base.Base):
+class List(base.Base):
     def execute(self):
         """
-        Execute the actions necessary to perform a `molecule status` and
+        Execute the actions necessary to perform a `molecule list` and
         returns None.
 
-        >>> molecule status
+        >>> molecule list
 
         Targeting a specific scenario:
 
-        >>> molecule status --scenario-name foo
+        >>> molecule list --scenario-name foo
 
         Executing with `debug`:
 
-        >>> molecule --debug status
+        >>> molecule --debug list
 
         :return: None
         """
@@ -48,15 +48,15 @@ class Status(base.Base):
 @click.command()
 @click.pass_context
 @click.option('--scenario-name', help='Name of the scenario to target.')
-def status(ctx, scenario_name):  # pragma: no cover
-    """ Displays status of instances. """
+def list(ctx, scenario_name):  # pragma: no cover
+    """ Lists status of instances. """
     args = ctx.obj.get('args')
     command_args = {'subcommand': __name__, 'scenario_name': scenario_name}
 
     statuses = []
     for config in base.get_configs(args, command_args):
-        s = Status(config)
-        statuses.extend(s.execute())
+        l = List(config)
+        statuses.extend(l.execute())
 
     _print_tabulate_data(
         statuses,
