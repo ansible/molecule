@@ -136,6 +136,15 @@ def test_inventory_property(ansible_instance):
                 'instance-1-default': {
                     'ansible_connection': 'docker'
                 }
+            },
+            'children': {
+                'child1': {
+                    'hosts': {
+                        'instance-1-default': {
+                            'ansible_connection': 'docker'
+                        }
+                    }
+                }
             }
         },
         'foo': {
@@ -146,6 +155,22 @@ def test_inventory_property(ansible_instance):
                 'instance-2-default': {
                     'ansible_connection': 'docker'
                 }
+            },
+            'children': {
+                'child1': {
+                    'hosts': {
+                        'instance-1-default': {
+                            'ansible_connection': 'docker'
+                        }
+                    }
+                },
+                'child2': {
+                    'hosts': {
+                        'instance-2-default': {
+                            'ansible_connection': 'docker'
+                        }
+                    }
+                }
             }
         },
         'baz': {
@@ -153,8 +178,17 @@ def test_inventory_property(ansible_instance):
                 'instance-2-default': {
                     'ansible_connection': 'docker'
                 }
+            },
+            'children': {
+                'child2': {
+                    'hosts': {
+                        'instance-2-default': {
+                            'ansible_connection': 'docker'
+                        }
+                    }
+                }
             }
-        },
+        }
     }
 
     assert x == ansible_instance.inventory
@@ -282,10 +316,19 @@ def test_write_inventory(temp_dir, ansible_instance):
     with open(ansible_instance.inventory_file, 'r') as stream:
         data = yaml.load(stream)
         x = {
-            'bar': {
+            'baz': {
                 'hosts': {
-                    'instance-1-default': {
+                    'instance-2-default': {
                         'ansible_connection': 'docker'
+                    }
+                },
+                'children': {
+                    'child2': {
+                        'hosts': {
+                            'instance-2-default': {
+                                'ansible_connection': 'docker'
+                            }
+                        }
                     }
                 }
             },
@@ -297,12 +340,37 @@ def test_write_inventory(temp_dir, ansible_instance):
                     'instance-2-default': {
                         'ansible_connection': 'docker'
                     }
+                },
+                'children': {
+                    'child1': {
+                        'hosts': {
+                            'instance-1-default': {
+                                'ansible_connection': 'docker'
+                            }
+                        }
+                    },
+                    'child2': {
+                        'hosts': {
+                            'instance-2-default': {
+                                'ansible_connection': 'docker'
+                            }
+                        }
+                    }
                 }
             },
-            'baz': {
+            'bar': {
                 'hosts': {
-                    'instance-2-default': {
+                    'instance-1-default': {
                         'ansible_connection': 'docker'
+                    }
+                },
+                'children': {
+                    'child1': {
+                        'hosts': {
+                            'instance-1-default': {
+                                'ansible_connection': 'docker'
+                            }
+                        }
                     }
                 }
             }

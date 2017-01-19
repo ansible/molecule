@@ -106,11 +106,17 @@ def test_command_login(with_scenario):
     'with_scenario', ['docker'], indirect=['with_scenario'])
 def test_command_status(with_scenario):
     out = sh.molecule('status', '--scenario-name', 'default')
-    assert re.search('instance-1-default.*Not Created.*Docker', out.stdout)
+    assert re.search(
+        'instance-1-default.*Docker.*Ansible.*default.*Not Created',
+        out.stdout)
 
     out = sh.molecule('status', '--scenario-name', 'multi-node')
-    assert re.search('instance-1-multi-node', out.stdout)
-    assert re.search('instance-2-multi-node', out.stdout)
+    assert re.search(
+        'instance-1-multi-node.*Docker.*Ansible.*multi-node.*Not Created',
+        out.stdout)
+    assert re.search(
+        'instance-2-multi-node.*Docker.*Ansible.*multi-node.*Not Created',
+        out.stdout)
 
 
 @pytest.mark.parametrize(

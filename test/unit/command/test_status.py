@@ -19,20 +19,24 @@
 #  DEALINGS IN THE SOFTWARE.
 
 from molecule.command import status
+from molecule.driver import base
 
 
-def test_execute(capsys, patched_print_info, config_instance):
+def test_execute(capsys, config_instance):
     s = status.Status(config_instance)
-    s.execute()
+    x = [
+        base.Status(
+            instance_name='instance-1-default',
+            driver_name='Docker',
+            provisioner_name='Ansible',
+            scenario_name='default',
+            state='Not Created'),
+        base.Status(
+            instance_name='instance-2-default',
+            driver_name='Docker',
+            provisioner_name='Ansible',
+            scenario_name='default',
+            state='Not Created'),
+    ]
 
-    msg = 'Scenario: [default]'
-    patched_print_info.assert_called_once_with(msg)
-
-    stdout, _ = capsys.readouterr()
-
-    assert 'Name' in stdout
-    assert 'State' in stdout
-    assert 'Driver' in stdout
-
-    assert 'instance-1-default' in stdout
-    assert 'instance-2-default' in stdout
+    assert x == s.execute()

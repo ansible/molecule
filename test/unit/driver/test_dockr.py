@@ -84,13 +84,17 @@ def test_status(mocker, docker_instance):
 
     assert 2 == len(result)
 
-    assert result[0].name == 'instance-1-default'
+    assert result[0].instance_name == 'instance-1-default'
+    assert result[0].driver_name == 'Docker'
+    assert result[0].provisioner_name == 'Ansible'
+    assert result[0].scenario_name == 'default'
     assert result[0].state == 'Up About an hour'
-    assert result[0].driver == 'Docker'
 
-    assert result[1].name == 'instance-2-default'
+    assert result[1].instance_name == 'instance-2-default'
+    assert result[1].driver_name == 'Docker'
+    assert result[0].provisioner_name == 'Ansible'
+    assert result[0].scenario_name == 'default'
     assert result[1].state == 'Up About an hour'
-    assert result[1].driver == 'Docker'
 
 
 def test_status_not_created(mocker, docker_instance):
@@ -100,10 +104,14 @@ def test_status_not_created(mocker, docker_instance):
 
     assert 2 == len(result)
 
-    assert result[0].name == 'instance-1-default'
+    assert result[0].instance_name == 'instance-1-default'
+    assert result[0].driver_name == 'Docker'
+    assert result[0].provisioner_name == 'Ansible'
+    assert result[0].scenario_name == 'default'
     assert result[0].state == 'Not Created'
-    assert result[0].driver == 'Docker'
 
-    assert result[1].name == 'instance-2-default'
+    assert result[1].instance_name == 'instance-2-default'
+    assert result[1].driver_name == 'Docker'
+    assert result[0].provisioner_name == 'Ansible'
+    assert result[0].scenario_name == 'default'
     assert result[1].state == 'Not Created'
-    assert result[1].driver == 'Docker'

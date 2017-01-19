@@ -19,6 +19,12 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import abc
+import collections
+
+Status = collections.namedtuple('Status', [
+    'instance_name', 'driver_name', 'provisioner_name', 'scenario_name',
+    'state'
+])
 
 
 class Base(object):

@@ -18,7 +18,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import collections
 import sys
 
 from molecule.driver import base
@@ -62,7 +61,8 @@ class Dockr(base.Base):
         return [instance]
 
     def status(self):
-        Status = collections.namedtuple('Status', ['name', 'state', 'driver'])
+        provisioner_name = self._config.provisioner.name.capitalize()
+
         status_list = []
         for platform in self._config.platforms.instances_with_scenario_name:
             instance_name = platform['name']
@@ -72,10 +72,12 @@ class Dockr(base.Base):
             except IndexError:
                 state = 'Not Created'
             status_list.append(
-                Status(
-                    name=instance_name,
-                    state=state,
-                    driver=self.name.capitalize()))
+                base.Status(
+                    instance_name=instance_name,
+                    driver_name=self.name.capitalize(),
+                    provisioner_name=provisioner_name,
+                    scenario_name=self._config.scenario.name,
+                    state=state))
 
         return status_list
 

@@ -21,7 +21,6 @@
 import click
 import tabulate
 
-from molecule import util
 from molecule.command import base
 
 
@@ -43,20 +42,7 @@ class Status(base.Base):
 
         :return: None
         """
-        msg = 'Scenario: [{}]'.format(self._config.scenario.name)
-        util.print_info(msg)
-        self._print_tabulate_data(self._config.driver.status(),
-                                  ['Name', 'State', 'Driver'])
-
-    def _print_tabulate_data(self, data, headers):
-        """
-        Shows the tabulate data on the screen and returns None.
-
-        :param data:
-        :param headers:
-        :returns: None
-        """
-        print tabulate.tabulate(data, headers, tablefmt='orgtbl')
+        return self._config.driver.status()
 
 
 @click.command()
@@ -67,6 +53,22 @@ def status(ctx, scenario_name):  # pragma: no cover
     args = ctx.obj.get('args')
     command_args = {'subcommand': __name__, 'scenario_name': scenario_name}
 
+    statuses = []
     for config in base.get_configs(args, command_args):
         s = Status(config)
-        s.execute()
+        statuses.extend(s.execute())
+
+    _print_tabulate_data(
+        statuses,
+        ['Instance', 'Driver', 'Provisioner', 'Scenario', 'Last Action'])
+
+
+def _print_tabulate_data(data, headers):
+    """
+    Shows the tabulate data on the screen and returns None.
+
+    :param data:
+    :param headers:
+    :returns: None
+    """
+    print tabulate.tabulate(data, headers, tablefmt='orgtbl')
