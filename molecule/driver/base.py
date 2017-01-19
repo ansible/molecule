@@ -85,18 +85,6 @@ class Base(object):
         """
         pass  # pragma: no cover
 
-    @abc.abstractmethod
-    def _delayed_import(self):
-        """
-        Delay driver module imports and returns a module.  By delaying the
-        import, Molecule can import all drivers in the config module, and only
-        instantiate the configured one.  Otherwise, Molecule would require
-        each driver's packages be installed.
-
-        :returns: module
-        """
-        pass  # pragma: no cover
-
     @property
     def name(self):
         return self._config.config['driver']['name']

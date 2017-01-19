@@ -68,38 +68,6 @@ def test_login_args(docker_instance):
 
 
 def test_status(mocker, docker_instance):
-    def side_effect(filters):
-        instance_name = filters['name']
-
-        return [{
-            u'Status': u'Up About an hour',
-            u'State': u'running',
-            u'Command': u'sleep infinity',
-            u'Names': [u'/{}'.format(instance_name)],
-        }]
-
-    m = mocker.patch('docker.client.Client.containers')
-    m.side_effect = side_effect
-    result = docker_instance.status()
-
-    assert 2 == len(result)
-
-    assert result[0].instance_name == 'instance-1-default'
-    assert result[0].driver_name == 'Docker'
-    assert result[0].provisioner_name == 'Ansible'
-    assert result[0].scenario_name == 'default'
-    assert result[0].state == 'Up About an hour'
-
-    assert result[1].instance_name == 'instance-2-default'
-    assert result[1].driver_name == 'Docker'
-    assert result[0].provisioner_name == 'Ansible'
-    assert result[0].scenario_name == 'default'
-    assert result[1].state == 'Up About an hour'
-
-
-def test_status_not_created(mocker, docker_instance):
-    m = mocker.patch('docker.client.Client.containers')
-    m.return_value = []
     result = docker_instance.status()
 
     assert 2 == len(result)
@@ -115,3 +83,13 @@ def test_status_not_created(mocker, docker_instance):
     assert result[0].provisioner_name == 'Ansible'
     assert result[0].scenario_name == 'default'
     assert result[1].state == 'Not Created'
+
+
+def test_instances_state(docker_instance):
+    assert 'Not Created' == docker_instance._instances_state()
+
+
+def test_instances_state_created(docker_instance):
+    docker_instance._config.state.change_state('created', True)
+
+    assert 'Created' == docker_instance._instances_state()

@@ -41,9 +41,6 @@ class Dockr(base.Base):
 
     def __init__(self, config):
         super(Dockr, self).__init__(config)
-        docker = self._delayed_import()
-        self._docker = docker.Client(
-            version='auto', **docker.utils.kwargs_from_env())
 
     @property
     def testinfra_options(self):
@@ -61,30 +58,38 @@ class Dockr(base.Base):
         return [instance]
 
     def status(self):
-        provisioner_name = self._config.provisioner.name.capitalize()
-
         status_list = []
         for platform in self._config.platforms.instances_with_scenario_name:
             instance_name = platform['name']
-            try:
-                d = self._docker.containers(filters={'name': instance_name})[0]
-                state = d.get('Status')
-            except IndexError:
-                state = 'Not Created'
+            driver_name = self.name.capitalize()
+            provisioner_name = self._config.provisioner.name.capitalize()
+            scenario_name = self._config.scenario.name
+            state = self._instances_state()
+
             status_list.append(
                 base.Status(
                     instance_name=instance_name,
-                    driver_name=self.name.capitalize(),
+                    driver_name=driver_name,
                     provisioner_name=provisioner_name,
-                    scenario_name=self._config.scenario.name,
+                    scenario_name=scenario_name,
                     state=state))
 
         return status_list
 
-    def _delayed_import(self):
-        try:
-            import docker
+    def _instances_state(self):
+        """
+        Get instances state and returns a string.
 
-            return docker
-        except ImportError:  # pragma: no cover
-            sys.exit('ERROR: Driver missing, install docker-py.')
+        .. important::
+
+            Molecule assumes all instances were created successfully by
+            Ansible, otherwise Ansible would return an error on create.  This
+            may prove to be a bad assumption.  However, configuring Moleule's
+            driver to match the options passed to the playbook may prove
+            difficult.  Especially in cases where the user is provisioning
+            instances off localhost.
+        """
+        if self._config.state.created:
+            return 'Created'
+        else:
+            return 'Not Created'
