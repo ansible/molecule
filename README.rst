@@ -43,6 +43,7 @@ Ansible Support
 ===============
 
 * 2.2.0.0 - Supported
+* 2.2.1.0 - Supported
 
 .. _`Ansible`: https://docs.ansible.com
 
