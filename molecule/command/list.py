@@ -63,7 +63,7 @@ def list(ctx, scenario_name):  # pragma: no cover
         ['Instance', 'Driver', 'Provisioner', 'Scenario', 'Last Action'])
 
 
-def _print_tabulate_data(data, headers):
+def _print_tabulate_data(data, headers):  # pragma: no cover
     """
     Shows the tabulate data on the screen and returns None.
 

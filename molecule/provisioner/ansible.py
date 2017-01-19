@@ -176,10 +176,6 @@ class Ansible(object):
         return self._config.config['provisioner']['group_vars']
 
     @property
-    def children(self):
-        return self._config.config['provisioner']['children']
-
-    @property
     def inventory(self):
         """
         Create an inventory structure and returns a dict.
