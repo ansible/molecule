@@ -40,7 +40,7 @@ def print_info(msg, pretty=True):
     if pretty:
         template = '--> {}{{}}'.format(colorama.Fore.CYAN)
     else:
-        template = '{}'
+        template = '    {}'
     print_msg(template, msg)
 
 

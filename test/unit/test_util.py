@@ -57,7 +57,7 @@ def test_print_info_without_pretty(capsys):
     util.print_info('test', pretty=False)
     stdout, _ = capsys.readouterr()
 
-    print('{}'.format('test'.rstrip()))
+    print('    {}'.format('test'.rstrip()))
     x, _ = capsys.readouterr()
 
     assert x == stdout
