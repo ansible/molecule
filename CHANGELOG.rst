@@ -2,6 +2,11 @@
 History
 *******
 
+1.18.1
+======
+
+* Make Openstack ssh timeout configurable.
+
 1.18
 ====
 
