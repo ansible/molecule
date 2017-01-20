@@ -1,0 +1,219 @@
+require 'yaml'
+
+$state = YAML::load_file('{{ cookiecutter.vagrantfile_state_file }}')
+
+Vagrant.configure('2') do |config|
+
+    driver_config = $state['driver_config']
+
+    if Vagrant.has_plugin?('vagrant-cachier')
+        config.cache.scope = 'machine'
+    end
+
+    ##
+    # Platforms
+    ##
+    if driver_config['platforms']
+        driver_config['platforms'].each { |platform|
+            if platform['name'] == driver_config['current_platform']
+                config.vm.box = platform['box']
+
+                if platform['box_version']
+                    config.vm.box_version = platform['box_version']
+                end
+
+                if platform['box_url']
+                    config.vm.box_url = platform['box_url']
+                end
+            end
+        }
+    end
+
+    ##
+    # Raw Configuration
+    ##
+    if driver_config['raw_config_args']
+        driver_config['raw_config_args'].each { |raw_config_arg|
+            eval("config.#{raw_config_arg}")
+        }
+    end
+
+    ##
+    # Providers
+    ##
+    if driver_config['providers']
+        driver_config['providers'].each { |provider|
+            if provider['name'] == driver_config['current_provider']
+                ##
+                # Virtualbox
+                ##
+                if provider['type'] == 'virtualbox'
+                    config.vm.provider provider['type'] do |virtualbox|
+                        # Required
+                        if provider['options'] and provider['options']['memory']
+                            virtualbox.memory = provider['options']['memory']
+                        else
+                            virtualbox.memory = 512
+                        end
+
+                        if provider['options'] and provider['options']['cpus']
+                            virtualbox.cpus = provider['options']['cpus']
+                        else
+                            virtualbox.cpus = 2
+                        end
+
+                        if provider['options'] and provider['options']['linked_clone']
+                            if Vagrant::VERSION =~ /^1.[89]/
+                                virtualbox.linked_clone = provider['options']['linked_clone']
+                            end
+                        else
+                            if Vagrant::VERSION =~ /^1.[89]/
+                                virtualbox.linked_clone = true
+                            end
+                        end
+
+                        # Custom
+                        if provider['options']
+                            provider['options'].each { |key, value|
+                                if key != 'memory' and key != 'cpus' and
+                                        key != 'linked_clone'
+                                    eval("virtualbox.#{key} = #{value}")
+                                end
+                            }
+                        end
+                    end
+
+                    # The vagrant-vbguest plugin attempts to update packages
+                    # before a RHEL based VM is registered.
+                    # TODO: Port from the old .j2, should be done in raw config
+                    if (driver_config['current_platform'] =~ /rhel/i) != nil
+                        if Vagrant.has_plugin?('vagrant-vbguest')
+                            config.vbguest.auto_update = false
+                        end
+                    end
+                end
+
+                ##
+                # VMware (vmware_fusion, vmware_workstation and vmware_desktop)
+                ##
+                if provider['type'].start_with?('vmware_')
+                    config.vm.provider provider['type'] do |vmware|
+                        # Required
+                        if provider['options'] and provider['options']['memory']
+                            vmware.vmx['memsize'] = provider['options']['memory']
+                        else
+                            vmware.vmx['memsize'] = 512
+                        end
+
+                        if provider['options'] and provider['options']['cpus']
+                            vmware.vmx['numvcpus'] = provider['options']['cpus']
+                        else
+                            vmware.vmx['numvcpus'] = 2
+                        end
+
+                        # Custom
+                        if provider['options']
+                            provider['options'].each { |key, value|
+                                if key != 'memory' and key != 'cpus'
+                                    eval("vmware.#{key} = #{value}")
+                                end
+                            }
+                        end
+                    end
+                end
+
+                ##
+                # Parallels
+                ##
+                if provider['type'] == 'parallels'
+                    config.vm.provider provider['type'] do |parallels|
+                        # Required
+                        if provider['options'] and provider['options']['memory']
+                            parallels.memory = provider['options']['memory']
+                        else
+                            parallels.memory = 512
+                        end
+
+                        if provider['options'] and provider['options']['cpus']
+                            parallels.cpus = provider['options']['cpus']
+                        else
+                            parallels.cpus = 2
+                        end
+
+                        # Custom
+                        if provider['options']
+                            provider['options'].each { |key, value|
+                                if key != 'memory' and key != 'cpus'
+                                    eval("parallels.#{key} = #{value}")
+                                end
+                            }
+                        end
+                    end
+                end
+
+                ##
+                # libvirt
+                ##
+                if provider['type'] == 'libvirt'
+                    config.vm.provider provider['type'] do |libvirt|
+                        # Required
+                        if provider['options'] and provider['options']['memory']
+                            libvirt.memory = provider['options']['memory']
+                        else
+                            libvirt.memory = 512
+                        end
+
+                        if provider['options'] and provider['options']['cpus']
+                            libvirt.cpus = provider['options']['cpus']
+                        else
+                            libvirt.cpus = 2
+                        end
+
+                        # Custom
+                        if provider['options']
+                            provider['options'].each { |key, value|
+                                if key != 'memory' and key != 'cpus'
+                                    eval("libvirt.#{key} = #{value}")
+                                end
+                            }
+                        end
+                    end
+                end
+            end
+        }
+    end
+
+    ##
+    # Instances
+    ##
+    if driver_config['instances']
+        driver_config['instances'].each { |instance|
+            config.vm.define instance['vm_name'] do |c|
+                if driver_config['current_provider'] != 'libvirt'
+                    c.vm.hostname = instance['vm_name']
+                end
+
+                if instance['platform']
+                    c.vm.box = instance['platform']
+                end
+
+                if instance['interfaces']
+                    instance['interfaces'].each { |interface|
+                        if interface['type'] == 'static'
+                            c.vm.network "#{interface['network_name']}", type: "#{interface['type']}", auto_config: "#{interface['auto_config']}", ip: "#{interface['ip']}"
+                        else
+                            c.vm.network "#{interface['network_name']}", type: "#{interface['type']}", auto_config: "#{interface['auto_config']}"
+                        end
+                    }
+                end
+
+                if instance['raw_config_args']
+                    provider['options'].each { |raw_config_arg|
+                        eval("c.#{raw_config_arg}")
+                    }
+                end
+
+            end
+        }
+    end
+end

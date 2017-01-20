@@ -27,7 +27,6 @@ import os
 import sys
 
 import colorama
-import jinja2
 
 colorama.init(autoreset=True)
 
@@ -84,44 +83,6 @@ def callback_info(msg):
 def callback_error(msg):
     """ A `print_error` wrapper to stream `sh` modules stderr. """
     print_error(msg, pretty=False)
-
-
-def write_template(src, dest, kwargs={}, _module='molecule', _dir='template'):
-    """
-    Writes a file from a jinja2 template and returns None.
-
-    :param src: A string containing the the target template files to use.
-    :param dest: A string containing the destination of the templatized file to
-     be written.
-    :param kwargs: A dict of arguments passed to jinja2 when rendering
-     template.
-    :param _module: An optional module (to look for template files) passed to
-     jinja2 PackageLoader.
-    :param _dir: An optional directory (to look for template files) passed to
-     jinja2 PackageLoader
-    :return: None
-    """
-    src = os.path.expanduser(src)
-    path = os.path.dirname(src)
-    filename = os.path.basename(src)
-
-    # template file doesn't exist
-    if path and not os.path.isfile(src):
-        msg = 'Unable to locate template file: {}'.format(src)
-        print_error(msg)
-        sysexit()
-
-    # look for template in filesystem, then molecule package
-    loader = jinja2.ChoiceLoader([
-        jinja2.FileSystemLoader(
-            path, followlinks=True), jinja2.PackageLoader(_module, _dir)
-    ])
-
-    env = jinja2.Environment(loader=loader)
-    template = env.get_template(filename)
-
-    with open(dest, 'w') as f:
-        f.write(template.render(**kwargs))
 
 
 def process_templates(template_dir, extra_context, output_dir, overwrite=True):

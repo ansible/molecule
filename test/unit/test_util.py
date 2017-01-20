@@ -135,24 +135,6 @@ def test_print_msg_handles_utf8(capsys):
     assert u'voilà\n' == result
 
 
-def test_write_template(temp_dir):
-    source_file = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), os.path.pardir,
-        'resources', 'test_write_template.j2')
-    dest_file = os.path.join(temp_dir, 'test_util_write_template.tmp')
-    util.write_template(source_file, dest_file, {'test': 'chicken'})
-    with open(dest_file, 'r') as f:
-        data = f.read()
-
-    assert data == 'this is a chicken\n'
-
-
-def test_write_template_template_does_not_exist(temp_dir):
-    dest_file = os.path.join(temp_dir, 'test_util_write_template.tmp')
-    with pytest.raises(SystemExit):
-        util.write_template('/non/existent', dest_file, {'foo': 'bar'})
-
-
 def test_write_file(temp_dir):
     dest_file = os.path.join(temp_dir, 'test_util_write_file.tmp')
     contents = binascii.b2a_hex(os.urandom(15))

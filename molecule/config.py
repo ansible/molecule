@@ -209,7 +209,6 @@ class ConfigV1(Config):
                 },
                 'testinfra_dir': 'tests',
                 'vagrantfile_file': 'vagrantfile',
-                'vagrantfile_template': 'vagrantfile.j2'
             },
             'verifier': {
                 'name': 'testinfra',
