@@ -14,6 +14,8 @@ Options
 * ``image`` - OpenStack image to use for instance.
 * ``flavor`` - OpenStack flavor to use for instance.
 * ``sshuser`` - user to ssh as.
+* ``ssh_timeout`` - Timeout for checking reachability via ssh in seconds
+  (default: ``30``)
 * ``ansible_groups`` - a list of groups the instance(s) belong to in Ansible
   and/or a list of lists for assigning the instance(s) to child groups.
 * ``security_groups`` - security groups the instance belongs to in OpenStack.

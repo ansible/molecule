@@ -20,5 +20,9 @@ Usage
         image: 'CentOS 7'
         flavor: m1.xlarge
         sshuser: centos
+        # Overrides the driver-level
+        # ssh_timeout setting for this
+        # instance
+        ssh_timeout: 45
         ansible_groups:
           - ansiblegroup
