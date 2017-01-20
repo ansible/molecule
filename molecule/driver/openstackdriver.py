@@ -80,6 +80,10 @@ class OpenstackDriver(basedriver.BaseDriver):
         self._platform = val
 
     @property
+    def ssh_timeout(self):
+        return self.molecule.config.config['openstack'].get('ssh_timeout', 30)
+
+    @property
     def valid_providers(self):
         return [{'name': self.provider}]
 
@@ -119,6 +123,19 @@ class OpenstackDriver(basedriver.BaseDriver):
 
         util.print_warn('Creating openstack instances...')
         for instance in self.instances:
+
+            try:
+                # We divide the ssh_timeout by 2, because the connect
+                # itself takes at least a second and is followed by
+                # a 1 sec sleep
+                ssh_timeout = int(
+                    instance.get('ssh_timeout', self.ssh_timeout) / 2)
+            except TypeError:
+                util.print_error('Can not cast ssh_timeout setting "%s"'
+                                 ' to int' %
+                                 instance.get('ssh_timeout', self.ssh_timeout))
+                util.sysexit()
+
             if instance['name'] not in active_instance_names:
                 msg = '\tBringing up {}...'.format(instance['name'])
                 util.print_info(msg)
@@ -135,19 +152,22 @@ class OpenstackDriver(basedriver.BaseDriver):
                     security_groups=instance.get('security_groups', []))
                 instance['created'] = True
                 instance['reachable'] = False
-                for _ in range(5):
+
+                for _ in range(ssh_timeout):
                     util.print_info('\t Waiting for ssh availability...')
                     if self._check_ssh_availability(
                             server['interface_ip'],
                             instance['sshuser'],
-                            timeout=6,
+                            timeout=1,
                             sshkey_filename=self._get_keyfile()):
                         instance['reachable'] = True
                         break
                 if not instance['reachable']:
-                    util.print_error('Could not reach instance %s'
-                                     ' within limit of 30 seconds' %
-                                     instance['name'])
+                    util.print_error(
+                        'Could not reach instance "%s"'
+                        ' within limit of %s seconds' %
+                        (instance['name'],
+                         instance.get('ssh_timeout', self.ssh_timeout)))
                     util.sysexit()
 
     def destroy(self):
