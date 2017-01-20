@@ -32,10 +32,10 @@ its tests.
 Ansible Support
 ===============
 
-* 1.9.6 - Limited (`Docker`_ driver not-supported by `Ansible`_)
-* 2.0.2.0 - Supported
-* 2.1.2.0 - Supported
-* 2.2.0.0 - Supported
+* 1.9 - Not Supported
+* 2.0 - Not Supported
+* 2.1.4.0 - Supported
+* 2.2.1.0 - Supported
 
 Dependencies
 ============
