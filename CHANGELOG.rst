@@ -2,6 +2,11 @@
 History
 *******
 
+1.19
+====
+
+* Convert vagrantfile from relying on jinja.
+
 1.18.1
 ======
 
