@@ -4,24 +4,6 @@ Usage
 Quick Start
 ^^^^^^^^^^^
 
-Install Molecule using pip:
-
-.. code-block:: bash
-
-  $ pip install molecule --pre
-
-.. warning::
-
-    This install method is not yet available.  We will cut a pre-release
-    candidate once ready.
-
-Install dependencies using pip:
-
-.. code-block:: bash
-
-  $ pip install ansible
-  $ pip install docker-py
-
 Create a new role:
 
 .. code-block:: bash
@@ -39,7 +21,10 @@ Or Create a new scenario in an existing role:
   --> Initializing new scenario default...
   Successfully initialized scenario in /tmp/foo/molecule/default.
 
-Update the role with needed functionality and tests.  Now test it:
+1. Update the role with needed functionality and tests.
+2. Install the dependencies by following the instructions in `INSTALL.rst`
+   included in the role's scenario directory.
+3. Now test it.
 
 .. code-block:: bash
 

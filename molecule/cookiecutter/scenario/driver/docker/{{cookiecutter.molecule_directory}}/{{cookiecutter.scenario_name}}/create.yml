@@ -1,6 +1,4 @@
 ---
-# Ansible 2.2 required
-
 {% raw %}
 - hosts: localhost
   connection: local

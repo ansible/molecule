@@ -2,17 +2,11 @@
 - hosts: all
   roles:
     - role: docker
-  tags:
-    - with_no_groups
 
 - hosts: group_1
   roles:
     - role: docker
-  tags:
-    - with_groups
 
 - hosts: child_1
   roles:
     - role: docker
-  tags:
-    - with_child_groups
