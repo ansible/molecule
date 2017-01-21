@@ -89,7 +89,7 @@ def test_execute(patched_print_info, patched_run_command,
 
     msg = 'Executing flake8 on files found in {}/...'.format(
         flake8_instance.directory)
-    patched_print_info.assert_called_with(msg)
+    patched_print_info.assert_called_once_with(msg)
 
 
 def test_execute_bakes(patched_run_command, flake8_instance):

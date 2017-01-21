@@ -90,15 +90,16 @@ def test_options_property_handles_cli_args(molecule_file, testinfra_instance,
     assert x == v.options
 
 
-@pytest.mark.skip(reason='baked command does not always return arguments in'
-                  'the same order')
 def test_bake(testinfra_instance):
     testinfra_instance._tests = ['test1', 'test2', 'test3']
     testinfra_instance.bake()
-    x = '{} --connection=docker --foo=bar test1 test2 test3'.format(
-        str(sh.testinfra))
+    x = [
+        str(sh.testinfra), '--connection=docker', '--foo=bar', 'test1',
+        'test2', 'test3'
+    ]
+    result = str(testinfra_instance._testinfra_command).split()
 
-    assert x == testinfra_instance._testinfra_command
+    assert sorted(x) == sorted(result)
 
 
 def test_execute(patched_flake8, patched_print_info, patched_run_command,
@@ -113,7 +114,7 @@ def test_execute(patched_flake8, patched_print_info, patched_run_command,
 
     msg = 'Executing testinfra tests found in {}/...'.format(
         testinfra_instance.directory)
-    patched_print_info.assert_called_with(msg)
+    patched_print_info.assert_called_once_with(msg)
 
     msg = 'Verifier completed successfully.'
     patched_print_success.assert_called_once_with(msg)
@@ -137,8 +138,6 @@ def test_does_not_execute_without_tests(patched_run_command,
     assert not patched_run_command.called
 
 
-@pytest.mark.skip(reason='baked command does not always return arguments in'
-                  'the same order')
 def test_execute_bakes(patched_flake8, patched_run_command,
                        patched_testinfra_get_tests, testinfra_instance):
     testinfra_instance.execute()
@@ -146,10 +145,7 @@ def test_execute_bakes(patched_flake8, patched_run_command,
     assert testinfra_instance._testinfra_command is not None
 
     patched_flake8.assert_called_once_with()
-
-    cmd = '{} --connection=docker --foo=bar test1 test2 test3'.format(
-        str(sh.testinfra))
-    patched_run_command.assert_called_once_with(cmd, debug=None)
+    patched_run_command.assert_called_once
 
 
 def test_executes_catches_and_exits_return_code(

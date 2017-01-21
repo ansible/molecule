@@ -53,7 +53,7 @@ def test_execute_raises_when_not_converged(patched_print_error,
     assert 1 == e.value.code
 
     msg = 'Instances not created.  Please create instances first.'
-    patched_print_error.assert_called_with(msg)
+    patched_print_error.assert_called_once_with(msg)
 
 
 def test_get_hostname_does_not_match(molecule_file, patched_print_error):

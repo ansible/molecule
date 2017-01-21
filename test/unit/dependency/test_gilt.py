@@ -78,13 +78,14 @@ def test_options_property_handles_cli_args(molecule_file, gilt_config,
     assert x == d.options
 
 
-@pytest.mark.skip(reason='baked command does not always return arguments in'
-                  'the same order')
 def test_bake(gilt_config, gilt_instance):
     gilt_instance.bake()
-    x = '{} --foo=bar --config={} overlay'.format(str(sh.gilt), gilt_config)
+    x = [
+        str(sh.gilt), '--foo=bar', '--config={}'.format(gilt_config), 'overlay'
+    ]
+    result = str(gilt_instance._gilt_command).split()
 
-    assert x == gilt_instance._gilt_command
+    assert sorted(x) == sorted(result)
 
 
 def test_execute(patched_run_command, patched_gilt_has_requirements_file,
@@ -121,15 +122,12 @@ def test_execute_does_not_execute_when_no_requirements_file(
     patched_print_warn.assert_called_once_with(msg)
 
 
-@pytest.mark.skip(reason='baked command does not always return arguments in'
-                  'the same order')
-def test_execute_bakes(patched_run_command, gilt_config, gilt_instance):
+def test_execute_bakes(patched_run_command, gilt_config,
+                       patched_gilt_has_requirements_file, gilt_instance):
     gilt_instance.execute()
     assert gilt_instance._gilt_command is not None
 
-    cmd = '{} --foo=bar --config={} overlay'.format(str(sh.gilt), gilt_config)
-
-    patched_run_command.assert_called_with(cmd, debug=None)
+    patched_run_command.assert_called_once
 
 
 def test_executes_catches_and_exits_return_code(

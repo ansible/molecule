@@ -98,14 +98,15 @@ def test_options_property_handles_cli_args(molecule_file, role_file,
     assert x == d.options
 
 
-@pytest.mark.skip(reason='baked command does not always return arguments in'
-                  'the same order')
 def test_bake(ansible_galaxy_instance, role_file, roles_path):
     ansible_galaxy_instance.bake()
-    x = '{} install --role-file={} --roles-path={} --force'.format(
-        str(sh.ansible_galaxy), role_file, roles_path)
+    x = [
+        str(sh.ansible_galaxy), 'install', '--role-file={}'.format(role_file),
+        '--roles-path={}'.format(roles_path), '--force', '--foo=bar'
+    ]
+    result = str(ansible_galaxy_instance._ansible_galaxy_command).split()
 
-    assert x == ansible_galaxy_instance._ansible_galaxy_command
+    assert sorted(x) == sorted(result)
 
 
 def test_execute(patched_run_command,
@@ -148,17 +149,13 @@ def test_execute_does_not_execute_when_no_requirements_file(
     patched_print_warn.assert_called_once_with(msg)
 
 
-@pytest.mark.skip(reason='baked command does not always return arguments in'
-                  'the same order')
 def test_execute_bakes(patched_run_command, ansible_galaxy_instance, role_file,
+                       patched_ansible_galaxy_has_requirements_file,
                        roles_path):
     ansible_galaxy_instance.execute()
     assert ansible_galaxy_instance._ansible_galaxy_command is not None
 
-    cmd = '{} install --role-file={} --roles-path={} --force --foo=bar'.format(
-        str(sh.ansible_galaxy), role_file, roles_path)
-
-    patched_run_command.assert_called_with(cmd, debug=None)
+    patched_run_command.assert_called_once
 
 
 def test_executes_catches_and_exits_return_code(

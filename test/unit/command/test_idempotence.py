@@ -63,7 +63,7 @@ def test_execute_raises_when_not_converged(
     assert 1 == e.value.code
 
     msg = 'Instances not converged.  Please converge instances first.'
-    patched_print_error.assert_called_with(msg)
+    patched_print_error.assert_called_once_with(msg)
 
 
 def test_execute_raises_when_fails_idempotence(

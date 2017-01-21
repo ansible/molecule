@@ -114,13 +114,13 @@ def test_print_debug(capsys):
 def test_callback_info(patched_print_info):
     util.callback_info('test')
 
-    patched_print_info.assert_called_with('test', pretty=False)
+    patched_print_info.assert_called_once_with('test', pretty=False)
 
 
 def test_callback_error(patched_print_error):
     util.callback_error('test')
 
-    patched_print_error.assert_called_with('test', pretty=False)
+    patched_print_error.assert_called_once_with('test', pretty=False)
 
 
 def test_sysexit():
@@ -166,7 +166,7 @@ def test_run_command_with_debug(patched_print_debug):
     cmd = sh.ls.bake()
     util.run_command(cmd, debug=True)
 
-    patched_print_debug.assert_called_with('COMMAND', sh.which('ls'))
+    patched_print_debug.assert_called_once_with('COMMAND', sh.which('ls'))
 
 
 def test_os_walk(temp_dir):

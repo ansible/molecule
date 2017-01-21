@@ -72,7 +72,7 @@ def test_verify_configs_raises_with_no_configs(patched_print_error):
     assert 1 == e.value.code
 
     msg = 'Unable to find a molecule.yml.  Exiting.'
-    patched_print_error.assert_called_with(msg)
+    patched_print_error.assert_called_once_with(msg)
 
 
 def test_verify_configs_raises_with_duplicate_configs(patched_print_error,
@@ -84,7 +84,7 @@ def test_verify_configs_raises_with_duplicate_configs(patched_print_error,
     assert 1 == e.value.code
 
     msg = "Duplicate scenario name 'default' found.  Exiting."
-    patched_print_error.assert_called_with(msg)
+    patched_print_error.assert_called_once_with(msg)
 
 
 def test_get_configs(temp_dir):
@@ -111,7 +111,7 @@ def test_get_configs_filter_configs_for_scenario(
     m = mocker.patch('molecule.command.base._filter_configs_for_scenario')
     base.get_configs({}, {'scenario_name': 'default'})
 
-    m.assert_called_with('default', [])
+    m.assert_called_once_with('default', [])
 
 
 def test_filter_configs_for_scenario(config_instance):
