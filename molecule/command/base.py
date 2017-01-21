@@ -50,16 +50,16 @@ class Base(object):
         pass
 
 
-def _load_config(config):
+def _load_config(c):
     """
     Open, interpolate, and YAML parse the provided file and returns a dict.
 
-    :param config: A string containing an absolute path to a Molecule config.
+    :param c: A string containing an absolute path to a Molecule config.
     :return: dict
     """
     i = interpolation.Interpolator(interpolation.TemplateWithDefaults,
                                    os.environ)
-    with open(config, 'r') as stream:
+    with open(c, 'r') as stream:
         interpolated_config = i.interpolate(stream.read())
 
         return yaml.safe_load(interpolated_config) or {}
@@ -87,7 +87,8 @@ def _verify_configs(configs):
 
 def get_configs(args, command_args):
     """
-    Walk the current directory for Molecule config files and returns a list.
+    Glob the current directory for Molecule config files, instantiate config
+    objects, and returns a list.
 
     :param args: A dict of options, arguments and commands from the CLI.
     :param command_args: A dict of options passed to the subcommand from
