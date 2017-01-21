@@ -84,7 +84,7 @@ def test_init_new_role(temp_dir, init_new_role_command_args,
     assert os.path.isdir('./test-role/molecule/default/tests')
 
     role_directory = os.path.join(temp_dir.strpath, 'test-role')
-    msg = 'Successfully initialized role in {}.'.format(role_directory)
+    msg = 'Initialized role in {} successfully.'.format(role_directory)
     patched_print_success.assert_called_once_with(msg)
 
 
@@ -124,7 +124,7 @@ def test_init_new_scenario(temp_dir, init_new_scenario_command_args,
 
     scenario_directory = os.path.join(temp_dir.strpath, 'molecule',
                                       'test-scenario')
-    msg = 'Successfully initialized scenario in {}.'.format(scenario_directory)
+    msg = 'Initialized scenario in {} successfully.'.format(scenario_directory)
     patched_print_success.assert_called_once_with(msg)
 
 

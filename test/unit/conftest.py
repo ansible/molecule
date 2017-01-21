@@ -105,6 +105,11 @@ def patched_print_success(mocker):
 
 
 @pytest.fixture
+def patched_print_warn(mocker):
+    return mocker.patch('molecule.util.print_warn')
+
+
+@pytest.fixture
 def patched_run_command(mocker):
     m = mocker.patch('molecule.util.run_command')
     m.return_value = mocker.Mock(stdout='patched-run-command-stdout')

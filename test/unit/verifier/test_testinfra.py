@@ -102,7 +102,8 @@ def test_bake(testinfra_instance):
 
 
 def test_execute(patched_flake8, patched_print_info, patched_run_command,
-                 patched_testinfra_get_tests, testinfra_instance):
+                 patched_testinfra_get_tests, patched_print_success,
+                 testinfra_instance):
     testinfra_instance._testinfra_command = 'patched-command'
     testinfra_instance.execute()
 
@@ -114,12 +115,19 @@ def test_execute(patched_flake8, patched_print_info, patched_run_command,
         testinfra_instance.directory)
     patched_print_info.assert_called_with(msg)
 
+    msg = 'Verifier completed successfully.'
+    patched_print_success.assert_called_once_with(msg)
 
-def test_execute_does_not_execute(patched_run_command, testinfra_instance):
+
+def test_execute_does_not_execute(patched_run_command, patched_print_warn,
+                                  testinfra_instance):
     testinfra_instance._config.config['verifier']['enabled'] = False
     testinfra_instance.execute()
 
     assert not patched_run_command.called
+
+    msg = 'Skipping, verifier is disabled.'
+    patched_print_warn.assert_called_once_with(msg)
 
 
 def test_does_not_execute_without_tests(patched_run_command,

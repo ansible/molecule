@@ -84,7 +84,7 @@ def _init_new_role(command_args):
         _process_templates(template, extra_context, scenario_base_directory)
 
     role_directory = os.path.join(role_directory, role_name)
-    msg = 'Successfully initialized role in {}.'.format(role_directory)
+    msg = 'Initialized role in {} successfully.'.format(role_directory)
     util.print_success(msg)
 
 
@@ -114,7 +114,7 @@ def _init_new_scenario(command_args):
         _process_templates(template, extra_context, scenario_base_directory)
 
     role_directory = os.path.join(role_directory, role_name)
-    msg = 'Successfully initialized scenario in {}.'.format(scenario_directory)
+    msg = 'Initialized scenario in {} successfully.'.format(scenario_directory)
     util.print_success(msg)
 
 

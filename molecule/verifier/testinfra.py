@@ -99,6 +99,7 @@ class Testinfra(base.Base):
         :return: None
         """
         if not self.enabled:
+            util.print_warn('Skipping, verifier is disabled.')
             return
 
         if self._testinfra_command is None:
@@ -116,6 +117,7 @@ class Testinfra(base.Base):
                 util.run_command(
                     self._testinfra_command,
                     debug=self._config.args.get('debug'))
+                util.print_success('Verifier completed successfully.')
             except sh.ErrorReturnCode as e:
                 util.sysexit(e.exit_code)
 

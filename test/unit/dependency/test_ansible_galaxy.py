@@ -110,7 +110,7 @@ def test_bake(ansible_galaxy_instance, role_file, roles_path):
 
 def test_execute(patched_run_command,
                  patched_ansible_galaxy_has_requirements_file,
-                 ansible_galaxy_instance):
+                 patched_print_success, ansible_galaxy_instance):
     ansible_galaxy_instance._ansible_galaxy_command = 'patched-command'
     ansible_galaxy_instance.execute()
 
@@ -121,22 +121,31 @@ def test_execute(patched_run_command,
 
     patched_run_command.assert_called_once_with('patched-command', debug=None)
 
+    msg = 'Dependency completed successfully.'
+    patched_print_success.assert_called_once_with(msg)
 
-def test_execute_does_not_execute_when_disabled(patched_run_command,
-                                                ansible_galaxy_instance):
+
+def test_execute_does_not_execute_when_disabled(
+        patched_run_command, patched_print_warn, ansible_galaxy_instance):
     ansible_galaxy_instance._config.config['dependency']['enabled'] = False
     ansible_galaxy_instance.execute()
 
     assert not patched_run_command.called
 
+    msg = 'Skipping, dependency is disabled.'
+    patched_print_warn.assert_called_once_with(msg)
+
 
 def test_execute_does_not_execute_when_no_requirements_file(
         patched_run_command, patched_ansible_galaxy_has_requirements_file,
-        ansible_galaxy_instance):
+        patched_print_warn, ansible_galaxy_instance):
     patched_ansible_galaxy_has_requirements_file.return_value = False
     ansible_galaxy_instance.execute()
 
     assert not patched_run_command.called
+
+    msg = 'Skipping, missing the requirements file.'
+    patched_print_warn.assert_called_once_with(msg)
 
 
 @pytest.mark.skip(reason='baked command does not always return arguments in'

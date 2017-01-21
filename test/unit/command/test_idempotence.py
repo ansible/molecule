@@ -50,7 +50,7 @@ def test_execute(mocker, patched_print_info, patched_ansible_converge,
     patched_command_idempotence_is_idempotent.assert_called_once_with(
         'patched-ansible-converge-stdout')
 
-    msg = 'Idempotence test passed.'
+    msg = 'Idempotence completed successfully.'
     patched_print_success.assert_called_once_with(msg)
 
 

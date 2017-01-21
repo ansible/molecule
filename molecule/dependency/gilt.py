@@ -90,9 +90,11 @@ class Gilt(base.Base):
         :return: None
         """
         if not self.enabled:
+            util.print_warn('Skipping, dependency is disabled.')
             return
 
         if not self._has_requirements_file():
+            util.print_warn('Skipping, missing the requirements file.')
             return
 
         if self._gilt_command is None:
@@ -101,6 +103,7 @@ class Gilt(base.Base):
         try:
             util.run_command(
                 self._gilt_command, debug=self._config.args.get('debug'))
+            util.print_success('Dependency completed successfully.')
         except sh.ErrorReturnCode as e:
             util.sysexit(e.exit_code)
 
