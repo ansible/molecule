@@ -165,8 +165,8 @@ def test_command_test_with_host_group_vars(with_scenario):
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['docker'], indirect=['with_scenario'])
-def test_command_verify(with_scenario):
-    sh.molecule('create')
-    sh.molecule('converge')
-    sh.molecule('verify')
+    'with_scenario', ['verifier'], indirect=['with_scenario'])
+def test_command_verify_testinfra(with_scenario):
+    sh.molecule('create', '--scenario-name', 'testinfra')
+    sh.molecule('converge', '--scenario-name', 'testinfra')
+    sh.molecule('verify', '--scenario-name', 'testinfra')
