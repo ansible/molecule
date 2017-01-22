@@ -1,6 +1,6 @@
 ---
 dependency:
-    name: galaxy
+    name: gilt
 driver:
     name: docker
 lint:
@@ -17,6 +17,6 @@ platforms:
 provisioner:
     name: ansible
 scenario:
-    name: multi-node
+    name: gilt
 verifier:
     name: testinfra

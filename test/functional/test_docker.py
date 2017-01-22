@@ -48,9 +48,23 @@ def test_command_create(with_scenario):
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['ansible-galaxy'], indirect=['with_scenario'])
-def test_command_dependency(with_scenario):
-    sh.molecule('dependency')
+    'with_scenario', ['dependency'], indirect=['with_scenario'])
+def test_command_dependency_ansible_galaxy(with_scenario):
+    sh.molecule('dependency', '--scenario-name', 'ansible-galaxy')
+
+    dependency_role = os.path.join('molecule', 'ansible-galaxy', '.molecule',
+                                   'roles', 'timezone')
+    assert os.path.isdir(dependency_role)
+
+
+@pytest.mark.parametrize(
+    'with_scenario', ['dependency'], indirect=['with_scenario'])
+def test_command_dependency_gilt(with_scenario):
+    sh.molecule('dependency', '--scenario-name', 'gilt')
+
+    dependency_role = os.path.join('molecule', 'ansible-galaxy', '.molecule',
+                                   'roles', 'timezone')
+    assert os.path.isdir(dependency_role)
 
 
 @pytest.mark.parametrize(
