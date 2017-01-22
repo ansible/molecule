@@ -237,8 +237,16 @@ class Config(object):
         """
         Prepare the system for Molecule and returns None.
 
+        The ephemeral directory is pruned with the exception of the state file.
+
         :return: None
         """
+        for root, dirs, files in os.walk(
+                self.ephemeral_directory, topdown=False):
+            for name in files:
+                state_file = os.path.basename(self.state.state_file)
+                if name != state_file:
+                    os.remove(os.path.join(root, name))
         if not os.path.isdir(self.ephemeral_directory):
             os.mkdir(self.ephemeral_directory)
 
