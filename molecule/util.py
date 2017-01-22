@@ -125,6 +125,23 @@ def write_file(filename, content):
     with open(filename, 'w') as f:
         f.write(content)
 
+    file_prepender(filename)
+
+
+def file_prepender(filename):
+    """
+    Prepend an informational header on files managed by Molecule and returns
+    None.
+
+    :param filename: A string containing the target filename.
+    :return: None
+    """
+    molecule_header = '# Molecule managed\n\n'
+    with open(filename, 'r+') as f:
+        content = f.read()
+        f.seek(0, 0)
+        f.write(molecule_header + content)
+
 
 def safe_dump(data):
     return yaml.safe_dump(data, default_flow_style=False, explicit_start=True)

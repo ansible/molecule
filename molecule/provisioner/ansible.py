@@ -349,16 +349,13 @@ class Ansible(object):
         :return: str
         """
         return """
-# Molecule managed
-
-
 {% for section, section_dict in config_options.items() -%}
 [{{ section }}]
 {% for k, v in section_dict.items() -%}
 {{ k }} = {{ v }}
 {% endfor -%}
 {% endfor -%}
-"""
+""".strip()
 
     def _vivify(self):
         """

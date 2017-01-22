@@ -188,8 +188,9 @@ def test_write_file(temp_dir):
     util.write_file(dest_file, contents)
     with open(dest_file, 'r') as stream:
         data = stream.read()
+    x = '# Molecule managed\n\n{}'.format(contents)
 
-    assert data == contents
+    assert x == data
 
 
 def test_safe_dump():
