@@ -6,18 +6,22 @@ driver:
 lint:
     name: ansible-lint
 platforms:
-  - name: host-group-vars
+  - name: instance-1
     groups:
       - example
+    children:
+      - example_1
 provisioner:
     name: ansible
     host_vars:
       # TODO(retr0h): We may wish to handle the scenario_name appended.
-      host-group-vars-default:
+      instance-1-default:
         - host_group_vars_host_molecule_yml: True
     group_vars:
       example:
         - host_group_vars_example_group_molecule_yml: True
+      example_1:
+        - host_group_vars_example_1_child_group_molecule_yml: True
 scenario:
     name: default
 verifier:

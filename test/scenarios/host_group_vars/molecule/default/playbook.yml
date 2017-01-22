@@ -17,7 +17,18 @@
       command: echo "{{ host_group_vars_group_vars_dir }}"
       changed_when: False
 
-    # TODO(retr0h): Implement children functionality.
-    # - name: Group host vars scenario test example2:children group vars from molecule.yml
-    #   command: echo "{{ group_host_vars_example2_group_molecule_yml }}"
-    #   changed_when: False
+    - name: Group vars group_var from child group example_1 from molecule.yml
+      command: echo "{{ host_group_vars_example_1_child_group_molecule_yml }}"
+      changed_when: False
+
+- hosts: example
+  tasks:
+    - name: Dummy converge of example group
+      command: /bin/true
+      changed_when: False
+
+- hosts: example_1
+  tasks:
+    - name: Dummy converge of child example_1 group
+      command: /bin/true
+      changed_when: False

@@ -30,19 +30,19 @@ from molecule import util
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['docker'], indirect=['with_scenario'])
+    'with_scenario', ['driver/docker'], indirect=['with_scenario'])
 def test_command_check(with_scenario):
     sh.molecule('check')
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['docker'], indirect=['with_scenario'])
+    'with_scenario', ['driver/docker'], indirect=['with_scenario'])
 def test_command_converge(with_scenario):
     sh.molecule('converge')
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['docker'], indirect=['with_scenario'])
+    'with_scenario', ['driver/docker'], indirect=['with_scenario'])
 def test_command_create(with_scenario):
     sh.molecule('create')
 
@@ -68,13 +68,13 @@ def test_command_dependency_gilt(with_scenario):
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['docker'], indirect=['with_scenario'])
+    'with_scenario', ['driver/docker'], indirect=['with_scenario'])
 def test_command_destroy(with_scenario):
     sh.molecule('destroy')
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['docker'], indirect=['with_scenario'])
+    'with_scenario', ['driver/docker'], indirect=['with_scenario'])
 def test_command_idempotence(with_scenario):
     sh.molecule('create')
     sh.molecule('converge')
@@ -99,13 +99,13 @@ def test_command_init_scenario(temp_dir):
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['docker'], indirect=['with_scenario'])
+    'with_scenario', ['driver/docker'], indirect=['with_scenario'])
 def test_command_lint(with_scenario):
     sh.molecule('lint')
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['docker'], indirect=['with_scenario'])
+    'with_scenario', ['driver/docker'], indirect=['with_scenario'])
 def test_command_list(with_scenario):
     out = sh.molecule('list', '--scenario-name', 'default')
     assert re.search(
@@ -122,7 +122,7 @@ def test_command_list(with_scenario):
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['docker'], indirect=['with_scenario'])
+    'with_scenario', ['driver/docker'], indirect=['with_scenario'])
 def test_command_login(with_scenario):
     sh.molecule('create')
 
@@ -134,34 +134,28 @@ def test_command_login(with_scenario):
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['docker'], indirect=['with_scenario'])
+    'with_scenario', ['driver/docker'], indirect=['with_scenario'])
 def test_command_syntax(with_scenario):
     sh.molecule('syntax')
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['docker'], indirect=['with_scenario'])
+    'with_scenario', ['driver/docker'], indirect=['with_scenario'])
 def test_command_test(with_scenario):
     sh.molecule('test')
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['docker'], indirect=['with_scenario'])
-def test_command_test_with_groups(with_scenario):
-    out = sh.molecule('test', '--scenario-name', 'default')
+    'with_scenario', ['host_group_vars'], indirect=['with_scenario'])
+def test_command_test_with_host_group_vars(with_scenario):
+    out = sh.molecule('test')
     out = util.ansi_escape(out.stdout)
 
     assert re.search('\[all\].*?ok: \[instance-1-default\]', out, re.DOTALL)
-    assert re.search('\[group_1\].*?ok: \[instance-1-default\]', out,
+    assert re.search('\[example\].*?ok: \[instance-1-default\]', out,
                      re.DOTALL)
-    assert re.search('\[child_1\].*?ok: \[instance-1-default\]', out,
+    assert re.search('\[example_1\].*?ok: \[instance-1-default\]', out,
                      re.DOTALL)
-
-
-@pytest.mark.parametrize(
-    'with_scenario', ['host_group_vars'], indirect=['with_scenario'])
-def test_command_test_with_host_group_vars(with_scenario):
-    sh.molecule('test')
 
 
 @pytest.mark.parametrize(
