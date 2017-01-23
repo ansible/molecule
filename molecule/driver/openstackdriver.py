@@ -300,8 +300,8 @@ class OpenstackDriver(basedriver.BaseDriver):
         try:
             command = [
                 'ssh', '-o', 'StrictHostKeyChecking=no', '-o',
-                'UserKnownHostsFile=/dev/null', '-o', 'BatchMode=yes', '-l',
-                user, hostip, 'exit'
+                'UserKnownHostsFile=/dev/null', '-o', 'BatchMode=yes', '-i',
+                sshkey_filename, '-l', user, hostip, 'exit'
             ]
             check_output(command, stderr=STDOUT)
             return True
