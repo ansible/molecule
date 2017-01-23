@@ -85,6 +85,29 @@ def _verify_configs(configs):
         util.sysexit_with_message(msg)
 
 
+def _setup(configs):
+    """
+    Prepare the system for Molecule and returns None.
+
+    The ephemeral directory is pruned with the exception of the state file.
+
+    :return: None
+    """
+    for c in configs:
+        for root, dirs, files in os.walk(c.ephemeral_directory, topdown=False):
+            for name in files:
+                state_file = os.path.basename(c.state.state_file)
+                if name != state_file:
+                    os.remove(os.path.join(root, name))
+        if not os.path.isdir(c.ephemeral_directory):
+            os.mkdir(c.ephemeral_directory)
+
+        c.provisioner.write_inventory()
+        c.provisioner.write_config()
+        c.provisioner._add_or_update_vars('host_vars')
+        c.provisioner._add_or_update_vars('group_vars')
+
+
 def get_configs(args, command_args):
     """
     Glob the current directory for Molecule config files, instantiate config
@@ -109,6 +132,7 @@ def get_configs(args, command_args):
         configs = _filter_configs_for_scenario(scenario_name, configs)
 
     _verify_configs(configs)
+    _setup(configs)
 
     return configs
 

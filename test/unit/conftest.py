@@ -54,7 +54,14 @@ def molecule_scenario_directory(molecule_directory):
 
 
 @pytest.fixture
-def molecule_file(molecule_scenario_directory):
+def molecule_ephemeral_directory(molecule_scenario_directory):
+    path = config.molecule_ephemeral_directory(molecule_scenario_directory)
+    if not os.path.isdir(path):
+        os.makedirs(path)
+
+
+@pytest.fixture
+def molecule_file(molecule_scenario_directory, molecule_ephemeral_directory):
     return config.molecule_file(molecule_scenario_directory)
 
 

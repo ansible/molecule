@@ -58,16 +58,6 @@ def test_command_args_member(config_instance):
     assert {} == config_instance.command_args
 
 
-def test_init_calls_setup(mocker, molecule_file, platforms_data, config_data):
-    m = mocker.patch('molecule.config.Config._setup')
-    config.Config(
-        molecule_file,
-        args={'debug': True},
-        configs=[platforms_data, config_data])
-
-    m.assert_called_once_with()
-
-
 def test_ephemeral_directory_property(config_instance):
     x = os.path.join(
         config.molecule_ephemeral_directory(
@@ -226,12 +216,6 @@ def test_merge_dicts(config_instance):
     x = {'a': 1, 'b': [{'c': 3}], 'd': {'e': "bbb", 'f': 3}}
 
     assert x == config_instance.merge_dicts(a, b)
-
-
-def test_setup(config_instance):
-    config_instance._setup()
-
-    assert os.path.isdir(config_instance.ephemeral_directory)
 
 
 def test_exit_with_invalid_section(config_instance, patched_print_error):

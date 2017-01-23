@@ -111,7 +111,7 @@ def test_options_property_handles_cli_args(molecule_file, platforms_data,
 
 
 def test_host_vars_property(ansible_instance):
-    x = {'instance-1-default': [{'foo': 'bar'}]}
+    x = {'instance-1': [{'foo': 'bar'}]}
 
     assert x == ansible_instance.host_vars
 
@@ -264,17 +264,6 @@ def test_add_or_update_vars_does_not_create_vars(platforms_data,
     assert not os.path.isdir(group_vars_directory)
 
 
-def test_init_calls_setup(mocker, molecule_file, platforms_data, ansible_data):
-    m = mocker.patch('molecule.provisioner.ansible.Ansible._setup')
-    c = config.Config(
-        molecule_file,
-        args={'debug': True},
-        configs=[platforms_data, ansible_data])
-    ansible.Ansible(c)
-
-    m.assert_called_once_with()
-
-
 def test_converge(ansible_instance, mocker, patched_ansible_playbook):
     result = ansible_instance.converge('playbook')
 
@@ -383,24 +372,6 @@ def test_write_config(temp_dir, ansible_instance):
     ansible_instance.write_config()
 
     assert os.path.isfile(ansible_instance.config_file)
-
-
-def test_setup(mocker, temp_dir, ansible_instance):
-    patched_provisioner_write_inventory = mocker.patch(
-        'molecule.provisioner.ansible.Ansible.write_inventory')
-    patched_provisioner_write_config = mocker.patch(
-        'molecule.provisioner.ansible.Ansible.write_config')
-    patched_provisioner_add_or_update_vars = mocker.patch(
-        'molecule.provisioner.ansible.Ansible._add_or_update_vars')
-    ansible_instance._setup()
-
-    assert os.path.isdir(os.path.dirname(ansible_instance.inventory_file))
-
-    patched_provisioner_write_inventory.assert_called_once_with()
-    patched_provisioner_write_config.assert_called_once_with()
-
-    x = [mocker.call('host_vars'), mocker.call('group_vars')]
-    assert x == patched_provisioner_add_or_update_vars.mock_calls
 
 
 def test_verify_inventory(ansible_instance):

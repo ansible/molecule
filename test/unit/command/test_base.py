@@ -20,6 +20,7 @@
 
 import os
 
+import m9dicts
 import pytest
 
 from molecule import config
@@ -87,12 +88,31 @@ def test_verify_configs_raises_with_duplicate_configs(patched_print_error,
     patched_print_error.assert_called_once_with(msg)
 
 
-def test_get_configs(temp_dir):
-    molecule_directory = config.molecule_directory(temp_dir.strpath)
-    scenario_directory = os.path.join(molecule_directory, 'scenario')
-    molecule_file = config.molecule_file(scenario_directory)
-    os.makedirs(scenario_directory)
-    open(molecule_file, 'a').close()
+def test_setup(mocker, config_instance):
+    patched_provisioner_write_inventory = mocker.patch(
+        'molecule.provisioner.ansible.Ansible.write_inventory')
+    patched_provisioner_write_config = mocker.patch(
+        'molecule.provisioner.ansible.Ansible.write_config')
+    patched_provisioner_add_or_update_vars = mocker.patch(
+        'molecule.provisioner.ansible.Ansible._add_or_update_vars')
+    base._setup([config_instance])
+
+    assert os.path.isdir(config_instance.ephemeral_directory)
+    assert os.path.isdir(
+        os.path.dirname(config_instance.provisioner.inventory_file))
+
+    patched_provisioner_write_inventory.assert_called_once_with()
+    patched_provisioner_write_config.assert_called_once_with()
+
+    x = [mocker.call('host_vars'), mocker.call('group_vars')]
+    assert x == patched_provisioner_add_or_update_vars.mock_calls
+
+
+def test_get_configs(temp_dir, config_instance):
+    molecule_file = config_instance.molecule_file
+    data = config_instance.config
+    data = m9dicts.convert_to(data)
+    util.write_file(molecule_file, util.safe_dump(data))
 
     result = base.get_configs({}, {})
     assert 1 == len(result)
@@ -100,10 +120,17 @@ def test_get_configs(temp_dir):
     assert isinstance(result[0], config.Config)
 
 
-def test_get_configs_verify_configs(patched_verify_configs, temp_dir):
+def test_get_configs_calls_verify_configs(patched_verify_configs, temp_dir):
     base.get_configs({}, {})
 
     patched_verify_configs.assert_called_once_with([])
+
+
+def test_get_configs_calls_setup(mocker, patched_verify_configs):
+    m = mocker.patch('molecule.command.base._setup')
+    base.get_configs({}, {})
+
+    m.assert_called_once_with([])
 
 
 def test_get_configs_filter_configs_for_scenario(

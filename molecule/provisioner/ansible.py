@@ -118,7 +118,6 @@ class Ansible(object):
         :return: None
         """
         self._config = config
-        self._setup()
 
     @property
     def default_config_options(self):
@@ -293,7 +292,7 @@ class Ansible(object):
         if target == 'host_vars':
             vars_target = copy.deepcopy(self.host_vars)
             # Append the scenario-name
-            for instance_name, _ in vars_target.items():
+            for instance_name, _ in self.host_vars.items():
                 instance_with_scenario_name = util.instance_with_scenario_name(
                     instance_name, self._config.scenario.name)
                 vars_target[instance_with_scenario_name] = vars_target.pop(
@@ -327,17 +326,6 @@ class Ansible(object):
         """
         return ansible_playbook.AnsiblePlaybook(self.inventory_file, playbook,
                                                 self._config, **kwargs)
-
-    def _setup(self):
-        """
-        Prepare the system for using the provisioner and returns None.
-
-        :return: None
-        """
-        self.write_inventory()
-        self.write_config()
-        self._add_or_update_vars('host_vars')
-        self._add_or_update_vars('group_vars')
 
     def _verify_inventory(self):
         """
