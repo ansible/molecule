@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import copy
 import collections
 import os
 
@@ -290,7 +291,14 @@ class Ansible(object):
         :returns: None
         """
         if target == 'host_vars':
-            vars_target = self.host_vars
+            vars_target = copy.deepcopy(self.host_vars)
+            # Append the scenario-name
+            for instance_name, _ in vars_target.items():
+                instance_with_scenario_name = util.instance_with_scenario_name(
+                    instance_name, self._config.scenario.name)
+                vars_target[instance_with_scenario_name] = vars_target.pop(
+                    instance_name)
+
         elif target == 'group_vars':
             vars_target = self.group_vars
 

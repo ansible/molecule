@@ -14,8 +14,7 @@ platforms:
 provisioner:
     name: ansible
     host_vars:
-      # TODO(retr0h): We may wish to handle the scenario_name appended.
-      instance-1-default:
+      instance-1:
         - host_group_vars_host_molecule_yml: True
     group_vars:
       example:

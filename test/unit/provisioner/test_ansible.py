@@ -41,7 +41,7 @@ def ansible_data():
                 'foo': 'bar'
             },
             'host_vars': {
-                'instance-1-default': [{
+                'instance-1': [{
                     'foo': 'bar'
                 }],
             },
