@@ -65,3 +65,13 @@ def patched_testinfra(mocker):
 @pytest.fixture
 def patched_verify_configs(mocker):
     return mocker.patch('molecule.command.base._verify_configs')
+
+
+@pytest.fixture
+def patched_provisioner_write_inventory(mocker):
+    return mocker.patch('molecule.provisioner.ansible.Ansible.write_inventory')
+
+
+@pytest.fixture
+def patched_provisioner_write_config(mocker):
+    return mocker.patch('molecule.provisioner.ansible.Ansible.write_config')

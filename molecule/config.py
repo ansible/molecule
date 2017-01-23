@@ -30,6 +30,7 @@ from molecule import util
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
 from molecule.driver import dockr
+from molecule.driver import vagrant
 from molecule.lint import ansible_lint
 from molecule.provisioner import ansible
 from molecule.verifier import testinfra
@@ -66,6 +67,7 @@ class Config(object):
          the CLI.
         :returns: None
         """
+        # TODO(retr0h): This file should be merged.
         self.molecule_file = molecule_file
         self.args = args
         self.command_args = command_args
@@ -90,6 +92,8 @@ class Config(object):
         driver_name = self.config['driver']['name']
         if driver_name == 'docker':
             return dockr.Dockr(self)
+        elif driver_name == 'vagrant':
+            return vagrant.Vagrant(self)
         else:
             self._exit_with_invalid_section('driver', driver_name)
 

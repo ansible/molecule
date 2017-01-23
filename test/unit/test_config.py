@@ -29,6 +29,7 @@ from molecule import state
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
 from molecule.driver import dockr
+from molecule.driver import vagrant
 from molecule.lint import ansible_lint
 from molecule.provisioner import ansible
 from molecule.verifier import testinfra
@@ -89,6 +90,18 @@ def test_dependency_property_raises(molecule_dependency_invalid_section_data,
 
 def test_driver_property(config_instance):
     assert isinstance(config_instance.driver, dockr.Dockr)
+
+
+@pytest.fixture
+def molecule_driver_vagrant_section_data():
+    return {'driver': {'name': 'vagrant'}, }
+
+
+def test_driver_property_is_vagrant(molecule_driver_vagrant_section_data,
+                                    config_instance):
+    config_instance.config.update(molecule_driver_vagrant_section_data)
+
+    assert isinstance(config_instance.driver, vagrant.Vagrant)
 
 
 @pytest.fixture

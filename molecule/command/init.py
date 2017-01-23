@@ -76,12 +76,14 @@ def _init_new_role(command_args):
                'Cannot create new role.').format(role_name)
         util.sysexit_with_message(msg)
 
-    extra_context = command_args
-    _process_templates('role', extra_context, role_directory)
+    _process_templates('role', command_args, role_directory)
     scenario_base_directory = os.path.join(role_directory, role_name)
-    templates = ['scenario/driver/docker', 'scenario/verifier/testinfra']
+    templates = [
+        'scenario/driver/{driver_name}'.format(**command_args),
+        'scenario/verifier/{verifier_name}'.format(**command_args)
+    ]
     for template in templates:
-        _process_templates(template, extra_context, scenario_base_directory)
+        _process_templates(template, command_args, scenario_base_directory)
 
     role_directory = os.path.join(role_directory, role_name)
     msg = 'Initialized role in {} successfully.'.format(role_directory)
@@ -107,11 +109,13 @@ def _init_new_scenario(command_args):
                'Cannot create new scenario.').format(scenario_name)
         util.sysexit_with_message(msg)
 
-    extra_context = command_args
     scenario_base_directory = os.path.join(role_directory, role_name)
-    templates = ['scenario/driver/docker', 'scenario/verifier/testinfra']
+    templates = [
+        'scenario/driver/{driver_name}'.format(**command_args),
+        'scenario/verifier/{verifier_name}'.format(**command_args)
+    ]
     for template in templates:
-        _process_templates(template, extra_context, scenario_base_directory)
+        _process_templates(template, command_args, scenario_base_directory)
 
     role_directory = os.path.join(role_directory, role_name)
     msg = 'Initialized scenario in {} successfully.'.format(scenario_directory)
@@ -132,7 +136,7 @@ def init(ctx):
     help='Name of dependency to initialize. (galaxy)')
 @click.option(
     '--driver-name',
-    type=click.Choice(['docker']),
+    type=click.Choice(['docker', 'vagrant']),
     default='docker',
     help='Name of driver to initialize. (docker)')
 @click.option(

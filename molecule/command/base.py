@@ -75,8 +75,9 @@ def _prune(c):
     """
     for root, dirs, files in os.walk(c.ephemeral_directory, topdown=False):
         for name in files:
-            state_file = os.path.basename(c.state.state_file)
-            if name != state_file:
+            safe_files = [os.path.basename(f) for f in c.driver.safe_files]
+            safe_files.append(os.path.basename(c.state.state_file))
+            if name not in safe_files:
                 os.remove(os.path.join(root, name))
 
 

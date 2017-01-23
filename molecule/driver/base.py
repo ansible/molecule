@@ -20,6 +20,7 @@
 
 import abc
 import collections
+import os
 
 Status = collections.namedtuple('Status', [
     'instance_name', 'driver_name', 'provisioner_name', 'scenario_name',
@@ -42,34 +43,35 @@ class Base(object):
     @abc.abstractproperty
     def testinfra_options(self):
         """
-        Returns a Testinfra specific options dict.
+        Testinfra specific options and returns a dict.
 
         :returns: dict
         """
         pass  # pragma: no cover
 
     @abc.abstractproperty
-    def connection_options(self):
+    def login_cmd_template(self):
         """
-        Returns a driver specific connection options dict.
+        The login command template to be populated by `login_args` and
+        returns a string.
 
         :returns: str
         """
         pass  # pragma: no cover
 
     @abc.abstractproperty
-    def login_cmd_template(self):
+    def safe_files(self):
         """
-        Returns the command string to login to a host.
+        Generated files to be preserved and returns a list.
 
-        :returns: str
+        :returns: list
         """
         pass  # pragma: no cover
 
     @abc.abstractmethod
     def login_args(self, instance_name):
         """
-        Returns the arguments used in the login command and returns a list.
+        Arguments used in the login command and returns a list.
 
         :param instance_name: A string containing the instance to login to.
         :returns: list
@@ -77,11 +79,12 @@ class Base(object):
         pass  # pragma: no cover
 
     @abc.abstractmethod
-    def status(self):
+    def connection_options(self, instance_name):
         """
-        Determine instances status and returns a list.
+        Connection options supplied to inventory and returns a dict.
 
-        :returns: list
+        :param instance_name: A string containing the instance to login to.
+        :returns: str
         """
         pass  # pragma: no cover
 
@@ -92,3 +95,51 @@ class Base(object):
     @property
     def options(self):
         return self._config.config['driver']['options']
+
+    @property
+    def instance_config(self):
+        return os.path.join(self._config.ephemeral_directory,
+                            'instance_config.yml')
+
+    def status(self):
+        """
+        Collects the instances state and returns a list.
+
+        .. important::
+
+            Molecule assumes all instances were created successfully by
+            Ansible, otherwise Ansible would return an error on create.  This
+            may prove to be a bad assumption.  However, configuring Moleule's
+            driver to match the options passed to the playbook may prove
+            difficult.  Especially in cases where the user is provisioning
+            instances off localhost.
+        :returns: list
+        """
+        status_list = []
+        for platform in self._config.platforms.instances_with_scenario_name:
+            instance_name = platform['name']
+            driver_name = self.name.capitalize()
+            provisioner_name = self._config.provisioner.name.capitalize()
+            scenario_name = self._config.scenario.name
+            state = self._instances_state()
+
+            status_list.append(
+                Status(
+                    instance_name=instance_name,
+                    driver_name=driver_name,
+                    provisioner_name=provisioner_name,
+                    scenario_name=scenario_name,
+                    state=state))
+
+        return status_list
+
+    def _instances_state(self):
+        """
+        Get instances state and returns a string.
+
+        :returns: str
+        """
+        if self._config.state.created:
+            return 'Created'
+        else:
+            return 'Not Created'

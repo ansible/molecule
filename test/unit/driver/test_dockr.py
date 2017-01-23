@@ -18,6 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
+
 import pytest
 
 from molecule import config
@@ -44,12 +46,6 @@ def test_testinfra_options_property(docker_instance):
     assert {'connection': 'docker'} == docker_instance.testinfra_options
 
 
-def test_connection_options_property(docker_instance):
-    x = {'ansible_connection': 'docker'}
-
-    assert x == docker_instance.connection_options
-
-
 def test_name_property(docker_instance):
     assert 'docker' == docker_instance.name
 
@@ -58,12 +54,29 @@ def test_options_property(docker_instance):
     assert {} == docker_instance.options
 
 
-def test_login_cmd_template(docker_instance):
+def test_login_cmd_template_property(docker_instance):
     assert 'docker exec -ti {} bash' == docker_instance.login_cmd_template
+
+
+def test_safe_files(docker_instance):
+    assert [] == docker_instance.safe_files
 
 
 def test_login_args(docker_instance):
     assert ['foo'] == docker_instance.login_args('foo')
+
+
+def test_connection_options(docker_instance):
+    x = {'ansible_connection': 'docker'}
+
+    assert x == docker_instance.connection_options('foo')
+
+
+def test_instance_config_property(docker_instance):
+    x = os.path.join(docker_instance._config.ephemeral_directory,
+                     'instance_config.yml')
+
+    assert x == docker_instance.instance_config
 
 
 def test_status(mocker, docker_instance):
