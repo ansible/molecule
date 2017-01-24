@@ -233,3 +233,13 @@ def test_links(docker_instance):
     d2 = docker_instance._docker.inspect_container('test2')['HostConfig'][
         'Links']
     assert '/test1:/test2/80' in d2
+
+
+def test_network_mode(docker_instance):
+    docker_instance.up()
+    d1 = docker_instance._docker.inspect_container('test1')['HostConfig'][
+        'NetworkMode']
+    assert 'bridge' in d1
+    d2 = docker_instance._docker.inspect_container('test1')['HostConfig'][
+        'NetworkMode']
+    assert 'bridge' in d2
