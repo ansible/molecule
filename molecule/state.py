@@ -20,8 +20,6 @@
 
 import os
 
-import yaml
-
 from molecule import util
 
 VALID_KEYS = [
@@ -117,8 +115,7 @@ class State(object):
         }
 
     def _load_file(self):
-        with open(self.state_file, 'r') as stream:
-            return yaml.safe_load(stream)
+        return util.safe_load_file(self.state_file)
 
     def _write_state_file(self):
         util.write_file(self.state_file, util.safe_dump(self._data))

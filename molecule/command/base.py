@@ -23,8 +23,6 @@ import collections
 import glob
 import os
 
-import yaml
-
 from molecule import config
 from molecule import interpolation
 from molecule import util
@@ -62,7 +60,7 @@ def _load_config(c):
     with open(c, 'r') as stream:
         interpolated_config = i.interpolate(stream.read())
 
-        return yaml.safe_load(interpolated_config) or {}
+        return util.safe_load(interpolated_config)
 
 
 def _verify_configs(configs):

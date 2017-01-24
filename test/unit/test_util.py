@@ -199,6 +199,21 @@ def test_safe_dump():
     assert x == util.safe_dump({'foo': 'bar'})
 
 
+def test_safe_load():
+    assert {'foo': 'bar'} == util.safe_load('foo: bar')
+
+
+def test_safe_load_returns_empty_dict_on_empty_string():
+    assert {} == util.safe_load('')
+
+
+def test_safe_load_file(temp_dir):
+    path = os.path.join(temp_dir.strpath, 'foo')
+    util.write_file(path, 'foo: bar')
+
+    assert {'foo': 'bar'} == util.safe_load_file(path)
+
+
 def test_instance_with_scenario_name():
     assert 'foo-bar' == util.instance_with_scenario_name('foo', 'bar')
 

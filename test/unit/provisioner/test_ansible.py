@@ -21,9 +21,9 @@
 import os
 
 import pytest
-import yaml
 
 from molecule import config
+from molecule import util
 from molecule.provisioner import ansible
 
 
@@ -302,70 +302,69 @@ def test_write_inventory(temp_dir, ansible_instance):
 
     assert os.path.isfile(ansible_instance.inventory_file)
 
-    with open(ansible_instance.inventory_file, 'r') as stream:
-        data = yaml.load(stream)
-        x = {
-            'baz': {
-                'hosts': {
-                    'instance-2-default': {
-                        'ansible_connection': 'docker'
-                    }
-                },
-                'children': {
-                    'child2': {
-                        'hosts': {
-                            'instance-2-default': {
-                                'ansible_connection': 'docker'
-                            }
+    data = util.safe_load_file(ansible_instance.inventory_file)
+    x = {
+        'baz': {
+            'hosts': {
+                'instance-2-default': {
+                    'ansible_connection': 'docker'
+                }
+            },
+            'children': {
+                'child2': {
+                    'hosts': {
+                        'instance-2-default': {
+                            'ansible_connection': 'docker'
                         }
                     }
                 }
+            }
+        },
+        'foo': {
+            'hosts': {
+                'instance-1-default': {
+                    'ansible_connection': 'docker'
+                },
+                'instance-2-default': {
+                    'ansible_connection': 'docker'
+                }
             },
-            'foo': {
-                'hosts': {
-                    'instance-1-default': {
-                        'ansible_connection': 'docker'
-                    },
-                    'instance-2-default': {
-                        'ansible_connection': 'docker'
+            'children': {
+                'child1': {
+                    'hosts': {
+                        'instance-1-default': {
+                            'ansible_connection': 'docker'
+                        }
                     }
                 },
-                'children': {
-                    'child1': {
-                        'hosts': {
-                            'instance-1-default': {
-                                'ansible_connection': 'docker'
-                            }
-                        }
-                    },
-                    'child2': {
-                        'hosts': {
-                            'instance-2-default': {
-                                'ansible_connection': 'docker'
-                            }
+                'child2': {
+                    'hosts': {
+                        'instance-2-default': {
+                            'ansible_connection': 'docker'
                         }
                     }
                 }
+            }
+        },
+        'bar': {
+            'hosts': {
+                'instance-1-default': {
+                    'ansible_connection': 'docker'
+                }
             },
-            'bar': {
-                'hosts': {
-                    'instance-1-default': {
-                        'ansible_connection': 'docker'
-                    }
-                },
-                'children': {
-                    'child1': {
-                        'hosts': {
-                            'instance-1-default': {
-                                'ansible_connection': 'docker'
-                            }
+            'children': {
+                'child1': {
+                    'hosts': {
+                        'instance-1-default': {
+                            'ansible_connection': 'docker'
                         }
                     }
                 }
             }
         }
+    }
 
-        assert x == data
+    assert x == data
 
 
 def test_write_config(temp_dir, ansible_instance):

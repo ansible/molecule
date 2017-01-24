@@ -144,10 +144,37 @@ def file_prepender(filename):
 
 
 def safe_dump(data):
-    return yaml.safe_dump(data, default_flow_style=False, explicit_start=True)
+    """
+    Dump the provided data to a YAML document and returns a string.
+
+    :param data: A string containing an absolute path to the file to parse.
+    :return: str
+    """
     # TODO(retr0h): Do we need to encode?
     # yaml.dump(data) produces the document as a str object in both python
     # 2 and 3.
+    return yaml.safe_dump(data, default_flow_style=False, explicit_start=True)
+
+
+def safe_load(string):
+    """
+    Parse the provided string returns a dict.
+
+    :param string: A string to be parsed.
+    :return: dict
+    """
+    return yaml.safe_load(string) or {}
+
+
+def safe_load_file(filename):
+    """
+    Parse the provided YAML file and returns a dict.
+
+    :param filename: A string containing an absolute path to the file to parse.
+    :return: dict
+    """
+    with open(filename, 'r') as stream:
+        return safe_load(stream)
 
 
 def instance_with_scenario_name(instance_name, scenario_name):

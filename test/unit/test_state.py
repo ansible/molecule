@@ -21,7 +21,6 @@
 import os
 
 import pytest
-import yaml
 
 from molecule import config
 from molecule import state
@@ -68,10 +67,8 @@ def test_reset_persists(state_instance):
     state_instance.reset()
     assert not state_instance.converged
 
-    with open(state_instance.state_file, 'r') as stream:
-        d = yaml.safe_load(stream)
-
-        assert not d.get('converged')
+    d = util.safe_load_file(state_instance.state_file)
+    assert not d.get('converged')
 
 
 def test_change_state(state_instance):
