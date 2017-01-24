@@ -266,7 +266,8 @@ def docker_v1_section_data():
                 'volume_mounts': ['/tmp/test1:/inside:rw'],
                 'cap_add': ['SYS_ADMIN', 'SETPCAP'],
                 'cap_drop': ['MKNOD'],
-                'ansible_groups': ['group1']
+                'ansible_groups': ['group1'],
+                'network_mode': 'bridge'
             }, {
                 'name': 'test2',
                 'image': 'ubuntu',
@@ -275,6 +276,7 @@ def docker_v1_section_data():
                 },
                 'image_version': 'latest',
                 'ansible_groups': ['group2'],
+                'network_mode': 'bridge',
                 'command': '/bin/sh',
                 'options': {
                     'append_platform_to_hostname': True
