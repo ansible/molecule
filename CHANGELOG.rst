@@ -2,6 +2,11 @@
 History
 *******
 
+1.19.1
+======
+
+* Add raw_config_args option to providers.
+
 1.19
 ====
 
