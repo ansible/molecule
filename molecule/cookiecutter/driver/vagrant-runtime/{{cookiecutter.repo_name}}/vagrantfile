@@ -81,6 +81,13 @@ Vagrant.configure('2') do |config|
                                 end
                             }
                         end
+
+                        # Raw Configuration
+                        if provider['raw_config_args']
+                            provider['raw_config_args'].each { |raw_config_arg|
+                                eval("virtualbox.#{raw_config_arg}")
+                            }
+                        end
                     end
 
                     # The vagrant-vbguest plugin attempts to update packages
@@ -119,6 +126,13 @@ Vagrant.configure('2') do |config|
                                 end
                             }
                         end
+
+                        # Raw Configuration
+                        if provider['raw_config_args']
+                            provider['raw_config_args'].each { |raw_config_arg|
+                                eval("vmware.#{raw_config_arg}")
+                            }
+                        end
                     end
                 end
 
@@ -148,6 +162,13 @@ Vagrant.configure('2') do |config|
                                 end
                             }
                         end
+
+                        # Raw Configuration
+                        if provider['raw_config_args']
+                            provider['raw_config_args'].each { |raw_config_arg|
+                                eval("parallels.#{raw_config_arg}")
+                            }
+                        end
                     end
                 end
 
@@ -175,6 +196,13 @@ Vagrant.configure('2') do |config|
                                 if key != 'memory' and key != 'cpus'
                                     eval("libvirt.#{key} = #{value}")
                                 end
+                            }
+                        end
+
+                        # Raw Configuration
+                        if provider['raw_config_args']
+                            provider['raw_config_args'].each { |raw_config_arg|
+                                eval("libvirt.#{raw_config_arg}")
                             }
                         end
                     end
@@ -208,11 +236,10 @@ Vagrant.configure('2') do |config|
                 end
 
                 if instance['raw_config_args']
-                    provider['options'].each { |raw_config_arg|
+                    instance['raw_config_args'].each { |raw_config_arg|
                         eval("c.#{raw_config_arg}")
                     }
                 end
-
             end
         }
     end
