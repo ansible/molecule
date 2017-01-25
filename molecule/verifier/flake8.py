@@ -61,7 +61,7 @@ class Flake8(base.Base):
         :return: None
         """
         self._flake8_command = sh.flake8.bake(
-            self.options,
+            self.default_options,
             self._tests,
             _env=os.environ,
             _out=util.callback_info,

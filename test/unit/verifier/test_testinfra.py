@@ -28,10 +28,10 @@ from molecule.verifier import testinfra
 
 
 @pytest.fixture
-def testinfra_instance(molecule_file, verifier_data):
-    c = config.Config(molecule_file, configs=[verifier_data])
+def testinfra_instance(molecule_verifier_section_data, config_instance):
+    config_instance.config.update(molecule_verifier_section_data)
 
-    return testinfra.Testinfra(c)
+    return testinfra.Testinfra(config_instance)
 
 
 def test_config_private_member(testinfra_instance):
@@ -80,14 +80,11 @@ def test_options_property(testinfra_instance):
     assert x == testinfra_instance.options
 
 
-def test_options_property_handles_cli_args(molecule_file, testinfra_instance,
-                                           verifier_data):
-    c = config.Config(
-        molecule_file, args={'debug': True}, configs=[verifier_data])
-    v = testinfra.Testinfra(c)
+def test_options_property_handles_cli_args(testinfra_instance):
+    testinfra_instance._config.args = {'debug': True}
     x = {'debug': True, 'connection': 'docker', 'foo': 'bar'}
 
-    assert x == v.options
+    assert x == testinfra_instance.options
 
 
 def test_bake(testinfra_instance):

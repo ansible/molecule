@@ -22,7 +22,7 @@ import pytest
 
 
 @pytest.fixture
-def verifier_data():
+def molecule_verifier_section_data():
     return {'verifier': {'name': 'testinfra', 'options': {'foo': 'bar'}}}
 
 

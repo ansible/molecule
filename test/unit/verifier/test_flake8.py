@@ -28,10 +28,10 @@ from molecule.verifier import flake8
 
 
 @pytest.fixture
-def flake8_instance(molecule_file, verifier_data):
-    c = config.Config(molecule_file, configs=[verifier_data])
+def flake8_instance(molecule_verifier_section_data, config_instance):
+    config_instance.config.update(molecule_verifier_section_data)
 
-    return flake8.Flake8(c)
+    return flake8.Flake8(config_instance)
 
 
 def test_config_private_member(flake8_instance):
@@ -59,22 +59,19 @@ def test_options_property(flake8_instance):
     assert {'foo': 'bar'} == flake8_instance.options
 
 
-def test_options_property_handles_cli_args(molecule_file, flake8_instance,
-                                           verifier_data):
-    c = config.Config(
-        molecule_file, args={'debug': True}, configs=[verifier_data])
-    v = flake8.Flake8(c)
+def test_options_property_handles_cli_args(flake8_instance):
+    flake8_instance._config.args = {'debug': True}
     x = {'foo': 'bar'}
 
     # Does nothing.  The `flake8` command does not support
     # a `debug` flag.
-    assert x == v.options
+    assert x == flake8_instance.options
 
 
 def test_bake(flake8_instance):
     flake8_instance._tests = ['test1', 'test2', 'test3']
     flake8_instance.bake()
-    x = '{} --foo=bar test1 test2 test3'.format(str(sh.flake8))
+    x = '{} test1 test2 test3'.format(str(sh.flake8))
 
     assert x == flake8_instance._flake8_command
 
@@ -98,7 +95,7 @@ def test_execute_bakes(patched_run_command, flake8_instance):
 
     assert flake8_instance._flake8_command is not None
 
-    cmd = '{} --foo=bar test1 test2 test3'.format(str(sh.flake8))
+    cmd = '{} test1 test2 test3'.format(str(sh.flake8))
     patched_run_command.assert_called_once_with(cmd, debug=None)
 
 

@@ -22,20 +22,12 @@ import os
 
 import pytest
 
-from molecule import config
 from molecule import scenario
 
 
 @pytest.fixture
-def scenario_data():
-    return {}
-
-
-@pytest.fixture
-def scenario_instance(molecule_file, scenario_data):
-    c = config.Config(molecule_file, configs=[scenario_data])
-
-    return scenario.Scenario(c)
+def scenario_instance(config_instance):
+    return scenario.Scenario(config_instance)
 
 
 def test_name_property(scenario_instance):

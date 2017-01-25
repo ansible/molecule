@@ -34,18 +34,6 @@ from molecule.provisioner import ansible
 from molecule.verifier import testinfra
 
 
-@pytest.fixture
-def config_data():
-    return {}
-
-
-@pytest.fixture
-def config_instance(platforms_data, molecule_file, config_data):
-    configs = [platforms_data, config_data]
-
-    return config.Config(molecule_file, configs=configs)
-
-
 def test_molecule_file_private_member(molecule_file, config_instance):
     assert molecule_file == config_instance.molecule_file
 
@@ -70,14 +58,28 @@ def test_dependency_property(config_instance):
     assert isinstance(config_instance.dependency, ansible_galaxy.AnsibleGalaxy)
 
 
-def test_dependency_property_raises(patched_print_error, platforms_data,
-                                    molecule_file):
-    config_data = {'dependency': {'name': 'invalid'}}
-    configs = [platforms_data, config_data]
-    c = config.Config(molecule_file, configs=configs)
+@pytest.fixture
+def molecule_dependency_gilt_section_data():
+    return {'dependency': {'name': 'gilt'}, }
 
+
+def test_dependency_property_is_gilt(molecule_dependency_gilt_section_data,
+                                     config_instance):
+    config_instance.config.update(molecule_dependency_gilt_section_data)
+
+    assert isinstance(config_instance.dependency, gilt.Gilt)
+
+
+@pytest.fixture
+def molecule_dependency_invalid_section_data():
+    return {'dependency': {'name': 'invalid'}, }
+
+
+def test_dependency_property_raises(molecule_dependency_invalid_section_data,
+                                    patched_print_error, config_instance):
+    config_instance.config.update(molecule_dependency_invalid_section_data)
     with pytest.raises(SystemExit) as e:
-        c.dependency
+        config_instance.dependency
 
     assert 1 == e.value.code
 
@@ -85,26 +87,20 @@ def test_dependency_property_raises(patched_print_error, platforms_data,
     patched_print_error.assert_called_once_with(msg)
 
 
-def test_dependency_property_is_gilt(config_instance, molecule_file):
-    gilt_data = {'dependency': {'name': 'gilt'}}
-    configs = [gilt_data]
-    c = config.Config(molecule_file, configs=configs)
-
-    assert isinstance(c.dependency, gilt.Gilt)
-
-
 def test_driver_property(config_instance):
     assert isinstance(config_instance.driver, dockr.Dockr)
 
 
-def test_driver_property_raises(patched_print_error, platforms_data,
-                                molecule_file):
-    config_data = {'driver': {'name': 'invalid'}}
-    configs = [platforms_data, config_data]
-    c = config.Config(molecule_file, configs=configs)
+@pytest.fixture
+def molecule_driver_invalid_section_data():
+    return {'driver': {'name': 'invalid'}, }
 
+
+def test_driver_property_raises(molecule_driver_invalid_section_data,
+                                patched_print_error, config_instance):
+    config_instance.config.update(molecule_driver_invalid_section_data)
     with pytest.raises(SystemExit) as e:
-        c.driver
+        config_instance.driver
 
     assert 1 == e.value.code
 
@@ -116,14 +112,16 @@ def test_lint_property(config_instance):
     assert isinstance(config_instance.lint, ansible_lint.AnsibleLint)
 
 
-def test_lint_property_raises(patched_print_error, platforms_data,
-                              molecule_file):
-    config_data = {'lint': {'name': 'invalid'}}
-    configs = [platforms_data, config_data]
-    c = config.Config(molecule_file, configs=configs)
+@pytest.fixture
+def molecule_lint_invalid_section_data():
+    return {'lint': {'name': 'invalid'}, }
 
+
+def test_lint_property_raises(molecule_lint_invalid_section_data,
+                              patched_print_error, config_instance):
+    config_instance.config.update(molecule_lint_invalid_section_data)
     with pytest.raises(SystemExit) as e:
-        c.lint
+        config_instance.lint
 
     assert 1 == e.value.code
 
@@ -139,14 +137,16 @@ def test_provisioner_property(config_instance):
     assert isinstance(config_instance.provisioner, ansible.Ansible)
 
 
-def test_provisioner_property_raises(patched_print_error, platforms_data,
-                                     molecule_file):
-    config_data = {'provisioner': {'name': 'invalid'}}
-    configs = [platforms_data, config_data]
-    c = config.Config(molecule_file, configs=configs)
+@pytest.fixture
+def molecule_provisioner_invalid_section_data():
+    return {'provisioner': {'name': 'invalid'}, }
 
+
+def test_provisioner_property_raises(molecule_provisioner_invalid_section_data,
+                                     patched_print_error, config_instance):
+    config_instance.config.update(molecule_provisioner_invalid_section_data)
     with pytest.raises(SystemExit) as e:
-        c.provisioner
+        config_instance.provisioner
 
     assert 1 == e.value.code
 
@@ -166,56 +166,21 @@ def test_verifier_property(config_instance):
     assert isinstance(config_instance.verifier, testinfra.Testinfra)
 
 
-def test_verifier_property_raises(patched_print_error, platforms_data,
-                                  molecule_file):
-    config_data = {'verifier': {'name': 'invalid'}}
-    configs = [platforms_data, config_data]
-    c = config.Config(molecule_file, configs=configs)
+@pytest.fixture
+def molecule_verifier_invalid_section_data():
+    return {'verifier': {'name': 'invalid'}, }
 
+
+def test_verifier_property_raises(molecule_verifier_invalid_section_data,
+                                  patched_print_error, config_instance):
+    config_instance.config.update(molecule_verifier_invalid_section_data)
     with pytest.raises(SystemExit) as e:
-        c.verifier
+        config_instance.verifier
 
     assert 1 == e.value.code
 
     msg = "Invalid verifier named 'invalid' configured."
     patched_print_error.assert_called_once_with(msg)
-
-
-@pytest.fixture()
-def project_config_data():
-    return {'driver': {'name': 'project-override'}}
-
-
-@pytest.fixture()
-def local_config_data():
-    return {'driver': {'name': 'local-override', 'options': {'foo': 'bar'}}}
-
-
-def test_combine_default_and_project_dicts(project_config_data, molecule_file,
-                                           config_data):
-    configs = [project_config_data, config_data]
-    c = config.Config(molecule_file, configs=configs)
-
-    assert 'project-override' == c.config['driver']['name']
-    assert {} == c.config['driver']['options']
-
-
-def test_combine_default_local_and_project_dicts(
-        project_config_data, local_config_data, molecule_file, config_data):
-    configs = [project_config_data, local_config_data]
-    c = config.Config(molecule_file, configs=configs)
-
-    assert 'local-override' == c.config['driver']['name']
-    return {'foo': 'bar'} == c.config['driver']['options']
-
-
-def test_merge_dicts(config_instance):
-    # example taken from python-anyconfig/anyconfig/__init__.py
-    a = {'b': [{'c': 0}, {'c': 2}], 'd': {'e': 'aaa', 'f': 3}}
-    b = {'a': 1, 'b': [{'c': 3}], 'd': {'e': 'bbb'}}
-    x = {'a': 1, 'b': [{'c': 3}], 'd': {'e': "bbb", 'f': 3}}
-
-    assert x == config_instance.merge_dicts(a, b)
 
 
 def test_exit_with_invalid_section(config_instance, patched_print_error):
@@ -226,6 +191,15 @@ def test_exit_with_invalid_section(config_instance, patched_print_error):
 
     msg = "Invalid section named 'name' configured."
     patched_print_error.assert_called_once_with(msg)
+
+
+def test_merge_dicts(config_instance):
+    # example taken from python-anyconfig/anyconfig/__init__.py
+    a = {'b': [{'c': 0}, {'c': 2}], 'd': {'e': 'aaa', 'f': 3}}
+    b = {'a': 1, 'b': [{'c': 3}], 'd': {'e': 'bbb'}}
+    x = {'a': 1, 'b': [{'c': 3}], 'd': {'e': "bbb", 'f': 3}}
+
+    assert x == config.merge_dicts(a, b)
 
 
 def test_molecule_directory():

@@ -28,10 +28,8 @@ from molecule import util
 
 
 @pytest.fixture
-def state_instance(molecule_file):
-    c = config.Config(molecule_file)
-
-    return state.State(c)
+def state_instance(config_instance):
+    return state.State(config_instance)
 
 
 def test_state_file_property(state_instance):
@@ -82,7 +80,7 @@ def test_change_state_raises(state_instance):
         state_instance.change_state('invalid-state', True)
 
 
-def test_get_data_loads_existing_state_file(temp_dir):
+def test_get_data_loads_existing_state_file(temp_dir, molecule_data):
     molecule_directory = config.molecule_directory(temp_dir.strpath)
     scenario_directory = os.path.join(molecule_directory, 'default')
     molecule_file = config.molecule_file(scenario_directory)
@@ -95,6 +93,7 @@ def test_get_data_loads_existing_state_file(temp_dir):
     data = {'converged': False, 'created': True}
     util.write_file(state_file, util.safe_dump(data))
 
+    pytest.helpers.write_molecule_file(molecule_file, molecule_data)
     c = config.Config(molecule_file)
     s = state.State(c)
 

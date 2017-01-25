@@ -20,15 +20,12 @@
 
 import pytest
 
-from molecule import config
 from molecule import platforms
 
 
 @pytest.fixture
-def platform_instance(molecule_file, platforms_data):
-    c = config.Config(molecule_file, configs=[platforms_data])
-
-    return platforms.Platforms(c)
+def platform_instance(config_instance):
+    return platforms.Platforms(config_instance)
 
 
 def test_instances_property(platform_instance):

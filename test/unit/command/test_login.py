@@ -20,24 +20,18 @@
 
 import pytest
 
-from molecule import config
 from molecule.command import login
 
 
 @pytest.fixture
-def login_instance(molecule_file, platforms_data):
-    configs = [platforms_data]
-    c = config.Config(
-        molecule_file,
-        args={},
-        command_args={'host': 'instance-1'},
-        configs=configs)
-    c.state.change_state('created', True)
+def login_instance(config_instance):
+    config_instance.state.change_state('created', True)
 
-    return login.Login(c)
+    return login.Login(config_instance)
 
 
 def test_execute(mocker, login_instance):
+    login_instance._config.command_args = {'host': 'instance-1'}
     m = mocker.patch('molecule.command.login.Login._get_login')
     login_instance.execute()
 
@@ -56,13 +50,11 @@ def test_execute_raises_when_not_converged(patched_print_error,
     patched_print_error.assert_called_once_with(msg)
 
 
-def test_get_hostname_does_not_match(molecule_file, patched_print_error):
-    c = config.Config(molecule_file, command_args={'host': 'invalid'})
-    l = login.Login(c)
+def test_get_hostname_does_not_match(patched_print_error, login_instance):
+    login_instance._config.command_args = {'host': 'invalid'}
     hosts = ['instance-1']
-
     with pytest.raises(SystemExit) as e:
-        l._get_hostname(hosts)
+        login_instance._get_hostname(hosts)
 
     assert 1 == e.value.code
 
@@ -71,46 +63,40 @@ def test_get_hostname_does_not_match(molecule_file, patched_print_error):
     patched_print_error.assert_called_once_with(msg)
 
 
-def test_get_hostname_exact_match_with_one_host(molecule_file):
-    c = config.Config(molecule_file, command_args={'host': 'instance-1'})
-    l = login.Login(c)
+def test_get_hostname_exact_match_with_one_host(login_instance):
+    login_instance._config.command_args = {'host': 'instance-1'}
     hosts = ['instance-1']
 
-    assert 'instance-1' == l._get_hostname(hosts)
+    assert 'instance-1' == login_instance._get_hostname(hosts)
 
 
-def test_get_hostname_partial_match_with_one_host(molecule_file):
-    c = config.Config(molecule_file, command_args={'host': 'inst'})
-    l = login.Login(c)
+def test_get_hostname_partial_match_with_one_host(login_instance):
+    login_instance._config.command_args = {'host': 'inst'}
     hosts = ['instance-1']
 
-    assert 'instance-1' == l._get_hostname(hosts)
+    assert 'instance-1' == login_instance._get_hostname(hosts)
 
 
-def test_get_hostname_exact_match_with_multiple_hosts(molecule_file):
-    c = config.Config(molecule_file, command_args={'host': 'instance-1'})
-    l = login.Login(c)
+def test_get_hostname_exact_match_with_multiple_hosts(login_instance):
+    login_instance._config.command_args = {'host': 'instance-1'}
     hosts = ['instance-1', 'instance-2']
 
-    assert 'instance-1' == l._get_hostname(hosts)
+    assert 'instance-1' == login_instance._get_hostname(hosts)
 
 
-def test_get_hostname_partial_match_with_multiple_hosts(molecule_file):
-    c = config.Config(molecule_file, command_args={'host': 'foo'})
-    l = login.Login(c)
+def test_get_hostname_partial_match_with_multiple_hosts(login_instance):
+    login_instance._config.command_args = {'host': 'foo'}
     hosts = ['foo', 'fooo']
 
-    assert 'foo' == l._get_hostname(hosts)
+    assert 'foo' == login_instance._get_hostname(hosts)
 
 
 def test_get_hostname_partial_match_with_multiple_hosts_raises(
-        molecule_file, patched_print_error):
-    c = config.Config(molecule_file, command_args={'host': 'inst'})
-    l = login.Login(c)
+        patched_print_error, login_instance):
+    login_instance._config.command_args = {'host': 'inst'}
     hosts = ['instance-1', 'instance-2']
-
     with pytest.raises(SystemExit) as e:
-        l._get_hostname(hosts)
+        login_instance._get_hostname(hosts)
 
     assert 1 == e.value.code
 

@@ -24,7 +24,6 @@ import glob
 import os
 
 from molecule import config
-from molecule import interpolation
 from molecule import util
 
 
@@ -46,21 +45,6 @@ class Base(object):
     @abc.abstractmethod
     def execute(self):  # pragma: no cover
         pass
-
-
-def _load_config(c):
-    """
-    Open, interpolate, and YAML parse the provided file and returns a dict.
-
-    :param c: A string containing an absolute path to a Molecule config.
-    :return: dict
-    """
-    i = interpolation.Interpolator(interpolation.TemplateWithDefaults,
-                                   os.environ)
-    with open(c, 'r') as stream:
-        interpolated_config = i.interpolate(stream.read())
-
-        return util.safe_load(interpolated_config)
 
 
 def _verify_configs(configs):
@@ -120,8 +104,7 @@ def get_configs(args, command_args):
         config.Config(
             molecule_file=os.path.abspath(c),
             args=args,
-            command_args=command_args,
-            configs=[_load_config(c)])
+            command_args=command_args)
         for c in glob.glob('molecule/*/molecule.yml')
     ]
 

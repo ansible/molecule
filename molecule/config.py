@@ -22,6 +22,7 @@ import os
 
 import anyconfig
 
+from molecule import interpolation
 from molecule import platforms
 from molecule import scenario
 from molecule import state
@@ -36,6 +37,7 @@ from molecule.verifier import testinfra
 MOLECULE_DIRECTORY = 'molecule'
 MOLECULE_EPHEMERAL_DIRECTORY = '.molecule'
 MOLECULE_FILE = 'molecule.yml'
+MERGE_STRATEGY = anyconfig.MS_DICTS
 
 
 class Config(object):
@@ -53,24 +55,21 @@ class Config(object):
     references.
     """
 
-    MERGE_STRATEGY = anyconfig.MS_DICTS
-
-    def __init__(self, molecule_file, args={}, command_args={}, configs=[]):
+    def __init__(self, molecule_file, args={}, command_args={}):
         """
         Initialize a new config version one class and returns None.
 
         :param molecule_file: A string containing the path to the Molecule file
-         parsed.
+         to be parsed.
         :param args: A dict of options, arguments and commands from the CLI.
         :param command_args: A dict of options passed to the subcommand from
          the CLI.
-        :param configs: A list of dicts to merge.
         :returns: None
         """
         self.molecule_file = molecule_file
         self.args = args
         self.command_args = command_args
-        self.config = self._combine(configs)
+        self.config = self._combine()
 
     @property
     def ephemeral_directory(self):
@@ -130,22 +129,20 @@ class Config(object):
         else:
             self._exit_with_invalid_section('verifier', verifier_name)
 
-    def _combine(self, configs):
-        """ Perform a prioritized recursive merge of serveral source dicts
-        and returns a new dict.
+    def _combine(self):
+        """
+        Perform a prioritized recursive merge of the `molecule_file` with
+        defaults and returns a new dict.
 
-        The merge order is based on the index of the list, meaning that
-        elements at the end of the list will be merged last, and have greater
-        precedence than elements at the beginning.  The result is then merged
-        ontop of the defaults.
-
-        :param configs: A list containing the dicts to load.
         :return: dict
         """
+        i = interpolation.Interpolator(interpolation.TemplateWithDefaults,
+                                       os.environ)
 
         base = self._get_defaults()
-        for config in configs:
-            base = self.merge_dicts(base, config)
+        with open(self.molecule_file, 'r') as stream:
+            interpolated_config = i.interpolate(stream.read())
+            base = self.merge_dicts(base, util.safe_load(interpolated_config))
 
         return base
 
@@ -194,47 +191,51 @@ class Config(object):
             },
         }
 
-    def merge_dicts(self, a, b):
-        """
-        Merges the values of B into A and returns a new dict.  Uses the same
-        merge strategy as ``config._combine``.
-
-        ::
-
-            dict a
-
-            b:
-               - c: 0
-               - c: 2
-            d:
-               e: "aaa"
-               f: 3
-
-            dict b
-
-            a: 1
-            b:
-               - c: 3
-            d:
-               e: "bbb"
-
-        Will give an object such as::
-
-            {'a': 1, 'b': [{'c': 3}], 'd': {'e': "bbb", 'f': 3}}
-
-
-        :param a: the target dictionary
-        :param b: the dictionary to import
-        :return: dict
-        """
-        conf = anyconfig.to_container(a, ac_merge=self.MERGE_STRATEGY)
-        conf.update(b)
-
-        return conf
-
     def _exit_with_invalid_section(self, section, name):
         msg = "Invalid {} named '{}' configured.".format(section, name)
         util.sysexit_with_message(msg)
+
+    def merge_dicts(self, a, b):
+        return merge_dicts(a, b)
+
+
+def merge_dicts(a, b):
+    """
+    Merges the values of B into A and returns a new dict.  Uses the same
+    merge strategy as ``config._combine``.
+
+    ::
+
+        dict a
+
+        b:
+           - c: 0
+           - c: 2
+        d:
+           e: "aaa"
+           f: 3
+
+        dict b
+
+        a: 1
+        b:
+           - c: 3
+        d:
+           e: "bbb"
+
+    Will give an object such as::
+
+        {'a': 1, 'b': [{'c': 3}], 'd': {'e': "bbb", 'f': 3}}
+
+
+    :param a: the target dictionary
+    :param b: the dictionary to import
+    :return: dict
+    """
+    conf = anyconfig.to_container(a, ac_merge=MERGE_STRATEGY)
+    conf.update(b)
+
+    return conf
 
 
 def molecule_directory(path):

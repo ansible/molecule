@@ -18,8 +18,10 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import functools
 import os
 
+import m9dicts
 import pytest
 
 from molecule import util
@@ -27,8 +29,10 @@ from molecule import config
 
 
 @pytest.helpers.register
-def create_molecule_file(molecule_file, config):
-    util.write_file(molecule_file, util.safe_dump(config.config))
+def write_molecule_file(filename, data):
+    data = m9dicts.convert_to(data)
+
+    util.write_file(filename, util.safe_dump(data))
 
 
 @pytest.helpers.register
@@ -37,6 +41,68 @@ def os_split(s):
     if rest in ('', os.path.sep):
         return tail,
     return os_split(rest) + (tail, )
+
+
+@pytest.fixture
+def molecule_dependency_galaxy_section_data():
+    return {'dependency': {'name': 'galaxy'}, }
+
+
+@pytest.fixture
+def molecule_driver_section_data():
+    return {'driver': {'name': 'docker', }, }
+
+
+@pytest.fixture
+def molecule_lint_section_data():
+    return {'lint': {'name': 'ansible-lint'}, }
+
+
+@pytest.fixture
+def molecule_platforms_section_data():
+    return {
+        'platforms': [{
+            'name': 'instance-1',
+            'groups': ['foo', 'bar'],
+            'children': ['child1'],
+        }, {
+            'name': 'instance-2',
+            'groups': ['baz', 'foo'],
+            'children': ['child2'],
+        }],
+    }
+
+
+@pytest.fixture
+def molecule_provisioner_section_data():
+    return {'provisioner': {'name': 'ansible'}, }
+
+
+@pytest.fixture
+def molecule_scenario_section_data():
+    return {'scenario': {'name': 'default'}, }
+
+
+@pytest.fixture
+def molecule_verifier_section_data():
+    return {'verifier': {'name': 'testinfra'}, }
+
+
+@pytest.fixture
+def molecule_data(
+        molecule_dependency_galaxy_section_data, molecule_driver_section_data,
+        molecule_lint_section_data, molecule_platforms_section_data,
+        molecule_provisioner_section_data, molecule_scenario_section_data,
+        molecule_verifier_section_data):
+
+    fixtures = [
+        molecule_dependency_galaxy_section_data, molecule_driver_section_data,
+        molecule_lint_section_data, molecule_platforms_section_data,
+        molecule_provisioner_section_data, molecule_scenario_section_data,
+        molecule_verifier_section_data
+    ]
+
+    return functools.reduce(lambda x, y: config.merge_dicts(x, y), fixtures)
 
 
 @pytest.fixture
@@ -66,18 +132,10 @@ def molecule_file(molecule_scenario_directory, molecule_ephemeral_directory):
 
 
 @pytest.fixture
-def platforms_data():
-    return {
-        'platforms': [{
-            'name': 'instance-1',
-            'groups': ['foo', 'bar'],
-            'children': ['child1'],
-        }, {
-            'name': 'instance-2',
-            'groups': ['baz', 'foo'],
-            'children': ['child2'],
-        }]
-    }
+def config_instance(molecule_file, molecule_data):
+    pytest.helpers.write_molecule_file(molecule_file, molecule_data)
+
+    return config.Config(molecule_file)
 
 
 # Mocks

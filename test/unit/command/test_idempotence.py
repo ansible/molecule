@@ -20,17 +20,14 @@
 
 import pytest
 
-from molecule import config
 from molecule.command import idempotence
 
 
 @pytest.fixture
-def idempotence_instance(molecule_file, platforms_data):
-    configs = [platforms_data]
-    c = config.Config(molecule_file, configs=configs)
-    c.state.change_state('converged', True)
+def idempotence_instance(config_instance):
+    config_instance.state.change_state('converged', True)
 
-    return idempotence.Idempotence(c)
+    return idempotence.Idempotence(config_instance)
 
 
 def test_execute(mocker, patched_print_info, patched_ansible_converge,

@@ -26,15 +26,15 @@ from molecule.lint import ansible_lint
 
 
 @pytest.fixture
-def lint_data():
+def molecule_lint_section_data():
     return {'lint': {'name': 'ansible-lint', 'options': {'foo': 'bar'}}}
 
 
 @pytest.fixture
-def ansible_lint_instance(molecule_file, lint_data):
-    c = config.Config(molecule_file, configs=[lint_data])
+def ansible_lint_instance(molecule_lint_section_data, config_instance):
+    config_instance.config.update(molecule_lint_section_data)
 
-    return ansible_lint.AnsibleLint(c)
+    return ansible_lint.AnsibleLint(config_instance)
 
 
 def test_config_private_member(ansible_lint_instance):
@@ -64,10 +64,8 @@ def test_options_property(ansible_lint_instance):
     assert x == ansible_lint_instance.options
 
 
-def test_options_property_handles_cli_args(molecule_file,
-                                           ansible_lint_instance, lint_data):
-    c = config.Config(molecule_file, args={'debug': True}, configs=[lint_data])
-    l = ansible_lint.AnsibleLint(c)
+def test_options_property_handles_cli_args(ansible_lint_instance):
+    ansible_lint_instance._config.args = {'debug': True}
     x = {
         'excludes': [ansible_lint_instance._config.ephemeral_directory],
         'foo': 'bar'
@@ -75,7 +73,7 @@ def test_options_property_handles_cli_args(molecule_file,
 
     # Does nothing.  The `ansible-lint` command does not support
     # a `debug` flag.
-    assert x == l.options
+    assert x == ansible_lint_instance.options
 
 
 def test_bake(ansible_lint_instance):

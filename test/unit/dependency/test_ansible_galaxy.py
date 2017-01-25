@@ -28,15 +28,15 @@ from molecule.dependency import ansible_galaxy
 
 
 @pytest.fixture
-def dependency_data():
+def molecule_dependency_section_data():
     return {'dependency': {'name': 'galaxy', 'options': {'foo': 'bar'}}}
 
 
 @pytest.fixture
-def ansible_galaxy_instance(molecule_file, dependency_data):
-    c = config.Config(molecule_file, configs=[dependency_data])
+def ansible_galaxy_instance(molecule_dependency_section_data, config_instance):
+    config_instance.config.update(molecule_dependency_section_data)
 
-    return ansible_galaxy.AnsibleGalaxy(c)
+    return ansible_galaxy.AnsibleGalaxy(config_instance)
 
 
 @pytest.fixture
@@ -81,11 +81,9 @@ def test_options_property(ansible_galaxy_instance, role_file, roles_path):
     assert x == ansible_galaxy_instance.options
 
 
-def test_options_property_handles_cli_args(molecule_file, role_file,
-                                           roles_path, dependency_data):
-    c = config.Config(
-        molecule_file, args={'debug': True}, configs=[dependency_data])
-    d = ansible_galaxy.AnsibleGalaxy(c)
+def test_options_property_handles_cli_args(role_file, roles_path,
+                                           ansible_galaxy_instance):
+    ansible_galaxy_instance._config.args = {'debug': True}
     x = {
         'force': True,
         'role-file': role_file,
@@ -95,7 +93,7 @@ def test_options_property_handles_cli_args(molecule_file, role_file,
 
     # Does nothing.  The `ansible-galaxy` command does not support
     # a `debug` flag.
-    assert x == d.options
+    assert x == ansible_galaxy_instance.options
 
 
 def test_bake(ansible_galaxy_instance, role_file, roles_path):

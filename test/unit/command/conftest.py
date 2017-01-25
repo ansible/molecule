@@ -20,20 +20,6 @@
 
 import pytest
 
-from molecule import config
-
-
-@pytest.fixture
-def command_data():
-    return {}
-
-
-@pytest.fixture
-def config_instance(molecule_file, platforms_data, command_data):
-    configs = [platforms_data, command_data]
-
-    return config.Config(molecule_file, configs=configs)
-
 
 @pytest.fixture
 def patched_ansible_check(mocker):

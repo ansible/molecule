@@ -58,10 +58,40 @@ def ansible_data():
 
 
 @pytest.fixture
-def ansible_instance(platforms_data, molecule_file, ansible_data):
-    c = config.Config(molecule_file, configs=[platforms_data, ansible_data])
+def molecule_provisioner_section_data():
+    return {
+        'provisioner': {
+            'name': 'ansible',
+            'config_options': {
+                'defaults': {
+                    'foo': 'bar'
+                },
+            },
+            'options': {
+                'foo': 'bar'
+            },
+            'host_vars': {
+                'instance-1': [{
+                    'foo': 'bar'
+                }],
+            },
+            'group_vars': {
+                'example_group1': [{
+                    'foo': 'bar'
+                }],
+                'example_group2': [{
+                    'foo': 'bar'
+                }],
+            }
+        },
+    }
 
-    return ansible.Ansible(c)
+
+@pytest.fixture
+def ansible_instance(molecule_provisioner_section_data, config_instance):
+    config_instance.config.update(molecule_provisioner_section_data)
+
+    return ansible.Ansible(config_instance)
 
 
 def test_config_private_member(ansible_instance):
@@ -99,15 +129,10 @@ def test_options_property(ansible_instance):
     assert x == ansible_instance.options
 
 
-def test_options_property_handles_cli_args(molecule_file, platforms_data,
-                                           ansible_data, ansible_instance):
-    c = config.Config(
-        molecule_file,
-        args={'debug': True},
-        configs=[platforms_data, ansible_data])
-    p = ansible.Ansible(c)
+def test_options_property_handles_cli_args(ansible_instance):
+    ansible_instance._config.args = {'debug': True}
 
-    assert p.options['debug']
+    assert ansible_instance.options['debug']
 
 
 def test_host_vars_property(ansible_instance):
@@ -248,17 +273,16 @@ def test_add_or_update_vars(ansible_instance):
     assert os.path.isfile(group_vars_2)
 
 
-def test_add_or_update_vars_does_not_create_vars(platforms_data,
-                                                 molecule_file):
-    c = config.Config(molecule_file, configs=[platforms_data])
-    a = ansible.Ansible(c)
-    ephemeral_directory = c.ephemeral_directory
+def test_add_or_update_vars_does_not_create_vars(ansible_instance):
+    ansible_instance._config.config['provisioner']['host_vars'] = {}
+    ansible_instance._config.config['provisioner']['group_vars'] = {}
+    ephemeral_directory = ansible_instance._config.ephemeral_directory
 
     host_vars_directory = os.path.join(ephemeral_directory, 'host_vars')
     group_vars_directory = os.path.join(ephemeral_directory, 'group_vars')
 
-    a._add_or_update_vars('host_vars')
-    a._add_or_update_vars('group_vars')
+    ansible_instance._add_or_update_vars('host_vars')
+    ansible_instance._add_or_update_vars('group_vars')
 
     assert not os.path.isdir(host_vars_directory)
     assert not os.path.isdir(group_vars_directory)

@@ -28,15 +28,15 @@ from molecule.dependency import gilt
 
 
 @pytest.fixture
-def dependency_data():
+def molecule_dependency_section_data():
     return {'dependency': {'name': 'gilt', 'options': {'foo': 'bar'}}}
 
 
 @pytest.fixture
-def gilt_instance(molecule_file, dependency_data):
-    c = config.Config(molecule_file, configs=[dependency_data])
+def gilt_instance(molecule_dependency_section_data, config_instance):
+    config_instance.config.update(molecule_dependency_section_data)
 
-    return gilt.Gilt(c)
+    return gilt.Gilt(config_instance)
 
 
 @pytest.fixture
@@ -68,14 +68,11 @@ def test_options_property(gilt_config, gilt_instance):
     assert x == gilt_instance.options
 
 
-def test_options_property_handles_cli_args(molecule_file, gilt_config,
-                                           dependency_data):
-    c = config.Config(
-        molecule_file, args={'debug': True}, configs=[dependency_data])
-    d = gilt.Gilt(c)
+def test_options_property_handles_cli_args(gilt_config, gilt_instance):
+    gilt_instance._config.args = {'debug': True}
     x = {'config': gilt_config, 'foo': 'bar', 'debug': True}
 
-    assert x == d.options
+    assert x == gilt_instance.options
 
 
 def test_bake(gilt_config, gilt_instance):

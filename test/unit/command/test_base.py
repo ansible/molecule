@@ -46,20 +46,6 @@ def test_config_private_member(base_instance):
     assert isinstance(base_instance._config, config.Config)
 
 
-def test_load_config(temp_dir):
-    inventory_file = os.path.join(temp_dir.strpath, 'inventory_file')
-    util.write_file(inventory_file, 'foo: bar')
-
-    assert {'foo': 'bar'} == base._load_config(inventory_file)
-
-
-def test_load_config_returns_empty_dict_on_empty_file(temp_dir):
-    inventory_file = os.path.join(temp_dir.strpath, 'inventory_file')
-    util.write_file(inventory_file, '')
-
-    assert {} == base._load_config(inventory_file)
-
-
 def test_verify_configs(config_instance):
     configs = [config_instance]
 
