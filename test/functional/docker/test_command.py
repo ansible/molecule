@@ -26,9 +26,6 @@ import pytest
 import sh
 
 from molecule import config
-from molecule import util
-
-### Commands
 
 
 @pytest.mark.parametrize(
@@ -153,28 +150,3 @@ def test_command_verify_testinfra(with_scenario):
     sh.molecule('create', '--scenario-name', 'testinfra')
     sh.molecule('converge', '--scenario-name', 'testinfra')
     sh.molecule('verify', '--scenario-name', 'testinfra')
-
-
-### Scenarios
-
-
-@pytest.mark.parametrize(
-    'with_scenario', ['interpolation'], indirect=['with_scenario'])
-def test_interpolation(with_scenario):
-    env = os.environ.copy()
-    env.update({'DEPENDENCY_NAME': 'galaxy', 'VERIFIER_NAME': 'testinfra'})
-
-    sh.molecule('test', _env=env)
-
-
-@pytest.mark.parametrize(
-    'with_scenario', ['host_group_vars'], indirect=['with_scenario'])
-def test_host_group_vars(with_scenario):
-    out = sh.molecule('test')
-    out = util.ansi_escape(out.stdout)
-
-    assert re.search('\[all\].*?ok: \[instance-1-default\]', out, re.DOTALL)
-    assert re.search('\[example\].*?ok: \[instance-1-default\]', out,
-                     re.DOTALL)
-    assert re.search('\[example_1\].*?ok: \[instance-1-default\]', out,
-                     re.DOTALL)
