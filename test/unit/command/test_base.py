@@ -1,4 +1,5 @@
 #  Copyright (c) 2015-2017 Cisco Systems, Inc.
+
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -19,6 +20,7 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import os
+import shutil
 
 import m9dicts
 import pytest
@@ -74,6 +76,26 @@ def test_verify_configs_raises_with_duplicate_configs(patched_print_error,
     patched_print_error.assert_called_once_with(msg)
 
 
+def test_prune(config_instance):
+    ephemeral_directory = config_instance.ephemeral_directory
+
+    foo_file = os.path.join(ephemeral_directory, 'foo')
+    bar_file = os.path.join(ephemeral_directory, 'bar')
+    baz_directory = os.path.join(ephemeral_directory, 'baz')
+    state_file = os.path.join(ephemeral_directory, 'state.yml')
+
+    os.mkdir(baz_directory)
+    for f in [foo_file, bar_file, state_file]:
+        open(f, 'a').close()
+
+    base._prune(config_instance)
+
+    assert not os.path.isfile(foo_file)
+    assert not os.path.isfile(bar_file)
+    assert os.path.isfile(state_file)
+    assert os.path.isdir(baz_directory)
+
+
 def test_setup(mocker, config_instance):
     patched_provisioner_write_inventory = mocker.patch(
         'molecule.provisioner.ansible.Ansible.write_inventory')
@@ -81,17 +103,27 @@ def test_setup(mocker, config_instance):
         'molecule.provisioner.ansible.Ansible.write_config')
     patched_provisioner_add_or_update_vars = mocker.patch(
         'molecule.provisioner.ansible.Ansible._add_or_update_vars')
+    patched_prune = mocker.patch('molecule.command.base._prune')
     base._setup([config_instance])
 
     assert os.path.isdir(config_instance.ephemeral_directory)
     assert os.path.isdir(
         os.path.dirname(config_instance.provisioner.inventory_file))
 
+    patched_prune.assert_called_once_with(config_instance)
     patched_provisioner_write_inventory.assert_called_once_with()
     patched_provisioner_write_config.assert_called_once_with()
 
     x = [mocker.call('host_vars'), mocker.call('group_vars')]
     assert x == patched_provisioner_add_or_update_vars.mock_calls
+
+
+def test_setup_creates_ephemeral_directory(config_instance):
+    ephemeral_directory = config_instance.ephemeral_directory
+    shutil.rmtree(config_instance.ephemeral_directory)
+    base._setup([config_instance])
+
+    assert os.path.isdir(ephemeral_directory)
 
 
 def test_get_configs(temp_dir, config_instance):

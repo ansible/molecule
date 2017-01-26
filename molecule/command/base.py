@@ -67,20 +67,27 @@ def _verify_configs(configs):
         util.sysexit_with_message(msg)
 
 
+def _prune(c):
+    """
+    Prune the ephemeral directory with the exception of the state file.
+
+    :return: None
+    """
+    for root, dirs, files in os.walk(c.ephemeral_directory, topdown=False):
+        for name in files:
+            state_file = os.path.basename(c.state.state_file)
+            if name != state_file:
+                os.remove(os.path.join(root, name))
+
+
 def _setup(configs):
     """
     Prepare the system for Molecule and returns None.
 
-    The ephemeral directory is pruned with the exception of the state file.
-
     :return: None
     """
     for c in configs:
-        for root, dirs, files in os.walk(c.ephemeral_directory, topdown=False):
-            for name in files:
-                state_file = os.path.basename(c.state.state_file)
-                if name != state_file:
-                    os.remove(os.path.join(root, name))
+        _prune(c)
         if not os.path.isdir(c.ephemeral_directory):
             os.mkdir(c.ephemeral_directory)
 
