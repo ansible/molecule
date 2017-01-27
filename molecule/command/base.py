@@ -69,11 +69,17 @@ class Base(object):
 
         :returns: None
         """
-        if not self._config.molecule_file_exists():
+        if (not self._config.molecule_file_exists() and
+                not self._config.molecule_local_config_file_exists()):
             msg = ('Unable to find {}. '
                    'Exiting.').format(self._config.molecule_file)
             util.print_error(msg)
             util.sysexit()
+        elif (not self._config.molecule_file_exists() and
+              self._config.molecule_local_config_file_exists()):
+            util.print_warn('No molecule.yml found in project, '
+                            'using config file at %s only' %
+                            self._config.molecule_local_config_file)
         self.molecule.main()
 
     @abc.abstractproperty

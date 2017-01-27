@@ -30,7 +30,7 @@ from re import sub
 from molecule import util
 
 PROJECT_CONFIG = 'molecule.yml'
-LOCAL_CONFIG = '~/.config/molecule/config.yml'
+LOCAL_CONFIG = os.path.expanduser('~/.config/molecule/config.yml')
 MERGE_STRATEGY = anyconfig.MS_DICTS
 
 
@@ -50,6 +50,10 @@ class Config(object):
     def molecule_file(self):
         return PROJECT_CONFIG
 
+    @property
+    def molecule_local_config_file(self):
+        return LOCAL_CONFIG
+
     @abc.abstractmethod
     def _get_config(self, configs):
         pass  # pragma: no cover
@@ -65,6 +69,9 @@ class ConfigV1(Config):
 
     def molecule_file_exists(self):
         return os.path.isfile(self.molecule_file)
+
+    def molecule_local_config_file_exists(self):
+        return os.path.isfile(self.molecule_local_config_file)
 
     def populate_instance_names(self, platform):
         """
