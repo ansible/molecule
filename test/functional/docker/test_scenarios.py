@@ -26,6 +26,8 @@ import sh
 
 from molecule import util
 
+pytestmark = pytest.helpers.supports_docker()
+
 
 @pytest.mark.parametrize(
     'with_scenario', ['interpolation'], indirect=['with_scenario'])

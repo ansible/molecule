@@ -27,6 +27,8 @@ import sh
 
 from molecule import config
 
+pytestmark = pytest.helpers.supports_vagrant_virtualbox()
+
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/vagrant'], indirect=['with_scenario'])

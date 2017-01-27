@@ -27,6 +27,8 @@ import sh
 
 from molecule import config
 
+pytestmark = pytest.helpers.supports_docker()
+
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/docker'], indirect=['with_scenario'])

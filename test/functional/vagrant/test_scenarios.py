@@ -26,6 +26,8 @@ import sh
 
 from molecule import util
 
+pytestmark = pytest.helpers.supports_vagrant_virtualbox()
+
 
 @pytest.mark.parametrize(
     'with_scenario', ['interpolation'], indirect=['with_scenario'])

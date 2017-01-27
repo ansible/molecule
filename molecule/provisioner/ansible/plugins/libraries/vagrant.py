@@ -409,8 +409,8 @@ class VagrantClient(object):
         }
 
         # TODO(retr0h): Should we move this to config.merge_dicts()?
-        d['provider']['options'].update(self._module.params[
-            'provider_options'])
+        d['provider']['options'].update(
+            self._module.params['provider_options'])
 
         return d
 
