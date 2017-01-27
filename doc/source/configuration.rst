@@ -116,7 +116,7 @@ Native Inventory
 
 An alternative to the above `Host/Group Vars` is the creation of `group_vars`
 and/or `host_vars` directories in the project root.  This allows Ansible to
-converge utilzing its built in group/host vars resolution.
+converge utilizing its built in group/host vars resolution.
 
 Vagrant Section
 ---------------
