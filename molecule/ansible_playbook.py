@@ -68,6 +68,7 @@ class AnsiblePlaybook(object):
         self._ansible_playbook_command = sh.ansible_playbook.bake(
             self._cli,
             self._playbook,
+            _cwd=self._config.scenario.directory,
             _env=self._env,
             _out=self._out,
             _err=self._err)

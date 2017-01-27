@@ -18,42 +18,32 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-from molecule.driver import base
+import os
+import re
+
+import pytest
+import sh
+
+from molecule import util
 
 
-class Dockr(base.Base):
-    """
-    `Docker`_ is the default driver.
+@pytest.mark.parametrize(
+    'with_scenario', ['interpolation'], indirect=['with_scenario'])
+def test_interpolation(with_scenario):
+    env = os.environ.copy()
+    env.update({'DEPENDENCY_NAME': 'galaxy', 'VERIFIER_NAME': 'testinfra'})
 
-    .. code-block:: yaml
+    sh.molecule('test', _env=env)
 
-        driver:
-          name: docker
 
-    .. code-block:: bash
+@pytest.mark.parametrize(
+    'with_scenario', ['host_group_vars'], indirect=['with_scenario'])
+def test_host_group_vars(with_scenario):
+    out = sh.molecule('test')
+    out = util.ansi_escape(out.stdout)
 
-        $ pip install docker-py
-
-    .. _`Docker`: https://www.docker.com
-    """
-
-    def __init__(self, config):
-        super(Dockr, self).__init__(config)
-
-    @property
-    def testinfra_options(self):
-        return {'connection': 'docker'}
-
-    @property
-    def login_cmd_template(self):
-        return 'docker exec -ti {} bash'
-
-    @property
-    def safe_files(self):
-        return []
-
-    def login_args(self, instance_name):
-        return [instance_name]
-
-    def connection_options(self, instance_name):
-        return {'ansible_connection': 'docker'}
+    assert re.search('\[all\].*?ok: \[instance-1-default\]', out, re.DOTALL)
+    assert re.search('\[example\].*?ok: \[instance-1-default\]', out,
+                     re.DOTALL)
+    assert re.search('\[example_1\].*?ok: \[instance-1-default\]', out,
+                     re.DOTALL)

@@ -1,4 +1,6 @@
 ---
 - hosts: all
-  roles:
-    - role: docker
+  tasks:
+    - name: Dummy task
+      command: /bin/true
+      changed_when: False

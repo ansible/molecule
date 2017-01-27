@@ -13,7 +13,6 @@ Variable Substitution
 .. autoclass:: molecule.interpolation.Interpolator
    :undoc-members:
 
-
 Dependency
 ----------
 
@@ -47,11 +46,16 @@ any provider `Ansible`_ supports.  This work is offloaded to the `provisioner`.
 
 .. _`Ansible`: https://docs.ansible.com
 
-
 Docker
 ^^^^^^
 
 .. autoclass:: molecule.driver.dockr.Dockr
+   :undoc-members:
+
+Vagrant
+^^^^^^^
+
+.. autoclass:: molecule.driver.vagrant.Vagrant
    :undoc-members:
 
 Lint
@@ -64,7 +68,6 @@ Ansible Lint
 
 .. autoclass:: molecule.lint.ansible_lint.AnsibleLint
    :undoc-members:
-
 
 Platforms
 ---------

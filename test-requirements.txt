@@ -1,8 +1,8 @@
 docker-py
-gilt-python
 mock
 pytest
 pytest-cov
 pytest-helpers-namespace
 pytest-mock
+python-vagrant
 wheel

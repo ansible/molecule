@@ -21,7 +21,8 @@
 from molecule.command import create
 
 
-def test_execute(mocker, patched_print_info, patched_ansible_converge,
+def test_execute(mocker, patched_provisioner_write_inventory,
+                 patched_print_info, patched_ansible_converge,
                  config_instance):
     c = create.Create(config_instance)
     c.execute()
@@ -37,3 +38,5 @@ def test_execute(mocker, patched_print_info, patched_ansible_converge,
         config_instance.scenario.setup)
 
     assert config_instance.state.created
+
+    patched_provisioner_write_inventory.assert_called_once_with()
