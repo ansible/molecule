@@ -16,6 +16,9 @@ drivers will behave. This information is contained in top level YAML sections
 described below.
 It is also possible to use environment variables by embbedding them in a
 string like this: ``playbook: "${envvar_containing_playbook_name}"``
+It is not strictly required to have a ``molecule.yml`` in the role directory,
+if all your roles use the same configuration, you may well want to use the config
+in ``~/.config/molecule/config.yml`` only.
 
 Molecule Section
 ----------------
