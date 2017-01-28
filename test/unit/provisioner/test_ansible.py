@@ -158,6 +158,17 @@ def test_group_vars_property(ansible_instance):
 
 def test_inventory_property(ansible_instance):
     x = {
+        'ungrouped': {
+            'vars': {
+                'molecule_file': ansible_instance._config.molecule_file,
+                'molecule_instance_config':
+                ansible_instance._config.driver.instance_config,
+                'molecule_inventory_file':
+                ansible_instance._config.provisioner.inventory_file,
+                'molecule_scenario_directory':
+                ansible_instance._config.scenario.directory,
+            }
+        },
         'bar': {
             'hosts': {
                 'instance-1-default': {
@@ -234,6 +245,15 @@ def test_inventory_property_handles_missing_groups(temp_dir, ansible_instance):
                 'instance-2-default': {
                     'ansible_connection': 'docker'
                 }
+            },
+            'vars': {
+                'molecule_file': ansible_instance._config.molecule_file,
+                'molecule_instance_config':
+                ansible_instance._config.driver.instance_config,
+                'molecule_inventory_file':
+                ansible_instance._config.provisioner.inventory_file,
+                'molecule_scenario_directory':
+                ansible_instance._config.scenario.directory,
             }
         }
     }
@@ -329,17 +349,29 @@ def test_write_inventory(temp_dir, ansible_instance):
     assert os.path.isfile(ansible_instance.inventory_file)
 
     data = util.safe_load_file(ansible_instance.inventory_file)
+
     x = {
-        'baz': {
+        'ungrouped': {
+            'vars': {
+                'molecule_file': ansible_instance._config.molecule_file,
+                'molecule_instance_config':
+                ansible_instance._config.driver.instance_config,
+                'molecule_inventory_file':
+                ansible_instance._config.provisioner.inventory_file,
+                'molecule_scenario_directory':
+                ansible_instance._config.scenario.directory,
+            }
+        },
+        'bar': {
             'hosts': {
-                'instance-2-default': {
+                'instance-1-default': {
                     'ansible_connection': 'docker'
                 }
             },
             'children': {
-                'child2': {
+                'child1': {
                     'hosts': {
-                        'instance-2-default': {
+                        'instance-1-default': {
                             'ansible_connection': 'docker'
                         }
                     }
@@ -372,16 +404,16 @@ def test_write_inventory(temp_dir, ansible_instance):
                 }
             }
         },
-        'bar': {
+        'baz': {
             'hosts': {
-                'instance-1-default': {
+                'instance-2-default': {
                     'ansible_connection': 'docker'
                 }
             },
             'children': {
-                'child1': {
+                'child2': {
                     'hosts': {
-                        'instance-1-default': {
+                        'instance-2-default': {
                             'ansible_connection': 'docker'
                         }
                     }

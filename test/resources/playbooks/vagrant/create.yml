@@ -2,7 +2,7 @@
 - hosts: localhost
   connection: local
   vars:
-    molecule_yml: "{{ lookup('file','molecule.yml') | from_yaml }}"
+    molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
   tasks:
     - name: Create molecule instance(s)
       vagrant:
@@ -14,5 +14,5 @@
 
     - name: Dump instance config
       copy: content="# Molecule managed\n\n{{ instance_conf | to_yaml }}"
-            dest=.molecule/instance_config.yml
+            dest="{{ molecule_instance_config }}"
       when: instance_conf.changed | bool

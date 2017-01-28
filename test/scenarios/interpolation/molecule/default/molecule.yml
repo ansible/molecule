@@ -11,5 +11,7 @@ provisioner:
     name: ansible
 scenario:
     name: default
+    setup: ../../../../resources/playbooks/docker/create.yml
+    teardown: ../../../../resources/playbooks/docker/destroy.yml
 verifier:
     name: ${VERIFIER_NAME}

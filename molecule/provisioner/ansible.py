@@ -184,20 +184,22 @@ class Ansible(object):
 
         .. code-block:: yaml
             ungrouped:
-             hosts:
-               instance-1-default:
-               instance-2-default:
-             children:
-               $child_group_name:
-                 hosts:
-                   instance-1-default:
-                   instance-2-default:
+              vars:
+                foo: bar
+              hosts:
+                instance-1-default:
+                instance-2-default:
+              children:
+                $child_group_name:
+                  hosts:
+                    instance-1-default:
+                    instance-2-default:
             $group_name:
-             hosts:
-               instance-1-default:
-                 ansible_connection: docker
-               instance-2-default:
-                 ansible_connection: docker
+              hosts:
+                instance-1-default:
+                  ansible_connection: docker
+                instance-2-default:
+                  ansible_connection: docker
 
         :return: str
         """
@@ -208,6 +210,14 @@ class Ansible(object):
                 connection_options = self._config.driver.connection_options(
                     instance_name)
                 dd[group]['hosts'][instance_name] = connection_options
+                dd['ungrouped']['vars'] = {
+                    'molecule_file': self._config.molecule_file,
+                    'molecule_inventory_file': self.inventory_file,
+                    'molecule_scenario_directory':
+                    self._config.scenario.directory,
+                    'molecule_instance_config':
+                    self._config.driver.instance_config,
+                }
                 # Child groups
                 for child_group in platform.get('children', []):
                     dd[group]['children'][child_group]['hosts'][
