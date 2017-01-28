@@ -92,7 +92,8 @@ class Ansible(object):
             ssh_connection:
               scp_if_ssh: True
 
-    Roles which require host/groups to have certain variables set.
+    Roles which require host/groups to have certain variables set.  Molecule
+    uses the same `variables defined in a playbook`_ syntax as `Ansible`_.
 
     .. code-block:: yaml
 
@@ -100,15 +101,17 @@ class Ansible(object):
           name: ansible
           group_vars:
             foo1:
-              - test: key
-                var2: value
+              foo: bar
             foo2:
-              - test: key
-                var: value
+              foo: bar
+              baz:
+                qux: zzyzx
           host_vars:
             foo1-01:
-              - set_this_value: True
-    """
+              foo: bar
+
+    .. _`variables defined in a playbook`: http://docs.ansible.com/ansible/playbooks_variables.html#variables-defined-in-a-playbook
+    """  # noqa
 
     def __init__(self, config):
         """
@@ -324,7 +327,7 @@ class Ansible(object):
             os.mkdir(os.path.abspath(target_vars_directory))
 
         for target in vars_target.keys():
-            target_var_content = vars_target[target][0]
+            target_var_content = vars_target[target]
             path = os.path.join(os.path.abspath(target_vars_directory), target)
             util.write_file(path, util.safe_dump(target_var_content))
 

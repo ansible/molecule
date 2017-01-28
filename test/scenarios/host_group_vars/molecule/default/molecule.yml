@@ -15,12 +15,13 @@ provisioner:
     name: ansible
     host_vars:
       instance-1:
-        - host_group_vars_host_molecule_yml: True
+        host_group_vars_host_molecule_yml: True
     group_vars:
       example:
-        - host_group_vars_example_group_molecule_yml: True
+        host_group_vars_example_group_one_molecule_yml: True
+        host_group_vars_example_group_two_molecule_yml: True
       example_1:
-        - host_group_vars_example_1_child_group_molecule_yml: True
+        host_group_vars_example_1_child_group_molecule_yml: True
 scenario:
     name: default
     setup: ../../../../resources/playbooks/docker/create.yml

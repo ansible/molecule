@@ -10,7 +10,7 @@
       changed_when: False
 
     - name: Group vars group_var for group example from molecule.yml
-      command: echo "{{ host_group_vars_example_group_molecule_yml }}"
+      command: echo "{{ host_group_vars_example_group_one_molecule_yml }} {{ host_group_vars_example_group_two_molecule_yml }}"
       changed_when: False
 
     - name: Group vars from group_vars existing directory
