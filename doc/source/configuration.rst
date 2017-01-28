@@ -99,14 +99,14 @@ in this situation - simply add the `host_vars` and/or `group_vars` to the
     playbook: playbook.yml
     group_vars:
       foo1:
-        - test: key
-          var2: value
+        foo: bar
+        baz:
+          key: value
       foo2:
-        - test: key
-          var: value
+        foo: bar
     host_vars:
       foo1-01:
-        - set_this_value: True
+        set_this_value: True
 
 This example will set the variables for the Ansible groups `foo1` and `foo2`.
 For hosts `foo1-01` the value `set_this_value` will be set to True.

@@ -324,7 +324,7 @@ class Molecule(object):
             os.mkdir(os.path.abspath(target_vars_path))
 
         for target in vars_target.keys():
-            target_var_content = vars_target[target][0]
+            target_var_content = vars_target[target]
             path = os.path.join(os.path.abspath(target_vars_path), target)
 
             util.write_file(
