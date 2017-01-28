@@ -102,24 +102,26 @@ class Testinfra(base.Base):
             util.print_warn('Skipping, verifier is disabled.')
             return
 
+        if not len(self._tests) > 0:
+            util.print_warn('Skipping, no tests found.')
+            return
+
         if self._testinfra_command is None:
             self.bake()
 
-        if len(self._tests) > 0:
-            f = flake8.Flake8(self._config)
-            f.execute()
+        f = flake8.Flake8(self._config)
+        f.execute()
 
-            msg = 'Executing testinfra tests found in {}/...'.format(
-                self.directory)
-            util.print_info(msg)
+        msg = 'Executing testinfra tests found in {}/...'.format(
+            self.directory)
+        util.print_info(msg)
 
-            try:
-                util.run_command(
-                    self._testinfra_command,
-                    debug=self._config.args.get('debug'))
-                util.print_success('Verifier completed successfully.')
-            except sh.ErrorReturnCode as e:
-                util.sysexit(e.exit_code)
+        try:
+            util.run_command(
+                self._testinfra_command, debug=self._config.args.get('debug'))
+            util.print_success('Verifier completed successfully.')
+        except sh.ErrorReturnCode as e:
+            util.sysexit(e.exit_code)
 
     def _get_tests(self):
         """

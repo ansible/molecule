@@ -128,11 +128,14 @@ def test_execute_does_not_execute(patched_run_command, patched_print_warn,
     patched_print_warn.assert_called_once_with(msg)
 
 
-def test_does_not_execute_without_tests(patched_run_command,
-                                        testinfra_instance):
+def test_does_not_execute_without_tests(
+        patched_run_command, patched_print_warn, testinfra_instance):
     testinfra_instance.execute()
 
     assert not patched_run_command.called
+
+    msg = 'Skipping, no tests found.'
+    patched_print_warn.assert_called_once_with(msg)
 
 
 def test_execute_bakes(patched_flake8, patched_run_command,
