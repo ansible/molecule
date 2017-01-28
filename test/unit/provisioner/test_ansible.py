@@ -281,7 +281,7 @@ def test_add_or_update_vars(ansible_instance):
     host_vars_directory = os.path.join(ephemeral_directory, 'host_vars')
     host_vars = os.path.join(host_vars_directory, 'instance-1-default')
 
-    ansible_instance._add_or_update_vars('host_vars')
+    ansible_instance.add_or_update_vars('host_vars')
     assert os.path.isdir(host_vars_directory)
     assert os.path.isfile(host_vars)
 
@@ -289,7 +289,7 @@ def test_add_or_update_vars(ansible_instance):
     group_vars_1 = os.path.join(group_vars_directory, 'example_group1')
     group_vars_2 = os.path.join(group_vars_directory, 'example_group2')
 
-    ansible_instance._add_or_update_vars('group_vars')
+    ansible_instance.add_or_update_vars('group_vars')
     assert os.path.isdir(group_vars_directory)
     assert os.path.isfile(group_vars_1)
     assert os.path.isfile(group_vars_2)
@@ -303,8 +303,8 @@ def test_add_or_update_vars_does_not_create_vars(ansible_instance):
     host_vars_directory = os.path.join(ephemeral_directory, 'host_vars')
     group_vars_directory = os.path.join(ephemeral_directory, 'group_vars')
 
-    ansible_instance._add_or_update_vars('host_vars')
-    ansible_instance._add_or_update_vars('group_vars')
+    ansible_instance.add_or_update_vars('host_vars')
+    ansible_instance.add_or_update_vars('group_vars')
 
     assert not os.path.isdir(host_vars_directory)
     assert not os.path.isdir(group_vars_directory)

@@ -77,7 +77,7 @@ class Idempotence(base.Base):
         """
 
         # Remove blank lines to make regex matches easier
-        output = re.sub('\n\s*\n*', '\n', output)
+        output = re.sub(r'\n\s*\n*', '\n', output)
 
         # Look for any non-zero changed lines
         changed = re.search(r'(changed=[1-9][0-9]*)', output)
@@ -105,7 +105,7 @@ class Idempotence(base.Base):
         output_lines = output.split('\n')
         res = []
         task_line = ''
-        for idx, line in enumerate(output_lines):
+        for _, line in enumerate(output_lines):
             if line.startswith('TASK'):
                 task_line = line
             elif line.startswith('changed'):

@@ -21,7 +21,7 @@
 import pbr.version
 
 try:
-    version_info = pbr.version.VersionInfo('molecule')
+    version_info = pbr.version.VersionInfo('molecule')  # noqa
     __version__ = pbr.version_info.release_string()
 except AttributeError:
     __version__ = None

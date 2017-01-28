@@ -298,7 +298,7 @@ class Ansible(object):
         template = template.render(config_options=self.config_options)
         util.write_file(self.config_file, template)
 
-    def _add_or_update_vars(self, target):
+    def add_or_update_vars(self, target):
         """
         Creates host and/or group vars and returns None.
 

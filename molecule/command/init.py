@@ -123,8 +123,7 @@ def _init_new_scenario(command_args):
 
 
 @click.group()
-@click.pass_context
-def init(ctx):
+def init():
     """ Initialize a new role or scenario. """
 
 
@@ -155,11 +154,9 @@ def init(ctx):
     type=click.Choice(['testinfra']),
     default='testinfra',
     help='Name of verifier to initialize. (testinfra)')
-@click.pass_context
-def role(ctx, dependency_name, driver_name, lint_name, provisioner_name,
-         role_name, verifier_name):  # pragma: no cover
+def role(dependency_name, driver_name, lint_name, provisioner_name, role_name,
+         verifier_name):  # pragma: no cover
     """ Initialize a new role for use with Molecule. """
-    # args = ctx.obj.get('args')
     command_args = {
         'dependency_name': dependency_name,
         'driver_name': driver_name,
@@ -188,11 +185,9 @@ def role(ctx, dependency_name, driver_name, lint_name, provisioner_name,
     type=click.Choice(['testinfra']),
     default='testinfra',
     help='Name of verifier to initialize. (testinfra)')
-@click.pass_context
-def scenario(ctx, driver_name, role_name, scenario_name,
+def scenario(driver_name, role_name, scenario_name,
              verifier_name):  # pragma: no cover
     """ Initialize a new scenario for use with Molecule. """
-    # args = ctx.obj.get('args')
     command_args = {
         'driver_name': driver_name,
         'role_name': role_name,

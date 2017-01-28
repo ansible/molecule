@@ -24,11 +24,6 @@ import molecule
 from molecule import command
 
 
-def main():
-    """ Molecule aids in the development, and testing of Ansible roles. """
-    cli(obj={})
-
-
 @click.group()
 @click.option(
     '--debug/--no-debug',
@@ -36,21 +31,22 @@ def main():
     help='Enable or disable debug mode. Default is disabled.')
 @click.version_option(version=molecule.__version__)
 @click.pass_context
-def cli(ctx, debug):  # pragma: no cover
+def main(ctx, debug):  # pragma: no cover
+    ctx.obj = {}
     ctx.obj['args'] = {}
     ctx.obj['args']['debug'] = debug
 
 
-cli.add_command(command.check.check)
-cli.add_command(command.converge.converge)
-cli.add_command(command.create.create)
-cli.add_command(command.dependency.dependency)
-cli.add_command(command.destroy.destroy)
-cli.add_command(command.idempotence.idempotence)
-cli.add_command(command.init.init)
-cli.add_command(command.lint.lint)
-cli.add_command(command.list.list)
-cli.add_command(command.login.login)
-cli.add_command(command.syntax.syntax)
-cli.add_command(command.test.test)
-cli.add_command(command.verify.verify)
+main.add_command(command.check.check)
+main.add_command(command.converge.converge)
+main.add_command(command.create.create)
+main.add_command(command.dependency.dependency)
+main.add_command(command.destroy.destroy)
+main.add_command(command.idempotence.idempotence)
+main.add_command(command.init.init)
+main.add_command(command.lint.lint)
+main.add_command(command.list.list)
+main.add_command(command.login.login)
+main.add_command(command.syntax.syntax)
+main.add_command(command.test.test)
+main.add_command(command.verify.verify)

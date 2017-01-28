@@ -1,5 +1,6 @@
 docker-py
 mock
+pylint
 pytest
 pytest-cov
 pytest-helpers-namespace

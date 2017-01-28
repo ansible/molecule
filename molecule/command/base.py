@@ -33,14 +33,14 @@ class Base(object):
     """
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, config):
+    def __init__(self, c):
         """
         Base initializer for all :ref:`Command` classes.
 
-        :param config: An instance of a Molecule config.
+        :param c: An instance of a Molecule config.
         :returns: None
         """
-        self._config = config
+        self._config = c
 
     @abc.abstractmethod
     def execute(self):  # pragma: no cover
@@ -55,7 +55,7 @@ def _verify_configs(configs):
     :return: None
     """
     if configs:
-        scenario_names = [config.scenario.name for config in configs]
+        scenario_names = [c.scenario.name for c in configs]
         for scenario_name, n in collections.Counter(scenario_names).items():
             if n > 1:
                 msg = ("Duplicate scenario name '{}' found.  "
@@ -73,7 +73,7 @@ def _prune(c):
 
     :return: None
     """
-    for root, dirs, files in os.walk(c.ephemeral_directory, topdown=False):
+    for root, _, files in os.walk(c.ephemeral_directory, topdown=False):
         for name in files:
             safe_files = [os.path.basename(f) for f in c.driver.safe_files]
             safe_files.append(os.path.basename(c.state.state_file))
@@ -94,8 +94,8 @@ def _setup(configs):
 
         c.provisioner.write_inventory()
         c.provisioner.write_config()
-        c.provisioner._add_or_update_vars('host_vars')
-        c.provisioner._add_or_update_vars('group_vars')
+        c.provisioner.add_or_update_vars('host_vars')
+        c.provisioner.add_or_update_vars('group_vars')
 
 
 def get_configs(args, command_args):
@@ -137,5 +137,5 @@ def _filter_configs_for_scenario(scenario_name, configs):
     """
 
     return [
-        config for config in configs if config.scenario.name == scenario_name
+        c for c in configs if c.scenario.name == scenario_name
     ]

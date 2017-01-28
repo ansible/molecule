@@ -99,7 +99,7 @@ def test_prune(config_instance):
 def test_setup(mocker, patched_provisioner_write_inventory,
                patched_provisioner_write_config, config_instance):
     patched_provisioner_add_or_update_vars = mocker.patch(
-        'molecule.provisioner.ansible.Ansible._add_or_update_vars')
+        'molecule.provisioner.ansible.Ansible.add_or_update_vars')
     patched_prune = mocker.patch('molecule.command.base._prune')
     base._setup([config_instance])
 

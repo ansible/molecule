@@ -20,19 +20,23 @@
 
 import fcntl
 import os
-import pexpect
 import signal
 import struct
 import sys
 import termios
 
 import click
+import pexpect
 
 from molecule import util
 from molecule.command import base
 
 
 class Login(base.Base):
+    def __init__(self, c):
+        super(Login, self).__init__(c)
+        self._pt = None
+
     def execute(self):
         """
         Execute the actions necessary to perform a `molecule login` and
@@ -86,13 +90,13 @@ class Login(base.Base):
         signal.signal(signal.SIGWINCH, self._sigwinch_passthrough)
         self._pt.interact()
 
-    def _sigwinch_passthrough(self, sig, data):  # pragma: no cover
-        TIOCGWINSZ = 1074295912  # assume
+    def _sigwinch_passthrough(self):  # pragma: no cover
+        tiocgwinsz = 1074295912  # assume
         if 'TIOCGWINSZ' in dir(termios):
-            TIOCGWINSZ = termios.TIOCGWINSZ
+            tiocgwinsz = termios.TIOCGWINSZ
         s = struct.pack('HHHH', 0, 0, 0, 0)
         a = struct.unpack('HHHH',
-                          fcntl.ioctl(sys.stdout.fileno(), TIOCGWINSZ, s))
+                          fcntl.ioctl(sys.stdout.fileno(), tiocgwinsz, s))
         self._pt.setwinsize(a[0], a[1])
 
 
