@@ -7,7 +7,7 @@
       tags: foo
 
     - name: Group host vars scenario test example group vars from molecule.yml
-      command: echo "{{ group_host_vars_example_group_molecule_yml }}"
+      command: echo "{{ group_host_vars_example_group_one_molecule_yml }} {{ group_host_vars_example_group_two_molecule_yml }}"
       changed_when: False
       tags:
         - foo

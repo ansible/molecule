@@ -6,12 +6,13 @@ driver:
 ansible:
   group_vars:
     example:
-      - group_host_vars_example_group_molecule_yml: foo
+      group_host_vars_example_group_one_molecule_yml: foo
+      group_host_vars_example_group_two_molecule_yml: foo
     example2:
-      - group_host_vars_example2_group_molecule_yml: foo
+      group_host_vars_example2_group_molecule_yml: foo
   host_vars:
     group-vars-scenario:
-      - group_host_vars_host_molecule_yml: bar
+      group_host_vars_host_molecule_yml: bar
 docker:
   containers:
     - name: group-vars-scenario
