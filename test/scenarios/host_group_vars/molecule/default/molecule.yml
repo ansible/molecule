@@ -23,5 +23,7 @@ provisioner:
         - host_group_vars_example_1_child_group_molecule_yml: True
 scenario:
     name: default
+    setup: ../../../../resources/playbooks/docker/create.yml
+    teardown: ../../../../resources/playbooks/docker/destroy.yml
 verifier:
     name: testinfra

@@ -53,6 +53,15 @@ class Scenario(object):
             - lint
             - verify
             - destroy
+
+    Share playbooks between roles.
+
+    .. code-block:: yaml
+
+        scenario:
+          name: default
+          setup: ../default/create.yml
+          teardown: ../default/destroy.yml
     """
 
     def __init__(self, config):

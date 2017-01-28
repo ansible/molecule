@@ -3,7 +3,7 @@
 - hosts: localhost
   connection: local
   vars:
-    molecule_yml: "{{ lookup('file','molecule.yml') | from_yaml }}"
+    molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
   tasks:
     - name: Destroy molecule instance(s)
       docker_container:
