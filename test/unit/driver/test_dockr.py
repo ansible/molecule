@@ -43,7 +43,10 @@ def test_config_private_member(docker_instance):
 
 
 def test_testinfra_options_property(docker_instance):
-    assert {'connection': 'docker'} == docker_instance.testinfra_options
+    assert {
+        'connection': 'ansible',
+        'ansible-inventory': '.molecule/ansible_inventory.yml'
+    } == docker_instance.testinfra_options
 
 
 def test_name_property(docker_instance):

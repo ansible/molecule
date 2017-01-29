@@ -39,15 +39,17 @@ def test_config_private_member(testinfra_instance):
 
 
 def test_default_options_property(testinfra_instance):
-    x = {'connection': 'docker'}
-
-    assert x == testinfra_instance.default_options
+    assert {
+        'connection': 'ansible',
+        'ansible-inventory': '.molecule/ansible_inventory.yml'
+    } == testinfra_instance.default_options
 
 
 def test_default_options_property_updates_debug(testinfra_instance):
     testinfra_instance._config.args = {'debug': True}
     assert {
-        'connection': 'docker',
+        'connection': 'ansible',
+        'ansible-inventory': '.molecule/ansible_inventory.yml',
         'debug': True
     } == testinfra_instance.default_options
 
@@ -56,7 +58,8 @@ def test_default_options_property_updates_sudo(testinfra_instance,
                                                patched_testinfra_get_tests):
     testinfra_instance._config.args = {'sudo': True}
     assert {
-        'connection': 'docker',
+        'connection': 'ansible',
+        'ansible-inventory': '.molecule/ansible_inventory.yml',
         'sudo': True
     } == testinfra_instance.default_options
 
@@ -75,24 +78,31 @@ def test_directory_property(testinfra_instance):
 
 
 def test_options_property(testinfra_instance):
-    x = {'connection': 'docker', 'foo': 'bar'}
-
-    assert x == testinfra_instance.options
+    assert {
+        'connection': 'ansible',
+        'ansible-inventory': '.molecule/ansible_inventory.yml',
+        'foo': 'bar'
+    } == testinfra_instance.options
 
 
 def test_options_property_handles_cli_args(testinfra_instance):
     testinfra_instance._config.args = {'debug': True}
-    x = {'debug': True, 'connection': 'docker', 'foo': 'bar'}
 
-    assert x == testinfra_instance.options
+    assert {
+        'connection': 'ansible',
+        'ansible-inventory': '.molecule/ansible_inventory.yml',
+        'foo': 'bar',
+        'debug': True
+    } == testinfra_instance.options
 
 
 def test_bake(testinfra_instance):
     testinfra_instance._tests = ['test1', 'test2', 'test3']
     testinfra_instance.bake()
     x = [
-        str(sh.testinfra), '--connection=docker', '--foo=bar', 'test1',
-        'test2', 'test3'
+        str(sh.testinfra),
+        '--ansible-inventory=.molecule/ansible_inventory.yml',
+        '--connection=ansible', '--foo=bar', 'test1', 'test2', 'test3'
     ]
     result = str(testinfra_instance._testinfra_command).split()
 
