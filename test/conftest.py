@@ -56,15 +56,15 @@ def ansible_v1():
 
 
 def get_docker_executable():
-    not distutils.spawn.find_executable('docker')
+    return not distutils.spawn.find_executable('docker')
 
 
 def get_vagrant_executable():
-    not distutils.spawn.find_executable('vagrant')
+    return not distutils.spawn.find_executable('vagrant')
 
 
 def get_virtualbox_executable():
-    not distutils.spawn.find_executable('VBoxManage')
+    return not distutils.spawn.find_executable('VBoxManage')
 
 
 @pytest.helpers.register
