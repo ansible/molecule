@@ -136,6 +136,4 @@ def _filter_configs_for_scenario(scenario_name, configs):
     :return: list
     """
 
-    return [
-        c for c in configs if c.scenario.name == scenario_name
-    ]
+    return [c for c in configs if c.scenario.name == scenario_name]
