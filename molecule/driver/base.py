@@ -40,14 +40,17 @@ class Base(object):
         """
         self._config = config
 
-    @abc.abstractproperty
+    @property
     def testinfra_options(self):
         """
         Testinfra specific options and returns a dict.
 
         :returns: dict
         """
-        pass  # pragma: no cover
+        return {
+            'connection': 'ansible',
+            'ansible-inventory': '.molecule/ansible_inventory.yml'
+        }
 
     @abc.abstractproperty
     def login_cmd_template(self):

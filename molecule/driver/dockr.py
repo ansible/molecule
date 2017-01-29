@@ -41,10 +41,6 @@ class Dockr(base.Base):
         super(Dockr, self).__init__(config)
 
     @property
-    def testinfra_options(self):
-        return {'connection': 'docker'}
-
-    @property
     def login_cmd_template(self):
         return 'docker exec -ti {} bash'
 
