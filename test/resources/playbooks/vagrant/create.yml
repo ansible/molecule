@@ -8,6 +8,7 @@
       vagrant:
         instance_name: "{{ item.name | instance_with_scenario_name(molecule_yml.scenario.name) }}"
         platform_box: ubuntu/trusty64
+        molecule_file: "{{ molecule_file }}"
         state: up
       register: instance_conf
       with_items: "{{ molecule_yml.platforms }}"

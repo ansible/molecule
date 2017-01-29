@@ -100,6 +100,11 @@ options:
       - Additional Vagrant options not explcitly exposed by this module.
     required: False
     default: None
+  molecule_file:
+    description:
+      - An absolute path to the Molecule file.
+    required: True
+    default: None
   state:
     description:
       - The desired state of the instance.
@@ -120,6 +125,7 @@ EXAMPLES = '''
       vagrant:
         instance_name: "{{ item }}"
         platform_box: ubuntu/trusty64
+        molecule_file: "{{ molecule_file }}"
         state: up
       with_items:
         - instance-1
@@ -132,6 +138,7 @@ EXAMPLES = '''
       vagrant:
         instance_name: "{{ item }}"
         platform_box: ubuntu/trusty64
+        molecule_file: "{{ molecule_file }}"
         state: destroy
       with_items:
         - instance-1
@@ -155,6 +162,7 @@ EXAMPLES = '''
             network_name: private_network
             type: static
         platform_box: ubuntu/trusty64
+        molecule_file: "{{ molecule_file }}"
         state: destroy
 '''
 
@@ -362,20 +370,23 @@ class VagrantClient(object):
         return {}
 
     def _get_config(self):
-        molecule_file = molecule.config.molecule_file(os.getcwd())
+        molecule_file = self._module.params['molecule_file']
 
         return molecule.config.Config(molecule_file)
 
-    def _write_configs(self):
+    def _write_vagrantfile(self):
         template = molecule.util.render_template(
             VAGRANTFILE_TEMPLATE,
             vagrantfile_config=self._config.driver.vagrantfile_config)
         molecule.util.write_file(self._vagrantfile, template)
 
-        vagrantfile_config_dict = self._get_vagrant_config_dict()
-        molecule.util.write_file(
-            self._config.driver.vagrantfile_config,
-            molecule.util.safe_dump(vagrantfile_config_dict))
+    def _write_vagrantfile_config(self, data):
+        molecule.util.write_file(self._config.driver.vagrantfile_config,
+                                 molecule.util.safe_dump(data))
+
+    def _write_configs(self):
+        self._write_vagrantfile_config(self._get_vagrant_config_dict())
+        self._write_vagrantfile()
 
     def _get_vagrant(self):
         v = vagrant.Vagrant(quiet_stdout=False, quiet_stderr=False)
@@ -440,6 +451,8 @@ def main():
                 type='dict', default={}),
             provider_raw_config_args=dict(
                 type='list', default=None),
+            molecule_file=dict(
+                type='str', required=True),
             state=dict(
                 type='str', default='up', choices=['up', 'destroy'])),
         supports_check_mode=False)

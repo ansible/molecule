@@ -18,7 +18,7 @@ provisioner:
     name: ansible
 scenario:
     name: multi-node
-    # setup: ../../../../../resources/playbooks/docker/create.yml
-    # teardown: ../../../../../resources/playbooks/docker/destroy.yml
+    setup: ../../../../../resources/playbooks/vagrant/create.yml
+    teardown: ../../../../../resources/playbooks/vagrant/destroy.yml
 verifier:
     name: testinfra
