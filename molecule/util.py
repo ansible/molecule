@@ -21,6 +21,7 @@
 from __future__ import print_function
 
 import fnmatch
+import jinja2
 import os
 import re
 import sys
@@ -112,6 +113,13 @@ def os_walk(directory, pattern):
                 filename = os.path.join(root, basename)
 
                 yield filename
+
+
+def render_template(template, **kwargs):
+    t = jinja2.Environment()
+    t = t.from_string(template)
+
+    return t.render(kwargs)
 
 
 def write_file(filename, content):

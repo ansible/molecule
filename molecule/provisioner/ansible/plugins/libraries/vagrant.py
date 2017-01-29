@@ -162,8 +162,7 @@ VAGRANTFILE_TEMPLATE = '''
 require 'yaml'
 
 Vagrant.configure('2') do |config|
-  # TODO(retr0h): Populate the vagrant_config path.
-  vagrant_config = YAML::load_file('.molecule/vagrant.yml')
+  vagrant_config = YAML::load_file('{{ vagrantfile_config }}')
 
   if Vagrant.has_plugin?('vagrant-cachier')
     config.cache.scope = 'machine'
@@ -368,7 +367,10 @@ class VagrantClient(object):
         return molecule.config.Config(molecule_file)
 
     def _write_configs(self):
-        molecule.util.write_file(self._vagrantfile, VAGRANTFILE_TEMPLATE)
+        template = molecule.util.render_template(
+            VAGRANTFILE_TEMPLATE,
+            vagrantfile_config=self._config.driver.vagrantfile_config)
+        molecule.util.write_file(self._vagrantfile, template)
 
         vagrantfile_config_dict = self._get_vagrant_config_dict()
         molecule.util.write_file(

@@ -22,7 +22,6 @@ import copy
 import collections
 import os
 
-import jinja2
 import m9dicts
 
 from molecule import ansible_playbook
@@ -293,9 +292,8 @@ class Ansible(object):
         """
         # self._verify_config()
 
-        template = jinja2.Environment()
-        template = template.from_string(self._get_config_template())
-        template = template.render(config_options=self.config_options)
+        template = util.render_template(
+            self._get_config_template(), config_options=self.config_options)
         util.write_file(self.config_file, template)
 
     def add_or_update_vars(self, target):
