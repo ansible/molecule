@@ -41,6 +41,10 @@ class Base(object):
     def default_options(self):  # pragma: no cover
         pass
 
+    @abc.abstractproperty
+    def default_env(self):  # pragma: no cover
+        pass
+
     @property
     def name(self):
         return self._config.config['dependency']['name']
@@ -53,3 +57,8 @@ class Base(object):
     def options(self):
         return self._config.merge_dicts(
             self.default_options, self._config.config['dependency']['options'])
+
+    @property
+    def env(self):
+        return self._config.merge_dicts(
+            self.default_env, self._config.config['dependency']['env'])

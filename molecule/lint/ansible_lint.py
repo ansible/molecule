@@ -54,6 +54,15 @@ class AnsibleLint(base.Base):
           name: ansible-lint
           enabled: False
 
+    Environment variables can be passed to lint.
+
+    .. code-block:: yaml
+
+        verifier:
+          name: ansible-lint
+          env:
+            FOO: bar
+
     .. _`Ansible Lint`: https://github.com/willthames/ansible-lint
     """
 
@@ -76,6 +85,16 @@ class AnsibleLint(base.Base):
         """
         return {'excludes': [self._config.ephemeral_directory]}
 
+    @property
+    def default_env(self):
+        """
+        Default env variables provided to `ansible-lint` and returns a
+        dict.
+
+        :return: dict
+        """
+        return os.environ.copy()
+
     def bake(self):
         """
         Bake an `ansible-lint` command so it's ready to execute and returns
@@ -90,7 +109,7 @@ class AnsibleLint(base.Base):
             options,
             exclude_args,
             self._config.scenario.converge,
-            _env=os.environ,
+            _env=self.env,
             _out=util.callback_info,
             _err=util.callback_error)
 

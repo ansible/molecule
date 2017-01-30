@@ -29,7 +29,17 @@ from molecule.dependency import gilt
 
 @pytest.fixture
 def molecule_dependency_section_data():
-    return {'dependency': {'name': 'gilt', 'options': {'foo': 'bar'}}}
+    return {
+        'dependency': {
+            'name': 'gilt',
+            'options': {
+                'foo': 'bar'
+            },
+            'env': {
+                'foo': 'bar'
+            }
+        }
+    }
 
 
 @pytest.fixture
@@ -54,6 +64,10 @@ def test_default_options_property(gilt_config, gilt_instance):
     assert x == gilt_instance.default_options
 
 
+def test_default_env_property(gilt_instance):
+    assert isinstance(gilt_instance.default_env, dict)
+
+
 def test_name_property(gilt_instance):
     assert 'gilt' == gilt_instance.name
 
@@ -73,6 +87,10 @@ def test_options_property_handles_cli_args(gilt_config, gilt_instance):
     x = {'config': gilt_config, 'foo': 'bar', 'debug': True}
 
     assert x == gilt_instance.options
+
+
+def test_env_property(gilt_instance):
+    assert 'bar' == gilt_instance.env['foo']
 
 
 def test_bake(gilt_config, gilt_instance):

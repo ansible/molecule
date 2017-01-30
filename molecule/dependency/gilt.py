@@ -49,6 +49,15 @@ class Gilt(base.Base):
           name: gilt
           enabled: False
 
+    Environment variables can be passed to the dependency.
+
+    .. code-block:: yaml
+
+        dependency:
+          name: gilt
+          env:
+            FOO: bar
+
     .. _`Gilt`: http://gilt.readthedocs.io
     """
 
@@ -70,6 +79,16 @@ class Gilt(base.Base):
 
         return d
 
+    @property
+    def default_env(self):
+        """
+        Default env variables provided to `testinfra` and returns a
+        dict.
+
+        :return: dict
+        """
+        return os.environ.copy()
+
     def bake(self):
         """
         Bake a `gilt` command so it's ready to execute and returns None.
@@ -79,7 +98,7 @@ class Gilt(base.Base):
         self._gilt_command = sh.gilt.bake(
             self.options,
             'overlay',
-            _env=os.environ,
+            _env=self.env,
             _out=util.callback_info,
             _err=util.callback_error)
 

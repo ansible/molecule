@@ -18,8 +18,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import os
-
 import sh
 
 from molecule import util
@@ -52,7 +50,7 @@ class AnsiblePlaybook(object):
         self._out = out
         self._err = err
         self._cli = {}
-        self._env = os.environ.copy()
+        self._env = self._config.provisioner.env
 
     def bake(self):
         """
@@ -62,8 +60,6 @@ class AnsiblePlaybook(object):
         :return: None
         """
         self.add_cli_arg('inventory', self._inventory)
-        self.add_env_arg('ANSIBLE_CONFIG',
-                         self._config.provisioner.config_file)
 
         self._ansible_playbook_command = sh.ansible_playbook.bake(
             self._cli,

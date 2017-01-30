@@ -79,6 +79,15 @@ class Ansible(object):
           options:
             debug: True
 
+    Environment variables can be passed to the provisioner.
+
+    .. code-block:: yaml
+
+        provisioner:
+          name: ansible
+          env:
+            FOO: bar
+
     Modifying ansible.cfg.
 
     .. code-block:: yaml
@@ -156,6 +165,19 @@ class Ansible(object):
         return d
 
     @property
+    def default_env(self):
+        """
+        Default env variables provided to `ansible-playbook` and returns a
+        dict.
+
+        :return: dict
+        """
+        env = os.environ.copy()
+        env['ANSIBLE_CONFIG'] = self._config.provisioner.config_file
+
+        return env
+
+    @property
     def name(self):
         return self._config.config['provisioner']['name']
 
@@ -170,6 +192,11 @@ class Ansible(object):
         return self._config.merge_dicts(
             self.default_options,
             self._config.config['provisioner']['options'])
+
+    @property
+    def env(self):
+        return self._config.merge_dicts(
+            self.default_env, self._config.config['provisioner']['env'])
 
     @property
     def host_vars(self):

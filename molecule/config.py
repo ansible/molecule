@@ -155,6 +155,7 @@ class Config(object):
             'dependency': {
                 'name': 'galaxy',
                 'options': {},
+                'env': {},
                 'enabled': True,
             },
             'driver': {
@@ -165,12 +166,14 @@ class Config(object):
                 'name': 'ansible-lint',
                 'enabled': True,
                 'options': {},
+                'env': {},
             },
             'platforms': [],
             'provisioner': {
                 'name': 'ansible',
                 'config_options': {},
                 'options': {},
+                'env': {},
                 'host_vars': {},
                 'group_vars': {},
                 'children': {},
@@ -192,6 +195,7 @@ class Config(object):
                 'enabled': True,
                 'directory': 'tests',
                 'options': {},
+                'env': {},
             },
         }
 

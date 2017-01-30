@@ -50,6 +50,15 @@ class AnsibleGalaxy(base.Base):
           name: galaxy
           enabled: False
 
+    Environment variables can be passed to the dependency.
+
+    .. code-block:: yaml
+
+        dependency:
+          name: galaxy
+          env:
+            FOO: bar
+
     .. _`Ansible Galaxy`: http://docs.ansible.com/ansible/galaxy.html
     """
 
@@ -73,6 +82,16 @@ class AnsibleGalaxy(base.Base):
             'roles-path': roles_path
         }
 
+    @property
+    def default_env(self):
+        """
+        Default env variables provided to `testinfra` and returns a
+        dict.
+
+        :return: dict
+        """
+        return os.environ.copy()
+
     def bake(self):
         """
         Bake an `ansible-galaxy` command so it's ready to execute and returns
@@ -83,7 +102,7 @@ class AnsibleGalaxy(base.Base):
         self._ansible_galaxy_command = sh.ansible_galaxy.bake(
             'install',
             self.options,
-            _env=os.environ,
+            _env=self.env,
             _out=util.callback_info,
             _err=util.callback_error)
 

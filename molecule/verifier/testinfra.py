@@ -49,6 +49,15 @@ class Testinfra(base.Base):
           name: testinfra
           enabled: False
 
+    Environment variables can be passed to the verifier.
+
+    .. code-block:: yaml
+
+        verifier:
+          name: testinfra
+          env:
+            FOO: bar
+
     .. _`Testinfra`: http://testinfra.readthedocs.io
     """
 
@@ -78,6 +87,16 @@ class Testinfra(base.Base):
 
         return d
 
+    @property
+    def default_env(self):
+        """
+        Default env variables provided to `testinfra` and returns a
+        dict.
+
+        :return: dict
+        """
+        return os.environ.copy()
+
     def bake(self):
         """
         Bake a `testinfra` command so it's ready to execute and returns None.
@@ -88,7 +107,7 @@ class Testinfra(base.Base):
             self.options,
             self._tests,
             _cwd=self._config.scenario.directory,
-            _env=os.environ,
+            _env=self.env,
             _out=util.callback_info,
             _err=util.callback_error)
 

@@ -27,7 +27,17 @@ from molecule.lint import ansible_lint
 
 @pytest.fixture
 def molecule_lint_section_data():
-    return {'lint': {'name': 'ansible-lint', 'options': {'foo': 'bar'}}}
+    return {
+        'lint': {
+            'name': 'ansible-lint',
+            'options': {
+                'foo': 'bar'
+            },
+            'env': {
+                'foo': 'bar'
+            }
+        }
+    }
 
 
 @pytest.fixture
@@ -74,6 +84,14 @@ def test_options_property_handles_cli_args(ansible_lint_instance):
     # Does nothing.  The `ansible-lint` command does not support
     # a `debug` flag.
     assert x == ansible_lint_instance.options
+
+
+def test_default_env_property(ansible_lint_instance):
+    assert isinstance(ansible_lint_instance.default_env, dict)
+
+
+def test_env_property(ansible_lint_instance):
+    assert 'bar' == ansible_lint_instance.env['foo']
 
 
 def test_bake(ansible_lint_instance):

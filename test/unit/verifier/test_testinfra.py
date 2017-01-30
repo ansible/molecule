@@ -64,6 +64,14 @@ def test_default_options_property_updates_sudo(testinfra_instance,
     } == testinfra_instance.default_options
 
 
+def test_default_env_property(testinfra_instance):
+    assert isinstance(testinfra_instance.default_env, dict)
+
+
+def test_env_property(testinfra_instance):
+    assert 'bar' == testinfra_instance.env['foo']
+
+
 def test_name_property(testinfra_instance):
     assert 'testinfra' == testinfra_instance.name
 

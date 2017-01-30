@@ -29,7 +29,17 @@ from molecule.dependency import ansible_galaxy
 
 @pytest.fixture
 def molecule_dependency_section_data():
-    return {'dependency': {'name': 'galaxy', 'options': {'foo': 'bar'}}}
+    return {
+        'dependency': {
+            'name': 'galaxy',
+            'options': {
+                'foo': 'bar'
+            },
+            'env': {
+                'foo': 'bar'
+            }
+        }
+    }
 
 
 @pytest.fixture
@@ -60,6 +70,10 @@ def test_default_options_property(ansible_galaxy_instance, role_file,
     x = {'role-file': role_file, 'roles-path': roles_path, 'force': True}
 
     assert x == ansible_galaxy_instance.default_options
+
+
+def test_default_env_property(ansible_galaxy_instance):
+    assert isinstance(ansible_galaxy_instance.default_env, dict)
 
 
 def test_name_property(ansible_galaxy_instance):
@@ -94,6 +108,10 @@ def test_options_property_handles_cli_args(role_file, roles_path,
     # Does nothing.  The `ansible-galaxy` command does not support
     # a `debug` flag.
     assert x == ansible_galaxy_instance.options
+
+
+def test_env_property(ansible_galaxy_instance):
+    assert 'bar' == ansible_galaxy_instance.env['foo']
 
 
 def test_bake(ansible_galaxy_instance, role_file, roles_path):

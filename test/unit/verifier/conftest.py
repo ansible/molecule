@@ -23,7 +23,17 @@ import pytest
 
 @pytest.fixture
 def molecule_verifier_section_data():
-    return {'verifier': {'name': 'testinfra', 'options': {'foo': 'bar'}}}
+    return {
+        'verifier': {
+            'name': 'testinfra',
+            'options': {
+                'foo': 'bar'
+            },
+            'env': {
+                'foo': 'bar'
+            }
+        }
+    }
 
 
 @pytest.fixture

@@ -70,6 +70,9 @@ def molecule_provisioner_section_data():
             'options': {
                 'foo': 'bar'
             },
+            'env': {
+                'foo': 'bar'
+            },
             'host_vars': {
                 'instance-1': [{
                     'foo': 'bar'
@@ -100,6 +103,12 @@ def test_config_private_member(ansible_instance):
 
 def test_default_options_property(ansible_instance):
     assert {} == ansible_instance.default_options
+
+
+def test_default_env_property(ansible_instance):
+    x = ansible_instance._config.provisioner.config_file
+
+    assert x == ansible_instance.default_env['ANSIBLE_CONFIG']
 
 
 def test_name_property(ansible_instance):
@@ -135,6 +144,13 @@ def test_options_property_handles_cli_args(ansible_instance):
     ansible_instance._config.args = {'debug': True}
 
     assert ansible_instance.options['debug']
+
+
+def test_env_property(ansible_instance):
+    x = ansible_instance._config.provisioner.config_file
+
+    assert x == ansible_instance.env['ANSIBLE_CONFIG']
+    assert 'bar' == ansible_instance.env['foo']
 
 
 def test_host_vars_property(ansible_instance):
