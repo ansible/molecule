@@ -96,7 +96,18 @@ class Testinfra(base.Base):
             self._testinfra_dir)
         util.print_info(msg)
 
-        cmd = sh.testinfra.bake(tests, **kwargs)
+        verbose = 'v'
+        verbose_flag = str()
+        for i in range(0, 3):
+            if kwargs.get(verbose):
+                verbose_flag = '-{}'.format(verbose)
+                del kwargs[verbose]
+                if kwargs.get('verbose'):
+                    del kwargs['verbose']
+                break
+            verbose = verbose + 'v'
+
+        cmd = sh.testinfra.bake(tests, verbose_flag, **kwargs)
         return util.run_command(cmd, debug=self._debug)
 
     def _flake8(self, tests, out=util.callback_info, err=util.callback_error):
