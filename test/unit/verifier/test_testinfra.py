@@ -89,7 +89,9 @@ def test_options_property(testinfra_instance):
     assert {
         'connection': 'ansible',
         'ansible-inventory': '.molecule/ansible_inventory.yml',
-        'foo': 'bar'
+        'foo': 'bar',
+        'vvv': True,
+        'verbose': True,
     } == testinfra_instance.options
 
 
@@ -100,7 +102,9 @@ def test_options_property_handles_cli_args(testinfra_instance):
         'connection': 'ansible',
         'ansible-inventory': '.molecule/ansible_inventory.yml',
         'foo': 'bar',
-        'debug': True
+        'debug': True,
+        'vvv': True,
+        'verbose': True,
     } == testinfra_instance.options
 
 
@@ -110,7 +114,7 @@ def test_bake(testinfra_instance):
     x = [
         str(sh.testinfra),
         '--ansible-inventory=.molecule/ansible_inventory.yml',
-        '--connection=ansible', '--foo=bar', 'test1', 'test2', 'test3'
+        '--connection=ansible', '-vvv', '--foo=bar', 'test1', 'test2', 'test3'
     ]
     result = str(testinfra_instance._testinfra_command).split()
 

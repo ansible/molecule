@@ -60,10 +60,13 @@ class AnsiblePlaybook(object):
         :return: None
         """
         self.add_cli_arg('inventory', self._inventory)
+        options = self._cli
+        verbose_flag = util.verbose_flag(options)
 
         self._ansible_playbook_command = sh.ansible_playbook.bake(
-            self._cli,
+            options,
             self._playbook,
+            *verbose_flag,
             _cwd=self._config.scenario.directory,
             _env=self._env,
             _out=self._out,

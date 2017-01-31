@@ -27,10 +27,12 @@ def molecule_verifier_section_data():
         'verifier': {
             'name': 'testinfra',
             'options': {
-                'foo': 'bar'
+                'foo': 'bar',
+                'vvv': True,
+                'verbose': True,
             },
             'env': {
-                'foo': 'bar'
+                'foo': 'bar',
             }
         }
     }
