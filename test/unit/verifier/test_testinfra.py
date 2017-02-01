@@ -167,7 +167,7 @@ def test_execute_bakes(patched_flake8, patched_run_command,
     assert testinfra_instance._testinfra_command is not None
 
     patched_flake8.assert_called_once_with()
-    patched_run_command.assert_called_once
+    assert 1 == patched_run_command.call_count
 
 
 def test_executes_catches_and_exits_return_code(
