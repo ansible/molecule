@@ -62,7 +62,6 @@ class AnsiblePlaybook(object):
         self.add_cli_arg('inventory', self._inventory)
         options = self._config.merge_dicts(self._config.provisioner.options,
                                            self._cli)
-        options = self._cli
         verbose_flag = util.verbose_flag(options)
 
         self._ansible_playbook_command = sh.ansible_playbook.bake(
