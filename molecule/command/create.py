@@ -52,6 +52,10 @@ class Create(base.Base):
             os.path.basename(self._config.scenario.setup))
         util.print_info(msg)
 
+        if self._config.state.created:
+          util.print_warn('Skipping, instances already created.')
+          return
+
         self._config.provisioner.converge(self._config.scenario.setup)
 
         self._config.state.change_state('created', True)

@@ -40,3 +40,15 @@ def test_execute(mocker, patched_provisioner_write_inventory,
     assert config_instance.state.created
 
     patched_provisioner_write_inventory.assert_called_once_with()
+
+
+def test_execute_bla(patched_print_warn, patched_ansible_converge,
+                     config_instance):
+    config_instance.state.change_state('created', True)
+    c = create.Create(config_instance)
+    c.execute()
+
+    msg = 'Skipping, instances already created.'
+    patched_print_warn.assert_called_once_with(msg)
+
+    assert not patched_ansible_converge.called
