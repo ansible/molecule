@@ -172,7 +172,7 @@ def test_execute_bakes(patched_run_command, ansible_galaxy_instance, role_file,
     ansible_galaxy_instance.execute()
     assert ansible_galaxy_instance._ansible_galaxy_command is not None
 
-    patched_run_command.assert_called_once
+    assert 1 == patched_run_command.call_count
 
 
 def test_executes_catches_and_exits_return_code(
