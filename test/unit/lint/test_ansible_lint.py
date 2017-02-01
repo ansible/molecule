@@ -97,12 +97,14 @@ def test_env_property(ansible_lint_instance):
 
 def test_bake(ansible_lint_instance):
     ansible_lint_instance.bake()
-    x = '{} --foo=bar -v --exclude={} {}'.format(
-        str(sh.ansible_lint),
-        ansible_lint_instance._config.ephemeral_directory,
-        ansible_lint_instance._config.scenario.converge)
+    x = [
+        str(sh.ansible_lint), '--foo=bar', '-v', '--exclude={}'.format(
+            ansible_lint_instance._config.ephemeral_directory),
+        ansible_lint_instance._config.scenario.converge
+    ]
+    result = str(ansible_lint_instance._ansible_lint_command).split()
 
-    assert x == ansible_lint_instance._ansible_lint_command
+    assert sorted(x) == sorted(result)
 
 
 def test_execute(patched_run_command, patched_print_success,
@@ -132,7 +134,7 @@ def test_execute_bakes(patched_run_command, ansible_lint_instance):
 
     assert ansible_lint_instance._ansible_lint_command is not None
 
-    patched_run_command.assert_called_once
+    assert 1 == patched_run_command.call_count
 
 
 def test_executes_catches_and_exits_return_code(patched_run_command,
