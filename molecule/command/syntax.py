@@ -22,8 +22,10 @@ import os
 
 import click
 
-from molecule import util
+from molecule import logger
 from molecule.command import base
+
+LOG = logger.get_logger(__name__)
 
 
 class Syntax(base.Base):
@@ -45,12 +47,12 @@ class Syntax(base.Base):
         :return: None
         """
         msg = 'Scenario: [{}]'.format(self._config.scenario.name)
-        util.print_info(msg)
+        LOG.info(msg)
         msg = 'Provisioner: [{}]'.format(self._config.provisioner.name)
-        util.print_info(msg)
+        LOG.info(msg)
         msg = 'Syntax Verification of Playbook: [{}]'.format(
             os.path.basename(self._config.scenario.converge))
-        util.print_info(msg)
+        LOG.info(msg)
 
         self._config.provisioner.syntax(self._config.scenario.converge)
 

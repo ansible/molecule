@@ -25,7 +25,10 @@ import os
 import m9dicts
 
 from molecule import ansible_playbook
+from molecule import logger
 from molecule import util
+
+LOG = logger.get_logger(__name__)
 
 
 class Ansible(object):

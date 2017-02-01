@@ -54,17 +54,17 @@ def test_verify_configs(config_instance):
     assert base._verify_configs(configs) is None
 
 
-def test_verify_configs_raises_with_no_configs(patched_print_error):
+def test_verify_configs_raises_with_no_configs(patched_logger_critical):
     with pytest.raises(SystemExit) as e:
         base._verify_configs([])
 
     assert 1 == e.value.code
 
     msg = 'Unable to find a molecule.yml.  Exiting.'
-    patched_print_error.assert_called_once_with(msg)
+    patched_logger_critical.assert_called_once_with(msg)
 
 
-def test_verify_configs_raises_with_duplicate_configs(patched_print_error,
+def test_verify_configs_raises_with_duplicate_configs(patched_logger_critical,
                                                       config_instance):
     with pytest.raises(SystemExit) as e:
         configs = [config_instance, config_instance]
@@ -73,7 +73,7 @@ def test_verify_configs_raises_with_duplicate_configs(patched_print_error,
     assert 1 == e.value.code
 
     msg = "Duplicate scenario name 'default' found.  Exiting."
-    patched_print_error.assert_called_once_with(msg)
+    patched_logger_critical.assert_called_once_with(msg)
 
 
 def test_prune(config_instance):

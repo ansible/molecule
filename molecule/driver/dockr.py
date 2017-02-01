@@ -18,7 +18,10 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+from molecule import logger
 from molecule.driver import base
+
+LOG = logger.get_logger(__name__)
 
 
 class Dockr(base.Base):

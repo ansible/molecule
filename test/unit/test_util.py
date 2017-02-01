@@ -33,66 +33,6 @@ from molecule import util
 colorama.init(autoreset=True)
 
 
-def test_print_success(capsys):
-    util.print_success('test')
-    stdout, _ = capsys.readouterr()
-
-    print('{}{}'.format(colorama.Fore.GREEN, 'test'.rstrip()))
-    x, _ = capsys.readouterr()
-
-    assert x == stdout
-
-
-def test_print_info(capsys):
-    util.print_info('test')
-    stdout, _ = capsys.readouterr()
-
-    print('--> {}{}'.format(colorama.Fore.CYAN, 'test'.rstrip()))
-    x, _ = capsys.readouterr()
-
-    assert x == stdout
-
-
-def test_print_info_without_pretty(capsys):
-    util.print_info('test', pretty=False)
-    stdout, _ = capsys.readouterr()
-
-    print('    {}'.format('test'.rstrip()))
-    x, _ = capsys.readouterr()
-
-    assert x == stdout
-
-
-def test_print_warn(capsys):
-    util.print_warn('test')
-    stdout, _ = capsys.readouterr()
-
-    print('{}{}'.format(colorama.Fore.YELLOW, 'test'.rstrip()))
-    x, _ = capsys.readouterr()
-
-    assert x == stdout
-
-
-def test_print_error(capsys):
-    util.print_error('test')
-    _, stderr = capsys.readouterr()
-
-    print('{}ERROR: {}'.format(colorama.Fore.RED, 'test'.rstrip()))
-    x, _ = capsys.readouterr()
-
-    assert x == stderr
-
-
-def test_print_error_without_pretty(capsys):
-    util.print_error('test', pretty=False)
-    x, stderr = capsys.readouterr()
-
-    print('{}{}'.format(colorama.Fore.RED, 'test'.rstrip()))
-    x, _ = capsys.readouterr()
-
-    assert x == stderr
-
-
 def test_print_debug(capsys):
     util.print_debug('test_title', 'test_data')
     result_title, _ = capsys.readouterr()
@@ -111,18 +51,6 @@ def test_print_debug(capsys):
     assert expected_title == result_title
 
 
-def test_callback_info(patched_print_info):
-    util.callback_info('test')
-
-    patched_print_info.assert_called_once_with('test', pretty=False)
-
-
-def test_callback_error(patched_print_error):
-    util.callback_error('test')
-
-    patched_print_error.assert_called_once_with('test', pretty=False)
-
-
 def test_sysexit():
     with pytest.raises(SystemExit) as e:
         util.sysexit()
@@ -137,22 +65,22 @@ def test_sysexit_with_custom_code():
     assert 2 == e.value.code
 
 
-def test_sysexit_with_message(patched_print_error):
+def test_sysexit_with_message(patched_logger_critical):
     with pytest.raises(SystemExit) as e:
         util.sysexit_with_message('foo')
 
     assert 1 == e.value.code
 
-    patched_print_error.assert_called_once_with('foo')
+    patched_logger_critical.assert_called_once_with('foo')
 
 
-def test_sysexit_with_message_and_custom_code(patched_print_error):
+def test_sysexit_with_message_and_custom_code(patched_logger_critical):
     with pytest.raises(SystemExit) as e:
         util.sysexit_with_message('foo', 2)
 
     assert 2 == e.value.code
 
-    patched_print_error.assert_called_once_with('foo')
+    patched_logger_critical.assert_called_once_with('foo')
 
 
 def test_run_command():

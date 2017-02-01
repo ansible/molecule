@@ -28,8 +28,11 @@ import termios
 import click
 import pexpect
 
+from molecule import logger
 from molecule import util
 from molecule.command import base
+
+LOG = logger.get_logger(__name__)
 
 
 class Login(base.Base):

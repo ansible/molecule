@@ -77,7 +77,7 @@ def molecule_dependency_invalid_section_data():
 
 
 def test_dependency_property_raises(molecule_dependency_invalid_section_data,
-                                    patched_print_error, config_instance):
+                                    patched_logger_critical, config_instance):
     config_instance.config.update(molecule_dependency_invalid_section_data)
     with pytest.raises(SystemExit) as e:
         config_instance.dependency
@@ -85,7 +85,7 @@ def test_dependency_property_raises(molecule_dependency_invalid_section_data,
     assert 1 == e.value.code
 
     msg = "Invalid dependency named 'invalid' configured."
-    patched_print_error.assert_called_once_with(msg)
+    patched_logger_critical.assert_called_once_with(msg)
 
 
 def test_driver_property(config_instance):
@@ -110,7 +110,7 @@ def molecule_driver_invalid_section_data():
 
 
 def test_driver_property_raises(molecule_driver_invalid_section_data,
-                                patched_print_error, config_instance):
+                                patched_logger_critical, config_instance):
     config_instance.config.update(molecule_driver_invalid_section_data)
     with pytest.raises(SystemExit) as e:
         config_instance.driver
@@ -118,7 +118,7 @@ def test_driver_property_raises(molecule_driver_invalid_section_data,
     assert 1 == e.value.code
 
     msg = "Invalid driver named 'invalid' configured."
-    patched_print_error.assert_called_once_with(msg)
+    patched_logger_critical.assert_called_once_with(msg)
 
 
 def test_lint_property(config_instance):
@@ -131,7 +131,7 @@ def molecule_lint_invalid_section_data():
 
 
 def test_lint_property_raises(molecule_lint_invalid_section_data,
-                              patched_print_error, config_instance):
+                              patched_logger_critical, config_instance):
     config_instance.config.update(molecule_lint_invalid_section_data)
     with pytest.raises(SystemExit) as e:
         config_instance.lint
@@ -139,7 +139,7 @@ def test_lint_property_raises(molecule_lint_invalid_section_data,
     assert 1 == e.value.code
 
     msg = "Invalid lint named 'invalid' configured."
-    patched_print_error.assert_called_once_with(msg)
+    patched_logger_critical.assert_called_once_with(msg)
 
 
 def test_platforms_property(config_instance):
@@ -156,7 +156,7 @@ def molecule_provisioner_invalid_section_data():
 
 
 def test_provisioner_property_raises(molecule_provisioner_invalid_section_data,
-                                     patched_print_error, config_instance):
+                                     patched_logger_critical, config_instance):
     config_instance.config.update(molecule_provisioner_invalid_section_data)
     with pytest.raises(SystemExit) as e:
         config_instance.provisioner
@@ -164,7 +164,7 @@ def test_provisioner_property_raises(molecule_provisioner_invalid_section_data,
     assert 1 == e.value.code
 
     msg = "Invalid provisioner named 'invalid' configured."
-    patched_print_error.assert_called_once_with(msg)
+    patched_logger_critical.assert_called_once_with(msg)
 
 
 def test_scenario_property(config_instance):
@@ -185,7 +185,7 @@ def molecule_verifier_invalid_section_data():
 
 
 def test_verifier_property_raises(molecule_verifier_invalid_section_data,
-                                  patched_print_error, config_instance):
+                                  patched_logger_critical, config_instance):
     config_instance.config.update(molecule_verifier_invalid_section_data)
     with pytest.raises(SystemExit) as e:
         config_instance.verifier
@@ -193,17 +193,17 @@ def test_verifier_property_raises(molecule_verifier_invalid_section_data,
     assert 1 == e.value.code
 
     msg = "Invalid verifier named 'invalid' configured."
-    patched_print_error.assert_called_once_with(msg)
+    patched_logger_critical.assert_called_once_with(msg)
 
 
-def test_exit_with_invalid_section(config_instance, patched_print_error):
+def test_exit_with_invalid_section(config_instance, patched_logger_critical):
     with pytest.raises(SystemExit) as e:
         config_instance._exit_with_invalid_section('section', 'name')
 
     assert 1 == e.value.code
 
     msg = "Invalid section named 'name' configured."
-    patched_print_error.assert_called_once_with(msg)
+    patched_logger_critical.assert_called_once_with(msg)
 
 
 def test_merge_dicts(config_instance):

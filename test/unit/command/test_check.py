@@ -21,7 +21,7 @@
 from molecule.command import check
 
 
-def test_execute(mocker, patched_print_info, patched_ansible_check,
+def test_execute(mocker, patched_logger_info, patched_ansible_check,
                  config_instance):
     c = check.Check(config_instance)
     c.execute()
@@ -31,7 +31,7 @@ def test_execute(mocker, patched_print_info, patched_ansible_check,
         mocker.call('Dry-Run of Playbook: [playbook.yml]')
     ]
 
-    assert x == patched_print_info.mock_calls
+    assert x == patched_logger_info.mock_calls
 
     patched_ansible_check.assert_called_once_with(
         config_instance.scenario.converge)

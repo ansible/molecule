@@ -121,8 +121,8 @@ def test_bake(testinfra_instance):
     assert sorted(x) == sorted(result)
 
 
-def test_execute(patched_flake8, patched_print_info, patched_run_command,
-                 patched_testinfra_get_tests, patched_print_success,
+def test_execute(patched_flake8, patched_logger_info, patched_run_command,
+                 patched_testinfra_get_tests, patched_logger_success,
                  testinfra_instance):
     testinfra_instance._testinfra_command = 'patched-command'
     testinfra_instance.execute()
@@ -133,13 +133,13 @@ def test_execute(patched_flake8, patched_print_info, patched_run_command,
 
     msg = 'Executing testinfra tests found in {}/...'.format(
         testinfra_instance.directory)
-    patched_print_info.assert_called_once_with(msg)
+    patched_logger_info.assert_called_once_with(msg)
 
     msg = 'Verifier completed successfully.'
-    patched_print_success.assert_called_once_with(msg)
+    patched_logger_success.assert_called_once_with(msg)
 
 
-def test_execute_does_not_execute(patched_run_command, patched_print_warn,
+def test_execute_does_not_execute(patched_run_command, patched_logger_warn,
                                   testinfra_instance):
     testinfra_instance._config.config['verifier']['enabled'] = False
     testinfra_instance.execute()
@@ -147,17 +147,17 @@ def test_execute_does_not_execute(patched_run_command, patched_print_warn,
     assert not patched_run_command.called
 
     msg = 'Skipping, verifier is disabled.'
-    patched_print_warn.assert_called_once_with(msg)
+    patched_logger_warn.assert_called_once_with(msg)
 
 
 def test_does_not_execute_without_tests(
-        patched_run_command, patched_print_warn, testinfra_instance):
+        patched_run_command, patched_logger_warn, testinfra_instance):
     testinfra_instance.execute()
 
     assert not patched_run_command.called
 
     msg = 'Skipping, no tests found.'
-    patched_print_warn.assert_called_once_with(msg)
+    patched_logger_warn.assert_called_once_with(msg)
 
 
 def test_execute_bakes(patched_flake8, patched_run_command,

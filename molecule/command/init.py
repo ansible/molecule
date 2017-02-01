@@ -25,7 +25,10 @@ import cookiecutter
 import cookiecutter.main
 
 from molecule import config
+from molecule import logger
 from molecule import util
+
+LOG = logger.get_logger(__name__)
 
 
 def _process_templates(template_dir, extra_context, output_dir,
@@ -69,7 +72,7 @@ def _init_new_role(command_args):
     """
     role_name = command_args['role_name']
     role_directory = os.getcwd()
-    util.print_info('Initializing new role {}...'.format(role_name))
+    LOG.info('Initializing new role {}...'.format(role_name))
 
     if os.path.isdir(role_name):
         msg = ('The directory {} exists. '
@@ -87,7 +90,7 @@ def _init_new_role(command_args):
 
     role_directory = os.path.join(role_directory, role_name)
     msg = 'Initialized role in {} successfully.'.format(role_directory)
-    util.print_success(msg)
+    LOG.success(msg)
 
 
 def _init_new_scenario(command_args):
@@ -98,7 +101,7 @@ def _init_new_scenario(command_args):
     role_name = os.getcwd().split(os.sep)[-1]
     role_directory = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
 
-    util.print_info('Initializing new scenario {}...'.format(scenario_name))
+    LOG.info('Initializing new scenario {}...'.format(scenario_name))
     molecule_directory = config.molecule_directory(
         os.path.join(role_directory, role_name))
     scenario_directory = os.path.join(molecule_directory, scenario_name)
@@ -119,7 +122,7 @@ def _init_new_scenario(command_args):
 
     role_directory = os.path.join(role_directory, role_name)
     msg = 'Initialized scenario in {} successfully.'.format(scenario_directory)
-    util.print_success(msg)
+    LOG.success(msg)
 
 
 @click.group()

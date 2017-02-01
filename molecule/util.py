@@ -29,38 +29,11 @@ import sys
 import colorama
 import yaml
 
+from molecule import logger
+
+LOG = logger.get_logger(__name__)
+
 colorama.init(autoreset=True)
-
-
-def print_success(msg):
-    template = '{}{{}}'.format(colorama.Fore.GREEN)
-    print_msg(template, msg)
-
-
-def print_info(msg, pretty=True):
-    if pretty:
-        template = '--> {}{{}}'.format(colorama.Fore.CYAN)
-    else:
-        template = '    {}'
-    print_msg(template, msg)
-
-
-def print_warn(msg):
-    template = '{}{{}}'.format(colorama.Fore.YELLOW)
-    print_msg(template, msg)
-
-
-def print_error(msg, pretty=True):
-    color = colorama.Fore.RED
-    if pretty:
-        template = '{}ERROR: {{}}'.format(color)
-    else:
-        template = '{}{{}}'.format(color)
-    print_msg(template, msg, file=sys.stderr)
-
-
-def print_msg(template, msg, **kwargs):
-    print(template.format(msg.rstrip()), **kwargs)
 
 
 def print_debug(title, data):
@@ -75,22 +48,12 @@ def print_debug(title, data):
     ]))
 
 
-def callback_info(msg):
-    """ A `print_info` wrapper to stream `sh` modules stdout. """
-    print_info(msg, pretty=False)
-
-
-def callback_error(msg):
-    """ A `print_error` wrapper to stream `sh` modules stderr. """
-    print_error(msg, pretty=False)
-
-
 def sysexit(code=1):
     sys.exit(code)
 
 
 def sysexit_with_message(msg, code=1):
-    print_error(msg)
+    LOG.critical(msg)
     sysexit(code)
 
 

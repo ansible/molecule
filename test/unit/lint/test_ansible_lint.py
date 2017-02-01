@@ -107,7 +107,7 @@ def test_bake(ansible_lint_instance):
     assert sorted(x) == sorted(result)
 
 
-def test_execute(patched_run_command, patched_print_success,
+def test_execute(patched_run_command, patched_logger_success,
                  ansible_lint_instance):
     ansible_lint_instance._ansible_lint_command = 'patched-command'
     ansible_lint_instance.execute()
@@ -115,10 +115,10 @@ def test_execute(patched_run_command, patched_print_success,
     patched_run_command.assert_called_once_with('patched-command', debug=None)
 
     msg = 'Lint completed successfully.'
-    patched_print_success.assert_called_once_with(msg)
+    patched_logger_success.assert_called_once_with(msg)
 
 
-def test_execute_does_not_execute(patched_run_command, patched_print_warn,
+def test_execute_does_not_execute(patched_run_command, patched_logger_warn,
                                   ansible_lint_instance):
     ansible_lint_instance._config.config['lint']['enabled'] = False
     ansible_lint_instance.execute()
@@ -126,7 +126,7 @@ def test_execute_does_not_execute(patched_run_command, patched_print_warn,
     assert not patched_run_command.called
 
     msg = 'Skipping, lint is disabled.'
-    patched_print_warn.assert_called_once_with(msg)
+    patched_logger_warn.assert_called_once_with(msg)
 
 
 def test_execute_bakes(patched_run_command, ansible_lint_instance):

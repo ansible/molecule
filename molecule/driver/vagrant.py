@@ -20,8 +20,11 @@
 
 import os
 
+from molecule import logger
 from molecule import util
 from molecule.driver import base
+
+LOG = logger.get_logger(__name__)
 
 
 class Vagrant(base.Base):

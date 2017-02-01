@@ -20,16 +20,15 @@
 
 import sh
 
+from molecule import logger
 from molecule import util
+
+LOG = logger.get_logger(__name__)
 
 
 class AnsiblePlaybook(object):
-    def __init__(self,
-                 inventory,
-                 playbook,
-                 config,
-                 out=util.callback_info,
-                 err=util.callback_error):
+    def __init__(self, inventory, playbook, config, out=LOG.out,
+                 err=LOG.error):
         """
         Sets up the requirements to execute `ansible-playbook` and returns
         None.

@@ -23,6 +23,7 @@ import os
 import anyconfig
 
 from molecule import interpolation
+from molecule import logger
 from molecule import platforms
 from molecule import scenario
 from molecule import state
@@ -35,6 +36,7 @@ from molecule.lint import ansible_lint
 from molecule.provisioner import ansible
 from molecule.verifier import testinfra
 
+LOG = logger.get_logger(__name__)
 MOLECULE_DIRECTORY = 'molecule'
 MOLECULE_EPHEMERAL_DIRECTORY = '.molecule'
 MOLECULE_FILE = 'molecule.yml'

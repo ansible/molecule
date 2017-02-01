@@ -21,7 +21,7 @@
 from molecule.command import destroy
 
 
-def test_execute(mocker, patched_print_info, patched_ansible_converge,
+def test_execute(mocker, patched_logger_info, patched_ansible_converge,
                  config_instance):
     d = destroy.Destroy(config_instance)
     d.execute()
@@ -31,7 +31,7 @@ def test_execute(mocker, patched_print_info, patched_ansible_converge,
         mocker.call('Playbook: [destroy.yml]')
     ]
 
-    assert x == patched_print_info.mock_calls
+    assert x == patched_logger_info.mock_calls
 
     patched_ansible_converge.assert_called_once_with(
         config_instance.scenario.teardown)

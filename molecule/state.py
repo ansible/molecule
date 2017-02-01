@@ -20,8 +20,10 @@
 
 import os
 
+from molecule import logger
 from molecule import util
 
+LOG = logger.get_logger(__name__)
 VALID_KEYS = [
     'created',
     'converged',

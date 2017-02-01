@@ -21,7 +21,10 @@
 import click
 
 import molecule.command
+from molecule import logger
 from molecule.command import base
+
+LOG = logger.get_logger(__name__)
 
 
 class Test(base.Base):

@@ -23,7 +23,10 @@ from __future__ import print_function
 import click
 import tabulate
 
+from molecule import logger
 from molecule.command import base
+
+LOG = logger.get_logger(__name__)
 
 
 class List(base.Base):

@@ -30,16 +30,16 @@ def idempotence_instance(config_instance):
     return idempotence.Idempotence(config_instance)
 
 
-def test_execute(mocker, patched_print_info, patched_ansible_converge,
+def test_execute(mocker, patched_logger_info, patched_ansible_converge,
                  patched_command_idempotence_is_idempotent,
-                 patched_print_success, idempotence_instance):
+                 patched_logger_success, idempotence_instance):
     idempotence_instance.execute()
     x = [
         mocker.call('Scenario: [default]'),
         mocker.call('Provisioner: [ansible]'),
         mocker.call('Idempotence Verification of Playbook: [playbook.yml]')
     ]
-    assert x == patched_print_info.mock_calls
+    assert x == patched_logger_info.mock_calls
 
     patched_ansible_converge.assert_called_once_with(
         idempotence_instance._config.scenario.converge, out=None, err=None)
@@ -48,11 +48,12 @@ def test_execute(mocker, patched_print_info, patched_ansible_converge,
         'patched-ansible-converge-stdout')
 
     msg = 'Idempotence completed successfully.'
-    patched_print_success.assert_called_once_with(msg)
+    patched_logger_success.assert_called_once_with(msg)
 
 
-def test_execute_raises_when_not_converged(
-        patched_print_error, patched_ansible_converge, idempotence_instance):
+def test_execute_raises_when_not_converged(patched_logger_critical,
+                                           patched_ansible_converge,
+                                           idempotence_instance):
     idempotence_instance._config.state.change_state('converged', False)
     with pytest.raises(SystemExit) as e:
         idempotence_instance.execute()
@@ -60,11 +61,11 @@ def test_execute_raises_when_not_converged(
     assert 1 == e.value.code
 
     msg = 'Instances not converged.  Please converge instances first.'
-    patched_print_error.assert_called_once_with(msg)
+    patched_logger_critical.assert_called_once_with(msg)
 
 
 def test_execute_raises_when_fails_idempotence(
-        mocker, patched_print_error, patched_ansible_converge,
+        mocker, patched_logger_critical, patched_ansible_converge,
         patched_command_idempotence_is_idempotent, idempotence_instance):
     patched_command_idempotence_is_idempotent.return_value = False
     with pytest.raises(SystemExit) as e:
@@ -73,7 +74,7 @@ def test_execute_raises_when_fails_idempotence(
     assert 1 == e.value.code
 
     msg = 'Idempotence test failed because of the following tasks:\n'
-    patched_print_error.assert_called_once_with(msg)
+    patched_logger_critical.assert_called_once_with(msg)
 
 
 def test_is_idempotent(idempotence_instance):

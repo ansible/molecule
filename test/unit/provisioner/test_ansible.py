@@ -448,7 +448,7 @@ def test_verify_inventory(ansible_instance):
 
 
 def test_verify_inventory_raises_when_missing_hosts(
-        temp_dir, patched_print_error, ansible_instance):
+        temp_dir, patched_logger_critical, ansible_instance):
     ansible_instance._config.config['platforms'] = []
     with pytest.raises(SystemExit) as e:
         ansible_instance._verify_inventory()
@@ -456,7 +456,7 @@ def test_verify_inventory_raises_when_missing_hosts(
     assert 1 == e.value.code
 
     msg = "Instances missing from the 'platform' section of molecule.yml."
-    patched_print_error.assert_called_once_with(msg)
+    patched_logger_critical.assert_called_once_with(msg)
 
 
 def test_vivify(ansible_instance):

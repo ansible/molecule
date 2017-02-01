@@ -86,7 +86,7 @@ def test_bake(flake8_instance):
     assert x == flake8_instance._flake8_command
 
 
-def test_execute(patched_print_info, patched_run_command,
+def test_execute(patched_logger_info, patched_run_command,
                  patched_testinfra_get_tests, flake8_instance):
     flake8_instance._tests = ['test1', 'test2', 'test3']
     flake8_instance._flake8_command = 'patched-command'
@@ -96,7 +96,7 @@ def test_execute(patched_print_info, patched_run_command,
 
     msg = 'Executing flake8 on files found in {}/...'.format(
         flake8_instance.directory)
-    patched_print_info.assert_called_once_with(msg)
+    patched_logger_info.assert_called_once_with(msg)
 
 
 def test_execute_bakes(patched_run_command, flake8_instance):
