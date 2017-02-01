@@ -103,9 +103,14 @@ class Testinfra(base.Base):
 
         :return: None
         """
+
+        options = self.options
+        verbose_flag = util.verbose_flag(options)
+
         self._testinfra_command = sh.testinfra.bake(
-            self.options,
+            options,
             self._tests,
+            *verbose_flag,
             _cwd=self._config.scenario.directory,
             _env=self.env,
             _out=util.callback_info,

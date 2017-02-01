@@ -56,12 +56,22 @@ def test_directory_property(flake8_instance):
 
 
 def test_options_property(flake8_instance):
-    assert {'foo': 'bar'} == flake8_instance.options
+    x = {
+        'foo': 'bar',
+        'vvv': True,
+        'verbose': True,
+    }
+
+    assert x == flake8_instance.options
 
 
 def test_options_property_handles_cli_args(flake8_instance):
     flake8_instance._config.args = {'debug': True}
-    x = {'foo': 'bar'}
+    x = {
+        'foo': 'bar',
+        'vvv': True,
+        'verbose': True,
+    }
 
     # Does nothing.  The `flake8` command does not support
     # a `debug` flag.

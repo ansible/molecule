@@ -34,23 +34,24 @@ def ansible_data():
             'name': 'ansible',
             'config_options': {
                 'defaults': {
-                    'foo': 'bar'
+                    'foo': 'bar',
                 },
             },
             'options': {
-                'foo': 'bar'
+                'foo': 'bar',
+                'vvv': 'vvv',
             },
             'host_vars': {
                 'instance-1': [{
-                    'foo': 'bar'
+                    'foo': 'bar',
                 }],
             },
             'group_vars': {
                 'example_group1': [{
-                    'foo': 'bar'
+                    'foo': 'bar',
                 }],
                 'example_group2': [{
-                    'foo': 'bar'
+                    'foo': 'bar',
                 }],
             },
         }
@@ -169,7 +170,7 @@ def test_options_property(ansible_instance):
 def test_options_property_handles_cli_args(ansible_instance):
     ansible_instance._config.args = {'debug': True}
 
-    assert ansible_instance.options['debug']
+    assert ansible_instance.options['vvv']
 
 
 def test_env_property(ansible_instance):

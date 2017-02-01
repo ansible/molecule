@@ -228,3 +228,24 @@ def test_ansi_escape():
     string = 'ls\r\n\x1b[00m\x1b[01;31mfoo\x1b[00m\r\n\x1b[01;31m'
 
     assert 'ls\r\nfoo\r\n' == util.ansi_escape(string)
+
+
+def test_verbose_flag():
+    options = {'verbose': True, 'v': True}
+
+    assert ['-v'] == util.verbose_flag(options)
+    assert {} == options
+
+
+def test_verbose_flag_extra_verbose():
+    options = {'verbose': True, 'vvv': True}
+
+    assert ['-vvv'] == util.verbose_flag(options)
+    assert {} == options
+
+
+def test_verbose_flag_preserves_verbose_option():
+    options = {'verbose': True}
+
+    assert [] == util.verbose_flag(options)
+    assert {'verbose': True} == options

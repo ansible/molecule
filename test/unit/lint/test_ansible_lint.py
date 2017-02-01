@@ -31,10 +31,11 @@ def molecule_lint_section_data():
         'lint': {
             'name': 'ansible-lint',
             'options': {
-                'foo': 'bar'
+                'foo': 'bar',
+                'v': True,
             },
             'env': {
-                'foo': 'bar'
+                'foo': 'bar',
             }
         }
     }
@@ -68,7 +69,8 @@ def test_enabled_property(ansible_lint_instance):
 def test_options_property(ansible_lint_instance):
     x = {
         'excludes': [ansible_lint_instance._config.ephemeral_directory],
-        'foo': 'bar'
+        'foo': 'bar',
+        'v': True,
     }
 
     assert x == ansible_lint_instance.options
@@ -78,11 +80,10 @@ def test_options_property_handles_cli_args(ansible_lint_instance):
     ansible_lint_instance._config.args = {'debug': True}
     x = {
         'excludes': [ansible_lint_instance._config.ephemeral_directory],
-        'foo': 'bar'
+        'foo': 'bar',
+        'v': True,
     }
 
-    # Does nothing.  The `ansible-lint` command does not support
-    # a `debug` flag.
     assert x == ansible_lint_instance.options
 
 
@@ -96,7 +97,7 @@ def test_env_property(ansible_lint_instance):
 
 def test_bake(ansible_lint_instance):
     ansible_lint_instance.bake()
-    x = '{} --foo=bar --exclude={} {}'.format(
+    x = '{} --foo=bar -v --exclude={} {}'.format(
         str(sh.ansible_lint),
         ansible_lint_instance._config.ephemeral_directory,
         ansible_lint_instance._config.scenario.converge)
@@ -131,11 +132,7 @@ def test_execute_bakes(patched_run_command, ansible_lint_instance):
 
     assert ansible_lint_instance._ansible_lint_command is not None
 
-    cmd = '{} --foo=bar --exclude={} {}'.format(
-        str(sh.ansible_lint),
-        ansible_lint_instance._config.ephemeral_directory,
-        ansible_lint_instance._config.scenario.converge)
-    patched_run_command.assert_called_once_with(cmd, debug=None)
+    patched_run_command.assert_called_once
 
 
 def test_executes_catches_and_exits_return_code(patched_run_command,

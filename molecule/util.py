@@ -191,3 +191,18 @@ def instance_with_scenario_name(instance_name, scenario_name):
 
 def ansi_escape(string):
     return re.sub(r'\x1b[^m]*m', '', string)
+
+
+def verbose_flag(options):
+    verbose = 'v'
+    verbose_flag = []
+    for i in range(0, 3):
+        if options.get(verbose):
+            verbose_flag = ['-{}'.format(verbose)]
+            del options[verbose]
+            if options.get('verbose'):
+                del options['verbose']
+            break
+        verbose = verbose + 'v'
+
+    return verbose_flag

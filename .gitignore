@@ -11,6 +11,4 @@
 .vagrant/
 doc/build/
 htmlcov/
-
-### FIX
-molecule/cli2.py
+ubuntu-xenial-16.04-cloudimg-console.log

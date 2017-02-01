@@ -77,7 +77,7 @@ class Ansible(object):
         provisioner:
           name: ansible
           options:
-            debug: True
+            vvv: True
 
     Environment variables can be passed to the provisioner.
 
@@ -164,7 +164,7 @@ class Ansible(object):
         """
         d = {}
         if self._config.args.get('debug'):
-            d['debug'] = True
+            d['vvv'] = True
 
         return d
 

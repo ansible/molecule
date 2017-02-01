@@ -83,7 +83,11 @@ class AnsibleLint(base.Base):
 
         :return: dict
         """
-        return {'excludes': [self._config.ephemeral_directory]}
+        d = {'excludes': [self._config.ephemeral_directory]}
+        if self._config.args.get('debug'):
+            d['v'] = True
+
+        return d
 
     @property
     def default_env(self):

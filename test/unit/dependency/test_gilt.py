@@ -33,10 +33,10 @@ def molecule_dependency_section_data():
         'dependency': {
             'name': 'gilt',
             'options': {
-                'foo': 'bar'
+                'foo': 'bar',
             },
             'env': {
-                'foo': 'bar'
+                'foo': 'bar',
             }
         }
     }

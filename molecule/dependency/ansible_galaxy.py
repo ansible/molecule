@@ -73,14 +73,17 @@ class AnsibleGalaxy(base.Base):
 
         :return: dict
         """
-        role_file = os.path.join(self._config.scenario.directory,
-                                 'requirements.yml')
-        roles_path = os.path.join(self._config.ephemeral_directory, 'roles')
-        return {
+        d = {
             'force': True,
-            'role-file': role_file,
-            'roles-path': roles_path
+            'role-file':
+            os.path.join(self._config.scenario.directory, 'requirements.yml'),
+            'roles-path':
+            os.path.join(self._config.ephemeral_directory, 'roles'),
         }
+        if self._config.args.get('debug'):
+            d['vvv'] = True
+
+        return d
 
     @property
     def default_env(self):
@@ -99,9 +102,13 @@ class AnsibleGalaxy(base.Base):
 
         :return: None
         """
+        options = self.options
+        verbose_flag = util.verbose_flag(options)
+
         self._ansible_galaxy_command = sh.ansible_galaxy.bake(
             'install',
-            self.options,
+            options,
+            *verbose_flag,
             _env=self.env,
             _out=util.callback_info,
             _err=util.callback_error)

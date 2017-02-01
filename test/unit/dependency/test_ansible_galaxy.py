@@ -33,10 +33,11 @@ def molecule_dependency_section_data():
         'dependency': {
             'name': 'galaxy',
             'options': {
-                'foo': 'bar'
+                'foo': 'bar',
+                'vvv': True,
             },
             'env': {
-                'foo': 'bar'
+                'foo': 'bar',
             }
         }
     }
@@ -89,7 +90,8 @@ def test_options_property(ansible_galaxy_instance, role_file, roles_path):
         'force': True,
         'role-file': role_file,
         'roles-path': roles_path,
-        'foo': 'bar'
+        'foo': 'bar',
+        'vvv': True,
     }
 
     assert x == ansible_galaxy_instance.options
@@ -102,11 +104,10 @@ def test_options_property_handles_cli_args(role_file, roles_path,
         'force': True,
         'role-file': role_file,
         'roles-path': roles_path,
-        'foo': 'bar'
+        'foo': 'bar',
+        'vvv': True,
     }
 
-    # Does nothing.  The `ansible-galaxy` command does not support
-    # a `debug` flag.
     assert x == ansible_galaxy_instance.options
 
 
@@ -118,7 +119,7 @@ def test_bake(ansible_galaxy_instance, role_file, roles_path):
     ansible_galaxy_instance.bake()
     x = [
         str(sh.ansible_galaxy), 'install', '--role-file={}'.format(role_file),
-        '--roles-path={}'.format(roles_path), '--force', '--foo=bar'
+        '--roles-path={}'.format(roles_path), '--force', '--foo=bar', '-vvv'
     ]
     result = str(ansible_galaxy_instance._ansible_galaxy_command).split()
 
