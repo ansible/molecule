@@ -53,8 +53,8 @@ class Create(base.Base):
         util.print_info(msg)
 
         if self._config.state.created:
-          util.print_warn('Skipping, instances already created.')
-          return
+            util.print_warn('Skipping, instances already created.')
+            return
 
         self._config.provisioner.converge(self._config.scenario.setup)
 
