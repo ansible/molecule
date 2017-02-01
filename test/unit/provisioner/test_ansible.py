@@ -47,6 +47,9 @@ def molecule_provisioner_section_data():
                 'instance-1': [{
                     'foo': 'bar'
                 }],
+                'localhost': [{
+                    'foo': 'baz'
+                }]
             },
             'group_vars': {
                 'example_group1': [{
@@ -150,7 +153,7 @@ def test_env_property(ansible_instance):
 
 
 def test_host_vars_property(ansible_instance):
-    x = {'instance-1': [{'foo': 'bar'}]}
+    x = {'instance-1': [{'foo': 'bar'}], 'localhost': [{'foo': 'baz'}]}
 
     assert x == ansible_instance.host_vars
 
@@ -296,6 +299,9 @@ def test_add_or_update_vars(ansible_instance):
     ansible_instance.add_or_update_vars('host_vars')
     assert os.path.isdir(host_vars_directory)
     assert os.path.isfile(host_vars)
+
+    host_vars_localhost = os.path.join(host_vars_directory, 'localhost')
+    assert os.path.isfile(host_vars_localhost)
 
     group_vars_directory = os.path.join(ephemeral_directory, 'group_vars')
     group_vars_1 = os.path.join(group_vars_directory, 'example_group1')
