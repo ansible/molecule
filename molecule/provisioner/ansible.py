@@ -305,10 +305,13 @@ class Ansible(object):
             vars_target = copy.deepcopy(self.host_vars)
             # Append the scenario-name
             for instance_name, _ in self.host_vars.items():
-                instance_with_scenario_name = util.instance_with_scenario_name(
-                    instance_name, self._config.scenario.name)
-                vars_target[instance_with_scenario_name] = vars_target.pop(
-                    instance_name)
+                if instance_name == 'localhost':
+                    instance_key = instance_name
+                else:
+                    instance_key = util.instance_with_scenario_name(
+                        instance_name, self._config.scenario.name)
+
+                vars_target[instance_key] = vars_target.pop(instance_name)
 
         elif target == 'group_vars':
             vars_target = self.group_vars
