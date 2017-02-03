@@ -38,7 +38,7 @@ def test_execute(mocker, login_instance):
     m.assert_called_once_with('instance-1-default')
 
 
-def test_execute_raises_when_not_converged(patched_print_error,
+def test_execute_raises_when_not_converged(patched_logger_critical,
                                            login_instance):
     login_instance._config.state.change_state('created', False)
     with pytest.raises(SystemExit) as e:
@@ -47,10 +47,10 @@ def test_execute_raises_when_not_converged(patched_print_error,
     assert 1 == e.value.code
 
     msg = 'Instances not created.  Please create instances first.'
-    patched_print_error.assert_called_once_with(msg)
+    patched_logger_critical.assert_called_once_with(msg)
 
 
-def test_get_hostname_does_not_match(patched_print_error, login_instance):
+def test_get_hostname_does_not_match(patched_logger_critical, login_instance):
     login_instance._config.command_args = {'host': 'invalid'}
     hosts = ['instance-1']
     with pytest.raises(SystemExit) as e:
@@ -60,7 +60,7 @@ def test_get_hostname_does_not_match(patched_print_error, login_instance):
 
     msg = ("There are no hosts that match 'invalid'.  You "
            'can only login to valid hosts.')
-    patched_print_error.assert_called_once_with(msg)
+    patched_logger_critical.assert_called_once_with(msg)
 
 
 def test_get_hostname_exact_match_with_one_host(login_instance):
@@ -92,7 +92,7 @@ def test_get_hostname_partial_match_with_multiple_hosts(login_instance):
 
 
 def test_get_hostname_partial_match_with_multiple_hosts_raises(
-        patched_print_error, login_instance):
+        patched_logger_critical, login_instance):
     login_instance._config.command_args = {'host': 'inst'}
     hosts = ['instance-1', 'instance-2']
     with pytest.raises(SystemExit) as e:
@@ -105,4 +105,4 @@ def test_get_hostname_partial_match_with_multiple_hosts_raises(
            'Available hosts:\n'
            'instance-1\n'
            'instance-2')
-    patched_print_error.assert_called_once_with(msg)
+    patched_logger_critical.assert_called_once_with(msg)

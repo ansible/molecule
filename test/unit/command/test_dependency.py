@@ -21,7 +21,7 @@
 from molecule.command import dependency
 
 
-def test_execute(mocker, patched_print_info, patched_ansible_galaxy,
+def test_execute(mocker, patched_logger_info, patched_ansible_galaxy,
                  config_instance):
     d = dependency.Dependency(config_instance)
     d.execute()
@@ -29,6 +29,6 @@ def test_execute(mocker, patched_print_info, patched_ansible_galaxy,
         mocker.call('Scenario: [default]'), mocker.call('Dependency: [galaxy]')
     ]
 
-    assert x == patched_print_info.mock_calls
+    assert x == patched_logger_info.mock_calls
 
     patched_ansible_galaxy.assert_called_once_with()

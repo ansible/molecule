@@ -20,7 +20,10 @@
 
 import copy
 
+from molecule import logger
 from molecule import util
+
+LOG = logger.get_logger(__name__)
 
 
 class Platforms(object):

@@ -22,8 +22,11 @@ import os
 
 import sh
 
+from molecule import logger
 from molecule import util
 from molecule.verifier import base
+
+LOG = logger.get_logger(__name__)
 
 
 class Flake8(base.Base):
@@ -64,8 +67,8 @@ class Flake8(base.Base):
             self.default_options,
             self._tests,
             _env=os.environ,
-            _out=util.callback_info,
-            _err=util.callback_error)
+            _out=LOG.out,
+            _err=LOG.error)
 
     def execute(self):
         """
@@ -78,7 +81,7 @@ class Flake8(base.Base):
 
         msg = 'Executing flake8 on files found in {}/...'.format(
             self.directory)
-        util.print_info(msg)
+        LOG.info(msg)
 
         try:
             util.run_command(

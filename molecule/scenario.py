@@ -20,6 +20,10 @@
 
 import os
 
+from molecule import logger
+
+LOG = logger.get_logger(__name__)
+
 
 class Scenario(object):
     """

@@ -22,9 +22,12 @@ import os
 
 import sh
 
+from molecule import logger
 from molecule import util
 from molecule.verifier import base
 from molecule.verifier import flake8
+
+LOG = logger.get_logger(__name__)
 
 
 class Testinfra(base.Base):
@@ -113,8 +116,8 @@ class Testinfra(base.Base):
             *verbose_flag,
             _cwd=self._config.scenario.directory,
             _env=self.env,
-            _out=util.callback_info,
-            _err=util.callback_error)
+            _out=LOG.out,
+            _err=LOG.error)
 
     def execute(self):
         """
@@ -123,11 +126,11 @@ class Testinfra(base.Base):
         :return: None
         """
         if not self.enabled:
-            util.print_warn('Skipping, verifier is disabled.')
+            LOG.warn('Skipping, verifier is disabled.')
             return
 
         if not len(self._tests) > 0:
-            util.print_warn('Skipping, no tests found.')
+            LOG.warn('Skipping, no tests found.')
             return
 
         if self._testinfra_command is None:
@@ -138,12 +141,13 @@ class Testinfra(base.Base):
 
         msg = 'Executing testinfra tests found in {}/...'.format(
             self.directory)
-        util.print_info(msg)
+        LOG.info(msg)
 
         try:
             util.run_command(
                 self._testinfra_command, debug=self._config.args.get('debug'))
-            util.print_success('Verifier completed successfully.')
+            LOG.success('Verifier completed successfully.')
+
         except sh.ErrorReturnCode as e:
             util.sysexit(e.exit_code)
 

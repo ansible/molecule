@@ -155,23 +155,28 @@ def patched_print_debug(mocker):
 
 
 @pytest.fixture
-def patched_print_error(mocker):
-    return mocker.patch('molecule.util.print_error')
+def patched_logger_info(mocker):
+    return mocker.patch('logging.Logger.info')
 
 
 @pytest.fixture
-def patched_print_info(mocker):
-    return mocker.patch('molecule.util.print_info')
+def patched_logger_warn(mocker):
+    return mocker.patch('logging.Logger.warn')
 
 
 @pytest.fixture
-def patched_print_success(mocker):
-    return mocker.patch('molecule.util.print_success')
+def patched_logger_error(mocker):
+    return mocker.patch('logging.Logger.error')
 
 
 @pytest.fixture
-def patched_print_warn(mocker):
-    return mocker.patch('molecule.util.print_warn')
+def patched_logger_critical(mocker):
+    return mocker.patch('logging.Logger.critical')
+
+
+@pytest.fixture
+def patched_logger_success(mocker):
+    return mocker.patch('molecule.logger.CustomLogger.success')
 
 
 @pytest.fixture

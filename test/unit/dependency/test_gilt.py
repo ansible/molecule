@@ -104,37 +104,37 @@ def test_bake(gilt_config, gilt_instance):
 
 
 def test_execute(patched_run_command, patched_gilt_has_requirements_file,
-                 patched_print_success, gilt_instance):
+                 patched_logger_success, gilt_instance):
     gilt_instance._gilt_command = 'patched-command'
     gilt_instance.execute()
 
     patched_run_command.assert_called_once_with('patched-command', debug=None)
 
     msg = 'Dependency completed successfully.'
-    patched_print_success.assert_called_once_with(msg)
+    patched_logger_success.assert_called_once_with(msg)
 
 
 def test_execute_does_not_execute_when_disabled(
-        patched_run_command, patched_print_warn, gilt_instance):
+        patched_run_command, patched_logger_warn, gilt_instance):
     gilt_instance._config.config['dependency']['enabled'] = False
     gilt_instance.execute()
 
     assert not patched_run_command.called
 
     msg = 'Skipping, dependency is disabled.'
-    patched_print_warn.assert_called_once_with(msg)
+    patched_logger_warn.assert_called_once_with(msg)
 
 
 def test_execute_does_not_execute_when_no_requirements_file(
         patched_run_command, patched_gilt_has_requirements_file,
-        patched_print_warn, gilt_instance):
+        patched_logger_warn, gilt_instance):
     patched_gilt_has_requirements_file.return_value = False
     gilt_instance.execute()
 
     assert not patched_run_command.called
 
     msg = 'Skipping, missing the requirements file.'
-    patched_print_warn.assert_called_once_with(msg)
+    patched_logger_warn.assert_called_once_with(msg)
 
 
 def test_execute_bakes(patched_run_command, gilt_config,

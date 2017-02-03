@@ -73,11 +73,11 @@ def init_new_role_command_args():
 
 
 def test_init_new_role(temp_dir, init_new_role_command_args,
-                       patched_print_info, patched_print_success):
+                       patched_logger_info, patched_logger_success):
     init._init_new_role(init_new_role_command_args)
 
     msg = 'Initializing new role test-role...'
-    patched_print_info.assert_called_once_with(msg)
+    patched_logger_info.assert_called_once_with(msg)
 
     assert os.path.isdir('./test-role')
     assert os.path.isdir('./test-role/molecule/default')
@@ -85,11 +85,11 @@ def test_init_new_role(temp_dir, init_new_role_command_args,
 
     role_directory = os.path.join(temp_dir.strpath, 'test-role')
     msg = 'Initialized role in {} successfully.'.format(role_directory)
-    patched_print_success.assert_called_once_with(msg)
+    patched_logger_success.assert_called_once_with(msg)
 
 
 def test_init_new_role_already_exists(temp_dir, init_new_role_command_args,
-                                      patched_print_error):
+                                      patched_logger_critical):
     init._init_new_role(init_new_role_command_args)
 
     with pytest.raises(SystemExit) as e:
@@ -98,7 +98,7 @@ def test_init_new_role_already_exists(temp_dir, init_new_role_command_args,
     assert 1 == e.value.code
 
     msg = 'The directory test-role exists. Cannot create new role.'
-    patched_print_error.assert_called_once_with(msg)
+    patched_logger_critical.assert_called_once_with(msg)
 
 
 @pytest.fixture
@@ -113,11 +113,11 @@ def init_new_scenario_command_args():
 
 
 def test_init_new_scenario(temp_dir, init_new_scenario_command_args,
-                           patched_print_info, patched_print_success):
+                           patched_logger_info, patched_logger_success):
     init._init_new_scenario(init_new_scenario_command_args)
 
     msg = 'Initializing new scenario test-scenario...'
-    patched_print_info.assert_called_once_with(msg)
+    patched_logger_info.assert_called_once_with(msg)
 
     assert os.path.isdir('./molecule/test-scenario')
     assert os.path.isdir('./molecule/test-scenario/tests')
@@ -125,11 +125,11 @@ def test_init_new_scenario(temp_dir, init_new_scenario_command_args,
     scenario_directory = os.path.join(temp_dir.strpath, 'molecule',
                                       'test-scenario')
     msg = 'Initialized scenario in {} successfully.'.format(scenario_directory)
-    patched_print_success.assert_called_once_with(msg)
+    patched_logger_success.assert_called_once_with(msg)
 
 
 def test_init_new_scenario_already_exists(
-        temp_dir, init_new_scenario_command_args, patched_print_error):
+        temp_dir, init_new_scenario_command_args, patched_logger_critical):
     init._init_new_scenario(init_new_scenario_command_args)
 
     with pytest.raises(SystemExit) as e:
@@ -139,4 +139,4 @@ def test_init_new_scenario_already_exists(
 
     msg = ('The directory molecule/test-scenario exists. '
            'Cannot create new scenario.')
-    patched_print_error.assert_called_once_with(msg)
+    patched_logger_critical.assert_called_once_with(msg)

@@ -21,7 +21,7 @@
 from molecule.command import lint
 
 
-def test_execute(mocker, patched_print_info, patched_ansible_lint,
+def test_execute(mocker, patched_logger_info, patched_ansible_lint,
                  config_instance):
     l = lint.Lint(config_instance)
     l.execute()
@@ -29,6 +29,6 @@ def test_execute(mocker, patched_print_info, patched_ansible_lint,
         mocker.call('Scenario: [default]'), mocker.call('Lint: [ansible-lint]')
     ]
 
-    assert x == patched_print_info.mock_calls
+    assert x == patched_logger_info.mock_calls
 
     patched_ansible_lint.assert_called_once_with()

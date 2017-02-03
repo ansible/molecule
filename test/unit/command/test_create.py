@@ -22,7 +22,7 @@ from molecule.command import create
 
 
 def test_execute(mocker, patched_provisioner_write_inventory,
-                 patched_print_info, patched_ansible_converge,
+                 patched_logger_info, patched_ansible_converge,
                  config_instance):
     c = create.Create(config_instance)
     c.execute()
@@ -32,7 +32,7 @@ def test_execute(mocker, patched_provisioner_write_inventory,
         mocker.call('Playbook: [create.yml]')
     ]
 
-    assert x == patched_print_info.mock_calls
+    assert x == patched_logger_info.mock_calls
 
     patched_ansible_converge.assert_called_once_with(
         config_instance.scenario.setup)
@@ -42,13 +42,13 @@ def test_execute(mocker, patched_provisioner_write_inventory,
     patched_provisioner_write_inventory.assert_called_once_with()
 
 
-def test_execute_bla(patched_print_warn, patched_ansible_converge,
+def test_execute_bla(patched_logger_warn, patched_ansible_converge,
                      config_instance):
     config_instance.state.change_state('created', True)
     c = create.Create(config_instance)
     c.execute()
 
     msg = 'Skipping, instances already created.'
-    patched_print_warn.assert_called_once_with(msg)
+    patched_logger_warn.assert_called_once_with(msg)
 
     assert not patched_ansible_converge.called

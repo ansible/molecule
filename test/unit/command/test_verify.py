@@ -21,7 +21,7 @@
 from molecule.command import verify
 
 
-def test_execute(mocker, patched_print_info, patched_testinfra,
+def test_execute(mocker, patched_logger_info, patched_testinfra,
                  config_instance):
     v = verify.Verify(config_instance)
     v.execute()
@@ -30,6 +30,6 @@ def test_execute(mocker, patched_print_info, patched_testinfra,
         mocker.call('Verifier: [testinfra]')
     ]
 
-    assert x == patched_print_info.mock_calls
+    assert x == patched_logger_info.mock_calls
 
     patched_testinfra.assert_called_once_with()

@@ -23,8 +23,11 @@ import re
 
 import click
 
+from molecule import logger
 from molecule import util
 from molecule.command import base
+
+LOG = logger.get_logger(__name__)
 
 
 class Idempotence(base.Base):
@@ -46,12 +49,12 @@ class Idempotence(base.Base):
         :return: None
         """
         msg = 'Scenario: [{}]'.format(self._config.scenario.name)
-        util.print_info(msg)
+        LOG.info(msg)
         msg = 'Provisioner: [{}]'.format(self._config.provisioner.name)
-        util.print_info(msg)
+        LOG.info(msg)
         msg = 'Idempotence Verification of Playbook: [{}]'.format(
             os.path.basename(self._config.scenario.converge))
-        util.print_info(msg)
+        LOG.info(msg)
 
         if not self._config.state.converged:
             msg = 'Instances not converged.  Please converge instances first.'
@@ -62,7 +65,7 @@ class Idempotence(base.Base):
 
         idempotent = self._is_idempotent(output)
         if idempotent:
-            util.print_success('Idempotence completed successfully.')
+            LOG.success('Idempotence completed successfully.')
         else:
             msg = ('Idempotence test failed because of the following tasks:\n'
                    '{}').format('\n'.join(self._non_idempotent_tasks(output)))

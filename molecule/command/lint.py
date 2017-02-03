@@ -20,8 +20,10 @@
 
 import click
 
-from molecule import util
+from molecule import logger
 from molecule.command import base
+
+LOG = logger.get_logger(__name__)
 
 
 class Lint(base.Base):
@@ -43,9 +45,9 @@ class Lint(base.Base):
         :return: None
         """
         msg = 'Scenario: [{}]'.format(self._config.scenario.name)
-        util.print_info(msg)
+        LOG.info(msg)
         msg = 'Lint: [{}]'.format(self._config.lint.name)
-        util.print_info(msg)
+        LOG.info(msg)
 
         self._config.lint.execute()
 
