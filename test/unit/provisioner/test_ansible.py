@@ -28,37 +28,6 @@ from molecule.provisioner import ansible
 
 
 @pytest.fixture
-def ansible_data():
-    return {
-        'provisioner': {
-            'name': 'ansible',
-            'config_options': {
-                'defaults': {
-                    'foo': 'bar',
-                },
-            },
-            'options': {
-                'foo': 'bar',
-                'vvv': 'vvv',
-            },
-            'host_vars': {
-                'instance-1': [{
-                    'foo': 'bar',
-                }],
-            },
-            'group_vars': {
-                'example_group1': [{
-                    'foo': 'bar',
-                }],
-                'example_group2': [{
-                    'foo': 'bar',
-                }],
-            },
-        }
-    }
-
-
-@pytest.fixture
 def molecule_provisioner_section_data():
     return {
         'provisioner': {

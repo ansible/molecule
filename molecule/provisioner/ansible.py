@@ -33,42 +33,6 @@ class Ansible(object):
     `Ansible`_ is the default provisioner.  No other provisioner will be
     supported.
 
-    Molecule uses Ansible to manage instances by executing playbooks.  The
-    playbook names can be changed by overriding the defaults.
-
-    .. code-block:: yaml
-
-        provisioner:
-          name: ansible
-            setup: create.yml
-            converge: playbook.yml
-            teardown: destroy.yml
-
-    A subset of Molecule subcommands have prerequisite tasks, which will run
-    before the subcommand.  These can be changed by overriding the defaults.
-
-    .. code-block:: yaml
-
-        provisioner:
-          name: ansible
-            check_sequence:
-              - create
-              - converge
-              - check
-            converge_sequence:
-              - create
-              - converge
-            test_sequence:
-              - destroy
-              - dependency
-              - syntax
-              - create
-              - converge
-              - idempotence
-              - lint
-              - verify
-              - destroy
-
     Additional options can be passed to `ansible-playbook` through the options
     dict.  Any option set in this section will override the defaults.
 
