@@ -2,7 +2,11 @@
 History
 *******
 
-=======
+1.19.3
+======
+
+* Openstack: Use configured ssh key.
+
 1.19.2
 ======
 
