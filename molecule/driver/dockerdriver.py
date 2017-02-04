@@ -121,6 +121,7 @@ class DockerDriver(basedriver.BaseDriver):
             port_bindings = container.get('port_bindings', {})
             volume_mounts = container.get('volume_mounts', [])
             links = container.get('links', {})
+            network_mode = container.get('network_mode', '')
             cap_add = container.get('cap_add', [])
             cap_drop = container.get('cap_drop', [])
             command = container.get('command', '')
@@ -131,6 +132,7 @@ class DockerDriver(basedriver.BaseDriver):
                 port_bindings=port_bindings,
                 binds=volume_mounts,
                 links=links,
+                network_mode=network_mode,
                 cap_add=cap_add,
                 cap_drop=cap_drop)
 
