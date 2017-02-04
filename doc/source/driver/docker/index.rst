@@ -40,6 +40,7 @@ Options
   container.
 * ``links`` - **(default=[])** the link mapping to allow containers to discover
   each other.
+* ``network_mode`` - **(default='bridge')** sets the Network mode for the container. ``bridge`` creates a new network stack for the container on the Docker bridge. ``none`` no networking for this container. ``container:[name|id]`` reuses another containers network stack. ``host`` use the host network stack inside the container or any name that identifies an existing Docker network.
 
 The available param for the Docker driver itself is:
 
