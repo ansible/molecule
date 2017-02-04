@@ -117,7 +117,7 @@ class OpenstackDriver(basedriver.BaseDriver):
 
         active_instances = self._openstack.list_servers()
         active_instance_names = {
-            instance['name']: instance['status']
+            instance['name']: instance['interface_ip']
             for instance in active_instances
         }
 
@@ -144,7 +144,7 @@ class OpenstackDriver(basedriver.BaseDriver):
                     image=self._openstack.get_image(instance['image']),
                     flavor=self._openstack.get_flavor(instance['flavor']),
                     auto_ip=True,
-                    wait=True,
+                    wait=False,
                     key_name=kpn,
                     ip_pool=instance.get('ip_pool')
                     if instance.get('ip_pool') else self.ip_pool,
@@ -152,23 +152,39 @@ class OpenstackDriver(basedriver.BaseDriver):
                     security_groups=instance.get('security_groups', []))
                 instance['created'] = True
                 instance['reachable'] = False
+                instance['server'] = server
+            else:
+                instance['address'] = active_instance_names[instance['name']]
+                instance['reachable'] = True
 
-                for _ in range(ssh_timeout):
-                    util.print_info('\t Waiting for ssh availability...')
-                    if self._check_ssh_availability(
-                            server['interface_ip'],
-                            instance['sshuser'],
-                            timeout=1,
-                            sshkey_filename=self._get_keyfile()):
-                        instance['reachable'] = True
-                        break
-                if not instance['reachable']:
-                    util.print_error(
-                        'Could not reach instance "%s"'
-                        ' within limit of %s seconds' %
-                        (instance['name'],
-                         instance.get('ssh_timeout', self.ssh_timeout)))
-                    util.sysexit()
+        for instance in self.instances:
+            if not instance.get('server'):
+                instance['server'] = self._openstack.get_server(instance['name'])
+            if not instance.get('address'):
+                util.print_info('\t Waiting for instance %s to be in state active...'
+                                % instance['name'])
+                server = self._openstack.wait_for_server(instance['server'],
+                                                         auto_ip=True)
+                instance['address'] = server['interface_ip']
+
+        for instance in self.instances:
+            for _ in range(ssh_timeout):
+                util.print_info('\t  Waiting for ssh availability of instance %s...'
+                        % instance['name'])
+                if self._check_ssh_availability(
+                        instance['address'],
+                        instance['sshuser'],
+                        timeout=1,
+                        sshkey_filename=self._get_keyfile()):
+                    instance['reachable'] = True
+                    break
+            if not instance['reachable']:
+                util.print_error(
+                    'Could not reach instance "%s"'
+                    ' within limit of %s seconds' %
+                    (instance['name'],
+                     instance.get('ssh_timeout', self.ssh_timeout)))
+                util.sysexit()
 
     def destroy(self):
         util.print_info('Deleting openstack instances...')
