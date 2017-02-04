@@ -159,18 +159,21 @@ class OpenstackDriver(basedriver.BaseDriver):
 
         for instance in self.instances:
             if not instance.get('server'):
-                instance['server'] = self._openstack.get_server(instance['name'])
+                instance['server'] = self._openstack.get_server(instance[
+                    'name'])
             if not instance.get('address'):
-                util.print_info('\t Waiting for instance %s to be in state active...'
-                                % instance['name'])
-                server = self._openstack.wait_for_server(instance['server'],
-                                                         auto_ip=True)
+                util.print_info(
+                    '\t Waiting for instance %s to be in state active...' %
+                    instance['name'])
+                server = self._openstack.wait_for_server(
+                    instance['server'], auto_ip=True)
                 instance['address'] = server['interface_ip']
 
         for instance in self.instances:
             for _ in range(ssh_timeout):
-                util.print_info('\t  Waiting for ssh availability of instance %s...'
-                        % instance['name'])
+                util.print_info(
+                    '\t  Waiting for ssh availability of instance %s...' %
+                    instance['name'])
                 if self._check_ssh_availability(
                         instance['address'],
                         instance['sshuser'],
