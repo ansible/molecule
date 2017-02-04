@@ -40,8 +40,26 @@ def test_main(mocker, molecule_instance):
     patched_molecule_main.assert_called_once_with()
 
 
-def test_main_exits_when_missing_config(patched_print_error,
+def test_main_doesnt_exit_when_local_config_only(mocker, molecule_instance):
+    patched_file_exists = mocker.patch(
+        'molecule.config.ConfigV1.molecule_file_exists')
+    patched_file_exists.return_value = False
+    patched_local_file_exists = mocker.patch(
+        'molecule.config.ConfigV1.molecule_local_config_file_exists')
+    patched_local_file_exists.return_value = True
+    patched_molecule_main = mocker.patch('molecule.core.Molecule.main')
+
+    foo = Foo({}, {}, molecule_instance)
+    foo.main()
+
+    patched_molecule_main.assert_called_once()
+
+
+def test_main_exits_when_missing_config(mocker, patched_print_error,
                                         molecule_instance):
+    patched_local_file_exists = mocker.patch(
+        'molecule.config.ConfigV1.molecule_local_config_file_exists')
+    patched_local_file_exists.return_value = False
     foo = Foo({}, {}, molecule_instance)
     with pytest.raises(SystemExit):
         foo.main()
