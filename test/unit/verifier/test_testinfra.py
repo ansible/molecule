@@ -82,7 +82,7 @@ def test_testinfra(patched_run_command, patched_get_tests, testinfra_instance):
     kwargs = {'debug': False, '_out': None, '_err': None}
     testinfra_instance._testinfra(*args, **kwargs)
 
-    x = sh.testinfra.bake('/tmp/ansible-inventory')
+    x = sh.testinfra.bake('/tmp/ansible-inventory ')
     patched_run_command.assert_called_once_with(x, debug=None)
 
 
