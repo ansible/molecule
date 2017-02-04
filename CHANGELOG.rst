@@ -2,6 +2,22 @@
 History
 *******
 
+1.20
+====
+
+* Expose network configuration to docker driver.
+* Openstack: Performance improvements for multiinstance setups.
+* Do not require a project_config when a local_config is present.
+* Corrected molecule.yml's group_vars/host_vars.
+
+Breaking Changes
+----------------
+
+* The `host_vars` and `group_vars` section of molecule.yml no longer accepts a
+  list, rather a dict similar to Ansible's `vars usage`_.
+
+.. _`vars usage`: http://docs.ansible.com/ansible/playbooks_variables.html#variables-defined-in-a-playbook
+
 1.19.3
 ======
 
