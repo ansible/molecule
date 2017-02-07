@@ -8,7 +8,7 @@
     - name: Create molecule instance(s)
       vagrant:
         instance_name: "{{ item.name | instance_with_scenario_name(molecule_yml.scenario.name) }}"
-        platform_box: ubuntu/xenial64
+        platform_box: debian/jessie64
         molecule_file: "{{ molecule_file }}"
         state: up
       register: instance_conf
@@ -18,11 +18,3 @@
       copy: content="# Molecule managed\n\n{{ instance_conf | to_yaml }}"
             dest="{{ molecule_instance_config }}"
       when: instance_conf.changed | bool
-
-- hosts: all
-  gather_facts: no
-  tasks:
-    - name: Install python for Ansible
-      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
-      become: yes
-      changed_when: False

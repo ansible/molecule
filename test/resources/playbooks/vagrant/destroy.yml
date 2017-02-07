@@ -8,7 +8,7 @@
     - name: Destroy molecule instance(s)
       vagrant:
         instance_name: "{{ item.name | instance_with_scenario_name(molecule_yml.scenario.name) }}"
-        platform_box: ubuntu/trusty64
+        platform_box: debian/jessie64
         molecule_file: "{{ molecule_file }}"
         state: destroy
       with_items: "{{ molecule_yml.platforms }}"

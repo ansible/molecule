@@ -79,6 +79,8 @@ class Vagrant(base.Base):
                 'ansible_ssh_private_key_file': d['IdentityFile'],
                 'connection': 'ssh'
             }
+        except StopIteration:
+            return {}
         except IOError:
             # Instance has yet to be provisioned , therefore the
             # instance_config is not on disk.
@@ -96,5 +98,5 @@ class Vagrant(base.Base):
         instance_config_dict = util.safe_load_file(
             self._config.driver.instance_config)
 
-        return next(item for item in instance_config_dict['results']
+        return next(item for item in instance_config_dict.get('results', {})
                     if item['Host'] == instance_name)
