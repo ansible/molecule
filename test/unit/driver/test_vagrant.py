@@ -138,6 +138,14 @@ def test_connection_options_handles_missing_instance_config(mocker,
     assert {} == vagrant_instance.connection_options('foo')
 
 
+def test_connection_options_handles_missing_results_key(mocker,
+                                                        vagrant_instance):
+    m = mocker.patch('molecule.util.safe_load_file')
+    m.side_effect = StopIteration
+
+    assert {} == vagrant_instance.connection_options('foo')
+
+
 def test_vagrantfile_property(vagrant_instance):
     x = os.path.join(vagrant_instance._config.ephemeral_directory,
                      'Vagrantfile')
