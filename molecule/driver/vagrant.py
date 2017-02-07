@@ -98,5 +98,6 @@ class Vagrant(base.Base):
         instance_config_dict = util.safe_load_file(
             self._config.driver.instance_config)
 
-        return next(item for item in instance_config_dict.get('results', {})
-                    if item['Host'] == instance_name)
+        return next(
+            item for item in instance_config_dict.get('results', {})
+            if item['Host'] == instance_name)
