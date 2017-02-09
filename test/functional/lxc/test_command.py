@@ -27,23 +27,23 @@ import sh
 
 from molecule import config
 
-pytestmark = pytest.helpers.supports_docker()
+pytestmark = pytest.helpers.supports_lxc()
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['driver/docker'], indirect=['with_scenario'])
+    'with_scenario', ['driver/lxc'], indirect=['with_scenario'])
 def test_command_check(with_scenario):
     sh.molecule('check')
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['driver/docker'], indirect=['with_scenario'])
+    'with_scenario', ['driver/lxc'], indirect=['with_scenario'])
 def test_command_converge(with_scenario):
     sh.molecule('converge')
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['driver/docker'], indirect=['with_scenario'])
+    'with_scenario', ['driver/lxc'], indirect=['with_scenario'])
 def test_command_create(with_scenario):
     sh.molecule('create')
 
@@ -69,13 +69,13 @@ def test_command_dependency_gilt(with_scenario):
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['driver/docker'], indirect=['with_scenario'])
+    'with_scenario', ['driver/lxc'], indirect=['with_scenario'])
 def test_command_destroy(with_scenario):
     sh.molecule('destroy')
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['driver/docker'], indirect=['with_scenario'])
+    'with_scenario', ['driver/lxc'], indirect=['with_scenario'])
 def test_command_idempotence(with_scenario):
     sh.molecule('create')
     sh.molecule('converge')
@@ -84,7 +84,8 @@ def test_command_idempotence(with_scenario):
 
 def test_command_init_role(temp_dir):
     role_directory = os.path.join(temp_dir.strpath, 'test-init')
-    sh.molecule('init', 'role', '--role-name', 'test-init')
+    sh.molecule('init', 'role', '--role-name', 'test-init', '--driver-name',
+                'lxc')
     os.chdir(role_directory)
 
     sh.molecule('test')
@@ -94,38 +95,37 @@ def test_command_init_scenario(temp_dir):
     molecule_directory = config.molecule_directory(temp_dir.strpath)
     scenario_directory = os.path.join(molecule_directory, 'test-scenario')
     sh.molecule('init', 'scenario', '--scenario-name', 'test-scenario',
-                '--role-name', 'test-init')
+                '--role-name', 'test-init', '--driver-name', 'lxc')
 
     assert os.path.isdir(scenario_directory)
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['driver/docker'], indirect=['with_scenario'])
+    'with_scenario', ['driver/lxc'], indirect=['with_scenario'])
 def test_command_lint(with_scenario):
     sh.molecule('lint')
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['driver/docker'], indirect=['with_scenario'])
+    'with_scenario', ['driver/lxc'], indirect=['with_scenario'])
 def test_command_list(with_scenario):
     sh.molecule('destroy')
     out = sh.molecule('list', '--scenario-name', 'default')
 
-    assert re.search(
-        'instance-1-default.*Docker.*Ansible.*default.*Not Created',
-        out.stdout)
+    assert re.search('instance-1-default.*Lxc.*Ansible.*default.*Not Created',
+                     out.stdout)
 
     out = sh.molecule('list', '--scenario-name', 'multi-node')
     assert re.search(
-        'instance-1-multi-node.*Docker.*Ansible.*multi-node.*Not Created',
+        'instance-1-multi-node.*Lxc.*Ansible.*multi-node.*Not Created',
         out.stdout)
     assert re.search(
-        'instance-2-multi-node.*Docker.*Ansible.*multi-node.*Not Created',
+        'instance-2-multi-node.*Lxc.*Ansible.*multi-node.*Not Created',
         out.stdout)
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['driver/docker'], indirect=['with_scenario'])
+    'with_scenario', ['driver/lxc'], indirect=['with_scenario'])
 def test_command_login(with_scenario):
     sh.molecule('create')
 
@@ -137,19 +137,19 @@ def test_command_login(with_scenario):
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['driver/docker'], indirect=['with_scenario'])
+    'with_scenario', ['driver/lxc'], indirect=['with_scenario'])
 def test_command_syntax(with_scenario):
     sh.molecule('syntax')
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['driver/docker'], indirect=['with_scenario'])
+    'with_scenario', ['driver/lxc'], indirect=['with_scenario'])
 def test_command_test(with_scenario):
     sh.molecule('test')
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['driver/docker'], indirect=['with_scenario'])
+    'with_scenario', ['driver/lxc'], indirect=['with_scenario'])
 def test_command_verify(with_scenario):
     sh.molecule('create', '--scenario-name', 'default')
     sh.molecule('converge', '--scenario-name', 'default')

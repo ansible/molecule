@@ -49,3 +49,11 @@ def test_host_group_vars(with_scenario):
                      re.DOTALL)
     assert re.search('\[example_1\].*?ok: \[instance-1-default\]', out,
                      re.DOTALL)
+
+
+@pytest.mark.parametrize(
+    'with_scenario', ['verifier'], indirect=['with_scenario'])
+def test_command_verify_testinfra(with_scenario):
+    sh.molecule('create', '--scenario-name', 'testinfra')
+    sh.molecule('converge', '--scenario-name', 'testinfra')
+    sh.molecule('verify', '--scenario-name', 'testinfra')

@@ -26,7 +26,8 @@ LOG = logger.get_logger(__name__)
 
 class Dockr(base.Base):
     """
-    `Docker`_ is the default driver.
+    The class responsible for managing `Docker`_ containers.  `Docker`_ is
+    the default driver used in Molecule.
 
     .. code-block:: yaml
 

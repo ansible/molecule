@@ -18,34 +18,42 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import os
-import re
+from molecule import logger
+from molecule.driver import base
 
-import pytest
-import sh
-
-from molecule import util
-
-pytestmark = pytest.helpers.supports_vagrant_virtualbox()
+LOG = logger.get_logger(__name__)
 
 
-@pytest.mark.parametrize(
-    'with_scenario', ['interpolation'], indirect=['with_scenario'])
-def test_interpolation(with_scenario):
-    env = os.environ.copy()
-    env.update({'DEPENDENCY_NAME': 'galaxy', 'VERIFIER_NAME': 'testinfra'})
+class Lxc(base.Base):
+    """
+    The class responsible for managing `LXC`_ containers.  `LXC`_ is `not` the
+    default driver used in Molecule.
 
-    sh.molecule('test', _env=env)
+    .. code-block:: yaml
 
+        driver:
+          name: lxc
 
-@pytest.mark.parametrize(
-    'with_scenario', ['host_group_vars'], indirect=['with_scenario'])
-def test_host_group_vars(with_scenario):
-    out = sh.molecule('test')
-    out = util.ansi_escape(out.stdout)
+    .. code-block:: bash
 
-    assert re.search('\[all\].*?ok: \[instance-1-default\]', out, re.DOTALL)
-    assert re.search('\[example\].*?ok: \[instance-1-default\]', out,
-                     re.DOTALL)
-    assert re.search('\[example_1\].*?ok: \[instance-1-default\]', out,
-                     re.DOTALL)
+        $ pip lxc-python2
+
+    .. _`LXC`: https://en.wikipedia.org/wiki/LXC
+    """
+
+    def __init__(self, config):
+        super(Lxc, self).__init__(config)
+
+    @property
+    def login_cmd_template(self):
+        return 'sudo lxc-attach -n {}'
+
+    @property
+    def safe_files(self):
+        return []
+
+    def login_args(self, instance_name):
+        return [instance_name]
+
+    def connection_options(self, instance_name):
+        return {'ansible_connection': 'lxc'}

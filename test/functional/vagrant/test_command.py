@@ -84,7 +84,8 @@ def test_command_idempotence(with_scenario):
 
 def test_command_init_role(temp_dir):
     role_directory = os.path.join(temp_dir.strpath, 'test-init')
-    sh.molecule('init', 'role', '--role-name', 'test-init')
+    sh.molecule('init', 'role', '--role-name', 'test-init', '--driver-name',
+                'vagrant')
     os.chdir(role_directory)
 
     sh.molecule('test')
@@ -94,7 +95,7 @@ def test_command_init_scenario(temp_dir):
     molecule_directory = config.molecule_directory(temp_dir.strpath)
     scenario_directory = os.path.join(molecule_directory, 'test-scenario')
     sh.molecule('init', 'scenario', '--scenario-name', 'test-scenario',
-                '--role-name', 'test-init')
+                '--role-name', 'test-init', '--driver-name', 'vagrant')
 
     assert os.path.isdir(scenario_directory)
 
@@ -108,7 +109,9 @@ def test_command_lint(with_scenario):
 @pytest.mark.parametrize(
     'with_scenario', ['driver/vagrant'], indirect=['with_scenario'])
 def test_command_list(with_scenario):
+    sh.molecule('destroy')
     out = sh.molecule('list', '--scenario-name', 'default')
+
     assert re.search(
         'instance-1-default.*Vagrant.*Ansible.*default.*Not Created',
         out.stdout)
@@ -147,8 +150,8 @@ def test_command_test(with_scenario):
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['verifier'], indirect=['with_scenario'])
-def test_command_verify_testinfra(with_scenario):
-    sh.molecule('create', '--scenario-name', 'testinfra')
-    sh.molecule('converge', '--scenario-name', 'testinfra')
-    sh.molecule('verify', '--scenario-name', 'testinfra')
+    'with_scenario', ['driver/vagrant'], indirect=['with_scenario'])
+def test_command_verify(with_scenario):
+    sh.molecule('create', '--scenario-name', 'default')
+    sh.molecule('converge', '--scenario-name', 'default')
+    sh.molecule('verify', '--scenario-name', 'default')

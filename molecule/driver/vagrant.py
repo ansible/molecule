@@ -29,7 +29,8 @@ LOG = logger.get_logger(__name__)
 
 class Vagrant(base.Base):
     """
-    `Vagrant`_ is `not` the default driver.
+    The class responsible for managing `Vagrant`_ instances.  `Vagrant`_ is
+    `not` the default driver used in Molecule.
 
     .. code-block:: yaml
 

@@ -138,7 +138,7 @@ def init():
     help='Name of dependency to initialize. (galaxy)')
 @click.option(
     '--driver-name',
-    type=click.Choice(['docker', 'vagrant']),
+    type=click.Choice(['docker', 'lxc', 'vagrant']),
     default='docker',
     help='Name of driver to initialize. (docker)')
 @click.option(
@@ -177,7 +177,7 @@ def role(dependency_name, driver_name, lint_name, provisioner_name, role_name,
 @init.command()
 @click.option(
     '--driver-name',
-    type=click.Choice(['docker']),
+    type=click.Choice(['docker', 'lxc', 'vagrant']),
     default='docker',
     help='Name of driver to initialize. (docker)')
 @click.option('--role-name', required=True, help='Name of the role to create.')

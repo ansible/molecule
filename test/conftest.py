@@ -19,12 +19,15 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import distutils.spawn
+import logging
 import os
 import random
 import shutil
 import string
 
 import pytest
+
+logging.getLogger('sh').setLevel(logging.WARNING)
 
 pytest_plugins = ['helpers_namespace']
 
@@ -51,6 +54,10 @@ def get_docker_executable():
     return not distutils.spawn.find_executable('docker')
 
 
+def get_lxc_executable():
+    return not distutils.spawn.find_executable('lxc')
+
+
 def get_vagrant_executable():
     return not distutils.spawn.find_executable('vagrant')
 
@@ -63,6 +70,11 @@ def get_virtualbox_executable():
 def supports_docker():
     return pytest.mark.skipif(
         get_docker_executable(), reason='Docker not supported')
+
+
+@pytest.helpers.register
+def supports_lxc():
+    return pytest.mark.skipif(get_lxc_executable(), reason='LXC not supported')
 
 
 @pytest.helpers.register

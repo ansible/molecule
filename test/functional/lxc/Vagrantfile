@@ -1,0 +1,37 @@
+Vagrant.configure('2') do |config|
+  config.vm.synced_folder '../../../', '/vagrant'
+
+  vm_name = 'molecule-xenial'
+  config.vm.define vm_name do |c|
+    c.vm.box = 'ubuntu/xenial64'
+    c.vm.provision 'shell', inline: <<-SCRIPT
+      sudo apt-get update
+      sudo apt-get install -y python-pip libssl-dev libffi-dev lxc lxc-dev
+
+      sudo pip install -U pip tox
+      sudo pip install lxc-python2
+
+      cd /vagrant
+      tox -e py27-ansible22-functional
+    SCRIPT
+
+    c.vm.host_name = vm_name
+  end
+
+  vm_name = 'molecule-centos'
+  config.vm.define vm_name do |c|
+    c.vm.box = 'centos/7'
+    c.vm.provision 'shell', inline: <<-SCRIPT
+      sudo yum install -y epel-release
+      sudo yum install -y gcc python-pip openssl-devel libffi-devel lxc lxc-devel
+
+      sudo pip install -U pip tox
+      sudo pip install lxc-python2
+
+      cd /vagrant
+      tox -e py27-ansible22-functional
+    SCRIPT
+
+    c.vm.host_name = vm_name
+  end
+end

@@ -31,6 +31,7 @@ from molecule import util
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
 from molecule.driver import dockr
+from molecule.driver import lxc
 from molecule.driver import vagrant
 from molecule.lint import ansible_lint
 from molecule.provisioner import ansible
@@ -96,6 +97,8 @@ class Config(object):
             return dockr.Dockr(self)
         elif driver_name == 'vagrant':
             return vagrant.Vagrant(self)
+        elif driver_name == 'lxc':
+            return lxc.Lxc(self)
         else:
             self._exit_with_invalid_section('driver', driver_name)
 

@@ -2,7 +2,7 @@
     "molecule_directory": "molecule",
 
     "dependency_name": "default",
-    "driver_name": "vagrant",
+    "driver_name": "lxc",
     "lint_name": "ansible-lint",
     "provisioner_name": "ansible",
     "role_name": "OVERRIDEN",

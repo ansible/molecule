@@ -52,6 +52,12 @@ Docker
 .. autoclass:: molecule.driver.dockr.Dockr
    :undoc-members:
 
+LXC
+^^^
+
+.. autoclass:: molecule.driver.lxc.Lxc
+   :undoc-members:
+
 Vagrant
 ^^^^^^^
 
