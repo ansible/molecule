@@ -9,21 +9,32 @@ Requirements
 ============
 
 * Ansible 2.2
+* Docker Engine
 * docker-py
 
-Install OS dependencies on CentOS 6/7
+Install OS dependencies on CentOS 7
 
 .. code-block:: bash
 
-  $ yum install -y epel-release
-  $ yum install gcc python-devel openssl-devel libffi-devel
+  $ sudo yum install -y epel-release
+  $ sudo yum install -y gcc python-pip openssl-devel
+  # If installing Molecule from source.
+  $ sudo yum install libffi-devel
 
 Install OS dependencies on Ubuntu 16.x
 
 .. code-block:: bash
 
-  $ apt-get update
-  $ apt-get install gcc python-pip python-vagrant libssl-dev libffi-dev
+  $ sudo apt-get update
+  $ sudo apt-get install -y python-pip libssl-dev docker-engine
+  # If installing Molecule from source.
+  $ sudo apt-get install -y libffi-dev
+
+Install OS dependencies on Mac OS
+
+.. code-block:: bash
+
+  $ brew install python
 
 Install using pip:
 
