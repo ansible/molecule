@@ -43,7 +43,12 @@ def temp_dir(tmpdir, random_string, request):
     os.chdir(directory.strpath)
 
     def cleanup():
-        shutil.rmtree(directory.strpath)
+        try:
+            shutil.rmtree(directory.strpath)
+        except OSError:
+            # LXC execute Molecule with sudo, which wreak havoc
+            # on functional tests.
+            pass
 
     request.addfinalizer(cleanup)
 
