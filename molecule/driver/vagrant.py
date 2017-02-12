@@ -32,6 +32,27 @@ class Vagrant(base.Base):
     The class responsible for managing `Vagrant`_ instances.  `Vagrant`_ is
     `not` the default driver used in Molecule.
 
+    .. important::
+
+        This driver is alpha quality software.  Do not perform any additonal
+        tasks inside the `setup` playbook.  Molecule does not know about the
+        Vagrant instances' configuration until the `converge` playbook is
+        executed.
+
+        The `setup` playbook boots instances, then the instance data is written
+        to disk.  The instance data is then added to Molecule's Ansible
+        inventory on the next execution of `molecule.command.create`, which
+        happens to be the `converge` playbook.
+
+        This is an area needing improvement.  Gluing togher Ansible playbook
+        return data and molecule is clunky.  Moving the playbook execution
+        from `sh` to python is less than ideal, since the playbook's return
+        data needs handled by an internal callback plugin.
+
+        Operating this far inside Ansible's internals doesn't feel right.  Nor
+        does orchestrating Ansible's CLI with Molecule.  Ansible is throwing
+        pieces over the wall, which Molecule is picking up and reconstructing.
+
     .. code-block:: yaml
 
         driver:
