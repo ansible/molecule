@@ -1,5 +1,5 @@
 ---
-{% raw %}
+{% raw -%}
 - hosts: localhost
   connection: local
   gather_facts: no
@@ -18,4 +18,4 @@
           apt-get update
           apt-get install -y python-minimal
       with_items: "{{ molecule_yml.platforms }}"
-{%- endraw -%}
+{% endraw -%}
