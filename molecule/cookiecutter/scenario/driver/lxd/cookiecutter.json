@@ -1,0 +1,11 @@
+{
+    "molecule_directory": "molecule",
+
+    "dependency_name": "default",
+    "driver_name": "lxd",
+    "lint_name": "ansible-lint",
+    "provisioner_name": "ansible",
+    "role_name": "OVERRIDEN",
+    "scenario_name": "default",
+    "verifier_name": "testinfra"
+}

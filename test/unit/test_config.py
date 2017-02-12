@@ -30,6 +30,7 @@ from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
 from molecule.driver import dockr
 from molecule.driver import lxc
+from molecule.driver import lxd
 from molecule.driver import vagrant
 from molecule.lint import ansible_lint
 from molecule.provisioner import ansible
@@ -115,6 +116,18 @@ def test_driver_property_is_lxc(molecule_driver_lxc_section_data,
     config_instance.config.update(molecule_driver_lxc_section_data)
 
     assert isinstance(config_instance.driver, lxc.Lxc)
+
+
+@pytest.fixture
+def molecule_driver_lxd_section_data():
+    return {'driver': {'name': 'lxd'}, }
+
+
+def test_driver_property_is_lxd(molecule_driver_lxd_section_data,
+                                config_instance):
+    config_instance.config.update(molecule_driver_lxd_section_data)
+
+    assert isinstance(config_instance.driver, lxd.Lxd)
 
 
 @pytest.fixture

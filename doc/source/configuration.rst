@@ -58,6 +58,12 @@ LXC
 .. autoclass:: molecule.driver.lxc.Lxc
    :undoc-members:
 
+LXD
+^^^
+
+.. autoclass:: molecule.driver.lxd.Lxd
+   :undoc-members:
+
 Vagrant
 ^^^^^^^
 

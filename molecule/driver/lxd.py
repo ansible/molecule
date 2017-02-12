@@ -24,29 +24,25 @@ from molecule.driver import base
 LOG = logger.get_logger(__name__)
 
 
-class Lxc(base.Base):
+class Lxd(base.Base):
     """
-    The class responsible for managing `LXC`_ containers.  `LXC`_ is `not` the
+    The class responsible for managing `LXD`_ containers.  `LXD`_ is `not` the
     default driver used in Molecule.
 
     .. code-block:: yaml
 
         driver:
-          name: lxc
+          name: lxd
 
-    .. code-block:: bash
-
-        $ pip lxc-python2
-
-    .. _`LXC`: https://linuxcontainers.org/lxc/introduction/
+    .. _`LXD`: https://linuxcontainers.org/lxd/introduction/
     """
 
     def __init__(self, config):
-        super(Lxc, self).__init__(config)
+        super(Lxd, self).__init__(config)
 
     @property
     def login_cmd_template(self):
-        return 'sudo lxc-attach -n {}'
+        return 'lxc exec {} bash'
 
     @property
     def safe_files(self):
@@ -56,4 +52,4 @@ class Lxc(base.Base):
         return [instance_name]
 
     def connection_options(self, instance_name):
-        return {'ansible_connection': 'lxc'}
+        return {'ansible_connection': 'lxd'}

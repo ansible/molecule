@@ -1,37 +1,30 @@
+# Manually perform the following:
+#
+# cd /vagrant
+# sudo pip install -r requirements.txt -r test-requirements.txt -r doc-requirements.txt
+# sudo pip install -e .
+# py.test test/functional/lxc/ -sv
+
 Vagrant.configure('2') do |config|
   config.vm.synced_folder '../../../', '/vagrant'
 
-  vm_name = 'molecule-xenial'
-  config.vm.define vm_name do |c|
+  config.vm.define 'molecule-lxc-xenial' do |c|
     c.vm.box = 'ubuntu/xenial64'
     c.vm.provision 'shell', inline: <<-SCRIPT
       sudo apt-get update
       sudo apt-get install -y python-pip libssl-dev libffi-dev lxc lxc-dev
-
-      sudo pip install -U pip tox
-      sudo pip install lxc-python2
-
-      cd /vagrant
-      tox -e py27-ansible22-functional
     SCRIPT
 
-    c.vm.host_name = vm_name
+    c.vm.host_name = 'molecule-lxc-xenial'
   end
 
-  vm_name = 'molecule-centos'
-  config.vm.define vm_name do |c|
+  config.vm.define 'molecule-lxc-centos' do |c|
     c.vm.box = 'centos/7'
     c.vm.provision 'shell', inline: <<-SCRIPT
       sudo yum install -y epel-release
       sudo yum install -y gcc python-pip openssl-devel libffi-devel lxc lxc-devel
-
-      sudo pip install -U pip tox
-      sudo pip install lxc-python2
-
-      cd /vagrant
-      tox -e py27-ansible22-functional
     SCRIPT
 
-    c.vm.host_name = vm_name
+    c.vm.host_name = 'molecule-lxc-centos'
   end
 end
