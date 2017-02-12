@@ -30,14 +30,25 @@ OUT = 101
 
 
 class LogFilter(object):
+    """
+    A custom log filter which excludes log messages above the logged
+    level.
+    """
+
     def __init__(self, level):
         self.__level = level
 
     def filter(self, logRecord):  # pragma: no cover
+        # https://docs.python.org/3/library/logging.html#logrecord-attributes
         return logRecord.levelno <= self.__level
 
 
 class CustomLogger(logging.getLoggerClass()):
+    """
+    A custom logging class which adds additional methods to the logger.  These
+    methods serve as syntactic sugar for formatting log messages.
+    """
+
     def __init__(self, name, level=logging.NOTSET):
         super(logging.getLoggerClass(), self).__init__(name, level)
         logging.addLevelName(SUCCESS, 'SUCCESS')
@@ -53,6 +64,10 @@ class CustomLogger(logging.getLoggerClass()):
 
 
 class TrailingNewlineFormatter(logging.Formatter):
+    """
+    A custom logging formatter which removes additional newlines from messages.
+    """
+
     def format(self, record):
         if record.msg:
             record.msg = record.msg.rstrip()
