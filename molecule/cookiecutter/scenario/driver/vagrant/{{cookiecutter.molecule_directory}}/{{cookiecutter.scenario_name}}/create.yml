@@ -1,5 +1,5 @@
 ---
-{% raw %}
+{% raw -%}
 - hosts: localhost
   connection: local
   vars:
@@ -18,12 +18,4 @@
       copy: content="# Molecule managed\n\n{{ instance_conf | to_yaml }}"
             dest="{{ molecule_instance_config }}"
       when: instance_conf.changed | bool
-
-- hosts: all
-  gather_facts: no
-  tasks:
-    - name: Install python for Ansible
-      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
-      become: yes
-      changed_when: False
-{%- endraw -%}
+{% endraw -%}
