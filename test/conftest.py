@@ -60,7 +60,7 @@ def get_docker_executable():
 
 
 def get_lxc_executable():
-    return not distutils.spawn.find_executable('lxc')
+    return not distutils.spawn.find_executable('lxc-start')
 
 
 def get_lxd_executable():

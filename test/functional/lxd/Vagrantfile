@@ -1,9 +1,10 @@
+# TODO(retr0h): Automate...
 # Manually perform the following:
 #
 # newgrp lxd
 # sudo lxd init
-# sudo pip install -U pip
 # cd /vagrant
+# sudo pip install -U pip
 # sudo pip install -r requirements.txt -r test-requirements.txt -r doc-requirements.txt
 # sudo pip install -e .
 # py.test test/functional/lxd/ -sv

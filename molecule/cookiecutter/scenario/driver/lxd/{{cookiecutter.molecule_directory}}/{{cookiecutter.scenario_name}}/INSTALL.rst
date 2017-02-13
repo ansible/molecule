@@ -22,9 +22,9 @@ Install OS dependencies on Ubuntu 16.x
 .. code-block:: bash
 
   $ sudo apt-get update
-  $ sudo apt-get install -y python-pip libssl-dev lxd
+  $ sudo apt-get install -y python-pip python-devel libssl-dev lxd
   # If installing Molecule from source.
-  $ sudo apt-get install -y libffi-dev
+  $ sudo apt-get install -y libffi-dev git
 
 Install OS dependencies on Mac OS
 

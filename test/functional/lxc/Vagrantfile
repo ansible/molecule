@@ -1,9 +1,12 @@
+# TODO(retr0h): Automate...
 # Manually perform the following:
 #
 # cd /vagrant
+# sudo pip install -U pip
 # sudo pip install -r requirements.txt -r test-requirements.txt -r doc-requirements.txt
+# sudo pip install lxc-python2
 # sudo pip install -e .
-# py.test test/functional/lxc/ -sv
+# sudo py.test test/functional/lxc/ -sv
 
 Vagrant.configure('2') do |config|
   config.vm.synced_folder '../../../', '/vagrant'
@@ -12,7 +15,7 @@ Vagrant.configure('2') do |config|
     c.vm.box = 'ubuntu/xenial64'
     c.vm.provision 'shell', inline: <<-SCRIPT
       sudo apt-get update
-      sudo apt-get install -y python-pip libssl-dev libffi-dev lxc lxc-dev
+      sudo apt-get install -y python-pip libssl-dev git libffi-dev lxc lxc-dev
     SCRIPT
 
     c.vm.host_name = 'molecule-lxc-xenial'
@@ -22,7 +25,7 @@ Vagrant.configure('2') do |config|
     c.vm.box = 'centos/7'
     c.vm.provision 'shell', inline: <<-SCRIPT
       sudo yum install -y epel-release
-      sudo yum install -y gcc python-pip openssl-devel libffi-devel lxc lxc-devel
+      sudo yum install -y gcc python-pip python-devel openssl-devel git libffi-devel lxc lxc-devel lxc-templates debootstrap
     SCRIPT
 
     c.vm.host_name = 'molecule-lxc-centos'

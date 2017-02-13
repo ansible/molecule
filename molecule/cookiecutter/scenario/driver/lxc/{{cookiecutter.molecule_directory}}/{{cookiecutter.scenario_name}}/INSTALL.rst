@@ -17,9 +17,9 @@ Install OS dependencies on CentOS 7
 .. code-block:: bash
 
   $ sudo yum install -y epel-release
-  $ sudo yum install -y gcc python-pip openssl-devel lxc lxc-devel
+  $ sudo yum install -y gcc python-pip python-devel openssl-devel lxc lxc-devel
   # If installing Molecule from source.
-  $ sudo yum install libffi-devel
+  $ sudo yum install libffi-devel git
 
 Install OS dependencies on Ubuntu 16.x
 
@@ -28,7 +28,7 @@ Install OS dependencies on Ubuntu 16.x
   $ sudo apt-get update
   $ sudo apt-get install -y python-pip libssl-dev lxc lxc-dev
   # If installing Molecule from source.
-  $ sudo apt-get install -y libffi-dev
+  $ sudo apt-get install -y libffi-dev git
 
 Install OS dependencies on Mac OS
 
