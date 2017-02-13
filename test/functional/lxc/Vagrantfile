@@ -25,7 +25,9 @@ Vagrant.configure('2') do |config|
     c.vm.box = 'centos/7'
     c.vm.provision 'shell', inline: <<-SCRIPT
       sudo yum install -y epel-release
-      sudo yum install -y gcc python-pip python-devel openssl-devel git libffi-devel lxc lxc-devel lxc-templates debootstrap
+      sudo yum install -y gcc python-pip python-devel openssl-devel git libffi-devel lxc lxc-devel lxc-templates lxc-extra debootstrap bridge-utils libvirt
+      sudo pip install configparser
+      systemctl start libvirtd
     SCRIPT
 
     c.vm.host_name = 'molecule-lxc-centos'
