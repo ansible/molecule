@@ -185,3 +185,11 @@ def patched_run_command(mocker):
     m.return_value = mocker.Mock(stdout='patched-run-command-stdout')
 
     return m
+
+
+@pytest.fixture
+def patched_ansible_converge(mocker):
+    m = mocker.patch('molecule.provisioner.ansible.Ansible.converge')
+    m.return_value = 'patched-ansible-converge-stdout'
+
+    return m

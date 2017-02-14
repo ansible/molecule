@@ -52,6 +52,7 @@ def test_enabled_property(flake8_instance):
 
 def test_directory_property(flake8_instance):
     parts = flake8_instance.directory.split(os.path.sep)
+
     assert 'tests' == parts[-1]
 
 
@@ -94,7 +95,7 @@ def test_execute(patched_logger_info, patched_run_command,
 
     patched_run_command.assert_called_once_with('patched-command', debug=None)
 
-    msg = 'Executing flake8 on files found in {}/...'.format(
+    msg = 'Executing Flake8 on files found in {}/...'.format(
         flake8_instance.directory)
     patched_logger_info.assert_called_once_with(msg)
 

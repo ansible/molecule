@@ -34,6 +34,7 @@ from molecule.driver import lxd
 from molecule.driver import vagrant
 from molecule.lint import ansible_lint
 from molecule.provisioner import ansible
+from molecule.verifier import goss
 from molecule.verifier import testinfra
 
 
@@ -203,6 +204,18 @@ def test_state_property(config_instance):
 
 def test_verifier_property(config_instance):
     assert isinstance(config_instance.verifier, testinfra.Testinfra)
+
+
+@pytest.fixture
+def molecule_verifier_goss_section_data():
+    return {'verifier': {'name': 'goss'}, }
+
+
+def test_verifier_property_is_goss(molecule_verifier_goss_section_data,
+                                   config_instance):
+    config_instance.config.update(molecule_verifier_goss_section_data)
+
+    assert isinstance(config_instance.verifier, goss.Goss)
 
 
 @pytest.fixture

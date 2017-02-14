@@ -1,0 +1,6 @@
+---
+- git: https://github.com/indusbox/goss-ansible.git
+  version: master
+  files:
+    - src: goss.py
+      dst: molecule/provisioner/ansible/plugins/libraries/

@@ -39,29 +39,35 @@ def test_config_private_member(testinfra_instance):
 
 
 def test_default_options_property(testinfra_instance):
-    assert {
+    x = {
         'connection': 'ansible',
         'ansible-inventory': '.molecule/ansible_inventory.yml'
-    } == testinfra_instance.default_options
+    }
+
+    assert x == testinfra_instance.default_options
 
 
 def test_default_options_property_updates_debug(testinfra_instance):
     testinfra_instance._config.args = {'debug': True}
-    assert {
+    x = {
         'connection': 'ansible',
         'ansible-inventory': '.molecule/ansible_inventory.yml',
         'debug': True
-    } == testinfra_instance.default_options
+    }
+
+    assert x == testinfra_instance.default_options
 
 
 def test_default_options_property_updates_sudo(testinfra_instance,
                                                patched_testinfra_get_tests):
     testinfra_instance._config.args = {'sudo': True}
-    assert {
+    x = {
         'connection': 'ansible',
         'ansible-inventory': '.molecule/ansible_inventory.yml',
         'sudo': True
-    } == testinfra_instance.default_options
+    }
+
+    assert x == testinfra_instance.default_options
 
 
 def test_default_env_property(testinfra_instance):
@@ -82,30 +88,34 @@ def test_enabled_property(testinfra_instance):
 
 def test_directory_property(testinfra_instance):
     parts = testinfra_instance.directory.split(os.path.sep)
+
     assert 'tests' == parts[-1]
 
 
 def test_options_property(testinfra_instance):
-    assert {
+    x = {
         'connection': 'ansible',
         'ansible-inventory': '.molecule/ansible_inventory.yml',
         'foo': 'bar',
         'vvv': True,
         'verbose': True,
-    } == testinfra_instance.options
+    }
+
+    assert x == testinfra_instance.options
 
 
 def test_options_property_handles_cli_args(testinfra_instance):
     testinfra_instance._config.args = {'debug': True}
-
-    assert {
+    x = {
         'connection': 'ansible',
         'ansible-inventory': '.molecule/ansible_inventory.yml',
         'foo': 'bar',
         'debug': True,
         'vvv': True,
         'verbose': True,
-    } == testinfra_instance.options
+    }
+
+    assert x == testinfra_instance.options
 
 
 def test_bake(testinfra_instance):
@@ -131,7 +141,7 @@ def test_execute(patched_flake8, patched_logger_info, patched_run_command,
 
     patched_flake8.assert_called_once_with()
 
-    msg = 'Executing testinfra tests found in {}/...'.format(
+    msg = 'Executing Testinfra tests found in {}/...'.format(
         testinfra_instance.directory)
     patched_logger_info.assert_called_once_with(msg)
 

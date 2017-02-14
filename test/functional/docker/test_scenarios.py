@@ -24,6 +24,7 @@ import re
 import pytest
 import sh
 
+from molecule import config
 from molecule import util
 
 pytestmark = pytest.helpers.supports_docker()
@@ -51,9 +52,35 @@ def test_host_group_vars(with_scenario):
                      re.DOTALL)
 
 
+def test_command_init_role_goss(temp_dir):
+    role_directory = os.path.join(temp_dir.strpath, 'test-init')
+    sh.molecule('init', 'role', '--role-name', 'test-init', '--verifier-name',
+                'goss')
+    os.chdir(role_directory)
+
+    sh.molecule('test')
+
+
+def test_command_init_scenario_goss(temp_dir):
+    molecule_directory = config.molecule_directory(temp_dir.strpath)
+    scenario_directory = os.path.join(molecule_directory, 'test-scenario')
+    sh.molecule('init', 'scenario', '--scenario-name', 'test-scenario',
+                '--role-name', 'test-init', '--verifier-name', 'goss')
+
+    assert os.path.isdir(scenario_directory)
+
+
 @pytest.mark.parametrize(
     'with_scenario', ['verifier'], indirect=['with_scenario'])
 def test_command_verify_testinfra(with_scenario):
     sh.molecule('create', '--scenario-name', 'testinfra')
     sh.molecule('converge', '--scenario-name', 'testinfra')
     sh.molecule('verify', '--scenario-name', 'testinfra')
+
+
+@pytest.mark.parametrize(
+    'with_scenario', ['verifier'], indirect=['with_scenario'])
+def test_command_verify_goss(with_scenario):
+    sh.molecule('create', '--scenario-name', 'goss')
+    sh.molecule('converge', '--scenario-name', 'goss')
+    sh.molecule('verify', '--scenario-name', 'goss')

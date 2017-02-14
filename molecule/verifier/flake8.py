@@ -79,7 +79,7 @@ class Flake8(base.Base):
         if self._flake8_command is None:
             self.bake()
 
-        msg = 'Executing flake8 on files found in {}/...'.format(
+        msg = 'Executing Flake8 on files found in {}/...'.format(
             self.directory)
         LOG.info(msg)
 

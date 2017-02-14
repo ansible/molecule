@@ -20,80 +20,65 @@
 
 import os
 
-import sh
-
 from molecule import logger
 from molecule import util
 from molecule.verifier import base
-from molecule.verifier import flake8
 
 LOG = logger.get_logger(__name__)
 
 
-class Testinfra(base.Base):
+class Goss(base.Base):
     """
-    `Testinfra`_ is the default test runner.
+    `Goss`_ is a YAML based serverspec-like tool for validating a server's
+    configuration.  `Goss`_ is `not` the default verifier used in Molecule.
 
-    Additional options can be passed to `testinfra` through the options
-    dict.  Any option set in this section will override the defaults.
+    Molecule executes a playbook (`test_default.yml`) located in the role's
+    `scenario.directory`.  This playbook will copy YAML files to the instances,
+    and execute Goss using a community written Goss Ansible module bundled with
+    Molecule.
 
-    .. code-block:: yaml
-
-        verifier:
-          name: testinfra
-          options:
-            n: 1
+    Additional options can be passed to `goss validate` by modifying the test
+    playbook.
 
     The testing can be disabled by setting `enabled` to False.
 
     .. code-block:: yaml
 
         verifier:
-          name: testinfra
+          name: goss
           enabled: False
 
-    Environment variables can be passed to the verifier.
+    .. important::
 
-    .. code-block:: yaml
+        Due to the nature of this verifier.  Molecule does not perform options
+        handling the same way Testinfra does.
 
-        verifier:
-          name: testinfra
-          env:
-            FOO: bar
-
-    .. _`Testinfra`: http://testinfra.readthedocs.io
+    .. _`Goss`: https://github.com/aelsabbahy/goss
     """
 
     def __init__(self, config):
         """
-        Sets up the requirements to execute `testinfra` and returns None.
+        Sets up the requirements to execute `goss` and returns None.
 
         :param config: An instance of a Molecule config.
         :return: None
         """
-        super(Testinfra, self).__init__(config)
-        self._testinfra_command = None
+        super(Goss, self).__init__(config)
         self._tests = self._get_tests()
 
     @property
     def default_options(self):
         """
-        Default CLI arguments provided to `testinfra` and returns a dict.
+        Default CLI arguments provided to `goss` and returns a dict.
 
         :return: dict
         """
-        d = self._config.driver.testinfra_options
-        if self._config.args.get('debug'):
-            d['debug'] = True
-        if self._config.args.get('sudo'):
-            d['sudo'] = True
-
-        return d
+        return {}
 
     @property
     def default_env(self):
         """
-        Default env variables provided to `testinfra` and returns a
+        Default env variables provided to `goss` and returns a
         dict.
 
         :return: dict
@@ -101,26 +86,11 @@ class Testinfra(base.Base):
         return os.environ.copy()
 
     def bake(self):
-        """
-        Bake a `testinfra` command so it's ready to execute and returns None.
-
-        :return: None
-        """
-        options = self.options
-        verbose_flag = util.verbose_flag(options)
-
-        self._testinfra_command = sh.testinfra.bake(
-            options,
-            self._tests,
-            *verbose_flag,
-            _cwd=self._config.scenario.directory,
-            _env=self.env,
-            _out=LOG.out,
-            _err=LOG.error)
+        pass
 
     def execute(self):
         """
-        Executes `testinfra` and returns None.
+        Executes `goss` and returns None.
 
         :return: None
         """
@@ -132,23 +102,13 @@ class Testinfra(base.Base):
             LOG.warn('Skipping, no tests found.')
             return
 
-        if self._testinfra_command is None:
-            self.bake()
-
-        f = flake8.Flake8(self._config)
-        f.execute()
-
-        msg = 'Executing Testinfra tests found in {}/...'.format(
-            self.directory)
+        msg = 'Executing Goss tests found in {}/...'.format(self.directory)
         LOG.info(msg)
 
-        try:
-            util.run_command(
-                self._testinfra_command, debug=self._config.args.get('debug'))
-            LOG.success('Verifier completed successfully.')
+        goss_playbook = os.path.join(self.directory, 'test_default.yml')
+        self._config.provisioner.converge(goss_playbook)
 
-        except sh.ErrorReturnCode as e:
-            util.sysexit(e.exit_code)
+        LOG.success('Verifier completed successfully.')
 
     def _get_tests(self):
         """
@@ -157,5 +117,5 @@ class Testinfra(base.Base):
         :return: list
         """
         return [
-            filename for filename in util.os_walk(self.directory, 'test_*.py')
+            filename for filename in util.os_walk(self.directory, 'test_*.yml')
         ]

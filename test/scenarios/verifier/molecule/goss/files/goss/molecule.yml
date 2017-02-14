@@ -1,0 +1,17 @@
+---
+file:
+  /etc/molecule:
+    exists: True
+    owner: root
+    group: root
+    mode: "0755"
+    filetype: directory
+
+file:
+  /etc/molecule/instance-1:
+    exists: True
+    owner: root
+    group: root
+    mode: "0644"
+    filetype: file
+    contains: ['instance-1']

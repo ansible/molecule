@@ -118,6 +118,12 @@ Verifier
 
 Molecule handles role testing by invoking configurable verifiers.
 
+Goss
+^^^^
+
+.. autoclass:: molecule.verifier.goss.Goss
+   :undoc-members:
+
 Testinfra
 ^^^^^^^^^
 

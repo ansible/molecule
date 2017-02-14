@@ -39,6 +39,14 @@ def molecule_verifier_section_data():
 
 
 @pytest.fixture
+def patched_goss_get_tests(mocker):
+    m = mocker.patch('molecule.verifier.goss.Goss._get_tests')
+    m.return_value = ['test1', 'test2', 'test3']
+
+    return m
+
+
+@pytest.fixture
 def patched_testinfra_get_tests(mocker):
     m = mocker.patch('molecule.verifier.testinfra.Testinfra._get_tests')
     m.return_value = ['test1', 'test2', 'test3']

@@ -33,8 +33,8 @@ class AnsibleGalaxy(base.Base):
     """
     `Ansible Galaxy`_ is the default dependency manager.
 
-    Additional options can be passed to `ansible-galaxy` through the options
-    dict.  Any option set in this section will override the defaults.
+    Additional options can be passed to `ansible-galaxy install` through the
+    options dict.  Any option set in this section will override the defaults.
 
     .. code-block:: yaml
 

@@ -36,6 +36,7 @@ from molecule.driver import lxd
 from molecule.driver import vagrant
 from molecule.lint import ansible_lint
 from molecule.provisioner import ansible
+from molecule.verifier import goss
 from molecule.verifier import testinfra
 
 LOG = logger.get_logger(__name__)
@@ -138,6 +139,8 @@ class Config(object):
         verifier_name = self.config['verifier']['name']
         if verifier_name == 'testinfra':
             return testinfra.Testinfra(self)
+        elif verifier_name == 'goss':
+            return goss.Goss(self)
         else:
             self._exit_with_invalid_section('verifier', verifier_name)
 

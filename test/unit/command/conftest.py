@@ -27,15 +27,6 @@ def patched_ansible_check(mocker):
 
 
 @pytest.fixture
-# TODO(retr0h): patched_provisioner_coverge
-def patched_ansible_converge(mocker):
-    m = mocker.patch('molecule.provisioner.ansible.Ansible.converge')
-    m.return_value = 'patched-ansible-converge-stdout'
-
-    return m
-
-
-@pytest.fixture
 def patched_ansible_lint(mocker):
     return mocker.patch('molecule.lint.ansible_lint.AnsibleLint.execute')
 
