@@ -45,6 +45,10 @@ class Dockr(base.Base):
         super(Dockr, self).__init__(config)
 
     @property
+    def name(self):
+        return 'docker'
+
+    @property
     def login_cmd_template(self):
         return 'docker exec -ti {} bash'
 

@@ -148,6 +148,12 @@ def test_driver_property_raises(molecule_driver_invalid_section_data,
     patched_logger_critical.assert_called_once_with(msg)
 
 
+def test_drivers_property(config_instance):
+    x = ['docker', 'lxc', 'lxd', 'vagrant']
+
+    assert x == config_instance.drivers
+
+
 def test_lint_property(config_instance):
     assert isinstance(config_instance.lint, ansible_lint.AnsibleLint)
 
@@ -235,6 +241,12 @@ def test_verifier_property_raises(molecule_verifier_invalid_section_data,
     patched_logger_critical.assert_called_once_with(msg)
 
 
+def test_verifiers_property(config_instance):
+    x = ['goss', 'testinfra']
+
+    assert x == config_instance.verifiers
+
+
 def test_exit_with_invalid_section(config_instance, patched_logger_critical):
     with pytest.raises(SystemExit) as e:
         config_instance._exit_with_invalid_section('section', 'name')
@@ -264,3 +276,15 @@ def test_molecule_ephemeral_directory():
 
 def test_molecule_file():
     assert '/foo/molecule.yml' == config.molecule_file('/foo')
+
+
+def test_molecule_drivers():
+    x = ['docker', 'lxc', 'lxd', 'vagrant']
+
+    assert x == config.molecule_drivers()
+
+
+def test_molecule_verifiers():
+    x = ['goss', 'testinfra']
+
+    assert x == config.molecule_verifiers()

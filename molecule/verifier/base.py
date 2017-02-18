@@ -36,16 +36,16 @@ class Base(object):
         self._config = config
 
     @abc.abstractproperty
+    def name(self):  # pragma: no cover
+        pass
+
+    @abc.abstractproperty
     def default_options(self):  # pragma: no cover
         pass
 
     @abc.abstractproperty
     def execute(self):  # pragma: no cover
         pass
-
-    @property
-    def name(self):
-        return self._config.config['verifier']['name']
 
     @property
     def enabled(self):

@@ -97,14 +97,18 @@ class Config(object):
         driver_name = self.config['driver']['name']
         if driver_name == 'docker':
             return dockr.Dockr(self)
-        elif driver_name == 'vagrant':
-            return vagrant.Vagrant(self)
         elif driver_name == 'lxc':
             return lxc.Lxc(self)
         elif driver_name == 'lxd':
             return lxd.Lxd(self)
+        elif driver_name == 'vagrant':
+            return vagrant.Vagrant(self)
         else:
             self._exit_with_invalid_section('driver', driver_name)
+
+    @property
+    def drivers(self):
+        return molecule_drivers()
 
     @property
     def lint(self):
@@ -143,6 +147,10 @@ class Config(object):
             return goss.Goss(self)
         else:
             self._exit_with_invalid_section('verifier', verifier_name)
+
+    @property
+    def verifiers(self):
+        return molecule_verifiers()
 
     def _combine(self):
         """
@@ -267,3 +275,16 @@ def molecule_ephemeral_directory(path):
 
 def molecule_file(path):
     return os.path.join(path, MOLECULE_FILE)
+
+
+def molecule_drivers():
+    return [
+        dockr.Dockr(None).name,
+        lxc.Lxc(None).name,
+        lxd.Lxd(None).name,
+        vagrant.Vagrant(None).name,
+    ]
+
+
+def molecule_verifiers():
+    return [goss.Goss(None).name, testinfra.Testinfra(None).name]

@@ -40,6 +40,15 @@ class Base(object):
         """
         self._config = config
 
+    @abc.abstractproperty
+    def name(self):  # pragma: no cover
+        """
+        Name of the driver and returns a string.
+
+        :returns: str
+        """
+        pass
+
     @property
     def testinfra_options(self):
         """
@@ -53,47 +62,43 @@ class Base(object):
         }
 
     @abc.abstractproperty
-    def login_cmd_template(self):
+    def login_cmd_template(self):  # pragma: no cover
         """
         The login command template to be populated by `login_args` and
         returns a string.
 
         :returns: str
         """
-        pass  # pragma: no cover
+        pass
 
     @abc.abstractproperty
-    def safe_files(self):
+    def safe_files(self):  # pragma: no cover
         """
         Generated files to be preserved and returns a list.
 
         :returns: list
         """
-        pass  # pragma: no cover
+        pass
 
     @abc.abstractmethod
-    def login_args(self, instance_name):
+    def login_args(self, instance_name):  # pragma: no cover
         """
         Arguments used in the login command and returns a list.
 
         :param instance_name: A string containing the instance to login to.
         :returns: list
         """
-        pass  # pragma: no cover
+        pass
 
     @abc.abstractmethod
-    def connection_options(self, instance_name):
+    def connection_options(self, instance_name):  # pragma: no cover
         """
         Connection options supplied to inventory and returns a dict.
 
         :param instance_name: A string containing the instance to login to.
-        :returns: str
+        :returns: dict
         """
-        pass  # pragma: no cover
-
-    @property
-    def name(self):
-        return self._config.config['driver']['name']
+        pass
 
     @property
     def options(self):

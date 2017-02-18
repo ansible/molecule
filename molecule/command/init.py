@@ -138,7 +138,7 @@ def init():
     help='Name of dependency to initialize. (galaxy)')
 @click.option(
     '--driver-name',
-    type=click.Choice(['docker', 'lxc', 'lxd', 'vagrant']),
+    type=click.Choice(config.molecule_drivers()),
     default='docker',
     help='Name of driver to initialize. (docker)')
 @click.option(
@@ -154,7 +154,7 @@ def init():
 @click.option('--role-name', required=True, help='Name of the role to create.')
 @click.option(
     '--verifier-name',
-    type=click.Choice(['goss', 'testinfra']),
+    type=click.Choice(config.molecule_verifiers()),
     default='testinfra',
     help='Name of verifier to initialize. (testinfra)')
 def role(dependency_name, driver_name, lint_name, provisioner_name, role_name,
@@ -177,7 +177,7 @@ def role(dependency_name, driver_name, lint_name, provisioner_name, role_name,
 @init.command()
 @click.option(
     '--driver-name',
-    type=click.Choice(['docker', 'lxc', 'lxd', 'vagrant']),
+    type=click.Choice(config.molecule_drivers()),
     default='docker',
     help='Name of driver to initialize. (docker)')
 @click.option('--role-name', required=True, help='Name of the role to create.')
@@ -185,7 +185,7 @@ def role(dependency_name, driver_name, lint_name, provisioner_name, role_name,
     '--scenario-name', required=True, help='Name of the scenario to create.')
 @click.option(
     '--verifier-name',
-    type=click.Choice(['goss', 'testinfra']),
+    type=click.Choice(config.molecule_verifiers()),
     default='testinfra',
     help='Name of verifier to initialize. (testinfra)')
 def scenario(driver_name, role_name, scenario_name,

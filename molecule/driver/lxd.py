@@ -41,6 +41,10 @@ class Lxd(base.Base):
         super(Lxd, self).__init__(config)
 
     @property
+    def name(self):
+        return 'lxd'
+
+    @property
     def login_cmd_template(self):
         return 'lxc exec {} bash'
 

@@ -69,6 +69,10 @@ class Vagrant(base.Base):
         super(Vagrant, self).__init__(config)
 
     @property
+    def name(self):
+        return 'vagrant'
+
+    @property
     def testinfra_options(self):
         return {
             'connection': 'ansible',

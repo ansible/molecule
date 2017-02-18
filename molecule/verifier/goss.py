@@ -64,7 +64,12 @@ class Goss(base.Base):
         :return: None
         """
         super(Goss, self).__init__(config)
-        self._tests = self._get_tests()
+        if config:
+            self._tests = self._get_tests()
+
+    @property
+    def name(self):
+        return 'goss'
 
     @property
     def default_options(self):

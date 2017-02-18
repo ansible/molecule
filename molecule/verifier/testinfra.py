@@ -73,7 +73,12 @@ class Testinfra(base.Base):
         """
         super(Testinfra, self).__init__(config)
         self._testinfra_command = None
-        self._tests = self._get_tests()
+        if config:
+            self._tests = self._get_tests()
+
+    @property
+    def name(self):
+        return 'testinfra'
 
     @property
     def default_options(self):

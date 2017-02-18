@@ -45,6 +45,10 @@ class Lxc(base.Base):
         super(Lxc, self).__init__(config)
 
     @property
+    def name(self):
+        return 'lxc'
+
+    @property
     def login_cmd_template(self):
         return 'sudo lxc-attach -n {}'
 
