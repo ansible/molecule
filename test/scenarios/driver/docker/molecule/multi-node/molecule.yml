@@ -16,9 +16,10 @@ platforms:
       - baz
 provisioner:
     name: ansible
+    playbooks:
+      setup: ../../../../../resources/playbooks/docker/create.yml
+      teardown: ../../../../../resources/playbooks/docker/destroy.yml
 scenario:
     name: multi-node
-    setup: ../../../../../resources/playbooks/docker/create.yml
-    teardown: ../../../../../resources/playbooks/docker/destroy.yml
 verifier:
     name: testinfra

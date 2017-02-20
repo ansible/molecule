@@ -22,6 +22,7 @@ import os
 
 import click
 
+from molecule import config
 from molecule import logger
 from molecule.command import base
 
@@ -40,6 +41,10 @@ class Create(base.Base):
 
         >>> molecule create --scenario-name foo
 
+        Targeting a specific driver:
+
+        >>> molecule converge --driver-name foo
+
         Executing with `debug`:
 
         >>> molecule --debug create
@@ -50,9 +55,13 @@ class Create(base.Base):
         LOG.info(msg)
         msg = 'Provisioner: [{}]'.format(self._config.provisioner.name)
         LOG.info(msg)
-        msg = 'Playbook: [{}]'.format(
-            os.path.basename(self._config.scenario.setup))
+        msg = 'Driver: [{}]'.format(self._config.driver.name)
         LOG.info(msg)
+        msg = 'Playbook: [{}]'.format(
+            os.path.basename(self._config.provisioner.playbooks.setup))
+        LOG.info(msg)
+
+        self._config.state.change_state('driver', self._config.driver.name)
 
         if self._config.driver.name == 'static':
             LOG.warn('Skipping, instances managed statically.')
@@ -62,8 +71,7 @@ class Create(base.Base):
             LOG.warn('Skipping, instances already created.')
             return
 
-        self._config.provisioner.converge(self._config.scenario.setup)
-
+        self._config.provisioner.setup()
         self._config.state.change_state('created', True)
         # Add the driver's connection_options to inventory, once the instances
         # are created.
@@ -73,11 +81,18 @@ class Create(base.Base):
 @click.command()
 @click.pass_context
 @click.option('--scenario-name', help='Name of the scenario to target.')
-def create(ctx, scenario_name):  # pragma: no cover
+@click.option(
+    '--driver-name',
+    type=click.Choice(config.molecule_drivers()),
+    help='Name of driver to use. (docker)')
+def create(ctx, scenario_name, driver_name):  # pragma: no cover
     """ Start instances. """
     args = ctx.obj.get('args')
-    command_args = {'subcommand': __name__, 'scenario_name': scenario_name}
+    command_args = {
+        'subcommand': __name__,
+        'scenario_name': scenario_name,
+        'driver_name': driver_name,
+    }
 
-    for config in base.get_configs(args, command_args):
-        c = Create(config)
-        c.execute()
+    for c in base.get_configs(args, command_args):
+        Create(c).execute()

@@ -46,6 +46,10 @@ def test_created(state_instance):
     assert not state_instance.created
 
 
+def test_driver(state_instance):
+    assert not state_instance.driver
+
+
 def test_reset(state_instance):
     assert not state_instance.converged
 
@@ -69,10 +73,22 @@ def test_reset_persists(state_instance):
     assert not d.get('converged')
 
 
-def test_change_state(state_instance):
+def test_change_state_converged(state_instance):
     state_instance.change_state('converged', True)
 
     assert state_instance.converged
+
+
+def test_change_state_created(state_instance):
+    state_instance.change_state('created', True)
+
+    assert state_instance.created
+
+
+def test_change_state_driver(state_instance):
+    state_instance.change_state('driver', 'foo')
+
+    assert 'foo' == state_instance.driver
 
 
 def test_change_state_raises(state_instance):
@@ -90,7 +106,7 @@ def test_get_data_loads_existing_state_file(temp_dir, molecule_data):
 
     os.makedirs(ephemeral_directory)
 
-    data = {'converged': False, 'created': True}
+    data = {'converged': False, 'created': True, 'driver': None}
     util.write_file(state_file, util.safe_dump(data))
 
     pytest.helpers.write_molecule_file(molecule_file, molecule_data)
@@ -99,3 +115,4 @@ def test_get_data_loads_existing_state_file(temp_dir, molecule_data):
 
     assert not s.converged
     assert s.created
+    assert not s.driver

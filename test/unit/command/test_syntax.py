@@ -33,5 +33,4 @@ def test_execute(mocker, patched_logger_info, patched_ansible_syntax,
 
     assert x == patched_logger_info.mock_calls
 
-    patched_ansible_syntax.assert_called_once_with(
-        config_instance.scenario.converge)
+    patched_ansible_syntax.assert_called_once_with()

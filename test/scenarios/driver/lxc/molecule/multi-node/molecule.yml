@@ -16,9 +16,10 @@ platforms:
       - baz
 provisioner:
     name: ansible
+    playbooks:
+      setup: ../../../../../resources/playbooks/lxc/create.yml
+      teardown: ../../../../../resources/playbooks/lxc/destroy.yml
 scenario:
     name: multi-node
-    setup: ../../../../../resources/playbooks/lxc/create.yml
-    teardown: ../../../../../resources/playbooks/lxc/destroy.yml
 verifier:
     name: testinfra

@@ -104,7 +104,7 @@ def test_bake(ansible_lint_instance):
     x = [
         str(sh.ansible_lint), '--foo=bar', '-v', '--exclude={}'.format(
             ansible_lint_instance._config.ephemeral_directory),
-        ansible_lint_instance._config.scenario.converge
+        ansible_lint_instance._config.provisioner.playbooks.converge
     ]
     result = str(ansible_lint_instance._ansible_lint_command).split()
 

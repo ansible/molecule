@@ -27,6 +27,7 @@ LOG = logger.get_logger(__name__)
 VALID_KEYS = [
     'created',
     'converged',
+    'driver',
 ]
 
 
@@ -85,6 +86,10 @@ class State(object):
     def created(self):
         return self._data.get('created')
 
+    @property
+    def driver(self):
+        return self._data.get('driver')
+
     @marshal
     def reset(self):
         self._data = self._default_data()
@@ -114,6 +119,7 @@ class State(object):
         return {
             'converged': False,
             'created': False,
+            'driver': None,
         }
 
     def _load_file(self):

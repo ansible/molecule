@@ -297,6 +297,78 @@ def test_config_file_property(ansible_instance):
     assert x == ansible_instance.config_file
 
 
+def test_playbooks_setup_property(ansible_instance):
+    x = os.path.join(ansible_instance._config.scenario.directory, 'create.yml')
+
+    assert x == ansible_instance.playbooks.setup
+
+
+@pytest.fixture
+def molecule_provisioner_playbooks_driver_section_data():
+    return {
+        'provisioner': {
+            'name': 'ansible',
+            'playbooks': {
+                'docker': {
+                    'setup': 'docker-create.yml',
+                    'converge': 'docker-playbook.yml',
+                    'teardown': 'docker-destroy.yml',
+                },
+                'setup': 'create.yml',
+                'converge': 'playbook.yml',
+                'teardown': 'destroy.yml',
+            },
+        }
+    }
+
+
+def test_playbooks_setup_property_when_driver(
+        molecule_provisioner_playbooks_driver_section_data, ansible_instance):
+    ansible_instance._config.merge_dicts(
+        ansible_instance._config.config,
+        molecule_provisioner_playbooks_driver_section_data)
+    x = os.path.join(ansible_instance._config.scenario.directory,
+                     'docker-create.yml')
+
+    assert x == ansible_instance.playbooks.setup
+
+
+def test_playbooks_converge_property(ansible_instance):
+    x = os.path.join(ansible_instance._config.scenario.directory,
+                     'playbook.yml')
+
+    assert x == ansible_instance.playbooks.converge
+
+
+def test_playbooks_converge_property_when_driver_does_not_use_driver(
+        molecule_provisioner_playbooks_driver_section_data, ansible_instance):
+    ansible_instance._config.merge_dicts(
+        ansible_instance._config.config,
+        molecule_provisioner_playbooks_driver_section_data)
+    x = os.path.join(ansible_instance._config.scenario.directory,
+                     'playbook.yml')
+
+    assert x == ansible_instance.playbooks.converge
+
+
+def test_playbooks_teardown_property(ansible_instance):
+    x = os.path.join(ansible_instance._config.scenario.directory,
+                     'destroy.yml')
+
+    assert x == ansible_instance.playbooks.teardown
+
+
+def test_playbooks_teardown_property_when_driver(
+        molecule_provisioner_playbooks_driver_section_data, ansible_instance):
+    ansible_instance._config.merge_dicts(
+        ansible_instance._config.config,
+        molecule_provisioner_playbooks_driver_section_data)
+    x = os.path.join(ansible_instance._config.scenario.directory,
+                     'docker-destroy.yml')
+
+    assert x == ansible_instance.playbooks.teardown
+
+
 def test_connection_options(ansible_instance):
     x = {'ansible_connection': 'docker', 'foo': 'bar'}
 
@@ -341,36 +413,78 @@ def test_add_or_update_vars_does_not_create_vars(ansible_instance):
     assert not os.path.isdir(group_vars_directory)
 
 
-def test_converge(ansible_instance, mocker, patched_ansible_playbook):
-    result = ansible_instance.converge('playbook')
+def test_check(ansible_instance, mocker, patched_ansible_playbook):
+    ansible_instance.check()
 
     inventory_file = ansible_instance._config.provisioner.inventory_file
     patched_ansible_playbook.assert_called_once_with(
-        inventory_file, 'playbook', ansible_instance._config)
+        inventory_file,
+        ansible_instance._config.provisioner.playbooks.converge,
+        ansible_instance._config, )
+    patched_ansible_playbook.return_value.add_cli_arg.assert_called_once_with(
+        'check', True)
+    patched_ansible_playbook.return_value.execute.assert_called_once_with()
+
+
+def test_converge(ansible_instance, mocker, patched_ansible_playbook):
+    result = ansible_instance.converge()
+
+    inventory_file = ansible_instance._config.provisioner.inventory_file
+    patched_ansible_playbook.assert_called_once_with(
+        inventory_file,
+        ansible_instance._config.provisioner.playbooks.converge,
+        ansible_instance._config, )
     assert result == 'patched-ansible-playbook-stdout'
 
     patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_syntax(ansible_instance, mocker, patched_ansible_playbook):
-    ansible_instance.syntax('playbook')
+def test_converge_with_playbook(ansible_instance, mocker,
+                                patched_ansible_playbook):
+    result = ansible_instance.converge('playbook')
 
     inventory_file = ansible_instance._config.provisioner.inventory_file
     patched_ansible_playbook.assert_called_once_with(
-        inventory_file, 'playbook', ansible_instance._config)
-    patched_ansible_playbook.return_value.add_cli_arg.assert_called_once_with(
-        'syntax-check', True)
+        inventory_file,
+        'playbook',
+        ansible_instance._config, )
+    assert result == 'patched-ansible-playbook-stdout'
+
     patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_check(ansible_instance, mocker, patched_ansible_playbook):
-    ansible_instance.check('playbook')
+def test_destroy(ansible_instance, mocker, patched_ansible_playbook):
+    ansible_instance.destroy()
 
     inventory_file = ansible_instance._config.provisioner.inventory_file
     patched_ansible_playbook.assert_called_once_with(
-        inventory_file, 'playbook', ansible_instance._config)
+        inventory_file,
+        ansible_instance._config.provisioner.playbooks.teardown,
+        ansible_instance._config, )
+    patched_ansible_playbook.return_value.execute.assert_called_once_with()
+
+
+def test_setup(ansible_instance, mocker, patched_ansible_playbook):
+    ansible_instance.setup()
+
+    inventory_file = ansible_instance._config.provisioner.inventory_file
+    patched_ansible_playbook.assert_called_once_with(
+        inventory_file,
+        ansible_instance._config.provisioner.playbooks.setup,
+        ansible_instance._config, )
+    patched_ansible_playbook.return_value.execute.assert_called_once_with()
+
+
+def test_syntax(ansible_instance, mocker, patched_ansible_playbook):
+    ansible_instance.syntax()
+
+    inventory_file = ansible_instance._config.provisioner.inventory_file
+    patched_ansible_playbook.assert_called_once_with(
+        inventory_file,
+        ansible_instance._config.provisioner.playbooks.converge,
+        ansible_instance._config, )
     patched_ansible_playbook.return_value.add_cli_arg.assert_called_once_with(
-        'check', True)
+        'syntax-check', True)
     patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 

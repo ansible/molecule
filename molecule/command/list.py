@@ -56,11 +56,14 @@ class List(base.Base):
 def list(ctx, scenario_name):  # pragma: no cover
     """ Lists status of instances. """
     args = ctx.obj.get('args')
-    command_args = {'subcommand': __name__, 'scenario_name': scenario_name}
+    command_args = {
+        'subcommand': __name__,
+        'scenario_name': scenario_name,
+    }
 
     statuses = []
-    for config in base.get_configs(args, command_args):
-        l = List(config)
+    for c in base.get_configs(args, command_args):
+        l = List(c)
         statuses.extend(l.execute())
 
     _print_tabulate_data([

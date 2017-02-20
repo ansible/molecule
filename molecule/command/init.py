@@ -168,7 +168,7 @@ def role(dependency_name, driver_name, lint_name, provisioner_name, role_name,
         'role_name': role_name,
         'scenario_name': 'default',
         'subcommand': __name__,
-        'verifier_name': verifier_name
+        'verifier_name': verifier_name,
     }
 
     _init_new_role(command_args)
@@ -196,7 +196,7 @@ def scenario(driver_name, role_name, scenario_name,
         'role_name': role_name,
         'scenario_name': scenario_name,
         'subcommand': __name__,
-        'verifier_name': verifier_name
+        'verifier_name': verifier_name,
     }
 
     _init_new_scenario(command_args)

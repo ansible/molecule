@@ -51,10 +51,10 @@ class Syntax(base.Base):
         msg = 'Provisioner: [{}]'.format(self._config.provisioner.name)
         LOG.info(msg)
         msg = 'Syntax Verification of Playbook: [{}]'.format(
-            os.path.basename(self._config.scenario.converge))
+            os.path.basename(self._config.provisioner.playbooks.converge))
         LOG.info(msg)
 
-        self._config.provisioner.syntax(self._config.scenario.converge)
+        self._config.provisioner.syntax()
 
 
 @click.command()
@@ -63,8 +63,10 @@ class Syntax(base.Base):
 def syntax(ctx, scenario_name):  # pragma: no cover
     """ Use a provisioner to syntax check the role. """
     args = ctx.obj.get('args')
-    command_args = {'subcommand': __name__, 'scenario_name': scenario_name}
+    command_args = {
+        'subcommand': __name__,
+        'scenario_name': scenario_name,
+    }
 
-    for config in base.get_configs(args, command_args):
-        s = Syntax(config)
-        s.execute()
+    for c in base.get_configs(args, command_args):
+        Syntax(c).execute()

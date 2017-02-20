@@ -53,15 +53,14 @@ class Idempotence(base.Base):
         msg = 'Provisioner: [{}]'.format(self._config.provisioner.name)
         LOG.info(msg)
         msg = 'Idempotence Verification of Playbook: [{}]'.format(
-            os.path.basename(self._config.scenario.converge))
+            os.path.basename(self._config.provisioner.playbooks.converge))
         LOG.info(msg)
 
         if not self._config.state.converged:
             msg = 'Instances not converged.  Please converge instances first.'
             util.sysexit_with_message(msg)
 
-        output = self._config.provisioner.converge(
-            self._config.scenario.converge, out=None, err=None)
+        output = self._config.provisioner.converge(out=None, err=None)
 
         idempotent = self._is_idempotent(output)
         if idempotent:
@@ -128,8 +127,10 @@ def idempotence(ctx, scenario_name):  # pragma: no cover
     determine idempotence.
     """
     args = ctx.obj.get('args')
-    command_args = {'subcommand': __name__, 'scenario_name': scenario_name}
+    command_args = {
+        'subcommand': __name__,
+        'scenario_name': scenario_name,
+    }
 
-    for config in base.get_configs(args, command_args):
-        i = Idempotence(config)
-        i.execute()
+    for c in base.get_configs(args, command_args):
+        Idempotence(c).execute()

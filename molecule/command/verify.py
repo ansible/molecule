@@ -58,8 +58,11 @@ class Verify(base.Base):
 def verify(ctx, scenario_name):  # pragma: no cover
     """ Run automated tests against instances. """
     args = ctx.obj.get('args')
-    command_args = {'subcommand': __name__, 'scenario_name': scenario_name}
 
-    for config in base.get_configs(args, command_args):
-        v = Verify(config)
-        v.execute()
+    command_args = {
+        'subcommand': __name__,
+        'scenario_name': scenario_name,
+    }
+
+    for c in base.get_configs(args, command_args):
+        Verify(c).execute()

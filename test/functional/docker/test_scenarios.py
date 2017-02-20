@@ -84,3 +84,15 @@ def test_command_verify_goss(with_scenario):
     sh.molecule('create', '--scenario-name', 'goss')
     sh.molecule('converge', '--scenario-name', 'goss')
     sh.molecule('verify', '--scenario-name', 'goss')
+
+
+@pytest.mark.parametrize(
+    'with_scenario', ['driver/docker'], indirect=['with_scenario'])
+def test_invalid_driver_subcommand(with_scenario):
+    sh.molecule('create', '--scenario-name', 'default')
+    try:
+        sh.molecule('test', '--scenario-name', 'default', '--driver-name',
+                    'vagrant')
+    except sh.ErrorReturnCode as e:
+        assert ("Instance(s) were created with the 'docker' driver, "
+                "but the subcommand is using 'vagrant' driver.") in e.stderr

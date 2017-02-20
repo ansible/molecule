@@ -52,11 +52,10 @@ class Converge(base.Base):
         msg = 'Provisioner: [{}]'.format(self._config.provisioner.name)
         LOG.info(msg)
         msg = 'Playbook: [{}]'.format(
-            os.path.basename(self._config.scenario.converge))
+            os.path.basename(self._config.provisioner.playbooks.converge))
         LOG.info(msg)
 
-        self._config.provisioner.converge(self._config.scenario.converge)
-
+        self._config.provisioner.converge()
         self._config.state.change_state('converged', True)
 
 
@@ -66,11 +65,13 @@ class Converge(base.Base):
 def converge(ctx, scenario_name):  # pragma: no cover
     """ Use a provisioner to configure instances (create, converge). """
     args = ctx.obj.get('args')
-    command_args = {'subcommand': __name__, 'scenario_name': scenario_name}
+    command_args = {
+        'subcommand': __name__,
+        'scenario_name': scenario_name,
+    }
 
-    for config in base.get_configs(args, command_args):
-        for task in config.scenario.converge_sequence:
+    for c in base.get_configs(args, command_args):
+        for task in c.scenario.converge_sequence:
             command_module = getattr(molecule.command, task)
             command = getattr(command_module, task.capitalize())
-            c = command(config)
-            c.execute()
+            command(c).execute()

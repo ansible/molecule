@@ -9,9 +9,10 @@ platforms:
   - name: instance-1
 provisioner:
     name: ansible
+    playbooks:
+      setup: ../../../../resources/playbooks/docker/create.yml
+      teardown: ../../../../resources/playbooks/docker/destroy.yml
 scenario:
     name: testinfra
-    setup: ../../../../resources/playbooks/docker/create.yml
-    teardown: ../../../../resources/playbooks/docker/destroy.yml
 verifier:
     name: testinfra

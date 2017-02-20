@@ -29,10 +29,52 @@ from molecule import util
 LOG = logger.get_logger(__name__)
 
 
+class AnsibleNamespace(object):
+    def __init__(self, config):
+        """
+        A class to act as a module to namespace playbook properties.
+
+        :param config: An instance of a Molecule config.
+        :return: None
+        """
+        self._config = config
+
+    @property
+    def setup(self):
+        return self._get_ansible_playbook('setup')
+
+    @property
+    def converge(self):
+        c = self._config.config
+
+        return os.path.join(self._config.scenario.directory,
+                            c['provisioner']['playbooks']['converge'])
+
+    @property
+    def teardown(self):
+        return self._get_ansible_playbook('teardown')
+
+    def _get_ansible_playbook(self, section):
+        c = self._config.config
+        driver_dict = c['provisioner']['playbooks'].get(
+            self._config.driver.name)
+
+        if driver_dict:
+            playbook = driver_dict[section]
+        else:
+            playbook = c['provisioner']['playbooks'][section]
+
+        return os.path.join(self._config.scenario.directory, playbook)
+
+
 class Ansible(object):
     """
     `Ansible`_ is the default provisioner.  No other provisioner will be
     supported.
+
+    Molecule's provisioner manages the instances lifecycle.  However, the user
+    must provide the setup, teardown, and converge playbooks.  Molecule's
+    `init` subcommand will provide the necessary files for convenience.
 
     Additional options can be passed to `ansible-playbook` through the options
     dict.  Any option set in this section will override the defaults.
@@ -43,6 +85,43 @@ class Ansible(object):
           name: ansible
           options:
             vvv: True
+          playbooks:
+            setup: create.yml
+            converge: playbook.yml
+            teardown: destroy.yml
+
+    Share playbooks between roles.
+
+    .. code-block:: yaml
+
+        provisioner:
+          name: ansible
+          playbooks:
+            setup: ../default/create.yml
+            teardown: ../default/destroy.yml
+            converge: playbook.yml
+
+    Multiple driver playbooks.  In some situations a developer may choose to
+    test the same role against different backends.  Molecule will choose driver
+    specific setup/teardown playbooks, if the determined driver has a key in
+    the playbooks section of the provisioner's dict.
+
+    .. important::
+
+        If the determined driver has a key in the playbooks dict, Molecule will
+        use this dict to resolve all provisioning playbooks (setup/teardown).
+
+    .. code-block:: yaml
+
+        provisioner:
+          name: ansible
+          playbooks:
+            docker:
+              setup: create.yml
+              teardown: destroy.yml
+            setup: create.yml
+            teardown: destroy.yml
+            converge: playbook.yml
 
     Environment variables can be passed to the provisioner.
 
@@ -104,6 +183,7 @@ class Ansible(object):
         :return: None
         """
         self._config = config
+        self._ns = AnsibleNamespace(config)
 
     @property
     def default_config_options(self):
@@ -237,46 +317,73 @@ class Ansible(object):
     def config_file(self):
         return os.path.join(self._config.ephemeral_directory, 'ansible.cfg')
 
+    @property
+    def playbooks(self):
+        return self._ns
+
     def connection_options(self, instance_name):
         d = self._config.driver.ansible_connection_options(instance_name)
 
         return self._config.merge_dicts(
             d, self._config.config['provisioner']['connection_options'])
 
-    def converge(self, playbook, **kwargs):
+    def check(self):
         """
-        Executes `ansible-playbook` and returns a string.
+        Executes `ansible-playbook` against the converge playbook with the
+        ``--check`` flag and returns None.
 
-        :param playbook: A string containing an absolute path to a
-         provisioner's playbook.
-        :param kwargs: Optional keyword arguments.
-        :return: str
-        """
-        pb = self._get_ansible_playbook(playbook, **kwargs)
-        return pb.execute()
-
-    def syntax(self, playbook):
-        """
-        Executes `ansible-playbook` syntax check and returns None.
-
-        :param playbook: A string containing an absolute path to a
-         provisioner's playbook.
         :return: None
         """
-        pb = self._get_ansible_playbook(playbook)
-        pb.add_cli_arg('syntax-check', True)
+        pb = self._get_ansible_playbook(self.playbooks.converge)
+        pb.add_cli_arg('check', True)
         pb.execute()
 
-    def check(self, playbook):
+    def converge(self, playbook=None, **kwargs):
         """
-        Executes `ansible-playbook` check and returns None.
+        Executes `ansible-playbook` against the converge playbook unless
+        specified otherwise and returns a string.
 
-        :param playbook: A string containing an absolute path to a
-         provisioner's playbook.
+        :param playbook: An optional string containing an absolute path to a
+         playbook.
+        :param kwargs: An optional keyword arguments.
+        :return: str
+        """
+        if playbook is None:
+            pb = self._get_ansible_playbook(self.playbooks.converge, **kwargs)
+        else:
+            pb = self._get_ansible_playbook(playbook, **kwargs)
+
+        return pb.execute()
+
+    def destroy(self):
+        """
+        Executes `ansible-playbook` against the destroy playbook and returns
+        None.
+
         :return: None
         """
-        pb = self._get_ansible_playbook(playbook)
-        pb.add_cli_arg('check', True)
+        pb = self._get_ansible_playbook(self.playbooks.teardown)
+        pb.execute()
+
+    def setup(self):
+        """
+        Executes `ansible-playbook` against the setup playbook and returns
+        None.
+
+        :return: None
+        """
+        pb = self._get_ansible_playbook(self.playbooks.setup)
+        pb.execute()
+
+    def syntax(self):
+        """
+        Executes `ansible-playbook` against the converge playbook with the
+        ``-syntax-check`` flag and returns None.
+
+        :return: None
+        """
+        pb = self._get_ansible_playbook(self.playbooks.converge)
+        pb.add_cli_arg('syntax-check', True)
         pb.execute()
 
     def write_inventory(self):
@@ -343,7 +450,7 @@ class Ansible(object):
 
         :param playbook: A string containing an absolute path to a
          provisioner's playbook.
-        :param kwargs: Optional keyword arguments.
+        :param kwargs: An optional keyword arguments.
         :return: object
         """
         return ansible_playbook.AnsiblePlaybook(self.inventory_file, playbook,

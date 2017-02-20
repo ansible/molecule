@@ -115,7 +115,7 @@ class AnsibleLint(base.Base):
         self._ansible_lint_command = sh.ansible_lint.bake(
             options,
             exclude_args,
-            self._config.scenario.converge,
+            self._config.provisioner.playbooks.converge,
             _env=self.env,
             _out=LOG.out,
             _err=LOG.error)

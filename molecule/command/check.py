@@ -52,10 +52,10 @@ class Check(base.Base):
         msg = 'Provisioner: [{}]'.format(self._config.provisioner.name)
         LOG.info(msg)
         msg = 'Dry-Run of Playbook: [{}]'.format(
-            os.path.basename(self._config.scenario.converge))
+            os.path.basename(self._config.provisioner.playbooks.converge))
         LOG.info(msg)
 
-        self._config.provisioner.check(self._config.scenario.converge)
+        self._config.provisioner.check()
 
 
 @click.command()
@@ -64,11 +64,13 @@ class Check(base.Base):
 def check(ctx, scenario_name):  # pragma: no cover
     """ Use a provisioner to perform a Dry-Run (create, converge, create). """
     args = ctx.obj.get('args')
-    command_args = {'subcommand': __name__, 'scenario_name': scenario_name}
+    command_args = {
+        'subcommand': __name__,
+        'scenario_name': scenario_name,
+    }
 
-    for config in base.get_configs(args, command_args):
-        for task in config.scenario.check_sequence:
+    for c in base.get_configs(args, command_args):
+        for task in c.scenario.check_sequence:
             command_module = getattr(molecule.command, task)
             command = getattr(command_module, task.capitalize())
-            c = command(config)
-            c.execute()
+            command(c).execute()

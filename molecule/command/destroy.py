@@ -22,6 +22,7 @@ import os
 
 import click
 
+from molecule import config
 from molecule import logger
 from molecule.command import base
 
@@ -40,6 +41,10 @@ class Destroy(base.Base):
 
         >>> molecule destroy --scenario-name foo
 
+        Targeting a specific driver:
+
+        >>> molecule converge --driver-name foo
+
         Executing with `debug`:
 
         >>> molecule --debug destroy
@@ -51,14 +56,14 @@ class Destroy(base.Base):
         msg = 'Provisioner: [{}]'.format(self._config.provisioner.name)
         LOG.info(msg)
         msg = 'Playbook: [{}]'.format(
-            os.path.basename(self._config.scenario.teardown))
+            os.path.basename(self._config.provisioner.playbooks.teardown))
         LOG.info(msg)
 
         if self._config.driver.name == 'static':
             LOG.warn('Skipping, instances managed statically.')
             return
 
-        self._config.provisioner.converge(self._config.scenario.teardown)
+        self._config.provisioner.destroy()
 
         self._config.state.reset()
 
@@ -66,11 +71,18 @@ class Destroy(base.Base):
 @click.command()
 @click.pass_context
 @click.option('--scenario-name', help='Name of the scenario to target.')
-def destroy(ctx, scenario_name):  # pragma: no cover
+@click.option(
+    '--driver-name',
+    type=click.Choice(config.molecule_drivers()),
+    help='Name of driver to use. (docker)')
+def destroy(ctx, scenario_name, driver_name):  # pragma: no cover
     """ Destroy instances. """
     args = ctx.obj.get('args')
-    command_args = {'subcommand': __name__, 'scenario_name': scenario_name}
+    command_args = {
+        'subcommand': __name__,
+        'scenario_name': scenario_name,
+        'driver_name': driver_name,
+    }
 
-    for config in base.get_configs(args, command_args):
-        d = Destroy(config)
-        d.execute()
+    for c in base.get_configs(args, command_args):
+        Destroy(c).execute()

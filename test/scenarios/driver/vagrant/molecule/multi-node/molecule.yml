@@ -16,9 +16,10 @@ platforms:
       - baz
 provisioner:
     name: ansible
+    playbooks:
+      setup: ../../../../../resources/playbooks/vagrant/create.yml
+      teardown: ../../../../../resources/playbooks/vagrant/destroy.yml
 scenario:
     name: multi-node
-    setup: ../../../../../resources/playbooks/vagrant/create.yml
-    teardown: ../../../../../resources/playbooks/vagrant/destroy.yml
 verifier:
     name: testinfra

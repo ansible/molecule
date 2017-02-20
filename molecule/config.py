@@ -95,7 +95,8 @@ class Config(object):
 
     @property
     def driver(self):
-        driver_name = self.config['driver']['name']
+        driver_name = self._get_driver_name()
+
         if driver_name == 'docker':
             return dockr.Dockr(self)
         elif driver_name == 'lxc':
@@ -164,6 +165,9 @@ class Config(object):
     def verifiers(self):
         return molecule_verifiers()
 
+    def merge_dicts(self, a, b):
+        return merge_dicts(a, b)
+
     def _combine(self):
         """
         Perform a prioritized recursive merge of the `molecule_file` with
@@ -210,12 +214,14 @@ class Config(object):
                 'host_vars': {},
                 'group_vars': {},
                 'children': {},
+                'playbooks': {
+                    'setup': 'create.yml',
+                    'converge': 'playbook.yml',
+                    'teardown': 'destroy.yml',
+                },
             },
             'scenario': {
                 'name': 'default',
-                'setup': 'create.yml',
-                'converge': 'playbook.yml',
-                'teardown': 'destroy.yml',
                 'check_sequence':
                 ['destroy', 'create', 'converge', 'check', 'destroy'],
                 'converge_sequence': ['create', 'converge'],
@@ -237,8 +243,24 @@ class Config(object):
         msg = "Invalid {} named '{}' configured.".format(section, name)
         util.sysexit_with_message(msg)
 
-    def merge_dicts(self, a, b):
-        return merge_dicts(a, b)
+    def _get_driver_name(self):
+        driver_from_state_file = self.state.driver
+        driver_from_cli = self.command_args.get('driver_name')
+
+        if driver_from_state_file:
+            driver_name = driver_from_state_file
+        elif driver_from_cli:
+            driver_name = driver_from_cli
+        else:
+            driver_name = self.config['driver']['name']
+
+        if driver_from_cli and (driver_from_cli != driver_name):
+            msg = ("Instance(s) were created with the '{}' driver, but the "
+                   "subcommand is using '{}' driver.").format(driver_name,
+                                                              driver_from_cli)
+            util.sysexit_with_message(msg)
+
+        return driver_name
 
 
 def merge_dicts(a, b):

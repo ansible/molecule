@@ -37,6 +37,11 @@ Driver
 Molecule uses `Ansible`_ to manage instances to operate on.  Molecule supports
 any provider `Ansible`_ supports.  This work is offloaded to the `provisioner`.
 
+The driver's name is specified in `molecule.yml`, and can be overriden on the
+command line.  Molecule will remember the last successful driver used, and
+continue to use the driver for all subsequent subcommands, or until the
+instances are destroyed by Molecule.
+
 .. important::
 
     The verifier must support the Ansible provider for proper Molecule

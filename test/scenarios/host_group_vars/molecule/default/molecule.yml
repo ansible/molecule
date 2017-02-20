@@ -13,6 +13,9 @@ platforms:
       - example_1
 provisioner:
     name: ansible
+    playbooks:
+      setup: ../../../../resources/playbooks/docker/create.yml
+      teardown: ../../../../resources/playbooks/docker/destroy.yml
     host_vars:
       instance-1:
         host_group_vars_host_molecule_yml: True
@@ -24,7 +27,5 @@ provisioner:
         host_group_vars_example_1_child_group_molecule_yml: True
 scenario:
     name: default
-    setup: ../../../../resources/playbooks/docker/create.yml
-    teardown: ../../../../resources/playbooks/docker/destroy.yml
 verifier:
     name: testinfra

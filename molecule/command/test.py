@@ -21,6 +21,7 @@
 import click
 
 import molecule.command
+from molecule import config
 from molecule import logger
 from molecule.command import base
 
@@ -39,6 +40,10 @@ class Test(base.Base):
 
         >>> molecule test --scenario-name foo
 
+        Targeting a specific driver:
+
+        >>> molecule converge --driver-name foo
+
         Executing with `debug`:
 
         >>> molecule --debug test
@@ -50,14 +55,21 @@ class Test(base.Base):
 @click.command()
 @click.pass_context
 @click.option('--scenario-name', help='Name of the scenario to target.')
-def test(ctx, scenario_name):  # pragma: no cover
+@click.option(
+    '--driver-name',
+    type=click.Choice(config.molecule_drivers()),
+    help='Name of driver to use. (docker)')
+def test(ctx, scenario_name, driver_name):  # pragma: no cover
     """ Test (destroy, create, converge, lint, verify, destroy). """
     args = ctx.obj.get('args')
-    command_args = {'subcommand': __name__, 'scenario_name': scenario_name}
+    command_args = {
+        'subcommand': __name__,
+        'scenario_name': scenario_name,
+        'driver_name': driver_name,
+    }
 
-    for config in base.get_configs(args, command_args):
-        for task in config.scenario.test_sequence:
+    for c in base.get_configs(args, command_args):
+        for task in c.scenario.test_sequence:
             command_module = getattr(molecule.command, task)
             command = getattr(command_module, task.capitalize())
-            c = command(config)
-            c.execute()
+            command(c).execute()

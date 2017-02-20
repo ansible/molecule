@@ -47,6 +47,10 @@ class Login(base.Base):
 
         >>> molecule login --host hotname --scenario-name foo
 
+        Executing with `debug`:
+
+        >>> molecule --debug list
+
         :return: None
         """
         is_static_driver = self._config.driver.name == 'static'
@@ -115,9 +119,8 @@ def login(ctx, host, scenario_name):  # pragma: no cover
     command_args = {
         'subcommand': __name__,
         'host': host,
-        'scenario_name': scenario_name
+        'scenario_name': scenario_name,
     }
 
-    for config in base.get_configs(args, command_args):
-        l = Login(config)
-        l.execute()
+    for c in base.get_configs(args, command_args):
+        Login(c).execute()

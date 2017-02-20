@@ -34,19 +34,12 @@ class Scenario(object):
     scenarios.  These scenario directories contain everything necessary for
     managing the instances, and converging/testing the role.
 
-    Molecule's provisioner manages the instances lifecycle.  However, the user
-    must provide the setup, teardown, and converge playbooks.  Molecule's
-    `init` subcommand will provide the necessary files for convenience.
-
     Any option set in this section will override the defaults.
 
     .. code-block:: yaml
 
         scenario:
           name: default
-          setup: create.yml
-          converge: playbook.yml
-          teardown: destroy.yml
           converge_sequence:
             - create
             - converge
@@ -57,15 +50,6 @@ class Scenario(object):
             - lint
             - verify
             - destroy
-
-    Share playbooks between roles.
-
-    .. code-block:: yaml
-
-        scenario:
-          name: default
-          setup: ../default/create.yml
-          teardown: ../default/destroy.yml
 
     A good source of examples are the `scenario`_ functional tests.
 
@@ -88,21 +72,6 @@ class Scenario(object):
     @property
     def directory(self):
         return os.path.dirname(self._config.molecule_file)
-
-    @property
-    def setup(self):
-        return os.path.join(self.directory,
-                            self._config.config['scenario']['setup'])
-
-    @property
-    def converge(self):
-        return os.path.join(self.directory,
-                            self._config.config['scenario']['converge'])
-
-    @property
-    def teardown(self):
-        return os.path.join(self.directory,
-                            self._config.config['scenario']['teardown'])
 
     @property
     def check_sequence(self):

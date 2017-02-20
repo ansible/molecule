@@ -27,6 +27,11 @@ def patched_ansible_check(mocker):
 
 
 @pytest.fixture
+def patched_ansible_destroy(mocker):
+    return mocker.patch('molecule.provisioner.ansible.Ansible.destroy')
+
+
+@pytest.fixture
 def patched_ansible_lint(mocker):
     return mocker.patch('molecule.lint.ansible_lint.AnsibleLint.execute')
 
@@ -35,6 +40,11 @@ def patched_ansible_lint(mocker):
 def patched_ansible_galaxy(mocker):
     return mocker.patch(
         'molecule.dependency.ansible_galaxy.AnsibleGalaxy.execute')
+
+
+@pytest.fixture
+def patched_ansible_setup(mocker):
+    return mocker.patch('molecule.provisioner.ansible.Ansible.setup')
 
 
 @pytest.fixture
