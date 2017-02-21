@@ -2,6 +2,11 @@
 History
 *******
 
+1.20.3
+======
+
+* Version bump, network interuption while uploading package to pypi.
+
 1.20.2
 ======
 
