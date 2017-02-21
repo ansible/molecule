@@ -23,8 +23,12 @@ import collections
 import os
 
 Status = collections.namedtuple('Status', [
-    'instance_name', 'driver_name', 'provisioner_name', 'scenario_name',
-    'state'
+    'instance_name',
+    'driver_name',
+    'provisioner_name',
+    'scenario_name',
+    'created',
+    'converged',
 ])
 
 
@@ -129,7 +133,6 @@ class Base(object):
             driver_name = self.name.capitalize()
             provisioner_name = self._config.provisioner.name.capitalize()
             scenario_name = self._config.scenario.name
-            state = self._instances_state()
 
             status_list.append(
                 Status(
@@ -137,17 +140,7 @@ class Base(object):
                     driver_name=driver_name,
                     provisioner_name=provisioner_name,
                     scenario_name=scenario_name,
-                    state=state))
+                    created=str(self._config.state.created),
+                    converged=str(self._config.state.converged)))
 
         return status_list
-
-    def _instances_state(self):
-        """
-        Get instances state and returns a string.
-
-        :returns: str
-        """
-        if self._config.state.created:
-            return 'Created'
-        else:
-            return 'Not Created'

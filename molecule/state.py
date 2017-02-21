@@ -112,8 +112,8 @@ class State(object):
 
     def _default_data(self):
         return {
-            'converged': None,
-            'created': None,
+            'converged': False,
+            'created': False,
         }
 
     def _load_file(self):

@@ -112,15 +112,15 @@ def test_command_list(with_scenario):
     sh.molecule('destroy')
     out = sh.molecule('list', '--scenario-name', 'default')
 
-    assert re.search('instance-1-default.*Lxc.*Ansible.*default.*Not Created',
+    assert re.search('instance-1-default.*Lxc.*Ansible.*default.*False.*False',
                      out.stdout)
 
     out = sh.molecule('list', '--scenario-name', 'multi-node')
     assert re.search(
-        'instance-1-multi-node.*Lxc.*Ansible.*multi-node.*Not Created',
+        'instance-1-multi-node.*Lxc.*Ansible.*multi-node.*False.*False',
         out.stdout)
     assert re.search(
-        'instance-2-multi-node.*Lxc.*Ansible.*multi-node.*Not Created',
+        'instance-2-multi-node.*Lxc.*Ansible.*multi-node.*False.*False',
         out.stdout)
 
 

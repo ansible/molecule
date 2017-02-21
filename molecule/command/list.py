@@ -63,17 +63,17 @@ def list(ctx, scenario_name):  # pragma: no cover
         l = List(config)
         statuses.extend(l.execute())
 
-    _print_tabulate_data(
-        statuses,
-        ['Instance', 'Driver', 'Provisioner', 'Scenario', 'Last Action'])
+    _print_tabulate_data([
+        'Instance', 'Driver', 'Provisioner', 'Scenario', 'Created', 'Converged'
+    ], statuses)
 
 
-def _print_tabulate_data(data, headers):  # pragma: no cover
+def _print_tabulate_data(headers, data):  # pragma: no cover
     """
     Shows the tabulate data on the screen and returns None.
 
-    :param data:
-    :param headers:
+    :param headers: A list of column headers.
+    :param data:  A list of tabular data to display.
     :returns: None
     """
     print(tabulate.tabulate(data, headers, tablefmt='orgtbl'))

@@ -91,20 +91,12 @@ def test_status(mocker, lxc_instance):
     assert result[0].driver_name == 'Lxc'
     assert result[0].provisioner_name == 'Ansible'
     assert result[0].scenario_name == 'default'
-    assert result[0].state == 'Not Created'
+    assert result[0].created == 'False'
+    assert result[0].converged == 'False'
 
     assert result[1].instance_name == 'instance-2-default'
     assert result[1].driver_name == 'Lxc'
-    assert result[0].provisioner_name == 'Ansible'
-    assert result[0].scenario_name == 'default'
-    assert result[1].state == 'Not Created'
-
-
-def test_instances_state(lxc_instance):
-    assert 'Not Created' == lxc_instance._instances_state()
-
-
-def test_instances_state_created(lxc_instance):
-    lxc_instance._config.state.change_state('created', True)
-
-    assert 'Created' == lxc_instance._instances_state()
+    assert result[1].provisioner_name == 'Ansible'
+    assert result[1].scenario_name == 'default'
+    assert result[1].created == 'False'
+    assert result[1].converged == 'False'
