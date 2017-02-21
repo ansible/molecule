@@ -174,8 +174,10 @@ class ConfigV1(Config):
                 'limit': 'all',
                 'playbook': 'playbook.yml',
                 'raw_ssh_args': [
-                    '-o UserKnownHostsFile=/dev/null', '-o IdentitiesOnly=yes',
-                    '-o ControlMaster=auto', '-o ControlPersist=60s'
+                    '-o UserKnownHostsFile=/dev/null',
+                    '-o ControlMaster=auto',
+                    '-o ControlPersist=60s',
+                    '-o IdentitiesOnly=yes',
                 ],
                 'tags': False,
                 'timeout': 30,
@@ -204,7 +206,8 @@ class ConfigV1(Config):
                 'rakefile_file': 'rakefile',
                 'raw_ssh_args': [
                     '-o StrictHostKeyChecking=no',
-                    '-o UserKnownHostsFile=/dev/null'
+                    '-o UserKnownHostsFile=/dev/null',
+                    '-o IdentitiesOnly=yes',
                 ],
                 'serverspec_dir': 'spec',
                 'state_file': 'state.yml',
