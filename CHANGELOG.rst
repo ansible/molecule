@@ -2,6 +2,11 @@
 History
 *******
 
+1.20.1
+======
+
+* Correct too many authentication failures error.
+
 1.20
 ====
 
