@@ -175,7 +175,6 @@ class ConfigV1(Config):
                 'playbook': 'playbook.yml',
                 'raw_ssh_args': [
                     '-o UserKnownHostsFile=/dev/null',
-                    '-o IdentitiesOnly=yes',
                     '-o ControlMaster=auto',
                     '-o ControlPersist=60s',
                     '-o IdentitiesOnly=yes',
