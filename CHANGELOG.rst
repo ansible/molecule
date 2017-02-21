@@ -2,6 +2,11 @@
 History
 *******
 
+1.20.2
+======
+
+* Correct testinfra tests discovered twice.
+
 1.20.1
 ======
 
