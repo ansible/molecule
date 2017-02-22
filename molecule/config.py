@@ -191,6 +191,7 @@ class Config(object):
             'provisioner': {
                 'name': 'ansible',
                 'config_options': {},
+                'connection_options': {},
                 'options': {},
                 'env': {},
                 'host_vars': {},

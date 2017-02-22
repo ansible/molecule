@@ -34,36 +34,39 @@ def testinfra_instance(molecule_verifier_section_data, config_instance):
     return testinfra.Testinfra(config_instance)
 
 
+@pytest.fixture
+def inventory_file(testinfra_instance):
+    return testinfra_instance._config.provisioner.inventory_file
+
+
 def test_config_private_member(testinfra_instance):
     assert isinstance(testinfra_instance._config, config.Config)
 
 
-def test_default_options_property(testinfra_instance):
-    x = {
-        'connection': 'ansible',
-        'ansible-inventory': '.molecule/ansible_inventory.yml'
-    }
+def test_default_options_property(inventory_file, testinfra_instance):
+    x = {'connection': 'ansible', 'ansible-inventory': inventory_file}
 
     assert x == testinfra_instance.default_options
 
 
-def test_default_options_property_updates_debug(testinfra_instance):
+def test_default_options_property_updates_debug(inventory_file,
+                                                testinfra_instance):
     testinfra_instance._config.args = {'debug': True}
     x = {
         'connection': 'ansible',
-        'ansible-inventory': '.molecule/ansible_inventory.yml',
+        'ansible-inventory': inventory_file,
         'debug': True
     }
 
     assert x == testinfra_instance.default_options
 
 
-def test_default_options_property_updates_sudo(testinfra_instance,
-                                               patched_testinfra_get_tests):
+def test_default_options_property_updates_sudo(
+        inventory_file, testinfra_instance, patched_testinfra_get_tests):
     testinfra_instance._config.args = {'sudo': True}
     x = {
         'connection': 'ansible',
-        'ansible-inventory': '.molecule/ansible_inventory.yml',
+        'ansible-inventory': inventory_file,
         'sudo': True
     }
 
@@ -92,10 +95,10 @@ def test_directory_property(testinfra_instance):
     assert 'tests' == parts[-1]
 
 
-def test_options_property(testinfra_instance):
+def test_options_property(inventory_file, testinfra_instance):
     x = {
         'connection': 'ansible',
-        'ansible-inventory': '.molecule/ansible_inventory.yml',
+        'ansible-inventory': inventory_file,
         'foo': 'bar',
         'vvv': True,
         'verbose': True,
@@ -104,11 +107,11 @@ def test_options_property(testinfra_instance):
     assert x == testinfra_instance.options
 
 
-def test_options_property_handles_cli_args(testinfra_instance):
+def test_options_property_handles_cli_args(inventory_file, testinfra_instance):
     testinfra_instance._config.args = {'debug': True}
     x = {
         'connection': 'ansible',
-        'ansible-inventory': '.molecule/ansible_inventory.yml',
+        'ansible-inventory': inventory_file,
         'foo': 'bar',
         'debug': True,
         'vvv': True,
@@ -118,12 +121,11 @@ def test_options_property_handles_cli_args(testinfra_instance):
     assert x == testinfra_instance.options
 
 
-def test_bake(testinfra_instance):
+def test_bake(inventory_file, testinfra_instance):
     testinfra_instance._tests = ['test1', 'test2', 'test3']
     testinfra_instance.bake()
     x = [
-        str(sh.testinfra),
-        '--ansible-inventory=.molecule/ansible_inventory.yml',
+        str(sh.testinfra), '--ansible-inventory={}'.format(inventory_file),
         '--connection=ansible', '-vvv', '--foo=bar', 'test1', 'test2', 'test3'
     ]
     result = str(testinfra_instance._testinfra_command).split()

@@ -43,7 +43,6 @@ def test_config_private_member(vagrant_instance):
 
 
 def test_testinfra_options_property(vagrant_instance):
-    vagrant_instance._config.provisioner.inventory_file
     x = {
         'connection': 'ansible',
         'ansible-inventory':
@@ -102,7 +101,7 @@ def test_login_args(mocker, vagrant_instance):
     assert x == vagrant_instance.login_args('foo')
 
 
-def test_connection_options(mocker, vagrant_instance):
+def test_ansible_connection_options(mocker, vagrant_instance):
     m = mocker.patch('molecule.util.safe_load_file')
     m.return_value = {
         'results': [{
@@ -124,26 +123,30 @@ def test_connection_options(mocker, vagrant_instance):
         'ansible_ssh_port': 2222,
         'ansible_ssh_user': 'vagrant',
         'ansible_ssh_private_key_file': '/foo/bar',
-        'connection': 'ssh'
+        'connection': 'ssh',
+        'ansible_ssh_extra_args': ('-o UserKnownHostsFile=/dev/null '
+                                   '-o ControlMaster=auto '
+                                   '-o ControlPersist=60s '
+                                   '-o IdentitiesOnly=yes')
     }
 
-    assert x == vagrant_instance.connection_options('foo')
+    assert x == vagrant_instance.ansible_connection_options('foo')
 
 
-def test_connection_options_handles_missing_instance_config(mocker,
-                                                            vagrant_instance):
+def test_ansible_connection_options_handles_missing_instance_config(
+        mocker, vagrant_instance):
     m = mocker.patch('molecule.util.safe_load_file')
     m.side_effect = IOError
 
-    assert {} == vagrant_instance.connection_options('foo')
+    assert {} == vagrant_instance.ansible_connection_options('foo')
 
 
-def test_connection_options_handles_missing_results_key(mocker,
-                                                        vagrant_instance):
+def test_ansible_connection_options_handles_missing_results_key(
+        mocker, vagrant_instance):
     m = mocker.patch('molecule.util.safe_load_file')
     m.side_effect = StopIteration
 
-    assert {} == vagrant_instance.connection_options('foo')
+    assert {} == vagrant_instance.ansible_connection_options('foo')
 
 
 def test_vagrantfile_property(vagrant_instance):

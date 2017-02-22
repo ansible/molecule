@@ -45,7 +45,7 @@ def test_config_private_member(lxd_instance):
 def test_testinfra_options_property(lxd_instance):
     assert {
         'connection': 'ansible',
-        'ansible-inventory': '.molecule/ansible_inventory.yml'
+        'ansible-inventory': lxd_instance._config.provisioner.inventory_file
     } == lxd_instance.testinfra_options
 
 
@@ -69,10 +69,10 @@ def test_login_args(lxd_instance):
     assert ['foo'] == lxd_instance.login_args('foo')
 
 
-def test_connection_options(lxd_instance):
+def test_ansible_connection_options(lxd_instance):
     x = {'ansible_connection': 'lxd'}
 
-    assert x == lxd_instance.connection_options('foo')
+    assert x == lxd_instance.ansible_connection_options('foo')
 
 
 def test_instance_config_property(lxd_instance):

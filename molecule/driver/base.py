@@ -62,7 +62,7 @@ class Base(object):
         """
         return {
             'connection': 'ansible',
-            'ansible-inventory': '.molecule/ansible_inventory.yml'
+            'ansible-inventory': self._config.provisioner.inventory_file
         }
 
     @abc.abstractproperty
@@ -95,9 +95,10 @@ class Base(object):
         pass
 
     @abc.abstractmethod
-    def connection_options(self, instance_name):  # pragma: no cover
+    def ansible_connection_options(self, instance_name):  # pragma: no cover
         """
-        Connection options supplied to inventory and returns a dict.
+        Ansible specific connection options supplied to inventory and returns a
+        dict.
 
         :param instance_name: A string containing the instance to login to.
         :returns: dict

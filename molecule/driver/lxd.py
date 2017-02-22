@@ -55,5 +55,5 @@ class Lxd(base.Base):
     def login_args(self, instance_name):
         return [instance_name]
 
-    def connection_options(self, instance_name):
+    def ansible_connection_options(self, instance_name):
         return {'ansible_connection': 'lxd'}

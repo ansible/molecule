@@ -85,6 +85,16 @@ class Ansible(object):
             foo1-01:
               foo: bar
 
+    Override connection options:
+
+    .. code-block:: yaml
+
+        provisioner:
+          name: ansible
+          connection_options:
+            ansible_ssh_user: foo
+            ansible_ssh_extra_args: -o IdentitiesOnly=no
+
     .. _`variables defined in a playbook`: http://docs.ansible.com/ansible/playbooks_variables.html#variables-defined-in-a-playbook
     """  # noqa
 
@@ -207,8 +217,7 @@ class Ansible(object):
         for platform in self._config.platforms.instances_with_scenario_name:
             for group in platform.get('groups', ['ungrouped']):
                 instance_name = platform['name']
-                connection_options = self._config.driver.connection_options(
-                    instance_name)
+                connection_options = self.connection_options(instance_name)
                 dd[group]['hosts'][instance_name] = connection_options
                 dd['ungrouped']['vars'] = {
                     'molecule_file': self._config.molecule_file,
@@ -233,6 +242,12 @@ class Ansible(object):
     @property
     def config_file(self):
         return os.path.join(self._config.ephemeral_directory, 'ansible.cfg')
+
+    def connection_options(self, instance_name):
+        d = self._config.driver.ansible_connection_options(instance_name)
+
+        return self._config.merge_dicts(
+            d, self._config.config['provisioner']['connection_options'])
 
     def converge(self, playbook, **kwargs):
         """

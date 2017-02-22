@@ -94,7 +94,13 @@ class Vagrant(base.Base):
 
         return [d['HostName'], d['User'], d['Port'], d['IdentityFile']]
 
-    def connection_options(self, instance_name):
+    def ansible_connection_options(self, instance_name):
+        ssh_options = [
+            '-o UserKnownHostsFile=/dev/null',
+            '-o ControlMaster=auto',
+            '-o ControlPersist=60s',
+            '-o IdentitiesOnly=yes',
+        ]
         try:
             d = self._get_instance_config(instance_name)
 
@@ -103,7 +109,8 @@ class Vagrant(base.Base):
                 'ansible_ssh_host': d['HostName'],
                 'ansible_ssh_port': d['Port'],
                 'ansible_ssh_private_key_file': d['IdentityFile'],
-                'connection': 'ssh'
+                'connection': 'ssh',
+                'ansible_ssh_extra_args': ' '.join(ssh_options),
             }
         except StopIteration:
             return {}

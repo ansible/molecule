@@ -37,6 +37,9 @@ def molecule_provisioner_section_data():
                     'foo': 'bar'
                 },
             },
+            'connection_options': {
+                'foo': 'bar'
+            },
             'options': {
                 'foo': 'bar'
             },
@@ -187,14 +190,16 @@ def test_inventory_property(ansible_instance):
         'bar': {
             'hosts': {
                 'instance-1-default': {
-                    'ansible_connection': 'docker'
+                    'ansible_connection': 'docker',
+                    'foo': 'bar'
                 }
             },
             'children': {
                 'child1': {
                     'hosts': {
                         'instance-1-default': {
-                            'ansible_connection': 'docker'
+                            'ansible_connection': 'docker',
+                            'foo': 'bar'
                         }
                     }
                 }
@@ -203,24 +208,28 @@ def test_inventory_property(ansible_instance):
         'foo': {
             'hosts': {
                 'instance-1-default': {
-                    'ansible_connection': 'docker'
+                    'ansible_connection': 'docker',
+                    'foo': 'bar'
                 },
                 'instance-2-default': {
-                    'ansible_connection': 'docker'
+                    'ansible_connection': 'docker',
+                    'foo': 'bar'
                 }
             },
             'children': {
                 'child1': {
                     'hosts': {
                         'instance-1-default': {
-                            'ansible_connection': 'docker'
+                            'ansible_connection': 'docker',
+                            'foo': 'bar'
                         }
                     }
                 },
                 'child2': {
                     'hosts': {
                         'instance-2-default': {
-                            'ansible_connection': 'docker'
+                            'ansible_connection': 'docker',
+                            'foo': 'bar'
                         }
                     }
                 }
@@ -229,14 +238,16 @@ def test_inventory_property(ansible_instance):
         'baz': {
             'hosts': {
                 'instance-2-default': {
-                    'ansible_connection': 'docker'
+                    'ansible_connection': 'docker',
+                    'foo': 'bar'
                 }
             },
             'children': {
                 'child2': {
                     'hosts': {
                         'instance-2-default': {
-                            'ansible_connection': 'docker'
+                            'ansible_connection': 'docker',
+                            'foo': 'bar'
                         }
                     }
                 }
@@ -255,10 +266,12 @@ def test_inventory_property_handles_missing_groups(temp_dir, ansible_instance):
         'ungrouped': {
             'hosts': {
                 'instance-1-default': {
-                    'ansible_connection': 'docker'
+                    'ansible_connection': 'docker',
+                    'foo': 'bar'
                 },
                 'instance-2-default': {
-                    'ansible_connection': 'docker'
+                    'ansible_connection': 'docker',
+                    'foo': 'bar'
                 }
             },
             'vars': {
@@ -288,6 +301,12 @@ def test_config_file_property(ansible_instance):
                      'ansible.cfg')
 
     assert x == ansible_instance.config_file
+
+
+def test_connection_options(ansible_instance):
+    x = {'ansible_connection': 'docker', 'foo': 'bar'}
+
+    assert x == ansible_instance.connection_options('foo')
 
 
 def test_add_or_update_vars(ansible_instance):
@@ -383,14 +402,16 @@ def test_write_inventory(temp_dir, ansible_instance):
         'bar': {
             'hosts': {
                 'instance-1-default': {
-                    'ansible_connection': 'docker'
+                    'ansible_connection': 'docker',
+                    'foo': 'bar'
                 }
             },
             'children': {
                 'child1': {
                     'hosts': {
                         'instance-1-default': {
-                            'ansible_connection': 'docker'
+                            'ansible_connection': 'docker',
+                            'foo': 'bar'
                         }
                     }
                 }
@@ -399,24 +420,28 @@ def test_write_inventory(temp_dir, ansible_instance):
         'foo': {
             'hosts': {
                 'instance-1-default': {
-                    'ansible_connection': 'docker'
+                    'ansible_connection': 'docker',
+                    'foo': 'bar'
                 },
                 'instance-2-default': {
-                    'ansible_connection': 'docker'
+                    'ansible_connection': 'docker',
+                    'foo': 'bar'
                 }
             },
             'children': {
                 'child1': {
                     'hosts': {
                         'instance-1-default': {
-                            'ansible_connection': 'docker'
+                            'ansible_connection': 'docker',
+                            'foo': 'bar'
                         }
                     }
                 },
                 'child2': {
                     'hosts': {
                         'instance-2-default': {
-                            'ansible_connection': 'docker'
+                            'ansible_connection': 'docker',
+                            'foo': 'bar'
                         }
                     }
                 }
@@ -425,14 +450,16 @@ def test_write_inventory(temp_dir, ansible_instance):
         'baz': {
             'hosts': {
                 'instance-2-default': {
-                    'ansible_connection': 'docker'
+                    'ansible_connection': 'docker',
+                    'foo': 'bar'
                 }
             },
             'children': {
                 'child2': {
                     'hosts': {
                         'instance-2-default': {
-                            'ansible_connection': 'docker'
+                            'ansible_connection': 'docker',
+                            'foo': 'bar'
                         }
                     }
                 }
