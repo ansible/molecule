@@ -38,7 +38,7 @@ Options
 * ``command`` - **(default='')** the command to launch the container.
 * ``environment`` - **(default=None)** the environment variables passed to the
   container.
-* ``links`` - **(default=[])** the link mapping to allow containers to discover
+* ``links`` - **(default={})** the link mapping to allow containers to discover
   each other.
 * ``network_mode`` - **(default='bridge')** sets the Network mode for the
   container. ``bridge`` creates a new network stack for the container on the

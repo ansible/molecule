@@ -33,6 +33,8 @@ Usage
         registry: testhost:5323
         volume_mounts:
           - '/this/volume:/to/this:rw'
+        links:
+          other-container-name: aliased-dns-name
         command: '/bin/sh'
 
 Note: numeric versions need to be put in quotes. If the image version tag is
