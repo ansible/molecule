@@ -46,10 +46,12 @@ Options
   ``container:[name|id]`` reuses another containers network stack. ``host`` use
   the host network stack inside the container or any name that identifies an
   existing Docker network.
+* ``build_image`` - **(default=None)** override global driver value
+  to build (or not) an image for use with Molecule.
 
 The available param for the Docker driver itself is:
 
-* ``build_image`` - **(default=True)** build an image for use with Molecule.
+* ``build_image`` - **(default=True)** build images for use with Molecule.
 * ``dockerfile`` - **(default=dockerfile)** supply a custom Dockerfile instead
   of Molecule provided image.
 

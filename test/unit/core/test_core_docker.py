@@ -84,6 +84,9 @@ def test_instances_state(docker_molecule_instance):
         },
         'test4-docker': {
             'groups': ['group2']
+        },
+        'test5-docker': {
+            'groups': ['group2']
         }
     }
 
