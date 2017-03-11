@@ -104,7 +104,7 @@ Install Molecule using pip:
 .. code-block:: bash
 
   $ pip install ansible
-  $ pip install docker-py
+  $ pip install docker
   $ pip install molecule
 
 Create a new role with the docker driver:
