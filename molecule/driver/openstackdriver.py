@@ -261,19 +261,21 @@ class OpenstackDriver(basedriver.BaseDriver):
         return ''
 
     def login_cmd(self, instance_name):
-        return 'ssh {} -l {} -i {}'
+        return 'ssh {} -l {} {}'
 
     def login_args(self, instance_name):
         # Try to retrieve the SSH configuration of the host.
         conf = self.conf(name=instance_name)
         user = ''
-        keyfile = self._get_keyfile()
+        keyfile_arg = ''
+        if self._get_keyfile():
+            keyfile_arg = '-i %s' % self._get_temp_keyfile()
 
         for instance in self.instances:
             if instance_name == instance['name']:
                 user = instance['sshuser']
 
-        return [conf, user, keyfile]
+        return [conf, user, keyfile_arg]
 
     def _get_provider(self):
         return 'openstack'
@@ -288,11 +290,11 @@ class OpenstackDriver(basedriver.BaseDriver):
             return self._get_temp_keypair()
 
     def _get_keyfile(self):
-        if ('keyfile' in self.molecule.config.config['openstack']):
+        if 'keypair' not in self.molecule.config.config['openstack']:
+            return self._get_temp_keyfile()
+        elif 'keyfile' in self.molecule.config.config['openstack']:
             return os.path.expanduser(self.molecule.config.config['openstack'][
                 'keyfile'])
-        else:
-            return self._get_temp_keyfile()
 
     def _get_temp_keypair(self):
         kpn = self._get_temp_keyname()
@@ -335,13 +337,18 @@ class OpenstackDriver(basedriver.BaseDriver):
             os.makedirs(loc)
         return os.path.abspath(loc)
 
-    def _check_ssh_availability(self, hostip, user, timeout, sshkey_filename):
+    def _check_ssh_availability(self,
+                                hostip,
+                                user,
+                                timeout,
+                                sshkey_filename=None):
+        key_arg = '-i %s' % sshkey_filename if sshkey_filename else ''
+        command = 'ssh -o StrictHostKeyChecking=no -o '\
+                  'UserKnownHostsFile=/dev/null -o'\
+                  'BatchMode=yes %s -l %s %s exit'\
+                  % (key_arg, user, hostip)
+        command = command.split()
         try:
-            command = [
-                'ssh', '-o', 'StrictHostKeyChecking=no', '-o',
-                'UserKnownHostsFile=/dev/null', '-o', 'BatchMode=yes', '-i',
-                sshkey_filename, '-l', user, hostip, 'exit'
-            ]
             check_output(command, stderr=STDOUT)
             return True
         except CalledProcessError:

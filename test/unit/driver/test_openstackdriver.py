@@ -92,7 +92,7 @@ def test_serverspec_args(openstack_instance):
 
 
 def test_login_cmd(openstack_instance):
-    assert 'ssh {} -l {} -i {}' == openstack_instance.login_cmd('aio-01')
+    assert 'ssh {} -l {} {}' == openstack_instance.login_cmd('aio-01')
 
 
 def test_login_args(openstack_instance):
