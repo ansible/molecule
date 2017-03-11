@@ -265,6 +265,8 @@ class Molecule(object):
         driver = self.args.get('driver')
         if driver:
             return driver
+        elif self.state.driver:
+            return self.state.driver
         elif self.config.config.get('driver'):
             return self.config.config['driver'].get('name')
         elif 'vagrant' in self.config.config:
