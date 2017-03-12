@@ -40,6 +40,13 @@ def test_get_driver_name_from_cli(molecule_instance):
     assert 'foo' == molecule_instance._get_driver_name()
 
 
+def test_get_driver_name_from_state(molecule_instance):
+    m = molecule_instance
+    m.state.change_state('driver', 'foo')
+
+    assert 'foo' == molecule_instance._get_driver_name()
+
+
 def test_get_driver_name_from_config(molecule_instance):
     m = molecule_instance
     m.config.config['driver'] = {'name': 'foo'}
