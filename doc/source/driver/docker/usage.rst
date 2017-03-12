@@ -7,7 +7,7 @@ Usage
 
 .. code-block:: bash
 
-  $ pip install docker-py
+  $ pip install docker
 
 .. code-block:: yaml
 

@@ -27,7 +27,7 @@ Options
   privileged mode.
 * ``registry`` - **(default='')** the registry to obtain the image.
 * ``port_bindings`` - **(default={})** the port mapping between the Docker host
-  and the container.  This is passed to docker-py as the port_bindings
+  and the container.  This is passed to docker as the port_bindings
   `host config`_.
 * ``volume_mounts`` - **(default=[])** the volume mappings between the Docker
   host and the container.
@@ -53,5 +53,5 @@ The available param for the Docker driver itself is:
 * ``dockerfile`` - **(default=dockerfile)** supply a custom Dockerfile instead
   of Molecule provided image.
 
-.. _`host config`: https://github.com/docker/docker-py/blob/master/docs/port-bindings.md
+.. _`host config`: https://docker-py.readthedocs.io/en/stable/api.html#docker.api.container.ContainerApiMixin.create_host_config
 .. _`capability`: https://docs.docker.com/engine/reference/run/#/runtime-privilege-and-linux-capabilities

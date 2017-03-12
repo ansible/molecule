@@ -26,7 +26,7 @@ import sys
 try:
     import docker
 except ImportError:  # pragma: no cover
-    sys.exit('ERROR: Driver missing, install docker-py.')
+    sys.exit('ERROR: python docker driver missing, install the docker package.')
 
 from molecule import util
 from molecule.driver import basedriver
@@ -35,7 +35,7 @@ from molecule.driver import basedriver
 class DockerDriver(basedriver.BaseDriver):
     def __init__(self, molecule):
         super(DockerDriver, self).__init__(molecule)
-        self._docker = docker.Client(
+        self._docker = docker.APIClient(
             version='auto', **docker.utils.kwargs_from_env())
         self._containers = self.molecule.config.config['docker']['containers']
         self._provider = self._get_provider()
