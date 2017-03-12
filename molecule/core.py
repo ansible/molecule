@@ -20,6 +20,7 @@
 
 import collections
 import os
+import shutil
 
 import tabulate
 import yaml
@@ -233,6 +234,18 @@ class Molecule(object):
     def remove_inventory_file(self):
         if os._exists(self.config.config['ansible']['inventory_file']):
             os.remove(self.config.config['ansible']['inventory_file'])
+
+    def remove_vars_files(self):
+        group_vars_dir = os.path.join(
+            os.path.abspath(self.config.config['molecule']['molecule_dir']),
+            'group_vars')
+        host_vars_dir = os.path.join(
+            os.path.abspath(self.config.config['molecule']['molecule_dir']),
+            'host_vars')
+        if os.path.exists(group_vars_dir):
+            shutil.rmtree(group_vars_dir)
+        if os.path.exists(host_vars_dir):
+            shutil.rmtree(host_vars_dir)
 
     def display_tabulate_data(self, data, headers=None):
         """

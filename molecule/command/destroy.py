@@ -48,6 +48,7 @@ class Destroy(base.Base):
             return e.returncode, e.message
         self.molecule.remove_templates()
         self.molecule.remove_inventory_file()
+        self.molecule.remove_vars_files()
         return None, None
 
 
