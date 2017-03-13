@@ -132,6 +132,7 @@ class DockerDriver(basedriver.BaseDriver):
             cap_drop = container.get('cap_drop', [])
             command = container.get('command', '')
             environment = container.get('environment')
+            hostname = container.get('hostname')
 
             docker_host_config = self._docker.create_host_config(
                 privileged=privileged,
@@ -157,7 +158,8 @@ class DockerDriver(basedriver.BaseDriver):
                     ports=port_bindings.keys(),
                     host_config=docker_host_config,
                     environment=environment,
-                    command=command)
+                    command=command,
+                    hostname=hostname)
                 self._docker.start(container=container.get('Id'))
                 container['created'] = True
 
