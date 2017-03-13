@@ -217,9 +217,7 @@ Vagrant.configure('2') do |config|
     if driver_config['instances']
         driver_config['instances'].each { |instance|
             config.vm.define instance['vm_name'] do |c|
-                if driver_config['current_provider'] != 'libvirt'
-                    c.vm.hostname = instance['vm_name']
-                end
+                c.vm.hostname = instance['vm_name']
 
                 if instance['platform']
                     c.vm.box = instance['platform']
