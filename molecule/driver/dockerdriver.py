@@ -206,7 +206,7 @@ class DockerDriver(basedriver.BaseDriver):
 
     def status(self):
         Status = collections.namedtuple(
-            'Status', ['name', 'state', 'provider', 'ports'])
+            'Status', ['name', 'state', 'provider', 'ports', 'networks'])
         status_list = []
         for container in self.instances:
             name = container.get('name')
@@ -214,6 +214,7 @@ class DockerDriver(basedriver.BaseDriver):
                 d = self._docker.containers(filters={'name': name})[0]
                 state = d.get('Status')
                 ports = d.get('Ports')
+                networks = d['NetworkSettings']['Networks'].keys()
             except IndexError:
                 state = 'not_created'
                 ports = []
@@ -222,7 +223,8 @@ class DockerDriver(basedriver.BaseDriver):
                     name=name,
                     state=state,
                     provider=self.provider,
-                    ports=ports))
+                    ports=ports,
+                    networks=networks))
 
         return status_list
 
