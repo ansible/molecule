@@ -26,7 +26,8 @@ import sys
 try:
     import docker
 except ImportError:  # pragma: no cover
-    sys.exit('ERROR: python docker driver missing, install the docker package.')
+    sys.exit(
+        'ERROR: python docker driver missing, install the docker package.')
 
 from molecule import util
 from molecule.driver import basedriver

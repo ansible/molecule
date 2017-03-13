@@ -74,7 +74,7 @@ def test_driver_precedence(molecule_instance):
     assert 'bar' == molecule_instance._get_driver_name()
 
     m.args.update({'driver': 'foobar'})
-    assert 'foobar' ==  molecule_instance._get_driver_name()
+    assert 'foobar' == molecule_instance._get_driver_name()
 
 
 def test_get_driver_invalid_instance(molecule_instance):
