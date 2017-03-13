@@ -41,6 +41,7 @@ class DockerDriver(basedriver.BaseDriver):
         self._containers = self.molecule.config.config['docker']['containers']
         self._provider = self._get_provider()
         self._platform = self._get_platform()
+        self._network = self.molecule.config.config['docker']['network']
 
         if 'build_image' not in self.molecule.config.config['docker']:
             self.molecule.config.config['docker']['build_image'] = True
@@ -112,6 +113,11 @@ class DockerDriver(basedriver.BaseDriver):
 
         self.molecule.state.change_state('driver', self.name)
 
+        if self._network is not None:
+            for network in self._network:
+                driver = network.get('driver')
+                self._docker.create_network(network['name'], driver=driver)
+
         for container in self.instances:
 
             # check global docker driver or specific container config for
@@ -179,6 +185,13 @@ class DockerDriver(basedriver.BaseDriver):
                 msg = 'Removed container {}.'.format(container['name'])
                 util.print_success(msg)
                 container['created'] = False
+
+        if self._network is not None:
+            docker_networks = self._docker.networks()
+            for network in self._network:
+                for active_network in docker_networks:
+                    if network['name'] == active_network['Name']:
+                        self._docker.remove_network(active_network['Id'])
 
     def status(self):
         Status = collections.namedtuple(
