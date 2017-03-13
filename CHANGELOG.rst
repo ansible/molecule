@@ -2,6 +2,22 @@
 History
 *******
 
+1.21
+====
+
+* No longer skip setting hostname with Vagrant's libvirt provider.
+* Openstack: Allow using ssh keys from ssh-agent.
+* Obtain driver from state file if set.
+* Updated to Goss 0.3.0.
+* Remove terminal warnings while running apt.
+* Support for new docker sdk.
+* Updated doc for docker driver links.
+
+Breaking Changes
+----------------
+
+* The `docker-py` pip package has been deprecated in favor of `docker`.
+
 1.20.3
 ======
 
