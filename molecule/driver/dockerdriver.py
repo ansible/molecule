@@ -115,8 +115,12 @@ class DockerDriver(basedriver.BaseDriver):
 
         if self._network is not None:
             for network in self._network:
-                driver = network.get('driver')
+                driver = network.get('driver', 'bridge')
+                msg = ('Creating network {} '
+                       'with driver {}').format(network['name'], driver)
+                util.print_warn(msg)
                 self._docker.create_network(network['name'], driver=driver)
+            util.print_success('Network(s) created')
 
         for container in self.instances:
 
@@ -187,11 +191,18 @@ class DockerDriver(basedriver.BaseDriver):
                 container['created'] = False
 
         if self._network is not None:
-            docker_networks = self._docker.networks()
             for network in self._network:
-                for active_network in docker_networks:
-                    if network['name'] == active_network['Name']:
-                        self._docker.remove_network(active_network['Id'])
+                try:
+                    d_net = self._docker.networks(names=[network['name']])[0]
+                    msg = 'Removing network {}'.format(network['name'])
+                    util.print_warn(msg)
+                    self._docker.remove_network(d_net['Id'])
+                except IndexError:
+                    msg = ('Could not find network {}. '
+                           'Skipping remove').format(network['name'])
+                    util.print_warn(msg)
+
+            util.print_success('Network(s) removed')
 
     def status(self):
         Status = collections.namedtuple(
