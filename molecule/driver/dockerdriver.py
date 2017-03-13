@@ -41,7 +41,7 @@ class DockerDriver(basedriver.BaseDriver):
         self._containers = self.molecule.config.config['docker']['containers']
         self._provider = self._get_provider()
         self._platform = self._get_platform()
-        self._network = self.molecule.config.config['docker']['network']
+        self._network = self.molecule.config.config['docker'].get('network')
 
         if 'build_image' not in self.molecule.config.config['docker']:
             self.molecule.config.config['docker']['build_image'] = True
@@ -218,6 +218,7 @@ class DockerDriver(basedriver.BaseDriver):
             except IndexError:
                 state = 'not_created'
                 ports = []
+                networks = {}
             status_list.append(
                 Status(
                     name=name,
