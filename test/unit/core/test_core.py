@@ -40,11 +40,41 @@ def test_get_driver_name_from_cli(molecule_instance):
     assert 'foo' == molecule_instance._get_driver_name()
 
 
+def test_get_driver_name_from_state(molecule_instance):
+    m = molecule_instance
+    m.state.change_state('driver', 'foo')
+
+    assert 'foo' == molecule_instance._get_driver_name()
+
+
 def test_get_driver_name_from_config(molecule_instance):
     m = molecule_instance
     m.config.config['driver'] = {'name': 'foo'}
 
     assert 'foo' == molecule_instance._get_driver_name()
+
+
+def test_driver_precedence(molecule_instance):
+    m = molecule_instance
+    m.config.config = {}
+
+    m.config.config['openstack'] = 'foo'
+    assert 'openstack' == molecule_instance._get_driver_name()
+
+    m.config.config['docker'] = 'foo'
+    assert 'docker' == molecule_instance._get_driver_name()
+
+    m.config.config['vagrant'] = 'foo'
+    assert 'vagrant' == molecule_instance._get_driver_name()
+
+    m.config.config['driver'] = {'name': 'foo'}
+    assert 'foo' == molecule_instance._get_driver_name()
+
+    m.state.change_state('driver', 'bar')
+    assert 'bar' == molecule_instance._get_driver_name()
+
+    m.args.update({'driver': 'foobar'})
+    assert 'foobar' ==  molecule_instance._get_driver_name()
 
 
 def test_get_driver_invalid_instance(molecule_instance):
