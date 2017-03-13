@@ -214,7 +214,7 @@ class DockerDriver(basedriver.BaseDriver):
                 d = self._docker.containers(filters={'name': name})[0]
                 state = d.get('Status')
                 ports = d.get('Ports')
-                networks = d['NetworkSettings']['Networks'].keys()
+                networks = d['NetworkSettings']['Networks']
             except IndexError:
                 state = 'not_created'
                 ports = []
