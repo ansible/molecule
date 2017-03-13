@@ -2,10 +2,10 @@
 {% raw -%}
 - hosts: all
   vars:
-    goss_version: v0.2.5
+    goss_version: v0.3.0
     goss_arch: amd64
     goss_dst: /usr/local/bin/goss
-    goss_sha256sum: 31d04f98444ded26e2478fbdb3f5949cc9318bed13b5937598facc1818e1fce1.
+    goss_sha256sum: 105648b505b748d577ae07fb4d56c8382a174cf8ab74756e3fa632cd27737079.
     goss_test_directory: /tmp
     goss_format: documentation
   tasks:
