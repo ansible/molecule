@@ -60,6 +60,7 @@ A ``.travis.yml`` testing a role named foo1 with the Docker driver.
     - sudo apt-get install -o Dpkg::Options::="--force-confold" --force-yes -y docker-engine
   install:
     - pip install molecule
+    # - pip install required driver (e.g. docker, python-vagrant, shade)
   script:
     - molecule test
 
