@@ -2,6 +2,11 @@
 History
 *******
 
+1.21.1
+======
+
+* Corrected None RepoTags bug with docker driver.
+
 1.21
 ====
 
