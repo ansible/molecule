@@ -301,6 +301,17 @@ def docker_v1_section_data():
                 'options': {
                     'append_platform_to_hostname': True
                 },
+            }, {
+                'name': 'test5',
+                'image': 'ubuntu',
+                'image_version': 'latest',
+                'ansible_groups': ['group2'],
+                'network_mode': 'host',
+                'command': '/bin/sh',
+                'build_image': False,
+                'options': {
+                    'append_platform_to_hostname': True
+                }
             }]
         }
     }

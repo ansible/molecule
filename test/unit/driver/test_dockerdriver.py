@@ -235,6 +235,14 @@ def test_links(docker_instance):
     assert '/test1:/test2/80' in d2
 
 
+def test_build_image(docker_instance):
+    docker_instance.up()
+    d1 = docker_instance._docker.inspect_container('test1')
+    d5 = docker_instance._docker.inspect_container('test5')
+    assert 'molecule_local/ubuntu:latest' == d1['Config']['Image']
+    assert 'ubuntu:latest' == d5['Config']['Image']
+
+
 def test_network_mode_bridge(docker_instance):
     docker_instance.up()
     d1 = docker_instance._docker.inspect_container('test1')['HostConfig'][
