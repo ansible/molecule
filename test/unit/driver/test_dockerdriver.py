@@ -281,15 +281,15 @@ def test_network_mode_host(docker_instance):
 
 def test_network_mode_cluster(docker_cluster_instance):
     docker_cluster_instance.up()
-    d1 = docker_cluster_instance._docker.inspect_container('test1.mycluster')['HostConfig'][
-        'NetworkMode']
+    d1 = docker_cluster_instance._docker.inspect_container('test1.mycluster')[
+        'HostConfig']['NetworkMode']
     assert 'docker-cluster-test-nw' in d1
-    d2 = docker_cluster_instance._docker.inspect_container('test2.mycluster')['HostConfig'][
-        'NetworkMode']
+    d2 = docker_cluster_instance._docker.inspect_container('test2.mycluster')[
+        'HostConfig']['NetworkMode']
     assert 'docker-cluster-test-nw' in d2
-    d3 = docker_cluster_instance._docker.inspect_container('test3.mycluster')['HostConfig'][
-        'NetworkMode']
+    d3 = docker_cluster_instance._docker.inspect_container('test3.mycluster')[
+        'HostConfig']['NetworkMode']
     assert 'docker-cluster-test-second-nw' in d3
-    d4 = docker_cluster_instance._docker.inspect_container('test4.mycluster')['HostConfig'][
-        'NetworkMode']
+    d4 = docker_cluster_instance._docker.inspect_container('test4.mycluster')[
+        'HostConfig']['NetworkMode']
     assert 'docker-cluster-test-second-nw' in d4

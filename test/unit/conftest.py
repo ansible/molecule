@@ -94,7 +94,8 @@ def docker_molecule_instance(temp_dir, temp_files, state_path_without_data):
 
 
 @pytest.fixture()
-def docker_cluster_molecule_instance(temp_dir, temp_files, state_path_without_data):
+def docker_cluster_molecule_instance(temp_dir, temp_files,
+                                     state_path_without_data):
     c = temp_files(fixtures=['molecule_docker_cluster_v1_config'])
     m = core.Molecule(config.ConfigV1(configs=c), {})
     m.state = state.State(state_file=state_path_without_data)
@@ -154,8 +155,8 @@ def molecule_docker_v1_config(molecule_v1_section_data, docker_v1_section_data,
 
 @pytest.fixture()
 def molecule_docker_cluster_v1_config(molecule_v1_section_data,
-                              docker_cluster_v1_section_data,
-                              ansible_v1_section_data):
+                                      docker_cluster_v1_section_data,
+                                      ansible_v1_section_data):
     return reduce(lambda x, y: config.merge_dicts(x, y), [
         molecule_v1_section_data, docker_cluster_v1_section_data,
         ansible_v1_section_data
@@ -341,12 +342,15 @@ def docker_v1_section_data():
 def docker_cluster_v1_section_data():
     return {
         'docker': {
-            'network': [{
-                'name': 'docker-cluster-test-nw',
-                'driver': 'bridge'
-            }, {
-                'name': 'docker-cluster-test-second-nw'
-            },],
+            'network': [
+                {
+                    'name': 'docker-cluster-test-nw',
+                    'driver': 'bridge'
+                },
+                {
+                    'name': 'docker-cluster-test-second-nw'
+                },
+            ],
             'containers': [{
                 'name': 'test1.mycluster',
                 'image': 'ubuntu',
@@ -382,7 +386,6 @@ def docker_cluster_v1_section_data():
                 'hostname': 'test3.mycluster',
                 'network_mode': 'docker-cluster-test-second-nw',
                 'command': '/bin/sh',
-
             }, {
                 'name': 'test4.mycluster',
                 'image': 'ubuntu',
