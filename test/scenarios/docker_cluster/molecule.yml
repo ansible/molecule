@@ -5,32 +5,32 @@ docker:
     - name: docker-cluster-test-nw
     - name: docker-cluster-test-second-nw
   containers:
-    - name: test1.mycluster
-      hostname: test1.mycluster
+    - name: instance1
+      hostname: instance1
       image: ubuntu
       image_version: latest
       network_mode: docker-cluster-test-nw
       ansible_groups:
         - group1
 
-    - name: test2.mycluster
-      hostname: test2.mycluster
+    - name: instance2
+      hostname: instance2
       image: ubuntu
       image_version: latest
       network_mode: docker-cluster-test-nw
       ansible_groups:
         - group1
 
-    - name: test3.mycluster
-      hostname: test3.mycluster
+    - name: instance3
+      hostname: instance3
       image: ubuntu
       image_version: latest
       network_mode: docker-cluster-test-second-nw
       ansible_groups:
         - group2
 
-    - name: test4.mycluster
-      hostname: test4.mycluster
+    - name: instance4
+      hostname: instance4
       image: ubuntu
       image_version: latest
       network_mode: docker-cluster-test-second-nw

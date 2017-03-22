@@ -5,8 +5,8 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 
 
 def test_resolve(Command):
-    group1 = ['test1.mycluster', 'test2.mycluster']
-    group2 = ['test3.mycluster', 'test4.mycluster']
+    group1 = ['instance1', 'instance2']
+    group2 = ['instance3', 'instance4']
 
     for host in group1:
         cmd = Command('getent ahostsv4 {}'.format(host))
