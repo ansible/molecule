@@ -94,6 +94,17 @@ def docker_molecule_instance(temp_dir, temp_files, state_path_without_data):
 
 
 @pytest.fixture()
+def docker_cluster_molecule_instance(temp_dir, temp_files,
+                                     state_path_without_data):
+    c = temp_files(fixtures=['molecule_docker_cluster_v1_config'])
+    m = core.Molecule(config.ConfigV1(configs=c), {})
+    m.state = state.State(state_file=state_path_without_data)
+    m.main()
+
+    return m
+
+
+@pytest.fixture()
 def openstack_molecule_instance(temp_dir, temp_files, state_path_without_data):
     c = temp_files(fixtures=['molecule_openstack_v1_config'])
     m = core.Molecule(config.ConfigV1(configs=c), {})
@@ -138,6 +149,16 @@ def molecule_docker_v1_config(molecule_v1_section_data, docker_v1_section_data,
                               ansible_v1_section_data):
     return reduce(lambda x, y: config.merge_dicts(x, y), [
         molecule_v1_section_data, docker_v1_section_data,
+        ansible_v1_section_data
+    ])
+
+
+@pytest.fixture()
+def molecule_docker_cluster_v1_config(molecule_v1_section_data,
+                                      docker_cluster_v1_section_data,
+                                      ansible_v1_section_data):
+    return reduce(lambda x, y: config.merge_dicts(x, y), [
+        molecule_v1_section_data, docker_cluster_v1_section_data,
         ansible_v1_section_data
     ])
 
@@ -312,6 +333,67 @@ def docker_v1_section_data():
                 'options': {
                     'append_platform_to_hostname': True
                 }
+            }]
+        }
+    }
+
+
+@pytest.fixture()
+def docker_cluster_v1_section_data():
+    return {
+        'docker': {
+            'network': [
+                {
+                    'name': 'docker-cluster-test-nw',
+                    'driver': 'bridge'
+                },
+                {
+                    'name': 'docker-cluster-test-second-nw'
+                },
+            ],
+            'containers': [{
+                'name': 'test1.mycluster',
+                'image': 'ubuntu',
+                'image_version': 'latest',
+                'port_bindings': {
+                    80: 80,
+                    443: 443
+                },
+                'environment': {
+                    'FOO': 'BAR',
+                    'BAZ': 'QUX'
+                },
+                'volume_mounts': ['/tmp/test1:/inside:rw'],
+                'cap_add': ['SYS_ADMIN', 'SETPCAP'],
+                'cap_drop': ['MKNOD'],
+                'ansible_groups': ['group1'],
+                'hostname': 'test1.mycluster',
+                'network_mode': 'docker-cluster-test-nw',
+            }, {
+                'name': 'test2.mycluster',
+                'image': 'ubuntu',
+                'image_version': 'latest',
+                'ansible_groups': ['group2'],
+                'network_mode': 'docker-cluster-test-nw',
+                'command': '/bin/sh',
+                'hostname': 'test2.mycluster',
+                'network_mode': 'docker-cluster-test-nw',
+            }, {
+                'name': 'test3.mycluster',
+                'image': 'ubuntu',
+                'image_version': 'latest',
+                'ansible_groups': ['group1'],
+                'hostname': 'test3.mycluster',
+                'network_mode': 'docker-cluster-test-second-nw',
+                'command': '/bin/sh',
+            }, {
+                'name': 'test4.mycluster',
+                'image': 'ubuntu',
+                'image_version': 'latest',
+                'ansible_groups': ['group2'],
+                'hostname': 'test4.mycluster',
+                'network_mode': 'docker-cluster-test-second-nw',
+                'command': '/bin/sh',
             }]
         }
     }

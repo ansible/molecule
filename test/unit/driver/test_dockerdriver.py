@@ -37,6 +37,18 @@ def docker_instance(docker_molecule_instance, request):
     return d
 
 
+@pytest.fixture()
+def docker_cluster_instance(docker_cluster_molecule_instance, request):
+    d = dockerdriver.DockerDriver(docker_cluster_molecule_instance)
+
+    def cleanup():
+        d.destroy()
+
+    request.addfinalizer(cleanup)
+
+    return d
+
+
 def test_name(docker_instance):
     assert 'docker' == docker_instance.name
 
@@ -248,7 +260,7 @@ def test_network_mode_bridge(docker_instance):
     d1 = docker_instance._docker.inspect_container('test1')['HostConfig'][
         'NetworkMode']
     assert 'bridge' in d1
-    d2 = docker_instance._docker.inspect_container('test1')['HostConfig'][
+    d2 = docker_instance._docker.inspect_container('test2')['HostConfig'][
         'NetworkMode']
     assert 'bridge' in d2
 
@@ -265,3 +277,19 @@ def test_network_mode_host(docker_instance):
     d1 = docker_instance._docker.inspect_container('test4')['HostConfig'][
         'NetworkMode']
     assert 'host' in d1
+
+
+def test_network_mode_cluster(docker_cluster_instance):
+    docker_cluster_instance.up()
+    d1 = docker_cluster_instance._docker.inspect_container('test1.mycluster')[
+        'HostConfig']['NetworkMode']
+    assert 'docker-cluster-test-nw' in d1
+    d2 = docker_cluster_instance._docker.inspect_container('test2.mycluster')[
+        'HostConfig']['NetworkMode']
+    assert 'docker-cluster-test-nw' in d2
+    d3 = docker_cluster_instance._docker.inspect_container('test3.mycluster')[
+        'HostConfig']['NetworkMode']
+    assert 'docker-cluster-test-second-nw' in d3
+    d4 = docker_cluster_instance._docker.inspect_container('test4.mycluster')[
+        'HostConfig']['NetworkMode']
+    assert 'docker-cluster-test-second-nw' in d4

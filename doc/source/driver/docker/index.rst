@@ -48,12 +48,19 @@ Options
   existing Docker network.
 * ``build_image`` - **(default=None)** override global driver value
   to build (or not) an image for use with Molecule.
+* ``hostname`` - **(default=None)** name set in **/etc/hosts**
+  inside the container. If not set the container ID is used.
 
 The available param for the Docker driver itself is:
 
 * ``build_image`` - **(default=True)** build images for use with Molecule.
 * ``dockerfile`` - **(default=dockerfile)** supply a custom Dockerfile instead
   of Molecule provided image.
+* ``network`` - **(default=None)** list of docker networks managed by Molecule.
+  The networks are created before the containers are started and removed during
+  the destroy phase. The network names can be used in ``network_mode`` of a
+  container to make clusters of docker containers. A ``driver`` can be specified
+  for a network **(default='bridge')**.
 
 .. _`host config`: https://docker-py.readthedocs.io/en/stable/api.html#docker.api.container.ContainerApiMixin.create_host_config
 .. _`capability`: https://docs.docker.com/engine/reference/run/#/runtime-privilege-and-linux-capabilities

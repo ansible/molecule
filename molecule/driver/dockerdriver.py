@@ -41,6 +41,7 @@ class DockerDriver(basedriver.BaseDriver):
         self._containers = self.molecule.config.config['docker']['containers']
         self._provider = self._get_provider()
         self._platform = self._get_platform()
+        self._network = self.molecule.config.config['docker'].get('network')
 
         if 'build_image' not in self.molecule.config.config['docker']:
             self.molecule.config.config['docker']['build_image'] = True
@@ -112,6 +113,15 @@ class DockerDriver(basedriver.BaseDriver):
 
         self.molecule.state.change_state('driver', self.name)
 
+        if self._network is not None:
+            for network in self._network:
+                driver = network.get('driver', 'bridge')
+                msg = ('Creating network {} '
+                       'with driver {}').format(network['name'], driver)
+                util.print_warn(msg)
+                self._docker.create_network(network['name'], driver=driver)
+            util.print_success('Network(s) created')
+
         for container in self.instances:
 
             # check global docker driver or specific container config for
@@ -132,6 +142,7 @@ class DockerDriver(basedriver.BaseDriver):
             cap_drop = container.get('cap_drop', [])
             command = container.get('command', '')
             environment = container.get('environment')
+            hostname = container.get('hostname')
 
             docker_host_config = self._docker.create_host_config(
                 privileged=privileged,
@@ -157,7 +168,8 @@ class DockerDriver(basedriver.BaseDriver):
                     ports=port_bindings.keys(),
                     host_config=docker_host_config,
                     environment=environment,
-                    command=command)
+                    command=command,
+                    hostname=hostname)
                 self._docker.start(container=container.get('Id'))
                 container['created'] = True
 
@@ -178,9 +190,23 @@ class DockerDriver(basedriver.BaseDriver):
                 util.print_success(msg)
                 container['created'] = False
 
+        if self._network is not None:
+            for network in self._network:
+                try:
+                    d_net = self._docker.networks(names=[network['name']])[0]
+                    msg = 'Removing network {}'.format(network['name'])
+                    util.print_warn(msg)
+                    self._docker.remove_network(d_net['Id'])
+                except IndexError:
+                    msg = ('Could not find network {}. '
+                           'Skipping remove').format(network['name'])
+                    util.print_warn(msg)
+
+            util.print_success('Network(s) removed')
+
     def status(self):
         Status = collections.namedtuple(
-            'Status', ['name', 'state', 'provider', 'ports'])
+            'Status', ['name', 'state', 'provider', 'ports', 'networks'])
         status_list = []
         for container in self.instances:
             name = container.get('name')
@@ -188,15 +214,18 @@ class DockerDriver(basedriver.BaseDriver):
                 d = self._docker.containers(filters={'name': name})[0]
                 state = d.get('Status')
                 ports = d.get('Ports')
+                networks = d['NetworkSettings']['Networks']
             except IndexError:
                 state = 'not_created'
                 ports = []
+                networks = {}
             status_list.append(
                 Status(
                     name=name,
                     state=state,
                     provider=self.provider,
-                    ports=ports))
+                    ports=ports,
+                    networks=networks))
 
         return status_list
 
@@ -222,8 +251,8 @@ class DockerDriver(basedriver.BaseDriver):
 
     def _build_ansible_compatible_image(self, container):
         available_images = [
-            tag.encode('utf-8')
-            for image in self._docker.images() if image.get('RepoTags') is not None
+            tag.encode('utf-8') for image in self._docker.images()
+            if image.get('RepoTags') is not None
             for tag in image.get('RepoTags')
         ]
 

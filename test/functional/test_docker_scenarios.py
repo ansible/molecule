@@ -160,3 +160,9 @@ def test_group_host_vars(scenario_setup):
     'scenario_setup', ['requirements_file'], indirect=['scenario_setup'])
 def test_requirements_file(scenario_setup):
     sh.molecule('test')
+
+
+@pytest.mark.parametrize(
+    'scenario_setup', ['docker_cluster'], indirect=['scenario_setup'])
+def test_docker_cluster(scenario_setup):
+    sh.molecule('test')
