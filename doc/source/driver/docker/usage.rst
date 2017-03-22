@@ -43,3 +43,30 @@ not a number, it does not need to be in quotes.
 A specific registry can also be defined with the ``registry`` option in the
 container.  When accessing a private registry, ensure your Docker client is
 logged into whichever registry you are trying to access.
+
+In order to create a cluster of docker containers with functional DNS lookup
+use the ``network`` handler of the docker driver
+
+.. code-block:: yaml
+
+  ---
+  docker:
+    network:
+      - name: docker-cluster-network
+        driver: bridge
+    containers:
+      - name: node1.mycluster
+        hostname: node1.mycluster
+        image: ubuntu
+        image_version: latest
+        network_mode: docker-cluster-network
+      - name: node2.mycluster
+        hostname: node2.mycluster
+        image: ubuntu
+        image_version: latest
+        network_mode: docker-cluster-network
+      - name: node3.mycluster
+        hostname: node3.mycluster
+        image: ubuntu
+        image_version: latest
+        network_mode: docker-cluster-network
