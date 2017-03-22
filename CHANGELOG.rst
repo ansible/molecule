@@ -2,6 +2,11 @@
 History
 *******
 
+1.22
+====
+
+* Handling of networks with Docker driver.
+
 1.21.1
 ======
 
