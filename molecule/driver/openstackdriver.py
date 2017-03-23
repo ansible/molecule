@@ -384,8 +384,8 @@ class OpenstackDriver(basedriver.BaseDriver):
                 os.remove(publoc)
 
     def _host_template(self):
-        return ('{hostname} ansible_ssh_host={interface_ip_address} '
-                'ansible_ssh_user={ssh_username} '
+        return ('{hostname} ansible_host={interface_ip_address} '
+                'ansible_user={ssh_username} '
                 'ansible_ssh_private_key_file="{ssh_key_filename}" '
                 'ansible_ssh_extra_args="-o ConnectionAttempts=5"\n')
 
