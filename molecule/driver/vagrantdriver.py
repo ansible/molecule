@@ -172,9 +172,8 @@ class VagrantDriver(basedriver.BaseDriver):
             return self._vagrant.conf(vm_name=vm_name)
 
     def inventory_entry(self, instance):
-        # TODO: for Ansiblev2, the following line must have s/ssh_//
-        template = ('{} ansible_ssh_host={} ansible_ssh_port={} '
-                    'ansible_ssh_private_key_file="{}" ansible_ssh_user={}\n')
+        template = ('{} ansible_host={} ansible_port={} '
+                    'ansible_ssh_private_key_file="{}" ansible_user={}\n')
 
         if not self._updated_multiplatform:
             ssh = self.conf(vm_name=util.format_instance_name(
