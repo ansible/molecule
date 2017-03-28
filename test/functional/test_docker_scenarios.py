@@ -162,6 +162,7 @@ def test_requirements_file(scenario_setup):
     sh.molecule('test')
 
 
+# NOTE(retr0h): Test requires your host returns NXDOMAIN.
 @pytest.mark.parametrize(
     'scenario_setup', ['docker_cluster'], indirect=['scenario_setup'])
 def test_docker_cluster(scenario_setup):
