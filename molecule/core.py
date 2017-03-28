@@ -399,7 +399,6 @@ class Molecule(object):
         return {
             'repo_name': molecule_dir,
             'ansiblecfg_molecule_dir': molecule_dir,
-            'ansiblecfg_ansible_library_path': 'library',
             'rakefile_state_file': state_file,
             'rakefile_serverspec_dir': serverspec_dir,
             'ansiblecfg_defaults': ansiblecfg_defaults_string,
