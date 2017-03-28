@@ -2,6 +2,15 @@
 History
 *******
 
+1.23
+====
+
+* Prescriptive ansible.cfg defaults.
+* Ansible v2 has deprecated ansible_ssh_{host,port,user}.
+* Docker driver: use POSIX shell and support more linux package systems.
+* Add quotes around ansible_ssh_private_key_file format.
+* Ansible 1.9 No longer supported.
+
 1.22
 ====
 
