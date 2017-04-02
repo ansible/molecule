@@ -27,7 +27,8 @@ from molecule.command import destroy
 
 def test_execute_deletes_instances(
         patched_driver_destroy, patched_print_info, patched_remove_templates,
-        patched_remove_inventory, molecule_instance):
+        patched_remove_inventory, patched_remove_vars_files,
+        molecule_instance):
     d = destroy.Destroy({}, {}, molecule_instance)
     result = d.execute()
 
@@ -41,6 +42,7 @@ def test_execute_deletes_instances(
 
     patched_remove_templates.assert_called_once_with()
     patched_remove_inventory.assert_called_once_with()
+    patched_remove_vars_files.assert_called_once_with()
 
 
 def test_execute_raises_on_exit(patched_driver_destroy, patched_print_info,
