@@ -78,6 +78,7 @@ class Molecule(object):
             util.sysexit()
 
         self.config.populate_instance_names(self.driver.platform)
+        self.remove_vars_files()
         self._add_or_update_vars('group_vars')
         self._add_or_update_vars('host_vars')
 
