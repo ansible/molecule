@@ -122,7 +122,7 @@ def test_ansible_connection_options(mocker, vagrant_instance):
         'ansible_host': '127.0.0.1',
         'ansible_port': 2222,
         'ansible_user': 'vagrant',
-        'ansible_private_key_file': '/foo/bar',
+        'ansible_private_key_file': '"/foo/bar"',
         'connection': 'ssh',
         'ansible_ssh_extra_args': ('-o UserKnownHostsFile=/dev/null '
                                    '-o ControlMaster=auto '
