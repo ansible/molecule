@@ -105,10 +105,10 @@ class Vagrant(base.Base):
             d = self._get_instance_config(instance_name)
 
             return {
-                'ansible_ssh_user': d['User'],
-                'ansible_ssh_host': d['HostName'],
-                'ansible_ssh_port': d['Port'],
-                'ansible_ssh_private_key_file': d['IdentityFile'],
+                'ansible_user': d['User'],
+                'ansible_host': d['HostName'],
+                'ansible_port': d['Port'],
+                'ansible_private_key_file': d['IdentityFile'],
                 'connection': 'ssh',
                 'ansible_ssh_extra_args': ' '.join(ssh_options),
             }
