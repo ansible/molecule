@@ -34,8 +34,8 @@ Ansible Support
 
 * 1.9 - Not Supported
 * 2.0 - Not Supported
-* 2.1.4.0 - Supported
-* 2.2.1.0 - Supported
+* 2.1.5.0 - Supported
+* 2.2.2.0 - Supported
 
 Dependencies
 ============
