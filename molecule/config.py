@@ -61,7 +61,7 @@ class Config(object):
     references.
     """
 
-    def __init__(self, molecule_file, args=None, command_args=None):
+    def __init__(self, molecule_file, args={}, command_args={}):
         """
         Initialize a new config version one class and returns None.
 
@@ -74,8 +74,8 @@ class Config(object):
         """
         # TODO(retr0h): This file should be merged.
         self.molecule_file = molecule_file
-        self.args = args if args else {}
-        self.command_args = command_args if command_args else {}
+        self.args = args
+        self.command_args = command_args
         self.config = self._combine()
 
     @property
