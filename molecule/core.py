@@ -189,7 +189,7 @@ class Molecule(object):
         :return: None
         """
 
-        inventory = ''
+        inventory = '[all]\n'
         for instance in self.driver.instances:
             inventory += self.driver.inventory_entry(instance)
 
