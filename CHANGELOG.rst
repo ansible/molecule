@@ -2,6 +2,11 @@
 History
 *******
 
+1.23.1
+======
+
+* Added ungrouped hosts under all.
+
 1.23
 ====
 
