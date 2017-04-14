@@ -2,6 +2,11 @@
 History
 *******
 
+1.23.2
+======
+
+* Globally disable cowsay, since it impacts the idempotence check.
+
 1.23.1
 ======
 
