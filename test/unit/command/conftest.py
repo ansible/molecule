@@ -116,6 +116,11 @@ def patched_remove_templates(mocker):
 
 
 @pytest.fixture
+def patched_remove_vars_files(mocker):
+    return mocker.patch('molecule.core.Molecule.remove_vars_files')
+
+
+@pytest.fixture
 def patched_add_cli_arg(mocker):
     return mocker.patch(
         'molecule.ansible_playbook.AnsiblePlaybook.add_cli_arg')

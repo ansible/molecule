@@ -66,3 +66,15 @@ def test_main_exits_when_missing_config(mocker, patched_print_error,
 
     msg = 'Unable to find molecule.yml. Exiting.'
     patched_print_error.assert_called_once_with(msg)
+
+
+def test_main_removes_vars_files(mocker, molecule_instance,
+                                 patched_remove_vars_files):
+    patched_file_exists = mocker.patch(
+        'molecule.config.ConfigV1.molecule_file_exists')
+    patched_file_exists.return_value = True
+
+    foo = Foo({}, {}, molecule_instance)
+    foo.main()
+
+    patched_remove_vars_files.assert_called_once()
