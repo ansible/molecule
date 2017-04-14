@@ -2,6 +2,11 @@
 History
 *******
 
+1.23.3
+======
+
+* Clean up {group,host}_vars on destroy.
+
 1.23.2
 ======
 
