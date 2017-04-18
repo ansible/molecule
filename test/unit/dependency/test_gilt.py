@@ -44,7 +44,8 @@ def molecule_dependency_section_data():
 
 @pytest.fixture
 def gilt_instance(molecule_dependency_section_data, config_instance):
-    config_instance.config.update(molecule_dependency_section_data)
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_dependency_section_data)
 
     return gilt.Gilt(config_instance)
 

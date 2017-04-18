@@ -21,7 +21,6 @@
 import functools
 import os
 
-import m9dicts
 import pytest
 
 from molecule import util
@@ -30,8 +29,6 @@ from molecule import config
 
 @pytest.helpers.register
 def write_molecule_file(filename, data):
-    data = m9dicts.convert_to(data)
-
     util.write_file(filename, util.safe_dump(data))
 
 

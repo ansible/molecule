@@ -29,7 +29,8 @@ from molecule.verifier import testinfra
 
 @pytest.fixture
 def testinfra_instance(molecule_verifier_section_data, config_instance):
-    config_instance.config.update(molecule_verifier_section_data)
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_verifier_section_data)
 
     return testinfra.Testinfra(config_instance)
 

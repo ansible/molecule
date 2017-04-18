@@ -57,7 +57,7 @@ def test_directory_property(molecule_scenario_directory, scenario_instance):
 
 
 def test_check_sequence_property(scenario_instance):
-    x = ['create', 'converge', 'check']
+    x = ['destroy', 'create', 'converge', 'check', 'destroy']
 
     assert x == scenario_instance.check_sequence
 

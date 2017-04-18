@@ -203,7 +203,8 @@ class Config(object):
                 'setup': 'create.yml',
                 'converge': 'playbook.yml',
                 'teardown': 'destroy.yml',
-                'check_sequence': ['create', 'converge', 'check'],
+                'check_sequence':
+                ['destroy', 'create', 'converge', 'check', 'destroy'],
                 'converge_sequence': ['create', 'converge'],
                 'test_sequence': [
                     'destroy', 'dependency', 'syntax', 'create', 'converge',
@@ -260,8 +261,8 @@ def merge_dicts(a, b):
     :param b: the dictionary to import
     :return: dict
     """
-    conf = anyconfig.to_container(a, ac_merge=MERGE_STRATEGY)
-    conf.update(b)
+    conf = a
+    anyconfig.merge(a, b, ac_merge=MERGE_STRATEGY)
 
     return conf
 

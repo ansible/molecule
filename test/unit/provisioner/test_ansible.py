@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import collections
 import os
 
 import pytest
@@ -68,7 +69,8 @@ def molecule_provisioner_section_data():
 
 @pytest.fixture
 def ansible_instance(molecule_provisioner_section_data, config_instance):
-    config_instance.config.update(molecule_provisioner_section_data)
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_provisioner_section_data)
 
     return ansible.Ansible(config_instance)
 
@@ -499,6 +501,14 @@ def test_vivify(ansible_instance):
     d['bar']['baz'] = 'qux'
 
     assert 'qux' == str(d['bar']['baz'])
+
+
+def test_default_to_regular(ansible_instance):
+    d = collections.defaultdict()
+    assert isinstance(d, collections.defaultdict)
+
+    d = ansible_instance._default_to_regular(d)
+    assert isinstance(d, dict)
 
 
 def test_get_plugin_directory(ansible_instance):

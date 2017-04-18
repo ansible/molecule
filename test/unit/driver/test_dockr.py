@@ -33,7 +33,8 @@ def molecule_driver_section_data():
 
 @pytest.fixture
 def docker_instance(molecule_driver_section_data, config_instance):
-    config_instance.config.update(molecule_driver_section_data)
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_driver_section_data)
 
     return dockr.Dockr(config_instance)
 

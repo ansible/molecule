@@ -22,7 +22,6 @@
 import os
 import shutil
 
-import m9dicts
 import pytest
 
 from molecule import config
@@ -126,7 +125,6 @@ def test_setup_creates_ephemeral_directory(config_instance):
 def test_get_configs(temp_dir, config_instance):
     molecule_file = config_instance.molecule_file
     data = config_instance.config
-    data = m9dicts.convert_to(data)
     util.write_file(molecule_file, util.safe_dump(data))
 
     result = base.get_configs({}, {})

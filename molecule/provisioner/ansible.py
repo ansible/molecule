@@ -22,8 +22,6 @@ import copy
 import collections
 import os
 
-import m9dicts
-
 from molecule import ansible_playbook
 from molecule import logger
 from molecule import util
@@ -233,7 +231,7 @@ class Ansible(object):
                     dd[group]['children'][child_group]['hosts'][
                         instance_name] = connection_options
 
-        return dd
+        return self._default_to_regular(dd)
 
     @property
     def inventory_file(self):
@@ -294,9 +292,7 @@ class Ansible(object):
         """
         self._verify_inventory()
 
-        # Convert the dictlike object to a dict for safe dumping.
-        inventory = m9dicts.convert_to(self.inventory)
-        util.write_file(self.inventory_file, util.safe_dump(inventory))
+        util.write_file(self.inventory_file, util.safe_dump(self.inventory))
 
     def write_config(self):
         """
@@ -391,6 +387,12 @@ class Ansible(object):
         :return: dict
         """
         return collections.defaultdict(self._vivify)
+
+    def _default_to_regular(self, d):
+        if isinstance(d, collections.defaultdict):
+            d = {k: self._default_to_regular(v) for k, v in d.items()}
+
+        return d
 
     def _get_plugin_directory(self):
         return os.path.join(

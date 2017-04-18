@@ -43,7 +43,8 @@ def molecule_lint_section_data():
 
 @pytest.fixture
 def ansible_lint_instance(molecule_lint_section_data, config_instance):
-    config_instance.config.update(molecule_lint_section_data)
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_lint_section_data)
 
     return ansible_lint.AnsibleLint(config_instance)
 

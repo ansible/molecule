@@ -69,7 +69,8 @@ def molecule_dependency_gilt_section_data():
 
 def test_dependency_property_is_gilt(molecule_dependency_gilt_section_data,
                                      config_instance):
-    config_instance.config.update(molecule_dependency_gilt_section_data)
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_dependency_gilt_section_data)
 
     assert isinstance(config_instance.dependency, gilt.Gilt)
 
@@ -81,7 +82,8 @@ def molecule_dependency_invalid_section_data():
 
 def test_dependency_property_raises(molecule_dependency_invalid_section_data,
                                     patched_logger_critical, config_instance):
-    config_instance.config.update(molecule_dependency_invalid_section_data)
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_dependency_invalid_section_data)
     with pytest.raises(SystemExit) as e:
         config_instance.dependency
 
@@ -102,7 +104,8 @@ def molecule_driver_vagrant_section_data():
 
 def test_driver_property_is_vagrant(molecule_driver_vagrant_section_data,
                                     config_instance):
-    config_instance.config.update(molecule_driver_vagrant_section_data)
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_driver_vagrant_section_data)
 
     assert isinstance(config_instance.driver, vagrant.Vagrant)
 
@@ -114,7 +117,8 @@ def molecule_driver_lxc_section_data():
 
 def test_driver_property_is_lxc(molecule_driver_lxc_section_data,
                                 config_instance):
-    config_instance.config.update(molecule_driver_lxc_section_data)
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_driver_lxc_section_data)
 
     assert isinstance(config_instance.driver, lxc.Lxc)
 
@@ -126,7 +130,8 @@ def molecule_driver_lxd_section_data():
 
 def test_driver_property_is_lxd(molecule_driver_lxd_section_data,
                                 config_instance):
-    config_instance.config.update(molecule_driver_lxd_section_data)
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_driver_lxd_section_data)
 
     assert isinstance(config_instance.driver, lxd.Lxd)
 
@@ -138,7 +143,8 @@ def molecule_driver_invalid_section_data():
 
 def test_driver_property_raises(molecule_driver_invalid_section_data,
                                 patched_logger_critical, config_instance):
-    config_instance.config.update(molecule_driver_invalid_section_data)
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_driver_invalid_section_data)
     with pytest.raises(SystemExit) as e:
         config_instance.driver
 
@@ -165,7 +171,8 @@ def molecule_lint_invalid_section_data():
 
 def test_lint_property_raises(molecule_lint_invalid_section_data,
                               patched_logger_critical, config_instance):
-    config_instance.config.update(molecule_lint_invalid_section_data)
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_lint_invalid_section_data)
     with pytest.raises(SystemExit) as e:
         config_instance.lint
 
@@ -190,7 +197,8 @@ def molecule_provisioner_invalid_section_data():
 
 def test_provisioner_property_raises(molecule_provisioner_invalid_section_data,
                                      patched_logger_critical, config_instance):
-    config_instance.config.update(molecule_provisioner_invalid_section_data)
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_provisioner_invalid_section_data)
     with pytest.raises(SystemExit) as e:
         config_instance.provisioner
 
@@ -219,7 +227,8 @@ def molecule_verifier_goss_section_data():
 
 def test_verifier_property_is_goss(molecule_verifier_goss_section_data,
                                    config_instance):
-    config_instance.config.update(molecule_verifier_goss_section_data)
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_verifier_goss_section_data)
 
     assert isinstance(config_instance.verifier, goss.Goss)
 
@@ -231,7 +240,8 @@ def molecule_verifier_invalid_section_data():
 
 def test_verifier_property_raises(molecule_verifier_invalid_section_data,
                                   patched_logger_critical, config_instance):
-    config_instance.config.update(molecule_verifier_invalid_section_data)
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_verifier_invalid_section_data)
     with pytest.raises(SystemExit) as e:
         config_instance.verifier
 
