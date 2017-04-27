@@ -42,7 +42,8 @@ http://molecule.readthedocs.io/en/v2/
 Ansible Support
 ===============
 
-* 2.2.2.0 - Supported
+* 2.2.2.0
+* 2.3.0.0
 
 .. _`Ansible`: https://docs.ansible.com
 
