@@ -38,3 +38,17 @@ def test_execute(mocker, patched_logger_info, patched_ansible_converge,
 
     assert not config_instance.state.converged
     assert not config_instance.state.created
+
+
+def test_execute_skips_when_manual_driver(
+        molecule_driver_static_section_data, patched_logger_warn,
+        patched_ansible_converge, config_instance):
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_driver_static_section_data)
+    d = destroy.Destroy(config_instance)
+    d.execute()
+
+    msg = 'Skipping, instances managed statically.'
+    patched_logger_warn.assert_called_once_with(msg)
+
+    assert not patched_ansible_converge.called

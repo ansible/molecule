@@ -49,7 +49,8 @@ class Login(base.Base):
 
         :return: None
         """
-        if not self._config.state.created:
+        is_static_driver = self._config.driver.name == 'static'
+        if not self._config.state.created and not is_static_driver:
             msg = 'Instances not created.  Please create instances first.'
             util.sysexit_with_message(msg)
 

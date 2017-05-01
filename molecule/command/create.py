@@ -54,6 +54,10 @@ class Create(base.Base):
             os.path.basename(self._config.scenario.setup))
         LOG.info(msg)
 
+        if self._config.driver.name == 'static':
+            LOG.warn('Skipping, instances managed statically.')
+            return
+
         if self._config.state.created:
             LOG.warn('Skipping, instances already created.')
             return

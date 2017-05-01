@@ -42,8 +42,22 @@ def test_execute(mocker, patched_provisioner_write_inventory,
     patched_provisioner_write_inventory.assert_called_once_with()
 
 
-def test_execute_bla(patched_logger_warn, patched_ansible_converge,
-                     config_instance):
+def test_execute_skips_when_manual_driver(
+        molecule_driver_static_section_data, patched_logger_warn,
+        patched_ansible_converge, config_instance):
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_driver_static_section_data)
+    c = create.Create(config_instance)
+    c.execute()
+
+    msg = 'Skipping, instances managed statically.'
+    patched_logger_warn.assert_called_once_with(msg)
+
+    assert not patched_ansible_converge.called
+
+
+def test_execute_skips_when_instances_already_created(
+        patched_logger_warn, patched_ansible_converge, config_instance):
     config_instance.state.change_state('created', True)
     c = create.Create(config_instance)
     c.execute()

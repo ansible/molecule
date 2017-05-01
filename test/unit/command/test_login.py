@@ -41,6 +41,7 @@ def test_execute(mocker, login_instance):
 def test_execute_raises_when_not_converged(patched_logger_critical,
                                            login_instance):
     login_instance._config.state.change_state('created', False)
+
     with pytest.raises(SystemExit) as e:
         login_instance.execute()
 

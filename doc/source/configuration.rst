@@ -64,6 +64,12 @@ LXD
 .. autoclass:: molecule.driver.lxd.Lxd
    :undoc-members:
 
+Static
+^^^^^^
+
+.. autoclass:: molecule.driver.static.Static
+   :undoc-members:
+
 Vagrant
 ^^^^^^^
 

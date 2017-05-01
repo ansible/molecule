@@ -51,6 +51,11 @@ def molecule_driver_section_data():
 
 
 @pytest.fixture
+def molecule_driver_static_section_data():
+    return {'driver': {'name': 'static'}, }
+
+
+@pytest.fixture
 def molecule_lint_section_data():
     return {'lint': {'name': 'ansible-lint'}, }
 

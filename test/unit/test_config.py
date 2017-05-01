@@ -31,6 +31,7 @@ from molecule.dependency import gilt
 from molecule.driver import dockr
 from molecule.driver import lxc
 from molecule.driver import lxd
+from molecule.driver import static
 from molecule.driver import vagrant
 from molecule.lint import ansible_lint
 from molecule.provisioner import ansible
@@ -98,19 +99,6 @@ def test_driver_property(config_instance):
 
 
 @pytest.fixture
-def molecule_driver_vagrant_section_data():
-    return {'driver': {'name': 'vagrant'}, }
-
-
-def test_driver_property_is_vagrant(molecule_driver_vagrant_section_data,
-                                    config_instance):
-    config_instance.merge_dicts(config_instance.config,
-                                molecule_driver_vagrant_section_data)
-
-    assert isinstance(config_instance.driver, vagrant.Vagrant)
-
-
-@pytest.fixture
 def molecule_driver_lxc_section_data():
     return {'driver': {'name': 'lxc'}, }
 
@@ -136,6 +124,27 @@ def test_driver_property_is_lxd(molecule_driver_lxd_section_data,
     assert isinstance(config_instance.driver, lxd.Lxd)
 
 
+def test_driver_property_is_static(molecule_driver_static_section_data,
+                                   config_instance):
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_driver_static_section_data)
+
+    assert isinstance(config_instance.driver, static.Static)
+
+
+@pytest.fixture
+def molecule_driver_vagrant_section_data():
+    return {'driver': {'name': 'vagrant'}, }
+
+
+def test_driver_property_is_vagrant(molecule_driver_vagrant_section_data,
+                                    config_instance):
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_driver_vagrant_section_data)
+
+    assert isinstance(config_instance.driver, vagrant.Vagrant)
+
+
 @pytest.fixture
 def molecule_driver_invalid_section_data():
     return {'driver': {'name': 'invalid'}, }
@@ -155,7 +164,7 @@ def test_driver_property_raises(molecule_driver_invalid_section_data,
 
 
 def test_drivers_property(config_instance):
-    x = ['docker', 'lxc', 'lxd', 'vagrant']
+    x = ['docker', 'lxc', 'lxd', 'static', 'vagrant']
 
     assert x == config_instance.drivers
 
@@ -289,7 +298,7 @@ def test_molecule_file():
 
 
 def test_molecule_drivers():
-    x = ['docker', 'lxc', 'lxd', 'vagrant']
+    x = ['docker', 'lxc', 'lxd', 'static', 'vagrant']
 
     assert x == config.molecule_drivers()
 

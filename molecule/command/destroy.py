@@ -54,6 +54,10 @@ class Destroy(base.Base):
             os.path.basename(self._config.scenario.teardown))
         LOG.info(msg)
 
+        if self._config.driver.name == 'static':
+            LOG.warn('Skipping, instances managed statically.')
+            return
+
         self._config.provisioner.converge(self._config.scenario.teardown)
 
         self._config.state.reset()
