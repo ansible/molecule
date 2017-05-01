@@ -34,9 +34,6 @@ def with_scenario(request):
     os.chdir(scenario_directory)
 
     def cleanup():
-        try:
-            sh.molecule('destroy')
-        except:
-            pass
+        sh.molecule('destroy')
 
     request.addfinalizer(cleanup)
