@@ -38,7 +38,7 @@ class Static(base.Base):
         driver:
           name: static
 
-    Use Molecule with statically created Docker instances.
+    Use Molecule with statically managed Docker instances.
 
     .. code-block:: bash
 
@@ -55,16 +55,29 @@ class Static(base.Base):
           options:
             login_cmd_template: 'docker exec -ti {} bash'
             ansible_connection_options:
-              ansible_connection: docker
+              connection: docker
         platforms:
-          - name: static-instance-default
+          - name: static-instance-docker
 
+    Use Molecule with statically managed instances, which are accessible over
+    ssh.
 
-    Use Molecule with statically created Vagrant instances.
+    .. important::
+
+        It is the developers responsibility to configure the ssh config file.
 
     .. code-block:: yaml
 
-        TODO
+        driver:
+          name: static
+          options:
+            login_cmd_template: 'ssh {} -F /tmp/ssh-config'
+            ansible_connection_options:
+              connection: ssh
+              ansible_ssh_extra_args: -F /path/to/ssh-config
+              ansible_scp_extra_args: -F /path/to/ssh-config
+        platforms:
+          - name: static-instance-vagrant
 
     .. note::
 

@@ -126,7 +126,8 @@ class Ansible(object):
                     self._get_filter_plugin_directory()),
             },
             'ssh_connection': {
-                'ssh_args': '-o UserKnownHostsFile=/dev/null'
+                'ssh_args': '-o UserKnownHostsFile=/dev/null',
+                'scp_if_ssh': True,
             },
         }
 

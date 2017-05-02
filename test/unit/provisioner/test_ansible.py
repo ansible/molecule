@@ -95,7 +95,8 @@ def test_default_config_options_property(ansible_instance):
             '{}:$ANSIBLE_FILTER_PLUGINS'.format(filter_plugins_directory),
         },
         'ssh_connection': {
-            'ssh_args': '-o UserKnownHostsFile=/dev/null'
+            'ssh_args': '-o UserKnownHostsFile=/dev/null',
+            'scp_if_ssh': True,
         },
     }
 
@@ -133,7 +134,8 @@ def test_config_options_property(ansible_instance):
             'foo': 'bar'
         },
         'ssh_connection': {
-            'ssh_args': '-o UserKnownHostsFile=/dev/null'
+            'ssh_args': '-o UserKnownHostsFile=/dev/null',
+            'scp_if_ssh': True,
         },
     }
 
