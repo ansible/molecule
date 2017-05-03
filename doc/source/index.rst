@@ -10,6 +10,7 @@ Contents:
    configuration
    changelog
    authors
+   testing
 
 Indices and tables
 ==================
