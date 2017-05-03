@@ -22,6 +22,7 @@ Options
 * ``ip_pool`` - Name of the network or floating IP pool to get an
   address from (default: ``None``)
 * ``networks``: - Network dict or name or id to attach the server to.
+* ``private``: - Whether or not this cloud is private (default: ``False``)
 
 The ``keypair`` and ``keyfile`` options may also be given to specify the
 keypair to use when accessing your OpenStack service. If neither ``keypair``
