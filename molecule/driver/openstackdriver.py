@@ -41,7 +41,8 @@ class OpenstackDriver(basedriver.BaseDriver):
         super(OpenstackDriver, self).__init__(molecule)
         self._provider = self._get_provider()
         self._platform = self._get_platform()
-        self._openstack = shade.openstack_cloud()
+        private = molecule.config.config['openstack'].get('private', False)
+        self._openstack = shade.openstack_cloud(private=private)
 
     @property
     def name(self):
