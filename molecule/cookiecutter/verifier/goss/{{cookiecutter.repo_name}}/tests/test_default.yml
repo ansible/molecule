@@ -28,7 +28,7 @@
       get_url:
         url: "{{ goss_url }}"
         dest: "/usr/local/bin/goss"
-        sha256sum: "{{ goss_sha256sum }}"
+        checksum: "sha256:{{ goss_sha256sum }}"
         mode: 0755
 
     - name: "Copy tests to remote"
@@ -42,12 +42,26 @@
   hosts: all
   gather_facts: no
 
+  vars:
+    goss_results: "goss_results"
+
   tasks:
-    - name: "test goss files"
+    - name: "Create foler for goss result files"
+      file:
+        path: "{{ goss_results }}"
+        state: directory
+        mode: 0700
+
+    - name: "Test goss files"
       goss:
         path: "/tmp/{{ item }}"
         format: documentation
+        output_file: "{{ goss_results }}/{{ item }}.txt"
       with_items:
         - hosts.yml
+
+    - name: "Display details about goss results"
+      debug:
+        msg: "Goss test results are in folder: {{ goss_results }}"
 
 {%- endraw -%}
