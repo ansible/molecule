@@ -75,7 +75,10 @@ def test_default_options_property(ansible_galaxy_instance, role_file,
 
 
 def test_default_env_property(ansible_galaxy_instance):
-    assert isinstance(ansible_galaxy_instance.default_env, dict)
+    assert 'MOLECULE_FILE' in ansible_galaxy_instance.default_env
+    assert 'MOLECULE_INVENTORY_FILE' in ansible_galaxy_instance.default_env
+    assert 'MOLECULE_SCENARIO_DIRECTORY' in ansible_galaxy_instance.default_env
+    assert 'MOLECULE_INSTANCE_CONFIG' in ansible_galaxy_instance.default_env
 
 
 def test_name_property(ansible_galaxy_instance):

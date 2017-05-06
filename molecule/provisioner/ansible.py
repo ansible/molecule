@@ -153,8 +153,10 @@ class Ansible(object):
 
         :return: dict
         """
-        env = os.environ.copy()
-        env['ANSIBLE_CONFIG'] = self._config.provisioner.config_file
+        env = self._config.merge_dicts(os.environ.copy(), self._config.env)
+        env = self._config.merge_dicts(
+            env, {'ANSIBLE_CONFIG': self._config.provisioner.config_file})
+        env = self._config.merge_dicts(env, self._config.env)
 
         return env
 
@@ -219,15 +221,7 @@ class Ansible(object):
                 instance_name = platform['name']
                 connection_options = self.connection_options(instance_name)
                 dd[group]['hosts'][instance_name] = connection_options
-                dd['ungrouped']['vars'] = {
-                    'molecule_file': self._config.molecule_file,
-                    'molecule_inventory_file': self.inventory_file,
-                    'molecule_scenario_directory':
-                    self._config.scenario.directory,
-                    'molecule_instance_config':
-                    self._config.driver.instance_config,
-                }
-                # Child groups
+                dd['ungrouped']['vars'] = {}
                 for child_group in platform.get('children', []):
                     dd[group]['children'][child_group]['hosts'][
                         instance_name] = connection_options

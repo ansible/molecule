@@ -111,6 +111,10 @@ def test_default_env_property(ansible_instance):
     x = ansible_instance._config.provisioner.config_file
 
     assert x == ansible_instance.default_env['ANSIBLE_CONFIG']
+    assert 'MOLECULE_FILE' in ansible_instance.default_env
+    assert 'MOLECULE_INVENTORY_FILE' in ansible_instance.default_env
+    assert 'MOLECULE_SCENARIO_DIRECTORY' in ansible_instance.default_env
+    assert 'MOLECULE_INSTANCE_CONFIG' in ansible_instance.default_env
 
 
 def test_name_property(ansible_instance):
@@ -183,15 +187,7 @@ def test_group_vars_property(ansible_instance):
 def test_inventory_property(ansible_instance):
     x = {
         'ungrouped': {
-            'vars': {
-                'molecule_file': ansible_instance._config.molecule_file,
-                'molecule_instance_config':
-                ansible_instance._config.driver.instance_config,
-                'molecule_inventory_file':
-                ansible_instance._config.provisioner.inventory_file,
-                'molecule_scenario_directory':
-                ansible_instance._config.scenario.directory,
-            }
+            'vars': {}
         },
         'bar': {
             'hosts': {
@@ -280,15 +276,7 @@ def test_inventory_property_handles_missing_groups(temp_dir, ansible_instance):
                     'foo': 'bar'
                 }
             },
-            'vars': {
-                'molecule_file': ansible_instance._config.molecule_file,
-                'molecule_instance_config':
-                ansible_instance._config.driver.instance_config,
-                'molecule_inventory_file':
-                ansible_instance._config.provisioner.inventory_file,
-                'molecule_scenario_directory':
-                ansible_instance._config.scenario.directory,
-            }
+            'vars': {}
         }
     }
 
@@ -395,15 +383,7 @@ def test_write_inventory(temp_dir, ansible_instance):
 
     x = {
         'ungrouped': {
-            'vars': {
-                'molecule_file': ansible_instance._config.molecule_file,
-                'molecule_instance_config':
-                ansible_instance._config.driver.instance_config,
-                'molecule_inventory_file':
-                ansible_instance._config.provisioner.inventory_file,
-                'molecule_scenario_directory':
-                ansible_instance._config.scenario.directory,
-            }
+            'vars': {}
         },
         'bar': {
             'hosts': {

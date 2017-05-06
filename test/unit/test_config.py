@@ -169,6 +169,17 @@ def test_drivers_property(config_instance):
     assert x == config_instance.drivers
 
 
+def test_env(config_instance):
+    x = {
+        'MOLECULE_FILE': config_instance.molecule_file,
+        'MOLECULE_INVENTORY_FILE': config_instance.provisioner.inventory_file,
+        'MOLECULE_SCENARIO_DIRECTORY': config_instance.scenario.directory,
+        'MOLECULE_INSTANCE_CONFIG': config_instance.driver.instance_config,
+    }
+
+    assert x == config_instance.env
+
+
 def test_lint_property(config_instance):
     assert isinstance(config_instance.lint, ansible_lint.AnsibleLint)
 

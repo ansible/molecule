@@ -103,11 +103,7 @@ class Testinfra(base.Base):
 
         :return: dict
         """
-        d = {
-            'MOLECULE_INVENTORY_FILE': self._config.provisioner.inventory_file
-        }
-
-        return self._config.merge_dicts(os.environ.copy(), d)
+        return self._config.merge_dicts(os.environ.copy(), self._config.env)
 
     def bake(self):
         """

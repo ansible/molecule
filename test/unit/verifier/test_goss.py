@@ -59,7 +59,10 @@ def test_default_options_property(goss_instance):
 
 
 def test_default_env_property(goss_instance):
-    assert isinstance(goss_instance.default_env, dict)
+    assert 'MOLECULE_FILE' in goss_instance.default_env
+    assert 'MOLECULE_INVENTORY_FILE' in goss_instance.default_env
+    assert 'MOLECULE_SCENARIO_DIRECTORY' in goss_instance.default_env
+    assert 'MOLECULE_INSTANCE_CONFIG' in goss_instance.default_env
 
 
 def test_env_property(goss_instance):

@@ -100,7 +100,7 @@ class AnsibleLint(base.Base):
 
         :return: dict
         """
-        return os.environ.copy()
+        return self._config.merge_dicts(os.environ.copy(), self._config.env)
 
     def bake(self):
         """

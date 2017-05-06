@@ -70,8 +70,7 @@ class Scenario(object):
     A good source of examples are the `scenario`_ functional tests.
 
     .. _`scenario`: https://github.com/metacloud/molecule/tree/v2/test/scenarios/driver
-
-    """
+    """  # noqa
 
     def __init__(self, config):
         """

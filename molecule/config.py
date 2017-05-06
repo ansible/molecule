@@ -114,6 +114,15 @@ class Config(object):
         return molecule_drivers()
 
     @property
+    def env(self):
+        return {
+            'MOLECULE_FILE': self.molecule_file,
+            'MOLECULE_INVENTORY_FILE': self.provisioner.inventory_file,
+            'MOLECULE_SCENARIO_DIRECTORY': self.scenario.directory,
+            'MOLECULE_INSTANCE_CONFIG': self.driver.instance_config,
+        }
+
+    @property
     def lint(self):
         lint_name = self.config['lint']['name']
         if lint_name == 'ansible-lint':
