@@ -66,6 +66,11 @@ class Scenario(object):
           name: default
           setup: ../default/create.yml
           teardown: ../default/destroy.yml
+
+    A good source of examples are the `scenario`_ functional tests.
+
+    .. _`scenario`: https://github.com/metacloud/molecule/tree/v2/test/scenarios/driver
+
     """
 
     def __init__(self, config):
