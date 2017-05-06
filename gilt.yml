@@ -1,0 +1,6 @@
+---
+- git: https://github.com/indusbox/goss-ansible.git
+  version: 423e279
+  files:
+    - src: goss.py
+      dst: molecule/verifier/ansible/library/

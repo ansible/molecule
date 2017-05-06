@@ -1,4 +1,5 @@
 docker==2.2.1
+gilt-python
 mock
 pytest
 pytest-cov
