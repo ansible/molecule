@@ -12,6 +12,8 @@ Contributing
 * Reformat the code by following the formatting section below.
 * Submit a pull request.
 
+.. _`Issue`: https://github.com/metacloud/molecule/issues
+
 IRC
 ===
 
@@ -46,59 +48,21 @@ There is also a `pip pattern` for development mode:
 Testing
 =======
 
-Dependencies
-------------
+Perform all of the :ref:`full_testing` testing steps prior to submitting a PR.
 
-Tests will be skipped when the driver's binary is not present. `Serverspec`
-scenarios do require a working ruby, `Bunder`_, and `Rake`_.
 
-Install the test framework `Tox`_.
+Ansible Modules
+===============
 
-.. code-block:: bash
+This project uses the following Ansible modules, and `Gilt`_ to manage them.
 
-  $ pip install tox
+- `Ansible Goss`_
 
-Install the remaining requirements in a venv (optional):
+To bring in updated upstream modules.  Update `gilt.yml` and execute the following:
 
 .. code-block:: bash
 
-  $ pip install -r test-requirements.txt -r requirements.txt
+  $ gilt overlay
 
-.. _`Bundler`: http://bundler.io
-.. _`Rake`: https://github.com/ruby/rake
-.. _`Serverspec`: http://serverspec.org
-
-Unit
-----
-
-Unit tests are invoked by `Tox`_, and composed of a generative envlist.
-
-.. code-block:: bash
-
-  $ tox -l
-  $ py{27}-ansible{19,20,21}-unit
-
-Functional
-----------
-
-Functional tests are invoked by `Tox`_, and composed of a generative envlist.
-
-.. code-block:: bash
-
-  $ tox -l
-  $ py{27}-ansible{19,20,21}-functional
-
-Formatting
-==========
-
-The formatting is done using `YAPF`_.
-
-From the root for the project, run:
-
-.. code-block:: bash
-
-  $ tox -e syntax
-
-.. _`YAPF`: https://github.com/google/yapf
-.. _`Tox`: https://tox.readthedocs.io/en/latest
-.. _`Issue`: https://github.com/metacloud/molecule/issues
+.. _`Ansible Goss`: https://github.com/indusbox/goss-ansible
+.. _`Gilt`: http://gilt.readthedocs.io

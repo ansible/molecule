@@ -8,9 +8,10 @@ Contents:
 
    usage
    configuration
+   testing
+   contributing
    changelog
    authors
-   testing
 
 Indices and tables
 ==================
