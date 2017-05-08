@@ -35,20 +35,68 @@ colorama.init(autoreset=True)
 
 def test_print_debug(capsys):
     util.print_debug('test_title', 'test_data')
-    result_title, _ = capsys.readouterr()
-
-    print(''.join([
+    result, _ = capsys.readouterr()
+    title = [
         colorama.Back.WHITE, colorama.Style.BRIGHT, colorama.Fore.BLACK,
-        'DEBUG: ' + 'test_title', colorama.Fore.RESET, colorama.Back.RESET,
+        'DEBUG: test_title', colorama.Fore.RESET, colorama.Back.RESET,
         colorama.Style.RESET_ALL
-    ]))
-    print(''.join([
+    ]
+    print(''.join(title))
+
+    data = [
         colorama.Fore.BLACK, colorama.Style.BRIGHT, 'test_data',
         colorama.Style.RESET_ALL, colorama.Fore.RESET
-    ]))
-    expected_title, _ = capsys.readouterr()
+    ]
+    print(''.join(data))
 
-    assert expected_title == result_title
+    x, _ = capsys.readouterr()
+    assert x == result
+
+
+def test_print_environment_vars(capsys):
+    env = {
+        'ANSIBLE_FOO': 'foo',
+        'ANSIBLE_BAR': 'bar',
+        'ANSIBLE': None,
+        'MOLECULE_FOO': 'foo',
+        'MOLECULE_BAR': 'bar',
+        'MOLECULE': None
+    }
+    util.print_environment_vars(env)
+    result, _ = capsys.readouterr()
+
+    # Ansible Environment
+    title = [
+        colorama.Back.WHITE, colorama.Style.BRIGHT, colorama.Fore.BLACK,
+        'DEBUG: ANSIBLE ENVIRONMENT', colorama.Fore.RESET, colorama.Back.RESET,
+        colorama.Style.RESET_ALL
+    ]
+    print(''.join(title))
+    data = [
+        colorama.Fore.BLACK, colorama.Style.BRIGHT, util.safe_dump({
+            'ANSIBLE_FOO': 'foo',
+            'ANSIBLE_BAR': 'bar'
+        }), colorama.Style.RESET_ALL, colorama.Fore.RESET
+    ]
+    print(''.join(data))
+
+    # Molecule Environment
+    title = [
+        colorama.Back.WHITE, colorama.Style.BRIGHT, colorama.Fore.BLACK,
+        'DEBUG: MOLECULE ENVIRONMENT', colorama.Fore.RESET,
+        colorama.Back.RESET, colorama.Style.RESET_ALL
+    ]
+    print(''.join(title))
+    data = [
+        colorama.Fore.BLACK, colorama.Style.BRIGHT, util.safe_dump({
+            'MOLECULE_FOO': 'foo',
+            'MOLECULE_BAR': 'bar'
+        }), colorama.Style.RESET_ALL, colorama.Fore.RESET
+    ]
+    print(''.join(data))
+
+    x, _ = capsys.readouterr()
+    assert x == result
 
 
 def test_sysexit():
@@ -90,11 +138,28 @@ def test_run_command():
     assert 0 == x.exit_code
 
 
-def test_run_command_with_debug(patched_print_debug):
+def test_run_command_with_debug(mocker, patched_print_debug):
+    cmd = sh.ls.bake(_env={'ANSIBLE_FOO': 'foo', 'MOLECULE_BAR': 'bar'})
+    util.run_command(cmd, debug=True)
+    x = [
+        mocker.call('ANSIBLE ENVIRONMENT', '---\nANSIBLE_FOO: foo\n'),
+        mocker.call('MOLECULE ENVIRONMENT', '---\nMOLECULE_BAR: bar\n'),
+        mocker.call('COMMAND', sh.which('ls'))
+    ]
+
+    assert x == patched_print_debug.mock_calls
+
+
+def test_run_command_with_debug_handles_no_env(mocker, patched_print_debug):
     cmd = sh.ls.bake()
     util.run_command(cmd, debug=True)
+    x = [
+        mocker.call('ANSIBLE ENVIRONMENT', '--- {}\n'),
+        mocker.call('MOLECULE ENVIRONMENT', '--- {}\n'),
+        mocker.call('COMMAND', sh.which('ls'))
+    ]
 
-    patched_print_debug.assert_called_once_with('COMMAND', sh.which('ls'))
+    assert x == patched_print_debug.mock_calls
 
 
 def test_os_walk(temp_dir):

@@ -37,15 +37,31 @@ colorama.init(autoreset=True)
 
 
 def print_debug(title, data):
-    print(''.join([
-        colorama.Back.WHITE, colorama.Style.BRIGHT, colorama.Fore.BLACK,
-        'DEBUG: ' + title, colorama.Fore.RESET, colorama.Back.RESET,
-        colorama.Style.RESET_ALL
-    ]))
-    print(''.join([
+    title = 'DEBUG: {}'.format(title)
+    title = [
+        colorama.Back.WHITE, colorama.Style.BRIGHT, colorama.Fore.BLACK, title,
+        colorama.Fore.RESET, colorama.Back.RESET, colorama.Style.RESET_ALL
+    ]
+    print(''.join(title))
+    data = [
         colorama.Fore.BLACK, colorama.Style.BRIGHT, data,
         colorama.Style.RESET_ALL, colorama.Fore.RESET
-    ]))
+    ]
+    print(''.join(data))
+
+
+def print_environment_vars(env):
+    """
+    Print ``Ansible`` and ``Molecule`` environment variables and returns None.
+
+    :param env: A dict containing the shell's environment as collected by
+    ``os.environ``.
+    :return: None
+    """
+    ansible_env = {k: v for (k, v) in env.items() if 'ANSIBLE_' in k}
+    print_debug('ANSIBLE ENVIRONMENT', safe_dump(ansible_env))
+    molecule_env = {k: v for (k, v) in env.items() if 'MOLECULE_' in k}
+    print_debug('MOLECULE ENVIRONMENT', safe_dump(molecule_env))
 
 
 def sysexit(code=1):
@@ -60,11 +76,15 @@ def sysexit_with_message(msg, code=1):
 def run_command(cmd, debug=False):
     """
     Execute the given command and returns None.
+
     :param cmd: A `sh.Command` object to execute.
     :param debug: An optional bool to toggle debug output.
     :return: ``sh`` object
     """
     if debug:
+        # WARN(retr0h): Uses an internal ``sh`` data structure to dig
+        # the environment out of the ``sh.command`` object.
+        print_environment_vars(cmd._partial_call_args.get('env', {}))
         print_debug('COMMAND', str(cmd))
     return cmd()
 
