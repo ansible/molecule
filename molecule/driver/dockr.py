@@ -50,14 +50,14 @@ class Dockr(base.Base):
 
     @property
     def login_cmd_template(self):
-        return 'docker exec -ti {} bash'
+        return 'docker exec -ti {instance} bash'
 
     @property
     def safe_files(self):
         return []
 
-    def login_args(self, instance_name):
-        return [instance_name]
+    def login_options(self, instance_name):
+        return {'instance': instance_name}
 
     def ansible_connection_options(self, instance_name):
         return {'ansible_connection': 'docker'}

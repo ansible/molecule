@@ -83,14 +83,14 @@ class Login(base.Base):
         return match[0]
 
     def _get_login(self, hostname):  # pragma: no cover
-        login_cmd = self._config.driver.login_cmd_template
-        login_args = self._config.driver.login_args(hostname)
+        login_options = self._config.driver.login_options(hostname)
+        login_cmd = self._config.driver.login_cmd_template.format(
+            **login_options)
 
         lines, columns = os.popen('stty size', 'r').read().split()
         dimensions = (int(lines), int(columns))
-        self._pt = pexpect.spawn(
-            '/usr/bin/env ' + login_cmd.format(*login_args),
-            dimensions=dimensions)
+        cmd = '/usr/bin/env {}'.format(login_cmd)
+        self._pt = pexpect.spawn(cmd, dimensions=dimensions)
         signal.signal(signal.SIGWINCH, self._sigwinch_passthrough)
         self._pt.interact()
 

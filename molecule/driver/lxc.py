@@ -50,14 +50,14 @@ class Lxc(base.Base):
 
     @property
     def login_cmd_template(self):
-        return 'sudo lxc-attach -n {}'
+        return 'sudo lxc-attach -n {instance}'
 
     @property
     def safe_files(self):
         return []
 
-    def login_args(self, instance_name):
-        return [instance_name]
+    def login_options(self, instance_name):
+        return {'instance': instance_name}
 
     def ansible_connection_options(self, instance_name):
         return {'ansible_connection': 'lxc'}

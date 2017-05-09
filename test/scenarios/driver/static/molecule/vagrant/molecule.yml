@@ -4,7 +4,7 @@ dependency:
 driver:
   name: static
   options:
-    login_cmd_template: 'ssh {} -F /tmp/ssh-config'
+    login_cmd_template: 'ssh {instance} -F /tmp/ssh-config'
     ansible_connection_options:
       connection: ssh
       ansible_ssh_extra_args: -F /tmp/ssh-config

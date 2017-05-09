@@ -59,15 +59,17 @@ def test_options_property(docker_instance):
 
 
 def test_login_cmd_template_property(docker_instance):
-    assert 'docker exec -ti {} bash' == docker_instance.login_cmd_template
+    x = 'docker exec -ti {instance} bash'
+
+    assert x == docker_instance.login_cmd_template
 
 
 def test_safe_files(docker_instance):
     assert [] == docker_instance.safe_files
 
 
-def test_login_args(docker_instance):
-    assert ['foo'] == docker_instance.login_args('foo')
+def test_login_options(docker_instance):
+    assert {'instance': 'foo'} == docker_instance.login_options('foo')
 
 
 def test_ansible_connection_options(docker_instance):

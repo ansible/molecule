@@ -53,7 +53,7 @@ class Static(base.Base):
         driver:
           name: static
           options:
-            login_cmd_template: 'docker exec -ti {} bash'
+            login_cmd_template: 'docker exec -ti {instance} bash'
             ansible_connection_options:
               connection: docker
         platforms:
@@ -71,7 +71,7 @@ class Static(base.Base):
         driver:
           name: static
           options:
-            login_cmd_template: 'ssh {} -F /tmp/ssh-config'
+            login_cmd_template: 'ssh {instance} -F /tmp/ssh-config'
             ansible_connection_options:
               connection: ssh
               ansible_ssh_extra_args: -F /path/to/ssh-config
@@ -101,8 +101,8 @@ class Static(base.Base):
     def safe_files(self):
         return []
 
-    def login_args(self, instance_name):
-        return [instance_name]
+    def login_options(self, instance_name):
+        return {'instance': instance_name}
 
     def ansible_connection_options(self, instance_name):
         return self.options['ansible_connection_options']

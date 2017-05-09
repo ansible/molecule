@@ -62,7 +62,12 @@ def test_options_property(vagrant_instance):
 
 
 def test_login_cmd_template_property(vagrant_instance):
-    x = 'ssh {} -l {} -p {} -i {}'
+    x = ('ssh {instance} -l {user} -p {port} -i {identity_file} '
+         '-o UserKnownHostsFile=/dev/null '
+         '-o ControlMaster=auto '
+         '-o ControlPersist=60s '
+         '-o IdentitiesOnly=yes '
+         '-o StrictHostKeyChecking=no')
 
     assert x == vagrant_instance.login_cmd_template
 
@@ -80,7 +85,7 @@ def test_safe_files(vagrant_instance):
     assert x == vagrant_instance.safe_files
 
 
-def test_login_args(mocker, vagrant_instance):
+def test_login_options(mocker, vagrant_instance):
     m = mocker.patch('molecule.util.safe_load_file')
     m.return_value = {
         'results': [{
@@ -97,9 +102,14 @@ def test_login_args(mocker, vagrant_instance):
             'IdentityFile': '/foo/bar'
         }]
     }
-    x = ['127.0.0.1', 'vagrant', 2222, '/foo/bar']
+    x = {
+        'instance': '127.0.0.1',
+        'user': 'vagrant',
+        'port': 2222,
+        'identity_file': '/foo/bar',
+    }
 
-    assert x == vagrant_instance.login_args('foo')
+    assert x == vagrant_instance.login_options('foo')
 
 
 def test_ansible_connection_options(mocker, vagrant_instance):
@@ -128,7 +138,8 @@ def test_ansible_connection_options(mocker, vagrant_instance):
         'ansible_ssh_extra_args': ('-o UserKnownHostsFile=/dev/null '
                                    '-o ControlMaster=auto '
                                    '-o ControlPersist=60s '
-                                   '-o IdentitiesOnly=yes')
+                                   '-o IdentitiesOnly=yes '
+                                   '-o StrictHostKeyChecking=no')
     }
 
     assert x == vagrant_instance.ansible_connection_options('foo')
@@ -189,3 +200,15 @@ def test_status(mocker, vagrant_instance):
     assert result[1].scenario_name == 'default'
     assert result[1].created == 'False'
     assert result[1].converged == 'False'
+
+
+def test_get_ssh_connection_options(vagrant_instance):
+    x = [
+        '-o UserKnownHostsFile=/dev/null',
+        '-o ControlMaster=auto',
+        '-o ControlPersist=60s',
+        '-o IdentitiesOnly=yes',
+        '-o StrictHostKeyChecking=no',
+    ]
+
+    assert x == vagrant_instance._get_ssh_connection_options()

@@ -81,7 +81,13 @@ class Vagrant(base.Base):
 
     @property
     def login_cmd_template(self):
-        return 'ssh {} -l {} -p {} -i {}'
+        connection_options = ' '.join(self._get_ssh_connection_options())
+
+        return ('ssh {{instance}} '
+                '-l {{user}} '
+                '-p {{port}} '
+                '-i {{identity_file}} '
+                '{}').format(connection_options)
 
     @property
     def safe_files(self):
@@ -89,18 +95,17 @@ class Vagrant(base.Base):
             self.vagrantfile, self.vagrantfile_config, self.instance_config
         ]
 
-    def login_args(self, instance_name):
+    def login_options(self, instance_name):
         d = self._get_instance_config(instance_name)
 
-        return [d['HostName'], d['User'], d['Port'], d['IdentityFile']]
+        return {
+            'instance': d['HostName'],
+            'user': d['User'],
+            'port': d['Port'],
+            'identity_file': d['IdentityFile'],
+        }
 
     def ansible_connection_options(self, instance_name):
-        ssh_options = [
-            '-o UserKnownHostsFile=/dev/null',
-            '-o ControlMaster=auto',
-            '-o ControlPersist=60s',
-            '-o IdentitiesOnly=yes',
-        ]
         try:
             d = self._get_instance_config(instance_name)
 
@@ -110,7 +115,8 @@ class Vagrant(base.Base):
                 'ansible_port': d['Port'],
                 'ansible_private_key_file': d['IdentityFile'],
                 'connection': 'ssh',
-                'ansible_ssh_extra_args': ' '.join(ssh_options),
+                'ansible_ssh_extra_args':
+                ' '.join(self._get_ssh_connection_options()),
             }
         except StopIteration:
             return {}
@@ -134,3 +140,12 @@ class Vagrant(base.Base):
         return next(
             item for item in instance_config_dict.get('results', {})
             if item['Host'] == instance_name)
+
+    def _get_ssh_connection_options(self):
+        return [
+            '-o UserKnownHostsFile=/dev/null',
+            '-o ControlMaster=auto',
+            '-o ControlPersist=60s',
+            '-o IdentitiesOnly=yes',
+            '-o StrictHostKeyChecking=no',
+        ]

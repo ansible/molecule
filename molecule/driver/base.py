@@ -68,7 +68,7 @@ class Base(object):
     @abc.abstractproperty
     def login_cmd_template(self):  # pragma: no cover
         """
-        The login command template to be populated by `login_args` and
+        The login command template to be populated by `login_options` and
         returns a string.
 
         :returns: str
@@ -85,12 +85,12 @@ class Base(object):
         pass
 
     @abc.abstractmethod
-    def login_args(self, instance_name):  # pragma: no cover
+    def login_options(self, instance_name):  # pragma: no cover
         """
-        Arguments used in the login command and returns a list.
+        Options used in the login command and returns a dict.
 
         :param instance_name: A string containing the instance to login to.
-        :returns: list
+        :returns: dict
         """
         pass
 

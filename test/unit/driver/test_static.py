@@ -32,7 +32,7 @@ def molecule_driver_section_data():
         'driver': {
             'name': 'static',
             'options': {
-                'login_cmd_template': 'docker exec -ti {} bash',
+                'login_cmd_template': 'docker exec -ti {instance} bash',
                 'ansible_connection_options': {
                     'ansible_connection': 'docker'
                 }
@@ -69,22 +69,24 @@ def test_options_property(static_instance):
         'ansible_connection_options': {
             'ansible_connection': 'docker'
         },
-        'login_cmd_template': 'docker exec -ti {} bash'
+        'login_cmd_template': 'docker exec -ti {instance} bash'
     }
 
     assert x == static_instance.options
 
 
 def test_login_cmd_template_property(static_instance):
-    assert 'docker exec -ti {} bash' == static_instance.login_cmd_template
+    x = 'docker exec -ti {instance} bash'
+
+    assert x == static_instance.login_cmd_template
 
 
 def test_safe_files(static_instance):
     assert [] == static_instance.safe_files
 
 
-def test_login_args(static_instance):
-    assert ['foo'] == static_instance.login_args('foo')
+def test_login_options(static_instance):
+    assert {'instance': 'foo'} == static_instance.login_options('foo')
 
 
 def test_ansible_connection_options(static_instance):

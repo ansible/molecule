@@ -59,15 +59,15 @@ def test_options_property(lxc_instance):
 
 
 def test_login_cmd_template_property(lxc_instance):
-    assert 'sudo lxc-attach -n {}' == lxc_instance.login_cmd_template
+    assert 'sudo lxc-attach -n {instance}' == lxc_instance.login_cmd_template
 
 
 def test_safe_files(lxc_instance):
     assert [] == lxc_instance.safe_files
 
 
-def test_login_args(lxc_instance):
-    assert ['foo'] == lxc_instance.login_args('foo')
+def test_login_options(lxc_instance):
+    assert {'instance': 'foo'} == lxc_instance.login_options('foo')
 
 
 def test_ansible_connection_options(lxc_instance):

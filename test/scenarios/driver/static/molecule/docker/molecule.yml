@@ -4,7 +4,7 @@ dependency:
 driver:
   name: static
   options:
-    login_cmd_template: 'docker exec -ti {} bash'
+    login_cmd_template: 'docker exec -ti {instance} bash'
     ansible_connection_options:
       ansible_connection: docker
 lint:
