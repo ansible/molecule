@@ -18,14 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import os
-import re
-
-import pexpect
 import pytest
-import sh
-
-from molecule import config
 
 pytestmark = pytest.helpers.supports_lxd()
 
@@ -33,124 +26,92 @@ pytestmark = pytest.helpers.supports_lxd()
 @pytest.mark.parametrize(
     'with_scenario', ['driver/lxd'], indirect=['with_scenario'])
 def test_command_check(with_scenario):
-    sh.molecule('check')
+    pytest.helpers.check()
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/lxd'], indirect=['with_scenario'])
 def test_command_converge(with_scenario):
-    sh.molecule('converge')
+    pytest.helpers.converge()
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/lxd'], indirect=['with_scenario'])
 def test_command_create(with_scenario):
-    sh.molecule('create')
+    pytest.helpers.create()
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['dependency'], indirect=['with_scenario'])
 def test_command_dependency_ansible_galaxy(with_scenario):
-    sh.molecule('dependency', '--scenario-name', 'ansible-galaxy')
-
-    dependency_role = os.path.join('molecule', 'ansible-galaxy', '.molecule',
-                                   'roles', 'timezone')
-    assert os.path.isdir(dependency_role)
+    pytest.helpers.dependency_ansible_galaxy()
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['dependency'], indirect=['with_scenario'])
 def test_command_dependency_gilt(with_scenario):
-    sh.molecule('dependency', '--scenario-name', 'gilt')
-
-    dependency_role = os.path.join('molecule', 'ansible-galaxy', '.molecule',
-                                   'roles', 'timezone')
-    assert os.path.isdir(dependency_role)
+    pytest.helpers.dependency_gilt()
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/lxd'], indirect=['with_scenario'])
 def test_command_destroy(with_scenario):
-    sh.molecule('destroy')
+    pytest.helpers.destroy()
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/lxd'], indirect=['with_scenario'])
 def test_command_idempotence(with_scenario):
-    sh.molecule('create')
-    sh.molecule('converge')
-    sh.molecule('idempotence')
+    pytest.helpers.idempotence()
 
 
 def test_command_init_role(temp_dir):
-    role_directory = os.path.join(temp_dir.strpath, 'test-init')
-    sh.molecule('init', 'role', '--role-name', 'test-init', '--driver-name',
-                'lxd')
-    os.chdir(role_directory)
-
-    sh.molecule('test')
+    pytest.helpers.init_role(temp_dir)
 
 
 def test_command_init_scenario(temp_dir):
-    molecule_directory = config.molecule_directory(temp_dir.strpath)
-    scenario_directory = os.path.join(molecule_directory, 'test-scenario')
-    sh.molecule('init', 'scenario', '--scenario-name', 'test-scenario',
-                '--role-name', 'test-init', '--driver-name', 'lxd')
-
-    assert os.path.isdir(scenario_directory)
+    pytest.helpers.init_scenario(temp_dir)
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/lxd'], indirect=['with_scenario'])
 def test_command_lint(with_scenario):
-    sh.molecule('lint')
+    pytest.helpers.lint()
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/lxd'], indirect=['with_scenario'])
 def test_command_list(with_scenario):
-    sh.molecule('destroy')
-    out = sh.molecule('list', '--scenario-name', 'default')
+    regexps = ['instance-1-default.*Lxd.*Ansible.*default.*False.*False', ]
+    pytest.helpers.list(regexps)
 
-    assert re.search('instance-1-default.*Lxd.*Ansible.*default.*False.*False',
-                     out.stdout)
-
-    out = sh.molecule('list', '--scenario-name', 'multi-node')
-    assert re.search(
+    regexps = [
         'instance-1-multi-node.*Lxd.*Ansible.*multi-node.*False.*False',
-        out.stdout)
-    assert re.search(
         'instance-2-multi-node.*Lxd.*Ansible.*multi-node.*False.*False',
-        out.stdout)
+    ]
+    pytest.helpers.list(regexps, 'multi-node')
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/lxd'], indirect=['with_scenario'])
 def test_command_login(with_scenario):
-    sh.molecule('create')
-
-    child = pexpect.spawn(
-        'molecule login --host instance  --scenario-name default')
-    child.expect('.*instance-[12].*')
-    # If the test returns and doesn't hang it succeeded.
-    child.sendline('exit')
+    pytest.helpers.login('instance-1', '.*instance-1.*', 'multi-node')
+    pytest.helpers.login('instance-2', '.*instance-2.*', 'multi-node')
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/lxd'], indirect=['with_scenario'])
 def test_command_syntax(with_scenario):
-    sh.molecule('syntax')
+    pytest.helpers.syntax()
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/lxd'], indirect=['with_scenario'])
 def test_command_test(with_scenario):
-    sh.molecule('test')
+    pytest.helpers.test()
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/lxd'], indirect=['with_scenario'])
 def test_command_verify(with_scenario):
-    sh.molecule('create', '--scenario-name', 'default')
-    sh.molecule('converge', '--scenario-name', 'default')
-    sh.molecule('verify', '--scenario-name', 'default')
+    pytest.helpers.verify()

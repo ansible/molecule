@@ -64,7 +64,7 @@ class Config(object):
 
     def __init__(self, molecule_file, args={}, command_args={}):
         """
-        Initialize a new config version one class and returns None.
+        Initialize a new config class and returns None.
 
         :param molecule_file: A string containing the path to the Molecule file
          to be parsed.
@@ -167,7 +167,8 @@ class Config(object):
     def _combine(self):
         """
         Perform a prioritized recursive merge of the `molecule_file` with
-        defaults and returns a new dict.
+        defaults, interpolate the result with environment variables, and
+        returns a new dict.
 
         :return: dict
         """

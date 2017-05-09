@@ -18,11 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import re
-
-import pexpect
 import pytest
-import sh
 
 pytestmark = pytest.helpers.supports_docker()
 
@@ -30,22 +26,19 @@ pytestmark = pytest.helpers.supports_docker()
 @pytest.mark.parametrize(
     'with_scenario', ['driver/static'], indirect=['with_scenario'])
 def test_command_check(with_scenario):
-    sh.molecule('check', '--scenario-name', 'docker')
-    sh.molecule('check', '--scenario-name', 'vagrant')
+    pytest.helpers.check('docker')
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/static'], indirect=['with_scenario'])
 def test_command_converge(with_scenario):
-    sh.molecule('converge', '--scenario-name', 'docker')
-    sh.molecule('converge', '--scenario-name', 'vagrant')
+    pytest.helpers.converge('docker')
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/static'], indirect=['with_scenario'])
 def test_command_create(with_scenario):
-    sh.molecule('create', '--scenario-name', 'docker')
-    sh.molecule('create', '--scenario-name', 'vagrant')
+    pytest.helpers.create('docker')
 
 
 @pytest.mark.parametrize(
@@ -63,20 +56,13 @@ def test_command_dependency_gilt(with_scenario):
 @pytest.mark.parametrize(
     'with_scenario', ['driver/static'], indirect=['with_scenario'])
 def test_command_destroy(with_scenario):
-    sh.molecule('destroy', '--scenario-name', 'docker')
-    sh.molecule('destroy', '--scenario-name', 'vagrant')
+    pytest.helpers.destroy('docker')
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/static'], indirect=['with_scenario'])
 def test_command_idempotence(with_scenario):
-    sh.molecule('create', '--scenario-name', 'docker')
-    sh.molecule('converge', '--scenario-name', 'docker')
-    sh.molecule('idempotence', '--scenario-name', 'docker')
-
-    sh.molecule('create', '--scenario-name', 'vagrant')
-    sh.molecule('converge', '--scenario-name', 'vagrant')
-    sh.molecule('idempotence', '--scenario-name', 'vagrant')
+    pytest.helpers.idempotence('docker')
 
 
 def test_command_init_role(temp_dir):
@@ -90,65 +76,38 @@ def test_command_init_scenario(temp_dir):
 @pytest.mark.parametrize(
     'with_scenario', ['driver/static'], indirect=['with_scenario'])
 def test_command_lint(with_scenario):
-    sh.molecule('lint', '--scenario-name', 'docker')
-    sh.molecule('lint', '--scenario-name', 'vagrant')
+    pytest.helpers.lint('docker')
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/static'], indirect=['with_scenario'])
 def test_command_list(with_scenario):
-    sh.molecule('destroy', '--scenario-name', 'docker')
-    out = sh.molecule('list', '--scenario-name', 'docker')
-
-    assert re.search(
+    regexps = [
         'static-instance-docker.*Static.*Ansible.*docker.*False.*True',
-        out.stdout)
-
-    sh.molecule('destroy', '--scenario-name', 'vagrant')
-    out = sh.molecule('list', '--scenario-name', 'vagrant')
-
-    assert re.search(
-        'static-instance-vagrant.*Static.*Ansible.*vagrant.*False.*True',
-        out.stdout)
+    ]
+    pytest.helpers.list(regexps, 'docker')
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/static'], indirect=['with_scenario'])
 def test_command_login(with_scenario):
-    child = pexpect.spawn(
-        'molecule login --host static-instance --scenario-name docker')
-    child.expect('.*static-instance-docker.*')
-    # If the test returns and doesn't hang it succeeded.
-    child.sendline('exit')
-
-    child = pexpect.spawn(
-        'molecule login --host static-instance --scenario-name vagrant')
-    child.expect('.*static-instance-vagrant.*')
-    # If the test returns and doesn't hang it succeeded.
-    child.sendline('exit')
+    pytest.helpers.login('static-instance-docker',
+                         '.*static-instance-docker.*', 'docker')
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/static'], indirect=['with_scenario'])
 def test_command_syntax(with_scenario):
-    sh.molecule('syntax', '--scenario-name', 'docker')
-    sh.molecule('syntax', '--scenario-name', 'vagrant')
+    pytest.helpers.syntax('docker')
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/static'], indirect=['with_scenario'])
 def test_command_test(with_scenario):
-    sh.molecule('test', '--scenario-name', 'docker')
-    sh.molecule('test', '--scenario-name', 'vagrant')
+    pytest.helpers.test('docker')
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/static'], indirect=['with_scenario'])
 def test_command_verify(with_scenario):
-    sh.molecule('create', '--scenario-name', 'docker')
-    sh.molecule('converge', '--scenario-name', 'docker')
-    sh.molecule('verify', '--scenario-name', 'docker')
-
-    sh.molecule('create', '--scenario-name', 'vagrant')
-    sh.molecule('converge', '--scenario-name', 'vagrant')
-    sh.molecule('verify', '--scenario-name', 'vagrant')
+    pytest.helpers.verify('docker')

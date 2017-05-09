@@ -19,9 +19,13 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import os
+import re
 
+import pexpect
 import pytest
 import sh
+
+from molecule import config
 
 
 @pytest.fixture()
@@ -37,3 +41,107 @@ def with_scenario(request):
         sh.molecule('destroy')
 
     request.addfinalizer(cleanup)
+
+
+@pytest.helpers.register
+def check(scenario='default'):
+    sh.molecule('check', '--scenario-name', scenario)
+
+
+@pytest.helpers.register
+def converge(scenario='default'):
+    sh.molecule('converge', '--scenario-name', scenario)
+
+
+@pytest.helpers.register
+def create(scenario='default'):
+    sh.molecule('create', '--scenario-name', scenario)
+
+
+@pytest.helpers.register
+def dependency_ansible_galaxy(scenario='default'):
+    sh.molecule('dependency', '--scenario-name', 'ansible-galaxy')
+    dependency_role = os.path.join('molecule', 'ansible-galaxy', '.molecule',
+                                   'roles', 'timezone')
+    assert os.path.isdir(dependency_role)
+
+
+@pytest.helpers.register
+def dependency_gilt(scenario='default'):
+    sh.molecule('dependency', '--scenario-name', 'gilt')
+
+    dependency_role = os.path.join('molecule', 'ansible-galaxy', '.molecule',
+                                   'roles', 'timezone')
+    assert os.path.isdir(dependency_role)
+
+
+@pytest.helpers.register
+def destroy(scenario='default'):
+    sh.molecule('destroy', '--scenario-name', scenario)
+
+
+@pytest.helpers.register
+def idempotence(scenario='default'):
+    sh.molecule('create', '--scenario-name', scenario)
+    sh.molecule('converge', '--scenario-name', scenario)
+    sh.molecule('idempotence', '--scenario-name', scenario)
+
+
+@pytest.helpers.register
+def init_role(temp_dir, scenario='default'):
+    role_directory = os.path.join(temp_dir.strpath, 'test-init')
+    sh.molecule('init', 'role', '--role-name', 'test-init')
+    os.chdir(role_directory)
+
+    sh.molecule('test')
+
+
+@pytest.helpers.register
+def init_scenario(temp_dir, scenario='default'):
+    molecule_directory = config.molecule_directory(temp_dir.strpath)
+    scenario_directory = os.path.join(molecule_directory, 'test-scenario')
+    sh.molecule('init', 'scenario', '--scenario-name', 'test-scenario',
+                '--role-name', 'test-init')
+
+    assert os.path.isdir(scenario_directory)
+
+
+@pytest.helpers.register
+def lint(scenario='default'):
+    sh.molecule('lint', '--scenario-name', scenario)
+
+
+@pytest.helpers.register
+def list(regexps, scenario='default'):
+    out = sh.molecule('list', '--scenario-name', scenario)
+
+    for regexp in regexps:
+        assert re.search(regexp, out.stdout)
+
+
+@pytest.helpers.register
+def login(instance, regexp, scenario='default'):
+    sh.molecule('create', '--scenario-name', scenario)
+    child_cmd = 'molecule login --host {} --scenario-name {}'.format(instance,
+                                                                     scenario)
+    child = pexpect.spawn(child_cmd)
+    child.expect(regexp)
+    # If the test returns and doesn't hang it succeeded.
+    child.sendline('exit')
+
+
+@pytest.helpers.register
+def syntax(scenario='default'):
+    sh.molecule('syntax', '--scenario-name', scenario)
+
+
+@pytest.helpers.register
+def test(scenario='default'):
+    sh.molecule('test')
+
+
+@pytest.helpers.register
+def verify(scenario='default'):
+    sh.molecule('create', '--scenario-name', scenario)
+    sh.molecule('converge', '--scenario-name', scenario)
+    sh.molecule('verify', '--scenario-name', scenario)
