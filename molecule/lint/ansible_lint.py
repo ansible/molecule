@@ -61,7 +61,7 @@ class AnsibleLint(base.Base):
 
     .. code-block:: yaml
 
-        verifier:
+        lint:
           name: ansible-lint
           env:
             FOO: bar
