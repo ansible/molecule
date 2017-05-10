@@ -24,6 +24,8 @@ import click
 import tabulate
 
 from molecule import logger
+from molecule import status
+from molecule import util
 from molecule.command import base
 
 LOG = logger.get_logger(__name__)
@@ -41,6 +43,11 @@ class List(base.Base):
 
         >>> molecule list --scenario-name foo
 
+        Machine readable output:
+
+        >>> molecule list --format plain
+        >>> molecule list --format yaml
+
         Executing with `debug`:
 
         >>> molecule --debug list
@@ -53,12 +60,18 @@ class List(base.Base):
 @click.command()
 @click.pass_context
 @click.option('--scenario-name', help='Name of the scenario to target.')
-def list(ctx, scenario_name):  # pragma: no cover
+@click.option(
+    '--format',
+    type=click.Choice(['simple', 'plain', 'yaml']),
+    default='simple',
+    help='Change output format. (simple)')
+def list(ctx, scenario_name, format):  # pragma: no cover
     """ Lists status of instances. """
     args = ctx.obj.get('args')
     command_args = {
         'subcommand': __name__,
         'scenario_name': scenario_name,
+        'format': format,
     }
 
     statuses = []
@@ -66,12 +79,17 @@ def list(ctx, scenario_name):  # pragma: no cover
         l = List(c)
         statuses.extend(l.execute())
 
-    _print_tabulate_data([
-        'Instance', 'Driver', 'Provisioner', 'Scenario', 'Created', 'Converged'
-    ], statuses)
+    headers = [util.title(name) for name in status.get_status()._fields]
+    if format == 'simple' or format == 'plain':
+        table_format = 'simple'
+        if format == 'plain':
+            headers = []
+            table_format = format
+        _print_tabulate_data(headers, statuses, table_format)
+    else:
+        _print_yaml_data(headers, statuses)
 
-
-def _print_tabulate_data(headers, data):  # pragma: no cover
+def _print_tabulate_data(headers, data, table_format):  # pragma: no cover
     """
     Shows the tabulate data on the screen and returns None.
 
@@ -79,4 +97,13 @@ def _print_tabulate_data(headers, data):  # pragma: no cover
     :param data:  A list of tabular data to display.
     :returns: None
     """
-    print(tabulate.tabulate(data, headers, tablefmt='orgtbl'))
+    print(tabulate.tabulate(data, headers, tablefmt=table_format))
+
+
+def _print_yaml_data(headers, data):  # pragma: no cover
+    l = [
+        dict(zip(headers, [getattr(datum, field) for field in datum._fields]))
+        for datum in data
+    ]
+
+    print(util.safe_dump(l))

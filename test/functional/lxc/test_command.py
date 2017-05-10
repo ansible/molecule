@@ -82,14 +82,27 @@ def test_command_lint(with_scenario):
 @pytest.mark.parametrize(
     'with_scenario', ['driver/lxc'], indirect=['with_scenario'])
 def test_command_list(with_scenario):
-    regexps = ['instance-1-default.*Lxc.*Ansible.*default.*False.*False', ]
-    pytest.helpers.list(regexps)
+    x = """
+Instance Name          Driver Name    Provisioner Name    Scenario Name    Created    Converged
+---------------------  -------------  ------------------  ---------------  ---------  -----------
+instance-1-default     Lxc            Ansible             default          False      False
+instance-1-multi-node  Lxc            Ansible             multi-node       False      False
+instance-2-multi-node  Lxc            Ansible             multi-node       False      False
+""".strip()  # noqa
 
-    regexps = [
-        'instance-1-multi-node.*Lxc.*Ansible.*multi-node.*False.*False',
-        'instance-2-multi-node.*Lxc.*Ansible.*multi-node.*False.*False',
-    ]
-    pytest.helpers.list(regexps, 'multi-node')
+    pytest.helpers.list(x)
+
+
+@pytest.mark.parametrize(
+    'with_scenario', ['driver/lxc'], indirect=['with_scenario'])
+def test_command_list_with_format_plain(with_scenario):
+    x = """
+instance-1-default     Lxc  Ansible  default     False  False
+instance-1-multi-node  Lxc  Ansible  multi-node  False  False
+instance-2-multi-node  Lxc  Ansible  multi-node  False  False
+""".strip()
+
+    pytest.helpers.list_with_format_plain(x)
 
 
 @pytest.mark.parametrize(

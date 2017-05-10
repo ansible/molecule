@@ -19,17 +19,11 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import abc
-import collections
 import os
 
-Status = collections.namedtuple('Status', [
-    'instance_name',
-    'driver_name',
-    'provisioner_name',
-    'scenario_name',
-    'created',
-    'converged',
-])
+from molecule import status
+
+Status = status.get_status()
 
 
 class Base(object):

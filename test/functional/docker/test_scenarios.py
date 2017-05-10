@@ -43,7 +43,7 @@ def test_interpolation(with_scenario):
     'with_scenario', ['host_group_vars'], indirect=['with_scenario'])
 def test_host_group_vars(with_scenario):
     out = sh.molecule('test')
-    out = util.ansi_escape(out.stdout)
+    out = util.strip_ansi_escape(out.stdout)
 
     assert re.search('\[all\].*?ok: \[instance-1-default\]', out, re.DOTALL)
     assert re.search('\[example\].*?ok: \[instance-1-default\]', out,

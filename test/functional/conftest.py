@@ -19,13 +19,13 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import os
-import re
 
 import pexpect
 import pytest
 import sh
 
 from molecule import config
+from molecule import util
 
 
 @pytest.fixture()
@@ -37,8 +37,23 @@ def with_scenario(request):
 
     os.chdir(scenario_directory)
 
+    # Cleanup only running instances.
     def cleanup():
-        sh.molecule('destroy')
+        out = sh.molecule('list', '--format', 'yaml')
+        out = out.stdout
+        out = util.strip_ansi_color(out)
+        results = util.safe_load(out)
+
+        instances_dict = [
+            result for result in results if result['Created'] == 'True'
+        ]
+        for scenario_name in {
+                instance_dict['Scenario Name']
+                for instance_dict in instances_dict
+        }:
+            # TODO(retr0h): Remove or properly log.
+            print "Calling destroy on '{}' scenario".format(scenario_name)
+            sh.molecule('destroy', '--scenario-name', scenario_name)
 
     request.addfinalizer(cleanup)
 
@@ -112,11 +127,21 @@ def lint(scenario_name='default'):
 
 
 @pytest.helpers.register
-def list(regexps, scenario_name='default'):
-    out = sh.molecule('list', '--scenario-name', scenario_name)
+def list(x, scenario_name='default'):
+    out = sh.molecule('list')
+    out = out.stdout
+    out = util.strip_ansi_color(out)
 
-    for regexp in regexps:
-        assert re.search(regexp, out.stdout)
+    assert x in out
+
+
+@pytest.helpers.register
+def list_with_format_plain(x, scenario_name='default'):
+    out = sh.molecule('list', '--format', 'plain')
+    out = out.stdout
+    out = util.strip_ansi_color(out)
+
+    assert x in out
 
 
 @pytest.helpers.register

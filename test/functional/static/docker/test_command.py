@@ -82,10 +82,25 @@ def test_command_lint(with_scenario):
 @pytest.mark.parametrize(
     'with_scenario', ['driver/static'], indirect=['with_scenario'])
 def test_command_list(with_scenario):
-    regexps = [
-        'static-instance-docker.*Static.*Ansible.*docker.*False.*True',
-    ]
-    pytest.helpers.list(regexps, 'docker')
+    x = """
+Instance Name            Driver Name    Provisioner Name    Scenario Name    Created    Converged
+-----------------------  -------------  ------------------  ---------------  ---------  -----------
+static-instance-docker   Static         Ansible             docker           False      True
+static-instance-vagrant  Static         Ansible             vagrant          False      True
+""".strip()  # noqa
+
+    pytest.helpers.list(x)
+
+
+@pytest.mark.parametrize(
+    'with_scenario', ['driver/static'], indirect=['with_scenario'])
+def test_command_list_with_format_plain(with_scenario):
+    x = """
+static-instance-docker   Static  Ansible  docker   False  True
+static-instance-vagrant  Static  Ansible  vagrant  False  True
+""".strip()
+
+    pytest.helpers.list_with_format_plain(x)
 
 
 @pytest.mark.parametrize(

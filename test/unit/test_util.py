@@ -217,10 +217,16 @@ def test_instance_with_scenario_name():
     assert 'foo-bar' == util.instance_with_scenario_name('foo', 'bar')
 
 
-def test_ansi_escape():
+def test_strip_ansi_escape():
     string = 'ls\r\n\x1b[00m\x1b[01;31mfoo\x1b[00m\r\n\x1b[01;31m'
 
-    assert 'ls\r\nfoo\r\n' == util.ansi_escape(string)
+    assert 'ls\r\nfoo\r\n' == util.strip_ansi_escape(string)
+
+
+def test_strip_ansi_color():
+    s = 'foo\x1b[0m\x1b[0m\x1b[0m\n\x1b[0m\x1b[0m\x1b[0m\x1b[0m\x1b[0m'
+
+    assert 'foo\n' == util.strip_ansi_color(s)
 
 
 def test_verbose_flag():
@@ -242,3 +248,8 @@ def test_verbose_flag_preserves_verbose_option():
 
     assert [] == util.verbose_flag(options)
     assert {'verbose': True} == options
+
+
+def test_title():
+    assert 'Foo' == util.title('foo')
+    assert 'Foo Bar' == util.title('foo_bar')
