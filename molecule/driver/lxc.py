@@ -43,10 +43,15 @@ class Lxc(base.Base):
 
     def __init__(self, config):
         super(Lxc, self).__init__(config)
+        self._name = 'lxc'
 
     @property
     def name(self):
-        return 'lxc'
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        self._name = value
 
     @property
     def login_cmd_template(self):

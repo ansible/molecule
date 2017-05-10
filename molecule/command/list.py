@@ -89,6 +89,7 @@ def list(ctx, scenario_name, format):  # pragma: no cover
     else:
         _print_yaml_data(headers, statuses)
 
+
 def _print_tabulate_data(headers, data, table_format):  # pragma: no cover
     """
     Shows the tabulate data on the screen and returns None.

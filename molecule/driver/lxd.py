@@ -39,10 +39,15 @@ class Lxd(base.Base):
 
     def __init__(self, config):
         super(Lxd, self).__init__(config)
+        self._name = 'lxd'
 
     @property
     def name(self):
-        return 'lxd'
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        self._name = value
 
     @property
     def login_cmd_template(self):

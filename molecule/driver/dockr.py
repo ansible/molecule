@@ -43,10 +43,15 @@ class Dockr(base.Base):
 
     def __init__(self, config):
         super(Dockr, self).__init__(config)
+        self._name = 'docker'
 
     @property
     def name(self):
-        return 'docker'
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        self._name = value
 
     @property
     def login_cmd_template(self):

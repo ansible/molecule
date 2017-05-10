@@ -38,12 +38,23 @@ class Base(object):
         """
         self._config = config
 
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def name(self):  # pragma: no cover
         """
         Name of the driver and returns a string.
 
         :returns: str
+        """
+        pass
+
+    @name.setter
+    @abc.abstractmethod
+    def name(self, value):  # pragma: no cover
+        """
+        Driver name setter and returns None.
+
+        :returns: None
         """
         pass
 

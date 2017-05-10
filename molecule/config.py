@@ -96,19 +96,24 @@ class Config(object):
     @property
     def driver(self):
         driver_name = self._get_driver_name()
+        driver = None
 
         if driver_name == 'docker':
-            return dockr.Dockr(self)
+            driver = dockr.Dockr(self)
         elif driver_name == 'lxc':
-            return lxc.Lxc(self)
+            driver = lxc.Lxc(self)
         elif driver_name == 'lxd':
-            return lxd.Lxd(self)
+            driver = lxd.Lxd(self)
         elif driver_name == 'static':
-            return static.Static(self)
+            driver = static.Static(self)
         elif driver_name == 'vagrant':
-            return vagrant.Vagrant(self)
+            driver = vagrant.Vagrant(self)
         else:
             self._exit_with_invalid_section('driver', driver_name)
+
+        driver.name = driver_name
+
+        return driver
 
     @property
     def drivers(self):
@@ -173,6 +178,25 @@ class Config(object):
 
     def merge_dicts(self, a, b):
         return merge_dicts(a, b)
+
+    def _get_driver_name(self):
+        driver_from_state_file = self.state.driver
+        driver_from_cli = self.command_args.get('driver_name')
+
+        if driver_from_state_file:
+            driver_name = driver_from_state_file
+        elif driver_from_cli:
+            driver_name = driver_from_cli
+        else:
+            driver_name = self.config['driver']['name']
+
+        if driver_from_cli and (driver_from_cli != driver_name):
+            msg = ("Instance(s) were created with the '{}' driver, but the "
+                   "subcommand is using '{}' driver.").format(driver_name,
+                                                              driver_from_cli)
+            util.sysexit_with_message(msg)
+
+        return driver_name
 
     def _combine(self):
         """
@@ -248,25 +272,6 @@ class Config(object):
     def _exit_with_invalid_section(self, section, name):
         msg = "Invalid {} named '{}' configured.".format(section, name)
         util.sysexit_with_message(msg)
-
-    def _get_driver_name(self):
-        driver_from_state_file = self.state.driver
-        driver_from_cli = self.command_args.get('driver_name')
-
-        if driver_from_state_file:
-            driver_name = driver_from_state_file
-        elif driver_from_cli:
-            driver_name = driver_from_cli
-        else:
-            driver_name = self.config['driver']['name']
-
-        if driver_from_cli and (driver_from_cli != driver_name):
-            msg = ("Instance(s) were created with the '{}' driver, but the "
-                   "subcommand is using '{}' driver.").format(driver_name,
-                                                              driver_from_cli)
-            util.sysexit_with_message(msg)
-
-        return driver_name
 
 
 def merge_dicts(a, b):

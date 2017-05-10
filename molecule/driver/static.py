@@ -88,10 +88,15 @@ class Static(base.Base):
 
     def __init__(self, config):
         super(Static, self).__init__(config)
+        self._name = 'static'
 
     @property
     def name(self):
-        return 'static'
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        self._name = value
 
     @property
     def login_cmd_template(self):

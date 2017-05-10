@@ -30,28 +30,6 @@ from molecule import util
 pytestmark = pytest.helpers.supports_docker()
 
 
-@pytest.mark.parametrize(
-    'with_scenario', ['interpolation'], indirect=['with_scenario'])
-def test_interpolation(with_scenario):
-    env = os.environ.copy()
-    env.update({'DEPENDENCY_NAME': 'galaxy', 'VERIFIER_NAME': 'testinfra'})
-
-    sh.molecule('test', _env=env)
-
-
-@pytest.mark.parametrize(
-    'with_scenario', ['host_group_vars'], indirect=['with_scenario'])
-def test_host_group_vars(with_scenario):
-    out = sh.molecule('test')
-    out = util.strip_ansi_escape(out.stdout)
-
-    assert re.search('\[all\].*?ok: \[instance-1-default\]', out, re.DOTALL)
-    assert re.search('\[example\].*?ok: \[instance-1-default\]', out,
-                     re.DOTALL)
-    assert re.search('\[example_1\].*?ok: \[instance-1-default\]', out,
-                     re.DOTALL)
-
-
 def test_command_init_role_goss(temp_dir):
     role_directory = os.path.join(temp_dir.strpath, 'test-init')
     sh.molecule('init', 'role', '--role-name', 'test-init', '--verifier-name',
@@ -71,6 +49,34 @@ def test_command_init_scenario_goss(temp_dir):
 
 
 @pytest.mark.parametrize(
+    'with_scenario', ['overrride_driver'], indirect=['with_scenario'])
+def test_command_test_overrides_driver(with_scenario):
+    sh.molecule('test', '--driver-name', 'docker')
+
+
+@pytest.mark.parametrize(
+    'with_scenario', ['host_group_vars'], indirect=['with_scenario'])
+def test_host_group_vars(with_scenario):
+    out = sh.molecule('test')
+    out = util.strip_ansi_escape(out.stdout)
+
+    assert re.search('\[all\].*?ok: \[instance-1-default\]', out, re.DOTALL)
+    assert re.search('\[example\].*?ok: \[instance-1-default\]', out,
+                     re.DOTALL)
+    assert re.search('\[example_1\].*?ok: \[instance-1-default\]', out,
+                     re.DOTALL)
+
+
+@pytest.mark.parametrize(
+    'with_scenario', ['interpolation'], indirect=['with_scenario'])
+def test_interpolation(with_scenario):
+    env = os.environ.copy()
+    env.update({'DEPENDENCY_NAME': 'galaxy', 'VERIFIER_NAME': 'testinfra'})
+
+    sh.molecule('test', _env=env)
+
+
+@pytest.mark.parametrize(
     'with_scenario', ['verifier'], indirect=['with_scenario'])
 def test_command_verify_testinfra(with_scenario):
     sh.molecule('create', '--scenario-name', 'testinfra')
@@ -84,15 +90,3 @@ def test_command_verify_goss(with_scenario):
     sh.molecule('create', '--scenario-name', 'goss')
     sh.molecule('converge', '--scenario-name', 'goss')
     sh.molecule('verify', '--scenario-name', 'goss')
-
-
-@pytest.mark.parametrize(
-    'with_scenario', ['driver/docker'], indirect=['with_scenario'])
-def test_invalid_driver_subcommand(with_scenario):
-    sh.molecule('create', '--scenario-name', 'default')
-    try:
-        sh.molecule('test', '--scenario-name', 'default', '--driver-name',
-                    'vagrant')
-    except sh.ErrorReturnCode as e:
-        assert ("Instance(s) were created with the 'docker' driver, "
-                "but the subcommand is using 'vagrant' driver.") in e.stderr

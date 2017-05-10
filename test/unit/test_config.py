@@ -291,16 +291,6 @@ def test_merge_dicts_instance_proxies(config_instance):
     assert isinstance(result, dict)
 
 
-def test_exit_with_invalid_section(config_instance, patched_logger_critical):
-    with pytest.raises(SystemExit) as e:
-        config_instance._exit_with_invalid_section('section', 'name')
-
-    assert 1 == e.value.code
-
-    msg = "Invalid section named 'name' configured."
-    patched_logger_critical.assert_called_once_with(msg)
-
-
 def test_get_driver_name_from_state_file(config_instance):
     config_instance.state.change_state('driver', 'state-driver')
 
@@ -317,8 +307,8 @@ def test_get_driver_name(config_instance):
     assert 'docker' == config_instance._get_driver_name()
 
 
-def test_get_driver_raises_when_different_driver_used(patched_logger_critical,
-                                                      config_instance):
+def test_get_driver_name_raises_when_different_driver_used(
+        patched_logger_critical, config_instance):
     config_instance.state.change_state('driver', 'foo')
     config_instance.command_args = {'driver_name': 'bar'}
     with pytest.raises(SystemExit) as e:
@@ -329,6 +319,16 @@ def test_get_driver_raises_when_different_driver_used(patched_logger_critical,
     msg = ("Instance(s) were created with the 'foo' driver, "
            "but the subcommand is using 'bar' driver.")
 
+    patched_logger_critical.assert_called_once_with(msg)
+
+
+def test_exit_with_invalid_section(config_instance, patched_logger_critical):
+    with pytest.raises(SystemExit) as e:
+        config_instance._exit_with_invalid_section('section', 'name')
+
+    assert 1 == e.value.code
+
+    msg = "Invalid section named 'name' configured."
     patched_logger_critical.assert_called_once_with(msg)
 
 
