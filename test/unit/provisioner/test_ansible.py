@@ -79,6 +79,10 @@ def test_config_private_member(ansible_instance):
     assert isinstance(ansible_instance._config, config.Config)
 
 
+def test_ns_private_member(ansible_instance):
+    assert isinstance(ansible_instance._ns, ansible.Namespace)
+
+
 def test_default_config_options_property(ansible_instance):
     libraries_directory = ansible_instance._get_libraries_directory()
     filter_plugins_directory = ansible_instance._get_filter_plugin_directory()

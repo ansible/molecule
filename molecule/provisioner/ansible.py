@@ -29,7 +29,7 @@ from molecule import util
 LOG = logger.get_logger(__name__)
 
 
-class AnsibleNamespace(object):
+class Namespace(object):
     def __init__(self, config):
         """
         A class to act as a module to namespace playbook properties.
@@ -183,7 +183,7 @@ class Ansible(object):
         :return: None
         """
         self._config = config
-        self._ns = AnsibleNamespace(config)
+        self._ns = Namespace(config)
 
     @property
     def default_config_options(self):
