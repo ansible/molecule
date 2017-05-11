@@ -79,7 +79,7 @@ class Static(base.Base):
         platforms:
           - name: static-instance-vagrant
 
-    .. note::
+    .. important::
 
         Molecule automatically appends the scenario name to the instances it is
         testing.  It doesn't seem useful to converge each scenario against the
