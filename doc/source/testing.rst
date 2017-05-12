@@ -7,8 +7,6 @@ Molecule has an extensive set of unit and functional tests.  Molecule uses
 `Tox`_ `Factors`_ to generate a matrix of python x Ansible x unit/functional
 tests.  Manual setup required as of this time.
 
-.. _`Factors`: https://tox.readthedocs.io/en/latest/config.html#factors-and-factor-conditional-settings
-
 Dependencies
 ------------
 
@@ -119,3 +117,5 @@ Follow the steps detailed in the Vagrantfile below.
 
     $ cd test/functional/lxd
     $ vagrant up
+
+.. include:: ci.rst
