@@ -66,11 +66,11 @@ def test_command_idempotence(with_scenario):
 
 
 def test_command_init_role(temp_dir):
-    pytest.helpers.init_role(temp_dir)
+    pytest.helpers.init_role(temp_dir, 'lxc')
 
 
 def test_command_init_scenario(temp_dir):
-    pytest.helpers.init_scenario(temp_dir)
+    pytest.helpers.init_scenario(temp_dir, 'lxc')
 
 
 @pytest.mark.parametrize(

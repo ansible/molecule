@@ -302,6 +302,7 @@ class Ansible(object):
                 connection_options = self.connection_options(instance_name)
                 dd['all']['hosts'][instance_name] = connection_options
                 dd[group]['hosts'][instance_name] = connection_options
+                # Ungrouped
                 dd['ungrouped']['vars'] = {}
                 # Children
                 for child_group in platform.get('children', []):

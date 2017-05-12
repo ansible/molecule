@@ -32,8 +32,10 @@ pytestmark = pytest.helpers.supports_docker()
 
 def test_command_init_role_goss(temp_dir):
     role_directory = os.path.join(temp_dir.strpath, 'test-init')
-    sh.molecule('init', 'role', '--role-name', 'test-init', '--verifier-name',
-                'goss')
+    cmd = sh.molecule.bake('init', 'role', '--role-name', 'test-init',
+                           '--verifier-name', 'goss')
+    pytest.helpers.run_command(cmd)
+
     os.chdir(role_directory)
 
     sh.molecule('test')
@@ -42,8 +44,10 @@ def test_command_init_role_goss(temp_dir):
 def test_command_init_scenario_goss(temp_dir):
     molecule_directory = config.molecule_directory(temp_dir.strpath)
     scenario_directory = os.path.join(molecule_directory, 'test-scenario')
-    sh.molecule('init', 'scenario', '--scenario-name', 'test-scenario',
-                '--role-name', 'test-init', '--verifier-name', 'goss')
+    cmd = sh.molecule.bake('init', 'scenario', '--scenario-name',
+                           'test-scenario', '--role-name', 'test-init',
+                           '--verifier-name', 'goss')
+    pytest.helpers.run_command(cmd)
 
     assert os.path.isdir(scenario_directory)
 
@@ -51,13 +55,15 @@ def test_command_init_scenario_goss(temp_dir):
 @pytest.mark.parametrize(
     'with_scenario', ['overrride_driver'], indirect=['with_scenario'])
 def test_command_test_overrides_driver(with_scenario):
-    sh.molecule('test', '--driver-name', 'docker')
+    cmd = sh.molecule.bake('test', '--driver-name', 'docker')
+    pytest.helpers.run_command(cmd)
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['host_group_vars'], indirect=['with_scenario'])
 def test_host_group_vars(with_scenario):
-    out = sh.molecule('test')
+    cmd = sh.molecule.bake('test')
+    out = pytest.helpers.run_command(cmd, log=False)
     out = util.strip_ansi_escape(out.stdout)
 
     assert re.search('\[all\].*?ok: \[instance-1-default\]', out, re.DOTALL)
@@ -73,20 +79,31 @@ def test_interpolation(with_scenario):
     env = os.environ.copy()
     env.update({'DEPENDENCY_NAME': 'galaxy', 'VERIFIER_NAME': 'testinfra'})
 
-    sh.molecule('test', _env=env)
+    cmd = sh.molecule.bake('test')
+    pytest.helpers.run_command(cmd, env=env)
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['verifier'], indirect=['with_scenario'])
 def test_command_verify_testinfra(with_scenario):
-    sh.molecule('create', '--scenario-name', 'testinfra')
-    sh.molecule('converge', '--scenario-name', 'testinfra')
-    sh.molecule('verify', '--scenario-name', 'testinfra')
+    cmd = sh.molecule.bake('create', '--scenario-name', 'testinfra')
+    pytest.helpers.run_command(cmd)
+
+    cmd = sh.molecule.bake('converge', '--scenario-name', 'testinfra')
+    pytest.helpers.run_command(cmd)
+
+    cmd = sh.molecule.bake('verify', '--scenario-name', 'testinfra')
+    pytest.helpers.run_command(cmd)
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['verifier'], indirect=['with_scenario'])
 def test_command_verify_goss(with_scenario):
-    sh.molecule('create', '--scenario-name', 'goss')
-    sh.molecule('converge', '--scenario-name', 'goss')
-    sh.molecule('verify', '--scenario-name', 'goss')
+    cmd = sh.molecule.bake('create', '--scenario-name', 'goss')
+    pytest.helpers.run_command(cmd)
+
+    cmd = sh.molecule.bake('converge', '--scenario-name', 'goss')
+    pytest.helpers.run_command(cmd)
+
+    cmd = sh.molecule.bake('verify', '--scenario-name', 'goss')
+    pytest.helpers.run_command(cmd)

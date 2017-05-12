@@ -60,7 +60,7 @@ class Vagrant(base.Base):
 
     .. code-block:: bash
 
-        $ pip install python-vagrant
+        $ sudo pip install python-vagrant
 
     .. _`Vagrant`: https://www.vagrantup.com
     """
@@ -145,12 +145,3 @@ class Vagrant(base.Base):
         return next(
             item for item in instance_config_dict.get('results', {})
             if item['Host'] == instance_name)
-
-    def _get_ssh_connection_options(self):
-        return [
-            '-o UserKnownHostsFile=/dev/null',
-            '-o ControlMaster=auto',
-            '-o ControlPersist=60s',
-            '-o IdentitiesOnly=yes',
-            '-o StrictHostKeyChecking=no',
-        ]

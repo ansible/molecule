@@ -83,10 +83,11 @@ def test_command_lint(with_scenario):
     'with_scenario', ['driver/static'], indirect=['with_scenario'])
 def test_command_list(with_scenario):
     x = """
-Instance Name            Driver Name    Provisioner Name    Scenario Name    Created    Converged
------------------------  -------------  ------------------  ---------------  ---------  -----------
-static-instance-docker   Static         Ansible             docker           False      True
-static-instance-vagrant  Static         Ansible             vagrant          False      True
+Instance Name              Driver Name    Provisioner Name    Scenario Name    Created    Converged
+-------------------------  -------------  ------------------  ---------------  ---------  -----------
+static-instance-docker     Static         Ansible             docker           False      True
+static-instance-openstack  Static         Ansible             openstack        False      True
+static-instance-vagrant    Static         Ansible             vagrant          False      True
 """.strip()  # noqa
 
     pytest.helpers.list(x)
@@ -96,8 +97,9 @@ static-instance-vagrant  Static         Ansible             vagrant          Fal
     'with_scenario', ['driver/static'], indirect=['with_scenario'])
 def test_command_list_with_format_plain(with_scenario):
     x = """
-static-instance-docker   Static  Ansible  docker   False  True
-static-instance-vagrant  Static  Ansible  vagrant  False  True
+static-instance-docker     Static  Ansible  docker     False  True
+static-instance-openstack  Static  Ansible  openstack  False  True
+static-instance-vagrant    Static  Ansible  vagrant    False  True
 """.strip()
 
     pytest.helpers.list_with_format_plain(x)

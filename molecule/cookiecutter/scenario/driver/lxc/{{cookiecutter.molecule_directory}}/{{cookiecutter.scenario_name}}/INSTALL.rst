@@ -40,9 +40,9 @@ Install using pip:
 
 .. code-block:: bash
 
-  $ pip install ansible
-  $ pip install lxc-python2
-  $ pip install molecule
+  $ sudo pip install ansible
+  $ sudo pip install lxc-python2
+  $ sudo pip install molecule
 
 .. important::
 

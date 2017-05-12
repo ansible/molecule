@@ -36,5 +36,5 @@ Install using pip:
 
 .. code-block:: bash
 
-  $ pip install ansible
-  $ pip install molecule
+  $ sudo pip install ansible
+  $ sudo pip install molecule

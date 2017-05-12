@@ -1,0 +1,94 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    molecule_file: "{{ lookup('env','MOLECULE_FILE') }}"
+    molecule_instance_config: "{{ lookup('env','MOLECULE_INSTANCE_CONFIG') }}"
+    molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
+
+    ssh_port: 22
+
+    security_group_name: molecule
+    security_group_rules:
+      - { proto: 'tcp', port: "{{ ssh_port }}", cidr: '0.0.0.0/0' }
+      - { proto: 'icmp', port: -1, cidr: '0.0.0.0/0' }
+      - { ethertype: 'IPv4', group: "{{ security_group.id }}" }
+      - { ethertype: 'IPv6', group: "{{ security_group.id }}" }
+
+    neutron:
+      networks:
+        - name: molecule
+          external: False
+          shared: False
+      subnets:
+        - name: molecule
+          network_name: molecule
+          ip_version: 4
+          cidr: 192.168.1.0/24
+          enable_dhcp: True
+          dns_nameservers:
+            - 8.8.8.8
+            - 8.8.4.4
+      routers:
+        - name: molecule
+          network_name: public-floating-601
+          interfaces:
+            - molecule
+
+    keypair_name: molecule_key
+    keypair_path: /tmp/molecule_ssh_key
+
+    nova:
+      image: Ubuntu-16.04
+      flavor: NO-Nano
+  tasks:
+    - include: security_groups.yml
+    - include: keypair.yml
+    - include: neutron.yml
+
+    - name: Create molecule instance(s)
+      os_server:
+        name: "{{ item.name | instance_with_scenario_name(molecule_yml.scenario.name) }}"
+        image: "{{ nova.image }}"
+        flavor: "{{ nova.flavor }}"
+        security_groups:
+          - "{{ security_group_name }}"
+        key_name: "{{ keypair_name }}"
+        nics:
+          - net-id: "{{ openstack_networks[0]['id'] }}"
+      register: server
+      with_items: "{{ molecule_yml.platforms }}"
+
+    # Mandatory configuration for Molecule to function.
+
+    - name: Populate instance config dict
+      set_fact:
+        instance_conf_dict: {
+          'instance': "{{ item.openstack.name }}",
+          'address': "{{ item.openstack.accessIPv4 }}",
+          'user': 'cloud-user',
+          'port': "{{ ssh_port }}",
+          'identity_file': "{{ keypair_path }}",}
+      with_items: "{{ server.results }}"
+      register: instance_config_dict
+      when: server.changed | bool
+
+    - name: Convert instance config dict to a list
+      set_fact:
+        instance_conf: "{{ instance_config_dict.results | map(attribute='ansible_facts.instance_conf_dict') | list }}"
+      when: server.changed | bool
+
+    - name: Dump instance config
+      copy:
+        content: "# Molecule managed\n\n{{ instance_conf | to_yaml }}"
+        dest: "{{ molecule_instance_config }}"
+      when: server.changed | bool
+
+    - name: Wait for SSH
+      wait_for:
+        port: "{{ ssh_port }}"
+        host: "{{ item.address }}"
+        search_regex: SSH
+        delay: 10
+      with_items: "{{ lookup('file', molecule_instance_config) | from_yaml }}"

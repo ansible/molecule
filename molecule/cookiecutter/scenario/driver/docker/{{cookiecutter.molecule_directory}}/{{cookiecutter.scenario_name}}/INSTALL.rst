@@ -41,6 +41,6 @@ Install using pip:
 
 .. code-block:: bash
 
-  $ pip install ansible
-  $ pip install docker-py
-  $ pip install molecule
+  $ sudo pip install ansible
+  $ sudo pip install docker-py
+  $ sudo pip install molecule

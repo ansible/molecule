@@ -16,7 +16,10 @@
       register: instance_conf
       with_items: "{{ molecule_yml.platforms }}"
 
+    # Mandatory configuration for Molecule to function.
+
     - name: Dump instance config
-      copy: content="# Molecule managed\n\n{{ instance_conf | to_yaml }}"
-            dest="{{ molecule_instance_config }}"
+      copy:
+        content: "# Molecule managed\n\n{{ instance_conf | to_yaml }}"
+        dest: "{{ molecule_instance_config }}"
       when: instance_conf.changed | bool

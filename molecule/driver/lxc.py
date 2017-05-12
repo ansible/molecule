@@ -36,7 +36,7 @@ class Lxc(base.Base):
 
     .. code-block:: bash
 
-        $ pip lxc-python2
+        $ sudo pip install lxc-python2
 
     .. _`LXC`: https://linuxcontainers.org/lxc/introduction/
     """

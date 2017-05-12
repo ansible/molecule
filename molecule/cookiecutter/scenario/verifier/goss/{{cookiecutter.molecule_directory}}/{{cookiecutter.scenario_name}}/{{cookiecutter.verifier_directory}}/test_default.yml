@@ -22,21 +22,24 @@
     goss_format: documentation
   tasks:
     - name: Download and install Goss
-      get_url: url="{{ goss_url }}"
-               dest="{{ goss_dst }}"
-               sha256sum="{{ goss_sha256sum }}"
-               mode=0755
+      get_url:
+        url: "{{ goss_url }}"
+        dest: "{{ goss_dst }}"
+        sha256sum: "{{ goss_sha256sum }}"
+        mode: 0755
 
     - name: Copy Goss tests to remote
-      copy: src="{{ playbook_dir }}/../files/goss/{{ item }}"
-            dest="/{{ goss_test_directory }}/{{ item }}"
+      copy:
+        src: "{{ playbook_dir }}/../files/goss/{{ item }}"
+        dest: "/{{ goss_test_directory }}/{{ item }}"
       with_items:
         - molecule.yml
 
     - name: Execute Goss tests
-      goss: path="{{ goss_test_directory }}/{{ item }}"
-            format="{{ goss_format }}"
-            output_file="{{ goss_output_directory }}/{{ item }}.txt"
+      goss:
+        path: "{{ goss_test_directory }}/{{ item }}"
+        format: "{{ goss_format }}"
+        output_file: "{{ goss_output_directory }}/{{ item }}.txt"
       with_items:
         - molecule.yml
 

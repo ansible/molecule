@@ -150,3 +150,12 @@ class Base(object):
                     converged=str(self._config.state.converged)))
 
         return status_list
+
+    def _get_ssh_connection_options(self):
+        return [
+            '-o UserKnownHostsFile=/dev/null',
+            '-o ControlMaster=auto',
+            '-o ControlPersist=60s',
+            '-o IdentitiesOnly=yes',
+            '-o StrictHostKeyChecking=no',
+        ]

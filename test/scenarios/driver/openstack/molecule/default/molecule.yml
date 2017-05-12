@@ -1,0 +1,20 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: openstack
+lint:
+  name: ansible-lint
+platforms:
+  - name: instance-1
+provisioner:
+  name: ansible
+  playbooks:
+    setup: ../../../../../resources/playbooks/openstack/create.yml
+    teardown: ../../../../../resources/playbooks/openstack/destroy.yml
+  env:
+    ANSIBLE_ROLES_PATH: ../../../../../../resources/roles/
+scenario:
+  name: default
+verifier:
+  name: testinfra

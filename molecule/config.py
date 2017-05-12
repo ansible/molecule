@@ -33,6 +33,7 @@ from molecule.dependency import gilt
 from molecule.driver import dockr
 from molecule.driver import lxc
 from molecule.driver import lxd
+from molecule.driver import openstack
 from molecule.driver import static
 from molecule.driver import vagrant
 from molecule.lint import ansible_lint
@@ -104,6 +105,8 @@ class Config(object):
             driver = lxc.Lxc(self)
         elif driver_name == 'lxd':
             driver = lxd.Lxd(self)
+        elif driver_name == 'openstack':
+            driver = openstack.Openstack(self)
         elif driver_name == 'static':
             driver = static.Static(self)
         elif driver_name == 'vagrant':
@@ -330,6 +333,7 @@ def molecule_drivers():
         dockr.Dockr(None).name,
         lxc.Lxc(None).name,
         lxd.Lxd(None).name,
+        openstack.Openstack(None).name,
         static.Static(None).name,
         vagrant.Vagrant(None).name,
     ]

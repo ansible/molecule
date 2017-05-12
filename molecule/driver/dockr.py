@@ -36,7 +36,7 @@ class Dockr(base.Base):
 
     .. code-block:: bash
 
-        $ pip install docker-py
+        $ sudo pip install docker-py
 
     .. _`Docker`: https://www.docker.com
     """

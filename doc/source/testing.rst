@@ -18,7 +18,7 @@ Install the test framework `Tox`_.
 
     $ pip install tox
 
-Install the remaining requirements in a venv (optional):
+Install the remaining requirements in a venv (optional).
 
 .. code-block:: bash
 
@@ -35,14 +35,7 @@ Boot static instances prior to running the tests.
 
 .. code-block:: bash
 
-    $ docker run \
-        -d \
-        --name static-instance-docker \
-        --hostname static-instance-docker \
-        -it molecule_local/ubuntu:latest sleep infinity & wait
-
-    $ vagrant up
-    $ vagrant ssh-config > /tmp/ssh-config
+    $ test/setup.bash
 
 Run all tests, including linting and coverage reports.  This should be run
 prior to merging or submitting a pull request.

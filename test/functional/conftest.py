@@ -43,7 +43,7 @@ def with_scenario(request):
     # Cleanup only running instances.
     def cleanup():
         cmd = sh.molecule.bake('list', '--format', 'yaml')
-        out = run_command(cmd, False)
+        out = run_command(cmd, log=False)
         out = out.stdout
         out = util.strip_ansi_color(out)
         results = util.safe_load(out)
@@ -121,10 +121,11 @@ def idempotence(scenario_name='default'):
 
 
 @pytest.helpers.register
-def init_role(temp_dir, scenario_name='default'):
+def init_role(temp_dir, driver_name, scenario_name='default'):
     role_directory = os.path.join(temp_dir.strpath, 'test-init')
 
-    cmd = sh.molecule.bake('init', 'role', '--role-name', 'test-init')
+    cmd = sh.molecule.bake('init', 'role', '--driver-name', driver_name,
+                           '--role-name', 'test-init')
     run_command(cmd)
 
     os.chdir(role_directory)
@@ -133,10 +134,11 @@ def init_role(temp_dir, scenario_name='default'):
 
 
 @pytest.helpers.register
-def init_scenario(temp_dir, scenario_name='default'):
+def init_scenario(temp_dir, driver_name, scenario_name='default'):
     # Create role
     role_directory = os.path.join(temp_dir.strpath, 'test-init')
-    cmd = sh.molecule.bake('init', 'role', '--role-name', 'test-init')
+    cmd = sh.molecule.bake('init', 'role', '--driver-name', driver_name,
+                           '--role-name', 'test-init')
     run_command(cmd)
     os.chdir(role_directory)
 
@@ -163,7 +165,7 @@ def lint(scenario_name='default'):
 @pytest.helpers.register
 def list(x, scenario_name='default'):
     cmd = sh.molecule.bake('list')
-    out = run_command(cmd, False)
+    out = run_command(cmd, log=False)
     out = out.stdout
     out = util.strip_ansi_color(out)
 
@@ -173,7 +175,7 @@ def list(x, scenario_name='default'):
 @pytest.helpers.register
 def list_with_format_plain(x, scenario_name='default'):
     cmd = sh.molecule.bake('list', '--format', 'plain')
-    out = run_command(cmd, False)
+    out = run_command(cmd, log=False)
     out = out.stdout
     out = util.strip_ansi_color(out)
 
@@ -217,12 +219,13 @@ def verify(scenario_name='default'):
     run_command(cmd)
 
 
-def run_command(cmd, log=True):
+@pytest.helpers.register
+def run_command(cmd, env=os.environ, log=True):
     if log:
-        cmd = _rebake_command(cmd)
+        cmd = _rebake_command(cmd, env)
 
     return util.run_command(cmd)
 
 
-def _rebake_command(cmd, out=LOG.out, err=LOG.error, env=os.environ):
-    return cmd.bake(_out=out, _err=err, _env=env)
+def _rebake_command(cmd, env, out=LOG.out, err=LOG.error):
+    return cmd.bake(_env=env, _out=out, _err=err)

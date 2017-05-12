@@ -4,11 +4,11 @@ dependency:
 driver:
   name: static
   options:
-    login_cmd_template: 'ssh {instance} -F /tmp/ssh-config'
+    login_cmd_template: 'ssh {instance} -F /tmp/ssh-config-vagrant'
     ansible_connection_options:
       connection: ssh
-      ansible_ssh_extra_args: -F /tmp/ssh-config
-      ansible_scp_extra_args: -F /tmp/ssh-config
+      ansible_ssh_extra_args: -F /tmp/ssh-config-vagrant
+      ansible_scp_extra_args: -F /tmp/ssh-config-vagrant
 lint:
   name: ansible-lint
 platforms:

@@ -14,4 +14,4 @@ file:
     group: root
     mode: "0644"
     filetype: file
-    contains: ['instance-1']
+    contains: ['instance-1-goss']

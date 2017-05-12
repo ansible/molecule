@@ -6,4 +6,5 @@ pytest-cov
 pytest-helpers-namespace
 pytest-mock
 python-vagrant
+shade
 wheel

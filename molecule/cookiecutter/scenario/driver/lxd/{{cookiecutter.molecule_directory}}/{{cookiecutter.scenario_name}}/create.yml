@@ -21,11 +21,4 @@
         wait_for_ipv4_addresses: true
         timeout: 600
       with_items: "{{ molecule_yml.platforms }}"
-
-    - name: Install python for Ansible
-      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
-      become: yes
-      changed_when: False
-      delegate_to: "{{ item.name | instance_with_scenario_name(molecule_yml.scenario.name) }}"
-      with_items: "{{ molecule_yml.platforms }}"
 {% endraw -%}

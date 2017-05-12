@@ -69,6 +69,12 @@ LXD
 .. autoclass:: molecule.driver.lxd.Lxd
    :undoc-members:
 
+Openstack
+^^^^^^^^^
+
+.. autoclass:: molecule.driver.openstack.Openstack
+   :undoc-members:
+
 Static
 ^^^^^^
 

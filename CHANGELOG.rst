@@ -15,7 +15,8 @@ Important Changes
 * Addition of `Scenarios`_.
 * Addition of a `Static Driver`_ to test instances managed outside of Molecule.
 * Promoted `Goss Verifier`_ to a supported verifier.
-* Added `LXC Driver`_ and `LXD Driver`_ as native Molecule drivers.
+* Added `LXC Driver`_, `LXD Driver`_ , and `OpenStack Driver`_ native Molecule
+  drivers.
 * Molecule will follow `Semantic Versioning`_.  Therefore versioning will be
   much different than previous versions of Molecule.  It will be safe to pin
   to MINOR versions of Molecule.  MINOR will add functionality in a
@@ -34,6 +35,7 @@ Breaking Changes
 .. _`Goss Verifier`: http://molecule.readthedocs.io/en/v2/configuration.html#goss
 .. _`LXC Driver`: http://molecule.readthedocs.io/en/v2/configuration.html#lxc
 .. _`LXD Driver`: http://molecule.readthedocs.io/en/v2/configuration.html#lxd
+.. _`OpenStack Driver`: http://molecule.readthedocs.io/en/v2/configuration.html#openstack
 .. _`Porting Guide`: http://molecule.readthedocs.io/en/v2/porting.html
 .. _`Semantic Versioning`: http://semver.org
 .. _`Scenarios`: http://molecule.readthedocs.io/en/v2/configuration.html#scenario
