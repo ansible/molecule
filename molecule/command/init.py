@@ -176,10 +176,25 @@ def role(dependency_name, driver_name, lint_name, provisioner_name, role_name,
 
 @init.command()
 @click.option(
+    '--dependency-name',
+    type=click.Choice(['galaxy']),
+    default='galaxy',
+    help='Name of dependency to initialize. (galaxy)')
+@click.option(
     '--driver-name',
     type=click.Choice(config.molecule_drivers()),
     default='docker',
     help='Name of driver to initialize. (docker)')
+@click.option(
+    '--lint-name',
+    type=click.Choice(['ansible-lint']),
+    default='ansible-lint',
+    help='Name of lint to initialize. (ansible-lint)')
+@click.option(
+    '--provisioner-name',
+    type=click.Choice(['ansible']),
+    default='ansible',
+    help='Name of provisioner to initialize. (ansible)')
 @click.option('--role-name', required=True, help='Name of the role to create.')
 @click.option(
     '--scenario-name', required=True, help='Name of the scenario to create.')
@@ -188,11 +203,14 @@ def role(dependency_name, driver_name, lint_name, provisioner_name, role_name,
     type=click.Choice(config.molecule_verifiers()),
     default='testinfra',
     help='Name of verifier to initialize. (testinfra)')
-def scenario(driver_name, role_name, scenario_name,
-             verifier_name):  # pragma: no cover
+def scenario(dependency_name, driver_name, lint_name, provisioner_name,
+             role_name, scenario_name, verifier_name):  # pragma: no cover
     """ Initialize a new scenario for use with Molecule. """
     command_args = {
+        'dependency_name': dependency_name,
         'driver_name': driver_name,
+        'lint_name': lint_name,
+        'provisioner_name': provisioner_name,
         'role_name': role_name,
         'scenario_name': scenario_name,
         'subcommand': __name__,

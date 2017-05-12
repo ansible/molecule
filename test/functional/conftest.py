@@ -126,12 +126,20 @@ def init_role(temp_dir, scenario_name='default'):
     run_command(cmd)
 
     os.chdir(role_directory)
-    sh.molecule('test')
+    cmd = sh.molecule.bake('test')
+    run_command(cmd)
 
 
 @pytest.helpers.register
 def init_scenario(temp_dir, scenario_name='default'):
-    molecule_directory = config.molecule_directory(temp_dir.strpath)
+    # Create role
+    role_directory = os.path.join(temp_dir.strpath, 'test-init')
+    cmd = sh.molecule.bake('init', 'role', '--role-name', 'test-init')
+    run_command(cmd)
+    os.chdir(role_directory)
+
+    # Create scenario
+    molecule_directory = config.molecule_directory(role_directory)
     scenario_directory = os.path.join(molecule_directory, 'test-scenario')
 
     cmd = sh.molecule.bake('init', 'scenario', '--scenario-name',
@@ -139,6 +147,9 @@ def init_scenario(temp_dir, scenario_name='default'):
     run_command(cmd)
 
     assert os.path.isdir(scenario_directory)
+
+    cmd = sh.molecule.bake('test', '--scenario-name', 'test-scenario')
+    run_command(cmd)
 
 
 @pytest.helpers.register

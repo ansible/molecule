@@ -5,12 +5,39 @@ History
 2.0
 ===
 
-* Overhaul of Molecule.
+* Major overhaul of Molecule.
+
+Important Changes
+-----------------
+
+* Ansible playbooks to manage instances.
+* Vagrant is managed through a custom Ansible module bundled with Molecule.
+* Addition of `Scenarios`_.
+* Addition of a `Static Driver`_ to test instances managed outside of Molecule.
+* Promoted `Goss Verifier`_ to a supported verifier.
+* Added `LXC Driver`_ and `LXD Driver`_ as native Molecule drivers.
+* Molecule will follow `Semantic Versioning`_.  Therefore versioning will be
+  much different than previous versions of Molecule.  It will be safe to pin
+  to MINOR versions of Molecule.  MINOR will add functionality in a
+  backwards-compatible manner.
 
 Breaking Changes
 ----------------
 
-* This is not compatible with Molecule v1 series.
+* Not compatible with Molecule v1 style config.
+* Demoted serverspec support entirely.
+* Does not support all of the Molecule v1 functionality or flexibility, in
+  favor of simplicity and consistency throughout.
+* Ansible 2.2 and 2.3 support only.
+* See Molecule v1 to v2 `Porting Guide`_.
+
+.. _`Goss Verifier`: http://molecule.readthedocs.io/en/v2/configuration.html#goss
+.. _`LXC Driver`: http://molecule.readthedocs.io/en/v2/configuration.html#lxc
+.. _`LXD Driver`: http://molecule.readthedocs.io/en/v2/configuration.html#lxd
+.. _`Porting Guide`: http://molecule.readthedocs.io/en/v2/porting.html
+.. _`Semantic Versioning`: http://semver.org
+.. _`Scenarios`: http://molecule.readthedocs.io/en/v2/configuration.html#scenario
+.. _`Static Driver`: http://molecule.readthedocs.io/en/v2/configuration.html#static
 
 1.24
 ====
