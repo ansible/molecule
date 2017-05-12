@@ -42,7 +42,8 @@ def with_scenario(request):
 
     # Cleanup only running instances.
     def cleanup():
-        out = sh.molecule('list', '--format', 'yaml')
+        cmd = sh.molecule.bake('list', '--format', 'yaml')
+        out = run_command(cmd, False)
         out = out.stdout
         out = util.strip_ansi_color(out)
         results = util.safe_load(out)
@@ -57,7 +58,8 @@ def with_scenario(request):
             msg = "CLEANUP: Destroying instances for '{}' scenario".format(
                 scenario_name)
             LOG.out(msg)
-            sh.molecule('destroy', '--scenario-name', scenario_name)
+            cmd = sh.molecule.bake('destroy', '--scenario-name', scenario_name)
+            run_command(cmd)
 
     request.addfinalizer(cleanup)
 
