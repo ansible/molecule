@@ -62,7 +62,7 @@ def test_options_property(vagrant_instance):
 
 
 def test_login_cmd_template_property(vagrant_instance):
-    x = ('ssh {instance} -l {user} -p {port} -i {identity_file} '
+    x = ('ssh {address} -l {user} -p {port} -i {identity_file} '
          '-o UserKnownHostsFile=/dev/null '
          '-o ControlMaster=auto '
          '-o ControlPersist=60s '
@@ -87,26 +87,25 @@ def test_safe_files(vagrant_instance):
 
 def test_login_options(mocker, vagrant_instance):
     m = mocker.patch('molecule.util.safe_load_file')
-    m.return_value = {
-        'results': [{
-            'Host': 'foo',
-            'HostName': '127.0.0.1',
-            'User': 'vagrant',
-            'Port': 2222,
-            'IdentityFile': '/foo/bar'
-        }, {
-            'Host': 'bar',
-            'HostName': '127.0.0.1',
-            'User': 'vagrant',
-            'Port': 2222,
-            'IdentityFile': '/foo/bar'
-        }]
-    }
-    x = {
-        'instance': '127.0.0.1',
+    m.return_value = [{
+        'instance': 'foo',
+        'address': '127.0.0.1',
         'user': 'vagrant',
         'port': 2222,
-        'identity_file': '/foo/bar',
+        'identity_file': '/foo/bar'
+    }, {
+        'instance': 'bar',
+        'address': '127.0.0.1',
+        'user': 'vagrant',
+        'port': 2222,
+        'identity_file': '/foo/bar'
+    }]
+    x = {
+        'instance': 'foo',
+        'address': '127.0.0.1',
+        'user': 'vagrant',
+        'port': 2222,
+        'identity_file': '/foo/bar'
     }
 
     assert x == vagrant_instance.login_options('foo')
@@ -114,21 +113,19 @@ def test_login_options(mocker, vagrant_instance):
 
 def test_ansible_connection_options(mocker, vagrant_instance):
     m = mocker.patch('molecule.util.safe_load_file')
-    m.return_value = {
-        'results': [{
-            'Host': 'foo',
-            'HostName': '127.0.0.1',
-            'User': 'vagrant',
-            'Port': 2222,
-            'IdentityFile': '/foo/bar'
-        }, {
-            'Host': 'bar',
-            'HostName': '127.0.0.1',
-            'User': 'vagrant',
-            'Port': 2222,
-            'IdentityFile': '/foo/bar'
-        }]
-    }
+    m.return_value = [{
+        'instance': 'foo',
+        'address': '127.0.0.1',
+        'user': 'vagrant',
+        'port': 2222,
+        'identity_file': '/foo/bar'
+    }, {
+        'instance': 'bar',
+        'address': '127.0.0.1',
+        'user': 'vagrant',
+        'port': 2222,
+        'identity_file': '/foo/bar'
+    }]
     x = {
         'ansible_host': '127.0.0.1',
         'ansible_port': 2222,

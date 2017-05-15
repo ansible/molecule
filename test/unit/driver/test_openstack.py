@@ -83,20 +83,20 @@ def test_login_options(mocker, openstack_instance):
     m = mocker.patch('molecule.util.safe_load_file')
     m.return_value = [{
         'instance': 'foo',
-        'address': '127.0.0.1',
+        'address': '172.16.0.2',
         'user': 'cloud-user',
         'port': 22,
         'identity_file': '/foo/bar'
     }, {
         'instance': 'bar',
-        'address': '127.0.0.1',
+        'address': '172.16.0.3',
         'user': 'cloud-user',
         'port': 22,
         'identity_file': '/foo/bar'
     }]
     x = {
         'instance': 'foo',
-        'address': '127.0.0.1',
+        'address': '172.16.0.2',
         'user': 'cloud-user',
         'port': 22,
         'identity_file': '/foo/bar'

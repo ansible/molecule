@@ -349,7 +349,6 @@ class VagrantClient(object):
         if cd:
             changed = True
             self._vagrant.destroy()
-            self._write_instance_config({})
 
         self._module.exit_json(changed=changed)
 
@@ -380,10 +379,6 @@ class VagrantClient(object):
             VAGRANTFILE_TEMPLATE,
             vagrantfile_config=self._config.driver.vagrantfile_config)
         molecule.util.write_file(self._vagrantfile, template)
-
-    def _write_instance_config(self, data):
-        molecule.util.write_file(self._config.driver.instance_config,
-                                 molecule.util.safe_dump(data))
 
     def _write_vagrantfile_config(self, data):
         molecule.util.write_file(self._config.driver.vagrantfile_config,

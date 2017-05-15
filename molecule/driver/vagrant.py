@@ -88,7 +88,7 @@ class Vagrant(base.Base):
     def login_cmd_template(self):
         connection_options = ' '.join(self._get_ssh_connection_options())
 
-        return ('ssh {{instance}} '
+        return ('ssh {{address}} '
                 '-l {{user}} '
                 '-p {{port}} '
                 '-i {{identity_file}} '
@@ -101,24 +101,20 @@ class Vagrant(base.Base):
         ]
 
     def login_options(self, instance_name):
-        d = self._get_instance_config(instance_name)
+        d = {'instance': instance_name}
 
-        return {
-            'instance': d['HostName'],
-            'user': d['User'],
-            'port': d['Port'],
-            'identity_file': d['IdentityFile'],
-        }
+        return self._config.merge_dicts(
+            d, self._get_instance_config(instance_name))
 
     def ansible_connection_options(self, instance_name):
         try:
             d = self._get_instance_config(instance_name)
 
             return {
-                'ansible_user': d['User'],
-                'ansible_host': d['HostName'],
-                'ansible_port': d['Port'],
-                'ansible_private_key_file': d['IdentityFile'],
+                'ansible_user': d['user'],
+                'ansible_host': d['address'],
+                'ansible_port': d['port'],
+                'ansible_private_key_file': d['identity_file'],
                 'connection': 'ssh',
                 'ansible_ssh_extra_args':
                 ' '.join(self._get_ssh_connection_options()),
@@ -142,6 +138,5 @@ class Vagrant(base.Base):
         instance_config_dict = util.safe_load_file(
             self._config.driver.instance_config)
 
-        return next(
-            item for item in instance_config_dict.get('results', {})
-            if item['Host'] == instance_name)
+        return next(item for item in instance_config_dict
+                    if item['instance'] == instance_name)

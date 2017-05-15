@@ -13,14 +13,31 @@
         platform_box: ubuntu/xenial64
         molecule_file: "{{ molecule_file }}"
         state: up
-      register: instance_conf
+      register: server
       with_items: "{{ molecule_yml.platforms }}"
 
     # Mandatory configuration for Molecule to function.
+
+    - name: Populate instance config dict
+      set_fact:
+        instance_conf_dict: {
+          'instance': "{{ item.Host }}",
+          'address': "{{ item.HostName }}",
+          'user': "{{ item.User }}",
+          'port': "{{ item.Port }}",
+          'identity_file': "{{ item.IdentityFile }}",}
+      with_items: "{{ server.results }}"
+      register: instance_config_dict
+      when: server.changed | bool
+
+    - name: Convert instance config dict to a list
+      set_fact:
+        instance_conf: "{{ instance_config_dict.results | map(attribute='ansible_facts.instance_conf_dict') | list }}"
+      when: server.changed | bool
 
     - name: Dump instance config
       copy:
         content: "# Molecule managed\n\n{{ instance_conf | to_yaml }}"
         dest: "{{ molecule_instance_config }}"
-      when: instance_conf.changed | bool
+      when: server.changed | bool
 {% endraw -%}
