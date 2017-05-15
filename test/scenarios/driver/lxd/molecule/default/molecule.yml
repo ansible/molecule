@@ -1,18 +1,20 @@
 ---
 dependency:
-    name: galaxy
+  name: galaxy
 driver:
-    name: lxd
+  name: lxd
 lint:
-    name: ansible-lint
+  name: ansible-lint
 platforms:
   - name: instance-1
 provisioner:
-    name: ansible
-    playbooks:
-      setup: ../../../../../resources/playbooks/lxd/create.yml
-      teardown: ../../../../../resources/playbooks/lxd/destroy.yml
+  name: ansible
+  playbooks:
+    setup: ../../../../../resources/playbooks/lxd/create.yml
+    teardown: ../../../../../resources/playbooks/lxd/destroy.yml
+  env:
+    ANSIBLE_ROLES_PATH: ../../../../../../resources/roles/
 scenario:
-    name: default
+  name: default
 verifier:
-    name: testinfra
+  name: testinfra

@@ -1,6 +1,4 @@
 ---
 - hosts: all
-  tasks:
-    - name: Dummy task
-      command: /bin/true
-      changed_when: False
+  roles:
+    - molecule

@@ -7,4 +7,22 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 
 
 def test_hostname(SystemInfo):
-    assert 'instance-2' == SystemInfo.hostname
+    assert 'instance-2-multi-node' == SystemInfo.hostname
+
+
+def test_etc_molecule_directory(File):
+    f = File('/etc/molecule')
+
+    assert f.is_directory
+    assert f.user == 'root'
+    assert f.group == 'root'
+    assert f.mode == 0o755
+
+
+def test_etc_molecule_ansible_hostname_file(File):
+    f = File('/etc/molecule/instance-2-multi-node')
+
+    assert f.is_file
+    assert f.user == 'root'
+    assert f.group == 'root'
+    assert f.mode == 0o644

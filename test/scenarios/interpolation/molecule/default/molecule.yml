@@ -1,18 +1,18 @@
 ---
 dependency:
-    name: $DEPENDENCY_NAME
+  name: $DEPENDENCY_NAME
 driver:
-    name: docker
+  name: docker
 lint:
-    name: ansible-lint
+  name: ansible-lint
 platforms:
   - name: instance-1
 provisioner:
-    name: ansible
-    playbooks:
-      setup: ../../../../resources/playbooks/docker/create.yml
-      teardown: ../../../../resources/playbooks/docker/destroy.yml
+  name: ansible
+  playbooks:
+    setup: ../../../../resources/playbooks/docker/create.yml
+    teardown: ../../../../resources/playbooks/docker/destroy.yml
 scenario:
-    name: default
+  name: default
 verifier:
-    name: ${VERIFIER_NAME}
+  name: ${VERIFIER_NAME}

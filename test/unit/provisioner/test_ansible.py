@@ -193,6 +193,18 @@ def test_inventory_property(ansible_instance):
         'ungrouped': {
             'vars': {}
         },
+        'all': {
+            'hosts': {
+                'instance-1-default': {
+                    'ansible_connection': 'docker',
+                    'foo': 'bar'
+                },
+                'instance-2-default': {
+                    'ansible_connection': 'docker',
+                    'foo': 'bar'
+                }
+            }
+        },
         'bar': {
             'hosts': {
                 'instance-1-default': {
@@ -269,6 +281,18 @@ def test_inventory_property_handles_missing_groups(temp_dir, ansible_instance):
     ansible_instance._config.config['platforms'] = platforms
 
     x = {
+        'all': {
+            'hosts': {
+                'instance-1-default': {
+                    'ansible_connection': 'docker',
+                    'foo': 'bar'
+                },
+                'instance-2-default': {
+                    'ansible_connection': 'docker',
+                    'foo': 'bar'
+                }
+            }
+        },
         'ungrouped': {
             'hosts': {
                 'instance-1-default': {
@@ -502,6 +526,18 @@ def test_write_inventory(temp_dir, ansible_instance):
     x = {
         'ungrouped': {
             'vars': {}
+        },
+        'all': {
+            'hosts': {
+                'instance-1-default': {
+                    'ansible_connection': 'docker',
+                    'foo': 'bar'
+                },
+                'instance-2-default': {
+                    'ansible_connection': 'docker',
+                    'foo': 'bar'
+                }
+            }
         },
         'bar': {
             'hosts': {

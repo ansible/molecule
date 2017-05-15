@@ -300,8 +300,10 @@ class Ansible(object):
             for group in platform.get('groups', ['ungrouped']):
                 instance_name = platform['name']
                 connection_options = self.connection_options(instance_name)
+                dd['all']['hosts'][instance_name] = connection_options
                 dd[group]['hosts'][instance_name] = connection_options
                 dd['ungrouped']['vars'] = {}
+                # Children
                 for child_group in platform.get('children', []):
                     dd[group]['children'][child_group]['hosts'][
                         instance_name] = connection_options

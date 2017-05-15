@@ -13,6 +13,8 @@ platforms:
   - name: static-instance
 provisioner:
   name: ansible
+  env:
+    ANSIBLE_ROLES_PATH: ../../../../../../resources/roles/
 scenario:
   name: docker
 verifier:

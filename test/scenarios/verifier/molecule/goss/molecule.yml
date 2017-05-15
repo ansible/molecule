@@ -1,18 +1,18 @@
 ---
 dependency:
-    name: galaxy
+  name: galaxy
 driver:
-    name: docker
+  name: docker
 lint:
-    name: ansible-lint
+  name: ansible-lint
 platforms:
   - name: instance-1
 provisioner:
-    name: ansible
-    playbooks:
-      setup: ../../../../resources/playbooks/docker/create.yml
-      teardown: ../../../../resources/playbooks/docker/destroy.yml
+  name: ansible
+  playbooks:
+    setup: ../../../../resources/playbooks/docker/create.yml
+    teardown: ../../../../resources/playbooks/docker/destroy.yml
 scenario:
-    name: goss
+  name: goss
 verifier:
-    name: goss
+  name: goss

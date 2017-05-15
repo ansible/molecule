@@ -1,10 +1,10 @@
 ---
 dependency:
-    name: galaxy
+  name: galaxy
 driver:
-    name: docker
+  name: docker
 lint:
-    name: ansible-lint
+  name: ansible-lint
 platforms:
   - name: instance-1
     groups:
@@ -15,11 +15,13 @@ platforms:
       - foo
       - baz
 provisioner:
-    name: ansible
-    playbooks:
-      setup: ../../../../../resources/playbooks/docker/create.yml
-      teardown: ../../../../../resources/playbooks/docker/destroy.yml
+  name: ansible
+  playbooks:
+    setup: ../../../../../resources/playbooks/docker/create.yml
+    teardown: ../../../../../resources/playbooks/docker/destroy.yml
+  env:
+    ANSIBLE_ROLES_PATH: ../../../../../../resources/roles/
 scenario:
-    name: multi-node
+  name: multi-node
 verifier:
-    name: testinfra
+  name: testinfra

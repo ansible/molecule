@@ -8,7 +8,7 @@ file:
     filetype: directory
 
 file:
-  /etc/molecule/instance-1:
+  /etc/molecule/instance-1-goss:
     exists: True
     owner: root
     group: root

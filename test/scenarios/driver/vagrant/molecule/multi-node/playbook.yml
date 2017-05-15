@@ -1,6 +1,20 @@
 ---
 - hosts: all
-  tasks:
-    - name: Dummy task
-      command: /bin/true
-      changed_when: False
+  become: yes
+  roles:
+    - molecule
+
+- hosts: bar
+  become: yes
+  roles:
+    - molecule
+
+- hosts: foo
+  become: yes
+  roles:
+    - molecule
+
+- hosts: baz
+  become: yes
+  roles:
+    - molecule

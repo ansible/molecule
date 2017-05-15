@@ -1,20 +1,16 @@
 ---
 - hosts: all
-  tasks:
-    - name: Install curl
-      yum: name=curl
+  roles:
+    - molecule
 
 - hosts: bar
-  tasks:
-    - name: Install curl
-      yum: name=curl
+  roles:
+    - molecule
 
 - hosts: foo
-  tasks:
-    - name: Install curl
-      yum: name=curl
+  roles:
+    - molecule
 
 - hosts: baz
-  tasks:
-    - name: Install curl
-      yum: name=curl
+  roles:
+    - molecule
