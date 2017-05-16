@@ -37,6 +37,8 @@ class List(base.Base):
         Execute the actions necessary to perform a `molecule list` and
         returns None.
 
+        Target all scenarios:
+
         >>> molecule list
 
         Targeting a specific scenario:

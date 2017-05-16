@@ -23,59 +23,64 @@ import pytest
 pytestmark = pytest.helpers.supports_vagrant_virtualbox()
 
 
-@pytest.mark.parametrize(
-    'with_scenario', ['driver/static'], indirect=['with_scenario'])
-def test_command_check(with_scenario):
-    pytest.helpers.check('vagrant')
+@pytest.fixture()
+def scenario_name():
+    return 'vagrant'
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/static'], indirect=['with_scenario'])
-def test_command_converge(with_scenario):
-    pytest.helpers.converge('vagrant')
+def test_command_check(with_scenario, scenario_name):
+    pytest.helpers.check(scenario_name)
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/static'], indirect=['with_scenario'])
-def test_command_create(with_scenario):
-    pytest.helpers.create('vagrant')
+def test_command_converge(with_scenario, scenario_name):
+    pytest.helpers.converge(scenario_name)
+
+
+@pytest.mark.parametrize(
+    'with_scenario', ['driver/static'], indirect=['with_scenario'])
+def test_command_create(with_scenario, scenario_name):
+    pytest.helpers.create(scenario_name)
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['dependency'], indirect=['with_scenario'])
-def test_command_dependency_ansible_galaxy(with_scenario):
+def test_command_dependency_ansible_galaxy(with_scenario, scenario_name):
     pass
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['dependency'], indirect=['with_scenario'])
-def test_command_dependency_gilt(with_scenario):
+def test_command_dependency_gilt(with_scenario, scenario_name):
     pass
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/static'], indirect=['with_scenario'])
-def test_command_destroy(with_scenario):
-    pytest.helpers.destroy('vagrant')
+def test_command_destroy(with_scenario, scenario_name):
+    pytest.helpers.destroy(scenario_name)
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/static'], indirect=['with_scenario'])
-def test_command_idempotence(with_scenario):
-    pytest.helpers.idempotence('vagrant')
+def test_command_idempotence(with_scenario, scenario_name):
+    pytest.helpers.idempotence(scenario_name)
 
 
-def test_command_init_role(temp_dir):
+def test_command_init_role(temp_dir, scenario_name):
     pass
 
 
-def test_command_init_scenario(temp_dir):
+def test_command_init_scenario(temp_dir, scenario_name):
     pass
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/static'], indirect=['with_scenario'])
-def test_command_list(with_scenario):
+def test_command_list(with_scenario, scenario_name):
     x = """
 Instance Name              Driver Name    Provisioner Name    Scenario Name    Created    Converged
 -------------------------  -------------  ------------------  ---------------  ---------  -----------
@@ -89,7 +94,7 @@ static-instance-vagrant    Static         Ansible             vagrant          F
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/static'], indirect=['with_scenario'])
-def test_command_list_with_format_plain(with_scenario):
+def test_command_list_with_format_plain(with_scenario, scenario_name):
     x = """
 static-instance-docker     Static  Ansible  docker     False  True
 static-instance-openstack  Static  Ansible  openstack  False  True
@@ -101,24 +106,24 @@ static-instance-vagrant    Static  Ansible  vagrant    False  True
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/static'], indirect=['with_scenario'])
-def test_command_login(with_scenario):
+def test_command_login(with_scenario, scenario_name):
     pytest.helpers.login('static-instance-vagrant',
-                         '.*static-instance-vagrant.*', 'vagrant')
+                         '.*static-instance-vagrant.*', scenario_name)
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/static'], indirect=['with_scenario'])
-def test_command_syntax(with_scenario):
-    pytest.helpers.syntax('vagrant')
+def test_command_syntax(with_scenario, scenario_name):
+    pytest.helpers.syntax(scenario_name)
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/static'], indirect=['with_scenario'])
-def test_command_test(with_scenario):
-    pytest.helpers.test('vagrant')
+def test_command_test(with_scenario, scenario_name):
+    pytest.helpers.test(scenario_name)
 
 
 @pytest.mark.parametrize(
     'with_scenario', ['driver/static'], indirect=['with_scenario'])
-def test_command_verify(with_scenario):
-    pytest.helpers.verify('vagrant')
+def test_command_verify(with_scenario, scenario_name):
+    pytest.helpers.verify(scenario_name)

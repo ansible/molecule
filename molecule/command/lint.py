@@ -32,6 +32,8 @@ class Lint(base.Base):
         Execute the actions necessary to perform a `molecule lint` and
         returns None.
 
+        Target the default scenario:
+
         >>> molecule lint
 
         Targeting a specific scenario:
@@ -54,7 +56,10 @@ class Lint(base.Base):
 
 @click.command()
 @click.pass_context
-@click.option('--scenario-name', help='Name of the scenario to target.')
+@click.option(
+    '--scenario-name',
+    default='default',
+    help='Name of the scenario to target. (default)')
 def lint(ctx, scenario_name):  # pragma: no cover
     """ Lint the role. """
     args = ctx.obj.get('args')

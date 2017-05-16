@@ -36,6 +36,8 @@ class Idempotence(base.Base):
         Execute the actions necessary to perform a `molecule idempotence` and
         returns None.
 
+        Target the default scenario:
+
         >>> molecule idempotence
 
         Targeting a specific scenario:
@@ -120,7 +122,10 @@ class Idempotence(base.Base):
 
 @click.command()
 @click.pass_context
-@click.option('--scenario-name', help='Name of the scenario to target.')
+@click.option(
+    '--scenario-name',
+    default='default',
+    help='Name of the scenario to target. (default)')
 def idempotence(ctx, scenario_name):  # pragma: no cover
     """
     Use a provisioner to configure the instances and parse the output to

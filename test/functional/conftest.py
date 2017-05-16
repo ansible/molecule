@@ -203,8 +203,12 @@ def syntax(scenario_name='default'):
 
 @pytest.helpers.register
 def test(scenario_name='default'):
-    cmd = sh.molecule.bake('test')
-    run_command(cmd)
+    if scenario_name is 'all':
+        cmd = sh.molecule.bake('test')
+        run_command(cmd)
+    else:
+        cmd = sh.molecule.bake('test', '--scenario-name', scenario_name)
+        run_command(cmd)
 
 
 @pytest.helpers.register

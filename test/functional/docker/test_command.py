@@ -121,7 +121,7 @@ def test_command_syntax(with_scenario):
 @pytest.mark.parametrize(
     'with_scenario', ['driver/docker'], indirect=['with_scenario'])
 def test_command_test(with_scenario):
-    pytest.helpers.test()
+    pytest.helpers.test('all')
 
 
 @pytest.mark.parametrize(

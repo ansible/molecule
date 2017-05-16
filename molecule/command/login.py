@@ -45,7 +45,13 @@ class Login(base.Base):
         Execute the actions necessary to perform a `molecule login` and
         returns None.
 
-        >>> molecule login --host hotname --scenario-name foo
+        Target the default scenario:
+
+        >>> molecule login --host hostname
+
+        Targeting a specific scenario:
+
+        >>> molecule login --host hostname --scenario-name foo
 
         Executing with `debug`:
 
@@ -112,7 +118,9 @@ class Login(base.Base):
 @click.pass_context
 @click.option('--host', required=True, help='Host to access.')
 @click.option(
-    '--scenario-name', required=True, help='Name of the scenario to target.')
+    '--scenario-name',
+    default='default',
+    help='Name of the scenario to target. (default)')
 def login(ctx, host, scenario_name):  # pragma: no cover
     """ Log in to one instance. """
     args = ctx.obj.get('args')

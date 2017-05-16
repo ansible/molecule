@@ -32,6 +32,8 @@ class Dependency(base.Base):
         Execute the actions necessary to perform a `molecule dependency` and
         returns None.
 
+        Target the default scenario:
+
         >>> molecule dependency
 
         Targeting a specific scenario:
@@ -54,7 +56,10 @@ class Dependency(base.Base):
 
 @click.command()
 @click.pass_context
-@click.option('--scenario-name', help='Name of the scenario to target.')
+@click.option(
+    '--scenario-name',
+    default='defalt',
+    help='Name of the scenario to target. (default)')
 def dependency(ctx, scenario_name):  # pragma: no cover
     """ Mange the role's dependencies. """
     args = ctx.obj.get('args')

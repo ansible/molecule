@@ -35,6 +35,8 @@ class Converge(base.Base):
         Execute the actions necessary to perform a `molecule converge` and
         returns None.
 
+        Target the default scenario:
+
         >>> molecule converge
 
         Targeting a specific scenario:
@@ -61,7 +63,10 @@ class Converge(base.Base):
 
 @click.command()
 @click.pass_context
-@click.option('--scenario-name', help='Name of the scenario to target.')
+@click.option(
+    '--scenario-name',
+    default='default',
+    help='Name of the scenario to target. (default)')
 def converge(ctx, scenario_name):  # pragma: no cover
     """ Use a provisioner to configure instances (create, converge). """
     args = ctx.obj.get('args')

@@ -21,6 +21,11 @@
 import pytest
 
 
+@pytest.fixture()
+def scenario_name():
+    return 'openstack'
+
+
 @pytest.mark.parametrize(
     'with_scenario', ['driver/openstack'], indirect=['with_scenario'])
 def test_command_check(with_scenario):
@@ -63,12 +68,12 @@ def test_command_idempotence(with_scenario):
     pytest.helpers.idempotence()
 
 
-def test_command_init_role(temp_dir):
-    pytest.helpers.init_role(temp_dir, 'openstack')
+def test_command_init_role(temp_dir, scenario_name):
+    pytest.helpers.init_role(temp_dir, scenario_name)
 
 
-def test_command_init_scenario(temp_dir):
-    pytest.helpers.init_scenario(temp_dir, 'openstack')
+def test_command_init_scenario(temp_dir, scenario_name):
+    pytest.helpers.init_scenario(temp_dir, scenario_name)
 
 
 @pytest.mark.parametrize(
@@ -119,7 +124,7 @@ def test_command_syntax(with_scenario):
 @pytest.mark.parametrize(
     'with_scenario', ['driver/openstack'], indirect=['with_scenario'])
 def test_command_test(with_scenario):
-    pytest.helpers.test()
+    pytest.helpers.test('all')
 
 
 @pytest.mark.parametrize(

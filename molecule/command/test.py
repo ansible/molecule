@@ -34,6 +34,8 @@ class Test(base.Base):
         Execute the actions necessary to perform a `molecule test` and
         returns None.
 
+        Target all scenarios:
+
         >>> molecule test
 
         Targeting a specific scenario:

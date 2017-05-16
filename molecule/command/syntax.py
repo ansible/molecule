@@ -34,6 +34,8 @@ class Syntax(base.Base):
         Execute the actions necessary to perform a `molecule syntax` and
         returns None.
 
+        Target the default scenario:
+
         >>> molecule syntax
 
         Targeting a specific scenario:
@@ -59,7 +61,10 @@ class Syntax(base.Base):
 
 @click.command()
 @click.pass_context
-@click.option('--scenario-name', help='Name of the scenario to target.')
+@click.option(
+    '--scenario-name',
+    default='default',
+    help='Name of the scenario to target. (default)')
 def syntax(ctx, scenario_name):  # pragma: no cover
     """ Use a provisioner to syntax check the role. """
     args = ctx.obj.get('args')

@@ -32,6 +32,8 @@ class Verify(base.Base):
         Execute the actions necessary to perform a `molecule verify` and
         returns None.
 
+        Target the default scenario:
+
         >>> molecule verify
 
         Targeting a specific scenario:
@@ -54,7 +56,10 @@ class Verify(base.Base):
 
 @click.command()
 @click.pass_context
-@click.option('--scenario-name', help='Name of the scenario to target.')
+@click.option(
+    '--scenario-name',
+    default='default',
+    help='Name of the scenario to target. (default)')
 def verify(ctx, scenario_name):  # pragma: no cover
     """ Run automated tests against instances. """
     args = ctx.obj.get('args')

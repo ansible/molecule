@@ -35,6 +35,8 @@ class Check(base.Base):
         Execute the actions necessary to perform a `molecule check` and
         returns None.
 
+        Target the default scenario:
+
         >>> molecule check
 
         Targeting a specific scenario:
@@ -60,7 +62,10 @@ class Check(base.Base):
 
 @click.command()
 @click.pass_context
-@click.option('--scenario-name', help='Name of the scenario to target.')
+@click.option(
+    '--scenario-name',
+    default='default',
+    help='Name of the scenario to target. (default)')
 def check(ctx, scenario_name):  # pragma: no cover
     """ Use a provisioner to perform a Dry-Run (create, converge, create). """
     args = ctx.obj.get('args')

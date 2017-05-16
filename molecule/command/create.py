@@ -35,6 +35,8 @@ class Create(base.Base):
         Execute the actions necessary to perform a `molecule create` and
         returns None.
 
+        Target the default scenario:
+
         >>> molecule create
 
         Targeting a specific scenario:
@@ -80,7 +82,10 @@ class Create(base.Base):
 
 @click.command()
 @click.pass_context
-@click.option('--scenario-name', help='Name of the scenario to target.')
+@click.option(
+    '--scenario-name',
+    default='default',
+    help='Name of the scenario to target. (default)')
 @click.option(
     '--driver-name',
     type=click.Choice(config.molecule_drivers()),
