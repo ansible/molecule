@@ -189,12 +189,12 @@ def test_env(config_instance):
         'MOLECULE_INVENTORY_FILE': config_instance.provisioner.inventory_file,
         'MOLECULE_SCENARIO_DIRECTORY': config_instance.scenario.directory,
         'MOLECULE_INSTANCE_CONFIG': config_instance.driver.instance_config,
-        'MOLECULE_DEPENDENCY': 'galaxy',
-        'MOLECULE_DRIVER': 'docker',
-        'MOLECULE_LINT': 'ansible-lint',
-        'MOLECULE_PROVISIONER': 'ansible',
-        'MOLECULE_SCENARIO': 'default',
-        'MOLECULE_VERIFIER': 'testinfra'
+        'MOLECULE_DEPENDENCY_NAME': 'galaxy',
+        'MOLECULE_DRIVER_NAME': 'docker',
+        'MOLECULE_LINT_NAME': 'ansible-lint',
+        'MOLECULE_PROVISIONER_NAME': 'ansible',
+        'MOLECULE_SCENARIO_NAME': 'default',
+        'MOLECULE_VERIFIER_NAME': 'testinfra'
     }
 
     assert x == config_instance.env

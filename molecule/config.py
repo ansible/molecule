@@ -129,12 +129,12 @@ class Config(object):
             'MOLECULE_INVENTORY_FILE': self.provisioner.inventory_file,
             'MOLECULE_SCENARIO_DIRECTORY': self.scenario.directory,
             'MOLECULE_INSTANCE_CONFIG': self.driver.instance_config,
-            'MOLECULE_DEPENDENCY': self.dependency.name,
-            'MOLECULE_DRIVER': self.driver.name,
-            'MOLECULE_LINT': self.lint.name,
-            'MOLECULE_PROVISIONER': self.provisioner.name,
-            'MOLECULE_SCENARIO': self.scenario.name,
-            'MOLECULE_VERIFIER': self.verifier.name,
+            'MOLECULE_DEPENDENCY_NAME': self.dependency.name,
+            'MOLECULE_DRIVER_NAME': self.driver.name,
+            'MOLECULE_LINT_NAME': self.lint.name,
+            'MOLECULE_PROVISIONER_NAME': self.provisioner.name,
+            'MOLECULE_SCENARIO_NAME': self.scenario.name,
+            'MOLECULE_VERIFIER_NAME': self.verifier.name,
         }
 
     @property
