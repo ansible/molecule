@@ -32,6 +32,15 @@ from molecule import command
 @click.version_option(version=molecule.__version__)
 @click.pass_context
 def main(ctx, debug):  # pragma: no cover
+    """
+    \b
+     _____     _             _
+    |     |___| |___ ___ _ _| |___
+    | | | | . | | -_|  _| | | | -_|
+    |_|_|_|___|_|___|___|___|_|___|
+
+    Molecule aids in the development and testing of Ansible roles.
+    """
     ctx.obj = {}
     ctx.obj['args'] = {}
     ctx.obj['args']['debug'] = debug
