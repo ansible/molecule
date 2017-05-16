@@ -6,12 +6,12 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
     os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('all')
 
 
-def test_hostname(SystemInfo):
-    assert 'static-instance-vagrant' == SystemInfo.hostname
+def test_hostname(host):
+    assert 'static-instance-vagrant' == host.system_info.hostname
 
 
-def test_etc_molecule_directory(File):
-    f = File('/etc/molecule')
+def test_etc_molecule_directory(host):
+    f = host.file('/etc/molecule')
 
     assert f.is_directory
     assert f.user == 'root'
@@ -19,8 +19,8 @@ def test_etc_molecule_directory(File):
     assert f.mode == 0o755
 
 
-def test_etc_molecule_ansible_hostname_file(File):
-    f = File('/etc/molecule/static-instance-vagrant')
+def test_etc_molecule_ansible_hostname_file(host):
+    f = host.file('/etc/molecule/static-instance-vagrant')
 
     assert f.is_file
     assert f.user == 'root'
