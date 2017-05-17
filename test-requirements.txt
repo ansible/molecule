@@ -5,6 +5,7 @@ pytest
 pytest-cov
 pytest-helpers-namespace
 pytest-mock
+pytest-verbose-parametrize
 python-vagrant
 shade
 wheel

@@ -18,7 +18,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import distutils.spawn
 import logging
 import os
 import random
@@ -37,7 +36,7 @@ def random_string(l=5):
     return ''.join(random.choice(string.ascii_uppercase) for _ in range(l))
 
 
-@pytest.fixture()
+@pytest.fixture
 def temp_dir(tmpdir, random_string, request):
     directory = tmpdir.mkdir(random_string)
     os.chdir(directory.strpath)
@@ -48,46 +47,3 @@ def temp_dir(tmpdir, random_string, request):
     request.addfinalizer(cleanup)
 
     return directory
-
-
-def get_docker_executable():
-    return not distutils.spawn.find_executable('docker')
-
-
-def get_lxc_executable():
-    return not distutils.spawn.find_executable('lxc-start')
-
-
-def get_lxd_executable():
-    return not distutils.spawn.find_executable('lxd')
-
-
-def get_vagrant_executable():
-    return not distutils.spawn.find_executable('vagrant')
-
-
-def get_virtualbox_executable():
-    return not distutils.spawn.find_executable('VBoxManage')
-
-
-@pytest.helpers.register
-def supports_docker():
-    return pytest.mark.skipif(
-        get_docker_executable(), reason='Docker not supported')
-
-
-@pytest.helpers.register
-def supports_lxc():
-    return pytest.mark.skipif(get_lxc_executable(), reason='LXC not supported')
-
-
-@pytest.helpers.register
-def supports_lxd():
-    return pytest.mark.skipif(get_lxd_executable(), reason='LXC not supported')
-
-
-@pytest.helpers.register
-def supports_vagrant_virtualbox():
-    return pytest.mark.skipif(
-        get_vagrant_executable() or get_virtualbox_executable(),
-        reason='VirtualBox not supported')

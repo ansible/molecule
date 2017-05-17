@@ -29,7 +29,7 @@ from molecule import util
 from molecule.command import base
 
 
-@pytest.fixture()
+@pytest.fixture
 def base_class(config_instance):
     class ExtendedBase(base.Base):
         def execute():
@@ -38,7 +38,7 @@ def base_class(config_instance):
     return ExtendedBase
 
 
-@pytest.fixture()
+@pytest.fixture
 def base_instance(base_class, config_instance):
     return base_class(config_instance)
 
