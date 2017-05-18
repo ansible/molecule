@@ -33,7 +33,8 @@ LOG = logger.get_logger(__name__)
 
 
 @pytest.fixture
-def with_scenario(request, scenario_to_test):
+def with_scenario(request, scenario_to_test, scenario_name=False):
+    local_scenario_name = scenario_name
     scenario_directory = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), os.path.pardir,
         'scenarios', scenario_to_test)
@@ -41,7 +42,8 @@ def with_scenario(request, scenario_to_test):
     os.chdir(scenario_directory)
 
     def cleanup():
-        cmd = sh.molecule.bake('list', '--format', 'yaml')
+        options = {'scenario_name': local_scenario_name, 'format': 'yaml'}
+        cmd = sh.molecule.bake('list', **options)
         out = run_command(cmd, log=False)
         out = out.stdout
         out = util.strip_ansi_color(out)
@@ -57,57 +59,64 @@ def with_scenario(request, scenario_to_test):
             msg = "CLEANUP: Destroying instances for '{}' scenario".format(
                 scenario_name)
             LOG.out(msg)
-            cmd = sh.molecule.bake('destroy', '--scenario-name', scenario_name)
+            options = {'scenario_name': scenario_name}
+            cmd = sh.molecule.bake('destroy', **options)
             run_command(cmd)
 
     request.addfinalizer(cleanup)
 
 
 @pytest.fixture
-def skip_test(request):
-    driver_name = request.param
-
+def skip_test(request, driver_name):
     if (driver_name == 'docker' and not supports_docker()):
-        pytest.skip("skipped '{}' not supported".format(driver_name))
+        pytest.skip("Skipped '{}' not supported".format(driver_name))
     elif (driver_name == 'lxc' and not supports_lxc()):
         pytest.skip("skipped '{}' not supported".format(driver_name))
     elif (driver_name == 'lxd' and not supports_lxd()):
-        pytest.skip("skipped '{}' not supported".format(driver_name))
+        pytest.skip("Skipped '{}' not supported".format(driver_name))
     elif (driver_name == 'vagrant' and not supports_vagrant_virtualbox()):
-        pytest.skip("skipped '{}' not supported".format(driver_name))
+        pytest.skip("Skipped '{}' not supported".format(driver_name))
+    elif driver_name == 'static':
+        pytest.skip("Ignoring '{}' tests for now".format(driver_name))
 
 
 @pytest.helpers.register
 def idempotence(scenario_name):
-    cmd = sh.molecule.bake('create', '--scenario-name', scenario_name)
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('create', **options)
     run_command(cmd)
 
-    cmd = sh.molecule.bake('converge', '--scenario-name', scenario_name)
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('converge', **options)
     run_command(cmd)
 
-    cmd = sh.molecule.bake('idempotence', '--scenario-name', scenario_name)
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('idempotence', **options)
     run_command(cmd)
 
 
 @pytest.helpers.register
 def init_role(temp_dir, driver_name):
-    role_directory = os.path.join(temp_dir.strpath, 'test-init')
+    print driver_name
+    #  role_directory = os.path.join(temp_dir.strpath, 'test-init')
 
-    cmd = sh.molecule.bake('init', 'role', '--driver-name', driver_name,
-                           '--role-name', 'test-init')
-    run_command(cmd)
+    #  cmd = sh.molecule.bake(
+    #      'init', 'role', {'driver-name': driver_name,
+    #                       'role-name': 'test-init'})
+    #  run_command(cmd)
 
-    os.chdir(role_directory)
-    cmd = sh.molecule.bake('test')
-    run_command(cmd)
+    #  os.chdir(role_directory)
+    #  cmd = sh.molecule.bake('test')
+    #  run_command(cmd)
 
 
 @pytest.helpers.register
 def init_scenario(temp_dir, driver_name):
     # Create role
     role_directory = os.path.join(temp_dir.strpath, 'test-init')
-    cmd = sh.molecule.bake('init', 'role', '--driver-name', driver_name,
-                           '--role-name', 'test-init')
+    cmd = sh.molecule.bake(
+        'init', 'role', {'driver-name': driver_name,
+                         'role-name': 'test-init'})
     run_command(cmd)
     os.chdir(role_directory)
 
@@ -115,13 +124,14 @@ def init_scenario(temp_dir, driver_name):
     molecule_directory = config.molecule_directory(role_directory)
     scenario_directory = os.path.join(molecule_directory, 'test-scenario')
 
-    cmd = sh.molecule.bake('init', 'scenario', '--scenario-name',
-                           'test-scenario', '--role-name', 'test-init')
+    options = {'scenario_name': 'test-scenario', 'role_name': 'test-init'}
+    cmd = sh.molecule.bake('init', 'scenario', **options)
     run_command(cmd)
 
     assert os.path.isdir(scenario_directory)
 
-    cmd = sh.molecule.bake('test', '--scenario-name', 'test-scenario')
+    options = {'scenario_name': 'test-scenario'}
+    cmd = sh.molecule.bake('test', **options)
     run_command(cmd)
 
 
@@ -137,7 +147,7 @@ def list(x):
 
 @pytest.helpers.register
 def list_with_format_plain(x):
-    cmd = sh.molecule.bake('list', '--format', 'plain')
+    cmd = sh.molecule.bake('list', {'format': 'plain'})
     out = run_command(cmd, log=False)
     out = out.stdout
     out = util.strip_ansi_color(out)
@@ -147,7 +157,8 @@ def list_with_format_plain(x):
 
 @pytest.helpers.register
 def login(instance, regexp, scenario_name='default'):
-    cmd = sh.molecule.bake('create', '--scenario-name', scenario_name)
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('create', **options)
     run_command(cmd)
 
     child_cmd = 'molecule login --host {} --scenario-name {}'.format(
@@ -160,23 +171,23 @@ def login(instance, regexp, scenario_name='default'):
 
 @pytest.helpers.register
 def test(scenario_name='default'):
-    if scenario_name is 'all':
-        cmd = sh.molecule.bake('test')
-        run_command(cmd)
-    else:
-        cmd = sh.molecule.bake('test', '--scenario-name', scenario_name)
-        run_command(cmd)
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('test', **options)
+    run_command(cmd)
 
 
 @pytest.helpers.register
 def verify(scenario_name='default'):
-    cmd = sh.molecule.bake('create', '--scenario-name', scenario_name)
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('create', **options)
     run_command(cmd)
 
-    cmd = sh.molecule.bake('converge', '--scenario-name', scenario_name)
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('converge', **options)
     run_command(cmd)
 
-    cmd = sh.molecule.bake('verify', '--scenario-name', scenario_name)
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('verify', **options)
     run_command(cmd)
 
 

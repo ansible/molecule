@@ -15,8 +15,8 @@ Important Changes
 * Addition of `Scenarios`_.
 * Addition of a `Static Driver`_ to test instances managed outside of Molecule.
 * Promoted `Goss Verifier`_ to a supported verifier.
-* Added `LXC Driver`_, `LXD Driver`_ , and `OpenStack Driver`_ native Molecule
-  drivers.
+* Added `EC2 Driver`, `LXC Driver`_, `LXD Driver`_ , and `OpenStack Driver`_
+  native Molecule drivers.
 * Molecule will follow `Semantic Versioning`_.  Therefore versioning will be
   much different than previous versions of Molecule.  It will be safe to pin
   to MINOR versions of Molecule.  MINOR will add functionality in a
@@ -32,6 +32,7 @@ Breaking Changes
 * Ansible 2.2 and 2.3 support only.
 * See Molecule v1 to v2 `Porting Guide`_.
 
+.. _`EC2 Driver`: http://molecule.readthedocs.io/en/v2/configuration.html#ec2
 .. _`Goss Verifier`: http://molecule.readthedocs.io/en/v2/configuration.html#goss
 .. _`LXC Driver`: http://molecule.readthedocs.io/en/v2/configuration.html#lxc
 .. _`LXD Driver`: http://molecule.readthedocs.io/en/v2/configuration.html#lxd

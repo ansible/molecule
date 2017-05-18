@@ -1,0 +1,14 @@
+---
+{% raw -%}
+- hosts: all
+  gather_facts: no
+  tasks:
+    - name: Install python for Ansible
+      raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal python-zipstream)
+      become: yes
+      changed_when: False
+{%- endraw %}
+
+- hosts: all
+  roles:
+    - role: {{ cookiecutter.role_name }}

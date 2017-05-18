@@ -10,54 +10,39 @@
     ssh_port: 22
 
     security_group_name: molecule
-    security_group_description: "Security group for testing Molecule"
+    security_group_description: Security group for testing Molecule
     security_group_rules:
-      - { proto: 'tcp', port: "{{ ssh_port }}", cidr: '0.0.0.0/0' }
-      - { proto: 'icmp', port: -1, cidr: '0.0.0.0/0' }
-      - { ethertype: 'IPv4', group: "{{ security_group.id }}" }
-      - { ethertype: 'IPv6', group: "{{ security_group.id }}" }
-
-    neutron:
-      networks:
-        - name: molecule
-          external: False
-          shared: False
-      subnets:
-        - name: molecule
-          network_name: molecule
-          ip_version: 4
-          cidr: 192.168.1.0/24
-          enable_dhcp: True
-          dns_nameservers:
-            - 8.8.8.8
-            - 8.8.4.4
-      routers:
-        - name: molecule
-          network_name: public-floating-601
-          interfaces:
-            - molecule
+      - { proto: 'tcp', from_port: "{{ ssh_port }}", to_port: "{{ ssh_port }}",
+          cidr_ip: '0.0.0.0/0' }
+      - { proto: 'icmp', from_port: 8, to_port: -1, cidr_ip: '0.0.0.0/0' }
+    security_group_rules_egress:
+      - { proto: -1, from_port: 0, to_port: 0, cidr_ip: '0.0.0.0/0' }
 
     keypair_name: molecule_key
-    keypair_path: /tmp/molecule_openstack_ssh_key
+    keypair_path: /tmp/molecule_aws_ssh_key
 
-    nova:
-      image: Ubuntu-16.04
-      flavor: NO-Nano
+    ec2:
+      image: ami-a5b196c0
+      instance_type: t2.micro
+      vpc_subnet_id: subnet-6456fd1f
   tasks:
     - include: security_groups.yml
     - include: keypair.yml
-    - include: neutron.yml
 
     - name: Create molecule instance(s)
-      os_server:
-        name: "{{ item.name | instance_with_scenario_name(molecule_yml.scenario.name) }}"
-        image: "{{ nova.image }}"
-        flavor: "{{ nova.flavor }}"
-        security_groups:
-          - "{{ security_group_name }}"
+      ec2:
         key_name: "{{ keypair_name }}"
-        nics:
-          - net-id: "{{ openstack_networks[0]['id'] }}"
+        image: "{{ ec2.image }}"
+        instance_type: "{{ ec2.instance_type }}"
+        vpc_subnet_id: "{{ ec2.vpc_subnet_id }}"
+        group: "{{ security_group_name }}"
+        instance_tags:
+          instance: "{{ item.name | instance_with_scenario_name(molecule_yml.scenario.name) }}"
+        wait: yes
+        assign_public_ip: yes
+        exact_count: 1
+        count_tag:
+          instance: "{{ item.name | instance_with_scenario_name(molecule_yml.scenario.name) }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
 
@@ -66,11 +51,12 @@
     - name: Populate instance config dict
       set_fact:
         instance_conf_dict: {
-          'instance': "{{ item.openstack.name }}",
-          'address': "{{ item.openstack.accessIPv4 }}",
-          'user': 'cloud-user',
+          'instance': "{{ server.results[0].instances[0].tags.instance }}",
+          'address': "{{ server.results[0].instances[0].public_dns_name }}",
+          'user': 'ubuntu',
           'port': "{{ ssh_port }}",
-          'identity_file': "{{ keypair_path }}",}
+          'identity_file': "{{ keypair_path }}",
+          'instance_ids': "{{ server.results[0].instance_ids }}",}
       with_items: "{{ server.results }}"
       register: instance_config_dict
       when: server.changed | bool

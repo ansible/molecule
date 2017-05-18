@@ -57,6 +57,12 @@ Docker
 .. autoclass:: molecule.driver.dockr.Dockr
    :undoc-members:
 
+EC2
+^^^
+
+.. autoclass:: molecule.driver.ec2.Ec2
+   :undoc-members:
+
 LXC
 ^^^
 
