@@ -2,7 +2,7 @@
 - name: Create security group
   os_security_group:
     name: "{{ security_group_name }}"
-    description: "Security group for testing Molecule"
+    description: "{{ security_group_description }}"
   register: security_group
 
 - name: Create security group rules

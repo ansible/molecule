@@ -1,14 +1,14 @@
 import os
-import re
 
 import testinfra.utils.ansible_runner
 
 testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
-    os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('foo')
+    os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('all')
 
 
+# EC2 provides unique random hostnames.
 def test_hostname(host):
-    assert re.search(r'instance-[12]-multi-node', host.system_info.hostname)
+    pass
 
 
 def test_etc_molecule_directory(host):

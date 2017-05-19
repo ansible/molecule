@@ -31,12 +31,6 @@ Install the remaining requirements in a venv (optional).
 Full
 ----
 
-Boot static instances prior to running the tests.
-
-.. code-block:: bash
-
-    $ test/setup.bash
-
 Run all tests, including linting and coverage reports.  This should be run
 prior to merging or submitting a pull request.
 

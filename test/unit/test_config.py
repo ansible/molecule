@@ -29,6 +29,7 @@ from molecule import state
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
 from molecule.driver import dockr
+from molecule.driver import ec2
 from molecule.driver import lxc
 from molecule.driver import lxd
 from molecule.driver import openstack
@@ -97,6 +98,19 @@ def test_dependency_property_raises(molecule_dependency_invalid_section_data,
 
 def test_driver_property(config_instance):
     assert isinstance(config_instance.driver, dockr.Dockr)
+
+
+@pytest.fixture
+def molecule_driver_ec2_section_data():
+    return {'driver': {'name': 'ec2'}, }
+
+
+def test_driver_property_is_ec2(molecule_driver_ec2_section_data,
+                                config_instance):
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_driver_ec2_section_data)
+
+    assert isinstance(config_instance.driver, ec2.Ec2)
 
 
 @pytest.fixture
@@ -178,7 +192,15 @@ def test_driver_property_raises(molecule_driver_invalid_section_data,
 
 
 def test_drivers_property(config_instance):
-    x = ['docker', 'lxc', 'lxd', 'openstack', 'static', 'vagrant']
+    x = [
+        'docker',
+        'ec2',
+        'lxc',
+        'lxd',
+        'openstack',
+        'static',
+        'vagrant',
+    ]
 
     assert x == config_instance.drivers
 
@@ -368,7 +390,15 @@ def test_molecule_file():
 
 
 def test_molecule_drivers():
-    x = ['docker', 'lxc', 'lxd', 'openstack', 'static', 'vagrant']
+    x = [
+        'docker',
+        'ec2',
+        'lxc',
+        'lxd',
+        'openstack',
+        'static',
+        'vagrant',
+    ]
 
     assert x == config.molecule_drivers()
 

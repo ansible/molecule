@@ -13,7 +13,7 @@
 
 - name: Gather facts about network for use with instance creation
   os_networks_facts:
-    name: molecule
+    name: "{{ neutron.networks[0].name }}"
 
 - name: Create subnets
   os_subnet:

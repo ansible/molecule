@@ -1,3 +1,4 @@
+boto
 docker-py
 # lxc-python2
 mock

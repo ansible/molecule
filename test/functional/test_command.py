@@ -28,72 +28,96 @@ def scenario_to_test(request):
     return request.param
 
 
+@pytest.fixture
+def scenario_name(request):
+    try:
+        return request.param
+    except AttributeError:
+        pass
+
+
+@pytest.fixture
+def driver_name(request):
+    return request.param
+
+
 @pytest.mark.parametrize(
-    'scenario_to_test, skip_test, scenario_name', [
+    'scenario_to_test, driver_name, scenario_name', [
         ('driver/docker', 'docker', 'default'),
+        ('driver/ec2', 'ec2', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
-        ('driver/static', 'docker', 'docker'),
-        ('driver/static', 'openstack', 'openstack'),
-        ('driver/static', 'vagrant', 'vagrant'),
+        ('driver/static', 'static', 'docker'),
+        ('driver/static', 'static', 'ec2'),
+        ('driver/static', 'static', 'openstack'),
+        ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
-    indirect=['scenario_to_test', 'skip_test'])
+    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
 def test_command_check(scenario_to_test, with_scenario, skip_test,
                        scenario_name):
-    cmd = sh.molecule.bake('check', '--scenario-name', scenario_name)
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('check', **options)
     pytest.helpers.run_command(cmd)
 
 
 @pytest.mark.parametrize(
-    'scenario_to_test, skip_test, scenario_name', [
+    'scenario_to_test, driver_name, scenario_name', [
         ('driver/docker', 'docker', 'default'),
+        ('driver/ec2', 'ec2', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
-        ('driver/static', 'docker', 'docker'),
-        ('driver/static', 'openstack', 'openstack'),
-        ('driver/static', 'vagrant', 'vagrant'),
+        ('driver/static', 'static', 'docker'),
+        ('driver/static', 'static', 'ec2'),
+        ('driver/static', 'static', 'openstack'),
+        ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
-    indirect=['scenario_to_test', 'skip_test'])
+    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
 def test_command_converge(scenario_to_test, with_scenario, skip_test,
                           scenario_name):
-    cmd = sh.molecule.bake('converge', '--scenario-name', scenario_name)
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('converge', **options)
     pytest.helpers.run_command(cmd)
 
 
 @pytest.mark.parametrize(
-    'scenario_to_test, skip_test, scenario_name', [
+    'scenario_to_test, driver_name, scenario_name', [
         ('driver/docker', 'docker', 'default'),
+        ('driver/ec2', 'ec2', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
-        ('driver/static', 'docker', 'docker'),
-        ('driver/static', 'openstack', 'openstack'),
-        ('driver/static', 'vagrant', 'vagrant'),
+        ('driver/static', 'static', 'docker'),
+        ('driver/static', 'static', 'ec2'),
+        ('driver/static', 'static', 'openstack'),
+        ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
-    indirect=['scenario_to_test', 'skip_test'])
+    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
 def test_command_create(scenario_to_test, with_scenario, skip_test,
                         scenario_name):
-    cmd = sh.molecule.bake('create', '--scenario-name', scenario_name)
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('create', **options)
     pytest.helpers.run_command(cmd)
 
 
 @pytest.mark.parametrize(
-    'scenario_to_test, skip_test', [
-        ('dependency', 'docker'),
-        ('dependency', 'lxc'),
-        ('dependency', 'lxd'),
-        ('dependency', 'openstack'),
-        ('dependency', 'vagrant'),
+    'scenario_to_test, driver_name, scenario_name', [
+        ('dependency', 'docker', 'ansible-galaxy'),
+        ('dependency', 'ec2', 'ansible-galaxy'),
+        ('dependency', 'lxc', 'ansible-galaxy'),
+        ('dependency', 'lxd', 'ansible-galaxy'),
+        ('dependency', 'openstack', 'ansible-galaxy'),
+        ('dependency', 'vagrant', 'ansible-galaxy'),
     ],
-    indirect=['scenario_to_test', 'skip_test'])
+    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
 def test_command_dependency_ansible_galaxy(scenario_to_test, with_scenario,
-                                           skip_test):
-    cmd = sh.molecule.bake('dependency', '--scenario-name', 'ansible-galaxy')
+                                           skip_test, scenario_name):
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('dependency', **options)
     pytest.helpers.run_command(cmd)
 
     dependency_role = os.path.join('molecule', 'ansible-galaxy', '.molecule',
@@ -102,16 +126,19 @@ def test_command_dependency_ansible_galaxy(scenario_to_test, with_scenario,
 
 
 @pytest.mark.parametrize(
-    'scenario_to_test, skip_test', [
-        ('dependency', 'docker'),
-        ('dependency', 'lxc'),
-        ('dependency', 'lxd'),
-        ('dependency', 'openstack'),
-        ('dependency', 'vagrant'),
+    'scenario_to_test, driver_name, scenario_name', [
+        ('dependency', 'docker', 'gilt'),
+        ('dependency', 'ec2', 'gilt'),
+        ('dependency', 'lxc', 'gilt'),
+        ('dependency', 'lxd', 'gilt'),
+        ('dependency', 'openstack', 'gilt'),
+        ('dependency', 'vagrant', 'gilt'),
     ],
-    indirect=['scenario_to_test', 'skip_test'])
-def test_command_dependency_gilt(scenario_to_test, with_scenario, skip_test):
-    cmd = sh.molecule.bake('dependency', '--scenario-name', 'gilt')
+    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
+def test_command_dependency_gilt(scenario_to_test, with_scenario, skip_test,
+                                 scenario_name):
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('dependency', **options)
     pytest.helpers.run_command(cmd)
 
     dependency_role = os.path.join('molecule', 'ansible-galaxy', '.molecule',
@@ -120,81 +147,91 @@ def test_command_dependency_gilt(scenario_to_test, with_scenario, skip_test):
 
 
 @pytest.mark.parametrize(
-    'scenario_to_test, skip_test, scenario_name', [
+    'scenario_to_test, driver_name, scenario_name', [
         ('driver/docker', 'docker', 'default'),
+        ('driver/ec2', 'ec2', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
-        ('driver/static', 'docker', 'docker'),
-        ('driver/static', 'openstack', 'openstack'),
-        ('driver/static', 'vagrant', 'vagrant'),
+        ('driver/static', 'static', 'docker'),
+        ('driver/static', 'static', 'ec2'),
+        ('driver/static', 'static', 'openstack'),
+        ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
-    indirect=['scenario_to_test', 'skip_test'])
+    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
 def test_command_destroy(scenario_to_test, with_scenario, skip_test,
                          scenario_name):
-    cmd = sh.molecule.bake('destroy', '--scenario-name', scenario_name)
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('destroy', **options)
     pytest.helpers.run_command(cmd)
 
 
 @pytest.mark.parametrize(
-    'scenario_to_test, skip_test, scenario_name', [
+    'scenario_to_test, driver_name, scenario_name', [
         ('driver/docker', 'docker', 'default'),
+        ('driver/ec2', 'ec2', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
-        ('driver/static', 'docker', 'docker'),
-        ('driver/static', 'openstack', 'openstack'),
-        ('driver/static', 'vagrant', 'vagrant'),
+        ('driver/static', 'static', 'docker'),
+        ('driver/static', 'static', 'ec2'),
+        ('driver/static', 'static', 'openstack'),
+        ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
-    indirect=['scenario_to_test', 'skip_test'])
+    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
 def test_command_idempotence(scenario_to_test, with_scenario, skip_test,
                              scenario_name):
     pytest.helpers.idempotence(scenario_name)
 
 
 @pytest.mark.parametrize(
-    'driver_name, skip_test', [
-        ('docker', 'docker'),
-        ('lxc', 'lxc'),
-        ('lxd', 'lxd'),
-        ('openstack', 'openstack'),
-        ('vagrant', 'vagrant'),
+    'driver_name', [
+        ('docker'),
+        ('ec2'),
+        ('lxc'),
+        ('lxd'),
+        ('openstack'),
+        ('vagrant'),
     ],
-    indirect=['skip_test'])
+    indirect=['driver_name'])
 def test_command_init_role(temp_dir, driver_name, skip_test):
     pytest.helpers.init_role(temp_dir, driver_name)
 
 
 @pytest.mark.parametrize(
-    'driver_name, skip_test', [
-        ('docker', 'docker'),
-        ('lxc', 'lxc'),
-        ('lxd', 'lxd'),
-        ('openstack', 'openstack'),
-        ('vagrant', 'vagrant'),
+    'driver_name', [
+        ('docker'),
+        ('ec2'),
+        ('lxc'),
+        ('lxd'),
+        ('openstack'),
+        ('vagrant'),
     ],
-    indirect=['skip_test'])
+    indirect=['driver_name'])
 def test_command_init_scenario(temp_dir, driver_name, skip_test):
     pytest.helpers.init_role(temp_dir, driver_name)
 
 
 @pytest.mark.parametrize(
-    'scenario_to_test, skip_test, scenario_name', [
+    'scenario_to_test, driver_name, scenario_name', [
         ('driver/docker', 'docker', 'default'),
+        ('driver/ec2', 'ec2', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
-        ('driver/static', 'docker', 'docker'),
-        ('driver/static', 'openstack', 'openstack'),
-        ('driver/static', 'vagrant', 'vagrant'),
+        ('driver/static', 'static', 'docker'),
+        ('driver/static', 'static', 'ec2'),
+        ('driver/static', 'static', 'openstack'),
+        ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
-    indirect=['scenario_to_test', 'skip_test'])
+    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
 def test_command_lint(scenario_to_test, with_scenario, skip_test,
                       scenario_name):
-    cmd = sh.molecule.bake('lint', '--scenario-name', scenario_name)
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('lint', **options)
     pytest.helpers.run_command(cmd)
 
 
@@ -207,6 +244,13 @@ Instance Name          Driver Name    Provisioner Name    Scenario Name    Creat
 instance-1-default     Docker         Ansible             default          False      False
 instance-1-multi-node  Docker         Ansible             multi-node       False      False
 instance-2-multi-node  Docker         Ansible             multi-node       False      False
+""".strip()),  # noqa
+        ('driver/ec2', """
+Instance Name          Driver Name    Provisioner Name    Scenario Name    Created    Converged
+---------------------  -------------  ------------------  ---------------  ---------  -----------
+instance-1-default     Ec2            Ansible             default          False      False
+instance-1-multi-node  Ec2            Ansible             multi-node       False      False
+instance-2-multi-node  Ec2            Ansible             multi-node       False      False
 """.strip()),  # noqa
         ('driver/lxc', """
 Instance Name          Driver Name    Provisioner Name    Scenario Name    Created    Converged
@@ -233,6 +277,7 @@ instance-2-multi-node  Openstack      Ansible             multi-node       False
 Instance Name              Driver Name    Provisioner Name    Scenario Name    Created    Converged
 -------------------------  -------------  ------------------  ---------------  ---------  -----------
 static-instance-docker     Static         Ansible             docker           False      True
+static-instance-ec2        Static         Ansible             ec2              False      True
 static-instance-openstack  Static         Ansible             openstack        False      True
 static-instance-vagrant    Static         Ansible             vagrant          False      True
 """.strip()),  # noqa
@@ -256,6 +301,11 @@ instance-1-default     Docker  Ansible  default     False  False
 instance-1-multi-node  Docker  Ansible  multi-node  False  False
 instance-2-multi-node  Docker  Ansible  multi-node  False  False
 """.strip()),
+        ('driver/ec2', """
+instance-1-default     Ec2  Ansible  default     False  False
+instance-1-multi-node  Ec2  Ansible  multi-node  False  False
+instance-2-multi-node  Ec2  Ansible  multi-node  False  False
+""".strip()),
         ('driver/lxc', """
 instance-1-default     Lxc  Ansible  default     False  False
 instance-1-multi-node  Lxc  Ansible  multi-node  False  False
@@ -273,6 +323,7 @@ instance-2-multi-node  Openstack  Ansible  multi-node  False  False
 """.strip()),
         ('driver/static', """
 static-instance-docker     Static  Ansible  docker     False  True
+static-instance-ec2        Static  Ansible  ec2        False  True
 static-instance-openstack  Static  Ansible  openstack  False  True
 static-instance-vagrant    Static  Ansible  vagrant    False  True
 """.strip()),
@@ -289,11 +340,13 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario,
 
 
 @pytest.mark.parametrize(
-    'scenario_to_test, skip_test, instance, regexp, scenario_name', [
+    'scenario_to_test, driver_name, instance, regexp, scenario_name', [
         ('driver/docker', 'docker', 'instance-1', '.*instance-1-multi-node.*',
          'multi-node'),
         ('driver/docker', 'docker', 'instance-2', '.*instance-2-multi-node.*',
          'multi-node'),
+        ('driver/ec2', 'ec2', 'instance-1', '.*ip-.*', 'multi-node'),
+        ('driver/ec2', 'ec2', 'instance-2', '.*ip-.*', 'multi-node'),
         ('driver/lxc', 'lxc', 'instance-1', '.*instance-1-multi-node.*',
          'multi-node'),
         ('driver/lxc', 'lxc', 'instance-2', '.*instance-2-multi-node.*',
@@ -306,70 +359,79 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario,
          '.*instance-1-multi-node.*', 'multi-node'),
         ('driver/openstack', 'openstack', 'instance-2',
          '.*instance-2-multi-node.*', 'multi-node'),
-        ('driver/static', 'docker', 'static-instance-vagrant',
-         '.*static-instance-vagrant.*', 'docker'),
-        ('driver/static', 'openstack', 'static-instance-vagrant',
-         '.*static-instance-vagrant.*', 'openstack'),
-        ('driver/static', 'vagrant', 'static-instance-vagrant',
+        ('driver/static', 'static', 'static-instance-vagrant',
+         '.*static-instance-docker.*', 'docker'),
+        ('driver/static', 'static', 'static-instance-vagrant',
+         '.*static-instance-ec2.*', 'ec2'),
+        ('driver/static', 'static', 'static-instance-vagrant',
+         '.*static-instance-openstack.*', 'openstack'),
+        ('driver/static', 'static', 'static-instance-vagrant',
          '.*static-instance-vagrant.*', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'instance-1',
          '.*instance-1-multi-node.*', 'multi-node'),
         ('driver/vagrant', 'vagrant', 'instance-2',
          '.*instance-2-multi-node.*', 'multi-node'),
     ],
-    indirect=['scenario_to_test', 'skip_test'])
+    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
 def test_command_login(scenario_to_test, with_scenario, skip_test, instance,
                        regexp, scenario_name):
     pytest.helpers.login(instance, regexp, scenario_name)
 
 
 @pytest.mark.parametrize(
-    'scenario_to_test, skip_test, scenario_name', [
+    'scenario_to_test, driver_name, scenario_name', [
         ('driver/docker', 'docker', 'default'),
+        ('driver/ec2', 'ec2', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
-        ('driver/static', 'docker', 'docker'),
-        ('driver/static', 'openstack', 'openstack'),
-        ('driver/static', 'vagrant', 'vagrant'),
+        ('driver/static', 'static', 'docker'),
+        ('driver/static', 'static', 'ec2'),
+        ('driver/static', 'static', 'openstack'),
+        ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
-    indirect=['scenario_to_test', 'skip_test'])
+    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
 def test_command_syntax(scenario_to_test, with_scenario, skip_test,
                         scenario_name):
-    cmd = sh.molecule.bake('syntax', '--scenario-name', scenario_name)
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('syntax', **options)
     pytest.helpers.run_command(cmd)
 
 
 @pytest.mark.parametrize(
-    'scenario_to_test, skip_test, scenario_name', [
-        ('driver/docker', 'docker', 'all'),
-        ('driver/lxc', 'lxc', 'all'),
-        ('driver/lxd', 'lxd', 'all'),
-        ('driver/openstack', 'openstack', 'all'),
-        ('driver/static', 'docker', 'docker'),
-        ('driver/static', 'openstack', 'openstack'),
-        ('driver/static', 'vagrant', 'vagrant'),
-        ('driver/vagrant', 'vagrant', 'all'),
+    'scenario_to_test, driver_name, scenario_name', [
+        ('driver/docker', 'docker', False),
+        ('driver/ec2', 'ec2', False),
+        ('driver/lxc', 'lxc', False),
+        ('driver/lxd', 'lxd', False),
+        ('driver/openstack', 'openstack', False),
+        ('driver/static', 'static', 'docker'),
+        ('driver/static', 'static', 'ec2'),
+        ('driver/static', 'static', 'openstack'),
+        ('driver/static', 'static', 'vagrant'),
+        ('driver/vagrant', 'vagrant', False),
     ],
-    indirect=['scenario_to_test', 'skip_test'])
+    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
 def test_command_test(scenario_to_test, with_scenario, skip_test,
                       scenario_name):
     pytest.helpers.test(scenario_name)
 
 
 @pytest.mark.parametrize(
-    'scenario_to_test, skip_test, scenario_name', [
+    'scenario_to_test, driver_name, scenario_name', [
         ('driver/docker', 'docker', 'default'),
+        ('driver/ec2', 'ec2', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
-        ('driver/static', 'docker', 'docker'),
-        ('driver/static', 'openstack', 'openstack'),
-        ('driver/static', 'vagrant', 'vagrant'),
+        ('driver/static', 'static', 'docker'),
+        ('driver/static', 'static', 'ec2'),
+        ('driver/static', 'static', 'openstack'),
+        ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
-    indirect=['scenario_to_test', 'skip_test'])
+    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
 def test_command_verify(scenario_to_test, with_scenario, skip_test,
                         scenario_name):
     pytest.helpers.verify(scenario_name)
