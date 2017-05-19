@@ -76,6 +76,18 @@ class Ansible(object):
     must provide the setup, teardown, and converge playbooks.  Molecule's
     `init` subcommand will provide the necessary files for convenience.
 
+    .. important::
+
+        Reserve the setup and teardown playbooks for provisioning.  Do not
+        attempt to gather facts or perform operations on the provisioned nodes
+        inside these playbooks.  Due to the gymnastics necessary to sync state
+        between Ansible and Molecule, it is best to perform these tasks in the
+        converge playbook.
+
+        It is the developers responsiblity to properly map the modules's fact
+        data into the instance_conf_dict fact in the setup playbook.  This
+        allows Molecule to properly configure Ansible inventory.
+
     Additional options can be passed to `ansible-playbook` through the options
     dict.  Any option set in this section will override the defaults.
 
