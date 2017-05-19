@@ -13,6 +13,7 @@ Contents:
    contributing
    changelog
    authors
+   faq
 
 Indices and tables
 ==================
