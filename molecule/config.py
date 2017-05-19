@@ -130,6 +130,7 @@ class Config(object):
         return {
             'MOLECULE_FILE': self.molecule_file,
             'MOLECULE_INVENTORY_FILE': self.provisioner.inventory_file,
+            'MOLECULE_EPHEMERAL_DIRECTORY': self.ephemeral_directory,
             'MOLECULE_SCENARIO_DIRECTORY': self.scenario.directory,
             'MOLECULE_INSTANCE_CONFIG': self.driver.instance_config,
             'MOLECULE_DEPENDENCY_NAME': self.dependency.name,

@@ -209,6 +209,7 @@ def test_env(config_instance):
     x = {
         'MOLECULE_FILE': config_instance.molecule_file,
         'MOLECULE_INVENTORY_FILE': config_instance.provisioner.inventory_file,
+        'MOLECULE_EPHEMERAL_DIRECTORY': config_instance.ephemeral_directory,
         'MOLECULE_SCENARIO_DIRECTORY': config_instance.scenario.directory,
         'MOLECULE_INSTANCE_CONFIG': config_instance.driver.instance_config,
         'MOLECULE_DEPENDENCY_NAME': 'galaxy',

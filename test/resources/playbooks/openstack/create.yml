@@ -38,7 +38,7 @@
             - molecule
 
     keypair_name: molecule_key
-    keypair_path: /tmp/molecule_openstack_ssh_key
+    keypair_path: "{{ lookup('env','MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
 
     nova:
       image: Ubuntu-16.04

@@ -17,8 +17,8 @@
       - { proto: 'icmp', from_port: 8, to_port: -1, cidr_ip: '0.0.0.0/0' }
     security_group_rules_egress:
       - { proto: -1, from_port: 0, to_port: 0, cidr_ip: '0.0.0.0/0' }
-    keypair_name: molecule_init_key
-    keypair_path: /tmp/molecule_init_aws_ssh_key
+    keypair_name: molecule_key
+    keypair_path: "{{ lookup('env','MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
     ec2_image: ami-a5b196c0
     ec2_instance_type: t2.micro
     ec2_vpc_subnet_id: subnet-6456fd1f

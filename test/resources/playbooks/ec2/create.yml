@@ -19,7 +19,7 @@
       - { proto: -1, from_port: 0, to_port: 0, cidr_ip: '0.0.0.0/0' }
 
     keypair_name: molecule_key
-    keypair_path: /tmp/molecule_aws_ssh_key
+    keypair_path: "{{ lookup('env','MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
 
     ec2:
       image: ami-a5b196c0

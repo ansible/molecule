@@ -18,8 +18,8 @@
       - { ethertype: 'IPv4', group: "{{ security_group.id }}" }
       - { ethertype: 'IPv6', group: "{{ security_group.id }}" }
     neutron_network_name: molecule
-    keypair_name: molecule_init_key
-    keypair_path: /tmp/molecule_init_openstack_ssh_key
+    keypair_name: molecule_key
+    keypair_path: "{{ lookup('env','MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
     nova_image: Ubuntu-16.04
     nova_flavor: NO-Nano
   tasks:
