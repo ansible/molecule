@@ -26,6 +26,8 @@ import os
 from molecule import config
 from molecule import util
 
+MOLECULE_GLOB = 'molecule/*/molecule.yml'
+
 
 class Base(object):
     """
@@ -63,7 +65,7 @@ def _verify_configs(configs):
                 util.sysexit_with_message(msg)
 
     else:
-        msg = 'Unable to find a molecule.yml.  Exiting.'
+        msg = "'{}' glob failed.  Exiting.".format(MOLECULE_GLOB)
         util.sysexit_with_message(msg)
 
 
@@ -127,8 +129,7 @@ def get_configs(args, command_args):
         config.Config(
             molecule_file=os.path.abspath(c),
             args=args,
-            command_args=command_args)
-        for c in glob.glob('molecule/*/molecule.yml')
+            command_args=command_args) for c in glob.glob(MOLECULE_GLOB)
     ]
 
     scenario_name = command_args.get('scenario_name')
