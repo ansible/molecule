@@ -62,6 +62,15 @@ class Flake8(base.Base):
         """
         return {}
 
+    @property
+    def default_env(self):
+        """
+        Default env variables provided to `flake8` and returns a dict.
+
+        :return: dict
+        """
+        return self._config.merge_dicts(os.environ.copy(), self._config.env)
+
     def bake(self):
         """
         Bake a `flake8` command so it's ready to execute and returns None.
@@ -71,7 +80,7 @@ class Flake8(base.Base):
         self._flake8_command = sh.flake8.bake(
             self.default_options,
             self._tests,
-            _env=os.environ,
+            _env=self.env,
             _out=LOG.out,
             _err=LOG.error)
 

@@ -43,6 +43,13 @@ def test_default_options_property(flake8_instance):
     assert {} == flake8_instance.default_options
 
 
+def test_default_env_property(flake8_instance):
+    assert 'MOLECULE_FILE' in flake8_instance.default_env
+    assert 'MOLECULE_INVENTORY_FILE' in flake8_instance.default_env
+    assert 'MOLECULE_SCENARIO_DIRECTORY' in flake8_instance.default_env
+    assert 'MOLECULE_INSTANCE_CONFIG' in flake8_instance.default_env
+
+
 def test_name_property(flake8_instance):
     assert 'testinfra' == flake8_instance.name
 
