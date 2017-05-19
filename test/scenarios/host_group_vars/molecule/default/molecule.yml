@@ -26,6 +26,6 @@ provisioner:
     example_1:
       host_group_vars_example_1_child_group_molecule_yml: True
 scenario:
-  name: default
+  name: ${MOLECULE_SCENARIO_NAME}
 verifier:
   name: testinfra

@@ -16,6 +16,6 @@ provisioner:
   env:
     ANSIBLE_ROLES_PATH: ../../../../../../resources/roles/
 scenario:
-  name: docker
+  name: ${MOLECULE_SCENARIO_NAME}
 verifier:
   name: testinfra

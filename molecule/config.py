@@ -75,10 +75,12 @@ class Config(object):
          the CLI.
         :returns: None
         """
-        # TODO(retr0h): This file should be merged.
         self.molecule_file = molecule_file
         self.args = args
         self.command_args = command_args
+        # NOTE(retr0h): Crude way to determine sceanrio name, before the
+        # scenario instance has been initialized.
+        self._scenario_name = scenario.name(scenario.directory(molecule_file))
         self.config = self._combine()
 
     @property
@@ -213,8 +215,9 @@ class Config(object):
 
         :return: dict
         """
-        i = interpolation.Interpolator(interpolation.TemplateWithDefaults,
-                                       os.environ)
+        env = self.merge_dicts(os.environ.copy(),
+                               {'MOLECULE_SCENARIO_NAME': self._scenario_name})
+        i = interpolation.Interpolator(interpolation.TemplateWithDefaults, env)
 
         base = self._get_defaults()
         with open(self.molecule_file, 'r') as stream:
