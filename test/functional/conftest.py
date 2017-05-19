@@ -97,17 +97,16 @@ def idempotence(scenario_name):
 
 @pytest.helpers.register
 def init_role(temp_dir, driver_name):
-    print driver_name
-    #  role_directory = os.path.join(temp_dir.strpath, 'test-init')
+    role_directory = os.path.join(temp_dir.strpath, 'test-init')
 
-    #  cmd = sh.molecule.bake(
-    #      'init', 'role', {'driver-name': driver_name,
-    #                       'role-name': 'test-init'})
-    #  run_command(cmd)
+    cmd = sh.molecule.bake(
+        'init', 'role', {'driver-name': driver_name,
+                         'role-name': 'test-init'})
+    run_command(cmd)
 
-    #  os.chdir(role_directory)
-    #  cmd = sh.molecule.bake('test')
-    #  run_command(cmd)
+    os.chdir(role_directory)
+    cmd = sh.molecule.bake('test')
+    run_command(cmd)
 
 
 @pytest.helpers.register
