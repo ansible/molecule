@@ -67,6 +67,21 @@ def _verify_configs(configs):
         util.sysexit_with_message(msg)
 
 
+def _verify_scenario_name(configs, scenario_name):
+    """
+    Verify the specified scenario was found and returns None.
+
+    :param configs: A list containing absolute paths to Molecule config files.
+    :param scenario_name: A string representing the name of the scenario to
+     verify.
+    :return: None
+    """
+    scenario_names = [c.scenario.name for c in configs]
+    if scenario_name not in scenario_names:
+        msg = ("Scenario '{}' not found.  Exiting.").format(scenario_name)
+        util.sysexit_with_message(msg)
+
+
 def _prune(c):
     """
     Prune the ephemeral directory with the exception of the state file.
@@ -119,6 +134,7 @@ def get_configs(args, command_args):
     scenario_name = command_args.get('scenario_name')
     if scenario_name:
         configs = _filter_configs_for_scenario(scenario_name, configs)
+        _verify_scenario_name(configs, scenario_name)
 
     _verify_configs(configs)
     _setup(configs)

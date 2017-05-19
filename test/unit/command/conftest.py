@@ -69,6 +69,21 @@ def patched_verify_configs(mocker):
 
 
 @pytest.fixture
+def patched_verify_scenario_name(mocker):
+    return mocker.patch('molecule.command.base._verify_scenario_name')
+
+
+@pytest.fixture
+def patched_base_setup(mocker):
+    return mocker.patch('molecule.command.base._setup')
+
+
+@pytest.fixture
+def patched_base_filter_configs_for_scenario(mocker):
+    return mocker.patch('molecule.command.base._filter_configs_for_scenario')
+
+
+@pytest.fixture
 def patched_provisioner_write_inventory(mocker):
     return mocker.patch('molecule.provisioner.ansible.Ansible.write_inventory')
 

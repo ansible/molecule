@@ -1,5 +1,4 @@
 #  Copyright (c) 2015-2017 Cisco Systems, Inc.
-
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -75,6 +74,24 @@ def test_verify_configs_raises_with_duplicate_configs(patched_logger_critical,
     patched_logger_critical.assert_called_once_with(msg)
 
 
+def test_verify_scenario_name(config_instance):
+    configs = [config_instance]
+
+    assert base._verify_scenario_name(configs, 'default') is None
+
+
+def test_verify_scenario_name_raises_when_scenario_not_found(
+        config_instance, patched_logger_critical):
+    configs = [config_instance]
+    with pytest.raises(SystemExit) as e:
+        base._verify_scenario_name(configs, 'foo')
+
+    assert 1 == e.value.code
+
+    msg = "Scenario 'foo' not found.  Exiting."
+    patched_logger_critical.assert_called_once_with(msg)
+
+
 def test_prune(config_instance):
     ephemeral_directory = config_instance.ephemeral_directory
 
@@ -122,7 +139,7 @@ def test_setup_creates_ephemeral_directory(config_instance):
     assert os.path.isdir(ephemeral_directory)
 
 
-def test_get_configs(temp_dir, config_instance):
+def test_get_configs(config_instance):
     molecule_file = config_instance.molecule_file
     data = config_instance.config
     util.write_file(molecule_file, util.safe_dump(data))
@@ -133,25 +150,43 @@ def test_get_configs(temp_dir, config_instance):
     assert isinstance(result[0], config.Config)
 
 
-def test_get_configs_calls_verify_configs(patched_verify_configs, temp_dir):
+def test_get_configs_calls_verify_scenario_name(
+        mocker, config_instance, patched_verify_configs,
+        patched_base_filter_configs_for_scenario,
+        patched_verify_scenario_name):
+    patched_base_filter_configs_for_scenario.return_value = [config_instance]
+    base.get_configs({}, {'scenario_name': 'default'})
+
+    patched_verify_scenario_name.assert_called_once_with(
+        patched_base_filter_configs_for_scenario.return_value, 'default')
+
+
+def test_get_configs_calls_verify_configs(patched_verify_configs):
     base.get_configs({}, {})
 
     patched_verify_configs.assert_called_once_with([])
 
 
-def test_get_configs_calls_setup(mocker, patched_verify_configs):
-    m = mocker.patch('molecule.command.base._setup')
-    base.get_configs({}, {})
+def test_get_configs_calls_setup(mocker, config_instance,
+                                 patched_verify_configs, patched_base_setup,
+                                 patched_base_filter_configs_for_scenario,
+                                 patched_verify_scenario_name):
+    patched_base_filter_configs_for_scenario.return_value = [config_instance]
+    base.get_configs({}, {'scenario_name': 'default'})
 
-    m.assert_called_once_with([])
+    patched_base_setup.assert_called_once_with(
+        patched_base_filter_configs_for_scenario.return_value)
 
 
 def test_get_configs_filter_configs_for_scenario(
-        mocker, patched_verify_configs, temp_dir):
-    m = mocker.patch('molecule.command.base._filter_configs_for_scenario')
+        mocker,
+        patched_verify_configs,
+        patched_base_filter_configs_for_scenario,
+        patched_verify_scenario_name, ):
     base.get_configs({}, {'scenario_name': 'default'})
 
-    m.assert_called_once_with('default', [])
+    patched_base_filter_configs_for_scenario.assert_called_once_with('default',
+                                                                     [])
 
 
 def test_filter_configs_for_scenario(config_instance):
