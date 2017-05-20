@@ -40,6 +40,12 @@ def main(ctx, debug):  # pragma: no cover
     |_|_|_|___|_|___|___|___|_|___|
 
     Molecule aids in the development and testing of Ansible roles.
+
+    Enable autocomplete issue:
+
+      autoload bashcompinit && bashcompinit # zsh
+
+      eval "$(_MOLECULE_COMPLETE=source molecule)"
     """
     ctx.obj = {}
     ctx.obj['args'] = {}
