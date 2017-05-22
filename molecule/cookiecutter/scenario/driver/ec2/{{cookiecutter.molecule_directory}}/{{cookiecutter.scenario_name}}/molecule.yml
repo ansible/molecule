@@ -10,6 +10,6 @@ platforms:
 provisioner:
   name: {{ cookiecutter.provisioner_name }}
 scenario:
-  name: ${MOLECULE_SCENARIO_NAME}
+  name: {{ cookiecutter.scenario_name }}
 verifier:
   name: {{ cookiecutter.verifier_name }}

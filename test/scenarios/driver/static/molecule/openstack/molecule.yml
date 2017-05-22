@@ -18,6 +18,6 @@ provisioner:
   env:
     ANSIBLE_ROLES_PATH: ../../../../../../resources/roles/
 scenario:
-  name: ${MOLECULE_SCENARIO_NAME}
+  name: openstack
 verifier:
   name: testinfra

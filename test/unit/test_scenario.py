@@ -55,11 +55,3 @@ def test_test_sequence_property(scenario_instance):
     ]
 
     assert x == scenario_instance.test_sequence
-
-
-def test_name():
-    assert 'baz' == scenario.name('/foo/bar/baz')
-
-
-def test_directory():
-    assert '/foo/bar' == scenario.directory('/foo/bar/baz')

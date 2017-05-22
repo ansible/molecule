@@ -53,15 +53,6 @@ class Scenario(object):
 
     A good source of examples are the `scenario`_ functional tests.
 
-    .. important::
-
-        The scenario name cannot be configured through `molecule.yml`.  It is
-        determined by the directory name of the scenario.  The config value
-        references a `MOLECULE_SCENARIO_NAME` environment variable, which is
-        correctly interpolated.  However, it provided so that the config is
-        symmetrical.  It may be removed in the future, if the source of much
-        confusion.
-
     .. _`scenario`: https://github.com/metacloud/molecule/tree/v2/test/scenarios/driver
     """  # noqa
 
@@ -76,11 +67,11 @@ class Scenario(object):
 
     @property
     def name(self):
-        return name(self.directory)
+        return self._config.config['scenario']['name']
 
     @property
     def directory(self):
-        return directory(self._config.molecule_file)
+        return os.path.dirname(self._config.molecule_file)
 
     @property
     def check_sequence(self):
@@ -93,10 +84,3 @@ class Scenario(object):
     @property
     def test_sequence(self):
         return self._config.config['scenario']['test_sequence']
-
-
-def name(path):
-    return os.path.basename(path)
-
-def directory(path):
-    return os.path.dirname(path)
