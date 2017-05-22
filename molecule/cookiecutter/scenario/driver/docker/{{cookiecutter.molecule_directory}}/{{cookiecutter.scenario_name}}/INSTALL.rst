@@ -43,4 +43,4 @@ Install using pip:
 
   $ sudo pip install ansible
   $ sudo pip install docker-py
-  $ sudo pip install molecule
+  $ sudo pip install molecule --pre
