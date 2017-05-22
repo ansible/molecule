@@ -1,5 +1,5 @@
 ---
-{% raw %}
+{% raw -%}
 - hosts: localhost
   connection: local
   gather_facts: no

@@ -23,4 +23,4 @@
         log_driver: syslog
         command: sleep infinity
       with_items: "{{ molecule_yml.platforms }}"
-{% endraw -%}
+{%- endraw -%}
