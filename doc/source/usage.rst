@@ -18,7 +18,7 @@ Create a new role:
 
     $ molecule init role --role-name foo
     --> Initializing new role foo...
-    Initialized role in /private/tmp/foo successfully.
+    Initialized role in /tmp/foo successfully.
 
 Or Create a new scenario in an existing role:
 
