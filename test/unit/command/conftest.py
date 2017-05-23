@@ -75,7 +75,27 @@ def patched_verify_scenario_name(mocker):
 
 @pytest.fixture
 def patched_base_setup(mocker):
-    return mocker.patch('molecule.command.base._setup')
+    return mocker.patch('test.unit.command.test_base.ExtendedBase._setup')
+
+
+@pytest.fixture
+def patched_create_setup(mocker):
+    return mocker.patch('molecule.command.create.Create._setup')
+
+
+@pytest.fixture
+def patched_destroy_setup(mocker):
+    return mocker.patch('molecule.command.destroy.Destroy._setup')
+
+
+@pytest.fixture
+def patched_base_prune(mocker):
+    return mocker.patch('test.unit.command.test_base.ExtendedBase.prune')
+
+
+@pytest.fixture
+def patched_destroy_prune(mocker):
+    return mocker.patch('molecule.command.destroy.Destroy.prune')
 
 
 @pytest.fixture
@@ -91,3 +111,9 @@ def patched_provisioner_write_inventory(mocker):
 @pytest.fixture
 def patched_provisioner_write_config(mocker):
     return mocker.patch('molecule.provisioner.ansible.Ansible.write_config')
+
+
+@pytest.fixture
+def patched_provisioner_add_or_update_vars(mocker):
+    return mocker.patch(
+        'molecule.provisioner.ansible.Ansible.add_or_update_vars')

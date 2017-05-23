@@ -61,6 +61,8 @@ class Destroy(base.Base):
             os.path.basename(self._config.provisioner.playbooks.teardown))
         LOG.info(msg)
 
+        self.prune()
+
         if self._config.driver.name == 'static':
             LOG.warn('Skipping, instances managed statically.')
             return

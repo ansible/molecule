@@ -7,10 +7,16 @@ lint:
   name: ansible-lint
 platforms:
   - name: instance-1
+    image: molecule_local/centos:7
+    command: sleep infinity
+    dockerfile: Dockerfile
     groups:
       - foo
       - bar
   - name: instance-2
+    image: molecule_local/centos:7
+    command: sleep infinity
+    dockerfile: Dockerfile
     groups:
       - foo
       - baz

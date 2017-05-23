@@ -45,12 +45,12 @@
     - name: Populate instance config dict
       set_fact:
         instance_conf_dict: {
-          'instance': "{{ server.results[0].instances[0].tags.instance }}",
-          'address': "{{ server.results[0].instances[0].public_dns_name }}",
+          'instance': "{{ item.instances[0].tags.instance }}",
+          'address': "{{ item.instances[0].public_dns_name }}",
           'user': 'ubuntu',
           'port': "{{ ssh_port }}",
           'identity_file': "{{ keypair_path }}",
-          'instance_ids': "{{ server.results[0].instance_ids }}",}
+          'instance_ids': "{{ item.instance_ids }}",}
       with_items: "{{ server.results }}"
       register: instance_config_dict
       when: server.changed | bool

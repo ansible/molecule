@@ -20,11 +20,6 @@
 
     keypair_name: molecule_key
     keypair_path: "{{ lookup('env','MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
-
-    ec2:
-      image: ami-a5b196c0
-      instance_type: t2.micro
-      vpc_subnet_id: subnet-6456fd1f
   tasks:
     - include: security_groups.yml
     - include: keypair.yml
@@ -32,9 +27,9 @@
     - name: Create molecule instance(s)
       ec2:
         key_name: "{{ keypair_name }}"
-        image: "{{ ec2.image }}"
-        instance_type: "{{ ec2.instance_type }}"
-        vpc_subnet_id: "{{ ec2.vpc_subnet_id }}"
+        image: "{{ item.image }}"
+        instance_type: "{{ item.instance_type }}"
+        vpc_subnet_id: "{{ item.vpc_subnet_id }}"
         group: "{{ security_group_name }}"
         instance_tags:
           instance: "{{ item.name | molecule_instance_with_scenario_name(molecule_yml.scenario.name) }}"
@@ -51,12 +46,12 @@
     - name: Populate instance config dict
       set_fact:
         instance_conf_dict: {
-          'instance': "{{ server.results[0].instances[0].tags.instance }}",
-          'address': "{{ server.results[0].instances[0].public_dns_name }}",
+          'instance': "{{ item.instances[0].tags.instance }}",
+          'address': "{{ item.instances[0].public_dns_name }}",
           'user': 'ubuntu',
           'port': "{{ ssh_port }}",
           'identity_file': "{{ keypair_path }}",
-          'instance_ids': "{{ server.results[0].instance_ids }}",}
+          'instance_ids': "{{ item.instance_ids }}",}
       with_items: "{{ server.results }}"
       register: instance_config_dict
       when: server.changed | bool

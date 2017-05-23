@@ -7,6 +7,9 @@ lint:
   name: ansible-lint
 platforms:
   - name: instance-1
+    image: ami-a5b196c0
+    instance_type: t2.micro
+    vpc_subnet_id: subnet-6456fd1f
 provisioner:
   name: ansible
   playbooks:

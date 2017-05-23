@@ -21,8 +21,8 @@
 from molecule.command import destroy
 
 
-def test_execute(mocker, patched_logger_info, patched_ansible_destroy,
-                 config_instance):
+def test_execute(mocker, patched_destroy_prune, patched_logger_info,
+                 patched_ansible_destroy, config_instance):
     d = destroy.Destroy(config_instance)
     d.execute()
     x = [
@@ -33,6 +33,7 @@ def test_execute(mocker, patched_logger_info, patched_ansible_destroy,
 
     assert x == patched_logger_info.mock_calls
 
+    patched_destroy_prune.assert_called_once_with()
     patched_ansible_destroy.assert_called_once_with()
 
     assert not config_instance.state.converged
@@ -40,8 +41,8 @@ def test_execute(mocker, patched_logger_info, patched_ansible_destroy,
 
 
 def test_execute_skips_when_manual_driver(
-        molecule_driver_static_section_data, patched_logger_warn,
-        patched_ansible_destroy, config_instance):
+        patched_destroy_setup, molecule_driver_static_section_data,
+        patched_logger_warn, patched_ansible_destroy, config_instance):
     config_instance.merge_dicts(config_instance.config,
                                 molecule_driver_static_section_data)
     d = destroy.Destroy(config_instance)

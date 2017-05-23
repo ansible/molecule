@@ -27,7 +27,23 @@ import sh
 from molecule import config
 from molecule import util
 
-pytestmark = pytest.helpers.supports_docker()
+
+@pytest.fixture
+def scenario_to_test(request):
+    return request.param
+
+
+@pytest.fixture
+def scenario_name(request):
+    try:
+        return request.param
+    except AttributeError:
+        return False
+
+
+@pytest.fixture
+def driver_name(request):
+    return request.param
 
 
 def test_command_init_role_goss(temp_dir):
@@ -53,15 +69,23 @@ def test_command_init_scenario_goss(temp_dir):
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['overrride_driver'], indirect=['with_scenario'])
-def test_command_test_overrides_driver(with_scenario):
+    'scenario_to_test, driver_name, scenario_name', [
+        ('overrride_driver', 'docker', 'default'),
+    ],
+    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
+def test_command_test_overrides_driver(scenario_to_test, with_scenario,
+                                       skip_test, scenario_name):
     cmd = sh.molecule.bake('test', '--driver-name', 'docker')
     pytest.helpers.run_command(cmd)
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['host_group_vars'], indirect=['with_scenario'])
-def test_host_group_vars(with_scenario):
+    'scenario_to_test, driver_name, scenario_name', [
+        ('host_group_vars', 'docker', 'default'),
+    ],
+    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
+def test_host_group_vars(scenario_to_test, with_scenario, skip_test,
+                         scenario_name):
     cmd = sh.molecule.bake('test')
     out = pytest.helpers.run_command(cmd, log=False)
     out = util.strip_ansi_escape(out.stdout)
@@ -74,8 +98,12 @@ def test_host_group_vars(with_scenario):
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['interpolation'], indirect=['with_scenario'])
-def test_interpolation(with_scenario):
+    'scenario_to_test, driver_name, scenario_name', [
+        ('interpolation', 'docker', 'default'),
+    ],
+    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
+def test_interpolation(scenario_to_test, with_scenario, skip_test,
+                       scenario_name):
     env = os.environ.copy()
     env.update({'DEPENDENCY_NAME': 'galaxy', 'VERIFIER_NAME': 'testinfra'})
 
@@ -84,8 +112,12 @@ def test_interpolation(with_scenario):
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['verifier'], indirect=['with_scenario'])
-def test_command_verify_testinfra(with_scenario):
+    'scenario_to_test, driver_name, scenario_name', [
+        ('verifier', 'docker', 'default'),
+    ],
+    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
+def test_command_verify_testinfra(scenario_to_test, with_scenario, skip_test,
+                                  scenario_name):
     cmd = sh.molecule.bake('create', '--scenario-name', 'testinfra')
     pytest.helpers.run_command(cmd)
 
@@ -97,8 +129,12 @@ def test_command_verify_testinfra(with_scenario):
 
 
 @pytest.mark.parametrize(
-    'with_scenario', ['verifier'], indirect=['with_scenario'])
-def test_command_verify_goss(with_scenario):
+    'scenario_to_test, driver_name, scenario_name', [
+        ('verifier', 'docker', 'default'),
+    ],
+    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
+def test_command_verify_goss(scenario_to_test, with_scenario, skip_test,
+                             scenario_name):
     cmd = sh.molecule.bake('create', '--scenario-name', 'goss')
     pytest.helpers.run_command(cmd)
 

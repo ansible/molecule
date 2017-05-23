@@ -28,12 +28,13 @@ from molecule import util
 from molecule.command import base
 
 
+class ExtendedBase(base.Base):
+    def execute():
+        pass
+
+
 @pytest.fixture
 def base_class(config_instance):
-    class ExtendedBase(base.Base):
-        def execute():
-            pass
-
     return ExtendedBase
 
 
@@ -44,6 +45,57 @@ def base_instance(base_class, config_instance):
 
 def test_config_private_member(base_instance):
     assert isinstance(base_instance._config, config.Config)
+
+
+def test_init_calls_setup(patched_base_setup, base_instance):
+    patched_base_setup.assert_called_once_with()
+
+
+def test_prune(base_instance):
+    ephemeral_directory = base_instance._config.ephemeral_directory
+
+    foo_file = os.path.join(ephemeral_directory, 'foo')
+    bar_file = os.path.join(ephemeral_directory, 'bar')
+    baz_directory = os.path.join(ephemeral_directory, 'baz')
+    state_file = os.path.join(ephemeral_directory, 'state.yml')
+    inventory_file = os.path.join(ephemeral_directory, 'ansible_inventory.yml')
+    config_file = os.path.join(ephemeral_directory, 'ansible.cfg')
+
+    os.mkdir(baz_directory)
+    for f in [foo_file, bar_file, state_file]:
+        open(f, 'a').close()
+
+    base_instance.prune()
+
+    assert not os.path.isfile(foo_file)
+    assert not os.path.isfile(bar_file)
+    assert os.path.isfile(state_file)
+    assert os.path.isfile(config_file)
+    assert os.path.isfile(inventory_file)
+    assert os.path.isdir(baz_directory)
+
+
+def test_setup(mocker, patched_provisioner_add_or_update_vars,
+               patched_provisioner_write_inventory,
+               patched_provisioner_write_config, base_instance):
+
+    assert os.path.isdir(base_instance._config.ephemeral_directory)
+    assert os.path.isdir(
+        os.path.dirname(base_instance._config.provisioner.inventory_file))
+
+    patched_provisioner_write_inventory.assert_called_once_with()
+    patched_provisioner_write_config.assert_called_once_with()
+
+    x = [mocker.call('host_vars'), mocker.call('group_vars')]
+    assert x == patched_provisioner_add_or_update_vars.mock_calls
+
+
+def test_setup_creates_ephemeral_directory(base_instance):
+    ephemeral_directory = base_instance._config.ephemeral_directory
+    shutil.rmtree(base_instance._config.ephemeral_directory)
+    base_instance._setup()
+
+    assert os.path.isdir(ephemeral_directory)
 
 
 def test_verify_configs(config_instance):
@@ -92,53 +144,6 @@ def test_verify_scenario_name_raises_when_scenario_not_found(
     patched_logger_critical.assert_called_once_with(msg)
 
 
-def test_prune(config_instance):
-    ephemeral_directory = config_instance.ephemeral_directory
-
-    foo_file = os.path.join(ephemeral_directory, 'foo')
-    bar_file = os.path.join(ephemeral_directory, 'bar')
-    baz_directory = os.path.join(ephemeral_directory, 'baz')
-    state_file = os.path.join(ephemeral_directory, 'state.yml')
-
-    os.mkdir(baz_directory)
-    for f in [foo_file, bar_file, state_file]:
-        open(f, 'a').close()
-
-    base._prune(config_instance)
-
-    assert not os.path.isfile(foo_file)
-    assert not os.path.isfile(bar_file)
-    assert os.path.isfile(state_file)
-    assert os.path.isdir(baz_directory)
-
-
-def test_setup(mocker, patched_provisioner_write_inventory,
-               patched_provisioner_write_config, config_instance):
-    patched_provisioner_add_or_update_vars = mocker.patch(
-        'molecule.provisioner.ansible.Ansible.add_or_update_vars')
-    patched_prune = mocker.patch('molecule.command.base._prune')
-    base._setup([config_instance])
-
-    assert os.path.isdir(config_instance.ephemeral_directory)
-    assert os.path.isdir(
-        os.path.dirname(config_instance.provisioner.inventory_file))
-
-    patched_prune.assert_called_once_with(config_instance)
-    patched_provisioner_write_inventory.assert_called_once_with()
-    patched_provisioner_write_config.assert_called_once_with()
-
-    x = [mocker.call('host_vars'), mocker.call('group_vars')]
-    assert x == patched_provisioner_add_or_update_vars.mock_calls
-
-
-def test_setup_creates_ephemeral_directory(config_instance):
-    ephemeral_directory = config_instance.ephemeral_directory
-    shutil.rmtree(config_instance.ephemeral_directory)
-    base._setup([config_instance])
-
-    assert os.path.isdir(ephemeral_directory)
-
-
 def test_get_configs(config_instance):
     molecule_file = config_instance.molecule_file
     data = config_instance.config
@@ -165,17 +170,6 @@ def test_get_configs_calls_verify_configs(patched_verify_configs):
     base.get_configs({}, {})
 
     patched_verify_configs.assert_called_once_with([])
-
-
-def test_get_configs_calls_setup(mocker, config_instance,
-                                 patched_verify_configs, patched_base_setup,
-                                 patched_base_filter_configs_for_scenario,
-                                 patched_verify_scenario_name):
-    patched_base_filter_configs_for_scenario.return_value = [config_instance]
-    base.get_configs({}, {'scenario_name': 'default'})
-
-    patched_base_setup.assert_called_once_with(
-        patched_base_filter_configs_for_scenario.return_value)
 
 
 def test_get_configs_filter_configs_for_scenario(
