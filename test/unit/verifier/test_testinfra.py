@@ -96,7 +96,21 @@ def test_enabled_property(testinfra_instance):
 def test_directory_property(testinfra_instance):
     parts = testinfra_instance.directory.split(os.path.sep)
 
-    assert 'tests' == parts[-1]
+    assert ['molecule', 'default', 'tests'] == parts[-3:]
+
+
+@pytest.fixture
+def molecule_verifier_directory_section_data():
+    return {'verifier': {'name': 'testinfra', 'directory': '/tmp/foo/bar'}, }
+
+
+def test_directory_property_overriden(
+        testinfra_instance, molecule_verifier_directory_section_data):
+    testinfra_instance._config.merge_dicts(
+        testinfra_instance._config.config,
+        molecule_verifier_directory_section_data)
+
+    assert '/tmp/foo/bar' == testinfra_instance.directory
 
 
 def test_options_property(inventory_file, testinfra_instance):

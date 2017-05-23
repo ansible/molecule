@@ -61,6 +61,14 @@ class Testinfra(base.Base):
           env:
             FOO: bar
 
+    Change path to the test directory.
+
+    .. code-block:: yaml
+
+        verifier:
+          name: testinfra
+          directory: /foo/bar/
+
     .. _`Testinfra`: http://testinfra.readthedocs.io
     """
 
