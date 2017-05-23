@@ -33,7 +33,7 @@ def scenario_name(request):
     try:
         return request.param
     except AttributeError:
-        pass
+        return False
 
 
 @pytest.fixture

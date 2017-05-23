@@ -21,8 +21,9 @@
 from molecule.command import create
 
 
-def test_execute(mocker, patched_provisioner_write_inventory,
-                 patched_logger_info, patched_ansible_setup, config_instance):
+def test_execute(mocker, patched_create_setup,
+                 patched_provisioner_write_inventory, patched_logger_info,
+                 patched_ansible_setup, config_instance):
     c = create.Create(config_instance)
     c.execute()
     x = [
@@ -43,8 +44,8 @@ def test_execute(mocker, patched_provisioner_write_inventory,
 
 
 def test_execute_skips_when_manual_driver(
-        molecule_driver_static_section_data, patched_logger_warn,
-        patched_ansible_setup, config_instance):
+        patched_create_setup, molecule_driver_static_section_data,
+        patched_logger_warn, patched_ansible_setup, config_instance):
     config_instance.merge_dicts(config_instance.config,
                                 molecule_driver_static_section_data)
     c = create.Create(config_instance)

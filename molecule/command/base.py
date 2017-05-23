@@ -43,10 +43,47 @@ class Base(object):
         :returns: None
         """
         self._config = c
+        self._setup()
 
     @abc.abstractmethod
     def execute(self):  # pragma: no cover
         pass
+
+    def prune(self):
+        """
+        Prune the ephemeral directory with the exception of safe files and
+        returns None.
+
+        :return: None
+        """
+        default_safe_files = [
+            self._config.provisioner.config_file,
+            self._config.provisioner.inventory_file,
+            self._config.state.state_file,
+        ]
+        for root, _, files in os.walk(
+                self._config.ephemeral_directory, topdown=False):
+            for name in files:
+                safe_files = [
+                    os.path.basename(f) for f in self._config.driver.safe_files
+                ] + [os.path.basename(f) for f in default_safe_files]
+
+                if name not in safe_files:
+                    os.remove(os.path.join(root, name))
+
+    def _setup(self):
+        """
+        Prepare the system for Molecule and returns None.
+
+        :return: None
+        """
+        if not os.path.isdir(self._config.ephemeral_directory):
+            os.mkdir(self._config.ephemeral_directory)
+
+        self._config.provisioner.write_inventory()
+        self._config.provisioner.write_config()
+        self._config.provisioner.add_or_update_vars('host_vars')
+        self._config.provisioner.add_or_update_vars('group_vars')
 
 
 def _verify_configs(configs):
@@ -84,37 +121,6 @@ def _verify_scenario_name(configs, scenario_name):
         util.sysexit_with_message(msg)
 
 
-def _prune(c):
-    """
-    Prune the ephemeral directory with the exception of the state file.
-
-    :return: None
-    """
-    for root, _, files in os.walk(c.ephemeral_directory, topdown=False):
-        for name in files:
-            safe_files = [os.path.basename(f) for f in c.driver.safe_files]
-            safe_files.append(os.path.basename(c.state.state_file))
-            if name not in safe_files:
-                os.remove(os.path.join(root, name))
-
-
-def _setup(configs):
-    """
-    Prepare the system for Molecule and returns None.
-
-    :return: None
-    """
-    for c in configs:
-        _prune(c)
-        if not os.path.isdir(c.ephemeral_directory):
-            os.mkdir(c.ephemeral_directory)
-
-        c.provisioner.write_inventory()
-        c.provisioner.write_config()
-        c.provisioner.add_or_update_vars('host_vars')
-        c.provisioner.add_or_update_vars('group_vars')
-
-
 def get_configs(args, command_args):
     """
     Glob the current directory for Molecule config files, instantiate config
@@ -138,7 +144,6 @@ def get_configs(args, command_args):
         _verify_scenario_name(configs, scenario_name)
 
     _verify_configs(configs)
-    _setup(configs)
 
     return configs
 

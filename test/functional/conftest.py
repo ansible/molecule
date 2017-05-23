@@ -33,8 +33,8 @@ LOG = logger.get_logger(__name__)
 
 
 @pytest.fixture
-def with_scenario(request, scenario_to_test, scenario_name=False):
-    local_scenario_name = scenario_name
+def with_scenario(request, scenario_to_test, scenario_name):
+    sn = scenario_name
     scenario_directory = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), os.path.pardir,
         'scenarios', scenario_to_test)
@@ -42,24 +42,10 @@ def with_scenario(request, scenario_to_test, scenario_name=False):
     os.chdir(scenario_directory)
 
     def cleanup():
-        options = {'scenario_name': local_scenario_name, 'format': 'yaml'}
-        cmd = sh.molecule.bake('list', **options)
-        out = run_command(cmd, log=False)
-        out = out.stdout
-        out = util.strip_ansi_color(out)
-        results = util.safe_load(out)
-
-        instances_dict = [
-            result for result in results if result['Created'] == 'True'
-        ]
-        for scenario_name in {
-                instance_dict['Scenario Name']
-                for instance_dict in instances_dict
-        }:
-            msg = "CLEANUP: Destroying instances for '{}' scenario".format(
-                scenario_name)
+        if sn:
+            msg = "CLEANUP: Destroying instances for '{}' scenario".format(sn)
             LOG.out(msg)
-            options = {'scenario_name': scenario_name}
+            options = {'scenario_name': sn}
             cmd = sh.molecule.bake('destroy', **options)
             run_command(cmd)
 
@@ -156,6 +142,10 @@ def list_with_format_plain(x):
 
 @pytest.helpers.register
 def login(instance, regexp, scenario_name='default'):
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('destroy', **options)
+    run_command(cmd)
+
     options = {'scenario_name': scenario_name}
     cmd = sh.molecule.bake('create', **options)
     run_command(cmd)

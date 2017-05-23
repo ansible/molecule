@@ -72,7 +72,7 @@ def test_login_cmd_template_property(ec2_instance):
 def test_safe_files(ec2_instance):
     x = [
         os.path.join(ec2_instance._config.ephemeral_directory,
-                     'instance_config.yml')
+                     'instance_config.yml'),
     ]
 
     assert x == ec2_instance.safe_files

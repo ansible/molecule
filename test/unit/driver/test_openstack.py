@@ -73,7 +73,7 @@ def test_login_cmd_template_property(openstack_instance):
 def test_safe_files(openstack_instance):
     x = [
         os.path.join(openstack_instance._config.ephemeral_directory,
-                     'instance_config.yml')
+                     'instance_config.yml'),
     ]
 
     assert x == openstack_instance.safe_files

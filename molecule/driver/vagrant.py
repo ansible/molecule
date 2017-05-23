@@ -97,7 +97,9 @@ class Vagrant(base.Base):
     @property
     def safe_files(self):
         return [
-            self.vagrantfile, self.vagrantfile_config, self.instance_config
+            self.vagrantfile,
+            self.vagrantfile_config,
+            self.instance_config,
         ]
 
     def login_options(self, instance_name):
