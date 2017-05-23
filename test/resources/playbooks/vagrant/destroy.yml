@@ -8,8 +8,8 @@
     molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
   tasks:
     - name: Destroy molecule instance(s)
-      vagrant:
-        instance_name: "{{ item.name | instance_with_scenario_name(molecule_yml.scenario.name) }}"
+      molecule_vagrant:
+        instance_name: "{{ item.name | molecule_instance_with_scenario_name(molecule_yml.scenario.name) }}"
         platform_box: debian/jessie64
         molecule_file: "{{ molecule_file }}"
         state: destroy

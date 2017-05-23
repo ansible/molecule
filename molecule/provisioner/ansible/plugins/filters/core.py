@@ -22,7 +22,7 @@ import molecule
 import molecule.util
 
 
-def instance_with_scenario_name(instance_name, scenario_name):
+def molecule_instance_with_scenario_name(instance_name, scenario_name):
     return molecule.util.instance_with_scenario_name(instance_name,
                                                      scenario_name)
 
@@ -31,4 +31,7 @@ class FilterModule(object):
     """ Core Molecule filter plugins. """
 
     def filters(self):
-        return {'instance_with_scenario_name': instance_with_scenario_name}
+        return {
+            'molecule_instance_with_scenario_name':
+            molecule_instance_with_scenario_name
+        }

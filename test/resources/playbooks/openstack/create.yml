@@ -50,7 +50,7 @@
 
     - name: Create molecule instance(s)
       os_server:
-        name: "{{ item.name | instance_with_scenario_name(molecule_yml.scenario.name) }}"
+        name: "{{ item.name | molecule_instance_with_scenario_name(molecule_yml.scenario.name) }}"
         image: "{{ nova.image }}"
         flavor: "{{ nova.flavor }}"
         security_groups:

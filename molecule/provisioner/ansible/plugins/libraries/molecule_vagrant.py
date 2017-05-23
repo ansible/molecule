@@ -122,7 +122,7 @@ EXAMPLES = '''
   connection: local
   tasks:
     - name: Create instances
-      vagrant:
+      molecule_vagrant:
         instance_name: "{{ item }}"
         platform_box: ubuntu/trusty64
         molecule_file: "{{ molecule_file }}"
@@ -135,7 +135,7 @@ EXAMPLES = '''
   connection: local
   tasks:
     - name: Destroy instances
-      vagrant:
+      molecule_vagrant:
         instance_name: "{{ item }}"
         platform_box: ubuntu/trusty64
         molecule_file: "{{ molecule_file }}"
@@ -148,7 +148,7 @@ EXAMPLES = '''
   connection: local
   tasks:
     - name: Create instance with interfaces
-      vagrant:
+      molecule_vagrant:
         instance_name: instance-1
         instance_interfaces:
           - auto_config: true

@@ -31,12 +31,12 @@
         vpc_subnet_id: "{{ item.vpc_subnet_id }}"
         group: "{{ security_group_name }}"
         instance_tags:
-          instance: "{{ item.name | instance_with_scenario_name(molecule_yml.scenario.name) }}"
+          instance: "{{ item.name | molecule_instance_with_scenario_name(molecule_yml.scenario.name) }}"
         wait: yes
         assign_public_ip: yes
         exact_count: 1
         count_tag:
-          instance: "{{ item.name | instance_with_scenario_name(molecule_yml.scenario.name) }}"
+          instance: "{{ item.name | molecule_instance_with_scenario_name(molecule_yml.scenario.name) }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
 
