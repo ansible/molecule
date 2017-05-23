@@ -7,6 +7,8 @@ lint:
   name: {{ cookiecutter.lint_name }}
 platforms:
   - name: instance-1
+    image: Ubuntu-16.04
+    flavor: NO-Nano
 provisioner:
   name: {{ cookiecutter.provisioner_name }}
 scenario:

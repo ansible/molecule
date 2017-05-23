@@ -7,6 +7,7 @@ lint:
   name: {{ cookiecutter.lint_name }}
 platforms:
   - name: instance-1
+    box: ubuntu/xenial64
 provisioner:
   name: {{ cookiecutter.provisioner_name }}
 scenario:
