@@ -11,6 +11,7 @@ Contents:
    porting
    testing
    contributing
+   development
    changelog
    authors
    faq
