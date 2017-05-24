@@ -47,6 +47,7 @@ Upload to `PyPI`_
         $ rm -rf build/ dist/
         $ python setup.py sdist bdist_wheel
         $ twine upload dist/*
+        $ rm -rf build/ dist/
 
 Post-release
 ------------
