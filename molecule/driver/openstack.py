@@ -85,7 +85,7 @@ class Openstack(base.Base):
                 'ansible_port': d['port'],
                 'ansible_private_key_file': d['identity_file'],
                 'connection': 'ssh',
-                'ansible_ssh_extra_args':
+                'ansible_ssh_common_args':
                 ' '.join(self._get_ssh_connection_options()),
             }
         except StopIteration:

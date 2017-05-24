@@ -64,7 +64,8 @@ def test_login_cmd_template_property(ec2_instance):
          '-o ControlMaster=auto '
          '-o ControlPersist=60s '
          '-o IdentitiesOnly=yes '
-         '-o StrictHostKeyChecking=no')
+         '-o StrictHostKeyChecking=no '
+         '-o ControlPath=~/.ansible/cp/%C')
 
     assert x == ec2_instance.login_cmd_template
 
@@ -125,11 +126,12 @@ def test_ansible_connection_options(mocker, ec2_instance):
         'ansible_user': 'cloud-user',
         'ansible_private_key_file': '/foo/bar',
         'connection': 'ssh',
-        'ansible_ssh_extra_args': ('-o UserKnownHostsFile=/dev/null '
-                                   '-o ControlMaster=auto '
-                                   '-o ControlPersist=60s '
-                                   '-o IdentitiesOnly=yes '
-                                   '-o StrictHostKeyChecking=no')
+        'ansible_ssh_common_args': ('-o UserKnownHostsFile=/dev/null '
+                                    '-o ControlMaster=auto '
+                                    '-o ControlPersist=60s '
+                                    '-o IdentitiesOnly=yes '
+                                    '-o StrictHostKeyChecking=no '
+                                    '-o ControlPath=~/.ansible/cp/%C'),
     }
 
     assert x == ec2_instance.ansible_connection_options('foo')

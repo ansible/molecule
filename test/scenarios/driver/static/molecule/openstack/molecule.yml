@@ -7,8 +7,7 @@ driver:
     login_cmd_template: 'ssh {instance} -F /tmp/ssh-config-openstack'
     ansible_connection_options:
       connection: ssh
-      ansible_ssh_extra_args: -F /tmp/ssh-config-openstack
-      ansible_scp_extra_args: -F /tmp/ssh-config-openstack
+      ansible_ssh_common_args: -F /tmp/ssh-config-openstack
 lint:
   name: ansible-lint
 platforms:

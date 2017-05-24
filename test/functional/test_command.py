@@ -54,9 +54,12 @@ def driver_name(request):
         ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
-    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
-def test_command_check(scenario_to_test, with_scenario, skip_test,
-                       scenario_name):
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+        'scenario_name',
+    ])
+def test_command_check(scenario_to_test, with_scenario, scenario_name):
     options = {'scenario_name': scenario_name}
     cmd = sh.molecule.bake('check', **options)
     pytest.helpers.run_command(cmd)
@@ -75,9 +78,12 @@ def test_command_check(scenario_to_test, with_scenario, skip_test,
         ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
-    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
-def test_command_converge(scenario_to_test, with_scenario, skip_test,
-                          scenario_name):
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+        'scenario_name',
+    ])
+def test_command_converge(scenario_to_test, with_scenario, scenario_name):
     options = {'scenario_name': scenario_name}
     cmd = sh.molecule.bake('converge', **options)
     pytest.helpers.run_command(cmd)
@@ -96,9 +102,12 @@ def test_command_converge(scenario_to_test, with_scenario, skip_test,
         ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
-    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
-def test_command_create(scenario_to_test, with_scenario, skip_test,
-                        scenario_name):
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+        'scenario_name',
+    ])
+def test_command_create(scenario_to_test, with_scenario, scenario_name):
     options = {'scenario_name': scenario_name}
     cmd = sh.molecule.bake('create', **options)
     pytest.helpers.run_command(cmd)
@@ -113,9 +122,13 @@ def test_command_create(scenario_to_test, with_scenario, skip_test,
         ('dependency', 'openstack', 'ansible-galaxy'),
         ('dependency', 'vagrant', 'ansible-galaxy'),
     ],
-    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+        'scenario_name',
+    ])
 def test_command_dependency_ansible_galaxy(scenario_to_test, with_scenario,
-                                           skip_test, scenario_name):
+                                           scenario_name):
     options = {'scenario_name': scenario_name}
     cmd = sh.molecule.bake('dependency', **options)
     pytest.helpers.run_command(cmd)
@@ -134,8 +147,12 @@ def test_command_dependency_ansible_galaxy(scenario_to_test, with_scenario,
         ('dependency', 'openstack', 'gilt'),
         ('dependency', 'vagrant', 'gilt'),
     ],
-    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
-def test_command_dependency_gilt(scenario_to_test, with_scenario, skip_test,
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+        'scenario_name',
+    ])
+def test_command_dependency_gilt(scenario_to_test, with_scenario,
                                  scenario_name):
     options = {'scenario_name': scenario_name}
     cmd = sh.molecule.bake('dependency', **options)
@@ -159,9 +176,12 @@ def test_command_dependency_gilt(scenario_to_test, with_scenario, skip_test,
         ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
-    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
-def test_command_destroy(scenario_to_test, with_scenario, skip_test,
-                         scenario_name):
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+        'scenario_name',
+    ])
+def test_command_destroy(scenario_to_test, with_scenario, scenario_name):
     options = {'scenario_name': scenario_name}
     cmd = sh.molecule.bake('destroy', **options)
     pytest.helpers.run_command(cmd)
@@ -180,9 +200,12 @@ def test_command_destroy(scenario_to_test, with_scenario, skip_test,
         ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
-    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
-def test_command_idempotence(scenario_to_test, with_scenario, skip_test,
-                             scenario_name):
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+        'scenario_name',
+    ])
+def test_command_idempotence(scenario_to_test, with_scenario, scenario_name):
     pytest.helpers.idempotence(scenario_name)
 
 
@@ -195,7 +218,7 @@ def test_command_idempotence(scenario_to_test, with_scenario, skip_test,
         ('openstack'),
         ('vagrant'),
     ],
-    indirect=['driver_name'])
+    indirect=['driver_name', ])
 def test_command_init_role(temp_dir, driver_name, skip_test):
     pytest.helpers.init_role(temp_dir, driver_name)
 
@@ -209,7 +232,7 @@ def test_command_init_role(temp_dir, driver_name, skip_test):
         ('openstack'),
         ('vagrant'),
     ],
-    indirect=['driver_name'])
+    indirect=['driver_name', ])
 def test_command_init_scenario(temp_dir, driver_name, skip_test):
     pytest.helpers.init_role(temp_dir, driver_name)
 
@@ -227,53 +250,56 @@ def test_command_init_scenario(temp_dir, driver_name, skip_test):
         ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
-    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
-def test_command_lint(scenario_to_test, with_scenario, skip_test,
-                      scenario_name):
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+        'scenario_name',
+    ])
+def test_command_lint(scenario_to_test, with_scenario, scenario_name):
     options = {'scenario_name': scenario_name}
     cmd = sh.molecule.bake('lint', **options)
     pytest.helpers.run_command(cmd)
 
 
 @pytest.mark.parametrize(
-    'scenario_to_test, expected',
+    'scenario_to_test, driver_name, expected',
     [
-        ('driver/docker', """
+        ('driver/docker', 'docker', """
 Instance Name          Driver Name    Provisioner Name    Scenario Name    Created    Converged
 ---------------------  -------------  ------------------  ---------------  ---------  -----------
 instance-1-default     Docker         Ansible             default          False      False
 instance-1-multi-node  Docker         Ansible             multi-node       False      False
 instance-2-multi-node  Docker         Ansible             multi-node       False      False
 """.strip()),  # noqa
-        ('driver/ec2', """
+        ('driver/ec2', 'ec2', """
 Instance Name          Driver Name    Provisioner Name    Scenario Name    Created    Converged
 ---------------------  -------------  ------------------  ---------------  ---------  -----------
 instance-1-default     Ec2            Ansible             default          False      False
 instance-1-multi-node  Ec2            Ansible             multi-node       False      False
 instance-2-multi-node  Ec2            Ansible             multi-node       False      False
 """.strip()),  # noqa
-        ('driver/lxc', """
+        ('driver/lxc', 'lxc', """
 Instance Name          Driver Name    Provisioner Name    Scenario Name    Created    Converged
 ---------------------  -------------  ------------------  ---------------  ---------  -----------
 instance-1-default     Lxc            Ansible             default          False      False
 instance-1-multi-node  Lxc            Ansible             multi-node       False      False
 instance-2-multi-node  Lxc            Ansible             multi-node       False      False
 """.strip()),  # noqa
-        ('driver/lxd', """
+        ('driver/lxd', 'lxd', """
 Instance Name          Driver Name    Provisioner Name    Scenario Name    Created    Converged
 ---------------------  -------------  ------------------  ---------------  ---------  -----------
 instance-1-default     Lxd            Ansible             default          False      False
 instance-1-multi-node  Lxd            Ansible             multi-node       False      False
 instance-2-multi-node  Lxd            Ansible             multi-node       False      False
 """.strip()),  # noqa
-        ('driver/openstack', """
+        ('driver/openstack', 'openstack', """
 Instance Name          Driver Name    Provisioner Name    Scenario Name    Created    Converged
 ---------------------  -------------  ------------------  ---------------  ---------  -----------
 instance-1-default     Openstack      Ansible             default          False      False
 instance-1-multi-node  Openstack      Ansible             multi-node       False      False
 instance-2-multi-node  Openstack      Ansible             multi-node       False      False
 """.strip()),  # noqa
-        ('driver/static', """
+        ('driver/static', 'static', """
 Instance Name              Driver Name    Provisioner Name    Scenario Name    Created    Converged
 -------------------------  -------------  ------------------  ---------------  ---------  -----------
 static-instance-docker     Static         Ansible             docker           False      True
@@ -281,7 +307,7 @@ static-instance-ec2        Static         Ansible             ec2              F
 static-instance-openstack  Static         Ansible             openstack        False      True
 static-instance-vagrant    Static         Ansible             vagrant          False      True
 """.strip()),  # noqa
-        ('driver/vagrant', """
+        ('driver/vagrant', 'vagrant', """
 Instance Name          Driver Name    Provisioner Name    Scenario Name    Created    Converged
 ---------------------  -------------  ------------------  ---------------  ---------  -----------
 instance-1-default     Vagrant        Ansible             default          False      False
@@ -289,51 +315,57 @@ instance-1-multi-node  Vagrant        Ansible             multi-node       False
 instance-2-multi-node  Vagrant        Ansible             multi-node       False      False
 """.strip()),  # noqa
     ],
-    indirect=['scenario_to_test'])
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+    ])
 def test_command_list(scenario_to_test, with_scenario, expected):
     pytest.helpers.list(expected)
 
 
 @pytest.mark.parametrize(
-    'scenario_to_test, expected', [
-        ('driver/docker', """
+    'scenario_to_test, driver_name, expected', [
+        ('driver/docker', 'docker', """
 instance-1-default     Docker  Ansible  default     False  False
 instance-1-multi-node  Docker  Ansible  multi-node  False  False
 instance-2-multi-node  Docker  Ansible  multi-node  False  False
 """.strip()),
-        ('driver/ec2', """
+        ('driver/ec2', 'ec2', """
 instance-1-default     Ec2  Ansible  default     False  False
 instance-1-multi-node  Ec2  Ansible  multi-node  False  False
 instance-2-multi-node  Ec2  Ansible  multi-node  False  False
 """.strip()),
-        ('driver/lxc', """
+        ('driver/lxc', 'lxc', """
 instance-1-default     Lxc  Ansible  default     False  False
 instance-1-multi-node  Lxc  Ansible  multi-node  False  False
 instance-2-multi-node  Lxc  Ansible  multi-node  False  False
 """.strip()),
-        ('driver/lxd', """
+        ('driver/lxd', 'lxd', """
 instance-1-default     Lxd  Ansible  default     False  False
 instance-1-multi-node  Lxd  Ansible  multi-node  False  False
 instance-2-multi-node  Lxd  Ansible  multi-node  False  False
 """.strip()),
-        ('driver/openstack', """
+        ('driver/openstack', 'openstack', """
 instance-1-default     Openstack  Ansible  default     False  False
 instance-1-multi-node  Openstack  Ansible  multi-node  False  False
 instance-2-multi-node  Openstack  Ansible  multi-node  False  False
 """.strip()),
-        ('driver/static', """
+        ('driver/static', 'static', """
 static-instance-docker     Static  Ansible  docker     False  True
 static-instance-ec2        Static  Ansible  ec2        False  True
 static-instance-openstack  Static  Ansible  openstack  False  True
 static-instance-vagrant    Static  Ansible  vagrant    False  True
 """.strip()),
-        ('driver/vagrant', """
+        ('driver/vagrant', 'vagrant', """
 instance-1-default     Vagrant  Ansible  default     False  False
 instance-1-multi-node  Vagrant  Ansible  multi-node  False  False
 instance-2-multi-node  Vagrant  Ansible  multi-node  False  False
 """.strip()),
     ],
-    indirect=['scenario_to_test'])
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+    ])
 def test_command_list_with_format_plain(scenario_to_test, with_scenario,
                                         expected):
     pytest.helpers.list_with_format_plain(expected)
@@ -372,9 +404,13 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario,
         ('driver/vagrant', 'vagrant', 'instance-2',
          '.*instance-2-multi-node.*', 'multi-node'),
     ],
-    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
-def test_command_login(scenario_to_test, with_scenario, skip_test, instance,
-                       regexp, scenario_name):
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+        'scenario_name',
+    ])
+def test_command_login(scenario_to_test, with_scenario, instance, regexp,
+                       scenario_name):
     pytest.helpers.login(instance, regexp, scenario_name)
 
 
@@ -391,9 +427,12 @@ def test_command_login(scenario_to_test, with_scenario, skip_test, instance,
         ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
-    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
-def test_command_syntax(scenario_to_test, with_scenario, skip_test,
-                        scenario_name):
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+        'scenario_name',
+    ])
+def test_command_syntax(scenario_to_test, with_scenario, scenario_name):
     options = {'scenario_name': scenario_name}
     cmd = sh.molecule.bake('syntax', **options)
     pytest.helpers.run_command(cmd)
@@ -412,9 +451,12 @@ def test_command_syntax(scenario_to_test, with_scenario, skip_test,
         ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', False),
     ],
-    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
-def test_command_test(scenario_to_test, with_scenario, skip_test,
-                      scenario_name):
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+        'scenario_name',
+    ])
+def test_command_test(scenario_to_test, with_scenario, scenario_name):
     pytest.helpers.test(scenario_name)
 
 
@@ -431,7 +473,10 @@ def test_command_test(scenario_to_test, with_scenario, skip_test,
         ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
-    indirect=['scenario_to_test', 'driver_name', 'scenario_name'])
-def test_command_verify(scenario_to_test, with_scenario, skip_test,
-                        scenario_name):
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+        'scenario_name',
+    ])
+def test_command_verify(scenario_to_test, with_scenario, scenario_name):
     pytest.helpers.verify(scenario_name)

@@ -182,7 +182,7 @@ class Ansible(object):
           name: ansible
           connection_options:
             ansible_ssh_user: foo
-            ansible_ssh_extra_args: -o IdentitiesOnly=no
+            ansible_ssh_common_args: -o IdentitiesOnly=no
 
     .. _`variables defined in a playbook`: http://docs.ansible.com/ansible/playbooks_variables.html#variables-defined-in-a-playbook
     """  # noqa
@@ -218,7 +218,6 @@ class Ansible(object):
                     self._get_filter_plugin_directory()),
             },
             'ssh_connection': {
-                'ssh_args': '-o UserKnownHostsFile=/dev/null',
                 'scp_if_ssh': True,
             },
         }

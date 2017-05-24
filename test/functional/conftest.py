@@ -33,7 +33,7 @@ LOG = logger.get_logger(__name__)
 
 
 @pytest.fixture
-def with_scenario(request, scenario_to_test, scenario_name):
+def with_scenario(request, scenario_to_test, scenario_name, skip_test):
     sn = scenario_name
     scenario_directory = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), os.path.pardir,

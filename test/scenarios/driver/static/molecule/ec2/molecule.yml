@@ -7,8 +7,7 @@ driver:
     login_cmd_template: 'ssh {instance} -F /tmp/ssh-config-aws'
     ansible_connection_options:
       connection: ssh
-      ansible_ssh_extra_args: -F /tmp/ssh-config-aws
-      ansible_scp_extra_args: -F /tmp/ssh-config-aws
+      ansible_ssh_common_args: -F /tmp/ssh-config-aws
 lint:
   name: ansible-lint
 platforms:
