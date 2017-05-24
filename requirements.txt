@@ -6,7 +6,7 @@ cookiecutter==1.5.1
 flake8==3.3.0
 gilt-python==1.0.0
 Jinja2==2.9.6
-pbr==2.1.0
+pbr==3.0.1
 pexpect==4.2.1
 PyYAML==3.12
 sh==1.12.13
