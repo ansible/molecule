@@ -18,16 +18,30 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import distutils
+import distutils.version
+
+import ansible
 import click
 
 import molecule
 from molecule import command
+from molecule import util
+
+
+def _allowed():  # pragma: no cover
+    if distutils.version.LooseVersion(
+            ansible.__version__) <= distutils.version.LooseVersion('2.2'):
+        msg = ("Ansible version '{}' not supported.  Molecule only supports "
+               'versions >= 2.2.').format(ansible.__version__)
+        util.sysexit_with_message(msg)
 
 
 @click.group()
 @click.option(
     '--debug/--no-debug',
     default=False,
+    callback=_allowed(),
     help='Enable or disable debug mode. Default is disabled.')
 @click.version_option(version=molecule.__version__)
 @click.pass_context
