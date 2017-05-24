@@ -74,8 +74,7 @@ class Static(base.Base):
             login_cmd_template: 'ssh {instance} -F /tmp/ssh-config'
             ansible_connection_options:
               connection: ssh
-              ansible_ssh_extra_args: -F /path/to/ssh-config
-              ansible_scp_extra_args: -F /path/to/ssh-config
+              ansible_ssh_common_args -F /path/to/ssh-config
         platforms:
           - name: static-instance-vagrant
 

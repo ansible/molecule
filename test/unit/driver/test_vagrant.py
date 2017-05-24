@@ -67,7 +67,8 @@ def test_login_cmd_template_property(vagrant_instance):
          '-o ControlMaster=auto '
          '-o ControlPersist=60s '
          '-o IdentitiesOnly=yes '
-         '-o StrictHostKeyChecking=no')
+         '-o StrictHostKeyChecking=no '
+         '-o ControlPath=~/.ansible/cp/%C')
 
     assert x == vagrant_instance.login_cmd_template
 
@@ -132,11 +133,12 @@ def test_ansible_connection_options(mocker, vagrant_instance):
         'ansible_user': 'vagrant',
         'ansible_private_key_file': '/foo/bar',
         'connection': 'ssh',
-        'ansible_ssh_extra_args': ('-o UserKnownHostsFile=/dev/null '
-                                   '-o ControlMaster=auto '
-                                   '-o ControlPersist=60s '
-                                   '-o IdentitiesOnly=yes '
-                                   '-o StrictHostKeyChecking=no')
+        'ansible_ssh_common_args': ('-o UserKnownHostsFile=/dev/null '
+                                    '-o ControlMaster=auto '
+                                    '-o ControlPersist=60s '
+                                    '-o IdentitiesOnly=yes '
+                                    '-o StrictHostKeyChecking=no '
+                                    '-o ControlPath=~/.ansible/cp/%C'),
     }
 
     assert x == vagrant_instance.ansible_connection_options('foo')
@@ -197,15 +199,3 @@ def test_status(mocker, vagrant_instance):
     assert result[1].scenario_name == 'default'
     assert result[1].created == 'False'
     assert result[1].converged == 'False'
-
-
-def test_get_ssh_connection_options(vagrant_instance):
-    x = [
-        '-o UserKnownHostsFile=/dev/null',
-        '-o ControlMaster=auto',
-        '-o ControlPersist=60s',
-        '-o IdentitiesOnly=yes',
-        '-o StrictHostKeyChecking=no',
-    ]
-
-    assert x == vagrant_instance._get_ssh_connection_options()

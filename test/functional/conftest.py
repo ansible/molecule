@@ -33,7 +33,7 @@ LOG = logger.get_logger(__name__)
 
 
 @pytest.fixture
-def with_scenario(request, scenario_to_test, scenario_name):
+def with_scenario(request, scenario_to_test, scenario_name, skip_test):
     sn = scenario_name
     scenario_directory = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), os.path.pardir,
@@ -58,6 +58,7 @@ def skip_test(request, driver_name):
         pytest.skip("Skipped '{}' not supported".format(driver_name))
     elif (driver_name == 'lxc' and not supports_lxc()):
         pytest.skip("skipped '{}' not supported".format(driver_name))
+        print 'here'
     elif (driver_name == 'lxd' and not supports_lxd()):
         pytest.skip("Skipped '{}' not supported".format(driver_name))
     elif (driver_name == 'vagrant' and not supports_vagrant_virtualbox()):
