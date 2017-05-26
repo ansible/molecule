@@ -439,6 +439,34 @@ def test_add_or_update_vars_does_not_create_vars(ansible_instance):
     assert not os.path.isdir(group_vars_directory)
 
 
+def test_remove_vars(ansible_instance):
+    ephemeral_directory = ansible_instance._config.ephemeral_directory
+
+    host_vars_directory = os.path.join(ephemeral_directory, 'host_vars')
+    host_vars = os.path.join(host_vars_directory, 'instance-1-default')
+
+    ansible_instance.add_or_update_vars('host_vars')
+    assert os.path.isdir(host_vars_directory)
+    assert os.path.isfile(host_vars)
+
+    host_vars_localhost = os.path.join(host_vars_directory, 'localhost')
+    assert os.path.isfile(host_vars_localhost)
+
+    group_vars_directory = os.path.join(ephemeral_directory, 'group_vars')
+    group_vars_1 = os.path.join(group_vars_directory, 'example_group1')
+    group_vars_2 = os.path.join(group_vars_directory, 'example_group2')
+
+    ansible_instance.add_or_update_vars('group_vars')
+    assert os.path.isdir(group_vars_directory)
+    assert os.path.isfile(group_vars_1)
+    assert os.path.isfile(group_vars_2)
+
+    ansible_instance.remove_vars()
+
+    assert not os.path.isdir(host_vars_directory)
+    assert not os.path.isdir(group_vars_directory)
+
+
 def test_check(ansible_instance, mocker, patched_ansible_playbook):
     ansible_instance.check()
 

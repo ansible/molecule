@@ -21,6 +21,7 @@
 import copy
 import collections
 import os
+import shutil
 
 from molecule import ansible_playbook
 from molecule import logger
@@ -457,6 +458,20 @@ class Ansible(object):
             target_var_content = vars_target[target]
             path = os.path.join(os.path.abspath(target_vars_directory), target)
             util.write_file(path, util.safe_dump(target_var_content))
+
+    def remove_vars(self):
+        """
+        Remove host and/or group vars and returns None.
+
+        :returns: None
+        """
+        gv = os.path.join(self._config.ephemeral_directory, 'group_vars')
+        hv = os.path.join(self._config.ephemeral_directory, 'host_vars')
+
+        if os.path.exists(gv):
+            shutil.rmtree(gv)
+        if os.path.exists(hv):
+            shutil.rmtree(hv)
 
     def _get_ansible_playbook(self, playbook, **kwargs):
         """

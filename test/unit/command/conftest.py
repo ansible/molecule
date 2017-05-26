@@ -117,3 +117,7 @@ def patched_provisioner_write_config(mocker):
 def patched_provisioner_add_or_update_vars(mocker):
     return mocker.patch(
         'molecule.provisioner.ansible.Ansible.add_or_update_vars')
+
+@pytest.fixture
+def patched_remove_vars(mocker):
+    return mocker.patch('molecule.provisioner.ansible.Ansible.remove_vars')

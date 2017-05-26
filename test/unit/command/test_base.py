@@ -76,7 +76,7 @@ def test_prune(base_instance):
 
 
 def test_setup(mocker, patched_provisioner_add_or_update_vars,
-               patched_provisioner_write_inventory,
+               patched_remove_vars, patched_provisioner_write_inventory,
                patched_provisioner_write_config, base_instance):
 
     assert os.path.isdir(base_instance._config.ephemeral_directory)
@@ -88,6 +88,8 @@ def test_setup(mocker, patched_provisioner_add_or_update_vars,
 
     x = [mocker.call('host_vars'), mocker.call('group_vars')]
     assert x == patched_provisioner_add_or_update_vars.mock_calls
+
+    patched_remove_vars.assert_called_once_with()
 
 
 def test_setup_creates_ephemeral_directory(base_instance):

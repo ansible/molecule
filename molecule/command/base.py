@@ -78,6 +78,7 @@ class Base(object):
 
         self._config.provisioner.write_inventory()
         self._config.provisioner.write_config()
+        self._config.provisioner.remove_vars()
         self._config.provisioner.add_or_update_vars('host_vars')
         self._config.provisioner.add_or_update_vars('group_vars')
 
