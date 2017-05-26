@@ -56,20 +56,16 @@ class Base(object):
 
         :return: None
         """
-        default_safe_files = [
+        safe_files = [
             self._config.provisioner.config_file,
             self._config.provisioner.inventory_file,
             self._config.state.state_file,
-        ]
-        for root, _, files in os.walk(
-                self._config.ephemeral_directory, topdown=False):
-            for name in files:
-                safe_files = [
-                    os.path.basename(f) for f in self._config.driver.safe_files
-                ] + [os.path.basename(f) for f in default_safe_files]
+        ] + self._config.driver.safe_files
 
-                if name not in safe_files:
-                    os.remove(os.path.join(root, name))
+        files = util.os_walk(self._config.ephemeral_directory, '*')
+        for f in files:
+            if f not in safe_files:
+                os.remove(f)
 
     def _setup(self):
         """
