@@ -51,7 +51,7 @@ def test_default_env_property(flake8_instance):
 
 
 def test_name_property(flake8_instance):
-    assert 'testinfra' == flake8_instance.name
+    assert flake8_instance.name is None
 
 
 def test_enabled_property(flake8_instance):

@@ -70,11 +70,6 @@ class Gilt(base.Base):
 
     @property
     def default_options(self):
-        """
-        Default CLI arguments provided to `gilt` and returns a dict.
-
-        :return: dict
-        """
         config = os.path.join(self._config.scenario.directory, 'gilt.yml')
         d = {'config': config}
         if self._config.args.get('debug'):
@@ -84,12 +79,6 @@ class Gilt(base.Base):
 
     @property
     def default_env(self):
-        """
-        Default env variables provided to `testinfra` and returns a
-        dict.
-
-        :return: dict
-        """
         return self._config.merge_dicts(os.environ.copy(), self._config.env)
 
     def bake(self):
@@ -106,11 +95,6 @@ class Gilt(base.Base):
             _err=LOG.error)
 
     def execute(self):
-        """
-        Executes `gilt` and returns None.
-
-        :return: None
-        """
         if not self.enabled:
             LOG.warn('Skipping, dependency is disabled.')
             return

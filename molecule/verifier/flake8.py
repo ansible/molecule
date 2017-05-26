@@ -51,24 +51,14 @@ class Flake8(base.Base):
 
     @property
     def name(self):
-        return 'testinfra'
+        return None
 
     @property
     def default_options(self):
-        """
-        Default CLI arguments provided to `flake8` and returns a dict.
-
-        :return: dict
-        """
         return {}
 
     @property
     def default_env(self):
-        """
-        Default env variables provided to `flake8` and returns a dict.
-
-        :return: dict
-        """
         return self._config.merge_dicts(os.environ.copy(), self._config.env)
 
     def bake(self):
@@ -85,11 +75,6 @@ class Flake8(base.Base):
             _err=LOG.error)
 
     def execute(self):
-        """
-        Executes `flake8` and returns None.
-
-        :return: None
-        """
         if self._flake8_command is None:
             self.bake()
 

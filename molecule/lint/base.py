@@ -35,14 +35,38 @@ class Base(object):
 
     @abc.abstractproperty
     def default_options(self):  # pragma: no cover
+        """
+        Default CLI arguments provided to `cmd` and returns a dict.
+
+        :return: dict
+        """
+        pass
+
+    @abc.abstractproperty
+    def default_env(self):  # pragma: no cover
+        """
+        Default env variables provided to `cmd` and returns a dict.
+
+        :return: dict
+        """
         pass
 
     @abc.abstractproperty
     def execute(self):  # pragma: no cover
+        """
+        Executes `cmd` and returns None.
+
+        :return: None
+        """
         pass
 
     @property
     def name(self):
+        """
+        Name of the lint and returns a string.
+
+        :returns: str
+        """
         return self._config.config['lint']['name']
 
     @property

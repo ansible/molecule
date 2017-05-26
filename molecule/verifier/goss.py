@@ -73,32 +73,16 @@ class Goss(base.Base):
 
     @property
     def default_options(self):
-        """
-        Default CLI arguments provided to `goss` and returns a dict.
-
-        :return: dict
-        """
         return {}
 
     @property
     def default_env(self):
-        """
-        Default env variables provided to `goss` and returns a
-        dict.
-
-        :return: dict
-        """
         return self._config.merge_dicts(os.environ.copy(), self._config.env)
 
     def bake(self):
         pass
 
     def execute(self):
-        """
-        Executes `goss` and returns None.
-
-        :return: None
-        """
         if not self.enabled:
             LOG.warn('Skipping, verifier is disabled.')
             return

@@ -71,11 +71,6 @@ class AnsibleGalaxy(base.Base):
 
     @property
     def default_options(self):
-        """
-        Default CLI arguments provided to `ansible-galaxy` and returns a dict.
-
-        :return: dict
-        """
         d = {
             'force': True,
             'role-file':
@@ -90,12 +85,6 @@ class AnsibleGalaxy(base.Base):
 
     @property
     def default_env(self):
-        """
-        Default env variables provided to `testinfra` and returns a
-        dict.
-
-        :return: dict
-        """
         return self._config.merge_dicts(os.environ.copy(), self._config.env)
 
     def bake(self):
@@ -117,11 +106,6 @@ class AnsibleGalaxy(base.Base):
             _err=LOG.error)
 
     def execute(self):
-        """
-        Executes `ansible-galaxy` and returns None.
-
-        :return: None
-        """
         if not self.enabled:
             LOG.warn('Skipping, dependency is disabled.')
             return

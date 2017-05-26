@@ -90,11 +90,6 @@ class Testinfra(base.Base):
 
     @property
     def default_options(self):
-        """
-        Default CLI arguments provided to `testinfra` and returns a dict.
-
-        :return: dict
-        """
         d = self._config.driver.testinfra_options
         if self._config.args.get('debug'):
             d['debug'] = True
@@ -105,12 +100,6 @@ class Testinfra(base.Base):
 
     @property
     def default_env(self):
-        """
-        Default env variables provided to `testinfra` and returns a
-        dict.
-
-        :return: dict
-        """
         return self._config.merge_dicts(os.environ.copy(), self._config.env)
 
     def bake(self):
@@ -132,11 +121,6 @@ class Testinfra(base.Base):
             _err=LOG.error)
 
     def execute(self):
-        """
-        Executes `testinfra` and returns None.
-
-        :return: None
-        """
         if not self.enabled:
             LOG.warn('Skipping, verifier is disabled.')
             return
