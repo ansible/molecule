@@ -33,8 +33,8 @@ LOG = logger.get_logger(__name__)
 
 
 @pytest.fixture
-def with_scenario(request, scenario_to_test, scenario_name, skip_test):
-    sn = scenario_name
+def with_scenario(request, scenario_to_test, driver_name, scenario_name,
+                  skip_test):
     scenario_directory = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), os.path.pardir,
         'scenarios', scenario_to_test)
@@ -42,10 +42,14 @@ def with_scenario(request, scenario_to_test, scenario_name, skip_test):
     os.chdir(scenario_directory)
 
     def cleanup():
-        if sn:
-            msg = "CLEANUP: Destroying instances for '{}' scenario".format(sn)
+        if scenario_name:
+            msg = "CLEANUP: Destroying instances for '{}' scenario".format(
+                scenario_name)
             LOG.out(msg)
-            options = {'scenario_name': sn}
+            options = {
+                'scenario_name': scenario_name,
+                'driver_name': driver_name,
+            }
             cmd = sh.molecule.bake('destroy', **options)
             run_command(cmd)
 

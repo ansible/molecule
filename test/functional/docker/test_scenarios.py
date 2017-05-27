@@ -115,7 +115,7 @@ def test_host_group_vars(scenario_to_test, with_scenario, scenario_name):
     ])
 def test_interpolation(scenario_to_test, with_scenario, scenario_name):
     env = os.environ.copy()
-    env.update({'DEPENDENCY_NAME': 'galaxy', 'VERIFIER_NAME': 'testinfra'})
+    env.update({'DRIVER_NAME': 'docker'})
 
     cmd = sh.molecule.bake('test')
     pytest.helpers.run_command(cmd, env=env)
@@ -123,7 +123,7 @@ def test_interpolation(scenario_to_test, with_scenario, scenario_name):
 
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
-        ('verifier', 'docker', 'default'),
+        ('verifier', 'docker', 'testinfra'),
     ],
     indirect=[
         'scenario_to_test',
@@ -144,7 +144,7 @@ def test_command_verify_testinfra(scenario_to_test, with_scenario,
 
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
-        ('verifier', 'docker', 'default'),
+        ('verifier', 'docker', 'goss'),
     ],
     indirect=[
         'scenario_to_test',
