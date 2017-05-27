@@ -21,8 +21,8 @@
 import pytest
 import sh
 
-from molecule import ansible_playbook
 from molecule import config
+from molecule.provisioner import ansible_playbook
 
 
 @pytest.fixture

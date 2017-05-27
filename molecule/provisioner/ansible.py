@@ -23,9 +23,10 @@ import collections
 import os
 import shutil
 
-from molecule import ansible_playbook
 from molecule import logger
 from molecule import util
+from molecule.provisioner import base
+from molecule.provisioner import ansible_playbook
 
 LOG = logger.get_logger(__name__)
 
@@ -68,7 +69,7 @@ class Namespace(object):
         return os.path.join(self._config.scenario.directory, playbook)
 
 
-class Ansible(object):
+class Ansible(base.Base):
     """
     `Ansible`_ is the default provisioner.  No other provisioner will be
     supported.
@@ -195,7 +196,7 @@ class Ansible(object):
         :param config: An instance of a Molecule config.
         :return: None
         """
-        self._config = config
+        super(Ansible, self).__init__(config)
         self._ns = Namespace(config)
 
     @property
@@ -225,12 +226,6 @@ class Ansible(object):
 
     @property
     def default_options(self):
-        """
-        Default CLI arguments provided to `ansible-playbook` and returns a
-        dict.
-
-        :return: dict
-        """
         d = {}
         if self._config.args.get('debug'):
             d['vvv'] = True
@@ -239,12 +234,6 @@ class Ansible(object):
 
     @property
     def default_env(self):
-        """
-        Default env variables provided to `ansible-playbook` and returns a
-        dict.
-
-        :return: dict
-        """
         env = self._config.merge_dicts(os.environ.copy(), self._config.env)
         env = self._config.merge_dicts(
             env, {'ANSIBLE_CONFIG': self._config.provisioner.config_file})

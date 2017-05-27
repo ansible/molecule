@@ -145,7 +145,7 @@ def config_instance(molecule_file, molecule_data):
 
 @pytest.fixture
 def patched_ansible_playbook(mocker):
-    m = mocker.patch('molecule.ansible_playbook.AnsiblePlaybook')
+    m = mocker.patch('molecule.provisioner.ansible_playbook.AnsiblePlaybook')
     m.return_value.execute.return_value = 'patched-ansible-playbook-stdout'
 
     return m
