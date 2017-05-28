@@ -11,7 +11,7 @@
         path: .
         name: "{{ item.image }}"
         dockerfile: "{{ item.dockerfile }}"
-      with_items: "{{ molecule_yml.platforms }}"
+      with_items: "{{ molecule_yml.platforms | molecule_dict_at_index(0) }}"
 
     - name: Create molecule instance(s)
       docker_container:

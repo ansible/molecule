@@ -22,9 +22,13 @@ import molecule
 import molecule.util
 
 
-def molecule_instance_with_scenario_name(instance_name, scenario_name):
+def instance_with_scenario_name(instance_name, scenario_name):
     return molecule.util.instance_with_scenario_name(instance_name,
                                                      scenario_name)
+
+
+def dict_at_index(h, index):
+    return [h[index]]
 
 
 class FilterModule(object):
@@ -33,5 +37,6 @@ class FilterModule(object):
     def filters(self):
         return {
             'molecule_instance_with_scenario_name':
-            molecule_instance_with_scenario_name
+            instance_with_scenario_name,
+            'molecule_dict_at_index': dict_at_index,
         }
