@@ -62,7 +62,7 @@ class Base(object):
         """
         pass
 
-    @abc.abstractproperty
+    @abc.abstractmethod
     def execute(self):  # pragma: no cover
         """
         Executes `cmd` and returns None.

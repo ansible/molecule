@@ -104,6 +104,16 @@ def test_env_property(ansible_lint_instance):
     assert 'bar' == ansible_lint_instance.env['foo']
 
 
+def test_default_ignore_paths_property(ansible_lint_instance):
+    assert [] == ansible_lint_instance.default_ignore_paths
+
+
+def test_ignore_paths_property(ansible_lint_instance):
+    x = ['.git', '.vagrant', '.molecule']
+
+    x == ansible_lint_instance.ignore_paths
+
+
 def test_bake(ansible_lint_instance):
     ansible_lint_instance.bake()
     x = [

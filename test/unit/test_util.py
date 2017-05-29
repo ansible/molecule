@@ -212,6 +212,14 @@ def test_safe_load_file(temp_dir):
     assert {'foo': 'bar'} == util.safe_load_file(path)
 
 
+def test_open_file(temp_dir):
+    path = os.path.join(temp_dir.strpath, 'foo')
+    util.write_file(path, 'foo: bar')
+
+    with util.open_file(path) as stream:
+        assert type(stream) is file
+
+
 def test_instance_with_scenario_name():
     assert 'foo-bar' == util.instance_with_scenario_name('foo', 'bar')
 

@@ -20,6 +20,7 @@
 
 from __future__ import print_function
 
+import contextlib
 import fnmatch
 import jinja2
 import os
@@ -113,7 +114,7 @@ def write_file(filename, content):
     :param content: A string containing the data to be written.
     :return: None
     """
-    with open(filename, 'w') as f:
+    with open_file(filename, 'w') as f:
         f.write(content)
 
     file_prepender(filename)
@@ -128,7 +129,7 @@ def file_prepender(filename):
     :return: None
     """
     molecule_header = '# Molecule managed\n\n'
-    with open(filename, 'r+') as f:
+    with open_file(filename, 'r+') as f:
         content = f.read()
         f.seek(0, 0)
         f.write(molecule_header + content)
@@ -164,8 +165,21 @@ def safe_load_file(filename):
     :param filename: A string containing an absolute path to the file to parse.
     :return: dict
     """
-    with open(filename, 'r') as stream:
+    with open_file(filename) as stream:
         return safe_load(stream)
+
+
+@contextlib.contextmanager
+def open_file(filename, mode='r'):
+    """
+    Open the provide file safely and returns a file type.
+
+    :param filename: A string containing an absolute path to the file to open.
+    :param mode: A string describing the way in which the file will be used.
+    :return: file type
+    """
+    with open(filename, mode) as stream:
+        yield stream
 
 
 def instance_with_scenario_name(instance_name, scenario_name):

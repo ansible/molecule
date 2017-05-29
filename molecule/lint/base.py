@@ -52,6 +52,15 @@ class Base(object):
         pass
 
     @abc.abstractproperty
+    def default_ignore_paths(self):  # pragma: no cover
+        """
+        Default ignore paths provided to `cmd` and returns a dict.
+
+        :return: dict
+        """
+        pass
+
+    @abc.abstractmethod
     def execute(self):  # pragma: no cover
         """
         Executes `cmd` and returns None.
@@ -82,3 +91,9 @@ class Base(object):
     def env(self):
         return self._config.merge_dicts(self.default_env,
                                         self._config.config['lint']['env'])
+
+    @property
+    def ignore_paths(self):
+        c = self._config.config
+
+        return self.default_ignore_paths + c['lint']['trailing_ignore_paths']

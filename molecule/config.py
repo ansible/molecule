@@ -247,6 +247,7 @@ class Config(object):
                 'enabled': True,
                 'options': {},
                 'env': {},
+                'trailing_ignore_paths': ['.git', '.vagrant', '.molecule']
             },
             'platforms': [],
             'provisioner': {

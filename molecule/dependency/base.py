@@ -33,7 +33,7 @@ class Base(object):
         """
         self._config = config
 
-    @abc.abstractproperty
+    @abc.abstractmethod
     def execute(self):  # pragma: no cover
         """
         Executes `cmd` and returns None.

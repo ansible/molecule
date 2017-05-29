@@ -109,12 +109,12 @@ def molecule_data(
 
 @pytest.fixture
 def molecule_directory_fixture(temp_dir):
-    return molecule_directory()
+    return pytest.helpers.molecule_directory()
 
 
 @pytest.fixture
 def molecule_scenario_directory_fixture(molecule_directory_fixture):
-    path = molecule_scenario_directory()
+    path = pytest.helpers.molecule_scenario_directory()
     if not os.path.isdir(path):
         os.makedirs(path)
 
@@ -123,7 +123,7 @@ def molecule_scenario_directory_fixture(molecule_directory_fixture):
 
 @pytest.fixture
 def molecule_ephemeral_directory_fixture(molecule_scenario_directory_fixture):
-    path = molecule_ephemeral_directory()
+    path = pytest.helpers.molecule_ephemeral_directory()
     if not os.path.isdir(path):
         os.makedirs(path)
 
@@ -131,7 +131,7 @@ def molecule_ephemeral_directory_fixture(molecule_scenario_directory_fixture):
 @pytest.fixture
 def molecule_file_fixture(molecule_scenario_directory_fixture,
                           molecule_ephemeral_directory_fixture):
-    return molecule_file()
+    return pytest.helpers.molecule_file()
 
 
 @pytest.fixture

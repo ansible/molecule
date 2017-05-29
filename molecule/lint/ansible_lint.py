@@ -91,6 +91,10 @@ class AnsibleLint(base.Base):
     def default_env(self):
         return self._config.merge_dicts(os.environ.copy(), self._config.env)
 
+    @property
+    def default_ignore_paths(self):
+        return []
+
     def bake(self):
         """
         Bake an `ansible-lint` command so it's ready to execute and returns
