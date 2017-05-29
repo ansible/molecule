@@ -68,6 +68,8 @@ def _resolve_template_dir(template_dir):
 
 def _init_new_role(command_args):
     """
+    Initialize a new role:
+
     >>> molecule init role --role-name foo
     """
     role_name = command_args['role_name']
@@ -95,6 +97,8 @@ def _init_new_role(command_args):
 
 def _init_new_scenario(command_args):
     """
+    Initialize a new scenario:
+
     >>> molecule init scenario --scenario-name default --role-name foo
     """
     scenario_name = command_args['scenario_name']
@@ -122,6 +126,31 @@ def _init_new_scenario(command_args):
 
     role_directory = os.path.join(role_directory, role_name)
     msg = 'Initialized scenario in {} successfully.'.format(scenario_directory)
+    LOG.success(msg)
+
+
+def _init_template(url, command_args, no_input):
+    """
+    Initialize a new role from a Cookiecutter URL:
+
+    >>> molecule init template --url https://example.com/user/cookiecutter-repo
+    """
+    role_name = command_args['role_name']
+    role_directory = os.getcwd()
+    LOG.info('Initializing new role {}...'.format(role_name))
+
+    if os.path.isdir(role_name):
+        msg = ('The directory {} exists. '
+               'Cannot create new role.').format(role_name)
+        util.sysexit_with_message(msg)
+
+    cookiecutter.main.cookiecutter(
+        url,
+        extra_context=command_args,
+        no_input=no_input, )
+
+    role_directory = os.path.join(os.getcwd(), role_name)
+    msg = 'Initialized role in {} successfully.'.format(role_directory)
     LOG.success(msg)
 
 
@@ -218,3 +247,26 @@ def scenario(dependency_name, driver_name, lint_name, provisioner_name,
     }
 
     _init_new_scenario(command_args)
+
+
+@init.command()
+@click.option(
+    '--url',
+    required=True,
+    help='URL to the Cookiecutter templates repository.')
+@click.option(
+    '--no-input/--input',
+    default=False,
+    help=('Do not prompt for parameters and only use cookiecutter.json for '
+          'content. (false)'))
+@click.option(
+    '--role-name', default='role_name', help='Name of the role to create.')
+def template(url, no_input, role_name):  # pragma: no cover
+    """ Initialize a new role from a Cookiecutter URL. """
+    command_args = {
+        'role_name': role_name,
+        'subcommand': __name__,
+        'url': url,
+    }
+
+    _init_template(url, command_args, no_input)

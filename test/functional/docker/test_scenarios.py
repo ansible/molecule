@@ -68,6 +68,23 @@ def test_command_init_scenario_goss(temp_dir):
     assert os.path.isdir(scenario_directory)
 
 
+def test_command_init_role_with_template(temp_dir):
+    role_name = 'test-init'
+    role_directory = os.path.join(temp_dir.strpath, role_name)
+
+    options = {
+        'url': 'https://github.com/retr0h/cookiecutter-molecule.git',
+        'no_input': True,
+        'role_name': role_name
+    }
+    cmd = sh.molecule.bake('init', 'template', **options)
+    pytest.helpers.run_command(cmd)
+
+    os.chdir(role_directory)
+
+    sh.molecule('test')
+
+
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
         ('overrride_driver', 'docker', 'default'),

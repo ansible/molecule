@@ -176,13 +176,11 @@ Idempotence
 Init
 ^^^^
 
-Initialize a new role:
-
 .. automethod:: molecule.command.init._init_new_role
 
-Initialize a new scenario:
-
 .. automethod:: molecule.command.init._init_new_scenario
+
+.. automethod:: molecule.command.init._init_template
 
 Lint
 ^^^^

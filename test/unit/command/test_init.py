@@ -140,3 +140,35 @@ def test_init_new_scenario_already_exists(
     msg = ('The directory molecule/test-scenario exists. '
            'Cannot create new scenario.')
     patched_logger_critical.assert_called_once_with(msg)
+
+
+def test_init_template(temp_dir, patched_logger_info, patched_logger_success):
+    url = 'https://github.com/retr0h/cookiecutter-molecule.git'
+    no_input = True
+    command_args = {'role_name': 'foo', }
+
+    init._init_template(url, command_args, no_input)
+
+    assert os.path.isdir('./foo')
+
+    msg = 'Initializing new role foo...'
+    patched_logger_info.assert_called_once_with(msg)
+
+    role_directory = os.path.join(temp_dir.strpath, 'foo')
+    msg = 'Initialized role in {} successfully.'.format(role_directory)
+    patched_logger_success.assert_called_once_with(msg)
+
+
+def test_init_template_role_already_exists(temp_dir, patched_logger_critical):
+    url = 'https://github.com/retr0h/cookiecutter-molecule.git'
+    no_input = True
+    command_args = {'role_name': 'foo', }
+    init._init_template(url, command_args, no_input)
+
+    with pytest.raises(SystemExit) as e:
+        init._init_template(url, command_args, no_input)
+
+    assert 1 == e.value.code
+
+    msg = ('The directory foo exists. Cannot create new role.')
+    patched_logger_critical.assert_called_once_with(msg)
