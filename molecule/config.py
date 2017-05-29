@@ -195,7 +195,7 @@ class ConfigV1(Config):
                         ('https://vagrantcloud.com/ubuntu/boxes/trusty64/'
                          'versions/14.04/providers/virtualbox.box'),
                         'box_version': '0.1.0',
-                        'name': 'trusty64'
+                        'name': 'ubuntu/trusty64'
                     },
                     'provider': {
                         'name': 'virtualbox',
