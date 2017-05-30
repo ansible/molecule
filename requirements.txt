@@ -11,4 +11,4 @@ pexpect==4.2.1
 PyYAML==3.12
 sh==1.12.13
 tabulate==0.7.7
-testinfra==1.6.2
+testinfra==1.6.3
