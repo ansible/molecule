@@ -130,11 +130,13 @@ class Vagrant(base.Base):
 
     @property
     def vagrantfile(self):
-        return os.path.join(self._config.ephemeral_directory, 'Vagrantfile')
+        return os.path.join(self._config.scenario.ephemeral_directory,
+                            'Vagrantfile')
 
     @property
     def vagrantfile_config(self):
-        return os.path.join(self._config.ephemeral_directory, 'vagrant.yml')
+        return os.path.join(self._config.scenario.ephemeral_directory,
+                            'vagrant.yml')
 
     def _get_instance_config(self, instance_name):
         instance_config_dict = util.safe_load_file(

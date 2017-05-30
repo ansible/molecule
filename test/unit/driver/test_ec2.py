@@ -72,7 +72,7 @@ def test_login_cmd_template_property(ec2_instance):
 
 def test_safe_files(ec2_instance):
     x = [
-        os.path.join(ec2_instance._config.ephemeral_directory,
+        os.path.join(ec2_instance._config.scenario.ephemeral_directory,
                      'instance_config.yml'),
     ]
 
@@ -154,7 +154,7 @@ def test_ansible_connection_options_handles_missing_results_key(mocker,
 
 
 def test_instance_config_property(ec2_instance):
-    x = os.path.join(ec2_instance._config.ephemeral_directory,
+    x = os.path.join(ec2_instance._config.scenario.ephemeral_directory,
                      'instance_config.yml')
 
     assert x == ec2_instance.instance_config

@@ -314,12 +314,13 @@ class Ansible(base.Base):
 
     @property
     def inventory_file(self):
-        return os.path.join(self._config.ephemeral_directory,
+        return os.path.join(self._config.scenario.ephemeral_directory,
                             'ansible_inventory.yml')
 
     @property
     def config_file(self):
-        return os.path.join(self._config.ephemeral_directory, 'ansible.cfg')
+        return os.path.join(self._config.scenario.ephemeral_directory,
+                            'ansible.cfg')
 
     @property
     def playbooks(self):
@@ -437,7 +438,7 @@ class Ansible(base.Base):
         if not vars_target:
             return
 
-        ephemeral_directory = self._config.ephemeral_directory
+        ephemeral_directory = self._config.scenario.ephemeral_directory
         target_vars_directory = os.path.join(ephemeral_directory, target)
 
         if not os.path.isdir(os.path.abspath(target_vars_directory)):
@@ -454,8 +455,10 @@ class Ansible(base.Base):
 
         :returns: None
         """
-        gv = os.path.join(self._config.ephemeral_directory, 'group_vars')
-        hv = os.path.join(self._config.ephemeral_directory, 'host_vars')
+        gv = os.path.join(self._config.scenario.ephemeral_directory,
+                          'group_vars')
+        hv = os.path.join(self._config.scenario.ephemeral_directory,
+                          'host_vars')
 
         if os.path.exists(gv):
             shutil.rmtree(gv)

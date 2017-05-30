@@ -59,8 +59,8 @@ def role_file(ansible_galaxy_instance):
 
 @pytest.fixture
 def roles_path(ansible_galaxy_instance):
-    return os.path.join(ansible_galaxy_instance._config.ephemeral_directory,
-                        'roles')
+    return os.path.join(
+        ansible_galaxy_instance._config.scenario.ephemeral_directory, 'roles')
 
 
 def test_config_private_member(ansible_galaxy_instance):

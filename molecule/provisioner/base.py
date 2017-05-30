@@ -19,7 +19,6 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import abc
-import os
 
 
 class Base(object):

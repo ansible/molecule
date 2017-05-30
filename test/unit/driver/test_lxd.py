@@ -77,7 +77,7 @@ def test_ansible_connection_options(lxd_instance):
 
 
 def test_instance_config_property(lxd_instance):
-    x = os.path.join(lxd_instance._config.ephemeral_directory,
+    x = os.path.join(lxd_instance._config.scenario.ephemeral_directory,
                      'instance_config.yml')
 
     assert x == lxd_instance.instance_config

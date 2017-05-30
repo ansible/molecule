@@ -81,7 +81,7 @@ class AnsibleLint(base.Base):
 
     @property
     def default_options(self):
-        d = {'excludes': [self._config.ephemeral_directory]}
+        d = {'excludes': [self._config.scenario.ephemeral_directory]}
         if self._config.args.get('debug'):
             d['v'] = True
 

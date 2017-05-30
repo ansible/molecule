@@ -26,6 +26,8 @@ import string
 
 import pytest
 
+from molecule import config
+
 logging.getLogger('sh').setLevel(logging.WARNING)
 
 pytest_plugins = ['helpers_namespace']
@@ -47,3 +49,33 @@ def temp_dir(tmpdir, random_string, request):
     request.addfinalizer(cleanup)
 
     return directory
+
+
+@pytest.helpers.register
+def molecule_project_directory():
+    return os.getcwd()
+
+
+@pytest.helpers.register
+def molecule_directory():
+    return config.molecule_directory(molecule_project_directory())
+
+
+@pytest.helpers.register
+def molecule_scenario_directory():
+    return os.path.join(molecule_directory(), 'default')
+
+
+@pytest.helpers.register
+def molecule_file():
+    return get_molecule_file(molecule_scenario_directory())
+
+
+@pytest.helpers.register
+def get_molecule_file(path):
+    return config.molecule_file(path)
+
+
+@pytest.helpers.register
+def molecule_ephemeral_directory():
+    return os.path.join(molecule_scenario_directory(), '.molecule')

@@ -96,7 +96,7 @@ def test_ansible_connection_options(static_instance):
 
 
 def test_instance_config_property(static_instance):
-    x = os.path.join(static_instance._config.ephemeral_directory,
+    x = os.path.join(static_instance._config.scenario.ephemeral_directory,
                      'instance_config.yml')
 
     assert x == static_instance.instance_config

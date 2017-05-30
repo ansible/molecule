@@ -76,7 +76,7 @@ class AnsibleGalaxy(base.Base):
             'role-file':
             os.path.join(self._config.scenario.directory, 'requirements.yml'),
             'roles-path':
-            os.path.join(self._config.ephemeral_directory, 'roles'),
+            os.path.join(self._config.scenario.ephemeral_directory, 'roles'),
         }
         if self._config.args.get('debug'):
             d['vvv'] = True

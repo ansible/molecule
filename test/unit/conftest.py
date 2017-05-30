@@ -108,13 +108,13 @@ def molecule_data(
 
 
 @pytest.fixture
-def molecule_directory(temp_dir):
-    return config.molecule_directory(temp_dir.strpath)
+def molecule_directory_fixture(temp_dir):
+    return molecule_directory()
 
 
 @pytest.fixture
-def molecule_scenario_directory(molecule_directory):
-    path = os.path.join(molecule_directory, 'default')
+def molecule_scenario_directory_fixture(molecule_directory_fixture):
+    path = molecule_scenario_directory()
     if not os.path.isdir(path):
         os.makedirs(path)
 
@@ -122,22 +122,23 @@ def molecule_scenario_directory(molecule_directory):
 
 
 @pytest.fixture
-def molecule_ephemeral_directory(molecule_scenario_directory):
-    path = config.molecule_ephemeral_directory(molecule_scenario_directory)
+def molecule_ephemeral_directory_fixture(molecule_scenario_directory_fixture):
+    path = molecule_ephemeral_directory()
     if not os.path.isdir(path):
         os.makedirs(path)
 
 
 @pytest.fixture
-def molecule_file(molecule_scenario_directory, molecule_ephemeral_directory):
-    return config.molecule_file(molecule_scenario_directory)
+def molecule_file_fixture(molecule_scenario_directory_fixture,
+                          molecule_ephemeral_directory_fixture):
+    return molecule_file()
 
 
 @pytest.fixture
-def config_instance(molecule_file, molecule_data):
-    pytest.helpers.write_molecule_file(molecule_file, molecule_data)
+def config_instance(molecule_file_fixture, molecule_data):
+    pytest.helpers.write_molecule_file(molecule_file_fixture, molecule_data)
 
-    return config.Config(molecule_file)
+    return config.Config(molecule_file_fixture)
 
 
 # Mocks

@@ -25,7 +25,6 @@ import pexpect
 import pytest
 import sh
 
-from molecule import config
 from molecule import logger
 from molecule import util
 
@@ -110,7 +109,7 @@ def init_scenario(temp_dir, driver_name):
     os.chdir(role_directory)
 
     # Create scenario
-    molecule_directory = config.molecule_directory(role_directory)
+    molecule_directory = pytest.helpers.molecule_directory()
     scenario_directory = os.path.join(molecule_directory, 'test-scenario')
 
     options = {'scenario_name': 'test-scenario', 'role_name': 'test-init'}

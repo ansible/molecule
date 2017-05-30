@@ -33,7 +33,8 @@ def state_instance(config_instance):
 
 
 def test_state_file_property(state_instance):
-    x = os.path.join(state_instance._config.ephemeral_directory, 'state.yml')
+    x = os.path.join(state_instance._config.scenario.ephemeral_directory,
+                     'state.yml')
 
     assert x == state_instance.state_file
 
@@ -97,11 +98,10 @@ def test_change_state_raises(state_instance):
 
 
 def test_get_data_loads_existing_state_file(temp_dir, molecule_data):
-    molecule_directory = config.molecule_directory(temp_dir.strpath)
+    molecule_directory = pytest.helpers.molecule_directory()
     scenario_directory = os.path.join(molecule_directory, 'default')
-    molecule_file = config.molecule_file(scenario_directory)
-    ephemeral_directory = config.molecule_ephemeral_directory(
-        scenario_directory)
+    molecule_file = pytest.helpers.get_molecule_file(scenario_directory)
+    ephemeral_directory = pytest.helpers.molecule_ephemeral_directory()
     state_file = os.path.join(ephemeral_directory, 'state.yml')
 
     os.makedirs(ephemeral_directory)

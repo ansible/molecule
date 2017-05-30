@@ -62,7 +62,7 @@ class Base(object):
             self._config.state.state_file,
         ] + self._config.driver.safe_files
 
-        files = util.os_walk(self._config.ephemeral_directory, '*')
+        files = util.os_walk(self._config.scenario.ephemeral_directory, '*')
         for f in files:
             if f not in safe_files:
                 os.remove(f)
@@ -73,8 +73,8 @@ class Base(object):
 
         :return: None
         """
-        if not os.path.isdir(self._config.ephemeral_directory):
-            os.mkdir(self._config.ephemeral_directory)
+        if not os.path.isdir(self._config.scenario.ephemeral_directory):
+            os.mkdir(self._config.scenario.ephemeral_directory)
 
         self._config.provisioner.write_inventory()
         self._config.provisioner.write_config()

@@ -52,7 +52,7 @@ def test_init_calls_setup(patched_base_setup, base_instance):
 
 
 def test_prune(base_instance):
-    ephemeral_directory = base_instance._config.ephemeral_directory
+    ephemeral_directory = base_instance._config.scenario.ephemeral_directory
 
     foo_file = os.path.join(ephemeral_directory, 'foo')
     bar_file = os.path.join(ephemeral_directory, 'bar')
@@ -79,7 +79,7 @@ def test_setup(mocker, patched_provisioner_add_or_update_vars,
                patched_remove_vars, patched_provisioner_write_inventory,
                patched_provisioner_write_config, base_instance):
 
-    assert os.path.isdir(base_instance._config.ephemeral_directory)
+    assert os.path.isdir(base_instance._config.scenario.ephemeral_directory)
     assert os.path.isdir(
         os.path.dirname(base_instance._config.provisioner.inventory_file))
 
@@ -93,8 +93,8 @@ def test_setup(mocker, patched_provisioner_add_or_update_vars,
 
 
 def test_setup_creates_ephemeral_directory(base_instance):
-    ephemeral_directory = base_instance._config.ephemeral_directory
-    shutil.rmtree(base_instance._config.ephemeral_directory)
+    ephemeral_directory = base_instance._config.scenario.ephemeral_directory
+    shutil.rmtree(base_instance._config.scenario.ephemeral_directory)
     base_instance._setup()
 
     assert os.path.isdir(ephemeral_directory)

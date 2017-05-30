@@ -75,11 +75,11 @@ def test_login_cmd_template_property(vagrant_instance):
 
 def test_safe_files(vagrant_instance):
     x = [
-        os.path.join(vagrant_instance._config.ephemeral_directory,
+        os.path.join(vagrant_instance._config.scenario.ephemeral_directory,
                      'Vagrantfile'),
-        os.path.join(vagrant_instance._config.ephemeral_directory,
+        os.path.join(vagrant_instance._config.scenario.ephemeral_directory,
                      'vagrant.yml'),
-        os.path.join(vagrant_instance._config.ephemeral_directory,
+        os.path.join(vagrant_instance._config.scenario.ephemeral_directory,
                      'instance_config.yml')
     ]
 
@@ -161,21 +161,21 @@ def test_ansible_connection_options_handles_missing_results_key(
 
 
 def test_vagrantfile_property(vagrant_instance):
-    x = os.path.join(vagrant_instance._config.ephemeral_directory,
+    x = os.path.join(vagrant_instance._config.scenario.ephemeral_directory,
                      'Vagrantfile')
 
     assert x == vagrant_instance.vagrantfile
 
 
 def test_vagrantfile_config_property(vagrant_instance):
-    x = os.path.join(vagrant_instance._config.ephemeral_directory,
+    x = os.path.join(vagrant_instance._config.scenario.ephemeral_directory,
                      'vagrant.yml')
 
     assert x == vagrant_instance.vagrantfile_config
 
 
 def test_instance_config_property(vagrant_instance):
-    x = os.path.join(vagrant_instance._config.ephemeral_directory,
+    x = os.path.join(vagrant_instance._config.scenario.ephemeral_directory,
                      'instance_config.yml')
 
     assert x == vagrant_instance.instance_config

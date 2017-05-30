@@ -41,8 +41,8 @@ from molecule.verifier import goss
 from molecule.verifier import testinfra
 
 
-def test_molecule_file_private_member(molecule_file, config_instance):
-    assert molecule_file == config_instance.molecule_file
+def test_molecule_file_private_member(molecule_file_fixture, config_instance):
+    assert molecule_file_fixture == config_instance.molecule_file
 
 
 def test_args_member(config_instance):
@@ -54,11 +54,19 @@ def test_command_args_member(config_instance):
 
 
 def test_ephemeral_directory_property(config_instance):
-    x = os.path.join(
-        config.molecule_ephemeral_directory(
-            config_instance.scenario.directory))
+    x = os.path.join(pytest.helpers.molecule_ephemeral_directory())
 
     assert x == config_instance.ephemeral_directory
+
+
+def test_project_directory_property(config_instance):
+    assert os.getcwd() == config_instance.project_directory
+
+
+def test_molecule_directory_property(config_instance):
+    x = os.path.join(os.getcwd(), 'molecule')
+
+    assert x == config_instance.molecule_directory
 
 
 def test_dependency_property(config_instance):
@@ -379,15 +387,11 @@ def test_merge_dicts():
 
 
 def test_molecule_directory():
-    assert '/foo/molecule' == config.molecule_directory('/foo')
-
-
-def test_molecule_ephemeral_directory():
-    assert '/foo/.molecule' == config.molecule_ephemeral_directory('/foo')
+    assert '/foo/bar/molecule' == config.molecule_directory('/foo/bar')
 
 
 def test_molecule_file():
-    assert '/foo/molecule.yml' == config.molecule_file('/foo')
+    assert '/foo/bar/molecule.yml' == config.molecule_file('/foo/bar')
 
 
 def test_molecule_drivers():

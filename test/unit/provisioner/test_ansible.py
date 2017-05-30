@@ -310,14 +310,14 @@ def test_inventory_property_handles_missing_groups(temp_dir, ansible_instance):
 
 
 def test_inventory_file_property(ansible_instance):
-    x = os.path.join(ansible_instance._config.ephemeral_directory,
+    x = os.path.join(ansible_instance._config.scenario.ephemeral_directory,
                      'ansible_inventory.yml')
 
     assert x == ansible_instance.inventory_file
 
 
 def test_config_file_property(ansible_instance):
-    x = os.path.join(ansible_instance._config.ephemeral_directory,
+    x = os.path.join(ansible_instance._config.scenario.ephemeral_directory,
                      'ansible.cfg')
 
     assert x == ansible_instance.config_file
@@ -402,7 +402,7 @@ def test_connection_options(ansible_instance):
 
 
 def test_add_or_update_vars(ansible_instance):
-    ephemeral_directory = ansible_instance._config.ephemeral_directory
+    ephemeral_directory = ansible_instance._config.scenario.ephemeral_directory
 
     host_vars_directory = os.path.join(ephemeral_directory, 'host_vars')
     host_vars = os.path.join(host_vars_directory, 'instance-1-default')
@@ -427,7 +427,7 @@ def test_add_or_update_vars(ansible_instance):
 def test_add_or_update_vars_does_not_create_vars(ansible_instance):
     ansible_instance._config.config['provisioner']['host_vars'] = {}
     ansible_instance._config.config['provisioner']['group_vars'] = {}
-    ephemeral_directory = ansible_instance._config.ephemeral_directory
+    ephemeral_directory = ansible_instance._config.scenario.ephemeral_directory
 
     host_vars_directory = os.path.join(ephemeral_directory, 'host_vars')
     group_vars_directory = os.path.join(ephemeral_directory, 'group_vars')
@@ -440,7 +440,7 @@ def test_add_or_update_vars_does_not_create_vars(ansible_instance):
 
 
 def test_remove_vars(ansible_instance):
-    ephemeral_directory = ansible_instance._config.ephemeral_directory
+    ephemeral_directory = ansible_instance._config.scenario.ephemeral_directory
 
     host_vars_directory = os.path.join(ephemeral_directory, 'host_vars')
     host_vars = os.path.join(host_vars_directory, 'instance-1-default')

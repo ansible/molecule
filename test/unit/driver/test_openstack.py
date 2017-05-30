@@ -73,7 +73,7 @@ def test_login_cmd_template_property(openstack_instance):
 
 def test_safe_files(openstack_instance):
     x = [
-        os.path.join(openstack_instance._config.ephemeral_directory,
+        os.path.join(openstack_instance._config.scenario.ephemeral_directory,
                      'instance_config.yml'),
     ]
 
@@ -155,7 +155,7 @@ def test_ansible_connection_options_handles_missing_results_key(
 
 
 def test_instance_config_property(openstack_instance):
-    x = os.path.join(openstack_instance._config.ephemeral_directory,
+    x = os.path.join(openstack_instance._config.scenario.ephemeral_directory,
                      'instance_config.yml')
 
     assert x == openstack_instance.instance_config

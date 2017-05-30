@@ -79,7 +79,7 @@ def test_ansible_connection_options(docker_instance):
 
 
 def test_instance_config_property(docker_instance):
-    x = os.path.join(docker_instance._config.ephemeral_directory,
+    x = os.path.join(docker_instance._config.scenario.ephemeral_directory,
                      'instance_config.yml')
 
     assert x == docker_instance.instance_config

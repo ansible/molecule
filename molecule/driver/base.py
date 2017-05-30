@@ -116,7 +116,7 @@ class Base(object):
 
     @property
     def instance_config(self):
-        return os.path.join(self._config.ephemeral_directory,
+        return os.path.join(self._config.scenario.ephemeral_directory,
                             'instance_config.yml')
 
     def status(self):

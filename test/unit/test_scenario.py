@@ -18,6 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
+
 import pytest
 
 from molecule import scenario
@@ -32,8 +34,16 @@ def test_name_property(scenario_instance):
     assert 'default' == scenario_instance.name
 
 
-def test_directory_property(molecule_scenario_directory, scenario_instance):
-    assert molecule_scenario_directory == scenario_instance.directory
+def test_directory_property(molecule_scenario_directory_fixture,
+                            scenario_instance):
+    assert molecule_scenario_directory_fixture == scenario_instance.directory
+
+
+def test_ephemeral_directory_property(molecule_scenario_directory_fixture,
+                                      scenario_instance):
+    x = os.path.join(molecule_scenario_directory_fixture, '.molecule')
+
+    assert x == scenario_instance.ephemeral_directory
 
 
 def test_check_sequence_property(scenario_instance):

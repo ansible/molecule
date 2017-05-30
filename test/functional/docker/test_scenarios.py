@@ -24,7 +24,6 @@ import re
 import pytest
 import sh
 
-from molecule import config
 from molecule import util
 
 
@@ -58,7 +57,7 @@ def test_command_init_role_goss(temp_dir):
 
 
 def test_command_init_scenario_goss(temp_dir):
-    molecule_directory = config.molecule_directory(temp_dir.strpath)
+    molecule_directory = pytest.helpers.molecule_directory()
     scenario_directory = os.path.join(molecule_directory, 'test-scenario')
     cmd = sh.molecule.bake('init', 'scenario', '--scenario-name',
                            'test-scenario', '--role-name', 'test-init',

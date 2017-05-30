@@ -81,6 +81,10 @@ class Scenario(object):
         return os.path.dirname(self._config.molecule_file)
 
     @property
+    def ephemeral_directory(self):
+        return os.path.join(self.directory, '.molecule')
+
+    @property
     def check_sequence(self):
         return self._config.config['scenario']['check_sequence']
 
