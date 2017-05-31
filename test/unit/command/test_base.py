@@ -63,7 +63,7 @@ def test_prune(base_instance):
 
     os.mkdir(baz_directory)
     for f in [foo_file, bar_file, state_file]:
-        open(f, 'a').close()
+        util.write_file(f, '')
 
     base_instance.prune()
 

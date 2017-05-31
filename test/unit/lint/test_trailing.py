@@ -175,7 +175,7 @@ def test_get_tests(trailing_instance):
             '.foo/foo.yml',
             '.bar/foo.yml',
     ]:
-        open(os.path.join(project_directory, f), 'a').close()
+        util.write_file(os.path.join(project_directory, f), '')
 
     # NOTE(retr0h): Unit tests add a molecule.yml automatically.
     assert 4 == len(trailing_instance._get_tests())

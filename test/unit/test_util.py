@@ -21,6 +21,7 @@
 from __future__ import print_function
 
 import binascii
+import io
 import os
 
 import colorama
@@ -168,7 +169,7 @@ def test_os_walk(temp_dir):
         scenario_directory = os.path.join(molecule_directory, scenario)
         molecule_file = pytest.helpers.get_molecule_file(scenario_directory)
         os.makedirs(scenario_directory)
-        open(molecule_file, 'a').close()
+        util.write_file(molecule_file, '')
 
     result = [f for f in util.os_walk(molecule_directory, 'molecule.yml')]
     assert 3 == len(result)
@@ -184,7 +185,7 @@ def test_write_file(temp_dir):
     dest_file = os.path.join(temp_dir.strpath, 'test_util_write_file.tmp')
     contents = binascii.b2a_hex(os.urandom(15)).decode()
     util.write_file(dest_file, contents)
-    with open(dest_file, 'r') as stream:
+    with util.open_file(dest_file) as stream:
         data = stream.read()
     x = '# Molecule managed\n\n{}'.format(contents)
 
@@ -217,7 +218,12 @@ def test_open_file(temp_dir):
     util.write_file(path, 'foo: bar')
 
     with util.open_file(path) as stream:
-        assert type(stream) is file
+        try:
+            file_types = (file, io.IOBase)
+        except NameError:
+            file_types = io.IOBase
+
+        assert isinstance(stream, file_types)
 
 
 def test_instance_with_scenario_name():

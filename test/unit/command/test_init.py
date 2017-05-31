@@ -23,6 +23,7 @@ import uuid
 
 import pytest
 
+from molecule import util
 from molecule.command import init
 
 
@@ -37,7 +38,7 @@ def test_process_templates(temp_dir):
     expected_file = os.path.join(temp_dir.strpath, repo_name, 'template.yml')
     expected_contents = '- value: foo'
 
-    with open(expected_file, 'r') as stream:
+    with util.open_file(expected_file) as stream:
         for line in stream.readlines():
             assert line.strip() in expected_contents
 

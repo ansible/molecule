@@ -224,7 +224,7 @@ class Config(object):
                                        os.environ)
 
         base = self._get_defaults()
-        with open(self.molecule_file, 'r') as stream:
+        with util.open_file(self.molecule_file) as stream:
             interpolated_config = i.interpolate(stream.read())
             base = self.merge_dicts(base, util.safe_load(interpolated_config))
 
