@@ -303,10 +303,7 @@ class DockerDriver(basedriver.BaseDriver):
         tag_string = container['image_tag'].format(container['image'],
                                                    container['image_version'])
 
-        if 'disable_cache' in container and container['disable_cache'] is True:
-            nocache = True
-        else:
-            nocache = False
+        nocache = container.get('disable_cache', False)
 
         errors = False
 
