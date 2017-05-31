@@ -61,6 +61,7 @@ The available param for the Docker driver itself is:
   the destroy phase. The network names can be used in ``network_mode`` of a
   container to make clusters of docker containers. A ``driver`` can be specified
   for a network **(default='bridge')**.
+* ``disable_cache`` - **(default=False)** Disable cache when building a Docker image
 
 .. _`host config`: https://docker-py.readthedocs.io/en/stable/api.html#docker.api.container.ContainerApiMixin.create_host_config
 .. _`capability`: https://docs.docker.com/engine/reference/run/#/runtime-privilege-and-linux-capabilities

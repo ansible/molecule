@@ -303,12 +303,14 @@ class DockerDriver(basedriver.BaseDriver):
         tag_string = container['image_tag'].format(container['image'],
                                                    container['image_version'])
 
+        nocache = container.get('disable_cache', False)
+
         errors = False
 
         if tag_string not in available_images or 'dockerfile' in container:
             util.print_info('Building ansible compatible image...')
             previous_line = ''
-            for line in self._docker.build(fileobj=f, tag=tag_string):
+            for line in self._docker.build(fileobj=f, tag=tag_string, nocache=nocache):
                 for line_split in line.split('\n'):
                     if len(line_split) > 0:
                         line = json.loads(line_split)
