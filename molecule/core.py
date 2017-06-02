@@ -18,6 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+from __future__ import print_function
+
 import collections
 import os
 import shutil
@@ -205,7 +207,7 @@ class Molecule(object):
                             groups[group] = []
                         groups[group].append(instance['name'])
                     elif isinstance(group, dict):
-                        for group_name, group_list in group.iteritems():
+                        for group_name, group_list in group.items():
                             for g in group_list:
                                 if group_name not in groups:
                                     groups[group_name] = []
@@ -214,7 +216,7 @@ class Molecule(object):
         if self.args.get('platform') == 'all':
             self.driver.platform = 'all'
 
-        for group, subgroups in groups.iteritems():
+        for group, subgroups in groups.items():
             inventory += '\n[{}]\n'.format(group)
             for subgroup in subgroups:
                 instance_name = util.format_instance_name(
@@ -371,7 +373,7 @@ class Molecule(object):
                     if isinstance(group, str):
                         groups.add(group)
                     elif isinstance(group, dict):
-                        for group_name, _ in group.iteritems():
+                        for group_name, _ in group.items():
                             groups.add(group_name.split(':')[0])
 
             instances[instance_name]['groups'] = sorted(list(groups))
@@ -390,7 +392,7 @@ class Molecule(object):
 
     def _dict_to_inisection_string(self, data, padding=15):
         result = ''
-        for key, value in data.iteritems():
+        for key, value in data.items():
             result += '\n%s = %s' % (key.ljust(padding), value)
 
         return result

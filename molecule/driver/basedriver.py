@@ -19,6 +19,7 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import abc
+import six
 
 
 class InvalidDriverSpecified(Exception):
@@ -42,8 +43,7 @@ class InvalidPlatformSpecified(Exception):
     pass
 
 
-class BaseDriver(object):
-    __metaclass__ = abc.ABCMeta
+class BaseDriver(six.with_metaclass(abc.ABCMeta)):
 
     def __init__(self, molecule):
         """
