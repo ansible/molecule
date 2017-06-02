@@ -24,7 +24,7 @@ import re
 
 from molecule.driver import openstackdriver
 
-# TODO(retr0h): Test instance create/delete through the openstack instance.
+pytestmark = pytest.mark.skip(reason='Openstack unit tests not supported')
 
 
 @pytest.fixture()
