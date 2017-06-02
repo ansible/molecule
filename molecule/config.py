@@ -17,6 +17,9 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
+"""
+Configuration related code.
+"""
 
 import abc
 import os
@@ -29,12 +32,18 @@ from re import sub
 
 from molecule import util
 
+#: Project level configuration
 PROJECT_CONFIG = 'molecule.yml'
+#: User specific configuration
 LOCAL_CONFIG = os.path.expanduser('~/.config/molecule/config.yml')
 MERGE_STRATEGY = anyconfig.MS_DICTS
 
 
 class Config(object):
+    """
+    Configuration class.
+    """
+
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, configs=[LOCAL_CONFIG, PROJECT_CONFIG]):
@@ -42,35 +51,70 @@ class Config(object):
         Base initializer for all Config classes.
 
         :param command_args: A list configs files to merge.
+        :type command_args: list
         :returns: None
         """
         self.config = self._get_config(configs)
 
     @property
     def molecule_file(self):
+        """
+        Returns the path to the project configuration file.
+
+        :rtype: str
+        """
         return PROJECT_CONFIG
 
     @property
     def molecule_local_config_file(self):
+        """
+        Returns the path to the local configuration file.
+
+        :rtype: str
+        """
         return LOCAL_CONFIG
 
     @abc.abstractmethod
     def _get_config(self, configs):
+        """
+        Method which must be overriden to return the configuration
+        data.
+
+        :param configs: A list containing the yaml files to load.
+        :type configs: list
+        """
         pass  # pragma: no cover
 
 
 class ConfigV1(Config):
+    """
+    Version 1 implementation of configuration.
+    """
+
     def __init__(self, configs=[LOCAL_CONFIG, PROJECT_CONFIG]):
         """
-        Initialize a new config version one class and returns None.
+        Initialize a new config version one class.
+
+        :param configs: A list containing the yaml files to load.
+        :type configs: list
         """
         super(ConfigV1, self).__init__(configs)
         self._build_config_paths()
 
     def molecule_file_exists(self):
+        """
+        Returns True if the molecule file exists.
+
+        :rtype: bool
+        """
         return os.path.isfile(self.molecule_file)
 
     def molecule_local_config_file_exists(self):
+        """
+        Returns True if the local molecule file exists.
+
+        :rtype: bool
+        """
         return os.path.isfile(self.molecule_local_config_file)
 
     def populate_instance_names(self, platform):
@@ -79,9 +123,9 @@ class ConfigV1(Config):
         the full instance name
 
         :param platform: platform name to pass to ``format_instance_name`` call
+        :type platform: str
         :return: None
         """
-
         if 'vagrant' in self.config:
             for instance in self.config['vagrant']['instances']:
                 instance['vm_name'] = util.format_instance_name(
@@ -89,6 +133,12 @@ class ConfigV1(Config):
                     self.config['vagrant']['instances'])
 
     def _get_config(self, configs):
+        """
+        Returns the configuration data.
+
+        :param configs: A list containing the yaml files to load.
+        :type configs: list
+        """
         return self._combine(configs)
 
     def _combine(self, configs):
@@ -101,9 +151,9 @@ class ConfigV1(Config):
         ontop of the defaults.
 
         :param configs: A list containing the yaml files to load.
+        :type configs: list
         :return: dict
         """
-
         default = self._get_defaults()
         conf = anyconfig.to_container(default, ac_merge=MERGE_STRATEGY)
         conf.update(
@@ -118,7 +168,8 @@ class ConfigV1(Config):
         string.
 
         :param config: An iterable containing the merged config
-        :return: dict
+        :type config: iterable
+        :rtype: dict
         """
 
         def __get_env_var(matchobj):
@@ -157,6 +208,11 @@ class ConfigV1(Config):
         return config
 
     def _get_defaults(self):
+        """
+        Returns the configuration defaults.
+
+        :rtype: dict
+        """
         return {
             'ansible': {
                 'ask_become_pass': False,
@@ -250,6 +306,11 @@ class ConfigV1(Config):
                 ad[item] = os.path.join(md['molecule_dir'], ad[item])
 
     def _is_path(self, pathname):
+        """
+        Returns True if the input is a path like string.
+
+        :rtype: bool
+        """
         return os.path.sep in pathname
 
 
@@ -283,8 +344,10 @@ def merge_dicts(a, b):
 
 
     :param a: the target dictionary
+    :type a: dict
     :param b: the dictionary to import
-    :return: dict
+    :type b: dict
+    :rtype: dict
     """
     conf = anyconfig.to_container(a, ac_merge=MERGE_STRATEGY)
     conf.update(b)
