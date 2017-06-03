@@ -2,6 +2,15 @@
 History
 *******
 
+1.25
+====
+
+* Display output when `idempotence` fails.
+* Changed basebox to ubuntu/trusty64 for molecule init.
+* Allow disable_cache parameter for Docker containers enhancement.
+* Update goss verifier.
+* Add a 'private' parameter in OpenStack driver.
+
 1.24
 ====
 
