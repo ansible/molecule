@@ -47,6 +47,7 @@ class Idempotence(base.Base):
         if status is not None:
             msg = 'Skipping due to errors during converge.'
             util.print_info(msg)
+            util.print_info(output)
             return status, None
 
         idempotent = self._is_idempotent(output)
