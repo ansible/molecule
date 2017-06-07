@@ -17,10 +17,14 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
+"""
+command line interface.
+"""
 
 import click
 
 import molecule
+
 from molecule import command
 
 
@@ -32,6 +36,14 @@ from molecule import command
 @click.version_option(version=molecule.__version__)
 @click.pass_context
 def cli(ctx, debug):  # pragma: no cover
+    """
+    Main command line interface class.
+
+    :param ctx: Context instance for the command line.
+    :type ctc: click.core.Context
+    :param debug: Debug flag.
+    :type debug: bool
+    """
     ctx.obj['args'] = {}
     ctx.obj['args']['debug'] = debug
 
@@ -41,6 +53,7 @@ def main():
     cli(obj={})
 
 
+# module level command additions
 cli.add_command(command.check.check)
 cli.add_command(command.converge.converge)
 cli.add_command(command.create.create)

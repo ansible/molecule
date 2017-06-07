@@ -17,6 +17,9 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
+"""
+ansible playbook runner.
+"""
 
 import os
 import sh
@@ -25,6 +28,10 @@ from molecule import util
 
 
 class AnsiblePlaybook(object):
+    """
+    Handles command creation and running for ansible-playbook.
+    """
+
     def __init__(self,
                  args,
                  connection_params,
@@ -37,15 +44,21 @@ class AnsiblePlaybook(object):
         Sets up requirements for ansible-playbook and returns None.
 
         :param args: A dict containing arguments to pass to ansible-playbook.
+        :type args: dict
         :param connection_params: A dict containing driver specific connection
          params to pass to ansible-playbook.
+        :type connection_params: dict
         :param _env: An optional environment to pass to underlying :func:`sh`
          call.
+        :type _env: dict
         :param _out: An optional function to process STDOUT for underlying
          :func:`sh` call.
+        :type _out: callable
         :param _err: An optional function to process STDERR for underlying
          :func:`sh` call.
+        :type _err: callable
         :param debug: An optional bool to toggle debug output.
+        :type debug: bool
         :return: None
         """
         self._playbook = None
@@ -70,6 +83,9 @@ class AnsiblePlaybook(object):
 
     @property
     def env(self):
+        """
+        Return the environment.
+        """
         return self._env
 
     def bake(self):
@@ -89,7 +105,9 @@ class AnsiblePlaybook(object):
         Adds argument to CLI or environment and returns None.
 
         :param name: A string containing the name of argument to be added.
+        :type name: str
         :param value: The value of argument to be added.
+        :type value: mixed
         :return: None
         """
 
@@ -137,7 +155,9 @@ class AnsiblePlaybook(object):
         Adds argument to CLI passed to ansible-playbook and returns None.
 
         :param name: A string containing the name of argument to be added.
+        :type name: str
         :param value: The value of argument to be added.
+        :type value: mixed
         :return: None
         """
         if value:
@@ -148,6 +168,7 @@ class AnsiblePlaybook(object):
         Removes CLI argument and returns None.
 
         :param name: A string containing the name of argument to be removed.
+        :type name: str
         :return: None
         """
         self._cli.pop(name, None)
@@ -158,7 +179,9 @@ class AnsiblePlaybook(object):
         None.
 
         :param name: A string containing the name of argument to be added.
+        :type name: str
         :param value: The value of argument to be added.
+        :type value: mixed
         :return: None
         """
         self._env[name] = value
@@ -168,6 +191,7 @@ class AnsiblePlaybook(object):
         Removes environment argument and returns None.
 
         :param name: A string containing the name of argument to be removed.
+        :type name: str
         :return: None
         """
         self._env.pop(name, None)
@@ -177,7 +201,9 @@ class AnsiblePlaybook(object):
         Executes ansible-playbook and returns command's stdout.
 
         :param hide_errors: An optional bool to toggle output of errors.
+        :type hide_errors: bool
         :return: The command's output, otherwise sys.exit on command failure.
+        :rtype: tuple
         """
         if self._ansible is None:
             self.bake()
