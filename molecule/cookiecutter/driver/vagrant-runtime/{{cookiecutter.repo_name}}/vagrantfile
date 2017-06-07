@@ -4,6 +4,8 @@ $state = YAML::load_file('{{ cookiecutter.vagrantfile_state_file }}')
 
 Vagrant.configure('2') do |config|
 
+    config.ssh.forward_agent = true
+
     driver_config = $state['driver_config']
 
     if Vagrant.has_plugin?('vagrant-cachier')
