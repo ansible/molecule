@@ -7,10 +7,18 @@ lint:
   name: ansible-lint
 platforms:
   - name: instance-1
+    interfaces:
+      - auto_config: true
+        network_name: private_network
+        type: dhcp
     groups:
       - foo
       - bar
   - name: instance-2
+    interfaces:
+      - auto_config: true
+        network_name: private_network
+        type: dhcp
     groups:
       - foo
       - baz

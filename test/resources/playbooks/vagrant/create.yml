@@ -10,6 +10,7 @@
     - name: Create molecule instance(s)
       molecule_vagrant:
         instance_name: "{{ item.name | molecule_instance_with_scenario_name(molecule_yml.scenario.name) }}"
+        instance_interfaces: "{{ item.interfaces | default([]) }}"
         platform_box: debian/jessie64
         molecule_file: "{{ molecule_file }}"
         state: up

@@ -28,3 +28,10 @@ def test_etc_molecule_ansible_hostname_file(host):
     assert f.user == 'root'
     assert f.group == 'root'
     assert f.mode == 0o644
+
+
+def test_interface(host):
+    i = host.interface('eth1').addresses
+
+    # NOTE(retr0h): Contains ipv4 and ipv6 addresses.
+    assert len(i) == 2
