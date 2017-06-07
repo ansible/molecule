@@ -19,6 +19,7 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import abc
+import six
 
 from molecule import config
 from molecule import core
@@ -32,11 +33,10 @@ class InvalidHost(Exception):
     pass
 
 
-class Base(object):
+class Base(six.with_metaclass(abc.ABCMeta)):
     """
     An abstract base class used to define the command interface.
     """
-    __metaclass__ = abc.ABCMeta
 
     def __init__(self, args, command_args, molecule=None):
         """

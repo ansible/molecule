@@ -19,6 +19,8 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import os
+
+import six
 import sh
 
 from molecule import util
@@ -56,7 +58,7 @@ class AnsiblePlaybook(object):
         self._env = _env if _env else os.environ.copy()
         self._debug = debug
 
-        for k, v in args.iteritems():
+        for k, v in args.items():
             self.parse_arg(k, v)
 
         for k, v in connection_params.items():
@@ -94,9 +96,9 @@ class AnsiblePlaybook(object):
         """
 
         if name == 'raw_env_vars':
-            for k, v in value.iteritems():
-                if not isinstance(v, basestring):
-                    v = unicode(v)
+            for k, v in value.items():
+                if not type(v) in six.string_types:
+                    v = six.u(v)
                 self.add_env_arg(k, v)
             return
 

@@ -19,10 +19,10 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import abc
+import six
 
 
-class Base(object):
-    __metaclass__ = abc.ABCMeta
+class Base(six.with_metaclass(abc.ABCMeta)):
 
     def __init__(self, molecule):
         """

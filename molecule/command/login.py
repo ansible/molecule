@@ -44,7 +44,7 @@ class Login(base.Base):
         """
         # get list of running hosts from state
         if self.molecule.state.hosts:
-            hosts = [k for k, v in self.molecule.state.hosts.iteritems()]
+            hosts = [k for k, v in self.molecule.state.hosts.items()]
         else:
             hosts = []
 

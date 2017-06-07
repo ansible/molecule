@@ -286,7 +286,7 @@ class DockerDriver(basedriver.BaseDriver):
             environment = container.get('environment')
             if environment:
                 environment = '\n'.join('ENV {} {}'.format(k, v)
-                                        for k, v in environment.iteritems())
+                                        for k, v in environment.items())
             else:
                 environment = ''
 
@@ -310,7 +310,8 @@ class DockerDriver(basedriver.BaseDriver):
         if tag_string not in available_images or 'dockerfile' in container:
             util.print_info('Building ansible compatible image...')
             previous_line = ''
-            for line in self._docker.build(fileobj=f, tag=tag_string, nocache=nocache):
+            for line in self._docker.build(
+                    fileobj=f, tag=tag_string, nocache=nocache):
                 for line_split in line.split('\n'):
                     if len(line_split) > 0:
                         line = json.loads(line_split)

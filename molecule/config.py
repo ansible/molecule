@@ -24,6 +24,7 @@ import os.path
 
 import anyconfig
 import m9dicts
+import six
 
 from re import sub
 
@@ -34,8 +35,7 @@ LOCAL_CONFIG = os.path.expanduser('~/.config/molecule/config.yml')
 MERGE_STRATEGY = anyconfig.MS_DICTS
 
 
-class Config(object):
-    __metaclass__ = abc.ABCMeta
+class Config(six.with_metaclass(abc.ABCMeta)):
 
     def __init__(self, configs=[LOCAL_CONFIG, PROJECT_CONFIG]):
         """
@@ -125,7 +125,7 @@ class ConfigV1(Config):
             return os.environ.get(matchobj.group(1), '')
 
         def __replace_matches(line):
-            if not isinstance(line, basestring):
+            if not type(line) in six.string_types:
                 return line
             return sub('\$\{([^\}]*)\}', __get_env_var, line)
 
@@ -139,7 +139,7 @@ class ConfigV1(Config):
                         del config[i]
                         config[new_name] = val
                 # Replace dict values
-                for k, v in config.iteritems():
+                for k, v in config.items():
                     if isinstance(v, (dict, list)):
                         __recursive_string_replace(v)
                     else:
