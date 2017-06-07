@@ -103,7 +103,7 @@ class Idempotence(base.Base):
             elif line.startswith('changed'):
                 host_name = re.search(r'\[(.*)\]', line).groups()[0]
                 task_name = re.search(r'\[(.*)\]', task_line).groups()[0]
-                res.append('* [{}] => {}'.format(host_name, task_name))
+                res.append(u'* [{}] => {}'.format(host_name, task_name))
 
         return res
 

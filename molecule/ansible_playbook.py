@@ -183,8 +183,8 @@ class AnsiblePlaybook(object):
             self.bake()
 
         try:
-            return None, util.run_command(
-                self._ansible, debug=self._debug).stdout
+            return None, unicode(util.run_command(
+                self._ansible, debug=self._debug))
         except sh.ErrorReturnCode as e:
             if not hide_errors:
                 util.print_error(str(e))
