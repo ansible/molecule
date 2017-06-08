@@ -18,8 +18,10 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
 import pytest
 import sh
+import yaml
 
 from molecule import config
 from molecule.dependency import ansible_galaxy
@@ -38,6 +40,19 @@ def test_add_env_arg(ansible_galaxy_instance):
     ansible_galaxy_instance.add_env_arg('MOLECULE_1', 'test')
 
     assert 'test' == ansible_galaxy_instance._env['MOLECULE_1']
+
+
+def test_check_meta_requirements(temp_dir, temp_files,
+                                 ansible_galaxy_instance):
+    requirements_file = temp_files(fixtures=['galaxy_meta_file'])[0]
+    roles_directory = os.path.join(temp_dir, 'roles')
+
+    expected_yaml = [{'role': 'molecule'}]
+    expected_file = os.path.join(roles_directory, 'requirements.yml')
+    assert expected_file == ansible_galaxy_instance.check_meta_requirements(
+        requirements_file, roles_directory)
+    with open(expected_file) as f:
+        assert expected_yaml == yaml.load(f)
 
 
 def test_execute(patched_ansible_galaxy, ansible_galaxy_instance):

@@ -21,6 +21,7 @@
 import os
 
 import sh
+import yaml
 
 from molecule import config
 from molecule import util
@@ -73,6 +74,11 @@ class AnsibleGalaxy(object):
         galaxy_options = config.merge_dicts(
             galaxy_default_options, self._config['dependency']['options'])
 
+        meta_requirements = self.check_meta_requirements(requirements_file,
+                                                         roles_path)
+        if meta_requirements:
+            galaxy_options['role-file'] = meta_requirements
+
         self._galaxy = sh.ansible_galaxy.bake(
             'install',
             _env=self._env,
@@ -90,6 +96,27 @@ class AnsibleGalaxy(object):
         :return: None
         """
         self._env[name] = value
+
+    def check_meta_requirements(self, requirements_file, roles_path):
+        """
+        If this is an ansible galaxy file (meta/main.yml) extract the
+        dependencies to a separate requirements file
+        """
+        try:
+            with open(requirements_file) as f:
+                y = yaml.load(f)
+            dependencies = y['dependencies']
+        except Exception:
+            dependencies = None
+
+        if dependencies:
+            meta_requirements = os.path.join(roles_path, 'requirements.yml')
+            if not os.path.exists(os.path.abspath(roles_path)):
+                os.mkdir(os.path.abspath(roles_path))
+
+            with open(meta_requirements, 'w') as f:
+                yaml.dump(dependencies, f)
+            return meta_requirements
 
     def execute(self):
         """
