@@ -206,6 +206,30 @@ class Ansible(base.Base):
 
         :return: dict
         """
+        envs = self._config.config['provisioner']['env']
+
+        roles_path = '../../../../'
+        filter_plugins = self._get_filter_plugin_directory()
+        library = self._get_libraries_directory()
+
+        # ANSIBLE_ like environments set on command line have higher precedence
+        # than their equivalents in the ansible.cfg file.
+        # Use env value instead of the env itself.
+        try:
+             roles_path = '{}:{}'.format(roles_path, envs['ANSIBLE_ROLES_PATH'])
+        except KeyError:
+             pass
+
+        try:
+             filter_plugins = '{}:{}'.format(filter_plugins, envs['ANSIBLE_FILTER_PLUGINS'])
+        except KeyError:
+             pass
+
+        try:
+             library = '{}:{}'.format(library, envs['ANSIBLE_LIBRARY'])
+        except KeyError:
+             pass
+
         return {
             'defaults': {
                 'ansible_managed':
@@ -213,11 +237,9 @@ class Ansible(base.Base):
                 'retry_files_enabled': False,
                 'host_key_checking': False,
                 'nocows': 1,
-                'roles_path': '../../../../:$ANSIBLE_ROLES_PATH',
-                'library':
-                '{}:$ANSIBLE_LIBRARY'.format(self._get_libraries_directory()),
-                'filter_plugins': '{}:$ANSIBLE_FILTER_PLUGINS'.format(
-                    self._get_filter_plugin_directory()),
+                'roles_path': roles_path,
+                'library': library,
+                'filter_plugins': filter_plugins,
             },
             'ssh_connection': {
                 'scp_if_ssh': True,
@@ -259,8 +281,15 @@ class Ansible(base.Base):
 
     @property
     def env(self):
-        return self._config.merge_dicts(
+        envs = self._config.merge_dicts(
             self.default_env, self._config.config['provisioner']['env'])
+        if 'ANSIBLE_FILTER_PLUGINS' in envs:
+            del envs['ANSIBLE_FILTER_PLUGINS']
+        if 'ANSIBLE_ROLES_PATH' in envs:
+            del envs['ANSIBLE_ROLES_PATH']
+        if 'ANSIBLE_LIBRARY' in envs:
+            del envs['ANSIBLE_LIBRARY']
+        return envs
 
     @property
     def host_vars(self):
