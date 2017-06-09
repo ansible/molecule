@@ -69,7 +69,8 @@ def check(module, test_file_path, output_format, goss_path):
 # write goss result to output_file_path
 def output_file(output_file_path, out):
     if output_file_path is not None:
-        util.write_file(output_file_path, output_file.write(out))
+        with open(output_file_path, 'w') as output_file:
+            output_file.write(out)
 
 
 def main():
