@@ -11,3 +11,4 @@ pytest-verbose-parametrize
 python-vagrant
 shade
 wheel
+yapf==0.16.2
