@@ -181,8 +181,8 @@ def test_get_configs_filter_configs_for_scenario(
         patched_verify_scenario_name, ):
     base.get_configs({}, {'scenario_name': 'default'})
 
-    patched_base_filter_configs_for_scenario.assert_called_once_with('default',
-                                                                     [])
+    patched_base_filter_configs_for_scenario.assert_called_once_with(
+        'default', [])
 
 
 def test_filter_configs_for_scenario(config_instance):

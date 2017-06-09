@@ -28,7 +28,8 @@ def test_execute(mocker, patched_create_setup,
     c.execute()
     x = [
         mocker.call('Scenario: [default]'),
-        mocker.call('Provisioner: [ansible]'), mocker.call('Driver: [docker]'),
+        mocker.call('Provisioner: [ansible]'),
+        mocker.call('Driver: [docker]'),
         mocker.call('Playbook: [create.yml]')
     ]
 

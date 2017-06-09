@@ -122,11 +122,16 @@ def test_ansible_connection_options(mocker, openstack_instance):
         'identity_file': '/foo/bar'
     }]
     x = {
-        'ansible_host': '172.16.0.2',
-        'ansible_port': 22,
-        'ansible_user': 'cloud-user',
-        'ansible_private_key_file': '/foo/bar',
-        'connection': 'ssh',
+        'ansible_host':
+        '172.16.0.2',
+        'ansible_port':
+        22,
+        'ansible_user':
+        'cloud-user',
+        'ansible_private_key_file':
+        '/foo/bar',
+        'connection':
+        'ssh',
         'ansible_ssh_common_args': ('-o UserKnownHostsFile=/dev/null '
                                     '-o ControlMaster=auto '
                                     '-o ControlPersist=60s '

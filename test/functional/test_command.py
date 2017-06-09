@@ -218,7 +218,9 @@ def test_command_idempotence(scenario_to_test, with_scenario, scenario_name):
         ('openstack'),
         ('vagrant'),
     ],
-    indirect=['driver_name', ])
+    indirect=[
+        'driver_name',
+    ])
 def test_command_init_role(temp_dir, driver_name, skip_test):
     pytest.helpers.init_role(temp_dir, driver_name)
 
@@ -232,7 +234,9 @@ def test_command_init_role(temp_dir, driver_name, skip_test):
         ('openstack'),
         ('vagrant'),
     ],
-    indirect=['driver_name', ])
+    indirect=[
+        'driver_name',
+    ])
 def test_command_init_scenario(temp_dir, driver_name, skip_test):
     pytest.helpers.init_role(temp_dir, driver_name)
 

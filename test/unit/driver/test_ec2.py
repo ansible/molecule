@@ -121,11 +121,16 @@ def test_ansible_connection_options(mocker, ec2_instance):
         'identity_file': '/foo/bar'
     }]
     x = {
-        'ansible_host': '172.16.0.2',
-        'ansible_port': 22,
-        'ansible_user': 'cloud-user',
-        'ansible_private_key_file': '/foo/bar',
-        'connection': 'ssh',
+        'ansible_host':
+        '172.16.0.2',
+        'ansible_port':
+        22,
+        'ansible_user':
+        'cloud-user',
+        'ansible_private_key_file':
+        '/foo/bar',
+        'connection':
+        'ssh',
         'ansible_ssh_common_args': ('-o UserKnownHostsFile=/dev/null '
                                     '-o ControlMaster=auto '
                                     '-o ControlPersist=60s '
@@ -145,8 +150,8 @@ def test_ansible_connection_options_handles_missing_instance_config(
     assert {} == ec2_instance.ansible_connection_options('foo')
 
 
-def test_ansible_connection_options_handles_missing_results_key(mocker,
-                                                                ec2_instance):
+def test_ansible_connection_options_handles_missing_results_key(
+        mocker, ec2_instance):
     m = mocker.patch('molecule.util.safe_load_file')
     m.side_effect = StopIteration
 

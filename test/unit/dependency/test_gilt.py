@@ -152,8 +152,8 @@ def test_execute_bakes(patched_run_command, gilt_config,
 def test_executes_catches_and_exits_return_code(
         patched_run_command, patched_gilt_has_requirements_file,
         gilt_instance):
-    patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.ansible_galaxy,
-                                                           b'', b'')
+    patched_run_command.side_effect = sh.ErrorReturnCode_1(
+        sh.ansible_galaxy, b'', b'')
     with pytest.raises(SystemExit) as e:
         gilt_instance.execute()
 

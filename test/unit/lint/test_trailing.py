@@ -63,7 +63,9 @@ def test_default_options_property(trailing_instance):
 
 
 def test_options_property(trailing_instance):
-    assert {'foo': 'bar', } == trailing_instance.options
+    assert {
+        'foo': 'bar',
+    } == trailing_instance.options
 
 
 def test_default_env_property(trailing_instance):

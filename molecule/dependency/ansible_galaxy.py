@@ -72,7 +72,8 @@ class AnsibleGalaxy(base.Base):
     @property
     def default_options(self):
         d = {
-            'force': True,
+            'force':
+            True,
             'role-file':
             os.path.join(self._config.scenario.directory, 'requirements.yml'),
             'roles-path':

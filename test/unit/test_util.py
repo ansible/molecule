@@ -73,7 +73,8 @@ def test_print_environment_vars(capsys):
     ]
     print(''.join(title))
     data = [
-        colorama.Fore.BLACK, colorama.Style.BRIGHT, util.safe_dump({
+        colorama.Fore.BLACK, colorama.Style.BRIGHT,
+        util.safe_dump({
             'ANSIBLE_FOO': 'foo',
             'ANSIBLE_BAR': 'bar'
         }), colorama.Style.RESET_ALL, colorama.Fore.RESET
@@ -88,7 +89,8 @@ def test_print_environment_vars(capsys):
     ]
     print(''.join(title))
     data = [
-        colorama.Fore.BLACK, colorama.Style.BRIGHT, util.safe_dump({
+        colorama.Fore.BLACK, colorama.Style.BRIGHT,
+        util.safe_dump({
             'MOLECULE_FOO': 'foo',
             'MOLECULE_BAR': 'bar'
         }), colorama.Style.RESET_ALL, colorama.Fore.RESET

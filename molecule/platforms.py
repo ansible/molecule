@@ -87,7 +87,7 @@ class Platforms(object):
         for instance in instances:
             instance_name = instance['name']
             scenario_name = self._config.scenario.name
-            instance['name'] = util.instance_with_scenario_name(instance_name,
-                                                                scenario_name)
+            instance['name'] = util.instance_with_scenario_name(
+                instance_name, scenario_name)
 
         return instances

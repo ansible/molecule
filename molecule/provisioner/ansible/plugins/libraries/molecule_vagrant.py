@@ -431,30 +431,19 @@ class VagrantClient(object):
 def main():
     module = AnsibleModule(  # noqa
         argument_spec=dict(
-            instance_name=dict(
-                type='str', required=True),
-            instance_interfaces=dict(
-                type='list', default=[]),
-            instance_raw_config_args=dict(
-                type='list', default=None),
-            platform_box=dict(
-                type='str', required=True),
+            instance_name=dict(type='str', required=True),
+            instance_interfaces=dict(type='list', default=[]),
+            instance_raw_config_args=dict(type='list', default=None),
+            platform_box=dict(type='str', required=True),
             platform_box_version=dict(type='str'),
             platform_box_url=dict(type='str'),
-            provider_name=dict(
-                type='str', default='virtualbox'),
-            provider_memory=dict(
-                type='int', default=512),
-            provider_cpus=dict(
-                type='int', default=2),
-            provider_options=dict(
-                type='dict', default={}),
-            provider_raw_config_args=dict(
-                type='list', default=None),
-            molecule_file=dict(
-                type='str', required=True),
-            state=dict(
-                type='str', default='up', choices=['up', 'destroy'])),
+            provider_name=dict(type='str', default='virtualbox'),
+            provider_memory=dict(type='int', default=512),
+            provider_cpus=dict(type='int', default=2),
+            provider_options=dict(type='dict', default={}),
+            provider_raw_config_args=dict(type='list', default=None),
+            molecule_file=dict(type='str', required=True),
+            state=dict(type='str', default='up', choices=['up', 'destroy'])),
         supports_check_mode=False)
 
     v = VagrantClient(module)

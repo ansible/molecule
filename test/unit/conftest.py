@@ -42,22 +42,38 @@ def os_split(s):
 
 @pytest.fixture
 def molecule_dependency_galaxy_section_data():
-    return {'dependency': {'name': 'galaxy'}, }
+    return {
+        'dependency': {
+            'name': 'galaxy'
+        },
+    }
 
 
 @pytest.fixture
 def molecule_driver_section_data():
-    return {'driver': {'name': 'docker', }, }
+    return {
+        'driver': {
+            'name': 'docker',
+        },
+    }
 
 
 @pytest.fixture
 def molecule_driver_static_section_data():
-    return {'driver': {'name': 'static'}, }
+    return {
+        'driver': {
+            'name': 'static'
+        },
+    }
 
 
 @pytest.fixture
 def molecule_lint_section_data():
-    return {'lint': {'name': 'ansible-lint'}, }
+    return {
+        'lint': {
+            'name': 'ansible-lint'
+        },
+    }
 
 
 @pytest.fixture
@@ -77,17 +93,29 @@ def molecule_platforms_section_data():
 
 @pytest.fixture
 def molecule_provisioner_section_data():
-    return {'provisioner': {'name': 'ansible'}, }
+    return {
+        'provisioner': {
+            'name': 'ansible'
+        },
+    }
 
 
 @pytest.fixture
 def molecule_scenario_section_data():
-    return {'scenario': {'name': 'default'}, }
+    return {
+        'scenario': {
+            'name': 'default'
+        },
+    }
 
 
 @pytest.fixture
 def molecule_verifier_section_data():
-    return {'verifier': {'name': 'testinfra'}, }
+    return {
+        'verifier': {
+            'name': 'testinfra'
+        },
+    }
 
 
 @pytest.fixture

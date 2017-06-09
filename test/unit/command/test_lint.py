@@ -26,7 +26,8 @@ def test_execute(mocker, patched_logger_info, patched_ansible_lint,
     l = lint.Lint(config_instance)
     l.execute()
     x = [
-        mocker.call('Scenario: [default]'), mocker.call('Lint: [ansible-lint]')
+        mocker.call('Scenario: [default]'),
+        mocker.call('Lint: [ansible-lint]')
     ]
 
     assert x == patched_logger_info.mock_calls

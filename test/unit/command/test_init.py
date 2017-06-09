@@ -146,7 +146,9 @@ def test_init_new_scenario_already_exists(
 def test_init_template(temp_dir, patched_logger_info, patched_logger_success):
     url = 'https://github.com/retr0h/cookiecutter-molecule.git'
     no_input = True
-    command_args = {'role_name': 'foo', }
+    command_args = {
+        'role_name': 'foo',
+    }
 
     init._init_template(url, command_args, no_input)
 
@@ -163,7 +165,9 @@ def test_init_template(temp_dir, patched_logger_info, patched_logger_success):
 def test_init_template_role_already_exists(temp_dir, patched_logger_critical):
     url = 'https://github.com/retr0h/cookiecutter-molecule.git'
     no_input = True
-    command_args = {'role_name': 'foo', }
+    command_args = {
+        'role_name': 'foo',
+    }
     init._init_template(url, command_args, no_input)
 
     with pytest.raises(SystemExit) as e:

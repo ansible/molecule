@@ -206,8 +206,8 @@ class Config(object):
 
         if driver_from_cli and (driver_from_cli != driver_name):
             msg = ("Instance(s) were created with the '{}' driver, but the "
-                   "subcommand is using '{}' driver.").format(driver_name,
-                                                              driver_from_cli)
+                   "subcommand is using '{}' driver.").format(
+                       driver_name, driver_from_cli)
             util.sysexit_with_message(msg)
 
         return driver_name
@@ -266,7 +266,8 @@ class Config(object):
                 },
             },
             'scenario': {
-                'name': 'default',
+                'name':
+                'default',
                 'check_sequence':
                 ['destroy', 'create', 'converge', 'check', 'destroy'],
                 'converge_sequence': ['create', 'converge'],

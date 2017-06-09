@@ -82,7 +82,9 @@ class Login(base.Base):
             # If there are multiple matches, but one of them is an exact string
             # match, assume this is the one they're looking for and use it.
             if hostname in match:
-                match = [hostname, ]
+                match = [
+                    hostname,
+                ]
             else:
                 msg = ("There are {} hosts that match '{}'. You "
                        'can only login to one at a time.\n\n'

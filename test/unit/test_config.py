@@ -75,7 +75,11 @@ def test_dependency_property(config_instance):
 
 @pytest.fixture
 def molecule_dependency_gilt_section_data():
-    return {'dependency': {'name': 'gilt'}, }
+    return {
+        'dependency': {
+            'name': 'gilt'
+        },
+    }
 
 
 def test_dependency_property_is_gilt(molecule_dependency_gilt_section_data,
@@ -88,7 +92,11 @@ def test_dependency_property_is_gilt(molecule_dependency_gilt_section_data,
 
 @pytest.fixture
 def molecule_dependency_invalid_section_data():
-    return {'dependency': {'name': 'invalid'}, }
+    return {
+        'dependency': {
+            'name': 'invalid'
+        },
+    }
 
 
 def test_dependency_property_raises(molecule_dependency_invalid_section_data,
@@ -110,7 +118,11 @@ def test_driver_property(config_instance):
 
 @pytest.fixture
 def molecule_driver_ec2_section_data():
-    return {'driver': {'name': 'ec2'}, }
+    return {
+        'driver': {
+            'name': 'ec2'
+        },
+    }
 
 
 def test_driver_property_is_ec2(molecule_driver_ec2_section_data,
@@ -123,7 +135,11 @@ def test_driver_property_is_ec2(molecule_driver_ec2_section_data,
 
 @pytest.fixture
 def molecule_driver_lxc_section_data():
-    return {'driver': {'name': 'lxc'}, }
+    return {
+        'driver': {
+            'name': 'lxc'
+        },
+    }
 
 
 def test_driver_property_is_lxc(molecule_driver_lxc_section_data,
@@ -136,7 +152,11 @@ def test_driver_property_is_lxc(molecule_driver_lxc_section_data,
 
 @pytest.fixture
 def molecule_driver_lxd_section_data():
-    return {'driver': {'name': 'lxd'}, }
+    return {
+        'driver': {
+            'name': 'lxd'
+        },
+    }
 
 
 def test_driver_property_is_lxd(molecule_driver_lxd_section_data,
@@ -149,7 +169,11 @@ def test_driver_property_is_lxd(molecule_driver_lxd_section_data,
 
 @pytest.fixture
 def molecule_driver_openstack_section_data():
-    return {'driver': {'name': 'openstack'}, }
+    return {
+        'driver': {
+            'name': 'openstack'
+        },
+    }
 
 
 def test_driver_property_is_openstack(molecule_driver_openstack_section_data,
@@ -170,7 +194,11 @@ def test_driver_property_is_static(molecule_driver_static_section_data,
 
 @pytest.fixture
 def molecule_driver_vagrant_section_data():
-    return {'driver': {'name': 'vagrant'}, }
+    return {
+        'driver': {
+            'name': 'vagrant'
+        },
+    }
 
 
 def test_driver_property_is_vagrant(molecule_driver_vagrant_section_data,
@@ -183,7 +211,11 @@ def test_driver_property_is_vagrant(molecule_driver_vagrant_section_data,
 
 @pytest.fixture
 def molecule_driver_invalid_section_data():
-    return {'driver': {'name': 'invalid'}, }
+    return {
+        'driver': {
+            'name': 'invalid'
+        },
+    }
 
 
 def test_driver_property_raises(molecule_driver_invalid_section_data,
@@ -237,7 +269,11 @@ def test_lint_property(config_instance):
 
 @pytest.fixture
 def molecule_lint_invalid_section_data():
-    return {'lint': {'name': 'invalid'}, }
+    return {
+        'lint': {
+            'name': 'invalid'
+        },
+    }
 
 
 def test_lint_property_raises(molecule_lint_invalid_section_data,
@@ -263,7 +299,11 @@ def test_provisioner_property(config_instance):
 
 @pytest.fixture
 def molecule_provisioner_invalid_section_data():
-    return {'provisioner': {'name': 'invalid'}, }
+    return {
+        'provisioner': {
+            'name': 'invalid'
+        },
+    }
 
 
 def test_provisioner_property_raises(molecule_provisioner_invalid_section_data,
@@ -293,7 +333,11 @@ def test_verifier_property(config_instance):
 
 @pytest.fixture
 def molecule_verifier_goss_section_data():
-    return {'verifier': {'name': 'goss'}, }
+    return {
+        'verifier': {
+            'name': 'goss'
+        },
+    }
 
 
 def test_verifier_property_is_goss(molecule_verifier_goss_section_data,
@@ -306,7 +350,11 @@ def test_verifier_property_is_goss(molecule_verifier_goss_section_data,
 
 @pytest.fixture
 def molecule_verifier_invalid_section_data():
-    return {'verifier': {'name': 'invalid'}, }
+    return {
+        'verifier': {
+            'name': 'invalid'
+        },
+    }
 
 
 def test_verifier_property_raises(molecule_verifier_invalid_section_data,

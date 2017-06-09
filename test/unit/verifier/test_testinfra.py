@@ -101,7 +101,12 @@ def test_directory_property(testinfra_instance):
 
 @pytest.fixture
 def molecule_verifier_directory_section_data():
-    return {'verifier': {'name': 'testinfra', 'directory': '/tmp/foo/bar'}, }
+    return {
+        'verifier': {
+            'name': 'testinfra',
+            'directory': '/tmp/foo/bar'
+        },
+    }
 
 
 def test_directory_property_overriden(
@@ -203,8 +208,8 @@ def test_execute_bakes(patched_flake8, patched_run_command,
 def test_executes_catches_and_exits_return_code(
         patched_flake8, patched_run_command, patched_testinfra_get_tests,
         testinfra_instance):
-    patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.testinfra, b'',
-                                                           b'')
+    patched_run_command.side_effect = sh.ErrorReturnCode_1(
+        sh.testinfra, b'', b'')
     with pytest.raises(SystemExit) as e:
         testinfra_instance.execute()
 
