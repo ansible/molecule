@@ -87,7 +87,7 @@ class AnsiblePlaybook(object):
                 debug=self._config.args.get('debug'))
             return cmd.stdout
         except sh.ErrorReturnCode as e:
-            util.sysexit_with_message(e.message, e.exit_code)
+            util.sysexit_with_message(str(e), e.exit_code)
 
     def add_cli_arg(self, name, value):
         """
