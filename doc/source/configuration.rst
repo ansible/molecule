@@ -96,6 +96,8 @@ Vagrant
 Molecule Vagrant Module 
 ^^^^^^^^^^^^^^^^^^^^^^^
 
+Create instances.
+
 .. code-block:: yaml
 
     - hosts: localhost
@@ -111,6 +113,10 @@ Molecule Vagrant Module
             - instance-1
             - instance-2
 
+Destroy instances.
+
+.. code-block:: yaml
+
     - hosts: localhost
       connection: local
       tasks:
@@ -123,6 +129,10 @@ Molecule Vagrant Module
           with_items:
             - instance-1
             - instance-2
+
+Create instances with interfaces.
+
+.. code-block:: yaml
 
     - hosts: localhost
       connection: local
@@ -144,7 +154,6 @@ Molecule Vagrant Module
             platform_box: ubuntu/trusty64
             molecule_file: "{{ molecule_file }}"
             state: destroy
-
 
 Lint
 ----
