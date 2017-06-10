@@ -122,6 +122,26 @@ def test_host_group_vars(scenario_to_test, with_scenario, scenario_name):
 
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
+        ('idempotence', 'docker', 'raises'),
+    ],
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+        'scenario_name',
+    ])
+def test_idempotence_raises(scenario_to_test, with_scenario, scenario_name):
+    options = {
+        'scenario_name': scenario_name,
+    }
+    cmd = sh.molecule.bake('test', **options)
+    with pytest.raises(sh.ErrorReturnCode_2) as e:
+        pytest.helpers.run_command(cmd)
+
+    assert 2 == e.value.exit_code
+
+
+@pytest.mark.parametrize(
+    'scenario_to_test, driver_name, scenario_name', [
         ('interpolation', 'docker', 'default'),
     ],
     indirect=[

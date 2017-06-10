@@ -1,0 +1,9 @@
+---
+- name: Create /tmp/test1
+  file: name=/tmp/test1 state=directory
+
+- name: Replace /tmp/test1 by /tmp/test2
+  shell: ls -ld /tmp/test1 | grep root
+
+- name: Fix /tmp/test1 perms
+  file: name=/tmp/test1 state=directory owner=lp group=lp
