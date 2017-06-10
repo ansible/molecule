@@ -93,6 +93,59 @@ Vagrant
 .. autoclass:: molecule.driver.vagrant.Vagrant
    :undoc-members:
 
+Molecule Vagrant Module 
+^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: yaml
+
+    - hosts: localhost
+      connection: local
+      tasks:
+        - name: Create instances
+          molecule_vagrant:
+            instance_name: "{{ item }}"
+            platform_box: ubuntu/trusty64
+            molecule_file: "{{ molecule_file }}"
+            state: up
+          with_items:
+            - instance-1
+            - instance-2
+
+    - hosts: localhost
+      connection: local
+      tasks:
+        - name: Destroy instances
+          molecule_vagrant:
+            instance_name: "{{ item }}"
+            platform_box: ubuntu/trusty64
+            molecule_file: "{{ molecule_file }}"
+            state: destroy
+          with_items:
+            - instance-1
+            - instance-2
+
+    - hosts: localhost
+      connection: local
+      tasks:
+        - name: Create instance with interfaces
+          molecule_vagrant:
+            instance_name: instance-1
+            instance_interfaces:
+              - auto_config: true
+                network_name: private_network
+                type: dhcp
+              - auto_config: false
+                network_name: private_network
+                type: dhcp
+              - auto_config: true
+                ip: 192.168.11.3
+                network_name: private_network
+                type: static
+            platform_box: ubuntu/trusty64
+            molecule_file: "{{ molecule_file }}"
+            state: destroy
+
+
 Lint
 ----
 
