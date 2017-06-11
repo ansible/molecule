@@ -93,8 +93,17 @@ Vagrant
 .. autoclass:: molecule.driver.vagrant.Vagrant
    :undoc-members:
 
-Molecule Vagrant Module 
+Molecule Vagrant Module
 ^^^^^^^^^^^^^^^^^^^^^^^
+
+Molecule manages Vagrant via an internal Ansible module.  The following belongs
+in the appropriate create or destroy playbooks, and uses the default provider.
+
+Supported Providers:
+
+* VirtualBox (default)
+* VMware (vmware_fusion, vmware_workstation and vmware_desktop)
+* Parallels
 
 Create instances.
 
@@ -154,6 +163,49 @@ Create instances with interfaces.
             platform_box: ubuntu/trusty64
             molecule_file: "{{ molecule_file }}"
             state: destroy
+
+Create instances with additional provider options.
+
+.. code-block:: yaml
+
+    - hosts: localhost
+      connection: local
+      tasks:
+        - name: Create instances
+          molecule_vagrant:
+            instance_name: "{{ item }}"
+            platform_box: ubuntu/trusty64
+            provider_name: virtualbox
+            provider_memory: 1024
+            provider_cpus: 4
+            provider_raw_config_args:
+              - "customize ['modifyvm', :id, '--cpuexecutioncap', '50']"
+            provider_options:
+              gui: true
+            molecule_file: "{{ molecule_file }}"
+            state: up
+          with_items:
+            - instance-1
+            - instance-2
+
+Create instances with additional instance options.
+
+.. code-block:: yaml
+
+    - hosts: localhost
+      connection: local
+      tasks:
+        - name: Create instances
+          molecule_vagrant:
+            instance_name: "{{ item }}"
+            platform_box: ubuntu/trusty64
+            instance_raw_config_args:
+              - "vm.network 'forwarded_port', guest: 80, host: 8080"
+            molecule_file: "{{ molecule_file }}"
+            state: up
+          with_items:
+            - instance-1
+            - instance-2
 
 Lint
 ----

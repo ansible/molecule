@@ -218,7 +218,7 @@ Vagrant.configure('2') do |config|
         # Raw Configuration
         if provider['raw_config_args']
           provider['raw_config_args'].each { |raw_config_arg|
-            eval("virtualbox.#{raw_config_arg}")
+            eval("vmware.#{raw_config_arg}")
           }
         end
       end
@@ -244,7 +244,7 @@ Vagrant.configure('2') do |config|
         # Raw Configuration
         if provider['raw_config_args']
           provider['raw_config_args'].each { |raw_config_arg|
-            eval("virtualbox.#{raw_config_arg}")
+            eval("parallels.#{raw_config_arg}")
           }
         end
       end
@@ -270,7 +270,7 @@ Vagrant.configure('2') do |config|
       end
 
       if instance['raw_config_args']
-        instance['options'].each { |raw_config_arg|
+        instance['raw_config_args'].each { |raw_config_arg|
           eval("c.#{raw_config_arg}")
         }
       end
