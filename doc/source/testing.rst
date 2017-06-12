@@ -18,6 +18,10 @@ Install the test framework `Tox`_.
 
     $ pip install tox
 
+Install `tox-tags`_.
+
+.. _`tox-tags`: https://github.com/AndreLouisCaron/tox-tags
+
 Install the remaining requirements in a venv (optional).
 
 .. code-block:: bash
@@ -45,8 +49,7 @@ Run all unit tests with coverage.
 
 .. code-block:: bash
 
-    $ tox -e $(tox -l | grep unit | paste -d, -s -)
-
+    $ tox -t unit
 
 Functional
 ----------
@@ -60,7 +63,13 @@ Run all functional tests.
 
 .. code-block:: bash
 
-    $ tox -e $(tox -l | grep functional | paste -d, -s -)
+    $ tox -t functional
+
+Run all functional tests targeting the docker driver.
+
+.. code-block:: bash
+
+    $ tox -t functional -- -v -k docker
 
 Formatting
 ----------
