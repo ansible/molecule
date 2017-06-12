@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -23,96 +23,115 @@ import pytest
 from molecule.command import idempotence
 
 
-def test_execute_with_successful_idempotence(
-        patched_converge, patched_print_info, molecule_instance):
-    i = idempotence.Idempotence({}, {}, molecule_instance)
-    result = i.execute()
+@pytest.fixture
+def idempotence_instance(config_instance):
+    config_instance.state.change_state('converged', True)
 
-    msg = 'Idempotence test in progress (can take a few minutes)...'
-    patched_print_info.assert_called_once_with(msg)
-
-    patched_converge.assert_called_with(
-        idempotent=True, exit=False, hide_errors=True)
-    assert (None, None) == result
+    return idempotence.Idempotence(config_instance)
 
 
-def test_execute_does_not_raise_on_converge_error(
-        patched_converge, patched_print_info, molecule_instance):
-    patched_converge.return_value = (1, None)
-
-    i = idempotence.Idempotence({}, {}, molecule_instance)
-    result = i.execute()
-
-    msg = 'Skipping due to errors during converge.'
-    patched_print_info.assert_called_with(msg)
-    assert (1, None) == result
-
-
-def test_execute_does_not_raise_on_idempotence_failure(
-        mocker, patched_converge, patched_print_error, molecule_instance):
-    output = 'check-command-01: ok=2    changed=1    unreachable=0    failed=0'
-    patched_converge.return_value = None, output
-
-    i = idempotence.Idempotence({}, {}, molecule_instance)
-    result = i.execute(exit=False)
-
-    expected_calls = [
-        mocker.call('Idempotence test failed because of the following tasks:'),
-        mocker.call('')
+def test_execute(mocker, patched_logger_info, patched_ansible_converge,
+                 patched_command_idempotence_is_idempotent,
+                 patched_logger_success, idempotence_instance):
+    idempotence_instance.execute()
+    x = [
+        mocker.call('Scenario: [default]'),
+        mocker.call('Provisioner: [ansible]'),
+        mocker.call('Idempotence Verification of Playbook: [playbook.yml]')
     ]
-    assert patched_print_error.mock_calls == expected_calls
-    assert (1, None) == result
+    assert x == patched_logger_info.mock_calls
+
+    patched_ansible_converge.assert_called_once_with(out=None, err=None)
+
+    patched_command_idempotence_is_idempotent.assert_called_once_with(
+        'patched-ansible-converge-stdout')
+
+    msg = 'Idempotence completed successfully.'
+    patched_logger_success.assert_called_once_with(msg)
 
 
-def test_execute_raises_on_idempotence_failure(
-        mocker, patched_converge, patched_print_error, molecule_instance):
-    output = 'check-command-01: ok=2    changed=1    unreachable=0    failed=0'
-    patched_converge.return_value = None, output
+def test_execute_raises_when_not_converged(patched_logger_critical,
+                                           patched_ansible_converge,
+                                           idempotence_instance):
+    idempotence_instance._config.state.change_state('converged', False)
+    with pytest.raises(SystemExit) as e:
+        idempotence_instance.execute()
 
-    i = idempotence.Idempotence({}, {}, molecule_instance)
-    with pytest.raises(SystemExit):
-        i.execute()
+    assert 1 == e.value.code
 
-    expected_calls = [
-        mocker.call('Idempotence test failed because of the following tasks:'),
-        mocker.call('')
-    ]
-    assert patched_print_error.mock_calls == expected_calls
+    msg = 'Instances not converged.  Please converge instances first.'
+    patched_logger_critical.assert_called_once_with(msg)
 
 
-def test_non_idempotent_tasks_idempotent(molecule_instance):
+def test_execute_raises_when_fails_idempotence(
+        mocker, patched_logger_critical, patched_ansible_converge,
+        patched_command_idempotence_is_idempotent, idempotence_instance):
+    patched_command_idempotence_is_idempotent.return_value = False
+    with pytest.raises(SystemExit) as e:
+        idempotence_instance.execute()
+
+    assert 1 == e.value.code
+
+    msg = 'Idempotence test failed because of the following tasks:\n'
+    patched_logger_critical.assert_called_once_with(msg)
+
+
+def test_is_idempotent(idempotence_instance):
+    output = """
+PLAY RECAP ***********************************************************
+check-command-01: ok=3    changed=0    unreachable=0    failed=0
+    """
+
+    assert idempotence_instance._is_idempotent(output)
+
+
+def test_is_idempotent_not_idempotent(idempotence_instance):
+    output = """
+PLAY RECAP ***********************************************************
+check-command-01: ok=2    changed=1    unreachable=0    failed=0
+check-command-02: ok=2    changed=1    unreachable=0    failed=0
+    """
+
+    assert not idempotence_instance._is_idempotent(output)
+
+
+def test_non_idempotent_tasks_idempotent(idempotence_instance):
     output = """
 PLAY [all] ***********************************************************
+
 GATHERING FACTS ******************************************************
 ok: [check-command-01]
+
 TASK: [Idempotence test] *********************************************
 ok: [check-command-01]
+
 PLAY RECAP ***********************************************************
 check-command-01: ok=3    changed=0    unreachable=0    failed=0
 """
-    i = idempotence.Idempotence({}, {}, molecule_instance)
-    ret = i._non_idempotent_tasks(output)
+    result = idempotence_instance._non_idempotent_tasks(output)
 
-    assert ret == []
+    assert result == []
 
 
-def test_non_idempotent_tasks_not_idempotent(molecule_instance):
+def test_non_idempotent_tasks_not_idempotent(idempotence_instance):
     output = """
 PLAY [all] ***********************************************************
+
 GATHERING FACTS ******************************************************
 ok: [check-command-01]
 ok: [check-command-02]
+
 TASK: [Idempotence test] *********************************************
 changed: [check-command-01]
 changed: [check-command-02]
+
 PLAY RECAP ***********************************************************
 check-command-01: ok=2    changed=1    unreachable=0    failed=0
 check-command-02: ok=2    changed=1    unreachable=0    failed=0
 """
-    i = idempotence.Idempotence({}, {}, molecule_instance)
-    ret = i._non_idempotent_tasks(output)
+    result = idempotence_instance._non_idempotent_tasks(output)
 
-    assert ret == [
+    assert result == [
         '* [check-command-01] => Idempotence test',
         '* [check-command-02] => Idempotence test'
     ]

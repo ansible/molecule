@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -18,35 +18,19 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import pytest
-
 from molecule.command import check
 
 
-def test_execute_raises_when_instance_not_created(
-        patched_check_main, patched_print_error, molecule_instance):
-    c = check.Check({}, {}, molecule_instance)
+def test_execute(mocker, patched_logger_info, patched_ansible_check,
+                 config_instance):
+    c = check.Check(config_instance)
+    c.execute()
+    x = [
+        mocker.call('Scenario: [default]'),
+        mocker.call('Provisioner: [ansible]'),
+        mocker.call('Dry-Run of Playbook: [playbook.yml]')
+    ]
 
-    with pytest.raises(SystemExit):
-        c.execute()
+    assert x == patched_logger_info.mock_calls
 
-    msg = ('Instance(s) not created, `check` should be run against '
-           'created instance(s).')
-    patched_print_error.assert_called_once_with(msg)
-
-
-def test_execute(mocker, patched_check_main, patched_ansible_playbook,
-                 patched_print_info, molecule_instance):
-    molecule_instance.state.change_state('created', True)
-    molecule_instance.state.change_state('converged', True)
-    molecule_instance._driver = mocker.Mock(
-        ansible_connection_params={'debug': True})
-    patched_ansible_playbook.return_value = 'returned'
-
-    c = check.Check({}, {}, molecule_instance)
-    result = c.execute()
-
-    msg = "Performing a 'Dry Run' of playbook..."
-    patched_print_info.assert_called_once_with(msg)
-    patched_ansible_playbook.assert_called_once_with(hide_errors=True)
-    assert 'returned' == result
+    patched_ansible_check.assert_called_once_with()

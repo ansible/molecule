@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -22,87 +22,123 @@ import os
 
 import sh
 
-from molecule import config
+from molecule import logger
 from molecule import util
+from molecule.dependency import base
+
+LOG = logger.get_logger(__name__)
 
 
-class AnsibleGalaxy(object):
-    def __init__(self,
-                 config,
-                 _env=None,
-                 _out=util.callback_info,
-                 _err=util.callback_error,
-                 debug=False):
-        """
-        Sets up requirements for ansible-galaxy and returns None.
+class AnsibleGalaxy(base.Base):
+    """
+    `Ansible Galaxy`_ is the default dependency manager.
 
-        :param config: A molecule config object.
-        :param _env: An optional environment to pass to underlying :func:`sh`
-         call.
-        :param _out: An optional function to process STDOUT for underlying
-         :func:`sh` call.
-        :param _err: An optional function to process STDERR for underlying
-         :func:`sh` call.
-        :param debug: An optional bool to toggle debug output.
-        :return: None
-        """
-        self._config = config
-        self._galaxy = None
-        self._env = _env if _env else os.environ.copy()
-        self._out = _out
-        self._err = _err
-        self._debug = debug
+    Additional options can be passed to `ansible-galaxy install` through the
+    options dict.  Any option set in this section will override the defaults.
 
-        self.add_env_arg('PYTHONUNBUFFERED', '1')
-        self.add_env_arg('ANSIBLE_FORCE_COLOR', 'true')
+    .. code-block:: yaml
+
+        dependency:
+          name: galaxy
+          options:
+            ignore-certs: True
+            ignore-errors: True
+
+
+    The dependency manager can be disabled by setting `enabled` to False.
+
+    .. code-block:: yaml
+
+        dependency:
+          name: galaxy
+          enabled: False
+
+    Environment variables can be passed to the dependency.
+
+    .. code-block:: yaml
+
+        dependency:
+          name: galaxy
+          env:
+            FOO: bar
+
+    .. _`Ansible Galaxy`: http://docs.ansible.com/ansible/galaxy.html
+    """
+
+    def __init__(self, config):
+        super(AnsibleGalaxy, self).__init__(config)
+        self._ansible_galaxy_command = None
+
+    @property
+    def default_options(self):
+        d = {
+            'force':
+            True,
+            'role-file':
+            os.path.join(self._config.scenario.directory, 'requirements.yml'),
+            'roles-path':
+            os.path.join(self._config.scenario.ephemeral_directory, 'roles'),
+        }
+        if self._config.args.get('debug'):
+            d['vvv'] = True
+
+        return d
+
+    @property
+    def default_env(self):
+        return self._config.merge_dicts(os.environ.copy(), self._config.env)
 
     def bake(self):
         """
-        Bake ansible-galaxy command so it's ready to execute and returns None.
-
-        :return: None
-        """
-        requirements_file = self._config['dependency']['requirements_file']
-        roles_path = os.path.join(self._config['molecule']['molecule_dir'],
-                                  'roles')
-        galaxy_default_options = {
-            'force': True,
-            'role-file': requirements_file,
-            'roles-path': roles_path
-        }
-        galaxy_options = config.merge_dicts(
-            galaxy_default_options, self._config['dependency']['options'])
-
-        self._galaxy = sh.ansible_galaxy.bake(
-            'install',
-            _env=self._env,
-            _out=self._out,
-            _err=self._err,
-            **galaxy_options)
-
-    def add_env_arg(self, name, value):
-        """
-        Adds argument to environment passed to ansible-galaxy and returns
+        Bake an `ansible-galaxy` command so it's ready to execute and returns
         None.
 
-        :param name: Name of argument to be added
-        :param value: Value of argument to be added
         :return: None
         """
-        self._env[name] = value
+        options = self.options
+        verbose_flag = util.verbose_flag(options)
+
+        self._ansible_galaxy_command = sh.ansible_galaxy.bake(
+            'install',
+            options,
+            *verbose_flag,
+            _env=self.env,
+            _out=LOG.out,
+            _err=LOG.error)
 
     def execute(self):
-        """
-        Executes ansible-galaxy install and returns the command's stdout.
+        if not self.enabled:
+            LOG.warn('Skipping, dependency is disabled.')
+            return
 
-        :return: The command's output, otherwise sys.exit on command failure.
-        """
+        if not self._has_requirements_file():
+            LOG.warn('Skipping, missing the requirements file.')
+            return
 
-        if self._galaxy is None:
+        if self._ansible_galaxy_command is None:
             self.bake()
 
+        self._setup()
         try:
-            return util.run_command(self._galaxy, debug=self._debug).stdout
+            util.run_command(
+                self._ansible_galaxy_command,
+                debug=self._config.args.get('debug'))
+            LOG.success('Dependency completed successfully.')
         except sh.ErrorReturnCode as e:
-            util.print_error(str(e))
             util.sysexit(e.exit_code)
+
+    def _setup(self):
+        """
+        Prepare the system for using `ansible-galaxy` and returns None.
+
+        :return: None
+        """
+        role_directory = os.path.join(self._config.scenario.directory,
+                                      self.options['roles-path'])
+        if not os.path.isdir(role_directory):
+            os.makedirs(role_directory)
+
+    def _has_requirements_file(self):
+        role_file = self.options.get('role-file')
+
+        return role_file and os.path.isfile(role_file)

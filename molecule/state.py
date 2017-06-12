@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -17,29 +17,17 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
-"""
-A class which manages the state file.  Intended to be used as a singleton
-throughout molecule.  The initial state is serialized to disk if the file does
-not exist, otherwise is deserialized from the existing state file.  Changes
-made to the object are immediately serialized.
-"""
 
 import os
 
-import yaml
-
+from molecule import logger
 from molecule import util
 
+LOG = logger.get_logger(__name__)
 VALID_KEYS = [
-    'converged',
     'created',
-    'default_platform',
-    'default_provider',
+    'converged',
     'driver',
-    'driver_config',
-    'hosts',
-    'installed_deps',
-    'multiple_platforms',
 ]
 
 
@@ -51,15 +39,31 @@ class InvalidState(Exception):
 
 
 class State(object):
-    def __init__(self, state_file='state.yml'):
+    """
+    A class which manages the state file.  Intended to be used as a singleton
+    throughout a given Molecule config.  The initial state is serialized to
+    disk if the file does not exist, otherwise is deserialized from the
+    existing state file.  Changes made to the object are immediately
+    serialized.
+
+    State is not a top level option in Molecule's config.  It's purpose is for
+    bookkeeping, and each Config_ object has a reference to a State_ object.
+
+    .. note::
+
+        Currently, it's use is significantly smaller than it was in v1 of
+        Molecule.
+    """
+
+    def __init__(self, config):
         """
         Initialize a new state class and returns None.
 
-        :param state_file: An optional string containing the path to the state
-        file.
+        :param config: An instance of a Molecule config.
         :returns: None
         """
-        self._state_file = state_file
+        self._config = config
+        self._state_file = self._get_state_file()
         self._data = self._get_data()
         self._write_state_file()
 
@@ -71,6 +75,10 @@ class State(object):
         return wrapper
 
     @property
+    def state_file(self):
+        return self._state_file
+
+    @property
     def converged(self):
         return self._data.get('converged')
 
@@ -79,32 +87,8 @@ class State(object):
         return self._data.get('created')
 
     @property
-    def default_platform(self):
-        return self._data.get('default_platform')
-
-    @property
-    def default_provider(self):
-        return self._data.get('default_provider')
-
-    @property
     def driver(self):
         return self._data.get('driver')
-
-    @property
-    def driver_config(self):
-        return self._data.get('driver_config')
-
-    @property
-    def hosts(self):
-        return self._data.get('hosts')
-
-    @property
-    def multiple_platforms(self):
-        return self._data.get('multiple_platforms')
-
-    @property
-    def installed_deps(self):
-        return self._data.get('installed_deps')
 
     @marshal
     def reset(self):
@@ -127,31 +111,23 @@ class State(object):
         self._data[key] = value
 
     def _get_data(self):
-        if os.path.isfile(self._state_file):
+        if os.path.isfile(self.state_file):
             return self._load_file()
         return self._default_data()
 
     def _default_data(self):
         return {
-            "converged": None,
-            "created": None,
-            "default_platform": None,
-            "default_provider": None,
-            "driver": None,
-            "driver_config": {},
-            "hosts": {},
-            "multiple_platforms": None
+            'converged': False,
+            'created': False,
+            'driver': None,
         }
 
     def _load_file(self):
-        with open(self._state_file) as stream:
-            return yaml.safe_load(stream)
+        return util.safe_load_file(self.state_file)
 
     def _write_state_file(self):
-        util.write_file(
-            self._state_file,
-            yaml.safe_dump(
-                self._data,
-                default_flow_style=False,
-                explicit_start=True,
-                encoding='utf-8'))
+        util.write_file(self.state_file, util.safe_dump(self._data))
+
+    def _get_state_file(self):
+        return os.path.join(self._config.scenario.ephemeral_directory,
+                            'state.yml')

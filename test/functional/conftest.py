@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -18,25 +18,218 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import distutils.spawn
 import os
 
+import pexpect
 import pytest
 import sh
 
+from molecule import logger
+from molecule import util
 
-@pytest.fixture()
-def scenario_setup(request):
-    scenario = request.param
-    d = os.path.join(
+LOG = logger.get_logger(__name__)
+
+
+@pytest.fixture
+def with_scenario(request, scenario_to_test, driver_name, scenario_name,
+                  skip_test):
+    scenario_directory = os.path.join(
         os.path.dirname(os.path.abspath(__file__)), os.path.pardir,
-        'scenarios', scenario)
+        'scenarios', scenario_to_test)
 
-    os.chdir(d)
+    os.chdir(scenario_directory)
 
     def cleanup():
-        try:
-            sh.molecule('destroy')
-        except:
-            pass
+        if scenario_name:
+            msg = "CLEANUP: Destroying instances for '{}' scenario".format(
+                scenario_name)
+            LOG.out(msg)
+            options = {
+                'scenario_name': scenario_name,
+                'driver_name': driver_name,
+            }
+            cmd = sh.molecule.bake('destroy', **options)
+            run_command(cmd)
 
     request.addfinalizer(cleanup)
+
+
+@pytest.fixture
+def skip_test(request, driver_name):
+    if (driver_name == 'docker' and not supports_docker()):
+        pytest.skip("Skipped '{}' not supported".format(driver_name))
+    elif (driver_name == 'lxc' and not supports_lxc()):
+        pytest.skip("skipped '{}' not supported".format(driver_name))
+    elif (driver_name == 'lxd' and not supports_lxd()):
+        pytest.skip("Skipped '{}' not supported".format(driver_name))
+    elif (driver_name == 'vagrant' and not supports_vagrant_virtualbox()):
+        pytest.skip("Skipped '{}' not supported".format(driver_name))
+    elif driver_name == 'static':
+        pytest.skip("Ignoring '{}' tests for now".format(driver_name))
+
+
+@pytest.helpers.register
+def idempotence(scenario_name):
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('create', **options)
+    run_command(cmd)
+
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('converge', **options)
+    run_command(cmd)
+
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('idempotence', **options)
+    run_command(cmd)
+
+
+@pytest.helpers.register
+def init_role(temp_dir, driver_name):
+    role_directory = os.path.join(temp_dir.strpath, 'test-init')
+
+    cmd = sh.molecule.bake(
+        'init', 'role', {'driver-name': driver_name,
+                         'role-name': 'test-init'})
+    run_command(cmd)
+
+    os.chdir(role_directory)
+    cmd = sh.molecule.bake('test')
+    run_command(cmd)
+
+
+@pytest.helpers.register
+def init_scenario(temp_dir, driver_name):
+    # Create role
+    role_directory = os.path.join(temp_dir.strpath, 'test-init')
+    cmd = sh.molecule.bake(
+        'init', 'role', {'driver-name': driver_name,
+                         'role-name': 'test-init'})
+    run_command(cmd)
+    os.chdir(role_directory)
+
+    # Create scenario
+    molecule_directory = pytest.helpers.molecule_directory()
+    scenario_directory = os.path.join(molecule_directory, 'test-scenario')
+
+    options = {'scenario_name': 'test-scenario', 'role_name': 'test-init'}
+    cmd = sh.molecule.bake('init', 'scenario', **options)
+    run_command(cmd)
+
+    assert os.path.isdir(scenario_directory)
+
+    options = {'scenario_name': 'test-scenario'}
+    cmd = sh.molecule.bake('test', **options)
+    run_command(cmd)
+
+
+@pytest.helpers.register
+def list(x):
+    cmd = sh.molecule.bake('list')
+    out = run_command(cmd, log=False)
+    out = out.stdout
+    out = util.strip_ansi_color(out)
+
+    assert x in out
+
+
+@pytest.helpers.register
+def list_with_format_plain(x):
+    cmd = sh.molecule.bake('list', {'format': 'plain'})
+    out = run_command(cmd, log=False)
+    out = out.stdout
+    out = util.strip_ansi_color(out)
+
+    assert x in out
+
+
+@pytest.helpers.register
+def login(instance, regexp, scenario_name='default'):
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('destroy', **options)
+    run_command(cmd)
+
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('create', **options)
+    run_command(cmd)
+
+    child_cmd = 'molecule login --host {} --scenario-name {}'.format(
+        instance, scenario_name)
+    child = pexpect.spawn(child_cmd)
+    child.expect(regexp)
+    # If the test returns and doesn't hang it succeeded.
+    child.sendline('exit')
+
+
+@pytest.helpers.register
+def test(scenario_name='default'):
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('test', **options)
+    run_command(cmd)
+
+
+@pytest.helpers.register
+def verify(scenario_name='default'):
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('create', **options)
+    run_command(cmd)
+
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('converge', **options)
+    run_command(cmd)
+
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('verify', **options)
+    run_command(cmd)
+
+
+@pytest.helpers.register
+def run_command(cmd, env=os.environ, log=True):
+    if log:
+        cmd = _rebake_command(cmd, env)
+
+    return util.run_command(cmd)
+
+
+def _rebake_command(cmd, env, out=LOG.out, err=LOG.error):
+    return cmd.bake(_env=env, _out=out, _err=err)
+
+
+def get_docker_executable():
+    return distutils.spawn.find_executable('docker')
+
+
+def get_lxc_executable():
+    return distutils.spawn.find_executable('lxc-start')
+
+
+def get_lxd_executable():
+    return distutils.spawn.find_executable('lxd')
+
+
+def get_vagrant_executable():
+    return distutils.spawn.find_executable('vagrant')
+
+
+def get_virtualbox_executable():
+    return distutils.spawn.find_executable('VBoxManage')
+
+
+@pytest.helpers.register
+def supports_docker():
+    return get_docker_executable()
+
+
+@pytest.helpers.register
+def supports_lxc():
+    return get_lxc_executable()
+
+
+@pytest.helpers.register
+def supports_lxd():
+    return get_lxd_executable()
+
+
+@pytest.helpers.register
+def supports_vagrant_virtualbox():
+    return (get_vagrant_executable() or get_virtualbox_executable())

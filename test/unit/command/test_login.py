@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -23,92 +23,87 @@ import pytest
 from molecule.command import login
 
 
-def test_execute_raises_when_no_running_hosts(patched_print_error,
-                                              molecule_instance):
-    l = login.Login({}, {}, molecule_instance)
-    with pytest.raises(SystemExit):
-        l.execute()
+@pytest.fixture
+def login_instance(config_instance):
+    config_instance.state.change_state('created', True)
 
-    msg = 'There are no running hosts.'
-    patched_print_error.assert_called_once_with(msg)
+    return login.Login(config_instance)
 
 
-def test_execute_raises_when_no_host_privided_but_multiple_instances_exist(
-        patched_print_error, molecule_instance):
-    molecule_instance.state.change_state('hosts', {'foo': None, 'baz': None})
-    l = login.Login({}, {}, molecule_instance)
-    with pytest.raises(SystemExit):
-        l.execute()
+def test_execute(mocker, login_instance):
+    login_instance._config.command_args = {'host': 'instance-1'}
+    m = mocker.patch('molecule.command.login.Login._get_login')
+    login_instance.execute()
 
-    msg = ('There are 2 running hosts. Please specify which with --host.\n'
-           '\nAvailable hosts:\nbaz\nfoo')
-    patched_print_error.assert_called_once_with(msg)
+    m.assert_called_once_with('instance-1-default')
 
 
-def test_execute_raises_when_host_unknown(patched_print_error,
-                                          molecule_instance):
-    molecule_instance.state.change_state('hosts', {'foo': None})
-    command_args = {'host': 'unknown'}
-    l = login.Login({}, command_args, molecule_instance)
-    with pytest.raises(SystemExit):
-        l.execute()
+def test_execute_raises_when_not_converged(patched_logger_critical,
+                                           login_instance):
+    login_instance._config.state.change_state('created', False)
 
-    msg = "Unknown host 'unknown'.\n\nAvailable hosts:\nfoo"
-    patched_print_error.assert_called_once_with(msg)
+    with pytest.raises(SystemExit) as e:
+        login_instance.execute()
 
+    assert 1 == e.value.code
 
-def test_execute_single_instance(mocker, molecule_instance):
-    molecule_instance.state.change_state('hosts', {'foo': None})
-    patched_get_login = mocker.patch('molecule.command.login.Login._get_login')
-
-    l = login.Login({}, {}, molecule_instance)
-    l.execute()
-
-    patched_get_login.assert_called_once_with('foo')
+    msg = 'Instances not created.  Please create instances first.'
+    patched_logger_critical.assert_called_once_with(msg)
 
 
-def test_execute_multiple_instances(mocker, molecule_instance):
-    molecule_instance.state.change_state('hosts', {'foo': None, 'bar': None})
-    command_args = {'host': 'foo'}
-    patched_get_login = mocker.patch('molecule.command.login.Login._get_login')
+def test_get_hostname_does_not_match(patched_logger_critical, login_instance):
+    login_instance._config.command_args = {'host': 'invalid'}
+    hosts = ['instance-1']
+    with pytest.raises(SystemExit) as e:
+        login_instance._get_hostname(hosts)
 
-    l = login.Login({}, command_args, molecule_instance)
-    l.execute()
+    assert 1 == e.value.code
 
-    patched_get_login.assert_called_once_with('foo')
-
-
-def test_execute_partial_hostname_match(mocker, molecule_instance):
-    molecule_instance.state.change_state('hosts', {'foo-host': None})
-    command_args = {'host': 'fo'}
-    patched_get_login = mocker.patch('molecule.command.login.Login._get_login')
-
-    l = login.Login({}, command_args, molecule_instance)
-    l.execute()
-
-    patched_get_login.assert_called_once_with('foo-host')
+    msg = ("There are no hosts that match 'invalid'.  You "
+           'can only login to valid hosts.')
+    patched_logger_critical.assert_called_once_with(msg)
 
 
-def test_execute_more_specific_hostname_match(mocker, molecule_instance):
-    molecule_instance.state.change_state('hosts', {'foo': None, 'fooo': None})
-    command_args = {'host': 'foo'}
-    patched_get_login = mocker.patch('molecule.command.login.Login._get_login')
+def test_get_hostname_exact_match_with_one_host(login_instance):
+    login_instance._config.command_args = {'host': 'instance-1'}
+    hosts = ['instance-1']
 
-    l = login.Login({}, command_args, molecule_instance)
-    l.execute()
-
-    patched_get_login.assert_called_once_with('foo')
+    assert 'instance-1' == login_instance._get_hostname(hosts)
 
 
-def test_execute_partial_hostname_raises_when_many_match(
-        mocker, patched_print_error, molecule_instance):
-    molecule_instance.state.change_state('hosts', {'foo': None, 'fooo': None})
-    command_args = {'host': 'fo'}
+def test_get_hostname_partial_match_with_one_host(login_instance):
+    login_instance._config.command_args = {'host': 'inst'}
+    hosts = ['instance-1']
 
-    l = login.Login({}, command_args, molecule_instance)
-    with pytest.raises(SystemExit):
-        l.execute()
+    assert 'instance-1' == login_instance._get_hostname(hosts)
 
-    msg = ("There are 2 hosts that match 'fo'. You can only login to one at a "
-           "time.\n\nAvailable hosts:\nfoo\nfooo")
-    patched_print_error.assert_called_once_with(msg)
+
+def test_get_hostname_exact_match_with_multiple_hosts(login_instance):
+    login_instance._config.command_args = {'host': 'instance-1'}
+    hosts = ['instance-1', 'instance-2']
+
+    assert 'instance-1' == login_instance._get_hostname(hosts)
+
+
+def test_get_hostname_partial_match_with_multiple_hosts(login_instance):
+    login_instance._config.command_args = {'host': 'foo'}
+    hosts = ['foo', 'fooo']
+
+    assert 'foo' == login_instance._get_hostname(hosts)
+
+
+def test_get_hostname_partial_match_with_multiple_hosts_raises(
+        patched_logger_critical, login_instance):
+    login_instance._config.command_args = {'host': 'inst'}
+    hosts = ['instance-1', 'instance-2']
+    with pytest.raises(SystemExit) as e:
+        login_instance._get_hostname(hosts)
+
+    assert 1 == e.value.code
+
+    msg = ("There are 2 hosts that match 'inst'. "
+           'You can only login to one at a time.\n\n'
+           'Available hosts:\n'
+           'instance-1\n'
+           'instance-2')
+    patched_logger_critical.assert_called_once_with(msg)

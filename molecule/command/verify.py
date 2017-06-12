@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -19,67 +19,55 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import click
-import sh
 
-from molecule import util
+from molecule import logger
 from molecule.command import base
-from molecule.verifier import ansible_lint
-from molecule.verifier import goss
-from molecule.verifier import serverspec
-from molecule.verifier import testinfra
-from molecule.verifier import trailing
+
+LOG = logger.get_logger(__name__)
 
 
 class Verify(base.Base):
-    def execute(self, exit=True):
+    def execute(self):
         """
         Execute the actions necessary to perform a `molecule verify` and
-        return a tuple.
+        returns None.
 
-        :param exit: An optional flag to toggle the exiting of the module
-         on command failure.
-        :return: Return a tuple of None, otherwise sys.exit on command failure.
+        Target the default scenario:
+
+        >>> molecule verify
+
+        Targeting a specific scenario:
+
+        >>> molecule verify --scenario-name foo
+
+        Executing with `debug`:
+
+        >>> molecule --debug verify
+
+        :return: None
         """
-        try:
-            v = ansible_lint.AnsibleLint(self.molecule)
-            v.execute()
-        except sh.ErrorReturnCode:
-            util.sysexit()
-        v = trailing.Trailing(self.molecule)
-        v.execute()
+        msg = 'Scenario: [{}]'.format(self._config.scenario.name)
+        LOG.info(msg)
+        msg = 'Verifier: [{}]'.format(self._config.verifier.name)
+        LOG.info(msg)
 
-        self.molecule.write_ssh_config()
-
-        try:
-            if self.molecule.verifier == 'serverspec':
-                v = serverspec.Serverspec(self.molecule)
-            elif self.molecule.verifier == 'goss':
-                v = goss.Goss(self.molecule)
-            else:
-                v = testinfra.Testinfra(self.molecule)
-
-            v.execute()
-        except sh.ErrorReturnCode as e:
-            util.print_error(str(e))
-            if exit:
-                util.sysexit(e.exit_code)
-            return e.exit_code, e.stdout
-
-        return None, None
+        self._config.verifier.execute()
 
 
 @click.command()
-@click.option('--platform', default=None, help='Specify a platform.')
-@click.option('--provider', default=None, help='Specify a provider.')
-@click.option(
-    '--sudo/--no-sudo',
-    default=False,
-    help='Enable or disable running tests with sudo. Default is disabled.')
 @click.pass_context
-def verify(ctx, platform, provider, sudo):  # pragma: no cover
-    """ Performs verification steps on running instances. """
-    command_args = {'platform': platform, 'provider': provider, 'sudo': sudo}
+@click.option(
+    '--scenario-name',
+    default='default',
+    help='Name of the scenario to target. (default)')
+def verify(ctx, scenario_name):  # pragma: no cover
+    """ Run automated tests against instances. """
+    args = ctx.obj.get('args')
 
-    v = Verify(ctx.obj.get('args'), command_args)
-    v.execute
-    util.sysexit(v.execute()[0])
+    command_args = {
+        'subcommand': __name__,
+        'scenario_name': scenario_name,
+    }
+
+    for c in base.get_configs(args, command_args):
+        Verify(c).execute()

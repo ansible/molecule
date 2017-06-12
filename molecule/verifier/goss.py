@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -20,74 +20,91 @@
 
 import os
 
-from molecule import ansible_playbook
+from molecule import logger
 from molecule import util
 from molecule.verifier import base
 
+LOG = logger.get_logger(__name__)
+
 
 class Goss(base.Base):
-    def __init__(self, molecule):
-        super(Goss, self).__init__(molecule)
-        self._goss_dir = molecule.config.config['molecule']['goss_dir']
-        self._goss_playbook = molecule.config.config['molecule'][
-            'goss_playbook']
-        self._playbook = self._get_playbook()
-        self._ansible = self._get_ansible_instance()
+    """
+    `Goss`_ is a YAML based serverspec-like tool for validating a server's
+    configuration.  `Goss`_ is `not` the default verifier used in Molecule.
 
-    def execute(self):
+    Molecule executes a playbook (`test_default.yml`) located in the role's
+    `scenario.directory`.  This playbook will copy YAML files to the instances,
+    and execute Goss using a community written Goss Ansible module bundled with
+    Molecule.
+
+    Additional options can be passed to `goss validate` by modifying the test
+    playbook.
+
+    The testing can be disabled by setting `enabled` to False.
+
+    .. code-block:: yaml
+
+        verifier:
+          name: goss
+          enabled: False
+
+    .. important::
+
+        Due to the nature of this verifier.  Molecule does not perform options
+        handling the same way Testinfra does.
+
+    .. _`Goss`: https://github.com/aelsabbahy/goss
+    """
+
+    def __init__(self, config):
         """
-        Executes Goss integration tests and returns None.
+        Sets up the requirements to execute `goss` and returns None.
 
+        :param config: An instance of a Molecule config.
         :return: None
         """
-        if self._get_tests():
-            status, output = self._goss()
-            if status is not None:
-                util.sysexit(status)
+        super(Goss, self).__init__(config)
+        if config:
+            self._tests = self._get_tests()
 
-    def _goss(self, out=util.callback_info, err=util.callback_error):
-        """
-        Executes goss against specified playbook and returns a :func:`sh`
-        response object.
+    @property
+    def name(self):
+        return 'goss'
 
-        :param out: An optional function to process STDOUT for underlying
-         :func:`sh` call.
-        :param err: An optional function to process STDERR for underlying
-         :func:`sh` call.
-        :return: :func:`sh` response object.
-        """
+    @property
+    def default_options(self):
+        return {}
 
-        msg = 'Executing goss tests found in {}...'.format(self._playbook)
-        util.print_info(msg)
+    @property
+    def default_env(self):
+        return self._config.merge_dicts(os.environ.copy(), self._config.env)
 
-        self._set_library_path()
-        return self._ansible.execute()
+    def bake(self):
+        pass
+
+    def execute(self):
+        if not self.enabled:
+            LOG.warn('Skipping, verifier is disabled.')
+            return
+
+        if not len(self._tests) > 0:
+            LOG.warn('Skipping, no tests found.')
+            return
+
+        msg = 'Executing Goss tests found in {}/...'.format(self.directory)
+        LOG.info(msg)
+
+        goss_playbook = os.path.join(self.directory, 'test_default.yml')
+        self._config.provisioner.converge(goss_playbook)
+
+        LOG.success('Verifier completed successfully.')
 
     def _get_tests(self):
-        return os.path.exists(self._playbook)
+        """
+        Walk the verifier's directory for tests and returns a list.
 
-    def _get_playbook(self):
-        return os.path.join(self._goss_dir, self._goss_playbook)
-
-    def _get_ansible_instance(self):
-        ac = self._molecule.config.config['ansible']
-        ac['playbook'] = self._playbook
-        debug = self._molecule.args.get('debug')
-        ansible = ansible_playbook.AnsiblePlaybook(
-            ac, self._molecule.driver.ansible_connection_params, debug=debug)
-
-        return ansible
-
-    def _set_library_path(self):
-        library_path = self._ansible.env.get('ANSIBLE_LIBRARY', '')
-        goss_path = self._get_library_path()
-        if library_path:
-            self._ansible.add_env_arg('ANSIBLE_LIBRARY',
-                                      '{}:{}'.format(library_path, goss_path))
-        else:
-            self._ansible.add_env_arg('ANSIBLE_LIBRARY', goss_path)
-
-    def _get_library_path(self):
-        return os.path.join(
-            os.path.dirname(__file__), os.path.pardir, os.path.pardir,
-            'molecule', 'verifier', 'ansible', 'library')
+        :return: list
+        """
+        return [
+            filename for filename in util.os_walk(self.directory, 'test_*.yml')
+        ]

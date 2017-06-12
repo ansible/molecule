@@ -1,4 +1,0 @@
----
-- hosts: all
-  tasks:
-    - shell: echo 'not idempotent'

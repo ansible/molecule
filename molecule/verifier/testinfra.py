@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -18,132 +18,141 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import fnmatch
 import os
 
 import sh
 
-from molecule import ansible_playbook
-from molecule import config
+from molecule import logger
 from molecule import util
 from molecule.verifier import base
+from molecule.verifier import flake8
+
+LOG = logger.get_logger(__name__)
 
 
 class Testinfra(base.Base):
-    def __init__(self, molecule):
-        super(Testinfra, self).__init__(molecule)
-        self._testinfra_dir = molecule.config.config['molecule'][
-            'testinfra_dir']
-        self._debug = molecule.args.get('debug')
+    """
+    `Testinfra`_ is the default test runner.
 
-    def execute(self):
+    Additional options can be passed to `testinfra` through the options
+    dict.  Any option set in this section will override the defaults.
+
+    .. code-block:: yaml
+
+        verifier:
+          name: testinfra
+          options:
+            n: 1
+
+    The testing can be disabled by setting `enabled` to False.
+
+    .. code-block:: yaml
+
+        verifier:
+          name: testinfra
+          enabled: False
+
+    Environment variables can be passed to the verifier.
+
+    .. code-block:: yaml
+
+        verifier:
+          name: testinfra
+          env:
+            FOO: bar
+
+    Change path to the test directory.
+
+    .. code-block:: yaml
+
+        verifier:
+          name: testinfra
+          directory: /foo/bar/
+
+    .. _`Testinfra`: http://testinfra.readthedocs.io
+    """
+
+    def __init__(self, config):
         """
-        Executes linting/integration tests and returns None.
+        Sets up the requirements to execute `testinfra` and returns None.
 
-        Flake8 performs the code linting.
-        Testinfra executes integration tests.
+        :param config: An instance of a Molecule config.
+        :return: None
+        """
+        super(Testinfra, self).__init__(config)
+        self._testinfra_command = None
+        if config:
+            self._tests = self._get_tests()
+
+    @property
+    def name(self):
+        return 'testinfra'
+
+    @property
+    def default_options(self):
+        d = self._config.driver.testinfra_options
+        if self._config.args.get('debug'):
+            d['debug'] = True
+        if self._config.args.get('sudo'):
+            d['sudo'] = True
+
+        return d
+
+    @property
+    def default_env(self):
+        return self._config.merge_dicts(os.environ.copy(), self._config.env)
+
+    def bake(self):
+        """
+        Bake a `testinfra` command so it's ready to execute and returns None.
 
         :return: None
         """
-        ansible = ansible_playbook.AnsiblePlaybook(
-            self._molecule.config.config['ansible'], {},
-            _env=self._molecule.env)
+        options = self.options
+        verbose_flag = util.verbose_flag(options)
 
-        testinfra_options = config.merge_dicts(
-            self._molecule.driver.testinfra_args,
-            self._molecule.config.config['verifier']['options'])
+        self._testinfra_command = sh.testinfra.bake(
+            options,
+            self._tests,
+            *verbose_flag,
+            _cwd=self._config.scenario.directory,
+            _env=self.env,
+            _out=LOG.out,
+            _err=LOG.error)
 
-        testinfra_options['ansible_env'] = ansible.env
-        if self._molecule.args.get('debug'):
-            testinfra_options['debug'] = True
-        if self._molecule.args.get('sudo'):
-            testinfra_options['sudo'] = True
+    def execute(self):
+        if not self.enabled:
+            LOG.warn('Skipping, verifier is disabled.')
+            return
 
-        tests = self._get_tests()
-        if len(tests) > 0:
-            if 'flake8' not in self._molecule.disabled:
-                self._flake8(tests)
-            self._testinfra(tests, **testinfra_options)
+        if not len(self._tests) > 0:
+            LOG.warn('Skipping, no tests found.')
+            return
 
-    def _testinfra(self,
-                   tests,
-                   debug=False,
-                   ansible_env={},
-                   out=util.callback_info,
-                   err=util.callback_error,
-                   **kwargs):
-        """
-        Executes testinfra against specified tests and returns a :func:`sh`
-        response object.
+        if self._testinfra_command is None:
+            self.bake()
 
-        :param tests: A list of testinfra tests.
-        :param debug: An optional bool to toggle debug output.
-        :param pattern: A string containing the pattern of files to lint.
-        :param ansible_env: An optional environment to pass to underlying
-         :func:`sh` call.
-        :param out: An optional function to process STDOUT for underlying
-         :func:`sh` call.
-        :param err: An optional function to process STDERR for underlying
-         :func:`sh` call.
-        :return: :func:`sh` response object.
-        """
-        kwargs['debug'] = debug
-        kwargs['_env'] = ansible_env
-        kwargs['_out'] = out
-        kwargs['_err'] = err
+        f = flake8.Flake8(self._config)
+        f.execute()
 
-        msg = 'Executing testinfra tests found in {}/...'.format(
-            self._testinfra_dir)
-        util.print_info(msg)
+        msg = 'Executing Testinfra tests found in {}/...'.format(
+            self.directory)
+        LOG.info(msg)
 
-        verbose = 'v'
-        verbose_flag = str()
-        for i in range(0, 3):
-            if kwargs.get(verbose):
-                verbose_flag = '-{}'.format(verbose)
-                del kwargs[verbose]
-                if kwargs.get('verbose'):
-                    del kwargs['verbose']
-                break
-            verbose = verbose + 'v'
+        try:
+            util.run_command(
+                self._testinfra_command, debug=self._config.args.get('debug'))
+            LOG.success('Verifier completed successfully.')
 
-        cmd = sh.testinfra.bake(tests)
-        if verbose_flag:
-            cmd = cmd.bake(verbose_flag)
-        cmd = cmd.bake(**kwargs)
-
-        return util.run_command(cmd, debug=self._debug)
-
-    def _flake8(self, tests, out=util.callback_info, err=util.callback_error):
-        """
-        Executes flake8 against specified tests and returns a :func:`sh`
-        response object.
-
-        :param tests: A list of testinfra tests.
-        :param out: An optional function to process STDOUT for underlying
-         :func:`sh` call.
-        :param err: An optional function to process STDERR for underlying
-         :func:`sh` call.
-        :return: :func:`sh` response object.
-        """
-        msg = 'Executing flake8 on *.py files found in {}/...'.format(
-            self._testinfra_dir)
-        util.print_info(msg)
-
-        cmd = sh.flake8.bake(tests)
-        return util.run_command(cmd, debug=self._debug)
+        except sh.ErrorReturnCode as e:
+            util.sysexit(e.exit_code)
 
     def _get_tests(self):
+        """
+        Walk the verifier's directory for tests and returns a list.
+
+        :return: list
+        """
         return [
-            filename
-            for filename in self._walk(self._testinfra_dir, 'test_*.py')
+            filename for filename in util.os_walk(self.directory, 'test_*.py')
         ]
-
-    def _walk(self, directory, pattern):
-        # Python 3.5 supports a recursive glob without needing os.walk.
-        for root, dirs, files in os.walk(directory):
-            for basename in files:
-                if fnmatch.fnmatch(basename, pattern):
-                    filename = os.path.join(root, basename)
-
-                    yield filename

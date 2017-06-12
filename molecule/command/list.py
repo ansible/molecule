@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -18,36 +18,95 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import click
+from __future__ import print_function
 
+import click
+import tabulate
+
+from molecule import logger
+from molecule import status
 from molecule import util
 from molecule.command import base
 
+LOG = logger.get_logger(__name__)
+
 
 class List(base.Base):
-    def execute(self, exit=True):
+    def execute(self):
         """
         Execute the actions necessary to perform a `molecule list` and
-        return a tuple.
+        returns None.
 
-        :param exit: (Unused) Provided to complete method signature.
-        :return: Return a tuple of None.
+        Target all scenarios:
+
+        >>> molecule list
+
+        Targeting a specific scenario:
+
+        >>> molecule list --scenario-name foo
+
+        Machine readable output:
+
+        >>> molecule list --format plain
+        >>> molecule list --format yaml
+
+        Executing with `debug`:
+
+        >>> molecule --debug list
+
+        :return: None
         """
-        porcelain = self.command_args.get('porcelain')
-        self.molecule.print_valid_platforms(porcelain=porcelain)
-        return None, None
+        return self._config.driver.status()
 
 
 @click.command()
-@click.option(
-    '--porcelain/--no-porcelain',
-    default=False,
-    help='Machine readable output.  Default is disabled.')
 @click.pass_context
-def list(ctx, porcelain):  # pragma: no cover
-    """ Prints a list of currently available platforms. """
-    command_args = {'porcelain': porcelain}
+@click.option('--scenario-name', help='Name of the scenario to target.')
+@click.option(
+    '--format',
+    type=click.Choice(['simple', 'plain', 'yaml']),
+    default='simple',
+    help='Change output format. (simple)')
+def list(ctx, scenario_name, format):  # pragma: no cover
+    """ Lists status of instances. """
+    args = ctx.obj.get('args')
+    command_args = {
+        'subcommand': __name__,
+        'scenario_name': scenario_name,
+        'format': format,
+    }
 
-    l = List(ctx.obj.get('args'), command_args)
-    l.execute
-    util.sysexit(l.execute()[0])
+    statuses = []
+    for c in base.get_configs(args, command_args):
+        l = List(c)
+        statuses.extend(l.execute())
+
+    headers = [util.title(name) for name in status.get_status()._fields]
+    if format == 'simple' or format == 'plain':
+        table_format = 'simple'
+        if format == 'plain':
+            headers = []
+            table_format = format
+        _print_tabulate_data(headers, statuses, table_format)
+    else:
+        _print_yaml_data(headers, statuses)
+
+
+def _print_tabulate_data(headers, data, table_format):  # pragma: no cover
+    """
+    Shows the tabulate data on the screen and returns None.
+
+    :param headers: A list of column headers.
+    :param data:  A list of tabular data to display.
+    :returns: None
+    """
+    print(tabulate.tabulate(data, headers, tablefmt=table_format))
+
+
+def _print_yaml_data(headers, data):  # pragma: no cover
+    l = [
+        dict(zip(headers, [getattr(datum, field) for field in datum._fields]))
+        for datum in data
+    ]
+
+    print(util.safe_dump(l))

@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -17,65 +17,3 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
-
-import pytest
-
-from molecule.command import test
-
-
-def test_execute(mocker, patched_destroy_main, patched_destroy,
-                 patched_dependency, patched_syntax, patched_create,
-                 patched_converge, patched_idempotence, patched_verify,
-                 molecule_instance):
-    t = test.Test({}, {}, molecule_instance)
-    result = t.execute()
-
-    patched_syntax.assert_called_once_with(exit=False)
-    patched_dependency.assert_called_once_with(exit=False)
-    patched_create.assert_called_once_with(exit=False)
-    patched_converge.assert_called_once_with(exit=False)
-    patched_idempotence.assert_called_once_with(exit=False)
-    patched_verify.assert_called_once_with(exit=False)
-
-    expected = [mocker.call(exit=False), mocker.call()]
-    assert patched_destroy.mock_calls == expected
-
-    assert (None, None) == result
-
-
-def test_execute_fail_fast(patched_destroy, patched_print_error,
-                           molecule_instance):
-    patched_destroy.return_value = 1, 'output'
-
-    t = test.Test({}, {}, molecule_instance)
-    with pytest.raises(SystemExit):
-        t.execute()
-
-    patched_print_error.assert_called_once_with('output')
-
-
-def test_execute_always_destroy(mocker, patched_destroy_main, patched_destroy,
-                                patched_syntax, patched_create,
-                                patched_converge, patched_idempotence,
-                                patched_verify, molecule_instance):
-    command_args = {'destroy': 'always'}
-    t = test.Test({}, command_args, molecule_instance)
-    result = t.execute()
-
-    expected = [mocker.call(exit=False), mocker.call()]
-    assert patched_destroy.mock_calls == expected
-
-    assert (None, None) == result
-
-
-def test_execute_never_destroy(patched_destroy_main, patched_destroy,
-                               patched_syntax, patched_create,
-                               patched_converge, patched_idempotence,
-                               patched_verify, molecule_instance):
-    command_args = {'destroy': 'never'}
-    t = test.Test({}, command_args, molecule_instance)
-    result = t.execute()
-
-    patched_destroy.assert_called_once_with(exit=False)
-
-    assert (None, None) == result

@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -20,123 +20,117 @@
 
 import fcntl
 import os
-import pexpect
 import signal
 import struct
-import subprocess
 import sys
 import termios
 
 import click
+import pexpect
 
+from molecule import logger
 from molecule import util
 from molecule.command import base
 
+LOG = logger.get_logger(__name__)
+
 
 class Login(base.Base):
-    def execute(self, exit=True):
+    def __init__(self, c):
+        super(Login, self).__init__(c)
+        self._pt = None
+
+    def execute(self):
         """
         Execute the actions necessary to perform a `molecule login` and
-        return a tuple.
+        returns None.
 
-        :param exit: (Unused) Provided to complete method signature.
-        :return: Return a tuple of None, otherwise sys.exit on command failure.
+        Target the default scenario:
+
+        >>> molecule login --host hostname
+
+        Targeting a specific scenario:
+
+        >>> molecule login --host hostname --scenario-name foo
+
+        Executing with `debug`:
+
+        >>> molecule --debug list
+
+        :return: None
         """
-        # get list of running hosts from state
-        if self.molecule.state.hosts:
-            hosts = [k for k, v in self.molecule.state.hosts.iteritems()]
-        else:
-            hosts = []
+        is_static_driver = self._config.driver.name == 'static'
+        if not self._config.state.created and not is_static_driver:
+            msg = 'Instances not created.  Please create instances first.'
+            util.sysexit_with_message(msg)
 
-        try:
-            # Nowhere to login to if there is no running host.
-            if len(hosts) == 0:
-                raise base.InvalidHost('There are no running hosts.')
-
-            # Check whether a host was specified.
-            if self.command_args.get('host') is None:
-                # One running host is perfect. Login to it.
-                if len(hosts) == 1:
-                    hostname = hosts[0]
-
-                # But too many hosts is trouble as well.
-                else:
-                    message = ('There are {} running hosts. Please specify '
-                               'which with --host.\n\n'
-                               'Available hosts:\n{}'.format(
-                                   len(hosts), '\n'.join(sorted(hosts))))
-                    raise base.InvalidHost(message)
-
-            else:
-                # If the host was specified, try to use it.
-                hostname = self.command_args.get('host')
-                match = [x for x in hosts if x.startswith(hostname)]
-                if len(match) == 0:
-                    raise subprocess.CalledProcessError(1, None)
-                elif len(match) != 1:
-                    # If there are multiple matches, but one of them is an
-                    # exact string match, assume this is the one they're
-                    # looking for and use it
-                    if hostname in match:
-                        match = [hostname, ]
-                    else:
-                        message = ("There are {} hosts that match '{}'. You "
-                                   'can only login to one at a time.\n\n'
-                                   'Available hosts:\n{}'.format(
-                                       len(match), hostname,
-                                       '\n'.join(sorted(hosts))))
-                        raise base.InvalidHost(message)
-                hostname = match[0]
-
-        except subprocess.CalledProcessError:
-            msg = ("Unknown host '{}'.\n\n"
-                   'Available hosts:\n{}').format(
-                       self.command_args.get('host'), '\n'.join(hosts))
-            util.print_error(msg)
-            util.sysexit()
-        except base.InvalidHost as e:
-            util.print_error(e.message)
-            util.sysexit()
-
+        hosts = [
+            d['name']
+            for d in self._config.platforms.instances_with_scenario_name
+        ]
+        hostname = self._get_hostname(hosts)
         self._get_login(hostname)
-        return None, None
+
+    def _get_hostname(self, hosts):
+        hostname = self._config.command_args.get('host')
+        match = [x for x in hosts if x.startswith(hostname)]
+        if len(match) == 0:
+            msg = ("There are no hosts that match '{}'.  You "
+                   'can only login to valid hosts.').format(hostname)
+            util.sysexit_with_message(msg)
+        elif len(match) != 1:
+            # If there are multiple matches, but one of them is an exact string
+            # match, assume this is the one they're looking for and use it.
+            if hostname in match:
+                match = [
+                    hostname,
+                ]
+            else:
+                msg = ("There are {} hosts that match '{}'. You "
+                       'can only login to one at a time.\n\n'
+                       'Available hosts:\n{}'.format(
+                           len(match), hostname, '\n'.join(sorted(hosts))))
+                util.sysexit_with_message(msg)
+
+        return match[0]
 
     def _get_login(self, hostname):  # pragma: no cover
-        login_cmd = self.molecule.driver.login_cmd(hostname)
-        login_args = self.molecule.driver.login_args(hostname)
+        login_options = self._config.driver.login_options(hostname)
+        login_cmd = self._config.driver.login_cmd_template.format(
+            **login_options)
 
         lines, columns = os.popen('stty size', 'r').read().split()
         dimensions = (int(lines), int(columns))
-        self._pt = pexpect.spawn(
-            '/usr/bin/env ' + login_cmd.format(*login_args),
-            dimensions=dimensions)
+        cmd = '/usr/bin/env {}'.format(login_cmd)
+        self._pt = pexpect.spawn(cmd, dimensions=dimensions)
         signal.signal(signal.SIGWINCH, self._sigwinch_passthrough)
         self._pt.interact()
 
-    def _sigwinch_passthrough(self, sig, data):  # pragma: no cover
-        TIOCGWINSZ = 1074295912  # assume
+    def _sigwinch_passthrough(self):  # pragma: no cover
+        tiocgwinsz = 1074295912  # assume
         if 'TIOCGWINSZ' in dir(termios):
-            TIOCGWINSZ = termios.TIOCGWINSZ
+            tiocgwinsz = termios.TIOCGWINSZ
         s = struct.pack('HHHH', 0, 0, 0, 0)
         a = struct.unpack('HHHH',
-                          fcntl.ioctl(sys.stdout.fileno(), TIOCGWINSZ, s))
+                          fcntl.ioctl(sys.stdout.fileno(), tiocgwinsz, s))
         self._pt.setwinsize(a[0], a[1])
 
 
 @click.command()
-@click.option('--driver', default=None, help='Specificy a driver.')
-@click.option('--host', default=None, help='Host to access.')
 @click.pass_context
-def login(ctx, driver, host):  # pragma: no cover
-    """
-    Initiates an interactive ssh session with the given host.
+@click.option('--host', required=True, help='Host to access.')
+@click.option(
+    '--scenario-name',
+    default='default',
+    help='Name of the scenario to target. (default)')
+def login(ctx, host, scenario_name):  # pragma: no cover
+    """ Log in to one instance. """
+    args = ctx.obj.get('args')
+    command_args = {
+        'subcommand': __name__,
+        'host': host,
+        'scenario_name': scenario_name,
+    }
 
-    \b
-    If no `--host` flag provided, will login to the instance.  If more than
-    once instance exists, the `--host` flag must be provided.
-    """
-    command_args = {'driver': driver, 'host': host}
-
-    l = Login(ctx.obj.get('args'), command_args)
-    l.execute
-    util.sysexit(l.execute()[0])
+    for c in base.get_configs(args, command_args):
+        Login(c).execute()

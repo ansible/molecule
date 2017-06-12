@@ -1,0 +1,42 @@
+---
+- name: Create networks
+  os_network:
+    name: "{{ item.name }}"
+    provider_network_type: "{{ item.network_type | default(omit) }}"
+    shared: "{{ item.shared | default(omit) }}"
+    external: "{{ item.external | default(omit) }}"
+    provider_segmentation_id: "{{ item.segmentation_id | default(omit)}}"
+    provider_physical_network: "{{ item.provider_physical_network | default(omit) }}"
+    validate_certs: "{{ validate_certs | default(omit) }}"
+  with_items: "{{ neutron.networks }}"
+  run_once: true
+
+- name: Gather facts about network for use with instance creation
+  os_networks_facts:
+    name: "{{ neutron.networks[0].name }}"
+
+- name: Create subnets
+  os_subnet:
+    name: "{{ item.name }}"
+    network_name: "{{ item.network_name }}"
+    cidr: "{{ item.cidr }}"
+    enable_dhcp: "{{ item.enable_dhcp }}"
+    gateway_ip: "{{ item.gateway_ip | default(omit) }}"
+    ip_version: "{{ item.ip_version | default(omit) }}"
+    ipv6_ra_mode: "{{ item.ipv6_ra_mode | default(omit) }}"
+    ipv6_address_mode: "{{ item.ipv6_ra_mode | default(omit) }}"
+    dns_nameservers: "{{ item.dns_nameservers | default(omit) }}"
+    allocation_pool_start: "{{ item.pool_start | default(omit) }}"
+    allocation_pool_end: "{{ item.pool_end | default(omit) }}"
+    validate_certs: "{{ validate_certs | default(omit) }}"
+  with_items: "{{ neutron.subnets }}"
+  run_once: true
+
+- name: Create routers
+  os_router:
+    name: "{{ item.name }}"
+    network: "{{ item.network_name }}"
+    interfaces: "{{ item.interfaces }}"
+    external_fixed_ips: "{{ item.external_fixed_ips | default(omit) }}"
+  with_items: "{{ neutron.routers }}"
+  run_once: true

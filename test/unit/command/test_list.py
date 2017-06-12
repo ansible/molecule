@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -18,28 +18,27 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-from molecule.command import list as command_list
+from molecule.command import list
+from molecule.driver import base
 
 
-def test_execute(capsys, molecule_instance):
-    l = command_list.List({}, {}, molecule_instance)
-    result = l.execute()
+def test_execute(capsys, config_instance):
+    l = list.List(config_instance)
+    x = [
+        base.Status(
+            instance_name='instance-1-default',
+            driver_name='Docker',
+            provisioner_name='Ansible',
+            scenario_name='default',
+            created='False',
+            converged='False'),
+        base.Status(
+            instance_name='instance-2-default',
+            driver_name='Docker',
+            provisioner_name='Ansible',
+            scenario_name='default',
+            created='False',
+            converged='False'),
+    ]
 
-    out, _ = capsys.readouterr()
-
-    assert 'ubuntu   (default)' in out
-    assert 'centos7' in out
-    assert (None, None) == result
-
-
-def test_execute_with_porcelain(capsys, molecule_instance):
-    command_args = {'porcelain': True}
-
-    l = command_list.List({}, command_args, molecule_instance)
-    result = l.execute()
-
-    out, _ = capsys.readouterr()
-
-    assert 'ubuntu   d' in out
-    assert 'centos7' in out
-    assert (None, None) == result
+    assert x == l.execute()

@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -22,152 +22,103 @@ import pytest
 
 
 @pytest.fixture
-def patched_check_main(mocker):
-    return mocker.patch('molecule.command.check.Check.main')
+def patched_ansible_check(mocker):
+    return mocker.patch('molecule.provisioner.ansible.Ansible.check')
 
 
 @pytest.fixture
-def patched_check(mocker):
-    m = mocker.patch('molecule.command.check.Check.execute')
-    m.return_value = None, None
-
-    return m
-
-
-@pytest.fixture
-def patched_create(mocker):
-    m = mocker.patch('molecule.command.create.Create.execute')
-    m.return_value = None, None
-
-    return m
-
-
-@pytest.fixture
-def patched_converge(mocker):
-    m = mocker.patch('molecule.command.converge.Converge.execute')
-    m.return_value = None, ''
-
-    return m
-
-
-@pytest.fixture
-def patched_dependency(mocker):
-    m = mocker.patch('molecule.command.dependency.Dependency.execute')
-    m.return_value = None, None
-
-    return m
-
-
-@pytest.fixture
-def patched_destroy_main(mocker):
-    return mocker.patch('molecule.command.destroy.Destroy.main')
-
-
-@pytest.fixture
-def patched_destroy(mocker):
-    m = mocker.patch('molecule.command.destroy.Destroy.execute')
-    m.return_value = None, None
-
-    return m
-
-
-@pytest.fixture
-def patched_idempotence(mocker):
-    m = mocker.patch('molecule.command.idempotence.Idempotence.execute')
-    m.return_value = None, None
-
-    return m
-
-
-@pytest.fixture
-def patched_syntax(mocker):
-    m = mocker.patch('molecule.command.syntax.Syntax.execute')
-    m.return_value = None, None
-
-    return m
-
-
-@pytest.fixture
-def patched_verify(mocker):
-    m = mocker.patch('molecule.command.verify.Verify.execute')
-    m.return_value = None, None
-
-    return m
-
-
-@pytest.fixture
-def patched_create_inventory(mocker):
-    return mocker.patch('molecule.core.Molecule.create_inventory_file')
-
-
-@pytest.fixture
-def patched_remove_inventory(mocker):
-    return mocker.patch('molecule.core.Molecule.remove_inventory_file')
-
-
-@pytest.fixture
-def patched_create_templates(mocker):
-    return mocker.patch('molecule.core.Molecule.create_templates')
-
-
-@pytest.fixture
-def patched_remove_templates(mocker):
-    return mocker.patch('molecule.core.Molecule.remove_templates')
-
-
-@pytest.fixture
-def patched_remove_vars_files(mocker):
-    return mocker.patch('molecule.core.Molecule.remove_vars_files')
-
-
-@pytest.fixture
-def patched_add_cli_arg(mocker):
-    return mocker.patch(
-        'molecule.ansible_playbook.AnsiblePlaybook.add_cli_arg')
-
-
-@pytest.fixture
-def patched_remove_cli_arg(mocker):
-    return mocker.patch(
-        'molecule.ansible_playbook.AnsiblePlaybook.remove_cli_arg')
-
-
-@pytest.fixture
-def patched_add_env_arg(mocker):
-    return mocker.patch(
-        'molecule.ansible_playbook.AnsiblePlaybook.add_env_arg')
+def patched_ansible_destroy(mocker):
+    return mocker.patch('molecule.provisioner.ansible.Ansible.destroy')
 
 
 @pytest.fixture
 def patched_ansible_lint(mocker):
-    return mocker.patch('molecule.verifier.ansible_lint.AnsibleLint')
+    return mocker.patch('molecule.lint.ansible_lint.AnsibleLint.execute')
 
 
 @pytest.fixture
-def patched_trailing(mocker):
-    return mocker.patch('molecule.verifier.trailing.Trailing')
+def patched_ansible_galaxy(mocker):
+    return mocker.patch(
+        'molecule.dependency.ansible_galaxy.AnsibleGalaxy.execute')
 
 
 @pytest.fixture
-def patched_ssh_config(mocker):
-    return mocker.patch('molecule.core.Molecule.write_ssh_config')
+def patched_ansible_setup(mocker):
+    return mocker.patch('molecule.provisioner.ansible.Ansible.setup')
 
 
 @pytest.fixture
-def patched_write_instances_state(mocker):
-    return mocker.patch('molecule.core.Molecule.write_instances_state')
+def patched_ansible_syntax(mocker):
+    return mocker.patch('molecule.provisioner.ansible.Ansible.syntax')
 
 
 @pytest.fixture
-def patched_driver_up(mocker):
-    return mocker.patch('molecule.driver.vagrantdriver.VagrantDriver.up')
+def patched_command_idempotence_is_idempotent(mocker):
+    return mocker.patch(
+        'molecule.command.idempotence.Idempotence._is_idempotent')
 
 
 @pytest.fixture
-def patched_driver_destroy(mocker):
-    return mocker.patch('molecule.driver.vagrantdriver.VagrantDriver.destroy')
+def patched_testinfra(mocker):
+    return mocker.patch('molecule.verifier.testinfra.Testinfra.execute')
 
 
 @pytest.fixture
-def patched_shell(mocker):
-    return mocker.patch('molecule.dependency.shell.Shell.execute')
+def patched_verify_configs(mocker):
+    return mocker.patch('molecule.command.base._verify_configs')
+
+
+@pytest.fixture
+def patched_verify_scenario_name(mocker):
+    return mocker.patch('molecule.command.base._verify_scenario_name')
+
+
+@pytest.fixture
+def patched_base_setup(mocker):
+    return mocker.patch('test.unit.command.test_base.ExtendedBase._setup')
+
+
+@pytest.fixture
+def patched_create_setup(mocker):
+    return mocker.patch('molecule.command.create.Create._setup')
+
+
+@pytest.fixture
+def patched_destroy_setup(mocker):
+    return mocker.patch('molecule.command.destroy.Destroy._setup')
+
+
+@pytest.fixture
+def patched_base_prune(mocker):
+    return mocker.patch('test.unit.command.test_base.ExtendedBase.prune')
+
+
+@pytest.fixture
+def patched_destroy_prune(mocker):
+    return mocker.patch('molecule.command.destroy.Destroy.prune')
+
+
+@pytest.fixture
+def patched_base_filter_configs_for_scenario(mocker):
+    return mocker.patch('molecule.command.base._filter_configs_for_scenario')
+
+
+@pytest.fixture
+def patched_provisioner_write_inventory(mocker):
+    return mocker.patch('molecule.provisioner.ansible.Ansible.write_inventory')
+
+
+@pytest.fixture
+def patched_provisioner_write_config(mocker):
+    return mocker.patch('molecule.provisioner.ansible.Ansible.write_config')
+
+
+@pytest.fixture
+def patched_provisioner_add_or_update_vars(mocker):
+    return mocker.patch(
+        'molecule.provisioner.ansible.Ansible.add_or_update_vars')
+
+
+@pytest.fixture
+def patched_remove_vars(mocker):
+    return mocker.patch('molecule.provisioner.ansible.Ansible.remove_vars')

@@ -1,0 +1,28 @@
+---
+{% raw %}
+- hosts: localhost
+  connection: local
+  vars:
+    molecule_file: "{{ lookup('env','MOLECULE_FILE') }}"
+    molecule_instance_config: "{{ lookup('env','MOLECULE_INSTANCE_CONFIG') }}"
+    molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
+  tasks:
+    - name: Destroy molecule instance(s)
+      molecule_vagrant:
+        instance_name: "{{ item.name | molecule_instance_with_scenario_name(molecule_yml.scenario.name) }}"
+        platform_box: "{{ item.box }}"
+        molecule_file: "{{ molecule_file }}"
+        state: destroy
+      with_items: "{{ molecule_yml.platforms }}"
+
+    # Mandatory configuration for Molecule to function.
+
+    - name: Populate instance config
+      set_fact:
+        instance_conf: {}
+
+    - name: Dump instance config
+      copy:
+        content: "# Molecule managed\n\n{{ instance_conf | to_yaml }}"
+        dest: "{{ molecule_instance_config }}"
+{%- endraw -%}

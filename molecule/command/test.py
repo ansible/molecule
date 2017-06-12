@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -20,77 +20,58 @@
 
 import click
 
-import molecule.command  # prevent circular dependencies
-from molecule import util
+import molecule.command
+from molecule import config
+from molecule import logger
 from molecule.command import base
+
+LOG = logger.get_logger(__name__)
 
 
 class Test(base.Base):
-    def execute(self, exit=True):
+    def execute(self):
         """
         Execute the actions necessary to perform a `molecule test` and
-        return a tuple.
+        returns None.
 
-        :param exit: (Unused) Provided to complete method signature.
-        :return: Return a tuple of (`exit status`, `command output`), otherwise
-         sys.exit on command failure.
+        Target all scenarios:
+
+        >>> molecule test
+
+        Targeting a specific scenario:
+
+        >>> molecule test --scenario-name foo
+
+        Targeting a specific driver:
+
+        >>> molecule converge --driver-name foo
+
+        Executing with `debug`:
+
+        >>> molecule --debug test
+
+        :return: None
         """
-        ts = self.molecule.config.config['molecule']['test']['sequence']
-        for task in ts:
-            command_module = getattr(molecule.command, task)
-            command = getattr(command_module, task.capitalize())
-            c = command(self.args, self.command_args, self.molecule)
-
-            status, output = c.execute(exit=False)
-
-            # Fail fast
-            if status is not 0 and status is not None:
-                if output:
-                    util.print_error(output)
-                util.sysexit(status)
-
-        if self.command_args.get('destroy') == 'always':
-            c = molecule.command.destroy.Destroy(self.args, self.command_args)
-            c.execute()
-            return None, None
-
-        if self.command_args.get('destroy') == 'never':
-            return None, None
-
-        # passing (default)
-        if status is None:
-            c = molecule.command.destroy.Destroy(self.args, self.command_args)
-            c.execute()
-            return None, None
 
 
 @click.command()
-@click.option('--driver', default=None, help='Specificy a driver.')
-@click.option('--platform', default=None, help='Specify a platform.')
-@click.option('--provider', default=None, help='Specify a provider.')
-@click.option(
-    '--destroy',
-    type=click.Choice(['passing', 'always', 'never']),
-    default=None,
-    help='Destroy behavior.')
-@click.option(
-    '--sudo/--no-sudo',
-    default=False,
-    help='Enable or disable running tests with sudo. Default is disabled.')
 @click.pass_context
-def test(ctx, driver, platform, provider, destroy, sudo):  # pragma: no cover
-    """
-    Runs a series of commands (defined in config) against instances for a full
-    test/verify run.
-    """
+@click.option('--scenario-name', help='Name of the scenario to target.')
+@click.option(
+    '--driver-name',
+    type=click.Choice(config.molecule_drivers()),
+    help='Name of driver to use. (docker)')
+def test(ctx, scenario_name, driver_name):  # pragma: no cover
+    """ Test (destroy, create, converge, lint, verify, destroy). """
+    args = ctx.obj.get('args')
     command_args = {
-        'driver': driver,
-        'platform': platform,
-        'provider': provider,
-        'destroy': destroy,
-        'sudo': sudo
+        'subcommand': __name__,
+        'scenario_name': scenario_name,
+        'driver_name': driver_name,
     }
 
-    t = Test(ctx.obj.get('args'), command_args)
-    t.execute
-    util.sysexit(t.execute()[0])
+    for c in base.get_configs(args, command_args):
+        for task in c.scenario.test_sequence:
+            command_module = getattr(molecule.command, task)
+            command = getattr(command_module, task.capitalize())
+            command(c).execute()

@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -18,69 +18,64 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import distutils.spawn
-import distutils.version
+import logging
 import os
 import random
 import shutil
 import string
-import sys
 
-import ansible
 import pytest
+
+from molecule import config
+
+logging.getLogger('sh').setLevel(logging.WARNING)
 
 pytest_plugins = ['helpers_namespace']
 
 
-@pytest.helpers.register
+@pytest.fixture
 def random_string(l=5):
     return ''.join(random.choice(string.ascii_uppercase) for _ in range(l))
 
 
-@pytest.fixture()
-def temp_dir(tmpdir, request):
-    d = tmpdir.mkdir(random_string())
-    os.chdir(d.strpath)
+@pytest.fixture
+def temp_dir(tmpdir, random_string, request):
+    directory = tmpdir.mkdir(random_string)
+    os.chdir(directory.strpath)
 
     def cleanup():
-        shutil.rmtree(d.strpath)
+        shutil.rmtree(directory.strpath)
 
     request.addfinalizer(cleanup)
 
-    return d.strpath
-
-
-def ansible_v1():
-    d = distutils.version
-    return (d.LooseVersion(ansible.__version__) < d.LooseVersion('2.0'))
-
-
-def get_docker_executable():
-    return not distutils.spawn.find_executable('docker')
-
-
-def get_vagrant_executable():
-    return not distutils.spawn.find_executable('vagrant')
-
-
-def get_virtualbox_executable():
-    return not distutils.spawn.find_executable('VBoxManage')
+    return directory
 
 
 @pytest.helpers.register
-def supports_openstack():
-    return pytest.mark.skipif(
-        'shade' not in sys.modules, reason='OpenStack not supported')
+def molecule_project_directory():
+    return os.getcwd()
 
 
 @pytest.helpers.register
-def supports_docker():
-    return pytest.mark.skipif(
-        ansible_v1() or get_docker_executable(), reason='Docker not supported')
+def molecule_directory():
+    return config.molecule_directory(molecule_project_directory())
 
 
 @pytest.helpers.register
-def supports_vagrant_virtualbox():
-    return pytest.mark.skipif(
-        get_vagrant_executable() or get_virtualbox_executable(),
-        reason='VirtualBox not supported')
+def molecule_scenario_directory():
+    return os.path.join(molecule_directory(), 'default')
+
+
+@pytest.helpers.register
+def molecule_file():
+    return get_molecule_file(molecule_scenario_directory())
+
+
+@pytest.helpers.register
+def get_molecule_file(path):
+    return config.molecule_file(path)
+
+
+@pytest.helpers.register
+def molecule_ephemeral_directory():
+    return os.path.join(molecule_scenario_directory(), '.molecule')

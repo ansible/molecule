@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -18,107 +18,101 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
+
 import pytest
-import yaml
 
+from molecule import config
 from molecule import state
+from molecule import util
 
 
-@pytest.fixture()
-def state_instance_with_data(state_path_with_data):
-    return state.State(state_file=state_path_with_data)
+@pytest.fixture
+def state_instance(config_instance):
+    return state.State(config_instance)
 
 
-@pytest.fixture()
-def state_instance_without_data(state_path_without_data):
-    return state.State(state_file=state_path_without_data)
+def test_state_file_property(state_instance):
+    x = os.path.join(state_instance._config.scenario.ephemeral_directory,
+                     'state.yml')
+
+    assert x == state_instance.state_file
 
 
-def test_converged(state_instance_without_data):
-    assert not state_instance_without_data.converged
+def test_converged(state_instance):
+    assert not state_instance.converged
 
 
-def test_created(state_instance_without_data):
-    assert not state_instance_without_data.created
+def test_created(state_instance):
+    assert not state_instance.created
 
 
-def test_default_platform(state_instance_without_data):
-    assert not state_instance_without_data.default_platform
+def test_driver(state_instance):
+    assert not state_instance.driver
 
 
-def test_default_provider(state_instance_without_data):
-    assert not state_instance_without_data.default_provider
+def test_reset(state_instance):
+    assert not state_instance.converged
+
+    state_instance.change_state('converged', True)
+    assert state_instance.converged
+
+    state_instance.reset()
+    assert not state_instance.converged
 
 
-def test_driver(state_instance_without_data):
-    assert not state_instance_without_data.driver
+def test_reset_persists(state_instance):
+    assert not state_instance.converged
+
+    state_instance.change_state('converged', True)
+    assert state_instance.converged
+
+    state_instance.reset()
+    assert not state_instance.converged
+
+    d = util.safe_load_file(state_instance.state_file)
+    assert not d.get('converged')
 
 
-def test_hosts(state_instance_without_data):
-    assert {} == state_instance_without_data.hosts
+def test_change_state_converged(state_instance):
+    state_instance.change_state('converged', True)
+
+    assert state_instance.converged
 
 
-def test_installed_deps(state_instance_without_data):
-    assert not state_instance_without_data.installed_deps
+def test_change_state_created(state_instance):
+    state_instance.change_state('created', True)
+
+    assert state_instance.created
 
 
-def test_multiple_platforms(state_instance_without_data):
-    assert not state_instance_without_data.multiple_platforms
+def test_change_state_driver(state_instance):
+    state_instance.change_state('driver', 'foo')
+
+    assert 'foo' == state_instance.driver
 
 
-def test_reset(state_instance_without_data):
-    assert not state_instance_without_data.created
-
-    state_instance_without_data.change_state('created', True)
-    assert state_instance_without_data.created
-
-    state_instance_without_data.reset()
-    assert not state_instance_without_data.created
-
-
-def test_reset_persists(state_instance_without_data):
-    assert not state_instance_without_data.created
-
-    state_instance_without_data.change_state('created', True)
-    assert state_instance_without_data.created
-
-    state_instance_without_data.reset()
-    assert not state_instance_without_data.created
-
-    with open(state_instance_without_data._state_file) as stream:
-        d = yaml.safe_load(stream)
-
-        assert not d.get('created')
-
-
-def test_change_state(state_instance_without_data):
-    state_instance_without_data.change_state('created', True)
-
-    assert state_instance_without_data.created
-
-
-def test_change_state_raises(state_instance_without_data):
+def test_change_state_raises(state_instance):
     with pytest.raises(state.InvalidState):
-        state_instance_without_data.change_state('invalid-state', True)
+        state_instance.change_state('invalid-state', True)
 
 
-def test_change_state_persists(state_instance_without_data):
-    assert not state_instance_without_data.created
+def test_get_data_loads_existing_state_file(temp_dir, molecule_data):
+    molecule_directory = pytest.helpers.molecule_directory()
+    scenario_directory = os.path.join(molecule_directory, 'default')
+    molecule_file = pytest.helpers.get_molecule_file(scenario_directory)
+    ephemeral_directory = pytest.helpers.molecule_ephemeral_directory()
+    state_file = os.path.join(ephemeral_directory, 'state.yml')
 
-    state_instance_without_data.change_state('created', True)
-    assert state_instance_without_data.created
+    os.makedirs(ephemeral_directory)
 
-    with open(state_instance_without_data._state_file) as stream:
-        d = yaml.safe_load(stream)
+    data = {'converged': False, 'created': True, 'driver': None}
+    util.write_file(state_file, util.safe_dump(data))
 
-        assert d.get('created')
+    pytest.helpers.write_molecule_file(molecule_file, molecule_data)
+    c = config.Config(molecule_file)
+    s = state.State(c)
 
-
-def test_get_data():
-    # Already tested through the property tests
-    pass
-
-
-def test_get_data_loads_existing_state_file(state_instance_with_data):
-
-    assert state_instance_with_data.created
+    assert not s.converged
+    assert s.created
+    assert not s.driver

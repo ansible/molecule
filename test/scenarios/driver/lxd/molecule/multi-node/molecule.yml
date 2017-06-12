@@ -1,0 +1,27 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: lxd
+lint:
+  name: ansible-lint
+platforms:
+  - name: instance-1
+    groups:
+      - foo
+      - bar
+  - name: instance-2
+    groups:
+      - foo
+      - baz
+provisioner:
+  name: ansible
+  playbooks:
+    setup: ../../../../../resources/playbooks/lxd/create.yml
+    teardown: ../../../../../resources/playbooks/lxd/destroy.yml
+  env:
+    ANSIBLE_ROLES_PATH: ../../../../../../resources/roles/
+scenario:
+  name: multi-node
+verifier:
+  name: testinfra

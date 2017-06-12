@@ -1,0 +1,18 @@
+---
+dependency:
+  name: {{ cookiecutter.dependency_name }}
+driver:
+  name: {{ cookiecutter.driver_name }}
+lint:
+  name: {{ cookiecutter.lint_name }}
+platforms:
+  - name: instance-1
+    image: molecule_local/centos:7
+    command: sleep infinity
+    dockerfile: Dockerfile
+provisioner:
+  name: {{ cookiecutter.provisioner_name }}
+scenario:
+  name: {{ cookiecutter.scenario_name }}
+verifier:
+  name: {{ cookiecutter.verifier_name }}

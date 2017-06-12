@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -20,52 +20,53 @@
 
 import click
 
-from molecule import util
+from molecule import logger
 from molecule.command import base
-from molecule.dependency import ansible_galaxy
-from molecule.dependency import shell
+
+LOG = logger.get_logger(__name__)
 
 
 class Dependency(base.Base):
-    def execute(self, exit=True):
+    def execute(self):
         """
-        Execute the actions that should run prior to a converge and return a
-        tuple.
+        Execute the actions necessary to perform a `molecule dependency` and
+        returns None.
 
-        :param exit: (Unused) Provided to complete method signature.
-        :return: Return a tuple provided by :meth:`.AnsiblePlaybook.execute`.
+        Target the default scenario:
+
+        >>> molecule dependency
+
+        Targeting a specific scenario:
+
+        >>> molecule dependency --scenario-name foo
+
+        Executing with `debug`:
+
+        >>> molecule --debug dependency
+
+        :return: None
         """
-        debug = self.args.get('debug')
-        if self.molecule.state.installed_deps:
-            return (None, None)
-        dependency_name = self.molecule.dependency
-        if dependency_name == 'galaxy':
-            dd = self.molecule.config.config.get('dependency')
-            if dd.get('requirements_file'):
-                msg = "Downloading dependencies with '{}'...".format(
-                    dependency_name)
-                util.print_info(msg)
-                g = ansible_galaxy.AnsibleGalaxy(
-                    self.molecule.config.config, debug=debug)
-                g.execute()
-                self.molecule.state.change_state('installed_deps', True)
-        elif dependency_name == 'shell':
-            dd = self.molecule.config.config.get('dependency')
-            if dd.get('command'):
-                msg = "Downloading dependencies with '{}'...".format(
-                    dependency_name)
-                util.print_info(msg)
-                s = shell.Shell(self.molecule.config.config, debug=debug)
-                s.execute()
-                self.molecule.state.change_state('installed_deps', True)
+        msg = 'Scenario: [{}]'.format(self._config.scenario.name)
+        LOG.info(msg)
+        msg = 'Dependency: [{}]'.format(self._config.dependency.name)
+        LOG.info(msg)
 
-        return (None, None)
+        self._config.dependency.execute()
 
 
 @click.command()
 @click.pass_context
-def dependency(ctx):  # pragma: no cover
-    """ Perform dependent actions on the current role. """
-    d = Dependency(ctx.obj.get('args'), {})
-    d.execute
-    util.sysexit(d.execute()[0])
+@click.option(
+    '--scenario-name',
+    default='defalt',
+    help='Name of the scenario to target. (default)')
+def dependency(ctx, scenario_name):  # pragma: no cover
+    """ Mange the role's dependencies. """
+    args = ctx.obj.get('args')
+    command_args = {
+        'subcommand': __name__,
+        'scenario_name': scenario_name,
+    }
+
+    for c in base.get_configs(args, command_args):
+        Dependency(c).execute()

@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -18,21 +18,74 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
+
 import abc
 
 
 class Base(object):
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, molecule):
+    def __init__(self, config):
         """
         Base initializer for all :ref:`Verifier` classes.
 
-        :param molecule: An instance of molecule.
+        :param config: An instance of a Molecule config.
         :returns: None
         """
-        self._molecule = molecule
+        self._config = config
 
     @abc.abstractproperty
-    def execute(self):  # pragma: no cover
+    def name(self):  # pragma: no cover
+        """
+        Name of the verifier and returns a string.
+
+        :returns: str
+        """
         pass
+
+    @abc.abstractproperty
+    def default_options(self):  # pragma: no cover
+        """
+        Default CLI arguments provided to `cmd` and returns a dict.
+
+        :return: dict
+        """
+        pass
+
+    @abc.abstractproperty
+    def default_env(self):  # pragma: no cover
+        """
+        Default env variables provided to `cmd` and returns a dict.
+
+        :return: dict
+        """
+        pass
+
+    @abc.abstractmethod
+    def execute(self):  # pragma: no cover
+        """
+        Executes `cmd` and returns None.
+
+        :return: None
+        """
+        pass
+
+    @property
+    def enabled(self):
+        return self._config.config['verifier']['enabled']
+
+    @property
+    def directory(self):
+        return os.path.join(self._config.scenario.directory,
+                            self._config.config['verifier']['directory'])
+
+    @property
+    def options(self):
+        return self._config.merge_dicts(
+            self.default_options, self._config.config['verifier']['options'])
+
+    @property
+    def env(self):
+        return self._config.merge_dicts(self.default_env,
+                                        self._config.config['verifier']['env'])

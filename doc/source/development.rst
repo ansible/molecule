@@ -16,9 +16,8 @@ Release Engineering
 Pre-release
 -----------
 
-* Update version in `doc/source/conf.py`.
-* Edit the `CHANGELOG`_.
-* Ensure tox tests pass.
+* Edit the :ref:`changelog`.
+* Follow the :ref:`testing` steps.
 
 Release
 -------
@@ -28,44 +27,33 @@ Tag the release and push to github.com
 
 .. code-block:: bash
 
-  $ git tag -a 1.0.5 -m "Version 1.0.5"
-  $ git push origin 1.0.5
+    $ git tag 2.0.0
+    $ git push --tags
 
 Upload to `PyPI`_
 ^^^^^^^^^^^^^^^^^
 
-* Install `twine`_ using `pip`.
-* You will require credentials to upload to `PyPI`_. Create a `~/.pypirc`:
+* Install `Twine`_ using `pip`.
 
-      .. code-block:: ini
+    .. code-block:: bash
 
-         [distutils]
-         index-servers = pypi
-         [pypi]
-         repository = https://pypi.python.org/pypi/molecule
-         username = XXXXXXX
-         password = XXXXXXX
+        $ pip install twine
 
 * Upload to  `PyPI`_.
 
-      .. code-block:: bash
+    .. code-block:: bash
 
-         $ cd /path/to/molecule
-         $ rm -rf build/ dist/
-         $ python setup.py sdist bdist_wheel
-         $ twine upload dist/*
-
-
-Update Molecule.ReadTheDocs.org
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Docs are updated through a github webhook.
+        $ cd /path/to/molecule
+        $ rm -rf build/ dist/
+        $ python setup.py sdist bdist_wheel
+        $ twine upload dist/*
+        $ rm -rf build/ dist/
 
 Post-release
 ------------
 
 * Comment/close any relevant `Issues`_.
-* Announce the release.
+* Announce the release in `#molecule-users`.
 
 Roadmap
 =======
@@ -74,6 +62,4 @@ Roadmap
 
 .. _`PyPI`: https://pypi.python.org/pypi/molecule
 .. _`ISSUES`: https://github.com/metacloud/molecule/issues
-.. _`CHANGELOG`: https://github.com/metacloud/molecule/blob/master/CHANGELOG.rst
-.. _`install from source`: https://molecule.readthedocs.io/en/latest/usage.html#installing-from-source
-.. _`twine`: https://pypi.python.org/pypi/twine
+.. _`Twine`: https://pypi.python.org/pypi/twine

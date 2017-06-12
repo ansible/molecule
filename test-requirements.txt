@@ -1,10 +1,14 @@
-docker==2.2.1
-gilt-python
+boto
+docker-py
+# lxc-python2
 mock
-pytest
+# pytest==3.1.0 issues with pytest-verbose-parametrize
+pytest==3.0.7
 pytest-cov
 pytest-helpers-namespace
 pytest-mock
-python-vagrant==0.5.14
-shade==1.19.0
+pytest-verbose-parametrize
+python-vagrant
+shade
 wheel
+yapf==0.16.2

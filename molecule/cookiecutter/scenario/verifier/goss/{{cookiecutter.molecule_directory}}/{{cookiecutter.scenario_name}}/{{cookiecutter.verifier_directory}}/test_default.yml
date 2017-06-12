@@ -1,0 +1,49 @@
+---
+# This is an example playbook to execute goss tests.
+# Tests need distributed to the appropriate ansible host/groups
+# prior to execution by `goss validate`.
+#
+# The goss ansible module is installed with molecule.  The ANSIBLE_LIBRARY
+# path is updated appropriately on `molecule verify`.
+
+# Details about ansible module:
+#  - https://github.com/indusbox/goss-ansible
+
+{% raw -%}
+- hosts: all
+  vars:
+    goss_version: v0.3.2
+    goss_arch: amd64
+    goss_dst: /usr/local/bin/goss
+    goss_sha256sum: 2f6727375db2ea0f81bee36e2c5be78ab5ab8d5981f632f761b25e4003e190ec
+    goss_url: "https://github.com/aelsabbahy/goss/releases/download/{{ goss_version }}/goss-linux-{{ goss_arch }}"
+    goss_test_directory: /tmp
+    goss_output_directory: "{{ goss_test_directory }}"
+    goss_format: documentation
+  tasks:
+    - name: Download and install Goss
+      get_url:
+        url: "{{ goss_url }}"
+        dest: "{{ goss_dst }}"
+        sha256sum: "{{ goss_sha256sum }}"
+        mode: 0755
+
+    - name: Copy Goss tests to remote
+      copy:
+        src: "{{ playbook_dir }}/../files/goss/{{ item }}"
+        dest: "/{{ goss_test_directory }}/{{ item }}"
+      with_items:
+        - molecule.yml
+
+    - name: Execute Goss tests
+      goss:
+        path: "{{ goss_test_directory }}/{{ item }}"
+        format: "{{ goss_format }}"
+        output_file: "{{ goss_output_directory }}/{{ item }}.txt"
+      with_items:
+        - molecule.yml
+
+    - name: Display details about goss results
+      debug:
+        msg: "Goss test results are in folder: {{ goss_output_directory }}"
+{% endraw -%}

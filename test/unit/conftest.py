@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -18,15 +18,18 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import functools
 import os
-import os.path
-import shutil
 
 import pytest
 
+from molecule import util
 from molecule import config
-from molecule import core
-from molecule import state
+
+
+@pytest.helpers.register
+def write_molecule_file(filename, data):
+    util.write_file(filename, util.safe_dump(data))
 
 
 @pytest.helpers.register
@@ -37,480 +40,144 @@ def os_split(s):
     return os_split(rest) + (tail, )
 
 
-@pytest.fixture()
-def temp_files(tmpdir, request):
-    def wrapper(fixtures=[]):
-        d = tmpdir.mkdir(pytest.helpers.random_string())
-        confs = []
-        for index, fixture in enumerate(fixtures):
-            c = d.join(os.extsep.join((fixture, 'yml')))
-            c.write(request.getfuncargvalue(fixtures[index]))
-            confs.append(c.strpath)
-
-        def cleanup():
-            shutil.rmtree(d.strpath)
-
-        request.addfinalizer(cleanup)
-
-        return confs
-
-    return wrapper
-
-
-@pytest.fixture()
-def molecule_instance(temp_dir, temp_files, state_path_without_data):
-    c = temp_files(fixtures=['molecule_vagrant_v1_config'])
-    m = core.Molecule(config.ConfigV1(configs=c), {})
-    m.state = state.State(state_file=state_path_without_data)
-    m.main()
-
-    return m
-
-
-@pytest.fixture()
-def molecule_instance_with_env_expansion(temp_dir, temp_files,
-                                         state_path_without_data):
-    os.environ['MOLECULE_TEST_01'] = 'vagrant'
-    os.environ['MOLECULE_TEST_02'] = 'ubuntu'
-    os.environ['MOLECULE_TEST_03'] = 'trusty64'
-    os.environ['MOLECULE_TEST_04'] = 'example1'
-    os.environ['MOLECULE_TEST_05'] = 'append_platform_to_hostname'
-    c = temp_files(fixtures=['molecule_vagrant_v1_config_using_env'])
-    m = core.Molecule(config.ConfigV1(configs=c), {})
-    m.state = state.State(state_file=state_path_without_data)
-    m.main()
-
-    return m
-
-
-@pytest.fixture()
-def docker_molecule_instance(temp_dir, temp_files, state_path_without_data):
-    c = temp_files(fixtures=['molecule_docker_v1_config'])
-    m = core.Molecule(config.ConfigV1(configs=c), {})
-    m.state = state.State(state_file=state_path_without_data)
-    m.main()
-
-    return m
-
-
-@pytest.fixture()
-def docker_cluster_molecule_instance(temp_dir, temp_files,
-                                     state_path_without_data):
-    c = temp_files(fixtures=['molecule_docker_cluster_v1_config'])
-    m = core.Molecule(config.ConfigV1(configs=c), {})
-    m.state = state.State(state_file=state_path_without_data)
-    m.main()
-
-    return m
-
-
-@pytest.fixture()
-def openstack_molecule_instance(temp_dir, temp_files, state_path_without_data):
-    c = temp_files(fixtures=['molecule_openstack_v1_config'])
-    m = core.Molecule(config.ConfigV1(configs=c), {})
-    m.state = state.State(state_file=state_path_without_data)
-    m.main()
-
-    return m
-
-
-@pytest.fixture()
-def vagrant_molecule_instance(temp_dir, temp_files, state_path_without_data):
-    c = temp_files(fixtures=['molecule_vagrant_v1_config'])
-    m = core.Molecule(config.ConfigV1(configs=c), {})
-    m.state = state.State(state_file=state_path_without_data)
-    m.main()
-
-    return m
-
-
-@pytest.fixture()
-def molecule_vagrant_v1_config(molecule_v1_section_data,
-                               vagrant_v1_section_data,
-                               ansible_v1_section_data):
-    return reduce(lambda x, y: config.merge_dicts(x, y), [
-        molecule_v1_section_data, vagrant_v1_section_data,
-        ansible_v1_section_data
-    ])
-
-
-@pytest.fixture()
-def molecule_vagrant_v1_config_using_env(molecule_v1_section_data,
-                                         vagrant_v1_section_data_using_env,
-                                         ansible_v1_section_data):
-    return reduce(lambda x, y: config.merge_dicts(x, y), [
-        molecule_v1_section_data, vagrant_v1_section_data_using_env,
-        ansible_v1_section_data
-    ])
-
-
-@pytest.fixture()
-def molecule_docker_v1_config(molecule_v1_section_data, docker_v1_section_data,
-                              ansible_v1_section_data):
-    return reduce(lambda x, y: config.merge_dicts(x, y), [
-        molecule_v1_section_data, docker_v1_section_data,
-        ansible_v1_section_data
-    ])
-
-
-@pytest.fixture()
-def molecule_docker_cluster_v1_config(molecule_v1_section_data,
-                                      docker_cluster_v1_section_data,
-                                      ansible_v1_section_data):
-    return reduce(lambda x, y: config.merge_dicts(x, y), [
-        molecule_v1_section_data, docker_cluster_v1_section_data,
-        ansible_v1_section_data
-    ])
-
-
-@pytest.fixture()
-def molecule_openstack_v1_config(molecule_v1_section_data,
-                                 openstack_v1_section_data,
-                                 ansible_v1_section_data):
-    return reduce(lambda x, y: config.merge_dicts(x, y), [
-        molecule_v1_section_data, openstack_v1_section_data,
-        ansible_v1_section_data
-    ])
-
-
-@pytest.fixture()
-def molecule_v1_section_data(state_path_without_data):
+@pytest.fixture
+def molecule_dependency_galaxy_section_data():
     return {
-        'molecule': {
-            'ignore_paths': ['.git', '.vagrant', '.molecule'],
-            'serverspec_dir': 'spec',
-            'testinfra_dir': 'tests',
-            'goss_dir': 'tests',
-            'goss_playbook': 'test_default.yml',
-            'molecule_dir': 'test',
-            'state_file': state_path_without_data,
-            'vagrantfile_file': 'vagrantfile_file',
-            'rakefile_file': 'rakefile_file',
-            'vagrantfile_template': 'vagrantfile.j2',
-            'raw_ssh_args': [
-                '-o StrictHostKeyChecking=no',
-                '-o UserKnownHostsFile=/dev/null'
-            ],
-            'test': {
-                'sequence': [
-                    'destroy', 'dependency', 'syntax', 'create', 'converge',
-                    'idempotence', 'verify'
-                ]
-            }
-        }
-    }
-
-
-@pytest.fixture()
-def vagrant_v1_section_data():
-    return {
-        'vagrant': {
-            'platforms': [{
-                'name': 'ubuntu',
-                'box': 'ubuntu/trusty64'
-            }, {
-                'name': 'centos7',
-                'box': 'centos/7'
-            }],
-            'providers': [{
-                'name': 'virtualbox',
-                'type': 'virtualbox'
-            }],
-            'instances': [{
-                'name': 'aio-01',
-                'ansible_groups': ['example', 'example1'],
-                'options': {
-                    'append_platform_to_hostname': True
-                }
-            }, {
-                'name': 'aio-02',
-                'ansible_groups': ['example', 'example1'],
-                'options': {
-                    'append_platform_to_hostname': True
-                }
-            }]
-        }
-    }
-
-
-@pytest.fixture()
-def vagrant_v1_section_data_using_env():
-    return {
-        '${MOLECULE_TEST_01}': {
-            'platforms': [{
-                'name': 'ubuntu',
-                'box': '${MOLECULE_TEST_02}/${MOLECULE_TEST_03}'
-            }, {
-                'name': 'centos7',
-                'box': 'centos/7'
-            }],
-            'providers': [{
-                'name': 'virtualbox',
-                'type': 'virtualbox'
-            }],
-            'instances': [{
-                'name': 'aio-01',
-                'ansible_groups': ['example', '${MOLECULE_TEST_04}'],
-                'options': {
-                    '${MOLECULE_TEST_05}': True
-                }
-            }, {
-                'name': 'aio-02',
-                'ansible_groups': ['example', 'example1'],
-                'options': {
-                    'append_platform_to_hostname': True
-                }
-            }]
-        }
-    }
-
-
-@pytest.fixture()
-def docker_v1_section_data():
-    return {
-        'docker': {
-            'containers': [{
-                'name': 'test1',
-                'image': 'ubuntu',
-                'image_version': 'latest',
-                'port_bindings': {
-                    80: 80,
-                    443: 443
-                },
-                'environment': {
-                    'FOO': 'BAR',
-                    'BAZ': 'QUX'
-                },
-                'volume_mounts': ['/tmp/test1:/inside:rw'],
-                'cap_add': ['SYS_ADMIN', 'SETPCAP'],
-                'cap_drop': ['MKNOD'],
-                'ansible_groups': ['group1'],
-                'network_mode': 'bridge',
-                'options': {
-                    'append_platform_to_hostname': True
-                },
-            }, {
-                'name': 'test2',
-                'image': 'ubuntu',
-                'links': {
-                    'test1': '80',
-                },
-                'image_version': 'latest',
-                'ansible_groups': ['group2'],
-                'network_mode': 'bridge',
-                'command': '/bin/sh',
-                'options': {
-                    'append_platform_to_hostname': True
-                },
-            }, {
-                'name': 'test3',
-                'image': 'ubuntu',
-                'image_version': 'latest',
-                'ansible_groups': ['group1'],
-                'network_mode': 'none',
-                'command': '/bin/sh',
-                'options': {
-                    'append_platform_to_hostname': True
-                },
-            }, {
-                'name': 'test4',
-                'image': 'ubuntu',
-                'image_version': 'latest',
-                'ansible_groups': ['group2'],
-                'network_mode': 'host',
-                'command': '/bin/sh',
-                'options': {
-                    'append_platform_to_hostname': True
-                },
-            }, {
-                'name': 'test5',
-                'image': 'ubuntu',
-                'image_version': 'latest',
-                'ansible_groups': ['group2'],
-                'network_mode': 'host',
-                'command': '/bin/sh',
-                'build_image': False,
-                'options': {
-                    'append_platform_to_hostname': True
-                }
-            }]
-        }
-    }
-
-
-@pytest.fixture()
-def docker_cluster_v1_section_data():
-    return {
-        'docker': {
-            'network': [
-                {
-                    'name': 'docker-cluster-test-nw',
-                    'driver': 'bridge'
-                },
-                {
-                    'name': 'docker-cluster-test-second-nw'
-                },
-            ],
-            'containers': [{
-                'name': 'test1.mycluster',
-                'image': 'ubuntu',
-                'image_version': 'latest',
-                'port_bindings': {
-                    80: 80,
-                    443: 443
-                },
-                'environment': {
-                    'FOO': 'BAR',
-                    'BAZ': 'QUX'
-                },
-                'volume_mounts': ['/tmp/test1:/inside:rw'],
-                'cap_add': ['SYS_ADMIN', 'SETPCAP'],
-                'cap_drop': ['MKNOD'],
-                'ansible_groups': ['group1'],
-                'hostname': 'test1.mycluster',
-                'network_mode': 'docker-cluster-test-nw',
-            }, {
-                'name': 'test2.mycluster',
-                'image': 'ubuntu',
-                'image_version': 'latest',
-                'ansible_groups': ['group2'],
-                'network_mode': 'docker-cluster-test-nw',
-                'command': '/bin/sh',
-                'hostname': 'test2.mycluster',
-                'network_mode': 'docker-cluster-test-nw',
-            }, {
-                'name': 'test3.mycluster',
-                'image': 'ubuntu',
-                'image_version': 'latest',
-                'ansible_groups': ['group1'],
-                'hostname': 'test3.mycluster',
-                'network_mode': 'docker-cluster-test-second-nw',
-                'command': '/bin/sh',
-            }, {
-                'name': 'test4.mycluster',
-                'image': 'ubuntu',
-                'image_version': 'latest',
-                'ansible_groups': ['group2'],
-                'hostname': 'test4.mycluster',
-                'network_mode': 'docker-cluster-test-second-nw',
-                'command': '/bin/sh',
-            }]
-        }
-    }
-
-
-@pytest.fixture()
-def openstack_v1_section_data():
-    return {
-        'openstack': {
-            'instances': [{
-                'name': 'aio-01',
-                'sshuser': 'root',
-                'ansible_groups': ['example', 'example1'],
-                'options': {
-                    'append_platform_to_hostname': True
-                }
-            }]
-        }
-    }
-
-
-@pytest.fixture()
-def ansible_v1_section_data(playbook):
-    return {
-        'ansible': {
-            'timeout': 30,
-            'become': True,
-            'become_user': False,
-            'ask_become_pass': False,
-            'ask_vault_pass': False,
-            'vault_password_file': False,
-            'limit': 'all',
-            'verbose': True,
-            'diff': True,
-            'tags': False,
-            'host_key_checking': False,
-            'raw_ssh_args': [
-                '-o UserKnownHostsFile=/dev/null', '-o IdentitiesOnly=yes',
-                '-o ControlMaster=auto', '-o ControlPersist=60s'
-            ],
-            'config_file': 'config_file',
-            'inventory_file': 'inventory_file',
-            'playbook': playbook,
-            'raw_env_vars': {
-                'FOO': 'bar',
-                'RETRY_FILES_ENABLED': 0,
-            }
-        },
-        'verifier': {
-            'name': 'testinfra',
-            'options': {}
-        },
         'dependency': {
-            'name': 'galaxy',
-            'options': {}
+            'name': 'galaxy'
         },
-        '_disabled': []
     }
-
-
-@pytest.fixture()
-def state_data():
-    return {
-        'converged': None,
-        'created': True,
-        'default_platform': None,
-        'default_provider': None,
-        'driver': None,
-        'hosts': {},
-        'multiple_platforms': None
-    }
-
-
-@pytest.fixture()
-def state_path_with_data(temp_files):
-    return temp_files(fixtures=['state_data'])[0]
-
-
-@pytest.fixture()
-def state_path_without_data(tmpdir, request):
-    d = tmpdir.mkdir(pytest.helpers.random_string())
-    c = d.join(os.extsep.join(('state', 'yml')))
-
-    def cleanup():
-        shutil.rmtree(d.strpath)
-
-    request.addfinalizer(cleanup)
-
-    return c.strpath
-
-
-@pytest.fixture()
-def playbook_data():
-    return [{'hosts': 'all', 'tasks': [{'command': 'echo'}]}]
-
-
-@pytest.fixture()
-def playbook(temp_files):
-    return temp_files(fixtures=['playbook_data'])[0]
-
-
-@pytest.fixture()
-def patched_ansible_playbook(mocker):
-    m = mocker.patch('molecule.ansible_playbook.AnsiblePlaybook.execute')
-    m.return_value = (None, None)
-
-    return m
-
-
-@pytest.fixture()
-def patched_ansible_galaxy(patched_run_command):
-    return patched_run_command
 
 
 @pytest.fixture
-def patched_print_info(mocker):
-    return mocker.patch('molecule.util.print_info')
+def molecule_driver_section_data():
+    return {
+        'driver': {
+            'name': 'docker',
+        },
+    }
+
+
+@pytest.fixture
+def molecule_driver_static_section_data():
+    return {
+        'driver': {
+            'name': 'static'
+        },
+    }
+
+
+@pytest.fixture
+def molecule_lint_section_data():
+    return {
+        'lint': {
+            'name': 'ansible-lint'
+        },
+    }
+
+
+@pytest.fixture
+def molecule_platforms_section_data():
+    return {
+        'platforms': [{
+            'name': 'instance-1',
+            'groups': ['foo', 'bar'],
+            'children': ['child1'],
+        }, {
+            'name': 'instance-2',
+            'groups': ['baz', 'foo'],
+            'children': ['child2'],
+        }],
+    }
+
+
+@pytest.fixture
+def molecule_provisioner_section_data():
+    return {
+        'provisioner': {
+            'name': 'ansible'
+        },
+    }
+
+
+@pytest.fixture
+def molecule_scenario_section_data():
+    return {
+        'scenario': {
+            'name': 'default'
+        },
+    }
+
+
+@pytest.fixture
+def molecule_verifier_section_data():
+    return {
+        'verifier': {
+            'name': 'testinfra'
+        },
+    }
+
+
+@pytest.fixture
+def molecule_data(
+        molecule_dependency_galaxy_section_data, molecule_driver_section_data,
+        molecule_lint_section_data, molecule_platforms_section_data,
+        molecule_provisioner_section_data, molecule_scenario_section_data,
+        molecule_verifier_section_data):
+
+    fixtures = [
+        molecule_dependency_galaxy_section_data, molecule_driver_section_data,
+        molecule_lint_section_data, molecule_platforms_section_data,
+        molecule_provisioner_section_data, molecule_scenario_section_data,
+        molecule_verifier_section_data
+    ]
+
+    return functools.reduce(lambda x, y: config.merge_dicts(x, y), fixtures)
+
+
+@pytest.fixture
+def molecule_directory_fixture(temp_dir):
+    return pytest.helpers.molecule_directory()
+
+
+@pytest.fixture
+def molecule_scenario_directory_fixture(molecule_directory_fixture):
+    path = pytest.helpers.molecule_scenario_directory()
+    if not os.path.isdir(path):
+        os.makedirs(path)
+
+    return path
+
+
+@pytest.fixture
+def molecule_ephemeral_directory_fixture(molecule_scenario_directory_fixture):
+    path = pytest.helpers.molecule_ephemeral_directory()
+    if not os.path.isdir(path):
+        os.makedirs(path)
+
+
+@pytest.fixture
+def molecule_file_fixture(molecule_scenario_directory_fixture,
+                          molecule_ephemeral_directory_fixture):
+    return pytest.helpers.molecule_file()
+
+
+@pytest.fixture
+def config_instance(molecule_file_fixture, molecule_data):
+    pytest.helpers.write_molecule_file(molecule_file_fixture, molecule_data)
+
+    return config.Config(molecule_file_fixture)
+
+
+# Mocks
+
+
+@pytest.fixture
+def patched_ansible_playbook(mocker):
+    m = mocker.patch('molecule.provisioner.ansible_playbook.AnsiblePlaybook')
+    m.return_value.execute.return_value = b'patched-ansible-playbook-stdout'
+
+    return m
 
 
 @pytest.fixture
@@ -519,10 +186,41 @@ def patched_print_debug(mocker):
 
 
 @pytest.fixture
-def patched_print_error(mocker):
-    return mocker.patch('molecule.util.print_error')
+def patched_logger_info(mocker):
+    return mocker.patch('logging.Logger.info')
 
 
-@pytest.fixture()
+@pytest.fixture
+def patched_logger_warn(mocker):
+    return mocker.patch('logging.Logger.warn')
+
+
+@pytest.fixture
+def patched_logger_error(mocker):
+    return mocker.patch('logging.Logger.error')
+
+
+@pytest.fixture
+def patched_logger_critical(mocker):
+    return mocker.patch('logging.Logger.critical')
+
+
+@pytest.fixture
+def patched_logger_success(mocker):
+    return mocker.patch('molecule.logger.CustomLogger.success')
+
+
+@pytest.fixture
 def patched_run_command(mocker):
-    return mocker.patch('molecule.util.run_command')
+    m = mocker.patch('molecule.util.run_command')
+    m.return_value = mocker.Mock(stdout='patched-run-command-stdout')
+
+    return m
+
+
+@pytest.fixture
+def patched_ansible_converge(mocker):
+    m = mocker.patch('molecule.provisioner.ansible.Ansible.converge')
+    m.return_value = 'patched-ansible-converge-stdout'
+
+    return m

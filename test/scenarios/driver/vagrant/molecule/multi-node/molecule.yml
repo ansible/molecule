@@ -1,0 +1,35 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: vagrant
+lint:
+  name: ansible-lint
+platforms:
+  - name: instance-1
+    interfaces:
+      - auto_config: true
+        network_name: private_network
+        type: dhcp
+    groups:
+      - foo
+      - bar
+  - name: instance-2
+    interfaces:
+      - auto_config: true
+        network_name: private_network
+        type: dhcp
+    groups:
+      - foo
+      - baz
+provisioner:
+  name: ansible
+  playbooks:
+    setup: ../../../../../resources/playbooks/vagrant/create.yml
+    teardown: ../../../../../resources/playbooks/vagrant/destroy.yml
+  env:
+    ANSIBLE_ROLES_PATH: ../../../../../../resources/roles/
+scenario:
+  name: multi-node
+verifier:
+  name: testinfra

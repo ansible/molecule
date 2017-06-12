@@ -1,120 +1,228 @@
-*****
 Usage
-*****
+=====
 
-In the contexts of operations and virtualization, the word 'provision' tends to
-refer to the initial creation of machines by allocating (hardware) resources;
-in contrast, in the context of configuration management (and in vagrant),
-'provisioning' refers to taking the (virtual) machine from an initial boot to
-having run the configuration management system (Ansible, Salt, Puppet, Chef,
-CFEngine or just shell). Molecule uses the term 'converge' (as does Test
-Kitchen) to refer to this latter meaning of 'provisioning' (i.e. "Run Ansible
-on the new test VM").
+Quick Start
+^^^^^^^^^^^
 
-It is very simple to run tests using the Molecule command from the working
-directory of your role.
-
-See ``molecule --help``
-
-The exact sequence of commands run during the ``test`` command can be
-configured in the `test['sequence']` config option.
-
-.. code-block:: yaml
-
-  molecule:
-    test:
-      sequence:
-        - destroy
-        - syntax
-        - create
-        - converge
-        - idempotence
-        - verify
-
-The ``test`` command will destroy the instance(s) after successful completion
-of all test sequences.  The ``test`` command supports a ``--destroy`` argument
-that will accept the values `always` (default), `never`, and `passing`.  Use
-these to tune the behavior for various use cases.
-
-For example, ``--destroy=always`` might be useful when using Molecule for
-CI/CD.
-
-Continuous integration
-======================
-
-Travis CI
----------
-
-`Travis`_ is a CI platform, which can be used to test Ansible roles.
-
-A ``.travis.yml`` testing a role named foo1 with the Docker driver.
-
-.. code-block:: yaml
-
-  sudo: required
-  language: python
-  services:
-    - docker
-  before_install:
-    - sudo apt-get -qq update
-    - sudo apt-get install -o Dpkg::Options::="--force-confold" --force-yes -y docker-engine
-  install:
-    - pip install molecule
-    # - pip install required driver (e.g. docker, python-vagrant, shade)
-  script:
-    - molecule test
-
-A ``.travis.yml`` using `Tox`_ as described below.
-
-.. code-block:: yaml
-
-  sudo: required
-  language: python
-  services:
-    - docker
-  before_install:
-    - sudo apt-get -qq update
-    - sudo apt-get install -o Dpkg::Options::="--force-confold" --force-yes -y docker-engine
-  install:
-    - pip install tox-travis
-  script:
-    - tox
-
-Tox
----
-
-`Tox`_ is a generic virtualenv management, and test command line tool.  `Tox`_
-can be used in conjunction with `Factors`_ and Molecule, to perform scenario
-tests.
-
-To test the role against multiple versions of Ansible.
-
-.. code-block:: ini
-
-  [tox]
-  minversion = 1.8
-  envlist = py{27}-ansible{20,21,22}
-  skipsdist = true
-
-  [testenv]
-  passenv = *
-  deps =
-      -rrequirements.txt
-      ansible20: ansible==2.0.2.0
-      ansible21: ansible==2.1.2.0
-      ansible22: ansible==2.2.0.0
-  commands =
-      molecule test
-
-To view the factor generated tox environments.
+Install Molecule using pip:
 
 .. code-block:: bash
 
-  [jodewey:~/git/ansible-etcd] master+ ± tox -l
-  py27-ansible20
-  py27-ansible21
-  py27-ansible22
+    $ pip install ansible
+    $ pip install docker-py
+    $ pip install molecule --pre
 
-.. _`Travis`: https://travis-ci.org/
-.. _`Tox`: https://tox.readthedocs.io/en/latest/
-.. _`Factors`: http://tox.readthedocs.io/en/latest/config.html#factors-and-factor-conditional-settings
+Create a new role:
+
+.. code-block:: bash
+
+    $ molecule init role --role-name foo
+    --> Initializing new role foo...
+    Initialized role in /tmp/foo successfully.
+
+Or Create a new scenario in an existing role:
+
+.. code-block:: bash
+
+    $ cd foo
+    $ molecule init scenario --role-name foo --scenario-name new-scenario
+    --> Initializing new scenario new-scenario...
+    Initialized scenario in /tmp/foo/molecule/new-scenario successfully.
+
+1. Update the role with needed functionality and tests.
+2. Install the dependencies by following the instructions in `INSTALL.rst`
+   included in the role's scenario directory.
+3. Now test it.
+
+.. code-block:: bash
+
+    $ cd foo
+    $ molecule test
+    --> Scenario: [default]
+    --> Provisioner: [ansible]
+    --> Playbook: [destroy.yml]
+
+        PLAY [localhost] ***************************************************************
+
+        TASK [setup] *******************************************************************
+        ok: [localhost]
+
+        TASK [Destroy molecule instance(s)] ********************************************
+        ok: [localhost] => (item={'name': u'instance-1'})
+
+        PLAY RECAP *********************************************************************
+        localhost                  : ok=2    changed=0    unreachable=0    failed=0
+
+    --> Scenario: [default]
+    --> Dependency: [galaxy]
+    Skipping, missing the requirements file.
+    --> Scenario: [default]
+    --> Provisioner: [ansible]
+    --> Syntax Verification of Playbook: [playbook.yml]
+
+        playbook: /Users/jodewey/git/molecule_2/test/scenarios/docker/foo/molecule/default/playbook.yml
+    --> Scenario: [default]
+    --> Provisioner: [ansible]
+    --> Playbook: [create.yml]
+
+        PLAY [localhost] ***************************************************************
+
+        TASK [setup] *******************************************************************
+        ok: [localhost]
+
+        TASK [Build an Ansible compatible image] ***************************************
+        ok: [localhost]
+
+        TASK [Create molecule instance(s)] *********************************************
+        changed: [localhost] => (item={'name': u'instance-1'})
+
+        PLAY RECAP *********************************************************************
+        localhost                  : ok=3    changed=1    unreachable=0    failed=0
+
+    --> Scenario: [default]
+    --> Provisioner: [ansible]
+    --> Playbook: [playbook.yml]
+
+        PLAY [all] *********************************************************************
+
+        TASK [setup] *******************************************************************
+        ok: [instance-1-default]
+
+        PLAY RECAP *********************************************************************
+        instance-1-default         : ok=1    changed=0    unreachable=0    failed=0
+
+    --> Scenario: [default]
+    --> Provisioner: [ansible]
+    --> Idempotence Verification of Playbook: [playbook.yml]
+    Idempotence completed successfully.
+    --> Scenario: [default]
+    --> Lint: [ansible-lint]
+    Lint completed successfully.
+    --> Scenario: [default]
+    --> Verifier: [testinfra]
+    --> Executing flake8 on files found in /Users/jodewey/git/molecule_2/test/scenarios/docker/foo/molecule/default/tests/...
+    --> Executing testinfra tests found in /Users/jodewey/git/molecule_2/test/scenarios/docker/foo/molecule/default/tests/...
+        ============================= test session starts ==============================
+        platform darwin -- Python 2.7.12, pytest-3.0.5, py-1.4.32, pluggy-0.4.0
+        rootdir: /Users/jodewey/git/molecule_2, inifile: pytest.ini
+        plugins: testinfra-1.5.1, mock-1.5.0, helpers-namespace-2016.7.10, cov-2.4.0
+    collected 1 itemss
+
+        tests/test_default.py .
+
+        ============================ pytest-warning summary ============================
+        WP1 None Module already imported so can not be re-written: testinfra
+        ================= 1 passed, 1 pytest-warnings in 0.64 seconds ==================
+    Verifier completed successfully.
+    --> Scenario: [default]
+    --> Provisioner: [ansible]
+    --> Playbook: [destroy.yml]
+
+        PLAY [localhost] ***************************************************************
+
+        TASK [setup] *******************************************************************
+        ok: [localhost]
+
+        TASK [Destroy molecule instance(s)] ********************************************
+        changed: [localhost] => (item={'name': u'instance-1'})
+
+        PLAY RECAP *********************************************************************
+        localhost                  : ok=2    changed=1    unreachable=0    failed=0
+
+Check
+^^^^^
+
+.. autoclass:: molecule.command.check.Check
+   :undoc-members:
+   :members: execute
+
+Converge
+^^^^^^^^
+
+Converge will execute the sequences necessary to converge the instances.
+
+.. autoclass:: molecule.command.converge.Converge
+   :undoc-members:
+   :members: execute
+
+Create
+^^^^^^
+
+.. autoclass:: molecule.command.create.Create
+   :undoc-members:
+   :members: execute
+
+Dependency
+^^^^^^^^^^
+
+.. autoclass:: molecule.command.dependency.Dependency
+   :undoc-members:
+   :members: execute
+
+Destroy
+^^^^^^^
+
+.. autoclass:: molecule.command.destroy.Destroy
+   :undoc-members:
+   :members: execute
+
+Idempotence
+^^^^^^^^^^^
+
+.. autoclass:: molecule.command.idempotence.Idempotence
+   :undoc-members:
+   :members: execute
+
+Init
+^^^^
+
+.. automethod:: molecule.command.init._init_new_role
+
+.. automethod:: molecule.command.init._init_new_scenario
+
+.. automethod:: molecule.command.init._init_template
+
+Lint
+^^^^
+
+.. autoclass:: molecule.command.lint.Lint
+   :undoc-members:
+   :members: execute
+
+List
+^^^^
+
+.. autoclass:: molecule.command.list.List
+   :undoc-members:
+   :members: execute
+
+Login
+^^^^^
+
+.. autoclass:: molecule.command.login.Login
+   :undoc-members:
+   :members: execute
+
+Syntax
+^^^^^^
+
+.. autoclass:: molecule.command.syntax.Syntax
+   :undoc-members:
+   :members: execute
+
+Test
+^^^^
+
+Test will execute the sequences necessary to test the instances.
+
+.. autoclass:: molecule.command.test.Test
+   :undoc-members:
+   :members: execute
+
+Verify
+^^^^^^
+
+.. autoclass:: molecule.command.verify.Verify
+   :undoc-members:
+   :members: execute
+

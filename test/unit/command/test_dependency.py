@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -21,52 +21,15 @@
 from molecule.command import dependency
 
 
-def test_execute(patched_ansible_galaxy, patched_print_info,
-                 molecule_instance):
-    molecule_instance.config.config['dependency']['requirements_file'] = True
-
-    d = dependency.Dependency({}, {}, molecule_instance)
+def test_execute(mocker, patched_logger_info, patched_ansible_galaxy,
+                 config_instance):
+    d = dependency.Dependency(config_instance)
     d.execute()
+    x = [
+        mocker.call('Scenario: [default]'),
+        mocker.call('Dependency: [galaxy]')
+    ]
 
-    msg = "Downloading dependencies with 'galaxy'..."
-    patched_print_info.assert_called_once_with(msg)
+    assert x == patched_logger_info.mock_calls
 
-    patched_ansible_galaxy.assert_called_once()
-    assert molecule_instance.state.installed_deps
-
-
-def test_execute_does_not_install_when_installed(patched_ansible_galaxy,
-                                                 molecule_instance):
-    molecule_instance.config.config['dependency']['requirements_file'] = True
-    molecule_instance.state.change_state('installed_deps', True)
-
-    d = dependency.Dependency({}, {}, molecule_instance)
-    d.execute()
-
-    assert not patched_ansible_galaxy.called
-
-
-def test_execute_shell(patched_shell, patched_print_info, molecule_instance):
-    molecule_instance.dependency = 'shell'
-    molecule_instance.config.config['dependency']['command'] = True
-
-    d = dependency.Dependency({}, {}, molecule_instance)
-    d.execute()
-
-    msg = "Downloading dependencies with 'shell'..."
-    patched_print_info.assert_called_once_with(msg)
-
-    patched_shell.assert_called_once_with()
-    assert molecule_instance.state.installed_deps
-
-
-def test_execute_shell_does_not_install_when_installed(patched_shell,
-                                                       molecule_instance):
-    molecule_instance.dependency = 'shell'
-    molecule_instance.config.config['dependency']['command'] = True
-    molecule_instance.state.change_state('installed_deps', True)
-
-    d = dependency.Dependency({}, {}, molecule_instance)
-    d.execute()
-
-    assert not patched_shell.called
+    patched_ansible_galaxy.assert_called_once_with()

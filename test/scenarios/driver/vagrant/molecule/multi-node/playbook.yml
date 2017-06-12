@@ -1,0 +1,20 @@
+---
+- hosts: all
+  become: yes
+  roles:
+    - molecule
+
+- hosts: bar
+  become: yes
+  roles:
+    - molecule
+
+- hosts: foo
+  become: yes
+  roles:
+    - molecule
+
+- hosts: baz
+  become: yes
+  roles:
+    - molecule

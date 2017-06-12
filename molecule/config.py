@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -18,245 +18,282 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import abc
 import os
-import os.path
 
 import anyconfig
-import m9dicts
 
-from re import sub
-
+from molecule import interpolation
+from molecule import logger
+from molecule import platforms
+from molecule import scenario
+from molecule import state
 from molecule import util
+from molecule.dependency import ansible_galaxy
+from molecule.dependency import gilt
+from molecule.driver import dockr
+from molecule.driver import ec2
+from molecule.driver import lxc
+from molecule.driver import lxd
+from molecule.driver import openstack
+from molecule.driver import static
+from molecule.driver import vagrant
+from molecule.lint import ansible_lint
+from molecule.provisioner import ansible
+from molecule.verifier import goss
+from molecule.verifier import testinfra
 
-PROJECT_CONFIG = 'molecule.yml'
-LOCAL_CONFIG = os.path.expanduser('~/.config/molecule/config.yml')
+LOG = logger.get_logger(__name__)
+MOLECULE_DIRECTORY = 'molecule'
+MOLECULE_EPHEMERAL_DIRECTORY = '.molecule'
+MOLECULE_FILE = 'molecule.yml'
 MERGE_STRATEGY = anyconfig.MS_DICTS
 
 
 class Config(object):
-    __metaclass__ = abc.ABCMeta
+    """
+    Molecule searches the current directory for `molecule.yml` files by
+    globbing `molecule/*/molecule.yml`.  The files are instantiated into
+    a list of Molecule :class:`.Config` objects, and each Molecule subcommand
+    operates on this list.
 
-    def __init__(self, configs=[LOCAL_CONFIG, PROJECT_CONFIG]):
+    The directory in which the `molecule.yml` resides is the Scenario's
+    directory.  Molecule performs most functions within this directory.
+
+    The :class:`.Config` object has instantiated Dependency_, Driver_, Lint_,
+    Platforms_, Provisioner_, Verifier_, :class:`.Scenario`, and State_
+    references.
+    """
+
+    def __init__(self, molecule_file, args={}, command_args={}):
         """
-        Base initializer for all Config classes.
+        Initialize a new config class and returns None.
 
-        :param command_args: A list configs files to merge.
+        :param molecule_file: A string containing the path to the Molecule file
+         to be parsed.
+        :param args: A dict of options, arguments and commands from the CLI.
+        :param command_args: A dict of options passed to the subcommand from
+         the CLI.
         :returns: None
         """
-        self.config = self._get_config(configs)
+        self.molecule_file = molecule_file
+        self.args = args
+        self.command_args = command_args
+        self.config = self._combine()
 
     @property
-    def molecule_file(self):
-        return PROJECT_CONFIG
+    def ephemeral_directory(self):
+        return os.path.join(self.scenario.directory, '.molecule')
 
     @property
-    def molecule_local_config_file(self):
-        return LOCAL_CONFIG
+    def project_directory(self):
+        return os.getcwd()
 
-    @abc.abstractmethod
-    def _get_config(self, configs):
-        pass  # pragma: no cover
+    @property
+    def molecule_directory(self):
+        return molecule_directory(self.project_directory)
 
+    @property
+    def dependency(self):
+        dependency_name = self.config['dependency']['name']
+        if dependency_name == 'galaxy':
+            return ansible_galaxy.AnsibleGalaxy(self)
+        elif dependency_name == 'gilt':
+            return gilt.Gilt(self)
+        else:
+            self._exit_with_invalid_section('dependency', dependency_name)
 
-class ConfigV1(Config):
-    def __init__(self, configs=[LOCAL_CONFIG, PROJECT_CONFIG]):
+    @property
+    def driver(self):
+        driver_name = self._get_driver_name()
+        driver = None
+
+        if driver_name == 'docker':
+            driver = dockr.Dockr(self)
+        elif driver_name == 'ec2':
+            driver = ec2.Ec2(self)
+        elif driver_name == 'lxc':
+            driver = lxc.Lxc(self)
+        elif driver_name == 'lxd':
+            driver = lxd.Lxd(self)
+        elif driver_name == 'openstack':
+            driver = openstack.Openstack(self)
+        elif driver_name == 'static':
+            driver = static.Static(self)
+        elif driver_name == 'vagrant':
+            driver = vagrant.Vagrant(self)
+        else:
+            self._exit_with_invalid_section('driver', driver_name)
+
+        driver.name = driver_name
+
+        return driver
+
+    @property
+    def drivers(self):
+        return molecule_drivers()
+
+    @property
+    def env(self):
+        return {
+            'MOLECULE_FILE': self.molecule_file,
+            'MOLECULE_INVENTORY_FILE': self.provisioner.inventory_file,
+            'MOLECULE_EPHEMERAL_DIRECTORY': self.scenario.ephemeral_directory,
+            'MOLECULE_SCENARIO_DIRECTORY': self.scenario.directory,
+            'MOLECULE_INSTANCE_CONFIG': self.driver.instance_config,
+            'MOLECULE_DEPENDENCY_NAME': self.dependency.name,
+            'MOLECULE_DRIVER_NAME': self.driver.name,
+            'MOLECULE_LINT_NAME': self.lint.name,
+            'MOLECULE_PROVISIONER_NAME': self.provisioner.name,
+            'MOLECULE_SCENARIO_NAME': self.scenario.name,
+            'MOLECULE_VERIFIER_NAME': self.verifier.name,
+        }
+
+    @property
+    def lint(self):
+        lint_name = self.config['lint']['name']
+        if lint_name == 'ansible-lint':
+            return ansible_lint.AnsibleLint(self)
+        else:
+            self._exit_with_invalid_section('lint', lint_name)
+
+    @property
+    def platforms(self):
+        return platforms.Platforms(self)
+
+    @property
+    def provisioner(self):
+        provisioner_name = self.config['provisioner']['name']
+        if provisioner_name == 'ansible':
+            return ansible.Ansible(self)
+        else:
+            self._exit_with_invalid_section('provisioner', provisioner_name)
+
+    @property
+    def scenario(self):
+        return scenario.Scenario(self)
+
+    @property
+    def state(self):
+        return state.State(self)
+
+    @property
+    def verifier(self):
+        verifier_name = self.config['verifier']['name']
+        if verifier_name == 'testinfra':
+            return testinfra.Testinfra(self)
+        elif verifier_name == 'goss':
+            return goss.Goss(self)
+        else:
+            self._exit_with_invalid_section('verifier', verifier_name)
+
+    @property
+    def verifiers(self):
+        return molecule_verifiers()
+
+    def merge_dicts(self, a, b):
+        return merge_dicts(a, b)
+
+    def _get_driver_name(self):
+        driver_from_state_file = self.state.driver
+        driver_from_cli = self.command_args.get('driver_name')
+
+        if driver_from_state_file:
+            driver_name = driver_from_state_file
+        elif driver_from_cli:
+            driver_name = driver_from_cli
+        else:
+            driver_name = self.config['driver']['name']
+
+        if driver_from_cli and (driver_from_cli != driver_name):
+            msg = ("Instance(s) were created with the '{}' driver, but the "
+                   "subcommand is using '{}' driver.").format(
+                       driver_name, driver_from_cli)
+            util.sysexit_with_message(msg)
+
+        return driver_name
+
+    def _combine(self):
         """
-        Initialize a new config version one class and returns None.
-        """
-        super(ConfigV1, self).__init__(configs)
-        self._build_config_paths()
+        Perform a prioritized recursive merge of the `molecule_file` with
+        defaults, interpolate the result with environment variables, and
+        returns a new dict.
 
-    def molecule_file_exists(self):
-        return os.path.isfile(self.molecule_file)
-
-    def molecule_local_config_file_exists(self):
-        return os.path.isfile(self.molecule_local_config_file)
-
-    def populate_instance_names(self, platform):
-        """
-        Updates instances section of config with an additional key containing
-        the full instance name
-
-        :param platform: platform name to pass to ``format_instance_name`` call
-        :return: None
-        """
-
-        if 'vagrant' in self.config:
-            for instance in self.config['vagrant']['instances']:
-                instance['vm_name'] = util.format_instance_name(
-                    instance['name'], platform,
-                    self.config['vagrant']['instances'])
-
-    def _get_config(self, configs):
-        return self._combine(configs)
-
-    def _combine(self, configs):
-        """ Perform a prioritized recursive merge of serveral source files
-        and returns a new dict.
-
-        The merge order is based on the index of the list, meaning that
-        elements at the end of the list will be merged last, and have greater
-        precedence than elements at the beginning.  The result is then merged
-        ontop of the defaults.
-
-        :param configs: A list containing the yaml files to load.
         :return: dict
         """
+        i = interpolation.Interpolator(interpolation.TemplateWithDefaults,
+                                       os.environ)
 
-        default = self._get_defaults()
-        conf = anyconfig.to_container(default, ac_merge=MERGE_STRATEGY)
-        conf.update(
-            anyconfig.load(
-                configs, ignore_missing=True, ac_merge=MERGE_STRATEGY))
+        base = self._get_defaults()
+        with util.open_file(self.molecule_file) as stream:
+            interpolated_config = i.interpolate(stream.read())
+            base = self.merge_dicts(base, util.safe_load(interpolated_config))
 
-        return self._expand_env_vars(m9dicts.convert_to(conf))
-
-    def _expand_env_vars(self, config):
-        """ Recursively searches for occurences of ${} and expands
-        them to a corresponding environment variable or an empty
-        string.
-
-        :param config: An iterable containing the merged config
-        :return: dict
-        """
-
-        def __get_env_var(matchobj):
-            return os.environ.get(matchobj.group(1), '')
-
-        def __replace_matches(line):
-            if not isinstance(line, basestring):
-                return line
-            return sub('\$\{([^\}]*)\}', __get_env_var, line)
-
-        def __recursive_string_replace(config):
-            if isinstance(config, dict):
-                # Replace dict keys
-                for i in list(config):
-                    new_name = __replace_matches(i)
-                    if i != new_name:
-                        val = config[i]
-                        del config[i]
-                        config[new_name] = val
-                # Replace dict values
-                for k, v in config.iteritems():
-                    if isinstance(v, (dict, list)):
-                        __recursive_string_replace(v)
-                    else:
-                        config[k] = __replace_matches(v)
-            else:
-                # Replace list items
-                for i, v in enumerate(config):
-                    if isinstance(v, (dict, list)):
-                        __recursive_string_replace(v)
-                    else:
-                        config[i] = __replace_matches(v)
-
-        __recursive_string_replace(config)
-
-        return config
+        return base
 
     def _get_defaults(self):
         return {
-            'ansible': {
-                'ask_become_pass': False,
-                'ask_vault_pass': False,
-                'become': True,
-                'become_user': False,
-                'config_file': 'ansible.cfg',
-                'ansiblecfg_defaults': {
-                    'retry_files_enabled': False,
-                },
-                'ansiblecfg_ssh_connection': {},
-                'diff': True,
-                'host_key_checking': False,
-                'inventory_file': 'ansible_inventory',
-                'limit': 'all',
-                'playbook': 'playbook.yml',
-                'raw_ssh_args': [
-                    '-o UserKnownHostsFile=/dev/null',
-                    '-o ControlMaster=auto',
-                    '-o ControlPersist=60s',
-                    '-o IdentitiesOnly=yes',
-                ],
-                'tags': False,
-                'timeout': 30,
-                'vault_password_file': False,
-                'verbose': False
+            'dependency': {
+                'name': 'galaxy',
+                'options': {},
+                'env': {},
+                'enabled': True,
             },
-            'molecule': {
-                'goss_dir': 'tests',
-                'goss_playbook': 'test_default.yml',
-                'ignore_paths': ['.git', '.vagrant', '.molecule'],
-                'init': {
-                    'platform': {
-                        'box': 'trusty64',
-                        'box_url':
-                        ('https://vagrantcloud.com/ubuntu/boxes/trusty64/'
-                         'versions/14.04/providers/virtualbox.box'),
-                        'box_version': '0.1.0',
-                        'name': 'ubuntu/trusty64'
-                    },
-                    'provider': {
-                        'name': 'virtualbox',
-                        'type': 'virtualbox'
-                    }
+            'driver': {
+                'name': 'docker',
+                'options': {},
+            },
+            'lint': {
+                'name': 'ansible-lint',
+                'enabled': True,
+                'options': {},
+                'env': {},
+                'trailing_ignore_paths': ['.git', '.vagrant', '.molecule']
+            },
+            'platforms': [],
+            'provisioner': {
+                'name': 'ansible',
+                'config_options': {},
+                'connection_options': {},
+                'options': {},
+                'env': {},
+                'host_vars': {},
+                'group_vars': {},
+                'children': {},
+                'playbooks': {
+                    'setup': 'create.yml',
+                    'converge': 'playbook.yml',
+                    'teardown': 'destroy.yml',
                 },
-                'molecule_dir': '.molecule',
-                'rakefile_file': 'rakefile',
-                'raw_ssh_args': [
-                    '-o StrictHostKeyChecking=no',
-                    '-o UserKnownHostsFile=/dev/null',
-                    '-o IdentitiesOnly=yes',
+            },
+            'scenario': {
+                'name':
+                'default',
+                'check_sequence':
+                ['destroy', 'create', 'converge', 'check', 'destroy'],
+                'converge_sequence': ['create', 'converge'],
+                'test_sequence': [
+                    'destroy', 'dependency', 'syntax', 'create', 'converge',
+                    'idempotence', 'lint', 'verify', 'destroy'
                 ],
-                'serverspec_dir': 'spec',
-                'state_file': 'state.yml',
-                'test': {
-                    'sequence': [
-                        'destroy', 'dependency', 'syntax', 'create',
-                        'converge', 'idempotence', 'verify'
-                    ]
-                },
-                'testinfra_dir': 'tests',
-                'vagrantfile_file': 'vagrantfile',
             },
             'verifier': {
                 'name': 'testinfra',
-                'options': {}
+                'enabled': True,
+                'directory': 'tests',
+                'options': {},
+                'env': {},
             },
-            'dependency': {
-                'name': 'galaxy',
-                'options': {}
-            },
-            '_disabled': [],
         }
 
-    def _build_config_paths(self):
-        """
-        Convenience function to build up paths from our config values.  Path
-        will not be relative to ``molecule_dir``, when a full path was provided
-        in the config.
-
-        :return: None
-        """
-        md = self.config.get('molecule')
-        ad = self.config.get('ansible')
-        for item in ['state_file', 'vagrantfile_file', 'rakefile_file']:
-            if md and not self._is_path(md[item]):
-                md[item] = os.path.join(md['molecule_dir'], md[item])
-
-        for item in ['config_file', 'inventory_file']:
-            if ad and not self._is_path(ad[item]):
-                ad[item] = os.path.join(md['molecule_dir'], ad[item])
-
-    def _is_path(self, pathname):
-        return os.path.sep in pathname
+    def _exit_with_invalid_section(self, section, name):
+        msg = "Invalid {} named '{}' configured.".format(section, name)
+        util.sysexit_with_message(msg)
 
 
 def merge_dicts(a, b):
     """
-    Merges the values of B into A and returns a new dict.  Uses the same merge
-    strategy as ``config._combine``.
+    Merges the values of B into A and returns a new dict.  Uses the same
+    merge strategy as ``config._combine``.
 
     ::
 
@@ -286,7 +323,31 @@ def merge_dicts(a, b):
     :param b: the dictionary to import
     :return: dict
     """
-    conf = anyconfig.to_container(a, ac_merge=MERGE_STRATEGY)
-    conf.update(b)
+    conf = a
+    anyconfig.merge(a, b, ac_merge=MERGE_STRATEGY)
 
     return conf
+
+
+def molecule_directory(path):
+    return os.path.join(path, MOLECULE_DIRECTORY)
+
+
+def molecule_file(path):
+    return os.path.join(path, MOLECULE_FILE)
+
+
+def molecule_drivers():
+    return [
+        dockr.Dockr(None).name,
+        ec2.Ec2(None).name,
+        lxc.Lxc(None).name,
+        lxd.Lxd(None).name,
+        openstack.Openstack(None).name,
+        static.Static(None).name,
+        vagrant.Vagrant(None).name,
+    ]
+
+
+def molecule_verifiers():
+    return [goss.Goss(None).name, testinfra.Testinfra(None).name]

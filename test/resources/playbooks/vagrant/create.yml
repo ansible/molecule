@@ -1,0 +1,43 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    molecule_file: "{{ lookup('env','MOLECULE_FILE') }}"
+    molecule_instance_config: "{{ lookup('env','MOLECULE_INSTANCE_CONFIG') }}"
+    molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
+  tasks:
+    - name: Create molecule instance(s)
+      molecule_vagrant:
+        instance_name: "{{ item.name | molecule_instance_with_scenario_name(molecule_yml.scenario.name) }}"
+        instance_interfaces: "{{ item.interfaces | default([]) }}"
+        platform_box: "{{ item.box }}"
+        molecule_file: "{{ molecule_file }}"
+        state: up
+      register: server
+      with_items: "{{ molecule_yml.platforms }}"
+
+    # Mandatory configuration for Molecule to function.
+
+    - name: Populate instance config dict
+      set_fact:
+        instance_conf_dict: {
+          'instance': "{{ item.Host }}",
+          'address': "{{ item.HostName }}",
+          'user': "{{ item.User }}",
+          'port': "{{ item.Port }}",
+          'identity_file': "{{ item.IdentityFile }}",}
+      with_items: "{{ server.results }}"
+      register: instance_config_dict
+      when: server.changed | bool
+
+    - name: Convert instance config dict to a list
+      set_fact:
+        instance_conf: "{{ instance_config_dict.results | map(attribute='ansible_facts.instance_conf_dict') | list }}"
+      when: server.changed | bool
+
+    - name: Dump instance config
+      copy:
+        content: "# Molecule managed\n\n{{ instance_conf | to_yaml }}"
+        dest: "{{ molecule_instance_config }}"
+      when: server.changed | bool

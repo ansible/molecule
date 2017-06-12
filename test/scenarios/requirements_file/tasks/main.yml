@@ -1,3 +1,0 @@
-- name: Requirements file functional scenario
-  command: /bin/true
-  changed_when: false

@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -18,41 +18,60 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
+
 import click
 
-from molecule import ansible_playbook
-from molecule import util
+from molecule import logger
 from molecule.command import base
-from molecule.command import dependency
+
+LOG = logger.get_logger(__name__)
 
 
 class Syntax(base.Base):
-    def execute(self, exit=True):
+    def execute(self):
         """
         Execute the actions necessary to perform a `molecule syntax` and
-        return a tuple.
+        returns None.
 
-        :param exit: (Unused) Provided to complete method signature.
-        :return: Return a tuple provided by :meth:`.AnsiblePlaybook.execute`.
+        Target the default scenario:
+
+        >>> molecule syntax
+
+        Targeting a specific scenario:
+
+        >>> molecule syntax --scenario-name foo
+
+        Executing with `debug`:
+
+        >>> molecule --debug syntax
+
+        :return: None
         """
-        debug = self.args.get('debug')
-        self.molecule.create_templates()
-        d = dependency.Dependency(self.args, self.command_args, self.molecule)
-        d.execute()
+        msg = 'Scenario: [{}]'.format(self._config.scenario.name)
+        LOG.info(msg)
+        msg = 'Provisioner: [{}]'.format(self._config.provisioner.name)
+        LOG.info(msg)
+        msg = 'Syntax Verification of Playbook: [{}]'.format(
+            os.path.basename(self._config.provisioner.playbooks.converge))
+        LOG.info(msg)
 
-        ansible = ansible_playbook.AnsiblePlaybook(
-            self.molecule.config.config['ansible'], {}, debug=debug)
-        ansible.add_cli_arg('syntax-check', True)
-        ansible.add_cli_arg('inventory_file', 'localhost,')
-        util.print_info("Checking playbook's syntax...")
-
-        return ansible.execute(hide_errors=True)
+        self._config.provisioner.syntax()
 
 
 @click.command()
 @click.pass_context
-def syntax(ctx):  # pragma: no cover
-    """ Performs a syntax check on the current role. """
-    s = Syntax(ctx.obj.get('args'), {})
-    s.execute
-    util.sysexit(s.execute()[0])
+@click.option(
+    '--scenario-name',
+    default='default',
+    help='Name of the scenario to target. (default)')
+def syntax(ctx, scenario_name):  # pragma: no cover
+    """ Use a provisioner to syntax check the role. """
+    args = ctx.obj.get('args')
+    command_args = {
+        'subcommand': __name__,
+        'scenario_name': scenario_name,
+    }
+
+    for c in base.get_configs(args, command_args):
+        Syntax(c).execute()

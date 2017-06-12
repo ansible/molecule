@@ -1,0 +1,16 @@
+---
+- hosts: all
+  roles:
+    - molecule
+
+- hosts: bar
+  roles:
+    - molecule
+
+- hosts: foo
+  roles:
+    - molecule
+
+- hosts: baz
+  roles:
+    - molecule

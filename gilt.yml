@@ -3,4 +3,4 @@
   version: c601202
   files:
     - src: goss.py
-      dst: molecule/verifier/ansible/library/
+      dst: molecule/provisioner/ansible/plugins/libraries/

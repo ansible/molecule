@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -18,50 +18,59 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
 import re
 
 import click
 
+from molecule import logger
 from molecule import util
 from molecule.command import base
-from molecule.command import converge
+
+LOG = logger.get_logger(__name__)
 
 
 class Idempotence(base.Base):
-    def execute(self, exit=True):
+    def execute(self):
         """
         Execute the actions necessary to perform a `molecule idempotence` and
-        return a tuple.
+        returns None.
 
-        :param exit: An optional flag to toggle the exiting of the module
-         on command failure.
-        :return: Return a tuple of (`exit status`, `command output`), otherwise
-         sys.exit on command failure.
+        Target the default scenario:
+
+        >>> molecule idempotence
+
+        Targeting a specific scenario:
+
+        >>> molecule idempotence --scenario-name foo
+
+        Executing with `debug`:
+
+        >>> molecule --debug idempotence
+
+        :return: None
         """
-        msg = 'Idempotence test in progress (can take a few minutes)...'
-        util.print_info(msg)
+        msg = 'Scenario: [{}]'.format(self._config.scenario.name)
+        LOG.info(msg)
+        msg = 'Provisioner: [{}]'.format(self._config.provisioner.name)
+        LOG.info(msg)
+        msg = 'Idempotence Verification of Playbook: [{}]'.format(
+            os.path.basename(self._config.provisioner.playbooks.converge))
+        LOG.info(msg)
 
-        c = converge.Converge(self.args, self.command_args, self.molecule)
-        status, output = c.execute(
-            idempotent=True, exit=False, hide_errors=True)
-        if status is not None:
-            msg = 'Skipping due to errors during converge.'
-            util.print_info(msg)
-            util.print_info(output)
-            return status, None
+        if not self._config.state.converged:
+            msg = 'Instances not converged.  Please converge instances first.'
+            util.sysexit_with_message(msg)
+
+        output = self._config.provisioner.converge(out=None, err=None)
 
         idempotent = self._is_idempotent(output)
         if idempotent:
-            util.print_success('Idempotence test passed.')
-            return None, None
+            LOG.success('Idempotence completed successfully.')
         else:
-            msg = 'Idempotence test failed because of the following tasks:'
-            util.print_error(msg)
-            util.print_error('\n'.join(self._non_idempotent_tasks(output)))
-            if exit:
-                util.sysexit()
-
-            return 1, None
+            msg = ('Idempotence test failed because of the following tasks:\n'
+                   '{}').format('\n'.join(self._non_idempotent_tasks(output)))
+            util.sysexit_with_message(msg)
 
     def _is_idempotent(self, output):
         """
@@ -72,7 +81,7 @@ class Idempotence(base.Base):
         """
 
         # Remove blank lines to make regex matches easier
-        output = re.sub("\n\s*\n*", "\n", output)
+        output = re.sub(r'\n\s*\n*', '\n', output)
 
         # Look for any non-zero changed lines
         changed = re.search(r'(changed=[1-9][0-9]*)', output)
@@ -91,31 +100,42 @@ class Idempotence(base.Base):
         :return: A list containing the names of the non idempotent tasks.
         """
         # Remove blank lines to make regex matches easier.
-        output = re.sub("\n\s*\n*", "\n", output)
+        output = re.sub(r'\n\s*\n*', '\n', output)
+
+        # Remove ansi escape sequences.
+        output = util.strip_ansi_escape(output)
 
         # Split the output into a list and go through it.
         output_lines = output.split('\n')
         res = []
         task_line = ''
-        for idx, line in enumerate(output_lines):
+        for _, line in enumerate(output_lines):
             if line.startswith('TASK'):
                 task_line = line
             elif line.startswith('changed'):
                 host_name = re.search(r'\[(.*)\]', line).groups()[0]
                 task_name = re.search(r'\[(.*)\]', task_line).groups()[0]
-                res.append(u'* [{}] => {}'.format(host_name, task_name))
+                res.append('* [{}] => {}'.format(host_name, task_name))
 
         return res
 
 
 @click.command()
-@click.option('--platform', default=None, help='Specify a platform.')
-@click.option('--provider', default=None, help='Specify a provider.')
 @click.pass_context
-def idempotence(ctx, platform, provider):  # pragma: no cover
-    """ Provisions instances and parses output to determine idempotence. """
-    command_args = {'platform': platform, 'provider': provider}
+@click.option(
+    '--scenario-name',
+    default='default',
+    help='Name of the scenario to target. (default)')
+def idempotence(ctx, scenario_name):  # pragma: no cover
+    """
+    Use a provisioner to configure the instances and parse the output to
+    determine idempotence.
+    """
+    args = ctx.obj.get('args')
+    command_args = {
+        'subcommand': __name__,
+        'scenario_name': scenario_name,
+    }
 
-    i = Idempotence(ctx.obj.get('args'), command_args)
-    i.execute
-    util.sysexit(i.execute()[0])
+    for c in base.get_configs(args, command_args):
+        Idempotence(c).execute()

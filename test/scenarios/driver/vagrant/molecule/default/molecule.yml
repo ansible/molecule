@@ -1,0 +1,25 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: vagrant
+lint:
+  name: ansible-lint
+platforms:
+  - name: instance-1
+    box: debian/jessie64
+    interfaces:
+      - auto_config: true
+        network_name: private_network
+        type: dhcp
+provisioner:
+  name: ansible
+  playbooks:
+    setup: ../../../../../resources/playbooks/vagrant/create.yml
+    teardown: ../../../../../resources/playbooks/vagrant/destroy.yml
+  env:
+    ANSIBLE_ROLES_PATH: ../../../../../../resources/roles/
+scenario:
+  name: default
+verifier:
+  name: testinfra

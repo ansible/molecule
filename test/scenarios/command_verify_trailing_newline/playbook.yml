@@ -1,7 +1,0 @@
----
-- hosts: all
-  tasks:
-    - name: Verify trailing newline functional scenario
-      command: /bin/true
-      changed_when: False
-

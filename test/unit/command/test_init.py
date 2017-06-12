@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -19,77 +19,161 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import os
+import uuid
 
 import pytest
 
+from molecule import util
 from molecule.command import init
 
 
+def test_process_templates(temp_dir):
+    template_dir = os.path.join(
+        os.path.dirname(__file__), os.path.pardir, os.path.pardir, 'resources',
+        'templates')
+    repo_name = str(uuid.uuid4())
+    context = {'repo_name': repo_name}
+    init._process_templates(template_dir, context, temp_dir.strpath)
+
+    expected_file = os.path.join(temp_dir.strpath, repo_name, 'template.yml')
+    expected_contents = '- value: foo'
+
+    with util.open_file(expected_file) as stream:
+        for line in stream.readlines():
+            assert line.strip() in expected_contents
+
+
+def test_resolve_template_dir_relative():
+    result = init._resolve_template_dir('foo')
+
+    parts = pytest.helpers.os_split(result)
+
+    assert ('..', 'cookiecutter', 'foo') == parts[-3:]
+
+
+def test_resolve_template_dir_absolute():
+    result = init._resolve_template_dir('/foo/bar')
+
+    parts = pytest.helpers.os_split(result)
+
+    assert ('foo', 'bar') == parts[-2:]
+
+
 @pytest.fixture
-def init_command_args():
+def init_new_role_command_args():
     return {
-        'role': 'docker_test',
-        'driver': 'vagrant',
-        'verifier': 'testinfra'
+        'dependency_name': 'galaxy',
+        'driver_name': 'docker',
+        'lint_name': 'ansible-lint',
+        'provisioner_name': 'ansible',
+        'role_name': 'test-role',
+        'scenario_name': 'default',
+        'subcommand': __name__,
+        'verifier_name': 'testinfra'
     }
 
 
-def test_create_role(temp_dir, init_command_args):
-    init_command_args.update({'role': 'unit_test1'})
-    i = init.Init({}, init_command_args)
-    with pytest.raises(SystemExit):
-        i.execute()
+def test_init_new_role(temp_dir, init_new_role_command_args,
+                       patched_logger_info, patched_logger_success):
+    init._init_new_role(init_new_role_command_args)
 
-    role_directory = os.path.join(temp_dir, 'unit_test1')
-    assert os.path.isdir(role_directory)
-    assert os.path.isdir(os.path.join(role_directory, 'tests'))
-    assert os.path.isfile(os.path.join(role_directory, 'molecule.yml'))
-    assert os.path.isfile(os.path.join(role_directory, 'playbook.yml'))
+    msg = 'Initializing new role test-role...'
+    patched_logger_info.assert_called_once_with(msg)
 
+    assert os.path.isdir('./test-role')
+    assert os.path.isdir('./test-role/molecule/default')
+    assert os.path.isdir('./test-role/molecule/default/tests')
 
-def test_create_role_in_existing_directory(temp_dir, init_command_args):
-    del init_command_args['role']
-    i = init.Init({}, init_command_args)
-    with pytest.raises(SystemExit):
-        i.execute()
-
-    role_directory = os.path.join(temp_dir)
-    assert os.path.isdir(role_directory)
-    assert os.path.isdir(os.path.join(role_directory, 'tests'))
-    assert os.path.isfile(os.path.join(role_directory, 'molecule.yml'))
-    assert os.path.isfile(os.path.join(role_directory, 'playbook.yml'))
+    role_directory = os.path.join(temp_dir.strpath, 'test-role')
+    msg = 'Initialized role in {} successfully.'.format(role_directory)
+    patched_logger_success.assert_called_once_with(msg)
 
 
-def test_create_role_existing_dir_error(temp_dir, init_command_args):
-    os.mkdir('test1')
-    init_command_args.update({'role': 'test1'})
-    i = init.Init({}, init_command_args)
-    with pytest.raises(SystemExit) as f:
-        i.execute()
-        assert 'Cannot create new role.' in f
+def test_init_new_role_already_exists(temp_dir, init_new_role_command_args,
+                                      patched_logger_critical):
+    init._init_new_role(init_new_role_command_args)
+
+    with pytest.raises(SystemExit) as e:
+        init._init_new_role(init_new_role_command_args)
+
+    assert 1 == e.value.code
+
+    msg = 'The directory test-role exists. Cannot create new role.'
+    patched_logger_critical.assert_called_once_with(msg)
 
 
-@pytest.mark.parametrize('driver', ['vagrant', 'docker', 'openstack'])
-def test_create_role_with_driver_flag(driver, temp_dir, init_command_args):
-    init_command_args.update({'driver': driver})
-    i = init.Init({}, init_command_args)
-    with pytest.raises(SystemExit):
-        i.execute()
-
-    os.chdir(os.path.join(temp_dir, 'docker_test'))
-
-    with open('molecule.yml') as f:
-        assert driver in f.read()
+@pytest.fixture
+def init_new_scenario_command_args():
+    return {
+        'driver_name': 'docker',
+        'role_name': 'test-role',
+        'scenario_name': 'test-scenario',
+        'subcommand': __name__,
+        'verifier_name': 'testinfra'
+    }
 
 
-@pytest.mark.parametrize('verifier', ['testinfra', 'serverspec', 'goss'])
-def test_create_role_with_verifier_flag(verifier, temp_dir, init_command_args):
-    init_command_args.update({'verifier': verifier})
-    i = init.Init({}, init_command_args)
-    with pytest.raises(SystemExit):
-        i.execute()
+def test_init_new_scenario(temp_dir, init_new_scenario_command_args,
+                           patched_logger_info, patched_logger_success):
+    init._init_new_scenario(init_new_scenario_command_args)
 
-    os.chdir(os.path.join(temp_dir, 'docker_test'))
+    msg = 'Initializing new scenario test-scenario...'
+    patched_logger_info.assert_called_once_with(msg)
 
-    with open('molecule.yml') as f:
-        assert verifier in f.read()
+    assert os.path.isdir('./molecule/test-scenario')
+    assert os.path.isdir('./molecule/test-scenario/tests')
+
+    scenario_directory = os.path.join(temp_dir.strpath, 'molecule',
+                                      'test-scenario')
+    msg = 'Initialized scenario in {} successfully.'.format(scenario_directory)
+    patched_logger_success.assert_called_once_with(msg)
+
+
+def test_init_new_scenario_already_exists(
+        temp_dir, init_new_scenario_command_args, patched_logger_critical):
+    init._init_new_scenario(init_new_scenario_command_args)
+
+    with pytest.raises(SystemExit) as e:
+        init._init_new_scenario(init_new_scenario_command_args)
+
+    assert 1 == e.value.code
+
+    msg = ('The directory molecule/test-scenario exists. '
+           'Cannot create new scenario.')
+    patched_logger_critical.assert_called_once_with(msg)
+
+
+def test_init_template(temp_dir, patched_logger_info, patched_logger_success):
+    url = 'https://github.com/retr0h/cookiecutter-molecule.git'
+    no_input = True
+    command_args = {
+        'role_name': 'foo',
+    }
+
+    init._init_template(url, command_args, no_input)
+
+    assert os.path.isdir('./foo')
+
+    msg = 'Initializing new role foo...'
+    patched_logger_info.assert_called_once_with(msg)
+
+    role_directory = os.path.join(temp_dir.strpath, 'foo')
+    msg = 'Initialized role in {} successfully.'.format(role_directory)
+    patched_logger_success.assert_called_once_with(msg)
+
+
+def test_init_template_role_already_exists(temp_dir, patched_logger_critical):
+    url = 'https://github.com/retr0h/cookiecutter-molecule.git'
+    no_input = True
+    command_args = {
+        'role_name': 'foo',
+    }
+    init._init_template(url, command_args, no_input)
+
+    with pytest.raises(SystemExit) as e:
+        init._init_template(url, command_args, no_input)
+
+    assert 1 == e.value.code
+
+    msg = ('The directory foo exists. Cannot create new role.')
+    patched_logger_critical.assert_called_once_with(msg)

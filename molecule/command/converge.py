@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -18,115 +18,65 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import click
-import yaml
+import os
 
-from molecule import ansible_playbook
-from molecule import util
+import click
+
+import molecule.command
+from molecule import logger
 from molecule.command import base
-from molecule.command import create
-from molecule.command import dependency
+
+LOG = logger.get_logger(__name__)
 
 
 class Converge(base.Base):
-    def execute(self,
-                idempotent=False,
-                create_instances=True,
-                create_inventory=True,
-                exit=True,
-                hide_errors=True):
+    def execute(self):
         """
         Execute the actions necessary to perform a `molecule converge` and
-        return a tuple.
+        returns None.
 
-        :param idempotent: An optional flag to perform the converge again, and
-         parse the output for idempotence.
-        :param create_inventory: An optional flag to toggle inventory creation.
-        :param create_instances: An optional flag to toggle instance creation.
-        :return: Return a tuple of (`exit status`, `command output`), otherwise
-         sys.exit on command failure.
+        Target the default scenario:
+
+        >>> molecule converge
+
+        Targeting a specific scenario:
+
+        >>> molecule converge --scenario-name foo
+
+        Executing with `debug`:
+
+        >>> molecule --debug converge
+
+        :return: None
         """
-        debug = self.args.get('debug')
+        msg = 'Scenario: [{}]'.format(self._config.scenario.name)
+        LOG.info(msg)
+        msg = 'Provisioner: [{}]'.format(self._config.provisioner.name)
+        LOG.info(msg)
+        msg = 'Playbook: [{}]'.format(
+            os.path.basename(self._config.provisioner.playbooks.converge))
+        LOG.info(msg)
 
-        if self.molecule.state.created:
-            create_instances = False
-
-        if self.molecule.state.converged:
-            create_inventory = False
-
-        if self.molecule.state.multiple_platforms:
-            self.command_args['platform'] = 'all'
-        else:
-            if ((self.command_args.get('platform') == 'all') and
-                    self.molecule.state.created):
-                create_instances = True
-                create_inventory = True
-
-        if create_instances and not idempotent:
-            c = create.Create(self.args, self.command_args, self.molecule)
-            c.execute()
-
-        if create_inventory:
-            self.molecule.create_inventory_file()
-
-        d = dependency.Dependency(self.args, self.command_args, self.molecule)
-        d.execute()
-
-        ansible = ansible_playbook.AnsiblePlaybook(
-            self.molecule.config.config['ansible'],
-            self.molecule.driver.ansible_connection_params,
-            raw_ansible_args=self.command_args.get('ansible_args'),
-            debug=debug)
-
-        if idempotent:
-            # Don't log stdout/err
-            ansible.remove_cli_arg('_out')
-            ansible.remove_cli_arg('_err')
-            # Idempotence task regexp cannot handle diff
-            ansible.remove_cli_arg('diff')
-            # Disable color for regexp
-            ansible.add_env_arg('ANSIBLE_NOCOLOR', 'true')
-            ansible.add_env_arg('ANSIBLE_FORCE_COLOR', 'false')
-
-        if debug:
-            ansible_env = {
-                k: v
-                for (k, v) in ansible.env.items() if 'ANSIBLE' in k
-            }
-            util.print_debug(
-                'ANSIBLE ENVIRONMENT',
-                yaml.dump(
-                    ansible_env, default_flow_style=False, indent=2))
-
-        util.print_info('Starting Ansible Run...')
-        status, output = ansible.execute(hide_errors=hide_errors)
-        if status is not None:
-            if exit:
-                util.sysexit(status)
-            return status, None
-
-        if not self.molecule.state.converged:
-            self.molecule.state.change_state('converged', True)
-
-        return None, output
+        self._config.provisioner.converge()
+        self._config.state.change_state('converged', True)
 
 
 @click.command()
-@click.option('--driver', default=None, help='Specificy a driver.')
-@click.option('--platform', default=None, help='Specify a platform.')
-@click.option('--provider', default=None, help='Specify a provider.')
-@click.argument('ansible_args', nargs=-1, type=click.UNPROCESSED)
 @click.pass_context
-def converge(ctx, driver, platform, provider,
-             ansible_args):  # pragma: no cover
-    """ Provisions all instances defined in molecule.yml. """
+@click.option(
+    '--scenario-name',
+    default='default',
+    help='Name of the scenario to target. (default)')
+def converge(ctx, scenario_name):  # pragma: no cover
+    """ Use a provisioner to configure instances (create, converge). """
+    args = ctx.obj.get('args')
     command_args = {
-        'driver': driver,
-        'platform': platform,
-        'provider': provider,
-        'ansible_args': ansible_args
+        'subcommand': __name__,
+        'scenario_name': scenario_name,
     }
 
-    c = Converge(ctx.obj.get('args'), command_args)
-    c.execute
-    util.sysexit(c.execute()[0])
+    for c in base.get_configs(args, command_args):
+        for task in c.scenario.converge_sequence:
+            command_module = getattr(molecule.command, task)
+            command = getattr(command_module, task.capitalize())
+            command(c).execute()

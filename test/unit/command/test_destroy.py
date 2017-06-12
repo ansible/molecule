@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -18,55 +18,37 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import subprocess
-
-import pytest
-
 from molecule.command import destroy
 
 
-def test_execute_deletes_instances(
-        patched_driver_destroy, patched_print_info, patched_remove_templates,
-        patched_remove_inventory, patched_remove_vars_files,
-        molecule_instance):
-    d = destroy.Destroy({}, {}, molecule_instance)
-    result = d.execute()
+def test_execute(mocker, patched_destroy_prune, patched_logger_info,
+                 patched_ansible_destroy, config_instance):
+    d = destroy.Destroy(config_instance)
+    d.execute()
+    x = [
+        mocker.call('Scenario: [default]'),
+        mocker.call('Provisioner: [ansible]'),
+        mocker.call('Playbook: [destroy.yml]')
+    ]
 
-    msg = 'Destroying instances...'
-    patched_print_info.assert_called_once_with(msg)
+    assert x == patched_logger_info.mock_calls
 
-    patched_driver_destroy.assert_called_once_with()
-    assert not molecule_instance.state.created
-    assert not molecule_instance.state.converged
-    (None, None) == result
+    patched_destroy_prune.assert_called_once_with()
+    patched_ansible_destroy.assert_called_once_with()
 
-    patched_remove_templates.assert_called_once_with()
-    patched_remove_inventory.assert_called_once_with()
-    patched_remove_vars_files.assert_called_once_with()
-
-
-def test_execute_raises_on_exit(patched_driver_destroy, patched_print_info,
-                                patched_print_error, patched_remove_templates,
-                                patched_remove_inventory, molecule_instance):
-    patched_driver_destroy.side_effect = subprocess.CalledProcessError(1, None,
-                                                                       None)
-
-    d = destroy.Destroy({}, {}, molecule_instance)
-    with pytest.raises(SystemExit):
-        d.execute()
-
-    msg = "Command 'None' returned non-zero exit status 1"
-    patched_print_error.assert_called_with(msg)
-
-    assert not patched_remove_templates.called
-    assert not patched_remove_inventory.called
+    assert not config_instance.state.converged
+    assert not config_instance.state.created
 
 
-def test_execute_does_not_raise_on_exit(patched_driver_destroy,
-                                        patched_print_info, molecule_instance):
-    patched_driver_destroy.side_effect = subprocess.CalledProcessError(1, None,
-                                                                       None)
-    d = destroy.Destroy({}, {}, molecule_instance)
-    result = d.execute(exit=False)
+def test_execute_skips_when_manual_driver(
+        patched_destroy_setup, molecule_driver_static_section_data,
+        patched_logger_warn, patched_ansible_destroy, config_instance):
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_driver_static_section_data)
+    d = destroy.Destroy(config_instance)
+    d.execute()
 
-    assert (1, '') == result
+    msg = 'Skipping, instances managed statically.'
+    patched_logger_warn.assert_called_once_with(msg)
+
+    assert not patched_ansible_destroy.called

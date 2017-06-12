@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2016 Cisco Systems, Inc.
+#  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -21,27 +21,16 @@
 from molecule.command import syntax
 
 
-def test_execute(mocker, patched_ansible_playbook, patched_print_info,
-                 molecule_instance):
-    patched_ansible_playbook.return_value = 'returned'
-
-    s = syntax.Syntax({}, {}, molecule_instance)
-    result = s.execute()
-
-    msg = "Checking playbook's syntax..."
-    patched_print_info.assert_called_once_with(msg)
-
-    patched_ansible_playbook.assert_called_once_with(hide_errors=True)
-    assert 'returned' == result
-
-
-def test_execute_installs_dependencies(patched_ansible_playbook,
-                                       patched_dependency, patched_print_info,
-                                       molecule_instance):
-    molecule_instance.config.config['dependency']['requirements_file'] = str()
-
-    s = syntax.Syntax({}, {}, molecule_instance)
+def test_execute(mocker, patched_logger_info, patched_ansible_syntax,
+                 config_instance):
+    s = syntax.Syntax(config_instance)
     s.execute()
+    x = [
+        mocker.call('Scenario: [default]'),
+        mocker.call('Provisioner: [ansible]'),
+        mocker.call('Syntax Verification of Playbook: [playbook.yml]')
+    ]
 
-    patched_dependency.assert_called_once()
-    patched_ansible_playbook.assert_called_once_with(hide_errors=True)
+    assert x == patched_logger_info.mock_calls
+
+    patched_ansible_syntax.assert_called_once_with()

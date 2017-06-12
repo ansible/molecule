@@ -1,0 +1,44 @@
+[MASTER]
+
+[MESSAGES CONTROL]
+
+disable=
+    cyclic-import,
+    duplicate-code,
+    fixme,
+    line-too-long,
+    locally-disabled,
+    maybe-no-member,
+    missing-docstring,
+    no-self-use,
+    too-few-public-methods,
+    too-many-arguments,
+    too-many-instance-attributes,
+
+[REPORTS]
+
+output-format=text
+reports=no
+
+[BASIC]
+
+variable-rgx=[a-z_][a-z0-9_]{0,30}$
+argument-rgx=[a-z_][a-z0-9_]{0,30}$
+
+[FORMAT]
+
+max-line-length=79
+max-module-lines=1000
+
+[VARIABLES]
+
+additional-builtins=_
+dummy-variables-rgx=_|dummy
+
+[CLASSES]
+
+defining-attr-methods=__init__,__new__,setUp,initialize
+
+[IMPORTS]
+
+deprecated-modules=regsub,TERMIOS,Bastion,rexec

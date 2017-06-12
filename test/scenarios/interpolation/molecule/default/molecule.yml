@@ -1,0 +1,21 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: ${DRIVER_NAME}
+lint:
+  name: ansible-lint
+platforms:
+  - name: instance-1
+    image: molecule_local/centos:7
+    command: sleep infinity
+    dockerfile: Dockerfile
+provisioner:
+  name: ansible
+  playbooks:
+    setup: ../../../../resources/playbooks/docker/create.yml
+    teardown: ../../../../resources/playbooks/docker/destroy.yml
+scenario:
+  name: default
+verifier:
+  name: testinfra

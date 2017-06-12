@@ -1,0 +1,17 @@
+---
+- name: Create security group
+  os_security_group:
+    name: "{{ security_group_name }}"
+    description: "{{ security_group_description }}"
+  register: security_group
+
+- name: Create security group rules
+  os_security_group_rule:
+    security_group: "{{ security_group_name }}"
+    protocol: "{{ item.proto | default(omit) }}"
+    port_range_min: "{{ item.port | default(omit) }}"
+    port_range_max: "{{ item.port | default(omit) }}"
+    remote_ip_prefix: "{{ item.cidr | default(omit) }}"
+    remote_group: "{{ item.group | default(omit) }}"
+    ethertype: "{{ item.ethertype | default(omit) }}"
+  with_items: "{{ security_group_rules }}"
