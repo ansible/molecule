@@ -15,7 +15,7 @@ Important Changes
 * Addition of `Scenarios`_.
 * Addition of a `Static Driver`_ to test instances managed outside of Molecule.
 * Promoted `Goss Verifier`_ to a supported verifier.
-* Added `EC2 Driver`, `LXC Driver`_, `LXD Driver`_ , and `OpenStack Driver`_
+* Added `EC2 Driver`_, `LXC Driver`_, `LXD Driver`_ , and `OpenStack Driver`_
   native Molecule drivers.
 * Molecule will follow `Semantic Versioning`_.  Therefore versioning will be
   much different than previous versions of Molecule.  It will be safe to pin
