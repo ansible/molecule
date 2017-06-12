@@ -7,7 +7,7 @@ Molecule
    :alt: PyPI Package
 
 .. image:: https://readthedocs.org/projects/molecule/badge/?version=latest
-   :target: https://molecule.readthedocs.io/en/latest/
+   :target: https://molecule.readthedocs.io/en/v1/
    :alt: Documentation Status
 
 .. image:: https://img.shields.io/badge/license-MIT-brightgreen.svg
@@ -180,7 +180,7 @@ Update the role with needed functionality and tests.  Now test it:
 Documentation
 =============
 
-https://molecule.readthedocs.io/
+http://molecule.readthedocs.io/en/v1/
 
 License
 =======

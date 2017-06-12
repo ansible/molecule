@@ -7,8 +7,7 @@ Development
 Branches
 ========
 
-* The ``master`` branch is stable.  Major changes should be performed
-  elsewhere.
+* The ``v1`` branch is stable for this version of Molecule.
 
 Release Engineering
 ===================
@@ -75,5 +74,5 @@ Roadmap
 .. _`PyPI`: https://pypi.python.org/pypi/molecule
 .. _`ISSUES`: https://github.com/metacloud/molecule/issues
 .. _`CHANGELOG`: https://github.com/metacloud/molecule/blob/master/CHANGELOG.rst
-.. _`install from source`: https://molecule.readthedocs.io/en/latest/usage.html#installing-from-source
+.. _`install from source`: https://molecule.readthedocs.io/en/v1/usage.html#installing-from-source
 .. _`twine`: https://pypi.python.org/pypi/twine
