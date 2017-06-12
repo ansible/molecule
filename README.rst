@@ -37,7 +37,11 @@ supports.
 Documentation
 =============
 
-http://molecule.readthedocs.io/en/v2/
+* `Current Release`_
+* `Upcoming Release`_
+
+.. _`Current Release`: http://molecule.readthedocs.io/en/v1/
+.. _`Upcoming Release`: http://molecule.readthedocs.io/en/v2/
 
 Ansible Support
 ===============
