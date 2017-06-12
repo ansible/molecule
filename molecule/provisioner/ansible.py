@@ -216,13 +216,6 @@ class Ansible(base.Base):
                 False,
                 'nocows':
                 1,
-                'roles_path':
-                '../../../../:$ANSIBLE_ROLES_PATH',
-                'library':
-                '{}:$ANSIBLE_LIBRARY'.format(self._get_libraries_directory()),
-                'filter_plugins':
-                '{}:$ANSIBLE_FILTER_PLUGINS'.format(
-                    self._get_filter_plugin_directory()),
             },
             'ssh_connection': {
                 'scp_if_ssh': True,
@@ -240,8 +233,16 @@ class Ansible(base.Base):
     @property
     def default_env(self):
         env = self._config.merge_dicts(os.environ.copy(), self._config.env)
-        env = self._config.merge_dicts(
-            env, {'ANSIBLE_CONFIG': self._config.provisioner.config_file})
+        env = self._config.merge_dicts(env, {
+            'ANSIBLE_CONFIG':
+            self._config.provisioner.config_file,
+            'ANSIBLE_ROLES_PATH':
+            '../../../../',
+            'ANSIBLE_LIBRARY':
+            self._get_libraries_directory(),
+            'ANSIBLE_FILTER_PLUGINS':
+            self._get_filter_plugin_directory(),
+        })
         env = self._config.merge_dicts(env, self._config.env)
 
         return env
@@ -264,8 +265,34 @@ class Ansible(base.Base):
 
     @property
     def env(self):
-        return self._config.merge_dicts(
-            self.default_env, self._config.config['provisioner']['env'])
+        default_env = self.default_env
+        env = self._config.config['provisioner']['env'].copy()
+
+        roles_path = default_env['ANSIBLE_ROLES_PATH']
+        library_path = default_env['ANSIBLE_LIBRARY']
+        filter_plugins_path = default_env['ANSIBLE_FILTER_PLUGINS']
+
+        try:
+            roles_path = '{}:{}'.format(roles_path, env['ANSIBLE_ROLES_PATH'])
+        except KeyError:
+            pass
+
+        try:
+            library_path = '{}:{}'.format(library_path, env['ANSIBLE_LIBRARY'])
+        except KeyError:
+            pass
+
+        try:
+            filter_plugins_path = '{}:{}'.format(filter_plugins_path,
+                                                 env['ANSIBLE_FILTER_PLUGINS'])
+        except KeyError:
+            pass
+
+        env['ANSIBLE_ROLES_PATH'] = roles_path
+        env['ANSIBLE_LIBRARY'] = library_path
+        env['ANSIBLE_FILTER_PLUGINS'] = filter_plugins_path
+
+        return self._config.merge_dicts(default_env, env)
 
     @property
     def host_vars(self):

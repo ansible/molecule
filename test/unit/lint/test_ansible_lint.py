@@ -102,6 +102,10 @@ def test_default_env_property(ansible_lint_instance):
 
 def test_env_property(ansible_lint_instance):
     assert 'bar' == ansible_lint_instance.env['foo']
+    assert 'ANSIBLE_CONFIG' in ansible_lint_instance.env
+    assert 'ANSIBLE_ROLES_PATH' in ansible_lint_instance.env
+    assert 'ANSIBLE_LIBRARY' in ansible_lint_instance.env
+    assert 'ANSIBLE_FILTER_PLUGINS' in ansible_lint_instance.env
 
 
 def test_default_ignore_paths_property(ansible_lint_instance):
