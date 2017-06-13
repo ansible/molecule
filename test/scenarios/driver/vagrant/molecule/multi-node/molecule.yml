@@ -7,6 +7,7 @@ lint:
   name: ansible-lint
 platforms:
   - name: instance-1
+    box: debian/jessie64
     interfaces:
       - auto_config: true
         network_name: private_network
@@ -15,6 +16,7 @@ platforms:
       - foo
       - bar
   - name: instance-2
+    box: debian/jessie64
     interfaces:
       - auto_config: true
         network_name: private_network
