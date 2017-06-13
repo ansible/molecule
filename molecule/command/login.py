@@ -45,7 +45,11 @@ class Login(base.Base):
         Execute the actions necessary to perform a `molecule login` and
         returns None.
 
-        Target the default scenario:
+        Targeting the only running host:
+
+        >>> molecule login
+
+        Targeting a specific host:
 
         >>> molecule login --host hostname
 
@@ -73,6 +77,15 @@ class Login(base.Base):
 
     def _get_hostname(self, hosts):
         hostname = self._config.command_args.get('host')
+        if hostname is None:
+            if len(hosts) == 1:
+                hostname = hosts[0]
+            else:
+                msg = ('There are {} running hosts. Please specify '
+                       'which with --host.\n\n'
+                       'Available hosts:\n{}'.format(
+                           len(hosts), '\n'.join(sorted(hosts))))
+                util.sysexit_with_message(msg)
         match = [x for x in hosts if x.startswith(hostname)]
         if len(match) == 0:
             msg = ("There are no hosts that match '{}'.  You "
@@ -118,7 +131,7 @@ class Login(base.Base):
 
 @click.command()
 @click.pass_context
-@click.option('--host', required=True, help='Host to access.')
+@click.option('--host', help='Host to access.')
 @click.option(
     '--scenario-name',
     default='default',

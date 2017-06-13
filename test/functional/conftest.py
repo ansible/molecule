@@ -144,7 +144,7 @@ def list_with_format_plain(x):
 
 
 @pytest.helpers.register
-def login(instance, regexp, scenario_name='default'):
+def login(login_args, scenario_name='default'):
     options = {'scenario_name': scenario_name}
     cmd = sh.molecule.bake('destroy', **options)
     run_command(cmd)
@@ -153,12 +153,16 @@ def login(instance, regexp, scenario_name='default'):
     cmd = sh.molecule.bake('create', **options)
     run_command(cmd)
 
-    child_cmd = 'molecule login --host {} --scenario-name {}'.format(
-        instance, scenario_name)
-    child = pexpect.spawn(child_cmd)
-    child.expect(regexp)
-    # If the test returns and doesn't hang it succeeded.
-    child.sendline('exit')
+    for instance, regexp in login_args:
+        if len(login_args) > 1:
+            child_cmd = 'molecule login --host {} --scenario-name {}'.format(
+                instance, scenario_name)
+        else:
+            child_cmd = 'molecule login'
+        child = pexpect.spawn(child_cmd)
+        child.expect(regexp)
+        # If the test returns and doesn't hang it succeeded.
+        child.sendline('exit')
 
 
 @pytest.helpers.register

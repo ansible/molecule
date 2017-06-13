@@ -107,3 +107,28 @@ def test_get_hostname_partial_match_with_multiple_hosts_raises(
            'instance-1\n'
            'instance-2')
     patched_logger_critical.assert_called_once_with(msg)
+
+
+def test_get_hostname_no_host_flag_specified_on_cli(login_instance):
+    login_instance._config.command_args = {}
+    hosts = ['instance-1']
+    login_instance._get_hostname(hosts)
+
+    assert 'instance-1' == login_instance._get_hostname(hosts)
+
+
+def test_get_hostname_no_host_flag_specified_on_cli_with_multiple_hosts_raises(
+        patched_logger_critical, login_instance):
+    login_instance._config.command_args = {}
+    hosts = ['instance-1', 'instance-2']
+    with pytest.raises(SystemExit) as e:
+        login_instance._get_hostname(hosts)
+
+    assert 1 == e.value.code
+
+    msg = ('There are 2 running hosts. Please specify '
+           'which with --host.\n\n'
+           'Available hosts:\n'
+           'instance-1\n'
+           'instance-2')
+    patched_logger_critical.assert_called_once_with(msg)

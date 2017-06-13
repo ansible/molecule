@@ -376,46 +376,78 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario,
 
 
 @pytest.mark.parametrize(
-    'scenario_to_test, driver_name, instance, regexp, scenario_name', [
-        ('driver/docker', 'docker', 'instance-1', '.*instance-1-multi-node.*',
-         'multi-node'),
-        ('driver/docker', 'docker', 'instance-2', '.*instance-2-multi-node.*',
-         'multi-node'),
-        ('driver/ec2', 'ec2', 'instance-1', '.*ip-.*', 'multi-node'),
-        ('driver/ec2', 'ec2', 'instance-2', '.*ip-.*', 'multi-node'),
-        ('driver/lxc', 'lxc', 'instance-1', '.*instance-1-multi-node.*',
-         'multi-node'),
-        ('driver/lxc', 'lxc', 'instance-2', '.*instance-2-multi-node.*',
-         'multi-node'),
-        ('driver/lxd', 'lxd', 'instance-1', '.*instance-1-multi-node.*',
-         'multi-node'),
-        ('driver/lxd', 'lxd', 'instance-2', '.*instance-2-multi-node.*',
-         'multi-node'),
-        ('driver/openstack', 'openstack', 'instance-1',
-         '.*instance-1-multi-node.*', 'multi-node'),
-        ('driver/openstack', 'openstack', 'instance-2',
-         '.*instance-2-multi-node.*', 'multi-node'),
-        ('driver/static', 'static', 'static-instance-vagrant',
-         '.*static-instance-docker.*', 'docker'),
-        ('driver/static', 'static', 'static-instance-vagrant',
-         '.*static-instance-ec2.*', 'ec2'),
-        ('driver/static', 'static', 'static-instance-vagrant',
-         '.*static-instance-openstack.*', 'openstack'),
-        ('driver/static', 'static', 'static-instance-vagrant',
-         '.*static-instance-vagrant.*', 'vagrant'),
-        ('driver/vagrant', 'vagrant', 'instance-1',
-         '.*instance-1-multi-node.*', 'multi-node'),
-        ('driver/vagrant', 'vagrant', 'instance-2',
-         '.*instance-2-multi-node.*', 'multi-node'),
+    'scenario_to_test, driver_name, login_args, scenario_name', [
+        ('driver/docker', 'docker', [[
+            'instance-1',
+            '.*instance-1-default.*',
+        ]], 'default'),
+        ('driver/docker', 'docker', [[
+            'instance-1',
+            '.*instance-1-multi-node.*',
+        ], [
+            'instance-2',
+            '.*instance-2-multi-node.*',
+        ]], 'multi-node'),
+        ('driver/ec2', 'ec2', [[
+            'instance-1',
+            '.*ip-.*',
+        ], [
+            'instance-2',
+            '.*ip-.*',
+        ]], 'multi-node'),
+        ('driver/lxc', 'lxc', [[
+            'instance-1',
+            '.*instance-1-multi-node.*',
+        ], [
+            'instance-2',
+            '.*instance-2-multi-node.*',
+        ]], 'multi-node'),
+        ('driver/lxd', 'lxd', [[
+            'instance-1',
+            '.*instance-1-multi-node.*',
+        ], [
+            'instance-2',
+            '.*instance-2-multi-node.*',
+        ]], 'multi-node'),
+        ('driver/openstack', 'openstack', [[
+            'instance-1',
+            '.*instance-1-multi-node.*',
+        ], [
+            'instance-2',
+            '.*instance-2-multi-node.*',
+        ]], 'multi-node'),
+        ('driver/static', 'static', [[
+            'static-instance-docker',
+            '.*static-instance-docker.*',
+        ]], 'docker'),
+        ('driver/static', 'static', [[
+            'static-instance-ec2',
+            '.*static-instance-ec2.*',
+        ]], 'ec2'),
+        ('driver/static', 'static', [[
+            'static-instance-openstack',
+            '.*static-instance-openstack.*',
+        ]], 'openstack'),
+        ('driver/static', 'static', [[
+            'static-instance-vagrant',
+            '.*static-instance-vagrant.*',
+        ]], 'vagrant'),
+        ('driver/vagrant', 'vagrant', [[
+            'instance-1',
+            '.*instance-1-multi-node.*',
+        ], [
+            'instance-2',
+            '.*instance-2-multi-node.*',
+        ]], 'multi-node'),
     ],
     indirect=[
         'scenario_to_test',
         'driver_name',
         'scenario_name',
     ])
-def test_command_login(scenario_to_test, with_scenario, instance, regexp,
+def test_command_login(scenario_to_test, with_scenario, login_args,
                        scenario_name):
-    pytest.helpers.login(instance, regexp, scenario_name)
+    pytest.helpers.login(login_args, scenario_name)
 
 
 @pytest.mark.parametrize(
