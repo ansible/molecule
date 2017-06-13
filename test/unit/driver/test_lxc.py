@@ -28,7 +28,12 @@ from molecule.driver import lxc
 
 @pytest.fixture
 def molecule_driver_section_data():
-    return {'driver': {'name': 'lxc', 'options': {}}}
+    return {
+        'driver': {
+            'name': 'lxc',
+            'options': {},
+        }
+    }
 
 
 @pytest.fixture
@@ -62,8 +67,12 @@ def test_login_cmd_template_property(lxc_instance):
     assert 'sudo lxc-attach -n {instance}' == lxc_instance.login_cmd_template
 
 
-def test_safe_files(lxc_instance):
+def test_safe_files_property(lxc_instance):
     assert [] == lxc_instance.safe_files
+
+
+def test_default_ssh_connection_options_property(lxc_instance):
+    assert [] == lxc_instance.default_ssh_connection_options
 
 
 def test_login_options(lxc_instance):
@@ -81,6 +90,10 @@ def test_instance_config_property(lxc_instance):
                      'instance_config.yml')
 
     assert x == lxc_instance.instance_config
+
+
+def test_ssh_connection_options_property(lxc_instance):
+    assert [] == lxc_instance.ssh_connection_options
 
 
 def test_status(mocker, lxc_instance):

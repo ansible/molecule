@@ -28,7 +28,12 @@ from molecule.driver import openstack
 
 @pytest.fixture
 def molecule_driver_section_data():
-    return {'driver': {'name': 'openstack', 'options': {}}}
+    return {
+        'driver': {
+            'name': 'openstack',
+            'options': {},
+        }
+    }
 
 
 @pytest.fixture
@@ -71,13 +76,26 @@ def test_login_cmd_template_property(openstack_instance):
     assert x == openstack_instance.login_cmd_template
 
 
-def test_safe_files(openstack_instance):
+def test_safe_files_property(openstack_instance):
     x = [
         os.path.join(openstack_instance._config.scenario.ephemeral_directory,
                      'instance_config.yml'),
     ]
 
     assert x == openstack_instance.safe_files
+
+
+def test_default_ssh_connection_options_property(openstack_instance):
+    x = [
+        '-o UserKnownHostsFile=/dev/null',
+        '-o ControlMaster=auto',
+        '-o ControlPersist=60s',
+        '-o IdentitiesOnly=yes',
+        '-o StrictHostKeyChecking=no',
+        '-o ControlPath=~/.ansible/cp/%C',
+    ]
+
+    assert x == openstack_instance.default_ssh_connection_options
 
 
 def test_login_options(mocker, openstack_instance):
@@ -164,6 +182,19 @@ def test_instance_config_property(openstack_instance):
                      'instance_config.yml')
 
     assert x == openstack_instance.instance_config
+
+
+def test_ssh_connection_options_property(openstack_instance):
+    x = [
+        '-o UserKnownHostsFile=/dev/null',
+        '-o ControlMaster=auto',
+        '-o ControlPersist=60s',
+        '-o IdentitiesOnly=yes',
+        '-o StrictHostKeyChecking=no',
+        '-o ControlPath=~/.ansible/cp/%C',
+    ]
+
+    assert x == openstack_instance.ssh_connection_options
 
 
 def test_status(mocker, openstack_instance):

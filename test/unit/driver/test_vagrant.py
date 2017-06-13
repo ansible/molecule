@@ -28,7 +28,13 @@ from molecule.driver import vagrant
 
 @pytest.fixture
 def molecule_driver_section_data():
-    return {'driver': {'name': 'vagrant', 'options': {}}}
+    return {
+        'driver': {
+            'name': 'vagrant',
+            'options': {},
+            'ssh_connection_options': ['-o foo=bar'],
+        }
+    }
 
 
 @pytest.fixture
@@ -62,18 +68,12 @@ def test_options_property(vagrant_instance):
 
 
 def test_login_cmd_template_property(vagrant_instance):
-    x = ('ssh {address} -l {user} -p {port} -i {identity_file} '
-         '-o UserKnownHostsFile=/dev/null '
-         '-o ControlMaster=auto '
-         '-o ControlPersist=60s '
-         '-o IdentitiesOnly=yes '
-         '-o StrictHostKeyChecking=no '
-         '-o ControlPath=~/.ansible/cp/%C')
+    x = 'ssh {address} -l {user} -p {port} -i {identity_file} -o foo=bar'
 
     assert x == vagrant_instance.login_cmd_template
 
 
-def test_safe_files(vagrant_instance):
+def test_safe_files_property(vagrant_instance):
     x = [
         os.path.join(vagrant_instance._config.scenario.ephemeral_directory,
                      'Vagrantfile'),
@@ -84,6 +84,19 @@ def test_safe_files(vagrant_instance):
     ]
 
     assert x == vagrant_instance.safe_files
+
+
+def test_default_ssh_connection_options_property(vagrant_instance):
+    x = [
+        '-o UserKnownHostsFile=/dev/null',
+        '-o ControlMaster=auto',
+        '-o ControlPersist=60s',
+        '-o IdentitiesOnly=yes',
+        '-o StrictHostKeyChecking=no',
+        '-o ControlPath=~/.ansible/cp/%C',
+    ]
+
+    assert x == vagrant_instance.default_ssh_connection_options
 
 
 def test_login_options(mocker, vagrant_instance):
@@ -128,22 +141,12 @@ def test_ansible_connection_options(mocker, vagrant_instance):
         'identity_file': '/foo/bar'
     }]
     x = {
-        'ansible_host':
-        '127.0.0.1',
-        'ansible_port':
-        2222,
-        'ansible_user':
-        'vagrant',
-        'ansible_private_key_file':
-        '/foo/bar',
-        'connection':
-        'ssh',
-        'ansible_ssh_common_args': ('-o UserKnownHostsFile=/dev/null '
-                                    '-o ControlMaster=auto '
-                                    '-o ControlPersist=60s '
-                                    '-o IdentitiesOnly=yes '
-                                    '-o StrictHostKeyChecking=no '
-                                    '-o ControlPath=~/.ansible/cp/%C'),
+        'ansible_host': '127.0.0.1',
+        'ansible_port': 2222,
+        'ansible_user': 'vagrant',
+        'ansible_private_key_file': '/foo/bar',
+        'connection': 'ssh',
+        'ansible_ssh_common_args': '-o foo=bar',
     }
 
     assert x == vagrant_instance.ansible_connection_options('foo')
@@ -184,6 +187,12 @@ def test_instance_config_property(vagrant_instance):
                      'instance_config.yml')
 
     assert x == vagrant_instance.instance_config
+
+
+def test_ssh_connection_options_property(vagrant_instance):
+    x = ['-o foo=bar']
+
+    assert x == vagrant_instance.ssh_connection_options
 
 
 def test_status(mocker, vagrant_instance):

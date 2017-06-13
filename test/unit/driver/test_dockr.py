@@ -28,7 +28,12 @@ from molecule.driver import dockr
 
 @pytest.fixture
 def molecule_driver_section_data():
-    return {'driver': {'name': 'docker', 'options': {}}}
+    return {
+        'driver': {
+            'name': 'docker',
+            'options': {},
+        }
+    }
 
 
 @pytest.fixture
@@ -64,8 +69,12 @@ def test_login_cmd_template_property(docker_instance):
     assert x == docker_instance.login_cmd_template
 
 
-def test_safe_files(docker_instance):
+def test_safe_files_property(docker_instance):
     assert [] == docker_instance.safe_files
+
+
+def test_default_ssh_connection_options_property(docker_instance):
+    assert [] == docker_instance.default_ssh_connection_options
 
 
 def test_login_options(docker_instance):
@@ -83,6 +92,10 @@ def test_instance_config_property(docker_instance):
                      'instance_config.yml')
 
     assert x == docker_instance.instance_config
+
+
+def test_ssh_connection_options_property(docker_instance):
+    assert [] == docker_instance.ssh_connection_options
 
 
 def test_status(mocker, docker_instance):

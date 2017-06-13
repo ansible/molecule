@@ -89,6 +89,15 @@ class Base(object):
         """
         pass
 
+    @abc.abstractproperty
+    def default_ssh_connection_options(self):  # pragma: no cover
+        """
+        SSH client options and returns a list.
+
+        :returns: list
+        """
+        pass
+
     @abc.abstractmethod
     def login_options(self, instance_name):  # pragma: no cover
         """
@@ -118,6 +127,12 @@ class Base(object):
     def instance_config(self):
         return os.path.join(self._config.scenario.ephemeral_directory,
                             'instance_config.yml')
+
+    @property
+    def ssh_connection_options(self):
+        if self._config.config['driver']['ssh_connection_options']:
+            return self._config.config['driver']['ssh_connection_options']
+        return self.default_ssh_connection_options
 
     def status(self):
         """

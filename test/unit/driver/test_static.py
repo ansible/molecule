@@ -81,8 +81,12 @@ def test_login_cmd_template_property(static_instance):
     assert x == static_instance.login_cmd_template
 
 
-def test_safe_files(static_instance):
+def test_safe_files_property(static_instance):
     assert [] == static_instance.safe_files
+
+
+def test_default_ssh_connection_options_property(static_instance):
+    assert [] == static_instance.default_ssh_connection_options
 
 
 def test_login_options(static_instance):
@@ -100,6 +104,10 @@ def test_instance_config_property(static_instance):
                      'instance_config.yml')
 
     assert x == static_instance.instance_config
+
+
+def test_ssh_connection_options_property(static_instance):
+    assert [] == static_instance.ssh_connection_options
 
 
 def test_status(mocker, static_instance):

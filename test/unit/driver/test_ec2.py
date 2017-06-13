@@ -28,7 +28,12 @@ from molecule.driver import ec2
 
 @pytest.fixture
 def molecule_driver_section_data():
-    return {'driver': {'name': 'ec2', 'options': {}}}
+    return {
+        'driver': {
+            'name': 'ec2',
+            'options': {},
+        }
+    }
 
 
 @pytest.fixture
@@ -70,13 +75,26 @@ def test_login_cmd_template_property(ec2_instance):
     assert x == ec2_instance.login_cmd_template
 
 
-def test_safe_files(ec2_instance):
+def test_safe_files_property(ec2_instance):
     x = [
         os.path.join(ec2_instance._config.scenario.ephemeral_directory,
                      'instance_config.yml'),
     ]
 
     assert x == ec2_instance.safe_files
+
+
+def test_default_ssh_connection_options_property(ec2_instance):
+    x = [
+        '-o UserKnownHostsFile=/dev/null',
+        '-o ControlMaster=auto',
+        '-o ControlPersist=60s',
+        '-o IdentitiesOnly=yes',
+        '-o StrictHostKeyChecking=no',
+        '-o ControlPath=~/.ansible/cp/%C',
+    ]
+
+    assert x == ec2_instance.default_ssh_connection_options
 
 
 def test_login_options(mocker, ec2_instance):
@@ -163,6 +181,19 @@ def test_instance_config_property(ec2_instance):
                      'instance_config.yml')
 
     assert x == ec2_instance.instance_config
+
+
+def test_ssh_connection_options_property(ec2_instance):
+    x = [
+        '-o UserKnownHostsFile=/dev/null',
+        '-o ControlMaster=auto',
+        '-o ControlPersist=60s',
+        '-o IdentitiesOnly=yes',
+        '-o StrictHostKeyChecking=no',
+        '-o ControlPath=~/.ansible/cp/%C',
+    ]
+
+    assert x == ec2_instance.ssh_connection_options
 
 
 def test_status(mocker, ec2_instance):

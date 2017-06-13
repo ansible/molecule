@@ -241,6 +241,7 @@ class Config(object):
             'driver': {
                 'name': 'docker',
                 'options': {},
+                'ssh_connection_options': [],
             },
             'lint': {
                 'name': 'ansible-lint',

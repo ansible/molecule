@@ -40,6 +40,15 @@ class Ec2(base.Base):
 
         $ sudo pip install boto
 
+    Change the options passed to the ssh client.
+
+    .. code-block:: yaml
+
+        driver:
+          name: ec2
+          ssh_connection_options:
+            -o ControlPath=~/.ansible/cp/%r@%h-%p
+
     .. _`EC2`: https://aws.amazon.com/ec2/
     """
 
@@ -57,7 +66,7 @@ class Ec2(base.Base):
 
     @property
     def login_cmd_template(self):
-        connection_options = ' '.join(self._get_ssh_connection_options())
+        connection_options = ' '.join(self.ssh_connection_options)
 
         return ('ssh {{address}} '
                 '-l {{user}} '
@@ -71,6 +80,10 @@ class Ec2(base.Base):
             self.instance_config,
         ]
 
+    @property
+    def default_ssh_connection_options(self):
+        return self._get_ssh_connection_options()
+
     def login_options(self, instance_name):
         d = {'instance': instance_name}
 
@@ -82,18 +95,13 @@ class Ec2(base.Base):
             d = self._get_instance_config(instance_name)
 
             return {
-                'ansible_user':
-                d['user'],
-                'ansible_host':
-                d['address'],
-                'ansible_port':
-                d['port'],
-                'ansible_private_key_file':
-                d['identity_file'],
-                'connection':
-                'ssh',
+                'ansible_user': d['user'],
+                'ansible_host': d['address'],
+                'ansible_port': d['port'],
+                'ansible_private_key_file': d['identity_file'],
+                'connection': 'ssh',
                 'ansible_ssh_common_args':
-                ' '.join(self._get_ssh_connection_options()),
+                ' '.join(self.ssh_connection_options),
             }
         except StopIteration:
             return {}

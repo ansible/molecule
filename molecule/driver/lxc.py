@@ -61,6 +61,10 @@ class Lxc(base.Base):
     def safe_files(self):
         return []
 
+    @property
+    def default_ssh_connection_options(self):
+        return []
+
     def login_options(self, instance_name):
         return {'instance': instance_name}
 
