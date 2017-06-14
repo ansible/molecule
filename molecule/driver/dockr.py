@@ -38,6 +38,21 @@ class Dockr(base.Base):
 
         $ sudo pip install docker-py
 
+    Provide the files Molecule will preserve upon each subcommand execution.
+
+    .. code-block:: yaml
+
+        driver:
+          name: ec2
+          safe_files:
+            - foo
+            - .molecule/bar
+
+    .. important::
+
+        Molecule does not merge lists, when overriding the developer must
+        provide all options.
+
     .. _`Docker`: https://www.docker.com
     """
 
@@ -58,7 +73,7 @@ class Dockr(base.Base):
         return 'docker exec -ti {instance} bash'
 
     @property
-    def safe_files(self):
+    def default_safe_files(self):
         return []
 
     @property

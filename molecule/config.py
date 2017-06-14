@@ -242,6 +242,7 @@ class Config(object):
                 'name': 'docker',
                 'options': {},
                 'ssh_connection_options': [],
+                'safe_files': [],
             },
             'lint': {
                 'name': 'ansible-lint',

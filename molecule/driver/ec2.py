@@ -49,6 +49,26 @@ class Ec2(base.Base):
           ssh_connection_options:
             -o ControlPath=~/.ansible/cp/%r@%h-%p
 
+    .. important::
+
+        Molecule does not merge lists, when overriding the developer must
+        provide all options.
+
+    Provide the files Molecule will preserve upon each subcommand execution.
+
+    .. code-block:: yaml
+
+        driver:
+          name: ec2
+          safe_files:
+            - foo
+            - .molecule/bar
+
+    .. important::
+
+        Molecule does not merge lists, when overriding the developer must
+        provide all options.
+
     .. _`EC2`: https://aws.amazon.com/ec2/
     """
 
@@ -75,7 +95,7 @@ class Ec2(base.Base):
                 '{}').format(connection_options)
 
     @property
-    def safe_files(self):
+    def default_safe_files(self):
         return [
             self.instance_config,
         ]

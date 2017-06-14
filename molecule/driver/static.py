@@ -83,6 +83,21 @@ class Static(base.Base):
         Molecule automatically appends the scenario name to the instances it is
         testing.  It doesn't seem useful to converge each scenario against the
         same static host.
+
+    Provide the files Molecule will preserve upon each subcommand execution.
+
+    .. code-block:: yaml
+
+        driver:
+          name: ec2
+          safe_files:
+            - foo
+            - .molecule/bar
+
+    .. important::
+
+        Molecule does not merge lists, when overriding the developer must
+        provide all options.
     """
 
     def __init__(self, config):
@@ -102,7 +117,7 @@ class Static(base.Base):
         return self.options['login_cmd_template']
 
     @property
-    def safe_files(self):
+    def default_safe_files(self):
         return []
 
     @property

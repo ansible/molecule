@@ -81,18 +81,18 @@ class Base(object):
         pass
 
     @abc.abstractproperty
-    def safe_files(self):  # pragma: no cover
+    def default_ssh_connection_options(self):  # pragma: no cover
         """
-        Generated files to be preserved and returns a list.
+        SSH client options and returns a list.
 
         :returns: list
         """
         pass
 
     @abc.abstractproperty
-    def default_ssh_connection_options(self):  # pragma: no cover
+    def default_safe_files(self):  # pragma: no cover
         """
-        SSH client options and returns a list.
+        Generated files to be preserved and returns a list.
 
         :returns: list
         """
@@ -133,6 +133,12 @@ class Base(object):
         if self._config.config['driver']['ssh_connection_options']:
             return self._config.config['driver']['ssh_connection_options']
         return self.default_ssh_connection_options
+
+    @property
+    def safe_files(self):
+        if self._config.config['driver']['safe_files']:
+            return self._config.config['driver']['safe_files']
+        return self.default_safe_files
 
     def status(self):
         """

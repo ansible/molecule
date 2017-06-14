@@ -33,6 +33,7 @@ def molecule_driver_section_data():
             'name': 'vagrant',
             'options': {},
             'ssh_connection_options': ['-o foo=bar'],
+            'safe_files': ['foo'],
         }
     }
 
@@ -74,6 +75,10 @@ def test_login_cmd_template_property(vagrant_instance):
 
 
 def test_safe_files_property(vagrant_instance):
+    assert ['foo'] == vagrant_instance.safe_files
+
+
+def test_default_safe_files_property(vagrant_instance):
     x = [
         os.path.join(vagrant_instance._config.scenario.ephemeral_directory,
                      'Vagrantfile'),
@@ -83,7 +88,7 @@ def test_safe_files_property(vagrant_instance):
                      'instance_config.yml')
     ]
 
-    assert x == vagrant_instance.safe_files
+    assert x == vagrant_instance.default_safe_files
 
 
 def test_default_ssh_connection_options_property(vagrant_instance):

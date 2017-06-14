@@ -85,6 +85,10 @@ def test_safe_files_property(static_instance):
     assert [] == static_instance.safe_files
 
 
+def test_default_safe_files_property(static_instance):
+    assert [] == static_instance.default_safe_files
+
+
 def test_default_ssh_connection_options_property(static_instance):
     assert [] == static_instance.default_ssh_connection_options
 

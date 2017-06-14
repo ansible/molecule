@@ -38,6 +38,21 @@ class Lxc(base.Base):
 
         $ sudo pip install lxc-python2
 
+    Provide the files Molecule will preserve upon each subcommand execution.
+
+    .. code-block:: yaml
+
+        driver:
+          name: ec2
+          safe_files:
+            - foo
+            - .molecule/bar
+
+    .. important::
+
+        Molecule does not merge lists, when overriding the developer must
+        provide all options.
+
     .. _`LXC`: https://linuxcontainers.org/lxc/introduction/
     """
 
@@ -58,7 +73,7 @@ class Lxc(base.Base):
         return 'sudo lxc-attach -n {instance}'
 
     @property
-    def safe_files(self):
+    def default_safe_files(self):
         return []
 
     @property

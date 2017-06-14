@@ -85,6 +85,15 @@ def test_safe_files_property(openstack_instance):
     assert x == openstack_instance.safe_files
 
 
+def test_default_safe_files_property(openstack_instance):
+    x = [
+        os.path.join(openstack_instance._config.scenario.ephemeral_directory,
+                     'instance_config.yml'),
+    ]
+
+    assert x == openstack_instance.default_safe_files
+
+
 def test_default_ssh_connection_options_property(openstack_instance):
     x = [
         '-o UserKnownHostsFile=/dev/null',

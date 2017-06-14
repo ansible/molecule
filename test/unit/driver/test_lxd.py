@@ -71,6 +71,10 @@ def test_safe_files_property(lxd_instance):
     assert [] == lxd_instance.safe_files
 
 
+def test_default_safe_files_property(lxd_instance):
+    assert [] == lxd_instance.default_safe_files
+
+
 def test_default_ssh_connection_options_property(lxd_instance):
     assert [] == lxd_instance.default_ssh_connection_options
 
