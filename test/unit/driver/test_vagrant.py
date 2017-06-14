@@ -75,7 +75,17 @@ def test_login_cmd_template_property(vagrant_instance):
 
 
 def test_safe_files_property(vagrant_instance):
-    assert ['foo'] == vagrant_instance.safe_files
+    x = [
+        os.path.join(vagrant_instance._config.scenario.ephemeral_directory,
+                     'Vagrantfile'),
+        os.path.join(vagrant_instance._config.scenario.ephemeral_directory,
+                     'vagrant.yml'),
+        os.path.join(vagrant_instance._config.scenario.ephemeral_directory,
+                     'instance_config.yml'),
+        'foo',
+    ]
+
+    assert x == vagrant_instance.safe_files
 
 
 def test_default_safe_files_property(vagrant_instance):

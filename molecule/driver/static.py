@@ -93,11 +93,6 @@ class Static(base.Base):
           safe_files:
             - foo
             - .molecule/bar
-
-    .. important::
-
-        Molecule does not merge lists, when overriding the developer must
-        provide all options.
     """
 
     def __init__(self, config):

@@ -48,11 +48,6 @@ class Dockr(base.Base):
             - foo
             - .molecule/bar
 
-    .. important::
-
-        Molecule does not merge lists, when overriding the developer must
-        provide all options.
-
     .. _`Docker`: https://www.docker.com
     """
 

@@ -136,9 +136,8 @@ class Base(object):
 
     @property
     def safe_files(self):
-        if self._config.config['driver']['safe_files']:
-            return self._config.config['driver']['safe_files']
-        return self.default_safe_files
+        return (self.default_safe_files +
+                self._config.config['driver']['safe_files'])
 
     def status(self):
         """

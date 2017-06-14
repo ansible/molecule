@@ -86,11 +86,6 @@ class Vagrant(base.Base):
             - foo
             - .molecule/bar
 
-    .. important::
-
-        Molecule does not merge lists, when overriding the developer must
-        provide all options.
-
     .. _`Vagrant`: https://www.vagrantup.com
     """
 
