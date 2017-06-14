@@ -58,7 +58,7 @@ class Dependency(base.Base):
 @click.pass_context
 @click.option(
     '--scenario-name',
-    default='defalt',
+    default='default',
     help='Name of the scenario to target. (default)')
 def dependency(ctx, scenario_name):  # pragma: no cover
     """ Mange the role's dependencies. """
