@@ -49,17 +49,17 @@ class Login(base.Base):
 
         >>> molecule login
 
-        Targeting a specific host:
+        Targeting a specific running host:
 
         >>> molecule login --host hostname
 
-        Targeting a specific scenario:
+        Targeting a specific running host and scenario:
 
         >>> molecule login --host hostname --scenario-name foo
 
         Executing with `debug`:
 
-        >>> molecule --debug list
+        >>> molecule --debug login
 
         :return: None
         """
