@@ -31,6 +31,8 @@ Breaking Changes
   favor of simplicity and consistency throughout.
 * Ansible 2.2 and 2.3 support only.
 * See Molecule v1 to v2 `Porting Guide`_.
+* Molecule no longer defaults to passing the `--become` flag to the
+  `ansible-playbook` command.
 
 .. _`EC2 Driver`: http://molecule.readthedocs.io/en/v2/configuration.html#ec2
 .. _`Goss Verifier`: http://molecule.readthedocs.io/en/v2/configuration.html#goss
