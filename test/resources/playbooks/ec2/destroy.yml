@@ -22,6 +22,7 @@
       ec2:
         state: absent
         instance_ids: "{{ item.instance_ids }}"
+      register: server
       with_items: "{{ instance_conf }}"
       when: not skip_instances
 
@@ -35,3 +36,4 @@
       copy:
         content: "# Molecule managed\n\n{{ instance_conf | to_yaml }}"
         dest: "{{ molecule_instance_config }}"
+      when: server.changed | bool

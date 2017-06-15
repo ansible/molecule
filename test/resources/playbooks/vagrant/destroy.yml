@@ -13,6 +13,7 @@
         platform_box: "{{ item.box }}"
         molecule_file: "{{ molecule_file }}"
         state: destroy
+      register: server
       with_items: "{{ molecule_yml.platforms }}"
 
     # Mandatory configuration for Molecule to function.
@@ -25,3 +26,4 @@
       copy:
         content: "# Molecule managed\n\n{{ instance_conf | to_yaml }}"
         dest: "{{ molecule_instance_config }}"
+      when: server.changed | bool

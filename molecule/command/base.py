@@ -64,7 +64,7 @@ class Base(object):
 
         files = util.os_walk(self._config.scenario.ephemeral_directory, '*')
         for f in files:
-            if f not in safe_files:
+            if all(sf not in f for sf in safe_files):
                 os.remove(f)
 
     def _setup(self):

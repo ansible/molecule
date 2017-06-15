@@ -124,6 +124,8 @@ class Vagrant(base.Base):
             self.vagrantfile,
             self.vagrantfile_config,
             self.instance_config,
+            os.path.join(self._config.scenario.ephemeral_directory,
+                         '.vagrant'),
         ]
 
     @property

@@ -11,6 +11,7 @@
       os_server:
         name: "{{ item.name | molecule_instance_with_scenario_name(molecule_yml.scenario.name) }}"
         state: absent
+      register: server
       with_items: "{{ molecule_yml.platforms }}"
 
     # Mandatory configuration for Molecule to function.
@@ -23,3 +24,4 @@
       copy:
         content: "# Molecule managed\n\n{{ instance_conf | to_yaml }}"
         dest: "{{ molecule_instance_config }}"
+      when: server.changed | bool

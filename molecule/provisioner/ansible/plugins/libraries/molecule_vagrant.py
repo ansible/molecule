@@ -344,14 +344,9 @@ class VagrantClient(object):
         self._write_vagrantfile()
 
     def _get_vagrant(self):
-        v = vagrant.Vagrant(quiet_stdout=False, quiet_stderr=False)
-
         env = os.environ.copy()
-        env['VAGRANT_VAGRANTFILE'] = self._vagrantfile
-        env['VAGRANT_DOTFILE_PATH'] = os.path.join(
-            os.environ['MOLECULE_EPHEMERAL_DIRECTORY'], '.vagrant')
-
-        v.env = env
+        env['VAGRANT_CWD'] = os.environ['MOLECULE_EPHEMERAL_DIRECTORY']
+        v = vagrant.Vagrant(quiet_stdout=False, quiet_stderr=False, env=env)
 
         return v
 
