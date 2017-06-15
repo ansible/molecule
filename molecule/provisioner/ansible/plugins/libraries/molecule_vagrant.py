@@ -100,11 +100,6 @@ options:
       - Additional Vagrant options not explcitly exposed by this module.
     required: False
     default: None
-  molecule_file:
-    description:
-      - An absolute path to the Molecule file.
-    required: True
-    default: None
   state:
     description:
       - The desired state of the instance.
@@ -325,7 +320,7 @@ class VagrantClient(object):
         return {}
 
     def _get_config(self):
-        molecule_file = self._module.params['molecule_file']
+        molecule_file = os.environ['MOLECULE_FILE']
 
         return molecule.config.Config(molecule_file)
 
@@ -395,7 +390,6 @@ def main():
             provider_cpus=dict(type='int', default=2),
             provider_options=dict(type='dict', default={}),
             provider_raw_config_args=dict(type='list', default=None),
-            molecule_file=dict(type='str', required=True),
             state=dict(type='str', default='up', choices=['up', 'destroy'])),
         supports_check_mode=False)
 

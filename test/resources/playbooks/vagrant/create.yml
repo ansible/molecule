@@ -12,7 +12,6 @@
         instance_name: "{{ item.name | molecule_instance_with_scenario_name(molecule_yml.scenario.name) }}"
         instance_interfaces: "{{ item.interfaces | default([]) }}"
         platform_box: "{{ item.box }}"
-        molecule_file: "{{ molecule_file }}"
         state: up
       register: server
       with_items: "{{ molecule_yml.platforms }}"

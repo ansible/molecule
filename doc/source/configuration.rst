@@ -116,7 +116,6 @@ Create instances.
           molecule_vagrant:
             instance_name: "{{ item }}"
             platform_box: ubuntu/trusty64
-            molecule_file: "{{ molecule_file }}"
             state: up
           with_items:
             - instance-1
@@ -133,7 +132,6 @@ Destroy instances.
           molecule_vagrant:
             instance_name: "{{ item }}"
             platform_box: ubuntu/trusty64
-            molecule_file: "{{ molecule_file }}"
             state: destroy
           with_items:
             - instance-1
@@ -161,7 +159,6 @@ Create instances with interfaces.
                 network_name: private_network
                 type: static
             platform_box: ubuntu/trusty64
-            molecule_file: "{{ molecule_file }}"
             state: destroy
 
 Create instances with additional provider options.
@@ -182,7 +179,6 @@ Create instances with additional provider options.
               - "customize ['modifyvm', :id, '--cpuexecutioncap', '50']"
             provider_options:
               gui: true
-            molecule_file: "{{ molecule_file }}"
             state: up
           with_items:
             - instance-1
@@ -201,7 +197,6 @@ Create instances with additional instance options.
             platform_box: ubuntu/trusty64
             instance_raw_config_args:
               - "vm.network 'forwarded_port', guest: 80, host: 8080"
-            molecule_file: "{{ molecule_file }}"
             state: up
           with_items:
             - instance-1
