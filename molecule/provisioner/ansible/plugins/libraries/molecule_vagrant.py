@@ -346,9 +346,12 @@ class VagrantClient(object):
     def _get_vagrant(self):
         v = vagrant.Vagrant(quiet_stdout=False, quiet_stderr=False)
 
-        os_env = os.environ.copy()
-        os_env['VAGRANT_VAGRANTFILE'] = self._vagrantfile
-        v.env = os_env
+        env = os.environ.copy()
+        env['VAGRANT_VAGRANTFILE'] = self._vagrantfile
+        env['VAGRANT_DOTFILE_PATH'] = os.path.join(
+            os.environ['MOLECULE_EPHEMERAL_DIRECTORY'], '.vagrant')
+
+        v.env = env
 
         return v
 
