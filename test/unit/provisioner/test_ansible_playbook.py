@@ -48,6 +48,24 @@ def test_config_private_member(ansible_playbook_instance):
 
 
 def test_bake(ansible_playbook_instance):
+    c = ansible_playbook_instance._config.config
+    pb = ansible_playbook_instance._config.provisioner.playbooks.converge
+    ansible_playbook_instance._playbook = pb
+    ansible_playbook_instance.bake()
+
+    x = [
+        str(sh.ansible_playbook),
+        '--become',
+        '--inventory=inventory',
+        pb,
+    ]
+    result = str(ansible_playbook_instance._ansible_playbook_command).split()
+
+    assert sorted(x) == sorted(result)
+
+
+def test_bake_removes_non_interactive_options_from_non_converge_playbooks(
+        ansible_playbook_instance):
     ansible_playbook_instance.bake()
     x = '{} --inventory=inventory playbook'.format(str(sh.ansible_playbook))
 

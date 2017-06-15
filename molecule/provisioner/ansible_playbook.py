@@ -62,6 +62,9 @@ class AnsiblePlaybook(object):
         options = self._config.merge_dicts(self._config.provisioner.options,
                                            self._cli)
         verbose_flag = util.verbose_flag(options)
+        if self._playbook != self._config.provisioner.playbooks.converge:
+            if options.get('become'):
+                del options['become']
 
         self._ansible_playbook_command = sh.ansible_playbook.bake(
             options,

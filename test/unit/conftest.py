@@ -95,7 +95,10 @@ def molecule_platforms_section_data():
 def molecule_provisioner_section_data():
     return {
         'provisioner': {
-            'name': 'ansible'
+            'name': 'ansible',
+            'options': {
+                'become': True,
+            },
         },
     }
 
