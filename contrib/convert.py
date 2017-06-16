@@ -86,13 +86,6 @@ d['provisioner']['env'][
     'ANSIBLE_LOOKUP_PLUGINS'] = '../../../../plugins/lookups'
 d['provisioner']['env'][
     'ANSIBLE_FILTER_PLUGINS'] = '../../../../plugins/filters'
-d['provisioner']['playbooks'] = collections.OrderedDict({})
-d['provisioner']['playbooks'][
-    'setup'] = '../../../../.molecule/playbooks/vagrant/create.yml'
-d['provisioner']['playbooks'][
-    'teardown'] = '../../../../.molecule/playbooks/vagrant/destroy.yml'
-d['provisioner']['options'] = collections.OrderedDict({})
-d['provisioner']['options']['become'] = True
 
 old_molecule_file = args.old_molecule_file
 
