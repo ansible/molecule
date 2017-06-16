@@ -9,7 +9,7 @@
   tasks:
     - name: Destroy molecule instance(s)
       molecule_vagrant:
-        instance_name: "{{ item.name | molecule_instance_with_scenario_name(molecule_yml.scenario.name) }}"
+        instance_name: "{{ molecule_file | molecule_instance_with_scenario_name(item.name) }}"
         platform_box: "{{ item.box }}"
         state: destroy
       register: server

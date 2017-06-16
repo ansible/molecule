@@ -8,6 +8,6 @@
   tasks:
     - name: Destroy molecule instance(s)
       lxd_container:
-        name: "{{ item.name | molecule_instance_with_scenario_name(molecule_yml.scenario.name) }}"
+        name: "{{ molecule_file | molecule_instance_with_scenario_name(item.name) }}"
         state: absent
       with_items: "{{ molecule_yml.platforms }}"

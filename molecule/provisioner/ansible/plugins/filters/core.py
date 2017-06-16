@@ -19,12 +19,15 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import molecule
-import molecule.util
+
+from molecule import config
+from molecule import util
 
 
-def instance_with_scenario_name(instance_name, scenario_name):
-    return molecule.util.instance_with_scenario_name(instance_name,
-                                                     scenario_name)
+def instance_with_scenario_name(molecule_file, instance_name):
+    c = config.Config(molecule_file)
+
+    return util.instance_with_scenario_name(instance_name, c.scenario.name)
 
 
 def dict_at_index(h, index):
