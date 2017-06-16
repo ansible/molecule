@@ -2,8 +2,28 @@
 Porting Guide
 *************
 
-Porting your existing role from Molecule to Molecule v2.  As of this writing
-this is a manual process.
+Porting your existing role from Molecule to Molecule v2.
+
+Automatically
+=============
+
+Molecule ships with a conversion script.  This conversion script converts a
+molecule v1 vagrant driver config into a molecule v2 vagrant config.  The
+script handles the creation of the initial directory structure, migration and
+cleanup of files.
+
+.. note::
+
+    The script is fairly crude, and only supports Vagrant at the time of this
+    writing.  The authors will be adding additional functionality as additional
+    roles are migrated to v2.
+
+.. code-block:: bash
+
+    $ contrib/convert.py /path/to/v1/role/molecule.yml
+
+Manually
+========
 
 1. In the basedir of your existing role, create a new `default` scenario.  This
    scenario is equivalent to your existing Molecule v1 setup. 
