@@ -26,6 +26,7 @@ from molecule import interpolation
 from molecule import logger
 from molecule import platforms
 from molecule import scenario
+from molecule import schema
 from molecule import state
 from molecule import util
 from molecule.dependency import ansible_galaxy
@@ -228,15 +229,17 @@ class Config(object):
             interpolated_config = i.interpolate(stream.read())
             base = self.merge_dicts(base, util.safe_load(interpolated_config))
 
+        schema.validate(base)
+
         return base
 
     def _get_defaults(self):
         return {
             'dependency': {
                 'name': 'galaxy',
+                'enabled': True,
                 'options': {},
                 'env': {},
-                'enabled': True,
             },
             'driver': {
                 'name': 'docker',

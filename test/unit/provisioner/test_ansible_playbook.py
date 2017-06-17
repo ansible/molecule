@@ -48,7 +48,6 @@ def test_config_private_member(ansible_playbook_instance):
 
 
 def test_bake(ansible_playbook_instance):
-    c = ansible_playbook_instance._config.config
     pb = ansible_playbook_instance._config.provisioner.playbooks.converge
     ansible_playbook_instance._playbook = pb
     ansible_playbook_instance.bake()

@@ -18,26 +18,35 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-from molecule import config
+from __future__ import unicode_literals
+import marshmallow
+import pytest
+
 from molecule import util
+from molecule import schema
 
 
-def instance_with_scenario_name(molecule_file, instance_name):
-    c = config.Config(molecule_file)
+def test_schema(config_instance):
+    data, errors = schema.validate(config_instance.config)
 
-    return util.instance_with_scenario_name(instance_name, c.scenario.name)
-
-
-def dict_at_index(h, index):
-    return [h[index]]
+    assert {} == errors
 
 
-class FilterModule(object):
-    """ Core Molecule filter plugins. """
+def test_schema_raises_on_extra_field(config_instance):
+    c = config_instance.config
+    c['driver']['extra'] = 'bar'
 
-    def filters(self):
-        return {
-            'molecule_instance_with_scenario_name':
-            instance_with_scenario_name,
-            'molecule_dict_at_index': dict_at_index,
-        }
+    with pytest.raises(marshmallow.ValidationError) as e:
+        schema.validate(config_instance.config)
+
+    assert 'Unknown field' in str(e)
+
+
+def test_schema_raises_on_invalid_field(config_instance):
+    c = config_instance.config
+    c['driver']['name'] = int
+
+    with pytest.raises(marshmallow.ValidationError) as e:
+        schema.validate(config_instance.config)
+
+    assert 'Not a valid string.' in str(e)
