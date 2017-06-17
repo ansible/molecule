@@ -88,9 +88,7 @@ def test_setup(mocker, patched_provisioner_add_or_update_vars,
     patched_provisioner_write_inventory.assert_called_once_with()
     patched_provisioner_write_config.assert_called_once_with()
 
-    x = [mocker.call('host_vars'), mocker.call('group_vars')]
-    assert x == patched_provisioner_add_or_update_vars.mock_calls
-
+    patched_provisioner_add_or_update_vars.assert_called_once_with()
     patched_provisioner_remove_vars.assert_called_once_with()
     patched_provisioner_link_or_update_vars.assert_called_once_with()
 

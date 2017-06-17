@@ -473,11 +473,10 @@ class Ansible(base.Base):
             self._get_config_template(), config_options=self.config_options)
         util.write_file(self.config_file, template)
 
-    def add_or_update_vars(self, target):
+    def add_or_update_vars(self):
         """
         Creates host and/or group vars and returns None.
 
-        :param target: A string containing either `host_vars` or `group_vars`.
         :returns: None
         """
         if self.links:
@@ -485,34 +484,36 @@ class Ansible(base.Base):
             LOG.warn(msg)
             return
 
-        if target == 'host_vars':
-            vars_target = copy.deepcopy(self.host_vars)
-            # Append the scenario-name
-            for instance_name, _ in self.host_vars.items():
-                if instance_name == 'localhost':
-                    instance_key = instance_name
-                else:
-                    instance_key = util.instance_with_scenario_name(
-                        instance_name, self._config.scenario.name)
+        for target in ['host_vars', 'group_vars']:
+            if target == 'host_vars':
+                vars_target = copy.deepcopy(self.host_vars)
+                # Append the scenario-name
+                for instance_name, _ in self.host_vars.items():
+                    if instance_name == 'localhost':
+                        instance_key = instance_name
+                    else:
+                        instance_key = util.instance_with_scenario_name(
+                            instance_name, self._config.scenario.name)
 
-                vars_target[instance_key] = vars_target.pop(instance_name)
+                    vars_target[instance_key] = vars_target.pop(instance_name)
 
-        elif target == 'group_vars':
-            vars_target = self.group_vars
+            elif target == 'group_vars':
+                vars_target = self.group_vars
 
-        if not vars_target:
-            return
+            if not vars_target:
+                return
 
-        ephemeral_directory = self._config.scenario.ephemeral_directory
-        target_vars_directory = os.path.join(ephemeral_directory, target)
+            ephemeral_directory = self._config.scenario.ephemeral_directory
+            target_vars_directory = os.path.join(ephemeral_directory, target)
 
-        if not os.path.isdir(os.path.abspath(target_vars_directory)):
-            os.mkdir(os.path.abspath(target_vars_directory))
+            if not os.path.isdir(os.path.abspath(target_vars_directory)):
+                os.mkdir(os.path.abspath(target_vars_directory))
 
-        for target in vars_target.keys():
-            target_var_content = vars_target[target]
-            path = os.path.join(os.path.abspath(target_vars_directory), target)
-            util.write_file(path, util.safe_dump(target_var_content))
+            for target in vars_target.keys():
+                target_var_content = vars_target[target]
+                path = os.path.join(
+                    os.path.abspath(target_vars_directory), target)
+                util.write_file(path, util.safe_dump(target_var_content))
 
     def remove_vars(self):
         """
