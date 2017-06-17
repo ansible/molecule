@@ -22,7 +22,6 @@ from __future__ import unicode_literals
 import marshmallow
 import pytest
 
-from molecule import util
 from molecule import schema
 
 
