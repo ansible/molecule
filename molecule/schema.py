@@ -59,16 +59,32 @@ class PlatformsSchema(marshmallow.Schema):
     name = marshmallow.fields.Str()
 
 
+class ProvisionerInventoryLinksSchema(SchemaBase):
+    host_vars = marshmallow.fields.Str()
+    group_vars = marshmallow.fields.Str()
+
+
+class ProvisionerInventorySchema(SchemaBase):
+    host_vars = marshmallow.fields.Dict()
+    group_vars = marshmallow.fields.Dict()
+    links = marshmallow.fields.Nested(ProvisionerInventoryLinksSchema())
+
+
+class ProvisionerPlaybooksSchema(SchemaBase):
+    setup = marshmallow.fields.Str()
+    converge = marshmallow.fields.Str()
+    teardown = marshmallow.fields.Str()
+
+
 class ProvisionerSchema(SchemaBase):
     name = marshmallow.fields.Str()
     config_options = marshmallow.fields.Dict()
     connection_options = marshmallow.fields.Dict()
     options = marshmallow.fields.Dict()
     env = marshmallow.fields.Dict()
-    host_vars = marshmallow.fields.Dict()
-    group_vars = marshmallow.fields.Dict()
+    inventory = marshmallow.fields.Nested(ProvisionerInventorySchema())
     children = marshmallow.fields.Dict()
-    playbooks = marshmallow.fields.Dict()
+    playbooks = marshmallow.fields.Nested(ProvisionerPlaybooksSchema())
 
 
 class ScenarioSchema(SchemaBase):

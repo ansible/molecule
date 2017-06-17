@@ -261,8 +261,11 @@ class Config(object):
                 'connection_options': {},
                 'options': {},
                 'env': {},
-                'host_vars': {},
-                'group_vars': {},
+                'inventory': {
+                    'host_vars': {},
+                    'group_vars': {},
+                    'links': {},
+                },
                 'children': {},
                 'playbooks': {
                     'setup': 'create.yml',

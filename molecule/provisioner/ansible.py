@@ -165,16 +165,39 @@ class Ansible(base.Base):
 
         provisioner:
           name: ansible
-          group_vars:
-            foo1:
-              foo: bar
-            foo2:
-              foo: bar
-              baz:
-                qux: zzyzx
-          host_vars:
-            foo1-01:
-              foo: bar
+          inventory:
+            group_vars:
+              foo1:
+                foo: bar
+              foo2:
+                foo: bar
+                baz:
+                  qux: zzyzx
+            host_vars:
+              foo1-01:
+                foo: bar
+
+    An alternative to the above is symlinking.  Molecule creates symlinks to
+    the specified directory in the inventory directory.  This allows ansible to
+    converge utilzing its built in host/group_vars resolution.  These two
+    forms of inventory management are mutually exclusive.
+
+    .. note::
+
+        The source directory linking is relative to the scenario's ephemeral
+        directory (`molecule/$scenario_name/.molecule/`).
+
+        The only valid keys are `group_vars` and `host_vars`.  Molecule's
+        schema validator will enforce this.
+
+    .. code-block:: yaml
+
+        provisioner:
+          name: ansible
+          inventory:
+            links:
+              group_vars: ../../../inventory/group_vars/
+              host_vars: ../../../inventory/host_vars/
 
     Override connection options:
 
@@ -296,11 +319,15 @@ class Ansible(base.Base):
 
     @property
     def host_vars(self):
-        return self._config.config['provisioner']['host_vars']
+        return self._config.config['provisioner']['inventory']['host_vars']
 
     @property
     def group_vars(self):
-        return self._config.config['provisioner']['group_vars']
+        return self._config.config['provisioner']['inventory']['group_vars']
+
+    @property
+    def links(self):
+        return self._config.config['provisioner']['inventory']['links']
 
     @property
     def inventory(self):
@@ -453,6 +480,11 @@ class Ansible(base.Base):
         :param target: A string containing either `host_vars` or `group_vars`.
         :returns: None
         """
+        if self.links:
+            msg = 'Skipping, add or update host vars links provided.'
+            LOG.warn(msg)
+            return
+
         if target == 'host_vars':
             vars_target = copy.deepcopy(self.host_vars)
             # Append the scenario-name
@@ -488,15 +520,37 @@ class Ansible(base.Base):
 
         :returns: None
         """
-        gv = os.path.join(self._config.scenario.ephemeral_directory,
-                          'group_vars')
-        hv = os.path.join(self._config.scenario.ephemeral_directory,
-                          'host_vars')
+        dirs = [
+            os.path.join(self._config.scenario.ephemeral_directory,
+                         'group_vars'),
+            os.path.join(self._config.scenario.ephemeral_directory,
+                         'host_vars'),
+        ]
 
-        if os.path.exists(gv):
-            shutil.rmtree(gv)
-        if os.path.exists(hv):
-            shutil.rmtree(hv)
+        for d in dirs:
+            if os.path.islink(d):
+                os.unlink(d)
+            else:
+                if os.path.exists(d):
+                    shutil.rmtree(d)
+
+    def link_or_update_vars(self):
+        """
+        Creates or updates the symlink to group_vars and returns None.
+
+        :returns: None
+        """
+        for d, source in self.links.items():
+            target = os.path.join(self._config.scenario.ephemeral_directory, d)
+            source = os.path.join(self._config.scenario.ephemeral_directory,
+                                  source)
+
+            if not os.path.exists(source):
+                msg = "The source path '{}' does not exist.".format(source)
+                util.sysexit_with_message(msg)
+            msg = "Inventory {} linked to {}".format(source, target)
+            LOG.info(msg)
+            os.symlink(source, target)
 
     def _get_ansible_playbook(self, playbook, **kwargs):
         """

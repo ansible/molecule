@@ -81,6 +81,7 @@ class Base(object):
         self._config.provisioner.remove_vars()
         self._config.provisioner.add_or_update_vars('host_vars')
         self._config.provisioner.add_or_update_vars('group_vars')
+        self._config.provisioner.link_or_update_vars()
 
 
 def _verify_configs(configs):
