@@ -20,8 +20,6 @@ provisioner:
     setup: ../../../../resources/playbooks/docker/create.yml
     teardown: ../../../../resources/playbooks/docker/destroy.yml
   inventory:
-    links:
-      host_vars: ../../../host_vars
     host_vars:
       instance-1:
         host_group_vars_host_molecule_yml: True

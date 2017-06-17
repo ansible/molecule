@@ -70,10 +70,22 @@ class ProvisionerInventorySchema(SchemaBase):
     links = marshmallow.fields.Nested(ProvisionerInventoryLinksSchema())
 
 
+class PlaybooksSchema(SchemaBase):
+    setup = marshmallow.fields.Str()
+    converge = marshmallow.fields.Str()
+    teardown = marshmallow.fields.Str()
+
+
 class ProvisionerPlaybooksSchema(SchemaBase):
     setup = marshmallow.fields.Str()
     converge = marshmallow.fields.Str()
     teardown = marshmallow.fields.Str()
+    docker = marshmallow.fields.Nested(PlaybooksSchema())
+    ec2 = marshmallow.fields.Nested(PlaybooksSchema())
+    lxc = marshmallow.fields.Nested(PlaybooksSchema())
+    lxd = marshmallow.fields.Nested(PlaybooksSchema())
+    openstack = marshmallow.fields.Nested(PlaybooksSchema())
+    vagrant = marshmallow.fields.Nested(PlaybooksSchema())
 
 
 class ProvisionerSchema(SchemaBase):

@@ -150,7 +150,8 @@ def test_idempotence_raises(scenario_to_test, with_scenario, scenario_name):
         'scenario_name',
     ])
 def test_interpolation(scenario_to_test, with_scenario, scenario_name):
-    env = os.environ.copy()
+    # Modify global environment so cleanup inherits our environment.
+    env = os.environ
     env.update({'DRIVER_NAME': 'docker'})
 
     cmd = sh.molecule.bake('test')
