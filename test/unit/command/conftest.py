@@ -104,27 +104,11 @@ def patched_base_filter_configs_for_scenario(mocker):
 
 
 @pytest.fixture
-def patched_provisioner_write_inventory(mocker):
-    return mocker.patch('molecule.provisioner.ansible.Ansible.write_inventory')
-
-
-@pytest.fixture
 def patched_provisioner_write_config(mocker):
     return mocker.patch('molecule.provisioner.ansible.Ansible.write_config')
 
 
 @pytest.fixture
-def patched_provisioner_add_or_update_vars(mocker):
+def patched_provisioner_manage_inventory(mocker):
     return mocker.patch(
-        'molecule.provisioner.ansible.Ansible.add_or_update_vars')
-
-
-@pytest.fixture
-def patched_provisioner_link_or_update_vars(mocker):
-    return mocker.patch(
-        'molecule.provisioner.ansible.Ansible.link_or_update_vars')
-
-
-@pytest.fixture
-def patched_provisioner_remove_vars(mocker):
-    return mocker.patch('molecule.provisioner.ansible.Ansible.remove_vars')
+        'molecule.provisioner.ansible.Ansible.manage_inventory')

@@ -76,11 +76,8 @@ class Base(object):
         if not os.path.isdir(self._config.scenario.ephemeral_directory):
             os.mkdir(self._config.scenario.ephemeral_directory)
 
-        self._config.provisioner.write_inventory()
         self._config.provisioner.write_config()
-        self._config.provisioner.remove_vars()
-        self._config.provisioner.add_or_update_vars()
-        self._config.provisioner.link_or_update_vars()
+        self._config.provisioner.manage_inventory()
 
 
 def _verify_configs(configs):

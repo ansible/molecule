@@ -451,16 +451,6 @@ class Ansible(base.Base):
         pb.add_cli_arg('syntax-check', True)
         pb.execute()
 
-    def write_inventory(self):
-        """
-        Writes the provisioner's inventory file to disk and returns None.
-
-        :return: None
-        """
-        self._verify_inventory()
-
-        util.write_file(self.inventory_file, util.safe_dump(self.inventory))
-
     def write_config(self):
         """
         Writes the provisioner's config file to disk and returns None.
@@ -473,17 +463,25 @@ class Ansible(base.Base):
             self._get_config_template(), config_options=self.config_options)
         util.write_file(self.config_file, template)
 
-    def add_or_update_vars(self):
+    def manage_inventory(self):
+        """
+        Manages inventory for Ansible and returns None.
+
+        :returns: None
+        """
+        self._write_inventory()
+        self._remove_vars()
+        if not self.links:
+            self._add_or_update_vars()
+        else:
+            self._link_or_update_vars()
+
+    def _add_or_update_vars(self):
         """
         Creates host and/or group vars and returns None.
 
         :returns: None
         """
-        if self.links:
-            msg = 'Skipping, add or update host vars links provided.'
-            LOG.warn(msg)
-            return
-
         for target in ['host_vars', 'group_vars']:
             if target == 'host_vars':
                 vars_target = copy.deepcopy(self.host_vars)
@@ -515,7 +513,17 @@ class Ansible(base.Base):
                     os.path.abspath(target_vars_directory), target)
                 util.write_file(path, util.safe_dump(target_var_content))
 
-    def remove_vars(self):
+    def _write_inventory(self):
+        """
+        Writes the provisioner's inventory file to disk and returns None.
+
+        :return: None
+        """
+        self._verify_inventory()
+
+        util.write_file(self.inventory_file, util.safe_dump(self.inventory))
+
+    def _remove_vars(self):
         """
         Remove host and/or group vars and returns None.
 
@@ -535,7 +543,7 @@ class Ansible(base.Base):
                 if os.path.exists(d):
                     shutil.rmtree(d)
 
-    def link_or_update_vars(self):
+    def _link_or_update_vars(self):
         """
         Creates or updates the symlink to group_vars and returns None.
 

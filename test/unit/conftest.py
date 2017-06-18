@@ -227,3 +227,26 @@ def patched_ansible_converge(mocker):
     m.return_value = 'patched-ansible-converge-stdout'
 
     return m
+
+
+@pytest.fixture
+def patched_provisioner_write_inventory(mocker):
+    return mocker.patch(
+        'molecule.provisioner.ansible.Ansible._write_inventory')
+
+
+@pytest.fixture
+def patched_provisioner_remove_vars(mocker):
+    return mocker.patch('molecule.provisioner.ansible.Ansible._remove_vars')
+
+
+@pytest.fixture
+def patched_provisioner_add_or_update_vars(mocker):
+    return mocker.patch(
+        'molecule.provisioner.ansible.Ansible._add_or_update_vars')
+
+
+@pytest.fixture
+def patched_provisioner_link_or_update_vars(mocker):
+    return mocker.patch(
+        'molecule.provisioner.ansible.Ansible._link_or_update_vars')

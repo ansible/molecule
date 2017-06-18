@@ -412,143 +412,6 @@ def test_connection_options(ansible_instance):
     assert x == ansible_instance.connection_options('foo')
 
 
-def test_add_or_update_vars(ansible_instance):
-    ephemeral_directory = ansible_instance._config.scenario.ephemeral_directory
-
-    host_vars_directory = os.path.join(ephemeral_directory, 'host_vars')
-    host_vars = os.path.join(host_vars_directory, 'instance-1-default')
-
-    ansible_instance.add_or_update_vars()
-
-    assert os.path.isdir(host_vars_directory)
-    assert os.path.isfile(host_vars)
-
-    host_vars_localhost = os.path.join(host_vars_directory, 'localhost')
-    assert os.path.isfile(host_vars_localhost)
-
-    group_vars_directory = os.path.join(ephemeral_directory, 'group_vars')
-    group_vars_1 = os.path.join(group_vars_directory, 'example_group1')
-    group_vars_2 = os.path.join(group_vars_directory, 'example_group2')
-
-    assert os.path.isdir(group_vars_directory)
-    assert os.path.isfile(group_vars_1)
-    assert os.path.isfile(group_vars_2)
-
-
-def test_add_or_update_vars_does_not_create_vars(ansible_instance):
-    c = ansible_instance._config.config
-    c['provisioner']['inventory']['host_vars'] = {}
-    c['provisioner']['inventory']['group_vars'] = {}
-    ephemeral_directory = ansible_instance._config.scenario.ephemeral_directory
-
-    host_vars_directory = os.path.join(ephemeral_directory, 'host_vars')
-    group_vars_directory = os.path.join(ephemeral_directory, 'group_vars')
-
-    ansible_instance.add_or_update_vars()
-
-    assert not os.path.isdir(host_vars_directory)
-    assert not os.path.isdir(group_vars_directory)
-
-
-def test_add_or_update_vars_does_not_create_vars_when_links(
-        ansible_instance, mocker, patched_logger_warn):
-    c = ansible_instance._config.config
-    c['provisioner']['inventory']['links'] = {'foo': 'bar'}
-    ephemeral_directory = ansible_instance._config.scenario.ephemeral_directory
-
-    host_vars_directory = os.path.join(ephemeral_directory, 'host_vars')
-    group_vars_directory = os.path.join(ephemeral_directory, 'group_vars')
-
-    ansible_instance.add_or_update_vars()
-
-    msg = 'Skipping, add or update host vars links provided.'
-    patched_logger_warn.assert_called_with(msg)
-
-    assert not os.path.isdir(host_vars_directory)
-    assert not os.path.isdir(group_vars_directory)
-
-
-def test_remove_vars(ansible_instance):
-    ephemeral_directory = ansible_instance._config.scenario.ephemeral_directory
-
-    host_vars_directory = os.path.join(ephemeral_directory, 'host_vars')
-    host_vars = os.path.join(host_vars_directory, 'instance-1-default')
-
-    ansible_instance.add_or_update_vars()
-    assert os.path.isdir(host_vars_directory)
-    assert os.path.isfile(host_vars)
-
-    host_vars_localhost = os.path.join(host_vars_directory, 'localhost')
-    assert os.path.isfile(host_vars_localhost)
-
-    group_vars_directory = os.path.join(ephemeral_directory, 'group_vars')
-    group_vars_1 = os.path.join(group_vars_directory, 'example_group1')
-    group_vars_2 = os.path.join(group_vars_directory, 'example_group2')
-
-    assert os.path.isdir(group_vars_directory)
-    assert os.path.isfile(group_vars_1)
-    assert os.path.isfile(group_vars_2)
-
-    ansible_instance.remove_vars()
-
-    assert not os.path.isdir(host_vars_directory)
-    assert not os.path.isdir(group_vars_directory)
-
-
-def test_remove_vars_symlinks(ansible_instance):
-    ephemeral_directory = ansible_instance._config.scenario.ephemeral_directory
-
-    source_group_vars = os.path.join(ephemeral_directory, os.path.pardir,
-                                     'group_vars')
-    target_group_vars = os.path.join(ephemeral_directory, 'group_vars')
-    os.mkdir(source_group_vars)
-    os.symlink(source_group_vars, target_group_vars)
-
-    ansible_instance.remove_vars()
-
-    assert not os.path.lexists(target_group_vars)
-
-
-def test_link_vars(ansible_instance):
-    c = ansible_instance._config.config
-    c['provisioner']['inventory']['links'] = {
-        'group_vars': '../group_vars',
-        'host_vars': '../host_vars'
-    }
-    ephemeral_directory = ansible_instance._config.scenario.ephemeral_directory
-    source_group_vars = os.path.join(ephemeral_directory, os.path.pardir,
-                                     'group_vars')
-    target_group_vars = os.path.join(ephemeral_directory, 'group_vars')
-    source_host_vars = os.path.join(ephemeral_directory, os.path.pardir,
-                                    'host_vars')
-    target_host_vars = os.path.join(ephemeral_directory, 'host_vars')
-
-    os.mkdir(source_group_vars)
-    os.mkdir(source_host_vars)
-
-    ansible_instance.link_or_update_vars()
-
-    assert os.path.lexists(target_group_vars)
-    assert os.path.lexists(target_host_vars)
-
-
-def test_link_vars_raises_when_source_not_found(ansible_instance,
-                                                patched_logger_critical):
-    c = ansible_instance._config.config
-    c['provisioner']['inventory']['links'] = {'foo': '../bar'}
-
-    with pytest.raises(SystemExit) as e:
-        ansible_instance.link_or_update_vars()
-
-    assert 1 == e.value.code
-
-    source = os.path.join(
-        ansible_instance._config.scenario.ephemeral_directory, os.path.pardir,
-        'bar')
-    msg = "The source path '{}' does not exist.".format(source)
-    patched_logger_critical.assert_called_once_with(msg)
-
-
 def test_check(ansible_instance, mocker, patched_ansible_playbook):
     ansible_instance.check()
 
@@ -624,8 +487,80 @@ def test_syntax(ansible_instance, mocker, patched_ansible_playbook):
     patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
+def test_write_config(temp_dir, ansible_instance):
+    ansible_instance.write_config()
+
+    assert os.path.isfile(ansible_instance.config_file)
+
+
+def test_manage_inventory(ansible_instance,
+                          patched_provisioner_write_inventory,
+                          patched_provisioner_remove_vars,
+                          patched_provisioner_add_or_update_vars,
+                          patched_provisioner_link_or_update_vars):
+    ansible_instance.manage_inventory()
+
+    patched_provisioner_write_inventory.assert_called_once_with()
+    patched_provisioner_remove_vars.assert_called_once_with()
+    patched_provisioner_add_or_update_vars.assert_called_once_with()
+    assert not patched_provisioner_link_or_update_vars.called
+
+
+def test_manage_inventory_with_links(ansible_instance,
+                                     patched_provisioner_write_inventory,
+                                     patched_provisioner_remove_vars,
+                                     patched_provisioner_add_or_update_vars,
+                                     patched_provisioner_link_or_update_vars):
+    c = ansible_instance._config.config
+    c['provisioner']['inventory']['links'] = {'foo': 'bar'}
+    ansible_instance.manage_inventory()
+
+    patched_provisioner_write_inventory.assert_called_once_with()
+    patched_provisioner_remove_vars.assert_called_once_with()
+    assert not patched_provisioner_add_or_update_vars.called
+    patched_provisioner_link_or_update_vars.assert_called_once_with()
+
+
+def test_add_or_update_vars(ansible_instance):
+    ephemeral_directory = ansible_instance._config.scenario.ephemeral_directory
+
+    host_vars_directory = os.path.join(ephemeral_directory, 'host_vars')
+    host_vars = os.path.join(host_vars_directory, 'instance-1-default')
+
+    ansible_instance._add_or_update_vars()
+
+    assert os.path.isdir(host_vars_directory)
+    assert os.path.isfile(host_vars)
+
+    host_vars_localhost = os.path.join(host_vars_directory, 'localhost')
+    assert os.path.isfile(host_vars_localhost)
+
+    group_vars_directory = os.path.join(ephemeral_directory, 'group_vars')
+    group_vars_1 = os.path.join(group_vars_directory, 'example_group1')
+    group_vars_2 = os.path.join(group_vars_directory, 'example_group2')
+
+    assert os.path.isdir(group_vars_directory)
+    assert os.path.isfile(group_vars_1)
+    assert os.path.isfile(group_vars_2)
+
+
+def test_add_or_update_vars_does_not_create_vars(ansible_instance):
+    c = ansible_instance._config.config
+    c['provisioner']['inventory']['host_vars'] = {}
+    c['provisioner']['inventory']['group_vars'] = {}
+    ephemeral_directory = ansible_instance._config.scenario.ephemeral_directory
+
+    host_vars_directory = os.path.join(ephemeral_directory, 'host_vars')
+    group_vars_directory = os.path.join(ephemeral_directory, 'group_vars')
+
+    ansible_instance._add_or_update_vars()
+
+    assert not os.path.isdir(host_vars_directory)
+    assert not os.path.isdir(group_vars_directory)
+
+
 def test_write_inventory(temp_dir, ansible_instance):
-    ansible_instance.write_inventory()
+    ansible_instance._write_inventory()
 
     assert os.path.isfile(ansible_instance.inventory_file)
 
@@ -718,10 +653,85 @@ def test_write_inventory(temp_dir, ansible_instance):
     assert x == data
 
 
-def test_write_config(temp_dir, ansible_instance):
-    ansible_instance.write_config()
+def test_remove_vars(ansible_instance):
+    ephemeral_directory = ansible_instance._config.scenario.ephemeral_directory
 
-    assert os.path.isfile(ansible_instance.config_file)
+    host_vars_directory = os.path.join(ephemeral_directory, 'host_vars')
+    host_vars = os.path.join(host_vars_directory, 'instance-1-default')
+
+    ansible_instance._add_or_update_vars()
+    assert os.path.isdir(host_vars_directory)
+    assert os.path.isfile(host_vars)
+
+    host_vars_localhost = os.path.join(host_vars_directory, 'localhost')
+    assert os.path.isfile(host_vars_localhost)
+
+    group_vars_directory = os.path.join(ephemeral_directory, 'group_vars')
+    group_vars_1 = os.path.join(group_vars_directory, 'example_group1')
+    group_vars_2 = os.path.join(group_vars_directory, 'example_group2')
+
+    assert os.path.isdir(group_vars_directory)
+    assert os.path.isfile(group_vars_1)
+    assert os.path.isfile(group_vars_2)
+
+    ansible_instance._remove_vars()
+
+    assert not os.path.isdir(host_vars_directory)
+    assert not os.path.isdir(group_vars_directory)
+
+
+def test_remove_vars_symlinks(ansible_instance):
+    ephemeral_directory = ansible_instance._config.scenario.ephemeral_directory
+
+    source_group_vars = os.path.join(ephemeral_directory, os.path.pardir,
+                                     'group_vars')
+    target_group_vars = os.path.join(ephemeral_directory, 'group_vars')
+    os.mkdir(source_group_vars)
+    os.symlink(source_group_vars, target_group_vars)
+
+    ansible_instance._remove_vars()
+
+    assert not os.path.lexists(target_group_vars)
+
+
+def test_link_vars(ansible_instance):
+    c = ansible_instance._config.config
+    c['provisioner']['inventory']['links'] = {
+        'group_vars': '../group_vars',
+        'host_vars': '../host_vars'
+    }
+    ephemeral_directory = ansible_instance._config.scenario.ephemeral_directory
+    source_group_vars = os.path.join(ephemeral_directory, os.path.pardir,
+                                     'group_vars')
+    target_group_vars = os.path.join(ephemeral_directory, 'group_vars')
+    source_host_vars = os.path.join(ephemeral_directory, os.path.pardir,
+                                    'host_vars')
+    target_host_vars = os.path.join(ephemeral_directory, 'host_vars')
+
+    os.mkdir(source_group_vars)
+    os.mkdir(source_host_vars)
+
+    ansible_instance._link_or_update_vars()
+
+    assert os.path.lexists(target_group_vars)
+    assert os.path.lexists(target_host_vars)
+
+
+def test_link_vars_raises_when_source_not_found(ansible_instance,
+                                                patched_logger_critical):
+    c = ansible_instance._config.config
+    c['provisioner']['inventory']['links'] = {'foo': '../bar'}
+
+    with pytest.raises(SystemExit) as e:
+        ansible_instance._link_or_update_vars()
+
+    assert 1 == e.value.code
+
+    source = os.path.join(
+        ansible_instance._config.scenario.ephemeral_directory, os.path.pardir,
+        'bar')
+    msg = "The source path '{}' does not exist.".format(source)
+    patched_logger_critical.assert_called_once_with(msg)
 
 
 def test_verify_inventory(ansible_instance):

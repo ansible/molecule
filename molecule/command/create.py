@@ -75,9 +75,6 @@ class Create(base.Base):
 
         self._config.provisioner.setup()
         self._config.state.change_state('created', True)
-        # Add the driver's connection_options to inventory, once the instances
-        # are created.
-        self._config.provisioner.write_inventory()
 
 
 @click.command()

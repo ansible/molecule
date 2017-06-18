@@ -21,8 +21,7 @@
 from molecule.command import create
 
 
-def test_execute(mocker, patched_create_setup,
-                 patched_provisioner_write_inventory, patched_logger_info,
+def test_execute(mocker, patched_create_setup, patched_logger_info,
                  patched_ansible_setup, config_instance):
     c = create.Create(config_instance)
     c.execute()
@@ -40,8 +39,6 @@ def test_execute(mocker, patched_create_setup,
     patched_ansible_setup.assert_called_once_with()
 
     assert config_instance.state.created
-
-    patched_provisioner_write_inventory.assert_called_once_with()
 
 
 def test_execute_skips_when_manual_driver(

@@ -11,6 +11,9 @@
       molecule_vagrant:
         instance_name: "{{ molecule_file | molecule_instance_with_scenario_name(item.name) }}"
         instance_interfaces: "{{ item.interfaces | default([]) }}"
+        # NOTE(retr0h): Help with spurious failures during functional tests.
+        instance_raw_config_args:
+          - "vm.boot_timeout = 700"
         platform_box: "{{ item.box }}"
         state: up
       register: server

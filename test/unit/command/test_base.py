@@ -76,21 +76,15 @@ def test_prune(base_instance):
 
 
 def test_setup(mocker, patched_provisioner_add_or_update_vars,
-               patched_provisioner_remove_vars,
-               patched_provisioner_link_or_update_vars,
-               patched_provisioner_write_inventory,
-               patched_provisioner_write_config, base_instance):
+               patched_provisioner_write_config,
+               patched_provisioner_manage_inventory, base_instance):
 
     assert os.path.isdir(base_instance._config.scenario.ephemeral_directory)
     assert os.path.isdir(
         os.path.dirname(base_instance._config.provisioner.inventory_file))
 
-    patched_provisioner_write_inventory.assert_called_once_with()
+    patched_provisioner_manage_inventory.assert_called_once_with()
     patched_provisioner_write_config.assert_called_once_with()
-
-    patched_provisioner_add_or_update_vars.assert_called_once_with()
-    patched_provisioner_remove_vars.assert_called_once_with()
-    patched_provisioner_link_or_update_vars.assert_called_once_with()
 
 
 def test_setup_creates_ephemeral_directory(base_instance):
