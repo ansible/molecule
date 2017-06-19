@@ -24,30 +24,29 @@ import sh
 
 from molecule import logger
 from molecule import util
-from molecule.verifier import base
+from molecule.lint import base
 
 LOG = logger.get_logger(__name__)
 
 
-class Flake8(base.Base):
+class Yamllint(base.Base):
     """
-    `Flake8`_ is the default code linter when using the Testinfra verifier.
-    It cannot be disabled without disabling the Testinfra verifier.
+    `Yamllint`_ is the default code linter when using the Ansible Lint linter.
+    It cannot be disabled without disabling the Ansible Lint linter.
 
-    .. _`Flake8`: http://flake8.pycqa.org/en/latest/
+    .. _`Yamllint`: https://github.com/adrienverge/yamllint
     """
 
     def __init__(self, config):
         """
-        Sets up the requirements to execute `flake8` and returns None.
+        Sets up the requirements to execute `yamllint` and returns None.
 
         :param config: An instance of a Molecule config.
         :return: None
         """
-        super(Flake8, self).__init__(config)
-        self._flake8_command = None
-        if config:
-            self._tests = self._get_tests()
+        super(Yamllint, self).__init__(config)
+        self._yamllint_command = None
+        self._directory = '.'
 
     @property
     def name(self):
@@ -63,37 +62,27 @@ class Flake8(base.Base):
 
     def bake(self):
         """
-        Bake a `flake8` command so it's ready to execute and returns None.
+        Bake a `yamllint` command so it's ready to execute and returns None.
 
         :return: None
         """
-        self._flake8_command = sh.flake8.bake(
+        self._yamllint_command = sh.yamllint.bake(
             self.default_options,
-            self._tests,
+            self._directory,
             _env=self.env,
             _out=LOG.out,
             _err=LOG.error)
 
     def execute(self):
-        if self._flake8_command is None:
+        if self._yamllint_command is None:
             self.bake()
 
-        msg = 'Executing Flake8 on files found in {}/...'.format(
-            self.directory)
+        msg = 'Executing Yamllint on files found in {}/...'.format(
+            self._directory)
         LOG.info(msg)
 
         try:
             util.run_command(
-                self._flake8_command, debug=self._config.args.get('debug'))
+                self._yamllint_command, debug=self._config.args.get('debug'))
         except sh.ErrorReturnCode as e:
             util.sysexit(e.exit_code)
-
-    def _get_tests(self):
-        """
-        Walk the verifier's directory for tests and returns a list.
-
-        :return: list
-        """
-        return [
-            filename for filename in util.os_walk(self.directory, 'test_*.py')
-        ]

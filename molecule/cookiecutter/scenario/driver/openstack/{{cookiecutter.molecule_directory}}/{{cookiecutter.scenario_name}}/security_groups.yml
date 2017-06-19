@@ -16,4 +16,4 @@
     remote_group: "{{ item.group | default(omit) }}"
     ethertype: "{{ item.ethertype | default(omit) }}"
   with_items: "{{ security_group_rules }}"
-{%- endraw -%}
+{%- endraw %}

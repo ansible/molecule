@@ -210,6 +210,9 @@ Molecule handles role linting by invoking configurable linters.
 Ansible Lint
 ^^^^^^^^^^^^
 
+.. autoclass:: molecule.lint.yamllint.Yamllint
+   :undoc-members:
+
 .. autoclass:: molecule.lint.ansible_lint.AnsibleLint
    :undoc-members:
 

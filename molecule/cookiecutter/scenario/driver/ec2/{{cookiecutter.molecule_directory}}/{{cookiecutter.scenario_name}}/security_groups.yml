@@ -6,4 +6,4 @@
     description: "{{ security_group_name }}"
     rules: "{{ security_group_rules }}"
     rules_egress: "{{ security_group_rules_egress }}"
-{%- endraw -%}
+{%- endraw %}

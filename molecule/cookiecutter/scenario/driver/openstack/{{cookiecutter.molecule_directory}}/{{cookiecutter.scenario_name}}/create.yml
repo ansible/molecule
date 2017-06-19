@@ -51,7 +51,7 @@
           'address': "{{ item.openstack.accessIPv4 }}",
           'user': "{{ user }}",
           'port': "{{ ssh_port }}",
-          'identity_file': "{{ keypair_path }}",}
+          'identity_file': "{{ keypair_path }}", }
       with_items: "{{ server.results }}"
       register: instance_config_dict
       when: server.changed | bool
@@ -74,4 +74,4 @@
         search_regex: SSH
         delay: 10
       with_items: "{{ lookup('file', molecule_instance_config) | from_yaml }}"
-{%- endraw -%}
+{%- endraw %}

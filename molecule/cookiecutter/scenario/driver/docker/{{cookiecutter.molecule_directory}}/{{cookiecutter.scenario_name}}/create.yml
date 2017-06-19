@@ -25,4 +25,4 @@
         log_driver: syslog
         command: "{{ item.command }}"
       with_items: "{{ molecule_yml.platforms }}"
-{%- endraw -%}
+{%- endraw %}

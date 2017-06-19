@@ -52,7 +52,6 @@ class LintSchema(SchemaBase):
     enabled = marshmallow.fields.Bool()
     options = marshmallow.fields.Dict()
     env = marshmallow.fields.Dict()
-    trailing_ignore_paths = marshmallow.fields.List(marshmallow.fields.Str)
 
 
 class PlatformsSchema(marshmallow.Schema):

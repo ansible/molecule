@@ -24,7 +24,7 @@
           'address': "{{ item.HostName }}",
           'user': "{{ item.User }}",
           'port': "{{ item.Port }}",
-          'identity_file': "{{ item.IdentityFile }}",}
+          'identity_file': "{{ item.IdentityFile }}", }
       with_items: "{{ server.results }}"
       register: instance_config_dict
       when: server.changed | bool
@@ -39,4 +39,4 @@
         content: "# Molecule managed\n\n{{ instance_conf | to_yaml }}"
         dest: "{{ molecule_instance_config }}"
       when: server.changed | bool
-{%- endraw -%}
+{%- endraw %}

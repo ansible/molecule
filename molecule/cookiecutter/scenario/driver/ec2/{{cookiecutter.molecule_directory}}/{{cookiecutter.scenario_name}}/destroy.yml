@@ -8,11 +8,12 @@
     molecule_instance_config: "{{ lookup('env','MOLECULE_INSTANCE_CONFIG') }}"
     molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
   tasks:
-    - block:
-      - name: Populate instance config
-        set_fact:
-          instance_conf: "{{ lookup('file', molecule_instance_config) | from_yaml }}"
-          skip_instances: False
+    - name: Ensure an instance_config exists
+      block:
+        - name: Populate instance config
+          set_fact:
+            instance_conf: "{{ lookup('file', molecule_instance_config) | from_yaml }}"
+            skip_instances: False
       rescue:
         - name: Populate instance config when file missing
           set_fact:
@@ -38,4 +39,4 @@
         content: "# Molecule managed\n\n{{ instance_conf | to_yaml }}"
         dest: "{{ molecule_instance_config }}"
       when: server.changed | bool
-{%- endraw -%}
+{%- endraw %}

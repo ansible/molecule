@@ -33,6 +33,7 @@ Breaking Changes
 * See Molecule v1 to v2 `Porting Guide`_.
 * Molecule no longer defaults to passing the `--become` flag to the
   `ansible-playbook` command.
+* Roles are linted with `Yamllint`_ vs v1's custom linter.
 
 .. _`EC2 Driver`: http://molecule.readthedocs.io/en/v2/configuration.html#ec2
 .. _`Goss Verifier`: http://molecule.readthedocs.io/en/v2/configuration.html#goss
@@ -43,6 +44,7 @@ Breaking Changes
 .. _`Semantic Versioning`: http://semver.org
 .. _`Scenarios`: http://molecule.readthedocs.io/en/v2/configuration.html#scenario
 .. _`Static Driver`: http://molecule.readthedocs.io/en/v2/configuration.html#static
+.. _`Yamllint`: https://github.com/adrienverge/yamllint
 
 1.25
 ====

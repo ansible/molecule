@@ -25,6 +25,7 @@ import sh
 from molecule import logger
 from molecule import util
 from molecule.lint import base
+from molecule.lint import yamllint
 
 LOG = logger.get_logger(__name__)
 
@@ -94,10 +95,6 @@ class AnsibleLint(base.Base):
 
         return env
 
-    @property
-    def default_ignore_paths(self):
-        return []
-
     def bake(self):
         """
         Bake an `ansible-lint` command so it's ready to execute and returns
@@ -123,6 +120,13 @@ class AnsibleLint(base.Base):
 
         if self._ansible_lint_command is None:
             self.bake()
+
+        y = yamllint.Yamllint(self._config)
+        y.execute()
+
+        msg = 'Executing Ansible Lint on {}/...'.format(
+            self._config.provisioner.playbooks.converge)
+        LOG.info(msg)
 
         try:
             util.run_command(

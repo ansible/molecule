@@ -22,43 +22,5 @@ import pytest
 
 
 @pytest.fixture
-def molecule_verifier_section_data():
-    return {
-        'verifier': {
-            'name': 'testinfra',
-            'options': {
-                'foo': 'bar',
-                'vvv': True,
-                'verbose': True,
-            },
-            'env': {
-                'foo': 'bar',
-            }
-        }
-    }
-
-
-@pytest.fixture
-def patched_goss_get_tests(mocker):
-    m = mocker.patch('molecule.verifier.goss.Goss._get_tests')
-    m.return_value = ['test1', 'test2', 'test3']
-
-    return m
-
-
-@pytest.fixture
-def patched_testinfra_get_tests(mocker):
-    m = mocker.patch('molecule.verifier.testinfra.Testinfra._get_tests')
-    m.return_value = ['test1', 'test2', 'test3']
-
-    return m
-
-
-@pytest.fixture
-def patched_flake8(mocker):
-    return mocker.patch('molecule.verifier.flake8.Flake8.execute')
-
-
-@pytest.fixture
 def patched_yamllint(mocker):
     return mocker.patch('molecule.lint.yamllint.Yamllint.execute')

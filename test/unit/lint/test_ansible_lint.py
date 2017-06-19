@@ -108,16 +108,6 @@ def test_env_property(ansible_lint_instance):
     assert 'ANSIBLE_FILTER_PLUGINS' in ansible_lint_instance.env
 
 
-def test_default_ignore_paths_property(ansible_lint_instance):
-    assert [] == ansible_lint_instance.default_ignore_paths
-
-
-def test_ignore_paths_property(ansible_lint_instance):
-    x = ['.git', '.vagrant', '.molecule']
-
-    x == ansible_lint_instance.ignore_paths
-
-
 def test_bake(ansible_lint_instance):
     ansible_lint_instance.bake()
     x = [
@@ -130,12 +120,23 @@ def test_bake(ansible_lint_instance):
     assert sorted(x) == sorted(result)
 
 
-def test_execute(patched_run_command, patched_logger_success,
-                 ansible_lint_instance):
-    ansible_lint_instance._ansible_lint_command = 'patched-command'
+def test_execute(mocker, patched_run_command, patched_logger_info,
+                 patched_logger_success, ansible_lint_instance):
+    ansible_lint_instance._ansible_lint_command = 'patched-ansiblelint-command'
     ansible_lint_instance.execute()
 
-    patched_run_command.assert_called_once_with('patched-command', debug=None)
+    x = [
+        mocker.call('{} .'.format(sh.yamllint), debug=None),
+        mocker.call('patched-ansiblelint-command', debug=None),
+    ]
+    assert x == patched_run_command.mock_calls
+
+    x = [
+        mocker.call('Executing Yamllint on files found in ./...'),
+        mocker.call('Executing Ansible Lint on {}/...'.format(
+            ansible_lint_instance._config.provisioner.playbooks.converge))
+    ]
+    assert x == patched_logger_info.mock_calls
 
     msg = 'Lint completed successfully.'
     patched_logger_success.assert_called_once_with(msg)
@@ -157,11 +158,11 @@ def test_execute_bakes(patched_run_command, ansible_lint_instance):
 
     assert ansible_lint_instance._ansible_lint_command is not None
 
-    assert 1 == patched_run_command.call_count
+    assert 2 == patched_run_command.call_count
 
 
-def test_executes_catches_and_exits_return_code(patched_run_command,
-                                                ansible_lint_instance):
+def test_executes_catches_and_exits_return_code(
+        patched_run_command, patched_yamllint, ansible_lint_instance):
     patched_run_command.side_effect = sh.ErrorReturnCode_1(
         sh.ansible_lint, b'', b'')
     with pytest.raises(SystemExit) as e:
