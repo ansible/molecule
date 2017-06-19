@@ -416,9 +416,8 @@ class Ansible(base.Base):
             pb = self._get_ansible_playbook(self.playbooks.converge, **kwargs)
         else:
             pb = self._get_ansible_playbook(playbook, **kwargs)
-        out = pb.execute()
 
-        return out.decode('utf-8')
+        return pb.execute()
 
     def destroy(self):
         """

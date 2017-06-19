@@ -216,7 +216,7 @@ def patched_logger_success(mocker):
 @pytest.fixture
 def patched_run_command(mocker):
     m = mocker.patch('molecule.util.run_command')
-    m.return_value = mocker.Mock(stdout='patched-run-command-stdout')
+    m.return_value = mocker.Mock(stdout=b'patched-run-command-stdout')
 
     return m
 

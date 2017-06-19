@@ -433,7 +433,9 @@ def test_converge(ansible_instance, mocker, patched_ansible_playbook):
         inventory_file,
         ansible_instance._config.provisioner.playbooks.converge,
         ansible_instance._config, )
-    assert result == 'patched-ansible-playbook-stdout'
+    # NOTE(retr0h): This is not the true return type.  This is a mock return
+    #               which didn't go through str.decode().
+    assert result == b'patched-ansible-playbook-stdout'
 
     patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
@@ -447,7 +449,9 @@ def test_converge_with_playbook(ansible_instance, mocker,
         inventory_file,
         'playbook',
         ansible_instance._config, )
-    assert result == 'patched-ansible-playbook-stdout'
+    # NOTE(retr0h): This is not the true return type.  This is a mock return
+    #               which didn't go through str.decode().
+    assert result == b'patched-ansible-playbook-stdout'
 
     patched_ansible_playbook.return_value.execute.assert_called_once_with()
 

@@ -88,9 +88,10 @@ class AnsiblePlaybook(object):
             cmd = util.run_command(
                 self._ansible_playbook_command,
                 debug=self._config.args.get('debug'))
-            return cmd.stdout
+            return cmd.stdout.decode('utf-8')
         except sh.ErrorReturnCode as e:
-            util.sysexit_with_message(str(e), e.exit_code)
+            out = e.stdout.decode('utf-8')
+            util.sysexit_with_message(str(out), e.exit_code)
 
     def add_cli_arg(self, name, value):
         """

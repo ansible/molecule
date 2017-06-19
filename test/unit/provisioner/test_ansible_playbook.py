@@ -88,9 +88,9 @@ def test_execute_bakes(patched_run_command, ansible_playbook_instance):
     patched_run_command.assert_called_once_with(cmd, debug=None)
 
 
-def test_executes_catches_and_exits_return_code(patched_run_command,
-                                                patched_logger_critical,
-                                                ansible_playbook_instance):
+def test_executes_catches_and_exits_return_code_with_stdout(
+        patched_run_command, patched_logger_critical,
+        ansible_playbook_instance):
     patched_run_command.side_effect = sh.ErrorReturnCode_1(
         sh.ansible_playbook, b'out', b'err')
     with pytest.raises(SystemExit) as e:
@@ -98,10 +98,7 @@ def test_executes_catches_and_exits_return_code(patched_run_command,
 
     assert 1 == e.value.code
 
-    msg = ('\n\n  '
-           'RAN: {}\n\n  '
-           'STDOUT:\nout\n\n  '
-           'STDERR:\nerr').format(sh.which('ansible-playbook'))
+    msg = 'out'
     patched_logger_critical.assert_called_once_with(msg)
 
 
