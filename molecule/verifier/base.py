@@ -22,6 +22,9 @@ import os
 
 import abc
 
+from molecule import util
+from molecule.verifier.lint import flake8
+
 
 class Base(object):
     __metaclass__ = abc.ABCMeta
@@ -89,3 +92,11 @@ class Base(object):
     def env(self):
         return self._config.merge_dicts(self.default_env,
                                         self._config.config['verifier']['env'])
+
+    @property
+    def lint(self):
+        lint_name = self._config.config['verifier']['lint']['name']
+        if lint_name == 'flake8':
+            return flake8.Flake8(self._config)
+        else:
+            util.exit_with_invalid_section('lint', lint_name)

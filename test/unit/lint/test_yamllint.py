@@ -29,7 +29,7 @@ from molecule.lint import yamllint
 def molecule_lint_section_data():
     return {
         'lint': {
-            'name': 'ansible-lint',
+            'name': 'yamllint',
             'options': {
                 'foo': 'bar',
             },
@@ -68,7 +68,7 @@ def test_default_env_property(yamllint_instance):
 
 
 def test_name_property(yamllint_instance):
-    assert yamllint_instance.name is None
+    assert 'yamllint' == yamllint_instance.name
 
 
 def test_enabled_property(yamllint_instance):
@@ -96,12 +96,14 @@ def test_options_property_handles_cli_args(yamllint_instance):
 
 def test_bake(yamllint_instance):
     yamllint_instance.bake()
-    x = '{} {}'.format(str(sh.yamllint), yamllint_instance._directory)
+    x = '{} --foo=bar {}'.format(
+        str(sh.yamllint), yamllint_instance._directory)
 
     assert x == yamllint_instance._yamllint_command
 
 
-def test_execute(patched_logger_info, patched_run_command, yamllint_instance):
+def test_execute(patched_logger_info, patched_logger_success,
+                 patched_run_command, yamllint_instance):
     yamllint_instance._yamllint_command = 'patched-yamllint-command'
     yamllint_instance.execute()
 
@@ -112,13 +114,17 @@ def test_execute(patched_logger_info, patched_run_command, yamllint_instance):
         yamllint_instance._directory)
     patched_logger_info.assert_called_once_with(msg)
 
+    msg = 'Lint completed successfully.'
+    patched_logger_success.assert_called_once_with(msg)
+
 
 def test_execute_bakes(patched_run_command, yamllint_instance):
     yamllint_instance.execute()
 
     assert yamllint_instance._yamllint_command is not None
 
-    cmd = '{} {}'.format(str(sh.yamllint), yamllint_instance._directory)
+    cmd = '{} --foo=bar {}'.format(
+        str(sh.yamllint), yamllint_instance._directory)
     patched_run_command.assert_called_once_with(cmd, debug=None)
 
 

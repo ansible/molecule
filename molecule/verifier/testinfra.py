@@ -25,7 +25,6 @@ import sh
 from molecule import logger
 from molecule import util
 from molecule.verifier import base
-from molecule.verifier import flake8
 
 LOG = logger.get_logger(__name__)
 
@@ -131,9 +130,6 @@ class Testinfra(base.Base):
 
         if self._testinfra_command is None:
             self.bake()
-
-        f = flake8.Flake8(self._config)
-        f.execute()
 
         msg = 'Executing Testinfra tests found in {}/...'.format(
             self.directory)

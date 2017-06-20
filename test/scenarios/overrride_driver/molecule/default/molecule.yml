@@ -4,8 +4,10 @@ dependency:
 driver:
   # NOTE(retr0h): Functional test overrides this on command line.
   name: vagrant
+  options:
+    config-file: ../../resources/.yamllint
 lint:
-  name: ansible-lint
+  name: yamllint
 platforms:
   - name: instance-1
     image: molecule_local/centos:7
@@ -17,7 +19,11 @@ provisioner:
     docker:
       setup: ../../../../resources/playbooks/docker/create.yml
       teardown: ../../../../resources/playbooks/docker/destroy.yml
+  lint:
+    name: ansible-lint
 scenario:
   name: default
 verifier:
   name: testinfra
+  lint:
+    name: flake8

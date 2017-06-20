@@ -16,7 +16,6 @@
 #  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-#  DEALINGS IN THE SOFTWARE.
 
 from __future__ import print_function
 
@@ -35,6 +34,11 @@ from molecule import logger
 LOG = logger.get_logger(__name__)
 
 colorama.init(autoreset=True)
+
+
+class SafeDumper(yaml.SafeDumper):
+    def increase_indent(self, flow=False, indentless=False):
+        return super(SafeDumper, self).increase_indent(flow, False)
 
 
 def print_debug(title, data):
@@ -120,6 +124,10 @@ def write_file(filename, content):
     file_prepender(filename)
 
 
+def molecule_prepender(content):
+    return '# Molecule managed\n\n' + content
+
+
 def file_prepender(filename):
     """
     Prepend an informational header on files managed by Molecule and returns
@@ -128,11 +136,10 @@ def file_prepender(filename):
     :param filename: A string containing the target filename.
     :return: None
     """
-    molecule_header = '# Molecule managed\n\n'
     with open_file(filename, 'r+') as f:
         content = f.read()
         f.seek(0, 0)
-        f.write(molecule_header + content)
+        f.write(molecule_prepender(content))
 
 
 def safe_dump(data):
@@ -145,7 +152,8 @@ def safe_dump(data):
     # TODO(retr0h): Do we need to encode?
     # yaml.dump(data) produces the document as a str object in both python
     # 2 and 3.
-    return yaml.safe_dump(data, default_flow_style=False, explicit_start=True)
+    return yaml.dump(
+        data, Dumper=SafeDumper, default_flow_style=False, explicit_start=True)
 
 
 def safe_load(string):
@@ -214,3 +222,8 @@ def verbose_flag(options):
 
 def title(word):
     return ' '.join(x.capitalize() or '_' for x in word.split('_'))
+
+
+def exit_with_invalid_section(section, name):
+    msg = "Invalid {} named '{}' configured.".format(section, name)
+    sysexit_with_message(msg)

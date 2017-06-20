@@ -38,7 +38,7 @@ from molecule.driver import lxd
 from molecule.driver import openstack
 from molecule.driver import static
 from molecule.driver import vagrant
-from molecule.lint import ansible_lint
+from molecule.lint import yamllint
 from molecule.provisioner import ansible
 from molecule.verifier import goss
 from molecule.verifier import testinfra
@@ -101,7 +101,7 @@ class Config(object):
         elif dependency_name == 'gilt':
             return gilt.Gilt(self)
         else:
-            self._exit_with_invalid_section('dependency', dependency_name)
+            util.exit_with_invalid_section('dependency', dependency_name)
 
     @property
     def driver(self):
@@ -123,7 +123,7 @@ class Config(object):
         elif driver_name == 'vagrant':
             driver = vagrant.Vagrant(self)
         else:
-            self._exit_with_invalid_section('driver', driver_name)
+            util.exit_with_invalid_section('driver', driver_name)
 
         driver.name = driver_name
 
@@ -152,10 +152,10 @@ class Config(object):
     @property
     def lint(self):
         lint_name = self.config['lint']['name']
-        if lint_name == 'ansible-lint':
-            return ansible_lint.AnsibleLint(self)
+        if lint_name == 'yamllint':
+            return yamllint.Yamllint(self)
         else:
-            self._exit_with_invalid_section('lint', lint_name)
+            util.exit_with_invalid_section('lint', lint_name)
 
     @property
     def platforms(self):
@@ -167,7 +167,7 @@ class Config(object):
         if provisioner_name == 'ansible':
             return ansible.Ansible(self)
         else:
-            self._exit_with_invalid_section('provisioner', provisioner_name)
+            util.exit_with_invalid_section('provisioner', provisioner_name)
 
     @property
     def scenario(self):
@@ -185,7 +185,7 @@ class Config(object):
         elif verifier_name == 'goss':
             return goss.Goss(self)
         else:
-            self._exit_with_invalid_section('verifier', verifier_name)
+            util.exit_with_invalid_section('verifier', verifier_name)
 
     @property
     def verifiers(self):
@@ -248,7 +248,7 @@ class Config(object):
                 'safe_files': [],
             },
             'lint': {
-                'name': 'ansible-lint',
+                'name': 'yamllint',
                 'enabled': True,
                 'options': {},
                 'env': {},
@@ -271,6 +271,12 @@ class Config(object):
                     'converge': 'playbook.yml',
                     'teardown': 'destroy.yml',
                 },
+                'lint': {
+                    'name': 'ansible-lint',
+                    'enabled': True,
+                    'options': {},
+                    'env': {},
+                },
             },
             'scenario': {
                 'name':
@@ -289,12 +295,14 @@ class Config(object):
                 'directory': 'tests',
                 'options': {},
                 'env': {},
+                'lint': {
+                    'name': 'flake8',
+                    'enabled': True,
+                    'options': {},
+                    'env': {},
+                },
             },
         }
-
-    def _exit_with_invalid_section(self, section, name):
-        msg = "Invalid {} named '{}' configured.".format(section, name)
-        util.sysexit_with_message(msg)
 
 
 def merge_dicts(a, b):

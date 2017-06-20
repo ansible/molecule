@@ -25,6 +25,27 @@ import sh
 
 from molecule import config
 from molecule.verifier import testinfra
+from molecule.verifier.lint import flake8
+
+
+@pytest.fixture
+def molecule_verifier_section_data():
+    return {
+        'verifier': {
+            'name': 'testinfra',
+            'options': {
+                'foo': 'bar',
+                'vvv': True,
+                'verbose': True,
+            },
+            'env': {
+                'foo': 'bar',
+            },
+            'lint': {
+                'name': 'flake8',
+            },
+        }
+    }
 
 
 @pytest.fixture
@@ -83,6 +104,36 @@ def test_default_env_property(testinfra_instance):
 
 def test_env_property(testinfra_instance):
     assert 'bar' == testinfra_instance.env['foo']
+
+
+def test_lint_property(testinfra_instance):
+    assert isinstance(testinfra_instance.lint, flake8.Flake8)
+
+
+@pytest.fixture
+def molecule_verifier_lint_invalid_section_data():
+    return {
+        'verifier': {
+            'name': 'testinfra',
+            'lint': {
+                'name': 'invalid',
+            },
+        }
+    }
+
+
+def test_lint_property_raises(molecule_verifier_lint_invalid_section_data,
+                              patched_logger_critical, testinfra_instance):
+    testinfra_instance._config.merge_dicts(
+        testinfra_instance._config.config,
+        molecule_verifier_lint_invalid_section_data)
+    with pytest.raises(SystemExit) as e:
+        testinfra_instance.lint
+
+    assert 1 == e.value.code
+
+    msg = "Invalid lint named 'invalid' configured."
+    patched_logger_critical.assert_called_once_with(msg)
 
 
 def test_name_property(testinfra_instance):
@@ -156,15 +207,13 @@ def test_bake(inventory_file, testinfra_instance):
     assert sorted(x) == sorted(result)
 
 
-def test_execute(patched_flake8, patched_logger_info, patched_run_command,
+def test_execute(patched_logger_info, patched_run_command,
                  patched_testinfra_get_tests, patched_logger_success,
                  testinfra_instance):
     testinfra_instance._testinfra_command = 'patched-command'
     testinfra_instance.execute()
 
     patched_run_command.assert_called_once_with('patched-command', debug=None)
-
-    patched_flake8.assert_called_once_with()
 
     msg = 'Executing Testinfra tests found in {}/...'.format(
         testinfra_instance.directory)
@@ -195,19 +244,17 @@ def test_does_not_execute_without_tests(
     patched_logger_warn.assert_called_once_with(msg)
 
 
-def test_execute_bakes(patched_flake8, patched_run_command,
-                       patched_testinfra_get_tests, testinfra_instance):
+def test_execute_bakes(patched_run_command, patched_testinfra_get_tests,
+                       testinfra_instance):
     testinfra_instance.execute()
 
     assert testinfra_instance._testinfra_command is not None
 
-    patched_flake8.assert_called_once_with()
     assert 1 == patched_run_command.call_count
 
 
 def test_executes_catches_and_exits_return_code(
-        patched_flake8, patched_run_command, patched_testinfra_get_tests,
-        testinfra_instance):
+        patched_run_command, patched_testinfra_get_tests, testinfra_instance):
     patched_run_command.side_effect = sh.ErrorReturnCode_1(
         sh.testinfra, b'', b'')
     with pytest.raises(SystemExit) as e:

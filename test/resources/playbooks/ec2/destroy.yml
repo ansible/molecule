@@ -8,10 +8,10 @@
     molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
   tasks:
     - block:
-      - name: Populate instance config
-        set_fact:
-          instance_conf: "{{ lookup('file', molecule_instance_config) | from_yaml }}"
-          skip_instances: False
+        - name: Populate instance config
+          set_fact:
+            instance_conf: "{{ lookup('file', molecule_instance_config) | from_yaml }}"
+            skip_instances: False
       rescue:
         - name: Populate instance config when file missing
           set_fact:
@@ -34,6 +34,8 @@
 
     - name: Dump instance config
       copy:
-        content: "# Molecule managed\n\n{{ instance_conf | to_yaml }}"
+        # NOTE(retr0h): Workaround for Ansible 2.2.
+        #               https://github.com/ansible/ansible/issues/20885
+        content: "{{ instance_conf | to_json | from_json | molecule_to_yaml | molecule_header }}"
         dest: "{{ molecule_instance_config }}"
       when: server.changed | bool

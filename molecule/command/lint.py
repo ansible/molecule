@@ -48,10 +48,16 @@ class Lint(base.Base):
         """
         msg = 'Scenario: [{}]'.format(self._config.scenario.name)
         LOG.info(msg)
-        msg = 'Lint: [{}]'.format(self._config.lint.name)
+        linters = ','.join([
+            self._config.lint.name, self._config.verifier.lint.name,
+            self._config.provisioner.lint.name
+        ])
+        msg = 'Lint: [{}]'.format(linters)
         LOG.info(msg)
 
         self._config.lint.execute()
+        self._config.verifier.lint.execute()
+        self._config.provisioner.lint.execute()
 
 
 @click.command()

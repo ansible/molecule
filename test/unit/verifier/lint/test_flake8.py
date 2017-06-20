@@ -18,19 +18,17 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import os
-
 import pytest
 import sh
 
 from molecule import config
-from molecule.verifier import flake8
+from molecule.verifier.lint import flake8
 
 
 @pytest.fixture
-def flake8_instance(molecule_verifier_section_data, config_instance):
+def flake8_instance(molecule_verifier_lint_section_data, config_instance):
     config_instance.merge_dicts(config_instance.config,
-                                molecule_verifier_section_data)
+                                molecule_verifier_lint_section_data)
 
     return flake8.Flake8(config_instance)
 
@@ -51,24 +49,16 @@ def test_default_env_property(flake8_instance):
 
 
 def test_name_property(flake8_instance):
-    assert flake8_instance.name is None
+    assert 'flake8' == flake8_instance.name
 
 
 def test_enabled_property(flake8_instance):
     assert flake8_instance.enabled
 
 
-def test_directory_property(flake8_instance):
-    parts = flake8_instance.directory.split(os.path.sep)
-
-    assert 'tests' == parts[-1]
-
-
 def test_options_property(flake8_instance):
     x = {
         'foo': 'bar',
-        'vvv': True,
-        'verbose': True,
     }
 
     assert x == flake8_instance.options
@@ -78,8 +68,6 @@ def test_options_property_handles_cli_args(flake8_instance):
     flake8_instance._config.args = {'debug': True}
     x = {
         'foo': 'bar',
-        'vvv': True,
-        'verbose': True,
     }
 
     # Does nothing.  The `flake8` command does not support
@@ -90,13 +78,13 @@ def test_options_property_handles_cli_args(flake8_instance):
 def test_bake(flake8_instance):
     flake8_instance._tests = ['test1', 'test2', 'test3']
     flake8_instance.bake()
-    x = '{} test1 test2 test3'.format(str(sh.flake8))
+    x = '{} --foo=bar test1 test2 test3'.format(str(sh.flake8))
 
     assert x == flake8_instance._flake8_command
 
 
-def test_execute(patched_logger_info, patched_run_command,
-                 patched_testinfra_get_tests, flake8_instance):
+def test_execute(patched_logger_info, patched_logger_success,
+                 patched_run_command, flake8_instance):
     flake8_instance._tests = ['test1', 'test2', 'test3']
     flake8_instance._flake8_command = 'patched-command'
     flake8_instance.execute()
@@ -104,8 +92,32 @@ def test_execute(patched_logger_info, patched_run_command,
     patched_run_command.assert_called_once_with('patched-command', debug=None)
 
     msg = 'Executing Flake8 on files found in {}/...'.format(
-        flake8_instance.directory)
+        flake8_instance._config.verifier.directory)
     patched_logger_info.assert_called_once_with(msg)
+
+    msg = 'Lint completed successfully.'
+    patched_logger_success.assert_called_once_with(msg)
+
+
+def test_execute_does_not_execute(patched_run_command, patched_logger_warn,
+                                  flake8_instance):
+    flake8_instance._config.config['verifier']['lint']['enabled'] = False
+    flake8_instance.execute()
+
+    assert not patched_run_command.called
+
+    msg = 'Skipping, verifier_lint is disabled.'
+    patched_logger_warn.assert_called_once_with(msg)
+
+
+def test_does_not_execute_without_tests(patched_run_command,
+                                        patched_logger_warn, flake8_instance):
+    flake8_instance.execute()
+
+    assert not patched_run_command.called
+
+    msg = 'Skipping, no tests found.'
+    patched_logger_warn.assert_called_once_with(msg)
 
 
 def test_execute_bakes(patched_run_command, flake8_instance):
@@ -114,12 +126,12 @@ def test_execute_bakes(patched_run_command, flake8_instance):
 
     assert flake8_instance._flake8_command is not None
 
-    cmd = '{} test1 test2 test3'.format(str(sh.flake8))
+    cmd = '{} --foo=bar test1 test2 test3'.format(str(sh.flake8))
     patched_run_command.assert_called_once_with(cmd, debug=None)
 
 
-def test_executes_catches_and_exits_return_code(patched_run_command,
-                                                flake8_instance):
+def test_executes_catches_and_exits_return_code(
+        patched_run_command, patched_flake8_get_tests, flake8_instance):
     patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.flake8, b'', b'')
     with pytest.raises(SystemExit) as e:
         flake8_instance.execute()

@@ -24,8 +24,7 @@ import sh
 
 from molecule import logger
 from molecule import util
-from molecule.lint import base
-from molecule.lint import yamllint
+from molecule.provisioner.lint import base
 
 LOG = logger.get_logger(__name__)
 
@@ -42,30 +41,36 @@ class AnsibleLint(base.Base):
 
     .. code-block:: yaml
 
-        lint:
-          name: ansible-lint
-          options:
-            excludes:
-              - path/exclude1
-              - path/exclude2
-            force-color: True
+        provisioner:
+          name: ansible
+          lint:
+            name: ansible-lint
+            options:
+              excludes:
+                - path/exclude1
+                - path/exclude2
+              force-color: True
 
     The role linting can be disabled by setting `enabled` to False.
 
     .. code-block:: yaml
 
-        lint:
-          name: ansible-lint
-          enabled: False
+        provisioner:
+          name: ansible
+          lint:
+            name: ansible-lint
+            enabled: False
 
     Environment variables can be passed to lint.
 
     .. code-block:: yaml
 
-        lint:
-          name: ansible-lint
-          env:
-            FOO: bar
+        provisioner:
+          name: ansible
+          lint:
+            name: ansible-lint
+            env:
+              FOO: bar
 
     .. _`Ansible Lint`: https://github.com/willthames/ansible-lint
     """
@@ -121,10 +126,7 @@ class AnsibleLint(base.Base):
         if self._ansible_lint_command is None:
             self.bake()
 
-        y = yamllint.Yamllint(self._config)
-        y.execute()
-
-        msg = 'Executing Ansible Lint on {}/...'.format(
+        msg = 'Executing Ansible Lint on {}...'.format(
             self._config.provisioner.playbooks.converge)
         LOG.info(msg)
 

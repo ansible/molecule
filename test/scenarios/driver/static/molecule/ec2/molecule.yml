@@ -9,14 +9,20 @@ driver:
       connection: ssh
       ansible_ssh_common_args: -F /tmp/ssh-config-aws
 lint:
-  name: ansible-lint
+  name: yamllint
+  options:
+    config-file: ../../../resources/.yamllint
 platforms:
   - name: static-instance
 provisioner:
   name: ansible
   env:
     ANSIBLE_ROLES_PATH: ../../../../../../resources/roles/
+  lint:
+    name: ansible-lint
 scenario:
   name: ec2
 verifier:
   name: testinfra
+  lint:
+    name: flake8

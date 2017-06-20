@@ -22,29 +22,33 @@ import pytest
 import sh
 
 from molecule import config
-from molecule.lint import ansible_lint
+from molecule.provisioner.lint import ansible_lint
 
 
 @pytest.fixture
-def molecule_lint_section_data():
+def molecule_provisioner_lint_section_data():
     return {
-        'lint': {
-            'name': 'ansible-lint',
-            'options': {
-                'foo': 'bar',
-                'v': True,
-            },
-            'env': {
-                'foo': 'bar',
+        'provisioner': {
+            'name': 'ansible',
+            'lint': {
+                'name': 'ansible-lint',
+                'options': {
+                    'foo': 'bar',
+                    'v': True,
+                },
+                'env': {
+                    'foo': 'bar',
+                },
             }
         }
     }
 
 
 @pytest.fixture
-def ansible_lint_instance(molecule_lint_section_data, config_instance):
+def ansible_lint_instance(molecule_provisioner_lint_section_data,
+                          config_instance):
     config_instance.merge_dicts(config_instance.config,
-                                molecule_lint_section_data)
+                                molecule_provisioner_lint_section_data)
 
     return ansible_lint.AnsibleLint(config_instance)
 
@@ -125,18 +129,12 @@ def test_execute(mocker, patched_run_command, patched_logger_info,
     ansible_lint_instance._ansible_lint_command = 'patched-ansiblelint-command'
     ansible_lint_instance.execute()
 
-    x = [
-        mocker.call('{} .'.format(sh.yamllint), debug=None),
-        mocker.call('patched-ansiblelint-command', debug=None),
-    ]
-    assert x == patched_run_command.mock_calls
+    patched_run_command.assert_called_once_with(
+        'patched-ansiblelint-command', debug=None)
 
-    x = [
-        mocker.call('Executing Yamllint on files found in ./...'),
-        mocker.call('Executing Ansible Lint on {}/...'.format(
-            ansible_lint_instance._config.provisioner.playbooks.converge))
-    ]
-    assert x == patched_logger_info.mock_calls
+    msg = 'Executing Ansible Lint on {}...'.format(
+        ansible_lint_instance._config.provisioner.playbooks.converge)
+    patched_logger_info.assert_called_once_with(msg)
 
     msg = 'Lint completed successfully.'
     patched_logger_success.assert_called_once_with(msg)
@@ -144,7 +142,8 @@ def test_execute(mocker, patched_run_command, patched_logger_info,
 
 def test_execute_does_not_execute(patched_run_command, patched_logger_warn,
                                   ansible_lint_instance):
-    ansible_lint_instance._config.config['lint']['enabled'] = False
+    c = ansible_lint_instance._config.config
+    c['provisioner']['lint']['enabled'] = False
     ansible_lint_instance.execute()
 
     assert not patched_run_command.called
@@ -158,7 +157,7 @@ def test_execute_bakes(patched_run_command, ansible_lint_instance):
 
     assert ansible_lint_instance._ansible_lint_command is not None
 
-    assert 2 == patched_run_command.call_count
+    assert 1 == patched_run_command.call_count
 
 
 def test_executes_catches_and_exits_return_code(

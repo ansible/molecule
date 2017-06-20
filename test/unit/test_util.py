@@ -194,10 +194,36 @@ def test_write_file(temp_dir):
     assert x == data
 
 
+def molecule_prepender(content):
+    x = '# Molecule managed\n\nfoo bar'
+
+    assert x == util.file_prepender('foo bar')
+
+
 def test_safe_dump():
-    x = '---\nfoo: bar\n'
+    x = """
+---
+foo: bar
+""".lstrip()
 
     assert x == util.safe_dump({'foo': 'bar'})
+
+
+def test_safe_dump_with_increase_indent():
+    data = {
+        'foo': [{
+            'foo': 'bar',
+            'baz': 'zzyzx',
+        }],
+    }
+
+    x = """
+---
+foo:
+  - baz: zzyzx
+    foo: bar
+""".lstrip()
+    assert x == util.safe_dump(data)
 
 
 def test_safe_load():
@@ -268,3 +294,13 @@ def test_verbose_flag_preserves_verbose_option():
 def test_title():
     assert 'Foo' == util.title('foo')
     assert 'Foo Bar' == util.title('foo_bar')
+
+
+def test_exit_with_invalid_section(patched_logger_critical):
+    with pytest.raises(SystemExit) as e:
+        util.exit_with_invalid_section('section', 'name')
+
+    assert 1 == e.value.code
+
+    msg = "Invalid section named 'name' configured."
+    patched_logger_critical.assert_called_once_with(msg)

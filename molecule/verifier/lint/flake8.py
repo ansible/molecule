@@ -24,15 +24,49 @@ import sh
 
 from molecule import logger
 from molecule import util
-from molecule.verifier import base
+from molecule.verifier.lint import base
 
 LOG = logger.get_logger(__name__)
 
 
 class Flake8(base.Base):
     """
-    `Flake8`_ is the default code linter when using the Testinfra verifier.
-    It cannot be disabled without disabling the Testinfra verifier.
+    `Flake8`_ is the default verifier linter.
+
+    `Flake8`_ is a linter for python files.
+
+    Additional options can be passed to `flake8` through the options
+    dict.  Any option set in this section will override the defaults.
+
+    .. code-block:: yaml
+
+        provisioner:
+          name: ansible
+          lint:
+            name: flake8
+            options:
+              benchmark: True
+
+    The role linting can be disabled by setting `enabled` to False.
+
+    .. code-block:: yaml
+
+        provisioner:
+          name: ansible
+          lint:
+            name: flake8
+            enabled: False
+
+    Environment variables can be passed to lint.
+
+    .. code-block:: yaml
+
+        provisioner:
+          name: ansible
+          lint:
+            name: flake8
+            env:
+              FOO: bar
 
     .. _`Flake8`: http://flake8.pycqa.org/en/latest/
     """
@@ -50,10 +84,6 @@ class Flake8(base.Base):
             self._tests = self._get_tests()
 
     @property
-    def name(self):
-        return None
-
-    @property
     def default_options(self):
         return {}
 
@@ -68,23 +98,32 @@ class Flake8(base.Base):
         :return: None
         """
         self._flake8_command = sh.flake8.bake(
-            self.default_options,
+            self.options,
             self._tests,
             _env=self.env,
             _out=LOG.out,
             _err=LOG.error)
 
     def execute(self):
+        if not self.enabled:
+            LOG.warn('Skipping, verifier_lint is disabled.')
+            return
+
+        if not len(self._tests) > 0:
+            LOG.warn('Skipping, no tests found.')
+            return
+
         if self._flake8_command is None:
             self.bake()
 
         msg = 'Executing Flake8 on files found in {}/...'.format(
-            self.directory)
+            self._config.verifier.directory)
         LOG.info(msg)
 
         try:
             util.run_command(
                 self._flake8_command, debug=self._config.args.get('debug'))
+            LOG.success('Lint completed successfully.')
         except sh.ErrorReturnCode as e:
             util.sysexit(e.exit_code)
 
@@ -95,5 +134,7 @@ class Flake8(base.Base):
         :return: list
         """
         return [
-            filename for filename in util.os_walk(self.directory, 'test_*.py')
+            filename
+            for filename in util.os_walk(self._config.verifier.directory,
+                                         'test_*.py')
         ]

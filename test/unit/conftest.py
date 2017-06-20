@@ -71,7 +71,7 @@ def molecule_driver_static_section_data():
 def molecule_lint_section_data():
     return {
         'lint': {
-            'name': 'ansible-lint'
+            'name': 'yamllint'
         },
     }
 
@@ -99,6 +99,9 @@ def molecule_provisioner_section_data():
             'options': {
                 'become': True,
             },
+            'lint': {
+                'name': 'ansible-lint',
+            },
         },
     }
 
@@ -116,7 +119,10 @@ def molecule_scenario_section_data():
 def molecule_verifier_section_data():
     return {
         'verifier': {
-            'name': 'testinfra'
+            'name': 'testinfra',
+            'lint': {
+                'name': 'flake8',
+            },
         },
     }
 
@@ -250,3 +256,8 @@ def patched_provisioner_add_or_update_vars(mocker):
 def patched_provisioner_link_or_update_vars(mocker):
     return mocker.patch(
         'molecule.provisioner.ansible.Ansible._link_or_update_vars')
+
+
+@pytest.fixture
+def patched_yamllint(mocker):
+    return mocker.patch('molecule.lint.yamllint.Yamllint.execute')

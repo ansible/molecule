@@ -172,9 +172,9 @@ def init():
     help='Name of driver to initialize. (docker)')
 @click.option(
     '--lint-name',
-    type=click.Choice(['ansible-lint']),
-    default='ansible-lint',
-    help='Name of lint to initialize. (ansible-lint)')
+    type=click.Choice(['yamllint']),
+    default='yamllint',
+    help='Name of lint to initialize. (yamllint)')
 @click.option(
     '--provisioner-name',
     type=click.Choice(['ansible']),

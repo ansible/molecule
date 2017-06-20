@@ -205,15 +205,12 @@ Create instances with additional instance options.
 Lint
 ----
 
-Molecule handles role linting by invoking configurable linters.
+Molecule handles project linting by invoking configurable linters.
 
-Ansible Lint
-^^^^^^^^^^^^
+Yaml Lint
+^^^^^^^^^
 
 .. autoclass:: molecule.lint.yamllint.Yamllint
-   :undoc-members:
-
-.. autoclass:: molecule.lint.ansible_lint.AnsibleLint
    :undoc-members:
 
 Platforms
@@ -231,6 +228,14 @@ Ansible
 ^^^^^^^
 
 .. autoclass:: molecule.provisioner.ansible.Ansible
+   :undoc-members:
+
+Ansible Lint
+^^^^^^^^^^^^
+
+Molecule handles provisioner linting by invoking configurable linters.
+
+.. autoclass:: molecule.provisioner.lint.ansible_lint.AnsibleLint
    :undoc-members:
 
 Scenario
@@ -266,4 +271,12 @@ Testinfra
    :undoc-members:
 
 .. autoclass:: molecule.verifier.testinfra.Testinfra
+   :undoc-members:
+
+Flake8
+^^^^^^
+
+Molecule handles test linting by invoking configurable linters.
+
+.. autoclass:: molecule.verifier.lint.flake8.Flake8
    :undoc-members:

@@ -4,7 +4,9 @@ dependency:
 driver:
   name: ec2
 lint:
-  name: ansible-lint
+  name: yamllint
+  options:
+    config-file: ../../../resources/.yamllint
 platforms:
   - name: instance-1
     image: ami-a5b196c0
@@ -27,7 +29,11 @@ provisioner:
     teardown: ../../../../../resources/playbooks/ec2/destroy.yml
   env:
     ANSIBLE_ROLES_PATH: ../../../../../../resources/roles/
+  lint:
+    name: ansible-lint
 scenario:
   name: multi-node
 verifier:
   name: testinfra
+  lint:
+    name: flake8

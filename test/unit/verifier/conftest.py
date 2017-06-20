@@ -22,23 +22,6 @@ import pytest
 
 
 @pytest.fixture
-def molecule_verifier_section_data():
-    return {
-        'verifier': {
-            'name': 'testinfra',
-            'options': {
-                'foo': 'bar',
-                'vvv': True,
-                'verbose': True,
-            },
-            'env': {
-                'foo': 'bar',
-            }
-        }
-    }
-
-
-@pytest.fixture
 def patched_goss_get_tests(mocker):
     m = mocker.patch('molecule.verifier.goss.Goss._get_tests')
     m.return_value = ['test1', 'test2', 'test3']

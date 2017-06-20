@@ -96,6 +96,7 @@ class ProvisionerSchema(SchemaBase):
     inventory = marshmallow.fields.Nested(ProvisionerInventorySchema())
     children = marshmallow.fields.Dict()
     playbooks = marshmallow.fields.Nested(ProvisionerPlaybooksSchema())
+    lint = marshmallow.fields.Nested(LintSchema())
 
 
 class ScenarioSchema(SchemaBase):
@@ -111,6 +112,7 @@ class VerifierSchema(SchemaBase):
     directory = marshmallow.fields.Str()
     options = marshmallow.fields.Dict()
     env = marshmallow.fields.Dict()
+    lint = marshmallow.fields.Nested(LintSchema())
 
 
 class MoleculeSchema(marshmallow.Schema):
@@ -122,6 +124,7 @@ class MoleculeSchema(marshmallow.Schema):
     provisioner = marshmallow.fields.Nested(ProvisionerSchema())
     scenario = marshmallow.fields.Nested(ScenarioSchema())
     verifier = marshmallow.fields.Nested(VerifierSchema())
+    # verifier_lint = marshmallow.fields.Nested(LintSchema())
 
 
 def validate(c):

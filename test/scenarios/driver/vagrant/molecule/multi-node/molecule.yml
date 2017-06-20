@@ -4,7 +4,9 @@ dependency:
 driver:
   name: vagrant
 lint:
-  name: ansible-lint
+  name: yamllint
+  options:
+    config-file: ../../../resources/.yamllint
 platforms:
   - name: instance-1
     box: debian/jessie64
@@ -31,7 +33,11 @@ provisioner:
     teardown: ../../../../../resources/playbooks/vagrant/destroy.yml
   env:
     ANSIBLE_ROLES_PATH: ../../../../../../resources/roles/
+  lint:
+    name: ansible-lint
 scenario:
   name: multi-node
 verifier:
   name: testinfra
+  lint:
+    name: flake8

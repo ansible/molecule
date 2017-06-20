@@ -33,7 +33,13 @@ def patched_ansible_destroy(mocker):
 
 @pytest.fixture
 def patched_ansible_lint(mocker):
-    return mocker.patch('molecule.lint.ansible_lint.AnsibleLint.execute')
+    return mocker.patch(
+        'molecule.provisioner.lint.ansible_lint.AnsibleLint.execute')
+
+
+@pytest.fixture
+def patched_flake8(mocker):
+    return mocker.patch('molecule.verifier.lint.flake8.Flake8.execute')
 
 
 @pytest.fixture

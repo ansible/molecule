@@ -31,8 +31,38 @@ LOG = logger.get_logger(__name__)
 
 class Yamllint(base.Base):
     """
-    `Yamllint`_ is the default code linter when using the Ansible Lint linter.
-    It cannot be disabled without disabling the Ansible Lint linter.
+    `Yamllint`_ is the default projet linter.
+
+    `Yamllint`_ is a linter for YAML files.  In addition to checking for syntax
+    validity, also checks for key repetition, and cosmetic problems such as
+    lines length, trailing spaces, and indentation.
+
+    Additional options can be passed to `yamllint` through the options
+    dict.  Any option set in this section will override the defaults.
+
+    .. code-block:: yaml
+
+        lint:
+          name: yamllint
+          options:
+            config-file: foo/bar
+
+    The project linting can be disabled by setting `enabled` to False.
+
+    .. code-block:: yaml
+
+        lint:
+          name: yamllint
+          enabled: False
+
+    Environment variables can be passed to lint.
+
+    .. code-block:: yaml
+
+        lint:
+          name: yamllint
+          env:
+            FOO: bar
 
     .. _`Yamllint`: https://github.com/adrienverge/yamllint
     """
@@ -49,10 +79,6 @@ class Yamllint(base.Base):
         self._directory = '.'
 
     @property
-    def name(self):
-        return None
-
-    @property
     def default_options(self):
         return {}
 
@@ -67,7 +93,7 @@ class Yamllint(base.Base):
         :return: None
         """
         self._yamllint_command = sh.yamllint.bake(
-            self.default_options,
+            self.options,
             self._directory,
             _env=self.env,
             _out=LOG.out,
@@ -84,5 +110,6 @@ class Yamllint(base.Base):
         try:
             util.run_command(
                 self._yamllint_command, debug=self._config.args.get('debug'))
+            LOG.success('Lint completed successfully.')
         except sh.ErrorReturnCode as e:
             util.sysexit(e.exit_code)

@@ -32,6 +32,14 @@ def dict_at_index(h, index):
     return [h[index]]
 
 
+def to_yaml(data):
+    return str(util.safe_dump(data))
+
+
+def header(content):
+    return util.molecule_prepender(content)
+
+
 class FilterModule(object):
     """ Core Molecule filter plugins. """
 
@@ -40,4 +48,6 @@ class FilterModule(object):
             'molecule_instance_with_scenario_name':
             instance_with_scenario_name,
             'molecule_dict_at_index': dict_at_index,
+            'molecule_to_yaml': to_yaml,
+            'molecule_header': header,
         }

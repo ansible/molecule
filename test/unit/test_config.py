@@ -35,7 +35,7 @@ from molecule.driver import lxd
 from molecule.driver import openstack
 from molecule.driver import static
 from molecule.driver import vagrant
-from molecule.lint import ansible_lint
+from molecule.lint import yamllint
 from molecule.provisioner import ansible
 from molecule.verifier import goss
 from molecule.verifier import testinfra
@@ -254,7 +254,7 @@ def test_env(config_instance):
         'MOLECULE_INSTANCE_CONFIG': config_instance.driver.instance_config,
         'MOLECULE_DEPENDENCY_NAME': 'galaxy',
         'MOLECULE_DRIVER_NAME': 'docker',
-        'MOLECULE_LINT_NAME': 'ansible-lint',
+        'MOLECULE_LINT_NAME': 'yamllint',
         'MOLECULE_PROVISIONER_NAME': 'ansible',
         'MOLECULE_SCENARIO_NAME': 'default',
         'MOLECULE_VERIFIER_NAME': 'testinfra'
@@ -264,7 +264,7 @@ def test_env(config_instance):
 
 
 def test_lint_property(config_instance):
-    assert isinstance(config_instance.lint, ansible_lint.AnsibleLint)
+    assert isinstance(config_instance.lint, yamllint.Yamllint)
 
 
 @pytest.fixture
@@ -412,16 +412,6 @@ def test_get_driver_name_raises_when_different_driver_used(
     msg = ("Instance(s) were created with the 'foo' driver, "
            "but the subcommand is using 'bar' driver.")
 
-    patched_logger_critical.assert_called_once_with(msg)
-
-
-def test_exit_with_invalid_section(config_instance, patched_logger_critical):
-    with pytest.raises(SystemExit) as e:
-        config_instance._exit_with_invalid_section('section', 'name')
-
-    assert 1 == e.value.code
-
-    msg = "Invalid section named 'name' configured."
     patched_logger_critical.assert_called_once_with(msg)
 
 

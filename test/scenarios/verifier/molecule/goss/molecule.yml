@@ -4,7 +4,9 @@ dependency:
 driver:
   name: docker
 lint:
-  name: ansible-lint
+  name: yamllint
+  options:
+    config-file: ../../resources/.yamllint
 platforms:
   - name: instance-1
     image: molecule_local/centos:7
@@ -15,7 +17,11 @@ provisioner:
   playbooks:
     setup: ../../../../resources/playbooks/docker/create.yml
     teardown: ../../../../resources/playbooks/docker/destroy.yml
+  lint:
+    name: ansible-lint
 scenario:
   name: goss
 verifier:
   name: goss
+  lint:
+    name: flake8

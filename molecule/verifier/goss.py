@@ -29,6 +29,8 @@ LOG = logger.get_logger(__name__)
 
 class Goss(base.Base):
     """
+    `Goss`_ is not the default test runner.
+
     `Goss`_ is a YAML based serverspec-like tool for validating a server's
     configuration.  `Goss`_ is `not` the default verifier used in Molecule.
 

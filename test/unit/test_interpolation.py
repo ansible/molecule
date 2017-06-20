@@ -84,7 +84,7 @@ dependency:
 driver:
     name: docker
 lint:
-    name: ansible-lint
+    name: yamllint
 platforms:
   - name: instance-1
 provisioner:
@@ -104,7 +104,7 @@ dependency:
 driver:
     name: docker
 lint:
-    name: ansible-lint
+    name: yamllint
 platforms:
   - name: instance-1
 provisioner:

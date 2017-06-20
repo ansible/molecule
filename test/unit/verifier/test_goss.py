@@ -24,6 +24,7 @@ import pytest
 
 from molecule import config
 from molecule.verifier import goss
+from molecule.verifier.lint import flake8
 
 
 @pytest.fixture
@@ -37,7 +38,10 @@ def molecule_verifier_section_data():
             },
             'env': {
                 'foo': 'bar',
-            }
+            },
+            'lint': {
+                'name': 'flake8',
+            },
         }
     }
 
@@ -67,6 +71,36 @@ def test_default_env_property(goss_instance):
 
 def test_env_property(goss_instance):
     assert 'bar' == goss_instance.env['foo']
+
+
+def test_lint_property(goss_instance):
+    assert isinstance(goss_instance.lint, flake8.Flake8)
+
+
+@pytest.fixture
+def molecule_verifier_lint_invalid_section_data():
+    return {
+        'verifier': {
+            'name': 'goss',
+            'lint': {
+                'name': 'invalid',
+            },
+        }
+    }
+
+
+def test_lint_property_raises(molecule_verifier_lint_invalid_section_data,
+                              patched_logger_critical, goss_instance):
+    goss_instance._config.merge_dicts(
+        goss_instance._config.config,
+        molecule_verifier_lint_invalid_section_data)
+    with pytest.raises(SystemExit) as e:
+        goss_instance.lint
+
+    assert 1 == e.value.code
+
+    msg = "Invalid lint named 'invalid' configured."
+    patched_logger_critical.assert_called_once_with(msg)
 
 
 def test_name_property(goss_instance):

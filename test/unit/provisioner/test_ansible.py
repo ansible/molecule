@@ -26,6 +26,7 @@ import pytest
 from molecule import config
 from molecule import util
 from molecule.provisioner import ansible
+from molecule.provisioner.lint import ansible_lint
 
 
 @pytest.fixture
@@ -68,7 +69,10 @@ def molecule_provisioner_section_data():
                     }],
                 },
             },
-        },
+            'lint': {
+                'name': 'ansible-lint',
+            },
+        }
     }
 
 
@@ -125,6 +129,36 @@ def test_default_env_property(ansible_instance):
 
 def test_name_property(ansible_instance):
     assert 'ansible' == ansible_instance.name
+
+
+def test_lint_property(ansible_instance):
+    assert isinstance(ansible_instance.lint, ansible_lint.AnsibleLint)
+
+
+@pytest.fixture
+def molecule_provisioner_lint_invalid_section_data():
+    return {
+        'provisioner': {
+            'name': 'ansible',
+            'lint': {
+                'name': 'invalid',
+            },
+        }
+    }
+
+
+def test_lint_property_raises(molecule_provisioner_lint_invalid_section_data,
+                              patched_logger_critical, ansible_instance):
+    ansible_instance._config.merge_dicts(
+        ansible_instance._config.config,
+        molecule_provisioner_lint_invalid_section_data)
+    with pytest.raises(SystemExit) as e:
+        ansible_instance.lint
+
+    assert 1 == e.value.code
+
+    msg = "Invalid lint named 'invalid' configured."
+    patched_logger_critical.assert_called_once_with(msg)
 
 
 def test_config_options_property(ansible_instance):

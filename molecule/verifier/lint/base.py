@@ -20,16 +20,13 @@
 
 import abc
 
-from molecule import util
-from molecule.provisioner.lint import ansible_lint
-
 
 class Base(object):
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, config):
         """
-        Base initializer for all :ref:`Provisioner` classes.
+        Base initializer for all :ref:`Verifier Lint` classes.
 
         :param config: An instance of a Molecule config.
         :returns: None
@@ -54,20 +51,35 @@ class Base(object):
         """
         pass
 
-    @property
     @abc.abstractmethod
-    def name(self):  # pragma: no cover
+    def execute(self):  # pragma: no cover
         """
-        Name of the provisioner and returns a string.
+        Executes `cmd` and returns None.
 
-        :returns: str
+        :return: None
         """
         pass
 
     @property
-    def lint(self):
-        lint_name = self._config.config['provisioner']['lint']['name']
-        if lint_name == 'ansible-lint':
-            return ansible_lint.AnsibleLint(self._config)
-        else:
-            util.exit_with_invalid_section('lint', lint_name)
+    def name(self):
+        """
+        Name of the lint and returns a string.
+
+        :returns: str
+        """
+        return self._config.config['verifier']['lint']['name']
+
+    @property
+    def enabled(self):
+        return self._config.config['verifier']['lint']['enabled']
+
+    @property
+    def options(self):
+        return self._config.merge_dicts(
+            self.default_options,
+            self._config.config['verifier']['lint']['options'])
+
+    @property
+    def env(self):
+        return self._config.merge_dicts(
+            self.default_env, self._config.config['verifier']['lint']['env'])
