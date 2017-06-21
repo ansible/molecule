@@ -1,0 +1,33 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    molecule_file: "{{ lookup('env','MOLECULE_FILE') }}"
+    molecule_instance_config: "{{ lookup('env','MOLECULE_INSTANCE_CONFIG') }}"
+    molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
+  tasks:
+    - name: Destroy molecule instance(s)
+      gce:
+        instance_names: "{{ molecule_file | molecule_instance_with_scenario_name(item.name) }}"
+        state: absent
+        zone: us-west1-a
+        service_account_email: 328742674280-compute@developer.gserviceaccount.com
+        credentials_file: "{{ lookup('env','HOME') }}/.env/molecule-99291d8cc014.json"
+        project_id: molecule-171422
+      register: server
+      with_items: "{{ molecule_yml.platforms }}"
+
+    # Mandatory configuration for Molecule to function.
+
+    - name: Populate instance config
+      set_fact:
+        instance_conf: {}
+
+    - name: Dump instance config
+      copy:
+        # NOTE(retr0h): Workaround for Ansible 2.2.
+        #               https://github.com/ansible/ansible/issues/20885
+        content: "{{ instance_conf | to_json | from_json | molecule_to_yaml | molecule_header }}"
+        dest: "{{ molecule_instance_config }}"
+      when: server.changed | bool

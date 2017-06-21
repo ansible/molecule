@@ -1,0 +1,27 @@
+---
+dependency:
+  name: {{ cookiecutter.dependency_name }}
+driver:
+  name: {{ cookiecutter.driver_name }}
+lint:
+  name: {{ cookiecutter.lint_name }}
+platforms:
+  - name: instance-1
+    zone: us-west1-a
+    machine_type: f1-micro
+    image: debian-8
+{%- raw %}
+    service_account_email: "{{ lookup('env','GCE_SERVICE_ACCOUNT_EMAIL') }}"
+    credentials_file: "{{ lookup('env','GCE_CREDENTIALS_FILE') }}"
+    project_id: "{{ lookup('env','GCE_PROJECT_ID') }}"
+{%- endraw %}
+provisioner:
+  name: {{ cookiecutter.provisioner_name }}
+  lint:
+    name: {{ cookiecutter.provisioner_lint_name }}
+scenario:
+  name: {{ cookiecutter.scenario_name }}
+verifier:
+  name: {{ cookiecutter.verifier_name }}
+  lint:
+    name: {{ cookiecutter.verifier_lint_name }}

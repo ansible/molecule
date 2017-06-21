@@ -28,7 +28,7 @@ LOG = logger.get_logger(__name__)
 
 class Openstack(base.Base):
     """
-    The class responsible for managing `OpenStack`_ containers.  `OpenStack`_
+    The class responsible for managing `OpenStack`_ instances.  `OpenStack`_
     is `not` the default driver used in Molecule.
 
     .. code-block:: yaml

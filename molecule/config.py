@@ -33,6 +33,7 @@ from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
 from molecule.driver import dockr
 from molecule.driver import ec2
+from molecule.driver import gce
 from molecule.driver import lxc
 from molecule.driver import lxd
 from molecule.driver import openstack
@@ -112,6 +113,8 @@ class Config(object):
             driver = dockr.Dockr(self)
         elif driver_name == 'ec2':
             driver = ec2.Ec2(self)
+        elif driver_name == 'gce':
+            driver = gce.Gce(self)
         elif driver_name == 'lxc':
             driver = lxc.Lxc(self)
         elif driver_name == 'lxd':
@@ -356,6 +359,7 @@ def molecule_drivers():
     return [
         dockr.Dockr(None).name,
         ec2.Ec2(None).name,
+        gce.Gce(None).name,
         lxc.Lxc(None).name,
         lxd.Lxd(None).name,
         openstack.Openstack(None).name,

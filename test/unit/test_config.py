@@ -30,6 +30,7 @@ from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
 from molecule.driver import dockr
 from molecule.driver import ec2
+from molecule.driver import gce
 from molecule.driver import lxc
 from molecule.driver import lxd
 from molecule.driver import openstack
@@ -134,6 +135,23 @@ def test_driver_property_is_ec2(molecule_driver_ec2_section_data,
 
 
 @pytest.fixture
+def molecule_driver_gce_section_data():
+    return {
+        'driver': {
+            'name': 'gce'
+        },
+    }
+
+
+def test_driver_property_is_gce(molecule_driver_gce_section_data,
+                                config_instance):
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_driver_gce_section_data)
+
+    assert isinstance(config_instance.driver, gce.Gce)
+
+
+@pytest.fixture
 def molecule_driver_lxc_section_data():
     return {
         'driver': {
@@ -235,6 +253,7 @@ def test_drivers_property(config_instance):
     x = [
         'docker',
         'ec2',
+        'gce',
         'lxc',
         'lxd',
         'openstack',
@@ -436,6 +455,7 @@ def test_molecule_drivers():
     x = [
         'docker',
         'ec2',
+        'gce',
         'lxc',
         'lxd',
         'openstack',

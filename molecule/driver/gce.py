@@ -26,26 +26,30 @@ from molecule import util
 LOG = logger.get_logger(__name__)
 
 
-class Ec2(base.Base):
+class Gce(base.Base):
     """
-    The class responsible for managing `EC2`_ instances.  `EC2`_
+    The class responsible for managing `GCE`_ instances.  `GCE`_
     is `not` the default driver used in Molecule.
+
+    GCE is somewhat different than other cloud providers.  There is not
+    an Ansible module for managing ssh keys.  This driver assumes the developer
+    has deployed project wide ssh key.
 
     .. code-block:: yaml
 
         driver:
-          name: ec2
+          name: gce
 
     .. code-block:: bash
 
-        $ sudo pip install boto
+        $ sudo pip install apache-libcloud
 
     Change the options passed to the ssh client.
 
     .. code-block:: yaml
 
         driver:
-          name: ec2
+          name: gce
           ssh_connection_options:
             -o ControlPath=~/.ansible/cp/%r@%h-%p
 
@@ -59,17 +63,17 @@ class Ec2(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: ec2
+          name: gce
           safe_files:
             - foo
             - .molecule/bar
 
-    .. _`EC2`: https://aws.amazon.com/ec2/
+    .. _`GCE`: https://cloud.google.com/compute/docs/
     """
 
     def __init__(self, config):
-        super(Ec2, self).__init__(config)
-        self._name = 'ec2'
+        super(Gce, self).__init__(config)
+        self._name = 'gce'
 
     @property
     def name(self):

@@ -1,0 +1,45 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: gce
+lint:
+  name: yamllint
+  options:
+    config-file: ../../../resources/.yamllint
+platforms:
+  - name: instance-1
+    zone: us-west1-a
+    machine_type: f1-micro
+    image: debian-8
+    service_account_email: "{{ lookup('env','GCE_SERVICE_ACCOUNT_EMAIL') }}"
+    credentials_file: "{{ lookup('env','GCE_CREDENTIALS_FILE') }}"
+    project_id: "{{ lookup('env','GCE_PROJECT_ID') }}"
+    groups:
+      - foo
+      - bar
+  - name: instance-2
+    zone: us-west1-a
+    machine_type: f1-micro
+    image: debian-8
+    service_account_email: "{{ lookup('env','GCE_SERVICE_ACCOUNT_EMAIL') }}"
+    credentials_file: "{{ lookup('env','GCE_CREDENTIALS_FILE') }}"
+    project_id: "{{ lookup('env','GCE_PROJECT_ID') }}"
+    groups:
+      - foo
+      - baz
+provisioner:
+  name: ansible
+  playbooks:
+    setup: ../../../../../resources/playbooks/gce/create.yml
+    teardown: ../../../../../resources/playbooks/gce/destroy.yml
+  env:
+    ANSIBLE_ROLES_PATH: ../../../../../../resources/roles/
+  lint:
+    name: ansible-lint
+scenario:
+  name: multi-node
+verifier:
+  name: testinfra
+  lint:
+    name: flake8
