@@ -9,6 +9,7 @@ pytest-helpers-namespace
 pytest-mock
 pytest-verbose-parametrize
 python-vagrant
-shade
+# The error was: KeyError: 'created_at'
+shade==1.20.0
 wheel
 yapf==0.16.2
