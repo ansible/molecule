@@ -124,7 +124,6 @@ class MoleculeSchema(marshmallow.Schema):
     provisioner = marshmallow.fields.Nested(ProvisionerSchema())
     scenario = marshmallow.fields.Nested(ScenarioSchema())
     verifier = marshmallow.fields.Nested(VerifierSchema())
-    # verifier_lint = marshmallow.fields.Nested(LintSchema())
 
 
 def validate(c):
