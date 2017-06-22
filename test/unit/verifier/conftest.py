@@ -24,7 +24,10 @@ import pytest
 @pytest.fixture
 def patched_goss_get_tests(mocker):
     m = mocker.patch('molecule.verifier.goss.Goss._get_tests')
-    m.return_value = ['test1', 'test2', 'test3']
+    m.return_value = [
+        'foo.py',
+        'bar.py',
+    ]
 
     return m
 
@@ -32,16 +35,9 @@ def patched_goss_get_tests(mocker):
 @pytest.fixture
 def patched_testinfra_get_tests(mocker):
     m = mocker.patch('molecule.verifier.testinfra.Testinfra._get_tests')
-    m.return_value = ['test1', 'test2', 'test3']
+    m.return_value = [
+        'foo.py',
+        'bar.py',
+    ]
 
     return m
-
-
-@pytest.fixture
-def patched_flake8(mocker):
-    return mocker.patch('molecule.verifier.flake8.Flake8.execute')
-
-
-@pytest.fixture
-def patched_yamllint(mocker):
-    return mocker.patch('molecule.lint.yamllint.Yamllint.execute')

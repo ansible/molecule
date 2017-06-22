@@ -195,12 +195,16 @@ def test_options_property_handles_cli_args(inventory_file, testinfra_instance):
     assert x == testinfra_instance.options
 
 
-def test_bake(inventory_file, testinfra_instance):
-    testinfra_instance._tests = ['test1', 'test2', 'test3']
+def test_bake(patched_testinfra_get_tests, inventory_file, testinfra_instance):
     testinfra_instance.bake()
     x = [
-        str(sh.testinfra), '--ansible-inventory={}'.format(inventory_file),
-        '--connection=ansible', '-vvv', '--foo=bar', 'test1', 'test2', 'test3'
+        str(sh.testinfra),
+        '--ansible-inventory={}'.format(inventory_file),
+        '--connection=ansible',
+        '-vvv',
+        '--foo=bar',
+        'foo.py',
+        'bar.py',
     ]
     result = str(testinfra_instance._testinfra_command).split()
 
