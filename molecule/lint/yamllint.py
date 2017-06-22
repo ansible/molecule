@@ -76,7 +76,7 @@ class Yamllint(base.Base):
         """
         super(Yamllint, self).__init__(config)
         self._yamllint_command = None
-        self._directory = '.'
+        self._files = self._get_files()
 
     @property
     def default_options(self):
@@ -94,7 +94,7 @@ class Yamllint(base.Base):
         """
         self._yamllint_command = sh.yamllint.bake(
             self.options,
-            self._directory,
+            self._files,
             _env=self.env,
             _out=LOG.out,
             _err=LOG.error)
@@ -104,7 +104,7 @@ class Yamllint(base.Base):
             self.bake()
 
         msg = 'Executing Yamllint on files found in {}/...'.format(
-            self._directory)
+            self._config.project_directory)
         LOG.info(msg)
 
         try:
@@ -113,3 +113,16 @@ class Yamllint(base.Base):
             LOG.success('Lint completed successfully.')
         except sh.ErrorReturnCode as e:
             util.sysexit(e.exit_code)
+
+    def _get_files(self):
+        """
+        Walk the project directory for tests and returns a list.
+
+        :return: list
+        """
+        generators = [
+            util.os_walk(self._config.project_directory, '*.yml'),
+            util.os_walk(self._config.project_directory, '*.yaml'),
+        ]
+
+        return [f for g in generators for f in g]

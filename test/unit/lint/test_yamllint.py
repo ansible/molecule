@@ -52,8 +52,13 @@ def test_config_private_member(yamllint_instance):
     assert isinstance(yamllint_instance._config, config.Config)
 
 
-def test_directory_private_member(yamllint_instance):
-    assert '.' == yamllint_instance._directory
+def test_files_private_member(patched_get_files, yamllint_instance):
+    x = [
+        'foo.yml',
+        'bar.yaml',
+    ]
+
+    assert x == yamllint_instance._files
 
 
 def test_default_options_property(yamllint_instance):
@@ -94,16 +99,16 @@ def test_options_property_handles_cli_args(yamllint_instance):
     assert x == yamllint_instance.options
 
 
-def test_bake(yamllint_instance):
+def test_bake(patched_get_files, yamllint_instance):
     yamllint_instance.bake()
-    x = '{} --foo=bar {}'.format(
-        str(sh.yamllint), yamllint_instance._directory)
+    x = '{} --foo=bar foo.yml bar.yaml'.format(str(sh.yamllint))
 
     assert x == yamllint_instance._yamllint_command
 
 
-def test_execute(patched_logger_info, patched_logger_success,
-                 patched_run_command, yamllint_instance):
+def test_execute(patched_get_files, patched_logger_info,
+                 patched_logger_success, patched_run_command,
+                 yamllint_instance):
     yamllint_instance._yamllint_command = 'patched-yamllint-command'
     yamllint_instance.execute()
 
@@ -111,20 +116,20 @@ def test_execute(patched_logger_info, patched_logger_success,
         'patched-yamllint-command', debug=None)
 
     msg = 'Executing Yamllint on files found in {}/...'.format(
-        yamllint_instance._directory)
+        yamllint_instance._config.project_directory)
     patched_logger_info.assert_called_once_with(msg)
 
     msg = 'Lint completed successfully.'
     patched_logger_success.assert_called_once_with(msg)
 
 
-def test_execute_bakes(patched_run_command, yamllint_instance):
+def test_execute_bakes(patched_get_files, patched_run_command,
+                       yamllint_instance):
     yamllint_instance.execute()
 
     assert yamllint_instance._yamllint_command is not None
 
-    cmd = '{} --foo=bar {}'.format(
-        str(sh.yamllint), yamllint_instance._directory)
+    cmd = '{} --foo=bar foo.yml bar.yaml'.format(str(sh.yamllint))
     patched_run_command.assert_called_once_with(cmd, debug=None)
 
 
