@@ -1,3 +1,9 @@
 FROM centos:7
 
-RUN yum makecache fast && yum update -y && yum install -y python sudo yum-plugin-ovl && sed -i 's/plugins=0/plugins=1/g' /etc/yum.conf
+RUN /bin/sh -c 'if [ -x "$(command -v apt-get)" ]; then apt-get update && apt-get upgrade -y && apt-get install -y python sudo bash; fi'
+RUN /bin/sh -c 'if [ -x "$(command -v yum)" ]; then touch /var/lib/rpm/* && yum makecache fast && yum update -y && yum install -y python sudo yum-plugin-ovl bash && sed -i 's/plugins=0/plugins=1/g' /etc/yum.conf; fi'
+RUN /bin/sh -c 'if [ -x "$(command -v zypper)" ]; then zypper refresh && zypper update -y && zypper install -y python sudo bash; fi'
+RUN /bin/sh -c 'if [ -x "$(command -v apk)" ]; then apk update && apk add python sudo bash; fi'
+RUN /bin/sh -c 'if [ -x "$(command -v pacman)" ]; then pacman --sync --noconfirm --refresh python2 bash; fi'
+RUN /bin/sh -c 'if [ -x "$(command -v dnf)" ]; then dnf makecache fast; dnf --assumeyes install python python-devel python2-dnf bash; fi'
+RUN /bin/sh -c 'if [ -x "$(command -v emerge)" ]; then emerge --ask n =dev-lang/python-2\* gentoolkit; fi'
