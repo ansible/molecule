@@ -6,16 +6,20 @@
     molecule_file: "{{ lookup('env','MOLECULE_FILE') }}"
     molecule_instance_config: "{{ lookup('env','MOLECULE_INSTANCE_CONFIG') }}"
     molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
+
+    ssh_port: 22
+    ssh_user: "{{ lookup('env','USER') }}"
+    ssh_identity_file: "{{ lookup('env','HOME') }}/.ssh/google_compute_engine"
   tasks:
     - name: Create molecule instance(s)
-      molecule_vagrant:
-        instance_name: "{{ molecule_file | molecule_instance_with_scenario_name(item.name) }}"
-        instance_interfaces: "{{ item.interfaces | default([]) }}"
-        # NOTE(retr0h): Help with spurious failures during functional tests.
-        instance_raw_config_args:
-          - "vm.boot_timeout = 700"
-        platform_box: "{{ item.box }}"
-        state: up
+      gce:
+        instance_names: "{{ molecule_file | molecule_instance_with_scenario_name(item.name) }}"
+        zone: "{{ item.zone }}"
+        machine_type: "{{ item.machine_type }}"
+        image: "{{ item.image }}"
+        service_account_email: "{{ item.service_account_email }}" 
+        credentials_file: "{{ item.credentials_file }}"
+        project_id: "{{ item.project_id }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
 
@@ -24,11 +28,11 @@
     - name: Populate instance config dict
       set_fact:
         instance_conf_dict: {
-          'instance': "{{ item.Host }}",
-          'address': "{{ item.HostName }}",
-          'user': "{{ item.User }}",
-          'port': "{{ item.Port }}",
-          'identity_file': "{{ item.IdentityFile }}", }
+          'instance': "{{ item.instance_data[0].name }}",
+          'address': "{{ item.instance_data[0].public_ip }}",
+          'user': "{{ ssh_user }}",
+          'port': "{{ ssh_port }}",
+          'identity_file': "{{ ssh_identity_file }}", }
       with_items: "{{ server.results }}"
       register: instance_config_dict
       when: server.changed | bool
@@ -45,3 +49,11 @@
         content: "{{ instance_conf | to_json | from_json | molecule_to_yaml | molecule_header }}"
         dest: "{{ molecule_instance_config }}"
       when: server.changed | bool
+
+    - name: Wait for SSH
+      wait_for:
+        port: "{{ ssh_port }}"
+        host: "{{ item.address }}"
+        search_regex: SSH
+        delay: 10
+      with_items: "{{ lookup('file', molecule_instance_config) | from_yaml }}"

@@ -51,7 +51,7 @@
           'user': 'ubuntu',
           'port': "{{ ssh_port }}",
           'identity_file': "{{ keypair_path }}",
-          'instance_ids': "{{ item.instance_ids }}",}
+          'instance_ids': "{{ item.instance_ids }}", }
       with_items: "{{ server.results }}"
       register: instance_config_dict
       when: server.changed | bool

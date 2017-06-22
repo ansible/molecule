@@ -45,6 +45,7 @@ def driver_name(request):
     'scenario_to_test, driver_name, scenario_name', [
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
+        ('driver/gce', 'gce', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
@@ -69,11 +70,13 @@ def test_command_check(scenario_to_test, with_scenario, scenario_name):
     'scenario_to_test, driver_name, scenario_name', [
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
+        ('driver/gce', 'gce', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/static', 'static', 'docker'),
         ('driver/static', 'static', 'ec2'),
+        ('driver/static', 'static', 'gce'),
         ('driver/static', 'static', 'openstack'),
         ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
@@ -93,11 +96,13 @@ def test_command_converge(scenario_to_test, with_scenario, scenario_name):
     'scenario_to_test, driver_name, scenario_name', [
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
+        ('driver/gce', 'gce', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/static', 'static', 'docker'),
         ('driver/static', 'static', 'ec2'),
+        ('driver/static', 'static', 'gce'),
         ('driver/static', 'static', 'openstack'),
         ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
@@ -117,6 +122,7 @@ def test_command_create(scenario_to_test, with_scenario, scenario_name):
     'scenario_to_test, driver_name, scenario_name', [
         ('dependency', 'docker', 'ansible-galaxy'),
         ('dependency', 'ec2', 'ansible-galaxy'),
+        ('dependency', 'gce', 'ansible-galaxy'),
         ('dependency', 'lxc', 'ansible-galaxy'),
         ('dependency', 'lxd', 'ansible-galaxy'),
         ('dependency', 'openstack', 'ansible-galaxy'),
@@ -142,6 +148,7 @@ def test_command_dependency_ansible_galaxy(scenario_to_test, with_scenario,
     'scenario_to_test, driver_name, scenario_name', [
         ('dependency', 'docker', 'gilt'),
         ('dependency', 'ec2', 'gilt'),
+        ('dependency', 'gce', 'gilt'),
         ('dependency', 'lxc', 'gilt'),
         ('dependency', 'lxd', 'gilt'),
         ('dependency', 'openstack', 'gilt'),
@@ -167,11 +174,13 @@ def test_command_dependency_gilt(scenario_to_test, with_scenario,
     'scenario_to_test, driver_name, scenario_name', [
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
+        ('driver/gce', 'gce', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/static', 'static', 'docker'),
         ('driver/static', 'static', 'ec2'),
+        ('driver/static', 'static', 'gce'),
         ('driver/static', 'static', 'openstack'),
         ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
@@ -191,11 +200,13 @@ def test_command_destroy(scenario_to_test, with_scenario, scenario_name):
     'scenario_to_test, driver_name, scenario_name', [
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
+        ('driver/gce', 'gce', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/static', 'static', 'docker'),
         ('driver/static', 'static', 'ec2'),
+        ('driver/static', 'static', 'gce'),
         ('driver/static', 'static', 'openstack'),
         ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
@@ -213,6 +224,7 @@ def test_command_idempotence(scenario_to_test, with_scenario, scenario_name):
     'driver_name', [
         ('docker'),
         ('ec2'),
+        ('gce'),
         ('lxc'),
         ('lxd'),
         ('openstack'),
@@ -229,6 +241,7 @@ def test_command_init_role(temp_dir, driver_name, skip_test):
     'driver_name', [
         ('docker'),
         ('ec2'),
+        ('gce'),
         ('lxc'),
         ('lxd'),
         ('openstack'),
@@ -245,11 +258,13 @@ def test_command_init_scenario(temp_dir, driver_name, skip_test):
     'scenario_to_test, driver_name, scenario_name', [
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
+        ('driver/gce', 'gce', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/static', 'static', 'docker'),
         ('driver/static', 'static', 'ec2'),
+        ('driver/static', 'static', 'gce'),
         ('driver/static', 'static', 'openstack'),
         ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
@@ -282,6 +297,13 @@ instance-1-default     Ec2            Ansible             default          False
 instance-1-multi-node  Ec2            Ansible             multi-node       False      False
 instance-2-multi-node  Ec2            Ansible             multi-node       False      False
 """.strip()),  # noqa
+        ('driver/gce', 'gce', """
+Instance Name          Driver Name    Provisioner Name    Scenario Name    Created    Converged
+---------------------  -------------  ------------------  ---------------  ---------  -----------
+instance-1-default     Gce            Ansible             default          False      False
+instance-1-multi-node  Gce            Ansible             multi-node       False      False
+instance-2-multi-node  Gce            Ansible             multi-node       False      False
+""".strip()),  # noqa
         ('driver/lxc', 'lxc', """
 Instance Name          Driver Name    Provisioner Name    Scenario Name    Created    Converged
 ---------------------  -------------  ------------------  ---------------  ---------  -----------
@@ -308,6 +330,7 @@ Instance Name              Driver Name    Provisioner Name    Scenario Name    C
 -------------------------  -------------  ------------------  ---------------  ---------  -----------
 static-instance-docker     Static         Ansible             docker           False      True
 static-instance-ec2        Static         Ansible             ec2              False      True
+static-instance-gce        Static         Ansible             gce              False      True
 static-instance-openstack  Static         Ansible             openstack        False      True
 static-instance-vagrant    Static         Ansible             vagrant          False      True
 """.strip()),  # noqa
@@ -339,6 +362,11 @@ instance-1-default     Ec2  Ansible  default     False  False
 instance-1-multi-node  Ec2  Ansible  multi-node  False  False
 instance-2-multi-node  Ec2  Ansible  multi-node  False  False
 """.strip()),
+        ('driver/gce', 'gce', """
+instance-1-default     Gce  Ansible  default     False  False
+instance-1-multi-node  Gce  Ansible  multi-node  False  False
+instance-2-multi-node  Gce  Ansible  multi-node  False  False
+""".strip()),
         ('driver/lxc', 'lxc', """
 instance-1-default     Lxc  Ansible  default     False  False
 instance-1-multi-node  Lxc  Ansible  multi-node  False  False
@@ -357,6 +385,7 @@ instance-2-multi-node  Openstack  Ansible  multi-node  False  False
         ('driver/static', 'static', """
 static-instance-docker     Static  Ansible  docker     False  True
 static-instance-ec2        Static  Ansible  ec2        False  True
+static-instance-gce        Static  Ansible  gce        False  True
 static-instance-openstack  Static  Ansible  openstack  False  True
 static-instance-vagrant    Static  Ansible  vagrant    False  True
 """.strip()),
@@ -395,6 +424,13 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario,
             'instance-2',
             '.*ip-.*',
         ]], 'multi-node'),
+        ('driver/gce', 'gce', [[
+            'instance-1',
+            '.*instance-1-multi-node.*',
+        ], [
+            'instance-2',
+            '.*instance-2-multi-node.*',
+        ]], 'multi-node'),
         ('driver/lxc', 'lxc', [[
             'instance-1',
             '.*instance-1-multi-node.*',
@@ -425,6 +461,10 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario,
             '.*static-instance-ec2.*',
         ]], 'ec2'),
         ('driver/static', 'static', [[
+            'static-instance-gce',
+            '.*static-instance-gce.*',
+        ]], 'gce'),
+        ('driver/static', 'static', [[
             'static-instance-openstack',
             '.*static-instance-openstack.*',
         ]], 'openstack'),
@@ -454,11 +494,13 @@ def test_command_login(scenario_to_test, with_scenario, login_args,
     'scenario_to_test, driver_name, scenario_name', [
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
+        ('driver/gce', 'gce', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/static', 'static', 'docker'),
         ('driver/static', 'static', 'ec2'),
+        ('driver/static', 'static', 'gce'),
         ('driver/static', 'static', 'openstack'),
         ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
@@ -478,11 +520,13 @@ def test_command_syntax(scenario_to_test, with_scenario, scenario_name):
     'scenario_to_test, driver_name, scenario_name', [
         ('driver/docker', 'docker', False),
         ('driver/ec2', 'ec2', False),
+        ('driver/gce', 'gce', False),
         ('driver/lxc', 'lxc', False),
         ('driver/lxd', 'lxd', False),
         ('driver/openstack', 'openstack', False),
         ('driver/static', 'static', 'docker'),
         ('driver/static', 'static', 'ec2'),
+        ('driver/static', 'static', 'gce'),
         ('driver/static', 'static', 'openstack'),
         ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', False),
@@ -499,12 +543,13 @@ def test_command_test(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
         ('driver/docker', 'docker', 'default'),
-        ('driver/ec2', 'ec2', 'default'),
+        ('driver/gce', 'gce', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/static', 'static', 'docker'),
         ('driver/static', 'static', 'ec2'),
+        ('driver/static', 'static', 'gce'),
         ('driver/static', 'static', 'openstack'),
         ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),

@@ -63,6 +63,12 @@ EC2
 .. autoclass:: molecule.driver.ec2.Ec2
    :undoc-members:
 
+GCE
+^^^
+
+.. autoclass:: molecule.driver.gce.Gce
+   :undoc-members:
+
 LXC
 ^^^
 

@@ -15,8 +15,8 @@ Important Changes
 * Addition of `Scenarios`_.
 * Addition of a `Static Driver`_ to test instances managed outside of Molecule.
 * Promoted `Goss Verifier`_ to a supported verifier.
-* Added `EC2 Driver`_, `LXC Driver`_, `LXD Driver`_ , and `OpenStack Driver`_
-  native Molecule drivers.
+* Added `GCE Driver`_, `EC2 Driver`_, `LXC Driver`_, `LXD Driver`_ , and
+  `OpenStack Driver`_ native Molecule drivers.
 * Molecule will follow `Semantic Versioning`_.  Therefore versioning will be
   much different than previous versions of Molecule.  It will be safe to pin
   to MINOR versions of Molecule.  MINOR will add functionality in a
@@ -35,6 +35,7 @@ Breaking Changes
   `ansible-playbook` command.
 * Roles are linted with `Yamllint`_ vs v1's custom linter.
 
+.. _`GCE Driver`: http://molecule.readthedocs.io/en/v2/configuration.html#gce
 .. _`EC2 Driver`: http://molecule.readthedocs.io/en/v2/configuration.html#ec2
 .. _`Goss Verifier`: http://molecule.readthedocs.io/en/v2/configuration.html#goss
 .. _`LXC Driver`: http://molecule.readthedocs.io/en/v2/configuration.html#lxc
