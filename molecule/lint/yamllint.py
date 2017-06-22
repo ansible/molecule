@@ -120,9 +120,14 @@ class Yamllint(base.Base):
 
         :return: list
         """
+        excludes = [
+            '.tox',
+            '.git',
+            '.vagrant',
+        ]
         generators = [
-            util.os_walk(self._config.project_directory, '*.yml'),
-            util.os_walk(self._config.project_directory, '*.yaml'),
+            util.os_walk(self._config.project_directory, '*.yml', excludes),
+            util.os_walk(self._config.project_directory, '*.yaml', excludes),
         ]
 
         return [f for g in generators for f in g]

@@ -94,8 +94,9 @@ def run_command(cmd, debug=False):
     return cmd()
 
 
-def os_walk(directory, pattern):
-    for root, _, files in os.walk(directory, topdown=False):
+def os_walk(directory, pattern, excludes=[]):
+    for root, dirs, files in os.walk(directory, topdown=True):
+        dirs[:] = [d for d in dirs if d not in excludes]
         for basename in files:
             if fnmatch.fnmatch(basename, pattern):
                 filename = os.path.join(root, basename)
