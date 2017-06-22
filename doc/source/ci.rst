@@ -10,16 +10,16 @@ A ``.travis.yml`` testing a role named foo1 with the Docker driver.
 
 .. code-block:: yaml
 
+    ---
     sudo: required
     language: python
     services:
       - docker
     before_install:
       - sudo apt-get -qq update
-      - sudo apt-get install -o Dpkg::Options::="--force-confold" --force-yes -y docker-engine
     install:
       - pip install molecule
-      # - pip install required driver (e.g. docker, python-vagrant, shade)
+      # - pip install required driver (e.g. docker, python-vagrant, shade, boto, apache-libcloud)
     script:
       - molecule test
 
@@ -27,13 +27,13 @@ A ``.travis.yml`` using `Tox`_ as described below.
 
 .. code-block:: yaml
 
+    ---
     sudo: required
     language: python
     services:
       - docker
     before_install:
       - sudo apt-get -qq update
-      - sudo apt-get install -o Dpkg::Options::="--force-confold" --force-yes -y docker-engine
     install:
       - pip install tox-travis
     script:
