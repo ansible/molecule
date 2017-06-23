@@ -600,7 +600,7 @@ class Ansible(base.Base):
 
     def _vivify(self):
         """
-        Return an autovivification default dict.
+        Returns an autovivification default dict.
 
         :return: dict
         """

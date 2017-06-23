@@ -46,18 +46,22 @@ class Lint(base.Base):
 
         :return: None
         """
+        linters = [
+            l
+            for l in [
+                self._config.lint,
+                self._config.verifier.lint,
+                self._config.provisioner.lint,
+            ] if l
+        ]
+
         msg = 'Scenario: [{}]'.format(self._config.scenario.name)
         LOG.info(msg)
-        linters = ','.join([
-            self._config.lint.name, self._config.verifier.lint.name,
-            self._config.provisioner.lint.name
-        ])
-        msg = 'Lint: [{}]'.format(linters)
+        msg = 'Lint: [{}]'.format(','.join([f.name for f in linters]))
         LOG.info(msg)
 
-        self._config.lint.execute()
-        self._config.verifier.lint.execute()
-        self._config.provisioner.lint.execute()
+        for l in linters:
+            l.execute()
 
 
 @click.command()

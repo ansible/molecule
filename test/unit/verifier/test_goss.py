@@ -24,7 +24,6 @@ import pytest
 
 from molecule import config
 from molecule.verifier import goss
-from molecule.verifier.lint import flake8
 
 
 @pytest.fixture
@@ -40,7 +39,7 @@ def molecule_verifier_section_data():
                 'foo': 'bar',
             },
             'lint': {
-                'name': 'flake8',
+                'name': 'None',
             },
         }
     }
@@ -74,7 +73,7 @@ def test_env_property(goss_instance):
 
 
 def test_lint_property(goss_instance):
-    assert isinstance(goss_instance.lint, flake8.Flake8)
+    assert goss_instance.lint is None
 
 
 @pytest.fixture
