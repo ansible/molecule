@@ -30,6 +30,94 @@ from molecule.provisioner.lint import ansible_lint
 
 
 @pytest.fixture
+def namespace_instance(molecule_provisioner_section_data, config_instance):
+    return ansible.Namespace(config_instance)
+
+
+def test_get_ansible_playbook(namespace_instance):
+    x = os.path.join(namespace_instance._config.scenario.directory,
+                     'create.yml')
+    assert x == namespace_instance._config.provisioner.playbooks.setup
+
+
+#  @pytest.fixture
+#  def molecule_provisioner_section_data_override():
+
+
+def test_get_ansible_playbook_with_driver_key(namespace_instance):
+    d = {
+        'provisioner': {
+            'name': 'ansible',
+            'playbooks': {
+                'docker': {
+                    'setup': 'docker-create.yml',
+                },
+                'setup': 'create.yml',
+            },
+        }
+    }
+    namespace_instance._config.merge_dicts(namespace_instance._config.config,
+                                           d)
+
+    x = os.path.join(namespace_instance._config.scenario.directory,
+                     'docker-create.yml')
+    assert x == namespace_instance._config.provisioner.playbooks.setup
+
+
+def test_get_ansible_playbook_when_playbook_none(namespace_instance):
+    d = {
+        'provisioner': {
+            'name': 'ansible',
+            'playbooks': {
+                'destruct': None,
+            },
+        }
+    }
+    namespace_instance._config.merge_dicts(namespace_instance._config.config,
+                                           d)
+
+    assert namespace_instance._config.provisioner.playbooks.destruct is None
+
+
+def test_get_ansible_playbook_with_driver_key_when_playbook_none(
+        namespace_instance):
+    d = {
+        'provisioner': {
+            'name': 'ansible',
+            'playbooks': {
+                'docker': {
+                    'destruct': None,
+                },
+                'destruct': None,
+            },
+        }
+    }
+    namespace_instance._config.merge_dicts(namespace_instance._config.config,
+                                           d)
+
+    assert namespace_instance._config.provisioner.playbooks.destruct is None
+
+
+def test_get_ansible_playbook_with_driver_key_when_playbook_key_missing(
+        namespace_instance):
+    d = {
+        'provisioner': {
+            'name': 'ansible',
+            'playbooks': {
+                'docker': {
+                    'setup': 'docker-create.yml',
+                },
+                'destruct': None,
+            },
+        }
+    }
+    namespace_instance._config.merge_dicts(namespace_instance._config.config,
+                                           d)
+
+    assert namespace_instance._config.provisioner.playbooks.destruct is None
+
+
+@pytest.fixture
 def molecule_provisioner_section_data():
     return {
         'provisioner': {
@@ -387,50 +475,7 @@ def test_playbooks_setup_property(ansible_instance):
     assert x == ansible_instance.playbooks.setup
 
 
-@pytest.fixture
-def molecule_provisioner_playbooks_driver_section_data():
-    return {
-        'provisioner': {
-            'name': 'ansible',
-            'playbooks': {
-                'docker': {
-                    'setup': 'docker-create.yml',
-                    'converge': 'docker-playbook.yml',
-                    'teardown': 'docker-destroy.yml',
-                    'destruct': 'docker-destruct.yml',
-                },
-                'setup': 'create.yml',
-                'converge': 'playbook.yml',
-                'teardown': 'destroy.yml',
-                'destruct': None,
-            },
-        }
-    }
-
-
-def test_playbooks_setup_property_when_driver(
-        molecule_provisioner_playbooks_driver_section_data, ansible_instance):
-    ansible_instance._config.merge_dicts(
-        ansible_instance._config.config,
-        molecule_provisioner_playbooks_driver_section_data)
-    x = os.path.join(ansible_instance._config.scenario.directory,
-                     'docker-create.yml')
-
-    assert x == ansible_instance.playbooks.setup
-
-
 def test_playbooks_converge_property(ansible_instance):
-    x = os.path.join(ansible_instance._config.scenario.directory,
-                     'playbook.yml')
-
-    assert x == ansible_instance.playbooks.converge
-
-
-def test_playbooks_converge_property_when_driver_does_not_use_driver(
-        molecule_provisioner_playbooks_driver_section_data, ansible_instance):
-    ansible_instance._config.merge_dicts(
-        ansible_instance._config.config,
-        molecule_provisioner_playbooks_driver_section_data)
     x = os.path.join(ansible_instance._config.scenario.directory,
                      'playbook.yml')
 
@@ -444,31 +489,8 @@ def test_playbooks_teardown_property(ansible_instance):
     assert x == ansible_instance.playbooks.teardown
 
 
-def test_playbooks_teardown_property_when_driver(
-        molecule_provisioner_playbooks_driver_section_data, ansible_instance):
-    ansible_instance._config.merge_dicts(
-        ansible_instance._config.config,
-        molecule_provisioner_playbooks_driver_section_data)
-    x = os.path.join(ansible_instance._config.scenario.directory,
-                     'docker-destroy.yml')
-
-    assert x == ansible_instance.playbooks.teardown
-
-
 def test_playbooks_destruct_property(ansible_instance):
     assert ansible_instance.playbooks.destruct is None
-
-
-def test_playbooks_destruct_property_when_driver(
-        molecule_provisioner_playbooks_driver_section_data, ansible_instance):
-    ansible_instance._config.merge_dicts(
-        ansible_instance._config.config,
-        molecule_provisioner_playbooks_driver_section_data)
-
-    x = os.path.join(ansible_instance._config.scenario.directory,
-                     'docker-destruct.yml')
-
-    assert x == ansible_instance.playbooks.destruct
 
 
 def test_connection_options(ansible_instance):

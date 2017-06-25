@@ -66,7 +66,10 @@ class Namespace(object):
             self._config.driver.name)
 
         if driver_dict:
-            playbook = driver_dict[section]
+            try:
+                playbook = driver_dict[section]
+            except KeyError:
+                return
         else:
             playbook = c['provisioner']['playbooks'][section]
 

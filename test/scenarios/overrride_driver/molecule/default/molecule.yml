@@ -4,10 +4,10 @@ dependency:
 driver:
   # NOTE(retr0h): Functional test overrides this on command line.
   name: vagrant
-  options:
-    config-file: ../../resources/.yamllint
 lint:
   name: yamllint
+  options:
+    config-file: ../../resources/.yamllint
 platforms:
   - name: instance-1
     image: molecule_local/centos:latest
