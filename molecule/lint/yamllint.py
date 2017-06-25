@@ -124,6 +124,7 @@ class Yamllint(base.Base):
             '.tox',
             '.git',
             '.vagrant',
+            '.molecule',
         ]
         generators = [
             util.os_walk(self._config.project_directory, '*.yml', excludes),
