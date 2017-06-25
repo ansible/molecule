@@ -123,6 +123,18 @@ def test_execute(patched_get_files, patched_logger_info,
     patched_logger_success.assert_called_once_with(msg)
 
 
+def test_execute_does_not_execute(patched_get_files, patched_logger_warn,
+                                  patched_logger_success, patched_run_command,
+                                  yamllint_instance):
+    yamllint_instance._config.config['lint']['enabled'] = False
+    yamllint_instance.execute()
+
+    assert not patched_run_command.called
+
+    msg = 'Skipping, lint is disabled.'
+    patched_logger_warn.assert_called_once_with(msg)
+
+
 def test_execute_bakes(patched_get_files, patched_run_command,
                        yamllint_instance):
     yamllint_instance.execute()
