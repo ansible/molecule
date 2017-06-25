@@ -2,7 +2,7 @@
 {% raw -%}
 - hosts: localhost
   connection: local
-  gather_facts: no
+  gather_facts: False
   vars:
     molecule_file: "{{ lookup('env','MOLECULE_FILE') }}"
     molecule_instance_config: "{{ lookup('env','MOLECULE_INSTANCE_CONFIG') }}"
@@ -32,8 +32,8 @@
         group: "{{ security_group_name }}"
         instance_tags:
           instance: "{{ molecule_file | molecule_instance_with_scenario_name(item.name) }}"
-        wait: yes
-        assign_public_ip: yes
+        wait: True
+        assign_public_ip: True
         exact_count: 1
         count_tag:
           instance: "{{ molecule_file | molecule_instance_with_scenario_name(item.name) }}"

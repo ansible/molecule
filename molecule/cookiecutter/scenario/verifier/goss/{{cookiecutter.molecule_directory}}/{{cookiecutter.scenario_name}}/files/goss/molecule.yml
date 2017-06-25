@@ -3,6 +3,6 @@
 ---
 file:
   /etc/hosts:
-    exists: true
+    exists: True
     owner: root
     group: root

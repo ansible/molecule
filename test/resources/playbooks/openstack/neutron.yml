@@ -9,7 +9,7 @@
     provider_physical_network: "{{ item.provider_physical_network | default(omit) }}"
     validate_certs: "{{ validate_certs | default(omit) }}"
   with_items: "{{ neutron.networks }}"
-  run_once: true
+  run_once: True
 
 - name: Gather facts about network for use with instance creation
   os_networks_facts:
@@ -30,7 +30,7 @@
     allocation_pool_end: "{{ item.pool_end | default(omit) }}"
     validate_certs: "{{ validate_certs | default(omit) }}"
   with_items: "{{ neutron.subnets }}"
-  run_once: true
+  run_once: True
 
 - name: Create routers
   os_router:
@@ -39,4 +39,4 @@
     interfaces: "{{ item.interfaces }}"
     external_fixed_ips: "{{ item.external_fixed_ips | default(omit) }}"
   with_items: "{{ neutron.routers }}"
-  run_once: true
+  run_once: True
