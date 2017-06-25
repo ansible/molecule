@@ -216,6 +216,32 @@ def test_command_destroy(scenario_to_test, with_scenario, scenario_name):
         'driver_name',
         'scenario_name',
     ])
+def test_command_destruct(scenario_to_test, with_scenario, scenario_name):
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('destruct', **options)
+    pytest.helpers.run_command(cmd)
+
+
+@pytest.mark.parametrize(
+    'scenario_to_test, driver_name, scenario_name', [
+        ('driver/docker', 'docker', 'default'),
+        ('driver/ec2', 'ec2', 'default'),
+        ('driver/gce', 'gce', 'default'),
+        ('driver/lxc', 'lxc', 'default'),
+        ('driver/lxd', 'lxd', 'default'),
+        ('driver/openstack', 'openstack', 'default'),
+        ('driver/static', 'static', 'docker'),
+        ('driver/static', 'static', 'ec2'),
+        ('driver/static', 'static', 'gce'),
+        ('driver/static', 'static', 'openstack'),
+        ('driver/static', 'static', 'vagrant'),
+        ('driver/vagrant', 'vagrant', 'default'),
+    ],
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+        'scenario_name',
+    ])
 def test_command_idempotence(scenario_to_test, with_scenario, scenario_name):
     pytest.helpers.idempotence(scenario_name)
 

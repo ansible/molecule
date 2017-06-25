@@ -53,15 +53,27 @@ def test_check_sequence_property(scenario_instance):
 
 
 def test_converge_sequence_property(scenario_instance):
-    x = ['create', 'converge']
+    x = [
+        'dependency',
+        'create',
+        'converge',
+    ]
 
     assert x == scenario_instance.converge_sequence
 
 
 def test_test_sequence_property(scenario_instance):
     x = [
-        'destroy', 'dependency', 'syntax', 'create', 'converge', 'idempotence',
-        'lint', 'verify', 'destroy'
+        'destroy',
+        'dependency',
+        'syntax',
+        'create',
+        'converge',
+        'idempotence',
+        'lint',
+        'destruct',
+        'verify',
+        'destroy',
     ]
 
     assert x == scenario_instance.test_sequence

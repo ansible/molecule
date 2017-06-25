@@ -166,6 +166,13 @@ Destroy
    :undoc-members:
    :members: execute
 
+Destruct
+^^^^^^^^
+
+.. autoclass:: molecule.command.destruct.Destruct
+   :undoc-members:
+   :members: execute
+
 Idempotence
 ^^^^^^^^^^^
 

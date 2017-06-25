@@ -28,6 +28,7 @@ from molecule.command import converge  # noqa
 from molecule.command import create  # noqa
 from molecule.command import dependency  # noqa
 from molecule.command import destroy  # noqa
+from molecule.command import destruct  # noqa
 from molecule.command import idempotence  # noqa
 from molecule.command import init  # noqa
 from molecule.command import lint  # noqa

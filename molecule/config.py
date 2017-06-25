@@ -273,6 +273,7 @@ class Config(object):
                     'setup': 'create.yml',
                     'converge': 'playbook.yml',
                     'teardown': 'destroy.yml',
+                    'destruct': None,
                 },
                 'lint': {
                     'name': 'ansible-lint',
@@ -286,10 +287,10 @@ class Config(object):
                 'default',
                 'check_sequence':
                 ['destroy', 'create', 'converge', 'check', 'destroy'],
-                'converge_sequence': ['create', 'converge'],
+                'converge_sequence': ['dependency', 'create', 'converge'],
                 'test_sequence': [
                     'destroy', 'dependency', 'syntax', 'create', 'converge',
-                    'idempotence', 'lint', 'verify', 'destroy'
+                    'idempotence', 'lint', 'destruct', 'verify', 'destroy'
                 ],
             },
             'verifier': {

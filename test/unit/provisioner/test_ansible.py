@@ -397,10 +397,12 @@ def molecule_provisioner_playbooks_driver_section_data():
                     'setup': 'docker-create.yml',
                     'converge': 'docker-playbook.yml',
                     'teardown': 'docker-destroy.yml',
+                    'destruct': 'docker-destruct.yml',
                 },
                 'setup': 'create.yml',
                 'converge': 'playbook.yml',
                 'teardown': 'destroy.yml',
+                'destruct': None,
             },
         }
     }
@@ -451,6 +453,22 @@ def test_playbooks_teardown_property_when_driver(
                      'docker-destroy.yml')
 
     assert x == ansible_instance.playbooks.teardown
+
+
+def test_playbooks_destruct_property(ansible_instance):
+    assert ansible_instance.playbooks.destruct is None
+
+
+def test_playbooks_destruct_property_when_driver(
+        molecule_provisioner_playbooks_driver_section_data, ansible_instance):
+    ansible_instance._config.merge_dicts(
+        ansible_instance._config.config,
+        molecule_provisioner_playbooks_driver_section_data)
+
+    x = os.path.join(ansible_instance._config.scenario.directory,
+                     'docker-destruct.yml')
+
+    assert x == ansible_instance.playbooks.destruct
 
 
 def test_connection_options(ansible_instance):
@@ -510,6 +528,17 @@ def test_destroy(ansible_instance, mocker, patched_ansible_playbook):
     patched_ansible_playbook.assert_called_once_with(
         inventory_file,
         ansible_instance._config.provisioner.playbooks.teardown,
+        ansible_instance._config, )
+    patched_ansible_playbook.return_value.execute.assert_called_once_with()
+
+
+def test_destruct(ansible_instance, mocker, patched_ansible_playbook):
+    ansible_instance.destruct()
+
+    inventory_file = ansible_instance._config.provisioner.inventory_file
+    patched_ansible_playbook.assert_called_once_with(
+        inventory_file,
+        ansible_instance._config.provisioner.playbooks.destruct,
         ansible_instance._config, )
     patched_ansible_playbook.return_value.execute.assert_called_once_with()
 

@@ -18,6 +18,7 @@
         name: "{{ molecule_file | molecule_instance_with_scenario_name(item.name) }}"
         hostname: "{{ molecule_file | molecule_instance_with_scenario_name(item.name) }}"
         image: "{{ item.image }}"
+        privileged: "{{ item.privileged | default(omit) }}"
         state: started
         recreate: no
         log_driver: syslog
