@@ -56,6 +56,10 @@ class Namespace(object):
     def teardown(self):
         return self._get_ansible_playbook('teardown')
 
+    @property
+    def destruct(self):
+        return self._get_ansible_playbook('destruct')
+
     def _get_ansible_playbook(self, section):
         c = self._config.config
         driver_dict = c['provisioner']['playbooks'].get(
@@ -66,7 +70,9 @@ class Namespace(object):
         else:
             playbook = c['provisioner']['playbooks'][section]
 
-        return os.path.join(self._config.scenario.directory, playbook)
+        if playbook is not None:
+            return os.path.join(self._config.scenario.directory, playbook)
+        return
 
 
 class Ansible(base.Base):
@@ -136,6 +142,22 @@ class Ansible(base.Base):
             setup: create.yml
             teardown: destroy.yml
             converge: playbook.yml
+
+    The destruct playbook executes actions which are destructive to the
+    instances(s).  Intended to test HA failover scenarios or the like.  It is
+    not enabled by default.  Add the following to the provisioner's `playbooks`
+    section to enable.
+
+    .. code-block:: yaml
+
+        provisioner:
+          name: ansible
+          playbooks:
+            destruct: destruct.yml
+
+    .. important::
+
+        This is feature should be considered experimental.
 
     Environment variables can be passed to the provisioner.
 
@@ -427,6 +449,16 @@ class Ansible(base.Base):
         :return: None
         """
         pb = self._get_ansible_playbook(self.playbooks.teardown)
+        pb.execute()
+
+    def destruct(self):
+        """
+        Executes `ansible-playbook` against the destruct playbook and returns
+        None.
+
+        :return: None
+        """
+        pb = self._get_ansible_playbook(self.playbooks.destruct)
         pb.execute()
 
     def setup(self):

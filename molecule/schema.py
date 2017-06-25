@@ -73,14 +73,13 @@ class PlaybooksSchema(SchemaBase):
     setup = marshmallow.fields.Str()
     converge = marshmallow.fields.Str()
     teardown = marshmallow.fields.Str()
+    destruct = marshmallow.fields.Str(allow_none=True)
 
 
-class ProvisionerPlaybooksSchema(SchemaBase):
-    setup = marshmallow.fields.Str()
-    converge = marshmallow.fields.Str()
-    teardown = marshmallow.fields.Str()
+class ProvisionerPlaybooksSchema(PlaybooksSchema):
     docker = marshmallow.fields.Nested(PlaybooksSchema())
     ec2 = marshmallow.fields.Nested(PlaybooksSchema())
+    gce = marshmallow.fields.Nested(PlaybooksSchema())
     lxc = marshmallow.fields.Nested(PlaybooksSchema())
     lxd = marshmallow.fields.Nested(PlaybooksSchema())
     openstack = marshmallow.fields.Nested(PlaybooksSchema())
