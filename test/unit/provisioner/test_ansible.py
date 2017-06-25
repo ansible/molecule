@@ -199,12 +199,25 @@ def test_env_property(ansible_instance):
 
 
 def test_env_appends_env_property(ansible_instance):
-    assert '../../../../:foo/bar' == ansible_instance.env['ANSIBLE_ROLES_PATH']
+    x = [
+        '../../../../',
+        'roles/',
+        'foo/bar',
+    ]
+    assert x == ansible_instance.env['ANSIBLE_ROLES_PATH'].split(':')
 
-    x = '{}:foo/bar'.format(ansible_instance._get_libraries_directory())
-    x == ansible_instance.env['ANSIBLE_LIBRARY']
+    x = [
+        ansible_instance._get_libraries_directory(),
+        'libraries/',
+        'foo/bar',
+    ]
+    assert x == ansible_instance.env['ANSIBLE_LIBRARY'].split(':')
 
-    x = '{}:foo/bar'.format(ansible_instance._get_filter_plugin_directory())
+    x = [
+        ansible_instance._get_filter_plugin_directory(),
+        'plugins/filters/',
+        'foo/bar',
+    ]
     x == ansible_instance.env['ANSIBLE_FILTER_PLUGINS']
 
 

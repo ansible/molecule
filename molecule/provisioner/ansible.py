@@ -260,11 +260,11 @@ class Ansible(base.Base):
             'ANSIBLE_CONFIG':
             self._config.provisioner.config_file,
             'ANSIBLE_ROLES_PATH':
-            '../../../../',
+            '../../../../:roles/',
             'ANSIBLE_LIBRARY':
-            self._get_libraries_directory(),
+            '{}:libraries/'.format(self._get_libraries_directory()),
             'ANSIBLE_FILTER_PLUGINS':
-            self._get_filter_plugin_directory(),
+            '{}:plugins/filters/'.format(self._get_filter_plugin_directory()),
         })
         env = self._config.merge_dicts(env, self._config.env)
 
