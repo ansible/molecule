@@ -1,0 +1,10 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: False
+  tasks:
+    - include: create/docker.yml
+    - include: create/ec2.yml
+    - include: create/gce.yml
+    - include: create/openstack.yml
+    - include: create/vagrant.yml

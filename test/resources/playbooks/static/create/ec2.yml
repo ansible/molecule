@@ -1,0 +1,38 @@
+---
+- name: Test for presence of local keypair
+  stat:
+    path: /tmp/ssh-aws
+  register: keypair_local
+
+- name: Delete remote keypair
+  ec2_key:
+    name: molecule
+    state: absent
+  when: not keypair_local.stat.exists
+
+- name: Create keypair
+  ec2_key:
+    name: molecule
+  register: keypair
+
+- name: Persist the keypair
+  copy:
+    dest: /tmp/ssh-aws
+    content: "{{ keypair.key.private_key }}"
+    mode: 0600
+  when: keypair.changed
+
+- name: Create molecule instance(s)
+  ec2:
+    key_name: molecule
+    image: ami-a5b196c0
+    instance_type: t2.micro
+    vpc_subnet_id: subnet-6456fd1f
+    group: molecule
+    instance_tags:
+      name: static-instance-gce
+    wait: True
+    assign_public_ip: True
+    exact_count: 1
+    count_tag:
+      name: static-instance-gce

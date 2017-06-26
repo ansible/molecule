@@ -1,0 +1,10 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: False
+  tasks:
+    - include: destroy/docker.yml
+    - include: destroy/ec2.yml
+    - include: destroy/gce.yml
+    - include: destroy/openstack.yml
+    - include: create/vagrant.yml

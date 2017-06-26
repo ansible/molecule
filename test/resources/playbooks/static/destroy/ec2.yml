@@ -1,0 +1,12 @@
+---
+- name: Get instance ec2 facts
+  ec2_remote_facts:
+    filters:
+      instance-state-name: running
+      tag:name: static-instance-gce
+  register: ec2_facts
+
+- name: Destroy molecule instance(s)
+  ec2:
+    state: absent
+    instance_ids: "{{ ec2_facts.instances[0].id }}"

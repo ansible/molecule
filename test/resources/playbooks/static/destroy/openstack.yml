@@ -1,0 +1,5 @@
+---
+- name: Destroy molecule instance(s)
+  os_server:
+    name: static-instance-openstack
+    state: absent

@@ -1,0 +1,10 @@
+---
+- name: Create molecule instance(s)
+  gce:
+    instance_names: static-instance-gce
+    zone: us-west1-a
+    machine_type: f1-micro
+    image: debian-8
+    service_account_email: "{{ lookup('env','GCE_SERVICE_ACCOUNT_EMAIL') }}"
+    credentials_file: "{{ lookup('env','GCE_CREDENTIALS_FILE') }}"
+    project_id: "{{ lookup('env','GCE_PROJECT_ID') }}"
