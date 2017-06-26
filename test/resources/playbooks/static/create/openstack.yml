@@ -1,23 +1,23 @@
 ---
 - name: Test for presence of local keypair
   stat:
-    path: /tmp/ssh-openstack
+    path: "{{ openstack.key_path }}"
   register: keypair_local
 
 - name: Delete remote keypair
   os_keypair:
-    name: molecule
+    name: "{{ openstack.key_name }}"
     state: absent
   when: not keypair_local.stat.exists
 
 - name: Create keypair
   os_keypair:
-    name: molecule
+    name: "{{ openstack.key_name }}"
   register: keypair
 
 - name: Persist the keypair
   copy:
-    dest: /tmp/ssh-openstack
+    dest: "{{ openstack.key_path }}"
     content: "{{ keypair.key.private_key }}"
     mode: 0600
   when: keypair.changed
@@ -28,11 +28,26 @@
 
 - name: Create molecule instance(s)
   os_server:
-    name: static-instance-openstack
+    name: "{{ openstack.name }}"
     image: Ubuntu-16.04
     flavor: NO-Nano
     security_groups:
       - molecule
-    key_name: molecule
+    key_name: "{{ openstack.key_name }}"
     nics:
       - net-id: "{{ openstack_networks[0]['id'] }}"
+  register: server
+
+- name: Persist ssh config
+  copy:
+    dest: "{{ openstack.ssh_config_path }}"
+    content: |
+      Host "{{ openstack.name }}"
+          HostName "{{ server.openstack.accessIPv4 }}"
+          User "{{ openstack.ssh_user }}"
+          IdentityFile "{{ openstack.key_path }}"
+          UserKnownHostsFile=/dev/null
+          IdentitiesOnly=yes
+          StrictHostKeyChecking=no
+          CheckHostIP=no
+  when: server.changed

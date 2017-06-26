@@ -7,4 +7,4 @@
     - include: create/ec2.yml
     - include: create/gce.yml
     - include: create/openstack.yml
-    - include: create/vagrant.yml
+    # - include: create/vagrant.yml

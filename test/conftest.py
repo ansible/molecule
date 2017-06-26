@@ -79,3 +79,8 @@ def get_molecule_file(path):
 @pytest.helpers.register
 def molecule_ephemeral_directory():
     return os.path.join(molecule_scenario_directory(), '.molecule')
+
+
+def pytest_addoption(parser):
+    parser.addoption(
+        '--static', action='store_true', help='Run static driver tests.')

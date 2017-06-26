@@ -7,4 +7,4 @@
     - include: destroy/ec2.yml
     - include: destroy/gce.yml
     - include: destroy/openstack.yml
-    - include: create/vagrant.yml
+    # - include: create/vagrant.yml

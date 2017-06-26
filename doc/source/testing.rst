@@ -71,6 +71,19 @@ Run all functional tests targeting the docker driver.
 
     $ tox -t functional -- -v -k docker
 
+Static
+^^^^^^
+
+Run all the functional static tests.
+
+.. code-block:: bash
+
+    $ ansible-playbook -i test/resources/playbooks/static/inventory \
+      test/resources/playbooks/static/create.yml
+    $ tox -t functional -- --static -v -k static
+    $ ansible-playbook -i test/resources/playbooks/static/inventory \
+      test/resources/playbooks/static/destroy.yml
+
 Formatting
 ----------
 

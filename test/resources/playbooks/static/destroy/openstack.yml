@@ -3,3 +3,11 @@
   os_server:
     name: static-instance-openstack
     state: absent
+
+- name: Cleanup temporary files file
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ openstack.key_path }}"
+    - "{{ openstack.ssh_config_path }}"
