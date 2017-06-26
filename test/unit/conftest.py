@@ -178,7 +178,7 @@ def config_instance(molecule_file_fixture, molecule_data):
     return config.Config(molecule_file_fixture)
 
 
-### Mocks
+# Mocks
 
 
 @pytest.fixture
