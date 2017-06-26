@@ -43,17 +43,6 @@ def patched_ansible_lint(mocker):
 
 
 @pytest.fixture
-def patched_flake8(mocker):
-    return mocker.patch('molecule.verifier.lint.flake8.Flake8.execute')
-
-
-@pytest.fixture
-def patched_ansible_galaxy(mocker):
-    return mocker.patch(
-        'molecule.dependency.ansible_galaxy.AnsibleGalaxy.execute')
-
-
-@pytest.fixture
 def patched_ansible_setup(mocker):
     return mocker.patch('molecule.provisioner.ansible.Ansible.setup')
 
@@ -64,14 +53,9 @@ def patched_ansible_syntax(mocker):
 
 
 @pytest.fixture
-def patched_command_idempotence_is_idempotent(mocker):
+def patched_is_idempotent(mocker):
     return mocker.patch(
         'molecule.command.idempotence.Idempotence._is_idempotent')
-
-
-@pytest.fixture
-def patched_testinfra(mocker):
-    return mocker.patch('molecule.verifier.testinfra.Testinfra.execute')
 
 
 @pytest.fixture
@@ -80,7 +64,7 @@ def patched_verify_configs(mocker):
 
 
 @pytest.fixture
-def patched_verify_scenario_name(mocker):
+def patched_scenario_name(mocker):
     return mocker.patch('molecule.command.base._verify_scenario_name')
 
 
@@ -100,11 +84,6 @@ def patched_destroy_setup(mocker):
 
 
 @pytest.fixture
-def patched_base_prune(mocker):
-    return mocker.patch('test.unit.command.test_base.ExtendedBase.prune')
-
-
-@pytest.fixture
 def patched_destroy_prune(mocker):
     return mocker.patch('molecule.command.destroy.Destroy.prune')
 
@@ -115,11 +94,11 @@ def patched_base_filter_configs_for_scenario(mocker):
 
 
 @pytest.fixture
-def patched_provisioner_write_config(mocker):
+def patched_write_config(mocker):
     return mocker.patch('molecule.provisioner.ansible.Ansible.write_config')
 
 
 @pytest.fixture
-def patched_provisioner_manage_inventory(mocker):
+def patched_manage_inventory(mocker):
     return mocker.patch(
         'molecule.provisioner.ansible.Ansible.manage_inventory')

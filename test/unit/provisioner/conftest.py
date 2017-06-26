@@ -22,8 +22,25 @@ import pytest
 
 
 @pytest.fixture
-def patched_get_tests(mocker):
-    m = mocker.patch('molecule.verifier.lint.flake8.Flake8._get_tests')
-    m.return_value = ['test1', 'test2', 'test3']
+def patched_ansible_playbook(mocker):
+    m = mocker.patch('molecule.provisioner.ansible_playbook.AnsiblePlaybook')
+    m.return_value.execute.return_value = b'patched-ansible-playbook-stdout'
 
     return m
+
+
+@pytest.fixture
+def patched_write_inventory(mocker):
+    return mocker.patch(
+        'molecule.provisioner.ansible.Ansible._write_inventory')
+
+
+@pytest.fixture
+def patched_remove_vars(mocker):
+    return mocker.patch('molecule.provisioner.ansible.Ansible._remove_vars')
+
+
+@pytest.fixture
+def patched_link_or_update_vars(mocker):
+    return mocker.patch(
+        'molecule.provisioner.ansible.Ansible._link_or_update_vars')

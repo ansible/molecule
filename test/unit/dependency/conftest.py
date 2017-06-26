@@ -23,8 +23,9 @@ import pytest
 
 @pytest.fixture
 def patched_ansible_galaxy_has_requirements_file(mocker):
-    m = mocker.patch('molecule.dependency.ansible_galaxy.'
-                     'AnsibleGalaxy._has_requirements_file')
+    m = mocker.patch(
+        'molecule.dependency.ansible_galaxy.AnsibleGalaxy._has_requirements_file'
+    )
     m.return_value = True
 
     return m

@@ -595,32 +595,28 @@ def test_write_config(temp_dir, ansible_instance):
     assert os.path.isfile(ansible_instance.config_file)
 
 
-def test_manage_inventory(ansible_instance,
-                          patched_provisioner_write_inventory,
-                          patched_provisioner_remove_vars,
-                          patched_provisioner_add_or_update_vars,
-                          patched_provisioner_link_or_update_vars):
+def test_manage_inventory(ansible_instance, patched_write_inventory,
+                          patched_remove_vars, patched_add_or_update_vars,
+                          patched_link_or_update_vars):
     ansible_instance.manage_inventory()
 
-    patched_provisioner_write_inventory.assert_called_once_with()
-    patched_provisioner_remove_vars.assert_called_once_with()
-    patched_provisioner_add_or_update_vars.assert_called_once_with()
-    assert not patched_provisioner_link_or_update_vars.called
+    patched_write_inventory.assert_called_once_with()
+    patched_remove_vars.assert_called_once_with()
+    patched_add_or_update_vars.assert_called_once_with()
+    assert not patched_link_or_update_vars.called
 
 
-def test_manage_inventory_with_links(ansible_instance,
-                                     patched_provisioner_write_inventory,
-                                     patched_provisioner_remove_vars,
-                                     patched_provisioner_add_or_update_vars,
-                                     patched_provisioner_link_or_update_vars):
+def test_manage_inventory_with_links(
+        ansible_instance, patched_write_inventory, patched_remove_vars,
+        patched_add_or_update_vars, patched_link_or_update_vars):
     c = ansible_instance._config.config
     c['provisioner']['inventory']['links'] = {'foo': 'bar'}
     ansible_instance.manage_inventory()
 
-    patched_provisioner_write_inventory.assert_called_once_with()
-    patched_provisioner_remove_vars.assert_called_once_with()
-    assert not patched_provisioner_add_or_update_vars.called
-    patched_provisioner_link_or_update_vars.assert_called_once_with()
+    patched_write_inventory.assert_called_once_with()
+    patched_remove_vars.assert_called_once_with()
+    assert not patched_add_or_update_vars.called
+    patched_link_or_update_vars.assert_called_once_with()
 
 
 def test_add_or_update_vars(ansible_instance):
