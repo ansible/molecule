@@ -21,55 +21,72 @@
 import marshmallow
 
 from molecule import logger
+from molecule.model import base
 
 LOG = logger.get_logger(__name__)
 
 
-class SchemaBase(marshmallow.Schema):
-    @marshmallow.validates_schema(pass_original=True)
-    def check_unknown_fields(self, data, original_data):
-        unknown = set(original_data) - set(self.fields)
-        if unknown:
-            raise marshmallow.ValidationError('Unknown field', unknown)
-
-
-class DependencySchema(SchemaBase):
+class DependencySchema(base.Base):
     name = marshmallow.fields.Str()
     enabled = marshmallow.fields.Bool()
     options = marshmallow.fields.Dict()
     env = marshmallow.fields.Dict()
 
 
-class DriverSchema(SchemaBase):
+class DriverSchema(base.Base):
     name = marshmallow.fields.Str()
     options = marshmallow.fields.Dict()
     ssh_connection_options = marshmallow.fields.List(marshmallow.fields.Str)
     safe_files = marshmallow.fields.List(marshmallow.fields.Str)
 
 
-class LintSchema(SchemaBase):
+class LintSchema(base.Base):
     name = marshmallow.fields.Str()
     enabled = marshmallow.fields.Bool()
     options = marshmallow.fields.Dict()
     env = marshmallow.fields.Dict()
 
 
-class PlatformsSchema(marshmallow.Schema):
+class InterfaceSchema(base.Base):
+    network_name = marshmallow.fields.Str()
+    type = marshmallow.fields.Str()
+    auto_config = marshmallow.fields.Bool()
+    ip = marshmallow.fields.Str()
+
+
+class PlatformsBaseSchema(marshmallow.Schema):
     name = marshmallow.fields.Str()
+    groups = marshmallow.fields.List(marshmallow.fields.Str())
+    children = marshmallow.fields.List(marshmallow.fields.Str())
 
 
-class ProvisionerInventoryLinksSchema(SchemaBase):
+class PlatformsSchema(PlatformsBaseSchema):
+    pass
+
+
+class PlatformsVagrantSchema(PlatformsBaseSchema):
+    box = marshmallow.fields.Str()
+    box_version = marshmallow.fields.Str()
+    box_url = marshmallow.fields.Str()
+    memory = marshmallow.fields.Int()
+    cpus = marshmallow.fields.Int()
+    raw_config_args = marshmallow.fields.List(marshmallow.fields.Str())
+    interfaces = marshmallow.fields.List(
+        marshmallow.fields.Nested(InterfaceSchema()))
+
+
+class ProvisionerInventoryLinksSchema(base.Base):
     host_vars = marshmallow.fields.Str()
     group_vars = marshmallow.fields.Str()
 
 
-class ProvisionerInventorySchema(SchemaBase):
+class ProvisionerInventorySchema(base.Base):
     host_vars = marshmallow.fields.Dict()
     group_vars = marshmallow.fields.Dict()
     links = marshmallow.fields.Nested(ProvisionerInventoryLinksSchema())
 
 
-class PlaybooksSchema(SchemaBase):
+class PlaybooksSchema(base.Base):
     setup = marshmallow.fields.Str()
     converge = marshmallow.fields.Str()
     teardown = marshmallow.fields.Str()
@@ -86,7 +103,7 @@ class ProvisionerPlaybooksSchema(PlaybooksSchema):
     vagrant = marshmallow.fields.Nested(PlaybooksSchema())
 
 
-class ProvisionerSchema(SchemaBase):
+class ProvisionerSchema(base.Base):
     name = marshmallow.fields.Str()
     config_options = marshmallow.fields.Dict()
     connection_options = marshmallow.fields.Dict()
@@ -98,14 +115,14 @@ class ProvisionerSchema(SchemaBase):
     lint = marshmallow.fields.Nested(LintSchema())
 
 
-class ScenarioSchema(SchemaBase):
+class ScenarioSchema(base.Base):
     name = marshmallow.fields.Str()
     check_sequence = marshmallow.fields.List(marshmallow.fields.Str)
     converge_sequence = marshmallow.fields.List(marshmallow.fields.Str)
     test_sequence = marshmallow.fields.List(marshmallow.fields.Str)
 
 
-class VerifierSchema(SchemaBase):
+class VerifierSchema(base.Base):
     name = marshmallow.fields.Str()
     enabled = marshmallow.fields.Bool()
     directory = marshmallow.fields.Str()
@@ -114,18 +131,29 @@ class VerifierSchema(SchemaBase):
     lint = marshmallow.fields.Nested(LintSchema())
 
 
-class MoleculeSchema(marshmallow.Schema):
+class MoleculeBaseSchema(base.Base):
     dependency = marshmallow.fields.Nested(DependencySchema())
     driver = marshmallow.fields.Nested(DriverSchema())
     lint = marshmallow.fields.Nested(LintSchema())
-    platforms = marshmallow.fields.List(
-        marshmallow.fields.Nested(PlatformsSchema(), only='name'))
     provisioner = marshmallow.fields.Nested(ProvisionerSchema())
     scenario = marshmallow.fields.Nested(ScenarioSchema())
     verifier = marshmallow.fields.Nested(VerifierSchema())
 
 
+class MoleculeVagrantSchema(MoleculeBaseSchema):
+    platforms = marshmallow.fields.List(
+        marshmallow.fields.Nested(PlatformsVagrantSchema()))
+
+
+class MoleculeSchema(MoleculeBaseSchema):
+    platforms = marshmallow.fields.List(
+        marshmallow.fields.Nested(PlatformsSchema()))
+
+
 def validate(c):
-    schema = MoleculeSchema(strict=True)
+    if c['driver']['name'] == 'vagrant':
+        schema = MoleculeVagrantSchema(strict=True)
+    else:
+        schema = MoleculeSchema(strict=True)
 
     return schema.load(c)
