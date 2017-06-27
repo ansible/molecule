@@ -1,7 +1,7 @@
 FROM centos:7
 
-RUN /bin/sh -c 'if [ -x "$(command -v apt-get)" ]; then apt-get update && apt-get upgrade -y && apt-get install -y python sudo bash; fi'
-RUN /bin/sh -c 'if [ -x "$(command -v yum)" ]; then touch /var/lib/rpm/* && yum makecache fast && yum update -y && yum install -y python sudo yum-plugin-ovl bash && sed -i 's/plugins=0/plugins=1/g' /etc/yum.conf; fi'
+RUN /bin/sh -c 'if [ -x "$(command -v apt-get)" ]; then apt-get update && apt-get upgrade -y && apt-get install -y systemd-sysv python sudo bash; fi'
+RUN /bin/sh -c 'if [ -x "$(command -v yum)" ]; then touch /var/lib/rpm/* && yum makecache fast && yum update -y && yum install -y systemd-sysv python sudo yum-plugin-ovl bash && sed -i 's/plugins=0/plugins=1/g' /etc/yum.conf; fi'
 RUN /bin/sh -c 'if [ -x "$(command -v zypper)" ]; then zypper refresh && zypper update -y && zypper install -y python sudo bash; fi'
 RUN /bin/sh -c 'if [ -x "$(command -v apk)" ]; then apk update && apk add python sudo bash; fi'
 RUN /bin/sh -c 'if [ -x "$(command -v pacman)" ]; then pacman --sync --noconfirm --refresh python2 bash; fi'
