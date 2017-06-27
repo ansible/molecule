@@ -27,22 +27,24 @@ LOG = logger.get_logger(__name__)
 
 
 class Dependency(base.Base):
+    """
+    Target the default scenario:
+
+    >>> molecule dependency
+
+    Targeting a specific scenario:
+
+    >>> molecule dependency --scenario-name foo
+
+    Executing with `debug`:
+
+    >>> molecule --debug dependency
+    """
+
     def execute(self):
         """
         Execute the actions necessary to perform a `molecule dependency` and
         returns None.
-
-        Target the default scenario:
-
-        >>> molecule dependency
-
-        Targeting a specific scenario:
-
-        >>> molecule dependency --scenario-name foo
-
-        Executing with `debug`:
-
-        >>> molecule --debug dependency
 
         :return: None
         """

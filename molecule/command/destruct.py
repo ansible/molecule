@@ -29,25 +29,27 @@ LOG = logger.get_logger(__name__)
 
 
 class Destruct(base.Base):
+    """
+    This is a destructive action and not enabled by default.   See the
+    provisioners documentation for further details.
+
+    Target the default scenario:
+
+    >>> molecule destruct
+
+    Targeting a specific scenario:
+
+    >>> molecule destruct --scenario-name foo
+
+    Executing with `debug`:
+
+    >>> molecule --debug destruct
+    """
+
     def execute(self):
         """
         Execute the actions necessary to perform a `molecule destruct` and
         returns None.
-
-        This is a destructive action and not enabled by default.   See the
-        provisioners documentation for further details.
-
-        Target the default scenario:
-
-        >>> molecule destruct
-
-        Targeting a specific scenario:
-
-        >>> molecule destruct --scenario-name foo
-
-        Executing with `debug`:
-
-        >>> molecule --debug destruct
 
         :return: None
         """

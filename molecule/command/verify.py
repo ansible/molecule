@@ -27,22 +27,24 @@ LOG = logger.get_logger(__name__)
 
 
 class Verify(base.Base):
+    """
+    Target the default scenario:
+
+    >>> molecule verify
+
+    Targeting a specific scenario:
+
+    >>> molecule verify --scenario-name foo
+
+    Executing with `debug`:
+
+    >>> molecule --debug verify
+    """
+
     def execute(self):
         """
         Execute the actions necessary to perform a `molecule verify` and
         returns None.
-
-        Target the default scenario:
-
-        >>> molecule verify
-
-        Targeting a specific scenario:
-
-        >>> molecule verify --scenario-name foo
-
-        Executing with `debug`:
-
-        >>> molecule --debug verify
 
         :return: None
         """

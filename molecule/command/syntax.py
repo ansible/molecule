@@ -29,22 +29,24 @@ LOG = logger.get_logger(__name__)
 
 
 class Syntax(base.Base):
+    """
+    Target the default scenario:
+
+    >>> molecule syntax
+
+    Targeting a specific scenario:
+
+    >>> molecule syntax --scenario-name foo
+
+    Executing with `debug`:
+
+    >>> molecule --debug syntax
+    """
+
     def execute(self):
         """
         Execute the actions necessary to perform a `molecule syntax` and
         returns None.
-
-        Target the default scenario:
-
-        >>> molecule syntax
-
-        Targeting a specific scenario:
-
-        >>> molecule syntax --scenario-name foo
-
-        Executing with `debug`:
-
-        >>> molecule --debug syntax
 
         :return: None
         """

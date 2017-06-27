@@ -30,26 +30,28 @@ LOG = logger.get_logger(__name__)
 
 
 class Create(base.Base):
+    """
+    Target the default scenario:
+
+    >>> molecule create
+
+    Targeting a specific scenario:
+
+    >>> molecule create --scenario-name foo
+
+    Targeting a specific driver:
+
+    >>> molecule converge --driver-name foo
+
+    Executing with `debug`:
+
+    >>> molecule --debug create
+    """
+
     def execute(self):
         """
         Execute the actions necessary to perform a `molecule create` and
         returns None.
-
-        Target the default scenario:
-
-        >>> molecule create
-
-        Targeting a specific scenario:
-
-        >>> molecule create --scenario-name foo
-
-        Targeting a specific driver:
-
-        >>> molecule converge --driver-name foo
-
-        Executing with `debug`:
-
-        >>> molecule --debug create
 
         :return: None
         """

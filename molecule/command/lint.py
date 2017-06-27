@@ -27,22 +27,23 @@ LOG = logger.get_logger(__name__)
 
 
 class Lint(base.Base):
+    """
+    Target the default scenario:
+
+    >>> molecule lint
+
+    Targeting a specific scenario:
+
+    >>> molecule lint --scenario-name foo
+
+    Executing with `debug`:
+
+    >>> molecule --debug lint
+    """
     def execute(self):
         """
         Execute the actions necessary to perform a `molecule lint` and
         returns None.
-
-        Target the default scenario:
-
-        >>> molecule lint
-
-        Targeting a specific scenario:
-
-        >>> molecule lint --scenario-name foo
-
-        Executing with `debug`:
-
-        >>> molecule --debug lint
 
         :return: None
         """

@@ -36,6 +36,23 @@ LOG = logger.get_logger(__name__)
 
 
 class Login(base.Base):
+    """
+    Targeting the only running host:
+
+    >>> molecule login
+
+    Targeting a specific running host:
+
+    >>> molecule login --host hostname
+
+    Targeting a specific running host and scenario:
+
+    >>> molecule login --host hostname --scenario-name foo
+
+    Executing with `debug`:
+
+    >>> molecule --debug login
+    """
     def __init__(self, c):
         super(Login, self).__init__(c)
         self._pt = None
@@ -44,22 +61,6 @@ class Login(base.Base):
         """
         Execute the actions necessary to perform a `molecule login` and
         returns None.
-
-        Targeting the only running host:
-
-        >>> molecule login
-
-        Targeting a specific running host:
-
-        >>> molecule login --host hostname
-
-        Targeting a specific running host and scenario:
-
-        >>> molecule login --host hostname --scenario-name foo
-
-        Executing with `debug`:
-
-        >>> molecule --debug login
 
         :return: None
         """

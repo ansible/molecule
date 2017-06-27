@@ -29,26 +29,28 @@ LOG = logger.get_logger(__name__)
 
 
 class Test(base.Base):
+    """
+    Target all scenarios:
+
+    >>> molecule test
+
+    Targeting a specific scenario:
+
+    >>> molecule test --scenario-name foo
+
+    Targeting a specific driver:
+
+    >>> molecule converge --driver-name foo
+
+    Executing with `debug`:
+
+    >>> molecule --debug test
+    """
+
     def execute(self):
         """
         Execute the actions necessary to perform a `molecule test` and
         returns None.
-
-        Target all scenarios:
-
-        >>> molecule test
-
-        Targeting a specific scenario:
-
-        >>> molecule test --scenario-name foo
-
-        Targeting a specific driver:
-
-        >>> molecule converge --driver-name foo
-
-        Executing with `debug`:
-
-        >>> molecule --debug test
 
         :return: None
         """

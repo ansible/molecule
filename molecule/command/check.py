@@ -30,22 +30,24 @@ LOG = logger.get_logger(__name__)
 
 
 class Check(base.Base):
+    """
+    Target the default scenario:
+
+    >>> molecule check
+
+    Targeting a specific scenario:
+
+    >>> molecule check --scenario-name foo
+
+    Executing with `debug`:
+
+    >>> molecule --debug check
+    """
+
     def execute(self):
         """
         Execute the actions necessary to perform a `molecule check` and
         returns None.
-
-        Target the default scenario:
-
-        >>> molecule check
-
-        Targeting a specific scenario:
-
-        >>> molecule check --scenario-name foo
-
-        Executing with `debug`:
-
-        >>> molecule --debug check
 
         :return: None
         """

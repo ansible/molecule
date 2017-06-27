@@ -134,7 +134,6 @@ Check
 
 .. autoclass:: molecule.command.check.Check
    :undoc-members:
-   :members: execute
 
 Converge
 ^^^^^^^^
@@ -143,42 +142,36 @@ Converge will execute the sequences necessary to converge the instances.
 
 .. autoclass:: molecule.command.converge.Converge
    :undoc-members:
-   :members: execute
 
 Create
 ^^^^^^
 
 .. autoclass:: molecule.command.create.Create
    :undoc-members:
-   :members: execute
 
 Dependency
 ^^^^^^^^^^
 
 .. autoclass:: molecule.command.dependency.Dependency
    :undoc-members:
-   :members: execute
 
 Destroy
 ^^^^^^^
 
 .. autoclass:: molecule.command.destroy.Destroy
    :undoc-members:
-   :members: execute
 
 Destruct
 ^^^^^^^^
 
 .. autoclass:: molecule.command.destruct.Destruct
    :undoc-members:
-   :members: execute
 
 Idempotence
 ^^^^^^^^^^^
 
 .. autoclass:: molecule.command.idempotence.Idempotence
    :undoc-members:
-   :members: execute
 
 Init
 ^^^^
@@ -194,28 +187,24 @@ Lint
 
 .. autoclass:: molecule.command.lint.Lint
    :undoc-members:
-   :members: execute
 
 List
 ^^^^
 
 .. autoclass:: molecule.command.list.List
    :undoc-members:
-   :members: execute
 
 Login
 ^^^^^
 
 .. autoclass:: molecule.command.login.Login
    :undoc-members:
-   :members: execute
 
 Syntax
 ^^^^^^
 
 .. autoclass:: molecule.command.syntax.Syntax
    :undoc-members:
-   :members: execute
 
 Test
 ^^^^
@@ -224,12 +213,9 @@ Test will execute the sequences necessary to test the instances.
 
 .. autoclass:: molecule.command.test.Test
    :undoc-members:
-   :members: execute
 
 Verify
 ^^^^^^
 
 .. autoclass:: molecule.command.verify.Verify
    :undoc-members:
-   :members: execute
-

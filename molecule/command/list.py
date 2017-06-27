@@ -32,27 +32,28 @@ LOG = logger.get_logger(__name__)
 
 
 class List(base.Base):
+    """
+    Target all scenarios:
+
+    >>> molecule list
+
+    Targeting a specific scenario:
+
+    >>> molecule list --scenario-name foo
+
+    Machine readable output:
+
+    >>> molecule list --format plain
+    >>> molecule list --format yaml
+
+    Executing with `debug`:
+
+    >>> molecule --debug list
+    """
     def execute(self):
         """
         Execute the actions necessary to perform a `molecule list` and
         returns None.
-
-        Target all scenarios:
-
-        >>> molecule list
-
-        Targeting a specific scenario:
-
-        >>> molecule list --scenario-name foo
-
-        Machine readable output:
-
-        >>> molecule list --format plain
-        >>> molecule list --format yaml
-
-        Executing with `debug`:
-
-        >>> molecule --debug list
 
         :return: None
         """

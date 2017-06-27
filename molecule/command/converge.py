@@ -30,22 +30,24 @@ LOG = logger.get_logger(__name__)
 
 
 class Converge(base.Base):
+    """
+    Target the default scenario:
+
+    >>> molecule converge
+
+    Targeting a specific scenario:
+
+    >>> molecule converge --scenario-name foo
+
+    Executing with `debug`:
+
+    >>> molecule --debug converge
+    """
+
     def execute(self):
         """
         Execute the actions necessary to perform a `molecule converge` and
         returns None.
-
-        Target the default scenario:
-
-        >>> molecule converge
-
-        Targeting a specific scenario:
-
-        >>> molecule converge --scenario-name foo
-
-        Executing with `debug`:
-
-        >>> molecule --debug converge
 
         :return: None
         """

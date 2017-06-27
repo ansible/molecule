@@ -31,22 +31,24 @@ LOG = logger.get_logger(__name__)
 
 
 class Idempotence(base.Base):
+    """
+    Target the default scenario:
+
+    >>> molecule idempotence
+
+    Targeting a specific scenario:
+
+    >>> molecule idempotence --scenario-name foo
+
+    Executing with `debug`:
+
+    >>> molecule --debug idempotence
+    """
+
     def execute(self):
         """
         Execute the actions necessary to perform a `molecule idempotence` and
         returns None.
-
-        Target the default scenario:
-
-        >>> molecule idempotence
-
-        Targeting a specific scenario:
-
-        >>> molecule idempotence --scenario-name foo
-
-        Executing with `debug`:
-
-        >>> molecule --debug idempotence
 
         :return: None
         """
