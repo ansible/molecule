@@ -32,9 +32,10 @@ LOG = logger.get_logger(__name__)
 
 
 class Namespace(object):
+    """ A class to act as a module to namespace playbook properties. """
     def __init__(self, config):
         """
-        A class to act as a module to namespace playbook properties.
+        Initialize a new namespace class and returns None.
 
         :param config: An instance of a Molecule config.
         :return: None
@@ -239,7 +240,7 @@ class Ansible(base.Base):
 
     def __init__(self, config):
         """
-        A class encapsulating the provisioner.
+        Initialize a new ansible class and returns None.
 
         :param config: An instance of a Molecule config.
         :return: None

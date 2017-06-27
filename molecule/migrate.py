@@ -39,7 +39,7 @@ class MyDumper(yaml.Dumper):
 class Migrate(object):
     def __init__(self, molecule_file):
         """
-        A class responsible for migrating an Molecule v1 to v2 config.
+        Initialize a new migrate class and returns None.
 
         :param molecule_file: A string containing an absolute path to the
          molecule v1 config to parse.

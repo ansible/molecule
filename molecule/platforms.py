@@ -70,7 +70,7 @@ class Platforms(object):
 
     def __init__(self, config):
         """
-        A class encapsulating platforms.
+        Initialize a new platform class and returns None.
 
         :param config: An instance of a Molecule config.
         :return: None

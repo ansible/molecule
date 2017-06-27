@@ -65,7 +65,7 @@ class Scenario(object):
 
     def __init__(self, config):
         """
-        A class encapsulating a scenario.
+        Initialize a new scenario class and returns None.
 
         :param config: An instance of a Molecule config.
         :return: None
