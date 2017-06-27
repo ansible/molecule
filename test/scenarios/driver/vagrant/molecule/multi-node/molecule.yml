@@ -11,7 +11,7 @@ platforms:
   - name: instance-1
     box: debian/jessie64
     interfaces:
-      - auto_config: true
+      - auto_config: True
         network_name: private_network
         type: dhcp
     groups:
@@ -20,7 +20,7 @@ platforms:
   - name: instance-2
     box: debian/jessie64
     interfaces:
-      - auto_config: true
+      - auto_config: True
         network_name: private_network
         type: dhcp
     groups:

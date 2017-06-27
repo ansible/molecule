@@ -1,0 +1,21 @@
+---
+- name: Get instance ec2 facts
+  ec2_remote_facts:
+    filters:
+      instance-state-name: running
+      tag:name: "{{ ec2.name }}"
+  register: ec2_facts
+
+- name: Destroy molecule instance(s)
+  ec2:
+    state: absent
+    instance_ids: "{{ ec2_facts.instances[0].id }}"
+  when: ec2_facts.instances | length | int > 0
+
+- name: Cleanup temporary files
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ ec2.key_path }}"
+    - "{{ ec2.ssh_config_path }}"

@@ -2,7 +2,7 @@
 {% raw -%}
 - hosts: localhost
   connection: local
-  gather_facts: no
+  gather_facts: False
   vars:
     molecule_file: "{{ lookup('env','MOLECULE_FILE') }}"
     molecule_scenario_directory: "{{ lookup('env','MOLECULE_SCENARIO_DIRECTORY') }}"
@@ -21,7 +21,7 @@
         hostname: "{{ item.name }}"
         image: "{{ item.image }}"
         state: started
-        recreate: no
+        recreate: False
         log_driver: syslog
         command: "{{ item.command }}"
       with_items: "{{ molecule_yml.platforms }}"

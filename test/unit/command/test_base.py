@@ -75,16 +75,15 @@ def test_prune(base_instance):
     assert os.path.isdir(baz_directory)
 
 
-def test_setup(mocker, patched_provisioner_add_or_update_vars,
-               patched_provisioner_write_config,
-               patched_provisioner_manage_inventory, base_instance):
+def test_setup(mocker, patched_add_or_update_vars, patched_write_config,
+               patched_manage_inventory, base_instance):
 
     assert os.path.isdir(base_instance._config.scenario.ephemeral_directory)
     assert os.path.isdir(
         os.path.dirname(base_instance._config.provisioner.inventory_file))
 
-    patched_provisioner_manage_inventory.assert_called_once_with()
-    patched_provisioner_write_config.assert_called_once_with()
+    patched_manage_inventory.assert_called_once_with()
+    patched_write_config.assert_called_once_with()
 
 
 def test_setup_creates_ephemeral_directory(base_instance):
@@ -154,12 +153,11 @@ def test_get_configs(config_instance):
 
 def test_get_configs_calls_verify_scenario_name(
         mocker, config_instance, patched_verify_configs,
-        patched_base_filter_configs_for_scenario,
-        patched_verify_scenario_name):
+        patched_base_filter_configs_for_scenario, patched_scenario_name):
     patched_base_filter_configs_for_scenario.return_value = [config_instance]
     base.get_configs({}, {'scenario_name': 'default'})
 
-    patched_verify_scenario_name.assert_called_once_with(
+    patched_scenario_name.assert_called_once_with(
         patched_base_filter_configs_for_scenario.return_value, 'default')
 
 
@@ -173,7 +171,7 @@ def test_get_configs_filter_configs_for_scenario(
         mocker,
         patched_verify_configs,
         patched_base_filter_configs_for_scenario,
-        patched_verify_scenario_name, ):
+        patched_scenario_name, ):
     base.get_configs({}, {'scenario_name': 'default'})
 
     patched_base_filter_configs_for_scenario.assert_called_once_with(

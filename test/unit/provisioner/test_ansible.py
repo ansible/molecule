@@ -30,6 +30,94 @@ from molecule.provisioner.lint import ansible_lint
 
 
 @pytest.fixture
+def namespace_instance(molecule_provisioner_section_data, config_instance):
+    return ansible.Namespace(config_instance)
+
+
+def test_get_ansible_playbook(namespace_instance):
+    x = os.path.join(namespace_instance._config.scenario.directory,
+                     'create.yml')
+    assert x == namespace_instance._config.provisioner.playbooks.setup
+
+
+#  @pytest.fixture
+#  def molecule_provisioner_section_data_override():
+
+
+def test_get_ansible_playbook_with_driver_key(namespace_instance):
+    d = {
+        'provisioner': {
+            'name': 'ansible',
+            'playbooks': {
+                'docker': {
+                    'setup': 'docker-create.yml',
+                },
+                'setup': 'create.yml',
+            },
+        }
+    }
+    namespace_instance._config.merge_dicts(namespace_instance._config.config,
+                                           d)
+
+    x = os.path.join(namespace_instance._config.scenario.directory,
+                     'docker-create.yml')
+    assert x == namespace_instance._config.provisioner.playbooks.setup
+
+
+def test_get_ansible_playbook_when_playbook_none(namespace_instance):
+    d = {
+        'provisioner': {
+            'name': 'ansible',
+            'playbooks': {
+                'destruct': None,
+            },
+        }
+    }
+    namespace_instance._config.merge_dicts(namespace_instance._config.config,
+                                           d)
+
+    assert namespace_instance._config.provisioner.playbooks.destruct is None
+
+
+def test_get_ansible_playbook_with_driver_key_when_playbook_none(
+        namespace_instance):
+    d = {
+        'provisioner': {
+            'name': 'ansible',
+            'playbooks': {
+                'docker': {
+                    'destruct': None,
+                },
+                'destruct': None,
+            },
+        }
+    }
+    namespace_instance._config.merge_dicts(namespace_instance._config.config,
+                                           d)
+
+    assert namespace_instance._config.provisioner.playbooks.destruct is None
+
+
+def test_get_ansible_playbook_with_driver_key_when_playbook_key_missing(
+        namespace_instance):
+    d = {
+        'provisioner': {
+            'name': 'ansible',
+            'playbooks': {
+                'docker': {
+                    'setup': 'docker-create.yml',
+                },
+                'destruct': None,
+            },
+        }
+    }
+    namespace_instance._config.merge_dicts(namespace_instance._config.config,
+                                           d)
+
+    assert namespace_instance._config.provisioner.playbooks.destruct is None
+
+
+@pytest.fixture
 def molecule_provisioner_section_data():
     return {
         'provisioner': {
@@ -199,12 +287,25 @@ def test_env_property(ansible_instance):
 
 
 def test_env_appends_env_property(ansible_instance):
-    assert '../../../../:foo/bar' == ansible_instance.env['ANSIBLE_ROLES_PATH']
+    x = [
+        '../../../../',
+        'roles/',
+        'foo/bar',
+    ]
+    assert x == ansible_instance.env['ANSIBLE_ROLES_PATH'].split(':')
 
-    x = '{}:foo/bar'.format(ansible_instance._get_libraries_directory())
-    x == ansible_instance.env['ANSIBLE_LIBRARY']
+    x = [
+        ansible_instance._get_libraries_directory(),
+        'libraries/',
+        'foo/bar',
+    ]
+    assert x == ansible_instance.env['ANSIBLE_LIBRARY'].split(':')
 
-    x = '{}:foo/bar'.format(ansible_instance._get_filter_plugin_directory())
+    x = [
+        ansible_instance._get_filter_plugin_directory(),
+        'plugins/filters/',
+        'foo/bar',
+    ]
     x == ansible_instance.env['ANSIBLE_FILTER_PLUGINS']
 
 
@@ -374,48 +475,7 @@ def test_playbooks_setup_property(ansible_instance):
     assert x == ansible_instance.playbooks.setup
 
 
-@pytest.fixture
-def molecule_provisioner_playbooks_driver_section_data():
-    return {
-        'provisioner': {
-            'name': 'ansible',
-            'playbooks': {
-                'docker': {
-                    'setup': 'docker-create.yml',
-                    'converge': 'docker-playbook.yml',
-                    'teardown': 'docker-destroy.yml',
-                },
-                'setup': 'create.yml',
-                'converge': 'playbook.yml',
-                'teardown': 'destroy.yml',
-            },
-        }
-    }
-
-
-def test_playbooks_setup_property_when_driver(
-        molecule_provisioner_playbooks_driver_section_data, ansible_instance):
-    ansible_instance._config.merge_dicts(
-        ansible_instance._config.config,
-        molecule_provisioner_playbooks_driver_section_data)
-    x = os.path.join(ansible_instance._config.scenario.directory,
-                     'docker-create.yml')
-
-    assert x == ansible_instance.playbooks.setup
-
-
 def test_playbooks_converge_property(ansible_instance):
-    x = os.path.join(ansible_instance._config.scenario.directory,
-                     'playbook.yml')
-
-    assert x == ansible_instance.playbooks.converge
-
-
-def test_playbooks_converge_property_when_driver_does_not_use_driver(
-        molecule_provisioner_playbooks_driver_section_data, ansible_instance):
-    ansible_instance._config.merge_dicts(
-        ansible_instance._config.config,
-        molecule_provisioner_playbooks_driver_section_data)
     x = os.path.join(ansible_instance._config.scenario.directory,
                      'playbook.yml')
 
@@ -429,15 +489,8 @@ def test_playbooks_teardown_property(ansible_instance):
     assert x == ansible_instance.playbooks.teardown
 
 
-def test_playbooks_teardown_property_when_driver(
-        molecule_provisioner_playbooks_driver_section_data, ansible_instance):
-    ansible_instance._config.merge_dicts(
-        ansible_instance._config.config,
-        molecule_provisioner_playbooks_driver_section_data)
-    x = os.path.join(ansible_instance._config.scenario.directory,
-                     'docker-destroy.yml')
-
-    assert x == ansible_instance.playbooks.teardown
+def test_playbooks_destruct_property(ansible_instance):
+    assert ansible_instance.playbooks.destruct is None
 
 
 def test_connection_options(ansible_instance):
@@ -501,6 +554,17 @@ def test_destroy(ansible_instance, mocker, patched_ansible_playbook):
     patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
+def test_destruct(ansible_instance, mocker, patched_ansible_playbook):
+    ansible_instance.destruct()
+
+    inventory_file = ansible_instance._config.provisioner.inventory_file
+    patched_ansible_playbook.assert_called_once_with(
+        inventory_file,
+        ansible_instance._config.provisioner.playbooks.destruct,
+        ansible_instance._config, )
+    patched_ansible_playbook.return_value.execute.assert_called_once_with()
+
+
 def test_setup(ansible_instance, mocker, patched_ansible_playbook):
     ansible_instance.setup()
 
@@ -531,32 +595,28 @@ def test_write_config(temp_dir, ansible_instance):
     assert os.path.isfile(ansible_instance.config_file)
 
 
-def test_manage_inventory(ansible_instance,
-                          patched_provisioner_write_inventory,
-                          patched_provisioner_remove_vars,
-                          patched_provisioner_add_or_update_vars,
-                          patched_provisioner_link_or_update_vars):
+def test_manage_inventory(ansible_instance, patched_write_inventory,
+                          patched_remove_vars, patched_add_or_update_vars,
+                          patched_link_or_update_vars):
     ansible_instance.manage_inventory()
 
-    patched_provisioner_write_inventory.assert_called_once_with()
-    patched_provisioner_remove_vars.assert_called_once_with()
-    patched_provisioner_add_or_update_vars.assert_called_once_with()
-    assert not patched_provisioner_link_or_update_vars.called
+    patched_write_inventory.assert_called_once_with()
+    patched_remove_vars.assert_called_once_with()
+    patched_add_or_update_vars.assert_called_once_with()
+    assert not patched_link_or_update_vars.called
 
 
-def test_manage_inventory_with_links(ansible_instance,
-                                     patched_provisioner_write_inventory,
-                                     patched_provisioner_remove_vars,
-                                     patched_provisioner_add_or_update_vars,
-                                     patched_provisioner_link_or_update_vars):
+def test_manage_inventory_with_links(
+        ansible_instance, patched_write_inventory, patched_remove_vars,
+        patched_add_or_update_vars, patched_link_or_update_vars):
     c = ansible_instance._config.config
     c['provisioner']['inventory']['links'] = {'foo': 'bar'}
     ansible_instance.manage_inventory()
 
-    patched_provisioner_write_inventory.assert_called_once_with()
-    patched_provisioner_remove_vars.assert_called_once_with()
-    assert not patched_provisioner_add_or_update_vars.called
-    patched_provisioner_link_or_update_vars.assert_called_once_with()
+    patched_write_inventory.assert_called_once_with()
+    patched_remove_vars.assert_called_once_with()
+    assert not patched_add_or_update_vars.called
+    patched_link_or_update_vars.assert_called_once_with()
 
 
 def test_add_or_update_vars(ansible_instance):

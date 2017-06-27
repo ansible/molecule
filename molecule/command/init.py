@@ -200,6 +200,9 @@ def role(dependency_name, driver_name, lint_name, provisioner_name, role_name,
         'verifier_name': verifier_name,
     }
 
+    if verifier_name == 'goss':
+        command_args.update({'verifier_lint_name': "'None'"})
+
     _init_new_role(command_args)
 
 
@@ -245,6 +248,9 @@ def scenario(dependency_name, driver_name, lint_name, provisioner_name,
         'subcommand': __name__,
         'verifier_name': verifier_name,
     }
+
+    if verifier_name == 'goss':
+        command_args.update({'verifier_lint_name': "'None'"})
 
     _init_new_scenario(command_args)
 

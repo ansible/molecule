@@ -4,10 +4,10 @@ dependency:
 driver:
   name: static
   options:
-    login_cmd_template: 'ssh {instance} -F /tmp/ssh-config-aws'
+    login_cmd_template: 'ssh {instance} -F /tmp/ssh-config-ec2'
     ansible_connection_options:
       connection: ssh
-      ansible_ssh_common_args: -F /tmp/ssh-config-aws
+      ansible_ssh_common_args: -F /tmp/ssh-config-ec2
 lint:
   name: yamllint
   options:

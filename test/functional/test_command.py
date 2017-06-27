@@ -42,7 +42,8 @@ def driver_name(request):
 
 
 @pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name', [
+    'scenario_to_test, driver_name, scenario_name',
+    [
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
@@ -52,7 +53,7 @@ def driver_name(request):
         ('driver/static', 'static', 'docker'),
         ('driver/static', 'static', 'ec2'),
         ('driver/static', 'static', 'openstack'),
-        ('driver/static', 'static', 'vagrant'),
+        #  ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
     indirect=[
@@ -67,7 +68,8 @@ def test_command_check(scenario_to_test, with_scenario, scenario_name):
 
 
 @pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name', [
+    'scenario_to_test, driver_name, scenario_name',
+    [
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
@@ -78,7 +80,7 @@ def test_command_check(scenario_to_test, with_scenario, scenario_name):
         ('driver/static', 'static', 'ec2'),
         ('driver/static', 'static', 'gce'),
         ('driver/static', 'static', 'openstack'),
-        ('driver/static', 'static', 'vagrant'),
+        #  ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
     indirect=[
@@ -93,7 +95,8 @@ def test_command_converge(scenario_to_test, with_scenario, scenario_name):
 
 
 @pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name', [
+    'scenario_to_test, driver_name, scenario_name',
+    [
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
@@ -104,7 +107,7 @@ def test_command_converge(scenario_to_test, with_scenario, scenario_name):
         ('driver/static', 'static', 'ec2'),
         ('driver/static', 'static', 'gce'),
         ('driver/static', 'static', 'openstack'),
-        ('driver/static', 'static', 'vagrant'),
+        #  ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
     indirect=[
@@ -171,7 +174,8 @@ def test_command_dependency_gilt(scenario_to_test, with_scenario,
 
 
 @pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name', [
+    'scenario_to_test, driver_name, scenario_name',
+    [
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
@@ -182,7 +186,7 @@ def test_command_dependency_gilt(scenario_to_test, with_scenario,
         ('driver/static', 'static', 'ec2'),
         ('driver/static', 'static', 'gce'),
         ('driver/static', 'static', 'openstack'),
-        ('driver/static', 'static', 'vagrant'),
+        #  ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
     indirect=[
@@ -197,7 +201,8 @@ def test_command_destroy(scenario_to_test, with_scenario, scenario_name):
 
 
 @pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name', [
+    'scenario_to_test, driver_name, scenario_name',
+    [
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
@@ -208,7 +213,34 @@ def test_command_destroy(scenario_to_test, with_scenario, scenario_name):
         ('driver/static', 'static', 'ec2'),
         ('driver/static', 'static', 'gce'),
         ('driver/static', 'static', 'openstack'),
-        ('driver/static', 'static', 'vagrant'),
+        #  ('driver/static', 'static', 'vagrant'),
+        ('driver/vagrant', 'vagrant', 'default'),
+    ],
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+        'scenario_name',
+    ])
+def test_command_destruct(scenario_to_test, with_scenario, scenario_name):
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('destruct', **options)
+    pytest.helpers.run_command(cmd)
+
+
+@pytest.mark.parametrize(
+    'scenario_to_test, driver_name, scenario_name',
+    [
+        ('driver/docker', 'docker', 'default'),
+        ('driver/ec2', 'ec2', 'default'),
+        ('driver/gce', 'gce', 'default'),
+        ('driver/lxc', 'lxc', 'default'),
+        ('driver/lxd', 'lxd', 'default'),
+        ('driver/openstack', 'openstack', 'default'),
+        ('driver/static', 'static', 'docker'),
+        ('driver/static', 'static', 'ec2'),
+        ('driver/static', 'static', 'gce'),
+        ('driver/static', 'static', 'openstack'),
+        #  ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
     indirect=[
@@ -255,7 +287,8 @@ def test_command_init_scenario(temp_dir, driver_name, skip_test):
 
 
 @pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name', [
+    'scenario_to_test, driver_name, scenario_name',
+    [
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
@@ -266,7 +299,7 @@ def test_command_init_scenario(temp_dir, driver_name, skip_test):
         ('driver/static', 'static', 'ec2'),
         ('driver/static', 'static', 'gce'),
         ('driver/static', 'static', 'openstack'),
-        ('driver/static', 'static', 'vagrant'),
+        #  ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
     indirect=[
@@ -332,7 +365,7 @@ static-instance-docker     Static         Ansible             docker           F
 static-instance-ec2        Static         Ansible             ec2              False      True
 static-instance-gce        Static         Ansible             gce              False      True
 static-instance-openstack  Static         Ansible             openstack        False      True
-static-instance-vagrant    Static         Ansible             vagrant          False      True
+static-instance-vagrant    Static         Ansible             vagrant          False      False
 """.strip()),  # noqa
         ('driver/vagrant', 'vagrant', """
 Instance Name          Driver Name    Provisioner Name    Scenario Name    Created    Converged
@@ -387,7 +420,7 @@ static-instance-docker     Static  Ansible  docker     False  True
 static-instance-ec2        Static  Ansible  ec2        False  True
 static-instance-gce        Static  Ansible  gce        False  True
 static-instance-openstack  Static  Ansible  openstack  False  True
-static-instance-vagrant    Static  Ansible  vagrant    False  True
+static-instance-vagrant    Static  Ansible  vagrant    False  False
 """.strip()),
         ('driver/vagrant', 'vagrant', """
 instance-1-default     Vagrant  Ansible  default     False  False
@@ -405,7 +438,8 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario,
 
 
 @pytest.mark.parametrize(
-    'scenario_to_test, driver_name, login_args, scenario_name', [
+    'scenario_to_test, driver_name, login_args, scenario_name',
+    [
         ('driver/docker', 'docker', [[
             'instance-1',
             '.*instance-1-default.*',
@@ -458,7 +492,7 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario,
         ]], 'docker'),
         ('driver/static', 'static', [[
             'static-instance-ec2',
-            '.*static-instance-ec2.*',
+            '.*ip-.*',
         ]], 'ec2'),
         ('driver/static', 'static', [[
             'static-instance-gce',
@@ -468,10 +502,10 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario,
             'static-instance-openstack',
             '.*static-instance-openstack.*',
         ]], 'openstack'),
-        ('driver/static', 'static', [[
-            'static-instance-vagrant',
-            '.*static-instance-vagrant.*',
-        ]], 'vagrant'),
+        #  ('driver/static', 'static', [[
+        #      'static-instance-vagrant',
+        #      '.*static-instance-vagrant.*',
+        #  ]], 'vagrant'),
         ('driver/vagrant', 'vagrant', [[
             'instance-1',
             '.*instance-1-multi-node.*',
@@ -491,7 +525,8 @@ def test_command_login(scenario_to_test, with_scenario, login_args,
 
 
 @pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name', [
+    'scenario_to_test, driver_name, scenario_name',
+    [
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
@@ -502,7 +537,7 @@ def test_command_login(scenario_to_test, with_scenario, login_args,
         ('driver/static', 'static', 'ec2'),
         ('driver/static', 'static', 'gce'),
         ('driver/static', 'static', 'openstack'),
-        ('driver/static', 'static', 'vagrant'),
+        #  ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
     indirect=[
@@ -517,7 +552,8 @@ def test_command_syntax(scenario_to_test, with_scenario, scenario_name):
 
 
 @pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name', [
+    'scenario_to_test, driver_name, scenario_name',
+    [
         ('driver/docker', 'docker', False),
         ('driver/ec2', 'ec2', False),
         ('driver/gce', 'gce', False),
@@ -528,7 +564,7 @@ def test_command_syntax(scenario_to_test, with_scenario, scenario_name):
         ('driver/static', 'static', 'ec2'),
         ('driver/static', 'static', 'gce'),
         ('driver/static', 'static', 'openstack'),
-        ('driver/static', 'static', 'vagrant'),
+        #  ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', False),
     ],
     indirect=[
@@ -541,7 +577,8 @@ def test_command_test(scenario_to_test, with_scenario, scenario_name):
 
 
 @pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name', [
+    'scenario_to_test, driver_name, scenario_name',
+    [
         ('driver/docker', 'docker', 'default'),
         ('driver/gce', 'gce', 'default'),
         ('driver/lxc', 'lxc', 'default'),
@@ -551,7 +588,7 @@ def test_command_test(scenario_to_test, with_scenario, scenario_name):
         ('driver/static', 'static', 'ec2'),
         ('driver/static', 'static', 'gce'),
         ('driver/static', 'static', 'openstack'),
-        ('driver/static', 'static', 'vagrant'),
+        #  ('driver/static', 'static', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
     indirect=[

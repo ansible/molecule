@@ -22,25 +22,7 @@ import pytest
 
 
 @pytest.fixture
-def molecule_verifier_lint_section_data():
-    return {
-        'verifier': {
-            'name': 'testinfra',
-            'lint': {
-                'name': 'flake8',
-                'options': {
-                    'foo': 'bar',
-                },
-                'env': {
-                    'foo': 'bar',
-                },
-            }
-        }
-    }
-
-
-@pytest.fixture
-def patched_flake8_get_tests(mocker):
+def patched_get_tests(mocker):
     m = mocker.patch('molecule.verifier.lint.flake8.Flake8._get_tests')
     m.return_value = ['test1', 'test2', 'test3']
 

@@ -1,28 +1,28 @@
 ---
 - hosts: all
-  gather_facts: no
+  gather_facts: False
   tasks:
     - name: Install python for Ansible
       raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal python-zipstream)
-      become: yes
+      become: True
       changed_when: False
 
 - hosts: all
-  become: yes
+  become: True
   roles:
     - molecule
 
 - hosts: bar
-  become: yes
+  become: True
   roles:
     - molecule
 
 - hosts: foo
-  become: yes
+  become: True
   roles:
     - molecule
 
 - hosts: baz
-  become: yes
+  become: True
   roles:
     - molecule

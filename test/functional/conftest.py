@@ -66,7 +66,8 @@ def skip_test(request, driver_name):
     elif (driver_name == 'vagrant' and not supports_vagrant_virtualbox()):
         pytest.skip("Skipped '{}' not supported".format(driver_name))
     elif driver_name == 'static':
-        pytest.skip("Ignoring '{}' tests for now".format(driver_name))
+        if not pytest.config.getoption('--static'):
+            pytest.skip("Ignoring '{}' tests for now".format(driver_name))
 
 
 @pytest.helpers.register
@@ -158,7 +159,8 @@ def login(login_args, scenario_name='default'):
             child_cmd = 'molecule login --host {} --scenario-name {}'.format(
                 instance, scenario_name)
         else:
-            child_cmd = 'molecule login'
+            child_cmd = 'molecule login --scenario-name {}'.format(
+                scenario_name)
         child = pexpect.spawn(child_cmd)
         child.expect(regexp)
         # If the test returns and doesn't hang it succeeded.

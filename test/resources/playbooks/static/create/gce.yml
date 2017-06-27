@@ -1,0 +1,25 @@
+---
+- name: Create molecule instance(s)
+  gce:
+    instance_names: "{{ gce.name }}"
+    zone: "{{ gce.zone }}"
+    machine_type: f1-micro
+    image: debian-8
+    service_account_email: "{{ lookup('env','GCE_SERVICE_ACCOUNT_EMAIL') }}"
+    credentials_file: "{{ lookup('env','GCE_CREDENTIALS_FILE') }}"
+    project_id: "{{ lookup('env','GCE_PROJECT_ID') }}"
+  register: server
+
+- name: Persist ssh config
+  copy:
+    dest: "{{ gce.ssh_config_path }}"
+    content: |
+      Host "{{ gce.name }}"
+          HostName "{{ server.instance_data[0].public_ip }}"
+          User "{{ gce.ssh_user }}"
+          IdentityFile "{{ gce.key_path }}"
+          UserKnownHostsFile=/dev/null
+          IdentitiesOnly=yes
+          StrictHostKeyChecking=no
+          CheckHostIP=no
+  when: server.changed

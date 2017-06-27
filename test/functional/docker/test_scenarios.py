@@ -45,6 +45,20 @@ def driver_name(request):
     return request.param
 
 
+@pytest.mark.parametrize(
+    'scenario_to_test, driver_name, scenario_name', [
+        ('destruct', 'docker', 'default'),
+    ],
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+        'scenario_name',
+    ])
+def test_command_destruct(scenario_to_test, with_scenario, scenario_name):
+    cmd = sh.molecule.bake('test', '--driver-name', 'docker')
+    pytest.helpers.run_command(cmd)
+
+
 def test_command_init_role_goss(temp_dir):
     role_directory = os.path.join(temp_dir.strpath, 'test-init')
     cmd = sh.molecule.bake('init', 'role', '--role-name', 'test-init',

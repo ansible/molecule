@@ -31,8 +31,8 @@ def idempotence_instance(config_instance):
 
 
 def test_execute(mocker, patched_logger_info, patched_ansible_converge,
-                 patched_command_idempotence_is_idempotent,
-                 patched_logger_success, idempotence_instance):
+                 patched_is_idempotent, patched_logger_success,
+                 idempotence_instance):
     idempotence_instance.execute()
     x = [
         mocker.call('Scenario: [default]'),
@@ -43,7 +43,7 @@ def test_execute(mocker, patched_logger_info, patched_ansible_converge,
 
     patched_ansible_converge.assert_called_once_with(out=None, err=None)
 
-    patched_command_idempotence_is_idempotent.assert_called_once_with(
+    patched_is_idempotent.assert_called_once_with(
         'patched-ansible-converge-stdout')
 
     msg = 'Idempotence completed successfully.'
@@ -65,8 +65,8 @@ def test_execute_raises_when_not_converged(patched_logger_critical,
 
 def test_execute_raises_when_fails_idempotence(
         mocker, patched_logger_critical, patched_ansible_converge,
-        patched_command_idempotence_is_idempotent, idempotence_instance):
-    patched_command_idempotence_is_idempotent.return_value = False
+        patched_is_idempotent, idempotence_instance):
+    patched_is_idempotent.return_value = False
     with pytest.raises(SystemExit) as e:
         idempotence_instance.execute()
 

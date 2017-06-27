@@ -9,7 +9,7 @@ lint:
     config-file: ../../resources/.yamllint
 platforms:
   - name: instance-1
-    image: molecule_local/centos:7
+    image: molecule_local/centos:latest
     command: sleep infinity
     dockerfile: Dockerfile
 provisioner:
@@ -24,4 +24,4 @@ scenario:
 verifier:
   name: goss
   lint:
-    name: flake8
+    name: 'None'

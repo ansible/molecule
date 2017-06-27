@@ -182,14 +182,6 @@ def config_instance(molecule_file_fixture, molecule_data):
 
 
 @pytest.fixture
-def patched_ansible_playbook(mocker):
-    m = mocker.patch('molecule.provisioner.ansible_playbook.AnsiblePlaybook')
-    m.return_value.execute.return_value = b'patched-ansible-playbook-stdout'
-
-    return m
-
-
-@pytest.fixture
 def patched_print_debug(mocker):
     return mocker.patch('molecule.util.print_debug')
 
@@ -236,28 +228,45 @@ def patched_ansible_converge(mocker):
 
 
 @pytest.fixture
-def patched_provisioner_write_inventory(mocker):
-    return mocker.patch(
-        'molecule.provisioner.ansible.Ansible._write_inventory')
-
-
-@pytest.fixture
-def patched_provisioner_remove_vars(mocker):
-    return mocker.patch('molecule.provisioner.ansible.Ansible._remove_vars')
-
-
-@pytest.fixture
-def patched_provisioner_add_or_update_vars(mocker):
+def patched_add_or_update_vars(mocker):
     return mocker.patch(
         'molecule.provisioner.ansible.Ansible._add_or_update_vars')
 
 
 @pytest.fixture
-def patched_provisioner_link_or_update_vars(mocker):
-    return mocker.patch(
-        'molecule.provisioner.ansible.Ansible._link_or_update_vars')
+def patched_yamllint(mocker):
+    return mocker.patch('molecule.lint.yamllint.Yamllint.execute')
 
 
 @pytest.fixture
-def patched_yamllint(mocker):
-    return mocker.patch('molecule.lint.yamllint.Yamllint.execute')
+def patched_flake8(mocker):
+    return mocker.patch('molecule.verifier.lint.flake8.Flake8.execute')
+
+
+@pytest.fixture
+def patched_ansible_galaxy(mocker):
+    return mocker.patch(
+        'molecule.dependency.ansible_galaxy.AnsibleGalaxy.execute')
+
+
+@pytest.fixture
+def patched_testinfra(mocker):
+    return mocker.patch('molecule.verifier.testinfra.Testinfra.execute')
+
+
+@pytest.fixture
+def molecule_verifier_lint_section_data():
+    return {
+        'verifier': {
+            'name': 'testinfra',
+            'lint': {
+                'name': 'flake8',
+                'options': {
+                    'foo': 'bar',
+                },
+                'env': {
+                    'foo': 'bar',
+                },
+            }
+        }
+    }

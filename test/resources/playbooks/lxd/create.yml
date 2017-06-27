@@ -1,7 +1,7 @@
 ---
 - hosts: localhost
   connection: local
-  gather_facts: no
+  gather_facts: False
   vars:
     molecule_file: "{{ lookup('env','MOLECULE_FILE') }}"
     molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
@@ -17,6 +17,6 @@
           protocol: lxd
           alias: ubuntu/xenial/amd64
         profiles: ["default"]
-        wait_for_ipv4_addresses: true
+        wait_for_ipv4_addresses: True
         timeout: 600
       with_items: "{{ molecule_yml.platforms }}"
