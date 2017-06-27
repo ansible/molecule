@@ -4,13 +4,13 @@ Configuration
 Config
 ------
 
-.. autoclass:: molecule.config.Config
+.. autoclass:: molecule.config.Config()
    :undoc-members:
 
 Variable Substitution
 ---------------------
 
-.. autoclass:: molecule.interpolation.Interpolator
+.. autoclass:: molecule.interpolation.Interpolator()
    :undoc-members:
 
 Dependency
@@ -22,13 +22,13 @@ these dependencies by invoking configurable dependency managers.
 Ansible Galaxy
 ^^^^^^^^^^^^^^
 
-.. autoclass:: molecule.dependency.ansible_galaxy.AnsibleGalaxy
+.. autoclass:: molecule.dependency.ansible_galaxy.AnsibleGalaxy()
    :undoc-members:
 
 Gilt
 ^^^^
 
-.. autoclass:: molecule.dependency.gilt.Gilt
+.. autoclass:: molecule.dependency.gilt.Gilt()
    :undoc-members:
 
 Driver
@@ -54,49 +54,49 @@ instances are destroyed by Molecule.
 Docker
 ^^^^^^
 
-.. autoclass:: molecule.driver.dockr.Dockr
+.. autoclass:: molecule.driver.dockr.Dockr()
    :undoc-members:
 
 EC2
 ^^^
 
-.. autoclass:: molecule.driver.ec2.Ec2
+.. autoclass:: molecule.driver.ec2.Ec2()
    :undoc-members:
 
 GCE
 ^^^
 
-.. autoclass:: molecule.driver.gce.Gce
+.. autoclass:: molecule.driver.gce.Gce()
    :undoc-members:
 
 LXC
 ^^^
 
-.. autoclass:: molecule.driver.lxc.Lxc
+.. autoclass:: molecule.driver.lxc.Lxc()
    :undoc-members:
 
 LXD
 ^^^
 
-.. autoclass:: molecule.driver.lxd.Lxd
+.. autoclass:: molecule.driver.lxd.Lxd()
    :undoc-members:
 
 Openstack
 ^^^^^^^^^
 
-.. autoclass:: molecule.driver.openstack.Openstack
+.. autoclass:: molecule.driver.openstack.Openstack()
    :undoc-members:
 
 Static
 ^^^^^^
 
-.. autoclass:: molecule.driver.static.Static
+.. autoclass:: molecule.driver.static.Static()
    :undoc-members:
 
 Vagrant
 ^^^^^^^
 
-.. autoclass:: molecule.driver.vagrant.Vagrant
+.. autoclass:: molecule.driver.vagrant.Vagrant()
    :undoc-members:
 
 Molecule Vagrant Module
@@ -216,13 +216,13 @@ Molecule handles project linting by invoking configurable linters.
 Yaml Lint
 ^^^^^^^^^
 
-.. autoclass:: molecule.lint.yamllint.Yamllint
+.. autoclass:: molecule.lint.yamllint.Yamllint()
    :undoc-members:
 
 Platforms
 ---------
 
-.. autoclass:: molecule.platforms.Platforms
+.. autoclass:: molecule.platforms.Platforms()
    :undoc-members:
 
 Provisioner
@@ -233,7 +233,7 @@ Molecule handles provisioning and converging the role.
 Ansible
 ^^^^^^^
 
-.. autoclass:: molecule.provisioner.ansible.Ansible
+.. autoclass:: molecule.provisioner.ansible.Ansible()
    :undoc-members:
 
 Lint
@@ -241,7 +241,7 @@ Lint
 
 Molecule handles provisioner linting by invoking configurable linters.
 
-.. autoclass:: molecule.provisioner.lint.ansible_lint.AnsibleLint
+.. autoclass:: molecule.provisioner.lint.ansible_lint.AnsibleLint()
    :undoc-members:
 
 Scenario
@@ -250,13 +250,13 @@ Scenario
 Molecule treats scenarios as a first-class citizens, with a top-level
 configuration syntax.
 
-.. autoclass:: molecule.scenario.Scenario
+.. autoclass:: molecule.scenario.Scenario()
    :undoc-members:
 
 State
 -----
 
-.. autoclass:: molecule.state.State
+.. autoclass:: molecule.state.State()
    :undoc-members:
 
 Verifier
@@ -267,7 +267,7 @@ Molecule handles role testing by invoking configurable verifiers.
 Goss
 ^^^^
 
-.. autoclass:: molecule.verifier.goss.Goss
+.. autoclass:: molecule.verifier.goss.Goss()
    :undoc-members:
 
 Lint
@@ -278,7 +278,7 @@ The Goss verifier does not utilize a linter.
 Testinfra
 ^^^^^^^^^
 
-.. autoclass:: molecule.verifier.testinfra.Testinfra
+.. autoclass:: molecule.verifier.testinfra.Testinfra()
    :undoc-members:
 
 .. _root_lint:
@@ -288,5 +288,5 @@ Lint
 
 Molecule handles test linting by invoking configurable linters.
 
-.. autoclass:: molecule.verifier.lint.flake8.Flake8
+.. autoclass:: molecule.verifier.lint.flake8.Flake8()
    :undoc-members:

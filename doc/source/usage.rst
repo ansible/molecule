@@ -132,7 +132,7 @@ Or Create a new scenario in an existing role:
 Check
 ^^^^^
 
-.. autoclass:: molecule.command.check.Check
+.. autoclass:: molecule.command.check.Check()
    :undoc-members:
 
 Converge
@@ -140,70 +140,70 @@ Converge
 
 Converge will execute the sequences necessary to converge the instances.
 
-.. autoclass:: molecule.command.converge.Converge
+.. autoclass:: molecule.command.converge.Converge()
    :undoc-members:
 
 Create
 ^^^^^^
 
-.. autoclass:: molecule.command.create.Create
+.. autoclass:: molecule.command.create.Create()
    :undoc-members:
 
 Dependency
 ^^^^^^^^^^
 
-.. autoclass:: molecule.command.dependency.Dependency
+.. autoclass:: molecule.command.dependency.Dependency()
    :undoc-members:
 
 Destroy
 ^^^^^^^
 
-.. autoclass:: molecule.command.destroy.Destroy
+.. autoclass:: molecule.command.destroy.Destroy()
    :undoc-members:
 
 Destruct
 ^^^^^^^^
 
-.. autoclass:: molecule.command.destruct.Destruct
+.. autoclass:: molecule.command.destruct.Destruct()
    :undoc-members:
 
 Idempotence
 ^^^^^^^^^^^
 
-.. autoclass:: molecule.command.idempotence.Idempotence
+.. autoclass:: molecule.command.idempotence.Idempotence()
    :undoc-members:
 
 Init
 ^^^^
 
-.. automethod:: molecule.command.init._init_new_role
+.. automethod:: molecule.command.init._init_new_role()
 
-.. automethod:: molecule.command.init._init_new_scenario
+.. automethod:: molecule.command.init._init_new_scenario()
 
-.. automethod:: molecule.command.init._init_template
+.. automethod:: molecule.command.init._init_template()
 
 Lint
 ^^^^
 
-.. autoclass:: molecule.command.lint.Lint
+.. autoclass:: molecule.command.lint.Lint()
    :undoc-members:
 
 List
 ^^^^
 
-.. autoclass:: molecule.command.list.List
+.. autoclass:: molecule.command.list.List()
    :undoc-members:
 
 Login
 ^^^^^
 
-.. autoclass:: molecule.command.login.Login
+.. autoclass:: molecule.command.login.Login()
    :undoc-members:
 
 Syntax
 ^^^^^^
 
-.. autoclass:: molecule.command.syntax.Syntax
+.. autoclass:: molecule.command.syntax.Syntax()
    :undoc-members:
 
 Test
@@ -211,11 +211,11 @@ Test
 
 Test will execute the sequences necessary to test the instances.
 
-.. autoclass:: molecule.command.test.Test
+.. autoclass:: molecule.command.test.Test()
    :undoc-members:
 
 Verify
 ^^^^^^
 
-.. autoclass:: molecule.command.verify.Verify
+.. autoclass:: molecule.command.verify.Verify()
    :undoc-members:
