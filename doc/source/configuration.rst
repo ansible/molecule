@@ -236,8 +236,8 @@ Ansible
 .. autoclass:: molecule.provisioner.ansible.Ansible
    :undoc-members:
 
-Ansible Lint
-^^^^^^^^^^^^
+Lint
+....
 
 Molecule handles provisioner linting by invoking configurable linters.
 
@@ -270,16 +270,23 @@ Goss
 .. autoclass:: molecule.verifier.goss.Goss
    :undoc-members:
 
+Lint
+....
+
+The Goss verifier does not utilize a linter.
+
 Testinfra
 ^^^^^^^^^
 
 .. autoclass:: molecule.verifier.testinfra.Testinfra
    :undoc-members:
 
-Flake8
-^^^^^^
+.. _root_lint:
 
-Molecule handles verifier linting by invoking configurable linters.
+Lint
+....
+
+Molecule handles test linting by invoking configurable linters.
 
 .. autoclass:: molecule.verifier.lint.flake8.Flake8
    :undoc-members:

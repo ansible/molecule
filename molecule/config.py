@@ -61,9 +61,8 @@ class Config(object):
     The directory in which the `molecule.yml` resides is the Scenario's
     directory.  Molecule performs most functions within this directory.
 
-    The :class:`.Config` object has instantiated Dependency_, Driver_, Lint_,
-    Platforms_, Provisioner_, Verifier_, :class:`.Scenario`, and State_
-    references.
+    The :class:`.Config` object has instantiated Dependency_, Driver_, :ref:`root_lint`,
+    Platforms_, Provisioner_, Verifier_, :class:`.Scenario`, and State_ references.
     """
 
     def __init__(self, molecule_file, args={}, command_args={}):
