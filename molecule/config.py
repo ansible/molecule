@@ -26,7 +26,6 @@ from molecule import interpolation
 from molecule import logger
 from molecule import platforms
 from molecule import scenario
-from molecule import schema
 from molecule import state
 from molecule import util
 from molecule.dependency import ansible_galaxy
@@ -40,6 +39,7 @@ from molecule.driver import openstack
 from molecule.driver import static
 from molecule.driver import vagrant
 from molecule.lint import yamllint
+from molecule.model import schema
 from molecule.provisioner import ansible
 from molecule.verifier import goss
 from molecule.verifier import testinfra

@@ -273,16 +273,13 @@ Goss
 Testinfra
 ^^^^^^^^^
 
-.. autoclass:: molecule.verifier.flake8.Flake8
-   :undoc-members:
-
 .. autoclass:: molecule.verifier.testinfra.Testinfra
    :undoc-members:
 
 Flake8
 ^^^^^^
 
-Molecule handles test linting by invoking configurable linters.
+Molecule handles verifier linting by invoking configurable linters.
 
 .. autoclass:: molecule.verifier.lint.flake8.Flake8
    :undoc-members:

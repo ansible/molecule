@@ -10,7 +10,16 @@
     - name: Create molecule instance(s)
       molecule_vagrant:
         instance_name: "{{ molecule_file | molecule_instance_with_scenario_name(item.name) }}"
+        instance_interfaces: "{{ item.interfaces | default(omit) }}"
+
         platform_box: "{{ item.box }}"
+        platform_box_version: "{{ item.box_version | default(omit)}}"
+        platform_box_url: "{{ item.box_url | default(omit) }}"
+
+        provider_memory: "{{ item.memory | default(omit)}}"
+        provider_cpus: "{{ item.cpus | default(omit)}}"
+        provider_raw_config_args: "{{ item.raw_config_args | default(omit)}}"
+
         state: up
       register: server
       with_items: "{{ molecule_yml.platforms }}"
