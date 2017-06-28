@@ -73,7 +73,7 @@ for f in glob.glob(r'{}/test_*.py'.format(old_test_dir)):
     LOG.info(msg)
     shutil.copy(f, test_dir)
 
-if not os.path.isfile(old_playbook):
+if os.path.isfile(old_playbook):
     msg = 'Copying {} to {}'.format(old_playbook, scenario_dir)
     LOG.info(msg)
     shutil.copy(old_playbook, scenario_dir)
