@@ -288,25 +288,39 @@ def test_env_property(ansible_instance):
 
 def test_env_appends_env_property(ansible_instance):
     x = [
-        '../../../../',
-        'roles/',
+        os.path.abspath(
+            os.path.join(ansible_instance._config.project_directory,
+                         os.path.pardir)),
+        os.path.abspath(
+            os.path.join(ansible_instance._config.scenario.ephemeral_directory,
+                         'roles')),
         'foo/bar',
     ]
     assert x == ansible_instance.env['ANSIBLE_ROLES_PATH'].split(':')
 
     x = [
         ansible_instance._get_libraries_directory(),
-        'libraries/',
+        os.path.abspath(
+            os.path.join(ansible_instance._config.project_directory,
+                         'library')),
+        os.path.abspath(
+            os.path.join(ansible_instance._config.scenario.ephemeral_directory,
+                         'library')),
         'foo/bar',
     ]
     assert x == ansible_instance.env['ANSIBLE_LIBRARY'].split(':')
 
     x = [
         ansible_instance._get_filter_plugin_directory(),
-        'plugins/filters/',
+        os.path.abspath(
+            os.path.join(ansible_instance._config.project_directory, 'plugins',
+                         'filters')),
+        os.path.abspath(
+            os.path.join(ansible_instance._config.scenario.ephemeral_directory,
+                         'plugins', 'filters')),
         'foo/bar',
     ]
-    x == ansible_instance.env['ANSIBLE_FILTER_PLUGINS']
+    assert x == ansible_instance.env['ANSIBLE_FILTER_PLUGINS'].split(':')
 
 
 def test_host_vars_property(ansible_instance):

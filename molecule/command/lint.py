@@ -40,6 +40,7 @@ class Lint(base.Base):
 
     >>> molecule --debug lint
     """
+
     def execute(self):
         """
         Execute the actions necessary to perform a `molecule lint` and

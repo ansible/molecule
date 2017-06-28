@@ -1,0 +1,12 @@
+---
+- git: https://github.com/yatesr/ansible-timezone.git
+  version: master
+  dst: molecule/default/.molecule/roles/yatesr.ansible-timezone/
+
+- git: https://github.com/retr0h/ansible-plugins.git
+  version: master
+  files:
+    - src: library/library.py
+      dst: molecule/default/.molecule/library/
+    - src: plugins/filters/core.py
+      dst: molecule/default/.molecule/plugins/filters/

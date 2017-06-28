@@ -55,14 +55,20 @@ def driver_name(request):
         'scenario_name',
     ])
 def test_command_destruct(scenario_to_test, with_scenario, scenario_name):
-    cmd = sh.molecule.bake('test', '--driver-name', 'docker')
+    options = {
+        'driver_name': 'docker',
+    }
+    cmd = sh.molecule.bake('test', **options)
     pytest.helpers.run_command(cmd)
 
 
 def test_command_init_role_goss(temp_dir):
     role_directory = os.path.join(temp_dir.strpath, 'test-init')
-    cmd = sh.molecule.bake('init', 'role', '--role-name', 'test-init',
-                           '--verifier-name', 'goss')
+    options = {
+        'role_name': 'test-init',
+        'verifier_name': 'goss',
+    }
+    cmd = sh.molecule.bake('init', 'role', **options)
     pytest.helpers.run_command(cmd)
 
     os.chdir(role_directory)
@@ -73,9 +79,12 @@ def test_command_init_role_goss(temp_dir):
 def test_command_init_scenario_goss(temp_dir):
     molecule_directory = pytest.helpers.molecule_directory()
     scenario_directory = os.path.join(molecule_directory, 'test-scenario')
-    cmd = sh.molecule.bake('init', 'scenario', '--scenario-name',
-                           'test-scenario', '--role-name', 'test-init',
-                           '--verifier-name', 'goss')
+    options = {
+        'scenario_name': 'test-scenario',
+        'role_name': 'test-init',
+        'verifier_name': 'goss',
+    }
+    cmd = sh.molecule.bake('init', 'scenario', **options)
     pytest.helpers.run_command(cmd)
 
     assert os.path.isdir(scenario_directory)
@@ -109,7 +118,10 @@ def test_command_init_role_with_template(temp_dir):
     ])
 def test_command_test_overrides_driver(scenario_to_test, with_scenario,
                                        scenario_name):
-    cmd = sh.molecule.bake('test', '--driver-name', 'docker')
+    options = {
+        'driver_name': 'docker',
+    }
+    cmd = sh.molecule.bake('test', **options)
     pytest.helpers.run_command(cmd)
 
 
@@ -183,13 +195,22 @@ def test_interpolation(scenario_to_test, with_scenario, scenario_name):
     ])
 def test_command_verify_testinfra(scenario_to_test, with_scenario,
                                   scenario_name):
-    cmd = sh.molecule.bake('create', '--scenario-name', 'testinfra')
+    options = {
+        'scenario_name': scenario_name,
+    }
+    cmd = sh.molecule.bake('create', **options)
     pytest.helpers.run_command(cmd)
 
-    cmd = sh.molecule.bake('converge', '--scenario-name', 'testinfra')
+    options = {
+        'scenario_name': scenario_name,
+    }
+    cmd = sh.molecule.bake('converge', **options)
     pytest.helpers.run_command(cmd)
 
-    cmd = sh.molecule.bake('verify', '--scenario-name', 'testinfra')
+    options = {
+        'scenario_name': scenario_name,
+    }
+    cmd = sh.molecule.bake('verify', **options)
     pytest.helpers.run_command(cmd)
 
 
@@ -203,11 +224,37 @@ def test_command_verify_testinfra(scenario_to_test, with_scenario,
         'scenario_name',
     ])
 def test_command_verify_goss(scenario_to_test, with_scenario, scenario_name):
-    cmd = sh.molecule.bake('create', '--scenario-name', 'goss')
+    options = {
+        'scenario_name': scenario_name,
+    }
+    cmd = sh.molecule.bake('create', **options)
     pytest.helpers.run_command(cmd)
 
-    cmd = sh.molecule.bake('converge', '--scenario-name', 'goss')
+    options = {
+        'scenario_name': scenario_name,
+    }
+    cmd = sh.molecule.bake('converge', **options)
     pytest.helpers.run_command(cmd)
 
-    cmd = sh.molecule.bake('verify', '--scenario-name', 'goss')
+    options = {
+        'scenario_name': scenario_name,
+    }
+    cmd = sh.molecule.bake('verify', **options)
+    pytest.helpers.run_command(cmd)
+
+
+@pytest.mark.parametrize(
+    'scenario_to_test, driver_name, scenario_name', [
+        ('plugins', 'docker', 'default'),
+    ],
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+        'scenario_name',
+    ])
+def test_plugins(scenario_to_test, with_scenario, scenario_name):
+    options = {
+        'scenario_name': scenario_name,
+    }
+    cmd = sh.molecule.bake('test', **options)
     pytest.helpers.run_command(cmd)

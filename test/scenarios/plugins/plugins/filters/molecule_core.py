@@ -18,45 +18,13 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import marshmallow
-import pytest
 
-from molecule.model import schema
-
-
-@pytest.fixture
-def config(config_instance):
-    return config_instance.config
+def project_filter(s):
+    return s
 
 
-def test_validate(config):
-    data, errors = schema.validate(config)
-
-    assert {} == errors
-
-
-def test_validate_raises_on_extra_field(config):
-    config['driver']['extra'] = 'bar'
-
-    with pytest.raises(marshmallow.ValidationError) as e:
-        schema.validate(config)
-
-    assert 'Unknown field' in str(e)
-
-
-def test_validate_raises_on_invalid_field(config):
-    config['driver']['name'] = int
-
-    with pytest.raises(marshmallow.ValidationError) as e:
-        schema.validate(config)
-
-    assert 'Not a valid string.' in str(e)
-
-
-#  def validate(c):
-#      if c['driver']['name'] == 'vagrant':
-#          schema = MoleculeVagrantSchema(strict=True)
-#      else:
-#          schema = MoleculeSchema(strict=True)
-
-#      return schema.load(c)
+class FilterModule(object):
+    def filters(self):
+        return {
+            'molecule_project_filter': project_filter,
+        }

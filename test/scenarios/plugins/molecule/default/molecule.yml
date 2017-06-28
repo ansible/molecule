@@ -1,0 +1,29 @@
+---
+dependency:
+  name: gilt
+driver:
+  name: docker
+lint:
+  name: yamllint
+  options:
+    config-file: ../../resources/.yamllint
+platforms:
+  - name: instance-1
+    image: molecule_local/centos:latest
+    command: sleep infinity
+    dockerfile: Dockerfile
+provisioner:
+  name: ansible
+  playbooks:
+    setup: ../../../../resources/playbooks/docker/create.yml
+    teardown: ../../../../resources/playbooks/docker/destroy.yml
+  env:
+    ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
+  lint:
+    name: ansible-lint
+scenario:
+  name: raises
+verifier:
+  name: testinfra
+  lint:
+    name: flake8

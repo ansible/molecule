@@ -1,0 +1,10 @@
+---
+- hosts: all
+  become: True
+  roles:
+    # Role from project root
+    - plugins
+    # Role from dependencies
+    - yatesr.ansible-timezone
+    # Role from provisioner provided env var
+    - molecule

@@ -33,6 +33,7 @@ LOG = logger.get_logger(__name__)
 
 class Namespace(object):
     """ A class to act as a module to namespace playbook properties. """
+
     def __init__(self, config):
         """
         Initialize a new namespace class and returns None.
@@ -163,7 +164,20 @@ class Ansible(base.Base):
 
         This is feature should be considered experimental.
 
-    Environment variables can be passed to the provisioner.
+    Environment variables.  Molecule does it's best to handle common Ansible
+    paths.  The defaults are as follows.
+
+    ::
+
+        ANSIBLE_ROLES_PATH:
+          $project_root/../:$ephemeral_directory/roles/
+        ANSIBLE_LIBRARY:
+          $project_root/library/:$ephemeral_directory/library/
+        ANSIBLE_FILTER_PLUGINS:
+          $project_root/filter/plugins/:$ephemeral_directory/plugins/filters/
+
+    Environment variables can be passed to the provisioner.  Variables in this
+    section which match the names above will be appened to the above defaults.
 
     .. code-block:: yaml
 
@@ -286,11 +300,33 @@ class Ansible(base.Base):
             'ANSIBLE_CONFIG':
             self._config.provisioner.config_file,
             'ANSIBLE_ROLES_PATH':
-            '../../../../:roles/',
+            ':'.join([
+                os.path.abspath(
+                    os.path.join(self._config.project_directory,
+                                 os.path.pardir)),
+                os.path.abspath(
+                    os.path.join(self._config.scenario.ephemeral_directory,
+                                 'roles'))
+            ]),
             'ANSIBLE_LIBRARY':
-            '{}:libraries/'.format(self._get_libraries_directory()),
+            ':'.join([
+                self._get_libraries_directory(),
+                os.path.abspath(
+                    os.path.join(self._config.project_directory, 'library')),
+                os.path.abspath(
+                    os.path.join(self._config.scenario.ephemeral_directory,
+                                 'library')),
+            ]),
             'ANSIBLE_FILTER_PLUGINS':
-            '{}:plugins/filters/'.format(self._get_filter_plugin_directory()),
+            ':'.join([
+                self._get_filter_plugin_directory(),
+                os.path.abspath(
+                    os.path.join(self._config.project_directory, 'plugins',
+                                 'filters')),
+                os.path.abspath(
+                    os.path.join(self._config.scenario.ephemeral_directory,
+                                 'plugins', 'filters')),
+            ]),
         })
         env = self._config.merge_dicts(env, self._config.env)
 
@@ -654,7 +690,9 @@ class Ansible(base.Base):
             'ansible', 'plugins')
 
     def _get_libraries_directory(self):
-        return os.path.join(self._get_plugin_directory(), 'libraries')
+        return os.path.abspath(
+            os.path.join(self._get_plugin_directory(), 'libraries'))
 
     def _get_filter_plugin_directory(self):
-        return os.path.join(self._get_plugin_directory(), 'filters')
+        return os.path.abspath(
+            os.path.join(self._get_plugin_directory(), 'filters'))

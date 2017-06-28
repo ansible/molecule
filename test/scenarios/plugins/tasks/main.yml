@@ -1,0 +1,16 @@
+---
+- name: Ensure project filter env is set properly by Molecule
+  debug:
+    var: foo | molecule_project_filter
+  changed_when: False
+
+- name: Ensure dependency filter env is set properly by Molecule
+  debug:
+    var: foo | filter
+  changed_when: False
+
+- name: Ensure project library env is set properly by Molecule
+  molecule_project_library:
+
+- name: Ensure dependency library env is set properly by Molecule
+  library:

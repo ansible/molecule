@@ -50,6 +50,7 @@ class List(base.Base):
 
     >>> molecule --debug list
     """
+
     def execute(self):
         """
         Execute the actions necessary to perform a `molecule list` and

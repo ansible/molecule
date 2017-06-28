@@ -54,7 +54,6 @@ def test_check_sequence_property(scenario_instance):
 
 def test_converge_sequence_property(scenario_instance):
     x = [
-        'dependency',
         'create',
         'converge',
     ]

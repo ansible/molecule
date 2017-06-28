@@ -53,6 +53,7 @@ class Login(base.Base):
 
     >>> molecule --debug login
     """
+
     def __init__(self, c):
         super(Login, self).__init__(c)
         self._pt = None

@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 #  Copyright (c) 2015-2017 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -18,45 +21,20 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import marshmallow
-import pytest
 
-from molecule.model import schema
+def main():
+    module = AnsibleModule(  # noqa
+        argument_spec=dict(
+            name=dict(type='str', required=False), ),
+        supports_check_mode=False)
 
+    ansible_facts_dict = {
+        'changed': False,
+        'ansible_facts': {},
+    }
 
-@pytest.fixture
-def config(config_instance):
-    return config_instance.config
-
-
-def test_validate(config):
-    data, errors = schema.validate(config)
-
-    assert {} == errors
+    module.exit_json(**ansible_facts_dict)
 
 
-def test_validate_raises_on_extra_field(config):
-    config['driver']['extra'] = 'bar'
-
-    with pytest.raises(marshmallow.ValidationError) as e:
-        schema.validate(config)
-
-    assert 'Unknown field' in str(e)
-
-
-def test_validate_raises_on_invalid_field(config):
-    config['driver']['name'] = int
-
-    with pytest.raises(marshmallow.ValidationError) as e:
-        schema.validate(config)
-
-    assert 'Not a valid string.' in str(e)
-
-
-#  def validate(c):
-#      if c['driver']['name'] == 'vagrant':
-#          schema = MoleculeVagrantSchema(strict=True)
-#      else:
-#          schema = MoleculeSchema(strict=True)
-
-#      return schema.load(c)
+from ansible.module_utils.basic import *  # noqa
+main()
