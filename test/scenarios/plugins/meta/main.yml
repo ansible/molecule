@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   author: John Dewey
-  description: Test Molecule paths role
+  description: Test Molecule plugins role
   license: MIT
   min_ansible_version: 1.2
   platforms:
