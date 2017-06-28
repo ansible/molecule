@@ -101,10 +101,10 @@ class Migrate(object):
             if platforms.get('box_url'):
                 i['box_url'] = platforms['box_url']
 
-            if providers.get('options').get('memory'):
+            if providers.get('options', {}).get('memory'):
                 i['memory'] = providers['options']['memory']
 
-            if providers.get('options').get('cpus'):
+            if providers.get('options', {}).get('cpus'):
                 i['cpus'] = providers['options']['cpus']
 
             if instance.get('ansible_groups'):
@@ -124,6 +124,7 @@ class Migrate(object):
         ansible = self._v1.get('ansible', collections.OrderedDict({}))
 
         self._v2['provisioner']['name'] = 'ansible'
+        self._v2['provisioner']['env'] = collections.OrderedDict({})
 
         if ansible.get('raw_env_vars'):
             self._v2['provisioner']['env'] = self._v1['ansible'][
@@ -154,7 +155,7 @@ class Migrate(object):
         self._v2['verifier']['lint'] = collections.OrderedDict({})
         self._v2['verifier']['lint']['name'] = 'flake8'
 
-        if verifier.get('options').get('sudo'):
+        if verifier.get('options', {}).get('sudo'):
             self._v2['verifier']['options']['sudo'] = verifier['options'][
                 'sudo']
 
