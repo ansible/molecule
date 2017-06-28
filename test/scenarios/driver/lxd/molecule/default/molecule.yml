@@ -15,7 +15,7 @@ provisioner:
     setup: ../../../../../resources/playbooks/lxd/create.yml
     teardown: ../../../../../resources/playbooks/lxd/destroy.yml
   env:
-    ANSIBLE_ROLES_PATH: ../../../../../../resources/roles/
+    ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
   lint:
     name: ansible-lint
 scenario:

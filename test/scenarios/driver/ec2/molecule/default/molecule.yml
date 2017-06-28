@@ -18,7 +18,7 @@ provisioner:
     setup: ../../../../../resources/playbooks/ec2/create.yml
     teardown: ../../../../../resources/playbooks/ec2/destroy.yml
   env:
-    ANSIBLE_ROLES_PATH: ../../../../../../resources/roles/
+    ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
   lint:
     name: ansible-lint
 scenario:

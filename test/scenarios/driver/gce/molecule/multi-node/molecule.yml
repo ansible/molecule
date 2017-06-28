@@ -34,7 +34,7 @@ provisioner:
     setup: ../../../../../resources/playbooks/gce/create.yml
     teardown: ../../../../../resources/playbooks/gce/destroy.yml
   env:
-    ANSIBLE_ROLES_PATH: ../../../../../../resources/roles/
+    ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
   lint:
     name: ansible-lint
 scenario:

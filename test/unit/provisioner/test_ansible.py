@@ -40,12 +40,9 @@ def test_get_ansible_playbook(namespace_instance):
     assert x == namespace_instance._config.provisioner.playbooks.setup
 
 
-#  @pytest.fixture
-#  def molecule_provisioner_section_data_override():
-
-
-def test_get_ansible_playbook_with_driver_key(namespace_instance):
-    d = {
+@pytest.fixture
+def molecule_provisioner_driver_section_data():
+    return {
         'provisioner': {
             'name': 'ansible',
             'playbooks': {
@@ -56,16 +53,22 @@ def test_get_ansible_playbook_with_driver_key(namespace_instance):
             },
         }
     }
-    namespace_instance._config.merge_dicts(namespace_instance._config.config,
-                                           d)
+
+
+def test_get_ansible_playbook_with_driver_key(
+        molecule_provisioner_driver_section_data, namespace_instance):
+    namespace_instance._config.merge_dicts(
+        namespace_instance._config.config,
+        molecule_provisioner_driver_section_data)
 
     x = os.path.join(namespace_instance._config.scenario.directory,
                      'docker-create.yml')
     assert x == namespace_instance._config.provisioner.playbooks.setup
 
 
-def test_get_ansible_playbook_when_playbook_none(namespace_instance):
-    d = {
+@pytest.fixture
+def molecule_provisioner_playbook_none_section_data():
+    return {
         'provisioner': {
             'name': 'ansible',
             'playbooks': {
@@ -73,15 +76,20 @@ def test_get_ansible_playbook_when_playbook_none(namespace_instance):
             },
         }
     }
-    namespace_instance._config.merge_dicts(namespace_instance._config.config,
-                                           d)
+
+
+def test_get_ansible_playbook_when_playbook_none(
+        molecule_provisioner_playbook_none_section_data, namespace_instance):
+    namespace_instance._config.merge_dicts(
+        namespace_instance._config.config,
+        molecule_provisioner_playbook_none_section_data)
 
     assert namespace_instance._config.provisioner.playbooks.destruct is None
 
 
-def test_get_ansible_playbook_with_driver_key_when_playbook_none(
-        namespace_instance):
-    d = {
+@pytest.fixture
+def molecule_provisioner_driver_playbook_none_section_data():
+    return {
         'provisioner': {
             'name': 'ansible',
             'playbooks': {
@@ -92,15 +100,21 @@ def test_get_ansible_playbook_with_driver_key_when_playbook_none(
             },
         }
     }
-    namespace_instance._config.merge_dicts(namespace_instance._config.config,
-                                           d)
+
+
+def test_get_ansible_playbook_with_driver_key_when_playbook_none(
+        molecule_provisioner_driver_playbook_none_section_data,
+        namespace_instance):
+    namespace_instance._config.merge_dicts(
+        namespace_instance._config.config,
+        molecule_provisioner_driver_playbook_none_section_data)
 
     assert namespace_instance._config.provisioner.playbooks.destruct is None
 
 
-def test_get_ansible_playbook_with_driver_key_when_playbook_key_missing(
-        namespace_instance):
-    d = {
+@pytest.fixture
+def molecule_provisioner_driver_playbook_key_missing_section_data():
+    return {
         'provisioner': {
             'name': 'ansible',
             'playbooks': {
@@ -111,8 +125,14 @@ def test_get_ansible_playbook_with_driver_key_when_playbook_key_missing(
             },
         }
     }
-    namespace_instance._config.merge_dicts(namespace_instance._config.config,
-                                           d)
+
+
+def test_get_ansible_playbook_with_driver_key_when_playbook_key_missing(
+        molecule_provisioner_driver_playbook_key_missing_section_data,
+        namespace_instance):
+    namespace_instance._config.merge_dicts(
+        namespace_instance._config.config,
+        molecule_provisioner_driver_playbook_key_missing_section_data)
 
     assert namespace_instance._config.provisioner.playbooks.destruct is None
 
@@ -294,7 +314,9 @@ def test_env_appends_env_property(ansible_instance):
         os.path.abspath(
             os.path.join(ansible_instance._config.scenario.ephemeral_directory,
                          'roles')),
-        'foo/bar',
+        os.path.abspath(
+            os.path.join(ansible_instance._config.scenario.directory, 'foo',
+                         'bar')),
     ]
     assert x == ansible_instance.env['ANSIBLE_ROLES_PATH'].split(':')
 
@@ -306,7 +328,9 @@ def test_env_appends_env_property(ansible_instance):
         os.path.abspath(
             os.path.join(ansible_instance._config.scenario.ephemeral_directory,
                          'library')),
-        'foo/bar',
+        os.path.abspath(
+            os.path.join(ansible_instance._config.scenario.directory, 'foo',
+                         'bar')),
     ]
     assert x == ansible_instance.env['ANSIBLE_LIBRARY'].split(':')
 
@@ -318,7 +342,9 @@ def test_env_appends_env_property(ansible_instance):
         os.path.abspath(
             os.path.join(ansible_instance._config.scenario.ephemeral_directory,
                          'plugins', 'filters')),
-        'foo/bar',
+        os.path.abspath(
+            os.path.join(ansible_instance._config.scenario.directory, 'foo',
+                         'bar')),
     ]
     assert x == ansible_instance.env['ANSIBLE_FILTER_PLUGINS'].split(':')
 

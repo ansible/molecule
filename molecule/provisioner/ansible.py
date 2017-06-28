@@ -177,7 +177,9 @@ class Ansible(base.Base):
           $project_root/filter/plugins/:$ephemeral_directory/plugins/filters/
 
     Environment variables can be passed to the provisioner.  Variables in this
-    section which match the names above will be appened to the above defaults.
+    section which match the names above will be appened to the above defaults,
+    and converted to absolute paths, where the relative parent is the
+    $scenario_directory.
 
     .. code-block:: yaml
 
@@ -358,18 +360,26 @@ class Ansible(base.Base):
         filter_plugins_path = default_env['ANSIBLE_FILTER_PLUGINS']
 
         try:
-            roles_path = '{}:{}'.format(roles_path, env['ANSIBLE_ROLES_PATH'])
+            path = os.path.abspath(
+                os.path.join(self._config.scenario.directory, env[
+                    'ANSIBLE_ROLES_PATH']))
+            roles_path = '{}:{}'.format(roles_path, path)
         except KeyError:
             pass
 
         try:
-            library_path = '{}:{}'.format(library_path, env['ANSIBLE_LIBRARY'])
+            path = os.path.abspath(
+                os.path.join(self._config.scenario.directory, env[
+                    'ANSIBLE_LIBRARY']))
+            library_path = '{}:{}'.format(library_path, path)
         except KeyError:
             pass
 
         try:
-            filter_plugins_path = '{}:{}'.format(filter_plugins_path,
-                                                 env['ANSIBLE_FILTER_PLUGINS'])
+            path = os.path.abspath(
+                os.path.join(self._config.scenario.directory, env[
+                    'ANSIBLE_FILTER_PLUGINS']))
+            filter_plugins_path = '{}:{}'.format(filter_plugins_path, path)
         except KeyError:
             pass
 

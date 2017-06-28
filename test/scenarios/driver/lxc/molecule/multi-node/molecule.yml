@@ -22,7 +22,7 @@ provisioner:
     setup: ../../../../../resources/playbooks/lxc/create.yml
     teardown: ../../../../../resources/playbooks/lxc/destroy.yml
   env:
-    ANSIBLE_ROLES_PATH: ../../../../../../resources/roles/
+    ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
   lint:
     name: ansible-lint
 scenario:
