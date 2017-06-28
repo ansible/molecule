@@ -6,8 +6,6 @@ file:
     group: root
     mode: "0755"
     filetype: directory
-
-file:
   /etc/molecule/instance-1-goss:
     exists: True
     owner: root

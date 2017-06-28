@@ -1,1 +1,2 @@
+---
 - value: {{ cookiecutter.value }}

@@ -36,7 +36,7 @@ def test_process_templates(temp_dir):
     init._process_templates(template_dir, context, temp_dir.strpath)
 
     expected_file = os.path.join(temp_dir.strpath, repo_name, 'template.yml')
-    expected_contents = '- value: foo'
+    expected_contents = '---\n- value: foo'
 
     with util.open_file(expected_file) as stream:
         for line in stream.readlines():

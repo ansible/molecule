@@ -17,7 +17,7 @@
         zone: "{{ item.zone }}"
         machine_type: "{{ item.machine_type }}"
         image: "{{ item.image }}"
-        service_account_email: "{{ item.service_account_email }}" 
+        service_account_email: "{{ item.service_account_email }}"
         credentials_file: "{{ item.credentials_file }}"
         project_id: "{{ item.project_id }}"
       register: server
