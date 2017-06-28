@@ -127,7 +127,7 @@ def get_configs(args, command_args):
     """
     configs = [
         config.Config(
-            molecule_file=os.path.abspath(c),
+            molecule_file=util.abs_path(c),
             args=args,
             command_args=command_args) for c in glob.glob(MOLECULE_GLOB)
     ]

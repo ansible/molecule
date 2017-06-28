@@ -51,8 +51,8 @@ class Namespace(object):
     def converge(self):
         c = self._config.config
 
-        return os.path.join(self._config.scenario.directory,
-                            c['provisioner']['playbooks']['converge'])
+        return self._config.provisioner.get_abs_path(
+            c['provisioner']['playbooks']['converge'])
 
     @property
     def teardown(self):
@@ -76,7 +76,7 @@ class Namespace(object):
             playbook = c['provisioner']['playbooks'][section]
 
         if playbook is not None:
-            return os.path.join(self._config.scenario.directory, playbook)
+            return self._config.provisioner.get_abs_path(playbook)
         return
 
 
@@ -148,6 +148,11 @@ class Ansible(base.Base):
             teardown: destroy.yml
             converge: playbook.yml
 
+    .. important::
+
+        Paths in this section are converted to absolute paths, where the
+        relative parent is the $scenario_directory.
+
     The destruct playbook executes actions which are destructive to the
     instances(s).  Intended to test HA failover scenarios or the like.  It is
     not enabled by default.  Add the following to the provisioner's `playbooks`
@@ -180,6 +185,11 @@ class Ansible(base.Base):
     section which match the names above will be appened to the above defaults,
     and converted to absolute paths, where the relative parent is the
     $scenario_directory.
+
+    .. important::
+
+        Paths in this section are converted to absolute paths, where the
+        relative parent is the $scenario_directory.
 
     .. code-block:: yaml
 
@@ -303,29 +313,29 @@ class Ansible(base.Base):
             self._config.provisioner.config_file,
             'ANSIBLE_ROLES_PATH':
             ':'.join([
-                os.path.abspath(
+                util.abs_path(
                     os.path.join(self._config.project_directory,
                                  os.path.pardir)),
-                os.path.abspath(
+                util.abs_path(
                     os.path.join(self._config.scenario.ephemeral_directory,
                                  'roles'))
             ]),
             'ANSIBLE_LIBRARY':
             ':'.join([
                 self._get_libraries_directory(),
-                os.path.abspath(
+                util.abs_path(
                     os.path.join(self._config.project_directory, 'library')),
-                os.path.abspath(
+                util.abs_path(
                     os.path.join(self._config.scenario.ephemeral_directory,
                                  'library')),
             ]),
             'ANSIBLE_FILTER_PLUGINS':
             ':'.join([
                 self._get_filter_plugin_directory(),
-                os.path.abspath(
+                util.abs_path(
                     os.path.join(self._config.project_directory, 'plugins',
                                  'filters')),
-                os.path.abspath(
+                util.abs_path(
                     os.path.join(self._config.scenario.ephemeral_directory,
                                  'plugins', 'filters')),
             ]),
@@ -360,25 +370,19 @@ class Ansible(base.Base):
         filter_plugins_path = default_env['ANSIBLE_FILTER_PLUGINS']
 
         try:
-            path = os.path.abspath(
-                os.path.join(self._config.scenario.directory, env[
-                    'ANSIBLE_ROLES_PATH']))
+            path = self.get_abs_path(env['ANSIBLE_ROLES_PATH'])
             roles_path = '{}:{}'.format(roles_path, path)
         except KeyError:
             pass
 
         try:
-            path = os.path.abspath(
-                os.path.join(self._config.scenario.directory, env[
-                    'ANSIBLE_LIBRARY']))
+            path = self.get_abs_path(env['ANSIBLE_LIBRARY'])
             library_path = '{}:{}'.format(library_path, path)
         except KeyError:
             pass
 
         try:
-            path = os.path.abspath(
-                os.path.join(self._config.scenario.directory, env[
-                    'ANSIBLE_FILTER_PLUGINS']))
+            path = self.get_abs_path(env['ANSIBLE_FILTER_PLUGINS'])
             filter_plugins_path = '{}:{}'.format(filter_plugins_path, path)
         except KeyError:
             pass
@@ -557,6 +561,10 @@ class Ansible(base.Base):
         else:
             self._link_or_update_vars()
 
+    def get_abs_path(self, path):
+        return util.abs_path(
+            os.path.join(self._config.scenario.directory, path))
+
     def _add_or_update_vars(self):
         """
         Creates host and/or group vars and returns None.
@@ -585,13 +593,13 @@ class Ansible(base.Base):
             ephemeral_directory = self._config.scenario.ephemeral_directory
             target_vars_directory = os.path.join(ephemeral_directory, target)
 
-            if not os.path.isdir(os.path.abspath(target_vars_directory)):
-                os.mkdir(os.path.abspath(target_vars_directory))
+            if not os.path.isdir(util.abs_path(target_vars_directory)):
+                os.mkdir(util.abs_path(target_vars_directory))
 
             for target in vars_target.keys():
                 target_var_content = vars_target[target]
                 path = os.path.join(
-                    os.path.abspath(target_vars_directory), target)
+                    util.abs_path(target_vars_directory), target)
                 util.write_file(path, util.safe_dump(target_var_content))
 
     def _write_inventory(self):
@@ -700,9 +708,9 @@ class Ansible(base.Base):
             'ansible', 'plugins')
 
     def _get_libraries_directory(self):
-        return os.path.abspath(
+        return util.abs_path(
             os.path.join(self._get_plugin_directory(), 'libraries'))
 
     def _get_filter_plugin_directory(self):
-        return os.path.abspath(
+        return util.abs_path(
             os.path.join(self._get_plugin_directory(), 'filters'))

@@ -308,13 +308,13 @@ def test_env_property(ansible_instance):
 
 def test_env_appends_env_property(ansible_instance):
     x = [
-        os.path.abspath(
+        util.abs_path(
             os.path.join(ansible_instance._config.project_directory,
                          os.path.pardir)),
-        os.path.abspath(
+        util.abs_path(
             os.path.join(ansible_instance._config.scenario.ephemeral_directory,
                          'roles')),
-        os.path.abspath(
+        util.abs_path(
             os.path.join(ansible_instance._config.scenario.directory, 'foo',
                          'bar')),
     ]
@@ -322,13 +322,13 @@ def test_env_appends_env_property(ansible_instance):
 
     x = [
         ansible_instance._get_libraries_directory(),
-        os.path.abspath(
+        util.abs_path(
             os.path.join(ansible_instance._config.project_directory,
                          'library')),
-        os.path.abspath(
+        util.abs_path(
             os.path.join(ansible_instance._config.scenario.ephemeral_directory,
                          'library')),
-        os.path.abspath(
+        util.abs_path(
             os.path.join(ansible_instance._config.scenario.directory, 'foo',
                          'bar')),
     ]
@@ -336,13 +336,13 @@ def test_env_appends_env_property(ansible_instance):
 
     x = [
         ansible_instance._get_filter_plugin_directory(),
-        os.path.abspath(
+        util.abs_path(
             os.path.join(ansible_instance._config.project_directory, 'plugins',
                          'filters')),
-        os.path.abspath(
+        util.abs_path(
             os.path.join(ansible_instance._config.scenario.ephemeral_directory,
                          'plugins', 'filters')),
-        os.path.abspath(
+        util.abs_path(
             os.path.join(ansible_instance._config.scenario.directory, 'foo',
                          'bar')),
     ]
@@ -924,3 +924,7 @@ def test_get_filter_plugin_directory(ansible_instance):
     x = ('molecule', 'provisioner', 'ansible', 'plugins', 'filters')
 
     assert x == parts[-5:]
+
+    #  def _get_abs_path(self, path):
+    #      return self._abs_path(
+    #          os.path.join(self._config.scenario.directory, path))

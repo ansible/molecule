@@ -35,8 +35,8 @@ LOG = logger.get_logger(__name__)
 def with_scenario(request, scenario_to_test, driver_name, scenario_name,
                   skip_test):
     scenario_directory = os.path.join(
-        os.path.dirname(os.path.abspath(__file__)), os.path.pardir,
-        'scenarios', scenario_to_test)
+        os.path.dirname(util.abs_path(__file__)), os.path.pardir, 'scenarios',
+        scenario_to_test)
 
     os.chdir(scenario_directory)
 

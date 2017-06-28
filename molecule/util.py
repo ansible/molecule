@@ -228,3 +228,7 @@ def title(word):
 def exit_with_invalid_section(section, name):
     msg = "Invalid {} named '{}' configured.".format(section, name)
     sysexit_with_message(msg)
+
+
+def abs_path(path):
+    return os.path.abspath(path)

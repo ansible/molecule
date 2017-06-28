@@ -117,9 +117,9 @@ def test_command_init_role_with_template(temp_dir):
         'scenario_name',
     ])
 def test_command_test_overrides_driver(scenario_to_test, with_scenario,
-                                       scenario_name):
+                                       driver_name, scenario_name):
     options = {
-        'driver_name': 'docker',
+        'driver_name': driver_name,
     }
     cmd = sh.molecule.bake('test', **options)
     pytest.helpers.run_command(cmd)

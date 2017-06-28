@@ -103,7 +103,7 @@ def _init_new_scenario(command_args):
     """
     scenario_name = command_args['scenario_name']
     role_name = os.getcwd().split(os.sep)[-1]
-    role_directory = os.path.abspath(os.path.join(os.getcwd(), os.pardir))
+    role_directory = util.abs_path(os.path.join(os.getcwd(), os.pardir))
 
     LOG.info('Initializing new scenario {}...'.format(scenario_name))
     molecule_directory = config.molecule_directory(
