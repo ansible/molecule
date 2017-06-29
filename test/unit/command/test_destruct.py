@@ -24,7 +24,7 @@ from molecule.command import destruct
 
 
 @pytest.fixture
-def molecule_provisioner_section_data_override():
+def molecule_provisioner_section_with_destruct_data():
     return {
         'provisioner': {
             'name': 'ansible',
@@ -35,11 +35,12 @@ def molecule_provisioner_section_data_override():
     }
 
 
-def test_execute(mocker, molecule_provisioner_section_data_override,
+def test_execute(mocker, molecule_provisioner_section_with_destruct_data,
                  patched_ansible_destruct, patched_logger_info,
                  config_instance):
-    config_instance.merge_dicts(config_instance.config,
-                                molecule_provisioner_section_data_override)
+    config_instance.merge_dicts(
+        config_instance.config,
+        molecule_provisioner_section_with_destruct_data)
 
     d = destruct.Destruct(config_instance)
     d.execute()
