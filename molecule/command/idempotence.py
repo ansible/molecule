@@ -43,11 +43,10 @@ class Idempotence(base.Base):
 
         c = converge.Converge(self.args, self.command_args, self.molecule)
         status, output = c.execute(
-            idempotent=True, exit=False, hide_errors=True)
+            idempotent=True, exit=False, hide_errors=False)
         if status is not None:
             msg = 'Skipping due to errors during converge.'
             util.print_info(msg)
-            util.print_info(output)
             return status, None
 
         idempotent = self._is_idempotent(output)
