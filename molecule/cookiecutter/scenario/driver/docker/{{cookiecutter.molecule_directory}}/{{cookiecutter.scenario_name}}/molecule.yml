@@ -8,8 +8,6 @@ lint:
 platforms:
   - name: instance-1
     image: centos:7
-    #command: sleep infinity
-    #dockerfile: Dockerfile
 provisioner:
   name: {{ cookiecutter.provisioner_name }}
   lint:
