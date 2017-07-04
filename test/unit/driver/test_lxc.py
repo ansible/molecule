@@ -103,7 +103,7 @@ def test_ssh_connection_options_property(lxc_instance):
 def test_status(mocker, lxc_instance):
     result = lxc_instance.status()
 
-    assert 2 == len(result)
+    assert 3 == len(result)
 
     assert result[0].instance_name == 'instance-1-default'
     assert result[0].driver_name == 'Lxc'
@@ -118,3 +118,10 @@ def test_status(mocker, lxc_instance):
     assert result[1].scenario_name == 'default'
     assert result[1].created == 'False'
     assert result[1].converged == 'False'
+
+    assert result[2].instance_name == 'instance-3'
+    assert result[2].driver_name == 'Lxc'
+    assert result[2].provisioner_name == 'Ansible'
+    assert result[2].scenario_name == 'default'
+    assert result[2].created == 'False'
+    assert result[2].converged == 'False'

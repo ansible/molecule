@@ -59,6 +59,7 @@ class PlatformsBaseSchema(marshmallow.Schema):
     groups = marshmallow.fields.List(marshmallow.fields.Str())
     children = marshmallow.fields.List(marshmallow.fields.Str())
     state = marshmallow.fields.List(marshmallow.fields.Str())
+    append_scenario = marshmallow.fields.Bool()
 
 
 class PlatformsSchema(PlatformsBaseSchema):
@@ -84,7 +85,7 @@ class PlatformsVagrantSchema(PlatformsBaseSchema):
     cpus = marshmallow.fields.Int()
     raw_config_args = marshmallow.fields.List(marshmallow.fields.Str())
     interfaces = marshmallow.fields.List(
-        marshmallow.fields.Nested(InterfaceSchema()))
+    marshmallow.fields.Nested(InterfaceSchema()))
     provider = marshmallow.fields.Str()
 
 

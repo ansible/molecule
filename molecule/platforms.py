@@ -87,7 +87,8 @@ class Platforms(object):
         for instance in instances:
             instance_name = instance['name']
             scenario_name = self._config.scenario.name
-            instance['name'] = util.instance_with_scenario_name(
-                instance_name, scenario_name)
+            if 'append_scenario' not in instance or instance['append_scenario']:
+                instance['name'] = util.instance_with_scenario_name(
+                    instance_name, scenario_name)
 
         return instances
