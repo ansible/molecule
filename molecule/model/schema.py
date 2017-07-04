@@ -36,8 +36,8 @@ class DependencySchema(base.Base):
 class DriverSchema(base.Base):
     name = marshmallow.fields.Str()
     options = marshmallow.fields.Dict()
-    ssh_connection_options = marshmallow.fields.List(marshmallow.fields.Str)
-    safe_files = marshmallow.fields.List(marshmallow.fields.Str)
+    ssh_connection_options = marshmallow.fields.List(marshmallow.fields.Str())
+    safe_files = marshmallow.fields.List(marshmallow.fields.Str())
 
 
 class LintSchema(base.Base):
@@ -72,8 +72,8 @@ class PlatformsDockerSchema(marshmallow.Schema):
     log_driver = marshmallow.fields.Str()
     command = marshmallow.fields.Str()
     privileged = marshmallow.fields.Bool()
-    volumes = marshmallow.fields.List(marshmallow.fields.Str)
-    capabilities = marshmallow.fields.List(marshmallow.fields.Str)
+    volumes = marshmallow.fields.List(marshmallow.fields.Str())
+    capabilities = marshmallow.fields.List(marshmallow.fields.Str())
 
 
 class PlatformsVagrantSchema(PlatformsBaseSchema):
@@ -129,9 +129,9 @@ class ProvisionerSchema(base.Base):
 
 class ScenarioSchema(base.Base):
     name = marshmallow.fields.Str()
-    check_sequence = marshmallow.fields.List(marshmallow.fields.Str)
-    converge_sequence = marshmallow.fields.List(marshmallow.fields.Str)
-    test_sequence = marshmallow.fields.List(marshmallow.fields.Str)
+    check_sequence = marshmallow.fields.List(marshmallow.fields.Str())
+    converge_sequence = marshmallow.fields.List(marshmallow.fields.Str())
+    test_sequence = marshmallow.fields.List(marshmallow.fields.Str())
 
 
 class VerifierSchema(base.Base):
