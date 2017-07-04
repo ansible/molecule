@@ -4,9 +4,9 @@
     instance_names: "{{ gce.name }}"
     zone: "{{ gce.zone }}"
     state: absent
-    service_account_email: "{{ lookup('env','GCE_SERVICE_ACCOUNT_EMAIL') }}"
-    credentials_file: "{{ lookup('env','GCE_CREDENTIALS_FILE') }}"
-    project_id: "{{ lookup('env','GCE_PROJECT_ID') }}"
+    service_account_email: "{{ lookup('env', 'GCE_SERVICE_ACCOUNT_EMAIL') }}"
+    credentials_file: "{{ lookup('env', 'GCE_CREDENTIALS_FILE') }}"
+    project_id: "{{ lookup('env', 'GCE_PROJECT_ID') }}"
 
 - name: Cleanup temporary files file
   file:

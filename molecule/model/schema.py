@@ -58,10 +58,22 @@ class PlatformsBaseSchema(marshmallow.Schema):
     name = marshmallow.fields.Str()
     groups = marshmallow.fields.List(marshmallow.fields.Str())
     children = marshmallow.fields.List(marshmallow.fields.Str())
+    state = marshmallow.fields.List(marshmallow.fields.Str())
 
 
 class PlatformsSchema(PlatformsBaseSchema):
     pass
+
+
+class PlatformsDockerSchema(marshmallow.Schema):
+    hostname = marshmallow.fields.Str()
+    image = marshmallow.fields.Str()
+    recreate = marshmallow.fields.Bool()
+    log_driver = marshmallow.fields.Str()
+    command = marshmallow.fields.Str()
+    privileged = marshmallow.fields.Bool()
+    volumes = marshmallow.fields.List(marshmallow.fields.Str)
+    capabilities = marshmallow.fields.List(marshmallow.fields.Str)
 
 
 class PlatformsVagrantSchema(PlatformsBaseSchema):
@@ -140,6 +152,11 @@ class MoleculeBaseSchema(base.Base):
     verifier = marshmallow.fields.Nested(VerifierSchema())
 
 
+class MoleculeDockerSchema(MoleculeBaseSchema):
+    platforms = marshmallow.fields.List(
+        marshmallow.fields.Nested(PlatformsDockerSchema()))
+
+
 class MoleculeVagrantSchema(MoleculeBaseSchema):
     platforms = marshmallow.fields.List(
         marshmallow.fields.Nested(PlatformsVagrantSchema()))
@@ -153,6 +170,8 @@ class MoleculeSchema(MoleculeBaseSchema):
 def validate(c):
     if c['driver']['name'] == 'vagrant':
         schema = MoleculeVagrantSchema(strict=True)
+    elif c['driver']['name'] == 'docker':
+        schema = MoleculeDockerSchema(strict=True)
     else:
         schema = MoleculeSchema(strict=True)
 

@@ -4,8 +4,8 @@
   connection: local
   gather_facts: False
   vars:
-    molecule_file: "{{ lookup('env','MOLECULE_FILE') }}"
-    molecule_instance_config: "{{ lookup('env','MOLECULE_INSTANCE_CONFIG') }}"
+    molecule_file: "{{ lookup('env', 'MOLECULE_FILE') }}"
+    molecule_instance_config: "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}"
     molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
 
     ssh_port: 22
@@ -18,7 +18,7 @@
     security_group_rules_egress:
       - { proto: -1, from_port: 0, to_port: 0, cidr_ip: '0.0.0.0/0' }
     keypair_name: molecule_key
-    keypair_path: "{{ lookup('env','MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
+    keypair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
   tasks:
     - include: security_groups.yml
     - include: keypair.yml

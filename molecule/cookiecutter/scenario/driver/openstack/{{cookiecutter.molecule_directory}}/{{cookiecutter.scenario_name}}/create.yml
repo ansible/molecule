@@ -4,8 +4,8 @@
   connection: local
   gather_facts: False
   vars:
-    molecule_file: "{{ lookup('env','MOLECULE_FILE') }}"
-    molecule_instance_config: "{{ lookup('env','MOLECULE_INSTANCE_CONFIG') }}"
+    molecule_file: "{{ lookup('env', 'MOLECULE_FILE') }}"
+    molecule_instance_config: "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}"
     molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
 
     user: cloud-user
@@ -19,7 +19,7 @@
       - { ethertype: 'IPv6', group: "{{ security_group.id }}" }
     neutron_network_name: molecule
     keypair_name: molecule_key
-    keypair_path: "{{ lookup('env','MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
+    keypair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
     nova_image: Ubuntu-16.04
     nova_flavor: NO-Nano
   tasks:
