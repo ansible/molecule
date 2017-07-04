@@ -11,9 +11,9 @@ ec2:
 gce:
   name: static-instance-gce
   zone: us-west1-a
-  key_path: "{{ lookup('env','HOME') }}/.ssh/google_compute_engine"
+  key_path: "{{ lookup('env', 'HOME') }}/.ssh/google_compute_engine"
   ssh_config_path: "{{ base_dir }}/ssh-config-gce"
-  ssh_user: "{{ lookup('env','USER') }}"
+  ssh_user: "{{ lookup('env', 'USER') }}"
 
 openstack:
   name: static-instance-openstack

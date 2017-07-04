@@ -3,24 +3,34 @@
   connection: local
   gather_facts: False
   vars:
-    molecule_file: "{{ lookup('env','MOLECULE_FILE') }}"
+    molecule_file: "{{ lookup('env', 'MOLECULE_FILE') }}"
+    molecule_ephemeral_directory: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}"
     molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
   tasks:
+    - name: Create Dockerfiles from image names
+      template:
+        src: Dockerfile.j2
+        dest: "{{ molecule_ephemeral_directory }}/Dockerfile_{{ item.image | regex_replace('[^a-zA-Z0-9_]', '_') }}"
+      with_items: "{{ molecule_yml.platforms }}"
+      register: platforms
+
     - name: Build an Ansible compatible image
       docker_image:
-        path: .
-        name: "{{ item.image }}"
-        dockerfile: "{{ item.dockerfile }}"
-      with_items: "{{ molecule_yml.platforms | molecule_dict_at_index(0) }}"
+        path: "{{ molecule_ephemeral_directory }}"
+        name: "molecule_local/{{ item.item.image }}"
+        dockerfile: "{{ item.item.dockerfile | default(item.invocation.module_args.dest) }}"
+      with_items: "{{ platforms.results }}"
 
     - name: Create molecule instance(s)
       docker_container:
         name: "{{ molecule_file | molecule_instance_with_scenario_name(item.name) }}"
         hostname: "{{ molecule_file | molecule_instance_with_scenario_name(item.name) }}"
-        image: "{{ item.image }}"
-        privileged: "{{ item.privileged | default(omit) }}"
+        image: "molecule_local/{{ item.image }}"
         state: started
         recreate: False
         log_driver: syslog
-        command: "{{ item.command }}"
+        command: "{{ item.command | default('sleep infinity') }}"
+        privileged: "{{ item.privileged | default(omit) }}"
+        volumes: "{{ item.volumes | default(omit) }}"
+        capabilities: "{{ item.capabilities | default(omit) }}"
       with_items: "{{ molecule_yml.platforms }}"

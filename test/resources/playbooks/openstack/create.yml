@@ -3,8 +3,8 @@
   connection: local
   gather_facts: no
   vars:
-    molecule_file: "{{ lookup('env','MOLECULE_FILE') }}"
-    molecule_instance_config: "{{ lookup('env','MOLECULE_INSTANCE_CONFIG') }}"
+    molecule_file: "{{ lookup('env', 'MOLECULE_FILE') }}"
+    molecule_instance_config: "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}"
     molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
 
     ssh_port: 22
@@ -38,7 +38,7 @@
             - molecule
 
     keypair_name: molecule_key
-    keypair_path: "{{ lookup('env','MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
+    keypair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
 
     nova:
       image: Ubuntu-16.04

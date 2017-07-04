@@ -9,16 +9,12 @@ lint:
     config-file: ../../../resources/.yamllint
 platforms:
   - name: instance-1
-    image: molecule_local/centos:latest
-    command: sleep infinity
-    dockerfile: Dockerfile
+    image: centos:latest
     groups:
       - foo
       - bar
   - name: instance-2
-    image: molecule_local/centos:latest
-    command: sleep infinity
-    dockerfile: Dockerfile
+    image: centos:latest
     groups:
       - foo
       - baz

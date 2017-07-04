@@ -3,8 +3,8 @@
   connection: local
   gather_facts: False
   vars:
-    molecule_file: "{{ lookup('env','MOLECULE_FILE') }}"
-    molecule_instance_config: "{{ lookup('env','MOLECULE_INSTANCE_CONFIG') }}"
+    molecule_file: "{{ lookup('env', 'MOLECULE_FILE') }}"
+    molecule_instance_config: "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}"
     molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
   tasks:
     - name: Destroy molecule instance(s)
@@ -13,7 +13,7 @@
         state: absent
         zone: us-west1-a
         service_account_email: 328742674280-compute@developer.gserviceaccount.com
-        credentials_file: "{{ lookup('env','HOME') }}/.env/molecule-99291d8cc014.json"
+        credentials_file: "{{ lookup('env', 'HOME') }}/.env/molecule-99291d8cc014.json"
         project_id: molecule-171422
       register: server
       with_items: "{{ molecule_yml.platforms }}"

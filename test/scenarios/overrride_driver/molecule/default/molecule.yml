@@ -10,9 +10,7 @@ lint:
     config-file: ../../resources/.yamllint
 platforms:
   - name: instance-1
-    image: molecule_local/centos:latest
-    command: sleep infinity
-    dockerfile: Dockerfile
+    image: centos:latest
 provisioner:
   name: ansible
   playbooks:
