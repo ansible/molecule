@@ -28,10 +28,6 @@ def instance_with_scenario_name(molecule_file, instance_name):
     return util.instance_with_scenario_name(instance_name, c.scenario.name)
 
 
-def dict_at_index(h, index):
-    return [h[index]]
-
-
 def to_yaml(data):
     return str(util.safe_dump(data))
 
@@ -47,7 +43,6 @@ class FilterModule(object):
         return {
             'molecule_instance_with_scenario_name':
             instance_with_scenario_name,
-            'molecule_dict_at_index': dict_at_index,
             'molecule_to_yaml': to_yaml,
             'molecule_header': header,
         }
