@@ -85,6 +85,7 @@ class PlatformsVagrantSchema(PlatformsBaseSchema):
     raw_config_args = marshmallow.fields.List(marshmallow.fields.Str())
     interfaces = marshmallow.fields.List(
         marshmallow.fields.Nested(InterfaceSchema()))
+    provider = marshmallow.fields.Str()
 
 
 class ProvisionerInventoryLinksSchema(base.Base):

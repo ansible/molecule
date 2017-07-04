@@ -178,7 +178,7 @@ def test_os_walk(temp_dir):
 
 
 def test_render_template():
-    template = "{{ foo }} = {{ bar}}"
+    template = "{{ foo }} = {{ bar }}"
 
     "foo = bar" == util.render_template(template, foo='foo', bar='bar')
 

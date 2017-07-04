@@ -4,7 +4,7 @@ base_dir: /tmp
 ec2:
   name: static-instance-ec2
   key_name: molecule
-  key_path: "{{ base_dir}}/ssh-key-ec2"
+  key_path: "{{ base_dir }}/ssh-key-ec2"
   ssh_config_path: "{{ base_dir }}/ssh-config-ec2"
   ssh_user: ubuntu
 
@@ -18,9 +18,9 @@ gce:
 openstack:
   name: static-instance-openstack
   key_name: molecule
-  key_path: "{{ base_dir}}/ssh-key-openstack"
+  key_path: "{{ base_dir }}/ssh-key-openstack"
   ssh_config_path: "{{ base_dir }}/ssh-config-openstack"
   ssh_user: cloud-user
 
-openstack_key_path: "{{ base_dir}}/ssh-key-openstack"
+openstack_key_path: "{{ base_dir }}/ssh-key-openstack"
 openstack_ssh_config_path: "{{ base_dir }}/ssh-config-openstack"
