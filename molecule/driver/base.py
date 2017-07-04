@@ -154,7 +154,7 @@ class Base(object):
         :returns: list
         """
         status_list = []
-        for platform in self._config.platforms.instances_with_scenario_name:
+        for platform in self._config.platforms.instances:
             instance_name = platform['name']
             driver_name = self.name.capitalize()
             provisioner_name = self._config.provisioner.name.capitalize()

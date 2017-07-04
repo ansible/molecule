@@ -18,10 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import copy
-
 from molecule import logger
-from molecule import util
 
 LOG = logger.get_logger(__name__)
 
@@ -80,14 +77,3 @@ class Platforms(object):
     @property
     def instances(self):
         return self._config.config['platforms']
-
-    @property
-    def instances_with_scenario_name(self):
-        instances = copy.deepcopy(self.instances)
-        for instance in instances:
-            instance_name = instance['name']
-            scenario_name = self._config.scenario.name
-            instance['name'] = util.instance_with_scenario_name(
-                instance_name, scenario_name)
-
-        return instances

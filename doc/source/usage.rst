@@ -86,10 +86,10 @@ Or Create a new scenario in an existing role:
         PLAY [all] *********************************************************************
 
         TASK [setup] *******************************************************************
-        ok: [instance-1-default]
+        ok: [instance-1]
 
         PLAY RECAP *********************************************************************
-        instance-1-default         : ok=1    changed=0    unreachable=0    failed=0
+        instance-1                 : ok=1    changed=0    unreachable=0    failed=0
 
     --> Scenario: [default]
     --> Provisioner: [ansible]

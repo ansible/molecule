@@ -12,7 +12,7 @@
   tasks:
     - name: Create molecule instance(s)
       molecule_vagrant:
-        instance_name: "{{ molecule_file | molecule_instance_with_scenario_name(item.name) }}"
+        instance_name: "{{ item.name }}"
         instance_interfaces: "{{ item.interfaces | default(omit) }}"
 
         platform_box: "{{ item.box }}"

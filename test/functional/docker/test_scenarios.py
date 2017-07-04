@@ -139,11 +139,9 @@ def test_host_group_vars(scenario_to_test, with_scenario, scenario_name):
     out = pytest.helpers.run_command(cmd, log=False)
     out = util.strip_ansi_escape(out.stdout)
 
-    assert re.search('\[all\].*?ok: \[instance-1-default\]', out, re.DOTALL)
-    assert re.search('\[example\].*?ok: \[instance-1-default\]', out,
-                     re.DOTALL)
-    assert re.search('\[example_1\].*?ok: \[instance-1-default\]', out,
-                     re.DOTALL)
+    assert re.search('\[all\].*?ok: \[instance\]', out, re.DOTALL)
+    assert re.search('\[example\].*?ok: \[instance\]', out, re.DOTALL)
+    assert re.search('\[example_1\].*?ok: \[instance\]', out, re.DOTALL)
 
 
 @pytest.mark.parametrize(

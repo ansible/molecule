@@ -34,12 +34,12 @@
         vpc_subnet_id: "{{ item.vpc_subnet_id }}"
         group: "{{ security_group_name }}"
         instance_tags:
-          instance: "{{ molecule_file | molecule_instance_with_scenario_name(item.name) }}"
+          instance: "{{ item.name }}"
         wait: True
         assign_public_ip: True
         exact_count: 1
         count_tag:
-          instance: "{{ molecule_file | molecule_instance_with_scenario_name(item.name) }}"
+          instance: "{{ item.name }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
 

@@ -6,7 +6,7 @@ driver:
 lint:
   name: {{ cookiecutter.lint_name }}
 platforms:
-  - name: instance-1
+  - name: instance
     image: centos:7
 provisioner:
   name: {{ cookiecutter.provisioner_name }}

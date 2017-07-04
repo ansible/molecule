@@ -26,14 +26,14 @@ def test_execute(capsys, config_instance):
     l = list.List(config_instance)
     x = [
         base.Status(
-            instance_name='instance-1-default',
+            instance_name='instance-1',
             driver_name='Docker',
             provisioner_name='Ansible',
             scenario_name='default',
             created='False',
             converged='False'),
         base.Status(
-            instance_name='instance-2-default',
+            instance_name='instance-2',
             driver_name='Docker',
             provisioner_name='Ansible',
             scenario_name='default',

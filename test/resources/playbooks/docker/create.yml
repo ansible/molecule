@@ -27,8 +27,8 @@
 
     - name: Create molecule instance(s)
       docker_container:
-        name: "{{ molecule_file | molecule_instance_with_scenario_name(item.name) }}"
-        hostname: "{{ molecule_file | molecule_instance_with_scenario_name(item.name) }}"
+        name: "{{ item.name }}"
+        hostname: "{{ item.name }}"
         image: "molecule_local/{{ item.image }}"
         state: started
         recreate: False

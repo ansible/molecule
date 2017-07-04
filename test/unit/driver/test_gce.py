@@ -210,14 +210,14 @@ def test_status(mocker, gce_instance):
 
     assert 2 == len(result)
 
-    assert result[0].instance_name == 'instance-1-default'
+    assert result[0].instance_name == 'instance-1'
     assert result[0].driver_name == 'Gce'
     assert result[0].provisioner_name == 'Ansible'
     assert result[0].scenario_name == 'default'
     assert result[0].created == 'False'
     assert result[0].converged == 'False'
 
-    assert result[1].instance_name == 'instance-2-default'
+    assert result[1].instance_name == 'instance-2'
     assert result[1].driver_name == 'Gce'
     assert result[1].provisioner_name == 'Ansible'
     assert result[1].scenario_name == 'default'

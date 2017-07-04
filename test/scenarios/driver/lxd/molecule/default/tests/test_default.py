@@ -6,4 +6,4 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 
 
 def test_hostname(host):
-    assert 'instance-1-default' == host.system_info.hostname
+    assert 'instance' == host.system_info.hostname

@@ -11,12 +11,12 @@
   tasks:
     - name: Destroy molecule instance(s)
       gce:
-        instance_names: "{{ molecule_file | molecule_instance_with_scenario_name(item.name) }}"
+        instance_names: "{{ item.name }}"
         state: absent
-        zone: us-west1-a
-        service_account_email: 328742674280-compute@developer.gserviceaccount.com
-        credentials_file: "{{ lookup('env', 'HOME') }}/.env/molecule-99291d8cc014.json"
-        project_id: molecule-171422
+        zone: "{{ item.zone }}"
+        service_account_email: "{{ lookup('env', 'GCE_SERVICE_ACCOUNT_EMAIL') }}"
+        credentials_file: "{{ lookup('env', 'GCE_CREDENTIALS_FILE') }}"
+        project_id: "{{ lookup('env', 'GCE_PROJECT_ID') }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
 
