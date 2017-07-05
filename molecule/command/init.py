@@ -219,8 +219,8 @@ def role(dependency_name, driver_name, lint_name, provisioner_name, role_name,
     help='Name of driver to initialize. (docker)')
 @click.option(
     '--lint-name',
-    type=click.Choice(['ansible-lint']),
-    default='ansible-lint',
+    type=click.Choice(['yamllint']),
+    default='yamllint',
     help='Name of lint to initialize. (ansible-lint)')
 @click.option(
     '--provisioner-name',
