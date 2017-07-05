@@ -1,16 +1,20 @@
 ---
-- hosts: all
+- name: Converge
+  hosts: all
   roles:
     - molecule
 
-- hosts: bar
+- name: Converge
+  hosts: bar
   roles:
     - molecule
 
-- hosts: foo
+- name: Converge
+  hosts: foo
   roles:
     - molecule
 
-- hosts: baz
+- name: Converge
+  hosts: baz
   roles:
     - molecule

@@ -1,6 +1,7 @@
 ---
 {% raw -%}
-- hosts: localhost
+- name: Setup
+  hosts: localhost
   connection: local
   vars:
     molecule_file: "{{ lookup('env', 'MOLECULE_FILE') }}"

@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Destruct
+  hosts: all
   tasks:
     - name: Kill ntpd on target
       command: pkill ntpd

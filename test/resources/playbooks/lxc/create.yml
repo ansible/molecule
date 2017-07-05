@@ -1,5 +1,6 @@
 ---
-- hosts: localhost
+- name: Setup
+  hosts: localhost
   connection: local
   gather_facts: False
   vars:

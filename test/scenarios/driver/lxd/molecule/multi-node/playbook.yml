@@ -1,5 +1,6 @@
 ---
-- hosts: all
+- name: Converge
+  hosts: all
   gather_facts: False
   tasks:
     - name: Install python for Ansible
@@ -7,18 +8,22 @@
       become: True
       changed_when: False
 
-- hosts: all
+- name: Converge
+  hosts: all
   roles:
     - molecule
 
-- hosts: bar
+- name: Converge
+  hosts: bar
   roles:
     - molecule
 
-- hosts: foo
+- name: Converge
+  hosts: foo
   roles:
     - molecule
 
-- hosts: baz
+- name: Converge
+  hosts: baz
   roles:
     - molecule

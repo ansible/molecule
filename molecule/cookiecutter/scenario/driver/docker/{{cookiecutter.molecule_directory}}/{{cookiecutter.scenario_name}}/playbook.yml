@@ -1,4 +1,5 @@
 ---
-- hosts: all
+- name: Converge
+  hosts: all
   roles:
     - role: {{ cookiecutter.role_name }}
