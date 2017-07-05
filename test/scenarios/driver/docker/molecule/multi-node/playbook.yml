@@ -1,16 +1,20 @@
 ---
 - hosts: all
+  become: True
   roles:
     - molecule
 
 - hosts: bar
+  become: True
   roles:
     - molecule
 
 - hosts: foo
+  become: True
   roles:
     - molecule
 
 - hosts: baz
+  become: True
   roles:
     - molecule
