@@ -300,7 +300,7 @@ class Ansible(base.Base):
     @property
     def default_options(self):
         d = {}
-        if self._config.args.get('debug'):
+        if self._config.debug:
             d['vvv'] = True
 
         return d

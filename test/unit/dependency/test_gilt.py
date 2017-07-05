@@ -112,7 +112,7 @@ def test_execute(patched_run_command, patched_gilt_has_requirements_file,
     gilt_instance._gilt_command = 'patched-command'
     gilt_instance.execute()
 
-    patched_run_command.assert_called_once_with('patched-command', debug=None)
+    patched_run_command.assert_called_once_with('patched-command', debug=False)
 
     msg = 'Dependency completed successfully.'
     patched_logger_success.assert_called_once_with(msg)

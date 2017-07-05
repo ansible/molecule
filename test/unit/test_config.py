@@ -54,6 +54,10 @@ def test_command_args_member(config_instance):
     assert {} == config_instance.command_args
 
 
+def test_debug_property(config_instance):
+    assert not config_instance.debug
+
+
 def test_ephemeral_directory_property(config_instance):
     x = os.path.join(pytest.helpers.molecule_ephemeral_directory())
 
@@ -266,6 +270,7 @@ def test_drivers_property(config_instance):
 
 def test_env(config_instance):
     x = {
+        'MOLECULE_DEBUG': 'False',
         'MOLECULE_FILE': config_instance.molecule_file,
         'MOLECULE_INVENTORY_FILE': config_instance.provisioner.inventory_file,
         'MOLECULE_EPHEMERAL_DIRECTORY': config_instance.ephemeral_directory,

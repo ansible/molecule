@@ -112,8 +112,7 @@ class Yamllint(base.Base):
         LOG.info(msg)
 
         try:
-            util.run_command(
-                self._yamllint_command, debug=self._config.args.get('debug'))
+            util.run_command(self._yamllint_command, debug=self._config.debug)
             LOG.success('Lint completed successfully.')
         except sh.ErrorReturnCode as e:
             util.sysexit(e.exit_code)

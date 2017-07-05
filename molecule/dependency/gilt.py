@@ -72,7 +72,7 @@ class Gilt(base.Base):
     def default_options(self):
         config = os.path.join(self._config.scenario.directory, 'gilt.yml')
         d = {'config': config}
-        if self._config.args.get('debug'):
+        if self._config.debug:
             d['debug'] = True
 
         return d
@@ -107,8 +107,7 @@ class Gilt(base.Base):
             self.bake()
 
         try:
-            util.run_command(
-                self._gilt_command, debug=self._config.args.get('debug'))
+            util.run_command(self._gilt_command, debug=self._config.debug)
             LOG.success('Dependency completed successfully.')
         except sh.ErrorReturnCode as e:
             util.sysexit(e.exit_code)

@@ -113,7 +113,7 @@ def test_execute(patched_get_files, patched_logger_info,
     yamllint_instance.execute()
 
     patched_run_command.assert_called_once_with(
-        'patched-yamllint-command', debug=None)
+        'patched-yamllint-command', debug=False)
 
     msg = 'Executing Yamllint on files found in {}/...'.format(
         yamllint_instance._config.project_directory)
@@ -142,7 +142,7 @@ def test_execute_bakes(patched_get_files, patched_run_command,
     assert yamllint_instance._yamllint_command is not None
 
     cmd = '{} --foo=bar foo.yml bar.yaml'.format(str(sh.yamllint))
-    patched_run_command.assert_called_once_with(cmd, debug=None)
+    patched_run_command.assert_called_once_with(cmd, debug=False)
 
 
 def test_executes_catches_and_exits_return_code(patched_run_command,

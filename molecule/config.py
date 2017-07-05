@@ -83,6 +83,10 @@ class Config(object):
         self.config = self._combine()
 
     @property
+    def debug(self):
+        return self.args.get('debug', False)
+
+    @property
     def ephemeral_directory(self):
         return os.path.join(self.scenario.directory, '.molecule')
 
@@ -139,6 +143,7 @@ class Config(object):
     @property
     def env(self):
         return {
+            'MOLECULE_DEBUG': str(self.debug),
             'MOLECULE_FILE': self.molecule_file,
             'MOLECULE_INVENTORY_FILE': self.provisioner.inventory_file,
             'MOLECULE_EPHEMERAL_DIRECTORY': self.scenario.ephemeral_directory,

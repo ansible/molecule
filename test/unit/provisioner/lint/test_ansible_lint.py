@@ -130,7 +130,7 @@ def test_execute(mocker, patched_run_command, patched_logger_info,
     ansible_lint_instance.execute()
 
     patched_run_command.assert_called_once_with(
-        'patched-ansiblelint-command', debug=None)
+        'patched-ansiblelint-command', debug=False)
 
     msg = 'Executing Ansible Lint on {}...'.format(
         ansible_lint_instance._config.provisioner.playbooks.converge)

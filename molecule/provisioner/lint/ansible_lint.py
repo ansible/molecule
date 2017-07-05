@@ -88,7 +88,7 @@ class AnsibleLint(base.Base):
     @property
     def default_options(self):
         d = {'excludes': [self._config.scenario.ephemeral_directory]}
-        if self._config.args.get('debug'):
+        if self._config.debug:
             d['v'] = True
 
         return d
@@ -132,8 +132,7 @@ class AnsibleLint(base.Base):
 
         try:
             util.run_command(
-                self._ansible_lint_command,
-                debug=self._config.args.get('debug'))
+                self._ansible_lint_command, debug=self._config.debug)
             LOG.success('Lint completed successfully.')
         except sh.ErrorReturnCode as e:
             util.sysexit(e.exit_code)

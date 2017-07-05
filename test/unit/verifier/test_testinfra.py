@@ -217,7 +217,7 @@ def test_execute(patched_logger_info, patched_run_command,
     testinfra_instance._testinfra_command = 'patched-command'
     testinfra_instance.execute()
 
-    patched_run_command.assert_called_once_with('patched-command', debug=None)
+    patched_run_command.assert_called_once_with('patched-command', debug=False)
 
     msg = 'Executing Testinfra tests found in {}/...'.format(
         testinfra_instance.directory)

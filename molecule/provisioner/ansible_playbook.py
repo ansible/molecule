@@ -86,8 +86,7 @@ class AnsiblePlaybook(object):
 
         try:
             cmd = util.run_command(
-                self._ansible_playbook_command,
-                debug=self._config.args.get('debug'))
+                self._ansible_playbook_command, )
             return cmd.stdout.decode('utf-8')
         except sh.ErrorReturnCode as e:
             out = e.stdout.decode('utf-8')

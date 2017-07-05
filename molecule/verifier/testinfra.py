@@ -90,7 +90,7 @@ class Testinfra(base.Base):
     @property
     def default_options(self):
         d = self._config.driver.testinfra_options
-        if self._config.args.get('debug'):
+        if self._config.debug:
             d['debug'] = True
         if self._config.args.get('sudo'):
             d['sudo'] = True
@@ -136,8 +136,7 @@ class Testinfra(base.Base):
         LOG.info(msg)
 
         try:
-            util.run_command(
-                self._testinfra_command, debug=self._config.args.get('debug'))
+            util.run_command(self._testinfra_command, debug=self._config.debug)
             LOG.success('Verifier completed successfully.')
 
         except sh.ErrorReturnCode as e:

@@ -89,7 +89,7 @@ def test_execute(patched_logger_info, patched_logger_success,
     flake8_instance._flake8_command = 'patched-command'
     flake8_instance.execute()
 
-    patched_run_command.assert_called_once_with('patched-command', debug=None)
+    patched_run_command.assert_called_once_with('patched-command', debug=False)
 
     msg = 'Executing Flake8 on files found in {}/...'.format(
         flake8_instance._config.verifier.directory)
@@ -127,7 +127,7 @@ def test_execute_bakes(patched_run_command, flake8_instance):
     assert flake8_instance._flake8_command is not None
 
     cmd = '{} --foo=bar test1 test2 test3'.format(str(sh.flake8))
-    patched_run_command.assert_called_once_with(cmd, debug=None)
+    patched_run_command.assert_called_once_with(cmd, debug=False)
 
 
 def test_executes_catches_and_exits_return_code(

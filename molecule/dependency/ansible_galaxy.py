@@ -79,7 +79,7 @@ class AnsibleGalaxy(base.Base):
             'roles-path':
             os.path.join(self._config.scenario.ephemeral_directory, 'roles'),
         }
-        if self._config.args.get('debug'):
+        if self._config.debug:
             d['vvv'] = True
 
         return d
@@ -121,8 +121,7 @@ class AnsibleGalaxy(base.Base):
         self._setup()
         try:
             util.run_command(
-                self._ansible_galaxy_command,
-                debug=self._config.args.get('debug'))
+                self._ansible_galaxy_command, debug=self._config.debug)
             LOG.success('Dependency completed successfully.')
         except sh.ErrorReturnCode as e:
             util.sysexit(e.exit_code)

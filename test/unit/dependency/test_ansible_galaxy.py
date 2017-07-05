@@ -141,7 +141,7 @@ def test_execute(patched_run_command,
         ansible_galaxy_instance.options['roles-path'])
     assert os.path.isdir(role_directory)
 
-    patched_run_command.assert_called_once_with('patched-command', debug=None)
+    patched_run_command.assert_called_once_with('patched-command', debug=False)
 
     msg = 'Dependency completed successfully.'
     patched_logger_success.assert_called_once_with(msg)
