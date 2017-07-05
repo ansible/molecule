@@ -1,6 +1,5 @@
 ---
-- name: Converge
-  hosts: all
+- hosts: all
   tasks:
     - name: Host vars host_var for host host-group-vars from molecule.yml
       command: echo "{{ host_group_vars_host_molecule_yml }}"
@@ -22,15 +21,13 @@
       command: echo "{{ host_group_vars_example_1_child_group_molecule_yml }}"
       changed_when: False
 
-- name: Converge
-  hosts: example
+- hosts: example
   tasks:
     - name: Dummy converge of example group
       command: /bin/true
       changed_when: False
 
-- name: Converge
-  hosts: example_1
+- hosts: example_1
   tasks:
     - name: Dummy converge of child example_1 group
       command: /bin/true
