@@ -70,11 +70,21 @@ def test_login_cmd_template_property(docker_instance):
 
 
 def test_safe_files_property(docker_instance):
-    assert [] == docker_instance.safe_files
+    x = [
+        os.path.join(docker_instance._config.scenario.ephemeral_directory,
+                     'Dockerfile')
+    ]
+
+    assert x == docker_instance.safe_files
 
 
 def test_default_safe_files_property(docker_instance):
-    assert [] == docker_instance.default_safe_files
+    x = [
+        os.path.join(docker_instance._config.scenario.ephemeral_directory,
+                     'Dockerfile')
+    ]
+
+    assert x == docker_instance.default_safe_files
 
 
 def test_default_ssh_connection_options_property(docker_instance):

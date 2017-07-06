@@ -12,5 +12,5 @@
       docker_container:
         name: "{{ molecule_file | molecule_instance_with_scenario_name(item.name) }}"
         state: absent
-        force_kill: "{{ item.force | default(True) }}"
+        force_kill: "{{ item.force_kill | default(True) }}"
       with_items: "{{ molecule_yml.platforms }}"

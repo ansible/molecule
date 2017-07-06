@@ -18,6 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
+
 from molecule import logger
 from molecule.driver import base
 
@@ -69,7 +71,10 @@ class Dockr(base.Base):
 
     @property
     def default_safe_files(self):
-        return []
+        return [
+            os.path.join(self._config.scenario.ephemeral_directory,
+                         'Dockerfile')
+        ]
 
     @property
     def default_ssh_connection_options(self):
