@@ -35,6 +35,10 @@ class Destroy(base.Base):
 
     >>> molecule destroy
 
+    Target all scenarios:
+
+    >>> molecule destroy --all
+
     Targeting a specific scenario:
 
     >>> molecule destroy --scenario-name foo
@@ -84,7 +88,12 @@ class Destroy(base.Base):
     '--driver-name',
     type=click.Choice(config.molecule_drivers()),
     help='Name of driver to use. (docker)')
-def destroy(ctx, scenario_name, driver_name):  # pragma: no cover
+@click.option(
+    '--all/--no-all',
+    '__all',
+    default=False,
+    help='Destroy all scenarios. Default is False.')
+def destroy(ctx, scenario_name, driver_name, __all):  # pragma: no cover
     """ Destroy instances. """
     args = ctx.obj.get('args')
     command_args = {
@@ -92,6 +101,9 @@ def destroy(ctx, scenario_name, driver_name):  # pragma: no cover
         'scenario_name': scenario_name,
         'driver_name': driver_name,
     }
+
+    if __all:
+        command_args['scenario_name'] = None
 
     for c in base.get_configs(args, command_args):
         Destroy(c).execute()

@@ -30,9 +30,13 @@ LOG = logger.get_logger(__name__)
 
 class Test(base.Base):
     """
-    Target all scenarios:
+    Target the default scenario:
 
     >>> molecule test
+
+    Target all scenarios:
+
+    >>> molecule test --all
 
     Targeting a specific scenario:
 
@@ -58,12 +62,20 @@ class Test(base.Base):
 
 @click.command()
 @click.pass_context
-@click.option('--scenario-name', help='Name of the scenario to target.')
+@click.option(
+    '--scenario-name',
+    default='default',
+    help='Name of the scenario to target. (default)')
 @click.option(
     '--driver-name',
     type=click.Choice(config.molecule_drivers()),
     help='Name of driver to use. (docker)')
-def test(ctx, scenario_name, driver_name):  # pragma: no cover
+@click.option(
+    '--all/--no-all',
+    '__all',
+    default=False,
+    help='Test all scenarios. Default is False.')
+def test(ctx, scenario_name, driver_name, __all):  # pragma: no cover
     """ Test (destroy, create, converge, lint, verify, destroy). """
     args = ctx.obj.get('args')
     command_args = {
@@ -71,6 +83,9 @@ def test(ctx, scenario_name, driver_name):  # pragma: no cover
         'scenario_name': scenario_name,
         'driver_name': driver_name,
     }
+
+    if __all:
+        command_args['scenario_name'] = None
 
     for c in base.get_configs(args, command_args):
         for task in c.scenario.test_sequence:

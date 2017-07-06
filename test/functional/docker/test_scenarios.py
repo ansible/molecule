@@ -57,6 +57,7 @@ def driver_name(request):
 def test_command_destruct(scenario_to_test, with_scenario, scenario_name):
     options = {
         'driver_name': 'docker',
+        'all': True,
     }
     cmd = sh.molecule.bake('test', **options)
     pytest.helpers.run_command(cmd)
@@ -97,7 +98,7 @@ def test_command_init_role_with_template(temp_dir):
     options = {
         'url': 'https://github.com/retr0h/cookiecutter-molecule.git',
         'no_input': True,
-        'role_name': role_name
+        'role_name': role_name,
     }
     cmd = sh.molecule.bake('init', 'template', **options)
     pytest.helpers.run_command(cmd)
@@ -120,6 +121,7 @@ def test_command_test_overrides_driver(scenario_to_test, with_scenario,
                                        driver_name, scenario_name):
     options = {
         'driver_name': driver_name,
+        'all': True,
     }
     cmd = sh.molecule.bake('test', **options)
     pytest.helpers.run_command(cmd)
@@ -135,7 +137,10 @@ def test_command_test_overrides_driver(scenario_to_test, with_scenario,
         'scenario_name',
     ])
 def test_host_group_vars(scenario_to_test, with_scenario, scenario_name):
-    cmd = sh.molecule.bake('test')
+    options = {
+        'all': True,
+    }
+    cmd = sh.molecule.bake('test', **options)
     out = pytest.helpers.run_command(cmd, log=False)
     out = util.strip_ansi_escape(out.stdout)
 
@@ -156,6 +161,7 @@ def test_host_group_vars(scenario_to_test, with_scenario, scenario_name):
 def test_idempotence_raises(scenario_to_test, with_scenario, scenario_name):
     options = {
         'scenario_name': scenario_name,
+        'all': True,
     }
     cmd = sh.molecule.bake('test', **options)
     with pytest.raises(sh.ErrorReturnCode_2) as e:
@@ -175,10 +181,13 @@ def test_idempotence_raises(scenario_to_test, with_scenario, scenario_name):
     ])
 def test_interpolation(scenario_to_test, with_scenario, scenario_name):
     # Modify global environment so cleanup inherits our environment.
+    options = {
+        'all': True,
+    }
     env = os.environ
     env.update({'DRIVER_NAME': 'docker'})
 
-    cmd = sh.molecule.bake('test')
+    cmd = sh.molecule.bake('test', **options)
     pytest.helpers.run_command(cmd, env=env)
 
 
@@ -253,6 +262,7 @@ def test_command_verify_goss(scenario_to_test, with_scenario, scenario_name):
 def test_plugins(scenario_to_test, with_scenario, scenario_name):
     options = {
         'scenario_name': scenario_name,
+        'all': True,
     }
     cmd = sh.molecule.bake('test', **options)
     pytest.helpers.run_command(cmd)

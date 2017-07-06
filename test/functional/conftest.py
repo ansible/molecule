@@ -42,12 +42,11 @@ def with_scenario(request, scenario_to_test, driver_name, scenario_name,
 
     def cleanup():
         if scenario_name:
-            msg = "CLEANUP: Destroying instances for '{}' scenario".format(
-                scenario_name)
+            msg = 'CLEANUP: Destroying instances for all scenario(s)'
             LOG.out(msg)
             options = {
-                'scenario_name': scenario_name,
                 'driver_name': driver_name,
+                'all': True,
             }
             cmd = sh.molecule.bake('destroy', **options)
             run_command(cmd)
@@ -72,15 +71,21 @@ def skip_test(request, driver_name):
 
 @pytest.helpers.register
 def idempotence(scenario_name):
-    options = {'scenario_name': scenario_name}
+    options = {
+        'scenario_name': scenario_name,
+    }
     cmd = sh.molecule.bake('create', **options)
     run_command(cmd)
 
-    options = {'scenario_name': scenario_name}
+    options = {
+        'scenario_name': scenario_name,
+    }
     cmd = sh.molecule.bake('converge', **options)
     run_command(cmd)
 
-    options = {'scenario_name': scenario_name}
+    options = {
+        'scenario_name': scenario_name,
+    }
     cmd = sh.molecule.bake('idempotence', **options)
     run_command(cmd)
 
@@ -95,7 +100,10 @@ def init_role(temp_dir, driver_name):
     run_command(cmd)
 
     os.chdir(role_directory)
-    cmd = sh.molecule.bake('test')
+    options = {
+        'all': True,
+    }
+    cmd = sh.molecule.bake('test', **options)
     run_command(cmd)
 
 
@@ -113,13 +121,19 @@ def init_scenario(temp_dir, driver_name):
     molecule_directory = pytest.helpers.molecule_directory()
     scenario_directory = os.path.join(molecule_directory, 'test-scenario')
 
-    options = {'scenario_name': 'test-scenario', 'role_name': 'test-init'}
+    options = {
+        'scenario_name': 'test-scenario',
+        'role_name': 'test-init',
+    }
     cmd = sh.molecule.bake('init', 'scenario', **options)
     run_command(cmd)
 
     assert os.path.isdir(scenario_directory)
 
-    options = {'scenario_name': 'test-scenario'}
+    options = {
+        'scenario_name': 'test-scenario',
+        'all': True,
+    }
     cmd = sh.molecule.bake('test', **options)
     run_command(cmd)
 
@@ -146,11 +160,15 @@ def list_with_format_plain(x):
 
 @pytest.helpers.register
 def login(login_args, scenario_name='default'):
-    options = {'scenario_name': scenario_name}
+    options = {
+        'scenario_name': scenario_name,
+    }
     cmd = sh.molecule.bake('destroy', **options)
     run_command(cmd)
 
-    options = {'scenario_name': scenario_name}
+    options = {
+        'scenario_name': scenario_name,
+    }
     cmd = sh.molecule.bake('create', **options)
     run_command(cmd)
 
@@ -169,22 +187,31 @@ def login(login_args, scenario_name='default'):
 
 @pytest.helpers.register
 def test(scenario_name='default'):
-    options = {'scenario_name': scenario_name}
+    options = {
+        'scenario_name': scenario_name,
+        'all': True,
+    }
     cmd = sh.molecule.bake('test', **options)
     run_command(cmd)
 
 
 @pytest.helpers.register
 def verify(scenario_name='default'):
-    options = {'scenario_name': scenario_name}
+    options = {
+        'scenario_name': scenario_name,
+    }
     cmd = sh.molecule.bake('create', **options)
     run_command(cmd)
 
-    options = {'scenario_name': scenario_name}
+    options = {
+        'scenario_name': scenario_name,
+    }
     cmd = sh.molecule.bake('converge', **options)
     run_command(cmd)
 
-    options = {'scenario_name': scenario_name}
+    options = {
+        'scenario_name': scenario_name,
+    }
     cmd = sh.molecule.bake('verify', **options)
     run_command(cmd)
 
