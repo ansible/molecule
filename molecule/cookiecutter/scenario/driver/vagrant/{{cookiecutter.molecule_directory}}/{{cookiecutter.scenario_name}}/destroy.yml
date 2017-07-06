@@ -15,6 +15,7 @@
         instance_name: "{{ molecule_file | molecule_instance_with_scenario_name(item.name) }}"
         platform_box: "{{ item.box }}"
         state: destroy
+        force_stop: "{{ item.force_stop | default(True) }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
 

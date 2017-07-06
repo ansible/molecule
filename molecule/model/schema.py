@@ -86,6 +86,7 @@ class PlatformsVagrantSchema(PlatformsBaseSchema):
     interfaces = marshmallow.fields.List(
         marshmallow.fields.Nested(InterfaceSchema()))
     provider = marshmallow.fields.Str()
+    force_stop = marshmallow.fields.Bool()
 
 
 class ProvisionerInventoryLinksSchema(base.Base):

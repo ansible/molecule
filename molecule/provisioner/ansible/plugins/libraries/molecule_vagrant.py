@@ -100,6 +100,11 @@ options:
       - Additional Vagrant options not explcitly exposed by this module.
     required: False
     default: None
+  force_stop:
+    description:
+      - Force halt the instance, then destroy the instance.
+    required: False
+    default: False
   state:
     description:
       - The desired state of the instance.
@@ -298,6 +303,8 @@ class VagrantClient(object):
         cd = self._created()
         if cd:
             changed = True
+            if self._module.params['force_stop']:
+                self._vagrant.halt(force=True)
             self._vagrant.destroy()
 
         self._module.exit_json(changed=changed)
@@ -390,6 +397,7 @@ def main():
             provider_cpus=dict(type='int', default=2),
             provider_options=dict(type='dict', default={}),
             provider_raw_config_args=dict(type='list', default=None),
+            force_stop=dict(type='bool', default=False),
             state=dict(type='str', default='up', choices=['up', 'destroy'])),
         supports_check_mode=False)
 
