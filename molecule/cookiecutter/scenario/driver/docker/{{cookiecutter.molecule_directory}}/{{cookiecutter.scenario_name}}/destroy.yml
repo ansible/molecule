@@ -13,5 +13,6 @@
       docker_container:
         name: "{{ item.name }}-{{ molecule_yml.scenario.name }}"
         state: absent
+        force_kill: "{{ item.force | default(True) }}"
       with_items: "{{ molecule_yml.platforms }}"
 {%- endraw %}
