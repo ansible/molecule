@@ -13,6 +13,6 @@
       lxd_container:
         name: "{{ molecule_file | molecule_instance_with_scenario_name(item.name) }}"
         state: absent
-        force_stop: True
+        force_stop: "{{ item.force | default(True) }}"
       with_items: "{{ molecule_yml.platforms }}"
 {%- endraw %}
