@@ -11,7 +11,7 @@
   tasks:
     - name: Destroy molecule instance(s)
       docker_container:
-        name: "{{ item.name }}-{{ molecule_yml.scenario.name }}"
+        name: "{{ item.name }}"
         state: absent
         force_kill: "{{ item.force_kill | default(True) }}"
       with_items: "{{ molecule_yml.platforms }}"

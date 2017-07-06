@@ -35,7 +35,7 @@ def test_execute(mocker, login_instance):
     m = mocker.patch('molecule.command.login.Login._get_login')
     login_instance.execute()
 
-    m.assert_called_once_with('instance-1-default')
+    m.assert_called_once_with('instance-1')
 
 
 def test_execute_raises_when_not_converged(patched_logger_critical,

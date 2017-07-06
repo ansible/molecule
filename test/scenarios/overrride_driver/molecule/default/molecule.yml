@@ -9,7 +9,7 @@ lint:
   options:
     config-file: ../../resources/.yamllint
 platforms:
-  - name: instance-1
+  - name: instance
     image: centos:latest
 provisioner:
   name: ansible

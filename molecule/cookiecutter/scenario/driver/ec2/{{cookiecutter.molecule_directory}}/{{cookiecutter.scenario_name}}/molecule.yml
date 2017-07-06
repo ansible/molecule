@@ -6,7 +6,7 @@ driver:
 lint:
   name: {{ cookiecutter.lint_name }}
 platforms:
-  - name: instance-1
+  - name: instance
     image: ami-a5b196c0
     instance_type: t2.micro
     vpc_subnet_id: subnet-6456fd1f

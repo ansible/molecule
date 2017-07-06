@@ -6,10 +6,10 @@ file:
     group: root
     mode: "0755"
     filetype: directory
-  /etc/molecule/instance-1-goss:
+  /etc/molecule/instance:
     exists: True
     owner: root
     group: root
     mode: "0644"
     filetype: file
-    contains: ['instance-1-goss']
+    contains: ['instance']

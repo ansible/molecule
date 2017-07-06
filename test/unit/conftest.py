@@ -79,15 +79,18 @@ def molecule_lint_section_data():
 @pytest.fixture
 def molecule_platforms_section_data():
     return {
-        'platforms': [{
-            'name': 'instance-1',
-            'groups': ['foo', 'bar'],
-            'children': ['child1'],
-        }, {
-            'name': 'instance-2',
-            'groups': ['baz', 'foo'],
-            'children': ['child2'],
-        }],
+        'platforms': [
+            {
+                'name': 'instance-1',
+                'groups': ['foo', 'bar'],
+                'children': ['child1'],
+            },
+            {
+                'name': 'instance-2',
+                'groups': ['baz', 'foo'],
+                'children': ['child2'],
+            },
+        ],
     }
 
 

@@ -29,28 +29,17 @@ def platform_instance(config_instance):
 
 
 def test_instances_property(platform_instance):
-    x = [{
-        'groups': ['foo', 'bar'],
-        'name': 'instance-1',
-        'children': ['child1'],
-    }, {
-        'groups': ['baz', 'foo'],
-        'name': 'instance-2',
-        'children': ['child2'],
-    }]
+    x = [
+        {
+            'groups': ['foo', 'bar'],
+            'name': 'instance-1',
+            'children': ['child1'],
+        },
+        {
+            'groups': ['baz', 'foo'],
+            'name': 'instance-2',
+            'children': ['child2'],
+        },
+    ]
 
     assert x == platform_instance.instances
-
-
-def test_platforms_with_scenario_name(platform_instance):
-    x = [{
-        'groups': ['foo', 'bar'],
-        'name': 'instance-1-default',
-        'children': ['child1'],
-    }, {
-        'groups': ['baz', 'foo'],
-        'name': 'instance-2-default',
-        'children': ['child2'],
-    }]
-
-    assert x == platform_instance.instances_with_scenario_name

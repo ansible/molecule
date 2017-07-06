@@ -415,24 +415,24 @@ class Ansible(base.Base):
               vars:
                 foo: bar
               hosts:
-                instance-1-default:
-                instance-2-default:
+                instance-1:
+                instance-2:
               children:
                 $child_group_name:
                   hosts:
-                    instance-1-default:
-                    instance-2-default:
+                    instance-1:
+                    instance-2:
             $group_name:
               hosts:
-                instance-1-default:
+                instance-1:
                   ansible_connection: docker
-                instance-2-default:
+                instance-2:
                   ansible_connection: docker
 
         :return: str
         """
         dd = self._vivify()
-        for platform in self._config.platforms.instances_with_scenario_name:
+        for platform in self._config.platforms.instances:
             for group in platform.get('groups', ['ungrouped']):
                 instance_name = platform['name']
                 connection_options = self.connection_options(instance_name)
@@ -574,13 +574,11 @@ class Ansible(base.Base):
         for target in ['host_vars', 'group_vars']:
             if target == 'host_vars':
                 vars_target = copy.deepcopy(self.host_vars)
-                # Append the scenario-name
                 for instance_name, _ in self.host_vars.items():
                     if instance_name == 'localhost':
                         instance_key = instance_name
                     else:
-                        instance_key = util.instance_with_scenario_name(
-                            instance_name, self._config.scenario.name)
+                        instance_key = instance_name
 
                     vars_target[instance_key] = vars_target.pop(instance_name)
 

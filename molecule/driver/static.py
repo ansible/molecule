@@ -78,12 +78,6 @@ class Static(base.Base):
         platforms:
           - name: static-instance-vagrant
 
-    .. important::
-
-        Molecule automatically appends the scenario name to the instances it is
-        testing.  It doesn't seem useful to converge each scenario against the
-        same static host.
-
     Provide the files Molecule will preserve upon each subcommand execution.
 
     .. code-block:: yaml

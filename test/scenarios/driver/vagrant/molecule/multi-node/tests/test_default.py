@@ -8,7 +8,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 
 
 def test_hostname(host):
-    assert re.search(r'instance-[12]-multi-node', host.system_info.hostname)
+    assert re.search(r'instance-[12]', host.system_info.hostname)
 
 
 def test_etc_molecule_directory(host):

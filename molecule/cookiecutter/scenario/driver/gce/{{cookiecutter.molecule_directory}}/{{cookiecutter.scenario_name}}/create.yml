@@ -16,13 +16,13 @@
   tasks:
     - name: Create molecule instance(s)
       gce:
-        instance_names: "{{ molecule_file | molecule_instance_with_scenario_name(item.name) }}"
+        instance_names: "{{ item.name }}"
         zone: "{{ item.zone }}"
         machine_type: "{{ item.machine_type }}"
         image: "{{ item.image }}"
-        service_account_email: "{{ item.service_account_email }}"
-        credentials_file: "{{ item.credentials_file }}"
-        project_id: "{{ item.project_id }}"
+        service_account_email: "{{ lookup('env', 'GCE_SERVICE_ACCOUNT_EMAIL') }}"
+        credentials_file: "{{ lookup('env', 'GCE_CREDENTIALS_FILE') }}"
+        project_id: "{{ lookup('env', 'GCE_PROJECT_ID') }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
 

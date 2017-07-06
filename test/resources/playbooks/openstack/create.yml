@@ -52,7 +52,7 @@
 
     - name: Create molecule instance(s)
       os_server:
-        name: "{{ molecule_file | molecule_instance_with_scenario_name(item.name) }}"
+        name: "{{ item.name }}"
         image: "{{ nova.image }}"
         flavor: "{{ nova.flavor }}"
         security_groups:

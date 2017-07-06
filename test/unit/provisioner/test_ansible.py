@@ -375,84 +375,84 @@ def test_links_property(ansible_instance):
 def test_inventory_property(ansible_instance):
     x = {
         'ungrouped': {
-            'vars': {}
+            'vars': {},
         },
         'all': {
             'hosts': {
-                'instance-1-default': {
+                'instance-1': {
                     'ansible_connection': 'docker',
-                    'foo': 'bar'
+                    'foo': 'bar',
                 },
-                'instance-2-default': {
+                'instance-2': {
                     'ansible_connection': 'docker',
-                    'foo': 'bar'
-                }
+                    'foo': 'bar',
+                },
             }
         },
         'bar': {
             'hosts': {
-                'instance-1-default': {
+                'instance-1': {
                     'ansible_connection': 'docker',
-                    'foo': 'bar'
-                }
+                    'foo': 'bar',
+                },
             },
             'children': {
                 'child1': {
                     'hosts': {
-                        'instance-1-default': {
+                        'instance-1': {
                             'ansible_connection': 'docker',
-                            'foo': 'bar'
-                        }
+                            'foo': 'bar',
+                        },
                     }
                 }
             }
         },
         'foo': {
             'hosts': {
-                'instance-1-default': {
+                'instance-1': {
                     'ansible_connection': 'docker',
-                    'foo': 'bar'
+                    'foo': 'bar',
                 },
-                'instance-2-default': {
+                'instance-2': {
                     'ansible_connection': 'docker',
-                    'foo': 'bar'
-                }
+                    'foo': 'bar',
+                },
             },
             'children': {
                 'child1': {
                     'hosts': {
-                        'instance-1-default': {
+                        'instance-1': {
                             'ansible_connection': 'docker',
-                            'foo': 'bar'
-                        }
+                            'foo': 'bar',
+                        },
                     }
                 },
                 'child2': {
                     'hosts': {
-                        'instance-2-default': {
+                        'instance-2': {
                             'ansible_connection': 'docker',
-                            'foo': 'bar'
-                        }
+                            'foo': 'bar',
+                        },
                     }
-                }
+                },
             }
         },
         'baz': {
             'hosts': {
-                'instance-2-default': {
+                'instance-2': {
                     'ansible_connection': 'docker',
-                    'foo': 'bar'
-                }
+                    'foo': 'bar',
+                },
             },
             'children': {
                 'child2': {
                     'hosts': {
-                        'instance-2-default': {
+                        'instance-2': {
                             'ansible_connection': 'docker',
-                            'foo': 'bar'
-                        }
+                            'foo': 'bar',
+                        },
                     }
-                }
+                },
             }
         }
     }
@@ -467,28 +467,28 @@ def test_inventory_property_handles_missing_groups(temp_dir, ansible_instance):
     x = {
         'all': {
             'hosts': {
-                'instance-1-default': {
+                'instance-1': {
                     'ansible_connection': 'docker',
-                    'foo': 'bar'
+                    'foo': 'bar',
                 },
-                'instance-2-default': {
+                'instance-2': {
                     'ansible_connection': 'docker',
-                    'foo': 'bar'
-                }
+                    'foo': 'bar',
+                },
             }
         },
         'ungrouped': {
             'hosts': {
-                'instance-1-default': {
+                'instance-1': {
                     'ansible_connection': 'docker',
-                    'foo': 'bar'
+                    'foo': 'bar',
                 },
-                'instance-2-default': {
+                'instance-2': {
                     'ansible_connection': 'docker',
-                    'foo': 'bar'
-                }
+                    'foo': 'bar',
+                },
             },
-            'vars': {}
+            'vars': {},
         }
     }
 
@@ -663,7 +663,7 @@ def test_add_or_update_vars(ansible_instance):
     ephemeral_directory = ansible_instance._config.scenario.ephemeral_directory
 
     host_vars_directory = os.path.join(ephemeral_directory, 'host_vars')
-    host_vars = os.path.join(host_vars_directory, 'instance-1-default')
+    host_vars = os.path.join(host_vars_directory, 'instance-1')
 
     ansible_instance._add_or_update_vars()
 
@@ -706,84 +706,84 @@ def test_write_inventory(temp_dir, ansible_instance):
 
     x = {
         'ungrouped': {
-            'vars': {}
+            'vars': {},
         },
         'all': {
             'hosts': {
-                'instance-1-default': {
+                'instance-1': {
                     'ansible_connection': 'docker',
-                    'foo': 'bar'
+                    'foo': 'bar',
                 },
-                'instance-2-default': {
+                'instance-2': {
                     'ansible_connection': 'docker',
-                    'foo': 'bar'
-                }
+                    'foo': 'bar',
+                },
             }
         },
         'bar': {
             'hosts': {
-                'instance-1-default': {
+                'instance-1': {
                     'ansible_connection': 'docker',
-                    'foo': 'bar'
+                    'foo': 'bar',
                 }
             },
             'children': {
                 'child1': {
                     'hosts': {
-                        'instance-1-default': {
+                        'instance-1': {
                             'ansible_connection': 'docker',
                             'foo': 'bar'
-                        }
+                        },
                     }
                 }
             }
         },
         'foo': {
             'hosts': {
-                'instance-1-default': {
+                'instance-1': {
                     'ansible_connection': 'docker',
-                    'foo': 'bar'
+                    'foo': 'bar',
                 },
-                'instance-2-default': {
+                'instance-2': {
                     'ansible_connection': 'docker',
-                    'foo': 'bar'
-                }
+                    'foo': 'bar',
+                },
             },
             'children': {
                 'child1': {
                     'hosts': {
-                        'instance-1-default': {
+                        'instance-1': {
                             'ansible_connection': 'docker',
                             'foo': 'bar'
-                        }
+                        },
                     }
                 },
                 'child2': {
                     'hosts': {
-                        'instance-2-default': {
+                        'instance-2': {
                             'ansible_connection': 'docker',
                             'foo': 'bar'
-                        }
+                        },
                     }
-                }
+                },
             }
         },
         'baz': {
             'hosts': {
-                'instance-2-default': {
+                'instance-2': {
                     'ansible_connection': 'docker',
-                    'foo': 'bar'
-                }
+                    'foo': 'bar',
+                },
             },
             'children': {
                 'child2': {
                     'hosts': {
-                        'instance-2-default': {
+                        'instance-2': {
                             'ansible_connection': 'docker',
                             'foo': 'bar'
-                        }
+                        },
                     }
-                }
+                },
             }
         }
     }
@@ -795,7 +795,7 @@ def test_remove_vars(ansible_instance):
     ephemeral_directory = ansible_instance._config.scenario.ephemeral_directory
 
     host_vars_directory = os.path.join(ephemeral_directory, 'host_vars')
-    host_vars = os.path.join(host_vars_directory, 'instance-1-default')
+    host_vars = os.path.join(host_vars_directory, 'instance-1')
 
     ansible_instance._add_or_update_vars()
     assert os.path.isdir(host_vars_directory)

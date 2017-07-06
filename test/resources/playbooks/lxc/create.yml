@@ -10,7 +10,7 @@
   tasks:
     - name: Create molecule instance(s)
       lxc_container:
-        name: "{{ molecule_file | molecule_instance_with_scenario_name(item.name) }}"
+        name: "{{ item.name }}"
         container_log: True
         template: ubuntu
         state: started

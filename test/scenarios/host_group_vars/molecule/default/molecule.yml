@@ -8,7 +8,7 @@ lint:
   options:
     config-file: ../../resources/.yamllint
 platforms:
-  - name: instance-1
+  - name: instance
     image: centos:latest
     groups:
       - example
@@ -21,7 +21,7 @@ provisioner:
     teardown: ../../../../resources/playbooks/docker/destroy.yml
   inventory:
     host_vars:
-      instance-1:
+      instance:
         host_group_vars_host_molecule_yml: True
     group_vars:
       example:

@@ -22,12 +22,6 @@ from molecule import config
 from molecule import util
 
 
-def instance_with_scenario_name(molecule_file, instance_name):
-    c = config.Config(molecule_file)
-
-    return util.instance_with_scenario_name(instance_name, c.scenario.name)
-
-
 def to_yaml(data):
     return str(util.safe_dump(data))
 
@@ -41,8 +35,6 @@ class FilterModule(object):
 
     def filters(self):
         return {
-            'molecule_instance_with_scenario_name':
-            instance_with_scenario_name,
             'molecule_to_yaml': to_yaml,
             'molecule_header': header,
         }

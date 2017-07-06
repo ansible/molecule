@@ -59,6 +59,7 @@ class PlatformsBaseSchema(marshmallow.Schema):
     groups = marshmallow.fields.List(marshmallow.fields.Str())
     children = marshmallow.fields.List(marshmallow.fields.Str())
     state = marshmallow.fields.List(marshmallow.fields.Str())
+    append_scenario = marshmallow.fields.Bool()
 
 
 class PlatformsSchema(PlatformsBaseSchema):

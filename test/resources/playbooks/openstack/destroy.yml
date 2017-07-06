@@ -11,7 +11,7 @@
   tasks:
     - name: Destroy molecule instance(s)
       os_server:
-        name: "{{ molecule_file | molecule_instance_with_scenario_name(item.name) }}"
+        name: "{{ item.name }}"
         state: absent
       register: server
       with_items: "{{ molecule_yml.platforms }}"

@@ -34,7 +34,7 @@
 
     - name: Create molecule instance(s)
       os_server:
-        name: "{{ molecule_file | molecule_instance_with_scenario_name(item.name) }}"
+        name: "{{ item.name }}"
         image: "{{ item.image }}"
         flavor: "{{ item.flavor }}"
         security_groups: "{{ security_group_name }}"
