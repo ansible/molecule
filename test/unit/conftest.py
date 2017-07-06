@@ -87,6 +87,12 @@ def molecule_platforms_section_data():
             'name': 'instance-2',
             'groups': ['baz', 'foo'],
             'children': ['child2'],
+        },
+        {
+            'name': 'instance-3',
+            'groups': ['baz', 'foo'],
+            'children': ['child3'],
+            'append_scenario': False
         }],
     }
 

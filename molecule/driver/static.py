@@ -83,6 +83,21 @@ class Static(base.Base):
         Molecule automatically appends the scenario name to the instances it is
         testing.  It doesn't seem useful to converge each scenario against the
         same static host.
+        But, if you need to avoid this feature, you can add the append_scenario
+        to False.
+
+    .. code-block:: yaml
+
+        driver:
+          name: static
+          options:
+            login_cmd_template: 'ssh {instance} -F /tmp/ssh-config'
+            ansible_connection_options:
+              connection: ssh
+              ansible_ssh_common_args -F /path/to/ssh-config
+        platforms:
+          - name: static-instance-vagrant
+            append_scenario: False
 
     Provide the files Molecule will preserve upon each subcommand execution.
 

@@ -170,7 +170,7 @@ def test_ansible_connection_options(mocker, ec2_instance):
 
 
 def test_ansible_connection_options_handles_missing_instance_config(
-        mocker, ec2_instance):
+    mocker, ec2_instance):
     m = mocker.patch('molecule.util.safe_load_file')
     m.side_effect = IOError
 
@@ -178,7 +178,7 @@ def test_ansible_connection_options_handles_missing_instance_config(
 
 
 def test_ansible_connection_options_handles_missing_results_key(
-        mocker, ec2_instance):
+    mocker, ec2_instance):
     m = mocker.patch('molecule.util.safe_load_file')
     m.side_effect = StopIteration
 
@@ -208,7 +208,7 @@ def test_ssh_connection_options_property(ec2_instance):
 def test_status(mocker, ec2_instance):
     result = ec2_instance.status()
 
-    assert 2 == len(result)
+    assert 3 == len(result)
 
     assert result[0].instance_name == 'instance-1-default'
     assert result[0].driver_name == 'Ec2'
@@ -223,3 +223,10 @@ def test_status(mocker, ec2_instance):
     assert result[1].scenario_name == 'default'
     assert result[1].created == 'False'
     assert result[1].converged == 'False'
+
+    assert result[2].instance_name == 'instance-3'
+    assert result[2].driver_name == 'Ec2'
+    assert result[2].provisioner_name == 'Ansible'
+    assert result[2].scenario_name == 'default'
+    assert result[2].created == 'False'
+    assert result[2].converged == 'False'
