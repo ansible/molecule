@@ -100,21 +100,6 @@ def _verify_configs(configs):
         util.sysexit_with_message(msg)
 
 
-def _verify_scenario_name(configs, scenario_name):
-    """
-    Verify the specified scenario was found and returns None.
-
-    :param configs: A list containing absolute paths to Molecule config files.
-    :param scenario_name: A string representing the name of the scenario to
-     verify.
-    :return: None
-    """
-    scenario_names = [c.scenario.name for c in configs]
-    if scenario_name not in scenario_names:
-        msg = ("Scenario '{}' not found.  Exiting.").format(scenario_name)
-        util.sysexit_with_message(msg)
-
-
 def get_configs(args, command_args):
     """
     Glob the current directory for Molecule config files, instantiate config
@@ -131,25 +116,6 @@ def get_configs(args, command_args):
             args=args,
             command_args=command_args) for c in glob.glob(MOLECULE_GLOB)
     ]
-
-    scenario_name = command_args.get('scenario_name')
-    if scenario_name:
-        configs = _filter_configs_for_scenario(scenario_name, configs)
-        _verify_scenario_name(configs, scenario_name)
-
     _verify_configs(configs)
 
     return configs
-
-
-def _filter_configs_for_scenario(scenario_name, configs):
-    """
-    Find the config matching the provided scenario name and returns a list.
-
-    :param scenario_name: A string representing the name of the scenario's
-     config to return
-    :param configs: A list containing Molecule config instances.
-    :return: list
-    """
-
-    return [c for c in configs if c.scenario.name == scenario_name]

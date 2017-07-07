@@ -24,6 +24,7 @@ import click
 import tabulate
 
 from molecule import logger
+from molecule import scenarios
 from molecule import status
 from molecule import util
 from molecule.command import base
@@ -74,12 +75,13 @@ def list(ctx, scenario_name, format):  # pragma: no cover
     args = ctx.obj.get('args')
     command_args = {
         'subcommand': __name__,
-        'scenario_name': scenario_name,
         'format': format,
     }
 
     statuses = []
-    for c in base.get_configs(args, command_args):
+    s = scenarios.Scenarios(
+        base.get_configs(args, command_args), scenario_name)
+    for c in s.all:
         l = List(c)
         statuses.extend(l.execute())
 

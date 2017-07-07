@@ -29,6 +29,7 @@ import click
 import pexpect
 
 from molecule import logger
+from molecule import scenarios
 from molecule import util
 from molecule.command import base
 
@@ -142,8 +143,9 @@ def login(ctx, host, scenario_name):  # pragma: no cover
     command_args = {
         'subcommand': __name__,
         'host': host,
-        'scenario_name': scenario_name,
     }
 
-    for c in base.get_configs(args, command_args):
+    s = scenarios.Scenarios(
+        base.get_configs(args, command_args), scenario_name)
+    for c in s.all:
         Login(c).execute()

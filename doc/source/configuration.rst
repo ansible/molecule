@@ -255,6 +255,12 @@ configuration syntax.
 .. autoclass:: molecule.scenario.Scenario()
    :undoc-members:
 
+Scenarios
+---------
+
+.. autoclass:: molecule.scenarios.Scenarios()
+   :undoc-members:
+
 State
 -----
 

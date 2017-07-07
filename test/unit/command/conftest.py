@@ -89,11 +89,6 @@ def patched_destroy_prune(mocker):
 
 
 @pytest.fixture
-def patched_base_filter_configs_for_scenario(mocker):
-    return mocker.patch('molecule.command.base._filter_configs_for_scenario')
-
-
-@pytest.fixture
 def patched_write_config(mocker):
     return mocker.patch('molecule.provisioner.ansible.Ansible.write_config')
 

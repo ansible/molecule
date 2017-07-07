@@ -23,6 +23,7 @@ import click
 import molecule.command
 from molecule import config
 from molecule import logger
+from molecule import scenarios
 from molecule.command import base
 
 LOG = logger.get_logger(__name__)
@@ -82,14 +83,15 @@ def test(ctx, scenario_name, driver_name, __all):  # pragma: no cover
     args = ctx.obj.get('args')
     command_args = {
         'subcommand': __name__,
-        'scenario_name': scenario_name,
         'driver_name': driver_name,
     }
 
     if __all:
-        command_args['scenario_name'] = None
+        scenario_name = None
 
-    for c in base.get_configs(args, command_args):
+    s = scenarios.Scenarios(
+        base.get_configs(args, command_args), scenario_name)
+    for c in s.all:
         for task in c.scenario.test_sequence:
             command_module = getattr(molecule.command, task)
             command = getattr(command_module, task.capitalize())

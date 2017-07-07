@@ -21,6 +21,7 @@
 import click
 
 from molecule import logger
+from molecule import scenarios
 from molecule.command import base
 
 LOG = logger.get_logger(__name__)
@@ -69,8 +70,9 @@ def verify(ctx, scenario_name):  # pragma: no cover
 
     command_args = {
         'subcommand': __name__,
-        'scenario_name': scenario_name,
     }
 
-    for c in base.get_configs(args, command_args):
+    s = scenarios.Scenarios(
+        base.get_configs(args, command_args), scenario_name)
+    for c in s.all:
         Verify(c).execute()
