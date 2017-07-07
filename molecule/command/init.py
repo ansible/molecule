@@ -169,6 +169,7 @@ def init():
     help='Name of dependency to initialize. (galaxy)')
 @click.option(
     '--driver-name',
+    '-d',
     type=click.Choice(config.molecule_drivers()),
     default='docker',
     help='Name of driver to initialize. (docker)')
@@ -182,7 +183,8 @@ def init():
     type=click.Choice(['ansible']),
     default='ansible',
     help='Name of provisioner to initialize. (ansible)')
-@click.option('--role-name', required=True, help='Name of the role to create.')
+@click.option(
+    '--role-name', '-r', required=True, help='Name of the role to create.')
 @click.option(
     '--verifier-name',
     type=click.Choice(config.molecule_verifiers()),
@@ -216,6 +218,7 @@ def role(dependency_name, driver_name, lint_name, provisioner_name, role_name,
     help='Name of dependency to initialize. (galaxy)')
 @click.option(
     '--driver-name',
+    '-d',
     type=click.Choice(config.molecule_drivers()),
     default='docker',
     help='Name of driver to initialize. (docker)')
@@ -229,9 +232,13 @@ def role(dependency_name, driver_name, lint_name, provisioner_name, role_name,
     type=click.Choice(['ansible']),
     default='ansible',
     help='Name of provisioner to initialize. (ansible)')
-@click.option('--role-name', required=True, help='Name of the role to create.')
 @click.option(
-    '--scenario-name', required=True, help='Name of the scenario to create.')
+    '--role-name', '-r', required=True, help='Name of the role to create.')
+@click.option(
+    '--scenario-name',
+    '-s',
+    required=True,
+    help='Name of the scenario to create.')
 @click.option(
     '--verifier-name',
     type=click.Choice(config.molecule_verifiers()),
@@ -268,7 +275,10 @@ def scenario(dependency_name, driver_name, lint_name, provisioner_name,
     help=('Do not prompt for parameters and only use cookiecutter.json for '
           'content. (false)'))
 @click.option(
-    '--role-name', default='role_name', help='Name of the role to create.')
+    '--role-name',
+    '-r',
+    default='role_name',
+    help='Name of the role to create.')
 def template(url, no_input, role_name):  # pragma: no cover
     """ Initialize a new role from a Cookiecutter URL. """
     command_args = {

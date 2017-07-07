@@ -130,9 +130,10 @@ class Login(base.Base):
 
 @click.command()
 @click.pass_context
-@click.option('--host', help='Host to access.')
+@click.option('--host', '-h', help='Host to access.')
 @click.option(
     '--scenario-name',
+    '-s',
     default='default',
     help='Name of the scenario to target. (default)')
 def login(ctx, host, scenario_name):  # pragma: no cover

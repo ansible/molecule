@@ -72,6 +72,7 @@ class Destruct(base.Base):
 @click.pass_context
 @click.option(
     '--scenario-name',
+    '-s',
     default='default',
     help='Name of the scenario to target. (default)')
 def destruct(ctx, scenario_name):  # pragma: no cover

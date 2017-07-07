@@ -60,6 +60,7 @@ class Dependency(base.Base):
 @click.pass_context
 @click.option(
     '--scenario-name',
+    '-s',
     default='default',
     help='Name of the scenario to target. (default)')
 def dependency(ctx, scenario_name):  # pragma: no cover

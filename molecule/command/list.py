@@ -63,7 +63,7 @@ class List(base.Base):
 
 @click.command()
 @click.pass_context
-@click.option('--scenario-name', help='Name of the scenario to target.')
+@click.option('--scenario-name', '-s', help='Name of the scenario to target.')
 @click.option(
     '--format',
     type=click.Choice(['simple', 'plain', 'yaml']),

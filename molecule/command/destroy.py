@@ -82,10 +82,12 @@ class Destroy(base.Base):
 @click.pass_context
 @click.option(
     '--scenario-name',
+    '-s',
     default='default',
     help='Name of the scenario to target. (default)')
 @click.option(
     '--driver-name',
+    '-d',
     type=click.Choice(config.molecule_drivers()),
     help='Name of driver to use. (docker)')
 @click.option(
