@@ -7,6 +7,5 @@
     "provisioner_lint_name": "ansible-lint",
     "scenario_name": "OVERRIDEN",
     "verifier_name": "OVERRIDEN",
-    "verifier_lint_name": "flake8",
-    "scenario_name": "OVERRIDEN"
+    "verifier_lint_name": "flake8"
 }
