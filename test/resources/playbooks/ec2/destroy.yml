@@ -7,12 +7,12 @@
   vars:
     molecule_file: "{{ lookup('env', 'MOLECULE_FILE') }}"
     molecule_instance_config: "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}"
-    molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
+    molecule_yml: "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
   tasks:
     - block:
         - name: Populate instance config
           set_fact:
-            instance_conf: "{{ lookup('file', molecule_instance_config) | from_yaml }}"
+            instance_conf: "{{ lookup('file', molecule_instance_config) | molecule_from_yaml }}"
             skip_instances: False
       rescue:
         - name: Populate instance config when file missing

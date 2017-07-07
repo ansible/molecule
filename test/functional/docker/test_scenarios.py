@@ -185,7 +185,10 @@ def test_interpolation(scenario_to_test, with_scenario, scenario_name):
         'all': True,
     }
     env = os.environ
-    env.update({'DRIVER_NAME': 'docker'})
+    env.update({
+        'DRIVER_NAME': 'docker',
+        'INSTANCE_NAME': 'instance',
+    })
 
     cmd = sh.molecule.bake('test', **options)
     pytest.helpers.run_command(cmd, env=env)

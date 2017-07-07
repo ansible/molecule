@@ -18,8 +18,18 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-from molecule import config
+import os
+
+from molecule import interpolation
 from molecule import util
+
+
+def from_yaml(data):
+    i = interpolation.Interpolator(interpolation.TemplateWithDefaults,
+                                   os.environ)
+    interpolated_data = i.interpolate(data)
+
+    return util.safe_load(interpolated_data)
 
 
 def to_yaml(data):
@@ -35,6 +45,7 @@ class FilterModule(object):
 
     def filters(self):
         return {
+            'molecule_from_yaml': from_yaml,
             'molecule_to_yaml': to_yaml,
             'molecule_header': header,
         }
