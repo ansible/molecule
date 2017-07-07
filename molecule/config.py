@@ -62,8 +62,8 @@ class Config(object):
     directory.  Molecule performs most functions within this directory.
 
     The :class:`.Config` object has instantiated Dependency_, Driver_,
-    :ref:`root_lint`, Platforms_, Provisioner_, Verifier_, :class:`.Scenario`,
-    and State_ references.
+    :ref:`root_lint`, Platforms_, Provisioner_, Verifier_,
+    :ref:`root_scenario`, and State_ references.
     """
 
     def __init__(self, molecule_file, args={}, command_args={}):

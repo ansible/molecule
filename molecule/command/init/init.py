@@ -18,22 +18,21 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-# NOTE(retr0h): Importing into the ``molecule.command`` namespace, to prevent
-# collisions (e.g. ``list``).  The CLI usage may conflict with reserved words
-# or builtins.
+import click
 
-from molecule.command import base  # noqa
-from molecule.command import check  # noqa
-from molecule.command import converge  # noqa
-from molecule.command import create  # noqa
-from molecule.command import dependency  # noqa
-from molecule.command import destroy  # noqa
-from molecule.command import destruct  # noqa
-from molecule.command import idempotence  # noqa
-from molecule.command import lint  # noqa
-from molecule.command import list  # noqa
-from molecule.command import login  # noqa
-from molecule.command import syntax  # noqa
-from molecule.command import test  # noqa
-from molecule.command import verify  # noqa
-from molecule.command.init import init  # noqa
+from molecule import logger
+from molecule.command.init import role
+from molecule.command.init import scenario
+from molecule.command.init import template
+
+LOG = logger.get_logger(__name__)
+
+
+@click.group()
+def init():  # pragma: no cover
+    """ Initialize a new role or scenario. """
+
+
+init.add_command(role.role)
+init.add_command(scenario.scenario)
+init.add_command(template.template)

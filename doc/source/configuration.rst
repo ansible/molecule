@@ -244,6 +244,8 @@ Molecule handles provisioner linting by invoking configurable linters.
 .. autoclass:: molecule.provisioner.lint.ansible_lint.AnsibleLint()
    :undoc-members:
 
+.. _root_scenario:
+
 Scenario
 --------
 

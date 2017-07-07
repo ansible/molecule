@@ -176,11 +176,14 @@ Idempotence
 Init
 ^^^^
 
-.. automethod:: molecule.command.init._init_new_role()
+.. autoclass:: molecule.command.init.role.Role()
+   :undoc-members:
 
-.. automethod:: molecule.command.init._init_new_scenario()
+.. autoclass:: molecule.command.init.scenario.Scenario()
+   :undoc-members:
 
-.. automethod:: molecule.command.init._init_template()
+.. autoclass:: molecule.command.init.template.Template()
+   :undoc-members:
 
 Lint
 ^^^^
