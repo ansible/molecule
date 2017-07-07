@@ -85,10 +85,11 @@ def _init_new_role(command_args):
     scenario_base_directory = os.path.join(role_directory, role_name)
     templates = [
         'scenario/driver/{driver_name}'.format(**command_args),
-        'scenario/verifier/{verifier_name}'.format(**command_args)
+        'scenario/verifier/{verifier_name}'.format(**command_args),
     ]
     for template in templates:
         _process_templates(template, command_args, scenario_base_directory)
+    _process_templates('molecule', command_args, scenario_base_directory)
 
     role_directory = os.path.join(role_directory, role_name)
     msg = 'Initialized role in {} successfully.'.format(role_directory)
@@ -119,10 +120,11 @@ def _init_new_scenario(command_args):
     scenario_base_directory = os.path.join(role_directory, role_name)
     templates = [
         'scenario/driver/{driver_name}'.format(**command_args),
-        'scenario/verifier/{verifier_name}'.format(**command_args)
+        'scenario/verifier/{verifier_name}'.format(**command_args),
     ]
     for template in templates:
         _process_templates(template, command_args, scenario_base_directory)
+    _process_templates('molecule', command_args, scenario_base_directory)
 
     role_directory = os.path.join(role_directory, role_name)
     msg = 'Initialized scenario in {} successfully.'.format(scenario_directory)

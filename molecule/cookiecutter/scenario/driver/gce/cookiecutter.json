@@ -1,13 +1,5 @@
 {
     "molecule_directory": "molecule",
-
-    "dependency_name": "default",
-    "driver_name": "gce",
-    "lint_name": "yamllint",
-    "provisioner_name": "ansible",
-    "provisioner_lint_name": "ansible-lint",
     "role_name": "OVERRIDEN",
-    "scenario_name": "default",
-    "verifier_name": "testinfra",
-    "verifier_lint_name": "flake8"
+    "scenario_name": "OVERRIDEN"
 }
