@@ -1,0 +1,9 @@
+---
+- name: Create molecule instance(s)
+  docker_container:
+    name: delegated-instance-docker
+    hostname: delegated-instance-docker
+    image: molecule_local/centos:latest
+    recreate: False
+    log_driver: syslog
+    command: sleep infinity

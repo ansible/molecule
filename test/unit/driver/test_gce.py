@@ -93,6 +93,10 @@ def test_default_safe_files_property(gce_instance):
     assert x == gce_instance.default_safe_files
 
 
+def test_delegated(gce_instance):
+    assert not gce_instance.delegated
+
+
 def test_default_ssh_connection_options_property(gce_instance):
     x = [
         '-o UserKnownHostsFile=/dev/null',

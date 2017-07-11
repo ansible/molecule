@@ -71,18 +71,18 @@ Run all functional tests targeting the docker driver.
 
     $ tox -t functional -- -v -k docker
 
-Static
-^^^^^^
+Delegated
+^^^^^^^^^
 
-Run all the functional static tests.
+Run all the functional delegated tests.
 
 .. code-block:: bash
 
-    $ ansible-playbook -i test/resources/playbooks/static/inventory \
-      test/resources/playbooks/static/create.yml
-    $ tox -t functional -- --static -v -k static
-    $ ansible-playbook -i test/resources/playbooks/static/inventory \
-      test/resources/playbooks/static/destroy.yml
+    $ ansible-playbook -i test/resources/playbooks/delegated/inventory \
+      test/resources/playbooks/delegated/create.yml
+    $ tox -t functional -- --delegated -v -k delegated
+    $ ansible-playbook -i test/resources/playbooks/delegated/inventory \
+      test/resources/playbooks/delegated/destroy.yml
 
 Formatting
 ----------

@@ -1,5 +1,0 @@
----
-- name: Destroy molecule instance(s)
-  docker_container:
-    name: static-instance-docker
-    state: absent

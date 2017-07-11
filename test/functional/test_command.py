@@ -33,7 +33,7 @@ def scenario_name(request):
     try:
         return request.param
     except AttributeError:
-        return False
+        return None
 
 
 @pytest.fixture
@@ -50,10 +50,10 @@ def driver_name(request):
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
-        ('driver/static', 'static', 'docker'),
-        ('driver/static', 'static', 'ec2'),
-        ('driver/static', 'static', 'openstack'),
-        #  ('driver/static', 'static', 'vagrant'),
+        ('driver/delegated', 'delegated', 'docker'),
+        ('driver/delegated', 'delegated', 'ec2'),
+        ('driver/delegated', 'delegated', 'openstack'),
+        #  ('driver/delegated', 'delegated', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
     indirect=[
@@ -76,11 +76,11 @@ def test_command_check(scenario_to_test, with_scenario, scenario_name):
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
-        ('driver/static', 'static', 'docker'),
-        ('driver/static', 'static', 'ec2'),
-        ('driver/static', 'static', 'gce'),
-        ('driver/static', 'static', 'openstack'),
-        #  ('driver/static', 'static', 'vagrant'),
+        ('driver/delegated', 'delegated', 'docker'),
+        ('driver/delegated', 'delegated', 'ec2'),
+        ('driver/delegated', 'delegated', 'gce'),
+        ('driver/delegated', 'delegated', 'openstack'),
+        #  ('driver/delegated', 'delegated', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
     indirect=[
@@ -103,11 +103,11 @@ def test_command_converge(scenario_to_test, with_scenario, scenario_name):
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
-        ('driver/static', 'static', 'docker'),
-        ('driver/static', 'static', 'ec2'),
-        ('driver/static', 'static', 'gce'),
-        ('driver/static', 'static', 'openstack'),
-        #  ('driver/static', 'static', 'vagrant'),
+        ('driver/delegated', 'delegated', 'docker'),
+        ('driver/delegated', 'delegated', 'ec2'),
+        ('driver/delegated', 'delegated', 'gce'),
+        ('driver/delegated', 'delegated', 'openstack'),
+        #  ('driver/delegated', 'delegated', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
     indirect=[
@@ -182,11 +182,11 @@ def test_command_dependency_gilt(scenario_to_test, with_scenario,
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
-        ('driver/static', 'static', 'docker'),
-        ('driver/static', 'static', 'ec2'),
-        ('driver/static', 'static', 'gce'),
-        ('driver/static', 'static', 'openstack'),
-        #  ('driver/static', 'static', 'vagrant'),
+        ('driver/delegated', 'delegated', 'docker'),
+        ('driver/delegated', 'delegated', 'ec2'),
+        ('driver/delegated', 'delegated', 'gce'),
+        ('driver/delegated', 'delegated', 'openstack'),
+        #  ('driver/delegated', 'delegated', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
     indirect=[
@@ -209,11 +209,11 @@ def test_command_destroy(scenario_to_test, with_scenario, scenario_name):
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
-        ('driver/static', 'static', 'docker'),
-        ('driver/static', 'static', 'ec2'),
-        ('driver/static', 'static', 'gce'),
-        ('driver/static', 'static', 'openstack'),
-        #  ('driver/static', 'static', 'vagrant'),
+        ('driver/delegated', 'delegated', 'docker'),
+        ('driver/delegated', 'delegated', 'ec2'),
+        ('driver/delegated', 'delegated', 'gce'),
+        ('driver/delegated', 'delegated', 'openstack'),
+        #  ('driver/delegated', 'delegated', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
     indirect=[
@@ -236,11 +236,11 @@ def test_command_destruct(scenario_to_test, with_scenario, scenario_name):
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
-        ('driver/static', 'static', 'docker'),
-        ('driver/static', 'static', 'ec2'),
-        ('driver/static', 'static', 'gce'),
-        ('driver/static', 'static', 'openstack'),
-        #  ('driver/static', 'static', 'vagrant'),
+        ('driver/delegated', 'delegated', 'docker'),
+        ('driver/delegated', 'delegated', 'ec2'),
+        ('driver/delegated', 'delegated', 'gce'),
+        ('driver/delegated', 'delegated', 'openstack'),
+        #  ('driver/delegated', 'delegated', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
     indirect=[
@@ -295,11 +295,11 @@ def test_command_init_scenario(temp_dir, driver_name, skip_test):
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
-        ('driver/static', 'static', 'docker'),
-        ('driver/static', 'static', 'ec2'),
-        ('driver/static', 'static', 'gce'),
-        ('driver/static', 'static', 'openstack'),
-        #  ('driver/static', 'static', 'vagrant'),
+        ('driver/delegated', 'delegated', 'docker'),
+        ('driver/delegated', 'delegated', 'ec2'),
+        ('driver/delegated', 'delegated', 'gce'),
+        ('driver/delegated', 'delegated', 'openstack'),
+        #  ('driver/delegated', 'delegated', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
     indirect=[
@@ -358,14 +358,14 @@ instance         Openstack      Ansible             default          False      
 instance-1       Openstack      Ansible             multi-node       False      False
 instance-2       Openstack      Ansible             multi-node       False      False
 """.strip()),  # noqa
-        ('driver/static', 'static', """
-Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    Converged
----------------  -------------  ------------------  ---------------  ---------  -----------
-static-instance  Static         Ansible             docker           False      False
-static-instance  Static         Ansible             ec2              False      False
-static-instance  Static         Ansible             gce              False      False
-static-instance  Static         Ansible             openstack        False      False
-static-instance  Static         Ansible             vagrant          False      False
+        ('driver/delegated', 'delegated', """
+Instance Name                 Driver Name    Provisioner Name    Scenario Name    Created    Converged
+----------------------------  -------------  ------------------  ---------------  ---------  -----------
+delegated-instance-docker     Delegated      Ansible             docker           False      True
+delegated-instance-ec2        Delegated      Ansible             ec2              False      True
+delegated-instance-gce        Delegated      Ansible             gce              False      True
+delegated-instance-openstack  Delegated      Ansible             openstack        False      True
+delegated-instance-vagrant    Delegated      Ansible             vagrant          False      False
 """.strip()),  # noqa
         ('driver/vagrant', 'vagrant', """
 Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    Converged
@@ -415,12 +415,12 @@ instance    Openstack  Ansible  default     False  False
 instance-1  Openstack  Ansible  multi-node  False  False
 instance-2  Openstack  Ansible  multi-node  False  False
 """.strip()),
-        ('driver/static', 'static', """
-static-instance-docker     Static  Ansible  docker     False  True
-static-instance-ec2        Static  Ansible  ec2        False  True
-static-instance-gce        Static  Ansible  gce        False  True
-static-instance-openstack  Static  Ansible  openstack  False  True
-static-instance-vagrant    Static  Ansible  vagrant    False  False
+        ('driver/delegated', 'delegated', """
+delegated-instance-docker     Delegated  Ansible  docker     False  True
+delegated-instance-ec2        Delegated  Ansible  ec2        False  True
+delegated-instance-gce        Delegated  Ansible  gce        False  True
+delegated-instance-openstack  Delegated  Ansible  openstack  False  True
+delegated-instance-vagrant    Delegated  Ansible  vagrant    False  False
 """.strip()),
         ('driver/vagrant', 'vagrant', """
 instance    Vagrant  Ansible  default     False  False
@@ -486,25 +486,25 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario,
             'instance-2',
             '.*instance-2.*',
         ]], 'multi-node'),
-        ('driver/static', 'static', [[
-            'static-instance-docker',
-            '.*static-instance-docker.*',
+        ('driver/delegated', 'delegated', [[
+            'delegated-instance-docker',
+            '.*delegated-instance-docker.*',
         ]], 'docker'),
-        ('driver/static', 'static', [[
-            'static-instance-ec2',
+        ('driver/delegated', 'delegated', [[
+            'delegated-instance-ec2',
             '.*ip-.*',
         ]], 'ec2'),
-        ('driver/static', 'static', [[
-            'static-instance-gce',
-            '.*static-instance-gce.*',
+        ('driver/delegated', 'delegated', [[
+            'delegated-instance-gce',
+            '.*delegated-instance-gce.*',
         ]], 'gce'),
-        ('driver/static', 'static', [[
-            'static-instance-openstack',
-            '.*static-instance-openstack.*',
+        ('driver/delegated', 'delegated', [[
+            'delegated-instance-openstack',
+            '.*delegated-instance-openstack.*',
         ]], 'openstack'),
-        #  ('driver/static', 'static', [[
-        #      'static-instance-vagrant',
-        #      '.*static-instance-vagrant.*',
+        #  ('driver/delegated', 'delegated', [[
+        #      'delegated-instance-vagrant',
+        #      '.*delegated-instance-vagrant.*',
         #  ]], 'vagrant'),
         ('driver/vagrant', 'vagrant', [[
             'instance-1',
@@ -533,11 +533,11 @@ def test_command_login(scenario_to_test, with_scenario, login_args,
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
-        ('driver/static', 'static', 'docker'),
-        ('driver/static', 'static', 'ec2'),
-        ('driver/static', 'static', 'gce'),
-        ('driver/static', 'static', 'openstack'),
-        #  ('driver/static', 'static', 'vagrant'),
+        ('driver/delegated', 'delegated', 'docker'),
+        ('driver/delegated', 'delegated', 'ec2'),
+        ('driver/delegated', 'delegated', 'gce'),
+        ('driver/delegated', 'delegated', 'openstack'),
+        #  ('driver/delegated', 'delegated', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
     indirect=[
@@ -554,26 +554,27 @@ def test_command_syntax(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
-        ('driver/docker', 'docker', False),
-        ('driver/ec2', 'ec2', False),
-        ('driver/gce', 'gce', False),
-        ('driver/lxc', 'lxc', False),
-        ('driver/lxd', 'lxd', False),
-        ('driver/openstack', 'openstack', False),
-        ('driver/static', 'static', 'docker'),
-        ('driver/static', 'static', 'ec2'),
-        ('driver/static', 'static', 'gce'),
-        ('driver/static', 'static', 'openstack'),
-        #  ('driver/static', 'static', 'vagrant'),
-        ('driver/vagrant', 'vagrant', False),
+        ('driver/docker', 'docker', None),
+        ('driver/ec2', 'ec2', None),
+        ('driver/gce', 'gce', None),
+        ('driver/lxc', 'lxc', None),
+        ('driver/lxd', 'lxd', None),
+        ('driver/openstack', 'openstack', None),
+        ('driver/delegated', 'delegated', 'docker'),
+        ('driver/delegated', 'delegated', 'ec2'),
+        ('driver/delegated', 'delegated', 'gce'),
+        ('driver/delegated', 'delegated', 'openstack'),
+        #  ('driver/delegated', 'delegated', 'vagrant'),
+        ('driver/vagrant', 'vagrant', None),
     ],
     indirect=[
         'scenario_to_test',
         'driver_name',
         'scenario_name',
     ])
-def test_command_test(scenario_to_test, with_scenario, scenario_name):
-    pytest.helpers.test(scenario_name)
+def test_command_test(scenario_to_test, with_scenario, scenario_name,
+                      driver_name):
+    pytest.helpers.test(driver_name, scenario_name)
 
 
 @pytest.mark.parametrize(
@@ -584,11 +585,11 @@ def test_command_test(scenario_to_test, with_scenario, scenario_name):
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
-        ('driver/static', 'static', 'docker'),
-        ('driver/static', 'static', 'ec2'),
-        ('driver/static', 'static', 'gce'),
-        ('driver/static', 'static', 'openstack'),
-        #  ('driver/static', 'static', 'vagrant'),
+        ('driver/delegated', 'delegated', 'docker'),
+        ('driver/delegated', 'delegated', 'ec2'),
+        ('driver/delegated', 'delegated', 'gce'),
+        ('driver/delegated', 'delegated', 'openstack'),
+        #  ('driver/delegated', 'delegated', 'vagrant'),
         ('driver/vagrant', 'vagrant', 'default'),
     ],
     indirect=[

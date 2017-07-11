@@ -1,0 +1,13 @@
+---
+- name: Destroy molecule instance(s)
+  os_server:
+    name: delegated-instance-openstack
+    state: absent
+
+- name: Cleanup temporary files file
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ openstack.key_path }}"
+    - "{{ openstack.ssh_config_path }}"

@@ -93,6 +93,10 @@ def test_default_safe_files_property(ec2_instance):
     assert x == ec2_instance.default_safe_files
 
 
+def test_delegated(ec2_instance):
+    assert not ec2_instance.delegated
+
+
 def test_default_ssh_connection_options_property(ec2_instance):
     x = [
         '-o UserKnownHostsFile=/dev/null',

@@ -41,7 +41,7 @@ Documentation
 * `Upcoming Release`_
 
 .. _`Current Release`: http://molecule.readthedocs.io/en/v1/
-.. _`Upcoming Release`: http://molecule.readthedocs.io/en/v2/
+.. _`Upcoming Release`: http://molecule.readthedocs.io/
 
 Ansible Support
 ===============
@@ -56,7 +56,7 @@ License
 
 `MIT`_
 
-.. _`MIT`: https://github.com/metacloud/molecule/blob/v2/LICENSE
+.. _`MIT`: https://github.com/metacloud/molecule/blob/master/LICENSE
 
 The logo is licensed under the `Creative Commons NoDerivatives 4.0 License`_.
 If you have some other use in mind, contact us.

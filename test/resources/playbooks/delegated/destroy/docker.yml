@@ -1,0 +1,5 @@
+---
+- name: Destroy molecule instance(s)
+  docker_container:
+    name: delegated-instance-docker
+    state: absent

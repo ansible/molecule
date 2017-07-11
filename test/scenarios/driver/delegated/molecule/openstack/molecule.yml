@@ -1,0 +1,28 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: delegated
+  options:
+    login_cmd_template: 'ssh {instance} -F /tmp/ssh-config-openstack'
+    ansible_connection_options:
+      connection: ssh
+      ansible_ssh_common_args: -F /tmp/ssh-config-openstack
+lint:
+  name: yamllint
+  options:
+    config-file: ../../../resources/.yamllint
+platforms:
+  - name: delegated-instance-openstack
+provisioner:
+  name: ansible
+  env:
+    ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
+  lint:
+    name: ansible-lint
+scenario:
+  name: openstack
+verifier:
+  name: testinfra
+  lint:
+    name: flake8

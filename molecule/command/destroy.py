@@ -70,8 +70,9 @@ class Destroy(base.Base):
 
         self.prune()
 
-        if self._config.driver.name == 'static':
-            LOG.warn('Skipping, instances managed statically.')
+        if self._config.driver.delegated:
+            msg = 'Skipping, instances are delegated.'
+            LOG.warn(msg)
             return
 
         self._config.provisioner.destroy()

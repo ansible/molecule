@@ -28,13 +28,13 @@ from molecule import scenario
 from molecule import state
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
+from molecule.driver import delegated
 from molecule.driver import dockr
 from molecule.driver import ec2
 from molecule.driver import gce
 from molecule.driver import lxc
 from molecule.driver import lxd
 from molecule.driver import openstack
-from molecule.driver import static
 from molecule.driver import vagrant
 from molecule.lint import yamllint
 from molecule.provisioner import ansible
@@ -115,6 +115,14 @@ def test_dependency_property_raises(molecule_dependency_invalid_section_data,
 
     msg = "Invalid dependency named 'invalid' configured."
     patched_logger_critical.assert_called_once_with(msg)
+
+
+def test_driver_property_is_delegated(molecule_driver_delegated_section_data,
+                                      config_instance):
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_driver_delegated_section_data)
+
+    assert isinstance(config_instance.driver, delegated.Delegated)
 
 
 def test_driver_property(config_instance):
@@ -206,14 +214,6 @@ def test_driver_property_is_openstack(molecule_driver_openstack_section_data,
     assert isinstance(config_instance.driver, openstack.Openstack)
 
 
-def test_driver_property_is_static(molecule_driver_static_section_data,
-                                   config_instance):
-    config_instance.merge_dicts(config_instance.config,
-                                molecule_driver_static_section_data)
-
-    assert isinstance(config_instance.driver, static.Static)
-
-
 @pytest.fixture
 def molecule_driver_vagrant_section_data():
     return {
@@ -255,13 +255,13 @@ def test_driver_property_raises(molecule_driver_invalid_section_data,
 
 def test_drivers_property(config_instance):
     x = [
+        'delegated',
         'docker',
         'ec2',
         'gce',
         'lxc',
         'lxd',
         'openstack',
-        'static',
         'vagrant',
     ]
 
@@ -458,13 +458,13 @@ def test_molecule_file():
 
 def test_molecule_drivers():
     x = [
+        'delegated',
         'docker',
         'ec2',
         'gce',
         'lxc',
         'lxd',
         'openstack',
-        'static',
         'vagrant',
     ]
 

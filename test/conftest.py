@@ -83,4 +83,4 @@ def molecule_ephemeral_directory():
 
 def pytest_addoption(parser):
     parser.addoption(
-        '--static', action='store_true', help='Run static driver tests.')
+        '--delegated', action='store_true', help='Run delegated driver tests.')

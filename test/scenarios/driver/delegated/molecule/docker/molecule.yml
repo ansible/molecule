@@ -1,0 +1,27 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: delegated
+  options:
+    login_cmd_template: 'docker exec -ti {instance} bash'
+    ansible_connection_options:
+      ansible_connection: docker
+lint:
+  name: yamllint
+  options:
+    config-file: ../../../resources/.yamllint
+platforms:
+  - name: delegated-instance-docker
+provisioner:
+  name: ansible
+  env:
+    ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
+  lint:
+    name: ansible-lint
+scenario:
+  name: docker
+verifier:
+  name: testinfra
+  lint:
+    name: flake8

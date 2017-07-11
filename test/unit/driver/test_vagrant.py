@@ -105,6 +105,10 @@ def test_default_safe_files_property(vagrant_instance):
     assert x == vagrant_instance.default_safe_files
 
 
+def test_delegated(vagrant_instance):
+    assert not vagrant_instance.delegated
+
+
 def test_default_ssh_connection_options_property(vagrant_instance):
     x = [
         '-o UserKnownHostsFile=/dev/null',

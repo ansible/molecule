@@ -13,7 +13,8 @@ Important Changes
 * Ansible playbooks to manage instances.
 * Vagrant is managed through a custom Ansible module bundled with Molecule.
 * Addition of `Scenarios`_.
-* Addition of a `Static Driver`_ to test instances managed outside of Molecule.
+* Addition of a `Delegated Driver`_ to test instances managed outside of
+  Molecule.
 * Promoted `Goss Verifier`_ to a supported verifier.
 * Added `GCE Driver`_, `EC2 Driver`_, `LXC Driver`_, `LXD Driver`_ , and
   `OpenStack Driver`_ native Molecule drivers.
@@ -35,16 +36,16 @@ Breaking Changes
   `ansible-playbook` command.
 * Roles are linted with `Yamllint`_ vs v1's custom linter.
 
-.. _`GCE Driver`: http://molecule.readthedocs.io/en/v2/configuration.html#gce
-.. _`EC2 Driver`: http://molecule.readthedocs.io/en/v2/configuration.html#ec2
-.. _`Goss Verifier`: http://molecule.readthedocs.io/en/v2/configuration.html#goss
-.. _`LXC Driver`: http://molecule.readthedocs.io/en/v2/configuration.html#lxc
-.. _`LXD Driver`: http://molecule.readthedocs.io/en/v2/configuration.html#lxd
-.. _`OpenStack Driver`: http://molecule.readthedocs.io/en/v2/configuration.html#openstack
-.. _`Porting Guide`: http://molecule.readthedocs.io/en/v2/porting.html
+.. _`GCE Driver`: http://molecule.readthedocs.io/en/latest/configuration.html#gce
+.. _`EC2 Driver`: http://molecule.readthedocs.io/en/latest/configuration.html#ec2
+.. _`Goss Verifier`: http://molecule.readthedocs.io/en/latest/configuration.html#goss
+.. _`LXC Driver`: http://molecule.readthedocs.io/en/latest/configuration.html#lxc
+.. _`LXD Driver`: http://molecule.readthedocs.io/en/latest/configuration.html#lxd
+.. _`OpenStack Driver`: http://molecule.readthedocs.io/en/latest/configuration.html#openstack
+.. _`Porting Guide`: http://molecule.readthedocs.io/en/latest/porting.html
 .. _`Semantic Versioning`: http://semver.org
-.. _`Scenarios`: http://molecule.readthedocs.io/en/v2/configuration.html#scenario
-.. _`Static Driver`: http://molecule.readthedocs.io/en/v2/configuration.html#static
+.. _`Scenarios`: http://molecule.readthedocs.io/en/latest/configuration.html#scenario
+.. _`Delegated Driver`: http://molecule.readthedocs.io/en/latest/configuration.html#delegated
 .. _`Yamllint`: https://github.com/adrienverge/yamllint
 
 1.25

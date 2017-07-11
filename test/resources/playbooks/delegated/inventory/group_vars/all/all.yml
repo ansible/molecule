@@ -1,0 +1,26 @@
+---
+base_dir: /tmp
+
+ec2:
+  name: delegated-instance-ec2
+  key_name: molecule
+  key_path: "{{ base_dir }}/ssh-key-ec2"
+  ssh_config_path: "{{ base_dir }}/ssh-config-ec2"
+  ssh_user: ubuntu
+
+gce:
+  name: delegated-instance-gce
+  zone: us-west1-a
+  key_path: "{{ lookup('env', 'HOME') }}/.ssh/google_compute_engine"
+  ssh_config_path: "{{ base_dir }}/ssh-config-gce"
+  ssh_user: "{{ lookup('env', 'USER') }}"
+
+openstack:
+  name: delegated-instance-openstack
+  key_name: molecule
+  key_path: "{{ base_dir }}/ssh-key-openstack"
+  ssh_config_path: "{{ base_dir }}/ssh-config-openstack"
+  ssh_user: cloud-user
+
+openstack_key_path: "{{ base_dir }}/ssh-key-openstack"
+openstack_ssh_config_path: "{{ base_dir }}/ssh-config-openstack"

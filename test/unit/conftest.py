@@ -59,10 +59,10 @@ def molecule_driver_section_data():
 
 
 @pytest.fixture
-def molecule_driver_static_section_data():
+def molecule_driver_delegated_section_data():
     return {
         'driver': {
-            'name': 'static'
+            'name': 'delegated'
         },
     }
 

@@ -64,8 +64,8 @@ def skip_test(request, driver_name):
         pytest.skip("Skipped '{}' not supported".format(driver_name))
     elif (driver_name == 'vagrant' and not supports_vagrant_virtualbox()):
         pytest.skip("Skipped '{}' not supported".format(driver_name))
-    elif driver_name == 'static':
-        if not pytest.config.getoption('--static'):
+    elif driver_name == 'delegated':
+        if not pytest.config.getoption('--delegated'):
             pytest.skip("Ignoring '{}' tests for now".format(driver_name))
 
 
@@ -186,11 +186,17 @@ def login(login_args, scenario_name='default'):
 
 
 @pytest.helpers.register
-def test(scenario_name='default'):
+def test(driver_name, scenario_name='default'):
     options = {
         'scenario_name': scenario_name,
         'all': True,
     }
+
+    if driver_name == 'delegated':
+        options = {
+            'scenario_name': scenario_name,
+        }
+
     cmd = sh.molecule.bake('test', **options)
     run_command(cmd)
 

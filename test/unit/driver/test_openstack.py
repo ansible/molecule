@@ -94,6 +94,10 @@ def test_default_safe_files_property(openstack_instance):
     assert x == openstack_instance.default_safe_files
 
 
+def test_delegated(openstack_instance):
+    assert not openstack_instance.delegated
+
+
 def test_default_ssh_connection_options_property(openstack_instance):
     x = [
         '-o UserKnownHostsFile=/dev/null',

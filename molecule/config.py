@@ -30,13 +30,13 @@ from molecule import state
 from molecule import util
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
+from molecule.driver import delegated
 from molecule.driver import dockr
 from molecule.driver import ec2
 from molecule.driver import gce
 from molecule.driver import lxc
 from molecule.driver import lxd
 from molecule.driver import openstack
-from molecule.driver import static
 from molecule.driver import vagrant
 from molecule.lint import yamllint
 from molecule.model import schema
@@ -113,7 +113,9 @@ class Config(object):
         driver_name = self._get_driver_name()
         driver = None
 
-        if driver_name == 'docker':
+        if driver_name == 'delegated':
+            driver = delegated.Delegated(self)
+        elif driver_name == 'docker':
             driver = dockr.Dockr(self)
         elif driver_name == 'ec2':
             driver = ec2.Ec2(self)
@@ -125,8 +127,6 @@ class Config(object):
             driver = lxd.Lxd(self)
         elif driver_name == 'openstack':
             driver = openstack.Openstack(self)
-        elif driver_name == 'static':
-            driver = static.Static(self)
         elif driver_name == 'vagrant':
             driver = vagrant.Vagrant(self)
         else:
@@ -363,13 +363,13 @@ def molecule_file(path):
 
 def molecule_drivers():
     return [
+        delegated.Delegated(None).name,
         dockr.Dockr(None).name,
         ec2.Ec2(None).name,
         gce.Gce(None).name,
         lxc.Lxc(None).name,
         lxd.Lxd(None).name,
         openstack.Openstack(None).name,
-        static.Static(None).name,
         vagrant.Vagrant(None).name,
     ]
 

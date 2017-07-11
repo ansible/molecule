@@ -42,14 +42,14 @@ def test_execute(mocker, patched_create_setup, patched_logger_info,
 
 
 def test_execute_skips_when_manual_driver(
-        patched_create_setup, molecule_driver_static_section_data,
+        patched_create_setup, molecule_driver_delegated_section_data,
         patched_logger_warn, patched_ansible_setup, config_instance):
     config_instance.merge_dicts(config_instance.config,
-                                molecule_driver_static_section_data)
+                                molecule_driver_delegated_section_data)
     c = create.Create(config_instance)
     c.execute()
 
-    msg = 'Skipping, instances managed statically.'
+    msg = 'Skipping, instances are delegated.'
     patched_logger_warn.assert_called_once_with(msg)
 
     assert not patched_ansible_setup.called

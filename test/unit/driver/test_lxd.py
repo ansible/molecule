@@ -75,6 +75,10 @@ def test_default_safe_files_property(lxd_instance):
     assert [] == lxd_instance.default_safe_files
 
 
+def test_delegated(lxd_instance):
+    assert not lxd_instance.delegated
+
+
 def test_default_ssh_connection_options_property(lxd_instance):
     assert [] == lxd_instance.default_ssh_connection_options
 

@@ -68,12 +68,13 @@ class Create(base.Base):
 
         self._config.state.change_state('driver', self._config.driver.name)
 
-        if self._config.driver.name == 'static':
-            LOG.warn('Skipping, instances managed statically.')
+        if self._config.driver.delegated:
+            LOG.warn('Skipping, instances are delegated.')
             return
 
         if self._config.state.created:
-            LOG.warn('Skipping, instances already created.')
+            msg = 'Skipping, instances already created.'
+            LOG.warn(msg)
             return
 
         self._config.provisioner.setup()

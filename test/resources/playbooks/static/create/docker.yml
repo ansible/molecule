@@ -1,9 +1,0 @@
----
-- name: Create molecule instance(s)
-  docker_container:
-    name: static-instance-docker
-    hostname: static-instance-docker
-    image: molecule_local/centos:latest
-    recreate: False
-    log_driver: syslog
-    command: sleep infinity

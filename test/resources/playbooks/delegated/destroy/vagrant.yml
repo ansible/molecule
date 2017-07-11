@@ -1,0 +1,6 @@
+---
+- name: Destroy molecule instance(s)
+  molecule_vagrant:
+    instance_name: delegated-instance-vagrant
+    platform_box: debian/jessie64
+    state: destroy

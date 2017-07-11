@@ -139,6 +139,15 @@ class Base(object):
         return (self.default_safe_files +
                 self._config.config['driver']['safe_files'])
 
+    @property
+    def delegated(self):
+        """
+        Is the driver delegated and returns a bool.
+
+        :returns: bool
+        """
+        return self.name == 'delegated'
+
     def status(self):
         """
         Collects the instances state and returns a list.

@@ -87,6 +87,10 @@ def test_default_safe_files_property(docker_instance):
     assert x == docker_instance.default_safe_files
 
 
+def test_delegated(docker_instance):
+    assert not docker_instance.delegated
+
+
 def test_default_ssh_connection_options_property(docker_instance):
     assert [] == docker_instance.default_ssh_connection_options
 
