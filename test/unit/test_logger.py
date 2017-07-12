@@ -18,8 +18,11 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+from __future__ import print_function
+
+import sys
+
 import colorama
-import pytest
 
 from molecule import logger
 
@@ -56,30 +59,30 @@ def test_warn(capsys):
     assert x == stdout
 
 
-@pytest.mark.skip(reason='TODO(retr0h): understand how to test this')
 def test_error(capsys):
     log = logger.get_logger(__name__)
     log.error('foo')
 
     _, stderr = capsys.readouterr()
 
-    print('{}{}'.format(colorama.fore.red, 'foo'.rstrip()))
+    print('{}{}'.format(colorama.Fore.RED, 'foo'.rstrip()), file=sys.stderr)
     _, x = capsys.readouterr()
 
-    assert x == stderr
+    assert x in stderr
 
 
-@pytest.mark.skip(reason='TODO(retr0h): understand how to test this')
 def test_critical(capsys):
     log = logger.get_logger(__name__)
     log.critical('foo')
 
     _, stderr = capsys.readouterr()
 
-    print('{}error: {}'.format(colorama.fore.red, 'foo'.rstrip()))
+    print(
+        '{}ERROR: {}'.format(colorama.Fore.RED, 'foo'.rstrip()),
+        file=sys.stderr)
     _, x = capsys.readouterr()
 
-    assert x == stderr
+    assert x in stderr
 
 
 def test_success(capsys):
