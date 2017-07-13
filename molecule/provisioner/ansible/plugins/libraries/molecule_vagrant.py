@@ -295,7 +295,8 @@ class VagrantClient(object):
         if not cd:
             changed = True
             for line in self._vagrant.up(no_provision, stream_output=True):
-                # Add prefix to ensure that output of 'vagrant up' doesn't start with one of the JSON start characters { or ]
+                # NOTE: Add prefix to ensure that output of 'vagrant up'
+                # doesn't start with one of the JSON start characters { or ].
                 print('<vagrant_output> {}'.format(line))
 
         self._module.exit_json(changed=changed, **self._conf())
