@@ -38,7 +38,7 @@ Documentation
 =============
 
 * `Current Release`_
-* `Upcoming Release`_
+* `Upcoming Release`_ (preferred)
 
 .. _`Current Release`: http://molecule.readthedocs.io/en/v1/
 .. _`Upcoming Release`: http://molecule.readthedocs.io/
