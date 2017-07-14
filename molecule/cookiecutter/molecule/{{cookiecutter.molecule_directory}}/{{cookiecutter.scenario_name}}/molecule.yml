@@ -6,8 +6,31 @@ driver:
 lint:
   name: {{ cookiecutter.lint_name }}
 platforms:
+{%- if cookiecutter.driver_name == 'docker' %}
   - name: instance
     image: centos:7
+{%- elif cookiecutter.driver_name == 'ec2' %}
+  - name: instance
+    image: ami-a5b196c0
+    instance_type: t2.micro
+    vpc_subnet_id: subnet-6456fd1f
+{%- elif cookiecutter.driver_name == 'gce' %}
+  - name: instance
+    zone: us-west1-a
+    machine_type: f1-micro
+    image: debian-8
+{%- elif cookiecutter.driver_name == 'lxc' %}
+  - name: instance
+{%- elif cookiecutter.driver_name == 'lxd' %}
+  - name: instance
+{%- elif cookiecutter.driver_name == 'openstack' %}
+  - name: instance
+    image: Ubuntu-16.04
+    flavor: NO-Nano
+{%- elif cookiecutter.driver_name == 'vagrant' %}
+  - name: instance
+    box: ubuntu/xenial64
+{%- endif %}
 provisioner:
   name: {{ cookiecutter.provisioner_name }}
   lint:
