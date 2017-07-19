@@ -38,7 +38,7 @@ class Dockr(base.Base):
 
     .. code-block:: bash
 
-        $ sudo pip install docker-py
+        $ sudo pip install docker
 
     Provide the files Molecule will preserve upon each subcommand execution.
 
