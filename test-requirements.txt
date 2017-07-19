@@ -1,6 +1,6 @@
 apache-libcloud
 boto
-docker-py
+docker
 # lxc-python2
 mock
 # pytest==3.1.0 issues with pytest-verbose-parametrize
