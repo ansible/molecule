@@ -40,8 +40,8 @@ Documentation
 * `Current Release`_
 * `Upcoming Release`_ (preferred)
 
-.. _`Current Release`: http://molecule.readthedocs.io/en/v1/
-.. _`Upcoming Release`: http://molecule.readthedocs.io/
+.. _`Current Release`: https://molecule.readthedocs.io/en/v1/
+.. _`Upcoming Release`: https://molecule.readthedocs.io/
 
 Ansible Support
 ===============
