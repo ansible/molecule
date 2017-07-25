@@ -297,6 +297,7 @@ def test_options_property_handles_cli_args(ansible_instance):
     ansible_instance._config.args = {'debug': True}
 
     assert ansible_instance.options['vvv']
+    assert ansible_instance.options['diff']
 
 
 def test_env_property(ansible_instance):

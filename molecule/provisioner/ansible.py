@@ -302,6 +302,7 @@ class Ansible(base.Base):
         d = {}
         if self._config.debug:
             d['vvv'] = True
+            d['diff'] = True
 
         return d
 
