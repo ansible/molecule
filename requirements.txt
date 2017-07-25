@@ -1,6 +1,7 @@
 ansible-lint==3.4.13
 anyconfig==0.9.1
 click==6.7
+click-completion==0.2.1
 colorama==0.3.7
 cookiecutter==1.5.1
 flake8==3.3.0
@@ -9,6 +10,7 @@ Jinja2==2.9.6
 marshmallow==2.13.5
 pbr==3.0.1
 pexpect==4.2.1
+psutil==5.2.2
 PyYAML==3.12
 sh==1.12.14
 tabulate==0.7.7

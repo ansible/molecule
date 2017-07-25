@@ -23,10 +23,13 @@ import distutils.version
 
 import ansible
 import click
+import click_completion
 
 import molecule
 from molecule import command
 from molecule import util
+
+click_completion.init()
 
 
 def _allowed():  # pragma: no cover
@@ -56,8 +59,6 @@ def main(ctx, debug):  # pragma: no cover
     Molecule aids in the development and testing of Ansible roles.
 
     Enable autocomplete issue:
-
-      autoload bashcompinit && bashcompinit # zsh
 
       eval "$(_MOLECULE_COMPLETE=source molecule)"
     """
