@@ -294,6 +294,7 @@ class Ansible(base.Base):
             },
             'ssh_connection': {
                 'scp_if_ssh': True,
+                'control_path': '%(directory)s/%%h-%%p-%%r',
             },
         }
 

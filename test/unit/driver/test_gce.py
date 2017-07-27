@@ -69,8 +69,7 @@ def test_login_cmd_template_property(gce_instance):
          '-o ControlMaster=auto '
          '-o ControlPersist=60s '
          '-o IdentitiesOnly=yes '
-         '-o StrictHostKeyChecking=no '
-         '-o ControlPath=~/.ansible/cp/%r@%h-%p')
+         '-o StrictHostKeyChecking=no')
 
     assert x == gce_instance.login_cmd_template
 
@@ -104,7 +103,6 @@ def test_default_ssh_connection_options_property(gce_instance):
         '-o ControlPersist=60s',
         '-o IdentitiesOnly=yes',
         '-o StrictHostKeyChecking=no',
-        '-o ControlPath=~/.ansible/cp/%r@%h-%p',
     ]
 
     assert x == gce_instance.default_ssh_connection_options
@@ -166,8 +164,7 @@ def test_ansible_connection_options(mocker, gce_instance):
                                     '-o ControlMaster=auto '
                                     '-o ControlPersist=60s '
                                     '-o IdentitiesOnly=yes '
-                                    '-o StrictHostKeyChecking=no '
-                                    '-o ControlPath=~/.ansible/cp/%r@%h-%p'),
+                                    '-o StrictHostKeyChecking=no'),
     }
 
     assert x == gce_instance.ansible_connection_options('foo')
@@ -203,7 +200,6 @@ def test_ssh_connection_options_property(gce_instance):
         '-o ControlPersist=60s',
         '-o IdentitiesOnly=yes',
         '-o StrictHostKeyChecking=no',
-        '-o ControlPath=~/.ansible/cp/%r@%h-%p',
     ]
 
     assert x == gce_instance.ssh_connection_options

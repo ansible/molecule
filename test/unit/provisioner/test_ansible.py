@@ -211,6 +211,7 @@ def test_default_config_options_property(ansible_instance):
         },
         'ssh_connection': {
             'scp_if_ssh': True,
+            'control_path': '%(directory)s/%%h-%%p-%%r',
         },
     }
 
@@ -281,6 +282,7 @@ def test_config_options_property(ansible_instance):
         },
         'ssh_connection': {
             'scp_if_ssh': True,
+            'control_path': '%(directory)s/%%h-%%p-%%r',
         },
     }
 

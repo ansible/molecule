@@ -48,7 +48,7 @@
       set_fact:
         instance_conf_dict: {
           'instance': "{{ item.instances[0].tags.instance }}",
-          'address': "{{ item.instances[0].public_dns_name }}",
+          'address': "{{ item.instances[0].public_ip }}",
           'user': 'ubuntu',
           'port': "{{ ssh_port }}",
           'identity_file': "{{ keypair_path }}",
@@ -76,5 +76,10 @@
         host: "{{ item.address }}"
         search_regex: SSH
         delay: 10
+        timeout: 320
       with_items: "{{ lookup('file', molecule_instance_config) | from_yaml }}"
+
+    - name: Wait for boot process to finish
+      pause:
+        minutes: 2
 {%- endraw %}
