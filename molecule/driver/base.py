@@ -187,5 +187,5 @@ class Base(object):
             '-o ControlPersist=60s',
             '-o IdentitiesOnly=yes',
             '-o StrictHostKeyChecking=no',
-            '-o ControlPath=~/.ansible/cp/%C',
+            '-o ControlPath=~/.ansible/cp/%r@%h-%p',
         ]

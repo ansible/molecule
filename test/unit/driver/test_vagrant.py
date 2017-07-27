@@ -116,7 +116,7 @@ def test_default_ssh_connection_options_property(vagrant_instance):
         '-o ControlPersist=60s',
         '-o IdentitiesOnly=yes',
         '-o StrictHostKeyChecking=no',
-        '-o ControlPath=~/.ansible/cp/%C',
+        '-o ControlPath=~/.ansible/cp/%r@%h-%p',
     ]
 
     assert x == vagrant_instance.default_ssh_connection_options
