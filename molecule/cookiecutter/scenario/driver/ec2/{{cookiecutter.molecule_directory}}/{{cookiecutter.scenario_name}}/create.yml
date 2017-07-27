@@ -76,5 +76,6 @@
         host: "{{ item.address }}"
         search_regex: SSH
         delay: 10
+        sleep: 10
       with_items: "{{ lookup('file', molecule_instance_config) | from_yaml }}"
 {%- endraw %}
