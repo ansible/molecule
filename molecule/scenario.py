@@ -63,16 +63,16 @@ class Scenario(object):
         :param config: An instance of a Molecule config.
         :return: None
         """
-        self._config = config
+        self.config = config
         self._setup()
 
     @property
     def name(self):
-        return self._config.config['scenario']['name']
+        return self.config.config['scenario']['name']
 
     @property
     def directory(self):
-        return os.path.dirname(self._config.molecule_file)
+        return os.path.dirname(self.config.molecule_file)
 
     @property
     def ephemeral_directory(self):
@@ -80,15 +80,15 @@ class Scenario(object):
 
     @property
     def check_sequences(self):
-        return self._config.config['scenario']['check_sequences']
+        return self.config.config['scenario']['check_sequences']
 
     @property
     def converge_sequences(self):
-        return self._config.config['scenario']['converge_sequences']
+        return self.config.config['scenario']['converge_sequences']
 
     @property
     def test_sequences(self):
-        return self._config.config['scenario']['test_sequences']
+        return self.config.config['scenario']['test_sequences']
 
     def _setup(self):
         """

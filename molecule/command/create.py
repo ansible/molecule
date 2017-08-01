@@ -104,5 +104,5 @@ def create(ctx, scenario_name, driver_name):  # pragma: no cover
 
     s = scenarios.Scenarios(
         base.get_configs(args, command_args), scenario_name)
-    for c in s.all:
-        Create(c).execute()
+    for scenario in s.all:
+        Create(scenario.config).execute()

@@ -78,5 +78,5 @@ def syntax(ctx, scenario_name):  # pragma: no cover
 
     s = scenarios.Scenarios(
         base.get_configs(args, command_args), scenario_name)
-    for c in s.all:
-        Syntax(c).execute()
+    for scenario in s.all:
+        Syntax(scenario.config).execute()

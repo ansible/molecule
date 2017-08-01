@@ -91,8 +91,8 @@ def test(ctx, scenario_name, driver_name, __all):  # pragma: no cover
 
     s = scenarios.Scenarios(
         base.get_configs(args, command_args), scenario_name)
-    for c in s.all:
-        for task in c.scenario.test_sequences:
+    for scenario in s.all:
+        for task in scenario.test_sequences:
             command_module = getattr(molecule.command, task)
             command = getattr(command_module, task.capitalize())
-            command(c).execute()
+            command(scenario.config).execute()

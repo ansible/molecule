@@ -33,7 +33,7 @@ def scenario_instance(config_instance):
 
 
 def test_config_private_member(scenario_instance):
-    assert isinstance(scenario_instance._config, config.Config)
+    assert isinstance(scenario_instance.config, config.Config)
 
 
 def test_init_calls_setup(patched_scenario_setup, scenario_instance):
@@ -89,7 +89,7 @@ def test_test_sequences_property(scenario_instance):
 
 
 def test_setup_creates_ephemeral_directory(scenario_instance):
-    ephemeral_directory = scenario_instance._config.scenario.ephemeral_directory
+    ephemeral_directory = scenario_instance.config.scenario.ephemeral_directory
     shutil.rmtree(ephemeral_directory)
     scenario_instance._setup()
 

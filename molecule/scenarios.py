@@ -43,19 +43,19 @@ class Scenarios(object):
     @property
     def all(self):
         """
-        Return a list containing all config objects.
+        Return a list containing all scenario objects.
 
         :return: list
         """
         if self._scenario_name:
-            configs = self._filter_configs_for_scenario(self._scenario_name)
-            self._verify_scenario_name()
+            scenarios = self._filter_for_scenario(self._scenario_name)
+            self._verify()
 
-            return configs
+            return scenarios
 
-        return self._configs
+        return [c.scenario for c in self._configs]
 
-    def _verify_scenario_name(self):
+    def _verify(self):
         """
         Verify the specified scenario was found and returns None.
 
@@ -67,13 +67,16 @@ class Scenarios(object):
                    ).format(self._scenario_name)
             util.sysexit_with_message(msg)
 
-    def _filter_configs_for_scenario(self, scenario_name):
+    def _filter_for_scenario(self, scenario_name):
         """
         Find the config matching the provided scenario name and returns a list.
 
-        :param scenario_name: A string representing the name of the scenario's
-         config to return
+        :param scenario_name: A string containing the name of the scenario's
+         object to find and return.
         :return: list
         """
 
-        return [c for c in self._configs if c.scenario.name == scenario_name]
+        return [
+            c.scenario for c in self._configs
+            if c.scenario.name == scenario_name
+        ]

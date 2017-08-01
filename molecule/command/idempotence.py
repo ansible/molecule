@@ -143,5 +143,5 @@ def idempotence(ctx, scenario_name):  # pragma: no cover
 
     s = scenarios.Scenarios(
         base.get_configs(args, command_args), scenario_name)
-    for c in s.all:
-        Idempotence(c).execute()
+    for scenario in s.all:
+        Idempotence(scenario.config).execute()

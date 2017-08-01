@@ -110,5 +110,5 @@ def destroy(ctx, scenario_name, driver_name, __all):  # pragma: no cover
 
     s = scenarios.Scenarios(
         base.get_configs(args, command_args), scenario_name)
-    for c in s.all:
-        Destroy(c).execute()
+    for scenario in s.all:
+        Destroy(scenario.config).execute()

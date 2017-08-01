@@ -35,7 +35,11 @@ def scenarios_instance(config_instance):
 
 
 def test_all_property(scenarios_instance):
-    assert 2 == len(scenarios_instance.all)
+    result = scenarios_instance.all
+
+    assert 2 == len(result)
+    assert 'default' == result[0].name
+    assert 'foo' == result[1].name
 
 
 def test_all_filters_on_scenario_name_property(scenarios_instance):
@@ -44,17 +48,17 @@ def test_all_filters_on_scenario_name_property(scenarios_instance):
     assert 1 == len(scenarios_instance.all)
 
 
-def test_verify_scenario_name_does_not_raise_when_found(scenarios_instance):
+def test_verify_does_not_raise_when_found(scenarios_instance):
     scenarios_instance._scenario_name = 'default'
 
-    assert scenarios_instance._verify_scenario_name() is None
+    assert scenarios_instance._verify() is None
 
 
-def test_verify_scenario_name_raises_when_scenario_not_found(
-        scenarios_instance, patched_logger_critical):
+def test_verify_raises_when_scenario_not_found(scenarios_instance,
+                                               patched_logger_critical):
     scenarios_instance._scenario_name = 'invalid'
     with pytest.raises(SystemExit) as e:
-        scenarios_instance._verify_scenario_name()
+        scenarios_instance._verify()
 
     assert 1 == e.value.code
 
@@ -62,9 +66,10 @@ def test_verify_scenario_name_raises_when_scenario_not_found(
     patched_logger_critical.assert_called_once_with(msg)
 
 
-def test_filter_configs_for_scenario(scenarios_instance):
-    result = scenarios_instance._filter_configs_for_scenario('default')
+def test_filter_for_scenario(scenarios_instance):
+    result = scenarios_instance._filter_for_scenario('default')
     assert 1 == len(result)
+    assert 'default' == result[0].name
 
-    result = scenarios_instance._filter_configs_for_scenario('invalid')
+    result = scenarios_instance._filter_for_scenario('invalid')
     assert [] == result

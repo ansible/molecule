@@ -147,5 +147,5 @@ def login(ctx, host, scenario_name):  # pragma: no cover
 
     s = scenarios.Scenarios(
         base.get_configs(args, command_args), scenario_name)
-    for c in s.all:
-        Login(c).execute()
+    for scenario in s.all:
+        Login(scenario.config).execute()

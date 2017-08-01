@@ -81,8 +81,8 @@ def list(ctx, scenario_name, format):  # pragma: no cover
     statuses = []
     s = scenarios.Scenarios(
         base.get_configs(args, command_args), scenario_name)
-    for c in s.all:
-        l = List(c)
+    for scenario in s.all:
+        l = List(scenario.config)
         statuses.extend(l.execute())
 
     headers = [util.title(name) for name in status.get_status()._fields]
