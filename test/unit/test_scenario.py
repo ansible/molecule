@@ -56,22 +56,22 @@ def test_ephemeral_directory_property(molecule_scenario_directory_fixture,
     assert x == scenario_instance.ephemeral_directory
 
 
-def test_check_sequence_property(scenario_instance):
+def test_check_sequences_property(scenario_instance):
     x = ['destroy', 'create', 'converge', 'check', 'destroy']
 
-    assert x == scenario_instance.check_sequence
+    assert x == scenario_instance.check_sequences
 
 
-def test_converge_sequence_property(scenario_instance):
+def test_converge_sequences_property(scenario_instance):
     x = [
         'create',
         'converge',
     ]
 
-    assert x == scenario_instance.converge_sequence
+    assert x == scenario_instance.converge_sequences
 
 
-def test_test_sequence_property(scenario_instance):
+def test_test_sequences_property(scenario_instance):
     x = [
         'destroy',
         'dependency',
@@ -85,7 +85,7 @@ def test_test_sequence_property(scenario_instance):
         'destroy',
     ]
 
-    assert x == scenario_instance.test_sequence
+    assert x == scenario_instance.test_sequences
 
 
 def test_setup_creates_ephemeral_directory(scenario_instance):

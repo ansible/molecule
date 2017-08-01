@@ -81,7 +81,7 @@ def converge(ctx, scenario_name):  # pragma: no cover
     s = scenarios.Scenarios(
         base.get_configs(args, command_args), scenario_name)
     for c in s.all:
-        for task in c.scenario.converge_sequence:
+        for task in c.scenario.converge_sequences:
             command_module = getattr(molecule.command, task)
             command = getattr(command_module, task.capitalize())
             command(c).execute()

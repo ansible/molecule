@@ -40,10 +40,10 @@ class Scenario(object):
 
         scenario:
           name: default
-          converge_sequence:
+          converge_sequences:
             - create
             - converge
-          test_sequence:
+          test_sequences:
             - destroy
             - create
             - converge
@@ -79,16 +79,16 @@ class Scenario(object):
         return os.path.join(self.directory, '.molecule')
 
     @property
-    def check_sequence(self):
-        return self._config.config['scenario']['check_sequence']
+    def check_sequences(self):
+        return self._config.config['scenario']['check_sequences']
 
     @property
-    def converge_sequence(self):
-        return self._config.config['scenario']['converge_sequence']
+    def converge_sequences(self):
+        return self._config.config['scenario']['converge_sequences']
 
     @property
-    def test_sequence(self):
-        return self._config.config['scenario']['test_sequence']
+    def test_sequences(self):
+        return self._config.config['scenario']['test_sequences']
 
     def _setup(self):
         """

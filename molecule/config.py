@@ -290,12 +290,28 @@ class Config(object):
             'scenario': {
                 'name':
                 'default',
-                'check_sequence':
-                ['destroy', 'create', 'converge', 'check', 'destroy'],
-                'converge_sequence': ['create', 'converge'],
-                'test_sequence': [
-                    'destroy', 'dependency', 'syntax', 'create', 'converge',
-                    'idempotence', 'lint', 'destruct', 'verify', 'destroy'
+                'check_sequences': [
+                    'destroy',
+                    'create',
+                    'converge',
+                    'check',
+                    'destroy',
+                ],
+                'converge_sequences': [
+                    'create',
+                    'converge',
+                ],
+                'test_sequences': [
+                    'destroy',
+                    'dependency',
+                    'syntax',
+                    'create',
+                    'converge',
+                    'idempotence',
+                    'lint',
+                    'destruct',
+                    'verify',
+                    'destroy',
                 ],
             },
             'verifier': {
