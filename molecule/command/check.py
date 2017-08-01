@@ -18,8 +18,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import os
-
 import click
 
 import molecule.command
@@ -52,14 +50,6 @@ class Check(base.Base):
 
         :return: None
         """
-        msg = 'Scenario: [{}]'.format(self._config.scenario.name)
-        LOG.info(msg)
-        msg = 'Provisioner: [{}]'.format(self._config.provisioner.name)
-        LOG.info(msg)
-        msg = 'Dry-Run of Playbook: [{}]'.format(
-            os.path.basename(self._config.provisioner.playbooks.converge))
-        LOG.info(msg)
-
         self._config.provisioner.check()
 
 
@@ -80,7 +70,8 @@ def check(ctx, scenario_name):  # pragma: no cover
     s = scenarios.Scenarios(
         base.get_configs(args, command_args), scenario_name)
     for scenario in s.all:
-        for task in scenario.check_sequences:
-            command_module = getattr(molecule.command, task)
-            command = getattr(command_module, task.capitalize())
+        for sequence in scenario.check_sequences:
+            s.print_sequence_info(scenario, sequence)
+            command_module = getattr(molecule.command, sequence)
+            command = getattr(command_module, sequence.capitalize())
             command(scenario.config).execute()

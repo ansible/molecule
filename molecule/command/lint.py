@@ -58,11 +58,6 @@ class Lint(base.Base):
             ] if l
         ]
 
-        msg = 'Scenario: [{}]'.format(self._config.scenario.name)
-        LOG.info(msg)
-        msg = 'Lint: [{}]'.format(','.join([f.name for f in linters]))
-        LOG.info(msg)
-
         for l in linters:
             l.execute()
 
@@ -84,4 +79,5 @@ def lint(ctx, scenario_name):  # pragma: no cover
     s = scenarios.Scenarios(
         base.get_configs(args, command_args), scenario_name)
     for scenario in s.all:
+        s.print_sequence_info(scenario, scenario.subcommand)
         Lint(scenario.config).execute()

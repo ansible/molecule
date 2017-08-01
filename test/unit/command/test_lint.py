@@ -25,12 +25,6 @@ def test_execute(mocker, patched_logger_info, patched_yamllint, patched_flake8,
                  patched_ansible_lint, config_instance):
     l = lint.Lint(config_instance)
     l.execute()
-    x = [
-        mocker.call('Scenario: [default]'),
-        mocker.call('Lint: [yamllint,flake8,ansible-lint]')
-    ]
-
-    assert x == patched_logger_info.mock_calls
 
     patched_yamllint.assert_called_once_with()
     patched_flake8.assert_called_once_with()

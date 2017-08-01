@@ -49,11 +49,6 @@ class Verify(base.Base):
 
         :return: None
         """
-        msg = 'Scenario: [{}]'.format(self._config.scenario.name)
-        LOG.info(msg)
-        msg = 'Verifier: [{}]'.format(self._config.verifier.name)
-        LOG.info(msg)
-
         self._config.verifier.execute()
 
 
@@ -75,4 +70,5 @@ def verify(ctx, scenario_name):  # pragma: no cover
     s = scenarios.Scenarios(
         base.get_configs(args, command_args), scenario_name)
     for scenario in s.all:
+        s.print_sequence_info(scenario, scenario.subcommand)
         Verify(scenario.config).execute()

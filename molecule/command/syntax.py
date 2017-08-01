@@ -18,8 +18,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import os
-
 import click
 
 from molecule import logger
@@ -51,14 +49,6 @@ class Syntax(base.Base):
 
         :return: None
         """
-        msg = 'Scenario: [{}]'.format(self._config.scenario.name)
-        LOG.info(msg)
-        msg = 'Provisioner: [{}]'.format(self._config.provisioner.name)
-        LOG.info(msg)
-        msg = 'Syntax Verification of Playbook: [{}]'.format(
-            os.path.basename(self._config.provisioner.playbooks.converge))
-        LOG.info(msg)
-
         self._config.provisioner.syntax()
 
 
@@ -79,4 +69,5 @@ def syntax(ctx, scenario_name):  # pragma: no cover
     s = scenarios.Scenarios(
         base.get_configs(args, command_args), scenario_name)
     for scenario in s.all:
+        s.print_sequence_info(scenario, scenario.subcommand)
         Syntax(scenario.config).execute()

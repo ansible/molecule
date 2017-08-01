@@ -25,13 +25,6 @@ def test_execute(mocker, patched_destroy_prune, patched_logger_info,
                  patched_ansible_destroy, config_instance):
     d = destroy.Destroy(config_instance)
     d.execute()
-    x = [
-        mocker.call('Scenario: [default]'),
-        mocker.call('Provisioner: [ansible]'),
-        mocker.call('Playbook: [destroy.yml]')
-    ]
-
-    assert x == patched_logger_info.mock_calls
 
     patched_destroy_prune.assert_called_once_with()
     patched_ansible_destroy.assert_called_once_with()

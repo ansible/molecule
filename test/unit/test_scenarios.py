@@ -73,3 +73,14 @@ def test_filter_for_scenario(scenarios_instance):
 
     result = scenarios_instance._filter_for_scenario('invalid')
     assert [] == result
+
+
+def test_print_sequence_info(mocker, patched_logger_info, scenarios_instance):
+    scenario = scenarios_instance._filter_for_scenario('default')[0]
+    scenarios_instance.print_sequence_info(scenario, 'sequence')
+    x = [
+        mocker.call("Scenario: 'default'"),
+        mocker.call("Sequence: 'sequence'"),
+    ]
+
+    assert x == patched_logger_info.mock_calls

@@ -74,4 +74,5 @@ def dependency(ctx, scenario_name):  # pragma: no cover
     s = scenarios.Scenarios(
         base.get_configs(args, command_args), scenario_name)
     for scenario in s.all:
+        s.print_sequence_info(scenario, scenario.subcommand)
         Dependency(scenario.config).execute()

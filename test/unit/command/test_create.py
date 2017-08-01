@@ -25,14 +25,6 @@ def test_execute(mocker, patched_create_setup, patched_logger_info,
                  patched_ansible_setup, config_instance):
     c = create.Create(config_instance)
     c.execute()
-    x = [
-        mocker.call('Scenario: [default]'),
-        mocker.call('Provisioner: [ansible]'),
-        mocker.call('Driver: [docker]'),
-        mocker.call('Playbook: [create.yml]')
-    ]
-
-    assert x == patched_logger_info.mock_calls
 
     assert 'docker' == config_instance.state.driver
 

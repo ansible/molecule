@@ -90,6 +90,10 @@ class Scenario(object):
     def test_sequences(self):
         return self.config.config['scenario']['test_sequences']
 
+    @property
+    def subcommand(self):
+        return self.config.command_args['subcommand'].split('.')[-1]
+
     def _setup(self):
         """
          Prepare the scenario for Molecule and returns None.

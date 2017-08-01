@@ -55,6 +55,12 @@ class Scenarios(object):
 
         return [c.scenario for c in self._configs]
 
+    def print_sequence_info(self, scenario, sequence):
+        msg = "Scenario: '{}'".format(scenario.name)
+        LOG.info(msg)
+        msg = "Sequence: '{}'".format(sequence)
+        LOG.info(msg)
+
     def _verify(self):
         """
         Verify the specified scenario was found and returns None.

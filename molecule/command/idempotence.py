@@ -18,7 +18,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import os
 import re
 
 import click
@@ -53,14 +52,6 @@ class Idempotence(base.Base):
 
         :return: None
         """
-        msg = 'Scenario: [{}]'.format(self._config.scenario.name)
-        LOG.info(msg)
-        msg = 'Provisioner: [{}]'.format(self._config.provisioner.name)
-        LOG.info(msg)
-        msg = 'Idempotence Verification of Playbook: [{}]'.format(
-            os.path.basename(self._config.provisioner.playbooks.converge))
-        LOG.info(msg)
-
         if not self._config.state.converged:
             msg = 'Instances not converged.  Please converge instances first.'
             util.sysexit_with_message(msg)
@@ -144,4 +135,5 @@ def idempotence(ctx, scenario_name):  # pragma: no cover
     s = scenarios.Scenarios(
         base.get_configs(args, command_args), scenario_name)
     for scenario in s.all:
+        s.print_sequence_info(scenario, scenario.subcommand)
         Idempotence(scenario.config).execute()

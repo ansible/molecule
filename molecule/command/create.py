@@ -18,8 +18,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import os
-
 import click
 
 from molecule import config
@@ -56,16 +54,6 @@ class Create(base.Base):
 
         :return: None
         """
-        msg = 'Scenario: [{}]'.format(self._config.scenario.name)
-        LOG.info(msg)
-        msg = 'Provisioner: [{}]'.format(self._config.provisioner.name)
-        LOG.info(msg)
-        msg = 'Driver: [{}]'.format(self._config.driver.name)
-        LOG.info(msg)
-        msg = 'Playbook: [{}]'.format(
-            os.path.basename(self._config.provisioner.playbooks.setup))
-        LOG.info(msg)
-
         self._config.state.change_state('driver', self._config.driver.name)
 
         if self._config.driver.delegated:
@@ -105,4 +93,5 @@ def create(ctx, scenario_name, driver_name):  # pragma: no cover
     s = scenarios.Scenarios(
         base.get_configs(args, command_args), scenario_name)
     for scenario in s.all:
+        s.print_sequence_info(scenario, scenario.subcommand)
         Create(scenario.config).execute()

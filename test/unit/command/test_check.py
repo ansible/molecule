@@ -25,12 +25,5 @@ def test_execute(mocker, patched_logger_info, patched_ansible_check,
                  config_instance):
     c = check.Check(config_instance)
     c.execute()
-    x = [
-        mocker.call('Scenario: [default]'),
-        mocker.call('Provisioner: [ansible]'),
-        mocker.call('Dry-Run of Playbook: [playbook.yml]')
-    ]
-
-    assert x == patched_logger_info.mock_calls
 
     patched_ansible_check.assert_called_once_with()

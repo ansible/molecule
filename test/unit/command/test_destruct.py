@@ -44,13 +44,6 @@ def test_execute(mocker, molecule_provisioner_section_with_destruct_data,
 
     d = destruct.Destruct(config_instance)
     d.execute()
-    x = [
-        mocker.call('Scenario: [default]'),
-        mocker.call('Provisioner: [ansible]'),
-        mocker.call('Playbook: [destruct.yml]')
-    ]
-
-    assert x == patched_logger_info.mock_calls
 
     patched_ansible_destruct.assert_called_once_with()
 
