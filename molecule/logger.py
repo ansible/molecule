@@ -99,12 +99,11 @@ def get_logger(name=None):
 
 
 def _get_info_handler():
-    color = colorama.Fore.CYAN
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging.INFO)
     handler.addFilter(LogFilter(logging.INFO))
     handler.setFormatter(
-        TrailingNewlineFormatter('--> {}%(message)s'.format(color)))
+        TrailingNewlineFormatter('--> {}'.format(cyan_text('%(message)s'))))
 
     return handler
 
@@ -119,44 +118,57 @@ def _get_out_handler():
 
 
 def _get_warn_handler():
-    color = colorama.Fore.YELLOW
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging.WARN)
     handler.addFilter(LogFilter(logging.WARN))
-    handler.setFormatter(
-        TrailingNewlineFormatter('{}%(message)s'.format(color)))
+    handler.setFormatter(TrailingNewlineFormatter(yellow_text('%(message)s')))
 
     return handler
 
 
 def _get_error_handler():
-    color = colorama.Fore.RED
     handler = logging.StreamHandler(sys.stderr)
     handler.setLevel(logging.ERROR)
     handler.addFilter(LogFilter(logging.ERROR))
-    handler.setFormatter(
-        TrailingNewlineFormatter('{}%(message)s'.format(color)))
+    handler.setFormatter(TrailingNewlineFormatter(red_text('%(message)s')))
 
     return handler
 
 
 def _get_critical_handler():
-    color = colorama.Fore.RED
     handler = logging.StreamHandler(sys.stderr)
     handler.setLevel(logging.CRITICAL)
     handler.addFilter(LogFilter(logging.CRITICAL))
     handler.setFormatter(
-        TrailingNewlineFormatter('{}ERROR: %(message)s'.format(color)))
+        TrailingNewlineFormatter(red_text('ERROR: %(message)s')))
 
     return handler
 
 
 def _get_success_handler():
-    color = colorama.Fore.GREEN
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(SUCCESS)
     handler.addFilter(LogFilter(SUCCESS))
-    handler.setFormatter(
-        TrailingNewlineFormatter('{}%(message)s'.format(color)))
+    handler.setFormatter(TrailingNewlineFormatter(green_text('%(message)s')))
 
     return handler
+
+
+def red_text(msg):
+    return color_text(colorama.Fore.RED, msg)
+
+
+def yellow_text(msg):
+    return color_text(colorama.Fore.YELLOW, msg)
+
+
+def green_text(msg):
+    return color_text(colorama.Fore.GREEN, msg)
+
+
+def cyan_text(msg):
+    return color_text(colorama.Fore.CYAN, msg)
+
+
+def color_text(color, msg):
+    return '{}{}{}'.format(color, msg, colorama.Style.RESET_ALL)

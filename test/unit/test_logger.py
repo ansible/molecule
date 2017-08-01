@@ -32,7 +32,8 @@ def test_info(capsys):
     log.info('foo')
     stdout, _ = capsys.readouterr()
 
-    print('--> {}{}'.format(colorama.Fore.CYAN, 'foo'.rstrip()))
+    print('--> {}{}{}'.format(colorama.Fore.CYAN, 'foo'.rstrip(),
+                              colorama.Style.RESET_ALL))
     x, _ = capsys.readouterr()
 
     assert x == stdout
@@ -53,7 +54,8 @@ def test_warn(capsys):
 
     stdout, _ = capsys.readouterr()
 
-    print('{}{}'.format(colorama.Fore.YELLOW, 'foo'.rstrip()))
+    print('{}{}{}'.format(colorama.Fore.YELLOW, 'foo'.rstrip(),
+                          colorama.Style.RESET_ALL))
     x, _ = capsys.readouterr()
 
     assert x == stdout
@@ -65,7 +67,10 @@ def test_error(capsys):
 
     _, stderr = capsys.readouterr()
 
-    print('{}{}'.format(colorama.Fore.RED, 'foo'.rstrip()), file=sys.stderr)
+    print(
+        '{}{}{}'.format(colorama.Fore.RED, 'foo'.rstrip(),
+                        colorama.Style.RESET_ALL),
+        file=sys.stderr)
     _, x = capsys.readouterr()
 
     assert x in stderr
@@ -78,7 +83,8 @@ def test_critical(capsys):
     _, stderr = capsys.readouterr()
 
     print(
-        '{}ERROR: {}'.format(colorama.Fore.RED, 'foo'.rstrip()),
+        '{}ERROR: {}{}'.format(colorama.Fore.RED, 'foo'.rstrip(),
+                               colorama.Style.RESET_ALL),
         file=sys.stderr)
     _, x = capsys.readouterr()
 
@@ -91,7 +97,32 @@ def test_success(capsys):
 
     stdout, _ = capsys.readouterr()
 
-    print('{}{}'.format(colorama.Fore.GREEN, 'foo'.rstrip()))
+    print('{}{}{}'.format(colorama.Fore.GREEN, 'foo'.rstrip(),
+                          colorama.Style.RESET_ALL))
     x, _ = capsys.readouterr()
 
     assert x == stdout
+
+
+def test_red_text():
+    x = '{}{}{}'.format(colorama.Fore.RED, 'foo', colorama.Style.RESET_ALL)
+
+    assert x == logger.red_text('foo')
+
+
+def test_yellow_text():
+    x = '{}{}{}'.format(colorama.Fore.YELLOW, 'foo', colorama.Style.RESET_ALL)
+
+    assert x == logger.yellow_text('foo')
+
+
+def test_green_text():
+    x = '{}{}{}'.format(colorama.Fore.GREEN, 'foo', colorama.Style.RESET_ALL)
+
+    assert x == logger.green_text('foo')
+
+
+def test_cyan_text():
+    x = '{}{}{}'.format(colorama.Fore.CYAN, 'foo', colorama.Style.RESET_ALL)
+
+    assert x == logger.cyan_text('foo')
