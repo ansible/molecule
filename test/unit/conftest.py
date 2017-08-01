@@ -195,6 +195,11 @@ def patched_logger_info(mocker):
 
 
 @pytest.fixture
+def patched_logger_out(mocker):
+    return mocker.patch('molecule.logger.CustomLogger.out')
+
+
+@pytest.fixture
 def patched_logger_warn(mocker):
     return mocker.patch('logging.Logger.warn')
 

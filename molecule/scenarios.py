@@ -18,6 +18,10 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import operator
+
+import tree_format
+
 from molecule import logger
 from molecule import util
 
@@ -61,6 +65,40 @@ class Scenarios(object):
         msg = "Sequence: '{}'".format(sequence)
         LOG.info(msg)
 
+    def print_matrix(self):
+        msg = 'Test matrix'
+        LOG.info(msg)
+
+        tree = tuple(
+            ('', [(scenario.name,
+                   [(sequence, [])
+                    for sequence in self.sequences_for_scenario(scenario)])
+                  for scenario in self.all]))
+
+        tf = tree_format.format_tree(
+            tree,
+            format_node=operator.itemgetter(0),
+            get_children=operator.itemgetter(1))
+
+        LOG.out(tf.encode('utf-8'))
+
+    def sequences_for_scenario(self, scenario):
+        """
+        Select the sequence based on scenario and subcommand of the provided
+        scenario object and returns a list.
+
+        :param scenario: A scenario object.
+        :param skipped: An optional bool to include skipped scenarios.
+        :return: list
+        """
+        matrix = self._get_matrix()
+
+        try:
+            return matrix[scenario.name][scenario.subcommand]
+        except KeyError:
+            # TODO(retr0h): May change this handling in the future.
+            return []
+
     def _verify(self):
         """
         Verify the specified scenario was found and returns None.
@@ -75,10 +113,11 @@ class Scenarios(object):
 
     def _filter_for_scenario(self, scenario_name):
         """
-        Find the config matching the provided scenario name and returns a list.
+        Find the scenario matching the provided scenario name and returns a
+        list.
 
-        :param scenario_name: A string containing the name of the scenario's
-         object to find and return.
+        :param scenario_name: A string containing the name of the scenario to
+         find.
         :return: list
         """
 
@@ -86,3 +125,41 @@ class Scenarios(object):
             c.scenario for c in self._configs
             if c.scenario.name == scenario_name
         ]
+
+    def _get_matrix(self):
+        """
+        Build a matrix of scenarios with sequences to include and returns a
+        dict.
+
+        {
+            scenario_1: {
+                'subcommand': [
+                    'sequence-1',
+                    'sequence-2',
+                ],
+            },
+            scenario_2: {
+                'subcommand': [
+                    'sequence-1',
+                ],
+            },
+        }
+
+        :returns: dict
+        """
+        return dict({
+            scenario.name: {
+                'check': scenario.check_sequences,
+                'converge': scenario.converge_sequences,
+                'create': scenario.create_sequences,
+                'dependency': scenario.dependency_sequences,
+                'destroy': scenario.destroy_sequences,
+                'destruct': scenario.destruct_sequences,
+                'idempotence': scenario.idempotence_sequences,
+                'lint': scenario.lint_sequences,
+                'syntax': scenario.syntax_sequences,
+                'test': scenario.test_sequences,
+                'verify': scenario.verify_sequences,
+            }
+            for scenario in self.all
+        })

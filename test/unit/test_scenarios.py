@@ -1,4 +1,5 @@
 #  Copyright (c) 2015-2017 Cisco Systems, Inc.
+# -*- coding: utf-8 -*-
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -28,6 +29,8 @@ from molecule import scenarios
 @pytest.fixture
 def scenarios_instance(config_instance):
     config_instance_1 = copy.deepcopy(config_instance)
+    config_instance_1.command_args = {'subcommand': 'molecule.command.test'}
+
     config_instance_2 = copy.deepcopy(config_instance)
     config_instance_2.config['scenario']['name'] = 'foo'
 
@@ -46,6 +49,61 @@ def test_all_filters_on_scenario_name_property(scenarios_instance):
     scenarios_instance._scenario_name = 'default'
 
     assert 1 == len(scenarios_instance.all)
+
+
+def test_print_sequence_info(mocker, patched_logger_info, scenarios_instance):
+    scenario = scenarios_instance._filter_for_scenario('default')[0]
+    scenarios_instance.print_sequence_info(scenario, 'sequence')
+    x = [
+        mocker.call("Scenario: 'default'"),
+        mocker.call("Sequence: 'sequence'"),
+    ]
+
+    assert x == patched_logger_info.mock_calls
+
+
+def test_print_matrix(patched_logger_out, scenarios_instance):
+    scenarios_instance.print_matrix()
+    x = u"""
+├── default
+│   ├── destroy
+│   ├── dependency
+│   ├── syntax
+│   ├── create
+│   ├── converge
+│   ├── idempotence
+│   ├── lint
+│   ├── destruct
+│   ├── verify
+│   └── destroy
+└── foo
+"""
+
+    assert x.encode('utf-8') == patched_logger_out.call_args[0][0]
+
+
+def test_sequences_for_scenario(scenarios_instance):
+    scenario = scenarios_instance.all[0]
+    x = [
+        'destroy',
+        'dependency',
+        'syntax',
+        'create',
+        'converge',
+        'idempotence',
+        'lint',
+        'destruct',
+        'verify',
+        'destroy',
+    ]
+
+    assert x == scenarios_instance.sequences_for_scenario(scenario)
+
+
+def test_sequences_for_scenario_with_invalid_subcommand(scenarios_instance):
+    scenario = scenarios_instance.all[1]
+
+    assert [] == scenarios_instance.sequences_for_scenario(scenario)
 
 
 def test_verify_does_not_raise_when_found(scenarios_instance):
@@ -75,12 +133,74 @@ def test_filter_for_scenario(scenarios_instance):
     assert [] == result
 
 
-def test_print_sequence_info(mocker, patched_logger_info, scenarios_instance):
-    scenario = scenarios_instance._filter_for_scenario('default')[0]
-    scenarios_instance.print_sequence_info(scenario, 'sequence')
-    x = [
-        mocker.call("Scenario: 'default'"),
-        mocker.call("Sequence: 'sequence'"),
-    ]
+def test_get_matrix(scenarios_instance):
+    x = {
+        'default': {
+            'lint': ['lint'],
+            'idempotence': ['idempotence'],
+            'syntax': ['syntax'],
+            'converge': [
+                'create',
+                'converge',
+            ],
+            'check': [
+                'destroy',
+                'create',
+                'converge',
+                'check',
+                'destroy',
+            ],
+            'verify': ['verify'],
+            'create': ['create'],
+            'destruct': ['destruct'],
+            'dependency': ['dependency'],
+            'test': [
+                'destroy',
+                'dependency',
+                'syntax',
+                'create',
+                'converge',
+                'idempotence',
+                'lint',
+                'destruct',
+                'verify',
+                'destroy',
+            ],
+            'destroy': ['destroy']
+        },
+        'foo': {
+            'lint': ['lint'],
+            'idempotence': ['idempotence'],
+            'syntax': ['syntax'],
+            'converge': [
+                'create',
+                'converge',
+            ],
+            'check': [
+                'destroy',
+                'create',
+                'converge',
+                'check',
+                'destroy',
+            ],
+            'verify': ['verify'],
+            'create': ['create'],
+            'destruct': ['destruct'],
+            'dependency': ['dependency'],
+            'test': [
+                'destroy',
+                'dependency',
+                'syntax',
+                'create',
+                'converge',
+                'idempotence',
+                'lint',
+                'destruct',
+                'verify',
+                'destroy',
+            ],
+            'destroy': ['destroy']
+        }
+    }
 
-    assert x == patched_logger_info.mock_calls
+    assert x == scenarios_instance._get_matrix()

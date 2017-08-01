@@ -80,39 +80,27 @@ def test_converge_sequences_property(scenario_instance):
 
 
 def test_dependency_sequences_property(scenario_instance):
-    assert [
-        'dependency',
-    ] == scenario_instance.dependency_sequences
+    assert ['dependency'] == scenario_instance.dependency_sequences
 
 
 def test_destroy_sequences_property(scenario_instance):
-    assert [
-        'destroy',
-    ] == scenario_instance.destroy_sequences
+    assert ['destroy'] == scenario_instance.destroy_sequences
 
 
 def test_destruct_sequences_property(scenario_instance):
-    assert [
-        'destruct',
-    ] == scenario_instance.destruct_sequences
+    assert ['destruct'] == scenario_instance.destruct_sequences
 
 
 def test_idempotence_sequences_property(scenario_instance):
-    assert [
-        'idempotence',
-    ] == scenario_instance.idempotence_sequences
+    assert ['idempotence'] == scenario_instance.idempotence_sequences
 
 
 def test_lint_sequences_property(scenario_instance):
-    assert [
-        'lint',
-    ] == scenario_instance.lint_sequences
+    assert ['lint'] == scenario_instance.lint_sequences
 
 
 def test_syntax_sequences_property(scenario_instance):
-    assert [
-        'syntax',
-    ] == scenario_instance.syntax_sequences
+    assert ['syntax'] == scenario_instance.syntax_sequences
 
 
 def test_test_sequences_property(scenario_instance):
@@ -133,9 +121,7 @@ def test_test_sequences_property(scenario_instance):
 
 
 def test_verify_sequences_property(scenario_instance):
-    assert [
-        'verify',
-    ] == scenario_instance.verify_sequences
+    assert ['verify'] == scenario_instance.verify_sequences
 
 
 def test_subcommand_property(scenario_instance):

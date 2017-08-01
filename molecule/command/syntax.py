@@ -69,8 +69,9 @@ def syntax(ctx, scenario_name):  # pragma: no cover
 
     s = scenarios.Scenarios(
         base.get_configs(args, command_args), scenario_name)
+    s.print_matrix()
     for scenario in s.all:
-        for sequence in scenario.syntax_sequences:
+        for sequence in s.sequences_for_scenario(scenario):
             s.print_sequence_info(scenario, sequence)
             command_module = getattr(molecule.command, sequence)
             command = getattr(command_module, sequence.capitalize())
