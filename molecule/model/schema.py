@@ -134,6 +134,7 @@ class ScenarioSchema(base.Base):
     name = marshmallow.fields.Str()
     check_sequences = marshmallow.fields.List(marshmallow.fields.Str())
     converge_sequences = marshmallow.fields.List(marshmallow.fields.Str())
+    destroy_sequences = marshmallow.fields.List(marshmallow.fields.Str())
     test_sequences = marshmallow.fields.List(marshmallow.fields.Str())
 
 

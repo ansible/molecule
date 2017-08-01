@@ -40,9 +40,17 @@ class Scenario(object):
 
         scenario:
           name: default
+          check_sequences:
+            - destroy
+            - create
+            - converge
+            - check
+            - destroy
           converge_sequences:
             - create
             - converge
+          destroy_sequences:
+            - destroy
           test_sequences:
             - destroy
             - create
@@ -87,8 +95,40 @@ class Scenario(object):
         return self.config.config['scenario']['converge_sequences']
 
     @property
+    def create_sequences(self):
+        return ['create']
+
+    @property
+    def dependency_sequences(self):
+        return ['dependency']
+
+    @property
+    def destroy_sequences(self):
+        return self.config.config['scenario']['destroy_sequences']
+
+    @property
+    def destruct_sequences(self):
+        return ['destruct']
+
+    @property
+    def idempotence_sequences(self):
+        return ['idempotence']
+
+    @property
+    def lint_sequences(self):
+        return ['lint']
+
+    @property
+    def syntax_sequences(self):
+        return ['syntax']
+
+    @property
     def test_sequences(self):
         return self.config.config['scenario']['test_sequences']
+
+    @property
+    def verify_sequences(self):
+        return ['verify']
 
     @property
     def subcommand(self):

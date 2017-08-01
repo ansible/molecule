@@ -20,6 +20,7 @@
 
 import click
 
+import molecule.command
 from molecule import logger
 from molecule import scenarios
 from molecule.command import base
@@ -74,5 +75,8 @@ def dependency(ctx, scenario_name):  # pragma: no cover
     s = scenarios.Scenarios(
         base.get_configs(args, command_args), scenario_name)
     for scenario in s.all:
-        s.print_sequence_info(scenario, scenario.subcommand)
-        Dependency(scenario.config).execute()
+        for sequence in scenario.dependency_sequences:
+            s.print_sequence_info(scenario, sequence)
+            command_module = getattr(molecule.command, sequence)
+            command = getattr(command_module, sequence.capitalize())
+            command(scenario.config).execute()

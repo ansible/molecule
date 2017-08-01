@@ -301,6 +301,9 @@ class Config(object):
                     'create',
                     'converge',
                 ],
+                'destroy_sequences': [
+                    'destroy',
+                ],
                 'test_sequences': [
                     'destroy',
                     'dependency',
