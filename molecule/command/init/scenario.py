@@ -51,7 +51,8 @@ class Scenario(base.Base):
         role_name = os.getcwd().split(os.sep)[-1]
         role_directory = util.abs_path(os.path.join(os.getcwd(), os.pardir))
 
-        LOG.info('Initializing new scenario {}...'.format(scenario_name))
+        msg = 'Initializing new scenario {}...'.format(scenario_name)
+        LOG.info(msg)
         molecule_directory = config.molecule_directory(
             os.path.join(role_directory, role_name))
         scenario_directory = os.path.join(molecule_directory, scenario_name)

@@ -59,7 +59,8 @@ class Destruct(base.Base):
         msg = 'Provisioner: [{}]'.format(self._config.provisioner.name)
         LOG.info(msg)
         if not self._config.provisioner.playbooks.destruct:
-            LOG.warn('Skipping, destruct playbook not configured.')
+            msg = 'Skipping, destruct playbook not configured.'
+            LOG.warn(msg)
             return
 
         msg = 'Playbook: [{}]'.format(

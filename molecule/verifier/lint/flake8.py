@@ -106,11 +106,13 @@ class Flake8(base.Base):
 
     def execute(self):
         if not self.enabled:
-            LOG.warn('Skipping, verifier_lint is disabled.')
+            msg = 'Skipping, verifier_lint is disabled.'
+            LOG.warn(msg)
             return
 
         if not len(self._tests) > 0:
-            LOG.warn('Skipping, no tests found.')
+            msg = 'Skipping, no tests found.'
+            LOG.warn(msg)
             return
 
         if self._flake8_command is None:
@@ -122,7 +124,8 @@ class Flake8(base.Base):
 
         try:
             util.run_command(self._flake8_command, debug=self._config.debug)
-            LOG.success('Lint completed successfully.')
+            msg = 'Lint completed successfully.'
+            LOG.success(msg)
         except sh.ErrorReturnCode as e:
             util.sysexit(e.exit_code)
 

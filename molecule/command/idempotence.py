@@ -69,7 +69,8 @@ class Idempotence(base.Base):
 
         idempotent = self._is_idempotent(output)
         if idempotent:
-            LOG.success('Idempotence completed successfully.')
+            msg = 'Idempotence completed successfully.'
+            LOG.success(msg)
         else:
             msg = ('Idempotence test failed because of the following tasks:\n'
                    '{}').format('\n'.join(self._non_idempotent_tasks(output)))

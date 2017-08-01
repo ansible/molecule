@@ -53,7 +53,8 @@ class Template(base.Base):
         url = self._command_args['url']
         no_input = self._command_args['no_input']
         role_directory = os.getcwd()
-        LOG.info('Initializing new role {}...'.format(role_name))
+        msg = 'Initializing new role {}...'.format(role_name)
+        LOG.info(msg)
 
         if os.path.isdir(role_name):
             msg = ('The directory {} exists. '

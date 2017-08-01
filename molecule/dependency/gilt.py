@@ -96,11 +96,13 @@ class Gilt(base.Base):
 
     def execute(self):
         if not self.enabled:
-            LOG.warn('Skipping, dependency is disabled.')
+            msg = 'Skipping, dependency is disabled.'
+            LOG.warn(msg)
             return
 
         if not self._has_requirements_file():
-            LOG.warn('Skipping, missing the requirements file.')
+            msg = 'Skipping, missing the requirements file.'
+            LOG.warn(msg)
             return
 
         if self._gilt_command is None:
@@ -108,7 +110,8 @@ class Gilt(base.Base):
 
         try:
             util.run_command(self._gilt_command, debug=self._config.debug)
-            LOG.success('Dependency completed successfully.')
+            msg = 'Dependency completed successfully.'
+            LOG.success(msg)
         except sh.ErrorReturnCode as e:
             util.sysexit(e.exit_code)
 

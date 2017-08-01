@@ -121,11 +121,13 @@ class Testinfra(base.Base):
 
     def execute(self):
         if not self.enabled:
-            LOG.warn('Skipping, verifier is disabled.')
+            msg = 'Skipping, verifier is disabled.'
+            LOG.warn(msg)
             return
 
         if not len(self._tests) > 0:
-            LOG.warn('Skipping, no tests found.')
+            msg = 'Skipping, no tests found.'
+            LOG.warn(msg)
             return
 
         if self._testinfra_command is None:
@@ -137,7 +139,8 @@ class Testinfra(base.Base):
 
         try:
             util.run_command(self._testinfra_command, debug=self._config.debug)
-            LOG.success('Verifier completed successfully.')
+            msg = 'Verifier completed successfully.'
+            LOG.success(msg)
 
         except sh.ErrorReturnCode as e:
             util.sysexit(e.exit_code)

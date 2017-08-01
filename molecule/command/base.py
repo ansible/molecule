@@ -69,7 +69,7 @@ class Base(object):
 
     def _setup(self):
         """
-        Prepare the system for Molecule and returns None.
+        Prepare Molecule's provisioner and returns None.
 
         :return: None
         """

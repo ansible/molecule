@@ -120,7 +120,8 @@ class AnsibleLint(base.Base):
 
     def execute(self):
         if not self.enabled:
-            LOG.warn('Skipping, lint is disabled.')
+            msg = 'Skipping, lint is disabled.'
+            LOG.warn(msg)
             return
 
         if self._ansible_lint_command is None:
@@ -133,6 +134,7 @@ class AnsibleLint(base.Base):
         try:
             util.run_command(
                 self._ansible_lint_command, debug=self._config.debug)
-            LOG.success('Lint completed successfully.')
+            msg = 'Lint completed successfully.'
+            LOG.success(msg)
         except sh.ErrorReturnCode as e:
             util.sysexit(e.exit_code)

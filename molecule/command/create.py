@@ -69,7 +69,8 @@ class Create(base.Base):
         self._config.state.change_state('driver', self._config.driver.name)
 
         if self._config.driver.delegated:
-            LOG.warn('Skipping, instances are delegated.')
+            msg = 'Skipping, instances are delegated.'
+            LOG.warn(msg)
             return
 
         if self._config.state.created:
