@@ -64,6 +64,7 @@ class Scenario(object):
         :return: None
         """
         self._config = config
+        self._setup()
 
     @property
     def name(self):
@@ -88,3 +89,12 @@ class Scenario(object):
     @property
     def test_sequence(self):
         return self._config.config['scenario']['test_sequence']
+
+    def _setup(self):
+        """
+         Prepare the scenario for Molecule and returns None.
+
+         :return: None
+         """
+        if not os.path.isdir(self.ephemeral_directory):
+            os.mkdir(self.ephemeral_directory)

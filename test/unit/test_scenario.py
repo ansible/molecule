@@ -19,15 +19,25 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import os
+import shutil
 
 import pytest
 
+from molecule import config
 from molecule import scenario
 
 
 @pytest.fixture
 def scenario_instance(config_instance):
     return scenario.Scenario(config_instance)
+
+
+def test_config_private_member(scenario_instance):
+    assert isinstance(scenario_instance._config, config.Config)
+
+
+def test_init_calls_setup(patched_scenario_setup, scenario_instance):
+    patched_scenario_setup.assert_called_once_with()
 
 
 def test_name_property(scenario_instance):
@@ -76,3 +86,11 @@ def test_test_sequence_property(scenario_instance):
     ]
 
     assert x == scenario_instance.test_sequence
+
+
+def test_setup_creates_ephemeral_directory(scenario_instance):
+    ephemeral_directory = scenario_instance._config.scenario.ephemeral_directory
+    shutil.rmtree(ephemeral_directory)
+    scenario_instance._setup()
+
+    assert os.path.isdir(ephemeral_directory)

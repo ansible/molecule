@@ -26,6 +26,24 @@ from molecule.verifier.lint import flake8
 
 
 @pytest.fixture
+def molecule_verifier_lint_section_data():
+    return {
+        'verifier': {
+            'name': 'testinfra',
+            'lint': {
+                'name': 'flake8',
+                'options': {
+                    'foo': 'bar',
+                },
+                'env': {
+                    'foo': 'bar',
+                },
+            }
+        }
+    }
+
+
+@pytest.fixture
 def flake8_instance(molecule_verifier_lint_section_data, config_instance):
     config_instance.merge_dicts(config_instance.config,
                                 molecule_verifier_lint_section_data)

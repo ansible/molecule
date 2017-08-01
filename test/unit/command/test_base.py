@@ -19,7 +19,6 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import os
-import shutil
 
 import pytest
 
@@ -78,20 +77,11 @@ def test_prune(base_instance):
 def test_setup(mocker, patched_add_or_update_vars, patched_write_config,
                patched_manage_inventory, base_instance):
 
-    assert os.path.isdir(base_instance._config.scenario.ephemeral_directory)
     assert os.path.isdir(
         os.path.dirname(base_instance._config.provisioner.inventory_file))
 
     patched_manage_inventory.assert_called_once_with()
     patched_write_config.assert_called_once_with()
-
-
-def test_setup_creates_ephemeral_directory(base_instance):
-    ephemeral_directory = base_instance._config.scenario.ephemeral_directory
-    shutil.rmtree(base_instance._config.scenario.ephemeral_directory)
-    base_instance._setup()
-
-    assert os.path.isdir(ephemeral_directory)
 
 
 def test_verify_configs(config_instance):

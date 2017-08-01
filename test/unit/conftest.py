@@ -258,18 +258,5 @@ def patched_testinfra(mocker):
 
 
 @pytest.fixture
-def molecule_verifier_lint_section_data():
-    return {
-        'verifier': {
-            'name': 'testinfra',
-            'lint': {
-                'name': 'flake8',
-                'options': {
-                    'foo': 'bar',
-                },
-                'env': {
-                    'foo': 'bar',
-                },
-            }
-        }
-    }
+def patched_scenario_setup(mocker):
+    return mocker.patch('molecule.scenario.Scenario._setup')

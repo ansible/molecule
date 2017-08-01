@@ -73,9 +73,6 @@ class Base(object):
 
         :return: None
         """
-        if not os.path.isdir(self._config.scenario.ephemeral_directory):
-            os.mkdir(self._config.scenario.ephemeral_directory)
-
         self._config.provisioner.write_config()
         self._config.provisioner.manage_inventory()
 
