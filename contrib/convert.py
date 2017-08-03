@@ -28,8 +28,10 @@ import shutil
 import click
 import sh
 
+from molecule import config
 from molecule import logger
 from molecule import migrate
+from molecule import scenario
 from molecule import util
 
 LOG = logger.get_logger(__name__)
@@ -39,21 +41,21 @@ class Convert(object):
     def __init__(self, old_molecule_file, driver_name):
         self._old_molecule_file = old_molecule_file
 
-        if not os.path.isfile(self._old_molecule_file):
-            msg = 'Unable to find {}. Exiting.'.format(self._old_molecule_file)
+        if not os.path.isfile(old_molecule_file):
+            msg = 'Unable to find {}. Exiting.'.format(old_molecule_file)
             util.sysexit_with_message(msg)
 
-        self._m = migrate.Migrate(self._old_molecule_file)
-        self._old_role_dir = os.path.join(
-            os.path.dirname(self._old_molecule_file))
-        self._old_dot_molecule_dir = os.path.join(self._old_role_dir,
-                                                  '.molecule')
+        self._m = migrate.Migrate(old_molecule_file)
+        self._old_role_dir = os.path.join(os.path.dirname(old_molecule_file))
+        self._old_dot_molecule_dir = scenario.ephemeral_directory(
+            self._old_role_dir)
         self._old_test_dir = os.path.join(self._old_role_dir, 'tests')
         self._old_playbook = os.path.join(self._old_role_dir, 'playbook.yml')
-        self._molecule_dir = os.path.join(self._old_role_dir, 'molecule')
+        self._molecule_dir = config.molecule_directory(self._old_role_dir)
         self._scenario_dir = os.path.join(self._molecule_dir, 'default')
         self._test_dir = os.path.join(self._scenario_dir, 'tests')
-        self._molecule_file = os.path.join(self._scenario_dir, 'molecule.yml')
+        self._molecule_file = config.molecule_file(self._scenario_dir)
+
         self._role_name = os.path.basename(
             os.path.normpath(self._old_role_dir))
 

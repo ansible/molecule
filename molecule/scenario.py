@@ -23,6 +23,7 @@ import os
 from molecule import logger
 
 LOG = logger.get_logger(__name__)
+MOLECULE_EPHEMERAL_DIRECTORY = '.molecule'
 
 
 class Scenario(object):
@@ -84,7 +85,7 @@ class Scenario(object):
 
     @property
     def ephemeral_directory(self):
-        return os.path.join(self.directory, '.molecule')
+        return ephemeral_directory(self.directory)
 
     @property
     def check_sequences(self):
@@ -142,3 +143,7 @@ class Scenario(object):
          """
         if not os.path.isdir(self.ephemeral_directory):
             os.mkdir(self.ephemeral_directory)
+
+
+def ephemeral_directory(path):
+    return os.path.join(path, MOLECULE_EPHEMERAL_DIRECTORY)

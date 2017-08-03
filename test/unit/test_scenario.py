@@ -134,3 +134,7 @@ def test_setup_creates_ephemeral_directory(scenario_instance):
     scenario_instance._setup()
 
     assert os.path.isdir(ephemeral_directory)
+
+
+def test_ephemeral_directory():
+    assert '/foo/bar/.molecule' == scenario.ephemeral_directory('/foo/bar')

@@ -46,7 +46,6 @@ from molecule.verifier import testinfra
 
 LOG = logger.get_logger(__name__)
 MOLECULE_DIRECTORY = 'molecule'
-MOLECULE_EPHEMERAL_DIRECTORY = '.molecule'
 MOLECULE_FILE = 'molecule.yml'
 MERGE_STRATEGY = anyconfig.MS_DICTS
 
