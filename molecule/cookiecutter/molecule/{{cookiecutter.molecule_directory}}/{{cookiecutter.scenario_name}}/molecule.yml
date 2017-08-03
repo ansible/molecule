@@ -3,6 +3,10 @@ dependency:
   name: {{ cookiecutter.dependency_name }}
 driver:
   name: {{ cookiecutter.driver_name }}
+{%- if cookiecutter.driver_name == 'vagrant' %}
+  provider:
+    name: virtualbox
+{%- endif %}
 lint:
   name: {{ cookiecutter.lint_name }}
 platforms:

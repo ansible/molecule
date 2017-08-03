@@ -62,6 +62,15 @@ class Vagrant(base.Base):
 
         $ sudo pip install python-vagrant
 
+    Change the provider passed to Vagrant.
+
+    .. code-block:: yaml
+
+        driver:
+          name: vagrant
+          provider:
+            name: parallels
+
     Change the options passed to the ssh client.
 
     .. code-block:: yaml

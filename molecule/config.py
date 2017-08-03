@@ -250,6 +250,9 @@ class Config(object):
             },
             'driver': {
                 'name': 'docker',
+                'provider': {
+                    'name': None
+                },
                 'options': {},
                 'ssh_connection_options': [],
                 'safe_files': [],

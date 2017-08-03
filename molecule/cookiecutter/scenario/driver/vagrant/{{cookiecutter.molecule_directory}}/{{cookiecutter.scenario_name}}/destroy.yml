@@ -14,8 +14,10 @@
       molecule_vagrant:
         instance_name: "{{ item.name }}"
         platform_box: "{{ item.box }}"
-        state: destroy
+        provider_name: "{{ molecule_yml.driver.provider.name }}"
         force_stop: "{{ item.force_stop | default(True) }}"
+
+        state: destroy
       register: server
       with_items: "{{ molecule_yml.platforms }}"
 

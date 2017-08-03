@@ -33,8 +33,13 @@ class DependencySchema(base.Base):
     env = marshmallow.fields.Dict()
 
 
+class DriverProviderSchema(base.Base):
+    name = marshmallow.fields.Str(allow_none=True)
+
+
 class DriverSchema(base.Base):
     name = marshmallow.fields.Str()
+    provider = marshmallow.fields.Nested(DriverProviderSchema())
     options = marshmallow.fields.Dict()
     ssh_connection_options = marshmallow.fields.List(marshmallow.fields.Str())
     safe_files = marshmallow.fields.List(marshmallow.fields.Str())

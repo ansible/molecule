@@ -13,15 +13,12 @@
       molecule_vagrant:
         instance_name: "{{ item.name }}"
         instance_interfaces: "{{ item.interfaces | default(omit) }}"
-        # NOTE(retr0h): Help with spurious failures during functional tests.
-        instance_raw_config_args:
-          - "vm.boot_timeout = 700"
 
         platform_box: "{{ item.box }}"
         platform_box_version: "{{ item.box_version | default(omit) }}"
         platform_box_url: "{{ item.box_url | default(omit) }}"
 
-        provider_name: "{{ item.provider | default(omit) }}"
+        provider_name: "{{ molecule_yml.driver.provider.name }}"
         provider_memory: "{{ item.memory | default(omit) }}"
         provider_cpus: "{{ item.cpus | default(omit) }}"
         provider_raw_config_args: "{{ item.raw_config_args | default(omit) }}"

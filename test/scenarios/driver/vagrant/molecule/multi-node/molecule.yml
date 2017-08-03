@@ -3,6 +3,8 @@ dependency:
   name: galaxy
 driver:
   name: vagrant
+  provider:
+    name: virtualbox
 lint:
   name: yamllint
   options:
