@@ -26,6 +26,8 @@ import glob
 import os
 import shutil
 
+import sh
+
 from molecule import logger
 from molecule import migrate
 from molecule import util
@@ -51,17 +53,15 @@ molecule_dir = os.path.join(old_role_dir, 'molecule')
 scenario_dir = os.path.join(molecule_dir, 'default')
 test_dir = os.path.join(scenario_dir, 'tests')
 molecule_file = os.path.join(scenario_dir, 'molecule.yml')
+role_name = os.path.basename(os.path.normpath(old_role_dir))
 
-dirs = [
-    molecule_dir,
-    scenario_dir,
-    test_dir,
-]
-for d in dirs:
-    if not os.path.isdir(d):
-        msg = 'Creating {}'.format(d)
-        LOG.info(msg)
-        os.mkdir(d)
+options = {
+    'role_name': role_name,
+    'scenario_name': 'default',
+    'driver_name': 'vagrant',
+}
+cmd = sh.molecule.bake('init', 'scenario', _cwd=old_role_dir, **options)
+util.run_command(cmd)
 
 with open(molecule_file, 'w') as stream:
     msg = 'Writing molecule.yml to {}'.format(molecule_file)
