@@ -31,7 +31,7 @@ Manually
 .. code-block:: bash
 
     $ cd $role-name
-    $ molecule init scenario --role-name $role-name  --scenario-name default --driver-name $driver-name
+    $ molecule init scenario -r $role-name -s default -d $driver-name
 
 2. Move existing Testinfra tests to the new scenario's test directory located
    at `molecule/default/tests/test_default.py`.
