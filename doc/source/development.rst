@@ -22,6 +22,10 @@ Pre-release
 Release
 -------
 
+Molecule follows `Semantic Versioning`_.
+
+.. _`Semantic Versioning`: http://semver.org
+
 Tag the release and push to github.com
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

@@ -2,6 +2,14 @@
 History
 *******
 
+Molecule follows `Semantic Versioning`_.  Therefore versioning will be much
+different than previous versions of Molecule.
+
+It will be safe to pin to MINOR versions of Molecule.  MINOR will add
+functionality in a backwards-compatible manner.
+
+.. _`Semantic Versioning`: http://semver.org
+
 2.0
 ===
 
@@ -18,10 +26,6 @@ Important Changes
 * Promoted `Goss Verifier`_ to a supported verifier.
 * Added `GCE Driver`_, `EC2 Driver`_, `LXC Driver`_, `LXD Driver`_ , and
   `OpenStack Driver`_ native Molecule drivers.
-* Molecule will follow `Semantic Versioning`_.  Therefore versioning will be
-  much different than previous versions of Molecule.  It will be safe to pin
-  to MINOR versions of Molecule.  MINOR will add functionality in a
-  backwards-compatible manner.
 
 Breaking Changes
 ----------------
@@ -43,7 +47,6 @@ Breaking Changes
 .. _`LXD Driver`: http://molecule.readthedocs.io/en/latest/configuration.html#lxd
 .. _`OpenStack Driver`: http://molecule.readthedocs.io/en/latest/configuration.html#openstack
 .. _`Porting Guide`: http://molecule.readthedocs.io/en/latest/porting.html
-.. _`Semantic Versioning`: http://semver.org
 .. _`Scenarios`: http://molecule.readthedocs.io/en/latest/configuration.html#scenario
 .. _`Delegated Driver`: http://molecule.readthedocs.io/en/latest/configuration.html#delegated
 .. _`Yamllint`: https://github.com/adrienverge/yamllint
