@@ -1,0 +1,45 @@
+---
+- name: Verifier
+  hosts: all
+  vars:
+    goss_version: v0.2.5
+    goss_arch: amd64
+    goss_dst: /usr/local/bin/goss
+    goss_sha256sum: 31d04f98444ded26e2478fbdb3f5949cc9318bed13b5937598facc1818e1fce1.
+    goss_test_directory: /tmp
+    goss_format: documentation
+  tasks:
+    - name: Download and install Goss
+      get_url:
+        url: "https://github.com/aelsabbahy/goss/releases/download/{{ goss_version }}/goss-linux-{{ goss_arch }}"
+        dest: "{{ goss_dst }}"
+        sha256sum: "{{ goss_sha256sum }}"
+        mode: 0755
+
+    - name: Copy Goss tests to remote
+      copy:
+        src: "{{ item }}"
+        dest: "{{ goss_test_directory }}/{{ item | basename }}"
+      with_fileglob:
+        - "{{ playbook_dir }}/tests/test_*.yml"
+
+    - name: Register test files
+      shell: "ls {{ goss_test_directory }}/test_*.yml"
+      register: test_files
+
+    - name: Execute Goss tests
+      command: "goss -g {{ item }} validate --format {{ goss_format }}"
+      register: test_results
+      with_items: "{{ test_files.stdout_lines }}"
+      ignore_errors: True
+
+    - name: Display details about the goss results
+      debug:
+        msg: "{{ item.stdout_lines }}"
+      with_items: "{{ test_results.results }}"
+
+    - name: Fail when tests fail
+      fail:
+        msg: "Goss failed to validate"
+      when: item.rc != 0
+      with_items: "{{ test_results.results }}"

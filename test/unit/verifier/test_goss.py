@@ -146,8 +146,8 @@ def test_execute(patched_logger_info, patched_ansible_converge,
                  goss_instance):
     goss_instance.execute()
 
-    goss_playbook = os.path.join(goss_instance._config.verifier.directory,
-                                 'test_default.yml')
+    goss_playbook = os.path.join(goss_instance._config.scenario.directory,
+                                 'verifier.yml')
     patched_ansible_converge.assert_called_once_with(goss_playbook)
 
     msg = 'Executing Goss tests found in {}/...'.format(

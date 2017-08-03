@@ -98,7 +98,8 @@ class Goss(base.Base):
         msg = 'Executing Goss tests found in {}/...'.format(self.directory)
         LOG.info(msg)
 
-        goss_playbook = os.path.join(self.directory, 'test_default.yml')
+        goss_playbook = os.path.join(self._config.scenario.directory,
+                                     'verifier.yml')
         self._config.provisioner.converge(goss_playbook)
 
         msg = 'Verifier completed successfully.'

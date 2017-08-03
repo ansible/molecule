@@ -1,8 +1,0 @@
-# Molecule managed
-
----
-file:
-  /etc/hosts:
-    exists: True
-    owner: root
-    group: root
