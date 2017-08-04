@@ -56,6 +56,8 @@ dependency:
   name: galaxy
 driver:
   name: vagrant
+  provider:
+    name: virtualbox
 lint:
   name: yamllint
 platforms:
@@ -102,7 +104,7 @@ verifier:
 def test_convert(migrate_instance, patched_logger_info):
     x = {
         'scenario': {
-            'name': 'default'
+            'name': 'default',
         },
         'platforms': [{
             'box':
@@ -114,48 +116,57 @@ def test_convert(migrate_instance, patched_logger_info):
             'interfaces': [{
                 'type': 'dhcp',
                 'network_name': 'private_network',
-                'auto_config': True
+                'auto_config': True,
             }],
             'cpus':
             2,
             'box_url':
             'http://example.com/pub/rhel-7.json',
-            'groups': ['group1', 'group2'],
+            'groups': [
+                'group1',
+                'group2',
+            ],
             'memory':
             4096,
-            'raw_config_args': ['foo', 'bar']
+            'raw_config_args': [
+                'foo',
+                'bar',
+            ],
         }],
         'lint': {
-            'name': 'yamllint'
+            'name': 'yamllint',
         },
         'driver': {
-            'name': 'vagrant'
+            'name': 'vagrant',
+            'provider': {
+                'name': 'virtualbox',
+            },
         },
         'dependency': {
-            'name': 'galaxy'
+            'name': 'galaxy',
         },
         'verifier': {
             'lint': {
-                'name': 'flake8'
+                'name': 'flake8',
             },
             'name': 'testinfra',
             'options': {
-                'sudo': True
+                'sudo': True,
             }
         },
         'provisioner': {
             'lint': {
-                'name': 'ansible-lint'
+                'name': 'ansible-lint',
             },
             'name': 'ansible',
             'env': {
-                'foo': 'bar'
+                'foo': 'bar',
             },
             'options': {
                 'become': True,
                 'extra-vars': 'foo=bar',
                 'verbose': True,
-                'tags': 'foo,bar'
+                'tags': 'foo,bar',
             }
         }
     }
