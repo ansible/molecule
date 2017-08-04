@@ -66,6 +66,7 @@ class Migrate(object):
             msg = 'Vagrant syle v1 config found'
             LOG.info(msg)
             self._set_vagrant_platforms()
+            self._set_vagrant_provider()
         else:
             msg = 'Vagrant migrations only supported.  Exiting.'
             util.sysexit_with_message(msg)
@@ -82,9 +83,14 @@ class Migrate(object):
     def _to_dict(self, od):
         return json.loads(json.dumps(od))
 
+    def _set_vagrant_provider(self):
+        provider = self._v1['vagrant']['providers'][0]
+
+        self._v2['driver']['provider']['name'] = provider['name']
+
     def _set_vagrant_platforms(self):
         platforms = self._v1['vagrant']['platforms'][0]
-        providers = self._v1['vagrant']['providers'][0]
+        provider = self._v1['vagrant']['providers'][0]
 
         platforms_list = []
         instances = self._v1['vagrant']['instances']
@@ -101,11 +107,11 @@ class Migrate(object):
             if platforms.get('box_url'):
                 i['box_url'] = platforms['box_url']
 
-            if providers.get('options', {}).get('memory'):
-                i['memory'] = providers['options']['memory']
+            if provider.get('options', {}).get('memory'):
+                i['memory'] = provider['options']['memory']
 
-            if providers.get('options', {}).get('cpus'):
-                i['cpus'] = providers['options']['cpus']
+            if provider.get('options', {}).get('cpus'):
+                i['cpus'] = provider['options']['cpus']
 
             if instance.get('ansible_groups'):
                 i['groups'] = instance['ansible_groups']
@@ -175,6 +181,7 @@ class Migrate(object):
             },
             'driver': {
                 'name': 'vagrant',
+                'provider': collections.OrderedDict({}),
             },
             'lint': {
                 'name': 'yamllint',
