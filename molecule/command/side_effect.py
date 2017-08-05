@@ -23,53 +23,54 @@ import click
 import molecule.command
 from molecule import logger
 from molecule import scenarios
+from molecule import util
 from molecule.command import base
 
 LOG = logger.get_logger(__name__)
 
 
-class Destruct(base.Base):
+class SideEffect(base.Base):
     """
-    This is a destructive action and not enabled by default.   See the
+    This action has side effects and not enabled by default.   See the
     provisioners documentation for further details.
 
     Target the default scenario:
 
-    >>> molecule destruct
+    >>> molecule side-effect
 
     Targeting a specific scenario:
 
-    >>> molecule destruct --scenario-name foo
+    >>> molecule side-effect --scenario-name foo
 
     Executing with `debug`:
 
-    >>> molecule --debug destruct
+    >>> molecule --debug side-effect
     """
 
     def execute(self):
         """
-        Execute the actions necessary to perform a `molecule destruct` and
+        Execute the actions necessary to perform a `molecule side-effect` and
         returns None.
 
         :return: None
         """
-        if not self._config.provisioner.playbooks.destruct:
-            msg = 'Skipping, destruct playbook not configured.'
+        if not self._config.provisioner.playbooks.side_effect:
+            msg = 'Skipping, side effect playbook not configured.'
             LOG.warn(msg)
             return
 
-        self._config.provisioner.destruct()
+        self._config.provisioner.side_effect()
 
 
-@click.command()
+@click.command(name='side-effect')
 @click.pass_context
 @click.option(
     '--scenario-name',
     '-s',
     default='default',
     help='Name of the scenario to target. (default)')
-def destruct(ctx, scenario_name):  # pragma: no cover
-    """ Use a provisioner to destruct instances. """
+def side_effect(ctx, scenario_name):  # pragma: no cover
+    """ Use the provisioner to perform side-effects to the instances. """
     args = ctx.obj.get('args')
     command_args = {
         'subcommand': __name__,
@@ -82,5 +83,5 @@ def destruct(ctx, scenario_name):  # pragma: no cover
         for sequence in s.sequences_for_scenario(scenario):
             s.print_sequence_info(scenario, sequence)
             command_module = getattr(molecule.command, sequence)
-            command = getattr(command_module, sequence.capitalize())
+            command = getattr(command_module, util.camelize(sequence))
             command(scenario.config).execute()

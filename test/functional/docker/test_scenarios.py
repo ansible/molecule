@@ -47,14 +47,14 @@ def driver_name(request):
 
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
-        ('destruct', 'docker', 'default'),
+        ('side_effect', 'docker', 'default'),
     ],
     indirect=[
         'scenario_to_test',
         'driver_name',
         'scenario_name',
     ])
-def test_command_destruct(scenario_to_test, with_scenario, scenario_name):
+def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
     options = {
         'driver_name': 'docker',
         'all': True,

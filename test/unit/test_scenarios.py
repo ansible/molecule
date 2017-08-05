@@ -73,7 +73,7 @@ def test_print_matrix(patched_logger_out, scenarios_instance):
 │   ├── converge
 │   ├── idempotence
 │   ├── lint
-│   ├── destruct
+│   ├── side_effect
 │   ├── verify
 │   └── destroy
 └── foo
@@ -92,7 +92,7 @@ def test_sequences_for_scenario(scenarios_instance):
         'converge',
         'idempotence',
         'lint',
-        'destruct',
+        'side_effect',
         'verify',
         'destroy',
     ]
@@ -152,7 +152,7 @@ def test_get_matrix(scenarios_instance):
             ],
             'verify': ['verify'],
             'create': ['create'],
-            'destruct': ['destruct'],
+            'side_effect': ['side_effect'],
             'dependency': ['dependency'],
             'test': [
                 'destroy',
@@ -162,7 +162,7 @@ def test_get_matrix(scenarios_instance):
                 'converge',
                 'idempotence',
                 'lint',
-                'destruct',
+                'side_effect',
                 'verify',
                 'destroy',
             ],
@@ -185,7 +185,7 @@ def test_get_matrix(scenarios_instance):
             ],
             'verify': ['verify'],
             'create': ['create'],
-            'destruct': ['destruct'],
+            'side_effect': ['side_effect'],
             'dependency': ['dependency'],
             'test': [
                 'destroy',
@@ -195,7 +195,7 @@ def test_get_matrix(scenarios_instance):
                 'converge',
                 'idempotence',
                 'lint',
-                'destruct',
+                'side_effect',
                 'verify',
                 'destroy',
             ],

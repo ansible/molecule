@@ -161,12 +161,6 @@ Destroy
 .. autoclass:: molecule.command.destroy.Destroy()
    :undoc-members:
 
-Destruct
-^^^^^^^^
-
-.. autoclass:: molecule.command.destruct.Destruct()
-   :undoc-members:
-
 Idempotence
 ^^^^^^^^^^^
 
@@ -201,6 +195,12 @@ Login
 ^^^^^
 
 .. autoclass:: molecule.command.login.Login()
+   :undoc-members:
+
+Side Effect
+^^^^^^^^^^^
+
+.. autoclass:: molecule.command.side_effect.SideEffect()
    :undoc-members:
 
 Syntax

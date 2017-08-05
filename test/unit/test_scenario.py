@@ -87,8 +87,8 @@ def test_destroy_sequences_property(scenario_instance):
     assert ['destroy'] == scenario_instance.destroy_sequences
 
 
-def test_destruct_sequences_property(scenario_instance):
-    assert ['destruct'] == scenario_instance.destruct_sequences
+def test_side_effect_sequences_property(scenario_instance):
+    assert ['side_effect'] == scenario_instance.side_effect_sequences
 
 
 def test_idempotence_sequences_property(scenario_instance):
@@ -112,7 +112,7 @@ def test_test_sequences_property(scenario_instance):
         'converge',
         'idempotence',
         'lint',
-        'destruct',
+        'side_effect',
         'verify',
         'destroy',
     ]

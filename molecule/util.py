@@ -232,3 +232,7 @@ def exit_with_invalid_section(section, name):
 
 def abs_path(path):
     return os.path.abspath(path)
+
+
+def camelize(string):
+    return re.sub(r"(?:^|_)(.)", lambda m: m.group(1).upper(), string)

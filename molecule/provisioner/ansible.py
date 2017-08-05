@@ -59,8 +59,8 @@ class Namespace(object):
         return self._get_ansible_playbook('destroy')
 
     @property
-    def destruct(self):
-        return self._get_ansible_playbook('destruct')
+    def side_effect(self):
+        return self._get_ansible_playbook('side_effect')
 
     def _get_ansible_playbook(self, section):
         c = self._config.config
@@ -153,7 +153,7 @@ class Ansible(base.Base):
         Paths in this section are converted to absolute paths, where the
         relative parent is the $scenario_directory.
 
-    The destruct playbook executes actions which are destructive to the
+    The side effect playbook executes actions which produce side effects to the
     instances(s).  Intended to test HA failover scenarios or the like.  It is
     not enabled by default.  Add the following to the provisioner's `playbooks`
     section to enable.
@@ -163,7 +163,7 @@ class Ansible(base.Base):
         provisioner:
           name: ansible
           playbooks:
-            destruct: destruct.yml
+            side_effect: side_effect.yml
 
     .. important::
 
@@ -507,14 +507,14 @@ class Ansible(base.Base):
         pb = self._get_ansible_playbook(self.playbooks.destroy)
         pb.execute()
 
-    def destruct(self):
+    def side_effect(self):
         """
-        Executes `ansible-playbook` against the destruct playbook and returns
-        None.
+        Executes `ansible-playbook` against the side_effect playbook and
+        returns None.
 
         :return: None
         """
-        pb = self._get_ansible_playbook(self.playbooks.destruct)
+        pb = self._get_ansible_playbook(self.playbooks.side_effect)
         pb.execute()
 
     def create(self):

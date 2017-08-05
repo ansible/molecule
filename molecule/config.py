@@ -280,7 +280,7 @@ class Config(object):
                     'create': 'create.yml',
                     'converge': 'playbook.yml',
                     'destroy': 'destroy.yml',
-                    'destruct': None,
+                    'side_effect': None,
                 },
                 'lint': {
                     'name': 'ansible-lint',
@@ -314,7 +314,7 @@ class Config(object):
                     'converge',
                     'idempotence',
                     'lint',
-                    'destruct',
+                    'side_effect',
                     'verify',
                     'destroy',
                 ],

@@ -311,3 +311,9 @@ def test_abs_path(temp_dir):
         os.path.join(os.getcwd(), os.path.pardir, 'foo', 'bar'))
 
     assert x == util.abs_path(os.path.join(os.path.pardir, 'foo', 'bar'))
+
+
+def test_camelize():
+    assert 'Foo' == util.camelize('foo')
+    assert 'FooBar' == util.camelize('foo_bar')
+    assert 'FooBarBaz' == util.camelize('foo_bar_baz')

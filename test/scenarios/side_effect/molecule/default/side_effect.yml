@@ -1,5 +1,5 @@
 ---
-- name: Destruct
+- name: Side Effect
   hosts: all
   gather_facts: False
   no_log: "{{ not lookup('env', 'MOLECULE_DEBUG') | bool }}"

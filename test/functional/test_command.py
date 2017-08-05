@@ -221,9 +221,9 @@ def test_command_destroy(scenario_to_test, with_scenario, scenario_name):
         'driver_name',
         'scenario_name',
     ])
-def test_command_destruct(scenario_to_test, with_scenario, scenario_name):
+def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
     options = {'scenario_name': scenario_name}
-    cmd = sh.molecule.bake('destruct', **options)
+    cmd = sh.molecule.bake('side-effect', **options)
     pytest.helpers.run_command(cmd)
 
 

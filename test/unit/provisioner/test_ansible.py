@@ -72,7 +72,7 @@ def molecule_provisioner_playbook_none_section_data():
         'provisioner': {
             'name': 'ansible',
             'playbooks': {
-                'destruct': None,
+                'side_effect': None,
             },
         }
     }
@@ -84,7 +84,7 @@ def test_get_ansible_playbook_when_playbook_none(
         namespace_instance._config.config,
         molecule_provisioner_playbook_none_section_data)
 
-    assert namespace_instance._config.provisioner.playbooks.destruct is None
+    assert namespace_instance._config.provisioner.playbooks.side_effect is None
 
 
 @pytest.fixture
@@ -94,9 +94,9 @@ def molecule_provisioner_driver_playbook_none_section_data():
             'name': 'ansible',
             'playbooks': {
                 'docker': {
-                    'destruct': None,
+                    'side_effect': None,
                 },
-                'destruct': None,
+                'side_effect': None,
             },
         }
     }
@@ -109,7 +109,7 @@ def test_get_ansible_playbook_with_driver_key_when_playbook_none(
         namespace_instance._config.config,
         molecule_provisioner_driver_playbook_none_section_data)
 
-    assert namespace_instance._config.provisioner.playbooks.destruct is None
+    assert namespace_instance._config.provisioner.playbooks.side_effect is None
 
 
 @pytest.fixture
@@ -121,7 +121,7 @@ def molecule_provisioner_driver_playbook_key_missing_section_data():
                 'docker': {
                     'create': 'docker-create.yml',
                 },
-                'destruct': None,
+                'side_effect': None,
             },
         }
     }
@@ -134,7 +134,7 @@ def test_get_ansible_playbook_with_driver_key_when_playbook_key_missing(
         namespace_instance._config.config,
         molecule_provisioner_driver_playbook_key_missing_section_data)
 
-    assert namespace_instance._config.provisioner.playbooks.destruct is None
+    assert namespace_instance._config.provisioner.playbooks.side_effect is None
 
 
 @pytest.fixture
@@ -532,8 +532,8 @@ def test_playbooks_destroy_property(ansible_instance):
     assert x == ansible_instance.playbooks.destroy
 
 
-def test_playbooks_destruct_property(ansible_instance):
-    assert ansible_instance.playbooks.destruct is None
+def test_playbooks_side_effect_property(ansible_instance):
+    assert ansible_instance.playbooks.side_effect is None
 
 
 def test_connection_options(ansible_instance):
@@ -597,13 +597,13 @@ def test_destroy(ansible_instance, mocker, patched_ansible_playbook):
     patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_destruct(ansible_instance, mocker, patched_ansible_playbook):
-    ansible_instance.destruct()
+def test_side_effect(ansible_instance, mocker, patched_ansible_playbook):
+    ansible_instance.side_effect()
 
     inventory_file = ansible_instance._config.provisioner.inventory_file
     patched_ansible_playbook.assert_called_once_with(
         inventory_file,
-        ansible_instance._config.provisioner.playbooks.destruct,
+        ansible_instance._config.provisioner.playbooks.side_effect,
         ansible_instance._config, )
     patched_ansible_playbook.return_value.execute.assert_called_once_with()
 

@@ -32,8 +32,8 @@ def patched_ansible_destroy(mocker):
 
 
 @pytest.fixture
-def patched_ansible_destruct(mocker):
-    return mocker.patch('molecule.provisioner.ansible.Ansible.destruct')
+def patched_ansible_side_effect(mocker):
+    return mocker.patch('molecule.provisioner.ansible.Ansible.side_effect')
 
 
 @pytest.fixture

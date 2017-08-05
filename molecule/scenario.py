@@ -108,8 +108,8 @@ class Scenario(object):
         return self.config.config['scenario']['destroy_sequences']
 
     @property
-    def destruct_sequences(self):
-        return ['destruct']
+    def side_effect_sequences(self):
+        return ['side_effect']
 
     @property
     def idempotence_sequences(self):
