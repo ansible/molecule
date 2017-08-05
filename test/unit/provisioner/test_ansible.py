@@ -37,7 +37,7 @@ def namespace_instance(molecule_provisioner_section_data, config_instance):
 def test_get_ansible_playbook(namespace_instance):
     x = os.path.join(namespace_instance._config.scenario.directory,
                      'create.yml')
-    assert x == namespace_instance._config.provisioner.playbooks.setup
+    assert x == namespace_instance._config.provisioner.playbooks.create
 
 
 @pytest.fixture
@@ -47,9 +47,9 @@ def molecule_provisioner_driver_section_data():
             'name': 'ansible',
             'playbooks': {
                 'docker': {
-                    'setup': 'docker-create.yml',
+                    'create': 'docker-create.yml',
                 },
-                'setup': 'create.yml',
+                'create': 'create.yml',
             },
         }
     }
@@ -63,7 +63,7 @@ def test_get_ansible_playbook_with_driver_key(
 
     x = os.path.join(namespace_instance._config.scenario.directory,
                      'docker-create.yml')
-    assert x == namespace_instance._config.provisioner.playbooks.setup
+    assert x == namespace_instance._config.provisioner.playbooks.create
 
 
 @pytest.fixture
@@ -119,7 +119,7 @@ def molecule_provisioner_driver_playbook_key_missing_section_data():
             'name': 'ansible',
             'playbooks': {
                 'docker': {
-                    'setup': 'docker-create.yml',
+                    'create': 'docker-create.yml',
                 },
                 'destruct': None,
             },
@@ -512,10 +512,10 @@ def test_config_file_property(ansible_instance):
     assert x == ansible_instance.config_file
 
 
-def test_playbooks_setup_property(ansible_instance):
+def test_playbooks_create_property(ansible_instance):
     x = os.path.join(ansible_instance._config.scenario.directory, 'create.yml')
 
-    assert x == ansible_instance.playbooks.setup
+    assert x == ansible_instance.playbooks.create
 
 
 def test_playbooks_converge_property(ansible_instance):
@@ -525,11 +525,11 @@ def test_playbooks_converge_property(ansible_instance):
     assert x == ansible_instance.playbooks.converge
 
 
-def test_playbooks_teardown_property(ansible_instance):
+def test_playbooks_destroy_property(ansible_instance):
     x = os.path.join(ansible_instance._config.scenario.directory,
                      'destroy.yml')
 
-    assert x == ansible_instance.playbooks.teardown
+    assert x == ansible_instance.playbooks.destroy
 
 
 def test_playbooks_destruct_property(ansible_instance):
@@ -592,7 +592,7 @@ def test_destroy(ansible_instance, mocker, patched_ansible_playbook):
     inventory_file = ansible_instance._config.provisioner.inventory_file
     patched_ansible_playbook.assert_called_once_with(
         inventory_file,
-        ansible_instance._config.provisioner.playbooks.teardown,
+        ansible_instance._config.provisioner.playbooks.destroy,
         ansible_instance._config, )
     patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
@@ -608,13 +608,13 @@ def test_destruct(ansible_instance, mocker, patched_ansible_playbook):
     patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_setup(ansible_instance, mocker, patched_ansible_playbook):
-    ansible_instance.setup()
+def test_create(ansible_instance, mocker, patched_ansible_playbook):
+    ansible_instance.create()
 
     inventory_file = ansible_instance._config.provisioner.inventory_file
     patched_ansible_playbook.assert_called_once_with(
         inventory_file,
-        ansible_instance._config.provisioner.playbooks.setup,
+        ansible_instance._config.provisioner.playbooks.create,
         ansible_instance._config, )
     patched_ansible_playbook.return_value.execute.assert_called_once_with()
 

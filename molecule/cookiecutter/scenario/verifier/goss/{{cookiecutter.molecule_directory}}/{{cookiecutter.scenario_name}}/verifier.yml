@@ -10,7 +10,7 @@
 #  - https://github.com/indusbox/goss-ansible
 
 {% raw -%}
-- name: Verifier
+- name: Verify
   hosts: all
   vars:
     goss_version: v0.3.2

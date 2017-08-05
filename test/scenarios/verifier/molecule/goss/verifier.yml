@@ -1,5 +1,5 @@
 ---
-- name: Verifier
+- name: Verify
   hosts: all
   vars:
     goss_version: v0.2.5

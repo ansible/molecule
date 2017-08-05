@@ -15,8 +15,8 @@ platforms:
 provisioner:
   name: ansible
   playbooks:
-    setup: ../../../../../resources/playbooks/ec2/create.yml
-    teardown: ../../../../../resources/playbooks/ec2/destroy.yml
+    create: ../../../../../resources/playbooks/ec2/create.yml
+    destroy: ../../../../../resources/playbooks/ec2/destroy.yml
   env:
     ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
   lint:

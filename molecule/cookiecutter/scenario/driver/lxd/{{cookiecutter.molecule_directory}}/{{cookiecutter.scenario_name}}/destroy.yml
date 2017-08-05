@@ -1,6 +1,6 @@
 ---
 {% raw %}
-- name: Teardown
+- name: Destroy
   hosts: localhost
   connection: local
   gather_facts: False

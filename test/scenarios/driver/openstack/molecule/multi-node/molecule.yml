@@ -19,8 +19,8 @@ platforms:
 provisioner:
   name: ansible
   playbooks:
-    setup: ../../../../../resources/playbooks/openstack/create.yml
-    teardown: ../../../../../resources/playbooks/openstack/destroy.yml
+    create: ../../../../../resources/playbooks/openstack/create.yml
+    destroy: ../../../../../resources/playbooks/openstack/destroy.yml
   env:
     ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
   lint:

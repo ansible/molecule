@@ -67,7 +67,7 @@ class Create(base.Base):
             LOG.warn(msg)
             return
 
-        self._config.provisioner.setup()
+        self._config.provisioner.create()
         self._config.state.change_state('created', True)
 
 

@@ -107,9 +107,9 @@ class ProvisionerInventorySchema(base.Base):
 
 
 class PlaybooksSchema(base.Base):
-    setup = marshmallow.fields.Str()
+    create = marshmallow.fields.Str()
     converge = marshmallow.fields.Str()
-    teardown = marshmallow.fields.Str()
+    destroy = marshmallow.fields.Str()
     destruct = marshmallow.fields.Str(allow_none=True)
 
 

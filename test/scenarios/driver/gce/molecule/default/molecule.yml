@@ -15,8 +15,8 @@ platforms:
 provisioner:
   name: ansible
   playbooks:
-    setup: ../../../../../resources/playbooks/gce/create.yml
-    teardown: ../../../../../resources/playbooks/gce/destroy.yml
+    create: ../../../../../resources/playbooks/gce/create.yml
+    destroy: ../../../../../resources/playbooks/gce/destroy.yml
   env:
     ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
   lint:

@@ -35,12 +35,12 @@ class Vagrant(base.Base):
     .. important::
 
         This driver is alpha quality software.  Do not perform any additonal
-        tasks inside the `setup` playbook.  Molecule does not know about the
+        tasks inside the `create` playbook.  Molecule does not know about the
         Vagrant instances' configuration until the `converge` playbook is
         executed.
 
-        The `setup` playbook boots instances, then the instance data is written
-        to disk.  The instance data is then added to Molecule's Ansible
+        The `create` playbook boots instances, then the instance data is
+        written to disk.  The instance data is then added to Molecule's Ansible
         inventory on the next execution of `molecule.command.create`, which
         happens to be the `converge` playbook.
 

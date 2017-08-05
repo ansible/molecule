@@ -19,8 +19,8 @@ platforms:
 provisioner:
   name: ansible
   playbooks:
-    setup: ../../../../../resources/playbooks/vagrant/create.yml
-    teardown: ../../../../../resources/playbooks/vagrant/destroy.yml
+    create: ../../../../../resources/playbooks/vagrant/create.yml
+    destroy: ../../../../../resources/playbooks/vagrant/destroy.yml
   env:
     ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
   lint:

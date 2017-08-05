@@ -44,8 +44,8 @@ class Namespace(object):
         self._config = config
 
     @property
-    def setup(self):
-        return self._get_ansible_playbook('setup')
+    def create(self):
+        return self._get_ansible_playbook('create')
 
     @property
     def converge(self):
@@ -55,8 +55,8 @@ class Namespace(object):
             c['provisioner']['playbooks']['converge'])
 
     @property
-    def teardown(self):
-        return self._get_ansible_playbook('teardown')
+    def destroy(self):
+        return self._get_ansible_playbook('destroy')
 
     @property
     def destruct(self):
@@ -86,19 +86,19 @@ class Ansible(base.Base):
     supported.
 
     Molecule's provisioner manages the instances lifecycle.  However, the user
-    must provide the setup, teardown, and converge playbooks.  Molecule's
+    must provide the create, destroy, and converge playbooks.  Molecule's
     `init` subcommand will provide the necessary files for convenience.
 
     .. important::
 
-        Reserve the setup and teardown playbooks for provisioning.  Do not
+        Reserve the create and destroy playbooks for provisioning.  Do not
         attempt to gather facts or perform operations on the provisioned nodes
         inside these playbooks.  Due to the gymnastics necessary to sync state
         between Ansible and Molecule, it is best to perform these tasks in the
         converge playbook.
 
         It is the developers responsiblity to properly map the modules's fact
-        data into the instance_conf_dict fact in the setup playbook.  This
+        data into the instance_conf_dict fact in the create playbook.  This
         allows Molecule to properly configure Ansible inventory.
 
     Additional options can be passed to `ansible-playbook` through the options
@@ -111,9 +111,9 @@ class Ansible(base.Base):
           options:
             vvv: True
           playbooks:
-            setup: create.yml
+            create: create.yml
             converge: playbook.yml
-            teardown: destroy.yml
+            destroy: destroy.yml
 
     Share playbooks between roles.
 
@@ -122,19 +122,19 @@ class Ansible(base.Base):
         provisioner:
           name: ansible
           playbooks:
-            setup: ../default/create.yml
-            teardown: ../default/destroy.yml
+            create: ../default/create.yml
+            destroy: ../default/destroy.yml
             converge: playbook.yml
 
     Multiple driver playbooks.  In some situations a developer may choose to
     test the same role against different backends.  Molecule will choose driver
-    specific setup/teardown playbooks, if the determined driver has a key in
+    specific create/destroy playbooks, if the determined driver has a key in
     the playbooks section of the provisioner's dict.
 
     .. important::
 
         If the determined driver has a key in the playbooks dict, Molecule will
-        use this dict to resolve all provisioning playbooks (setup/teardown).
+        use this dict to resolve all provisioning playbooks (create/destroy).
 
     .. code-block:: yaml
 
@@ -142,10 +142,10 @@ class Ansible(base.Base):
           name: ansible
           playbooks:
             docker:
-              setup: create.yml
-              teardown: destroy.yml
-            setup: create.yml
-            teardown: destroy.yml
+              create: create.yml
+              destroy: destroy.yml
+            create: create.yml
+            destroy: destroy.yml
             converge: playbook.yml
 
     .. important::
@@ -504,7 +504,7 @@ class Ansible(base.Base):
 
         :return: None
         """
-        pb = self._get_ansible_playbook(self.playbooks.teardown)
+        pb = self._get_ansible_playbook(self.playbooks.destroy)
         pb.execute()
 
     def destruct(self):
@@ -517,14 +517,14 @@ class Ansible(base.Base):
         pb = self._get_ansible_playbook(self.playbooks.destruct)
         pb.execute()
 
-    def setup(self):
+    def create(self):
         """
-        Executes `ansible-playbook` against the setup playbook and returns
+        Executes `ansible-playbook` against the create playbook and returns
         None.
 
         :return: None
         """
-        pb = self._get_ansible_playbook(self.playbooks.setup)
+        pb = self._get_ansible_playbook(self.playbooks.create)
         pb.execute()
 
     def syntax(self):

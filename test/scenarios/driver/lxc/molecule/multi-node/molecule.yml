@@ -19,8 +19,8 @@ platforms:
 provisioner:
   name: ansible
   playbooks:
-    setup: ../../../../../resources/playbooks/lxc/create.yml
-    teardown: ../../../../../resources/playbooks/lxc/destroy.yml
+    create: ../../../../../resources/playbooks/lxc/create.yml
+    destroy: ../../../../../resources/playbooks/lxc/destroy.yml
   env:
     ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
   lint:

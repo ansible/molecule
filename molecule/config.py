@@ -277,9 +277,9 @@ class Config(object):
                 },
                 'children': {},
                 'playbooks': {
-                    'setup': 'create.yml',
+                    'create': 'create.yml',
                     'converge': 'playbook.yml',
-                    'teardown': 'destroy.yml',
+                    'destroy': 'destroy.yml',
                     'destruct': None,
                 },
                 'lint': {
