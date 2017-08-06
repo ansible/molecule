@@ -235,4 +235,6 @@ def abs_path(path):
 
 
 def camelize(string):
+    # NOTE(retr0h): Taken from jpvanhal/inflection
+    # https://github.com/jpvanhal/inflection
     return re.sub(r"(?:^|_)(.)", lambda m: m.group(1).upper(), string)
