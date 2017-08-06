@@ -38,96 +38,110 @@ Or Create a new scenario in an existing role:
 
     $ cd foo
     $ molecule test
-    --> Scenario: [default]
-    --> Provisioner: [ansible]
-    --> Playbook: [destroy.yml]
+    --> Test matrix
 
-        PLAY [localhost] ***************************************************************
+    └── default
+        ├── destroy
+        ├── dependency
+        ├── syntax
+        ├── create
+        ├── converge
+        ├── idempotence
+        ├── lint
+        ├── side_effect
+        ├── verify
+        └── destroy
+    --> Scenario: 'default'
+    --> Sequence: 'destroy'
 
-        TASK [setup] *******************************************************************
-        ok: [localhost]
+        PLAY [Destroy] *****************************************************************
 
         TASK [Destroy molecule instance(s)] ********************************************
-        ok: [localhost] => (item={'name': u'instance-1'})
+        ok: [localhost] => (item=(censored due to no_log))
 
         PLAY RECAP *********************************************************************
-        localhost                  : ok=2    changed=0    unreachable=0    failed=0
+        localhost                  : ok=1    changed=0    unreachable=0    failed=0
 
+
+    --> Scenario: 'default'
+    --> Sequence: 'dependency'
     --> Scenario: [default]
     --> Dependency: [galaxy]
     Skipping, missing the requirements file.
-    --> Scenario: [default]
-    --> Provisioner: [ansible]
-    --> Syntax Verification of Playbook: [playbook.yml]
+    --> Scenario: 'default'
+    --> Sequence: 'syntax'
 
-        playbook: /Users/jodewey/git/molecule_2/test/scenarios/docker/foo/molecule/default/playbook.yml
-    --> Scenario: [default]
-    --> Provisioner: [ansible]
-    --> Playbook: [create.yml]
+        playbook: /Users/jodewey/git/molecule_2/test/scenarios/foo/molecule/default/playbook.yml
 
-        PLAY [localhost] ***************************************************************
+    --> Scenario: 'default'
+    --> Sequence: 'create'
 
-        TASK [setup] *******************************************************************
-        ok: [localhost]
+        PLAY [Create] ******************************************************************
+
+        TASK [Create Dockerfiles from image names] *************************************
+        changed: [localhost] => (item=(censored due to no_log))
 
         TASK [Build an Ansible compatible image] ***************************************
-        ok: [localhost]
+        changed: [localhost] => (item=(censored due to no_log))
 
         TASK [Create molecule instance(s)] *********************************************
-        changed: [localhost] => (item={'name': u'instance-1'})
+        changed: [localhost] => (item=(censored due to no_log))
 
         PLAY RECAP *********************************************************************
-        localhost                  : ok=3    changed=1    unreachable=0    failed=0
+        localhost                  : ok=3    changed=3    unreachable=0    failed=0
 
-    --> Scenario: [default]
-    --> Provisioner: [ansible]
-    --> Playbook: [playbook.yml]
 
-        PLAY [all] *********************************************************************
+    --> Scenario: 'default'
+    --> Sequence: 'converge'
 
-        TASK [setup] *******************************************************************
-        ok: [instance-1]
+        PLAY [Converge] ****************************************************************
+
+        TASK [Gathering Facts] *********************************************************
+        ok: [instance]
 
         PLAY RECAP *********************************************************************
-        instance-1                 : ok=1    changed=0    unreachable=0    failed=0
+        instance                   : ok=1    changed=0    unreachable=0    failed=0
 
-    --> Scenario: [default]
-    --> Provisioner: [ansible]
-    --> Idempotence Verification of Playbook: [playbook.yml]
+
+    --> Scenario: 'default'
+    --> Sequence: 'idempotence'
     Idempotence completed successfully.
-    --> Scenario: [default]
-    --> Lint: [ansible-lint]
+    --> Scenario: 'default'
+    --> Sequence: 'lint'
+    --> Executing Yamllint on files found in /Users/jodewey/git/molecule_2/test/scenarios/foo/...
     Lint completed successfully.
-    --> Scenario: [default]
-    --> Verifier: [testinfra]
-    --> Executing flake8 on files found in /Users/jodewey/git/molecule_2/test/scenarios/docker/foo/molecule/default/tests/...
-    --> Executing testinfra tests found in /Users/jodewey/git/molecule_2/test/scenarios/docker/foo/molecule/default/tests/...
+    --> Executing Flake8 on files found in /Users/jodewey/git/molecule_2/test/scenarios/foo/molecule/default/tests/...
+    Lint completed successfully.
+    --> Executing Ansible Lint on /Users/jodewey/git/molecule_2/test/scenarios/foo/molecule/default/playbook.yml...
+    Lint completed successfully.
+    --> Scenario: 'default'
+    --> Sequence: 'side_effect'
+    Skipping, side effect playbook not configured.
+    --> Scenario: 'default'
+    --> Sequence: 'verify'
+    --> Executing Testinfra tests found in /Users/jodewey/git/molecule_2/test/scenarios/foo/molecule/default/tests/...
         ============================= test session starts ==============================
-        platform darwin -- Python 2.7.12, pytest-3.0.5, py-1.4.32, pluggy-0.4.0
+        platform darwin -- Python 2.7.13, pytest-3.0.7, py-1.4.33, pluggy-0.4.0
         rootdir: /Users/jodewey/git/molecule_2, inifile: pytest.ini
-        plugins: testinfra-1.5.1, mock-1.5.0, helpers-namespace-2016.7.10, cov-2.4.0
+        plugins: testinfra-1.6.0, verbose-parametrize-1.2.2, mock-1.6.0, helpers-namespace-2016.7.10, cov-2.4.0
     collected 1 itemss
 
         tests/test_default.py .
 
         ============================ pytest-warning summary ============================
         WP1 None Module already imported so can not be re-written: testinfra
-        ================= 1 passed, 1 pytest-warnings in 0.64 seconds ==================
+        ================= 1 passed, 1 pytest-warnings in 5.31 seconds ==================
     Verifier completed successfully.
-    --> Scenario: [default]
-    --> Provisioner: [ansible]
-    --> Playbook: [destroy.yml]
+    --> Scenario: 'default'
+    --> Sequence: 'destroy'
 
-        PLAY [localhost] ***************************************************************
-
-        TASK [setup] *******************************************************************
-        ok: [localhost]
+        PLAY [Destroy] *****************************************************************
 
         TASK [Destroy molecule instance(s)] ********************************************
-        changed: [localhost] => (item={'name': u'instance-1'})
+        changed: [localhost] => (item=(censored due to no_log))
 
         PLAY RECAP *********************************************************************
-        localhost                  : ok=2    changed=1    unreachable=0    failed=0
+        localhost                  : ok=1    changed=1    unreachable=0    failed=0
 
 Check
 ^^^^^
