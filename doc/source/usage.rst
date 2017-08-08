@@ -52,7 +52,7 @@ Or Create a new scenario in an existing role:
         ├── verify
         └── destroy
     --> Scenario: 'default'
-    --> Sequence: 'destroy'
+    --> Term: 'destroy'
 
         PLAY [Destroy] *****************************************************************
 
@@ -64,17 +64,17 @@ Or Create a new scenario in an existing role:
 
 
     --> Scenario: 'default'
-    --> Sequence: 'dependency'
+    --> Term: 'dependency'
     --> Scenario: [default]
     --> Dependency: [galaxy]
     Skipping, missing the requirements file.
     --> Scenario: 'default'
-    --> Sequence: 'syntax'
+    --> Term: 'syntax'
 
         playbook: /Users/jodewey/git/molecule_2/test/scenarios/foo/molecule/default/playbook.yml
 
     --> Scenario: 'default'
-    --> Sequence: 'create'
+    --> Term: 'create'
 
         PLAY [Create] ******************************************************************
 
@@ -92,7 +92,7 @@ Or Create a new scenario in an existing role:
 
 
     --> Scenario: 'default'
-    --> Sequence: 'converge'
+    --> Term: 'converge'
 
         PLAY [Converge] ****************************************************************
 
@@ -104,10 +104,10 @@ Or Create a new scenario in an existing role:
 
 
     --> Scenario: 'default'
-    --> Sequence: 'idempotence'
+    --> Term: 'idempotence'
     Idempotence completed successfully.
     --> Scenario: 'default'
-    --> Sequence: 'lint'
+    --> Term: 'lint'
     --> Executing Yamllint on files found in /Users/jodewey/git/molecule_2/test/scenarios/foo/...
     Lint completed successfully.
     --> Executing Flake8 on files found in /Users/jodewey/git/molecule_2/test/scenarios/foo/molecule/default/tests/...
@@ -115,10 +115,10 @@ Or Create a new scenario in an existing role:
     --> Executing Ansible Lint on /Users/jodewey/git/molecule_2/test/scenarios/foo/molecule/default/playbook.yml...
     Lint completed successfully.
     --> Scenario: 'default'
-    --> Sequence: 'side_effect'
+    --> Term: 'side_effect'
     Skipping, side effect playbook not configured.
     --> Scenario: 'default'
-    --> Sequence: 'verify'
+    --> Term: 'verify'
     --> Executing Testinfra tests found in /Users/jodewey/git/molecule_2/test/scenarios/foo/molecule/default/tests/...
         ============================= test session starts ==============================
         platform darwin -- Python 2.7.13, pytest-3.0.7, py-1.4.33, pluggy-0.4.0
@@ -133,7 +133,7 @@ Or Create a new scenario in an existing role:
         ================= 1 passed, 1 pytest-warnings in 5.31 seconds ==================
     Verifier completed successfully.
     --> Scenario: 'default'
-    --> Sequence: 'destroy'
+    --> Term: 'destroy'
 
         PLAY [Destroy] *****************************************************************
 
@@ -152,7 +152,7 @@ Check
 Converge
 ^^^^^^^^
 
-Converge will execute the sequences necessary to converge the instances.
+Converge will execute the sequence necessary to converge the instances.
 
 .. autoclass:: molecule.command.converge.Converge()
    :undoc-members:
@@ -226,7 +226,7 @@ Syntax
 Test
 ^^^^
 
-Test will execute the sequences necessary to test the instances.
+Test will execute the sequence necessary to test the instances.
 
 .. autoclass:: molecule.command.test.Test()
    :undoc-members:

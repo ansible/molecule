@@ -292,21 +292,21 @@ class Config(object):
             'scenario': {
                 'name':
                 'default',
-                'check_sequences': [
+                'check_sequence': [
                     'destroy',
                     'create',
                     'converge',
                     'check',
                     'destroy',
                 ],
-                'converge_sequences': [
+                'converge_sequence': [
                     'create',
                     'converge',
                 ],
-                'destroy_sequences': [
+                'destroy_sequence': [
                     'destroy',
                 ],
-                'test_sequences': [
+                'test_sequence': [
                     'destroy',
                     'dependency',
                     'syntax',

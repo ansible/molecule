@@ -137,10 +137,10 @@ class ProvisionerSchema(base.Base):
 
 class ScenarioSchema(base.Base):
     name = marshmallow.fields.Str()
-    check_sequences = marshmallow.fields.List(marshmallow.fields.Str())
-    converge_sequences = marshmallow.fields.List(marshmallow.fields.Str())
-    destroy_sequences = marshmallow.fields.List(marshmallow.fields.Str())
-    test_sequences = marshmallow.fields.List(marshmallow.fields.Str())
+    check_sequence = marshmallow.fields.List(marshmallow.fields.Str())
+    converge_sequence = marshmallow.fields.List(marshmallow.fields.Str())
+    destroy_sequence = marshmallow.fields.List(marshmallow.fields.Str())
+    test_sequence = marshmallow.fields.List(marshmallow.fields.Str())
 
 
 class VerifierSchema(base.Base):

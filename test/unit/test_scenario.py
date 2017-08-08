@@ -58,7 +58,7 @@ def test_ephemeral_directory_property(molecule_scenario_directory_fixture,
     assert x == scenario_instance.ephemeral_directory
 
 
-def test_check_sequences_property(scenario_instance):
+def test_check_sequence_property(scenario_instance):
     x = [
         'destroy',
         'create',
@@ -67,43 +67,43 @@ def test_check_sequences_property(scenario_instance):
         'destroy',
     ]
 
-    assert x == scenario_instance.check_sequences
+    assert x == scenario_instance.check_sequence
 
 
-def test_converge_sequences_property(scenario_instance):
+def test_converge_sequence_property(scenario_instance):
     x = [
         'create',
         'converge',
     ]
 
-    assert x == scenario_instance.converge_sequences
+    assert x == scenario_instance.converge_sequence
 
 
-def test_dependency_sequences_property(scenario_instance):
-    assert ['dependency'] == scenario_instance.dependency_sequences
+def test_dependency_sequence_property(scenario_instance):
+    assert ['dependency'] == scenario_instance.dependency_sequence
 
 
-def test_destroy_sequences_property(scenario_instance):
-    assert ['destroy'] == scenario_instance.destroy_sequences
+def test_destroy_sequence_property(scenario_instance):
+    assert ['destroy'] == scenario_instance.destroy_sequence
 
 
-def test_side_effect_sequences_property(scenario_instance):
-    assert ['side_effect'] == scenario_instance.side_effect_sequences
+def test_side_effect_sequence_property(scenario_instance):
+    assert ['side_effect'] == scenario_instance.side_effect_sequence
 
 
-def test_idempotence_sequences_property(scenario_instance):
-    assert ['idempotence'] == scenario_instance.idempotence_sequences
+def test_idempotence_sequence_property(scenario_instance):
+    assert ['idempotence'] == scenario_instance.idempotence_sequence
 
 
-def test_lint_sequences_property(scenario_instance):
-    assert ['lint'] == scenario_instance.lint_sequences
+def test_lint_sequence_property(scenario_instance):
+    assert ['lint'] == scenario_instance.lint_sequence
 
 
-def test_syntax_sequences_property(scenario_instance):
-    assert ['syntax'] == scenario_instance.syntax_sequences
+def test_syntax_sequence_property(scenario_instance):
+    assert ['syntax'] == scenario_instance.syntax_sequence
 
 
-def test_test_sequences_property(scenario_instance):
+def test_test_sequence_property(scenario_instance):
     x = [
         'destroy',
         'dependency',
@@ -117,11 +117,11 @@ def test_test_sequences_property(scenario_instance):
         'destroy',
     ]
 
-    assert x == scenario_instance.test_sequences
+    assert x == scenario_instance.test_sequence
 
 
-def test_verify_sequences_property(scenario_instance):
-    assert ['verify'] == scenario_instance.verify_sequences
+def test_verify_sequence_property(scenario_instance):
+    assert ['verify'] == scenario_instance.verify_sequence
 
 
 def test_subcommand_property(scenario_instance):

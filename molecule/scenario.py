@@ -41,18 +41,18 @@ class Scenario(object):
 
         scenario:
           name: default
-          check_sequences:
+          check_sequence:
             - destroy
             - create
             - converge
             - check
             - destroy
-          converge_sequences:
+          converge_sequence:
             - create
             - converge
-          destroy_sequences:
+          destroy_sequence:
             - destroy
-          test_sequences:
+          test_sequence:
             - destroy
             - create
             - converge
@@ -88,47 +88,47 @@ class Scenario(object):
         return ephemeral_directory(self.directory)
 
     @property
-    def check_sequences(self):
-        return self.config.config['scenario']['check_sequences']
+    def check_sequence(self):
+        return self.config.config['scenario']['check_sequence']
 
     @property
-    def converge_sequences(self):
-        return self.config.config['scenario']['converge_sequences']
+    def converge_sequence(self):
+        return self.config.config['scenario']['converge_sequence']
 
     @property
-    def create_sequences(self):
+    def create_sequence(self):
         return ['create']
 
     @property
-    def dependency_sequences(self):
+    def dependency_sequence(self):
         return ['dependency']
 
     @property
-    def destroy_sequences(self):
-        return self.config.config['scenario']['destroy_sequences']
+    def destroy_sequence(self):
+        return self.config.config['scenario']['destroy_sequence']
 
     @property
-    def side_effect_sequences(self):
+    def side_effect_sequence(self):
         return ['side_effect']
 
     @property
-    def idempotence_sequences(self):
+    def idempotence_sequence(self):
         return ['idempotence']
 
     @property
-    def lint_sequences(self):
+    def lint_sequence(self):
         return ['lint']
 
     @property
-    def syntax_sequences(self):
+    def syntax_sequence(self):
         return ['syntax']
 
     @property
-    def test_sequences(self):
-        return self.config.config['scenario']['test_sequences']
+    def test_sequence(self):
+        return self.config.config['scenario']['test_sequence']
 
     @property
-    def verify_sequences(self):
+    def verify_sequence(self):
         return ['verify']
 
     @property

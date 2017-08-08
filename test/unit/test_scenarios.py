@@ -51,12 +51,12 @@ def test_all_filters_on_scenario_name_property(scenarios_instance):
     assert 1 == len(scenarios_instance.all)
 
 
-def test_print_sequence_info(mocker, patched_logger_info, scenarios_instance):
+def test_print_term_info(mocker, patched_logger_info, scenarios_instance):
     scenario = scenarios_instance._filter_for_scenario('default')[0]
-    scenarios_instance.print_sequence_info(scenario, 'sequence')
+    scenarios_instance.print_term_info(scenario, 'sequence')
     x = [
         mocker.call("Scenario: 'default'"),
-        mocker.call("Sequence: 'sequence'"),
+        mocker.call("Term: 'sequence'"),
     ]
 
     assert x == patched_logger_info.mock_calls
@@ -82,7 +82,7 @@ def test_print_matrix(patched_logger_out, scenarios_instance):
     assert x.encode('utf-8') == patched_logger_out.call_args[0][0]
 
 
-def test_sequences_for_scenario(scenarios_instance):
+def test_terms_for_scenario(scenarios_instance):
     scenario = scenarios_instance.all[0]
     x = [
         'destroy',
@@ -97,13 +97,13 @@ def test_sequences_for_scenario(scenarios_instance):
         'destroy',
     ]
 
-    assert x == scenarios_instance.sequences_for_scenario(scenario)
+    assert x == scenarios_instance.terms_for_scenario(scenario)
 
 
-def test_sequences_for_scenario_with_invalid_subcommand(scenarios_instance):
+def test_terms_for_scenario_with_invalid_subcommand(scenarios_instance):
     scenario = scenarios_instance.all[1]
 
-    assert [] == scenarios_instance.sequences_for_scenario(scenario)
+    assert [] == scenarios_instance.terms_for_scenario(scenario)
 
 
 def test_verify_does_not_raise_when_found(scenarios_instance):
