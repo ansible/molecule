@@ -28,6 +28,35 @@ from molecule import util
 LOG = logger.get_logger(__name__)
 
 
+class Term(object):
+    """ A class to act as a container for a term. """
+
+    def __init__(self, scenario, name):
+        """
+        Initialize a new Term class and returns None.
+
+        :param scenario: An instance of a scenario object.
+        :param name: A string containing the name of the term.
+        :return: None
+        """
+        self._scenario = scenario
+        self._name = name
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def scenario(self):
+        return self._scenario
+
+    def print_info(self):
+        msg = "Scenario: '{}'".format(self.scenario.name)
+        LOG.info(msg)
+        msg = "Term: '{}'".format(self.name)
+        LOG.info(msg)
+
+
 class Scenarios(object):
     """
     The Scenarios object consists of one to many scenario objects Molecule will
@@ -59,21 +88,14 @@ class Scenarios(object):
 
         return [c.scenario for c in self._configs]
 
-    def print_term_info(self, scenario, sequence):
-        msg = "Scenario: '{}'".format(scenario.name)
-        LOG.info(msg)
-        msg = "Term: '{}'".format(sequence)
-        LOG.info(msg)
-
     def print_matrix(self):
         msg = 'Test matrix'
         LOG.info(msg)
 
-        tree = tuple(('',
-                      [(scenario.name,
-                        [(sequence, [])
-                         for sequence in self.sequence_for_scenario(scenario)])
-                       for scenario in self.all]))
+        tree = tuple(('', [(scenario.name,
+                            [(term.name, [])
+                             for term in self.sequence_for_scenario(scenario)])
+                           for scenario in self.all]))
 
         tf = tree_format.format_tree(
             tree,
@@ -85,7 +107,7 @@ class Scenarios(object):
     def sequence_for_scenario(self, scenario):
         """
         Select the sequence based on scenario and subcommand of the provided
-        scenario object and returns a list.
+        scenario object and returns a list of Term objects.
 
         :param scenario: A scenario object.
         :param skipped: An optional bool to include skipped scenarios.
@@ -94,7 +116,9 @@ class Scenarios(object):
         matrix = self._get_matrix()
 
         try:
-            return matrix[scenario.name][scenario.subcommand]
+            sequence = matrix[scenario.name][scenario.subcommand]
+
+            return [Term(scenario, term) for term in sequence]
         except KeyError:
             # TODO(retr0h): May change this handling in the future.
             return []
@@ -134,13 +158,13 @@ class Scenarios(object):
         {
             scenario_1: {
                 'subcommand': [
-                    'sequence-1',
-                    'sequence-2',
+                    'term-1',
+                    'term-2',
                 ],
             },
             scenario_2: {
                 'subcommand': [
-                    'sequence-1',
+                    'term-1',
                 ],
             },
         }

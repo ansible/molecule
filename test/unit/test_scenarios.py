@@ -23,6 +23,7 @@ import copy
 
 import pytest
 
+from molecule import scenario
 from molecule import scenarios
 
 
@@ -37,6 +38,34 @@ def scenarios_instance(config_instance):
     return scenarios.Scenarios([config_instance_1, config_instance_2])
 
 
+@pytest.fixture
+def term_instance(scenarios_instance):
+    scenario = scenarios_instance._filter_for_scenario('default')[0]
+
+    return scenarios.Term(scenario, 'foo')
+
+
+def test_name_property(term_instance):
+    assert 'foo' == term_instance.name
+
+
+def test_scenario_property(term_instance):
+    assert isinstance(term_instance.scenario, scenario.Scenario)
+
+
+def test_print_term_info(mocker, patched_logger_info, scenarios_instance,
+                         term_instance):
+    scenario = scenarios_instance.all[0]
+    term = scenarios_instance.sequence_for_scenario(scenario)[0]
+    term.print_info()
+    x = [
+        mocker.call("Scenario: 'default'"),
+        mocker.call("Term: 'destroy'"),
+    ]
+
+    assert x == patched_logger_info.mock_calls
+
+
 def test_all_property(scenarios_instance):
     result = scenarios_instance.all
 
@@ -49,17 +78,6 @@ def test_all_filters_on_scenario_name_property(scenarios_instance):
     scenarios_instance._scenario_name = 'default'
 
     assert 1 == len(scenarios_instance.all)
-
-
-def test_print_term_info(mocker, patched_logger_info, scenarios_instance):
-    scenario = scenarios_instance._filter_for_scenario('default')[0]
-    scenarios_instance.print_term_info(scenario, 'sequence')
-    x = [
-        mocker.call("Scenario: 'default'"),
-        mocker.call("Term: 'sequence'"),
-    ]
-
-    assert x == patched_logger_info.mock_calls
 
 
 def test_print_matrix(patched_logger_out, scenarios_instance):
@@ -83,21 +101,12 @@ def test_print_matrix(patched_logger_out, scenarios_instance):
 
 
 def test_sequence_for_scenario(scenarios_instance):
-    scenario = scenarios_instance.all[0]
-    x = [
-        'destroy',
-        'dependency',
-        'syntax',
-        'create',
-        'converge',
-        'idempotence',
-        'lint',
-        'side_effect',
-        'verify',
-        'destroy',
-    ]
+    s = scenarios_instance.all[0]
+    result = scenarios_instance.sequence_for_scenario(s)
 
-    assert x == scenarios_instance.sequence_for_scenario(scenario)
+    assert 'destroy' == result[0].name
+    assert isinstance(result[0].scenario, scenario.Scenario)
+    assert isinstance(result[0], scenarios.Term)
 
 
 def test_sequence_for_scenario_with_invalid_subcommand(scenarios_instance):
