@@ -82,7 +82,7 @@ def test_print_matrix(patched_logger_out, scenarios_instance):
     assert x.encode('utf-8') == patched_logger_out.call_args[0][0]
 
 
-def test_terms_for_scenario(scenarios_instance):
+def test_sequence_for_scenario(scenarios_instance):
     scenario = scenarios_instance.all[0]
     x = [
         'destroy',
@@ -97,13 +97,13 @@ def test_terms_for_scenario(scenarios_instance):
         'destroy',
     ]
 
-    assert x == scenarios_instance.terms_for_scenario(scenario)
+    assert x == scenarios_instance.sequence_for_scenario(scenario)
 
 
-def test_terms_for_scenario_with_invalid_subcommand(scenarios_instance):
+def test_sequence_for_scenario_with_invalid_subcommand(scenarios_instance):
     scenario = scenarios_instance.all[1]
 
-    assert [] == scenarios_instance.terms_for_scenario(scenario)
+    assert [] == scenarios_instance.sequence_for_scenario(scenario)
 
 
 def test_verify_does_not_raise_when_found(scenarios_instance):

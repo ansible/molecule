@@ -103,7 +103,7 @@ def destroy(ctx, scenario_name, driver_name, __all):  # pragma: no cover
         base.get_configs(args, command_args), scenario_name)
     s.print_matrix()
     for scenario in s.all:
-        for term in s.terms_for_scenario(scenario):
+        for term in s.sequence_for_scenario(scenario):
             s.print_term_info(scenario, term)
             command_module = getattr(molecule.command, term)
             command = getattr(command_module, util.camelize(term))

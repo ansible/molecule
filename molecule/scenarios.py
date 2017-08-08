@@ -72,7 +72,7 @@ class Scenarios(object):
         tree = tuple(('',
                       [(scenario.name,
                         [(sequence, [])
-                         for sequence in self.terms_for_scenario(scenario)])
+                         for sequence in self.sequence_for_scenario(scenario)])
                        for scenario in self.all]))
 
         tf = tree_format.format_tree(
@@ -82,7 +82,7 @@ class Scenarios(object):
 
         LOG.out(tf.encode('utf-8'))
 
-    def terms_for_scenario(self, scenario):
+    def sequence_for_scenario(self, scenario):
         """
         Select the sequence based on scenario and subcommand of the provided
         scenario object and returns a list.
