@@ -119,7 +119,7 @@ class Login(base.Base):
         signal.signal(signal.SIGWINCH, self._sigwinch_passthrough)
         self._pt.interact()
 
-    def _sigwinch_passthrough(self):  # pragma: no cover
+    def _sigwinch_passthrough(self, sig, data):  # pragma: no cover
         tiocgwinsz = 1074295912  # assume
         if 'TIOCGWINSZ' in dir(termios):
             tiocgwinsz = termios.TIOCGWINSZ
