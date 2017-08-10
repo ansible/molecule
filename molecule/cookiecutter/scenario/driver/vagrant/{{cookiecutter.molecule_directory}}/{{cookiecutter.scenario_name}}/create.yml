@@ -14,6 +14,7 @@
       molecule_vagrant:
         instance_name: "{{ item.name }}"
         instance_interfaces: "{{ item.interfaces | default(omit) }}"
+        instance_raw_config_args: "{{ item.instance_raw_config_args | default(omit) }}"
 
         platform_box: "{{ item.box }}"
         platform_box_version: "{{ item.box_version | default(omit) }}"
