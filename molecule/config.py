@@ -325,6 +325,7 @@ class Config(object):
                 'directory': 'tests',
                 'options': {},
                 'env': {},
+                'additional_file_or_dir': [],
                 'lint': {
                     'name': 'flake8',
                     'enabled': True,

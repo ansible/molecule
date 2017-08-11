@@ -38,6 +38,11 @@ def molecule_verifier_section_data():
                 'vvv': True,
                 'verbose': True,
             },
+            'additional_file_or_dir': [
+                '../foo.py',
+                '../bar.py',
+                '../baz',
+            ],
             'env': {
                 'foo': 'bar',
             },
@@ -100,6 +105,15 @@ def test_default_env_property(testinfra_instance):
     assert 'MOLECULE_INVENTORY_FILE' in testinfra_instance.default_env
     assert 'MOLECULE_SCENARIO_DIRECTORY' in testinfra_instance.default_env
     assert 'MOLECULE_INSTANCE_CONFIG' in testinfra_instance.default_env
+
+
+def test_additional_file_or_dir_property(testinfra_instance):
+    x = [
+        '../foo.py',
+        '../bar.py',
+        '../baz',
+    ]
+    assert x == testinfra_instance.additional_file_or_dir
 
 
 def test_env_property(testinfra_instance):
@@ -205,6 +219,9 @@ def test_bake(patched_testinfra_get_tests, inventory_file, testinfra_instance):
         '--foo=bar',
         'foo.py',
         'bar.py',
+        '../foo.py',
+        '../bar.py',
+        '../baz',
     ]
     result = str(testinfra_instance._testinfra_command).split()
 

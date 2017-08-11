@@ -68,6 +68,18 @@ class Testinfra(base.Base):
           name: testinfra
           directory: /foo/bar/
 
+    Additional tests from another file or directory relative to the scenario
+    directory.
+
+    .. code-block:: yaml
+
+        verifier:
+          name: testinfra
+          additional_file_or_dir:
+            - ../path/to/test_1
+            - ../path/to/test_2
+            - ../path/to/directory/
+
     .. _`Testinfra`: http://testinfra.readthedocs.io
     """
 
@@ -101,6 +113,10 @@ class Testinfra(base.Base):
     def default_env(self):
         return self._config.merge_dicts(os.environ.copy(), self._config.env)
 
+    @property
+    def additional_file_or_dir(self):
+        return self._config.config['verifier']['additional_file_or_dir']
+
     def bake(self):
         """
         Bake a `testinfra` command so it's ready to execute and returns None.
@@ -109,11 +125,12 @@ class Testinfra(base.Base):
         """
         options = self.options
         verbose_flag = util.verbose_flag(options)
+        args = verbose_flag + self.additional_file_or_dir
 
         self._testinfra_command = sh.testinfra.bake(
             options,
             self._tests,
-            *verbose_flag,
+            *args,
             _cwd=self._config.scenario.directory,
             _env=self.env,
             _out=LOG.out,
