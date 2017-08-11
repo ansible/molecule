@@ -71,7 +71,7 @@ def test_prune(base_instance):
     assert os.path.isfile(state_file)
     assert os.path.isfile(config_file)
     assert os.path.isfile(inventory_file)
-    assert os.path.isdir(baz_directory)
+    assert not os.path.isdir(baz_directory)
 
 
 def test_setup(mocker, patched_add_or_update_vars, patched_write_config,

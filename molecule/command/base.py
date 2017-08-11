@@ -67,6 +67,12 @@ class Base(object):
             if all(sf not in f for sf in safe_files):
                 os.remove(f)
 
+        # Remove empty directories.
+        for dirpath, dirs, files in os.walk(
+                self._config.scenario.ephemeral_directory):
+            if not dirs and not files:
+                os.rmdir(dirpath)
+
     def _setup(self):
         """
         Prepare Molecule's provisioner and returns None.
