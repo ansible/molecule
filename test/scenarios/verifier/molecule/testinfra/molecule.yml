@@ -21,7 +21,7 @@ scenario:
   name: testinfra
 verifier:
   name: testinfra
-  files_or_dirs:
+  additional_files_or_dirs:
     - shared/test_shared.py
   lint:
     name: flake8

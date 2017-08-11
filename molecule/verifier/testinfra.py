@@ -75,7 +75,7 @@ class Testinfra(base.Base):
 
         verifier:
           name: testinfra
-          files_or_dirs:
+          additional_files_or_dirs:
             - ../path/to/test_1
             - ../path/to/test_2
             - ../path/to/directory/
@@ -114,8 +114,8 @@ class Testinfra(base.Base):
         return self._config.merge_dicts(os.environ.copy(), self._config.env)
 
     @property
-    def files_or_dirs(self):
-        return self._config.config['verifier']['files_or_dirs']
+    def additional_files_or_dirs(self):
+        return self._config.config['verifier']['additional_files_or_dirs']
 
     def bake(self):
         """
@@ -125,7 +125,7 @@ class Testinfra(base.Base):
         """
         options = self.options
         verbose_flag = util.verbose_flag(options)
-        args = verbose_flag + self.files_or_dirs
+        args = verbose_flag + self.additional_files_or_dirs
 
         self._testinfra_command = sh.testinfra.bake(
             options,

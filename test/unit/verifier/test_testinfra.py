@@ -38,7 +38,7 @@ def molecule_verifier_section_data():
                 'vvv': True,
                 'verbose': True,
             },
-            'files_or_dirs': [
+            'additional_files_or_dirs': [
                 '../foo.py',
                 '../bar.py',
                 '../baz',
@@ -107,13 +107,13 @@ def test_default_env_property(testinfra_instance):
     assert 'MOLECULE_INSTANCE_CONFIG' in testinfra_instance.default_env
 
 
-def test_files_or_dirs_property(testinfra_instance):
+def test_additional_files_or_dirs_property(testinfra_instance):
     x = [
         '../foo.py',
         '../bar.py',
         '../baz',
     ]
-    assert x == testinfra_instance.files_or_dirs
+    assert x == testinfra_instance.additional_files_or_dirs
 
 
 def test_env_property(testinfra_instance):
