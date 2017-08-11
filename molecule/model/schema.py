@@ -149,7 +149,7 @@ class VerifierSchema(base.Base):
     directory = marshmallow.fields.Str()
     options = marshmallow.fields.Dict()
     env = marshmallow.fields.Dict()
-    additional_file_or_dir = marshmallow.fields.List(marshmallow.fields.Str())
+    files_or_dirs = marshmallow.fields.List(marshmallow.fields.Str())
     lint = marshmallow.fields.Nested(LintSchema())
 
 
