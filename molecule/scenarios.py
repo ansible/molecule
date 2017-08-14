@@ -28,35 +28,6 @@ from molecule import util
 LOG = logger.get_logger(__name__)
 
 
-class Term(object):
-    """ A class to act as a container for a term. """
-
-    def __init__(self, scenario, name):
-        """
-        Initialize a new Term class and returns None.
-
-        :param scenario: An instance of a scenario object.
-        :param name: A string containing the name of the term.
-        :return: None
-        """
-        self._scenario = scenario
-        self._name = name
-
-    @property
-    def name(self):
-        return self._name
-
-    @property
-    def scenario(self):
-        return self._scenario
-
-    def print_info(self):
-        msg = "Scenario: '{}'".format(self.scenario.name)
-        LOG.info(msg)
-        msg = "Term: '{}'".format(self.name)
-        LOG.info(msg)
-
-
 class Scenarios(object):
     """
     The Scenarios object consists of one to many scenario objects Molecule will
@@ -68,10 +39,20 @@ class Scenarios(object):
         Initialize a new scenarios class and returns None.
 
         :param configs: A list containing Molecule config instances.
+        :param scenario_name: A string containing the name of the scenario.
         :return: None
         """
         self._configs = configs
         self._scenario_name = scenario_name
+        self._scenarios = self.all
+
+    def next(self):
+        if not self._scenarios:
+            raise StopIteration
+        return self._scenarios.pop(0)
+
+    def __iter__(self):
+        return self
 
     @property
     def all(self):
@@ -92,9 +73,8 @@ class Scenarios(object):
         msg = 'Test matrix'
         LOG.info(msg)
 
-        tree = tuple(('', [(scenario.name,
-                            [(term.name, [])
-                             for term in self.sequence_for_scenario(scenario)])
+        tree = tuple(('', [(scenario.name, [(term.name, [])
+                                            for term in scenario.sequence])
                            for scenario in self.all]))
 
         tf = tree_format.format_tree(
@@ -103,25 +83,6 @@ class Scenarios(object):
             get_children=operator.itemgetter(1))
 
         LOG.out(tf.encode('utf-8'))
-
-    def sequence_for_scenario(self, scenario):
-        """
-        Select the sequence based on scenario and subcommand of the provided
-        scenario object and returns a list of Term objects.
-
-        :param scenario: A scenario object.
-        :param skipped: An optional bool to include skipped scenarios.
-        :return: list
-        """
-        matrix = self._get_matrix()
-
-        try:
-            sequence = matrix[scenario.name][scenario.subcommand]
-
-            return [Term(scenario, term) for term in sequence]
-        except KeyError:
-            # TODO(retr0h): May change this handling in the future.
-            return []
 
     def _verify(self):
         """

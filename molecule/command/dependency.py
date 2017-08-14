@@ -76,8 +76,8 @@ def dependency(ctx, scenario_name):  # pragma: no cover
     s = scenarios.Scenarios(
         base.get_configs(args, command_args), scenario_name)
     s.print_matrix()
-    for scenario in s.all:
-        for term in s.sequence_for_scenario(scenario):
+    for scenario in s:
+        for term in scenario.sequence:
             term.print_info()
             command_module = getattr(molecule.command, term.name)
             command = getattr(command_module, util.camelize(term.name))

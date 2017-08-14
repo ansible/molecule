@@ -21,9 +21,39 @@
 import os
 
 from molecule import logger
+from molecule import scenarios
 
 LOG = logger.get_logger(__name__)
 MOLECULE_EPHEMERAL_DIRECTORY = '.molecule'
+
+
+class Term(object):
+    """ A class to act as a container for a term. """
+
+    def __init__(self, scenario, name):
+        """
+        Initialize a new Term class and returns None.
+
+        :param scenario: An instance of a scenario object.
+        :param name: A string containing the name of the term.
+        :return: None
+        """
+        self._scenario = scenario
+        self._name = name
+
+    @property
+    def name(self):
+        return self._name
+
+    @property
+    def scenario(self):
+        return self._scenario
+
+    def print_info(self):
+        msg = "Scenario: '{}'".format(self.scenario.name)
+        LOG.info(msg)
+        msg = "Term: '{}'".format(self.name)
+        LOG.info(msg)
 
 
 class Scenario(object):
@@ -130,6 +160,27 @@ class Scenario(object):
     @property
     def verify_sequence(self):
         return ['verify']
+
+    @property
+    def sequence(self):
+        """
+        Select the sequence based on scenario and subcommand of the provided
+        scenario object and returns a list of Term objects.
+
+        :param scenario: A scenario object.
+        :param skipped: An optional bool to include skipped scenarios.
+        :return: list
+        """
+        s = scenarios.Scenarios([self.config])
+        matrix = s._get_matrix()
+
+        try:
+            sequence = matrix[self.name][self.subcommand]
+
+            return [Term(self, term) for term in sequence]
+        except KeyError:
+            # TODO(retr0h): May change this handling in the future.
+            return []
 
     @property
     def subcommand(self):

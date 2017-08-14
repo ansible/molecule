@@ -145,6 +145,8 @@ def list(x):
     out = out.stdout
     out = util.strip_ansi_color(out)
 
+    print
+    print out
     assert x in out
 
 

@@ -23,6 +23,7 @@ import copy
 
 import pytest
 
+from molecule import config
 from molecule import scenario
 from molecule import scenarios
 
@@ -38,32 +39,27 @@ def scenarios_instance(config_instance):
     return scenarios.Scenarios([config_instance_1, config_instance_2])
 
 
-@pytest.fixture
-def term_instance(scenarios_instance):
-    scenario = scenarios_instance._filter_for_scenario('default')[0]
-
-    return scenarios.Term(scenario, 'foo')
-
-
-def test_name_property(term_instance):
-    assert 'foo' == term_instance.name
+def test_configs_private_member(scenarios_instance):
+    assert 2 == len(scenarios_instance._configs)
+    assert isinstance(scenarios_instance._configs[0], config.Config)
+    assert isinstance(scenarios_instance._configs[1], config.Config)
 
 
-def test_scenario_property(term_instance):
-    assert isinstance(term_instance.scenario, scenario.Scenario)
+def test_scenario_name_private_member(scenarios_instance):
+    assert scenarios_instance._scenario_name is None
 
 
-def test_print_term_info(mocker, patched_logger_info, scenarios_instance,
-                         term_instance):
-    scenario = scenarios_instance.all[0]
-    term = scenarios_instance.sequence_for_scenario(scenario)[0]
-    term.print_info()
-    x = [
-        mocker.call("Scenario: 'default'"),
-        mocker.call("Term: 'destroy'"),
-    ]
+def test_scenarios_private_member(scenarios_instance):
+    assert 2 == len(scenarios_instance._scenarios)
+    assert isinstance(scenarios_instance._scenarios[0], scenario.Scenario)
+    assert isinstance(scenarios_instance._scenarios[1], scenario.Scenario)
 
-    assert x == patched_logger_info.mock_calls
+
+def test_scenarios_iterator(scenarios_instance):
+    s = [scenario for scenario in scenarios_instance]
+
+    assert 'default' == s[0].name
+    assert 'foo' == s[1].name
 
 
 def test_all_property(scenarios_instance):
@@ -98,21 +94,6 @@ def test_print_matrix(patched_logger_out, scenarios_instance):
 """
 
     assert x.encode('utf-8') == patched_logger_out.call_args[0][0]
-
-
-def test_sequence_for_scenario(scenarios_instance):
-    s = scenarios_instance.all[0]
-    result = scenarios_instance.sequence_for_scenario(s)
-
-    assert 'destroy' == result[0].name
-    assert isinstance(result[0].scenario, scenario.Scenario)
-    assert isinstance(result[0], scenarios.Term)
-
-
-def test_sequence_for_scenario_with_invalid_subcommand(scenarios_instance):
-    scenario = scenarios_instance.all[1]
-
-    assert [] == scenarios_instance.sequence_for_scenario(scenario)
 
 
 def test_verify_does_not_raise_when_found(scenarios_instance):
