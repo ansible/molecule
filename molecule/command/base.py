@@ -23,6 +23,7 @@ import collections
 import glob
 import os
 
+import molecule.command
 from molecule import config
 from molecule import util
 
@@ -83,24 +84,11 @@ class Base(object):
         self._config.provisioner.manage_inventory()
 
 
-def _verify_configs(configs):
-    """
-    Verify a Molecule config was found and returns None.
+def execute_subcommand(config, subcommand):
+    command_module = getattr(molecule.command, subcommand)
+    command = getattr(command_module, util.camelize(subcommand))
 
-    :param configs: A list containing absolute paths to Molecule config files.
-    :return: None
-    """
-    if configs:
-        scenario_names = [c.scenario.name for c in configs]
-        for scenario_name, n in collections.Counter(scenario_names).items():
-            if n > 1:
-                msg = ("Duplicate scenario name '{}' found.  "
-                       'Exiting.').format(scenario_name)
-                util.sysexit_with_message(msg)
-
-    else:
-        msg = "'{}' glob failed.  Exiting.".format(MOLECULE_GLOB)
-        util.sysexit_with_message(msg)
+    return command(config).execute()
 
 
 def get_configs(args, command_args):
@@ -122,3 +110,23 @@ def get_configs(args, command_args):
     _verify_configs(configs)
 
     return configs
+
+
+def _verify_configs(configs):
+    """
+    Verify a Molecule config was found and returns None.
+
+    :param configs: A list containing absolute paths to Molecule config files.
+    :return: None
+    """
+    if configs:
+        scenario_names = [c.scenario.name for c in configs]
+        for scenario_name, n in collections.Counter(scenario_names).items():
+            if n > 1:
+                msg = ("Duplicate scenario name '{}' found.  "
+                       'Exiting.').format(scenario_name)
+                util.sysexit_with_message(msg)
+
+    else:
+        msg = "'{}' glob failed.  Exiting.".format(MOLECULE_GLOB)
+        util.sysexit_with_message(msg)

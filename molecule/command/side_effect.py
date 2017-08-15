@@ -20,10 +20,8 @@
 
 import click
 
-import molecule.command
 from molecule import logger
 from molecule import scenarios
-from molecule import util
 from molecule.command import base
 
 LOG = logger.get_logger(__name__)
@@ -82,6 +80,4 @@ def side_effect(ctx, scenario_name):  # pragma: no cover
     for scenario in s:
         for term in scenario.sequence:
             term.print_info()
-            command_module = getattr(molecule.command, term.name)
-            command = getattr(command_module, util.camelize(term.name))
-            command(scenario.config).execute()
+            base.execute_subcommand(scenario.config, term.name)
