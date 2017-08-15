@@ -54,6 +54,8 @@ class Scenarios(object):
     def __iter__(self):
         return self
 
+    __next__ = next  # Python 3.X compatibility
+
     @property
     def all(self):
         """
