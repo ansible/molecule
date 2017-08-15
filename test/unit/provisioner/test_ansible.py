@@ -22,6 +22,7 @@ import collections
 import os
 
 import pytest
+import six
 
 from molecule import config
 from molecule import util
@@ -185,6 +186,13 @@ def molecule_provisioner_section_data():
 
 
 @pytest.fixture
+def ansible_config():
+    return os.path.join(
+        os.path.dirname(__file__), os.path.pardir, os.path.pardir, 'resources',
+        'ansible.cfg')
+
+
+@pytest.fixture
 def ansible_instance(molecule_provisioner_section_data, config_instance):
     config_instance.merge_dicts(config_instance.config,
                                 molecule_provisioner_section_data)
@@ -198,6 +206,30 @@ def test_config_private_member(ansible_instance):
 
 def test_ns_private_member(ansible_instance):
     assert isinstance(ansible_instance._ns, ansible.Namespace)
+
+
+def test_ansible_config_options_property_when_disabled(ansible_instance):
+    assert {} == ansible_instance.ansible_config_options
+
+
+def test_ansible_config_options_property_when_enabled(
+        monkeypatch, ansible_config, ansible_instance):
+    monkeypatch.setenv('MOLECULE_INCLUDE_ANSIBLE_CFG', '1')
+    monkeypatch.setenv('ANSIBLE_CONFIG', ansible_config)
+    x = {
+        'default': {
+            'foo': 'bar',
+        }
+    }
+
+    assert x == ansible_instance.ansible_config_options
+
+
+def test_ansible_config_options_property_when_enabled_but_missing_ansible_cfg(
+        monkeypatch, ansible_instance):
+    monkeypatch.setenv('MOLECULE_INCLUDE_ANSIBLE_CFG', '1')
+
+    assert {} == ansible_instance.ansible_config_options
 
 
 def test_default_config_options_property(ansible_instance):
@@ -928,6 +960,22 @@ def test_get_filter_plugin_directory(ansible_instance):
 
     assert x == parts[-5:]
 
-    #  def _get_abs_path(self, path):
-    #      return self._abs_path(
-    #          os.path.join(self._config.scenario.directory, path))
+
+def test_ansible_config_to_dict(monkeypatch, ansible_config, ansible_instance):
+    monkeypatch.setenv('ANSIBLE_CONFIG', ansible_config)
+    c, p = ansible_instance._load_ansible_config_file()
+    x = {
+        'default': {
+            'foo': 'bar',
+        }
+    }
+
+    assert x == ansible_instance._ansible_config_to_dict(c)
+
+
+def test_load_ansible_config_file(monkeypatch, ansible_config,
+                                  ansible_instance):
+    monkeypatch.setenv('ANSIBLE_CONFIG', ansible_config)
+    c, p = ansible_instance._load_ansible_config_file()
+
+    assert isinstance(c, six.moves.configparser.ConfigParser)
