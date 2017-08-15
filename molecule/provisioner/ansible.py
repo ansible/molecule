@@ -28,6 +28,9 @@ from molecule import util
 from molecule.provisioner import base
 from molecule.provisioner import ansible_playbook
 
+from __future__ import absolute_import
+from ansible import constants
+
 LOG = logger.get_logger(__name__)
 
 
@@ -275,6 +278,24 @@ class Ansible(base.Base):
         self._ns = Namespace(config)
 
     @property
+    def ansible_config_options(self):
+        """
+        Provides access options defined in ansible config file:
+        the first match of ENV, CWD, HOME, /etc/ansible
+
+        :return: dict
+        """
+
+        if 'MOLECULE_INCLUDE_ANSIBLE_CFG' not in os.environ:
+            return {}
+
+        c, p = constants.load_config_file()
+        if p is None:
+            return {}
+
+        return self._config_to_dict(c)
+
+    @property
     def default_config_options(self):
         """
         Default options provided to construct ansible.cfg and returns a dict.
@@ -353,7 +374,9 @@ class Ansible(base.Base):
     @property
     def config_options(self):
         return self._config.merge_dicts(
-            self.default_config_options,
+            self._config.merge_dicts(
+                self.ansible_config_options,
+                self.default_config_options),
             self._config.config['provisioner']['config_options'])
 
     @property
@@ -714,3 +737,6 @@ class Ansible(base.Base):
     def _get_filter_plugin_directory(self):
         return util.abs_path(
             os.path.join(self._get_plugin_directory(), 'filters'))
+
+    def _config_to_dict(self, cfg):
+        return {s: dict(cfg.items(s)) for s in cfg.sections()}
