@@ -26,4 +26,11 @@ def test_execute(mocker, patched_logger_info, patched_testinfra,
     v = verify.Verify(config_instance)
     v.execute()
 
+    x = [
+        mocker.call("Scenario: 'default'"),
+        mocker.call("Action: 'verify'"),
+    ]
+
+    assert x == patched_logger_info.mock_calls
+
     patched_testinfra.assert_called_once_with()

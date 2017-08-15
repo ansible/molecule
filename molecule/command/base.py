@@ -25,8 +25,10 @@ import os
 
 import molecule.command
 from molecule import config
+from molecule import logger
 from molecule import util
 
+LOG = logger.get_logger(__name__)
 MOLECULE_GLOB = 'molecule/*/molecule.yml'
 
 
@@ -73,6 +75,12 @@ class Base(object):
                 self._config.scenario.ephemeral_directory):
             if not dirs and not files:
                 os.rmdir(dirpath)
+
+    def print_info(self):
+        msg = "Scenario: '{}'".format(self._config.scenario.name)
+        LOG.info(msg)
+        msg = "Action: '{}'".format(util.underscore(self.__class__.__name__))
+        LOG.info(msg)
 
     def _setup(self):
         """

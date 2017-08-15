@@ -49,6 +49,7 @@ class Converge(base.Base):
 
         :return: None
         """
+        self.print_info()
         self._config.provisioner.converge()
         self._config.state.change_state('converged', True)
 
@@ -72,5 +73,4 @@ def converge(ctx, scenario_name):  # pragma: no cover
     s.print_matrix()
     for scenario in s:
         for term in scenario.sequence:
-            term.print_info()
-            base.execute_subcommand(scenario.config, term.name)
+            base.execute_subcommand(scenario.config, term)

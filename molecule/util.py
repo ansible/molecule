@@ -238,3 +238,13 @@ def camelize(string):
     # NOTE(retr0h): Taken from jpvanhal/inflection
     # https://github.com/jpvanhal/inflection
     return re.sub(r"(?:^|_)(.)", lambda m: m.group(1).upper(), string)
+
+
+def underscore(string):
+    # NOTE(retr0h): Taken from jpvanhal/inflection
+    # https://github.com/jpvanhal/inflection
+    string = re.sub(r"([A-Z]+)([A-Z][a-z])", r'\1_\2', string)
+    string = re.sub(r"([a-z\d])([A-Z])", r'\1_\2', string)
+    string = string.replace("-", "_")
+
+    return string.lower()

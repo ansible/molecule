@@ -75,7 +75,7 @@ class Scenarios(object):
         msg = 'Test matrix'
         LOG.info(msg)
 
-        tree = tuple(('', [(scenario.name, [(term.name, [])
+        tree = tuple(('', [(scenario.name, [(term, [])
                                             for term in scenario.sequence])
                            for scenario in self.all]))
 

@@ -317,3 +317,9 @@ def test_camelize():
     assert 'Foo' == util.camelize('foo')
     assert 'FooBar' == util.camelize('foo_bar')
     assert 'FooBarBaz' == util.camelize('foo_bar_baz')
+
+
+def test_underscore():
+    assert 'foo' == util.underscore('Foo')
+    assert 'foo_bar' == util.underscore('FooBar')
+    assert 'foo_bar_baz' == util.underscore('FooBarBaz')

@@ -168,8 +168,8 @@ def test_command_dependency_gilt(scenario_to_test, with_scenario,
     cmd = sh.molecule.bake('dependency', **options)
     pytest.helpers.run_command(cmd)
 
-    dependency_role = os.path.join('molecule', 'gilt', '.molecule',
-                                   'roles', 'timezone')
+    dependency_role = os.path.join('molecule', 'gilt', '.molecule', 'roles',
+                                   'timezone')
     assert os.path.isdir(dependency_role)
 
 

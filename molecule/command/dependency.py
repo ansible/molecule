@@ -49,11 +49,7 @@ class Dependency(base.Base):
 
         :return: None
         """
-        msg = 'Scenario: [{}]'.format(self._config.scenario.name)
-        LOG.info(msg)
-        msg = 'Dependency: [{}]'.format(self._config.dependency.name)
-        LOG.info(msg)
-
+        self.print_info()
         self._config.dependency.execute()
 
 
@@ -76,5 +72,4 @@ def dependency(ctx, scenario_name):  # pragma: no cover
     s.print_matrix()
     for scenario in s:
         for term in scenario.sequence:
-            term.print_info()
-            base.execute_subcommand(scenario.config, term.name)
+            base.execute_subcommand(scenario.config, term)

@@ -58,6 +58,7 @@ class Destroy(base.Base):
 
         :return: None
         """
+        self.print_info()
         self.prune()
 
         if self._config.driver.delegated:
@@ -102,5 +103,4 @@ def destroy(ctx, scenario_name, driver_name, __all):  # pragma: no cover
     s.print_matrix()
     for scenario in s:
         for term in scenario.sequence:
-            term.print_info()
-            base.execute_subcommand(scenario.config, term.name)
+            base.execute_subcommand(scenario.config, term)

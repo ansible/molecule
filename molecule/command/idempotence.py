@@ -52,6 +52,7 @@ class Idempotence(base.Base):
 
         :return: None
         """
+        self.print_info()
         if not self._config.state.converged:
             msg = 'Instances not converged.  Please converge instances first.'
             util.sysexit_with_message(msg)
@@ -137,5 +138,4 @@ def idempotence(ctx, scenario_name):  # pragma: no cover
     s.print_matrix()
     for scenario in s:
         for term in scenario.sequence:
-            term.print_info()
-            base.execute_subcommand(scenario.config, term.name)
+            base.execute_subcommand(scenario.config, term)

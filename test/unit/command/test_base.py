@@ -74,6 +74,16 @@ def test_prune(base_instance):
     assert not os.path.isdir(baz_directory)
 
 
+def test_print_info(mocker, patched_logger_info, base_instance):
+    base_instance.print_info()
+    x = [
+        mocker.call("Scenario: 'default'"),
+        mocker.call("Action: 'extended_base'"),
+    ]
+
+    assert x == patched_logger_info.mock_calls
+
+
 def test_setup(mocker, patched_add_or_update_vars, patched_write_config,
                patched_manage_inventory, base_instance):
 

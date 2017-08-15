@@ -45,6 +45,13 @@ def test_execute(mocker, molecule_provisioner_section_with_side_effect_data,
     se = side_effect.SideEffect(config_instance)
     se.execute()
 
+    x = [
+        mocker.call("Scenario: 'default'"),
+        mocker.call("Action: 'side_effect'"),
+    ]
+
+    assert x == patched_logger_info.mock_calls
+
     patched_ansible_side_effect.assert_called_once_with()
 
 
