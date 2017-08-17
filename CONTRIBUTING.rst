@@ -14,13 +14,6 @@ Contributing
 
 .. _`Issue`: https://github.com/metacloud/molecule/issues
 
-IRC
-===
-
-Join us in the #molecule-users channel on `freenode`_.
-
-.. _`freenode`: https://freenode.net
-
 Installing from source
 ======================
 

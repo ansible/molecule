@@ -43,6 +43,26 @@ Documentation
 .. _`Current Release`: https://molecule.readthedocs.io/en/v1/
 .. _`Upcoming Release`: https://molecule.readthedocs.io/
 
+Contact
+=======
+
+IRC
+---
+
+Join us in the #molecule-users channel on `freenode`_.
+
+.. _`freenode`: https://freenode.net
+
+Forums
+------
+
+* `rook-users`_
+* `rook-dev`_
+
+.. _`molecule-users`: https://groups.google.com/forum/#!forum/molecule-users
+.. _`molecule-dev`: https://freenode.ne://groups.google.com/forum/#!forum/molecule-dev
+
+
 Ansible Support
 ===============
 
