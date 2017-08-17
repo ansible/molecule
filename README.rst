@@ -56,8 +56,8 @@ Join us in the #molecule-users channel on `freenode`_.
 Forums
 ------
 
-* `rook-users`_
-* `rook-dev`_
+* `molecule-users`_
+* `molecule-dev`_
 
 .. _`molecule-users`: https://groups.google.com/forum/#!forum/molecule-users
 .. _`molecule-dev`: https://freenode.ne://groups.google.com/forum/#!forum/molecule-dev
