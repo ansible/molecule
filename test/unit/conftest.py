@@ -177,8 +177,10 @@ def molecule_file_fixture(molecule_scenario_directory_fixture,
 @pytest.fixture
 def config_instance(molecule_file_fixture, molecule_data):
     pytest.helpers.write_molecule_file(molecule_file_fixture, molecule_data)
+    c = config.Config(molecule_file_fixture)
+    c.command_args = {'subcommand': 'test'}
 
-    return config.Config(molecule_file_fixture)
+    return c
 
 
 # Mocks

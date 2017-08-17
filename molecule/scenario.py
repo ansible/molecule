@@ -146,16 +146,10 @@ class Scenario(object):
         matrix = s._get_matrix()
 
         try:
-            return matrix[self.name][self.subcommand]
+            return matrix[self.name][self.config.subcommand]
         except KeyError:
             # TODO(retr0h): May change this handling in the future.
             return []
-
-    @property
-    # TODO(retr0h): Does this belong on scenario, shouldn't
-    # it be moved to config?
-    def subcommand(self):
-        return self.config.command_args['subcommand']
 
     def _setup(self):
         """

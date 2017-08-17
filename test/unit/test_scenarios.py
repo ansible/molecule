@@ -31,7 +31,6 @@ from molecule import scenarios
 @pytest.fixture
 def scenarios_instance(config_instance):
     config_instance_1 = copy.deepcopy(config_instance)
-    config_instance_1.command_args = {'subcommand': 'test'}
 
     config_instance_2 = copy.deepcopy(config_instance)
     config_instance_2.config['scenario']['name'] = 'foo'
@@ -91,6 +90,16 @@ def test_print_matrix(patched_logger_out, scenarios_instance):
 │   ├── verify
 │   └── destroy
 └── foo
+    ├── destroy
+    ├── dependency
+    ├── syntax
+    ├── create
+    ├── converge
+    ├── idempotence
+    ├── lint
+    ├── side_effect
+    ├── verify
+    └── destroy
 """
 
     assert x.encode('utf-8') == patched_logger_out.call_args[0][0]

@@ -29,8 +29,6 @@ from molecule import scenario
 
 @pytest.fixture
 def scenario_instance(config_instance):
-    config_instance.command_args = {'subcommand': 'test'}
-
     return scenario.Scenario(config_instance)
 
 
@@ -128,18 +126,6 @@ def test_sequence_property(scenario_instance):
     result = scenario_instance.sequence
 
     assert 'destroy' == result[0]
-
-
-def test_sequence_property_with_invalid_subcommand(scenario_instance):
-    scenario_instance.config.command_args = {
-        'subcommand': 'molecule.command.invalid'
-    }
-
-    assert [] == scenario_instance.sequence
-
-
-def test_subcommand_property(scenario_instance):
-    assert 'test' == scenario_instance.subcommand
 
 
 def test_setup_creates_ephemeral_directory(scenario_instance):

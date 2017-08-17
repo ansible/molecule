@@ -86,6 +86,10 @@ class Config(object):
         return self.args.get('debug', False)
 
     @property
+    def subcommand(self):
+        return self.command_args['subcommand']
+
+    @property
     def ephemeral_directory(self):
         return os.path.join(self.scenario.directory, '.molecule')
 

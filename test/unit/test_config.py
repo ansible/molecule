@@ -51,11 +51,17 @@ def test_args_member(config_instance):
 
 
 def test_command_args_member(config_instance):
-    assert {} == config_instance.command_args
+    x = {'subcommand': 'test'}
+
+    assert x == config_instance.command_args
 
 
 def test_debug_property(config_instance):
     assert not config_instance.debug
+
+
+def test_subcommand_property(config_instance):
+    assert 'test' == config_instance.subcommand
 
 
 def test_ephemeral_directory_property(config_instance):
