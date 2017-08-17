@@ -129,6 +129,26 @@ def test_command_test_overrides_driver(scenario_to_test, with_scenario,
 
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
+        ('driver/docker', 'docker', 'default'),
+    ],
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+        'scenario_name',
+    ])
+def test_command_test_builds_local_molecule_image(
+        scenario_to_test, with_scenario, scenario_name, driver_name):
+    try:
+        cmd = sh.docker.bake('rmi', 'molecule_local/centos:latest', '--force')
+        pytest.helpers.run_command(cmd)
+    except sh.ErrorReturnCode:
+        pass
+
+    pytest.helpers.test(driver_name, scenario_name)
+
+
+@pytest.mark.parametrize(
+    'scenario_to_test, driver_name, scenario_name', [
         ('host_group_vars', 'docker', 'default'),
     ],
     indirect=[

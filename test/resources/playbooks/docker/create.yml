@@ -16,6 +16,12 @@
       with_items: "{{ molecule_yml.platforms }}"
       register: platforms
 
+    - name: Discover local Docker images
+      docker_image_facts:
+        name: "molecule_local/{{ item.item.name }}"
+      with_items: "{{ platforms.results }}"
+      register: docker_images
+
     - name: Build an Ansible compatible image
       docker_image:
         path: "{{ molecule_ephemeral_directory }}"
@@ -23,7 +29,7 @@
         dockerfile: "{{ item.item.dockerfile | default(item.invocation.module_args.dest) }}"
         force: "{{ item.item.force | default(True) }}"
       with_items: "{{ platforms.results }}"
-      when: platforms.changed
+      when: platforms.changed or docker_images.results | map(attribute='images') | select('equalto', []) | list | count >= 0
 
     - name: Create molecule instance(s)
       docker_container:
