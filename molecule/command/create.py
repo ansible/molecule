@@ -86,8 +86,9 @@ class Create(base.Base):
 def create(ctx, scenario_name, driver_name):  # pragma: no cover
     """ Start instances. """
     args = ctx.obj.get('args')
+    subcommand = base._get_subcommand(__name__)
     command_args = {
-        'subcommand': __name__,
+        'subcommand': subcommand,
         'driver_name': driver_name,
     }
 

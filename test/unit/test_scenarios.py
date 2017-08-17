@@ -31,7 +31,7 @@ from molecule import scenarios
 @pytest.fixture
 def scenarios_instance(config_instance):
     config_instance_1 = copy.deepcopy(config_instance)
-    config_instance_1.command_args = {'subcommand': 'molecule.command.test'}
+    config_instance_1.command_args = {'subcommand': 'test'}
 
     config_instance_2 = copy.deepcopy(config_instance)
     config_instance_2.config['scenario']['name'] = 'foo'

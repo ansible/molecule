@@ -71,8 +71,9 @@ class SideEffect(base.Base):
 def side_effect(ctx, scenario_name):  # pragma: no cover
     """ Use the provisioner to perform side-effects to the instances. """
     args = ctx.obj.get('args')
+    subcommand = base._get_subcommand(__name__)
     command_args = {
-        'subcommand': __name__,
+        'subcommand': subcommand,
     }
 
     s = scenarios.Scenarios(

@@ -138,3 +138,7 @@ def _verify_configs(configs):
     else:
         msg = "'{}' glob failed.  Exiting.".format(MOLECULE_GLOB)
         util.sysexit_with_message(msg)
+
+
+def _get_subcommand(string):
+    return string.split('.')[-1]

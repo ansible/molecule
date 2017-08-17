@@ -29,7 +29,7 @@ from molecule import scenario
 
 @pytest.fixture
 def scenario_instance(config_instance):
-    config_instance.command_args = {'subcommand': 'molecule.command.test'}
+    config_instance.command_args = {'subcommand': 'test'}
 
     return scenario.Scenario(config_instance)
 

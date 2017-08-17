@@ -140,12 +140,13 @@ class Login(base.Base):
 def login(ctx, host, scenario_name):  # pragma: no cover
     """ Log in to one instance. """
     args = ctx.obj.get('args')
+    subcommand = base._get_subcommand(__name__)
     command_args = {
-        'subcommand': __name__,
+        'subcommand': subcommand,
         'host': host,
     }
 
     s = scenarios.Scenarios(
         base.get_configs(args, command_args), scenario_name)
     for scenario in s.all:
-        Login(scenario.config).execute()
+        base.execute_subcommand(scenario.config, subcommand)

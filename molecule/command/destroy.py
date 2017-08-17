@@ -90,8 +90,9 @@ class Destroy(base.Base):
 def destroy(ctx, scenario_name, driver_name, __all):  # pragma: no cover
     """ Destroy instances. """
     args = ctx.obj.get('args')
+    subcommand = base._get_subcommand(__name__)
     command_args = {
-        'subcommand': __name__,
+        'subcommand': subcommand,
         'driver_name': driver_name,
     }
 

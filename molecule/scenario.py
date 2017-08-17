@@ -152,8 +152,10 @@ class Scenario(object):
             return []
 
     @property
+    # TODO(retr0h): Does this belong on scenario, shouldn't
+    # it be moved to config?
     def subcommand(self):
-        return self.config.command_args['subcommand'].split('.')[-1]
+        return self.config.command_args['subcommand']
 
     def _setup(self):
         """

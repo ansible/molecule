@@ -141,3 +141,7 @@ def test_verify_configs_raises_with_duplicate_configs(patched_logger_critical,
 
     msg = "Duplicate scenario name 'default' found.  Exiting."
     patched_logger_critical.assert_called_once_with(msg)
+
+
+def test_get_subcommand():
+    assert 'test_base' == base._get_subcommand(__name__)

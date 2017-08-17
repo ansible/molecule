@@ -64,8 +64,9 @@ class Converge(base.Base):
 def converge(ctx, scenario_name):  # pragma: no cover
     """ Use the provisioner to configure instances (create, converge). """
     args = ctx.obj.get('args')
+    subcommand = base._get_subcommand(__name__)
     command_args = {
-        'subcommand': __name__,
+        'subcommand': subcommand,
     }
 
     s = scenarios.Scenarios(

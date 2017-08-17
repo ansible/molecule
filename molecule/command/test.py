@@ -80,8 +80,9 @@ class Test(base.Base):
 def test(ctx, scenario_name, driver_name, __all):  # pragma: no cover
     """ Test (destroy, create, converge, lint, verify, destroy). """
     args = ctx.obj.get('args')
+    subcommand = base._get_subcommand(__name__)
     command_args = {
-        'subcommand': __name__,
+        'subcommand': subcommand,
         'driver_name': driver_name,
     }
 

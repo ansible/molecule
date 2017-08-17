@@ -129,8 +129,9 @@ def idempotence(ctx, scenario_name):  # pragma: no cover
     determine idempotence.
     """
     args = ctx.obj.get('args')
+    subcommand = base._get_subcommand(__name__)
     command_args = {
-        'subcommand': __name__,
+        'subcommand': subcommand,
     }
 
     s = scenarios.Scenarios(
