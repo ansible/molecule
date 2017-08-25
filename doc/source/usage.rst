@@ -25,9 +25,9 @@ Or Create a new scenario in an existing role:
 .. code-block:: bash
 
     $ cd foo
-    $ molecule init scenario --role-name foo --scenario-name new-scenario
-    --> Initializing new scenario new-scenario...
-    Initialized scenario in /tmp/foo/molecule/new-scenario successfully.
+    $ molecule init scenario --role-name foo --scenario-name default
+    --> Initializing new scenario default...
+    Initialized scenario in /tmp/foo/molecule/default successfully.
 
 1. Update the role with needed functionality and tests.
 2. Install the dependencies by following the instructions in `INSTALL.rst`
