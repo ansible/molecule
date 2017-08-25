@@ -37,11 +37,7 @@ supports.
 Documentation
 =============
 
-* `Current Release`_
-* `Upcoming Release`_ (preferred)
-
-.. _`Current Release`: https://molecule.readthedocs.io/en/v1/
-.. _`Upcoming Release`: https://molecule.readthedocs.io/
+https://molecule.readthedocs.io/
 
 Contact
 =======
