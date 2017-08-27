@@ -42,7 +42,7 @@ class AnsiblePlaybook(object):
          :func:`sh` call.
         :returns: None
         """
-        self._ansible_playbook_command = None
+        self._ansible_command = None
         self._playbook = playbook
         self._inventory = inventory
         self._config = config
@@ -66,7 +66,7 @@ class AnsiblePlaybook(object):
             if options.get('become'):
                 del options['become']
 
-        self._ansible_playbook_command = sh.ansible_playbook.bake(
+        self._ansible_command = sh.ansible_playbook.bake(
             options,
             self._playbook,
             *verbose_flag,
@@ -75,18 +75,22 @@ class AnsiblePlaybook(object):
             _out=self._out,
             _err=self._err)
 
+        if self._config.ansible_args:
+            self._ansible_command = self._ansible_command.bake(
+                self._config.ansible_args)
+
     def execute(self):
         """
         Executes `ansible-playbook` and returns a string.
 
         :return: str
         """
-        if self._ansible_playbook_command is None:
+        if self._ansible_command is None:
             self.bake()
 
         try:
             cmd = util.run_command(
-                self._ansible_playbook_command, )
+                self._ansible_command, debug=self._config.debug)
             return cmd.stdout.decode('utf-8')
         except sh.ErrorReturnCode as e:
             out = e.stdout.decode('utf-8')

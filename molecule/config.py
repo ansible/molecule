@@ -65,20 +65,28 @@ class Config(object):
     :ref:`root_scenario`, and State_ references.
     """
 
-    def __init__(self, molecule_file, args={}, command_args={}):
+    def __init__(self,
+                 molecule_file,
+                 args={},
+                 command_args={},
+                 ansible_args=()):
         """
         Initialize a new config class and returns None.
 
         :param molecule_file: A string containing the path to the Molecule file
          to be parsed.
-        :param args: A dict of options, arguments and commands from the CLI.
-        :param command_args: A dict of options passed to the subcommand from
+        :param args: An optional dict of options, arguments and commands from
          the CLI.
+        :param command_args: An optional dict of options passed to the
+         subcommand from the CLI.
+        :param ansible_args: An optional tuple of arguments provided to the
+         `ansible-playbook` command.
         :returns: None
         """
         self.molecule_file = molecule_file
         self.args = args
         self.command_args = command_args
+        self.ansible_args = ansible_args
         self.config = self._combine()
 
     @property
