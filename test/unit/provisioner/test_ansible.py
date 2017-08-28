@@ -931,3 +931,26 @@ def test_get_filter_plugin_directory(ansible_instance):
     #  def _get_abs_path(self, path):
     #      return self._abs_path(
     #          os.path.join(self._config.scenario.directory, path))
+
+
+def test_ansible_config_options_when_disabled(ansible_instance):
+    os.unsetenv('MOLECULE_INCLUDE_ANSIBLE_CFG')
+    x = ansible_instance.ansible_config_options
+
+    assert x == {}
+
+
+def test_ansible_config_options_when_enabled(ansible_instance):
+    os.environ['MOLECULE_INCLUDE_ANSIBLE_CFG'] = '1'
+    d = {
+        'test_section': {
+            'param1': 'val1',
+            'param2': 'val2'
+        }
+    }
+    template = util.render_template(
+        ansible_instance._get_config_template(), config_options=d)
+    util.write_file('ansible.cfg', template)
+    x = ansible_instance.ansible_config_options
+
+    assert x == d
