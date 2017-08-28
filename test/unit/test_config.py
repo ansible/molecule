@@ -29,7 +29,7 @@ from molecule import state
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
 from molecule.driver import delegated
-from molecule.driver import dockr
+from molecule.driver import docker
 from molecule.driver import ec2
 from molecule.driver import gce
 from molecule.driver import lxc
@@ -132,7 +132,7 @@ def test_driver_property_is_delegated(molecule_driver_delegated_section_data,
 
 
 def test_driver_property(config_instance):
-    assert isinstance(config_instance.driver, dockr.Dockr)
+    assert isinstance(config_instance.driver, docker.Docker)
 
 
 @pytest.fixture

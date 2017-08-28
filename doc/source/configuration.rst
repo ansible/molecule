@@ -60,7 +60,7 @@ Delegated
 Docker
 ^^^^^^
 
-.. autoclass:: molecule.driver.dockr.Dockr()
+.. autoclass:: molecule.driver.docker.Docker()
    :undoc-members:
 
 EC2

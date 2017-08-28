@@ -31,7 +31,7 @@ from molecule import util
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
 from molecule.driver import delegated
-from molecule.driver import dockr
+from molecule.driver import docker
 from molecule.driver import ec2
 from molecule.driver import gce
 from molecule.driver import lxc
@@ -127,7 +127,7 @@ class Config(object):
         if driver_name == 'delegated':
             driver = delegated.Delegated(self)
         elif driver_name == 'docker':
-            driver = dockr.Dockr(self)
+            driver = docker.Docker(self)
         elif driver_name == 'ec2':
             driver = ec2.Ec2(self)
         elif driver_name == 'gce':
@@ -398,7 +398,7 @@ def molecule_file(path):
 def molecule_drivers():
     return [
         delegated.Delegated(None).name,
-        dockr.Dockr(None).name,
+        docker.Docker(None).name,
         ec2.Ec2(None).name,
         gce.Gce(None).name,
         lxc.Lxc(None).name,

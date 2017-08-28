@@ -23,7 +23,7 @@ import os
 import pytest
 
 from molecule import config
-from molecule.driver import dockr
+from molecule.driver import docker
 
 
 @pytest.fixture
@@ -41,7 +41,7 @@ def docker_instance(molecule_driver_section_data, config_instance):
     config_instance.merge_dicts(config_instance.config,
                                 molecule_driver_section_data)
 
-    return dockr.Dockr(config_instance)
+    return docker.Docker(config_instance)
 
 
 def test_config_private_member(docker_instance):

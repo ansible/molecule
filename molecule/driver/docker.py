@@ -18,6 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+from __future__ import absolute_import
+
 import os
 
 from molecule import logger
@@ -26,7 +28,7 @@ from molecule.driver import base
 LOG = logger.get_logger(__name__)
 
 
-class Dockr(base.Base):
+class Docker(base.Base):
     """
     The class responsible for managing `Docker`_ containers.  `Docker`_ is
     the default driver used in Molecule.
@@ -54,7 +56,7 @@ class Dockr(base.Base):
     """
 
     def __init__(self, config):
-        super(Dockr, self).__init__(config)
+        super(Docker, self).__init__(config)
         self._name = 'docker'
 
     @property
