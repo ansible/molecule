@@ -27,14 +27,12 @@ LOG = logger.get_logger(__name__)
 
 
 class AnsiblePlaybook(object):
-    def __init__(self, inventory, playbook, config, out=LOG.out,
-                 err=LOG.error):
+    def __init__(self, playbook, config, out=LOG.out, err=LOG.error):
         """
         Sets up the requirements to execute `ansible-playbook` and returns
         None.
 
         :param playbook: A string containing the path to the playbook.
-        :param inventory: A string containing the path to the inventory.
         :param config: An instance of a Molecule config.
         :param out: An optional function to process STDOUT for underlying
          :func:`sh` call.
@@ -44,7 +42,6 @@ class AnsiblePlaybook(object):
         """
         self._ansible_command = None
         self._playbook = playbook
-        self._inventory = inventory
         self._config = config
         self._out = out
         self._err = err
@@ -58,7 +55,7 @@ class AnsiblePlaybook(object):
 
         :return: None
         """
-        self.add_cli_arg('inventory', self._inventory)
+        self.add_cli_arg('inventory', self._config.provisioner.inventory_file)
         options = self._config.merge_dicts(self._config.provisioner.options,
                                            self._cli)
         verbose_flag = util.verbose_flag(options)

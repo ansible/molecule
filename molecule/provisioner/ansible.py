@@ -696,8 +696,8 @@ class Ansible(base.Base):
         :param kwargs: An optional keyword arguments.
         :return: object
         """
-        return ansible_playbook.AnsiblePlaybook(self.inventory_file, playbook,
-                                                self._config, **kwargs)
+        return ansible_playbook.AnsiblePlaybook(playbook, self._config,
+                                                **kwargs)
 
     def _verify_inventory(self):
         """

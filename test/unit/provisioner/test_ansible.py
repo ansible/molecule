@@ -577,9 +577,7 @@ def test_connection_options(ansible_instance):
 def test_check(ansible_instance, mocker, patched_ansible_playbook):
     ansible_instance.check()
 
-    inventory_file = ansible_instance._config.provisioner.inventory_file
     patched_ansible_playbook.assert_called_once_with(
-        inventory_file,
         ansible_instance._config.provisioner.playbooks.converge,
         ansible_instance._config, )
     patched_ansible_playbook.return_value.add_cli_arg.assert_called_once_with(
@@ -590,9 +588,7 @@ def test_check(ansible_instance, mocker, patched_ansible_playbook):
 def test_converge(ansible_instance, mocker, patched_ansible_playbook):
     result = ansible_instance.converge()
 
-    inventory_file = ansible_instance._config.provisioner.inventory_file
     patched_ansible_playbook.assert_called_once_with(
-        inventory_file,
         ansible_instance._config.provisioner.playbooks.converge,
         ansible_instance._config, )
     # NOTE(retr0h): This is not the true return type.  This is a mock return
@@ -606,9 +602,7 @@ def test_converge_with_playbook(ansible_instance, mocker,
                                 patched_ansible_playbook):
     result = ansible_instance.converge('playbook')
 
-    inventory_file = ansible_instance._config.provisioner.inventory_file
     patched_ansible_playbook.assert_called_once_with(
-        inventory_file,
         'playbook',
         ansible_instance._config, )
     # NOTE(retr0h): This is not the true return type.  This is a mock return
@@ -621,9 +615,7 @@ def test_converge_with_playbook(ansible_instance, mocker,
 def test_destroy(ansible_instance, mocker, patched_ansible_playbook):
     ansible_instance.destroy()
 
-    inventory_file = ansible_instance._config.provisioner.inventory_file
     patched_ansible_playbook.assert_called_once_with(
-        inventory_file,
         ansible_instance._config.provisioner.playbooks.destroy,
         ansible_instance._config, )
     patched_ansible_playbook.return_value.execute.assert_called_once_with()
@@ -632,9 +624,7 @@ def test_destroy(ansible_instance, mocker, patched_ansible_playbook):
 def test_side_effect(ansible_instance, mocker, patched_ansible_playbook):
     ansible_instance.side_effect()
 
-    inventory_file = ansible_instance._config.provisioner.inventory_file
     patched_ansible_playbook.assert_called_once_with(
-        inventory_file,
         ansible_instance._config.provisioner.playbooks.side_effect,
         ansible_instance._config, )
     patched_ansible_playbook.return_value.execute.assert_called_once_with()
@@ -643,9 +633,7 @@ def test_side_effect(ansible_instance, mocker, patched_ansible_playbook):
 def test_create(ansible_instance, mocker, patched_ansible_playbook):
     ansible_instance.create()
 
-    inventory_file = ansible_instance._config.provisioner.inventory_file
     patched_ansible_playbook.assert_called_once_with(
-        inventory_file,
         ansible_instance._config.provisioner.playbooks.create,
         ansible_instance._config, )
     patched_ansible_playbook.return_value.execute.assert_called_once_with()
@@ -654,9 +642,7 @@ def test_create(ansible_instance, mocker, patched_ansible_playbook):
 def test_syntax(ansible_instance, mocker, patched_ansible_playbook):
     ansible_instance.syntax()
 
-    inventory_file = ansible_instance._config.provisioner.inventory_file
     patched_ansible_playbook.assert_called_once_with(
-        inventory_file,
         ansible_instance._config.provisioner.playbooks.converge,
         ansible_instance._config, )
     patched_ansible_playbook.return_value.add_cli_arg.assert_called_once_with(
