@@ -78,6 +78,15 @@ def test_command_init_role_goss(temp_dir):
 
 
 def test_command_init_scenario_goss(temp_dir):
+    options = {
+        'role_name': 'test-init',
+    }
+    cmd = sh.molecule.bake('init', 'role', **options)
+    pytest.helpers.run_command(cmd)
+
+    role_directory = os.path.join(temp_dir.strpath, 'test-init')
+    os.chdir(role_directory)
+
     molecule_directory = pytest.helpers.molecule_directory()
     scenario_directory = os.path.join(molecule_directory, 'test-scenario')
     options = {
@@ -89,6 +98,52 @@ def test_command_init_scenario_goss(temp_dir):
     pytest.helpers.run_command(cmd)
 
     assert os.path.isdir(scenario_directory)
+
+
+def test_command_init_scenario_with_invalid_role_raises(temp_dir):
+    options = {
+        'role_name': 'test-role',
+    }
+    cmd = sh.molecule.bake('init', 'role', **options)
+    pytest.helpers.run_command(cmd)
+
+    role_directory = os.path.join(temp_dir.strpath, 'test-role')
+    os.chdir(role_directory)
+
+    options = {
+        'scenario_name': 'default',
+        'role_name': 'invalid-role-name',
+    }
+    try:
+        cmd = sh.molecule.bake('init', 'scenario', **options)
+        pytest.helpers.run_command(cmd, log=False)
+    except sh.ErrorReturnCode as e:
+        msg = ("ERROR: The role 'invalid-role-name' not found. "
+               'Please choose the proper role name.')
+        assert msg in e.stderr
+
+
+def test_command_init_scenario_without_default_scenario_raises(temp_dir):
+    options = {
+        'role_name': 'test-role',
+    }
+    cmd = sh.molecule.bake('init', 'role', **options)
+    pytest.helpers.run_command(cmd)
+
+    role_directory = os.path.join(temp_dir.strpath, 'test-role')
+    os.chdir(role_directory)
+
+    options = {
+        'scenario_name': 'invalid-role-name',
+        'role_name': 'test-role',
+    }
+    try:
+        cmd = sh.molecule.bake('init', 'scenario', **options)
+        pytest.helpers.run_command(cmd, log=False)
+    except sh.ErrorReturnCode as e:
+        msg = ('The default scenario not found.  Please create a scenario '
+               "named 'default' first.")
+        assert msg in e.stderr
 
 
 def test_command_init_role_with_template(temp_dir):

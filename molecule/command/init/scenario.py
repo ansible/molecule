@@ -80,6 +80,24 @@ class Scenario(base.Base):
         LOG.success(msg)
 
 
+def _role_exists(ctx, param, value):  # pragma: no cover
+    role_directory = os.path.join(os.pardir, value)
+    if not os.path.exists(role_directory):
+        msg = ("The role '{}' not found. "
+               'Please choose the proper role name.'.format(value))
+        util.sysexit_with_message(msg)
+    return value
+
+
+def _default_scenario_exists(ctx, param, value):  # pragma: no cover
+    default_scenario_directory = os.path.join('molecule', 'default')
+    if not os.path.exists(default_scenario_directory):
+        msg = ('The default scenario not found.  Please create a scenario '
+               "named 'default' first.")
+        util.sysexit_with_message(msg)
+    return value
+
+
 @click.command()
 @click.pass_context
 @click.option(
@@ -104,11 +122,17 @@ class Scenario(base.Base):
     default='ansible',
     help='Name of provisioner to initialize. (ansible)')
 @click.option(
-    '--role-name', '-r', required=True, help='Name of the role to create.')
+    '--role-name',
+    '-r',
+    required=True,
+    callback=_role_exists,
+    help='Name of the role to create.')
 @click.option(
     '--scenario-name',
     '-s',
+    default='default',
     required=True,
+    callback=_default_scenario_exists,
     help='Name of the scenario to create.')
 @click.option(
     '--verifier-name',
