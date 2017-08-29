@@ -31,57 +31,9 @@ from molecule import logger
 from molecule import util
 from molecule.provisioner import base
 from molecule.provisioner import ansible_playbook
+from molecule.provisioner import ansible_playbooks
 
 LOG = logger.get_logger(__name__)
-
-
-class Namespace(object):
-    """ A class to act as a module to namespace playbook properties. """
-
-    def __init__(self, config):
-        """
-        Initialize a new namespace class and returns None.
-
-        :param config: An instance of a Molecule config.
-        :return: None
-        """
-        self._config = config
-
-    @property
-    def create(self):
-        return self._get_ansible_playbook('create')
-
-    @property
-    def converge(self):
-        c = self._config.config
-
-        return self._config.provisioner.get_abs_path(
-            c['provisioner']['playbooks']['converge'])
-
-    @property
-    def destroy(self):
-        return self._get_ansible_playbook('destroy')
-
-    @property
-    def side_effect(self):
-        return self._get_ansible_playbook('side_effect')
-
-    def _get_ansible_playbook(self, section):
-        c = self._config.config
-        driver_dict = c['provisioner']['playbooks'].get(
-            self._config.driver.name)
-
-        if driver_dict:
-            try:
-                playbook = driver_dict[section]
-            except KeyError:
-                return
-        else:
-            playbook = c['provisioner']['playbooks'][section]
-
-        if playbook is not None:
-            return self._config.provisioner.get_abs_path(playbook)
-        return
 
 
 class Ansible(base.Base):
@@ -290,7 +242,7 @@ class Ansible(base.Base):
         :return: None
         """
         super(Ansible, self).__init__(config)
-        self._ns = Namespace(config)
+        self._ansible_playbooks = ansible_playbooks.AnsiblePlaybooks(config)
 
     @property
     def ansible_config_options(self):
@@ -498,7 +450,7 @@ class Ansible(base.Base):
 
     @property
     def playbooks(self):
-        return self._ns
+        return self._ansible_playbooks
 
     def connection_options(self, instance_name):
         d = self._config.driver.ansible_connection_options(instance_name)

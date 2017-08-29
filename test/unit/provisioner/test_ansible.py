@@ -27,115 +27,8 @@ import six
 from molecule import config
 from molecule import util
 from molecule.provisioner import ansible
+from molecule.provisioner import ansible_playbooks
 from molecule.provisioner.lint import ansible_lint
-
-
-@pytest.fixture
-def namespace_instance(molecule_provisioner_section_data, config_instance):
-    return ansible.Namespace(config_instance)
-
-
-def test_get_ansible_playbook(namespace_instance):
-    x = os.path.join(namespace_instance._config.scenario.directory,
-                     'create.yml')
-    assert x == namespace_instance._config.provisioner.playbooks.create
-
-
-@pytest.fixture
-def molecule_provisioner_driver_section_data():
-    return {
-        'provisioner': {
-            'name': 'ansible',
-            'playbooks': {
-                'docker': {
-                    'create': 'docker-create.yml',
-                },
-                'create': 'create.yml',
-            },
-        }
-    }
-
-
-def test_get_ansible_playbook_with_driver_key(
-        molecule_provisioner_driver_section_data, namespace_instance):
-    namespace_instance._config.merge_dicts(
-        namespace_instance._config.config,
-        molecule_provisioner_driver_section_data)
-
-    x = os.path.join(namespace_instance._config.scenario.directory,
-                     'docker-create.yml')
-    assert x == namespace_instance._config.provisioner.playbooks.create
-
-
-@pytest.fixture
-def molecule_provisioner_playbook_none_section_data():
-    return {
-        'provisioner': {
-            'name': 'ansible',
-            'playbooks': {
-                'side_effect': None,
-            },
-        }
-    }
-
-
-def test_get_ansible_playbook_when_playbook_none(
-        molecule_provisioner_playbook_none_section_data, namespace_instance):
-    namespace_instance._config.merge_dicts(
-        namespace_instance._config.config,
-        molecule_provisioner_playbook_none_section_data)
-
-    assert namespace_instance._config.provisioner.playbooks.side_effect is None
-
-
-@pytest.fixture
-def molecule_provisioner_driver_playbook_none_section_data():
-    return {
-        'provisioner': {
-            'name': 'ansible',
-            'playbooks': {
-                'docker': {
-                    'side_effect': None,
-                },
-                'side_effect': None,
-            },
-        }
-    }
-
-
-def test_get_ansible_playbook_with_driver_key_when_playbook_none(
-        molecule_provisioner_driver_playbook_none_section_data,
-        namespace_instance):
-    namespace_instance._config.merge_dicts(
-        namespace_instance._config.config,
-        molecule_provisioner_driver_playbook_none_section_data)
-
-    assert namespace_instance._config.provisioner.playbooks.side_effect is None
-
-
-@pytest.fixture
-def molecule_provisioner_driver_playbook_key_missing_section_data():
-    return {
-        'provisioner': {
-            'name': 'ansible',
-            'playbooks': {
-                'docker': {
-                    'create': 'docker-create.yml',
-                },
-                'side_effect': None,
-            },
-        }
-    }
-
-
-def test_get_ansible_playbook_with_driver_key_when_playbook_key_missing(
-        molecule_provisioner_driver_playbook_key_missing_section_data,
-        namespace_instance):
-    namespace_instance._config.merge_dicts(
-        namespace_instance._config.config,
-        molecule_provisioner_driver_playbook_key_missing_section_data)
-
-    assert namespace_instance._config.provisioner.playbooks.side_effect is None
 
 
 @pytest.fixture
@@ -204,8 +97,9 @@ def test_config_private_member(ansible_instance):
     assert isinstance(ansible_instance._config, config.Config)
 
 
-def test_ns_private_member(ansible_instance):
-    assert isinstance(ansible_instance._ns, ansible.Namespace)
+def test_ansible_playbooks_private_member(ansible_instance):
+    assert isinstance(ansible_instance._ansible_playbooks,
+                      ansible_playbooks.AnsiblePlaybooks)
 
 
 def test_ansible_config_options_property_when_disabled(ansible_instance):
