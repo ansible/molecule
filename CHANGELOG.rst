@@ -10,6 +10,11 @@ functionality in a backwards-compatible manner.
 
 .. _`Semantic Versioning`: http://semver.org
 
+2.0.1
+=====
+
+* Corrected init scenario validation.
+
 2.0
 ===
 
