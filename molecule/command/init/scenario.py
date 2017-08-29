@@ -90,6 +90,9 @@ def _role_exists(ctx, param, value):  # pragma: no cover
 
 
 def _default_scenario_exists(ctx, param, value):  # pragma: no cover
+    if value == 'default':
+        return value
+
     default_scenario_directory = os.path.join('molecule', 'default')
     if not os.path.exists(default_scenario_directory):
         msg = ('The default scenario not found.  Please create a scenario '

@@ -23,6 +23,7 @@ import re
 
 import pytest
 import sh
+import shutil
 
 from molecule import util
 
@@ -121,6 +122,30 @@ def test_command_init_scenario_with_invalid_role_raises(temp_dir):
         msg = ("ERROR: The role 'invalid-role-name' not found. "
                'Please choose the proper role name.')
         assert msg in e.stderr
+
+
+def test_command_init_scenario_as_default_without_default_scenario(temp_dir):
+    options = {
+        'role_name': 'test-role',
+    }
+    cmd = sh.molecule.bake('init', 'role', **options)
+    pytest.helpers.run_command(cmd)
+
+    role_directory = os.path.join(temp_dir.strpath, 'test-role')
+    os.chdir(role_directory)
+
+    molecule_directory = pytest.helpers.molecule_directory()
+    scenario_directory = os.path.join(molecule_directory, 'default')
+    shutil.rmtree(scenario_directory)
+
+    options = {
+        'scenario_name': 'default',
+        'role_name': 'test-role',
+    }
+    cmd = sh.molecule.bake('init', 'scenario', **options)
+    pytest.helpers.run_command(cmd)
+
+    assert os.path.isdir(scenario_directory)
 
 
 def test_command_init_scenario_without_default_scenario_raises(temp_dir):
