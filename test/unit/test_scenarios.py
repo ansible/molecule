@@ -124,11 +124,13 @@ def test_verify_raises_when_scenario_not_found(scenarios_instance,
 
 
 def test_filter_for_scenario(scenarios_instance):
-    result = scenarios_instance._filter_for_scenario('default')
+    scenarios_instance._scenario_name = 'default'
+    result = scenarios_instance._filter_for_scenario()
     assert 1 == len(result)
     assert 'default' == result[0].name
 
-    result = scenarios_instance._filter_for_scenario('invalid')
+    scenarios_instance._scenario_name = 'invalid'
+    result = scenarios_instance._filter_for_scenario()
     assert [] == result
 
 

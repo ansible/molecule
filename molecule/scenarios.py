@@ -64,7 +64,7 @@ class Scenarios(object):
         :return: list
         """
         if self._scenario_name:
-            scenarios = self._filter_for_scenario(self._scenario_name)
+            scenarios = self._filter_for_scenario()
             self._verify()
 
             return scenarios
@@ -94,23 +94,20 @@ class Scenarios(object):
         """
         scenario_names = [c.scenario.name for c in self._configs]
         if self._scenario_name not in scenario_names:
-            msg = ("Scenario '{}' not found.  Exiting."
-                   ).format(self._scenario_name)
+            msg = ("Scenario '{}' not found.  "
+                   'Exiting.').format(self._scenario_name)
             util.sysexit_with_message(msg)
 
-    def _filter_for_scenario(self, scenario_name):
+    def _filter_for_scenario(self):
         """
         Find the scenario matching the provided scenario name and returns a
         list.
 
-        :param scenario_name: A string containing the name of the scenario to
-         find.
         :return: list
         """
-
         return [
             c.scenario for c in self._configs
-            if c.scenario.name == scenario_name
+            if c.scenario.name == self._scenario_name
         ]
 
     def _get_matrix(self):
