@@ -10,6 +10,11 @@ functionality in a backwards-compatible manner.
 
 .. _`Semantic Versioning`: http://semver.org
 
+2.0.2
+=====
+
+* Pass the provisioner's env to the verifier.
+
 2.0.1
 =====
 
