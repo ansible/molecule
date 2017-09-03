@@ -24,7 +24,8 @@
 
 def main():
     module = AnsibleModule(  # noqa
-        argument_spec=dict(name=dict(type='str', required=False), ),
+        argument_spec=dict(
+            name=dict(type='str', required=False), ),
         supports_check_mode=False)
 
     ansible_facts_dict = {

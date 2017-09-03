@@ -111,7 +111,10 @@ class Testinfra(base.Base):
 
     @property
     def default_env(self):
-        return self._config.merge_dicts(os.environ.copy(), self._config.env)
+        env = self._config.merge_dicts(os.environ.copy(), self._config.env)
+        env = self._config.merge_dicts(env, self._config.provisioner.env)
+
+        return env
 
     @property
     def additional_files_or_dirs(self):
