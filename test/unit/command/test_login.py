@@ -24,8 +24,26 @@ from molecule.command import login
 
 
 @pytest.fixture
-def login_instance(config_instance):
+def molecule_driver_delegated_section_data():
+    return {
+        'driver': {
+            'name': 'delegated',
+            'options': {
+                'managed': False,
+                'login_cmd_template': 'docker exec -ti {instance} bash',
+                'ansible_connection_options': {
+                    'ansible_connection': 'docker'
+                }
+            }
+        }
+    }
+
+
+@pytest.fixture
+def login_instance(molecule_driver_delegated_section_data, config_instance):
     config_instance.state.change_state('created', True)
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_driver_delegated_section_data)
 
     return login.Login(config_instance)
 

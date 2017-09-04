@@ -61,7 +61,9 @@ def test_name_property(openstack_instance):
 
 
 def test_options_property(openstack_instance):
-    assert {} == openstack_instance.options
+    x = {'managed': True}
+
+    assert x == openstack_instance.options
 
 
 def test_login_cmd_template_property(openstack_instance):
@@ -93,8 +95,12 @@ def test_default_safe_files_property(openstack_instance):
     assert x == openstack_instance.default_safe_files
 
 
-def test_delegated(openstack_instance):
+def test_delegated_property(openstack_instance):
     assert not openstack_instance.delegated
+
+
+def test_managed_property(openstack_instance):
+    assert openstack_instance.managed
 
 
 def test_default_ssh_connection_options_property(openstack_instance):
