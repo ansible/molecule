@@ -35,10 +35,10 @@ class Gce(base.Base):
     an Ansible module for managing ssh keys.  This driver assumes the developer
     has deployed project wide ssh key.
 
-    Molecule leverages Ansible's `gce`_ module, by mapping variables from
+    Molecule leverages Ansible's `gce_module`_, by mapping variables from
     `molecule.yml` into `create.yml` and `destroy.yml`.
 
-    .. _`gce`: http://docs.ansible.com/ansible/latest/list_of_cloud_modules.html#google
+    .. _`gce_module`: http://docs.ansible.com/ansible/latest/gce_module.html
 
     .. code-block:: yaml
 

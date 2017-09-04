@@ -99,6 +99,8 @@ Vagrant
 .. autoclass:: molecule.driver.vagrant.Vagrant()
    :undoc-members:
 
+.. _molecule_vagrant_module:
+
 Molecule Vagrant Module
 ^^^^^^^^^^^^^^^^^^^^^^^
 

@@ -31,10 +31,10 @@ class Ec2(base.Base):
     The class responsible for managing `EC2`_ instances.  `EC2`_
     is `not` the default driver used in Molecule.
 
-    Molecule leverages Ansible's `ec2`_ module, by mapping variables from
+    Molecule leverages Ansible's `ec2_module`_, by mapping variables from
     `molecule.yml` into `create.yml` and `destroy.yml`.
 
-    .. _`ec2`: http://docs.ansible.com/ansible/latest/list_of_cloud_modules.html#amazon
+    .. _`ec2_module`: http://docs.ansible.com/ansible/latest/ec2_module.html
 
     .. code-block:: yaml
 

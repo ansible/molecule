@@ -32,10 +32,8 @@ class Vagrant(base.Base):
     The class responsible for managing `Vagrant`_ instances.  `Vagrant`_ is
     `not` the default driver used in Molecule.
 
-    Molecule leverages Molecule's own `vagrant module`_, by mapping variables
-    from `molecule.yml` into `create.yml` and `destroy.yml`.
-
-    .. _`vagrant module`: https://molecule.readthedocs.io/en/latest/configuration.html#molecule-vagrant-module
+    Molecule leverages Molecule's own :ref:`molecule_vagrant_module`, by
+    mapping variables from `molecule.yml` into `create.yml` and `destroy.yml`.
 
     .. important::
 

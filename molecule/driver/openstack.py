@@ -31,10 +31,10 @@ class Openstack(base.Base):
     The class responsible for managing `OpenStack`_ instances.  `OpenStack`_
     is `not` the default driver used in Molecule.
 
-    Molecule leverages Ansible's `openstack`_ modules, by mapping variables
+    Molecule leverages Ansible's `openstack_module`_, by mapping variables
     from `molecule.yml` into `create.yml` and `destroy.yml`.
 
-    .. _`openstack`: http://docs.ansible.com/ansible/latest/list_of_cloud_modules.html#openstack
+    .. _`openstack_module`: http://docs.ansible.com/ansible/latest/os_server_module.html
 
     .. code-block:: yaml
 
