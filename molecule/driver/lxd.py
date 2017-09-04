@@ -29,23 +29,28 @@ class Lxd(base.Base):
     The class responsible for managing `LXD`_ containers.  `LXD`_ is `not` the
     default driver used in Molecule.
 
+    Molecule leverages Ansible's `lxd_container`_ module, by mapping variables
+    from `molecule.yml` into `create.yml` and `destroy.yml`.
+
+    .. _`lxd_container`: http://docs.ansible.com/ansible/latest/lxd_container_module.html
+
     .. code-block:: yaml
 
         driver:
-          name: lxd
+          name: instance
 
     Provide the files Molecule will preserve upon each subcommand execution.
 
     .. code-block:: yaml
 
         driver:
-          name: ec2
+          name: instance
           safe_files:
             - foo
             - .molecule/bar
 
     .. _`LXD`: https://linuxcontainers.org/lxd/introduction/
-    """
+    """  # noqa
 
     def __init__(self, config):
         super(Lxd, self).__init__(config)

@@ -31,10 +31,24 @@ class Ec2(base.Base):
     The class responsible for managing `EC2`_ instances.  `EC2`_
     is `not` the default driver used in Molecule.
 
+    Molecule leverages Ansible's `ec2`_ module, by mapping variables from
+    `molecule.yml` into `create.yml` and `destroy.yml`.
+
+    .. _`ec2`: http://docs.ansible.com/ansible/latest/list_of_cloud_modules.html#amazon
+
     .. code-block:: yaml
 
         driver:
-          name: ec2
+          name: instance
+          key_name: "{{ keypair_name }}"
+          image: "{{ item.image }}"
+          instance_type: "{{ item.instance_type }}"
+          vpc_subnet_id: "{{ item.vpc_subnet_id }}"
+          group: "{{ security_group_name }}"
+          instance_tags:
+            instance: "{{ item.name }}"
+          count_tag:
+            instance: "{{ item.name }}"
 
     .. code-block:: bash
 
@@ -45,7 +59,7 @@ class Ec2(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: ec2
+          name: instance
           ssh_connection_options:
             -o ControlPath=~/.ansible/cp/%r@%h-%p
 
@@ -59,13 +73,13 @@ class Ec2(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: ec2
+          name: instance
           safe_files:
             - foo
             - .molecule/bar
 
     .. _`EC2`: https://aws.amazon.com/ec2/
-    """
+    """  # noqa
 
     def __init__(self, config):
         super(Ec2, self).__init__(config)

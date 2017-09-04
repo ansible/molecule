@@ -36,7 +36,7 @@ class Delegated(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: delegated
+          name: instance
 
     Use Molecule with delegated Docker instances.
 
@@ -44,20 +44,20 @@ class Delegated(base.Base):
 
         $ docker run \\
             -d \\
-            --name delegated-instance-docker \\
-            --hostname delegated-instance-docker \\
+            --name instance-docker \\
+            --hostname instance-docker \\
             -it molecule_local/ubuntu:latest sleep infinity & wait
 
     .. code-block:: yaml
 
         driver:
-          name: delegated
+          name: instance
           options:
             login_cmd_template: 'docker exec -ti {instance} bash'
             ansible_connection_options:
               connection: docker
         platforms:
-          - name: delegated-instance-docker
+          - name: instance-docker
 
     Use Molecule with delegated instances, which are accessible over ssh.
 
@@ -68,21 +68,21 @@ class Delegated(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: delegated
+          name: instance
           options:
             login_cmd_template: 'ssh {instance} -F /tmp/ssh-config'
             ansible_connection_options:
               connection: ssh
               ansible_ssh_common_args -F /path/to/ssh-config
         platforms:
-          - name: delegated-instance-vagrant
+          - name: instance-vagrant
 
     Provide the files Molecule will preserve upon each subcommand execution.
 
     .. code-block:: yaml
 
         driver:
-          name: ec2
+          name: instance
           safe_files:
             - foo
             - .molecule/bar

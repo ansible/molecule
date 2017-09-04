@@ -32,6 +32,11 @@ class Vagrant(base.Base):
     The class responsible for managing `Vagrant`_ instances.  `Vagrant`_ is
     `not` the default driver used in Molecule.
 
+    Molecule leverages Molecule's own `vagrant module`_, by mapping variables
+    from `molecule.yml` into `create.yml` and `destroy.yml`.
+
+    .. _`vagrant module`: https://molecule.readthedocs.io/en/latest/configuration.html#molecule-vagrant-module
+
     .. important::
 
         This driver is alpha quality software.  Do not perform any additonal
@@ -56,7 +61,17 @@ class Vagrant(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: vagrant
+          name: instance
+          instance_name: "{{ item.name }}"
+          instance_interfaces: "{{ item.interfaces | default(omit) }}"
+          instance_raw_config_args: "{{ item.instance_raw_config_args | default(omit) }}"
+          platform_box: "{{ item.box }}"
+          platform_box_version: "{{ item.box_version | default(omit) }}"
+          platform_box_url: "{{ item.box_url | default(omit) }}"
+          provider_name: "{{ molecule_yml.driver.provider.name }}"
+          provider_memory: "{{ item.memory | default(omit) }}"
+          provider_cpus: "{{ item.cpus | default(omit) }}"
+          provider_raw_config_args: "{{ item.raw_config_args | default(omit) }}"
 
     .. code-block:: bash
 
@@ -67,7 +82,7 @@ class Vagrant(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: vagrant
+          name: instance
           provider:
             name: parallels
 
@@ -76,7 +91,7 @@ class Vagrant(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: vagrant
+          name: instance
           ssh_connection_options:
             -o ControlPath=~/.ansible/cp/%r@%h-%p
 
@@ -90,13 +105,13 @@ class Vagrant(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: ec2
+          name: instance
           safe_files:
             - foo
             - .molecule/bar
 
     .. _`Vagrant`: https://www.vagrantup.com
-    """
+    """  # noqa
 
     def __init__(self, config):
         super(Vagrant, self).__init__(config)
