@@ -10,6 +10,11 @@ functionality in a backwards-compatible manner.
 
 .. _`Semantic Versioning`: http://semver.org
 
+2.0.3
+=====
+
+* Generate host/group vars when host vars missing.
+
 2.0.2
 =====
 
