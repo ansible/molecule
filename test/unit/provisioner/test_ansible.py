@@ -597,6 +597,31 @@ def test_add_or_update_vars(ansible_instance):
     assert os.path.isfile(group_vars_2)
 
 
+def test_add_or_update_vars_without_host_vars(ansible_instance):
+    c = ansible_instance._config.config
+    c['provisioner']['inventory']['host_vars'] = {}
+    ephemeral_directory = ansible_instance._config.scenario.ephemeral_directory
+
+    host_vars_directory = os.path.join(ephemeral_directory, 'host_vars')
+    host_vars = os.path.join(host_vars_directory, 'instance-1')
+
+    ansible_instance._add_or_update_vars()
+
+    assert not os.path.isdir(host_vars_directory)
+    assert not os.path.isfile(host_vars)
+
+    host_vars_localhost = os.path.join(host_vars_directory, 'localhost')
+    assert not os.path.isfile(host_vars_localhost)
+
+    group_vars_directory = os.path.join(ephemeral_directory, 'group_vars')
+    group_vars_1 = os.path.join(group_vars_directory, 'example_group1')
+    group_vars_2 = os.path.join(group_vars_directory, 'example_group2')
+
+    assert os.path.isdir(group_vars_directory)
+    assert os.path.isfile(group_vars_1)
+    assert os.path.isfile(group_vars_2)
+
+
 def test_add_or_update_vars_does_not_create_vars(ansible_instance):
     c = ansible_instance._config.config
     c['provisioner']['inventory']['host_vars'] = {}

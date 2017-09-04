@@ -576,20 +576,19 @@ class Ansible(base.Base):
             elif target == 'group_vars':
                 vars_target = self.group_vars
 
-            if not vars_target:
-                return
+            if vars_target:
+                ephemeral_directory = self._config.scenario.ephemeral_directory
+                target_vars_directory = os.path.join(ephemeral_directory,
+                                                     target)
 
-            ephemeral_directory = self._config.scenario.ephemeral_directory
-            target_vars_directory = os.path.join(ephemeral_directory, target)
+                if not os.path.isdir(util.abs_path(target_vars_directory)):
+                    os.mkdir(util.abs_path(target_vars_directory))
 
-            if not os.path.isdir(util.abs_path(target_vars_directory)):
-                os.mkdir(util.abs_path(target_vars_directory))
-
-            for target in vars_target.keys():
-                target_var_content = vars_target[target]
-                path = os.path.join(
-                    util.abs_path(target_vars_directory), target)
-                util.write_file(path, util.safe_dump(target_var_content))
+                for target in vars_target.keys():
+                    target_var_content = vars_target[target]
+                    path = os.path.join(
+                        util.abs_path(target_vars_directory), target)
+                    util.write_file(path, util.safe_dump(target_var_content))
 
     def _write_inventory(self):
         """
