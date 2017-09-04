@@ -37,14 +37,14 @@ class Lxd(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: instance
+          name: lxd
 
     Provide the files Molecule will preserve upon each subcommand execution.
 
     .. code-block:: yaml
 
         driver:
-          name: instance
+          name: lxd
           safe_files:
             - foo
             - .molecule/bar

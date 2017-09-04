@@ -37,7 +37,7 @@ class Lxc(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: instance
+          name: lxc
 
     .. code-block:: bash
 
@@ -48,7 +48,7 @@ class Lxc(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: instance
+          name: lxc
           safe_files:
             - foo
             - .molecule/bar

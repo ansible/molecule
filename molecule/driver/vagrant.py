@@ -59,17 +59,19 @@ class Vagrant(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: instance
-          instance_name: "{{ item.name }}"
-          instance_interfaces: "{{ item.interfaces | default(omit) }}"
-          instance_raw_config_args: "{{ item.instance_raw_config_args | default(omit) }}"
-          platform_box: "{{ item.box }}"
-          platform_box_version: "{{ item.box_version | default(omit) }}"
-          platform_box_url: "{{ item.box_url | default(omit) }}"
-          provider_name: "{{ molecule_yml.driver.provider.name }}"
-          provider_memory: "{{ item.memory | default(omit) }}"
-          provider_cpus: "{{ item.cpus | default(omit) }}"
-          provider_raw_config_args: "{{ item.raw_config_args | default(omit) }}"
+          name: vagrant
+        platforms:
+          - name: instance
+            instance_name: "{{ item.name }}"
+            instance_interfaces: "{{ item.interfaces | default(omit) }}"
+            instance_raw_config_args: "{{ item.instance_raw_config_args | default(omit) }}"
+            platform_box: "{{ item.box }}"
+            platform_box_version: "{{ item.box_version | default(omit) }}"
+            platform_box_url: "{{ item.box_url | default(omit) }}"
+            provider_name: "{{ molecule_yml.driver.provider.name }}"
+            provider_memory: "{{ item.memory | default(omit) }}"
+            provider_cpus: "{{ item.cpus | default(omit) }}"
+            provider_raw_config_args: "{{ item.raw_config_args | default(omit) }}"
 
     .. code-block:: bash
 
@@ -80,7 +82,7 @@ class Vagrant(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: instance
+          name: vagrant
           provider:
             name: parallels
 
@@ -89,7 +91,7 @@ class Vagrant(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: instance
+          name: vagrant
           ssh_connection_options:
             -o ControlPath=~/.ansible/cp/%r@%h-%p
 
@@ -103,7 +105,7 @@ class Vagrant(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: instance
+          name: vagrant
           safe_files:
             - foo
             - .molecule/bar

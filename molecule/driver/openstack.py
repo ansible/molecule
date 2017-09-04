@@ -39,13 +39,15 @@ class Openstack(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: instance
-          image: "{{ item.image }}"
-          flavor: "{{ item.flavor }}"
-          security_groups: "{{ security_group_name }}"
-          key_name: "{{ keypair_name }}"
-          nics:
-            - net-id: "{{ openstack_networks[0]['id'] }}"
+          name: openstack
+        platforms:
+          - name: instance
+            image: "{{ item.image }}"
+            flavor: "{{ item.flavor }}"
+            security_groups: "{{ security_group_name }}"
+            key_name: "{{ keypair_name }}"
+            nics:
+              - net-id: "{{ openstack_networks[0]['id'] }}"
 
     .. code-block:: bash
 
@@ -56,7 +58,7 @@ class Openstack(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: instance
+          name: openstack
           ssh_connection_options:
             -o ControlPath=~/.ansible/cp/%r@%h-%p
 
@@ -70,7 +72,7 @@ class Openstack(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: instance
+          name: openstack
           safe_files:
             - foo
             - .molecule/bar

@@ -43,14 +43,16 @@ class Gce(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: instance
-          instance_names: "{{ item.name }}"
-          zone: "{{ item.zone }}"
-          machine_type: "{{ item.machine_type }}"
-          image: "{{ item.image }}"
-          service_account_email: "{{ lookup('env', 'GCE_SERVICE_ACCOUNT_EMAIL') }}"
-          credentials_file: "{{ lookup('env', 'GCE_CREDENTIALS_FILE') }}"
-          project_id: "{{ lookup('env', 'GCE_PROJECT_ID') }}"
+          name: gce
+        platforms:
+          - name: instance
+            instance_names: "{{ item.name }}"
+            zone: "{{ item.zone }}"
+            machine_type: "{{ item.machine_type }}"
+            image: "{{ item.image }}"
+            service_account_email: "{{ lookup('env', 'GCE_SERVICE_ACCOUNT_EMAIL') }}"
+            credentials_file: "{{ lookup('env', 'GCE_CREDENTIALS_FILE') }}"
+            project_id: "{{ lookup('env', 'GCE_PROJECT_ID') }}"
 
     .. code-block:: bash
 
@@ -61,7 +63,7 @@ class Gce(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: instance
+          name: gce
           ssh_connection_options:
             -o ControlPath=~/.ansible/cp/%r@%h-%p
 
@@ -75,7 +77,7 @@ class Gce(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: instance
+          name: gce
           safe_files:
             - foo
             - .molecule/bar

@@ -39,16 +39,18 @@ class Ec2(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: instance
-          key_name: "{{ keypair_name }}"
-          image: "{{ item.image }}"
-          instance_type: "{{ item.instance_type }}"
-          vpc_subnet_id: "{{ item.vpc_subnet_id }}"
-          group: "{{ security_group_name }}"
-          instance_tags:
-            instance: "{{ item.name }}"
-          count_tag:
-            instance: "{{ item.name }}"
+          name: ec2
+        platforms:
+          - name: instance
+            key_name: "{{ keypair_name }}"
+            image: "{{ item.image }}"
+            instance_type: "{{ item.instance_type }}"
+            vpc_subnet_id: "{{ item.vpc_subnet_id }}"
+            group: "{{ security_group_name }}"
+            instance_tags:
+              instance: "{{ item.name }}"
+            count_tag:
+              instance: "{{ item.name }}"
 
     .. code-block:: bash
 
@@ -59,7 +61,7 @@ class Ec2(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: instance
+          name: ec2
           ssh_connection_options:
             -o ControlPath=~/.ansible/cp/%r@%h-%p
 
@@ -73,7 +75,7 @@ class Ec2(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: instance
+          name: ec2
           safe_files:
             - foo
             - .molecule/bar

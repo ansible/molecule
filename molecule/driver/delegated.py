@@ -36,7 +36,7 @@ class Delegated(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: instance
+          name: delegated
 
     Use Molecule with delegated Docker instances.
 
@@ -51,7 +51,7 @@ class Delegated(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: instance
+          name: delegated
           options:
             login_cmd_template: 'docker exec -ti {instance} bash'
             ansible_connection_options:
@@ -68,7 +68,7 @@ class Delegated(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: instance
+          name: delegated
           options:
             login_cmd_template: 'ssh {instance} -F /tmp/ssh-config'
             ansible_connection_options:
@@ -82,7 +82,7 @@ class Delegated(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: instance
+          name: delegated
           safe_files:
             - foo
             - .molecule/bar

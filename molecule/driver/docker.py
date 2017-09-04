@@ -41,13 +41,15 @@ class Docker(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: instance
-          hostname: "{{ item.name }}"
-          image: "molecule_local/{{ item.image }}"
-          command: "{{ item.command | default('sleep infinity') }}"
-          privileged: "{{ item.privileged | default(omit) }}"
-          volumes: "{{ item.volumes | default(omit) }}"
-          capabilities: "{{ item.capabilities | default(omit) }}"
+          name: docker
+        platforms:
+          - name: instance
+            hostname: "{{ item.name }}"
+            image: "molecule_local/{{ item.image }}"
+            command: "{{ item.command | default('sleep infinity') }}"
+            privileged: "{{ item.privileged | default(omit) }}"
+            volumes: "{{ item.volumes | default(omit) }}"
+            capabilities: "{{ item.capabilities | default(omit) }}"
 
     .. code-block:: bash
 
@@ -58,7 +60,7 @@ class Docker(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: instance
+          name: docker
           safe_files:
             - foo
             - .molecule/bar
