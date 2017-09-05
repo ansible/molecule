@@ -62,7 +62,10 @@ def molecule_driver_section_data():
 def molecule_driver_delegated_section_data():
     return {
         'driver': {
-            'name': 'delegated'
+            'name': 'delegated',
+            'options': {
+                'managed': False,
+            },
         },
     }
 

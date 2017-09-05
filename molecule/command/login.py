@@ -67,7 +67,8 @@ class Login(base.Base):
         :return: None
         """
         c = self._config
-        if not c.state.created and not c.driver.delegated:
+        if not c.state.created and (c.driver.delegated and
+                                    not c.driver.managed):
             msg = 'Instances not created.  Please create instances first.'
             util.sysexit_with_message(msg)
 

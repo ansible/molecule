@@ -29,16 +29,29 @@ class Delegated(base.Base):
     The class responsible for managing delegated instances.  Delegated is `not`
     the default driver used in Molecule.
 
-    Under this driver, Molecule skips the provisioning/deprovisioning steps.
-    It is the developers responsibility to manage the instances, and properly
-    configure Molecule to connect to said instances.
+    Under this driver, it is the developers responsibility to implement the
+    create and destroy actions.
 
     .. code-block:: yaml
 
         driver:
           name: delegated
 
-    Use Molecule with delegated Docker instances.
+    Molecule can also skip the provisioning/deprovisioning steps.  It is the
+    developers responsibility to manage the instances, and properly configure
+    Molecule to connect to said instances.
+
+    .. code-block:: yaml
+
+        driver:
+          name: delegated
+          options:
+            managed: False
+            login_cmd_template: 'docker exec -ti {instance} bash'
+            ansible_connection_options:
+              connection: docker
+        platforms:
+          - name: instance-docker
 
     .. code-block:: bash
 
@@ -47,17 +60,6 @@ class Delegated(base.Base):
             --name instance-docker \\
             --hostname instance-docker \\
             -it molecule_local/ubuntu:latest sleep infinity & wait
-
-    .. code-block:: yaml
-
-        driver:
-          name: delegated
-          options:
-            login_cmd_template: 'docker exec -ti {instance} bash'
-            ansible_connection_options:
-              connection: docker
-        platforms:
-          - name: instance-docker
 
     Use Molecule with delegated instances, which are accessible over ssh.
 
@@ -70,6 +72,7 @@ class Delegated(base.Base):
         driver:
           name: delegated
           options:
+            managed: False
             login_cmd_template: 'ssh {instance} -F /tmp/ssh-config'
             ansible_connection_options:
               connection: ssh

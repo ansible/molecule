@@ -265,7 +265,9 @@ class Config(object):
                 'provider': {
                     'name': None
                 },
-                'options': {},
+                'options': {
+                    'managed': True,
+                },
                 'ssh_connection_options': [],
                 'safe_files': [],
             },

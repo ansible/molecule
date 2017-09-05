@@ -65,7 +65,9 @@ def test_name_property(vagrant_instance):
 
 
 def test_options_property(vagrant_instance):
-    assert {} == vagrant_instance.options
+    x = {'managed': True}
+
+    assert x == vagrant_instance.options
 
 
 def test_login_cmd_template_property(vagrant_instance):
@@ -105,8 +107,12 @@ def test_default_safe_files_property(vagrant_instance):
     assert x == vagrant_instance.default_safe_files
 
 
-def test_delegated(vagrant_instance):
+def test_delegated_property(vagrant_instance):
     assert not vagrant_instance.delegated
+
+
+def test_managed_property(vagrant_instance):
+    assert vagrant_instance.managed
 
 
 def test_default_ssh_connection_options_property(vagrant_instance):

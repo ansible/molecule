@@ -148,6 +148,15 @@ class Base(object):
         """
         return self.name == 'delegated'
 
+    @property
+    def managed(self):
+        """
+        Is the driver is managed and returns a bool.
+
+        :returns: bool
+        """
+        return self.options['managed']
+
     def status(self):
         """
         Collects the instances state and returns a list.

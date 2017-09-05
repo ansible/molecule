@@ -70,7 +70,8 @@ def test_options_property(delegated_instance):
         'ansible_connection_options': {
             'ansible_connection': 'docker'
         },
-        'login_cmd_template': 'docker exec -ti {instance} bash'
+        'login_cmd_template': 'docker exec -ti {instance} bash',
+        'managed': True,
     }
 
     assert x == delegated_instance.options
@@ -90,8 +91,12 @@ def test_default_safe_files_property(delegated_instance):
     assert [] == delegated_instance.default_safe_files
 
 
-def test_delegated(delegated_instance):
+def test_delegated_property(delegated_instance):
     assert delegated_instance.delegated
+
+
+def test_managed_property(delegated_instance):
+    assert delegated_instance.managed
 
 
 def test_default_ssh_connection_options_property(delegated_instance):

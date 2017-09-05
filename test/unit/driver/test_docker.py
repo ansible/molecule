@@ -60,7 +60,9 @@ def test_name_property(docker_instance):
 
 
 def test_options_property(docker_instance):
-    assert {} == docker_instance.options
+    x = {'managed': True}
+
+    assert x == docker_instance.options
 
 
 def test_login_cmd_template_property(docker_instance):
@@ -87,8 +89,12 @@ def test_default_safe_files_property(docker_instance):
     assert x == docker_instance.default_safe_files
 
 
-def test_delegated(docker_instance):
+def test_delegated_property(docker_instance):
     assert not docker_instance.delegated
+
+
+def test_managed_property(docker_instance):
+    assert docker_instance.managed
 
 
 def test_default_ssh_connection_options_property(docker_instance):
