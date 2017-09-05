@@ -43,4 +43,4 @@ Install using pip:
 
   $ sudo pip install ansible
   $ sudo pip install shade
-  $ sudo pip install molecule --pre
+  $ sudo pip install molecule

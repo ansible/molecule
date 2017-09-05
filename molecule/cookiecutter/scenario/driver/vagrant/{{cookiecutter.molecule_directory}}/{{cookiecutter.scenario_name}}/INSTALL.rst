@@ -44,4 +44,4 @@ Install using pip:
 
   $ sudo pip install ansible
   $ sudo pip install python-vagrant
-  $ sudo pip install molecule --pre
+  $ sudo pip install molecule

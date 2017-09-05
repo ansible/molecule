@@ -1,8 +1,8 @@
 Usage
 =====
 
-.. image:: https://asciinema.org/a/136191.png
-   :target: https://asciinema.org/a/136191
+.. image:: https://asciinema.org/a/136334.png
+   :target: https://asciinema.org/a/136334
    :alt: Quick Start
 
 Check
