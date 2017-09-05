@@ -10,6 +10,11 @@ functionality in a backwards-compatible manner.
 
 .. _`Semantic Versioning`: http://semver.org
 
+2.0.4
+=====
+
+* Fix Dockerfile for Fedora.
+
 2.0.3
 =====
 
