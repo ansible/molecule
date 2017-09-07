@@ -35,6 +35,10 @@ class Scenario(base.Base):
     Initialize a new scenario:
 
     >>> molecule init scenario --scenario-name default --role-name foo
+
+    Initialize an existing role with Molecule:
+
+    >>> molecule init scenario --scenario-name default --role-name foo
     """
 
     def __init__(self, command_args):

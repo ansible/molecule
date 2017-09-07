@@ -33,6 +33,13 @@ Manually
     $ cd $role-name
     $ molecule init scenario -r $role-name -s default -d $driver-name
 
+.. important:
+
+    The linting checks will likely fail since the role was not created with
+    `molecule init role`.  The errors can be ignored by placing a `.yamllint`
+    file in the project root of the role.  This will be corrected in the
+    future.
+
 2. Move existing Testinfra tests to the new scenario's test directory located
    at `molecule/default/tests/test_default.py`.
 
