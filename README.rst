@@ -34,6 +34,9 @@ supports.
 .. _`playbooks`: https://docs.ansible.com/ansible/playbooks.html
 .. _`role`: http://docs.ansible.com/ansible/playbooks_roles.html
 
+.. image:: https://user-images.githubusercontent.com/9895/30235316-650d17fa-94bc-11e7-8205-ec787b80cfc3.gif
+   :alt: Quick Start
+
 Documentation
 =============
 
