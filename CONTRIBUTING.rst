@@ -17,7 +17,7 @@ Contributing
 Installing
 ==========
 
-:ref:`installing` from source or package.
+:ref:`installation` from source or package.
 
 Testing
 =======

@@ -1,8 +1,8 @@
-.. _installing:
+.. _installation:
 
-**********
-Installing
-**********
+************
+Installation
+************
 
 This document assumes the developer has a basic understanding of python
 packaging, and how to install and manage python on the system executing

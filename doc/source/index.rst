@@ -6,7 +6,7 @@ Contents:
 .. toctree::
    :maxdepth: 3
 
-   installing
+   installation
    usage
    configuration
    porting
