@@ -1,4 +1,4 @@
-ansible-lint==3.4.13
+ansible-lint==3.4.15
 anyconfig==0.9.1
 click==6.7
 click-completion==0.2.1
