@@ -23,6 +23,7 @@ import click
 from molecule import config
 from molecule import logger
 from molecule import scenarios
+from molecule import util
 from molecule.command import base
 
 LOG = logger.get_logger(__name__)
@@ -44,11 +45,15 @@ class Test(base.Base):
 
     Targeting a specific driver:
 
-    >>> molecule converge --driver-name foo
+    >>> molecule test --driver-name foo
 
     Executing with `debug`:
 
     >>> molecule --debug test
+
+    Always destroy instances at the conclusion of a Molecule run:
+
+    >>> molecule test --destroy=always
     """
 
     def execute(self):
@@ -77,7 +82,13 @@ class Test(base.Base):
     '__all',
     default=False,
     help='Test all scenarios. Default is False.')
-def test(ctx, scenario_name, driver_name, __all):  # pragma: no cover
+@click.option(
+    '--destroy',
+    type=click.Choice(['always', 'never']),
+    default='never',
+    help=('The destroy strategy used at the conclusion of a '
+          'Molecule run (never).'))
+def test(ctx, scenario_name, driver_name, __all, destroy):  # pragma: no cover
     """ Test (destroy, create, converge, lint, verify, destroy). """
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
@@ -93,5 +104,14 @@ def test(ctx, scenario_name, driver_name, __all):  # pragma: no cover
         base.get_configs(args, command_args), scenario_name)
     s.print_matrix()
     for scenario in s:
-        for term in scenario.sequence:
-            base.execute_subcommand(scenario.config, term)
+        try:
+            for term in scenario.sequence:
+                base.execute_subcommand(scenario.config, term)
+        except SystemExit:
+            if destroy == 'always':
+                msg = ('An error occured during the test sequence.  '
+                       'Cleaning up.')
+                LOG.warn(msg)
+                base.execute_subcommand(scenario.config, 'destroy')
+                util.sysexit()
+            raise

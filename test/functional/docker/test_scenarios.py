@@ -229,6 +229,52 @@ def test_command_test_builds_local_molecule_image(
 
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
+        ('test_destroy_strategy', 'docker', 'default'),
+    ],
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+        'scenario_name',
+    ])
+def test_command_test_destroy_strategy_always(scenario_to_test, with_scenario,
+                                              scenario_name, driver_name):
+    options = {
+        'destroy': 'always',
+    }
+    try:
+        cmd = sh.molecule.bake('test', **options)
+        pytest.helpers.run_command(cmd, log=False)
+    except sh.ErrorReturnCode as e:
+        msg = 'An error occured during the test sequence.  Cleaning up.'
+        assert msg in e.stdout
+
+        assert 'PLAY [Destroy]' in e.stdout
+        assert 1 == e.exit_code
+
+
+@pytest.mark.parametrize(
+    'scenario_to_test, driver_name, scenario_name', [
+        ('test_destroy_strategy', 'docker', 'default'),
+    ],
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+        'scenario_name',
+    ])
+def test_command_test_destroy_strategy_never(scenario_to_test, with_scenario,
+                                             scenario_name, driver_name):
+    try:
+        cmd = sh.molecule.bake('test')
+        pytest.helpers.run_command(cmd, log=False)
+    except sh.ErrorReturnCode as e:
+        msg = 'An error occured during the test sequence.  Cleaning up.'
+        assert msg not in e.stdout
+
+        assert 1 == e.exit_code
+
+
+@pytest.mark.parametrize(
+    'scenario_to_test, driver_name, scenario_name', [
         ('host_group_vars', 'docker', 'default'),
     ],
     indirect=[
