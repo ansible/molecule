@@ -249,7 +249,7 @@ def test_command_test_destroy_strategy_always(scenario_to_test, with_scenario,
         assert msg in e.stdout
 
         assert 'PLAY [Destroy]' in e.stdout
-        assert 1 == e.exit_code
+        assert e.exit_code != 0
 
 
 @pytest.mark.parametrize(
@@ -270,7 +270,7 @@ def test_command_test_destroy_strategy_never(scenario_to_test, with_scenario,
         msg = 'An error occured during the test sequence.  Cleaning up.'
         assert msg not in e.stdout
 
-        assert 1 == e.exit_code
+        assert e.exit_code != 0
 
 
 @pytest.mark.parametrize(
