@@ -10,6 +10,12 @@ functionality in a backwards-compatible manner.
 
 .. _`Semantic Versioning`: http://semver.org
 
+2.1
+===
+
+* Add a destroy strategy to the `test` action.
+* Delegated driver may or may not manage instances.
+
 2.0.4
 =====
 
