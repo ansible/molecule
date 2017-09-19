@@ -64,8 +64,7 @@ Forums
 Ansible Support
 ===============
 
-* 2.2.3.0
-* 2.3.1.0
+Molecule requires Ansible version 2.2 or later.
 
 .. _`Ansible`: https://docs.ansible.com
 
