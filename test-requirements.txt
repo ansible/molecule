@@ -13,4 +13,4 @@ python-vagrant
 # The error was: KeyError: 'created_at'
 shade==1.22.2
 wheel
-yapf==0.17.0
+yapf==0.18.0
