@@ -77,6 +77,11 @@ Breaking Changes
 .. _`Delegated Driver`: http://molecule.readthedocs.io/en/latest/configuration.html#delegated
 .. _`Yamllint`: https://github.com/adrienverge/yamllint
 
+1.25.1
+======
+
+* Update ansible-lint for Ansible 1.24 compatibility.
+
 1.25
 ====
 
