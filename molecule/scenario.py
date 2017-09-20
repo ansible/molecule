@@ -42,6 +42,9 @@ class Scenario(object):
 
         scenario:
           name: default
+          create_sequence:
+            - create
+            - prepare
           check_sequence:
             - destroy
             - create
@@ -94,7 +97,7 @@ class Scenario(object):
 
     @property
     def create_sequence(self):
-        return ['create']
+        return ['create','prepare']
 
     @property
     def dependency_sequence(self):

@@ -479,6 +479,16 @@ class Ansible(base.Base):
         pb = self._get_ansible_playbook(self.playbooks.create)
         pb.execute()
 
+    def prepare(self):
+        """
+        Executes `ansible-playbook` against the prepare playbook and returns
+        None.
+
+        :return: None
+        """
+        pb = self._get_ansible_playbook(self.playbooks.prepare)
+        pb.execute()
+
     def syntax(self):
         """
         Executes `ansible-playbook` against the converge playbook with the
