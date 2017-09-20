@@ -8,6 +8,7 @@ Contents:
 
    installation
    usage
+   examples
    configuration
    porting
    testing

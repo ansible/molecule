@@ -60,10 +60,6 @@ class Scenario(object):
             - lint
             - verify
             - destroy
-
-    A good source of examples are the `scenario`_ functional tests.
-
-    .. _`scenario`: https://github.com/metacloud/molecule/tree/master/test/scenarios/driver
     """  # noqa
 
     def __init__(self, config):
