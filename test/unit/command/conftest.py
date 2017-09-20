@@ -46,6 +46,7 @@ def patched_ansible_lint(mocker):
 def patched_ansible_create(mocker):
     return mocker.patch('molecule.provisioner.ansible.Ansible.create')
 
+
 @pytest.fixture
 def patched_ansible_prepare(mocker):
     return mocker.patch('molecule.provisioner.ansible.Ansible.prepare')

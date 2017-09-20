@@ -101,7 +101,7 @@ class Scenario(object):
 
     @property
     def create_sequence(self):
-        return ['create','prepare']
+        return ['create', 'prepare']
 
     @property
     def dependency_sequence(self):

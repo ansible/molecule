@@ -57,14 +57,15 @@ class Prepare(base.Base):
         """
         self.print_info()
 
-        if not os.path.exists(self._config.provisioner.playbooks.prepare):
-            msg = 'Skipping, prepare playbook does not exist.'
-            LOG.warn(msg)
-            return
-
         if self._config.state.prepared:
             msg = 'Skipping, instances already prepared.'
             LOG.warn(msg)
+            return
+
+        if not os.path.exists(self._config.provisioner.playbooks.prepare):
+            msg = 'Skipping, prepare playbook does not exist.'
+            LOG.warn(msg)
+            self._config.state.change_state('prepared', True)
             return
 
         self._config.provisioner.prepare()
