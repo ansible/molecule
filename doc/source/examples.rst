@@ -39,11 +39,9 @@ Molecule can test complex scenarios leveraging this technique.
     $ cd monolith-repo/roles/baz
     $ molecule test
 
-Molecule is simply setting the `ANSIBLE_ROLES_PATH` environment vasriable for
-the developers convenience.
-
-To view the environment variables set during a Molecule operation pass the
-``--debug`` flag.
+Molecule is simply setting the `ANSIBLE_*` environment variables.  To view the
+environment variables set during a Molecule operation pass the ``--debug``
+flag.
 
 .. code-block:: bash
 
