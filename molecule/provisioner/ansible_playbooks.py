@@ -42,6 +42,10 @@ class AnsiblePlaybooks(object):
         return self._get_ansible_playbook('create')
 
     @property
+    def prepare(self):
+        return self._get_ansible_playbook('prepare')
+
+    @property
     def converge(self):
         c = self._config.config
 

@@ -18,23 +18,21 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-# NOTE(retr0h): Importing into the ``molecule.command`` namespace, to prevent
-# collisions (e.g. ``list``).  The CLI usage may conflict with reserved words
-# or builtins.
+from molecule.command import prepare
 
-from molecule.command import base  # noqa
-from molecule.command import check  # noqa
-from molecule.command import converge  # noqa
-from molecule.command import create  # noqa
-from molecule.command import dependency  # noqa
-from molecule.command import destroy  # noqa
-from molecule.command import idempotence  # noqa
-from molecule.command import lint  # noqa
-from molecule.command import list  # noqa
-from molecule.command import login  # noqa
-from molecule.command import prepare  # noqa
-from molecule.command import side_effect  # noqa
-from molecule.command import syntax  # noqa
-from molecule.command import test  # noqa
-from molecule.command import verify  # noqa
-from molecule.command.init import init  # noqa
+
+def test_execute(mocker, patched_logger_info, patched_ansible_prepare,
+                 config_instance):
+    c = converge.Converge(config_instance)
+    c.execute()
+
+    x = [
+        mocker.call("Scenario: 'default'"),
+        mocker.call("Action: 'prepare'"),
+    ]
+
+    assert x == patched_logger_info.mock_calls
+
+    patched_ansible_prepare.assert_called_once_with()
+
+    assert config_instance.state.prepared
