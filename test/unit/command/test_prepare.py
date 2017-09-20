@@ -23,7 +23,7 @@ from molecule.command import prepare
 
 def test_execute(mocker, patched_logger_info, patched_ansible_prepare,
                  config_instance):
-    c = converge.Converge(config_instance)
+    c = prepare.Prepare(config_instance)
     c.execute()
 
     x = [
