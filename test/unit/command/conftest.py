@@ -48,6 +48,11 @@ def patched_ansible_create(mocker):
 
 
 @pytest.fixture
+def patched_ansible_prepare(mocker):
+    return mocker.patch('molecule.provisioner.ansible.Ansible.prepare')
+
+
+@pytest.fixture
 def patched_ansible_syntax(mocker):
     return mocker.patch('molecule.provisioner.ansible.Ansible.syntax')
 

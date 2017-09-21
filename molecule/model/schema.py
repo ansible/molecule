@@ -111,6 +111,7 @@ class PlaybooksSchema(base.Base):
     converge = marshmallow.fields.Str()
     destroy = marshmallow.fields.Str()
     side_effect = marshmallow.fields.Str(allow_none=True)
+    prepare = marshmallow.fields.Str()
 
 
 class ProvisionerPlaybooksSchema(PlaybooksSchema):
@@ -139,6 +140,7 @@ class ScenarioSchema(base.Base):
     name = marshmallow.fields.Str()
     check_sequence = marshmallow.fields.List(marshmallow.fields.Str())
     converge_sequence = marshmallow.fields.List(marshmallow.fields.Str())
+    create_sequence = marshmallow.fields.List(marshmallow.fields.Str())
     destroy_sequence = marshmallow.fields.List(marshmallow.fields.Str())
     test_sequence = marshmallow.fields.List(marshmallow.fields.Str())
 
