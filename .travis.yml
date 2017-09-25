@@ -4,7 +4,7 @@ services:
   - docker
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -o Dpkg::Options::="--force-confold" --force-yes -y docker-engine
+  - sudo apt-get install -o Dpkg::Options::="--force-confold" --force-yes -y docker-ce
 python:
   - "2.7"
   - "3.5"
