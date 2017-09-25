@@ -110,8 +110,8 @@ class PlaybooksSchema(base.Base):
     create = marshmallow.fields.Str()
     converge = marshmallow.fields.Str()
     destroy = marshmallow.fields.Str()
-    side_effect = marshmallow.fields.Str(allow_none=True)
     prepare = marshmallow.fields.Str()
+    side_effect = marshmallow.fields.Str(allow_none=True)
 
 
 class ProvisionerPlaybooksSchema(PlaybooksSchema):

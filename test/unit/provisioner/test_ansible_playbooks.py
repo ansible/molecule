@@ -30,10 +30,43 @@ def playbooks_instance(molecule_provisioner_section_data, config_instance):
     return ansible_playbooks.AnsiblePlaybooks(config_instance)
 
 
+def test_create_property(playbooks_instance):
+    x = os.path.join(playbooks_instance._config.scenario.directory,
+                     'create.yml')
+
+    assert x == playbooks_instance._config.provisioner.playbooks.create
+
+
+def test_converge_property(playbooks_instance):
+    x = os.path.join(playbooks_instance._config.scenario.directory,
+                     'playbook.yml')
+
+    assert x == playbooks_instance._config.provisioner.playbooks.converge
+
+
+def test_destroy_property(playbooks_instance):
+    x = os.path.join(playbooks_instance._config.scenario.directory,
+                     'destroy.yml')
+
+    assert x == playbooks_instance._config.provisioner.playbooks.destroy
+
+
+def test_prepare_property(playbooks_instance):
+    x = os.path.join(playbooks_instance._config.scenario.directory,
+                     'prepare.yml')
+
+    assert x == playbooks_instance._config.provisioner.playbooks.prepare
+
+
+def test_side_effect_property(playbooks_instance):
+    assert playbooks_instance._config.provisioner.playbooks.side_effect is None
+
+
 def test_get_ansible_playbook(playbooks_instance):
     x = os.path.join(playbooks_instance._config.scenario.directory,
                      'create.yml')
-    assert x == playbooks_instance._config.provisioner.playbooks.create
+
+    assert x == playbooks_instance._get_ansible_playbook('create')
 
 
 @pytest.fixture
@@ -59,7 +92,7 @@ def test_get_ansible_playbook_with_driver_key(
 
     x = os.path.join(playbooks_instance._config.scenario.directory,
                      'docker-create.yml')
-    assert x == playbooks_instance._config.provisioner.playbooks.create
+    assert x == playbooks_instance._get_ansible_playbook('create')
 
 
 @pytest.fixture
@@ -80,7 +113,7 @@ def test_get_ansible_playbook_when_playbook_none(
         playbooks_instance._config.config,
         molecule_provisioner_playbook_none_section_data)
 
-    assert playbooks_instance._config.provisioner.playbooks.side_effect is None
+    assert playbooks_instance._get_ansible_playbook('side_effect') is None
 
 
 @pytest.fixture
@@ -105,7 +138,7 @@ def test_get_ansible_playbook_with_driver_key_when_playbook_none(
         playbooks_instance._config.config,
         molecule_provisioner_driver_playbook_none_section_data)
 
-    assert playbooks_instance._config.provisioner.playbooks.side_effect is None
+    assert playbooks_instance._get_ansible_playbook('side_effect') is None
 
 
 @pytest.fixture
@@ -117,7 +150,7 @@ def molecule_provisioner_driver_playbook_key_missing_section_data():
                 'docker': {
                     'create': 'docker-create.yml',
                 },
-                'side_effect': None,
+                'side_effect': 'side_effect.yml',
             },
         }
     }
@@ -130,4 +163,6 @@ def test_get_ansible_playbook_with_driver_key_when_playbook_key_missing(
         playbooks_instance._config.config,
         molecule_provisioner_driver_playbook_key_missing_section_data)
 
-    assert playbooks_instance._config.provisioner.playbooks.side_effect is None
+    x = os.path.join(playbooks_instance._config.scenario.directory,
+                     'side_effect.yml')
+    assert x == playbooks_instance._get_ansible_playbook('side_effect')

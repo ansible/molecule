@@ -83,7 +83,6 @@ def test_print_matrix(patched_logger_out, scenarios_instance):
 │   ├── dependency
 │   ├── syntax
 │   ├── create
-│   ├── prepare
 │   ├── converge
 │   ├── idempotence
 │   ├── lint
@@ -95,7 +94,6 @@ def test_print_matrix(patched_logger_out, scenarios_instance):
     ├── dependency
     ├── syntax
     ├── create
-    ├── prepare
     ├── converge
     ├── idempotence
     ├── lint
@@ -144,13 +142,11 @@ def test_get_matrix(scenarios_instance):
             'syntax': ['syntax'],
             'converge': [
                 'create',
-                'prepare',
                 'converge',
             ],
             'check': [
                 'destroy',
                 'create',
-                'prepare',
                 'converge',
                 'check',
                 'destroy',
@@ -158,7 +154,6 @@ def test_get_matrix(scenarios_instance):
             'verify': ['verify'],
             'create': [
                 'create',
-                'prepare',
             ],
             'side_effect': ['side_effect'],
             'dependency': ['dependency'],
@@ -167,7 +162,6 @@ def test_get_matrix(scenarios_instance):
                 'dependency',
                 'syntax',
                 'create',
-                'prepare',
                 'converge',
                 'idempotence',
                 'lint',
@@ -183,20 +177,17 @@ def test_get_matrix(scenarios_instance):
             'syntax': ['syntax'],
             'converge': [
                 'create',
-                'prepare',
                 'converge',
             ],
             'check': [
                 'destroy',
                 'create',
-                'prepare',
                 'converge',
                 'check',
                 'destroy',
             ],
             'create': [
                 'create',
-                'prepare',
             ],
             'verify': ['verify'],
             'side_effect': ['side_effect'],
@@ -206,7 +197,6 @@ def test_get_matrix(scenarios_instance):
                 'dependency',
                 'syntax',
                 'create',
-                'prepare',
                 'converge',
                 'idempotence',
                 'lint',

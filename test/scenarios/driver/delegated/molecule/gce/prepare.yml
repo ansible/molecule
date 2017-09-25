@@ -1,7 +1,5 @@
 ---
-{% raw -%}
 - name: Prepare
   hosts: all
   gather_facts: False
   tasks: []
-{%- endraw %}

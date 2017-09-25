@@ -68,6 +68,10 @@ class Create(base.Base):
             return
 
         self._config.provisioner.create()
+        self._config.provisioner.prepare()
+
+        # Set the `created` state only when `create` and `prepare` are
+        # successful.
         self._config.state.change_state('created', True)
 
 

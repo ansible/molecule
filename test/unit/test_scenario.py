@@ -60,7 +60,6 @@ def test_check_sequence_property(scenario_instance):
     x = [
         'destroy',
         'create',
-        'prepare',
         'converge',
         'check',
         'destroy',
@@ -72,7 +71,6 @@ def test_check_sequence_property(scenario_instance):
 def test_converge_sequence_property(scenario_instance):
     x = [
         'create',
-        'prepare',
         'converge',
     ]
 
@@ -82,7 +80,6 @@ def test_converge_sequence_property(scenario_instance):
 def test_create_sequence_property(scenario_instance):
     x = [
         'create',
-        'prepare',
     ]
 
     assert x == scenario_instance.create_sequence
@@ -118,7 +115,6 @@ def test_test_sequence_property(scenario_instance):
         'dependency',
         'syntax',
         'create',
-        'prepare',
         'converge',
         'idempotence',
         'lint',

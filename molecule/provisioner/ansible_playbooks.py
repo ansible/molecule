@@ -42,10 +42,6 @@ class AnsiblePlaybooks(object):
         return self._get_ansible_playbook('create')
 
     @property
-    def prepare(self):
-        return self._get_ansible_playbook('prepare')
-
-    @property
     def converge(self):
         c = self._config.config
 
@@ -55,6 +51,10 @@ class AnsiblePlaybooks(object):
     @property
     def destroy(self):
         return self._get_ansible_playbook('destroy')
+
+    @property
+    def prepare(self):
+        return self._get_ansible_playbook('prepare')
 
     @property
     def side_effect(self):
@@ -69,7 +69,7 @@ class AnsiblePlaybooks(object):
             try:
                 playbook = driver_dict[section]
             except KeyError:
-                return
+                playbook = c['provisioner']['playbooks'][section]
         else:
             playbook = c['provisioner']['playbooks'][section]
 

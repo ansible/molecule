@@ -26,7 +26,6 @@ from molecule import util
 LOG = logger.get_logger(__name__)
 VALID_KEYS = [
     'created',
-    'prepared',
     'converged',
     'driver',
 ]
@@ -88,10 +87,6 @@ class State(object):
         return self._data.get('created')
 
     @property
-    def prepared(self):
-        return self._data.get('prepared')
-
-    @property
     def driver(self):
         return self._data.get('driver')
 
@@ -124,7 +119,6 @@ class State(object):
         return {
             'converged': False,
             'created': False,
-            'prepared': False,
             'driver': None,
         }
 

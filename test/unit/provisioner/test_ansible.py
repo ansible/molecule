@@ -501,6 +501,15 @@ def test_create(ansible_instance, mocker, patched_ansible_playbook):
     patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
+def test_prepare(ansible_instance, mocker, patched_ansible_playbook):
+    ansible_instance.prepare()
+
+    patched_ansible_playbook.assert_called_once_with(
+        ansible_instance._config.provisioner.playbooks.prepare,
+        ansible_instance._config, )
+    patched_ansible_playbook.return_value.execute.assert_called_once_with()
+
+
 def test_syntax(ansible_instance, mocker, patched_ansible_playbook):
     ansible_instance.syntax()
 
