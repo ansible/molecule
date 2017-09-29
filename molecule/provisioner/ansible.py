@@ -18,14 +18,10 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-from __future__ import absolute_import
-
 import copy
 import collections
 import os
 import shutil
-
-import ansible.constants
 
 from molecule import logger
 from molecule import util
@@ -154,7 +150,7 @@ class Ansible(base.Base):
           env:
             FOO: bar
 
-    Modifying Molecule's ansible.cfg.
+    Modifying ansible.cfg.
 
     .. code-block:: yaml
 
@@ -165,20 +161,6 @@ class Ansible(base.Base):
               fact_caching: jsonfile
             ssh_connection:
               scp_if_ssh: True
-
-    Import options defined in an existing ansible.cfg into Molecule's
-    ansible.cfg.
-
-    .. code-block:: yaml
-
-        provisioner:
-          name: ansible
-          env:
-            MOLECULE_INCLUDE_ANSIBLE_CFG: '1'
-
-    .. important::
-
-        This can be dangerous, use with caution.
 
     Roles which require host/groups to have certain variables set.  Molecule
     uses the same `variables defined in a playbook`_ syntax as `Ansible`_.
@@ -243,24 +225,6 @@ class Ansible(base.Base):
         """
         super(Ansible, self).__init__(config)
         self._ansible_playbooks = ansible_playbooks.AnsiblePlaybooks(config)
-
-    @property
-    def ansible_config_options(self):
-        """
-        Provides access options defined in ansible config file, the first
-        match of ENV, CWD, HOME, /etc/ansible and returns a dict.
-
-        :return: dict
-        """
-
-        if 'MOLECULE_INCLUDE_ANSIBLE_CFG' not in os.environ:
-            return {}
-
-        c, p = self._load_ansible_config_file()
-        if c is None:
-            return {}
-
-        return self._ansible_config_to_dict(c)
 
     @property
     def default_config_options(self):
@@ -341,8 +305,7 @@ class Ansible(base.Base):
     @property
     def config_options(self):
         return self._config.merge_dicts(
-            self._config.merge_dicts(self.ansible_config_options,
-                                     self.default_config_options),
+            self.default_config_options,
             self._config.config['provisioner']['config_options'])
 
     @property
@@ -702,9 +665,3 @@ class Ansible(base.Base):
     def _get_filter_plugin_directory(self):
         return util.abs_path(
             os.path.join(self._get_plugin_directory(), 'filters'))
-
-    def _ansible_config_to_dict(self, cfg):
-        return {s: dict(cfg.items(s)) for s in cfg.sections()}
-
-    def _load_ansible_config_file(self):
-        return ansible.constants.load_config_file()
