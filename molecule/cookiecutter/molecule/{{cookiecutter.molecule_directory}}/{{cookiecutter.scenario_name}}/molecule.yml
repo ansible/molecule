@@ -37,6 +37,10 @@ platforms:
 {%- endif %}
 provisioner:
   name: {{ cookiecutter.provisioner_name }}
+{%- if cookiecutter.driver_name == 'vagrant' %}
+  options:
+    become: True
+{%- endif %}
   lint:
     name: {{ cookiecutter.provisioner_lint_name }}
 scenario:
