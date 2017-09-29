@@ -130,7 +130,7 @@ class Testinfra(base.Base):
         verbose_flag = util.verbose_flag(options)
         args = verbose_flag + self.additional_files_or_dirs
 
-        self._testinfra_command = sh.testinfra.bake(
+        self._testinfra_command = sh.Command('py.test').bake(
             options,
             self._tests,
             *args,
