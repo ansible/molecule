@@ -207,7 +207,7 @@ def test_env_appends_env_property(ansible_instance):
     x = [
         util.abs_path(
             os.path.join(ansible_instance._config.project_directory,
-                         os.path.pardir)),
+                         os.path.curdir)),
         util.abs_path(
             os.path.join(ansible_instance._config.scenario.ephemeral_directory,
                          'roles')),

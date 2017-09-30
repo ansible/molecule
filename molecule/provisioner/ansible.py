@@ -121,13 +121,13 @@ class Ansible(base.Base):
 
         This is feature should be considered experimental.
 
-    Environment variables.  Molecule does it's best to handle common Ansible
+    Environment variables.  Molecule does its best to handle common Ansible
     paths.  The defaults are as follows.
 
     ::
 
         ANSIBLE_ROLES_PATH:
-          $project_root/../:$ephemeral_directory/roles/
+          $project_root/:$ephemeral_directory/roles/
         ANSIBLE_LIBRARY:
           $project_root/library/:$ephemeral_directory/library/
         ANSIBLE_FILTER_PLUGINS:
@@ -267,9 +267,7 @@ class Ansible(base.Base):
             self._config.provisioner.config_file,
             'ANSIBLE_ROLES_PATH':
             ':'.join([
-                util.abs_path(
-                    os.path.join(self._config.project_directory,
-                                 os.path.pardir)),
+                util.abs_path(self._config.project_directory),
                 util.abs_path(
                     os.path.join(self._config.scenario.ephemeral_directory,
                                  'roles'))
