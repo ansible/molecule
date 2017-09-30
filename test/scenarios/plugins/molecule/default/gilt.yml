@@ -7,6 +7,6 @@
   version: master
   files:
     - src: library/library.py
-      dst: molecule/default/.molecule/library/
+      dst: molecule/default/.molecule/library/dependency_library.py
     - src: plugins/filters/core.py
-      dst: molecule/default/.molecule/plugins/filters/
+      dst: molecule/default/.molecule/plugins/filters/dependency_filter.py
