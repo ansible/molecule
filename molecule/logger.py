@@ -23,7 +23,7 @@ import sys
 import os
 import colorama
 
-if sys.stderr.isatty() and os.name != 'nt' and os.getenv('TERM') != 'dumb':
+if os.name != 'nt' and os.getenv('TERM') != 'dumb':
     colorama.init(autoreset=True)
 else:
     colorama.init(autoreset=True, strip=True)
