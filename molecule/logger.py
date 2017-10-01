@@ -20,10 +20,14 @@
 
 import logging
 import sys
-
+import os
 import colorama
 
-colorama.init(autoreset=True)
+if sys.stderr.isatty() and os.name != 'nt' and os.getenv('TERM') != 'dumb':
+    colorama.init(autoreset=True)
+else:
+    colorama.init(autoreset=True, strip=True)
+
 
 SUCCESS = 100
 OUT = 101
