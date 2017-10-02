@@ -294,6 +294,7 @@ class Config(object):
                     'create': 'create.yml',
                     'converge': 'playbook.yml',
                     'destroy': 'destroy.yml',
+                    'prepare': 'prepare.yml',
                     'side_effect': None,
                 },
                 'lint': {
@@ -316,6 +317,9 @@ class Config(object):
                 'converge_sequence': [
                     'create',
                     'converge',
+                ],
+                'create_sequence': [
+                    'create',
                 ],
                 'destroy_sequence': [
                     'destroy',

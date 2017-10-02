@@ -42,6 +42,8 @@ class Scenario(object):
 
         scenario:
           name: default
+          create_sequence:
+            - create
           check_sequence:
             - destroy
             - create
@@ -55,9 +57,13 @@ class Scenario(object):
             - destroy
           test_sequence:
             - destroy
+            - dependency
+            - syntax
             - create
             - converge
+            - idempotence
             - lint
+            - side_effect
             - verify
             - destroy
     """  # noqa

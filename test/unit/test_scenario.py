@@ -77,6 +77,14 @@ def test_converge_sequence_property(scenario_instance):
     assert x == scenario_instance.converge_sequence
 
 
+def test_create_sequence_property(scenario_instance):
+    x = [
+        'create',
+    ]
+
+    assert x == scenario_instance.create_sequence
+
+
 def test_dependency_sequence_property(scenario_instance):
     assert ['dependency'] == scenario_instance.dependency_sequence
 

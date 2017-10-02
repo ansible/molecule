@@ -106,7 +106,11 @@ def test_get_data_loads_existing_state_file(temp_dir, molecule_data):
 
     os.makedirs(ephemeral_directory)
 
-    data = {'converged': False, 'created': True, 'driver': None}
+    data = {
+        'converged': False,
+        'created': True,
+        'driver': None,
+    }
     util.write_file(state_file, util.safe_dump(data))
 
     pytest.helpers.write_molecule_file(molecule_file, molecule_data)

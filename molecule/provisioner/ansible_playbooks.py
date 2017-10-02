@@ -53,6 +53,10 @@ class AnsiblePlaybooks(object):
         return self._get_ansible_playbook('destroy')
 
     @property
+    def prepare(self):
+        return self._get_ansible_playbook('prepare')
+
+    @property
     def side_effect(self):
         return self._get_ansible_playbook('side_effect')
 
@@ -65,7 +69,7 @@ class AnsiblePlaybooks(object):
             try:
                 playbook = driver_dict[section]
             except KeyError:
-                return
+                playbook = c['provisioner']['playbooks'][section]
         else:
             playbook = c['provisioner']['playbooks'][section]
 

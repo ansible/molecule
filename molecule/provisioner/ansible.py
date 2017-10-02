@@ -121,6 +121,18 @@ class Ansible(base.Base):
 
         This is feature should be considered experimental.
 
+    The prepare playbook executes actions which bring the system to a given
+    state prior to converge.  It is executed after create, and only once for
+    the duration of the instances life.
+
+    This can be used to bring instances into a particular state, prior to
+    testing.
+
+        provisioner:
+          name: ansible
+          playbooks:
+            prepare: prepare.yml
+
     Environment variables.  Molecule does it's best to handle common Ansible
     paths.  The defaults are as follows.
 
@@ -477,6 +489,16 @@ class Ansible(base.Base):
         :return: None
         """
         pb = self._get_ansible_playbook(self.playbooks.create)
+        pb.execute()
+
+    def prepare(self):
+        """
+        Executes `ansible-playbook` against the prepare playbook and returns
+        None.
+
+        :return: None
+        """
+        pb = self._get_ansible_playbook(self.playbooks.prepare)
         pb.execute()
 
     def syntax(self):

@@ -152,7 +152,9 @@ def test_get_matrix(scenarios_instance):
                 'destroy',
             ],
             'verify': ['verify'],
-            'create': ['create'],
+            'create': [
+                'create',
+            ],
             'side_effect': ['side_effect'],
             'dependency': ['dependency'],
             'test': [
@@ -184,8 +186,10 @@ def test_get_matrix(scenarios_instance):
                 'check',
                 'destroy',
             ],
+            'create': [
+                'create',
+            ],
             'verify': ['verify'],
-            'create': ['create'],
             'side_effect': ['side_effect'],
             'dependency': ['dependency'],
             'test': [
