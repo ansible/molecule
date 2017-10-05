@@ -24,6 +24,9 @@ from molecule.command import create
 def test_execute(mocker, patched_create_setup, patched_logger_info,
                  patched_ansible_create, patched_ansible_prepare,
                  config_instance):
+    m = mocker.patch('molecule.command.create.Create._has_prepare_playbook')
+    m.return_value = True
+
     c = create.Create(config_instance)
     c.execute()
 
@@ -38,6 +41,26 @@ def test_execute(mocker, patched_create_setup, patched_logger_info,
 
     patched_ansible_create.assert_called_once_with()
     patched_ansible_prepare.assert_called_once_with()
+
+    assert config_instance.state.created
+
+
+def test_execute_logs_deprecation_when_prepare_yml_missing(
+        mocker, patched_create_setup, patched_logger_warn,
+        patched_ansible_create, patched_ansible_prepare, config_instance):
+    m = mocker.patch('molecule.command.create.Create._has_prepare_playbook')
+    m.return_value = False
+
+    c = create.Create(config_instance)
+    c.execute()
+
+    msg = ('[DEPRECATION WARNING]:\n  The prepare playbook not found '
+           'at {}/prepare.yml.  Please add one to the scenarios '
+           'directory.').format(config_instance.scenario.directory)
+    patched_logger_warn.assert_called_once_with(msg)
+
+    patched_ansible_create.assert_called_once_with()
+    assert not patched_ansible_prepare.called
 
     assert config_instance.state.created
 
@@ -70,3 +93,9 @@ def test_execute_skips_when_instances_already_created(
 
     assert not patched_ansible_create.called
     assert not patched_ansible_prepare.called
+
+
+def test_has_prepare_playbook(config_instance):
+    c = create.Create(config_instance)
+
+    assert not c._has_prepare_playbook()
