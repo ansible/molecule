@@ -69,6 +69,12 @@ Login
 .. autoclass:: molecule.command.login.Login()
    :undoc-members:
 
+Prepare
+^^^^^^^
+
+.. autoclass:: molecule.command.prepare.Prepare()
+   :undoc-members:
+
 Side Effect
 ^^^^^^^^^^^
 

@@ -310,16 +310,19 @@ class Config(object):
                 'check_sequence': [
                     'destroy',
                     'create',
+                    'prepare',
                     'converge',
                     'check',
                     'destroy',
                 ],
                 'converge_sequence': [
                     'create',
+                    'prepare',
                     'converge',
                 ],
                 'create_sequence': [
                     'create',
+                    'prepare',
                 ],
                 'destroy_sequence': [
                     'destroy',
@@ -329,6 +332,7 @@ class Config(object):
                     'dependency',
                     'syntax',
                     'create',
+                    'prepare',
                     'converge',
                     'idempotence',
                     'lint',

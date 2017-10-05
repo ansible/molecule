@@ -51,6 +51,10 @@ def test_driver(state_instance):
     assert not state_instance.driver
 
 
+def test_prepared(state_instance):
+    assert not state_instance.prepared
+
+
 def test_reset(state_instance):
     assert not state_instance.converged
 
@@ -92,6 +96,12 @@ def test_change_state_driver(state_instance):
     assert 'foo' == state_instance.driver
 
 
+def test_change_state_prepared(state_instance):
+    state_instance.change_state('prepared', True)
+
+    assert state_instance.prepared
+
+
 def test_change_state_raises(state_instance):
     with pytest.raises(state.InvalidState):
         state_instance.change_state('invalid-state', True)
@@ -110,6 +120,7 @@ def test_get_data_loads_existing_state_file(temp_dir, molecule_data):
         'converged': False,
         'created': True,
         'driver': None,
+        'prepared': None,
     }
     util.write_file(state_file, util.safe_dump(data))
 
@@ -120,3 +131,4 @@ def test_get_data_loads_existing_state_file(temp_dir, molecule_data):
     assert not s.converged
     assert s.created
     assert not s.driver
+    assert not s.prepared
