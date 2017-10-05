@@ -10,6 +10,11 @@ functionality in a backwards-compatible manner.
 
 .. _`Semantic Versioning`: http://semver.org
 
+2.2.1
+=====
+
+* Ensure setup is run for prepare to correct ssh connection failures.
+
 2.2
 ===
 
