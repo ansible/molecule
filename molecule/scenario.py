@@ -44,14 +44,17 @@ class Scenario(object):
           name: default
           create_sequence:
             - create
+            - prepare
           check_sequence:
             - destroy
             - create
+            - prepare
             - converge
             - check
             - destroy
           converge_sequence:
             - create
+            - prepare
             - converge
           destroy_sequence:
             - destroy
@@ -60,6 +63,7 @@ class Scenario(object):
             - dependency
             - syntax
             - create
+            - prepare
             - converge
             - idempotence
             - lint
@@ -100,7 +104,7 @@ class Scenario(object):
 
     @property
     def create_sequence(self):
-        return ['create']
+        return self.config.config['scenario']['create_sequence']
 
     @property
     def dependency_sequence(self):
