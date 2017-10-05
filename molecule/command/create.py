@@ -18,6 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
+
 import click
 
 from molecule import config
@@ -68,11 +70,21 @@ class Create(base.Base):
             return
 
         self._config.provisioner.create()
-        self._config.provisioner.prepare()
+
+        if self._has_prepare_playbook():
+            self._config.provisioner.prepare()
+        else:
+            msg = ('[DEPRECATION WARNING]:\n  The prepare playbook not found '
+                   'at {}/prepare.yml.  Please add one to the scenarios '
+                   'directory.').format(self._config.scenario.directory)
+            LOG.warn(msg)
 
         # Set the `created` state only when `create` and `prepare` are
         # successful.
         self._config.state.change_state('created', True)
+
+    def _has_prepare_playbook(self):
+        return os.path.exists(self._config.provisioner.playbooks.prepare)
 
 
 @click.command()
