@@ -10,6 +10,15 @@ functionality in a backwards-compatible manner.
 
 .. _`Semantic Versioning`: http://semver.org
 
+2.2
+===
+
+* Ability to execute a prepare playbook post create.
+* Log deprecation warning when missing prepare.yml.
+* Support Ansible 2.4.
+* Revert "Add support import data from original ansible.cfg".
+* Changed testinfra command to py.test.
+
 2.1
 ===
 
