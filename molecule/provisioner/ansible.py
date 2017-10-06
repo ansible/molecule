@@ -30,10 +30,13 @@ from molecule.provisioner import ansible_playbook
 from molecule.provisioner import ansible_playbooks
 
 LOG = logger.get_logger(__name__)
-UNSAFE_ENV_LIST = [
+UNSAFE_ENV_KEYS = [
     'ANSIBLE_BECOME',
     'ANSIBLE_BECOME_METHOD',
     'ANSIBLE_BECOME_USER',
+]
+UNSAFE_CONFIG_OPTIONS_KEYS = [
+    'privilege_escalation',
 ]
 
 
@@ -321,9 +324,10 @@ class Ansible(base.Base):
 
     @property
     def config_options(self):
-        return self._config.merge_dicts(
-            self.default_config_options,
-            self._config.config['provisioner']['config_options'])
+        options = self._sanitize_config_options(
+            self._config.config['provisioner']['config_options'].copy())
+
+        return self._config.merge_dicts(self.default_config_options, options)
 
     @property
     def options(self):
@@ -695,7 +699,7 @@ class Ansible(base.Base):
             os.path.join(self._get_plugin_directory(), 'filters'))
 
     def _sanitize_env(self, env):
-        for unsafe_env in UNSAFE_ENV_LIST:
+        for unsafe_env in UNSAFE_ENV_KEYS:
             if env.get(unsafe_env):
                 msg = ("Disallowed user provided env option '{}'.  "
                        'Removing.').format(unsafe_env)
@@ -703,3 +707,13 @@ class Ansible(base.Base):
                 del env[unsafe_env]
 
         return env
+
+    def _sanitize_config_options(self, config_options):
+        for unsafe_option in UNSAFE_CONFIG_OPTIONS_KEYS:
+            if config_options.get(unsafe_option):
+                msg = ("Disallowed user provided config option '{}'.  "
+                       'Removing.').format(unsafe_option)
+                LOG.warn(msg)
+                del config_options[unsafe_option]
+
+        return config_options
