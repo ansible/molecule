@@ -30,7 +30,6 @@ def test_execute(mocker, patched_logger_info, patched_ansible_create,
         mocker.call("Scenario: 'default'"),
         mocker.call("Action: 'create'"),
     ]
-
     assert x == patched_logger_info.mock_calls
 
     assert 'docker' == config_instance.state.driver

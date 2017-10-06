@@ -33,7 +33,6 @@ def test_execute(mocker, patched_logger_info, patched_ansible_prepare,
         mocker.call("Scenario: 'default'"),
         mocker.call("Action: 'prepare'"),
     ]
-
     assert x == patched_logger_info.mock_calls
 
     patched_ansible_prepare.assert_called_once_with()

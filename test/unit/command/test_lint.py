@@ -30,7 +30,6 @@ def test_execute(mocker, patched_logger_info, patched_yamllint, patched_flake8,
         mocker.call("Scenario: 'default'"),
         mocker.call("Action: 'lint'"),
     ]
-
     assert x == patched_logger_info.mock_calls
 
     patched_yamllint.assert_called_once_with()
