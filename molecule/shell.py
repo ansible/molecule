@@ -20,6 +20,8 @@
 
 import distutils
 import distutils.version
+import platform
+import sys
 
 import ansible
 import click
@@ -32,19 +34,45 @@ from molecule import util
 click_completion.init()
 
 
-def _allowed():  # pragma: no cover
-    if distutils.version.LooseVersion(
-            ansible.__version__) <= distutils.version.LooseVersion('2.2'):
-        msg = ("Ansible version '{}' not supported.  Molecule only supports "
-               'versions >= 2.2.').format(ansible.__version__)
+def _get_python_version():  # pragma: no cover
+    return sys.version_info[:2]
+
+
+def _get_ansible_version():  # pragma: no cover
+    return ansible.__version__
+
+
+def _supported_python2_version():  # pragma: no coversys.version_info[:2]
+    return _get_python_version() == (2, 7)
+
+
+def _supported_python3_version():  # pragma: no cover
+    return _get_python_version() == (3, 6)
+
+
+def _supported_ansible_version():  # pragma: no cover
+    if _supported_python2_version():
+        if (distutils.version.LooseVersion(_get_ansible_version()) <=
+                distutils.version.LooseVersion('2.2')):
+            msg = ("Ansible version '{}' not supported.  "
+                   'Molecule only supports Ansible versions '
+                   '>= 2.2.').format(_get_ansible_version())
+            util.sysexit_with_message(msg)
+    elif _supported_python3_version():
+        msg = ("Python version '{}' not supported.  Molecule only supports "
+               'python version = 2.7.').format(platform.python_version())
         util.sysexit_with_message(msg)
+
+
+def _allowed(ctx, param, value):  # pragma: no cover
+    _supported_ansible_version()
 
 
 @click.group()
 @click.option(
     '--debug/--no-debug',
     default=False,
-    callback=_allowed(),
+    callback=_allowed,
     help='Enable or disable debug mode. Default is disabled.')
 @click.version_option(version=molecule.__version__)
 @click.pass_context
