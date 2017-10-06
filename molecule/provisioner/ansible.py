@@ -30,6 +30,11 @@ from molecule.provisioner import ansible_playbook
 from molecule.provisioner import ansible_playbooks
 
 LOG = logger.get_logger(__name__)
+UNSAFE_ENV_LIST = [
+    'ANSIBLE_BECOME',
+    'ANSIBLE_BECOME_METHOD',
+    'ANSIBLE_BECOME_USER',
+]
 
 
 class Ansible(base.Base):
@@ -329,7 +334,8 @@ class Ansible(base.Base):
     @property
     def env(self):
         default_env = self.default_env
-        env = self._config.config['provisioner']['env'].copy()
+        env = self._sanitize_env(
+            self._config.config['provisioner']['env'].copy())
 
         roles_path = default_env['ANSIBLE_ROLES_PATH']
         library_path = default_env['ANSIBLE_LIBRARY']
@@ -687,3 +693,13 @@ class Ansible(base.Base):
     def _get_filter_plugin_directory(self):
         return util.abs_path(
             os.path.join(self._get_plugin_directory(), 'filters'))
+
+    def _sanitize_env(self, env):
+        for unsafe_env in UNSAFE_ENV_LIST:
+            if env.get(unsafe_env):
+                msg = ("Disallowed user provided env option '{}'.  "
+                       'Removing.').format(unsafe_env)
+                LOG.warn(msg)
+                del env[unsafe_env]
+
+        return env

@@ -842,6 +842,26 @@ def test_get_filter_plugin_directory(ansible_instance):
 
     assert x == parts[-5:]
 
-    #  def _get_abs_path(self, path):
-    #      return self._abs_path(
-    #          os.path.join(self._config.scenario.directory, path))
+
+def test_sanitize_env(mocker, ansible_instance, patched_logger_warn):
+    env = {
+        'ANSIBLE_BECOME_METHOD': 'sudo',
+        'ANSIBLE_BECOME': True,
+        'ANSIBLE_BECOME_USER': 'root',
+        'FOO': 'foo',
+        'BAR': 'bar',
+    }
+
+    x = {
+        'FOO': 'foo',
+        'BAR': 'bar',
+    }
+    assert x == ansible_instance._sanitize_env(env)
+
+    msg = "Disallowed user provided env option '{}'.  Removing."
+    x = [
+        mocker.call(msg.format('ANSIBLE_BECOME')),
+        mocker.call(msg.format('ANSIBLE_BECOME_METHOD')),
+        mocker.call(msg.format('ANSIBLE_BECOME_USER'))
+    ]
+    assert x == patched_logger_warn.mock_calls
