@@ -1,3 +1,5 @@
+# Molecule managed
+
 FROM {{ item.image }}
 
 RUN if [ $(command -v apt-get) ]; then apt-get update && apt-get upgrade -y && apt-get install -y python sudo bash ca-certificates && apt-get clean; \
