@@ -67,6 +67,8 @@ def _supported_ansible_version():  # pragma: no cover
 def _allowed(ctx, param, value):  # pragma: no cover
     _supported_ansible_version()
 
+    return value
+
 
 @click.group()
 @click.option(
