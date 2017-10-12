@@ -75,8 +75,13 @@ def test_all_filters_on_scenario_name_property(scenarios_instance):
     assert 1 == len(scenarios_instance.all)
 
 
-def test_print_matrix(patched_logger_out, scenarios_instance):
+def test_print_matrix(mocker, patched_logger_info, patched_logger_out,
+                      scenarios_instance):
     scenarios_instance.print_matrix()
+
+    msg = 'Test matrix'
+    patched_logger_info(msg)
+
     x = u"""
 ├── default
 │   ├── destroy
@@ -103,8 +108,8 @@ def test_print_matrix(patched_logger_out, scenarios_instance):
     ├── verify
     └── destroy
 """
-
-    assert x.encode('utf-8') == patched_logger_out.call_args[0][0]
+    assert x.encode('utf-8') == patched_logger_out.mock_calls[0][1][0]
+    assert mocker.call('') == patched_logger_out.mock_calls[1]
 
 
 def test_verify_does_not_raise_when_found(scenarios_instance):
