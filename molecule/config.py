@@ -245,8 +245,14 @@ class Config(object):
 
         base = self._get_defaults()
         with util.open_file(self.molecule_file) as stream:
-            interpolated_config = i.interpolate(stream.read())
-            base = self.merge_dicts(base, util.safe_load(interpolated_config))
+            try:
+                interpolated_config = i.interpolate(stream.read())
+                base = self.merge_dicts(base,
+                                        util.safe_load(interpolated_config))
+            except interpolation.InvalidInterpolation as e:
+                msg = ("parsing config file '{}'.\n\n"
+                       '{}\n{}'.format(self.molecule_file, e.place, e.string))
+                util.sysexit_with_message(msg)
 
         schema.validate(base)
 

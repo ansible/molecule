@@ -19,8 +19,9 @@ import string
 
 
 class InvalidInterpolation(Exception):
-    def __init__(self, string):
+    def __init__(self, string, place):
         self.string = string
+        self.place = place
 
 
 class Interpolator(object):
@@ -57,8 +58,8 @@ class Interpolator(object):
     def interpolate(self, string):
         try:
             return self.templater(string).substitute(self.mapping)
-        except ValueError:
-            raise InvalidInterpolation(string)
+        except ValueError as e:
+            raise InvalidInterpolation(string, e)
 
 
 class TemplateWithDefaults(string.Template):
