@@ -10,6 +10,17 @@ functionality in a backwards-compatible manner.
 
 .. _`Semantic Versioning`: http://semver.org
 
+2.3
+===
+
+* Report friendly error message when interpolation fails.
+* Added a new line after printing matrix.
+* Added molecule header to generated Dockerfiles.
+* Check supported python and ansible versions when executing Molecule.
+* Sanitize user provided config options.
+* Sanitize user provided env options.
+* Added shell friendly env output
+
 2.2.1
 =====
 
