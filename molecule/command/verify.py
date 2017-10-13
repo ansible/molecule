@@ -40,6 +40,10 @@ class Verify(base.Base):
     Executing with `debug`:
 
     >>> molecule --debug verify
+
+    Executing with `sudo`:
+
+    >>> molecule --sudo verify
     """
 
     def execute(self):

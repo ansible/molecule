@@ -47,6 +47,10 @@ class Converge(base.Base):
     Executing with `debug`:
 
     >>> molecule --debug converge
+
+    Executing with `sudo`:
+
+    >>> molecule --sudo converge
     """
 
     def execute(self):

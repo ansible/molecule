@@ -49,6 +49,10 @@ class Destroy(base.Base):
     Executing with `debug`:
 
     >>> molecule --debug destroy
+
+    Executing with `sudo`:
+
+    >>> molecule --sudo destroy
     """
 
     def execute(self):

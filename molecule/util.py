@@ -67,6 +67,8 @@ def print_environment_vars(env):
     print_debug('ANSIBLE ENVIRONMENT', safe_dump(ansible_env))
 
     molecule_env = {k: v for (k, v) in env.items() if 'MOLECULE_' in k}
+    if molecule_env.get('MOLECULE_SUDO_PASSWORD'):
+        molecule_env['MOLECULE_SUDO_PASSWORD'] = '***HIDDEN***'
     print_debug('MOLECULE ENVIRONMENT', safe_dump(molecule_env))
 
     combined_env = ansible_env.copy()

@@ -60,7 +60,8 @@ def test_print_environment_vars(capsys):
         'ANSIBLE': None,
         'MOLECULE_FOO': 'foo',
         'MOLECULE_BAR': 'bar',
-        'MOLECULE': None
+        'MOLECULE': None,
+        'MOLECULE_SUDO_PASSWORD': 'secret',
     }
     util.print_environment_vars(env)
     result, _ = capsys.readouterr()
@@ -76,7 +77,7 @@ def test_print_environment_vars(capsys):
         colorama.Fore.BLACK, colorama.Style.BRIGHT,
         util.safe_dump({
             'ANSIBLE_FOO': 'foo',
-            'ANSIBLE_BAR': 'bar'
+            'ANSIBLE_BAR': 'bar',
         }), colorama.Style.RESET_ALL, colorama.Fore.RESET
     ]
     print(''.join(data))
@@ -92,7 +93,8 @@ def test_print_environment_vars(capsys):
         colorama.Fore.BLACK, colorama.Style.BRIGHT,
         util.safe_dump({
             'MOLECULE_FOO': 'foo',
-            'MOLECULE_BAR': 'bar'
+            'MOLECULE_BAR': 'bar',
+            'MOLECULE_SUDO_PASSWORD': '***HIDDEN***',
         }), colorama.Style.RESET_ALL, colorama.Fore.RESET
     ]
     print(''.join(data))
@@ -106,8 +108,12 @@ def test_print_environment_vars(capsys):
     print(''.join(title))
     data = [
         colorama.Fore.BLACK, colorama.Style.BRIGHT,
-        'ANSIBLE_BAR=bar ANSIBLE_FOO=foo MOLECULE_BAR=bar MOLECULE_FOO=foo',
-        colorama.Style.RESET_ALL, colorama.Fore.RESET
+        ('ANSIBLE_BAR=bar '
+         'ANSIBLE_FOO=foo '
+         'MOLECULE_BAR=bar '
+         'MOLECULE_FOO=foo '
+         'MOLECULE_SUDO_PASSWORD=***HIDDEN***'), colorama.Style.RESET_ALL,
+        colorama.Fore.RESET
     ]
     print(''.join(data))
     print()

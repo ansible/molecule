@@ -20,6 +20,7 @@
 
 import distutils
 import distutils.version
+import getpass
 import platform
 import sys
 
@@ -70,15 +71,24 @@ def _allowed(ctx, param, value):  # pragma: no cover
     return value
 
 
+def _get_sudo_password():  # pragma: no cover
+    return getpass.getpass('Password:')
+
+
 @click.group()
 @click.option(
     '--debug/--no-debug',
     default=False,
     callback=_allowed,
     help='Enable or disable debug mode. Default is disabled.')
+@click.option(
+    '--sudo/--no-sudo',
+    default=False,
+    help=('Enable or disable the provisioner from using sudo. '
+          'Sudo is disabled.'))
 @click.version_option(version=molecule.__version__)
 @click.pass_context
-def main(ctx, debug):  # pragma: no cover
+def main(ctx, debug, sudo):  # pragma: no cover
     """
     \b
      _____     _             _
@@ -95,6 +105,9 @@ def main(ctx, debug):  # pragma: no cover
     ctx.obj = {}
     ctx.obj['args'] = {}
     ctx.obj['args']['debug'] = debug
+
+    if sudo:
+        ctx.obj['args']['sudo_password'] = _get_sudo_password()
 
 
 main.add_command(command.check.check)

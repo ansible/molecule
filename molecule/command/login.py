@@ -53,6 +53,10 @@ class Login(base.Base):
     Executing with `debug`:
 
     >>> molecule --debug login
+
+    Executing with `sudo`:
+
+    >>> molecule --sudo login
     """
 
     def __init__(self, c):

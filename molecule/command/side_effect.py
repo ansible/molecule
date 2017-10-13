@@ -43,6 +43,10 @@ class SideEffect(base.Base):
     Executing with `debug`:
 
     >>> molecule --debug side-effect
+
+    Executing with `sudo`:
+
+    >>> molecule --sudo side-effect
     """
 
     def execute(self):

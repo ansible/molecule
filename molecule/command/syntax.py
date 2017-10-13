@@ -40,6 +40,10 @@ class Syntax(base.Base):
     Executing with `debug`:
 
     >>> molecule --debug syntax
+
+    Executing with `sudo`:
+
+    >>> molecule --sudo syntax
     """
 
     def execute(self):

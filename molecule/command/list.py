@@ -50,6 +50,10 @@ class List(base.Base):
     Executing with `debug`:
 
     >>> molecule --debug list
+
+    Executing with `sudo`:
+
+    >>> molecule --sudo list
     """
 
     def execute(self):
