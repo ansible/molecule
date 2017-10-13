@@ -10,6 +10,11 @@ functionality in a backwards-compatible manner.
 
 .. _`Semantic Versioning`: http://semver.org
 
+2.3.1
+=====
+
+* Switched out from_yaml with molecule_from_yaml in create/destroy playbooks.
+
 2.3
 ===
 
