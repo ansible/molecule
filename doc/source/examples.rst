@@ -64,3 +64,31 @@ project.
     name: ansible
     env:
       ANSIBLE_$VAR: $VALUE
+
+Sudo
+====
+
+Some developers may wish to execute the playbooks with sudo.  As an example
+they may not want to add their user to the docker group.  Molecule provides
+a way to securely use the password as an environment variable in such
+playbooks.
+
+Adding the `ansible_sudo_pass` and necessary `become` options to the play, will
+enable such functionality.
+
+.. note::
+
+    Molecule accepts the `sudo` flag globally.  However, this does not mean
+    every subcommand will be executed with sudo.  The `sudo` flag is intended
+    as a means to pass the sudo password safely to the provisioner.
+
+.. code-block:: yaml
+
+    - name: Name of playbook
+      hosts: localhost
+      connection: local
+      gather_facts: False
+      become: True
+      no_log: "{{ not lookup('env', 'MOLECULE_DEBUG') | bool }}"
+      vars:
+        ansible_sudo_pass: "{{ lookup('env', 'MOLECULE_SUDO_PASSWORD') }}"
