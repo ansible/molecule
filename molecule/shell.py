@@ -42,7 +42,7 @@ def _get_ansible_version():  # pragma: no cover
     return ansible.__version__
 
 
-def _supported_python2_version():  # pragma: no coversys.version_info[:2]
+def _supported_python2_version():  # pragma: no cover
     return _get_python_version() == (2, 7)
 
 
