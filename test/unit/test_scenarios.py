@@ -165,6 +165,7 @@ def test_get_matrix(scenarios_instance):
                 'create',
                 'prepare',
             ],
+            'prepare': ['prepare'],
             'side_effect': ['side_effect'],
             'dependency': ['dependency'],
             'test': [
@@ -204,6 +205,7 @@ def test_get_matrix(scenarios_instance):
                 'prepare',
             ],
             'verify': ['verify'],
+            'prepare': ['prepare'],
             'side_effect': ['side_effect'],
             'dependency': ['dependency'],
             'test': [

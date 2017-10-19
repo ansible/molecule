@@ -52,6 +52,19 @@ def test_execute_skips_when_instances_already_prepared(
     assert not patched_ansible_prepare.called
 
 
+def test_execute_when_instances_already_prepared_but_force_provided(
+        mocker, patched_logger_warn, patched_ansible_prepare, config_instance):
+    m = mocker.patch('molecule.command.prepare.Prepare._has_prepare_playbook')
+    m.return_value = True
+    config_instance.state.change_state('prepared', True)
+    config_instance.command_args = {'force': True}
+
+    p = prepare.Prepare(config_instance)
+    p.execute()
+
+    patched_ansible_prepare.assert_called_once_with()
+
+
 def test_execute_logs_deprecation_when_prepare_yml_missing(
         mocker, patched_logger_warn, patched_ansible_create,
         patched_ansible_prepare, config_instance):
