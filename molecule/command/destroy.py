@@ -88,7 +88,7 @@ class Destroy(base.Base):
     default=False,
     help='Destroy all scenarios. Default is False.')
 def destroy(ctx, scenario_name, driver_name, __all):  # pragma: no cover
-    """ Destroy instances. """
+    """ Use the provisioner to destroy the instances. """
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
     command_args = {
