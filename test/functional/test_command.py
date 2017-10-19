@@ -221,33 +221,6 @@ def test_command_destroy(scenario_to_test, with_scenario, scenario_name):
         'driver_name',
         'scenario_name',
     ])
-def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
-    options = {'scenario_name': scenario_name}
-    cmd = sh.molecule.bake('side-effect', **options)
-    pytest.helpers.run_command(cmd)
-
-
-@pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name',
-    [
-        ('driver/docker', 'docker', 'default'),
-        ('driver/ec2', 'ec2', 'default'),
-        ('driver/gce', 'gce', 'default'),
-        ('driver/lxc', 'lxc', 'default'),
-        ('driver/lxd', 'lxd', 'default'),
-        ('driver/openstack', 'openstack', 'default'),
-        ('driver/delegated', 'delegated', 'docker'),
-        ('driver/delegated', 'delegated', 'ec2'),
-        ('driver/delegated', 'delegated', 'gce'),
-        ('driver/delegated', 'delegated', 'openstack'),
-        #  ('driver/delegated', 'delegated', 'vagrant'),
-        ('driver/vagrant', 'vagrant', 'default'),
-    ],
-    indirect=[
-        'scenario_to_test',
-        'driver_name',
-        'scenario_name',
-    ])
 def test_command_idempotence(scenario_to_test, with_scenario, scenario_name):
     pytest.helpers.idempotence(scenario_name)
 
@@ -522,6 +495,60 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario,
 def test_command_login(scenario_to_test, with_scenario, login_args,
                        scenario_name):
     pytest.helpers.login(login_args, scenario_name)
+
+
+@pytest.mark.parametrize(
+    'scenario_to_test, driver_name, scenario_name',
+    [
+        ('driver/docker', 'docker', 'default'),
+        ('driver/ec2', 'ec2', 'default'),
+        ('driver/gce', 'gce', 'default'),
+        ('driver/lxc', 'lxc', 'default'),
+        ('driver/lxd', 'lxd', 'default'),
+        ('driver/openstack', 'openstack', 'default'),
+        ('driver/delegated', 'delegated', 'docker'),
+        ('driver/delegated', 'delegated', 'ec2'),
+        ('driver/delegated', 'delegated', 'gce'),
+        ('driver/delegated', 'delegated', 'openstack'),
+        #  ('driver/delegated', 'delegated', 'vagrant'),
+        ('driver/vagrant', 'vagrant', 'default'),
+    ],
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+        'scenario_name',
+    ])
+def test_command_prepare(scenario_to_test, with_scenario, scenario_name):
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('prepare', **options)
+    pytest.helpers.run_command(cmd)
+
+
+@pytest.mark.parametrize(
+    'scenario_to_test, driver_name, scenario_name',
+    [
+        ('driver/docker', 'docker', 'default'),
+        ('driver/ec2', 'ec2', 'default'),
+        ('driver/gce', 'gce', 'default'),
+        ('driver/lxc', 'lxc', 'default'),
+        ('driver/lxd', 'lxd', 'default'),
+        ('driver/openstack', 'openstack', 'default'),
+        ('driver/delegated', 'delegated', 'docker'),
+        ('driver/delegated', 'delegated', 'ec2'),
+        ('driver/delegated', 'delegated', 'gce'),
+        ('driver/delegated', 'delegated', 'openstack'),
+        #  ('driver/delegated', 'delegated', 'vagrant'),
+        ('driver/vagrant', 'vagrant', 'default'),
+    ],
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+        'scenario_name',
+    ])
+def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('side-effect', **options)
+    pytest.helpers.run_command(cmd)
 
 
 @pytest.mark.parametrize(

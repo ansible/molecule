@@ -115,16 +115,20 @@ class Scenario(object):
         return self.config.config['scenario']['destroy_sequence']
 
     @property
-    def side_effect_sequence(self):
-        return ['side_effect']
-
-    @property
     def idempotence_sequence(self):
         return ['idempotence']
 
     @property
     def lint_sequence(self):
         return ['lint']
+
+    @property
+    def prepare_sequence(self):
+        return ['prepare']
+
+    @property
+    def side_effect_sequence(self):
+        return ['side_effect']
 
     @property
     def syntax_sequence(self):
