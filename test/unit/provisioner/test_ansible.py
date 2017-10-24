@@ -886,3 +886,20 @@ def test_sanitize_config_options(mocker, ansible_instance,
     msg = "Disallowed user provided config option '{}'.  Removing.".format(
         'privilege_escalation')
     patched_logger_warn.assert_called_once_with(msg)
+
+
+def test_absolute_path_for(ansible_instance):
+    env = {'foo': 'foo:bar'}
+    x = ':'.join([
+        os.path.join(ansible_instance._config.scenario.directory, 'foo'),
+        os.path.join(ansible_instance._config.scenario.directory, 'bar'),
+    ])
+
+    x == ansible_instance._absolute_path_for(env, 'foo')
+
+
+def test_absolute_path_for_raises_with_missing_key(ansible_instance):
+    env = {'foo': 'foo:bar'}
+
+    with pytest.raises(KeyError):
+        ansible_instance._absolute_path_for(env, 'invalid')

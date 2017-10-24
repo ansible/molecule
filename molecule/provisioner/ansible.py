@@ -346,19 +346,19 @@ class Ansible(base.Base):
         filter_plugins_path = default_env['ANSIBLE_FILTER_PLUGINS']
 
         try:
-            path = self.get_abs_path(env['ANSIBLE_ROLES_PATH'])
+            path = self._absolute_path_for(env, 'ANSIBLE_ROLES_PATH')
             roles_path = '{}:{}'.format(roles_path, path)
         except KeyError:
             pass
 
         try:
-            path = self.get_abs_path(env['ANSIBLE_LIBRARY'])
+            path = self._absolute_path_for(env, 'ANSIBLE_LIBRARY')
             library_path = '{}:{}'.format(library_path, path)
         except KeyError:
             pass
 
         try:
-            path = self.get_abs_path(env['ANSIBLE_FILTER_PLUGINS'])
+            path = self._absolute_path_for(env, 'ANSIBLE_FILTER_PLUGINS')
             filter_plugins_path = '{}:{}'.format(filter_plugins_path, path)
         except KeyError:
             pass
@@ -717,3 +717,6 @@ class Ansible(base.Base):
                 del config_options[unsafe_option]
 
         return config_options
+
+    def _absolute_path_for(self, env, key):
+        return ':'.join([self.get_abs_path(p) for p in env[key].split(':')])
