@@ -2,17 +2,20 @@
 - name: Create
   hosts: localhost
   connection: local
-  gather_facts: False
+  gather_facts: false
   no_log: "{{ not lookup('env', 'MOLECULE_DEBUG') | bool }}"
   vars:
     molecule_file: "{{ lookup('env', 'MOLECULE_FILE') }}"
-    molecule_ephemeral_directory: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}"
-    molecule_yml: "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
+    molecule_ephemeral_directory: "{{ lookup('env',
+                                             'MOLECULE_EPHEMERAL_DIRECTORY') }}"
+    molecule_scenario_directory: "{{ lookup('env',
+                                            'MOLECULE_SCENARIO_DIRECTORY') }}"
   tasks:
     - name: Create Dockerfiles from image names
       template:
         src: Dockerfile.j2
-        dest: "{{ molecule_ephemeral_directory }}/Dockerfile_{{ item.image | regex_replace('[^a-zA-Z0-9_]', '_') }}"
+        dest: "{{ molecule_ephemeral_directory }}/Dockerfile_{{
+                  item.image | regex_replace('[^a-zA-Z0-9_]', '_') }}"
       with_items: "{{ molecule_yml.platforms }}"
       register: platforms
 
@@ -26,10 +29,12 @@
       docker_image:
         path: "{{ molecule_ephemeral_directory }}"
         name: "molecule_local/{{ item.item.image }}"
-        dockerfile: "{{ item.item.dockerfile | default(item.invocation.module_args.dest) }}"
+        dockerfile: "{{ item.item.dockerfile |
+                        default(item.invocation.module_args.dest) }}"
         force: "{{ item.item.force | default(True) }}"
       with_items: "{{ platforms.results }}"
-      when: platforms.changed or docker_images.results | map(attribute='images') | select('equalto', []) | list | count >= 0
+      when: platforms.changed or docker_images.results |
+            map(attribute='images') | select('equalto', []) | list | count >= 0
 
     - name: Create molecule instance(s)
       docker_container:
@@ -37,7 +42,7 @@
         hostname: "{{ item.name }}"
         image: "molecule_local/{{ item.image }}"
         state: started
-        recreate: False
+        recreate: false
         log_driver: syslog
         command: "{{ item.command | default('sleep infinity') }}"
         privileged: "{{ item.privileged | default(omit) }}"
