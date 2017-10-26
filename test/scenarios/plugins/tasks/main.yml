@@ -1,12 +1,12 @@
 ---
 - name: Ensure project filter env is set properly by Molecule
   debug:
-    var: foo | molecule_project_filter
+    var: foo | project_filter
   changed_when: false
 
 - name: Ensure dependency filter env is set properly by Molecule
   debug:
-    var: foo | filter
+    var: foo | dependency_filter
   changed_when: false
 
 - name: Ensure project library env is set properly by Molecule
