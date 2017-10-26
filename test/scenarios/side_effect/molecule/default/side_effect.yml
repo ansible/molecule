@@ -1,7 +1,7 @@
 ---
 - name: Side Effect
   hosts: all
-  gather_facts: False
+  gather_facts: false
   no_log: "{{ not lookup('env', 'MOLECULE_DEBUG') | bool }}"
   tasks:
     - name: Kill ntpd on target
