@@ -3,32 +3,32 @@
   tasks:
     - name: Host vars host_var for host host-group-vars from molecule.yml
       command: echo "{{ host_group_vars_host_molecule_yml }}"
-      changed_when: False
+      changed_when: false
 
     - name: Host vars from host_vars existing directory
       command: echo "{{ host_group_vars_host_vars_dir }}"
-      changed_when: False
+      changed_when: false
 
     - name: Group vars group_var for group example from molecule.yml
       command: echo "{{ host_group_vars_example_group_one_molecule_yml }} {{ host_group_vars_example_group_two_molecule_yml }}"
-      changed_when: False
+      changed_when: false
 
     - name: Group vars from group_vars existing directory
       command: echo "{{ host_group_vars_group_vars_dir }}"
-      changed_when: False
+      changed_when: false
 
     - name: Group vars group_var from child group example_1 from molecule.yml
       command: echo "{{ host_group_vars_example_1_child_group_molecule_yml }}"
-      changed_when: False
+      changed_when: false
 
 - hosts: example
   tasks:
     - name: Dummy converge of example group
       command: /bin/true
-      changed_when: False
+      changed_when: false
 
 - hosts: example_1
   tasks:
     - name: Dummy converge of child example_1 group
       command: /bin/true
-      changed_when: False
+      changed_when: false
