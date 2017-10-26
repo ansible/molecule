@@ -30,7 +30,6 @@ def test_execute(mocker, patched_destroy_prune, patched_logger_info,
         mocker.call("Scenario: 'default'"),
         mocker.call("Action: 'destroy'"),
     ]
-
     assert x == patched_logger_info.mock_calls
 
     patched_destroy_prune.assert_called_once_with()

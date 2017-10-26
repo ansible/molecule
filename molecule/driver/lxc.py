@@ -29,6 +29,11 @@ class Lxc(base.Base):
     The class responsible for managing `LXC`_ containers.  `LXC`_ is `not` the
     default driver used in Molecule.
 
+    Molecule leverages Ansible's `lxc_container`_ module, by mapping variables
+    from `molecule.yml` into `create.yml` and `destroy.yml`.
+
+    .. _`lxc_container`: http://docs.ansible.com/ansible/latest/lxc_container_module.html
+
     .. code-block:: yaml
 
         driver:
@@ -43,13 +48,13 @@ class Lxc(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: ec2
+          name: lxc
           safe_files:
             - foo
             - .molecule/bar
 
     .. _`LXC`: https://linuxcontainers.org/lxc/introduction/
-    """
+    """  # noqa
 
     def __init__(self, config):
         super(Lxc, self).__init__(config)

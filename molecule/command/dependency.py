@@ -61,7 +61,7 @@ class Dependency(base.Base):
     default='default',
     help='Name of the scenario to target. (default)')
 def dependency(ctx, scenario_name):  # pragma: no cover
-    """ Mange the role's dependencies. """
+    """ Manage the role's dependencies. """
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
     command_args = {

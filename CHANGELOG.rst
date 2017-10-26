@@ -10,6 +10,57 @@ functionality in a backwards-compatible manner.
 
 .. _`Semantic Versioning`: http://semver.org
 
+2.3
+===
+
+* Report friendly error message when interpolation fails.
+* Added a new line after printing matrix.
+* Added molecule header to generated Dockerfiles.
+* Check supported python and ansible versions when executing Molecule.
+* Sanitize user provided config options.
+* Sanitize user provided env options.
+* Added shell friendly env output
+
+2.2.1
+=====
+
+* Ensure setup is run for prepare to correct ssh connection failures.
+
+2.2
+===
+
+* Ability to execute a prepare playbook post create.
+* Log deprecation warning when missing prepare.yml.
+* Support Ansible 2.4.
+* Revert "Add support import data from original ansible.cfg".
+* Changed testinfra command to py.test.
+
+2.1
+===
+
+* Add a destroy strategy to the `test` action.
+* Delegated driver may or may not manage instances.
+
+2.0.4
+=====
+
+* Fix Dockerfile for Fedora.
+
+2.0.3
+=====
+
+* Generate host/group vars when host vars missing.
+
+2.0.2
+=====
+
+* Pass the provisioner's env to the verifier.
+
+2.0.1
+=====
+
+* Corrected init scenario validation.
+
 2.0
 ===
 
@@ -50,6 +101,11 @@ Breaking Changes
 .. _`Scenarios`: http://molecule.readthedocs.io/en/latest/configuration.html#scenario
 .. _`Delegated Driver`: http://molecule.readthedocs.io/en/latest/configuration.html#delegated
 .. _`Yamllint`: https://github.com/adrienverge/yamllint
+
+1.25.1
+======
+
+* Update ansible-lint for Ansible 2.4 compatibility.
 
 1.25
 ====

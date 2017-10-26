@@ -27,57 +27,17 @@ from molecule import logger
 from molecule import util
 from molecule.provisioner import base
 from molecule.provisioner import ansible_playbook
+from molecule.provisioner import ansible_playbooks
 
 LOG = logger.get_logger(__name__)
-
-
-class Namespace(object):
-    """ A class to act as a module to namespace playbook properties. """
-
-    def __init__(self, config):
-        """
-        Initialize a new namespace class and returns None.
-
-        :param config: An instance of a Molecule config.
-        :return: None
-        """
-        self._config = config
-
-    @property
-    def create(self):
-        return self._get_ansible_playbook('create')
-
-    @property
-    def converge(self):
-        c = self._config.config
-
-        return self._config.provisioner.get_abs_path(
-            c['provisioner']['playbooks']['converge'])
-
-    @property
-    def destroy(self):
-        return self._get_ansible_playbook('destroy')
-
-    @property
-    def side_effect(self):
-        return self._get_ansible_playbook('side_effect')
-
-    def _get_ansible_playbook(self, section):
-        c = self._config.config
-        driver_dict = c['provisioner']['playbooks'].get(
-            self._config.driver.name)
-
-        if driver_dict:
-            try:
-                playbook = driver_dict[section]
-            except KeyError:
-                return
-        else:
-            playbook = c['provisioner']['playbooks'][section]
-
-        if playbook is not None:
-            return self._config.provisioner.get_abs_path(playbook)
-        return
+UNSAFE_ENV_KEYS = [
+    'ANSIBLE_BECOME',
+    'ANSIBLE_BECOME_METHOD',
+    'ANSIBLE_BECOME_USER',
+]
+UNSAFE_CONFIG_OPTIONS_KEYS = [
+    'privilege_escalation',
+]
 
 
 class Ansible(base.Base):
@@ -168,6 +128,18 @@ class Ansible(base.Base):
     .. important::
 
         This is feature should be considered experimental.
+
+    The prepare playbook executes actions which bring the system to a given
+    state prior to converge.  It is executed after create, and only once for
+    the duration of the instances life.
+
+    This can be used to bring instances into a particular state, prior to
+    testing.
+
+        provisioner:
+          name: ansible
+          playbooks:
+            prepare: prepare.yml
 
     Environment variables.  Molecule does it's best to handle common Ansible
     paths.  The defaults are as follows.
@@ -272,7 +244,7 @@ class Ansible(base.Base):
         :return: None
         """
         super(Ansible, self).__init__(config)
-        self._ns = Namespace(config)
+        self._ansible_playbooks = ansible_playbooks.AnsiblePlaybooks(config)
 
     @property
     def default_config_options(self):
@@ -352,9 +324,10 @@ class Ansible(base.Base):
 
     @property
     def config_options(self):
-        return self._config.merge_dicts(
-            self.default_config_options,
-            self._config.config['provisioner']['config_options'])
+        options = self._sanitize_config_options(
+            self._config.config['provisioner']['config_options'].copy())
+
+        return self._config.merge_dicts(self.default_config_options, options)
 
     @property
     def options(self):
@@ -365,26 +338,27 @@ class Ansible(base.Base):
     @property
     def env(self):
         default_env = self.default_env
-        env = self._config.config['provisioner']['env'].copy()
+        env = self._sanitize_env(
+            self._config.config['provisioner']['env'].copy())
 
         roles_path = default_env['ANSIBLE_ROLES_PATH']
         library_path = default_env['ANSIBLE_LIBRARY']
         filter_plugins_path = default_env['ANSIBLE_FILTER_PLUGINS']
 
         try:
-            path = self.get_abs_path(env['ANSIBLE_ROLES_PATH'])
+            path = self._absolute_path_for(env, 'ANSIBLE_ROLES_PATH')
             roles_path = '{}:{}'.format(roles_path, path)
         except KeyError:
             pass
 
         try:
-            path = self.get_abs_path(env['ANSIBLE_LIBRARY'])
+            path = self._absolute_path_for(env, 'ANSIBLE_LIBRARY')
             library_path = '{}:{}'.format(library_path, path)
         except KeyError:
             pass
 
         try:
-            path = self.get_abs_path(env['ANSIBLE_FILTER_PLUGINS'])
+            path = self._absolute_path_for(env, 'ANSIBLE_FILTER_PLUGINS')
             filter_plugins_path = '{}:{}'.format(filter_plugins_path, path)
         except KeyError:
             pass
@@ -461,7 +435,7 @@ class Ansible(base.Base):
 
     @property
     def playbooks(self):
-        return self._ns
+        return self._ansible_playbooks
 
     def connection_options(self, instance_name):
         d = self._config.driver.ansible_connection_options(instance_name)
@@ -527,6 +501,16 @@ class Ansible(base.Base):
         pb = self._get_ansible_playbook(self.playbooks.create)
         pb.execute()
 
+    def prepare(self):
+        """
+        Executes `ansible-playbook` against the prepare playbook and returns
+        None.
+
+        :return: None
+        """
+        pb = self._get_ansible_playbook(self.playbooks.prepare)
+        pb.execute()
+
     def syntax(self):
         """
         Executes `ansible-playbook` against the converge playbook with the
@@ -587,20 +571,19 @@ class Ansible(base.Base):
             elif target == 'group_vars':
                 vars_target = self.group_vars
 
-            if not vars_target:
-                return
+            if vars_target:
+                ephemeral_directory = self._config.scenario.ephemeral_directory
+                target_vars_directory = os.path.join(ephemeral_directory,
+                                                     target)
 
-            ephemeral_directory = self._config.scenario.ephemeral_directory
-            target_vars_directory = os.path.join(ephemeral_directory, target)
+                if not os.path.isdir(util.abs_path(target_vars_directory)):
+                    os.mkdir(util.abs_path(target_vars_directory))
 
-            if not os.path.isdir(util.abs_path(target_vars_directory)):
-                os.mkdir(util.abs_path(target_vars_directory))
-
-            for target in vars_target.keys():
-                target_var_content = vars_target[target]
-                path = os.path.join(
-                    util.abs_path(target_vars_directory), target)
-                util.write_file(path, util.safe_dump(target_var_content))
+                for target in vars_target.keys():
+                    target_var_content = vars_target[target]
+                    path = os.path.join(
+                        util.abs_path(target_vars_directory), target)
+                    util.write_file(path, util.safe_dump(target_var_content))
 
     def _write_inventory(self):
         """
@@ -659,8 +642,8 @@ class Ansible(base.Base):
         :param kwargs: An optional keyword arguments.
         :return: object
         """
-        return ansible_playbook.AnsiblePlaybook(self.inventory_file, playbook,
-                                                self._config, **kwargs)
+        return ansible_playbook.AnsiblePlaybook(playbook, self._config,
+                                                **kwargs)
 
     def _verify_inventory(self):
         """
@@ -714,3 +697,26 @@ class Ansible(base.Base):
     def _get_filter_plugin_directory(self):
         return util.abs_path(
             os.path.join(self._get_plugin_directory(), 'filters'))
+
+    def _sanitize_env(self, env):
+        for unsafe_env in UNSAFE_ENV_KEYS:
+            if env.get(unsafe_env):
+                msg = ("Disallowed user provided env option '{}'.  "
+                       'Removing.').format(unsafe_env)
+                LOG.warn(msg)
+                del env[unsafe_env]
+
+        return env
+
+    def _sanitize_config_options(self, config_options):
+        for unsafe_option in UNSAFE_CONFIG_OPTIONS_KEYS:
+            if config_options.get(unsafe_option):
+                msg = ("Disallowed user provided config option '{}'.  "
+                       'Removing.').format(unsafe_option)
+                LOG.warn(msg)
+                del config_options[unsafe_option]
+
+        return config_options
+
+    def _absolute_path_for(self, env, key):
+        return ':'.join([self.get_abs_path(p) for p in env[key].split(':')])

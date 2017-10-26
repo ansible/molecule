@@ -14,29 +14,10 @@ Contributing
 
 .. _`Issue`: https://github.com/metacloud/molecule/issues
 
-Installing from source
-======================
+Installing
+==========
 
-Due to the rapid pace of development on this tool, you might want to install it
-in "`development`_" mode so that new updates can be obtained by simply doing a
-``git pull`` in the repository's directory.
-
-.. code-block:: bash
-
-  $ cd /path/to/repos
-  $ git clone git@github.com:metacloud/molecule.git
-  $ cd molecule
-  $ sudo python setup.py develop
-
-There is also a `pip pattern` for development mode:
-
-.. code-block:: bash
-
-  $ cd /path/to/repos
-  $ git clone git@github.com:metacloud/molecule.git
-  $ pip install -U -e .
-
-.. _`development`: http://pythonhosted.org/setuptools/setuptools.html#development-mode
+:ref:`installation` from source or package.
 
 Testing
 =======

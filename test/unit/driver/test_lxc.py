@@ -60,7 +60,9 @@ def test_name_property(lxc_instance):
 
 
 def test_options_property(lxc_instance):
-    assert {} == lxc_instance.options
+    x = {'managed': True}
+
+    assert x == lxc_instance.options
 
 
 def test_login_cmd_template_property(lxc_instance):
@@ -75,8 +77,12 @@ def test_default_safe_files_property(lxc_instance):
     assert [] == lxc_instance.default_safe_files
 
 
-def test_delegated(lxc_instance):
+def test_delegated_property(lxc_instance):
     assert not lxc_instance.delegated
+
+
+def test_managed_property(lxc_instance):
+    assert lxc_instance.managed
 
 
 def test_default_ssh_connection_options_property(lxc_instance):

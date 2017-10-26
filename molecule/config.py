@@ -31,7 +31,7 @@ from molecule import util
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
 from molecule.driver import delegated
-from molecule.driver import dockr
+from molecule.driver import docker
 from molecule.driver import ec2
 from molecule.driver import gce
 from molecule.driver import lxc
@@ -65,20 +65,28 @@ class Config(object):
     :ref:`root_scenario`, and State_ references.
     """
 
-    def __init__(self, molecule_file, args={}, command_args={}):
+    def __init__(self,
+                 molecule_file,
+                 args={},
+                 command_args={},
+                 ansible_args=()):
         """
         Initialize a new config class and returns None.
 
         :param molecule_file: A string containing the path to the Molecule file
          to be parsed.
-        :param args: A dict of options, arguments and commands from the CLI.
-        :param command_args: A dict of options passed to the subcommand from
+        :param args: An optional dict of options, arguments and commands from
          the CLI.
+        :param command_args: An optional dict of options passed to the
+         subcommand from the CLI.
+        :param ansible_args: An optional tuple of arguments provided to the
+         `ansible-playbook` command.
         :returns: None
         """
         self.molecule_file = molecule_file
         self.args = args
         self.command_args = command_args
+        self.ansible_args = ansible_args
         self.config = self._combine()
 
     @property
@@ -119,7 +127,7 @@ class Config(object):
         if driver_name == 'delegated':
             driver = delegated.Delegated(self)
         elif driver_name == 'docker':
-            driver = dockr.Dockr(self)
+            driver = docker.Docker(self)
         elif driver_name == 'ec2':
             driver = ec2.Ec2(self)
         elif driver_name == 'gce':
@@ -237,8 +245,14 @@ class Config(object):
 
         base = self._get_defaults()
         with util.open_file(self.molecule_file) as stream:
-            interpolated_config = i.interpolate(stream.read())
-            base = self.merge_dicts(base, util.safe_load(interpolated_config))
+            try:
+                interpolated_config = i.interpolate(stream.read())
+                base = self.merge_dicts(base,
+                                        util.safe_load(interpolated_config))
+            except interpolation.InvalidInterpolation as e:
+                msg = ("parsing config file '{}'.\n\n"
+                       '{}\n{}'.format(self.molecule_file, e.place, e.string))
+                util.sysexit_with_message(msg)
 
         schema.validate(base)
 
@@ -257,7 +271,9 @@ class Config(object):
                 'provider': {
                     'name': None
                 },
-                'options': {},
+                'options': {
+                    'managed': True,
+                },
                 'ssh_connection_options': [],
                 'safe_files': [],
             },
@@ -284,6 +300,7 @@ class Config(object):
                     'create': 'create.yml',
                     'converge': 'playbook.yml',
                     'destroy': 'destroy.yml',
+                    'prepare': 'prepare.yml',
                     'side_effect': None,
                 },
                 'lint': {
@@ -299,13 +316,19 @@ class Config(object):
                 'check_sequence': [
                     'destroy',
                     'create',
+                    'prepare',
                     'converge',
                     'check',
                     'destroy',
                 ],
                 'converge_sequence': [
                     'create',
+                    'prepare',
                     'converge',
+                ],
+                'create_sequence': [
+                    'create',
+                    'prepare',
                 ],
                 'destroy_sequence': [
                     'destroy',
@@ -315,6 +338,7 @@ class Config(object):
                     'dependency',
                     'syntax',
                     'create',
+                    'prepare',
                     'converge',
                     'idempotence',
                     'lint',
@@ -390,7 +414,7 @@ def molecule_file(path):
 def molecule_drivers():
     return [
         delegated.Delegated(None).name,
-        dockr.Dockr(None).name,
+        docker.Docker(None).name,
         ec2.Ec2(None).name,
         gce.Gce(None).name,
         lxc.Lxc(None).name,

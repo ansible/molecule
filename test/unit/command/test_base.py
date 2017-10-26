@@ -80,7 +80,6 @@ def test_print_info(mocker, patched_logger_info, base_instance):
         mocker.call("Scenario: 'default'"),
         mocker.call("Action: 'extended_base'"),
     ]
-
     assert x == patched_logger_info.mock_calls
 
 

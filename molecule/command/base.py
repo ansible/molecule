@@ -99,7 +99,7 @@ def execute_subcommand(config, subcommand):
     return command(config).execute()
 
 
-def get_configs(args, command_args):
+def get_configs(args, command_args, ansible_args=()):
     """
     Glob the current directory for Molecule config files, instantiate config
     objects, and returns a list.
@@ -107,13 +107,16 @@ def get_configs(args, command_args):
     :param args: A dict of options, arguments and commands from the CLI.
     :param command_args: A dict of options passed to the subcommand from
      the CLI.
+    :param ansible_args: An optional tuple of arguments provided to the
+     `ansible-playbook` command.
     :return: list
     """
     configs = [
         config.Config(
             molecule_file=util.abs_path(c),
             args=args,
-            command_args=command_args) for c in glob.glob(MOLECULE_GLOB)
+            command_args=command_args,
+            ansible_args=ansible_args, ) for c in glob.glob(MOLECULE_GLOB)
     ]
     _verify_configs(configs)
 

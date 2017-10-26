@@ -118,6 +118,10 @@ def test_additional_files_or_dirs_property(testinfra_instance):
 
 def test_env_property(testinfra_instance):
     assert 'bar' == testinfra_instance.env['foo']
+    assert 'ANSIBLE_CONFIG' in testinfra_instance.env
+    assert 'ANSIBLE_ROLES_PATH' in testinfra_instance.env
+    assert 'ANSIBLE_LIBRARY' in testinfra_instance.env
+    assert 'ANSIBLE_FILTER_PLUGINS' in testinfra_instance.env
 
 
 def test_lint_property(testinfra_instance):
@@ -212,7 +216,7 @@ def test_options_property_handles_cli_args(inventory_file, testinfra_instance):
 def test_bake(patched_testinfra_get_tests, inventory_file, testinfra_instance):
     testinfra_instance.bake()
     x = [
-        str(sh.testinfra),
+        str(sh.Command('py.test')),
         '--ansible-inventory={}'.format(inventory_file),
         '--connection=ansible',
         '-vvv',

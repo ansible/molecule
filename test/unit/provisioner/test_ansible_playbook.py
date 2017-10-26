@@ -27,27 +27,27 @@ from molecule.provisioner import ansible_playbook
 
 @pytest.fixture
 def ansible_playbook_instance(config_instance):
-    return ansible_playbook.AnsiblePlaybook('inventory', 'playbook',
-                                            config_instance)
+    return ansible_playbook.AnsiblePlaybook('playbook', config_instance)
 
 
-def test_ansible_playbook_command_private_member(ansible_playbook_instance):
-    assert ansible_playbook_instance._ansible_playbook_command is None
+@pytest.fixture
+def inventory_file(ansible_playbook_instance):
+    return ansible_playbook_instance._config.provisioner.inventory_file
+
+
+def test_ansible_command_private_member(ansible_playbook_instance):
+    assert ansible_playbook_instance._ansible_command is None
 
 
 def test_ansible_playbook_private_member(ansible_playbook_instance):
     assert 'playbook' == ansible_playbook_instance._playbook
 
 
-def test_playbook_private_member(ansible_playbook_instance):
-    assert 'inventory' == ansible_playbook_instance._inventory
-
-
 def test_config_private_member(ansible_playbook_instance):
     assert isinstance(ansible_playbook_instance._config, config.Config)
 
 
-def test_bake(ansible_playbook_instance):
+def test_bake(inventory_file, ansible_playbook_instance):
     pb = ansible_playbook_instance._config.provisioner.playbooks.converge
     ansible_playbook_instance._playbook = pb
     ansible_playbook_instance.bake()
@@ -55,37 +55,52 @@ def test_bake(ansible_playbook_instance):
     x = [
         str(sh.ansible_playbook),
         '--become',
-        '--inventory=inventory',
+        '--inventory={}'.format(inventory_file),
         pb,
     ]
-    result = str(ansible_playbook_instance._ansible_playbook_command).split()
+    result = str(ansible_playbook_instance._ansible_command).split()
 
     assert sorted(x) == sorted(result)
 
 
 def test_bake_removes_non_interactive_options_from_non_converge_playbooks(
-        ansible_playbook_instance):
+        inventory_file, ansible_playbook_instance):
     ansible_playbook_instance.bake()
-    x = '{} --inventory=inventory playbook'.format(str(sh.ansible_playbook))
+    x = '{} --inventory={} playbook'.format(
+        str(sh.ansible_playbook), inventory_file)
 
-    assert x == ansible_playbook_instance._ansible_playbook_command
+    assert x == ansible_playbook_instance._ansible_command
 
 
 def test_execute(patched_run_command, ansible_playbook_instance):
-    ansible_playbook_instance._ansible_playbook_command = 'patched-command'
+    ansible_playbook_instance._ansible_command = 'patched-command'
     result = ansible_playbook_instance.execute()
 
-    patched_run_command.assert_called_once_with('patched-command')
+    patched_run_command.assert_called_once_with('patched-command', debug=False)
     assert 'patched-run-command-stdout' == result
 
 
-def test_execute_bakes(patched_run_command, ansible_playbook_instance):
+def test_execute_bakes(inventory_file, patched_run_command,
+                       ansible_playbook_instance):
     ansible_playbook_instance.execute()
 
-    assert ansible_playbook_instance._ansible_playbook_command is not None
+    assert ansible_playbook_instance._ansible_command is not None
 
-    cmd = '{} --inventory=inventory playbook'.format(str(sh.ansible_playbook))
-    patched_run_command.assert_called_once_with(cmd)
+    cmd = '{} --inventory={} playbook'.format(
+        str(sh.ansible_playbook), inventory_file)
+    patched_run_command.assert_called_once_with(cmd, debug=False)
+
+
+def test_execute_bakes_with_ansible_args(inventory_file, patched_run_command,
+                                         ansible_playbook_instance):
+    ansible_playbook_instance._config.ansible_args = ('--foo', '--bar')
+    ansible_playbook_instance.execute()
+
+    assert ansible_playbook_instance._ansible_command is not None
+
+    cmd = '{} --inventory={} playbook --foo --bar'.format(
+        str(sh.ansible_playbook), inventory_file)
+    patched_run_command.assert_called_once_with(cmd, debug=False)
 
 
 def test_executes_catches_and_exits_return_code_with_stdout(

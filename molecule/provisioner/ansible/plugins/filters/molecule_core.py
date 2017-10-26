@@ -25,6 +25,15 @@ from molecule import util
 
 
 def from_yaml(data):
+    """
+    Interpolate the provided data and return a dict.
+
+    Currently, this is used to reinterpolate the `molecule.yml` inside an
+    Ansible playbook.  If there were any interpolation errors, they would
+    have been found and raised earlier.
+
+    :return: dict
+    """
     i = interpolation.Interpolator(interpolation.TemplateWithDefaults,
                                    os.environ)
     interpolated_data = i.interpolate(data)

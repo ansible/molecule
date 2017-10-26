@@ -18,6 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+from __future__ import absolute_import
+
 import os
 
 from molecule import logger
@@ -26,15 +28,28 @@ from molecule.driver import base
 LOG = logger.get_logger(__name__)
 
 
-class Dockr(base.Base):
+class Docker(base.Base):
     """
     The class responsible for managing `Docker`_ containers.  `Docker`_ is
     the default driver used in Molecule.
+
+    Molecule leverages Ansible's `docker_container`_ module, by mapping
+    variables from `molecule.yml` into `create.yml` and `destroy.yml`.
+
+    .. _`docker_container`: http://docs.ansible.com/ansible/latest/docker_container_module.html
 
     .. code-block:: yaml
 
         driver:
           name: docker
+        platforms:
+          - name: instance
+            hostname: "{{ item.name }}"
+            image: "molecule_local/{{ item.image }}"
+            command: "{{ item.command | default('sleep infinity') }}"
+            privileged: "{{ item.privileged | default(omit) }}"
+            volumes: "{{ item.volumes | default(omit) }}"
+            capabilities: "{{ item.capabilities | default(omit) }}"
 
     .. code-block:: bash
 
@@ -45,16 +60,16 @@ class Dockr(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: ec2
+          name: docker
           safe_files:
             - foo
             - .molecule/bar
 
     .. _`Docker`: https://www.docker.com
-    """
+    """  # noqa
 
     def __init__(self, config):
-        super(Dockr, self).__init__(config)
+        super(Docker, self).__init__(config)
         self._name = 'docker'
 
     @property

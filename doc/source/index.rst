@@ -6,7 +6,9 @@ Contents:
 .. toctree::
    :maxdepth: 3
 
+   installation
    usage
+   examples
    configuration
    porting
    testing

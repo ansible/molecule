@@ -75,14 +75,20 @@ def test_all_filters_on_scenario_name_property(scenarios_instance):
     assert 1 == len(scenarios_instance.all)
 
 
-def test_print_matrix(patched_logger_out, scenarios_instance):
+def test_print_matrix(mocker, patched_logger_info, patched_logger_out,
+                      scenarios_instance):
     scenarios_instance.print_matrix()
+
+    msg = 'Test matrix'
+    patched_logger_info(msg)
+
     x = u"""
 ├── default
 │   ├── destroy
 │   ├── dependency
 │   ├── syntax
 │   ├── create
+│   ├── prepare
 │   ├── converge
 │   ├── idempotence
 │   ├── lint
@@ -94,6 +100,7 @@ def test_print_matrix(patched_logger_out, scenarios_instance):
     ├── dependency
     ├── syntax
     ├── create
+    ├── prepare
     ├── converge
     ├── idempotence
     ├── lint
@@ -101,8 +108,8 @@ def test_print_matrix(patched_logger_out, scenarios_instance):
     ├── verify
     └── destroy
 """
-
-    assert x.encode('utf-8') == patched_logger_out.call_args[0][0]
+    assert x.encode('utf-8') == patched_logger_out.mock_calls[0][1][0]
+    assert mocker.call('') == patched_logger_out.mock_calls[1]
 
 
 def test_verify_does_not_raise_when_found(scenarios_instance):
@@ -124,11 +131,13 @@ def test_verify_raises_when_scenario_not_found(scenarios_instance,
 
 
 def test_filter_for_scenario(scenarios_instance):
-    result = scenarios_instance._filter_for_scenario('default')
+    scenarios_instance._scenario_name = 'default'
+    result = scenarios_instance._filter_for_scenario()
     assert 1 == len(result)
     assert 'default' == result[0].name
 
-    result = scenarios_instance._filter_for_scenario('invalid')
+    scenarios_instance._scenario_name = 'invalid'
+    result = scenarios_instance._filter_for_scenario()
     assert [] == result
 
 
@@ -140,17 +149,23 @@ def test_get_matrix(scenarios_instance):
             'syntax': ['syntax'],
             'converge': [
                 'create',
+                'prepare',
                 'converge',
             ],
             'check': [
                 'destroy',
                 'create',
+                'prepare',
                 'converge',
                 'check',
                 'destroy',
             ],
             'verify': ['verify'],
-            'create': ['create'],
+            'create': [
+                'create',
+                'prepare',
+            ],
+            'prepare': ['prepare'],
             'side_effect': ['side_effect'],
             'dependency': ['dependency'],
             'test': [
@@ -158,6 +173,7 @@ def test_get_matrix(scenarios_instance):
                 'dependency',
                 'syntax',
                 'create',
+                'prepare',
                 'converge',
                 'idempotence',
                 'lint',
@@ -173,17 +189,23 @@ def test_get_matrix(scenarios_instance):
             'syntax': ['syntax'],
             'converge': [
                 'create',
+                'prepare',
                 'converge',
             ],
             'check': [
                 'destroy',
                 'create',
+                'prepare',
                 'converge',
                 'check',
                 'destroy',
             ],
+            'create': [
+                'create',
+                'prepare',
+            ],
             'verify': ['verify'],
-            'create': ['create'],
+            'prepare': ['prepare'],
             'side_effect': ['side_effect'],
             'dependency': ['dependency'],
             'test': [
@@ -191,6 +213,7 @@ def test_get_matrix(scenarios_instance):
                 'dependency',
                 'syntax',
                 'create',
+                'prepare',
                 'converge',
                 'idempotence',
                 'lint',

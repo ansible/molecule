@@ -21,8 +21,8 @@
 from molecule.command import create
 
 
-def test_execute(mocker, patched_create_setup, patched_logger_info,
-                 patched_ansible_create, config_instance):
+def test_execute(mocker, patched_logger_info, patched_ansible_create,
+                 config_instance):
     c = create.Create(config_instance)
     c.execute()
 
@@ -30,7 +30,6 @@ def test_execute(mocker, patched_create_setup, patched_logger_info,
         mocker.call("Scenario: 'default'"),
         mocker.call("Action: 'create'"),
     ]
-
     assert x == patched_logger_info.mock_calls
 
     assert 'docker' == config_instance.state.driver

@@ -26,5 +26,5 @@ def project_filter(s):
 class FilterModule(object):
     def filters(self):
         return {
-            'molecule_project_filter': project_filter,
+            'project_filter': project_filter,
         }

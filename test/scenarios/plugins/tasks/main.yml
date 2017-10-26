@@ -10,7 +10,7 @@
   changed_when: false
 
 - name: Ensure project library env is set properly by Molecule
-  molecule_project_library:
+  project_library:
 
 - name: Ensure dependency library env is set properly by Molecule
-  library:
+  dependency_library:

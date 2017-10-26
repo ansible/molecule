@@ -42,28 +42,34 @@ class Scenario(object):
 
         scenario:
           name: default
+          create_sequence:
+            - create
+            - prepare
           check_sequence:
             - destroy
             - create
+            - prepare
             - converge
             - check
             - destroy
           converge_sequence:
             - create
+            - prepare
             - converge
           destroy_sequence:
             - destroy
           test_sequence:
             - destroy
+            - dependency
+            - syntax
             - create
+            - prepare
             - converge
+            - idempotence
             - lint
+            - side_effect
             - verify
             - destroy
-
-    A good source of examples are the `scenario`_ functional tests.
-
-    .. _`scenario`: https://github.com/metacloud/molecule/tree/master/test/scenarios/driver
     """  # noqa
 
     def __init__(self, config):
@@ -98,7 +104,7 @@ class Scenario(object):
 
     @property
     def create_sequence(self):
-        return ['create']
+        return self.config.config['scenario']['create_sequence']
 
     @property
     def dependency_sequence(self):
@@ -109,16 +115,20 @@ class Scenario(object):
         return self.config.config['scenario']['destroy_sequence']
 
     @property
-    def side_effect_sequence(self):
-        return ['side_effect']
-
-    @property
     def idempotence_sequence(self):
         return ['idempotence']
 
     @property
     def lint_sequence(self):
         return ['lint']
+
+    @property
+    def prepare_sequence(self):
+        return ['prepare']
+
+    @property
+    def side_effect_sequence(self):
+        return ['side_effect']
 
     @property
     def syntax_sequence(self):

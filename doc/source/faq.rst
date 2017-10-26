@@ -18,8 +18,8 @@ through their respective CLI.
 
 .. _`direct consumption`: http://docs.ansible.com/ansible/dev_guide/developing_api.html
 
-Why does Molecule only support ansible 2.2 and 2.3?
-===================================================
+Why does Molecule only support Ansible versions 2.2 and later?
+==============================================================
 
 * Ansible 2.2 is the first good release in the Ansible 2 lineup.
 * The modules needed to support the drivers did not exist pre 2.2 or were not

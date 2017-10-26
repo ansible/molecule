@@ -26,10 +26,11 @@ from molecule import config
 from molecule import platforms
 from molecule import scenario
 from molecule import state
+from molecule import util
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
 from molecule.driver import delegated
-from molecule.driver import dockr
+from molecule.driver import docker
 from molecule.driver import ec2
 from molecule.driver import gce
 from molecule.driver import lxc
@@ -132,7 +133,7 @@ def test_driver_property_is_delegated(molecule_driver_delegated_section_data,
 
 
 def test_driver_property(config_instance):
-    assert isinstance(config_instance.driver, dockr.Dockr)
+    assert isinstance(config_instance.driver, docker.Docker)
 
 
 @pytest.fixture
@@ -442,6 +443,28 @@ def test_get_driver_name_raises_when_different_driver_used(
     msg = ("Instance(s) were created with the 'foo' driver, "
            "but the subcommand is using 'bar' driver.")
 
+    patched_logger_critical.assert_called_once_with(msg)
+
+
+def test_combine(config_instance):
+    assert isinstance(config_instance._combine(), dict)
+
+
+def test_combine_raises_on_failed_interpolation(patched_logger_critical,
+                                                config_instance):
+    contents = {'foo': '$6$8I5Cfmpr$kGZB'}
+    util.write_file(config_instance.molecule_file, util.safe_dump(contents))
+
+    with pytest.raises(SystemExit) as e:
+        config_instance._combine()
+
+    assert 1 == e.value.code
+
+    msg = ("parsing config file '{}'.\n\n"
+           'Invalid placeholder in string: line 4, col 6\n'
+           '# Molecule managed\n\n'
+           '---\n'
+           'foo: $6$8I5Cfmpr$kGZB\n').format(config_instance.molecule_file)
     patched_logger_critical.assert_called_once_with(msg)
 
 

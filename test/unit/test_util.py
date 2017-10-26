@@ -97,6 +97,21 @@ def test_print_environment_vars(capsys):
     ]
     print(''.join(data))
 
+    # Shell Replay
+    title = [
+        colorama.Back.WHITE, colorama.Style.BRIGHT, colorama.Fore.BLACK,
+        'DEBUG: SHELL REPLAY', colorama.Fore.RESET, colorama.Back.RESET,
+        colorama.Style.RESET_ALL
+    ]
+    print(''.join(title))
+    data = [
+        colorama.Fore.BLACK, colorama.Style.BRIGHT,
+        'ANSIBLE_BAR=bar ANSIBLE_FOO=foo MOLECULE_BAR=bar MOLECULE_FOO=foo',
+        colorama.Style.RESET_ALL, colorama.Fore.RESET
+    ]
+    print(''.join(data))
+    print()
+
     x, _ = capsys.readouterr()
     assert x == result
 
@@ -146,6 +161,7 @@ def test_run_command_with_debug(mocker, patched_print_debug):
     x = [
         mocker.call('ANSIBLE ENVIRONMENT', '---\nANSIBLE_FOO: foo\n'),
         mocker.call('MOLECULE ENVIRONMENT', '---\nMOLECULE_BAR: bar\n'),
+        mocker.call('SHELL REPLAY', 'ANSIBLE_FOO=foo MOLECULE_BAR=bar'),
         mocker.call('COMMAND', sh.which('ls'))
     ]
 
@@ -158,6 +174,7 @@ def test_run_command_with_debug_handles_no_env(mocker, patched_print_debug):
     x = [
         mocker.call('ANSIBLE ENVIRONMENT', '--- {}\n'),
         mocker.call('MOLECULE ENVIRONMENT', '--- {}\n'),
+        mocker.call('SHELL REPLAY', ''),
         mocker.call('COMMAND', sh.which('ls'))
     ]
 

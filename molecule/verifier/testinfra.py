@@ -111,7 +111,10 @@ class Testinfra(base.Base):
 
     @property
     def default_env(self):
-        return self._config.merge_dicts(os.environ.copy(), self._config.env)
+        env = self._config.merge_dicts(os.environ.copy(), self._config.env)
+        env = self._config.merge_dicts(env, self._config.provisioner.env)
+
+        return env
 
     @property
     def additional_files_or_dirs(self):
@@ -127,7 +130,7 @@ class Testinfra(base.Base):
         verbose_flag = util.verbose_flag(options)
         args = verbose_flag + self.additional_files_or_dirs
 
-        self._testinfra_command = sh.testinfra.bake(
+        self._testinfra_command = sh.Command('py.test').bake(
             options,
             self._tests,
             *args,

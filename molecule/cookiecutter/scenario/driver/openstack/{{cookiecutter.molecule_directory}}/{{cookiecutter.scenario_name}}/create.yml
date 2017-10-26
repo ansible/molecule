@@ -8,7 +8,7 @@
   vars:
     molecule_file: "{{ lookup('env', 'MOLECULE_FILE') }}"
     molecule_instance_config: "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}"
-    molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
+    molecule_yml: "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
 
     user: cloud-user
     ssh_port: 22
@@ -77,5 +77,5 @@
         host: "{{ item.address }}"
         search_regex: SSH
         delay: 10
-      with_items: "{{ lookup('file', molecule_instance_config) | from_yaml }}"
+      with_items: "{{ lookup('file', molecule_instance_config) | molecule_from_yaml }}"
 {%- endraw %}

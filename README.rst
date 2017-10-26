@@ -34,14 +34,13 @@ supports.
 .. _`playbooks`: https://docs.ansible.com/ansible/playbooks.html
 .. _`role`: http://docs.ansible.com/ansible/playbooks_roles.html
 
+.. image:: https://user-images.githubusercontent.com/9895/30235316-650d17fa-94bc-11e7-8205-ec787b80cfc3.gif
+   :alt: Quick Start
+
 Documentation
 =============
 
-* `Current Release`_
-* `Upcoming Release`_ (preferred)
-
-.. _`Current Release`: https://molecule.readthedocs.io/en/v1/
-.. _`Upcoming Release`: https://molecule.readthedocs.io/
+https://molecule.readthedocs.io/
 
 Contact
 =======
@@ -65,8 +64,7 @@ Forums
 Ansible Support
 ===============
 
-* 2.2.3.0
-* 2.3.1.0
+Molecule requires Ansible version 2.2 or later.
 
 .. _`Ansible`: https://docs.ansible.com
 

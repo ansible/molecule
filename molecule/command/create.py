@@ -57,7 +57,7 @@ class Create(base.Base):
         self.print_info()
         self._config.state.change_state('driver', self._config.driver.name)
 
-        if self._config.driver.delegated:
+        if self._config.driver.delegated and not self._config.driver.managed:
             msg = 'Skipping, instances are delegated.'
             LOG.warn(msg)
             return
@@ -68,6 +68,7 @@ class Create(base.Base):
             return
 
         self._config.provisioner.create()
+
         self._config.state.change_state('created', True)
 
 
@@ -84,7 +85,7 @@ class Create(base.Base):
     type=click.Choice(config.molecule_drivers()),
     help='Name of driver to use. (docker)')
 def create(ctx, scenario_name, driver_name):  # pragma: no cover
-    """ Start instances. """
+    """ Use the provisioner to start the instances. """
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
     command_args = {

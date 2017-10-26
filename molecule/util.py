@@ -65,8 +65,15 @@ def print_environment_vars(env):
     """
     ansible_env = {k: v for (k, v) in env.items() if 'ANSIBLE_' in k}
     print_debug('ANSIBLE ENVIRONMENT', safe_dump(ansible_env))
+
     molecule_env = {k: v for (k, v) in env.items() if 'MOLECULE_' in k}
     print_debug('MOLECULE ENVIRONMENT', safe_dump(molecule_env))
+
+    combined_env = ansible_env.copy()
+    combined_env.update(molecule_env)
+    print_debug('SHELL REPLAY', " ".join(
+        ["{}={}".format(k, v) for (k, v) in sorted(combined_env.items())]))
+    print()
 
 
 def sysexit(code=1):
@@ -91,6 +98,7 @@ def run_command(cmd, debug=False):
         # the environment out of the ``sh.command`` object.
         print_environment_vars(cmd._partial_call_args.get('env', {}))
         print_debug('COMMAND', str(cmd))
+        print()
     return cmd()
 
 

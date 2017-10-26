@@ -28,6 +28,7 @@ VALID_KEYS = [
     'created',
     'converged',
     'driver',
+    'prepared',
 ]
 
 
@@ -90,6 +91,10 @@ class State(object):
     def driver(self):
         return self._data.get('driver')
 
+    @property
+    def prepared(self):
+        return self._data.get('prepared')
+
     @marshal
     def reset(self):
         self._data = self._default_data()
@@ -120,6 +125,7 @@ class State(object):
             'converged': False,
             'created': False,
             'driver': None,
+            'prepared': None,
         }
 
     def _load_file(self):

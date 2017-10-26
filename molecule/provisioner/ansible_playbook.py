@@ -27,14 +27,12 @@ LOG = logger.get_logger(__name__)
 
 
 class AnsiblePlaybook(object):
-    def __init__(self, inventory, playbook, config, out=LOG.out,
-                 err=LOG.error):
+    def __init__(self, playbook, config, out=LOG.out, err=LOG.error):
         """
         Sets up the requirements to execute `ansible-playbook` and returns
         None.
 
         :param playbook: A string containing the path to the playbook.
-        :param inventory: A string containing the path to the inventory.
         :param config: An instance of a Molecule config.
         :param out: An optional function to process STDOUT for underlying
          :func:`sh` call.
@@ -42,9 +40,8 @@ class AnsiblePlaybook(object):
          :func:`sh` call.
         :returns: None
         """
-        self._ansible_playbook_command = None
+        self._ansible_command = None
         self._playbook = playbook
-        self._inventory = inventory
         self._config = config
         self._out = out
         self._err = err
@@ -58,7 +55,7 @@ class AnsiblePlaybook(object):
 
         :return: None
         """
-        self.add_cli_arg('inventory', self._inventory)
+        self.add_cli_arg('inventory', self._config.provisioner.inventory_file)
         options = self._config.merge_dicts(self._config.provisioner.options,
                                            self._cli)
         verbose_flag = util.verbose_flag(options)
@@ -66,7 +63,7 @@ class AnsiblePlaybook(object):
             if options.get('become'):
                 del options['become']
 
-        self._ansible_playbook_command = sh.ansible_playbook.bake(
+        self._ansible_command = sh.ansible_playbook.bake(
             options,
             self._playbook,
             *verbose_flag,
@@ -75,18 +72,22 @@ class AnsiblePlaybook(object):
             _out=self._out,
             _err=self._err)
 
+        if self._config.ansible_args:
+            self._ansible_command = self._ansible_command.bake(
+                self._config.ansible_args)
+
     def execute(self):
         """
         Executes `ansible-playbook` and returns a string.
 
         :return: str
         """
-        if self._ansible_playbook_command is None:
+        if self._ansible_command is None:
             self.bake()
 
         try:
             cmd = util.run_command(
-                self._ansible_playbook_command, )
+                self._ansible_command, debug=self._config.debug)
             return cmd.stdout.decode('utf-8')
         except sh.ErrorReturnCode as e:
             out = e.stdout.decode('utf-8')

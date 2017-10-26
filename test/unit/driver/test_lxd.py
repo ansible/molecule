@@ -60,7 +60,9 @@ def test_name_property(lxd_instance):
 
 
 def test_options_property(lxd_instance):
-    assert {} == lxd_instance.options
+    x = {'managed': True}
+
+    assert x == lxd_instance.options
 
 
 def test_login_cmd_template_property(lxd_instance):
@@ -75,8 +77,12 @@ def test_default_safe_files_property(lxd_instance):
     assert [] == lxd_instance.default_safe_files
 
 
-def test_delegated(lxd_instance):
+def test_delegated_property(lxd_instance):
     assert not lxd_instance.delegated
+
+
+def test_managed_property(lxd_instance):
+    assert lxd_instance.managed
 
 
 def test_default_ssh_connection_options_property(lxd_instance):

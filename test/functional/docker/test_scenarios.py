@@ -23,6 +23,7 @@ import re
 
 import pytest
 import sh
+import shutil
 
 from molecule import util
 
@@ -78,6 +79,15 @@ def test_command_init_role_goss(temp_dir):
 
 
 def test_command_init_scenario_goss(temp_dir):
+    options = {
+        'role_name': 'test-init',
+    }
+    cmd = sh.molecule.bake('init', 'role', **options)
+    pytest.helpers.run_command(cmd)
+
+    role_directory = os.path.join(temp_dir.strpath, 'test-init')
+    os.chdir(role_directory)
+
     molecule_directory = pytest.helpers.molecule_directory()
     scenario_directory = os.path.join(molecule_directory, 'test-scenario')
     options = {
@@ -89,6 +99,76 @@ def test_command_init_scenario_goss(temp_dir):
     pytest.helpers.run_command(cmd)
 
     assert os.path.isdir(scenario_directory)
+
+
+def test_command_init_scenario_with_invalid_role_raises(temp_dir):
+    options = {
+        'role_name': 'test-role',
+    }
+    cmd = sh.molecule.bake('init', 'role', **options)
+    pytest.helpers.run_command(cmd)
+
+    role_directory = os.path.join(temp_dir.strpath, 'test-role')
+    os.chdir(role_directory)
+
+    options = {
+        'scenario_name': 'default',
+        'role_name': 'invalid-role-name',
+    }
+    try:
+        cmd = sh.molecule.bake('init', 'scenario', **options)
+        pytest.helpers.run_command(cmd, log=False)
+    except sh.ErrorReturnCode as e:
+        msg = ("ERROR: The role 'invalid-role-name' not found. "
+               'Please choose the proper role name.')
+        assert msg in e.stderr
+
+
+def test_command_init_scenario_as_default_without_default_scenario(temp_dir):
+    options = {
+        'role_name': 'test-role',
+    }
+    cmd = sh.molecule.bake('init', 'role', **options)
+    pytest.helpers.run_command(cmd)
+
+    role_directory = os.path.join(temp_dir.strpath, 'test-role')
+    os.chdir(role_directory)
+
+    molecule_directory = pytest.helpers.molecule_directory()
+    scenario_directory = os.path.join(molecule_directory, 'default')
+    shutil.rmtree(scenario_directory)
+
+    options = {
+        'scenario_name': 'default',
+        'role_name': 'test-role',
+    }
+    cmd = sh.molecule.bake('init', 'scenario', **options)
+    pytest.helpers.run_command(cmd)
+
+    assert os.path.isdir(scenario_directory)
+
+
+def test_command_init_scenario_without_default_scenario_raises(temp_dir):
+    options = {
+        'role_name': 'test-role',
+    }
+    cmd = sh.molecule.bake('init', 'role', **options)
+    pytest.helpers.run_command(cmd)
+
+    role_directory = os.path.join(temp_dir.strpath, 'test-role')
+    os.chdir(role_directory)
+
+    options = {
+        'scenario_name': 'invalid-role-name',
+        'role_name': 'test-role',
+    }
+    try:
+        cmd = sh.molecule.bake('init', 'scenario', **options)
+        pytest.helpers.run_command(cmd, log=False)
+    except sh.ErrorReturnCode as e:
+        msg = ('The default scenario not found.  Please create a scenario '
+               "named 'default' first.")
+        assert msg in e.stderr
 
 
 def test_command_init_role_with_template(temp_dir):
@@ -145,6 +225,52 @@ def test_command_test_builds_local_molecule_image(
         pass
 
     pytest.helpers.test(driver_name, scenario_name)
+
+
+@pytest.mark.parametrize(
+    'scenario_to_test, driver_name, scenario_name', [
+        ('test_destroy_strategy', 'docker', 'default'),
+    ],
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+        'scenario_name',
+    ])
+def test_command_test_destroy_strategy_always(scenario_to_test, with_scenario,
+                                              scenario_name, driver_name):
+    options = {
+        'destroy': 'always',
+    }
+    try:
+        cmd = sh.molecule.bake('test', **options)
+        pytest.helpers.run_command(cmd, log=False)
+    except sh.ErrorReturnCode as e:
+        msg = 'An error occured during the test sequence.  Cleaning up.'
+        assert msg in e.stdout
+
+        assert 'PLAY [Destroy]' in e.stdout
+        assert e.exit_code != 0
+
+
+@pytest.mark.parametrize(
+    'scenario_to_test, driver_name, scenario_name', [
+        ('test_destroy_strategy', 'docker', 'default'),
+    ],
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+        'scenario_name',
+    ])
+def test_command_test_destroy_strategy_never(scenario_to_test, with_scenario,
+                                             scenario_name, driver_name):
+    try:
+        cmd = sh.molecule.bake('test')
+        pytest.helpers.run_command(cmd, log=False)
+    except sh.ErrorReturnCode as e:
+        msg = 'An error occured during the test sequence.  Cleaning up.'
+        assert msg not in e.stdout
+
+        assert e.exit_code != 0
 
 
 @pytest.mark.parametrize(

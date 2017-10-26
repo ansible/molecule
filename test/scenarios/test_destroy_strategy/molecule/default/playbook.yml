@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: all
+  become: True
+  tasks:
+    - name: Force a converge failure
+      command: /bin/false

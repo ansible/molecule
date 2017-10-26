@@ -35,10 +35,24 @@ class Gce(base.Base):
     an Ansible module for managing ssh keys.  This driver assumes the developer
     has deployed project wide ssh key.
 
+    Molecule leverages Ansible's `gce_module`_, by mapping variables from
+    `molecule.yml` into `create.yml` and `destroy.yml`.
+
+    .. _`gce_module`: http://docs.ansible.com/ansible/latest/gce_module.html
+
     .. code-block:: yaml
 
         driver:
           name: gce
+        platforms:
+          - name: instance
+            instance_names: "{{ item.name }}"
+            zone: "{{ item.zone }}"
+            machine_type: "{{ item.machine_type }}"
+            image: "{{ item.image }}"
+            service_account_email: "{{ lookup('env', 'GCE_SERVICE_ACCOUNT_EMAIL') }}"
+            credentials_file: "{{ lookup('env', 'GCE_CREDENTIALS_FILE') }}"
+            project_id: "{{ lookup('env', 'GCE_PROJECT_ID') }}"
 
     .. code-block:: bash
 
@@ -69,7 +83,7 @@ class Gce(base.Base):
             - .molecule/bar
 
     .. _`GCE`: https://cloud.google.com/compute/docs/
-    """
+    """  # noqa
 
     def __init__(self, config):
         super(Gce, self).__init__(config)

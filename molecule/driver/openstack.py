@@ -31,10 +31,23 @@ class Openstack(base.Base):
     The class responsible for managing `OpenStack`_ instances.  `OpenStack`_
     is `not` the default driver used in Molecule.
 
+    Molecule leverages Ansible's `openstack_module`_, by mapping variables
+    from `molecule.yml` into `create.yml` and `destroy.yml`.
+
+    .. _`openstack_module`: http://docs.ansible.com/ansible/latest/os_server_module.html
+
     .. code-block:: yaml
 
         driver:
           name: openstack
+        platforms:
+          - name: instance
+            image: "{{ item.image }}"
+            flavor: "{{ item.flavor }}"
+            security_groups: "{{ security_group_name }}"
+            key_name: "{{ keypair_name }}"
+            nics:
+              - net-id: "{{ openstack_networks[0]['id'] }}"
 
     .. code-block:: bash
 
@@ -59,13 +72,13 @@ class Openstack(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: ec2
+          name: openstack
           safe_files:
             - foo
             - .molecule/bar
 
     .. _`OpenStack`: https://www.openstack.org
-    """
+    """  # noqa
 
     def __init__(self, config):
         super(Openstack, self).__init__(config)
