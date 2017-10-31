@@ -135,6 +135,8 @@ class Ansible(base.Base):
 
     This can be used to bring instances into a particular state, prior to
     testing.
+    
+    .. code-block:: yaml
 
         provisioner:
           name: ansible
