@@ -10,6 +10,17 @@ functionality in a backwards-compatible manner.
 
 .. _`Semantic Versioning`: http://semver.org
 
+2.4
+===
+
+* Corrected missing code block inside documentation.
+* Bump ansible-lint version.
+* Added yamlint to init scenario.
+* Correct env path qualification.
+* Add sudo package to Fedora section of Dockerfile template.
+* Correct ANSIBLE_ROLES_PATH path component.
+* Allow re-run of prepare playbook. 
+
 2.3
 ===
 
