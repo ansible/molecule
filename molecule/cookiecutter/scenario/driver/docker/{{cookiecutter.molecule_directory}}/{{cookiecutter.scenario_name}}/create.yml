@@ -45,5 +45,6 @@
         privileged: "{{ item.privileged | default(omit) }}"
         volumes: "{{ item.volumes | default(omit) }}"
         capabilities: "{{ item.capabilities | default(omit) }}"
+        ports: "{{ item.exposed_ports | default(omit) }}"
       with_items: "{{ molecule_yml.platforms }}"
 {%- endraw %}
