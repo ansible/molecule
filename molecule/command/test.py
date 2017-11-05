@@ -89,7 +89,11 @@ class Test(base.Base):
     help=('The destroy strategy used at the conclusion of a '
           'Molecule run (never).'))
 def test(ctx, scenario_name, driver_name, __all, destroy):  # pragma: no cover
-    """ Test (destroy, create, converge, lint, verify, destroy). """
+    """
+    Test (lint, destroy, dependency, syntax, create, prepare, converge,
+          idempotence, side_effect, verify, destroy).
+    """
+
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
     command_args = {

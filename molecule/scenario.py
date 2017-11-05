@@ -59,6 +59,7 @@ class Scenario(object):
           destroy_sequence:
             - destroy
           test_sequence:
+            - lint
             - destroy
             - dependency
             - syntax
@@ -66,7 +67,6 @@ class Scenario(object):
             - prepare
             - converge
             - idempotence
-            - lint
             - side_effect
             - verify
             - destroy

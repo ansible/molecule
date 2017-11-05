@@ -84,6 +84,7 @@ def test_print_matrix(mocker, patched_logger_info, patched_logger_out,
 
     x = u"""
 ├── default
+│   ├── lint
 │   ├── destroy
 │   ├── dependency
 │   ├── syntax
@@ -91,11 +92,11 @@ def test_print_matrix(mocker, patched_logger_info, patched_logger_out,
 │   ├── prepare
 │   ├── converge
 │   ├── idempotence
-│   ├── lint
 │   ├── side_effect
 │   ├── verify
 │   └── destroy
 └── foo
+    ├── lint
     ├── destroy
     ├── dependency
     ├── syntax
@@ -103,7 +104,6 @@ def test_print_matrix(mocker, patched_logger_info, patched_logger_out,
     ├── prepare
     ├── converge
     ├── idempotence
-    ├── lint
     ├── side_effect
     ├── verify
     └── destroy
@@ -169,6 +169,7 @@ def test_get_matrix(scenarios_instance):
             'side_effect': ['side_effect'],
             'dependency': ['dependency'],
             'test': [
+                'lint',
                 'destroy',
                 'dependency',
                 'syntax',
@@ -176,7 +177,6 @@ def test_get_matrix(scenarios_instance):
                 'prepare',
                 'converge',
                 'idempotence',
-                'lint',
                 'side_effect',
                 'verify',
                 'destroy',
@@ -209,6 +209,7 @@ def test_get_matrix(scenarios_instance):
             'side_effect': ['side_effect'],
             'dependency': ['dependency'],
             'test': [
+                'lint',
                 'destroy',
                 'dependency',
                 'syntax',
@@ -216,7 +217,6 @@ def test_get_matrix(scenarios_instance):
                 'prepare',
                 'converge',
                 'idempotence',
-                'lint',
                 'side_effect',
                 'verify',
                 'destroy',

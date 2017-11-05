@@ -118,6 +118,7 @@ def test_syntax_sequence_property(scenario_instance):
 
 def test_test_sequence_property(scenario_instance):
     x = [
+        'lint',
         'destroy',
         'dependency',
         'syntax',
@@ -125,7 +126,6 @@ def test_test_sequence_property(scenario_instance):
         'prepare',
         'converge',
         'idempotence',
-        'lint',
         'side_effect',
         'verify',
         'destroy',
@@ -139,7 +139,7 @@ def test_verify_sequence_property(scenario_instance):
 
 
 def test_sequence_property(scenario_instance):
-    assert 'destroy' == scenario_instance.sequence[0]
+    assert 'lint' == scenario_instance.sequence[0]
 
 
 def test_sequence_property_with_invalid_subcommand(scenario_instance):
