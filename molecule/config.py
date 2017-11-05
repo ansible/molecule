@@ -334,6 +334,7 @@ class Config(object):
                     'destroy',
                 ],
                 'test_sequence': [
+                    'lint',
                     'destroy',
                     'dependency',
                     'syntax',
@@ -341,7 +342,6 @@ class Config(object):
                     'prepare',
                     'converge',
                     'idempotence',
-                    'lint',
                     'side_effect',
                     'verify',
                     'destroy',
