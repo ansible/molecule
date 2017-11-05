@@ -4,4 +4,4 @@
   tasks:
     - name: Dummy task
       command: /bin/true
-      changed_when: False
+      changed_when: false

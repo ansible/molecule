@@ -22,13 +22,13 @@ provisioner:
   inventory:
     host_vars:
       instance:
-        host_group_vars_host_molecule_yml: True
+        host_group_vars_host_molecule_yml: true
     group_vars:
       example:
-        host_group_vars_example_group_one_molecule_yml: True
-        host_group_vars_example_group_two_molecule_yml: True
+        host_group_vars_example_group_one_molecule_yml: true
+        host_group_vars_example_group_two_molecule_yml: true
       example_1:
-        host_group_vars_example_1_child_group_molecule_yml: True
+        host_group_vars_example_1_child_group_molecule_yml: true
   lint:
     name: ansible-lint
 scenario:

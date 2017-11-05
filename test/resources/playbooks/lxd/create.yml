@@ -2,7 +2,7 @@
 - name: Create
   hosts: localhost
   connection: local
-  gather_facts: False
+  gather_facts: false
   no_log: "{{ not lookup('env', 'MOLECULE_DEBUG') | bool }}"
   vars:
     molecule_file: "{{ lookup('env', 'MOLECULE_FILE') }}"
@@ -19,6 +19,6 @@
           protocol: lxd
           alias: ubuntu/xenial/amd64
         profiles: ["default"]
-        wait_for_ipv4_addresses: True
+        wait_for_ipv4_addresses: true
         timeout: 600
       with_items: "{{ molecule_yml.platforms }}"

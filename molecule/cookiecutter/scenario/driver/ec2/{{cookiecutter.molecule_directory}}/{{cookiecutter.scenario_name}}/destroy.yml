@@ -3,7 +3,7 @@
 - name: Destroy
   hosts: localhost
   connection: local
-  gather_facts: False
+  gather_facts: false
   no_log: "{{ not lookup('env', 'MOLECULE_DEBUG') | bool }}"
   vars:
     molecule_file: "{{ lookup('env', 'MOLECULE_FILE') }}"
@@ -14,12 +14,12 @@
         - name: Populate instance config
           set_fact:
             instance_conf: "{{ lookup('file', molecule_instance_config) | molecule_from_yaml }}"
-            skip_instances: False
+            skip_instances: false
       rescue:
         - name: Populate instance config when file missing
           set_fact:
             instance_conf: {}
-            skip_instances: True
+            skip_instances: true
 
     - name: Destroy molecule instance(s)
       ec2:

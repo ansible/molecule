@@ -11,7 +11,7 @@ platforms:
   - name: instance
     image: centos:latest
     command: /sbin/init
-    privileged: True
+    privileged: true
 provisioner:
   name: ansible
   playbooks:

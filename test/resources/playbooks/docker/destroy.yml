@@ -2,7 +2,7 @@
 - name: Destroy
   hosts: localhost
   connection: local
-  gather_facts: False
+  gather_facts: false
   no_log: "{{ not lookup('env', 'MOLECULE_DEBUG') | bool }}"
   vars:
     molecule_file: "{{ lookup('env', 'MOLECULE_FILE') }}"
@@ -12,5 +12,5 @@
       docker_container:
         name: "{{ item.name }}"
         state: absent
-        force_kill: "{{ item.force_kill | default(True) }}"
+        force_kill: "{{ item.force_kill | default(true) }}"
       with_items: "{{ molecule_yml.platforms }}"

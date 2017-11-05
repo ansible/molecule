@@ -13,7 +13,7 @@ platforms:
   - name: instance
     box: debian/jessie64
     interfaces:
-      - auto_config: True
+      - auto_config: true
         network_name: private_network
         type: dhcp
 provisioner:

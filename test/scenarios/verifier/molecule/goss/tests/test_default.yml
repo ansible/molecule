@@ -3,13 +3,13 @@
 ---
 file:
   /etc/molecule:
-    exists: True
+    exists: true
     owner: root
     group: root
     mode: "0755"
     filetype: directory
   /etc/molecule/instance:
-    exists: True
+    exists: true
     owner: root
     group: root
     mode: "0644"

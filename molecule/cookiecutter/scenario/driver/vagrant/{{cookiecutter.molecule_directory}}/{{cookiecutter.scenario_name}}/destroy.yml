@@ -3,7 +3,7 @@
 - name: Destroy
   hosts: localhost
   connection: local
-  gather_facts: False
+  gather_facts: false
   no_log: "{{ not lookup('env', 'MOLECULE_DEBUG') | bool }}"
   vars:
     molecule_file: "{{ lookup('env', 'MOLECULE_FILE') }}"
@@ -15,7 +15,7 @@
         instance_name: "{{ item.name }}"
         platform_box: "{{ item.box }}"
         provider_name: "{{ molecule_yml.driver.provider.name }}"
-        force_stop: "{{ item.force_stop | default(True) }}"
+        force_stop: "{{ item.force_stop | default(true) }}"
 
         state: destroy
       register: server

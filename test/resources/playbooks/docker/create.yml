@@ -2,7 +2,7 @@
 - name: Create
   hosts: localhost
   connection: local
-  gather_facts: False
+  gather_facts: false
   no_log: "{{ not lookup('env', 'MOLECULE_DEBUG') | bool }}"
   vars:
     molecule_file: "{{ lookup('env', 'MOLECULE_FILE') }}"
@@ -27,7 +27,7 @@
         path: "{{ molecule_ephemeral_directory }}"
         name: "molecule_local/{{ item.item.image }}"
         dockerfile: "{{ item.item.dockerfile | default(item.invocation.module_args.dest) }}"
-        force: "{{ item.item.force | default(True) }}"
+        force: "{{ item.item.force | default(true) }}"
       with_items: "{{ platforms.results }}"
       when: platforms.changed or docker_images.results | map(attribute='images') | select('equalto', []) | list | count >= 0
 
@@ -37,7 +37,7 @@
         hostname: "{{ item.name }}"
         image: "molecule_local/{{ item.image }}"
         state: started
-        recreate: False
+        recreate: false
         log_driver: syslog
         command: "{{ item.command | default('sleep infinity') }}"
         privileged: "{{ item.privileged | default(omit) }}"

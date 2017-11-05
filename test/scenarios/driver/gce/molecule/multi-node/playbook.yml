@@ -1,24 +1,24 @@
 ---
 - name: Converge
   hosts: all
-  become: True
+  become: true
   roles:
     - molecule
 
 - name: Converge
   hosts: bar
-  become: True
+  become: true
   roles:
     - molecule
 
 - name: Converge
   hosts: foo
-  become: True
+  become: true
   roles:
     - molecule
 
 - name: Converge
   hosts: baz
-  become: True
+  become: true
   roles:
     - molecule
