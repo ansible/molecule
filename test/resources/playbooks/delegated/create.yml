@@ -2,7 +2,7 @@
 - name: Create
   hosts: localhost
   connection: local
-  gather_facts: False
+  gather_facts: false
   tasks:
     - include: create/docker.yml
     - include: create/ec2.yml

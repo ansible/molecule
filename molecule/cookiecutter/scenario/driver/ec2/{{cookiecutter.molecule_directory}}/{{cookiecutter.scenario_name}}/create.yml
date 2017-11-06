@@ -3,7 +3,7 @@
 - name: Create
   hosts: localhost
   connection: local
-  gather_facts: False
+  gather_facts: false
   no_log: "{{ not lookup('env', 'MOLECULE_DEBUG') | bool }}"
   vars:
     molecule_file: "{{ lookup('env', 'MOLECULE_FILE') }}"
@@ -34,8 +34,8 @@
         group: "{{ security_group_name }}"
         instance_tags:
           instance: "{{ item.name }}"
-        wait: True
-        assign_public_ip: True
+        wait: true
+        assign_public_ip: true
         exact_count: 1
         count_tag:
           instance: "{{ item.name }}"

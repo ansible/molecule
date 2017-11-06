@@ -5,8 +5,8 @@ ansible:
   raw_env_vars:
     foo: bar
   extra_vars: foo=bar
-  verbose: True
-  become: True
+  verbose: true
+  become: true
   tags: foo,bar
 driver:
   name: vagrant

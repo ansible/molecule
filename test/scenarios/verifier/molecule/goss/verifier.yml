@@ -31,7 +31,7 @@
       command: "goss -g {{ item }} validate --format {{ goss_format }}"
       register: test_results
       with_items: "{{ test_files.stdout_lines }}"
-      ignore_errors: True
+      ignore_errors: true
 
     - name: Display details about the goss results
       debug:

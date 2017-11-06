@@ -4,7 +4,7 @@ dependency:
 driver:
   name: delegated
   options:
-    managed: False
+    managed: false
     login_cmd_template: 'ssh {instance} -F /tmp/ssh-config-openstack'
     ansible_connection_options:
       connection: ssh

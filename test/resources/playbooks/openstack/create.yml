@@ -2,7 +2,7 @@
 - name: Create
   hosts: localhost
   connection: local
-  gather_facts: False
+  gather_facts: false
   no_log: "{{ not lookup('env', 'MOLECULE_DEBUG') | bool }}"
   vars:
     molecule_file: "{{ lookup('env', 'MOLECULE_FILE') }}"
@@ -22,14 +22,14 @@
     neutron:
       networks:
         - name: molecule
-          external: False
-          shared: False
+          external: false
+          shared: false
       subnets:
         - name: molecule
           network_name: molecule
           ip_version: 4
           cidr: 192.168.1.0/24
-          enable_dhcp: True
+          enable_dhcp: true
           dns_nameservers:
             - 8.8.8.8
             - 8.8.4.4
