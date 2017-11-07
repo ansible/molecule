@@ -1,4 +1,5 @@
 ---
+{% raw -%}
 - name: Destroy
   hosts: localhost
   connection: local
@@ -11,24 +12,17 @@
 
     resource_group_name: molecule
   tasks:
-    - block:
-        - name: Populate instance config
-          set_fact:
-            instance_conf: "{{ lookup('file', molecule_instance_config) | molecule_from_yaml }}"
-            skip_instances: false
-      rescue:
-        - name: Populate instance config when file missing
-          set_fact:
-            instance_conf: {}
-            skip_instances: true
-
     - name: Destroy molecule instance(s)
-      ec2:
+      azure_rm_virtualmachine:
+        resource_group: "{{ resource_group_name }}"
+        name: "{{ item.name }}"
         state: absent
-        instance_ids: "{{ item.instance_ids }}"
+        remove_on_absent:
+          - network_interfaces
+          - virtual_storage
+          - public_ips
       register: server
-      with_items: "{{ instance_conf }}"
-      when: not skip_instances
+      with_items: "{{ molecule_yml.platforms }}"
 
     # Mandatory configuration for Molecule to function.
 
@@ -43,3 +37,4 @@
         content: "{{ instance_conf | to_json | from_json | molecule_to_yaml | molecule_header }}"
         dest: "{{ molecule_instance_config }}"
       when: server.changed | bool
+{%- endraw %}

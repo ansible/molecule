@@ -10,19 +10,30 @@
     molecule_instance_config: "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}"
     molecule_yml: "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
 
+    ssh_user: ubuntu
     ssh_port: 22
+
     security_group_name: molecule
     security_group_description: Security group for testing Molecule
     security_group_rules:
-      - { proto: 'tcp', from_port: "{{ ssh_port }}", to_port: "{{ ssh_port }}",
-          cidr_ip: '0.0.0.0/0' }
-      - { proto: 'icmp', from_port: 8, to_port: -1, cidr_ip: '0.0.0.0/0' }
+      - proto: tcp
+        from_port: "{{ ssh_port }}"
+        to_port: "{{ ssh_port }}"
+        cidr_ip: '0.0.0.0/0'
+      - proto: icmp
+        from_port: 8
+        to_port: -1
+        cidr_ip: '0.0.0.0/0'
     security_group_rules_egress:
-      - { proto: -1, from_port: 0, to_port: 0, cidr_ip: '0.0.0.0/0' }
+      - proto: -1
+        from_port: 0
+        to_port: 0
+        cidr_ip: '0.0.0.0/0'
+
     keypair_name: molecule_key
     keypair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
   tasks:
-    - include: security_groups.yml
+    - include: security_group.yml
     - include: keypair.yml
 
     - name: Create molecule instance(s)
@@ -49,7 +60,7 @@
         instance_conf_dict: {
           'instance': "{{ item.instances[0].tags.instance }}",
           'address': "{{ item.instances[0].public_ip }}",
-          'user': 'ubuntu',
+          'user': "{{ ssh_user }}",
           'port': "{{ ssh_port }}",
           'identity_file': "{{ keypair_path }}",
           'instance_ids': "{{ item.instance_ids }}", }

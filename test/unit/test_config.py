@@ -29,6 +29,7 @@ from molecule import state
 from molecule import util
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
+from molecule.driver import azure
 from molecule.driver import delegated
 from molecule.driver import docker
 from molecule.driver import ec2
@@ -124,16 +125,33 @@ def test_dependency_property_raises(molecule_dependency_invalid_section_data,
     patched_logger_critical.assert_called_once_with(msg)
 
 
+def test_driver_property(config_instance):
+    assert isinstance(config_instance.driver, docker.Docker)
+
+
+@pytest.fixture
+def molecule_driver_azure_section_data():
+    return {
+        'driver': {
+            'name': 'azure'
+        },
+    }
+
+
+def test_driver_property_is_azure(molecule_driver_azure_section_data,
+                                  config_instance):
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_driver_azure_section_data)
+
+    assert isinstance(config_instance.driver, azure.Azure)
+
+
 def test_driver_property_is_delegated(molecule_driver_delegated_section_data,
                                       config_instance):
     config_instance.merge_dicts(config_instance.config,
                                 molecule_driver_delegated_section_data)
 
     assert isinstance(config_instance.driver, delegated.Delegated)
-
-
-def test_driver_property(config_instance):
-    assert isinstance(config_instance.driver, docker.Docker)
 
 
 @pytest.fixture
@@ -262,6 +280,7 @@ def test_driver_property_raises(molecule_driver_invalid_section_data,
 
 def test_drivers_property(config_instance):
     x = [
+        'azure',
         'delegated',
         'docker',
         'ec2',
@@ -487,6 +506,7 @@ def test_molecule_file():
 
 def test_molecule_drivers():
     x = [
+        'azure',
         'delegated',
         'docker',
         'ec2',

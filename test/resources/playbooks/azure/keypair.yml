@@ -1,0 +1,7 @@
+---
+- name: Create keypair
+  user:
+    name: "{{ lookup('env', 'USER') }}"
+    generate_ssh_key: true
+    ssh_key_file: "{{ keypair_path }}"
+  register: keypair
