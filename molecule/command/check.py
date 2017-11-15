@@ -62,7 +62,8 @@ class Check(base.Base):
     help='Name of the scenario to target. (default)')
 def check(ctx, scenario_name):  # pragma: no cover
     """
-    Use the provisioner to perform a Dry-Run (create, converge, create).
+    Use the provisioner to perform a Dry-Run (destroy, dependency, create,
+    prepare, converge).
     """
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)

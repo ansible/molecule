@@ -70,7 +70,11 @@ class Converge(base.Base):
     help='Name of the scenario to target. (default)')
 @click.argument('ansible_args', nargs=-1, type=click.UNPROCESSED)
 def converge(ctx, scenario_name, ansible_args):  # pragma: no cover
-    """ Use the provisioner to configure instances (create, converge). """
+    """
+    Use the provisioner to configure instances (dependency, create, prepare
+    converge).
+    """
+
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
     command_args = {

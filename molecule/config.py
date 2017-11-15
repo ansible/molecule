@@ -315,6 +315,7 @@ class Config(object):
                 'default',
                 'check_sequence': [
                     'destroy',
+                    'dependency',
                     'create',
                     'prepare',
                     'converge',
@@ -322,6 +323,7 @@ class Config(object):
                     'destroy',
                 ],
                 'converge_sequence': [
+                    'dependency',
                     'create',
                     'prepare',
                     'converge',
