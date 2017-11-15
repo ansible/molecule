@@ -126,7 +126,7 @@ def test_command_create(scenario_to_test, with_scenario, scenario_name):
 
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
-        ('dependency', 'azure', 'default'),
+        ('dependency', 'azure', 'ansible-galaxy'),
         ('dependency', 'docker', 'ansible-galaxy'),
         ('dependency', 'ec2', 'ansible-galaxy'),
         ('dependency', 'gce', 'ansible-galaxy'),
@@ -153,7 +153,7 @@ def test_command_dependency_ansible_galaxy(scenario_to_test, with_scenario,
 
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
-        ('dependency', 'azure', 'default'),
+        ('dependency', 'azure', 'gilt'),
         ('dependency', 'docker', 'gilt'),
         ('dependency', 'ec2', 'gilt'),
         ('dependency', 'gce', 'gilt'),
