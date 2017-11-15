@@ -59,6 +59,7 @@ def test_ephemeral_directory_property(molecule_scenario_directory_fixture,
 def test_check_sequence_property(scenario_instance):
     x = [
         'destroy',
+        'dependency',
         'create',
         'prepare',
         'converge',
@@ -71,6 +72,7 @@ def test_check_sequence_property(scenario_instance):
 
 def test_converge_sequence_property(scenario_instance):
     x = [
+        'dependency',
         'create',
         'prepare',
         'converge',

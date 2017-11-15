@@ -148,12 +148,14 @@ def test_get_matrix(scenarios_instance):
             'idempotence': ['idempotence'],
             'syntax': ['syntax'],
             'converge': [
+                'dependency',
                 'create',
                 'prepare',
                 'converge',
             ],
             'check': [
                 'destroy',
+                'dependency',
                 'create',
                 'prepare',
                 'converge',
@@ -188,12 +190,14 @@ def test_get_matrix(scenarios_instance):
             'idempotence': ['idempotence'],
             'syntax': ['syntax'],
             'converge': [
+                'dependency',
                 'create',
                 'prepare',
                 'converge',
             ],
             'check': [
                 'destroy',
+                'dependency',
                 'create',
                 'prepare',
                 'converge',
