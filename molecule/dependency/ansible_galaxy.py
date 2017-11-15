@@ -43,6 +43,7 @@ class AnsibleGalaxy(base.Base):
           options:
             ignore-certs: True
             ignore-errors: True
+            role-file: requirements.yml
 
 
     The dependency manager can be disabled by setting `enabled` to False.
