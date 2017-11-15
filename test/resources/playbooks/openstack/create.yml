@@ -9,15 +9,22 @@
     molecule_instance_config: "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}"
     molecule_yml: "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
 
+    ssh_user: cloud-user
     ssh_port: 22
 
     security_group_name: molecule
     security_group_description: "Security group for testing Molecule"
     security_group_rules:
-      - { proto: 'tcp', port: "{{ ssh_port }}", cidr: '0.0.0.0/0' }
-      - { proto: 'icmp', port: -1, cidr: '0.0.0.0/0' }
-      - { ethertype: 'IPv4', group: "{{ security_group.id }}" }
-      - { ethertype: 'IPv6', group: "{{ security_group.id }}" }
+      - proto: tcp
+        port: "{{ ssh_port }}"
+        cidr: '0.0.0.0/0'
+      - proto: icmp
+        port: -1
+        cidr: '0.0.0.0/0'
+      - ethertype: IPv4
+        group: "{{ security_group.id }}"
+      - ethertype: IPv6
+        group: "{{ security_group.id }}"
 
     neutron:
       networks:
@@ -46,7 +53,7 @@
       image: Ubuntu-16.04
       flavor: NO-Nano
   tasks:
-    - include: security_groups.yml
+    - include: security_group.yml
     - include: keypair.yml
     - include: neutron.yml
 
@@ -70,7 +77,7 @@
         instance_conf_dict: {
           'instance': "{{ item.openstack.name }}",
           'address': "{{ item.openstack.accessIPv4 }}",
-          'user': 'cloud-user',
+          'user': "{{ ssh_user }}",
           'port': "{{ ssh_port }}",
           'identity_file': "{{ keypair_path }}", }
       with_items: "{{ server.results }}"

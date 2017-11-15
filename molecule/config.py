@@ -30,6 +30,7 @@ from molecule import state
 from molecule import util
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
+from molecule.driver import azure
 from molecule.driver import delegated
 from molecule.driver import docker
 from molecule.driver import ec2
@@ -124,7 +125,9 @@ class Config(object):
         driver_name = self._get_driver_name()
         driver = None
 
-        if driver_name == 'delegated':
+        if driver_name == 'azure':
+            driver = azure.Azure(self)
+        elif driver_name == 'delegated':
             driver = delegated.Delegated(self)
         elif driver_name == 'docker':
             driver = docker.Docker(self)
@@ -415,6 +418,7 @@ def molecule_file(path):
 
 def molecule_drivers():
     return [
+        azure.Azure(None).name,
         delegated.Delegated(None).name,
         docker.Docker(None).name,
         ec2.Ec2(None).name,

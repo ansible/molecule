@@ -44,6 +44,7 @@ def driver_name(request):
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
+        ('driver/azure', 'azure', 'default'),
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
@@ -70,6 +71,7 @@ def test_command_check(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
+        ('driver/azure', 'azure', 'default'),
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
@@ -97,6 +99,7 @@ def test_command_converge(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
+        ('driver/azure', 'azure', 'default'),
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
@@ -123,6 +126,7 @@ def test_command_create(scenario_to_test, with_scenario, scenario_name):
 
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
+        ('dependency', 'azure', 'ansible-galaxy'),
         ('dependency', 'docker', 'ansible-galaxy'),
         ('dependency', 'ec2', 'ansible-galaxy'),
         ('dependency', 'gce', 'ansible-galaxy'),
@@ -149,6 +153,7 @@ def test_command_dependency_ansible_galaxy(scenario_to_test, with_scenario,
 
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
+        ('dependency', 'azure', 'gilt'),
         ('dependency', 'docker', 'gilt'),
         ('dependency', 'ec2', 'gilt'),
         ('dependency', 'gce', 'gilt'),
@@ -176,6 +181,7 @@ def test_command_dependency_gilt(scenario_to_test, with_scenario,
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
+        ('driver/azure', 'azure', 'default'),
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
@@ -203,6 +209,7 @@ def test_command_destroy(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
+        ('driver/azure', 'azure', 'default'),
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
@@ -227,6 +234,7 @@ def test_command_idempotence(scenario_to_test, with_scenario, scenario_name):
 
 @pytest.mark.parametrize(
     'driver_name', [
+        ('azure'),
         ('docker'),
         ('ec2'),
         ('gce'),
@@ -244,6 +252,7 @@ def test_command_init_role(temp_dir, driver_name, skip_test):
 
 @pytest.mark.parametrize(
     'driver_name', [
+        ('azure'),
         ('docker'),
         ('ec2'),
         ('gce'),
@@ -262,6 +271,7 @@ def test_command_init_scenario(temp_dir, driver_name, skip_test):
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
+        ('driver/azure', 'azure', 'default'),
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
@@ -289,6 +299,14 @@ def test_command_lint(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, expected',
     [
+        ('driver/azure', 'azure', """
+
+Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    Converged
+---------------  -------------  ------------------  ---------------  ---------  -----------
+instance         Azure          Ansible             default          False      False
+instance-1       Azure          Ansible             multi-node       False      False
+instance-2       Azure          Ansible             multi-node       False      False
+""".strip()),  # noqa
         ('driver/docker', 'docker', """
 Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    Converged
 ---------------  -------------  ------------------  ---------------  ---------  -----------
@@ -358,6 +376,11 @@ def test_command_list(scenario_to_test, with_scenario, expected):
 
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, expected', [
+        ('driver/azure', 'azure', """
+instance    Azure  Ansible  default     False  False
+instance-1  Azure  Ansible  multi-node  False  False
+instance-2  Azure  Ansible  multi-node  False  False
+""".strip()),
         ('driver/docker', 'docker', """
 instance    Docker  Ansible  default     False  False
 instance-1  Docker  Ansible  multi-node  False  False
@@ -413,6 +436,17 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario,
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, login_args, scenario_name',
     [
+        ('driver/azure', 'azure', [[
+            'instance',
+            '.*instance.*',
+        ]], 'default'),
+        ('driver/azure', 'azure', [[
+            'instance-1',
+            '.*instance-1.*',
+        ], [
+            'instance-2',
+            '.*instance-2.*',
+        ]], 'multi-node'),
         ('driver/docker', 'docker', [[
             'instance',
             '.*instance.*',
@@ -500,6 +534,7 @@ def test_command_login(scenario_to_test, with_scenario, login_args,
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
+        ('driver/azure', 'azure', 'default'),
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
@@ -527,6 +562,7 @@ def test_command_prepare(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
+        ('driver/azure', 'azure', 'default'),
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
@@ -554,6 +590,7 @@ def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
+        ('driver/azure', 'azure', 'default'),
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
@@ -581,6 +618,7 @@ def test_command_syntax(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
+        ('driver/azure', 'azure', 'default'),
         ('driver/docker', 'docker', None),
         ('driver/ec2', 'ec2', None),
         ('driver/gce', 'gce', None),
@@ -607,6 +645,7 @@ def test_command_test(scenario_to_test, with_scenario, scenario_name,
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
+        ('driver/azure', 'azure', 'default'),
         ('driver/docker', 'docker', 'default'),
         ('driver/gce', 'gce', 'default'),
         ('driver/lxc', 'lxc', 'default'),

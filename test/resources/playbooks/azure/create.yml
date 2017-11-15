@@ -9,46 +9,39 @@
     molecule_instance_config: "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}"
     molecule_yml: "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
 
-    ssh_user: ubuntu
+    resource_group_name: molecule
+
+    location: westus
+
+    ssh_user: molecule
     ssh_port: 22
 
-    security_group_name: molecule
-    security_group_description: Security group for testing Molecule
-    security_group_rules:
-      - proto: tcp
-        from_port: "{{ ssh_port }}"
-        to_port: "{{ ssh_port }}"
-        cidr_ip: '0.0.0.0/0'
-      - proto: icmp
-        from_port: 8
-        to_port: -1
-        cidr_ip: '0.0.0.0/0'
-    security_group_rules_egress:
-      - proto: -1
-        from_port: 0
-        to_port: 0
-        cidr_ip: '0.0.0.0/0'
+    virtual_network_name: molecule_vnet
 
-    keypair_name: molecule_key
+    subnet_name: molecule_subnet
+
     keypair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
   tasks:
-    - include: security_group.yml
+    - include: resource_group.yml
+    - include: network.yml
     - include: keypair.yml
 
     - name: Create molecule instance(s)
-      ec2:
-        key_name: "{{ keypair_name }}"
-        image: "{{ item.image }}"
-        instance_type: "{{ item.instance_type }}"
-        vpc_subnet_id: "{{ item.vpc_subnet_id }}"
-        group: "{{ security_group_name }}"
-        instance_tags:
-          instance: "{{ item.name }}"
-        wait: true
-        assign_public_ip: true
-        exact_count: 1
-        count_tag:
-          instance: "{{ item.name }}"
+      azure_rm_virtualmachine:
+        resource_group: "{{ resource_group_name }}"
+        name: "{{ item.name }}"
+        vm_size: Standard_A0
+        admin_username: "{{ ssh_user }}"
+        public_ip_allocation_method: Dynamic
+        ssh_password_enabled: false
+        ssh_public_keys:
+          - path: "/home/{{ ssh_user }}/.ssh/authorized_keys"
+            key_data: "{{ keypair.ssh_public_key }}"
+        image:
+          offer: CentOS
+          publisher: OpenLogic
+          sku: '7.4'
+          version: latest
       register: server
       with_items: "{{ molecule_yml.platforms }}"
 
@@ -57,12 +50,11 @@
     - name: Populate instance config dict
       set_fact:
         instance_conf_dict: {
-          'instance': "{{ item.instances[0].tags.instance }}",
-          'address': "{{ item.instances[0].public_ip }}",
+          'instance': "{{ item.item.name }}",
+          'address': "{{ item.ansible_facts.azure_vm.properties.networkProfile.networkInterfaces[0].properties.ipConfigurations[0].properties.publicIPAddress.properties.ipAddress }}",
           'user': "{{ ssh_user }}",
           'port': "{{ ssh_port }}",
-          'identity_file': "{{ keypair_path }}",
-          'instance_ids': "{{ item.instance_ids }}", }
+          'identity_file': "{{ keypair_path }}", }
       with_items: "{{ server.results }}"
       register: instance_config_dict
       when: server.changed | bool
@@ -86,9 +78,4 @@
         host: "{{ item.address }}"
         search_regex: SSH
         delay: 10
-        timeout: 320
       with_items: "{{ lookup('file', molecule_instance_config) | molecule_from_yaml }}"
-
-    - name: Wait for boot process to finish
-      pause:
-        minutes: 2

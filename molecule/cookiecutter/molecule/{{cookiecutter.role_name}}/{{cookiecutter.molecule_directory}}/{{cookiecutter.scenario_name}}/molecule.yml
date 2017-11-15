@@ -10,7 +10,9 @@ driver:
 lint:
   name: {{ cookiecutter.lint_name }}
 platforms:
-{%- if cookiecutter.driver_name == 'docker' %}
+{%- if cookiecutter.driver_name == 'azure' %}
+  - name: instance
+{%- elif cookiecutter.driver_name == 'docker' %}
   - name: instance
     image: centos:7
 {%- elif cookiecutter.driver_name == 'ec2' %}

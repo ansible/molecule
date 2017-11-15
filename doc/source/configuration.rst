@@ -51,6 +51,12 @@ instances are destroyed by Molecule.
 
 .. _`Ansible`: https://docs.ansible.com
 
+Azure
+^^^^^
+
+.. autoclass:: molecule.driver.azure.Azure()
+   :undoc-members:
+
 Delegated
 ^^^^^^^^^
 
