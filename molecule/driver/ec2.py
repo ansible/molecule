@@ -55,6 +55,7 @@ class Ec2(base.Base):
     .. code-block:: bash
 
         $ sudo pip install boto
+        $ sudo pip install boto3
 
     Change the options passed to the ssh client.
 

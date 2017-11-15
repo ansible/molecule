@@ -29,6 +29,9 @@
       register: server
       with_items: "{{ molecule_yml.platforms }}"
 
+    # NOTE(retr0h): Vagrant/VBox sucks and parallelizing instance creation
+    # causes issues.
+
     # Mandatory configuration for Molecule to function.
 
     - name: Populate instance config dict
