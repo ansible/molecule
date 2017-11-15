@@ -42,12 +42,6 @@ class Azure(base.Base):
           name: azure
         platforms:
           - name: instance
-            image: "{{ item.image }}"
-            flavor: "{{ item.flavor }}"
-            security_groups: "{{ security_group_name }}"
-            key_name: "{{ keypair_name }}"
-            nics:
-              - net-id: "{{ openstack_networks[0]['id'] }}"
 
     .. code-block:: bash
 
