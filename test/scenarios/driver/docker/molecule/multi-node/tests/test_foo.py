@@ -8,7 +8,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 
 
 def test_hostname(host):
-    assert re.search(r'instance-[12]', host.system_info.hostname)
+    assert re.search(r'instance-[12]', host.check_output('hostname -s'))
 
 
 def test_etc_molecule_directory(host):
@@ -21,7 +21,7 @@ def test_etc_molecule_directory(host):
 
 
 def test_etc_molecule_ansible_hostname_file(host):
-    filename = '/etc/molecule/{}'.format(host.system_info.hostname)
+    filename = '/etc/molecule/{}'.format(host.check_output('hostname -s'))
     f = host.file(filename)
 
     assert f.is_file

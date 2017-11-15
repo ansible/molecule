@@ -7,7 +7,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 
 
 def test_hostname(host):
-    assert 'delegated-instance-vagrant' == host.system_info.hostname
+    assert 'delegated-instance-vagrant' == host.check_output('hostname -s')
 
 
 def test_etc_molecule_directory(host):
