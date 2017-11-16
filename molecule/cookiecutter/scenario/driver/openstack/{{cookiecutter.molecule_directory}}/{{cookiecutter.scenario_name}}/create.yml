@@ -53,6 +53,16 @@
           - net-id: "{{ openstack_networks[0]['id'] }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
+      async: 7200
+      poll: 0
+
+    - name: Wait for instance(s) creation to complete
+      async_status:
+        jid: "{{ item.ansible_job_id }}"
+      register: os_jobs
+      until: os_jobs.finished
+      retries: 300
+      with_items: "{{ server.results }}"
 
     # Mandatory configuration for Molecule to function.
 
@@ -64,7 +74,7 @@
           'user': "{{ ssh_user }}",
           'port': "{{ ssh_port }}",
           'identity_file': "{{ keypair_path }}", }
-      with_items: "{{ server.results }}"
+      with_items: "{{ os_jobs.results }}"
       register: instance_config_dict
       when: server.changed | bool
 

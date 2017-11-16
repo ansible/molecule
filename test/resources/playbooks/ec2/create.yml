@@ -51,6 +51,16 @@
           instance: "{{ item.name }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
+      async: 7200
+      poll: 0
+
+    - name: Wait for instance(s) creation to complete
+      async_status:
+        jid: "{{ item.ansible_job_id }}"
+      register: ec2_jobs
+      until: ec2_jobs.finished
+      retries: 300
+      with_items: "{{ server.results }}"
 
     # Mandatory configuration for Molecule to function.
 
@@ -63,7 +73,7 @@
           'port': "{{ ssh_port }}",
           'identity_file': "{{ keypair_path }}",
           'instance_ids': "{{ item.instance_ids }}", }
-      with_items: "{{ server.results }}"
+      with_items: "{{ ec2_jobs.results }}"
       register: instance_config_dict
       when: server.changed | bool
 

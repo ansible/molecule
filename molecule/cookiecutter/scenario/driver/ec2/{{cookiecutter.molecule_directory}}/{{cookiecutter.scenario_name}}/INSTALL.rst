@@ -6,7 +6,7 @@ Requirements
 ============
 
 * An AWS credentials rc file
-* boto
+* boto or boto3
 
 Install
 =======
@@ -14,3 +14,4 @@ Install
 .. code-block:: bash
 
   $ sudo pip install boto
+  $ sudo pip install boto3

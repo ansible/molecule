@@ -24,6 +24,16 @@
         project_id: "{{ lookup('env', 'GCE_PROJECT_ID') }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
+      async: 7200
+      poll: 0
+
+    - name: Wait for instance(s) creation to complete
+      async_status:
+        jid: "{{ item.ansible_job_id }}"
+      register: gce_jobs
+      until: gce_jobs.finished
+      retries: 300
+      with_items: "{{ server.results }}"
 
     # Mandatory configuration for Molecule to function.
 
@@ -35,7 +45,7 @@
           'user': "{{ ssh_user }}",
           'port': "{{ ssh_port }}",
           'identity_file': "{{ ssh_identity_file }}", }
-      with_items: "{{ server.results }}"
+      with_items: "{{ gce_jobs.results }}"
       register: instance_config_dict
       when: server.changed | bool
 

@@ -1,6 +1,7 @@
 apache-libcloud
-azure
+ansible[azure]
 boto
+boto3
 docker-py
 # lxc-python2
 mock
