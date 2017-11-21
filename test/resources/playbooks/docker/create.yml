@@ -39,7 +39,7 @@
         state: started
         recreate: false
         log_driver: syslog
-        command: "{{ item.command | default('bash -c \"while true; do sleep 10000; done\"') }}"
+        command: "{{ item.command | default('sh -c \"while true; do sleep 10000; done\"') }}"
         privileged: "{{ item.privileged | default(omit) }}"
         volumes: "{{ item.volumes | default(omit) }}"
         capabilities: "{{ item.capabilities | default(omit) }}"
