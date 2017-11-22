@@ -51,6 +51,10 @@ class Test(base.Base):
 
     >>> molecule --debug test
 
+    Executing with `sudo`:
+
+    >>> molecule --sudo test
+
     Always destroy instances at the conclusion of a Molecule run:
 
     >>> molecule test --destroy=always

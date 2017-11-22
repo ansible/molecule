@@ -40,6 +40,10 @@ class Lint(base.Base):
     Executing with `debug`:
 
     >>> molecule --debug lint
+
+    Executing with `sudo`:
+
+    >>> molecule --sudo lint
     """
 
     def execute(self):

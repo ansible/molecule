@@ -43,6 +43,10 @@ class Idempotence(base.Base):
     Executing with `debug`:
 
     >>> molecule --debug idempotence
+
+    Executing with `sudo`:
+
+    >>> molecule --sudo idempotence
     """
 
     def execute(self):

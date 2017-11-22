@@ -40,6 +40,10 @@ class Check(base.Base):
     Executing with `debug`:
 
     >>> molecule --debug check
+
+    Executing with `sudo`:
+
+    >>> molecule --sudo check
     """
 
     def execute(self):

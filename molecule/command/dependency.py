@@ -40,6 +40,10 @@ class Dependency(base.Base):
     Executing with `debug`:
 
     >>> molecule --debug dependency
+
+    Executing with `sudo`:
+
+    >>> molecule --sudo dependency
     """
 
     def execute(self):

@@ -45,6 +45,10 @@ class Create(base.Base):
     Executing with `debug`:
 
     >>> molecule --debug create
+
+    Executing with `sudo`:
+
+    >>> molecule --sudo create
     """
 
     def execute(self):

@@ -95,6 +95,10 @@ class Config(object):
         return self.args.get('debug', False)
 
     @property
+    def sudo_password(self):
+        return self.args.get('sudo_password', str())
+
+    @property
     def subcommand(self):
         return self.command_args['subcommand']
 
@@ -169,6 +173,7 @@ class Config(object):
             'MOLECULE_PROVISIONER_NAME': self.provisioner.name,
             'MOLECULE_SCENARIO_NAME': self.scenario.name,
             'MOLECULE_VERIFIER_NAME': self.verifier.name,
+            'MOLECULE_SUDO_PASSWORD': self.sudo_password,
         }
 
     @property

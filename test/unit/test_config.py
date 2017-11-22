@@ -62,6 +62,10 @@ def test_debug_property(config_instance):
     assert not config_instance.debug
 
 
+def test_sudo_password_property(config_instance):
+    assert not config_instance.sudo_password
+
+
 def test_subcommand_property(config_instance):
     assert 'test' == config_instance.subcommand
 
@@ -307,7 +311,8 @@ def test_env(config_instance):
         'MOLECULE_LINT_NAME': 'yamllint',
         'MOLECULE_PROVISIONER_NAME': 'ansible',
         'MOLECULE_SCENARIO_NAME': 'default',
-        'MOLECULE_VERIFIER_NAME': 'testinfra'
+        'MOLECULE_VERIFIER_NAME': 'testinfra',
+        'MOLECULE_SUDO_PASSWORD': '',
     }
 
     assert x == config_instance.env
