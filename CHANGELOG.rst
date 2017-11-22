@@ -10,6 +10,20 @@ functionality in a backwards-compatible manner.
 
 .. _`Semantic Versioning`: http://semver.org
 
+2.5
+===
+
+* Ignore provisioner.options when in the create/destroy provisioner.
+* Switched Docker driver to a portable default command.
+* Parallel instance management.
+* Added Azure driver.
+* Corrected testinfra SystemInfo tests.
+* Execute `dependency` on check and converge sequence.
+* Updated Docs usage of dependency role-file instead of requirements_file.
+* Cleaned up YAML syntax.
+* Execute linting first in test sequence.
+* Support expose_ports option in docker driver.
+
 2.4
 ===
 
