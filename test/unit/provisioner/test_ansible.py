@@ -189,6 +189,13 @@ def test_options_property(ansible_instance):
     assert x == ansible_instance.options
 
 
+def test_options_property_does_not_merge(ansible_instance):
+    for subcommand in ['create', 'destroy']:
+        ansible_instance._config.command_args = {'subcommand': subcommand}
+
+        assert {} == ansible_instance.options
+
+
 def test_options_property_handles_cli_args(ansible_instance):
     ansible_instance._config.args = {'debug': True}
 
