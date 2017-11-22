@@ -64,6 +64,10 @@ class Ansible(base.Base):
     Additional options can be passed to `ansible-playbook` through the options
     dict.  Any option set in this section will override the defaults.
 
+    .. important::
+
+        Options do not affect the create and destroy actions.
+
     .. code-block:: yaml
 
         provisioner:
@@ -135,7 +139,7 @@ class Ansible(base.Base):
 
     This can be used to bring instances into a particular state, prior to
     testing.
-    
+
     .. code-block:: yaml
 
         provisioner:
@@ -333,6 +337,8 @@ class Ansible(base.Base):
 
     @property
     def options(self):
+        if self._config.subcommand in ['create', 'destroy']:
+            return self.default_options
         return self._config.merge_dicts(
             self.default_options,
             self._config.config['provisioner']['options'])
