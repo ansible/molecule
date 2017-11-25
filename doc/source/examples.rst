@@ -60,7 +60,47 @@ project.
 
 .. code-block:: yaml
 
-  provisioner:
-    name: ansible
-    env:
-      ANSIBLE_$VAR: $VALUE
+    provisioner:
+      name: ansible
+      env:
+        ANSIBLE_$VAR: $VALUE
+
+Systemd Container
+=================
+
+The docker daemon was designed to provide a simple means of starting, stopping
+and managing containers. It was not originally designed to bring up an entire
+Linux system or manage services for such things as start-up order, dependency
+checking, and failed service recovery. [1]_
+
+To start a service which requires systemd, configure `molecule.yml` with a
+systemd compliant image, capabilities, volumes, and command as follows.
+
+.. code-block:: bash
+
+    platforms:
+      - name: instance
+        image: solita/ubuntu-systemd:latest
+        command: /sbin/init
+        capabilities:
+          - SYS_ADMIN
+        volumes:
+          - /sys/fs/cgroup:/sys/fs/cgroup:ro
+
+The developer can also opt to start the container with extended privileges.
+
+.. important::
+
+    Use caution when using `privileged` mode. [2]_ [3]_
+
+.. code-block:: bash
+
+    platforms:
+      - name: instance
+        image: solita/ubuntu-systemd:latest
+        privileged: True
+        command: /sbin/init
+
+.. [1] https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html/managing_containers/using_systemd_with_containers
+.. [2] https://blog.docker.com/2013/09/docker-can-now-run-within-docker/
+.. [3] https://groups.google.com/forum/#!topic/docker-user/RWLHyzg6Z78
