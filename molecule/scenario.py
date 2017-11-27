@@ -24,7 +24,10 @@ from molecule import logger
 from molecule import scenarios
 
 LOG = logger.get_logger(__name__)
-MOLECULE_EPHEMERAL_DIRECTORY = '.molecule'
+if os.getenv('MOLECULE_EPHEMERAL_DIRECTORY') is not None:
+    MOLECULE_EPHEMERAL_DIRECTORY = os.getenv('MOLECULE_EPHEMERAL_DIRECTORY')
+else:
+    MOLECULE_EPHEMERAL_DIRECTORY = '.molecule'
 
 
 class Scenario(object):
