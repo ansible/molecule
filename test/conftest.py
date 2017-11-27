@@ -27,6 +27,7 @@ import string
 import pytest
 
 from molecule import config
+from molecule import scenario
 
 logging.getLogger('sh').setLevel(logging.WARNING)
 
@@ -57,23 +58,48 @@ def molecule_project_directory():
 
 
 @pytest.helpers.register
+def molecule_directory_envvar(monkeypatch):
+    monkeypatch.setenv('MOLECULE_EPHEMERAL_DIRECTORY', '.molecule-osenv')
+    return config.molecule_directory(molecule_project_directory())
+
+@pytest.helpers.register
 def molecule_directory():
     return config.molecule_directory(molecule_project_directory())
 
 
 @pytest.helpers.register
+def molecule_scenario_directory_envvar(monkeypatch):
+    monkeypatch.setenv('MOLECULE_EPHEMERAL_DIRECTORY', '.molecule-osenv')
+    reload(config)
+    return os.path.join(molecule_directory_envvar(monkeypatch), 'default')
+
+@pytest.helpers.register
 def molecule_scenario_directory():
     return os.path.join(molecule_directory(), 'default')
 
+@pytest.helpers.register
+def molecule_file_envvar(monkeypatch):
+    monkeypatch.setenv('MOLECULE_EPHEMERAL_DIRECTORY', '.molecule-osenv')
+    return get_molecule_file_envvar(molecule_scenario_directory_envvar(monkeypatch), monkeypatch)
 
 @pytest.helpers.register
 def molecule_file():
     return get_molecule_file(molecule_scenario_directory())
 
+@pytest.helpers.register
+def get_molecule_file_envvar(path, monkeypatch):
+    monkeypatch.setenv('MOLECULE_EPHEMERAL_DIRECTORY', '.molecule-osenv')
+    return config.molecule_file_envvar(path, monkeypatch)
 
 @pytest.helpers.register
 def get_molecule_file(path):
     return config.molecule_file(path)
+
+@pytest.helpers.register
+def molecule_ephemeral_directory_envvar(monkeypatch):
+    monkeypatch.setenv('MOLECULE_EPHEMERAL_DIRECTORY', '.molecule-osenv')
+    reload(config)
+    return os.path.join(molecule_scenario_directory_envvar(monkeypatch), os.getenv('MOLECULE_EPHEMERAL_DIRECTORY'))
 
 
 @pytest.helpers.register

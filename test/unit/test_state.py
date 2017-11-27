@@ -26,11 +26,21 @@ from molecule import config
 from molecule import state
 from molecule import util
 
+@pytest.fixture
+def state_instance_envvar(config_instance_envvar):
+    return state.State(config_instance_envvar)
+
 
 @pytest.fixture
 def state_instance(config_instance):
     return state.State(config_instance)
 
+
+def test_state_file_property_envvar(state_instance_envvar):
+    x = os.path.join(state_instance_envvar._config.scenario.ephemeral_directory,
+                     'state.yml')
+
+    assert x == state_instance_envvar.state_file
 
 def test_state_file_property(state_instance):
     x = os.path.join(state_instance._config.scenario.ephemeral_directory,
@@ -114,6 +124,7 @@ def test_get_data_loads_existing_state_file(temp_dir, molecule_data):
     ephemeral_directory = pytest.helpers.molecule_ephemeral_directory()
     state_file = os.path.join(ephemeral_directory, 'state.yml')
 
+    
     os.makedirs(ephemeral_directory)
 
     data = {

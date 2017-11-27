@@ -66,8 +66,14 @@ def test_subcommand_property(config_instance):
     assert 'test' == config_instance.subcommand
 
 
+def test_ephemeral_directory_envvar_property(config_instance_envvar, monkeypatch):
+    x = pytest.helpers.molecule_ephemeral_directory_envvar(monkeypatch)
+
+    assert x == config_instance_envvar.ephemeral_directory
+
+
 def test_ephemeral_directory_property(config_instance):
-    x = os.path.join(pytest.helpers.molecule_ephemeral_directory())
+    x = pytest.helpers.molecule_ephemeral_directory()
 
     assert x == config_instance.ephemeral_directory
 
@@ -292,6 +298,26 @@ def test_drivers_property(config_instance):
     ]
 
     assert x == config_instance.drivers
+
+def test_env_envvar(config_instance_envvar):
+
+    x = {
+        'MOLECULE_DEBUG': 'False',
+        'MOLECULE_FILE': config_instance_envvar.molecule_file,
+        'MOLECULE_INVENTORY_FILE': config_instance_envvar.provisioner.inventory_file,
+        'MOLECULE_EPHEMERAL_DIRECTORY': config_instance_envvar.ephemeral_directory,
+        'MOLECULE_SCENARIO_DIRECTORY': config_instance_envvar.scenario.directory,
+        'MOLECULE_INSTANCE_CONFIG': config_instance_envvar.driver.instance_config,
+        'MOLECULE_DEPENDENCY_NAME': 'galaxy',
+        'MOLECULE_DRIVER_NAME': 'docker',
+        'MOLECULE_LINT_NAME': 'yamllint',
+        'MOLECULE_PROVISIONER_NAME': 'ansible',
+        'MOLECULE_SCENARIO_NAME': 'default',
+        'MOLECULE_VERIFIER_NAME': 'testinfra'
+    }
+
+    assert x == config_instance_envvar.env
+
 
 
 def test_env(config_instance):
