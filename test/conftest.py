@@ -70,7 +70,6 @@ def molecule_directory():
 @pytest.helpers.register
 def molecule_scenario_directory_envvar(monkeypatch):
     monkeypatch.setenv('MOLECULE_EPHEMERAL_DIRECTORY', '.molecule-osenv')
-    reload(config)
     return os.path.join(molecule_directory_envvar(monkeypatch), 'default')
 
 @pytest.helpers.register
@@ -98,12 +97,13 @@ def get_molecule_file(path):
 @pytest.helpers.register
 def molecule_ephemeral_directory_envvar(monkeypatch):
     monkeypatch.setenv('MOLECULE_EPHEMERAL_DIRECTORY', '.molecule-osenv')
-    reload(config)
+    reload(scenario)
     return os.path.join(molecule_scenario_directory_envvar(monkeypatch), os.getenv('MOLECULE_EPHEMERAL_DIRECTORY'))
 
 
 @pytest.helpers.register
 def molecule_ephemeral_directory():
+    reload(scenario)
     return os.path.join(molecule_scenario_directory(), '.molecule')
 
 

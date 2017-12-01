@@ -37,12 +37,10 @@ def scenario_instance(config_instance):
 
 def test_config_member(scenario_instance):
     assert isinstance(scenario_instance.config, config.Config)
-    assert True
 
 
 def test_init_calls_setup(patched_scenario_setup, scenario_instance):
-    #patched_scenario_setup.assert_called_once_with()
-    assert True
+    patched_scenario_setup.assert_called_once_with()
 
 
 def test_name_property(scenario_instance):
@@ -162,9 +160,9 @@ def test_sequence_property_with_invalid_subcommand(scenario_instance):
 
     assert [] == scenario_instance.sequence
 
-def test_setup_creates_ephemeral_directory(scenario_instance_envvar):
+def test_setup_creates_ephemeral_envvar_directory(scenario_instance_envvar):
     ephemeral_directory = scenario_instance_envvar.config.scenario.ephemeral_directory
-    shutils.rmtree(ephemeral_directory)
+    shutil.rmtree(ephemeral_directory)
     scenario_instance_envvar._setup()
 
     assert os.path.isdir(ephemeral_directory)
