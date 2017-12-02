@@ -156,14 +156,6 @@ def molecule_directory_fixture(temp_dir):
 
 
 @pytest.fixture
-def molecule_scenario_directory_envvar_fixture(molecule_directory_fixture, monkeypatch):
-    path = pytest.helpers.molecule_scenario_directory_envvar(monkeypatch)
-    if not os.path.isdir(path):
-        os.makedirs(path)
-
-    return path
-
-@pytest.fixture
 def molecule_scenario_directory_fixture(molecule_directory_fixture):
     path = pytest.helpers.molecule_scenario_directory()
     if not os.path.isdir(path):
@@ -173,22 +165,10 @@ def molecule_scenario_directory_fixture(molecule_directory_fixture):
 
 
 @pytest.fixture
-def molecule_ephemeral_directory_envvar_fixture(molecule_scenario_directory_fixture, monkeypatch):
-    path = pytest.helpers.molecule_ephemeral_directory_envvar(monkeypatch)
-    if not os.path.isdir(path):
-        os.makedirs(path)
-
-@pytest.fixture
 def molecule_ephemeral_directory_fixture(molecule_scenario_directory_fixture):
     path = pytest.helpers.molecule_ephemeral_directory()
     if not os.path.isdir(path):
         os.makedirs(path)
-
-
-@pytest.fixture
-def molecule_file_envvar_fixture(molecule_scenario_directory_fixture,
-                          molecule_ephemeral_directory_envvar_fixture):
-    return pytest.helpers.molecule_file()
 
 
 @pytest.fixture
@@ -198,16 +178,7 @@ def molecule_file_fixture(molecule_scenario_directory_fixture,
 
 
 @pytest.fixture
-def config_instance_envvar(molecule_file_envvar_fixture, molecule_data, monkeypatch):
-    monkeypatch.setenv('MOLECULE_EPHEMERAL_DIRECTORY', '.molecule-osenv')
-    pytest.helpers.write_molecule_file(molecule_file_envvar_fixture, molecule_data)
-    c = config.Config(molecule_file_envvar_fixture)
-    c.command_args = {'subcommand': 'test'}
-    
-    return c
-
-@pytest.fixture
-def config_instance(molecule_file_fixture, molecule_data, monkeypatch):
+def config_instance(molecule_file_fixture, molecule_data):
     pytest.helpers.write_molecule_file(molecule_file_fixture, molecule_data)
     c = config.Config(molecule_file_fixture)
     c.command_args = {'subcommand': 'test'}

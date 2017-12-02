@@ -51,7 +51,6 @@ MOLECULE_FILE = 'molecule.yml'
 MERGE_STRATEGY = anyconfig.MS_DICTS
 
 
-
 class Config(object):
     """
     Molecule searches the current directory for `molecule.yml` files by
@@ -102,7 +101,8 @@ class Config(object):
     @property
     def ephemeral_directory(self):
         if os.getenv('MOLECULE_EPHEMERAL_DIRECTORY'):
-            return os.path.join(self.scenario.directory, os.getenv('MOLECULE_EPHEMERAL_DIRECTORY'))
+            return os.path.join(self.scenario.directory,
+                                os.getenv('MOLECULE_EPHEMERAL_DIRECTORY'))
         else:
             return os.path.join(self.scenario.directory, '.molecule')
 
