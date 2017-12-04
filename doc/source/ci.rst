@@ -82,66 +82,60 @@ use of multiple CPUs. Detox will run tox environment tests in parallel.
 
 Detox takes the same arguments and configuration as tox, however Molecule must
 be made aware of the parallel testing by setting a MOLECULE_EPHEMERAL_DIRECTORY
-environment variable per environment. 
+environment variable per environment.
 
 .. code-block:: ini
 
-   [tox]
-   minversion = 1.8
-   envlist = py{27}_ansible{23,24}
-   skipsdist = true
-   
-   [testenv]
-   deps = 
-       -rrequirements.txt
-       ansible23: ansible==2.3
-       ansible24: ansible==2.4
-   commands =
-       molecule test
-   setenv = 
-       MOLECULE_EPHEMERAL_DIRECTORY={envname}
-       MOLECULE_ENVNAME={envname}
+    [tox]
+    minversion = 1.8
+    envlist = py{27}_ansible{23,24}
+    skipsdist = true
 
-If you are utilizing the Openstack driver you will have to make sure that your ``envname`` variable
-does not contain any invalid characters, particularly ``-``
+    [testenv]
+    deps =
+        -rrequirements.txt
+        ansible23: ansible==2.3
+        ansible24: ansible==2.4
+    commands =
+        molecule test
+    setenv =
+        MOLECULE_EPHEMERAL_DIRECTORY={envname}
+        MOLECULE_ENVNAME={envname}
 
-You also must include the MOLECULE_EPHEMERAL_DIRECTORY variable in the ``molecule.yml`` configuration file
+If you are utilizing the Openstack driver you will have to make sure that your
+``envname`` variable does not contain any invalid characters, particularly
+``-``.
+
+You also must include the MOLECULE_EPHEMERAL_DIRECTORY variable in the
+``molecule.yml`` configuration file.
 
 .. code-block:: yaml
 
-   ---
-   dependency:
-     name: galaxy
-   driver:
-     name: docker
-   lint:
-     name: yamllint
-   platforms:
-     - name: database-$MOLECULE_EPHEMERAL_DIRECTORY
-       image: mariadb
-       environment:
-         MYSQL_ROOT_PASSWORD: install
-         MYSQL_USER: keystone
-         MYSQL_PASSWORD: test
-         MYSQL_DATABASE: keystone
-       groups:
-         - database
-     - name: keystone-$MOLECULE_EPHEMERAL_DIRECTORY
-       image: retr0h/centos7-systemd-ansible:latest
-       privileged: True
-       command: /usr/sbin/init
-       groups:
-         - keystone-hosts
-   provisioner:
-     name: ansible
-     lint:
-       name: ansible-lint
-   scenario:
-     name: default
-   verifier:
-     name: testinfra
-     lint:
-       name: flake8
+    ---
+    dependency:
+      name: galaxy
+    driver:
+      name: docker
+    lint:
+      name: yamllint
+    platforms:
+      - name: instance1-$MOLECULE_EPHEMERAL_DIRECTORY
+        image: mariadb
+      - name: instance2-$MOLECULE_EPHEMERAL_DIRECTORY
+        image: retr0h/centos7-systemd-ansible:latest
+        privileged: True
+        command: /usr/sbin/init
+    provisioner:
+      name: ansible
+      lint:
+        name: ansible-lint
+    scenario:
+      name: default
+    verifier:
+      name: testinfra
+      lint:
+        name: flake8
+
 .. _`Factors`: http://tox.readthedocs.io/en/latest/config.html#factors-and-factor-conditional-settings
 .. _`Travis`: https://travis-ci.org/
 .. _`Tox`: https://tox.readthedocs.io/en/lates

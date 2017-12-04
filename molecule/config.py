@@ -99,14 +99,6 @@ class Config(object):
         return self.command_args['subcommand']
 
     @property
-    def ephemeral_directory(self):
-        if os.getenv('MOLECULE_EPHEMERAL_DIRECTORY'):
-            return os.path.join(self.scenario.directory,
-                                os.getenv('MOLECULE_EPHEMERAL_DIRECTORY'))
-        else:
-            return os.path.join(self.scenario.directory, '.molecule')
-
-    @property
     def project_directory(self):
         return os.getcwd()
 
