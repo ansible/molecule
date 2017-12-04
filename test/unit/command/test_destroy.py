@@ -39,7 +39,23 @@ def test_execute(mocker, patched_destroy_prune, patched_logger_info,
     assert not config_instance.state.created
 
 
-def test_execute_skips_when_manual_driver(
+def test_execute_skips_when_destroy_strategy_is_never(
+        patched_destroy_setup, molecule_driver_delegated_section_data,
+        patched_logger_warn, patched_ansible_destroy, config_instance):
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_driver_delegated_section_data)
+    config_instance.command_args = {'destroy': 'never'}
+
+    d = destroy.Destroy(config_instance)
+    d.execute()
+
+    msg = "Skipping, '--destroy=never' requested."
+    patched_logger_warn.assert_called_once_with(msg)
+
+    assert not patched_ansible_destroy.called
+
+
+def test_execute_skips_when_delegated_driver(
         patched_destroy_setup, molecule_driver_delegated_section_data,
         patched_logger_warn, patched_ansible_destroy, config_instance):
     config_instance.merge_dicts(config_instance.config,

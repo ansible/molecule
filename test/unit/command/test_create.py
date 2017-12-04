@@ -39,7 +39,7 @@ def test_execute(mocker, patched_logger_info, patched_ansible_create,
     assert config_instance.state.created
 
 
-def test_execute_skips_when_manual_driver(
+def test_execute_skips_when_delegated_driver(
         patched_create_setup, molecule_driver_delegated_section_data,
         patched_logger_warn, patched_ansible_create, config_instance):
     config_instance.merge_dicts(config_instance.config,
