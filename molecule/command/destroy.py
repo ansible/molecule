@@ -62,7 +62,7 @@ class Destroy(base.Base):
         self.prune()
 
         if self._config.command_args.get('destroy') == 'never':
-            msg = "Skipping, '--destroy=never' requested"
+            msg = "Skipping, '--destroy=never' requested."
             LOG.warn(msg)
             return
 
