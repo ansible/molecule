@@ -97,6 +97,7 @@ def test(ctx, scenario_name, driver_name, __all, destroy):  # pragma: no cover
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
     command_args = {
+        'destroy': destroy,
         'subcommand': subcommand,
         'driver_name': driver_name,
     }
