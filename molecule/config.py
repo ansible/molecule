@@ -99,10 +99,6 @@ class Config(object):
         return self.command_args['subcommand']
 
     @property
-    def ephemeral_directory(self):
-        return os.path.join(self.scenario.directory, '.molecule')
-
-    @property
     def project_directory(self):
         return os.getcwd()
 

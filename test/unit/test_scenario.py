@@ -160,3 +160,9 @@ def test_setup_creates_ephemeral_directory(scenario_instance):
 
 def test_ephemeral_directory():
     assert '/foo/bar/.molecule' == scenario.ephemeral_directory('/foo/bar')
+
+
+def test_ephemeral_directory_overriden_via_env_var(monkeypatch):
+    monkeypatch.setenv('MOLECULE_EPHEMERAL_DIRECTORY', '.foo')
+
+    assert '/foo/bar/.foo' == scenario.ephemeral_directory('/foo/bar')
