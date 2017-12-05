@@ -76,7 +76,7 @@ checking, and failed service recovery. [1]_
 To start a service which requires systemd, configure `molecule.yml` with a
 systemd compliant image, capabilities, volumes, and command as follows.
 
-.. code-block:: bash
+.. code-block:: yaml
 
     platforms:
       - name: instance
@@ -104,3 +104,28 @@ The developer can also opt to start the container with extended privileges.
 .. [1] https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html/managing_containers/using_systemd_with_containers
 .. [2] https://blog.docker.com/2013/09/docker-can-now-run-within-docker/
 .. [3] https://groups.google.com/forum/#!topic/docker-user/RWLHyzg6Z78
+
+Vagrant Proxy Settings
+======================
+
+One way of passing in proxy settings to the Vagrant provider is using the
+vagrant-proxyconf plugin and adding the vagrant-proxyconf configurations to
+~/.vagrant.d/Vagrantfile.
+
+To install the plugin run:
+
+.. code-block:: bash
+
+    $ vagrant plugin install vagrant-proxyconf
+
+On linux add the following Vagrantfile to ~/.vagrant.d/Vagrantfile.
+
+.. code-block:: ruby
+
+    Vagrant.configure("2") do |config|
+      if Vagrant.has_plugin?("vagrant-proxyconf")
+        config.proxy.http     = ENV['HTTP_PROXY']
+        config.proxy.https    = ENV['HTTP_PROXY']
+        config.proxy.no_proxy = ENV['NO_PROXY']
+      end
+    end
