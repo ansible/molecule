@@ -76,7 +76,7 @@ checking, and failed service recovery. [1]_
 To start a service which requires systemd, configure `molecule.yml` with a
 systemd compliant image, capabilities, volumes, and command as follows.
 
-.. code-block:: bash
+.. code-block:: yaml
 
     platforms:
       - name: instance
@@ -108,82 +108,24 @@ The developer can also opt to start the container with extended privileges.
 Vagrant Proxy Settings
 ======================
 
-One way of passing in proxy settings to the Vagrant provider is using the vagrant-proxyconf plugin and adding the vagrant-proxyconf configurations to
-the Vagrantfile in your user home .vagrant.d/Vagrantfile.
+One way of passing in proxy settings to the Vagrant provider is using the
+vagrant-proxyconf plugin and adding the vagrant-proxyconf configurations to
+~/.vagrant.d/Vagrantfile.
 
-  To install the plugin run: 
+To install the plugin run:
 
 .. code-block:: bash
 
-		$vagrant plugin install vagrant-proxyconf
+    $ vagrant plugin install vagrant-proxyconf
 
-On linux add the following Vagrantfile to ~/.vagrant.d/Vagrantfile or update the existing file to include the if statement that configures vagrant-proxyconf.
+On linux add the following Vagrantfile to ~/.vagrant.d/Vagrantfile.
 
 .. code-block:: ruby
 
-		Vagrant.configure("2") do |config|
-		  if Vagrant.has_plugin?("vagrant-proxyconf")
-		    config.proxy.http     = ENV['HTTP_PROXY'] 
-		    config.proxy.https    = ENV['HTTP_PROXY'] 
-		    config.proxy.no_proxy = ENV['NO_PROXY'] 
-		  end
-		end
-
-Windows
-=======
-
-You can use molecule to spin up a Windows instance. Here is an example molecule.yml configuration:
-
-.. code-block:: yaml
-
-    driver:
-      name: vagrant
-      provider:
-        name: vmware_desktop
-    lint:
-      name: yamllint
-    platforms:
-      - name: instance
-        box: windows-2016-core
-    provisioner:
-      name: ansible
-      connection_options:
-        sudo: False
-        ansible_user: vagrant
-        ansible_password: vagrant
-        ansible_port: 55985
-        ansible_connection: winrm
-        ansible_winrm_scheme: http
-        ansible_winrm_server_cert_validation: ignore
-      lint:
-        name: ansible-lint
-    scenario:
-      name: default
-    verifier:
-      name: testinfra
-      lint:
-        name: flake8
-
-If you want to create a Windows 2016 vagrant box:
-
-* Clone packer repo: `git clone https://github.com/StefanScherer/packer-windows.git`
-
-* Build a Windows 2016 core vagrant box: `packer build --only vmware-iso windows_2016_core.json`
-
-* Add the newly built vagrant box: `vagrant box add --name windows-2016-core windows_2016_core_vmware.box`
-
-* Verify the box has been added: `vagrant box list`
-
-
-To create a new role that uses a Windows vagrant instance:
-
-* Create a role named 'foo': `molecule init role -d molecule_vagrant -r foo -d vagrant`
-
-* Modify the molecule/default/molecule.yml to look like the example above.
-
-* Comment any tasks in molecule/default/prepare.yml that try to install python for Ansible.
-
-* Ensure you have installed the following modules: xmltodict and pywinrm
-
-* Try to converge in debug: `molecule --debug converge`
-
+    Vagrant.configure("2") do |config|
+      if Vagrant.has_plugin?("vagrant-proxyconf")
+        config.proxy.http     = ENV['HTTP_PROXY']
+        config.proxy.https    = ENV['HTTP_PROXY']
+        config.proxy.no_proxy = ENV['NO_PROXY']
+      end
+    end
