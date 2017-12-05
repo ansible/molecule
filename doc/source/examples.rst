@@ -186,3 +186,4 @@ To create a new role that uses a Windows vagrant instance:
 * Ensure you have installed the following modules: xmltodict and pywinrm
 
 * Try to converge in debug: `molecule --debug converge`
+

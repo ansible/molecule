@@ -66,12 +66,6 @@ def test_subcommand_property(config_instance):
     assert 'test' == config_instance.subcommand
 
 
-def test_ephemeral_directory_property(config_instance):
-    x = os.path.join(pytest.helpers.molecule_ephemeral_directory())
-
-    assert x == config_instance.ephemeral_directory
-
-
 def test_project_directory_property(config_instance):
     assert os.getcwd() == config_instance.project_directory
 
@@ -296,18 +290,30 @@ def test_drivers_property(config_instance):
 
 def test_env(config_instance):
     x = {
-        'MOLECULE_DEBUG': 'False',
-        'MOLECULE_FILE': config_instance.molecule_file,
-        'MOLECULE_INVENTORY_FILE': config_instance.provisioner.inventory_file,
-        'MOLECULE_EPHEMERAL_DIRECTORY': config_instance.ephemeral_directory,
-        'MOLECULE_SCENARIO_DIRECTORY': config_instance.scenario.directory,
-        'MOLECULE_INSTANCE_CONFIG': config_instance.driver.instance_config,
-        'MOLECULE_DEPENDENCY_NAME': 'galaxy',
-        'MOLECULE_DRIVER_NAME': 'docker',
-        'MOLECULE_LINT_NAME': 'yamllint',
-        'MOLECULE_PROVISIONER_NAME': 'ansible',
-        'MOLECULE_SCENARIO_NAME': 'default',
-        'MOLECULE_VERIFIER_NAME': 'testinfra'
+        'MOLECULE_DEBUG':
+        'False',
+        'MOLECULE_FILE':
+        config_instance.molecule_file,
+        'MOLECULE_INVENTORY_FILE':
+        config_instance.provisioner.inventory_file,
+        'MOLECULE_EPHEMERAL_DIRECTORY':
+        config_instance.scenario.ephemeral_directory,
+        'MOLECULE_SCENARIO_DIRECTORY':
+        config_instance.scenario.directory,
+        'MOLECULE_INSTANCE_CONFIG':
+        config_instance.driver.instance_config,
+        'MOLECULE_DEPENDENCY_NAME':
+        'galaxy',
+        'MOLECULE_DRIVER_NAME':
+        'docker',
+        'MOLECULE_LINT_NAME':
+        'yamllint',
+        'MOLECULE_PROVISIONER_NAME':
+        'ansible',
+        'MOLECULE_SCENARIO_NAME':
+        'default',
+        'MOLECULE_VERIFIER_NAME':
+        'testinfra'
     }
 
     assert x == config_instance.env
