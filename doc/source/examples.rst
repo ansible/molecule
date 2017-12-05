@@ -108,23 +108,24 @@ The developer can also opt to start the container with extended privileges.
 Vagrant Proxy Settings
 ======================
 
-One way of passing in proxy settings to the Vagrant provider is using the vagrant-proxyconf plugin and adding the vagrant-proxyconf configurations to
-the Vagrantfile in your user home .vagrant.d/Vagrantfile.
+One way of passing in proxy settings to the Vagrant provider is using the
+vagrant-proxyconf plugin and adding the vagrant-proxyconf configurations to
+~/.vagrant.d/Vagrantfile.
 
-  To install the plugin run: 
+To install the plugin run:
 
 .. code-block:: bash
 
-    vagrant plugin install vagrant-proxyconf
+    $ vagrant plugin install vagrant-proxyconf
 
-On linux add the following Vagrantfile to ~/.vagrant.d/Vagrantfile or update the existing file to include the if statement that configures vagrant-proxyconf.
+On linux add the following Vagrantfile to ~/.vagrant.d/Vagrantfile.
 
 .. code-block:: ruby
 
     Vagrant.configure("2") do |config|
       if Vagrant.has_plugin?("vagrant-proxyconf")
-        config.proxy.http     = ENV['HTTP_PROXY'] 
-        config.proxy.https    = ENV['HTTP_PROXY'] 
-        config.proxy.no_proxy = ENV['NO_PROXY'] 
+        config.proxy.http     = ENV['HTTP_PROXY']
+        config.proxy.https    = ENV['HTTP_PROXY']
+        config.proxy.no_proxy = ENV['NO_PROXY']
       end
     end
