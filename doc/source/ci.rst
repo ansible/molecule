@@ -100,7 +100,6 @@ environment variable per environment.
         molecule test
     setenv =
         MOLECULE_EPHEMERAL_DIRECTORY={envname}
-        MOLECULE_ENVNAME={envname}
 
 If you are utilizing the Openstack driver you will have to make sure that your
 ``envname`` variable does not contain any invalid characters, particularly
