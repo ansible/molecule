@@ -7,7 +7,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 
 
 def test_hostname(host):
-    assert 'instance' == host.check_output('hostname -s')
+    assert host.check_output('hostname -s') == 'instance'
 
 
 def test_etc_molecule_directory(host):
