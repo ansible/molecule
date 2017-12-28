@@ -10,6 +10,17 @@ functionality in a backwards-compatible manner.
 
 .. _`Semantic Versioning`: http://semver.org
 
+2.6
+===
+
+* Path searching to check ephemeral dir first.
+* Update Goss verifier.yml.
+* Bump ansible-lint version.
+* Added example for setting Vagrant proxy settings for Linux.
+* Never destroy instances if --destroy-never requested.
+* Variable Molecule Ephemeral Directory.
+* Added systemd example.
+
 2.5
 ===
 
