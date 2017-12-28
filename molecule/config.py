@@ -44,6 +44,7 @@ from molecule.model import schema
 from molecule.provisioner import ansible
 from molecule.verifier import goss
 from molecule.verifier import testinfra
+from molecule.verifier import inspec
 
 LOG = logger.get_logger(__name__)
 MOLECULE_DIRECTORY = 'molecule'
@@ -200,6 +201,8 @@ class Config(object):
         verifier_name = self.config['verifier']['name']
         if verifier_name == 'testinfra':
             return testinfra.Testinfra(self)
+        if verifier_name == 'inspec':
+            return inspec.Inspec(self)
         elif verifier_name == 'goss':
             return goss.Goss(self)
         else:
@@ -427,4 +430,4 @@ def molecule_drivers():
 
 
 def molecule_verifiers():
-    return [goss.Goss(None).name, testinfra.Testinfra(None).name]
+    return [goss.Goss(None).name, inspec.Inspec(None).name, testinfra.Testinfra(None).name]

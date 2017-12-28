@@ -133,6 +133,13 @@ class Vagrant(base.Base):
         }
 
     @property
+    def inspec_options(self):
+        return {
+            'connection': 'ansible',
+            'ansible-inventory': self._config.provisioner.inventory_file
+        }
+
+    @property
     def login_cmd_template(self):
         connection_options = ' '.join(self.ssh_connection_options)
 
