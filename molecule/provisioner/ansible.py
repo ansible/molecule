@@ -147,17 +147,17 @@ class Ansible(base.Base):
           playbooks:
             prepare: prepare.yml
 
-    Environment variables.  Molecule does it's best to handle common Ansible
+    Environment variables.  Molecule does its best to handle common Ansible
     paths.  The defaults are as follows.
 
     ::
 
         ANSIBLE_ROLES_PATH:
-          $project_root/../:$ephemeral_directory/roles/
+          $ephemeral_directory/roles/:$project_root/../
         ANSIBLE_LIBRARY:
-          $project_root/library/:$ephemeral_directory/library/
+          $ephemeral_directory/library/:$project_root/library/
         ANSIBLE_FILTER_PLUGINS:
-          $project_root/filter/plugins/:$ephemeral_directory/plugins/filters/
+          $ephemeral_directory/plugins/filters/:$project_root/filter/plugins/
 
     Environment variables can be passed to the provisioner.  Variables in this
     section which match the names above will be appened to the above defaults,
@@ -294,30 +294,30 @@ class Ansible(base.Base):
             'ANSIBLE_ROLES_PATH':
             ':'.join([
                 util.abs_path(
+                    os.path.join(self._config.scenario.ephemeral_directory,
+                                 'roles')),
+                util.abs_path(
                     os.path.join(self._config.project_directory,
                                  os.path.pardir)),
-                util.abs_path(
-                    os.path.join(self._config.scenario.ephemeral_directory,
-                                 'roles'))
             ]),
             'ANSIBLE_LIBRARY':
             ':'.join([
                 self._get_libraries_directory(),
                 util.abs_path(
-                    os.path.join(self._config.project_directory, 'library')),
-                util.abs_path(
                     os.path.join(self._config.scenario.ephemeral_directory,
                                  'library')),
+                util.abs_path(
+                    os.path.join(self._config.project_directory, 'library')),
             ]),
             'ANSIBLE_FILTER_PLUGINS':
             ':'.join([
                 self._get_filter_plugin_directory(),
                 util.abs_path(
-                    os.path.join(self._config.project_directory, 'plugins',
-                                 'filters')),
-                util.abs_path(
                     os.path.join(self._config.scenario.ephemeral_directory,
                                  'plugins', 'filters')),
+                util.abs_path(
+                    os.path.join(self._config.project_directory, 'plugins',
+                                 'filters')),
             ]),
         })
         env = self._config.merge_dicts(env, self._config.env)

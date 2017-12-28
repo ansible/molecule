@@ -213,11 +213,11 @@ def test_env_property(ansible_instance):
 def test_env_appends_env_property(ansible_instance):
     x = [
         util.abs_path(
-            os.path.join(ansible_instance._config.project_directory,
-                         os.path.pardir)),
-        util.abs_path(
             os.path.join(ansible_instance._config.scenario.ephemeral_directory,
                          'roles')),
+        util.abs_path(
+            os.path.join(ansible_instance._config.project_directory,
+                         os.path.pardir)),
         util.abs_path(
             os.path.join(ansible_instance._config.scenario.directory, 'foo',
                          'bar')),
@@ -227,10 +227,10 @@ def test_env_appends_env_property(ansible_instance):
     x = [
         ansible_instance._get_libraries_directory(),
         util.abs_path(
-            os.path.join(ansible_instance._config.project_directory,
+            os.path.join(ansible_instance._config.scenario.ephemeral_directory,
                          'library')),
         util.abs_path(
-            os.path.join(ansible_instance._config.scenario.ephemeral_directory,
+            os.path.join(ansible_instance._config.project_directory,
                          'library')),
         util.abs_path(
             os.path.join(ansible_instance._config.scenario.directory, 'foo',
@@ -241,11 +241,11 @@ def test_env_appends_env_property(ansible_instance):
     x = [
         ansible_instance._get_filter_plugin_directory(),
         util.abs_path(
-            os.path.join(ansible_instance._config.project_directory, 'plugins',
-                         'filters')),
-        util.abs_path(
             os.path.join(ansible_instance._config.scenario.ephemeral_directory,
                          'plugins', 'filters')),
+        util.abs_path(
+            os.path.join(ansible_instance._config.project_directory, 'plugins',
+                         'filters')),
         util.abs_path(
             os.path.join(ansible_instance._config.scenario.directory, 'foo',
                          'bar')),
