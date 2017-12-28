@@ -12,7 +12,7 @@
 {% raw -%}
 - name: Verify
   hosts: all
-  become: yes
+  become: true
   vars:
     goss_version: v0.3.2
     goss_arch: amd64
