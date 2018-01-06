@@ -5,5 +5,5 @@
     hostname: delegated-instance-docker
     image: molecule_local/centos:latest
     recreate: false
-    log_driver: syslog
+    log_driver: none
     command: sleep infinity
