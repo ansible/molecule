@@ -47,13 +47,13 @@ class Test(base.Base):
 
     >>> molecule test --driver-name foo
 
-    Executing with `debug`:
-
-    >>> molecule --debug test
-
     Always destroy instances at the conclusion of a Molecule run:
 
     >>> molecule test --destroy=always
+
+    Executing with `debug`:
+
+    >>> molecule --debug test
     """
 
     def execute(self):
@@ -85,9 +85,9 @@ class Test(base.Base):
 @click.option(
     '--destroy',
     type=click.Choice(['always', 'never']),
-    default='never',
+    default='always',
     help=('The destroy strategy used at the conclusion of a '
-          'Molecule run (never).'))
+          'Molecule run (always).'))
 def test(ctx, scenario_name, driver_name, __all, destroy):  # pragma: no cover
     """
     Test (lint, destroy, dependency, syntax, create, prepare, converge,
