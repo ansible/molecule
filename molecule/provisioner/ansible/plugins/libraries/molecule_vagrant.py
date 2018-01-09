@@ -162,13 +162,9 @@ Vagrant.configure('2') do |config|
         virtualbox.cpus = provider['options']['cpus']
 
         if provider['options'] and provider['options']['linked_clone']
-          if Vagrant::VERSION =~ /^1.[89]/
-            virtualbox.linked_clone = provider['options']['linked_clone']
-          end
+          virtualbox.linked_clone = provider['options']['linked_clone'] if Gem::Version.new(Vagrant::VERSION) >= Gem::Version.new('1.8.0')
         else
-          if Vagrant::VERSION =~ /^1.[89]/
-            virtualbox.linked_clone = true
-          end
+          virtualbox.linked_clone = true if Gem::Version.new(Vagrant::VERSION) >= Gem::Version.new('1.8.0')
         end
 
         # Custom
