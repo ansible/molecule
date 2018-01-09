@@ -263,8 +263,11 @@ def test_command_test_destroy_strategy_always(scenario_to_test, with_scenario,
     ])
 def test_command_test_destroy_strategy_never(scenario_to_test, with_scenario,
                                              scenario_name, driver_name):
+    options = {
+        'destroy': 'never',
+    }
     try:
-        cmd = sh.molecule.bake('test')
+        cmd = sh.molecule.bake('test', **options)
         pytest.helpers.run_command(cmd, log=False)
     except sh.ErrorReturnCode as e:
         msg = 'An error occured during the test sequence.  Cleaning up.'
@@ -308,6 +311,7 @@ def test_idempotence_raises(scenario_to_test, with_scenario, scenario_name):
     options = {
         'scenario_name': scenario_name,
         'all': True,
+        'destroy': 'never',
     }
     cmd = sh.molecule.bake('test', **options)
     with pytest.raises(sh.ErrorReturnCode_2) as e:
