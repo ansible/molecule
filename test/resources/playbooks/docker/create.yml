@@ -44,6 +44,7 @@
         volumes: "{{ item.volumes | default(omit) }}"
         capabilities: "{{ item.capabilities | default(omit) }}"
         ports: "{{ item.exposed_ports | default(omit) }}"
+        ulimits: "{{ item.ulimits | default(omit) }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
       async: 7200
