@@ -80,6 +80,7 @@ class PlatformsDockerSchema(marshmallow.Schema):
     privileged = marshmallow.fields.Bool()
     volumes = marshmallow.fields.List(marshmallow.fields.Str())
     capabilities = marshmallow.fields.List(marshmallow.fields.Str())
+    ulimits = marshmallow.fields.List(marshmallow.fields.Str())
 
 
 class PlatformsVagrantSchema(PlatformsBaseSchema):

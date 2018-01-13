@@ -7,3 +7,4 @@
     recreate: false
     log_driver: none
     command: sleep infinity
+    ulimits: "{{ item.ulimits | default(omit) }}"

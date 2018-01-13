@@ -50,6 +50,7 @@ class Docker(base.Base):
             privileged: "{{ item.privileged | default(omit) }}"
             volumes: "{{ item.volumes | default(omit) }}"
             capabilities: "{{ item.capabilities | default(omit) }}"
+            ulimits: "{{ item.ulimits | default(omit) }}"
 
     .. code-block:: bash
 
