@@ -5,6 +5,6 @@
     hostname: delegated-instance-docker
     image: molecule_local/centos:latest
     recreate: false
-    log_driver: none
+    log_driver: json-file
     command: sleep infinity
     ulimits: "{{ item.ulimits | default(omit) }}"
