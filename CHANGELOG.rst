@@ -10,6 +10,18 @@ functionality in a backwards-compatible manner.
 
 .. _`Semantic Versioning`: http://semver.org
 
+2.7
+===
+
+* Ability to set a ulimit for the Docker driver.
+* Switching log_driver from none to json-file to for compatibility with
+  Ansible 2.2.
+* Default to always destroy strategy.
+* Support linked_clone for Vagrant 2.X.
+* Bump tree-format to 0.1.2.
+* Correct starting container on Docker edge by changing log_driver to none.
+* Make psutil installation platform-dependent.
+
 2.6
 ===
 
