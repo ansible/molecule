@@ -3,7 +3,9 @@
 - name: Create security group
   ec2_group:
     name: "{{ security_group_name }}"
-    description: "{{ security_group_name }}"
+    description: "{{ security_group_description }}"
+    region: "{{ region }}"
+    vpc_id: "{{ vpc_id }}"
     rules: "{{ security_group_rules }}"
     rules_egress: "{{ security_group_rules_egress }}"
 {%- endraw %}

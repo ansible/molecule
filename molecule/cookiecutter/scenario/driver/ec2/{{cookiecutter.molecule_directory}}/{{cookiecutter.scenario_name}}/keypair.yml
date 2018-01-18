@@ -8,12 +8,14 @@
 - name: Delete remote keypair
   ec2_key:
     name: "{{ keypair_name }}"
+    region: "{{ region }}"
     state: absent
   when: not keypair_local.stat.exists
 
 - name: Create keypair
   ec2_key:
     name: "{{ keypair_name }}"
+    region: "{{ region }}"
   register: keypair
 
 - name: Persist the keypair

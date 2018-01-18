@@ -25,6 +25,7 @@
       ec2:
         state: absent
         instance_ids: "{{ item.instance_ids }}"
+        region: "{{ item.region }}"
       register: server
       with_items: "{{ instance_conf }}"
       when: not skip_instances
