@@ -57,8 +57,6 @@ def get_docker_networks(data):
                 if "name" in network:
                     name = network['name']
                     network_list.append(name)
-                else:
-                    network_list.append("something")
     return network_list
 
 
