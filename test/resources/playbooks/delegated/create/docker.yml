@@ -8,3 +8,4 @@
     log_driver: json-file
     command: sleep infinity
     ulimits: "{{ item.ulimits | default(omit) }}"
+    networks: "{{ item.networks | default(omit) }}"
