@@ -9,3 +9,4 @@
     command: sleep infinity
     ulimits: "{{ item.ulimits | default(omit) }}"
     networks: "{{ item.networks | default(omit) }}"
+    dns_servers: "{{ item.dns_servers | default(omit) }}"
