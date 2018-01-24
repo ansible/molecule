@@ -26,4 +26,10 @@
       until: docker_jobs.finished
       retries: 300
       with_items: "{{ server.results }}"
+
+    - name: Delete docker network(s)
+      docker_network:
+        name: "{{ item }}"
+        state: absent
+      with_items: "{{ molecule_yml.platforms | molecule_get_docker_networks }}"
 {%- endraw %}

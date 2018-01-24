@@ -31,6 +31,12 @@
       with_items: "{{ platforms.results }}"
       when: platforms.changed or docker_images.results | map(attribute='images') | select('equalto', []) | list | count >= 0
 
+    - name: Create docker network(s)
+      docker_network:
+        name: "{{ item }}"
+        state: present
+      with_items: "{{ molecule_yml.platforms | molecule_get_docker_networks }}"
+
     - name: Create molecule instance(s)
       docker_container:
         name: "{{ item.name }}"
@@ -45,6 +51,7 @@
         capabilities: "{{ item.capabilities | default(omit) }}"
         ports: "{{ item.exposed_ports | default(omit) }}"
         ulimits: "{{ item.ulimits | default(omit) }}"
+        networks: "{{ item.networks | default(omit) }}"
         dns_servers: "{{ item.dns_servers | default(omit) }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"

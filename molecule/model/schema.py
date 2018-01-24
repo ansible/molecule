@@ -81,6 +81,7 @@ class PlatformsDockerSchema(marshmallow.Schema):
     volumes = marshmallow.fields.List(marshmallow.fields.Str())
     capabilities = marshmallow.fields.List(marshmallow.fields.Str())
     ulimits = marshmallow.fields.List(marshmallow.fields.Str())
+    networks = marshmallow.fields.List(marshmallow.fields.Str())
     dns_servers = marshmallow.fields.List(marshmallow.fields.Str())
 
 

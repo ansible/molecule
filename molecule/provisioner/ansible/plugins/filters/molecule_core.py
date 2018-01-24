@@ -49,6 +49,17 @@ def header(content):
     return util.molecule_prepender(content)
 
 
+def get_docker_networks(data):
+    network_list = []
+    for platform in data:
+        if "networks" in platform:
+            for network in platform['networks']:
+                if "name" in network:
+                    name = network['name']
+                    network_list.append(name)
+    return network_list
+
+
 class FilterModule(object):
     """ Core Molecule filter plugins. """
 
@@ -57,4 +68,5 @@ class FilterModule(object):
             'molecule_from_yaml': from_yaml,
             'molecule_to_yaml': to_yaml,
             'molecule_header': header,
+            'molecule_get_docker_networks': get_docker_networks,
         }

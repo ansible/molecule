@@ -52,6 +52,7 @@ class Docker(base.Base):
             capabilities: "{{ item.capabilities | default(omit) }}"
             ulimits: "{{ item.ulimits | default(omit) }}"
             dns_servers: "{{ item.dns_servers | default(omit) }}"
+            networks: "{{ item.networks | default(omit) }}"
 
     .. code-block:: bash
 
