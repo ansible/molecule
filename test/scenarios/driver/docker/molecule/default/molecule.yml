@@ -10,6 +10,9 @@ lint:
 platforms:
   - name: instance
     image: centos:latest
+    networks:
+      - name: foo
+      - name: bar
 provisioner:
   name: ansible
   playbooks:

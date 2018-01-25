@@ -71,6 +71,10 @@ class PlatformsSchema(PlatformsBaseSchema):
     pass
 
 
+class PlatformsDockerNetworksSchema(marshmallow.Schema):
+    name = marshmallow.fields.Str()
+
+
 class PlatformsDockerSchema(marshmallow.Schema):
     hostname = marshmallow.fields.Str()
     image = marshmallow.fields.Str()
@@ -81,7 +85,8 @@ class PlatformsDockerSchema(marshmallow.Schema):
     volumes = marshmallow.fields.List(marshmallow.fields.Str())
     capabilities = marshmallow.fields.List(marshmallow.fields.Str())
     ulimits = marshmallow.fields.List(marshmallow.fields.Str())
-    networks = marshmallow.fields.List(marshmallow.fields.Str())
+    networks = marshmallow.fields.List(
+        marshmallow.fields.Nested(PlatformsDockerNetworksSchema))
     dns_servers = marshmallow.fields.List(marshmallow.fields.Str())
 
 

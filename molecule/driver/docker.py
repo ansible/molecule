@@ -48,11 +48,15 @@ class Docker(base.Base):
             image: "molecule_local/{{ item.image }}"
             command: "{{ item.command | default('sleep infinity') }}"
             privileged: "{{ item.privileged | default(omit) }}"
-            volumes: "{{ item.volumes | default(omit) }}"
-            capabilities: "{{ item.capabilities | default(omit) }}"
+            volumes:
+              - /sys/fs/cgroup:/sys/fs/cgroup:ro
+            capabilities:
+              - SYS_ADMIN
             ulimits: "{{ item.ulimits | default(omit) }}"
             dns_servers: "{{ item.dns_servers | default(omit) }}"
-            networks: "{{ item.networks | default(omit) }}"
+            networks:
+              - name: foo
+              - name: bar
 
     .. code-block:: bash
 
