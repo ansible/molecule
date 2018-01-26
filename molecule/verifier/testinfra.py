@@ -19,7 +19,7 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import os
-
+import glob
 import sh
 
 from molecule import logger
@@ -126,9 +126,18 @@ class Testinfra(base.Base):
 
         :return: None
         """
+        list_of_files_or_dirs = []
         options = self.options
         verbose_flag = util.verbose_flag(options)
-        args = verbose_flag + self.additional_files_or_dirs
+        additional_files_or_dirs = self.additional_files_or_dirs
+        for additional_path in additional_files_or_dirs:
+            glob_add_path_dir = glob.glob(self._config.scenario.directory + '/' + additional_path)
+            # If file/directory not exists, length will be 0 and continue with next path.
+            if len(glob_add_path_dir) == 0:
+                continue
+            list_of_files_or_dirs.append(glob_add_path_dir)
+
+        args = verbose_flag + list_of_files_or_dirs
 
         self._testinfra_command = sh.Command('py.test').bake(
             options,
