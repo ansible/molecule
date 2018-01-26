@@ -24,6 +24,8 @@
         provider_cpus: "{{ item.cpus | default(omit) }}"
         provider_raw_config_args: "{{ item.raw_config_args | default(omit) }}"
 
+        no_provision: "{{ item.no_provision | default(omit) }}"
+
         state: up
       register: server
       with_items: "{{ molecule_yml.platforms }}"

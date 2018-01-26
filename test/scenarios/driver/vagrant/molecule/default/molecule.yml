@@ -16,6 +16,7 @@ platforms:
       - auto_config: true
         network_name: private_network
         type: dhcp
+    no_provision: true
 provisioner:
   name: ansible
   playbooks:

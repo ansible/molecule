@@ -294,6 +294,7 @@ class VagrantClient(object):
         cd = self._created()
         if not cd:
             changed = True
+            no_provision = no_provision and self._module.params['no_provision']
             for line in self._vagrant.up(no_provision, stream_output=True):
                 # NOTE: Add prefix to ensure that output of 'vagrant up'
                 # doesn't start with one of the JSON start characters { or ].
@@ -401,6 +402,7 @@ def main():
             provider_options=dict(type='dict', default={}),
             provider_raw_config_args=dict(type='list', default=None),
             force_stop=dict(type='bool', default=False),
+            no_provision=dict(type='bool', default=True),
             state=dict(type='str', default='up', choices=['up', 'destroy'])),
         supports_check_mode=False)
 
