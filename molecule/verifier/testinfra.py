@@ -131,11 +131,11 @@ class Testinfra(base.Base):
         verbose_flag = util.verbose_flag(options)
         additional_files_or_dirs = self.additional_files_or_dirs
         for additional_path in additional_files_or_dirs:
-            glob_add_path_dir = glob.glob(self._config.scenario.directory + '/' + additional_path)
-            # If file/directory not exists, length will be 0 and continue with next path.
-            if len(glob_add_path_dir) == 0:
+            glob_add_path_dir = os.path.join(self._config.scenario.directory, additional_path)
+            add_path_exists = glob.glob(glob_add_path_dir)
+            if not add_path_exists:
                 continue
-            list_of_files_or_dirs.append(glob_add_path_dir)
+            list_of_files_or_dirs.append(add_path_exists)
 
         args = verbose_flag + list_of_files_or_dirs
 
