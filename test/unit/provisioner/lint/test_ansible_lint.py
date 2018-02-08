@@ -39,6 +39,10 @@ def molecule_provisioner_lint_section_data():
                         'foo',
                         'bar',
                     ],
+                    'x': [
+                        'foo',
+                        'bar',
+                    ],
                 },
                 'env': {
                     'foo': 'bar',
@@ -66,6 +70,7 @@ def test_default_options_property(ansible_lint_instance):
         'default_exclude':
         [ansible_lint_instance._config.scenario.ephemeral_directory],
         'exclude': [],
+        'x': [],
     }
 
     assert x == ansible_lint_instance.default_options
@@ -87,6 +92,10 @@ def test_options_property(ansible_lint_instance):
             'foo',
             'bar',
         ],
+        'x': [
+            'foo',
+            'bar',
+        ],
         'foo':
         'bar',
         'v':
@@ -102,6 +111,10 @@ def test_options_property_handles_cli_args(ansible_lint_instance):
         'default_exclude':
         [ansible_lint_instance._config.scenario.ephemeral_directory],
         'exclude': [
+            'foo',
+            'bar',
+        ],
+        'x': [
             'foo',
             'bar',
         ],
@@ -132,10 +145,16 @@ def test_env_property(ansible_lint_instance):
 def test_bake(ansible_lint_instance):
     ansible_lint_instance.bake()
     x = [
-        str(sh.ansible_lint), '--foo=bar', '-v', '--exclude={}'.format(
+        str(sh.ansible_lint),
+        '--foo=bar',
+        '-v',
+        '--exclude={}'.format(
             ansible_lint_instance._config.scenario.ephemeral_directory),
-        '--exclude=foo', '--exclude=bar',
-        ansible_lint_instance._config.provisioner.playbooks.converge
+        '--exclude=foo',
+        '--exclude=bar',
+        ansible_lint_instance._config.provisioner.playbooks.converge,
+        '-x=foo',
+        '-x=bar',
     ]
     result = str(ansible_lint_instance._ansible_lint_command).split()
 

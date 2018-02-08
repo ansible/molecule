@@ -49,6 +49,9 @@ class AnsibleLint(base.Base):
               exclude:
                 - path/exclude1
                 - path/exclude2
+              x:
+                - ANSIBLE0011
+                - ANSIBLE0012
               force-color: True
 
     The role linting can be disabled by setting `enabled` to False.
@@ -90,6 +93,7 @@ class AnsibleLint(base.Base):
         d = {
             'default_exclude': [self._config.scenario.ephemeral_directory],
             'exclude': [],
+            'x': [],
         }
         if self._config.debug:
             d['v'] = True
@@ -114,10 +118,14 @@ class AnsibleLint(base.Base):
         default_exclude_list = options.pop('default_exclude')
         options_exclude_list = options.pop('exclude')
         excludes = default_exclude_list + options_exclude_list
+        x_list = options.pop('x')
+
         exclude_args = ['--exclude={}'.format(exclude) for exclude in excludes]
+        x_args = ['-x={}'.format(x) for x in x_list]
         self._ansible_lint_command = sh.ansible_lint.bake(
             options,
             exclude_args,
+            x_args,
             self._config.provisioner.playbooks.converge,
             _env=self.env,
             _out=LOG.out,
