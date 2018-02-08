@@ -89,6 +89,7 @@ class Config(object):
         self.command_args = command_args
         self.ansible_args = ansible_args
         self.config = self._combine()
+        self._action = None
 
     @property
     def debug(self):
@@ -97,6 +98,14 @@ class Config(object):
     @property
     def subcommand(self):
         return self.command_args['subcommand']
+
+    @property
+    def action(self):
+        return self._action
+
+    @action.setter
+    def action(self, value):
+        self._action = value
 
     @property
     def project_directory(self):

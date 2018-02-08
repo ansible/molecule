@@ -190,8 +190,8 @@ def test_options_property(ansible_instance):
 
 
 def test_options_property_does_not_merge(ansible_instance):
-    for subcommand in ['create', 'destroy']:
-        ansible_instance._config.command_args = {'subcommand': subcommand}
+    for action in ['create', 'destroy']:
+        ansible_instance._config.action = action
 
         assert {} == ansible_instance.options
 
