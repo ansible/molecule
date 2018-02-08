@@ -3,4 +3,4 @@
   hosts: all
   become: true
   roles:
-    - yatesr.timezone
+    - timezone

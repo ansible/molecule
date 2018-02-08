@@ -154,6 +154,10 @@ def test_command_dependency_ansible_galaxy(scenario_to_test, with_scenario,
                                    'roles', 'timezone')
     assert os.path.isdir(dependency_role)
 
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('converge', **options)
+    pytest.helpers.run_command(cmd)
+
 
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
@@ -180,6 +184,10 @@ def test_command_dependency_gilt(scenario_to_test, with_scenario,
     dependency_role = os.path.join('molecule', 'gilt', '.molecule', 'roles',
                                    'timezone')
     assert os.path.isdir(dependency_role)
+
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('converge', **options)
+    pytest.helpers.run_command(cmd)
 
 
 @pytest.mark.parametrize(
