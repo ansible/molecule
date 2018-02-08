@@ -72,5 +72,6 @@ def verify(ctx, scenario_name):  # pragma: no cover
         base.get_configs(args, command_args), scenario_name)
     s.print_matrix()
     for scenario in s:
-        for term in scenario.sequence:
-            base.execute_subcommand(scenario.config, term)
+        for action in scenario.sequence:
+            scenario.config.action = action
+            base.execute_subcommand(scenario.config, action)

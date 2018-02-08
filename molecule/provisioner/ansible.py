@@ -337,7 +337,7 @@ class Ansible(base.Base):
 
     @property
     def options(self):
-        if self._config.subcommand in ['create', 'destroy']:
+        if self._config.action in ['create', 'destroy']:
             return self.default_options
         return self._config.merge_dicts(
             self.default_options,

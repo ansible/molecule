@@ -66,6 +66,16 @@ def test_subcommand_property(config_instance):
     assert 'test' == config_instance.subcommand
 
 
+def test_action_property(config_instance):
+    assert config_instance.action is None
+
+
+def test_action_setter(config_instance):
+    config_instance.action = 'foo'
+
+    assert 'foo' == config_instance.action
+
+
 def test_project_directory_property(config_instance):
     assert os.getcwd() == config_instance.project_directory
 

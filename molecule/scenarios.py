@@ -75,8 +75,8 @@ class Scenarios(object):
         msg = 'Test matrix'
         LOG.info(msg)
 
-        tree = tuple(('', [(scenario.name, [(term, [])
-                                            for term in scenario.sequence])
+        tree = tuple(('', [(scenario.name, [(action, [])
+                                            for action in scenario.sequence])
                            for scenario in self.all]))
 
         tf = tree_format.format_tree(
@@ -119,13 +119,13 @@ class Scenarios(object):
         {
             scenario_1: {
                 'subcommand': [
-                    'term-1',
-                    'term-2',
+                    'action-1',
+                    'action-2',
                 ],
             },
             scenario_2: {
                 'subcommand': [
-                    'term-1',
+                    'action-1',
                 ],
             },
         }
