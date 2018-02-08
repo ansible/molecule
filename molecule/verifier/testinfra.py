@@ -18,8 +18,9 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import os
 import glob
+import os
+
 import sh
 
 from molecule import logger
@@ -68,17 +69,17 @@ class Testinfra(base.Base):
           name: testinfra
           directory: /foo/bar/
 
-    Additional tests from another file or directory relative to the scenario
-    directory.
+    Additional tests from another file or directory relative to the scenario's
+    tests directory (supports regexp).
 
     .. code-block:: yaml
 
         verifier:
           name: testinfra
           additional_files_or_dirs:
-            - ../path/to/test_1
-            - ../path/to/test_2
-            - ../path/to/directory/
+            - ../path/to/test_1.py
+            - ../path/to/test_2.py
+            - ../path/to/directory/*
 
     .. _`Testinfra`: http://testinfra.readthedocs.io
     """
@@ -118,7 +119,15 @@ class Testinfra(base.Base):
 
     @property
     def additional_files_or_dirs(self):
-        return self._config.config['verifier']['additional_files_or_dirs']
+        files_list = []
+        c = self._config.config
+        for f in c['verifier']['additional_files_or_dirs']:
+            glob_path = os.path.join(self._config.verifier.directory, f)
+            glob_list = glob.glob(glob_path)
+            if glob_list:
+                files_list.extend(glob_list)
+
+        return files_list
 
     def bake(self):
         """
@@ -126,18 +135,10 @@ class Testinfra(base.Base):
 
         :return: None
         """
-        list_of_files_or_dirs = []
+
         options = self.options
         verbose_flag = util.verbose_flag(options)
-        additional_files_or_dirs = self.additional_files_or_dirs
-        for additional_path in additional_files_or_dirs:
-            glob_add_path_dir = os.path.join(self._config.scenario.directory, additional_path)
-            add_path_exists = glob.glob(glob_add_path_dir)
-            if not add_path_exists:
-                continue
-            list_of_files_or_dirs.append(add_path_exists)
-
-        args = verbose_flag + list_of_files_or_dirs
+        args = verbose_flag + self.additional_files_or_dirs
 
         self._testinfra_command = sh.Command('py.test').bake(
             options,

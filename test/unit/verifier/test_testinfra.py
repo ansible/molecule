@@ -24,6 +24,7 @@ import pytest
 import sh
 
 from molecule import config
+from molecule import util
 from molecule.verifier import testinfra
 from molecule.verifier.lint import flake8
 
@@ -32,16 +33,18 @@ from molecule.verifier.lint import flake8
 def molecule_verifier_section_data():
     return {
         'verifier': {
-            'name': 'testinfra',
+            'name':
+            'testinfra',
             'options': {
                 'foo': 'bar',
                 'vvv': True,
                 'verbose': True,
             },
             'additional_files_or_dirs': [
-                '../foo.py',
-                '../bar.py',
-                '../baz',
+                'file1.py',
+                'file2.py',
+                'match*.py',
+                'dir/*',
             ],
             'env': {
                 'foo': 'bar',
@@ -108,12 +111,33 @@ def test_default_env_property(testinfra_instance):
 
 
 def test_additional_files_or_dirs_property(testinfra_instance):
+    tests_directory = testinfra_instance._config.verifier.directory
+    file1_file = os.path.join(tests_directory, 'file1.py')
+    file2_file = os.path.join(tests_directory, 'file2.py')
+    match1_file = os.path.join(tests_directory, 'match1.py')
+    match2_file = os.path.join(tests_directory, 'match2.py')
+    test_subdir = os.path.join(tests_directory, 'dir')
+    test_subdir_file = os.path.join(test_subdir, 'test_subdir_file.py')
+
+    os.mkdir(tests_directory)
+    os.mkdir(test_subdir)
+    for f in [
+            file1_file,
+            file2_file,
+            match1_file,
+            match2_file,
+            test_subdir_file,
+    ]:
+        util.write_file(f, '')
+
     x = [
-        '../foo.py',
-        '../bar.py',
-        '../baz',
+        file1_file,
+        file2_file,
+        match1_file,
+        match2_file,
+        test_subdir_file,
     ]
-    assert x == testinfra_instance.additional_files_or_dirs
+    assert sorted(x) == sorted(testinfra_instance.additional_files_or_dirs)
 
 
 def test_env_property(testinfra_instance):
@@ -214,6 +238,12 @@ def test_options_property_handles_cli_args(inventory_file, testinfra_instance):
 
 
 def test_bake(patched_testinfra_get_tests, inventory_file, testinfra_instance):
+    tests_directory = testinfra_instance._config.verifier.directory
+    file1_file = os.path.join(tests_directory, 'file1.py')
+
+    os.mkdir(tests_directory)
+    util.write_file(file1_file, '')
+
     testinfra_instance.bake()
     x = [
         str(sh.Command('py.test')),
@@ -223,9 +253,7 @@ def test_bake(patched_testinfra_get_tests, inventory_file, testinfra_instance):
         '--foo=bar',
         'foo.py',
         'bar.py',
-        '../foo.py',
-        '../bar.py',
-        '../baz',
+        file1_file,
     ]
     result = str(testinfra_instance._testinfra_command).split()
 
