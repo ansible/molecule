@@ -35,6 +35,10 @@ def molecule_provisioner_lint_section_data():
                 'options': {
                     'foo': 'bar',
                     'v': True,
+                    'exclude': [
+                        'foo',
+                        'bar',
+                    ],
                 },
                 'env': {
                     'foo': 'bar',
@@ -59,8 +63,9 @@ def test_config_private_member(ansible_lint_instance):
 
 def test_default_options_property(ansible_lint_instance):
     x = {
-        'excludes':
-        [ansible_lint_instance._config.scenario.ephemeral_directory]
+        'default_exclude':
+        [ansible_lint_instance._config.scenario.ephemeral_directory],
+        'exclude': [],
     }
 
     assert x == ansible_lint_instance.default_options
@@ -76,10 +81,16 @@ def test_enabled_property(ansible_lint_instance):
 
 def test_options_property(ansible_lint_instance):
     x = {
-        'excludes':
+        'default_exclude':
         [ansible_lint_instance._config.scenario.ephemeral_directory],
-        'foo': 'bar',
-        'v': True,
+        'exclude': [
+            'foo',
+            'bar',
+        ],
+        'foo':
+        'bar',
+        'v':
+        True,
     }
 
     assert x == ansible_lint_instance.options
@@ -88,10 +99,16 @@ def test_options_property(ansible_lint_instance):
 def test_options_property_handles_cli_args(ansible_lint_instance):
     ansible_lint_instance._config.args = {'debug': True}
     x = {
-        'excludes':
+        'default_exclude':
         [ansible_lint_instance._config.scenario.ephemeral_directory],
-        'foo': 'bar',
-        'v': True,
+        'exclude': [
+            'foo',
+            'bar',
+        ],
+        'foo':
+        'bar',
+        'v':
+        True,
     }
 
     assert x == ansible_lint_instance.options
@@ -117,6 +134,7 @@ def test_bake(ansible_lint_instance):
     x = [
         str(sh.ansible_lint), '--foo=bar', '-v', '--exclude={}'.format(
             ansible_lint_instance._config.scenario.ephemeral_directory),
+        '--exclude=foo', '--exclude=bar',
         ansible_lint_instance._config.provisioner.playbooks.converge
     ]
     result = str(ansible_lint_instance._ansible_lint_command).split()
