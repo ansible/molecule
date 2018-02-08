@@ -10,7 +10,6 @@
     molecule_instance_config: "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}"
     molecule_yml: "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
 
-    ssh_user: ubuntu
     ssh_port: 22
 
     security_group_name: molecule
@@ -34,17 +33,28 @@
     keypair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
   tasks:
     - include: security_group.yml
+      tags: skip_ansible_lint
+      vars:
+        region: "{{ item.region }}"
+        vpc_id: "{{ item.vpc_id }}"
+      with_items: "{{ molecule_yml.platforms }}"
     - include: keypair.yml
+      tags: skip_ansible_lint
+      vars:
+        region: "{{ item.region }}"
+      with_items: "{{ molecule_yml.platforms }}"
 
     - name: Create molecule instance(s)
       ec2:
         key_name: "{{ keypair_name }}"
+        region: "{{ item.region }}"
         image: "{{ item.image }}"
         instance_type: "{{ item.instance_type }}"
         vpc_subnet_id: "{{ item.vpc_subnet_id }}"
         group: "{{ security_group_name }}"
         instance_tags:
           instance: "{{ item.name }}"
+          user: "{{ item.user }}"
         wait: true
         assign_public_ip: true
         exact_count: 1
@@ -69,8 +79,9 @@
       set_fact:
         instance_conf_dict: {
           'instance': "{{ item.instances[0].tags.instance }}",
+          'region': "{{ item.instances[0].region }}",
           'address': "{{ item.instances[0].public_ip }}",
-          'user': "{{ ssh_user }}",
+          'user': "{{ item.instances[0].tags.user }}",
           'port': "{{ ssh_port }}",
           'identity_file': "{{ keypair_path }}",
           'instance_ids': "{{ item.instance_ids }}", }

@@ -11,6 +11,9 @@ platforms:
   - name: instance
     image: ami-a5b196c0
     instance_type: t2.micro
+    region: us-east-2
+    user: ubuntu
+    vpc_id: vpc-72e724c6
     vpc_subnet_id: subnet-6456fd1f
 provisioner:
   name: ansible
