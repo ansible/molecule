@@ -46,7 +46,7 @@ class AnsibleLint(base.Base):
           lint:
             name: ansible-lint
             options:
-              excludes:
+              exclude:
                 - path/exclude1
                 - path/exclude2
               force-color: True
@@ -87,7 +87,10 @@ class AnsibleLint(base.Base):
 
     @property
     def default_options(self):
-        d = {'excludes': [self._config.scenario.ephemeral_directory]}
+        d = {
+            'default_exclude': [self._config.scenario.ephemeral_directory],
+            'exclude': [],
+        }
         if self._config.debug:
             d['v'] = True
 
@@ -108,7 +111,9 @@ class AnsibleLint(base.Base):
         :return: None
         """
         options = self.options
-        excludes = options.pop('excludes')
+        default_exclude_list = options.pop('default_exclude')
+        options_exclude_list = options.pop('exclude')
+        excludes = default_exclude_list + options_exclude_list
         exclude_args = ['--exclude={}'.format(exclude) for exclude in excludes]
         self._ansible_lint_command = sh.ansible_lint.bake(
             options,
