@@ -10,6 +10,12 @@ functionality in a backwards-compatible manner.
 
 .. _`Semantic Versioning`: http://semver.org
 
+2.8.1
+=====
+
+* Cosmetic change only.  Corrected quickstart image sizes for
+  pypi webui.
+
 2.8
 ===
 
