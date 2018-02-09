@@ -193,6 +193,7 @@ Create instances with additional provider options.
               - "customize ['modifyvm', :id, '--cpuexecutioncap', '50']"
             provider_options:
               gui: true
+            provision: true
             state: up
           with_items:
             - instance-1

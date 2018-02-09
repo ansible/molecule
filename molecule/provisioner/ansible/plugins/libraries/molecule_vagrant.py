@@ -289,12 +289,13 @@ class VagrantClient(object):
         self._vagrant = self._get_vagrant()
         self._write_configs()
 
-    def up(self, no_provision=True):
+    def up(self):
         changed = False
         cd = self._created()
         if not cd:
             changed = True
-            for line in self._vagrant.up(no_provision, stream_output=True):
+            provision = self._module.params['provision']
+            for line in self._vagrant.up(provision=provision, stream_output=True):
                 # NOTE: Add prefix to ensure that output of 'vagrant up'
                 # doesn't start with one of the JSON start characters { or ].
                 print('<vagrant_output> {}'.format(line))
@@ -400,6 +401,7 @@ def main():
             provider_cpus=dict(type='int', default=2),
             provider_options=dict(type='dict', default={}),
             provider_raw_config_args=dict(type='list', default=None),
+            provision=dict(type='bool', default=False),
             force_stop=dict(type='bool', default=False),
             state=dict(type='str', default='up', choices=['up', 'destroy'])),
         supports_check_mode=False)
