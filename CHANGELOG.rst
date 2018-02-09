@@ -10,6 +10,29 @@ functionality in a backwards-compatible manner.
 
 .. _`Semantic Versioning`: http://semver.org
 
+2.8
+===
+
+* Improved quickstart video.
+* Ability to specify a custom registry to Docker driver.
+* Add a link to talk demo.
+* Corrected incorreclty fixed bug when tags provided to provisioner.
+* Corrected dependency scenario functional tests.
+* Corrected incorrectly fixed bug when providing provisioner lint options.
+* Regexp support in additional_files_or_dirs.
+* Add custom nameserver to Docker container.
+* Add network create and destroy support to Docker driver.
+
+Breaking Changes
+----------------
+
+* The verifier's `additional_files_or_dirs` option is relative to the
+  test directory, as opposed to the scenario directory.
+* The verifier's `additional_files_or_dirs` option now supports regexp.
+  Molecule will add additional files or directories, only when the glob
+  succeeds.  Directories must be appended with the regexp to match, further
+  details in the verifier's documentation.
+
 2.7
 ===
 
