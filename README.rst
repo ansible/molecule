@@ -40,23 +40,24 @@ Quick Start
 Installing
 ----------
 
-.. image:: https://asciinema.org/a/161970.png
-   :target: https://asciinema.org/a/161970?speed=5&autoplay=1&loop=1
-   :alt: Installing
+.. raw:: html
+
+    <a href="https://asciinema.org/a/161970?speed=5&autoplay=1&loop=1"><img src="https://asciinema.org/a/161970.png" width="500"/></a>
+
 
 Creating a new role
 -------------------
 
-.. image:: https://asciinema.org/a/161976.png
-   :target: https://asciinema.org/a/161976?speed=5&autoplay=1&loop=1
-   :alt: Creating a new role
+.. raw:: html
+
+    <a href="https://asciinema.org/a/161976?speed=5&autoplay=1&loop=1"><img src="https://asciinema.org/a/161976.png" width="500"/></a>
 
 Testing a new role
 -------------------
 
-.. image:: https://asciinema.org/a/161977.png
-   :target: https://asciinema.org/a/161977?speed=5&autoplay=1&loop=1
-   :alt: Testing a new role
+.. raw:: html
+
+    <a href="https://asciinema.org/a/161977?speed=5&autoplay=1&loop=1"><img src="https://asciinema.org/a/161977.png" width="500"/></a>
 
 Documentation
 =============
