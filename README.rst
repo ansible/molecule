@@ -37,8 +37,26 @@ supports.
 Quick Start
 ===========
 
-.. image:: https://user-images.githubusercontent.com/9895/30235316-650d17fa-94bc-11e7-8205-ec787b80cfc3.gif
-   :alt: Quick Start
+Installing
+----------
+
+.. image:: https://asciinema.org/a/161970.png
+   :target: https://asciinema.org/a/161970?speed=5&autoplay=1&loop=1
+   :alt: Installing
+
+Creating a new role
+-------------------
+
+.. image:: https://asciinema.org/a/161976.png
+   :target: https://asciinema.org/a/161976?speed=5&autoplay=1&loop=1
+   :alt: Creating a new role
+
+Testing a new role
+-------------------
+
+.. image:: https://asciinema.org/a/161977.png
+   :target: https://asciinema.org/a/161977?speed=5&autoplay=1&loop=1
+   :alt: Testing a new role
 
 Documentation
 =============
