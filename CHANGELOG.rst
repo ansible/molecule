@@ -10,10 +10,15 @@ functionality in a backwards-compatible manner.
 
 .. _`Semantic Versioning`: http://semver.org
 
-2.8.1
+2.8.2
 =====
 
 * Corrected ansible args.
+
+2.8.1
+=====
+
+* Reverted, release does not exist.
 
 2.8
 ===
