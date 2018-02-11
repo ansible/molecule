@@ -66,10 +66,34 @@ def test_bake(inventory_file, ansible_playbook_instance):
 def test_bake_removes_non_interactive_options_from_non_converge_playbooks(
         inventory_file, ansible_playbook_instance):
     ansible_playbook_instance.bake()
+
     x = '{} --inventory={} playbook'.format(
         str(sh.ansible_playbook), inventory_file)
 
     assert x == ansible_playbook_instance._ansible_command
+
+
+def test_bake_has_ansible_args(inventory_file, ansible_playbook_instance):
+    ansible_playbook_instance._config.ansible_args = ('foo', 'bar')
+    ansible_playbook_instance.bake()
+
+    x = '{} --inventory={} playbook foo bar'.format(
+        str(sh.ansible_playbook), inventory_file)
+
+    assert x == ansible_playbook_instance._ansible_command
+
+
+def test_bake_does_not_have_ansible_args(inventory_file,
+                                         ansible_playbook_instance):
+    for action in ['create', 'destroy']:
+        ansible_playbook_instance._config.ansible_args = ('foo', 'bar')
+        ansible_playbook_instance._config.action = action
+        ansible_playbook_instance.bake()
+
+        x = '{} --inventory={} playbook'.format(
+            str(sh.ansible_playbook), inventory_file)
+
+        assert x == ansible_playbook_instance._ansible_command
 
 
 def test_execute(patched_run_command, ansible_playbook_instance):

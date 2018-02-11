@@ -73,8 +73,9 @@ class AnsiblePlaybook(object):
             _err=self._err)
 
         if self._config.ansible_args:
-            self._ansible_command = self._ansible_command.bake(
-                self._config.ansible_args)
+            if self._config.action not in ['create', 'destroy']:
+                self._ansible_command = self._ansible_command.bake(
+                    self._config.ansible_args)
 
     def execute(self):
         """
