@@ -26,7 +26,7 @@ from molecule.model import base
 LOG = logger.get_logger(__name__)
 
 
-class AnsibleSchema(base.Base):
+class AnsibleSchema(base.BaseUnknown):
     config_file = marshmallow.fields.Str()
     playbook = marshmallow.fields.Str()
     raw_env_vars = marshmallow.fields.Dict()
@@ -36,40 +36,40 @@ class AnsibleSchema(base.Base):
     tags = marshmallow.fields.Str()
 
 
-class DriverSchema(base.Base):
+class DriverSchema(base.BaseUnknown):
     name = marshmallow.fields.Str()
 
 
-class PlatformSchema(base.Base):
+class PlatformSchema(base.BaseUnknown):
     name = marshmallow.fields.Str()
     box = marshmallow.fields.Str()
     box_version = marshmallow.fields.Str()
     box_url = marshmallow.fields.Str()
 
 
-class ProviderOptionsSchema(base.Base):
+class ProviderOptionsSchema(base.BaseUnknown):
     memory = marshmallow.fields.Int()
     cpus = marshmallow.fields.Int()
 
 
-class ProviderSchema(base.Base):
+class ProviderSchema(base.BaseUnknown):
     name = marshmallow.fields.Str()
     type = marshmallow.fields.Str()
     options = marshmallow.fields.Nested(ProviderOptionsSchema())
 
 
-class InterfaceSchema(base.Base):
+class InterfaceSchema(base.BaseUnknown):
     network_name = marshmallow.fields.Str()
     type = marshmallow.fields.Str()
     auto_config = marshmallow.fields.Bool()
     ip = marshmallow.fields.Str()
 
 
-class InstanceOptionsSchema(base.Base):
+class InstanceOptionsSchema(base.BaseUnknown):
     append_platform_to_hostname = marshmallow.fields.Bool()
 
 
-class InstanceSchema(base.Base):
+class InstanceSchema(base.BaseUnknown):
     name = marshmallow.fields.Str()
     ansible_groups = marshmallow.fields.List(marshmallow.fields.Str())
     interfaces = marshmallow.fields.List(
@@ -78,7 +78,7 @@ class InstanceSchema(base.Base):
     options = marshmallow.fields.Nested(InstanceOptionsSchema())
 
 
-class VagrantSchema(base.Base):
+class VagrantSchema(base.BaseUnknown):
     platforms = marshmallow.fields.List(
         marshmallow.fields.Nested(PlatformSchema()))
     providers = marshmallow.fields.List(
@@ -87,11 +87,11 @@ class VagrantSchema(base.Base):
         marshmallow.fields.Nested(InstanceSchema()))
 
 
-class VerifierOptionsSchema(base.Base):
+class VerifierOptionsSchema(base.BaseUnknown):
     sudo = marshmallow.fields.Bool()
 
 
-class VerifierSchema(base.Base):
+class VerifierSchema(base.BaseUnknown):
     name = marshmallow.fields.Str()
     options = marshmallow.fields.Nested(VerifierOptionsSchema())
 

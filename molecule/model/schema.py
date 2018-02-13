@@ -26,18 +26,18 @@ from molecule.model import base
 LOG = logger.get_logger(__name__)
 
 
-class DependencySchema(base.Base):
+class DependencySchema(base.BaseUnknown):
     name = marshmallow.fields.Str()
     enabled = marshmallow.fields.Bool()
     options = marshmallow.fields.Dict()
     env = marshmallow.fields.Dict()
 
 
-class DriverProviderSchema(base.Base):
+class DriverProviderSchema(base.BaseUnknown):
     name = marshmallow.fields.Str(allow_none=True)
 
 
-class DriverSchema(base.Base):
+class DriverSchema(base.BaseUnknown):
     name = marshmallow.fields.Str()
     provider = marshmallow.fields.Nested(DriverProviderSchema())
     options = marshmallow.fields.Dict()
@@ -45,14 +45,14 @@ class DriverSchema(base.Base):
     safe_files = marshmallow.fields.List(marshmallow.fields.Str())
 
 
-class LintSchema(base.Base):
+class LintSchema(base.BaseUnknown):
     name = marshmallow.fields.Str()
     enabled = marshmallow.fields.Bool()
     options = marshmallow.fields.Dict()
     env = marshmallow.fields.Dict()
 
 
-class InterfaceSchema(base.Base):
+class InterfaceSchema(base.BaseUnknown):
     network_name = marshmallow.fields.Str()
     type = marshmallow.fields.Str()
     auto_config = marshmallow.fields.Bool()
@@ -103,18 +103,18 @@ class PlatformsVagrantSchema(PlatformsBaseSchema):
     force_stop = marshmallow.fields.Bool()
 
 
-class ProvisionerInventoryLinksSchema(base.Base):
+class ProvisionerInventoryLinksSchema(base.BaseUnknown):
     host_vars = marshmallow.fields.Str()
     group_vars = marshmallow.fields.Str()
 
 
-class ProvisionerInventorySchema(base.Base):
+class ProvisionerInventorySchema(base.BaseUnknown):
     host_vars = marshmallow.fields.Dict()
     group_vars = marshmallow.fields.Dict()
     links = marshmallow.fields.Nested(ProvisionerInventoryLinksSchema())
 
 
-class PlaybooksSchema(base.Base):
+class PlaybooksSchema(base.BaseUnknown):
     create = marshmallow.fields.Str()
     converge = marshmallow.fields.Str()
     destroy = marshmallow.fields.Str()
@@ -132,9 +132,14 @@ class ProvisionerPlaybooksSchema(PlaybooksSchema):
     vagrant = marshmallow.fields.Nested(PlaybooksSchema())
 
 
-class ProvisionerSchema(base.Base):
+class ProvisionerConfigOptionsSchema(base.BaseDisallowed):
+    defaults = marshmallow.fields.Dict()
+
+
+class ProvisionerSchema(base.BaseUnknown):
     name = marshmallow.fields.Str()
-    config_options = marshmallow.fields.Dict()
+    config_options = marshmallow.fields.Nested(
+        ProvisionerConfigOptionsSchema())
     connection_options = marshmallow.fields.Dict()
     options = marshmallow.fields.Dict()
     env = marshmallow.fields.Dict()
@@ -144,7 +149,7 @@ class ProvisionerSchema(base.Base):
     lint = marshmallow.fields.Nested(LintSchema())
 
 
-class ScenarioSchema(base.Base):
+class ScenarioSchema(base.BaseUnknown):
     name = marshmallow.fields.Str()
     check_sequence = marshmallow.fields.List(marshmallow.fields.Str())
     converge_sequence = marshmallow.fields.List(marshmallow.fields.Str())
@@ -153,7 +158,7 @@ class ScenarioSchema(base.Base):
     test_sequence = marshmallow.fields.List(marshmallow.fields.Str())
 
 
-class VerifierSchema(base.Base):
+class VerifierSchema(base.BaseUnknown):
     name = marshmallow.fields.Str()
     enabled = marshmallow.fields.Bool()
     directory = marshmallow.fields.Str()
@@ -164,7 +169,7 @@ class VerifierSchema(base.Base):
     lint = marshmallow.fields.Nested(LintSchema())
 
 
-class MoleculeBaseSchema(base.Base):
+class MoleculeBaseSchema(base.BaseUnknown):
     dependency = marshmallow.fields.Nested(DependencySchema())
     driver = marshmallow.fields.Nested(DriverSchema())
     lint = marshmallow.fields.Nested(LintSchema())

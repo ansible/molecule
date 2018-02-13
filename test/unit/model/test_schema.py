@@ -53,10 +53,22 @@ def test_validate_raises_on_invalid_field(config):
     assert 'Not a valid string.' in str(e)
 
 
-#  def validate(c):
-#      if c['driver']['name'] == 'vagrant':
-#          schema = MoleculeVagrantSchema(strict=True)
-#      else:
-#          schema = MoleculeSchema(strict=True)
+def test_validate_raises_on_disallowed_field(config):
+    disallowed_options = [
+        {
+            'roles_path': '/path/to/roles'
+        },
+        {
+            'library': '/path/to/library'
+        },
+        {
+            'filter_plugins': '/path/to/filter_plugins'
+        },
+    ]
+    for option in disallowed_options:
+        config['provisioner']['config_options']['defaults'] = option
 
-#      return schema.load(c)
+        with pytest.raises(marshmallow.ValidationError) as e:
+            schema.validate(config)
+
+        assert 'Disallowed user provided config option' in str(e)
