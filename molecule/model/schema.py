@@ -134,6 +134,7 @@ class ProvisionerPlaybooksSchema(PlaybooksSchema):
 
 class ProvisionerConfigOptionsSchema(base.BaseDisallowed):
     defaults = marshmallow.fields.Dict()
+    privilege_escalation = marshmallow.fields.Dict()
 
 
 class ProvisionerSchema(base.BaseUnknown):
