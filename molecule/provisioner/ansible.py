@@ -188,6 +188,22 @@ class Ansible(base.Base):
             ssh_connection:
               scp_if_ssh: True
 
+    .. important::
+
+        The following keys are disallowed to prevent Molecule from
+        improperly functioning.  They can be specified through the
+        provisioner's env setting described above.
+
+    .. code-block:: yaml
+
+        provisioner:
+          name: ansible
+          config_options:
+            defaults:
+              roles_path: /path/to/roles_path
+              library: /path/to/library
+              filter_plugins: /path/to/filter_plugins
+
     Roles which require host/groups to have certain variables set.  Molecule
     uses the same `variables defined in a playbook`_ syntax as `Ansible`_.
 
