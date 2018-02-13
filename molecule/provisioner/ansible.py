@@ -35,9 +35,6 @@ UNSAFE_ENV_KEYS = [
     'ANSIBLE_BECOME_METHOD',
     'ANSIBLE_BECOME_USER',
 ]
-UNSAFE_CONFIG_OPTIONS_KEYS = [
-    'privilege_escalation',
-]
 
 
 class Ansible(base.Base):
@@ -192,7 +189,8 @@ class Ansible(base.Base):
 
         The following keys are disallowed to prevent Molecule from
         improperly functioning.  They can be specified through the
-        provisioner's env setting described above.
+        provisioner's env setting described above, with the exception
+        of the `privilege_escalation`.
 
     .. code-block:: yaml
 
@@ -203,6 +201,7 @@ class Ansible(base.Base):
               roles_path: /path/to/roles_path
               library: /path/to/library
               filter_plugins: /path/to/filter_plugins
+            privilege_escalation: {}
 
     Roles which require host/groups to have certain variables set.  Molecule
     uses the same `variables defined in a playbook`_ syntax as `Ansible`_.
@@ -346,10 +345,9 @@ class Ansible(base.Base):
 
     @property
     def config_options(self):
-        options = self._sanitize_config_options(
-            self._config.config['provisioner']['config_options'].copy())
-
-        return self._config.merge_dicts(self.default_config_options, options)
+        return self._config.merge_dicts(
+            self.default_config_options,
+            self._config.config['provisioner']['config_options'])
 
     @property
     def options(self):
@@ -731,16 +729,6 @@ class Ansible(base.Base):
                 del env[unsafe_env]
 
         return env
-
-    def _sanitize_config_options(self, config_options):
-        for unsafe_option in UNSAFE_CONFIG_OPTIONS_KEYS:
-            if config_options.get(unsafe_option):
-                msg = ("Disallowed user provided config option '{}'.  "
-                       'Removing.').format(unsafe_option)
-                LOG.warn(msg)
-                del config_options[unsafe_option]
-
-        return config_options
 
     def _absolute_path_for(self, env, key):
         return ':'.join([self.get_abs_path(p) for p in env[key].split(':')])

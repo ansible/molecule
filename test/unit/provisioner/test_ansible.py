@@ -874,27 +874,6 @@ def test_sanitize_env(mocker, ansible_instance, patched_logger_warn):
     assert x == patched_logger_warn.mock_calls
 
 
-def test_sanitize_config_options(mocker, ansible_instance,
-                                 patched_logger_warn):
-    options = {
-        'privilege_escalation': {
-            'become_user': 'root',
-            'become': True,
-            'become_method': 'sudo'
-        },
-        'foo': 'bar',
-    }
-
-    x = {
-        'foo': 'bar',
-    }
-    assert x == ansible_instance._sanitize_config_options(options)
-
-    msg = "Disallowed user provided config option '{}'.  Removing.".format(
-        'privilege_escalation')
-    patched_logger_warn.assert_called_once_with(msg)
-
-
 def test_absolute_path_for(ansible_instance):
     env = {'foo': 'foo:bar'}
     x = ':'.join([

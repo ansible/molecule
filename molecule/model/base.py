@@ -42,3 +42,9 @@ class BaseDisallowed(marshmallow.Schema):
             if any(disallowed in defaults for disallowed in disallowed_list):
                 raise marshmallow.ValidationError(
                     'Disallowed user provided config option', defaults)
+
+        privilege_escalation = data.get('privilege_escalation')
+        if privilege_escalation:
+            raise marshmallow.ValidationError(
+                'Disallowed user provided config option',
+                'privilege_escalation')
