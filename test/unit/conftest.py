@@ -108,6 +108,7 @@ def molecule_provisioner_section_data():
             'lint': {
                 'name': 'ansible-lint',
             },
+            'config_options': {},
         },
     }
 

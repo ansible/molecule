@@ -25,9 +25,20 @@ from molecule import logger
 LOG = logger.get_logger(__name__)
 
 
-class Base(marshmallow.Schema):
+class BaseUnknown(marshmallow.Schema):
     @marshmallow.validates_schema(pass_original=True)
     def check_unknown_fields(self, data, original_data):
         unknown = set(original_data) - set(self.fields)
         if unknown:
             raise marshmallow.ValidationError('Unknown field', unknown)
+
+
+class BaseDisallowed(marshmallow.Schema):
+    @marshmallow.validates_schema()
+    def check_fields(self, data):
+        defaults = data.get('defaults')
+        if defaults:
+            disallowed_list = ['roles_path', 'library', 'filter_plugins']
+            if any(disallowed in defaults for disallowed in disallowed_list):
+                raise marshmallow.ValidationError(
+                    'Disallowed user provided config option', defaults)
