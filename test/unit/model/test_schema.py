@@ -56,16 +56,24 @@ def test_validate_raises_on_invalid_field(config):
 def test_validate_raises_on_disallowed_field(config):
     disallowed_options = [
         {
-            'defaults': { 'roles_path': '/path/to/roles' }
+            'defaults': {
+                'roles_path': '/path/to/roles'
+            }
         },
         {
-            'defaults': { 'library': '/path/to/library' }
+            'defaults': {
+                'library': '/path/to/library'
+            }
         },
         {
-            'defaults': { 'filter_plugins': '/path/to/filter_plugins' }
+            'defaults': {
+                'filter_plugins': '/path/to/filter_plugins'
+            }
         },
         {
-            'privilege_escalation': { 'foo': 'bar' }
+            'privilege_escalation': {
+                'foo': 'bar'
+            }
         },
     ]
     for options in disallowed_options:

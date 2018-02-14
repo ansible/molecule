@@ -121,11 +121,11 @@ class AnsibleLint(base.Base):
         x_list = options.pop('x')
 
         exclude_args = ['--exclude={}'.format(exclude) for exclude in excludes]
-        x_args = ['-x={}'.format(x) for x in x_list]
+        x_args = tuple(('-x', x) for x in x_list)
         self._ansible_lint_command = sh.ansible_lint.bake(
             options,
             exclude_args,
-            x_args,
+            sum(x_args, ()),
             self._config.provisioner.playbooks.converge,
             _env=self.env,
             _out=LOG.out,
