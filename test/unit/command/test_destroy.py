@@ -32,11 +32,11 @@ def test_execute(mocker, patched_destroy_prune, patched_logger_info,
     ]
     assert x == patched_logger_info.mock_calls
 
-    patched_destroy_prune.assert_called_once_with()
     patched_ansible_destroy.assert_called_once_with()
 
     assert not config_instance.state.converged
     assert not config_instance.state.created
+    patched_destroy_prune.assert_called_once_with()
 
 
 def test_execute_skips_when_destroy_strategy_is_never(
