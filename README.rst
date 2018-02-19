@@ -58,6 +58,13 @@ Testing a new role
    :target: https://asciinema.org/a/161977?speed=5&autoplay=1&loop=1
    :alt: Testing a new role
 
+Testing an existing role
+-------------------
+
+.. image:: https://asciinema.org/a/AkQ4KhxuGAxwn1YJX3tM5BZld.png
+   :target: https://asciinema.org/a/AkQ4KhxuGAxwn1YJX3tM5BZld?speed=5&autoplay=1&loop=1
+   :alt: Testing an existing role
+
 Documentation
 =============
 
