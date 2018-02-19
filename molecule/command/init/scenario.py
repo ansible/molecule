@@ -38,6 +38,7 @@ class Scenario(base.Base):
 
     Initialize an existing role with Molecule:
 
+    >>> cd foo
     >>> molecule init scenario --scenario-name default --role-name foo
     """
 
