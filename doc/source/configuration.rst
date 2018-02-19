@@ -118,6 +118,7 @@ Supported Providers:
 * VirtualBox (default)
 * VMware (vmware_fusion, vmware_workstation and vmware_desktop)
 * Parallels
+* Libvirt (requires vagrant-libvirt plugin)
 
 Create instances.
 

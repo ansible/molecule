@@ -249,6 +249,32 @@ Vagrant.configure('2') do |config|
         end
       end
     end
+
+    ##
+    # Libvirt
+    ##
+    if provider['name'] == 'libvirt'
+      config.vm.provider provider['name'] do |libvirt|
+        libvirt.memory = provider['options']['memory']
+        libvirt.cpus = provider['options']['cpus']
+
+        # Custom
+        if provider['options']
+          provider['options'].each { |key, value|
+            if key != 'memory' and key != 'cpus'
+              eval("libvirt.#{key} = #{value}")
+            end
+          }
+        end
+
+        # Raw Configuration
+        if provider['raw_config_args']
+          provider['raw_config_args'].each { |raw_config_arg|
+            eval("libvirt.#{raw_config_arg}")
+          }
+        end
+      end
+    end
   end
 
   ##
