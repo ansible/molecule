@@ -53,6 +53,12 @@ class Docker(base.Base):
               - /sys/fs/cgroup:/sys/fs/cgroup:ro
             capabilities:
               - SYS_ADMIN
+            exposed_ports:
+              - "53/udp"
+              - "53/tcp"
+            published_ports:
+              - "0.0.0.0:8053:53/udp"
+              - "0.0.0.0:8053:53/tcp"
             ulimits: "{{ item.ulimits | default(omit) }}"
             dns_servers: "{{ item.dns_servers | default(omit) }}"
             networks:
