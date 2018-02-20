@@ -2,4 +2,5 @@
 - name: Converge
   hosts: all
   roles:
+    - timezone
     - molecule
