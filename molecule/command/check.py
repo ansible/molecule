@@ -31,15 +31,15 @@ class Check(base.Base):
     """
     Target the default scenario:
 
-    >>> molecule check
+    $ molecule check
 
     Targeting a specific scenario:
 
-    >>> molecule check --scenario-name foo
+    $ molecule check --scenario-name foo
 
     Executing with `debug`:
 
-    >>> molecule --debug check
+    $ molecule --debug check
     """
 
     def execute(self):

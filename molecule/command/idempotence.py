@@ -34,15 +34,15 @@ class Idempotence(base.Base):
     """
     Target the default scenario:
 
-    >>> molecule idempotence
+    $ molecule idempotence
 
     Targeting a specific scenario:
 
-    >>> molecule idempotence --scenario-name foo
+    $ molecule idempotence --scenario-name foo
 
     Executing with `debug`:
 
-    >>> molecule --debug idempotence
+    $ molecule --debug idempotence
     """
 
     def execute(self):

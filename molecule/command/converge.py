@@ -31,22 +31,22 @@ class Converge(base.Base):
     """
     Target the default scenario:
 
-    >>> molecule converge
+    $ molecule converge
 
     Targeting a specific scenario:
 
-    >>> molecule converge --scenario-name foo
+    $ molecule converge --scenario-name foo
 
     Providing additional command line arguments to the `ansible-playbook`
     command.  Use this option with care, as there is no sanitation or
     validation of input.  Options passed on the CLI override options
     provided in provisioner's `options` section of `molecule.yml`.
 
-    >>> molecule converge -- -vvv -tags foo,bar
+    $ molecule converge -- -vvv -tags foo,bar
 
     Executing with `debug`:
 
-    >>> molecule --debug converge
+    $ molecule --debug converge
     """
 
     def execute(self):

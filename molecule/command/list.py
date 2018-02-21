@@ -36,20 +36,20 @@ class List(base.Base):
     """
     Target all scenarios:
 
-    >>> molecule list
+    $ molecule list
 
     Targeting a specific scenario:
 
-    >>> molecule list --scenario-name foo
+    $ molecule list --scenario-name foo
 
     Machine readable output:
 
-    >>> molecule list --format plain
-    >>> molecule list --format yaml
+    $ molecule list --format plain
+    $ molecule list --format yaml
 
     Executing with `debug`:
 
-    >>> molecule --debug list
+    $ molecule --debug list
     """
 
     def execute(self):

@@ -31,15 +31,15 @@ class Syntax(base.Base):
     """
     Target the default scenario:
 
-    >>> molecule syntax
+    $ molecule syntax
 
     Targeting a specific scenario:
 
-    >>> molecule syntax --scenario-name foo
+    $ molecule syntax --scenario-name foo
 
     Executing with `debug`:
 
-    >>> molecule --debug syntax
+    $ molecule --debug syntax
     """
 
     def execute(self):

@@ -31,15 +31,15 @@ class Lint(base.Base):
     """
     Target the default scenario:
 
-    >>> molecule lint
+    $ molecule lint
 
     Targeting a specific scenario:
 
-    >>> molecule lint --scenario-name foo
+    $ molecule lint --scenario-name foo
 
     Executing with `debug`:
 
-    >>> molecule --debug lint
+    $ molecule --debug lint
     """
 
     def execute(self):

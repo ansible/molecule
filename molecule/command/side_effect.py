@@ -34,15 +34,15 @@ class SideEffect(base.Base):
 
     Target the default scenario:
 
-    >>> molecule side-effect
+    $ molecule side-effect
 
     Targeting a specific scenario:
 
-    >>> molecule side-effect --scenario-name foo
+    $ molecule side-effect --scenario-name foo
 
     Executing with `debug`:
 
-    >>> molecule --debug side-effect
+    $ molecule --debug side-effect
     """
 
     def execute(self):
