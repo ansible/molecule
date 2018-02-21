@@ -128,7 +128,7 @@ class Ansible(base.Base):
 
     .. important::
 
-        This is feature should be considered experimental.
+        This feature should be considered experimental.
 
     The prepare playbook executes actions which bring the system to a given
     state prior to converge.  It is executed after create, and only once for
