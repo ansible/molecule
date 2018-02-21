@@ -153,7 +153,7 @@ Vagrant.configure('2') do |config|
   if vagrant_config['provider']
     provider = vagrant_config['provider']
 
-    #Boot time optimization
+    # Boot time optimization
     if provider['options']
       if provider['options']['synced_folder']
         config.vm.synced_folder provider['options']['synced_folder']
