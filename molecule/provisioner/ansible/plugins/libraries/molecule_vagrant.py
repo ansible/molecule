@@ -166,7 +166,6 @@ Vagrant.configure('2') do |config|
       else
         config.ssh.insert_key = false
       end
-
     else
       config.vm.synced_folder ".", "/vagrant", disabled: true
       config.ssh.insert_key = false
