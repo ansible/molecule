@@ -46,7 +46,8 @@ class Docker(base.Base):
           - name: instance
             hostname: "{{ item.name }}"
             image: "molecule_local/{{ item.image }}"
-            registry: registry.example.com
+            registry:
+              url: registry.example.com
             command: "{{ item.command | default('sleep infinity') }}"
             privileged: "{{ item.privileged | default(omit) }}"
             volumes:
