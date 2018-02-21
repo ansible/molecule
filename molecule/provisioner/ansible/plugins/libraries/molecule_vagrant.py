@@ -153,6 +153,23 @@ Vagrant.configure('2') do |config|
   if vagrant_config['provider']
     provider = vagrant_config['provider']
 
+    #Boot time optimization
+    if provider['options']
+      if provider['options']['synced_folder']
+        config.vm.synced_folder provider['options']['synced_folder']
+      else
+        config.vm.synced_folder ".", "/vagrant", disabled: true
+      end
+      if provider['options']['ssh_insert_key']
+        config.ssh.insert_key = provider['options']['ssh_insert_key']
+      else
+        config.ssh.insert_key = false
+      end
+    else
+      config.vm.synced_folder ".", "/vagrant", disabled: true
+      config.ssh.insert_key = false
+    end
+
     ##
     # Virtualbox
     ##
