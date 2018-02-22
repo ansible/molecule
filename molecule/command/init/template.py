@@ -35,7 +35,7 @@ class Template(base.Base):
     """
     Initialize a new role from a Cookiecutter URL:
 
-    >>> molecule init template --url https://example.com/user/cookiecutter-repo
+    $ molecule init template --url https://example.com/user/cookiecutter-repo
     """
 
     def __init__(self, command_args):

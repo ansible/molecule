@@ -34,7 +34,7 @@ class Role(base.Base):
     """
     Initialize a new role:
 
-    >>> molecule init role --role-name foo
+    $ molecule init role --role-name foo
     """
 
     def __init__(self, command_args):
