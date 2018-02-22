@@ -32,19 +32,19 @@ class Create(base.Base):
     """
     Target the default scenario:
 
-    >>> molecule create
+    $ molecule create
 
     Targeting a specific scenario:
 
-    >>> molecule create --scenario-name foo
+    $ molecule create --scenario-name foo
 
     Targeting a specific driver:
 
-    >>> molecule converge --driver-name foo
+    $ molecule converge --driver-name foo
 
     Executing with `debug`:
 
-    >>> molecule --debug create
+    $ molecule --debug create
     """
 
     def execute(self):

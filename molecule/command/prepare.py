@@ -34,23 +34,23 @@ class Prepare(base.Base):
     """
     Target the default scenario:
 
-    >>> molecule prepare
+    $ molecule prepare
 
     Targeting a specific scenario:
 
-    >>> molecule prepare --scenario-name foo
+    $ molecule prepare --scenario-name foo
 
     Targeting a specific driver:
 
-    >>> molecule prepare --driver-name foo
+    $ molecule prepare --driver-name foo
 
     Force the execution fo the prepare playbook:
 
-    >>> molecule prepare --force
+    $ molecule prepare --force
 
     Executing with `debug`:
 
-    >>> molecule --debug prepare
+    $ molecule --debug prepare
     """
 
     def execute(self):

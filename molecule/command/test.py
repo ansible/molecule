@@ -33,27 +33,27 @@ class Test(base.Base):
     """
     Target the default scenario:
 
-    >>> molecule test
+    $ molecule test
 
     Target all scenarios:
 
-    >>> molecule test --all
+    $ molecule test --all
 
     Targeting a specific scenario:
 
-    >>> molecule test --scenario-name foo
+    $ molecule test --scenario-name foo
 
     Targeting a specific driver:
 
-    >>> molecule test --driver-name foo
+    $ molecule test --driver-name foo
 
     Always destroy instances at the conclusion of a Molecule run:
 
-    >>> molecule test --destroy=always
+    $ molecule test --destroy=always
 
     Executing with `debug`:
 
-    >>> molecule --debug test
+    $ molecule --debug test
     """
 
     def execute(self):

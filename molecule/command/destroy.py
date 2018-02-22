@@ -32,23 +32,23 @@ class Destroy(base.Base):
     """
     Target the default scenario:
 
-    >>> molecule destroy
+    $ molecule destroy
 
     Target all scenarios:
 
-    >>> molecule destroy --all
+    $ molecule destroy --all
 
     Targeting a specific scenario:
 
-    >>> molecule destroy --scenario-name foo
+    $ molecule destroy --scenario-name foo
 
     Targeting a specific driver:
 
-    >>> molecule converge --driver-name foo
+    $ molecule converge --driver-name foo
 
     Executing with `debug`:
 
-    >>> molecule --debug destroy
+    $ molecule --debug destroy
     """
 
     def execute(self):

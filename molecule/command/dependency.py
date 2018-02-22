@@ -31,15 +31,15 @@ class Dependency(base.Base):
     """
     Target the default scenario:
 
-    >>> molecule dependency
+    $ molecule dependency
 
     Targeting a specific scenario:
 
-    >>> molecule dependency --scenario-name foo
+    $ molecule dependency --scenario-name foo
 
     Executing with `debug`:
 
-    >>> molecule --debug dependency
+    $ molecule --debug dependency
     """
 
     def execute(self):

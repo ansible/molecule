@@ -31,15 +31,15 @@ class Verify(base.Base):
     """
     Target the default scenario:
 
-    >>> molecule verify
+    $ molecule verify
 
     Targeting a specific scenario:
 
-    >>> molecule verify --scenario-name foo
+    $ molecule verify --scenario-name foo
 
     Executing with `debug`:
 
-    >>> molecule --debug verify
+    $ molecule --debug verify
     """
 
     def execute(self):
