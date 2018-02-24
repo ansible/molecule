@@ -30,7 +30,7 @@ functionality in a backwards-compatible manner.
 Important Changes
 -----------------
 
-These change does not impact existing projects.  However, if one was using the
+These changes do not impact existing projects.  However, if one was using the
 old syntax, and upgraded create.yml, changes would be required.
 
 * The Docker driver's registry has been moved to a key named `url` under
