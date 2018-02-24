@@ -16,4 +16,4 @@ sh==1.12.14
 tabulate==0.7.7
 testinfra==1.7.1
 tree-format==0.1.2
-yamllint==1.8.1
+yamllint==1.11.0
