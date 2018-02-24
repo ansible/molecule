@@ -10,6 +10,58 @@ functionality in a backwards-compatible manner.
 
 .. _`Semantic Versioning`: http://semver.org
 
+2.9
+===
+
+* Bumped yamllint version.
+* Namespaced Docker registry.
+* Reduce create time with Vagrant driver.
+* Replace >>> with $ in documentation.
+* Moved prune to run after destroy.
+* Fix confusion between exposed and published ports in docker create
+  playbook.
+* Add basic support for libvirt in Vagrant driver.
+* Ignore psutil on cygwin platform.
+* Corrected ability to set multiple x options in provisioner's lint.
+* Disallow privilege_escalation via schema.
+* Validate schema for invalid ansible config options.
+* Adding provision option for Vagrant driver.
+
+Important Changes
+-----------------
+
+These change does not impact existing projects.  However, if one was using the
+old syntax, and upgraded create.yml, changes would be required.
+
+* The Docker driver's registry has been moved to a key named `url` under
+  `registry`.
+
+.. code-block:: yaml
+
+    driver:
+      name: docker
+    platforms:
+      - name: instance
+        image: image_name:tag
+        registry:
+          url: registry.example.com
+
+* Fix confusion between exposed and published ports in docker create playbook.
+
+.. code-block:: yaml
+
+    driver:
+      name: docker
+    platforms:
+      - name: instance
+        image: image_name:tag
+        exposed_ports:
+          - "53/udp"
+          - "53/tcp"
+        published_ports:
+          - "0.0.0.0:8053:53/udp"
+          - "0.0.0.0:8053:53/tcp"
+
 2.8.2
 =====
 

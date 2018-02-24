@@ -44,11 +44,11 @@ class Docker(base.Base):
           name: docker
         platforms:
           - name: instance
-            hostname: "{{ item.name }}"
-            image: "molecule_local/{{ item.image }}"
+            hostname: instance
+            image: image_name:tag
             registry:
               url: registry.example.com
-            command: "{{ item.command | default('sleep infinity') }}"
+            command: sleep infinity
             privileged: "{{ item.privileged | default(omit) }}"
             volumes:
               - /sys/fs/cgroup:/sys/fs/cgroup:ro
