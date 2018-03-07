@@ -10,6 +10,23 @@ functionality in a backwards-compatible manner.
 
 .. _`Semantic Versioning`: http://semver.org
 
+2.10
+====
+
+* Properly skipping Vagrant speedup keys in provider.
+* Allow Vagrant to automatically insert a keypair.
+* Correct molecule_vagrant.py bug where `provider_options`
+  would cause Vagrant to fail if keys from #1147 were provided.
+* Fix line length in cookie cutter README.
+
+Important Changes
+-----------------
+
+PR #1147 reduced Vagrant create time, which disabled Vagrant from
+automatically inserting a keypair.  Molecule's default is now changed
+back to Vagrant's default of True, which may reduce the speed of Vagrant
+create as fixed by #1147.
+
 2.9
 ===
 
