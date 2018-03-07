@@ -162,13 +162,13 @@ Vagrant.configure('2') do |config|
       end
 
       if provider['options']['ssh_insert_key']
-        config.ssh.insert_key = provider['options']['ssh_insert_key']
-      else
         config.ssh.insert_key = true
+      else
+        config.ssh.insert_key = false
       end
     else
       config.vm.synced_folder ".", "/vagrant", disabled: true
-      config.ssh.insert_key = false
+      config.ssh.insert_key = true
     end
 
     ##
@@ -179,7 +179,7 @@ Vagrant.configure('2') do |config|
         virtualbox.memory = provider['options']['memory']
         virtualbox.cpus = provider['options']['cpus']
 
-        if provider['options'] and provider['options']['linked_clone']
+        if provider['options'] && provider['options']['linked_clone']
           if Gem::Version.new(Vagrant::VERSION) >= Gem::Version.new('1.8.0')
             virtualbox.linked_clone = provider['options']['linked_clone']
           end
@@ -192,7 +192,7 @@ Vagrant.configure('2') do |config|
         # Custom
         if provider['options']
           provider['options'].each { |key, value|
-            if key != 'memory' and key != 'cpus' and key != 'linked_clone' and key != 'ssh_insert_key'
+            if key != 'memory' && key != 'cpus' && key != 'linked_clone' && key != 'ssh_insert_key' && key != 'synced_folder'
               eval("virtualbox.#{key} = #{value}")
             end
           }
@@ -227,7 +227,7 @@ Vagrant.configure('2') do |config|
         # Custom
         if provider['options']
           provider['options'].each { |key, value|
-            if key != 'memory' and key != 'cpus'
+            if key != 'memory' && key != 'cpus' && key != 'ssh_insert_key' && key != 'synced_folder'
               eval("vmware.#{key} = #{value}")
             end
           }
@@ -253,7 +253,7 @@ Vagrant.configure('2') do |config|
         # Custom
         if provider['options']
           provider['options'].each { |key, value|
-            if key != 'memory' and key != 'cpus'
+            if key != 'memory' && key != 'cpus' && key != 'ssh_insert_key' && key != 'synced_folder'
               eval("parallels.#{key} = #{value}")
             end
           }
@@ -279,7 +279,7 @@ Vagrant.configure('2') do |config|
         # Custom
         if provider['options']
           provider['options'].each { |key, value|
-            if key != 'memory' and key != 'cpus'
+            if key != 'memory' && key != 'cpus' && key != 'ssh_insert_key' && key != 'synced_folder'
               eval("libvirt.#{key} = #{value}")
             end
           }
