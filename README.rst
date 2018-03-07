@@ -70,14 +70,6 @@ Documentation
 
 https://molecule.readthedocs.io/
 
-Demo
-====
-
-`Infrastructure Testing with Molecule`_, AnsibleFest SF 2017
-
-.. _`Infrastructure Testing with Molecule`: https://www.ansible.com/infastructure-testing-with-molecule
-
-
 Contact
 =======
 
