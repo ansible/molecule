@@ -192,7 +192,7 @@ Vagrant.configure('2') do |config|
         # Custom
         if provider['options']
           provider['options'].each { |key, value|
-            if key != 'memory' and key != 'cpus' and key != 'linked_clone'
+            if key != 'memory' and key != 'cpus' and key != 'linked_clone' and key != 'ssh_insert_key'
               eval("virtualbox.#{key} = #{value}")
             end
           }
