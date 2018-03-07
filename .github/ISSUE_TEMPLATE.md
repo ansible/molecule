@@ -7,13 +7,25 @@
 
 ```
 ansible --version
+```
+
+```
 molecule --version
 ```
 
-- Molecule installation method: One of source, pip
-- Ansible installation method: One of source, pip, OS package
+Molecule installation method (one of):
 
-# Desired Behaviour
+- source
+- pip
+
+
+Ansible installation method (one of):
+
+- source
+- pip
+- OS package
+
+# Desired Behavior
 
 Please give some details of the feature being requested or what
 should happen if providing a bug report.
