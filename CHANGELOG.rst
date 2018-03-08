@@ -10,6 +10,12 @@ functionality in a backwards-compatible manner.
 
 .. _`Semantic Versioning`: http://semver.org
 
+2.10.1
+======
+
+* Correct Vagrant to automatically insert a keypair.
+* Corrected synced_folders usage.
+
 2.10
 ====
 
