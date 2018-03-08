@@ -18,7 +18,6 @@ Molecule installation method (one of):
 - source
 - pip
 
-
 Ansible installation method (one of):
 
 - source
