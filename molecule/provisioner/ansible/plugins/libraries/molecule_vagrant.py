@@ -156,7 +156,7 @@ Vagrant.configure('2') do |config|
     # Boot time optimization
     if provider['options']
       if provider['options']['synced_folder']
-        config.vm.synced_folder provider['options']['synced_folder']
+        config.vm.synced_folder ".", "/vagrant"
       else
         config.vm.synced_folder ".", "/vagrant", disabled: true
       end
@@ -166,8 +166,6 @@ Vagrant.configure('2') do |config|
       else
         config.ssh.insert_key = true
       end
-    else
-      config.vm.synced_folder ".", "/vagrant", disabled: true
     end
 
     ##
