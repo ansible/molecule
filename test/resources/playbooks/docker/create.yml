@@ -9,6 +9,18 @@
     molecule_ephemeral_directory: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}"
     molecule_yml: "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
   tasks:
+    - name: Log into a Docker registry
+      docker_login:
+        username: "{{ item.registry.credentials.username }}"
+        password: "{{ item.registry.credentials.passsword }}"
+        email: "{{ item.registry.credentials.email | default(omit) }}"
+        registry: "{{ item.registry.url }}"
+      with_items: "{{ molecule_yml.platforms }}"
+      when:
+        - item.registry is defined
+        - item.registry.credentials is defined
+        - item.registry.credentials.username is defined
+
     - name: Create Dockerfiles from image names
       template:
         src: Dockerfile.j2

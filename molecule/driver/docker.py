@@ -48,6 +48,10 @@ class Docker(base.Base):
             image: image_name:tag
             registry:
               url: registry.example.com
+              credentials:
+                username: $USERNAME
+                passsword: $PASSWORD
+                email: user@example.com
             command: sleep infinity
             privileged: "{{ item.privileged | default(omit) }}"
             volumes:
