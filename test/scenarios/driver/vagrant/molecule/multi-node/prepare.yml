@@ -2,4 +2,10 @@
 - name: Prepare
   hosts: all
   gather_facts: false
-  tasks: []
+  become: true
+  tasks:
+    - name: Install prerequisite packages for tests
+      package:
+        name: "{{ item }}"
+      with_items:
+        - iproute

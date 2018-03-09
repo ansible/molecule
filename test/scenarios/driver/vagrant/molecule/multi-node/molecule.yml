@@ -19,8 +19,12 @@ platforms:
     groups:
       - foo
       - bar
+    memory: 1024
+    cpus: 1
+    config_options:
+      synced_folder: True
   - name: instance-2
-    box: debian/jessie64
+    box: centos/7
     interfaces:
       - auto_config: true
         network_name: private_network
@@ -28,6 +32,8 @@ platforms:
     groups:
       - foo
       - baz
+    memory: 2048
+    cpus: 2
 provisioner:
   name: ansible
   playbooks:
@@ -41,5 +47,7 @@ scenario:
   name: multi-node
 verifier:
   name: testinfra
+  options:
+    sudo: True
   lint:
     name: flake8
