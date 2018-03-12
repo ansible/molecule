@@ -15,6 +15,8 @@
         instance_interfaces: "{{ item.interfaces | default(omit) }}"
         instance_raw_config_args: "{{ item.instance_raw_config_args | default(omit) }}"
 
+        config_options: "{{ item.config_options | default(omit) }}"
+
         platform_box: "{{ item.box }}"
         platform_box_version: "{{ item.box_version | default(omit) }}"
         platform_box_url: "{{ item.box_url | default(omit) }}"
@@ -22,7 +24,8 @@
         provider_name: "{{ molecule_yml.driver.provider.name }}"
         provider_memory: "{{ item.memory | default(omit) }}"
         provider_cpus: "{{ item.cpus | default(omit) }}"
-        provider_raw_config_args: "{{ item.raw_config_args | default(omit) }}"
+        provider_options: "{{ item.provider_options | default(omit) }}"
+        provider_raw_config_args: "{{ item.provider_raw_config_args | default(omit) }}"
 
         provision: "{{ item.provision | default(omit) }}"
 

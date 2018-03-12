@@ -60,6 +60,11 @@ options:
       - Additional Vagrant options not explcitly exposed by this module.
     required: False
     default: None
+  config_options:
+    description:
+      - Additional config options not explcitly exposed by this module.
+    required: False
+    default: {}
   platform_box:
     description:
       - Name of Vagrant box.
@@ -125,178 +130,172 @@ VAGRANTFILE_TEMPLATE = '''
 require 'yaml'
 
 Vagrant.configure('2') do |config|
-  vagrant_config = YAML::load_file('{{ vagrantfile_config }}')
+  vagrant_config_hash = YAML::load_file('{{ vagrantfile_config }}')
 
   if Vagrant.has_plugin?('vagrant-cachier')
     config.cache.scope = 'machine'
   end
 
   ##
+  # Configs
+  ##
+
+  c = vagrant_config_hash['config']
+  if !c['options']['synced_folder']
+    config.vm.synced_folder ".", "/vagrant", disabled: true
+  end
+  c['options'].delete('synced_folder')
+
+  c['options'].each { |key, value|
+    eval("config.#{key} = #{value}")
+  }
+
+  ##
   # Platforms
   ##
-  if vagrant_config['platform']
-    platform = vagrant_config['platform']
-    config.vm.box = platform['box']
 
-    if platform['box_version']
-      config.vm.box_version = platform['box_version']
-    end
+  platform = vagrant_config_hash['platform']
 
-    if platform['box_url']
-      config.vm.box_url = platform['box_url']
-    end
+  config.vm.box = platform['box']
+
+  if platform['box_version']
+    config.vm.box_version = platform['box_version']
+  end
+
+  if platform['box_url']
+    config.vm.box_url = platform['box_url']
   end
 
   ##
   # Provider
   ##
-  if vagrant_config['provider']
-    provider = vagrant_config['provider']
 
-    # Boot time optimization
-    if provider['options']
-      if provider['options']['synced_folder']
-        config.vm.synced_folder ".", "/vagrant"
+  provider = vagrant_config_hash['provider']
+  provider_memory = provider['options']['memory']
+  provider_cpus = provider['options']['cpus']
+  provider['options'].delete('memory')
+  provider['options'].delete('cpus')
+
+  ##
+  # Virtualbox
+  ##
+
+  if provider['name'] == 'virtualbox'
+    config.vm.provider provider['name'] do |virtualbox|
+      virtualbox.memory = provider_memory
+      virtualbox.cpus = provider_cpus
+
+      if provider['options']['linked_clone']
+        if Gem::Version.new(Vagrant::VERSION) >= Gem::Version.new('1.8.0')
+          virtualbox.linked_clone = provider['options']['linked_clone']
+        end
       else
-        config.vm.synced_folder ".", "/vagrant", disabled: true
-      end
-
-      if provider['options'].has_key?('ssh_insert_key')
-        config.ssh.insert_key = provider['options']['ssh_insert_key']
-      else
-        config.ssh.insert_key = true
-      end
-    end
-
-    ##
-    # Virtualbox
-    ##
-    if provider['name'] == 'virtualbox'
-      config.vm.provider provider['name'] do |virtualbox|
-        virtualbox.memory = provider['options']['memory']
-        virtualbox.cpus = provider['options']['cpus']
-
-        if provider['options'] && provider['options']['linked_clone']
-          if Gem::Version.new(Vagrant::VERSION) >= Gem::Version.new('1.8.0')
-            virtualbox.linked_clone = provider['options']['linked_clone']
-          end
-        else
-          if Gem::Version.new(Vagrant::VERSION) >= Gem::Version.new('1.8.0')
-            virtualbox.linked_clone = true
-          end
-        end
-
-        # Custom
-        if provider['options']
-          provider['options'].each { |key, value|
-            if key != 'memory' && key != 'cpus' && key != 'linked_clone' && key != 'ssh_insert_key' && key != 'synced_folder'
-              eval("virtualbox.#{key} = #{value}")
-            end
-          }
-        end
-
-        # Raw Configuration
-        if provider['raw_config_args']
-          provider['raw_config_args'].each { |raw_config_arg|
-            eval("virtualbox.#{raw_config_arg}")
-          }
+        if Gem::Version.new(Vagrant::VERSION) >= Gem::Version.new('1.8.0')
+          virtualbox.linked_clone = true
         end
       end
 
-      # The vagrant-vbguest plugin attempts to update packages
-      # before a RHEL based VM is registered.
-      # TODO: Port from the old .j2, should be done in raw config
-      if (vagrant_config['platform'] =~ /rhel/i) != nil
-        if Vagrant.has_plugin?('vagrant-vbguest')
-          config.vbguest.auto_update = false
+      # Custom
+      provider['options'].each { |key, value|
+        if key != 'linked_clone'
+          eval("virtualbox.#{key} = #{value}")
         end
+      }
+
+      # Raw Configuration
+      if provider['raw_config_args']
+        provider['raw_config_args'].each { |raw_config_arg|
+          eval("virtualbox.#{raw_config_arg}")
+        }
       end
     end
 
-    ##
-    # VMware (vmware_fusion, vmware_workstation and vmware_desktop)
-    ##
-    if provider['name'].start_with?('vmware_')
-      config.vm.provider provider['name'] do |vmware|
-        vmware.vmx['memsize'] = provider['options']['memory']
-        vmware.vmx['numvcpus'] = provider['options']['cpus']
-
-        # Custom
-        if provider['options']
-          provider['options'].each { |key, value|
-            if key != 'memory' && key != 'cpus' && key != 'ssh_insert_key' && key != 'synced_folder'
-              eval("vmware.#{key} = #{value}")
-            end
-          }
-        end
-
-        # Raw Configuration
-        if provider['raw_config_args']
-          provider['raw_config_args'].each { |raw_config_arg|
-            eval("vmware.#{raw_config_arg}")
-          }
-        end
-      end
-    end
-
-    ##
-    # Parallels
-    ##
-    if provider['name'] == 'parallels'
-      config.vm.provider provider['name'] do |parallels|
-        parallels.memory = provider['options']['memory']
-        parallels.cpus = provider['options']['cpus']
-
-        # Custom
-        if provider['options']
-          provider['options'].each { |key, value|
-            if key != 'memory' && key != 'cpus' && key != 'ssh_insert_key' && key != 'synced_folder'
-              eval("parallels.#{key} = #{value}")
-            end
-          }
-        end
-
-        # Raw Configuration
-        if provider['raw_config_args']
-          provider['raw_config_args'].each { |raw_config_arg|
-            eval("parallels.#{raw_config_arg}")
-          }
-        end
-      end
-    end
-
-    ##
-    # Libvirt
-    ##
-    if provider['name'] == 'libvirt'
-      config.vm.provider provider['name'] do |libvirt|
-        libvirt.memory = provider['options']['memory']
-        libvirt.cpus = provider['options']['cpus']
-
-        # Custom
-        if provider['options']
-          provider['options'].each { |key, value|
-            if key != 'memory' && key != 'cpus' && key != 'ssh_insert_key' && key != 'synced_folder'
-              eval("libvirt.#{key} = #{value}")
-            end
-          }
-        end
-
-        # Raw Configuration
-        if provider['raw_config_args']
-          provider['raw_config_args'].each { |raw_config_arg|
-            eval("libvirt.#{raw_config_arg}")
-          }
-        end
+    # The vagrant-vbguest plugin attempts to update packages
+    # before a RHEL based VM is registered.
+    # TODO: Port from the old .j2, should be done in raw config
+    if (vagrant_config_hash['platform'] =~ /rhel/i) != nil
+      if Vagrant.has_plugin?('vagrant-vbguest')
+        config.vbguest.auto_update = false
       end
     end
   end
 
   ##
+  # VMware (vmware_fusion, vmware_workstation and vmware_desktop)
+  ##
+
+  if provider['name'].start_with?('vmware_')
+    config.vm.provider provider['name'] do |vmware|
+      vmware.vmx['memsize'] = provider_memory
+      vmware.vmx['numvcpus'] = provider_cpus
+
+      # Custom
+      provider['options'].each { |key, value|
+        eval("vmware.#{key} = #{value}")
+      }
+
+      # Raw Configuration
+      if provider['raw_config_args']
+        provider['raw_config_args'].each { |raw_config_arg|
+          eval("vmware.#{raw_config_arg}")
+        }
+      end
+    end
+  end
+
+  ##
+  # Parallels
+  ##
+
+  if provider['name'] == 'parallels'
+    config.vm.provider provider['name'] do |parallels|
+      parallels.memory = provider_memory
+      parallels.cpus = provider_cpus
+
+      # Custom
+      provider['options'].each { |key, value|
+        eval("parallels.#{key} = #{value}")
+      }
+
+      # Raw Configuration
+      if provider['raw_config_args']
+        provider['raw_config_args'].each { |raw_config_arg|
+          eval("parallels.#{raw_config_arg}")
+        }
+      end
+    end
+  end
+
+  ##
+  # Libvirt
+  ##
+
+  if provider['name'] == 'libvirt'
+    config.vm.provider provider['name'] do |libvirt|
+      libvirt.memory = provider_memory
+      libvirt.cpus = provider_cpus
+
+      # Custom
+      provider['options'].each { |key, value|
+        eval("libvirt.#{key} = #{value}")
+      }
+
+      # Raw Configuration
+      if provider['raw_config_args']
+        provider['raw_config_args'].each { |raw_config_arg|
+          eval("libvirt.#{raw_config_arg}")
+        }
+      end
+    end
+  end
+
+
+  ##
   # Instances
   ##
-  if vagrant_config['instance']
-    instance = vagrant_config['instance']
+
+  if vagrant_config_hash['instance']
+    instance = vagrant_config_hash['instance']
     config.vm.define instance['name'] do |c|
       c.vm.hostname = instance['name']
 
@@ -336,7 +335,8 @@ class VagrantClient(object):
         if not cd:
             changed = True
             provision = self._module.params['provision']
-            for line in self._vagrant.up(provision=provision, stream_output=True):
+            for line in self._vagrant.up(
+                    provision=provision, stream_output=True):
                 # NOTE: Add prefix to ensure that output of 'vagrant up'
                 # doesn't start with one of the JSON start characters { or ].
                 print('<vagrant_output> {}'.format(line))
@@ -399,19 +399,32 @@ class VagrantClient(object):
 
     def _get_vagrant_config_dict(self):
         d = {
-            'instance': {
-                'name': self._module.params['instance_name'],
-                'interfaces': self._module.params['instance_interfaces'],
-                'raw_config_args':
-                self._module.params['instance_raw_config_args'],
+            'config': {
+                # NOTE(retr0h): Options provided here will be passed to
+                # Vagrant as "config.#{key} = #{value}".
+                'options': {
+                    # NOTE(retr0h): `synced_folder` does not represent the
+                    # actual key used by Vagrant.  Is used as a flag to
+                    # simply enable/disable shared folder.
+                    'synced_folder': False,
+                    'ssh.insert_key': True,
+                }
             },
             'platform': {
                 'box': self._module.params['platform_box'],
                 'box_version': self._module.params['platform_box_version'],
                 'box_url': self._module.params['platform_box_url'],
             },
+            'instance': {
+                'name': self._module.params['instance_name'],
+                'interfaces': self._module.params['instance_interfaces'],
+                'raw_config_args':
+                self._module.params['instance_raw_config_args'],
+            },
             'provider': {
                 'name': self._module.params['provider_name'],
+                # NOTE(retr0h): Options provided here will be passed to
+                # Vagrant as "$provider_name.#{key} = #{value}".
                 'options': {
                     'memory': self._module.params['provider_memory'],
                     'cpus': self._module.params['provider_cpus'],
@@ -421,9 +434,11 @@ class VagrantClient(object):
             }
         }
 
-        # TODO(retr0h): Should we move this to config.merge_dicts()?
-        d['provider']['options'].update(
-            self._module.params['provider_options'])
+        molecule.config.merge_dicts(d['config']['options'],
+                                    self._module.params['config_options'])
+
+        molecule.config.merge_dicts(d['provider']['options'],
+                                    self._module.params['provider_options'])
 
         return d
 
@@ -434,7 +449,8 @@ def main():
             instance_name=dict(type='str', required=True),
             instance_interfaces=dict(type='list', default=[]),
             instance_raw_config_args=dict(type='list', default=None),
-            platform_box=dict(type='str', required=True),
+            config_options=dict(type='dict', default={}),
+            platform_box=dict(type='str', required=False),
             platform_box_version=dict(type='str'),
             platform_box_url=dict(type='str'),
             provider_name=dict(type='str', default='virtualbox'),
