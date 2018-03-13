@@ -31,6 +31,7 @@ class DependencySchema(base.BaseUnknown):
     enabled = marshmallow.fields.Bool()
     options = marshmallow.fields.Dict()
     env = marshmallow.fields.Dict()
+    command = marshmallow.fields.Str()
 
 
 class DriverProviderSchema(base.BaseUnknown):

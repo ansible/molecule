@@ -30,6 +30,7 @@ from molecule import state
 from molecule import util
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
+from molecule.dependency import shell
 from molecule.driver import azure
 from molecule.driver import delegated
 from molecule.driver import docker
@@ -91,6 +92,10 @@ class Config(object):
         self.config = self._combine()
         self._action = None
 
+        self.config['dependency']['command'] = self.dependency.command
+
+        schema.validate(self.config)
+
     @property
     def debug(self):
         return self.args.get('debug', False)
@@ -122,6 +127,8 @@ class Config(object):
             return ansible_galaxy.AnsibleGalaxy(self)
         elif dependency_name == 'gilt':
             return gilt.Gilt(self)
+        elif dependency_name == 'shell':
+            return shell.Shell(self)
         else:
             util.exit_with_invalid_section('dependency', dependency_name)
 
@@ -262,14 +269,13 @@ class Config(object):
                        '{}\n{}'.format(self.molecule_file, e.place, e.string))
                 util.sysexit_with_message(msg)
 
-        schema.validate(base)
-
         return base
 
     def _get_defaults(self):
         return {
             'dependency': {
                 'name': 'galaxy',
+                'command': None,
                 'enabled': True,
                 'options': {},
                 'env': {},

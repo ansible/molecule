@@ -183,6 +183,33 @@ def test_command_dependency_gilt(scenario_to_test, with_scenario,
 
 
 @pytest.mark.parametrize(
+    'scenario_to_test, driver_name, scenario_name', [
+        ('dependency', 'azure', 'shell'),
+        ('dependency', 'docker', 'shell'),
+        ('dependency', 'ec2', 'shell'),
+        ('dependency', 'gce', 'shell'),
+        ('dependency', 'lxc', 'shell'),
+        ('dependency', 'lxd', 'shell'),
+        ('dependency', 'openstack', 'shell'),
+        ('dependency', 'vagrant', 'shell'),
+    ],
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+        'scenario_name',
+    ])
+def test_command_dependency_shell(scenario_to_test, with_scenario,
+                                  scenario_name):
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('dependency', **options)
+    pytest.helpers.run_command(cmd)
+
+    dependency_role = os.path.join('molecule', 'shell', '.molecule', 'roles',
+                                   'yatesr.timezone')
+    assert os.path.isdir(dependency_role)
+
+
+@pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
         ('driver/azure', 'azure', 'default'),

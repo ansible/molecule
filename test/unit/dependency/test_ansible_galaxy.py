@@ -125,7 +125,7 @@ def test_bake(ansible_galaxy_instance, role_file, roles_path):
         str(sh.ansible_galaxy), 'install', '--role-file={}'.format(role_file),
         '--roles-path={}'.format(roles_path), '--force', '--foo=bar', '-vvv'
     ]
-    result = str(ansible_galaxy_instance._ansible_galaxy_command).split()
+    result = str(ansible_galaxy_instance._sh_command).split()
 
     assert sorted(x) == sorted(result)
 
@@ -133,7 +133,7 @@ def test_bake(ansible_galaxy_instance, role_file, roles_path):
 def test_execute(patched_run_command,
                  patched_ansible_galaxy_has_requirements_file,
                  patched_logger_success, ansible_galaxy_instance):
-    ansible_galaxy_instance._ansible_galaxy_command = 'patched-command'
+    ansible_galaxy_instance._sh_command = 'patched-command'
     ansible_galaxy_instance.execute()
 
     role_directory = os.path.join(
@@ -174,7 +174,7 @@ def test_execute_bakes(patched_run_command, ansible_galaxy_instance, role_file,
                        patched_ansible_galaxy_has_requirements_file,
                        roles_path):
     ansible_galaxy_instance.execute()
-    assert ansible_galaxy_instance._ansible_galaxy_command is not None
+    assert ansible_galaxy_instance._sh_command is not None
 
     assert 1 == patched_run_command.call_count
 
@@ -199,6 +199,10 @@ def test_setup(ansible_galaxy_instance):
     ansible_galaxy_instance._setup()
 
     assert os.path.isdir(role_directory)
+
+
+def test_role_file(role_file, ansible_galaxy_instance):
+    assert role_file == ansible_galaxy_instance._role_file()
 
 
 def test_has_requirements_file(ansible_galaxy_instance):

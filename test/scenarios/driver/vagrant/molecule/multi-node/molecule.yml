@@ -22,7 +22,7 @@ platforms:
     memory: 1024
     cpus: 1
     config_options:
-      synced_folder: True
+      synced_folder: true
   - name: instance-2
     box: centos/7
     interfaces:
@@ -48,6 +48,6 @@ scenario:
 verifier:
   name: testinfra
   options:
-    sudo: True
+    sudo: true
   lint:
     name: flake8

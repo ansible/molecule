@@ -68,7 +68,9 @@ class AnsibleGalaxy(base.Base):
 
     def __init__(self, config):
         super(AnsibleGalaxy, self).__init__(config)
-        self._ansible_galaxy_command = None
+        self._sh_command = None
+
+        self.command = 'ansible-galaxy'
 
     @property
     def default_options(self):
@@ -99,7 +101,8 @@ class AnsibleGalaxy(base.Base):
         options = self.options
         verbose_flag = util.verbose_flag(options)
 
-        self._ansible_galaxy_command = sh.ansible_galaxy.bake(
+        self._sh_command = getattr(sh, self.command)
+        self._sh_command = self._sh_command.bake(
             'install',
             options,
             *verbose_flag,
@@ -118,13 +121,12 @@ class AnsibleGalaxy(base.Base):
             LOG.warn(msg)
             return
 
-        if self._ansible_galaxy_command is None:
+        if self._sh_command is None:
             self.bake()
 
         self._setup()
         try:
-            util.run_command(
-                self._ansible_galaxy_command, debug=self._config.debug)
+            util.run_command(self._sh_command, debug=self._config.debug)
             msg = 'Dependency completed successfully.'
             LOG.success(msg)
         except sh.ErrorReturnCode as e:
@@ -141,7 +143,8 @@ class AnsibleGalaxy(base.Base):
         if not os.path.isdir(role_directory):
             os.makedirs(role_directory)
 
-    def _has_requirements_file(self):
-        role_file = self.options.get('role-file')
+    def _role_file(self):
+        return self.options.get('role-file')
 
-        return role_file and os.path.isfile(role_file)
+    def _has_requirements_file(self):
+        return os.path.isfile(self._role_file())

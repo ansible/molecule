@@ -31,6 +31,12 @@ Gilt
 .. autoclass:: molecule.dependency.gilt.Gilt()
    :undoc-members:
 
+Shell
+^^^^^
+
+.. autoclass:: molecule.dependency.shell.Shell()
+   :undoc-members:
+
 Driver
 ------
 
