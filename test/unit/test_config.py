@@ -29,6 +29,7 @@ from molecule import state
 from molecule import util
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
+from molecule.dependency import shell
 from molecule.driver import azure
 from molecule.driver import delegated
 from molecule.driver import docker
@@ -105,6 +106,23 @@ def test_dependency_property_is_gilt(molecule_dependency_gilt_section_data,
                                 molecule_dependency_gilt_section_data)
 
     assert isinstance(config_instance.dependency, gilt.Gilt)
+
+
+@pytest.fixture
+def molecule_dependency_shell_section_data():
+    return {
+        'dependency': {
+            'name': 'shell'
+        },
+    }
+
+
+def test_dependency_property_is_shell(molecule_dependency_shell_section_data,
+                                      config_instance):
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_dependency_shell_section_data)
+
+    assert isinstance(config_instance.dependency, shell.Shell)
 
 
 @pytest.fixture

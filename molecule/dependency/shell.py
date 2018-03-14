@@ -29,27 +29,33 @@ from molecule.dependency import base
 LOG = logger.get_logger(__name__)
 
 
-class Gilt(base.Base):
+class Shell(base.Base):
     """
-    `Gilt`_ is an alternate dependency manager.
+    `Shell` is an alternate dependency manager.  It is intended to run a
+    command in situations where `Ansible Galaxy`_ and `Gilt`_ don't suffice.
 
-    Additional options can be passed to `gilt overlay` through the options
-    dict.  Any option set in this section will override the defaults.
+    The `command` to execute is required, and is relative to Molecule's project
+    directory when referencing a script not in $PATH.
+
+    .. note::
+
+    Unlike the other dependency managers, `options` are ignored and not passed
+    to `shell`.  Additional flags/subcommands should simply be added to the
+    `command`.
 
     .. code-block:: yaml
 
         dependency:
-          name: gilt
-          options:
-            debug: True
-
+          name: shell
+          command: path/to/command --flag1 subcommand --flag2
 
     The dependency manager can be disabled by setting `enabled` to False.
 
     .. code-block:: yaml
 
         dependency:
-          name: gilt
+          name: shell
+          command: path/to/command --flag1 subcommand --flag2
           enabled: False
 
     Environment variables can be passed to the dependency.
@@ -57,27 +63,21 @@ class Gilt(base.Base):
     .. code-block:: yaml
 
         dependency:
-          name: gilt
+          name: shell
+          command: path/to/command --flag1 subcommand --flag2
           env:
             FOO: bar
-
-    .. _`Gilt`: http://gilt.readthedocs.io
     """
 
     def __init__(self, config):
-        super(Gilt, self).__init__(config)
+        super(Shell, self).__init__(config)
         self._sh_command = None
 
-        self.command = 'gilt'
+        self.command = config.config['dependency']['command']
 
     @property
     def default_options(self):
-        config = os.path.join(self._config.scenario.directory, 'gilt.yml')
-        d = {'config': config}
-        if self._config.debug:
-            d['debug'] = True
-
-        return d
+        return {}
 
     @property
     def default_env(self):
@@ -85,26 +85,21 @@ class Gilt(base.Base):
 
     def bake(self):
         """
-        Bake a `gilt` command so it's ready to execute and returns None.
+        Bake a `shell` command so it's ready to execute and returns None.
 
         :return: None
         """
-        self._sh_command = getattr(sh, self.command)
+        command_list = self.command.split(' ')
+        command, args = command_list[0], command_list[1:]
+
+        self._sh_command = getattr(sh, command)
+        # Reconstruct command with remaining args.
         self._sh_command = self._sh_command.bake(
-            self.options,
-            'overlay',
-            _env=self.env,
-            _out=LOG.out,
-            _err=LOG.error)
+            args, _env=self.env, _out=LOG.out, _err=LOG.error)
 
     def execute(self):
         if not self.enabled:
             msg = 'Skipping, dependency is disabled.'
-            LOG.warn(msg)
-            return
-
-        if not self._has_requirements_file():
-            msg = 'Skipping, missing the requirements file.'
             LOG.warn(msg)
             return
 
@@ -118,8 +113,5 @@ class Gilt(base.Base):
         except sh.ErrorReturnCode as e:
             util.sysexit(e.exit_code)
 
-    def _config_file(self):
-        return self.options.get('config')
-
-    def _has_requirements_file(self):
-        return os.path.isfile(self._config_file())
+    def _has_command_configured(self):
+        return 'command' in self._config.config['dependency']

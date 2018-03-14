@@ -102,14 +102,14 @@ def test_bake(gilt_config, gilt_instance):
     x = [
         str(sh.gilt), '--foo=bar', '--config={}'.format(gilt_config), 'overlay'
     ]
-    result = str(gilt_instance._gilt_command).split()
+    result = str(gilt_instance._sh_command).split()
 
     assert sorted(x) == sorted(result)
 
 
 def test_execute(patched_run_command, patched_gilt_has_requirements_file,
                  patched_logger_success, gilt_instance):
-    gilt_instance._gilt_command = 'patched-command'
+    gilt_instance._sh_command = 'patched-command'
     gilt_instance.execute()
 
     patched_run_command.assert_called_once_with('patched-command', debug=False)
@@ -144,7 +144,7 @@ def test_execute_does_not_execute_when_no_requirements_file(
 def test_execute_bakes(patched_run_command, gilt_config,
                        patched_gilt_has_requirements_file, gilt_instance):
     gilt_instance.execute()
-    assert gilt_instance._gilt_command is not None
+    assert gilt_instance._sh_command is not None
 
     assert 1 == patched_run_command.call_count
 
@@ -152,12 +152,15 @@ def test_execute_bakes(patched_run_command, gilt_config,
 def test_executes_catches_and_exits_return_code(
         patched_run_command, patched_gilt_has_requirements_file,
         gilt_instance):
-    patched_run_command.side_effect = sh.ErrorReturnCode_1(
-        sh.ansible_galaxy, b'', b'')
+    patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.gilt, b'', b'')
     with pytest.raises(SystemExit) as e:
         gilt_instance.execute()
 
     assert 1 == e.value.code
+
+
+def test_config_file(gilt_instance, gilt_config):
+    assert gilt_config == gilt_instance._config_file()
 
 
 def test_has_requirements_file(gilt_instance):
