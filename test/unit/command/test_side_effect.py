@@ -20,6 +20,7 @@
 
 import pytest
 
+from molecule import util
 from molecule.command import side_effect
 
 
@@ -38,9 +39,8 @@ def molecule_provisioner_section_with_side_effect_data():
 def test_execute(mocker, molecule_provisioner_section_with_side_effect_data,
                  patched_ansible_side_effect, patched_logger_info,
                  config_instance):
-    config_instance.merge_dicts(
-        config_instance.config,
-        molecule_provisioner_section_with_side_effect_data)
+    util.merge_dicts(config_instance.config,
+                     molecule_provisioner_section_with_side_effect_data)
 
     se = side_effect.SideEffect(config_instance)
     se.execute()

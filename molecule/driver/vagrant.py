@@ -166,8 +166,7 @@ class Vagrant(base.Base):
     def login_options(self, instance_name):
         d = {'instance': instance_name}
 
-        return self._config.merge_dicts(
-            d, self._get_instance_config(instance_name))
+        return util.merge_dicts(d, self._get_instance_config(instance_name))
 
     def ansible_connection_options(self, instance_name):
         try:

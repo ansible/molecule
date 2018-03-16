@@ -20,6 +20,8 @@
 
 import abc
 
+from molecule import util
+
 
 class Base(object):
     __metaclass__ = abc.ABCMeta
@@ -75,10 +77,10 @@ class Base(object):
 
     @property
     def options(self):
-        return self._config.merge_dicts(self.default_options,
-                                        self._config.config['lint']['options'])
+        return util.merge_dicts(self.default_options,
+                                self._config.config['lint']['options'])
 
     @property
     def env(self):
-        return self._config.merge_dicts(self.default_env,
-                                        self._config.config['lint']['env'])
+        return util.merge_dicts(self.default_env,
+                                self._config.config['lint']['env'])

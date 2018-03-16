@@ -22,6 +22,7 @@ import os
 
 import pytest
 
+from molecule import util
 from molecule.provisioner import ansible_playbooks
 
 
@@ -86,9 +87,8 @@ def molecule_provisioner_driver_section_data():
 
 def test_get_ansible_playbook_with_driver_key(
         molecule_provisioner_driver_section_data, playbooks_instance):
-    playbooks_instance._config.merge_dicts(
-        playbooks_instance._config.config,
-        molecule_provisioner_driver_section_data)
+    util.merge_dicts(playbooks_instance._config.config,
+                     molecule_provisioner_driver_section_data)
 
     x = os.path.join(playbooks_instance._config.scenario.directory,
                      'docker-create.yml')
@@ -109,9 +109,8 @@ def molecule_provisioner_playbook_none_section_data():
 
 def test_get_ansible_playbook_when_playbook_none(
         molecule_provisioner_playbook_none_section_data, playbooks_instance):
-    playbooks_instance._config.merge_dicts(
-        playbooks_instance._config.config,
-        molecule_provisioner_playbook_none_section_data)
+    util.merge_dicts(playbooks_instance._config.config,
+                     molecule_provisioner_playbook_none_section_data)
 
     assert playbooks_instance._get_ansible_playbook('side_effect') is None
 
@@ -134,9 +133,8 @@ def molecule_provisioner_driver_playbook_none_section_data():
 def test_get_ansible_playbook_with_driver_key_when_playbook_none(
         molecule_provisioner_driver_playbook_none_section_data,
         playbooks_instance):
-    playbooks_instance._config.merge_dicts(
-        playbooks_instance._config.config,
-        molecule_provisioner_driver_playbook_none_section_data)
+    util.merge_dicts(playbooks_instance._config.config,
+                     molecule_provisioner_driver_playbook_none_section_data)
 
     assert playbooks_instance._get_ansible_playbook('side_effect') is None
 
@@ -159,7 +157,7 @@ def molecule_provisioner_driver_playbook_key_missing_section_data():
 def test_get_ansible_playbook_with_driver_key_when_playbook_key_missing(
         molecule_provisioner_driver_playbook_key_missing_section_data,
         playbooks_instance):
-    playbooks_instance._config.merge_dicts(
+    util.merge_dicts(
         playbooks_instance._config.config,
         molecule_provisioner_driver_playbook_key_missing_section_data)
 

@@ -58,8 +58,7 @@ def molecule_verifier_section_data():
 
 @pytest.fixture
 def testinfra_instance(molecule_verifier_section_data, config_instance):
-    config_instance.merge_dicts(config_instance.config,
-                                molecule_verifier_section_data)
+    util.merge_dicts(config_instance.config, molecule_verifier_section_data)
 
     return testinfra.Testinfra(config_instance)
 
@@ -166,9 +165,8 @@ def molecule_verifier_lint_invalid_section_data():
 
 def test_lint_property_raises(molecule_verifier_lint_invalid_section_data,
                               patched_logger_critical, testinfra_instance):
-    testinfra_instance._config.merge_dicts(
-        testinfra_instance._config.config,
-        molecule_verifier_lint_invalid_section_data)
+    util.merge_dicts(testinfra_instance._config.config,
+                     molecule_verifier_lint_invalid_section_data)
     with pytest.raises(SystemExit) as e:
         testinfra_instance.lint
 
@@ -204,9 +202,8 @@ def molecule_verifier_directory_section_data():
 
 def test_directory_property_overriden(
         testinfra_instance, molecule_verifier_directory_section_data):
-    testinfra_instance._config.merge_dicts(
-        testinfra_instance._config.config,
-        molecule_verifier_directory_section_data)
+    util.merge_dicts(testinfra_instance._config.config,
+                     molecule_verifier_directory_section_data)
 
     assert '/tmp/foo/bar' == testinfra_instance.directory
 

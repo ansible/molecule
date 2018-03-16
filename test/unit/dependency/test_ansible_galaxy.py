@@ -24,6 +24,7 @@ import pytest
 import sh
 
 from molecule import config
+from molecule import util
 from molecule.dependency import ansible_galaxy
 
 
@@ -45,8 +46,7 @@ def molecule_dependency_section_data():
 
 @pytest.fixture
 def ansible_galaxy_instance(molecule_dependency_section_data, config_instance):
-    config_instance.merge_dicts(config_instance.config,
-                                molecule_dependency_section_data)
+    util.merge_dicts(config_instance.config, molecule_dependency_section_data)
 
     return ansible_galaxy.AnsibleGalaxy(config_instance)
 

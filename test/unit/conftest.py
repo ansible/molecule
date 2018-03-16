@@ -148,7 +148,7 @@ def molecule_data(
         molecule_verifier_section_data
     ]
 
-    return functools.reduce(lambda x, y: config.merge_dicts(x, y), fixtures)
+    return functools.reduce(lambda x, y: util.merge_dicts(x, y), fixtures)
 
 
 @pytest.fixture

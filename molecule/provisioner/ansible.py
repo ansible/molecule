@@ -302,8 +302,8 @@ class Ansible(base.Base):
 
     @property
     def default_env(self):
-        env = self._config.merge_dicts(os.environ.copy(), self._config.env)
-        env = self._config.merge_dicts(env, {
+        env = util.merge_dicts(os.environ.copy(), self._config.env)
+        env = util.merge_dicts(env, {
             'ANSIBLE_CONFIG':
             self._config.provisioner.config_file,
             'ANSIBLE_ROLES_PATH':
@@ -335,7 +335,7 @@ class Ansible(base.Base):
                                  'filters')),
             ]),
         })
-        env = self._config.merge_dicts(env, self._config.env)
+        env = util.merge_dicts(env, self._config.env)
 
         return env
 
@@ -345,7 +345,7 @@ class Ansible(base.Base):
 
     @property
     def config_options(self):
-        return self._config.merge_dicts(
+        return util.merge_dicts(
             self.default_config_options,
             self._config.config['provisioner']['config_options'])
 
@@ -353,9 +353,8 @@ class Ansible(base.Base):
     def options(self):
         if self._config.action in ['create', 'destroy']:
             return self.default_options
-        return self._config.merge_dicts(
-            self.default_options,
-            self._config.config['provisioner']['options'])
+        return util.merge_dicts(self.default_options,
+                                self._config.config['provisioner']['options'])
 
     @property
     def env(self):
@@ -389,7 +388,7 @@ class Ansible(base.Base):
         env['ANSIBLE_LIBRARY'] = library_path
         env['ANSIBLE_FILTER_PLUGINS'] = filter_plugins_path
 
-        return self._config.merge_dicts(default_env, env)
+        return util.merge_dicts(default_env, env)
 
     @property
     def host_vars(self):
@@ -462,7 +461,7 @@ class Ansible(base.Base):
     def connection_options(self, instance_name):
         d = self._config.driver.ansible_connection_options(instance_name)
 
-        return self._config.merge_dicts(
+        return util.merge_dicts(
             d, self._config.config['provisioner']['connection_options'])
 
     def check(self):

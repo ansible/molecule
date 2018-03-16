@@ -23,6 +23,7 @@ import os
 import pytest
 
 from molecule import config
+from molecule import util
 from molecule.driver import ec2
 
 
@@ -38,8 +39,7 @@ def molecule_driver_section_data():
 
 @pytest.fixture
 def ec2_instance(molecule_driver_section_data, config_instance):
-    config_instance.merge_dicts(config_instance.config,
-                                molecule_driver_section_data)
+    util.merge_dicts(config_instance.config, molecule_driver_section_data)
 
     return ec2.Ec2(config_instance)
 

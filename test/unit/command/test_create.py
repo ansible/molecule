@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+from molecule import util
 from molecule.command import create
 
 
@@ -42,8 +43,8 @@ def test_execute(mocker, patched_logger_info, patched_ansible_create,
 def test_execute_skips_when_delegated_driver(
         patched_create_setup, molecule_driver_delegated_section_data,
         patched_logger_warn, patched_ansible_create, config_instance):
-    config_instance.merge_dicts(config_instance.config,
-                                molecule_driver_delegated_section_data)
+    util.merge_dicts(config_instance.config,
+                     molecule_driver_delegated_section_data)
     c = create.Create(config_instance)
     c.execute()
 

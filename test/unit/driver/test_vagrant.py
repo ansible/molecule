@@ -23,6 +23,7 @@ import os
 import pytest
 
 from molecule import config
+from molecule import util
 from molecule.driver import vagrant
 
 
@@ -40,8 +41,7 @@ def molecule_driver_section_data():
 
 @pytest.fixture
 def vagrant_instance(molecule_driver_section_data, config_instance):
-    config_instance.merge_dicts(config_instance.config,
-                                molecule_driver_section_data)
+    util.merge_dicts(config_instance.config, molecule_driver_section_data)
 
     return vagrant.Vagrant(config_instance)
 

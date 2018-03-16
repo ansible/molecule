@@ -23,6 +23,7 @@ import os
 import pytest
 
 from molecule import config
+from molecule import util
 from molecule.verifier import goss
 
 
@@ -47,8 +48,7 @@ def molecule_verifier_section_data():
 
 @pytest.fixture
 def goss_instance(molecule_verifier_section_data, config_instance):
-    config_instance.merge_dicts(config_instance.config,
-                                molecule_verifier_section_data)
+    util.merge_dicts(config_instance.config, molecule_verifier_section_data)
 
     return goss.Goss(config_instance)
 
@@ -90,9 +90,8 @@ def molecule_verifier_lint_invalid_section_data():
 
 def test_lint_property_raises(molecule_verifier_lint_invalid_section_data,
                               patched_logger_critical, goss_instance):
-    goss_instance._config.merge_dicts(
-        goss_instance._config.config,
-        molecule_verifier_lint_invalid_section_data)
+    util.merge_dicts(goss_instance._config.config,
+                     molecule_verifier_lint_invalid_section_data)
     with pytest.raises(SystemExit) as e:
         goss_instance.lint
 

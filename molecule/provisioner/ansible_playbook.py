@@ -56,8 +56,7 @@ class AnsiblePlaybook(object):
         :return: None
         """
         self.add_cli_arg('inventory', self._config.provisioner.inventory_file)
-        options = self._config.merge_dicts(self._config.provisioner.options,
-                                           self._cli)
+        options = util.merge_dicts(self._config.provisioner.options, self._cli)
         verbose_flag = util.verbose_flag(options)
         if self._playbook != self._config.provisioner.playbooks.converge:
             if options.get('become'):
