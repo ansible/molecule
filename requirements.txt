@@ -6,7 +6,7 @@ colorama==0.3.7
 cookiecutter==1.5.1
 flake8==3.3.0
 python-gilt==1.1.0
-Jinja2==2.9.6
+Jinja2==2.10
 marshmallow==2.13.5
 pbr==3.0.1
 pexpect==4.2.1
