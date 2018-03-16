@@ -79,8 +79,7 @@ def molecule_provisioner_section_data():
 
 @pytest.fixture
 def ansible_instance(molecule_provisioner_section_data, config_instance):
-    config_instance.merge_dicts(config_instance.config,
-                                molecule_provisioner_section_data)
+    util.merge_dicts(config_instance.config, molecule_provisioner_section_data)
 
     return ansible.Ansible(config_instance)
 
@@ -152,9 +151,8 @@ def molecule_provisioner_lint_invalid_section_data():
 
 def test_lint_property_raises(molecule_provisioner_lint_invalid_section_data,
                               patched_logger_critical, ansible_instance):
-    ansible_instance._config.merge_dicts(
-        ansible_instance._config.config,
-        molecule_provisioner_lint_invalid_section_data)
+    util.merge_dicts(ansible_instance._config.config,
+                     molecule_provisioner_lint_invalid_section_data)
     with pytest.raises(SystemExit) as e:
         ansible_instance.lint
 

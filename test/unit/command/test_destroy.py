@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+from molecule import util
 from molecule.command import destroy
 
 
@@ -42,8 +43,8 @@ def test_execute(mocker, patched_destroy_prune, patched_logger_info,
 def test_execute_skips_when_destroy_strategy_is_never(
         patched_destroy_setup, molecule_driver_delegated_section_data,
         patched_logger_warn, patched_ansible_destroy, config_instance):
-    config_instance.merge_dicts(config_instance.config,
-                                molecule_driver_delegated_section_data)
+    util.merge_dicts(config_instance.config,
+                     molecule_driver_delegated_section_data)
     config_instance.command_args = {'destroy': 'never'}
 
     d = destroy.Destroy(config_instance)
@@ -58,8 +59,8 @@ def test_execute_skips_when_destroy_strategy_is_never(
 def test_execute_skips_when_delegated_driver(
         patched_destroy_setup, molecule_driver_delegated_section_data,
         patched_logger_warn, patched_ansible_destroy, config_instance):
-    config_instance.merge_dicts(config_instance.config,
-                                molecule_driver_delegated_section_data)
+    util.merge_dicts(config_instance.config,
+                     molecule_driver_delegated_section_data)
     d = destroy.Destroy(config_instance)
     d.execute()
 

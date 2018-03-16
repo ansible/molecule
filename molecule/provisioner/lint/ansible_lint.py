@@ -102,8 +102,8 @@ class AnsibleLint(base.Base):
 
     @property
     def default_env(self):
-        env = self._config.merge_dicts(os.environ.copy(), self._config.env)
-        env = self._config.merge_dicts(env, self._config.provisioner.env)
+        env = util.merge_dicts(os.environ.copy(), self._config.env)
+        env = util.merge_dicts(env, self._config.provisioner.env)
 
         return env
 

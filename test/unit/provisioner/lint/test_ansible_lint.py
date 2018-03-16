@@ -22,6 +22,7 @@ import pytest
 import sh
 
 from molecule import config
+from molecule import util
 from molecule.provisioner.lint import ansible_lint
 
 
@@ -55,8 +56,8 @@ def molecule_provisioner_lint_section_data():
 @pytest.fixture
 def ansible_lint_instance(molecule_provisioner_lint_section_data,
                           config_instance):
-    config_instance.merge_dicts(config_instance.config,
-                                molecule_provisioner_lint_section_data)
+    util.merge_dicts(config_instance.config,
+                     molecule_provisioner_lint_section_data)
 
     return ansible_lint.AnsibleLint(config_instance)
 

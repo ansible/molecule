@@ -20,6 +20,7 @@
 
 import pytest
 
+from molecule import util
 from molecule.command import login
 
 
@@ -42,8 +43,8 @@ def molecule_driver_delegated_section_data():
 @pytest.fixture
 def login_instance(molecule_driver_delegated_section_data, config_instance):
     config_instance.state.change_state('created', True)
-    config_instance.merge_dicts(config_instance.config,
-                                molecule_driver_delegated_section_data)
+    util.merge_dicts(config_instance.config,
+                     molecule_driver_delegated_section_data)
 
     return login.Login(config_instance)
 

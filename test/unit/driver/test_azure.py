@@ -23,6 +23,7 @@ import os
 import pytest
 
 from molecule import config
+from molecule import util
 from molecule.driver import azure
 
 
@@ -38,8 +39,7 @@ def molecule_driver_section_data():
 
 @pytest.fixture
 def azure_instance(molecule_driver_section_data, config_instance):
-    config_instance.merge_dicts(config_instance.config,
-                                molecule_driver_section_data)
+    util.merge_dicts(config_instance.config, molecule_driver_section_data)
 
     return azure.Azure(config_instance)
 

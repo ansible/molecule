@@ -22,6 +22,7 @@ import pytest
 import sh
 
 from molecule import config
+from molecule import util
 from molecule.lint import yamllint
 
 
@@ -42,8 +43,7 @@ def molecule_lint_section_data():
 
 @pytest.fixture
 def yamllint_instance(molecule_lint_section_data, config_instance):
-    config_instance.merge_dicts(config_instance.config,
-                                molecule_lint_section_data)
+    util.merge_dicts(config_instance.config, molecule_lint_section_data)
 
     return yamllint.Yamllint(config_instance)
 

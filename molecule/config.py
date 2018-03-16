@@ -225,9 +225,6 @@ class Config(object):
     def verifiers(self):
         return molecule_verifiers()
 
-    def merge_dicts(self, a, b):
-        return merge_dicts(a, b)
-
     def _get_driver_name(self):
         driver_from_state_file = self.state.driver
         driver_from_cli = self.command_args.get('driver_name')
@@ -262,7 +259,7 @@ class Config(object):
         with util.open_file(self.molecule_file) as stream:
             try:
                 interpolated_config = i.interpolate(stream.read())
-                base = self.merge_dicts(base,
+                base = util.merge_dicts(base,
                                         util.safe_load(interpolated_config))
             except interpolation.InvalidInterpolation as e:
                 msg = ("parsing config file '{}'.\n\n"
@@ -378,45 +375,6 @@ class Config(object):
                 },
             },
         }
-
-
-def merge_dicts(a, b):
-    """
-    Merges the values of B into A and returns a new dict.  Uses the same
-    merge strategy as ``config._combine``.
-
-    ::
-
-        dict a
-
-        b:
-           - c: 0
-           - c: 2
-        d:
-           e: "aaa"
-           f: 3
-
-        dict b
-
-        a: 1
-        b:
-           - c: 3
-        d:
-           e: "bbb"
-
-    Will give an object such as::
-
-        {'a': 1, 'b': [{'c': 3}], 'd': {'e': "bbb", 'f': 3}}
-
-
-    :param a: the target dictionary
-    :param b: the dictionary to import
-    :return: dict
-    """
-    conf = a
-    anyconfig.merge(a, b, ac_merge=MERGE_STRATEGY)
-
-    return conf
 
 
 def molecule_directory(path):

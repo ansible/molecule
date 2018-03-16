@@ -22,6 +22,7 @@ import pytest
 import sh
 
 from molecule import config
+from molecule import util
 from molecule.dependency import shell
 
 
@@ -43,8 +44,7 @@ def molecule_dependency_section_data():
 
 @pytest.fixture
 def shell_instance(molecule_dependency_section_data, config_instance):
-    config_instance.merge_dicts(config_instance.config,
-                                molecule_dependency_section_data)
+    util.merge_dicts(config_instance.config, molecule_dependency_section_data)
 
     return shell.Shell(config_instance)
 
