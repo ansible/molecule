@@ -41,7 +41,7 @@ from molecule.driver import lxd
 from molecule.driver import openstack
 from molecule.driver import vagrant
 from molecule.lint import yamllint
-from molecule.model import schema
+from molecule.model import schema_v2
 from molecule.provisioner import ansible
 from molecule.verifier import goss
 from molecule.verifier import testinfra
@@ -92,9 +92,7 @@ class Config(object):
         self.config = self._combine()
         self._action = None
 
-        self.config['dependency']['command'] = self.dependency.command
-
-        schema.validate(self.config)
+        self._validate()
 
     @property
     def debug(self):
@@ -129,8 +127,6 @@ class Config(object):
             return gilt.Gilt(self)
         elif dependency_name == 'shell':
             return shell.Shell(self)
-        else:
-            util.exit_with_invalid_section('dependency', dependency_name)
 
     @property
     def driver(self):
@@ -155,8 +151,6 @@ class Config(object):
             driver = openstack.Openstack(self)
         elif driver_name == 'vagrant':
             driver = vagrant.Vagrant(self)
-        else:
-            util.exit_with_invalid_section('driver', driver_name)
 
         driver.name = driver_name
 
@@ -188,8 +182,6 @@ class Config(object):
         lint_name = self.config['lint']['name']
         if lint_name == 'yamllint':
             return yamllint.Yamllint(self)
-        else:
-            util.exit_with_invalid_section('lint', lint_name)
 
     @property
     def platforms(self):
@@ -200,8 +192,6 @@ class Config(object):
         provisioner_name = self.config['provisioner']['name']
         if provisioner_name == 'ansible':
             return ansible.Ansible(self)
-        else:
-            util.exit_with_invalid_section('provisioner', provisioner_name)
 
     @property
     def scenario(self):
@@ -218,8 +208,6 @@ class Config(object):
             return testinfra.Testinfra(self)
         elif verifier_name == 'goss':
             return goss.Goss(self)
-        else:
-            util.exit_with_invalid_section('verifier', verifier_name)
 
     @property
     def verifiers(self):
@@ -280,7 +268,7 @@ class Config(object):
             'driver': {
                 'name': 'docker',
                 'provider': {
-                    'name': None
+                    'name': None,
                 },
                 'options': {
                     'managed': True,
@@ -375,6 +363,26 @@ class Config(object):
                 },
             },
         }
+
+    def _validate(self):
+        msg = 'Validating schema {}.'.format(self.molecule_file)
+        LOG.info(msg)
+
+        # Prior to validation, we must set values.  This allows us to perform
+        # validation in one place.  This feels gross.
+        self.config['dependency']['command'] = self.dependency.command
+        try:
+            self.config['driver']['name'] = self.driver.name
+        except AttributeError:
+            pass
+
+        errors = schema_v2.validate(self.config)
+        if errors:
+            msg = "Failed to validate.\n\n{}".format(errors)
+            util.sysexit_with_message(msg)
+
+        msg = 'Validation completed successfully.'
+        LOG.success(msg)
 
 
 def molecule_directory(path):

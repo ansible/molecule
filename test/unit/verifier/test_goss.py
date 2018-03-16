@@ -23,12 +23,22 @@ import os
 import pytest
 
 from molecule import config
-from molecule import util
 from molecule.verifier import goss
 
 
 @pytest.fixture
-def molecule_verifier_section_data():
+def _patched_goss_get_tests(mocker):
+    m = mocker.patch('molecule.verifier.goss.Goss._get_tests')
+    m.return_value = [
+        'foo.py',
+        'bar.py',
+    ]
+
+    return m
+
+
+@pytest.fixture
+def _verifier_section_data():
     return {
         'verifier': {
             'name': 'goss',
@@ -37,7 +47,7 @@ def molecule_verifier_section_data():
                 'retry-timeout': '30s',
             },
             'env': {
-                'foo': 'bar',
+                'FOO': 'bar',
             },
             'lint': {
                 'name': 'None',
@@ -46,86 +56,71 @@ def molecule_verifier_section_data():
     }
 
 
+# NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
+# config.Config._validate from executing.  Thus preventing odd side-effects
+# throughout patched.assert_called unit tests.
 @pytest.fixture
-def goss_instance(molecule_verifier_section_data, config_instance):
-    util.merge_dicts(config_instance.config, molecule_verifier_section_data)
-
+def _instance(_verifier_section_data, patched_config_validate,
+              config_instance):
     return goss.Goss(config_instance)
 
 
-def test_config_private_member(goss_instance):
-    assert isinstance(goss_instance._config, config.Config)
+def test_config_private_member(_instance):
+    assert isinstance(_instance._config, config.Config)
 
 
-def test_default_options_property(goss_instance):
-    assert {} == goss_instance.default_options
+def test_default_options_property(_instance):
+    assert {} == _instance.default_options
 
 
-def test_default_env_property(goss_instance):
-    assert 'MOLECULE_FILE' in goss_instance.default_env
-    assert 'MOLECULE_INVENTORY_FILE' in goss_instance.default_env
-    assert 'MOLECULE_SCENARIO_DIRECTORY' in goss_instance.default_env
-    assert 'MOLECULE_INSTANCE_CONFIG' in goss_instance.default_env
+def test_default_env_property(_instance):
+    assert 'MOLECULE_FILE' in _instance.default_env
+    assert 'MOLECULE_INVENTORY_FILE' in _instance.default_env
+    assert 'MOLECULE_SCENARIO_DIRECTORY' in _instance.default_env
+    assert 'MOLECULE_INSTANCE_CONFIG' in _instance.default_env
 
 
-def test_env_property(goss_instance):
-    assert 'bar' == goss_instance.env['foo']
+@pytest.mark.parametrize(
+    'config_instance', ['_verifier_section_data'], indirect=True)
+def test_env_property(_instance):
+    assert 'bar' == _instance.env['FOO']
 
 
-def test_lint_property(goss_instance):
-    assert goss_instance.lint is None
+@pytest.mark.parametrize(
+    'config_instance', ['_verifier_section_data'], indirect=True)
+def test_lint_property(_instance):
+    assert _instance.lint is None
 
 
-@pytest.fixture
-def molecule_verifier_lint_invalid_section_data():
-    return {
-        'verifier': {
-            'name': 'goss',
-            'lint': {
-                'name': 'invalid',
-            },
-        }
-    }
+def test_name_property(_instance):
+    assert 'goss' == _instance.name
 
 
-def test_lint_property_raises(molecule_verifier_lint_invalid_section_data,
-                              patched_logger_critical, goss_instance):
-    util.merge_dicts(goss_instance._config.config,
-                     molecule_verifier_lint_invalid_section_data)
-    with pytest.raises(SystemExit) as e:
-        goss_instance.lint
-
-    assert 1 == e.value.code
-
-    msg = "Invalid lint named 'invalid' configured."
-    patched_logger_critical.assert_called_once_with(msg)
+def test_enabled_property(_instance):
+    assert _instance.enabled
 
 
-def test_name_property(goss_instance):
-    assert 'goss' == goss_instance.name
-
-
-def test_enabled_property(goss_instance):
-    assert goss_instance.enabled
-
-
-def test_directory_property(goss_instance):
-    parts = goss_instance.directory.split(os.path.sep)
+def test_directory_property(_instance):
+    parts = _instance.directory.split(os.path.sep)
 
     assert 'tests' == parts[-1]
 
 
-def test_options_property(goss_instance):
+@pytest.mark.parametrize(
+    'config_instance', ['_verifier_section_data'], indirect=True)
+def test_options_property(_instance):
     x = {
         'foo': 'bar',
         'retry-timeout': '30s',
     }
 
-    assert x == goss_instance.options
+    assert x == _instance.options
 
 
-def test_options_property_handles_cli_args(goss_instance):
-    goss_instance._config.args = {'debug': True}
+@pytest.mark.parametrize(
+    'config_instance', ['_verifier_section_data'], indirect=True)
+def test_options_property_handles_cli_args(_instance):
+    _instance._config.args = {'debug': True}
     x = {
         'foo': 'bar',
         'retry-timeout': '30s',
@@ -133,24 +128,22 @@ def test_options_property_handles_cli_args(goss_instance):
 
     # Does nothing.  The `goss` command does not support
     # a `debug` flag.
-    assert x == goss_instance.options
+    assert x == _instance.options
 
 
-def test_bake(goss_instance):
-    assert goss_instance.bake() is None
+def test_bake(_instance):
+    assert _instance.bake() is None
 
 
 def test_execute(patched_logger_info, patched_ansible_converge,
-                 patched_goss_get_tests, patched_logger_success,
-                 goss_instance):
-    goss_instance.execute()
+                 _patched_goss_get_tests, patched_logger_success, _instance):
+    _instance.execute()
 
-    goss_playbook = os.path.join(goss_instance._config.scenario.directory,
+    goss_playbook = os.path.join(_instance._config.scenario.directory,
                                  'verifier.yml')
     patched_ansible_converge.assert_called_once_with(goss_playbook)
 
-    msg = 'Executing Goss tests found in {}/...'.format(
-        goss_instance.directory)
+    msg = 'Executing Goss tests found in {}/...'.format(_instance.directory)
     patched_logger_info.assert_called_once_with(msg)
 
     msg = 'Verifier completed successfully.'
@@ -158,9 +151,9 @@ def test_execute(patched_logger_info, patched_ansible_converge,
 
 
 def test_execute_does_not_execute(patched_ansible_converge,
-                                  patched_logger_warn, goss_instance):
-    goss_instance._config.config['verifier']['enabled'] = False
-    goss_instance.execute()
+                                  patched_logger_warn, _instance):
+    _instance._config.config['verifier']['enabled'] = False
+    _instance.execute()
 
     assert not patched_ansible_converge.called
 
@@ -169,8 +162,8 @@ def test_execute_does_not_execute(patched_ansible_converge,
 
 
 def test_does_not_execute_without_tests(patched_ansible_converge,
-                                        patched_logger_warn, goss_instance):
-    goss_instance.execute()
+                                        patched_logger_warn, _instance):
+    _instance.execute()
 
     assert not patched_ansible_converge.called
 

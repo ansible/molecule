@@ -22,12 +22,11 @@ import pytest
 import sh
 
 from molecule import config
-from molecule import util
 from molecule.dependency import shell
 
 
 @pytest.fixture
-def molecule_dependency_section_data():
+def _dependency_section_data():
     return {
         'dependency': {
             'name': 'shell',
@@ -36,63 +35,75 @@ def molecule_dependency_section_data():
                 'foo': 'bar',
             },
             'env': {
-                'foo': 'bar',
+                'FOO': 'bar',
             }
         }
     }
 
 
+# NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
+# config.Config._validate from executing.  Thus preventing odd side-effects
+# throughout patched.assert_called unit tests.
 @pytest.fixture
-def shell_instance(molecule_dependency_section_data, config_instance):
-    util.merge_dicts(config_instance.config, molecule_dependency_section_data)
-
+def _instance(_dependency_section_data, patched_config_validate,
+              config_instance):
     return shell.Shell(config_instance)
 
 
-def test_config_private_member(shell_instance):
-    assert isinstance(shell_instance._config, config.Config)
+def test_config_private_member(_instance):
+    assert isinstance(_instance._config, config.Config)
 
 
-def test_default_options_property(shell_instance):
+def test_default_options_property(_instance):
     x = {}
 
-    assert x == shell_instance.default_options
+    assert x == _instance.default_options
 
 
-def test_default_env_property(shell_instance):
-    assert 'MOLECULE_FILE' in shell_instance.default_env
-    assert 'MOLECULE_INVENTORY_FILE' in shell_instance.default_env
-    assert 'MOLECULE_SCENARIO_DIRECTORY' in shell_instance.default_env
-    assert 'MOLECULE_INSTANCE_CONFIG' in shell_instance.default_env
+def test_default_env_property(_instance):
+    assert 'MOLECULE_FILE' in _instance.default_env
+    assert 'MOLECULE_INVENTORY_FILE' in _instance.default_env
+    assert 'MOLECULE_SCENARIO_DIRECTORY' in _instance.default_env
+    assert 'MOLECULE_INSTANCE_CONFIG' in _instance.default_env
 
 
-def test_name_property(shell_instance):
-    assert 'shell' == shell_instance.name
+@pytest.mark.parametrize(
+    'config_instance', ['_dependency_section_data'], indirect=True)
+def test_name_property(_instance):
+    assert 'shell' == _instance.name
 
 
-def test_enabled_property(shell_instance):
-    assert shell_instance.enabled
+def test_enabled_property(_instance):
+    assert _instance.enabled
 
 
-def test_options_property(shell_instance):
+@pytest.mark.parametrize(
+    'config_instance', ['_dependency_section_data'], indirect=True)
+def test_options_property(_instance):
     x = {'foo': 'bar'}
 
-    assert x == shell_instance.options
+    assert x == _instance.options
 
 
-def test_options_property_handles_cli_args(shell_instance):
-    shell_instance._config.args = {}
+@pytest.mark.parametrize(
+    'config_instance', ['_dependency_section_data'], indirect=True)
+def test_options_property_handles_cli_args(_instance):
+    _instance._config.args = {}
     x = {'foo': 'bar'}
 
-    assert x == shell_instance.options
+    assert x == _instance.options
 
 
-def test_env_property(shell_instance):
-    assert 'bar' == shell_instance.env['foo']
+@pytest.mark.parametrize(
+    'config_instance', ['_dependency_section_data'], indirect=True)
+def test_env_property(_instance):
+    assert 'bar' == _instance.env['FOO']
 
 
-def test_bake(shell_instance):
-    shell_instance.bake()
+@pytest.mark.parametrize(
+    'config_instance', ['_dependency_section_data'], indirect=True)
+def test_bake(_instance):
+    _instance.bake()
 
     x = [
         str(sh.ls),
@@ -100,14 +111,14 @@ def test_bake(shell_instance):
         '-a',
         '/tmp',
     ]
-    result = str(shell_instance._sh_command).split()
+    result = str(_instance._sh_command).split()
 
     assert sorted(x) == sorted(result)
 
 
-def test_execute(patched_run_command, patched_logger_success, shell_instance):
-    shell_instance._sh_command = 'patched-command'
-    shell_instance.execute()
+def test_execute(patched_run_command, patched_logger_success, _instance):
+    _instance._sh_command = 'patched-command'
+    _instance.execute()
 
     patched_run_command.assert_called_once_with('patched-command', debug=False)
 
@@ -116,9 +127,9 @@ def test_execute(patched_run_command, patched_logger_success, shell_instance):
 
 
 def test_execute_does_not_execute_when_disabled(
-        patched_run_command, patched_logger_warn, shell_instance):
-    shell_instance._config.config['dependency']['enabled'] = False
-    shell_instance.execute()
+        patched_run_command, patched_logger_warn, _instance):
+    _instance._config.config['dependency']['enabled'] = False
+    _instance.execute()
 
     assert not patched_run_command.called
 
@@ -126,21 +137,25 @@ def test_execute_does_not_execute_when_disabled(
     patched_logger_warn.assert_called_once_with(msg)
 
 
-def test_execute_bakes(patched_run_command, shell_instance):
-    shell_instance.execute()
-    assert shell_instance._sh_command is not None
+@pytest.mark.parametrize(
+    'config_instance', ['_dependency_section_data'], indirect=True)
+def test_execute_bakes(patched_run_command, _instance):
+    _instance.execute()
+    assert _instance._sh_command is not None
 
     assert 1 == patched_run_command.call_count
 
 
+@pytest.mark.parametrize(
+    'config_instance', ['_dependency_section_data'], indirect=True)
 def test_executes_catches_and_exits_return_code(patched_run_command,
-                                                shell_instance):
+                                                _instance):
     patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.ls, b'', b'')
     with pytest.raises(SystemExit) as e:
-        shell_instance.execute()
+        _instance.execute()
 
     assert 1 == e.value.code
 
 
-def test_has_command_configured(shell_instance):
-    assert shell_instance._has_command_configured()
+def test_has_command_configured(_instance):
+    assert _instance._has_command_configured()

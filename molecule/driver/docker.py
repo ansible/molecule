@@ -50,22 +50,24 @@ class Docker(base.Base):
               url: registry.example.com
               credentials:
                 username: $USERNAME
-                passsword: $PASSWORD
+                password: $PASSWORD
                 email: user@example.com
             command: sleep infinity
-            privileged: "{{ item.privileged | default(omit) }}"
+            privileged: True|False
             volumes:
               - /sys/fs/cgroup:/sys/fs/cgroup:ro
             capabilities:
               - SYS_ADMIN
             exposed_ports:
-              - "53/udp"
-              - "53/tcp"
+              - 53/udp
+              - 53/tcp
             published_ports:
-              - "0.0.0.0:8053:53/udp"
-              - "0.0.0.0:8053:53/tcp"
-            ulimits: "{{ item.ulimits | default(omit) }}"
-            dns_servers: "{{ item.dns_servers | default(omit) }}"
+              - 0.0.0.0:8053:53/udp
+              - 0.0.0.0:8053:53/tcp
+            ulimits:
+              - nofile:262144:262144
+            dns_servers:
+              - 8.8.8.8
             networks:
               - name: foo
               - name: bar

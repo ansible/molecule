@@ -27,7 +27,7 @@ from molecule import migrate
 
 
 @pytest.fixture
-def migrate_instance():
+def _instance():
     molecule_file = os.path.join(
         os.path.dirname(__file__), os.path.pardir, 'resources',
         'molecule_v1_vagrant.yml')
@@ -35,21 +35,21 @@ def migrate_instance():
     return migrate.Migrate(molecule_file)
 
 
-def test_get_v1_config(migrate_instance):
-    data = migrate_instance._get_v1_config()
+def test_get_v1_config(_instance):
+    data = _instance._get_v1_config()
 
     assert isinstance(data, dict)
 
 
-def test_v1_member(migrate_instance):
-    assert isinstance(migrate_instance._v1, dict)
+def test_v1_member(_instance):
+    assert isinstance(_instance._v1, dict)
 
 
-def test_v2_member(migrate_instance):
-    assert isinstance(migrate_instance._v2, collections.OrderedDict)
+def test_v2_member(_instance):
+    assert isinstance(_instance._v2, collections.OrderedDict)
 
 
-def test_dump(migrate_instance):
+def test_dump(_instance):
     x = """
 ---
 dependency:
@@ -80,7 +80,7 @@ platforms:
 provisioner:
   name: ansible
   env:
-    foo: bar
+    FOO: bar
   options:
     extra-vars: foo=bar
     verbose: true
@@ -98,10 +98,10 @@ verifier:
     name: flake8
 """.lstrip()
 
-    assert x == migrate_instance.dump()
+    assert x == _instance.dump()
 
 
-def test_convert(migrate_instance, patched_logger_info):
+def test_convert(_instance, patched_logger_info):
     x = {
         'scenario': {
             'name': 'default',
@@ -160,7 +160,7 @@ def test_convert(migrate_instance, patched_logger_info):
             },
             'name': 'ansible',
             'env': {
-                'foo': 'bar',
+                'FOO': 'bar',
             },
             'options': {
                 'become': True,
@@ -171,21 +171,35 @@ def test_convert(migrate_instance, patched_logger_info):
         }
     }
 
-    data = migrate_instance._convert()
-    assert x == migrate_instance._to_dict(data)
+    data = _instance._convert()
+    assert x == _instance._to_dict(data)
 
     msg = 'Vagrant syle v1 config found'
     patched_logger_info.assert_called_once_with(msg)
 
 
-def test_convert_raises_on_invalid_migration_config(migrate_instance,
+def test_convert_raises_on_invalid_migration_config(_instance,
                                                     patched_logger_critical):
-    del migrate_instance._v1['vagrant']
+    del _instance._v1['vagrant']
 
     with pytest.raises(SystemExit) as e:
-        migrate_instance._convert()
+        _instance._convert()
 
     assert 1 == e.value.code
 
     msg = 'Vagrant migrations only supported.  Exiting.'
+    patched_logger_critical.assert_called_once_with(msg)
+
+
+def test_check_errors(_instance):
+    assert _instance._check_errors({}) is None
+
+
+def test_check_errors_raises_on_errors(_instance, patched_logger_critical):
+    with pytest.raises(SystemExit) as e:
+        _instance._check_errors('unit test error')
+
+    assert 1 == e.value.code
+
+    msg = 'Failed to validate.\n\nunit test error'
     patched_logger_critical.assert_called_once_with(msg)

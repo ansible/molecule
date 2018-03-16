@@ -26,7 +26,7 @@ from molecule.command.init import role
 
 
 @pytest.fixture
-def command_args():
+def _command_args():
     return {
         'dependency_name': 'galaxy',
         'driver_name': 'docker',
@@ -40,13 +40,13 @@ def command_args():
 
 
 @pytest.fixture
-def role_instance(command_args):
-    return role.Role(command_args)
+def _instance(_command_args):
+    return role.Role(_command_args)
 
 
-def test_execute(temp_dir, role_instance, patched_logger_info,
+def test_execute(temp_dir, _instance, patched_logger_info,
                  patched_logger_success):
-    role_instance.execute()
+    _instance.execute()
 
     msg = 'Initializing new role test-role...'
     patched_logger_info.assert_called_once_with(msg)
@@ -60,11 +60,11 @@ def test_execute(temp_dir, role_instance, patched_logger_info,
     patched_logger_success.assert_called_once_with(msg)
 
 
-def test_execute_role_exists(temp_dir, role_instance, patched_logger_critical):
-    role_instance.execute()
+def test_execute_role_exists(temp_dir, _instance, patched_logger_critical):
+    _instance.execute()
 
     with pytest.raises(SystemExit) as e:
-        role_instance.execute()
+        _instance.execute()
 
     assert 1 == e.value.code
 

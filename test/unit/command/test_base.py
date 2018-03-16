@@ -32,26 +32,50 @@ class ExtendedBase(base.Base):
         pass
 
 
+# NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
+# config.Config._validate from executing.  Thus preventing odd side-effects
+# throughout patched.assert_called unit tests.
 @pytest.fixture
-def base_class(config_instance):
+def _base_class(patched_config_validate, config_instance):
     return ExtendedBase
 
 
 @pytest.fixture
-def base_instance(base_class, config_instance):
-    return base_class(config_instance)
+def _instance(_base_class, config_instance):
+    return _base_class(config_instance)
 
 
-def test_config_private_member(base_instance):
-    assert isinstance(base_instance._config, config.Config)
+@pytest.fixture
+def _patched_verify_configs(mocker):
+    return mocker.patch('molecule.command.base._verify_configs')
 
 
-def test_init_calls_setup(patched_base_setup, base_instance):
-    patched_base_setup.assert_called_once_with()
+@pytest.fixture
+def _patched_base_setup(mocker):
+    return mocker.patch('test.unit.command.test_base.ExtendedBase._setup')
 
 
-def test_prune(base_instance):
-    ephemeral_directory = base_instance._config.scenario.ephemeral_directory
+@pytest.fixture
+def _patched_write_config(mocker):
+    return mocker.patch('molecule.provisioner.ansible.Ansible.write_config')
+
+
+@pytest.fixture
+def _patched_manage_inventory(mocker):
+    return mocker.patch(
+        'molecule.provisioner.ansible.Ansible.manage_inventory')
+
+
+def test_config_private_member(_instance):
+    assert isinstance(_instance._config, config.Config)
+
+
+def test_init_calls_setup(_patched_base_setup, _instance):
+    _patched_base_setup.assert_called_once_with()
+
+
+def test_prune(_instance):
+    ephemeral_directory = _instance._config.scenario.ephemeral_directory
 
     foo_file = os.path.join(ephemeral_directory, 'foo')
     bar_file = os.path.join(ephemeral_directory, 'bar')
@@ -64,7 +88,7 @@ def test_prune(base_instance):
     for f in [foo_file, bar_file, state_file]:
         util.write_file(f, '')
 
-    base_instance.prune()
+    _instance.prune()
 
     assert not os.path.isfile(foo_file)
     assert not os.path.isfile(bar_file)
@@ -74,8 +98,8 @@ def test_prune(base_instance):
     assert not os.path.isdir(baz_directory)
 
 
-def test_print_info(mocker, patched_logger_info, base_instance):
-    base_instance.print_info()
+def test_print_info(mocker, patched_logger_info, _instance):
+    _instance.print_info()
     x = [
         mocker.call("Scenario: 'default'"),
         mocker.call("Action: 'extended_base'"),
@@ -83,14 +107,14 @@ def test_print_info(mocker, patched_logger_info, base_instance):
     assert x == patched_logger_info.mock_calls
 
 
-def test_setup(mocker, patched_add_or_update_vars, patched_write_config,
-               patched_manage_inventory, base_instance):
+def test_setup(mocker, patched_add_or_update_vars, _patched_write_config,
+               _patched_manage_inventory, _instance):
 
     assert os.path.isdir(
-        os.path.dirname(base_instance._config.provisioner.inventory_file))
+        os.path.dirname(_instance._config.provisioner.inventory_file))
 
-    patched_manage_inventory.assert_called_once_with()
-    patched_write_config.assert_called_once_with()
+    _patched_manage_inventory.assert_called_once_with()
+    _patched_write_config.assert_called_once_with()
 
 
 def test_execute_subcommand(config_instance):
@@ -108,10 +132,10 @@ def test_get_configs(config_instance):
     assert isinstance(result[0], config.Config)
 
 
-def test_get_configs_calls_verify_configs(patched_verify_configs):
+def test_get_configs_calls_verify_configs(_patched_verify_configs):
     base.get_configs({}, {})
 
-    patched_verify_configs.assert_called_once_with([])
+    _patched_verify_configs.assert_called_once_with([])
 
 
 def test_verify_configs(config_instance):

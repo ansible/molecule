@@ -20,7 +20,6 @@
 
 import abc
 
-from molecule import util
 from molecule.provisioner.lint import ansible_lint
 
 
@@ -69,5 +68,3 @@ class Base(object):
         lint_name = self._config.config['provisioner']['lint']['name']
         if lint_name == 'ansible-lint':
             return ansible_lint.AnsibleLint(self._config)
-        else:
-            util.exit_with_invalid_section('lint', lint_name)

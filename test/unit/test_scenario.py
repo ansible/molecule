@@ -27,36 +27,38 @@ from molecule import config
 from molecule import scenario
 
 
+# NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
+# config.Config._validate from executing.  Thus preventing odd side-effects
+# throughout patched.assert_called unit tests.
 @pytest.fixture
-def scenario_instance(config_instance):
+def _instance(patched_config_validate, config_instance):
     return scenario.Scenario(config_instance)
 
 
-def test_config_member(scenario_instance):
-    assert isinstance(scenario_instance.config, config.Config)
+def test_config_member(_instance):
+    assert isinstance(_instance.config, config.Config)
 
 
-def test_init_calls_setup(patched_scenario_setup, scenario_instance):
+def test_init_calls_setup(patched_scenario_setup, _instance):
     patched_scenario_setup.assert_called_once_with()
 
 
-def test_name_property(scenario_instance):
-    assert 'default' == scenario_instance.name
+def test_name_property(_instance):
+    assert 'default' == _instance.name
 
 
-def test_directory_property(molecule_scenario_directory_fixture,
-                            scenario_instance):
-    assert molecule_scenario_directory_fixture == scenario_instance.directory
+def test_directory_property(molecule_scenario_directory_fixture, _instance):
+    assert molecule_scenario_directory_fixture == _instance.directory
 
 
 def test_ephemeral_directory_property(molecule_scenario_directory_fixture,
-                                      scenario_instance):
+                                      _instance):
     x = os.path.join(molecule_scenario_directory_fixture, '.molecule')
 
-    assert x == scenario_instance.ephemeral_directory
+    assert x == _instance.ephemeral_directory
 
 
-def test_check_sequence_property(scenario_instance):
+def test_check_sequence_property(_instance):
     x = [
         'destroy',
         'dependency',
@@ -67,10 +69,10 @@ def test_check_sequence_property(scenario_instance):
         'destroy',
     ]
 
-    assert x == scenario_instance.check_sequence
+    assert x == _instance.check_sequence
 
 
-def test_converge_sequence_property(scenario_instance):
+def test_converge_sequence_property(_instance):
     x = [
         'dependency',
         'create',
@@ -78,47 +80,47 @@ def test_converge_sequence_property(scenario_instance):
         'converge',
     ]
 
-    assert x == scenario_instance.converge_sequence
+    assert x == _instance.converge_sequence
 
 
-def test_create_sequence_property(scenario_instance):
+def test_create_sequence_property(_instance):
     x = [
         'create',
         'prepare',
     ]
 
-    assert x == scenario_instance.create_sequence
+    assert x == _instance.create_sequence
 
 
-def test_dependency_sequence_property(scenario_instance):
-    assert ['dependency'] == scenario_instance.dependency_sequence
+def test_dependency_sequence_property(_instance):
+    assert ['dependency'] == _instance.dependency_sequence
 
 
-def test_destroy_sequence_property(scenario_instance):
-    assert ['destroy'] == scenario_instance.destroy_sequence
+def test_destroy_sequence_property(_instance):
+    assert ['destroy'] == _instance.destroy_sequence
 
 
-def test_idempotence_sequence_property(scenario_instance):
-    assert ['idempotence'] == scenario_instance.idempotence_sequence
+def test_idempotence_sequence_property(_instance):
+    assert ['idempotence'] == _instance.idempotence_sequence
 
 
-def test_lint_sequence_property(scenario_instance):
-    assert ['lint'] == scenario_instance.lint_sequence
+def test_lint_sequence_property(_instance):
+    assert ['lint'] == _instance.lint_sequence
 
 
-def test_prepare_sequence_property(scenario_instance):
-    assert ['prepare'] == scenario_instance.prepare_sequence
+def test_prepare_sequence_property(_instance):
+    assert ['prepare'] == _instance.prepare_sequence
 
 
-def test_side_effect_sequence_property(scenario_instance):
-    assert ['side_effect'] == scenario_instance.side_effect_sequence
+def test_side_effect_sequence_property(_instance):
+    assert ['side_effect'] == _instance.side_effect_sequence
 
 
-def test_syntax_sequence_property(scenario_instance):
-    assert ['syntax'] == scenario_instance.syntax_sequence
+def test_syntax_sequence_property(_instance):
+    assert ['syntax'] == _instance.syntax_sequence
 
 
-def test_test_sequence_property(scenario_instance):
+def test_test_sequence_property(_instance):
     x = [
         'lint',
         'destroy',
@@ -133,29 +135,29 @@ def test_test_sequence_property(scenario_instance):
         'destroy',
     ]
 
-    assert x == scenario_instance.test_sequence
+    assert x == _instance.test_sequence
 
 
-def test_verify_sequence_property(scenario_instance):
-    assert ['verify'] == scenario_instance.verify_sequence
+def test_verify_sequence_property(_instance):
+    assert ['verify'] == _instance.verify_sequence
 
 
-def test_sequence_property(scenario_instance):
-    assert 'lint' == scenario_instance.sequence[0]
+def test_sequence_property(_instance):
+    assert 'lint' == _instance.sequence[0]
 
 
-def test_sequence_property_with_invalid_subcommand(scenario_instance):
-    scenario_instance.config.command_args = {'subcommand': 'invalid'}
+def test_sequence_property_with_invalid_subcommand(_instance):
+    _instance.config.command_args = {'subcommand': 'invalid'}
 
-    assert [] == scenario_instance.sequence
+    assert [] == _instance.sequence
 
 
-def test_setup_creates_ephemeral_directory(scenario_instance):
-    ephemeral_directory = scenario_instance.config.scenario.ephemeral_directory
-    shutil.rmtree(ephemeral_directory)
-    scenario_instance._setup()
+def test_setup_creates_ephemeral_directory(_instance):
+    ephemeral_dir = _instance.config.scenario.ephemeral_directory
+    shutil.rmtree(ephemeral_dir)
+    _instance._setup()
 
-    assert os.path.isdir(ephemeral_directory)
+    assert os.path.isdir(ephemeral_dir)
 
 
 def test_ephemeral_directory():

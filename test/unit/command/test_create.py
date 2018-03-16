@@ -18,12 +18,21 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-from molecule import util
+import pytest
+
 from molecule.command import create
 
 
-def test_execute(mocker, patched_logger_info, patched_ansible_create,
-                 config_instance):
+@pytest.fixture
+def _patched_create_setup(mocker):
+    return mocker.patch('molecule.command.create.Create._setup')
+
+
+# NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
+# config.Config._validate from executing.  Thus preventing odd side-effects
+# throughout patched.assert_called unit tests.
+def test_execute(mocker, patched_logger_info, command_patched_ansible_create,
+                 patched_config_validate, config_instance):
     c = create.Create(config_instance)
     c.execute()
 
@@ -35,27 +44,28 @@ def test_execute(mocker, patched_logger_info, patched_ansible_create,
 
     assert 'docker' == config_instance.state.driver
 
-    patched_ansible_create.assert_called_once_with()
+    command_patched_ansible_create.assert_called_once_with()
 
     assert config_instance.state.created
 
 
+@pytest.mark.parametrize(
+    'config_instance', ['command_driver_delegated_section_data'],
+    indirect=True)
 def test_execute_skips_when_delegated_driver(
-        patched_create_setup, molecule_driver_delegated_section_data,
-        patched_logger_warn, patched_ansible_create, config_instance):
-    util.merge_dicts(config_instance.config,
-                     molecule_driver_delegated_section_data)
+        _patched_create_setup, patched_logger_warn,
+        command_patched_ansible_create, config_instance):
     c = create.Create(config_instance)
     c.execute()
 
     msg = 'Skipping, instances are delegated.'
     patched_logger_warn.assert_called_once_with(msg)
 
-    assert not patched_ansible_create.called
+    assert not command_patched_ansible_create.called
 
 
 def test_execute_skips_when_instances_already_created(
-        patched_logger_warn, patched_ansible_create, config_instance):
+        patched_logger_warn, command_patched_ansible_create, config_instance):
     config_instance.state.change_state('created', True)
     c = create.Create(config_instance)
     c.execute()
@@ -63,4 +73,4 @@ def test_execute_skips_when_instances_already_created(
     msg = 'Skipping, instances already created.'
     patched_logger_warn.assert_called_once_with(msg)
 
-    assert not patched_ansible_create.called
+    assert not command_patched_ansible_create.called

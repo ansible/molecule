@@ -22,12 +22,11 @@ import pytest
 import sh
 
 from molecule import config
-from molecule import util
 from molecule.provisioner.lint import ansible_lint
 
 
 @pytest.fixture
-def molecule_provisioner_lint_section_data():
+def _provisioner_lint_section_data():
     return {
         'provisioner': {
             'name': 'ansible',
@@ -46,49 +45,48 @@ def molecule_provisioner_lint_section_data():
                     ],
                 },
                 'env': {
-                    'foo': 'bar',
+                    'FOO': 'bar',
                 },
             }
         }
     }
 
 
+# NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
+# config.Config._validate from executing.  Thus preventing odd side-effects
+# throughout patched.assert_called unit tests.
 @pytest.fixture
-def ansible_lint_instance(molecule_provisioner_lint_section_data,
-                          config_instance):
-    util.merge_dicts(config_instance.config,
-                     molecule_provisioner_lint_section_data)
-
+def _instance(patched_config_validate, config_instance):
     return ansible_lint.AnsibleLint(config_instance)
 
 
-def test_config_private_member(ansible_lint_instance):
-    assert isinstance(ansible_lint_instance._config, config.Config)
+def test_config_private_member(_instance):
+    assert isinstance(_instance._config, config.Config)
 
 
-def test_default_options_property(ansible_lint_instance):
+def test_default_options_property(_instance):
     x = {
-        'default_exclude':
-        [ansible_lint_instance._config.scenario.ephemeral_directory],
+        'default_exclude': [_instance._config.scenario.ephemeral_directory],
         'exclude': [],
         'x': [],
     }
 
-    assert x == ansible_lint_instance.default_options
+    assert x == _instance.default_options
 
 
-def test_name_property(ansible_lint_instance):
-    assert 'ansible-lint' == ansible_lint_instance.name
+def test_name_property(_instance):
+    assert 'ansible-lint' == _instance.name
 
 
-def test_enabled_property(ansible_lint_instance):
-    assert ansible_lint_instance.enabled
+def test_enabled_property(_instance):
+    assert _instance.enabled
 
 
-def test_options_property(ansible_lint_instance):
+@pytest.mark.parametrize(
+    'config_instance', ['_provisioner_lint_section_data'], indirect=True)
+def test_options_property(_instance):
     x = {
-        'default_exclude':
-        [ansible_lint_instance._config.scenario.ephemeral_directory],
+        'default_exclude': [_instance._config.scenario.ephemeral_directory],
         'exclude': [
             'foo',
             'bar',
@@ -97,20 +95,19 @@ def test_options_property(ansible_lint_instance):
             'foo',
             'bar',
         ],
-        'foo':
-        'bar',
-        'v':
-        True,
+        'foo': 'bar',
+        'v': True,
     }
 
-    assert x == ansible_lint_instance.options
+    assert x == _instance.options
 
 
-def test_options_property_handles_cli_args(ansible_lint_instance):
-    ansible_lint_instance._config.args = {'debug': True}
+@pytest.mark.parametrize(
+    'config_instance', ['_provisioner_lint_section_data'], indirect=True)
+def test_options_property_handles_cli_args(_instance):
+    _instance._config.args = {'debug': True}
     x = {
-        'default_exclude':
-        [ansible_lint_instance._config.scenario.ephemeral_directory],
+        'default_exclude': [_instance._config.scenario.ephemeral_directory],
         'exclude': [
             'foo',
             'bar',
@@ -119,61 +116,62 @@ def test_options_property_handles_cli_args(ansible_lint_instance):
             'foo',
             'bar',
         ],
-        'foo':
-        'bar',
-        'v':
-        True,
+        'foo': 'bar',
+        'v': True,
     }
 
-    assert x == ansible_lint_instance.options
+    assert x == _instance.options
 
 
-def test_default_env_property(ansible_lint_instance):
-    assert 'MOLECULE_FILE' in ansible_lint_instance.default_env
-    assert 'MOLECULE_INVENTORY_FILE' in ansible_lint_instance.default_env
-    assert 'MOLECULE_SCENARIO_DIRECTORY' in ansible_lint_instance.default_env
-    assert 'MOLECULE_INSTANCE_CONFIG' in ansible_lint_instance.default_env
+def test_default_env_property(_instance):
+    assert 'MOLECULE_FILE' in _instance.default_env
+    assert 'MOLECULE_INVENTORY_FILE' in _instance.default_env
+    assert 'MOLECULE_SCENARIO_DIRECTORY' in _instance.default_env
+    assert 'MOLECULE_INSTANCE_CONFIG' in _instance.default_env
 
 
-def test_env_property(ansible_lint_instance):
-    assert 'bar' == ansible_lint_instance.env['foo']
-    assert 'ANSIBLE_CONFIG' in ansible_lint_instance.env
-    assert 'ANSIBLE_ROLES_PATH' in ansible_lint_instance.env
-    assert 'ANSIBLE_LIBRARY' in ansible_lint_instance.env
-    assert 'ANSIBLE_FILTER_PLUGINS' in ansible_lint_instance.env
+@pytest.mark.parametrize(
+    'config_instance', ['_provisioner_lint_section_data'], indirect=True)
+def test_env_property(_instance):
+    assert 'bar' == _instance.env['FOO']
+    assert 'ANSIBLE_CONFIG' in _instance.env
+    assert 'ANSIBLE_ROLES_PATH' in _instance.env
+    assert 'ANSIBLE_LIBRARY' in _instance.env
+    assert 'ANSIBLE_FILTER_PLUGINS' in _instance.env
 
 
-def test_bake(ansible_lint_instance):
-    ansible_lint_instance.bake()
+@pytest.mark.parametrize(
+    'config_instance', ['_provisioner_lint_section_data'], indirect=True)
+def test_bake(_instance):
+    _instance.bake()
     x = [
         str(sh.ansible_lint),
         '--foo=bar',
         '-v',
         '-x',
         '-x',
-        '--exclude={}'.format(
-            ansible_lint_instance._config.scenario.ephemeral_directory),
+        '--exclude={}'.format(_instance._config.scenario.ephemeral_directory),
         '--exclude=foo',
         '--exclude=bar',
-        ansible_lint_instance._config.provisioner.playbooks.converge,
+        _instance._config.provisioner.playbooks.converge,
         'bar',
         'foo',
     ]
-    result = str(ansible_lint_instance._ansible_lint_command).split()
+    result = str(_instance._ansible_lint_command).split()
 
     assert sorted(x) == sorted(result)
 
 
 def test_execute(mocker, patched_run_command, patched_logger_info,
-                 patched_logger_success, ansible_lint_instance):
-    ansible_lint_instance._ansible_lint_command = 'patched-ansiblelint-command'
-    ansible_lint_instance.execute()
+                 patched_logger_success, _instance):
+    _instance._ansible_lint_command = 'patched-ansiblelint-command'
+    _instance.execute()
 
     patched_run_command.assert_called_once_with(
         'patched-ansiblelint-command', debug=False)
 
     msg = 'Executing Ansible Lint on {}...'.format(
-        ansible_lint_instance._config.provisioner.playbooks.converge)
+        _instance._config.provisioner.playbooks.converge)
     patched_logger_info.assert_called_once_with(msg)
 
     msg = 'Lint completed successfully.'
@@ -181,10 +179,10 @@ def test_execute(mocker, patched_run_command, patched_logger_info,
 
 
 def test_execute_does_not_execute(patched_run_command, patched_logger_warn,
-                                  ansible_lint_instance):
-    c = ansible_lint_instance._config.config
+                                  _instance):
+    c = _instance._config.config
     c['provisioner']['lint']['enabled'] = False
-    ansible_lint_instance.execute()
+    _instance.execute()
 
     assert not patched_run_command.called
 
@@ -192,19 +190,19 @@ def test_execute_does_not_execute(patched_run_command, patched_logger_warn,
     patched_logger_warn.assert_called_once_with(msg)
 
 
-def test_execute_bakes(patched_run_command, ansible_lint_instance):
-    ansible_lint_instance.execute()
+def test_execute_bakes(patched_run_command, _instance):
+    _instance.execute()
 
-    assert ansible_lint_instance._ansible_lint_command is not None
+    assert _instance._ansible_lint_command is not None
 
     assert 1 == patched_run_command.call_count
 
 
-def test_executes_catches_and_exits_return_code(
-        patched_run_command, patched_yamllint, ansible_lint_instance):
+def test_executes_catches_and_exits_return_code(patched_run_command,
+                                                patched_yamllint, _instance):
     patched_run_command.side_effect = sh.ErrorReturnCode_1(
         sh.ansible_lint, b'', b'')
     with pytest.raises(SystemExit) as e:
-        ansible_lint_instance.execute()
+        _instance.execute()
 
     assert 1 == e.value.code

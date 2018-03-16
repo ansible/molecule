@@ -42,15 +42,6 @@ class Ec2(base.Base):
           name: ec2
         platforms:
           - name: instance
-            key_name: "{{ keypair_name }}"
-            image: "{{ item.image }}"
-            instance_type: "{{ item.instance_type }}"
-            vpc_subnet_id: "{{ item.vpc_subnet_id }}"
-            group: "{{ security_group_name }}"
-            instance_tags:
-              instance: "{{ item.name }}"
-            count_tag:
-              instance: "{{ item.name }}"
 
     .. code-block:: bash
 

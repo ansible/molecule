@@ -60,25 +60,26 @@ class Vagrant(base.Base):
 
         driver:
           name: vagrant
-        platforms:
-          - name: instance
-            instance_name: "{{ item.name }}"
-            instance_interfaces: "{{ item.interfaces | default(omit) }}"
-            instance_raw_config_args: "{{ item.instance_raw_config_args | default(omit) }}"
-
-            config_options: "{{ item.config_options | default(omit) }}"
-
-            platform_box: "{{ item.box }}"
-            platform_box_version: "{{ item.box_version | default(omit) }}"
-            platform_box_url: "{{ item.box_url | default(omit) }}"
-
-            provider_name: "{{ molecule_yml.driver.provider.name }}"
-            provider_memory: "{{ item.memory | default(omit) }}"
-            provider_cpus: "{{ item.cpus | default(omit) }}"
-            provider_options: "{{ item.provider_options | default(omit) }}"
-            provider_raw_config_args: "{{ item.provider_raw_config_args | default(omit) }}"
-
-            provision: "{{ item.provision | default(omit) }}"
+        platforms
+          - name: instance-1
+            instance_raw_config_args:
+              - "vm.network 'forwarded_port', guest: 80, host: 8080"
+            interfaces:
+              - auto_config: true
+                network_name: private_network
+                type: dhcp
+            config_options:
+              synced_folder: True
+            box: debian/jessie64
+            box_version: 10.1
+            box_url: http://repo.example.com/images/postmerge/debian.json
+            memory: 1024
+            cpus: 1
+            provider_options:
+              gui: True
+            provider_raw_config_args:
+              - "customize ['modifyvm', :id, '--cpuexecutioncap', '50']"
+            provision: True
 
     .. code-block:: bash
 

@@ -23,49 +23,39 @@ import os
 import pytest
 
 from molecule import config
-from molecule import util
 from molecule.driver import azure
 
 
+# NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
+# config.Config._validate from executing.  Thus preventing odd side-effects
+# throughout patched.assert_called unit tests.
 @pytest.fixture
-def molecule_driver_section_data():
-    return {
-        'driver': {
-            'name': 'azure',
-            'options': {},
-        }
-    }
-
-
-@pytest.fixture
-def azure_instance(molecule_driver_section_data, config_instance):
-    util.merge_dicts(config_instance.config, molecule_driver_section_data)
-
+def _instance(patched_config_validate, config_instance):
     return azure.Azure(config_instance)
 
 
-def test_config_private_member(azure_instance):
-    assert isinstance(azure_instance._config, config.Config)
+def test_config_private_member(_instance):
+    assert isinstance(_instance._config, config.Config)
 
 
-def test_testinfra_options_property(azure_instance):
+def test_testinfra_options_property(_instance):
     assert {
         'connection': 'ansible',
-        'ansible-inventory': azure_instance._config.provisioner.inventory_file
-    } == azure_instance.testinfra_options
+        'ansible-inventory': _instance._config.provisioner.inventory_file
+    } == _instance.testinfra_options
 
 
-def test_name_property(azure_instance):
-    assert 'azure' == azure_instance.name
+def test_name_property(_instance):
+    assert 'azure' == _instance.name
 
 
-def test_options_property(azure_instance):
+def test_options_property(_instance):
     x = {'managed': True}
 
-    assert x == azure_instance.options
+    assert x == _instance.options
 
 
-def test_login_cmd_template_property(azure_instance):
+def test_login_cmd_template_property(_instance):
     x = ('ssh {address} -l {user} -p {port} -i {identity_file} '
          '-o UserKnownHostsFile=/dev/null '
          '-o ControlMaster=auto '
@@ -73,36 +63,36 @@ def test_login_cmd_template_property(azure_instance):
          '-o IdentitiesOnly=yes '
          '-o StrictHostKeyChecking=no')
 
-    assert x == azure_instance.login_cmd_template
+    assert x == _instance.login_cmd_template
 
 
-def test_safe_files_property(azure_instance):
+def test_safe_files_property(_instance):
     x = [
-        os.path.join(azure_instance._config.scenario.ephemeral_directory,
+        os.path.join(_instance._config.scenario.ephemeral_directory,
                      'instance_config.yml'),
     ]
 
-    assert x == azure_instance.safe_files
+    assert x == _instance.safe_files
 
 
-def test_default_safe_files_property(azure_instance):
+def test_default_safe_files_property(_instance):
     x = [
-        os.path.join(azure_instance._config.scenario.ephemeral_directory,
+        os.path.join(_instance._config.scenario.ephemeral_directory,
                      'instance_config.yml'),
     ]
 
-    assert x == azure_instance.default_safe_files
+    assert x == _instance.default_safe_files
 
 
-def test_delegated_property(azure_instance):
-    assert not azure_instance.delegated
+def test_delegated_property(_instance):
+    assert not _instance.delegated
 
 
-def test_managed_property(azure_instance):
-    assert azure_instance.managed
+def test_managed_property(_instance):
+    assert _instance.managed
 
 
-def test_default_ssh_connection_options_property(azure_instance):
+def test_default_ssh_connection_options_property(_instance):
     x = [
         '-o UserKnownHostsFile=/dev/null',
         '-o ControlMaster=auto',
@@ -111,50 +101,39 @@ def test_default_ssh_connection_options_property(azure_instance):
         '-o StrictHostKeyChecking=no',
     ]
 
-    assert x == azure_instance.default_ssh_connection_options
+    assert x == _instance.default_ssh_connection_options
 
 
-def test_login_options(mocker, azure_instance):
-    m = mocker.patch('molecule.util.safe_load_file')
-    m.return_value = [{
+def test_login_options(mocker, _instance):
+    m = mocker.patch('molecule.driver.azure.Azure._get_instance_config')
+    m.return_value = {
         'instance': 'foo',
         'address': '172.16.0.2',
         'user': 'cloud-user',
         'port': 22,
-        'identity_file': '/foo/bar'
-    }, {
-        'instance': 'bar',
-        'address': '172.16.0.3',
-        'user': 'cloud-user',
-        'port': 22,
-        'identity_file': '/foo/bar'
-    }]
+        'identity_file': '/foo/bar',
+    }
+
     x = {
         'instance': 'foo',
         'address': '172.16.0.2',
         'user': 'cloud-user',
         'port': 22,
-        'identity_file': '/foo/bar'
+        'identity_file': '/foo/bar',
     }
+    assert x == _instance.login_options('foo')
 
-    assert x == azure_instance.login_options('foo')
 
-
-def test_ansible_connection_options(mocker, azure_instance):
-    m = mocker.patch('molecule.util.safe_load_file')
-    m.return_value = [{
+def test_ansible_connection_options(mocker, _instance):
+    m = mocker.patch('molecule.driver.azure.Azure._get_instance_config')
+    m.return_value = {
         'instance': 'foo',
         'address': '172.16.0.2',
         'user': 'cloud-user',
         'port': 22,
-        'identity_file': '/foo/bar'
-    }, {
-        'instance': 'bar',
-        'address': '172.16.0.3',
-        'user': 'cloud-user',
-        'port': 22,
-        'identity_file': '/foo/bar'
-    }]
+        'identity_file': '/foo/bar',
+    }
+
     x = {
         'ansible_host':
         '172.16.0.2',
@@ -172,34 +151,33 @@ def test_ansible_connection_options(mocker, azure_instance):
                                     '-o IdentitiesOnly=yes '
                                     '-o StrictHostKeyChecking=no'),
     }
-
-    assert x == azure_instance.ansible_connection_options('foo')
+    assert x == _instance.ansible_connection_options('foo')
 
 
 def test_ansible_connection_options_handles_missing_instance_config(
-        mocker, azure_instance):
+        mocker, _instance):
     m = mocker.patch('molecule.util.safe_load_file')
     m.side_effect = IOError
 
-    assert {} == azure_instance.ansible_connection_options('foo')
+    assert {} == _instance.ansible_connection_options('foo')
 
 
 def test_ansible_connection_options_handles_missing_results_key(
-        mocker, azure_instance):
+        mocker, _instance):
     m = mocker.patch('molecule.util.safe_load_file')
     m.side_effect = StopIteration
 
-    assert {} == azure_instance.ansible_connection_options('foo')
+    assert {} == _instance.ansible_connection_options('foo')
 
 
-def test_instance_config_property(azure_instance):
-    x = os.path.join(azure_instance._config.scenario.ephemeral_directory,
+def test_instance_config_property(_instance):
+    x = os.path.join(_instance._config.scenario.ephemeral_directory,
                      'instance_config.yml')
 
-    assert x == azure_instance.instance_config
+    assert x == _instance.instance_config
 
 
-def test_ssh_connection_options_property(azure_instance):
+def test_ssh_connection_options_property(_instance):
     x = [
         '-o UserKnownHostsFile=/dev/null',
         '-o ControlMaster=auto',
@@ -208,11 +186,11 @@ def test_ssh_connection_options_property(azure_instance):
         '-o StrictHostKeyChecking=no',
     ]
 
-    assert x == azure_instance.ssh_connection_options
+    assert x == _instance.ssh_connection_options
 
 
-def test_status(mocker, azure_instance):
-    result = azure_instance.status()
+def test_status(mocker, _instance):
+    result = _instance.status()
 
     assert 2 == len(result)
 
@@ -229,3 +207,17 @@ def test_status(mocker, azure_instance):
     assert result[1].scenario_name == 'default'
     assert result[1].created == 'False'
     assert result[1].converged == 'False'
+
+
+def test_get_instance_config(mocker, _instance):
+    m = mocker.patch('molecule.util.safe_load_file')
+    m.return_value = [{
+        'instance': 'foo',
+    }, {
+        'instance': 'bar',
+    }]
+
+    x = {
+        'instance': 'foo',
+    }
+    assert x == _instance._get_instance_config('foo')

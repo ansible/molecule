@@ -26,7 +26,7 @@ from molecule.command.init import scenario
 
 
 @pytest.fixture
-def command_args():
+def _command_args():
     return {
         'driver_name': 'docker',
         'role_name': 'test-role',
@@ -37,13 +37,13 @@ def command_args():
 
 
 @pytest.fixture
-def scenario_instance(command_args):
-    return scenario.Scenario(command_args)
+def _instance(_command_args):
+    return scenario.Scenario(_command_args)
 
 
-def test_execute(temp_dir, scenario_instance, patched_logger_info,
+def test_execute(temp_dir, _instance, patched_logger_info,
                  patched_logger_success):
-    scenario_instance.execute()
+    _instance.execute()
 
     msg = 'Initializing new scenario test-scenario...'
     patched_logger_info.assert_called_once_with(msg)
@@ -57,12 +57,11 @@ def test_execute(temp_dir, scenario_instance, patched_logger_info,
     patched_logger_success.assert_called_once_with(msg)
 
 
-def test_execute_scenario_exists(temp_dir, scenario_instance,
-                                 patched_logger_critical):
-    scenario_instance.execute()
+def test_execute_scenario_exists(temp_dir, _instance, patched_logger_critical):
+    _instance.execute()
 
     with pytest.raises(SystemExit) as e:
-        scenario_instance.execute()
+        _instance.execute()
 
     assert 1 == e.value.code
 

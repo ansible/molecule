@@ -40,4 +40,5 @@ def test_execute(capsys, config_instance):
             created='False',
             converged='False'),
     ]
+
     assert x == l.execute()

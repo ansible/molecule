@@ -23,12 +23,11 @@ import os
 import pytest
 
 from molecule import config
-from molecule import util
 from molecule.driver import delegated
 
 
 @pytest.fixture
-def molecule_driver_section_data():
+def _driver_section_data():
     return {
         'driver': {
             'name': 'delegated',
@@ -43,29 +42,28 @@ def molecule_driver_section_data():
 
 
 @pytest.fixture
-def delegated_instance(molecule_driver_section_data, config_instance):
-    util.merge_dicts(config_instance.config, molecule_driver_section_data)
-
+def _instance(config_instance):
     return delegated.Delegated(config_instance)
 
 
-def test_config_private_member(delegated_instance):
-    assert isinstance(delegated_instance._config, config.Config)
+def test_config_private_member(_instance):
+    assert isinstance(_instance._config, config.Config)
 
 
-def test_testinfra_options_property(delegated_instance):
+def test_testinfra_options_property(_instance):
     assert {
         'connection': 'ansible',
-        'ansible-inventory':
-        delegated_instance._config.provisioner.inventory_file
-    } == delegated_instance.testinfra_options
+        'ansible-inventory': _instance._config.provisioner.inventory_file
+    } == _instance.testinfra_options
 
 
-def test_name_property(delegated_instance):
-    assert 'delegated' == delegated_instance.name
+def test_name_property(_instance):
+    assert 'delegated' == _instance.name
 
 
-def test_options_property(delegated_instance):
+@pytest.mark.parametrize(
+    'config_instance', ['_driver_section_data'], indirect=True)
+def test_options_property(_instance):
     x = {
         'ansible_connection_options': {
             'ansible_connection': 'docker'
@@ -74,58 +72,62 @@ def test_options_property(delegated_instance):
         'managed': True,
     }
 
-    assert x == delegated_instance.options
+    assert x == _instance.options
 
 
-def test_login_cmd_template_property(delegated_instance):
+@pytest.mark.parametrize(
+    'config_instance', ['_driver_section_data'], indirect=True)
+def test_login_cmd_template_property(_instance):
     x = 'docker exec -ti {instance} bash'
 
-    assert x == delegated_instance.login_cmd_template
+    assert x == _instance.login_cmd_template
 
 
-def test_safe_files_property(delegated_instance):
-    assert [] == delegated_instance.safe_files
+def test_safe_files_property(_instance):
+    assert [] == _instance.safe_files
 
 
-def test_default_safe_files_property(delegated_instance):
-    assert [] == delegated_instance.default_safe_files
+def test_default_safe_files_property(_instance):
+    assert [] == _instance.default_safe_files
 
 
-def test_delegated_property(delegated_instance):
-    assert delegated_instance.delegated
+def test_delegated_property(_instance):
+    assert _instance.delegated
 
 
-def test_managed_property(delegated_instance):
-    assert delegated_instance.managed
+def test_managed_property(_instance):
+    assert _instance.managed
 
 
-def test_default_ssh_connection_options_property(delegated_instance):
-    assert [] == delegated_instance.default_ssh_connection_options
+def test_default_ssh_connection_options_property(_instance):
+    assert [] == _instance.default_ssh_connection_options
 
 
-def test_login_options(delegated_instance):
-    assert {'instance': 'foo'} == delegated_instance.login_options('foo')
+def test_login_options(_instance):
+    assert {'instance': 'foo'} == _instance.login_options('foo')
 
 
-def test_ansible_connection_options(delegated_instance):
+@pytest.mark.parametrize(
+    'config_instance', ['_driver_section_data'], indirect=True)
+def test_ansible_connection_options(_instance):
     x = {'ansible_connection': 'docker'}
 
-    assert x == delegated_instance.ansible_connection_options('foo')
+    assert x == _instance.ansible_connection_options('foo')
 
 
-def test_instance_config_property(delegated_instance):
-    x = os.path.join(delegated_instance._config.scenario.ephemeral_directory,
+def test_instance_config_property(_instance):
+    x = os.path.join(_instance._config.scenario.ephemeral_directory,
                      'instance_config.yml')
 
-    assert x == delegated_instance.instance_config
+    assert x == _instance.instance_config
 
 
-def test_ssh_connection_options_property(delegated_instance):
-    assert [] == delegated_instance.ssh_connection_options
+def test_ssh_connection_options_property(_instance):
+    assert [] == _instance.ssh_connection_options
 
 
-def test_status(mocker, delegated_instance):
-    result = delegated_instance.status()
+def test_status(mocker, _instance):
+    result = _instance.status()
 
     assert 2 == len(result)
 

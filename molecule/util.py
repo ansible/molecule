@@ -235,11 +235,6 @@ def title(word):
     return ' '.join(x.capitalize() or '_' for x in word.split('_'))
 
 
-def exit_with_invalid_section(section, name):
-    msg = "Invalid {} named '{}' configured.".format(section, name)
-    sysexit_with_message(msg)
-
-
 def abs_path(path):
     return os.path.abspath(path)
 
@@ -262,8 +257,7 @@ def underscore(string):
 
 def merge_dicts(a, b):
     """
-    Merges the values of B into A and returns a new dict.  Uses the same
-    merge strategy as ``config._combine``.
+    Merges the values of B into A and returns a mutated dict A.
 
     ::
 
@@ -293,7 +287,6 @@ def merge_dicts(a, b):
     :param b: the dictionary to import
     :return: dict
     """
-    conf = a
     anyconfig.merge(a, b, ac_merge=MERGE_STRATEGY)
 
-    return conf
+    return a
