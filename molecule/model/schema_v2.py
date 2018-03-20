@@ -368,8 +368,18 @@ driver_vagrant_provider_section_schema = {
                 'type': 'dict',
                 'schema': {
                     'name': {
-                        'type': 'string',
-                        'nullable': False,
+                        'type':
+                        'string',
+                        'nullable':
+                        False,
+                        'allowed': [
+                            'virtualbox',
+                            'vmware_fusion',
+                            'vmware_workstation',
+                            'vmware_desktop',
+                            'parallels',
+                            'libvirt',
+                        ],
                     },
                 }
             },
