@@ -39,9 +39,9 @@ class Shell(base.Base):
 
     .. note::
 
-    Unlike the other dependency managers, `options` are ignored and not passed
-    to `shell`.  Additional flags/subcommands should simply be added to the
-    `command`.
+        Unlike the other dependency managers, `options` are ignored and not passed
+        to `shell`.  Additional flags/subcommands should simply be added to the
+        `command`.
 
     .. code-block:: yaml
 
