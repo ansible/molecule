@@ -64,7 +64,8 @@ class Template(base.Base):
         cookiecutter.main.cookiecutter(
             url,
             extra_context=self._command_args,
-            no_input=no_input, )
+            no_input=no_input,
+        )
 
         role_directory = os.path.join(os.getcwd(), role_name)
         msg = 'Initialized role in {} successfully.'.format(role_directory)

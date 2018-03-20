@@ -456,7 +456,8 @@ def test_check(_instance, mocker, _patched_ansible_playbook):
 
     _patched_ansible_playbook.assert_called_once_with(
         _instance._config.provisioner.playbooks.converge,
-        _instance._config, )
+        _instance._config,
+    )
     _patched_ansible_playbook.return_value.add_cli_arg.assert_called_once_with(
         'check', True)
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
@@ -467,7 +468,8 @@ def test_converge(_instance, mocker, _patched_ansible_playbook):
 
     _patched_ansible_playbook.assert_called_once_with(
         _instance._config.provisioner.playbooks.converge,
-        _instance._config, )
+        _instance._config,
+    )
     # NOTE(retr0h): This is not the true return type.  This is a mock return
     #               which didn't go through str.decode().
     assert result == b'patched-ansible-playbook-stdout'
@@ -480,7 +482,8 @@ def test_converge_with_playbook(_instance, mocker, _patched_ansible_playbook):
 
     _patched_ansible_playbook.assert_called_once_with(
         'playbook',
-        _instance._config, )
+        _instance._config,
+    )
     # NOTE(retr0h): This is not the true return type.  This is a mock return
     #               which didn't go through str.decode().
     assert result == b'patched-ansible-playbook-stdout'
@@ -493,7 +496,8 @@ def test_destroy(_instance, mocker, _patched_ansible_playbook):
 
     _patched_ansible_playbook.assert_called_once_with(
         _instance._config.provisioner.playbooks.destroy,
-        _instance._config, )
+        _instance._config,
+    )
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
@@ -502,7 +506,8 @@ def test_side_effect(_instance, mocker, _patched_ansible_playbook):
 
     _patched_ansible_playbook.assert_called_once_with(
         _instance._config.provisioner.playbooks.side_effect,
-        _instance._config, )
+        _instance._config,
+    )
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
@@ -511,7 +516,8 @@ def test_create(_instance, mocker, _patched_ansible_playbook):
 
     _patched_ansible_playbook.assert_called_once_with(
         _instance._config.provisioner.playbooks.create,
-        _instance._config, )
+        _instance._config,
+    )
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
@@ -520,7 +526,8 @@ def test_prepare(_instance, mocker, _patched_ansible_playbook):
 
     _patched_ansible_playbook.assert_called_once_with(
         _instance._config.provisioner.playbooks.prepare,
-        _instance._config, )
+        _instance._config,
+    )
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
@@ -529,7 +536,8 @@ def test_syntax(_instance, mocker, _patched_ansible_playbook):
 
     _patched_ansible_playbook.assert_called_once_with(
         _instance._config.provisioner.playbooks.converge,
-        _instance._config, )
+        _instance._config,
+    )
     _patched_ansible_playbook.return_value.add_cli_arg.assert_called_once_with(
         'syntax-check', True)
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()

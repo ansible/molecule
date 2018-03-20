@@ -94,9 +94,10 @@ def idempotence(scenario_name):
 def init_role(temp_dir, driver_name):
     role_directory = os.path.join(temp_dir.strpath, 'test-init')
 
-    cmd = sh.molecule.bake(
-        'init', 'role', {'driver-name': driver_name,
-                         'role-name': 'test-init'})
+    cmd = sh.molecule.bake('init', 'role', {
+        'driver-name': driver_name,
+        'role-name': 'test-init'
+    })
     run_command(cmd)
 
     os.chdir(role_directory)
@@ -111,9 +112,10 @@ def init_role(temp_dir, driver_name):
 def init_scenario(temp_dir, driver_name):
     # Create role
     role_directory = os.path.join(temp_dir.strpath, 'test-init')
-    cmd = sh.molecule.bake(
-        'init', 'role', {'driver-name': driver_name,
-                         'role-name': 'test-init'})
+    cmd = sh.molecule.bake('init', 'role', {
+        'driver-name': driver_name,
+        'role-name': 'test-init'
+    })
     run_command(cmd)
     os.chdir(role_directory)
 

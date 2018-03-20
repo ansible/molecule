@@ -136,7 +136,6 @@ class Flake8(base.Base):
         :return: list
         """
         return [
-            filename
-            for filename in util.os_walk(self._config.verifier.directory,
-                                         'test_*.py')
+            filename for filename in util.os_walk(
+                self._config.verifier.directory, 'test_*.py')
         ]

@@ -298,38 +298,40 @@ class Ansible(base.Base):
     @property
     def default_env(self):
         env = util.merge_dicts(os.environ.copy(), self._config.env)
-        env = util.merge_dicts(env, {
-            'ANSIBLE_CONFIG':
-            self._config.provisioner.config_file,
-            'ANSIBLE_ROLES_PATH':
-            ':'.join([
-                util.abs_path(
-                    os.path.join(self._config.scenario.ephemeral_directory,
-                                 'roles')),
-                util.abs_path(
-                    os.path.join(self._config.project_directory,
-                                 os.path.pardir)),
-            ]),
-            'ANSIBLE_LIBRARY':
-            ':'.join([
-                self._get_libraries_directory(),
-                util.abs_path(
-                    os.path.join(self._config.scenario.ephemeral_directory,
-                                 'library')),
-                util.abs_path(
-                    os.path.join(self._config.project_directory, 'library')),
-            ]),
-            'ANSIBLE_FILTER_PLUGINS':
-            ':'.join([
-                self._get_filter_plugin_directory(),
-                util.abs_path(
-                    os.path.join(self._config.scenario.ephemeral_directory,
-                                 'plugins', 'filters')),
-                util.abs_path(
-                    os.path.join(self._config.project_directory, 'plugins',
-                                 'filters')),
-            ]),
-        })
+        env = util.merge_dicts(
+            env, {
+                'ANSIBLE_CONFIG':
+                self._config.provisioner.config_file,
+                'ANSIBLE_ROLES_PATH':
+                ':'.join([
+                    util.abs_path(
+                        os.path.join(self._config.scenario.ephemeral_directory,
+                                     'roles')),
+                    util.abs_path(
+                        os.path.join(self._config.project_directory,
+                                     os.path.pardir)),
+                ]),
+                'ANSIBLE_LIBRARY':
+                ':'.join([
+                    self._get_libraries_directory(),
+                    util.abs_path(
+                        os.path.join(self._config.scenario.ephemeral_directory,
+                                     'library')),
+                    util.abs_path(
+                        os.path.join(self._config.project_directory,
+                                     'library')),
+                ]),
+                'ANSIBLE_FILTER_PLUGINS':
+                ':'.join([
+                    self._get_filter_plugin_directory(),
+                    util.abs_path(
+                        os.path.join(self._config.scenario.ephemeral_directory,
+                                     'plugins', 'filters')),
+                    util.abs_path(
+                        os.path.join(self._config.project_directory, 'plugins',
+                                     'filters')),
+                ]),
+            })
         env = util.merge_dicts(env, self._config.env)
 
         return env
