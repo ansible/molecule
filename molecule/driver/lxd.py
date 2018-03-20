@@ -24,7 +24,7 @@ from molecule.driver import base
 LOG = logger.get_logger(__name__)
 
 
-class Lxd(base.Base):
+class LXD(base.Base):
     """
     The class responsible for managing `LXD`_ containers.  `LXD`_ is `not` the
     default driver used in Molecule.
@@ -53,7 +53,7 @@ class Lxd(base.Base):
     """  # noqa
 
     def __init__(self, config):
-        super(Lxd, self).__init__(config)
+        super(LXD, self).__init__(config)
         self._name = 'lxd'
 
     @property

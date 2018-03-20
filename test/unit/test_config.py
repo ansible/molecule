@@ -177,7 +177,7 @@ def _config_driver_ec2_section_data():
 @pytest.mark.parametrize(
     'config_instance', ['_config_driver_ec2_section_data'], indirect=True)
 def test_driver_property_is_ec2(config_instance):
-    assert isinstance(config_instance.driver, ec2.Ec2)
+    assert isinstance(config_instance.driver, ec2.EC2)
 
 
 @pytest.fixture
@@ -192,7 +192,7 @@ def _config_driver_gce_section_data():
 @pytest.mark.parametrize(
     'config_instance', ['_config_driver_gce_section_data'], indirect=True)
 def test_driver_property_is_gce(config_instance):
-    assert isinstance(config_instance.driver, gce.Gce)
+    assert isinstance(config_instance.driver, gce.GCE)
 
 
 @pytest.fixture
@@ -207,7 +207,7 @@ def _config_driver_lxc_section_data():
 @pytest.mark.parametrize(
     'config_instance', ['_config_driver_lxc_section_data'], indirect=True)
 def test_driver_property_is_lxc(config_instance):
-    assert isinstance(config_instance.driver, lxc.Lxc)
+    assert isinstance(config_instance.driver, lxc.LXC)
 
 
 @pytest.fixture
@@ -222,7 +222,7 @@ def _config_driver_lxd_section_data():
 @pytest.mark.parametrize(
     'config_instance', ['_config_driver_lxd_section_data'], indirect=True)
 def test_driver_property_is_lxd(config_instance):
-    assert isinstance(config_instance.driver, lxd.Lxd)
+    assert isinstance(config_instance.driver, lxd.LXD)
 
 
 @pytest.fixture

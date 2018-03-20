@@ -140,13 +140,13 @@ class Config(object):
         elif driver_name == 'docker':
             driver = docker.Docker(self)
         elif driver_name == 'ec2':
-            driver = ec2.Ec2(self)
+            driver = ec2.EC2(self)
         elif driver_name == 'gce':
-            driver = gce.Gce(self)
+            driver = gce.GCE(self)
         elif driver_name == 'lxc':
-            driver = lxc.Lxc(self)
+            driver = lxc.LXC(self)
         elif driver_name == 'lxd':
-            driver = lxd.Lxd(self)
+            driver = lxd.LXD(self)
         elif driver_name == 'openstack':
             driver = openstack.Openstack(self)
         elif driver_name == 'vagrant':
@@ -398,10 +398,10 @@ def molecule_drivers():
         azure.Azure(None).name,
         delegated.Delegated(None).name,
         docker.Docker(None).name,
-        ec2.Ec2(None).name,
-        gce.Gce(None).name,
-        lxc.Lxc(None).name,
-        lxd.Lxd(None).name,
+        ec2.EC2(None).name,
+        gce.GCE(None).name,
+        lxc.LXC(None).name,
+        lxd.LXD(None).name,
         openstack.Openstack(None).name,
         vagrant.Vagrant(None).name,
     ]

@@ -28,7 +28,7 @@ from molecule.driver import lxd
 
 @pytest.fixture
 def _instance(config_instance):
-    return lxd.Lxd(config_instance)
+    return lxd.LXD(config_instance)
 
 
 def test_config_private_member(_instance):

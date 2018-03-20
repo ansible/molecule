@@ -78,25 +78,25 @@ Docker
 EC2
 ^^^
 
-.. autoclass:: molecule.driver.ec2.Ec2()
+.. autoclass:: molecule.driver.ec2.EC2()
    :undoc-members:
 
 GCE
 ^^^
 
-.. autoclass:: molecule.driver.gce.Gce()
+.. autoclass:: molecule.driver.gce.GCE()
    :undoc-members:
 
 LXC
 ^^^
 
-.. autoclass:: molecule.driver.lxc.Lxc()
+.. autoclass:: molecule.driver.lxc.LXC()
    :undoc-members:
 
 LXD
 ^^^
 
-.. autoclass:: molecule.driver.lxd.Lxd()
+.. autoclass:: molecule.driver.lxd.LXD()
    :undoc-members:
 
 Openstack

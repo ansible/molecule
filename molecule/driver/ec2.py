@@ -26,7 +26,7 @@ from molecule import util
 LOG = logger.get_logger(__name__)
 
 
-class Ec2(base.Base):
+class EC2(base.Base):
     """
     The class responsible for managing `EC2`_ instances.  `EC2`_
     is `not` the default driver used in Molecule.
@@ -76,7 +76,7 @@ class Ec2(base.Base):
     """  # noqa
 
     def __init__(self, config):
-        super(Ec2, self).__init__(config)
+        super(EC2, self).__init__(config)
         self._name = 'ec2'
 
     @property

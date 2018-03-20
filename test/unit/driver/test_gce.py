@@ -31,7 +31,7 @@ from molecule.driver import gce
 # throughout patched.assert_called unit tests.
 @pytest.fixture
 def _instance(patched_config_validate, config_instance):
-    return gce.Gce(config_instance)
+    return gce.GCE(config_instance)
 
 
 def test_config_private_member(_instance):
@@ -105,7 +105,7 @@ def test_default_ssh_connection_options_property(_instance):
 
 
 def test_login_options(mocker, _instance):
-    m = mocker.patch('molecule.driver.gce.Gce._get_instance_config')
+    m = mocker.patch('molecule.driver.gce.GCE._get_instance_config')
     m.return_value = {
         'instance': 'foo',
         'address': '172.16.0.2',
@@ -125,7 +125,7 @@ def test_login_options(mocker, _instance):
 
 
 def test_ansible_connection_options(mocker, _instance):
-    m = mocker.patch('molecule.driver.gce.Gce._get_instance_config')
+    m = mocker.patch('molecule.driver.gce.GCE._get_instance_config')
     m.return_value = {
         'instance': 'foo',
         'address': '172.16.0.2',
