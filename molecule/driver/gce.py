@@ -26,7 +26,7 @@ from molecule import util
 LOG = logger.get_logger(__name__)
 
 
-class Gce(base.Base):
+class GCE(base.Base):
     """
     The class responsible for managing `GCE`_ instances.  `GCE`_
     is `not` the default driver used in Molecule.
@@ -79,7 +79,7 @@ class Gce(base.Base):
     """  # noqa
 
     def __init__(self, config):
-        super(Gce, self).__init__(config)
+        super(GCE, self).__init__(config)
         self._name = 'gce'
 
     @property

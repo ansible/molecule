@@ -24,7 +24,7 @@ from molecule.driver import base
 LOG = logger.get_logger(__name__)
 
 
-class Lxc(base.Base):
+class LXC(base.Base):
     """
     The class responsible for managing `LXC`_ containers.  `LXC`_ is `not` the
     default driver used in Molecule.
@@ -57,7 +57,7 @@ class Lxc(base.Base):
     """  # noqa
 
     def __init__(self, config):
-        super(Lxc, self).__init__(config)
+        super(LXC, self).__init__(config)
         self._name = 'lxc'
 
     @property

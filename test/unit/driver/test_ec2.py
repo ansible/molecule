@@ -31,7 +31,7 @@ from molecule.driver import ec2
 # throughout patched.assert_called unit tests.
 @pytest.fixture
 def _instance(patched_config_validate, config_instance):
-    return ec2.Ec2(config_instance)
+    return ec2.EC2(config_instance)
 
 
 def test_config_private_member(_instance):
@@ -105,7 +105,7 @@ def test_default_ssh_connection_options_property(_instance):
 
 
 def test_login_options(mocker, _instance):
-    m = mocker.patch('molecule.driver.ec2.Ec2._get_instance_config')
+    m = mocker.patch('molecule.driver.ec2.EC2._get_instance_config')
     m.return_value = {
         'instance': 'foo',
         'address': '172.16.0.2',
@@ -125,7 +125,7 @@ def test_login_options(mocker, _instance):
 
 
 def test_ansible_connection_options(mocker, _instance):
-    m = mocker.patch('molecule.driver.ec2.Ec2._get_instance_config')
+    m = mocker.patch('molecule.driver.ec2.EC2._get_instance_config')
     m.return_value = {
         'instance': 'foo',
         'address': '172.16.0.2',
