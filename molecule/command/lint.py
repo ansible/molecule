@@ -51,8 +51,7 @@ class Lint(base.Base):
         """
         self.print_info()
         linters = [
-            l
-            for l in [
+            l for l in [
                 self._config.lint,
                 self._config.verifier.lint,
                 self._config.provisioner.lint,

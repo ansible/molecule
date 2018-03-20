@@ -58,7 +58,8 @@ class Base(object):
             extra_context=extra_context,
             output_dir=output_dir,
             overwrite_if_exists=overwrite,
-            no_input=True, )
+            no_input=True,
+        )
 
     def _resolve_template_dir(self, template_dir):
         if not os.path.isabs(template_dir):
