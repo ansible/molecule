@@ -20,49 +20,32 @@
 
 import pytest
 
-from molecule import util
 from molecule.command import login
 
 
 @pytest.fixture
-def molecule_driver_delegated_section_data():
-    return {
-        'driver': {
-            'name': 'delegated',
-            'options': {
-                'managed': False,
-                'login_cmd_template': 'docker exec -ti {instance} bash',
-                'ansible_connection_options': {
-                    'ansible_connection': 'docker'
-                }
-            }
-        }
-    }
-
-
-@pytest.fixture
-def login_instance(molecule_driver_delegated_section_data, config_instance):
+def _instance(config_instance):
     config_instance.state.change_state('created', True)
-    util.merge_dicts(config_instance.config,
-                     molecule_driver_delegated_section_data)
 
     return login.Login(config_instance)
 
 
-def test_execute(mocker, login_instance):
-    login_instance._config.command_args = {'host': 'instance-1'}
+def test_execute(mocker, _instance):
+    _instance._config.command_args = {'host': 'instance-1'}
     m = mocker.patch('molecule.command.login.Login._get_login')
-    login_instance.execute()
+    _instance.execute()
 
     m.assert_called_once_with('instance-1')
 
 
-def test_execute_raises_when_not_converged(patched_logger_critical,
-                                           login_instance):
-    login_instance._config.state.change_state('created', False)
+@pytest.mark.parametrize(
+    'config_instance', ['command_driver_delegated_section_data'],
+    indirect=True)
+def test_execute_raises_when_not_converged(patched_logger_critical, _instance):
+    _instance._config.state.change_state('created', False)
 
     with pytest.raises(SystemExit) as e:
-        login_instance.execute()
+        _instance.execute()
 
     assert 1 == e.value.code
 
@@ -70,11 +53,11 @@ def test_execute_raises_when_not_converged(patched_logger_critical,
     patched_logger_critical.assert_called_once_with(msg)
 
 
-def test_get_hostname_does_not_match(patched_logger_critical, login_instance):
-    login_instance._config.command_args = {'host': 'invalid'}
+def test_get_hostname_does_not_match(patched_logger_critical, _instance):
+    _instance._config.command_args = {'host': 'invalid'}
     hosts = ['instance-1']
     with pytest.raises(SystemExit) as e:
-        login_instance._get_hostname(hosts)
+        _instance._get_hostname(hosts)
 
     assert 1 == e.value.code
 
@@ -83,40 +66,40 @@ def test_get_hostname_does_not_match(patched_logger_critical, login_instance):
     patched_logger_critical.assert_called_once_with(msg)
 
 
-def test_get_hostname_exact_match_with_one_host(login_instance):
-    login_instance._config.command_args = {'host': 'instance-1'}
+def test_get_hostname_exact_match_with_one_host(_instance):
+    _instance._config.command_args = {'host': 'instance-1'}
     hosts = ['instance-1']
 
-    assert 'instance-1' == login_instance._get_hostname(hosts)
+    assert 'instance-1' == _instance._get_hostname(hosts)
 
 
-def test_get_hostname_partial_match_with_one_host(login_instance):
-    login_instance._config.command_args = {'host': 'inst'}
+def test_get_hostname_partial_match_with_one_host(_instance):
+    _instance._config.command_args = {'host': 'inst'}
     hosts = ['instance-1']
 
-    assert 'instance-1' == login_instance._get_hostname(hosts)
+    assert 'instance-1' == _instance._get_hostname(hosts)
 
 
-def test_get_hostname_exact_match_with_multiple_hosts(login_instance):
-    login_instance._config.command_args = {'host': 'instance-1'}
+def test_get_hostname_exact_match_with_multiple_hosts(_instance):
+    _instance._config.command_args = {'host': 'instance-1'}
     hosts = ['instance-1', 'instance-2']
 
-    assert 'instance-1' == login_instance._get_hostname(hosts)
+    assert 'instance-1' == _instance._get_hostname(hosts)
 
 
-def test_get_hostname_partial_match_with_multiple_hosts(login_instance):
-    login_instance._config.command_args = {'host': 'foo'}
+def test_get_hostname_partial_match_with_multiple_hosts(_instance):
+    _instance._config.command_args = {'host': 'foo'}
     hosts = ['foo', 'fooo']
 
-    assert 'foo' == login_instance._get_hostname(hosts)
+    assert 'foo' == _instance._get_hostname(hosts)
 
 
 def test_get_hostname_partial_match_with_multiple_hosts_raises(
-        patched_logger_critical, login_instance):
-    login_instance._config.command_args = {'host': 'inst'}
+        patched_logger_critical, _instance):
+    _instance._config.command_args = {'host': 'inst'}
     hosts = ['instance-1', 'instance-2']
     with pytest.raises(SystemExit) as e:
-        login_instance._get_hostname(hosts)
+        _instance._get_hostname(hosts)
 
     assert 1 == e.value.code
 
@@ -128,20 +111,20 @@ def test_get_hostname_partial_match_with_multiple_hosts_raises(
     patched_logger_critical.assert_called_once_with(msg)
 
 
-def test_get_hostname_no_host_flag_specified_on_cli(login_instance):
-    login_instance._config.command_args = {}
+def test_get_hostname_no_host_flag_specified_on_cli(_instance):
+    _instance._config.command_args = {}
     hosts = ['instance-1']
-    login_instance._get_hostname(hosts)
+    _instance._get_hostname(hosts)
 
-    assert 'instance-1' == login_instance._get_hostname(hosts)
+    assert 'instance-1' == _instance._get_hostname(hosts)
 
 
 def test_get_hostname_no_host_flag_specified_on_cli_with_multiple_hosts_raises(
-        patched_logger_critical, login_instance):
-    login_instance._config.command_args = {}
+        patched_logger_critical, _instance):
+    _instance._config.command_args = {}
     hosts = ['instance-1', 'instance-2']
     with pytest.raises(SystemExit) as e:
-        login_instance._get_hostname(hosts)
+        _instance._get_hostname(hosts)
 
     assert 1 == e.value.code
 

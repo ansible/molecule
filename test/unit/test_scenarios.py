@@ -29,7 +29,7 @@ from molecule import scenarios
 
 
 @pytest.fixture
-def scenarios_instance(config_instance):
+def _instance(config_instance):
     config_instance_1 = copy.deepcopy(config_instance)
 
     config_instance_2 = copy.deepcopy(config_instance)
@@ -38,46 +38,46 @@ def scenarios_instance(config_instance):
     return scenarios.Scenarios([config_instance_1, config_instance_2])
 
 
-def test_configs_private_member(scenarios_instance):
-    assert 2 == len(scenarios_instance._configs)
-    assert isinstance(scenarios_instance._configs[0], config.Config)
-    assert isinstance(scenarios_instance._configs[1], config.Config)
+def test_configs_private_member(_instance):
+    assert 2 == len(_instance._configs)
+    assert isinstance(_instance._configs[0], config.Config)
+    assert isinstance(_instance._configs[1], config.Config)
 
 
-def test_scenario_name_private_member(scenarios_instance):
-    assert scenarios_instance._scenario_name is None
+def test_scenario_name_private_member(_instance):
+    assert _instance._scenario_name is None
 
 
-def test_scenarios_private_member(scenarios_instance):
-    assert 2 == len(scenarios_instance._scenarios)
-    assert isinstance(scenarios_instance._scenarios[0], scenario.Scenario)
-    assert isinstance(scenarios_instance._scenarios[1], scenario.Scenario)
+def test_scenarios_private_member(_instance):
+    assert 2 == len(_instance._scenarios)
+    assert isinstance(_instance._scenarios[0], scenario.Scenario)
+    assert isinstance(_instance._scenarios[1], scenario.Scenario)
 
 
-def test_scenarios_iterator(scenarios_instance):
-    s = [scenario for scenario in scenarios_instance]
+def test_scenarios_iterator(_instance):
+    s = [scenario for scenario in _instance]
 
     assert 'default' == s[0].name
     assert 'foo' == s[1].name
 
 
-def test_all_property(scenarios_instance):
-    result = scenarios_instance.all
+def test_all_property(_instance):
+    result = _instance.all
 
     assert 2 == len(result)
     assert 'default' == result[0].name
     assert 'foo' == result[1].name
 
 
-def test_all_filters_on_scenario_name_property(scenarios_instance):
-    scenarios_instance._scenario_name = 'default'
+def test_all_filters_on_scenario_name_property(_instance):
+    _instance._scenario_name = 'default'
 
-    assert 1 == len(scenarios_instance.all)
+    assert 1 == len(_instance.all)
 
 
 def test_print_matrix(mocker, patched_logger_info, patched_logger_out,
-                      scenarios_instance):
-    scenarios_instance.print_matrix()
+                      _instance):
+    _instance.print_matrix()
 
     msg = 'Test matrix'
     patched_logger_info(msg)
@@ -112,17 +112,17 @@ def test_print_matrix(mocker, patched_logger_info, patched_logger_out,
     assert mocker.call('') == patched_logger_out.mock_calls[1]
 
 
-def test_verify_does_not_raise_when_found(scenarios_instance):
-    scenarios_instance._scenario_name = 'default'
+def test_verify_does_not_raise_when_found(_instance):
+    _instance._scenario_name = 'default'
 
-    assert scenarios_instance._verify() is None
+    assert _instance._verify() is None
 
 
-def test_verify_raises_when_scenario_not_found(scenarios_instance,
+def test_verify_raises_when_scenario_not_found(_instance,
                                                patched_logger_critical):
-    scenarios_instance._scenario_name = 'invalid'
+    _instance._scenario_name = 'invalid'
     with pytest.raises(SystemExit) as e:
-        scenarios_instance._verify()
+        _instance._verify()
 
     assert 1 == e.value.code
 
@@ -130,18 +130,18 @@ def test_verify_raises_when_scenario_not_found(scenarios_instance,
     patched_logger_critical.assert_called_once_with(msg)
 
 
-def test_filter_for_scenario(scenarios_instance):
-    scenarios_instance._scenario_name = 'default'
-    result = scenarios_instance._filter_for_scenario()
+def test_filter_for_scenario(_instance):
+    _instance._scenario_name = 'default'
+    result = _instance._filter_for_scenario()
     assert 1 == len(result)
     assert 'default' == result[0].name
 
-    scenarios_instance._scenario_name = 'invalid'
-    result = scenarios_instance._filter_for_scenario()
+    _instance._scenario_name = 'invalid'
+    result = _instance._filter_for_scenario()
     assert [] == result
 
 
-def test_get_matrix(scenarios_instance):
+def test_get_matrix(_instance):
     x = {
         'default': {
             'lint': ['lint'],
@@ -229,4 +229,4 @@ def test_get_matrix(scenarios_instance):
         }
     }
 
-    assert x == scenarios_instance._get_matrix()
+    assert x == _instance._get_matrix()

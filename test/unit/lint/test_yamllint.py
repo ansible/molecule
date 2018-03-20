@@ -22,12 +22,22 @@ import pytest
 import sh
 
 from molecule import config
-from molecule import util
 from molecule.lint import yamllint
 
 
 @pytest.fixture
-def molecule_lint_section_data():
+def _patched_get_files(mocker):
+    m = mocker.patch('molecule.lint.yamllint.Yamllint._get_files')
+    m.return_value = [
+        'foo.yml',
+        'bar.yaml',
+    ]
+
+    return m
+
+
+@pytest.fixture
+def _lint_section_data():
     return {
         'lint': {
             'name': 'yamllint',
@@ -35,99 +45,105 @@ def molecule_lint_section_data():
                 'foo': 'bar',
             },
             'env': {
-                'foo': 'bar',
+                'FOO': 'bar',
             }
         }
     }
 
 
+# NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
+# config.Config._validate from executing.  Thus preventing odd side-effects
+# throughout patched.assert_called unit tests.
 @pytest.fixture
-def yamllint_instance(molecule_lint_section_data, config_instance):
-    util.merge_dicts(config_instance.config, molecule_lint_section_data)
-
+def _instance(_lint_section_data, patched_config_validate, config_instance):
     return yamllint.Yamllint(config_instance)
 
 
-def test_config_private_member(yamllint_instance):
-    assert isinstance(yamllint_instance._config, config.Config)
+def test_config_private_member(_instance):
+    assert isinstance(_instance._config, config.Config)
 
 
-def test_files_private_member(patched_get_files, yamllint_instance):
+def test_files_private_member(_patched_get_files, _instance):
     x = [
         'foo.yml',
         'bar.yaml',
     ]
 
-    assert x == yamllint_instance._files
+    assert x == _instance._files
 
 
-def test_default_options_property(yamllint_instance):
-    assert {} == yamllint_instance.default_options
+def test_default_options_property(_instance):
+    assert {} == _instance.default_options
 
 
-def test_default_env_property(yamllint_instance):
-    assert 'MOLECULE_FILE' in yamllint_instance.default_env
-    assert 'MOLECULE_INVENTORY_FILE' in yamllint_instance.default_env
-    assert 'MOLECULE_SCENARIO_DIRECTORY' in yamllint_instance.default_env
-    assert 'MOLECULE_INSTANCE_CONFIG' in yamllint_instance.default_env
+def test_default_env_property(_instance):
+    assert 'MOLECULE_FILE' in _instance.default_env
+    assert 'MOLECULE_INVENTORY_FILE' in _instance.default_env
+    assert 'MOLECULE_SCENARIO_DIRECTORY' in _instance.default_env
+    assert 'MOLECULE_INSTANCE_CONFIG' in _instance.default_env
 
 
-def test_name_property(yamllint_instance):
-    assert 'yamllint' == yamllint_instance.name
+def test_name_property(_instance):
+    assert 'yamllint' == _instance.name
 
 
-def test_enabled_property(yamllint_instance):
-    assert yamllint_instance.enabled
+def test_enabled_property(_instance):
+    assert _instance.enabled
 
 
-def test_options_property(yamllint_instance):
+@pytest.mark.parametrize(
+    'config_instance', ['_lint_section_data'], indirect=True)
+def test_options_property(_instance):
     x = {
         'foo': 'bar',
     }
 
-    assert x == yamllint_instance.options
+    assert x == _instance.options
 
 
-def test_options_property_handles_cli_args(yamllint_instance):
-    yamllint_instance._config.args = {'debug': True}
+@pytest.mark.parametrize(
+    'config_instance', ['_lint_section_data'], indirect=True)
+def test_options_property_handles_cli_args(_instance):
+    _instance._config.args = {'debug': True}
     x = {
         'foo': 'bar',
     }
 
     # Does nothing.  The `yamllint` command does not support
     # a `debug` flag.
-    assert x == yamllint_instance.options
+    assert x == _instance.options
 
 
-def test_bake(patched_get_files, yamllint_instance):
-    yamllint_instance.bake()
+@pytest.mark.parametrize(
+    'config_instance', ['_lint_section_data'], indirect=True)
+def test_bake(_patched_get_files, _instance):
+    _instance.bake()
     x = '{} --foo=bar foo.yml bar.yaml'.format(str(sh.yamllint))
 
-    assert x == yamllint_instance._yamllint_command
+    assert x == _instance._yamllint_command
 
 
-def test_execute(patched_get_files, patched_logger_info,
-                 patched_logger_success, patched_run_command,
-                 yamllint_instance):
-    yamllint_instance._yamllint_command = 'patched-yamllint-command'
-    yamllint_instance.execute()
+def test_execute(_patched_get_files, patched_logger_info,
+                 patched_logger_success, patched_run_command, _instance):
+    _instance._yamllint_command = 'patched-yamllint-command'
+    _instance.execute()
 
     patched_run_command.assert_called_once_with(
         'patched-yamllint-command', debug=False)
 
     msg = 'Executing Yamllint on files found in {}/...'.format(
-        yamllint_instance._config.project_directory)
+        _instance._config.project_directory)
     patched_logger_info.assert_called_once_with(msg)
 
     msg = 'Lint completed successfully.'
     patched_logger_success.assert_called_once_with(msg)
 
 
-def test_execute_does_not_execute(patched_get_files, patched_logger_warn,
+def test_execute_does_not_execute(_patched_get_files, patched_logger_warn,
                                   patched_logger_success, patched_run_command,
-                                  yamllint_instance):
-    yamllint_instance._config.config['lint']['enabled'] = False
-    yamllint_instance.execute()
+                                  _instance):
+    _instance._config.config['lint']['enabled'] = False
+    _instance.execute()
 
     assert not patched_run_command.called
 
@@ -135,21 +151,22 @@ def test_execute_does_not_execute(patched_get_files, patched_logger_warn,
     patched_logger_warn.assert_called_once_with(msg)
 
 
-def test_execute_bakes(patched_get_files, patched_run_command,
-                       yamllint_instance):
-    yamllint_instance.execute()
+@pytest.mark.parametrize(
+    'config_instance', ['_lint_section_data'], indirect=True)
+def test_execute_bakes(_patched_get_files, patched_run_command, _instance):
+    _instance.execute()
 
-    assert yamllint_instance._yamllint_command is not None
+    assert _instance._yamllint_command is not None
 
     cmd = '{} --foo=bar foo.yml bar.yaml'.format(str(sh.yamllint))
     patched_run_command.assert_called_once_with(cmd, debug=False)
 
 
 def test_executes_catches_and_exits_return_code(patched_run_command,
-                                                yamllint_instance):
+                                                _instance):
     patched_run_command.side_effect = sh.ErrorReturnCode_1(
         sh.yamllint, b'', b'')
     with pytest.raises(SystemExit) as e:
-        yamllint_instance.execute()
+        _instance.execute()
 
     assert 1 == e.value.code

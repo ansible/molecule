@@ -24,11 +24,11 @@ from molecule import platforms
 
 
 @pytest.fixture
-def platform_instance(config_instance):
+def _instance(config_instance):
     return platforms.Platforms(config_instance)
 
 
-def test_instances_property(platform_instance):
+def test_instances_property(_instance):
     x = [
         {
             'groups': ['foo', 'bar'],
@@ -42,4 +42,4 @@ def test_instances_property(platform_instance):
         },
     ]
 
-    assert x == platform_instance.instances
+    assert x == _instance.instances

@@ -31,23 +31,49 @@ from molecule.provisioner.lint import ansible_lint
 
 
 @pytest.fixture
-def molecule_provisioner_section_data():
+def _patched_ansible_playbook(mocker):
+    m = mocker.patch('molecule.provisioner.ansible_playbook.AnsiblePlaybook')
+    m.return_value.execute.return_value = b'patched-ansible-playbook-stdout'
+
+    return m
+
+
+@pytest.fixture
+def _patched_write_inventory(mocker):
+    return mocker.patch(
+        'molecule.provisioner.ansible.Ansible._write_inventory')
+
+
+@pytest.fixture
+def _patched_remove_vars(mocker):
+    return mocker.patch('molecule.provisioner.ansible.Ansible._remove_vars')
+
+
+@pytest.fixture
+def _patched_link_or_update_vars(mocker):
+    return mocker.patch(
+        'molecule.provisioner.ansible.Ansible._link_or_update_vars')
+
+
+@pytest.fixture
+def _provisioner_section_data():
     return {
         'provisioner': {
             'name': 'ansible',
             'config_options': {
                 'defaults': {
-                    'foo': 'bar'
+                    'foo': 'bar',
                 },
             },
             'connection_options': {
                 'foo': 'bar'
             },
             'options': {
-                'foo': 'bar'
+                'foo': 'bar',
+                'become': True,
             },
             'env': {
-                'foo': 'bar',
+                'FOO': 'bar',
                 'ANSIBLE_ROLES_PATH': 'foo/bar',
                 'ANSIBLE_LIBRARY': 'foo/bar',
                 'ANSIBLE_FILTER_PLUGINS': 'foo/bar',
@@ -55,18 +81,18 @@ def molecule_provisioner_section_data():
             'inventory': {
                 'host_vars': {
                     'instance-1': [{
-                        'foo': 'bar'
+                        'foo': 'bar',
                     }],
                     'localhost': [{
-                        'foo': 'baz'
+                        'foo': 'baz',
                     }]
                 },
                 'group_vars': {
                     'example_group1': [{
-                        'foo': 'bar'
+                        'foo': 'bar',
                     }],
                     'example_group2': [{
-                        'foo': 'bar'
+                        'foo': 'bar',
                     }],
                 },
             },
@@ -78,22 +104,20 @@ def molecule_provisioner_section_data():
 
 
 @pytest.fixture
-def ansible_instance(molecule_provisioner_section_data, config_instance):
-    util.merge_dicts(config_instance.config, molecule_provisioner_section_data)
-
+def _instance(_provisioner_section_data, config_instance):
     return ansible.Ansible(config_instance)
 
 
-def test_config_private_member(ansible_instance):
-    assert isinstance(ansible_instance._config, config.Config)
+def test_config_private_member(_instance):
+    assert isinstance(_instance._config, config.Config)
 
 
-def test_ansible_playbooks_private_member(ansible_instance):
-    assert isinstance(ansible_instance._ansible_playbooks,
+def test_ansible_playbooks_private_member(_instance):
+    assert isinstance(_instance._ansible_playbooks,
                       ansible_playbooks.AnsiblePlaybooks)
 
 
-def test_default_config_options_property(ansible_instance):
+def test_default_config_options_property(_instance):
     x = {
         'defaults': {
             'ansible_managed':
@@ -108,61 +132,38 @@ def test_default_config_options_property(ansible_instance):
         },
     }
 
-    assert x == ansible_instance.default_config_options
+    assert x == _instance.default_config_options
 
 
-def test_default_options_property(ansible_instance):
-    assert {} == ansible_instance.default_options
+def test_default_options_property(_instance):
+    assert {} == _instance.default_options
 
 
-def test_default_env_property(ansible_instance):
-    x = ansible_instance._config.provisioner.config_file
+def test_default_env_property(_instance):
+    x = _instance._config.provisioner.config_file
 
-    assert x == ansible_instance.default_env['ANSIBLE_CONFIG']
-    assert 'MOLECULE_FILE' in ansible_instance.default_env
-    assert 'MOLECULE_INVENTORY_FILE' in ansible_instance.default_env
-    assert 'MOLECULE_SCENARIO_DIRECTORY' in ansible_instance.default_env
-    assert 'MOLECULE_INSTANCE_CONFIG' in ansible_instance.default_env
-    assert 'ANSIBLE_CONFIG' in ansible_instance.env
-    assert 'ANSIBLE_ROLES_PATH' in ansible_instance.env
-    assert 'ANSIBLE_LIBRARY' in ansible_instance.env
-    assert 'ANSIBLE_FILTER_PLUGINS' in ansible_instance.env
-
-
-def test_name_property(ansible_instance):
-    assert 'ansible' == ansible_instance.name
+    assert x == _instance.default_env['ANSIBLE_CONFIG']
+    assert 'MOLECULE_FILE' in _instance.default_env
+    assert 'MOLECULE_INVENTORY_FILE' in _instance.default_env
+    assert 'MOLECULE_SCENARIO_DIRECTORY' in _instance.default_env
+    assert 'MOLECULE_INSTANCE_CONFIG' in _instance.default_env
+    assert 'ANSIBLE_CONFIG' in _instance.env
+    assert 'ANSIBLE_ROLES_PATH' in _instance.env
+    assert 'ANSIBLE_LIBRARY' in _instance.env
+    assert 'ANSIBLE_FILTER_PLUGINS' in _instance.env
 
 
-def test_lint_property(ansible_instance):
-    assert isinstance(ansible_instance.lint, ansible_lint.AnsibleLint)
+def test_name_property(_instance):
+    assert 'ansible' == _instance.name
 
 
-@pytest.fixture
-def molecule_provisioner_lint_invalid_section_data():
-    return {
-        'provisioner': {
-            'name': 'ansible',
-            'lint': {
-                'name': 'invalid',
-            },
-        }
-    }
+def test_lint_property(_instance):
+    assert isinstance(_instance.lint, ansible_lint.AnsibleLint)
 
 
-def test_lint_property_raises(molecule_provisioner_lint_invalid_section_data,
-                              patched_logger_critical, ansible_instance):
-    util.merge_dicts(ansible_instance._config.config,
-                     molecule_provisioner_lint_invalid_section_data)
-    with pytest.raises(SystemExit) as e:
-        ansible_instance.lint
-
-    assert 1 == e.value.code
-
-    msg = "Invalid lint named 'invalid' configured."
-    patched_logger_critical.assert_called_once_with(msg)
-
-
-def test_config_options_property(ansible_instance):
+@pytest.mark.parametrize(
+    'config_instance', ['_provisioner_section_data'], indirect=True)
+def test_config_options_property(_instance):
     x = {
         'defaults': {
             'ansible_managed':
@@ -178,86 +179,91 @@ def test_config_options_property(ansible_instance):
         },
     }
 
-    assert x == ansible_instance.config_options
+    assert x == _instance.config_options
 
 
-def test_options_property(ansible_instance):
-    x = {'foo': 'bar'}
+@pytest.mark.parametrize(
+    'config_instance', ['_provisioner_section_data'], indirect=True)
+def test_options_property(_instance):
+    x = {'become': True, 'foo': 'bar'}
 
-    assert x == ansible_instance.options
+    assert x == _instance.options
 
 
-def test_options_property_does_not_merge(ansible_instance):
+def test_options_property_does_not_merge(_instance):
     for action in ['create', 'destroy']:
-        ansible_instance._config.action = action
+        _instance._config.action = action
 
-        assert {} == ansible_instance.options
-
-
-def test_options_property_handles_cli_args(ansible_instance):
-    ansible_instance._config.args = {'debug': True}
-
-    assert ansible_instance.options['vvv']
-    assert ansible_instance.options['diff']
+        assert {} == _instance.options
 
 
-def test_env_property(ansible_instance):
-    x = ansible_instance._config.provisioner.config_file
+def test_options_property_handles_cli_args(_instance):
+    _instance._config.args = {'debug': True}
 
-    assert x == ansible_instance.env['ANSIBLE_CONFIG']
-    assert 'bar' == ansible_instance.env['foo']
+    assert _instance.options['vvv']
+    assert _instance.options['diff']
 
 
-def test_env_appends_env_property(ansible_instance):
+@pytest.mark.parametrize(
+    'config_instance', ['_provisioner_section_data'], indirect=True)
+def test_env_property(_instance):
+    x = _instance._config.provisioner.config_file
+
+    assert x == _instance.env['ANSIBLE_CONFIG']
+    assert 'bar' == _instance.env['FOO']
+
+
+@pytest.mark.parametrize(
+    'config_instance', ['_provisioner_section_data'], indirect=True)
+def test_env_appends_env_property(_instance):
     x = [
         util.abs_path(
-            os.path.join(ansible_instance._config.scenario.ephemeral_directory,
+            os.path.join(_instance._config.scenario.ephemeral_directory,
                          'roles')),
         util.abs_path(
-            os.path.join(ansible_instance._config.project_directory,
-                         os.path.pardir)),
+            os.path.join(_instance._config.project_directory, os.path.pardir)),
         util.abs_path(
-            os.path.join(ansible_instance._config.scenario.directory, 'foo',
-                         'bar')),
+            os.path.join(_instance._config.scenario.directory, 'foo', 'bar')),
     ]
-    assert x == ansible_instance.env['ANSIBLE_ROLES_PATH'].split(':')
+    assert x == _instance.env['ANSIBLE_ROLES_PATH'].split(':')
 
     x = [
-        ansible_instance._get_libraries_directory(),
+        _instance._get_libraries_directory(),
         util.abs_path(
-            os.path.join(ansible_instance._config.scenario.ephemeral_directory,
+            os.path.join(_instance._config.scenario.ephemeral_directory,
                          'library')),
         util.abs_path(
-            os.path.join(ansible_instance._config.project_directory,
-                         'library')),
+            os.path.join(_instance._config.project_directory, 'library')),
         util.abs_path(
-            os.path.join(ansible_instance._config.scenario.directory, 'foo',
-                         'bar')),
+            os.path.join(_instance._config.scenario.directory, 'foo', 'bar')),
     ]
-    assert x == ansible_instance.env['ANSIBLE_LIBRARY'].split(':')
+    assert x == _instance.env['ANSIBLE_LIBRARY'].split(':')
 
     x = [
-        ansible_instance._get_filter_plugin_directory(),
+        _instance._get_filter_plugin_directory(),
         util.abs_path(
-            os.path.join(ansible_instance._config.scenario.ephemeral_directory,
+            os.path.join(_instance._config.scenario.ephemeral_directory,
                          'plugins', 'filters')),
         util.abs_path(
-            os.path.join(ansible_instance._config.project_directory, 'plugins',
+            os.path.join(_instance._config.project_directory, 'plugins',
                          'filters')),
         util.abs_path(
-            os.path.join(ansible_instance._config.scenario.directory, 'foo',
-                         'bar')),
+            os.path.join(_instance._config.scenario.directory, 'foo', 'bar')),
     ]
-    assert x == ansible_instance.env['ANSIBLE_FILTER_PLUGINS'].split(':')
+    assert x == _instance.env['ANSIBLE_FILTER_PLUGINS'].split(':')
 
 
-def test_host_vars_property(ansible_instance):
+@pytest.mark.parametrize(
+    'config_instance', ['_provisioner_section_data'], indirect=True)
+def test_host_vars_property(_instance):
     x = {'instance-1': [{'foo': 'bar'}], 'localhost': [{'foo': 'baz'}]}
 
-    assert x == ansible_instance.host_vars
+    assert x == _instance.host_vars
 
 
-def test_group_vars_property(ansible_instance):
+@pytest.mark.parametrize(
+    'config_instance', ['_provisioner_section_data'], indirect=True)
+def test_group_vars_property(_instance):
     x = {
         'example_group1': [{
             'foo': 'bar'
@@ -267,14 +273,16 @@ def test_group_vars_property(ansible_instance):
         }]
     }
 
-    assert x == ansible_instance.group_vars
+    assert x == _instance.group_vars
 
 
-def test_links_property(ansible_instance):
-    assert {} == ansible_instance.links
+def test_links_property(_instance):
+    assert {} == _instance.links
 
 
-def test_inventory_property(ansible_instance):
+@pytest.mark.parametrize(
+    'config_instance', ['_provisioner_section_data'], indirect=True)
+def test_inventory_property(_instance):
     x = {
         'ungrouped': {
             'vars': {},
@@ -359,12 +367,14 @@ def test_inventory_property(ansible_instance):
         }
     }
 
-    assert x == ansible_instance.inventory
+    assert x == _instance.inventory
 
 
-def test_inventory_property_handles_missing_groups(temp_dir, ansible_instance):
+@pytest.mark.parametrize(
+    'config_instance', ['_provisioner_section_data'], indirect=True)
+def test_inventory_property_handles_missing_groups(temp_dir, _instance):
     platforms = [{'name': 'instance-1'}, {'name': 'instance-2'}]
-    ansible_instance._config.config['platforms'] = platforms
+    _instance._config.config['platforms'] = platforms
 
     x = {
         'all': {
@@ -394,175 +404,176 @@ def test_inventory_property_handles_missing_groups(temp_dir, ansible_instance):
         }
     }
 
-    assert x == ansible_instance.inventory
+    assert x == _instance.inventory
 
 
-def test_inventory_file_property(ansible_instance):
-    x = os.path.join(ansible_instance._config.scenario.ephemeral_directory,
+def test_inventory_file_property(_instance):
+    x = os.path.join(_instance._config.scenario.ephemeral_directory,
                      'ansible_inventory.yml')
 
-    assert x == ansible_instance.inventory_file
+    assert x == _instance.inventory_file
 
 
-def test_config_file_property(ansible_instance):
-    x = os.path.join(ansible_instance._config.scenario.ephemeral_directory,
+def test_config_file_property(_instance):
+    x = os.path.join(_instance._config.scenario.ephemeral_directory,
                      'ansible.cfg')
 
-    assert x == ansible_instance.config_file
+    assert x == _instance.config_file
 
 
-def test_playbooks_create_property(ansible_instance):
-    x = os.path.join(ansible_instance._config.scenario.directory, 'create.yml')
+def test_playbooks_create_property(_instance):
+    x = os.path.join(_instance._config.scenario.directory, 'create.yml')
 
-    assert x == ansible_instance.playbooks.create
-
-
-def test_playbooks_converge_property(ansible_instance):
-    x = os.path.join(ansible_instance._config.scenario.directory,
-                     'playbook.yml')
-
-    assert x == ansible_instance.playbooks.converge
+    assert x == _instance.playbooks.create
 
 
-def test_playbooks_destroy_property(ansible_instance):
-    x = os.path.join(ansible_instance._config.scenario.directory,
-                     'destroy.yml')
+def test_playbooks_converge_property(_instance):
+    x = os.path.join(_instance._config.scenario.directory, 'playbook.yml')
 
-    assert x == ansible_instance.playbooks.destroy
-
-
-def test_playbooks_side_effect_property(ansible_instance):
-    assert ansible_instance.playbooks.side_effect is None
+    assert x == _instance.playbooks.converge
 
 
-def test_connection_options(ansible_instance):
+def test_playbooks_destroy_property(_instance):
+    x = os.path.join(_instance._config.scenario.directory, 'destroy.yml')
+
+    assert x == _instance.playbooks.destroy
+
+
+def test_playbooks_side_effect_property(_instance):
+    assert _instance.playbooks.side_effect is None
+
+
+@pytest.mark.parametrize(
+    'config_instance', ['_provisioner_section_data'], indirect=True)
+def test_connection_options(_instance):
     x = {'ansible_connection': 'docker', 'foo': 'bar'}
 
-    assert x == ansible_instance.connection_options('foo')
+    assert x == _instance.connection_options('foo')
 
 
-def test_check(ansible_instance, mocker, patched_ansible_playbook):
-    ansible_instance.check()
+def test_check(_instance, mocker, _patched_ansible_playbook):
+    _instance.check()
 
-    patched_ansible_playbook.assert_called_once_with(
-        ansible_instance._config.provisioner.playbooks.converge,
-        ansible_instance._config, )
-    patched_ansible_playbook.return_value.add_cli_arg.assert_called_once_with(
+    _patched_ansible_playbook.assert_called_once_with(
+        _instance._config.provisioner.playbooks.converge,
+        _instance._config, )
+    _patched_ansible_playbook.return_value.add_cli_arg.assert_called_once_with(
         'check', True)
-    patched_ansible_playbook.return_value.execute.assert_called_once_with()
+    _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_converge(ansible_instance, mocker, patched_ansible_playbook):
-    result = ansible_instance.converge()
+def test_converge(_instance, mocker, _patched_ansible_playbook):
+    result = _instance.converge()
 
-    patched_ansible_playbook.assert_called_once_with(
-        ansible_instance._config.provisioner.playbooks.converge,
-        ansible_instance._config, )
+    _patched_ansible_playbook.assert_called_once_with(
+        _instance._config.provisioner.playbooks.converge,
+        _instance._config, )
     # NOTE(retr0h): This is not the true return type.  This is a mock return
     #               which didn't go through str.decode().
     assert result == b'patched-ansible-playbook-stdout'
 
-    patched_ansible_playbook.return_value.execute.assert_called_once_with()
+    _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_converge_with_playbook(ansible_instance, mocker,
-                                patched_ansible_playbook):
-    result = ansible_instance.converge('playbook')
+def test_converge_with_playbook(_instance, mocker, _patched_ansible_playbook):
+    result = _instance.converge('playbook')
 
-    patched_ansible_playbook.assert_called_once_with(
+    _patched_ansible_playbook.assert_called_once_with(
         'playbook',
-        ansible_instance._config, )
+        _instance._config, )
     # NOTE(retr0h): This is not the true return type.  This is a mock return
     #               which didn't go through str.decode().
     assert result == b'patched-ansible-playbook-stdout'
 
-    patched_ansible_playbook.return_value.execute.assert_called_once_with()
+    _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_destroy(ansible_instance, mocker, patched_ansible_playbook):
-    ansible_instance.destroy()
+def test_destroy(_instance, mocker, _patched_ansible_playbook):
+    _instance.destroy()
 
-    patched_ansible_playbook.assert_called_once_with(
-        ansible_instance._config.provisioner.playbooks.destroy,
-        ansible_instance._config, )
-    patched_ansible_playbook.return_value.execute.assert_called_once_with()
-
-
-def test_side_effect(ansible_instance, mocker, patched_ansible_playbook):
-    ansible_instance.side_effect()
-
-    patched_ansible_playbook.assert_called_once_with(
-        ansible_instance._config.provisioner.playbooks.side_effect,
-        ansible_instance._config, )
-    patched_ansible_playbook.return_value.execute.assert_called_once_with()
+    _patched_ansible_playbook.assert_called_once_with(
+        _instance._config.provisioner.playbooks.destroy,
+        _instance._config, )
+    _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_create(ansible_instance, mocker, patched_ansible_playbook):
-    ansible_instance.create()
+def test_side_effect(_instance, mocker, _patched_ansible_playbook):
+    _instance.side_effect()
 
-    patched_ansible_playbook.assert_called_once_with(
-        ansible_instance._config.provisioner.playbooks.create,
-        ansible_instance._config, )
-    patched_ansible_playbook.return_value.execute.assert_called_once_with()
-
-
-def test_prepare(ansible_instance, mocker, patched_ansible_playbook):
-    ansible_instance.prepare()
-
-    patched_ansible_playbook.assert_called_once_with(
-        ansible_instance._config.provisioner.playbooks.prepare,
-        ansible_instance._config, )
-    patched_ansible_playbook.return_value.execute.assert_called_once_with()
+    _patched_ansible_playbook.assert_called_once_with(
+        _instance._config.provisioner.playbooks.side_effect,
+        _instance._config, )
+    _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_syntax(ansible_instance, mocker, patched_ansible_playbook):
-    ansible_instance.syntax()
+def test_create(_instance, mocker, _patched_ansible_playbook):
+    _instance.create()
 
-    patched_ansible_playbook.assert_called_once_with(
-        ansible_instance._config.provisioner.playbooks.converge,
-        ansible_instance._config, )
-    patched_ansible_playbook.return_value.add_cli_arg.assert_called_once_with(
+    _patched_ansible_playbook.assert_called_once_with(
+        _instance._config.provisioner.playbooks.create,
+        _instance._config, )
+    _patched_ansible_playbook.return_value.execute.assert_called_once_with()
+
+
+def test_prepare(_instance, mocker, _patched_ansible_playbook):
+    _instance.prepare()
+
+    _patched_ansible_playbook.assert_called_once_with(
+        _instance._config.provisioner.playbooks.prepare,
+        _instance._config, )
+    _patched_ansible_playbook.return_value.execute.assert_called_once_with()
+
+
+def test_syntax(_instance, mocker, _patched_ansible_playbook):
+    _instance.syntax()
+
+    _patched_ansible_playbook.assert_called_once_with(
+        _instance._config.provisioner.playbooks.converge,
+        _instance._config, )
+    _patched_ansible_playbook.return_value.add_cli_arg.assert_called_once_with(
         'syntax-check', True)
-    patched_ansible_playbook.return_value.execute.assert_called_once_with()
+    _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_write_config(temp_dir, ansible_instance):
-    ansible_instance.write_config()
+def test_write_config(temp_dir, _instance):
+    _instance.write_config()
 
-    assert os.path.isfile(ansible_instance.config_file)
+    assert os.path.isfile(_instance.config_file)
 
 
-def test_manage_inventory(ansible_instance, patched_write_inventory,
-                          patched_remove_vars, patched_add_or_update_vars,
-                          patched_link_or_update_vars):
-    ansible_instance.manage_inventory()
+def test_manage_inventory(_instance, _patched_write_inventory,
+                          _patched_remove_vars, patched_add_or_update_vars,
+                          _patched_link_or_update_vars):
+    _instance.manage_inventory()
 
-    patched_write_inventory.assert_called_once_with()
-    patched_remove_vars.assert_called_once_with()
+    _patched_write_inventory.assert_called_once_with()
+    _patched_remove_vars.assert_called_once_with()
     patched_add_or_update_vars.assert_called_once_with()
-    assert not patched_link_or_update_vars.called
+    assert not _patched_link_or_update_vars.called
 
 
 def test_manage_inventory_with_links(
-        ansible_instance, patched_write_inventory, patched_remove_vars,
-        patched_add_or_update_vars, patched_link_or_update_vars):
-    c = ansible_instance._config.config
+        _instance, _patched_write_inventory, _patched_remove_vars,
+        patched_add_or_update_vars, _patched_link_or_update_vars):
+    c = _instance._config.config
     c['provisioner']['inventory']['links'] = {'foo': 'bar'}
-    ansible_instance.manage_inventory()
+    _instance.manage_inventory()
 
-    patched_write_inventory.assert_called_once_with()
-    patched_remove_vars.assert_called_once_with()
+    _patched_write_inventory.assert_called_once_with()
+    _patched_remove_vars.assert_called_once_with()
     assert not patched_add_or_update_vars.called
-    patched_link_or_update_vars.assert_called_once_with()
+    _patched_link_or_update_vars.assert_called_once_with()
 
 
-def test_add_or_update_vars(ansible_instance):
-    ephemeral_directory = ansible_instance._config.scenario.ephemeral_directory
+@pytest.mark.parametrize(
+    'config_instance', ['_provisioner_section_data'], indirect=True)
+def test_add_or_update_vars(_instance):
+    ephemeral_dir = _instance._config.scenario.ephemeral_directory
 
-    host_vars_directory = os.path.join(ephemeral_directory, 'host_vars')
+    host_vars_directory = os.path.join(ephemeral_dir, 'host_vars')
     host_vars = os.path.join(host_vars_directory, 'instance-1')
 
-    ansible_instance._add_or_update_vars()
+    _instance._add_or_update_vars()
 
     assert os.path.isdir(host_vars_directory)
     assert os.path.isfile(host_vars)
@@ -570,7 +581,7 @@ def test_add_or_update_vars(ansible_instance):
     host_vars_localhost = os.path.join(host_vars_directory, 'localhost')
     assert os.path.isfile(host_vars_localhost)
 
-    group_vars_directory = os.path.join(ephemeral_directory, 'group_vars')
+    group_vars_directory = os.path.join(ephemeral_dir, 'group_vars')
     group_vars_1 = os.path.join(group_vars_directory, 'example_group1')
     group_vars_2 = os.path.join(group_vars_directory, 'example_group2')
 
@@ -579,15 +590,17 @@ def test_add_or_update_vars(ansible_instance):
     assert os.path.isfile(group_vars_2)
 
 
-def test_add_or_update_vars_without_host_vars(ansible_instance):
-    c = ansible_instance._config.config
+@pytest.mark.parametrize(
+    'config_instance', ['_provisioner_section_data'], indirect=True)
+def test_add_or_update_vars_without_host_vars(_instance):
+    c = _instance._config.config
     c['provisioner']['inventory']['host_vars'] = {}
-    ephemeral_directory = ansible_instance._config.scenario.ephemeral_directory
+    ephemeral_dir = _instance._config.scenario.ephemeral_directory
 
-    host_vars_directory = os.path.join(ephemeral_directory, 'host_vars')
+    host_vars_directory = os.path.join(ephemeral_dir, 'host_vars')
     host_vars = os.path.join(host_vars_directory, 'instance-1')
 
-    ansible_instance._add_or_update_vars()
+    _instance._add_or_update_vars()
 
     assert not os.path.isdir(host_vars_directory)
     assert not os.path.isfile(host_vars)
@@ -595,7 +608,7 @@ def test_add_or_update_vars_without_host_vars(ansible_instance):
     host_vars_localhost = os.path.join(host_vars_directory, 'localhost')
     assert not os.path.isfile(host_vars_localhost)
 
-    group_vars_directory = os.path.join(ephemeral_directory, 'group_vars')
+    group_vars_directory = os.path.join(ephemeral_dir, 'group_vars')
     group_vars_1 = os.path.join(group_vars_directory, 'example_group1')
     group_vars_2 = os.path.join(group_vars_directory, 'example_group2')
 
@@ -604,27 +617,29 @@ def test_add_or_update_vars_without_host_vars(ansible_instance):
     assert os.path.isfile(group_vars_2)
 
 
-def test_add_or_update_vars_does_not_create_vars(ansible_instance):
-    c = ansible_instance._config.config
+def test_add_or_update_vars_does_not_create_vars(_instance):
+    c = _instance._config.config
     c['provisioner']['inventory']['host_vars'] = {}
     c['provisioner']['inventory']['group_vars'] = {}
-    ephemeral_directory = ansible_instance._config.scenario.ephemeral_directory
+    ephemeral_dir = _instance._config.scenario.ephemeral_directory
 
-    host_vars_directory = os.path.join(ephemeral_directory, 'host_vars')
-    group_vars_directory = os.path.join(ephemeral_directory, 'group_vars')
+    host_vars_directory = os.path.join(ephemeral_dir, 'host_vars')
+    group_vars_directory = os.path.join(ephemeral_dir, 'group_vars')
 
-    ansible_instance._add_or_update_vars()
+    _instance._add_or_update_vars()
 
     assert not os.path.isdir(host_vars_directory)
     assert not os.path.isdir(group_vars_directory)
 
 
-def test_write_inventory(temp_dir, ansible_instance):
-    ansible_instance._write_inventory()
+@pytest.mark.parametrize(
+    'config_instance', ['_provisioner_section_data'], indirect=True)
+def test_write_inventory(temp_dir, _instance):
+    _instance._write_inventory()
 
-    assert os.path.isfile(ansible_instance.inventory_file)
+    assert os.path.isfile(_instance.inventory_file)
 
-    data = util.safe_load_file(ansible_instance.inventory_file)
+    data = util.safe_load_file(_instance.inventory_file)
 
     x = {
         'ungrouped': {
@@ -713,20 +728,22 @@ def test_write_inventory(temp_dir, ansible_instance):
     assert x == data
 
 
-def test_remove_vars(ansible_instance):
-    ephemeral_directory = ansible_instance._config.scenario.ephemeral_directory
+@pytest.mark.parametrize(
+    'config_instance', ['_provisioner_section_data'], indirect=True)
+def test_remove_vars(_instance):
+    ephemeral_dir = _instance._config.scenario.ephemeral_directory
 
-    host_vars_directory = os.path.join(ephemeral_directory, 'host_vars')
+    host_vars_directory = os.path.join(ephemeral_dir, 'host_vars')
     host_vars = os.path.join(host_vars_directory, 'instance-1')
 
-    ansible_instance._add_or_update_vars()
+    _instance._add_or_update_vars()
     assert os.path.isdir(host_vars_directory)
     assert os.path.isfile(host_vars)
 
     host_vars_localhost = os.path.join(host_vars_directory, 'localhost')
     assert os.path.isfile(host_vars_localhost)
 
-    group_vars_directory = os.path.join(ephemeral_directory, 'group_vars')
+    group_vars_directory = os.path.join(ephemeral_dir, 'group_vars')
     group_vars_1 = os.path.join(group_vars_directory, 'example_group1')
     group_vars_2 = os.path.join(group_vars_directory, 'example_group2')
 
@@ -734,75 +751,73 @@ def test_remove_vars(ansible_instance):
     assert os.path.isfile(group_vars_1)
     assert os.path.isfile(group_vars_2)
 
-    ansible_instance._remove_vars()
+    _instance._remove_vars()
 
     assert not os.path.isdir(host_vars_directory)
     assert not os.path.isdir(group_vars_directory)
 
 
-def test_remove_vars_symlinks(ansible_instance):
-    ephemeral_directory = ansible_instance._config.scenario.ephemeral_directory
+def test_remove_vars_symlinks(_instance):
+    ephemeral_dir = _instance._config.scenario.ephemeral_directory
 
-    source_group_vars = os.path.join(ephemeral_directory, os.path.pardir,
+    source_group_vars = os.path.join(ephemeral_dir, os.path.pardir,
                                      'group_vars')
-    target_group_vars = os.path.join(ephemeral_directory, 'group_vars')
+    target_group_vars = os.path.join(ephemeral_dir, 'group_vars')
     os.mkdir(source_group_vars)
     os.symlink(source_group_vars, target_group_vars)
 
-    ansible_instance._remove_vars()
+    _instance._remove_vars()
 
     assert not os.path.lexists(target_group_vars)
 
 
-def test_link_vars(ansible_instance):
-    c = ansible_instance._config.config
+def test_link_vars(_instance):
+    c = _instance._config.config
     c['provisioner']['inventory']['links'] = {
         'group_vars': '../group_vars',
         'host_vars': '../host_vars'
     }
-    ephemeral_directory = ansible_instance._config.scenario.ephemeral_directory
-    source_group_vars = os.path.join(ephemeral_directory, os.path.pardir,
+    ephemeral_dir = _instance._config.scenario.ephemeral_directory
+    source_group_vars = os.path.join(ephemeral_dir, os.path.pardir,
                                      'group_vars')
-    target_group_vars = os.path.join(ephemeral_directory, 'group_vars')
-    source_host_vars = os.path.join(ephemeral_directory, os.path.pardir,
-                                    'host_vars')
-    target_host_vars = os.path.join(ephemeral_directory, 'host_vars')
+    target_group_vars = os.path.join(ephemeral_dir, 'group_vars')
+    source_host_vars = os.path.join(ephemeral_dir, os.path.pardir, 'host_vars')
+    target_host_vars = os.path.join(ephemeral_dir, 'host_vars')
 
     os.mkdir(source_group_vars)
     os.mkdir(source_host_vars)
 
-    ansible_instance._link_or_update_vars()
+    _instance._link_or_update_vars()
 
     assert os.path.lexists(target_group_vars)
     assert os.path.lexists(target_host_vars)
 
 
-def test_link_vars_raises_when_source_not_found(ansible_instance,
+def test_link_vars_raises_when_source_not_found(_instance,
                                                 patched_logger_critical):
-    c = ansible_instance._config.config
+    c = _instance._config.config
     c['provisioner']['inventory']['links'] = {'foo': '../bar'}
 
     with pytest.raises(SystemExit) as e:
-        ansible_instance._link_or_update_vars()
+        _instance._link_or_update_vars()
 
     assert 1 == e.value.code
 
-    source = os.path.join(
-        ansible_instance._config.scenario.ephemeral_directory, os.path.pardir,
-        'bar')
+    source = os.path.join(_instance._config.scenario.ephemeral_directory,
+                          os.path.pardir, 'bar')
     msg = "The source path '{}' does not exist.".format(source)
     patched_logger_critical.assert_called_once_with(msg)
 
 
-def test_verify_inventory(ansible_instance):
-    ansible_instance._verify_inventory()
+def test_verify_inventory(_instance):
+    _instance._verify_inventory()
 
 
 def test_verify_inventory_raises_when_missing_hosts(
-        temp_dir, patched_logger_critical, ansible_instance):
-    ansible_instance._config.config['platforms'] = []
+        temp_dir, patched_logger_critical, _instance):
+    _instance._config.config['platforms'] = []
     with pytest.raises(SystemExit) as e:
-        ansible_instance._verify_inventory()
+        _instance._verify_inventory()
 
     assert 1 == e.value.code
 
@@ -810,80 +825,56 @@ def test_verify_inventory_raises_when_missing_hosts(
     patched_logger_critical.assert_called_once_with(msg)
 
 
-def test_vivify(ansible_instance):
-    d = ansible_instance._vivify()
+def test_vivify(_instance):
+    d = _instance._vivify()
     d['bar']['baz'] = 'qux'
 
     assert 'qux' == str(d['bar']['baz'])
 
 
-def test_default_to_regular(ansible_instance):
+def test_default_to_regular(_instance):
     d = collections.defaultdict()
     assert isinstance(d, collections.defaultdict)
 
-    d = ansible_instance._default_to_regular(d)
+    d = _instance._default_to_regular(d)
     assert isinstance(d, dict)
 
 
-def test_get_plugin_directory(ansible_instance):
-    result = ansible_instance._get_plugin_directory()
+def test_get_plugin_directory(_instance):
+    result = _instance._get_plugin_directory()
     parts = pytest.helpers.os_split(result)
 
     assert ('molecule', 'provisioner', 'ansible', 'plugins') == parts[-4:]
 
 
-def test_get_libraries_directory(ansible_instance):
-    result = ansible_instance._get_libraries_directory()
+def test_get_libraries_directory(_instance):
+    result = _instance._get_libraries_directory()
     parts = pytest.helpers.os_split(result)
     x = ('molecule', 'provisioner', 'ansible', 'plugins', 'libraries')
 
     assert x == parts[-5:]
 
 
-def test_get_filter_plugin_directory(ansible_instance):
-    result = ansible_instance._get_filter_plugin_directory()
+def test_get_filter_plugin_directory(_instance):
+    result = _instance._get_filter_plugin_directory()
     parts = pytest.helpers.os_split(result)
     x = ('molecule', 'provisioner', 'ansible', 'plugins', 'filters')
 
     assert x == parts[-5:]
 
 
-def test_sanitize_env(mocker, ansible_instance, patched_logger_warn):
-    env = {
-        'ANSIBLE_BECOME_METHOD': 'sudo',
-        'ANSIBLE_BECOME': True,
-        'ANSIBLE_BECOME_USER': 'root',
-        'FOO': 'foo',
-        'BAR': 'bar',
-    }
-
-    x = {
-        'FOO': 'foo',
-        'BAR': 'bar',
-    }
-    assert x == ansible_instance._sanitize_env(env)
-
-    msg = "Disallowed user provided env option '{}'.  Removing."
-    x = [
-        mocker.call(msg.format('ANSIBLE_BECOME')),
-        mocker.call(msg.format('ANSIBLE_BECOME_METHOD')),
-        mocker.call(msg.format('ANSIBLE_BECOME_USER'))
-    ]
-    assert x == patched_logger_warn.mock_calls
-
-
-def test_absolute_path_for(ansible_instance):
+def test_absolute_path_for(_instance):
     env = {'foo': 'foo:bar'}
     x = ':'.join([
-        os.path.join(ansible_instance._config.scenario.directory, 'foo'),
-        os.path.join(ansible_instance._config.scenario.directory, 'bar'),
+        os.path.join(_instance._config.scenario.directory, 'foo'),
+        os.path.join(_instance._config.scenario.directory, 'bar'),
     ])
 
-    x == ansible_instance._absolute_path_for(env, 'foo')
+    x == _instance._absolute_path_for(env, 'foo')
 
 
-def test_absolute_path_for_raises_with_missing_key(ansible_instance):
+def test_absolute_path_for_raises_with_missing_key(_instance):
     env = {'foo': 'foo:bar'}
 
     with pytest.raises(KeyError):
-        ansible_instance._absolute_path_for(env, 'invalid')
+        _instance._absolute_path_for(env, 'invalid')

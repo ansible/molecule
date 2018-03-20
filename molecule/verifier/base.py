@@ -98,7 +98,3 @@ class Base(object):
         lint_name = self._config.config['verifier']['lint']['name']
         if lint_name == 'flake8':
             return flake8.Flake8(self._config)
-        elif lint_name == 'None':
-            return
-        else:
-            util.exit_with_invalid_section('lint', lint_name)

@@ -12,7 +12,7 @@
     - name: Log into a Docker registry
       docker_login:
         username: "{{ item.registry.credentials.username }}"
-        password: "{{ item.registry.credentials.passsword }}"
+        password: "{{ item.registry.credentials.password }}"
         email: "{{ item.registry.credentials.email | default(omit) }}"
         registry: "{{ item.registry.url }}"
       with_items: "{{ molecule_yml.platforms }}"

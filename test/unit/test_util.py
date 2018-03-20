@@ -313,16 +313,6 @@ def test_title():
     assert 'Foo Bar' == util.title('foo_bar')
 
 
-def test_exit_with_invalid_section(patched_logger_critical):
-    with pytest.raises(SystemExit) as e:
-        util.exit_with_invalid_section('section', 'name')
-
-    assert 1 == e.value.code
-
-    msg = "Invalid section named 'name' configured."
-    patched_logger_critical.assert_called_once_with(msg)
-
-
 def test_abs_path(temp_dir):
     x = os.path.abspath(
         os.path.join(os.getcwd(), os.path.pardir, 'foo', 'bar'))

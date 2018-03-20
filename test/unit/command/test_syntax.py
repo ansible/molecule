@@ -18,11 +18,21 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import pytest
+
 from molecule.command import syntax
 
 
-def test_execute(mocker, patched_logger_info, patched_ansible_syntax,
-                 config_instance):
+@pytest.fixture
+def _patched_ansible_syntax(mocker):
+    return mocker.patch('molecule.provisioner.ansible.Ansible.syntax')
+
+
+# NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
+# config.Config._validate from executing.  Thus preventing odd side-effects
+# throughout patched.assert_called unit tests.
+def test_execute(mocker, patched_logger_info, _patched_ansible_syntax,
+                 patched_config_validate, config_instance):
     s = syntax.Syntax(config_instance)
     s.execute()
 
@@ -32,4 +42,4 @@ def test_execute(mocker, patched_logger_info, patched_ansible_syntax,
     ]
     assert x == patched_logger_info.mock_calls
 
-    patched_ansible_syntax.assert_called_once_with()
+    _patched_ansible_syntax.assert_called_once_with()

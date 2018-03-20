@@ -30,7 +30,18 @@ from molecule.verifier.lint import flake8
 
 
 @pytest.fixture
-def molecule_verifier_section_data():
+def _patched_testinfra_get_tests(mocker):
+    m = mocker.patch('molecule.verifier.testinfra.Testinfra._get_tests')
+    m.return_value = [
+        'foo.py',
+        'bar.py',
+    ]
+
+    return m
+
+
+@pytest.fixture
+def _verifier_section_data():
     return {
         'verifier': {
             'name':
@@ -47,7 +58,7 @@ def molecule_verifier_section_data():
                 'dir/*',
             ],
             'env': {
-                'foo': 'bar',
+                'FOO': 'bar',
             },
             'lint': {
                 'name': 'flake8',
@@ -56,61 +67,63 @@ def molecule_verifier_section_data():
     }
 
 
+# NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
+# config.Config._validate from executing.  Thus preventing odd side-effects
+# throughout patched.assert_called unit tests.
 @pytest.fixture
-def testinfra_instance(molecule_verifier_section_data, config_instance):
-    util.merge_dicts(config_instance.config, molecule_verifier_section_data)
-
+def _instance(patched_config_validate, config_instance):
     return testinfra.Testinfra(config_instance)
 
 
 @pytest.fixture
-def inventory_file(testinfra_instance):
-    return testinfra_instance._config.provisioner.inventory_file
+def inventory_file(_instance):
+    return _instance._config.provisioner.inventory_file
 
 
-def test_config_private_member(testinfra_instance):
-    assert isinstance(testinfra_instance._config, config.Config)
+def test_config_private_member(_instance):
+    assert isinstance(_instance._config, config.Config)
 
 
-def test_default_options_property(inventory_file, testinfra_instance):
+def test_default_options_property(inventory_file, _instance):
     x = {'connection': 'ansible', 'ansible-inventory': inventory_file}
 
-    assert x == testinfra_instance.default_options
+    assert x == _instance.default_options
 
 
-def test_default_options_property_updates_debug(inventory_file,
-                                                testinfra_instance):
-    testinfra_instance._config.args = {'debug': True}
+def test_default_options_property_updates_debug(inventory_file, _instance):
+    _instance._config.args = {'debug': True}
     x = {
         'connection': 'ansible',
         'ansible-inventory': inventory_file,
         'debug': True
     }
 
-    assert x == testinfra_instance.default_options
+    assert x == _instance.default_options
 
 
-def test_default_options_property_updates_sudo(
-        inventory_file, testinfra_instance, patched_testinfra_get_tests):
-    testinfra_instance._config.args = {'sudo': True}
+def test_default_options_property_updates_sudo(inventory_file, _instance,
+                                               _patched_testinfra_get_tests):
+    _instance._config.args = {'sudo': True}
     x = {
         'connection': 'ansible',
         'ansible-inventory': inventory_file,
         'sudo': True
     }
 
-    assert x == testinfra_instance.default_options
+    assert x == _instance.default_options
 
 
-def test_default_env_property(testinfra_instance):
-    assert 'MOLECULE_FILE' in testinfra_instance.default_env
-    assert 'MOLECULE_INVENTORY_FILE' in testinfra_instance.default_env
-    assert 'MOLECULE_SCENARIO_DIRECTORY' in testinfra_instance.default_env
-    assert 'MOLECULE_INSTANCE_CONFIG' in testinfra_instance.default_env
+def test_default_env_property(_instance):
+    assert 'MOLECULE_FILE' in _instance.default_env
+    assert 'MOLECULE_INVENTORY_FILE' in _instance.default_env
+    assert 'MOLECULE_SCENARIO_DIRECTORY' in _instance.default_env
+    assert 'MOLECULE_INSTANCE_CONFIG' in _instance.default_env
 
 
-def test_additional_files_or_dirs_property(testinfra_instance):
-    tests_directory = testinfra_instance._config.verifier.directory
+@pytest.mark.parametrize(
+    'config_instance', ['_verifier_section_data'], indirect=True)
+def test_additional_files_or_dirs_property(_instance):
+    tests_directory = _instance._config.verifier.directory
     file1_file = os.path.join(tests_directory, 'file1.py')
     file2_file = os.path.join(tests_directory, 'file2.py')
     match1_file = os.path.join(tests_directory, 'match1.py')
@@ -136,62 +149,39 @@ def test_additional_files_or_dirs_property(testinfra_instance):
         match2_file,
         test_subdir_file,
     ]
-    assert sorted(x) == sorted(testinfra_instance.additional_files_or_dirs)
+    assert sorted(x) == sorted(_instance.additional_files_or_dirs)
 
 
-def test_env_property(testinfra_instance):
-    assert 'bar' == testinfra_instance.env['foo']
-    assert 'ANSIBLE_CONFIG' in testinfra_instance.env
-    assert 'ANSIBLE_ROLES_PATH' in testinfra_instance.env
-    assert 'ANSIBLE_LIBRARY' in testinfra_instance.env
-    assert 'ANSIBLE_FILTER_PLUGINS' in testinfra_instance.env
+@pytest.mark.parametrize(
+    'config_instance', ['_verifier_section_data'], indirect=True)
+def test_env_property(_instance):
+    assert 'bar' == _instance.env['FOO']
+    assert 'ANSIBLE_CONFIG' in _instance.env
+    assert 'ANSIBLE_ROLES_PATH' in _instance.env
+    assert 'ANSIBLE_LIBRARY' in _instance.env
+    assert 'ANSIBLE_FILTER_PLUGINS' in _instance.env
 
 
-def test_lint_property(testinfra_instance):
-    assert isinstance(testinfra_instance.lint, flake8.Flake8)
+def test_lint_property(_instance):
+    assert isinstance(_instance.lint, flake8.Flake8)
 
 
-@pytest.fixture
-def molecule_verifier_lint_invalid_section_data():
-    return {
-        'verifier': {
-            'name': 'testinfra',
-            'lint': {
-                'name': 'invalid',
-            },
-        }
-    }
+def test_name_property(_instance):
+    assert 'testinfra' == _instance.name
 
 
-def test_lint_property_raises(molecule_verifier_lint_invalid_section_data,
-                              patched_logger_critical, testinfra_instance):
-    util.merge_dicts(testinfra_instance._config.config,
-                     molecule_verifier_lint_invalid_section_data)
-    with pytest.raises(SystemExit) as e:
-        testinfra_instance.lint
-
-    assert 1 == e.value.code
-
-    msg = "Invalid lint named 'invalid' configured."
-    patched_logger_critical.assert_called_once_with(msg)
+def test_enabled_property(_instance):
+    assert _instance.enabled
 
 
-def test_name_property(testinfra_instance):
-    assert 'testinfra' == testinfra_instance.name
-
-
-def test_enabled_property(testinfra_instance):
-    assert testinfra_instance.enabled
-
-
-def test_directory_property(testinfra_instance):
-    parts = testinfra_instance.directory.split(os.path.sep)
+def test_directory_property(_instance):
+    parts = _instance.directory.split(os.path.sep)
 
     assert ['molecule', 'default', 'tests'] == parts[-3:]
 
 
 @pytest.fixture
-def molecule_verifier_directory_section_data():
+def _verifier_testinfra_directory_section_data():
     return {
         'verifier': {
             'name': 'testinfra',
@@ -200,15 +190,16 @@ def molecule_verifier_directory_section_data():
     }
 
 
-def test_directory_property_overriden(
-        testinfra_instance, molecule_verifier_directory_section_data):
-    util.merge_dicts(testinfra_instance._config.config,
-                     molecule_verifier_directory_section_data)
+@pytest.mark.parametrize(
+    'config_instance', ['_verifier_testinfra_directory_section_data'],
+    indirect=True)
+def test_directory_property_overriden(_instance):
+    assert '/tmp/foo/bar' == _instance.directory
 
-    assert '/tmp/foo/bar' == testinfra_instance.directory
 
-
-def test_options_property(inventory_file, testinfra_instance):
+@pytest.mark.parametrize(
+    'config_instance', ['_verifier_section_data'], indirect=True)
+def test_options_property(inventory_file, _instance):
     x = {
         'connection': 'ansible',
         'ansible-inventory': inventory_file,
@@ -217,11 +208,13 @@ def test_options_property(inventory_file, testinfra_instance):
         'verbose': True,
     }
 
-    assert x == testinfra_instance.options
+    assert x == _instance.options
 
 
-def test_options_property_handles_cli_args(inventory_file, testinfra_instance):
-    testinfra_instance._config.args = {'debug': True}
+@pytest.mark.parametrize(
+    'config_instance', ['_verifier_section_data'], indirect=True)
+def test_options_property_handles_cli_args(inventory_file, _instance):
+    _instance._config.args = {'debug': True}
     x = {
         'connection': 'ansible',
         'ansible-inventory': inventory_file,
@@ -231,17 +224,19 @@ def test_options_property_handles_cli_args(inventory_file, testinfra_instance):
         'verbose': True,
     }
 
-    assert x == testinfra_instance.options
+    assert x == _instance.options
 
 
-def test_bake(patched_testinfra_get_tests, inventory_file, testinfra_instance):
-    tests_directory = testinfra_instance._config.verifier.directory
+@pytest.mark.parametrize(
+    'config_instance', ['_verifier_section_data'], indirect=True)
+def test_bake(_patched_testinfra_get_tests, inventory_file, _instance):
+    tests_directory = _instance._config.verifier.directory
     file1_file = os.path.join(tests_directory, 'file1.py')
 
     os.mkdir(tests_directory)
     util.write_file(file1_file, '')
 
-    testinfra_instance.bake()
+    _instance.bake()
     x = [
         str(sh.Command('py.test')),
         '--ansible-inventory={}'.format(inventory_file),
@@ -252,21 +247,21 @@ def test_bake(patched_testinfra_get_tests, inventory_file, testinfra_instance):
         'bar.py',
         file1_file,
     ]
-    result = str(testinfra_instance._testinfra_command).split()
+    result = str(_instance._testinfra_command).split()
 
     assert sorted(x) == sorted(result)
 
 
 def test_execute(patched_logger_info, patched_run_command,
-                 patched_testinfra_get_tests, patched_logger_success,
-                 testinfra_instance):
-    testinfra_instance._testinfra_command = 'patched-command'
-    testinfra_instance.execute()
+                 _patched_testinfra_get_tests, patched_logger_success,
+                 _instance):
+    _instance._testinfra_command = 'patched-command'
+    _instance.execute()
 
     patched_run_command.assert_called_once_with('patched-command', debug=False)
 
     msg = 'Executing Testinfra tests found in {}/...'.format(
-        testinfra_instance.directory)
+        _instance.directory)
     patched_logger_info.assert_called_once_with(msg)
 
     msg = 'Verifier completed successfully.'
@@ -274,9 +269,9 @@ def test_execute(patched_logger_info, patched_run_command,
 
 
 def test_execute_does_not_execute(patched_run_command, patched_logger_warn,
-                                  testinfra_instance):
-    testinfra_instance._config.config['verifier']['enabled'] = False
-    testinfra_instance.execute()
+                                  _instance):
+    _instance._config.config['verifier']['enabled'] = False
+    _instance.execute()
 
     assert not patched_run_command.called
 
@@ -284,9 +279,9 @@ def test_execute_does_not_execute(patched_run_command, patched_logger_warn,
     patched_logger_warn.assert_called_once_with(msg)
 
 
-def test_does_not_execute_without_tests(
-        patched_run_command, patched_logger_warn, testinfra_instance):
-    testinfra_instance.execute()
+def test_does_not_execute_without_tests(patched_run_command,
+                                        patched_logger_warn, _instance):
+    _instance.execute()
 
     assert not patched_run_command.called
 
@@ -294,20 +289,20 @@ def test_does_not_execute_without_tests(
     patched_logger_warn.assert_called_once_with(msg)
 
 
-def test_execute_bakes(patched_run_command, patched_testinfra_get_tests,
-                       testinfra_instance):
-    testinfra_instance.execute()
+def test_execute_bakes(patched_run_command, _patched_testinfra_get_tests,
+                       _instance):
+    _instance.execute()
 
-    assert testinfra_instance._testinfra_command is not None
+    assert _instance._testinfra_command is not None
 
     assert 1 == patched_run_command.call_count
 
 
 def test_executes_catches_and_exits_return_code(
-        patched_run_command, patched_testinfra_get_tests, testinfra_instance):
+        patched_run_command, _patched_testinfra_get_tests, _instance):
     patched_run_command.side_effect = sh.ErrorReturnCode_1(
         sh.testinfra, b'', b'')
     with pytest.raises(SystemExit) as e:
-        testinfra_instance.execute()
+        _instance.execute()
 
     assert 1 == e.value.code

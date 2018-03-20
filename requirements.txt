@@ -1,5 +1,6 @@
 ansible-lint==3.4.19
 anyconfig==0.9.1
+cerberus==1.1
 click==6.7
 click-completion==0.2.1
 colorama==0.3.7
@@ -7,7 +8,6 @@ cookiecutter==1.5.1
 flake8==3.3.0
 python-gilt==1.1.0
 Jinja2==2.10
-marshmallow==2.13.5
 pbr==3.0.1
 pexpect==4.2.1
 psutil==5.2.2; sys_platform!="win32" and sys_platform!="cygwin"

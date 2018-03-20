@@ -3,7 +3,7 @@ ansible:
   config_file: ansible.cfg
   playbook: playbook.yml
   raw_env_vars:
-    foo: bar
+    FOO: bar
   extra_vars: foo=bar
   verbose: true
   become: true

@@ -26,7 +26,7 @@ from molecule.command.init import template
 
 
 @pytest.fixture
-def command_args():
+def _command_args():
     return {
         'role_name': 'test-role',
         'url': 'https://github.com/retr0h/cookiecutter-molecule.git',
@@ -36,14 +36,14 @@ def command_args():
 
 
 @pytest.fixture
-def template_instance(command_args):
-    return template.Template(command_args)
+def _instance(_command_args):
+    return template.Template(_command_args)
 
 
-def test_execute(temp_dir, template_instance, patched_logger_info,
+def test_execute(temp_dir, _instance, patched_logger_info,
                  patched_logger_success):
 
-    template_instance.execute()
+    _instance.execute()
 
     assert os.path.isdir('./test-role')
 
@@ -55,12 +55,11 @@ def test_execute(temp_dir, template_instance, patched_logger_info,
     patched_logger_success.assert_called_once_with(msg)
 
 
-def test_execute_role_exists(temp_dir, template_instance,
-                             patched_logger_critical):
-    template_instance.execute()
+def test_execute_role_exists(temp_dir, _instance, patched_logger_critical):
+    _instance.execute()
 
     with pytest.raises(SystemExit) as e:
-        template_instance.execute()
+        _instance.execute()
 
     assert 1 == e.value.code
 

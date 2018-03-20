@@ -18,11 +18,23 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import pytest
+
 from molecule.command import lint
 
 
+@pytest.fixture
+def _patched_ansible_lint(mocker):
+    return mocker.patch(
+        'molecule.provisioner.lint.ansible_lint.AnsibleLint.execute')
+
+
+# NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
+# config.Config._validate from executing.  Thus preventing odd side-effects
+# throughout patched.assert_called unit tests.
 def test_execute(mocker, patched_logger_info, patched_yamllint, patched_flake8,
-                 patched_ansible_lint, config_instance):
+                 patched_config_validate, _patched_ansible_lint,
+                 config_instance):
     l = lint.Lint(config_instance)
     l.execute()
 
@@ -34,4 +46,4 @@ def test_execute(mocker, patched_logger_info, patched_yamllint, patched_flake8,
 
     patched_yamllint.assert_called_once_with()
     patched_flake8.assert_called_once_with()
-    patched_ansible_lint.assert_called_once_with()
+    _patched_ansible_lint.assert_called_once_with()

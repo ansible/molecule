@@ -21,8 +21,11 @@
 from molecule.command import dependency
 
 
+# NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
+# config.Config._validate from executing.  Thus preventing odd side-effects
+# throughout patched.assert_called unit tests.
 def test_execute(mocker, patched_logger_info, patched_ansible_galaxy,
-                 config_instance):
+                 patched_config_validate, config_instance):
     d = dependency.Dependency(config_instance)
     d.execute()
 

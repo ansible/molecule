@@ -77,6 +77,10 @@ def test_action_setter(config_instance):
     assert 'foo' == config_instance.action
 
 
+def test_init_calls_validate(patched_config_validate, config_instance):
+    patched_config_validate.assert_called_once_with()
+
+
 def test_project_directory_property(config_instance):
     assert os.getcwd() == config_instance.project_directory
 
@@ -92,7 +96,7 @@ def test_dependency_property(config_instance):
 
 
 @pytest.fixture
-def molecule_dependency_gilt_section_data():
+def _config_dependency_gilt_section_data():
     return {
         'dependency': {
             'name': 'gilt'
@@ -100,51 +104,27 @@ def molecule_dependency_gilt_section_data():
     }
 
 
-def test_dependency_property_is_gilt(molecule_dependency_gilt_section_data,
-                                     config_instance):
-    util.merge_dicts(config_instance.config,
-                     molecule_dependency_gilt_section_data)
-
+@pytest.mark.parametrize(
+    'config_instance', ['_config_dependency_gilt_section_data'], indirect=True)
+def test_dependency_property_is_gilt(config_instance):
     assert isinstance(config_instance.dependency, gilt.Gilt)
 
 
 @pytest.fixture
-def molecule_dependency_shell_section_data():
+def _config_dependency_shell_section_data():
     return {
         'dependency': {
-            'name': 'shell'
+            'name': 'shell',
+            'command': 'bin/command',
         },
     }
 
 
-def test_dependency_property_is_shell(molecule_dependency_shell_section_data,
-                                      config_instance):
-    util.merge_dicts(config_instance.config,
-                     molecule_dependency_shell_section_data)
-
+@pytest.mark.parametrize(
+    'config_instance', ['_config_dependency_shell_section_data'],
+    indirect=True)
+def test_dependency_property_is_shell(config_instance):
     assert isinstance(config_instance.dependency, shell.Shell)
-
-
-@pytest.fixture
-def molecule_dependency_invalid_section_data():
-    return {
-        'dependency': {
-            'name': 'invalid'
-        },
-    }
-
-
-def test_dependency_property_raises(molecule_dependency_invalid_section_data,
-                                    patched_logger_critical, config_instance):
-    util.merge_dicts(config_instance.config,
-                     molecule_dependency_invalid_section_data)
-    with pytest.raises(SystemExit) as e:
-        config_instance.dependency
-
-    assert 1 == e.value.code
-
-    msg = "Invalid dependency named 'invalid' configured."
-    patched_logger_critical.assert_called_once_with(msg)
 
 
 def test_driver_property(config_instance):
@@ -152,7 +132,7 @@ def test_driver_property(config_instance):
 
 
 @pytest.fixture
-def molecule_driver_azure_section_data():
+def _config_driver_azure_section_data():
     return {
         'driver': {
             'name': 'azure'
@@ -160,24 +140,33 @@ def molecule_driver_azure_section_data():
     }
 
 
-def test_driver_property_is_azure(molecule_driver_azure_section_data,
-                                  config_instance):
-    util.merge_dicts(config_instance.config,
-                     molecule_driver_azure_section_data)
-
+@pytest.mark.parametrize(
+    'config_instance', ['_config_driver_azure_section_data'], indirect=True)
+def test_driver_property_is_azure(config_instance):
     assert isinstance(config_instance.driver, azure.Azure)
 
 
-def test_driver_property_is_delegated(molecule_driver_delegated_section_data,
-                                      config_instance):
-    util.merge_dicts(config_instance.config,
-                     molecule_driver_delegated_section_data)
+@pytest.fixture
+def _config_driver_delegated_section_data():
+    return {
+        'driver': {
+            'name': 'delegated',
+            'options': {
+                'managed': False,
+            },
+        },
+    }
 
+
+@pytest.mark.parametrize(
+    'config_instance', ['_config_driver_delegated_section_data'],
+    indirect=True)
+def test_driver_property_is_delegated(config_instance):
     assert isinstance(config_instance.driver, delegated.Delegated)
 
 
 @pytest.fixture
-def molecule_driver_ec2_section_data():
+def _config_driver_ec2_section_data():
     return {
         'driver': {
             'name': 'ec2'
@@ -185,15 +174,14 @@ def molecule_driver_ec2_section_data():
     }
 
 
-def test_driver_property_is_ec2(molecule_driver_ec2_section_data,
-                                config_instance):
-    util.merge_dicts(config_instance.config, molecule_driver_ec2_section_data)
-
+@pytest.mark.parametrize(
+    'config_instance', ['_config_driver_ec2_section_data'], indirect=True)
+def test_driver_property_is_ec2(config_instance):
     assert isinstance(config_instance.driver, ec2.Ec2)
 
 
 @pytest.fixture
-def molecule_driver_gce_section_data():
+def _config_driver_gce_section_data():
     return {
         'driver': {
             'name': 'gce'
@@ -201,15 +189,14 @@ def molecule_driver_gce_section_data():
     }
 
 
-def test_driver_property_is_gce(molecule_driver_gce_section_data,
-                                config_instance):
-    util.merge_dicts(config_instance.config, molecule_driver_gce_section_data)
-
+@pytest.mark.parametrize(
+    'config_instance', ['_config_driver_gce_section_data'], indirect=True)
+def test_driver_property_is_gce(config_instance):
     assert isinstance(config_instance.driver, gce.Gce)
 
 
 @pytest.fixture
-def molecule_driver_lxc_section_data():
+def _config_driver_lxc_section_data():
     return {
         'driver': {
             'name': 'lxc'
@@ -217,15 +204,14 @@ def molecule_driver_lxc_section_data():
     }
 
 
-def test_driver_property_is_lxc(molecule_driver_lxc_section_data,
-                                config_instance):
-    util.merge_dicts(config_instance.config, molecule_driver_lxc_section_data)
-
+@pytest.mark.parametrize(
+    'config_instance', ['_config_driver_lxc_section_data'], indirect=True)
+def test_driver_property_is_lxc(config_instance):
     assert isinstance(config_instance.driver, lxc.Lxc)
 
 
 @pytest.fixture
-def molecule_driver_lxd_section_data():
+def _config_driver_lxd_section_data():
     return {
         'driver': {
             'name': 'lxd'
@@ -233,15 +219,14 @@ def molecule_driver_lxd_section_data():
     }
 
 
-def test_driver_property_is_lxd(molecule_driver_lxd_section_data,
-                                config_instance):
-    util.merge_dicts(config_instance.config, molecule_driver_lxd_section_data)
-
+@pytest.mark.parametrize(
+    'config_instance', ['_config_driver_lxd_section_data'], indirect=True)
+def test_driver_property_is_lxd(config_instance):
     assert isinstance(config_instance.driver, lxd.Lxd)
 
 
 @pytest.fixture
-def molecule_driver_openstack_section_data():
+def _config_driver_openstack_section_data():
     return {
         'driver': {
             'name': 'openstack'
@@ -249,51 +234,29 @@ def molecule_driver_openstack_section_data():
     }
 
 
-def test_driver_property_is_openstack(molecule_driver_openstack_section_data,
-                                      config_instance):
-    util.merge_dicts(config_instance.config,
-                     molecule_driver_openstack_section_data)
-
+@pytest.mark.parametrize(
+    'config_instance', ['_config_driver_openstack_section_data'],
+    indirect=True)
+def test_driver_property_is_openstack(config_instance):
     assert isinstance(config_instance.driver, openstack.Openstack)
 
 
 @pytest.fixture
-def molecule_driver_vagrant_section_data():
+def _config_driver_vagrant_section_data():
     return {
         'driver': {
-            'name': 'vagrant'
+            'name': 'vagrant',
+            'provider': {
+                'name': 'virtualbox',
+            },
         },
     }
 
 
-def test_driver_property_is_vagrant(molecule_driver_vagrant_section_data,
-                                    config_instance):
-    util.merge_dicts(config_instance.config,
-                     molecule_driver_vagrant_section_data)
-
+@pytest.mark.parametrize(
+    'config_instance', ['_config_driver_vagrant_section_data'], indirect=True)
+def test_driver_property_is_vagrant(config_instance):
     assert isinstance(config_instance.driver, vagrant.Vagrant)
-
-
-@pytest.fixture
-def molecule_driver_invalid_section_data():
-    return {
-        'driver': {
-            'name': 'invalid'
-        },
-    }
-
-
-def test_driver_property_raises(molecule_driver_invalid_section_data,
-                                patched_logger_critical, config_instance):
-    util.merge_dicts(config_instance.config,
-                     molecule_driver_invalid_section_data)
-    with pytest.raises(SystemExit) as e:
-        config_instance.driver
-
-    assert 1 == e.value.code
-
-    msg = "Invalid driver named 'invalid' configured."
-    patched_logger_critical.assert_called_once_with(msg)
 
 
 def test_drivers_property(config_instance):
@@ -347,56 +310,12 @@ def test_lint_property(config_instance):
     assert isinstance(config_instance.lint, yamllint.Yamllint)
 
 
-@pytest.fixture
-def molecule_lint_invalid_section_data():
-    return {
-        'lint': {
-            'name': 'invalid'
-        },
-    }
-
-
-def test_lint_property_raises(molecule_lint_invalid_section_data,
-                              patched_logger_critical, config_instance):
-    util.merge_dicts(config_instance.config,
-                     molecule_lint_invalid_section_data)
-    with pytest.raises(SystemExit) as e:
-        config_instance.lint
-
-    assert 1 == e.value.code
-
-    msg = "Invalid lint named 'invalid' configured."
-    patched_logger_critical.assert_called_once_with(msg)
-
-
 def test_platforms_property(config_instance):
     assert isinstance(config_instance.platforms, platforms.Platforms)
 
 
 def test_provisioner_property(config_instance):
     assert isinstance(config_instance.provisioner, ansible.Ansible)
-
-
-@pytest.fixture
-def molecule_provisioner_invalid_section_data():
-    return {
-        'provisioner': {
-            'name': 'invalid'
-        },
-    }
-
-
-def test_provisioner_property_raises(molecule_provisioner_invalid_section_data,
-                                     patched_logger_critical, config_instance):
-    util.merge_dicts(config_instance.config,
-                     molecule_provisioner_invalid_section_data)
-    with pytest.raises(SystemExit) as e:
-        config_instance.provisioner
-
-    assert 1 == e.value.code
-
-    msg = "Invalid provisioner named 'invalid' configured."
-    patched_logger_critical.assert_called_once_with(msg)
 
 
 def test_scenario_property(config_instance):
@@ -412,7 +331,7 @@ def test_verifier_property(config_instance):
 
 
 @pytest.fixture
-def molecule_verifier_goss_section_data():
+def _config_verifier_goss_section_data():
     return {
         'verifier': {
             'name': 'goss'
@@ -420,34 +339,10 @@ def molecule_verifier_goss_section_data():
     }
 
 
-def test_verifier_property_is_goss(molecule_verifier_goss_section_data,
-                                   config_instance):
-    util.merge_dicts(config_instance.config,
-                     molecule_verifier_goss_section_data)
-
+@pytest.mark.parametrize(
+    'config_instance', ['_config_verifier_goss_section_data'], indirect=True)
+def test_verifier_property_is_goss(config_instance):
     assert isinstance(config_instance.verifier, goss.Goss)
-
-
-@pytest.fixture
-def molecule_verifier_invalid_section_data():
-    return {
-        'verifier': {
-            'name': 'invalid'
-        },
-    }
-
-
-def test_verifier_property_raises(molecule_verifier_invalid_section_data,
-                                  patched_logger_critical, config_instance):
-    util.merge_dicts(config_instance.config,
-                     molecule_verifier_invalid_section_data)
-    with pytest.raises(SystemExit) as e:
-        config_instance.verifier
-
-    assert 1 == e.value.code
-
-    msg = "Invalid verifier named 'invalid' configured."
-    patched_logger_critical.assert_called_once_with(msg)
 
 
 def test_verifiers_property(config_instance):
@@ -507,6 +402,46 @@ def test_combine_raises_on_failed_interpolation(patched_logger_critical,
            '---\n'
            'foo: $6$8I5Cfmpr$kGZB\n').format(config_instance.molecule_file)
     patched_logger_critical.assert_called_once_with(msg)
+
+
+def test_validate(mocker, config_instance, patched_logger_info,
+                  patched_logger_success):
+    m = mocker.patch('molecule.model.schema_v2.validate')
+    m.return_value = None
+
+    config_instance._validate()
+
+    msg = 'Validating schema {}.'.format(config_instance.molecule_file)
+    patched_logger_info.assert_called_once_with(msg)
+
+    m.assert_called_once_with(config_instance.config)
+    assert 'ansible-galaxy' == config_instance.config['dependency']['command']
+    assert 'docker' == config_instance.config['driver']['name']
+
+    msg = 'Validation completed successfully.'
+    patched_logger_success.assert_called_once_with(msg)
+
+
+def test_validate_exists_when_validation_fails(mocker, patched_logger_critical,
+                                               config_instance):
+    m = mocker.patch('molecule.model.schema_v2.validate')
+    m.return_value = 'validation errors'
+
+    with pytest.raises(SystemExit) as e:
+        config_instance._validate()
+
+    assert 1 == e.value.code
+
+    msg = 'Failed to validate.\n\nvalidation errors'
+    patched_logger_critical.assert_called_once_with(msg)
+
+
+def test_validate_handles_unknown_driver_name(mocker, config_instance):
+    m = mocker.patch('molecule.config.Config._get_driver_name')
+    m.side_effect = AttributeError()
+
+    config_instance._validate()
+    assert 'docker' == config_instance.config['driver']['name']
 
 
 def test_molecule_directory():

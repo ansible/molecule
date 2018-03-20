@@ -18,12 +18,32 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-from molecule import util
+import pytest
+
 from molecule.command import destroy
 
 
-def test_execute(mocker, patched_destroy_prune, patched_logger_info,
-                 patched_ansible_destroy, config_instance):
+@pytest.fixture
+def _patched_ansible_destroy(mocker):
+    return mocker.patch('molecule.provisioner.ansible.Ansible.destroy')
+
+
+@pytest.fixture
+def _patched_destroy_setup(mocker):
+    return mocker.patch('molecule.command.destroy.Destroy._setup')
+
+
+@pytest.fixture
+def _patched_destroy_prune(mocker):
+    return mocker.patch('molecule.command.destroy.Destroy.prune')
+
+
+# NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
+# config.Config._validate from executing.  Thus preventing odd side-effects
+# throughout patched.assert_called unit tests.
+def test_execute(mocker, _patched_destroy_prune, patched_logger_info,
+                 patched_config_validate, _patched_ansible_destroy,
+                 config_instance):
     d = destroy.Destroy(config_instance)
     d.execute()
 
@@ -33,18 +53,19 @@ def test_execute(mocker, patched_destroy_prune, patched_logger_info,
     ]
     assert x == patched_logger_info.mock_calls
 
-    patched_ansible_destroy.assert_called_once_with()
+    _patched_ansible_destroy.assert_called_once_with()
 
     assert not config_instance.state.converged
     assert not config_instance.state.created
-    patched_destroy_prune.assert_called_once_with()
+    _patched_destroy_prune.assert_called_once_with()
 
 
+@pytest.mark.parametrize(
+    'config_instance', ['command_driver_delegated_section_data'],
+    indirect=True)
 def test_execute_skips_when_destroy_strategy_is_never(
-        patched_destroy_setup, molecule_driver_delegated_section_data,
-        patched_logger_warn, patched_ansible_destroy, config_instance):
-    util.merge_dicts(config_instance.config,
-                     molecule_driver_delegated_section_data)
+        _patched_destroy_setup, patched_logger_warn, _patched_ansible_destroy,
+        config_instance):
     config_instance.command_args = {'destroy': 'never'}
 
     d = destroy.Destroy(config_instance)
@@ -53,18 +74,19 @@ def test_execute_skips_when_destroy_strategy_is_never(
     msg = "Skipping, '--destroy=never' requested."
     patched_logger_warn.assert_called_once_with(msg)
 
-    assert not patched_ansible_destroy.called
+    assert not _patched_ansible_destroy.called
 
 
+@pytest.mark.parametrize(
+    'config_instance', ['command_driver_delegated_section_data'],
+    indirect=True)
 def test_execute_skips_when_delegated_driver(
-        patched_destroy_setup, molecule_driver_delegated_section_data,
-        patched_logger_warn, patched_ansible_destroy, config_instance):
-    util.merge_dicts(config_instance.config,
-                     molecule_driver_delegated_section_data)
+        _patched_destroy_setup, patched_logger_warn, _patched_ansible_destroy,
+        config_instance):
     d = destroy.Destroy(config_instance)
     d.execute()
 
     msg = 'Skipping, instances are delegated.'
     patched_logger_warn.assert_called_once_with(msg)
 
-    assert not patched_ansible_destroy.called
+    assert not _patched_ansible_destroy.called

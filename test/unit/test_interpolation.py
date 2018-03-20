@@ -18,7 +18,7 @@ from molecule import interpolation
 
 
 @pytest.fixture
-def mock_env():
+def _mock_env():
     return {
         'FOO': 'foo',
         'BAR': '',
@@ -28,55 +28,55 @@ def mock_env():
 
 
 @pytest.fixture
-def interpolator_instance(mock_env):
+def _instance(_mock_env):
     return interpolation.Interpolator(interpolation.TemplateWithDefaults,
-                                      mock_env).interpolate
+                                      _mock_env).interpolate
 
 
-def test_escaped_interpolation(interpolator_instance):
-    assert '${foo}' == interpolator_instance('$${foo}')
+def test_escaped_interpolation(_instance):
+    assert '${foo}' == _instance('$${foo}')
 
 
-def test_invalid_interpolation(interpolator_instance):
+def test_invalid_interpolation(_instance):
     with pytest.raises(interpolation.InvalidInterpolation):
-        interpolator_instance('${')
+        _instance('${')
     with pytest.raises(interpolation.InvalidInterpolation):
-        interpolator_instance('$}')
+        _instance('$}')
     with pytest.raises(interpolation.InvalidInterpolation):
-        interpolator_instance('${}')
+        _instance('${}')
     with pytest.raises(interpolation.InvalidInterpolation):
-        interpolator_instance('${ }')
+        _instance('${ }')
     with pytest.raises(interpolation.InvalidInterpolation):
-        interpolator_instance('${ foo}')
+        _instance('${ foo}')
     with pytest.raises(interpolation.InvalidInterpolation):
-        interpolator_instance('${foo }')
+        _instance('${foo }')
     with pytest.raises(interpolation.InvalidInterpolation):
-        interpolator_instance('${foo!}')
+        _instance('${foo!}')
 
 
-def test_interpolate_missing_no_default(interpolator_instance):
-    assert 'This  var' == interpolator_instance('This ${missing} var')
-    assert 'This  var' == interpolator_instance('This ${BAR} var')
+def test_interpolate_missing_no_default(_instance):
+    assert 'This  var' == _instance('This ${missing} var')
+    assert 'This  var' == _instance('This ${BAR} var')
 
 
-def test_interpolate_with_value(interpolator_instance):
-    assert 'This foo var' == interpolator_instance('This $FOO var')
-    assert 'This foo var' == interpolator_instance('This ${FOO} var')
+def test_interpolate_with_value(_instance):
+    assert 'This foo var' == _instance('This $FOO var')
+    assert 'This foo var' == _instance('This ${FOO} var')
 
 
-def test_interpolate_missing_with_default(interpolator_instance):
-    assert 'ok def' == interpolator_instance('ok ${missing:-def}')
-    assert 'ok def' == interpolator_instance('ok ${missing-def}')
-    assert 'ok /non:-alphanumeric' == interpolator_instance(
+def test_interpolate_missing_with_default(_instance):
+    assert 'ok def' == _instance('ok ${missing:-def}')
+    assert 'ok def' == _instance('ok ${missing-def}')
+    assert 'ok /non:-alphanumeric' == _instance(
         'ok ${BAR:-/non:-alphanumeric}')
 
 
-def test_interpolate_with_empty_and_default_value(interpolator_instance):
-    assert 'ok def' == interpolator_instance('ok ${BAR:-def}')
-    assert 'ok ' == interpolator_instance('ok ${BAR-def}')
+def test_interpolate_with_empty_and_default_value(_instance):
+    assert 'ok def' == _instance('ok ${BAR:-def}')
+    assert 'ok ' == _instance('ok ${BAR-def}')
 
 
-def test_interpolate_with_molecule_yaml(interpolator_instance):
+def test_interpolate_with_molecule_yaml(_instance):
     data = """
 ---
 dependency:
@@ -117,4 +117,4 @@ verifier:
       foo: bar
 """.strip()
 
-    assert x == interpolator_instance(data)
+    assert x == _instance(data)

@@ -18,26 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import pytest
+from molecule.model import schema_v2
 
 
-@pytest.fixture
-def patched_goss_get_tests(mocker):
-    m = mocker.patch('molecule.verifier.goss.Goss._get_tests')
-    m.return_value = [
-        'foo.py',
-        'bar.py',
-    ]
-
-    return m
-
-
-@pytest.fixture
-def patched_testinfra_get_tests(mocker):
-    m = mocker.patch('molecule.verifier.testinfra.Testinfra._get_tests')
-    m.return_value = [
-        'foo.py',
-        'bar.py',
-    ]
-
-    return m
+def test_base_config(_config):
+    assert {} == schema_v2.validate(_config)

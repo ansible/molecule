@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import copy
 import functools
 import os
 
@@ -41,7 +42,7 @@ def os_split(s):
 
 
 @pytest.fixture
-def molecule_dependency_galaxy_section_data():
+def _molecule_dependency_galaxy_section_data():
     return {
         'dependency': {
             'name': 'galaxy'
@@ -50,7 +51,7 @@ def molecule_dependency_galaxy_section_data():
 
 
 @pytest.fixture
-def molecule_driver_section_data():
+def _molecule_driver_section_data():
     return {
         'driver': {
             'name': 'docker',
@@ -59,19 +60,7 @@ def molecule_driver_section_data():
 
 
 @pytest.fixture
-def molecule_driver_delegated_section_data():
-    return {
-        'driver': {
-            'name': 'delegated',
-            'options': {
-                'managed': False,
-            },
-        },
-    }
-
-
-@pytest.fixture
-def molecule_lint_section_data():
+def _molecule_lint_section_data():
     return {
         'lint': {
             'name': 'yamllint'
@@ -80,7 +69,7 @@ def molecule_lint_section_data():
 
 
 @pytest.fixture
-def molecule_platforms_section_data():
+def _molecule_platforms_section_data():
     return {
         'platforms': [
             {
@@ -98,7 +87,7 @@ def molecule_platforms_section_data():
 
 
 @pytest.fixture
-def molecule_provisioner_section_data():
+def _molecule_provisioner_section_data():
     return {
         'provisioner': {
             'name': 'ansible',
@@ -114,7 +103,7 @@ def molecule_provisioner_section_data():
 
 
 @pytest.fixture
-def molecule_scenario_section_data():
+def _molecule_scenario_section_data():
     return {
         'scenario': {
             'name': 'default'
@@ -123,7 +112,7 @@ def molecule_scenario_section_data():
 
 
 @pytest.fixture
-def molecule_verifier_section_data():
+def _molecule_verifier_section_data():
     return {
         'verifier': {
             'name': 'testinfra',
@@ -136,16 +125,16 @@ def molecule_verifier_section_data():
 
 @pytest.fixture
 def molecule_data(
-        molecule_dependency_galaxy_section_data, molecule_driver_section_data,
-        molecule_lint_section_data, molecule_platforms_section_data,
-        molecule_provisioner_section_data, molecule_scenario_section_data,
-        molecule_verifier_section_data):
+        _molecule_dependency_galaxy_section_data,
+        _molecule_driver_section_data, _molecule_lint_section_data,
+        _molecule_platforms_section_data, _molecule_provisioner_section_data,
+        _molecule_scenario_section_data, _molecule_verifier_section_data):
 
     fixtures = [
-        molecule_dependency_galaxy_section_data, molecule_driver_section_data,
-        molecule_lint_section_data, molecule_platforms_section_data,
-        molecule_provisioner_section_data, molecule_scenario_section_data,
-        molecule_verifier_section_data
+        _molecule_dependency_galaxy_section_data,
+        _molecule_driver_section_data, _molecule_lint_section_data,
+        _molecule_platforms_section_data, _molecule_provisioner_section_data,
+        _molecule_scenario_section_data, _molecule_verifier_section_data
     ]
 
     return functools.reduce(lambda x, y: util.merge_dicts(x, y), fixtures)
@@ -179,8 +168,11 @@ def molecule_file_fixture(molecule_scenario_directory_fixture,
 
 
 @pytest.fixture
-def config_instance(molecule_file_fixture, molecule_data):
-    pytest.helpers.write_molecule_file(molecule_file_fixture, molecule_data)
+def config_instance(molecule_file_fixture, molecule_data, request):
+    mdc = copy.deepcopy(molecule_data)
+    if hasattr(request, 'param'):
+        util.merge_dicts(mdc, request.getfuncargvalue(request.param))
+    pytest.helpers.write_molecule_file(molecule_file_fixture, mdc)
     c = config.Config(molecule_file_fixture)
     c.command_args = {'subcommand': 'test'}
 
@@ -271,3 +263,8 @@ def patched_testinfra(mocker):
 @pytest.fixture
 def patched_scenario_setup(mocker):
     return mocker.patch('molecule.scenario.Scenario._setup')
+
+
+@pytest.fixture
+def patched_config_validate(mocker):
+    return mocker.patch('molecule.config.Config._validate')

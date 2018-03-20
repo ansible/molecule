@@ -18,29 +18,24 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
+
 import pytest
 
-
-@pytest.fixture
-def patched_ansible_playbook(mocker):
-    m = mocker.patch('molecule.provisioner.ansible_playbook.AnsiblePlaybook')
-    m.return_value.execute.return_value = b'patched-ansible-playbook-stdout'
-
-    return m
+from molecule import util
 
 
 @pytest.fixture
-def patched_write_inventory(mocker):
-    return mocker.patch(
-        'molecule.provisioner.ansible.Ansible._write_inventory')
+def _molecule_file():
+    return os.path.join(
+        os.path.dirname(__file__), os.path.pardir, os.path.pardir,
+        os.path.pardir, 'resources', 'molecule_docker.yml')
 
 
 @pytest.fixture
-def patched_remove_vars(mocker):
-    return mocker.patch('molecule.provisioner.ansible.Ansible._remove_vars')
+def _config(_molecule_file, request):
+    d = util.safe_load(open(_molecule_file))
+    if hasattr(request, 'param'):
+        d = util.merge_dicts(d, request.getfuncargvalue(request.param))
 
-
-@pytest.fixture
-def patched_link_or_update_vars(mocker):
-    return mocker.patch(
-        'molecule.provisioner.ansible.Ansible._link_or_update_vars')
+    return d

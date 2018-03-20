@@ -28,83 +28,83 @@ from molecule import util
 
 
 @pytest.fixture
-def state_instance(config_instance):
+def _instance(config_instance):
     return state.State(config_instance)
 
 
-def test_state_file_property(state_instance):
-    x = os.path.join(state_instance._config.scenario.ephemeral_directory,
+def test_state_file_property(_instance):
+    x = os.path.join(_instance._config.scenario.ephemeral_directory,
                      'state.yml')
 
-    assert x == state_instance.state_file
+    assert x == _instance.state_file
 
 
-def test_converged(state_instance):
-    assert not state_instance.converged
+def test_converged(_instance):
+    assert not _instance.converged
 
 
-def test_created(state_instance):
-    assert not state_instance.created
+def test_created(_instance):
+    assert not _instance.created
 
 
-def test_driver(state_instance):
-    assert not state_instance.driver
+def test_driver(_instance):
+    assert not _instance.driver
 
 
-def test_prepared(state_instance):
-    assert not state_instance.prepared
+def test_prepared(_instance):
+    assert not _instance.prepared
 
 
-def test_reset(state_instance):
-    assert not state_instance.converged
+def test_reset(_instance):
+    assert not _instance.converged
 
-    state_instance.change_state('converged', True)
-    assert state_instance.converged
+    _instance.change_state('converged', True)
+    assert _instance.converged
 
-    state_instance.reset()
-    assert not state_instance.converged
+    _instance.reset()
+    assert not _instance.converged
 
 
-def test_reset_persists(state_instance):
-    assert not state_instance.converged
+def test_reset_persists(_instance):
+    assert not _instance.converged
 
-    state_instance.change_state('converged', True)
-    assert state_instance.converged
+    _instance.change_state('converged', True)
+    assert _instance.converged
 
-    state_instance.reset()
-    assert not state_instance.converged
+    _instance.reset()
+    assert not _instance.converged
 
-    d = util.safe_load_file(state_instance.state_file)
+    d = util.safe_load_file(_instance.state_file)
     assert not d.get('converged')
 
 
-def test_change_state_converged(state_instance):
-    state_instance.change_state('converged', True)
+def test_change_state_converged(_instance):
+    _instance.change_state('converged', True)
 
-    assert state_instance.converged
-
-
-def test_change_state_created(state_instance):
-    state_instance.change_state('created', True)
-
-    assert state_instance.created
+    assert _instance.converged
 
 
-def test_change_state_driver(state_instance):
-    state_instance.change_state('driver', 'foo')
+def test_change_state_created(_instance):
+    _instance.change_state('created', True)
 
-    assert 'foo' == state_instance.driver
-
-
-def test_change_state_prepared(state_instance):
-    state_instance.change_state('prepared', True)
-
-    assert state_instance.prepared
+    assert _instance.created
 
 
-def test_change_state_raises(state_instance):
+def test_change_state_driver(_instance):
+    _instance.change_state('driver', 'foo')
+
+    assert 'foo' == _instance.driver
+
+
+def test_change_state_prepared(_instance):
+    _instance.change_state('prepared', True)
+
+    assert _instance.prepared
+
+
+def test_change_state_raises(_instance):
     with pytest.raises(state.InvalidState):
-        state_instance.change_state('invalid-state', True)
+        _instance.change_state('invalid-state', True)
 
 
 def test_get_data_loads_existing_state_file(temp_dir, molecule_data):

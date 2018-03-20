@@ -20,7 +20,6 @@
 
 import os
 
-import marshmallow
 import pytest
 
 from molecule import util
@@ -28,36 +27,20 @@ from molecule.model import schema_v1
 
 
 @pytest.fixture
-def molecule_v1_file():
+def _molecule_v1_file():
     return os.path.join(
         os.path.dirname(__file__), os.path.pardir, os.path.pardir, 'resources',
         'molecule_v1_vagrant.yml')
 
 
 @pytest.fixture
-def config(molecule_v1_file):
-    return util.safe_load(open(molecule_v1_file))
+def _config(_molecule_v1_file, request):
+    d = util.safe_load(open(_molecule_v1_file))
+    if hasattr(request, 'param'):
+        d = util.merge_dicts(d, request.getfuncargvalue(request.param))
+
+    return d
 
 
-def test_validate(config):
-    data, errors = schema_v1.validate(config)
-
-    assert {} == errors
-
-
-def test_validate_raises_on_extra_field(config):
-    config['driver']['extra'] = 'bar'
-
-    with pytest.raises(marshmallow.ValidationError) as e:
-        schema_v1.validate(config)
-
-    assert 'Unknown field' in str(e)
-
-
-def test_validate_raises_on_invalid_field(config):
-    config['driver']['name'] = int
-
-    with pytest.raises(marshmallow.ValidationError) as e:
-        schema_v1.validate(config)
-
-    assert 'Not a valid string.' in str(e)
+def test_base_config(_config):
+    assert {} == schema_v1.validate(_config)

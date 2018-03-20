@@ -18,92 +18,135 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import marshmallow
+import cerberus
+import cerberus.errors
 
-from molecule import logger
-from molecule.model import base
-
-LOG = logger.get_logger(__name__)
-
-
-class AnsibleSchema(base.BaseUnknown):
-    config_file = marshmallow.fields.Str()
-    playbook = marshmallow.fields.Str()
-    raw_env_vars = marshmallow.fields.Dict()
-    extra_vars = marshmallow.fields.Str()
-    verbose = marshmallow.fields.Bool()
-    become = marshmallow.fields.Bool()
-    tags = marshmallow.fields.Str()
-
-
-class DriverSchema(base.BaseUnknown):
-    name = marshmallow.fields.Str()
-
-
-class PlatformSchema(base.BaseUnknown):
-    name = marshmallow.fields.Str()
-    box = marshmallow.fields.Str()
-    box_version = marshmallow.fields.Str()
-    box_url = marshmallow.fields.Str()
-
-
-class ProviderOptionsSchema(base.BaseUnknown):
-    memory = marshmallow.fields.Int()
-    cpus = marshmallow.fields.Int()
-
-
-class ProviderSchema(base.BaseUnknown):
-    name = marshmallow.fields.Str()
-    type = marshmallow.fields.Str()
-    options = marshmallow.fields.Nested(ProviderOptionsSchema())
-
-
-class InterfaceSchema(base.BaseUnknown):
-    network_name = marshmallow.fields.Str()
-    type = marshmallow.fields.Str()
-    auto_config = marshmallow.fields.Bool()
-    ip = marshmallow.fields.Str()
-
-
-class InstanceOptionsSchema(base.BaseUnknown):
-    append_platform_to_hostname = marshmallow.fields.Bool()
-
-
-class InstanceSchema(base.BaseUnknown):
-    name = marshmallow.fields.Str()
-    ansible_groups = marshmallow.fields.List(marshmallow.fields.Str())
-    interfaces = marshmallow.fields.List(
-        marshmallow.fields.Nested(InterfaceSchema()))
-    raw_config_args = marshmallow.fields.List(marshmallow.fields.Str())
-    options = marshmallow.fields.Nested(InstanceOptionsSchema())
-
-
-class VagrantSchema(base.BaseUnknown):
-    platforms = marshmallow.fields.List(
-        marshmallow.fields.Nested(PlatformSchema()))
-    providers = marshmallow.fields.List(
-        marshmallow.fields.Nested(ProviderSchema()))
-    instances = marshmallow.fields.List(
-        marshmallow.fields.Nested(InstanceSchema()))
-
-
-class VerifierOptionsSchema(base.BaseUnknown):
-    sudo = marshmallow.fields.Bool()
-
-
-class VerifierSchema(base.BaseUnknown):
-    name = marshmallow.fields.Str()
-    options = marshmallow.fields.Nested(VerifierOptionsSchema())
-
-
-class MoleculeSchema(marshmallow.Schema):
-    ansible = marshmallow.fields.Nested(AnsibleSchema())
-    vagrant = marshmallow.fields.Nested(VagrantSchema())
-    driver = marshmallow.fields.Nested(DriverSchema())
-    verifier = marshmallow.fields.Nested(VerifierSchema())
+base_schema = {
+    'ansible': {
+        'type': 'dict',
+        'schema': {
+            'config_file': {
+                'type': 'string',
+            },
+            'playbook': {
+                'type': 'string',
+            },
+            'raw_env_vars': {
+                'type': 'dict',
+                'keyschema': {
+                    'type': 'string',
+                    'regex': '^[A-Z0-9_-]+$',
+                },
+            },
+            'extra_vars': {
+                'type': 'string',
+            },
+            'verbose': {
+                'type': 'boolean',
+            },
+            'become': {
+                'type': 'boolean',
+            },
+            'tags': {
+                'type': 'string',
+            },
+        }
+    },
+    'driver': {
+        'type': 'dict',
+        'schema': {
+            'name': {
+                'type': 'string',
+            },
+        }
+    },
+    'vagrant': {
+        'type': 'dict',
+        'schema': {
+            'platforms': {
+                'type': 'list',
+                'schema': {
+                    'type': 'dict',
+                    'schema': {
+                        'name': {
+                            'type': 'string',
+                        },
+                        'box': {
+                            'type': 'string',
+                        },
+                        'box_version': {
+                            'type': 'string',
+                        },
+                        'box_url': {
+                            'type': 'string',
+                        },
+                    }
+                }
+            },
+            'providers': {
+                'type': 'list',
+                'schema': {
+                    'type': 'dict',
+                    'schema': {
+                        'name': {
+                            'type': 'string',
+                        },
+                        'type': {
+                            'type': 'string',
+                        },
+                        'options': {
+                            'type': 'dict',
+                        },
+                    }
+                }
+            },
+            'instances': {
+                'type': 'list',
+                'schema': {
+                    'type': 'dict',
+                    'schema': {
+                        'name': {
+                            'type': 'string',
+                        },
+                        'ansible_groups': {
+                            'type': 'list',
+                            'schema': {
+                                'type': 'string',
+                            }
+                        },
+                        'interfaces': {
+                            'type': 'list',
+                            'schema': {
+                                'type': 'dict',
+                            }
+                        },
+                        'raw_config_args': {
+                            'type': 'list',
+                            'schema': {
+                                'type': 'string',
+                            }
+                        },
+                    }
+                }
+            },
+        }
+    },
+    'verifier': {
+        'type': 'dict',
+        'schema': {
+            'name': {
+                'type': 'string',
+            },
+            'options': {
+                'type': 'dict',
+            },
+        }
+    },
+}
 
 
 def validate(c):
-    schema = MoleculeSchema(strict=True)
+    v = cerberus.Validator()
+    v.validate(c, base_schema)
 
-    return schema.load(c)
+    return v.errors
