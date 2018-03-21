@@ -231,6 +231,10 @@ def verbose_flag(options):
     return verbose_flag
 
 
+def filter_verbose_permutation(options):
+    return {k: options[k] for k in options if not re.match('^([v]+)$', k)}
+
+
 def title(word):
     return ' '.join(x.capitalize() or '_' for x in word.split('_'))
 

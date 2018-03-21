@@ -36,6 +36,12 @@ class AnsibleGalaxy(base.Base):
     Additional options can be passed to `ansible-galaxy install` through the
     options dict.  Any option set in this section will override the defaults.
 
+    .. note::
+
+        Molecule will remove any options matching '^[v]+$', and pass `-vvv`
+        to the underlying `ansible-galaxy` command when executing
+        `molecule --debug`.
+
     .. code-block:: yaml
 
         dependency:
@@ -86,6 +92,17 @@ class AnsibleGalaxy(base.Base):
             d['vvv'] = True
 
         return d
+
+    # NOTE(retr0h): Override the base classes' options() to handle `ansible-galaxy`
+    # one-off.
+    @property
+    def options(self):
+        o = self._config.config['dependency']['options']
+        # NOTE(retr0h): Remove verbose options added by the user while in debug.
+        if self._config.debug:
+            o = util.filter_verbose_permutation(o)
+
+        return util.merge_dicts(self.default_options, o)
 
     @property
     def default_env(self):

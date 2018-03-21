@@ -43,7 +43,7 @@ def _dependency_section_data():
             'name': 'galaxy',
             'options': {
                 'foo': 'bar',
-                'vvv': True,
+                'v': True,
             },
             'env': {
                 'FOO': 'bar',
@@ -108,7 +108,7 @@ def test_options_property(_instance, role_file, roles_path):
         'role-file': role_file,
         'roles-path': roles_path,
         'foo': 'bar',
-        'vvv': True,
+        'v': True,
     }
 
     assert x == _instance.options
@@ -141,7 +141,7 @@ def test_bake(_instance, role_file, roles_path):
     _instance.bake()
     x = [
         str(sh.ansible_galaxy), 'install', '--role-file={}'.format(role_file),
-        '--roles-path={}'.format(roles_path), '--force', '--foo=bar', '-vvv'
+        '--roles-path={}'.format(roles_path), '--force', '--foo=bar', '-v'
     ]
     result = str(_instance._sh_command).split()
 
