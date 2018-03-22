@@ -308,6 +308,24 @@ def test_verbose_flag_preserves_verbose_option():
     assert {'verbose': True} == options
 
 
+def test_filter_verbose_permutation():
+    options = {
+        'v': True,
+        'vv': True,
+        'vvv': True,
+        'vfoo': True,
+        'foo': True,
+        'bar': True,
+    }
+
+    x = {
+        'vfoo': True,
+        'foo': True,
+        'bar': True,
+    }
+    assert x == util.filter_verbose_permutation(options)
+
+
 def test_title():
     assert 'Foo' == util.title('foo')
     assert 'Foo Bar' == util.title('foo_bar')

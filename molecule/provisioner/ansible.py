@@ -60,6 +60,12 @@ class Ansible(base.Base):
 
         Options do not affect the create and destroy actions.
 
+    .. note::
+
+        Molecule will remove any options matching '^[v]+$', and pass `-vvv`
+        to the underlying `ansible-playbook` command when executing
+        `molecule --debug`.
+
     .. code-block:: yaml
 
         provisioner:
@@ -350,8 +356,13 @@ class Ansible(base.Base):
     def options(self):
         if self._config.action in ['create', 'destroy']:
             return self.default_options
-        return util.merge_dicts(self.default_options,
-                                self._config.config['provisioner']['options'])
+
+        o = self._config.config['provisioner']['options']
+        # NOTE(retr0h): Remove verbose options added by the user while in debug.
+        if self._config.debug:
+            o = util.filter_verbose_permutation(o)
+
+        return util.merge_dicts(self.default_options, o)
 
     @property
     def env(self):

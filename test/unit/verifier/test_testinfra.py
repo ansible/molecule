@@ -48,7 +48,7 @@ def _verifier_section_data():
             'testinfra',
             'options': {
                 'foo': 'bar',
-                'vvv': True,
+                'v': True,
                 'verbose': True,
             },
             'additional_files_or_dirs': [
@@ -95,7 +95,8 @@ def test_default_options_property_updates_debug(inventory_file, _instance):
     x = {
         'connection': 'ansible',
         'ansible-inventory': inventory_file,
-        'debug': True
+        'debug': True,
+        'vvv': True,
     }
 
     assert x == _instance.default_options
@@ -204,7 +205,7 @@ def test_options_property(inventory_file, _instance):
         'connection': 'ansible',
         'ansible-inventory': inventory_file,
         'foo': 'bar',
-        'vvv': True,
+        'v': True,
         'verbose': True,
     }
 
@@ -241,7 +242,7 @@ def test_bake(_patched_testinfra_get_tests, inventory_file, _instance):
         str(sh.Command('py.test')),
         '--ansible-inventory={}'.format(inventory_file),
         '--connection=ansible',
-        '-vvv',
+        '-v',
         '--foo=bar',
         'foo.py',
         'bar.py',
