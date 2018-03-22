@@ -28,8 +28,6 @@ Install the remaining requirements in a venv (optional).
 
     $ pip install -r test-requirements.txt -r requirements.txt
 
-.. _`Tox`: https://tox.readthedocs.io/en/latest
-
 .. _full_testing:
 
 Full
