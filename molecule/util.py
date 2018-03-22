@@ -232,7 +232,7 @@ def verbose_flag(options):
 
 
 def filter_verbose_permutation(options):
-    return {k: options[k] for k in options if not re.match('^([v]+)$', k)}
+    return {k: options[k] for k in options if not re.match('^[v]+$', k)}
 
 
 def title(word):
