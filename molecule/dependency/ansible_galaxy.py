@@ -93,12 +93,13 @@ class AnsibleGalaxy(base.Base):
 
         return d
 
-    # NOTE(retr0h): Override the base classes' options() to handle `ansible-galaxy`
-    # one-off.
+    # NOTE(retr0h): Override the base classes' options() to handle
+    # `ansible-galaxy` one-off.
     @property
     def options(self):
         o = self._config.config['dependency']['options']
-        # NOTE(retr0h): Remove verbose options added by the user while in debug.
+        # NOTE(retr0h): Remove verbose options added by the user while in
+        # debug.
         if self._config.debug:
             o = util.filter_verbose_permutation(o)
 

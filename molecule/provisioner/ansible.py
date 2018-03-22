@@ -358,7 +358,8 @@ class Ansible(base.Base):
             return self.default_options
 
         o = self._config.config['provisioner']['options']
-        # NOTE(retr0h): Remove verbose options added by the user while in debug.
+        # NOTE(retr0h): Remove verbose options added by the user while in
+        # debug.
         if self._config.debug:
             o = util.filter_verbose_permutation(o)
 
