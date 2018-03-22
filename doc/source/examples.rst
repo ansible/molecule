@@ -129,3 +129,40 @@ On linux add the following Vagrantfile to ~/.vagrant.d/Vagrantfile.
         config.proxy.no_proxy = ENV['NO_PROXY']
       end
     end
+
+Sharing Across Scenarios
+========================
+
+Playbooks and tests can be shared across scenarios.
+
+::
+
+    $ tree shared-tests
+    shared-tests
+    ├── molecule
+    │   ├── centos
+    │   │   └── molecule.yml
+    │   ├── resources
+    │   │   ├── playbooks
+    │   │   │   ├── Dockerfile.j2
+    │   │   │   ├── create.yml
+    │   │   │   ├── destroy.yml
+    │   │   │   ├── playbook.yml
+    │   │   │   └── prepare.yml
+    │   │   └── tests
+    │   │       └── test_default.py
+    │   ├── ubuntu
+    │   │   └── molecule.yml
+    │   └── ubuntu-upstart
+    │       └── molecule.yml
+
+Tests can be shared across scenarios.  In this example the `tests` directory
+lives in a shared location and `molecule.yml` is points to the shared tests.
+
+.. code-block:: yaml
+
+    verifier:
+    name: testinfra
+    directory: ../resources/tests/
+    lint:
+      name: flake8
