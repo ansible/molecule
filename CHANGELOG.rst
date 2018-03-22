@@ -10,6 +10,35 @@ functionality in a backwards-compatible manner.
 
 .. _`Semantic Versioning`: http://semver.org
 
+2.11
+====
+
+* Correct verbose flag options with `--debug`.
+* Bumped Ansible 2.4 and 2.3 minor versions.
+* Reimplemented schema validation with Cerberus.
+* Bumped version of jinja2.
+* Move merge_dicts into util.
+* Forward port Molecule v1 shell dependency manager.
+* Vagrantfile cleanup.
+* Ability to log into a Docker registry.
+
+Important Changes
+-----------------
+
+* Reimplemented schema validation with Cerberus.  The Molecule file is
+  thoroughly validated.  This may result in validation errors if the
+  developer's `molecule.yml` is doing something unusual.
+
+* Cleaned up the Vagrantfile, and allow the developer to change options
+  on the base Vagrant config object.
+
+Breaking Changes
+----------------
+
+* Changed Vagrant's `molecule.yml` `raw_config_args` to
+  `provider_raw_config_args` for differentiating
+  `instance_raw_config_args`.
+
 2.10.1
 ======
 
@@ -28,10 +57,10 @@ functionality in a backwards-compatible manner.
 Important Changes
 -----------------
 
-PR #1147 reduced Vagrant create time, which disabled Vagrant from
-automatically inserting a keypair.  Molecule's default is now changed
-back to Vagrant's default of True, which may reduce the speed of Vagrant
-create as fixed by #1147.
+* PR #1147 reduced Vagrant create time, which disabled Vagrant from
+  automatically inserting a keypair.  Molecule's default is now changed
+  back to Vagrant's default of True, which may reduce the speed of Vagrant
+  create as fixed by #1147.
 
 2.9
 ===
@@ -53,11 +82,9 @@ create as fixed by #1147.
 Important Changes
 -----------------
 
-These changes do not impact existing projects.  However, if one was using the
-old syntax, and upgraded create.yml, changes would be required.
-
-* The Docker driver's registry has been moved to a key named `url` under
-  `registry`.
+* These changes do not impact existing projects.  However, if one was using the
+  old syntax, and upgraded create.yml, changes would be required.  The Docker
+  driver's registry has been moved to a key named `url` under `registry`.
 
 .. code-block:: yaml
 
