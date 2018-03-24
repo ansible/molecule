@@ -290,84 +290,124 @@ def test_links_property(_instance):
 def test_inventory_property(_instance):
     x = {
         'ungrouped': {
-            'vars': {},
-        },
-        'all': {
-            'hosts': {
-                'instance-1': {
-                    'ansible_connection': 'docker',
-                    'foo': 'bar',
-                },
-                'instance-2': {
-                    'ansible_connection': 'docker',
-                    'foo': 'bar',
-                },
-            }
+            'vars': {}
         },
         'bar': {
             'hosts': {
                 'instance-1': {
-                    'ansible_connection': 'docker',
                     'foo': 'bar',
-                },
+                    'ansible_connection': 'docker'
+                }
             },
             'children': {
                 'child1': {
                     'hosts': {
                         'instance-1': {
-                            'ansible_connection': 'docker',
                             'foo': 'bar',
-                        },
+                            'ansible_connection': 'docker'
+                        }
                     }
                 }
+            },
+            'vars': {
+                'molecule_file':
+                "{{ lookup('env', 'MOLECULE_FILE') }}",
+                'molecule_ephemeral_directory':
+                "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
+                'molecule_scenario_directory':
+                "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
+                'molecule_yml':
+                "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
+            }
+        },
+        'all': {
+            'hosts': {
+                'instance-1': {
+                    'foo': 'bar',
+                    'ansible_connection': 'docker'
+                },
+                'instance-2': {
+                    'foo': 'bar',
+                    'ansible_connection': 'docker'
+                }
+            },
+            'vars': {
+                'molecule_file':
+                "{{ lookup('env', 'MOLECULE_FILE') }}",
+                'molecule_ephemeral_directory':
+                "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
+                'molecule_scenario_directory':
+                "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
+                'molecule_yml':
+                "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
             }
         },
         'foo': {
             'hosts': {
                 'instance-1': {
-                    'ansible_connection': 'docker',
                     'foo': 'bar',
+                    'ansible_connection': 'docker'
                 },
                 'instance-2': {
-                    'ansible_connection': 'docker',
                     'foo': 'bar',
-                },
+                    'ansible_connection': 'docker'
+                }
             },
             'children': {
                 'child1': {
                     'hosts': {
                         'instance-1': {
-                            'ansible_connection': 'docker',
                             'foo': 'bar',
-                        },
+                            'ansible_connection': 'docker'
+                        }
                     }
                 },
                 'child2': {
                     'hosts': {
                         'instance-2': {
-                            'ansible_connection': 'docker',
                             'foo': 'bar',
-                        },
+                            'ansible_connection': 'docker'
+                        }
                     }
-                },
+                }
+            },
+            'vars': {
+                'molecule_file':
+                "{{ lookup('env', 'MOLECULE_FILE') }}",
+                'molecule_ephemeral_directory':
+                "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
+                'molecule_scenario_directory':
+                "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
+                'molecule_yml':
+                "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
             }
         },
         'baz': {
             'hosts': {
                 'instance-2': {
-                    'ansible_connection': 'docker',
                     'foo': 'bar',
-                },
+                    'ansible_connection': 'docker'
+                }
             },
             'children': {
                 'child2': {
                     'hosts': {
                         'instance-2': {
-                            'ansible_connection': 'docker',
                             'foo': 'bar',
-                        },
+                            'ansible_connection': 'docker'
+                        }
                     }
-                },
+                }
+            },
+            'vars': {
+                'molecule_file':
+                "{{ lookup('env', 'MOLECULE_FILE') }}",
+                'molecule_ephemeral_directory':
+                "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
+                'molecule_scenario_directory':
+                "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
+                'molecule_yml':
+                "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
             }
         }
     }
@@ -382,30 +422,40 @@ def test_inventory_property_handles_missing_groups(temp_dir, _instance):
     _instance._config.config['platforms'] = platforms
 
     x = {
-        'all': {
-            'hosts': {
-                'instance-1': {
-                    'ansible_connection': 'docker',
-                    'foo': 'bar',
-                },
-                'instance-2': {
-                    'ansible_connection': 'docker',
-                    'foo': 'bar',
-                },
-            }
-        },
         'ungrouped': {
             'hosts': {
                 'instance-1': {
-                    'ansible_connection': 'docker',
                     'foo': 'bar',
+                    'ansible_connection': 'docker'
                 },
                 'instance-2': {
-                    'ansible_connection': 'docker',
                     'foo': 'bar',
-                },
+                    'ansible_connection': 'docker'
+                }
             },
-            'vars': {},
+            'vars': {}
+        },
+        'all': {
+            'hosts': {
+                'instance-1': {
+                    'foo': 'bar',
+                    'ansible_connection': 'docker'
+                },
+                'instance-2': {
+                    'foo': 'bar',
+                    'ansible_connection': 'docker'
+                }
+            },
+            'vars': {
+                'molecule_file':
+                "{{ lookup('env', 'MOLECULE_FILE') }}",
+                'molecule_ephemeral_directory':
+                "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
+                'molecule_scenario_directory':
+                "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
+                'molecule_yml':
+                "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
+            }
         }
     }
 
@@ -656,84 +706,124 @@ def test_write_inventory(temp_dir, _instance):
 
     x = {
         'ungrouped': {
-            'vars': {},
-        },
-        'all': {
-            'hosts': {
-                'instance-1': {
-                    'ansible_connection': 'docker',
-                    'foo': 'bar',
-                },
-                'instance-2': {
-                    'ansible_connection': 'docker',
-                    'foo': 'bar',
-                },
-            }
+            'vars': {}
         },
         'bar': {
             'hosts': {
                 'instance-1': {
-                    'ansible_connection': 'docker',
                     'foo': 'bar',
+                    'ansible_connection': 'docker'
                 }
             },
             'children': {
                 'child1': {
                     'hosts': {
                         'instance-1': {
-                            'ansible_connection': 'docker',
-                            'foo': 'bar'
-                        },
+                            'foo': 'bar',
+                            'ansible_connection': 'docker'
+                        }
                     }
                 }
+            },
+            'vars': {
+                'molecule_file':
+                "{{ lookup('env', 'MOLECULE_FILE') }}",
+                'molecule_ephemeral_directory':
+                "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
+                'molecule_scenario_directory':
+                "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
+                'molecule_yml':
+                "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
+            }
+        },
+        'all': {
+            'hosts': {
+                'instance-1': {
+                    'foo': 'bar',
+                    'ansible_connection': 'docker'
+                },
+                'instance-2': {
+                    'foo': 'bar',
+                    'ansible_connection': 'docker'
+                }
+            },
+            'vars': {
+                'molecule_file':
+                "{{ lookup('env', 'MOLECULE_FILE') }}",
+                'molecule_ephemeral_directory':
+                "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
+                'molecule_scenario_directory':
+                "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
+                'molecule_yml':
+                "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
             }
         },
         'foo': {
             'hosts': {
                 'instance-1': {
-                    'ansible_connection': 'docker',
                     'foo': 'bar',
+                    'ansible_connection': 'docker'
                 },
                 'instance-2': {
-                    'ansible_connection': 'docker',
                     'foo': 'bar',
-                },
+                    'ansible_connection': 'docker'
+                }
             },
             'children': {
                 'child1': {
                     'hosts': {
                         'instance-1': {
-                            'ansible_connection': 'docker',
-                            'foo': 'bar'
-                        },
+                            'foo': 'bar',
+                            'ansible_connection': 'docker'
+                        }
                     }
                 },
                 'child2': {
                     'hosts': {
                         'instance-2': {
-                            'ansible_connection': 'docker',
-                            'foo': 'bar'
-                        },
+                            'foo': 'bar',
+                            'ansible_connection': 'docker'
+                        }
                     }
-                },
+                }
+            },
+            'vars': {
+                'molecule_file':
+                "{{ lookup('env', 'MOLECULE_FILE') }}",
+                'molecule_ephemeral_directory':
+                "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
+                'molecule_scenario_directory':
+                "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
+                'molecule_yml':
+                "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
             }
         },
         'baz': {
             'hosts': {
                 'instance-2': {
-                    'ansible_connection': 'docker',
                     'foo': 'bar',
-                },
+                    'ansible_connection': 'docker'
+                }
             },
             'children': {
                 'child2': {
                     'hosts': {
                         'instance-2': {
-                            'ansible_connection': 'docker',
-                            'foo': 'bar'
-                        },
+                            'foo': 'bar',
+                            'ansible_connection': 'docker'
+                        }
                     }
-                },
+                }
+            },
+            'vars': {
+                'molecule_file':
+                "{{ lookup('env', 'MOLECULE_FILE') }}",
+                'molecule_ephemeral_directory':
+                "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
+                'molecule_scenario_directory':
+                "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
+                'molecule_yml':
+                "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
             }
         }
     }

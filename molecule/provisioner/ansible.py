@@ -441,8 +441,23 @@ class Ansible(base.Base):
             for group in platform.get('groups', ['ungrouped']):
                 instance_name = platform['name']
                 connection_options = self.connection_options(instance_name)
+                molecule_vars = {
+                    'molecule_file':
+                    "{{ lookup('env', 'MOLECULE_FILE') }}",
+                    'molecule_ephemeral_directory':
+                    "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
+                    'molecule_scenario_directory':
+                    "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
+                    'molecule_yml':
+                    "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
+                }
+
+                # All group
                 dd['all']['hosts'][instance_name] = connection_options
+                dd['all']['vars'] = molecule_vars
+                # Named group
                 dd[group]['hosts'][instance_name] = connection_options
+                dd[group]['vars'] = molecule_vars
                 # Ungrouped
                 dd['ungrouped']['vars'] = {}
                 # Children
