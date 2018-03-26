@@ -126,10 +126,11 @@ class Yamllint(base.Base):
         :return: list
         """
         excludes = [
-            '.tox',
             '.git',
-            '.vagrant',
             '.molecule',
+            '.tox',
+            '.vagrant',
+            '.venv',
         ]
         generators = [
             util.os_walk(self._config.project_directory, '*.yml', excludes),
