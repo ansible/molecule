@@ -6,6 +6,28 @@ A good source of examples are the `scenario`_ functional tests.
 
 .. _`scenario`: https://github.com/metacloud/molecule/tree/master/test/scenarios/driver
 
+Docker
+======
+
+Molecule can be executed via an Alpine Linux container by leveraging dind
+(Docker in Docker).  Currently, we only build images for the latest version
+of Ansible and Molecule.  In the future we may break this out into Molecule/
+Ansible versioned pairs.  The images are located on `Docker Hub`_.
+
+To test a role, change directory into the role to test, and execute Molecule as
+follows.
+
+.. code-block:: bash
+
+    docker run --rm -it \
+        -v '$(pwd)':/tmp/$(basename "${PWD}") \
+        -v /var/run/docker.sock:/var/run/docker.sock \
+        -w /tmp/$(basename "${PWD}") \
+        retr0h/molecule:latest \
+        sudo molecule test
+
+.. _`Docker Hub`: https://hub.docker.com/r/retr0h/molecule/
+
 Monolith Repo
 =============
 
