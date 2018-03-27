@@ -49,10 +49,10 @@ class AnsibleLint(base.Base):
               exclude:
                 - path/exclude1
                 - path/exclude2
-              x:
-                - ANSIBLE0011
-                - ANSIBLE0012
+              x: ["ANSIBLE0011,ANSIBLE0012"]
               force-color: True
+
+    The `x` option has to be passed like this due to a `bug`_ in Ansible Lint.
 
     The role linting can be disabled by setting `enabled` to False.
 
@@ -76,6 +76,7 @@ class AnsibleLint(base.Base):
               FOO: bar
 
     .. _`Ansible Lint`: https://github.com/willthames/ansible-lint
+    .. _`bug`: https://github.com/willthames/ansible-lint/issues/279
     """
 
     def __init__(self, config):
