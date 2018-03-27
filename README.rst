@@ -65,6 +65,13 @@ Testing an existing role
    :target: https://asciinema.org/a/AkQ4KhxuGAxwn1YJX3tM5BZld?speed=5&autoplay=1&loop=1
    :alt: Testing an existing role
 
+Docker in Docker
+----------------
+
+.. image:: https://asciinema.org/a/172713.png
+   :target: https://asciinema.org/a/172713?speed=5&autoplay=1&loop=1
+   :alt: Testing an existing role
+
 Documentation
 =============
 
