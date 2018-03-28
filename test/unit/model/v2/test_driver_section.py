@@ -91,7 +91,6 @@ def test_driver_has_errors(_config):
             }],
             'name': ['must be of string type'],
             'provider': [{
-                'foo': ['unknown field'],
                 'name': ['must be of string type'],
             }],
         }]
