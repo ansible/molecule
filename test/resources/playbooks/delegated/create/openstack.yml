@@ -36,6 +36,7 @@
     key_name: "{{ openstack.key_name }}"
     nics:
       - net-id: "{{ openstack_networks[0]['id'] }}"
+    delete_fip: yes
   register: server
 
 - name: Persist ssh config
