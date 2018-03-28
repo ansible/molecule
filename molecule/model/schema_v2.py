@@ -597,7 +597,7 @@ def validate(c):
     else:
         util.merge_dicts(schema, platforms_base_schema)
 
-    v = Validator()
+    v = Validator(allow_unknown=True)
     v.validate(c, schema)
 
     return v.errors
