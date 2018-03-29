@@ -22,44 +22,64 @@
       - ethertype: IPv6
         group: "{{ security_group.id }}"
 
-    neutron:
-      networks:
-        - name: molecule
-          external: false
-          shared: false
-      subnets:
-        - name: molecule
-          network_name: molecule
-          ip_version: 4
-          cidr: 192.168.1.0/24
-          enable_dhcp: true
-          dns_nameservers:
-            - 8.8.8.8
-            - 8.8.4.4
-      routers:
-        - name: molecule
-          network_name: public-floating-601
-          interfaces:
-            - molecule
+    neutron_network_name: molecule
 
     keypair_name: molecule_key
     keypair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
 
-    nova:
-      image: Ubuntu-16.04
-      flavor: NO-Nano
+    nova_image: Ubuntu-16.04
+    nova_flavor: NO-Nano
   tasks:
-    - include: security_group.yml
-    - include: keypair.yml
-    - include: neutron.yml
+    - name: Create security group
+      os_security_group:
+        name: "{{ security_group_name }}"
+        description: "{{ security_group_description }}"
+      register: security_group
+
+    - name: Create security group rules
+      os_security_group_rule:
+        security_group: "{{ security_group_name }}"
+        protocol: "{{ item.proto | default(omit) }}"
+        port_range_min: "{{ item.port | default(omit) }}"
+        port_range_max: "{{ item.port | default(omit) }}"
+        remote_ip_prefix: "{{ item.cidr | default(omit) }}"
+        remote_group: "{{ item.group | default(omit) }}"
+        ethertype: "{{ item.ethertype | default(omit) }}"
+      with_items: "{{ security_group_rules }}"
+
+    - name: Test for presence of local keypair
+      stat:
+        path: "{{ keypair_path }}"
+      register: keypair_local
+
+    - name: Delete remote keypair
+      os_keypair:
+        name: "{{ keypair_name }}"
+        state: absent
+      when: not keypair_local.stat.exists
+
+    - name: Create keypair
+      os_keypair:
+        name: "{{ keypair_name }}"
+      register: keypair
+
+    - name: Persist the keypair
+      copy:
+        dest: "{{ keypair_path }}"
+        content: "{{ keypair.key.private_key }}"
+        mode: 0600
+      when: keypair.changed
+
+    - name: Gather facts about network for use with instance creation
+      os_networks_facts:
+        name: "{{ neutron_network_name }}"
 
     - name: Create molecule instance(s)
       os_server:
         name: "{{ item.name }}"
-        image: "{{ nova.image }}"
-        flavor: "{{ nova.flavor }}"
-        security_groups:
-          - "{{ security_group_name }}"
+        image: "{{ item.image }}"
+        flavor: "{{ item.flavor }}"
+        security_groups: "{{ security_group_name }}"
         key_name: "{{ keypair_name }}"
         nics:
           - net-id: "{{ openstack_networks[0]['id'] }}"
