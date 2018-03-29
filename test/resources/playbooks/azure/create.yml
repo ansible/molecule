@@ -6,21 +6,37 @@
   no_log: "{{ not lookup('env', 'MOLECULE_DEBUG') | bool }}"
   vars:
     resource_group_name: molecule
-
     location: westus
-
     ssh_user: molecule
     ssh_port: 22
-
     virtual_network_name: molecule_vnet
-
     subnet_name: molecule_subnet
-
     keypair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
   tasks:
-    - include: resource_group.yml
-    - include: network.yml
-    - include: keypair.yml
+    - name: Create resource group
+      azure_rm_resourcegroup:
+        name: "{{ resource_group_name }}"
+        location: "{{ location }}"
+
+    - name: Create virtual network
+      azure_rm_virtualnetwork:
+        resource_group: "{{ resource_group_name }}"
+        name: "{{ virtual_network_name }}"
+        address_prefixes: "10.10.0.0/16"
+
+    - name: Create subnet
+      azure_rm_subnet:
+        resource_group: "{{ resource_group_name }}"
+        name: "{{ subnet_name }}"
+        address_prefix_cidr: 10.10.1.0/24
+        virtual_network_name: "{{ virtual_network_name }}"
+
+    - name: Create keypair
+      user:
+        name: "{{ lookup('env', 'USER') }}"
+        generate_ssh_key: true
+        ssh_key_file: "{{ keypair_path }}"
+      register: keypair
 
     - name: Create molecule instance(s)
       azure_rm_virtualmachine:
@@ -50,6 +66,7 @@
       until: azure_jobs.finished
       retries: 300
       with_items: "{{ server.results }}"
+
 
     # Mandatory configuration for Molecule to function.
 
