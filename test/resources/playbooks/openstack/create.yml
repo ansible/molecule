@@ -83,7 +83,7 @@
         key_name: "{{ keypair_name }}"
         nics:
           - net-id: "{{ openstack_networks[0]['id'] }}"
-        delete_fip: yes
+        delete_fip: true
       register: server
       with_items: "{{ molecule_yml.platforms }}"
       async: 7200
