@@ -1,6 +1,6 @@
 extends: default
 ignore: |
-  *.molecule/*
+  *.molecule/
   molecule/cookiecutter/
 
 rules:
