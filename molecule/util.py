@@ -294,3 +294,17 @@ def merge_dicts(a, b):
     anyconfig.merge(a, b, ac_merge=MERGE_STRATEGY)
 
     return a
+
+
+def memoize(function):
+    memo = {}
+
+    def wrapper(*args, **kwargs):
+        if args not in memo:
+            rv = function(*args, **kwargs)
+            memo[args] = rv
+
+            return rv
+        return memo[args]
+
+    return wrapper

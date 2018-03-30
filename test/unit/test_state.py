@@ -22,7 +22,6 @@ import os
 
 import pytest
 
-from molecule import config
 from molecule import state
 from molecule import util
 
@@ -107,26 +106,17 @@ def test_change_state_raises(_instance):
         _instance.change_state('invalid-state', True)
 
 
-def test_get_data_loads_existing_state_file(temp_dir, molecule_data):
-    molecule_directory = pytest.helpers.molecule_directory()
-    scenario_directory = os.path.join(molecule_directory, 'default')
-    molecule_file = pytest.helpers.get_molecule_file(scenario_directory)
-    ephemeral_directory = pytest.helpers.molecule_ephemeral_directory()
-    state_file = os.path.join(ephemeral_directory, 'state.yml')
-
-    os.makedirs(ephemeral_directory)
-
+def test_get_data_loads_existing_state_file(_instance, molecule_data,
+                                            config_instance):
     data = {
         'converged': False,
         'created': True,
         'driver': None,
         'prepared': None,
     }
-    util.write_file(state_file, util.safe_dump(data))
+    util.write_file(_instance._state_file, util.safe_dump(data))
 
-    pytest.helpers.write_molecule_file(molecule_file, molecule_data)
-    c = config.Config(molecule_file)
-    s = state.State(c)
+    s = state.State(config_instance)
 
     assert not s.converged
     assert s.created

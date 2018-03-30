@@ -19,6 +19,7 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import os
+import tempfile
 
 from molecule import logger
 from molecule import scenarios
@@ -91,7 +92,13 @@ class Scenario(object):
 
     @property
     def ephemeral_directory(self):
-        return ephemeral_directory(self.directory)
+        project_directory = os.path.basename(self.config.project_directory)
+        scenario_name = self.name
+        project_scenario_directory = os.path.join(
+            'molecule', project_directory, scenario_name)
+        path = ephemeral_directory(project_scenario_directory)
+
+        return ephemeral_directory(path)
 
     @property
     def check_sequence(self):
@@ -167,11 +174,11 @@ class Scenario(object):
          :return: None
          """
         if not os.path.isdir(self.ephemeral_directory):
-            os.mkdir(self.ephemeral_directory)
+            os.makedirs(self.ephemeral_directory)
 
 
 def ephemeral_directory(path):
     d = os.getenv('MOLECULE_EPHEMERAL_DIRECTORY')
     if d:
-        return os.path.join(path, d)
-    return os.path.join(path, '.molecule')
+        return os.path.join(tempfile.gettempdir(), d)
+    return os.path.join(tempfile.gettempdir(), path)

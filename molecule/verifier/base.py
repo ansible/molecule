@@ -94,6 +94,7 @@ class Base(object):
                                 self._config.config['verifier']['env'])
 
     @property
+    @util.memoize
     def lint(self):
         lint_name = self._config.config['verifier']['lint']['name']
         if lint_name == 'flake8':

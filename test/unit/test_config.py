@@ -436,14 +436,6 @@ def test_validate_exists_when_validation_fails(mocker, patched_logger_critical,
     patched_logger_critical.assert_called_once_with(msg)
 
 
-def test_validate_handles_unknown_driver_name(mocker, config_instance):
-    m = mocker.patch('molecule.config.Config._get_driver_name')
-    m.side_effect = AttributeError()
-
-    config_instance._validate()
-    assert 'docker' == config_instance.config['driver']['name']
-
-
 def test_molecule_directory():
     assert '/foo/bar/molecule' == config.molecule_directory('/foo/bar')
 
