@@ -119,6 +119,7 @@ class Config(object):
         return molecule_directory(self.project_directory)
 
     @property
+    @util.memoize
     def dependency(self):
         dependency_name = self.config['dependency']['name']
         if dependency_name == 'galaxy':
@@ -129,6 +130,7 @@ class Config(object):
             return shell.Shell(self)
 
     @property
+    @util.memoize
     def driver(self):
         driver_name = self._get_driver_name()
         driver = None
@@ -178,30 +180,36 @@ class Config(object):
         }
 
     @property
+    @util.memoize
     def lint(self):
         lint_name = self.config['lint']['name']
         if lint_name == 'yamllint':
             return yamllint.Yamllint(self)
 
     @property
+    @util.memoize
     def platforms(self):
         return platforms.Platforms(self)
 
     @property
+    @util.memoize
     def provisioner(self):
         provisioner_name = self.config['provisioner']['name']
         if provisioner_name == 'ansible':
             return ansible.Ansible(self)
 
     @property
+    @util.memoize
     def scenario(self):
         return scenario.Scenario(self)
 
     @property
+    @util.memoize
     def state(self):
         return state.State(self)
 
     @property
+    @util.memoize
     def verifier(self):
         verifier_name = self.config['verifier']['name']
         if verifier_name == 'testinfra':
@@ -210,6 +218,7 @@ class Config(object):
             return goss.Goss(self)
 
     @property
+    @util.memoize
     def verifiers(self):
         return molecule_verifiers()
 
@@ -371,10 +380,7 @@ class Config(object):
         # Prior to validation, we must set values.  This allows us to perform
         # validation in one place.  This feels gross.
         self.config['dependency']['command'] = self.dependency.command
-        try:
-            self.config['driver']['name'] = self.driver.name
-        except AttributeError:
-            pass
+        self.config['driver']['name'] = self.driver.name
 
         errors = schema_v2.validate(self.config)
         if errors:
