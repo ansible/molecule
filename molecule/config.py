@@ -310,6 +310,7 @@ class Config(object):
                     'destroy': 'destroy.yml',
                     'prepare': 'prepare.yml',
                     'side_effect': None,
+                    'verify': 'verify.yml',
                 },
                 'lint': {
                     'name': 'ansible-lint',

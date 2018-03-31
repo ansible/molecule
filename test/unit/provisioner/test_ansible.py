@@ -598,6 +598,16 @@ def test_syntax(_instance, mocker, _patched_ansible_playbook):
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
+def test_verify(_instance, mocker, _patched_ansible_playbook):
+    _instance.verify()
+
+    _patched_ansible_playbook.assert_called_once_with(
+        _instance._config.provisioner.playbooks.verify,
+        _instance._config,
+    )
+    _patched_ansible_playbook.return_value.execute.assert_called_once_with()
+
+
 def test_write_config(temp_dir, _instance):
     _instance.write_config()
 

@@ -566,6 +566,16 @@ class Ansible(base.Base):
         pb.add_cli_arg('syntax-check', True)
         pb.execute()
 
+    def verify(self):
+        """
+        Executes `ansible-playbook` against the verify playbook and returns
+        None.
+
+        :return: None
+        """
+        pb = self._get_ansible_playbook(self.playbooks.verify)
+        pb.execute()
+
     def write_config(self):
         """
         Writes the provisioner's config file to disk and returns None.

@@ -60,6 +60,10 @@ class AnsiblePlaybooks(object):
     def side_effect(self):
         return self._get_ansible_playbook('side_effect')
 
+    @property
+    def verify(self):
+        return self._get_ansible_playbook('verify')
+
     def _get_ansible_playbook(self, section):
         c = self._config.config
         driver_dict = c['provisioner']['playbooks'].get(

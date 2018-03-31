@@ -27,6 +27,14 @@ from molecule.verifier import goss
 
 
 @pytest.fixture
+def _patched_ansible_verify(mocker):
+    m = mocker.patch('molecule.provisioner.ansible.Ansible.verify')
+    m.return_value = 'patched-ansible-verify-stdout'
+
+    return m
+
+
+@pytest.fixture
 def _patched_goss_get_tests(mocker):
     m = mocker.patch('molecule.verifier.goss.Goss._get_tests')
     m.return_value = [
@@ -135,13 +143,11 @@ def test_bake(_instance):
     assert _instance.bake() is None
 
 
-def test_execute(patched_logger_info, patched_ansible_converge,
+def test_execute(patched_logger_info, _patched_ansible_verify,
                  _patched_goss_get_tests, patched_logger_success, _instance):
     _instance.execute()
 
-    goss_playbook = os.path.join(_instance._config.scenario.directory,
-                                 'verifier.yml')
-    patched_ansible_converge.assert_called_once_with(goss_playbook)
+    _patched_ansible_verify.assert_called_once_with()
 
     msg = 'Executing Goss tests found in {}/...'.format(_instance.directory)
     patched_logger_info.assert_called_once_with(msg)

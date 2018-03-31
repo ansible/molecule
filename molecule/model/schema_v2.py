@@ -231,6 +231,9 @@ base_schema = {
                         'type': 'string',
                         'nullable': True,
                     },
+                    'verify': {
+                        'type': 'string',
+                    },
                 }
             },
             'lint': {

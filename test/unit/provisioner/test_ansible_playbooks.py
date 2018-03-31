@@ -72,6 +72,12 @@ def test_side_effect_property(_instance):
     assert _instance._config.provisioner.playbooks.side_effect is None
 
 
+def test_verify_property(_instance):
+    x = os.path.join(_instance._config.scenario.directory, 'verify.yml')
+
+    assert x == _instance._config.provisioner.playbooks.verify
+
+
 def test_get_ansible_playbook(_instance):
     x = os.path.join(_instance._config.scenario.directory, 'create.yml')
 
