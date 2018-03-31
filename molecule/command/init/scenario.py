@@ -160,8 +160,5 @@ def scenario(ctx, dependency_name, driver_name, lint_name, provisioner_name,
         'verifier_name': verifier_name,
     }
 
-    if verifier_name == 'goss':
-        command_args.update({'verifier_lint_enabled': False})
-
     s = Scenario(command_args)
     s.execute()
