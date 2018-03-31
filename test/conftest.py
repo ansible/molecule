@@ -18,7 +18,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import logging
 import os
 import random
 import shutil
@@ -27,10 +26,24 @@ import string
 import pytest
 
 from molecule import config
+from molecule import logger
+from molecule import util
 
-logging.getLogger('sh').setLevel(logging.WARNING)
+LOG = logger.get_logger(__name__)
 
 pytest_plugins = ['helpers_namespace']
+
+
+@pytest.helpers.register
+def run_command(cmd, env=os.environ, log=True):
+    if log:
+        cmd = _rebake_command(cmd, env)
+
+    return util.run_command(cmd)
+
+
+def _rebake_command(cmd, env, out=LOG.out, err=LOG.error):
+    return cmd.bake(_env=env, _out=out, _err=err)
 
 
 @pytest.fixture

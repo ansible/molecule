@@ -8,6 +8,5 @@
     "scenario_name": "OVERRIDEN",
     "role_name": "OVERRIDEN",
     "verifier_name": "OVERRIDEN",
-    "verifier_lint_name": "flake8",
-    "verifier_lint_enabled": "true"
+    "verifier_lint_name": "flake8"
 }
