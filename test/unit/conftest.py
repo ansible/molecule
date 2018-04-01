@@ -20,12 +20,20 @@
 
 import copy
 import functools
+import glob
 import os
+import re
+import shutil
+import tempfile
 
 import pytest
 
 from molecule import util
 from molecule import config
+
+for d in glob.glob(os.path.join(tempfile.gettempdir(), 'molecule', '*')):
+    if re.search('[A-Z]{5}$', d):
+        shutil.rmtree(d)
 
 
 @pytest.helpers.register
