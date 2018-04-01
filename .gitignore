@@ -6,7 +6,6 @@
 .coverage
 .coverage.*
 .eggs/
-.pytest_cache/
 .tox/
 .vagrant/
 doc/build/

@@ -108,6 +108,7 @@ class Testinfra(base.Base):
     @property
     def default_options(self):
         d = self._config.driver.testinfra_options
+        d['p'] = 'no:cacheprovider'
         if self._config.debug:
             d['debug'] = True
             d['vvv'] = True
