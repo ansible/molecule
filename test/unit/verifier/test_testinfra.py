@@ -85,7 +85,11 @@ def test_config_private_member(_instance):
 
 
 def test_default_options_property(inventory_file, _instance):
-    x = {'connection': 'ansible', 'ansible-inventory': inventory_file}
+    x = {
+        'connection': 'ansible',
+        'ansible-inventory': inventory_file,
+        'p': 'no:cacheprovider',
+    }
 
     assert x == _instance.default_options
 
@@ -97,6 +101,7 @@ def test_default_options_property_updates_debug(inventory_file, _instance):
         'ansible-inventory': inventory_file,
         'debug': True,
         'vvv': True,
+        'p': 'no:cacheprovider',
     }
 
     assert x == _instance.default_options
@@ -108,7 +113,8 @@ def test_default_options_property_updates_sudo(inventory_file, _instance,
     x = {
         'connection': 'ansible',
         'ansible-inventory': inventory_file,
-        'sudo': True
+        'sudo': True,
+        'p': 'no:cacheprovider',
     }
 
     assert x == _instance.default_options
@@ -207,6 +213,7 @@ def test_options_property(inventory_file, _instance):
         'foo': 'bar',
         'v': True,
         'verbose': True,
+        'p': 'no:cacheprovider',
     }
 
     assert x == _instance.options
@@ -223,6 +230,7 @@ def test_options_property_handles_cli_args(inventory_file, _instance):
         'debug': True,
         'vvv': True,
         'verbose': True,
+        'p': 'no:cacheprovider',
     }
 
     assert x == _instance.options
@@ -246,6 +254,8 @@ def test_bake(_patched_testinfra_get_tests, inventory_file, _instance):
         '--foo=bar',
         'foo.py',
         'bar.py',
+        '-p',
+        'no:cacheprovider',
         file1_file,
     ]
     result = str(_instance._testinfra_command).split()
