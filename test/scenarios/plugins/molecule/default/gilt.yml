@@ -1,12 +1,12 @@
 ---
 - git: https://github.com/yatesr/ansible-timezone.git
   version: master
-  dst: molecule/default/.molecule/roles/yatesr.ansible-timezone/
+  dst: $MOLECULE_EPHEMERAL_DIRECTORY/roles/yatesr.ansible-timezone/
 
 - git: https://github.com/retr0h/ansible-plugins.git
   version: master
   files:
     - src: library/library.py
-      dst: molecule/default/.molecule/library/dependency_library.py
+      dst: $MOLECULE_EPHEMERAL_DIRECTORY/library/dependency_library.py
     - src: plugins/filters/core.py
-      dst: molecule/default/.molecule/plugins/filters/dependency_filter.py
+      dst: $MOLECULE_EPHEMERAL_DIRECTORY/plugins/filters/dependency_filter.py

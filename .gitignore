@@ -6,7 +6,6 @@
 .coverage
 .coverage.*
 .eggs/
-.molecule/
 .pytest_cache/
 .tox/
 .vagrant/
