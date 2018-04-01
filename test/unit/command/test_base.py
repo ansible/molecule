@@ -83,8 +83,12 @@ def test_prune(_instance):
     state_file = os.path.join(ephemeral_directory, 'state.yml')
     inventory_file = os.path.join(ephemeral_directory, 'ansible_inventory.yml')
     config_file = os.path.join(ephemeral_directory, 'ansible.cfg')
+    role_directory = os.path.join(ephemeral_directory, 'roles')
+    empty_role_directory = os.path.join(role_directory, 'foo')
 
     os.mkdir(baz_directory)
+    os.mkdir(role_directory)
+    os.mkdir(empty_role_directory)
     for f in [foo_file, bar_file, state_file]:
         util.write_file(f, '')
 
@@ -96,6 +100,7 @@ def test_prune(_instance):
     assert os.path.isfile(config_file)
     assert os.path.isfile(inventory_file)
     assert not os.path.isdir(baz_directory)
+    assert not os.path.isdir(role_directory)
 
 
 def test_print_info(mocker, patched_logger_info, _instance):

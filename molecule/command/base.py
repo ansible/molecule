@@ -72,9 +72,9 @@ class Base(object):
 
         # Remove empty directories.
         for dirpath, dirs, files in os.walk(
-                self._config.scenario.ephemeral_directory):
+                self._config.scenario.ephemeral_directory, topdown=False):
             if not dirs and not files:
-                os.rmdir(dirpath)
+                os.removedirs(dirpath)
 
     def print_info(self):
         msg = "Scenario: '{}'".format(self._config.scenario.name)
