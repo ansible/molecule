@@ -450,6 +450,8 @@ class Ansible(base.Base):
                     "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
                     'molecule_yml':
                     "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
+                    'molecule_instance_config':
+                    "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
                 }
 
                 # All group

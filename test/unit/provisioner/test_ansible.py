@@ -317,7 +317,9 @@ def test_inventory_property(_instance):
                 'molecule_scenario_directory':
                 "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
                 'molecule_yml':
-                "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
+                "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
+                'molecule_instance_config':
+                "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
             }
         },
         'all': {
@@ -339,7 +341,9 @@ def test_inventory_property(_instance):
                 'molecule_scenario_directory':
                 "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
                 'molecule_yml':
-                "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
+                "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
+                'molecule_instance_config':
+                "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
             }
         },
         'foo': {
@@ -379,7 +383,9 @@ def test_inventory_property(_instance):
                 'molecule_scenario_directory':
                 "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
                 'molecule_yml':
-                "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
+                "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
+                'molecule_instance_config':
+                "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
             }
         },
         'baz': {
@@ -407,7 +413,9 @@ def test_inventory_property(_instance):
                 'molecule_scenario_directory':
                 "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
                 'molecule_yml':
-                "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
+                "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
+                'molecule_instance_config':
+                "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
             }
         }
     }
@@ -454,7 +462,9 @@ def test_inventory_property_handles_missing_groups(temp_dir, _instance):
                 'molecule_scenario_directory':
                 "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
                 'molecule_yml':
-                "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
+                "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
+                'molecule_instance_config':
+                "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
             }
         }
     }
@@ -743,7 +753,9 @@ def test_write_inventory(temp_dir, _instance):
                 'molecule_scenario_directory':
                 "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
                 'molecule_yml':
-                "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
+                "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
+                'molecule_instance_config':
+                "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
             }
         },
         'all': {
@@ -765,7 +777,9 @@ def test_write_inventory(temp_dir, _instance):
                 'molecule_scenario_directory':
                 "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
                 'molecule_yml':
-                "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
+                "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
+                'molecule_instance_config':
+                "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
             }
         },
         'foo': {
@@ -805,7 +819,9 @@ def test_write_inventory(temp_dir, _instance):
                 'molecule_scenario_directory':
                 "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
                 'molecule_yml':
-                "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
+                "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
+                'molecule_instance_config':
+                "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
             }
         },
         'baz': {
@@ -833,7 +849,9 @@ def test_write_inventory(temp_dir, _instance):
                 'molecule_scenario_directory':
                 "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
                 'molecule_yml':
-                "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
+                "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
+                'molecule_instance_config':
+                "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
             }
         }
     }
