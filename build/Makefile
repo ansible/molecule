@@ -1,12 +1,15 @@
-DIR := ${CURDIR}
 USER := retr0h
 TAG := latest
 IMAGE := $(USER)/molecule:$(TAG)
 
 build:
 	@echo "+ $@"
-	docker build -t $(IMAGE) .
+	sudo docker build \
+		--rm=true \
+		--no-cache \
+		-t $(IMAGE) .
+
 
 push:
 	@echo "+ $@"
-	docker push $(IMAGE)
+	sudo docker push $(IMAGE)
