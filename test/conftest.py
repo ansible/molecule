@@ -22,6 +22,7 @@ import os
 import random
 import shutil
 import string
+import tempfile
 
 import pytest
 
@@ -91,7 +92,11 @@ def get_molecule_file(path):
 
 @pytest.helpers.register
 def molecule_ephemeral_directory():
-    return os.path.join(molecule_scenario_directory(), '.molecule')
+    project_directory = 'test-project'
+    scenario_name = 'test-instance'
+
+    return os.path.join(tempfile.gettempdir(), 'molecule', project_directory,
+                        scenario_name)
 
 
 def pytest_addoption(parser):

@@ -19,6 +19,8 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import os
+import tempfile
+
 import pytest
 import sh
 
@@ -150,8 +152,9 @@ def test_command_dependency_ansible_galaxy(scenario_to_test, with_scenario,
     cmd = sh.molecule.bake('dependency', **options)
     pytest.helpers.run_command(cmd)
 
-    dependency_role = os.path.join('molecule', 'ansible-galaxy', '.molecule',
-                                   'roles', 'timezone')
+    dependency_role = os.path.join(tempfile.gettempdir(), 'molecule',
+                                   'dependency', 'ansible-galaxy', 'roles',
+                                   'timezone')
     assert os.path.isdir(dependency_role)
 
 
@@ -177,8 +180,8 @@ def test_command_dependency_gilt(scenario_to_test, with_scenario,
     cmd = sh.molecule.bake('dependency', **options)
     pytest.helpers.run_command(cmd)
 
-    dependency_role = os.path.join('molecule', 'gilt', '.molecule', 'roles',
-                                   'timezone')
+    dependency_role = os.path.join(tempfile.gettempdir(), 'molecule',
+                                   'dependency', 'gilt', 'roles', 'timezone')
     assert os.path.isdir(dependency_role)
 
 
@@ -204,7 +207,8 @@ def test_command_dependency_shell(scenario_to_test, with_scenario,
     cmd = sh.molecule.bake('dependency', **options)
     pytest.helpers.run_command(cmd)
 
-    dependency_role = os.path.join('molecule', 'shell', '.molecule', 'roles',
+    dependency_role = os.path.join(tempfile.gettempdir(), 'molecule',
+                                   'dependency', 'shell', 'roles',
                                    'yatesr.timezone')
     assert os.path.isdir(dependency_role)
 
