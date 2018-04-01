@@ -10,6 +10,16 @@ functionality in a backwards-compatible manner.
 
 .. _`Semantic Versioning`: http://semver.org
 
+2.12.1
+======
+
+* Disable pytest caching plugin.
+
+Important Changes
+-----------------
+
+* No longer need to `.gitignore` the `.pytest_cache/` directory.
+
 2.12
 ====
 
@@ -33,6 +43,7 @@ Important Changes
 * Molecule writes temporary files to `$TMPDIR` hashed as
   `molecule/$role_name/$scenario_name/`.  Temporary files are no longer
   written to `$scenario_directory/.molecule/`.
+* No longer need to `.gitignore` the `.molecule/` directory.
 
 Breaking Changes
 ----------------
