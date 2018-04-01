@@ -10,6 +10,36 @@ functionality in a backwards-compatible manner.
 
 .. _`Semantic Versioning`: http://semver.org
 
+2.12
+====
+
+* Ensure prune properly removes empty dirs.
+* Allow verify playbook to be shared.
+* Added cookiecutter tests.
+* Moved temporary files to $TMPDIR.
+* Added and tested Ansible 2.5 support.
+* Remove include tasks from driver playbooks.
+* Set `delete_fip = yes` for os_server resources.
+* Relaxed schema validation for which allows unknown keys in `molecule.yml`.
+* Corrected AnsibleLint `-x` example.
+* Added dind support and docs.
+* Exclude .venv directory from yamllint.
+* Move Molecule playbook vars into host inventory.
+* Switch functional tests to pytest.raises.
+
+Important Changes
+-----------------
+
+* Molecule writes temporary files to `$TMPDIR` hashed as
+  `molecule/$role_name/$scenario_name/`.  Temporary files are no longer
+  written to `$scenario_directory/.molecule/`.
+
+Breaking Changes
+----------------
+
+* Users of the Goss verifier will need to change their `verifier.yml` playbook
+  to `verify.yml`.
+
 2.11
 ====
 
