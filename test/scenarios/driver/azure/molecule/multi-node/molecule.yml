@@ -21,6 +21,8 @@ provisioner:
   playbooks:
     create: ../../../../../resources/playbooks/azure/create.yml
     destroy: ../../../../../resources/playbooks/azure/destroy.yml
+  env:
+    ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
   inventory:
     group_vars:
       all:
@@ -31,8 +33,6 @@ provisioner:
         virtual_network_name: molecule_vnet
         subnet_name: molecule_subnet
         keypair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
-  env:
-    ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
   lint:
     name: ansible-lint
 scenario:

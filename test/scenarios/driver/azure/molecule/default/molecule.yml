@@ -16,6 +16,16 @@ provisioner:
     destroy: ../../../../../resources/playbooks/azure/destroy.yml
   env:
     ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
+  inventory:
+    group_vars:
+      all:
+        resource_group_name: molecule
+        location: westus
+        ssh_user: molecule
+        ssh_port: 22
+        virtual_network_name: molecule_vnet
+        subnet_name: molecule_subnet
+        keypair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
   lint:
     name: ansible-lint
 scenario:

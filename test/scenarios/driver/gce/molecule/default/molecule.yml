@@ -19,6 +19,12 @@ provisioner:
     destroy: ../../../../../resources/playbooks/gce/destroy.yml
   env:
     ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
+  inventory:
+    group_vars:
+      all:
+        ssh_port: 22
+        ssh_user: "{{ lookup('env', 'USER') }}"
+        ssh_identity_file: "{{ lookup('env', 'HOME') }}/.ssh/google_compute_engine"
   lint:
     name: ansible-lint
 scenario:

@@ -66,6 +66,16 @@ def _molecule_file(_role_directory):
                         'molecule.yml')
 
 
+def yamllint(molecule_file):
+    config_file = os.path.join(
+        os.path.dirname(__file__), os.path.pardir, os.path.pardir,
+        os.path.pardir, '.yamllint')
+    options = {'config-file': config_file}
+    cmd = sh.yamllint.bake('-s', molecule_file, **options)
+
+    pytest.helpers.run_command(cmd)
+
+
 def test_valid(temp_dir, _molecule_file, _role_directory, _command_args,
                _instance):
     _instance._process_templates('molecule', _command_args, _role_directory)
@@ -74,8 +84,7 @@ def test_valid(temp_dir, _molecule_file, _role_directory, _command_args,
 
     assert {} == schema_v2.validate(data)
 
-    cmd = sh.yamllint.bake('-s', _molecule_file)
-    pytest.helpers.run_command(cmd)
+    yamllint(_molecule_file)
 
 
 def test_vagrant_driver(temp_dir, _molecule_file, _role_directory,
@@ -87,8 +96,7 @@ def test_vagrant_driver(temp_dir, _molecule_file, _role_directory,
 
     assert {} == schema_v2.validate(data)
 
-    cmd = sh.yamllint.bake('-s', _molecule_file)
-    pytest.helpers.run_command(cmd)
+    yamllint(_molecule_file)
 
 
 @pytest.mark.parametrize('driver', [
@@ -110,8 +118,7 @@ def test_drivers(driver, temp_dir, _molecule_file, _role_directory,
 
     assert {} == schema_v2.validate(data)
 
-    cmd = sh.yamllint.bake('-s', _molecule_file)
-    pytest.helpers.run_command(cmd)
+    yamllint(_molecule_file)
 
 
 def test_verifier_lint_when_verifier_goss(
@@ -124,5 +131,4 @@ def test_verifier_lint_when_verifier_goss(
     assert {} == schema_v2.validate(data)
     assert not data['verifier']['lint']['enabled']
 
-    cmd = sh.yamllint.bake('-s', _molecule_file)
-    pytest.helpers.run_command(cmd)
+    yamllint(_molecule_file)

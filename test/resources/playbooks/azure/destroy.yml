@@ -4,8 +4,6 @@
   connection: local
   gather_facts: false
   no_log: "{{ not lookup('env', 'MOLECULE_DEBUG') | bool }}"
-  vars:
-    resource_group_name: molecule
   tasks:
     - name: Destroy molecule instance(s)
       azure_rm_virtualmachine:

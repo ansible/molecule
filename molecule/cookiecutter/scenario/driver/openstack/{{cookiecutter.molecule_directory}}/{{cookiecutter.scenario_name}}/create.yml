@@ -5,31 +5,6 @@
   connection: local
   gather_facts: false
   no_log: "{{ not lookup('env', 'MOLECULE_DEBUG') | bool }}"
-  vars:
-    ssh_user: cloud-user
-    ssh_port: 22
-
-    security_group_name: molecule
-    security_group_description: "Security group for testing Molecule"
-    security_group_rules:
-      - proto: tcp
-        port: "{{ ssh_port }}"
-        cidr: '0.0.0.0/0'
-      - proto: icmp
-        port: -1
-        cidr: '0.0.0.0/0'
-      - ethertype: IPv4
-        group: "{{ security_group.id }}"
-      - ethertype: IPv6
-        group: "{{ security_group.id }}"
-
-    neutron_network_name: molecule
-
-    keypair_name: molecule_key
-    keypair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
-
-    nova_image: Ubuntu-16.04
-    nova_flavor: NO-Nano
   tasks:
     - name: Create security group
       os_security_group:
