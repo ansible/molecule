@@ -584,8 +584,6 @@ class Ansible(base.Base):
 
         :return: None
         """
-        # self._verify_config()
-
         template = util.render_template(
             self._get_config_template(), config_options=self.config_options)
         util.write_file(self.config_file, template)
