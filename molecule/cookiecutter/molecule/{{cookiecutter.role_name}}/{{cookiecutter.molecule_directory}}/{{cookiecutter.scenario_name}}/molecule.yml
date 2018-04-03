@@ -39,6 +39,81 @@ platforms:
 {%- endif %}
 provisioner:
   name: {{ cookiecutter.provisioner_name }}
+{%- if cookiecutter.driver_name == 'azure' %}
+  inventory:
+    group_vars:
+      all:
+        {% raw -%}
+        resource_group_name: molecule
+        location: westus
+        ssh_user: molecule
+        ssh_port: 22
+        virtual_network_name: molecule_vnet
+        subnet_name: molecule_subnet
+        keypair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
+        {%- endraw -%}
+{%- elif cookiecutter.driver_name == 'ec2' %}
+  inventory:
+    group_vars:
+      all:
+        {% raw -%}
+        ssh_user: ubuntu
+        ssh_port: 22
+        security_group_name: molecule
+        security_group_description: Security group for testing Molecule
+        security_group_rules:
+          - proto: tcp
+            from_port: "{{ ssh_port }}"
+            to_port: "{{ ssh_port }}"
+            cidr_ip: '0.0.0.0/0'
+          - proto: icmp
+            from_port: 8
+            to_port: -1
+            cidr_ip: '0.0.0.0/0'
+        security_group_rules_egress:
+          - proto: -1
+            from_port: 0
+            to_port: 0
+            cidr_ip: '0.0.0.0/0'
+        keypair_name: molecule_key
+        keypair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
+        {%- endraw -%}
+{%- elif cookiecutter.driver_name == 'gce' %}
+  inventory:
+    group_vars:
+      all:
+        {% raw -%}
+        ssh_port: 22
+        ssh_user: "{{ lookup('env', 'USER') }}"
+        ssh_identity_file: "{{ lookup('env', 'HOME') }}/.ssh/google_compute_engine"
+        {%- endraw -%}
+{%- elif cookiecutter.driver_name == 'openstack' %}
+  inventory:
+    group_vars:
+      all:
+        {% raw -%}
+        ssh_user: cloud-user
+        ssh_port: 22
+        security_group_name: molecule
+        security_group_description: "Security group for testing Molecule"
+        security_group_rules:
+          - proto: tcp
+            port: "{{ ssh_port }}"
+            cidr: '0.0.0.0/0'
+          - proto: icmp
+            port: -1
+            cidr: '0.0.0.0/0'
+          - ethertype: IPv4
+            group: "{{ security_group.id }}"
+          - ethertype: IPv6
+            group: "{{ security_group.id }}"
+        neutron_network_name: molecule
+        keypair_name: molecule_key
+        keypair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
+        nova_image: Ubuntu-16.04
+        nova_flavor: NO-Nano
+        {%- endraw -%}
+{%- endif %}
   lint:
     name: {{ cookiecutter.provisioner_lint_name }}
 scenario:

@@ -29,6 +29,29 @@ provisioner:
     destroy: ../../../../../resources/playbooks/ec2/destroy.yml
   env:
     ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
+  inventory:
+    group_vars:
+      all:
+        ssh_user: ubuntu
+        ssh_port: 22
+        security_group_name: molecule
+        security_group_description: Security group for testing Molecule
+        security_group_rules:
+          - proto: tcp
+            from_port: "{{ ssh_port }}"
+            to_port: "{{ ssh_port }}"
+            cidr_ip: '0.0.0.0/0'
+          - proto: icmp
+            from_port: 8
+            to_port: -1
+            cidr_ip: '0.0.0.0/0'
+        security_group_rules_egress:
+          - proto: -1
+            from_port: 0
+            to_port: 0
+            cidr_ip: '0.0.0.0/0'
+        keypair_name: molecule_key
+        keypair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
   lint:
     name: ansible-lint
 scenario:

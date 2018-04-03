@@ -4,10 +4,6 @@
   connection: local
   gather_facts: false
   no_log: "{{ not lookup('env', 'MOLECULE_DEBUG') | bool }}"
-  vars:
-    ssh_port: 22
-    ssh_user: "{{ lookup('env', 'USER') }}"
-    ssh_identity_file: "{{ lookup('env', 'HOME') }}/.ssh/google_compute_engine"
   tasks:
     - name: Create molecule instance(s)
       gce:
