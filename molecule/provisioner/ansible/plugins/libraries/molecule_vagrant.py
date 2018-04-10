@@ -114,7 +114,7 @@ options:
     description:
       - The desired state of the instance.
     required: True
-    choices: ['up', 'destroy']
+    choices: ['up', 'halt', 'destroy']
     default: None
 requirements:
     - python >= 2.6
