@@ -1,9 +1,6 @@
 Configuration
 =============
 
-Config
-------
-
 .. autoclass:: molecule.config.Config()
    :undoc-members:
 
@@ -269,18 +266,6 @@ Molecule treats scenarios as a first-class citizens, with a top-level
 configuration syntax.
 
 .. autoclass:: molecule.scenario.Scenario()
-   :undoc-members:
-
-Scenarios
----------
-
-.. autoclass:: molecule.scenarios.Scenarios()
-   :undoc-members:
-
-State
------
-
-.. autoclass:: molecule.state.State()
    :undoc-members:
 
 Verifier
