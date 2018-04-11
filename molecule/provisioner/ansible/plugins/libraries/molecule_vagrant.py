@@ -114,7 +114,7 @@ options:
     description:
       - The desired state of the instance.
     required: True
-    choices: ['up', 'destroy']
+    choices: ['up', 'halt', 'destroy']
     default: None
 requirements:
     - python >= 2.6
@@ -354,6 +354,15 @@ class VagrantClient(object):
 
         self._module.exit_json(changed=changed)
 
+    def halt(self):
+        changed = False
+        cd = self._created()
+        if cd:
+            changed = True
+            self._vagrant.halt(force=self._module.params['force_stop'])
+
+        self._module.exit_json(changed=changed)
+
     def _conf(self):
         instance_name = self._module.params['instance_name']
 
@@ -460,7 +469,8 @@ def main():
             provider_raw_config_args=dict(type='list', default=None),
             provision=dict(type='bool', default=False),
             force_stop=dict(type='bool', default=False),
-            state=dict(type='str', default='up', choices=['up', 'destroy'])),
+            state=dict(type='str', default='up', choices=['up', 'destroy',
+                                                          'halt'])),
         supports_check_mode=False)
 
     v = VagrantClient(module)
@@ -470,6 +480,9 @@ def main():
 
     if module.params['state'] == 'destroy':
         v.destroy()
+
+    if module.params['state'] == 'halt':
+        v.halt()
 
 
 from ansible.module_utils.basic import *  # noqa

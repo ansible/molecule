@@ -155,6 +155,22 @@ Destroy instances.
             - instance-1
             - instance-2
 
+Halt instances (shutdown without destroy).
+
+.. code-block:: yaml
+
+    - hosts: localhost
+      connection: local
+      tasks:
+        - name: Halt instances
+          molecule_vagrant:
+            instance_name: "{{ item }}"
+            platform_box: ubuntu/trusty64
+            state: halt
+          with_items:
+            - instance-1
+            - instance-2
+
 Create instances with interfaces.
 
 .. code-block:: yaml
