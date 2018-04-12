@@ -47,7 +47,6 @@ class LXD(base.Base):
           name: lxd
           safe_files:
             - foo
-            - .molecule/bar
 
     .. _`LXD`: https://linuxcontainers.org/lxd/introduction/
     """  # noqa

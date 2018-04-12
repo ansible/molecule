@@ -88,7 +88,6 @@ class Delegated(base.Base):
           name: delegated
           safe_files:
             - foo
-            - .molecule/bar
     """
 
     def __init__(self, config):

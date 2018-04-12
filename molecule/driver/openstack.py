@@ -69,7 +69,6 @@ class Openstack(base.Base):
           name: openstack
           safe_files:
             - foo
-            - .molecule/bar
 
     .. _`OpenStack`: https://www.openstack.org
     """  # noqa

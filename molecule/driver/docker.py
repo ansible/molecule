@@ -84,7 +84,6 @@ class Docker(base.Base):
           name: docker
           safe_files:
             - foo
-            - .molecule/bar
 
     .. _`Docker`: https://www.docker.com
     """  # noqa

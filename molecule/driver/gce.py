@@ -73,7 +73,6 @@ class GCE(base.Base):
           name: gce
           safe_files:
             - foo
-            - .molecule/bar
 
     .. _`GCE`: https://cloud.google.com/compute/docs/
     """  # noqa

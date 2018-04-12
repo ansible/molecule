@@ -51,7 +51,6 @@ class LXC(base.Base):
           name: lxc
           safe_files:
             - foo
-            - .molecule/bar
 
     .. _`LXC`: https://linuxcontainers.org/lxc/introduction/
     """  # noqa

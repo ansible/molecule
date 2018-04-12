@@ -70,7 +70,6 @@ class EC2(base.Base):
           name: ec2
           safe_files:
             - foo
-            - .molecule/bar
 
     .. _`EC2`: https://aws.amazon.com/ec2/
     """  # noqa

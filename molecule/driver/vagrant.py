@@ -116,7 +116,6 @@ class Vagrant(base.Base):
           name: vagrant
           safe_files:
             - foo
-            - .molecule/bar
 
     .. _`Vagrant`: https://www.vagrantup.com
     """  # noqa

@@ -69,7 +69,6 @@ class Azure(base.Base):
           name: azure
           safe_files:
             - foo
-            - .molecule/bar
 
     .. _`Azure`: https://azure.microsoft.com
     """  # noqa
