@@ -103,15 +103,23 @@ def test_status(mocker, _instance):
     assert 2 == len(result)
 
     assert result[0].instance_name == 'instance-1'
-    assert result[0].driver_name == 'Lxc'
-    assert result[0].provisioner_name == 'Ansible'
+    assert result[0].driver_name == 'lxc'
+    assert result[0].provisioner_name == 'ansible'
     assert result[0].scenario_name == 'default'
-    assert result[0].created == 'False'
-    assert result[0].converged == 'False'
+    assert result[0].created == 'false'
+    assert result[0].converged == 'false'
 
     assert result[1].instance_name == 'instance-2'
-    assert result[1].driver_name == 'Lxc'
-    assert result[1].provisioner_name == 'Ansible'
+    assert result[1].driver_name == 'lxc'
+    assert result[1].provisioner_name == 'ansible'
     assert result[1].scenario_name == 'default'
-    assert result[1].created == 'False'
-    assert result[1].converged == 'False'
+    assert result[1].created == 'false'
+    assert result[1].converged == 'false'
+
+
+def test_created_property(_instance):
+    assert 'false' == _instance._created()
+
+
+def test_converged_property(_instance):
+    assert 'false' == _instance._converged()

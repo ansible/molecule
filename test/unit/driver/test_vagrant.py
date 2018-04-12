@@ -227,18 +227,18 @@ def test_status(mocker, _instance):
     assert 2 == len(result)
 
     assert result[0].instance_name == 'instance-1'
-    assert result[0].driver_name == 'Vagrant'
-    assert result[0].provisioner_name == 'Ansible'
+    assert result[0].driver_name == 'vagrant'
+    assert result[0].provisioner_name == 'ansible'
     assert result[0].scenario_name == 'default'
-    assert result[0].created == 'False'
-    assert result[0].converged == 'False'
+    assert result[0].created == 'false'
+    assert result[0].converged == 'false'
 
     assert result[1].instance_name == 'instance-2'
-    assert result[1].driver_name == 'Vagrant'
-    assert result[1].provisioner_name == 'Ansible'
+    assert result[1].driver_name == 'vagrant'
+    assert result[1].provisioner_name == 'ansible'
     assert result[1].scenario_name == 'default'
-    assert result[1].created == 'False'
-    assert result[1].converged == 'False'
+    assert result[1].created == 'false'
+    assert result[1].converged == 'false'
 
 
 def test_get_instance_config(mocker, _instance):
@@ -253,3 +253,11 @@ def test_get_instance_config(mocker, _instance):
         'instance': 'foo',
     }
     assert x == _instance._get_instance_config('foo')
+
+
+def test_created(_instance):
+    assert 'false' == _instance._created()
+
+
+def test_converged(_instance):
+    assert 'false' == _instance._converged()

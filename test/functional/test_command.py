@@ -341,67 +341,67 @@ def test_command_lint(scenario_to_test, with_scenario, scenario_name):
 
 Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    Converged
 ---------------  -------------  ------------------  ---------------  ---------  -----------
-instance         Azure          Ansible             default          False      False
-instance-1       Azure          Ansible             multi-node       False      False
-instance-2       Azure          Ansible             multi-node       False      False
+instance         azure          ansible             default          false      false
+instance-1       azure          ansible             multi-node       false      false
+instance-2       azure          ansible             multi-node       false      false
 """.strip()),  # noqa
         ('driver/docker', 'docker', """
 Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    Converged
 ---------------  -------------  ------------------  ---------------  ---------  -----------
-instance         Docker         Ansible             default          False      False
-instance-1       Docker         Ansible             multi-node       False      False
-instance-2       Docker         Ansible             multi-node       False      False
+instance         docker         ansible             default          false      false
+instance-1       docker         ansible             multi-node       false      false
+instance-2       docker         ansible             multi-node       false      false
 """.strip()),  # noqa
         ('driver/ec2', 'ec2', """
 Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    Converged
 ---------------  -------------  ------------------  ---------------  ---------  -----------
-instance         Ec2            Ansible             default          False      False
-instance-1       Ec2            Ansible             multi-node       False      False
-instance-2       Ec2            Ansible             multi-node       False      False
+instance         ec2            ansible             default          false      false
+instance-1       ec2            ansible             multi-node       false      false
+instance-2       ec2            ansible             multi-node       false      false
 """.strip()),  # noqa
         ('driver/gce', 'gce', """
 Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    Converged
 ---------------  -------------  ------------------  ---------------  ---------  -----------
-instance         Gce            Ansible             default          False      False
-instance-1       Gce            Ansible             multi-node       False      False
-instance-2       Gce            Ansible             multi-node       False      False
+instance         gce            ansible             default          false      false
+instance-1       gce            ansible             multi-node       false      false
+instance-2       gce            ansible             multi-node       false      false
 """.strip()),  # noqa
         ('driver/lxc', 'lxc', """
 Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    Converged
 ---------------  -------------  ------------------  ---------------  ---------  -----------
-instance         Lxc            Ansible             default          False      False
-instance-1       Lxc            Ansible             multi-node       False      False
-instance-2       Lxc            Ansible             multi-node       False      False
+instance         lxc            ansible             default          false      false
+instance-1       lxc            ansible             multi-node       false      false
+instance-2       lxc            ansible             multi-node       false      false
 """.strip()),  # noqa
         ('driver/lxd', 'lxd', """
 Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    Converged
 ---------------  -------------  ------------------  ---------------  ---------  -----------
-instance         Lxd            Ansible             default          False      False
-instance-1       Lxd            Ansible             multi-node       False      False
-instance-2       Lxd            Ansible             multi-node       False      False
+instance         lxd            ansible             default          false      false
+instance-1       lxd            ansible             multi-node       false      false
+instance-2       lxd            ansible             multi-node       false      false
 """.strip()),  # noqa
         ('driver/openstack', 'openstack', """
 Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    Converged
 ---------------  -------------  ------------------  ---------------  ---------  -----------
-instance         Openstack      Ansible             default          False      False
-instance-1       Openstack      Ansible             multi-node       False      False
-instance-2       Openstack      Ansible             multi-node       False      False
+instance         openstack      ansible             default          false      false
+instance-1       openstack      ansible             multi-node       false      false
+instance-2       openstack      ansible             multi-node       false      false
 """.strip()),  # noqa
         ('driver/delegated', 'delegated', """
 Instance Name                 Driver Name    Provisioner Name    Scenario Name    Created    Converged
 ----------------------------  -------------  ------------------  ---------------  ---------  -----------
-delegated-instance-docker     Delegated      Ansible             docker           False      True
-delegated-instance-ec2        Delegated      Ansible             ec2              False      True
-delegated-instance-gce        Delegated      Ansible             gce              False      True
-delegated-instance-openstack  Delegated      Ansible             openstack        False      True
-delegated-instance-vagrant    Delegated      Ansible             vagrant          False      False
+delegated-instance-docker     delegated      ansible             docker           unknown    true
+delegated-instance-ec2        delegated      ansible             ec2              unknown    true
+delegated-instance-gce        delegated      ansible             gce              unknown    true
+delegated-instance-openstack  delegated      ansible             openstack        unknown    true
+delegated-instance-vagrant    delegated      ansible             vagrant          unknown    false
 """.strip()),  # noqa
         ('driver/vagrant', 'vagrant', """
 Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    Converged
 ---------------  -------------  ------------------  ---------------  ---------  -----------
-instance         Vagrant        Ansible             default          False      False
-instance-1       Vagrant        Ansible             multi-node       False      False
-instance-2       Vagrant        Ansible             multi-node       False      False
+instance         vagrant        ansible             default          false      false
+instance-1       vagrant        ansible             multi-node       false      false
+instance-2       vagrant        ansible             multi-node       false      false
 """.strip()),  # noqa
     ],
     indirect=[
@@ -415,51 +415,51 @@ def test_command_list(scenario_to_test, with_scenario, expected):
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, expected', [
         ('driver/azure', 'azure', """
-instance    Azure  Ansible  default     False  False
-instance-1  Azure  Ansible  multi-node  False  False
-instance-2  Azure  Ansible  multi-node  False  False
+instance    azure  ansible  default     false  false
+instance-1  azure  ansible  multi-node  false  false
+instance-2  azure  ansible  multi-node  false  false
 """.strip()),
         ('driver/docker', 'docker', """
-instance    Docker  Ansible  default     False  False
-instance-1  Docker  Ansible  multi-node  False  False
-instance-2  Docker  Ansible  multi-node  False  False
+instance    docker  ansible  default     false  false
+instance-1  docker  ansible  multi-node  false  false
+instance-2  docker  ansible  multi-node  false  false
 """.strip()),
         ('driver/ec2', 'ec2', """
-instance    Ec2  Ansible  default     False  False
-instance-1  Ec2  Ansible  multi-node  False  False
-instance-2  Ec2  Ansible  multi-node  False  False
+instance    ec2  ansible  default     false  false
+instance-1  ec2  ansible  multi-node  false  false
+instance-2  ec2  ansible  multi-node  false  false
 """.strip()),
         ('driver/gce', 'gce', """
-instance    Gce  Ansible  default     False  False
-instance-1  Gce  Ansible  multi-node  False  False
-instance-2  Gce  Ansible  multi-node  False  False
+instance    gce  ansible  default     false  false
+instance-1  gce  ansible  multi-node  false  false
+instance-2  gce  ansible  multi-node  false  false
 """.strip()),
         ('driver/lxc', 'lxc', """
-instance    Lxc  Ansible  default     False  False
-instance-1  Lxc  Ansible  multi-node  False  False
-instance-2  Lxc  Ansible  multi-node  False  False
+instance    lxc  ansible  default     false  false
+instance-1  lxc  ansible  multi-node  false  false
+instance-2  lxc  ansible  multi-node  false  false
 """.strip()),
         ('driver/lxd', 'lxd', """
-instance    Lxd  Ansible  default     False  False
-instance-1  Lxd  Ansible  multi-node  False  False
-instance-2  Lxd  Ansible  multi-node  False  False
+instance    lxd  ansible  default     false  false
+instance-1  lxd  ansible  multi-node  false  false
+instance-2  lxd  ansible  multi-node  false  false
 """.strip()),
         ('driver/openstack', 'openstack', """
-instance    Openstack  Ansible  default     False  False
-instance-1  Openstack  Ansible  multi-node  False  False
-instance-2  Openstack  Ansible  multi-node  False  False
+instance    openstack  ansible  default     false  false
+instance-1  openstack  ansible  multi-node  false  false
+instance-2  openstack  ansible  multi-node  false  false
 """.strip()),
         ('driver/delegated', 'delegated', """
-delegated-instance-docker     Delegated  Ansible  docker     False  True
-delegated-instance-ec2        Delegated  Ansible  ec2        False  True
-delegated-instance-gce        Delegated  Ansible  gce        False  True
-delegated-instance-openstack  Delegated  Ansible  openstack  False  True
-delegated-instance-vagrant    Delegated  Ansible  vagrant    False  False
+delegated-instance-docker     delegated  ansible  docker     unknown  true
+delegated-instance-ec2        delegated  ansible  ec2        unknown  true
+delegated-instance-gce        delegated  ansible  gce        unknown  true
+delegated-instance-openstack  delegated  ansible  openstack  unknown  true
+delegated-instance-vagrant    delegated  ansible  vagrant    unknown  false
 """.strip()),
         ('driver/vagrant', 'vagrant', """
-instance    Vagrant  Ansible  default     False  False
-instance-1  Vagrant  Ansible  multi-node  False  False
-instance-2  Vagrant  Ansible  multi-node  False  False
+instance    vagrant  ansible  default     false  false
+instance-1  vagrant  ansible  multi-node  false  false
+instance-2  vagrant  ansible  multi-node  false  false
 """.strip()),
     ],
     indirect=[
