@@ -109,11 +109,13 @@ class Login(base.Base):
         return match[0]
 
     def _get_login(self, hostname):  # pragma: no cover
+        lines, columns = os.popen('stty size', 'r').read().split()
         login_options = self._config.driver.login_options(hostname)
+        login_options['columns'] = columns
+        login_options['lines'] = lines
         login_cmd = self._config.driver.login_cmd_template.format(
             **login_options)
 
-        lines, columns = os.popen('stty size', 'r').read().split()
         dimensions = (int(lines), int(columns))
         cmd = '/usr/bin/env {}'.format(login_cmd)
         self._pt = pexpect.spawn(cmd, dimensions=dimensions)
