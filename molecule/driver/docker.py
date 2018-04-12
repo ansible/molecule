@@ -103,7 +103,11 @@ class Docker(base.Base):
 
     @property
     def login_cmd_template(self):
-        return 'docker exec -ti {instance} bash'
+        return ('docker exec '
+                '-e COLUMNS={columns} '
+                '-e LINES={lines} '
+                '-e TERM=bash '
+                '-ti {instance} bash')
 
     @property
     def default_safe_files(self):
