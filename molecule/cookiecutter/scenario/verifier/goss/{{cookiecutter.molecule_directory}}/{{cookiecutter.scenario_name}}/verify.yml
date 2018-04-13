@@ -28,6 +28,9 @@
         dest: "{{ goss_dst }}"
         sha256sum: "{{ goss_sha256sum }}"
         mode: 0755
+      register: download_goss
+      until: download_goss is succeeded
+      retries: 3
 
     - name: Copy Goss tests to remote
       copy:
