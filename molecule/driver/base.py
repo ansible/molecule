@@ -174,8 +174,8 @@ class Base(object):
         status_list = []
         for platform in self._config.platforms.instances:
             instance_name = platform['name']
-            driver_name = self.name.capitalize()
-            provisioner_name = self._config.provisioner.name.capitalize()
+            driver_name = self.name
+            provisioner_name = self._config.provisioner.name
             scenario_name = self._config.scenario.name
 
             status_list.append(
@@ -184,8 +184,9 @@ class Base(object):
                     driver_name=driver_name,
                     provisioner_name=provisioner_name,
                     scenario_name=scenario_name,
-                    created=str(self._config.state.created),
-                    converged=str(self._config.state.converged)))
+                    created=self._created(),
+                    converged=self._converged(),
+                ))
 
         return status_list
 
@@ -197,3 +198,9 @@ class Base(object):
             '-o IdentitiesOnly=yes',
             '-o StrictHostKeyChecking=no',
         ]
+
+    def _created(self):
+        return str(self._config.state.created).lower()
+
+    def _converged(self):
+        return str(self._config.state.converged).lower()

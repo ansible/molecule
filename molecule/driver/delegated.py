@@ -119,3 +119,8 @@ class Delegated(base.Base):
 
     def ansible_connection_options(self, instance_name):
         return self.options['ansible_connection_options']
+
+    def _created(self):
+        if self.managed:
+            return super(Delegated, self)._created()
+        return 'unknown'
