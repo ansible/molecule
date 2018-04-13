@@ -121,7 +121,7 @@ def test_command_init_scenario_with_invalid_role_raises(temp_dir):
 
     msg = ("ERROR: The role 'invalid-role-name' not found. "
            'Please choose the proper role name.')
-    assert msg in e.value.stderr
+    assert msg in str(e.value.stderr)
 
 
 def test_command_init_scenario_as_default_without_default_scenario(temp_dir):
@@ -174,7 +174,7 @@ def test_command_init_scenario_without_default_scenario_raises(temp_dir):
 
     msg = ('The default scenario not found.  Please create a scenario '
            "named 'default' first.")
-    assert msg in e.value.stderr
+    assert msg in str(e.value.stderr)
 
 
 def test_command_init_role_with_template(temp_dir):
@@ -252,7 +252,7 @@ def test_command_test_destroy_strategy_always(scenario_to_test, with_scenario,
         pytest.helpers.run_command(cmd, log=False)
 
     msg = 'An error occured during the test sequence.  Cleaning up.'
-    assert msg in e.value.stdout
+    assert msg in str(e.value.stdout)
 
     assert 'PLAY [Destroy]' in e.value.stdout
     assert 0 != e.value.exit_code
@@ -277,7 +277,7 @@ def test_command_test_destroy_strategy_never(scenario_to_test, with_scenario,
         pytest.helpers.run_command(cmd, log=False)
 
     msg = 'An error occured during the test sequence.  Cleaning up.'
-    assert msg not in e.value.stdout
+    assert msg not in str(e.value.stdout)
 
     assert 0 != e.value.exit_code
 

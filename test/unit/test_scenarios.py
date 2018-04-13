@@ -108,7 +108,7 @@ def test_print_matrix(mocker, patched_logger_info, patched_logger_out,
     ├── verify
     └── destroy
 """
-    assert x.encode('utf-8') == patched_logger_out.mock_calls[0][1][0]
+    assert x == patched_logger_out.mock_calls[0][1][0]
     assert mocker.call('') == patched_logger_out.mock_calls[1]
 
 

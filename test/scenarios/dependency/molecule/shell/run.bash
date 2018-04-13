@@ -6,7 +6,7 @@ ansible-galaxy install \
 	-vvv \
 	--force \
 	--roles-path ${MOLECULE_EPHEMERAL_DIRECTORY}/roles/ \
-	yatesr.timezone
+	--role-file ${MOLECULE_SCENARIO_DIRECTORY}/requirements.yml
 
 
 exit 0
