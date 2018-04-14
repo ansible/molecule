@@ -208,8 +208,7 @@ def test_command_dependency_shell(scenario_to_test, with_scenario,
     pytest.helpers.run_command(cmd)
 
     dependency_role = os.path.join(tempfile.gettempdir(), 'molecule',
-                                   'dependency', 'shell', 'roles',
-                                   'yatesr.timezone')
+                                   'dependency', 'shell', 'roles', 'timezone')
     assert os.path.isdir(dependency_role)
 
 

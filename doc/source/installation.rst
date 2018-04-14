@@ -16,6 +16,7 @@ See `INSTALL.rst`, which is created when initializing a new scenario.
 
 * Ansible >= 2.2
 * Python 2.7
+* Python 3.6 with Ansible >= 2.5
 
 CentOS 7
 --------

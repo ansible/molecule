@@ -84,7 +84,7 @@ class Scenarios(object):
             format_node=operator.itemgetter(0),
             get_children=operator.itemgetter(1))
 
-        LOG.out(tf.encode('utf-8'))
+        LOG.out(tf)
         LOG.out('')
 
     def _verify(self):

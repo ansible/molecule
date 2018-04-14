@@ -211,9 +211,9 @@ def strip_ansi_escape(string):
 
 def strip_ansi_color(s):
     # Taken from tabulate
-    invisible_codes = re.compile('\x1b\[\d*m')
+    invisible_codes = re.compile(r'\x1b\[\d*m')
 
-    return re.sub(invisible_codes, '', s)
+    return re.sub(invisible_codes, '', s.decode('utf-8'))
 
 
 def verbose_flag(options):

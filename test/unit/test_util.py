@@ -202,7 +202,7 @@ def test_render_template():
 
 def test_write_file(temp_dir):
     dest_file = os.path.join(temp_dir.strpath, 'test_util_write_file.tmp')
-    contents = binascii.b2a_hex(os.urandom(15)).decode()
+    contents = binascii.b2a_hex(os.urandom(15)).decode('utf-8')
     util.write_file(dest_file, contents)
     with util.open_file(dest_file) as stream:
         data = stream.read()
@@ -282,7 +282,7 @@ def test_strip_ansi_escape():
 
 
 def test_strip_ansi_color():
-    s = 'foo\x1b[0m\x1b[0m\x1b[0m\n\x1b[0m\x1b[0m\x1b[0m\x1b[0m\x1b[0m'
+    s = b'foo\x1b[0m\x1b[0m\x1b[0m\n\x1b[0m\x1b[0m\x1b[0m\x1b[0m\x1b[0m'
 
     assert 'foo\n' == util.strip_ansi_color(s)
 
