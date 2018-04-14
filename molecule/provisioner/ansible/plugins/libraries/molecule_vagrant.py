@@ -331,8 +331,7 @@ class VagrantClient(object):
 
     def up(self):
         changed = False
-        cd = self._created()
-        if not cd:
+        if not self._created():
             changed = True
             provision = self._module.params['provision']
             for line in self._vagrant.up(
@@ -345,8 +344,7 @@ class VagrantClient(object):
 
     def destroy(self):
         changed = False
-        cd = self._created()
-        if cd:
+        if self._created():
             changed = True
             if self._module.params['force_stop']:
                 self._vagrant.halt(force=True)
@@ -356,8 +354,7 @@ class VagrantClient(object):
 
     def halt(self):
         changed = False
-        cd = self._created()
-        if cd:
+        if self._created():
             changed = True
             self._vagrant.halt(force=self._module.params['force_stop'])
 
