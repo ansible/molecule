@@ -20,7 +20,6 @@
 
 import distutils
 import distutils.version
-import platform
 import sys
 
 import ansible
