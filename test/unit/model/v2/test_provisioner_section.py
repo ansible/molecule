@@ -97,6 +97,7 @@ def _model_provisioner_errors_section_data():
             'env': {
                 'foo': 'foo',
                 'foo-bar': 'foo-bar',
+                'foo-bar-baz': None,
             },
             'inventory': {
                 'host_vars': [],
@@ -156,6 +157,10 @@ def test_provisioner_has_errors(_config):
             'env': [{
                 'foo': ["value does not match regex '^[A-Z0-9_-]+$'"],
                 'foo-bar': ["value does not match regex '^[A-Z0-9_-]+$'"],
+                'foo-bar-baz': [
+                    "value does not match regex '^[A-Z0-9_-]+$'",
+                    'null value not allowed'
+                ],
             }],
             'options': ['must be of dict type'],
             'name': ['must be of string type'],
