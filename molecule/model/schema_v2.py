@@ -179,6 +179,9 @@ base_schema = {
                     'type': 'string',
                     'regex': '^[A-Z0-9_-]+$',
                 },
+                'valueschema': {
+                    'nullable': False,
+                },
                 'schema': {
                     'ANSIBLE_BECOME': {
                         'type': 'string',
