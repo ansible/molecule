@@ -1,0 +1,10 @@
+---
+- hosts: all
+  tasks:
+    - name: Host vars from host_vars links
+      command: echo "{{ host_group_vars_host_vars_linked }}"
+      changed_when: false
+
+    - name: Group vars from group_vars links
+      command: echo "{{ host_group_vars_group_vars_linked }}"
+      changed_when: false

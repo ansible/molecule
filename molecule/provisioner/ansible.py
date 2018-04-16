@@ -230,8 +230,8 @@ class Ansible(base.Base):
 
     .. note::
 
-        The source directory linking is relative to the scenario's ephemeral
-        directory (`molecule/$scenario_name/.molecule/`).
+        The source directory linking is relative to the scenario's
+        directory.
 
         The only valid keys are `group_vars` and `host_vars`.  Molecule's
         schema validator will enforce this.
@@ -677,8 +677,7 @@ class Ansible(base.Base):
         """
         for d, source in self.links.items():
             target = os.path.join(self._config.scenario.ephemeral_directory, d)
-            source = os.path.join(self._config.scenario.ephemeral_directory,
-                                  source)
+            source = os.path.join(self._config.scenario.directory, source)
 
             if not os.path.exists(source):
                 msg = "The source path '{}' does not exist.".format(source)
