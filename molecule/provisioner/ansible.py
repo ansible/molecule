@@ -41,6 +41,9 @@ class Ansible(base.Base):
     must provide the create, destroy, and converge playbooks.  Molecule's
     `init` subcommand will provide the necessary files for convenience.
 
+    Molecule will skip tasks which are taged with either `molecule-notest` or
+    `notest`.
+
     .. important::
 
         Reserve the create and destroy playbooks for provisioning.  Do not
@@ -294,7 +297,9 @@ class Ansible(base.Base):
 
     @property
     def default_options(self):
-        d = {}
+        d = {
+            'skip-tags': 'molecule-notest,notest',
+        }
         if self._config.debug:
             d['vvv'] = True
             d['diff'] = True

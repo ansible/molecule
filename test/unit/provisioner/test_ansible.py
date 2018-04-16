@@ -137,7 +137,9 @@ def test_default_config_options_property(_instance):
 
 
 def test_default_options_property(_instance):
-    assert {} == _instance.default_options
+    assert {
+        'skip-tags': 'molecule-notest,notest',
+    } == _instance.default_options
 
 
 def test_default_env_property(_instance):
@@ -186,7 +188,12 @@ def test_config_options_property(_instance):
 @pytest.mark.parametrize(
     'config_instance', ['_provisioner_section_data'], indirect=True)
 def test_options_property(_instance):
-    x = {'become': True, 'foo': 'bar', 'v': True}
+    x = {
+        'become': True,
+        'foo': 'bar',
+        'v': True,
+        'skip-tags': 'molecule-notest,notest',
+    }
 
     assert x == _instance.options
 
@@ -195,15 +202,20 @@ def test_options_property_does_not_merge(_instance):
     for action in ['create', 'destroy']:
         _instance._config.action = action
 
-        assert {} == _instance.options
+        assert {
+            'skip-tags': 'molecule-notest,notest',
+        } == _instance.options
 
 
 def test_options_property_handles_cli_args(_instance):
-    _instance._config.args = {'debug': True}
+    _instance._config.args = {
+        'debug': True,
+    }
     x = {
         'vvv': True,
         'become': True,
         'diff': True,
+        'skip-tags': 'molecule-notest,notest',
     }
 
     assert x == _instance.options
