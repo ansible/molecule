@@ -909,10 +909,11 @@ def test_link_vars(_instance):
         'host_vars': '../host_vars'
     }
     ephemeral_dir = _instance._config.scenario.ephemeral_directory
-    source_group_vars = os.path.join(ephemeral_dir, os.path.pardir,
+    scenario_dir = _instance._config.scenario.directory
+    source_group_vars = os.path.join(scenario_dir, os.path.pardir,
                                      'group_vars')
     target_group_vars = os.path.join(ephemeral_dir, 'group_vars')
-    source_host_vars = os.path.join(ephemeral_dir, os.path.pardir, 'host_vars')
+    source_host_vars = os.path.join(scenario_dir, os.path.pardir, 'host_vars')
     target_host_vars = os.path.join(ephemeral_dir, 'host_vars')
 
     os.mkdir(source_group_vars)
@@ -934,8 +935,8 @@ def test_link_vars_raises_when_source_not_found(_instance,
 
     assert 1 == e.value.code
 
-    source = os.path.join(_instance._config.scenario.ephemeral_directory,
-                          os.path.pardir, 'bar')
+    source = os.path.join(_instance._config.scenario.directory, os.path.pardir,
+                          'bar')
     msg = "The source path '{}' does not exist.".format(source)
     patched_logger_critical.assert_called_once_with(msg)
 
