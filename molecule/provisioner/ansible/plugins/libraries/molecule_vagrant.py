@@ -21,6 +21,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import contextlib
 import os
 import sys
 
@@ -328,19 +329,36 @@ class VagrantClient(object):
         self._vagrantfile = self._config.driver.vagrantfile
         self._vagrant = self._get_vagrant()
         self._write_configs()
+        self._has_error = None
+
+    @contextlib.contextmanager
+    def stderr_cm(self):
+        with open(self._get_vagrant_log(), mode='w') as fh:
+            try:
+                yield fh
+            except Exception:
+                self._has_error = True
 
     def up(self):
         changed = False
         if not self._created():
             changed = True
             provision = self._module.params['provision']
-            for line in self._vagrant.up(
-                    provision=provision, stream_output=True):
-                # NOTE: Add prefix to ensure that output of 'vagrant up'
-                # doesn't start with one of the JSON start characters { or ].
-                print('<vagrant_output> {}'.format(line))
+            try:
+                self._vagrant.up(provision=provision)
+            except Exception:
+                # NOTE(retr0h): Ignore the exception since python-vagrant
+                # passes the actual error as a no-argument ContextManager.
+                pass
 
-        self._module.exit_json(changed=changed, **self._conf())
+            # NOTE(retr0h): Ansible wants only one module return `fail_json`
+            # or `exit_json`.
+            if not self._has_error:
+                self._module.exit_json(changed=changed, **self._conf())
+            else:
+                msg = "ERROR: See log file '{}'".format(
+                    self._get_vagrant_log())
+                self._module.fail_json(msg=msg)
 
     def destroy(self):
         changed = False
@@ -399,7 +417,7 @@ class VagrantClient(object):
     def _get_vagrant(self):
         env = os.environ.copy()
         env['VAGRANT_CWD'] = os.environ['MOLECULE_EPHEMERAL_DIRECTORY']
-        v = vagrant.Vagrant(quiet_stdout=False, quiet_stderr=False, env=env)
+        v = vagrant.Vagrant(err_cm=self.stderr_cm, env=env)
 
         return v
 
@@ -447,6 +465,12 @@ class VagrantClient(object):
                                   self._module.params['provider_options'])
 
         return d
+
+    def _get_vagrant_log(self):
+        instance_name = self._module.params['instance_name']
+
+        return os.path.join(self._config.scenario.ephemeral_directory,
+                            'vagrant-{}.out'.format(instance_name))
 
 
 def main():
