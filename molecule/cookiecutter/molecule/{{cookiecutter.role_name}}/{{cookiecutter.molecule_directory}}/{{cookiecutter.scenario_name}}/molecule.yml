@@ -47,6 +47,6 @@ verifier:
   name: {{ cookiecutter.verifier_name }}
   lint:
     name: {{ cookiecutter.verifier_lint_name }}
-{%- if cookiecutter.verifier_name == 'goss' %}
+{%- if cookiecutter.verifier_name == 'goss' or cookiecutter.verifier_name == 'inspec' %}
     enabled: false
 {%- endif %}

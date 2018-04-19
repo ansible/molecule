@@ -33,7 +33,7 @@
       register: test_results
       with_items: "{{ test_files.stdout_lines }}"
 
-    - name: Display details about the goss results
+    - name: Display details about the Goss results
       debug:
         msg: "{{ item.stdout_lines }}"
       with_items: "{{ test_results.results }}"

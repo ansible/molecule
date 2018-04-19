@@ -64,6 +64,43 @@ def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
     pytest.helpers.run_command(cmd)
 
 
+def test_command_init_role_inspec(temp_dir):
+    role_directory = os.path.join(temp_dir.strpath, 'test-init')
+    options = {
+        'role_name': 'test-init',
+        'verifier_name': 'inspec',
+    }
+    cmd = sh.molecule.bake('init', 'role', **options)
+    pytest.helpers.run_command(cmd)
+
+    os.chdir(role_directory)
+
+    sh.molecule('test')
+
+
+def test_command_init_scenario_inspec(temp_dir):
+    options = {
+        'role_name': 'test-init',
+    }
+    cmd = sh.molecule.bake('init', 'role', **options)
+    pytest.helpers.run_command(cmd)
+
+    role_directory = os.path.join(temp_dir.strpath, 'test-init')
+    os.chdir(role_directory)
+
+    molecule_directory = pytest.helpers.molecule_directory()
+    scenario_directory = os.path.join(molecule_directory, 'test-scenario')
+    options = {
+        'scenario_name': 'test-scenario',
+        'role_name': 'test-init',
+        'verifier_name': 'inspec',
+    }
+    cmd = sh.molecule.bake('init', 'scenario', **options)
+    pytest.helpers.run_command(cmd)
+
+    assert os.path.isdir(scenario_directory)
+
+
 def test_command_init_role_goss(temp_dir):
     role_directory = os.path.join(temp_dir.strpath, 'test-init')
     options = {

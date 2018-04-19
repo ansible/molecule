@@ -310,6 +310,7 @@ base_schema = {
                 'type': 'string',
                 'allowed': [
                     'testinfra',
+                    'inspec',
                     'goss',
                 ],
             },

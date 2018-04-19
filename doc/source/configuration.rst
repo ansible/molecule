@@ -300,6 +300,17 @@ Lint
 
 The Goss verifier does not utilize a linter.
 
+Inspec
+^^^^^^
+
+.. autoclass:: molecule.verifier.inspec.Inspec()
+   :undoc-members:
+
+Lint
+....
+
+The Inspec verifier does not utilize a linter.
+
 Testinfra
 ^^^^^^^^^
 
