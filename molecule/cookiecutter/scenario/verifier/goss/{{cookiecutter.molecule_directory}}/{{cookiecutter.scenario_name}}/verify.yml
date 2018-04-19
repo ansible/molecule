@@ -2,12 +2,6 @@
 # This is an example playbook to execute goss tests.
 # Tests need distributed to the appropriate ansible host/groups
 # prior to execution by `goss validate`.
-#
-# The goss ansible module is installed with molecule.  The ANSIBLE_LIBRARY
-# path is updated appropriately on `molecule verify`.
-
-# Details about ansible module:
-#  - https://github.com/indusbox/goss-ansible
 
 {% raw -%}
 - name: Verify
@@ -48,7 +42,7 @@
       register: test_results
       with_items: "{{ test_files.stdout_lines }}"
 
-    - name: Display details about the goss results
+    - name: Display details about the Goss results
       debug:
         msg: "{{ item.stdout_lines }}"
       with_items: "{{ test_results.results }}"

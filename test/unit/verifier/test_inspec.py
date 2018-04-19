@@ -23,7 +23,7 @@ import os
 import pytest
 
 from molecule import config
-from molecule.verifier import goss
+from molecule.verifier import inspec
 
 
 @pytest.fixture
@@ -35,11 +35,11 @@ def _patched_ansible_verify(mocker):
 
 
 @pytest.fixture
-def _patched_goss_get_tests(mocker):
-    m = mocker.patch('molecule.verifier.goss.Goss._get_tests')
+def _patched_inspec_get_tests(mocker):
+    m = mocker.patch('molecule.verifier.inspec.Inspec._get_tests')
     m.return_value = [
-        'foo.py',
-        'bar.py',
+        'foo.rb',
+        'bar.rb',
     ]
 
     return m
@@ -49,7 +49,7 @@ def _patched_goss_get_tests(mocker):
 def _verifier_section_data():
     return {
         'verifier': {
-            'name': 'goss',
+            'name': 'inspec',
             'env': {
                 'FOO': 'bar',
             },
@@ -66,7 +66,7 @@ def _verifier_section_data():
 @pytest.fixture
 def _instance(_verifier_section_data, patched_config_validate,
               config_instance):
-    return goss.Goss(config_instance)
+    return inspec.Inspec(config_instance)
 
 
 def test_config_private_member(_instance):
@@ -97,7 +97,7 @@ def test_lint_property(_instance):
 
 
 def test_name_property(_instance):
-    assert 'goss' == _instance.name
+    assert 'inspec' == _instance.name
 
 
 def test_enabled_property(_instance):
@@ -124,7 +124,7 @@ def test_options_property_handles_cli_args(_instance):
     _instance._config.args = {'debug': True}
     x = {}
 
-    # Does nothing.  The `goss` command does not support
+    # Does nothing.  The `inspec` command does not support
     # a `debug` flag.
     assert x == _instance.options
 
@@ -134,12 +134,12 @@ def test_bake(_instance):
 
 
 def test_execute(patched_logger_info, _patched_ansible_verify,
-                 _patched_goss_get_tests, patched_logger_success, _instance):
+                 _patched_inspec_get_tests, patched_logger_success, _instance):
     _instance.execute()
 
     _patched_ansible_verify.assert_called_once_with()
 
-    msg = 'Executing Goss tests found in {}/...'.format(_instance.directory)
+    msg = 'Executing Inspec tests found in {}/...'.format(_instance.directory)
     patched_logger_info.assert_called_once_with(msg)
 
     msg = 'Verifier completed successfully.'

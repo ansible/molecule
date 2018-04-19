@@ -27,19 +27,23 @@ from molecule.verifier import base
 LOG = logger.get_logger(__name__)
 
 
-class Goss(base.Base):
+class Inspec(base.Base):
     """
-    `Goss`_ is not the default test runner.
+    `Inspec`_ is not the default test runner.
 
-    `Goss`_ is a YAML based serverspec-like tool for validating a server's
-    configuration.  `Goss`_ is `not` the default verifier used in Molecule.
+    `InSpec`_ is Chef's open-source language for describing security &
+    compliance rules that can be shared between software engineers, operations,
+    and security engineers. Your compliance, security, and other policy
+    requirements become automated tests throughout all stages of the software
+    delivery process. `Inspec`_ is `not` the default verifier used in Molecule.
 
     Molecule executes a playbook (`verify.yml`) located in the role's
-    `scenario.directory`.  This playbook will copy YAML files to the instances,
-    and execute Goss using a community written Goss Ansible module bundled with
-    Molecule.
+    `scenario.directory`.  This playbook will copy test files to the instances,
+    and execute Inspec locally over Ansible.  Molecule executes Inspec over an
+    Ansible transport, in an attempt to provide Inspec support across all
+    Molecule drivers.
 
-    Additional options can be passed to `goss validate` by modifying the verify
+    Additional options can be passed to `inspec exec` by modifying the verify
     playbook.
 
     The testing can be disabled by setting `enabled` to False.
@@ -47,7 +51,7 @@ class Goss(base.Base):
     .. code-block:: yaml
 
         verifier:
-          name: goss
+          name: inspec
           enabled: False
 
     .. important::
@@ -55,23 +59,23 @@ class Goss(base.Base):
         Due to the nature of this verifier.  Molecule does not perform options
         handling in the same fashion as Testinfra.
 
-    .. _`Goss`: https://github.com/aelsabbahy/goss
+    .. _`Inspec`: https://www.chef.io/inspec/
     """
 
     def __init__(self, config):
         """
-        Sets up the requirements to execute `goss` and returns None.
+        Sets up the requirements to execute `inspec` and returns None.
 
         :param config: An instance of a Molecule config.
         :return: None
         """
-        super(Goss, self).__init__(config)
+        super(Inspec, self).__init__(config)
         if config:
             self._tests = self._get_tests()
 
     @property
     def name(self):
-        return 'goss'
+        return 'inspec'
 
     @property
     def default_options(self):
@@ -95,7 +99,7 @@ class Goss(base.Base):
             LOG.warn(msg)
             return
 
-        msg = 'Executing Goss tests found in {}/...'.format(self.directory)
+        msg = 'Executing Inspec tests found in {}/...'.format(self.directory)
         LOG.info(msg)
 
         self._config.provisioner.verify()
@@ -110,5 +114,5 @@ class Goss(base.Base):
         :return: list
         """
         return [
-            filename for filename in util.os_walk(self.directory, 'test_*.yml')
+            filename for filename in util.os_walk(self.directory, 'test_*.rb')
         ]

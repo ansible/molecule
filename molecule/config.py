@@ -44,6 +44,7 @@ from molecule.lint import yamllint
 from molecule.model import schema_v2
 from molecule.provisioner import ansible
 from molecule.verifier import goss
+from molecule.verifier import inspec
 from molecule.verifier import testinfra
 
 LOG = logger.get_logger(__name__)
@@ -214,6 +215,8 @@ class Config(object):
         verifier_name = self.config['verifier']['name']
         if verifier_name == 'testinfra':
             return testinfra.Testinfra(self)
+        elif verifier_name == 'inspec':
+            return inspec.Inspec(self)
         elif verifier_name == 'goss':
             return goss.Goss(self)
 
@@ -415,4 +418,8 @@ def molecule_drivers():
 
 
 def molecule_verifiers():
-    return [goss.Goss(None).name, testinfra.Testinfra(None).name]
+    return [
+        goss.Goss(None).name,
+        inspec.Inspec(None).name,
+        testinfra.Testinfra(None).name,
+    ]
