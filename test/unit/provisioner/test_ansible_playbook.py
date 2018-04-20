@@ -68,22 +68,34 @@ def test_bake_removes_non_interactive_options_from_non_converge_playbooks(
         _inventory_file, _instance):
     _instance.bake()
 
-    x = ('{} --skip-tags=molecule-notest,notest '
-         '--inventory={} playbook').format(
-             str(sh.ansible_playbook), _inventory_file)
+    x = [
+        str(sh.ansible_playbook),
+        '--inventory={}'.format(_inventory_file),
+        '--skip-tags=molecule-notest,notest',
+        'playbook',
+    ]
 
-    assert x == _instance._ansible_command
+    result = str(_instance._ansible_command).split()
+
+    assert sorted(x) == sorted(result)
 
 
 def test_bake_has_ansible_args(_inventory_file, _instance):
     _instance._config.ansible_args = ('foo', 'bar')
     _instance.bake()
 
-    x = ('{} --skip-tags=molecule-notest,notest '
-         '--inventory={} playbook foo bar').format(
-             str(sh.ansible_playbook), _inventory_file)
+    x = [
+        str(sh.ansible_playbook),
+        '--inventory={}'.format(_inventory_file),
+        '--skip-tags=molecule-notest,notest',
+        'playbook',
+        'foo',
+        'bar',
+    ]
 
-    assert x == _instance._ansible_command
+    result = str(_instance._ansible_command).split()
+
+    assert sorted(x) == sorted(result)
 
 
 def test_bake_does_not_have_ansible_args(_inventory_file, _instance):
@@ -92,11 +104,16 @@ def test_bake_does_not_have_ansible_args(_inventory_file, _instance):
         _instance._config.action = action
         _instance.bake()
 
-        x = ('{} --skip-tags=molecule-notest,notest '
-             '--inventory={} playbook').format(
-                 str(sh.ansible_playbook), _inventory_file)
+        x = [
+            str(sh.ansible_playbook),
+            '--inventory={}'.format(_inventory_file),
+            '--skip-tags=molecule-notest,notest',
+            'playbook',
+        ]
 
-        assert x == _instance._ansible_command
+        result = str(_instance._ansible_command).split()
+
+        assert sorted(x) == sorted(result)
 
 
 def test_execute(patched_run_command, _instance):
@@ -112,10 +129,16 @@ def test_execute_bakes(_inventory_file, patched_run_command, _instance):
 
     assert _instance._ansible_command is not None
 
-    cmd = ('{} --skip-tags=molecule-notest,notest '
-           '--inventory={} playbook').format(
-               str(sh.ansible_playbook), _inventory_file)
-    patched_run_command.assert_called_once_with(cmd, debug=False)
+    x = [
+        str(sh.ansible_playbook),
+        '--inventory={}'.format(_inventory_file),
+        '--skip-tags=molecule-notest,notest',
+        'playbook',
+    ]
+
+    result = str(patched_run_command.mock_calls[0][1][0]).split()
+
+    assert sorted(x) == sorted(result)
 
 
 def test_execute_bakes_with_ansible_args(_inventory_file, patched_run_command,
@@ -125,10 +148,18 @@ def test_execute_bakes_with_ansible_args(_inventory_file, patched_run_command,
 
     assert _instance._ansible_command is not None
 
-    cmd = ('{} --skip-tags=molecule-notest,notest --inventory={} '
-           'playbook --foo --bar').format(
-               str(sh.ansible_playbook), _inventory_file)
-    patched_run_command.assert_called_once_with(cmd, debug=False)
+    x = [
+        str(sh.ansible_playbook),
+        '--inventory={}'.format(_inventory_file),
+        '--skip-tags=molecule-notest,notest',
+        'playbook',
+        '--foo',
+        '--bar',
+    ]
+
+    result = str(patched_run_command.mock_calls[0][1][0]).split()
+
+    assert sorted(x) == sorted(result)
 
 
 def test_executes_catches_and_exits_return_code_with_stdout(
