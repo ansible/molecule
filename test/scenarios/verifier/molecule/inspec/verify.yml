@@ -10,7 +10,7 @@
     inspec_package_name: "{{ inspec_download_url.split('/')[-1] }}"
     inspec_bin: /opt/inspec/bin/inspec
 
-    inspec_test_directory: "/tmp/molecule/inspec"
+    inspec_test_directory: /tmp/molecule/inspec
   tasks:
     - name: Download Inspec
       get_url:

@@ -5,17 +5,22 @@
   vars:
     goss_version: v0.2.5
     goss_arch: amd64
-    goss_dst: /usr/local/bin/goss
+    goss_bin: /usr/local/bin/goss
     goss_sha256sum: 31d04f98444ded26e2478fbdb3f5949cc9318bed13b5937598facc1818e1fce1.
-    goss_test_directory: /tmp
+    goss_test_directory: /tmp/molecule/goss
     goss_format: documentation
   tasks:
     - name: Download and install Goss
       get_url:
         url: "https://github.com/aelsabbahy/goss/releases/download/{{ goss_version }}/goss-linux-{{ goss_arch }}"
-        dest: "{{ goss_dst }}"
+        dest: "{{ goss_bin }}"
         sha256sum: "{{ goss_sha256sum }}"
         mode: 0755
+
+    - name: Create Molecule directory for test files
+      file:
+        path: "{{ goss_test_directory }}"
+        state: directory
 
     - name: Copy Goss tests to remote
       copy:
@@ -29,9 +34,10 @@
       register: test_files
 
     - name: Execute Goss tests
-      command: "{{ goss_dst }} -g {{ item }} validate --format {{ goss_format }}"
+      command: "{{ goss_bin }} -g {{ item }} validate --format {{ goss_format }}"
       register: test_results
       with_items: "{{ test_files.stdout_lines }}"
+      ignore_errors: true
 
     - name: Display details about the Goss results
       debug:
