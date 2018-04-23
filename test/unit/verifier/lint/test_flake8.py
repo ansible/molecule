@@ -80,6 +80,8 @@ def test_env_property(_instance):
     assert 'bar' == _instance.env['FOO']
 
 
+@pytest.mark.parametrize(
+    'config_instance', ['_verifier_lint_section_data'], indirect=True)
 def test_name_property(_instance):
     assert 'flake8' == _instance.name
 

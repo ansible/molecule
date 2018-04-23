@@ -343,6 +343,7 @@ base_schema = {
                         'type': 'string',
                         'allowed': [
                             'flake8',
+                            'rubocop',
                         ],
                     },
                     'enabled': {

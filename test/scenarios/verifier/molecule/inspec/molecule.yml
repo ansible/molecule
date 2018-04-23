@@ -22,5 +22,4 @@ scenario:
 verifier:
   name: inspec
   lint:
-    name: flake8
-    enabled: false
+    name: rubocop

@@ -1,5 +1,3 @@
-#  Copyright (c) 2015-2017 Cisco Systems, Inc.
-#
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
 #  deal in the Software without restriction, including without limitation the
@@ -18,45 +16,35 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import os
-
 import pytest
+import sh
 
 from molecule import config
-from molecule.verifier import inspec
 from molecule.verifier.lint import rubocop
 
 
 @pytest.fixture
-def _patched_ansible_verify(mocker):
-    m = mocker.patch('molecule.provisioner.ansible.Ansible.verify')
-    m.return_value = 'patched-ansible-verify-stdout'
+def _patched_get_tests(mocker):
+    m = mocker.patch('molecule.verifier.lint.rubocop.RuboCop._get_tests')
+    m.return_value = ['test1', 'test2', 'test3']
 
     return m
 
 
 @pytest.fixture
-def _patched_inspec_get_tests(mocker):
-    m = mocker.patch('molecule.verifier.inspec.Inspec._get_tests')
-    m.return_value = [
-        'foo.rb',
-        'bar.rb',
-    ]
-
-    return m
-
-
-@pytest.fixture
-def _verifier_section_data():
+def _verifier_lint_section_data():
     return {
         'verifier': {
             'name': 'inspec',
-            'env': {
-                'FOO': 'bar',
-            },
             'lint': {
                 'name': 'rubocop',
-            },
+                'options': {
+                    'foo': 'bar',
+                },
+                'env': {
+                    'FOO': 'bar',
+                },
+            }
         }
     }
 
@@ -65,9 +53,8 @@ def _verifier_section_data():
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.fixture
-def _instance(_verifier_section_data, patched_config_validate,
-              config_instance):
-    return inspec.Inspec(config_instance)
+def _instance(patched_config_validate, config_instance):
+    return rubocop.RuboCop(config_instance)
 
 
 def test_config_private_member(_instance):
@@ -86,87 +73,106 @@ def test_default_env_property(_instance):
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_verifier_section_data'], indirect=True)
+    'config_instance', ['_verifier_lint_section_data'], indirect=True)
 def test_env_property(_instance):
     assert 'bar' == _instance.env['FOO']
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_verifier_section_data'], indirect=True)
-def test_lint_property(_instance):
-    assert isinstance(_instance.lint, rubocop.RuboCop)
-
-
+    'config_instance', ['_verifier_lint_section_data'], indirect=True)
 def test_name_property(_instance):
-    assert 'inspec' == _instance.name
+    assert 'rubocop' == _instance.name
 
 
 def test_enabled_property(_instance):
     assert _instance.enabled
 
 
-def test_directory_property(_instance):
-    parts = _instance.directory.split(os.path.sep)
-
-    assert 'tests' == parts[-1]
-
-
 @pytest.mark.parametrize(
-    'config_instance', ['_verifier_section_data'], indirect=True)
+    'config_instance', ['_verifier_lint_section_data'], indirect=True)
 def test_options_property(_instance):
-    x = {}
+    x = {
+        'foo': 'bar',
+    }
 
     assert x == _instance.options
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_verifier_section_data'], indirect=True)
+    'config_instance', ['_verifier_lint_section_data'], indirect=True)
 def test_options_property_handles_cli_args(_instance):
     _instance._config.args = {'debug': True}
-    x = {}
-
-    # Does nothing.  The `inspec` command does not support
-    # a `debug` flag.
+    x = {
+        'foo': 'bar',
+        'd': True,
+    }
     assert x == _instance.options
 
 
+@pytest.mark.parametrize(
+    'config_instance', ['_verifier_lint_section_data'], indirect=True)
 def test_bake(_instance):
-    assert _instance.bake() is None
+    _instance._tests = ['test1', 'test2', 'test3']
+    _instance.bake()
+    x = '{} --foo=bar test1 test2 test3'.format(str(sh.rubocop))
+
+    assert x == _instance._rubocop_command
 
 
-def test_execute(patched_logger_info, _patched_ansible_verify,
-                 _patched_inspec_get_tests, patched_logger_success, _instance):
+def test_execute(patched_logger_info, patched_logger_success,
+                 patched_run_command, _instance):
+    _instance._tests = ['test1', 'test2', 'test3']
+    _instance._rubocop_command = 'patched-command'
     _instance.execute()
 
-    _patched_ansible_verify.assert_called_once_with()
+    patched_run_command.assert_called_once_with('patched-command', debug=False)
 
-    msg = 'Executing Inspec tests found in {}/...'.format(_instance.directory)
+    msg = 'Executing RuboCop on files found in {}/...'.format(
+        _instance._config.verifier.directory)
     patched_logger_info.assert_called_once_with(msg)
 
-    msg = 'Verifier completed successfully.'
+    msg = 'Lint completed successfully.'
     patched_logger_success.assert_called_once_with(msg)
 
 
-def test_execute_does_not_execute(patched_ansible_converge,
-                                  patched_logger_warn, _instance):
-    _instance._config.config['verifier']['enabled'] = False
+def test_execute_does_not_execute(patched_run_command, patched_logger_warn,
+                                  _instance):
+    _instance._config.config['verifier']['lint']['enabled'] = False
     _instance.execute()
 
-    assert not patched_ansible_converge.called
+    assert not patched_run_command.called
 
-    msg = 'Skipping, verifier is disabled.'
+    msg = 'Skipping, verifier_lint is disabled.'
     patched_logger_warn.assert_called_once_with(msg)
 
 
-def test_does_not_execute_without_tests(patched_ansible_converge,
+def test_does_not_execute_without_tests(patched_run_command,
                                         patched_logger_warn, _instance):
     _instance.execute()
 
-    assert not patched_ansible_converge.called
+    assert not patched_run_command.called
 
     msg = 'Skipping, no tests found.'
     patched_logger_warn.assert_called_once_with(msg)
 
 
-def test_execute_bakes():
-    pass
+@pytest.mark.parametrize(
+    'config_instance', ['_verifier_lint_section_data'], indirect=True)
+def test_execute_bakes(patched_run_command, _instance):
+    _instance._tests = ['test1', 'test2', 'test3']
+    _instance.execute()
+
+    assert _instance._rubocop_command is not None
+
+    cmd = '{} --foo=bar test1 test2 test3'.format(str(sh.rubocop))
+    patched_run_command.assert_called_once_with(cmd, debug=False)
+
+
+def test_executes_catches_and_exits_return_code(patched_run_command,
+                                                _patched_get_tests, _instance):
+    patched_run_command.side_effect = sh.ErrorReturnCode_1(
+        sh.rubocop, b'', b'')
+    with pytest.raises(SystemExit) as e:
+        _instance.execute()
+
+    assert 1 == e.value.code
