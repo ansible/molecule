@@ -48,8 +48,6 @@ class Testinfra(base.Base):
           name: testinfra
           options:
             n: 1
-            v: True
-            setup-show: True
 
     The testing can be disabled by setting `enabled` to False.
 

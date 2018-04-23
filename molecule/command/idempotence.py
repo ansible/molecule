@@ -34,6 +34,7 @@ class Idempotence(base.Base):
     """
     Runs the converge step a second time. If no tasks will be marked as changed
     the scenario will be considered idempotent. 
+    
     Target the default scenario:
 
     $ molecule idempotence
