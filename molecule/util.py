@@ -206,7 +206,7 @@ def instance_with_scenario_name(instance_name, scenario_name):
 
 
 def strip_ansi_escape(string):
-    return re.sub(r'\x1b[^m]*m', '', string)
+    return re.sub(r'\x1b[^m]*m', '', string.decode('utf-8'))
 
 
 def strip_ansi_color(s):

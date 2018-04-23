@@ -276,7 +276,7 @@ def test_instance_with_scenario_name():
 
 
 def test_strip_ansi_escape():
-    string = 'ls\r\n\x1b[00m\x1b[01;31mfoo\x1b[00m\r\n\x1b[01;31m'
+    string = b'ls\r\n\x1b[00m\x1b[01;31mfoo\x1b[00m\r\n\x1b[01;31m'
 
     assert 'ls\r\nfoo\r\n' == util.strip_ansi_escape(string)
 
