@@ -144,7 +144,7 @@ def init_scenario(temp_dir, driver_name):
 def list(x):
     cmd = sh.molecule.bake('list')
     out = pytest.helpers.run_command(cmd, log=False)
-    out = out.stdout
+    out = out.stdout.decode('utf-8')
     out = util.strip_ansi_color(out)
 
     assert x in out
@@ -154,7 +154,7 @@ def list(x):
 def list_with_format_plain(x):
     cmd = sh.molecule.bake('list', {'format': 'plain'})
     out = pytest.helpers.run_command(cmd, log=False)
-    out = out.stdout
+    out = out.stdout.decode('utf-8')
     out = util.strip_ansi_color(out)
 
     assert x in out

@@ -206,14 +206,14 @@ def instance_with_scenario_name(instance_name, scenario_name):
 
 
 def strip_ansi_escape(string):
-    return re.sub(r'\x1b[^m]*m', '', string.decode('utf-8'))
+    return re.sub(r'\x1b[^m]*m', '', string)
 
 
 def strip_ansi_color(s):
     # Taken from tabulate
     invisible_codes = re.compile(r'\x1b\[\d*m')
 
-    return re.sub(invisible_codes, '', s.decode('utf-8'))
+    return re.sub(invisible_codes, '', s)
 
 
 def verbose_flag(options):
