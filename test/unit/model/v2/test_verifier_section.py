@@ -138,7 +138,7 @@ def _model_verifier_allows_inspec_section_data():
         'verifier': {
             'name': 'inspec',
             'lint': {
-                'name': 'flake8',
+                'name': 'rubocop',
             },
         }
     }

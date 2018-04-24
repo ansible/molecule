@@ -309,7 +309,8 @@ Inspec
 Lint
 ....
 
-The Inspec verifier does not utilize a linter.
+.. autoclass:: molecule.verifier.lint.rubocop.RuboCop()
+   :undoc-members:
 
 Testinfra
 ^^^^^^^^^
@@ -321,8 +322,6 @@ Testinfra
 
 Lint
 ....
-
-Molecule handles test linting by invoking configurable linters.
 
 .. autoclass:: molecule.verifier.lint.flake8.Flake8()
    :undoc-members:

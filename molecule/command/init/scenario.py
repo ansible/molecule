@@ -160,5 +160,11 @@ def scenario(ctx, dependency_name, driver_name, lint_name, provisioner_name,
         'verifier_name': verifier_name,
     }
 
+    if verifier_name == 'inspec':
+        command_args['verifier_lint_name'] = 'rubocop'
+
+    if verifier_name == 'goss':
+        command_args['verifier_lint_enabled'] = 'false'
+
     s = Scenario(command_args)
     s.execute()

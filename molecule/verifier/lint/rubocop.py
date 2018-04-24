@@ -29,32 +29,32 @@ from molecule.verifier.lint import base
 LOG = logger.get_logger(__name__)
 
 
-class Flake8(base.Base):
+class RuboCop(base.Base):
     """
-    `Flake8`_ is the default verifier linter.
+    `RuboCop`_ is not the default verifier linter.
 
-    `Flake8`_ is a linter for python files.
+    `RuboCop`_ is a linter for ruby files.
 
-    Additional options can be passed to `flake8` through the options
+    Additional options can be passed to `rubocop` through the options
     dict.  Any option set in this section will override the defaults.
 
     .. code-block:: yaml
 
         verifier:
-          name: testinfra
+          name: inspec
           lint:
-            name: flake8
+            name: rubocop
             options:
-              benchmark: True
+              auto-correct: True
 
     Test file linting can be disabled by setting `enabled` to False.
 
     .. code-block:: yaml
 
         verifier:
-          name: testinfra
+          name: inspec
           lint:
-            name: flake8
+            name: rubocop
             enabled: False
 
     Environment variables can be passed to lint.
@@ -62,30 +62,34 @@ class Flake8(base.Base):
     .. code-block:: yaml
 
         verifier:
-          name: testinfra
+          name: inspec
           lint:
-            name: flake8
+            name: rubocop
             env:
               FOO: bar
 
-    .. _`Flake8`: http://flake8.pycqa.org/en/latest/
+    .. _`RuboCop`: https://rubocop.readthedocs.io/en/latest/
     """
 
     def __init__(self, config):
         """
-        Sets up the requirements to execute `flake8` and returns None.
+        Sets up the requirements to execute `rubocop` and returns None.
 
         :param config: An instance of a Molecule config.
         :return: None
         """
-        super(Flake8, self).__init__(config)
-        self._flake8_command = None
+        super(RuboCop, self).__init__(config)
+        self._rubocop_command = None
         if config:
             self._tests = self._get_tests()
 
     @property
     def default_options(self):
-        return {}
+        d = {}
+        if self._config.debug:
+            d['d'] = True
+
+        return d
 
     @property
     def default_env(self):
@@ -93,11 +97,11 @@ class Flake8(base.Base):
 
     def bake(self):
         """
-        Bake a `flake8` command so it's ready to execute and returns None.
+        Bake a `rubocop` command so it's ready to execute and returns None.
 
         :return: None
         """
-        self._flake8_command = sh.flake8.bake(
+        self._rubocop_command = sh.rubocop.bake(
             self.options,
             self._tests,
             _env=self.env,
@@ -115,15 +119,15 @@ class Flake8(base.Base):
             LOG.warn(msg)
             return
 
-        if self._flake8_command is None:
+        if self._rubocop_command is None:
             self.bake()
 
-        msg = 'Executing Flake8 on files found in {}/...'.format(
+        msg = 'Executing RuboCop on files found in {}/...'.format(
             self._config.verifier.directory)
         LOG.info(msg)
 
         try:
-            util.run_command(self._flake8_command, debug=self._config.debug)
+            util.run_command(self._rubocop_command, debug=self._config.debug)
             msg = 'Lint completed successfully.'
             LOG.success(msg)
         except sh.ErrorReturnCode as e:
@@ -137,5 +141,5 @@ class Flake8(base.Base):
         """
         return [
             filename for filename in util.os_walk(
-                self._config.verifier.directory, 'test_*.py')
+                self._config.verifier.directory, 'test_*.rb')
         ]

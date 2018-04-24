@@ -24,6 +24,7 @@ import abc
 
 from molecule import util
 from molecule.verifier.lint import flake8
+from molecule.verifier.lint import rubocop
 
 
 class Base(object):
@@ -99,3 +100,5 @@ class Base(object):
         lint_name = self._config.config['verifier']['lint']['name']
         if lint_name == 'flake8':
             return flake8.Flake8(self._config)
+        if lint_name == 'rubocop':
+            return rubocop.RuboCop(self._config)
