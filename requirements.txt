@@ -14,6 +14,6 @@ psutil==5.2.2; sys_platform!="win32" and sys_platform!="cygwin"
 PyYAML==3.12
 sh==1.12.14
 tabulate==0.8.2
-testinfra==1.11.1
+testinfra==1.12.0
 tree-format==0.1.2
 yamllint==1.11.1
