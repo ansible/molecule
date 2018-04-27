@@ -101,6 +101,11 @@ options:
       - Additional provider options not explcitly exposed by this module.
     required: False
     default: {}
+  provider_override_args:
+    description:
+      - Additional override options not explcitly exposed by this module.
+    required: False
+    default: None
   provider_raw_config_args:
     description:
       - Additional Vagrant options not explcitly exposed by this module.
@@ -182,7 +187,7 @@ Vagrant.configure('2') do |config|
   ##
 
   if provider['name'] == 'virtualbox'
-    config.vm.provider provider['name'] do |virtualbox|
+    config.vm.provider provider['name'] do |virtualbox, override|
       virtualbox.memory = provider_memory
       virtualbox.cpus = provider_cpus
 
@@ -209,6 +214,12 @@ Vagrant.configure('2') do |config|
           eval("virtualbox.#{raw_config_arg}")
         }
       end
+
+      if provider['override_args']
+        provider['override_args'].each { |override_arg|
+          eval("override.#{override_arg}")
+        }
+      end
     end
 
     # The vagrant-vbguest plugin attempts to update packages
@@ -226,7 +237,7 @@ Vagrant.configure('2') do |config|
   ##
 
   if provider['name'].start_with?('vmware_')
-    config.vm.provider provider['name'] do |vmware|
+    config.vm.provider provider['name'] do |vmware, override|
       vmware.vmx['memsize'] = provider_memory
       vmware.vmx['numvcpus'] = provider_cpus
 
@@ -241,6 +252,12 @@ Vagrant.configure('2') do |config|
           eval("vmware.#{raw_config_arg}")
         }
       end
+
+      if provider['override_args']
+        provider['override_args'].each { |override_arg|
+          eval("override.#{override_arg}")
+        }
+      end
     end
   end
 
@@ -249,7 +266,7 @@ Vagrant.configure('2') do |config|
   ##
 
   if provider['name'] == 'parallels'
-    config.vm.provider provider['name'] do |parallels|
+    config.vm.provider provider['name'] do |parallels, override|
       parallels.memory = provider_memory
       parallels.cpus = provider_cpus
 
@@ -264,6 +281,12 @@ Vagrant.configure('2') do |config|
           eval("parallels.#{raw_config_arg}")
         }
       end
+
+      if provider['override_args']
+        provider['override_args'].each { |override_arg|
+          eval("override.#{override_arg}")
+        }
+      end
     end
   end
 
@@ -272,7 +295,7 @@ Vagrant.configure('2') do |config|
   ##
 
   if provider['name'] == 'libvirt'
-    config.vm.provider provider['name'] do |libvirt|
+    config.vm.provider provider['name'] do |libvirt, override|
       libvirt.memory = provider_memory
       libvirt.cpus = provider_cpus
 
@@ -285,6 +308,12 @@ Vagrant.configure('2') do |config|
       if provider['raw_config_args']
         provider['raw_config_args'].each { |raw_config_arg|
           eval("libvirt.#{raw_config_arg}")
+        }
+      end
+
+      if provider['override_args']
+        provider['override_args'].each { |override_arg|
+          eval("override.#{override_arg}")
         }
       end
     end
@@ -455,6 +484,7 @@ class VagrantClient(object):
                 },
                 'raw_config_args':
                 self._module.params['provider_raw_config_args'],
+                'override_args': self._module.params['provider_override_args'],
             }
         }
 
@@ -487,6 +517,7 @@ def main():
             provider_memory=dict(type='int', default=512),
             provider_cpus=dict(type='int', default=2),
             provider_options=dict(type='dict', default={}),
+            provider_override_args=dict(type='list', default=None),
             provider_raw_config_args=dict(type='list', default=None),
             provision=dict(type='bool', default=False),
             force_stop=dict(type='bool', default=False),
