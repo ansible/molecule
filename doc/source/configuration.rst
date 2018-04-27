@@ -237,13 +237,12 @@ Create instances with additional instance options.
             - instance-1
             - instance-2
 
-Create instances on a remote Libvirt node using default create/destroy templates.
+Create instances on a remote Libvirt node using default create/destroy
+templates.
 
 .. code-block:: yaml
 
     ---
-    dependency:
-      name: galaxy
     driver:
       name: vagrant
       provider:
@@ -251,29 +250,14 @@ Create instances on a remote Libvirt node using default create/destroy templates
     lint:
       name: yamllint
     platforms:
-      - name: centos6
-        box: centos/6
-        memory: 1024
-        config_options:
-          synced_folder: False
-        instance_raw_config_args:
-          - "vm.hostname = 'centos6.ci.example.net'"
+      - name: instance
+        box: centos/7
         provider_raw_config_args:
-          - 'host = "remote-node.dev.example.net"'
+          - 'host = "remote-node.example.com"'
           - 'connect_via_ssh = "True"'
           - 'username = "sshuser"'
           - 'driver = "kvm"'
           - 'cpu_mode = "host-passthrough"'
-    provisioner:
-      name: ansible
-      lint:
-        name: ansible-lint
-    scenario:
-      name: centos
-    verifier:
-      name: testinfra
-      lint:
-        name: flake8
 
 Lint
 ----
