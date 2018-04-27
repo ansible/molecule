@@ -242,22 +242,23 @@ templates.
 
 .. code-block:: yaml
 
-    ---
-    driver:
-      name: vagrant
-      provider:
-        name: libvirt
-    lint:
-      name: yamllint
-    platforms:
-      - name: instance
-        box: centos/7
-        provider_raw_config_args:
-          - 'host = "remote-node.example.com"'
-          - 'connect_via_ssh = "True"'
-          - 'username = "sshuser"'
-          - 'driver = "kvm"'
-          - 'cpu_mode = "host-passthrough"'
+    - hosts: localhost
+      connection: local
+      tasks:
+        - name: Create instances
+          molecule_vagrant:
+            instance_name: "{{ item }}"
+            platform_box: ubuntu/trusty64
+            provider_raw_config_args:
+              - 'host = "remote-node.example.com"'
+              - 'connect_via_ssh = "True"'
+              - 'username = "sshuser"'
+              - 'driver = "kvm"'
+              - 'cpu_mode = "host-passthrough"'
+            state: up
+          with_items:
+            - instance-1
+            - instance-2
 
 Lint
 ----
