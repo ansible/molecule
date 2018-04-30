@@ -2,13 +2,43 @@
 History
 *******
 
-Molecule follows `Semantic Versioning`_.  Therefore versioning will be much
-different than previous versions of Molecule.
+2.13
+====
 
-It will be safe to pin to MINOR versions of Molecule.  MINOR will add
-functionality in a backwards-compatible manner.
+* Allow the destroying of remote libvirt instances.
+* Bumped testinfra version for Ansible 2.5.1 compatibility.
+* Added RuboCop as Inspec's linter.
+* Minor fixes to Goss verifier playbook.
+* Update documentation for verify and idempotency checks.
+* Added Inspec verifier.
+* Support Void Linux when using Docker driver.
+* Converge with built in Molecule skip tags.
+* Render inventory links relative to scenario dir.
+* Disallow null provider.env values.
+* Log vagrant errors.
+* Enable py36 support for Ansible 2.5.
+* Retry downloading goss 3 times.
+* Delegated driver should report unknown on `molecule list`.
+* Correct Docker container terminal sizing.
+* Bumped Ansible 2.4 minor version in tox.
+* Add docker_host attribute to templates to allow talking to a remote
+  docker daemon.
+* Across-the-board requirements update.
+* Add parameter for Vagrant provider override.
+* Add 'halt' option to Vagrant module.
 
-.. _`Semantic Versioning`: http://semver.org
+Important Changes
+-----------------
+
+* Python 3.6 support.
+* Added Inspec verifier.
+* Added RuboCop linter for Inspec.
+
+Breaking Changes
+----------------
+
+* Render inventory links relative to scenario dir instead of ephemeral dir.
+  Unfortunately, this was a side effect of #1218.
 
 2.12.1
 ======
