@@ -42,6 +42,19 @@ Upload to `PyPI`_
     .. code-block:: bash
 
         $ make -f build/Makefile build
+        $ make -f build/Makefile push
+
+Upload to `Docker Hub`_
+^^^^^^^^^^^^^^^^^^^^^^^
+
+* Build and upload to  `PyPI`_.
+
+    .. code-block:: bash
+
+        $ make -f build/Makefile docker-build
+        $ make -f build/Makefile docker-push
+
+.. _`Docker Hub`: https://www.docker.com/retr0h/molecule
 
 Post-release
 ------------
