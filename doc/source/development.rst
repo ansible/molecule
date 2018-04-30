@@ -54,7 +54,7 @@ Upload to `Docker Hub`_
         $ make -f build/Makefile docker-build
         $ make -f build/Makefile docker-push
 
-.. _`Docker Hub`: https://www.docker.com/retr0h/molecule
+.. _`Docker Hub`: https://hub.docker.com/r/retr0h/molecule/
 
 Post-release
 ------------
