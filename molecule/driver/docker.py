@@ -71,6 +71,7 @@ class Docker(base.Base):
             networks:
               - name: foo
               - name: bar
+            docker_host: tcp://localhost:12376
 
     .. code-block:: bash
 
@@ -84,22 +85,6 @@ class Docker(base.Base):
           name: docker
           safe_files:
             - foo
-
-    To use a URL to connect to the Docker API instead of the default Unix socket
-    path `unix://var/run/docker.sock`.
-
-    .. code-block:: yaml
-
-        driver:
-          name: docker
-        platforms:
-          - name: instance
-            image: centos:7
-            docker_host: 'tcp://localhost:12376'
-        provisioner:
-          name: ansible
-          env:
-            DOCKER_HOST: 'tcp://localhost:12376'
 
     .. _`Docker`: https://www.docker.com
     """  # noqa
