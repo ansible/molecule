@@ -14,5 +14,6 @@ pytest-verbose-parametrize
 python-vagrant
 # The error was: KeyError: 'created_at'
 shade==1.22.2
+twine
 wheel
 yapf==0.21.0

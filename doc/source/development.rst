@@ -31,27 +31,17 @@ Tag the release and push to github.com
 
 .. code-block:: bash
 
-    $ git tag 2.0.0
+    $ git tag 2.x.x
     $ git push --tags
 
 Upload to `PyPI`_
 ^^^^^^^^^^^^^^^^^
 
-* Install `Twine`_ using `pip`.
+* Build and upload to  `PyPI`_.
 
     .. code-block:: bash
 
-        $ pip install twine
-
-* Upload to  `PyPI`_.
-
-    .. code-block:: bash
-
-        $ cd /path/to/molecule
-        $ git clean -d -x -f molecule/cookiecutter/
-        $ python setup.py sdist bdist_wheel
-        $ twine upload dist/*
-        $ rm -rf build/ dist/
+        $ make -f build/Makefile build
 
 Post-release
 ------------
