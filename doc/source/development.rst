@@ -47,7 +47,7 @@ Upload to `PyPI`_
 Upload to `Docker Hub`_
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-* Build and upload to  `PyPI`_.
+* Build and upload to  `Docker Hub`_.
 
     .. code-block:: bash
 
