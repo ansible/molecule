@@ -15,7 +15,7 @@ build: clean
 
 docker-build:
 	@echo "+ $@"
-	sudo docker build \
+	cd build && sudo docker build \
 		--rm=true \
 		--no-cache \
 		-t $(IMAGE) .
