@@ -43,6 +43,7 @@ Upload to `PyPI`_
 
         $ make -f build/Makefile build
         $ make -f build/Makefile push
+        $ make -f build/Makefile clean
 
 Upload to `Docker Hub`_
 ^^^^^^^^^^^^^^^^^^^^^^^
