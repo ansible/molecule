@@ -84,7 +84,6 @@ base_schema = {
             },
             'options': {
                 'type': 'dict',
-                'allow_unknown': True,
                 'schema': {
                     'managed': {
                         'type': 'boolean',
@@ -141,7 +140,6 @@ base_schema = {
             },
             'config_options': {
                 'type': 'dict',
-                'allow_unknown': True,
                 'schema': {
                     'defaults': {
                         'type': 'dict',
@@ -174,7 +172,6 @@ base_schema = {
             },
             'env': {
                 'type': 'dict',
-                'allow_unknown': True,
                 'keyschema': {
                     'type': 'string',
                     'regex': '^[A-Z0-9_-]+$',
@@ -216,7 +213,6 @@ base_schema = {
             },
             'playbooks': {
                 'type': 'dict',
-                'allow_unknown': True,
                 'schema': {
                     'create': {
                         'type': 'string',
@@ -400,7 +396,6 @@ platforms_base_schema = {
         'type': 'list',
         'schema': {
             'type': 'dict',
-            'allow_unknown': True,
             'schema': {
                 'name': {
                     'type': 'string',
@@ -576,6 +571,19 @@ platforms_docker_schema = {
     },
 }
 
+verifier_options_readonly_schema = {
+    'verifier': {
+        'type': 'dict',
+        'schema': {
+            'options': {
+                'keyschema': {
+                    'readonly': True,
+                },
+            },
+        }
+    },
+}
+
 
 class Validator(cerberus.Validator):
     def __init__(self, *args, **kwargs):
@@ -604,6 +612,8 @@ def validate(c):
         util.merge_dicts(schema, platforms_vagrant_schema)
     else:
         util.merge_dicts(schema, platforms_base_schema)
+    if c['verifier']['name'] != 'testinfra':
+        util.merge_dicts(schema, verifier_options_readonly_schema)
 
     v = Validator(allow_unknown=True)
     v.validate(c, schema)

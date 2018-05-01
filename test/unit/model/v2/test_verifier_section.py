@@ -168,6 +168,42 @@ def test_verifier_allows_name(_config):
 
 
 @pytest.fixture
+def _model_verifier_errors_inspec_readonly_options_section_data():
+    return {
+        'verifier': {
+            'name': 'inspec',
+            'options': {
+                'foo': 'bar',
+            },
+        }
+    }
+
+
+@pytest.fixture
+def _model_verifier_errors_goss_readonly_options_section_data():
+    return {
+        'verifier': {
+            'name': 'goss',
+            'options': {
+                'foo': 'bar',
+            },
+        }
+    }
+
+
+@pytest.mark.parametrize(
+    '_config', [
+        ('_model_verifier_errors_inspec_readonly_options_section_data'),
+        ('_model_verifier_errors_goss_readonly_options_section_data'),
+    ],
+    indirect=True)
+def test_verifier_errors_readonly_options_section_data(_config):
+    x = {'verifier': [{'options': [{'foo': ['field is read-only']}]}]}
+
+    assert x == schema_v2.validate(_config)
+
+
+@pytest.fixture
 def _model_verifier_errors_invalid_section_data():
     return {
         'verifier': {
