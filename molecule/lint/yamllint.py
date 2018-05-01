@@ -80,7 +80,9 @@ class Yamllint(base.Base):
 
     @property
     def default_options(self):
-        return {}
+        return {
+            's': True,
+        }
 
     @property
     def default_env(self):
@@ -127,10 +129,10 @@ class Yamllint(base.Base):
         """
         excludes = [
             '.git',
-            '.molecule',
             '.tox',
             '.vagrant',
             '.venv',
+            os.path.basename(self._config.verifier.directory),
         ]
         generators = [
             util.os_walk(self._config.project_directory, '*.yml', excludes),

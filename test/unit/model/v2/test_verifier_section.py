@@ -121,7 +121,7 @@ def test_verifier_has_errors(_config):
 
 
 @pytest.fixture
-def _model_verifier_allows_ansible_lint_section_data():
+def _model_verifier_allows_testinfra_section_data():
     return {
         'verifier': {
             'name': 'testinfra',
@@ -150,7 +150,7 @@ def _model_verifier_allows_goss_section_data():
         'verifier': {
             'name': 'goss',
             'lint': {
-                'name': 'flake8',
+                'name': 'yamllint',
             },
         }
     }
@@ -158,7 +158,7 @@ def _model_verifier_allows_goss_section_data():
 
 @pytest.mark.parametrize(
     '_config', [
-        ('_model_verifier_allows_ansible_lint_section_data'),
+        ('_model_verifier_allows_testinfra_section_data'),
         ('_model_verifier_allows_inspec_section_data'),
         ('_model_verifier_allows_goss_section_data'),
     ],

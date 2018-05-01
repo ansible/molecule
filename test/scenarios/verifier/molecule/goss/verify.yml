@@ -27,7 +27,7 @@
         src: "{{ item }}"
         dest: "{{ goss_test_directory }}/{{ item | basename }}"
       with_fileglob:
-        - "{{ playbook_dir }}/tests/test_*.yml"
+        - "{{ lookup('env', 'MOLECULE_VERIFIER_TEST_DIRECTORY') }}/test_*.yml"
 
     - name: Register test files
       shell: "ls {{ goss_test_directory }}/test_*.yml"

@@ -122,7 +122,7 @@ def role(ctx, dependency_name, driver_name, lint_name, provisioner_name,
         command_args['verifier_lint_name'] = 'rubocop'
 
     if verifier_name == 'goss':
-        command_args['verifier_lint_enabled'] = 'false'
+        command_args['verifier_lint_name'] = 'yamllint'
 
     r = Role(command_args)
     r.execute()

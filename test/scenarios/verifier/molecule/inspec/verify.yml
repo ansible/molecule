@@ -34,7 +34,7 @@
         src: "{{ item }}"
         dest: "{{ inspec_test_directory }}/{{ item | basename }}"
       with_fileglob:
-        - "{{ playbook_dir }}/tests/test_*.rb"
+        - "{{ lookup('env', 'MOLECULE_VERIFIER_TEST_DIRECTORY') }}/test_*.rb"
 
     - name: Register test files
       shell: "ls {{ inspec_test_directory }}/test_*.rb"

@@ -301,7 +301,9 @@ def test_env(config_instance):
         'MOLECULE_SCENARIO_NAME':
         'default',
         'MOLECULE_VERIFIER_NAME':
-        'testinfra'
+        'testinfra',
+        'MOLECULE_VERIFIER_TEST_DIRECTORY':
+        config_instance.verifier.directory,
     }
 
     assert x == config_instance.env

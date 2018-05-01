@@ -340,6 +340,7 @@ base_schema = {
                         'allowed': [
                             'flake8',
                             'rubocop',
+                            'yamllint',
                         ],
                     },
                     'enabled': {

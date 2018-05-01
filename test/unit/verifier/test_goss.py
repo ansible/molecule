@@ -24,6 +24,7 @@ import pytest
 
 from molecule import config
 from molecule.verifier import goss
+from molecule.verifier.lint import yamllint
 
 
 @pytest.fixture
@@ -54,7 +55,7 @@ def _verifier_section_data():
                 'FOO': 'bar',
             },
             'lint': {
-                'name': 'None',
+                'name': 'yamllint',
             },
         }
     }
@@ -93,7 +94,7 @@ def test_env_property(_instance):
 @pytest.mark.parametrize(
     'config_instance', ['_verifier_section_data'], indirect=True)
 def test_lint_property(_instance):
-    assert _instance.lint is None
+    assert isinstance(_instance.lint, yamllint.Yamllint)
 
 
 def test_name_property(_instance):

@@ -22,5 +22,4 @@ scenario:
 verifier:
   name: goss
   lint:
-    name: flake8
-    enabled: false
+    name: yamllint

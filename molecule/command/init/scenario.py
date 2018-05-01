@@ -164,7 +164,7 @@ def scenario(ctx, dependency_name, driver_name, lint_name, provisioner_name,
         command_args['verifier_lint_name'] = 'rubocop'
 
     if verifier_name == 'goss':
-        command_args['verifier_lint_enabled'] = 'false'
+        command_args['verifier_lint_name'] = 'yamllint'
 
     s = Scenario(command_args)
     s.execute()

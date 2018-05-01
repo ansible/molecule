@@ -20,94 +20,95 @@
 
 import os
 
+import sh
+
 from molecule import logger
 from molecule import util
-from molecule.verifier import base
+from molecule.verifier.lint import base
 
 LOG = logger.get_logger(__name__)
 
 
-class Inspec(base.Base):
+class Yamllint(base.Base):
     """
-    `Inspec`_ is not the default test runner.
+    `Yamllint`_ is not the default verifier linter.
 
-    `InSpec`_ is Chef's open-source language for describing security &
-    compliance rules that can be shared between software engineers, operations,
-    and security engineers. Your compliance, security, and other policy
-    requirements become automated tests throughout all stages of the software
-    delivery process. `Inspec`_ is `not` the default verifier used in Molecule.
+    `Yamllint`_ is a linter for yaml files.
 
-    Molecule executes a playbook (`verify.yml`) located in the role's
-    `scenario.directory`.  This playbook will copy test files to the instances,
-    and execute Inspec locally over Ansible.  Molecule executes Inspec over an
-    Ansible transport, in an attempt to provide Inspec support across all
-    Molecule drivers.
-
-    Additional options can be passed to `inspec exec` by modifying the verify
-    playbook.
-
-    The testing can be disabled by setting `enabled` to False.
+    Additional options can be passed to `yamllint` through the options
+    dict.  Any option set in this section will override the defaults.
 
     .. code-block:: yaml
 
         verifier:
-          name: inspec
-          enabled: False
+          name: goss
+          lint:
+            name: yamllint
+            options:
+              config-file: foo/bar
 
-    Environment variables can be passed to the verifier.
-
-    .. code-block:: yaml
-
-        verifier:
-          name: inspec
-          env:
-            FOO: bar
-
-    Change path to the test directory.
+    Test file linting can be disabled by setting `enabled` to False.
 
     .. code-block:: yaml
 
         verifier:
-          name: inspec
-          directory: /foo/bar/
+          name: goss
+          lint:
+            name: yamllint
+            enabled: False
 
-    .. important::
+    Environment variables can be passed to lint.
 
-        Due to the nature of this verifier.  Molecule does not perform options
-        handling in the same fashion as Testinfra.
+    .. code-block:: yaml
 
-    .. _`Inspec`: https://www.chef.io/inspec/
+        verifier:
+          name: goss
+          lint:
+            name: yamllint
+            env:
+              FOO: bar
+
+    .. _`Yamllint`: https://github.com/adrienverge/yamllint
     """
 
     def __init__(self, config):
         """
-        Sets up the requirements to execute `inspec` and returns None.
+        Sets up the requirements to execute `yamllint` and returns None.
 
         :param config: An instance of a Molecule config.
         :return: None
         """
-        super(Inspec, self).__init__(config)
+        super(Yamllint, self).__init__(config)
+        self._yamllint_command = None
         if config:
             self._tests = self._get_tests()
 
     @property
-    def name(self):
-        return 'inspec'
-
-    @property
     def default_options(self):
-        return {}
+        return {
+            's': True,
+        }
 
     @property
     def default_env(self):
         return util.merge_dicts(os.environ.copy(), self._config.env)
 
     def bake(self):
-        pass
+        """
+        Bake a `yamllint` command so it's ready to execute and returns None.
+
+        :return: None
+        """
+        self._yamllint_command = sh.yamllint.bake(
+            self.options,
+            self._tests,
+            _env=self.env,
+            _out=LOG.out,
+            _err=LOG.error)
 
     def execute(self):
         if not self.enabled:
-            msg = 'Skipping, verifier is disabled.'
+            msg = 'Skipping, verifier_lint is disabled.'
             LOG.warn(msg)
             return
 
@@ -116,13 +117,19 @@ class Inspec(base.Base):
             LOG.warn(msg)
             return
 
-        msg = 'Executing Inspec tests found in {}/...'.format(self.directory)
+        if self._yamllint_command is None:
+            self.bake()
+
+        msg = 'Executing Yamllint on files found in {}/...'.format(
+            self._config.verifier.directory)
         LOG.info(msg)
 
-        self._config.provisioner.verify()
-
-        msg = 'Verifier completed successfully.'
-        LOG.success(msg)
+        try:
+            util.run_command(self._yamllint_command, debug=self._config.debug)
+            msg = 'Lint completed successfully.'
+            LOG.success(msg)
+        except sh.ErrorReturnCode as e:
+            util.sysexit(e.exit_code)
 
     def _get_tests(self):
         """
@@ -131,5 +138,6 @@ class Inspec(base.Base):
         :return: list
         """
         return [
-            filename for filename in util.os_walk(self.directory, 'test_*.rb')
+            filename for filename in util.os_walk(
+                self._config.verifier.directory, 'test_*.yml')
         ]
