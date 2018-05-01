@@ -61,7 +61,7 @@ def _supported_ansible_version():  # pragma: no cover
         pass
     elif _supported_python3_version():
         if (distutils.version.LooseVersion(_get_ansible_version()) <
-                distutils.version.LooseVersion('2.5')):
+                distutils.version.LooseVersion('2.4')):
             msg = ("Ansible version '{}' not supported.  "
                    'Molecule only supports Ansible versions '
                    "'>=2.5' with Python version '{}'").format(
