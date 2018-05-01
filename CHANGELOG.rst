@@ -2,6 +2,11 @@
 History
 *******
 
+2.13.1
+======
+
+* Enable Ansible 2.4 support with py36.
+
 2.13
 ====
 
