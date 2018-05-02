@@ -50,6 +50,23 @@ class Goss(base.Base):
           name: goss
           enabled: False
 
+    Environment variables can be passed to the verifier.
+
+    .. code-block:: yaml
+
+        verifier:
+          name: goss
+          env:
+            FOO: bar
+
+    Change path to the test directory.
+
+    .. code-block:: yaml
+
+        verifier:
+          name: goss
+          directory: /foo/bar/
+
     .. important::
 
         Due to the nature of this verifier.  Molecule does not perform options

@@ -178,6 +178,7 @@ class Config(object):
             'MOLECULE_PROVISIONER_NAME': self.provisioner.name,
             'MOLECULE_SCENARIO_NAME': self.scenario.name,
             'MOLECULE_VERIFIER_NAME': self.verifier.name,
+            'MOLECULE_VERIFIER_TEST_DIRECTORY': self.verifier.directory,
         }
 
     @property

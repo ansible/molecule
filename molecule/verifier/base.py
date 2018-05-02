@@ -25,6 +25,7 @@ import abc
 from molecule import util
 from molecule.verifier.lint import flake8
 from molecule.verifier.lint import rubocop
+from molecule.verifier.lint import yamllint
 
 
 class Base(object):
@@ -102,3 +103,5 @@ class Base(object):
             return flake8.Flake8(self._config)
         if lint_name == 'rubocop':
             return rubocop.RuboCop(self._config)
+        if lint_name == 'yamllint':
+            return yamllint.Yamllint(self._config)
