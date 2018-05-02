@@ -22,6 +22,7 @@ import os
 
 import pytest
 
+from molecule import util
 from molecule.provisioner import ansible_playbooks
 
 
@@ -45,7 +46,8 @@ def _instance(_provisioner_section_data, config_instance):
 
 
 def test_create_property(_instance):
-    x = os.path.join(_instance._config.scenario.directory, 'create.yml')
+    x = os.path.join(_instance._get_playbook_directory(), 'docker',
+                     'create.yml')
 
     assert x == _instance._config.provisioner.playbooks.create
 
@@ -57,15 +59,14 @@ def test_converge_property(_instance):
 
 
 def test_destroy_property(_instance):
-    x = os.path.join(_instance._config.scenario.directory, 'destroy.yml')
+    x = os.path.join(_instance._get_playbook_directory(), 'docker',
+                     'destroy.yml')
 
     assert x == _instance._config.provisioner.playbooks.destroy
 
 
 def test_prepare_property(_instance):
-    x = os.path.join(_instance._config.scenario.directory, 'prepare.yml')
-
-    assert x == _instance._config.provisioner.playbooks.prepare
+    assert _instance._config.provisioner.playbooks.prepare is None
 
 
 def test_side_effect_property(_instance):
@@ -73,15 +74,30 @@ def test_side_effect_property(_instance):
 
 
 def test_verify_property(_instance):
-    x = os.path.join(_instance._config.scenario.directory, 'verify.yml')
-
-    assert x == _instance._config.provisioner.playbooks.verify
+    assert _instance._config.provisioner.playbooks.verify is None
 
 
-def test_get_ansible_playbook(_instance):
+def test_get_playbook_directory(_instance):
+    result = _instance._get_playbook_directory()
+    parts = pytest.helpers.os_split(result)
+    x = ('molecule', 'provisioner', 'ansible', 'playbooks')
+
+    assert x == parts[-4:]
+
+
+def test_get_playbook(tmpdir, _instance):
     x = os.path.join(_instance._config.scenario.directory, 'create.yml')
+    util.write_file(x, '')
 
-    assert x == _instance._get_ansible_playbook('create')
+    assert x == _instance._get_playbook('create')
+
+
+def test_get_playbook_returns_bundled_driver_playbook_when_local_not_found(
+        tmpdir, _instance):
+    x = os.path.join(_instance._get_playbook_directory(), 'docker',
+                     'create.yml')
+
+    assert x == _instance._get_playbook('create')
 
 
 @pytest.fixture
@@ -101,50 +117,11 @@ def _provisioner_driver_section_data():
 
 @pytest.mark.parametrize(
     'config_instance', ['_provisioner_driver_section_data'], indirect=True)
-def test_get_ansible_playbook_with_driver_key(_instance):
+def test_get_ansible_playbook_with_driver_key(tmpdir, _instance):
     x = os.path.join(_instance._config.scenario.directory, 'docker-create.yml')
-    assert x == _instance._get_ansible_playbook('create')
+    util.write_file(x, '')
 
-
-@pytest.fixture
-def _provisioner_playbook_none_section_data():
-    return {
-        'provisioner': {
-            'name': 'ansible',
-            'playbooks': {
-                'side_effect': None,
-            },
-        }
-    }
-
-
-@pytest.mark.parametrize(
-    'config_instance', ['_provisioner_playbook_none_section_data'],
-    indirect=True)
-def test_get_ansible_playbook_when_playbook_none(_instance):
-    assert _instance._get_ansible_playbook('side_effect') is None
-
-
-@pytest.fixture
-def _provisioner_driver_playbook_none_section_data():
-    return {
-        'provisioner': {
-            'name': 'ansible',
-            'playbooks': {
-                'docker': {
-                    'side_effect': None,
-                },
-                'side_effect': None,
-            },
-        }
-    }
-
-
-@pytest.mark.parametrize(
-    'config_instance', ['_provisioner_driver_playbook_none_section_data'],
-    indirect=True)
-def test_get_ansible_playbook_with_driver_key_when_playbook_none(_instance):
-    assert _instance._get_ansible_playbook('side_effect') is None
+    assert x == _instance._get_playbook('create')
 
 
 @pytest.fixture
@@ -167,6 +144,16 @@ def _provisioner_driver_playbook_key_missing_section_data():
     ['_provisioner_driver_playbook_key_missing_section_data'],
     indirect=True)
 def test_get_ansible_playbook_with_driver_key_when_playbook_key_missing(
-        _instance):
+        tmpdir, _instance):
     x = os.path.join(_instance._config.scenario.directory, 'side_effect.yml')
-    assert x == _instance._get_ansible_playbook('side_effect')
+    util.write_file(x, '')
+
+    assert x == _instance._get_playbook('side_effect')
+
+
+def test_get_bundled_driver_playbook(_instance):
+    result = _instance._get_bundled_driver_playbook('create')
+    parts = pytest.helpers.os_split(result)
+    x = ('ansible', 'playbooks', 'docker', 'create.yml')
+
+    assert x == parts[-4:]

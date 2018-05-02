@@ -124,9 +124,16 @@ def test_options_property_handles_cli_args(_instance):
     'config_instance', ['_lint_section_data'], indirect=True)
 def test_bake(_patched_get_files, _instance):
     _instance.bake()
-    x = '{} -s --foo=bar foo.yml bar.yaml'.format(str(sh.yamllint))
+    x = [
+        str(sh.Command('yamllint')),
+        '-s',
+        '--foo=bar',
+        'foo.yml',
+        'bar.yaml',
+    ]
 
-    assert x == _instance._yamllint_command
+    result = str(_instance._yamllint_command).split()
+    assert sorted(x) == sorted(result)
 
 
 def test_execute(_patched_get_files, patched_logger_info,

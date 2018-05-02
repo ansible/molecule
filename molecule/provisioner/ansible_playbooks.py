@@ -20,7 +20,10 @@
 
 from __future__ import absolute_import
 
+import os
+
 from molecule import logger
+from molecule import util
 
 LOG = logger.get_logger(__name__)
 
@@ -39,44 +42,56 @@ class AnsiblePlaybooks(object):
 
     @property
     def create(self):
-        return self._get_ansible_playbook('create')
+        return self._get_playbook('create')
 
     @property
     def converge(self):
         c = self._config.config
 
-        return self._config.provisioner.get_abs_path(
+        return self._config.provisioner.abs_path(
             c['provisioner']['playbooks']['converge'])
 
     @property
     def destroy(self):
-        return self._get_ansible_playbook('destroy')
+        return self._get_playbook('destroy')
 
     @property
     def prepare(self):
-        return self._get_ansible_playbook('prepare')
+        return self._get_playbook('prepare')
 
     @property
     def side_effect(self):
-        return self._get_ansible_playbook('side_effect')
+        return self._get_playbook('side_effect')
 
     @property
     def verify(self):
-        return self._get_ansible_playbook('verify')
+        return self._get_playbook('verify')
 
-    def _get_ansible_playbook(self, section):
+    def _get_playbook_directory(self):
+        return util.abs_path(
+            os.path.join(self._config.provisioner.directory, 'playbooks'))
+
+    def _get_playbook(self, section):
         c = self._config.config
         driver_dict = c['provisioner']['playbooks'].get(
             self._config.driver.name)
 
+        playbook = c['provisioner']['playbooks'][section]
         if driver_dict:
             try:
                 playbook = driver_dict[section]
-            except KeyError:
-                playbook = c['provisioner']['playbooks'][section]
-        else:
-            playbook = c['provisioner']['playbooks'][section]
+            except Exception:
+                pass
 
         if playbook is not None:
-            return self._config.provisioner.get_abs_path(playbook)
-        return
+            playbook = self._config.provisioner.abs_path(playbook)
+
+            if os.path.exists(playbook):
+                return playbook
+            elif os.path.exists(self._get_bundled_driver_playbook(section)):
+                return self._get_bundled_driver_playbook(section)
+
+    def _get_bundled_driver_playbook(self, section):
+        return os.path.join(
+            self._get_playbook_directory(), self._config.driver.name,
+            self._config.config['provisioner']['playbooks'][section])
