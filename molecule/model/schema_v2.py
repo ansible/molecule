@@ -603,16 +603,18 @@ class Validator(cerberus.Validator):
 
 def validate(c):
     schema = copy.deepcopy(base_schema)
-    if c['driver']['name'] == 'vagrant':
-        util.merge_dicts(schema, driver_vagrant_provider_section_schema)
 
+    # Driver
     util.merge_dicts(schema, platforms_base_schema)
     if c['driver']['name'] == 'docker':
         util.merge_dicts(schema, platforms_docker_schema)
     elif c['driver']['name'] == 'vagrant':
+        util.merge_dicts(schema, driver_vagrant_provider_section_schema)
         util.merge_dicts(schema, platforms_vagrant_schema)
     else:
         util.merge_dicts(schema, platforms_base_schema)
+
+    # Verifier
     if c['verifier']['name'] != 'testinfra':
         util.merge_dicts(schema, verifier_options_readonly_schema)
 
