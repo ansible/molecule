@@ -36,8 +36,8 @@ def _patched_ansible_prepare(mocker):
 # throughout patched.assert_called unit tests.
 def test_execute(mocker, patched_logger_info, _patched_ansible_prepare,
                  patched_config_validate, config_instance):
-    m = mocker.patch('molecule.command.prepare.Prepare._has_prepare_playbook')
-    m.return_value = True
+    pb = os.path.join(config_instance.scenario.directory, 'prepare.yml')
+    util.write_file(pb, '')
 
     p = prepare.Prepare(config_instance)
     p.execute()
@@ -65,11 +65,24 @@ def test_execute_skips_when_instances_already_prepared(
     assert not _patched_ansible_prepare.called
 
 
+def test_execute_skips_when_playbook_not_configured(
+        patched_logger_warn, _patched_ansible_prepare, config_instance):
+
+    p = prepare.Prepare(config_instance)
+    p.execute()
+
+    msg = 'Skipping, prepare playbook not configured.'
+    patched_logger_warn.assert_called_once_with(msg)
+
+    assert not _patched_ansible_prepare.called
+
+
 def test_execute_when_instances_already_prepared_but_force_provided(
         mocker, patched_logger_warn, _patched_ansible_prepare,
         config_instance):
-    m = mocker.patch('molecule.command.prepare.Prepare._has_prepare_playbook')
-    m.return_value = True
+    pb = os.path.join(config_instance.scenario.directory, 'prepare.yml')
+    util.write_file(pb, '')
+
     config_instance.state.change_state('prepared', True)
     config_instance.command_args = {'force': True}
 
@@ -77,37 +90,3 @@ def test_execute_when_instances_already_prepared_but_force_provided(
     p.execute()
 
     _patched_ansible_prepare.assert_called_once_with()
-
-
-def test_execute_logs_deprecation_when_prepare_yml_missing(
-        mocker, patched_logger_warn, command_patched_ansible_create,
-        _patched_ansible_prepare, config_instance):
-    m = mocker.patch('molecule.command.prepare.Prepare._has_prepare_playbook')
-    m.return_value = False
-
-    p = prepare.Prepare(config_instance)
-    p.execute()
-
-    msg = ('[DEPRECATION WARNING]:\n  The prepare playbook not found '
-           'at {}/prepare.yml.  Please add one to the scenarios '
-           'directory.').format(config_instance.scenario.directory)
-    patched_logger_warn.assert_called_once_with(msg)
-
-    assert not _patched_ansible_prepare.called
-
-    assert config_instance.state.prepared
-
-
-def test_has_prepare_playbook(config_instance):
-    pb = os.path.join(config_instance.scenario.directory, 'prepare.yml')
-    util.write_file(pb, '')
-
-    p = prepare.Prepare(config_instance)
-
-    assert p._has_prepare_playbook()
-
-
-def test_has_prepare_playbook_missing_prepare_playbook(config_instance):
-    p = prepare.Prepare(config_instance)
-
-    assert not p._has_prepare_playbook()
