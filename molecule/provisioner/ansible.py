@@ -69,6 +69,16 @@ class Ansible(base.Base):
         to the underlying `ansible-playbook` command when executing
         `molecule --debug`.
 
+    The create/destroy playbooks for Docker and Vagrant are bundled with
+    Molecule.  These playbooks have a clean API from `molecule.yml`, and
+    are the most commonly used.  The bundled playbooks can still be overriden.
+
+    The playbook loading order is:
+
+    1. provisioner.playbooks.$driver_name.$action
+    2. provisioner.playbooks.$action
+    3. bundled_playbook.$driver_name.$action
+
     .. code-block:: yaml
 
         provisioner:
@@ -269,7 +279,6 @@ class Ansible(base.Base):
         :return: None
         """
         super(Ansible, self).__init__(config)
-        self._ansible_playbooks = ansible_playbooks.AnsiblePlaybooks(config)
 
     @property
     def default_config_options(self):
@@ -485,8 +494,15 @@ class Ansible(base.Base):
                             'ansible.cfg')
 
     @property
+    @util.memoize
     def playbooks(self):
-        return self._ansible_playbooks
+        return ansible_playbooks.AnsiblePlaybooks(self._config)
+
+    @property
+    def directory(self):
+        return os.path.join(
+            os.path.dirname(__file__), os.path.pardir, os.path.pardir,
+            'molecule', 'provisioner', 'ansible')
 
     def connection_options(self, instance_name):
         d = self._config.driver.ansible_connection_options(instance_name)
@@ -606,7 +622,7 @@ class Ansible(base.Base):
         else:
             self._link_or_update_vars()
 
-    def get_abs_path(self, path):
+    def abs_path(self, path):
         return util.abs_path(
             os.path.join(self._config.scenario.directory, path))
 
@@ -744,9 +760,7 @@ class Ansible(base.Base):
         return d
 
     def _get_plugin_directory(self):
-        return os.path.join(
-            os.path.dirname(__file__), os.path.pardir, os.path.pardir,
-            'molecule', 'provisioner', 'ansible', 'plugins')
+        return os.path.join(self.directory, 'plugins')
 
     def _get_libraries_directory(self):
         return util.abs_path(
@@ -757,4 +771,4 @@ class Ansible(base.Base):
             os.path.join(self._get_plugin_directory(), 'filters'))
 
     def _absolute_path_for(self, env, key):
-        return ':'.join([self.get_abs_path(p) for p in env[key].split(':')])
+        return ':'.join([self.abs_path(p) for p in env[key].split(':')])

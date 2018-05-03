@@ -18,8 +18,11 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
+
 import pytest
 
+from molecule import util
 from molecule.command import prepare
 
 
@@ -96,6 +99,15 @@ def test_execute_logs_deprecation_when_prepare_yml_missing(
 
 
 def test_has_prepare_playbook(config_instance):
+    pb = os.path.join(config_instance.scenario.directory, 'prepare.yml')
+    util.write_file(pb, '')
+
+    p = prepare.Prepare(config_instance)
+
+    assert p._has_prepare_playbook()
+
+
+def test_has_prepare_playbook_missing_prepare_playbook(config_instance):
     p = prepare.Prepare(config_instance)
 
     assert not p._has_prepare_playbook()

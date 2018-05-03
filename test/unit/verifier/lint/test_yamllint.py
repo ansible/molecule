@@ -122,9 +122,17 @@ def test_options_property_handles_cli_args(_instance):
 def test_bake(_instance):
     _instance._tests = ['test1', 'test2', 'test3']
     _instance.bake()
-    x = '{} -s --foo=bar test1 test2 test3'.format(str(sh.yamllint))
+    x = [
+        str(sh.Command('yamllint')),
+        '-s',
+        '--foo=bar',
+        'test1',
+        'test2',
+        'test3',
+    ]
 
-    assert x == _instance._yamllint_command
+    result = str(_instance._yamllint_command).split()
+    assert sorted(x) == sorted(result)
 
 
 def test_execute(patched_logger_info, patched_logger_success,

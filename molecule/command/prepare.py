@@ -18,8 +18,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import os
-
 import click
 
 from molecule import config
@@ -79,7 +77,7 @@ class Prepare(base.Base):
         self._config.state.change_state('prepared', True)
 
     def _has_prepare_playbook(self):
-        return os.path.exists(self._config.provisioner.playbooks.prepare)
+        return self._config.provisioner.playbooks.prepare is not None
 
 
 @click.command()

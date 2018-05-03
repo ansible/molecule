@@ -113,11 +113,6 @@ def test_config_private_member(_instance):
     assert isinstance(_instance._config, config.Config)
 
 
-def test_ansible_playbooks_private_member(_instance):
-    assert isinstance(_instance._ansible_playbooks,
-                      ansible_playbooks.AnsiblePlaybooks)
-
-
 def test_default_config_options_property(_instance):
     x = {
         'defaults': {
@@ -498,8 +493,25 @@ def test_config_file_property(_instance):
     assert x == _instance.config_file
 
 
+def test_playbooks_property(_instance):
+    assert isinstance(_instance.playbooks, ansible_playbooks.AnsiblePlaybooks)
+
+
+def test_directory_property(_instance):
+    result = _instance.directory
+    parts = pytest.helpers.os_split(result)
+
+    assert (
+        'molecule',
+        'provisioner',
+        'ansible',
+    ) == parts[-3:]
+
+
 def test_playbooks_create_property(_instance):
-    x = os.path.join(_instance._config.scenario.directory, 'create.yml')
+    x = os.path.join(
+        _instance._config.provisioner.playbooks._get_playbook_directory(),
+        'docker', 'create.yml')
 
     assert x == _instance.playbooks.create
 
@@ -511,7 +523,9 @@ def test_playbooks_converge_property(_instance):
 
 
 def test_playbooks_destroy_property(_instance):
-    x = os.path.join(_instance._config.scenario.directory, 'destroy.yml')
+    x = os.path.join(
+        _instance._config.provisioner.playbooks._get_playbook_directory(),
+        'docker', 'destroy.yml')
 
     assert x == _instance.playbooks.destroy
 

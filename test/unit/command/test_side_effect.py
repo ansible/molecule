@@ -18,8 +18,11 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
+
 import pytest
 
+from molecule import util
 from molecule.command import side_effect
 
 
@@ -48,6 +51,9 @@ def _patched_ansible_side_effect(mocker):
     indirect=True)
 def test_execute(mocker, _patched_ansible_side_effect, patched_logger_info,
                  patched_config_validate, config_instance):
+    pb = os.path.join(config_instance.scenario.directory, 'side_effect.yml')
+    util.write_file(pb, '')
+
     se = side_effect.SideEffect(config_instance)
     se.execute()
 
@@ -62,6 +68,7 @@ def test_execute(mocker, _patched_ansible_side_effect, patched_logger_info,
 
 def test_execute_skips_when_playbook_not_configured(
         patched_logger_warn, _patched_ansible_side_effect, config_instance):
+
     se = side_effect.SideEffect(config_instance)
     se.execute()
 
