@@ -228,7 +228,6 @@ base_schema = {
                     },
                     'side_effect': {
                         'type': 'string',
-                        'nullable': True,
                     },
                     'verify': {
                         'type': 'string',

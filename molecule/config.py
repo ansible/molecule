@@ -313,7 +313,7 @@ class Config(object):
                     'converge': 'playbook.yml',
                     'destroy': 'destroy.yml',
                     'prepare': 'prepare.yml',
-                    'side_effect': None,
+                    'side_effect': 'side_effect.yml',
                     'verify': 'verify.yml',
                 },
                 'lint': {

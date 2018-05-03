@@ -66,18 +66,13 @@ class Prepare(base.Base):
             LOG.warn(msg)
             return
 
-        if self._has_prepare_playbook():
-            self._config.provisioner.prepare()
-        else:
-            msg = ('[DEPRECATION WARNING]:\n  The prepare playbook not found '
-                   'at {}/prepare.yml.  Please add one to the scenarios '
-                   'directory.').format(self._config.scenario.directory)
+        if not self._config.provisioner.playbooks.prepare:
+            msg = 'Skipping, prepare playbook not configured.'
             LOG.warn(msg)
+            return
 
+        self._config.provisioner.prepare()
         self._config.state.change_state('prepared', True)
-
-    def _has_prepare_playbook(self):
-        return self._config.provisioner.playbooks.prepare is not None
 
 
 @click.command()

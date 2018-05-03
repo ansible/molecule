@@ -171,25 +171,6 @@ def test_provisioner_has_errors(_config):
 
 
 @pytest.fixture
-def _model_provisioner_playbooks_side_effect_nullable_section_data():
-    return {
-        'provisioner': {
-            'playbooks': {
-                'side_effect': None,
-            },
-        }
-    }
-
-
-@pytest.mark.parametrize(
-    '_config',
-    ['_model_provisioner_playbooks_side_effect_nullable_section_data'],
-    indirect=True)
-def test_provisioner_playbooks_side_effect_nullable(_config):
-    assert {} == schema_v2.validate(_config)
-
-
-@pytest.fixture
 def _model_provisioner_config_options_disallowed_section_data():
     return {
         'provisioner': {
