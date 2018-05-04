@@ -337,7 +337,10 @@ def test_verifier_property(config_instance):
 def _config_verifier_inspec_section_data():
     return {
         'verifier': {
-            'name': 'inspec'
+            'name': 'inspec',
+            'lint': {
+                'name': 'rubocop',
+            },
         },
     }
 
@@ -352,7 +355,10 @@ def test_verifier_property_is_inspec(config_instance):
 def _config_verifier_goss_section_data():
     return {
         'verifier': {
-            'name': 'goss'
+            'name': 'goss',
+            'lint': {
+                'name': 'yamllint',
+            },
         },
     }
 

@@ -175,6 +175,9 @@ def _model_verifier_errors_inspec_readonly_options_section_data():
             'options': {
                 'foo': 'bar',
             },
+            'lint': {
+                'name': 'rubocop',
+            },
         }
     }
 
@@ -186,6 +189,9 @@ def _model_verifier_errors_goss_readonly_options_section_data():
             'name': 'goss',
             'options': {
                 'foo': 'bar',
+            },
+            'lint': {
+                'name': 'yamllint',
             },
         }
     }
