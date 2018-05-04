@@ -171,8 +171,16 @@ def test_execute_bakes(_patched_get_files, patched_run_command, _instance):
 
     assert _instance._yamllint_command is not None
 
-    cmd = '{} -s --foo=bar foo.yml bar.yaml'.format(str(sh.yamllint))
-    patched_run_command.assert_called_once_with(cmd, debug=False)
+    x = [
+        str(sh.Command('yamllint')),
+        '-s',
+        '--foo=bar',
+        'foo.yml',
+        'bar.yaml',
+    ]
+    result = str(patched_run_command.mock_calls[0][1][0]).split()
+
+    assert sorted(x) == sorted(result)
 
 
 def test_executes_catches_and_exits_return_code(patched_run_command,
