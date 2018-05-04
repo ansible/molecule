@@ -584,6 +584,80 @@ verifier_options_readonly_schema = {
     },
 }
 
+verifier_goss_mutually_exclusive_schema = {
+    'verifier': {
+        'type': 'dict',
+        'schema': {
+            'name': {
+                'type': 'string',
+                'allowed': [
+                    'goss',
+                ],
+            },
+            'lint': {
+                'type': 'dict',
+                'schema': {
+                    'name': {
+                        'type': 'string',
+                        'allowed': [
+                            'yamllint',
+                        ],
+                    },
+                }
+            },
+        }
+    },
+}
+
+verifier_inspec_mutually_exclusive_schema = {
+    'verifier': {
+        'type': 'dict',
+        'schema': {
+            'name': {
+                'type': 'string',
+                'allowed': [
+                    'inspec',
+                ],
+            },
+            'lint': {
+                'type': 'dict',
+                'schema': {
+                    'name': {
+                        'type': 'string',
+                        'allowed': [
+                            'rubocop',
+                        ],
+                    },
+                }
+            },
+        }
+    },
+}
+verifier_testinfra_mutually_exclusive_schema = {
+    'verifier': {
+        'type': 'dict',
+        'schema': {
+            'name': {
+                'type': 'string',
+                'allowed': [
+                    'testinfra',
+                ],
+            },
+            'lint': {
+                'type': 'dict',
+                'schema': {
+                    'name': {
+                        'type': 'string',
+                        'allowed': [
+                            'flake8',
+                        ],
+                    },
+                }
+            },
+        }
+    },
+}
+
 
 class Validator(cerberus.Validator):
     def __init__(self, *args, **kwargs):
@@ -614,8 +688,14 @@ def validate(c):
         util.merge_dicts(schema, platforms_base_schema)
 
     # Verifier
-    if c['verifier']['name'] != 'testinfra':
+    if c['verifier']['name'] == 'goss':
         util.merge_dicts(schema, verifier_options_readonly_schema)
+        util.merge_dicts(schema, verifier_goss_mutually_exclusive_schema)
+    elif c['verifier']['name'] == 'inspec':
+        util.merge_dicts(schema, verifier_options_readonly_schema)
+        util.merge_dicts(schema, verifier_inspec_mutually_exclusive_schema)
+    elif c['verifier']['name'] == 'testinfra':
+        util.merge_dicts(schema, verifier_testinfra_mutually_exclusive_schema)
 
     v = Validator(allow_unknown=True)
     v.validate(c, schema)
