@@ -95,7 +95,7 @@ def _allowed(ctx, param, value):  # pragma: no cover
     default=LOCAL_CONFIG,
     help=('Path to a base config.  If provided Molecule will load '
           "this config first, and deep merge each scenario's "
-          'molecule.yml ontop. ({})').format(LOCAL_CONFIG))
+          'molecule.yml on top. ({})').format(LOCAL_CONFIG))
 @click.version_option(version=molecule.__version__)
 @click.pass_context
 def main(ctx, debug, base_config):  # pragma: no cover
