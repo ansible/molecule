@@ -53,6 +53,10 @@ class Login(base.Base):
     Executing with `debug`:
 
     $ molecule --debug login
+
+    Executing with a `base-config`:
+
+    $ molecule --base-config base.yml login
     """
 
     def __init__(self, c):

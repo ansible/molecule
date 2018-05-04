@@ -247,27 +247,43 @@ class Config(object):
 
     def _combine(self):
         """
-        Perform a prioritized recursive merge of the `molecule_file` with
-        defaults, interpolate the result with environment variables, and
-        returns a new dict.
+        Perform a prioritized recursive merge of config files, and returns
+        a new dict.  Prior to merging the config files are interpolated with
+        environment variables.
+
+        1. Loads Molecule defaults.
+        2. Loads a base config (if provided) and merges ontop of defaults.
+        3. Loads the scenario's `molecule file` and merges ontop of previous
+           merge.
 
         :return: dict
         """
+        defaults = self._get_defaults()
+        base_config = self.args.get('base_config')
+        if base_config:
+            if os.path.exists(base_config):
+                with util.open_file(base_config) as stream:
+                    interpolated_config = self._interpolate(stream.read())
+                    defaults = util.merge_dicts(
+                        defaults, util.safe_load(interpolated_config))
+
+        with util.open_file(self.molecule_file) as stream:
+            interpolated_config = self._interpolate(stream.read())
+            defaults = util.merge_dicts(defaults,
+                                        util.safe_load(interpolated_config))
+
+        return defaults
+
+    def _interpolate(self, stream):
         i = interpolation.Interpolator(interpolation.TemplateWithDefaults,
                                        os.environ)
 
-        base = self._get_defaults()
-        with util.open_file(self.molecule_file) as stream:
-            try:
-                interpolated_config = i.interpolate(stream.read())
-                base = util.merge_dicts(base,
-                                        util.safe_load(interpolated_config))
-            except interpolation.InvalidInterpolation as e:
-                msg = ("parsing config file '{}'.\n\n"
-                       '{}\n{}'.format(self.molecule_file, e.place, e.string))
-                util.sysexit_with_message(msg)
-
-        return base
+        try:
+            return i.interpolate(stream)
+        except interpolation.InvalidInterpolation as e:
+            msg = ("parsing config file '{}'.\n\n"
+                   '{}\n{}'.format(self.molecule_file, e.place, e.string))
+            util.sysexit_with_message(msg)
 
     def _get_defaults(self):
         return {

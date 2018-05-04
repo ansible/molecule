@@ -40,6 +40,10 @@ class Lint(base.Base):
     Executing with `debug`:
 
     $ molecule --debug lint
+
+    Executing with a `base-config`:
+
+    $ molecule --base-config base.yml lint
     """
 
     def execute(self):

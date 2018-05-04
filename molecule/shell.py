@@ -20,6 +20,7 @@
 
 import distutils
 import distutils.version
+import os
 import sys
 
 import ansible
@@ -31,6 +32,8 @@ from molecule import command
 from molecule import util
 
 click_completion.init()
+
+LOCAL_CONFIG = os.path.expanduser('~/.config/molecule/config.yml')
 
 
 def _get_python_version():  # pragma: no cover
@@ -86,9 +89,16 @@ def _allowed(ctx, param, value):  # pragma: no cover
     default=False,
     callback=_allowed,
     help='Enable or disable debug mode. Default is disabled.')
+@click.option(
+    '--base-config',
+    '-c',
+    default=LOCAL_CONFIG,
+    help=('Path to a base config.  If provided Molecule will load '
+          "this config first, and deep merge each scenario's "
+          'molecule.yml ontop. ({})').format(LOCAL_CONFIG))
 @click.version_option(version=molecule.__version__)
 @click.pass_context
-def main(ctx, debug):  # pragma: no cover
+def main(ctx, debug, base_config):  # pragma: no cover
     """
     \b
      _____     _             _
@@ -105,6 +115,7 @@ def main(ctx, debug):  # pragma: no cover
     ctx.obj = {}
     ctx.obj['args'] = {}
     ctx.obj['args']['debug'] = debug
+    ctx.obj['args']['base_config'] = base_config
 
 
 main.add_command(command.check.check)

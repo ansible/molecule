@@ -49,6 +49,10 @@ class Destroy(base.Base):
     Executing with `debug`:
 
     $ molecule --debug destroy
+
+    Executing with a `base-config`:
+
+    $ molecule --base-config base.yml destroy
     """
 
     def execute(self):

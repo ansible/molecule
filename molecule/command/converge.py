@@ -47,6 +47,10 @@ class Converge(base.Base):
     Executing with `debug`:
 
     $ molecule --debug converge
+
+    Executing with a `base-config`:
+
+    $ molecule --base-config base.yml converge
     """
 
     def execute(self):

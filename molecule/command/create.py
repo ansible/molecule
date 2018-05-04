@@ -45,6 +45,10 @@ class Create(base.Base):
     Executing with `debug`:
 
     $ molecule --debug create
+
+    Executing with a `base-config`:
+
+    $ molecule --base-config base.yml create
     """
 
     def execute(self):

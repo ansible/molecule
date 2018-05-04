@@ -40,6 +40,10 @@ class Verify(base.Base):
     Executing with `debug`:
 
     $ molecule --debug verify
+
+    Executing with a `base-config`:
+
+    $ molecule --base-config base.yml verify
     """
 
     def execute(self):

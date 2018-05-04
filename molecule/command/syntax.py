@@ -40,6 +40,10 @@ class Syntax(base.Base):
     Executing with `debug`:
 
     $ molecule --debug syntax
+
+    Executing with a `base-config`:
+
+    $ molecule --base-config base.yml syntax
     """
 
     def execute(self):

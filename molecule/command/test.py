@@ -54,6 +54,10 @@ class Test(base.Base):
     Executing with `debug`:
 
     $ molecule --debug test
+
+    Executing with a `base-config`:
+
+    $ molecule --base-config base.yml test
     """
 
     def execute(self):

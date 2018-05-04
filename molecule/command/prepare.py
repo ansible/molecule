@@ -49,6 +49,10 @@ class Prepare(base.Base):
     Executing with `debug`:
 
     $ molecule --debug prepare
+
+    Executing with a `base-config`:
+
+    $ molecule --base-config base.yml prepare
     """
 
     def execute(self):
