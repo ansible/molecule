@@ -410,21 +410,35 @@ def test_combine(config_instance):
     assert isinstance(config_instance._combine(), dict)
 
 
-def test_combine_raises_on_failed_interpolation(patched_logger_critical,
-                                                config_instance):
-    contents = {'foo': '$6$8I5Cfmpr$kGZB'}
-    util.write_file(config_instance.molecule_file, util.safe_dump(contents))
+def test_combine_with_base_config(config_instance):
+    config_instance.args = {'base_config': './foo.yml'}
+    contents = {'foo': 'bar'}
+    util.write_file(config_instance.args['base_config'],
+                    util.safe_dump(contents))
+    result = config_instance._combine()
+
+    assert result['foo'] == 'bar'
+
+
+def test_interpolate(patched_logger_critical, config_instance):
+    string = 'foo: $HOME'
+    x = 'foo: {}'.format(os.environ['HOME'])
+
+    assert x == config_instance._interpolate(string)
+
+
+def test_interpolate_raises_on_failed_interpolation(patched_logger_critical,
+                                                    config_instance):
+    string = '$6$8I5Cfmpr$kGZB'
 
     with pytest.raises(SystemExit) as e:
-        config_instance._combine()
+        config_instance._interpolate(string)
 
     assert 1 == e.value.code
 
     msg = ("parsing config file '{}'.\n\n"
-           'Invalid placeholder in string: line 4, col 6\n'
-           '# Molecule managed\n\n'
-           '---\n'
-           'foo: $6$8I5Cfmpr$kGZB\n').format(config_instance.molecule_file)
+           'Invalid placeholder in string: line 1, col 1\n'
+           '$6$8I5Cfmpr$kGZB').format(config_instance.molecule_file)
     patched_logger_critical.assert_called_once_with(msg)
 
 

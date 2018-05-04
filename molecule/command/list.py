@@ -50,6 +50,10 @@ class List(base.Base):
     Executing with `debug`:
 
     $ molecule --debug list
+
+    Executing with a `base-config`:
+
+    $ molecule --base-config base.yml list
     """
 
     def execute(self):

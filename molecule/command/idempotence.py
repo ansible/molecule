@@ -46,6 +46,10 @@ class Idempotence(base.Base):
     Executing with `debug`:
 
     $ molecule --debug idempotence
+
+    Executing with a `base-config`:
+
+    $ molecule --base-config base.yml idempotence
     """
 
     def execute(self):

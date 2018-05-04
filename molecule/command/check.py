@@ -40,6 +40,10 @@ class Check(base.Base):
     Executing with `debug`:
 
     $ molecule --debug check
+
+    Executing with a `base-config`:
+
+    $ molecule --base-config base.yml check
     """
 
     def execute(self):

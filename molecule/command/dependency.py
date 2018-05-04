@@ -40,6 +40,10 @@ class Dependency(base.Base):
     Executing with `debug`:
 
     $ molecule --debug dependency
+
+    Executing with a `base-config`:
+
+    $ molecule --base-config base.yml dependency
     """
 
     def execute(self):
