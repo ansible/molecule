@@ -24,6 +24,7 @@
 import contextlib
 import os
 import sys
+import time
 
 import molecule
 import molecule.config
@@ -359,10 +360,18 @@ class VagrantClient(object):
         self._vagrant = self._get_vagrant()
         self._write_configs()
         self._has_error = None
+        self._time = int(time.time())
+
+    @contextlib.contextmanager
+    def stdout_cm(self):
+        """ Redirect the stdout to a log file. """
+        with open(self._get_stdout_log(), mode='w') as fh:
+            yield fh
 
     @contextlib.contextmanager
     def stderr_cm(self):
-        with open(self._get_vagrant_log(), mode='w') as fh:
+        """ Redirect the stderr to a log file. """
+        with open(self._get_stderr_log(), mode='w') as fh:
             try:
                 yield fh
             except Exception:
@@ -383,10 +392,12 @@ class VagrantClient(object):
             # NOTE(retr0h): Ansible wants only one module return `fail_json`
             # or `exit_json`.
             if not self._has_error:
-                self._module.exit_json(changed=changed, **self._conf())
+                self._module.exit_json(
+                    changed=changed,
+                    log=self._get_stdout_log(),
+                    **self._conf())
             else:
-                msg = "ERROR: See log file '{}'".format(
-                    self._get_vagrant_log())
+                msg = "ERROR: See log file '{}'".format(self._get_stderr_log())
                 self._module.fail_json(msg=msg)
 
     def destroy(self):
@@ -446,7 +457,8 @@ class VagrantClient(object):
     def _get_vagrant(self):
         env = os.environ.copy()
         env['VAGRANT_CWD'] = os.environ['MOLECULE_EPHEMERAL_DIRECTORY']
-        v = vagrant.Vagrant(err_cm=self.stderr_cm, env=env)
+        v = vagrant.Vagrant(
+            out_cm=self.stdout_cm, err_cm=self.stderr_cm, env=env)
 
         return v
 
@@ -498,11 +510,18 @@ class VagrantClient(object):
 
         return d
 
-    def _get_vagrant_log(self):
+    def _get_stdout_log(self):
+        return self._get_vagrant_log('out')
+
+    def _get_stderr_log(self):
+        return self._get_vagrant_log('err')
+
+    def _get_vagrant_log(self, __type):
         instance_name = self._module.params['instance_name']
 
         return os.path.join(self._config.scenario.ephemeral_directory,
-                            'vagrant-{}.out'.format(instance_name))
+                            'vagrant-{}-{}.{}'.format(self._time,
+                                                      instance_name, __type))
 
 
 def main():
