@@ -365,7 +365,7 @@ class VagrantClient(object):
     @contextlib.contextmanager
     def stdout_cm(self):
         """ Redirect the stdout to a log file. """
-        with open(self._get_stdout_log(), mode='w+') as fh:
+        with open(self._get_stdout_log(), 'a+') as fh:
             msg = '### {} ###\n'.format(self._datetime)
             fh.write(msg)
             fh.flush()
@@ -375,15 +375,18 @@ class VagrantClient(object):
     @contextlib.contextmanager
     def stderr_cm(self):
         """ Redirect the stderr to a log file. """
-        with open(self._get_stderr_log(), mode='w+') as fh:
+        with open(self._get_stderr_log(), 'a+') as fh:
             msg = '### {} ###\n'.format(self._datetime)
             fh.write(msg)
             fh.flush()
 
             try:
                 yield fh
-            except Exception:
+            except Exception as e:
                 self._has_error = True
+                fh.write(e.message)
+                fh.flush()
+                raise
 
     def up(self):
         changed = False
@@ -433,13 +436,18 @@ class VagrantClient(object):
 
     def _status(self):
         instance_name = self._module.params['instance_name']
-        s = self._vagrant.status(vm_name=instance_name)[0]
+        try:
+            s = self._vagrant.status(vm_name=instance_name)[0]
 
-        return {'name': s.name, 'state': s.state, 'provider': s.provider}
+            return {'name': s.name, 'state': s.state, 'provider': s.provider}
+        except AttributeError:
+            pass
+        except subprocess.CalledProcessError:
+            pass
 
     def _created(self):
         status = self._status()
-        if status['state'] == 'running':
+        if status and status['state'] == 'running':
             return status
         return {}
 
