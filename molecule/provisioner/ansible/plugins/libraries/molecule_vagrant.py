@@ -22,9 +22,9 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import contextlib
+import datetime
 import os
 import sys
-import time
 
 import molecule
 import molecule.config
@@ -360,18 +360,26 @@ class VagrantClient(object):
         self._vagrant = self._get_vagrant()
         self._write_configs()
         self._has_error = None
-        self._time = int(time.time())
+        self._datetime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     @contextlib.contextmanager
     def stdout_cm(self):
         """ Redirect the stdout to a log file. """
-        with open(self._get_stdout_log(), mode='w') as fh:
+        with open(self._get_stdout_log(), mode='w+') as fh:
+            msg = '### {} ###\n'.format(self._datetime)
+            fh.write(msg)
+            fh.flush()
+
             yield fh
 
     @contextlib.contextmanager
     def stderr_cm(self):
         """ Redirect the stderr to a log file. """
-        with open(self._get_stderr_log(), mode='w') as fh:
+        with open(self._get_stderr_log(), mode='w+') as fh:
+            msg = '### {} ###\n'.format(self._datetime)
+            fh.write(msg)
+            fh.flush()
+
             try:
                 yield fh
             except Exception:
@@ -520,8 +528,7 @@ class VagrantClient(object):
         instance_name = self._module.params['instance_name']
 
         return os.path.join(self._config.scenario.ephemeral_directory,
-                            'vagrant-{}-{}.{}'.format(self._time,
-                                                      instance_name, __type))
+                            'vagrant-{}.{}'.format(instance_name, __type))
 
 
 def main():

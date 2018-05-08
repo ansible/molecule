@@ -92,6 +92,10 @@ def test_safe_files_property(_instance):
                      'instance_config.yml'),
         os.path.join(_instance._config.scenario.ephemeral_directory,
                      '.vagrant'),
+        os.path.join(_instance._config.scenario.ephemeral_directory,
+                     'vagrant-*.out'),
+        os.path.join(_instance._config.scenario.ephemeral_directory,
+                     'vagrant-*.err'),
         'foo',
     ]
 
@@ -108,6 +112,10 @@ def test_default_safe_files_property(_instance):
                      'instance_config.yml'),
         os.path.join(_instance._config.scenario.ephemeral_directory,
                      '.vagrant'),
+        os.path.join(_instance._config.scenario.ephemeral_directory,
+                     'vagrant-*.out'),
+        os.path.join(_instance._config.scenario.ephemeral_directory,
+                     'vagrant-*.err'),
     ]
 
     assert x == _instance.default_safe_files
