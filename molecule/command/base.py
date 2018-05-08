@@ -1,3 +1,4 @@
+
 #  Copyright (c) 2015-2018 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,6 +21,7 @@
 
 import abc
 import collections
+import fnmatch
 import glob
 import os
 
@@ -64,10 +66,9 @@ class Base(object):
             self._config.provisioner.inventory_file,
             self._config.state.state_file,
         ] + self._config.driver.safe_files
-
         files = util.os_walk(self._config.scenario.ephemeral_directory, '*')
         for f in files:
-            if all(sf not in f for sf in safe_files):
+            if not any(sf for sf in safe_files if fnmatch.fnmatch(f, sf)):
                 os.remove(f)
 
         # Remove empty directories.
