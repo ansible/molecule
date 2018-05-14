@@ -73,7 +73,11 @@ class Shell(base.Base):
         super(Shell, self).__init__(config)
         self._sh_command = None
 
-        self.command = config.config['dependency']['command']
+        # self.command = config..config['dependency']['command']
+
+    @property
+    def command(self):
+        return self._config.config['dependency']['command']
 
     @property
     def default_options(self):

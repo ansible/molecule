@@ -21,6 +21,7 @@
 import os
 
 import anyconfig
+import six
 
 from molecule import interpolation
 from molecule import logger
@@ -53,6 +54,15 @@ MOLECULE_FILE = 'molecule.yml'
 MERGE_STRATEGY = anyconfig.MS_DICTS
 
 
+# https://stackoverflow.com/questions/16017397/injecting-function-call-after-init-with-decorator  # noqa
+class NewInitCaller(type):
+    def __call__(cls, *args, **kwargs):
+        obj = type.__call__(cls, *args, **kwargs)
+        obj.after_init()
+        return obj
+
+
+@six.add_metaclass(NewInitCaller)
 class Config(object):
     """
     Molecule searches the current directory for `molecule.yml` files by
@@ -90,9 +100,11 @@ class Config(object):
         self.args = args
         self.command_args = command_args
         self.ansible_args = ansible_args
-        self.config = self._combine()
+        self.config = self._get_config()
         self._action = None
 
+    def after_init(self):
+        self.config = self._reget_config()
         self._validate()
 
     @property
@@ -245,7 +257,29 @@ class Config(object):
 
         return driver_name
 
-    def _combine(self):
+    def _get_config(self):
+        """
+        Perform a prioritized recursive merge of config files, and returns
+        a new dict.  Prior to merging the config files are interpolated with
+        environment variables.
+
+        :return: dict
+        """
+        return self._combine(keep_string='MOLECULE_')
+
+    def _reget_config(self):
+        """
+        Perform the same prioritized recursive merge from `get_config`, this
+        time, interpolating the `keep_string` left behind in the original
+        `get_config` call.  This is probably __very__ bad.
+
+        :return: dict
+        """
+        env = util.merge_dicts(os.environ.copy(), self.env)
+
+        return self._combine(env=env)
+
+    def _combine(self, env=os.environ, keep_string=None):
         """
         Perform a prioritized recursive merge of config files, and returns
         a new dict.  Prior to merging the config files are interpolated with
@@ -263,23 +297,24 @@ class Config(object):
         if base_config:
             if os.path.exists(base_config):
                 with util.open_file(base_config) as stream:
-                    interpolated_config = self._interpolate(stream.read())
+                    interpolated_config = self._interpolate(
+                        stream.read(), env, keep_string)
                     defaults = util.merge_dicts(
                         defaults, util.safe_load(interpolated_config))
 
         with util.open_file(self.molecule_file) as stream:
-            interpolated_config = self._interpolate(stream.read())
+            interpolated_config = self._interpolate(stream.read(), env,
+                                                    keep_string)
             defaults = util.merge_dicts(defaults,
                                         util.safe_load(interpolated_config))
 
         return defaults
 
-    def _interpolate(self, stream):
-        i = interpolation.Interpolator(interpolation.TemplateWithDefaults,
-                                       os.environ)
+    def _interpolate(self, stream, env, keep_string):
+        i = interpolation.Interpolator(interpolation.TemplateWithDefaults, env)
 
         try:
-            return i.interpolate(stream)
+            return i.interpolate(stream, keep_string)
         except interpolation.InvalidInterpolation as e:
             msg = ("parsing config file '{}'.\n\n"
                    '{}\n{}'.format(self.molecule_file, e.place, e.string))
@@ -397,11 +432,6 @@ class Config(object):
     def _validate(self):
         msg = 'Validating schema {}.'.format(self.molecule_file)
         LOG.info(msg)
-
-        # Prior to validation, we must set values.  This allows us to perform
-        # validation in one place.  This feels gross.
-        self.config['dependency']['command'] = self.dependency.command
-        self.config['driver']['name'] = self.driver.name
 
         errors = schema_v2.validate(self.config)
         if errors:

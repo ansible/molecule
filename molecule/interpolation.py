@@ -49,15 +49,19 @@ class Interpolator(object):
 
     If a literal dollar sign is needed in a configuration, use a double dollar
     sign (`$$`).
+
+    Molecule will substitute special `MOLECULE_` environment variables defined
+    in `molecule.yml`.  However, use at your own risk, this should be used
+    sparingly.
     """
 
     def __init__(self, templater, mapping):
         self.templater = templater
         self.mapping = mapping
 
-    def interpolate(self, string):
+    def interpolate(self, string, keep_string=None):
         try:
-            return self.templater(string).substitute(self.mapping)
+            return self.templater(string).substitute(self.mapping, keep_string)
         except ValueError as e:
             raise InvalidInterpolation(string, e)
 
@@ -66,12 +70,14 @@ class TemplateWithDefaults(string.Template):
     idpattern = r'[_a-z][_a-z0-9]*(?::?-[^}]+)?'
 
     # Modified from python2.7/string.py
-    def substitute(self, mapping):
+    def substitute(self, mapping, keep_string):
         # Helper function for .sub()
         def convert(mo):
             # Check the most common path first.
             named = mo.group('named') or mo.group('braced')
             if named is not None:
+                if keep_string and named.startswith(keep_string):
+                    return '$%s' % named
                 if ':-' in named:
                     var, _, default = named.partition(':-')
                     return mapping.get(var) or default
