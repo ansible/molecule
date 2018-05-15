@@ -25,6 +25,31 @@ import cerberus.errors
 
 from molecule import util
 
+pre_validate_base_schema = {
+    'platforms': {
+        'type': 'list',
+        'schema': {
+            'type': 'dict',
+            'schema': {
+                'registry': {
+                    'type': 'dict',
+                    'schema': {
+                        'credentials': {
+                            'type': 'dict',
+                            'schema': {
+                                'password': {
+                                    'type': 'string',
+                                    'regex': '^[{$]+[a-z0-9A-z]+[}]*$',
+                                },
+                            }
+                        },
+                    }
+                },
+            }
+        }
+    },
+}
+
 base_schema = {
     'dependency': {
         'type': 'dict',
@@ -501,7 +526,6 @@ platforms_docker_schema = {
                             'schema': {
                                 'username': {
                                     'type': 'string',
-                                    'regex': '^[{$]+[a-z0-9A-z]+[}]*$',
                                 },
                                 'password': {
                                     'type': 'string',
@@ -685,6 +709,15 @@ class Validator(cerberus.Validator):
         if disallowed:
             msg = 'disallowed user provided config option'
             self._error(field, msg)
+
+
+def pre_validate(stream):
+    data = util.safe_load(stream)
+
+    v = Validator(allow_unknown=True)
+    v.validate(data, pre_validate_base_schema)
+
+    return v.errors
 
 
 def validate(c):

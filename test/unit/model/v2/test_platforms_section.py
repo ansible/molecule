@@ -36,7 +36,7 @@ def _model_platforms_docker_section_data():
             'registry': {
                 'url': 'registry.example.com',
                 'credentials': {
-                    'username': '$USERNAME',
+                    'username': 'username',
                     'password': '$PASSWORD',
                     'email': 'user@example.com',
                 },
@@ -202,9 +202,6 @@ def test_platforms_docker_registry_credentials_are_interpolated(_config):
             0: [{
                 'registry': [{
                     'credentials': [{
-                        'username': [
-                            "value does not match regex '^[{$]+[a-z0-9A-z]+[}]*$'",  # noqa
-                        ],
                         'password': [
                             "value does not match regex '^[{$]+[a-z0-9A-z]+[}]*$'",  # noqa
                         ]

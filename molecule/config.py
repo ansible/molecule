@@ -297,14 +297,17 @@ class Config(object):
         if base_config:
             if os.path.exists(base_config):
                 with util.open_file(base_config) as stream:
+                    s = stream.read()
+                    self._preflight(s)
                     interpolated_config = self._interpolate(
-                        stream.read(), env, keep_string)
+                        s, env, keep_string)
                     defaults = util.merge_dicts(
                         defaults, util.safe_load(interpolated_config))
 
         with util.open_file(self.molecule_file) as stream:
-            interpolated_config = self._interpolate(stream.read(), env,
-                                                    keep_string)
+            s = stream.read()
+            self._preflight(s)
+            interpolated_config = self._interpolate(s, env, keep_string)
             defaults = util.merge_dicts(defaults,
                                         util.safe_load(interpolated_config))
 
@@ -428,6 +431,12 @@ class Config(object):
                 },
             },
         }
+
+    def _preflight(self, data):
+        errors = schema_v2.pre_validate(data)
+        if errors:
+            msg = "Failed to validate.\n\n{}".format(errors)
+            util.sysexit_with_message(msg)
 
     def _validate(self):
         msg = 'Validating schema {}.'.format(self.molecule_file)
