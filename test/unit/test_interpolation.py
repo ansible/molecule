@@ -23,57 +23,67 @@ def _mock_env():
         'FOO': 'foo',
         'BAR': '',
         'DEPENDENCY_NAME': 'galaxy',
-        'VERIFIER_NAME': 'testinfra'
+        'VERIFIER_NAME': 'testinfra',
+        'MOLECULE_SCENARIO_NAME': 'default',
     }
 
 
 @pytest.fixture
 def _instance(_mock_env):
     return interpolation.Interpolator(interpolation.TemplateWithDefaults,
-                                      _mock_env).interpolate
+                                      _mock_env)
 
 
 def test_escaped_interpolation(_instance):
-    assert '${foo}' == _instance('$${foo}')
+    assert '${foo}' == _instance.interpolate('$${foo}')
 
 
 def test_invalid_interpolation(_instance):
     with pytest.raises(interpolation.InvalidInterpolation):
-        _instance('${')
+        _instance.interpolate('${')
     with pytest.raises(interpolation.InvalidInterpolation):
-        _instance('$}')
+        _instance.interpolate('$}')
     with pytest.raises(interpolation.InvalidInterpolation):
-        _instance('${}')
+        _instance.interpolate('${}')
     with pytest.raises(interpolation.InvalidInterpolation):
-        _instance('${ }')
+        _instance.interpolate('${ }')
     with pytest.raises(interpolation.InvalidInterpolation):
-        _instance('${ foo}')
+        _instance.interpolate('${ foo}')
     with pytest.raises(interpolation.InvalidInterpolation):
-        _instance('${foo }')
+        _instance.interpolate('${foo }')
     with pytest.raises(interpolation.InvalidInterpolation):
-        _instance('${foo!}')
+        _instance.interpolate('${foo!}')
 
 
 def test_interpolate_missing_no_default(_instance):
-    assert 'This  var' == _instance('This ${missing} var')
-    assert 'This  var' == _instance('This ${BAR} var')
+    assert 'This  var' == _instance.interpolate('This ${missing} var')
+    assert 'This  var' == _instance.interpolate('This ${BAR} var')
 
 
 def test_interpolate_with_value(_instance):
-    assert 'This foo var' == _instance('This $FOO var')
-    assert 'This foo var' == _instance('This ${FOO} var')
+    assert 'This foo var' == _instance.interpolate('This $FOO var')
+    assert 'This foo var' == _instance.interpolate('This ${FOO} var')
 
 
 def test_interpolate_missing_with_default(_instance):
-    assert 'ok def' == _instance('ok ${missing:-def}')
-    assert 'ok def' == _instance('ok ${missing-def}')
-    assert 'ok /non:-alphanumeric' == _instance(
+    assert 'ok def' == _instance.interpolate('ok ${missing:-def}')
+    assert 'ok def' == _instance.interpolate('ok ${missing-def}')
+    assert 'ok /non:-alphanumeric' == _instance.interpolate(
         'ok ${BAR:-/non:-alphanumeric}')
 
 
 def test_interpolate_with_empty_and_default_value(_instance):
-    assert 'ok def' == _instance('ok ${BAR:-def}')
-    assert 'ok ' == _instance('ok ${BAR-def}')
+    assert 'ok def' == _instance.interpolate('ok ${BAR:-def}')
+    assert 'ok ' == _instance.interpolate('ok ${BAR-def}')
+
+
+def test_interpolate_interpolates_MOLECULE_strings(_instance):
+    assert 'default' == _instance.interpolate('$MOLECULE_SCENARIO_NAME')
+
+
+def test_interpolate_does_not_interpolate_MOLECULE_strings(_instance):
+    assert 'foo $MOLECULE_SCENARIO_NAME' == _instance.interpolate(
+        'foo $MOLECULE_SCENARIO_NAME', keep_string='MOLECULE_')
 
 
 def test_interpolate_with_molecule_yaml(_instance):
@@ -90,7 +100,7 @@ platforms:
 provisioner:
     name: ansible
 scenario:
-    name: default
+    name: $MOLECULE_SCENARIO_NAME
 verifier:
     name: ${VERIFIER_NAME}
     options:
@@ -117,4 +127,4 @@ verifier:
       foo: bar
 """.strip()
 
-    assert x == _instance(data)
+    assert x == _instance.interpolate(data)

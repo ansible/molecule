@@ -52,6 +52,7 @@ base_schema = {
             },
             'command': {
                 'type': 'string',
+                'nullable': True,
             },
         }
     },
@@ -571,6 +572,18 @@ platforms_docker_schema = {
     },
 }
 
+dependency_command_nullable_schema = {
+    'dependency': {
+        'type': 'dict',
+        'schema': {
+            'command': {
+                'type': 'string',
+                'nullable': False,
+            },
+        }
+    },
+}
+
 verifier_options_readonly_schema = {
     'verifier': {
         'type': 'dict',
@@ -676,6 +689,10 @@ class Validator(cerberus.Validator):
 
 def validate(c):
     schema = copy.deepcopy(base_schema)
+
+    # Dependency
+    if c['dependency']['name'] == 'shell':
+        util.merge_dicts(schema, dependency_command_nullable_schema)
 
     # Driver
     util.merge_dicts(schema, platforms_base_schema)

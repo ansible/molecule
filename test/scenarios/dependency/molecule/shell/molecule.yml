@@ -1,10 +1,7 @@
 ---
 dependency:
   name: shell
-  # TODO(retr0h): Setup the MOLECULE_ env vars prior to the
-  # interpolator.
-  # command: $MOLECULE_SCENARIO_DIRECTORY/run.bash
-  command: ./molecule/shell/run.bash
+  command: $MOLECULE_SCENARIO_DIRECTORY/run.bash
 driver:
   name: docker
   # NOTE(retr0h): Required for functional tests, since
