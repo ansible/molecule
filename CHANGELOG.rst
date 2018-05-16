@@ -890,7 +890,7 @@ Breaking Changes
 * Added support for libvirt provider.
 * Added ``molecule check`` to check playbook syntax.
 * Testinfra parameters can now be set as vars in molecule.yml.
-* Running testinfra tests in parallel is no longer the default behavior.
+* Running testinfra tests in parallel is no longer the default behaviour.
 
 1.5.1
 =====
