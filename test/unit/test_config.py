@@ -446,6 +446,29 @@ def test_interpolate_raises_on_failed_interpolation(patched_logger_critical,
     patched_logger_critical.assert_called_once_with(msg)
 
 
+def test_preflight(mocker, config_instance, patched_logger_info):
+    m = mocker.patch('molecule.model.schema_v2.pre_validate')
+    m.return_value = None
+
+    config_instance._preflight('foo')
+
+    m.assert_called_once_with('foo')
+
+
+def test_preflight_exists_when_validation_fails(
+        mocker, patched_logger_critical, config_instance):
+    m = mocker.patch('molecule.model.schema_v2.pre_validate')
+    m.return_value = 'validation errors'
+
+    with pytest.raises(SystemExit) as e:
+        config_instance._preflight('invalid stream')
+
+    assert 1 == e.value.code
+
+    msg = 'Failed to validate.\n\nvalidation errors'
+    patched_logger_critical.assert_called_once_with(msg)
+
+
 def test_validate(mocker, config_instance, patched_logger_info,
                   patched_logger_success):
     m = mocker.patch('molecule.model.schema_v2.validate')

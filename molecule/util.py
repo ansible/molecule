@@ -174,7 +174,10 @@ def safe_load(string):
     :param string: A string to be parsed.
     :return: dict
     """
-    return yaml.safe_load(string) or {}
+    try:
+        return yaml.safe_load(string) or {}
+    except yaml.scanner.ScannerError as e:
+        sysexit_with_message(str(e))
 
 
 def safe_load_file(filename):
