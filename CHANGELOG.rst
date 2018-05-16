@@ -2,6 +2,33 @@
 History
 *******
 
+2.14
+====
+
+* Add pre-validation.
+* MOLECULE_ special variables available in molecule.yml.
+* Log Vagrant stdout to a file in MOLECULE_EPHEMERAL_DIRECTORY.
+* Reintroduce base config merging.
+* Corrected unit tests to work with tox.
+* Add verifier mutually exclusive checking.
+* UTF-8 issue in idempotence.
+* Made prepare playbook optional.
+* Bundle common playbooks.
+* Added Goss linter.
+* Disallow verifier.options with Goss and Inspec.
+
+Important Changes
+-----------------
+
+* MOLECULE_ special variables available in molecule.yml.
+* Molecule introduces a new CLI option `--base-config`, which is
+  loaded prior to each scenario's `molecule.yml`.  This allows
+  developers to specify a base config, to help reduce repetition
+  in their molecule.yml files.  The default base config is
+  ~/.config/molecule/config.yml.
+* Prepare playbook no longer needs to exist, unless using it.
+* Molecule bundles Docker and Vagrant create/destroy playbooks.
+
 2.13.1
 ======
 
