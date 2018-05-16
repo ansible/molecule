@@ -10,8 +10,8 @@ clean:
 build: clean
 	@echo "+ $@"
 	git clean -d -x -f molecule/cookiecutter/
-	./.tox/py27-ansible25-functional/bin/python setup.py sdist bdist_wheel
-	./.tox/py36-ansible25-functional/bin/python setup.py sdist bdist_wheel
+	./.tox/py27-ansible25-unit/bin/python setup.py sdist bdist_wheel
+	./.tox/py36-ansible25-unit/bin/python setup.py sdist bdist_wheel
 
 docker-build:
 	@echo "+ $@"
@@ -21,7 +21,7 @@ docker-build:
 		-t $(IMAGE) .
 
 push:
-	./.tox/py27-ansible25-functional/bin/twine upload dist/* -r pypi
+	./.tox/py27-ansible25-unit/bin/twine upload dist/* -r pypi
 
 docker-push:
 	@echo "+ $@"
