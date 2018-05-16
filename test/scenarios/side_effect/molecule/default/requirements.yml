@@ -1,3 +1,4 @@
 ---
 - name: timezone
   src: geerlingguy.ntp
+  version: 1.5.3
