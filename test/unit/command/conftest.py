@@ -40,3 +40,13 @@ def command_driver_delegated_section_data():
             }
         }
     }
+
+
+@pytest.fixture
+def command_driver_delegated_managed_section_data():
+    return {
+        'driver': {
+            'name': 'delegated',
+            'managed': True,
+        }
+    }

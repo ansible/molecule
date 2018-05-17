@@ -39,9 +39,9 @@ def test_execute(mocker, _instance):
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['command_driver_delegated_section_data'],
+    'config_instance', ['command_driver_delegated_managed_section_data'],
     indirect=True)
-def test_execute_raises_when_not_converged(patched_logger_critical, _instance):
+def test_execute_raises_when_not_created(patched_logger_critical, _instance):
     _instance._config.state.change_state('created', False)
 
     with pytest.raises(SystemExit) as e:
