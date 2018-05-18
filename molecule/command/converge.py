@@ -42,7 +42,7 @@ class Converge(base.Base):
     validation of input.  Options passed on the CLI override options
     provided in provisioner's `options` section of `molecule.yml`.
 
-    $ molecule converge -- -vvv -tags foo,bar
+    $ molecule converge -- -vvv --tags foo,bar
 
     Executing with `debug`:
 
