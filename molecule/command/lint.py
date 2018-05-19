@@ -29,21 +29,29 @@ LOG = logger.get_logger(__name__)
 
 class Lint(base.Base):
     """
-    Target the default scenario:
+    .. program:: molecule lint
 
-    $ molecule lint
+    .. option:: molecule lint
 
-    Targeting a specific scenario:
+        Target the default scenario.
 
-    $ molecule lint --scenario-name foo
+    .. program:: molecule lint --scenario-name foo
 
-    Executing with `debug`:
+    .. option:: molecule lint --scenario-name foo
 
-    $ molecule --debug lint
+        Targeting a specific scenario.
 
-    Executing with a `base-config`:
+    .. program:: molecule --debug lint
 
-    $ molecule --base-config base.yml lint
+    .. option:: molecule --debug lint
+
+        Executing with `debug`.
+
+    .. program:: molecule --base-config base.yml lint
+
+    .. option:: molecule --base-config base.yml lint
+
+        Executing with a `base-config`.
     """
 
     def execute(self):

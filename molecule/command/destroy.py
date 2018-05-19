@@ -30,29 +30,41 @@ LOG = logger.get_logger(__name__)
 
 class Destroy(base.Base):
     """
-    Target the default scenario:
+    .. program:: molecule destroy
 
-    $ molecule destroy
+    .. option:: molecule destroy
 
-    Target all scenarios:
+        Target the default scenario.
 
-    $ molecule destroy --all
+    .. program:: molecule destroy --scenario-name foo
 
-    Targeting a specific scenario:
+    .. option:: molecule destroy --scenario-name foo
 
-    $ molecule destroy --scenario-name foo
+        Targeting a specific scenario.
 
-    Targeting a specific driver:
+    .. program:: molecule destroy --all
 
-    $ molecule converge --driver-name foo
+    .. option:: molecule destroy --all
 
-    Executing with `debug`:
+        Target all scenarios.
 
-    $ molecule --debug destroy
+    .. program:: molecule destroy --driver-name foo
 
-    Executing with a `base-config`:
+    .. option:: molecule destroy --driver-name foo
 
-    $ molecule --base-config base.yml destroy
+        Targeting a specific driver.
+
+    .. program:: molecule --debug destroy
+
+    .. option:: molecule --debug destroy
+
+        Executing with `debug`.
+
+    .. program:: molecule --base-config base.yml destroy
+
+    .. option:: molecule --base-config base.yml destroy
+
+        Executing with a `base-config`.
     """
 
     def execute(self):

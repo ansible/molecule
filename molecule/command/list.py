@@ -34,26 +34,41 @@ LOG = logger.get_logger(__name__)
 
 class List(base.Base):
     """
-    Target all scenarios:
+    .. program:: molecule list
 
-    $ molecule list
+    .. option:: molecule list
 
-    Targeting a specific scenario:
+        Target the default scenario.
 
-    $ molecule list --scenario-name foo
+    .. program:: molecule list --scenario-name foo
 
-    Machine readable output:
+    .. option:: molecule list --scenario-name foo
 
-    $ molecule list --format plain
-    $ molecule list --format yaml
+        Targeting a specific scenario.
 
-    Executing with `debug`:
+    .. program:: molecule list --format plain
 
-    $ molecule --debug list
+    .. option:: molecule list  --format plain
 
-    Executing with a `base-config`:
+        Machine readable plain text output.
 
-    $ molecule --base-config base.yml list
+    .. program:: molecule list --format yaml
+
+    .. option:: molecule list  --format yaml
+
+        Machine readable yaml output.
+
+    .. program:: molecule --debug list
+
+    .. option:: molecule --debug list
+
+        Executing with `debug`.
+
+    .. program:: molecule --base-config base.yml list
+
+    .. option:: molecule --base-config base.yml list
+
+        Executing with a `base-config`.
     """
 
     def execute(self):
@@ -70,7 +85,7 @@ class List(base.Base):
 @click.pass_context
 @click.option('--scenario-name', '-s', help='Name of the scenario to target.')
 @click.option(
-    '--format',
+    '--format', '-f',
     type=click.Choice(['simple', 'plain', 'yaml']),
     default='simple',
     help='Change output format. (simple)')

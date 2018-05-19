@@ -29,28 +29,38 @@ LOG = logger.get_logger(__name__)
 
 class Converge(base.Base):
     """
-    Target the default scenario:
+    .. program:: molecule converge
 
-    $ molecule converge
+    .. option:: molecule converge
 
-    Targeting a specific scenario:
+        Target the default scenario.
 
-    $ molecule converge --scenario-name foo
+    .. program:: molecule converge --scenario-name foo
 
-    Providing additional command line arguments to the `ansible-playbook`
-    command.  Use this option with care, as there is no sanitation or
-    validation of input.  Options passed on the CLI override options
-    provided in provisioner's `options` section of `molecule.yml`.
+    .. option:: molecule converge --scenario-name foo
 
-    $ molecule converge -- -vvv --tags foo,bar
+        Targeting a specific scenario.
 
-    Executing with `debug`:
+    .. program:: molecule converge -- -vvv --tags foo,bar
 
-    $ molecule --debug converge
+    .. option:: molecule converge -- -vvv --tags foo,bar
 
-    Executing with a `base-config`:
+        Providing additional command line arguments to the `ansible-playbook`
+        command.  Use this option with care, as there is no sanitation or
+        validation of input.  Options passed on the CLI override options
+        provided in provisioner's `options` section of `molecule.yml`.
 
-    $ molecule --base-config base.yml converge
+    .. program:: molecule --debug converge
+
+    .. option:: molecule --debug converge
+
+        Executing with `debug`.
+
+    .. program:: molecule --base-config base.yml converge
+
+    .. option:: molecule --base-config base.yml converge
+
+        Executing with a `base-config`.
     """
 
     def execute(self):

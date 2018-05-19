@@ -38,25 +38,41 @@ LOG = logger.get_logger(__name__)
 
 class Login(base.Base):
     """
-    Targeting the only running host:
+    .. program:: molecule login
 
-    $ molecule login
+    .. option:: molecule login
 
-    Targeting a specific running host:
+        Target the default scenario.
 
-    $ molecule login --host hostname
+    .. program:: molecule login --scenario-name foo
 
-    Targeting a specific running host and scenario:
+    .. option:: molecule login --scenario-name foo
 
-    $ molecule login --host hostname --scenario-name foo
+        Targeting a specific scenario.
 
-    Executing with `debug`:
+    .. program:: molecule login --host hostname
 
-    $ molecule --debug login
+    .. option:: molecule login --host hostname
 
-    Executing with a `base-config`:
+        Targeting a specific running host.
 
-    $ molecule --base-config base.yml login
+    .. program:: molecule login --host hostname --scenario-name foo
+
+    .. option:: molecule login --host hostname --scenario-name foo
+
+        Targeting a specific running host and scenario.
+
+    .. program:: molecule --debug login
+
+    .. option:: molecule --debug login
+
+        Executing with `debug`.
+
+    .. program:: molecule --base-config base.yml login
+
+    .. option:: molecule --base-config base.yml login
+
+        Executing with a `base-config`.
     """
 
     def __init__(self, c):

@@ -32,14 +32,17 @@ LOG = logger.get_logger(__name__)
 
 class Scenario(base.Base):
     """
-    Initialize a new scenario:
+    .. program:: molecule init scenario --scenario-name bar --role-name foo
 
-    $ molecule init scenario --scenario-name default --role-name foo
+    .. option:: molecule init scenario --scenario-name bar --role-name foo
 
-    Initialize an existing role with Molecule:
+        Initialize a new scenario.
 
-    $ cd foo
-    $ molecule init scenario --scenario-name default --role-name foo
+    .. program:: cd foo; molecule init scenario --scenario-name bar --role-name foo  # noqa
+
+    .. option:: cd foo; molecule init scenario --scenario-name bar --role-name foo  # noqa
+
+        Initialize an existing role with Molecule:
     """
 
     def __init__(self, command_args):

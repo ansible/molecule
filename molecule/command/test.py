@@ -31,33 +31,29 @@ LOG = logger.get_logger(__name__)
 
 class Test(base.Base):
     """
-    Target the default scenario:
+    .. program:: molecule test
 
-    $ molecule test
+    .. option:: molecule test
 
-    Target all scenarios:
+        Target the default scenario.
 
-    $ molecule test --all
+    .. program:: molecule test --scenario-name foo
 
-    Targeting a specific scenario:
+    .. option:: molecule test --scenario-name foo
 
-    $ molecule test --scenario-name foo
+        Targeting a specific scenario.
 
-    Targeting a specific driver:
+    .. program:: molecule test --all
 
-    $ molecule test --driver-name foo
+    .. option:: molecule test --all
 
-    Always destroy instances at the conclusion of a Molecule run:
+        Target all scenarios.
 
-    $ molecule test --destroy=always
+    .. program:: molecule test --destroy=always
 
-    Executing with `debug`:
+    .. option:: molecule test --destroy=always
 
-    $ molecule --debug test
-
-    Executing with a `base-config`:
-
-    $ molecule --base-config base.yml test
+        Always destroy instances at the conclusion of a Molecule run.
     """
 
     def execute(self):
