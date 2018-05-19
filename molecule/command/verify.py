@@ -29,21 +29,29 @@ LOG = logger.get_logger(__name__)
 
 class Verify(base.Base):
     """
-    Target the default scenario:
+    .. program:: molecule verify
 
-    $ molecule verify
+    .. option:: molecule verify
 
-    Targeting a specific scenario:
+        Target the default scenario.
 
-    $ molecule verify --scenario-name foo
+    .. program:: molecule verify --scenario-name foo
 
-    Executing with `debug`:
+    .. option:: molecule verify --scenario-name foo
 
-    $ molecule --debug verify
+        Targeting a specific scenario.
 
-    Executing with a `base-config`:
+    .. program:: molecule --debug verify
 
-    $ molecule --base-config base.yml verify
+    .. option:: molecule --debug verify
+
+        Executing with `debug`.
+
+    .. program:: molecule --base-config base.yml verify
+
+    .. option:: molecule --base-config base.yml verify
+
+        Executing with a `base-config`.
     """
 
     def execute(self):

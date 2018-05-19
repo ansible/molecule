@@ -35,21 +35,29 @@ class Idempotence(base.Base):
     Runs the converge step a second time. If no tasks will be marked as changed
     the scenario will be considered idempotent.
 
-    Target the default scenario:
+    .. program:: molecule idempotence
 
-    $ molecule idempotence
+    .. option:: molecule idempotence
 
-    Targeting a specific scenario:
+        Target the default scenario.
 
-    $ molecule idempotence --scenario-name foo
+    .. program:: molecule idempotence --scenario-name foo
 
-    Executing with `debug`:
+    .. option:: molecule idempotence --scenario-name foo
 
-    $ molecule --debug idempotence
+        Targeting a specific scenario.
 
-    Executing with a `base-config`:
+    .. program:: molecule --debug idempotence
 
-    $ molecule --base-config base.yml idempotence
+    .. option:: molecule --debug idempotence
+
+        Executing with `debug`.
+
+    .. program:: molecule --base-config base.yml idempotence
+
+    .. option:: molecule --base-config base.yml idempotence
+
+        Executing with a `base-config`.
     """
 
     def execute(self):

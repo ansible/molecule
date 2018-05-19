@@ -29,21 +29,29 @@ LOG = logger.get_logger(__name__)
 
 class Check(base.Base):
     """
-    Target the default scenario:
+    .. program:: molecule check
 
-    $ molecule check
+    .. option:: molecule check
 
-    Targeting a specific scenario:
+        Target the default scenario.
 
-    $ molecule check --scenario-name foo
+    .. program:: molecule check --scenario-name foo
 
-    Executing with `debug`:
+    .. option:: molecule check --scenario-name foo
 
-    $ molecule --debug check
+        Targeting a specific scenario.
 
-    Executing with a `base-config`:
+    .. program:: molecule --debug check
 
-    $ molecule --base-config base.yml check
+    .. option:: molecule --debug check
+
+        Executing with `debug`.
+
+    .. program:: molecule --base-config base.yml check
+
+    .. option:: molecule --base-config base.yml check
+
+        Executing with a `base-config`.
     """
 
     def execute(self):

@@ -30,29 +30,41 @@ LOG = logger.get_logger(__name__)
 
 class Prepare(base.Base):
     """
-    Target the default scenario:
+    .. program:: molecule prepare
 
-    $ molecule prepare
+    .. option:: molecule prepare
 
-    Targeting a specific scenario:
+        Target the default scenario.
 
-    $ molecule prepare --scenario-name foo
+    .. program:: molecule prepare --scenario-name foo
 
-    Targeting a specific driver:
+    .. option:: molecule prepare --scenario-name foo
 
-    $ molecule prepare --driver-name foo
+        Targeting a specific scenario.
 
-    Force the execution fo the prepare playbook:
+    .. program:: molecule prepare --driver-name foo
 
-    $ molecule prepare --force
+    .. option:: molecule prepare --driver-name foo
 
-    Executing with `debug`:
+        Targeting a specific driver.
 
-    $ molecule --debug prepare
+    .. program:: molecule prepare --force
 
-    Executing with a `base-config`:
+    .. option:: molecule prepare --force
 
-    $ molecule --base-config base.yml prepare
+        Force the execution fo the prepare playbook.
+
+    .. program:: molecule --debug prepare
+
+    .. option:: molecule --debug prepare
+
+        Executing with `debug`.
+
+    .. program:: molecule --base-config base.yml prepare
+
+    .. option:: molecule --base-config base.yml prepare
+
+        Executing with a `base-config`.
     """
 
     def execute(self):

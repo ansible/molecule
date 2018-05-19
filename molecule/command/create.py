@@ -30,25 +30,35 @@ LOG = logger.get_logger(__name__)
 
 class Create(base.Base):
     """
-    Target the default scenario:
+    .. program:: molecule create
 
-    $ molecule create
+    .. option:: molecule create
 
-    Targeting a specific scenario:
+        Target the default scenario.
 
-    $ molecule create --scenario-name foo
+    .. program:: molecule create --scenario-name foo
 
-    Targeting a specific driver:
+    .. option:: molecule create --scenario-name foo
 
-    $ molecule converge --driver-name foo
+        Targeting a specific scenario.
 
-    Executing with `debug`:
+    .. program:: molecule create --driver-name foo
 
-    $ molecule --debug create
+    .. option:: molecule create --driver-name foo
 
-    Executing with a `base-config`:
+        Targeting a specific driver.
 
-    $ molecule --base-config base.yml create
+    .. program:: molecule --debug create
+
+    .. option:: molecule --debug create
+
+        Executing with `debug`.
+
+    .. program:: molecule --base-config base.yml create
+
+    .. option:: molecule --base-config base.yml create
+
+        Executing with a `base-config`.
     """
 
     def execute(self):

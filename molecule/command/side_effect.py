@@ -32,21 +32,29 @@ class SideEffect(base.Base):
     This action has side effects and not enabled by default.   See the
     provisioners documentation for further details.
 
-    Target the default scenario:
+    .. program:: molecule side-effect
 
-    $ molecule side-effect
+    .. option:: molecule side-effect
 
-    Targeting a specific scenario:
+        Target the default scenario.
 
-    $ molecule side-effect --scenario-name foo
+    .. program:: molecule side-effect --scenario-name foo
 
-    Executing with `debug`:
+    .. option:: molecule side-effect --scenario-name foo
 
-    $ molecule --debug side-effect
+        Targeting a specific scenario.
 
-    Executing with a `base-config`:
+    .. program:: molecule --debug side-effect
 
-    $ molecule --base-config base.yml side-effect
+    .. option:: molecule --debug side-effect
+
+        Executing with `debug`.
+
+    .. program:: molecule --base-config base.yml side-effect
+
+    .. option:: molecule --base-config base.yml side-effect
+
+        Executing with a `base-config`.
     """
 
     def execute(self):

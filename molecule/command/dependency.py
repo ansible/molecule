@@ -29,21 +29,29 @@ LOG = logger.get_logger(__name__)
 
 class Dependency(base.Base):
     """
-    Target the default scenario:
+    .. program:: molecule dependency
 
-    $ molecule dependency
+    .. option:: molecule dependency
 
-    Targeting a specific scenario:
+        Target the default scenario.
 
-    $ molecule dependency --scenario-name foo
+    .. program:: molecule dependency --scenario-name foo
 
-    Executing with `debug`:
+    .. option:: molecule dependency --scenario-name foo
 
-    $ molecule --debug dependency
+        Targeting a specific scenario.
 
-    Executing with a `base-config`:
+    .. program:: molecule --debug dependency
 
-    $ molecule --base-config base.yml dependency
+    .. option:: molecule --debug dependency
+
+        Executing with `debug`.
+
+    .. program:: molecule --base-config base.yml dependency
+
+    .. option:: molecule --base-config base.yml dependency
+
+        Executing with a `base-config`.
     """
 
     def execute(self):
