@@ -52,6 +52,13 @@ class Lint(base.Base):
     .. option:: molecule --base-config base.yml lint
 
         Executing with a `base-config`.
+
+    .. program:: molecule --env-file foo.yml lint
+
+    .. option:: molecule --env-file foo.yml lint
+
+        Load an env file to read variables from when rendering
+        molecule.yml.
     """
 
     def execute(self):

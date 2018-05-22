@@ -73,6 +73,13 @@ class Login(base.Base):
     .. option:: molecule --base-config base.yml login
 
         Executing with a `base-config`.
+
+    .. program:: molecule --env-file foo.yml login
+
+    .. option:: molecule --env-file foo.yml login
+
+        Load an env file to read variables from when rendering
+        molecule.yml.
     """
 
     def __init__(self, c):

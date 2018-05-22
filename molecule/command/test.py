@@ -54,6 +54,25 @@ class Test(base.Base):
     .. option:: molecule test --destroy=always
 
         Always destroy instances at the conclusion of a Molecule run.
+
+    .. program:: molecule --debug test
+
+    .. option:: molecule --debug test
+
+        Executing with `debug`.
+
+    .. program:: molecule --base-config base.yml test
+
+    .. option:: molecule --base-config base.yml test
+
+        Executing with a `base-config`.
+
+    .. program:: molecule --env-file foo.yml test
+
+    .. option:: molecule --env-file foo.yml test
+
+        Load an env file to read variables from when rendering
+        molecule.yml.
     """
 
     def execute(self):

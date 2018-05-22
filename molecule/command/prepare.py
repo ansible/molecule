@@ -65,6 +65,13 @@ class Prepare(base.Base):
     .. option:: molecule --base-config base.yml prepare
 
         Executing with a `base-config`.
+
+    .. program:: molecule --env-file foo.yml prepare
+
+    .. option:: molecule --env-file foo.yml prepare
+
+        Load an env file to read variables from when rendering
+        molecule.yml.
     """
 
     def execute(self):

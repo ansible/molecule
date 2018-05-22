@@ -61,6 +61,13 @@ class Converge(base.Base):
     .. option:: molecule --base-config base.yml converge
 
         Executing with a `base-config`.
+
+    .. program:: molecule --env-file foo.yml converge
+
+    .. option:: molecule --env-file foo.yml converge
+
+        Load an env file to read variables from when rendering
+        molecule.yml.
     """
 
     def execute(self):

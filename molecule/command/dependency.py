@@ -52,6 +52,13 @@ class Dependency(base.Base):
     .. option:: molecule --base-config base.yml dependency
 
         Executing with a `base-config`.
+
+    .. program:: molecule --env-file foo.yml dependency
+
+    .. option:: molecule --env-file foo.yml dependency
+
+        Load an env file to read variables from when rendering
+        molecule.yml.
     """
 
     def execute(self):

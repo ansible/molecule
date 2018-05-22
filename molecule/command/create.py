@@ -59,6 +59,13 @@ class Create(base.Base):
     .. option:: molecule --base-config base.yml create
 
         Executing with a `base-config`.
+
+    .. program:: molecule --env-file foo.yml create
+
+    .. option:: molecule --env-file foo.yml create
+
+        Load an env file to read variables from when rendering
+        molecule.yml.
     """
 
     def execute(self):

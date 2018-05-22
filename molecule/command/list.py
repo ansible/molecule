@@ -69,6 +69,13 @@ class List(base.Base):
     .. option:: molecule --base-config base.yml list
 
         Executing with a `base-config`.
+
+    .. program:: molecule --env-file foo.yml list
+
+    .. option:: molecule --env-file foo.yml list
+
+        Load an env file to read variables from when rendering
+        molecule.yml.
     """
 
     def execute(self):
@@ -85,7 +92,8 @@ class List(base.Base):
 @click.pass_context
 @click.option('--scenario-name', '-s', help='Name of the scenario to target.')
 @click.option(
-    '--format', '-f',
+    '--format',
+    '-f',
     type=click.Choice(['simple', 'plain', 'yaml']),
     default='simple',
     help='Change output format. (simple)')

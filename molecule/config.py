@@ -294,15 +294,13 @@ class Config(object):
         """
         defaults = self._get_defaults()
         base_config = self.args.get('base_config')
-        if base_config:
-            if os.path.exists(base_config):
-                with util.open_file(base_config) as stream:
-                    s = stream.read()
-                    self._preflight(s)
-                    interpolated_config = self._interpolate(
-                        s, env, keep_string)
-                    defaults = util.merge_dicts(
-                        defaults, util.safe_load(interpolated_config))
+        if base_config and os.path.exists(base_config):
+            with util.open_file(base_config) as stream:
+                s = stream.read()
+                self._preflight(s)
+                interpolated_config = self._interpolate(s, env, keep_string)
+                defaults = util.merge_dicts(
+                    defaults, util.safe_load(interpolated_config))
 
         with util.open_file(self.molecule_file) as stream:
             s = stream.read()
@@ -314,6 +312,8 @@ class Config(object):
         return defaults
 
     def _interpolate(self, stream, env, keep_string):
+        env = self._set_env(env)
+
         i = interpolation.Interpolator(interpolation.TemplateWithDefaults, env)
 
         try:
@@ -322,6 +322,18 @@ class Config(object):
             msg = ("parsing config file '{}'.\n\n"
                    '{}\n{}'.format(self.molecule_file, e.place, e.string))
             util.sysexit_with_message(msg)
+
+    def _set_env(self, env):
+        env_file = self.args.get('env_file')
+        if env_file and os.path.exists(env_file):
+            env = env.copy()
+            d = util.safe_load_file(env_file)
+            for k, v in d.items():
+                env[k] = v
+
+            return env
+
+        return env
 
     def _get_defaults(self):
         return {

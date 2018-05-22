@@ -52,6 +52,13 @@ class Check(base.Base):
     .. option:: molecule --base-config base.yml check
 
         Executing with a `base-config`.
+
+    .. program:: molecule --env-file foo.yml check
+
+    .. option:: molecule --env-file foo.yml check
+
+        Load an env file to read variables from when rendering
+        molecule.yml.
     """
 
     def execute(self):

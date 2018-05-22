@@ -55,6 +55,13 @@ class SideEffect(base.Base):
     .. option:: molecule --base-config base.yml side-effect
 
         Executing with a `base-config`.
+
+    .. program:: molecule --env-file foo.yml side-effect
+
+    .. option:: molecule --env-file foo.yml side-effect
+
+        Load an env file to read variables from when rendering
+        molecule.yml.
     """
 
     def execute(self):

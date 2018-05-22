@@ -65,6 +65,13 @@ class Destroy(base.Base):
     .. option:: molecule --base-config base.yml destroy
 
         Executing with a `base-config`.
+
+    .. program:: molecule --env-file foo.yml destroy
+
+    .. option:: molecule --env-file foo.yml destroy
+
+        Load an env file to read variables from when rendering
+        molecule.yml.
     """
 
     def execute(self):
