@@ -60,7 +60,6 @@ def _molecule_dependency_galaxy_section_data():
 
 @pytest.fixture
 def _molecule_driver_section_data():
-    print 'I HERE'
     return {
         'driver': {
             'name': 'docker',
