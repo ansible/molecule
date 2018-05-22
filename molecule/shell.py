@@ -34,6 +34,7 @@ from molecule import util
 click_completion.init()
 
 LOCAL_CONFIG = os.path.expanduser('~/.config/molecule/config.yml')
+ENV_FILE = '.env.yml'
 
 
 def _get_python_version():  # pragma: no cover
@@ -96,9 +97,15 @@ def _allowed(ctx, param, value):  # pragma: no cover
     help=('Path to a base config.  If provided Molecule will load '
           "this config first, and deep merge each scenario's "
           'molecule.yml on top. ({})').format(LOCAL_CONFIG))
+@click.option(
+    '--env-file',
+    '-e',
+    default=ENV_FILE,
+    help=('The file to read variables from when rendering molecule.yml. '
+          '(.env.yml)'))
 @click.version_option(version=molecule.__version__)
 @click.pass_context
-def main(ctx, debug, base_config):  # pragma: no cover
+def main(ctx, debug, base_config, env_file):  # pragma: no cover
     """
     \b
      _____     _             _
@@ -116,6 +123,7 @@ def main(ctx, debug, base_config):  # pragma: no cover
     ctx.obj['args'] = {}
     ctx.obj['args']['debug'] = debug
     ctx.obj['args']['base_config'] = base_config
+    ctx.obj['args']['env_file'] = env_file
 
 
 main.add_command(command.check.check)

@@ -446,6 +446,24 @@ def test_interpolate_raises_on_failed_interpolation(patched_logger_critical,
     patched_logger_critical.assert_called_once_with(msg)
 
 
+def test_set_env(config_instance):
+    config_instance.args = {'env_file': '.env'}
+    contents = {
+        'foo': 'bar',
+        'BAZ': 'zzyzx',
+    }
+    util.write_file(config_instance.args['env_file'], util.safe_dump(contents))
+    env = config_instance._set_env({})
+
+    assert contents == env
+
+
+def test_set_env_returns_original_env_when_env_file_not_found(config_instance):
+    env = config_instance._set_env({})
+
+    assert {} == env
+
+
 def test_preflight(mocker, config_instance, patched_logger_info):
     m = mocker.patch('molecule.model.schema_v2.pre_validate')
     m.return_value = None

@@ -53,6 +53,9 @@ class Interpolator(object):
     Molecule will substitute special `MOLECULE_` environment variables defined
     in `molecule.yml`.  However, use at your own risk, this should be used
     sparingly.
+
+    A file may be placed in the root of the project as, and Molecule will read
+    variables when rendering `molecule.yml`.  See command usage.
     """
 
     def __init__(self, templater, mapping):

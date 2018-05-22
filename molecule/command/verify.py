@@ -52,6 +52,13 @@ class Verify(base.Base):
     .. option:: molecule --base-config base.yml verify
 
         Executing with a `base-config`.
+
+    .. program:: molecule --env-file foo.yml verify
+
+    .. option:: molecule --env-file foo.yml verify
+
+        Load an env file to read variables from when rendering
+        molecule.yml.
     """
 
     def execute(self):
