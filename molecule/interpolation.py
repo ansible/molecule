@@ -51,8 +51,12 @@ class Interpolator(object):
     sign (`$$`).
 
     Molecule will substitute special `MOLECULE_` environment variables defined
-    in `molecule.yml`.  However, use at your own risk, this should be used
-    sparingly.
+    in `molecule.yml`.
+
+    .. important::
+
+        Remember, the `MOLECULE_` namespace is reserved for Molecule.  Do not
+        prefix your own variables with `MOLECULE_`.
 
     A file may be placed in the root of the project as, and Molecule will read
     variables when rendering `molecule.yml`.  See command usage.
