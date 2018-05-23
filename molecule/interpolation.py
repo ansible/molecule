@@ -58,8 +58,8 @@ class Interpolator(object):
         Remember, the `MOLECULE_` namespace is reserved for Molecule.  Do not
         prefix your own variables with `MOLECULE_`.
 
-    A file may be placed in the root of the project as, and Molecule will read
-    variables when rendering `molecule.yml`.  See command usage.
+    A file may be placed in the root of the project as `env.yml`, and Molecule
+    will read variables when rendering `molecule.yml`.  See command usage.
     """
 
     def __init__(self, templater, mapping):
