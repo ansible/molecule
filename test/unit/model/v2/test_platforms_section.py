@@ -203,7 +203,7 @@ def test_platforms_docker_registry_credentials_are_interpolated(_config):
                 'registry': [{
                     'credentials': [{
                         'password': [
-                            "value does not match regex '^[{$]+[a-z0-9A-z]+[}]*$'",  # noqa
+                            "value does not match regex '^[{$]+[a-z0-9A-Z]+[}]*$'",  # noqa
                         ]
                     }]
                 }]

@@ -188,8 +188,10 @@ class Config(object):
             'MOLECULE_DRIVER_NAME': self.driver.name,
             'MOLECULE_LINT_NAME': self.lint.name,
             'MOLECULE_PROVISIONER_NAME': self.provisioner.name,
+            'MOLECULE_PROVISIONER_LINT_NAME': self.provisioner.lint.name,
             'MOLECULE_SCENARIO_NAME': self.scenario.name,
             'MOLECULE_VERIFIER_NAME': self.verifier.name,
+            'MOLECULE_VERIFIER_LINT_NAME': self.verifier.lint.name,
             'MOLECULE_VERIFIER_TEST_DIRECTORY': self.verifier.directory,
         }
 

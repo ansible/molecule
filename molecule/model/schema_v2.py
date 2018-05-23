@@ -19,6 +19,7 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import copy
+import re
 
 import cerberus
 import cerberus.errors
@@ -26,6 +27,33 @@ import cerberus.errors
 from molecule import util
 
 pre_validate_base_schema = {
+    'dependency': {
+        'type': 'dict',
+        'schema': {
+            'name': {
+                'type': 'string',
+                'molecule_env_var': True,
+            },
+        }
+    },
+    'driver': {
+        'type': 'dict',
+        'schema': {
+            'name': {
+                'type': 'string',
+                'molecule_env_var': True,
+            },
+        }
+    },
+    'lint': {
+        'type': 'dict',
+        'schema': {
+            'name': {
+                'type': 'string',
+                'molecule_env_var': True,
+            },
+        }
+    },
     'platforms': {
         'type': 'list',
         'schema': {
@@ -39,13 +67,58 @@ pre_validate_base_schema = {
                             'schema': {
                                 'password': {
                                     'type': 'string',
-                                    'regex': '^[{$]+[a-z0-9A-z]+[}]*$',
+                                    'regex': '^[{$]+[a-z0-9A-Z]+[}]*$',
                                 },
                             }
                         },
                     }
                 },
             }
+        }
+    },
+    'provisioner': {
+        'type': 'dict',
+        'schema': {
+            'name': {
+                'type': 'string',
+                'molecule_env_var': True,
+            },
+            'lint': {
+                'type': 'dict',
+                'schema': {
+                    'name': {
+                        'type': 'string',
+                        'molecule_env_var': True,
+                    },
+                }
+            },
+        }
+    },
+    'scenario': {
+        'type': 'dict',
+        'schema': {
+            'name': {
+                'type': 'string',
+                'molecule_env_var': True,
+            },
+        }
+    },
+    'verifier': {
+        'type': 'dict',
+        'schema': {
+            'name': {
+                'type': 'string',
+                'molecule_env_var': True,
+            },
+            'lint': {
+                'type': 'dict',
+                'schema': {
+                    'name': {
+                        'type': 'string',
+                        'molecule_env_var': True,
+                    },
+                }
+            },
         }
     },
 }
@@ -529,7 +602,7 @@ platforms_docker_schema = {
                                 },
                                 'password': {
                                     'type': 'string',
-                                    'regex': '^[{$]+[a-z0-9A-z]+[}]*$',
+                                    'regex': '^[{$]+[a-z0-9A-Z]+[}]*$',
                                 },
                                 'email': {
                                     'type': 'string',
@@ -709,6 +782,21 @@ class Validator(cerberus.Validator):
         if disallowed:
             msg = 'disallowed user provided config option'
             self._error(field, msg)
+
+    def _validate_molecule_env_var(self, molecule_env_var, field, value):
+        """ Readonly but with a custom error.
+
+        The rule's arguments are validated against this schema:
+        {'type': 'boolean'}
+        """
+        # TODO(retr0h): This needs to be better handled.
+        pattern = r'^[{$]+MOLECULE[_a-z0-9A-Z]+[}]*$'
+
+        if molecule_env_var:
+            if re.match(pattern, value):
+                msg = ('cannot reference $MOLECULE special variables '
+                       'in this section')
+                self._error(field, msg)
 
 
 def pre_validate(stream):
