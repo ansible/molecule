@@ -77,8 +77,9 @@ class Check(base.Base):
 @click.option(
     '--scenario-name',
     '-s',
-    default='default',
-    help='Name of the scenario to target. (default)')
+    default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
+    help='Name of the scenario to target. ({})'.format(
+        base.MOLECULE_DEFAULT_SCENARIO_NAME))
 def check(ctx, scenario_name):  # pragma: no cover
     """
     Use the provisioner to perform a Dry-Run (destroy, dependency, create,
