@@ -38,12 +38,12 @@ class Scenario(base.Base):
 
         Initialize a new scenario.
 
-    .. program:: cd foo; molecule init scenario --scenario-name bar --role-name foo  # noqa
+    .. program:: cd foo; molecule init scenario --scenario-name bar --role-name foo
 
-    .. option:: cd foo; molecule init scenario --scenario-name bar --role-name foo  # noqa
+    .. option:: cd foo; molecule init scenario --scenario-name bar --role-name foo
 
         Initialize an existing role with Molecule:
-    """
+    """  # noqa
 
     def __init__(self, command_args):
         self._command_args = command_args

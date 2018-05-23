@@ -62,12 +62,85 @@ def test_platforms_docker_has_errors(_stream):
                     'credentials': [{
                         'password': [
                             ('value does not match regex '
-                             "'^[{$]+[a-z0-9A-z]+[}]*$'"),
+                             "'^[{$]+[a-z0-9A-Z]+[}]*$'"),
                         ]
                     }]
                 }]
             }]
         }]
+    }
+
+    assert x == schema_v2.pre_validate(_stream())
+
+
+@pytest.fixture
+def _model_molecule_env_errors_section_data():
+    return """
+---
+dependency:
+  name: $MOLECULE_DEPENDENCY_NAME
+driver:
+  name: $MOLECULE_DRIVER_NAME
+lint:
+  name: $MOLECULE_LINT_NAME
+platforms:
+  - name: instance
+    image: centos:latest
+    networks:
+      - name: foo
+      - name: bar
+provisioner:
+  name: $MOLECULE_PROVISIONER_NAME
+  lint:
+    name: $MOLECULE_PROVISIONER_LINT_NAME
+scenario:
+  name: $MOLECULE_SCENARIO_NAME
+verifier:
+  name: $MOLECULE_VERIFIER_NAME
+  lint:
+    name: $MOLECULE_VERIFIER_LINT_NAME
+""".strip()
+
+
+@pytest.mark.parametrize('_stream',
+                         [(_model_molecule_env_errors_section_data)])
+def test_has_errors_when_molecule_env_var_referenced_in_unallowed_sections(
+        _stream):
+    x = {
+        'scenario': [{
+            'name':
+            ['cannot reference $MOLECULE special variables in this section']
+        }],
+        'lint': [{
+            'name':
+            ['cannot reference $MOLECULE special variables in this section']
+        }],
+        'driver': [{
+            'name':
+            ['cannot reference $MOLECULE special variables in this section']
+        }],
+        'dependency': [{
+            'name':
+            ['cannot reference $MOLECULE special variables in this section']
+        }],
+        'verifier': [{
+            'lint': [{
+                'name':
+                [('cannot reference $MOLECULE special variables in this '
+                  'section')]
+            }],
+            'name':
+            ['cannot reference $MOLECULE special variables in this section']
+        }],
+        'provisioner': [{
+            'lint': [{
+                'name':
+                [('cannot reference $MOLECULE special variables in this '
+                  'section')]
+            }],
+            'name':
+            ['cannot reference $MOLECULE special variables in this section']
+        }],
     }
 
     assert x == schema_v2.pre_validate(_stream())
