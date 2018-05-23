@@ -31,6 +31,7 @@ from molecule import util
 
 LOG = logger.get_logger(__name__)
 MOLECULE_GLOB = 'molecule/*/molecule.yml'
+MOLECULE_DEFAULT_SCENARIO_NAME = 'default'
 
 
 class Base(object):
