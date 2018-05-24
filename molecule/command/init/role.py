@@ -25,6 +25,7 @@ import click
 from molecule import config
 from molecule import logger
 from molecule import util
+from molecule.command import base as command_base
 from molecule.command.init import base
 
 LOG = logger.get_logger(__name__)
@@ -115,7 +116,7 @@ def role(ctx, dependency_name, driver_name, lint_name, provisioner_name,
         'lint_name': lint_name,
         'provisioner_name': provisioner_name,
         'role_name': role_name,
-        'scenario_name': 'default',
+        'scenario_name': command_base.MOLECULE_DEFAULT_SCENARIO_NAME,
         'subcommand': __name__,
         'verifier_name': verifier_name,
     }
