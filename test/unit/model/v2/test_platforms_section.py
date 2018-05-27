@@ -45,8 +45,15 @@ def _model_platforms_docker_section_data():
             'sleep infinity',
             'privileged':
             True,
+            'security_opts': [
+                'seccomp=unconfined',
+            ],
             'volumes': [
                 '/sys/fs/cgroup:/sys/fs/cgroup:ro',
+            ],
+            'tmpfs': [
+                '/tmp',
+                '/run ',
             ],
             'capabilities': [
                 'SYS_ADMIN',
@@ -79,8 +86,8 @@ def _model_platforms_docker_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_platforms_docker_section_data'], indirect=True)
+@pytest.mark.parametrize('_config', ['_model_platforms_docker_section_data'],
+                         indirect=True)
 def test_platforms_docker(_config):
     assert {} == schema_v2.validate(_config)
 
@@ -102,7 +109,13 @@ def _model_platforms_docker_errors_section_data():
             },
             'command': int(),
             'privileged': str(),
+            'security_opts': [
+                int(),
+            ],
             'volumes': [
+                int(),
+            ],
+            'tmpfs': [
                 int(),
             ],
             'capabilities': [
@@ -129,51 +142,30 @@ def _model_platforms_docker_errors_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_platforms_docker_errors_section_data'], indirect=True)
+@pytest.mark.parametrize('_config',
+                         ['_model_platforms_docker_errors_section_data'],
+                         indirect=True)
 def test_platforms_docker_has_errors(_config):
-    x = {
-        'platforms': [{
-            0: [{
-                'exposed_ports': [{
-                    0: ['must be of string type'],
-                }],
-                'dns_servers': [{
-                    0: ['must be of string type'],
-                }],
+    x = {'platforms':
+         [{0: [{'exposed_ports': [{0: ['must be of string type']}],
+                'dns_servers': [{0: ['must be of string type']}],
                 'name': ['must be of string type'],
+                'capabilities': [{0: ['must be of string type']}],
                 'image': ['must be of string type'],
                 'hostname': ['must be of string type'],
-                'capabilities': [{
-                    0: ['must be of string type'],
-                }],
+                'security_opts': [{0: ['must be of string type']}],
                 'privileged': ['must be of boolean type'],
                 'command': ['must be of string type'],
-                'registry': [{
-                    'url': ['must be of string type'],
-                    'credentials': [{
-                        'username': ['must be of string type'],
-                        'password': ['must be of string type'],
-                        'email': ['must be of string type'],
-                    }]
-                }],
-                'volumes': [{
-                    0: ['must be of string type'],
-                }],
-                'published_ports': [{
-                    0: ['must be of string type'],
-                }],
-                'networks': [{
-                    0: [{
-                        'name': ['must be of string type'],
-                    }]
-                }],
-                'ulimits': [{
-                    0: ['must be of string type'],
-                }]
-            }]
-        }]
-    }
+                'registry': [{'url': ['must be of string type'],
+                              'credentials':
+                              [{'username': ['must be of string type'],
+                                'password': ['must be of string type'],
+                                'email': ['must be of string type']}]}],
+                'volumes': [{0: ['must be of string type']}],
+                'published_ports': [{0: ['must be of string type']}],
+                'tmpfs': [{0: ['must be of string type']}],
+                'networks': [{0: [{'name': ['must be of string type']}]}],
+                'ulimits': [{0: ['must be of string type']}]}]}]}
 
     assert x == schema_v2.validate(_config)
 
@@ -252,8 +244,8 @@ def _model_platforms_vagrant_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_platforms_vagrant_section_data'], indirect=True)
+@pytest.mark.parametrize('_config', ['_model_platforms_vagrant_section_data'],
+                         indirect=True)
 def test_platforms_vagrant(_config):
     assert {} == schema_v2.validate(_config)
 
@@ -282,8 +274,9 @@ def _model_platforms_vagrant_errors_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_platforms_vagrant_errors_section_data'], indirect=True)
+@pytest.mark.parametrize('_config',
+                         ['_model_platforms_vagrant_errors_section_data'],
+                         indirect=True)
 def test_platforms_vagrant_has_errors(_config):
     x = {
         'platforms': [{
