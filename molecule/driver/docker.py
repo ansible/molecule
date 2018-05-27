@@ -54,8 +54,13 @@ class Docker(base.Base):
                 email: user@example.com
             command: sleep infinity
             privileged: True|False
+            security_opts:
+              - seccomp=unconfined
             volumes:
               - /sys/fs/cgroup:/sys/fs/cgroup:ro
+            tmpfs:
+              - /tmp
+              - /run
             capabilities:
               - SYS_ADMIN
             exposed_ports:

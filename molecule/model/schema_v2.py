@@ -617,7 +617,19 @@ platforms_docker_schema = {
                 'privileged': {
                     'type': 'boolean',
                 },
+                'security_opts': {
+                    'type': 'list',
+                    'schema': {
+                        'type': 'string',
+                    }
+                },
                 'volumes': {
+                    'type': 'list',
+                    'schema': {
+                        'type': 'string',
+                    }
+                },
+                'tmpfs': {
                     'type': 'list',
                     'schema': {
                         'type': 'string',
