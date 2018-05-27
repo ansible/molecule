@@ -26,6 +26,9 @@ from molecule.model import schema_v2
 @pytest.fixture
 def _model_platforms_docker_section_data():
     return {
+        'driver': {
+            'name': 'docker',
+        },
         'platforms': [{
             'name':
             'instance',
@@ -86,8 +89,8 @@ def _model_platforms_docker_section_data():
     }
 
 
-@pytest.mark.parametrize('_config', ['_model_platforms_docker_section_data'],
-                         indirect=True)
+@pytest.mark.parametrize(
+    '_config', ['_model_platforms_docker_section_data'], indirect=True)
 def test_platforms_docker(_config):
     assert {} == schema_v2.validate(_config)
 
@@ -95,6 +98,9 @@ def test_platforms_docker(_config):
 @pytest.fixture
 def _model_platforms_docker_errors_section_data():
     return {
+        'driver': {
+            'name': 'vagrant',
+        },
         'platforms': [{
             'name': int(),
             'hostname': int(),
@@ -142,30 +148,57 @@ def _model_platforms_docker_errors_section_data():
     }
 
 
-@pytest.mark.parametrize('_config',
-                         ['_model_platforms_docker_errors_section_data'],
-                         indirect=True)
+@pytest.mark.parametrize(
+    '_config', ['_model_platforms_docker_errors_section_data'], indirect=True)
 def test_platforms_docker_has_errors(_config):
-    x = {'platforms':
-         [{0: [{'exposed_ports': [{0: ['must be of string type']}],
-                'dns_servers': [{0: ['must be of string type']}],
+    x = {
+        'platforms': [{
+            0: [{
+                'exposed_ports': [{
+                    0: ['must be of string type']
+                }],
+                'dns_servers': [{
+                    0: ['must be of string type']
+                }],
                 'name': ['must be of string type'],
-                'capabilities': [{0: ['must be of string type']}],
+                'capabilities': [{
+                    0: ['must be of string type']
+                }],
                 'image': ['must be of string type'],
                 'hostname': ['must be of string type'],
-                'security_opts': [{0: ['must be of string type']}],
+                'security_opts': [{
+                    0: ['must be of string type']
+                }],
                 'privileged': ['must be of boolean type'],
                 'command': ['must be of string type'],
-                'registry': [{'url': ['must be of string type'],
-                              'credentials':
-                              [{'username': ['must be of string type'],
-                                'password': ['must be of string type'],
-                                'email': ['must be of string type']}]}],
-                'volumes': [{0: ['must be of string type']}],
-                'published_ports': [{0: ['must be of string type']}],
-                'tmpfs': [{0: ['must be of string type']}],
-                'networks': [{0: [{'name': ['must be of string type']}]}],
-                'ulimits': [{0: ['must be of string type']}]}]}]}
+                'registry': [{
+                    'url': ['must be of string type'],
+                    'credentials': [{
+                        'username': ['must be of string type'],
+                        'password': ['must be of string type'],
+                        'email': ['must be of string type']
+                    }]
+                }],
+                'volumes': [{
+                    0: ['must be of string type']
+                }],
+                'published_ports': [{
+                    0: ['must be of string type']
+                }],
+                'tmpfs': [{
+                    0: ['must be of string type']
+                }],
+                'networks': [{
+                    0: [{
+                        'name': ['must be of string type']
+                    }]
+                }],
+                'ulimits': [{
+                    0: ['must be of string type']
+                }]
+            }]
+        }]
+    }
 
     assert x == schema_v2.validate(_config)
 
@@ -209,6 +242,9 @@ def test_platforms_docker_registry_credentials_are_interpolated(_config):
 @pytest.fixture
 def _model_platforms_vagrant_section_data():
     return {
+        'driver': {
+            'name': 'vagrant',
+        },
         'platforms': [{
             'name':
             'instance',
@@ -244,8 +280,8 @@ def _model_platforms_vagrant_section_data():
     }
 
 
-@pytest.mark.parametrize('_config', ['_model_platforms_vagrant_section_data'],
-                         indirect=True)
+@pytest.mark.parametrize(
+    '_config', ['_model_platforms_vagrant_section_data'], indirect=True)
 def test_platforms_vagrant(_config):
     assert {} == schema_v2.validate(_config)
 
@@ -253,6 +289,9 @@ def test_platforms_vagrant(_config):
 @pytest.fixture
 def _model_platforms_vagrant_errors_section_data():
     return {
+        'driver': {
+            'name': 'vagrant',
+        },
         'platforms': [{
             'name': int(),
             'interfaces': [],
@@ -274,9 +313,8 @@ def _model_platforms_vagrant_errors_section_data():
     }
 
 
-@pytest.mark.parametrize('_config',
-                         ['_model_platforms_vagrant_errors_section_data'],
-                         indirect=True)
+@pytest.mark.parametrize(
+    '_config', ['_model_platforms_vagrant_errors_section_data'], indirect=True)
 def test_platforms_vagrant_has_errors(_config):
     x = {
         'platforms': [{
