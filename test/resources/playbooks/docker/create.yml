@@ -11,6 +11,7 @@
         password: "{{ item.registry.credentials.password }}"
         email: "{{ item.registry.credentials.email | default(omit) }}"
         registry: "{{ item.registry.url }}"
+        docker_host: "{{ item.docker_host | default('unix://var/run/docker.sock') }}"
       with_items: "{{ molecule_yml.platforms }}"
       when:
         - item.registry is defined
@@ -27,6 +28,7 @@
     - name: Discover local Docker images
       docker_image_facts:
         name: "molecule_local/{{ item.item.name }}"
+        docker_host: "{{ item.item.docker_host | default('unix://var/run/docker.sock') }}"
       with_items: "{{ platforms.results }}"
       register: docker_images
 
@@ -34,6 +36,7 @@
       docker_image:
         path: "{{ molecule_ephemeral_directory }}"
         name: "molecule_local/{{ item.item.image }}"
+        docker_host: "{{ item.item.docker_host | default('unix://var/run/docker.sock') }}"
         dockerfile: "{{ item.item.dockerfile | default(item.invocation.module_args.dest) }}"
         force: "{{ item.item.force | default(true) }}"
       with_items: "{{ platforms.results }}"
@@ -42,12 +45,14 @@
     - name: Create docker network(s)
       docker_network:
         name: "{{ item }}"
+        docker_host: "{{ item.docker_host | default('unix://var/run/docker.sock') }}"
         state: present
       with_items: "{{ molecule_yml.platforms | molecule_get_docker_networks }}"
 
     - name: Create molecule instance(s)
       docker_container:
         name: "{{ item.name }}"
+        docker_host: "{{ item.docker_host | default('unix://var/run/docker.sock') }}"
         hostname: "{{ item.name }}"
         image: "molecule_local/{{ item.image }}"
         state: started
