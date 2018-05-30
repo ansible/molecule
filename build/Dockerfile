@@ -17,6 +17,7 @@ ENV PACKAGES="\
     python-dev \
     linux-headers \
     sudo \
+    rsync \
 "
 
 ENV PIP_PACKAGES="\
