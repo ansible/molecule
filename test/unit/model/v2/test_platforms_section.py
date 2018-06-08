@@ -204,42 +204,6 @@ def test_platforms_docker_has_errors(_config):
 
 
 @pytest.fixture
-def _model_platforms_docker_registry_credentials_section_data():
-    return {
-        'platforms': [{
-            'name': str(),
-            'registry': {
-                'credentials': {
-                    'username': 'foo',
-                    'password': 'bar',
-                },
-            },
-        }]
-    }
-
-
-@pytest.mark.parametrize(
-    '_config', ['_model_platforms_docker_registry_credentials_section_data'],
-    indirect=True)
-def test_platforms_docker_registry_credentials_are_interpolated(_config):
-    x = {
-        'platforms': [{
-            0: [{
-                'registry': [{
-                    'credentials': [{
-                        'password': [
-                            "value does not match regex '^[{$]+[a-z0-9A-Z]+[}]*$'",  # noqa
-                        ]
-                    }]
-                }]
-            }]
-        }]
-    }
-
-    assert x == schema_v2.validate(_config)
-
-
-@pytest.fixture
 def _model_platforms_vagrant_section_data():
     return {
         'driver': {

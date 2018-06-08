@@ -602,7 +602,6 @@ platforms_docker_schema = {
                                 },
                                 'password': {
                                     'type': 'string',
-                                    'regex': '^[{$]+[a-z0-9A-Z]+[}]*$',
                                 },
                                 'email': {
                                     'type': 'string',
