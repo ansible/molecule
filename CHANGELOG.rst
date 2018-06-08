@@ -2,6 +2,19 @@
 History
 *******
 
+2.15
+====
+
+* Removed docker credential regexp validation.
+* Added rsync to Docker image.
+* Docker create playbooks: add tmpfs & security_opts docker_container
+  parameters.
+* Moved default scenario to a const.
+* Pre-validate Molecule special variables.
+* Added env file.
+* Corrected command syntax.
+* Delegated driver acts as managed.
+
 2.14
 ====
 
