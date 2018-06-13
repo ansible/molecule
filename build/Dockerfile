@@ -18,13 +18,21 @@ ENV PACKAGES="\
     linux-headers \
     sudo \
     rsync \
+    curl \ 
+    ruby \
+    ruby-dev \ 
 "
 
 ENV PIP_PACKAGES="\
+    ansible[azure] \
     virtualenv \
     molecule \
     ansible \
     docker-py \
+    azure-cli \
+    packaging \
+    msrestazure \
+    pywinrm \ 
 "
 
 RUN \
