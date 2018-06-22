@@ -3,15 +3,34 @@
   hosts: all
   become: true
   vars:
-    inspec_download_url: "https://packages.chef.io/files/stable/inspec/2.1.43/el/7/inspec-2.1.43-1.el7.x86_64.rpm"
-    inspec_download_source_dir: /usr/local/src
-    inspec_download_sha256sum: bf36072724322fcca708467e5fc1973e838f605d655d72a2ba17f3365b39cd08
-
-    inspec_package_name: "{{ inspec_download_url.split('/')[-1] }}"
     inspec_bin: /opt/inspec/bin/inspec
-
+    inspec_download_source_dir: /usr/local/src
     inspec_test_directory: /tmp/molecule/inspec
   tasks:
+    - name: Setting variables (CentOS 6 / RHEL 6)
+      set_fact:
+        inspec_download_url: "https://packages.chef.io/files/stable/inspec/2.2.20/el/6/inspec-2.2.20-1.el6.x86_64.rpm"
+        inspec_download_sha256sum: f9e95df840918e72f403bd35fa080fae53369bcb3389ca70d7ea6816dbe29663
+      when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "6"
+
+    - name: Setting variables (CentOS 7 / RHEL 7)
+      set_fact:
+        inspec_download_url: "https://packages.chef.io/files/stable/inspec/2.2.20/el/7/inspec-2.2.20-1.el7.x86_64.rpm"
+        inspec_download_sha256sum: 081b86dd6ca785e287fd53337f6308544393ce1d336192dbe799089d9f7a6ff7
+      when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "7"
+
+    - name: Setting variables (Debian 8 / Ubuntu 16.04)
+      set_fact:
+        inspec_download_url: "https://packages.chef.io/files/stable/inspec/2.2.20/ubuntu/16.04/inspec_2.2.20-1_amd64.deb"
+        inspec_download_sha256sum: f3bba905ca2d95835350a86bd2bda746c592ce98388dd031b43a44d9051c3c92
+      when: ansible_os_family == "Debian" and (ansible_distribution_major_version == "8" or ansible_distribution_version == "16.04")
+
+    - name: Setting variables (Debian 9 / Ubuntu 18.04)
+      set_fact:
+        inspec_download_url: "https://packages.chef.io/files/stable/inspec/2.2.20/ubuntu/18.04/inspec_2.2.20-1_amd64.deb"
+        inspec_download_sha256sum: f3bba905ca2d95835350a86bd2bda746c592ce98388dd031b43a44d9051c3c92
+      when: ansible_os_family == "Debian" and (ansible_distribution_major_version == "9" or ansible_distribution_version == "18.04")
+
     - name: Download Inspec
       get_url:
         url: "{{ inspec_download_url }}"
@@ -19,10 +38,17 @@
         sha256sum: "{{ inspec_download_sha256sum }}"
         mode: 0755
 
-    - name: Install Inspec
+    - name: Install Inspec (apt)
+      apt:
+        deb: "{{ inspec_download_source_dir }}/{{ inspec_download_url.split('/')[-1] }}"
+        state: present
+      when: ansible_pkg_mgr == "apt"
+
+    - name: Install Inspec (yum)
       yum:
-        name: "{{ inspec_download_source_dir }}/{{ inspec_package_name }}"
+        name: "{{ inspec_download_source_dir }}/{{ inspec_download_url.split('/')[-1] }}"
         state: latest
+      when: ansible_pkg_mgr == "yum"
 
     - name: Create Molecule directory for test files
       file:
