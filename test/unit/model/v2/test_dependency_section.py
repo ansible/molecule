@@ -118,23 +118,6 @@ def test_dependency_allows_shell_name(_config):
     assert {} == schema_v2.validate(_config)
 
 
-@pytest.fixture
-def _model_dependency_errors_invalid_section_data():
-    return {
-        'dependency': {
-            'name': str(),
-        }
-    }
-
-
-@pytest.mark.parametrize(
-    '_config', ['_model_dependency_errors_invalid_section_data'],
-    indirect=True)
-def test_dependency_invalid_dependency_name_has_errors(_config):
-    x = {'dependency': [{'name': ['unallowed value ']}]}
-
-    assert x == schema_v2.validate(_config)
-
 
 @pytest.fixture
 def _model_dependency_shell_errors_section_data():

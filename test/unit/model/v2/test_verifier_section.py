@@ -207,30 +207,3 @@ def test_verifier_errors_readonly_options_section_data(_config):
     x = {'verifier': [{'options': [{'foo': ['field is read-only']}]}]}
 
     assert x == schema_v2.validate(_config)
-
-
-@pytest.fixture
-def _model_verifier_errors_invalid_section_data():
-    return {
-        'verifier': {
-            'name': str(),
-            'lint': {
-                'name': str(),
-            },
-        }
-    }
-
-
-@pytest.mark.parametrize(
-    '_config', ['_model_verifier_errors_invalid_section_data'], indirect=True)
-def test_verifier_invalid_verifier_name_has_errors(_config):
-    x = {
-        'verifier': [{
-            'lint': [{
-                'name': ['unallowed value ']
-            }],
-            'name': ['unallowed value ']
-        }]
-    }
-
-    assert x == schema_v2.validate(_config)
