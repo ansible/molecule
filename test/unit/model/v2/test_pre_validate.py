@@ -131,11 +131,9 @@ def test_has_errors_when_molecule_env_var_referenced_in_unallowed_sections(
         }],
         'verifier': [{
             'lint': [{
-                'name': [
-                    ('cannot reference $MOLECULE special variables in this '
-                     'section'),
-                    'unallowed value $MOLECULE_VERIFIER_LINT_NAME'
-                ]
+                'name':
+                [('cannot reference $MOLECULE special variables in this '
+                  'section'), 'unallowed value $MOLECULE_VERIFIER_LINT_NAME']
             }],
             'name': [
                 'cannot reference $MOLECULE special variables in this section',
@@ -144,11 +142,10 @@ def test_has_errors_when_molecule_env_var_referenced_in_unallowed_sections(
         }],
         'provisioner': [{
             'lint': [{
-                'name': [
-                    ('cannot reference $MOLECULE special variables in this '
-                     'section'),
-                    'unallowed value $MOLECULE_PROVISIONER_LINT_NAME'
-                ]
+                'name':
+                [('cannot reference $MOLECULE special variables in this '
+                  'section'),
+                 'unallowed value $MOLECULE_PROVISIONER_LINT_NAME']
             }],
             'name': [
                 'cannot reference $MOLECULE special variables in this section',
