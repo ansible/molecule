@@ -45,8 +45,10 @@ pre_validate_base_schema = {
         'type': 'dict',
         'schema': {
             'name': {
-                'type': 'string',
-                'molecule_env_var': True,
+                'type':
+                'string',
+                'molecule_env_var':
+                True,
                 'allowed': [
                     'azure',
                     'delegated',
@@ -188,8 +190,7 @@ base_schema = {
         'type': 'dict',
         'schema': {
             'name': {
-                'type':
-                'string',
+                'type': 'string',
             },
             'provider': {
                 'type': 'dict',

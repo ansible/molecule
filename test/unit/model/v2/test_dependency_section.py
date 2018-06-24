@@ -118,7 +118,6 @@ def test_dependency_allows_shell_name(_config):
     assert {} == schema_v2.validate(_config)
 
 
-
 @pytest.fixture
 def _model_dependency_shell_errors_section_data():
     return {
