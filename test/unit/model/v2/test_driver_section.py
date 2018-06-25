@@ -134,13 +134,7 @@ def _model_driver_provider_name_not_nullable_when_vagrant_section_data():
     ['_model_driver_provider_name_not_nullable_when_vagrant_section_data'],
     indirect=True)
 def test_driver_provider_name_not_nullable_when_vagrant_driver(_config):
-    x = {
-        'driver': [{
-            'provider': [{
-                'name': ['unallowed value None', 'null value not allowed']
-            }]
-        }]
-    }
+    x = {'driver': [{'provider': [{'name': ['null value not allowed']}]}]}
 
     assert x == schema_v2.validate(_config)
 
@@ -355,20 +349,3 @@ def _model_driver_allows_vagrant_section_data():
     indirect=True)
 def test_driver_allows_name(_config):
     assert {} == schema_v2.validate(_config)
-
-
-@pytest.fixture
-def _model_driver_errors_invalid_section_data():
-    return {
-        'driver': {
-            'name': str(),
-        }
-    }
-
-
-@pytest.mark.parametrize(
-    '_config', ['_model_driver_errors_invalid_section_data'], indirect=True)
-def test_driver_invalid_driver_name_has_errors(_config):
-    x = {'driver': [{'name': ['unallowed value ']}]}
-
-    assert x == schema_v2.validate(_config)

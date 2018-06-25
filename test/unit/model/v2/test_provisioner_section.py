@@ -265,31 +265,3 @@ def _model_provisioner_allows_ansible_section_data():
     indirect=True)
 def test_provisioner_allows_name(_config):
     assert {} == schema_v2.validate(_config)
-
-
-@pytest.fixture
-def _model_provisioner_errors_invalid_section_data():
-    return {
-        'provisioner': {
-            'name': str(),
-            'lint': {
-                'name': str(),
-            },
-        }
-    }
-
-
-@pytest.mark.parametrize(
-    '_config', ['_model_provisioner_errors_invalid_section_data'],
-    indirect=True)
-def test_provisioner_invalid_provisioner_name_has_errors(_config):
-    x = {
-        'provisioner': [{
-            'lint': [{
-                'name': ['unallowed value ']
-            }],
-            'name': ['unallowed value ']
-        }]
-    }
-
-    assert x == schema_v2.validate(_config)

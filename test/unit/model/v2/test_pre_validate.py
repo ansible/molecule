@@ -112,35 +112,46 @@ def test_has_errors_when_molecule_env_var_referenced_in_unallowed_sections(
             ['cannot reference $MOLECULE special variables in this section']
         }],
         'lint': [{
-            'name':
-            ['cannot reference $MOLECULE special variables in this section']
+            'name': [
+                'cannot reference $MOLECULE special variables in this section',
+                'unallowed value $MOLECULE_LINT_NAME'
+            ]
         }],
         'driver': [{
-            'name':
-            ['cannot reference $MOLECULE special variables in this section']
+            'name': [
+                'cannot reference $MOLECULE special variables in this section',
+                'unallowed value $MOLECULE_DRIVER_NAME'
+            ]
         }],
         'dependency': [{
-            'name':
-            ['cannot reference $MOLECULE special variables in this section']
+            'name': [
+                'cannot reference $MOLECULE special variables in this section',
+                'unallowed value $MOLECULE_DEPENDENCY_NAME'
+            ]
         }],
         'verifier': [{
             'lint': [{
                 'name':
                 [('cannot reference $MOLECULE special variables in this '
-                  'section')]
+                  'section'), 'unallowed value $MOLECULE_VERIFIER_LINT_NAME']
             }],
-            'name':
-            ['cannot reference $MOLECULE special variables in this section']
+            'name': [
+                'cannot reference $MOLECULE special variables in this section',
+                'unallowed value $MOLECULE_VERIFIER_NAME'
+            ]
         }],
         'provisioner': [{
             'lint': [{
                 'name':
                 [('cannot reference $MOLECULE special variables in this '
-                  'section')]
+                  'section'),
+                 'unallowed value $MOLECULE_PROVISIONER_LINT_NAME']
             }],
-            'name':
-            ['cannot reference $MOLECULE special variables in this section']
-        }],
+            'name': [
+                'cannot reference $MOLECULE special variables in this section',
+                'unallowed value $MOLECULE_PROVISIONER_NAME'
+            ]
+        }]
     }
 
     assert x == schema_v2.pre_validate(_stream())

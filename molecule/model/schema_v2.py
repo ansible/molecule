@@ -33,6 +33,11 @@ pre_validate_base_schema = {
             'name': {
                 'type': 'string',
                 'molecule_env_var': True,
+                'allowed': [
+                    'galaxy',
+                    'gilt',
+                    'shell',
+                ],
             },
         }
     },
@@ -40,8 +45,21 @@ pre_validate_base_schema = {
         'type': 'dict',
         'schema': {
             'name': {
-                'type': 'string',
-                'molecule_env_var': True,
+                'type':
+                'string',
+                'molecule_env_var':
+                True,
+                'allowed': [
+                    'azure',
+                    'delegated',
+                    'docker',
+                    'ec2',
+                    'gce',
+                    'lxc',
+                    'lxd',
+                    'openstack',
+                    'vagrant',
+                ],
             },
         }
     },
@@ -51,6 +69,9 @@ pre_validate_base_schema = {
             'name': {
                 'type': 'string',
                 'molecule_env_var': True,
+                'allowed': [
+                    'yamllint',
+                ],
             },
         }
     },
@@ -82,6 +103,9 @@ pre_validate_base_schema = {
             'name': {
                 'type': 'string',
                 'molecule_env_var': True,
+                'allowed': [
+                    'ansible',
+                ],
             },
             'lint': {
                 'type': 'dict',
@@ -89,6 +113,9 @@ pre_validate_base_schema = {
                     'name': {
                         'type': 'string',
                         'molecule_env_var': True,
+                        'allowed': [
+                            'ansible-lint',
+                        ],
                     },
                 }
             },
@@ -109,6 +136,11 @@ pre_validate_base_schema = {
             'name': {
                 'type': 'string',
                 'molecule_env_var': True,
+                'allowed': [
+                    'testinfra',
+                    'inspec',
+                    'goss',
+                ],
             },
             'lint': {
                 'type': 'dict',
@@ -116,6 +148,11 @@ pre_validate_base_schema = {
                     'name': {
                         'type': 'string',
                         'molecule_env_var': True,
+                        'allowed': [
+                            'flake8',
+                            'rubocop',
+                            'yamllint',
+                        ],
                     },
                 }
             },
@@ -129,11 +166,6 @@ base_schema = {
         'schema': {
             'name': {
                 'type': 'string',
-                'allowed': [
-                    'galaxy',
-                    'gilt',
-                    'shell',
-                ],
             },
             'enabled': {
                 'type': 'boolean',
@@ -158,19 +190,7 @@ base_schema = {
         'type': 'dict',
         'schema': {
             'name': {
-                'type':
-                'string',
-                'allowed': [
-                    'azure',
-                    'delegated',
-                    'docker',
-                    'ec2',
-                    'gce',
-                    'lxc',
-                    'lxd',
-                    'openstack',
-                    'vagrant',
-                ],
+                'type': 'string',
             },
             'provider': {
                 'type': 'dict',
@@ -208,9 +228,6 @@ base_schema = {
         'schema': {
             'name': {
                 'type': 'string',
-                'allowed': [
-                    'yamllint',
-                ],
             },
             'enabled': {
                 'type': 'boolean',
@@ -233,9 +250,6 @@ base_schema = {
         'schema': {
             'name': {
                 'type': 'string',
-                'allowed': [
-                    'ansible',
-                ],
             },
             'config_options': {
                 'type': 'dict',
@@ -338,9 +352,6 @@ base_schema = {
                 'schema': {
                     'name': {
                         'type': 'string',
-                        'allowed': [
-                            'ansible-lint',
-                        ],
                     },
                     'enabled': {
                         'type': 'boolean',
@@ -402,11 +413,6 @@ base_schema = {
         'schema': {
             'name': {
                 'type': 'string',
-                'allowed': [
-                    'testinfra',
-                    'inspec',
-                    'goss',
-                ],
             },
             'enabled': {
                 'type': 'boolean',
@@ -435,11 +441,6 @@ base_schema = {
                 'schema': {
                     'name': {
                         'type': 'string',
-                        'allowed': [
-                            'flake8',
-                            'rubocop',
-                            'yamllint',
-                        ],
                     },
                     'enabled': {
                         'type': 'boolean',
