@@ -15,6 +15,11 @@ platforms:
 {%- elif cookiecutter.driver_name == 'docker' %}
   - name: instance
     image: centos:7
+    command: /usr/sbin/init
+    capabilities:
+      - SYS_ADMIN
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
 {%- elif cookiecutter.driver_name == 'ec2' %}
   - name: instance
     image: ami-a5b196c0
