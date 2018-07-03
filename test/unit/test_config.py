@@ -474,7 +474,7 @@ def test_preflight(mocker, config_instance, patched_logger_info):
 
     config_instance._preflight('foo')
 
-    m.assert_called_once_with('foo')
+    m.assert_called_once_with('foo', os.environ, config.MOLECULE_KEEP_STRING)
 
 
 def test_preflight_exists_when_validation_fails(

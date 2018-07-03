@@ -52,6 +52,7 @@ LOG = logger.get_logger(__name__)
 MOLECULE_DIRECTORY = 'molecule'
 MOLECULE_FILE = 'molecule.yml'
 MERGE_STRATEGY = anyconfig.MS_DICTS
+MOLECULE_KEEP_STRING = 'MOLECULE_'
 
 
 # https://stackoverflow.com/questions/16017397/injecting-function-call-after-init-with-decorator  # noqa
@@ -267,7 +268,7 @@ class Config(object):
 
         :return: dict
         """
-        return self._combine(keep_string='MOLECULE_')
+        return self._combine(keep_string=MOLECULE_KEEP_STRING)
 
     def _reget_config(self):
         """
@@ -447,7 +448,10 @@ class Config(object):
         }
 
     def _preflight(self, data):
-        errors = schema_v2.pre_validate(data)
+        env = os.environ.copy()
+        env = self._set_env(env)
+        errors = schema_v2.pre_validate(data, env, MOLECULE_KEEP_STRING)
+
         if errors:
             msg = "Failed to validate.\n\n{}".format(errors)
             util.sysexit_with_message(msg)
