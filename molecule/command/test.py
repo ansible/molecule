@@ -135,8 +135,8 @@ def test(ctx, scenario_name, driver_name, __all, destroy):  # pragma: no cover
                 base.execute_subcommand(scenario.config, action)
         except SystemExit:
             if destroy == 'always':
-                msg = ('An error occured during the test sequence.  '
-                       'Cleaning up.')
+                msg = ('An error occurred during the test sequence '
+                       "action: '{}'. Cleaning up.").format(action)
                 LOG.warn(msg)
                 base.execute_subcommand(scenario.config, 'destroy')
                 util.sysexit()
