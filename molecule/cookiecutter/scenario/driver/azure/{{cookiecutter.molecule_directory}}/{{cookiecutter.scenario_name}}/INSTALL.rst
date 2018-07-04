@@ -13,4 +13,4 @@ Install
 
 .. code-block:: bash
 
-  $ sudo pip install 'ansible[azure]'
+    $ sudo pip install 'ansible[azure]'

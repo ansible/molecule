@@ -13,4 +13,4 @@ Install
 
 .. code-block:: bash
 
-  $ sudo pip install shade
+    $ sudo pip install shade

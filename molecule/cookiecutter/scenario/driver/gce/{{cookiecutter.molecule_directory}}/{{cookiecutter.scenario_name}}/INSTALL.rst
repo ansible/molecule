@@ -13,4 +13,4 @@ Install
 
 .. code-block:: bash
 
-  $ sudo pip install apache-libcloud
+    $ sudo pip install apache-libcloud

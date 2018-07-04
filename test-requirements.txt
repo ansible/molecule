@@ -2,7 +2,6 @@ apache-libcloud
 ansible[azure]
 boto
 boto3
-docker-py
 # lxc-python2
 mock
 # pytest==3.1.0 issues with pytest-verbose-parametrize

@@ -78,9 +78,17 @@ class Docker(base.Base):
               - name: bar
             docker_host: tcp://localhost:12376
 
+    Ansible < 2.6
+
     .. code-block:: bash
 
         $ sudo pip install docker-py
+
+    Ansible >= 2.6
+
+    .. code-block:: bash
+
+        $ sudo pip install docker
 
     Provide the files Molecule will preserve upon each subcommand execution.
 
