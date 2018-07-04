@@ -39,6 +39,47 @@ A ``.travis.yml`` using `Tox`_ as described below.
     script:
       - tox
 
+Gitlab CI
+^^^^^^^^^
+
+`Gitlab`_ includes its own CI. Pipelines are usually defined in a ``.gitlab-ci.yml`` file in the top folder of a repository, to be ran on Gitlab Runners. 
+
+Here is an example setting up a virtualenv and testing an Ansible role via Molecule. User-level pip is cached and so is the virtual environment to save time. And this is run over a runner tagged `pip36` and `docker`, because its a minimal CentOS 7 VM installed with pip36 from IUS repository and docker.
+
+
+.. code-block:: yaml
+
+    ---
+    stages:
+      - test
+
+    variables:
+      PIP_CACHE_DIR: "$CI_PROJECT_DIR/.pip"
+
+    cache:
+      paths:
+        - .pip/
+        - virtenv/
+
+    before_script:
+      - pip3.6 install virtualenv
+      - virtualenv virtenv
+      - source virtenv/bin/activate
+
+    molecule:
+      stage: test
+      tags:
+        - pip36
+        - docker
+      script:
+        - docker -v
+        - python -V
+        - pip install ansible molecule docker
+        - ansible --version
+        - molecule --version
+        - molecule test
+
+
 Tox
 ^^^
 
@@ -137,5 +178,6 @@ You also must include the MOLECULE_EPHEMERAL_DIRECTORY variable in the
 
 .. _`Factors`: http://tox.readthedocs.io/en/latest/config.html#factors-and-factor-conditional-settings
 .. _`Travis`: https://travis-ci.org/
+.. _`Gitlab`: https://gitlab.com
 .. _`Tox`: https://tox.readthedocs.io/en/lates
 .. _`Detox`: https://pypi.python.org/pypi/detox
