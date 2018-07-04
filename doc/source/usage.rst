@@ -69,6 +69,12 @@ Login
 .. autoclass:: molecule.command.login.Login()
    :undoc-members:
 
+Matrix
+^^^^^^
+
+.. autoclass:: molecule.command.matrix.Matrix()
+   :undoc-members:
+
 Prepare
 ^^^^^^^
 
