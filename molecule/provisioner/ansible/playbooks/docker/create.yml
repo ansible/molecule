@@ -39,6 +39,7 @@
         docker_host: "{{ item.item.docker_host | default('unix://var/run/docker.sock') }}"
         dockerfile: "{{ item.item.dockerfile | default(item.invocation.module_args.dest) }}"
         force: "{{ item.item.force | default(true) }}"
+        pull: "{{ item.item.pull | default(true) }}"
       with_items: "{{ platforms.results }}"
       when: platforms.changed or docker_images.results | map(attribute='images') | select('equalto', []) | list | count >= 0
 
