@@ -20,8 +20,10 @@
 
 import click
 
+from molecule import config
 from molecule import logger
 from molecule import scenarios
+from molecule import util
 from molecule.command import base
 
 LOG = logger.get_logger(__name__)
@@ -61,25 +63,20 @@ class Matrix(base.Base):
         molecule.yml.
     """
 
-
 @click.command()
 @click.pass_context
-@click.option(
-    '--scenario-name',
-    '-s',
-    default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help='Name of the scenario to target. ({})'.format(
-        base.MOLECULE_DEFAULT_SCENARIO_NAME))
+@click.option('--scenario-name', '-s', help='Name of the scenario to target.')
 @click.argument('subcommand', nargs=-1, type=click.UNPROCESSED)
 def matrix(ctx, scenario_name, subcommand):  # pragma: no cover
     """
     List matrix of steps used to test instances.
     """
+
     args = ctx.obj.get('args')
     command_args = {
         'subcommand': subcommand[0],
     }
 
     s = scenarios.Scenarios(
-        base.get_configs(args, command_args, scenario_name))
+        base.get_configs(args, command_args), scenario_name)
     s.print_matrix()
