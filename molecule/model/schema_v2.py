@@ -19,146 +19,162 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import copy
+import functools
 import re
 
 import cerberus
 import cerberus.errors
 
+from molecule import interpolation
 from molecule import util
 
-pre_validate_base_schema = {
-    'dependency': {
-        'type': 'dict',
-        'schema': {
-            'name': {
-                'type': 'string',
-                'molecule_env_var': True,
-                'allowed': [
-                    'galaxy',
-                    'gilt',
-                    'shell',
-                ],
-            },
-        }
-    },
-    'driver': {
-        'type': 'dict',
-        'schema': {
-            'name': {
-                'type':
-                'string',
-                'molecule_env_var':
-                True,
-                'allowed': [
-                    'azure',
-                    'delegated',
-                    'docker',
-                    'ec2',
-                    'gce',
-                    'lxc',
-                    'lxd',
-                    'openstack',
-                    'vagrant',
-                ],
-            },
-        }
-    },
-    'lint': {
-        'type': 'dict',
-        'schema': {
-            'name': {
-                'type': 'string',
-                'molecule_env_var': True,
-                'allowed': [
-                    'yamllint',
-                ],
-            },
-        }
-    },
-    'platforms': {
-        'type': 'list',
-        'schema': {
+
+def coerce_env(env, keep_string, v):
+    i = interpolation.Interpolator(interpolation.TemplateWithDefaults, env)
+
+    return i.interpolate(v, keep_string)
+
+
+def pre_validate_base_schema(env, keep_string):
+    return {
+        'dependency': {
             'type': 'dict',
             'schema': {
-                'registry': {
+                'name': {
+                    'type': 'string',
+                    'molecule_env_var': True,
+                    'allowed': [
+                        'galaxy',
+                        'gilt',
+                        'shell',
+                    ],
+                },
+            }
+        },
+        'driver': {
+            'type': 'dict',
+            'schema': {
+                'name': {
+                    'type':
+                    'string',
+                    'molecule_env_var':
+                    True,
+                    'allowed': [
+                        'azure',
+                        'delegated',
+                        'docker',
+                        'ec2',
+                        'gce',
+                        'lxc',
+                        'lxd',
+                        'openstack',
+                        'vagrant',
+                    ],
+                    # NOTE(retr0h): Some users use an environment variable to
+                    # change the driver name.  May add this coercion to rest of
+                    # config using allowed validation.
+                    'coerce': (str,
+                               functools.partial(coerce_env, env, keep_string))
+                },
+            }
+        },
+        'lint': {
+            'type': 'dict',
+            'schema': {
+                'name': {
+                    'type': 'string',
+                    'molecule_env_var': True,
+                    'allowed': [
+                        'yamllint',
+                    ],
+                },
+            }
+        },
+        'platforms': {
+            'type': 'list',
+            'schema': {
+                'type': 'dict',
+                'schema': {
+                    'registry': {
+                        'type': 'dict',
+                        'schema': {
+                            'credentials': {
+                                'type': 'dict',
+                                'schema': {
+                                    'password': {
+                                        'type': 'string',
+                                        'regex': '^[{$]+[a-z0-9A-Z]+[}]*$',
+                                    },
+                                }
+                            },
+                        }
+                    },
+                }
+            }
+        },
+        'provisioner': {
+            'type': 'dict',
+            'schema': {
+                'name': {
+                    'type': 'string',
+                    'molecule_env_var': True,
+                    'allowed': [
+                        'ansible',
+                    ],
+                },
+                'lint': {
                     'type': 'dict',
                     'schema': {
-                        'credentials': {
-                            'type': 'dict',
-                            'schema': {
-                                'password': {
-                                    'type': 'string',
-                                    'regex': '^[{$]+[a-z0-9A-Z]+[}]*$',
-                                },
-                            }
+                        'name': {
+                            'type': 'string',
+                            'molecule_env_var': True,
+                            'allowed': [
+                                'ansible-lint',
+                            ],
                         },
                     }
                 },
             }
-        }
-    },
-    'provisioner': {
-        'type': 'dict',
-        'schema': {
-            'name': {
-                'type': 'string',
-                'molecule_env_var': True,
-                'allowed': [
-                    'ansible',
-                ],
-            },
-            'lint': {
-                'type': 'dict',
-                'schema': {
-                    'name': {
-                        'type': 'string',
-                        'molecule_env_var': True,
-                        'allowed': [
-                            'ansible-lint',
-                        ],
-                    },
-                }
-            },
-        }
-    },
-    'scenario': {
-        'type': 'dict',
-        'schema': {
-            'name': {
-                'type': 'string',
-                'molecule_env_var': True,
-            },
-        }
-    },
-    'verifier': {
-        'type': 'dict',
-        'schema': {
-            'name': {
-                'type': 'string',
-                'molecule_env_var': True,
-                'allowed': [
-                    'testinfra',
-                    'inspec',
-                    'goss',
-                ],
-            },
-            'lint': {
-                'type': 'dict',
-                'schema': {
-                    'name': {
-                        'type': 'string',
-                        'molecule_env_var': True,
-                        'allowed': [
-                            'flake8',
-                            'rubocop',
-                            'yamllint',
-                        ],
-                    },
-                }
-            },
-        }
-    },
-}
+        },
+        'scenario': {
+            'type': 'dict',
+            'schema': {
+                'name': {
+                    'type': 'string',
+                    'molecule_env_var': True,
+                },
+            }
+        },
+        'verifier': {
+            'type': 'dict',
+            'schema': {
+                'name': {
+                    'type': 'string',
+                    'molecule_env_var': True,
+                    'allowed': [
+                        'testinfra',
+                        'inspec',
+                        'goss',
+                    ],
+                },
+                'lint': {
+                    'type': 'dict',
+                    'schema': {
+                        'name': {
+                            'type': 'string',
+                            'molecule_env_var': True,
+                            'allowed': [
+                                'flake8',
+                                'rubocop',
+                                'yamllint',
+                            ],
+                        },
+                    }
+                },
+            }
+        },
+    }
+
 
 base_schema = {
     'dependency': {
@@ -811,11 +827,11 @@ class Validator(cerberus.Validator):
                 self._error(field, msg)
 
 
-def pre_validate(stream):
+def pre_validate(stream, env, keep_string):
     data = util.safe_load(stream)
 
     v = Validator(allow_unknown=True)
-    v.validate(data, pre_validate_base_schema)
+    v.validate(data, pre_validate_base_schema(env, keep_string))
 
     return v.errors
 

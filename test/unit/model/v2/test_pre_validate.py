@@ -35,9 +35,19 @@ platforms:
 """.strip()
 
 
+@pytest.fixture
+def _env():
+    return {}
+
+
+@pytest.fixture
+def _keep_string():
+    return 'MOLECULE_'
+
+
 @pytest.mark.parametrize('_stream', [(_model_platforms_docker_section_data)])
-def test_platforms_docker(_stream):
-    assert {} == schema_v2.pre_validate(_stream())
+def test_platforms_docker(_stream, _env, _keep_string):
+    assert {} == schema_v2.pre_validate(_stream(), _env, _keep_string)
 
 
 @pytest.fixture
@@ -54,7 +64,7 @@ platforms:
 
 @pytest.mark.parametrize('_stream',
                          [_model_platforms_docker_errors_section_data])
-def test_platforms_docker_has_errors(_stream):
+def test_platforms_docker_has_errors(_stream, _env, _keep_string):
     x = {
         'platforms': [{
             0: [{
@@ -70,7 +80,7 @@ def test_platforms_docker_has_errors(_stream):
         }]
     }
 
-    assert x == schema_v2.pre_validate(_stream())
+    assert x == schema_v2.pre_validate(_stream(), _env, _keep_string)
 
 
 @pytest.fixture
@@ -105,7 +115,7 @@ verifier:
 @pytest.mark.parametrize('_stream',
                          [(_model_molecule_env_errors_section_data)])
 def test_has_errors_when_molecule_env_var_referenced_in_unallowed_sections(
-        _stream):
+        _stream, _env, _keep_string):
     x = {
         'scenario': [{
             'name':
@@ -154,4 +164,4 @@ def test_has_errors_when_molecule_env_var_referenced_in_unallowed_sections(
         }]
     }
 
-    assert x == schema_v2.pre_validate(_stream())
+    assert x == schema_v2.pre_validate(_stream(), _env, _keep_string)
