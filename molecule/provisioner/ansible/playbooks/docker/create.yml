@@ -53,7 +53,7 @@
       docker_container:
         name: "{{ item.name }}"
         docker_host: "{{ item.docker_host | default('unix://var/run/docker.sock') }}"
-        hostname: "{{ item.name }}"
+        hostname: "{{ item.hostname | default(item.name) }}"
         image: "molecule_local/{{ item.image }}"
         state: started
         recreate: false
