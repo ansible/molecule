@@ -10,6 +10,7 @@
         instance_name: "{{ item.name }}"
         platform_box: "{{ item.box }}"
         provider_name: "{{ molecule_yml.driver.provider.name }}"
+        provider_options: "{{ item.provider_options | default(omit) }}"
         provider_raw_config_args: "{{ item.provider_raw_config_args | default(omit) }}"
         force_stop: "{{ item.force_stop | default(true) }}"
 
