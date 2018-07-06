@@ -605,6 +605,9 @@ platforms_docker_schema = {
                 'image': {
                     'type': 'string',
                 },
+                'pull': {
+                    'type': 'boolean',
+                },
                 'registry': {
                     'type': 'dict',
                     'schema': {
