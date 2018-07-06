@@ -35,9 +35,9 @@ def _model_platforms_docker_section_data():
             'hostname':
             'instance',
             'image':
+            'image_name:tag',
 						'pull':
 						True,
-            'image_name:tag',
             'registry': {
                 'url': 'registry.example.com',
                 'credentials': {
@@ -168,6 +168,7 @@ def test_platforms_docker_has_errors(_config):
                     0: ['must be of string type']
                 }],
                 'image': ['must be of string type'],
+                'pull': ['must be of boolean type'],
                 'hostname': ['must be of string type'],
                 'security_opts': [{
                     0: ['must be of string type']
