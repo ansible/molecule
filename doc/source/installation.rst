@@ -24,7 +24,7 @@ CentOS 7
 .. code-block:: bash
 
     $ sudo yum install -y epel-release
-    $ sudo yum install -y gcc python-pip python-devel openssl-devel
+    $ sudo yum install -y gcc python-pip python-devel openssl-devel libselinux-python
 
 Ubuntu 16.x
 -----------

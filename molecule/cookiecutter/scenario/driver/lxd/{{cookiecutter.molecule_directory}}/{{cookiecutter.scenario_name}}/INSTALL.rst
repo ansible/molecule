@@ -1,5 +1,5 @@
 *******
-Install
+LXD driver installation guide
 *******
 
 Requirements

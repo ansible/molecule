@@ -1,5 +1,5 @@
 *******
-Install
+Azure driver installation guide
 *******
 
 Requirements
