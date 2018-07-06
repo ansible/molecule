@@ -1,5 +1,5 @@
 *******
-Install
+Delegated driver installation guide
 *******
 
 Requirements

@@ -1,5 +1,5 @@
 *******
-Install
+Vagrant driver installation guide
 *******
 
 Requirements
