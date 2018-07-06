@@ -35,6 +35,8 @@ def _model_platforms_docker_section_data():
             'hostname':
             'instance',
             'image':
+						'pull':
+						True,
             'image_name:tag',
             'registry': {
                 'url': 'registry.example.com',
@@ -105,6 +107,7 @@ def _model_platforms_docker_errors_section_data():
             'name': int(),
             'hostname': int(),
             'image': int(),
+						'pull': str(),
             'registry': {
                 'url': int(),
                 'credentials': {
