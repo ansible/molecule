@@ -107,7 +107,7 @@ def _model_platforms_docker_errors_section_data():
             'name': int(),
             'hostname': int(),
             'image': int(),
-						'pull': str(),
+						'pull': int(),
             'registry': {
                 'url': int(),
                 'credentials': {
