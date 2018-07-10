@@ -2,6 +2,28 @@
 History
 *******
 
+2.16
+====
+
+* Add feature for auto bumping docker image tag.
+* Fixed Docker provider not using DOCKER_HOST environmental variable.
+* Updates to the Ansible provisioning playbook for docker and vagrant for
+  missing options.
+* Documentation : dependencies on centos and docker driver clarifications.
+* Added matrix subcommand.
+* added pull: yes|no param to Docker executor.
+* Added Gitlab CI example.
+* Add information about the action which failed.
+* Support Ansible 2.6.
+* Corrected schema due to #1344.
+* Prevalidator should enforce allowed options.
+* Add support for multiple distributions to inspec verifier.
+* Update InSpec to version 2.2.20.
+* Update ansible-lint to version 3.4.23.
+* Create unique keypair to allow parallel executions with OpenStack driver.
+* Requirements update.
+* Update the Dockerfile for work with az client and rubocop.
+
 2.15
 ====
 
