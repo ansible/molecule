@@ -20,10 +20,8 @@
 
 import click
 
-from molecule import config
 from molecule import logger
 from molecule import scenarios
-from molecule import util
 from molecule.command import base
 
 LOG = logger.get_logger(__name__)
@@ -62,6 +60,7 @@ class Matrix(base.Base):
         Load an env file to read variables from when rendering
         molecule.yml.
     """
+
 
 @click.command()
 @click.pass_context
