@@ -6,7 +6,7 @@ driver:
 lint:
   name: yamllint
   options:
-    config-file: ../../../resources/.yamllint
+    config-file: ../../resources/.yamllint
 platforms:
   - name: instance
     image: centos:latest
