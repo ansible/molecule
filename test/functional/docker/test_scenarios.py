@@ -288,7 +288,8 @@ def test_command_test_destroy_strategy_always(scenario_to_test, with_scenario,
         cmd = sh.molecule.bake('test', **options)
         pytest.helpers.run_command(cmd, log=False)
 
-    msg = "An error occurred during the test sequence action: 'lint'. Cleaning up."
+    msg = ("An error occurred during the test sequence action: 'lint'. "
+           'Cleaning up.')
     assert msg in str(e.value.stdout)
 
     assert 'PLAY [Destroy]' in str(e.value.stdout)
@@ -313,7 +314,8 @@ def test_command_test_destroy_strategy_never(scenario_to_test, with_scenario,
         cmd = sh.molecule.bake('test', **options)
         pytest.helpers.run_command(cmd, log=False)
 
-    msg = "An error occurred during the test sequence action: 'lint'. Cleaning up."
+    msg = ("An error occurred during the test sequence action: 'lint'. "
+           'Cleaning up.')
     assert msg not in str(e.value.stdout)
 
     assert 0 != e.value.exit_code
