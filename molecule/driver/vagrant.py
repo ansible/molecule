@@ -79,6 +79,8 @@ class Vagrant(base.Base):
               gui: True
             provider_raw_config_args:
               - "customize ['modifyvm', :id, '--cpuexecutioncap', '50']"
+            provider_override_args:
+              - "vm.synced_folder './', '/vagrant', disabled: true, type: 'nfs'"
             provision: True
 
     .. code-block:: bash
