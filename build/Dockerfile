@@ -18,9 +18,11 @@ ENV PACKAGES="\
     linux-headers \
     sudo \
     rsync \
-    curl \ 
+    curl \
     ruby \
-    ruby-dev \ 
+    ruby-dev \
+    ruby-rdoc \
+    ruby-irb \
 "
 
 ENV PIP_PACKAGES="\
@@ -28,11 +30,15 @@ ENV PIP_PACKAGES="\
     virtualenv \
     molecule \
     ansible \
-    docker-py \
+    docker \
     azure-cli \
     packaging \
     msrestazure \
-    pywinrm \ 
+    pywinrm \
+"
+
+ENV GEM_PACKAGES="\
+    rubocop \
 "
 
 RUN \
@@ -41,6 +47,7 @@ RUN \
     && rm -rf /var/cache/apk/* \
     && pip install --no-cache-dir ${PIP_PACKAGES} \
     && rm -rf /root/.cache \
+    && gem install ${GEM_PACKAGES} \
     && adduser -D -h ${TEST_HOME_DIR} ${TEST_USER} \
     && usermod -aG dockremap ${TEST_USER} \
     && echo "${TEST_USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
