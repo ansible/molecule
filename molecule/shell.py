@@ -38,7 +38,7 @@ ENV_FILE = '.env.yml'
 
 
 def _get_python_version():  # pragma: no cover
-    return sys.version_info[:2]
+    return sys.version_info
 
 
 def _get_ansible_version():  # pragma: no cover
@@ -46,11 +46,11 @@ def _get_ansible_version():  # pragma: no cover
 
 
 def _supported_python2_version():  # pragma: no cover
-    return _get_python_version() == (2, 7)
+    return _get_python_version()[:2] == (2, 7)
 
 
 def _supported_python3_version():  # pragma: no cover
-    return _get_python_version() == (3, 6)
+    return _get_python_version() >= (3, 6)
 
 
 def _supported_ansible_version():  # pragma: no cover
@@ -74,7 +74,7 @@ def _supported_ansible_version():  # pragma: no cover
     else:
         msg = ("Python version '{}' not supported.  "
                'Molecule only supports Python versions '
-               "'2.7' and '3.6'.").format(_get_python_version())
+               "'2.7' and '>= 3.6'.").format(_get_python_version())
         util.sysexit_with_message(msg)
 
 
