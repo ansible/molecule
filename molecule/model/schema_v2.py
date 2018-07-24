@@ -267,6 +267,9 @@ base_schema = {
             'name': {
                 'type': 'string',
             },
+            'log': {
+                'type': 'boolean',
+            },
             'config_options': {
                 'type': 'dict',
                 'schema': {

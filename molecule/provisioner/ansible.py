@@ -69,6 +69,16 @@ class Ansible(base.Base):
         to the underlying `ansible-playbook` command when executing
         `molecule --debug`.
 
+    Molecule will silence log output, unless invoked with the `--debug` flag.
+    However, this results in quite a bit of output.  To enable Ansible log
+    output, add the following to the `provisioner` section of `molecule.yml`.
+
+    .. code-block:: yaml
+
+        provisioner:
+          name: ansible
+          log: True
+
     The create/destroy playbooks for Docker and Vagrant are bundled with
     Molecule.  These playbooks have a clean API from `molecule.yml`, and
     are the most commonly used.  The bundled playbooks can still be overriden.
