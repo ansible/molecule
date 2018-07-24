@@ -28,6 +28,7 @@ def _model_provisioner_section_data():
     return {
         'provisioner': {
             'name': 'ansible',
+            'log': True,
             'config_options': {
                 'foo': 'bar',
             },
@@ -91,6 +92,7 @@ def _model_provisioner_errors_section_data():
     return {
         'provisioner': {
             'name': int(),
+            'log': int,
             'config_options': [],
             'connection_options': [],
             'options': [],
@@ -164,6 +166,7 @@ def test_provisioner_has_errors(_config):
             }],
             'options': ['must be of dict type'],
             'name': ['must be of string type'],
+            'log': ['must be of boolean type'],
         }]
     }
 
