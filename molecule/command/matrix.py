@@ -65,7 +65,10 @@ class Matrix(base.Base):
 @click.command()
 @click.pass_context
 @click.option('--scenario-name', '-s', help='Name of the scenario to target.')
-@click.argument('subcommand', nargs=-1, type=click.UNPROCESSED)
+# NOTE(retr0h): Cannot introspect base.Base for `click.Choice`, since
+# subclasses have not all loaded at this point.
+@click.argument(
+    'subcommand', nargs=1, type=click.UNPROCESSED)
 def matrix(ctx, scenario_name, subcommand):  # pragma: no cover
     """
     List matrix of steps used to test instances.
