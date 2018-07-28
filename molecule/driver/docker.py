@@ -78,6 +78,8 @@ class Docker(base.Base):
               - name: foo
               - name: bar
             docker_host: tcp://localhost:12376
+            env:
+              FOO: bar
 
     Ansible < 2.6
 

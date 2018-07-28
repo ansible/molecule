@@ -687,6 +687,13 @@ platforms_docker_schema = {
                         'type': 'string',
                     }
                 },
+                'env': {
+                    'type': 'dict',
+                    'keyschema': {
+                        'type': 'string',
+                        'regex': '^[A-Z0-9_-]+$',
+                    }
+                },
                 'networks': {
                     'type': 'list',
                     'schema': {
