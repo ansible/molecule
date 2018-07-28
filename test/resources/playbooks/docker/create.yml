@@ -70,6 +70,7 @@
         ulimits: "{{ item.ulimits | default(omit) }}"
         networks: "{{ item.networks | default(omit) }}"
         dns_servers: "{{ item.dns_servers | default(omit) }}"
+        env: "{{ item.env | default(omit) }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
       async: 7200

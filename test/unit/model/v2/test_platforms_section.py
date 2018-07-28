@@ -77,6 +77,9 @@ def _model_platforms_docker_section_data():
             'dns_servers': [
                 '8.8.8.8',
             ],
+            'env': {
+                'FOO': 'bar',
+            },
             'networks': [
                 {
                     'name': 'foo',
@@ -142,6 +145,7 @@ def _model_platforms_docker_errors_section_data():
             'dns_servers': [
                 int(),
             ],
+            'env': str(),
             'networks': [
                 {
                     'name': int(),
@@ -199,7 +203,8 @@ def test_platforms_docker_has_errors(_config):
                 }],
                 'ulimits': [{
                     0: ['must be of string type']
-                }]
+                }],
+                'env': ['must be of dict type'],
             }]
         }]
     }
