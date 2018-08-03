@@ -23,6 +23,7 @@ ENV PACKAGES="\
     ruby-dev \
     ruby-rdoc \
     ruby-irb \
+    git \
 "
 
 ENV PIP_PACKAGES="\
