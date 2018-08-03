@@ -19,6 +19,12 @@
         inspec_download_sha256sum: c3d3fcb89b746f6378e27c0b318f61a8cda8784f4354306a866c70b945d52cec
       when: ansible_os_family == "RedHat" and ansible_distribution_major_version == "7"
 
+    - name: Setting variables (Debian 8 / Ubuntu 14.04)
+      set_fact:
+        inspec_download_url: "https://packages.chef.io/files/stable/inspec/2.2.34/ubuntu/14.04/inspec_2.2.34-1_amd64.deb"
+        inspec_download_sha256sum: 5a8c6253b90d44e1e4059f495f1fdfa4c0491ce75ecf9fc37fc905c26f5a43d7
+      when: ansible_os_family == "Debian" and (ansible_distribution_major_version == "8" or ansible_distribution_version == "14.04")
+
     - name: Setting variables (Debian 8 / Ubuntu 16.04)
       set_fact:
         inspec_download_url: "https://packages.chef.io/files/stable/inspec/2.2.34/ubuntu/16.04/inspec_2.2.34-1_amd64.deb"
