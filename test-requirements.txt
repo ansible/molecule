@@ -15,5 +15,5 @@ python-vagrant
 # The error was: KeyError: 'created_at'
 shade==1.22.2
 twine
-wheel
+wheel==0.30.0
 yapf==0.21.0
