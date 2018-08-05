@@ -28,8 +28,12 @@ def test_etc_molecule_ansible_hostname_file(host):
     assert f.mode == 0o644
 
 
-def test_interface(host):
+def test_hostonly_interface(host):
     i = host.interface('eth1').addresses
 
     # NOTE(retr0h): Contains ipv4 and ipv6 addresses.
     assert len(i) == 2
+
+
+def test_internal_interface(host):
+    assert '192.168.0.1' in host.interface('eth2').addresses
