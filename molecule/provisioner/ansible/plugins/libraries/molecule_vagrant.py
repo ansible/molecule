@@ -333,11 +333,8 @@ Vagrant.configure('2') do |config|
 
       if instance['interfaces']
         instance['interfaces'].each { |interface|
-          if interface['type'] == 'static'
-            c.vm.network "#{interface['network_name']}", type: "#{interface['type']}", auto_config: "#{interface['auto_config']}", ip: "#{interface['ip']}"
-          else
-            c.vm.network "#{interface['network_name']}", type: "#{interface['type']}", auto_config: "#{interface['auto_config']}"
-          end
+          c.vm.network "#{interface['network_name']}",
+                       interface.select{|k| k != 'network_name'}.transform_keys{|k| k.to_sym}
         }
       end
 
