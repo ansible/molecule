@@ -334,7 +334,7 @@ Vagrant.configure('2') do |config|
       if instance['interfaces']
         instance['interfaces'].each { |interface|
           c.vm.network "#{interface['network_name']}",
-                       interface.select{|k| k != 'network_name'}.transform_keys{|k| k.to_sym}
+                       Hash[interface.select{|k| k != 'network_name'}.map{|k,v| [k.to_sym, v]}]
         }
       end
 
