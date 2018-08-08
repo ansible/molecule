@@ -348,3 +348,24 @@ Lint
 
 .. autoclass:: molecule.verifier.lint.flake8.Flake8()
    :undoc-members:
+
+Advanced settings
+-----------------
+
+Handle long interpreter directives in external executables
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In order to perform some actions Molecule relies on a number of
+external executable scripts (e.g. `ansible-playbook`).
+In some circumstances (for example, when installed in a
+virtual environment inside Jenkins workspace dir) these executables can define
+interpreter directives with lengths beyond system limits
+(128 characters for Linux; `BINPRM_BUF_SIZE`).
+
+To bypass this limitation Molecule can parse the interpreter directive
+and execute it explicitly. User can enable this workaround by defining the
+`MOLECULE_LIMITED_SHEBANG` environment variable before invoking Molecule:
+
+.. code-block:: bash
+
+    export MOLECULE_LIMITED_SHEBANG=1
