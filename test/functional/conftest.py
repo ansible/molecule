@@ -147,7 +147,8 @@ def list(x):
     out = out.stdout.decode('utf-8')
     out = util.strip_ansi_color(out)
 
-    assert x in out
+    for l in x.splitlines():
+        assert l in out
 
 
 @pytest.helpers.register
@@ -157,7 +158,8 @@ def list_with_format_plain(x):
     out = out.stdout.decode('utf-8')
     out = util.strip_ansi_color(out)
 
-    assert x in out
+    for l in x.splitlines():
+        assert l in out
 
 
 @pytest.helpers.register

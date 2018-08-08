@@ -29,3 +29,7 @@ def test_has_shared_directory(host):
     f = host.file('/vagrant')
 
     assert f.is_directory
+
+
+def test_internal_interface(host):
+    assert '192.168.0.1' in host.interface('eth2').addresses

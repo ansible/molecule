@@ -16,6 +16,9 @@ platforms:
       - auto_config: true
         network_name: private_network
         type: dhcp
+      - virtualbox__intnet: test_network
+        network_name: private_network
+        ip: 192.168.0.1
     groups:
       - foo
       - bar
@@ -29,6 +32,9 @@ platforms:
       - auto_config: true
         network_name: private_network
         type: dhcp
+      - virtualbox__intnet: test_network
+        network_name: private_network
+        ip: 192.168.0.2
     groups:
       - foo
       - baz
