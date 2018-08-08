@@ -87,6 +87,46 @@ def sysexit_with_message(msg, code=1):
     sysexit(code)
 
 
+def prepend_shebang_interpreter(cmd):
+    """
+    Inspired by tox:
+    https://github.com/tox-dev/tox/blob/46fca4c3c817f0a4728552e99e89ace9b2cc6234/tox/venv.py#L420
+
+    prepend interpreter directive (if any) to the provided `sh.Command` object
+
+    When preparing virtual environments in a file container which has large
+    length, the system might not be able to invoke shebang scripts which
+    define interpreters beyond system limits (e.x. Linux as a limit of 128;
+    BINPRM_BUF_SIZE).
+    This method can be used to check if the executable is
+    a script containing a shebang line. If so, extract the interpreter (and
+    possible optional argument) and prepend the values to the provided ``sh``
+    command. Molecule will only attempt to read an interpreter directive of
+    a maximum size of 2048 bytes to limit excessive reading and support UNIX
+    systems which may support a longer interpret length.
+
+    :param cmd: a `sh.Command` object
+    :return: a `sh.Command` object
+
+    """
+    cmd_path = cmd._path
+    try:
+        with open(cmd_path, 'rb') as f:
+            if f.read(1) == b'#' and f.read(1) == b'!':
+                cmd._partial_baked_args.insert(0, cmd_path)
+                MAXINTERP = 2048
+                interp = f.readline(MAXINTERP).rstrip()
+                interp_args = interp.split(None, 1)[:2]
+                cmd._path = interp_args[0]
+                baked_args = cmd._partial_baked_args
+                cmd._partial_baked_args = interp_args[1:] + baked_args
+                return cmd
+    except IOError:
+        pass
+
+    return cmd
+
+
 def run_command(cmd, debug=False):
     """
     Execute the given command and returns None.
@@ -95,6 +135,8 @@ def run_command(cmd, debug=False):
     :param debug: An optional bool to toggle debug output.
     :return: ``sh`` object
     """
+    if 'MOLECULE_LIMITED_SHEBANG' in os.environ:
+        cmd = prepend_shebang_interpreter(cmd)
     if debug:
         # WARN(retr0h): Uses an internal ``sh`` data structure to dig
         # the environment out of the ``sh.command`` object.
