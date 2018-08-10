@@ -79,6 +79,72 @@ Here is an example setting up a virtualenv and testing an Ansible role via Molec
         - molecule --version
         - molecule test
 
+Jenkins Pipeline
+^^^^^^^^^^^^^^^^
+
+`Jenkins`_ projects can also be defined in a file, by default named `Jenkinsfile` in the top folder of a repository. Two syntax are available, Declarative and Scripted. Here is an example using the declarative syntax, setting up a virtualenv and testing an Ansible role via Molecule.
+
+.. code-block:: groovy
+
+    pipeline {
+
+      agent {
+        // Node setup : minimal centos7, plugged into Jenkins, and
+        // git config --global http.sslVerify false
+        // sudo yum -y install https://centos7.iuscommunity.org/ius-release.rpm
+        // sudo yum -y install python36u python36u-pip python36u-devel git curl gcc
+        // git config --global http.sslVerify false
+        // sudo curl -fsSL get.docker.com | bash
+        label 'Molecule_Slave'
+      }
+
+      stages {
+
+        stage ('Get latest code') {
+          steps {
+            checkout scm
+          }
+        }
+
+        stage ('Setup Python virtual environment') {
+          steps {
+            sh '''
+              export HTTP_PROXY=http://10.123.123.123:8080
+              export HTTPS_PROXY=http://10.123.123.123:8080
+              pip3.6 install virtualenv
+              virtualenv virtenv
+              source virtenv/bin/activate
+              pip install --upgrade ansible molecule docker
+            '''
+          }
+        }
+
+        stage ('Display versions') {
+          steps {
+            sh '''
+              source virtenv/bin/activate
+              docker -v
+              python -V
+              ansible --version
+              molecule --version
+            '''
+          }
+        }
+
+        stage ('Molecule test') {
+          steps {
+            sh '''
+              source virtenv/bin/activate
+              molecule test
+            '''
+          }
+        }
+
+      }
+
+    }
+
+
 
 Tox
 ^^^
@@ -178,6 +244,7 @@ You also must include the MOLECULE_EPHEMERAL_DIRECTORY variable in the
 
 .. _`Factors`: http://tox.readthedocs.io/en/latest/config.html#factors-and-factor-conditional-settings
 .. _`Travis`: https://travis-ci.org/
+.. _`Jenkins`: https://jenkins.io/doc/book/pipeline/jenkinsfile
 .. _`Gitlab`: https://gitlab.com
 .. _`Tox`: https://tox.readthedocs.io/en/lates
 .. _`Detox`: https://pypi.python.org/pypi/detox
