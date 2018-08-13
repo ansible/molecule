@@ -8,6 +8,10 @@
   tasks:
     - name: Destroy molecule instance(s)
       lxd_container:
+        url: "{{ item.url | default(omit)}}"
+        cert_file: "{{ item.cert_file | default(omit) }}"
+        key_file: "{{ item.key_file | default(omit) }}"
+        trust_password: "{{ item.trust_password | default(omit) }}"
         name: "{{ item.name }}"
         state: absent
         force_stop: "{{ item.force_stop | default(true) }}"
