@@ -18,10 +18,6 @@ Install the test framework `Tox`_.
 
     $ pip install tox
 
-Install `tox-tags`_.
-
-.. _`tox-tags`: https://github.com/AndreLouisCaron/tox-tags
-
 Install the remaining requirements in a venv (optional).
 
 .. code-block:: bash
