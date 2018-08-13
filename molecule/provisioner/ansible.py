@@ -174,11 +174,11 @@ class Ansible(base.Base):
     ::
 
         ANSIBLE_ROLES_PATH:
-          $ephemeral_directory/roles/:$project_root/../
+          $ephemeral_directory/roles/:$project_directory/../
         ANSIBLE_LIBRARY:
-          $ephemeral_directory/library/:$project_root/library/
+          $ephemeral_directory/library/:$project_directory/library/
         ANSIBLE_FILTER_PLUGINS:
-          $ephemeral_directory/plugins/filters/:$project_root/filter/plugins/
+          $ephemeral_directory/plugins/filters/:$project_directory/filter/plugins/
 
     Environment variables can be passed to the provisioner.  Variables in this
     section which match the names above will be appened to the above defaults,
