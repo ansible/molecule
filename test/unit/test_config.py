@@ -309,6 +309,7 @@ def test_env(config_instance):
     x = {
         'MOLECULE_DEBUG': 'False',
         'MOLECULE_FILE': config_instance.molecule_file,
+        'MOLECULE_BASE_FILE': config_instance.molecule_base_file,
         'MOLECULE_ENV_FILE': util.abs_path(
             config_instance.args.get('env_file')),
         'MOLECULE_INVENTORY_FILE': config_instance.provisioner.inventory_file,
@@ -451,11 +452,11 @@ def test_get_config(config_instance):
     assert isinstance(config_instance._get_config(), dict)
 
 
-def test_get_config_with_base_config(config_instance):
-    config_instance.args = {'base_config': './foo.yml'}
+def test_get_config_with_base_config(tmpdir, config_instance):
+    base_file = tmpdir.mkdir('config').join('foo.yml')
+    config_instance.molecule_base_file = base_file
     contents = {'foo': 'bar'}
-    util.write_file(config_instance.args['base_config'],
-                    util.safe_dump(contents))
+    util.write_file(base_file, util.safe_dump(contents))
     result = config_instance._get_config()
 
     assert result['foo'] == 'bar'

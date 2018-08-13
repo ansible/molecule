@@ -88,16 +88,19 @@ DEFAULTS = {
     'provisioner': {
         'name': 'ansible',
         'config_options': {},
+        'ansible_args': [],
         'connection_options': {},
         'options': {},
         'env': {},
         'inventory': {
+            'hosts': {},
             'host_vars': {},
             'group_vars': {},
             'links': {},
         },
         'children': {},
         'playbooks': {
+            'cleanup': 'cleanup.yml',
             'create': 'create.yml',
             'converge': 'playbook.yml',
             'destroy': 'destroy.yml',
@@ -113,17 +116,19 @@ DEFAULTS = {
         },
     },
     'scenario': {
-        'name':
-        'default',
+        'name': 'default',
         'check_sequence': [
-            'destroy',
             'dependency',
+            'cleanup',
+            'destroy',
             'create',
             'prepare',
             'converge',
             'check',
+            'cleanup',
             'destroy',
         ],
+        'cleanup_sequence': ['cleanup'],
         'converge_sequence': [
             'dependency',
             'create',
@@ -131,16 +136,20 @@ DEFAULTS = {
             'converge',
         ],
         'create_sequence': [
+            'dependency',
             'create',
             'prepare',
         ],
         'destroy_sequence': [
+            'dependency',
+            'cleanup',
             'destroy',
         ],
         'test_sequence': [
             'lint',
-            'destroy',
             'dependency',
+            'cleanup',
+            'destroy',
             'syntax',
             'create',
             'prepare',
@@ -148,6 +157,7 @@ DEFAULTS = {
             'idempotence',
             'side_effect',
             'verify',
+            'cleanup',
             'destroy',
         ],
     },
@@ -426,7 +436,8 @@ class Config(object):
         :return: dict
         """
         defaults = self._get_defaults()
-        if self.molecule_base_file is not None and os.path.exists(self.molecule_base_file):
+        if (self.molecule_base_file is not None
+                and os.path.exists(self.molecule_base_file)):
             with util.open_file(self.molecule_base_file) as stream:
                 s = stream.read()
                 self._preflight(s)
