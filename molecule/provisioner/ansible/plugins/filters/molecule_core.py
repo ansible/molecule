@@ -49,8 +49,8 @@ def from_yaml(data):
             env,
         )
         interpolated_data = i.interpolate(d)
-        defaults = util.merge_dicts(
-            defaults, util.safe_load(interpolated_data))
+        defaults = util.merge_dicts(defaults,
+                                    util.safe_load(interpolated_data))
     return defaults
 
 
