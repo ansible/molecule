@@ -8,7 +8,7 @@
   tasks:
     - name: Create molecule instance(s)
       lxd_container:
-        url: "{{ item.url | default(omit)}}"
+        url: "{{ item.url | default(omit) }}"
         cert_file: "{{ item.cert_file | default(omit) }}"
         key_file: "{{ item.key_file | default(omit) }}"
         trust_password: "{{ item.trust_password | default(omit) }}"
@@ -16,11 +16,11 @@
         state: started
         source:
           type: image
-          mode: "{{ item.mode | default('pull')}}"
+          mode: "{{ item.mode | default('pull') }}"
           server: "{{ item.server | default('https://images.linuxcontainers.org') }}"
           protocol: lxd
-          alias: "{{ item.alias }}"
-        profiles: "{{ item.profiles | default(omit)}}"
+          alias: "{{ item.alias | default('ubuntu/xenial/amd64') }}"
+        profiles: "{{ item.profiles | default(omit) }}"
         wait_for_ipv4_addresses: true
         timeout: 600
       with_items: "{{ molecule_yml.platforms }}"
