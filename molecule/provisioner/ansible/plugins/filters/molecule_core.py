@@ -40,10 +40,18 @@ def from_yaml(data):
     env = os.environ.copy()
     env = config.set_env_from_file(env, molecule_env_file)
 
-    i = interpolation.Interpolator(interpolation.TemplateWithDefaults, env)
-    interpolated_data = i.interpolate(data)
-
-    return util.safe_load(interpolated_data)
+    defaults = config.DEFAULTS.copy()
+    if not isinstance(data, list):
+        data = [data]
+    for d in data:
+        i = interpolation.Interpolator(
+            interpolation.TemplateWithDefaults,
+            env,
+        )
+        interpolated_data = i.interpolate(d)
+        defaults = util.merge_dicts(
+            defaults, util.safe_load(interpolated_data))
+    return defaults
 
 
 def to_yaml(data):

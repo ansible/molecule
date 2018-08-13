@@ -59,6 +59,113 @@ MOLECULE_DIRECTORY = 'molecule'
 MOLECULE_FILE = 'molecule.yml'
 MERGE_STRATEGY = anyconfig.MS_DICTS
 MOLECULE_KEEP_STRING = 'MOLECULE_'
+DEFAULTS = {
+    'dependency': {
+        'name': 'galaxy',
+        'command': None,
+        'enabled': True,
+        'options': {},
+        'env': {},
+    },
+    'driver': {
+        'name': 'docker',
+        'provider': {
+            'name': None,
+        },
+        'options': {
+            'managed': True,
+        },
+        'ssh_connection_options': [],
+        'safe_files': [],
+    },
+    'lint': {
+        'name': 'yamllint',
+        'enabled': True,
+        'options': {},
+        'env': {},
+    },
+    'platforms': [],
+    'provisioner': {
+        'name': 'ansible',
+        'config_options': {},
+        'connection_options': {},
+        'options': {},
+        'env': {},
+        'inventory': {
+            'host_vars': {},
+            'group_vars': {},
+            'links': {},
+        },
+        'children': {},
+        'playbooks': {
+            'create': 'create.yml',
+            'converge': 'playbook.yml',
+            'destroy': 'destroy.yml',
+            'prepare': 'prepare.yml',
+            'side_effect': 'side_effect.yml',
+            'verify': 'verify.yml',
+        },
+        'lint': {
+            'name': 'ansible-lint',
+            'enabled': True,
+            'options': {},
+            'env': {},
+        },
+    },
+    'scenario': {
+        'name':
+        'default',
+        'check_sequence': [
+            'destroy',
+            'dependency',
+            'create',
+            'prepare',
+            'converge',
+            'check',
+            'destroy',
+        ],
+        'converge_sequence': [
+            'dependency',
+            'create',
+            'prepare',
+            'converge',
+        ],
+        'create_sequence': [
+            'create',
+            'prepare',
+        ],
+        'destroy_sequence': [
+            'destroy',
+        ],
+        'test_sequence': [
+            'lint',
+            'destroy',
+            'dependency',
+            'syntax',
+            'create',
+            'prepare',
+            'converge',
+            'idempotence',
+            'side_effect',
+            'verify',
+            'destroy',
+        ],
+    },
+    'verifier': {
+        'name': 'testinfra',
+        'enabled': True,
+        'directory': 'tests',
+        'options': {},
+        'env': {},
+        'additional_files_or_dirs': [],
+        'lint': {
+            'name': 'flake8',
+            'enabled': True,
+            'options': {},
+            'env': {},
+        },
+    },
+}
 
 
 # https://stackoverflow.com/questions/16017397/injecting-function-call-after-init-with-decorator  # noqa
@@ -105,6 +212,7 @@ class Config(object):
         """
         self.molecule_file = molecule_file
         self.args = args
+        self.molecule_base_file = self.args.get('base_config')
         self.command_args = command_args
         self.ansible_args = ansible_args
         self.config = self._get_config()
@@ -198,6 +306,7 @@ class Config(object):
             'MOLECULE_DEBUG': str(self.debug),
             'MOLECULE_FILE': self.molecule_file,
             'MOLECULE_ENV_FILE': self.env_file,
+            'MOLECULE_BASE_FILE': self.molecule_base_file,
             'MOLECULE_INVENTORY_FILE': self.provisioner.inventory_file,
             'MOLECULE_EPHEMERAL_DIRECTORY': self.scenario.ephemeral_directory,
             'MOLECULE_SCENARIO_DIRECTORY': self.scenario.directory,
@@ -317,9 +426,8 @@ class Config(object):
         :return: dict
         """
         defaults = self._get_defaults()
-        base_config = self.args.get('base_config')
-        if base_config and os.path.exists(base_config):
-            with util.open_file(base_config) as stream:
+        if self.molecule_base_file is not None and os.path.exists(self.molecule_base_file):
+            with util.open_file(self.molecule_base_file) as stream:
                 s = stream.read()
                 self._preflight(s)
                 interpolated_config = self._interpolate(s, env, keep_string)
@@ -350,124 +458,9 @@ class Config(object):
     def _get_defaults(self):
         scenario_name = (os.path.basename(os.path.dirname(self.molecule_file))
                          or 'default')
-        return {
-            'dependency': {
-                'name': 'galaxy',
-                'command': None,
-                'enabled': True,
-                'options': {},
-                'env': {},
-            },
-            'driver': {
-                'name': 'docker',
-                'provider': {
-                    'name': None,
-                },
-                'options': {
-                    'managed': True,
-                },
-                'ssh_connection_options': [],
-                'safe_files': [],
-            },
-            'lint': {
-                'name': 'yamllint',
-                'enabled': True,
-                'options': {},
-                'env': {},
-            },
-            'platforms': [],
-            'provisioner': {
-                'name': 'ansible',
-                'config_options': {},
-                'ansible_args': [],
-                'connection_options': {},
-                'options': {},
-                'env': {},
-                'inventory': {
-                    'hosts': {},
-                    'host_vars': {},
-                    'group_vars': {},
-                    'links': {},
-                },
-                'children': {},
-                'playbooks': {
-                    'cleanup': 'cleanup.yml',
-                    'create': 'create.yml',
-                    'converge': 'playbook.yml',
-                    'destroy': 'destroy.yml',
-                    'prepare': 'prepare.yml',
-                    'side_effect': 'side_effect.yml',
-                    'verify': 'verify.yml',
-                },
-                'lint': {
-                    'name': 'ansible-lint',
-                    'enabled': True,
-                    'options': {},
-                    'env': {},
-                },
-            },
-            'scenario': {
-                'name':
-                scenario_name,
-                'check_sequence': [
-                    'dependency',
-                    'cleanup',
-                    'destroy',
-                    'create',
-                    'prepare',
-                    'converge',
-                    'check',
-                    'cleanup',
-                    'destroy',
-                ],
-                'cleanup_sequence': ['cleanup'],
-                'converge_sequence': [
-                    'dependency',
-                    'create',
-                    'prepare',
-                    'converge',
-                ],
-                'create_sequence': [
-                    'dependency',
-                    'create',
-                    'prepare',
-                ],
-                'destroy_sequence': [
-                    'dependency',
-                    'cleanup',
-                    'destroy',
-                ],
-                'test_sequence': [
-                    'lint',
-                    'dependency',
-                    'cleanup',
-                    'destroy',
-                    'syntax',
-                    'create',
-                    'prepare',
-                    'converge',
-                    'idempotence',
-                    'side_effect',
-                    'verify',
-                    'cleanup',
-                    'destroy',
-                ],
-            },
-            'verifier': {
-                'name': 'testinfra',
-                'enabled': True,
-                'directory': 'tests',
-                'options': {},
-                'env': {},
-                'additional_files_or_dirs': [],
-                'lint': {
-                    'name': 'flake8',
-                    'enabled': True,
-                    'options': {},
-                    'env': {},
-                },
-            },
-        }
+        defaults = DEFAULTS.copy()
+        defaults['scenario']['name'] = scenario_name
+        return defaults
 
     def _preflight(self, data):
         env = os.environ.copy()
