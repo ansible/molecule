@@ -19,7 +19,7 @@
           yum install -y python
         elif [ -x "$(command -v zypper)" ]
         then
-          zypper --non-interactive --gpg-auto-import-keys refresh && zypper --non-interactive install -y python python-xml
+          zypper -n --gpg-auto-import-keys refresh && zypper -n install -y python python-xml
         elif [ -x "$(command -v apk)" ]
         then
           apk update && apk add python
