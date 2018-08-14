@@ -246,5 +246,5 @@ You also must include the MOLECULE_EPHEMERAL_DIRECTORY variable in the
 .. _`Travis`: https://travis-ci.org/
 .. _`Jenkins`: https://jenkins.io/doc/book/pipeline/jenkinsfile
 .. _`Gitlab`: https://gitlab.com
-.. _`Tox`: https://tox.readthedocs.io/en/lates
+.. _`Tox`: https://tox.readthedocs.io/en/latest
 .. _`Detox`: https://pypi.python.org/pypi/detox
