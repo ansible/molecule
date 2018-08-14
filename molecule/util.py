@@ -243,7 +243,8 @@ def title(word):
 
 
 def abs_path(path):
-    return os.path.abspath(path)
+    if path:
+        return os.path.abspath(path)
 
 
 def camelize(string):

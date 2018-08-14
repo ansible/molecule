@@ -350,6 +350,10 @@ def test_abs_path(temp_dir):
     assert x == util.abs_path(os.path.join(os.path.pardir, 'foo', 'bar'))
 
 
+def test_abs_path_with_none_path():
+    assert util.abs_path(None) is None
+
+
 def test_camelize():
     assert 'Foo' == util.camelize('foo')
     assert 'FooBar' == util.camelize('foo_bar')

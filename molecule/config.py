@@ -113,6 +113,10 @@ class Config(object):
         return self.args.get('debug', False)
 
     @property
+    def env_file(self):
+        return util.abs_path(self.args.get('env_file'))
+
+    @property
     def subcommand(self):
         return self.command_args['subcommand']
 
@@ -181,6 +185,7 @@ class Config(object):
         return {
             'MOLECULE_DEBUG': str(self.debug),
             'MOLECULE_FILE': self.molecule_file,
+            'MOLECULE_ENV_FILE': self.env_file,
             'MOLECULE_INVENTORY_FILE': self.provisioner.inventory_file,
             'MOLECULE_EPHEMERAL_DIRECTORY': self.scenario.ephemeral_directory,
             'MOLECULE_SCENARIO_DIRECTORY': self.scenario.directory,
@@ -280,6 +285,7 @@ class Config(object):
         :return: dict
         """
         env = util.merge_dicts(os.environ.copy(), self.env)
+        env = set_env_from_file(env, self.env_file)
 
         return self._combine(env=env)
 
@@ -316,7 +322,7 @@ class Config(object):
         return defaults
 
     def _interpolate(self, stream, env, keep_string):
-        env = self._set_env(env)
+        env = set_env_from_file(env, self.env_file)
 
         i = interpolation.Interpolator(interpolation.TemplateWithDefaults, env)
 
@@ -326,18 +332,6 @@ class Config(object):
             msg = ("parsing config file '{}'.\n\n"
                    '{}\n{}'.format(self.molecule_file, e.place, e.string))
             util.sysexit_with_message(msg)
-
-    def _set_env(self, env):
-        env_file = self.args.get('env_file')
-        if env_file and os.path.exists(env_file):
-            env = env.copy()
-            d = util.safe_load_file(env_file)
-            for k, v in d.items():
-                env[k] = v
-
-            return env
-
-        return env
 
     def _get_defaults(self):
         return {
@@ -450,7 +444,7 @@ class Config(object):
 
     def _preflight(self, data):
         env = os.environ.copy()
-        env = self._set_env(env)
+        env = set_env_from_file(env, self.env_file)
         errors = schema_v2.pre_validate(data, env, MOLECULE_KEEP_STRING)
 
         if errors:
@@ -498,3 +492,15 @@ def molecule_verifiers():
         inspec.Inspec(None).name,
         testinfra.Testinfra(None).name,
     ]
+
+
+def set_env_from_file(env, env_file):
+    if env_file and os.path.exists(env_file):
+        env = env.copy()
+        d = util.safe_load_file(env_file)
+        for k, v in d.items():
+            env[k] = v
+
+        return env
+
+    return env

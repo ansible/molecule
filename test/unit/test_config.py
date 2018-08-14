@@ -64,6 +64,13 @@ def test_debug_property(config_instance):
     assert not config_instance.debug
 
 
+def test_env_file_property(config_instance):
+    config_instance.args = {'env_file': '.env'}
+    result = config_instance.env_file
+
+    assert util.abs_path(config_instance.args.get('env_file')) == result
+
+
 def test_subcommand_property(config_instance):
     assert 'test' == config_instance.subcommand
 
@@ -277,11 +284,14 @@ def test_drivers_property(config_instance):
 
 
 def test_env(config_instance):
+    config_instance.args = {'env_file': '.env'}
     x = {
         'MOLECULE_DEBUG':
         'False',
         'MOLECULE_FILE':
         config_instance.molecule_file,
+        'MOLECULE_ENV_FILE':
+        util.abs_path(config_instance.args.get('env_file')),
         'MOLECULE_INVENTORY_FILE':
         config_instance.provisioner.inventory_file,
         'MOLECULE_EPHEMERAL_DIRECTORY':
@@ -452,24 +462,6 @@ def test_interpolate_raises_on_failed_interpolation(patched_logger_critical,
     patched_logger_critical.assert_called_once_with(msg)
 
 
-def test_set_env(config_instance):
-    config_instance.args = {'env_file': '.env'}
-    contents = {
-        'foo': 'bar',
-        'BAZ': 'zzyzx',
-    }
-    util.write_file(config_instance.args['env_file'], util.safe_dump(contents))
-    env = config_instance._set_env({})
-
-    assert contents == env
-
-
-def test_set_env_returns_original_env_when_env_file_not_found(config_instance):
-    env = config_instance._set_env({})
-
-    assert {} == env
-
-
 def test_preflight(mocker, config_instance, patched_logger_info):
     m = mocker.patch('molecule.model.schema_v2.pre_validate')
     m.return_value = None
@@ -551,3 +543,23 @@ def test_molecule_verifiers():
     x = ['goss', 'inspec', 'testinfra']
 
     assert x == config.molecule_verifiers()
+
+
+def test_set_env_from_file(config_instance):
+    config_instance.args = {'env_file': '.env'}
+    contents = {
+        'foo': 'bar',
+        'BAZ': 'zzyzx',
+    }
+    env_file = config_instance.args.get('env_file')
+    util.write_file(env_file, util.safe_dump(contents))
+    env = config.set_env_from_file({}, env_file)
+
+    assert contents == env
+
+
+def test_set_env_from_file_returns_original_env_when_env_file_not_found(
+        config_instance):
+    env = config.set_env_from_file({}, 'file-not-found')
+
+    assert {} == env
