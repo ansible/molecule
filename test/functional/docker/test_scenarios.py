@@ -450,6 +450,35 @@ def test_command_verify_goss(scenario_to_test, with_scenario, scenario_name):
 
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
+        ('verifier', 'docker', 'inspec'),
+    ],
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+        'scenario_name',
+    ])
+def test_command_verify_inspec(scenario_to_test, with_scenario, scenario_name):
+    options = {
+        'scenario_name': scenario_name,
+    }
+    cmd = sh.molecule.bake('create', **options)
+    pytest.helpers.run_command(cmd)
+
+    options = {
+        'scenario_name': scenario_name,
+    }
+    cmd = sh.molecule.bake('converge', **options)
+    pytest.helpers.run_command(cmd)
+
+    options = {
+        'scenario_name': scenario_name,
+    }
+    cmd = sh.molecule.bake('verify', **options)
+    pytest.helpers.run_command(cmd)
+
+
+@pytest.mark.parametrize(
+    'scenario_to_test, driver_name, scenario_name', [
         ('plugins', 'docker', 'default'),
     ],
     indirect=[
