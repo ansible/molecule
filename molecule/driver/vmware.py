@@ -43,10 +43,25 @@ class VMware(base.base):
           name: vmware
         platforms:
           - name: instance
+            template: random_template
+            datacenter: temp_datacenter
+            disk:
+              - size_mb/gb/kb
+                type: thin
+                datastore: thing
+            cluter: temp_cluster
+            networks: 
+              - networks
+            hardware:
+              hardware
+            hostname: hostname
+            validate_certs: false
+
+
 
     .. code-block:: bash
 
-        $ sudo pip install 'ansible[vmware?]'
+        $ sudo pip install 'pyvmomi'
 
     Change the options passed to the ssh client.
 

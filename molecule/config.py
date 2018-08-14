@@ -151,6 +151,8 @@ class Config(object):
 
         if driver_name == 'azure':
             driver = azure.Azure(self)
+        elif driver_name == 'vmware':
+            driver = vmware.VMware(self)
         elif driver_name == 'delegated':
             driver = delegated.Delegated(self)
         elif driver_name == 'docker':
@@ -479,6 +481,7 @@ def molecule_file(path):
 
 def molecule_drivers():
     return [
+        vmware.VMware(None).name,
         azure.Azure(None).name,
         delegated.Delegated(None).name,
         docker.Docker(None).name,
