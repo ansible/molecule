@@ -2,6 +2,29 @@
 History
 *******
 
+2.17
+====
+
+* Correct .env file interpolation.
+* Fixes Tox link in docs.
+* Adds tox-tags to test-requirements.txt.
+* Expose config.project_directory as env var.
+* Update Matrix usage.rst.
+* Update ci.rst with Jenkinsfile example.
+* Support passing arbitrary keys to vm.network.
+* Pin wheel version to 0.30.0.
+* Add git to docker DIND container.
+* Added inspec download for Ubuntu 14.04.
+* Added env to docker.
+* Accept a single option to the matrix subcommand.
+* Knob to change Ansible `no_log`.
+* Bumped testinfra to 1.14.1 due to testinfra bug.
+* Remove upgrade from Dockerfile.
+* Bumped requirements.txt.
+* Corrected provider_override_args.
+* Add docker python and rubocop dependencies.
+* Added python 3.7 support.
+
 2.16
 ====
 
