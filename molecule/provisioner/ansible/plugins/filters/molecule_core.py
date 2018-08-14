@@ -20,6 +20,7 @@
 
 import os
 
+from molecule import config
 from molecule import interpolation
 from molecule import util
 
@@ -34,8 +35,12 @@ def from_yaml(data):
 
     :return: dict
     """
-    i = interpolation.Interpolator(interpolation.TemplateWithDefaults,
-                                   os.environ)
+    molecule_env_file = os.environ['MOLECULE_ENV_FILE']
+
+    env = os.environ.copy()
+    env = config.set_env_from_file(env, molecule_env_file)
+
+    i = interpolation.Interpolator(interpolation.TemplateWithDefaults, env)
     interpolated_data = i.interpolate(data)
 
     return util.safe_load(interpolated_data)
