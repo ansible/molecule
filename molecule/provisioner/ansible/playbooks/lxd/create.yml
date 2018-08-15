@@ -5,6 +5,13 @@
   gather_facts: false
   no_log: "{{ not (lookup('env', 'MOLECULE_DEBUG') | bool or molecule_yml.provisioner.log|default(false) | bool) }}"
   tasks:
+    - name: Create default source variable
+      set_fact:
+        default_source:
+          type: image
+          server: https://images.linuxcontainers.org
+          alias: ubuntu/xenial/amd64
+
     - name: Create molecule instance(s)
       lxd_container:
         url: "{{ item.url | default(omit) }}"
@@ -13,12 +20,9 @@
         trust_password: "{{ item.trust_password | default(omit) }}"
         name: "{{ item.name }}"
         state: started
-        source:
-          type: image
-          mode: "{{ item.mode | default('pull') }}"
-          server: "{{ item.server | default('https://images.linuxcontainers.org') }}"
-          protocol: lxd
-          alias: "{{ item.alias | default('ubuntu/xenial/amd64') }}"
+        source: "{{ default_source | combine(item.source | default({})) }}"
+        architecture: "{{ item.architecture | default(omit) }}"
+        devices: "{{ item.devices | default(omit) }}"
         profiles: "{{ item.profiles | default(omit) }}"
         wait_for_ipv4_addresses: true
         timeout: 600
