@@ -382,10 +382,10 @@ def _model_platforms_lxd_errors_section_data():
                 'type': int(),
                 'mode': int(),
                 'server': int(),
-                'protocol': 'not-lxd-or-simplestreams',
+                'protocol': str(),
                 'alias': int(),
             },
-            'architecture': 'not-x86_64-or-i686',
+            'architecture': str(),
             'devices': int(),
             'profiles': [
                 int(),
