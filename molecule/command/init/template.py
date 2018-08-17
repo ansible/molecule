@@ -35,7 +35,7 @@ class Template(base.Base):
     """
     .. program:: molecule init template --url https://example.com/user/cookiecutter-repo
 
-    .. option:: molecule init init template --url https://example.com/user/cookiecutter-repo
+    .. option:: molecule init template --url https://example.com/user/cookiecutter-repo
 
         Initialize a new role from a Cookiecutter URL.
     """  # noqa
