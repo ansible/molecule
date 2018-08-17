@@ -51,6 +51,8 @@ class LXD(base.Base):
               protocol: lxd|simplestreams
               alias: ubuntu/xenial/amd64
             architecture: x86_64|i686
+            config:
+              limits.cpu: 2
             devices:
               kvm:
                 path: /dev/kvm

@@ -766,6 +766,12 @@ platforms_lxd_schema = {
                         'i686',
                     ],
                 },
+                'config': {
+                    'type': 'dict',
+                    'schema': {
+                        'type': 'string',
+                    },
+                },
                 'devices': {
                     'type': 'dict',
                     'schema': {

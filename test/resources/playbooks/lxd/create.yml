@@ -21,6 +21,7 @@
         name: "{{ item.name }}"
         state: started
         source: "{{ default_source | combine(item.source | default({})) }}"
+        config: "{{ item.config | default(omit) }}"
         architecture: "{{ item.architecture | default(omit) }}"
         devices: "{{ item.devices | default(omit) }}"
         profiles: "{{ item.profiles | default(omit) }}"

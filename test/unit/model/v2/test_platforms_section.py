@@ -345,6 +345,9 @@ def _model_platforms_lxd_section_data():
             },
             'architecture':
                 'x86_64',
+            'config': {
+                'limits.cpu': '2',
+            },
             'devices': {
                 'kvm': {
                     'path': '/dev/kvm',
@@ -386,6 +389,7 @@ def _model_platforms_lxd_errors_section_data():
                 'alias': int(),
             },
             'architecture': str(),
+            'config': int(),
             'devices': int(),
             'profiles': [
                 int(),
@@ -413,6 +417,7 @@ def test_platforms_lxd_has_errors(_config):
                     'alias': ['must be of string type'],
                 },
                 'architecture': ['must be x86_64 or i686'],
+                'config': ['must be of dict type'],
                 'devices': ['must be of dict type'],
                 'profiles': [{
                     0: ['must be of string type']
