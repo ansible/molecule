@@ -47,6 +47,7 @@ class Docker(base.Base):
             hostname: instance
             image: image_name:tag
             pull: True|False
+            pre_build_image: True|False
             registry:
               url: registry.example.com
               credentials:

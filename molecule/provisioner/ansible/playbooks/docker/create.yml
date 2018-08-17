@@ -3,7 +3,7 @@
   hosts: localhost
   connection: local
   gather_facts: false
-  no_log: "{{ not (lookup('env', 'MOLECULE_DEBUG') | bool or molecule_yml.provisioner.log|default(false) | bool) }}"
+  no_log: false
   tasks:
     - name: Log into a Docker registry
       docker_login:
@@ -20,9 +20,10 @@
 
     - name: Create Dockerfiles from image names
       template:
-        src: "{{ molecule_scenario_directory }}/Dockerfile.j2"
+        src: Dockerfile.j2
         dest: "{{ molecule_ephemeral_directory }}/Dockerfile_{{ item.image | regex_replace('[^a-zA-Z0-9_]', '_') }}"
       with_items: "{{ molecule_yml.platforms }}"
+      when: not item.pre_build_image | default(false)
       register: platforms
 
     - name: Discover local Docker images
@@ -30,6 +31,7 @@
         name: "molecule_local/{{ item.item.name }}"
         docker_host: "{{ item.item.docker_host | default(lookup('env', 'DOCKER_HOST') or 'unix://var/run/docker.sock') }}"
       with_items: "{{ platforms.results }}"
+      when: not item.pre_build_image | default(false)
       register: docker_images
 
     - name: Build an Ansible compatible image
@@ -41,7 +43,9 @@
         force: "{{ item.item.force | default(true) }}"
         pull: "{{ item.item.pull | default(omit) }}"
       with_items: "{{ platforms.results }}"
-      when: platforms.changed or docker_images.results | map(attribute='images') | select('equalto', []) | list | count >= 0
+      when:
+        - platforms.changed or docker_images.results | map(attribute='images') | select('equalto', []) | list | count >= 0
+        - not item.item.pre_build_image | default(false)
 
     - name: Create docker network(s)
       docker_network:
@@ -55,7 +59,7 @@
         name: "{{ item.name }}"
         docker_host: "{{ item.docker_host | default(lookup('env', 'DOCKER_HOST') or 'unix://var/run/docker.sock') }}"
         hostname: "{{ item.hostname | default(item.name) }}"
-        image: "molecule_local/{{ item.image }}"
+        image: "{{ item.pre_build_image | default(false) | ternary('', 'molecule_local/') }}{{ item.image }}"
         state: started
         recreate: false
         log_driver: json-file
