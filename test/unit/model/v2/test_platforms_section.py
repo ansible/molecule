@@ -38,6 +38,8 @@ def _model_platforms_docker_section_data():
             'image_name:tag',
             'pull':
             True,
+            'pre_build_image':
+            False,
             'registry': {
                 'url': 'registry.example.com',
                 'credentials': {
@@ -111,6 +113,7 @@ def _model_platforms_docker_errors_section_data():
             'hostname': int(),
             'image': int(),
             'pull': int(),
+            'pre_build_image': int(),
             'registry': {
                 'url': int(),
                 'credentials': {
@@ -173,6 +176,7 @@ def test_platforms_docker_has_errors(_config):
                 }],
                 'image': ['must be of string type'],
                 'pull': ['must be of boolean type'],
+                'pre_build_image': ['must be of boolean type'],
                 'hostname': ['must be of string type'],
                 'security_opts': [{
                     0: ['must be of string type']

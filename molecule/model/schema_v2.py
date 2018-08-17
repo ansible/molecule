@@ -611,6 +611,9 @@ platforms_docker_schema = {
                 'pull': {
                     'type': 'boolean',
                 },
+                'pre_build_image': {
+                    'type': 'boolean',
+                },
                 'registry': {
                     'type': 'dict',
                     'schema': {
