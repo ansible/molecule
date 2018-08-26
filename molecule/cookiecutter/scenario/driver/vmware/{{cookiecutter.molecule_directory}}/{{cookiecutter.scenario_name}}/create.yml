@@ -1,0 +1,109 @@
+---
+{% raw -%}
+- name: Create
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  no_log: "{{ not lookup('env','MOLECULE_DEBUG') | bool }}"
+  vars:
+    molecule_file: "{{ lookup('env','MOLECULE_FILE') }}"
+    molecule_vmware_creds: "{{ lookup('file','~/.molecule_vmware.yml') | molecule_from_yaml }}"
+    molecule_instance_config: "{{ lookup('env','MOLECULE_INSTANCE_CONFIG') }}"
+    molecule_yml: "{{ lookup('file', 'molecule_file' | molecule_from_yaml }}"
+
+    folder: molecule
+    ssh_user: molecule
+    molecule_password: molecule
+    ssh_port: 22
+    keypair_path: "{{ lookup('env','MOLECULE_EPHEMERAL_DIRECTROY') }}/ssh_key"
+
+  tasks:
+
+    - include_tasks: keypair.yml
+
+    - name: Create molecule instance(s)
+      vmware_guest:
+        name: "{{ item.name }}"
+        datacenter: "{{ item.datacenter }}"
+        cluster: "{{ item.cluster }}"
+        folder: "{{ item.folder }}"
+        template: "{{ item.template }}"
+        disk: "{{ item.disk }}"
+        state: powerdon
+        hardware: "{{ item.hardware }}"
+        networks: "{{ item.networks }}"
+        hostname: "{{ molecule_vmware_creds.hostname }}"
+        username: "{{ molecule_vmware_creds.username }}"
+        password: "{{ molecule_vmware_creds.password }}"
+        validate_certs: "{{ item.validate_certs }}"
+        wait_for_ip_address: true
+      with_items: "{{ molecule_yml.platforms }}"
+
+  - name: Insert molecule ssh keys
+    vmware_vm_shell:
+      vm_id: "{{ item.name }}"
+      folder: "{{ item.folder }}"
+      datacenter: "{{ item.datacenter }}"
+      vm_username: "{{ ssh_user }}"
+      vm_password: "{{ molecule_password }}"
+      vm_shell: /bin/mkdir
+      vm_shell_args: " /home/molecule/.ssh/"
+      hostname: "{{ item.hostname }}"
+    with_items: "{{ molecule_yml.platforms }}"
+
+    vmware_vm_shell:
+      vm_id: "{{ item.name }}"
+      folder: "{{ item.folder }}"
+      datacenter: "{{ item.datacenter }}"
+      vm_username: "{{ ssh_user }}"
+      vm_password: "{{ molecule_password }}"
+      vm_shell: /bin/echo
+      vm_shell_args: " \"{{keypair.ssh_public_key}}\" > /home/molecule/.ssh/authorized_keys"
+      hostname: "{{ item.hostname }}"
+    with_items: "{{ molecule_yml.platforms }}"
+
+    - name: Wait for ip address
+      vmware_guest_facts:
+        name: "{{ item.name }}"
+        folder: "{{ item.folder }}"
+        hostname: "{{ molecule_vmware_creds.hostname }}"
+        username: "{{ molecule_vmware_creds.username }}"
+        password: "{{ molecule_vmware_creds.password }}"
+        validate_certs: "{{ item.validate_certs }}"
+      register: server
+      until: server.instance.ipv4 or server.instance.ipv6
+      delay: 30
+      retries: 3
+      with_items: "{{ molecule_yml.platforms }}"
+
+ # Mandatory configuration for Molecule to function.
+    - name: Populate instance config dict
+      set_fact:
+        instance_conf_dict: {
+          'instance': "{{ item.item.name }}",
+          'address': "{{ if item.instance.ipv4 else item.instance.ipv6 }}",
+          'user': "{{ ssh_user }}",
+          'port': "{{ ssh_port }}",
+          'identity_file': "{{ keypair_path }}", }
+      with_items: "{{ server.results }}"
+      register: instance_config_dict
+      when: server.changed | bool
+    - name: Convert instance config dict to a list
+      set_fact:
+        instance_conf: "{{ instance_config_dict.results | map(attribute='ansible_facts.instance_conf_dict') | list }}"
+      when: server.changed | bool
+    - name: Dump instance config
+      copy:
+        # NOTE(retr0h): Workaround for Ansible 2.2.
+        #               https://github.com/ansible/ansible/issues/20885
+        content: "{{ instance_conf | to_json | from_json | molecule_to_yaml | molecule_header }}"
+        dest: "{{ molecule_instance_config }}"
+      when: server.changed | bool
+    - name: Wait for SSH
+      wait_for:
+        port: "{{ ssh_port }}"
+        host: "{{ item.address }}"
+        search_regex: SSH
+        delay: 10
+      with_items: "{{ lookup('file', molecule_instance_config) | molecule_from_yaml }}"
+{%- endraw %}
