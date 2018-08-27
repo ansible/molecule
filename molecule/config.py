@@ -41,6 +41,7 @@ from molecule.driver import lxc
 from molecule.driver import lxd
 from molecule.driver import openstack
 from molecule.driver import vagrant
+from molecule.driver import vmware
 from molecule.lint import yamllint
 from molecule.model import schema_v2
 from molecule.provisioner import ansible

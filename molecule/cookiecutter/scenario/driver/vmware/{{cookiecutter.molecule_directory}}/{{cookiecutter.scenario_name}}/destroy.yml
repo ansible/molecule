@@ -7,6 +7,7 @@
   no_log: "{{ not lookup('env','MOLECULE_DEBUG') | bool }}"
   vars:
     molecule_file: "{{ lookup('env','MOLECULE_FILE') }}"
+    molecule_vmware: "{{ lookup('file','~/.molecule_vmware.yml') | molecule_from_yaml }}"
     molecule_instance_config: "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}"
     molecule_yml: "{{ lookup('file', molecule_file) | molecule_from_yml }}"
 
@@ -15,14 +16,14 @@
     - name: Create molecule instance(s)
       vmware_guest:
         name: "{{ item.name }}"
-        datacenter: "{{ item.datacenter }}"
-        cluster: "{{ item.cluster }}"
-        folder: "{{ item.folder }}"
+        datacenter: "{{ molecule_vmware.datacenter }}"
+        cluster: "{{ molecule_vmware.cluster }}"
+        folder: "{{ molecule_vmware.folder }}"
         state: absent
         force: yes
-        hostname: "{{ molecule_vmware_creds.hostname }}"
-        username: "{{ molecule_vmware_creds.username }}"
-        password: "{{ molecule_vmware_creds.password }}"
+        hostname: "{{ molecule_vmware.hostname }}"
+        username: "{{ molecule_vmware.username }}"
+        password: "{{ molecule_vmware.password }}"
         validate_certs: "{{ item.validate_certs }}"
         wait_for_ip_address: true
       register: server

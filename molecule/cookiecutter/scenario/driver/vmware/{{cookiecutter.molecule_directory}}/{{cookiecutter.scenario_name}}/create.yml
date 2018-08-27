@@ -7,7 +7,7 @@
   no_log: "{{ not lookup('env','MOLECULE_DEBUG') | bool }}"
   vars:
     molecule_file: "{{ lookup('env','MOLECULE_FILE') }}"
-    molecule_vmware_creds: "{{ lookup('file','~/.molecule_vmware.yml') | molecule_from_yaml }}"
+    molecule_vmware: "{{ lookup('file','~/.molecule_vmware.yml') | molecule_from_yaml }}"
     molecule_instance_config: "{{ lookup('env','MOLECULE_INSTANCE_CONFIG') }}"
     molecule_yml: "{{ lookup('file', 'molecule_file' | molecule_from_yaml }}"
 
@@ -24,17 +24,17 @@
     - name: Create molecule instance(s)
       vmware_guest:
         name: "{{ item.name }}"
-        datacenter: "{{ item.datacenter }}"
-        cluster: "{{ item.cluster }}"
-        folder: "{{ item.folder }}"
+        datacenter: "{{ molecule_vmware.datacenter }}"
+        cluster: "{{ molecule_vmware.cluster }}"
+        folder: "{{ molecule_vmware.folder }}"
         template: "{{ item.template }}"
         disk: "{{ item.disk }}"
         state: powerdon
         hardware: "{{ item.hardware }}"
         networks: "{{ item.networks }}"
-        hostname: "{{ molecule_vmware_creds.hostname }}"
-        username: "{{ molecule_vmware_creds.username }}"
-        password: "{{ molecule_vmware_creds.password }}"
+        hostname: "{{ molecule_vmware.hostname }}"
+        username: "{{ molecule_vmware.username }}"
+        password: "{{ molecule_vmware.password }}"
         validate_certs: "{{ item.validate_certs }}"
         wait_for_ip_address: true
       with_items: "{{ molecule_yml.platforms }}"
@@ -42,33 +42,34 @@
   - name: Insert molecule ssh keys
     vmware_vm_shell:
       vm_id: "{{ item.name }}"
-      folder: "{{ item.folder }}"
-      datacenter: "{{ item.datacenter }}"
+      folder: "{{ molecule_vmware.folder }}"
+      datacenter: "{{ molecule_vmware.datacenter }}"
       vm_username: "{{ ssh_user }}"
       vm_password: "{{ molecule_password }}"
       vm_shell: /bin/mkdir
       vm_shell_args: " /home/molecule/.ssh/"
-      hostname: "{{ item.hostname }}"
+      hostname: "{{ item.name }}"
     with_items: "{{ molecule_yml.platforms }}"
 
     vmware_vm_shell:
       vm_id: "{{ item.name }}"
-      folder: "{{ item.folder }}"
-      datacenter: "{{ item.datacenter }}"
+      folder: "{{ molecule_vmware.folder }}"
+      datacenter: "{{ molecule_vmware.datacenter }}"
       vm_username: "{{ ssh_user }}"
       vm_password: "{{ molecule_password }}"
       vm_shell: /bin/echo
       vm_shell_args: " \"{{keypair.ssh_public_key}}\" > /home/molecule/.ssh/authorized_keys"
-      hostname: "{{ item.hostname }}"
+      hostname: "{{ item.name }}"
     with_items: "{{ molecule_yml.platforms }}"
 
     - name: Wait for ip address
       vmware_guest_facts:
         name: "{{ item.name }}"
-        folder: "{{ item.folder }}"
-        hostname: "{{ molecule_vmware_creds.hostname }}"
-        username: "{{ molecule_vmware_creds.username }}"
-        password: "{{ molecule_vmware_creds.password }}"
+        datacenter: "{{ molecule_vmware.datacenter }}"
+        folder: "{{ molecule_vmware.folder }}"
+        hostname: "{{ molecule_vmware.hostname }}"
+        username: "{{ molecule_vmware.username }}"
+        password: "{{ molecule_vmware.password }}"
         validate_certs: "{{ item.validate_certs }}"
       register: server
       until: server.instance.ipv4 or server.instance.ipv6
