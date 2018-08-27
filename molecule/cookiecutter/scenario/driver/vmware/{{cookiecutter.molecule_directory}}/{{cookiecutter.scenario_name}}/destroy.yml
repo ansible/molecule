@@ -4,27 +4,24 @@
   hosts: localhost
   connection: local
   gather_facts: false
-  no_log: "{{ not lookup('env','MOLECULE_DEBUG') | bool }}"
-  vars:
-    molecule_file: "{{ lookup('env','MOLECULE_FILE') }}"
-    molecule_vmware: "{{ lookup('file','~/.molecule_vmware.yml') | molecule_from_yaml }}"
-    molecule_instance_config: "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}"
-    molecule_yml: "{{ lookup('file', molecule_file) | molecule_from_yml }}"
+  no_log: "{{ not (lookup('env', 'MOLECULE_DEBUG') | bool or molecule_yml.provisioner.log|default(false) | bool) }}"
+  vars_files:
+    - "~/.molecule_vmware.yml"
 
   tasks:
 
-    - name: Create molecule instance(s)
+    - name: Destroy molecule instance(s)
       vmware_guest:
         name: "{{ item.name }}"
         datacenter: "{{ molecule_vmware.datacenter }}"
         cluster: "{{ molecule_vmware.cluster }}"
         folder: "{{ molecule_vmware.folder }}"
         state: absent
-        force: yes
+        force: true
         hostname: "{{ molecule_vmware.hostname }}"
         username: "{{ molecule_vmware.username }}"
         password: "{{ molecule_vmware.password }}"
-        validate_certs: "{{ item.validate_certs }}"
+        validate_certs: "{{ molecule_vmware.validate_certs }}"
         wait_for_ip_address: true
       register: server
       with_items: "{{ molecule_yml.platforms }}"
@@ -40,4 +37,5 @@
         content: "{{ instance_conf | to_json | from_json | molecule_to_yaml | molecule_header }}"
         dest: "{{ molecule_instance_config }}"
       when: server.changed | bool
+
 {%- endraw %}

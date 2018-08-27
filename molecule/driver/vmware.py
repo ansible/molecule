@@ -111,7 +111,7 @@ class VMware(base.Base):
     @property
     def default_safe_files(self):
         return [
-            self._default_safe_file
+            self.instance_config,
         ]
 
     @property
