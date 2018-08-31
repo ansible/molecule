@@ -124,6 +124,7 @@ class Docker(base.Base):
                 '-e COLUMNS={columns} '
                 '-e LINES={lines} '
                 '-e TERM=bash '
+                '-e TERM=xterm '
                 '-ti {instance} bash')
 
     @property
