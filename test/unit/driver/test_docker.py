@@ -57,6 +57,7 @@ def test_login_cmd_template_property(_instance):
          '-e COLUMNS={columns} '
          '-e LINES={lines} '
          '-e TERM=bash '
+         '-e TERM=xterm '
          '-ti {instance} bash')
 
     assert x == _instance.login_cmd_template
