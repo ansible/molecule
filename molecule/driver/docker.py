@@ -78,6 +78,7 @@ class Docker(base.Base):
             networks:
               - name: foo
               - name: bar
+			network_mode: host
             docker_host: tcp://localhost:12376
             env:
               FOO: bar

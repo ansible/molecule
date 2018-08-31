@@ -90,6 +90,8 @@ def _model_platforms_docker_section_data():
                     'name': 'bar',
                 },
             ],
+            'network_mode':
+            'mode',
             'foo':
             'bar'
         }]
@@ -154,6 +156,7 @@ def _model_platforms_docker_errors_section_data():
                     'name': int(),
                 },
             ],
+            'network_mode': int(),
         }]
     }
 
@@ -205,6 +208,7 @@ def test_platforms_docker_has_errors(_config):
                         'name': ['must be of string type']
                     }]
                 }],
+                'network_mode': ['must bt of string type'],
                 'ulimits': [{
                     0: ['must be of string type']
                 }],
