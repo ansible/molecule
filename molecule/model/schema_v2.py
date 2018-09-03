@@ -697,6 +697,12 @@ platforms_docker_schema = {
                         'regex': '^[A-Z0-9_-]+$',
                     }
                 },
+                'restart_policy': {
+                    'type': 'string',
+                },
+                'restart_retries': {
+                    'type': 'integer',
+                },
                 'networks': {
                     'type': 'list',
                     'schema': {

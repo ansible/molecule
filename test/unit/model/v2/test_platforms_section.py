@@ -82,6 +82,10 @@ def _model_platforms_docker_section_data():
             'env': {
                 'FOO': 'bar',
             },
+            'restart_policy':
+            'on-failure',
+            'restart_retries':
+            1,
             'networks': [
                 {
                     'name': 'foo',
@@ -149,6 +153,8 @@ def _model_platforms_docker_errors_section_data():
                 int(),
             ],
             'env': str(),
+            'restart_policy': int(),
+            'restart_retries': str(),
             'networks': [
                 {
                     'name': int(),
@@ -209,6 +215,8 @@ def test_platforms_docker_has_errors(_config):
                     0: ['must be of string type']
                 }],
                 'env': ['must be of dict type'],
+                'restart_policy': ['must be of string type'],
+                'restart_retries': ['must be of integer type'],
             }]
         }]
     }

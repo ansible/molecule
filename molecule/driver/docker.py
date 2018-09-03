@@ -81,6 +81,8 @@ class Docker(base.Base):
             docker_host: tcp://localhost:12376
             env:
               FOO: bar
+            restart_policy: on-failure
+            restart_retries: 1
 
     Ansible < 2.6
 
