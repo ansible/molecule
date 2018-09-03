@@ -321,30 +321,19 @@ def _model_platforms_lxd_section_data():
             'name': 'lxd',
         },
         'platforms': [{
-            'name':
-            'instance',
-            'url':
-            'https://127.0.0.1:8443',
-            'cert_file':
-            '/root/.config/lxc/client.crt',
-            'key_file':
-            '/root/.config/lxc/client.key',
-            'trust_password':
-            'password',
+            'name': 'instance',
+            'url': 'https://127.0.0.1:8443',
+            'cert_file': '/root/.config/lxc/client.crt',
+            'key_file': '/root/.config/lxc/client.key',
+            'trust_password': 'password',
             'source': {
-                'type':
-                'image',
-                'mode':
-                'pull',
-                'protocol':
-                'lxd',
-                'server':
-                'https://images.linuxcontainers.org',
-                'alias':
-                'ubuntu/xenial/amd64',
+                'type': 'image',
+                'mode': 'pull',
+                'protocol': 'lxd',
+                'server': 'https://images.linuxcontainers.org',
+                'alias': 'ubuntu/xenial/amd64',
             },
-            'architecture':
-                'x86_64',
+            'architecture': 'x86_64',
             'config': {
                 'limits.cpu': '2',
             },
@@ -357,8 +346,7 @@ def _model_platforms_lxd_section_data():
             'profiles': [
                 'default',
             ],
-            'force_stop':
-            True,
+            'force_stop': True,
         }]
     }
 
