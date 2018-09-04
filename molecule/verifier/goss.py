@@ -42,6 +42,13 @@ class Goss(base.Base):
     Additional options can be passed to `goss validate` by modifying the verify
     playbook.
 
+    .. code-block:: yaml
+
+        verifier:
+          name: goss
+          lint:
+            name: yamllint
+
     The testing can be disabled by setting `enabled` to False.
 
     .. code-block:: yaml
