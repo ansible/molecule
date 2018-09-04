@@ -208,7 +208,7 @@ def test_platforms_docker_has_errors(_config):
                         'name': ['must be of string type']
                     }]
                 }],
-                'network_mode': ['must bt of string type'],
+                'network_mode': ['must be of string type'],
                 'ulimits': [{
                     0: ['must be of string type']
                 }],
