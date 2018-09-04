@@ -708,6 +708,9 @@ platforms_docker_schema = {
                         }
                     }
                 },
+                'network_mode': {
+                    'type': 'string',
+                },
             }
         }
     },
