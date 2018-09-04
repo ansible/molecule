@@ -399,7 +399,7 @@ def test_platforms_lxd_has_errors(_config):
                 'key_file': ['must be of string type'],
                 'trust_password': ['must be of string type'],
                 'source': {
-                    'mode': ['must be of string type'],
+                    'mode': ['must be pull or local'],
                     'server': ['must be of string type'],
                     'protocol': ['must be lxd or simplestreams'],
                     'alias': ['must be of string type'],

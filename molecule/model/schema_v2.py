@@ -776,7 +776,7 @@ platforms_lxd_schema = {
                     'type': 'dict',
                     'schema': {
                         'type': 'dict',
-                        'keyschema': {
+                        'schema': {
                             'type': 'string',
                         },
                     },
