@@ -76,7 +76,7 @@ def matrix(ctx, scenario_name, subcommand):  # pragma: no cover
 
     args = ctx.obj.get('args')
     command_args = {
-        'subcommand': subcommand[0],
+        'subcommand': subcommand,
     }
 
     s = scenarios.Scenarios(
