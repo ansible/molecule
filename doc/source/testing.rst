@@ -24,6 +24,15 @@ Install the remaining requirements in a venv (optional).
 
     $ pip install -r test-requirements.txt -r requirements.txt
 
+For some tests `RuboCop`_ is required.
+
+.. code-block:: bash
+
+    # apt-get install ruby ruby-dev
+    # gem install rubocop
+
+.. _`RuboCop`: http://batsov.com/rubocop/
+
 .. _full_testing:
 
 Full
