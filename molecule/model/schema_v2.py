@@ -768,18 +768,11 @@ platforms_lxd_schema = {
                 },
                 'config': {
                     'type': 'dict',
-                    'schema': {
-                        'type': 'string',
-                    },
+                    'allow_unknown': True,
                 },
                 'devices': {
                     'type': 'dict',
-                    'schema': {
-                        'type': 'dict',
-                        'schema': {
-                            'type': 'string',
-                        },
-                    },
+                    'allow_unknown': True,
                 },
                 'profiles': {
                     'type': 'list',

@@ -371,12 +371,12 @@ def _model_platforms_lxd_errors_section_data():
             'trust_password': int(),
             'source': {
                 'type': int(),
-                'mode': int(),
+                'mode': 'set for mode',
                 'server': int(),
-                'protocol': str(),
+                'protocol': 'set for protocol',
                 'alias': int(),
             },
-            'architecture': str(),
+            'architecture': 'set for architecture',
             'config': int(),
             'devices': int(),
             'profiles': [
@@ -388,7 +388,7 @@ def _model_platforms_lxd_errors_section_data():
 
 
 @pytest.mark.parametrize(
-    '_config', ['_model_platforms_docker_errors_section_data'], indirect=True)
+    '_config', ['_model_platforms_lxd_errors_section_data'], indirect=True)
 def test_platforms_lxd_has_errors(_config):
     x = {
         'platforms': [{
@@ -398,19 +398,20 @@ def test_platforms_lxd_has_errors(_config):
                 'cert_file': ['must be of string type'],
                 'key_file': ['must be of string type'],
                 'trust_password': ['must be of string type'],
-                'source': {
-                    'mode': ['must be pull or local'],
-                    'server': ['must be of string type'],
-                    'protocol': ['must be lxd or simplestreams'],
+                'source': [{
                     'alias': ['must be of string type'],
-                },
-                'architecture': ['must be x86_64 or i686'],
+                    'mode': ['unallowed value set for mode'],
+                    'protocol': ['unallowed value set for protocol'],
+                    'server': ['must be of string type'],
+                    'type': ['must be of string type']
+                }],
+                'architecture': ['unallowed value set for architecture'],
                 'config': ['must be of dict type'],
                 'devices': ['must be of dict type'],
                 'profiles': [{
                     0: ['must be of string type']
                 }],
-                'force_stop': ['must be of boolean type'],
+                'force_stop': ['must be of boolean type']
             }]
         }]
     }
