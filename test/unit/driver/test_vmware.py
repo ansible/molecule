@@ -105,7 +105,7 @@ def test_default_ssh_connection_options_property(_instance):
 
 
 def test_login_options(mocker, _instance):
-    m = mocker.patch('molecule.driver.vmware.vmware._get_instance_config')
+    m = mocker.patch('molecule.driver.vmware.VMware._get_instance_config')
     m.return_value = {
         'instance': 'foo',
         'address': '172.16.0.2',
@@ -125,7 +125,7 @@ def test_login_options(mocker, _instance):
 
 
 def test_ansible_connection_options(mocker, _instance):
-    m = mocker.patch('molecule.driver.vmware.vmware._get_instance_config')
+    m = mocker.patch('molecule.driver.vmware.VMware._get_instance_config')
     m.return_value = {
         'instance': 'foo',
         'address': '172.16.0.2',
