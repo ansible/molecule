@@ -594,37 +594,7 @@ platforms_vagrant_schema = {
     },
 }
 
-platforms_vmware_schema = {
-    'platforms':{
-        'type':'list',
-        'schema':{
-            'type':'dict',
-            'schema':{
-                'name':{
-                    'type':'string'
-                },
-                'template':{
-                    'type':'string'
-                },
-                'disk':{
-                    'type':'list',
-                    'schema':{
-                        'type':'dict'
-                    }
-                },
-                'networks':{
-                    'type':'list',
-                    'schema':{
-                        'type':'dict'
-                    }
-                },
-                'hardware':{
-                    'type':'dict'   
-                }
-            }
-        }
-    }
-}
+
 
 platforms_docker_schema = {
     'platforms': {
@@ -896,8 +866,6 @@ def validate(c):
     elif c['driver']['name'] == 'vagrant':
         util.merge_dicts(schema, driver_vagrant_provider_section_schema)
         util.merge_dicts(schema, platforms_vagrant_schema)
-    elif c['driver']['name'] == 'vmware':
-        util.merge_dicts(schema, platforms_vmware_schema)
     else:
         util.merge_dicts(schema, platforms_base_schema)
     # Verifier

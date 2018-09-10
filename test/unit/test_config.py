@@ -39,6 +39,7 @@ from molecule.driver import lxc
 from molecule.driver import lxd
 from molecule.driver import openstack
 from molecule.driver import vagrant
+from molecule.driver import vmware
 from molecule.lint import yamllint
 from molecule.provisioner import ansible
 from molecule.verifier import goss
@@ -130,6 +131,21 @@ def test_dependency_property_is_shell(config_instance):
 
 def test_driver_property(config_instance):
     assert isinstance(config_instance.driver, docker.Docker)
+
+
+@pytest.fixture
+def molecule_driver_azure_section_data():
+    return {
+        'driver': {
+            'name': 'vmware'
+        },
+    }
+
+def test_driver_property_is_vmware(molecule_driver_vmare_section_data,
+                                  config_instance):
+    config_instance.merge_dicts(config_instance.config,
+                                molecule_driver_vmware_section_data)
+    assert isinstance(config_instance.driver, vmware.VMware)
 
 
 @pytest.fixture
@@ -262,6 +278,7 @@ def test_driver_property_is_vagrant(config_instance):
 
 def test_drivers_property(config_instance):
     x = [
+        'vmware'
         'azure',
         'delegated',
         'docker',
@@ -531,6 +548,7 @@ def test_molecule_file():
 
 def test_molecule_drivers():
     x = [
+        'vmware',
         'azure',
         'delegated',
         'docker',
