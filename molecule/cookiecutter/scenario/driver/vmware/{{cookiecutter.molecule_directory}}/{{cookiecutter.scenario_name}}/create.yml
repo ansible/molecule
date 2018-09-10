@@ -40,6 +40,16 @@
         wait_for_ip_address: true
       register: server
       with_items: "{{ molecule_yml.platforms }}"
+      async: 7200
+      poll: 0
+
+    - name: Wait for instance(s) creation to complete
+      async_status:
+        jid: "{{ item.ansible_job_id }}"
+      register: vmware_jobs
+      until: vmware_jobs.finished
+      retries: 300
+      with_items: "{{ server.results }}"
 
     - name: Create ssh key location
       vmware_vm_shell:
@@ -71,6 +81,18 @@
         validate_certs: "{{ molecule_vmware.validate_certs }}"
       with_items: "{{ molecule_yml.platforms }}"
 
+    - name: Gather instance(s) facts
+      vmware_guest_facts:
+        name: "{{ item.name }}"
+        datacenter: "{{ molecule_vmware.datacenter }}"
+        folder: "{{ molecule_vmware.folder }}"
+        hostname: "{{ molecule_vmware.hostname }}"
+        username: "{{ molecule_vmware.username }}"
+        password: "{{ molecule_vmware.password }}"
+        validate_certs: "{{ molecule_vmware.validate_certs }}"
+      register: server_facts
+      with_items: "{{ molecule_yml.platforms }}"
+
     # Mandatory configuration for Molecule to function.
     - name: Populate instance config dict
       set_fact:
@@ -80,7 +102,7 @@
           'user': "{{ ssh_user }}",
           'port': "{{ ssh_port }}",
           'identity_file': "{{ keypair_path }}", }
-      with_items: "{{ server.results }}"
+      with_items: "{{ server_facts.results }}"
       register: instance_config_dict
       when: server.changed | bool
     - name: Convert instance config dict to a list
