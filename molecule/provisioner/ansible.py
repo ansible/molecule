@@ -50,7 +50,7 @@ class Ansible(base.Base):
         attempt to gather facts or perform operations on the provisioned nodes
         inside these playbooks.  Due to the gymnastics necessary to sync state
         between Ansible and Molecule, it is best to perform these tasks in the
-        converge playbook.
+        prepare or converge playbooks.
 
         It is the developers responsiblity to properly map the modules's fact
         data into the instance_conf_dict fact in the create playbook.  This
