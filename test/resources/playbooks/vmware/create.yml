@@ -1,5 +1,4 @@
 ---
-{% raw -%}
 - name: Create
   hosts: localhost
   connection: local
@@ -123,5 +122,3 @@
         search_regex: SSH
         delay: 10
       with_items: "{{ lookup('file', molecule_instance_config) | molecule_from_yaml }}"
-
-{%- endraw %}

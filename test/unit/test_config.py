@@ -134,17 +134,16 @@ def test_driver_property(config_instance):
 
 
 @pytest.fixture
-def molecule_driver_azure_section_data():
+def _config_driver_vmware_section_data():
     return {
         'driver': {
             'name': 'vmware'
         },
     }
 
-def test_driver_property_is_vmware(molecule_driver_vmare_section_data,
-                                  config_instance):
-    config_instance.merge_dicts(config_instance.config,
-                                molecule_driver_vmware_section_data)
+@pytest.mark.parametrize(
+    'config_instance', ['_driver_vmware_section_data'], indirect=True)
+def test_driver_property_is_vmware(config_instance):
     assert isinstance(config_instance.driver, vmware.VMware)
 
 
@@ -278,7 +277,7 @@ def test_driver_property_is_vagrant(config_instance):
 
 def test_drivers_property(config_instance):
     x = [
-        'vmware'
+        'vmware',
         'azure',
         'delegated',
         'docker',
@@ -567,3 +566,5 @@ def test_molecule_verifiers():
     x = ['goss', 'inspec', 'testinfra']
 
     assert x == config.molecule_verifiers()
+
+    assert x == config_instance.command_args

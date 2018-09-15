@@ -594,8 +594,6 @@ platforms_vagrant_schema = {
     },
 }
 
-
-
 platforms_docker_schema = {
     'platforms': {
         'type': 'list',
