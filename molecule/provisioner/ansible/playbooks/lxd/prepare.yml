@@ -1,0 +1,53 @@
+---
+- name: Prepare
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Test if Python is installed
+      raw: python -V # execute Python
+      register: python_version
+      changed_when: "'not found' in python_version.stderr"
+      failed_when: false
+
+    - name: Install Python when not installed
+      raw: |
+        if [ -x "$(command -v apt-get)" ]
+        then
+          apt-get update && apt-get install -y python
+        elif [ -x "$(command -v yum)" ]
+        then
+          yum install -y python
+        elif [ -x "$(command -v zypper)" ]
+        then
+          zypper -n --gpg-auto-import-keys refresh && zypper -n install -y python python-xml
+        elif [ -x "$(command -v apk)" ]
+        then
+          apk update && apk add python
+        elif [ -x "$(command -v pacman)" ]
+        then
+          pacman -Syu --noconfirm python2
+        elif [ -x "$(command -v dnf)" ]
+        then
+          dnf --assumeyes install python python-devel python2-dnf
+        elif [ -x "$(command -v emerge)" ]
+        then
+          emerge --ask n dev-lang/python-2
+        fi
+      when: "'not found' in python_version.stderr"
+
+    - name: Gathering Facts
+      setup: # aka gather_facts
+
+    - name: Install equery on Gentoo based containers when not available
+      raw: test -e /usr/bin/equery || emerge --ask n gentoolkit
+      register: equery_status
+      changed_when: equery_status.stdout != ''
+      when: ansible_os_family == 'Gentoo'
+
+    - name: Install some basic packages because LXC containers are bare
+      package:
+        name:
+          - ca-certificates
+          - curl
+          - sudo
+        state: present

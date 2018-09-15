@@ -38,6 +38,28 @@ class LXD(base.Base):
 
         driver:
           name: lxd
+        platforms:
+          - name: instance
+            url: https://127.0.0.1:8443
+            cert_file: /root/.config/lxc/client.crt
+            key_file: /root/.config/lxc/client.key
+            trust_password: password
+            source:
+              type: image
+              mode: pull|local
+              server: https://images.linuxcontainers.org
+              protocol: lxd|simplestreams
+              alias: ubuntu/xenial/amd64
+            architecture: x86_64|i686
+            config:
+              limits.cpu: 2
+            devices:
+              kvm:
+                path: /dev/kvm
+                type: unix-char
+            profiles:
+              - default
+            force_stop: True|False
 
     Provide the files Molecule will preserve upon each subcommand execution.
 

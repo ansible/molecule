@@ -330,6 +330,111 @@ def test_platforms_vagrant_has_errors(_config):
     assert x == schema_v2.validate(_config)
 
 
+@pytest.fixture
+def _model_platforms_lxd_section_data():
+    return {
+        'driver': {
+            'name': 'lxd',
+        },
+        'platforms': [{
+            'name': 'instance',
+            'url': 'https://127.0.0.1:8443',
+            'cert_file': '/root/.config/lxc/client.crt',
+            'key_file': '/root/.config/lxc/client.key',
+            'trust_password': 'password',
+            'source': {
+                'type': 'image',
+                'mode': 'pull',
+                'protocol': 'lxd',
+                'server': 'https://images.linuxcontainers.org',
+                'alias': 'ubuntu/xenial/amd64',
+            },
+            'architecture': 'x86_64',
+            'config': {
+                'limits.cpu': '2',
+            },
+            'devices': {
+                'kvm': {
+                    'path': '/dev/kvm',
+                    'type': 'unix-char',
+                }
+            },
+            'profiles': [
+                'default',
+            ],
+            'force_stop': True,
+        }]
+    }
+
+
+@pytest.mark.parametrize(
+    '_config', ['_model_platforms_lxd_section_data'], indirect=True)
+def test_platforms_lxd(_config):
+    assert {} == schema_v2.validate(_config)
+
+
+@pytest.fixture
+def _model_platforms_lxd_errors_section_data():
+    return {
+        'driver': {
+            'name': 'lxd',
+        },
+        'platforms': [{
+            'name': int(),
+            'url': int(),
+            'cert_file': int(),
+            'key_file': int(),
+            'trust_password': int(),
+            'source': {
+                'type': int(),
+                'mode': 'set for mode',
+                'server': int(),
+                'protocol': 'set for protocol',
+                'alias': int(),
+            },
+            'architecture': 'set for architecture',
+            'config': int(),
+            'devices': int(),
+            'profiles': [
+                int(),
+            ],
+            'force_stop': int()
+        }]
+    }
+
+
+@pytest.mark.parametrize(
+    '_config', ['_model_platforms_lxd_errors_section_data'], indirect=True)
+def test_platforms_lxd_has_errors(_config):
+    x = {
+        'platforms': [{
+            0: [{
+                'name': ['must be of string type'],
+                'url': ['must be of string type'],
+                'cert_file': ['must be of string type'],
+                'key_file': ['must be of string type'],
+                'trust_password': ['must be of string type'],
+                'source': [{
+                    'alias': ['must be of string type'],
+                    'mode': ['unallowed value set for mode'],
+                    'protocol': ['unallowed value set for protocol'],
+                    'server': ['must be of string type'],
+                    'type': ['must be of string type']
+                }],
+                'architecture': ['unallowed value set for architecture'],
+                'config': ['must be of dict type'],
+                'devices': ['must be of dict type'],
+                'profiles': [{
+                    0: ['must be of string type']
+                }],
+                'force_stop': ['must be of boolean type']
+            }]
+        }]
+    }
+
+    assert x == schema_v2.validate(_config)
+
+
 def test_platforms_driver_name_required(_config):
     del _config['platforms'][0]['name']
     x = {'platforms': [{0: [{'name': ['required field']}]}]}
