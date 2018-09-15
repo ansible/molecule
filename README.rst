@@ -99,7 +99,7 @@ Forums
 Ansible Support
 ===============
 
-Molecule requires Ansible version 2.2 or later.
+Molecule requires Ansible version 2.4 or later.
 
 .. _`Ansible`: https://docs.ansible.com
 
