@@ -4,7 +4,7 @@
   gather_facts: false
   tasks:
     - name: Test if Python is installed
-      raw: python -V # execute Python
+      raw: python -V  # execute Python
       register: python_version
       changed_when: "'not found' in python_version.stderr"
       failed_when: false
@@ -36,7 +36,7 @@
       when: "'not found' in python_version.stderr"
 
     - name: Gathering Facts
-      setup: # aka gather_facts
+      setup:  # aka gather_facts
 
     - name: Install equery on Gentoo based containers when not available
       raw: test -e /usr/bin/equery || emerge --ask n gentoolkit
