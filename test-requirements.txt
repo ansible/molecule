@@ -2,6 +2,7 @@ apache-libcloud
 ansible[azure]
 boto
 boto3
+pyvmomi
 # lxc-python2
 mock
 pur

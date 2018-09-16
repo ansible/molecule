@@ -1,0 +1,127 @@
+---
+{% raw -%}
+- name: Create
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  no_log: "{{ not (lookup('env', 'MOLECULE_DEBUG') | bool or molecule_yml.provisioner.log|default(false) | bool) }}"
+  vars_files:
+    - "~/.molecule_vmware.yml"
+  vars:
+    ssh_user: molecule
+    molecule_password: molecule
+    ssh_port: 22
+    keypair_path: "{{ lookup('env','MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
+
+  tasks:
+
+    - name: Create keypair
+      user:
+        name: "{{ lookup('env','USER') }}"
+        generate_ssh_key: true
+        ssh_key_file: "{{ keypair_path }}"
+      register: keypair
+
+    - name: Create molecule instance(s)
+      vmware_guest:
+        name: "{{ item.name }}"
+        datacenter: "{{ molecule_vmware.datacenter }}"
+        cluster: "{{ molecule_vmware.cluster }}"
+        folder: "{{ molecule_vmware.folder }}"
+        template: "{{ item.template }}"
+        disk: "{{ item.disk }}"
+        state: poweredon
+        hardware: "{{ item.hardware }}"
+        networks: "{{ item.networks }}"
+        hostname: "{{ molecule_vmware.hostname }}"
+        username: "{{ molecule_vmware.username }}"
+        password: "{{ molecule_vmware.password }}"
+        validate_certs: "{{ molecule_vmware.validate_certs }}"
+        wait_for_ip_address: true
+      register: server
+      with_items: "{{ molecule_yml.platforms }}"
+      async: 7200
+      poll: 0
+
+    - name: Wait for instance(s) creation to complete
+      async_status:
+        jid: "{{ item.ansible_job_id }}"
+      register: vmware_jobs
+      until: vmware_jobs.finished
+      retries: 300
+      with_items: "{{ server.results }}"
+
+    - name: Create ssh key location
+      vmware_vm_shell:
+        vm_id: "{{ item.name }}"
+        folder: "{{ molecule_vmware.folder }}"
+        datacenter: "{{ molecule_vmware.datacenter }}"
+        vm_username: "{{ ssh_user }}"
+        vm_password: "{{ molecule_password }}"
+        vm_shell: /bin/mkdir
+        vm_shell_args: " /home/molecule/.ssh/"
+        hostname: "{{ molecule_vmware.hostname }}"
+        username: "{{ molecule_vmware.username }}"
+        password: "{{ molecule_vmware.password }}"
+        validate_certs: "{{ molecule_vmware.validate_certs }}"
+      with_items: "{{ molecule_yml.platforms }}"
+
+    - name: Insert ssh key
+      vmware_vm_shell:
+        vm_id: "{{ item.name }}"
+        folder: "{{ molecule_vmware.folder }}"
+        datacenter: "{{ molecule_vmware.datacenter }}"
+        vm_username: "{{ ssh_user }}"
+        vm_password: "{{ molecule_password }}"
+        vm_shell: /bin/echo
+        vm_shell_args: " \"{{keypair.ssh_public_key}}\" > /home/molecule/.ssh/authorized_keys"
+        hostname: "{{ molecule_vmware.hostname }}"
+        username: "{{ molecule_vmware.username }}"
+        password: "{{ molecule_vmware.password }}"
+        validate_certs: "{{ molecule_vmware.validate_certs }}"
+      with_items: "{{ molecule_yml.platforms }}"
+
+    - name: Gather instance(s) facts
+      vmware_guest_facts:
+        name: "{{ item.name }}"
+        datacenter: "{{ molecule_vmware.datacenter }}"
+        folder: "{{ molecule_vmware.folder }}"
+        hostname: "{{ molecule_vmware.hostname }}"
+        username: "{{ molecule_vmware.username }}"
+        password: "{{ molecule_vmware.password }}"
+        validate_certs: "{{ molecule_vmware.validate_certs }}"
+      register: server_facts
+      with_items: "{{ molecule_yml.platforms }}"
+
+    # Mandatory configuration for Molecule to function.
+    - name: Populate instance config dict
+      set_fact:
+        instance_conf_dict: {
+          'instance': "{{ item.invocation.module_args.name }}",
+          'address': "{{ item.instance.ipv4 or item.instance.ipv6 }}",
+          'user': "{{ ssh_user }}",
+          'port': "{{ ssh_port }}",
+          'identity_file': "{{ keypair_path }}", }
+      with_items: "{{ server_facts.results }}"
+      register: instance_config_dict
+      when: server.changed | bool
+    - name: Convert instance config dict to a list
+      set_fact:
+        instance_conf: "{{ instance_config_dict.results | map(attribute='ansible_facts.instance_conf_dict') | list }}"
+      when: server.changed | bool
+    - name: Dump instance config
+      copy:
+        # NOTE(retr0h): Workaround for Ansible 2.2.
+        #               https://github.com/ansible/ansible/issues/20885
+        content: "{{ instance_conf | to_json | from_json | molecule_to_yaml | molecule_header }}"
+        dest: "{{ molecule_instance_config }}"
+      when: server.changed | bool
+    - name: Wait for SSH
+      wait_for:
+        port: "{{ ssh_port }}"
+        host: "{{ item.address }}"
+        search_regex: SSH
+        delay: 10
+      with_items: "{{ lookup('file', molecule_instance_config) | molecule_from_yaml }}"
+
+{%- endraw %}

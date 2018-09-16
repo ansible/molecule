@@ -41,6 +41,7 @@ from molecule.driver import lxc
 from molecule.driver import lxd
 from molecule.driver import openstack
 from molecule.driver import vagrant
+from molecule.driver import vmware
 from molecule.lint import yamllint
 from molecule.model import schema_v2
 from molecule.provisioner import ansible
@@ -155,6 +156,8 @@ class Config(object):
 
         if driver_name == 'azure':
             driver = azure.Azure(self)
+        elif driver_name == 'vmware':
+            driver = vmware.VMware(self)
         elif driver_name == 'delegated':
             driver = delegated.Delegated(self)
         elif driver_name == 'docker':
@@ -474,6 +477,7 @@ def molecule_file(path):
 
 def molecule_drivers():
     return [
+        vmware.VMware(None).name,
         azure.Azure(None).name,
         delegated.Delegated(None).name,
         docker.Docker(None).name,

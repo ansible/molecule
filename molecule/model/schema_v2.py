@@ -61,6 +61,7 @@ def pre_validate_base_schema(env, keep_string):
                     True,
                     'allowed': [
                         'azure',
+                        'vmware',
                         'delegated',
                         'docker',
                         'ec2',
@@ -593,6 +594,8 @@ platforms_vagrant_schema = {
     },
 }
 
+
+
 platforms_docker_schema = {
     'platforms': {
         'type': 'list',
@@ -957,7 +960,6 @@ def validate(c):
         util.merge_dicts(schema, platforms_lxd_schema)
     else:
         util.merge_dicts(schema, platforms_base_schema)
-
     # Verifier
     if c['verifier']['name'] == 'goss':
         util.merge_dicts(schema, verifier_options_readonly_schema)
