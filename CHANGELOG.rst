@@ -5,6 +5,10 @@ History
 2.18
 ====
 
+* Bump Goss to v0.3.6.
+* Fixes docs build, appends #egg to tox-tags url.
+* Fixes typo in base.py status docstring.
+* Adds to goss docs about linting.
 * Deprecated ansible 2.2 and 2.3 tests.
 * Bumped ansible versions to test.
 * Docs: Recommend prepare playbook for node setup.
