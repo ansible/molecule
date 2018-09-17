@@ -18,4 +18,4 @@ shade==1.22.2
 twine
 wheel==0.30.0
 yapf==0.21.0
-https://github.com/AndreLouisCaron/tox-tags/archive/master.zip
+https://github.com/AndreLouisCaron/tox-tags/archive/master.zip#egg=tox-tags
