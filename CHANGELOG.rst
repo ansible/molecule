@@ -2,6 +2,23 @@
 History
 *******
 
+2.18
+====
+
+* Deprecated ansible 2.2 and 2.3 tests.
+* Bumped ansible versions to test.
+* Docs: Recommend prepare playbook for node setup.
+* Updates typo in docker section of test_platforms_section.py.
+* Adds install instructions for RuboCop.
+* Updates tox-tags url in test-requirements.txt.
+* Add support of restart_policy and restart_retries to docker driver.
+* Added TERM=xterm to docker instance env.
+* Added network_mode option to Docker container.
+* Adds pre_build_image option to Docker create playbook.
+* Remove the double `init` in the doc.
+* Expand LXD driver functionality.
+* Fixed the matrix subcommand yet again.
+
 2.17
 ====
 
