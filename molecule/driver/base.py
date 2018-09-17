@@ -165,7 +165,7 @@ class Base(object):
 
             Molecule assumes all instances were created successfully by
             Ansible, otherwise Ansible would return an error on create.  This
-            may prove to be a bad assumption.  However, configuring Moleule's
+            may prove to be a bad assumption.  However, configuring Molecule's
             driver to match the options passed to the playbook may prove
             difficult.  Especially in cases where the user is provisioning
             instances off localhost.
