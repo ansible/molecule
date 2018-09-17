@@ -441,3 +441,76 @@ def test_platforms_driver_name_required(_config):
     x = {'platforms': [{0: [{'name': ['required field']}]}]}
 
     assert x == schema_v2.validate(_config)
+
+
+@pytest.fixture
+def _model_platform_linode_section_data():
+    return {
+        'driver': {
+            'name': 'linode',
+        },
+        'platforms': [{
+            'name': '',
+            'plan': 0,
+            'datacenter': 0,
+            'distribution': 0,
+        }]
+    }
+
+
+@pytest.mark.parametrize(
+    '_config', ['_model_platform_linode_section_data'], indirect=True)
+def test_platforms_linode(_config):
+    assert {} == schema_v2.validate(_config)
+
+
+@pytest.fixture
+def _model_platforms_linode_errors_section_data():
+    return {
+        'driver': {
+            'name': 'linode',
+        },
+        'platforms': [{
+            'name': 0,
+            'plan': '',
+            'datacenter': '',
+            'distribution': '',
+        }]
+    }
+
+
+@pytest.mark.parametrize(
+    '_config', ['_model_platforms_linode_errors_section_data'], indirect=True)
+def test_platforms_linode_has_errors(_config):
+    expected_config = {
+        'platforms': [{
+            0: [{
+                'name': ['must be of string type'],
+                'plan': ['must be of integer type'],
+                'datacenter': ['must be of integer type'],
+                'distribution': ['must be of integer type'],
+            }],
+        }],
+    }
+
+    assert expected_config == schema_v2.validate(_config)
+
+
+@pytest.mark.parametrize(
+    '_config', ['_model_platform_linode_section_data'], indirect=True)
+@pytest.mark.parametrize('_required_field', (
+    'distribution',
+    'plan',
+    'datacenter',
+    'distribution',
+))
+def test_platforms_linode_fields_required(_config, _required_field):
+    del _config['platforms'][0][_required_field]
+    expected_config = {
+        'platforms': [{
+            0: [{
+                _required_field: ['required field']
+            }]
+        }]
+    }
+    assert expected_config == schema_v2.validate(_config)
