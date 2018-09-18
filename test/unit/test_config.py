@@ -142,7 +142,7 @@ def _config_driver_vmware_section_data():
     }
 
 @pytest.mark.parametrize(
-    'config_instance', ['_driver_vmware_section_data'], indirect=True)
+    'config_instance', ['_config_driver_vmware_section_data'], indirect=True)
 def test_driver_property_is_vmware(config_instance):
     assert isinstance(config_instance.driver, vmware.VMware)
 
