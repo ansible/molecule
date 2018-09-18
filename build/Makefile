@@ -17,6 +17,7 @@ build: clean
 docker-build:
 	@echo "+ $@"
 	cd build && sudo docker build \
+		--pull \
 		--rm=true \
 		--no-cache \
 		-t $(LATEST_IMAGE) -t $(TAG_IMAGE) .

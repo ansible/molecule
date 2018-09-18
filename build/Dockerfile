@@ -46,6 +46,7 @@ RUN \
     apk update \
     && apk add --update --no-cache ${PACKAGES} \
     && rm -rf /var/cache/apk/* \
+    && pip install --upgrade pip \
     && pip install --no-cache-dir ${PIP_PACKAGES} \
     && rm -rf /root/.cache \
     && gem install ${GEM_PACKAGES} \
