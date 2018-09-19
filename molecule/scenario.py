@@ -47,12 +47,14 @@ class Scenario(object):
             - prepare
           check_sequence:
             - destroy
+            - dependency
             - create
             - prepare
             - converge
             - check
             - destroy
           converge_sequence:
+            - dependency
             - create
             - prepare
             - converge
