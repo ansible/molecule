@@ -7,12 +7,6 @@ Development Leads
 
 * John Dewey (`@retr0h`_)
 
-Core Committers
-===============
-
-* Adam Brown <adambr2@cisco.com>
-* Erik Nadel <einadel@wpi.edu>
-
 Contributors
 ============
 
