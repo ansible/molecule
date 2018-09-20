@@ -2,6 +2,12 @@
 History
 *******
 
+2.18.1
+======
+
+* Fixes #1484 - add ruby-etc apk package.
+* Fix documentation of scenario sequences.
+
 2.18
 ====
 
