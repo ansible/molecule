@@ -21,6 +21,7 @@ ENV PACKAGES="\
     curl \
     ruby \
     ruby-dev \
+    ruby-etc \
     ruby-rdoc \
     ruby-irb \
     git \
