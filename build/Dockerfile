@@ -28,14 +28,13 @@ ENV PACKAGES="\
 
 ENV PIP_PACKAGES="\
     ansible[azure] \
-    virtualenv \
-    molecule \
-    ansible \
+    ansible-lint-junit \
+    detox \
     docker \
-    azure-cli \
-    packaging \
-    msrestazure \
+    junit-xml \
+    molecule \
     pywinrm \
+    virtualenv \
 "
 
 ENV GEM_PACKAGES="\
