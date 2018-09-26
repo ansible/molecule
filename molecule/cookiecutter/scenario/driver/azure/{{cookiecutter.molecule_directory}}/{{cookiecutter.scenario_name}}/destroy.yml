@@ -6,7 +6,7 @@
   gather_facts: false
   no_log: "{{ not (lookup('env', 'MOLECULE_DEBUG') | bool or molecule_yml.provisioner.log|default(false) | bool) }}"
   vars:
-    resource_group_name: molecule
+    resource_group_name: "{{ molecule_yml.driver.resource_group_name }}"
   tasks:
     - name: Destroy molecule instance(s)
       azure_rm_virtualmachine:

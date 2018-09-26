@@ -3,16 +3,30 @@ dependency:
   name: galaxy
 driver:
   name: azure
+  location: westus
+  resource_group_name: molecule
 lint:
   name: yamllint
   options:
     config-file: ../../../resources/.yamllint
 platforms:
   - name: instance-1
+    vm_size: Standard_A0
+    image:
+      offer: CentOS
+      publisher: OpenLogic
+      sku: "7.4"
+      version: latest
     groups:
       - foo
       - bar
   - name: instance-2
+    vm_size: Standard_A0
+    image:
+      offer: CentOS
+      publisher: OpenLogic
+      sku: "7.4"
+      version: latest
     groups:
       - foo
       - baz
@@ -24,8 +38,6 @@ provisioner:
   inventory:
     group_vars:
       all:
-        resource_group_name: molecule
-        location: westus
         ssh_user: molecule
         ssh_port: 22
         virtual_network_name: molecule_vnet

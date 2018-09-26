@@ -6,8 +6,8 @@
   gather_facts: false
   no_log: "{{ not (lookup('env', 'MOLECULE_DEBUG') | bool or molecule_yml.provisioner.log|default(false) | bool) }}"
   vars:
-    resource_group_name: molecule
-    location: westus
+    resource_group_name: "{{ molecule_yml.driver.resource_group_name }}"
+    location: "{{ molecule_yml.driver.location }}"
     ssh_user: molecule
     ssh_port: 22
     virtual_network_name: molecule_vnet
@@ -43,7 +43,8 @@
       azure_rm_virtualmachine:
         resource_group: "{{ resource_group_name }}"
         name: "{{ item.name }}"
-        vm_size: Standard_A0
+        vm_size: "{{ item.vm_size }}"
+        managed_disk_type: Standard_LRS
         admin_username: "{{ ssh_user }}"
         public_ip_allocation_method: Dynamic
         ssh_password_enabled: false
@@ -51,10 +52,10 @@
           - path: "/home/{{ ssh_user }}/.ssh/authorized_keys"
             key_data: "{{ keypair.ssh_public_key }}"
         image:
-          offer: CentOS
-          publisher: OpenLogic
-          sku: '7.4'
-          version: latest
+          offer: "{{ item.image.offer }}"
+          publisher: "{{ item.image.publisher }}"
+          sku: "{{ item.image.sku }}"
+          version: "{{ item.image.version }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
       async: 7200

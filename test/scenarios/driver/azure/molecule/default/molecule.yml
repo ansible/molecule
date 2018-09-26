@@ -3,12 +3,20 @@ dependency:
   name: galaxy
 driver:
   name: azure
+  location: westus
+  resource_group_name: molecule
 lint:
   name: yamllint
   options:
     config-file: ../../../resources/.yamllint
 platforms:
   - name: instance
+    vm_size: Standard_A0
+    image:
+      offer: CentOS
+      publisher: OpenLogic
+      sku: "7.4"
+      version: latest
 provisioner:
   name: ansible
   playbooks:

@@ -3,6 +3,10 @@ dependency:
   name: {{ cookiecutter.dependency_name }}
 driver:
   name: {{ cookiecutter.driver_name }}
+{%- if cookiecutter.driver_name == 'azure' %}
+  resource_group_name: molecule
+  location: westus
+{%- endif %}
 {%- if cookiecutter.driver_name == 'vagrant' %}
   provider:
     name: virtualbox
@@ -12,6 +16,12 @@ lint:
 platforms:
 {%- if cookiecutter.driver_name == 'azure' %}
   - name: instance
+    vm_size: Standard_A0
+    image:
+      offer: CentOS
+      publisher: OpenLogic
+      sku: "7.4"
+      version: latest
 {%- elif cookiecutter.driver_name == 'docker' %}
   - name: instance
     image: centos:7

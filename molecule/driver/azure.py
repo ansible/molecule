@@ -40,8 +40,15 @@ class Azure(base.Base):
 
         driver:
           name: azure
+          location: westus
+          resource_group_name: molecule
         platforms:
           - name: instance
+            offer: CentOS
+            publisher: OpenLogic
+            sku: '7.4'
+            version: latest
+
 
     .. code-block:: bash
 
