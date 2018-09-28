@@ -31,8 +31,11 @@ class LXD(base.Base):
 
     Molecule leverages Ansible's `lxd_container`_ module, by mapping variables
     from `molecule.yml` into `create.yml` and `destroy.yml`.
+    The `lxd_container`_ module leverages the LXD API. Usefull information
+    about, for example the source variable can be found in the `LXD API documentation`.
 
     .. _`lxd_container`: http://docs.ansible.com/ansible/latest/lxd_container_module.html
+    .. _`LXD API documentation`: https://github.com/lxc/lxd/blob/master/doc/rest-api.md#post-1
 
     .. code-block:: yaml
 
