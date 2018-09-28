@@ -46,7 +46,7 @@ class LXD(base.Base):
             trust_password: password
             source:
               type: image
-              mode: pull|local
+              mode: pull
               server: https://images.linuxcontainers.org
               protocol: lxd|simplestreams
               alias: ubuntu/xenial/amd64
