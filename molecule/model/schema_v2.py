@@ -694,7 +694,7 @@ platforms_docker_schema = {
                     'type': 'dict',
                     'keyschema': {
                         'type': 'string',
-                        'regex': '^[A-Z0-9_-]+$',
+                        'regex': '^[a-zA-Z0-9_-]+$',
                     }
                 },
                 'restart_policy': {

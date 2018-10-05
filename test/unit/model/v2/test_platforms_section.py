@@ -81,6 +81,7 @@ def _model_platforms_docker_section_data():
             ],
             'env': {
                 'FOO': 'bar',
+                'foo': 'bar',
             },
             'restart_policy':
             'on-failure',
