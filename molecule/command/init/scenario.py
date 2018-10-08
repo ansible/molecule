@@ -43,7 +43,7 @@ class Scenario(base.Base):
 
     .. option:: cd foo; molecule init scenario --scenario-name bar --role-name foo
 
-        Initialize an existing role with Molecule:
+        Initialize an existing role with Molecule.
     """  # noqa
 
     def __init__(self, command_args):
