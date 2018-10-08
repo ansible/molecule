@@ -33,11 +33,17 @@ LOG = logger.get_logger(__name__)
 
 class Template(base.Base):
     """
-    .. program:: molecule init template --url https://example.com/user/cookiecutter-repo
+    .. program:: molecule init template --template https://example.com/user/cookiecutter-repo
 
-    .. option:: molecule init template --url https://example.com/user/cookiecutter-repo
+    .. option:: molecule init template --template https://example.com/user/cookiecutter-repo
 
         Initialize a new role from a Cookiecutter URL.
+
+    .. program:: molecule init template --template path/to/template/directory
+
+    .. option:: molecule init template --template path/to/template/directory
+
+        Initialize a new role from a local Cookiecutter template.
     """  # noqa
 
     def __init__(self, command_args):
@@ -52,7 +58,7 @@ class Template(base.Base):
         """
 
         role_name = self._command_args['role_name']
-        url = self._command_args['url']
+        template_path = self._command_args['template']
         no_input = self._command_args['no_input']
         role_directory = os.getcwd()
         msg = 'Initializing new role {}...'.format(role_name)
@@ -64,7 +70,7 @@ class Template(base.Base):
             util.sysexit_with_message(msg)
 
         cookiecutter.main.cookiecutter(
-            url,
+            template_path,
             extra_context=self._command_args,
             no_input=no_input,
         )
@@ -77,9 +83,9 @@ class Template(base.Base):
 @click.command()
 @click.pass_context
 @click.option(
-    '--url',
+    '--template',
     required=True,
-    help='URL to the Cookiecutter templates repository.')
+    help='Path to the Cookiecutter templates location (can be URL).')
 @click.option(
     '--no-input/--input',
     default=False,
@@ -90,12 +96,12 @@ class Template(base.Base):
     '-r',
     default='role_name',
     help='Name of the role to create.')
-def template(ctx, url, no_input, role_name):  # pragma: no cover
-    """ Initialize a new role from a Cookiecutter URL. """
+def template(ctx, template_path, no_input, role_name):  # pragma: no cover
+    """ Initialize a new role from a Cookiecutter Template. """
     command_args = {
         'role_name': role_name,
         'subcommand': __name__,
-        'url': url,
+        'template': template_path,
         'no_input': no_input,
     }
 
