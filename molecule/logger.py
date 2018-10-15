@@ -171,4 +171,7 @@ def cyan_text(msg):
 
 
 def color_text(color, msg):
-    return '{}{}{}'.format(color, msg, colorama.Style.RESET_ALL)
+    if sys.stdout.isatty():
+        return '{}{}{}'.format(color, msg, colorama.Style.RESET_ALL)
+    else:
+        return msg
