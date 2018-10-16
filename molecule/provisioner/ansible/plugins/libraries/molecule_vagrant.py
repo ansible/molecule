@@ -155,7 +155,7 @@ Vagrant.configure('2') do |config|
   c['options'].delete('synced_folder')
 
   c['options'].each { |key, value|
-    eval("config.#{key} = #{value}")
+    value.is_a?(String) ? eval("config.#{key} = \"#{value}\"") : eval("config.#{key} = #{value}")
   }
 
   ##
