@@ -12,6 +12,14 @@ Unreleased
 * Allows lowercase environment variables in the Docker scheme.
 * Removes local mode from LXD documentation.
 
+Important Changes
+-----------------
+
+Last release by `@retr0h`_.  Subsequent releases will be made by
+the Ansible team.
+
+.. _`@retr0h`: https://github.com/retr0h
+
 2.18.1
 ======
 
