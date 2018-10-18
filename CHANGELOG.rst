@@ -5,7 +5,12 @@ History
 Unreleased
 ==========
 
+2.19
+====
+
 * Bumped testinfra to 1.16.0 due to testinfra bug.
+* Allows lowercase environment variables in the Docker scheme.
+* Removes local mode from LXD documentation.
 
 2.18.1
 ======
