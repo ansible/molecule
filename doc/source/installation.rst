@@ -53,7 +53,16 @@ Install Molecule:
 
 .. code-block:: bash
 
-    $ sudo pip install molecule
+    $ pip install --user molecule
+
+Installing molecule package also installed its main script ``molecule``,
+usually in ``PATH``. Users should know that molecule can also be called as a
+python module, using ``python -m molecule ...``. This alternative method has
+some benefits:
+
+* allows to control which python interpreter is used by molecule
+* allows molecule installation at user level without even needing to have
+  the script in ``PATH``.
 
 Source
 ======
