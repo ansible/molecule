@@ -122,6 +122,7 @@
         state: started
         recreate: false
         log_driver: json-file
+        user: "{{ item.user | default(omit) }}"
         command: "{{ (command_directives_dict | default({}))[item.name] | default(omit) }}"
         pid_mode: "{{ item.pid_mode | default(omit) }}"
         privileged: "{{ item.privileged | default(omit) }}"

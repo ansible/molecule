@@ -409,6 +409,7 @@ platforms_docker_schema = {
                     'schema': {'type': 'string', 'coerce': 'exposed_ports'},
                 },
                 'published_ports': {'type': 'list', 'schema': {'type': 'string'}},
+                'user': {'type': 'string'},
                 'ulimits': {'type': 'list', 'schema': {'type': 'string'}},
                 'dns_servers': {'type': 'list', 'schema': {'type': 'string'}},
                 'etc_hosts': {
