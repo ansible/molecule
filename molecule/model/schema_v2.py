@@ -633,6 +633,9 @@ platforms_docker_schema = {
                         },
                     }
                 },
+                'user': {
+                    'type': 'string',
+                },
                 'command': {
                     'type': 'string',
                     'nullable': True,

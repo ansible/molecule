@@ -54,6 +54,7 @@ class Docker(base.Base):
                 username: $USERNAME
                 password: $PASSWORD
                 email: user@example.com
+            user: root
             command: sleep infinity
             privileged: True|False
             security_opts:
