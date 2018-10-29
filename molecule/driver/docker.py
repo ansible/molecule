@@ -96,7 +96,7 @@ class Docker(base.Base):
     .. code-block:: bash
 
         $ export USERNAME=foo
-        $ export PASSWORD=BAR
+        $ export PASSWORD=bar
 
     Provide the files Molecule will preserve upon each subcommand execution.
 
