@@ -1,7 +1,11 @@
+---
+name: 🐛 Bug report
+about: Create a report to help us improve
+---
+
 # Issue Type
 
 - Bug report
-- Feature request
 
 # Molecule and Ansible details
 
@@ -29,7 +33,7 @@ Ansible installation method (one of):
 Please give some details of the feature being requested or what
 should happen if providing a bug report.
 
-# Actual Behaviour (Bug report only)
+# Actual Behaviour
 
 Please give some details of what is actually happening.
 Include a [minimum complete verifiable example](http://stackoverflow.com/help/mcve) with

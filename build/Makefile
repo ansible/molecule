@@ -1,4 +1,4 @@
-USER := retr0h
+USER := ansible
 TAG := $(shell git describe --tags `git rev-list --tags --max-count=1`)
 LATEST_IMAGE := $(USER)/molecule:latest
 TAG_IMAGE := $(USER)/molecule:$(TAG)
@@ -24,10 +24,5 @@ docker-build:
 
 push:
 	./.tox/py27-ansible25-unit/bin/twine upload dist/* -r pypi
-
-docker-push:
-	@echo "+ $@"
-	sudo docker push $(LATEST_IMAGE)
-	sudo docker push $(TAG_IMAGE)
 
 .PHONY: build

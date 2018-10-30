@@ -31,8 +31,8 @@ supports.
    use it, Molecule can test it.  Molecule simply leverages Ansible's module
    system to manage instances.
 
-.. _`playbooks`: https://docs.ansible.com/ansible/playbooks.html
-.. _`role`: http://docs.ansible.com/ansible/playbooks_roles.html
+.. _`playbooks`: https://docs.ansible.com/ansible/latest/playbooks.html
+.. _`role`: http://docs.ansible.com/ansible/latest/playbooks_roles.html
 
 Quick Start
 ===========
@@ -106,9 +106,15 @@ License
 
 `MIT`_
 
-.. _`MIT`: https://github.com/metacloud/molecule/blob/master/LICENSE
+.. _`MIT`: https://github.com/ansible/molecule/blob/master/LICENSE
 
 The logo is licensed under the `Creative Commons NoDerivatives 4.0 License`_.
 If you have some other use in mind, contact us.
 
 .. _`Creative Commons NoDerivatives 4.0 License`: https://creativecommons.org/licenses/by-nd/4.0/
+
+
+Authors
+=======
+
+Molecule was created by `Retr0h <https://github.com/retr0h>`_ and is now maintained as part of the `Ansible <https://ansible.com>`_ by Red Hat project.

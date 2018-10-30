@@ -75,8 +75,8 @@ class AnsibleLint(base.Base):
             env:
               FOO: bar
 
-    .. _`Ansible Lint`: https://github.com/willthames/ansible-lint
-    .. _`bug`: https://github.com/willthames/ansible-lint/issues/279
+    .. _`Ansible Lint`: https://github.com/ansible/ansible-lint
+    .. _`bug`: https://github.com/ansible/ansible-lint/issues/279
     """
 
     def __init__(self, config):

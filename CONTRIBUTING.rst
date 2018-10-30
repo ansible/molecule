@@ -8,11 +8,15 @@ Contributing
 * Create a topic branch from where you want to base your work.
 * Check for unnecessary whitespace with ``git diff --check`` before committing.
 * Make sure you have added tests for your changes.
+* You must use ``git commit --signoff`` for any commit to be merged, and agree
+  that usage of ``--signoff`` constitutes agreement with the terms of `DCO 1.1`.
+
 * Run all the tests to ensure nothing else was accidentally broken.
 * Reformat the code by following the formatting section below.
 * Submit a pull request.
 
-.. _`Issue`: https://github.com/metacloud/molecule/issues
+.. _`Issue`: https://github.com/ansible/molecule/issues
+.. _`DCO 1.1`: https://github.com/ansible/molecule/blob/master/DCO_1_1.md
 
 Installing
 ==========
