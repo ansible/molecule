@@ -1,4 +1,4 @@
-ansible-lint==3.4.23
+ansible-lint==3.5.1
 anyconfig==0.9.7
 cerberus==1.2
 click==6.7
