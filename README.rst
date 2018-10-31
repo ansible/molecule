@@ -80,13 +80,15 @@ https://molecule.readthedocs.io/
 Contact
 =======
 
-* Join us in the ``#molecule-users`` channel on `freenode`_.
+* Join us in the ``#ansible-molecule`` channel on `freenode`_.
 * Join the discussion in `molecule-users Forum`_
-* Want to know about releases, subscribe to `ansible-announce <https://groups.google.com/group/ansible-announce>`_
-* For the full list of Ansible email Lists, IRC channels see the `Communication page <https://docs.ansible.com/ansible/latest/community/communication.html>`_
+* Want to know about releases, subscribe to `ansible-announce list`_
+* For the full list of Ansible email Lists, IRC channels see the `communication page`_
 
 .. _`freenode`: https://freenode.net
 .. _`molecule-users Forum`: https://groups.google.com/forum/#!forum/molecule-users
+.. _`ansible-announce list`: https://groups.google.com/group/ansible-announce
+.. _`communication page`: https://docs.ansible.com/ansible/latest/community/communication.html
 
 Ansible Support
 ===============
