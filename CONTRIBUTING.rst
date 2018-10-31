@@ -44,3 +44,59 @@ To bring in updated upstream modules.  Update `gilt.yml` and execute the followi
 
 .. _`Ansible Goss`: https://github.com/indusbox/goss-ansible
 .. _`Gilt`: http://gilt.readthedocs.io
+
+
+Move to Red Hat
+===============
+
+During the end of October 2018 the Molecule was moved to its new home under Ansible by Red Hat.
+
+Update Git repo location
+------------------------
+
+The Molecule project has moved:
+
+old location: ``https://github.com/metacloud/molecule``
+
+new location: ``https://github.com/ansible/molecule``
+
+If you have the source checked out you should use ``git remote set-url origin``
+to point to the new location
+
+Please follow GitHub's official `changing a remote's URL`_ guide.
+
+.. _`changing a remote's URL`: https://help.github.com/articles/changing-a-remote-s-url/
+
+New Docker location
+-------------------
+
+For people that use the Docker image, we are now publishing to a new location `Molecule on quay.io`_.
+
+old location: ``https://hub.docker.com/r/retr0h/molecule/``
+
+new location: ``https://quay.io/repository/ansible/molecule``
+
+How to use::
+
+  docker pull quay.io/ansible/molecule:latest
+
+.. _`Molecule on quay.io`: https://quay.io/repository/ansible/molecule
+
+
+Release announcements
+---------------------
+
+Want to know about releases, subscribe to `ansible-announce list`_
+
+.. _`ansible-announce list`: https://groups.google.com/group/ansible-announce
+
+Talk to us
+----------
+
+Join us in ``#ansible-molecule`` on `freenode`_, or `molecule-users Forum`_.
+
+The full list of Ansible email lists and IRC channels can be found in the `communication page`_.
+
+.. _`freenode`: https://freenode.net
+.. _`molecule-users Forum`: https://groups.google.com/forum/#!forum/molecule-users
+.. _`communication page`: https://docs.ansible.com/ansible/latest/community/communication.html
