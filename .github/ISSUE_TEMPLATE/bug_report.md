@@ -28,6 +28,8 @@ Ansible installation method (one of):
 - pip
 - OS package
 
+Detail any linters or test runners used:
+
 # Desired Behavior
 
 Please give some details of the feature being requested or what

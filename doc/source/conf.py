@@ -132,10 +132,11 @@ html_theme_options = {
     'github_user': 'ansible',
     'github_repo': 'molecule',
     'github_button': True,
-    'travis_button': False,
+    'badge_branch': 'master',
+    'travis_button': True,
     'show_powered_by': False,
     'extra_nav_links': {
-        'View on GitHub': 'https://github.com/ansible/molecule',
+    'View on GitHub': 'https://github.com/ansible/molecule',
     },
 }
 

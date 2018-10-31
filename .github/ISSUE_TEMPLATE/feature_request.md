@@ -1,6 +1,6 @@
 ---
 name: ✨ Feature request
-about: Suggest an idea for this project
+about: Suggest an idea for the Molecule project
 ---
 
 # Issue Type
@@ -30,5 +30,4 @@ Ansible installation method (one of):
 
 # Desired Behavior
 
-Please give some details of the feature being requested or what
-should happen if providing a bug report.
+Please give some details of the feature being requested
