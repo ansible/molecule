@@ -85,10 +85,6 @@ class Docker(base.Base):
             restart_policy: on-failure
             restart_retries: 1
 
-    .. code-block:: bash
-
-        $ sudo pip install docker-py
-
     Provide the files Molecule will preserve upon each subcommand execution.
 
     .. code-block:: yaml
