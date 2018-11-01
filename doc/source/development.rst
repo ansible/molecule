@@ -58,7 +58,7 @@ Post-release
 
 * Comment/close any relevant `Issues`_.
 * Announce the release in `#ansible-molecule`.
-* Announce on Google Groups: ansible-announce, molecule-users
+* Announce on Google Groups: ansible-announce, molecule-users.
 
 Roadmap
 =======
@@ -66,5 +66,5 @@ Roadmap
 * From Molecule v2.20 `GitHub Milestones`_ are used to track each release
 
 .. _`PyPI`: https://pypi.python.org/pypi/molecule
-.. _`GitHub Milestones`: `https://github.com/ansible/molecule/milestones
-.. _`Issues`: `https://github.com/ansible/molecule/issues
+.. _`GitHub Milestones`: https://github.com/ansible/molecule/milestones
+.. _`Issues`: https://github.com/ansible/molecule/issues
