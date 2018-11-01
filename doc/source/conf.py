@@ -153,8 +153,13 @@ html_theme_options = {
     'github_user': github_repo_org,
     'github_repo': github_repo_name,
     'github_button': True,
+    'github_banner': True,
+    'github_type': 'star',
+    'github_count': True,
     'badge_branch': 'master',
     'travis_button': True,
+    'codecov_button': True,
+    # 'analytics_id': ...,
     'show_powered_by': False,
     'extra_nav_links': {
         'View on GitHub': github_repo_url,
