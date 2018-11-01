@@ -12,7 +12,7 @@ Important Changes
 * Docker Container now hosted on `quay.io`_
 
 .. _`Move to Red Hat`: https://molecule.readthedocs.io/en/latest/contributing.html#move-to-red-hat
-.. _`quay.io: `https://quay.io/repository/ansible/molecule
+.. _`quay.io`: https://quay.io/repository/ansible/molecule
 
 2.19
 ====
