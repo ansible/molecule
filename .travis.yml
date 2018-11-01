@@ -1,0 +1,219 @@
+conditions: v1
+sudo: false
+
+cache:
+  pip: true
+  directories:
+  - $HOME/.cache/pre-commit
+  - $HOME/.pre-commit
+  - $HOME/virtualenv/python$(python -c 'import platform; print(platform.python_version())')
+  - $HOME/Library/Caches/Homebrew
+
+services:
+- docker
+
+language: python
+
+.mixtures:  # is not used by Travis CI, but helps avoid duplication
+- &if-cron-or-manual-run
+  if: type IN (cron, api)
+- &py-27
+  python: "2.7"
+- &py-36
+  python: "3.6"
+- &py-37
+  python: "3.7"
+  sudo: required
+  dist: xenial
+- &lint
+  <<: *py-36  # Because 3.7 requires a VM is Travis CI, which is "heavy"
+  before_install: []  # These don't require inspec+rubocop
+  before_script: []  # These don't require dynamic TOXENV
+  services: []  # Linters don't require docker
+
+jobs:
+  fast_finish: true
+
+  include:
+  - <<: *lint
+    name: linting the code
+    env:
+      TOXENV: lint
+
+  - <<: *lint
+    name: checking the code style
+    env:
+      TOXENV: format-check
+
+  - <<: *lint
+    name: checking the docs build
+    env:
+      TOXENV: doc
+
+  - <<: *py-37
+    env:
+      ANSIBLE_VERSION: "27"
+      TESTS_TYPE: unit
+
+  - <<: *py-37
+    env:
+      ANSIBLE_VERSION: "26"
+      TESTS_TYPE: unit
+
+  - <<: *py-37
+    env:
+      ANSIBLE_VERSION: "25"
+      TESTS_TYPE: unit
+
+  - <<: *py-37
+    env:
+      ANSIBLE_VERSION: "24"
+      TESTS_TYPE: unit
+
+  - <<: *py-36
+    env:
+      ANSIBLE_VERSION: "27"
+      TESTS_TYPE: unit
+
+  - <<: *py-36
+    env:
+      ANSIBLE_VERSION: "26"
+      TESTS_TYPE: unit
+
+  - <<: *py-36
+    env:
+      ANSIBLE_VERSION: "25"
+      TESTS_TYPE: unit
+
+  - <<: *py-36
+    env:
+      ANSIBLE_VERSION: "24"
+      TESTS_TYPE: unit
+
+  - <<: *py-27
+    env:
+      ANSIBLE_VERSION: "27"
+      TESTS_TYPE: unit
+
+  - <<: *py-27
+    env:
+      ANSIBLE_VERSION: "26"
+      TESTS_TYPE: unit
+
+  - <<: *py-27
+    env:
+      ANSIBLE_VERSION: "25"
+      TESTS_TYPE: unit
+
+  - <<: *py-27
+    env:
+      ANSIBLE_VERSION: "24"
+      TESTS_TYPE: unit
+
+  - <<: *py-37
+    env:
+      ANSIBLE_VERSION: "27"
+      TESTS_TYPE: functional
+
+  - <<: *py-37
+    env:
+      ANSIBLE_VERSION: "26"
+      TESTS_TYPE: functional
+
+  - <<: *py-37
+    env:
+      ANSIBLE_VERSION: "25"
+      TESTS_TYPE: functional
+
+  - <<: *py-37
+    env:
+      ANSIBLE_VERSION: "24"
+      TESTS_TYPE: functional
+
+  - <<: *py-36
+    env:
+      ANSIBLE_VERSION: "27"
+      TESTS_TYPE: functional
+
+  - <<: *py-36
+    env:
+      ANSIBLE_VERSION: "26"
+      TESTS_TYPE: functional
+
+  - <<: *py-36
+    env:
+      ANSIBLE_VERSION: "25"
+      TESTS_TYPE: functional
+
+  - <<: *py-36
+    env:
+      ANSIBLE_VERSION: "24"
+      TESTS_TYPE: functional
+
+  - <<: *py-27
+    env:
+      ANSIBLE_VERSION: "27"
+      TESTS_TYPE: functional
+
+  - <<: *py-27
+    env:
+      ANSIBLE_VERSION: "26"
+      TESTS_TYPE: functional
+
+  - <<: *py-27
+    env:
+      ANSIBLE_VERSION: "25"
+      TESTS_TYPE: functional
+
+  - <<: *py-27
+    env:
+      ANSIBLE_VERSION: "24"
+      TESTS_TYPE: functional
+
+
+  # The following set of jobs is triggered only if ran manually or by cron:
+
+  - <<: *py-37
+    <<: *if-cron-or-manual-run
+    env:
+      ANSIBLE_VERSION: devel
+      TESTS_TYPE: unit
+  - <<: *py-37
+    <<: *if-cron-or-manual-run
+    env:
+      ANSIBLE_VERSION: devel
+      TESTS_TYPE: functional
+
+  - <<: *py-36
+    <<: *if-cron-or-manual-run
+    env:
+      ANSIBLE_VERSION: devel
+      TESTS_TYPE: unit
+  - <<: *py-36
+    <<: *if-cron-or-manual-run
+    env:
+      ANSIBLE_VERSION: devel
+      TESTS_TYPE: functional
+
+  - <<: *py-27
+    <<: *if-cron-or-manual-run
+    env:
+      ANSIBLE_VERSION: devel
+      TESTS_TYPE: unit
+  - <<: *py-27
+    <<: *if-cron-or-manual-run
+    env:
+      ANSIBLE_VERSION: devel
+      TESTS_TYPE: functional
+
+env:
+  global:
+    TOXENV_TMPL: "'ansible${ANSIBLE_VERSION}-${TESTS_TYPE}'"
+before_install:
+- gem install inspec rubocop
+install:
+- pip install tox-venv
+before_script:
+- export TOXENV=$(echo $TOXENV_TMPL | envsubst)
+script:
+- tox
