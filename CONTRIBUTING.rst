@@ -49,7 +49,7 @@ To bring in updated upstream modules.  Update `gilt.yml` and execute the followi
 Move to Red Hat
 ===============
 
-During the end of October 2018 the Molecule was moved to its new home under Ansible by Red Hat.
+During the end of October 2018 the Molecule Project was moved to its new home under Ansible by Red Hat.
 
 Update Git repo location
 ------------------------
@@ -61,7 +61,7 @@ old location: ``https://github.com/metacloud/molecule``
 new location: ``https://github.com/ansible/molecule``
 
 If you have the source checked out you should use ``git remote set-url origin``
-to point to the new location
+to point to the new location.
 
 Please follow GitHub's official `changing a remote's URL`_ guide.
 
