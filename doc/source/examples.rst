@@ -4,7 +4,7 @@ Examples
 
 A good source of examples are the `scenario`_ functional tests.
 
-.. _`scenario`: https://github.com/metacloud/molecule/tree/master/test/scenarios/driver
+.. _`scenario`: https://github.com/ansible/molecule/tree/master/test/scenarios/driver
 
 Docker
 ======
@@ -12,7 +12,7 @@ Docker
 Molecule can be executed via an Alpine Linux container by leveraging dind
 (Docker in Docker).  Currently, we only build images for the latest version
 of Ansible and Molecule.  In the future we may break this out into Molecule/
-Ansible versioned pairs.  The images are located on `Docker Hub`_.
+Ansible versioned pairs.  The images are located on `quay.io`_.
 
 To test a role, change directory into the role to test, and execute Molecule as
 follows.
@@ -23,10 +23,10 @@ follows.
         -v '$(pwd)':/tmp/$(basename "${PWD}"):ro \
         -v /var/run/docker.sock:/var/run/docker.sock \
         -w /tmp/$(basename "${PWD}") \
-        retr0h/molecule:latest \
+        quay.io/ansible/molecule:latest \
         sudo molecule test
 
-.. _`Docker Hub`: https://hub.docker.com/r/retr0h/molecule/
+.. _`quay.io`: https://quay.io/repository/ansible/molecule
 
 Monolith Repo
 =============

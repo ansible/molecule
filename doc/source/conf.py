@@ -58,7 +58,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Molecule'
-copyright = u' %s, Cisco Systems, Inc.' % datetime.date.today().year
+copyright = u' %s, Red Hat Inc.' % datetime.date.today().year
 author = u'AUTHORS.rst'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -129,13 +129,14 @@ html_theme = 'alabaster'
 # html_theme_options = {}
 html_theme_options = {
     'logo': 'logo.png',
-    'github_user': 'metacloud',
+    'github_user': 'ansible',
     'github_repo': 'molecule',
     'github_button': True,
-    'travis_button': False,
+    'badge_branch': 'master',
+    'travis_button': True,
     'show_powered_by': False,
     'extra_nav_links': {
-        'View on github': 'https://github.com/metacloud/molecule',
+    'View on GitHub': 'https://github.com/ansible/molecule',
     },
 }
 

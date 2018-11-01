@@ -1,5 +1,5 @@
 FROM docker:dind
-LABEL maintainer "John Dewey <john@dewey.ws>"
+LABEL maintainer "Ansible <info@ansible.com>"
 
 ENV TEST_USER=molecule
 ENV TEST_HOME_DIR=/home/${TEST_USER}

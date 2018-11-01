@@ -69,5 +69,5 @@ Roadmap
 * See `Issues`_ on Github.com.
 
 .. _`PyPI`: https://pypi.python.org/pypi/molecule
-.. _`ISSUES`: https://github.com/metacloud/molecule/issues
+.. _`ISSUES`: https://github.com/ansible/molecule/issues
 .. _`Twine`: https://pypi.python.org/pypi/twine
