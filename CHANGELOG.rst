@@ -118,7 +118,7 @@ the Ansible team.
 ====
 
 * Add pre-validation.
-* MOLECULE_ special variables available in molecule.yml.
+* ``MOLECULE_`` special variables available in molecule.yml.
 * Log Vagrant stdout to a file in MOLECULE_EPHEMERAL_DIRECTORY.
 * Reintroduce base config merging.
 * Corrected unit tests to work with tox.
@@ -132,7 +132,7 @@ the Ansible team.
 Important Changes
 -----------------
 
-* MOLECULE_ special variables available in molecule.yml.
+* ``MOLECULE_`` special variables available in molecule.yml.
 * Molecule introduces a new CLI option `--base-config`, which is
   loaded prior to each scenario's `molecule.yml`.  This allows
   developers to specify a base config, to help reduce repetition
