@@ -78,6 +78,7 @@ extlinks = {
 
 intersphinx_mapping = {
     'ansible': ('https://docs.ansible.com/ansible/devel/', None),
+    'pip': ('https://pip.pypa.io/en/latest/', None),
     'python': ('https://docs.python.org/3', None),
     'python2': ('https://docs.python.org/2', None),
 }
