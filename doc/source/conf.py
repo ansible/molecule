@@ -36,8 +36,9 @@ sys.path.insert(0, os.path.abspath('../..'))
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx.ext.doctest',
     'sphinx.ext.coverage',
+    'sphinx.ext.doctest',
+    'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'alabaster',
 ]
@@ -60,6 +61,12 @@ master_doc = 'index'
 project = u'Molecule'
 copyright = u' %s, Red Hat Inc.' % datetime.date.today().year
 author = u'AUTHORS.rst'
+
+intersphinx_mapping = {
+    'ansible': ('https://docs.ansible.com/ansible/devel/', None),
+    'python': ('https://docs.python.org/3', None),
+    'python2': ('https://docs.python.org/2', None),
+}
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
