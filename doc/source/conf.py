@@ -38,6 +38,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.coverage',
     'sphinx.ext.doctest',
+    'sphinx.ext.extlinks',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
     'alabaster',
@@ -61,6 +62,19 @@ master_doc = 'index'
 project = u'Molecule'
 copyright = u' %s, Red Hat Inc.' % datetime.date.today().year
 author = u'AUTHORS.rst'
+
+github_url = 'https://github.com'
+github_repo_org = 'ansible'
+github_repo_name = 'molecule'
+github_repo_slug = f'{github_repo_org}/{github_repo_name}'
+github_repo_url = f'{github_url}/{github_repo_slug}'
+
+extlinks = {
+    'issue': (f'{github_repo_url}/issues/%s', '#'),
+    'pr': (f'{github_repo_url}/pull/%s', 'PR #'),
+    'commit': (f'{github_repo_url}/commit/%s', ''),
+    'gh': (f'{github_url}/%s', 'GitHub: '),
+}
 
 intersphinx_mapping = {
     'ansible': ('https://docs.ansible.com/ansible/devel/', None),
@@ -136,14 +150,14 @@ html_theme = 'alabaster'
 # html_theme_options = {}
 html_theme_options = {
     'logo': 'logo.png',
-    'github_user': 'ansible',
-    'github_repo': 'molecule',
+    'github_user': github_repo_org,
+    'github_repo': github_repo_name,
     'github_button': True,
     'badge_branch': 'master',
     'travis_button': True,
     'show_powered_by': False,
     'extra_nav_links': {
-    'View on GitHub': 'https://github.com/ansible/molecule',
+        'View on GitHub': github_repo_url,
     },
 }
 
