@@ -12,7 +12,7 @@ Requirements
 ============
 
 Depending on the driver chosen, you may need to install additional OS packages.
-See `INSTALL.rst`, which is created when initializing a new scenario.
+See ``INSTALL.rst``, which is created when initializing a new scenario.
 
 * Ansible >= 2.4
 * Python 2.7

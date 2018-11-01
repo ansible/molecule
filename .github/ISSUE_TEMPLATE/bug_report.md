@@ -10,11 +10,7 @@ about: Create a report to help us improve
 # Molecule and Ansible details
 
 ```
-ansible --version
-```
-
-```
-molecule --version
+ansible --version && molecule --version
 ```
 
 Molecule installation method (one of):

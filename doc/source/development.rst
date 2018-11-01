@@ -16,7 +16,8 @@ Release Engineering
 Pre-release
 -----------
 
-* Edit the :ref:`changelog`.
+* Ensure the `GitHub Milestones`_ is complete and closed
+* Edit the :ref:`changelog`, based on Milestone and recent commits
 * Follow the :ref:`testing` steps.
 
 Release
@@ -45,29 +46,25 @@ Upload to `PyPI`_
         $ make -f build/Makefile push
         $ make -f build/Makefile clean
 
-Upload to `Docker Hub`_
-^^^^^^^^^^^^^^^^^^^^^^^
+Docker Build
+^^^^^^^^^^^^
 
-* Build and upload to  `Docker Hub`_.
+* `Quay.io`_ automatically builds on commit and tag
 
-    .. code-block:: bash
-
-        $ make -f build/Makefile docker-build
-        $ make -f build/Makefile docker-push
-
-.. _`Docker Hub`: https://hub.docker.com/r/retr0h/molecule/
+.. _`quay.io`: https://quay.io/repository/ansible/molecule
 
 Post-release
 ------------
 
 * Comment/close any relevant `Issues`_.
-* Announce the release in `#molecule-users`.
+* Announce the release in `#ansible-molecule`.
+* Announce on Google Groups: ansible-announce, molecule-users
 
 Roadmap
 =======
 
-* See `Issues`_ on Github.com.
+* From Molecule v2.20 `GitHub Milestones`_ are used to track each release
 
 .. _`PyPI`: https://pypi.python.org/pypi/molecule
-.. _`ISSUES`: https://github.com/ansible/molecule/issues
-.. _`Twine`: https://pypi.python.org/pypi/twine
+.. _`GitHub Milestones`: `https://github.com/ansible/molecule/milestones
+.. _`Issues`: `https://github.com/ansible/molecule/issues
