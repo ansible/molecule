@@ -1169,7 +1169,7 @@ Breaking Changes
 * Fixed incorrect messaging in _print_valid_providers().
 * Fixed edge case in vagrantfile template to make sure we always have default
   cpus/memory set for virtualbox instances.
-* Leveraged new config flexibility to clean up old hack for `molecule init`.
+* Leveraged new config flexibility to clean up old hack for ``molecule init``.
 * Fixed utility test for deep_merge that was failing.
 * Made print_line two different functions for stdout and stderr.
 * Updated print functions to be Python 3 ready.
