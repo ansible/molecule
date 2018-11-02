@@ -304,3 +304,22 @@ def supports_gce():
 def supports_openstack():
     # FIXME: come up with an actual check
     return not IS_TRAVIS  # FIXME: Travis CI
+
+
+@pytest.helpers.register
+def has_inspec():
+    return distutils.spawn.find_executable('inspec')
+
+
+@pytest.helpers.register
+def has_rubocop():
+    return distutils.spawn.find_executable('rubocop')
+
+
+needs_inspec = pytest.mark.skipif(
+    not has_inspec(),
+    reason='Needs inspec to be pre-installed and available in $PATH')
+
+needs_rubocop = pytest.mark.skipif(
+    not has_rubocop(),
+    reason='Needs rubocop to be pre-installed and available in $PATH')
