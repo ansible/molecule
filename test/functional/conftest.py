@@ -33,6 +33,8 @@ from ..conftest import change_dir_to
 
 LOG = logger.get_logger(__name__)
 
+IS_TRAVIS = os.getenv('TRAVIS') and os.getenv('CI')
+
 
 @pytest.fixture
 def with_scenario(request, scenario_to_test, driver_name, scenario_name,
@@ -59,9 +61,13 @@ def skip_test(request, driver_name):
     msg_tmpl = ("Ignoring '{}' tests for now" if driver_name == 'delegated'
                 else "Skipped '{}' not supported")
     support_checks_map = {
+        'azure': supports_azure,
         'docker': supports_docker,
+        'ec2': supports_ec2,
+        'gce': supports_gce,
         'lxc': supports_lxc,
         'lxd': supports_lxd,
+        'openstack': supports_openstack,
         'vagrant': supports_vagrant_virtualbox,
         'delegated': demands_delegated,
     }
@@ -262,7 +268,8 @@ def supports_lxc():
 
 @pytest.helpers.register
 def supports_lxd():
-    return get_lxd_executable()
+    # FIXME: Travis CI
+    return not IS_TRAVIS and get_lxd_executable()
 
 
 @pytest.helpers.register
@@ -273,3 +280,27 @@ def supports_vagrant_virtualbox():
 @pytest.helpers.register
 def demands_delegated():
     return pytest.config.getoption('--delegated')
+
+
+@pytest.helpers.register
+def supports_azure():
+    # FIXME: come up with an actual check
+    return not IS_TRAVIS  # FIXME: Travis CI
+
+
+@pytest.helpers.register
+def supports_ec2():
+    # FIXME: come up with an actual check
+    return not IS_TRAVIS  # FIXME: Travis CI
+
+
+@pytest.helpers.register
+def supports_gce():
+    # FIXME: come up with an actual check
+    return not IS_TRAVIS  # FIXME: Travis CI
+
+
+@pytest.helpers.register
+def supports_openstack():
+    # FIXME: come up with an actual check
+    return not IS_TRAVIS  # FIXME: Travis CI
