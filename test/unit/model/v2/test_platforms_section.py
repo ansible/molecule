@@ -97,6 +97,8 @@ def _model_platforms_docker_section_data():
             ],
             'network_mode':
             'mode',
+            'purge_networks':
+            True,
             'foo':
             'bar'
         }]
@@ -161,6 +163,7 @@ def _model_platforms_docker_errors_section_data():
                 },
             ],
             'network_mode': int(),
+            'purge_networks': int(),
         }]
     }
 
@@ -213,6 +216,7 @@ def test_platforms_docker_has_errors(_config):
                     }]
                 }],
                 'network_mode': ['must be of string type'],
+                'purge_networks': ['must be of boolean type'],
                 'ulimits': [{
                     0: ['must be of string type']
                 }],

@@ -715,6 +715,9 @@ platforms_docker_schema = {
                 'network_mode': {
                     'type': 'string',
                 },
+                'purge_networks': {
+                    'type': 'boolean',
+                }
             }
         }
     },

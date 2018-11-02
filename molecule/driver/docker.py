@@ -79,6 +79,7 @@ class Docker(base.Base):
               - name: foo
               - name: bar
             network_mode: host
+            purge_networks: true
             docker_host: tcp://localhost:12376
             env:
               FOO: bar
