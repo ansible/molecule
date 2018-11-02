@@ -1,4 +1,5 @@
 #  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2018 Red Hat, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -55,17 +56,21 @@ def with_scenario(request, scenario_to_test, driver_name, scenario_name,
 
 @pytest.fixture
 def skip_test(request, driver_name):
-    if (driver_name == 'docker' and not supports_docker()):
-        pytest.skip("Skipped '{}' not supported".format(driver_name))
-    elif (driver_name == 'lxc' and not supports_lxc()):
-        pytest.skip("skipped '{}' not supported".format(driver_name))
-    elif (driver_name == 'lxd' and not supports_lxd()):
-        pytest.skip("Skipped '{}' not supported".format(driver_name))
-    elif (driver_name == 'vagrant' and not supports_vagrant_virtualbox()):
-        pytest.skip("Skipped '{}' not supported".format(driver_name))
-    elif driver_name == 'delegated':
-        if not pytest.config.getoption('--delegated'):
-            pytest.skip("Ignoring '{}' tests for now".format(driver_name))
+    msg_tmpl = ("Ignoring '{}' tests for now" if driver_name == 'delegated'
+                else "Skipped '{}' not supported")
+    support_checks_map = {
+        'docker': supports_docker,
+        'lxc': supports_lxc,
+        'lxd': supports_lxd,
+        'vagrant': supports_vagrant_virtualbox,
+        'delegated': demands_delegated,
+    }
+    try:
+        check_func = support_checks_map[driver_name]
+        if not check_func():
+            pytest.skip(msg_tmpl.format(driver_name))
+    except KeyError:
+        pass
 
 
 @pytest.helpers.register
@@ -263,3 +268,8 @@ def supports_lxd():
 @pytest.helpers.register
 def supports_vagrant_virtualbox():
     return (get_vagrant_executable() or get_virtualbox_executable())
+
+
+@pytest.helpers.register
+def demands_delegated():
+    return pytest.config.getoption('--delegated')
