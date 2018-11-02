@@ -160,7 +160,7 @@ html_theme_options = {
     'badge_branch': 'master',
     'travis_button': True,
     'codecov_button': True,
-    # 'analytics_id': ...,
+    'analytics_id': 'UA-128382387-1',
     'show_powered_by': False,
     'extra_nav_links': {
         'View on GitHub': github_repo_url,
