@@ -27,7 +27,7 @@ import shutil
 
 from molecule import util
 
-from ..conftest import change_dir_to
+from ..conftest import change_dir_to, needs_inspec, needs_rubocop
 
 
 @pytest.fixture
@@ -66,6 +66,8 @@ def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
     pytest.helpers.run_command(cmd)
 
 
+@needs_inspec
+@needs_rubocop
 def test_command_init_role_inspec(temp_dir):
     role_directory = os.path.join(temp_dir.strpath, 'test-init')
     options = {

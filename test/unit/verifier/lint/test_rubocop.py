@@ -22,6 +22,10 @@ import sh
 from molecule import config
 from molecule.verifier.lint import rubocop
 
+from test.functional.conftest import needs_rubocop
+
+pytestmark = needs_rubocop
+
 
 @pytest.fixture
 def _patched_get_tests(mocker):
