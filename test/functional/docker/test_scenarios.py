@@ -27,6 +27,8 @@ import shutil
 
 from molecule import util
 
+from ..conftest import change_dir_to
+
 
 @pytest.fixture
 def scenario_to_test(request):
@@ -73,9 +75,8 @@ def test_command_init_role_inspec(temp_dir):
     cmd = sh.molecule.bake('init', 'role', **options)
     pytest.helpers.run_command(cmd)
 
-    os.chdir(role_directory)
-
-    sh.molecule('test')
+    with change_dir_to(role_directory):
+        sh.molecule('test')
 
 
 def test_command_init_scenario_inspec(temp_dir):
@@ -86,19 +87,18 @@ def test_command_init_scenario_inspec(temp_dir):
     pytest.helpers.run_command(cmd)
 
     role_directory = os.path.join(temp_dir.strpath, 'test-init')
-    os.chdir(role_directory)
+    with change_dir_to(role_directory):
+        molecule_directory = pytest.helpers.molecule_directory()
+        scenario_directory = os.path.join(molecule_directory, 'test-scenario')
+        options = {
+            'scenario_name': 'test-scenario',
+            'role_name': 'test-init',
+            'verifier_name': 'inspec',
+        }
+        cmd = sh.molecule.bake('init', 'scenario', **options)
+        pytest.helpers.run_command(cmd)
 
-    molecule_directory = pytest.helpers.molecule_directory()
-    scenario_directory = os.path.join(molecule_directory, 'test-scenario')
-    options = {
-        'scenario_name': 'test-scenario',
-        'role_name': 'test-init',
-        'verifier_name': 'inspec',
-    }
-    cmd = sh.molecule.bake('init', 'scenario', **options)
-    pytest.helpers.run_command(cmd)
-
-    assert os.path.isdir(scenario_directory)
+        assert os.path.isdir(scenario_directory)
 
 
 def test_command_init_role_goss(temp_dir):
@@ -110,9 +110,8 @@ def test_command_init_role_goss(temp_dir):
     cmd = sh.molecule.bake('init', 'role', **options)
     pytest.helpers.run_command(cmd)
 
-    os.chdir(role_directory)
-
-    sh.molecule('test')
+    with change_dir_to(role_directory):
+        sh.molecule('test')
 
 
 def test_command_init_scenario_goss(temp_dir):
@@ -123,19 +122,18 @@ def test_command_init_scenario_goss(temp_dir):
     pytest.helpers.run_command(cmd)
 
     role_directory = os.path.join(temp_dir.strpath, 'test-init')
-    os.chdir(role_directory)
+    with change_dir_to(role_directory):
+        molecule_directory = pytest.helpers.molecule_directory()
+        scenario_directory = os.path.join(molecule_directory, 'test-scenario')
+        options = {
+            'scenario_name': 'test-scenario',
+            'role_name': 'test-init',
+            'verifier_name': 'goss',
+        }
+        cmd = sh.molecule.bake('init', 'scenario', **options)
+        pytest.helpers.run_command(cmd)
 
-    molecule_directory = pytest.helpers.molecule_directory()
-    scenario_directory = os.path.join(molecule_directory, 'test-scenario')
-    options = {
-        'scenario_name': 'test-scenario',
-        'role_name': 'test-init',
-        'verifier_name': 'goss',
-    }
-    cmd = sh.molecule.bake('init', 'scenario', **options)
-    pytest.helpers.run_command(cmd)
-
-    assert os.path.isdir(scenario_directory)
+        assert os.path.isdir(scenario_directory)
 
 
 def test_command_init_scenario_with_invalid_role_raises(temp_dir):
@@ -146,19 +144,18 @@ def test_command_init_scenario_with_invalid_role_raises(temp_dir):
     pytest.helpers.run_command(cmd)
 
     role_directory = os.path.join(temp_dir.strpath, 'test-role')
-    os.chdir(role_directory)
+    with change_dir_to(role_directory):
+        options = {
+            'scenario_name': 'default',
+            'role_name': 'invalid-role-name',
+        }
+        with pytest.raises(sh.ErrorReturnCode) as e:
+            cmd = sh.molecule.bake('init', 'scenario', **options)
+            pytest.helpers.run_command(cmd, log=False)
 
-    options = {
-        'scenario_name': 'default',
-        'role_name': 'invalid-role-name',
-    }
-    with pytest.raises(sh.ErrorReturnCode) as e:
-        cmd = sh.molecule.bake('init', 'scenario', **options)
-        pytest.helpers.run_command(cmd, log=False)
-
-    msg = ("ERROR: The role 'invalid-role-name' not found. "
-           'Please choose the proper role name.')
-    assert msg in str(e.value.stderr)
+        msg = ("ERROR: The role 'invalid-role-name' not found. "
+               'Please choose the proper role name.')
+        assert msg in str(e.value.stderr)
 
 
 def test_command_init_scenario_as_default_without_default_scenario(temp_dir):
@@ -169,20 +166,19 @@ def test_command_init_scenario_as_default_without_default_scenario(temp_dir):
     pytest.helpers.run_command(cmd)
 
     role_directory = os.path.join(temp_dir.strpath, 'test-role')
-    os.chdir(role_directory)
+    with change_dir_to(role_directory):
+        molecule_directory = pytest.helpers.molecule_directory()
+        scenario_directory = os.path.join(molecule_directory, 'default')
+        shutil.rmtree(scenario_directory)
 
-    molecule_directory = pytest.helpers.molecule_directory()
-    scenario_directory = os.path.join(molecule_directory, 'default')
-    shutil.rmtree(scenario_directory)
+        options = {
+            'scenario_name': 'default',
+            'role_name': 'test-role',
+        }
+        cmd = sh.molecule.bake('init', 'scenario', **options)
+        pytest.helpers.run_command(cmd)
 
-    options = {
-        'scenario_name': 'default',
-        'role_name': 'test-role',
-    }
-    cmd = sh.molecule.bake('init', 'scenario', **options)
-    pytest.helpers.run_command(cmd)
-
-    assert os.path.isdir(scenario_directory)
+        assert os.path.isdir(scenario_directory)
 
 
 # NOTE(retr0h): Molecule does not allow the creation of a role without
@@ -195,23 +191,22 @@ def test_command_init_scenario_without_default_scenario_raises(temp_dir):
     pytest.helpers.run_command(cmd)
 
     role_directory = os.path.join(temp_dir.strpath, 'test-role')
-    os.chdir(role_directory)
+    with change_dir_to(role_directory):
+        molecule_directory = pytest.helpers.molecule_directory()
+        scenario_directory = os.path.join(molecule_directory, 'default')
+        shutil.rmtree(scenario_directory)
 
-    molecule_directory = pytest.helpers.molecule_directory()
-    scenario_directory = os.path.join(molecule_directory, 'default')
-    shutil.rmtree(scenario_directory)
+        options = {
+            'scenario_name': 'invalid-role-name',
+            'role_name': 'test-role',
+        }
+        with pytest.raises(sh.ErrorReturnCode) as e:
+            cmd = sh.molecule.bake('init', 'scenario', **options)
+            pytest.helpers.run_command(cmd, log=False)
 
-    options = {
-        'scenario_name': 'invalid-role-name',
-        'role_name': 'test-role',
-    }
-    with pytest.raises(sh.ErrorReturnCode) as e:
-        cmd = sh.molecule.bake('init', 'scenario', **options)
-        pytest.helpers.run_command(cmd, log=False)
-
-    msg = ('The default scenario not found.  Please create a scenario '
-           "named 'default' first.")
-    assert msg in str(e.value.stderr)
+        msg = ('The default scenario not found.  Please create a scenario '
+               "named 'default' first.")
+        assert msg in str(e.value.stderr)
 
 
 def test_command_init_role_with_template(temp_dir):
@@ -226,9 +221,8 @@ def test_command_init_role_with_template(temp_dir):
     cmd = sh.molecule.bake('init', 'template', **options)
     pytest.helpers.run_command(cmd)
 
-    os.chdir(role_directory)
-
-    sh.molecule('test')
+    with change_dir_to(role_directory):
+        sh.molecule('test')
 
 
 @pytest.mark.parametrize(

@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import contextlib
 import os
 import random
 import shutil
@@ -52,17 +53,20 @@ def random_string(l=5):
     return ''.join(random.choice(string.ascii_uppercase) for _ in range(l))
 
 
+@contextlib.contextmanager
+def change_dir_to(dir_name):
+    cwd = os.getcwd()
+    os.chdir(dir_name)
+    yield
+    os.chdir(cwd)
+
+
 @pytest.fixture
 def temp_dir(tmpdir, random_string, request):
     directory = tmpdir.mkdir(random_string)
-    os.chdir(directory.strpath)
 
-    def cleanup():
-        shutil.rmtree(directory.strpath)
-
-    request.addfinalizer(cleanup)
-
-    return directory
+    with change_dir_to(directory.strpath):
+        yield directory
 
 
 @pytest.helpers.register

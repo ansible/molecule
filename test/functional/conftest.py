@@ -28,6 +28,8 @@ import sh
 from molecule import logger
 from molecule import util
 
+from ..conftest import change_dir_to
+
 LOG = logger.get_logger(__name__)
 
 
@@ -38,9 +40,8 @@ def with_scenario(request, scenario_to_test, driver_name, scenario_name,
         os.path.dirname(util.abs_path(__file__)), os.path.pardir, 'scenarios',
         scenario_to_test)
 
-    os.chdir(scenario_directory)
-
-    def cleanup():
+    with change_dir_to(scenario_directory):
+        yield
         if scenario_name:
             msg = 'CLEANUP: Destroying instances for all scenario(s)'
             LOG.out(msg)
@@ -50,8 +51,6 @@ def with_scenario(request, scenario_to_test, driver_name, scenario_name,
             }
             cmd = sh.molecule.bake('destroy', **options)
             pytest.helpers.run_command(cmd)
-
-    request.addfinalizer(cleanup)
 
 
 @pytest.fixture
@@ -100,12 +99,12 @@ def init_role(temp_dir, driver_name):
     })
     pytest.helpers.run_command(cmd)
 
-    os.chdir(role_directory)
-    options = {
-        'all': True,
-    }
-    cmd = sh.molecule.bake('test', **options)
-    pytest.helpers.run_command(cmd)
+    with change_dir_to(role_directory):
+        options = {
+            'all': True,
+        }
+        cmd = sh.molecule.bake('test', **options)
+        pytest.helpers.run_command(cmd)
 
 
 @pytest.helpers.register
@@ -117,27 +116,27 @@ def init_scenario(temp_dir, driver_name):
         'role-name': 'test-init'
     })
     pytest.helpers.run_command(cmd)
-    os.chdir(role_directory)
 
-    # Create scenario
-    molecule_directory = pytest.helpers.molecule_directory()
-    scenario_directory = os.path.join(molecule_directory, 'test-scenario')
+    with change_dir_to(role_directory):
+        # Create scenario
+        molecule_directory = pytest.helpers.molecule_directory()
+        scenario_directory = os.path.join(molecule_directory, 'test-scenario')
 
-    options = {
-        'scenario_name': 'test-scenario',
-        'role_name': 'test-init',
-    }
-    cmd = sh.molecule.bake('init', 'scenario', **options)
-    pytest.helpers.run_command(cmd)
+        options = {
+            'scenario_name': 'test-scenario',
+            'role_name': 'test-init',
+        }
+        cmd = sh.molecule.bake('init', 'scenario', **options)
+        pytest.helpers.run_command(cmd)
 
-    assert os.path.isdir(scenario_directory)
+        assert os.path.isdir(scenario_directory)
 
-    options = {
-        'scenario_name': 'test-scenario',
-        'all': True,
-    }
-    cmd = sh.molecule.bake('test', **options)
-    pytest.helpers.run_command(cmd)
+        options = {
+            'scenario_name': 'test-scenario',
+            'all': True,
+        }
+        cmd = sh.molecule.bake('test', **options)
+        pytest.helpers.run_command(cmd)
 
 
 @pytest.helpers.register
