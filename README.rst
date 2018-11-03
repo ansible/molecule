@@ -10,6 +10,9 @@ Molecule
    :target: https://molecule.readthedocs.io/en/latest/
    :alt: Documentation Status
 
+.. image:: https://img.shields.io/travis/com/ansible/molecule/master.svg?label=Linux%20builds%20%40%20Travis%20CI
+   :target: https://travis-ci.com/ansible/molecule
+
 .. image:: https://img.shields.io/badge/Code%20of%20Conduct-Ansible-silver.svg
    :target: https://docs.ansible.com/ansible/latest/community/code_of_conduct.html
    :alt: Ansible Code of Conduct
