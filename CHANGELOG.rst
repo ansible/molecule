@@ -13,6 +13,7 @@ Important Changes
 
 .. _`Move to Red Hat`: https://molecule.readthedocs.io/en/latest/contributing.html#move-to-red-hat
 .. _`quay.io`: https://quay.io/repository/ansible/molecule
+.. Molecule can now be called as a python module (python -m molecule)
 
 2.19
 ====
