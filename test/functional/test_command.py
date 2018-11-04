@@ -24,6 +24,10 @@ import tempfile
 import pytest
 import sh
 
+from .conftest import skip_unsupported_matrix
+
+pytestmark = skip_unsupported_matrix
+
 
 @pytest.fixture
 def scenario_to_test(request):
