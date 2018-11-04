@@ -5,6 +5,10 @@ History
 Unreleased
 ==========
 
+* Molecule can now be called as a python module (python -m molecule). Patch by `@ssbarnea`_.
+
+.. _`@ssbarnea`: https://github.com/ssbarnea
+
 Important Changes
 -----------------
 
@@ -13,7 +17,6 @@ Important Changes
 
 .. _`Move to Red Hat`: https://molecule.readthedocs.io/en/latest/contributing.html#move-to-red-hat
 .. _`quay.io`: https://quay.io/repository/ansible/molecule
-.. Molecule can now be called as a python module (python -m molecule)
 
 2.19
 ====
