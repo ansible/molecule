@@ -14,7 +14,7 @@ Requirements
 Depending on the driver chosen, you may need to install additional OS packages.
 See ``INSTALL.rst``, which is created when initializing a new scenario.
 
-* Ansible >= 2.4
+* :std:doc:`Ansible <ansible:index>` >= 2.4
 * Python 2.7
 * Python >= 3.6 with Ansible >= 2.4
 
@@ -37,7 +37,7 @@ Ubuntu 16.x
 Pip
 ===
 
-Pip is the only supported installation method.
+:std:doc:`pip <pip:usage>` is the only supported installation method.
 
 Requirements
 ------------

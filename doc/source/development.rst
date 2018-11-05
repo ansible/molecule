@@ -16,8 +16,8 @@ Release Engineering
 Pre-release
 -----------
 
-* Ensure the `GitHub Milestones`_ is complete and closed
-* Edit the :ref:`changelog`, based on Milestone and recent commits
+* Ensure the `GitHub Milestones`_ is complete and closed.
+* Edit the :ref:`changelog`, based on Milestone and recent commits.
 * Follow the :ref:`testing` steps.
 
 Release
@@ -57,7 +57,7 @@ Post-release
 ------------
 
 * Comment/close any relevant `Issues`_.
-* Announce the release in `#ansible-molecule`.
+* Announce the release in ``#ansible-molecule``.
 * Announce on Google Groups: ansible-announce, molecule-users.
 
 Roadmap
@@ -65,6 +65,6 @@ Roadmap
 
 * From Molecule v2.20 `GitHub Milestones`_ are used to track each release
 
-.. _`PyPI`: https://pypi.python.org/pypi/molecule
+.. _`PyPI`: https://pypi.org/project/molecule
 .. _`GitHub Milestones`: https://github.com/ansible/molecule/milestones
 .. _`Issues`: https://github.com/ansible/molecule/issues
