@@ -11,7 +11,7 @@
     goss_version: v0.3.6
     goss_arch: amd64
     goss_dst: /usr/local/bin/goss
-    goss_sha256sum: 2f6727375db2ea0f81bee36e2c5be78ab5ab8d5981f632f761b25e4003e190ec
+    goss_sha256sum: 53dd1156ab66f2c4275fd847372e6329d895cfb2f0bcbec5f86c1c4df7236dde
     goss_url: "https://github.com/aelsabbahy/goss/releases/download/{{ goss_version }}/goss-linux-{{ goss_arch }}"
     goss_test_directory: /tmp
     goss_format: documentation
