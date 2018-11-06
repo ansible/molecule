@@ -8,7 +8,7 @@ cookiecutter==1.6.0
 flake8==3.5.0
 python-gilt==1.2.1
 Jinja2==2.10
-pbr==4.1.0
+pbr==5.1.1
 pexpect==4.6.0
 psutil==5.4.6; sys_platform!="win32" and sys_platform!="cygwin"
 PyYAML==3.13
