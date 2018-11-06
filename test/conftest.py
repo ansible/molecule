@@ -105,3 +105,21 @@ def molecule_ephemeral_directory():
 def pytest_addoption(parser):
     parser.addoption(
         '--delegated', action='store_true', help='Run delegated driver tests.')
+    parser.addoption(
+        '--shards-count',
+        type=int,
+        default=int(os.getenv('PYTEST_SHARDS_COUNT', 6)),
+        help='Add markers as follows: shard_{n}_of_{shards-count}',
+    )
+
+
+def pytest_collection_modifyitems(items):
+    shards_num = pytest.config.getoption('--shards-count')
+    for test_counter, item in enumerate(items):
+        shard_id = test_counter % shards_num + 1
+        marker = getattr(pytest.mark, 'shard_{}_of_{}'.format(
+            shard_id,
+            shards_num,
+        ))
+        item.add_marker(marker)
+    del marker
