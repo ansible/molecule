@@ -99,31 +99,109 @@ jobs:
     env:
       ANSIBLE_VERSION: "27"
       TESTS_TYPE: functional
+      PYTEST_ADDOPTS: "'--test-group=1 --test-group-count=3'"
+
+  - <<: *py-37
+    env:
+      ANSIBLE_VERSION: "27"
+      TESTS_TYPE: functional
+      PYTEST_ADDOPTS: "'--test-group=2 --test-group-count=3'"
+
+  - <<: *py-37
+    env:
+      ANSIBLE_VERSION: "27"
+      TESTS_TYPE: functional
+      PYTEST_ADDOPTS: "'--test-group=3 --test-group-count=3'"
 
   - <<: *py-37
     env:
       ANSIBLE_VERSION: "26"
       TESTS_TYPE: functional
+      PYTEST_ADDOPTS: "'--test-group=1 --test-group-count=3'"
+
+  - <<: *py-37
+    env:
+      ANSIBLE_VERSION: "26"
+      TESTS_TYPE: functional
+      PYTEST_ADDOPTS: "'--test-group=2 --test-group-count=3'"
+
+  - <<: *py-37
+    env:
+      ANSIBLE_VERSION: "26"
+      TESTS_TYPE: functional
+      PYTEST_ADDOPTS: "'--test-group=3 --test-group-count=3'"
 
   - <<: *py-37
     env:
       ANSIBLE_VERSION: "25"
       TESTS_TYPE: functional
+      PYTEST_ADDOPTS: "'--test-group=1 --test-group-count=3'"
+
+  - <<: *py-37
+    env:
+      ANSIBLE_VERSION: "25"
+      TESTS_TYPE: functional
+      PYTEST_ADDOPTS: "'--test-group=2 --test-group-count=3'"
+
+  - <<: *py-37
+    env:
+      ANSIBLE_VERSION: "25"
+      TESTS_TYPE: functional
+      PYTEST_ADDOPTS: "'--test-group=3 --test-group-count=3'"
 
   - <<: *py-36
     env:
       ANSIBLE_VERSION: "27"
       TESTS_TYPE: functional
+      PYTEST_ADDOPTS: "'--test-group=1 --test-group-count=3'"
+
+  - <<: *py-36
+    env:
+      ANSIBLE_VERSION: "27"
+      TESTS_TYPE: functional
+      PYTEST_ADDOPTS: "'--test-group=2 --test-group-count=3'"
+
+  - <<: *py-36
+    env:
+      ANSIBLE_VERSION: "27"
+      TESTS_TYPE: functional
+      PYTEST_ADDOPTS: "'--test-group=3 --test-group-count=3'"
 
   - <<: *py-36
     env:
       ANSIBLE_VERSION: "26"
       TESTS_TYPE: functional
+      PYTEST_ADDOPTS: "'--test-group=1 --test-group-count=3'"
+
+  - <<: *py-36
+    env:
+      ANSIBLE_VERSION: "26"
+      TESTS_TYPE: functional
+      PYTEST_ADDOPTS: "'--test-group=2 --test-group-count=3'"
+
+  - <<: *py-36
+    env:
+      ANSIBLE_VERSION: "26"
+      TESTS_TYPE: functional
+      PYTEST_ADDOPTS: "'--test-group=3 --test-group-count=3'"
 
   - <<: *py-36
     env:
       ANSIBLE_VERSION: "25"
       TESTS_TYPE: functional
+      PYTEST_ADDOPTS: "'--test-group=1 --test-group-count=3'"
+
+  - <<: *py-36
+    env:
+      ANSIBLE_VERSION: "25"
+      TESTS_TYPE: functional
+      PYTEST_ADDOPTS: "'--test-group=2 --test-group-count=3'"
+
+  - <<: *py-36
+    env:
+      ANSIBLE_VERSION: "25"
+      TESTS_TYPE: functional
+      PYTEST_ADDOPTS: "'--test-group=3 --test-group-count=3'"
 
   - <<: *py-27
     env:

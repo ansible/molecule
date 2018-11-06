@@ -11,6 +11,7 @@ pytest==3.0.7
 pytest-cov
 pytest-helpers-namespace
 pytest-mock
+pytest-test-groups
 pytest-verbose-parametrize
 python-vagrant
 # The error was: KeyError: 'created_at'
