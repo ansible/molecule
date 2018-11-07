@@ -99,126 +99,108 @@ jobs:
     env:
       ANSIBLE_VERSION: "27"
       TESTS_TYPE: functional
-      PYTEST_SHARDS_COUNT: "3"
       PYTEST_ADDOPTS: "'-m shard_1_of_3'"
 
   - <<: *py-37
     env:
       ANSIBLE_VERSION: "27"
       TESTS_TYPE: functional
-      PYTEST_SHARDS_COUNT: "3"
       PYTEST_ADDOPTS: "'-m shard_2_of_3'"
 
   - <<: *py-37
     env:
       ANSIBLE_VERSION: "27"
       TESTS_TYPE: functional
-      PYTEST_SHARDS_COUNT: "3"
       PYTEST_ADDOPTS: "'-m shard_3_of_3'"
 
   - <<: *py-37
     env:
       ANSIBLE_VERSION: "26"
       TESTS_TYPE: functional
-      PYTEST_SHARDS_COUNT: "3"
       PYTEST_ADDOPTS: "'-m shard_1_of_3'"
 
   - <<: *py-37
     env:
       ANSIBLE_VERSION: "26"
       TESTS_TYPE: functional
-      PYTEST_SHARDS_COUNT: "3"
       PYTEST_ADDOPTS: "'-m shard_2_of_3'"
 
   - <<: *py-37
     env:
       ANSIBLE_VERSION: "26"
       TESTS_TYPE: functional
-      PYTEST_SHARDS_COUNT: "3"
       PYTEST_ADDOPTS: "'-m shard_3_of_3'"
 
   - <<: *py-37
     env:
       ANSIBLE_VERSION: "25"
       TESTS_TYPE: functional
-      PYTEST_SHARDS_COUNT: "3"
       PYTEST_ADDOPTS: "'-m shard_1_of_3'"
 
   - <<: *py-37
     env:
       ANSIBLE_VERSION: "25"
       TESTS_TYPE: functional
-      PYTEST_SHARDS_COUNT: "3"
       PYTEST_ADDOPTS: "'-m shard_2_of_3'"
 
   - <<: *py-37
     env:
       ANSIBLE_VERSION: "25"
       TESTS_TYPE: functional
-      PYTEST_SHARDS_COUNT: "3"
       PYTEST_ADDOPTS: "'-m shard_3_of_3'"
 
   - <<: *py-36
     env:
       ANSIBLE_VERSION: "27"
       TESTS_TYPE: functional
-      PYTEST_SHARDS_COUNT: "3"
       PYTEST_ADDOPTS: "'-m shard_1_of_3'"
 
   - <<: *py-36
     env:
       ANSIBLE_VERSION: "27"
       TESTS_TYPE: functional
-      PYTEST_SHARDS_COUNT: "3"
       PYTEST_ADDOPTS: "'-m shard_2_of_3'"
 
   - <<: *py-36
     env:
       ANSIBLE_VERSION: "27"
       TESTS_TYPE: functional
-      PYTEST_SHARDS_COUNT: "3"
       PYTEST_ADDOPTS: "'-m shard_3_of_3'"
 
   - <<: *py-36
     env:
       ANSIBLE_VERSION: "26"
       TESTS_TYPE: functional
-      PYTEST_SHARDS_COUNT: "3"
       PYTEST_ADDOPTS: "'-m shard_1_of_3'"
 
   - <<: *py-36
     env:
       ANSIBLE_VERSION: "26"
       TESTS_TYPE: functional
-      PYTEST_SHARDS_COUNT: "3"
       PYTEST_ADDOPTS: "'-m shard_2_of_3'"
 
   - <<: *py-36
     env:
       ANSIBLE_VERSION: "26"
       TESTS_TYPE: functional
-      PYTEST_SHARDS_COUNT: "3"
       PYTEST_ADDOPTS: "'-m shard_3_of_3'"
 
   - <<: *py-36
     env:
       ANSIBLE_VERSION: "25"
       TESTS_TYPE: functional
-      PYTEST_SHARDS_COUNT: "3"
       PYTEST_ADDOPTS: "'-m shard_1_of_3'"
 
   - <<: *py-36
     env:
       ANSIBLE_VERSION: "25"
       TESTS_TYPE: functional
-      PYTEST_SHARDS_COUNT: "3"
       PYTEST_ADDOPTS: "'-m shard_2_of_3'"
 
   - <<: *py-36
     env:
       ANSIBLE_VERSION: "25"
       TESTS_TYPE: functional
-      PYTEST_SHARDS_COUNT: "3"
       PYTEST_ADDOPTS: "'-m shard_3_of_3'"
 
   - <<: *py-27
