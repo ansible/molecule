@@ -136,3 +136,10 @@ def pytest_collection_modifyitems(items):
     del marker
     print('Running sharded test group #{} out of {}'.format(
         shard_id, shards_num))
+
+
+def pytest_sessionstart():
+    """Make PYTEST_* env vars inaccessible to subprocesses."""
+    for var_name in list(os.environ):
+        if var_name.startswith('PYTEST_'):
+            del os.environ[var_name]
