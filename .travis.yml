@@ -27,6 +27,7 @@ language: python
   dist: xenial
 - &lint
   <<: *py-36  # Because 3.7 requires a VM is Travis CI, which is "heavy"
+  addons: {}  # Linters don't require extra OS packages
   before_install: []  # These don't require inspec+rubocop and dynamic TOXENV
   services: []  # Linters don't require docker
 - &env-functional
@@ -292,6 +293,10 @@ jobs:
 env:
   global:
     TOXENV_TMPL: "'ansible${ANSIBLE_VERSION}-${TESTS_TYPE}'"
+addons:
+  apt:
+    packages:
+    - lxc-dev
 before_install:
 - gem install inspec rubocop
 - export TOXENV=$(echo $TOXENV_TMPL | envsubst)
