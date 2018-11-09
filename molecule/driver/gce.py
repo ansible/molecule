@@ -49,7 +49,7 @@ class GCE(base.Base):
 
     .. code-block:: bash
 
-        $ sudo pip install apache-libcloud
+        $ pip install molecule[gce]
 
     Change the options passed to the ssh client.
 
