@@ -105,3 +105,42 @@ def molecule_ephemeral_directory():
 def pytest_addoption(parser):
     parser.addoption(
         '--delegated', action='store_true', help='Run delegated driver tests.')
+
+
+def pytest_collection_modifyitems(items):
+    marker = pytest.config.getoption('-m')
+    is_sharded = False
+    shard_id = 0
+    shards_num = 0
+    if not marker.startswith('shard_'):
+        return
+    shard_id, _, shards_num = marker[6:].partition('_of_')
+    if shards_num:
+        shard_id = int(shard_id)
+        shards_num = int(shards_num)
+        is_sharded = True
+    else:
+        raise ValueError('shard_{}_of_{} marker is invalid')
+    if not is_sharded:
+        return
+    if not (0 < shard_id <= shards_num):
+        raise ValueError(
+            'shard_id must be greater than 0 and not bigger than shards_num')
+    for test_counter, item in enumerate(items):
+        cur_shard_id = test_counter % shards_num + 1
+        marker = getattr(pytest.mark, 'shard_{}_of_{}'.format(
+            cur_shard_id,
+            shards_num,
+        ))
+        item.add_marker(marker)
+    del marker
+    print('Running sharded test group #{} out of {}'.format(
+        shard_id, shards_num))
+
+
+@pytest.fixture(autouse=True)
+def reset_pytest_vars(monkeypatch):
+    """Make PYTEST_* env vars inaccessible to subprocesses."""
+    for var_name in os.environ:
+        if var_name.startswith('PYTEST_'):
+            monkeypatch.delenv(var_name, raising=False)
