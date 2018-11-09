@@ -15,8 +15,8 @@ services:
 language: python
 
 .mixtures:  # is not used by Travis CI, but helps avoid duplication
-- &if-cron-or-manual-run
-  if: type IN (cron, api)
+- &if-cron-or-manual-run-or-tagged
+  if: type IN (cron, api) OR tag IS present
 - &py-27
   python: "2.7"
 - &py-36
@@ -77,30 +77,30 @@ jobs:
       TESTS_TYPE: unit
 
   - <<: *py-36
-    <<: *if-cron-or-manual-run
+    <<: *if-cron-or-manual-run-or-tagged
     env:
       ANSIBLE_VERSION: "27"
       TESTS_TYPE: unit
 
   - <<: *py-36
-    <<: *if-cron-or-manual-run
+    <<: *if-cron-or-manual-run-or-tagged
     env:
       ANSIBLE_VERSION: "26"
       TESTS_TYPE: unit
 
   - <<: *py-36
-    <<: *if-cron-or-manual-run
+    <<: *if-cron-or-manual-run-or-tagged
     env:
       ANSIBLE_VERSION: "25"
-      TESTS_TYPE: unit
-
-  - <<: *py-27
-    env:
-      ANSIBLE_VERSION: "27"
       TESTS_TYPE: unit
 
   - <<: *py-27
     env:
+      ANSIBLE_VERSION: "27"
+      TESTS_TYPE: unit
+
+  - <<: *py-27
+    env:
       ANSIBLE_VERSION: "26"
       TESTS_TYPE: unit
 
@@ -155,55 +155,55 @@ jobs:
       ANSIBLE_VERSION: "25"
 
   - <<: *py-36
-    <<: *if-cron-or-manual-run
+    <<: *if-cron-or-manual-run-or-tagged
     env:
       <<: *env-functional-shard_1
       ANSIBLE_VERSION: "27"
 
   - <<: *py-36
-    <<: *if-cron-or-manual-run
+    <<: *if-cron-or-manual-run-or-tagged
     env:
       <<: *env-functional-shard_2
       ANSIBLE_VERSION: "27"
 
   - <<: *py-36
-    <<: *if-cron-or-manual-run
+    <<: *if-cron-or-manual-run-or-tagged
     env:
       <<: *env-functional-shard_3
       ANSIBLE_VERSION: "27"
 
   - <<: *py-36
-    <<: *if-cron-or-manual-run
+    <<: *if-cron-or-manual-run-or-tagged
     env:
       <<: *env-functional-shard_1
       ANSIBLE_VERSION: "26"
 
   - <<: *py-36
-    <<: *if-cron-or-manual-run
+    <<: *if-cron-or-manual-run-or-tagged
     env:
       <<: *env-functional-shard_2
       ANSIBLE_VERSION: "26"
 
   - <<: *py-36
-    <<: *if-cron-or-manual-run
+    <<: *if-cron-or-manual-run-or-tagged
     env:
       <<: *env-functional-shard_3
       ANSIBLE_VERSION: "26"
 
   - <<: *py-36
-    <<: *if-cron-or-manual-run
+    <<: *if-cron-or-manual-run-or-tagged
     env:
       <<: *env-functional-shard_1
       ANSIBLE_VERSION: "25"
 
   - <<: *py-36
-    <<: *if-cron-or-manual-run
+    <<: *if-cron-or-manual-run-or-tagged
     env:
       <<: *env-functional-shard_2
       ANSIBLE_VERSION: "25"
 
   - <<: *py-36
-    <<: *if-cron-or-manual-run
+    <<: *if-cron-or-manual-run-or-tagged
     env:
       <<: *env-functional-shard_3
       ANSIBLE_VERSION: "25"
@@ -227,34 +227,34 @@ jobs:
   # The following set of jobs is triggered only if ran manually or by cron:
 
   - <<: *py-37
-    <<: *if-cron-or-manual-run
+    <<: *if-cron-or-manual-run-or-tagged
     env:
       ANSIBLE_VERSION: devel
       TESTS_TYPE: unit
   - <<: *py-37
-    <<: *if-cron-or-manual-run
+    <<: *if-cron-or-manual-run-or-tagged
     env:
       ANSIBLE_VERSION: devel
       TESTS_TYPE: functional
 
   - <<: *py-36
-    <<: *if-cron-or-manual-run
+    <<: *if-cron-or-manual-run-or-tagged
     env:
       ANSIBLE_VERSION: devel
       TESTS_TYPE: unit
   - <<: *py-36
-    <<: *if-cron-or-manual-run
+    <<: *if-cron-or-manual-run-or-tagged
     env:
       ANSIBLE_VERSION: devel
       TESTS_TYPE: functional
 
   - <<: *py-27
-    <<: *if-cron-or-manual-run
+    <<: *if-cron-or-manual-run-or-tagged
     env:
       ANSIBLE_VERSION: devel
       TESTS_TYPE: unit
   - <<: *py-27
-    <<: *if-cron-or-manual-run
+    <<: *if-cron-or-manual-run-or-tagged
     env:
       ANSIBLE_VERSION: devel
       TESTS_TYPE: functional
