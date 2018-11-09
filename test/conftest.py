@@ -138,8 +138,9 @@ def pytest_collection_modifyitems(items):
         shard_id, shards_num))
 
 
-def pytest_sessionstart():
+@pytest.fixture(autouse=True)
+def reset_pytest_vars(monkeypatch):
     """Make PYTEST_* env vars inaccessible to subprocesses."""
-    for var_name in list(os.environ):
+    for var_name in os.environ:
         if var_name.startswith('PYTEST_'):
-            del os.environ[var_name]
+            monkeypatch.delenv(var_name, raising=False)
