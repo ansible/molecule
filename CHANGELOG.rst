@@ -5,6 +5,10 @@ History
 Unreleased
 ==========
 
+* Molecule can now be called as a python module (python -m molecule). Patch by `@ssbarnea`_.
+
+.. _`@ssbarnea`: https://github.com/ssbarnea
+
 Important Changes
 -----------------
 
