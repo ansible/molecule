@@ -41,7 +41,7 @@ class LXC(base.Base):
 
     .. code-block:: bash
 
-        $ sudo pip install lxc-python2
+        $ pip install molecule[lxc]
 
     Provide the files Molecule will preserve upon each subcommand execution.
 
