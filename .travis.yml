@@ -30,6 +30,17 @@ language: python
   before_install: []  # These don't require inspec+rubocop
   before_script: []  # These don't require dynamic TOXENV
   services: []  # Linters don't require docker
+- &env-functional
+  TESTS_TYPE: functional
+- &env-functional-shard_1
+  <<: *env-functional
+  PYTEST_ADDOPTS: "'-m shard_1_of_3'"
+- &env-functional-shard_2
+  <<: *env-functional
+  PYTEST_ADDOPTS: "'-m shard_2_of_3'"
+- &env-functional-shard_3
+  <<: *env-functional
+  PYTEST_ADDOPTS: "'-m shard_3_of_3'"
 
 jobs:
   fast_finish: true
@@ -97,111 +108,93 @@ jobs:
 
   - <<: *py-37
     env:
+      <<: *env-functional-shard_1
       ANSIBLE_VERSION: "27"
-      TESTS_TYPE: functional
-      PYTEST_ADDOPTS: "'-m shard_1_of_3'"
 
   - <<: *py-37
     env:
+      <<: *env-functional-shard_2
       ANSIBLE_VERSION: "27"
-      TESTS_TYPE: functional
-      PYTEST_ADDOPTS: "'-m shard_2_of_3'"
 
   - <<: *py-37
     env:
+      <<: *env-functional-shard_3
       ANSIBLE_VERSION: "27"
-      TESTS_TYPE: functional
-      PYTEST_ADDOPTS: "'-m shard_3_of_3'"
 
   - <<: *py-37
     env:
+      <<: *env-functional-shard_1
       ANSIBLE_VERSION: "26"
-      TESTS_TYPE: functional
-      PYTEST_ADDOPTS: "'-m shard_1_of_3'"
 
   - <<: *py-37
     env:
+      <<: *env-functional-shard_2
       ANSIBLE_VERSION: "26"
-      TESTS_TYPE: functional
-      PYTEST_ADDOPTS: "'-m shard_2_of_3'"
 
   - <<: *py-37
     env:
+      <<: *env-functional-shard_3
       ANSIBLE_VERSION: "26"
-      TESTS_TYPE: functional
-      PYTEST_ADDOPTS: "'-m shard_3_of_3'"
 
   - <<: *py-37
     env:
+      <<: *env-functional-shard_1
       ANSIBLE_VERSION: "25"
-      TESTS_TYPE: functional
-      PYTEST_ADDOPTS: "'-m shard_1_of_3'"
 
   - <<: *py-37
     env:
+      <<: *env-functional-shard_2
       ANSIBLE_VERSION: "25"
-      TESTS_TYPE: functional
-      PYTEST_ADDOPTS: "'-m shard_2_of_3'"
 
   - <<: *py-37
     env:
+      <<: *env-functional-shard_3
       ANSIBLE_VERSION: "25"
-      TESTS_TYPE: functional
-      PYTEST_ADDOPTS: "'-m shard_3_of_3'"
 
   - <<: *py-36
     env:
+      <<: *env-functional-shard_1
       ANSIBLE_VERSION: "27"
-      TESTS_TYPE: functional
-      PYTEST_ADDOPTS: "'-m shard_1_of_3'"
 
   - <<: *py-36
     env:
+      <<: *env-functional-shard_2
       ANSIBLE_VERSION: "27"
-      TESTS_TYPE: functional
-      PYTEST_ADDOPTS: "'-m shard_2_of_3'"
 
   - <<: *py-36
     env:
+      <<: *env-functional-shard_3
       ANSIBLE_VERSION: "27"
-      TESTS_TYPE: functional
-      PYTEST_ADDOPTS: "'-m shard_3_of_3'"
 
   - <<: *py-36
     env:
+      <<: *env-functional-shard_1
       ANSIBLE_VERSION: "26"
-      TESTS_TYPE: functional
-      PYTEST_ADDOPTS: "'-m shard_1_of_3'"
 
   - <<: *py-36
     env:
+      <<: *env-functional-shard_2
       ANSIBLE_VERSION: "26"
-      TESTS_TYPE: functional
-      PYTEST_ADDOPTS: "'-m shard_2_of_3'"
 
   - <<: *py-36
     env:
+      <<: *env-functional-shard_3
       ANSIBLE_VERSION: "26"
-      TESTS_TYPE: functional
-      PYTEST_ADDOPTS: "'-m shard_3_of_3'"
 
   - <<: *py-36
     env:
+      <<: *env-functional-shard_1
       ANSIBLE_VERSION: "25"
-      TESTS_TYPE: functional
-      PYTEST_ADDOPTS: "'-m shard_1_of_3'"
 
   - <<: *py-36
     env:
+      <<: *env-functional-shard_2
       ANSIBLE_VERSION: "25"
-      TESTS_TYPE: functional
-      PYTEST_ADDOPTS: "'-m shard_2_of_3'"
 
   - <<: *py-36
     env:
+      <<: *env-functional-shard_3
       ANSIBLE_VERSION: "25"
-      TESTS_TYPE: functional
-      PYTEST_ADDOPTS: "'-m shard_3_of_3'"
 
   - <<: *py-27
     env:
