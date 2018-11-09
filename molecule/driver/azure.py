@@ -45,7 +45,7 @@ class Azure(base.Base):
 
     .. code-block:: bash
 
-        $ sudo pip install 'ansible[azure]'
+        $ pip install 'molecule[azure]'
 
     Change the options passed to the ssh client.
 
