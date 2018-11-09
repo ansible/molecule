@@ -85,7 +85,7 @@ class Vagrant(base.Base):
 
     .. code-block:: bash
 
-        $ sudo pip install python-vagrant
+        $ pip install molecule[vagrant]
 
     Change the provider passed to Vagrant.
 
