@@ -45,7 +45,7 @@ class Openstack(base.Base):
 
     .. code-block:: bash
 
-        $ sudo pip install shade
+        $ pip install molecule[openstack]
 
     Change the options passed to the ssh client.
 
