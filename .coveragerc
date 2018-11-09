@@ -1,7 +1,3 @@
 [run]
 omit =
   */molecule/cookiecutter/*
-
-[report]
-fail_under =
-  40

@@ -6,8 +6,10 @@ Unreleased
 ==========
 
 * Molecule can now be called as a python module (python -m molecule). Patch by `@ssbarnea`_.
+* Add `Travis CI integration`_ and fix related test issues.
 
 .. _`@ssbarnea`: https://github.com/ssbarnea
+.. _`Travis CI integration`: https://travis-ci.com/ansible/molecule
 
 Important Changes
 -----------------
