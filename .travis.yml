@@ -27,8 +27,7 @@ language: python
   dist: xenial
 - &lint
   <<: *py-36  # Because 3.7 requires a VM is Travis CI, which is "heavy"
-  before_install: []  # These don't require inspec+rubocop
-  before_script: []  # These don't require dynamic TOXENV
+  before_install: []  # These don't require inspec+rubocop and dynamic TOXENV
   services: []  # Linters don't require docker
 - &env-functional
   TESTS_TYPE: functional
@@ -264,9 +263,9 @@ env:
     TOXENV_TMPL: "'ansible${ANSIBLE_VERSION}-${TESTS_TYPE}'"
 before_install:
 - gem install inspec rubocop
+- export TOXENV=$(echo $TOXENV_TMPL | envsubst)
 install:
 - pip install tox-venv
-before_script:
-- export TOXENV=$(echo $TOXENV_TMPL | envsubst)
+- tox --notest
 script:
 - tox
