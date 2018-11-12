@@ -223,7 +223,8 @@ jobs:
       TESTS_TYPE: functional
 
 
-  # The following set of jobs is triggered only if ran manually or by cron:
+  # The following set of jobs is running tests against devel branch
+  # of ansible/ansible:
 
   - <<: *py-37
     <<: *if-cron-or-manual-run-or-tagged
@@ -233,8 +234,18 @@ jobs:
   - <<: *py-37
     <<: *if-cron-or-manual-run-or-tagged
     env:
+      <<: *env-functional-shard_1
       ANSIBLE_VERSION: devel
-      TESTS_TYPE: functional
+  - <<: *py-37
+    <<: *if-cron-or-manual-run-or-tagged
+    env:
+      <<: *env-functional-shard_2
+      ANSIBLE_VERSION: devel
+  - <<: *py-37
+    <<: *if-cron-or-manual-run-or-tagged
+    env:
+      <<: *env-functional-shard_3
+      ANSIBLE_VERSION: devel
 
   - <<: *py-36
     <<: *if-cron-or-manual-run-or-tagged
@@ -244,8 +255,18 @@ jobs:
   - <<: *py-36
     <<: *if-cron-or-manual-run-or-tagged
     env:
+      <<: *env-functional-shard_1
       ANSIBLE_VERSION: devel
-      TESTS_TYPE: functional
+  - <<: *py-36
+    <<: *if-cron-or-manual-run-or-tagged
+    env:
+      <<: *env-functional-shard_2
+      ANSIBLE_VERSION: devel
+  - <<: *py-36
+    <<: *if-cron-or-manual-run-or-tagged
+    env:
+      <<: *env-functional-shard_3
+      ANSIBLE_VERSION: devel
 
   - <<: *py-27
     <<: *if-cron-or-manual-run-or-tagged
@@ -255,8 +276,18 @@ jobs:
   - <<: *py-27
     <<: *if-cron-or-manual-run-or-tagged
     env:
+      <<: *env-functional-shard_1
       ANSIBLE_VERSION: devel
-      TESTS_TYPE: functional
+  - <<: *py-27
+    <<: *if-cron-or-manual-run-or-tagged
+    env:
+      <<: *env-functional-shard_1
+      ANSIBLE_VERSION: devel
+  - <<: *py-27
+    <<: *if-cron-or-manual-run-or-tagged
+    env:
+      <<: *env-functional-shard_3
+      ANSIBLE_VERSION: devel
 
 env:
   global:
