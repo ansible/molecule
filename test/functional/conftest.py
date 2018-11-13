@@ -266,23 +266,23 @@ def supports_docker():
 
 @pytest.helpers.register
 def supports_lxc():
-    # FIXME: Travis CI
-    # This fixes most of the errors:
-    # $ mkdir -p ~/.config/lxc
-    # $ echo "lxc.id_map = u 0 100000 65536" > ~/.config/lxc/default.conf
-    # $ echo "lxc.id_map = g 0 100000 65536" >> ~/.config/lxc/default.conf
-    # $ echo "lxc.network.type = veth" >> ~/.config/lxc/default.conf
-    # $ echo "lxc.network.link = lxcbr0" >> ~/.config/lxc/default.conf
-    # $ echo "$USER veth lxcbr0 2" | sudo tee -a /etc/lxc/lxc-usernet
-    # travis veth lxcbr0 2
-    # But there's still one left:
-    # $ cat ~/lxc-instance.log
-    # lxc-create 1542112494.884 INFO     lxc_utils - utils.c:get_rundir:229 - XDG_RUNTIME_DIR isn't set in the environment.
-    # lxc-create 1542112494.884 WARN     lxc_log - log.c:lxc_log_init:331 - lxc_log_init called with log already initialized
-    # lxc-create 1542112494.884 INFO     lxc_confile - confile.c:config_idmap:1385 - read uid map: type u nsid 0 hostid 100000 range 65536
-    # lxc-create 1542112494.884 INFO     lxc_confile - confile.c:config_idmap:1385 - read uid map: type g nsid 0 hostid 100000 range 65536
-    # lxc-create 1542112494.887 ERROR    lxc_container - lxccontainer.c:do_create_container_dir:767 - Failed to chown container dir
-    # lxc-create 1542112494.887 ERROR    lxc_create_ui - lxc_create.c:main:274 - Error creating container instance
+    # noqa: E501 # FIXME: Travis CI
+    # noqa: E501 # This fixes most of the errors:
+    # noqa: E501 # $ mkdir -p ~/.config/lxc
+    # noqa: E501 # $ echo "lxc.id_map = u 0 100000 65536" > ~/.config/lxc/default.conf
+    # noqa: E501 # $ echo "lxc.id_map = g 0 100000 65536" >> ~/.config/lxc/default.conf
+    # noqa: E501 # $ echo "lxc.network.type = veth" >> ~/.config/lxc/default.conf
+    # noqa: E501 # $ echo "lxc.network.link = lxcbr0" >> ~/.config/lxc/default.conf
+    # noqa: E501 # $ echo "$USER veth lxcbr0 2" | sudo tee -a /etc/lxc/lxc-usernet
+    # noqa: E501 # travis veth lxcbr0 2
+    # noqa: E501 # But there's still one left:
+    # noqa: E501 # $ cat ~/lxc-instance.log
+    # noqa: E501 # lxc-create 1542112494.884 INFO     lxc_utils - utils.c:get_rundir:229 - XDG_RUNTIME_DIR isn't set in the environment.
+    # noqa: E501 # lxc-create 1542112494.884 WARN     lxc_log - log.c:lxc_log_init:331 - lxc_log_init called with log already initialized
+    # noqa: E501 # lxc-create 1542112494.884 INFO     lxc_confile - confile.c:config_idmap:1385 - read uid map: type u nsid 0 hostid 100000 range 65536
+    # noqa: E501 # lxc-create 1542112494.884 INFO     lxc_confile - confile.c:config_idmap:1385 - read uid map: type g nsid 0 hostid 100000 range 65536
+    # noqa: E501 # lxc-create 1542112494.887 ERROR    lxc_container - lxccontainer.c:do_create_container_dir:767 - Failed to chown container dir
+    # noqa: E501 # lxc-create 1542112494.887 ERROR    lxc_create_ui - lxc_create.c:main:274 - Error creating container instance
     return not IS_TRAVIS and get_lxc_executable()
 
 
