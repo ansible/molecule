@@ -45,8 +45,7 @@ class EC2(base.Base):
 
     .. code-block:: bash
 
-        $ sudo pip install boto
-        $ sudo pip install boto3
+        $ pip install molecule[ec2]
 
     Change the options passed to the ssh client.
 
