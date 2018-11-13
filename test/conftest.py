@@ -141,6 +141,6 @@ def pytest_collection_modifyitems(items):
 @pytest.fixture(autouse=True)
 def reset_pytest_vars(monkeypatch):
     """Make PYTEST_* env vars inaccessible to subprocesses."""
-    for var_name in os.environ:
+    for var_name in tuple(os.environ):
         if var_name.startswith('PYTEST_'):
             monkeypatch.delenv(var_name, raising=False)
