@@ -295,6 +295,7 @@ env:
 addons:
   apt:
     packages:
+    - lxc
     - lxc-dev
 before_install:
 - gem install inspec rubocop
