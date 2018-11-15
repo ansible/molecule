@@ -271,8 +271,7 @@ def supports_lxc():
 
 @pytest.helpers.register
 def supports_lxd():
-    # FIXME: Travis CI
-    return not IS_TRAVIS and get_lxd_executable()
+    return get_lxd_executable()
 
 
 @pytest.helpers.register
