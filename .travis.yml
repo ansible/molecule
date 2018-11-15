@@ -1,5 +1,6 @@
 conditions: v1
-sudo: false
+dist: xenial
+sudo: required
 
 cache:
   pip: true
@@ -23,10 +24,8 @@ language: python
   python: "3.6"
 - &py-37
   python: "3.7"
-  sudo: required
-  dist: xenial
 - &lint
-  <<: *py-36  # Because 3.7 requires a VM is Travis CI, which is "heavy"
+  <<: *py-37
   addons: {}  # Linters don't require extra OS packages
   before_install: []  # These don't require inspec+rubocop and dynamic TOXENV
   services: []  # Linters don't require docker
