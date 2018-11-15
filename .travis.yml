@@ -12,6 +12,10 @@ cache:
 services:
 - docker
 
+stages:
+- test
+- release
+
 language: python
 
 .mixtures:  # is not used by Travis CI, but helps avoid duplication
@@ -287,7 +291,10 @@ jobs:
     env:
       <<: *env-functional-shard_3
       ANSIBLE_VERSION: devel
-
+  - release
+      <<: *if-cron-or-manual-run-or-tagged
+      stage: release
+      script: tox -e upload
 env:
   global:
     TOXENV_TMPL: "'ansible${ANSIBLE_VERSION}-${TESTS_TYPE}'"
