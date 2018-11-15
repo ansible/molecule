@@ -1,6 +1,5 @@
 conditions: v1
 dist: xenial
-sudo: required
 
 cache:
   pip: true
