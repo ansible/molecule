@@ -12,6 +12,7 @@ cache:
 
 services:
 - docker
+- lxd
 
 language: python
 
