@@ -23,11 +23,13 @@ language: python
   python: "3.6"
 - &py-37
   python: "3.7"
+- &reset-prerequisites
+  addons: {}
+  before_install: []
+  services: []
 - &lint
   <<: *py-37
-  addons: {}  # Linters don't require extra OS packages
-  before_install: []  # These don't require inspec+rubocop and dynamic TOXENV
-  services: []  # Linters don't require docker
+  <<: *reset-prerequisites
 - &env-functional
   TESTS_TYPE: functional
 - &env-functional-shard_1
@@ -290,6 +292,7 @@ jobs:
 
   - &deploy-job
     <<: *py-37
+    <<: *reset-prerequisites
     stage: Deploy
     name: Publishing current Git tagged version of dist to PyPI
     if: tag IS present
