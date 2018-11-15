@@ -288,6 +288,32 @@ jobs:
       <<: *env-functional-shard_3
       ANSIBLE_VERSION: devel
 
+  - &deploy-job
+    <<: *py-37
+    stage: Deploy
+    name: Publishing current Git tagged version of dist to PyPI
+    if: tag IS present
+    env:
+      TOXENV: metadata-validation
+    deploy: &deploy-step
+      provider: pypi
+      user: any-maintainer-on-pypi  # I recommend having a separate account
+      password:
+        secure: >  # needs real data
+          PLACE_FOR_AN_ENCRYPTED_STRING
+      distributions: dists
+      skip-cleanup: true
+      on:
+        tags: true
+        all_branches: true
+
+  - <<: *deploy-job
+    if: type != pull_request AND tag IS NOT present  # Always run, except if PR or tagged commit
+    name: Publishing current (unstable) Git revision of dist to Test PyPI
+    deploy:
+      <<: *deploy-step
+      server: https://test.pypi.org/legacy/
+
 env:
   global:
     TOXENV_TMPL: "'ansible${ANSIBLE_VERSION}-${TESTS_TYPE}'"
