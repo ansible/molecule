@@ -297,6 +297,8 @@ addons:
     packages:
     - lxc
     - lxc-dev
+    - lxd
+    - lxd-client
 before_install:
 - gem install inspec rubocop
 - export TOXENV=$(echo $TOXENV_TMPL | envsubst)
