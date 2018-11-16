@@ -318,6 +318,9 @@ before_install:
 #        echo -n .
 #    done
 #    echo -n
+- sudo add-apt-repository -y ppa:ubuntu-lxc/lxd-stable
+- sudo apt-get -qq update
+- sudo apt-get -y install lxd lxd-client
 - sudo lxd init --auto
 - sudo usermod -a -G lxd travis
 - sudo su travis -c 'lxc network create lxdbr0'
