@@ -314,6 +314,7 @@ before_install:
 #        echo -n .
 #    done
 #    echo -n
+- sudo apt-get remove lxc-client
 - sudo lxd init --auto
 - sudo usermod -a -G lxd travis
 - sudo su travis -c 'lxc network create lxdbr0'
