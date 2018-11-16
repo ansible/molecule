@@ -298,7 +298,7 @@ addons:
   #- lxc
   #- lxc-dev
   - lxd
-  - lxd-client
+  #- lxd-client
 before_install:
 #- mkdir -p ~/.config/lxc
 #- echo "lxc.id_map = u 0 100000 65536" > ~/.config/lxc/default.conf
