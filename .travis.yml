@@ -329,6 +329,6 @@ before_install:
 - export TOXENV=$(echo $TOXENV_TMPL | envsubst)
 install:
 - pip install tox-venv
-- tox --notest
+- MOLECULE_DEBUG=true tox --notest
 script:
 - tox
