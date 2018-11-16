@@ -318,7 +318,7 @@ before_install:
 # create profile
 - sudo lxd waitready
 - printf 'n\ny\ndefault\ndir\nn\ny\nlxdbr0\nauto\nauto\ny\nall\n\ny\nn\n' | sudo lxd init
-- sudo lxd.migrate
+- yes | sudo lxd.migrate
 - sudo lxd.lxc profile copy default travis
 - sudo lxd.lxc profile set travis security.privileged true
 #- sudo lxd init --auto
