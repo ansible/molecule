@@ -314,10 +314,16 @@ before_install:
 #        echo -n .
 #    done
 #    echo -n
-- sudo lxd init --auto
-- sudo usermod -a -G lxd travis
-- sudo su travis -c 'lxc network create lxdbr0'
-- sudo su travis -c 'lxc network attach-profile lxdbr0 default eth0'
+
+# create profile
+- sudo lxd waitready
+- printf 'n\ny\ndefault\ndir\nn\ny\nlxdbr0\nauto\nauto\ny\nall\n\ny\nn\n' | sudo lxd init
+- sudo lxd.lxc profile copy default travis
+- sudo lxd.lxc profile set travis security.privileged true
+#- sudo lxd init --auto
+#- sudo usermod -a -G lxd travis
+#- sudo su travis -c 'lxc network create lxdbr0'
+#- sudo su travis -c 'lxc network attach-profile lxdbr0 default eth0'
 - gem install inspec rubocop
 - export TOXENV=$(echo $TOXENV_TMPL | envsubst)
 install:
