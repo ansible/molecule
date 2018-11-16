@@ -307,7 +307,15 @@ before_install:
 - echo "lxc.network.type = veth" >> ~/.config/lxc/default.conf
 - echo "lxc.network.link = lxcbr0" >> ~/.config/lxc/default.conf
 - echo "$USER veth lxcbr0 2" | sudo tee -a /etc/lxc/lxc-usernet
-- sudo lxd init --auto
+#- |
+#    while [ ! -S /var/snap/lxd/common/lxd/unix.socket ]
+#    do
+#        echo -n "Waiting for LXD socket..."
+#        sleep 0.2
+#        echo -n .
+#    done
+#    echo -n
+#- sudo lxd init --auto
 - gem install inspec rubocop
 - export TOXENV=$(echo $TOXENV_TMPL | envsubst)
 install:
