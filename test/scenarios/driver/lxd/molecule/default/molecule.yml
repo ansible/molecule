@@ -11,6 +11,7 @@ platforms:
   - name: instance
 provisioner:
   name: ansible
+  log: true
   playbooks:
     create: ../../../../../resources/playbooks/lxd/create.yml
     destroy: ../../../../../resources/playbooks/lxd/destroy.yml
