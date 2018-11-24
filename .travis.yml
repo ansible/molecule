@@ -294,9 +294,11 @@ env:
   global:
     TOXENV_TMPL: "'ansible${ANSIBLE_VERSION}-${TESTS_TYPE}'"
 addons:
+  apt:
+    packages:
+    - lxc
+    - lxc-dev
   snaps:
-  #- lxc
-  #- lxc-dev
   - lxd
   #- lxd-client
 before_install:
