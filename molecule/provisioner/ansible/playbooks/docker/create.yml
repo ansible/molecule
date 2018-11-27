@@ -65,6 +65,7 @@
         log_driver: json-file
         command: "{{ item.command | default('bash -c \"while true; do sleep 10000; done\"') }}"
         privileged: "{{ item.privileged | default(omit) }}"
+        sysctls: "{{ item.sysctls | default(omit) }}"
         security_opts: "{{ item.security_opts | default(omit) }}"
         volumes: "{{ item.volumes | default(omit) }}"
         tmpfs: "{{ item.tmpfs | default(omit) }}"
