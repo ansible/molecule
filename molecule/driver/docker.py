@@ -84,6 +84,8 @@ class Docker(base.Base):
               FOO: bar
             restart_policy: on-failure
             restart_retries: 1
+            buildargs:
+                http_proxy: http://proxy.example.com:8080/
 
     .. code-block:: bash
 
