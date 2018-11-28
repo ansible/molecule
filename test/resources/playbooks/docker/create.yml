@@ -63,6 +63,7 @@
         state: started
         recreate: false
         log_driver: json-file
+        entrypoint: "{{ item.entrypoint | default('bash') }}"
         command: "{{ item.command | default('bash -c \"while true; do sleep 10000; done\"') }}"
         privileged: "{{ item.privileged | default(omit) }}"
         security_opts: "{{ item.security_opts | default(omit) }}"
