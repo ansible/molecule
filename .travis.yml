@@ -300,10 +300,10 @@ jobs:
       TOXENV: metadata-validation
     deploy: &deploy-step
       provider: pypi
-      user: any-maintainer-on-pypi  # I recommend having a separate account
+      user: ansible-molecule
       password:
-        secure: >  # needs real data
-          PLACE_FOR_AN_ENCRYPTED_STRING
+        secure: >
+          WmJrpca4Oc5b3NxZV5eLjpVYUFKXlXdd+IJCCYJN/9OM19g8nPJflkzqRUVAakbphZr4TUN/O0HOX7/UoY1Kx88tV5UT7LdZ+Ke2wnQ6aYceq/lwDbCv0/cN7pu0RtZRCbqYhMcKPOHCOyxF7cSvK3t8FnQFPafY1s9OLTyWARnsiSSEF4DZYigd11g88sG4E/B5BMQ+0d5PgBQq9RGXI5GvTtsALKtnnvWTa2yvu1lvtfihuyJm5p5a3ryiVtAqGYZSV6Ze5LjLvrWMw/SuMjYuCmsRqRjJ9ZTCRKWBYLrYcmjUmvdG8RWJHRgDWuoOEhTIUES8XUXBBsFisJRoUGvMvLe037PTuMLIyPCpv7oyU7U7Zp6DRfJ7rzr6OJvzBRPMC4hsSJaDPC23pQD6DiL5TQn6vUzozGEEjCzdwot8XOxDXXy7QjKSJD5/m+LdcoUWCkFB7knoSdr6kYVCpkCHCbUgg0b3uTa9b/NUPYOSCxReBQCC4eaw2a19grAku645enF3dGcMx/D+jbMrUbgdh0VBPemwEQfunYNhPnoddE+MX0kWY28OI/wsPSEO+1Rxje6CXjq/CkyiJaAxfG/6wCT7099HXp8s/8QQSBi/44i8WmTU1CLXJbjB0R769d/WcfYs4qEL76g026TixVyTDUTms0SCij7f6HZJHbs=
       distributions: dists
       skip-cleanup: true
       on:
