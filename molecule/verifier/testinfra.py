@@ -99,8 +99,6 @@ class Testinfra(base.Base):
         """
         super(Testinfra, self).__init__(config)
         self._testinfra_command = None
-        if config:
-            self._tests = self._get_tests()
 
     @property
     def name(self):
@@ -162,7 +160,7 @@ class Testinfra(base.Base):
 
         self._testinfra_command = sh.Command('py.test').bake(
             options,
-            self._tests,
+            self.directory,
             *args,
             _cwd=self._config.scenario.directory,
             _env=self.env,
@@ -175,15 +173,10 @@ class Testinfra(base.Base):
             LOG.warn(msg)
             return
 
-        if not len(self._tests) > 0:
-            msg = 'Skipping, no tests found.'
-            LOG.warn(msg)
-            return
-
         if self._testinfra_command is None:
             self.bake()
 
-        msg = 'Executing Testinfra tests found in {}/...'.format(
+        msg = 'Executing Testinfra tests in {}/...'.format(
             self.directory)
         LOG.info(msg)
 
@@ -194,13 +187,3 @@ class Testinfra(base.Base):
 
         except sh.ErrorReturnCode as e:
             util.sysexit(e.exit_code)
-
-    def _get_tests(self):
-        """
-        Walk the verifier's directory for tests and returns a list.
-
-        :return: list
-        """
-        return [
-            filename for filename in util.os_walk(self.directory, 'test_*.py')
-        ]
