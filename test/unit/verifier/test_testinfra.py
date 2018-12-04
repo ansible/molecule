@@ -30,17 +30,6 @@ from molecule.verifier.lint import flake8
 
 
 @pytest.fixture
-def _patched_testinfra_get_tests(mocker):
-    m = mocker.patch('molecule.verifier.testinfra.Testinfra._get_tests')
-    m.return_value = [
-        'foo.py',
-        'bar.py',
-    ]
-
-    return m
-
-
-@pytest.fixture
 def _verifier_section_data():
     return {
         'verifier': {
@@ -107,8 +96,7 @@ def test_default_options_property_updates_debug(inventory_file, _instance):
     assert x == _instance.default_options
 
 
-def test_default_options_property_updates_sudo(inventory_file, _instance,
-                                               _patched_testinfra_get_tests):
+def test_default_options_property_updates_sudo(inventory_file, _instance):
     _instance._config.args = {'sudo': True}
     x = {
         'connection': 'ansible',
@@ -238,7 +226,7 @@ def test_options_property_handles_cli_args(inventory_file, _instance):
 
 @pytest.mark.parametrize(
     'config_instance', ['_verifier_section_data'], indirect=True)
-def test_bake(_patched_testinfra_get_tests, inventory_file, _instance):
+def test_bake(inventory_file, _instance):
     tests_directory = _instance._config.verifier.directory
     file1_file = os.path.join(tests_directory, 'file1.py')
 
@@ -252,8 +240,7 @@ def test_bake(_patched_testinfra_get_tests, inventory_file, _instance):
         '--connection=ansible',
         '-v',
         '--foo=bar',
-        'foo.py',
-        'bar.py',
+        tests_directory,
         '-p',
         'no:cacheprovider',
         file1_file,
@@ -264,14 +251,13 @@ def test_bake(_patched_testinfra_get_tests, inventory_file, _instance):
 
 
 def test_execute(patched_logger_info, patched_run_command,
-                 _patched_testinfra_get_tests, patched_logger_success,
-                 _instance):
+                 patched_logger_success, _instance):
     _instance._testinfra_command = 'patched-command'
     _instance.execute()
 
     patched_run_command.assert_called_once_with('patched-command', debug=False)
 
-    msg = 'Executing Testinfra tests found in {}/...'.format(
+    msg = 'Executing Testinfra tests in {}/...'.format(
         _instance.directory)
     patched_logger_info.assert_called_once_with(msg)
 
@@ -290,18 +276,7 @@ def test_execute_does_not_execute(patched_run_command, patched_logger_warn,
     patched_logger_warn.assert_called_once_with(msg)
 
 
-def test_does_not_execute_without_tests(patched_run_command,
-                                        patched_logger_warn, _instance):
-    _instance.execute()
-
-    assert not patched_run_command.called
-
-    msg = 'Skipping, no tests found.'
-    patched_logger_warn.assert_called_once_with(msg)
-
-
-def test_execute_bakes(patched_run_command, _patched_testinfra_get_tests,
-                       _instance):
+def test_execute_bakes(patched_run_command, _instance):
     _instance.execute()
 
     assert _instance._testinfra_command is not None
@@ -310,7 +285,7 @@ def test_execute_bakes(patched_run_command, _patched_testinfra_get_tests,
 
 
 def test_executes_catches_and_exits_return_code(
-        patched_run_command, _patched_testinfra_get_tests, _instance):
+        patched_run_command, _instance):
     patched_run_command.side_effect = sh.ErrorReturnCode_1(
         sh.testinfra, b'', b'')
     with pytest.raises(SystemExit) as e:
