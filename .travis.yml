@@ -307,7 +307,6 @@ jobs:
       distributions: dists
       skip-cleanup: true
       on:
-        tags: true
         all_branches: true
 
   - <<: *deploy-job
