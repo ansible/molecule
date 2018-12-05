@@ -638,6 +638,7 @@ platforms_docker_schema = {
                 },
                 'command': {
                     'type': 'string',
+                    'nullable': True,
                 },
                 'privileged': {
                     'type': 'boolean',
