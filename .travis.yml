@@ -1,6 +1,9 @@
 conditions: v1
 dist: xenial
 
+git:
+  depth: 100
+
 cache:
   pip: true
   directories:
