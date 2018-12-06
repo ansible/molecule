@@ -24,6 +24,8 @@ import fnmatch
 import glob
 import os
 
+import six
+
 import molecule.command
 from molecule import config
 from molecule import logger
@@ -34,11 +36,11 @@ MOLECULE_GLOB = 'molecule/*/molecule.yml'
 MOLECULE_DEFAULT_SCENARIO_NAME = 'default'
 
 
+@six.add_metaclass(abc.ABCMeta)
 class Base(object):
     """
     An abstract base class used to define the command interface.
     """
-    __metaclass__ = abc.ABCMeta
 
     def __init__(self, c):
         """
