@@ -310,7 +310,7 @@ jobs:
         all_branches: true
 
   - <<: *deploy-job
-    if: type != pull_request AND tag IS NOT present  # Always run, except if PR or tagged commit
+    if: type NOT IN (cron, pull_request) AND tag IS NOT present  # Always run, except if PR, cron or tagged commit
     name: Publishing current (unstable) Git revision of dist to Test PyPI
     deploy:
       <<: *deploy-step
