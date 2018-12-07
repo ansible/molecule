@@ -6,6 +6,7 @@ click-completion==0.3.1
 colorama==0.3.9
 cookiecutter==1.6.0
 flake8==3.5.0
+idna<2.8  # because indirect dependency "requests" conflict with it now
 python-gilt==1.2.1
 Jinja2==2.10
 pbr==5.1.1
