@@ -338,6 +338,6 @@ before_install:
 install:
 - tox --notest
 - >
-    return $(( $(grep 'ERROR: ' .tox/*/log/*.log || echo $?) ^ 1 ))
+  (exit $(( $(grep 'ERROR: ' .tox/*/log/*.log >/dev/null; echo $?) ^ 1 )) )
 script:
 - tox
