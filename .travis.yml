@@ -336,7 +336,7 @@ before_install:
 - export TOXENV=$(echo $TOXENV_TMPL | envsubst)
 - pip install tox-venv
 install:
-- tox --notest | ~/.tox-venv-install.log
+- tox --notest | tee ~/.tox-venv-install.log
 - >
   ! grep 'ERROR: ' ~/.tox-venv-install.log .tox/*/log/*.log
 script:
