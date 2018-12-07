@@ -337,6 +337,7 @@ before_install:
 - pip install tox-venv
 install:
 - tox --notest
-- return $(( $(grep 'ERROR: ' .tox/*/log/*.log || echo $?) ^ 1 ))
+- >
+    return $(( $(grep 'ERROR: ' .tox/*/log/*.log || echo $?) ^ 1 ))
 script:
 - tox
