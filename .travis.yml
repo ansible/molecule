@@ -5,10 +5,12 @@ git:
   depth: 100
 
 cache:
+  bundler: true
   pip: true
   directories:
   - $HOME/.cache/pre-commit
   - $HOME/.pre-commit
+  - $HOME/.rvm
   - $HOME/virtualenv/python$(python -c 'import platform; print(platform.python_version())')
   - $HOME/Library/Caches/Homebrew
 
