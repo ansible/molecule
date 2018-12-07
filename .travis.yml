@@ -334,8 +334,9 @@ addons:
 before_install:
 - gem install inspec rubocop
 - export TOXENV=$(echo $TOXENV_TMPL | envsubst)
-install:
 - pip install tox-venv
+install:
 - tox --notest
+- return $(( $(grep 'ERROR: ' .tox/*/log/*.log || echo $?) ^ 1 ))
 script:
 - tox
