@@ -300,7 +300,7 @@ jobs:
     <<: *reset-prerequisites
     stage: Deploy
     name: Publishing current Git tagged version of dist to PyPI
-    if: not fork AND tag IS present
+    if: repo == "ansible/molecule" AND tag IS present
     env:
       TOXENV: metadata-validation
     deploy: &deploy-step
@@ -315,7 +315,7 @@ jobs:
         all_branches: true
 
   - <<: *deploy-job
-    if: not fork AND type NOT IN (cron, pull_request)  # Always run, except if PR or cron
+    if: repo == "ansible/molecule" AND type NOT IN (cron, pull_request)  # Always run, except if PR or cron
     name: Publishing current (unstable) Git revision of dist to Test PyPI
     deploy:
       <<: *deploy-step
