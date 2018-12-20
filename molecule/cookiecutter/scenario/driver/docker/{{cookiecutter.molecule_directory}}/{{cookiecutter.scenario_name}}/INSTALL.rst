@@ -12,4 +12,4 @@ Requirements
 Install
 =======
 
-    $ sudo pip install docker
+    $ pip install molecule[docker]
