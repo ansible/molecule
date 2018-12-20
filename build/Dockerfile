@@ -31,8 +31,11 @@ ENV PIP_PACKAGES="\
     ansible[azure] \
     virtualenv \
     molecule \
+    ansible \
     docker \
+    azure-cli \
     packaging \
+    msrestazure \
     pywinrm \
 "
 
