@@ -261,7 +261,30 @@ base_schema = {
             },
         }
     },
-    'platforms': {},
+    'platforms': {
+        'type': 'list',
+        'schema': {
+            'type': 'dict',
+            'schema': {
+                'name': {
+                    'type': 'string',
+                    'required': True,
+                },
+                'groups': {
+                    'type': 'list',
+                    'schema': {
+                        'type': 'string',
+                    }
+                },
+                'children': {
+                    'type': 'list',
+                    'schema': {
+                        'type': 'string',
+                    }
+                },
+            }
+        }
+    },
     'provisioner': {
         'type': 'dict',
         'schema': {
@@ -507,33 +530,6 @@ driver_vagrant_provider_section_schema = {
                     },
                 }
             },
-        }
-    },
-}
-
-platforms_base_schema = {
-    'platforms': {
-        'type': 'list',
-        'schema': {
-            'type': 'dict',
-            'schema': {
-                'name': {
-                    'type': 'string',
-                    'required': True,
-                },
-                'groups': {
-                    'type': 'list',
-                    'schema': {
-                        'type': 'string',
-                    }
-                },
-                'children': {
-                    'type': 'list',
-                    'schema': {
-                        'type': 'string',
-                    }
-                },
-            }
         }
     },
 }
@@ -975,7 +971,7 @@ def validate(c):
         util.merge_dicts(schema, dependency_command_nullable_schema)
 
     # Driver
-    util.merge_dicts(schema, platforms_base_schema)
+    util.merge_dicts(schema, base_schema)
     if c['driver']['name'] == 'docker':
         util.merge_dicts(schema, platforms_docker_schema)
     elif c['driver']['name'] == 'vagrant':
@@ -986,7 +982,7 @@ def validate(c):
     elif c['driver']['name'] == 'linode':
         util.merge_dicts(schema, platforms_linode_schema)
     else:
-        util.merge_dicts(schema, platforms_base_schema)
+        util.merge_dicts(schema, base_schema)
 
     # Verifier
     if c['verifier']['name'] == 'goss':
