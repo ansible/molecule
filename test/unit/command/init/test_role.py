@@ -122,4 +122,13 @@ def test_execute_with_custom_template(custom_template_dir, custom_readme_content
     
     assert os.path.isdir('./test-role/molecule/default')
     assert os.path.isdir('./test-role/molecule/default/tests')
-    
+
+def test_execute_with_absent_template(temp_dir,_command_args,patched_logger_critical):
+    incorrect_path = os.path.join(temp_dir,"absent_template_dir")
+    _command_args['template'] = incorrect_path
+
+    absent_template_instance = role.Role(_command_args)
+    with pytest.raises(SystemExit) as e:
+        absent_template_instance.execute()
+
+    assert e.value.code == 1    

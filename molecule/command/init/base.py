@@ -24,7 +24,9 @@ import os
 import cookiecutter
 import cookiecutter.main
 
+
 from molecule import logger
+from molecule import util
 
 LOG = logger.get_logger(__name__)
 
@@ -52,6 +54,7 @@ class Base(object):
         :return: None
         """
         template_dir = self._resolve_template_dir(template_dir)
+        self._validate_template_dir(template_dir)
 
         cookiecutter.main.cookiecutter(
             template_dir,
@@ -68,3 +71,8 @@ class Base(object):
                 'cookiecutter', template_dir)
 
         return template_dir
+
+    def _validate_template_dir(self, template_dir):
+        if not os.path.isdir(template_dir):
+            util.sysexit_with_message(
+                "The specified template directory does not exist")
