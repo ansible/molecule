@@ -61,7 +61,12 @@ class Role(base.Base):
                    'Cannot create new role.').format(role_name)
             util.sysexit_with_message(msg)
 
-        self._process_templates('role', self._command_args, role_directory)
+        template_directory = ''
+        if 'template' in self._command_args.keys():
+            template_directory = self._command_args['template']
+        else:
+            template_directory = 'role'
+        self._process_templates(template_directory, self._command_args, role_directory)
         scenario_base_directory = os.path.join(role_directory, role_name)
         templates = [
             'scenario/driver/{driver_name}'.format(**self._command_args),
