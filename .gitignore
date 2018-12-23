@@ -15,3 +15,4 @@ pytestdebug.log
 ubuntu-xenial-16.04-cloudimg-console.log
 .python-version
 coverage.xml
+.vscode/
