@@ -69,7 +69,9 @@ class Scenarios(object):
 
             return scenarios
 
-        return [c.scenario for c in self._configs]
+        scenarios = [c.scenario for c in self._configs]
+        scenarios.sort(key=lambda x: x.directory)
+        return scenarios
 
     def print_matrix(self):
         msg = 'Test matrix'
