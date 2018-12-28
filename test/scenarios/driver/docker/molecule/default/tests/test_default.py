@@ -26,3 +26,8 @@ def test_etc_molecule_ansible_hostname_file(host):
     assert f.user == 'root'
     assert f.group == 'root'
     assert f.mode == 0o644
+
+
+def test_buildarg_env_var(host):
+    cmd_out = host.run("echo $envarg")
+    assert cmd_out.stdout == 'this_is_a_test'
