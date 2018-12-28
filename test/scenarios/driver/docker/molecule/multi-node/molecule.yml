@@ -13,11 +13,15 @@ platforms:
     groups:
       - foo
       - bar
+    buildargs:
+      testarg: this_is_a_test
   - name: instance-2
     image: centos:latest
     groups:
       - foo
       - baz
+    buildargs:
+      testarg: this_is_a_test
 provisioner:
   name: ansible
   playbooks:

@@ -13,6 +13,8 @@ platforms:
     networks:
       - name: foo
       - name: bar
+    buildargs:
+      testarg: this_is_a_test
 provisioner:
   name: ansible
   playbooks:
