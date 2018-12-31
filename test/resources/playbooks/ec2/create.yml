@@ -28,12 +28,20 @@
     keypair_name: molecule_key
     keypair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
   tasks:
-    - name: Create security group
+    - name: Find the vpc for the subnet
+      ec2_vpc_subnet_facts:
+        subnet_ids: "{{ item.vpc_subnet_id }}"
+      loop: "{{ molecule_yml.platforms }}"
+      register: subnet_facts
+
+    - name: Create security groups
       ec2_group:
+        vpc_id: "{{ item.subnets[0].vpc_id }}"
         name: "{{ security_group_name }}"
         description: "{{ security_group_name }}"
         rules: "{{ security_group_rules }}"
         rules_egress: "{{ security_group_rules_egress }}"
+      loop: "{{ subnet_facts.results }}"
 
     - name: Test for presence of local keypair
       stat:
