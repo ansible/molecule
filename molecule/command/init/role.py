@@ -112,8 +112,12 @@ class Role(base.Base):
     type=click.Choice(config.molecule_verifiers()),
     default='testinfra',
     help='Name of verifier to initialize. (testinfra)')
+@click.option(
+    '--template', '-t',
+    type=click.Path(exists=True,dir_okay=True,readable=True,resolve_path=True),
+    help="Path to a cookicutter custom template to initialize the role. The molecule folder will be added to this template")
 def role(ctx, dependency_name, driver_name, lint_name, provisioner_name,
-         role_name, verifier_name):  # pragma: no cover
+         role_name, verifier_name,template):  # pragma: no cover
     """ Initialize a new role for use with Molecule. """
     command_args = {
         'dependency_name': dependency_name,
@@ -132,5 +136,8 @@ def role(ctx, dependency_name, driver_name, lint_name, provisioner_name,
     if verifier_name == 'goss':
         command_args['verifier_lint_name'] = 'yamllint'
 
+    if template is not None:
+        command_args['template'] = template
+        
     r = Role(command_args)
     r.execute()
