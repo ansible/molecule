@@ -8,7 +8,7 @@
   hosts: all
   become: true
   vars:
-    goss_version: v0.2.5
+    goss_version: v0.3.6
     goss_arch: amd64
     goss_bin: /usr/local/bin/goss
     goss_sha256sum: 31d04f98444ded26e2478fbdb3f5949cc9318bed13b5937598facc1818e1fce1.
