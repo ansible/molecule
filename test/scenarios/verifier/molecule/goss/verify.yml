@@ -1,4 +1,9 @@
 ---
+# This is an example playbook to execute goss tests.
+# Tests need distributed to the appropriate ansible host/groups
+# prior to execution by `goss validate`.
+
+{% raw -%}
 - name: Verify
   hosts: all
   become: true
@@ -22,12 +27,22 @@
         path: "{{ goss_test_directory }}"
         state: directory
 
+    - name: Find Goss tests on localhost
+      shell: "find {{ lookup('env', 'MOLECULE_VERIFIER_TEST_DIRECTORY') }} \\( -name 'test_*.yml' -and -not -name 'test_host_*.yml' \\) -or -name 'test_host_{{ ansible_hostname }}*.yml'"
+      delegate_to: localhost
+      register: test_files
+
+    - name: debug
+      debug:
+        msg: "{{ test_files.stdout_lines }}"
+        verbosity: 3
+
     - name: Copy Goss tests to remote
       copy:
         src: "{{ item }}"
         dest: "{{ goss_test_directory }}/{{ item | basename }}"
-      with_fileglob:
-        - "{{ lookup('env', 'MOLECULE_VERIFIER_TEST_DIRECTORY') }}/test_*.yml"
+      with_items:
+        - "{{ test_files.stdout_lines }}"
 
     - name: Register test files
       shell: "ls {{ goss_test_directory }}/test_*.yml"
@@ -49,3 +64,4 @@
         msg: "Goss failed to validate"
       when: item.rc != 0
       with_items: "{{ test_results.results }}"
+{% endraw -%}
