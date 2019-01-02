@@ -1,9 +1,4 @@
 ---
-# This is an example playbook to execute goss tests.
-# Tests need distributed to the appropriate ansible host/groups
-# prior to execution by `goss validate`.
-
-{% raw -%}
 - name: Verify
   hosts: all
   become: true
@@ -64,4 +59,3 @@
         msg: "Goss failed to validate"
       when: item.rc != 0
       with_items: "{{ test_results.results }}"
-{% endraw -%}
