@@ -366,6 +366,7 @@ class Config(object):
             'provisioner': {
                 'name': 'ansible',
                 'config_options': {},
+                'ansible_args': [],
                 'connection_options': {},
                 'options': {},
                 'env': {},

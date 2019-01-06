@@ -279,6 +279,17 @@ class Ansible(base.Base):
             ansible_ssh_common_args: -o IdentitiesOnly=no
 
     .. _`variables defined in a playbook`: https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#defining-variables-in-a-playbook
+
+    Add arguments to ansible-playbook when running converge:
+
+    .. code-block:: yaml
+
+        provisioner:
+          name: ansible
+          ansible_args:
+            - --inventory=mygroups.yml
+            - --limit=host1,host2
+
     """  # noqa
 
     def __init__(self, config):
@@ -369,6 +380,10 @@ class Ansible(base.Base):
     @property
     def name(self):
         return self._config.config['provisioner']['name']
+
+    @property
+    def ansible_args(self):
+        return self._config.config['provisioner']['ansible_args']
 
     @property
     def config_options(self):
