@@ -58,6 +58,7 @@ class AnsiblePlaybook(object):
         self.add_cli_arg('inventory', self._config.provisioner.inventory_file)
         options = util.merge_dicts(self._config.provisioner.options, self._cli)
         verbose_flag = util.verbose_flag(options)
+        raw_options = self._config.provisioner.options.get('raw_options', [])
         if self._playbook != self._config.provisioner.playbooks.converge:
             if options.get('become'):
                 del options['become']
@@ -65,7 +66,7 @@ class AnsiblePlaybook(object):
         self._ansible_command = sh.ansible_playbook.bake(
             options,
             self._playbook,
-            *verbose_flag,
+            *(verbose_flag + raw_options),
             _cwd=self._config.scenario.directory,
             _env=self._env,
             _out=self._out,

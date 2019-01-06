@@ -64,6 +64,27 @@ def test_bake(_inventory_file, _instance):
     assert sorted(x) == sorted(result)
 
 
+def test_bake_raw_options(_inventory_file, _instance):
+    raw_options = ['--inventory=moreinventory', '--myoption']
+    _instance._config.provisioner.options['raw_options'] = raw_options
+    pb = _instance._config.provisioner.playbooks.converge
+    _instance._playbook = pb
+    _instance.bake()
+
+    x = [
+        str(sh.ansible_playbook),
+        '--become',
+        '--inventory={}'.format(_inventory_file),
+        '--inventory=moreinventory',
+        '--myoption',
+        '--skip-tags=molecule-notest,notest',
+        pb,
+    ]
+    result = str(_instance._ansible_command).split()
+
+    assert sorted(x) == sorted(result)
+
+
 def test_bake_removes_non_interactive_options_from_non_converge_playbooks(
         _inventory_file, _instance):
     _instance.bake()
