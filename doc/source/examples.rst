@@ -115,7 +115,7 @@ The developer can also opt to start the container with extended privileges.
 
     Use caution when using `privileged` mode. [2]_ [3]_
 
-.. code-block:: bash
+.. code-block:: yaml
 
     platforms:
       - name: instance
