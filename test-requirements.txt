@@ -2,7 +2,7 @@ mock
 pur
 # pytest==3.1.0 issues with pytest-verbose-parametrize
 pytest==3.0.7
-pytest-cov
+pytest-cov==2.6.0
 pytest-helpers-namespace
 pytest-mock
 pytest-verbose-parametrize
