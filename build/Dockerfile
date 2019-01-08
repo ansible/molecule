@@ -28,15 +28,8 @@ ENV PACKAGES="\
 "
 
 ENV PIP_PACKAGES="\
-    ansible[azure] \
+    molecule[azure,docker,docs,ec2,gce,lxc,openstack,vagrant,windows] \
     virtualenv \
-    molecule \
-    ansible \
-    docker \
-    azure-cli \
-    packaging \
-    msrestazure \
-    pywinrm \
 "
 
 ENV GEM_PACKAGES="\
