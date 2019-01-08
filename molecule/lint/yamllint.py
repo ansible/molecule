@@ -82,6 +82,7 @@ class Yamllint(base.Base):
     def default_options(self):
         return {
             's': True,
+            'truthy': False,
         }
 
     @property

@@ -75,6 +75,7 @@ def test_files_private_member(_patched_get_files, _instance):
 def test_default_options_property(_instance):
     x = {
         's': True,
+        'truthy': False,
     }
 
     assert x == _instance.default_options
