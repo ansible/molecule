@@ -90,9 +90,10 @@ class Yamllint(base.Base):
             'c',
             'config-file',
         ])
-        lint_options = set(self._config.config['lint'].get('options', {}).keys())
-        if not config_file_flags.intersection(lint_options):
-            opts['d'] = '{extends: default, rules: {truthy: disable}}'
+        lint_options = self._config.config['lint'].get('options', {})
+        lint_option_keys = lint_options.keys()
+        if not config_file_flags.intersection(lint_option_keys):
+            opts['d'] = "'{extends: default, rules: {truthy: disable}}'"
 
         return opts
 

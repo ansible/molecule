@@ -75,6 +75,7 @@ def test_files_private_member(_patched_get_files, _instance):
 def test_default_options_property(_instance):
     x = {
         's': True,
+        'd': "'{extends: default, rules: {truthy: disable}}'",
     }
 
     assert x == _instance.default_options
@@ -101,6 +102,7 @@ def test_options_property(_instance):
     x = {
         's': True,
         'foo': 'bar',
+        'd': "'{extends: default, rules: {truthy: disable}}'",
     }
 
     assert x == _instance.options
@@ -113,6 +115,7 @@ def test_options_property_handles_cli_args(_instance):
     x = {
         's': True,
         'foo': 'bar',
+        'd': "'{extends: default, rules: {truthy: disable}}'",
     }
 
     # Does nothing.  The `yamllint` command does not support
@@ -127,6 +130,12 @@ def test_bake(_patched_get_files, _instance):
     x = [
         str(sh.Command('yamllint')),
         '-s',
+        '-d',
+        "'{extends:",
+        'default,',
+        'rules:',
+        '{truthy:',
+        "disable}}'",
         '--foo=bar',
         'foo.yml',
         'bar.yaml',
@@ -174,6 +183,12 @@ def test_execute_bakes(_patched_get_files, patched_run_command, _instance):
     x = [
         str(sh.Command('yamllint')),
         '-s',
+        '-d',
+        "'{extends:",
+        'default,',
+        'rules:',
+        '{truthy:',
+        "disable}}'",
         '--foo=bar',
         'foo.yml',
         'bar.yaml',
