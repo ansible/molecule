@@ -66,7 +66,8 @@ class Role(base.Base):
             template_directory = self._command_args['template']
         else:
             template_directory = 'role'
-        self._process_templates(template_directory, self._command_args, role_directory)
+        self._process_templates(
+            template_directory, self._command_args, role_directory)
         scenario_base_directory = os.path.join(role_directory, role_name)
         templates = [
             'scenario/driver/{driver_name}'.format(**self._command_args),
@@ -113,11 +114,17 @@ class Role(base.Base):
     default='testinfra',
     help='Name of verifier to initialize. (testinfra)')
 @click.option(
-    '--template', '-t',
-    type=click.Path(exists=True,dir_okay=True,readable=True,resolve_path=True),
-    help="Path to a cookicutter custom template to initialize the role. The molecule folder will be added to this template")
+    '--template',
+    '-t',
+    type=click.Path(
+        exists=True,
+        dir_okay=True,
+        readable=True,
+        resolve_path=True),
+    help="Path to a cookicutter custom template to initialize the role. "
+         "The molecule folder will be added to this template")
 def role(ctx, dependency_name, driver_name, lint_name, provisioner_name,
-         role_name, verifier_name,template):  # pragma: no cover
+         role_name, verifier_name, template):  # pragma: no cover
     """ Initialize a new role for use with Molecule. """
     command_args = {
         'dependency_name': dependency_name,
@@ -138,6 +145,6 @@ def role(ctx, dependency_name, driver_name, lint_name, provisioner_name,
 
     if template is not None:
         command_args['template'] = template
-        
+
     r = Role(command_args)
     r.execute()

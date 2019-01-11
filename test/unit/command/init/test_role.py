@@ -51,16 +51,24 @@ def custom_readme_content():
 
 @pytest.fixture
 def custom_template_dir(temp_dir, custom_readme_content):
-    return _generate_template_dir(temp_dir, '{{cookiecutter.role_name}}', custom_readme_content)
+    return _generate_template_dir(
+        temp_dir,
+        '{{cookiecutter.role_name}}',
+        custom_readme_content)
+
 
 @pytest.fixture
 def invalid_template_dir(temp_dir, custom_readme_content):
-    return _generate_template_dir(temp_dir, 'bad_format', custom_readme_content)
+    return _generate_template_dir(
+        temp_dir,
+        'bad_format',
+        custom_readme_content)
 
-def _generate_template_dir(root_dir,template_dir,readme_content):
+
+def _generate_template_dir(root_dir, template_dir, readme_content):
     cookiecutter_json_path = os.path.join(
-        os.path.dirname(
-            __file__), os.path.pardir, os.path.pardir, os.path.pardir, os.path.pardir,
+        os.path.dirname(__file__),
+        os.path.pardir, os.path.pardir, os.path.pardir, os.path.pardir,
         'molecule', 'cookiecutter', 'role', 'cookiecutter.json')
     with open(cookiecutter_json_path, 'r') as cookiecutter_json:
         cookiecutter_json_content = cookiecutter_json.read()
@@ -82,10 +90,11 @@ def _generate_template_dir(root_dir,template_dir,readme_content):
 
     os.makedirs(custom_cookiecutter_dir_path)
     os.mknod(custom_cookiecutter_readme_path)
-    with open(custom_cookiecutter_readme_path, 'a') as custom_cookiecutter_readme:
-        custom_cookiecutter_readme.write(readme_content)
+    with open(custom_cookiecutter_readme_path, 'a') as custom_readme:
+        custom_readme.write(readme_content)
 
     return custom_role_template_dir
+
 
 def test_execute(temp_dir, _instance, patched_logger_info,
                  patched_logger_success):
@@ -115,7 +124,11 @@ def test_execute_role_exists(temp_dir, _instance, patched_logger_critical):
     patched_logger_critical.assert_called_once_with(msg)
 
 
-def test_execute_with_custom_template(custom_template_dir, custom_readme_content, _command_args, patched_logger_critical):
+def test_execute_with_custom_template(
+        custom_template_dir,
+        custom_readme_content,
+        _command_args,
+        patched_logger_critical):
     _command_args['template'] = custom_template_dir
 
     custom_template_instance = role.Role(_command_args)
@@ -130,7 +143,10 @@ def test_execute_with_custom_template(custom_template_dir, custom_readme_content
     assert os.path.isdir('./test-role/molecule/default/tests')
 
 
-def test_execute_with_absent_template(temp_dir, _command_args, patched_logger_critical):
+def test_execute_with_absent_template(
+        temp_dir,
+        _command_args,
+        patched_logger_critical):
     incorrect_path = os.path.join(temp_dir, "absent_template_dir")
     _command_args['template'] = incorrect_path
 
@@ -140,11 +156,15 @@ def test_execute_with_absent_template(temp_dir, _command_args, patched_logger_cr
 
     assert e.value.code == 1
 
-def test_execute_with_incorrect_template(invalid_template_dir, _command_args, patched_logger_critical):
+
+def test_execute_with_incorrect_template(
+        invalid_template_dir,
+        _command_args,
+        patched_logger_critical):
     _command_args['template'] = invalid_template_dir
 
     invalid_template_instance = role.Role(_command_args)
     with pytest.raises(SystemExit) as e:
         invalid_template_instance.execute()
-    
+
     assert e.value.code == 1
