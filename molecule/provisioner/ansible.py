@@ -42,7 +42,8 @@ class Ansible(base.Base):
     ``init`` subcommand will provide the necessary files for convenience.
 
     Molecule will skip tasks which are tagged with either `molecule-notest` or
-    `notest`.
+    `notest`. With the tag `molecule-idempotence-notest` tasks are only
+    skipped during the idempotence action step.
 
     .. important::
 
@@ -386,6 +387,10 @@ class Ansible(base.Base):
         d = {
             'skip-tags': 'molecule-notest,notest',
         }
+
+        if self._config.action == 'idempotence':
+            d['skip-tags'] += ',molecule-idempotence-notest'
+
         if self._config.debug:
             d['vvv'] = True
             d['diff'] = True
