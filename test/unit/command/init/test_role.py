@@ -45,24 +45,42 @@ def _instance(_command_args):
 
 
 @pytest.fixture
-def custom_readme_content():
-    return "This string should be in the custom readme"
+def _resources_folder_path():
+    resources_folder_path = os.path.join(
+        os.path.dirname(__file__),
+        os.pardir, os.pardir, os.pardir,
+        'resources'
+    )
+    return resources_folder_path
 
 
 @pytest.fixture
-def custom_template_dir(temp_dir, custom_readme_content):
-    return _generate_template_dir(
-        temp_dir,
-        '{{cookiecutter.role_name}}',
-        custom_readme_content)
+def custom_template_dir(_resources_folder_path):
+    custom_template_dir_path = os.path.join(
+        _resources_folder_path, 'custom_role_template'
+    )
+    return custom_template_dir_path
 
 
 @pytest.fixture
-def invalid_template_dir(temp_dir, custom_readme_content):
-    return _generate_template_dir(
-        temp_dir,
-        'bad_format',
-        custom_readme_content)
+def invalid_template_dir(_resources_folder_path):
+    invalid_role_template_path = os.path.join(
+        _resources_folder_path, 'invalid_role_template'
+    )
+    return invalid_role_template_path
+
+
+@pytest.fixture
+def custom_readme_content(custom_template_dir):
+    readme_path = os.path.join(
+        custom_template_dir, '{{cookiecutter.role_name}}', 'README.md'
+    )
+
+    custom_readme_content = ""
+    with open(readme_path, 'r') as readme:
+        custom_readme_content = readme.read()
+
+    return custom_readme_content
 
 
 def _generate_template_dir(root_dir, template_dir, readme_content):
@@ -125,16 +143,16 @@ def test_execute_role_exists(temp_dir, _instance, patched_logger_critical):
 
 
 def test_execute_with_custom_template(
+        temp_dir,
         custom_template_dir,
         custom_readme_content,
-        _command_args,
-        patched_logger_critical):
+        _command_args):
     _command_args['template'] = custom_template_dir
 
     custom_template_instance = role.Role(_command_args)
     custom_template_instance.execute()
 
-    readme_path = './test-role/README.rst'
+    readme_path = './test-role/README.md'
     assert os.path.isfile(readme_path)
     with open(readme_path, 'r') as readme:
         assert readme.read() == custom_readme_content
@@ -145,8 +163,7 @@ def test_execute_with_custom_template(
 
 def test_execute_with_absent_template(
         temp_dir,
-        _command_args,
-        patched_logger_critical):
+        _command_args):
     incorrect_path = os.path.join(temp_dir, "absent_template_dir")
     _command_args['template'] = incorrect_path
 
@@ -158,9 +175,9 @@ def test_execute_with_absent_template(
 
 
 def test_execute_with_incorrect_template(
+        temp_dir,
         invalid_template_dir,
-        _command_args,
-        patched_logger_critical):
+        _command_args):
     _command_args['template'] = invalid_template_dir
 
     invalid_template_instance = role.Role(_command_args)
