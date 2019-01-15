@@ -112,9 +112,6 @@ def test_platforms_docker(_config):
 @pytest.fixture
 def _model_platforms_docker_errors_section_data():
     return {
-        'driver': {
-            'name': 'vagrant',
-        },
         'platforms': [{
             'name': int(),
             'hostname': int(),
