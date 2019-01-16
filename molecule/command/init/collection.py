@@ -69,21 +69,6 @@ class Collection(base.Base):
         # create the default scenario
         scenario_base_directory = os.path.join(collection_directory, collection_name)
 
-        '''
-        templates = [
-            'collection_scenario/driver/{driver_name}'.format(**self._command_args),
-            'collection_scenario/verifier/{verifier_name}'.format(**self._command_args),
-        ]
-
-        for template in templates:
-            LOG.info(template)
-            self._process_templates(template, self._command_args,
-                                    scenario_base_directory)
-
-        # create the molecule directory
-        self._process_templates('molecule', self._command_args, collection_directory)
-        '''
-
         LOG.success(msg)
 
 
