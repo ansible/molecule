@@ -21,6 +21,7 @@
 import click
 
 from molecule import logger
+from molecule.command.init import collection
 from molecule.command.init import role
 from molecule.command.init import scenario
 from molecule.command.init import template
@@ -33,6 +34,7 @@ def init():  # pragma: no cover
     """ Initialize a new role or scenario. """
 
 
+init.add_command(collection.collection)
 init.add_command(role.role)
 init.add_command(scenario.scenario)
 init.add_command(template.template)
