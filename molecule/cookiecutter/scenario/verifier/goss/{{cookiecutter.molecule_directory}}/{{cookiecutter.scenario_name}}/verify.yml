@@ -31,6 +31,7 @@
       shell: "find {{ lookup('env', 'MOLECULE_VERIFIER_TEST_DIRECTORY') }} \\( -name 'test_*.yml' -and -not -name 'test_host_*.yml' \\) -or -name 'test_host_{{ ansible_hostname }}*.yml'"
       delegate_to: localhost
       register: test_files
+      become: false
 
     - name: debug
       debug:
