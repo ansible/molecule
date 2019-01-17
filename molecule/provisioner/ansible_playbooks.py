@@ -41,6 +41,10 @@ class AnsiblePlaybooks(object):
         self._config = config
 
     @property
+    def cleanup(self):
+        return self._get_playbook('cleanup')
+
+    @property
     def create(self):
         return self._get_playbook('create')
 

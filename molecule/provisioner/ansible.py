@@ -168,6 +168,33 @@ class Ansible(base.Base):
           playbooks:
             prepare: prepare.yml
 
+    The cleanup playbook is for cleaning up test infrastructure that may not
+    be present on the instance that will be destroyed. The primary use-case
+    is for "cleaning up" changes that were made outside of Molecule's test
+    environment. For example, remote database connections or user accounts.
+    Intended to be used in conjunction with `prepare` to modify external
+    resources when required.
+
+    The cleanup step is executed directly before every destroy step. Just like
+    the destroy step, it will be run twice. An initial clean before converge
+    and then a clean before the last destroy step. This means that the cleanup
+    playbook must handle failures to cleanup resources which have not
+    been created yet.
+
+    Add the following to the provisioner's `playbooks` section
+    to enable.
+
+    .. code-block:: yaml
+
+        provisioner:
+          name: ansible
+          playbooks:
+            cleanup: cleanup.yml
+
+    .. important::
+
+        This feature should be considered experimental.
+
     Environment variables.  Molecule does its best to handle common Ansible
     paths.  The defaults are as follows.
 
@@ -513,6 +540,16 @@ class Ansible(base.Base):
         return os.path.join(
             os.path.dirname(__file__), os.path.pardir, os.path.pardir,
             'molecule', 'provisioner', 'ansible')
+
+    def cleanup(self):
+        """
+        Executes `ansible-playbook` against the cleanup playbook and returns
+        None.
+
+        :return: None
+        """
+        pb = self._get_ansible_playbook(self.playbooks.cleanup)
+        pb.execute()
 
     def connection_options(self, instance_name):
         d = self._config.driver.ansible_connection_options(instance_name)

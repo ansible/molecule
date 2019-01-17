@@ -85,6 +85,7 @@ def test_print_matrix(mocker, patched_logger_info, patched_logger_out,
     x = u"""
 ├── default
 │   ├── lint
+│   ├── cleanup
 │   ├── destroy
 │   ├── dependency
 │   ├── syntax
@@ -94,9 +95,11 @@ def test_print_matrix(mocker, patched_logger_info, patched_logger_out,
 │   ├── idempotence
 │   ├── side_effect
 │   ├── verify
+│   ├── cleanup
 │   └── destroy
 └── foo
     ├── lint
+    ├── cleanup
     ├── destroy
     ├── dependency
     ├── syntax
@@ -106,6 +109,7 @@ def test_print_matrix(mocker, patched_logger_info, patched_logger_out,
     ├── idempotence
     ├── side_effect
     ├── verify
+    ├── cleanup
     └── destroy
 """
     assert x == patched_logger_out.mock_calls[0][1][0]
@@ -153,13 +157,16 @@ def test_get_matrix(_instance):
                 'prepare',
                 'converge',
             ],
+            'cleanup': ['cleanup'],
             'check': [
+                'cleanup',
                 'destroy',
                 'dependency',
                 'create',
                 'prepare',
                 'converge',
                 'check',
+                'cleanup',
                 'destroy',
             ],
             'verify': ['verify'],
@@ -172,6 +179,7 @@ def test_get_matrix(_instance):
             'dependency': ['dependency'],
             'test': [
                 'lint',
+                'cleanup',
                 'destroy',
                 'dependency',
                 'syntax',
@@ -181,9 +189,10 @@ def test_get_matrix(_instance):
                 'idempotence',
                 'side_effect',
                 'verify',
+                'cleanup',
                 'destroy',
             ],
-            'destroy': ['destroy']
+            'destroy': ['cleanup', 'destroy']
         },
         'foo': {
             'lint': ['lint'],
@@ -196,14 +205,17 @@ def test_get_matrix(_instance):
                 'converge',
             ],
             'check': [
+                'cleanup',
                 'destroy',
                 'dependency',
                 'create',
                 'prepare',
                 'converge',
                 'check',
+                'cleanup',
                 'destroy',
             ],
+            'cleanup': ['cleanup'],
             'create': [
                 'create',
                 'prepare',
@@ -214,6 +226,7 @@ def test_get_matrix(_instance):
             'dependency': ['dependency'],
             'test': [
                 'lint',
+                'cleanup',
                 'destroy',
                 'dependency',
                 'syntax',
@@ -223,9 +236,10 @@ def test_get_matrix(_instance):
                 'idempotence',
                 'side_effect',
                 'verify',
+                'cleanup',
                 'destroy',
             ],
-            'destroy': ['destroy']
+            'destroy': ['cleanup', 'destroy']
         }
     }
 

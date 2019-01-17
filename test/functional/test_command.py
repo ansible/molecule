@@ -99,6 +99,35 @@ def test_command_check(scenario_to_test, with_scenario, scenario_name):
         'driver_name',
         'scenario_name',
     ])
+def test_command_cleanup(scenario_to_test, with_scenario, scenario_name):
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('cleanup', **options)
+    pytest.helpers.run_command(cmd)
+
+
+@pytest.mark.parametrize(
+    'scenario_to_test, driver_name, scenario_name',
+    [
+        ('driver/azure', 'azure', 'default'),
+        ('driver/docker', 'docker', 'default'),
+        ('driver/ec2', 'ec2', 'default'),
+        ('driver/gce', 'gce', 'default'),
+        ('driver/lxc', 'lxc', 'default'),
+        ('driver/lxd', 'lxd', 'default'),
+        ('driver/openstack', 'openstack', 'default'),
+        #  ('driver/delegated', 'delegated', 'azure'),
+        ('driver/delegated', 'delegated', 'docker'),
+        ('driver/delegated', 'delegated', 'ec2'),
+        ('driver/delegated', 'delegated', 'gce'),
+        ('driver/delegated', 'delegated', 'openstack'),
+        #  ('driver/delegated', 'delegated', 'vagrant'),
+        ('driver/vagrant', 'vagrant', 'default'),
+    ],
+    indirect=[
+        'scenario_to_test',
+        'driver_name',
+        'scenario_name',
+    ])
 def test_command_converge(scenario_to_test, with_scenario, scenario_name):
     options = {'scenario_name': scenario_name}
     cmd = sh.molecule.bake('converge', **options)

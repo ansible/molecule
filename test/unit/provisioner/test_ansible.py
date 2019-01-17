@@ -508,6 +508,10 @@ def test_directory_property(_instance):
     ) == parts[-3:]
 
 
+def test_playbooks_cleaned_property_is_optional(_instance):
+    assert _instance.playbooks.cleanup is None
+
+
 def test_playbooks_create_property(_instance):
     x = os.path.join(
         _instance._config.provisioner.playbooks._get_playbook_directory(),
@@ -579,6 +583,16 @@ def test_converge_with_playbook(_instance, mocker, _patched_ansible_playbook):
     #               which didn't go through str.decode().
     assert result == b'patched-ansible-playbook-stdout'
 
+    _patched_ansible_playbook.return_value.execute.assert_called_once_with()
+
+
+def test_cleanup(_instance, mocker, _patched_ansible_playbook):
+    _instance.cleanup()
+
+    _patched_ansible_playbook.assert_called_once_with(
+        _instance._config.provisioner.playbooks.cleanup,
+        _instance._config,
+    )
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
