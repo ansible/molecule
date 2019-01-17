@@ -18,9 +18,19 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+from uuid import uuid4
+
 from molecule import logger
 
+
 LOG = logger.get_logger(__name__)
+
+
+def extend_instance_names(config_platforms, unique_id):
+    def transformer_func(p):
+        p['name'] = '{}-{}'.format(p['name'], unique_id)
+        return p
+    return [transformer_func(p) for p in config_platforms]
 
 
 class Platforms(object):
@@ -72,6 +82,11 @@ class Platforms(object):
         :param config: An instance of a Molecule config.
         :return: None
         """
+        self._unique_run_id = str(uuid4())
+        config.config['platforms'] = extend_instance_names(
+            config.config['platforms'],
+            self._unique_run_id,
+        )
         self._config = config
 
     @property
