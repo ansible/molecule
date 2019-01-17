@@ -6,6 +6,7 @@ pytest-cov==2.6.0
 pytest-helpers-namespace
 pytest-mock
 pytest-verbose-parametrize
+pytest-xdist==1.26.0
 # The error was: KeyError: 'created_at'
 shade==1.22.2
 twine
