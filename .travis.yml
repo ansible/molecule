@@ -30,7 +30,7 @@ language: python
   python: "3.7"
 - &reset-prerequisites
   addons: {}
-  before_install: []
+  before_script: []
   services: []
 - &lint
   <<: *py-37
@@ -332,12 +332,13 @@ addons:
     - lxd
     - lxd-client
 before_install:
-- gem install inspec rubocop
 - export TOXENV=$(echo $TOXENV_TMPL | envsubst)
 - pip install tox-venv
 install:
 - tox --notest | tee ~/.tox-venv-install.log
 - >
   ! grep 'ERROR: ' ~/.tox-venv-install.log .tox/*/log/*.log
+before_script:
+- gem install inspec rubocop
 script:
 - tox
