@@ -151,20 +151,35 @@ class Delegated(base.Base):
             try:
                 d = self._get_instance_config(instance_name)
 
-                return {
-                    'ansible_user':
-                    d['user'],
-                    'ansible_host':
-                    d['address'],
-                    'ansible_port':
-                    d['port'],
-                    'ansible_private_key_file':
-                    d['identity_file'],
-                    'connection':
-                    'ssh',
-                    'ansible_ssh_common_args':
-                    ' '.join(self.ssh_connection_options),
-                }
+                if d['ansible_connection'] == "winrm":
+                    return {
+                        'ansible_user':
+                            d['user'],
+                        'ansible_host':
+                            d['address'],
+                        'ansible_port':
+                            d['port'],
+                        'ansible_winrm_transport':
+                            d['ansible_winrm_transport'],
+                        'ansible_connection':
+                            d['ansible_connection'],
+                        'ansible_winrm_server_cert_validation': 'ignore'
+                    }
+                else:
+                    return {
+                        'ansible_user':
+                        d['user'],
+                        'ansible_host':
+                        d['address'],
+                        'ansible_port':
+                        d['port'],
+                        'ansible_private_key_file':
+                        d['identity_file'],
+                        'connection':
+                        'ssh',
+                        'ansible_ssh_common_args':
+                        ' '.join(self.ssh_connection_options),
+                    }
             except StopIteration:
                 return {}
             except IOError:
