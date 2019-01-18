@@ -192,9 +192,9 @@ def test_ansible_connection_options(_instance):
 @pytest.mark.parametrize(
     'config_instance', ['_driver_managed_section_data'], indirect=True)
 def test_ansible_connection_options_when_managed(mocker, _instance):
-    m = mocker.patch(
+    ssh_case_data = mocker.patch(
         'molecule.driver.delegated.Delegated._get_instance_config')
-    m.return_value = {
+    ssh_case_data.return_value = {
         'instance': 'foo',
         'address': '172.16.0.2',
         'user': 'cloud-user',
@@ -202,7 +202,7 @@ def test_ansible_connection_options_when_managed(mocker, _instance):
         'identity_file': '/foo/bar',
     }
 
-    x = {
+    ssh_expected_data = {
         'ansible_host':
         '172.16.0.2',
         'ansible_port':
@@ -220,11 +220,11 @@ def test_ansible_connection_options_when_managed(mocker, _instance):
                                     '-o StrictHostKeyChecking=no'),
     }
 
-    assert x == _instance.ansible_connection_options('foo')
+    assert ssh_expected_data == _instance.ansible_connection_options('foo')
 
-    z = mocker.patch(
+    winrm_case_data = mocker.patch(
         'molecule.driver.delegated.Delegated._get_instance_config')
-    z.return_value = {
+    winrm_case_data.return_value = {
         'instance': 'foo',
         'address': '172.16.0.2',
         'user': 'cloud-user',
@@ -232,7 +232,7 @@ def test_ansible_connection_options_when_managed(mocker, _instance):
         'connection': 'winrm',
     }
 
-    y = {
+    winrm_expected_data = {
         'ansible_host':
             '172.16.0.2',
         'ansible_port':
@@ -243,7 +243,7 @@ def test_ansible_connection_options_when_managed(mocker, _instance):
             'winrm'
     }
 
-    assert y == _instance.ansible_connection_options('foo')
+    assert winrm_expected_data == _instance.ansible_connection_options('foo')
 
 
 def test_ansible_connection_options_handles_missing_instance_config_managed(
