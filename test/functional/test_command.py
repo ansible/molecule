@@ -54,6 +54,7 @@ def driver_name(request):
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
+        ('driver/linode', 'linode', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
@@ -83,6 +84,7 @@ def test_command_check(scenario_to_test, with_scenario, scenario_name):
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
+        ('driver/linode', 'linode', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
@@ -112,6 +114,7 @@ def test_command_converge(scenario_to_test, with_scenario, scenario_name):
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
+        ('driver/linode', 'linode', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
@@ -140,6 +143,7 @@ def test_command_create(scenario_to_test, with_scenario, scenario_name):
         ('dependency', 'docker', 'ansible-galaxy'),
         ('dependency', 'ec2', 'ansible-galaxy'),
         ('dependency', 'gce', 'ansible-galaxy'),
+        ('dependency', 'linode', 'ansible-galaxy'),
         ('dependency', 'lxc', 'ansible-galaxy'),
         ('dependency', 'lxd', 'ansible-galaxy'),
         ('dependency', 'openstack', 'ansible-galaxy'),
@@ -168,6 +172,7 @@ def test_command_dependency_ansible_galaxy(scenario_to_test, with_scenario,
         ('dependency', 'docker', 'gilt'),
         ('dependency', 'ec2', 'gilt'),
         ('dependency', 'gce', 'gilt'),
+        ('dependency', 'linode', 'gilt'),
         ('dependency', 'lxc', 'gilt'),
         ('dependency', 'lxd', 'gilt'),
         ('dependency', 'openstack', 'gilt'),
@@ -195,6 +200,7 @@ def test_command_dependency_gilt(scenario_to_test, with_scenario,
         ('dependency', 'docker', 'shell'),
         ('dependency', 'ec2', 'shell'),
         ('dependency', 'gce', 'shell'),
+        ('dependency', 'linode', 'shell'),
         ('dependency', 'lxc', 'shell'),
         ('dependency', 'lxd', 'shell'),
         ('dependency', 'openstack', 'shell'),
@@ -223,6 +229,7 @@ def test_command_dependency_shell(scenario_to_test, with_scenario,
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
+        ('driver/linode', 'linode', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
@@ -252,6 +259,7 @@ def test_command_destroy(scenario_to_test, with_scenario, scenario_name):
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
+        ('driver/linode', 'linode', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
@@ -278,6 +286,7 @@ def test_command_idempotence(scenario_to_test, with_scenario, scenario_name):
         ('docker'),
         ('ec2'),
         ('gce'),
+        ('linode'),
         ('lxc'),
         ('lxd'),
         ('openstack'),
@@ -296,6 +305,7 @@ def test_command_init_role(temp_dir, driver_name, skip_test):
         ('docker'),
         ('ec2'),
         ('gce'),
+        ('linode'),
         ('lxc'),
         ('lxd'),
         ('openstack'),
@@ -315,6 +325,7 @@ def test_command_init_scenario(temp_dir, driver_name, skip_test):
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
+        ('driver/linode', 'linode', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
@@ -368,6 +379,13 @@ Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    
 instance         gce            ansible             default          false      false
 instance-1       gce            ansible             multi-node       false      false
 instance-2       gce            ansible             multi-node       false      false
+""".strip()),  # noqa
+        ('driver/linode', 'linode', """
+Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    Converged
+---------------  -------------  ------------------  ---------------  ---------  -----------
+instance         linode          ansible             default          false      false
+instance-1       linode          ansible             multi-node       false      false
+instance-2       linode          ansible             multi-node       false      false
 """.strip()),  # noqa
         ('driver/lxc', 'lxc', """
 Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    Converged
@@ -436,6 +454,11 @@ instance-2  ec2  ansible  multi-node  false  false
 instance    gce  ansible  default     false  false
 instance-1  gce  ansible  multi-node  false  false
 instance-2  gce  ansible  multi-node  false  false
+""".strip()),
+        ('driver/linode', 'linode', """
+instance    linode  ansible  default     false  false
+instance-1  linode  ansible  multi-node  false  false
+instance-2  linode  ansible  multi-node  false  false
 """.strip()),
         ('driver/lxc', 'lxc', """
 instance    lxc  ansible  default     false  false
@@ -513,6 +536,17 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario,
             'instance-2',
             '.*instance-2.*',
         ]], 'multi-node'),
+        ('driver/linode', 'linode', [[
+            'instance',
+            '.*instance.*',
+        ]], 'default'),
+        ('driver/linode', 'linode', [[
+            'instance-1',
+            '.*instance-1.*',
+        ], [
+            'instance-2',
+            '.*instance-2.*',
+        ]], 'multi-node'),
         ('driver/lxc', 'lxc', [[
             'instance-1',
             '.*instance-1.*',
@@ -583,6 +617,7 @@ def test_command_login(scenario_to_test, with_scenario, login_args,
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
+        ('driver/linode', 'linode', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
@@ -616,6 +651,7 @@ def test_command_prepare(scenario_to_test, with_scenario, scenario_name):
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
+        ('driver/linode', 'linode', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
@@ -645,6 +681,7 @@ def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
+        ('driver/linode', 'linode', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
@@ -674,6 +711,7 @@ def test_command_syntax(scenario_to_test, with_scenario, scenario_name):
         ('driver/docker', 'docker', None),
         ('driver/ec2', 'ec2', None),
         ('driver/gce', 'gce', None),
+        ('driver/linode', 'linode', None),
         ('driver/lxc', 'lxc', None),
         ('driver/lxd', 'lxd', None),
         ('driver/openstack', 'openstack', None),
@@ -701,6 +739,7 @@ def test_command_test(scenario_to_test, with_scenario, scenario_name,
         ('driver/azure', 'azure', 'default'),
         ('driver/docker', 'docker', 'default'),
         ('driver/gce', 'gce', 'default'),
+        ('driver/linode', 'linode', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
