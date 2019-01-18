@@ -211,15 +211,39 @@ def test_ansible_connection_options_when_managed(mocker, _instance):
         'cloud-user',
         'ansible_private_key_file':
         '/foo/bar',
-        'connection':
-        'ssh',
+        'ansible_connection':
+        'smart',
         'ansible_ssh_common_args': ('-o UserKnownHostsFile=/dev/null '
                                     '-o ControlMaster=auto '
                                     '-o ControlPersist=60s '
                                     '-o IdentitiesOnly=yes '
                                     '-o StrictHostKeyChecking=no'),
     }
+
     assert x == _instance.ansible_connection_options('foo')
+
+    z = mocker.patch(
+        'molecule.driver.delegated.Delegated._get_instance_config')
+    z.return_value = {
+        'instance': 'foo',
+        'address': '172.16.0.2',
+        'user': 'cloud-user',
+        'port': 5896,
+        'connection': 'winrm',
+    }
+
+    y = {
+        'ansible_host':
+            '172.16.0.2',
+        'ansible_port':
+            5896,
+        'ansible_user':
+            'cloud-user',
+        'ansible_connection':
+            'winrm'
+    }
+
+    assert y == _instance.ansible_connection_options('foo')
 
 
 def test_ansible_connection_options_handles_missing_instance_config_managed(
