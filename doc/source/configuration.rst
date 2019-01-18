@@ -84,6 +84,12 @@ GCE
 .. autoclass:: molecule.driver.gce.GCE()
    :undoc-members:
 
+Linode
+^^^^^^
+
+.. autoclass:: molecule.driver.linode.Linode()
+   :undoc-members:
+
 LXC
 ^^^
 

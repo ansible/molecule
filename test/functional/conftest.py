@@ -68,6 +68,7 @@ def skip_test(request, driver_name):
         'docker': supports_docker,
         'ec2': supports_ec2,
         'gce': supports_gce,
+        'linode': supports_linode,
         'lxc': supports_lxc,
         'lxd': supports_lxd,
         'openstack': supports_openstack,
@@ -262,6 +263,15 @@ def get_virtualbox_executable():
 @pytest.helpers.register
 def supports_docker():
     return get_docker_executable()
+
+
+@pytest.helpers.register
+def supports_linode():
+    try:
+        pytest.importorskip('linode')
+        return True
+    except Exception:
+        return False
 
 
 @pytest.helpers.register
