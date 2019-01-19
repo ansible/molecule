@@ -164,7 +164,7 @@ def test_execute_with_custom_template(
 def test_execute_with_absent_template(
         temp_dir,
         _command_args):
-    incorrect_path = os.path.join(temp_dir, "absent_template_dir")
+    incorrect_path = os.path.join("absent_template_dir")
     _command_args['template'] = incorrect_path
 
     absent_template_instance = role.Role(_command_args)
