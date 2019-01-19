@@ -47,71 +47,35 @@ def _instance(_command_args):
 @pytest.fixture
 def _resources_folder_path():
     resources_folder_path = os.path.join(
-        os.path.dirname(__file__),
-        os.pardir, os.pardir, os.pardir,
-        'resources'
-    )
+        os.path.dirname(__file__), os.pardir, os.pardir, os.pardir,
+        'resources')
     return resources_folder_path
 
 
 @pytest.fixture
 def custom_template_dir(_resources_folder_path):
-    custom_template_dir_path = os.path.join(
-        _resources_folder_path, 'custom_role_template'
-    )
+    custom_template_dir_path = os.path.join(_resources_folder_path,
+                                            'custom_role_template')
     return custom_template_dir_path
 
 
 @pytest.fixture
 def invalid_template_dir(_resources_folder_path):
-    invalid_role_template_path = os.path.join(
-        _resources_folder_path, 'invalid_role_template'
-    )
+    invalid_role_template_path = os.path.join(_resources_folder_path,
+                                              'invalid_role_template')
     return invalid_role_template_path
 
 
 @pytest.fixture
 def custom_readme_content(custom_template_dir):
-    readme_path = os.path.join(
-        custom_template_dir, '{{cookiecutter.role_name}}', 'README.md'
-    )
+    readme_path = os.path.join(custom_template_dir,
+                              '{{cookiecutter.role_name}}', 'README.md')
 
     custom_readme_content = ""
     with open(readme_path, 'r') as readme:
         custom_readme_content = readme.read()
 
     return custom_readme_content
-
-
-def _generate_template_dir(root_dir, template_dir, readme_content):
-    cookiecutter_json_path = os.path.join(
-        os.path.dirname(__file__),
-        os.path.pardir, os.path.pardir, os.path.pardir, os.path.pardir,
-        'molecule', 'cookiecutter', 'role', 'cookiecutter.json')
-    with open(cookiecutter_json_path, 'r') as cookiecutter_json:
-        cookiecutter_json_content = cookiecutter_json.read()
-
-    custom_role_template_dir = os.path.join(
-        root_dir, "custom_role_template")
-
-    custom_cookiecutter_json_path = os.path.join(
-        custom_role_template_dir, 'cookiecutter.json')
-    custom_cookiecutter_dir_path = os.path.join(
-        custom_role_template_dir, template_dir)
-    custom_cookiecutter_readme_path = os.path.join(
-        custom_cookiecutter_dir_path, 'README.rst')
-
-    os.makedirs(custom_role_template_dir)
-    os.mknod(custom_cookiecutter_json_path)
-    with open(custom_cookiecutter_json_path, 'a') as custom_cookiecutter_json:
-        custom_cookiecutter_json.write(cookiecutter_json_content)
-
-    os.makedirs(custom_cookiecutter_dir_path)
-    os.mknod(custom_cookiecutter_readme_path)
-    with open(custom_cookiecutter_readme_path, 'a') as custom_readme:
-        custom_readme.write(readme_content)
-
-    return custom_role_template_dir
 
 
 def test_execute(temp_dir, _instance, patched_logger_info,
@@ -142,11 +106,8 @@ def test_execute_role_exists(temp_dir, _instance, patched_logger_critical):
     patched_logger_critical.assert_called_once_with(msg)
 
 
-def test_execute_with_custom_template(
-        temp_dir,
-        custom_template_dir,
-        custom_readme_content,
-        _command_args):
+def test_execute_with_custom_template(temp_dir, custom_template_dir,
+                                      custom_readme_content, _command_args):
     _command_args['template'] = custom_template_dir
 
     custom_template_instance = role.Role(_command_args)
@@ -161,9 +122,7 @@ def test_execute_with_custom_template(
     assert os.path.isdir('./test-role/molecule/default/tests')
 
 
-def test_execute_with_absent_template(
-        temp_dir,
-        _command_args):
+def test_execute_with_absent_template( temp_dir, _command_args):
     incorrect_path = os.path.join("absent_template_dir")
     _command_args['template'] = incorrect_path
 
@@ -174,10 +133,8 @@ def test_execute_with_absent_template(
     assert e.value.code == 1
 
 
-def test_execute_with_incorrect_template(
-        temp_dir,
-        invalid_template_dir,
-        _command_args):
+def test_execute_with_incorrect_template(temp_dir, invalid_template_dir,
+                                         _command_args):
     _command_args['template'] = invalid_template_dir
 
     invalid_template_instance = role.Role(_command_args)

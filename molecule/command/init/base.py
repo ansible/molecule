@@ -24,7 +24,6 @@ import os
 import cookiecutter
 import cookiecutter.main
 
-
 from molecule import logger
 from molecule import util
 
