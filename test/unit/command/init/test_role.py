@@ -69,7 +69,7 @@ def invalid_template_dir(_resources_folder_path):
 @pytest.fixture
 def custom_readme_content(custom_template_dir):
     readme_path = os.path.join(custom_template_dir,
-                              '{{cookiecutter.role_name}}', 'README.md')
+                               '{{cookiecutter.role_name}}', 'README.md')
 
     custom_readme_content = ""
     with open(readme_path, 'r') as readme:
@@ -122,7 +122,7 @@ def test_execute_with_custom_template(temp_dir, custom_template_dir,
     assert os.path.isdir('./test-role/molecule/default/tests')
 
 
-def test_execute_with_absent_template( temp_dir, _command_args):
+def test_execute_with_absent_template(temp_dir, _command_args):
     incorrect_path = os.path.join("absent_template_dir")
     _command_args['template'] = incorrect_path
 
