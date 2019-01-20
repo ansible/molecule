@@ -343,4 +343,4 @@ install:
 before_script:
 - gem install inspec rubocop
 script:
-- tox
+- tox --parallel all
