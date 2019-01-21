@@ -63,11 +63,14 @@ class Collection(base.Base):
                    'Cannot create new collection.').format(collection_path)
             util.sysexit_with_message(msg)
 
-        self._process_templates('collection', self._command_args, collection_directory)
-        msg = 'Initialized colletion in {} successfully.'.format(collection_path)
+        self._process_templates('collection', self._command_args,
+                                collection_directory)
+        msg = 'Initialized colletion in {} successfully.'.format(
+            collection_path)
 
         # create the default scenario
-        scenario_base_directory = os.path.join(collection_directory, collection_name)
+        scenario_base_directory = os.path.join(collection_directory,
+                                               collection_name)
 
         LOG.success(msg)
 
@@ -75,10 +78,13 @@ class Collection(base.Base):
 @click.command()
 @click.pass_context
 @click.option(
-    '--collection-namespace', '-n', required=True, help='Namespace of the collection.')
+    '--collection-namespace',
+    '-n',
+    required=True,
+    help='Namespace of the collection.')
 @click.option(
     '--collection-name', '-c', required=True, help='Name of the collection.')
-def collection(ctx, collection_namespace, collection_name): #pragma: no cover
+def collection(ctx, collection_namespace, collection_name):  #pragma: no cover
     """Initialize a new collection for use with Molecule."""
     command_args = {
         'collection_namespace': collection_namespace,
