@@ -80,22 +80,9 @@ class Yamllint(base.Base):
 
     @property
     def default_options(self):
-        opts = {
+        return {
             's': True,
         }
-
-        # Config file and default flags are mutually exclusive. If 'c' or
-        # 'config-file' are specified, do not override the default
-        config_file_flags = set([
-            'c',
-            'config-file',
-        ])
-        lint_options = self._config.config['lint'].get('options', {})
-        lint_option_keys = lint_options.keys()
-        if not config_file_flags.intersection(lint_option_keys):
-            opts['d'] = "'{extends: default, rules: {truthy: disable}}'"
-
-        return opts
 
     @property
     def default_env(self):
