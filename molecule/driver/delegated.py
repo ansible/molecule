@@ -94,6 +94,7 @@ class Delegated(base.Base):
         platforms:
           - name: instance-vagrant
 
+
     Provide the files Molecule will preserve post `destroy` action.
 
     .. code-block:: yaml

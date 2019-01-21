@@ -229,18 +229,14 @@ def test_ansible_connection_options_when_managed(mocker, _instance):
         'address': '172.16.0.2',
         'user': 'cloud-user',
         'port': 5896,
-        'connection': 'winrm',
+        'connection': 'winrm'
     }
 
     winrm_expected_data = {
-        'ansible_host':
-            '172.16.0.2',
-        'ansible_port':
-            5896,
-        'ansible_user':
-            'cloud-user',
-        'ansible_connection':
-            'winrm'
+        'ansible_host': '172.16.0.2',
+        'ansible_port': 5896,
+        'ansible_user': 'cloud-user',
+        'ansible_connection': 'winrm'
     }
 
     assert winrm_expected_data == _instance.ansible_connection_options('foo')
