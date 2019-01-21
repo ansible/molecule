@@ -31,14 +31,32 @@ LOG = logger.get_logger(__name__)
 
 class Yamllint(base.Base):
     """
-    `Yamllint`_ is the default projet linter.
+    `yamllint`_ is the default projet linter.
 
-    `Yamllint`_ is a linter for YAML files.  In addition to checking for syntax
-    validity, also checks for key repetition, and cosmetic problems such as
-    lines length, trailing spaces, and indentation.
+    `yamllint`_ is a linter for YAML files. In addition to checking for syntax
+    validity it also checks for key repetition as well as cosmetic problems such as
+    line length, trailing spaces, and indentation.
+
+    The default ``yamllint`` settings that ship with ``molecule`` are:
+
+    .. code-block: yaml
+
+        extends: default
+
+        rules:
+          braces:
+            max-spaces-inside: 1
+            level: error
+          brackets:
+            max-spaces-inside: 1
+            level: error
+          line-length: disable
+          truthy: disable
+
 
     Additional options can be passed to ``yamllint`` through the options
-    dict.  Any option set in this section will override the defaults.
+    dict. Any option set in this section will override the defaults. See the
+    `yamllint rules`_ for more options.
 
     .. code-block:: yaml
 
@@ -47,7 +65,7 @@ class Yamllint(base.Base):
           options:
             config-file: foo/bar
 
-    The project linting can be disabled by setting ``enabled`` to False.
+    The project linting can be disabled by setting ``enabled`` to ``False``.
 
     .. code-block:: yaml
 
@@ -64,7 +82,8 @@ class Yamllint(base.Base):
           env:
             FOO: bar
 
-    .. _`Yamllint`: https://github.com/adrienverge/yamllint
+    .. _`yamllint`: https://github.com/adrienverge/yamllint
+    .. _`yamllint rules`: https://yamllint.readthedocs.io/en/stable/rules.html
     """
 
     def __init__(self, config):
