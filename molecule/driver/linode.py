@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2018-2019 Red Hat, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -18,43 +18,51 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-from molecule import logger
 from molecule.driver import base
 
 from molecule import util
 
-LOG = logger.get_logger(__name__)
 
-
-class Openstack(base.Base):
+class Linode(base.Base):
     """
-    The class responsible for managing `OpenStack`_ instances.  `OpenStack`_
+    The class responsible for managing `Linode`_ instances.  `Linode`_
     is `not` the default driver used in Molecule.
 
-    Molecule leverages Ansible's `openstack_module`_, by mapping variables
+    Molecule leverages Ansible's `linode_module`_, by mapping variables
     from `molecule.yml` into `create.yml` and `destroy.yml`.
 
-    .. _`openstack_module`: http://docs.ansible.com/ansible/latest/os_server_module.html
+    .. important::
+
+        Please note, the Ansible Linode module is currently using the deprecated
+        API and there are a number of outstanding usability issues with the module.
+        However, there is ongoing work to migrate to the new API (v4) and migrate
+        this driver when that time comes. In the mean time, this driver can be
+        considered at somewhat of an Alpha status quality.
+
+    .. _`linode_module`: https://docs.ansible.com/ansible/latest/modules/linode_module.html
 
     .. code-block:: yaml
 
         driver:
-          name: openstack
+          name: linode
         platforms:
           - name: instance
+            plan: 1
+            datacenter: 7
+            distribution: 129
 
     .. code-block:: bash
 
-        $ pip install molecule[openstack]
+        $ pip install 'molecule[linode]'
 
     Change the options passed to the ssh client.
 
     .. code-block:: yaml
 
         driver:
-          name: openstack
+          name: linode
           ssh_connection_options:
-            - -o ControlPath=~/.ansible/cp/%r@%h-%p
+            -o ControlPath=~/.ansible/cp/%r@%h-%p
 
     .. important::
 
@@ -66,16 +74,16 @@ class Openstack(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: openstack
+          name: linode
           safe_files:
             - foo
 
-    .. _`OpenStack`: https://www.openstack.org
+    .. _`Linode`: https://www.linode.com/
     """  # noqa
 
     def __init__(self, config):
-        super(Openstack, self).__init__(config)
-        self._name = 'openstack'
+        super(Linode, self).__init__(config)
+        self._name = 'linode'
 
     @property
     def name(self):
@@ -118,6 +126,7 @@ class Openstack(base.Base):
                 'ansible_user': d['user'],
                 'ansible_host': d['address'],
                 'ansible_port': d['port'],
+                'ansible_ssh_pass': d['ssh_pass'],
                 'ansible_private_key_file': d['identity_file'],
                 'connection': 'ssh',
                 'ansible_ssh_common_args':
@@ -134,5 +143,11 @@ class Openstack(base.Base):
         instance_config_dict = util.safe_load_file(
             self._config.driver.instance_config)
 
-        return next(item for item in instance_config_dict
-                    if item['instance'] == instance_name)
+        return next(
+            item for item in instance_config_dict if any((
+                # NOTE(lwm): Handle both because of transitioning label logic
+                #            https://github.com/ansible/ansible/pull/44719
+                item['instance'] == '{}_{}'.format(item['linode_id'],
+                                                   instance_name),
+                item['instance'] == '{}-{}'.format(item['linode_id'],
+                                                   instance_name))))

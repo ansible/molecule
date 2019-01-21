@@ -27,6 +27,11 @@ platforms:
     image: debian-8
 {%- elif cookiecutter.driver_name == 'lxc' %}
   - name: instance
+{%- elif cookiecutter.driver_name == 'linode' %}
+  - name: instance
+    plan: 1
+    datacenter: 7
+    distribution: 129
 {%- elif cookiecutter.driver_name == 'lxd' %}
   - name: instance
 {%- elif cookiecutter.driver_name == 'openstack' %}

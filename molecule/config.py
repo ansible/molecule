@@ -37,6 +37,7 @@ from molecule.driver import delegated
 from molecule.driver import docker
 from molecule.driver import ec2
 from molecule.driver import gce
+from molecule.driver import linode
 from molecule.driver import lxc
 from molecule.driver import lxd
 from molecule.driver import openstack
@@ -163,6 +164,8 @@ class Config(object):
             driver = ec2.EC2(self)
         elif driver_name == 'gce':
             driver = gce.GCE(self)
+        elif driver_name == 'linode':
+            driver = linode.Linode(self)
         elif driver_name == 'lxc':
             driver = lxc.LXC(self)
         elif driver_name == 'lxd':
@@ -479,6 +482,7 @@ def molecule_drivers():
         docker.Docker(None).name,
         ec2.EC2(None).name,
         gce.GCE(None).name,
+        linode.Linode(None).name,
         lxc.LXC(None).name,
         lxd.LXD(None).name,
         openstack.Openstack(None).name,
