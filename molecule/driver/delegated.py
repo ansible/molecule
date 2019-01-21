@@ -51,6 +51,14 @@ class Delegated(base.Base):
           port: ssh_port_as_string
           user: ssh_user
 
+        - address: winrm_endpoint
+          instance: instance_name
+          port: winrm_port_as_string
+          user: winrm_user
+          connection: 'winrm'
+    This article covers how to configure and use WinRM with Ansible:
+    https://docs.ansible.com/ansible/latest/user_guide/windows_winrm.html
+
     Molecule can also skip the provisioning/deprovisioning steps.  It is the
     developers responsibility to manage the instances, and properly configure
     Molecule to connect to said instances.
