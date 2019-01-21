@@ -53,7 +53,7 @@ class Delegated(base.Base):
 
         - address: winrm_endpoint
           instance: instance_name
-          port: winrm_port_as_string
+          port: winrm_port
           user: winrm_user
           connection: 'winrm'
     This article covers how to configure and use WinRM with Ansible:
