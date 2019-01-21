@@ -29,10 +29,10 @@ LOG = logger.get_logger(__name__)
 class Azure(base.Base):
     """
     The class responsible for managing `Azure`_ instances.  `Azure`_
-    is `not` the default driver used in Molecule.
+    is ``not`` the default driver used in Molecule.
 
     Molecule leverages Ansible's `azure_module`_, by mapping variables
-    from `molecule.yml` into `create.yml` and `destroy.yml`.
+    from ``molecule.yml`` into ``create.yml`` and ``destroy.yml``.
 
     .. _`azure_module`: http://docs.ansible.com/ansible/latest/guide_azure.html
 

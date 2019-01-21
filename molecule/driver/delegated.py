@@ -31,7 +31,7 @@ class Delegated(base.Base):
     the default driver used in Molecule.
 
     Under this driver, it is the developers responsibility to implement the
-    create and destroy playbooks.  `Managed` is the default behaviour of all
+    create and destroy playbooks.  ``Managed`` is the default behaviour of all
     drivers.
 
     .. code-block:: yaml
@@ -94,7 +94,7 @@ class Delegated(base.Base):
         platforms:
           - name: instance-vagrant
 
-    Provide the files Molecule will preserve post `destroy` action.
+    Provide the files Molecule will preserve post ``destroy`` action.
 
     .. code-block:: yaml
 

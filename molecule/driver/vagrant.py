@@ -33,23 +33,23 @@ class Vagrant(base.Base):
     `not` the default driver used in Molecule.
 
     Molecule leverages Molecule's own :ref:`molecule_vagrant_module`, by
-    mapping variables from `molecule.yml` into `create.yml` and `destroy.yml`.
+    mapping variables from ``molecule.yml`` into ``create.yml`` and ``destroy.yml``.
 
     .. important::
 
         This driver is alpha quality software.  Do not perform any additonal
-        tasks inside the `create` playbook.  Molecule does not know about the
-        Vagrant instances' configuration until the `converge` playbook is
+        tasks inside the ``create`` playbook.  Molecule does not know about the
+        Vagrant instances' configuration until the ``converge`` playbook is
         executed.
 
-        The `create` playbook boots instances, then the instance data is
+        The ``create`` playbook boots instances, then the instance data is
         written to disk.  The instance data is then added to Molecule's Ansible
         inventory on the next execution of `molecule.command.create`, which
-        happens to be the `converge` playbook.
+        happens to be the ``converge`` playbook.
 
         This is an area needing improvement.  Gluing togher Ansible playbook
         return data and molecule is clunky.  Moving the playbook execution
-        from `sh` to python is less than ideal, since the playbook's return
+        from ``sh`` to python is less than ideal, since the playbook's return
         data needs handled by an internal callback plugin.
 
         Operating this far inside Ansible's internals doesn't feel right.  Nor

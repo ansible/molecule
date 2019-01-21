@@ -31,15 +31,15 @@ LOG = logger.get_logger(__name__)
 
 class Shell(base.Base):
     """
-    `Shell` is an alternate dependency manager.  It is intended to run a
+    ``Shell`` is an alternate dependency manager.  It is intended to run a
     command in situations where `Ansible Galaxy`_ and `Gilt`_ don't suffice.
 
-    The `command` to execute is required, and is relative to Molecule's project
+    The ``command`` to execute is required, and is relative to Molecule's project
     directory when referencing a script not in $PATH.
 
     .. note::
 
-        Unlike the other dependency managers, `options` are ignored and not
+        Unlike the other dependency managers, ``options`` are ignored and not
         passed to `shell`.  Additional flags/subcommands should simply be added
         to the `command`.
 
@@ -49,7 +49,7 @@ class Shell(base.Base):
           name: shell
           command: path/to/command --flag1 subcommand --flag2
 
-    The dependency manager can be disabled by setting `enabled` to False.
+    The dependency manager can be disabled by setting ``enabled`` to False.
 
     .. code-block:: yaml
 
@@ -89,7 +89,7 @@ class Shell(base.Base):
 
     def bake(self):
         """
-        Bake a `shell` command so it's ready to execute and returns None.
+        Bake a ``shell`` command so it's ready to execute and returns None.
 
         :return: None
         """

@@ -39,9 +39,9 @@ class Ansible(base.Base):
 
     Molecule's provisioner manages the instances lifecycle.  However, the user
     must provide the create, destroy, and converge playbooks.  Molecule's
-    `init` subcommand will provide the necessary files for convenience.
+    ``init`` subcommand will provide the necessary files for convenience.
 
-    Molecule will skip tasks which are taged with either `molecule-notest` or
+    Molecule will skip tasks which are taged with either ``molecule-notest`` or
     `notest`.
 
     .. important::
@@ -56,7 +56,7 @@ class Ansible(base.Base):
         data into the instance_conf_dict fact in the create playbook.  This
         allows Molecule to properly configure Ansible inventory.
 
-    Additional options can be passed to `ansible-playbook` through the options
+    Additional options can be passed to ``ansible-playbook`` through the options
     dict.  Any option set in this section will override the defaults.
 
     .. important::
@@ -65,13 +65,13 @@ class Ansible(base.Base):
 
     .. note::
 
-        Molecule will remove any options matching '^[v]+$', and pass `-vvv`
-        to the underlying `ansible-playbook` command when executing
+        Molecule will remove any options matching '^[v]+$', and pass ``-vvv``
+        to the underlying ``ansible-playbook`` command when executing
         `molecule --debug`.
 
-    Molecule will silence log output, unless invoked with the `--debug` flag.
+    Molecule will silence log output, unless invoked with the ``--debug`` flag.
     However, this results in quite a bit of output.  To enable Ansible log
-    output, add the following to the `provisioner` section of `molecule.yml`.
+    output, add the following to the ``provisioner`` section of ``molecule.yml``.
 
     .. code-block:: yaml
 
@@ -140,7 +140,7 @@ class Ansible(base.Base):
 
     The side effect playbook executes actions which produce side effects to the
     instances(s).  Intended to test HA failover scenarios or the like.  It is
-    not enabled by default.  Add the following to the provisioner's `playbooks`
+    not enabled by default.  Add the following to the provisioner's ``playbooks``
     section to enable.
 
     .. code-block:: yaml
@@ -256,7 +256,7 @@ class Ansible(base.Base):
         The source directory linking is relative to the scenario's
         directory.
 
-        The only valid keys are `group_vars` and `host_vars`.  Molecule's
+        The only valid keys are ``group_vars`` and ``host_vars``.  Molecule's
         schema validator will enforce this.
 
     .. code-block:: yaml
@@ -522,7 +522,7 @@ class Ansible(base.Base):
 
     def check(self):
         """
-        Executes `ansible-playbook` against the converge playbook with the
+        Executes ``ansible-playbook`` against the converge playbook with the
         ``--check`` flag and returns None.
 
         :return: None
@@ -533,7 +533,7 @@ class Ansible(base.Base):
 
     def converge(self, playbook=None, **kwargs):
         """
-        Executes `ansible-playbook` against the converge playbook unless
+        Executes ``ansible-playbook`` against the converge playbook unless
         specified otherwise and returns a string.
 
         :param playbook: An optional string containing an absolute path to a
@@ -550,7 +550,7 @@ class Ansible(base.Base):
 
     def destroy(self):
         """
-        Executes `ansible-playbook` against the destroy playbook and returns
+        Executes ``ansible-playbook`` against the destroy playbook and returns
         None.
 
         :return: None
@@ -560,7 +560,7 @@ class Ansible(base.Base):
 
     def side_effect(self):
         """
-        Executes `ansible-playbook` against the side_effect playbook and
+        Executes ``ansible-playbook`` against the side_effect playbook and
         returns None.
 
         :return: None
@@ -570,7 +570,7 @@ class Ansible(base.Base):
 
     def create(self):
         """
-        Executes `ansible-playbook` against the create playbook and returns
+        Executes ``ansible-playbook`` against the create playbook and returns
         None.
 
         :return: None
@@ -580,7 +580,7 @@ class Ansible(base.Base):
 
     def prepare(self):
         """
-        Executes `ansible-playbook` against the prepare playbook and returns
+        Executes ``ansible-playbook`` against the prepare playbook and returns
         None.
 
         :return: None
@@ -590,7 +590,7 @@ class Ansible(base.Base):
 
     def syntax(self):
         """
-        Executes `ansible-playbook` against the converge playbook with the
+        Executes ``ansible-playbook`` against the converge playbook with the
         ``-syntax-check`` flag and returns None.
 
         :return: None
@@ -601,7 +601,7 @@ class Ansible(base.Base):
 
     def verify(self):
         """
-        Executes `ansible-playbook` against the verify playbook and returns
+        Executes ``ansible-playbook`` against the verify playbook and returns
         None.
 
         :return: None
