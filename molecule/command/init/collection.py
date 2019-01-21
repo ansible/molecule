@@ -79,7 +79,7 @@ class Collection(base.Base):
 @click.option(
     '--collection-name', '-c', required=True, help='Name of the collection.')
 def collection(ctx, collection_namespace, collection_name): #pragma: no cover
-    """ Initialize a new collection for use with Molecule. """
+    """Initialize a new collection for use with Molecule."""
     command_args = {
         'collection_namespace': collection_namespace,
         'collection_name': collection_name,
