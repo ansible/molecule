@@ -1,4 +1,5 @@
 #  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2019 Ansible Project
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -33,9 +34,9 @@ LOG = logger.get_logger(__name__)
 
 class Collection(base.Base):
     """
-    .. program:: molecule init collection --collection-namespace foo --collection-name bar
+    .. program:: molecule init collection --namespace foo --name bar
 
-    .. option:: molecule init collection --collection-namespace foo --collection-name bar
+    .. option:: molecule init collection --namespace foo --name bar
 
         Initialize a new collection.
     """
@@ -44,13 +45,6 @@ class Collection(base.Base):
         self._command_args = command_args
 
     def execute(self):
-        """
-        Execute the actions necessary to perform a `molecule init collection` and
-        returns None.
-
-        :return: None
-        """
-
         collection_namespace = self._command_args['collection_namespace']
         collection_name = self._command_args['collection_name']
         collection_directory = os.getcwd()
@@ -78,17 +72,17 @@ class Collection(base.Base):
 @click.command()
 @click.pass_context
 @click.option(
-    '--collection-namespace',
+    '--namespace',
     '-n',
     required=True,
     help='Namespace of the collection.')
 @click.option(
-    '--collection-name', '-c', required=True, help='Name of the collection.')
-def collection(ctx, collection_namespace, collection_name):  #pragma: no cover
+    '--name', '-c', required=True, help='Name of the collection.')
+def collection(ctx, namespace, name):  # pragma: no cover
     """Initialize a new collection for use with Molecule."""
     command_args = {
-        'collection_namespace': collection_namespace,
-        'collection_name': collection_name,
+        'collection_namespace': namespace,
+        'collection_name': name,
     }
 
     col = Collection(command_args)
