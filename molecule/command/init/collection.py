@@ -23,10 +23,8 @@ import os
 
 import click
 
-from molecule import config
 from molecule import logger
 from molecule import util
-from molecule.command import base as command_base
 from molecule.command.init import base
 
 LOG = logger.get_logger(__name__)
@@ -62,9 +60,7 @@ class Collection(base.Base):
         msg = 'Initialized colletion in {} successfully.'.format(
             collection_path)
 
-        # create the default scenario
-        scenario_base_directory = os.path.join(collection_directory,
-                                               collection_name)
+        # TODO create the default scenario
 
         LOG.success(msg)
 
