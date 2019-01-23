@@ -74,6 +74,16 @@ class Goss(base.Base):
           name: goss
           directory: /foo/bar/
 
+    All files starting with test_* will be copied to all molecule hosts.
+    Files matching the regular expression `test_host_$instance_name[-.\\w].yml`
+    will only run on $instance_name. If you have 2 molecule instances,
+    instance1 and instance2, your test files could look like this:
+
+    .. code-block::
+        test_default.yml (will run on all hosts)
+        test_host_instance1.yml (will run only on instance1)
+        test_host_instance2.yml (will run only on instance2)
+
     .. important::
 
         Due to the nature of this verifier.  Molecule does not perform options

@@ -28,7 +28,14 @@
         state: directory
 
     - name: Find Goss tests on localhost
-      shell: "find {{ lookup('env', 'MOLECULE_VERIFIER_TEST_DIRECTORY') }} \\( -name 'test_*.yml' -and -not -name 'test_host_*.yml' \\) -or -name 'test_host_{{ ansible_hostname }}*.yml'"
+      find:
+        paths: "{{ lookup('env', 'MOLECULE_VERIFIER_TEST_DIRECTORY') }}"
+        patterns:
+          - "test[-.\\w]*.yml"
+          - "test_host_{{ ansible_hostname }}[-.\\w]*.yml"
+        excludes:
+          - "test_host_(?!{{ ansible_hostname }})[-.\\w]*.yml"
+        use_regex: true
       delegate_to: localhost
       register: test_files
       changed_when: false
@@ -36,15 +43,15 @@
 
     - name: debug
       debug:
-        msg: "{{ test_files.stdout_lines }}"
+        msg: "{{ test_files.files }}"
         verbosity: 3
 
     - name: Copy Goss tests to remote
       copy:
-        src: "{{ item }}"
-        dest: "{{ goss_test_directory }}/{{ item | basename }}"
+        src: "{{ item.path }}"
+        dest: "{{ goss_test_directory }}/{{ item.path | basename }}"
       with_items:
-        - "{{ test_files.stdout_lines }}"
+        - "{{ test_files.files }}"
 
     - name: Register test files
       shell: "ls {{ goss_test_directory }}/test_*.yml"
