@@ -37,6 +37,7 @@ from molecule.driver import delegated
 from molecule.driver import docker
 from molecule.driver import ec2
 from molecule.driver import gce
+from molecule.driver import linode
 from molecule.driver import lxc
 from molecule.driver import lxd
 from molecule.driver import openstack
@@ -66,12 +67,12 @@ class NewInitCaller(type):
 @six.add_metaclass(NewInitCaller)
 class Config(object):
     """
-    Molecule searches the current directory for `molecule.yml` files by
+    Molecule searches the current directory for ``molecule.yml`` files by
     globbing `molecule/*/molecule.yml`.  The files are instantiated into
     a list of Molecule :class:`.Config` objects, and each Molecule subcommand
     operates on this list.
 
-    The directory in which the `molecule.yml` resides is the Scenario's
+    The directory in which the ``molecule.yml`` resides is the Scenario's
     directory.  Molecule performs most functions within this directory.
 
     The :class:`.Config` object has instantiated Dependency_, Driver_,
@@ -94,7 +95,7 @@ class Config(object):
         :param command_args: An optional dict of options passed to the
          subcommand from the CLI.
         :param ansible_args: An optional tuple of arguments provided to the
-         `ansible-playbook` command.
+         ``ansible-playbook`` command.
         :returns: None
         """
         self.molecule_file = molecule_file
@@ -163,6 +164,8 @@ class Config(object):
             driver = ec2.EC2(self)
         elif driver_name == 'gce':
             driver = gce.GCE(self)
+        elif driver_name == 'linode':
+            driver = linode.Linode(self)
         elif driver_name == 'lxc':
             driver = lxc.LXC(self)
         elif driver_name == 'lxd':
@@ -279,8 +282,8 @@ class Config(object):
     def _reget_config(self):
         """
         Perform the same prioritized recursive merge from `get_config`, this
-        time, interpolating the `keep_string` left behind in the original
-        `get_config` call.  This is probably __very__ bad.
+        time, interpolating the ``keep_string`` left behind in the original
+        ``get_config`` call.  This is probably __very__ bad.
 
         :return: dict
         """
@@ -297,7 +300,7 @@ class Config(object):
 
         1. Loads Molecule defaults.
         2. Loads a base config (if provided) and merges ontop of defaults.
-        3. Loads the scenario's `molecule file` and merges ontop of previous
+        3. Loads the scenario's ``molecule file`` and merges ontop of previous
            merge.
 
         :return: dict
@@ -479,6 +482,7 @@ def molecule_drivers():
         docker.Docker(None).name,
         ec2.EC2(None).name,
         gce.GCE(None).name,
+        linode.Linode(None).name,
         lxc.LXC(None).name,
         lxd.LXD(None).name,
         openstack.Openstack(None).name,

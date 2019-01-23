@@ -30,7 +30,7 @@ class LXD(base.Base):
     default driver used in Molecule.
 
     Molecule leverages Ansible's `lxd_container`_ module, by mapping variables
-    from `molecule.yml` into `create.yml` and `destroy.yml`.
+    from ``molecule.yml`` into ``create.yml`` and ``destroy.yml``.
     The `lxd_container`_ module leverages the LXD API. Usefull information
     about, for example the source variable can be found in the `LXD API documentation`.
 

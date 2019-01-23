@@ -43,7 +43,7 @@ Requirements
 ------------
 
 Depending on the driver chosen, you may need to install additional python
-packages.  See the driver's documentation or `INSTALL.rst`, which is created
+packages.  See the driver's documentation or ``INSTALL.rst``, which is created
 when initializing a new scenario.
 
 Install

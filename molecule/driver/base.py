@@ -73,7 +73,7 @@ class Base(object):
     @abc.abstractproperty
     def login_cmd_template(self):  # pragma: no cover
         """
-        The login command template to be populated by `login_options` and
+        The login command template to be populated by ``login_options`` and
         returns a string.
 
         :returns: str

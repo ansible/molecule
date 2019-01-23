@@ -31,7 +31,7 @@ class Delegated(base.Base):
     the default driver used in Molecule.
 
     Under this driver, it is the developers responsibility to implement the
-    create and destroy playbooks.  `Managed` is the default behaviour of all
+    create and destroy playbooks.  ``Managed`` is the default behaviour of all
     drivers.
 
     .. code-block:: yaml
@@ -101,7 +101,6 @@ class Delegated(base.Base):
               ansible_ssh_common_args -F /path/to/ssh-config
         platforms:
           - name: instance-vagrant
-
 
     Provide the files Molecule will preserve post `destroy` action.
 

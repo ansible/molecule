@@ -29,10 +29,10 @@ LOG = logger.get_logger(__name__)
 class EC2(base.Base):
     """
     The class responsible for managing `EC2`_ instances.  `EC2`_
-    is `not` the default driver used in Molecule.
+    is ``not`` the default driver used in Molecule.
 
     Molecule leverages Ansible's `ec2_module`_, by mapping variables from
-    `molecule.yml` into `create.yml` and `destroy.yml`.
+    ``molecule.yml`` into ``create.yml`` and ``destroy.yml``.
 
     .. _`ec2_module`: http://docs.ansible.com/ansible/latest/ec2_module.html
 

@@ -91,7 +91,7 @@ def run_command(cmd, debug=False):
     """
     Execute the given command and returns None.
 
-    :param cmd: A `sh.Command` object to execute.
+    :param cmd: A ``sh.Command`` object to execute.
     :param debug: An optional bool to toggle debug output.
     :return: ``sh`` object
     """
