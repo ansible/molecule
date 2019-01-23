@@ -43,10 +43,10 @@ class Inspec(base.Base):
     Ansible transport, in an attempt to provide Inspec support across all
     Molecule drivers.
 
-    Additional options can be passed to `inspec exec` by modifying the verify
+    Additional options can be passed to ``inspec exec`` by modifying the verify
     playbook.
 
-    The testing can be disabled by setting `enabled` to False.
+    The testing can be disabled by setting ``enabled`` to False.
 
     .. code-block:: yaml
 
@@ -81,7 +81,7 @@ class Inspec(base.Base):
 
     def __init__(self, config):
         """
-        Sets up the requirements to execute `inspec` and returns None.
+        Sets up the requirements to execute ``inspec`` and returns None.
 
         :param config: An instance of a Molecule config.
         :return: None
