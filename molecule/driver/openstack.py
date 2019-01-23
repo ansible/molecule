@@ -32,7 +32,7 @@ class Openstack(base.Base):
     is `not` the default driver used in Molecule.
 
     Molecule leverages Ansible's `openstack_module`_, by mapping variables
-    from `molecule.yml` into `create.yml` and `destroy.yml`.
+    from ``molecule.yml`` into ``create.yml`` and ``destroy.yml``.
 
     .. _`openstack_module`: http://docs.ansible.com/ansible/latest/os_server_module.html
 

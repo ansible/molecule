@@ -33,13 +33,13 @@ class AnsibleGalaxy(base.Base):
     """
     `Ansible Galaxy`_ is the default dependency manager.
 
-    Additional options can be passed to `ansible-galaxy install` through the
+    Additional options can be passed to ``ansible-galaxy install`` through the
     options dict.  Any option set in this section will override the defaults.
 
     .. note::
 
-        Molecule will remove any options matching '^[v]+$', and pass `-vvv`
-        to the underlying `ansible-galaxy` command when executing
+        Molecule will remove any options matching '^[v]+$', and pass ``-vvv``
+        to the underlying ``ansible-galaxy`` command when executing
         `molecule --debug`.
 
     .. code-block:: yaml
@@ -52,7 +52,7 @@ class AnsibleGalaxy(base.Base):
             role-file: requirements.yml
 
 
-    The dependency manager can be disabled by setting `enabled` to False.
+    The dependency manager can be disabled by setting ``enabled`` to False.
 
     .. code-block:: yaml
 
@@ -94,7 +94,7 @@ class AnsibleGalaxy(base.Base):
         return d
 
     # NOTE(retr0h): Override the base classes' options() to handle
-    # `ansible-galaxy` one-off.
+    # ``ansible-galaxy`` one-off.
     @property
     def options(self):
         o = self._config.config['dependency']['options']
@@ -111,7 +111,7 @@ class AnsibleGalaxy(base.Base):
 
     def bake(self):
         """
-        Bake an `ansible-galaxy` command so it's ready to execute and returns
+        Bake an ``ansible-galaxy`` command so it's ready to execute and returns
         None.
 
         :return: None
@@ -152,7 +152,7 @@ class AnsibleGalaxy(base.Base):
 
     def _setup(self):
         """
-        Prepare the system for using `ansible-galaxy` and returns None.
+        Prepare the system for using ``ansible-galaxy`` and returns None.
 
         :return: None
         """

@@ -34,7 +34,7 @@ class Docker(base.Base):
     the default driver used in Molecule.
 
     Molecule leverages Ansible's `docker_container`_ module, by mapping
-    variables from `molecule.yml` into `create.yml` and `destroy.yml`.
+    variables from ``molecule.yml`` into ``create.yml`` and ``destroy.yml``.
 
     .. _`docker_container`: http://docs.ansible.com/ansible/latest/docker_container_module.html
 
