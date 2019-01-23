@@ -99,7 +99,7 @@ Contact
 
 .. _`freenode`: https://freenode.net
 .. _`molecule-users Forum`: https://groups.google.com/forum/#!forum/molecule-users
-.. _`wiki`: https://github.com/ansible/community/tree/master/group-molecule
+.. _`wiki`: https://github.com/ansible/community/wiki/Molecule
 .. _`ansible-announce list`: https://groups.google.com/group/ansible-announce
 .. _`communication page`: https://docs.ansible.com/ansible/latest/community/communication.html
 
