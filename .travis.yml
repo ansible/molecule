@@ -50,13 +50,13 @@ language: python
   PYTEST_ADDOPTS: "'-m shard_3_of_3'"
 - &py27-env-functional-shard_1
   <<: *env-functional
-  PYTEST_ADDOPTS: "-m shard_1_of_3"
+  PYTEST_ADDOPTS: "-m=shard_1_of_3"
 - &py27-env-functional-shard_2
   <<: *env-functional
-  PYTEST_ADDOPTS: "-m shard_2_of_3"
+  PYTEST_ADDOPTS: "-m=shard_2_of_3"
 - &py27-env-functional-shard_3
   <<: *env-functional
-  PYTEST_ADDOPTS: "-m shard_3_of_3"
+  PYTEST_ADDOPTS: "-m=shard_3_of_3"
 
 
 jobs:
