@@ -29,7 +29,7 @@ class Linode(base.Base):
     is `not` the default driver used in Molecule.
 
     Molecule leverages Ansible's `linode_module`_, by mapping variables
-    from `molecule.yml` into `create.yml` and `destroy.yml`.
+    from ``molecule.yml`` into ``create.yml`` and ``destroy.yml``.
 
     .. important::
 
