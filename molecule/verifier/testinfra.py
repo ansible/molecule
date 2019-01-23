@@ -40,7 +40,8 @@ class Testinfra(base.Base):
     .. note::
 
         Molecule will remove any options matching '^[v]+$', and pass ``-vvv``
-        to the underlying ``py.test`` command when executing ``molecule --debug``.
+        to the underlying ``py.test`` command when executing
+        ``molecule --debug``.
 
     .. code-block:: yaml
 
