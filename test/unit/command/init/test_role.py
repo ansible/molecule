@@ -122,7 +122,8 @@ def test_execute_with_custom_template(temp_dir, custom_template_dir,
     assert os.path.isdir('./test-role/molecule/default/tests')
 
 
-def test_execute_with_absent_template(temp_dir, _command_args):
+def test_execute_with_absent_template(temp_dir, _command_args,
+                                      patched_logger_critical):
     incorrect_path = os.path.join("absent_template_dir")
     _command_args['template'] = incorrect_path
 
@@ -131,10 +132,12 @@ def test_execute_with_absent_template(temp_dir, _command_args):
         absent_template_instance.execute()
 
     assert e.value.code == 1
+    patched_logger_critical.assert_called_once()
 
 
 def test_execute_with_incorrect_template(temp_dir, invalid_template_dir,
-                                         _command_args):
+                                         _command_args,
+                                         patched_logger_critical):
     _command_args['template'] = invalid_template_dir
 
     invalid_template_instance = role.Role(_command_args)
@@ -142,3 +145,4 @@ def test_execute_with_incorrect_template(temp_dir, invalid_template_dir,
         invalid_template_instance.execute()
 
     assert e.value.code == 1
+    patched_logger_critical.assert_called_once()
