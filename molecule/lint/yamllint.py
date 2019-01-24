@@ -37,21 +37,8 @@ class Yamllint(base.Base):
     validity it also checks for key repetition as well as cosmetic problems
     such as line length, trailing spaces, and indentation.
 
-    The default ``yamllint`` settings that ship with ``molecule`` are:
-
-    .. code-block: yaml
-
-        extends: default
-
-        rules:
-          braces:
-            max-spaces-inside: 1
-            level: error
-          brackets:
-            max-spaces-inside: 1
-            level: error
-          line-length: disable
-          truthy: disable
+    The default ``yamllint`` settings that ship with ``molecule`` can be found
+    in the `cookiecutter template`_.
 
 
     Additional options can be passed to ``yamllint`` through the options
@@ -84,6 +71,7 @@ class Yamllint(base.Base):
 
     .. _`yamllint`: https://github.com/adrienverge/yamllint
     .. _`yamllint rules`: https://yamllint.readthedocs.io/en/stable/rules.html
+    .. _`cookiecutter template`: https://github.com/ansible/molecule/blob/master/molecule/cookiecutter/molecule/%7B%7Bcookiecutter.role_name%7D%7D/.yamllint
     """
 
     def __init__(self, config):
