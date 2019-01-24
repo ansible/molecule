@@ -27,7 +27,7 @@ argument-rgx=[a-z_][a-z0-9_]{0,30}$
 
 [FORMAT]
 
-max-line-length=79
+max-line-length=160
 max-module-lines=1000
 
 [VARIABLES]
