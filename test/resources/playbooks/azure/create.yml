@@ -69,7 +69,7 @@
 
 
     # Mandatory configuration for Molecule to function.
-
+    # yamllint disable rule:line-length
     - name: Populate instance config dict
       set_fact:
         instance_conf_dict: {
@@ -81,6 +81,7 @@
       with_items: "{{ azure_jobs.results }}"
       register: instance_config_dict
       when: server.changed | bool
+      # yamllint enable rule:line-length
 
     - name: Convert instance config dict to a list
       set_fact:
