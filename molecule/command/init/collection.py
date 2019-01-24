@@ -45,7 +45,9 @@ class Collection(base.Base):
     def execute(self):
         collection_namespace = self._command_args['collection_namespace']
         collection_name = self._command_args['collection_name']
-        collection_directory = os.getcwd()
+        collection_directory = self._command_args['collection_directory']
+        if collection_directory is None:
+            collection_directory = os.getcwd()
         collection_path = collection_namespace + '.' + collection_name
         msg = 'Initializing new collection {}...'.format(collection_path)
         LOG.info(msg)
@@ -68,17 +70,19 @@ class Collection(base.Base):
 @click.command()
 @click.pass_context
 @click.option(
-    '--namespace',
-    '-n',
-    required=True,
-    help='Namespace of the collection.')
+    '--namespace', '-n', required=True, help='Namespace of the collection.')
+@click.option('--name', '-c', required=True, help='Name of the collection.')
 @click.option(
-    '--name', '-c', required=True, help='Name of the collection.')
-def collection(ctx, namespace, name):  # pragma: no cover
+    '--directory',
+    '-d',
+    required=False,
+    help='Directory path for the new collection.')
+def collection(ctx, namespace, name, directory):  # pragma: no cover
     """Initialize a new collection for use with Molecule."""
     command_args = {
         'collection_namespace': namespace,
         'collection_name': name,
+        'collection_directory': directory
     }
 
     col = Collection(command_args)
