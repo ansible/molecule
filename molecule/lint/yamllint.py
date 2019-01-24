@@ -34,8 +34,8 @@ class Yamllint(base.Base):
     `yamllint`_ is the default projet linter.
 
     `yamllint`_ is a linter for YAML files. In addition to checking for syntax
-    validity it also checks for key repetition as well as cosmetic problems such as
-    line length, trailing spaces, and indentation.
+    validity it also checks for key repetition as well as cosmetic problems
+    such as line length, trailing spaces, and indentation.
 
     The default ``yamllint`` settings that ship with ``molecule`` are:
 
