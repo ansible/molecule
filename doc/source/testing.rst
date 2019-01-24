@@ -110,24 +110,4 @@ Linting is performed by `Flake8`_.
 
 .. _`Flake8`: http://flake8.pycqa.org/en/latest/
 
-LXC
----
-
-Follow the steps detailed in the Vagrantfile below.
-
-.. code-block:: bash
-
-    $ cd test/functional/lxc
-    $ vagrant up
-
-LXD
----
-
-Follow the steps detailed in the Vagrantfile below.
-
-.. code-block:: bash
-
-    $ cd test/functional/lxd
-    $ vagrant up
-
 .. include:: ci.rst
