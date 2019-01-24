@@ -2,3 +2,4 @@
 exclude = .venv/,.tox/,dist/,build/,doc/,.eggs/,molecule/provisioner/ansible/plugins/libraries/goss.py
 format = pylint
 ignore = E741,W503
+max-line-length = 160
