@@ -11,4 +11,3 @@ rules:
     allow-non-breakable-inline-mappings: true
     allow-non-breakable-words: true
     max: 160
-  truthy: disable
