@@ -7,5 +7,8 @@ rules:
   brackets:
     max-spaces-inside: 1
     level: error
-  line-length: disable
+  line-length:
+    allow-non-breakable-inline-mappings: true
+    allow-non-breakable-words: true
+    max: 160
   truthy: disable
