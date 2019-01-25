@@ -10,5 +10,5 @@ Requirements
 Install
 =======
 
-No additional python packages required.  Apt installs necessary requirements
-while installing `lxd`.
+No additional python packages required. Apt installs necessary requirements
+while installing ``lxd``.

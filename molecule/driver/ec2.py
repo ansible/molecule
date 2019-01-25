@@ -45,7 +45,7 @@ class EC2(base.Base):
 
     .. code-block:: bash
 
-        $ pip install molecule[ec2]
+        $ pip install 'molecule[ec2]'
 
     Change the options passed to the ssh client.
 
