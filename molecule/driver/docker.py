@@ -101,12 +101,13 @@ class Docker(base.Base):
 
         platforms:
         - name: instance
-            image: centos:7
-            privileged: true
-            volume_mounts:
+          image: centos:7
+          privileged: true
+          volume_mounts:
             - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
-            command: "/usr/sbin/init"
-            environment: { container: docker }
+          command: "/usr/sbin/init"
+          environment:
+            container: docker
 
     .. code-block:: bash
 
