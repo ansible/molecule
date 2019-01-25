@@ -71,7 +71,9 @@ class Yamllint(base.Base):
 
     .. _`yamllint`: https://github.com/adrienverge/yamllint
     .. _`yamllint rules`: https://yamllint.readthedocs.io/en/stable/rules.html
-    .. _`cookiecutter template`: https://github.com/ansible/molecule/blob/master/molecule/cookiecutter/molecule/%7B%7Bcookiecutter.role_name%7D%7D/.yamllint
+    .. _`cookiecutter template`: https://github.com/ansible/molecule/blob/ma\
+        ster/molecule/cookiecutter/molecule/%7B%7Bcookiecutter.role_name%7\
+        D%7D/.yamllint
     """
 
     def __init__(self, config):
