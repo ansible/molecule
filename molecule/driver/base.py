@@ -136,8 +136,8 @@ class Base(object):
 
     @property
     def safe_files(self):
-        return (self.default_safe_files +
-                self._config.config['driver']['safe_files'])
+        return (self.default_safe_files
+                + self._config.config['driver']['safe_files'])
 
     @property
     def delegated(self):
