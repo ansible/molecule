@@ -65,6 +65,7 @@
         recreate: false
         log_driver: json-file
         command: "{{ item.command | default('bash -c \"while true; do sleep 10000; done\"') }}"
+        pid_mode: "{{ item.pid_mode | default(omit) }}"
         privileged: "{{ item.privileged | default(omit) }}"
         security_opts: "{{ item.security_opts | default(omit) }}"
         volumes: "{{ item.volumes | default(omit) }}"

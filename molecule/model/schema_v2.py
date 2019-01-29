@@ -637,6 +637,9 @@ platforms_docker_schema = {
                     'type': 'string',
                     'nullable': True,
                 },
+                'pid_mode': {
+                    'type': 'string',
+                },
                 'privileged': {
                     'type': 'boolean',
                 },

@@ -50,6 +50,8 @@ def _model_platforms_docker_section_data():
             },
             'command':
             'sleep infinity',
+            'pid_mode':
+            'host',
             'privileged':
             True,
             'security_opts': [
@@ -127,6 +129,7 @@ def _model_platforms_docker_errors_section_data():
                 },
             },
             'command': int(),
+            'pid_mode': int(),
             'privileged': str(),
             'security_opts': [
                 int(),
@@ -188,6 +191,7 @@ def test_platforms_docker_has_errors(_config):
                 'security_opts': [{
                     0: ['must be of string type']
                 }],
+                'pid_mode': ['must be of string type'],
                 'privileged': ['must be of boolean type'],
                 'command': ['must be of string type'],
                 'registry': [{

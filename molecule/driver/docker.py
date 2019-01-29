@@ -56,6 +56,7 @@ class Docker(base.Base):
                 password: $PASSWORD
                 email: user@example.com
             command: sleep infinity
+            pid_mode: host
             privileged: True|False
             security_opts:
               - seccomp=unconfined
