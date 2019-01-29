@@ -1,3 +1,4 @@
+---
 conditions: v1
 dist: xenial
 
@@ -281,7 +282,7 @@ jobs:
       ANSIBLE_VERSION: "26"
     name: functional tests shard 3/3, Ansible 2.6, Python 2.7
 
- - <<: *py-27
+  - <<: *py-27
     env:
       <<: *env-functional-shard_1
       ANSIBLE_VERSION: "25"
