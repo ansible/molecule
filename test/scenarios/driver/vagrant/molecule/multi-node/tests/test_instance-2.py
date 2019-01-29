@@ -19,8 +19,8 @@ def test_cpus(host):
 
 
 def test_memory(host):
-    total_memory = host.ansible("setup")['ansible_facts'][
-        'ansible_memtotal_mb']
+    total_memory = host.ansible(
+        "setup")['ansible_facts']['ansible_memtotal_mb']
 
     assert (1024 + 1024 / 2) <= int(total_memory) <= 2048
 
