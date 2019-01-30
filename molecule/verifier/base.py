@@ -26,6 +26,7 @@ from molecule import util
 from molecule.verifier.lint import flake8
 from molecule.verifier.lint import rubocop
 from molecule.verifier.lint import yamllint
+from molecule.verifier.lint import ansible_lint
 
 
 class Base(object):
@@ -105,3 +106,5 @@ class Base(object):
             return rubocop.RuboCop(self._config)
         if lint_name == 'yamllint':
             return yamllint.Yamllint(self._config)
+        if lint_name == 'ansible-lint':
+            return ansible_lint.AnsibleLint(self._config)

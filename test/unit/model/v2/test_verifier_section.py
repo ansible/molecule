@@ -145,6 +145,18 @@ def _model_verifier_allows_inspec_section_data():
 
 
 @pytest.fixture
+def _model_verifier_allows_ansible_section_data():
+    return {
+        'verifier': {
+            'name': 'ansible',
+            'lint': {
+                'name': 'ansible-lint',
+            },
+        }
+    }
+
+
+@pytest.fixture
 def _model_verifier_allows_goss_section_data():
     return {
         'verifier': {
@@ -161,6 +173,7 @@ def _model_verifier_allows_goss_section_data():
         ('_model_verifier_allows_testinfra_section_data'),
         ('_model_verifier_allows_inspec_section_data'),
         ('_model_verifier_allows_goss_section_data'),
+        ('_model_verifier_allows_ansible_section_data'),
     ],
     indirect=True)
 def test_verifier_allows_name(_config):
