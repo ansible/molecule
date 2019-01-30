@@ -1,3 +1,4 @@
+---
 conditions: v1
 dist: xenial
 
@@ -41,13 +42,16 @@ language: python
   TESTS_TYPE: functional
 - &env-functional-shard_1
   <<: *env-functional
-  PYTEST_ADDOPTS: "'-m shard_1_of_3'"
+  PYTEST_ADDOPTS: >-
+    '-m shard_1_of_3'
 - &env-functional-shard_2
   <<: *env-functional
-  PYTEST_ADDOPTS: "'-m shard_2_of_3'"
+  PYTEST_ADDOPTS: >-
+    '-m shard_2_of_3'
 - &env-functional-shard_3
   <<: *env-functional
-  PYTEST_ADDOPTS: "'-m shard_3_of_3'"
+  PYTEST_ADDOPTS: >-
+    '-m shard_3_of_3'
 
 jobs:
   fast_finish: true
@@ -244,22 +248,57 @@ jobs:
 
   - <<: *py-27
     env:
+      <<: *env-functional-shard_1
       ANSIBLE_VERSION: "27"
-      TESTS_TYPE: functional
-    name: functional tests, Ansible 2.7, Python 2.7
+    name: functional tests shard 1/3, Ansible 2.7, Python 2.7
 
   - <<: *py-27
     env:
+      <<: *env-functional-shard_2
+      ANSIBLE_VERSION: "27"
+    name: functional tests shard 2/3, Ansible 2.7, Python 2.7
+
+  - <<: *py-27
+    env:
+      <<: *env-functional-shard_3
+      ANSIBLE_VERSION: "27"
+    name: functional tests shard 3/3, Ansible 2.7, Python 2.7
+
+  - <<: *py-27
+    env:
+      <<: *env-functional-shard_1
       ANSIBLE_VERSION: "26"
-      TESTS_TYPE: functional
-    name: functional tests, Ansible 2.6, Python 2.7
+    name: functional tests shard 1/3, Ansible 2.6, Python 2.7
 
   - <<: *py-27
     env:
-      ANSIBLE_VERSION: "25"
-      TESTS_TYPE: functional
-    name: functional tests, Ansible 2.5, Python 2.7
+      <<: *env-functional-shard_2
+      ANSIBLE_VERSION: "26"
+    name: functional tests shard 2/3, Ansible 2.6, Python 2.7
 
+  - <<: *py-27
+    env:
+      <<: *env-functional-shard_3
+      ANSIBLE_VERSION: "26"
+    name: functional tests shard 3/3, Ansible 2.6, Python 2.7
+
+  - <<: *py-27
+    env:
+      <<: *env-functional-shard_1
+      ANSIBLE_VERSION: "25"
+    name: functional tests shard 1/3, Ansible 2.5, Python 2.7
+
+  - <<: *py-27
+    env:
+      <<: *env-functional-shard_2
+      ANSIBLE_VERSION: "25"
+    name: functional tests shard 2/3, Ansible 2.5, Python 2.7
+
+  - <<: *py-27
+    env:
+      <<: *env-functional-shard_3
+      ANSIBLE_VERSION: "25"
+    name: functional tests shard 3/3, Ansible 2.5, Python 2.7
 
   # The following set of jobs is running tests against devel branch
   # of ansible/ansible:
