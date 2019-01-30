@@ -50,8 +50,8 @@ class Interpolator(object):
     If a literal dollar sign is needed in a configuration, use a double dollar
     sign (`$$`).
 
-    Molecule will substitute special ``MOLECULE_`` environment variables defined
-    in `molecule.yml`.
+    Molecule will substitute special ``MOLECULE_`` environment variables
+    defined in `molecule.yml`.
 
     .. important::
 

@@ -73,8 +73,9 @@ def print_environment_vars(env):
 
     combined_env = ansible_env.copy()
     combined_env.update(molecule_env)
-    print_debug('SHELL REPLAY', " ".join(
-        ["{}={}".format(k, v) for (k, v) in sorted(combined_env.items())]))
+    print_debug(
+        'SHELL REPLAY', " ".join(
+            ["{}={}".format(k, v) for (k, v) in sorted(combined_env.items())]))
     print()
 
 
