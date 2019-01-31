@@ -38,6 +38,16 @@ class Role(base.Base):
     .. option:: molecule init role --role-name foo
 
         Initialize a new role.
+
+    .. program:: molecule init role --role-name foo --template path
+
+    .. option:: molecule init role --role-name foo --template path
+
+        Initialize a new role using a local *cookiecutter* template. This allows
+        the customization of a role while still using the ``molecule`` folder, 
+        wich you can still customize with all the ``init role`` options. This
+        is similar to an ``ansible-galaxy init`` skeleton.
+
     """
 
     def __init__(self, command_args):
