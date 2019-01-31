@@ -278,7 +278,7 @@ class Ansible(base.Base):
             ansible_ssh_user: foo
             ansible_ssh_common_args: -o IdentitiesOnly=no
 
-    .. _`variables defined in a playbook`: http://docs.ansible.com/ansible/playbooks_variables.html#variables-defined-in-a-playbook
+    .. _`variables defined in a playbook`: https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#defining-variables-in-a-playbook
     """  # noqa
 
     def __init__(self, config):

@@ -131,4 +131,4 @@ To bring in updated upstream modules.  Update `gilt.yml` and execute the followi
   $ gilt overlay
 
 .. _`Ansible Goss`: https://github.com/indusbox/goss-ansible
-.. _`Gilt`: http://gilt.readthedocs.io
+.. _`Gilt`: https://gilt.readthedocs.io
