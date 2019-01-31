@@ -102,7 +102,7 @@ def run_command(cmd, debug=False):
         print_environment_vars(cmd._partial_call_args.get('env', {}))
         print_debug('COMMAND', str(cmd))
         print()
-    return cmd()
+    return cmd(_truncate_exc=False)
 
 
 def os_walk(directory, pattern, excludes=[]):
