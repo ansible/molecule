@@ -36,7 +36,7 @@ class Docker(base.Base):
     Molecule leverages Ansible's `docker_container`_ module, by mapping
     variables from ``molecule.yml`` into ``create.yml`` and ``destroy.yml``.
 
-    .. _`docker_container`: http://docs.ansible.com/ansible/latest/docker_container_module.html
+    .. _`docker_container`: https://docs.ansible.com/ansible/latest/docker_container_module.html
     .. _`Docker Security Configuration`: https://docs.docker.com/engine/reference/run/#security-configuration
 
     .. code-block:: yaml
