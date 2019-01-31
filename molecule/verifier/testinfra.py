@@ -87,7 +87,7 @@ class Testinfra(base.Base):
             - ../path/to/test_2.py
             - ../path/to/directory/*
 
-    .. _`Testinfra`: http://testinfra.readthedocs.io
+    .. _`Testinfra`: https://testinfra.readthedocs.io
     """
 
     def __init__(self, config):

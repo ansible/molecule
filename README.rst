@@ -43,7 +43,7 @@ supports.
    system to manage instances.
 
 .. _`playbooks`: https://docs.ansible.com/ansible/latest/playbooks.html
-.. _`role`: http://docs.ansible.com/ansible/latest/playbooks_roles.html
+.. _`role`: https://docs.ansible.com/ansible/latest/playbooks_roles.html
 
 Quick Start
 ===========
