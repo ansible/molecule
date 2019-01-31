@@ -132,6 +132,7 @@ class Docker(base.Base):
             - foo
 
     .. _`Docker`: https://www.docker.com
+    .. _`systemd`: https://www.freedesktop.org/wiki/Software/systemd/
     """  # noqa
 
     def __init__(self, config):
