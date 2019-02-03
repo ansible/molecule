@@ -54,6 +54,28 @@ class AnsibleLint(base.Base):
 
     The `x` option has to be passed like this due to a `bug`_ in Ansible Lint.
 
+    An additional option is to use the following option for ansible-lint on `molecule.yml`
+    
+    .. code-block:: yaml
+    
+        provisioner:
+          name: ansible
+          lint:
+            name: ansible-lint
+            options:
+              c: molecule/default/.ansible-lint
+    
+    This is the `.ansible-lint` file and some example values.
+    
+    .. code-block:: yaml
+
+    ---
+    parseable: true
+    skip_list:
+      - ANSIBLE0010
+    use_default_rules: true
+    verbosity: 1
+
     The role linting can be disabled by setting `enabled` to False.
 
     .. code-block:: yaml
