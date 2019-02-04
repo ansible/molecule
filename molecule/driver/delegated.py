@@ -56,6 +56,7 @@ class Delegated(base.Base):
           port: winrm_port
           user: winrm_user
           connection: 'winrm'
+
     This article covers how to configure and use WinRM with Ansible:
     https://docs.ansible.com/ansible/latest/user_guide/windows_winrm.html
 
@@ -102,7 +103,7 @@ class Delegated(base.Base):
         platforms:
           - name: instance-vagrant
 
-    Provide the files Molecule will preserve post `destroy` action.
+    Provide the files Molecule will preserve post ``destroy`` action.
 
     .. code-block:: yaml
 
