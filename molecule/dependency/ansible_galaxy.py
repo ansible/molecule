@@ -69,7 +69,7 @@ class AnsibleGalaxy(base.Base):
           env:
             FOO: bar
 
-    .. _`Ansible Galaxy`: http://docs.ansible.com/ansible/galaxy.html
+    .. _`Ansible Galaxy`: https://docs.ansible.com/ansible/latest/reference_appendices/galaxy.html
     """
 
     def __init__(self, config):

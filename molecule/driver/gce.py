@@ -38,7 +38,7 @@ class GCE(base.Base):
     Molecule leverages Ansible's `gce_module`_, by mapping variables from
     ``molecule.yml`` into ``create.yml`` and ``destroy.yml``.
 
-    .. _`gce_module`: http://docs.ansible.com/ansible/latest/gce_module.html
+    .. _`gce_module`: https://docs.ansible.com/ansible/latest/gce_module.html
 
     .. code-block:: yaml
 

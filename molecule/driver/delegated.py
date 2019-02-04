@@ -71,7 +71,7 @@ class Delegated(base.Base):
             managed: False
             login_cmd_template: 'docker exec -ti {instance} bash'
             ansible_connection_options:
-              connection: docker
+              ansible_connection: docker
         platforms:
           - name: instance-docker
 
@@ -97,8 +97,8 @@ class Delegated(base.Base):
             managed: False
             login_cmd_template: 'ssh {instance} -F /tmp/ssh-config'
             ansible_connection_options:
-              connection: ssh
-              ansible_ssh_common_args -F /path/to/ssh-config
+              ansible_connection: ssh
+              ansible_ssh_common_args: '-F /path/to/ssh-config'
         platforms:
           - name: instance-vagrant
 
@@ -110,6 +110,17 @@ class Delegated(base.Base):
           name: delegated
           safe_files:
             - foo
+
+    And in order to use localhost as molecule's target:
+
+    .. code-block:: yaml
+
+        driver:
+          name: delegated
+          options:
+            managed: False
+            ansible_connection_options:
+              ansible_connection: local
     """
 
     def __init__(self, config):

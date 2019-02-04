@@ -36,7 +36,8 @@ class Docker(base.Base):
     Molecule leverages Ansible's `docker_container`_ module, by mapping
     variables from ``molecule.yml`` into ``create.yml`` and ``destroy.yml``.
 
-    .. _`docker_container`: http://docs.ansible.com/ansible/latest/docker_container_module.html
+    .. _`docker_container`: https://docs.ansible.com/ansible/latest/docker_container_module.html
+    .. _`Docker Security Configuration`: https://docs.docker.com/engine/reference/run/#security-configuration
 
     .. code-block:: yaml
 
@@ -87,6 +88,27 @@ class Docker(base.Base):
             buildargs:
                 http_proxy: http://proxy.example.com:8080/
 
+    When attempting to utilize a container image with `systemd`_ as your init
+    system inside the container to simulate a real machine, make sure to set
+    the ``privileged``, ``volume_mounts``, ``command``, and ``environment``
+    values. An example using the ``centos:7`` image is below:
+
+    .. note:: Do note that running containers in privileged mode is considerably
+              less secure. For details, please reference `Docker Security
+              Configuration`_
+
+    .. code-block:: yaml
+
+        platforms:
+        - name: instance
+          image: centos:7
+          privileged: true
+          volume_mounts:
+            - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
+          command: "/usr/sbin/init"
+          environment:
+            container: docker
+
     .. code-block:: bash
 
         $ pip install molecule[docker]
@@ -110,6 +132,7 @@ class Docker(base.Base):
             - foo
 
     .. _`Docker`: https://www.docker.com
+    .. _`systemd`: https://www.freedesktop.org/wiki/Software/systemd/
     """  # noqa
 
     def __init__(self, config):

@@ -42,7 +42,7 @@ A ``.travis.yml`` using `Tox`_ as described below.
 Gitlab CI
 ^^^^^^^^^
 
-`Gitlab`_ includes its own CI. Pipelines are usually defined in a ``.gitlab-ci.yml`` file in the top folder of a repository, to be ran on Gitlab Runners. 
+`Gitlab`_ includes its own CI. Pipelines are usually defined in a ``.gitlab-ci.yml`` file in the top folder of a repository, to be ran on Gitlab Runners.
 
 Here is an example setting up a virtualenv and testing an Ansible role via Molecule. User-level pip is cached and so is the virtual environment to save time. And this is run over a runner tagged `pip36` and `docker`, because its a minimal CentOS 7 VM installed with pip36 from IUS repository and docker.
 
@@ -181,20 +181,14 @@ To view the factor generated tox environments.
     py27-ansible21
     py27-ansible22
 
-Detox
-^^^^^
-
-`Detox`_ is a distributed version of Tox which can be used to make efficient
-use of multiple CPUs. Detox will run tox environment tests in parallel.
-
-Detox takes the same arguments and configuration as tox, however Molecule must
-be made aware of the parallel testing by setting a MOLECULE_EPHEMERAL_DIRECTORY
-environment variable per environment.
+If using the `--parallel functionality`_ of Tox (version 3.7 onwards), Molecule
+must be made aware of the parallel testing by setting a
+``MOLECULE_EPHEMERAL_DIRECTORY`` environment variable per environment.
 
 .. code-block:: ini
 
     [tox]
-    minversion = 1.8
+    minversion = 3.7
     envlist = py{27}_ansible{23,24}
     skipsdist = true
 
@@ -212,7 +206,7 @@ If you are utilizing the Openstack driver you will have to make sure that your
 ``envname`` variable does not contain any invalid characters, particularly
 ``-``.
 
-You also must include the MOLECULE_EPHEMERAL_DIRECTORY variable in the
+You also must include the ``MOLECULE_EPHEMERAL_DIRECTORY`` variable in the
 ``molecule.yml`` configuration file.
 
 .. code-block:: yaml
@@ -247,4 +241,4 @@ You also must include the MOLECULE_EPHEMERAL_DIRECTORY variable in the
 .. _`Jenkins`: https://jenkins.io/doc/book/pipeline/jenkinsfile
 .. _`Gitlab`: https://gitlab.com
 .. _`Tox`: https://tox.readthedocs.io/en/latest
-.. _`Detox`: https://pypi.python.org/pypi/detox
+.. _`--parallel functionality`: https://tox.readthedocs.io/en/latest/config.html#cmdoption-tox-p

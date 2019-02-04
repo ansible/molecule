@@ -32,7 +32,7 @@ class LXC(base.Base):
     Molecule leverages Ansible's `lxc_container`_ module, by mapping variables
     from ``molecule.yml`` into ``create.yml`` and ``destroy.yml``.
 
-    .. _`lxc_container`: http://docs.ansible.com/ansible/latest/lxc_container_module.html
+    .. _`lxc_container`: https://docs.ansible.com/ansible/latest/lxc_container_module.html
 
     .. code-block:: yaml
 

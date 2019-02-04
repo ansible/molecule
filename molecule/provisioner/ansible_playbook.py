@@ -50,8 +50,8 @@ class AnsiblePlaybook(object):
 
     def bake(self):
         """
-        Bake an ``ansible-playbook`` command so it's ready to execute and returns
-        None.
+        Bake an ``ansible-playbook`` command so it's ready to execute and
+        returns None.
 
         :return: None
         """

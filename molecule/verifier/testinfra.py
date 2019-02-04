@@ -40,7 +40,8 @@ class Testinfra(base.Base):
     .. note::
 
         Molecule will remove any options matching '^[v]+$', and pass ``-vvv``
-        to the underlying ``py.test`` command when executing ``molecule --debug``.
+        to the underlying ``py.test`` command when executing
+        ``molecule --debug``.
 
     .. code-block:: yaml
 
@@ -86,7 +87,7 @@ class Testinfra(base.Base):
             - ../path/to/test_2.py
             - ../path/to/directory/*
 
-    .. _`Testinfra`: http://testinfra.readthedocs.io
+    .. _`Testinfra`: https://testinfra.readthedocs.io
     """
 
     def __init__(self, config):
