@@ -1,11 +1,17 @@
-Usage
-=====
+.. _command-reference:
+
+Command Reference
+=================
+
+.. _check:
 
 Check
 ^^^^^
 
 .. autoclass:: molecule.command.check.Check()
    :undoc-members:
+
+.. _converge:
 
 Converge
 ^^^^^^^^
@@ -15,11 +21,15 @@ Converge will execute the sequence necessary to converge the instances.
 .. autoclass:: molecule.command.converge.Converge()
    :undoc-members:
 
+.. _create:
+
 Create
 ^^^^^^
 
 .. autoclass:: molecule.command.create.Create()
    :undoc-members:
+
+.. _dependency:
 
 Dependency
 ^^^^^^^^^^
@@ -27,17 +37,23 @@ Dependency
 .. autoclass:: molecule.command.dependency.Dependency()
    :undoc-members:
 
+.. _destroy:
+
 Destroy
 ^^^^^^^
 
 .. autoclass:: molecule.command.destroy.Destroy()
    :undoc-members:
 
+.. _idempotence:
+
 Idempotence
 ^^^^^^^^^^^
 
 .. autoclass:: molecule.command.idempotence.Idempotence()
    :undoc-members:
+
+.. _init:
 
 Init
 ^^^^
@@ -51,11 +67,15 @@ Init
 .. autoclass:: molecule.command.init.template.Template()
    :undoc-members:
 
+.. _lint:
+
 Lint
 ^^^^
 
 .. autoclass:: molecule.command.lint.Lint()
    :undoc-members:
+
+.. _list:
 
 List
 ^^^^
@@ -63,11 +83,15 @@ List
 .. autoclass:: molecule.command.list.List()
    :undoc-members:
 
+.. _login:
+
 Login
 ^^^^^
 
 .. autoclass:: molecule.command.login.Login()
    :undoc-members:
+
+.. _matrix:
 
 Matrix
 ^^^^^^
@@ -80,11 +104,15 @@ changed in `scenario`_ configuration.
 .. autoclass:: molecule.command.matrix.Matrix()
    :undoc-members:
 
+.. _prepare:
+
 Prepare
 ^^^^^^^
 
 .. autoclass:: molecule.command.prepare.Prepare()
    :undoc-members:
+
+.. _side-effect:
 
 Side Effect
 ^^^^^^^^^^^
@@ -92,11 +120,15 @@ Side Effect
 .. autoclass:: molecule.command.side_effect.SideEffect()
    :undoc-members:
 
+.. _syntax:
+
 Syntax
 ^^^^^^
 
 .. autoclass:: molecule.command.syntax.Syntax()
    :undoc-members:
+
+.. _test:
 
 Test
 ^^^^
@@ -105,6 +137,8 @@ Test will execute the sequence necessary to test the instances.
 
 .. autoclass:: molecule.command.test.Test()
    :undoc-members:
+
+.. _verify:
 
 Verify
 ^^^^^^
