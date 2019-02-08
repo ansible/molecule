@@ -2,64 +2,51 @@
 FAQ
 ***
 
-Why does Molecule make so many shell calls?
-===========================================
+How to skip tasks?
+==================
 
-Ansible provides a Python API.  However, it is not intended for
-`direct consumption`_.  We wanted to focus on making Molecule useful, so our
-efforts were spent consuming Ansible's CLI.
+Molecule will skip tasks which are tagged with either ``molecule-notest`` or
+``notest``.
 
-Since we already consume Ansible's CLI, we decided to call additional binaries
-through their respective CLI.
+Change the test sequence order?
+===============================
 
-.. note::
+You can override the ``scenario`` configuration in your ``molecule.yml`` to
+specify the test sequence that you would like. Refer to the
+:ref:`root_scenario` documentation for more.
 
-    This decision may be reevaluated later.
+How does ``side-effect`` work?
+==============================
 
-.. _`direct consumption`: https://docs.ansible.com/ansible/latest/dev_guide/developing_api.html
+The optional :ref:`side-effect` playbook executes actions which produce side
+effects to the instances. Intended to test HA failover scenarios or the like.
+It is not enabled by default. Please see the :ref:`provisioner` documentation
+for more.
 
-Why does Molecule only support Ansible versions 2.2 and later?
-==============================================================
+Can I use Docker in Docker?
+===========================
 
-* Ansible 2.2 is the first good release in the Ansible 2 lineup.
-* The modules needed to support the drivers did not exist pre 2.2 or were not
-  sufficient.
+Molecule can be executed via an Alpine Linux container by leveraging ``dind``
+(Docker in Docker).  Currently, we only build images for the latest version of
+Ansible and Molecule.  In the future we may break this out into Molecule/
+Ansible versioned pairs.  The images are located on `quay.io`_.
 
-Why are playbooks used to provision instances?
-==============================================
+To test a role, change directory into the role to test, and execute Molecule as
+follows.
 
-Simplicity.  Ansible already supports numerous cloud providers.  Too much time
-was spent in Molecule v1, re-implementing a feature that already existed in the
-core Ansible modules.
+.. _`quay.io`: https://quay.io/repository/ansible/molecule
 
-Have you thought about using Ansible's python API instead of playbooks?
-=======================================================================
+.. code-block:: bash
 
-This was `evaluated`_ early on.  It was a toss up.  It would provide simplicity
-in some situations and complexity in others.  Developers know and understand
-playbooks.  Decided against a more elegant and sexy solution.
+    docker run --rm -it \
+        -v "$(pwd)":/tmp/$(basename "${PWD}"):ro \
+        -v /var/run/docker.sock:/var/run/docker.sock \
+        -w /tmp/$(basename "${PWD}") \
+        quay.io/ansible/molecule:latest \
+        sudo molecule test
 
-.. _`evaluated`: https://github.com/kireledan/molecule/tree/playbook_proto
+Variable substitution handling?
+===============================
 
-Why are there multiple scenario directories and molecule.yml files?
-===================================================================
-
-Again, simplicity.  Rather than defining an all encompassing config file opted
-to normalize.  Molecule simply loops through each scenario applying the
-scenario's molecule.yml.
-
-.. note::
-
-    This decision may be reevaluated later.
-
-Are there similar tools to Molecule?
-====================================
-
-* Ansible's own `Testing Strategies`_
-* `ansible-test`_ (`abandoned`_?)
-* `RoleSpec`_
-
-.. _`Testing Strategies`: https://docs.ansible.com/ansible/latest/reference_appendices/test_strategies.html
-.. _`ansible-test`: https://github.com/nylas/ansible-test
-.. _`abandoned`: https://github.com/nylas/ansible-test/issues/14
-.. _`RoleSpec`: https://github.com/nickjj/rolespec
+.. autoclass:: molecule.interpolation.Interpolator()
+   :undoc-members:
