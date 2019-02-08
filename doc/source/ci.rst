@@ -1,5 +1,9 @@
-Continuous integration
-----------------------
+.. _continuous-integration:
+
+CI Integration
+--------------
+
+.. _travis-ci:
 
 Travis CI
 ^^^^^^^^^
@@ -39,13 +43,19 @@ A ``.travis.yml`` using `Tox`_ as described below.
     script:
       - tox
 
+.. _gitlab-ci:
+
 Gitlab CI
 ^^^^^^^^^
 
-`Gitlab`_ includes its own CI. Pipelines are usually defined in a ``.gitlab-ci.yml`` file in the top folder of a repository, to be ran on Gitlab Runners.
+`Gitlab`_ includes its own CI. Pipelines are usually defined in a
+``.gitlab-ci.yml`` file in the top folder of a repository, to be ran on Gitlab
+Runners.
 
-Here is an example setting up a virtualenv and testing an Ansible role via Molecule. User-level pip is cached and so is the virtual environment to save time. And this is run over a runner tagged `pip36` and `docker`, because its a minimal CentOS 7 VM installed with pip36 from IUS repository and docker.
-
+Here is an example setting up a virtualenv and testing an Ansible role via
+Molecule. User-level pip is cached and so is the virtual environment to save
+time. And this is run over a runner tagged ``pip36`` and ``docker``, because
+its a minimal CentOS 7 VM installed with pip36 from IUS repository and docker.
 
 .. code-block:: yaml
 
@@ -82,7 +92,10 @@ Here is an example setting up a virtualenv and testing an Ansible role via Molec
 Jenkins Pipeline
 ^^^^^^^^^^^^^^^^
 
-`Jenkins`_ projects can also be defined in a file, by default named `Jenkinsfile` in the top folder of a repository. Two syntax are available, Declarative and Scripted. Here is an example using the declarative syntax, setting up a virtualenv and testing an Ansible role via Molecule.
+`Jenkins`_ projects can also be defined in a file, by default named
+``Jenkinsfile`` in the top folder of a repository. Two syntax are available,
+Declarative and Scripted. Here is an example using the declarative syntax,
+setting up a virtualenv and testing an Ansible role via Molecule.
 
 .. code-block:: groovy
 
@@ -144,8 +157,6 @@ Jenkins Pipeline
 
     }
 
-
-
 Tox
 ^^^
 
@@ -153,7 +164,7 @@ Tox
 can be used in conjunction with `Factors`_ and Molecule, to perform scenario
 tests.
 
-To test the role against multiple versions of Ansible.
+To test the role against multiple versions of Ansible:
 
 .. code-block:: ini
 
@@ -172,7 +183,7 @@ To test the role against multiple versions of Ansible.
     commands =
         molecule test
 
-To view the factor generated tox environments.
+To view the factor generated tox environments:
 
 .. code-block:: bash
 
@@ -207,7 +218,7 @@ If you are utilizing the Openstack driver you will have to make sure that your
 ``-``.
 
 You also must include the ``MOLECULE_EPHEMERAL_DIRECTORY`` variable in the
-``molecule.yml`` configuration file.
+``molecule.yml`` configuration file:
 
 .. code-block:: yaml
 
