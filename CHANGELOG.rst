@@ -1,6 +1,6 @@
-*******
-History
-*******
+*********
+Changelog
+*********
 
 Unreleased
 ==========
@@ -410,7 +410,7 @@ Breaking Changes
 * Correct env path qualification.
 * Add sudo package to Fedora section of Dockerfile template.
 * Correct ANSIBLE_ROLES_PATH path component.
-* Allow re-run of prepare playbook. 
+* Allow re-run of prepare playbook.
 
 2.3
 ===
