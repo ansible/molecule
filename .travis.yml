@@ -56,6 +56,56 @@ language: python
 jobs:
   fast_finish: true
 
+  allow_failures:
+  - <<: *py-37
+    env:
+      ANSIBLE_VERSION: devel
+      TESTS_TYPE: unit
+  - <<: *py-37
+    env:
+      <<: *env-functional-shard_1
+      ANSIBLE_VERSION: devel
+  - <<: *py-37
+    env:
+      <<: *env-functional-shard_2
+      ANSIBLE_VERSION: devel
+  - <<: *py-37
+    env:
+      <<: *env-functional-shard_3
+      ANSIBLE_VERSION: devel
+  - <<: *py-36
+    env:
+      ANSIBLE_VERSION: devel
+      TESTS_TYPE: unit
+  - <<: *py-36
+    env:
+      <<: *env-functional-shard_1
+      ANSIBLE_VERSION: devel
+  - <<: *py-36
+    env:
+      <<: *env-functional-shard_2
+      ANSIBLE_VERSION: devel
+  - <<: *py-36
+    env:
+      <<: *env-functional-shard_3
+      ANSIBLE_VERSION: devel
+  - <<: *py-27
+    env:
+      ANSIBLE_VERSION: devel
+      TESTS_TYPE: unit
+  - <<: *py-27
+    env:
+      <<: *env-functional-shard_1
+      ANSIBLE_VERSION: devel
+  - <<: *py-27
+    env:
+      <<: *env-functional-shard_1
+      ANSIBLE_VERSION: devel
+  - <<: *py-27
+    env:
+      <<: *env-functional-shard_3
+      ANSIBLE_VERSION: devel
+
   include:
   - <<: *lint
     name: linting the code
