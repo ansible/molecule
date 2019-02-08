@@ -1,19 +1,17 @@
+.. _configuration:
+
 Configuration
 =============
 
 .. autoclass:: molecule.config.Config()
    :undoc-members:
 
-Variable Substitution
----------------------
-
-.. autoclass:: molecule.interpolation.Interpolator()
-   :undoc-members:
+.. _dependency-cfg:
 
 Dependency
 ----------
 
-Testing roles may rely upon additional dependencies.  Molecule handles managing
+Testing roles may rely upon additional dependencies. Molecule handles managing
 these dependencies by invoking configurable dependency managers.
 
 Ansible Galaxy
@@ -34,6 +32,8 @@ Shell
 .. autoclass:: molecule.dependency.shell.Shell()
    :undoc-members:
 
+.. _driver:
+
 Driver
 ------
 
@@ -48,11 +48,11 @@ instances are destroyed by Molecule.
 .. important::
 
     The verifier must support the Ansible provider for proper Molecule
-    integration.
-
-    The driver's python package requires installation.
+    integration. The driver's python package requires installation.
 
 .. _`Ansible`: https://docs.ansible.com
+
+.. _azure-driver:
 
 Azure
 ^^^^^
@@ -60,11 +60,15 @@ Azure
 .. autoclass:: molecule.driver.azure.Azure()
    :undoc-members:
 
+.. _delegated-driver:
+
 Delegated
 ^^^^^^^^^
 
 .. autoclass:: molecule.driver.delegated.Delegated()
    :undoc-members:
+
+.. _docker-driver:
 
 Docker
 ^^^^^^
@@ -72,11 +76,15 @@ Docker
 .. autoclass:: molecule.driver.docker.Docker()
    :undoc-members:
 
+.. _ec2-driver:
+
 EC2
 ^^^
 
 .. autoclass:: molecule.driver.ec2.EC2()
    :undoc-members:
+
+.. _gce-driver:
 
 GCE
 ^^^
@@ -84,11 +92,15 @@ GCE
 .. autoclass:: molecule.driver.gce.GCE()
    :undoc-members:
 
+.. _linode-driver:
+
 Linode
 ^^^^^^
 
 .. autoclass:: molecule.driver.linode.Linode()
    :undoc-members:
+
+.. _lxc-driver:
 
 LXC
 ^^^
@@ -96,17 +108,23 @@ LXC
 .. autoclass:: molecule.driver.lxc.LXC()
    :undoc-members:
 
+.. _lxd-driver:
+
 LXD
 ^^^
 
 .. autoclass:: molecule.driver.lxd.LXD()
    :undoc-members:
 
+.. _openstack-driver:
+
 Openstack
 ^^^^^^^^^
 
 .. autoclass:: molecule.driver.openstack.Openstack()
    :undoc-members:
+
+.. _vagrant-driver:
 
 Vagrant
 ^^^^^^^
@@ -119,7 +137,7 @@ Vagrant
 Molecule Vagrant Module
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-Molecule manages Vagrant via an internal Ansible module.  The following belongs
+Molecule manages Vagrant via an internal Ansible module. The following belongs
 in the appropriate create or destroy playbooks, and uses the default provider.
 
 Supported Providers:
@@ -129,7 +147,7 @@ Supported Providers:
 * Parallels
 * Libvirt (requires vagrant-libvirt plugin)
 
-Create instances.
+Create instances:
 
 .. code-block:: yaml
 
@@ -145,7 +163,7 @@ Create instances.
             - instance-1
             - instance-2
 
-Destroy instances.
+Destroy instances:
 
 .. code-block:: yaml
 
@@ -161,7 +179,7 @@ Destroy instances.
             - instance-1
             - instance-2
 
-Halt instances (shutdown without destroy).
+Halt instances (shutdown without destroy):
 
 .. code-block:: yaml
 
@@ -177,7 +195,7 @@ Halt instances (shutdown without destroy).
             - instance-1
             - instance-2
 
-Create instances with interfaces.
+Create instances with interfaces:
 
 .. code-block:: yaml
 
@@ -201,7 +219,7 @@ Create instances with interfaces.
             platform_box: ubuntu/trusty64
             state: destroy
 
-Create instances with additional provider options.
+Create instances with additional provider options:
 
 .. code-block:: yaml
 
@@ -225,7 +243,7 @@ Create instances with additional provider options.
             - instance-1
             - instance-2
 
-Create instances with additional instance options.
+Create instances with additional instance options:
 
 .. code-block:: yaml
 
@@ -244,7 +262,7 @@ Create instances with additional instance options.
             - instance-2
 
 Create instances on a remote Libvirt node using default create/destroy
-templates.
+templates:
 
 .. code-block:: yaml
 
@@ -266,6 +284,8 @@ templates.
             - instance-1
             - instance-2
 
+.. _lint-cfg:
+
 Lint
 ----
 
@@ -277,11 +297,15 @@ Yaml Lint
 .. autoclass:: molecule.lint.yamllint.Yamllint()
    :undoc-members:
 
+.. _platforms:
+
 Platforms
 ---------
 
 .. autoclass:: molecule.platforms.Platforms()
    :undoc-members:
+
+.. _provisioner:
 
 Provisioner
 -----------
@@ -313,6 +337,8 @@ configuration syntax.
 .. autoclass:: molecule.scenario.Scenario()
    :undoc-members:
 
+.. _state:
+
 State
 -----
 
@@ -320,6 +346,8 @@ An internal bookkeeping mechanism.
 
 .. autoclass:: molecule.state.State()
   :undoc-members:
+
+.. _verifier:
 
 Verifier
 --------
