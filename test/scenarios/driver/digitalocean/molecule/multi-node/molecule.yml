@@ -1,0 +1,33 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: digitalocean
+lint:
+  name: yamllint
+  options:
+    config-file: ../../../resources/.yamllint
+platforms:
+  - name: instance-1
+    region_id: nyc3
+    image_id: ubuntu-18-10-x64
+    size_id: s-1vcpu-1gb
+  - name: instance-2
+    region_id: nyc3
+    image_id: ubuntu-18-10-x64
+    size_id: s-1vcpu-1gb
+provisioner:
+  name: ansible
+  playbooks:
+    create: ../../../../../resources/playbooks/digitalocean/create.yml
+    destroy: ../../../../../resources/playbooks/digitalocean/destroy.yml
+  env:
+    ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
+  lint:
+    name: ansible-lint
+scenario:
+  name: multi-node
+verifier:
+  name: testinfra
+  lint:
+    name: flake8

@@ -71,6 +71,7 @@ def skip_test(request, driver_name):
                 else "Skipped '{}' not supported")
     support_checks_map = {
         'azure': supports_azure,
+        'digitalocean': supports_digitalocean,
         'docker': supports_docker,
         'ec2': supports_ec2,
         'gce': supports_gce,
@@ -353,6 +354,12 @@ def supports_azure():
     )
 
     return _env_vars_exposed(env_vars) and HAS_AZURE
+
+
+@pytest.helpers.register
+def supports_digitalocean():
+    # FIXME: come up with an actual check
+    return not IS_TRAVIS  # FIXME: Travis CI
 
 
 @pytest.helpers.register

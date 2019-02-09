@@ -62,6 +62,7 @@ def pre_validate_base_schema(env, keep_string):
                     'allowed': [
                         'azure',
                         'delegated',
+                        'digitalocean',
                         'docker',
                         'ec2',
                         'gce',
