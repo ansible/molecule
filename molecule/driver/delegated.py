@@ -42,7 +42,7 @@ class Delegated(base.Base):
     However, the developer must adhere to the instance-config API.  The
     developer's create playbook must provide the following instance-config
     data, and the developer's destroy playbook must reset the instance-config.
-    Both `ansible_become` keys are optional
+    Both `become` keys are optional.
 
     .. code-block:: yaml
 
@@ -177,9 +177,11 @@ class Delegated(base.Base):
                 conn_dict['ansible_user'] = d.get('user')
                 conn_dict['ansible_host'] = d.get('address')
                 conn_dict['ansible_port'] = d.get('port')
-                conn_dict['ansible_become_method'] = d.get('become_method')
-                conn_dict['ansible_become_pass'] = d.get('become_pass')
                 conn_dict['ansible_connection'] = d.get('connection', 'smart')
+                if d.get('become_method'):
+                    conn_dict['ansible_become_method'] = d.get('become_method')
+                if d.get('become_pass'):
+                    conn_dict['ansible_become_pass'] = d.get('become_pass')
                 if d.get('identity_file'):
                     conn_dict['ansible_private_key_file'] = d.get(
                         'identity_file')
