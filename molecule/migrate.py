@@ -188,14 +188,12 @@ class Migrate(object):
             'lint': {
                 'name': 'yamllint',
             },
-            'provisioner':
-            collections.OrderedDict({}),
+            'provisioner': collections.OrderedDict({}),
             'platforms': [],
             'scenario': {
                 'name': 'default',
             },
-            'verifier':
-            collections.OrderedDict({}),
+            'verifier': collections.OrderedDict({}),
         })
 
         return d
