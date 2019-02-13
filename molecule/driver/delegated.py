@@ -51,8 +51,8 @@ class Delegated(base.Base):
           instance: instance_name
           port: ssh_port_as_string
           user: ssh_user
-          become_method: su
-          become_pass: mypass
+          become_method: valid_ansible_become_method
+          become_pass: password_if_required
 
         - address: winrm_endpoint
           instance: instance_name
