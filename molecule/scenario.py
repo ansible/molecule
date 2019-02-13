@@ -36,12 +36,15 @@ class Scenario(object):
     for testing the role in a particular way.  The default scenario is named
     ``default``, and every role should contain a default scenario.
 
+    Unless mentioned explicitly, the scenario name will be the directory name
+    hosting the files.
+
     Any option set in this section will override the defaults.
 
     .. code-block:: yaml
 
         scenario:
-          name: default
+          name: default  # optional
           create_sequence:
             - create
             - prepare
