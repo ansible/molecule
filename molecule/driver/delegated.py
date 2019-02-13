@@ -42,7 +42,7 @@ class Delegated(base.Base):
     However, the developer must adhere to the instance-config API.  The
     developer's create playbook must provide the following instance-config
     data, and the developer's destroy playbook must reset the instance-config.
-    Both `become` keys are optional.
+    Both `become` keys are optional and can be used independently.
 
     .. code-block:: yaml
 
