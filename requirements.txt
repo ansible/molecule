@@ -1,5 +1,5 @@
 -r lint-requirements.txt
-ansible-lint>=4.0.1,<5
+ansible-lint>=4.0.2,<5
 anyconfig==0.9.7
 cerberus==1.2
 click==6.7
