@@ -3,7 +3,7 @@ conditions: v1
 dist: xenial
 
 git:
-  depth: 100
+  depth: 150
 
 cache:
   bundler: true
