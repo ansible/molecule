@@ -300,7 +300,7 @@ def supports_docker():
 @pytest.helpers.register
 def supports_linode():
     # FIXME: Travis CI
-    return not IS_TRAVIS and get_lxd_executable()
+    return not IS_TRAVIS and get_linode_executable()
 
 
 @pytest.helpers.register
