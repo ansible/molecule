@@ -268,6 +268,14 @@ def get_docker_executable():
     return distutils.spawn.find_executable('docker')
 
 
+def get_linode_executable():
+    try:
+        pytest.importorskip('linode')
+        return True
+    except Exception:
+        return False
+
+
 def get_lxc_executable():
     return distutils.spawn.find_executable('lxc-start')
 
@@ -291,11 +299,8 @@ def supports_docker():
 
 @pytest.helpers.register
 def supports_linode():
-    try:
-        pytest.importorskip('linode')
-        return True
-    except Exception:
-        return False
+    # FIXME: Travis CI
+    return not IS_TRAVIS and get_linode_executable()
 
 
 @pytest.helpers.register
