@@ -62,6 +62,13 @@ def test_ephemeral_directory_property(_instance):
     assert e_dir == _instance.ephemeral_directory
 
 
+def test_inventory_directory_property(_instance):
+    ephemeral_directory = _instance.config.scenario.ephemeral_directory
+    e_dir = os.path.join(ephemeral_directory, "inventory")
+
+    assert e_dir == _instance.inventory_directory
+
+
 def test_check_sequence_property(_instance):
     sequence = [
         'destroy',
@@ -156,12 +163,14 @@ def test_sequence_property_with_invalid_subcommand(_instance):
     assert [] == _instance.sequence
 
 
-def test_setup_creates_ephemeral_directory(_instance):
+def test_setup_creates_ephemeral_and_inventory_directories(_instance):
     ephemeral_dir = _instance.config.scenario.ephemeral_directory
+    inventory_dir = _instance.config.scenario.inventory_directory
     shutil.rmtree(ephemeral_dir)
     _instance._setup()
 
     assert os.path.isdir(ephemeral_dir)
+    assert os.path.isdir(inventory_dir)
 
 
 def test_ephemeral_directory():

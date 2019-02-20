@@ -31,8 +31,8 @@ def _instance(config_instance):
 
 
 @pytest.fixture
-def _inventory_file(_instance):
-    return _instance._config.provisioner.inventory_file
+def _inventory_directory(_instance):
+    return _instance._config.provisioner.inventory_directory
 
 
 def test_ansible_command_private_member(_instance):
@@ -47,7 +47,7 @@ def test_config_private_member(_instance):
     assert isinstance(_instance._config, config.Config)
 
 
-def test_bake(_inventory_file, _instance):
+def test_bake(_inventory_directory, _instance):
     pb = _instance._config.provisioner.playbooks.converge
     _instance._playbook = pb
     _instance.bake()
@@ -55,7 +55,7 @@ def test_bake(_inventory_file, _instance):
     x = [
         str(sh.ansible_playbook),
         '--become',
-        '--inventory={}'.format(_inventory_file),
+        '--inventory={}'.format(_inventory_directory),
         '--skip-tags=molecule-notest,notest',
         pb,
     ]
@@ -65,12 +65,12 @@ def test_bake(_inventory_file, _instance):
 
 
 def test_bake_removes_non_interactive_options_from_non_converge_playbooks(
-        _inventory_file, _instance):
+        _inventory_directory, _instance):
     _instance.bake()
 
     x = [
         str(sh.ansible_playbook),
-        '--inventory={}'.format(_inventory_file),
+        '--inventory={}'.format(_inventory_directory),
         '--skip-tags=molecule-notest,notest',
         'playbook',
     ]
@@ -80,13 +80,13 @@ def test_bake_removes_non_interactive_options_from_non_converge_playbooks(
     assert sorted(x) == sorted(result)
 
 
-def test_bake_has_ansible_args(_inventory_file, _instance):
+def test_bake_has_ansible_args(_inventory_directory, _instance):
     _instance._config.ansible_args = ('foo', 'bar')
     _instance.bake()
 
     x = [
         str(sh.ansible_playbook),
-        '--inventory={}'.format(_inventory_file),
+        '--inventory={}'.format(_inventory_directory),
         '--skip-tags=molecule-notest,notest',
         'playbook',
         'foo',
@@ -98,7 +98,7 @@ def test_bake_has_ansible_args(_inventory_file, _instance):
     assert sorted(x) == sorted(result)
 
 
-def test_bake_does_not_have_ansible_args(_inventory_file, _instance):
+def test_bake_does_not_have_ansible_args(_inventory_directory, _instance):
     for action in ['create', 'destroy']:
         _instance._config.ansible_args = ('foo', 'bar')
         _instance._config.action = action
@@ -106,7 +106,7 @@ def test_bake_does_not_have_ansible_args(_inventory_file, _instance):
 
         x = [
             str(sh.ansible_playbook),
-            '--inventory={}'.format(_inventory_file),
+            '--inventory={}'.format(_inventory_directory),
             '--skip-tags=molecule-notest,notest',
             'playbook',
         ]
@@ -124,14 +124,14 @@ def test_execute(patched_run_command, _instance):
     assert 'patched-run-command-stdout' == result
 
 
-def test_execute_bakes(_inventory_file, patched_run_command, _instance):
+def test_execute_bakes(_inventory_directory, patched_run_command, _instance):
     _instance.execute()
 
     assert _instance._ansible_command is not None
 
     x = [
         str(sh.ansible_playbook),
-        '--inventory={}'.format(_inventory_file),
+        '--inventory={}'.format(_inventory_directory),
         '--skip-tags=molecule-notest,notest',
         'playbook',
     ]
@@ -141,8 +141,8 @@ def test_execute_bakes(_inventory_file, patched_run_command, _instance):
     assert sorted(x) == sorted(result)
 
 
-def test_execute_bakes_with_ansible_args(_inventory_file, patched_run_command,
-                                         _instance):
+def test_execute_bakes_with_ansible_args(_inventory_directory,
+                                         patched_run_command, _instance):
     _instance._config.ansible_args = ('--foo', '--bar')
     _instance.execute()
 
@@ -150,7 +150,7 @@ def test_execute_bakes_with_ansible_args(_inventory_file, patched_run_command,
 
     x = [
         str(sh.ansible_playbook),
-        '--inventory={}'.format(_inventory_file),
+        '--inventory={}'.format(_inventory_directory),
         '--skip-tags=molecule-notest,notest',
         'playbook',
         '--foo',

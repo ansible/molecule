@@ -18,6 +18,7 @@ provisioner:
   name: ansible
   inventory:
     links:
+      hosts: ../../hosts
       host_vars: ../../host_vars
       group_vars: ../../group_vars
   playbooks:
