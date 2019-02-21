@@ -82,7 +82,7 @@ def test_print_matrix(mocker, patched_logger_info, patched_logger_out,
     msg = 'Test matrix'
     patched_logger_info(msg)
 
-    x = u"""
+    matrix_out = u"""
 ├── default
 │   ├── lint
 │   ├── destroy
@@ -108,7 +108,7 @@ def test_print_matrix(mocker, patched_logger_info, patched_logger_out,
     ├── verify
     └── destroy
 """
-    assert x == patched_logger_out.mock_calls[0][1][0]
+    assert matrix_out == patched_logger_out.mock_calls[0][1][0]
     assert mocker.call('') == patched_logger_out.mock_calls[1]
 
 
@@ -142,7 +142,7 @@ def test_filter_for_scenario(_instance):
 
 
 def test_get_matrix(_instance):
-    x = {
+    matrix = {
         'default': {
             'lint': ['lint'],
             'idempotence': ['idempotence'],
@@ -229,4 +229,4 @@ def test_get_matrix(_instance):
         }
     }
 
-    assert x == _instance._get_matrix()
+    assert matrix == _instance._get_matrix()
