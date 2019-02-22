@@ -102,6 +102,7 @@ def test_command_init_role_inspec(temp_dir):
     }
     cmd = sh.molecule.bake('init', 'role', **options)
     pytest.helpers.run_command(cmd)
+    pytest.helpers.metadata_lint_update(role_directory)
 
     with change_dir_to(role_directory):
         sh.molecule('test')
@@ -109,13 +110,14 @@ def test_command_init_role_inspec(temp_dir):
 
 @skip_unsupported_matrix
 def test_command_init_scenario_inspec(temp_dir):
+    role_directory = os.path.join(temp_dir.strpath, 'test-init')
     options = {
         'role_name': 'test-init',
     }
     cmd = sh.molecule.bake('init', 'role', **options)
     pytest.helpers.run_command(cmd)
+    pytest.helpers.metadata_lint_update(role_directory)
 
-    role_directory = os.path.join(temp_dir.strpath, 'test-init')
     with change_dir_to(role_directory):
         molecule_directory = pytest.helpers.molecule_directory()
         scenario_directory = os.path.join(molecule_directory, 'test-scenario')
@@ -139,19 +141,21 @@ def test_command_init_role_goss(temp_dir):
     }
     cmd = sh.molecule.bake('init', 'role', **options)
     pytest.helpers.run_command(cmd)
+    pytest.helpers.metadata_lint_update(role_directory)
 
     with change_dir_to(role_directory):
         sh.molecule('test')
 
 
 def test_command_init_scenario_goss(temp_dir):
+    role_directory = os.path.join(temp_dir.strpath, 'test-init')
     options = {
         'role_name': 'test-init',
     }
     cmd = sh.molecule.bake('init', 'role', **options)
     pytest.helpers.run_command(cmd)
+    pytest.helpers.metadata_lint_update(role_directory)
 
-    role_directory = os.path.join(temp_dir.strpath, 'test-init')
     with change_dir_to(role_directory):
         molecule_directory = pytest.helpers.molecule_directory()
         scenario_directory = os.path.join(molecule_directory, 'test-scenario')
@@ -167,13 +171,14 @@ def test_command_init_scenario_goss(temp_dir):
 
 
 def test_command_init_scenario_with_invalid_role_raises(temp_dir):
+    role_directory = os.path.join(temp_dir.strpath, 'test-role')
     options = {
         'role_name': 'test-role',
     }
     cmd = sh.molecule.bake('init', 'role', **options)
     pytest.helpers.run_command(cmd)
+    pytest.helpers.metadata_lint_update(role_directory)
 
-    role_directory = os.path.join(temp_dir.strpath, 'test-role')
     with change_dir_to(role_directory):
         options = {
             'scenario_name': 'default',
@@ -189,13 +194,14 @@ def test_command_init_scenario_with_invalid_role_raises(temp_dir):
 
 
 def test_command_init_scenario_as_default_without_default_scenario(temp_dir):
+    role_directory = os.path.join(temp_dir.strpath, 'test-role')
     options = {
         'role_name': 'test-role',
     }
     cmd = sh.molecule.bake('init', 'role', **options)
     pytest.helpers.run_command(cmd)
+    pytest.helpers.metadata_lint_update(role_directory)
 
-    role_directory = os.path.join(temp_dir.strpath, 'test-role')
     with change_dir_to(role_directory):
         molecule_directory = pytest.helpers.molecule_directory()
         scenario_directory = os.path.join(molecule_directory, 'default')
@@ -214,13 +220,14 @@ def test_command_init_scenario_as_default_without_default_scenario(temp_dir):
 # NOTE(retr0h): Molecule does not allow the creation of a role without
 # a default scenario.  This tests roles not created by a newer Molecule.
 def test_command_init_scenario_without_default_scenario_raises(temp_dir):
+    role_directory = os.path.join(temp_dir.strpath, 'test-role')
     options = {
         'role_name': 'test-role',
     }
     cmd = sh.molecule.bake('init', 'role', **options)
     pytest.helpers.run_command(cmd)
+    pytest.helpers.metadata_lint_update(role_directory)
 
-    role_directory = os.path.join(temp_dir.strpath, 'test-role')
     with change_dir_to(role_directory):
         molecule_directory = pytest.helpers.molecule_directory()
         scenario_directory = os.path.join(molecule_directory, 'default')
@@ -245,12 +252,13 @@ def test_command_init_role_with_template(temp_dir):
     role_directory = os.path.join(temp_dir.strpath, role_name)
 
     options = {
-        'url': 'https://github.com/retr0h/cookiecutter-molecule.git',
+        'url': 'https://github.com/ansible/molecule-cookiecutter.git',
         'no_input': True,
         'role_name': role_name,
     }
     cmd = sh.molecule.bake('init', 'template', **options)
     pytest.helpers.run_command(cmd)
+    pytest.helpers.metadata_lint_update(role_directory)
 
     with change_dir_to(role_directory):
         sh.molecule('test')
@@ -368,9 +376,9 @@ def test_host_group_vars(scenario_to_test, with_scenario, scenario_name):
     out = pytest.helpers.run_command(cmd, log=False)
     out = util.strip_ansi_escape(out.stdout.decode('utf-8'))
 
-    assert re.search('\[all\].*?ok: \[instance\]', out, re.DOTALL)
-    assert re.search('\[example\].*?ok: \[instance\]', out, re.DOTALL)
-    assert re.search('\[example_1\].*?ok: \[instance\]', out, re.DOTALL)
+    assert re.search(r'\[all\].*?ok: \[instance\]', out, re.DOTALL)
+    assert re.search(r'\[example\].*?ok: \[instance\]', out, re.DOTALL)
+    assert re.search(r'\[example_1\].*?ok: \[instance\]', out, re.DOTALL)
 
 
 @skip_unsupported_matrix

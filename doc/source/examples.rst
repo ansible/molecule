@@ -20,7 +20,7 @@ follows.
 .. code-block:: bash
 
     docker run --rm -it \
-        -v '$(pwd)':/tmp/$(basename "${PWD}"):ro \
+        -v "$(pwd)":/tmp/$(basename "${PWD}"):ro \
         -v /var/run/docker.sock:/var/run/docker.sock \
         -w /tmp/$(basename "${PWD}") \
         quay.io/ansible/molecule:latest \
@@ -52,7 +52,7 @@ test roles from a monolith repo.
             └── README.md
 
 The role initialized with Molecule (baz in this case) would simply reference
-the dependant roles via it's `playbook.yml` or meta dependencies.
+the dependant roles via it's ``playbook.yml`` or meta dependencies.
 
 Molecule can test complex scenarios leveraging this technique.
 
@@ -61,7 +61,7 @@ Molecule can test complex scenarios leveraging this technique.
     $ cd monolith-repo/roles/baz
     $ molecule test
 
-Molecule is simply setting the `ANSIBLE_*` environment variables.  To view the
+Molecule is simply setting the ``ANSIBLE_*`` environment variables.  To view the
 environment variables set during a Molecule operation pass the ``--debug``
 flag.
 
@@ -77,7 +77,7 @@ flag.
     ANSIBLE_ROLES_PATH: /private/tmp/monolith-repo/roles:/private/tmp/monolith-repo/roles/baz/molecule/default/.molecule/roles
 
 Molecule can be customized any number of ways.  Updating the provisioner's env
-section in `molecule.yml` to suit the needs of the developer and layout of the
+section in ``molecule.yml`` to suit the needs of the developer and layout of the
 project.
 
 .. code-block:: yaml
@@ -179,7 +179,7 @@ Playbooks and tests can be shared across scenarios.
     │       └── molecule.yml
 
 Tests can be shared across scenarios.  In this example the `tests` directory
-lives in a shared location and `molecule.yml` is points to the shared tests.
+lives in a shared location and ``molecule.yml`` is points to the shared tests.
 
 .. code-block:: yaml
 

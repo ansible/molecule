@@ -34,7 +34,7 @@ class Scenario(object):
 
     A scenario is a self-contained directory containing everything necessary
     for testing the role in a particular way.  The default scenario is named
-    `default`, and every role should contain a default scenario.
+    ``default``, and every role should contain a default scenario.
 
     Any option set in this section will override the defaults.
 

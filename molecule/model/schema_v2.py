@@ -65,6 +65,7 @@ def pre_validate_base_schema(env, keep_string):
                         'docker',
                         'ec2',
                         'gce',
+                        'linode',
                         'lxc',
                         'lxd',
                         'openstack',
@@ -260,7 +261,30 @@ base_schema = {
             },
         }
     },
-    'platforms': {},
+    'platforms': {
+        'type': 'list',
+        'schema': {
+            'type': 'dict',
+            'schema': {
+                'name': {
+                    'type': 'string',
+                    'required': True,
+                },
+                'groups': {
+                    'type': 'list',
+                    'schema': {
+                        'type': 'string',
+                    }
+                },
+                'children': {
+                    'type': 'list',
+                    'schema': {
+                        'type': 'string',
+                    }
+                },
+            }
+        }
+    },
     'provisioner': {
         'type': 'dict',
         'schema': {
@@ -509,33 +533,6 @@ driver_vagrant_provider_section_schema = {
                     },
                 }
             },
-        }
-    },
-}
-
-platforms_base_schema = {
-    'platforms': {
-        'type': 'list',
-        'schema': {
-            'type': 'dict',
-            'schema': {
-                'name': {
-                    'type': 'string',
-                    'required': True,
-                },
-                'groups': {
-                    'type': 'list',
-                    'schema': {
-                        'type': 'string',
-                    }
-                },
-                'children': {
-                    'type': 'list',
-                    'schema': {
-                        'type': 'string',
-                    }
-                },
-            }
         }
     },
 }
@@ -804,6 +801,32 @@ platforms_lxd_schema = {
     },
 }
 
+platforms_linode_schema = {
+    'platforms': {
+        'type': 'list',
+        'schema': {
+            'type': 'dict',
+            'schema': {
+                'name': {
+                    'type': 'string',
+                },
+                'plan': {
+                    'type': 'integer',
+                    'required': True,
+                },
+                'datacenter': {
+                    'type': 'integer',
+                    'required': True,
+                },
+                'distribution': {
+                    'type': 'integer',
+                    'required': True,
+                },
+            },
+        },
+    },
+}
+
 dependency_command_nullable_schema = {
     'dependency': {
         'type': 'dict',
@@ -946,12 +969,13 @@ def pre_validate(stream, env, keep_string):
 def validate(c):
     schema = copy.deepcopy(base_schema)
 
+    util.merge_dicts(schema, base_schema)
+
     # Dependency
     if c['dependency']['name'] == 'shell':
         util.merge_dicts(schema, dependency_command_nullable_schema)
 
     # Driver
-    util.merge_dicts(schema, platforms_base_schema)
     if c['driver']['name'] == 'docker':
         util.merge_dicts(schema, platforms_docker_schema)
     elif c['driver']['name'] == 'vagrant':
@@ -959,8 +983,8 @@ def validate(c):
         util.merge_dicts(schema, platforms_vagrant_schema)
     elif c['driver']['name'] == 'lxd':
         util.merge_dicts(schema, platforms_lxd_schema)
-    else:
-        util.merge_dicts(schema, platforms_base_schema)
+    elif c['driver']['name'] == 'linode':
+        util.merge_dicts(schema, platforms_linode_schema)
 
     # Verifier
     if c['verifier']['name'] == 'goss':

@@ -37,7 +37,7 @@ class Yamllint(base.Base):
     validity, also checks for key repetition, and cosmetic problems such as
     lines length, trailing spaces, and indentation.
 
-    Additional options can be passed to `yamllint` through the options
+    Additional options can be passed to ``yamllint`` through the options
     dict.  Any option set in this section will override the defaults.
 
     .. code-block:: yaml
@@ -47,7 +47,7 @@ class Yamllint(base.Base):
           options:
             config-file: foo/bar
 
-    The project linting can be disabled by setting `enabled` to False.
+    The project linting can be disabled by setting ``enabled`` to False.
 
     .. code-block:: yaml
 
@@ -69,7 +69,7 @@ class Yamllint(base.Base):
 
     def __init__(self, config):
         """
-        Sets up the requirements to execute `yamllint` and returns None.
+        Sets up the requirements to execute ``yamllint`` and returns None.
 
         :param config: An instance of a Molecule config.
         :return: None
@@ -90,7 +90,7 @@ class Yamllint(base.Base):
 
     def bake(self):
         """
-        Bake a `yamllint` command so it's ready to execute and returns None.
+        Bake a ``yamllint`` command so it's ready to execute and returns None.
 
         :return: None
         """

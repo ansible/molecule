@@ -34,13 +34,14 @@ class Testinfra(base.Base):
     """
     `Testinfra`_ is the default test runner.
 
-    Additional options can be passed to `testinfra` through the options
+    Additional options can be passed to ``testinfra`` through the options
     dict.  Any option set in this section will override the defaults.
 
     .. note::
 
-        Molecule will remove any options matching '^[v]+$', and pass `-vvv`
-        to the underlying `py.test` command when executing `molecule --debug`.
+        Molecule will remove any options matching '^[v]+$', and pass ``-vvv``
+        to the underlying ``py.test`` command when executing
+        ``molecule --debug``.
 
     .. code-block:: yaml
 
@@ -49,7 +50,7 @@ class Testinfra(base.Base):
           options:
             n: 1
 
-    The testing can be disabled by setting `enabled` to False.
+    The testing can be disabled by setting ``enabled`` to False.
 
     .. code-block:: yaml
 
@@ -86,12 +87,12 @@ class Testinfra(base.Base):
             - ../path/to/test_2.py
             - ../path/to/directory/*
 
-    .. _`Testinfra`: http://testinfra.readthedocs.io
+    .. _`Testinfra`: https://testinfra.readthedocs.io
     """
 
     def __init__(self, config):
         """
-        Sets up the requirements to execute `testinfra` and returns None.
+        Sets up the requirements to execute ``testinfra`` and returns None.
 
         :param config: An instance of a Molecule config.
         :return: None
@@ -118,7 +119,7 @@ class Testinfra(base.Base):
         return d
 
     # NOTE(retr0h): Override the base classes' options() to handle
-    # `ansible-galaxy` one-off.
+    # ``ansible-galaxy`` one-off.
     @property
     def options(self):
         o = self._config.config['verifier']['options']
@@ -150,7 +151,7 @@ class Testinfra(base.Base):
 
     def bake(self):
         """
-        Bake a `testinfra` command so it's ready to execute and returns None.
+        Bake a ``testinfra`` command so it's ready to execute and returns None.
 
         :return: None
         """

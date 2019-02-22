@@ -493,15 +493,15 @@ Breaking Changes
   `ansible-playbook` command.
 * Roles are linted with :gh:`Yamllint <adrienverge/yamllint>` vs v1's custom linter.
 
-.. _`GCE Driver`: http://molecule.readthedocs.io/en/latest/configuration.html#gce
-.. _`EC2 Driver`: http://molecule.readthedocs.io/en/latest/configuration.html#ec2
-.. _`Goss Verifier`: http://molecule.readthedocs.io/en/latest/configuration.html#goss
-.. _`LXC Driver`: http://molecule.readthedocs.io/en/latest/configuration.html#lxc
-.. _`LXD Driver`: http://molecule.readthedocs.io/en/latest/configuration.html#lxd
-.. _`OpenStack Driver`: http://molecule.readthedocs.io/en/latest/configuration.html#openstack
-.. _`Porting Guide`: http://molecule.readthedocs.io/en/latest/porting.html
-.. _`Scenarios`: http://molecule.readthedocs.io/en/latest/configuration.html#scenario
-.. _`Delegated Driver`: http://molecule.readthedocs.io/en/latest/configuration.html#delegated
+.. _`GCE Driver`: https://molecule.readthedocs.io/en/latest/configuration.html#gce
+.. _`EC2 Driver`: https://molecule.readthedocs.io/en/latest/configuration.html#ec2
+.. _`Goss Verifier`: https://molecule.readthedocs.io/en/latest/configuration.html#goss
+.. _`LXC Driver`: https://molecule.readthedocs.io/en/latest/configuration.html#lxc
+.. _`LXD Driver`: https://molecule.readthedocs.io/en/latest/configuration.html#lxd
+.. _`OpenStack Driver`: https://molecule.readthedocs.io/en/latest/configuration.html#openstack
+.. _`Porting Guide`: https://molecule.readthedocs.io/en/latest/porting.html
+.. _`Scenarios`: https://molecule.readthedocs.io/en/latest/configuration.html#scenario
+.. _`Delegated Driver`: https://molecule.readthedocs.io/en/latest/configuration.html#delegated
 
 1.25.1
 ======
@@ -601,7 +601,7 @@ Breaking Changes
 * The `host_vars` and `group_vars` section of molecule.yml no longer accepts a
   list, rather a dict similar to Ansible's `vars usage`_.
 
-.. _`vars usage`: http://docs.ansible.com/ansible/playbooks_variables.html#variables-defined-in-a-playbook
+.. _`vars usage`: https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#defining-variables-in-a-playbook
 
 1.19.3
 ======

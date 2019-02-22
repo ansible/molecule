@@ -39,8 +39,8 @@ class Goss(base.Base):
     and execute Goss using a community written Goss Ansible module bundled with
     Molecule.
 
-    Additional options can be passed to `goss validate` by modifying the verify
-    playbook.
+    Additional options can be passed to ``goss validate`` by modifying the
+    verify playbook.
 
     .. code-block:: yaml
 
@@ -49,7 +49,7 @@ class Goss(base.Base):
           lint:
             name: yamllint
 
-    The testing can be disabled by setting `enabled` to False.
+    The testing can be disabled by setting ``enabled`` to False.
 
     .. code-block:: yaml
 
@@ -84,7 +84,7 @@ class Goss(base.Base):
 
     def __init__(self, config):
         """
-        Sets up the requirements to execute `goss` and returns None.
+        Sets up the requirements to execute ``goss`` and returns None.
 
         :param config: An instance of a Molecule config.
         :return: None

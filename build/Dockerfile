@@ -25,6 +25,7 @@ ENV PACKAGES="\
     ruby-rdoc \
     ruby-irb \
     git \
+    openssh-client \
 "
 
 ENV PIP_PACKAGES="\

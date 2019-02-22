@@ -21,6 +21,7 @@
 
 import distutils.spawn
 import os
+import shutil
 import sys
 from distutils.version import LooseVersion
 
@@ -68,6 +69,7 @@ def skip_test(request, driver_name):
         'docker': supports_docker,
         'ec2': supports_ec2,
         'gce': supports_gce,
+        'linode': supports_linode,
         'lxc': supports_lxc,
         'lxd': supports_lxd,
         'openstack': supports_openstack,
@@ -112,6 +114,7 @@ def init_role(temp_dir, driver_name):
         'role-name': 'test-init'
     })
     pytest.helpers.run_command(cmd)
+    pytest.helpers.metadata_lint_update(role_directory)
 
     with change_dir_to(role_directory):
         options = {
@@ -130,6 +133,7 @@ def init_scenario(temp_dir, driver_name):
         'role-name': 'test-init'
     })
     pytest.helpers.run_command(cmd)
+    pytest.helpers.metadata_lint_update(role_directory)
 
     with change_dir_to(role_directory):
         # Create scenario
@@ -151,6 +155,27 @@ def init_scenario(temp_dir, driver_name):
         }
         cmd = sh.molecule.bake('test', **options)
         pytest.helpers.run_command(cmd)
+
+
+@pytest.helpers.register
+def metadata_lint_update(role_directory):
+    # By default, ansible-lint will fail on newly-created roles because the
+    # fields in this file have not been changed from their defaults. This is
+    # good because molecule should create this file using the defaults, and
+    # users should receive feedback to change these defaults. However, this
+    # blocks the testing of 'molecule init' itself, so ansible-lint should
+    # be configured to ignore these metadata lint errors.
+    ansible_lint_src = os.path.join(
+        os.path.dirname(util.abs_path(__file__)), '.ansible-lint')
+    shutil.copy(ansible_lint_src, role_directory)
+
+    # Explicitly lint here to catch any unexpected lint errors before
+    # continuining functional testing. Ansible lint is run at the root
+    # of the role directory and pointed at the role directory to ensure
+    # the customize ansible-lint config is used.
+    with change_dir_to(role_directory):
+        cmd = sh.ansible_lint.bake('.')
+    pytest.helpers.run_command(cmd)
 
 
 @pytest.helpers.register
@@ -243,6 +268,14 @@ def get_docker_executable():
     return distutils.spawn.find_executable('docker')
 
 
+def get_linode_executable():
+    try:
+        pytest.importorskip('linode')
+        return True
+    except Exception:
+        return False
+
+
 def get_lxc_executable():
     return distutils.spawn.find_executable('lxc-start')
 
@@ -262,6 +295,12 @@ def get_virtualbox_executable():
 @pytest.helpers.register
 def supports_docker():
     return get_docker_executable()
+
+
+@pytest.helpers.register
+def supports_linode():
+    # FIXME: Travis CI
+    return not IS_TRAVIS and get_linode_executable()
 
 
 @pytest.helpers.register

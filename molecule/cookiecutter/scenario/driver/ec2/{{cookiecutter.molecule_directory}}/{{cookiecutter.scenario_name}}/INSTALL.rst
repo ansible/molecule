@@ -6,12 +6,17 @@ Requirements
 ============
 
 * An AWS credentials rc file
-* boto or boto3
 
 Install
 =======
 
+Please refer to the `Virtual environment`_ documentation for installation best
+practices. If not using a virtual environment, please consider passing the
+widely recommended `'--user' flag`_ when invoking ``pip``.
+
+.. _Virtual environment: https://virtualenv.pypa.io/en/latest/
+.. _'--user' flag: https://packaging.python.org/tutorials/installing-packages/#installing-to-the-user-site
+
 .. code-block:: bash
 
-    $ sudo pip install boto
-    $ sudo pip install boto3
+    $ pip install 'molecule[ec2]'

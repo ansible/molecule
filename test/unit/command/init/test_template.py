@@ -29,7 +29,7 @@ from molecule.command.init import template
 def _command_args():
     return {
         'role_name': 'test-role',
-        'url': 'https://github.com/retr0h/cookiecutter-molecule.git',
+        'url': 'https://github.com/ansible/molecule-cookiecutter.git',
         'no_input': True,
         'subcommand': __name__,
     }

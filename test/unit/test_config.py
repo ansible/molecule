@@ -274,6 +274,7 @@ def test_drivers_property(config_instance):
         'docker',
         'ec2',
         'gce',
+        'linode',
         'lxc',
         'lxd',
         'openstack',
@@ -286,40 +287,25 @@ def test_drivers_property(config_instance):
 def test_env(config_instance):
     config_instance.args = {'env_file': '.env'}
     x = {
-        'MOLECULE_DEBUG':
-        'False',
-        'MOLECULE_FILE':
-        config_instance.molecule_file,
-        'MOLECULE_ENV_FILE':
-        util.abs_path(config_instance.args.get('env_file')),
-        'MOLECULE_INVENTORY_FILE':
-        config_instance.provisioner.inventory_file,
+        'MOLECULE_DEBUG': 'False',
+        'MOLECULE_FILE': config_instance.molecule_file,
+        'MOLECULE_ENV_FILE': util.abs_path(
+            config_instance.args.get('env_file')),
+        'MOLECULE_INVENTORY_FILE': config_instance.provisioner.inventory_file,
         'MOLECULE_EPHEMERAL_DIRECTORY':
         config_instance.scenario.ephemeral_directory,
-        'MOLECULE_SCENARIO_DIRECTORY':
-        config_instance.scenario.directory,
-        'MOLECULE_PROJECT_DIRECTORY':
-        config_instance.project_directory,
-        'MOLECULE_INSTANCE_CONFIG':
-        config_instance.driver.instance_config,
-        'MOLECULE_DEPENDENCY_NAME':
-        'galaxy',
-        'MOLECULE_DRIVER_NAME':
-        'docker',
-        'MOLECULE_LINT_NAME':
-        'yamllint',
-        'MOLECULE_PROVISIONER_NAME':
-        'ansible',
-        'MOLECULE_PROVISIONER_LINT_NAME':
-        'ansible-lint',
-        'MOLECULE_SCENARIO_NAME':
-        'default',
-        'MOLECULE_VERIFIER_NAME':
-        'testinfra',
-        'MOLECULE_VERIFIER_LINT_NAME':
-        'flake8',
-        'MOLECULE_VERIFIER_TEST_DIRECTORY':
-        config_instance.verifier.directory,
+        'MOLECULE_SCENARIO_DIRECTORY': config_instance.scenario.directory,
+        'MOLECULE_PROJECT_DIRECTORY': config_instance.project_directory,
+        'MOLECULE_INSTANCE_CONFIG': config_instance.driver.instance_config,
+        'MOLECULE_DEPENDENCY_NAME': 'galaxy',
+        'MOLECULE_DRIVER_NAME': 'docker',
+        'MOLECULE_LINT_NAME': 'yamllint',
+        'MOLECULE_PROVISIONER_NAME': 'ansible',
+        'MOLECULE_PROVISIONER_LINT_NAME': 'ansible-lint',
+        'MOLECULE_SCENARIO_NAME': 'default',
+        'MOLECULE_VERIFIER_NAME': 'testinfra',
+        'MOLECULE_VERIFIER_LINT_NAME': 'flake8',
+        'MOLECULE_VERIFIER_TEST_DIRECTORY': config_instance.verifier.directory,
     }
 
     assert x == config_instance.env
@@ -530,6 +516,7 @@ def test_molecule_drivers():
         'docker',
         'ec2',
         'gce',
+        'linode',
         'lxc',
         'lxd',
         'openstack',

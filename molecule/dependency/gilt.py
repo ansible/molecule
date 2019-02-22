@@ -33,7 +33,7 @@ class Gilt(base.Base):
     """
     `Gilt`_ is an alternate dependency manager.
 
-    Additional options can be passed to `gilt overlay` through the options
+    Additional options can be passed to ``gilt overlay`` through the options
     dict.  Any option set in this section will override the defaults.
 
     .. code-block:: yaml
@@ -44,7 +44,7 @@ class Gilt(base.Base):
             debug: True
 
 
-    The dependency manager can be disabled by setting `enabled` to False.
+    The dependency manager can be disabled by setting ``enabled`` to False.
 
     .. code-block:: yaml
 
@@ -61,7 +61,7 @@ class Gilt(base.Base):
           env:
             FOO: bar
 
-    .. _`Gilt`: http://gilt.readthedocs.io
+    .. _`Gilt`: https://gilt.readthedocs.io
     """
 
     def __init__(self, config):
@@ -85,7 +85,7 @@ class Gilt(base.Base):
 
     def bake(self):
         """
-        Bake a `gilt` command so it's ready to execute and returns None.
+        Bake a ``gilt`` command so it's ready to execute and returns None.
 
         :return: None
         """

@@ -84,6 +84,12 @@ GCE
 .. autoclass:: molecule.driver.gce.GCE()
    :undoc-members:
 
+Linode
+^^^^^^
+
+.. autoclass:: molecule.driver.linode.Linode()
+   :undoc-members:
+
 LXC
 ^^^
 
@@ -306,6 +312,14 @@ configuration syntax.
 
 .. autoclass:: molecule.scenario.Scenario()
    :undoc-members:
+
+State
+-----
+
+An internal bookkeeping mechanism.
+
+.. autoclass:: molecule.state.State()
+  :undoc-members:
 
 Verifier
 --------

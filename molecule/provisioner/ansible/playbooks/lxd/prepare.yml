@@ -3,51 +3,27 @@
   hosts: all
   gather_facts: false
   tasks:
-    - name: Test if Python is installed
-      raw: python -V  # execute Python
-      register: python_version
-      changed_when: "'not found' in python_version.stderr"
-      failed_when: false
-
-    - name: Install Python when not installed
+    - name: Install some basic packages because LXC containers are bare
       raw: |
         if [ -x "$(command -v apt-get)" ]
         then
-          apt-get update && apt-get install -y python
+          apt-get update && apt-get install -y ca-certificates curl python sudo
         elif [ -x "$(command -v yum)" ]
         then
-          yum install -y python
+          yum install -y ca-certificates curl python sudo
         elif [ -x "$(command -v zypper)" ]
         then
-          zypper -n --gpg-auto-import-keys refresh && zypper -n install -y python python-xml
+          zypper -n --gpg-auto-import-keys refresh && zypper -n install -y ca-certificates ca-certificates-cacert ca-certificates-mozilla curl python python-xml sudo
         elif [ -x "$(command -v apk)" ]
         then
-          apk update && apk add python
+          apk update && apk add ca-certificates curl python sudo
         elif [ -x "$(command -v pacman)" ]
         then
-          pacman -Syu --noconfirm python2
+          pacman -Syu --noconfirm ca-certificates curl python2 sudo
         elif [ -x "$(command -v dnf)" ]
         then
-          dnf --assumeyes install python python-devel python2-dnf
+          dnf --assumeyes install ca-certificates curl python python-devel python2-dnf sudo
         elif [ -x "$(command -v emerge)" ]
         then
-          emerge --ask n dev-lang/python-2
+          emerge --ask n ca-certificates curl dev-lang/python-2 gentoolkit sudo
         fi
-      when: "'not found' in python_version.stderr"
-
-    - name: Gathering Facts
-      setup:  # aka gather_facts
-
-    - name: Install equery on Gentoo based containers when not available
-      raw: test -e /usr/bin/equery || emerge --ask n gentoolkit
-      register: equery_status
-      changed_when: equery_status.stdout != ''
-      when: ansible_os_family == 'Gentoo'
-
-    - name: Install some basic packages because LXC containers are bare
-      package:
-        name:
-          - ca-certificates
-          - curl
-          - sudo
-        state: present
