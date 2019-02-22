@@ -48,6 +48,8 @@ def _model_platforms_docker_section_data():
                     'email': 'user@example.com',
                 },
             },
+            'override_command':
+            False,
             'command':
             'sleep infinity',
             'privileged':
@@ -126,6 +128,7 @@ def _model_platforms_docker_errors_section_data():
                     'email': int(),
                 },
             },
+            'override_command': int(),
             'command': int(),
             'privileged': str(),
             'security_opts': [
@@ -189,6 +192,7 @@ def test_platforms_docker_has_errors(_config):
                     0: ['must be of string type']
                 }],
                 'privileged': ['must be of boolean type'],
+                'override_command': ['must be of boolean type'],
                 'command': ['must be of string type'],
                 'registry': [{
                     'url': ['must be of string type'],
