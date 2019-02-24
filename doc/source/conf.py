@@ -77,10 +77,12 @@ extlinks = {
 }
 
 intersphinx_mapping = {
-    'ansible': ('https://docs.ansible.com/ansible/devel/', None),
+    'ansible': ('https://docs.ansible.com/ansible/latest/', None),
     'pip': ('https://pip.pypa.io/en/latest/', None),
     'python': ('https://docs.python.org/3', None),
     'python2': ('https://docs.python.org/2', None),
+    'testinfra': ('https://testinfra.readthedocs.io/en/latest/', None),
+    'yamllint': ('http://yamllint.readthedocs.io/en/latest/', None),
 }
 
 # The version info for the project you're documenting, acts as replacement for

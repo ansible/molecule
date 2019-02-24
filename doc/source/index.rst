@@ -1,4 +1,5 @@
 .. include:: ../../README.rst
+  :end-before: _documentation
 
 Contents:
 =========
@@ -7,6 +8,7 @@ Contents:
    :maxdepth: 3
 
    installation
+   getting-started
    usage
    examples
    configuration

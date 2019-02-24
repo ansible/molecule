@@ -132,3 +132,36 @@ To bring in updated upstream modules.  Update `gilt.yml` and execute the followi
 
 .. _`Ansible Goss`: https://github.com/indusbox/goss-ansible
 .. _`Gilt`: https://gilt.readthedocs.io
+
+Documentation
+=============
+
+Working with InterSphinx
+------------------------
+
+In the `conf.py`_, we define an ``intersphinx_mapping`` which provides the base
+URLs for conveniently linking to other Sphinx documented projects. In order to
+find the correct link syntax and text you can link to, you can quickly inspect
+the reference from the command line.
+
+For example, if we would like to link to a specific part of the Ansible
+documentation, we could first run the following command:
+
+.. code-block:: bash
+
+    python -m sphinx.ext.intersphinx https://docs.ansible.com/ansible/latest/objects.inv
+
+And then see the entire Sphinx listing. We see entries that look like:
+
+.. code-block:: bash
+
+    py:attribute
+        AnsibleModule._debug  api/index.html#AnsibleModule._debug
+
+With which we can link out to using the following syntax:
+
+.. code-block:: bash
+
+    :py:attribute:`AnsibleModule._debug`
+
+.. _conf.py: ../source/conf.py
