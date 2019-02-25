@@ -370,6 +370,9 @@ base_schema = {
             'playbooks': {
                 'type': 'dict',
                 'schema': {
+                    'cleanup': {
+                        'type': 'string',
+                    },
                     'create': {
                         'type': 'string',
                     },

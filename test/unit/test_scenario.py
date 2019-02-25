@@ -64,12 +64,14 @@ def test_ephemeral_directory_property(_instance):
 
 def test_check_sequence_property(_instance):
     sequence = [
+        'cleanup',
         'destroy',
         'dependency',
         'create',
         'prepare',
         'converge',
         'check',
+        'cleanup',
         'destroy',
     ]
 
@@ -101,7 +103,7 @@ def test_dependency_sequence_property(_instance):
 
 
 def test_destroy_sequence_property(_instance):
-    assert ['destroy'] == _instance.destroy_sequence
+    assert ['cleanup', 'destroy'] == _instance.destroy_sequence
 
 
 def test_idempotence_sequence_property(_instance):
@@ -127,6 +129,7 @@ def test_syntax_sequence_property(_instance):
 def test_test_sequence_property(_instance):
     sequence = [
         'lint',
+        'cleanup',
         'destroy',
         'dependency',
         'syntax',
@@ -136,6 +139,7 @@ def test_test_sequence_property(_instance):
         'idempotence',
         'side_effect',
         'verify',
+        'cleanup',
         'destroy',
     ]
 

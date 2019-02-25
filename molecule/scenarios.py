@@ -137,6 +137,7 @@ class Scenarios(object):
         return dict({
             scenario.name: {
                 'check': scenario.check_sequence,
+                'cleanup': scenario.cleanup_sequence,
                 'converge': scenario.converge_sequence,
                 'create': scenario.create_sequence,
                 'dependency': scenario.dependency_sequence,

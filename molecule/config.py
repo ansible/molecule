@@ -376,6 +376,7 @@ class Config(object):
                 },
                 'children': {},
                 'playbooks': {
+                    'cleanup': 'cleanup.yml',
                     'create': 'create.yml',
                     'converge': 'playbook.yml',
                     'destroy': 'destroy.yml',
@@ -394,14 +395,17 @@ class Config(object):
                 'name':
                 'default',
                 'check_sequence': [
+                    'cleanup',
                     'destroy',
                     'dependency',
                     'create',
                     'prepare',
                     'converge',
                     'check',
+                    'cleanup',
                     'destroy',
                 ],
+                'cleanup_sequence': ['cleanup'],
                 'converge_sequence': [
                     'dependency',
                     'create',
@@ -413,10 +417,12 @@ class Config(object):
                     'prepare',
                 ],
                 'destroy_sequence': [
+                    'cleanup',
                     'destroy',
                 ],
                 'test_sequence': [
                     'lint',
+                    'cleanup',
                     'destroy',
                     'dependency',
                     'syntax',
@@ -426,6 +432,7 @@ class Config(object):
                     'idempotence',
                     'side_effect',
                     'verify',
+                    'cleanup',
                     'destroy',
                 ],
             },

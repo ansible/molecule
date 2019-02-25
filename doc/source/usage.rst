@@ -7,6 +7,12 @@ Check
 .. autoclass:: molecule.command.check.Check()
    :undoc-members:
 
+Clean Up
+^^^^^^^^
+
+.. autoclass:: molecule.command.cleanup.Cleanup()
+   :undoc-members:
+
 Converge
 ^^^^^^^^
 
