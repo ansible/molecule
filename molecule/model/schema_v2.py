@@ -633,6 +633,10 @@ platforms_docker_schema = {
                         },
                     }
                 },
+                'override_command': {
+                    'type': 'boolean',
+                    'nullable': True,
+                },
                 'command': {
                     'type': 'string',
                     'nullable': True,
