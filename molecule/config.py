@@ -370,6 +370,7 @@ class Config(object):
                 'options': {},
                 'env': {},
                 'inventory': {
+                    'hosts': {},
                     'host_vars': {},
                     'group_vars': {},
                     'links': {},

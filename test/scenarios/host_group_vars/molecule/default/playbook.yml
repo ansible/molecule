@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: instance
   tasks:
     - name: Host vars host_var for host host-group-vars from molecule.yml
       command: echo "{{ host_group_vars_host_molecule_yml }}"
@@ -20,6 +20,10 @@
 
     - name: Group vars group_var from child group example_1 from molecule.yml
       command: echo "{{ host_group_vars_example_1_child_group_molecule_yml }}"
+      changed_when: false
+
+    - name: Variable from extra_host from molecule.yml
+      command: echo "{{ hostvars['extra_host']['host_group_vars_extra_host_molecule_yml'] }}"
       changed_when: false
 
 - hosts: example

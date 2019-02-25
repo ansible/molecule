@@ -80,6 +80,18 @@ def _provisioner_section_data():
                 'ANSIBLE_FILTER_PLUGINS': 'foo/bar',
             },
             'inventory': {
+                'hosts': {
+                    'all': {
+                        'hosts': {
+                            'extra-host-01': {},
+                        },
+                        'children': {
+                            'extra-group': {
+                                'hosts': ['extra-host-01']
+                            },
+                        },
+                    },
+                },
                 'host_vars': {
                     'instance-1': [{
                         'foo': 'bar',
@@ -286,6 +298,25 @@ def test_group_vars_property(_instance):
     }
 
     assert x == _instance.group_vars
+
+
+@pytest.mark.parametrize(
+    'config_instance', ['_provisioner_section_data'], indirect=True)
+def test_hosts_property(_instance):
+    hosts = {
+        'all': {
+            'hosts': {
+                'extra-host-01': {}
+            },
+            'children': {
+                'extra-group': {
+                    'hosts': ['extra-host-01']
+                }
+            },
+        }
+    }
+
+    assert hosts == _instance.hosts
 
 
 def test_links_property(_instance):
@@ -704,6 +735,10 @@ def test_add_or_update_vars(_instance):
     assert os.path.isfile(group_vars_1)
     assert os.path.isfile(group_vars_2)
 
+    hosts = os.path.join(inventory_dir, 'hosts')
+    assert os.path.isfile(hosts)
+    assert util.safe_load_file(hosts) == _instance.hosts
+
 
 @pytest.mark.parametrize(
     'config_instance', ['_provisioner_section_data'], indirect=True)
@@ -731,13 +766,19 @@ def test_add_or_update_vars_without_host_vars(_instance):
     assert os.path.isfile(group_vars_1)
     assert os.path.isfile(group_vars_2)
 
+    hosts = os.path.join(inventory_dir, 'hosts')
+    assert os.path.isfile(hosts)
+    assert util.safe_load_file(hosts) == _instance.hosts
+
 
 def test_add_or_update_vars_does_not_create_vars(_instance):
     c = _instance._config.config
+    c['provisioner']['inventory']['hosts'] = {}
     c['provisioner']['inventory']['host_vars'] = {}
     c['provisioner']['inventory']['group_vars'] = {}
     inventory_dir = _instance._config.scenario.inventory_directory
 
+    hosts = os.path.join(inventory_dir, 'hosts')
     host_vars_directory = os.path.join(inventory_dir, 'host_vars')
     group_vars_directory = os.path.join(inventory_dir, 'group_vars')
 
@@ -745,6 +786,7 @@ def test_add_or_update_vars_does_not_create_vars(_instance):
 
     assert not os.path.isdir(host_vars_directory)
     assert not os.path.isdir(group_vars_directory)
+    assert not os.path.isfile(hosts)
 
 
 @pytest.mark.parametrize(
@@ -896,10 +938,12 @@ def test_write_inventory(temp_dir, _instance):
 def test_remove_vars(_instance):
     inventory_dir = _instance._config.scenario.inventory_directory
 
+    hosts = os.path.join(inventory_dir, 'hosts')
     host_vars_directory = os.path.join(inventory_dir, 'host_vars')
     host_vars = os.path.join(host_vars_directory, 'instance-1')
 
     _instance._add_or_update_vars()
+    assert os.path.isfile(hosts)
     assert os.path.isdir(host_vars_directory)
     assert os.path.isfile(host_vars)
 
@@ -916,6 +960,7 @@ def test_remove_vars(_instance):
 
     _instance._remove_vars()
 
+    assert not os.path.isfile(hosts)
     assert not os.path.isdir(host_vars_directory)
     assert not os.path.isdir(group_vars_directory)
 

@@ -353,6 +353,9 @@ base_schema = {
             'inventory': {
                 'type': 'dict',
                 'schema': {
+                    'hosts': {
+                        'type': 'dict',
+                    },
                     'host_vars': {
                         'type': 'dict',
                     },

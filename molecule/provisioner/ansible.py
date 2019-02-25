@@ -426,6 +426,10 @@ class Ansible(base.Base):
         return util.merge_dicts(default_env, env)
 
     @property
+    def hosts(self):
+        return self._config.config['provisioner']['inventory']['hosts']
+
+    @property
     def host_vars(self):
         return self._config.config['provisioner']['inventory']['host_vars']
 
@@ -648,6 +652,11 @@ class Ansible(base.Base):
 
         :returns: None
         """
+        # Create the hosts extra inventory source (only if not empty)
+        hosts_file = os.path.join(self.inventory_directory, 'hosts')
+        if self.hosts:
+            util.write_file(hosts_file, util.safe_dump(self.hosts))
+        # Create the host_vars and group_vars directories
         for target in ['host_vars', 'group_vars']:
             if target == 'host_vars':
                 vars_target = copy.deepcopy(self.host_vars)
@@ -693,11 +702,10 @@ class Ansible(base.Base):
         """
         for name in ("hosts", "group_vars", "host_vars"):
             d = os.path.join(self.inventory_directory, name)
-            if os.path.islink(d):
+            if os.path.islink(d) or os.path.isfile(d):
                 os.unlink(d)
-            else:
-                if os.path.exists(d):
-                    shutil.rmtree(d)
+            elif os.path.isdir(d):
+                shutil.rmtree(d)
 
     def _link_or_update_vars(self):
         """
