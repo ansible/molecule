@@ -60,7 +60,7 @@ class Vagrant(base.Base):
 
         driver:
           name: vagrant
-        platforms
+        platforms:
           - name: instance-1
             instance_raw_config_args:
               - "vm.network 'forwarded_port', guest: 80, host: 8080"
