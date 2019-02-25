@@ -42,7 +42,7 @@ A ``.travis.yml`` using `Tox`_ as described below.
 Gitlab CI
 ^^^^^^^^^
 
-`Gitlab`_ includes its own CI. Pipelines are usually defined in a ``.gitlab-ci.yml`` file in the top folder of a repository, to be ran on Gitlab Runners. 
+`Gitlab`_ includes its own CI. Pipelines are usually defined in a ``.gitlab-ci.yml`` file in the top folder of a repository, to be ran on Gitlab Runners.
 
 Here is an example setting up a virtualenv and testing an Ansible role via Molecule. User-level pip is cached and so is the virtual environment to save time. And this is run over a runner tagged `pip36` and `docker`, because its a minimal CentOS 7 VM installed with pip36 from IUS repository and docker.
 
@@ -183,7 +183,8 @@ To view the factor generated tox environments.
 
 If using the `--parallel functionality`_ of Tox (version 3.7 onwards), Molecule
 must be made aware of the parallel testing by setting a
-``MOLECULE_EPHEMERAL_DIRECTORY`` environment variable per environment.
+``MOLECULE_EPHEMERAL_DIRECTORY`` environment variable per environment. In addition,
+we export a ``TOX_ENVNAME`` environment variable, it's the name of our tox env.
 
 .. code-block:: ini
 
@@ -200,14 +201,16 @@ must be made aware of the parallel testing by setting a
     commands =
         molecule test
     setenv =
-        MOLECULE_EPHEMERAL_DIRECTORY={envname}
+        TOX_ENVNAME={envname}
+        MOLECULE_EPHEMERAL_DIRECTORY=/tmp/{envname}
 
 If you are utilizing the Openstack driver you will have to make sure that your
 ``envname`` variable does not contain any invalid characters, particularly
 ``-``.
 
-You also must include the ``MOLECULE_EPHEMERAL_DIRECTORY`` variable in the
-``molecule.yml`` configuration file.
+You also must include the ``TOX_ENVNAME`` variable in name of each platform in
+``molecule.yml`` configuration file. This way, ther names won't create any
+conflict.
 
 .. code-block:: yaml
 
@@ -219,9 +222,9 @@ You also must include the ``MOLECULE_EPHEMERAL_DIRECTORY`` variable in the
     lint:
       name: yamllint
     platforms:
-      - name: instance1-$MOLECULE_EPHEMERAL_DIRECTORY
+      - name: instance1-$TOX_ENVNAME
         image: mariadb
-      - name: instance2-$MOLECULE_EPHEMERAL_DIRECTORY
+      - name: instance2-$TOX_ENVNAME
         image: retr0h/centos7-systemd-ansible:latest
         privileged: True
         command: /usr/sbin/init
@@ -241,4 +244,4 @@ You also must include the ``MOLECULE_EPHEMERAL_DIRECTORY`` variable in the
 .. _`Jenkins`: https://jenkins.io/doc/book/pipeline/jenkinsfile
 .. _`Gitlab`: https://gitlab.com
 .. _`Tox`: https://tox.readthedocs.io/en/latest
-.. _parallel functionality: https://tox.readthedocs.io/en/latest/config.html#cmdoption-tox-p
+.. _`--parallel functionality`: https://tox.readthedocs.io/en/latest/config.html#cmdoption-tox-p

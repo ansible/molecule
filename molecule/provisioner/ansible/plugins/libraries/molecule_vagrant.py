@@ -501,8 +501,7 @@ class VagrantClient(object):
                 self._module.params['instance_raw_config_args'],
             },
             'provider': {
-                'name':
-                self._module.params['provider_name'],
+                'name': self._module.params['provider_name'],
                 # NOTE(retr0h): Options provided here will be passed to
                 # Vagrant as "$provider_name.#{key} = #{value}".
                 'options': {
@@ -511,8 +510,7 @@ class VagrantClient(object):
                 },
                 'raw_config_args':
                 self._module.params['provider_raw_config_args'],
-                'override_args':
-                self._module.params['provider_override_args'],
+                'override_args': self._module.params['provider_override_args'],
             }
         }
 

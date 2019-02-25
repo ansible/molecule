@@ -34,7 +34,7 @@ class Openstack(base.Base):
     Molecule leverages Ansible's `openstack_module`_, by mapping variables
     from ``molecule.yml`` into ``create.yml`` and ``destroy.yml``.
 
-    .. _`openstack_module`: http://docs.ansible.com/ansible/latest/os_server_module.html
+    .. _`openstack_module`: https://docs.ansible.com/ansible/latest/os_server_module.html
 
     .. code-block:: yaml
 

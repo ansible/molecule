@@ -36,7 +36,7 @@ class Docker(base.Base):
     Molecule leverages Ansible's `docker_container`_ module, by mapping
     variables from ``molecule.yml`` into ``create.yml`` and ``destroy.yml``.
 
-    .. _`docker_container`: http://docs.ansible.com/ansible/latest/docker_container_module.html
+    .. _`docker_container`: https://docs.ansible.com/ansible/latest/docker_container_module.html
     .. _`Docker Security Configuration`: https://docs.docker.com/engine/reference/run/#security-configuration
 
     .. code-block:: yaml
@@ -55,6 +55,7 @@ class Docker(base.Base):
                 username: $USERNAME
                 password: $PASSWORD
                 email: user@example.com
+            override_command: True|False
             command: sleep infinity
             pid_mode: host
             privileged: True|False
@@ -88,6 +89,12 @@ class Docker(base.Base):
             restart_retries: 1
             buildargs:
                 http_proxy: http://proxy.example.com:8080/
+
+    If specifying the `CMD`_ directive in your ``Dockerfile.j2`` or consuming a
+    built image which declares a ``CMD`` directive, then you must set
+    ``override_command: False``. Otherwise, Molecule takes care to honour the
+    value of the ``command`` key or uses the default of ``bash -c "while true;
+    do sleep 10000; done"`` to run the container until it is provisioned.
 
     When attempting to utilize a container image with `systemd`_ as your init
     system inside the container to simulate a real machine, make sure to set
@@ -133,6 +140,8 @@ class Docker(base.Base):
             - foo
 
     .. _`Docker`: https://www.docker.com
+    .. _`systemd`: https://www.freedesktop.org/wiki/Software/systemd/
+    .. _`CMD`: https://docs.docker.com/engine/reference/builder/#cmd
     """  # noqa
 
     def __init__(self, config):

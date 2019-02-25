@@ -1,11 +1,11 @@
-ansible-lint>=4.0.1,<5
+-r lint-requirements.txt
+ansible-lint>=4.0.2,<5
 anyconfig==0.9.7
 cerberus==1.2
 click==6.7
 click-completion==0.3.1
 colorama==0.3.9
 cookiecutter==1.6.0
-flake8==3.5.0
 idna<2.8  # because indirect dependency "requests" conflict with it now
 python-gilt==1.2.1
 Jinja2==2.10
@@ -16,6 +16,5 @@ PyYAML==3.13
 sh==1.12.14
 six==1.11.0
 tabulate==0.8.2
-testinfra==1.16.0
+testinfra==1.19.0
 tree-format==0.1.2
-yamllint==1.11.1

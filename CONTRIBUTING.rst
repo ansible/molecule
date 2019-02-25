@@ -115,7 +115,7 @@ contributors. Until such time that we improve the build speeds we must
 therefore ask that you please perform all of the :ref:`full_testing` testing
 steps prior to submitting a pull request.
 
-.. `continuous integration`: https://travis-ci.com/ansible/molecule
+.. _`continuous integration`: https://travis-ci.com/ansible/molecule
 
 Ansible Modules
 ===============
@@ -131,4 +131,4 @@ To bring in updated upstream modules.  Update `gilt.yml` and execute the followi
   $ gilt overlay
 
 .. _`Ansible Goss`: https://github.com/indusbox/goss-ansible
-.. _`Gilt`: http://gilt.readthedocs.io
+.. _`Gilt`: https://gilt.readthedocs.io

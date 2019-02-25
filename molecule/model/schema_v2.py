@@ -370,6 +370,9 @@ base_schema = {
             'playbooks': {
                 'type': 'dict',
                 'schema': {
+                    'cleanup': {
+                        'type': 'string',
+                    },
                     'create': {
                         'type': 'string',
                     },
@@ -632,6 +635,10 @@ platforms_docker_schema = {
                             }
                         },
                     }
+                },
+                'override_command': {
+                    'type': 'boolean',
+                    'nullable': True,
                 },
                 'command': {
                     'type': 'string',

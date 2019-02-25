@@ -51,6 +51,15 @@ class Delegated(base.Base):
           port: ssh_port_as_string
           user: ssh_user
 
+        - address: winrm_endpoint
+          instance: instance_name
+          port: winrm_port
+          user: winrm_user
+          connection: 'winrm'
+
+    This article covers how to configure and use WinRM with Ansible:
+    https://docs.ansible.com/ansible/latest/user_guide/windows_winrm.html
+
     Molecule can also skip the provisioning/deprovisioning steps.  It is the
     developers responsibility to manage the instances, and properly configure
     Molecule to connect to said instances.
@@ -90,7 +99,7 @@ class Delegated(base.Base):
             login_cmd_template: 'ssh {instance} -F /tmp/ssh-config'
             ansible_connection_options:
               ansible_connection: ssh
-              ansible_ssh_common_args -F /path/to/ssh-config
+              ansible_ssh_common_args: '-F /path/to/ssh-config'
         platforms:
           - name: instance-vagrant
 
@@ -103,9 +112,10 @@ class Delegated(base.Base):
           safe_files:
             - foo
 
-    Use localhost as molecule's target
+    And in order to use localhost as molecule's target:
 
     .. code-block:: yaml
+
         driver:
           name: delegated
           options:
@@ -160,21 +170,19 @@ class Delegated(base.Base):
         if self.managed:
             try:
                 d = self._get_instance_config(instance_name)
+                conn_dict = {}
+                conn_dict['ansible_user'] = d.get('user')
+                conn_dict['ansible_host'] = d.get('address')
+                conn_dict['ansible_port'] = d.get('port')
+                conn_dict['ansible_connection'] = d.get('connection', 'smart')
+                if d.get('identity_file'):
+                    conn_dict['ansible_private_key_file'] = d.get(
+                        'identity_file')
+                    conn_dict['ansible_ssh_common_args'] = ' '.join(
+                        self.ssh_connection_options)
 
-                return {
-                    'ansible_user':
-                    d['user'],
-                    'ansible_host':
-                    d['address'],
-                    'ansible_port':
-                    d['port'],
-                    'ansible_private_key_file':
-                    d['identity_file'],
-                    'connection':
-                    'ssh',
-                    'ansible_ssh_common_args':
-                    ' '.join(self.ssh_connection_options),
-                }
+                return conn_dict
+
             except StopIteration:
                 return {}
             except IOError:

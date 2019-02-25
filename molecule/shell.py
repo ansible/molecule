@@ -126,6 +126,7 @@ def main(ctx, debug, base_config, env_file):  # pragma: no cover
     ctx.obj['args']['env_file'] = env_file
 
 
+main.add_command(command.cleanup.cleanup)
 main.add_command(command.check.check)
 main.add_command(command.converge.converge)
 main.add_command(command.create.create)

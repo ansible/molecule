@@ -75,7 +75,7 @@ class Config(object):
     The directory in which the ``molecule.yml`` resides is the Scenario's
     directory.  Molecule performs most functions within this directory.
 
-    The :class:`.Config` object has instantiated Dependency_, Driver_,
+    The :class:`.Config` object instantiates Dependency_, Driver_,
     :ref:`root_lint`, Platforms_, Provisioner_, Verifier_,
     :ref:`root_scenario`, and State_ references.
     """
@@ -376,6 +376,7 @@ class Config(object):
                 },
                 'children': {},
                 'playbooks': {
+                    'cleanup': 'cleanup.yml',
                     'create': 'create.yml',
                     'converge': 'playbook.yml',
                     'destroy': 'destroy.yml',
@@ -394,14 +395,17 @@ class Config(object):
                 'name':
                 'default',
                 'check_sequence': [
+                    'cleanup',
                     'destroy',
                     'dependency',
                     'create',
                     'prepare',
                     'converge',
                     'check',
+                    'cleanup',
                     'destroy',
                 ],
+                'cleanup_sequence': ['cleanup'],
                 'converge_sequence': [
                     'dependency',
                     'create',
@@ -413,10 +417,12 @@ class Config(object):
                     'prepare',
                 ],
                 'destroy_sequence': [
+                    'cleanup',
                     'destroy',
                 ],
                 'test_sequence': [
                     'lint',
+                    'cleanup',
                     'destroy',
                     'dependency',
                     'syntax',
@@ -426,6 +432,7 @@ class Config(object):
                     'idempotence',
                     'side_effect',
                     'verify',
+                    'cleanup',
                     'destroy',
                 ],
             },

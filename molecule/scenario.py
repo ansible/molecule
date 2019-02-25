@@ -59,6 +59,7 @@ class Scenario(object):
             - prepare
             - converge
           destroy_sequence:
+            - cleanup
             - destroy
           test_sequence:
             - lint
@@ -71,6 +72,7 @@ class Scenario(object):
             - idempotence
             - side_effect
             - verify
+            - cleanup
             - destroy
     """  # noqa
 
@@ -105,6 +107,10 @@ class Scenario(object):
     @property
     def check_sequence(self):
         return self.config.config['scenario']['check_sequence']
+
+    @property
+    def cleanup_sequence(self):
+        return self.config.config['scenario']['cleanup_sequence']
 
     @property
     def converge_sequence(self):

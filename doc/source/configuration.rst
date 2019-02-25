@@ -313,6 +313,14 @@ configuration syntax.
 .. autoclass:: molecule.scenario.Scenario()
    :undoc-members:
 
+State
+-----
+
+An internal bookkeeping mechanism.
+
+.. autoclass:: molecule.state.State()
+  :undoc-members:
+
 Verifier
 --------
 

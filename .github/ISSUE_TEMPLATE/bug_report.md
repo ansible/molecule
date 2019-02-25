@@ -34,5 +34,5 @@ should happen if providing a bug report.
 # Actual Behaviour
 
 Please give some details of what is actually happening.
-Include a [minimum complete verifiable example](http://stackoverflow.com/help/mcve) with
+Include a [minimum complete verifiable example](https://stackoverflow.com/help/mcve) with
 output of running `molecule --debug`.
