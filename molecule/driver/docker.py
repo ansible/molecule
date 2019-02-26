@@ -57,6 +57,7 @@ class Docker(base.Base):
                 email: user@example.com
             override_command: True|False
             command: sleep infinity
+            pid_mode: host
             privileged: True|False
             security_opts:
               - seccomp=unconfined
