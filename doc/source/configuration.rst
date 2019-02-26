@@ -199,7 +199,7 @@ Create instances with interfaces.
                 network_name: private_network
                 type: static
             platform_box: ubuntu/trusty64
-            state: destroy
+            state: up
 
 Create instances with additional provider options.
 
