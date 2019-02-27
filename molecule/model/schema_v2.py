@@ -166,6 +166,7 @@ def pre_validate_base_schema(env, keep_string):
                             'molecule_env_var': True,
                             'allowed': [
                                 'flake8',
+                                'precommit',
                                 'rubocop',
                                 'yamllint',
                             ],
@@ -931,6 +932,7 @@ verifier_testinfra_mutually_exclusive_schema = {
                         'type': 'string',
                         'allowed': [
                             'flake8',
+                            'precommit',
                         ],
                     },
                 }
