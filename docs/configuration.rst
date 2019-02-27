@@ -412,3 +412,6 @@ Lint
 
 .. autoclass:: molecule.verifier.lint.flake8.Flake8()
    :undoc-members:
+
+.. autoclass:: molecule.verifier.lint.precommit.PreCommit()
+   :undoc-members:
