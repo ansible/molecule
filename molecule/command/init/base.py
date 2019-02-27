@@ -64,9 +64,9 @@ class Base(object):
                 no_input=True,
             )
         except cookiecutter.exceptions.NonTemplatedInputDirException:
-            util.sysexit_with_message("The specified template directory (" + 
-                                      str(template_dir) +
-                                      ") is in an invalid format")
+            util.sysexit_with_message(
+                "The specified template directory (" + str(template_dir) +
+                ") is in an invalid format")
 
     def _resolve_template_dir(self, template_dir):
         if not os.path.isabs(template_dir):
