@@ -26,7 +26,7 @@ Molecule
    :alt: Repository License
 
 Molecule is designed to aid in the development and testing of
-:std:doc:`Ansible <ansible:index>` roles.
+`Ansible`_ roles.
 
 Molecule provides support for testing with multiple instances, operating
 systems and distributions, virtualization providers, test frameworks and
