@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: example
   tasks:
     - name: Host vars from host_vars links
       command: echo "{{ host_group_vars_host_vars_linked }}"
@@ -7,4 +7,8 @@
 
     - name: Group vars from group_vars links
       command: echo "{{ host_group_vars_group_vars_linked }}"
+      changed_when: false
+
+    - name: Variable from extra inventory link
+      command: echo "{{ hostvars['extra-host']['host_group_vars_extra_host_linked'] }}"
       changed_when: false

@@ -105,6 +105,10 @@ class Scenario(object):
         return ephemeral_directory(path)
 
     @property
+    def inventory_directory(self):
+        return os.path.join(self.ephemeral_directory, "inventory")
+
+    @property
     def check_sequence(self):
         return self.config.config['scenario']['check_sequence']
 
@@ -181,8 +185,8 @@ class Scenario(object):
 
          :return: None
          """
-        if not os.path.isdir(self.ephemeral_directory):
-            os.makedirs(self.ephemeral_directory)
+        if not os.path.isdir(self.inventory_directory):
+            os.makedirs(self.inventory_directory)
 
 
 def ephemeral_directory(path):

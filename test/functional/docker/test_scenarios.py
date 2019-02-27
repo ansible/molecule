@@ -376,7 +376,7 @@ def test_host_group_vars(scenario_to_test, with_scenario, scenario_name):
     out = pytest.helpers.run_command(cmd, log=False)
     out = util.strip_ansi_escape(out.stdout.decode('utf-8'))
 
-    assert re.search(r'\[all\].*?ok: \[instance\]', out, re.DOTALL)
+    assert re.search(r'\[instance\].*?ok: \[instance\]', out, re.DOTALL)
     assert re.search(r'\[example\].*?ok: \[instance\]', out, re.DOTALL)
     assert re.search(r'\[example_1\].*?ok: \[instance\]', out, re.DOTALL)
 
