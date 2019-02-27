@@ -66,6 +66,26 @@ def _patched_manage_inventory(mocker):
         'molecule.provisioner.ansible.Ansible.manage_inventory')
 
 
+@pytest.fixture
+def _patched_execute_subcommand(mocker):
+    return mocker.patch('molecule.command.base.execute_subcommand')
+
+
+@pytest.fixture
+def _patched_execute_scenario(mocker):
+    return mocker.patch('molecule.command.base.execute_scenario')
+
+
+@pytest.fixture
+def _patched_print_matrix(mocker):
+    return mocker.patch('molecule.scenarios.Scenarios.print_matrix')
+
+
+@pytest.fixture
+def _patched_sysexit(mocker):
+    return mocker.patch('molecule.util.sysexit')
+
+
 def test_config_private_member(_instance):
     assert isinstance(_instance._config, config.Config)
 
@@ -123,8 +143,89 @@ def test_setup(mocker, patched_add_or_update_vars, _patched_write_config,
     _patched_write_config.assert_called_once_with()
 
 
+def test_execute_cmdline_scenarios(config_instance, _patched_print_matrix,
+                                   _patched_execute_scenario):
+    # Ensure execute_cmdline_scenarios runs normally:
+    # - scenarios.print_matrix is called, which also indicates Scenarios
+    #   was instantiated correctly
+    # - execute_scenario is called once, indicating the function correctly
+    #   loops over Scenarios.
+    scenario_name = None
+    args = {}
+    command_args = {
+        'destroy': 'always',
+        'subcommand': 'test',
+    }
+    base.execute_cmdline_scenarios(scenario_name, args, command_args)
+
+    assert _patched_print_matrix.called_once_with()
+    assert _patched_execute_scenario.call_count == 1
+
+
+def test_execute_cmdline_scenarios_destroy(
+        config_instance, _patched_execute_scenario,
+        _patched_execute_subcommand, _patched_sysexit):
+    # Ensure execute_cmdline_scenarios handles errors correctly when 'destroy'
+    # is 'always':
+    # - cleanup and destroy subcommands are run when execute_scenario
+    #   raises SystemExit
+    scenario_name = 'default'
+    args = {}
+    command_args = {
+        'destroy': 'always',
+        'subcommand': 'test',
+    }
+    _patched_execute_scenario.side_effect = SystemExit()
+
+    base.execute_cmdline_scenarios(scenario_name, args, command_args)
+
+    assert _patched_execute_subcommand.call_count == 2
+    # pull out the second positional call argument for each call,
+    # which is the called subcommand. 'cleanup' and 'destroy' should be called.
+    assert _patched_execute_subcommand.call_args_list[0][0][1] == 'cleanup'
+    assert _patched_execute_subcommand.call_args_list[1][0][1] == 'destroy'
+    assert _patched_sysexit.called
+
+
+def test_execute_cmdline_scenarios_nodestroy(
+        config_instance, _patched_execute_scenario, _patched_sysexit):
+    # Ensure execute_cmdline_scenarios handles errors correctly when 'destroy'
+    # is 'always':
+    # - destroy subcommand is not run when execute_scenario raises SystemExit
+    # - caught SystemExit is reraised
+    scenario_name = 'default'
+    args = {}
+    command_args = {
+        'destroy': 'never',
+        'subcommand': 'test',
+    }
+
+    _patched_execute_scenario.side_effect = SystemExit()
+
+    # Catch the expected SystemExit reraise
+    with pytest.raises(SystemExit):
+        base.execute_cmdline_scenarios(scenario_name, args, command_args)
+
+    assert _patched_execute_scenario.called
+    assert not _patched_sysexit.called
+
+
 def test_execute_subcommand(config_instance):
     assert base.execute_subcommand(config_instance, 'list')
+
+
+def test_execute_scenario(mocker, _patched_execute_subcommand):
+    # call a spoofed scenario with a sequence that does not include destroy:
+    # - execute_subcommand should be called once for each sequence item
+    scenario = mocker.Mock()
+    scenario.sequence = ('a', 'b', 'c')
+
+    base.execute_scenario(scenario)
+
+    assert _patched_execute_subcommand.call_count == len(scenario.sequence)
+    # scenario.config.action is mutated in-place for every sequence action,
+    # so make sure that is currently set to the last executed action
+    assert scenario.config.action == scenario.sequence[-1]
 
 
 def test_get_configs(config_instance):

@@ -27,6 +27,7 @@ import os
 import six
 
 import molecule.command
+import molecule.scenarios
 from molecule import config
 from molecule import logger
 from molecule import util
@@ -95,11 +96,66 @@ class Base(object):
         self._config.provisioner.manage_inventory()
 
 
+def execute_cmdline_scenarios(scenario_name, args, command_args):
+    """
+    Execute scenario sequences based on parsed command-line arguments.
+
+    This is useful for subcommands that run scenario sequences, which
+    excludes subcommands such as ``list``, ``login``, and ``matrix``.
+
+    ``args`` and ``command_args`` are combined using :func:`get_configs`
+    to generate the scenario(s) configuration.
+
+    :param scenario_name: Name of scenario to run, or ``None`` to run all.
+    :param args: ``args`` dict from ``click`` command context
+    :param command_args: dict of command argumentss, including the target
+                         subcommand to execute
+    :returns: None
+
+    """
+    scenarios = molecule.scenarios.Scenarios(
+        get_configs(args, command_args), scenario_name)
+    scenarios.print_matrix()
+    for scenario in scenarios:
+        try:
+            execute_scenario(scenario)
+        except SystemExit:
+            # if the command has a 'destroy' arg, like test does,
+            # handle that behavior here.
+            if command_args.get('destroy') == 'always':
+                msg = ('An error occurred during the {} sequence action: '
+                       "'{}'. Cleaning up.").format(scenario.config.subcommand,
+                                                    scenario.config.action)
+                LOG.warn(msg)
+                execute_subcommand(scenario.config, 'cleanup')
+                execute_subcommand(scenario.config, 'destroy')
+                util.sysexit()
+            else:
+                raise
+
+
 def execute_subcommand(config, subcommand):
     command_module = getattr(molecule.command, subcommand)
     command = getattr(command_module, util.camelize(subcommand))
 
     return command(config).execute()
+
+
+def execute_scenario(scenario):
+    """
+    Execute each command in the given scenario's configured sequence.
+
+    :param scenario: The scenario to execute.
+    :returns: None
+
+    """
+
+    for action in scenario.sequence:
+        # knowledge of the current action is used by some provisioners
+        # to ensure they behave correctly during certain sequence steps,
+        # and is also used for reporting in execute_cmdline_scenarios
+        scenario.config.action = action
+        execute_subcommand(scenario.config, action)
 
 
 def get_configs(args, command_args, ansible_args=()):
