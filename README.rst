@@ -35,6 +35,8 @@ testing scenarios.
 Molecule encourages an approach that results in consistently developed roles
 that are well-written, easily understood and maintained.
 
+.. _`Ansible`: https://ansible.com
+
 .. _documentation:
 
 Documentation
@@ -66,8 +68,6 @@ Authors
 
 Molecule was created by `Retr0h <https://github.com/retr0h>`_ and is now
 maintained as part of the `Ansible`_ by Red Hat project.
-
-.. _`Ansible`: https://ansible.com
 
 .. _license:
 
