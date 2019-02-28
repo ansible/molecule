@@ -162,8 +162,10 @@ def pre_validate_base_schema(env, keep_string):
                     'type': 'dict',
                     'schema': {
                         'name': {
-                            'type': 'string',
-                            'molecule_env_var': True,
+                            'type':
+                            'string',
+                            'molecule_env_var':
+                            True,
                             'allowed': [
                                 'flake8',
                                 'pre-commit',

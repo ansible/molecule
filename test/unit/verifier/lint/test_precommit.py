@@ -39,7 +39,7 @@ def _verifier_lint_section_data():
         'verifier': {
             'name': 'testinfra',
             'lint': {
-                'name': 'precommit',
+                'name': 'pre-commit',
                 'options': {
                     'foo': 'bar',
                 },
@@ -83,7 +83,7 @@ def test_env_property(_instance):
 @pytest.mark.parametrize(
     'config_instance', ['_verifier_lint_section_data'], indirect=True)
 def test_name_property(_instance):
-    assert 'precommit' == _instance.name
+    assert 'pre-commit' == _instance.name
 
 
 def test_enabled_property(_instance):
@@ -118,9 +118,10 @@ def test_options_property_handles_cli_args(_instance):
 def test_bake(_instance):
     _instance._tests = ['test1', 'test2', 'test3']
     _instance.bake()
-    x = '{} --foo=bar test1 test2 test3'.format(str(sh.flake8))
+    x = '{} run --foo=bar --files test1 test2 test3'.format(
+        str(sh.Command('pre-commit')))
 
-    assert x == _instance._flake8_command
+    assert x == _instance._precommit_command
 
 
 def test_execute(patched_logger_info, patched_logger_success,
@@ -168,13 +169,15 @@ def test_execute_bakes(patched_run_command, _instance):
 
     assert _instance._precommit_command is not None
 
-    cmd = '{} --foo=bar test1 test2 test3'.format(str(sh.flake8))
+    cmd = '{} run --foo=bar --files test1 test2 test3'.format(
+        str(sh.Command('pre-commit')))
     patched_run_command.assert_called_once_with(cmd, debug=False)
 
 
 def test_executes_catches_and_exits_return_code(patched_run_command,
                                                 _patched_get_tests, _instance):
-    patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.flake8, b'', b'')
+    patched_run_command.side_effect = sh.ErrorReturnCode_1(
+        sh.Command('pre-commit'), b'', b'')
     with pytest.raises(SystemExit) as e:
         _instance.execute()
 
