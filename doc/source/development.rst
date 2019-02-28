@@ -16,8 +16,8 @@ Release Engineering
 Pre-release
 -----------
 
-* Ensure the `GitHub Milestones`_ is complete and closed.
-* Edit the :ref:`changelog`, based on Milestone and recent commits.
+* Ensure the `GitHub Project`_ has all cards in the ``Done`` column.
+* Edit the :ref:`changelog`, based on the project ``Done`` column.
 * Follow the :ref:`testing` steps.
 
 Release
@@ -63,8 +63,8 @@ Post-release
 Roadmap
 =======
 
-* From Molecule v2.20 `GitHub Milestones`_ are used to track each release
+* From Molecule v2.20 the `GitHub Project`_ tool is used to track each release.
 
 .. _`PyPI`: https://pypi.org/project/molecule
-.. _`GitHub Milestones`: https://github.com/ansible/molecule/milestones
+.. _`GitHub Project`: https://github.com/ansible/molecule/projects
 .. _`Issues`: https://github.com/ansible/molecule/issues
