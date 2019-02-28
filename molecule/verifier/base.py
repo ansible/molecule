@@ -102,7 +102,7 @@ class Base(object):
         lint_name = self._config.config['verifier']['lint']['name']
         if lint_name == 'flake8':
             return flake8.Flake8(self._config)
-        if lint_name == 'precommit':
+        if lint_name == 'pre-commit':
             return precommit.PreCommit(self._config)
         if lint_name == 'rubocop':
             return rubocop.RuboCop(self._config)
