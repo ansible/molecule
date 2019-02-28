@@ -43,7 +43,7 @@ class PreCommit(base.Base):
         verifier:
           name: testinfra
           lint:
-            name: precommit
+            name: pre-commit
             options:
               remove-tabs:
 
