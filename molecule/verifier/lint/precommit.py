@@ -54,7 +54,7 @@ class PreCommit(base.Base):
         verifier:
           name: testinfra
           lint:
-            name: precommit
+            name: pre-commit
             enabled: False
 
     Environment variables can be passed to lint.
