@@ -82,6 +82,11 @@ def _patched_print_matrix(mocker):
 
 
 @pytest.fixture
+def _patched_prune(mocker):
+    return mocker.patch('molecule.scenario.Scenario.prune')
+
+
+@pytest.fixture
 def _patched_sysexit(mocker):
     return mocker.patch('molecule.util.sysexit')
 
@@ -92,36 +97,6 @@ def test_config_private_member(_instance):
 
 def test_init_calls_setup(_patched_base_setup, _instance):
     _patched_base_setup.assert_called_once_with()
-
-
-def test_prune(_instance):
-    ephemeral_directory = _instance._config.scenario.ephemeral_directory
-    inventory_directory = _instance._config.scenario.inventory_directory
-
-    foo_file = os.path.join(inventory_directory, 'foo')
-    bar_file = os.path.join(inventory_directory, 'bar')
-    baz_directory = os.path.join(inventory_directory, 'baz')
-    state_file = os.path.join(ephemeral_directory, 'state.yml')
-    inventory_file = os.path.join(inventory_directory, 'ansible_inventory.yml')
-    config_file = os.path.join(ephemeral_directory, 'ansible.cfg')
-    role_directory = os.path.join(ephemeral_directory, 'roles')
-    empty_role_directory = os.path.join(role_directory, 'foo')
-
-    os.mkdir(baz_directory)
-    os.mkdir(role_directory)
-    os.mkdir(empty_role_directory)
-    for f in [foo_file, bar_file, state_file]:
-        util.write_file(f, '')
-
-    _instance.prune()
-
-    assert not os.path.isfile(foo_file)
-    assert not os.path.isfile(bar_file)
-    assert os.path.isfile(state_file)
-    assert os.path.isfile(config_file)
-    assert os.path.isfile(inventory_file)
-    assert not os.path.isdir(baz_directory)
-    assert not os.path.isdir(role_directory)
 
 
 def test_print_info(mocker, patched_logger_info, _instance):
@@ -163,12 +138,13 @@ def test_execute_cmdline_scenarios(config_instance, _patched_print_matrix,
 
 
 def test_execute_cmdline_scenarios_destroy(
-        config_instance, _patched_execute_scenario,
+        config_instance, _patched_execute_scenario, _patched_prune,
         _patched_execute_subcommand, _patched_sysexit):
     # Ensure execute_cmdline_scenarios handles errors correctly when 'destroy'
     # is 'always':
     # - cleanup and destroy subcommands are run when execute_scenario
     #   raises SystemExit
+    # - scenario is pruned
     scenario_name = 'default'
     args = {}
     command_args = {
@@ -184,14 +160,17 @@ def test_execute_cmdline_scenarios_destroy(
     # which is the called subcommand. 'cleanup' and 'destroy' should be called.
     assert _patched_execute_subcommand.call_args_list[0][0][1] == 'cleanup'
     assert _patched_execute_subcommand.call_args_list[1][0][1] == 'destroy'
+    assert _patched_prune.called
     assert _patched_sysexit.called
 
 
-def test_execute_cmdline_scenarios_nodestroy(
-        config_instance, _patched_execute_scenario, _patched_sysexit):
+def test_execute_cmdline_scenarios_nodestroy(config_instance,
+                                             _patched_execute_scenario,
+                                             _patched_prune, _patched_sysexit):
     # Ensure execute_cmdline_scenarios handles errors correctly when 'destroy'
     # is 'always':
     # - destroy subcommand is not run when execute_scenario raises SystemExit
+    # - scenario is not pruned
     # - caught SystemExit is reraised
     scenario_name = 'default'
     args = {}
@@ -207,6 +186,7 @@ def test_execute_cmdline_scenarios_nodestroy(
         base.execute_cmdline_scenarios(scenario_name, args, command_args)
 
     assert _patched_execute_scenario.called
+    assert not _patched_prune.called
     assert not _patched_sysexit.called
 
 
@@ -217,6 +197,7 @@ def test_execute_subcommand(config_instance):
 def test_execute_scenario(mocker, _patched_execute_subcommand):
     # call a spoofed scenario with a sequence that does not include destroy:
     # - execute_subcommand should be called once for each sequence item
+    # - prune should not be called, since the sequence has no destroy step
     scenario = mocker.Mock()
     scenario.sequence = ('a', 'b', 'c')
 
@@ -226,6 +207,23 @@ def test_execute_scenario(mocker, _patched_execute_subcommand):
     # scenario.config.action is mutated in-place for every sequence action,
     # so make sure that is currently set to the last executed action
     assert scenario.config.action == scenario.sequence[-1]
+    assert not scenario.prune.called
+
+
+def test_execute_scenario_destroy(mocker, _patched_execute_subcommand):
+    # call a spoofed scenario with a sequence that includes destroy:
+    # - execute_subcommand should be called once for each sequence item
+    # - prune should be called, since the sequence has a destroy step
+    scenario = mocker.Mock()
+    scenario.sequence = ('a', 'b', 'destroy', 'c')
+
+    base.execute_scenario(scenario)
+
+    assert _patched_execute_subcommand.call_count == len(scenario.sequence)
+    # scenario.config.action is mutated in-place for every sequence action,
+    # so make sure that is currently set to the last executed action
+    assert scenario.config.action == scenario.sequence[-1]
+    assert scenario.prune.called
 
 
 def test_get_configs(config_instance):

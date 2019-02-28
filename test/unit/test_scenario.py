@@ -26,6 +26,7 @@ import pytest
 
 from molecule import config
 from molecule import scenario
+from molecule import util
 
 
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
@@ -34,6 +35,61 @@ from molecule import scenario
 @pytest.fixture
 def _instance(patched_config_validate, config_instance):
     return scenario.Scenario(config_instance)
+
+
+def test_prune(_instance):
+    e_dir = _instance.ephemeral_directory
+    # prune data also includes files in the scenario inventory dir,
+    # which is "<e_dir>/inventory" by default.
+    # items are created in listed order, directories first, safe before pruned
+    prune_data = {
+        # these files should not be pruned
+        'safe_files': [
+            'state.yml',
+            'ansible.cfg',
+            'inventory/ansible_inventory.yml',
+        ],
+        # these directories should not be pruned
+        'safe_dirs': ['inventory'],
+        # these files should be pruned
+        'pruned_files': [
+            'foo',
+            'bar',
+            'inventory/foo',
+            'inventory/bar',
+        ],
+        # these directories should be pruned, including empty subdirectories
+        'pruned_dirs': [
+            'baz',
+            'roles',
+            'inventory/baz',
+            'roles/foo',
+        ],
+    }
+
+    for directory in prune_data['safe_dirs'] + prune_data['pruned_dirs']:
+        # inventory dir should already exist, and its existence is
+        # required by the assertions below.
+        if directory == 'inventory':
+            continue
+        os.mkdir(os.path.join(e_dir, directory))
+
+    for file in prune_data['safe_files'] + prune_data['pruned_files']:
+        util.write_file(os.path.join(e_dir, file), '')
+
+    _instance.prune()
+
+    for safe_file in prune_data['safe_files']:
+        assert os.path.isfile(os.path.join(e_dir, safe_file))
+
+    for safe_dir in prune_data['safe_dirs']:
+        assert os.path.isdir(os.path.join(e_dir, safe_dir))
+
+    for pruned_file in prune_data['pruned_files']:
+        assert not os.path.isfile(os.path.join(e_dir, pruned_file))
+
+    for pruned_dir in prune_data['pruned_dirs']:
+        assert not os.path.isdir(os.path.join(e_dir, pruned_dir))
 
 
 def test_config_member(_instance):

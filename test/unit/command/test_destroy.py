@@ -33,17 +33,11 @@ def _patched_destroy_setup(mocker):
     return mocker.patch('molecule.command.destroy.Destroy._setup')
 
 
-@pytest.fixture
-def _patched_destroy_prune(mocker):
-    return mocker.patch('molecule.command.destroy.Destroy.prune')
-
-
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-def test_execute(mocker, _patched_destroy_prune, patched_logger_info,
-                 patched_config_validate, _patched_ansible_destroy,
-                 config_instance):
+def test_execute(mocker, patched_logger_info, patched_config_validate,
+                 _patched_ansible_destroy, config_instance):
     d = destroy.Destroy(config_instance)
     d.execute()
 
@@ -57,7 +51,6 @@ def test_execute(mocker, _patched_destroy_prune, patched_logger_info,
 
     assert not config_instance.state.converged
     assert not config_instance.state.created
-    _patched_destroy_prune.assert_called_once_with()
 
 
 @pytest.mark.parametrize(

@@ -94,7 +94,6 @@ class Destroy(base.Base):
 
         self._config.provisioner.destroy()
         self._config.state.reset()
-        self.prune()
 
 
 @click.command()

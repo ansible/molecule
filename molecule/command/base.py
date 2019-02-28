@@ -20,7 +20,6 @@
 
 import abc
 import collections
-import fnmatch
 import glob
 import os
 
@@ -56,29 +55,6 @@ class Base(object):
     @abc.abstractmethod
     def execute(self):  # pragma: no cover
         pass
-
-    def prune(self):
-        """
-        Prune the ephemeral directory with the exception of safe files and
-        returns None.
-
-        :return: None
-        """
-        safe_files = [
-            self._config.provisioner.config_file,
-            self._config.provisioner.inventory_file,
-            self._config.state.state_file,
-        ] + self._config.driver.safe_files
-        files = util.os_walk(self._config.scenario.ephemeral_directory, '*')
-        for f in files:
-            if not any(sf for sf in safe_files if fnmatch.fnmatch(f, sf)):
-                os.remove(f)
-
-        # Remove empty directories.
-        for dirpath, dirs, files in os.walk(
-                self._config.scenario.ephemeral_directory, topdown=False):
-            if not dirs and not files:
-                os.removedirs(dirpath)
 
     def print_info(self):
         msg = "Scenario: '{}'".format(self._config.scenario.name)
@@ -129,6 +105,8 @@ def execute_cmdline_scenarios(scenario_name, args, command_args):
                 LOG.warn(msg)
                 execute_subcommand(scenario.config, 'cleanup')
                 execute_subcommand(scenario.config, 'destroy')
+                # always prune ephemeral dir if destroying on failure
+                scenario.prune()
                 util.sysexit()
             else:
                 raise
@@ -156,6 +134,11 @@ def execute_scenario(scenario):
         # and is also used for reporting in execute_cmdline_scenarios
         scenario.config.action = action
         execute_subcommand(scenario.config, action)
+
+    # pruning only if a 'destroy' step was in the sequence allows for normal
+    # debugging by manually stepping through a scenario sequence
+    if 'destroy' in scenario.sequence:
+        scenario.prune()
 
 
 def get_configs(args, command_args, ansible_args=()):
