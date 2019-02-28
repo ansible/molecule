@@ -932,7 +932,7 @@ verifier_testinfra_mutually_exclusive_schema = {
                         'type': 'string',
                         'allowed': [
                             'flake8',
-                            'precommit',
+                            'pre-commit',
                         ],
                     },
                 }
