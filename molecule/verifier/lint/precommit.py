@@ -113,7 +113,7 @@ class PreCommit(base.Base):
             LOG.warn(msg)
             return
 
-        if not len(self._tests) > 0:
+        if not self._tests:
             msg = 'Skipping, no tests found.'
             LOG.warn(msg)
             return
