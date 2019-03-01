@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2018-2019 Red Hat, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -41,7 +41,7 @@ def _verifier_lint_section_data():
             'lint': {
                 'name': 'pre-commit',
                 'options': {
-                    'foo': 'bar',
+                    'color': 'never',
                 },
                 'env': {
                     'FOO': 'bar',
@@ -93,8 +93,9 @@ def test_enabled_property(_instance):
 @pytest.mark.parametrize(
     'config_instance', ['_verifier_lint_section_data'], indirect=True)
 def test_options_property(_instance):
+    """Test options to disable pre-commit color output."""
     x = {
-        'foo': 'bar',
+        'color': 'never',
     }
 
     assert x == _instance.options
@@ -105,7 +106,7 @@ def test_options_property(_instance):
 def test_options_property_handles_cli_args(_instance):
     _instance._config.args = {'debug': True}
     x = {
-        'foo': 'bar',
+        'color': 'never',
     }
 
     # Does nothing.  The `pre-commit` command does not support
@@ -118,7 +119,7 @@ def test_options_property_handles_cli_args(_instance):
 def test_bake(_instance):
     _instance._tests = ['test1', 'test2', 'test3']
     _instance.bake()
-    x = '{} run --foo=bar --files test1 test2 test3'.format(
+    x = '{} run --color=never --files test1 test2 test3'.format(
         str(sh.Command('pre-commit')))
 
     assert x == _instance._precommit_command
@@ -169,7 +170,7 @@ def test_execute_bakes(patched_run_command, _instance):
 
     assert _instance._precommit_command is not None
 
-    cmd = '{} run --foo=bar --files test1 test2 test3'.format(
+    cmd = '{} run --color=never --files test1 test2 test3'.format(
         str(sh.Command('pre-commit')))
     patched_run_command.assert_called_once_with(cmd, debug=False)
 

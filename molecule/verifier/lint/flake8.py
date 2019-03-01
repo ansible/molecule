@@ -35,7 +35,7 @@ class Flake8(base.Base):
 
     `Flake8`_ is a linter for python files.
 
-    Additional options can be passed to `flake8` through the options
+    Additional options can be passed to ``flake8`` through the options
     dict.  Any option set in this section will override the defaults.
 
     .. code-block:: yaml
@@ -47,7 +47,7 @@ class Flake8(base.Base):
             options:
               benchmark: True
 
-    Test file linting can be disabled by setting `enabled` to False.
+    Test file linting can be disabled by setting ``enabled`` to False.
 
     .. code-block:: yaml
 

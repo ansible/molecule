@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2018-2019 Red Hat, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -35,7 +35,7 @@ class PreCommit(base.Base):
 
     `PreCommit`_ is a linter for python files and more.
 
-    Additional options can be passed to `pre-commit` through the options
+    Additional options can be passed to ``pre-commit`` through the options
     dict.  Any option set in this section will override the defaults.
 
     .. code-block:: yaml
@@ -47,7 +47,7 @@ class PreCommit(base.Base):
             options:
               remove-tabs:
 
-    Test file linting can be disabled by setting `enabled` to False.
+    Test file linting can be disabled by setting ``enabled`` to False.
 
     .. code-block:: yaml
 
