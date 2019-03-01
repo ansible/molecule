@@ -59,7 +59,7 @@
       set_fact:
         command_directives_dict: >-
           {{ command_directives_dict | default({}) |
-            combine({ item.name: item.command | default('bash -c "while true; do sleep 10000; done"') })
+             combine({ item.name: item.command | default('bash -c "while true; do sleep 10000; done"') })
           }}
       with_items: "{{ molecule_yml.platforms }}"
       when: item.override_command | default(true)
@@ -73,7 +73,7 @@
         state: started
         recreate: false
         log_driver: json-file
-        command: "{{ command_directives_dict[item.name] | default(omit) }}"
+        command: "{{ (command_directives_dict | default({}))[item.name] | default(omit) }}"
         pid_mode: "{{ item.pid_mode | default(omit) }}"
         privileged: "{{ item.privileged | default(omit) }}"
         security_opts: "{{ item.security_opts | default(omit) }}"
