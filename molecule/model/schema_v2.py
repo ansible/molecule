@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import collections
 import copy
 import functools
 import re
@@ -25,8 +26,7 @@ import re
 import cerberus
 import cerberus.errors
 
-from molecule import interpolation
-from molecule import util
+from molecule import interpolation, util
 
 
 def coerce_env(env, keep_string, v):
@@ -269,6 +269,8 @@ base_schema = {
                 'name': {
                     'type': 'string',
                     'required': True,
+                    'unique':  # https://github.com/pyeve/cerberus/issues/467
+                    True,
                 },
                 'groups': {
                     'type': 'list',
@@ -943,6 +945,20 @@ verifier_testinfra_mutually_exclusive_schema = {
 class Validator(cerberus.Validator):
     def __init__(self, *args, **kwargs):
         super(Validator, self).__init__(*args, **kwargs)
+
+    def _validate_unique(self, unique, field, value):
+        """Ensure value uniqueness.
+
+        The rule's arguments are validated against this schema:
+        {'type': 'boolean'}
+        """
+        if unique:
+            root_key = self.schema_path[0]
+            data = (doc[field] for doc in self.root_document[root_key])
+            for key, count in collections.Counter(data).items():
+                if count > 1:
+                    msg = "'{}' is not unique".format(key)
+                    self._error(field, msg)
 
     def _validate_disallowed(self, disallowed, field, value):
         """ Readonly but with a custom error.
