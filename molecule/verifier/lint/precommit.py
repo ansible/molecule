@@ -74,7 +74,7 @@ class PreCommit(base.Base):
 
     def __init__(self, config):
         """
-        Sets up the requirements to execute `pre-commit` and returns None.
+        Set up the requirements to execute `pre-commit` tool.
 
         :param config: An instance of a Molecule config.
         :return: None
