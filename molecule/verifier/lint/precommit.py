@@ -121,7 +121,7 @@ class PreCommit(base.Base):
         if self._precommit_command is None:
             self.bake()
 
-        msg = 'Executing Pre-Commit on files found in {}/...'.format(
+        msg = 'Executing pre-commit on files found in {}/...'.format(
             self._config.verifier.directory)
         LOG.info(msg)
 
