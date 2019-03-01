@@ -26,7 +26,7 @@ from molecule.verifier.lint import precommit
 
 
 @pytest.fixture
-def _patched_get_tests(mocker):
+def _patched_get_tests(mokeypatch):
     m = mocker.patch('molecule.verifier.lint.precommit.PreCommit._get_tests')
     m.return_value = ['test1', 'test2', 'test3']
 
