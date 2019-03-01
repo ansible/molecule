@@ -17,11 +17,9 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
-
+"""Linter module for pre-commit related code."""
 import os
-
 import sh
-
 from molecule import logger
 from molecule import util
 from molecule.verifier.lint import base
@@ -30,7 +28,11 @@ LOG = logger.get_logger(__name__)
 
 
 class PreCommit(base.Base):
-    """Pre-commit tool verifier wrapper.
+    """
+    Pre-commit linter class.
+
+    This class is used to lint files by executing the pre-commit
+    command line tool  linting files.
 
     `PreCommit`_ is not the default verifier linter.
 
@@ -77,7 +79,6 @@ class PreCommit(base.Base):
         Set up the requirements to execute `pre-commit` tool.
 
         :param config: An instance of a Molecule config.
-        :return: None
         """
         super(PreCommit, self).__init__(config)
         self._precommit_command = None
@@ -86,18 +87,16 @@ class PreCommit(base.Base):
 
     @property
     def default_options(self):
+        """Property of the default options for pre-commit."""
         return {}
 
     @property
     def default_env(self):
+        """Property of the default environment for pre-commit."""
         return util.merge_dicts(os.environ.copy(), self._config.env)
 
     def bake(self):
-        """
-        Bake a `pre-commit` command so it's ready to execute and returns None.
-
-        :return: None
-        """
+        """Bake a `pre-commit` command so it's ready to execute."""
         self._precommit_command = sh.Command('pre-commit').bake(
             'run',
             self.options,
@@ -108,6 +107,7 @@ class PreCommit(base.Base):
             _err=LOG.error)
 
     def execute(self):
+        """Execute the pre-commit command."""
         if not self.enabled:
             msg = 'Skipping, verifier_lint is disabled.'
             LOG.warn(msg)
@@ -134,11 +134,8 @@ class PreCommit(base.Base):
 
     def _get_tests(self):
         """
-        Walk the verifier's directory for tests and returns a list.
+        Get a list of test files from the verifier's directory.
 
         :return: list
         """
         return list(util.os_walk(self._config.verifier.directory, 'test_*.py'))
-            filename for filename in util.os_walk(
-                self._config.verifier.directory, 'test_*.py')
-        ]

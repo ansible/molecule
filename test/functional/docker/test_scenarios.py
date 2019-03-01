@@ -432,7 +432,7 @@ def test_interpolation(scenario_to_test, with_scenario, scenario_name):
 @skip_unsupported_matrix
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
-        ('verifier', 'docker', 'testinfra', 'testinfra-pre-commit'),
+        ('verifier', 'docker', 'testinfra'),
     ],
     indirect=[
         'scenario_to_test',

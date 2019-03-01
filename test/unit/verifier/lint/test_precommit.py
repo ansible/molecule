@@ -26,11 +26,10 @@ from molecule.verifier.lint import precommit
 
 
 @pytest.fixture
-def _patched_get_tests(mokeypatch):
-    m = mocker.patch('molecule.verifier.lint.precommit.PreCommit._get_tests')
-    m.return_value = ['test1', 'test2', 'test3']
-
-    return m
+def _patched_get_tests(monkeypatch):
+    monkeypatch.setattr(
+        precommit.PreCommit,
+        '_get_tests', lambda _self: ['test1', 'test2', 'test3'])
 
 
 @pytest.fixture
@@ -94,24 +93,22 @@ def test_enabled_property(_instance):
     'config_instance', ['_verifier_lint_section_data'], indirect=True)
 def test_options_property(_instance):
     """Test options to disable pre-commit color output."""
-    x = {
+    color_opt = {
         'color': 'never',
     }
-
-    assert x == _instance.options
+    assert color_opt == _instance.options
 
 
 @pytest.mark.parametrize(
     'config_instance', ['_verifier_lint_section_data'], indirect=True)
 def test_options_property_handles_cli_args(_instance):
     _instance._config.args = {'debug': True}
-    x = {
+    color_opt = {
         'color': 'never',
     }
-
     # Does nothing.  The `pre-commit` command does not support
     # a `debug` flag.
-    assert x == _instance.options
+    assert color_opt == _instance.options
 
 
 @pytest.mark.parametrize(
@@ -119,10 +116,10 @@ def test_options_property_handles_cli_args(_instance):
 def test_bake(_instance):
     _instance._tests = ['test1', 'test2', 'test3']
     _instance.bake()
-    x = '{} run --color=never --files test1 test2 test3'.format(
+    cmd_str = '{} run --color=never --files test1 test2 test3'.format(
         str(sh.Command('pre-commit')))
 
-    assert x == _instance._precommit_command
+    assert cmd_str == _instance._precommit_command
 
 
 def test_execute(patched_logger_info, patched_logger_success,
@@ -133,7 +130,7 @@ def test_execute(patched_logger_info, patched_logger_success,
 
     patched_run_command.assert_called_once_with('patched-command', debug=False)
 
-    msg = 'Executing Pre-Commit on files found in {}/...'.format(
+    msg = 'Executing pre-commit on files found in {}/...'.format(
         _instance._config.verifier.directory)
     patched_logger_info.assert_called_once_with(msg)
 
