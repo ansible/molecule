@@ -30,7 +30,8 @@ LOG = logger.get_logger(__name__)
 
 
 class PreCommit(base.Base):
-    """
+    """Pre-commit tool verifier wrapper.
+
     `PreCommit`_ is not the default verifier linter.
 
     `PreCommit`_ is a linter for python files and more.
