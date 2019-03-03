@@ -18,8 +18,11 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 """Linter module for pre-commit related code."""
+
 import os
+
 import sh
+
 from molecule import logger
 from molecule import util
 from molecule.verifier.lint import base
