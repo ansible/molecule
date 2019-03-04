@@ -88,7 +88,7 @@ class Delegated(base.Base):
 
     .. important::
 
-        It is the developers responsibility to configure the ssh config file.
+        It is the developer's responsibility to configure the ssh config file.
 
     .. code-block:: yaml
 
