@@ -115,6 +115,28 @@ def test_platforms_docker(_config):
     assert {} == schema_v2.validate(_config)
 
 
+@pytest.mark.parametrize(
+    '_config', ['_model_platforms_docker_section_data'], indirect=True)
+def test_platforms_unique_names(_config):
+    instance_name = _config['platforms'][0]['name']
+    _config['platforms'] += [{
+        'name': instance_name  # duplicate platform name
+    }]
+
+    expected_validation_errors = {
+        'platforms': [{
+            0: [{
+                'name': ["'{}' is not unique".format(instance_name)]
+            }],
+            1: [{
+                'name': ["'{}' is not unique".format(instance_name)]
+            }]
+        }]
+    }
+
+    assert expected_validation_errors == schema_v2.validate(_config)
+
+
 @pytest.fixture
 def _model_platforms_docker_errors_section_data():
     return {
