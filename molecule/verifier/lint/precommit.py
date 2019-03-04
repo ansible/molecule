@@ -39,7 +39,7 @@ class PreCommit(base.Base):
 
     `PreCommit`_ is not the default verifier linter.
 
-    `PreCommit`_ is a linter for python files and more.
+    `Pre-Commit`_ is a linter for python files and more.
 
     Additional options can be passed to ``pre-commit`` through the options
     dict.  Any option set in this section will override the defaults.
