@@ -37,7 +37,7 @@ class PreCommit(base.Base):
     This class is used to lint files by executing the pre-commit
     command line tool  linting files.
 
-    `PreCommit`_ is not the default verifier linter.
+    `Pre-Commit`_ is not the default verifier linter.
 
     `Pre-Commit`_ is a linter for python files and more.
 
