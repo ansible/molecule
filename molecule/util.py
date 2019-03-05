@@ -30,12 +30,10 @@ import anyconfig
 import colorama
 import yaml
 
-from molecule import logger
+from molecule.logger import get_logger
 
-LOG = logger.get_logger(__name__)
+LOG = get_logger(__name__)
 MERGE_STRATEGY = anyconfig.MS_DICTS
-
-colorama.init(autoreset=True)
 
 
 class SafeDumper(yaml.SafeDumper):
