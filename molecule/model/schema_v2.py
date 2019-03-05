@@ -683,6 +683,7 @@ platforms_docker_schema = {
                     'type': 'list',
                     'schema': {
                         'type': 'string',
+                        'coerce': 'exposed_ports'
                     }
                 },
                 'published_ports': {
@@ -969,6 +970,17 @@ class Validator(cerberus.Validator):
         if disallowed:
             msg = 'disallowed user provided config option'
             self._error(field, msg)
+
+    def _normalize_coerce_exposed_ports(self, value):
+        """Coerce ``exposed_ports`` values to string.
+
+        Not all types that can be specified by the user are acceptable and
+        therefore we cannot simply pass a ``'coerce': 'string'`` to the schema
+        definition.
+        """
+        if type(value) == int:
+            return str(value)
+        return value
 
     def _validate_molecule_env_var(self, molecule_env_var, field, value):
         """ Readonly but with a custom error.

@@ -137,6 +137,13 @@ def test_platforms_unique_names(_config):
     assert expected_validation_errors == schema_v2.validate(_config)
 
 
+@pytest.mark.parametrize(
+    '_config', ['_model_platforms_docker_section_data'], indirect=True)
+def test_platforms_docker_exposed_ports_coerced(_config):
+    _config['platforms'][0]['exposed_ports'] = [9904]
+    assert {} == schema_v2.validate(_config)
+
+
 @pytest.fixture
 def _model_platforms_docker_errors_section_data():
     return {
@@ -171,7 +178,7 @@ def _model_platforms_docker_errors_section_data():
                 int(),
             ],
             'exposed_ports': [
-                int(),
+                bool(),
             ],
             'published_ports': [
                 int(),
