@@ -613,6 +613,9 @@ platforms_docker_schema = {
                 'image': {
                     'type': 'string',
                 },
+                'dockerfile': {
+                    'type': 'string',
+                },
                 'pull': {
                     'type': 'boolean',
                 },

@@ -47,6 +47,7 @@ class Docker(base.Base):
           - name: instance
             hostname: instance
             image: image_name:tag
+            dockerfile: Dockerfile.j2
             pull: True|False
             pre_build_image: True|False
             registry:

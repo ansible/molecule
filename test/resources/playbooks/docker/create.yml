@@ -20,7 +20,7 @@
 
     - name: Create Dockerfiles from image names
       template:
-        src: Dockerfile.j2
+        src: "{{ item.dockerfile | default('Dockerfile.j2') }}"
         dest: "{{ molecule_ephemeral_directory }}/Dockerfile_{{ item.image | regex_replace('[^a-zA-Z0-9_]', '_') }}"
       with_items: "{{ molecule_yml.platforms }}"
       when: not item.pre_build_image | default(false)

@@ -152,6 +152,7 @@ def _model_platforms_docker_errors_section_data():
             'hostname': int(),
             'image': int(),
             'pull': int(),
+            'dockerfile': bool(),
             'pre_build_image': int(),
             'registry': {
                 'url': int(),
@@ -221,6 +222,7 @@ def test_platforms_docker_has_errors(_config):
                 }],
                 'image': ['must be of string type'],
                 'pull': ['must be of boolean type'],
+                'dockerfile': ['must be of string type'],
                 'pre_build_image': ['must be of boolean type'],
                 'hostname': ['must be of string type'],
                 'security_opts': [{
