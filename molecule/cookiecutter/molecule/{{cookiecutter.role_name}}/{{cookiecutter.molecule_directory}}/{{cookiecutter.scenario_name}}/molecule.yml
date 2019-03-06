@@ -46,8 +46,6 @@ provisioner:
   name: {{ cookiecutter.provisioner_name }}
   lint:
     name: {{ cookiecutter.provisioner_lint_name }}
-scenario:
-  name: {{ cookiecutter.scenario_name }}
 verifier:
   name: {{ cookiecutter.verifier_name }}
   lint:

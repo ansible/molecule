@@ -17,8 +17,9 @@ provisioner:
     destroy: ../../../../resources/playbooks/docker/destroy.yml
   lint:
     name: ansible-lint
-scenario:
-  name: raises
+# commented on purpose to validate that molecule will inherit it from parent folder name:
+# scenario:
+#   name: raises
 verifier:
   name: testinfra
   lint:

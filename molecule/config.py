@@ -339,6 +339,8 @@ class Config(object):
             util.sysexit_with_message(msg)
 
     def _get_defaults(self):
+        scenario_name = (os.path.basename(os.path.dirname(self.molecule_file))
+                         or 'default')
         return {
             'dependency': {
                 'name': 'galaxy',
@@ -396,7 +398,7 @@ class Config(object):
             },
             'scenario': {
                 'name':
-                'default',
+                scenario_name,
                 'check_sequence': [
                     'cleanup',
                     'destroy',

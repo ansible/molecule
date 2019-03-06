@@ -448,6 +448,13 @@ def test_interpolate_raises_on_failed_interpolation(patched_logger_critical,
     patched_logger_critical.assert_called_once_with(msg)
 
 
+def test_get_defaults(config_instance, mocker):
+    mocker.patch.object(config_instance, 'molecule_file',
+                        '/path/to/test_scenario_name/molecule.yml')
+    defaults = config_instance._get_defaults()
+    assert defaults['scenario']['name'] == 'test_scenario_name'
+
+
 def test_preflight(mocker, config_instance, patched_logger_info):
     m = mocker.patch('molecule.model.schema_v2.pre_validate')
     m.return_value = None

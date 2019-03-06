@@ -236,8 +236,6 @@ conflict.
       name: ansible
       lint:
         name: ansible-lint
-    scenario:
-      name: default
     verifier:
       name: testinfra
       lint:

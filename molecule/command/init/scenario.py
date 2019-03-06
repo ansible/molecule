@@ -89,6 +89,11 @@ class Scenario(base.Base):
 
 
 def _role_exists(ctx, param, value):  # pragma: no cover
+    # if role name was not mentioned we assume that current directory is the
+    # one hosting the role and determining the role name.
+    if not value:
+        value = os.path.basename(os.getcwd())
+
     role_directory = os.path.join(os.pardir, value)
     if not os.path.exists(role_directory):
         msg = ("The role '{}' not found. "
@@ -137,7 +142,7 @@ def _default_scenario_exists(ctx, param, value):  # pragma: no cover
 @click.option(
     '--role-name',
     '-r',
-    required=True,
+    required=False,
     callback=_role_exists,
     help='Name of the role to create.')
 @click.option(
