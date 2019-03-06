@@ -6,15 +6,15 @@
   no_log: "{{ not (lookup('env', 'MOLECULE_DEBUG') | bool or molecule_yml.provisioner.log|default(false) | bool) }}"
   tasks:
     - block:
-      - name: Populate instance config
-        set_fact:
-          instance_conf: "{{ lookup('file', molecule_instance_config) | molecule_from_yaml }}"
-          skip_instances: false
+        - name: Populate instance config
+          set_fact:
+            instance_conf: "{{ lookup('file', molecule_instance_config) | molecule_from_yaml }}"
+            skip_instances: false
       rescue:
-      - name: Populate instance config when file missing
-        set_fact:
-          instance_conf: {}
-          skip_instances: true
+        - name: Populate instance config when file missing
+          set_fact:
+            instance_conf: {}
+            skip_instances: true
 
     - name: Destroy molecule instance(s)
       digital_ocean:
