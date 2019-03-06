@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2019 Red Hat, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -47,38 +47,39 @@ def test_name_property(_instance):
 
 
 def test_options_property(_instance):
-    x = {'managed': True}
+    expected_options = {'managed': True}
 
-    assert x == _instance.options
+    assert expected_options == _instance.options
 
 
 def test_login_cmd_template_property(_instance):
-    x = ('ssh {address} -l {user} -p {port} -i {identity_file} '
+    expected_ssh_command = ('ssh {address} '
+         '-l {user} -p {port} -i {identity_file} '
          '-o UserKnownHostsFile=/dev/null '
          '-o ControlMaster=auto '
          '-o ControlPersist=60s '
          '-o IdentitiesOnly=yes '
          '-o StrictHostKeyChecking=no')
 
-    assert x == _instance.login_cmd_template
+    assert expected_ssh_command == _instance.login_cmd_template
 
 
 def test_safe_files_property(_instance):
-    x = [
+    expected_safe_files = [
         os.path.join(_instance._config.scenario.ephemeral_directory,
                      'instance_config.yml'),
     ]
 
-    assert x == _instance.safe_files
+    assert expected_safe_files == _instance.safe_files
 
 
 def test_default_safe_files_property(_instance):
-    x = [
+    expected_default_safe_files = [
         os.path.join(_instance._config.scenario.ephemeral_directory,
                      'instance_config.yml'),
     ]
 
-    assert x == _instance.default_safe_files
+    assert expected_default_safe_files == _instance.default_safe_files
 
 
 def test_delegated_property(_instance):
@@ -90,7 +91,7 @@ def test_managed_property(_instance):
 
 
 def test_default_ssh_connection_options_property(_instance):
-    x = [
+    expected_ssh_defaults = [
         '-o UserKnownHostsFile=/dev/null',
         '-o ControlMaster=auto',
         '-o ControlPersist=60s',
@@ -98,7 +99,7 @@ def test_default_ssh_connection_options_property(_instance):
         '-o StrictHostKeyChecking=no',
     ]
 
-    assert x == _instance.default_ssh_connection_options
+    assert expected_ssh_defaults == _instance.default_ssh_connection_options
 
 
 def test_login_options(mocker, _instance):
@@ -112,14 +113,14 @@ def test_login_options(mocker, _instance):
         'identity_file': '/foo/bar',
     }
 
-    x = {
+    expected_login_data = {
         'instance': 'foo',
         'address': '172.16.0.2',
         'user': 'cloud-user',
         'port': 22,
         'identity_file': '/foo/bar',
     }
-    assert x == _instance.login_options('foo')
+    assert expected_login_data == _instance.login_options('foo')
 
 
 def test_ansible_connection_options(mocker, _instance):
@@ -133,7 +134,7 @@ def test_ansible_connection_options(mocker, _instance):
         'identity_file': '/foo/bar',
     }
 
-    x = {
+    expected_cnx_data = {
         'ansible_host':
         '172.16.0.2',
         'ansible_port':
@@ -150,7 +151,7 @@ def test_ansible_connection_options(mocker, _instance):
                                     '-o IdentitiesOnly=yes '
                                     '-o StrictHostKeyChecking=no'),
     }
-    assert x == _instance.ansible_connection_options('foo')
+    assert expected_cnx_data == _instance.ansible_connection_options('foo')
 
 
 def test_ansible_connection_options_handles_missing_instance_config(
@@ -170,14 +171,16 @@ def test_ansible_connection_options_handles_missing_results_key(
 
 
 def test_instance_config_property(_instance):
-    x = os.path.join(_instance._config.scenario.ephemeral_directory,
-                     'instance_config.yml')
+    expected_config_file = os.path.join(
+                          _instance._config.scenario.ephemeral_directory,
+                          'instance_config.yml'
+                      )
 
-    assert x == _instance.instance_config
+    assert expected_config_file == _instance.instance_config
 
 
 def test_ssh_connection_options_property(_instance):
-    x = [
+    expected_ssh_options = [
         '-o UserKnownHostsFile=/dev/null',
         '-o ControlMaster=auto',
         '-o ControlPersist=60s',
@@ -185,7 +188,7 @@ def test_ssh_connection_options_property(_instance):
         '-o StrictHostKeyChecking=no',
     ]
 
-    assert x == _instance.ssh_connection_options
+    assert expected_ssh_options == _instance.ssh_connection_options
 
 
 def test_status(mocker, _instance):
@@ -216,10 +219,10 @@ def test_get_instance_config(mocker, _instance):
         'instance': 'bar',
     }]
 
-    x = {
+    expected_instance = {
         'instance': 'foo',
     }
-    assert x == _instance._get_instance_config('foo')
+    assert expected_instance == _instance._get_instance_config('foo')
 
 
 def test_created(_instance):

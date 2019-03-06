@@ -1,4 +1,4 @@
-#  Copyright (c) 2015-2018 Cisco Systems, Inc.
+#  Copyright (c) 2019 Red Hat, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -23,18 +23,18 @@ from molecule.driver import base
 
 from molecule import util
 
-LOG = logger.get_logger(__name__)
+log = logger.get_logger(__name__)
 
 
 class DigitalOcean(base.Base):
     """
-    The class responsible for managing `DigitalOcean`_ instances.
-    `DigitalOcean`_ is ``not`` the default driver used in Molecule.
+    This class is responsible for managing `DigitalOcean`_ instances.
+    `DigitalOcean`_ is **not** the default driver used in Molecule.
 
     Molecule leverages Ansible's `digital_ocean_module`_, by mapping variables
     from ``molecule.yml`` into ``create.yml`` and ``destroy.yml``.
 
-    .. _`digital_ocean_module`: https://docs.ansible.com/ansible/latest/ec2_module.html
+    .. _`digital_ocean_module`: https://docs.ansible.com/ansible/latest/modules/digital_ocean_module.html#digital-ocean-module
 
     .. code-block:: yaml
 
