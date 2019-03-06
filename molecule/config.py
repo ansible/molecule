@@ -21,6 +21,7 @@
 import os
 
 import anyconfig
+from ansible.module_utils.parsing.convert_bool import boolean
 import six
 
 from molecule import interpolation
@@ -50,6 +51,7 @@ from molecule.verifier import inspec
 from molecule.verifier import testinfra
 
 LOG = logger.get_logger(__name__)
+MOLECULE_DEBUG = boolean(os.environ.get('MOLECULE_DEBUG', 'False'))
 MOLECULE_DIRECTORY = 'molecule'
 MOLECULE_FILE = 'molecule.yml'
 MERGE_STRATEGY = anyconfig.MS_DICTS
@@ -111,7 +113,7 @@ class Config(object):
 
     @property
     def debug(self):
-        return self.args.get('debug', False)
+        return self.args.get('debug', MOLECULE_DEBUG)
 
     @property
     def env_file(self):

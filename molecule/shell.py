@@ -30,6 +30,7 @@ import click_completion
 import molecule
 from molecule import command
 from molecule import util
+from molecule.config import MOLECULE_DEBUG
 
 click_completion.init()
 
@@ -87,7 +88,7 @@ def _allowed(ctx, param, value):  # pragma: no cover
 @click.group()
 @click.option(
     '--debug/--no-debug',
-    default=False,
+    default=MOLECULE_DEBUG,
     callback=_allowed,
     help='Enable or disable debug mode. Default is disabled.')
 @click.option(
