@@ -86,8 +86,4 @@
         delay: 10
         timeout: 320
       with_items: "{{ lookup('file', molecule_instance_config) | molecule_from_yaml }}"
-
-    - name: Wait for boot process to finish
-      pause:
-        minutes: 2
 {%- endraw %}
