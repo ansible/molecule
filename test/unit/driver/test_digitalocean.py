@@ -54,12 +54,12 @@ def test_options_property(_instance):
 
 def test_login_cmd_template_property(_instance):
     expected_ssh_command = ('ssh {address} '
-         '-l {user} -p {port} -i {identity_file} '
-         '-o UserKnownHostsFile=/dev/null '
-         '-o ControlMaster=auto '
-         '-o ControlPersist=60s '
-         '-o IdentitiesOnly=yes '
-         '-o StrictHostKeyChecking=no')
+                            '-l {user} -p {port} -i {identity_file} '
+                            '-o UserKnownHostsFile=/dev/null '
+                            '-o ControlMaster=auto '
+                            '-o ControlPersist=60s '
+                            '-o IdentitiesOnly=yes '
+                            '-o StrictHostKeyChecking=no')
 
     assert expected_ssh_command == _instance.login_cmd_template
 
@@ -172,9 +172,7 @@ def test_ansible_connection_options_handles_missing_results_key(
 
 def test_instance_config_property(_instance):
     expected_config_file = os.path.join(
-                          _instance._config.scenario.ephemeral_directory,
-                          'instance_config.yml'
-                      )
+        _instance._config.scenario.ephemeral_directory, 'instance_config.yml')
 
     assert expected_config_file == _instance.instance_config
 
