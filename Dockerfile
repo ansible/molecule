@@ -29,8 +29,10 @@ LABEL maintainer "Ansible <info@ansible.com>"
 
 ENV PACKAGES="\
     docker \
+    openssh-client \
     ruby \
     "
+
 ENV BUILD_DEPS="\
     gcc \
     libc-dev \
