@@ -79,7 +79,7 @@ class Goss(base.Base):
     will only run on $instance_name. If you have 2 molecule instances,
     instance1 and instance2, your test files could look like this:
 
-    .. code-block::
+    .. code-block:: bash
         test_default.yml (will run on all hosts)
         test_host_instance1.yml (will run only on instance1)
         test_host_instance2.yml (will run only on instance2)
