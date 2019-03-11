@@ -16,9 +16,9 @@
         instance_conf_dict: {
           'instance': "{{ }}",
           'address': "{{ }}",
-          'user': {{ }},
+          'user': "{{ }}",
           'port': "{{ }}",
-          'identity_file': "{{ }}",
+          'identity_file': "{{ }}",}
       with_items: "{{ server.results }}"
       register: instance_config_dict
       when: server.changed | bool

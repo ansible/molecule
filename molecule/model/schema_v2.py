@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import collections
 import copy
 import functools
 import re
@@ -25,8 +26,7 @@ import re
 import cerberus
 import cerberus.errors
 
-from molecule import interpolation
-from molecule import util
+from molecule import interpolation, util
 
 
 def coerce_env(env, keep_string, v):
@@ -269,6 +269,8 @@ base_schema = {
                 'name': {
                     'type': 'string',
                     'required': True,
+                    'unique':  # https://github.com/pyeve/cerberus/issues/467
+                    True,
                 },
                 'groups': {
                     'type': 'list',
@@ -353,6 +355,9 @@ base_schema = {
             'inventory': {
                 'type': 'dict',
                 'schema': {
+                    'hosts': {
+                        'type': 'dict',
+                    },
                     'host_vars': {
                         'type': 'dict',
                     },
@@ -370,6 +375,9 @@ base_schema = {
             'playbooks': {
                 'type': 'dict',
                 'schema': {
+                    'cleanup': {
+                        'type': 'string',
+                    },
                     'create': {
                         'type': 'string',
                     },
@@ -605,6 +613,9 @@ platforms_docker_schema = {
                 'image': {
                     'type': 'string',
                 },
+                'dockerfile': {
+                    'type': 'string',
+                },
                 'pull': {
                     'type': 'boolean',
                 },
@@ -633,9 +644,16 @@ platforms_docker_schema = {
                         },
                     }
                 },
+                'override_command': {
+                    'type': 'boolean',
+                    'nullable': True,
+                },
                 'command': {
                     'type': 'string',
                     'nullable': True,
+                },
+                'pid_mode': {
+                    'type': 'string',
                 },
                 'privileged': {
                     'type': 'boolean',
@@ -668,6 +686,7 @@ platforms_docker_schema = {
                     'type': 'list',
                     'schema': {
                         'type': 'string',
+                        'coerce': 'exposed_ports'
                     }
                 },
                 'published_ports': {
@@ -715,6 +734,9 @@ platforms_docker_schema = {
                 'network_mode': {
                     'type': 'string',
                 },
+                'purge_networks': {
+                    'type': 'boolean',
+                }
             }
         }
     },
@@ -928,6 +950,20 @@ class Validator(cerberus.Validator):
     def __init__(self, *args, **kwargs):
         super(Validator, self).__init__(*args, **kwargs)
 
+    def _validate_unique(self, unique, field, value):
+        """Ensure value uniqueness.
+
+        The rule's arguments are validated against this schema:
+        {'type': 'boolean'}
+        """
+        if unique:
+            root_key = self.schema_path[0]
+            data = (doc[field] for doc in self.root_document[root_key])
+            for key, count in collections.Counter(data).items():
+                if count > 1:
+                    msg = "'{}' is not unique".format(key)
+                    self._error(field, msg)
+
     def _validate_disallowed(self, disallowed, field, value):
         """ Readonly but with a custom error.
 
@@ -937,6 +973,17 @@ class Validator(cerberus.Validator):
         if disallowed:
             msg = 'disallowed user provided config option'
             self._error(field, msg)
+
+    def _normalize_coerce_exposed_ports(self, value):
+        """Coerce ``exposed_ports`` values to string.
+
+        Not all types that can be specified by the user are acceptable and
+        therefore we cannot simply pass a ``'coerce': 'string'`` to the schema
+        definition.
+        """
+        if type(value) == int:
+            return str(value)
+        return value
 
     def _validate_molecule_env_var(self, molecule_env_var, field, value):
         """ Readonly but with a custom error.

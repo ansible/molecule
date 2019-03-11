@@ -20,7 +20,7 @@
 
     - name: Create Dockerfiles from image names
       template:
-        src: Dockerfile.j2
+        src: "{{ item.dockerfile | default('Dockerfile.j2') }}"
         dest: "{{ molecule_ephemeral_directory }}/Dockerfile_{{ item.image | regex_replace('[^a-zA-Z0-9_]', '_') }}"
       with_items: "{{ molecule_yml.platforms }}"
       when: not item.pre_build_image | default(false)
@@ -55,6 +55,15 @@
         state: present
       with_items: "{{ molecule_yml.platforms | molecule_get_docker_networks }}"
 
+    - name: Determine the CMD directives
+      set_fact:
+        command_directives_dict: >-
+          {{ command_directives_dict | default({}) |
+             combine({ item.name: item.command | default('bash -c "while true; do sleep 10000; done"') })
+          }}
+      with_items: "{{ molecule_yml.platforms }}"
+      when: item.override_command | default(true)
+
     - name: Create molecule instance(s)
       docker_container:
         name: "{{ item.name }}"
@@ -64,7 +73,8 @@
         state: started
         recreate: false
         log_driver: json-file
-        command: "{{ item.command | default('bash -c \"while true; do sleep 10000; done\"') }}"
+        command: "{{ (command_directives_dict | default({}))[item.name] | default(omit) }}"
+        pid_mode: "{{ item.pid_mode | default(omit) }}"
         privileged: "{{ item.privileged | default(omit) }}"
         security_opts: "{{ item.security_opts | default(omit) }}"
         volumes: "{{ item.volumes | default(omit) }}"
@@ -75,6 +85,7 @@
         ulimits: "{{ item.ulimits | default(omit) }}"
         networks: "{{ item.networks | default(omit) }}"
         network_mode: "{{ item.network_mode | default(omit) }}"
+        purge_networks: "{{ item.purge_networks | default(omit) }}"
         dns_servers: "{{ item.dns_servers | default(omit) }}"
         env: "{{ item.env | default(omit) }}"
         restart_policy: "{{ item.restart_policy | default(omit) }}"

@@ -48,7 +48,8 @@ class State(object):
     serialized.
 
     State is not a top level option in Molecule's config.  It's purpose is for
-    bookkeeping, and each Config_ object has a reference to a State_ object.
+    bookkeeping, and each :class:`.Config` object has a reference to a State_
+    object.
 
     .. note::
 

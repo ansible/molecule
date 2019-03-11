@@ -39,8 +39,8 @@ class Goss(base.Base):
     and execute Goss using a community written Goss Ansible module bundled with
     Molecule.
 
-    Additional options can be passed to ``goss validate`` by modifying the verify
-    playbook.
+    Additional options can be passed to ``goss validate`` by modifying the
+    verify playbook.
 
     .. code-block:: yaml
 

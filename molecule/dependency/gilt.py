@@ -61,7 +61,7 @@ class Gilt(base.Base):
           env:
             FOO: bar
 
-    .. _`Gilt`: http://gilt.readthedocs.io
+    .. _`Gilt`: https://gilt.readthedocs.io
     """
 
     def __init__(self, config):

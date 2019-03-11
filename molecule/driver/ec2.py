@@ -34,7 +34,7 @@ class EC2(base.Base):
     Molecule leverages Ansible's `ec2_module`_, by mapping variables from
     ``molecule.yml`` into ``create.yml`` and ``destroy.yml``.
 
-    .. _`ec2_module`: http://docs.ansible.com/ansible/latest/ec2_module.html
+    .. _`ec2_module`: https://docs.ansible.com/ansible/latest/ec2_module.html
 
     .. code-block:: yaml
 
@@ -45,7 +45,7 @@ class EC2(base.Base):
 
     .. code-block:: bash
 
-        $ pip install molecule[ec2]
+        $ pip install 'molecule[ec2]'
 
     Change the options passed to the ssh client.
 

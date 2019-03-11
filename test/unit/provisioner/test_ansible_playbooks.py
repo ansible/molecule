@@ -45,6 +45,10 @@ def _instance(_provisioner_section_data, config_instance):
     return ansible_playbooks.AnsiblePlaybooks(config_instance)
 
 
+def test_cleanup_property_is_optional(_instance):
+    assert _instance._config.provisioner.playbooks.cleanup is None
+
+
 def test_create_property(_instance):
     x = os.path.join(_instance._get_playbook_directory(), 'docker',
                      'create.yml')

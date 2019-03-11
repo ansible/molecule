@@ -9,6 +9,8 @@
 .tox/
 .vagrant/
 .pytest_cache/
+build/
+dist/
 doc/build/
 htmlcov/
 pytestdebug.log

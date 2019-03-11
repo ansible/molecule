@@ -19,11 +19,22 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import logging
+import os
 import sys
 
 import colorama
+from ansible.module_utils.parsing.convert_bool import boolean as to_bool
 
-colorama.init(autoreset=True)
+
+def should_do_markup():
+    py_colors = os.environ.get('PY_COLORS', None)
+    if py_colors is not None:
+        return to_bool(py_colors, strict=False)
+
+    return sys.stdout.isatty() and os.environ.get('TERM') != 'dumb'
+
+
+colorama.init(autoreset=True, strip=not should_do_markup())
 
 SUCCESS = 100
 OUT = 101

@@ -36,12 +36,15 @@ class Scenario(object):
     for testing the role in a particular way.  The default scenario is named
     ``default``, and every role should contain a default scenario.
 
+    Unless mentioned explicitly, the scenario name will be the directory name
+    hosting the files.
+
     Any option set in this section will override the defaults.
 
     .. code-block:: yaml
 
         scenario:
-          name: default
+          name: default  # optional
           create_sequence:
             - create
             - prepare
@@ -59,6 +62,7 @@ class Scenario(object):
             - prepare
             - converge
           destroy_sequence:
+            - cleanup
             - destroy
           test_sequence:
             - lint
@@ -71,6 +75,7 @@ class Scenario(object):
             - idempotence
             - side_effect
             - verify
+            - cleanup
             - destroy
     """  # noqa
 
@@ -103,8 +108,16 @@ class Scenario(object):
         return ephemeral_directory(path)
 
     @property
+    def inventory_directory(self):
+        return os.path.join(self.ephemeral_directory, "inventory")
+
+    @property
     def check_sequence(self):
         return self.config.config['scenario']['check_sequence']
+
+    @property
+    def cleanup_sequence(self):
+        return self.config.config['scenario']['cleanup_sequence']
 
     @property
     def converge_sequence(self):
@@ -175,8 +188,8 @@ class Scenario(object):
 
          :return: None
          """
-        if not os.path.isdir(self.ephemeral_directory):
-            os.makedirs(self.ephemeral_directory)
+        if not os.path.isdir(self.inventory_directory):
+            os.makedirs(self.inventory_directory)
 
 
 def ephemeral_directory(path):

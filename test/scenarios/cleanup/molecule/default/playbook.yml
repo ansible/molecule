@@ -1,0 +1,8 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: Touch a file
+      command: touch /tmp/cleanup
+      args:
+        creates: /tmp/cleanup

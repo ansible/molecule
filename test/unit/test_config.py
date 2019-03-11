@@ -287,40 +287,25 @@ def test_drivers_property(config_instance):
 def test_env(config_instance):
     config_instance.args = {'env_file': '.env'}
     x = {
-        'MOLECULE_DEBUG':
-        'False',
-        'MOLECULE_FILE':
-        config_instance.molecule_file,
-        'MOLECULE_ENV_FILE':
-        util.abs_path(config_instance.args.get('env_file')),
-        'MOLECULE_INVENTORY_FILE':
-        config_instance.provisioner.inventory_file,
+        'MOLECULE_DEBUG': 'False',
+        'MOLECULE_FILE': config_instance.molecule_file,
+        'MOLECULE_ENV_FILE': util.abs_path(
+            config_instance.args.get('env_file')),
+        'MOLECULE_INVENTORY_FILE': config_instance.provisioner.inventory_file,
         'MOLECULE_EPHEMERAL_DIRECTORY':
         config_instance.scenario.ephemeral_directory,
-        'MOLECULE_SCENARIO_DIRECTORY':
-        config_instance.scenario.directory,
-        'MOLECULE_PROJECT_DIRECTORY':
-        config_instance.project_directory,
-        'MOLECULE_INSTANCE_CONFIG':
-        config_instance.driver.instance_config,
-        'MOLECULE_DEPENDENCY_NAME':
-        'galaxy',
-        'MOLECULE_DRIVER_NAME':
-        'docker',
-        'MOLECULE_LINT_NAME':
-        'yamllint',
-        'MOLECULE_PROVISIONER_NAME':
-        'ansible',
-        'MOLECULE_PROVISIONER_LINT_NAME':
-        'ansible-lint',
-        'MOLECULE_SCENARIO_NAME':
-        'default',
-        'MOLECULE_VERIFIER_NAME':
-        'testinfra',
-        'MOLECULE_VERIFIER_LINT_NAME':
-        'flake8',
-        'MOLECULE_VERIFIER_TEST_DIRECTORY':
-        config_instance.verifier.directory,
+        'MOLECULE_SCENARIO_DIRECTORY': config_instance.scenario.directory,
+        'MOLECULE_PROJECT_DIRECTORY': config_instance.project_directory,
+        'MOLECULE_INSTANCE_CONFIG': config_instance.driver.instance_config,
+        'MOLECULE_DEPENDENCY_NAME': 'galaxy',
+        'MOLECULE_DRIVER_NAME': 'docker',
+        'MOLECULE_LINT_NAME': 'yamllint',
+        'MOLECULE_PROVISIONER_NAME': 'ansible',
+        'MOLECULE_PROVISIONER_LINT_NAME': 'ansible-lint',
+        'MOLECULE_SCENARIO_NAME': 'default',
+        'MOLECULE_VERIFIER_NAME': 'testinfra',
+        'MOLECULE_VERIFIER_LINT_NAME': 'flake8',
+        'MOLECULE_VERIFIER_TEST_DIRECTORY': config_instance.verifier.directory,
     }
 
     assert x == config_instance.env
@@ -461,6 +446,13 @@ def test_interpolate_raises_on_failed_interpolation(patched_logger_critical,
            'Invalid placeholder in string: line 1, col 1\n'
            '$6$8I5Cfmpr$kGZB').format(config_instance.molecule_file)
     patched_logger_critical.assert_called_once_with(msg)
+
+
+def test_get_defaults(config_instance, mocker):
+    mocker.patch.object(config_instance, 'molecule_file',
+                        '/path/to/test_scenario_name/molecule.yml')
+    defaults = config_instance._get_defaults()
+    assert defaults['scenario']['name'] == 'test_scenario_name'
 
 
 def test_preflight(mocker, config_instance, patched_logger_info):

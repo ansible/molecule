@@ -80,6 +80,18 @@ def _provisioner_section_data():
                 'ANSIBLE_FILTER_PLUGINS': 'foo/bar',
             },
             'inventory': {
+                'hosts': {
+                    'all': {
+                        'hosts': {
+                            'extra-host-01': {},
+                        },
+                        'children': {
+                            'extra-group': {
+                                'hosts': ['extra-host-01']
+                            },
+                        },
+                    },
+                },
                 'host_vars': {
                     'instance-1': [{
                         'foo': 'bar',
@@ -288,6 +300,25 @@ def test_group_vars_property(_instance):
     assert x == _instance.group_vars
 
 
+@pytest.mark.parametrize(
+    'config_instance', ['_provisioner_section_data'], indirect=True)
+def test_hosts_property(_instance):
+    hosts = {
+        'all': {
+            'hosts': {
+                'extra-host-01': {}
+            },
+            'children': {
+                'extra-group': {
+                    'hosts': ['extra-host-01']
+                }
+            },
+        }
+    }
+
+    assert hosts == _instance.hosts
+
+
 def test_links_property(_instance):
     assert {} == _instance.links
 
@@ -479,8 +510,14 @@ def test_inventory_property_handles_missing_groups(temp_dir, _instance):
     assert x == _instance.inventory
 
 
-def test_inventory_file_property(_instance):
+def test_inventory_directory_property(_instance):
     x = os.path.join(_instance._config.scenario.ephemeral_directory,
+                     'inventory')
+    assert x == _instance.inventory_directory
+
+
+def test_inventory_file_property(_instance):
+    x = os.path.join(_instance._config.scenario.inventory_directory,
                      'ansible_inventory.yml')
 
     assert x == _instance.inventory_file
@@ -506,6 +543,10 @@ def test_directory_property(_instance):
         'provisioner',
         'ansible',
     ) == parts[-3:]
+
+
+def test_playbooks_cleaned_property_is_optional(_instance):
+    assert _instance.playbooks.cleanup is None
 
 
 def test_playbooks_create_property(_instance):
@@ -579,6 +620,16 @@ def test_converge_with_playbook(_instance, mocker, _patched_ansible_playbook):
     #               which didn't go through str.decode().
     assert result == b'patched-ansible-playbook-stdout'
 
+    _patched_ansible_playbook.return_value.execute.assert_called_once_with()
+
+
+def test_cleanup(_instance, mocker, _patched_ansible_playbook):
+    _instance.cleanup()
+
+    _patched_ansible_playbook.assert_called_once_with(
+        _instance._config.provisioner.playbooks.cleanup,
+        _instance._config,
+    )
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
@@ -677,9 +728,9 @@ def test_manage_inventory_with_links(
 @pytest.mark.parametrize(
     'config_instance', ['_provisioner_section_data'], indirect=True)
 def test_add_or_update_vars(_instance):
-    ephemeral_dir = _instance._config.scenario.ephemeral_directory
+    inventory_dir = _instance._config.scenario.inventory_directory
 
-    host_vars_directory = os.path.join(ephemeral_dir, 'host_vars')
+    host_vars_directory = os.path.join(inventory_dir, 'host_vars')
     host_vars = os.path.join(host_vars_directory, 'instance-1')
 
     _instance._add_or_update_vars()
@@ -690,7 +741,7 @@ def test_add_or_update_vars(_instance):
     host_vars_localhost = os.path.join(host_vars_directory, 'localhost')
     assert os.path.isfile(host_vars_localhost)
 
-    group_vars_directory = os.path.join(ephemeral_dir, 'group_vars')
+    group_vars_directory = os.path.join(inventory_dir, 'group_vars')
     group_vars_1 = os.path.join(group_vars_directory, 'example_group1')
     group_vars_2 = os.path.join(group_vars_directory, 'example_group2')
 
@@ -698,15 +749,19 @@ def test_add_or_update_vars(_instance):
     assert os.path.isfile(group_vars_1)
     assert os.path.isfile(group_vars_2)
 
+    hosts = os.path.join(inventory_dir, 'hosts')
+    assert os.path.isfile(hosts)
+    assert util.safe_load_file(hosts) == _instance.hosts
+
 
 @pytest.mark.parametrize(
     'config_instance', ['_provisioner_section_data'], indirect=True)
 def test_add_or_update_vars_without_host_vars(_instance):
     c = _instance._config.config
     c['provisioner']['inventory']['host_vars'] = {}
-    ephemeral_dir = _instance._config.scenario.ephemeral_directory
+    inventory_dir = _instance._config.scenario.inventory_directory
 
-    host_vars_directory = os.path.join(ephemeral_dir, 'host_vars')
+    host_vars_directory = os.path.join(inventory_dir, 'host_vars')
     host_vars = os.path.join(host_vars_directory, 'instance-1')
 
     _instance._add_or_update_vars()
@@ -717,7 +772,7 @@ def test_add_or_update_vars_without_host_vars(_instance):
     host_vars_localhost = os.path.join(host_vars_directory, 'localhost')
     assert not os.path.isfile(host_vars_localhost)
 
-    group_vars_directory = os.path.join(ephemeral_dir, 'group_vars')
+    group_vars_directory = os.path.join(inventory_dir, 'group_vars')
     group_vars_1 = os.path.join(group_vars_directory, 'example_group1')
     group_vars_2 = os.path.join(group_vars_directory, 'example_group2')
 
@@ -725,20 +780,27 @@ def test_add_or_update_vars_without_host_vars(_instance):
     assert os.path.isfile(group_vars_1)
     assert os.path.isfile(group_vars_2)
 
+    hosts = os.path.join(inventory_dir, 'hosts')
+    assert os.path.isfile(hosts)
+    assert util.safe_load_file(hosts) == _instance.hosts
+
 
 def test_add_or_update_vars_does_not_create_vars(_instance):
     c = _instance._config.config
+    c['provisioner']['inventory']['hosts'] = {}
     c['provisioner']['inventory']['host_vars'] = {}
     c['provisioner']['inventory']['group_vars'] = {}
-    ephemeral_dir = _instance._config.scenario.ephemeral_directory
+    inventory_dir = _instance._config.scenario.inventory_directory
 
-    host_vars_directory = os.path.join(ephemeral_dir, 'host_vars')
-    group_vars_directory = os.path.join(ephemeral_dir, 'group_vars')
+    hosts = os.path.join(inventory_dir, 'hosts')
+    host_vars_directory = os.path.join(inventory_dir, 'host_vars')
+    group_vars_directory = os.path.join(inventory_dir, 'group_vars')
 
     _instance._add_or_update_vars()
 
     assert not os.path.isdir(host_vars_directory)
     assert not os.path.isdir(group_vars_directory)
+    assert not os.path.isfile(hosts)
 
 
 @pytest.mark.parametrize(
@@ -888,19 +950,21 @@ def test_write_inventory(temp_dir, _instance):
 @pytest.mark.parametrize(
     'config_instance', ['_provisioner_section_data'], indirect=True)
 def test_remove_vars(_instance):
-    ephemeral_dir = _instance._config.scenario.ephemeral_directory
+    inventory_dir = _instance._config.scenario.inventory_directory
 
-    host_vars_directory = os.path.join(ephemeral_dir, 'host_vars')
+    hosts = os.path.join(inventory_dir, 'hosts')
+    host_vars_directory = os.path.join(inventory_dir, 'host_vars')
     host_vars = os.path.join(host_vars_directory, 'instance-1')
 
     _instance._add_or_update_vars()
+    assert os.path.isfile(hosts)
     assert os.path.isdir(host_vars_directory)
     assert os.path.isfile(host_vars)
 
     host_vars_localhost = os.path.join(host_vars_directory, 'localhost')
     assert os.path.isfile(host_vars_localhost)
 
-    group_vars_directory = os.path.join(ephemeral_dir, 'group_vars')
+    group_vars_directory = os.path.join(inventory_dir, 'group_vars')
     group_vars_1 = os.path.join(group_vars_directory, 'example_group1')
     group_vars_2 = os.path.join(group_vars_directory, 'example_group2')
 
@@ -910,16 +974,17 @@ def test_remove_vars(_instance):
 
     _instance._remove_vars()
 
+    assert not os.path.isfile(hosts)
     assert not os.path.isdir(host_vars_directory)
     assert not os.path.isdir(group_vars_directory)
 
 
 def test_remove_vars_symlinks(_instance):
-    ephemeral_dir = _instance._config.scenario.ephemeral_directory
+    inventory_dir = _instance._config.scenario.inventory_directory
 
-    source_group_vars = os.path.join(ephemeral_dir, os.path.pardir,
+    source_group_vars = os.path.join(inventory_dir, os.path.pardir,
                                      'group_vars')
-    target_group_vars = os.path.join(ephemeral_dir, 'group_vars')
+    target_group_vars = os.path.join(inventory_dir, 'group_vars')
     os.mkdir(source_group_vars)
     os.symlink(source_group_vars, target_group_vars)
 
@@ -931,22 +996,27 @@ def test_remove_vars_symlinks(_instance):
 def test_link_vars(_instance):
     c = _instance._config.config
     c['provisioner']['inventory']['links'] = {
+        'hosts': '../hosts',
         'group_vars': '../group_vars',
         'host_vars': '../host_vars'
     }
-    ephemeral_dir = _instance._config.scenario.ephemeral_directory
+    inventory_dir = _instance._config.scenario.inventory_directory
     scenario_dir = _instance._config.scenario.directory
+    source_hosts = os.path.join(scenario_dir, os.path.pardir, 'hosts')
+    target_hosts = os.path.join(inventory_dir, 'hosts')
     source_group_vars = os.path.join(scenario_dir, os.path.pardir,
                                      'group_vars')
-    target_group_vars = os.path.join(ephemeral_dir, 'group_vars')
+    target_group_vars = os.path.join(inventory_dir, 'group_vars')
     source_host_vars = os.path.join(scenario_dir, os.path.pardir, 'host_vars')
-    target_host_vars = os.path.join(ephemeral_dir, 'host_vars')
+    target_host_vars = os.path.join(inventory_dir, 'host_vars')
 
+    open(source_hosts, 'w').close()
     os.mkdir(source_group_vars)
     os.mkdir(source_host_vars)
 
     _instance._link_or_update_vars()
 
+    assert os.path.lexists(target_hosts)
     assert os.path.lexists(target_group_vars)
     assert os.path.lexists(target_host_vars)
 

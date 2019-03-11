@@ -76,12 +76,13 @@ def test_init_calls_setup(_patched_base_setup, _instance):
 
 def test_prune(_instance):
     ephemeral_directory = _instance._config.scenario.ephemeral_directory
+    inventory_directory = _instance._config.scenario.inventory_directory
 
-    foo_file = os.path.join(ephemeral_directory, 'foo')
-    bar_file = os.path.join(ephemeral_directory, 'bar')
-    baz_directory = os.path.join(ephemeral_directory, 'baz')
+    foo_file = os.path.join(inventory_directory, 'foo')
+    bar_file = os.path.join(inventory_directory, 'bar')
+    baz_directory = os.path.join(inventory_directory, 'baz')
     state_file = os.path.join(ephemeral_directory, 'state.yml')
-    inventory_file = os.path.join(ephemeral_directory, 'ansible_inventory.yml')
+    inventory_file = os.path.join(inventory_directory, 'ansible_inventory.yml')
     config_file = os.path.join(ephemeral_directory, 'ansible.cfg')
     role_directory = os.path.join(ephemeral_directory, 'roles')
     empty_role_directory = os.path.join(role_directory, 'foo')

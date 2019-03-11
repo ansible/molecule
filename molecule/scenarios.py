@@ -69,7 +69,9 @@ class Scenarios(object):
 
             return scenarios
 
-        return [c.scenario for c in self._configs]
+        scenarios = [c.scenario for c in self._configs]
+        scenarios.sort(key=lambda x: x.directory)
+        return scenarios
 
     def print_matrix(self):
         msg = 'Test matrix'
@@ -135,6 +137,7 @@ class Scenarios(object):
         return dict({
             scenario.name: {
                 'check': scenario.check_sequence,
+                'cleanup': scenario.cleanup_sequence,
                 'converge': scenario.converge_sequence,
                 'create': scenario.create_sequence,
                 'dependency': scenario.dependency_sequence,

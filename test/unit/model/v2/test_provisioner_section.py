@@ -43,6 +43,9 @@ def _model_provisioner_section_data():
                 'FOO_BAR': 'foo_bar',
             },
             'inventory': {
+                'hosts': {
+                    'foo': 'bar',
+                },
                 'host_vars': {
                     'foo': 'bar',
                 },
@@ -102,6 +105,7 @@ def _model_provisioner_errors_section_data():
                 'foo-bar-baz': None,
             },
             'inventory': {
+                'hosts': [],
                 'host_vars': [],
                 'group_vars': [],
                 'links': [],
@@ -152,6 +156,7 @@ def test_provisioner_has_errors(_config):
             }],
             'children': ['must be of dict type'],
             'inventory': [{
+                'hosts': ['must be of dict type'],
                 'group_vars': ['must be of dict type'],
                 'host_vars': ['must be of dict type'],
                 'links': ['must be of dict type'],

@@ -57,43 +57,52 @@ def test_ephemeral_directory_property(_instance):
     scenario_name = _instance.name
     project_scenario_directory = os.path.join('molecule', project_directory,
                                               scenario_name)
-    x = os.path.join(tempfile.gettempdir(), project_scenario_directory)
+    e_dir = os.path.join(tempfile.gettempdir(), project_scenario_directory)
 
-    assert x == _instance.ephemeral_directory
+    assert e_dir == _instance.ephemeral_directory
+
+
+def test_inventory_directory_property(_instance):
+    ephemeral_directory = _instance.config.scenario.ephemeral_directory
+    e_dir = os.path.join(ephemeral_directory, "inventory")
+
+    assert e_dir == _instance.inventory_directory
 
 
 def test_check_sequence_property(_instance):
-    x = [
+    sequence = [
+        'cleanup',
         'destroy',
         'dependency',
         'create',
         'prepare',
         'converge',
         'check',
+        'cleanup',
         'destroy',
     ]
 
-    assert x == _instance.check_sequence
+    assert sequence == _instance.check_sequence
 
 
 def test_converge_sequence_property(_instance):
-    x = [
+    sequence = [
         'dependency',
         'create',
         'prepare',
         'converge',
     ]
 
-    assert x == _instance.converge_sequence
+    assert sequence == _instance.converge_sequence
 
 
 def test_create_sequence_property(_instance):
-    x = [
+    sequence = [
         'create',
         'prepare',
     ]
 
-    assert x == _instance.create_sequence
+    assert sequence == _instance.create_sequence
 
 
 def test_dependency_sequence_property(_instance):
@@ -101,7 +110,7 @@ def test_dependency_sequence_property(_instance):
 
 
 def test_destroy_sequence_property(_instance):
-    assert ['destroy'] == _instance.destroy_sequence
+    assert ['cleanup', 'destroy'] == _instance.destroy_sequence
 
 
 def test_idempotence_sequence_property(_instance):
@@ -125,8 +134,9 @@ def test_syntax_sequence_property(_instance):
 
 
 def test_test_sequence_property(_instance):
-    x = [
+    sequence = [
         'lint',
+        'cleanup',
         'destroy',
         'dependency',
         'syntax',
@@ -136,10 +146,11 @@ def test_test_sequence_property(_instance):
         'idempotence',
         'side_effect',
         'verify',
+        'cleanup',
         'destroy',
     ]
 
-    assert x == _instance.test_sequence
+    assert sequence == _instance.test_sequence
 
 
 def test_verify_sequence_property(_instance):
@@ -156,25 +167,27 @@ def test_sequence_property_with_invalid_subcommand(_instance):
     assert [] == _instance.sequence
 
 
-def test_setup_creates_ephemeral_directory(_instance):
+def test_setup_creates_ephemeral_and_inventory_directories(_instance):
     ephemeral_dir = _instance.config.scenario.ephemeral_directory
+    inventory_dir = _instance.config.scenario.inventory_directory
     shutil.rmtree(ephemeral_dir)
     _instance._setup()
 
     assert os.path.isdir(ephemeral_dir)
+    assert os.path.isdir(inventory_dir)
 
 
 def test_ephemeral_directory():
-    x = os.path.join(tempfile.gettempdir(), 'foo/bar')
+    e_dir = os.path.join(tempfile.gettempdir(), 'foo/bar')
 
-    assert x == scenario.ephemeral_directory('foo/bar')
+    assert e_dir == scenario.ephemeral_directory('foo/bar')
 
 
 def test_ephemeral_directory_overriden_via_env_var(monkeypatch):
     monkeypatch.setenv('MOLECULE_EPHEMERAL_DIRECTORY', 'foo/bar')
-    x = os.path.join(tempfile.gettempdir(), 'foo/bar')
+    e_dir = os.path.join(tempfile.gettempdir(), 'foo/bar')
 
-    assert x == scenario.ephemeral_directory('foo/bar')
+    assert e_dir == scenario.ephemeral_directory('foo/bar')
 
 
 def test_ephemeral_directory_overriden_via_env_var_uses_absolute_path(

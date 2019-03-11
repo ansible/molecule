@@ -50,12 +50,15 @@ class AnsiblePlaybook(object):
 
     def bake(self):
         """
-        Bake an ``ansible-playbook`` command so it's ready to execute and returns
-        None.
+        Bake an ``ansible-playbook`` command so it's ready to execute and
+        returns ``None``.
 
         :return: None
         """
-        self.add_cli_arg('inventory', self._config.provisioner.inventory_file)
+        # Pass a directory as inventory to let Ansible merge the multiple
+        # inventory sources located under
+        self.add_cli_arg('inventory',
+                         self._config.provisioner.inventory_directory)
         options = util.merge_dicts(self._config.provisioner.options, self._cli)
         verbose_flag = util.verbose_flag(options)
         if self._playbook != self._config.provisioner.playbooks.converge:

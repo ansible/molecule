@@ -20,6 +20,11 @@ provisioner:
     create: ../../../../resources/playbooks/docker/create.yml
     destroy: ../../../../resources/playbooks/docker/destroy.yml
   inventory:
+    hosts:
+      all:
+        hosts:
+          extra_host:
+            host_group_vars_extra_host_molecule_yml: true
     host_vars:
       instance:
         host_group_vars_host_molecule_yml: true
