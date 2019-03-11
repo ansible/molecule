@@ -80,6 +80,7 @@ class Goss(base.Base):
     instance1 and instance2, your test files could look like this:
 
     .. code-block:: bash
+    
         test_default.yml (will run on all hosts)
         test_host_instance1.yml (will run only on instance1)
         test_host_instance2.yml (will run only on instance2)
