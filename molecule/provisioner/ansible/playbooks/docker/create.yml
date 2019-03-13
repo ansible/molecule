@@ -25,6 +25,7 @@
       with_items: "{{ molecule_yml.platforms }}"
       when: not item.pre_build_image | default(false)
       register: platforms
+      no_log: platforms is success
 
     - name: Discover local Docker images
       docker_image_facts:
@@ -33,6 +34,7 @@
       with_items: "{{ platforms.results }}"
       when: not item.pre_build_image | default(false)
       register: docker_images
+      no_log: docker_images is success
 
     - name: Build an Ansible compatible image
       docker_image:
@@ -47,6 +49,8 @@
       when:
         - platforms.changed or docker_images.results | map(attribute='images') | select('equalto', []) | list | count >= 0
         - not item.item.pre_build_image | default(false)
+      register: result
+      no_log: result is success
 
     - name: Create docker network(s)
       docker_network:
@@ -54,6 +58,8 @@
         docker_host: "{{ item.docker_host | default(lookup('env', 'DOCKER_HOST') or 'unix://var/run/docker.sock') }}"
         state: present
       with_items: "{{ molecule_yml.platforms | molecule_get_docker_networks }}"
+      register: result
+      no_log: result is success
 
     - name: Determine the CMD directives
       set_fact:
@@ -102,3 +108,4 @@
       until: docker_jobs.finished
       retries: 300
       with_items: "{{ server.results }}"
+      no_log: not item.failed

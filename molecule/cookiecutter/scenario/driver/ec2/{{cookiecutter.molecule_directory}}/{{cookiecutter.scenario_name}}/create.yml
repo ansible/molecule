@@ -85,6 +85,7 @@
       until: ec2_jobs.finished
       retries: 300
       with_items: "{{ server.results }}"
+      no_log: not item.failed
 
     # Mandatory configuration for Molecule to function.
 
