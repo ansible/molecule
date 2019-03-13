@@ -6,7 +6,7 @@ workflow "On PR" {
 action "Run Ansible Lint" {
   uses = "ansible/ansible-lint-action@master"
   env = {
-    ACTION_PLAYBOOK_NAME = "."
+    ACTION_PLAYBOOK_NAME = "test/"
   }
 }
 
