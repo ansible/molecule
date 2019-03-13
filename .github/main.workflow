@@ -1,9 +1,9 @@
 workflow "On PR" {
   on = "pull_request"
-  resolves = ["ansible/ansible-lint-action@master"]
+  resolves = ["Run Ansible Lint"]
 }
 
-action "ansible/ansible-lint-action@master" {
+action "Run Ansible Lint" {
   uses = "ansible/ansible-lint-action@master"
   env = {
     ACTION_PLAYBOOK_NAME = "."
