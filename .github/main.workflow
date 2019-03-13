@@ -9,3 +9,8 @@ action "Run Ansible Lint" {
     ACTION_PLAYBOOK_NAME = "."
   }
 }
+
+workflow "On Push" {
+  on = "push"
+  resolves = ["Run Ansible Lint"]
+}
