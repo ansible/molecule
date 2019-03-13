@@ -17,6 +17,7 @@ Important Changes
 Other
 -----
 
+* Officially advertise support for Python 3.5.
 * Remove mandatory ``-r`` option for ``molecule init scenario``.
 * Make the default scenario use the parent folder.
 * Fix support for honouring environment variables such as ``MOLECULE_DEBUG``.
