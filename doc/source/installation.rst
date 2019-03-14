@@ -37,6 +37,13 @@ Pip
 
 :std:doc:`pip <pip:usage>` is the only supported installation method.
 
+Keep in mind that on selinux supporting systems, if you install into a virtual
+environment, you may face :gh:`issue <ansible/ansible/issues/34340>` even
+if selinux is not enabled or is configured to be permissive.
+
+It is your reponsability to assure that soft dependencies of Ansible are
+available on your controller or host machines.
+
 Requirements
 ------------
 

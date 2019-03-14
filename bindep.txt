@@ -1,0 +1,2 @@
+libselinux-python [platform:redhat]
+python3-libselinux [platform:fedora]
