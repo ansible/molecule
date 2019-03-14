@@ -427,7 +427,7 @@ jobs:
     <<: *reset-prerequisites
     stage: Deploy
     name: Publishing current Git tagged version of dist to PyPI
-    if: repo == "ansible/molecule" AND tag IS present AND type == push
+    if: repo == "ansible/molecule" AND tag IS present
     env:
       TOXENV: metadata-validation
     deploy: &deploy-step
