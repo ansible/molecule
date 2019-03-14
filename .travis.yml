@@ -2,6 +2,11 @@
 conditions: v1
 dist: xenial
 
+# avoid building other branches to avoid duplicate builds on PRs
+branches:
+  only:
+    - master
+    - /^\d+\.\d+(\.\d+)?(-\S*)?$/
 git:
   depth: 200
 
