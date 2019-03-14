@@ -442,7 +442,7 @@ jobs:
         all_branches: true
 
   - <<: *deploy-job
-    if: repo == "ansible/molecule" AND type NOT IN (cron, pull_request)  # Always run, except if PR or cron
+    if: repo == "ansible/molecule" AND type == push AND branch == "master"  # publish only pushes to master
     name: Publishing current (unstable) Git revision of dist to Test PyPI
     deploy:
       <<: *deploy-step
