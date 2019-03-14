@@ -99,7 +99,7 @@ class PreCommit(base.Base):
         return util.merge_dicts(os.environ.copy(), self._config.env)
 
     def bake(self):
-        """Bake a `pre-commit` command so it's ready to execute."""
+        """Bake a ready to execute ``pre-commit`` command."""
         self._precommit_command = sh.Command('pre-commit').bake(
             'run',
             self.options,
