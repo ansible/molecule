@@ -90,7 +90,7 @@ class PreCommit(base.Base):
 
     @property
     def default_options(self):
-        """Property of the default options for pre-commit."""
+        """Default options for pre-commit tool runtime."""
         return {}
 
     @property
