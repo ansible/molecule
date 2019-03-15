@@ -6,6 +6,8 @@ A good source of examples are the `scenario`_ functional tests.
 
 .. _`scenario`: https://github.com/ansible/molecule/tree/master/test/scenarios/driver
 
+.. _docker-usage-example:
+
 Docker
 ======
 
@@ -23,8 +25,8 @@ follows.
         -v "$(pwd)":/tmp/$(basename "${PWD}"):ro \
         -v /var/run/docker.sock:/var/run/docker.sock \
         -w /tmp/$(basename "${PWD}") \
-        quay.io/ansible/molecule:latest \
-        sudo molecule test
+        quay.io/ansible/molecule:2.20 \
+        molecule test
 
 .. _`quay.io`: https://quay.io/repository/ansible/molecule
 

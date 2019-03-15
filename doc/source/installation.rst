@@ -69,6 +69,22 @@ some benefits:
 * allows molecule installation at user level without even needing to have
   the script in ``PATH``.
 
+Docker
+======
+
+We publish molecule images via `quay.io`_ where the following tags are available:
+
+  * ``latest``: latest master branch build, which should be viewed as unstable
+  * ``2.20``: Git based tags
+  * ``2.20a1``: Pre-releases tags
+
+Please see the `tags listing`_ for available tags.
+
+Please see :ref:`docker-usage-example` for usage.
+
+.. _`quay.io`: https://quay.io/repository/ansible/molecule
+.. _tags listing: https://quay.io/repository/ansible/molecule?tab=tags
+
 Source
 ======
 
