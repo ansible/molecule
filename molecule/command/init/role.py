@@ -129,7 +129,7 @@ class Role(base.Base):
     type=click.Path(
         exists=True, dir_okay=True, readable=True, resolve_path=True),
     help="Path to a cookiecutter custom template to initialize the role. "
-    "The molecule folder will be added to this template")
+    "The upstream molecule folder will be added to this template")
 def role(ctx, dependency_name, driver_name, lint_name, provisioner_name,
          role_name, verifier_name, template):  # pragma: no cover
     """ Initialize a new role for use with Molecule. """
