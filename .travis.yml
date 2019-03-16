@@ -468,7 +468,7 @@ addons:
     - lxd-client
 before_install:
 - export TOXENV=$(echo $TOXENV_TMPL | envsubst)
-- pip install tox-venv
+- pip install tox-venv tox-tags
 install:
 - tox --notest | tee ~/.tox-venv-install.log
 - >
