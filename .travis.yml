@@ -32,7 +32,7 @@ language: python
 - &reset-prerequisites
   addons: {}
   before_install:
-  - pip install tox-venv
+  - pip install tox-venv tox-tags
   before_script: []
   services: []
 - &lint
