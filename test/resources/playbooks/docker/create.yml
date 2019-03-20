@@ -25,6 +25,7 @@
       with_items: "{{ molecule_yml.platforms }}"
       when: not item.pre_build_image | default(false)
       register: platforms
+      no_log: not item.failed
 
     - name: Discover local Docker images
       docker_image_facts:
@@ -102,3 +103,4 @@
       until: docker_jobs.finished
       retries: 300
       with_items: "{{ server.results }}"
+      no_log: not item.failed
