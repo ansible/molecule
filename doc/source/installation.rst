@@ -69,6 +69,25 @@ some benefits:
 * allows molecule installation at user level without even needing to have
   the script in ``PATH``.
 
+.. note::
+
+    We also have a continuous pre-release process which is provided for early
+    adoption and feedback purposes only. It is available from
+    `test.pypi.org/project/molecule`_ and can be installed like so:
+
+    .. code-block:: bash
+
+        pip install \
+          --index-url https://test.pypi.org/simple \
+          --extra-index-url https://pypi.org/simple \
+          molecule==2.20.0.0a3.dev11
+
+    Where ``2.20.0.0a3.dev11`` is the latest available pre-release version.
+    Please check the `release history`_ listing for the available releases.
+
+    .. _test.pypi.org/project/molecule: https://test.pypi.org/project/molecule/
+    .. _release history: https://test.pypi.org/project/molecule/#history
+
 Docker
 ======
 
