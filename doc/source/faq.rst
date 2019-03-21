@@ -2,6 +2,21 @@
 FAQ
 ***
 
+Why is my idempotence action failing?
+=====================================
+
+It is important to understand that Molecule does not do anything further than
+the default functionality of Ansible when determining if your tasks are
+idempotent or not. Molecule will simply run the converge action twice and check
+against Ansible's standard output.
+
+Therefore, if you are seeing idempotence failures, it is typically related to
+the underlying Ansible report and not Molecule.
+
+If you are facing idempotence failures and intend to raise a bug on our issue
+tracker, please first manually run ``molecule converge`` twice and confirm that
+Ansible itself is reporting task idempotence (changed=0).
+
 Why does Molecule make so many shell calls?
 ===========================================
 
