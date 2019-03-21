@@ -23,5 +23,6 @@ import setuptools
 setuptools.setup(
     packages=setuptools.find_packages(),
     pbr=True,
-    setup_requires=['pbr']
+    setup_requires=['pbr', 'setuptools>=12']
+    # setuptools due https://github.com/ansible/molecule/issues/1859
 )
