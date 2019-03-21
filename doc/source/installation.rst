@@ -44,6 +44,20 @@ if selinux is not enabled or is configured to be permissive.
 It is your reponsability to assure that soft dependencies of Ansible are
 available on your controller or host machines.
 
+.. warning::
+
+  It is highly recommended that you install molecule in a :std:doc:`virtual
+  environment <virtualenv:userguide>`. This will provide a modern copy of
+  `setuptools`_ which is mandatory in order for molecule to be installed
+  successfully and function correctly. If you cannot use a virtual environment
+  then you can attempt a package upgrade with the following:
+
+  .. code-block:: bash
+
+      $ pip install --upgrade --user setuptools
+
+.. _setuptools: https://pypi.org/project/setuptools/
+
 Requirements
 ------------
 
