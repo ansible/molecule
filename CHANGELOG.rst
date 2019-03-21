@@ -18,9 +18,11 @@ Other
 -----
 
 * Molecule docker images will use the following convention on tags going forwards:
+
   * ``latest``: corresponds to the master branch, which should be viewed as unstable
   * ``2.20``: Git based tags
   * ``2.20a1``: pre-releases tags
+
 * Molecule docker image no longer requires ``sudo`` when invoking ``molecule``.
 * Molecule docker image no longer specifies ``USER molecule``.
 * Officially advertise support for Python 3.5.
