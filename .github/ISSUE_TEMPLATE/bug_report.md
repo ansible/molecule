@@ -3,6 +3,7 @@ name: 🐛 Bug report
 about: Create a report to help us improve
 labels: bug
 ---
+<!--- Please use https://groups.google.com/forum/#!forum/molecule-users for usage questions -->
 
 # Issue Type
 
