@@ -30,6 +30,12 @@ LOG = logger.get_logger(__name__)
 
 class Prepare(base.Base):
     """
+    This action is for the purpose of preparing a molecule managed instance
+    before the :py:class:`molecule.command.converge.Converge` action is run.
+    Tasks contained within the ``prepare.yml`` playbook in the scenario
+    directory will be run remotely on the managed instance. This action is run
+    only once per test sequence.
+
     .. program:: molecule prepare
 
     .. option:: molecule prepare
