@@ -58,7 +58,7 @@
     - name: Install Inspec (yum)
       yum:
         name: "{{ inspec_download_source_dir }}/{{ inspec_download_url.split('/')[-1] }}"
-        state: latest
+        state: present
       when: ansible_pkg_mgr == "yum"
 
     - name: Create Molecule directory for test files
