@@ -101,7 +101,7 @@ Linting is performed by `Flake8`_.
 
 .. code-block:: bash
 
-    $ tox -e $(tox -l | grep lint | paste -d, -s -)
+    $ tox -e lint
 
 .. _`Flake8`: http://flake8.pycqa.org/en/latest/
 
