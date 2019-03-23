@@ -128,7 +128,7 @@ def _model_platforms_docker_errors_section_data():
                     'email': int(),
                 },
             },
-            'user': str(),
+            'user': int(),
             'command': int(),
             'privileged': str(),
             'security_opts': [
