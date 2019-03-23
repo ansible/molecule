@@ -56,18 +56,18 @@ Run all functional tests.
 
 .. note::
 
-    The functional tests are a work in progress.  They need better structure
-    and reuse.
+    The functional tests are a work in progress. They need better structure and
+    reuse. They are also very slow and costly in terms of system resources.
 
 .. code-block:: bash
 
-    $ tox -t functional
+    $ tox -e functional
 
 Run all functional tests targeting the docker driver.
 
 .. code-block:: bash
 
-    $ tox -t functional -- -v -k docker
+    $ tox -e functional -- -v -k docker
 
 Delegated
 ^^^^^^^^^
