@@ -12,17 +12,12 @@ Dependencies
 
 Tests will be skipped when the driver's binary is not present.
 
-Install the test framework `Tox`_.
+Install the test framework `Tox`_ and remaining test requirements.
 
 .. code-block:: bash
 
     $ pip install tox
-
-Install the remaining requirements in a venv (optional).
-
-.. code-block:: bash
-
-    $ pip install -r test-requirements.txt -r requirements.txt
+    $ pip install -r test-requirements.txt
 
 For some tests `RuboCop`_ is required.
 
