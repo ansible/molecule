@@ -47,7 +47,7 @@ Run all unit tests with coverage.
 
 .. code-block:: bash
 
-    $ tox -t unit
+    $ tox -e unit
 
 Functional
 ----------
