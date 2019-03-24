@@ -92,42 +92,61 @@ project.
 Systemd Container
 =================
 
-The docker daemon was designed to provide a simple means of starting, stopping
-and managing containers. It was not originally designed to bring up an entire
-Linux system or manage services for such things as start-up order, dependency
-checking, and failed service recovery. [1]_
-
-To start a service which requires systemd, configure `molecule.yml` with a
-systemd compliant image, capabilities, volumes, and command as follows.
+To start a service which requires systemd, in an `unprivileged` container,
+configure `molecule.yml` with a systemd compliant image, tmpfs, volumes,
+and command as follows. [1]_
 
 .. code-block:: yaml
 
     platforms:
       - name: instance
-        image: solita/ubuntu-systemd:latest
+        image: centos:7
+        command: /sbin/init
+        tmpfs:
+          - /run
+          - /tmp
+        volumes:
+          - /sys/fs/cgroup:/sys/fs/cgroup:ro
+
+The developer can also opt to start the container with extended privileges,
+by either giving it `SYS_ADMIN` capabilites or running it in `privileged` mode. [2]_
+
+.. important::
+
+    Use caution when using `privileged` mode or `SYS_ADMIN`
+    capabilities as it grants the container elevated access to the
+    underlying system. [3]_ [4]_ [5]_
+
+To limit the scope of the extended privileges, grant `SYS_ADMIN`
+capabilities along with the same image, command, and volumes as shown in the `unprivileged` example.
+
+.. code-block:: yaml
+
+    platforms:
+      - name: instance
+        image: centos:7
         command: /sbin/init
         capabilities:
           - SYS_ADMIN
         volumes:
           - /sys/fs/cgroup:/sys/fs/cgroup:ro
 
-The developer can also opt to start the container with extended privileges.
-
-.. important::
-
-    Use caution when using `privileged` mode. [2]_ [3]_
+To start the container in `privileged` mode, set the privileged flag along with the
+same image and command as shown in the `unprivileged` example.
 
 .. code-block:: yaml
 
     platforms:
       - name: instance
-        image: solita/ubuntu-systemd:latest
-        privileged: True
+        image: centos:7
         command: /sbin/init
+        privileged: True
 
-.. [1] https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html/managing_containers/using_systemd_with_containers
+.. [1] https://developers.redhat.com/blog/2016/09/13/running-systemd-in-a-non-privileged-container/
 .. [2] https://blog.docker.com/2013/09/docker-can-now-run-within-docker/
 .. [3] https://groups.google.com/forum/#!topic/docker-user/RWLHyzg6Z78
+.. [4] https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities
+.. [5] http://man7.org/linux/man-pages/man7/capabilities.7.html
 
 Vagrant Proxy Settings
 ======================
