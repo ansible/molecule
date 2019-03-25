@@ -108,14 +108,31 @@ and command as follows. [1]_
         volumes:
           - /sys/fs/cgroup:/sys/fs/cgroup:ro
 
+Note that centos:7 image contains a `seccomp security profile for Docker`_ which allows to use Systemd.
+When needed, such security profile can be reused (for example the one available in Fedora [2]_:
+
+.. code-block:: yaml
+
+    platforms:
+      - name: instance
+        image: debian:stretch
+        command: /sbin/init
+        security_opts:
+          - seccomp=path/to/seccomp.json
+        tmpfs:
+          - /run
+          - /tmp
+        volumes:
+          - /sys/fs/cgroup:/sys/fs/cgroup:ro
+
 The developer can also opt to start the container with extended privileges,
-by either giving it `SYS_ADMIN` capabilites or running it in `privileged` mode. [2]_
+by either giving it `SYS_ADMIN` capabilites or running it in `privileged` mode. [3]_
 
 .. important::
 
     Use caution when using `privileged` mode or `SYS_ADMIN`
     capabilities as it grants the container elevated access to the
-    underlying system. [3]_ [4]_ [5]_
+    underlying system. [4]_ [5]_ [6]_
 
 To limit the scope of the extended privileges, grant `SYS_ADMIN`
 capabilities along with the same image, command, and volumes as shown in the `unprivileged` example.
@@ -142,11 +159,13 @@ same image and command as shown in the `unprivileged` example.
         command: /sbin/init
         privileged: True
 
+.. _`seccomp security profile for Docker`: https://docs.docker.com/engine/security/seccomp/
 .. [1] https://developers.redhat.com/blog/2016/09/13/running-systemd-in-a-non-privileged-container/
-.. [2] https://blog.docker.com/2013/09/docker-can-now-run-within-docker/
-.. [3] https://groups.google.com/forum/#!topic/docker-user/RWLHyzg6Z78
-.. [4] https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities
-.. [5] http://man7.org/linux/man-pages/man7/capabilities.7.html
+.. [2] https://src.fedoraproject.org/rpms/docker/raw/master/f/seccomp.json
+.. [3] https://blog.docker.com/2013/09/docker-can-now-run-within-docker/
+.. [4] https://groups.google.com/forum/#!topic/docker-user/RWLHyzg6Z78
+.. [5] https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities
+.. [6] http://man7.org/linux/man-pages/man7/capabilities.7.html
 
 Vagrant Proxy Settings
 ======================
