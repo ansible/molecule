@@ -46,41 +46,28 @@ def _get_ansible_version():  # pragma: no cover
     return ansible.__version__
 
 
-def _supported_python2_version():  # pragma: no cover
-    return _get_python_version()[:2] == (2, 7)
+def _supported_python_version():  # pragma: no cover
+    py_version = _get_python_version()
+    return py_version[:2] == (2, 7) or py_version >= (3, 5)
 
 
-def _supported_python3_version():  # pragma: no cover
-    return _get_python_version() >= (3, 6)
-
-
-def _supported_ansible_version():  # pragma: no cover
-    if (distutils.version.LooseVersion(_get_ansible_version()) <=
-            distutils.version.LooseVersion('2.4')):
+def _supported_ansible_and_python_version():  # pragma: no cover
+    if (distutils.version.LooseVersion(_get_ansible_version()) <
+            distutils.version.LooseVersion('2.5')):
         msg = ("Ansible version '{}' not supported.  "
                'Molecule only supports Ansible versions '
-               "'>= 2.4'.").format(_get_ansible_version())
+               "'>= 2.5'.").format(_get_ansible_version())
         util.sysexit_with_message(msg)
 
-    if _supported_python2_version():
-        pass
-    elif _supported_python3_version():
-        if (distutils.version.LooseVersion(_get_ansible_version()) <
-                distutils.version.LooseVersion('2.4')):
-            msg = ("Ansible version '{}' not supported.  "
-                   'Molecule only supports Ansible versions '
-                   "'>=2.5' with Python version '{}'").format(
-                       _get_ansible_version(), _get_python_version())
-            util.sysexit_with_message(msg)
-    else:
+    if not _supported_python_version():
         msg = ("Python version '{}' not supported.  "
                'Molecule only supports Python versions '
-               "'2.7' and '>= 3.6'.").format(_get_python_version())
+               "'2.7' and '>= 3.5'.").format(_get_python_version())
         util.sysexit_with_message(msg)
 
 
 def _allowed(ctx, param, value):  # pragma: no cover
-    _supported_ansible_version()
+    _supported_ansible_and_python_version()
 
     return value
 

@@ -387,7 +387,7 @@ needs_rubocop = pytest.mark.skipif(
 @pytest.helpers.register
 def is_supported_ansible_python_combo():
     ansible_below_25 = LooseVersion(ansible.__version__) < LooseVersion('2.5')
-    max_py = (3, 6) if ansible_below_25 else (3, 7)
+    max_py = (3, 5) if ansible_below_25 else (3, 7)
     return sys.version_info[:2] <= max_py
 
 
