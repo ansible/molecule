@@ -400,9 +400,9 @@ class Config(object):
                 'name':
                 scenario_name,
                 'check_sequence': [
+                    'dependency',
                     'cleanup',
                     'destroy',
-                    'dependency',
                     'create',
                     'prepare',
                     'converge',
@@ -418,18 +418,20 @@ class Config(object):
                     'converge',
                 ],
                 'create_sequence': [
+                    'dependency',
                     'create',
                     'prepare',
                 ],
                 'destroy_sequence': [
+                    'dependency',
                     'cleanup',
                     'destroy',
                 ],
                 'test_sequence': [
                     'lint',
+                    'dependency',
                     'cleanup',
                     'destroy',
-                    'dependency',
                     'syntax',
                     'create',
                     'prepare',

@@ -127,9 +127,9 @@ def test_inventory_directory_property(_instance):
 
 def test_check_sequence_property(_instance):
     sequence = [
+        'dependency',
         'cleanup',
         'destroy',
-        'dependency',
         'create',
         'prepare',
         'converge',
@@ -154,6 +154,7 @@ def test_converge_sequence_property(_instance):
 
 def test_create_sequence_property(_instance):
     sequence = [
+        'dependency',
         'create',
         'prepare',
     ]
@@ -166,7 +167,7 @@ def test_dependency_sequence_property(_instance):
 
 
 def test_destroy_sequence_property(_instance):
-    assert ['cleanup', 'destroy'] == _instance.destroy_sequence
+    assert ['dependency', 'cleanup', 'destroy'] == _instance.destroy_sequence
 
 
 def test_idempotence_sequence_property(_instance):
@@ -192,9 +193,9 @@ def test_syntax_sequence_property(_instance):
 def test_test_sequence_property(_instance):
     sequence = [
         'lint',
+        'dependency',
         'cleanup',
         'destroy',
-        'dependency',
         'syntax',
         'create',
         'prepare',

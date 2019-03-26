@@ -2,6 +2,12 @@
 History
 *******
 
+Unreleased
+==========
+
+* `dependency` step is now run by default before any playbook sequence step, including
+  `create` and `destroy`. This allows the use of roles in all sequence step playbooks.
+
 2.20
 ====
 

@@ -48,11 +48,13 @@ class Scenario(object):
         scenario:
           name: default  # optional
           create_sequence:
+            - dependency
             - create
             - prepare
           check_sequence:
-            - destroy
             - dependency
+            - cleanup
+            - destroy
             - create
             - prepare
             - converge
@@ -64,12 +66,14 @@ class Scenario(object):
             - prepare
             - converge
           destroy_sequence:
+            - dependency
             - cleanup
             - destroy
           test_sequence:
             - lint
-            - destroy
             - dependency
+            - cleanup
+            - destroy
             - syntax
             - create
             - prepare
