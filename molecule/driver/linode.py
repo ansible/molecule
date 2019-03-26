@@ -151,3 +151,7 @@ class Linode(base.Base):
                                                    instance_name),
                 item['instance'] == '{}-{}'.format(item['linode_id'],
                                                    instance_name))))
+
+    def sanity_checks(self):
+        # FIXME(decentral1se): Implement sanity checks
+        pass

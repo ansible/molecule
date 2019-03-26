@@ -202,3 +202,7 @@ class Delegated(base.Base):
 
         return next(item for item in instance_config_dict
                     if item['instance'] == instance_name)
+
+    def sanity_checks(self):
+        # Note(decentral1se): Cannot implement driver specifics are unknown
+        pass

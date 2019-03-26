@@ -29,6 +29,7 @@ VALID_KEYS = [
     'converged',
     'driver',
     'prepared',
+    'sanity_checked',
 ]
 
 
@@ -96,6 +97,10 @@ class State(object):
     def prepared(self):
         return self._data.get('prepared')
 
+    @property
+    def sanity_checked(self):
+        return self._data.get('sanity_checked')
+
     @marshal
     def reset(self):
         self._data = self._default_data()
@@ -127,6 +132,7 @@ class State(object):
             'created': False,
             'driver': None,
             'prepared': None,
+            'sanity_checked': False,
         }
 
     def _load_file(self):

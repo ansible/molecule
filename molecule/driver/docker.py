@@ -24,8 +24,9 @@ import os
 
 from molecule import logger
 from molecule.driver import base
+from molecule.util import sysexit_with_message
 
-LOG = logger.get_logger(__name__)
+log = logger.get_logger(__name__)
 
 
 class Docker(base.Base):
@@ -183,3 +184,36 @@ class Docker(base.Base):
 
     def ansible_connection_options(self, instance_name):
         return {'ansible_connection': 'docker'}
+
+    def sanity_checks(self):
+        """Implement Docker driver sanity checks."""
+
+        if self._config.state.sanity_checked:
+            return
+
+        log.info("Sanity checks: '{}'".format(self._name))
+
+        try:
+            from ansible.module_utils.docker_common import HAS_DOCKER_PY
+            if not HAS_DOCKER_PY:
+                msg = ('Missing Docker driver dependency. Please '
+                       "install via 'molecule[docker]' or refer to "
+                       'your INSTALL.rst driver documentation file')
+                sysexit_with_message(msg)
+        except ImportError:
+            msg = ('Unable to import Ansible. Please ensure '
+                   'that Ansible is installed')
+            sysexit_with_message(msg)
+
+        try:
+            import docker
+            import requests
+            docker_client = docker.from_env()
+            docker_client.ping()
+        except requests.exceptions.ConnectionError:
+            msg = ('Unable to contact the Docker daemon. '
+                   'Please refer to https://docs.docker.com/config/daemon/ '
+                   'for managing the daemon')
+            sysexit_with_message(msg)
+
+        self._config.state.change_state('sanity_checked', True)

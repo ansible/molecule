@@ -119,6 +119,19 @@ class Base(object):
         """
         pass
 
+    @abc.abstractmethod
+    def sanity_checks(self):
+        """
+        Sanity checks to ensure the driver can do work successfully. For
+        example, when using the Docker driver, we want to know that the Docker
+        daemon is running and we have the correct Docker Python dependency.
+        Each driver implementation can decide what is the most stable sanity
+        check for itself.
+
+        :returns: None
+        """
+        pass
+
     @property
     def options(self):
         return self._config.config['driver']['options']
