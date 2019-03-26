@@ -92,9 +92,9 @@ project.
 Systemd Container
 =================
 
-To start a service which requires systemd, in an `unprivileged` container,
-configure `molecule.yml` with a systemd compliant image, tmpfs, volumes,
-and command as follows. [1]_
+To start a service which requires systemd, `in a non-privileged container`_,
+configure ``molecule.yml`` with a systemd compliant image, tmpfs, volumes,
+and command as follows.
 
 .. code-block:: yaml
 
@@ -108,8 +108,8 @@ and command as follows. [1]_
         volumes:
           - /sys/fs/cgroup:/sys/fs/cgroup:ro
 
-Note that centos:7 image contains a `seccomp security profile for Docker`_ which allows to use Systemd.
-When needed, such security profile can be reused (for example the one available in Fedora [2]_:
+Note that centos:7 image contains a `seccomp security profile for Docker`_ which enables the use of systemd.
+When needed, such security profiles can be reused (for example `the one available in Fedora`_):
 
 .. code-block:: yaml
 
@@ -125,17 +125,17 @@ When needed, such security profile can be reused (for example the one available 
         volumes:
           - /sys/fs/cgroup:/sys/fs/cgroup:ro
 
-The developer can also opt to start the container with extended privileges,
-by either giving it `SYS_ADMIN` capabilites or running it in `privileged` mode. [3]_
+The developer can also opt to `start the container with extended privileges`_,
+by either giving it ``SYS_ADMIN`` capabilites or running it in ``privileged`` mode.
 
 .. important::
 
-    Use caution when using `privileged` mode or `SYS_ADMIN`
-    capabilities as it grants the container elevated access to the
-    underlying system. [4]_ [5]_ [6]_
+    Use caution when using ``privileged`` mode or ``SYS_ADMIN``
+    capabilities as it `grants the container elevated access`_ to the
+    underlying system.
 
-To limit the scope of the extended privileges, grant `SYS_ADMIN`
-capabilities along with the same image, command, and volumes as shown in the `unprivileged` example.
+To limit the scope of the extended privileges, grant ``SYS_ADMIN``
+capabilities along with the same image, command, and volumes as shown in the ``non-privileged`` example.
 
 .. code-block:: yaml
 
@@ -148,8 +148,8 @@ capabilities along with the same image, command, and volumes as shown in the `un
         volumes:
           - /sys/fs/cgroup:/sys/fs/cgroup:ro
 
-To start the container in `privileged` mode, set the privileged flag along with the
-same image and command as shown in the `unprivileged` example.
+To start the container in ``privileged`` mode, set the privileged flag along with the
+same image and command as shown in the ``non-privileged`` example.
 
 .. code-block:: yaml
 
@@ -160,12 +160,10 @@ same image and command as shown in the `unprivileged` example.
         privileged: True
 
 .. _`seccomp security profile for Docker`: https://docs.docker.com/engine/security/seccomp/
-.. [1] https://developers.redhat.com/blog/2016/09/13/running-systemd-in-a-non-privileged-container/
-.. [2] https://src.fedoraproject.org/rpms/docker/raw/master/f/seccomp.json
-.. [3] https://blog.docker.com/2013/09/docker-can-now-run-within-docker/
-.. [4] https://groups.google.com/forum/#!topic/docker-user/RWLHyzg6Z78
-.. [5] https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities
-.. [6] http://man7.org/linux/man-pages/man7/capabilities.7.html
+.. _`the one available in fedora`: https://src.fedoraproject.org/rpms/docker/raw/master/f/seccomp.json
+.. _`in a non-privileged container`: https://developers.redhat.com/blog/2016/09/13/running-systemd-in-a-non-privileged-container/
+.. _`start the container with extended privileges`: https://blog.docker.com/2013/09/docker-can-now-run-within-docker/
+.. _`grants the container elevated access`: https://groups.google.com/forum/#!topic/docker-user/RWLHyzg6Z78
 
 Vagrant Proxy Settings
 ======================
