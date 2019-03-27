@@ -11,4 +11,3 @@ shade==1.22.2
 twine
 wheel==0.30.0
 yapf>=0.25.0,<2
-tox-tags>=0.2.0
