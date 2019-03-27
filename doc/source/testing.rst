@@ -18,12 +18,6 @@ Install the test framework `Tox`_.
 
     $ pip install tox
 
-Install the remaining requirements in a venv (optional).
-
-.. code-block:: bash
-
-    $ pip install -r test-requirements.txt -r requirements.txt
-
 For some tests `RuboCop`_ is required.
 
 .. code-block:: bash
@@ -45,6 +39,15 @@ prior to merging or submitting a pull request.
 
     $ tox
 
+List available scenarios
+------------------------
+
+List all available scenarios. This is useful to target specific Python and
+Ansible version for the functional and unit tests.
+
+    $ tox -l
+
+
 Unit
 ----
 
@@ -52,27 +55,38 @@ Run all unit tests with coverage.
 
 .. code-block:: bash
 
-    $ tox -t unit
+    $ tox -e py{27,35,36,37}-ansible{25,26,27}-unit
+
+Run all unit tests for a specific version of Python and Ansible (here Python 3.7
+and Ansible 2.7).
+
+    $ tox -e py37-ansible27-unit
 
 Functional
 ----------
 
-Run all functional tests.
+Run all functional tests for all supported platforms.
 
 .. note::
 
-    The functional tests are a work in progress.  They need better structure
-    and reuse.
+    The functional tests are a work in progress. They need better structure and
+    reuse. They are also very slow and costly in terms of system resources.
 
 .. code-block:: bash
 
-    $ tox -t functional
+    $ tox -e py{27,35,36,37}-ansible{25,26,27}-functional
+
+
+Run all functional tests for a specific version of Python and Ansible (here
+Python 3.7 and Ansible 2.7).
+
+    $ tox -e py37-ansible27-functional
 
 Run all functional tests targeting the docker driver.
 
 .. code-block:: bash
 
-    $ tox -t functional -- -v -k docker
+    $ tox -e py{27,35,36,37}-ansible{25,26,27}-functional -- -v -k docker
 
 Delegated
 ^^^^^^^^^
@@ -92,6 +106,16 @@ Formatting
 
 The formatting is done using `YAPF`_.
 
+Check format
+^^^^^^^^^^^^
+
+.. code-block:: bash
+
+    $ tox -e format-check
+
+Enforce format
+^^^^^^^^^^^^^^
+
 .. code-block:: bash
 
     $ tox -e format
@@ -106,8 +130,43 @@ Linting is performed by `Flake8`_.
 
 .. code-block:: bash
 
-    $ tox -e $(tox -l | grep lint | paste -d, -s -)
+    $ tox -e lint
 
 .. _`Flake8`: http://flake8.pycqa.org/en/latest/
+
+
+Documentation
+-------------
+
+Generate the documentation, using `sphinx`_.
+
+.. code-block:: bash
+
+    $ tox -e doc
+
+.. _`sphinx`: http://www.sphinx-doc.org
+
+Metadata validation
+-------------------
+
+Check if the long description of the generated package will render properly in
+Python eggs and PyPI, using `checkdocs`_ and `twine`_.
+
+.. code-block:: bash
+
+    $ tox -e metadata-validation
+
+.. _`checkdocs`: https://github.com/collective/collective.checkdocs
+
+.. _`twine`: https://twine.readthedocs.io/
+
+Build docker
+------------
+
+Build the docker container.
+
+.. code-block:: bash
+
+    $ tox -e build-docker
 
 .. include:: ci.rst
