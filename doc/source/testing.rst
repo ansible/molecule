@@ -55,7 +55,7 @@ Run all unit tests with coverage.
 
 .. code-block:: bash
 
-    $ tox -e py{27,35,36,37}-ansible{25,26,27}-unit
+    $ tox -e 'py{27,35,36,37}-ansible{25,26,27}-unit'
 
 Run all unit tests for a specific version of Python and Ansible (here Python 3.7
 and Ansible 2.7).
@@ -74,7 +74,7 @@ Run all functional tests for all supported platforms.
 
 .. code-block:: bash
 
-    $ tox -e py{27,35,36,37}-ansible{25,26,27}-functional
+    $ tox -e 'py{27,35,36,37}-ansible{25,26,27}-functional'
 
 
 Run all functional tests for a specific version of Python and Ansible (here
@@ -86,7 +86,7 @@ Run all functional tests targeting the docker driver.
 
 .. code-block:: bash
 
-    $ tox -e py{27,35,36,37}-ansible{25,26,27}-functional -- -v -k docker
+    $ tox -e 'py{27,35,36,37}-ansible{25,26,27}-functional' -- -v -k docker
 
 Delegated
 ^^^^^^^^^
