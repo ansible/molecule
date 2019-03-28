@@ -43,6 +43,31 @@ class EC2(base.Base):
         platforms:
           - name: instance
 
+    Some configuration examples:
+
+    .. code-block:: yaml
+
+        driver:
+          name: ec2
+        platforms:
+          - name: instance
+            image: ami-0311dc90a352b25f4
+            instance_type: t2.micro
+            vpc_subnet_id: subnet-1cb17175
+
+    If you don't know the AMI code or want to avoid hardcode it:
+
+    .. code-block:: yaml
+
+        driver:
+          name: ec2
+        platforms:
+          - name: instance
+            image_owner: 099720109477
+            image_name: ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-20190320
+            instance_type: t2.micro
+            vpc_subnet_id: subnet-1cb17175
+
     .. code-block:: bash
 
         $ pip install 'molecule[ec2]'
