@@ -66,10 +66,21 @@
         mode: 0600
       when: keypair.changed
 
+    - name: Get the ec2 ami(s) by owner and name, if image not set
+      ec2_ami_facts:
+        owners: "{{ item.image_owner }}"
+        filters:
+          name: "{{ item.image_name }}"
+      loop: "{{ molecule_yml.platforms }}"
+      when: item.image is not defined
+      register: ami_facts
+
     - name: Create molecule instance(s)
       ec2:
         key_name: "{{ keypair_name }}"
-        image: "{{ item.image }}"
+        image: "{{ item.image
+          if item.image is defined
+          else ami_facts.results[index].images[0].image_id }}"
         instance_type: "{{ item.instance_type }}"
         vpc_subnet_id: "{{ item.vpc_subnet_id }}"
         group: "{{ security_group_name }}"
@@ -81,7 +92,9 @@
         count_tag:
           instance: "{{ item.name }}"
       register: server
-      with_items: "{{ molecule_yml.platforms }}"
+      loop: "{{ molecule_yml.platforms }}"
+      loop_control:
+        index_var: index
       async: 7200
       poll: 0
 
