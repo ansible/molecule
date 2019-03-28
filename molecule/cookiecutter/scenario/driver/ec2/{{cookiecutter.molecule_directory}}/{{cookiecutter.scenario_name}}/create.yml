@@ -71,7 +71,9 @@
     - name: Create molecule instance(s)
       ec2:
         key_name: "{{ keypair_name }}"
-        image: "{{ item.image if item.image is defined else ami_facts.results[index].images[0].image_id }}"
+        image: "{{ item.image
+          if item.image is defined
+          else ami_facts.results[index].images[0].image_id }}"
         instance_type: "{{ item.instance_type }}"
         vpc_subnet_id: "{{ item.vpc_subnet_id }}"
         group: "{{ security_group_name }}"
