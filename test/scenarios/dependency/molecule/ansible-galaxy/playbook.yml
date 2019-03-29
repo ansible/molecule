@@ -3,4 +3,6 @@
   hosts: all
   become: true
   roles:
-    - timezone
+    - name: Dummy task
+      command: /bin/true
+      changed_when: false
