@@ -1,4 +1,5 @@
 -r lint-requirements.txt
+ansible>=2.5
 ansible-lint>=4.0.2,<5
 anyconfig==0.9.7
 cerberus==1.2
