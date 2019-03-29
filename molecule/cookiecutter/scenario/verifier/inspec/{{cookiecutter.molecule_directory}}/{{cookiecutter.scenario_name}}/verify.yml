@@ -58,7 +58,7 @@
     - name: Install Inspec (yum)
       yum:
         name: "{{ inspec_download_source_dir }}/{{ inspec_download_url.split('/')[-1] }}"
-        state: latest
+        state: present
       when: ansible_pkg_mgr == "yum"
 
     - name: Create Molecule directory for test files
@@ -70,17 +70,15 @@
       copy:
         src: "{{ item }}"
         dest: "{{ inspec_test_directory }}/{{ item | basename }}"
+      register: copy_inspec_tests
       with_fileglob:
         - "{{ lookup('env', 'MOLECULE_VERIFIER_TEST_DIRECTORY') }}/test_*.rb"
 
-    - name: Register test files
-      shell: "ls {{ inspec_test_directory }}/test_*.rb"
-      register: test_files
-
     - name: Execute Inspec tests
-      command: "{{ inspec_bin }} exec {{ item }}"
+      command: "{{ inspec_bin }} exec {{ item.dest }}"
       register: test_results
-      with_items: "{{ test_files.stdout_lines }}"
+      with_items: "{{ copy_inspec_tests.results }}"
+      changed_when: test_results.changed
       ignore_errors: true
 
     - name: Display details about the Inspec results
