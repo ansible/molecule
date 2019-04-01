@@ -55,7 +55,7 @@ class EC2(base.Base):
             instance_type: t2.micro
             vpc_subnet_id: subnet-1cb17175
 
-    If you don't know the AMI code or want to avoid hardcode it:
+    If you don't know the AMI code or want to avoid hardcoding it:
 
     .. code-block:: yaml
 
@@ -65,6 +65,19 @@ class EC2(base.Base):
           - name: instance
             image_owner: 099720109477
             image_name: ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-20190320
+            instance_type: t2.micro
+            vpc_subnet_id: subnet-1cb17175
+
+    Use wildcards for getting the latest image. For example, the latest Ubuntu bionic image:
+
+    .. code-block:: yaml
+
+        driver:
+          name: ec2
+        platforms:
+          - name: instance
+            image_owner: 099720109477
+            image_name: ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*
             instance_type: t2.micro
             vpc_subnet_id: subnet-1cb17175
 

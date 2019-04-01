@@ -73,7 +73,7 @@
         key_name: "{{ keypair_name }}"
         image: "{{ item.image
           if item.image is defined
-          else ami_facts.results[index].images[0].image_id }}"
+          else (ami_facts.results[index].images | sort(attribute='creation_date', reverse=True))[0].image_id }}"
         instance_type: "{{ item.instance_type }}"
         vpc_subnet_id: "{{ item.vpc_subnet_id }}"
         group: "{{ security_group_name }}"
