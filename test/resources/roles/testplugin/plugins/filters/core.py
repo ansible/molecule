@@ -1,4 +1,4 @@
-#  Copyright (c) 2019 Red Hat, Inc.
+#  Copyright (c) 2017 John Dewey
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -19,12 +19,12 @@
 #  DEALINGS IN THE SOFTWARE.
 
 
-def project_filter(s):
+def filter(s):
     return s
 
 
 class FilterModule(object):
     def filters(self):
         return {
-            'project_filter': project_filter,
+            'dependency_filter': filter,
         }

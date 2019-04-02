@@ -1,4 +1,7 @@
-#  Copyright (c) 2019 Red Hat, Inc.
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+#  Copyright (c) 2017 John Dewey
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -18,13 +21,20 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-
-def project_filter(s):
-    return s
+from ansible.module_utils.basic import AnsibleModule
 
 
-class FilterModule(object):
-    def filters(self):
-        return {
-            'project_filter': project_filter,
-        }
+def main():
+    module = AnsibleModule(
+        argument_spec=dict(name=dict(type='str', required=False), ),
+        supports_check_mode=False)
+
+    ansible_facts_dict = {
+        'changed': False,
+        'ansible_facts': {},
+    }
+
+    module.exit_json(**ansible_facts_dict)
+
+
+main()
