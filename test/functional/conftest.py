@@ -40,6 +40,11 @@ LOG = logger.get_logger(__name__)
 IS_TRAVIS = os.getenv('TRAVIS') and os.getenv('CI')
 
 
+def _env_vars_exposed(env_vars, env=os.environ):
+    """Check if environment variables are exposed."""
+    return all(var in env for var in env_vars)
+
+
 @pytest.fixture
 def with_scenario(request, scenario_to_test, driver_name, scenario_name,
                   skip_test):
@@ -268,14 +273,6 @@ def get_docker_executable():
     return distutils.spawn.find_executable('docker')
 
 
-def get_linode_executable():
-    try:
-        pytest.importorskip('linode')
-        return True
-    except Exception:
-        return False
-
-
 def get_lxc_executable():
     return distutils.spawn.find_executable('lxc-start')
 
@@ -299,8 +296,11 @@ def supports_docker():
 
 @pytest.helpers.register
 def supports_linode():
-    # FIXME: Travis CI
-    return not IS_TRAVIS and get_linode_executable()
+    from ansible.modules.cloud.linode.linode import HAS_LINODE
+
+    env_vars = ('LINODE_API_KEY', )
+
+    return _env_vars_exposed(env_vars) and HAS_LINODE
 
 
 @pytest.helpers.register
@@ -343,26 +343,56 @@ def demands_delegated():
 
 @pytest.helpers.register
 def supports_azure():
-    # FIXME: come up with an actual check
-    return not IS_TRAVIS  # FIXME: Travis CI
+    from ansible.module_utils.azure_rm_common import HAS_AZURE
+
+    env_vars = (
+        'AZURE_SUBSCRIPTION_ID',
+        'AZURE_CLIENT_ID',
+        'AZURE_SECRET',
+        'AZURE_TENANT',
+    )
+
+    return _env_vars_exposed(env_vars) and HAS_AZURE
 
 
 @pytest.helpers.register
 def supports_ec2():
-    # FIXME: come up with an actual check
-    return not IS_TRAVIS  # FIXME: Travis CI
+    from ansible.module_utils.ec2 import HAS_BOTO3
+
+    env_vars = (
+        'AWS_ACCESS_KEY',
+        'AWS_SECRET_ACCESS_KEY',
+    )
+
+    return _env_vars_exposed(env_vars) and HAS_BOTO3
 
 
 @pytest.helpers.register
 def supports_gce():
-    # FIXME: come up with an actual check
-    return not IS_TRAVIS  # FIXME: Travis CI
+    from ansible.module_utils.gcp import HAS_GOOGLE_AUTH
+
+    env_vars = (
+        'GCE_SERVICE_ACCOUNT_EMAIL',
+        'GCE_CREDENTIALS_FILE',
+        'GCE_PROJECT_ID',
+    )
+
+    return _env_vars_exposed(env_vars) and HAS_GOOGLE_AUTH
 
 
 @pytest.helpers.register
 def supports_openstack():
-    # FIXME: come up with an actual check
-    return not IS_TRAVIS  # FIXME: Travis CI
+    pytest.importorskip('shade')  # Ansible provides no import
+
+    env_vars = (
+        'OS_AUTH_URL',
+        'OS_PASSWORD',
+        'OS_REGION_NAME',
+        'OS_USERNAME',
+        'OS_TENANT_NAME',
+    )
+
+    return _env_vars_exposed(env_vars)
 
 
 @pytest.helpers.register
