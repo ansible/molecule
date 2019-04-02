@@ -1,5 +1,5 @@
 # This is a multi-stage build which requires Docker 17.05 or higher
-FROM python:3.7-alpine as molecule-builder
+FROM python:alpine3.8 as molecule-builder
 
 WORKDIR /usr/src/molecule
 
@@ -24,7 +24,7 @@ RUN \
 # ✄---------------------------------------------------------------------
 # This is an actual target container:
 
-FROM python:3.7-alpine
+FROM python:alpine3.8
 LABEL maintainer "Ansible <info@ansible.com>"
 
 ENV PACKAGES="\
