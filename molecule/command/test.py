@@ -110,8 +110,8 @@ class Test(base.Base):
           'Molecule run (always).'))
 def test(ctx, scenario_name, driver_name, __all, destroy):  # pragma: no cover
     """
-    Test (lint, destroy, dependency, syntax, create, prepare, converge,
-          idempotence, side_effect, verify, destroy).
+    Test (lint, cleanup, destroy, dependency, syntax, create, prepare,
+          converge, idempotence, side_effect, verify, cleanup, destroy).
     """
 
     args = ctx.obj.get('args')
@@ -138,6 +138,7 @@ def test(ctx, scenario_name, driver_name, __all, destroy):  # pragma: no cover
                 msg = ('An error occurred during the test sequence '
                        "action: '{}'. Cleaning up.").format(action)
                 LOG.warn(msg)
+                base.execute_subcommand(scenario.config, 'cleanup')
                 base.execute_subcommand(scenario.config, 'destroy')
                 util.sysexit()
             raise
