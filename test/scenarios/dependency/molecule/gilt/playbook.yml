@@ -1,8 +1,6 @@
 ---
 - name: Converge
   hosts: all
-  become: true
+  gather_facts: false
   roles:
-    - name: Dummy task
-      command: /bin/true
-      changed_when: false
+    - molecule
