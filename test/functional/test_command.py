@@ -415,11 +415,12 @@ instance-1       digitalocean   ansible             multi-node       false      
 instance-2       digitalocean   ansible             multi-node       false      false
 """.strip()),  # noqa
         ('driver/docker', 'docker', """
-Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    Converged
----------------  -------------  ------------------  ---------------  ---------  -----------
-instance         docker         ansible             default          false      false
-instance-1       docker         ansible             multi-node       false      false
-instance-2       docker         ansible             multi-node       false      false
+Instance Name    Driver Name    Provisioner Name    Scenario Name     Created    Converged
+---------------  -------------  ------------------  ----------------  ---------  -----------
+instance         docker         ansible             ansible-verifier  false      false
+instance         docker         ansible             default           false      false
+instance-1       docker         ansible             multi-node        false      false
+instance-2       docker         ansible             multi-node        false      false
 """.strip()),  # noqa
         ('driver/ec2', 'ec2', """
 Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    Converged
@@ -501,9 +502,10 @@ instance-1  digitalocean  ansible  multi-node  false  false
 instance-2  digitalocean  ansible  multi-node  false  false
 """.strip()),
         ('driver/docker', 'docker', """
-instance    docker  ansible  default     false  false
-instance-1  docker  ansible  multi-node  false  false
-instance-2  docker  ansible  multi-node  false  false
+instance    docker  ansible  ansible-verifier  false  false
+instance    docker  ansible  default           false  false
+instance-1  docker  ansible  multi-node        false  false
+instance-2  docker  ansible  multi-node        false  false
 """.strip()),
         ('driver/ec2', 'ec2', """
 instance    ec2  ansible  default     false  false
