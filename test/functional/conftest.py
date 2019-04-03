@@ -358,8 +358,11 @@ def supports_azure():
 
 @pytest.helpers.register
 def supports_digitalocean():
-    # FIXME: come up with an actual check
-    return not IS_TRAVIS  # FIXME: Travis CI
+    from ansible.modules.cloud.digital_ocean.digital_ocean import HAS_DOPY
+
+    env_vars = ('DO_API_KEY', )
+
+    return _env_vars_exposed(env_vars) and HAS_DOPY
 
 
 @pytest.helpers.register
