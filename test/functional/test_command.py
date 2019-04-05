@@ -783,9 +783,11 @@ def test_command_syntax(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
-        ('driver/azure', 'azure', 'default'),
+        ('driver/azure', 'azure', None),
         ('driver/digitalocean', 'digitalocean', None),
-        ('driver/docker', 'docker', None),
+        ('driver/docker', 'docker', 'default'),
+        ('driver/docker', 'docker', 'ansible-verifier'),
+        ('driver/docker', 'docker', 'multi-node'),
         ('driver/ec2', 'ec2', None),
         ('driver/gce', 'gce', None),
         ('driver/linode', 'linode', None),
