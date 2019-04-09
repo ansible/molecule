@@ -116,6 +116,22 @@ def test_bake_does_not_have_ansible_args(_inventory_directory, _instance):
         assert sorted(x) == sorted(result)
 
 
+def test_bake_idem_does_have_skip_tag(_inventory_directory, _instance):
+    _instance._config.action = 'idempotence'
+    _instance.bake()
+
+    x = [
+        str(sh.ansible_playbook),
+        '--inventory={}'.format(_inventory_directory),
+        '--skip-tags=molecule-notest,notest,molecule-idempotence-notest',
+        'playbook',
+    ]
+
+    result = str(_instance._ansible_command).split()
+
+    assert sorted(x) == sorted(result)
+
+
 def test_execute(patched_run_command, _instance):
     _instance._ansible_command = 'patched-command'
     result = _instance.execute()
