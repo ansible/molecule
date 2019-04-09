@@ -32,6 +32,7 @@ from molecule.dependency import gilt
 from molecule.dependency import shell
 from molecule.driver import azure
 from molecule.driver import delegated
+from molecule.driver import digitalocean
 from molecule.driver import docker
 from molecule.driver import ec2
 from molecule.driver import gce
@@ -174,6 +175,22 @@ def test_driver_property_is_delegated(config_instance):
 
 
 @pytest.fixture
+def _config_driver_digitalocean_section_data():
+    return {
+        'driver': {
+            'name': 'digitalocean'
+        },
+    }
+
+
+@pytest.mark.parametrize(
+    'config_instance', ['_config_driver_digitalocean_section_data'],
+    indirect=True)
+def test_driver_property_is_digitalocean(config_instance):
+    assert isinstance(config_instance.driver, digitalocean.DigitalOcean)
+
+
+@pytest.fixture
 def _config_driver_ec2_section_data():
     return {
         'driver': {
@@ -271,6 +288,7 @@ def test_drivers_property(config_instance):
     x = [
         'azure',
         'delegated',
+        'digitalocean',
         'docker',
         'ec2',
         'gce',
@@ -520,6 +538,7 @@ def test_molecule_drivers():
     x = [
         'azure',
         'delegated',
+        'digitalocean',
         'docker',
         'ec2',
         'gce',
