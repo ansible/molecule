@@ -6,8 +6,8 @@ Molecule
    :target: https://badge.fury.io/py/molecule
    :alt: PyPI Package
 
-.. image:: https://readthedocs.org/projects/molecule/badge/?version=latest
-   :target: https://molecule.readthedocs.io/en/latest/
+.. image:: https://readthedocs.org/projects/molecule/badge/?version=stable
+   :target: https://molecule.readthedocs.io/en/stable/
    :alt: Documentation Status
 
 .. image:: https://img.shields.io/travis/com/ansible/molecule/master.svg?label=Linux%20builds%20%40%20Travis%20CI
