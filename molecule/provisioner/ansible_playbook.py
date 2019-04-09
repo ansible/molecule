@@ -89,6 +89,7 @@ class AnsiblePlaybook(object):
             self.bake()
 
         try:
+            self._config.driver.sanity_checks()
             cmd = util.run_command(
                 self._ansible_command, debug=self._config.debug)
             return cmd.stdout.decode('utf-8')

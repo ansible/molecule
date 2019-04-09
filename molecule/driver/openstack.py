@@ -137,3 +137,7 @@ class Openstack(base.Base):
 
         return next(item for item in instance_config_dict
                     if item['instance'] == instance_name)
+
+    def sanity_checks(self):
+        # FIXME(decentral1se): Implement sanity checks
+        pass

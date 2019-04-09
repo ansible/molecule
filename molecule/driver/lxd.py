@@ -106,3 +106,7 @@ class LXD(base.Base):
 
     def ansible_connection_options(self, instance_name):
         return {'ansible_connection': 'lxd'}
+
+    def sanity_checks(self):
+        # FIXME(decentral1se): Implement sanity checks
+        pass
