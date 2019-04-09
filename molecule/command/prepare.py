@@ -22,7 +22,6 @@ import click
 
 from molecule import config
 from molecule import logger
-from molecule import scenarios
 from molecule.command import base
 
 LOG = logger.get_logger(__name__)
@@ -134,10 +133,4 @@ def prepare(ctx, scenario_name, driver_name, force):  # pragma: no cover
         'force': force,
     }
 
-    s = scenarios.Scenarios(
-        base.get_configs(args, command_args), scenario_name)
-    s.print_matrix()
-    for scenario in s:
-        for action in scenario.sequence:
-            scenario.config.action = action
-            base.execute_subcommand(scenario.config, action)
+    base.execute_cmdline_scenarios(scenario_name, args, command_args)
