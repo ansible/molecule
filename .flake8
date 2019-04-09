@@ -1,4 +1,4 @@
 [flake8]
 exclude = .venv/,.tox/,dist/,build/,doc/,.eggs/,molecule/provisioner/ansible/plugins/libraries/goss.py
 format = pylint
-ignore = E741,W503,W504
+ignore = E741,W503,W504,H

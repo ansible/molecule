@@ -32,7 +32,7 @@ language: python
 - &reset-prerequisites
   addons: {}
   before_install:
-  - pip install "tox>=3.7.0" tox-venv
+  - pip install tox-venv tox-tags
   before_script: []
   services: []
 - &lint
@@ -442,7 +442,15 @@ jobs:
         all_branches: true
 
   - <<: *deploy-job
-    if: repo == "ansible/molecule" AND type NOT IN (cron, pull_request)  # Always run, except if PR or cron
+    if: >-  # publish only pushes to master and tags; only if upstream
+      repo == "ansible/molecule" AND
+      (
+        (
+          type == push AND
+          branch == "master"
+        ) OR
+        tag IS present
+      )
     name: Publishing current (unstable) Git revision of dist to Test PyPI
     deploy:
       <<: *deploy-step
@@ -460,7 +468,7 @@ addons:
     - lxd-client
 before_install:
 - export TOXENV=$(echo $TOXENV_TMPL | envsubst)
-- pip install "tox>=3.7.0" tox-venv
+- pip install tox-venv tox-tags
 install:
 - tox --notest | tee ~/.tox-venv-install.log
 - >

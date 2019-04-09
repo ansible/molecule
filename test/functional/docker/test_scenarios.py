@@ -328,6 +328,7 @@ def test_command_test_destroy_strategy_always(scenario_to_test, with_scenario,
            'Cleaning up.')
     assert msg in str(e.value.stdout)
 
+    assert 'Action: \'cleanup\'' in str(e.value.stdout)
     assert 'PLAY [Destroy]' in str(e.value.stdout)
     assert 0 != e.value.exit_code
 

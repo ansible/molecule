@@ -148,7 +148,54 @@ Jenkins Pipeline
 
     }
 
+The following `Jenkinsfile` uses the official 'quay.io/ansible/molecule' image.
 
+.. code-block:: groovy
+
+    pipeline {
+      agent {
+        docker {
+          image 'quay.io/ansible/molecule'
+          args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
+      }
+
+      stages {
+
+        stage ('Display versions') {
+          steps {
+            sh '''
+              docker -v
+              python -V
+              ansible --version
+              molecule --version
+            '''
+          }
+        }
+
+        stage ('Molecule test') {
+          steps {
+            sh 'sudo molecule test --all'
+          }
+        }
+
+      } // close stages
+    }   // close pipeline
+
+.. note::
+
+    For Jenkins to work properly using a `Multibranch Pipeline` or a `GitHub Organisation` - as used by Blue Ocean, the role name in the scenario/playbook.yml should be changed to perform a lookup of the role root directory. For example :
+
+.. code-block:: yaml
+
+    ---
+    - name: Converge
+      hosts: all
+      roles:
+        - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+
+
+This is the cleaner of the current choices. See `issue1567_comment`_ for additional detail.
 
 Tox
 ^^^
@@ -247,3 +294,4 @@ conflict.
 .. _`Gitlab`: https://gitlab.com
 .. _`Tox`: https://tox.readthedocs.io/en/latest
 .. _`--parallel functionality`: https://tox.readthedocs.io/en/latest/config.html#cmdoption-tox-p
+.. _`issue1567_comment`: https://github.com/ansible/molecule/issues/1567#issuecomment-436876722

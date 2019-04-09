@@ -2,7 +2,9 @@
 - name: Side Effect
   hosts: all
   gather_facts: false
-  no_log: "{{ not (lookup('env', 'MOLECULE_DEBUG') | bool or molecule_yml.provisioner.log|default(false) | bool) }}"
+  no_log: "{{ molecule_no_log }}"
   tasks:
-    - name: Kill ntpd on target
-      command: pkill ntpd
+    - name: Delete the test file as a planned side effect
+      file:
+        path: /tmp/testfile
+        state: absent

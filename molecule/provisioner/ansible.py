@@ -547,6 +547,9 @@ class Ansible(base.Base):
                     "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
                     'molecule_instance_config':
                     "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
+                    'molecule_no_log':
+                    "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
+                    "molecule_yml.provisioner.log|default(False) | bool }}"
                 }
 
                 # All group

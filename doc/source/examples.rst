@@ -6,6 +6,8 @@ A good source of examples are the `scenario`_ functional tests.
 
 .. _`scenario`: https://github.com/ansible/molecule/tree/master/test/scenarios/driver
 
+.. _docker-usage-example:
+
 Docker
 ======
 
@@ -23,8 +25,8 @@ follows.
         -v "$(pwd)":/tmp/$(basename "${PWD}"):ro \
         -v /var/run/docker.sock:/var/run/docker.sock \
         -w /tmp/$(basename "${PWD}") \
-        quay.io/ansible/molecule:latest \
-        sudo molecule test
+        quay.io/ansible/molecule:2.20 \
+        molecule test
 
 .. _`quay.io`: https://quay.io/repository/ansible/molecule
 
@@ -90,42 +92,78 @@ project.
 Systemd Container
 =================
 
-The docker daemon was designed to provide a simple means of starting, stopping
-and managing containers. It was not originally designed to bring up an entire
-Linux system or manage services for such things as start-up order, dependency
-checking, and failed service recovery. [1]_
-
-To start a service which requires systemd, configure `molecule.yml` with a
-systemd compliant image, capabilities, volumes, and command as follows.
+To start a service which requires systemd, `in a non-privileged container`_,
+configure ``molecule.yml`` with a systemd compliant image, tmpfs, volumes,
+and command as follows.
 
 .. code-block:: yaml
 
     platforms:
       - name: instance
-        image: solita/ubuntu-systemd:latest
+        image: centos:7
+        command: /sbin/init
+        tmpfs:
+          - /run
+          - /tmp
+        volumes:
+          - /sys/fs/cgroup:/sys/fs/cgroup:ro
+
+Note that centos:7 image contains a `seccomp security profile for Docker`_ which enables the use of systemd.
+When needed, such security profiles can be reused (for example `the one available in Fedora`_):
+
+.. code-block:: yaml
+
+    platforms:
+      - name: instance
+        image: debian:stretch
+        command: /sbin/init
+        security_opts:
+          - seccomp=path/to/seccomp.json
+        tmpfs:
+          - /run
+          - /tmp
+        volumes:
+          - /sys/fs/cgroup:/sys/fs/cgroup:ro
+
+The developer can also opt to `start the container with extended privileges`_,
+by either giving it ``SYS_ADMIN`` capabilites or running it in ``privileged`` mode.
+
+.. important::
+
+    Use caution when using ``privileged`` mode or ``SYS_ADMIN``
+    capabilities as it `grants the container elevated access`_ to the
+    underlying system.
+
+To limit the scope of the extended privileges, grant ``SYS_ADMIN``
+capabilities along with the same image, command, and volumes as shown in the ``non-privileged`` example.
+
+.. code-block:: yaml
+
+    platforms:
+      - name: instance
+        image: centos:7
         command: /sbin/init
         capabilities:
           - SYS_ADMIN
         volumes:
           - /sys/fs/cgroup:/sys/fs/cgroup:ro
 
-The developer can also opt to start the container with extended privileges.
-
-.. important::
-
-    Use caution when using `privileged` mode. [2]_ [3]_
+To start the container in ``privileged`` mode, set the privileged flag along with the
+same image and command as shown in the ``non-privileged`` example.
 
 .. code-block:: yaml
 
     platforms:
       - name: instance
-        image: solita/ubuntu-systemd:latest
-        privileged: True
+        image: centos:7
         command: /sbin/init
+        privileged: True
 
-.. [1] https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html/managing_containers/using_systemd_with_containers
-.. [2] https://blog.docker.com/2013/09/docker-can-now-run-within-docker/
-.. [3] https://groups.google.com/forum/#!topic/docker-user/RWLHyzg6Z78
+.. _`seccomp security profile for Docker`: https://docs.docker.com/engine/security/seccomp/
+.. _`the one available in fedora`: https://src.fedoraproject.org/rpms/docker/raw/master/f/seccomp.json
+.. _`in a non-privileged container`: https://developers.redhat.com/blog/2016/09/13/running-systemd-in-a-non-privileged-container/
+.. _`start the container with extended privileges`: https://blog.docker.com/2013/09/docker-can-now-run-within-docker/
+.. _`grants the container elevated access`: https://groups.google.com/forum/#!topic/docker-user/RWLHyzg6Z78
 
 Vagrant Proxy Settings
 ======================

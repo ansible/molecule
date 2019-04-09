@@ -22,8 +22,6 @@ import click
 
 from molecule import config
 from molecule import logger
-from molecule import scenarios
-from molecule import util
 from molecule.command import base
 
 LOG = logger.get_logger(__name__)
@@ -110,8 +108,8 @@ class Test(base.Base):
           'Molecule run (always).'))
 def test(ctx, scenario_name, driver_name, __all, destroy):  # pragma: no cover
     """
-    Test (lint, destroy, dependency, syntax, create, prepare, converge,
-          idempotence, side_effect, verify, destroy).
+    Test (lint, cleanup, destroy, dependency, syntax, create, prepare,
+          converge, idempotence, side_effect, verify, cleanup, destroy).
     """
 
     args = ctx.obj.get('args')
@@ -125,19 +123,4 @@ def test(ctx, scenario_name, driver_name, __all, destroy):  # pragma: no cover
     if __all:
         scenario_name = None
 
-    s = scenarios.Scenarios(
-        base.get_configs(args, command_args), scenario_name)
-    s.print_matrix()
-    for scenario in s:
-        try:
-            for action in scenario.sequence:
-                scenario.config.action = action
-                base.execute_subcommand(scenario.config, action)
-        except SystemExit:
-            if destroy == 'always':
-                msg = ('An error occurred during the test sequence '
-                       "action: '{}'. Cleaning up.").format(action)
-                LOG.warn(msg)
-                base.execute_subcommand(scenario.config, 'destroy')
-                util.sysexit()
-            raise
+    base.execute_cmdline_scenarios(scenario_name, args, command_args)

@@ -23,7 +23,6 @@ import re
 import click
 
 from molecule import logger
-from molecule import scenarios
 from molecule import util
 from molecule.command import base
 
@@ -157,10 +156,4 @@ def idempotence(ctx, scenario_name):  # pragma: no cover
         'subcommand': subcommand,
     }
 
-    s = scenarios.Scenarios(
-        base.get_configs(args, command_args), scenario_name)
-    s.print_matrix()
-    for scenario in s:
-        for action in scenario.sequence:
-            scenario.config.action = action
-            base.execute_subcommand(scenario.config, action)
+    base.execute_cmdline_scenarios(scenario_name, args, command_args)

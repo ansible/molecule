@@ -3,7 +3,7 @@
   hosts: localhost
   connection: local
   gather_facts: false
-  no_log: "{{ not (lookup('env', 'MOLECULE_DEBUG') | bool or molecule_yml.provisioner.log|default(false) | bool) }}"
+  no_log: "{{ molecule_no_log }}"
   tasks:
     - name: Log into a Docker registry
       docker_login:
@@ -25,6 +25,7 @@
       with_items: "{{ molecule_yml.platforms }}"
       when: not item.pre_build_image | default(false)
       register: platforms
+      no_log: item.failed
 
     - name: Discover local Docker images
       docker_image_facts:
@@ -39,7 +40,7 @@
         path: "{{ molecule_ephemeral_directory }}"
         name: "molecule_local/{{ item.item.image }}"
         docker_host: "{{ item.item.docker_host | default(lookup('env', 'DOCKER_HOST') or 'unix://var/run/docker.sock') }}"
-        dockerfile: "{{ item.item.dockerfile | default(item.invocation.module_args.dest) }}"
+        dockerfile: "{{ item.invocation.module_args.dest }}"
         force: "{{ item.item.force | default(true) }}"
         pull: "{{ item.item.pull | default(omit) }}"
         buildargs: "{{ item.item.buildargs | default(omit) }}"
@@ -102,3 +103,4 @@
       until: docker_jobs.finished
       retries: 300
       with_items: "{{ server.results }}"
+      no_log: item.failed

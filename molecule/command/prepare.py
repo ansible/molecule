@@ -22,7 +22,6 @@ import click
 
 from molecule import config
 from molecule import logger
-from molecule import scenarios
 from molecule.command import base
 
 LOG = logger.get_logger(__name__)
@@ -30,6 +29,12 @@ LOG = logger.get_logger(__name__)
 
 class Prepare(base.Base):
     """
+    This action is for the purpose of preparing a molecule managed instance
+    before the :py:class:`molecule.command.converge.Converge` action is run.
+    Tasks contained within the ``prepare.yml`` playbook in the scenario
+    directory will be run remotely on the managed instance. This action is run
+    only once per test sequence.
+
     .. program:: molecule prepare
 
     .. option:: molecule prepare
@@ -128,10 +133,4 @@ def prepare(ctx, scenario_name, driver_name, force):  # pragma: no cover
         'force': force,
     }
 
-    s = scenarios.Scenarios(
-        base.get_configs(args, command_args), scenario_name)
-    s.print_matrix()
-    for scenario in s:
-        for action in scenario.sequence:
-            scenario.config.action = action
-            base.execute_subcommand(scenario.config, action)
+    base.execute_cmdline_scenarios(scenario_name, args, command_args)

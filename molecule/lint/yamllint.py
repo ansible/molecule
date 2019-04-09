@@ -69,6 +69,16 @@ class Yamllint(base.Base):
           env:
             FOO: bar
 
+    Paths can be ignored.
+
+    .. code-block:: yaml
+
+        lint:
+          name: yamllint
+          options:
+            config-data:
+              ignore: path_to_ignore
+
     .. _`yamllint`: https://github.com/adrienverge/yamllint
     .. _`yamllint rules`: https://yamllint.readthedocs.io/en/stable/rules.html
     .. _`cookiecutter template`: https://github.com/ansible/molecule/blob/ma\

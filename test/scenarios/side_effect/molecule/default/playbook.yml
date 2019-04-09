@@ -1,5 +1,14 @@
 ---
 - name: Converge
   hosts: all
-  roles:
-    - role: timezone
+  tasks:
+    - name: Check for test file
+      stat:
+        path: /tmp/testfile
+      register: test_file
+
+    - name: Create the test file
+      file:
+        path: /tmp/testfile
+        state: touch
+      when: not test_file.stat.exists

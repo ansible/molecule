@@ -93,6 +93,7 @@ def test_vagrant_driver(temp_dir, _molecule_file, _role_directory,
 
 @pytest.mark.parametrize('driver', [
     ('azure'),
+    ('digitalocean'),
     ('docker'),
     ('ec2'),
     ('gce'),
