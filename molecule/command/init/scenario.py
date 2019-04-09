@@ -37,7 +37,8 @@ class Scenario(base.Base):
 
     .. option:: molecule init scenario --scenario-name bar --role-name foo
 
-        Initialize a new scenario.
+        Initialize a new scenario using a local _cookiecutter_ template. In
+        order to customise the role, please refer to the `init role` command.
 
     .. program:: cd foo; molecule init scenario --scenario-name bar --role-name foo
 

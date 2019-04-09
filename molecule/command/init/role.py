@@ -38,6 +38,16 @@ class Role(base.Base):
     .. option:: molecule init role --role-name foo
 
         Initialize a new role.
+
+    .. program:: molecule init role --role-name foo --template path
+
+    .. option:: molecule init role --role-name foo --template path
+
+        Initialize a new role using a local *cookiecutter* template. This
+        allows the customization of a role while still using the upstream
+        ``molecule`` folder. This is similar to an
+        ``ansible-galaxy init`` skeleton. Please refer to the ``init scenario``
+        command in order to generate a custom ``molecule`` scenario.
     """
 
     def __init__(self, command_args):
@@ -61,7 +71,13 @@ class Role(base.Base):
                    'Cannot create new role.').format(role_name)
             util.sysexit_with_message(msg)
 
-        self._process_templates('role', self._command_args, role_directory)
+        template_directory = ''
+        if 'template' in self._command_args.keys():
+            template_directory = self._command_args['template']
+        else:
+            template_directory = 'role'
+        self._process_templates(template_directory, self._command_args,
+                                role_directory)
         scenario_base_directory = os.path.join(role_directory, role_name)
         templates = [
             'scenario/driver/{driver_name}'.format(**self._command_args),
@@ -107,8 +123,15 @@ class Role(base.Base):
     type=click.Choice(config.molecule_verifiers()),
     default='testinfra',
     help='Name of verifier to initialize. (testinfra)')
+@click.option(
+    '--template',
+    '-t',
+    type=click.Path(
+        exists=True, dir_okay=True, readable=True, resolve_path=True),
+    help="Path to a cookiecutter custom template to initialize the role. "
+    "The upstream molecule folder will be added to this template")
 def role(ctx, dependency_name, driver_name, lint_name, provisioner_name,
-         role_name, verifier_name):  # pragma: no cover
+         role_name, verifier_name, template):  # pragma: no cover
     """ Initialize a new role for use with Molecule. """
     command_args = {
         'dependency_name': dependency_name,
@@ -126,6 +149,9 @@ def role(ctx, dependency_name, driver_name, lint_name, provisioner_name,
 
     if verifier_name == 'goss':
         command_args['verifier_lint_name'] = 'yamllint'
+
+    if template is not None:
+        command_args['template'] = template
 
     r = Role(command_args)
     r.execute()
