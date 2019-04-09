@@ -10,37 +10,58 @@
   vars:
     goss_version: v0.3.6
     goss_arch: amd64
-    goss_dst: /usr/local/bin/goss
-    goss_sha256sum: 53dd1156ab66f2c4275fd847372e6329d895cfb2f0bcbec5f86c1c4df7236dde
-    goss_url: "https://github.com/aelsabbahy/goss/releases/download/{{ goss_version }}/goss-linux-{{ goss_arch }}"
-    goss_test_directory: /tmp
+    goss_bin: /usr/local/bin/goss
+    goss_sha256sum: 53dd1156ab66f2c4275fd847372e6329d895cfb2f0bcbec5f86c1c4df7236dde.
+    goss_test_directory: /tmp/molecule/goss
     goss_format: documentation
   tasks:
     - name: Download and install Goss
       get_url:
-        url: "{{ goss_url }}"
-        dest: "{{ goss_dst }}"
+        url: "https://github.com/aelsabbahy/goss/releases/download/{{ goss_version }}/goss-linux-{{ goss_arch }}"
+        dest: "{{ goss_bin }}"
         sha256sum: "{{ goss_sha256sum }}"
         mode: 0755
-      register: download_goss
-      until: download_goss is succeeded
-      retries: 3
+
+    - name: Create Molecule directory for test files
+      file:
+        path: "{{ goss_test_directory }}"
+        state: directory
+
+    - name: Find Goss tests on localhost
+      find:
+        paths: "{{ lookup('env', 'MOLECULE_VERIFIER_TEST_DIRECTORY') }}"
+        patterns:
+          - "test[-.\\w]*.yml"
+          - "test_host_{{ ansible_hostname }}[-.\\w]*.yml"
+        excludes:
+          - "test_host_(?!{{ ansible_hostname }})[-.\\w]*.yml"
+        use_regex: true
+      delegate_to: localhost
+      register: test_files
+      changed_when: false
+      become: false
+
+    - name: debug
+      debug:
+        msg: "{{ test_files.files }}"
+        verbosity: 3
 
     - name: Copy Goss tests to remote
       copy:
-        src: "{{ item }}"
-        dest: "{{ goss_test_directory }}/{{ item | basename }}"
-      with_fileglob:
-        - "{{ lookup('env', 'MOLECULE_VERIFIER_TEST_DIRECTORY') }}/test_*.yml"
+        src: "{{ item.path }}"
+        dest: "{{ goss_test_directory }}/{{ item.path | basename }}"
+      with_items:
+        - "{{ test_files.files }}"
 
     - name: Register test files
       shell: "ls {{ goss_test_directory }}/test_*.yml"
       register: test_files
 
     - name: Execute Goss tests
-      command: "{{ goss_dst }} -g {{ item }} validate --format {{ goss_format }}"
+      command: "{{ goss_bin }} -g {{ item }} validate --format {{ goss_format }}"
       register: test_results
       with_items: "{{ test_files.stdout_lines }}"
+      failed_when: false
 
     - name: Display details about the Goss results
       debug:

@@ -8,10 +8,3 @@ file:
     group: root
     mode: "0755"
     filetype: directory
-  /etc/molecule/instance:
-    exists: true
-    owner: root
-    group: root
-    mode: "0644"
-    filetype: file
-    contains: ['instance']
