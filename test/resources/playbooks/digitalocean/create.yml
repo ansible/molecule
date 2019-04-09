@@ -1,0 +1,88 @@
+---
+- name: Create
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  no_log: "{{ molecule_no_log }}"
+  vars:
+    ssh_user: root
+    ssh_port: 22
+
+    keypair_name: molecule_key
+    keypair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
+  tasks:
+    - name: Create local keypair
+      user:
+        name: "{{ lookup('env', 'USER') }}"
+        generate_ssh_key: true
+        ssh_key_file: "{{ keypair_path }}"
+      register: local_keypair
+
+    - name: Create remote keypair
+      digital_ocean_sshkey:
+        name: "{{ keypair_name }}"
+        ssh_pub_key: "{{ local_keypair.ssh_public_key }}"
+        state: present
+      register: remote_keypair
+
+    - name: Create molecule instance(s)
+      digital_ocean:
+        command: droplet
+        name: "{{ item.name }}"
+        unique_name: true
+        region_id: "{{ item.region_id }}"
+        image_id: "{{ item.image_id }}"
+        size_id: "{{ item.size_id }}"
+        ssh_key_ids: "{{ remote_keypair.data.ssh_key.id }}"
+        private_networking: true
+        wait: true
+        wait_timeout: 300
+        state: present
+      register: server
+      with_items: "{{ molecule_yml.platforms }}"
+      async: 7200
+      poll: 0
+
+    - name: Wait for instance(s) creation to complete
+      async_status:
+        jid: "{{ item.ansible_job_id }}"
+      register: digitalocean_jobs
+      until: digitalocean_jobs.finished
+      retries: 300
+      with_items: "{{ server.results }}"
+
+    # Mandatory configuration for Molecule to function.
+
+    - name: Populate instance config dict
+      set_fact:
+        instance_conf_dict: {
+          'instance': "{{ item.droplet.name }}",
+          'address': "{{ item.droplet.ip_address }}",
+          'user': "{{ ssh_user }}",
+          'port': "{{ ssh_port }}",
+          'identity_file': "{{ keypair_path }}",
+          'droplet_id': "{{ item.droplet.id }}",
+          'fingerprint': "{{ remote_keypair.data.ssh_key.fingerprint }}", }
+      with_items: "{{ digitalocean_jobs.results }}"
+      register: instance_config_dict
+      when: server.changed | bool
+
+    - name: Convert instance config dict to a list
+      set_fact:
+        instance_conf: "{{ instance_config_dict.results | map(attribute='ansible_facts.instance_conf_dict') | list }}"
+      when: server.changed | bool
+
+    - name: Dump instance config
+      copy:
+        content: "{{ instance_conf | to_json | from_json | molecule_to_yaml | molecule_header }}"
+        dest: "{{ molecule_instance_config }}"
+      when: server.changed | bool
+
+    - name: Wait for SSH
+      wait_for:
+        port: "{{ ssh_port }}"
+        host: "{{ item.address }}"
+        search_regex: SSH
+        delay: 10
+        timeout: 320
+      with_items: "{{ lookup('file', molecule_instance_config) | molecule_from_yaml }}"

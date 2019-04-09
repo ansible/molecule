@@ -12,6 +12,11 @@ lint:
 platforms:
 {%- if cookiecutter.driver_name == 'azure' %}
   - name: instance
+{%- elif cookiecutter.driver_name == 'digitalocean' %}
+  - name: instance
+    region_id: nyc3
+    image_id: ubuntu-18-10-x64
+    size_id: s-1vcpu-1gb
 {%- elif cookiecutter.driver_name == 'docker' %}
   - name: instance
     image: centos:7

@@ -35,6 +35,7 @@ from molecule.dependency import gilt
 from molecule.dependency import shell
 from molecule.driver import azure
 from molecule.driver import delegated
+from molecule.driver import digitalocean
 from molecule.driver import docker
 from molecule.driver import ec2
 from molecule.driver import gce
@@ -160,6 +161,8 @@ class Config(object):
             driver = azure.Azure(self)
         elif driver_name == 'delegated':
             driver = delegated.Delegated(self)
+        elif driver_name == 'digitalocean':
+            driver = digitalocean.DigitalOcean(self)
         elif driver_name == 'docker':
             driver = docker.Docker(self)
         elif driver_name == 'ec2':
@@ -400,9 +403,9 @@ class Config(object):
                 'name':
                 scenario_name,
                 'check_sequence': [
+                    'dependency',
                     'cleanup',
                     'destroy',
-                    'dependency',
                     'create',
                     'prepare',
                     'converge',
@@ -418,18 +421,20 @@ class Config(object):
                     'converge',
                 ],
                 'create_sequence': [
+                    'dependency',
                     'create',
                     'prepare',
                 ],
                 'destroy_sequence': [
+                    'dependency',
                     'cleanup',
                     'destroy',
                 ],
                 'test_sequence': [
                     'lint',
+                    'dependency',
                     'cleanup',
                     'destroy',
-                    'dependency',
                     'syntax',
                     'create',
                     'prepare',
@@ -491,6 +496,7 @@ def molecule_drivers():
     return [
         azure.Azure(None).name,
         delegated.Delegated(None).name,
+        digitalocean.DigitalOcean(None).name,
         docker.Docker(None).name,
         ec2.EC2(None).name,
         gce.GCE(None).name,
