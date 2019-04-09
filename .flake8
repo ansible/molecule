@@ -1,4 +1,5 @@
 [flake8]
+# keep exclude in-sync with ones in .pre-commitconfig.yaml or better remove them
 exclude = .venv/,.tox/,dist/,build/,doc/,.eggs/,molecule/provisioner/ansible/plugins/libraries/goss.py
 format = pylint
 ignore = E741,W503,W504,H

@@ -10,4 +10,7 @@ rules:
   brackets:
     max-spaces-inside: 1
     level: error
+  document-start: disable
   line-length: disable
+  key-duplicates: enable
+  truthy: disable

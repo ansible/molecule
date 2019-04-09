@@ -1,0 +1,27 @@
+---
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.1.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+      - id: check-byte-order-marker
+      - id: check-executables-have-shebangs
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-vcs-permalinks
+      - id: debug-statements
+      - id: requirements-txt-fixer
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: v1.15.0
+    hooks:
+      - id: yamllint
+        files: \.(yaml|yml)$
+  - repo: https://github.com/PyCQA/flake8
+    rev: 3.7.7
+    hooks:
+      - id: flake8
+        # flake8 config excludes are ignored when run as a hook due to
+        # https://github.com/pre-commit/pre-commit-hooks/issues/112
+        exclude: doc/

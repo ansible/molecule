@@ -4,7 +4,7 @@
   hosts: localhost
   connection: local
   gather_facts: false
-  no_log: "{{ molecule_no_log }}" 
+  no_log: "{{ molecule_no_log }}"
   vars:
     ssh_user: root
     ssh_port: 22

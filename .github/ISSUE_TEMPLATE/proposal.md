@@ -1,7 +1,7 @@
 ---
 name: Proposal
 about: Suggest an large change for the Molecule project
-labels: proposal 
+labels: proposal
 ---
 
 
@@ -55,5 +55,3 @@ Does / should this require documentation? If so, describe here. This section is 
 ## Anything else?
 
 If you'd like to add anything else beyond the above required and optional sections, you are welcome to do so.
-
-
