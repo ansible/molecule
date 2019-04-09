@@ -1,6 +1,7 @@
 ---
 - name: Converge
   hosts: all
+  gather_facts: false
   tasks:
     - name: Touch a file
       command: touch /tmp/cleanup

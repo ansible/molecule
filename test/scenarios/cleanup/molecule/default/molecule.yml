@@ -14,6 +14,9 @@ platforms:
     privileged: true
 provisioner:
   name: ansible
+  config_options:
+    defaults:
+      callback_whitelist: profile_roles,profile_tasks,timer
   playbooks:
     create: ../../../../resources/playbooks/docker/create.yml
     destroy: ../../../../resources/playbooks/docker/destroy.yml
