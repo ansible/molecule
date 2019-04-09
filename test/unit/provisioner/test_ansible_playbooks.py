@@ -119,8 +119,9 @@ def _provisioner_driver_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_provisioner_driver_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance',
+                         ['_provisioner_driver_section_data'],
+                         indirect=True)
 def test_get_ansible_playbook_with_driver_key(tmpdir, _instance):
     x = os.path.join(_instance._config.scenario.directory, 'docker-create.yml')
     util.write_file(x, '')

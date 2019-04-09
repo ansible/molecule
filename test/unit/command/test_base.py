@@ -137,9 +137,11 @@ def test_execute_cmdline_scenarios(config_instance, _patched_print_matrix,
     assert _patched_execute_scenario.call_count == 1
 
 
-def test_execute_cmdline_scenarios_destroy(
-        config_instance, _patched_execute_scenario, _patched_prune,
-        _patched_execute_subcommand, _patched_sysexit):
+def test_execute_cmdline_scenarios_destroy(config_instance,
+                                           _patched_execute_scenario,
+                                           _patched_prune,
+                                           _patched_execute_subcommand,
+                                           _patched_sysexit):
     # Ensure execute_cmdline_scenarios handles errors correctly when 'destroy'
     # is 'always':
     # - cleanup and destroy subcommands are run when execute_scenario

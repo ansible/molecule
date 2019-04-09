@@ -109,14 +109,14 @@ def _model_platforms_docker_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_platforms_docker_section_data'], indirect=True)
+@pytest.mark.parametrize('_config', ['_model_platforms_docker_section_data'],
+                         indirect=True)
 def test_platforms_docker(_config):
     assert {} == schema_v2.validate(_config)
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_platforms_docker_section_data'], indirect=True)
+@pytest.mark.parametrize('_config', ['_model_platforms_docker_section_data'],
+                         indirect=True)
 def test_platforms_unique_names(_config):
     instance_name = _config['platforms'][0]['name']
     _config['platforms'] += [{
@@ -137,8 +137,8 @@ def test_platforms_unique_names(_config):
     assert expected_validation_errors == schema_v2.validate(_config)
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_platforms_docker_section_data'], indirect=True)
+@pytest.mark.parametrize('_config', ['_model_platforms_docker_section_data'],
+                         indirect=True)
 def test_platforms_docker_exposed_ports_coerced(_config):
     _config['platforms'][0]['exposed_ports'] = [9904]
     assert {} == schema_v2.validate(_config)
@@ -204,8 +204,9 @@ def _model_platforms_docker_errors_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_platforms_docker_errors_section_data'], indirect=True)
+@pytest.mark.parametrize('_config',
+                         ['_model_platforms_docker_errors_section_data'],
+                         indirect=True)
 def test_platforms_docker_has_errors(_config):
     x = {
         'platforms': [{
@@ -310,8 +311,8 @@ def _model_platforms_vagrant_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_platforms_vagrant_section_data'], indirect=True)
+@pytest.mark.parametrize('_config', ['_model_platforms_vagrant_section_data'],
+                         indirect=True)
 def test_platforms_vagrant(_config):
     assert {} == schema_v2.validate(_config)
 
@@ -343,8 +344,9 @@ def _model_platforms_vagrant_errors_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_platforms_vagrant_errors_section_data'], indirect=True)
+@pytest.mark.parametrize('_config',
+                         ['_model_platforms_vagrant_errors_section_data'],
+                         indirect=True)
 def test_platforms_vagrant_has_errors(_config):
     x = {
         'platforms': [{
@@ -408,8 +410,8 @@ def _model_platforms_lxd_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_platforms_lxd_section_data'], indirect=True)
+@pytest.mark.parametrize('_config', ['_model_platforms_lxd_section_data'],
+                         indirect=True)
 def test_platforms_lxd(_config):
     assert {} == schema_v2.validate(_config)
 
@@ -444,8 +446,9 @@ def _model_platforms_lxd_errors_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_platforms_lxd_errors_section_data'], indirect=True)
+@pytest.mark.parametrize('_config',
+                         ['_model_platforms_lxd_errors_section_data'],
+                         indirect=True)
 def test_platforms_lxd_has_errors(_config):
     x = {
         'platforms': [{
@@ -498,8 +501,8 @@ def _model_platform_linode_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_platform_linode_section_data'], indirect=True)
+@pytest.mark.parametrize('_config', ['_model_platform_linode_section_data'],
+                         indirect=True)
 def test_platforms_linode(_config):
     assert {} == schema_v2.validate(_config)
 
@@ -519,8 +522,9 @@ def _model_platforms_linode_errors_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_platforms_linode_errors_section_data'], indirect=True)
+@pytest.mark.parametrize('_config',
+                         ['_model_platforms_linode_errors_section_data'],
+                         indirect=True)
 def test_platforms_linode_has_errors(_config):
     expected_config = {
         'platforms': [{
@@ -536,8 +540,8 @@ def test_platforms_linode_has_errors(_config):
     assert expected_config == schema_v2.validate(_config)
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_platform_linode_section_data'], indirect=True)
+@pytest.mark.parametrize('_config', ['_model_platform_linode_section_data'],
+                         indirect=True)
 @pytest.mark.parametrize('_required_field', (
     'distribution',
     'plan',

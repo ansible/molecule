@@ -28,9 +28,8 @@ from molecule import migrate
 
 @pytest.fixture
 def _instance():
-    molecule_file = os.path.join(
-        os.path.dirname(__file__), os.path.pardir, 'resources',
-        'molecule_v1_vagrant.yml')
+    molecule_file = os.path.join(os.path.dirname(__file__), os.path.pardir,
+                                 'resources', 'molecule_v1_vagrant.yml')
 
     return migrate.Migrate(molecule_file)
 

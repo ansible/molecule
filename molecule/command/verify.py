@@ -73,12 +73,11 @@ class Verify(base.Base):
 
 @click.command()
 @click.pass_context
-@click.option(
-    '--scenario-name',
-    '-s',
-    default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help='Name of the scenario to target. ({})'.format(
-        base.MOLECULE_DEFAULT_SCENARIO_NAME))
+@click.option('--scenario-name',
+              '-s',
+              default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
+              help='Name of the scenario to target. ({})'.format(
+                  base.MOLECULE_DEFAULT_SCENARIO_NAME))
 def verify(ctx, scenario_name):  # pragma: no cover
     """ Run automated tests against instances. """
     args = ctx.obj.get('args')

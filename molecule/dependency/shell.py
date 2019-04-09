@@ -98,8 +98,10 @@ class Shell(base.Base):
 
         self._sh_command = getattr(sh, command)
         # Reconstruct command with remaining args.
-        self._sh_command = self._sh_command.bake(
-            args, _env=self.env, _out=LOG.out, _err=LOG.error)
+        self._sh_command = self._sh_command.bake(args,
+                                                 _env=self.env,
+                                                 _out=LOG.out,
+                                                 _err=LOG.error)
 
     def execute(self):
         if not self.enabled:

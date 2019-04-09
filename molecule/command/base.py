@@ -89,8 +89,8 @@ def execute_cmdline_scenarios(scenario_name, args, command_args):
     :returns: None
 
     """
-    scenarios = molecule.scenarios.Scenarios(
-        get_configs(args, command_args), scenario_name)
+    scenarios = molecule.scenarios.Scenarios(get_configs(args, command_args),
+                                             scenario_name)
     scenarios.print_matrix()
     for scenario in scenarios:
         try:

@@ -118,46 +118,39 @@ def _default_scenario_exists(ctx, param, value):  # pragma: no cover
 
 @click.command()
 @click.pass_context
-@click.option(
-    '--dependency-name',
-    type=click.Choice(['galaxy']),
-    default='galaxy',
-    help='Name of dependency to initialize. (galaxy)')
-@click.option(
-    '--driver-name',
-    '-d',
-    type=click.Choice(config.molecule_drivers()),
-    default='docker',
-    help='Name of driver to initialize. (docker)')
-@click.option(
-    '--lint-name',
-    type=click.Choice(['yamllint']),
-    default='yamllint',
-    help='Name of lint to initialize. (ansible-lint)')
-@click.option(
-    '--provisioner-name',
-    type=click.Choice(['ansible']),
-    default='ansible',
-    help='Name of provisioner to initialize. (ansible)')
-@click.option(
-    '--role-name',
-    '-r',
-    required=False,
-    callback=_role_exists,
-    help='Name of the role to create.')
-@click.option(
-    '--scenario-name',
-    '-s',
-    default=command_base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    required=True,
-    callback=_default_scenario_exists,
-    help='Name of the scenario to create. ({})'.format(
-        command_base.MOLECULE_DEFAULT_SCENARIO_NAME))
-@click.option(
-    '--verifier-name',
-    type=click.Choice(config.molecule_verifiers()),
-    default='testinfra',
-    help='Name of verifier to initialize. (testinfra)')
+@click.option('--dependency-name',
+              type=click.Choice(['galaxy']),
+              default='galaxy',
+              help='Name of dependency to initialize. (galaxy)')
+@click.option('--driver-name',
+              '-d',
+              type=click.Choice(config.molecule_drivers()),
+              default='docker',
+              help='Name of driver to initialize. (docker)')
+@click.option('--lint-name',
+              type=click.Choice(['yamllint']),
+              default='yamllint',
+              help='Name of lint to initialize. (ansible-lint)')
+@click.option('--provisioner-name',
+              type=click.Choice(['ansible']),
+              default='ansible',
+              help='Name of provisioner to initialize. (ansible)')
+@click.option('--role-name',
+              '-r',
+              required=False,
+              callback=_role_exists,
+              help='Name of the role to create.')
+@click.option('--scenario-name',
+              '-s',
+              default=command_base.MOLECULE_DEFAULT_SCENARIO_NAME,
+              required=True,
+              callback=_default_scenario_exists,
+              help='Name of the scenario to create. ({})'.format(
+                  command_base.MOLECULE_DEFAULT_SCENARIO_NAME))
+@click.option('--verifier-name',
+              type=click.Choice(config.molecule_verifiers()),
+              default='testinfra',
+              help='Name of verifier to initialize. (testinfra)')
 def scenario(ctx, dependency_name, driver_name, lint_name, provisioner_name,
              role_name, scenario_name, verifier_name):  # pragma: no cover
     """ Initialize a new scenario for use with Molecule. """

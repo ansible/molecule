@@ -94,17 +94,15 @@ class Create(base.Base):
 
 @click.command()
 @click.pass_context
-@click.option(
-    '--scenario-name',
-    '-s',
-    default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help='Name of the scenario to target. ({})'.format(
-        base.MOLECULE_DEFAULT_SCENARIO_NAME))
-@click.option(
-    '--driver-name',
-    '-d',
-    type=click.Choice(config.molecule_drivers()),
-    help='Name of driver to use. (docker)')
+@click.option('--scenario-name',
+              '-s',
+              default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
+              help='Name of the scenario to target. ({})'.format(
+                  base.MOLECULE_DEFAULT_SCENARIO_NAME))
+@click.option('--driver-name',
+              '-d',
+              type=click.Choice(config.molecule_drivers()),
+              help='Name of driver to use. (docker)')
 def create(ctx, scenario_name, driver_name):  # pragma: no cover
     """ Use the provisioner to start the instances. """
     args = ctx.obj.get('args')

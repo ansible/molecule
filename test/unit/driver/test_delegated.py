@@ -71,8 +71,8 @@ def test_name_property(_instance):
     assert 'delegated' == _instance.name
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_driver_unmanaged_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_driver_unmanaged_section_data'],
+                         indirect=True)
 def test_options_property(_instance):
     x = {
         'ansible_connection_options': {
@@ -85,8 +85,8 @@ def test_options_property(_instance):
     assert x == _instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_driver_managed_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_driver_managed_section_data'],
+                         indirect=True)
 def test_options_property_when_managed(_instance):
     x = {
         'managed': True,
@@ -95,16 +95,16 @@ def test_options_property_when_managed(_instance):
     assert x == _instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_driver_unmanaged_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_driver_unmanaged_section_data'],
+                         indirect=True)
 def test_login_cmd_template_property(_instance):
     x = 'docker exec -ti {instance} bash'
 
     assert x == _instance.login_cmd_template
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_driver_managed_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_driver_managed_section_data'],
+                         indirect=True)
 def test_login_cmd_template_property_when_managed(_instance):
     x = ('ssh {address} -l {user} -p {port} -i {identity_file} '
          '-o UserKnownHostsFile=/dev/null '
@@ -132,14 +132,14 @@ def test_managed_property(_instance):
     assert _instance.managed
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_driver_unmanaged_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_driver_unmanaged_section_data'],
+                         indirect=True)
 def test_default_ssh_connection_options_property(_instance):
     assert [] == _instance.default_ssh_connection_options
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_driver_managed_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_driver_managed_section_data'],
+                         indirect=True)
 def test_default_ssh_connection_options_property_when_managed(_instance):
     x = [
         '-o UserKnownHostsFile=/dev/null',
@@ -152,14 +152,14 @@ def test_default_ssh_connection_options_property_when_managed(_instance):
     assert x == _instance.default_ssh_connection_options
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_driver_unmanaged_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_driver_unmanaged_section_data'],
+                         indirect=True)
 def test_login_options(_instance):
     assert {'instance': 'foo'} == _instance.login_options('foo')
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_driver_managed_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_driver_managed_section_data'],
+                         indirect=True)
 def test_login_options_when_managed(mocker, _instance):
     m = mocker.patch(
         'molecule.driver.delegated.Delegated._get_instance_config')
@@ -181,16 +181,16 @@ def test_login_options_when_managed(mocker, _instance):
     assert x == _instance.login_options('foo')
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_driver_unmanaged_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_driver_unmanaged_section_data'],
+                         indirect=True)
 def test_ansible_connection_options(_instance):
     x = {'ansible_connection': 'docker'}
 
     assert x == _instance.ansible_connection_options('foo')
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_driver_managed_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_driver_managed_section_data'],
+                         indirect=True)
 def test_ansible_connection_options_when_managed(mocker, _instance):
     ssh_case_data = mocker.patch(
         'molecule.driver.delegated.Delegated._get_instance_config')
@@ -265,8 +265,8 @@ def test_instance_config_property(_instance):
     assert x == _instance.instance_config
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_driver_unmanaged_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_driver_unmanaged_section_data'],
+                         indirect=True)
 def test_ssh_connection_options_property(_instance):
     assert [] == _instance.ssh_connection_options
 
@@ -306,8 +306,9 @@ def _driver_options_managed_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_driver_options_managed_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance',
+                         ['_driver_options_managed_section_data'],
+                         indirect=True)
 def test_created_unknown_when_managed_false(
         _driver_options_managed_section_data, _instance):
     assert 'unknown' == _instance._created()

@@ -46,9 +46,9 @@ def _patched_ansible_cleanup(mocker):
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-@pytest.mark.parametrize(
-    'config_instance', ['_command_provisioner_section_with_cleanup_data'],
-    indirect=True)
+@pytest.mark.parametrize('config_instance',
+                         ['_command_provisioner_section_with_cleanup_data'],
+                         indirect=True)
 def test_execute(mocker, _patched_ansible_cleanup, patched_logger_info,
                  patched_config_validate, config_instance):
     pb = os.path.join(config_instance.scenario.directory, 'cleanup.yml')
@@ -66,8 +66,9 @@ def test_execute(mocker, _patched_ansible_cleanup, patched_logger_info,
     _patched_ansible_cleanup.assert_called_once_with()
 
 
-def test_execute_skips_when_playbook_not_configured(
-        patched_logger_warn, _patched_ansible_cleanup, config_instance):
+def test_execute_skips_when_playbook_not_configured(patched_logger_warn,
+                                                    _patched_ansible_cleanup,
+                                                    config_instance):
 
     cu = cleanup.Cleanup(config_instance)
     cu.execute()

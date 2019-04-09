@@ -76,20 +76,18 @@ class Template(base.Base):
 
 @click.command()
 @click.pass_context
-@click.option(
-    '--url',
-    required=True,
-    help='URL to the Cookiecutter templates repository.')
+@click.option('--url',
+              required=True,
+              help='URL to the Cookiecutter templates repository.')
 @click.option(
     '--no-input/--input',
     default=False,
     help=('Do not prompt for parameters and only use cookiecutter.json for '
           'content. (false)'))
-@click.option(
-    '--role-name',
-    '-r',
-    default='role_name',
-    help='Name of the role to create.')
+@click.option('--role-name',
+              '-r',
+              default='role_name',
+              help='Name of the role to create.')
 def template(ctx, url, no_input, role_name):  # pragma: no cover
     """ Initialize a new role from a Cookiecutter URL. """
     command_args = {

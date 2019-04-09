@@ -47,8 +47,8 @@ def _model_scenario_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_scenario_section_data'], indirect=True)
+@pytest.mark.parametrize('_config', ['_model_scenario_section_data'],
+                         indirect=True)
 def test_scenario(_config):
     assert {} == schema_v2.validate(_config)
 
@@ -77,8 +77,8 @@ def _model_scenario_errors_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_scenario_errors_section_data'], indirect=True)
+@pytest.mark.parametrize('_config', ['_model_scenario_errors_section_data'],
+                         indirect=True)
 def test_scenario_has_errors(_config):
     x = {
         'scenario': [{

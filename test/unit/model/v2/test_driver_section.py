@@ -47,8 +47,8 @@ def _model_driver_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_driver_section_data'], indirect=True)
+@pytest.mark.parametrize('_config', ['_model_driver_section_data'],
+                         indirect=True)
 def test_driver(_config):
     assert {} == schema_v2.validate(_config)
 
@@ -75,8 +75,8 @@ def _model_driver_errors_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_driver_errors_section_data'], indirect=True)
+@pytest.mark.parametrize('_config', ['_model_driver_errors_section_data'],
+                         indirect=True)
 def test_driver_has_errors(_config):
     x = {
         'driver': [{
@@ -110,9 +110,9 @@ def _model_driver_provider_name_nullable_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_driver_provider_name_nullable_section_data'],
-    indirect=True)
+@pytest.mark.parametrize('_config',
+                         ['_model_driver_provider_name_nullable_section_data'],
+                         indirect=True)
 def test_driver_provider_name_nullable(_config):
     assert {} == schema_v2.validate(_config)
 
@@ -217,16 +217,15 @@ def _model_driver_provider_allows_libvirt_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', [
-        ('_model_driver_provider_allows_virtualbox_section_data'),
-        ('_model_driver_provider_allows_vmware_fusion_section_data'),
-        ('_model_driver_provider_allows_vmware_workstation_section_data'),
-        ('_model_driver_provider_allows_vmware_desktop_section_data'),
-        ('_model_driver_provider_allows_parallels_section_data'),
-        ('_model_driver_provider_allows_libvirt_section_data'),
-    ],
-    indirect=True)
+@pytest.mark.parametrize('_config', [
+    ('_model_driver_provider_allows_virtualbox_section_data'),
+    ('_model_driver_provider_allows_vmware_fusion_section_data'),
+    ('_model_driver_provider_allows_vmware_workstation_section_data'),
+    ('_model_driver_provider_allows_vmware_desktop_section_data'),
+    ('_model_driver_provider_allows_parallels_section_data'),
+    ('_model_driver_provider_allows_libvirt_section_data'),
+],
+                         indirect=True)
 def test_driver_provider_allows_name(_config):
     assert {} == schema_v2.validate(_config)
 
@@ -349,19 +348,18 @@ def _model_driver_allows_vagrant_section_data():
 
 
 ###
-@pytest.mark.parametrize(
-    '_config', [
-        ('_model_driver_allows_azure_section_data'),
-        ('_model_driver_allows_delegated_section_data'),
-        ('_model_driver_allows_digitalocean_section_data'),
-        ('_model_driver_allows_docker_section_data'),
-        ('_model_driver_allows_ec2_section_data'),
-        ('_model_driver_allows_gce_section_data'),
-        ('_model_driver_allows_lxc_section_data'),
-        ('_model_driver_allows_lxd_section_data'),
-        ('_model_driver_allows_openstack_section_data'),
-        ('_model_driver_allows_vagrant_section_data'),
-    ],
-    indirect=True)
+@pytest.mark.parametrize('_config', [
+    ('_model_driver_allows_azure_section_data'),
+    ('_model_driver_allows_delegated_section_data'),
+    ('_model_driver_allows_digitalocean_section_data'),
+    ('_model_driver_allows_docker_section_data'),
+    ('_model_driver_allows_ec2_section_data'),
+    ('_model_driver_allows_gce_section_data'),
+    ('_model_driver_allows_lxc_section_data'),
+    ('_model_driver_allows_lxd_section_data'),
+    ('_model_driver_allows_openstack_section_data'),
+    ('_model_driver_allows_vagrant_section_data'),
+],
+                         indirect=True)
 def test_driver_allows_name(_config):
     assert {} == schema_v2.validate(_config)

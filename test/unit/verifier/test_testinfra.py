@@ -127,8 +127,8 @@ def test_default_env_property(_instance):
     assert 'MOLECULE_INSTANCE_CONFIG' in _instance.default_env
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_verifier_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_verifier_section_data'],
+                         indirect=True)
 def test_additional_files_or_dirs_property(_instance):
     tests_directory = _instance._config.verifier.directory
     file1_file = os.path.join(tests_directory, 'file1.py')
@@ -159,8 +159,8 @@ def test_additional_files_or_dirs_property(_instance):
     assert sorted(x) == sorted(_instance.additional_files_or_dirs)
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_verifier_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_verifier_section_data'],
+                         indirect=True)
 def test_env_property(_instance):
     assert 'bar' == _instance.env['FOO']
     assert 'ANSIBLE_CONFIG' in _instance.env
@@ -197,15 +197,15 @@ def _verifier_testinfra_directory_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_verifier_testinfra_directory_section_data'],
-    indirect=True)
+@pytest.mark.parametrize('config_instance',
+                         ['_verifier_testinfra_directory_section_data'],
+                         indirect=True)
 def test_directory_property_overriden(_instance):
     assert '/tmp/foo/bar' == _instance.directory
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_verifier_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_verifier_section_data'],
+                         indirect=True)
 def test_options_property(inventory_file, _instance):
     x = {
         'connection': 'ansible',
@@ -219,8 +219,8 @@ def test_options_property(inventory_file, _instance):
     assert x == _instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_verifier_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_verifier_section_data'],
+                         indirect=True)
 def test_options_property_handles_cli_args(inventory_file, _instance):
     _instance._config.args = {'debug': True}
     x = {
@@ -236,8 +236,8 @@ def test_options_property_handles_cli_args(inventory_file, _instance):
     assert x == _instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_verifier_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_verifier_section_data'],
+                         indirect=True)
 def test_bake(_patched_testinfra_get_tests, inventory_file, _instance):
     tests_directory = _instance._config.verifier.directory
     file1_file = os.path.join(tests_directory, 'file1.py')
@@ -309,8 +309,9 @@ def test_execute_bakes(patched_run_command, _patched_testinfra_get_tests,
     assert 1 == patched_run_command.call_count
 
 
-def test_executes_catches_and_exits_return_code(
-        patched_run_command, _patched_testinfra_get_tests, _instance):
+def test_executes_catches_and_exits_return_code(patched_run_command,
+                                                _patched_testinfra_get_tests,
+                                                _instance):
     patched_run_command.side_effect = sh.ErrorReturnCode_1(
         sh.testinfra, b'', b'')
     with pytest.raises(SystemExit) as e:

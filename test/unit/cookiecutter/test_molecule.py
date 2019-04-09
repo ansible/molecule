@@ -116,8 +116,9 @@ def test_drivers(driver, temp_dir, _molecule_file, _role_directory,
     pytest.helpers.run_command(cmd)
 
 
-def test_verifier_lint_when_verifier_inspec(
-        temp_dir, _molecule_file, _role_directory, _command_args, _instance):
+def test_verifier_lint_when_verifier_inspec(temp_dir, _molecule_file,
+                                            _role_directory, _command_args,
+                                            _instance):
     _command_args['verifier_name'] = 'inspec'
     _command_args['verifier_lint_name'] = 'rubocop'
     _instance._process_templates('molecule', _command_args, _role_directory)
@@ -130,8 +131,9 @@ def test_verifier_lint_when_verifier_inspec(
     pytest.helpers.run_command(cmd)
 
 
-def test_verifier_lint_when_verifier_goss(
-        temp_dir, _molecule_file, _role_directory, _command_args, _instance):
+def test_verifier_lint_when_verifier_goss(temp_dir, _molecule_file,
+                                          _role_directory, _command_args,
+                                          _instance):
     _command_args['verifier_name'] = 'goss'
     _command_args['verifier_lint_name'] = 'yamllint'
     _instance._process_templates('molecule', _command_args, _role_directory)

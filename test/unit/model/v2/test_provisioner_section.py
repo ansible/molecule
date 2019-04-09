@@ -84,8 +84,8 @@ def _model_provisioner_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_provisioner_section_data'], indirect=True)
+@pytest.mark.parametrize('_config', ['_model_provisioner_section_data'],
+                         indirect=True)
 def test_provisioner(_config):
     assert {} == schema_v2.validate(_config)
 
@@ -131,8 +131,8 @@ def _model_provisioner_errors_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_provisioner_errors_section_data'], indirect=True)
+@pytest.mark.parametrize('_config', ['_model_provisioner_errors_section_data'],
+                         indirect=True)
 def test_provisioner_has_errors(_config):
     x = {
         'provisioner': [{
@@ -235,9 +235,9 @@ def _model_provisioner_env_disallowed_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_provisioner_env_disallowed_section_data'],
-    indirect=True)
+@pytest.mark.parametrize('_config',
+                         ['_model_provisioner_env_disallowed_section_data'],
+                         indirect=True)
 def test_provisioner_config_env_disallowed_field(_config):
     x = {
         'provisioner': [{
@@ -266,10 +266,9 @@ def _model_provisioner_allows_ansible_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', [
-        ('_model_provisioner_allows_ansible_section_data'),
-    ],
-    indirect=True)
+@pytest.mark.parametrize('_config', [
+    ('_model_provisioner_allows_ansible_section_data'),
+],
+                         indirect=True)
 def test_provisioner_allows_name(_config):
     assert {} == schema_v2.validate(_config)

@@ -99,12 +99,11 @@ class Yamllint(base.Base):
 
         :return: None
         """
-        self._yamllint_command = sh.yamllint.bake(
-            self.options,
-            self._tests,
-            _env=self.env,
-            _out=LOG.out,
-            _err=LOG.error)
+        self._yamllint_command = sh.yamllint.bake(self.options,
+                                                  self._tests,
+                                                  _env=self.env,
+                                                  _out=LOG.out,
+                                                  _err=LOG.error)
 
     def execute(self):
         if not self.enabled:

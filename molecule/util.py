@@ -162,8 +162,10 @@ def safe_dump(data):
     # TODO(retr0h): Do we need to encode?
     # yaml.dump(data) produces the document as a str object in both python
     # 2 and 3.
-    return yaml.dump(
-        data, Dumper=SafeDumper, default_flow_style=False, explicit_start=True)
+    return yaml.dump(data,
+                     Dumper=SafeDumper,
+                     default_flow_style=False,
+                     explicit_start=True)
 
 
 def safe_load(string):

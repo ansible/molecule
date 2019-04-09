@@ -146,8 +146,8 @@ class AnsibleLint(base.Base):
         LOG.info(msg)
 
         try:
-            util.run_command(
-                self._ansible_lint_command, debug=self._config.debug)
+            util.run_command(self._ansible_lint_command,
+                             debug=self._config.debug)
             msg = 'Lint completed successfully.'
             LOG.success(msg)
         except sh.ErrorReturnCode as e:

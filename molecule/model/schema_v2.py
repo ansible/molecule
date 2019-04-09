@@ -75,8 +75,8 @@ def pre_validate_base_schema(env, keep_string):
                     # NOTE(retr0h): Some users use an environment variable to
                     # change the driver name.  May add this coercion to rest of
                     # config using allowed validation.
-                    'coerce': (str,
-                               functools.partial(coerce_env, env, keep_string))
+                    'coerce':
+                    (str, functools.partial(coerce_env, env, keep_string))
                 },
             }
         },

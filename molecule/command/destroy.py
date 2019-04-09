@@ -98,22 +98,19 @@ class Destroy(base.Base):
 
 @click.command()
 @click.pass_context
-@click.option(
-    '--scenario-name',
-    '-s',
-    default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help='Name of the scenario to target. ({})'.format(
-        base.MOLECULE_DEFAULT_SCENARIO_NAME))
-@click.option(
-    '--driver-name',
-    '-d',
-    type=click.Choice(config.molecule_drivers()),
-    help='Name of driver to use. (docker)')
-@click.option(
-    '--all/--no-all',
-    '__all',
-    default=False,
-    help='Destroy all scenarios. Default is False.')
+@click.option('--scenario-name',
+              '-s',
+              default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
+              help='Name of the scenario to target. ({})'.format(
+                  base.MOLECULE_DEFAULT_SCENARIO_NAME))
+@click.option('--driver-name',
+              '-d',
+              type=click.Choice(config.molecule_drivers()),
+              help='Name of driver to use. (docker)')
+@click.option('--all/--no-all',
+              '__all',
+              default=False,
+              help='Destroy all scenarios. Default is False.')
 def destroy(ctx, scenario_name, driver_name, __all):  # pragma: no cover
     """ Use the provisioner to destroy the instances. """
     args = ctx.obj.get('args')

@@ -72,16 +72,16 @@ def test_options_property(_instance):
     assert x == _instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_driver_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_driver_section_data'],
+                         indirect=True)
 def test_login_cmd_template_property(_instance):
     x = 'ssh {address} -l {user} -p {port} -i {identity_file} -o foo=bar'
 
     assert x == _instance.login_cmd_template
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_driver_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_driver_section_data'],
+                         indirect=True)
 def test_safe_files_property(_instance):
     x = [
         os.path.join(_instance._config.scenario.ephemeral_directory,
@@ -161,8 +161,8 @@ def test_login_options(mocker, _instance):
     assert x == _instance.login_options('foo')
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_driver_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_driver_section_data'],
+                         indirect=True)
 def test_ansible_connection_options(mocker, _instance):
     m = mocker.patch('molecule.driver.vagrant.Vagrant._get_instance_config')
     m.return_value = {
@@ -221,8 +221,8 @@ def test_instance_config_property(_instance):
     assert x == _instance.instance_config
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_driver_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_driver_section_data'],
+                         indirect=True)
 def test_ssh_connection_options_property(_instance):
     x = ['-o foo=bar']
 

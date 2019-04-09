@@ -81,10 +81,9 @@ class Scenarios(object):
                                             for action in scenario.sequence])
                            for scenario in self.all]))
 
-        tf = tree_format.format_tree(
-            tree,
-            format_node=operator.itemgetter(0),
-            get_children=operator.itemgetter(1))
+        tf = tree_format.format_tree(tree,
+                                     format_node=operator.itemgetter(0),
+                                     get_children=operator.itemgetter(1))
 
         LOG.out(tf)
         LOG.out('')

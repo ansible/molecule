@@ -95,8 +95,8 @@ def test_enabled_property(_instance):
     assert _instance.enabled
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_lint_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_lint_section_data'],
+                         indirect=True)
 def test_options_property(_instance):
     x = {
         's': True,
@@ -106,8 +106,8 @@ def test_options_property(_instance):
     assert x == _instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_lint_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_lint_section_data'],
+                         indirect=True)
 def test_options_property_handles_cli_args(_instance):
     _instance._config.args = {'debug': True}
     x = {
@@ -120,8 +120,8 @@ def test_options_property_handles_cli_args(_instance):
     assert x == _instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_lint_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_lint_section_data'],
+                         indirect=True)
 def test_bake(_patched_get_files, _instance):
     _instance.bake()
     x = [
@@ -141,8 +141,8 @@ def test_execute(_patched_get_files, patched_logger_info,
     _instance._yamllint_command = 'patched-yamllint-command'
     _instance.execute()
 
-    patched_run_command.assert_called_once_with(
-        'patched-yamllint-command', debug=False)
+    patched_run_command.assert_called_once_with('patched-yamllint-command',
+                                                debug=False)
 
     msg = 'Executing Yamllint on files found in {}/...'.format(
         _instance._config.project_directory)
@@ -164,8 +164,8 @@ def test_execute_does_not_execute(_patched_get_files, patched_logger_warn,
     patched_logger_warn.assert_called_once_with(msg)
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_lint_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_lint_section_data'],
+                         indirect=True)
 def test_execute_bakes(_patched_get_files, patched_run_command, _instance):
     _instance.execute()
 

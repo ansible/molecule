@@ -40,8 +40,8 @@ def _model_lint_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_lint_section_data'], indirect=True)
+@pytest.mark.parametrize('_config', ['_model_lint_section_data'],
+                         indirect=True)
 def test_lint(_config):
     assert {} == schema_v2.validate(_config)
 
@@ -61,8 +61,8 @@ def _model_lint_errors_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_lint_errors_section_data'], indirect=True)
+@pytest.mark.parametrize('_config', ['_model_lint_errors_section_data'],
+                         indirect=True)
 def test_lint_has_errors(_config):
     x = {
         'lint': [{
@@ -88,9 +88,9 @@ def _model_lint_allows_yamllint_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', [
-        ('_model_lint_allows_yamllint_section_data'),
-    ], indirect=True)
+@pytest.mark.parametrize('_config', [
+    ('_model_lint_allows_yamllint_section_data'),
+],
+                         indirect=True)
 def test_lint_allows_name(_config):
     assert {} == schema_v2.validate(_config)

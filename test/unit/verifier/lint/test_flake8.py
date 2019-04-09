@@ -74,14 +74,14 @@ def test_default_env_property(_instance):
     assert 'MOLECULE_INSTANCE_CONFIG' in _instance.default_env
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_verifier_lint_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_verifier_lint_section_data'],
+                         indirect=True)
 def test_env_property(_instance):
     assert 'bar' == _instance.env['FOO']
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_verifier_lint_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_verifier_lint_section_data'],
+                         indirect=True)
 def test_name_property(_instance):
     assert 'flake8' == _instance.name
 
@@ -90,8 +90,8 @@ def test_enabled_property(_instance):
     assert _instance.enabled
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_verifier_lint_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_verifier_lint_section_data'],
+                         indirect=True)
 def test_options_property(_instance):
     x = {
         'foo': 'bar',
@@ -100,8 +100,8 @@ def test_options_property(_instance):
     assert x == _instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_verifier_lint_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_verifier_lint_section_data'],
+                         indirect=True)
 def test_options_property_handles_cli_args(_instance):
     _instance._config.args = {'debug': True}
     x = {
@@ -113,8 +113,8 @@ def test_options_property_handles_cli_args(_instance):
     assert x == _instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_verifier_lint_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_verifier_lint_section_data'],
+                         indirect=True)
 def test_bake(_instance):
     _instance._tests = ['test1', 'test2', 'test3']
     _instance.bake()
@@ -160,8 +160,8 @@ def test_does_not_execute_without_tests(patched_run_command,
     patched_logger_warn.assert_called_once_with(msg)
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_verifier_lint_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_verifier_lint_section_data'],
+                         indirect=True)
 def test_execute_bakes(patched_run_command, _instance):
     _instance._tests = ['test1', 'test2', 'test3']
     _instance.execute()

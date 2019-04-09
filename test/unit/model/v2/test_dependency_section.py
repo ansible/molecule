@@ -40,8 +40,8 @@ def _model_dependency_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize('_config', ['_model_dependency_section_data'],
+                         indirect=True)
 def test_dependency(_config):
     assert {} == schema_v2.validate(_config)
 
@@ -62,8 +62,8 @@ def _model_dependency_errors_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_dependency_errors_section_data'], indirect=True)
+@pytest.mark.parametrize('_config', ['_model_dependency_errors_section_data'],
+                         indirect=True)
 def test_dependency_has_errors(_config):
     x = {
         'dependency': [{
@@ -107,13 +107,12 @@ def _model_dependency_allows_shell_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', [
-        ('_model_dependency_allows_galaxy_section_data'),
-        ('_model_dependency_allows_gilt_section_data'),
-        ('_model_dependency_allows_shell_section_data'),
-    ],
-    indirect=True)
+@pytest.mark.parametrize('_config', [
+    ('_model_dependency_allows_galaxy_section_data'),
+    ('_model_dependency_allows_gilt_section_data'),
+    ('_model_dependency_allows_shell_section_data'),
+],
+                         indirect=True)
 def test_dependency_allows_shell_name(_config):
     assert {} == schema_v2.validate(_config)
 
@@ -128,8 +127,9 @@ def _model_dependency_shell_errors_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_dependency_shell_errors_section_data'], indirect=True)
+@pytest.mark.parametrize('_config',
+                         ['_model_dependency_shell_errors_section_data'],
+                         indirect=True)
 def test_dependency_shell_has_errors(_config):
     x = {'dependency': [{'command': ['null value not allowed']}]}
 

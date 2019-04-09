@@ -97,12 +97,11 @@ class Flake8(base.Base):
 
         :return: None
         """
-        self._flake8_command = sh.flake8.bake(
-            self.options,
-            self._tests,
-            _env=self.env,
-            _out=LOG.out,
-            _err=LOG.error)
+        self._flake8_command = sh.flake8.bake(self.options,
+                                              self._tests,
+                                              _env=self.env,
+                                              _out=LOG.out,
+                                              _err=LOG.error)
 
     def execute(self):
         if not self.enabled:

@@ -344,8 +344,8 @@ def test_title():
 
 
 def test_abs_path(temp_dir):
-    x = os.path.abspath(
-        os.path.join(os.getcwd(), os.path.pardir, 'foo', 'bar'))
+    x = os.path.abspath(os.path.join(os.getcwd(), os.path.pardir, 'foo',
+                                     'bar'))
 
     assert x == util.abs_path(os.path.join(os.path.pardir, 'foo', 'bar'))
 

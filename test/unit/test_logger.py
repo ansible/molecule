@@ -67,10 +67,9 @@ def test_error(capsys):
 
     _, stderr = capsys.readouterr()
 
-    print(
-        '{}{}{}'.format(colorama.Fore.RED, 'foo'.rstrip(),
-                        colorama.Style.RESET_ALL),
-        file=sys.stderr)
+    print('{}{}{}'.format(colorama.Fore.RED, 'foo'.rstrip(),
+                          colorama.Style.RESET_ALL),
+          file=sys.stderr)
     _, x = capsys.readouterr()
 
     assert x in stderr
@@ -82,10 +81,9 @@ def test_critical(capsys):
 
     _, stderr = capsys.readouterr()
 
-    print(
-        '{}ERROR: {}{}'.format(colorama.Fore.RED, 'foo'.rstrip(),
-                               colorama.Style.RESET_ALL),
-        file=sys.stderr)
+    print('{}ERROR: {}{}'.format(colorama.Fore.RED, 'foo'.rstrip(),
+                                 colorama.Style.RESET_ALL),
+          file=sys.stderr)
     _, x = capsys.readouterr()
 
     assert x in stderr

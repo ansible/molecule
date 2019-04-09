@@ -79,34 +79,31 @@ class Role(base.Base):
 
 @click.command()
 @click.pass_context
-@click.option(
-    '--dependency-name',
-    type=click.Choice(['galaxy']),
-    default='galaxy',
-    help='Name of dependency to initialize. (galaxy)')
-@click.option(
-    '--driver-name',
-    '-d',
-    type=click.Choice(config.molecule_drivers()),
-    default='docker',
-    help='Name of driver to initialize. (docker)')
-@click.option(
-    '--lint-name',
-    type=click.Choice(['yamllint']),
-    default='yamllint',
-    help='Name of lint to initialize. (yamllint)')
-@click.option(
-    '--provisioner-name',
-    type=click.Choice(['ansible']),
-    default='ansible',
-    help='Name of provisioner to initialize. (ansible)')
-@click.option(
-    '--role-name', '-r', required=True, help='Name of the role to create.')
-@click.option(
-    '--verifier-name',
-    type=click.Choice(config.molecule_verifiers()),
-    default='testinfra',
-    help='Name of verifier to initialize. (testinfra)')
+@click.option('--dependency-name',
+              type=click.Choice(['galaxy']),
+              default='galaxy',
+              help='Name of dependency to initialize. (galaxy)')
+@click.option('--driver-name',
+              '-d',
+              type=click.Choice(config.molecule_drivers()),
+              default='docker',
+              help='Name of driver to initialize. (docker)')
+@click.option('--lint-name',
+              type=click.Choice(['yamllint']),
+              default='yamllint',
+              help='Name of lint to initialize. (yamllint)')
+@click.option('--provisioner-name',
+              type=click.Choice(['ansible']),
+              default='ansible',
+              help='Name of provisioner to initialize. (ansible)')
+@click.option('--role-name',
+              '-r',
+              required=True,
+              help='Name of the role to create.')
+@click.option('--verifier-name',
+              type=click.Choice(config.molecule_verifiers()),
+              default='testinfra',
+              help='Name of verifier to initialize. (testinfra)')
 def role(ctx, dependency_name, driver_name, lint_name, provisioner_name,
          role_name, verifier_name):  # pragma: no cover
     """ Initialize a new role for use with Molecule. """

@@ -58,8 +58,9 @@ def test_execute(mocker, patched_logger_info, patched_ansible_converge,
     patched_logger_success.assert_called_once_with(msg)
 
 
-def test_execute_raises_when_not_converged(
-        patched_logger_critical, patched_ansible_converge, _instance):
+def test_execute_raises_when_not_converged(patched_logger_critical,
+                                           patched_ansible_converge,
+                                           _instance):
     _instance._config.state.change_state('converged', False)
     with pytest.raises(SystemExit) as e:
         _instance.execute()
@@ -70,9 +71,10 @@ def test_execute_raises_when_not_converged(
     patched_logger_critical.assert_called_once_with(msg)
 
 
-def test_execute_raises_when_fails_idempotence(
-        mocker, patched_logger_critical, patched_ansible_converge,
-        _patched_is_idempotent, _instance):
+def test_execute_raises_when_fails_idempotence(mocker, patched_logger_critical,
+                                               patched_ansible_converge,
+                                               _patched_is_idempotent,
+                                               _instance):
     _patched_is_idempotent.return_value = False
     with pytest.raises(SystemExit) as e:
         _instance.execute()

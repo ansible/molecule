@@ -49,12 +49,13 @@ def test_execute(mocker, patched_logger_info, command_patched_ansible_create,
     assert config_instance.state.created
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['command_driver_delegated_section_data'],
-    indirect=True)
-def test_execute_skips_when_delegated_driver(
-        _patched_create_setup, patched_logger_warn,
-        command_patched_ansible_create, config_instance):
+@pytest.mark.parametrize('config_instance',
+                         ['command_driver_delegated_section_data'],
+                         indirect=True)
+def test_execute_skips_when_delegated_driver(_patched_create_setup,
+                                             patched_logger_warn,
+                                             command_patched_ansible_create,
+                                             config_instance):
     c = create.Create(config_instance)
     c.execute()
 

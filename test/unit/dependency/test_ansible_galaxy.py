@@ -100,8 +100,8 @@ def test_enabled_property(_instance):
     assert _instance.enabled
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_dependency_section_data'],
+                         indirect=True)
 def test_options_property(_instance, role_file, roles_path):
     x = {
         'force': True,
@@ -114,8 +114,8 @@ def test_options_property(_instance, role_file, roles_path):
     assert x == _instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_dependency_section_data'],
+                         indirect=True)
 def test_options_property_handles_cli_args(role_file, roles_path, _instance):
     _instance._config.args = {'debug': True}
     x = {
@@ -129,14 +129,14 @@ def test_options_property_handles_cli_args(role_file, roles_path, _instance):
     assert x == _instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_dependency_section_data'],
+                         indirect=True)
 def test_env_property(_instance):
     assert 'bar' == _instance.env['FOO']
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_dependency_section_data'],
+                         indirect=True)
 def test_bake(_instance, role_file, roles_path):
     _instance.bake()
     x = [
@@ -164,8 +164,9 @@ def test_execute(patched_run_command,
     patched_logger_success.assert_called_once_with(msg)
 
 
-def test_execute_does_not_execute_when_disabled(
-        patched_run_command, patched_logger_warn, _instance):
+def test_execute_does_not_execute_when_disabled(patched_run_command,
+                                                patched_logger_warn,
+                                                _instance):
     _instance._config.config['dependency']['enabled'] = False
     _instance.execute()
 

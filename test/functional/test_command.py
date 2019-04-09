@@ -169,24 +169,23 @@ def test_command_create(scenario_to_test, with_scenario, scenario_name):
     pytest.helpers.run_command(cmd)
 
 
-@pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name', [
-        ('dependency', 'azure', 'ansible-galaxy'),
-        ('dependency', 'digitalocean', 'ansible-galaxy'),
-        ('dependency', 'docker', 'ansible-galaxy'),
-        ('dependency', 'ec2', 'ansible-galaxy'),
-        ('dependency', 'gce', 'ansible-galaxy'),
-        ('dependency', 'linode', 'ansible-galaxy'),
-        ('dependency', 'lxc', 'ansible-galaxy'),
-        ('dependency', 'lxd', 'ansible-galaxy'),
-        ('dependency', 'openstack', 'ansible-galaxy'),
-        ('dependency', 'vagrant', 'ansible-galaxy'),
-    ],
-    indirect=[
-        'scenario_to_test',
-        'driver_name',
-        'scenario_name',
-    ])
+@pytest.mark.parametrize('scenario_to_test, driver_name, scenario_name', [
+    ('dependency', 'azure', 'ansible-galaxy'),
+    ('dependency', 'digitalocean', 'ansible-galaxy'),
+    ('dependency', 'docker', 'ansible-galaxy'),
+    ('dependency', 'ec2', 'ansible-galaxy'),
+    ('dependency', 'gce', 'ansible-galaxy'),
+    ('dependency', 'linode', 'ansible-galaxy'),
+    ('dependency', 'lxc', 'ansible-galaxy'),
+    ('dependency', 'lxd', 'ansible-galaxy'),
+    ('dependency', 'openstack', 'ansible-galaxy'),
+    ('dependency', 'vagrant', 'ansible-galaxy'),
+],
+                         indirect=[
+                             'scenario_to_test',
+                             'driver_name',
+                             'scenario_name',
+                         ])
 def test_command_dependency_ansible_galaxy(request, scenario_to_test,
                                            with_scenario, scenario_name):
     # FIXME(decentral1se): skipped due to failures on network access
@@ -203,24 +202,23 @@ def test_command_dependency_ansible_galaxy(request, scenario_to_test,
     assert os.path.isdir(dependency_role)
 
 
-@pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name', [
-        ('dependency', 'azure', 'gilt'),
-        ('dependency', 'digitalocean', 'gilt'),
-        ('dependency', 'docker', 'gilt'),
-        ('dependency', 'ec2', 'gilt'),
-        ('dependency', 'gce', 'gilt'),
-        ('dependency', 'linode', 'gilt'),
-        ('dependency', 'lxc', 'gilt'),
-        ('dependency', 'lxd', 'gilt'),
-        ('dependency', 'openstack', 'gilt'),
-        ('dependency', 'vagrant', 'gilt'),
-    ],
-    indirect=[
-        'scenario_to_test',
-        'driver_name',
-        'scenario_name',
-    ])
+@pytest.mark.parametrize('scenario_to_test, driver_name, scenario_name', [
+    ('dependency', 'azure', 'gilt'),
+    ('dependency', 'digitalocean', 'gilt'),
+    ('dependency', 'docker', 'gilt'),
+    ('dependency', 'ec2', 'gilt'),
+    ('dependency', 'gce', 'gilt'),
+    ('dependency', 'linode', 'gilt'),
+    ('dependency', 'lxc', 'gilt'),
+    ('dependency', 'lxd', 'gilt'),
+    ('dependency', 'openstack', 'gilt'),
+    ('dependency', 'vagrant', 'gilt'),
+],
+                         indirect=[
+                             'scenario_to_test',
+                             'driver_name',
+                             'scenario_name',
+                         ])
 def test_command_dependency_gilt(request, scenario_to_test, with_scenario,
                                  scenario_name):
     # FIXME(decentral1se): skipped due to failures on network access
@@ -236,24 +234,23 @@ def test_command_dependency_gilt(request, scenario_to_test, with_scenario,
     assert os.path.isdir(dependency_role)
 
 
-@pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name', [
-        ('dependency', 'azure', 'shell'),
-        ('dependency', 'digitalocean', 'shell'),
-        ('dependency', 'docker', 'shell'),
-        ('dependency', 'ec2', 'shell'),
-        ('dependency', 'gce', 'shell'),
-        ('dependency', 'linode', 'shell'),
-        ('dependency', 'lxc', 'shell'),
-        ('dependency', 'lxd', 'shell'),
-        ('dependency', 'openstack', 'shell'),
-        ('dependency', 'vagrant', 'shell'),
-    ],
-    indirect=[
-        'scenario_to_test',
-        'driver_name',
-        'scenario_name',
-    ])
+@pytest.mark.parametrize('scenario_to_test, driver_name, scenario_name', [
+    ('dependency', 'azure', 'shell'),
+    ('dependency', 'digitalocean', 'shell'),
+    ('dependency', 'docker', 'shell'),
+    ('dependency', 'ec2', 'shell'),
+    ('dependency', 'gce', 'shell'),
+    ('dependency', 'linode', 'shell'),
+    ('dependency', 'lxc', 'shell'),
+    ('dependency', 'lxd', 'shell'),
+    ('dependency', 'openstack', 'shell'),
+    ('dependency', 'vagrant', 'shell'),
+],
+                         indirect=[
+                             'scenario_to_test',
+                             'driver_name',
+                             'scenario_name',
+                         ])
 def test_command_dependency_shell(request, scenario_to_test, with_scenario,
                                   scenario_name):
     # FIXME(decentral1se): skipped due to failures on network access
@@ -329,42 +326,40 @@ def test_command_idempotence(scenario_to_test, with_scenario, scenario_name):
     pytest.helpers.idempotence(scenario_name)
 
 
-@pytest.mark.parametrize(
-    'driver_name', [
-        ('azure'),
-        ('digitalocean'),
-        ('docker'),
-        ('ec2'),
-        ('gce'),
-        ('linode'),
-        ('lxc'),
-        ('lxd'),
-        ('openstack'),
-        ('vagrant'),
-    ],
-    indirect=[
-        'driver_name',
-    ])
+@pytest.mark.parametrize('driver_name', [
+    ('azure'),
+    ('digitalocean'),
+    ('docker'),
+    ('ec2'),
+    ('gce'),
+    ('linode'),
+    ('lxc'),
+    ('lxd'),
+    ('openstack'),
+    ('vagrant'),
+],
+                         indirect=[
+                             'driver_name',
+                         ])
 def test_command_init_role(temp_dir, driver_name, skip_test):
     pytest.helpers.init_role(temp_dir, driver_name)
 
 
-@pytest.mark.parametrize(
-    'driver_name', [
-        ('azure'),
-        ('digitalocean'),
-        ('docker'),
-        ('ec2'),
-        ('gce'),
-        ('linode'),
-        ('lxc'),
-        ('lxd'),
-        ('openstack'),
-        ('vagrant'),
-    ],
-    indirect=[
-        'driver_name',
-    ])
+@pytest.mark.parametrize('driver_name', [
+    ('azure'),
+    ('digitalocean'),
+    ('docker'),
+    ('ec2'),
+    ('gce'),
+    ('linode'),
+    ('lxc'),
+    ('lxd'),
+    ('openstack'),
+    ('vagrant'),
+],
+                         indirect=[
+                             'driver_name',
+                         ])
 def test_command_init_scenario(temp_dir, driver_name, skip_test):
     pytest.helpers.init_scenario(temp_dir, driver_name)
 
@@ -492,70 +487,69 @@ def test_command_list(scenario_to_test, with_scenario, expected):
     pytest.helpers.list(expected)
 
 
-@pytest.mark.parametrize(
-    'scenario_to_test, driver_name, expected', [
-        ('driver/azure', 'azure', """
+@pytest.mark.parametrize('scenario_to_test, driver_name, expected', [
+    ('driver/azure', 'azure', """
 instance    azure  ansible  default     false  false
 instance-1  azure  ansible  multi-node  false  false
 instance-2  azure  ansible  multi-node  false  false
 """.strip()),
-        ('driver/digitalocean', 'digitalocean', """
+    ('driver/digitalocean', 'digitalocean', """
 instance    digitalocean  ansible  default     false  false
 instance-1  digitalocean  ansible  multi-node  false  false
 instance-2  digitalocean  ansible  multi-node  false  false
 """.strip()),
-        ('driver/docker', 'docker', """
+    ('driver/docker', 'docker', """
 instance    docker  ansible  default     false  false
 instance-1  docker  ansible  multi-node  false  false
 instance-2  docker  ansible  multi-node  false  false
 """.strip()),
-        ('driver/ec2', 'ec2', """
+    ('driver/ec2', 'ec2', """
 instance    ec2  ansible  default     false  false
 instance-1  ec2  ansible  multi-node  false  false
 instance-2  ec2  ansible  multi-node  false  false
 """.strip()),
-        ('driver/gce', 'gce', """
+    ('driver/gce', 'gce', """
 instance    gce  ansible  default     false  false
 instance-1  gce  ansible  multi-node  false  false
 instance-2  gce  ansible  multi-node  false  false
 """.strip()),
-        ('driver/linode', 'linode', """
+    ('driver/linode', 'linode', """
 instance    linode  ansible  default     false  false
 instance-1  linode  ansible  multi-node  false  false
 instance-2  linode  ansible  multi-node  false  false
 """.strip()),
-        ('driver/lxc', 'lxc', """
+    ('driver/lxc', 'lxc', """
 instance    lxc  ansible  default     false  false
 instance-1  lxc  ansible  multi-node  false  false
 instance-2  lxc  ansible  multi-node  false  false
 """.strip()),
-        ('driver/lxd', 'lxd', """
+    ('driver/lxd', 'lxd', """
 instance    lxd  ansible  default     false  false
 instance-1  lxd  ansible  multi-node  false  false
 instance-2  lxd  ansible  multi-node  false  false
 """.strip()),
-        ('driver/openstack', 'openstack', """
+    ('driver/openstack', 'openstack', """
 instance    openstack  ansible  default     false  false
 instance-1  openstack  ansible  multi-node  false  false
 instance-2  openstack  ansible  multi-node  false  false
 """.strip()),
-        ('driver/delegated', 'delegated', """
+    ('driver/delegated', 'delegated', """
 delegated-instance-docker     delegated  ansible  docker     unknown  true
 delegated-instance-ec2        delegated  ansible  ec2        unknown  true
 delegated-instance-gce        delegated  ansible  gce        unknown  true
 delegated-instance-openstack  delegated  ansible  openstack  unknown  true
 delegated-instance-vagrant    delegated  ansible  vagrant    unknown  false
 """.strip()),
-        ('driver/vagrant', 'vagrant', """
+    ('driver/vagrant', 'vagrant', """
 instance    vagrant  ansible  default     false  false
 instance-1  vagrant  ansible  multi-node  false  false
 instance-2  vagrant  ansible  multi-node  false  false
 """.strip()),
-    ],
-    indirect=[
-        'scenario_to_test',
-        'driver_name',
-    ])
+],
+                         indirect=[
+                             'scenario_to_test',
+                             'driver_name',
+                         ])
 def test_command_list_with_format_plain(scenario_to_test, with_scenario,
                                         expected):
     pytest.helpers.list_with_format_plain(expected)

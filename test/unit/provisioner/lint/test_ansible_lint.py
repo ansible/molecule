@@ -82,8 +82,8 @@ def test_enabled_property(_instance):
     assert _instance.enabled
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_provisioner_lint_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_provisioner_lint_section_data'],
+                         indirect=True)
 def test_options_property(_instance):
     x = {
         'default_exclude': [_instance._config.scenario.ephemeral_directory],
@@ -102,8 +102,8 @@ def test_options_property(_instance):
     assert x == _instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_provisioner_lint_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_provisioner_lint_section_data'],
+                         indirect=True)
 def test_options_property_handles_cli_args(_instance):
     _instance._config.args = {'debug': True}
     x = {
@@ -130,8 +130,8 @@ def test_default_env_property(_instance):
     assert 'MOLECULE_INSTANCE_CONFIG' in _instance.default_env
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_provisioner_lint_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_provisioner_lint_section_data'],
+                         indirect=True)
 def test_env_property(_instance):
     assert 'bar' == _instance.env['FOO']
     assert 'ANSIBLE_CONFIG' in _instance.env
@@ -140,8 +140,8 @@ def test_env_property(_instance):
     assert 'ANSIBLE_FILTER_PLUGINS' in _instance.env
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_provisioner_lint_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_provisioner_lint_section_data'],
+                         indirect=True)
 def test_bake(_instance):
     _instance.bake()
     x = [
@@ -167,8 +167,8 @@ def test_execute(mocker, patched_run_command, patched_logger_info,
     _instance._ansible_lint_command = 'patched-ansiblelint-command'
     _instance.execute()
 
-    patched_run_command.assert_called_once_with(
-        'patched-ansiblelint-command', debug=False)
+    patched_run_command.assert_called_once_with('patched-ansiblelint-command',
+                                                debug=False)
 
     msg = 'Executing Ansible Lint on {}...'.format(
         _instance._config.provisioner.playbooks.converge)

@@ -86,18 +86,16 @@ def _allowed(ctx, param, value):  # pragma: no cover
 
 
 @click.group()
-@click.option(
-    '--debug/--no-debug',
-    default=MOLECULE_DEBUG,
-    callback=_allowed,
-    help='Enable or disable debug mode. Default is disabled.')
-@click.option(
-    '--base-config',
-    '-c',
-    default=LOCAL_CONFIG,
-    help=('Path to a base config.  If provided Molecule will load '
-          "this config first, and deep merge each scenario's "
-          'molecule.yml on top. ({})').format(LOCAL_CONFIG))
+@click.option('--debug/--no-debug',
+              default=MOLECULE_DEBUG,
+              callback=_allowed,
+              help='Enable or disable debug mode. Default is disabled.')
+@click.option('--base-config',
+              '-c',
+              default=LOCAL_CONFIG,
+              help=('Path to a base config.  If provided Molecule will load '
+                    "this config first, and deep merge each scenario's "
+                    'molecule.yml on top. ({})').format(LOCAL_CONFIG))
 @click.option(
     '--env-file',
     '-e',

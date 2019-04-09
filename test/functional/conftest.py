@@ -48,9 +48,9 @@ def _env_vars_exposed(env_vars, env=os.environ):
 @pytest.fixture
 def with_scenario(request, scenario_to_test, driver_name, scenario_name,
                   skip_test):
-    scenario_directory = os.path.join(
-        os.path.dirname(util.abs_path(__file__)), os.path.pardir, 'scenarios',
-        scenario_to_test)
+    scenario_directory = os.path.join(os.path.dirname(util.abs_path(__file__)),
+                                      os.path.pardir, 'scenarios',
+                                      scenario_to_test)
 
     with change_dir_to(scenario_directory):
         yield
@@ -171,8 +171,8 @@ def metadata_lint_update(role_directory):
     # users should receive feedback to change these defaults. However, this
     # blocks the testing of 'molecule init' itself, so ansible-lint should
     # be configured to ignore these metadata lint errors.
-    ansible_lint_src = os.path.join(
-        os.path.dirname(util.abs_path(__file__)), '.ansible-lint')
+    ansible_lint_src = os.path.join(os.path.dirname(util.abs_path(__file__)),
+                                    '.ansible-lint')
     shutil.copy(ansible_lint_src, role_directory)
 
     # Explicitly lint here to catch any unexpected lint errors before

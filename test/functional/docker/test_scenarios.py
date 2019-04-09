@@ -54,15 +54,14 @@ def driver_name(request):
 
 
 @skip_unsupported_matrix
-@pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name', [
-        ('side_effect', 'docker', 'default'),
-    ],
-    indirect=[
-        'scenario_to_test',
-        'driver_name',
-        'scenario_name',
-    ])
+@pytest.mark.parametrize('scenario_to_test, driver_name, scenario_name', [
+    ('side_effect', 'docker', 'default'),
+],
+                         indirect=[
+                             'scenario_to_test',
+                             'driver_name',
+                             'scenario_name',
+                         ])
 def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
     options = {
         'driver_name': 'docker',
@@ -73,15 +72,14 @@ def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
 
 
 @skip_unsupported_matrix
-@pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name', [
-        ('cleanup', 'docker', 'default'),
-    ],
-    indirect=[
-        'scenario_to_test',
-        'driver_name',
-        'scenario_name',
-    ])
+@pytest.mark.parametrize('scenario_to_test, driver_name, scenario_name', [
+    ('cleanup', 'docker', 'default'),
+],
+                         indirect=[
+                             'scenario_to_test',
+                             'driver_name',
+                             'scenario_name',
+                         ])
 def test_command_cleanup(scenario_to_test, with_scenario, scenario_name):
     options = {
         'driver_name': 'docker',
@@ -265,15 +263,14 @@ def test_command_init_role_with_template(temp_dir):
 
 
 @skip_unsupported_matrix
-@pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name', [
-        ('overrride_driver', 'docker', 'default'),
-    ],
-    indirect=[
-        'scenario_to_test',
-        'driver_name',
-        'scenario_name',
-    ])
+@pytest.mark.parametrize('scenario_to_test, driver_name, scenario_name', [
+    ('overrride_driver', 'docker', 'default'),
+],
+                         indirect=[
+                             'scenario_to_test',
+                             'driver_name',
+                             'scenario_name',
+                         ])
 def test_command_test_overrides_driver(scenario_to_test, with_scenario,
                                        driver_name, scenario_name):
     options = {
@@ -285,17 +282,17 @@ def test_command_test_overrides_driver(scenario_to_test, with_scenario,
 
 
 @skip_unsupported_matrix
-@pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name', [
-        ('driver/docker', 'docker', 'default'),
-    ],
-    indirect=[
-        'scenario_to_test',
-        'driver_name',
-        'scenario_name',
-    ])
-def test_command_test_builds_local_molecule_image(
-        scenario_to_test, with_scenario, scenario_name, driver_name):
+@pytest.mark.parametrize('scenario_to_test, driver_name, scenario_name', [
+    ('driver/docker', 'docker', 'default'),
+],
+                         indirect=[
+                             'scenario_to_test',
+                             'driver_name',
+                             'scenario_name',
+                         ])
+def test_command_test_builds_local_molecule_image(scenario_to_test,
+                                                  with_scenario, scenario_name,
+                                                  driver_name):
     try:
         cmd = sh.docker.bake('rmi', 'molecule_local/centos:latest', '--force')
         pytest.helpers.run_command(cmd)
@@ -306,15 +303,14 @@ def test_command_test_builds_local_molecule_image(
 
 
 @skip_unsupported_matrix
-@pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name', [
-        ('test_destroy_strategy', 'docker', 'default'),
-    ],
-    indirect=[
-        'scenario_to_test',
-        'driver_name',
-        'scenario_name',
-    ])
+@pytest.mark.parametrize('scenario_to_test, driver_name, scenario_name', [
+    ('test_destroy_strategy', 'docker', 'default'),
+],
+                         indirect=[
+                             'scenario_to_test',
+                             'driver_name',
+                             'scenario_name',
+                         ])
 def test_command_test_destroy_strategy_always(scenario_to_test, with_scenario,
                                               scenario_name, driver_name):
     options = {
@@ -334,15 +330,14 @@ def test_command_test_destroy_strategy_always(scenario_to_test, with_scenario,
 
 
 @skip_unsupported_matrix
-@pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name', [
-        ('test_destroy_strategy', 'docker', 'default'),
-    ],
-    indirect=[
-        'scenario_to_test',
-        'driver_name',
-        'scenario_name',
-    ])
+@pytest.mark.parametrize('scenario_to_test, driver_name, scenario_name', [
+    ('test_destroy_strategy', 'docker', 'default'),
+],
+                         indirect=[
+                             'scenario_to_test',
+                             'driver_name',
+                             'scenario_name',
+                         ])
 def test_command_test_destroy_strategy_never(scenario_to_test, with_scenario,
                                              scenario_name, driver_name):
     options = {
@@ -360,15 +355,14 @@ def test_command_test_destroy_strategy_never(scenario_to_test, with_scenario,
 
 
 @skip_unsupported_matrix
-@pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name', [
-        ('host_group_vars', 'docker', 'default'),
-    ],
-    indirect=[
-        'scenario_to_test',
-        'driver_name',
-        'scenario_name',
-    ])
+@pytest.mark.parametrize('scenario_to_test, driver_name, scenario_name', [
+    ('host_group_vars', 'docker', 'default'),
+],
+                         indirect=[
+                             'scenario_to_test',
+                             'driver_name',
+                             'scenario_name',
+                         ])
 def test_host_group_vars(scenario_to_test, with_scenario, scenario_name):
     options = {
         'all': True,
@@ -383,15 +377,14 @@ def test_host_group_vars(scenario_to_test, with_scenario, scenario_name):
 
 
 @skip_unsupported_matrix
-@pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name', [
-        ('idempotence', 'docker', 'raises'),
-    ],
-    indirect=[
-        'scenario_to_test',
-        'driver_name',
-        'scenario_name',
-    ])
+@pytest.mark.parametrize('scenario_to_test, driver_name, scenario_name', [
+    ('idempotence', 'docker', 'raises'),
+],
+                         indirect=[
+                             'scenario_to_test',
+                             'driver_name',
+                             'scenario_name',
+                         ])
 def test_idempotence_raises(scenario_to_test, with_scenario, scenario_name):
     options = {
         'scenario_name': scenario_name,
@@ -406,15 +399,14 @@ def test_idempotence_raises(scenario_to_test, with_scenario, scenario_name):
 
 
 @skip_unsupported_matrix
-@pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name', [
-        ('interpolation', 'docker', 'default'),
-    ],
-    indirect=[
-        'scenario_to_test',
-        'driver_name',
-        'scenario_name',
-    ])
+@pytest.mark.parametrize('scenario_to_test, driver_name, scenario_name', [
+    ('interpolation', 'docker', 'default'),
+],
+                         indirect=[
+                             'scenario_to_test',
+                             'driver_name',
+                             'scenario_name',
+                         ])
 def test_interpolation(scenario_to_test, with_scenario, scenario_name):
     # Modify global environment so cleanup inherits our environment.
     options = {
@@ -431,15 +423,14 @@ def test_interpolation(scenario_to_test, with_scenario, scenario_name):
 
 
 @skip_unsupported_matrix
-@pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name', [
-        ('verifier', 'docker', 'testinfra'),
-    ],
-    indirect=[
-        'scenario_to_test',
-        'driver_name',
-        'scenario_name',
-    ])
+@pytest.mark.parametrize('scenario_to_test, driver_name, scenario_name', [
+    ('verifier', 'docker', 'testinfra'),
+],
+                         indirect=[
+                             'scenario_to_test',
+                             'driver_name',
+                             'scenario_name',
+                         ])
 def test_command_verify_testinfra(scenario_to_test, with_scenario,
                                   scenario_name):
     options = {
@@ -462,15 +453,14 @@ def test_command_verify_testinfra(scenario_to_test, with_scenario,
 
 
 @skip_unsupported_matrix
-@pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name', [
-        ('verifier', 'docker', 'goss'),
-    ],
-    indirect=[
-        'scenario_to_test',
-        'driver_name',
-        'scenario_name',
-    ])
+@pytest.mark.parametrize('scenario_to_test, driver_name, scenario_name', [
+    ('verifier', 'docker', 'goss'),
+],
+                         indirect=[
+                             'scenario_to_test',
+                             'driver_name',
+                             'scenario_name',
+                         ])
 def test_command_verify_goss(scenario_to_test, with_scenario, scenario_name):
     options = {
         'scenario_name': scenario_name,
@@ -492,15 +482,14 @@ def test_command_verify_goss(scenario_to_test, with_scenario, scenario_name):
 
 
 @skip_unsupported_matrix
-@pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name', [
-        ('verifier', 'docker', 'inspec'),
-    ],
-    indirect=[
-        'scenario_to_test',
-        'driver_name',
-        'scenario_name',
-    ])
+@pytest.mark.parametrize('scenario_to_test, driver_name, scenario_name', [
+    ('verifier', 'docker', 'inspec'),
+],
+                         indirect=[
+                             'scenario_to_test',
+                             'driver_name',
+                             'scenario_name',
+                         ])
 def test_command_verify_inspec(scenario_to_test, with_scenario, scenario_name):
     options = {
         'scenario_name': scenario_name,
@@ -522,15 +511,14 @@ def test_command_verify_inspec(scenario_to_test, with_scenario, scenario_name):
 
 
 @skip_unsupported_matrix
-@pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name', [
-        ('plugins', 'docker', 'default'),
-    ],
-    indirect=[
-        'scenario_to_test',
-        'driver_name',
-        'scenario_name',
-    ])
+@pytest.mark.parametrize('scenario_to_test, driver_name, scenario_name', [
+    ('plugins', 'docker', 'default'),
+],
+                         indirect=[
+                             'scenario_to_test',
+                             'driver_name',
+                             'scenario_name',
+                         ])
 def test_plugins(scenario_to_test, with_scenario, scenario_name):
     options = {
         'scenario_name': scenario_name,

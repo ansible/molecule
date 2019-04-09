@@ -113,8 +113,9 @@ def _config_dependency_gilt_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_config_dependency_gilt_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance',
+                         ['_config_dependency_gilt_section_data'],
+                         indirect=True)
 def test_dependency_property_is_gilt(config_instance):
     assert isinstance(config_instance.dependency, gilt.Gilt)
 
@@ -129,9 +130,9 @@ def _config_dependency_shell_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_config_dependency_shell_section_data'],
-    indirect=True)
+@pytest.mark.parametrize('config_instance',
+                         ['_config_dependency_shell_section_data'],
+                         indirect=True)
 def test_dependency_property_is_shell(config_instance):
     assert isinstance(config_instance.dependency, shell.Shell)
 
@@ -149,8 +150,9 @@ def _config_driver_azure_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_config_driver_azure_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance',
+                         ['_config_driver_azure_section_data'],
+                         indirect=True)
 def test_driver_property_is_azure(config_instance):
     assert isinstance(config_instance.driver, azure.Azure)
 
@@ -167,9 +169,9 @@ def _config_driver_delegated_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_config_driver_delegated_section_data'],
-    indirect=True)
+@pytest.mark.parametrize('config_instance',
+                         ['_config_driver_delegated_section_data'],
+                         indirect=True)
 def test_driver_property_is_delegated(config_instance):
     assert isinstance(config_instance.driver, delegated.Delegated)
 
@@ -183,9 +185,9 @@ def _config_driver_digitalocean_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_config_driver_digitalocean_section_data'],
-    indirect=True)
+@pytest.mark.parametrize('config_instance',
+                         ['_config_driver_digitalocean_section_data'],
+                         indirect=True)
 def test_driver_property_is_digitalocean(config_instance):
     assert isinstance(config_instance.driver, digitalocean.DigitalOcean)
 
@@ -199,8 +201,9 @@ def _config_driver_ec2_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_config_driver_ec2_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance',
+                         ['_config_driver_ec2_section_data'],
+                         indirect=True)
 def test_driver_property_is_ec2(config_instance):
     assert isinstance(config_instance.driver, ec2.EC2)
 
@@ -214,8 +217,9 @@ def _config_driver_gce_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_config_driver_gce_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance',
+                         ['_config_driver_gce_section_data'],
+                         indirect=True)
 def test_driver_property_is_gce(config_instance):
     assert isinstance(config_instance.driver, gce.GCE)
 
@@ -229,8 +233,9 @@ def _config_driver_lxc_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_config_driver_lxc_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance',
+                         ['_config_driver_lxc_section_data'],
+                         indirect=True)
 def test_driver_property_is_lxc(config_instance):
     assert isinstance(config_instance.driver, lxc.LXC)
 
@@ -244,8 +249,9 @@ def _config_driver_lxd_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_config_driver_lxd_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance',
+                         ['_config_driver_lxd_section_data'],
+                         indirect=True)
 def test_driver_property_is_lxd(config_instance):
     assert isinstance(config_instance.driver, lxd.LXD)
 
@@ -259,9 +265,9 @@ def _config_driver_openstack_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_config_driver_openstack_section_data'],
-    indirect=True)
+@pytest.mark.parametrize('config_instance',
+                         ['_config_driver_openstack_section_data'],
+                         indirect=True)
 def test_driver_property_is_openstack(config_instance):
     assert isinstance(config_instance.driver, openstack.Openstack)
 
@@ -278,8 +284,9 @@ def _config_driver_vagrant_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_config_driver_vagrant_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance',
+                         ['_config_driver_vagrant_section_data'],
+                         indirect=True)
 def test_driver_property_is_vagrant(config_instance):
     assert isinstance(config_instance.driver, vagrant.Vagrant)
 
@@ -307,8 +314,8 @@ def test_env(config_instance):
     x = {
         'MOLECULE_DEBUG': 'False',
         'MOLECULE_FILE': config_instance.molecule_file,
-        'MOLECULE_ENV_FILE': util.abs_path(
-            config_instance.args.get('env_file')),
+        'MOLECULE_ENV_FILE':
+        util.abs_path(config_instance.args.get('env_file')),
         'MOLECULE_INVENTORY_FILE': config_instance.provisioner.inventory_file,
         'MOLECULE_EPHEMERAL_DIRECTORY':
         config_instance.scenario.ephemeral_directory,
@@ -365,8 +372,9 @@ def _config_verifier_inspec_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_config_verifier_inspec_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance',
+                         ['_config_verifier_inspec_section_data'],
+                         indirect=True)
 def test_verifier_property_is_inspec(config_instance):
     assert isinstance(config_instance.verifier, inspec.Inspec)
 
@@ -383,8 +391,9 @@ def _config_verifier_goss_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_config_verifier_goss_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance',
+                         ['_config_verifier_goss_section_data'],
+                         indirect=True)
 def test_verifier_property_is_goss(config_instance):
     assert isinstance(config_instance.verifier, goss.Goss)
 
@@ -482,8 +491,9 @@ def test_preflight(mocker, config_instance, patched_logger_info):
     m.assert_called_once_with('foo', os.environ, config.MOLECULE_KEEP_STRING)
 
 
-def test_preflight_exists_when_validation_fails(
-        mocker, patched_logger_critical, config_instance):
+def test_preflight_exists_when_validation_fails(mocker,
+                                                patched_logger_critical,
+                                                config_instance):
     m = mocker.patch('molecule.model.schema_v2.pre_validate')
     m.return_value = 'validation errors'
 

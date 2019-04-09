@@ -103,8 +103,9 @@ def molecule_ephemeral_directory():
 
 
 def pytest_addoption(parser):
-    parser.addoption(
-        '--delegated', action='store_true', help='Run delegated driver tests.')
+    parser.addoption('--delegated',
+                     action='store_true',
+                     help='Run delegated driver tests.')
 
 
 def pytest_collection_modifyitems(items):

@@ -587,9 +587,9 @@ class Ansible(base.Base):
 
     @property
     def directory(self):
-        return os.path.join(
-            os.path.dirname(__file__), os.path.pardir, os.path.pardir,
-            'molecule', 'provisioner', 'ansible')
+        return os.path.join(os.path.dirname(__file__), os.path.pardir,
+                            os.path.pardir, 'molecule', 'provisioner',
+                            'ansible')
 
     def cleanup(self):
         """
@@ -702,8 +702,8 @@ class Ansible(base.Base):
 
         :return: None
         """
-        template = util.render_template(
-            self._get_config_template(), config_options=self.config_options)
+        template = util.render_template(self._get_config_template(),
+                                        config_options=self.config_options)
         util.write_file(self.config_file, template)
 
     def manage_inventory(self):
@@ -757,8 +757,8 @@ class Ansible(base.Base):
 
                 for target in vars_target.keys():
                     target_var_content = vars_target[target]
-                    path = os.path.join(
-                        util.abs_path(target_vars_directory), target)
+                    path = os.path.join(util.abs_path(target_vars_directory),
+                                        target)
                     util.write_file(path, util.safe_dump(target_var_content))
 
     def _write_inventory(self):

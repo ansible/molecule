@@ -85,14 +85,14 @@ def test_default_env_property(_instance):
     assert 'MOLECULE_INSTANCE_CONFIG' in _instance.default_env
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_verifier_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_verifier_section_data'],
+                         indirect=True)
 def test_env_property(_instance):
     assert 'bar' == _instance.env['FOO']
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_verifier_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_verifier_section_data'],
+                         indirect=True)
 def test_lint_property(_instance):
     assert isinstance(_instance.lint, rubocop.RuboCop)
 
@@ -111,16 +111,16 @@ def test_directory_property(_instance):
     assert 'tests' == parts[-1]
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_verifier_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_verifier_section_data'],
+                         indirect=True)
 def test_options_property(_instance):
     x = {}
 
     assert x == _instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_verifier_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_verifier_section_data'],
+                         indirect=True)
 def test_options_property_handles_cli_args(_instance):
     _instance._config.args = {'debug': True}
     x = {}

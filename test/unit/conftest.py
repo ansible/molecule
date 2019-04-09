@@ -135,11 +135,12 @@ def _molecule_verifier_section_data():
 
 
 @pytest.fixture
-def molecule_data(
-        _molecule_dependency_galaxy_section_data,
-        _molecule_driver_section_data, _molecule_lint_section_data,
-        _molecule_platforms_section_data, _molecule_provisioner_section_data,
-        _molecule_scenario_section_data, _molecule_verifier_section_data):
+def molecule_data(_molecule_dependency_galaxy_section_data,
+                  _molecule_driver_section_data, _molecule_lint_section_data,
+                  _molecule_platforms_section_data,
+                  _molecule_provisioner_section_data,
+                  _molecule_scenario_section_data,
+                  _molecule_verifier_section_data):
 
     fixtures = [
         _molecule_dependency_galaxy_section_data,

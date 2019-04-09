@@ -121,13 +121,12 @@ class AnsibleGalaxy(base.Base):
         verbose_flag = util.verbose_flag(options)
 
         self._sh_command = getattr(sh, self.command)
-        self._sh_command = self._sh_command.bake(
-            'install',
-            options,
-            *verbose_flag,
-            _env=self.env,
-            _out=LOG.out,
-            _err=LOG.error)
+        self._sh_command = self._sh_command.bake('install',
+                                                 options,
+                                                 *verbose_flag,
+                                                 _env=self.env,
+                                                 _out=LOG.out,
+                                                 _err=LOG.error)
 
     def execute(self):
         if not self.enabled:

@@ -110,8 +110,8 @@ class Login(base.Base):
             else:
                 msg = ('There are {} running hosts. Please specify '
                        'which with --host.\n\n'
-                       'Available hosts:\n{}'.format(
-                           len(hosts), '\n'.join(sorted(hosts))))
+                       'Available hosts:\n{}'.format(len(hosts),
+                                                     '\n'.join(sorted(hosts))))
                 util.sysexit_with_message(msg)
         match = [x for x in hosts if x.startswith(hostname)]
         if len(match) == 0:
@@ -128,8 +128,8 @@ class Login(base.Base):
             else:
                 msg = ("There are {} hosts that match '{}'. You "
                        'can only login to one at a time.\n\n'
-                       'Available hosts:\n{}'.format(
-                           len(match), hostname, '\n'.join(sorted(hosts))))
+                       'Available hosts:\n{}'.format(len(match), hostname,
+                                                     '\n'.join(sorted(hosts))))
                 util.sysexit_with_message(msg)
 
         return match[0]
@@ -161,12 +161,11 @@ class Login(base.Base):
 @click.command()
 @click.pass_context
 @click.option('--host', '-h', help='Host to access.')
-@click.option(
-    '--scenario-name',
-    '-s',
-    default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help='Name of the scenario to target. ({})'.format(
-        base.MOLECULE_DEFAULT_SCENARIO_NAME))
+@click.option('--scenario-name',
+              '-s',
+              default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
+              help='Name of the scenario to target. ({})'.format(
+                  base.MOLECULE_DEFAULT_SCENARIO_NAME))
 def login(ctx, host, scenario_name):  # pragma: no cover
     """ Log in to one instance. """
     args = ctx.obj.get('args')
@@ -176,7 +175,7 @@ def login(ctx, host, scenario_name):  # pragma: no cover
         'host': host,
     }
 
-    s = scenarios.Scenarios(
-        base.get_configs(args, command_args), scenario_name)
+    s = scenarios.Scenarios(base.get_configs(args, command_args),
+                            scenario_name)
     for scenario in s.all:
         base.execute_subcommand(scenario.config, subcommand)

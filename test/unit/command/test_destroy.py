@@ -53,12 +53,13 @@ def test_execute(mocker, patched_logger_info, patched_config_validate,
     assert not config_instance.state.created
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['command_driver_delegated_section_data'],
-    indirect=True)
-def test_execute_skips_when_destroy_strategy_is_never(
-        _patched_destroy_setup, patched_logger_warn, _patched_ansible_destroy,
-        config_instance):
+@pytest.mark.parametrize('config_instance',
+                         ['command_driver_delegated_section_data'],
+                         indirect=True)
+def test_execute_skips_when_destroy_strategy_is_never(_patched_destroy_setup,
+                                                      patched_logger_warn,
+                                                      _patched_ansible_destroy,
+                                                      config_instance):
     config_instance.command_args = {'destroy': 'never'}
 
     d = destroy.Destroy(config_instance)
@@ -70,12 +71,13 @@ def test_execute_skips_when_destroy_strategy_is_never(
     assert not _patched_ansible_destroy.called
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['command_driver_delegated_section_data'],
-    indirect=True)
-def test_execute_skips_when_delegated_driver(
-        _patched_destroy_setup, patched_logger_warn, _patched_ansible_destroy,
-        config_instance):
+@pytest.mark.parametrize('config_instance',
+                         ['command_driver_delegated_section_data'],
+                         indirect=True)
+def test_execute_skips_when_delegated_driver(_patched_destroy_setup,
+                                             patched_logger_warn,
+                                             _patched_ansible_destroy,
+                                             config_instance):
     d = destroy.Destroy(config_instance)
     d.execute()
 

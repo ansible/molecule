@@ -144,11 +144,10 @@ class Linode(base.Base):
         instance_config_dict = util.safe_load_file(
             self._config.driver.instance_config)
 
-        return next(
-            item for item in instance_config_dict if any((
-                # NOTE(lwm): Handle both because of transitioning label logic
-                #            https://github.com/ansible/ansible/pull/44719
-                item['instance'] == '{}_{}'.format(item['linode_id'],
-                                                   instance_name),
-                item['instance'] == '{}-{}'.format(item['linode_id'],
-                                                   instance_name))))
+        return next(item for item in instance_config_dict if any((
+            # NOTE(lwm): Handle both because of transitioning label logic
+            #            https://github.com/ansible/ansible/pull/44719
+            item['instance'] == '{}_{}'.format(item['linode_id'],
+                                               instance_name),
+            item['instance'] == '{}-{}'.format(item['linode_id'],
+                                               instance_name))))

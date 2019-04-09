@@ -401,10 +401,9 @@ class VagrantClient(object):
             # NOTE(retr0h): Ansible wants only one module return `fail_json`
             # or `exit_json`.
             if not self._has_error:
-                self._module.exit_json(
-                    changed=changed,
-                    log=self._get_stdout_log(),
-                    **self._conf())
+                self._module.exit_json(changed=changed,
+                                       log=self._get_stdout_log(),
+                                       **self._conf())
             else:
                 msg = "ERROR: See log file '{}'".format(self._get_stderr_log())
                 self._module.fail_json(msg=msg)
@@ -471,8 +470,9 @@ class VagrantClient(object):
     def _get_vagrant(self):
         env = os.environ.copy()
         env['VAGRANT_CWD'] = os.environ['MOLECULE_EPHEMERAL_DIRECTORY']
-        v = vagrant.Vagrant(
-            out_cm=self.stdout_cm, err_cm=self.stderr_cm, env=env)
+        v = vagrant.Vagrant(out_cm=self.stdout_cm,
+                            err_cm=self.stderr_cm,
+                            env=env)
 
         return v
 
@@ -537,24 +537,28 @@ class VagrantClient(object):
 
 def main():
     module = AnsibleModule(  # noqa
-        argument_spec=dict(
-            instance_name=dict(type='str', required=True),
-            instance_interfaces=dict(type='list', default=[]),
-            instance_raw_config_args=dict(type='list', default=None),
-            config_options=dict(type='dict', default={}),
-            platform_box=dict(type='str', required=False),
-            platform_box_version=dict(type='str'),
-            platform_box_url=dict(type='str'),
-            provider_name=dict(type='str', default='virtualbox'),
-            provider_memory=dict(type='int', default=512),
-            provider_cpus=dict(type='int', default=2),
-            provider_options=dict(type='dict', default={}),
-            provider_override_args=dict(type='list', default=None),
-            provider_raw_config_args=dict(type='list', default=None),
-            provision=dict(type='bool', default=False),
-            force_stop=dict(type='bool', default=False),
-            state=dict(
-                type='str', default='up', choices=['up', 'destroy', 'halt'])),
+        argument_spec=dict(instance_name=dict(type='str', required=True),
+                           instance_interfaces=dict(type='list', default=[]),
+                           instance_raw_config_args=dict(type='list',
+                                                         default=None),
+                           config_options=dict(type='dict', default={}),
+                           platform_box=dict(type='str', required=False),
+                           platform_box_version=dict(type='str'),
+                           platform_box_url=dict(type='str'),
+                           provider_name=dict(type='str',
+                                              default='virtualbox'),
+                           provider_memory=dict(type='int', default=512),
+                           provider_cpus=dict(type='int', default=2),
+                           provider_options=dict(type='dict', default={}),
+                           provider_override_args=dict(type='list',
+                                                       default=None),
+                           provider_raw_config_args=dict(type='list',
+                                                         default=None),
+                           provision=dict(type='bool', default=False),
+                           force_stop=dict(type='bool', default=False),
+                           state=dict(type='str',
+                                      default='up',
+                                      choices=['up', 'destroy', 'halt'])),
         supports_check_mode=False)
 
     v = VagrantClient(module)

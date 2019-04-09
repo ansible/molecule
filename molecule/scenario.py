@@ -118,8 +118,8 @@ class Scenario(object):
                 os.remove(f)
 
         # Remove empty directories.
-        for dirpath, dirs, files in os.walk(
-                self.ephemeral_directory, topdown=False):
+        for dirpath, dirs, files in os.walk(self.ephemeral_directory,
+                                            topdown=False):
             if not dirs and not files:
                 os.removedirs(dirpath)
 
@@ -135,8 +135,9 @@ class Scenario(object):
     def ephemeral_directory(self):
         project_directory = os.path.basename(self.config.project_directory)
         scenario_name = self.name
-        project_scenario_directory = os.path.join(
-            'molecule', project_directory, scenario_name)
+        project_scenario_directory = os.path.join('molecule',
+                                                  project_directory,
+                                                  scenario_name)
         path = ephemeral_directory(project_scenario_directory)
 
         return ephemeral_directory(path)

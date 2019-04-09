@@ -105,21 +105,18 @@ class Prepare(base.Base):
 
 @click.command()
 @click.pass_context
-@click.option(
-    '--scenario-name',
-    '-s',
-    default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help='Name of the scenario to target. ({})'.format(
-        base.MOLECULE_DEFAULT_SCENARIO_NAME))
-@click.option(
-    '--driver-name',
-    '-d',
-    type=click.Choice(config.molecule_drivers()),
-    help='Name of driver to use. (docker)')
-@click.option(
-    '--force/--no-force',
-    default=False,
-    help='Enable or disable force mode. Default is disabled.')
+@click.option('--scenario-name',
+              '-s',
+              default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
+              help='Name of the scenario to target. ({})'.format(
+                  base.MOLECULE_DEFAULT_SCENARIO_NAME))
+@click.option('--driver-name',
+              '-d',
+              type=click.Choice(config.molecule_drivers()),
+              help='Name of driver to use. (docker)')
+@click.option('--force/--no-force',
+              default=False,
+              help='Enable or disable force mode. Default is disabled.')
 def prepare(ctx, scenario_name, driver_name, force):  # pragma: no cover
     """
     Use the provisioner to prepare the instances into a particular starting

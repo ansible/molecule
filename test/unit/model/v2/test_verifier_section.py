@@ -55,8 +55,8 @@ def _model_verifier_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_verifier_section_data'], indirect=True)
+@pytest.mark.parametrize('_config', ['_model_verifier_section_data'],
+                         indirect=True)
 def test_verifier(_config):
     assert {} == schema_v2.validate(_config)
 
@@ -89,8 +89,8 @@ def _model_verifier_errors_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_verifier_errors_section_data'], indirect=True)
+@pytest.mark.parametrize('_config', ['_model_verifier_errors_section_data'],
+                         indirect=True)
 def test_verifier_has_errors(_config):
     x = {
         'verifier': [{
@@ -156,13 +156,12 @@ def _model_verifier_allows_goss_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', [
-        ('_model_verifier_allows_testinfra_section_data'),
-        ('_model_verifier_allows_inspec_section_data'),
-        ('_model_verifier_allows_goss_section_data'),
-    ],
-    indirect=True)
+@pytest.mark.parametrize('_config', [
+    ('_model_verifier_allows_testinfra_section_data'),
+    ('_model_verifier_allows_inspec_section_data'),
+    ('_model_verifier_allows_goss_section_data'),
+],
+                         indirect=True)
 def test_verifier_allows_name(_config):
     assert {} == schema_v2.validate(_config)
 
@@ -197,12 +196,11 @@ def _model_verifier_errors_goss_readonly_options_section_data():
     }
 
 
-@pytest.mark.parametrize(
-    '_config', [
-        ('_model_verifier_errors_inspec_readonly_options_section_data'),
-        ('_model_verifier_errors_goss_readonly_options_section_data'),
-    ],
-    indirect=True)
+@pytest.mark.parametrize('_config', [
+    ('_model_verifier_errors_inspec_readonly_options_section_data'),
+    ('_model_verifier_errors_goss_readonly_options_section_data'),
+],
+                         indirect=True)
 def test_verifier_errors_readonly_options_section_data(_config):
     x = {'verifier': [{'options': [{'foo': ['field is read-only']}]}]}
 

@@ -83,12 +83,11 @@ class Converge(base.Base):
 
 @click.command()
 @click.pass_context
-@click.option(
-    '--scenario-name',
-    '-s',
-    default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help='Name of the scenario to target. ({})'.format(
-        base.MOLECULE_DEFAULT_SCENARIO_NAME))
+@click.option('--scenario-name',
+              '-s',
+              default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
+              help='Name of the scenario to target. ({})'.format(
+                  base.MOLECULE_DEFAULT_SCENARIO_NAME))
 @click.argument('ansible_args', nargs=-1, type=click.UNPROCESSED)
 def converge(ctx, scenario_name, ansible_args):  # pragma: no cover
     """

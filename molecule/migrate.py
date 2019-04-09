@@ -54,12 +54,11 @@ class Migrate(object):
         yaml.add_representer(collections.OrderedDict,
                              self._get_dict_representer)
 
-        return yaml.dump(
-            od,
-            Dumper=MyDumper,
-            default_flow_style=False,
-            explicit_start=True,
-            line_break=1)
+        return yaml.dump(od,
+                         Dumper=MyDumper,
+                         default_flow_style=False,
+                         explicit_start=True,
+                         line_break=1)
 
     def _convert(self):
         if self._v1.get('vagrant'):

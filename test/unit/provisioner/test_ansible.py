@@ -171,8 +171,8 @@ def test_lint_property(_instance):
     assert isinstance(_instance.lint, ansible_lint.AnsibleLint)
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_provisioner_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_provisioner_section_data'],
+                         indirect=True)
 def test_config_options_property(_instance):
     x = {
         'defaults': {
@@ -192,8 +192,8 @@ def test_config_options_property(_instance):
     assert x == _instance.config_options
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_provisioner_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_provisioner_section_data'],
+                         indirect=True)
 def test_options_property(_instance):
     x = {
         'become': True,
@@ -228,8 +228,8 @@ def test_options_property_handles_cli_args(_instance):
     assert x == _instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_provisioner_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_provisioner_section_data'],
+                         indirect=True)
 def test_env_property(_instance):
     x = _instance._config.provisioner.config_file
 
@@ -237,8 +237,8 @@ def test_env_property(_instance):
     assert 'bar' == _instance.env['FOO']
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_provisioner_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_provisioner_section_data'],
+                         indirect=True)
 def test_env_appends_env_property(_instance):
     x = [
         util.abs_path(
@@ -277,16 +277,16 @@ def test_env_appends_env_property(_instance):
     assert x == _instance.env['ANSIBLE_FILTER_PLUGINS'].split(':')
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_provisioner_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_provisioner_section_data'],
+                         indirect=True)
 def test_host_vars_property(_instance):
     x = {'instance-1': [{'foo': 'bar'}], 'localhost': [{'foo': 'baz'}]}
 
     assert x == _instance.host_vars
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_provisioner_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_provisioner_section_data'],
+                         indirect=True)
 def test_group_vars_property(_instance):
     x = {
         'example_group1': [{
@@ -300,8 +300,8 @@ def test_group_vars_property(_instance):
     assert x == _instance.group_vars
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_provisioner_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_provisioner_section_data'],
+                         indirect=True)
 def test_hosts_property(_instance):
     hosts = {
         'all': {
@@ -323,8 +323,8 @@ def test_links_property(_instance):
     assert {} == _instance.links
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_provisioner_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_provisioner_section_data'],
+                         indirect=True)
 def test_inventory_property(_instance):
     x = {
         'ungrouped': {
@@ -473,8 +473,8 @@ def test_inventory_property(_instance):
     assert x == _instance.inventory
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_provisioner_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_provisioner_section_data'],
+                         indirect=True)
 def test_inventory_property_handles_missing_groups(temp_dir, _instance):
     platforms = [{'name': 'instance-1'}, {'name': 'instance-2'}]
     _instance._config.config['platforms'] = platforms
@@ -590,8 +590,8 @@ def test_playbooks_side_effect_property(_instance):
     assert _instance.playbooks.side_effect is None
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_provisioner_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_provisioner_section_data'],
+                         indirect=True)
 def test_connection_options(_instance):
     x = {'ansible_connection': 'docker', 'foo': 'bar'}
 
@@ -727,9 +727,10 @@ def test_manage_inventory(_instance, _patched_write_inventory,
     assert not _patched_link_or_update_vars.called
 
 
-def test_manage_inventory_with_links(
-        _instance, _patched_write_inventory, _patched_remove_vars,
-        patched_add_or_update_vars, _patched_link_or_update_vars):
+def test_manage_inventory_with_links(_instance, _patched_write_inventory,
+                                     _patched_remove_vars,
+                                     patched_add_or_update_vars,
+                                     _patched_link_or_update_vars):
     c = _instance._config.config
     c['provisioner']['inventory']['links'] = {'foo': 'bar'}
     _instance.manage_inventory()
@@ -740,8 +741,8 @@ def test_manage_inventory_with_links(
     _patched_link_or_update_vars.assert_called_once_with()
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_provisioner_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_provisioner_section_data'],
+                         indirect=True)
 def test_add_or_update_vars(_instance):
     inventory_dir = _instance._config.scenario.inventory_directory
 
@@ -769,8 +770,8 @@ def test_add_or_update_vars(_instance):
     assert util.safe_load_file(hosts) == _instance.hosts
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_provisioner_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_provisioner_section_data'],
+                         indirect=True)
 def test_add_or_update_vars_without_host_vars(_instance):
     c = _instance._config.config
     c['provisioner']['inventory']['host_vars'] = {}
@@ -818,8 +819,8 @@ def test_add_or_update_vars_does_not_create_vars(_instance):
     assert not os.path.isfile(hosts)
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_provisioner_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_provisioner_section_data'],
+                         indirect=True)
 def test_write_inventory(temp_dir, _instance):
     _instance._write_inventory()
 
@@ -974,8 +975,8 @@ def test_write_inventory(temp_dir, _instance):
     assert x == data
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_provisioner_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_provisioner_section_data'],
+                         indirect=True)
 def test_remove_vars(_instance):
     inventory_dir = _instance._config.scenario.inventory_directory
 
@@ -1068,8 +1069,9 @@ def test_verify_inventory(_instance):
     _instance._verify_inventory()
 
 
-def test_verify_inventory_raises_when_missing_hosts(
-        temp_dir, patched_logger_critical, _instance):
+def test_verify_inventory_raises_when_missing_hosts(temp_dir,
+                                                    patched_logger_critical,
+                                                    _instance):
     _instance._config.config['platforms'] = []
     with pytest.raises(SystemExit) as e:
         _instance._verify_inventory()

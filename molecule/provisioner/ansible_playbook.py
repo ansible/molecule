@@ -89,8 +89,8 @@ class AnsiblePlaybook(object):
             self.bake()
 
         try:
-            cmd = util.run_command(
-                self._ansible_command, debug=self._config.debug)
+            cmd = util.run_command(self._ansible_command,
+                                   debug=self._config.debug)
             return cmd.stdout.decode('utf-8')
         except sh.ErrorReturnCode as e:
             out = e.stdout.decode('utf-8')

@@ -101,12 +101,11 @@ class RuboCop(base.Base):
 
         :return: None
         """
-        self._rubocop_command = sh.rubocop.bake(
-            self.options,
-            self._tests,
-            _env=self.env,
-            _out=LOG.out,
-            _err=LOG.error)
+        self._rubocop_command = sh.rubocop.bake(self.options,
+                                                self._tests,
+                                                _env=self.env,
+                                                _out=LOG.out,
+                                                _err=LOG.error)
 
     def execute(self):
         if not self.enabled:
