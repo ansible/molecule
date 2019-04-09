@@ -82,6 +82,7 @@ def test_bake_removes_non_interactive_options_from_non_converge_playbooks(
 
 def test_bake_has_ansible_args(_inventory_directory, _instance):
     _instance._config.ansible_args = ('foo', 'bar')
+    _instance._config.config['provisioner']['ansible_args'] = ('frob', 'nitz')
     _instance.bake()
 
     x = [
@@ -89,6 +90,8 @@ def test_bake_has_ansible_args(_inventory_directory, _instance):
         '--inventory={}'.format(_inventory_directory),
         '--skip-tags=molecule-notest,notest',
         'playbook',
+        'frob',
+        'nitz',
         'foo',
         'bar',
     ]
