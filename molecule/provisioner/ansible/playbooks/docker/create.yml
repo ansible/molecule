@@ -12,6 +12,10 @@
         email: "{{ item.registry.credentials.email | default(omit) }}"
         registry: "{{ item.registry.url }}"
         docker_host: "{{ item.docker_host | default(lookup('env', 'DOCKER_HOST') or 'unix://var/run/docker.sock') }}"
+        cacert_path: "{{ item.cacert_path | default((lookup('env', 'DOCKER_CERT_PATH')+'/ca.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
+        cert_path: "{{ item.cert_path | default((lookup('env', 'DOCKER_CERT_PATH')+'/cert.pem')  if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
+        key_path: "{{ item.key_path | default((lookup('env', 'DOCKER_CERT_PATH')+'/key.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
+        tls_verify: "{{ item.tls_verify | default(lookup('env', 'DOCKER_TLS_VERIFY')) or '0' }}"
       with_items: "{{ molecule_yml.platforms }}"
       when:
         - item.registry is defined
@@ -30,6 +34,11 @@
       docker_image_facts:
         name: "molecule_local/{{ item.item.name }}"
         docker_host: "{{ item.item.docker_host | default(lookup('env', 'DOCKER_HOST') or 'unix://var/run/docker.sock') }}"
+        cacert_path: "{{ item.cacert_path | default((lookup('env', 'DOCKER_CERT_PATH')+'/ca.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
+        cert_path: "{{ item.cert_path | default((lookup('env', 'DOCKER_CERT_PATH')+'/cert.pem')  if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
+        key_path: "{{ item.key_path | default((lookup('env', 'DOCKER_CERT_PATH')+'/key.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
+        tls_verify: "{{ item.tls_verify | default(lookup('env', 'DOCKER_TLS_VERIFY')) or '0' }}"
+        debug: true
       with_items: "{{ platforms.results }}"
       when: not item.pre_build_image | default(false)
       register: docker_images
@@ -39,6 +48,10 @@
         path: "{{ molecule_ephemeral_directory }}"
         name: "molecule_local/{{ item.item.image }}"
         docker_host: "{{ item.item.docker_host | default(lookup('env', 'DOCKER_HOST') or 'unix://var/run/docker.sock') }}"
+        cacert_path: "{{ item.cacert_path | default((lookup('env', 'DOCKER_CERT_PATH')+'/ca.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
+        cert_path: "{{ item.cert_path | default((lookup('env', 'DOCKER_CERT_PATH')+'/cert.pem')  if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
+        key_path: "{{ item.key_path | default((lookup('env', 'DOCKER_CERT_PATH')+'/key.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
+        tls_verify: "{{ item.tls_verify | default(lookup('env', 'DOCKER_TLS_VERIFY')) or '0' }}"
         dockerfile: "{{ item.invocation.module_args.dest }}"
         force: "{{ item.item.force | default(true) }}"
         pull: "{{ item.item.pull | default(omit) }}"
@@ -52,6 +65,10 @@
       docker_network:
         name: "{{ item }}"
         docker_host: "{{ item.docker_host | default(lookup('env', 'DOCKER_HOST') or 'unix://var/run/docker.sock') }}"
+        cacert_path: "{{ item.cacert_path | default((lookup('env', 'DOCKER_CERT_PATH')+'/ca.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
+        cert_path: "{{ item.cert_path | default((lookup('env', 'DOCKER_CERT_PATH')+'/cert.pem')  if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
+        key_path: "{{ item.key_path | default((lookup('env', 'DOCKER_CERT_PATH')+'/key.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
+        tls_verify: "{{ item.tls_verify | default(lookup('env', 'DOCKER_TLS_VERIFY')) or '0' }}"
         state: present
       with_items: "{{ molecule_yml.platforms | molecule_get_docker_networks }}"
 
@@ -68,6 +85,10 @@
       docker_container:
         name: "{{ item.name }}"
         docker_host: "{{ item.docker_host | default(lookup('env', 'DOCKER_HOST') or 'unix://var/run/docker.sock') }}"
+        cacert_path: "{{ item.cacert_path | default((lookup('env', 'DOCKER_CERT_PATH')+'/ca.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
+        cert_path: "{{ item.cert_path | default((lookup('env', 'DOCKER_CERT_PATH')+'/cert.pem')  if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
+        key_path: "{{ item.key_path | default((lookup('env', 'DOCKER_CERT_PATH')+'/key.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
+        tls_verify: "{{ item.tls_verify | default(lookup('env', 'DOCKER_TLS_VERIFY')) or '0' }}"
         hostname: "{{ item.hostname | default(item.name) }}"
         image: "{{ item.pre_build_image | default(false) | ternary('', 'molecule_local/') }}{{ item.image }}"
         state: started
