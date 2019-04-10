@@ -10,7 +10,7 @@ pin: True
 
 # set the default branch
 # default: empty, the default branch on GitHub
-branch:
+#branch:
 
 # update schedule
 # default: empty
@@ -56,7 +56,7 @@ branch_prefix: pyup/
 
 # set a global prefix for PRs
 # default: empty
-pr_prefix:
+#pr_prefix:
 
 # allow to close stale PRs
 # default: True
