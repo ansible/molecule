@@ -278,6 +278,22 @@ else:
         opt['package_data'] = {}
         for k, v in opt_package_data.items():
             opt['package_data'][k] = cfg_val_to_list(v)
+        try:
+            opt_exclude_package_data = dict(
+                cfg.items('options.exclude_package_data'),
+            )
+            if (
+                    not opt_exclude_package_data.get('', '').strip()
+                    and '*' in opt_exclude_package_data
+            ):
+                opt_exclude_package_data[''] = opt_exclude_package_data['*']
+                del opt_exclude_package_data['*']
+        except NoSectionError:
+            pass
+        else:
+            opt['exclude_package_data'] = {}
+            for k, v in opt_exclude_package_data.items():
+                opt['exclude_package_data'][k] = cfg_val_to_list(v)
         cur_pkgs = opt.get('packages', '').strip()
         if '\n' in cur_pkgs:
             opt['packages'] = cfg_val_to_list(opt['packages'])
