@@ -1,0 +1,19 @@
+.github/* @webknjaz @gundalow
+test/conftest.py @webknjaz
+
+.gitattributes @webknjaz
+.gitignore @webknjaz
+.git_archival.txt @webknjaz
+.pre-commit-hooks.yaml @webknjaz
+.readthedocs.yml @webknjaz
+.travis.yml @webknjaz
+
+MANIFEST.in @webknjaz
+Dockerfile @webknjaz
+bindep.txt @ssbarnea
+hooks.yaml @webknjaz
+pytest.ini @webknjaz
+pyproject.toml @webknjaz
+setup.cfg @webknjaz
+setup.py @webknjaz
+tox.ini @webknjaz
