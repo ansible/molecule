@@ -4,6 +4,7 @@ test/conftest.py @webknjaz
 .gitattributes @webknjaz
 .gitignore @webknjaz
 .git_archival.txt @webknjaz
+.pre-commit-config.yaml @webknjaz
 .pre-commit-hooks.yaml @webknjaz
 .readthedocs.yml @webknjaz
 .travis.yml @webknjaz
