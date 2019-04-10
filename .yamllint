@@ -2,6 +2,9 @@ extends: default
 ignore: |
   *.molecule/
   molecule/cookiecutter/
+  .tox
+  # HACK: https://github.com/pyupio/pyup/issues/346
+  .pyup.yml
 
 rules:
   braces:
