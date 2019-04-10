@@ -85,6 +85,10 @@ class Docker(base.Base):
             network_mode: host
             purge_networks: true
             docker_host: tcp://localhost:12376
+            cacert_path: /foo/bar/ca.pem
+            cert_path: /foo/bar/cert.pem
+            key_path: /foo/bar/key.pem
+            tls_verify: 1
             env:
               FOO: bar
             restart_policy: on-failure
