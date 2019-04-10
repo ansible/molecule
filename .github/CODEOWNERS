@@ -1,4 +1,4 @@
-.github/* @webknjaz @gundalow
+.github/ @webknjaz @gundalow
 test/conftest.py @webknjaz
 
 .gitattributes @webknjaz
