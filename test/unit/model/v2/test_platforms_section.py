@@ -114,7 +114,7 @@ def _model_platforms_docker_section_data():
             'key_path':
             '/foo/bar/key.pem',
             'tls_verify':
-            'true'
+            True
         }]
     }
 
