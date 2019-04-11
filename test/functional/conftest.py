@@ -22,10 +22,7 @@
 import distutils.spawn
 import os
 import shutil
-import sys
-from distutils.version import LooseVersion
 
-import ansible
 import pexpect
 import pytest
 import sh
