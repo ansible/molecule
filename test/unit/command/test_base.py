@@ -191,7 +191,11 @@ def test_execute_cmdline_scenarios_nodestroy(config_instance,
 
 
 def test_execute_subcommand(config_instance):
+    # scenario's config.action is mutated in-place for every sequence action,
+    # so make sure that is currently set to the executed action
+    assert config_instance.action != 'list'
     assert base.execute_subcommand(config_instance, 'list')
+    assert config_instance.action == 'list'
 
 
 def test_execute_scenario(mocker, _patched_execute_subcommand):
@@ -204,9 +208,6 @@ def test_execute_scenario(mocker, _patched_execute_subcommand):
     base.execute_scenario(scenario)
 
     assert _patched_execute_subcommand.call_count == len(scenario.sequence)
-    # scenario.config.action is mutated in-place for every sequence action,
-    # so make sure that is currently set to the last executed action
-    assert scenario.config.action == scenario.sequence[-1]
     assert not scenario.prune.called
 
 
@@ -220,9 +221,6 @@ def test_execute_scenario_destroy(mocker, _patched_execute_subcommand):
     base.execute_scenario(scenario)
 
     assert _patched_execute_subcommand.call_count == len(scenario.sequence)
-    # scenario.config.action is mutated in-place for every sequence action,
-    # so make sure that is currently set to the last executed action
-    assert scenario.config.action == scenario.sequence[-1]
     assert scenario.prune.called
 
 
