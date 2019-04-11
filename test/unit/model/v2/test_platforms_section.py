@@ -114,7 +114,7 @@ def _model_platforms_docker_section_data():
             'key_path':
             '/foo/bar/key.pem',
             'tls_verify':
-            '1'
+            'true'
         }]
     }
 
@@ -214,7 +214,7 @@ def _model_platforms_docker_errors_section_data():
             'cacert_path': str(),
             'cert_path': str(),
             'key_path': str(),
-            'tls_verify': int(),
+            'tls_verify': bool(),
         }]
     }
 
@@ -281,7 +281,7 @@ def test_platforms_docker_has_errors(_config):
                 'cacert_path': ['must be of string type'],
                 'cert_path': ['must be of string type'],
                 'key_path': ['must be of string type'],
-                'tls_verify': ['must be of integer type'],
+                'tls_verify': ['must be of boolean type'],
             }]
         }]
     }
