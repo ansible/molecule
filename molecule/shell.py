@@ -18,18 +18,13 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import distutils
-import distutils.version
 import os
-import sys
 
-import ansible
 import click
 import click_completion
 
 import molecule
 from molecule import command
-from molecule import util
 from molecule.config import MOLECULE_DEBUG
 
 click_completion.init()
@@ -38,58 +33,10 @@ LOCAL_CONFIG = os.path.expanduser('~/.config/molecule/config.yml')
 ENV_FILE = '.env.yml'
 
 
-def _get_python_version():  # pragma: no cover
-    return sys.version_info
-
-
-def _get_ansible_version():  # pragma: no cover
-    return ansible.__version__
-
-
-def _supported_python2_version():  # pragma: no cover
-    return _get_python_version()[:2] == (2, 7)
-
-
-def _supported_python3_version():  # pragma: no cover
-    return _get_python_version() >= (3, 6)
-
-
-def _supported_ansible_version():  # pragma: no cover
-    if (distutils.version.LooseVersion(_get_ansible_version()) <=
-            distutils.version.LooseVersion('2.4')):
-        msg = ("Ansible version '{}' not supported.  "
-               'Molecule only supports Ansible versions '
-               "'>= 2.4'.").format(_get_ansible_version())
-        util.sysexit_with_message(msg)
-
-    if _supported_python2_version():
-        pass
-    elif _supported_python3_version():
-        if (distutils.version.LooseVersion(_get_ansible_version()) <
-                distutils.version.LooseVersion('2.4')):
-            msg = ("Ansible version '{}' not supported.  "
-                   'Molecule only supports Ansible versions '
-                   "'>=2.5' with Python version '{}'").format(
-                       _get_ansible_version(), _get_python_version())
-            util.sysexit_with_message(msg)
-    else:
-        msg = ("Python version '{}' not supported.  "
-               'Molecule only supports Python versions '
-               "'2.7' and '>= 3.6'.").format(_get_python_version())
-        util.sysexit_with_message(msg)
-
-
-def _allowed(ctx, param, value):  # pragma: no cover
-    _supported_ansible_version()
-
-    return value
-
-
 @click.group()
 @click.option(
     '--debug/--no-debug',
     default=MOLECULE_DEBUG,
-    callback=_allowed,
     help='Enable or disable debug mode. Default is disabled.')
 @click.option(
     '--base-config',

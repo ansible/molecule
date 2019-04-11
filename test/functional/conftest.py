@@ -382,15 +382,3 @@ needs_inspec = pytest.mark.skipif(
 needs_rubocop = pytest.mark.skipif(
     not has_rubocop(),
     reason='Needs rubocop to be pre-installed and available in $PATH')
-
-
-@pytest.helpers.register
-def is_supported_ansible_python_combo():
-    ansible_below_25 = LooseVersion(ansible.__version__) < LooseVersion('2.5')
-    max_py = (3, 6) if ansible_below_25 else (3, 7)
-    return sys.version_info[:2] <= max_py
-
-
-skip_unsupported_matrix = pytest.mark.skipif(
-    not is_supported_ansible_python_combo(),
-    reason='Current combination of Ansible and Python is not supported')
