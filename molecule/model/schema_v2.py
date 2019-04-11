@@ -751,8 +751,7 @@ platforms_docker_schema = {
                     'type': 'string',
                 },
                 'tls_verify': {
-                    'type': 'integer',
-                    'regex': '^[0-1]$',
+                    'type': 'boolean',
                 }
             }
         }
