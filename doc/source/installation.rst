@@ -100,9 +100,9 @@ some benefits:
         pip install \
           --index-url https://test.pypi.org/simple \
           --extra-index-url https://pypi.org/simple \
-          molecule==2.20.0.0a3.dev11
+          molecule==2.21.dev46
 
-    Where ``2.20.0.0a3.dev11`` is the latest available pre-release version.
+    Where ``2.21.dev46`` is the latest available pre-release version.
     Please check the `release history`_ listing for the available releases.
 
     .. _test.pypi.org/project/molecule: https://test.pypi.org/project/molecule/
