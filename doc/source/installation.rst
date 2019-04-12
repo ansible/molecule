@@ -56,7 +56,13 @@ available on your controller or host machines.
 
       $ pip install --upgrade --user setuptools
 
-.. _setuptools: https://pypi.org/project/setuptools/
+  .. _setuptools: https://pypi.org/project/setuptools/
+
+.. warning::
+
+  Pip v19 series has an isolation bug of setuptools being exposed to the
+  package build env. That is why it's highly recommended to upgrade user
+  setuptools even when using a proper virtualenv as shown above.
 
 Requirements
 ------------
