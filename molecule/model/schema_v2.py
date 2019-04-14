@@ -708,6 +708,9 @@ platforms_docker_schema = {
                         'type': 'string',
                     }
                 },
+                'etc_hosts': {
+                    'type': 'string',
+                },
                 'env': {
                     'type': 'dict',
                     'keyschema': {

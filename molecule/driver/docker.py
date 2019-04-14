@@ -80,6 +80,7 @@ class Docker(base.Base):
               - nofile:262144:262144
             dns_servers:
               - 8.8.8.8
+            etc_hosts: "{'host1.example.com': '10.3.1.5'}"
             networks:
               - name: foo
               - name: bar
