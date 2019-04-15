@@ -91,6 +91,10 @@ def _model_platforms_docker_section_data():
             'on-failure',
             'restart_retries':
             1,
+            'etc_hosts': {
+                'my-server1.example.com': '172.17.0.1',
+                'my-server2.example.com': '172.17.0.1',
+            },
             'networks': [
                 {
                     'name': 'foo',
@@ -200,6 +204,7 @@ def _model_platforms_docker_errors_section_data():
             ],
             'network_mode': int(),
             'purge_networks': int(),
+            'etc_hosts': str(),
         }]
     }
 
@@ -262,6 +267,7 @@ def test_platforms_docker_has_errors(_config):
                 'env': ['must be of dict type'],
                 'restart_policy': ['must be of string type'],
                 'restart_retries': ['must be of integer type'],
+                'etc_hosts': ['must be of dict type'],
             }]
         }]
     }

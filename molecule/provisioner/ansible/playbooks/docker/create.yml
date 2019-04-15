@@ -90,6 +90,7 @@
         env: "{{ item.env | default(omit) }}"
         restart_policy: "{{ item.restart_policy | default(omit) }}"
         restart_retries: "{{ item.restart_retries | default(omit) }}"
+        etc_hosts: "{{ item.etc_hosts | default(omit) }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
       async: 7200

@@ -721,6 +721,12 @@ platforms_docker_schema = {
                 'restart_retries': {
                     'type': 'integer',
                 },
+                'etc_hosts': {
+                    'type': 'dict',
+                    'keyschema': {
+                        'type': 'string',
+                    }
+                },
                 'networks': {
                     'type': 'list',
                     'schema': {

@@ -90,6 +90,9 @@ class Docker(base.Base):
               FOO: bar
             restart_policy: on-failure
             restart_retries: 1
+            etc_hosts:
+              my-server1.example.com: 172.17.0.1
+              my-server2.example.com: 172.17.0.1
             buildargs:
                 http_proxy: http://proxy.example.com:8080/
 
@@ -114,7 +117,7 @@ class Docker(base.Base):
         - name: instance
           image: centos:7
           privileged: true
-          volume_mounts:
+          volumes:
             - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
           command: "/usr/sbin/init"
           environment:
