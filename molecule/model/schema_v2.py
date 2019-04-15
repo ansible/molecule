@@ -721,6 +721,13 @@ platforms_docker_schema = {
                 'restart_retries': {
                     'type': 'integer',
                 },
+                'etc_hosts': {
+                    'type': 'dict',
+                    'keyschema': {
+                        'type': 'string',
+                        'regex': '^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$',
+                    }
+                },
                 'networks': {
                     'type': 'list',
                     'schema': {
