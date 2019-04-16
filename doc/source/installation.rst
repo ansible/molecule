@@ -142,8 +142,9 @@ certain unstable version should the need to send a bug report arise.
   Please avoid using ``--editable``/``-e`` `development mode`_ when
   installing Molecule with Pip. This not very well supported and only
   needed when doing development.
-  For contributing purposes, it's already integrated with ``tox``
-  properly.
+  For contributing purposes, you can rely on the tox command line
+  interface. Please see :ref:`our testing guide <Testing>` for further
+  details.
 
   .. _`development mode`:
      https://setuptools.readthedocs.io/en/latest\
