@@ -60,9 +60,10 @@ available on your controller or host machines.
 
 .. warning::
 
-  Pip v19 series has an isolation bug of setuptools being exposed to the
-  package build env. That is why it's highly recommended to upgrade user
-  setuptools even when using a proper virtualenv as shown above.
+  Pip v19 series has an :gh:`isolation bug <pypa/pip/issues/6264>` of
+  setuptools being exposed to the package build env. That is why it's
+  highly recommended to upgrade user setuptools even when using a proper
+  virtualenv as shown above.
 
 Requirements
 ------------
