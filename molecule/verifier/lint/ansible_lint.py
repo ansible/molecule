@@ -30,7 +30,7 @@ class AnsibleLint(AnsibleLintMixin, base.Base):
     potentially be improved.
 
     Additional options can be passed to ``ansible-lint`` through the options
-    dict.  Any option set in this section will override the defaults.
+    dict. Any option set in this section will override the defaults.
 
     .. code-block:: yaml
 
