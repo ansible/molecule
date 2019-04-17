@@ -29,9 +29,6 @@ from molecule.util import sysexit_with_message
 log = logger.get_logger(__name__)
 
 
-HAS_DOCKER_PY = None
-
-
 class Docker(base.Base):
     """
     The class responsible for managing `Docker`_ containers.  `Docker`_ is
@@ -197,19 +194,23 @@ class Docker(base.Base):
 
         log.info("Sanity checks: '{}'".format(self._name))
 
+        HAS_DOCKER_PY_IMPORTED = False
+        HAS_DOCKER_PY = False
         try:
             from ansible.module_utils.docker_common import HAS_DOCKER_PY
+            HAS_DOCKER_PY_IMPORTED = True
         except ImportError:
             pass
 
         # ansible 2.8+
-        if HAS_DOCKER_PY is None:
+        if not HAS_DOCKER_PY_IMPORTED:
             try:
                 from ansible.module_utils.docker.common import HAS_DOCKER_PY
+                HAS_DOCKER_PY_IMPORTED = True
             except ImportError:
                 pass
 
-        if HAS_DOCKER_PY is None:
+        if not HAS_DOCKER_PY_IMPORTED or not HAS_DOCKER_PY:
             msg = ('Missing Docker driver dependency. Please '
                    "install via 'molecule[docker]' or refer to "
                    'your INSTALL.rst driver documentation file')
