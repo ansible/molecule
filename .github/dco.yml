@@ -1,2 +1,2 @@
 require:
-  members: false
+  members: true
