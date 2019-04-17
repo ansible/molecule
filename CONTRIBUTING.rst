@@ -10,13 +10,12 @@ Move to Red Hat
     During the end of October 2018 the Molecule Project was moved to its new home
     under Ansible by Red Hat.
 
-There are some implications:
+How to get involved
+-------------------
 
 * To see what's planned see the `Molecule Project Board`_.
 * Join the Molecule `community working group`_ if you would like to
   influence the direction of the project.
-
-* The coding style is what's enforced by CI.
 
 .. _community working group: https://github.com/ansible/community/wiki/molecule
 .. _Molecule Project Board: https://github.com/ansible/molecule/projects
