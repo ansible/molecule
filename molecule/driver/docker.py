@@ -194,23 +194,18 @@ class Docker(base.Base):
 
         log.info("Sanity checks: '{}'".format(self._name))
 
-        HAS_DOCKER_PY_IMPORTED = False
-        HAS_DOCKER_PY = False
+        HAS_DOCKER_PY = None
         try:
             from ansible.module_utils.docker_common import HAS_DOCKER_PY
-            HAS_DOCKER_PY_IMPORTED = True
         except ImportError:
-            pass
 
-        # ansible 2.8+
-        if not HAS_DOCKER_PY_IMPORTED:
+            # ansible 2.8+
             try:
                 from ansible.module_utils.docker.common import HAS_DOCKER_PY
-                HAS_DOCKER_PY_IMPORTED = True
             except ImportError:
                 pass
 
-        if not HAS_DOCKER_PY_IMPORTED or not HAS_DOCKER_PY:
+        if not HAS_DOCKER_PY:
             msg = ('Missing Docker driver dependency. Please '
                    "install via 'molecule[docker]' or refer to "
                    'your INSTALL.rst driver documentation file')
