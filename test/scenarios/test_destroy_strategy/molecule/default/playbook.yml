@@ -3,5 +3,5 @@
   hosts: all
   become: true
   tasks:
-    - name: Force a converge failure
+    - name: Force a converge failure  # noqa 301
       command: /bin/false
