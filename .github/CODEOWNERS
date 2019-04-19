@@ -7,7 +7,7 @@ test/conftest.py @webknjaz
 .pre-commit-config.yaml @webknjaz
 .pre-commit-hooks.yaml @webknjaz
 .readthedocs.yml @webknjaz
-.travis.yml @webknjaz
+.travis.yml @ssbarnea
 
 MANIFEST.in @webknjaz
 Dockerfile @webknjaz
