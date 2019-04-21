@@ -192,7 +192,7 @@ def _model_platforms_docker_errors_section_data():
             'dns_servers': [
                 int(),
             ],
-            "etc_hosts": str(),
+            "etc_hosts": int(),
             'env': str(),
             'restart_policy': int(),
             'restart_retries': str(),
@@ -219,7 +219,6 @@ def test_platforms_docker_has_errors(_config):
                 'dns_servers': [{
                     0: ['must be of string type']
                 }],
-                'etc_hosts': ['must be of string type'],
                 'name': ['must be of string type'],
                 'capabilities': [{
                     0: ['must be of string type']
@@ -263,6 +262,7 @@ def test_platforms_docker_has_errors(_config):
                 'ulimits': [{
                     0: ['must be of string type']
                 }],
+                'etc_hosts': ['must be of [\'string\', \'dict\'] type'],
                 'env': ['must be of dict type'],
                 'restart_policy': ['must be of string type'],
                 'restart_retries': ['must be of integer type'],
