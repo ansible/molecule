@@ -34,8 +34,6 @@ def should_do_markup():
     return sys.stdout.isatty() and os.environ.get('TERM') != 'dumb'
 
 
-colorama.init(autoreset=True, strip=not should_do_markup())
-
 SUCCESS = 100
 OUT = 101
 
