@@ -86,12 +86,14 @@ Contribution Guidelines
 
 * Run all the tests to ensure nothing else was accidentally broken.
 * Reformat the code by following the formatting section below.
+* Add a changelog entry if applicable. See `changelog/README.rst`_ for instructions.
 * Submit a pull request.
 
 .. _`Issue`: https://github.com/ansible/molecule/issues/new/choose
 .. _`DCO 1.1`: https://github.com/ansible/molecule/blob/master/DCO_1_1.md
 .. _formatting: https://molecule.readthedocs.io/en/latest/testing.html#formatting
 .. _linting: https://molecule.readthedocs.io/en/latest/testing.html#linting
+.. _changelog/README.rst: ./changelog/README.rst
 
 Installing
 ==========

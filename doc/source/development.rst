@@ -10,6 +10,13 @@ Branches
 * The ``master`` branch is stable.  Major changes should be performed
   elsewhere.
 
+Managing the Changelog
+======================
+
+Please see `changelog/README.rst` for instructions.
+
+.. _changelog/README.rst: ./changelog/README.rst
+
 Release Engineering
 ===================
 
@@ -17,7 +24,7 @@ Pre-release
 -----------
 
 * Ensure the `GitHub Project`_ has all cards in the ``Done`` column.
-* Edit the :ref:`changelog`, based on the project ``Done`` column.
+* Ensure :ref:`changelog` entries present, based on the project ``Done`` column.
 * Follow the :ref:`testing` steps.
 
 Release

@@ -171,6 +171,11 @@ jobs:
         TOXENV: doc
 
     - <<: *lint
+      name: checking the changelog generation
+      env:
+        TOXENV: changelog-check
+
+    - <<: *lint
       name: checking the Python distribution package metadata consistency
       if: repo == "ansible/molecule" AND type IN (cron, pull_request)  # Only run if PR or cron
       env:
