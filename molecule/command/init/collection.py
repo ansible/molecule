@@ -21,12 +21,21 @@
 import os
 
 import click
+import spdx
 
 from molecule import logger
 from molecule import util
 from molecule.command.init import base
 
 LOG = logger.get_logger(__name__)
+
+
+def _get_spdx_license_ids():
+    return set(l['id'] for l in spdx.licenses())
+
+
+def _is_valid_spdx_id(spdx_id):
+    return spdx_id in _get_spdx_license_ids()
 
 
 class Collection(base.Base):
