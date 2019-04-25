@@ -1,0 +1,32 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint:
+  name: yamllint
+  options:
+    config-file: ../../../resources/.yamllint
+platforms:
+  - name: instance
+    image: centos:latest
+    networks:
+      - name: foo
+      - name: bar
+    buildargs:
+      testarg: this_is_a_test
+provisioner:
+  name: ansible
+  playbooks:
+    create: ../../../../../resources/playbooks/docker/create.yml
+    destroy: ../../../../../resources/playbooks/docker/destroy.yml
+  env:
+    ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
+  lint:
+    name: ansible-lint
+scenario:
+  name: ansible-verifier
+verifier:
+  name: ansible
+  lint:
+    name: ansible-lint

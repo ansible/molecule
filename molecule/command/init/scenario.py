@@ -179,5 +179,8 @@ def scenario(ctx, dependency_name, driver_name, lint_name, provisioner_name,
     if verifier_name == 'goss':
         command_args['verifier_lint_name'] = 'yamllint'
 
+    if verifier_name == 'ansible':
+        command_args['verifier_lint_name'] = 'ansible-lint'
+
     s = Scenario(command_args)
     s.execute()

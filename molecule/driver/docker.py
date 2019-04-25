@@ -124,14 +124,14 @@ class Docker(base.Base):
 
         $ pip install molecule[docker]
 
-    When pulling from a private registry, the username and password must be
-    exported as environment variables in the current shell. The only supported
-    variables are $USERNAME and $PASSWORD.
+    When pulling from a private registry, it is the user's discretion to decide
+    whether to use hard-code strings or environment variables for passing
+    credentials to molecule.
 
-    .. code-block:: bash
+    .. important::
 
-        $ export USERNAME=foo
-        $ export PASSWORD=bar
+        Hard-coded credentials in ``molecule.yml`` should be avoided, instead use
+        `variable substitution`_.
 
     Provide a list of files Molecule will preserve, relative to the scenario
     ephemeral directory, after any ``destroy`` subcommand execution.
@@ -194,16 +194,21 @@ class Docker(base.Base):
 
         log.info("Sanity checks: '{}'".format(self._name))
 
+        HAS_DOCKER_PY = None
         try:
             from ansible.module_utils.docker_common import HAS_DOCKER_PY
-            if not HAS_DOCKER_PY:
-                msg = ('Missing Docker driver dependency. Please '
-                       "install via 'molecule[docker]' or refer to "
-                       'your INSTALL.rst driver documentation file')
-                sysexit_with_message(msg)
         except ImportError:
-            msg = ('Unable to import Ansible. Please ensure '
-                   'that Ansible is installed')
+
+            # ansible 2.8+
+            try:
+                from ansible.module_utils.docker.common import HAS_DOCKER_PY
+            except ImportError:
+                pass
+
+        if not HAS_DOCKER_PY:
+            msg = ('Missing Docker driver dependency. Please '
+                   "install via 'molecule[docker]' or refer to "
+                   'your INSTALL.rst driver documentation file')
             sysexit_with_message(msg)
 
         try:

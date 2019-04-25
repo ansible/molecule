@@ -58,7 +58,7 @@ platforms:
   - name: instance
     registry:
       credentials:
-        password: foo
+        password: 123
 """.strip()
 
 
@@ -70,10 +70,7 @@ def test_platforms_docker_has_errors(_stream, _env, _keep_string):
             0: [{
                 'registry': [{
                     'credentials': [{
-                        'password': [
-                            ('value does not match regex '
-                             "'^[{$]+[a-z0-9A-Z]+[}]*$'"),
-                        ]
+                        'password': ['must be of string type']
                     }]
                 }]
             }]

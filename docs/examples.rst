@@ -30,6 +30,59 @@ follows.
 
 .. _`quay.io`: https://quay.io/repository/ansible/molecule
 
+Docker With Non-Privileged User
+===============================
+
+Default Molecule Docker driver execute Ansible playbooks with root user. If your
+workflow require non-privileged user, some simple changes to ``molecule.yaml``
+and ``Dockerfile.j2`` are required.
+
+Append to end off ``Dockerfile.j2`` commands that are creating ``ansible``
+user with passwordless sudo privileges. Variable ``SUDO_GROUP`` depends on distribution
+``wheel`` is used on ``centos:7``.
+
+.. code-block:: docker
+
+    # Create `ansible` user with sudo permissions and membership in `DEPLOY_GROUP`
+    ENV ANSIBLE_USER=ansible SUDO_GROUP=wheel DEPLOY_GROUP=deployer
+    RUN set -xe \
+      && groupadd -r ${ANSIBLE_USER} \
+      && groupadd -r ${DEPLOY_GROUP} \
+      && useradd -m -g ${ANSIBLE_USER} ${ANSIBLE_USER} \
+      && usermod -aG ${SUDO_GROUP} ${ANSIBLE_USER} \
+      && usermod -aG ${DEPLOY_GROUP} ${ANSIBLE_USER} \
+      && sed -i "/^%${SUDO_GROUP}/s/ALL\$/NOPASSWD:ALL/g" /etc/sudoers
+
+Change ``molecule.yaml`` file by modifying ``provisioner`` block and changing
+default provisioning user from root to newly created one.
+
+.. code-block:: yaml
+
+    provisioner:
+      name: ansible
+      lint:
+        name: ansible-lint
+      inventory:
+        host_vars:
+          instance:
+            ansible_user: ansible
+
+Now you can test new user with simple task add following TASK to ``tasks/main.yml`` it
+should fail until you uncomment ``become: yes``.
+
+.. code-block:: yaml
+
+    - name: Create apps dir
+      file:
+        path: /opt/examples
+        owner: ansible
+        group: deployer
+        mode: 0775
+        state: directory
+      # become: yes
+
+Don't forget to run ``molecule destroy`` if image vas already created.
+
 Monolith Repo
 =============
 

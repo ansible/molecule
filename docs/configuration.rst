@@ -4,6 +4,8 @@ Configuration
 .. autoclass:: molecule.config.Config()
    :undoc-members:
 
+.. _variable substitution:
+
 Variable Substitution
 ---------------------
 
