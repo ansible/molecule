@@ -4,8 +4,8 @@ test/conftest.py @webknjaz
 .gitattributes @webknjaz
 .gitignore @webknjaz
 .git_archival.txt @webknjaz
-.pre-commit-config.yaml @webknjaz
-.pre-commit-hooks.yaml @webknjaz
+.pre-commit-config.yaml @webknjaz @ssbarnea
+.pre-commit-hooks.yaml @webknjaz @ssbarnea
 .readthedocs.yml @webknjaz
 .travis.yml @ssbarnea
 
@@ -17,4 +17,4 @@ pytest.ini @webknjaz
 pyproject.toml @webknjaz
 setup.cfg @webknjaz
 setup.py @webknjaz
-tox.ini @webknjaz
+tox.ini @webknjaz @ssbarnea
