@@ -104,8 +104,7 @@ def pre_validate_base_schema(env, keep_string):
                                 'type': 'dict',
                                 'schema': {
                                     'password': {
-                                        'type': 'string',
-                                        'regex': '^[{$]+[a-z0-9A-Z]+[}]*$',
+                                        'type': 'string'
                                     },
                                 }
                             },
