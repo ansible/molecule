@@ -150,6 +150,9 @@ def role(ctx, dependency_name, driver_name, lint_name, provisioner_name,
     if verifier_name == 'goss':
         command_args['verifier_lint_name'] = 'yamllint'
 
+    if verifier_name == 'ansible':
+        command_args['verifier_lint_name'] = 'ansible-lint'
+
     if template is not None:
         command_args['template'] = template
 

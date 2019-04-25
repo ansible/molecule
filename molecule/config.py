@@ -47,6 +47,7 @@ from molecule.driver import vagrant
 from molecule.lint import yamllint
 from molecule.model import schema_v2
 from molecule.provisioner import ansible
+from molecule.verifier import ansible as ansible_verifier
 from molecule.verifier import goss
 from molecule.verifier import inspec
 from molecule.verifier import testinfra
@@ -249,6 +250,8 @@ class Config(object):
             return inspec.Inspec(self)
         elif verifier_name == 'goss':
             return goss.Goss(self)
+        elif verifier_name == 'ansible':
+            return ansible_verifier.Ansible(self)
 
     @property
     @util.memoize
@@ -514,6 +517,7 @@ def molecule_verifiers():
         goss.Goss(None).name,
         inspec.Inspec(None).name,
         testinfra.Testinfra(None).name,
+        ansible_verifier.Ansible(None).name,
     ]
 
 

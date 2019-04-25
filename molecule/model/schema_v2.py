@@ -156,18 +156,22 @@ def pre_validate_base_schema(env, keep_string):
                         'testinfra',
                         'inspec',
                         'goss',
+                        'ansible',
                     ],
                 },
                 'lint': {
                     'type': 'dict',
                     'schema': {
                         'name': {
-                            'type': 'string',
-                            'molecule_env_var': True,
+                            'type':
+                            'string',
+                            'molecule_env_var':
+                            True,
                             'allowed': [
                                 'flake8',
                                 'rubocop',
                                 'yamllint',
+                                'ansible-lint',
                             ],
                         },
                     }
@@ -945,6 +949,31 @@ verifier_testinfra_mutually_exclusive_schema = {
     },
 }
 
+verifier_ansible_mutually_exclusive_schema = {
+    'verifier': {
+        'type': 'dict',
+        'schema': {
+            'name': {
+                'type': 'string',
+                'allowed': [
+                    'ansible',
+                ],
+            },
+            'lint': {
+                'type': 'dict',
+                'schema': {
+                    'name': {
+                        'type': 'string',
+                        'allowed': [
+                            'ansible-lint',
+                        ],
+                    },
+                }
+            },
+        }
+    },
+}
+
 
 class Validator(cerberus.Validator):
     def __init__(self, *args, **kwargs):
@@ -1039,6 +1068,8 @@ def validate(c):
         util.merge_dicts(schema, verifier_inspec_mutually_exclusive_schema)
     elif c['verifier']['name'] == 'testinfra':
         util.merge_dicts(schema, verifier_testinfra_mutually_exclusive_schema)
+    elif c['verifier']['name'] == 'ansible':
+        util.merge_dicts(schema, verifier_ansible_mutually_exclusive_schema)
 
     v = Validator(allow_unknown=True)
     v.validate(c, schema)

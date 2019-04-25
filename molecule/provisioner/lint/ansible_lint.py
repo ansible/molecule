@@ -28,8 +28,85 @@ from molecule.provisioner.lint import base
 
 LOG = logger.get_logger(__name__)
 
+__metaclass__ = type
 
-class AnsibleLint(base.Base):
+
+class AnsibleLintMixin:
+    def __init__(self, config):
+        """
+        Sets up the requirements to execute `ansible-lint` and returns None.
+
+        :param config: An instance of a Molecule config.
+        :return: None
+        """
+        super(AnsibleLintMixin, self).__init__(config)
+        self._ansible_lint_command = None
+
+    @property
+    def default_options(self):
+        d = {
+            'default_exclude': [self._config.scenario.ephemeral_directory],
+            'exclude': [],
+            'x': [],
+        }
+        if self._config.debug:
+            d['v'] = True
+
+        return d
+
+    @property
+    def default_env(self):
+        env = util.merge_dicts(os.environ.copy(), self._config.env)
+        env = util.merge_dicts(env, self._action_env)
+
+        return env
+
+    def bake(self):
+        """
+        Bake an `ansible-lint` command so it's ready to execute and returns
+        None.
+
+        :return: None
+        """
+        options = self.options
+        default_exclude_list = options.pop('default_exclude')
+        options_exclude_list = options.pop('exclude')
+        excludes = default_exclude_list + options_exclude_list
+        x_list = options.pop('x')
+
+        exclude_args = ['--exclude={}'.format(exclude) for exclude in excludes]
+        x_args = tuple(('-x', x) for x in x_list)
+        self._ansible_lint_command = sh.ansible_lint.bake(
+            options,
+            exclude_args,
+            sum(x_args, ()),
+            self._playbook,
+            _env=self.env,
+            _out=LOG.out,
+            _err=LOG.error)
+
+    def execute(self):
+        if not self.enabled:
+            msg = 'Skipping, lint is disabled.'
+            LOG.warn(msg)
+            return
+
+        if self._ansible_lint_command is None:
+            self.bake()
+
+        msg = 'Executing Ansible Lint on {}...'.format(self._playbook)
+        LOG.info(msg)
+
+        try:
+            util.run_command(
+                self._ansible_lint_command, debug=self._config.debug)
+            msg = 'Lint completed successfully.'
+            LOG.success(msg)
+        except sh.ErrorReturnCode as e:
+            util.sysexit(e.exit_code)
+
+
+class AnsibleLint(AnsibleLintMixin, base.Base):
     """
     `Ansible Lint`_ is the default role linter.
 
@@ -54,7 +131,7 @@ class AnsibleLint(base.Base):
 
     The `x` option has to be passed like this due to a `bug`_ in Ansible Lint.
 
-    The role linting can be disabled by setting `enabled` to False.
+    The role linting can be disabled by setting ``enabled`` to ``False``.
 
     .. code-block:: yaml
 
@@ -79,76 +156,10 @@ class AnsibleLint(base.Base):
     .. _`bug`: https://github.com/ansible/ansible-lint/issues/279
     """
 
-    def __init__(self, config):
-        """
-        Sets up the requirements to execute `ansible-lint` and returns None.
-
-        :param config: An instance of a Molecule config.
-        :return: None
-        """
-        super(AnsibleLint, self).__init__(config)
-        self._ansible_lint_command = None
+    @property
+    def _playbook(self):
+        return self._config.provisioner.playbooks.converge
 
     @property
-    def default_options(self):
-        d = {
-            'default_exclude': [self._config.scenario.ephemeral_directory],
-            'exclude': [],
-            'x': [],
-        }
-        if self._config.debug:
-            d['v'] = True
-
-        return d
-
-    @property
-    def default_env(self):
-        env = util.merge_dicts(os.environ.copy(), self._config.env)
-        env = util.merge_dicts(env, self._config.provisioner.env)
-
-        return env
-
-    def bake(self):
-        """
-        Bake an `ansible-lint` command so it's ready to execute and returns
-        None.
-
-        :return: None
-        """
-        options = self.options
-        default_exclude_list = options.pop('default_exclude')
-        options_exclude_list = options.pop('exclude')
-        excludes = default_exclude_list + options_exclude_list
-        x_list = options.pop('x')
-
-        exclude_args = ['--exclude={}'.format(exclude) for exclude in excludes]
-        x_args = tuple(('-x', x) for x in x_list)
-        self._ansible_lint_command = sh.ansible_lint.bake(
-            options,
-            exclude_args,
-            sum(x_args, ()),
-            self._config.provisioner.playbooks.converge,
-            _env=self.env,
-            _out=LOG.out,
-            _err=LOG.error)
-
-    def execute(self):
-        if not self.enabled:
-            msg = 'Skipping, lint is disabled.'
-            LOG.warn(msg)
-            return
-
-        if self._ansible_lint_command is None:
-            self.bake()
-
-        msg = 'Executing Ansible Lint on {}...'.format(
-            self._config.provisioner.playbooks.converge)
-        LOG.info(msg)
-
-        try:
-            util.run_command(
-                self._ansible_lint_command, debug=self._config.debug)
-            msg = 'Lint completed successfully.'
-            LOG.success(msg)
-        except sh.ErrorReturnCode as e:
-            util.sysexit(e.exit_code)
+    def _action_env(self):
+        return self._config.verifier.env

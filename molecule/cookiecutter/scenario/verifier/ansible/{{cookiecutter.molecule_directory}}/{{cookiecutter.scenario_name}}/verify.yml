@@ -1,0 +1,11 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+{% raw -%}
+- name: Verify
+  hosts: all
+  tasks:
+  - name: Example assertion
+    assert:
+      that: true
+{% endraw -%}
