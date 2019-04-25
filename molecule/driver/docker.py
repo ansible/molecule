@@ -124,14 +124,14 @@ class Docker(base.Base):
 
         $ pip install molecule[docker]
 
-    When pulling from a private registry, the username and password must be
-    exported as environment variables in the current shell. The only supported
-    variables are $USERNAME and $PASSWORD.
+    When pulling from a private registry, it is the user's discretion to decide
+    whether to use hard-code strings or environment variables for passing
+    credentials to molecule.
 
-    .. code-block:: bash
+    .. important::
 
-        $ export USERNAME=foo
-        $ export PASSWORD=bar
+        Hard-coded credentials in ``molecule.yml`` should be avoided, instead use
+        `variable substitution`_.
 
     Provide a list of files Molecule will preserve, relative to the scenario
     ephemeral directory, after any ``destroy`` subcommand execution.

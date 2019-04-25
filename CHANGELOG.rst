@@ -7,6 +7,7 @@ Unreleased
 
 * `dependency` step is now run by default before any playbook sequence step, including
   `create` and `destroy`. This allows the use of roles in all sequence step playbooks.
+* Removed validation regex for docker registry passwords, all ``string`` values are now valid.
 
 2.20
 ====
