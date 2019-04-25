@@ -45,6 +45,7 @@ from molecule.provisioner import ansible
 from molecule.verifier import goss
 from molecule.verifier import inspec
 from molecule.verifier import testinfra
+from molecule.verifier import ansible as ansible_verifier
 
 
 def test_molecule_file_private_member(molecule_file_fixture, config_instance):
@@ -389,8 +390,27 @@ def test_verifier_property_is_goss(config_instance):
     assert isinstance(config_instance.verifier, goss.Goss)
 
 
+@pytest.fixture
+def _config_verifier_ansible_section_data():
+    return {
+        'verifier': {
+            'name': 'ansible',
+            'lint': {
+                'name': 'ansible-lint',
+            },
+        },
+    }
+
+
+@pytest.mark.parametrize(
+    'config_instance', ['_config_verifier_ansible_section_data'],
+    indirect=True)
+def test_verifier_property_is_ansible(config_instance):
+    assert isinstance(config_instance.verifier, ansible_verifier.Ansible)
+
+
 def test_verifiers_property(config_instance):
-    x = ['goss', 'inspec', 'testinfra']
+    x = ['goss', 'inspec', 'testinfra', 'ansible']
 
     assert x == config_instance.verifiers
 
@@ -553,7 +573,7 @@ def test_molecule_drivers():
 
 
 def test_molecule_verifiers():
-    x = ['goss', 'inspec', 'testinfra']
+    x = ['goss', 'inspec', 'testinfra', 'ansible']
 
     assert x == config.molecule_verifiers()
 

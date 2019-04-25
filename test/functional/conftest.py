@@ -234,7 +234,7 @@ def login(login_args, scenario_name='default'):
 def test(driver_name, scenario_name='default'):
     options = {
         'scenario_name': scenario_name,
-        'all': True,
+        'all': scenario_name is None,
     }
 
     if driver_name == 'delegated':
