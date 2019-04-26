@@ -52,6 +52,8 @@ def _model_platforms_docker_section_data():
             False,
             'command':
             'sleep infinity',
+            'tty':
+            True,
             'pid_mode':
             'host',
             'privileged':
@@ -164,6 +166,7 @@ def _model_platforms_docker_errors_section_data():
             },
             'override_command': int(),
             'command': int(),
+            'tty': str(),
             'pid_mode': int(),
             'privileged': str(),
             'security_opts': [
@@ -232,6 +235,7 @@ def test_platforms_docker_has_errors(_config):
                 'privileged': ['must be of boolean type'],
                 'override_command': ['must be of boolean type'],
                 'command': ['must be of string type'],
+                'tty': ['must be of boolean type'],
                 'registry': [{
                     'url': ['must be of string type'],
                     'credentials': [{
