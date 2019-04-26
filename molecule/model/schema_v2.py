@@ -656,6 +656,10 @@ platforms_docker_schema = {
                     'type': 'string',
                     'nullable': True,
                 },
+                'tty': {
+                    'type': 'boolean',
+                    'nullable': True,
+                },
                 'pid_mode': {
                     'type': 'string',
                 },

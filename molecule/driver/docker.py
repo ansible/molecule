@@ -59,6 +59,7 @@ class Docker(base.Base):
                 email: user@example.com
             override_command: True|False
             command: sleep infinity
+            tty: True|False
             pid_mode: host
             privileged: True|False
             security_opts:
@@ -117,6 +118,7 @@ class Docker(base.Base):
           volume_mounts:
             - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
           command: "/usr/sbin/init"
+          tty: True
           environment:
             container: docker
 
