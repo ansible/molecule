@@ -1,5 +1,4 @@
 ---
-{% raw -%}
 - name: Prepare
   hosts: all
   become: true
@@ -29,4 +28,3 @@
         then
           emerge --ask n ca-certificates curl dev-lang/python-2 gentoolkit sudo
         fi
-{%- endraw %}
