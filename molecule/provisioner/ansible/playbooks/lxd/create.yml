@@ -28,3 +28,6 @@
         wait_for_ipv4_addresses: true
         timeout: 600
       with_items: "{{ molecule_yml.platforms }}"
+      loop_control:
+        label: "{{ item.name }}"
+      no_log: false

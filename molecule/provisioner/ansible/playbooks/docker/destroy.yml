@@ -13,6 +13,9 @@
         force_kill: "{{ item.force_kill | default(true) }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
+      loop_control:
+        label: "{{ item.name }}"
+      no_log: false
       async: 7200
       poll: 0
 
@@ -30,3 +33,6 @@
         docker_host: "{{ item.docker_host | default(lookup('env', 'DOCKER_HOST') or 'unix://var/run/docker.sock') }}"
         state: absent
       with_items: "{{ molecule_yml.platforms | molecule_get_docker_networks }}"
+      loop_control:
+        label: "{{ item }}"
+      no_log: false
