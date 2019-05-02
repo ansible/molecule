@@ -134,13 +134,7 @@ def _model_driver_provider_name_not_nullable_when_vagrant_section_data():
     ['_model_driver_provider_name_not_nullable_when_vagrant_section_data'],
     indirect=True)
 def test_driver_provider_name_not_nullable_when_vagrant_driver(_config):
-    x = {
-        'driver': [{
-            'provider': [{
-                'name': ['unallowed value None', 'null value not allowed']
-            }]
-        }]
-    }
+    x = {'driver': [{'provider': [{'name': ['null value not allowed']}]}]}
 
     assert x == schema_v2.validate(_config)
 
