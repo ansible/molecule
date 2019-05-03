@@ -358,6 +358,18 @@ Verifier
 
 Molecule handles role testing by invoking configurable verifiers.
 
+Ansible
+^^^^^^^
+
+.. autoclass:: molecule.verifier.ansible.Ansible()
+   :undoc-members:
+
+Lint
+....
+
+.. autoclass:: molecule.verifier.lint.ansible_lint.AnsibleLint()
+   :undoc-members:
+
 Goss
 ^^^^
 
