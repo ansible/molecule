@@ -247,7 +247,7 @@ def test_bake(_patched_testinfra_get_tests, inventory_file, _instance):
 
     _instance.bake()
     x = [
-        str(sh.Command('py.test')),
+        str(sh.Command('pytest')),
         '--ansible-inventory={}'.format(inventory_file),
         '--connection=ansible',
         '-v',
