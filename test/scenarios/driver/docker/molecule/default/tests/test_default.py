@@ -30,4 +30,4 @@ def test_etc_molecule_ansible_hostname_file(host):
 
 def test_buildarg_env_var(host):
     cmd_out = host.run("echo $envarg")
-    assert cmd_out.stdout == 'this_is_a_test'
+    assert cmd_out.stdout.strip() == 'this_is_a_test'
