@@ -93,6 +93,13 @@ Contribution Guidelines
 .. _formatting: https://molecule.readthedocs.io/en/latest/testing.html#formatting
 .. _linting: https://molecule.readthedocs.io/en/latest/testing.html#linting
 
+Code Of Conduct
+===============
+
+Please see our `Code of Conduct`_ document.
+
+.. _Code of Conduct: https://github.com/ansible/molecule/blob/master/.github/CODE_OF_CONDUCT.md
+
 Pull Request Life Cycle and Governance
 ======================================
 
