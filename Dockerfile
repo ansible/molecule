@@ -29,6 +29,7 @@ LABEL maintainer "Ansible <info@ansible.com>"
 
 ENV PACKAGES="\
     docker \
+    git \
     openssh-client \
     ruby \
     "
