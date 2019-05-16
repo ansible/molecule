@@ -101,7 +101,8 @@ def test_command_init_role_inspec(temp_dir):
     pytest.helpers.metadata_lint_update(role_directory)
 
     with change_dir_to(role_directory):
-        sh.molecule('test')
+        cmd = sh.molecule.bake('test')
+        pytest.helpers.run_command(cmd)
 
 
 def test_command_init_scenario_inspec(temp_dir):
@@ -138,7 +139,8 @@ def test_command_init_role_goss(temp_dir):
     pytest.helpers.metadata_lint_update(role_directory)
 
     with change_dir_to(role_directory):
-        sh.molecule('test')
+        cmd = sh.molecule.bake('test')
+        pytest.helpers.run_command(cmd)
 
 
 def test_command_init_scenario_goss(temp_dir):
@@ -254,7 +256,8 @@ def test_command_init_role_with_template(temp_dir):
     pytest.helpers.metadata_lint_update(role_directory)
 
     with change_dir_to(role_directory):
-        sh.molecule('test')
+        cmd = sh.molecule.bake('test')
+        pytest.helpers.run_command(cmd)
 
 
 @pytest.mark.parametrize(
