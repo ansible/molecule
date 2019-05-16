@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Molecule managed
 
 describe file('/etc/hosts') do
