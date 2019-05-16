@@ -608,6 +608,7 @@ install:
   - >
     ! grep 'ERROR: ' ~/.tox-venv-install.log .tox/*/log/*.log
 before_script:
-  - gem install inspec rubocop
+  - gem install inspec -v '~> 3'
+  - gem install rubocop -v '~> 0.69.0'
 script:
   - tox
