@@ -40,6 +40,9 @@ def run_command(cmd, env=os.environ, log=True):
     if log:
         cmd = _rebake_command(cmd, env)
 
+    # Never let sh truncate exceptions in testing
+    cmd = cmd.bake(_truncate_exc=False)
+
     return util.run_command(cmd)
 
 
