@@ -33,7 +33,7 @@ base_schema = {
             },
             'raw_env_vars': {
                 'type': 'dict',
-                'keyschema': {
+                'keysrules': {
                     'type': 'string',
                     'regex': '^[A-Z0-9_-]+$',
                 },
