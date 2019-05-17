@@ -93,6 +93,23 @@ Contribution Guidelines
 .. _formatting: https://molecule.readthedocs.io/en/latest/testing.html#formatting
 .. _linting: https://molecule.readthedocs.io/en/latest/testing.html#linting
 
+Code Of Conduct
+===============
+
+Please see our `Code of Conduct`_ document.
+
+.. _Code of Conduct: https://github.com/ansible/molecule/blob/master/.github/CODE_OF_CONDUCT.md
+
+Pull Request Life Cycle and Governance
+======================================
+
+* If your PRs get stuck `join us on IRC`_ or add to the `working group agenda`_.
+* The code style is what is enforced by CI, everything else is off topic.
+* All PRs must be reviewed by one other person. This is enforced by GitHub. Larger changes require +2.
+
+.. _working group agenda: https://github.com/ansible/community/wiki/Molecule#meetings
+.. _join us on IRC: https://github.com/ansible/community/wiki/Molecule#join-the-discussion
+
 Installing
 ==========
 
