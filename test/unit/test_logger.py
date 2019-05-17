@@ -50,7 +50,7 @@ def test_out(capsys):
 
 def test_warn(capsys):
     log = logger.get_logger(__name__)
-    log.warn('foo')
+    log.warning('foo')
 
     stdout, _ = capsys.readouterr()
 

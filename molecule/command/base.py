@@ -102,7 +102,7 @@ def execute_cmdline_scenarios(scenario_name, args, command_args):
                 msg = ('An error occurred during the {} sequence action: '
                        "'{}'. Cleaning up.").format(scenario.config.subcommand,
                                                     scenario.config.action)
-                LOG.warn(msg)
+                LOG.warning(msg)
                 execute_subcommand(scenario.config, 'cleanup')
                 execute_subcommand(scenario.config, 'destroy')
                 # always prune ephemeral dir if destroying on failure
