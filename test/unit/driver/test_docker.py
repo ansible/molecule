@@ -143,8 +143,14 @@ def test_converged(_instance):
 
 
 def test_sanity_checks_missing_docker_dependency(mocker, _instance):
-    target = 'ansible.module_utils.docker_common.HAS_DOCKER_PY'
-    mocker.patch(target, False)
+    try:
+        # ansible >= 2.8
+        target = 'ansible.module_utils.docker.common.HAS_DOCKER_PY'
+        mocker.patch(target, False)
+    except ImportError:
+        # ansible < 2.8
+        target = 'ansible.module_utils.docker_common.HAS_DOCKER_PY'
+        mocker.patch(target, False)
 
     with pytest.raises(SystemExit):
         _instance.sanity_checks()

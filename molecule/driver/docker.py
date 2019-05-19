@@ -196,16 +196,12 @@ class Docker(base.Base):
 
         log.info("Sanity checks: '{}'".format(self._name))
 
-        HAS_DOCKER_PY = None
         try:
-            from ansible.module_utils.docker_common import HAS_DOCKER_PY
+            # ansible >= 2.8
+            from ansible.module_utils.docker.common import HAS_DOCKER_PY
         except ImportError:
-
-            # ansible 2.8+
-            try:
-                from ansible.module_utils.docker.common import HAS_DOCKER_PY
-            except ImportError:
-                pass
+            # ansible < 2.8
+            from ansible.module_utils.docker_common import HAS_DOCKER_PY
 
         if not HAS_DOCKER_PY:
             msg = ('Missing Docker driver dependency. Please '
