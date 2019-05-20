@@ -11,6 +11,7 @@
         docker_host: "{{ item.docker_host | default(lookup('env', 'DOCKER_HOST') or 'unix://var/run/docker.sock') }}"
         state: absent
         force_kill: "{{ item.force_kill | default(true) }}"
+        keep_volumes: "{{ item.keep_volumes | default(true) }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
       async: 7200
