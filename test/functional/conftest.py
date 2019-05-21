@@ -355,7 +355,16 @@ def supports_azure():
 
 @pytest.helpers.register
 def supports_digitalocean():
-    from ansible.modules.cloud.digital_ocean.digital_ocean import HAS_DOPY
+    try:
+        # ansible >=2.8
+        # The _digital_ocean module is deprecated, and will be removed in
+        # ansible 2.12. This is a temporary fix, and should be addressed
+        # based on decisions made in the related github issue:
+        # https://github.com/ansible/molecule/issues/2054
+        from ansible.modules.cloud.digital_ocean._digital_ocean import HAS_DOPY
+    except ImportError:
+        # ansible <2.8
+        from ansible.modules.cloud.digital_ocean.digital_ocean import HAS_DOPY
 
     env_vars = ('DO_API_KEY', )
 
