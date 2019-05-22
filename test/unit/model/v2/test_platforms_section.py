@@ -64,6 +64,8 @@ def _model_platforms_docker_section_data():
             'volumes': [
                 '/sys/fs/cgroup:/sys/fs/cgroup:ro',
             ],
+            'keep_volumes':
+            True,
             'tmpfs': [
                 '/tmp',
                 '/run ',
@@ -175,6 +177,9 @@ def _model_platforms_docker_errors_section_data():
             'volumes': [
                 int(),
             ],
+            'keep_volumes': [
+                int(),
+            ],
             'tmpfs': [
                 int(),
             ],
@@ -247,6 +252,7 @@ def test_platforms_docker_has_errors(_config):
                 'volumes': [{
                     0: ['must be of string type']
                 }],
+                'keep_volumes': ['must be of boolean type'],
                 'published_ports': [{
                     0: ['must be of string type']
                 }],

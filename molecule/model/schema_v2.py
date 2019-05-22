@@ -678,6 +678,9 @@ platforms_docker_schema = {
                         'type': 'string',
                     }
                 },
+                'keep_volumes': {
+                    'type': 'boolean',
+                },
                 'tmpfs': {
                     'type': 'list',
                     'schema': {

@@ -66,6 +66,7 @@ class Docker(base.Base):
               - seccomp=unconfined
             volumes:
               - /sys/fs/cgroup:/sys/fs/cgroup:ro
+            keep_volumes: True|False
             tmpfs:
               - /tmp
               - /run

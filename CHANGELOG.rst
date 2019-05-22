@@ -11,6 +11,7 @@ Unreleased
 * Add ``tty`` option to the Docker driver.
 * Specify new lower bound of 3.0.2 for ``testinfra`` which uses the new Ansible test runner.
 * Place upper bounds on inspec and rubocop for CI testing.
+* Support pruning of docker volumes in 'destroy' phase for docker driver
 
 2.20
 ====
