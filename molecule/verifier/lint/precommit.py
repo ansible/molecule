@@ -32,7 +32,7 @@ LOG = logger.get_logger(__name__)
 
 class PreCommit(base.Base):
     """
-    Pre-commit linter class.
+    Pre-commit tool verifier wrapper.
 
     This class is used to lint files by executing the pre-commit
     command line tool for linting files.
