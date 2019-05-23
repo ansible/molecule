@@ -210,11 +210,11 @@ def _model_platforms_docker_errors_section_data():
             ],
             'network_mode': int(),
             'purge_networks': int(),
-            'docker_host': str(),
-            'cacert_path': str(),
-            'cert_path': str(),
-            'key_path': str(),
-            'tls_verify': bool(),
+            'docker_host': int(),
+            'cacert_path': int(),
+            'cert_path': int(),
+            'key_path': int(),
+            'tls_verify': str(),
         }]
     }
 
