@@ -196,7 +196,7 @@ base_schema = {
             },
             'env': {
                 'type': 'dict',
-                'keyschema': {
+                'keysrules': {
                     'type': 'string',
                     'regex': '^[A-Z0-9_-]+$',
                 },
@@ -258,7 +258,7 @@ base_schema = {
             },
             'env': {
                 'type': 'dict',
-                'keyschema': {
+                'keysrules': {
                     'type': 'string',
                     'regex': '^[A-Z0-9_-]+$',
                 },
@@ -334,11 +334,11 @@ base_schema = {
             },
             'env': {
                 'type': 'dict',
-                'keyschema': {
+                'keysrules': {
                     'type': 'string',
                     'regex': '^[A-Z0-9_-]+$',
                 },
-                'valueschema': {
+                'valuesrules': {
                     'nullable': False,
                 },
                 'schema': {
@@ -416,7 +416,7 @@ base_schema = {
                     },
                     'env': {
                         'type': 'dict',
-                        'keyschema': {
+                        'keysrules': {
                             'type': 'string',
                             'regex': '^[A-Z0-9_-]+$',
                         },
@@ -477,7 +477,7 @@ base_schema = {
             },
             'env': {
                 'type': 'dict',
-                'keyschema': {
+                'keysrules': {
                     'type': 'string',
                     'regex': '^[A-Z0-9_-]+$',
                 },
@@ -505,7 +505,7 @@ base_schema = {
                     },
                     'env': {
                         'type': 'dict',
-                        'keyschema': {
+                        'keysrules': {
                             'type': 'string',
                             'regex': '^[A-Z0-9_-]+$',
                         },
@@ -720,7 +720,7 @@ platforms_docker_schema = {
                 },
                 'env': {
                     'type': 'dict',
-                    'keyschema': {
+                    'keysrules': {
                         'type': 'string',
                         'regex': '^[a-zA-Z0-9_-]+$',
                     }
@@ -874,7 +874,7 @@ verifier_options_readonly_schema = {
         'type': 'dict',
         'schema': {
             'options': {
-                'keyschema': {
+                'keysrules': {
                     'readonly': True,
                 },
             },
