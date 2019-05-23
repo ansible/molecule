@@ -1,12 +1,13 @@
 ---
 - name: Verify
   hosts: all
+  gather_facts: true  # required
   become: true
   vars:
-    goss_version: v0.2.5
+    goss_version: v0.3.6
     goss_arch: amd64
     goss_bin: /usr/local/bin/goss
-    goss_sha256sum: 31d04f98444ded26e2478fbdb3f5949cc9318bed13b5937598facc1818e1fce1.
+    goss_sha256sum: 53dd1156ab66f2c4275fd847372e6329d895cfb2f0bcbec5f86c1c4df7236dde.
     goss_test_directory: /tmp/molecule/goss
     goss_format: documentation
   tasks:
@@ -22,12 +23,31 @@
         path: "{{ goss_test_directory }}"
         state: directory
 
+    - name: Find Goss tests on localhost
+      find:
+        paths: "{{ lookup('env', 'MOLECULE_VERIFIER_TEST_DIRECTORY') }}"
+        patterns:
+          - "test[-.\\w]*.yml"
+          - "test_host_{{ ansible_hostname }}[-.\\w]*.yml"
+        excludes:
+          - "test_host_(?!{{ ansible_hostname }})[-.\\w]*.yml"
+        use_regex: true
+      delegate_to: localhost
+      register: test_files
+      changed_when: false
+      become: false
+
+    - name: debug
+      debug:
+        msg: "{{ test_files.files }}"
+        verbosity: 3
+
     - name: Copy Goss tests to remote
       copy:
-        src: "{{ item }}"
-        dest: "{{ goss_test_directory }}/{{ item | basename }}"
-      with_fileglob:
-        - "{{ lookup('env', 'MOLECULE_VERIFIER_TEST_DIRECTORY') }}/test_*.yml"
+        src: "{{ item.path }}"
+        dest: "{{ goss_test_directory }}/{{ item.path | basename }}"
+      with_items:
+        - "{{ test_files.files }}"
 
     - name: Register test files
       shell: "ls {{ goss_test_directory }}/test_*.yml"

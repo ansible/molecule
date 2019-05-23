@@ -82,6 +82,7 @@ def test_bake_removes_non_interactive_options_from_non_converge_playbooks(
 
 def test_bake_has_ansible_args(_inventory_directory, _instance):
     _instance._config.ansible_args = ('foo', 'bar')
+    _instance._config.config['provisioner']['ansible_args'] = ('frob', 'nitz')
     _instance.bake()
 
     x = [
@@ -89,6 +90,8 @@ def test_bake_has_ansible_args(_inventory_directory, _instance):
         '--inventory={}'.format(_inventory_directory),
         '--skip-tags=molecule-notest,notest',
         'playbook',
+        'frob',
+        'nitz',
         'foo',
         'bar',
     ]
@@ -114,6 +117,22 @@ def test_bake_does_not_have_ansible_args(_inventory_directory, _instance):
         result = str(_instance._ansible_command).split()
 
         assert sorted(x) == sorted(result)
+
+
+def test_bake_idem_does_have_skip_tag(_inventory_directory, _instance):
+    _instance._config.action = 'idempotence'
+    _instance.bake()
+
+    x = [
+        str(sh.ansible_playbook),
+        '--inventory={}'.format(_inventory_directory),
+        '--skip-tags=molecule-notest,notest,molecule-idempotence-notest',
+        'playbook',
+    ]
+
+    result = str(_instance._ansible_command).split()
+
+    assert sorted(x) == sorted(result)
 
 
 def test_execute(patched_run_command, _instance):

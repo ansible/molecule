@@ -25,6 +25,7 @@ import cookiecutter
 import cookiecutter.main
 
 from molecule import logger
+from molecule import util
 
 LOG = logger.get_logger(__name__)
 
@@ -52,14 +53,20 @@ class Base(object):
         :return: None
         """
         template_dir = self._resolve_template_dir(template_dir)
+        self._validate_template_dir(template_dir)
 
-        cookiecutter.main.cookiecutter(
-            template_dir,
-            extra_context=extra_context,
-            output_dir=output_dir,
-            overwrite_if_exists=overwrite,
-            no_input=True,
-        )
+        try:
+            cookiecutter.main.cookiecutter(
+                template_dir,
+                extra_context=extra_context,
+                output_dir=output_dir,
+                overwrite_if_exists=overwrite,
+                no_input=True,
+            )
+        except cookiecutter.exceptions.NonTemplatedInputDirException:
+            util.sysexit_with_message("The specified template directory (" +
+                                      str(template_dir) +
+                                      ") is in an invalid format")
 
     def _resolve_template_dir(self, template_dir):
         if not os.path.isabs(template_dir):
@@ -68,3 +75,8 @@ class Base(object):
                 'cookiecutter', template_dir)
 
         return template_dir
+
+    def _validate_template_dir(self, template_dir):
+        if not os.path.isdir(template_dir):
+            util.sysexit_with_message("The specified template directory (" +
+                                      str(template_dir) + ") does not exist")

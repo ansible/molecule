@@ -11,6 +11,9 @@ platforms:
   - name: instance
 provisioner:
   name: ansible
+  config_options:
+    defaults:
+      callback_whitelist: profile_roles,profile_tasks,timer
   playbooks:
     create: ../../../../../resources/playbooks/lxd/create.yml
     destroy: ../../../../../resources/playbooks/lxd/destroy.yml

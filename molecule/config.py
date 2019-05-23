@@ -21,6 +21,7 @@
 import os
 
 import anyconfig
+from ansible.module_utils.parsing.convert_bool import boolean
 import six
 
 from molecule import interpolation
@@ -34,6 +35,7 @@ from molecule.dependency import gilt
 from molecule.dependency import shell
 from molecule.driver import azure
 from molecule.driver import delegated
+from molecule.driver import digitalocean
 from molecule.driver import docker
 from molecule.driver import ec2
 from molecule.driver import gce
@@ -45,11 +47,13 @@ from molecule.driver import vagrant
 from molecule.lint import yamllint
 from molecule.model import schema_v2
 from molecule.provisioner import ansible
+from molecule.verifier import ansible as ansible_verifier
 from molecule.verifier import goss
 from molecule.verifier import inspec
 from molecule.verifier import testinfra
 
 LOG = logger.get_logger(__name__)
+MOLECULE_DEBUG = boolean(os.environ.get('MOLECULE_DEBUG', 'False'))
 MOLECULE_DIRECTORY = 'molecule'
 MOLECULE_FILE = 'molecule.yml'
 MERGE_STRATEGY = anyconfig.MS_DICTS
@@ -111,7 +115,7 @@ class Config(object):
 
     @property
     def debug(self):
-        return self.args.get('debug', False)
+        return self.args.get('debug', MOLECULE_DEBUG)
 
     @property
     def env_file(self):
@@ -158,6 +162,8 @@ class Config(object):
             driver = azure.Azure(self)
         elif driver_name == 'delegated':
             driver = delegated.Delegated(self)
+        elif driver_name == 'digitalocean':
+            driver = digitalocean.DigitalOcean(self)
         elif driver_name == 'docker':
             driver = docker.Docker(self)
         elif driver_name == 'ec2':
@@ -244,6 +250,8 @@ class Config(object):
             return inspec.Inspec(self)
         elif verifier_name == 'goss':
             return goss.Goss(self)
+        elif verifier_name == 'ansible':
+            return ansible_verifier.Ansible(self)
 
     @property
     @util.memoize
@@ -337,6 +345,8 @@ class Config(object):
             util.sysexit_with_message(msg)
 
     def _get_defaults(self):
+        scenario_name = (os.path.basename(os.path.dirname(self.molecule_file))
+                         or 'default')
         return {
             'dependency': {
                 'name': 'galaxy',
@@ -366,6 +376,7 @@ class Config(object):
             'provisioner': {
                 'name': 'ansible',
                 'config_options': {},
+                'ansible_args': [],
                 'connection_options': {},
                 'options': {},
                 'env': {},
@@ -394,11 +405,11 @@ class Config(object):
             },
             'scenario': {
                 'name':
-                'default',
+                scenario_name,
                 'check_sequence': [
+                    'dependency',
                     'cleanup',
                     'destroy',
-                    'dependency',
                     'create',
                     'prepare',
                     'converge',
@@ -414,18 +425,20 @@ class Config(object):
                     'converge',
                 ],
                 'create_sequence': [
+                    'dependency',
                     'create',
                     'prepare',
                 ],
                 'destroy_sequence': [
+                    'dependency',
                     'cleanup',
                     'destroy',
                 ],
                 'test_sequence': [
                     'lint',
+                    'dependency',
                     'cleanup',
                     'destroy',
-                    'dependency',
                     'syntax',
                     'create',
                     'prepare',
@@ -487,6 +500,7 @@ def molecule_drivers():
     return [
         azure.Azure(None).name,
         delegated.Delegated(None).name,
+        digitalocean.DigitalOcean(None).name,
         docker.Docker(None).name,
         ec2.EC2(None).name,
         gce.GCE(None).name,
@@ -503,6 +517,7 @@ def molecule_verifiers():
         goss.Goss(None).name,
         inspec.Inspec(None).name,
         testinfra.Testinfra(None).name,
+        ansible_verifier.Ansible(None).name,
     ]
 
 

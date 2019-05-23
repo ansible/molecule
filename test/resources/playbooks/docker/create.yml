@@ -3,7 +3,7 @@
   hosts: localhost
   connection: local
   gather_facts: false
-  no_log: "{{ not (lookup('env', 'MOLECULE_DEBUG') | bool or molecule_yml.provisioner.log|default(false) | bool) }}"
+  no_log: "{{ molecule_no_log }}"
   tasks:
     - name: Log into a Docker registry
       docker_login:
@@ -20,11 +20,12 @@
 
     - name: Create Dockerfiles from image names
       template:
-        src: Dockerfile.j2
+        src: "{{ item.dockerfile | default('Dockerfile.j2') }}"
         dest: "{{ molecule_ephemeral_directory }}/Dockerfile_{{ item.image | regex_replace('[^a-zA-Z0-9_]', '_') }}"
       with_items: "{{ molecule_yml.platforms }}"
       when: not item.pre_build_image | default(false)
       register: platforms
+      no_log: item.failed
 
     - name: Discover local Docker images
       docker_image_facts:
@@ -39,7 +40,7 @@
         path: "{{ molecule_ephemeral_directory }}"
         name: "molecule_local/{{ item.item.image }}"
         docker_host: "{{ item.item.docker_host | default(lookup('env', 'DOCKER_HOST') or 'unix://var/run/docker.sock') }}"
-        dockerfile: "{{ item.item.dockerfile | default(item.invocation.module_args.dest) }}"
+        dockerfile: "{{ item.invocation.module_args.dest }}"
         force: "{{ item.item.force | default(true) }}"
         pull: "{{ item.item.pull | default(omit) }}"
         buildargs: "{{ item.item.buildargs | default(omit) }}"
@@ -55,9 +56,12 @@
         state: present
       with_items: "{{ molecule_yml.platforms | molecule_get_docker_networks }}"
 
-    - name: Determine the CMD directive
+    - name: Determine the CMD directives
       set_fact:
-        command_directive: "{{ item.command | default('bash -c \"while true; do sleep 10000; done\"') }}"
+        command_directives_dict: >-
+          {{ command_directives_dict | default({}) |
+             combine({ item.name: item.command | default('bash -c "while true; do sleep 10000; done"') })
+          }}
       with_items: "{{ molecule_yml.platforms }}"
       when: item.override_command | default(true)
 
@@ -70,7 +74,7 @@
         state: started
         recreate: false
         log_driver: json-file
-        command: "{{ command_directive | default(omit) }}"
+        command: "{{ (command_directives_dict | default({}))[item.name] | default(omit) }}"
         pid_mode: "{{ item.pid_mode | default(omit) }}"
         privileged: "{{ item.privileged | default(omit) }}"
         security_opts: "{{ item.security_opts | default(omit) }}"
@@ -99,3 +103,4 @@
       until: docker_jobs.finished
       retries: 300
       with_items: "{{ server.results }}"
+      no_log: item.failed

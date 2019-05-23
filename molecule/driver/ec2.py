@@ -43,6 +43,44 @@ class EC2(base.Base):
         platforms:
           - name: instance
 
+    Some configuration examples:
+
+    .. code-block:: yaml
+
+        driver:
+          name: ec2
+        platforms:
+          - name: instance
+            image: ami-0311dc90a352b25f4
+            instance_type: t2.micro
+            vpc_subnet_id: subnet-1cb17175
+
+    If you don't know the AMI code or want to avoid hardcoding it:
+
+    .. code-block:: yaml
+
+        driver:
+          name: ec2
+        platforms:
+          - name: instance
+            image_owner: 099720109477
+            image_name: ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-20190320
+            instance_type: t2.micro
+            vpc_subnet_id: subnet-1cb17175
+
+    Use wildcards for getting the latest image. For example, the latest Ubuntu bionic image:
+
+    .. code-block:: yaml
+
+        driver:
+          name: ec2
+        platforms:
+          - name: instance
+            image_owner: 099720109477
+            image_name: ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*
+            instance_type: t2.micro
+            vpc_subnet_id: subnet-1cb17175
+
     .. code-block:: bash
 
         $ pip install 'molecule[ec2]'
@@ -61,7 +99,8 @@ class EC2(base.Base):
         Molecule does not merge lists, when overriding the developer must
         provide all options.
 
-    Provide the files Molecule will preserve upon each subcommand execution.
+    Provide a list of files Molecule will preserve, relative to the scenario
+    ephemeral directory, after any ``destroy`` subcommand execution.
 
     .. code-block:: yaml
 
@@ -136,3 +175,7 @@ class EC2(base.Base):
 
         return next(item for item in instance_config_dict
                     if item['instance'] == instance_name)
+
+    def sanity_checks(self):
+        # FIXME(decentral1se): Implement sanity checks
+        pass

@@ -64,7 +64,8 @@ class LXD(base.Base):
               - default
             force_stop: True|False
 
-    Provide the files Molecule will preserve upon each subcommand execution.
+    Provide a list of files Molecule will preserve, relative to the scenario
+    ephemeral directory, after any ``destroy`` subcommand execution.
 
     .. code-block:: yaml
 
@@ -105,3 +106,7 @@ class LXD(base.Base):
 
     def ansible_connection_options(self, instance_name):
         return {'ansible_connection': 'lxd'}
+
+    def sanity_checks(self):
+        # FIXME(decentral1se): Implement sanity checks
+        pass

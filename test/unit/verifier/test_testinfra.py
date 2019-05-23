@@ -247,7 +247,7 @@ def test_bake(_patched_testinfra_get_tests, inventory_file, _instance):
 
     _instance.bake()
     x = [
-        str(sh.Command('py.test')),
+        str(sh.Command('pytest')),
         '--ansible-inventory={}'.format(inventory_file),
         '--connection=ansible',
         '-v',
@@ -311,8 +311,7 @@ def test_execute_bakes(patched_run_command, _patched_testinfra_get_tests,
 
 def test_executes_catches_and_exits_return_code(
         patched_run_command, _patched_testinfra_get_tests, _instance):
-    patched_run_command.side_effect = sh.ErrorReturnCode_1(
-        sh.testinfra, b'', b'')
+    patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.pytest, b'', b'')
     with pytest.raises(SystemExit) as e:
         _instance.execute()
 

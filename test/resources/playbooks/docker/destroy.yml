@@ -3,7 +3,7 @@
   hosts: localhost
   connection: local
   gather_facts: false
-  no_log: "{{ not (lookup('env', 'MOLECULE_DEBUG') | bool or molecule_yml.provisioner.log|default(false) | bool) }}"
+  no_log: "{{ molecule_no_log }}"
   tasks:
     - name: Destroy molecule instance(s)
       docker_container:
@@ -11,6 +11,7 @@
         docker_host: "{{ item.docker_host | default(lookup('env', 'DOCKER_HOST') or 'unix://var/run/docker.sock') }}"
         state: absent
         force_kill: "{{ item.force_kill | default(true) }}"
+        keep_volumes: "{{ item.keep_volumes | default(true) }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
       async: 7200
@@ -23,6 +24,7 @@
       until: docker_jobs.finished
       retries: 300
       with_items: "{{ server.results }}"
+      no_log: item.failed
 
     - name: Delete docker network(s)
       docker_network:

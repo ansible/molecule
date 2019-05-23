@@ -5,11 +5,16 @@ History
 Unreleased
 ==========
 
-* Molecule can now be called as a python module (python -m molecule). Patch by `@ssbarnea`_.
-* Add `Travis CI integration`_ and fix related test issues.
+* `dependency` step is now run by default before any playbook sequence step, including
+  `create` and `destroy`. This allows the use of roles in all sequence step playbooks.
+* Removed validation regex for docker registry passwords, all ``string`` values are now valid.
+* Add ``tty`` option to the Docker driver.
+* Specify new lower bound of 3.0.2 for ``testinfra`` which uses the new Ansible test runner.
+* Place upper bounds on inspec and rubocop for CI testing.
+* Support pruning of docker volumes in 'destroy' phase for docker driver
 
-.. _`@ssbarnea`: https://github.com/ssbarnea
-.. _`Travis CI integration`: https://travis-ci.com/ansible/molecule
+2.20
+====
 
 Important Changes
 -----------------
@@ -19,6 +24,54 @@ Important Changes
 
 .. _`Move to Red Hat`: https://molecule.readthedocs.io/en/latest/contributing.html#move-to-red-hat
 .. _`quay.io`: https://quay.io/repository/ansible/molecule
+
+Other
+-----
+
+* Molecule docker images will use the following convention on tags going forwards:
+
+  * ``latest``: corresponds to the master branch, which should be viewed as unstable
+  * ``2.20``: Git based tags
+  * ``2.20a1``: pre-releases tags
+
+* Molecule docker image no longer requires ``sudo`` when invoking ``molecule``.
+* Molecule docker image no longer specifies ``USER molecule``.
+* Officially advertise support for Python 3.5.
+* Remove mandatory ``-r`` option for ``molecule init scenario``.
+* Make the default scenario use the parent folder.
+* Fix support for honouring environment variables such as ``MOLECULE_DEBUG``.
+* Allow to customise the location of the ``Dockerfile.j2`` with the ``dockerfile`` option for the Docker driver.
+* Add integer type coercion for the ``exposed_ports`` platform option.
+* Add support for honouring ``PY_COLORS`` environment variable.
+* Disable YAML lint truthy rule by default.
+* Add validation for non-unique platform instance names.
+* Add 'Getting Started' guide to the documentation for the benefit of new users.
+* Allow to specify extra inventory sources not created by Molecule.
+* Avoid including assets in the package ``sdist``.
+* Add ``openssh-client`` to the Molecule Docker image.
+* Fix ``ca-certificates`` installation for OpenSUSE.
+* Add ``purge_networks`` option to the Docker driver.
+* Add ``pid_mode`` option to the Docker driver.
+* Constrain ``ansible-lint`` to ``>=4.0.2,<5``.
+* Add the Linode driver (API v3).
+* Provide documented example for using ``systemd`` enabled Docker images.
+* Add ``winrm`` connection support for the delegated driver.
+* Remove usage of ``sudo pip ..`` in driver installation documentation.
+* Add ``override_command`` option to the Docker driver for overriding ``CMD`` directives.
+* Only recommend to install ``'molecule[docker]'`` in the ``INSTALL.rst`` for the Docker driver.
+* Sort scenario execution order by directory name.
+* Fix Python package install for Docker ``prepare.yml`` on Fedora Rawhide.
+* Update SHA-256 hash for the Goss binary.
+* Remove ``Detox`` (deprecated) configuration example from ``Tox`` documentation.
+* Add ``CODE_OF_CONDUCT.md``.
+* Add optional ``cleanup`` sequence step.
+* Allow to customise configuration file location with ``MOLECULE_GLOB`` environment variable.
+* Molecule can now be called as a Python module (``python -m molecule``). Patch by `@ssbarnea`_.
+* Add `Travis CI integration`_ and fix related test issues.
+* Add Docker ``buildargs`` option for configuring the ``docker_image`` ``create.yml`` build step.
+
+.. _`@ssbarnea`: https://github.com/ssbarnea
+.. _`Travis CI integration`: https://travis-ci.com/ansible/molecule
 
 2.19
 ====
@@ -410,7 +463,7 @@ Breaking Changes
 * Correct env path qualification.
 * Add sudo package to Fedora section of Dockerfile template.
 * Correct ANSIBLE_ROLES_PATH path component.
-* Allow re-run of prepare playbook. 
+* Allow re-run of prepare playbook.
 
 2.3
 ===

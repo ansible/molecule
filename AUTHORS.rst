@@ -2,16 +2,17 @@
 Credits
 *******
 
-Development Leads
-=================
+Based on the good work of John Dewey (`@retr0h`_).
 
-* John Dewey (`@retr0h`_)
+.. _`@retr0h`: https://github.com/retr0h
 
 Contributors
 ============
 
-.. code-block:: bash
+Please see the following:
 
-  $ git shortlog -s | cut -c8-
+* `Contributors listing`_
+* `Community working group members`_
 
-.. _`@retr0h`: https://github.com/retr0h
+.. _Contributors listing: https://github.com/ansible/molecule/graphs/contributors
+.. _Community working group members: https://github.com/ansible/community/wiki/Molecule

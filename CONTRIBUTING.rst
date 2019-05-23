@@ -10,21 +10,16 @@ Move to Red Hat
     During the end of October 2018 the Molecule Project was moved to its new home
     under Ansible by Red Hat.
 
-Therefore the project is in a state of transition.
+How to get involved
+-------------------
 
-There are some implications:
-
-* There is no immediate roadmap but there is a `community working group`_ with
-  aspirations to achieve it. Please join the group if you would like to
+* To see what's planned see the `Molecule Project Board`_.
+* Join the Molecule `community working group`_ if you would like to
   influence the direction of the project.
 
-* The coding style currently used (as of early 2019) is not necessarily the
-  style that will be followed in future development. Therefore, please
-  understand that when reviewers submit several comments relating to style that
-  we are in a process of shaping the code base to match the Ansible team
-  standards.
+.. _community working group: https://github.com/ansible/community/wiki/molecule
+.. _Molecule Project Board: https://github.com/ansible/molecule/projects
 
-.. _community working group: https://github.com/ansible/community/tree/master/group-molecule
 
 Update Git repo location
 ------------------------
@@ -97,6 +92,23 @@ Contribution Guidelines
 .. _`DCO 1.1`: https://github.com/ansible/molecule/blob/master/DCO_1_1.md
 .. _formatting: https://molecule.readthedocs.io/en/latest/testing.html#formatting
 .. _linting: https://molecule.readthedocs.io/en/latest/testing.html#linting
+
+Code Of Conduct
+===============
+
+Please see our `Code of Conduct`_ document.
+
+.. _Code of Conduct: https://github.com/ansible/molecule/blob/master/.github/CODE_OF_CONDUCT.md
+
+Pull Request Life Cycle and Governance
+======================================
+
+* If your PRs get stuck `join us on IRC`_ or add to the `working group agenda`_.
+* The code style is what is enforced by CI, everything else is off topic.
+* All PRs must be reviewed by one other person. This is enforced by GitHub. Larger changes require +2.
+
+.. _working group agenda: https://github.com/ansible/community/wiki/Molecule#meetings
+.. _join us on IRC: https://github.com/ansible/community/wiki/Molecule#join-the-discussion
 
 Installing
 ==========

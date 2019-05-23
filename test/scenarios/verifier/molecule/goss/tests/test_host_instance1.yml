@@ -1,0 +1,11 @@
+# Molecule managed
+
+---
+file:
+  /etc/molecule/instance1:
+    exists: true
+    owner: root
+    group: root
+    mode: "0644"
+    filetype: file
+    contains: ['instance1']

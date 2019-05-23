@@ -1,4 +1,5 @@
 [flake8]
-exclude = .venv/,.tox/,dist/,build/,doc/,.eggs/,molecule/provisioner/ansible/plugins/libraries/goss.py
+# do not add excludes for files in repo
+exclude = .venv/,.tox/,dist/,build/,.eggs/
 format = pylint
-ignore = E741,W503,W504
+ignore = E741,W503,W504,H

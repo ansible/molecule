@@ -52,6 +52,8 @@ def _model_platforms_docker_section_data():
             False,
             'command':
             'sleep infinity',
+            'tty':
+            True,
             'pid_mode':
             'host',
             'privileged':
@@ -62,6 +64,8 @@ def _model_platforms_docker_section_data():
             'volumes': [
                 '/sys/fs/cgroup:/sys/fs/cgroup:ro',
             ],
+            'keep_volumes':
+            True,
             'tmpfs': [
                 '/tmp',
                 '/run ',
@@ -115,6 +119,35 @@ def test_platforms_docker(_config):
     assert {} == schema_v2.validate(_config)
 
 
+@pytest.mark.parametrize(
+    '_config', ['_model_platforms_docker_section_data'], indirect=True)
+def test_platforms_unique_names(_config):
+    instance_name = _config['platforms'][0]['name']
+    _config['platforms'] += [{
+        'name': instance_name  # duplicate platform name
+    }]
+
+    expected_validation_errors = {
+        'platforms': [{
+            0: [{
+                'name': ["'{}' is not unique".format(instance_name)]
+            }],
+            1: [{
+                'name': ["'{}' is not unique".format(instance_name)]
+            }]
+        }]
+    }
+
+    assert expected_validation_errors == schema_v2.validate(_config)
+
+
+@pytest.mark.parametrize(
+    '_config', ['_model_platforms_docker_section_data'], indirect=True)
+def test_platforms_docker_exposed_ports_coerced(_config):
+    _config['platforms'][0]['exposed_ports'] = [9904]
+    assert {} == schema_v2.validate(_config)
+
+
 @pytest.fixture
 def _model_platforms_docker_errors_section_data():
     return {
@@ -123,6 +156,7 @@ def _model_platforms_docker_errors_section_data():
             'hostname': int(),
             'image': int(),
             'pull': int(),
+            'dockerfile': bool(),
             'pre_build_image': int(),
             'registry': {
                 'url': int(),
@@ -134,12 +168,16 @@ def _model_platforms_docker_errors_section_data():
             },
             'override_command': int(),
             'command': int(),
+            'tty': str(),
             'pid_mode': int(),
             'privileged': str(),
             'security_opts': [
                 int(),
             ],
             'volumes': [
+                int(),
+            ],
+            'keep_volumes': [
                 int(),
             ],
             'tmpfs': [
@@ -149,7 +187,7 @@ def _model_platforms_docker_errors_section_data():
                 int(),
             ],
             'exposed_ports': [
-                int(),
+                bool(),
             ],
             'published_ports': [
                 int(),
@@ -192,6 +230,7 @@ def test_platforms_docker_has_errors(_config):
                 }],
                 'image': ['must be of string type'],
                 'pull': ['must be of boolean type'],
+                'dockerfile': ['must be of string type'],
                 'pre_build_image': ['must be of boolean type'],
                 'hostname': ['must be of string type'],
                 'security_opts': [{
@@ -201,6 +240,7 @@ def test_platforms_docker_has_errors(_config):
                 'privileged': ['must be of boolean type'],
                 'override_command': ['must be of boolean type'],
                 'command': ['must be of string type'],
+                'tty': ['must be of boolean type'],
                 'registry': [{
                     'url': ['must be of string type'],
                     'credentials': [{
@@ -212,6 +252,7 @@ def test_platforms_docker_has_errors(_config):
                 'volumes': [{
                     0: ['must be of string type']
                 }],
+                'keep_volumes': ['must be of boolean type'],
                 'published_ports': [{
                     0: ['must be of string type']
                 }],

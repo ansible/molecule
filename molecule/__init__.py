@@ -1,3 +1,4 @@
+#  Copyright (c) 2019 Red Hat, Inc.
 #  Copyright (c) 2015-2018 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -17,8 +18,13 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
+"""Molecule version information."""
 
-import pbr.version
+from __future__ import absolute_import, division, print_function
+__metaclass__ = type
 
-version_info = pbr.version.VersionInfo('molecule')  # noqa
-__version__ = version_info.release_string()
+try:
+    import pkg_resources
+    __version__ = pkg_resources.get_distribution('molecule').version
+except Exception:
+    __version__ = 'unknown'

@@ -40,8 +40,8 @@ class Testinfra(base.Base):
     .. note::
 
         Molecule will remove any options matching '^[v]+$', and pass ``-vvv``
-        to the underlying ``py.test`` command when executing
-        ``molecule --debug``.
+        to the underlying ``pytest`` command when executing ``molecule
+        --debug``.
 
     .. code-block:: yaml
 
@@ -160,7 +160,7 @@ class Testinfra(base.Base):
         verbose_flag = util.verbose_flag(options)
         args = verbose_flag + self.additional_files_or_dirs
 
-        self._testinfra_command = sh.Command('py.test').bake(
+        self._testinfra_command = sh.Command('pytest').bake(
             options,
             self._tests,
             *args,

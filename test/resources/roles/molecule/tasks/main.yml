@@ -6,9 +6,9 @@
         mode=0755
         state=directory
 
-- name: Create /etc/molecule/{{ ansible_hostname }}
-  copy: dest="/etc/molecule/{{ ansible_hostname }}"
+- name: Create /etc/molecule/{{ ansible_host }}
+  copy: dest="/etc/molecule/{{ ansible_host }}"
         group=root
         owner=root
         mode=0644
-        content="{{ ansible_hostname }}"
+        content="{{ ansible_host }}"

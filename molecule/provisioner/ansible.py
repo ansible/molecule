@@ -42,7 +42,8 @@ class Ansible(base.Base):
     ``init`` subcommand will provide the necessary files for convenience.
 
     Molecule will skip tasks which are tagged with either `molecule-notest` or
-    `notest`.
+    `notest`. With the tag `molecule-idempotence-notest` tasks are only
+    skipped during the idempotence action step.
 
     .. important::
 
@@ -349,6 +350,17 @@ class Ansible(base.Base):
             ansible_ssh_common_args: -o IdentitiesOnly=no
 
     .. _`variables defined in a playbook`: https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#defining-variables-in-a-playbook
+
+    Add arguments to ansible-playbook when running converge:
+
+    .. code-block:: yaml
+
+        provisioner:
+          name: ansible
+          ansible_args:
+            - --inventory=mygroups.yml
+            - --limit=host1,host2
+
     """  # noqa
 
     def __init__(self, config):
@@ -386,6 +398,10 @@ class Ansible(base.Base):
         d = {
             'skip-tags': 'molecule-notest,notest',
         }
+
+        if self._config.action == 'idempotence':
+            d['skip-tags'] += ',molecule-idempotence-notest'
+
         if self._config.debug:
             d['vvv'] = True
             d['diff'] = True
@@ -436,6 +452,10 @@ class Ansible(base.Base):
     @property
     def name(self):
         return self._config.config['provisioner']['name']
+
+    @property
+    def ansible_args(self):
+        return self._config.config['provisioner']['ansible_args']
 
     @property
     def config_options(self):
@@ -547,6 +567,9 @@ class Ansible(base.Base):
                     "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
                     'molecule_instance_config':
                     "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
+                    'molecule_no_log':
+                    "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
+                    "molecule_yml.provisioner.log|default(False) | bool }}"
                 }
 
                 # All group

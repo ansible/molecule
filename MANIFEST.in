@@ -1,6 +1,1 @@
-include LICENSE README.rst
-include requirements.txt
-include test-requirements.txt
-include lint-requirements.txt
 prune asset
-prune tests

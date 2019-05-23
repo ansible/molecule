@@ -43,7 +43,8 @@ class LXC(base.Base):
 
         $ pip install molecule[lxc]
 
-    Provide the files Molecule will preserve upon each subcommand execution.
+    Provide a list of files Molecule will preserve, relative to the scenario
+    ephemeral directory, after any ``destroy`` subcommand execution.
 
     .. code-block:: yaml
 
@@ -84,3 +85,7 @@ class LXC(base.Base):
 
     def ansible_connection_options(self, instance_name):
         return {'ansible_connection': 'lxc'}
+
+    def sanity_checks(self):
+        # FIXME(decentral1se): Implement sanity checks
+        pass

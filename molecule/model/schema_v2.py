@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import collections
 import copy
 import functools
 import re
@@ -25,8 +26,7 @@ import re
 import cerberus
 import cerberus.errors
 
-from molecule import interpolation
-from molecule import util
+from molecule import interpolation, util
 
 
 def coerce_env(env, keep_string, v):
@@ -62,6 +62,7 @@ def pre_validate_base_schema(env, keep_string):
                     'allowed': [
                         'azure',
                         'delegated',
+                        'digitalocean',
                         'docker',
                         'ec2',
                         'gce',
@@ -103,8 +104,7 @@ def pre_validate_base_schema(env, keep_string):
                                 'type': 'dict',
                                 'schema': {
                                     'password': {
-                                        'type': 'string',
-                                        'regex': '^[{$]+[a-z0-9A-Z]+[}]*$',
+                                        'type': 'string'
                                     },
                                 }
                             },
@@ -156,6 +156,7 @@ def pre_validate_base_schema(env, keep_string):
                         'testinfra',
                         'inspec',
                         'goss',
+                        'ansible',
                     ],
                 },
                 'lint': {
@@ -171,6 +172,7 @@ def pre_validate_base_schema(env, keep_string):
                                 'pre-commit',
                                 'rubocop',
                                 'yamllint',
+                                'ansible-lint',
                             ],
                         },
                     }
@@ -272,6 +274,8 @@ base_schema = {
                 'name': {
                     'type': 'string',
                     'required': True,
+                    'unique':  # https://github.com/pyeve/cerberus/issues/467
+                    True,
                 },
                 'groups': {
                     'type': 'list',
@@ -614,6 +618,9 @@ platforms_docker_schema = {
                 'image': {
                     'type': 'string',
                 },
+                'dockerfile': {
+                    'type': 'string',
+                },
                 'pull': {
                     'type': 'boolean',
                 },
@@ -650,6 +657,10 @@ platforms_docker_schema = {
                     'type': 'string',
                     'nullable': True,
                 },
+                'tty': {
+                    'type': 'boolean',
+                    'nullable': True,
+                },
                 'pid_mode': {
                     'type': 'string',
                 },
@@ -668,6 +679,9 @@ platforms_docker_schema = {
                         'type': 'string',
                     }
                 },
+                'keep_volumes': {
+                    'type': 'boolean',
+                },
                 'tmpfs': {
                     'type': 'list',
                     'schema': {
@@ -684,6 +698,7 @@ platforms_docker_schema = {
                     'type': 'list',
                     'schema': {
                         'type': 'string',
+                        'coerce': 'exposed_ports'
                     }
                 },
                 'published_ports': {
@@ -943,10 +958,49 @@ verifier_testinfra_mutually_exclusive_schema = {
     },
 }
 
+verifier_ansible_mutually_exclusive_schema = {
+    'verifier': {
+        'type': 'dict',
+        'schema': {
+            'name': {
+                'type': 'string',
+                'allowed': [
+                    'ansible',
+                ],
+            },
+            'lint': {
+                'type': 'dict',
+                'schema': {
+                    'name': {
+                        'type': 'string',
+                        'allowed': [
+                            'ansible-lint',
+                        ],
+                    },
+                }
+            },
+        }
+    },
+}
+
 
 class Validator(cerberus.Validator):
     def __init__(self, *args, **kwargs):
         super(Validator, self).__init__(*args, **kwargs)
+
+    def _validate_unique(self, unique, field, value):
+        """Ensure value uniqueness.
+
+        The rule's arguments are validated against this schema:
+        {'type': 'boolean'}
+        """
+        if unique:
+            root_key = self.schema_path[0]
+            data = (doc[field] for doc in self.root_document[root_key])
+            for key, count in collections.Counter(data).items():
+                if count > 1:
+                    msg = "'{}' is not unique".format(key)
+                    self._error(field, msg)
 
     def _validate_disallowed(self, disallowed, field, value):
         """ Readonly but with a custom error.
@@ -957,6 +1011,17 @@ class Validator(cerberus.Validator):
         if disallowed:
             msg = 'disallowed user provided config option'
             self._error(field, msg)
+
+    def _normalize_coerce_exposed_ports(self, value):
+        """Coerce ``exposed_ports`` values to string.
+
+        Not all types that can be specified by the user are acceptable and
+        therefore we cannot simply pass a ``'coerce': 'string'`` to the schema
+        definition.
+        """
+        if type(value) == int:
+            return str(value)
+        return value
 
     def _validate_molecule_env_var(self, molecule_env_var, field, value):
         """ Readonly but with a custom error.
@@ -1012,6 +1077,8 @@ def validate(c):
         util.merge_dicts(schema, verifier_inspec_mutually_exclusive_schema)
     elif c['verifier']['name'] == 'testinfra':
         util.merge_dicts(schema, verifier_testinfra_mutually_exclusive_schema)
+    elif c['verifier']['name'] == 'ansible':
+        util.merge_dicts(schema, verifier_ansible_mutually_exclusive_schema)
 
     v = Validator(allow_unknown=True)
     v.validate(c, schema)

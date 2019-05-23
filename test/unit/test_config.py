@@ -32,6 +32,7 @@ from molecule.dependency import gilt
 from molecule.dependency import shell
 from molecule.driver import azure
 from molecule.driver import delegated
+from molecule.driver import digitalocean
 from molecule.driver import docker
 from molecule.driver import ec2
 from molecule.driver import gce
@@ -44,6 +45,7 @@ from molecule.provisioner import ansible
 from molecule.verifier import goss
 from molecule.verifier import inspec
 from molecule.verifier import testinfra
+from molecule.verifier import ansible as ansible_verifier
 
 
 def test_molecule_file_private_member(molecule_file_fixture, config_instance):
@@ -174,6 +176,22 @@ def test_driver_property_is_delegated(config_instance):
 
 
 @pytest.fixture
+def _config_driver_digitalocean_section_data():
+    return {
+        'driver': {
+            'name': 'digitalocean'
+        },
+    }
+
+
+@pytest.mark.parametrize(
+    'config_instance', ['_config_driver_digitalocean_section_data'],
+    indirect=True)
+def test_driver_property_is_digitalocean(config_instance):
+    assert isinstance(config_instance.driver, digitalocean.DigitalOcean)
+
+
+@pytest.fixture
 def _config_driver_ec2_section_data():
     return {
         'driver': {
@@ -271,6 +289,7 @@ def test_drivers_property(config_instance):
     x = [
         'azure',
         'delegated',
+        'digitalocean',
         'docker',
         'ec2',
         'gce',
@@ -371,8 +390,27 @@ def test_verifier_property_is_goss(config_instance):
     assert isinstance(config_instance.verifier, goss.Goss)
 
 
+@pytest.fixture
+def _config_verifier_ansible_section_data():
+    return {
+        'verifier': {
+            'name': 'ansible',
+            'lint': {
+                'name': 'ansible-lint',
+            },
+        },
+    }
+
+
+@pytest.mark.parametrize(
+    'config_instance', ['_config_verifier_ansible_section_data'],
+    indirect=True)
+def test_verifier_property_is_ansible(config_instance):
+    assert isinstance(config_instance.verifier, ansible_verifier.Ansible)
+
+
 def test_verifiers_property(config_instance):
-    x = ['goss', 'inspec', 'testinfra']
+    x = ['goss', 'inspec', 'testinfra', 'ansible']
 
     assert x == config_instance.verifiers
 
@@ -448,6 +486,13 @@ def test_interpolate_raises_on_failed_interpolation(patched_logger_critical,
     patched_logger_critical.assert_called_once_with(msg)
 
 
+def test_get_defaults(config_instance, mocker):
+    mocker.patch.object(config_instance, 'molecule_file',
+                        '/path/to/test_scenario_name/molecule.yml')
+    defaults = config_instance._get_defaults()
+    assert defaults['scenario']['name'] == 'test_scenario_name'
+
+
 def test_preflight(mocker, config_instance, patched_logger_info):
     m = mocker.patch('molecule.model.schema_v2.pre_validate')
     m.return_value = None
@@ -513,6 +558,7 @@ def test_molecule_drivers():
     x = [
         'azure',
         'delegated',
+        'digitalocean',
         'docker',
         'ec2',
         'gce',
@@ -527,7 +573,7 @@ def test_molecule_drivers():
 
 
 def test_molecule_verifiers():
-    x = ['goss', 'inspec', 'testinfra']
+    x = ['goss', 'inspec', 'testinfra', 'ansible']
 
     assert x == config.molecule_verifiers()
 

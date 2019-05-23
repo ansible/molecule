@@ -114,7 +114,7 @@ def test_ssh_connection_options_property(_instance):
     assert [] == _instance.ssh_connection_options
 
 
-def test_status(mocker, _instance):
+def test_status(_instance):
     result = _instance.status()
 
     assert 2 == len(result)
@@ -140,3 +140,17 @@ def test_created(_instance):
 
 def test_converged(_instance):
     assert 'false' == _instance._converged()
+
+
+def test_sanity_checks_missing_docker_dependency(mocker, _instance):
+    try:
+        # ansible >= 2.8
+        target = 'ansible.module_utils.docker.common.HAS_DOCKER_PY'
+        mocker.patch(target, False)
+    except ImportError:
+        # ansible < 2.8
+        target = 'ansible.module_utils.docker_common.HAS_DOCKER_PY'
+        mocker.patch(target, False)
+
+    with pytest.raises(SystemExit):
+        _instance.sanity_checks()

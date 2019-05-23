@@ -19,10 +19,12 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import os
+import fnmatch
 import tempfile
 
 from molecule import logger
 from molecule import scenarios
+from molecule import util
 
 LOG = logger.get_logger(__name__)
 
@@ -36,18 +38,23 @@ class Scenario(object):
     for testing the role in a particular way.  The default scenario is named
     ``default``, and every role should contain a default scenario.
 
+    Unless mentioned explicitly, the scenario name will be the directory name
+    hosting the files.
+
     Any option set in this section will override the defaults.
 
     .. code-block:: yaml
 
         scenario:
-          name: default
+          name: default  # optional
           create_sequence:
+            - dependency
             - create
             - prepare
           check_sequence:
-            - destroy
             - dependency
+            - cleanup
+            - destroy
             - create
             - prepare
             - converge
@@ -59,12 +66,14 @@ class Scenario(object):
             - prepare
             - converge
           destroy_sequence:
+            - dependency
             - cleanup
             - destroy
           test_sequence:
             - lint
-            - destroy
             - dependency
+            - cleanup
+            - destroy
             - syntax
             - create
             - prepare
@@ -85,6 +94,34 @@ class Scenario(object):
         """
         self.config = config
         self._setup()
+
+    def prune(self):
+        """
+        Prune the scenario ephemeral directory files and returns None.
+
+        "safe files" will not be pruned, including the ansible configuration
+        and inventory used by this scenario, the scenario state file, and
+        files declared as "safe_files" in the ``driver`` configuration
+        declared in ``molecule.yml``.
+
+        :return: None
+        """
+        LOG.info('Pruning extra files from scenario ephemeral directory')
+        safe_files = [
+            self.config.provisioner.config_file,
+            self.config.provisioner.inventory_file,
+            self.config.state.state_file,
+        ] + self.config.driver.safe_files
+        files = util.os_walk(self.ephemeral_directory, '*')
+        for f in files:
+            if not any(sf for sf in safe_files if fnmatch.fnmatch(f, sf)):
+                os.remove(f)
+
+        # Remove empty directories.
+        for dirpath, dirs, files in os.walk(
+                self.ephemeral_directory, topdown=False):
+            if not dirs and not files:
+                os.removedirs(dirpath)
 
     @property
     def name(self):

@@ -22,10 +22,7 @@
 import distutils.spawn
 import os
 import shutil
-import sys
-from distutils.version import LooseVersion
 
-import ansible
 import pexpect
 import pytest
 import sh
@@ -38,6 +35,11 @@ from ..conftest import change_dir_to
 LOG = logger.get_logger(__name__)
 
 IS_TRAVIS = os.getenv('TRAVIS') and os.getenv('CI')
+
+
+def _env_vars_exposed(env_vars, env=os.environ):
+    """Check if environment variables are exposed."""
+    return all(var in env for var in env_vars)
 
 
 @pytest.fixture
@@ -66,6 +68,7 @@ def skip_test(request, driver_name):
                 else "Skipped '{}' not supported")
     support_checks_map = {
         'azure': supports_azure,
+        'digitalocean': supports_digitalocean,
         'docker': supports_docker,
         'ec2': supports_ec2,
         'gce': supports_gce,
@@ -231,7 +234,7 @@ def login(login_args, scenario_name='default'):
 def test(driver_name, scenario_name='default'):
     options = {
         'scenario_name': scenario_name,
-        'all': True,
+        'all': scenario_name is None,
     }
 
     if driver_name == 'delegated':
@@ -268,14 +271,6 @@ def get_docker_executable():
     return distutils.spawn.find_executable('docker')
 
 
-def get_linode_executable():
-    try:
-        pytest.importorskip('linode')
-        return True
-    except Exception:
-        return False
-
-
 def get_lxc_executable():
     return distutils.spawn.find_executable('lxc-start')
 
@@ -299,8 +294,11 @@ def supports_docker():
 
 @pytest.helpers.register
 def supports_linode():
-    # FIXME: Travis CI
-    return not IS_TRAVIS and get_linode_executable()
+    from ansible.modules.cloud.linode.linode import HAS_LINODE
+
+    env_vars = ('LINODE_API_KEY', )
+
+    return _env_vars_exposed(env_vars) and HAS_LINODE
 
 
 @pytest.helpers.register
@@ -343,26 +341,74 @@ def demands_delegated():
 
 @pytest.helpers.register
 def supports_azure():
-    # FIXME: come up with an actual check
-    return not IS_TRAVIS  # FIXME: Travis CI
+    from ansible.module_utils.azure_rm_common import HAS_AZURE
+
+    env_vars = (
+        'AZURE_SUBSCRIPTION_ID',
+        'AZURE_CLIENT_ID',
+        'AZURE_SECRET',
+        'AZURE_TENANT',
+    )
+
+    return _env_vars_exposed(env_vars) and HAS_AZURE
+
+
+@pytest.helpers.register
+def supports_digitalocean():
+    try:
+        # ansible >=2.8
+        # The _digital_ocean module is deprecated, and will be removed in
+        # ansible 2.12. This is a temporary fix, and should be addressed
+        # based on decisions made in the related github issue:
+        # https://github.com/ansible/molecule/issues/2054
+        from ansible.modules.cloud.digital_ocean._digital_ocean import HAS_DOPY
+    except ImportError:
+        # ansible <2.8
+        from ansible.modules.cloud.digital_ocean.digital_ocean import HAS_DOPY
+
+    env_vars = ('DO_API_KEY', )
+
+    return _env_vars_exposed(env_vars) and HAS_DOPY
 
 
 @pytest.helpers.register
 def supports_ec2():
-    # FIXME: come up with an actual check
-    return not IS_TRAVIS  # FIXME: Travis CI
+    from ansible.module_utils.ec2 import HAS_BOTO3
+
+    env_vars = (
+        'AWS_ACCESS_KEY',
+        'AWS_SECRET_ACCESS_KEY',
+    )
+
+    return _env_vars_exposed(env_vars) and HAS_BOTO3
 
 
 @pytest.helpers.register
 def supports_gce():
-    # FIXME: come up with an actual check
-    return not IS_TRAVIS  # FIXME: Travis CI
+    from ansible.module_utils.gcp import HAS_GOOGLE_AUTH
+
+    env_vars = (
+        'GCE_SERVICE_ACCOUNT_EMAIL',
+        'GCE_CREDENTIALS_FILE',
+        'GCE_PROJECT_ID',
+    )
+
+    return _env_vars_exposed(env_vars) and HAS_GOOGLE_AUTH
 
 
 @pytest.helpers.register
 def supports_openstack():
-    # FIXME: come up with an actual check
-    return not IS_TRAVIS  # FIXME: Travis CI
+    pytest.importorskip('shade')  # Ansible provides no import
+
+    env_vars = (
+        'OS_AUTH_URL',
+        'OS_PASSWORD',
+        'OS_REGION_NAME',
+        'OS_USERNAME',
+        'OS_TENANT_NAME',
+    )
+
+    return _env_vars_exposed(env_vars)
 
 
 @pytest.helpers.register
@@ -382,15 +428,3 @@ needs_inspec = pytest.mark.skipif(
 needs_rubocop = pytest.mark.skipif(
     not has_rubocop(),
     reason='Needs rubocop to be pre-installed and available in $PATH')
-
-
-@pytest.helpers.register
-def is_supported_ansible_python_combo():
-    ansible_below_25 = LooseVersion(ansible.__version__) < LooseVersion('2.5')
-    max_py = (3, 6) if ansible_below_25 else (3, 7)
-    return sys.version_info[:2] <= max_py
-
-
-skip_unsupported_matrix = pytest.mark.skipif(
-    not is_supported_ansible_python_combo(),
-    reason='Current combination of Ansible and Python is not supported')

@@ -31,7 +31,6 @@ from ..conftest import (
     change_dir_to,
     needs_inspec,
     needs_rubocop,
-    skip_unsupported_matrix,
 )
 
 
@@ -53,7 +52,6 @@ def driver_name(request):
     return request.param
 
 
-@skip_unsupported_matrix
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
         ('side_effect', 'docker', 'default'),
@@ -72,7 +70,6 @@ def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
     pytest.helpers.run_command(cmd)
 
 
-@skip_unsupported_matrix
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
         ('cleanup', 'docker', 'default'),
@@ -93,7 +90,6 @@ def test_command_cleanup(scenario_to_test, with_scenario, scenario_name):
 
 @needs_inspec
 @needs_rubocop
-@skip_unsupported_matrix
 def test_command_init_role_inspec(temp_dir):
     role_directory = os.path.join(temp_dir.strpath, 'test-init')
     options = {
@@ -105,10 +101,10 @@ def test_command_init_role_inspec(temp_dir):
     pytest.helpers.metadata_lint_update(role_directory)
 
     with change_dir_to(role_directory):
-        sh.molecule('test')
+        cmd = sh.molecule.bake('test')
+        pytest.helpers.run_command(cmd)
 
 
-@skip_unsupported_matrix
 def test_command_init_scenario_inspec(temp_dir):
     role_directory = os.path.join(temp_dir.strpath, 'test-init')
     options = {
@@ -132,7 +128,6 @@ def test_command_init_scenario_inspec(temp_dir):
         assert os.path.isdir(scenario_directory)
 
 
-@skip_unsupported_matrix
 def test_command_init_role_goss(temp_dir):
     role_directory = os.path.join(temp_dir.strpath, 'test-init')
     options = {
@@ -144,7 +139,8 @@ def test_command_init_role_goss(temp_dir):
     pytest.helpers.metadata_lint_update(role_directory)
 
     with change_dir_to(role_directory):
-        sh.molecule('test')
+        cmd = sh.molecule.bake('test')
+        pytest.helpers.run_command(cmd)
 
 
 def test_command_init_scenario_goss(temp_dir):
@@ -246,7 +242,6 @@ def test_command_init_scenario_without_default_scenario_raises(temp_dir):
         assert msg in str(e.value.stderr)
 
 
-@skip_unsupported_matrix
 def test_command_init_role_with_template(temp_dir):
     role_name = 'test-init'
     role_directory = os.path.join(temp_dir.strpath, role_name)
@@ -261,10 +256,10 @@ def test_command_init_role_with_template(temp_dir):
     pytest.helpers.metadata_lint_update(role_directory)
 
     with change_dir_to(role_directory):
-        sh.molecule('test')
+        cmd = sh.molecule.bake('test')
+        pytest.helpers.run_command(cmd)
 
 
-@skip_unsupported_matrix
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
         ('overrride_driver', 'docker', 'default'),
@@ -284,7 +279,6 @@ def test_command_test_overrides_driver(scenario_to_test, with_scenario,
     pytest.helpers.run_command(cmd)
 
 
-@skip_unsupported_matrix
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
         ('driver/docker', 'docker', 'default'),
@@ -305,7 +299,6 @@ def test_command_test_builds_local_molecule_image(
     pytest.helpers.test(driver_name, scenario_name)
 
 
-@skip_unsupported_matrix
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
         ('test_destroy_strategy', 'docker', 'default'),
@@ -328,11 +321,11 @@ def test_command_test_destroy_strategy_always(scenario_to_test, with_scenario,
            'Cleaning up.')
     assert msg in str(e.value.stdout)
 
+    assert 'Action: \'cleanup\'' in str(e.value.stdout)
     assert 'PLAY [Destroy]' in str(e.value.stdout)
     assert 0 != e.value.exit_code
 
 
-@skip_unsupported_matrix
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
         ('test_destroy_strategy', 'docker', 'default'),
@@ -358,7 +351,6 @@ def test_command_test_destroy_strategy_never(scenario_to_test, with_scenario,
     assert 0 != e.value.exit_code
 
 
-@skip_unsupported_matrix
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
         ('host_group_vars', 'docker', 'default'),
@@ -381,7 +373,6 @@ def test_host_group_vars(scenario_to_test, with_scenario, scenario_name):
     assert re.search(r'\[example_1\].*?ok: \[instance\]', out, re.DOTALL)
 
 
-@skip_unsupported_matrix
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
         ('idempotence', 'docker', 'raises'),
@@ -404,7 +395,6 @@ def test_idempotence_raises(scenario_to_test, with_scenario, scenario_name):
     assert 2 == e.value.exit_code
 
 
-@skip_unsupported_matrix
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
         ('interpolation', 'docker', 'default'),
@@ -429,7 +419,6 @@ def test_interpolation(scenario_to_test, with_scenario, scenario_name):
     pytest.helpers.run_command(cmd, env=env)
 
 
-@skip_unsupported_matrix
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
         ('verifier', 'docker', 'testinfra'),
@@ -457,7 +446,6 @@ def test_command_verify_testinfra(scenario_to_test, with_scenario,
     pytest.helpers.run_command(cmd)
 
 
-@skip_unsupported_matrix
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
         ('verifier', 'docker', 'goss'),
@@ -487,7 +475,6 @@ def test_command_verify_goss(scenario_to_test, with_scenario, scenario_name):
     pytest.helpers.run_command(cmd)
 
 
-@skip_unsupported_matrix
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
         ('verifier', 'docker', 'inspec'),
@@ -517,7 +504,6 @@ def test_command_verify_inspec(scenario_to_test, with_scenario, scenario_name):
     pytest.helpers.run_command(cmd)
 
 
-@skip_unsupported_matrix
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
         ('plugins', 'docker', 'default'),

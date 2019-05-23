@@ -134,13 +134,7 @@ def _model_driver_provider_name_not_nullable_when_vagrant_section_data():
     ['_model_driver_provider_name_not_nullable_when_vagrant_section_data'],
     indirect=True)
 def test_driver_provider_name_not_nullable_when_vagrant_driver(_config):
-    x = {
-        'driver': [{
-            'provider': [{
-                'name': ['unallowed value None', 'null value not allowed']
-            }]
-        }]
-    }
+    x = {'driver': [{'provider': [{'name': ['null value not allowed']}]}]}
 
     assert x == schema_v2.validate(_config)
 
@@ -277,6 +271,15 @@ def _model_driver_allows_delegated_section_data():
 
 
 @pytest.fixture
+def _model_driver_allows_digitalocean_section_data():
+    return {
+        'driver': {
+            'name': 'digitalocean',
+        }
+    }
+
+
+@pytest.fixture
 def _model_driver_allows_docker_section_data():
     return {
         'driver': {
@@ -344,6 +347,7 @@ def _model_driver_allows_vagrant_section_data():
     '_config', [
         ('_model_driver_allows_azure_section_data'),
         ('_model_driver_allows_delegated_section_data'),
+        ('_model_driver_allows_digitalocean_section_data'),
         ('_model_driver_allows_docker_section_data'),
         ('_model_driver_allows_ec2_section_data'),
         ('_model_driver_allows_gce_section_data'),
