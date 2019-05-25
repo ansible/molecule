@@ -4,10 +4,10 @@
   gather_facts: true  # required
   become: true
   vars:
-    goss_version: v0.3.6
+    goss_version: v0.3.7
     goss_arch: amd64
     goss_bin: /usr/local/bin/goss
-    goss_sha256sum: 53dd1156ab66f2c4275fd847372e6329d895cfb2f0bcbec5f86c1c4df7236dde.
+    goss_sha256sum: 357f5c7f2e7949b412bce44349cd32ab19eb3947255a8ac805f884cc2c326059.
     goss_test_directory: /tmp/molecule/goss
     goss_format: documentation
   tasks:
