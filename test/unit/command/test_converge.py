@@ -18,7 +18,10 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+from click.testing import CliRunner
+
 from molecule.command import converge
+from molecule.shell import main
 
 
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
@@ -38,3 +41,19 @@ def test_execute(mocker, patched_logger_info, patched_ansible_converge,
     patched_ansible_converge.assert_called_once_with()
 
     assert config_instance.state.converged
+
+
+def test_ansible_args_passed_to_scenarios_get_configs(mocker):
+    # Scenarios patch is needed to safely invoke CliRunner
+    # in the test environment and block scenario exectution
+    mocker.patch('molecule.scenarios.Scenarios')
+    patched_get_configs = mocker.patch('molecule.command.base.get_configs')
+
+    runner = CliRunner()
+    args = ('converge', '--', '-e', 'testvar=testvalue')
+    ansible_args = args[2:]
+    runner.invoke(main, args, obj={})
+
+    # call index [0][2] is the 3rd positional arguement to get_configs,
+    # which should be the tuple of parsed ansible_args from the CLI
+    assert patched_get_configs.call_args[0][2] == ansible_args

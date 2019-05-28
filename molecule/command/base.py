@@ -72,7 +72,10 @@ class Base(object):
         self._config.provisioner.manage_inventory()
 
 
-def execute_cmdline_scenarios(scenario_name, args, command_args):
+def execute_cmdline_scenarios(scenario_name,
+                              args,
+                              command_args,
+                              ansible_args=()):
     """
     Execute scenario sequences based on parsed command-line arguments.
 
@@ -90,7 +93,7 @@ def execute_cmdline_scenarios(scenario_name, args, command_args):
 
     """
     scenarios = molecule.scenarios.Scenarios(
-        get_configs(args, command_args), scenario_name)
+        get_configs(args, command_args, ansible_args), scenario_name)
     scenarios.print_matrix()
     for scenario in scenarios:
         try:
