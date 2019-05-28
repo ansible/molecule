@@ -1,6 +1,6 @@
 ---
-name: 📝 Proposal
-about: Suggest an large change for the Molecule project
+name: Proposal
+about: Suggest a large change for the Molecule project
 labels: proposal
 ---
 
