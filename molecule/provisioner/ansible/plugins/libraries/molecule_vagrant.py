@@ -155,7 +155,7 @@ Vagrant.configure('2') do |config|
   c['options'].delete('synced_folder')
 
   c['options'].each { |key, value|
-    eval("config.#{key} = #{value}")
+    config.send "#{key}=", value
   }
 
   ##
@@ -206,7 +206,7 @@ Vagrant.configure('2') do |config|
       # Custom
       provider['options'].each { |key, value|
         if key != 'linked_clone'
-          eval("virtualbox.#{key} = #{value}")
+          virtualbox.send "#{key}=", value
         end
       }
 
@@ -245,7 +245,7 @@ Vagrant.configure('2') do |config|
 
       # Custom
       provider['options'].each { |key, value|
-        eval("vmware.#{key} = #{value}")
+        vmware.send "#{key}=", value
       }
 
       # Raw Configuration
@@ -274,7 +274,7 @@ Vagrant.configure('2') do |config|
 
       # Custom
       provider['options'].each { |key, value|
-        eval("parallels.#{key} = #{value}")
+        parallels.send "#{key}=", value
       }
 
       # Raw Configuration
@@ -303,7 +303,7 @@ Vagrant.configure('2') do |config|
 
       # Custom
       provider['options'].each { |key, value|
-        eval("libvirt.#{key} = #{value}")
+        libvirt.send "#{key}=", value
       }
 
       # Raw Configuration
