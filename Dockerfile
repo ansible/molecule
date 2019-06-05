@@ -50,6 +50,8 @@ ENV PIP_INSTALL_ARGS="\
 
 ENV GEM_PACKAGES="\
     rubocop \
+    json \
+    etc \
     "
 
 ENV MOLECULE_EXTRAS="azure,docker,docs,ec2,gce,linode,lxc,openstack,vagrant,windows"
