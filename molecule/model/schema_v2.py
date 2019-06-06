@@ -718,6 +718,12 @@ platforms_docker_schema = {
                         'type': 'string',
                     }
                 },
+                'etc_hosts': {
+                    'type': ['string', 'dict'],
+                    'keyschema': {
+                        'type': 'string',
+                    }
+                },
                 'env': {
                     'type': 'dict',
                     'keysrules': {

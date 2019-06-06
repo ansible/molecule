@@ -87,6 +87,8 @@ def _model_platforms_docker_section_data():
             'dns_servers': [
                 '8.8.8.8',
             ],
+            'etc_hosts':
+            "{'host1.example.com': '10.3.1.5'}",
             'env': {
                 'FOO': 'bar',
                 'foo': 'bar',
@@ -198,6 +200,7 @@ def _model_platforms_docker_errors_section_data():
             'dns_servers': [
                 int(),
             ],
+            "etc_hosts": int(),
             'env': str(),
             'restart_policy': int(),
             'restart_retries': str(),
@@ -269,6 +272,7 @@ def test_platforms_docker_has_errors(_config):
                 'ulimits': [{
                     0: ['must be of string type']
                 }],
+                'etc_hosts': ['must be of [\'string\', \'dict\'] type'],
                 'env': ['must be of dict type'],
                 'restart_policy': ['must be of string type'],
                 'restart_retries': ['must be of integer type'],
