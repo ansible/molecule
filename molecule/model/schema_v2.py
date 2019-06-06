@@ -753,6 +753,21 @@ platforms_docker_schema = {
                 },
                 'purge_networks': {
                     'type': 'boolean',
+                },
+                'docker_host': {
+                    'type': 'string',
+                },
+                'cacert_path': {
+                    'type': 'string',
+                },
+                'cert_path': {
+                    'type': 'string',
+                },
+                'key_path': {
+                    'type': 'string',
+                },
+                'tls_verify': {
+                    'type': 'boolean',
                 }
             }
         }
