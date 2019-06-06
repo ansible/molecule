@@ -18,9 +18,15 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import getpass
 import os
+import platform
 import fnmatch
 import tempfile
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
 
 from molecule import logger
 from molecule import scenarios
@@ -226,8 +232,24 @@ class Scenario(object):
             os.makedirs(self.inventory_directory)
 
 
-def ephemeral_directory(path):
+def ephemeral_directory(path=None):
+    """
+    Returns temporary directory to be used by molecule. Molecule users should
+    not make any assumptions about its location, permissions or its content as
+    this may change in future release.
+    """
     d = os.getenv('MOLECULE_EPHEMERAL_DIRECTORY')
-    if d:
-        return os.path.join(tempfile.gettempdir(), d)
-    return os.path.join(tempfile.gettempdir(), path)
+    if not d:
+        # Darwin is the only known platform that returns user-isolated tempdirs
+        # so we do not need to make them unique to each user.
+        if platform.system() == 'Darwin':
+            d = tempfile.gettempdir()
+        else:
+            d = os.path.join(tempfile.gettempdir(), 'mol.' + getpass.getuser())
+    else:
+        d = os.path.abspath(d)
+    if path:
+        d = os.path.abspath(os.path.join(d, path))
+        if not os.path.isdir(d):
+            Path(d).mkdir(mode=0o700, parents=True, exist_ok=True)
+    return d

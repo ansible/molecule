@@ -19,7 +19,7 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import os
-import tempfile
+from molecule.scenario import ephemeral_directory
 
 import pytest
 import sh
@@ -193,9 +193,9 @@ def test_command_dependency_ansible_galaxy(request, scenario_to_test,
     cmd = sh.molecule.bake('dependency', **options)
     pytest.helpers.run_command(cmd)
 
-    dependency_role = os.path.join(tempfile.gettempdir(), 'molecule',
-                                   'dependency', 'ansible-galaxy', 'roles',
-                                   'timezone')
+    dependency_role = os.path.join(
+        ephemeral_directory('molecule'), 'dependency', 'ansible-galaxy',
+        'roles', 'timezone')
     assert os.path.isdir(dependency_role)
 
 
@@ -227,8 +227,9 @@ def test_command_dependency_gilt(request, scenario_to_test, with_scenario,
     cmd = sh.molecule.bake('dependency', **options)
     pytest.helpers.run_command(cmd)
 
-    dependency_role = os.path.join(tempfile.gettempdir(), 'molecule',
-                                   'dependency', 'gilt', 'roles', 'timezone')
+    dependency_role = os.path.join(
+        ephemeral_directory('molecule'), 'dependency', 'gilt', 'roles',
+        'timezone')
     assert os.path.isdir(dependency_role)
 
 
@@ -260,8 +261,9 @@ def test_command_dependency_shell(request, scenario_to_test, with_scenario,
     cmd = sh.molecule.bake('dependency', **options)
     pytest.helpers.run_command(cmd)
 
-    dependency_role = os.path.join(tempfile.gettempdir(), 'molecule',
-                                   'dependency', 'shell', 'roles', 'timezone')
+    dependency_role = os.path.join(
+        ephemeral_directory('molecule'), 'dependency', 'shell', 'roles',
+        'timezone')
     assert os.path.isdir(dependency_role)
 
 

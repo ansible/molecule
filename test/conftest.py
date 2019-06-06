@@ -22,13 +22,13 @@ import contextlib
 import os
 import random
 import string
-import tempfile
 
 import pytest
 
 from molecule import config
 from molecule import logger
 from molecule import util
+from molecule.scenario import ephemeral_directory
 
 LOG = logger.get_logger(__name__)
 
@@ -101,8 +101,7 @@ def molecule_ephemeral_directory():
     project_directory = 'test-project'
     scenario_name = 'test-instance'
 
-    return os.path.join(tempfile.gettempdir(), 'molecule', project_directory,
-                        scenario_name)
+    return ephemeral_directory(os.path.join(project_directory, scenario_name))
 
 
 def pytest_addoption(parser):
