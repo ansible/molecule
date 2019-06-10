@@ -30,8 +30,15 @@
       when: not item.pre_build_image | default(false)
       register: platforms
 
+    - name: Determine which docker image info module to use
+      set_fact:
+        _docker_image_info_module: >-
+          {{ ansible_version.full is version_compare('2.8', '>=') |
+            ternary('docker_image_info', 'docker_image_facts') }}
+
     - name: Discover local Docker images
-      docker_image_facts:
+      action: "{{ _docker_image_info_module }}"
+      args:
         name: "molecule_local/{{ item.item.name }}"
         docker_host: "{{ item.item.docker_host | default(lookup('env', 'DOCKER_HOST') or 'unix://var/run/docker.sock') }}"
         cacert_path: "{{ item.cacert_path | default((lookup('env', 'DOCKER_CERT_PATH') + '/ca.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
@@ -39,7 +46,8 @@
         key_path: "{{ item.key_path | default((lookup('env', 'DOCKER_CERT_PATH') + '/key.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
         tls_verify: "{{ item.tls_verify | default(lookup('env', 'DOCKER_TLS_VERIFY')) or false }}"
       with_items: "{{ platforms.results }}"
-      when: not item.pre_build_image | default(false)
+      when:
+        - not item.pre_build_image | default(false)
       register: docker_images
 
     - name: Build an Ansible compatible image
