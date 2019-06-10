@@ -17,6 +17,9 @@
         state: destroy
       register: server
       with_items: "{{ molecule_yml.platforms }}"
+      loop_control:
+        label: "{{ item.name }}"
+      no_log: false
 
     # NOTE(retr0h): Vagrant/VBox sucks and parallelizing instance deletion
     # causes issues.

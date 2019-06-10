@@ -15,3 +15,6 @@
         state: absent
         force_stop: "{{ item.force_stop | default(true) }}"
       with_items: "{{ molecule_yml.platforms }}"
+      loop_control:
+        label: "{{ item.name }}"
+      no_log: false
