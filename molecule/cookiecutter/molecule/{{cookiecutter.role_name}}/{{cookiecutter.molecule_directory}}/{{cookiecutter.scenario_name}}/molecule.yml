@@ -43,6 +43,9 @@ platforms:
   - name: instance
     image: Ubuntu-16.04
     flavor: NO-Nano
+{%- elif cookiecutter.driver_name == 'podman' %}
+  - name: instance
+    image: centos:7
 {%- elif cookiecutter.driver_name == 'vagrant' %}
   - name: instance
     box: ubuntu/xenial64

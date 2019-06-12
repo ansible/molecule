@@ -70,6 +70,7 @@ def pre_validate_base_schema(env, keep_string):
                         'lxc',
                         'lxd',
                         'openstack',
+                        'podman',
                         'vagrant',
                     ],
                     # NOTE(retr0h): Some users use an environment variable to
@@ -774,6 +775,149 @@ platforms_docker_schema = {
     },
 }
 
+platforms_podman_schema = {
+    'platforms': {
+        'type': 'list',
+        'schema': {
+            'type': 'dict',
+            'schema': {
+                'name': {
+                    'type': 'string',
+                },
+                'hostname': {
+                    'type': 'string',
+                },
+                'image': {
+                    'type': 'string',
+                },
+                'dockerfile': {
+                    'type': 'string',
+                },
+                'pull': {
+                    'type': 'boolean',
+                },
+                'pre_build_image': {
+                    'type': 'boolean',
+                },
+                'registry': {
+                    'type': 'dict',
+                    'schema': {
+                        'url': {
+                            'type': 'string',
+                        },
+                        'credentials': {
+                            'type': 'dict',
+                            'schema': {
+                                'username': {
+                                    'type': 'string',
+                                },
+                                'password': {
+                                    'type': 'string',
+                                },
+                            }
+                        },
+                    }
+                },
+                'override_command': {
+                    'type': 'boolean',
+                    'nullable': True,
+                },
+                'command': {
+                    'type': 'string',
+                    'nullable': True,
+                },
+                'tty': {
+                    'type': 'boolean',
+                    'nullable': True,
+                },
+                'pid_mode': {
+                    'type': 'string',
+                },
+                'privileged': {
+                    'type': 'boolean',
+                },
+                'security_opts': {
+                    'type': 'list',
+                    'schema': {
+                        'type': 'string',
+                    }
+                },
+                'volumes': {
+                    'type': 'list',
+                    'schema': {
+                        'type': 'string',
+                    }
+                },
+                'tmpfs': {
+                    'type': 'list',
+                    'schema': {
+                        'type': 'string',
+                    }
+                },
+                'capabilities': {
+                    'type': 'list',
+                    'schema': {
+                        'type': 'string',
+                    }
+                },
+                'exposed_ports': {
+                    'type': 'list',
+                    'schema': {
+                        'type': 'string',
+                        'coerce': 'exposed_ports'
+                    }
+                },
+                'published_ports': {
+                    'type': 'list',
+                    'schema': {
+                        'type': 'string',
+                    }
+                },
+                'ulimits': {
+                    'type': 'list',
+                    'schema': {
+                        'type': 'string',
+                    }
+                },
+                'dns_servers': {
+                    'type': 'list',
+                    'schema': {
+                        'type': 'string',
+                    }
+                },
+                'etc_hosts': {
+                    'type': ['string', 'dict'],
+                    'keyschema': {
+                        'type': 'string',
+                    }
+                },
+                'env': {
+                    'type': 'dict',
+                    'keysrules': {
+                        'type': 'string',
+                        'regex': '^[a-zA-Z0-9_-]+$',
+                    }
+                },
+                'restart_policy': {
+                    'type': 'string',
+                },
+                'restart_retries': {
+                    'type': 'integer',
+                },
+                'network': {
+                    'type': 'string',
+                },
+                'cert_path': {
+                    'type': 'string',
+                },
+                'tls_verify': {
+                    'type': 'boolean',
+                }
+            }
+        }
+    },
+}
+
 platforms_lxd_schema = {
     'platforms': {
         'type': 'list',
@@ -1079,6 +1223,8 @@ def validate(c):
     # Driver
     if c['driver']['name'] == 'docker':
         util.merge_dicts(schema, platforms_docker_schema)
+    elif c['driver']['name'] == 'podman':
+        util.merge_dicts(schema, platforms_podman_schema)
     elif c['driver']['name'] == 'vagrant':
         util.merge_dicts(schema, driver_vagrant_provider_section_schema)
         util.merge_dicts(schema, platforms_vagrant_schema)
