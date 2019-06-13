@@ -64,9 +64,6 @@
         pull: "{{ item.item.pull | default(omit) }}"
         buildargs: "{{ item.item.buildargs | default(omit) }}"
       with_items: "{{ platforms.results }}"
-      loop_control:
-        label: "molecule_local/{{ item.item.image }}"
-      no_log: false
       when:
         - platforms.changed or docker_images.results | map(attribute='images') | select('equalto', []) | list | count >= 0
         - not item.item.pre_build_image | default(false)
@@ -81,9 +78,6 @@
         tls_verify: "{{ item.tls_verify | default(lookup('env', 'DOCKER_TLS_VERIFY')) or false }}"
         state: present
       with_items: "{{ molecule_yml.platforms | molecule_get_docker_networks }}"
-      loop_control:
-        label: "{{ item }}"
-      no_log: false
 
     - name: Determine the CMD directives
       set_fact:
@@ -128,9 +122,6 @@
         tty: "{{ item.tty | default(omit) }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
-      loop_control:
-        label: "{{ item.name }}"
-      no_log: false
       async: 7200
       poll: 0
 

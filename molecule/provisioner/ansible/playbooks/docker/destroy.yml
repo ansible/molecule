@@ -18,9 +18,6 @@
         keep_volumes: "{{ item.keep_volumes | default(true) }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
-      loop_control:
-        label: "{{ item.name }}"
-      no_log: false
       async: 7200
       poll: 0
 
@@ -42,6 +39,3 @@
         tls_verify: "{{ item.tls_verify | default(lookup('env', 'DOCKER_TLS_VERIFY')) or false }}"
         state: absent
       with_items: "{{ molecule_yml.platforms | molecule_get_docker_networks }}"
-      loop_control:
-        label: "{{ item }}"
-      no_log: false
