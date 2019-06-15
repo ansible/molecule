@@ -42,6 +42,7 @@ class Delegated(base.Base):
     However, the developer must adhere to the instance-config API.  The
     developer's create playbook must provide the following instance-config
     data, and the developer's destroy playbook must reset the instance-config.
+    Both `become` keys are optional and can be used independently.
 
     .. code-block:: yaml
 
@@ -50,6 +51,8 @@ class Delegated(base.Base):
           instance: instance_name
           port: ssh_port_as_string
           user: ssh_user
+          become_method: valid_ansible_become_method
+          become_pass: password_if_required
 
         - address: winrm_endpoint
           instance: instance_name
@@ -175,6 +178,10 @@ class Delegated(base.Base):
                 conn_dict['ansible_host'] = d.get('address')
                 conn_dict['ansible_port'] = d.get('port')
                 conn_dict['ansible_connection'] = d.get('connection', 'smart')
+                if d.get('become_method'):
+                    conn_dict['ansible_become_method'] = d.get('become_method')
+                if d.get('become_pass'):
+                    conn_dict['ansible_become_pass'] = d.get('become_pass')
                 if d.get('identity_file'):
                     conn_dict['ansible_private_key_file'] = d.get(
                         'identity_file')

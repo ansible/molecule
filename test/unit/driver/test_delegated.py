@@ -168,6 +168,8 @@ def test_login_options_when_managed(mocker, _instance):
         'address': '172.16.0.2',
         'user': 'cloud-user',
         'port': 22,
+        'become_method': 'su',
+        'become_pass': 'password',
         'identity_file': '/foo/bar',
     }
 
@@ -176,6 +178,8 @@ def test_login_options_when_managed(mocker, _instance):
         'address': '172.16.0.2',
         'user': 'cloud-user',
         'port': 22,
+        'become_method': 'su',
+        'become_pass': 'password',
         'identity_file': '/foo/bar',
     }
     assert x == _instance.login_options('foo')
@@ -199,6 +203,8 @@ def test_ansible_connection_options_when_managed(mocker, _instance):
         'address': '172.16.0.2',
         'user': 'cloud-user',
         'port': 22,
+        'become_method': 'su',
+        'become_pass': 'password',
         'identity_file': '/foo/bar',
     }
 
@@ -209,6 +215,10 @@ def test_ansible_connection_options_when_managed(mocker, _instance):
         22,
         'ansible_user':
         'cloud-user',
+        'ansible_become_method':
+        'su',
+        'ansible_become_pass':
+        'password',
         'ansible_private_key_file':
         '/foo/bar',
         'ansible_connection':
