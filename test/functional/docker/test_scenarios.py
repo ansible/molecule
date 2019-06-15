@@ -290,11 +290,11 @@ def test_command_test_overrides_driver(scenario_to_test, with_scenario,
     ])
 def test_command_test_builds_local_molecule_image(
         scenario_to_test, with_scenario, scenario_name, driver_name):
-    try:
-        cmd = sh.docker.bake('rmi', 'molecule_local/centos:latest', '--force')
-        pytest.helpers.run_command(cmd)
-    except sh.ErrorReturnCode:
-        pass
+    # try:
+    #     cmd = sh.docker.bake('rmi', 'molecule_local/centos:latest', '--force')
+    #     pytest.helpers.run_command(cmd)
+    # except sh.ErrorReturnCode:
+    #     pass
 
     pytest.helpers.test(driver_name, scenario_name)
 
