@@ -43,6 +43,7 @@ from molecule.driver import linode
 from molecule.driver import lxc
 from molecule.driver import lxd
 from molecule.driver import openstack
+from molecule.driver import podman
 from molecule.driver import vagrant
 from molecule.lint import yamllint
 from molecule.model import schema_v2
@@ -178,6 +179,8 @@ class Config(object):
             driver = lxd.LXD(self)
         elif driver_name == 'openstack':
             driver = openstack.Openstack(self)
+        elif driver_name == 'podman':
+            driver = podman.Podman(self)
         elif driver_name == 'vagrant':
             driver = vagrant.Vagrant(self)
 
@@ -508,6 +511,7 @@ def molecule_drivers():
         lxc.LXC(None).name,
         lxd.LXD(None).name,
         openstack.Openstack(None).name,
+        podman.Podman(None).name,
         vagrant.Vagrant(None).name,
     ]
 

@@ -297,6 +297,7 @@ def test_drivers_property(config_instance):
         'lxc',
         'lxd',
         'openstack',
+        'podman',
         'vagrant',
     ]
 
@@ -566,6 +567,7 @@ def test_molecule_drivers():
         'lxc',
         'lxd',
         'openstack',
+        'podman',
         'vagrant',
     ]
 
