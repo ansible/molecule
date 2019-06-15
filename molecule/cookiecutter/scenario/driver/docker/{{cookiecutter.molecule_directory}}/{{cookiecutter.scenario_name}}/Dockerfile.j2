@@ -8,7 +8,7 @@ FROM {{ item.image }}
 {% endif %}
 
 {% if item.env is defined %}
-{% for var, value in item.env.iteritems() %}
+{% for var, value in item.env.items() %}
 {% if value %}
 ENV {{ var }} {{ value }}
 {% endif %}
