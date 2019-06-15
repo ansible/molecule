@@ -87,6 +87,8 @@ def _model_platforms_docker_section_data():
             'dns_servers': [
                 '8.8.8.8',
             ],
+            'etc_hosts':
+            "{'host1.example.com': '10.3.1.5'}",
             'env': {
                 'FOO': 'bar',
                 'foo': 'bar',
@@ -108,7 +110,17 @@ def _model_platforms_docker_section_data():
             'purge_networks':
             True,
             'foo':
-            'bar'
+            'bar',
+            'docker_host':
+            'tcp://localhost:12376',
+            'cacert_path':
+            '/foo/bar/ca.pem',
+            'cert_path':
+            '/foo/bar/cert.pem',
+            'key_path':
+            '/foo/bar/key.pem',
+            'tls_verify':
+            True
         }]
     }
 
@@ -198,6 +210,7 @@ def _model_platforms_docker_errors_section_data():
             'dns_servers': [
                 int(),
             ],
+            "etc_hosts": int(),
             'env': str(),
             'restart_policy': int(),
             'restart_retries': str(),
@@ -208,6 +221,11 @@ def _model_platforms_docker_errors_section_data():
             ],
             'network_mode': int(),
             'purge_networks': int(),
+            'docker_host': int(),
+            'cacert_path': int(),
+            'cert_path': int(),
+            'key_path': int(),
+            'tls_verify': str(),
         }]
     }
 
@@ -269,9 +287,15 @@ def test_platforms_docker_has_errors(_config):
                 'ulimits': [{
                     0: ['must be of string type']
                 }],
+                'etc_hosts': ['must be of [\'string\', \'dict\'] type'],
                 'env': ['must be of dict type'],
                 'restart_policy': ['must be of string type'],
                 'restart_retries': ['must be of integer type'],
+                'docker_host': ['must be of string type'],
+                'cacert_path': ['must be of string type'],
+                'cert_path': ['must be of string type'],
+                'key_path': ['must be of string type'],
+                'tls_verify': ['must be of boolean type'],
             }]
         }]
     }

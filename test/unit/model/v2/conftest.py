@@ -36,6 +36,6 @@ def _molecule_file():
 def _config(_molecule_file, request):
     d = util.safe_load(open(_molecule_file))
     if hasattr(request, 'param'):
-        d = util.merge_dicts(d, request.getfuncargvalue(request.param))
+        d = util.merge_dicts(d, request.getfixturevalue(request.param))
 
     return d

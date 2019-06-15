@@ -24,26 +24,24 @@ import os
 
 from molecule import logger
 from molecule.driver import base
-from molecule.util import sysexit_with_message
 
 log = logger.get_logger(__name__)
 
 
-class Docker(base.Base):
+class Podman(base.Base):
     """
-    The class responsible for managing `Docker`_ containers.  `Docker`_ is
-    the default driver used in Molecule.
+    The class responsible for managing `Podman`_ containers.  `Podman`_ is
+    not default driver used in Molecule.
 
-    Molecule leverages Ansible's `docker_container`_ module, by mapping
+    Molecule uses Podman ansible connector and podman CLI while mapping
     variables from ``molecule.yml`` into ``create.yml`` and ``destroy.yml``.
 
-    .. _`docker_container`: https://docs.ansible.com/ansible/latest/docker_container_module.html
-    .. _`Docker Security Configuration`: https://docs.docker.com/engine/reference/run/#security-configuration
+    .. _`podman connection`: https://docs.ansible.com/ansible/latest/plugins/connection/podman.html
 
     .. code-block:: yaml
 
         driver:
-          name: docker
+          name: podman
         platforms:
           - name: instance
             hostname: instance
@@ -56,7 +54,6 @@ class Docker(base.Base):
               credentials:
                 username: $USERNAME
                 password: $PASSWORD
-                email: user@example.com
             override_command: True|False
             command: sleep infinity
             tty: True|False
@@ -66,7 +63,6 @@ class Docker(base.Base):
               - seccomp=unconfined
             volumes:
               - /sys/fs/cgroup:/sys/fs/cgroup:ro
-            keep_volumes: True|False
             tmpfs:
               - /tmp
               - /run
@@ -79,26 +75,19 @@ class Docker(base.Base):
               - 0.0.0.0:8053:53/udp
               - 0.0.0.0:8053:53/tcp
             ulimits:
-              - nofile:262144:262144
+              - nofile=1024:1028
             dns_servers:
               - 8.8.8.8
-            etc_hosts: "{'host1.example.com': '10.3.1.5'}"
-            networks:
-              - name: foo
-              - name: bar
-            network_mode: host
-            purge_networks: true
-            docker_host: tcp://localhost:12376
-            cacert_path: /foo/bar/ca.pem
+            network: host
+            etc_hosts: {'host1.example.com': '10.3.1.5'}
             cert_path: /foo/bar/cert.pem
-            key_path: /foo/bar/key.pem
             tls_verify: true
             env:
               FOO: bar
             restart_policy: on-failure
             restart_retries: 1
             buildargs:
-                http_proxy: http://proxy.example.com:8080/
+              http_proxy: http://proxy.example.com:8080/
 
     If specifying the `CMD`_ directive in your ``Dockerfile.j2`` or consuming a
     built image which declares a ``CMD`` directive, then you must set
@@ -112,8 +101,7 @@ class Docker(base.Base):
     values. An example using the ``centos:7`` image is below:
 
     .. note:: Do note that running containers in privileged mode is considerably
-              less secure. For details, please reference `Docker Security
-              Configuration`_
+              less secure.
 
     .. code-block:: yaml
 
@@ -121,16 +109,14 @@ class Docker(base.Base):
         - name: instance
           image: centos:7
           privileged: true
-          volume_mounts:
+          volumes:
             - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
           command: "/usr/sbin/init"
           tty: True
-          environment:
-            container: docker
 
     .. code-block:: bash
 
-        $ pip install molecule[docker]
+        $ pip install molecule[podman]
 
     When pulling from a private registry, it is the user's discretion to decide
     whether to use hard-code strings or environment variables for passing
@@ -147,18 +133,18 @@ class Docker(base.Base):
     .. code-block:: yaml
 
         driver:
-          name: docker
+          name: podman
           safe_files:
             - foo
 
-    .. _`Docker`: https://www.docker.com
+    .. _`Podman`: https://podman.io/
     .. _`systemd`: https://www.freedesktop.org/wiki/Software/systemd/
     .. _`CMD`: https://docs.docker.com/engine/reference/builder/#cmd
     """  # noqa
 
     def __init__(self, config):
-        super(Docker, self).__init__(config)
-        self._name = 'docker'
+        super(Podman, self).__init__(config)
+        self._name = 'podman'
 
     @property
     def name(self):
@@ -170,7 +156,7 @@ class Docker(base.Base):
 
     @property
     def login_cmd_template(self):
-        return ('docker exec '
+        return ('podman exec '
                 '-e COLUMNS={columns} '
                 '-e LINES={lines} '
                 '-e TERM=bash '
@@ -192,38 +178,13 @@ class Docker(base.Base):
         return {'instance': instance_name}
 
     def ansible_connection_options(self, instance_name):
-        return {'ansible_connection': 'docker'}
+        return {'ansible_connection': 'podman'}
 
     def sanity_checks(self):
-        """Implement Docker driver sanity checks."""
+        """Implement Podman driver sanity checks."""
 
         if self._config.state.sanity_checked:
             return
 
         log.info("Sanity checks: '{}'".format(self._name))
-
-        try:
-            # ansible >= 2.8
-            from ansible.module_utils.docker.common import HAS_DOCKER_PY
-        except ImportError:
-            # ansible < 2.8
-            from ansible.module_utils.docker_common import HAS_DOCKER_PY
-
-        if not HAS_DOCKER_PY:
-            msg = ('Missing Docker driver dependency. Please '
-                   "install via 'molecule[docker]' or refer to "
-                   'your INSTALL.rst driver documentation file')
-            sysexit_with_message(msg)
-
-        try:
-            import docker
-            import requests
-            docker_client = docker.from_env()
-            docker_client.ping()
-        except requests.exceptions.ConnectionError:
-            msg = ('Unable to contact the Docker daemon. '
-                   'Please refer to https://docs.docker.com/config/daemon/ '
-                   'for managing the daemon')
-            sysexit_with_message(msg)
-
         self._config.state.change_state('sanity_checked', True)

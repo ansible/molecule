@@ -1,5 +1,5 @@
 ---
-name: 🔥 Security bug report
+name: Security bug report
 about: How to report security vulnerabilities
 ---
 

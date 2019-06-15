@@ -102,4 +102,5 @@ def converge(ctx, scenario_name, ansible_args):  # pragma: no cover
         'subcommand': subcommand,
     }
 
-    base.execute_cmdline_scenarios(scenario_name, args, command_args)
+    base.execute_cmdline_scenarios(scenario_name, args, command_args,
+                                   ansible_args)
