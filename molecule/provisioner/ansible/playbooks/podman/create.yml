@@ -28,13 +28,12 @@
       when: not item.pre_build_image | default(false)
       register: platforms
 
-    - name: Discover local Docker images
-      shell: >
-        podman image exists molecule_local/{{ item.item.name }} &&
-        podman image inspect molecule_local/{{ item.item.name }}||
-        true
+    - name: Discover local Podman images
+      podman_image_info:
+        name: "molecule_local/{{ item.item.name }}"
       with_items: "{{ platforms.results }}"
-      when: not item.pre_build_image | default(false)
+      when:
+        - not item.pre_build_image | default(false)
       register: podman_images
 
     - name: Build an Ansible compatible image
@@ -63,7 +62,6 @@
         podman run
         -d
         --name "{{ item.name }}"
-        --log-driver=json-file
         {% if item.pid_mode is defined %}--pid={{ item.pid_mode }}{% endif %}
         {% if item.privileged is defined %}--privileged={{ item.privileged }}{% endif %}
         {% if item.security_opts is defined %}{% for i in item.security_opts %}--security-opt {{ i }} {% endfor %}{% endif %}
