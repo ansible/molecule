@@ -54,34 +54,25 @@ Here is an example setting up a virtualenv and testing an Ansible role via Molec
 .. code-block:: yaml
 
     ---
-    stages:
-      - test
+    image: docker:git
 
-    variables:
-      PIP_CACHE_DIR: "$CI_PROJECT_DIR/.pip"
-
-    cache:
-      paths:
-        - .pip/
-        - virtenv/
+    services:
+      - docker:dind
 
     before_script:
-      - pip3.6 install virtualenv
-      - virtualenv virtenv
-      - source virtenv/bin/activate
+      - apk update && apk add --no-cache docker
+        python3-dev py3-pip docker gcc git curl build-base
+        autoconf automake py3-cryptography linux-headers
+        musl-dev libffi-dev openssl-dev openssh
+      - docker info
+      - python3 --version
 
     molecule:
-      stage: test
-      tags:
-        - pip36
-        - docker
-      script:
-        - docker -v
-        - python -V
-        - pip install ansible molecule docker
-        - ansible --version
-        - molecule --version
-        - molecule test
+    stage: test
+    script:
+      - pip3 install ansible molecule docker
+      - ansible --version
+      - cd roles/testrole && molecule test
 
 Jenkins Pipeline
 ^^^^^^^^^^^^^^^^
