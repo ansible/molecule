@@ -12,7 +12,6 @@ cache:
     - $HOME/.cache/pre-commit
     - $HOME/.pre-commit
     - $HOME/.rvm
-    - $HOME/virtualenv/python$(python -c 'import platform; print(platform.python_version())')
     - $HOME/Library/Caches/Homebrew
 
 services:
@@ -470,11 +469,7 @@ addons:
       - lxd-client
 before_install:
   - export TOXENV=$(echo $TOXENV_TMPL | envsubst)
-  - pip install tox-venv tox-tags
-install:
-  - tox --notest | tee ~/.tox-venv-install.log
-  - >
-    ! grep 'ERROR: ' ~/.tox-venv-install.log .tox/*/log/*.log
+  - pip install tox-tags
 before_script:
   - gem install inspec -v '~> 3'
   - gem install rubocop -v '~> 0.69.0'
