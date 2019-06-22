@@ -199,6 +199,10 @@ def open_file(filename, mode='r'):
     :param mode: A string describing the way in which the file will be used.
     :return: file type
     """
+    # Resolve symlinks as on Linux open() could fail to open it and raise
+    # [Errno 2] No such file or directory
+    filename = os.path.realpath(filename)
+
     with open(filename, mode) as stream:
         yield stream
 
