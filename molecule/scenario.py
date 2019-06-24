@@ -18,11 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import getpass
 import os
-import platform
 import fnmatch
-import tempfile
 try:
     from pathlib import Path
 except ImportError:
@@ -240,16 +237,11 @@ def ephemeral_directory(path=None):
     """
     d = os.getenv('MOLECULE_EPHEMERAL_DIRECTORY')
     if not d:
-        # Darwin is the only known platform that returns user-isolated tempdirs
-        # so we do not need to make them unique to each user.
-        if platform.system() == 'Darwin':
-            d = tempfile.gettempdir()
-        else:
-            d = os.path.join(tempfile.gettempdir(), 'mol.' + getpass.getuser())
-    else:
-        d = os.path.abspath(d)
-    if path:
-        d = os.path.abspath(os.path.join(d, path))
-        if not os.path.isdir(d):
-            Path(d).mkdir(mode=0o700, parents=True, exist_ok=True)
+        d = os.getenv("XDG_CACHE_HOME", os.path.expanduser("~/.cache"))
+    d = os.path.abspath(os.path.join(d, path if path else 'molecule'))
+
+    if not os.path.isdir(d):
+        os.umask(0o077)
+        Path(d).mkdir(mode=0o700, parents=True, exist_ok=True)
+
     return d
