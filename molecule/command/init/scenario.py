@@ -37,14 +37,21 @@ class Scenario(base.Base):
 
     .. option:: molecule init scenario --scenario-name bar --role-name foo
 
-        Initialize a new scenario using a local _cookiecutter_ template. In
-        order to customise the role, please refer to the `init role` command.
+        Initialize a new scenario. In order to customise the role, please refer
+        to the `init role` command.
 
     .. program:: cd foo; molecule init scenario --scenario-name bar --role-name foo
 
     .. option:: cd foo; molecule init scenario --scenario-name bar --role-name foo
 
         Initialize an existing role with Molecule:
+
+    .. program:: cd foo; molecule init scenario --scenario-name bar --role-name foo --driver-template path
+
+    .. option:: cd foo; molecule init scenario --scenario-name bar --role-name foo --driver-template path
+
+        Initialize a new scenario using a local *cookiecutter* template for the
+        driver configuration.
     """  # noqa
 
     def __init__(self, command_args):
@@ -67,7 +74,6 @@ class Scenario(base.Base):
             os.path.join(role_directory, role_name)
         )
         scenario_directory = os.path.join(molecule_directory, scenario_name)
-        scenario_base_directory = os.path.dirname(scenario_directory)
 
         if os.path.isdir(scenario_directory):
             msg = (
@@ -75,9 +81,22 @@ class Scenario(base.Base):
             ).format(scenario_name)
             util.sysexit_with_message(msg)
 
+        driver_template = 'scenario/driver/{driver_name}'.format(**self._command_args)
+        if 'driver_template' in self._command_args:
+            self._validate_template_dir(self._command_args['driver_template'])
+            cli_driver_template = '{driver_template}/{driver_name}'.format(
+                **self._command_args
+            )
+            if os.path.isdir(cli_driver_template):
+                driver_template = cli_driver_template
+            else:
+                LOG.warn(
+                    "Driver not found in custom template directory({}), "
+                    "using the default template instead".format(cli_driver_template)
+                )
         scenario_base_directory = os.path.join(role_directory, role_name)
         templates = [
-            'scenario/driver/{driver_name}'.format(**self._command_args),
+            driver_template,
             'scenario/verifier/{verifier_name}'.format(**self._command_args),
         ]
         for template in templates:
@@ -172,6 +191,13 @@ def _default_scenario_exists(ctx, param, value):  # pragma: no cover
     default='testinfra',
     help='Name of verifier to initialize. (testinfra)',
 )
+@click.option(
+    '--driver-template',
+    type=click.Path(exists=True, dir_okay=True, readable=True, resolve_path=True),
+    help="Path to a cookiecutter custom driver template to initialize the "
+    "scenario. If the driver template is not found locally, default "
+    "template will be used instead.",
+)
 def scenario(
     ctx,
     dependency_name,
@@ -181,6 +207,7 @@ def scenario(
     role_name,
     scenario_name,
     verifier_name,
+    driver_template,
 ):  # pragma: no cover
     """ Initialize a new scenario for use with Molecule. """
     command_args = {
@@ -202,6 +229,12 @@ def scenario(
 
     if verifier_name == 'ansible':
         command_args['verifier_lint_name'] = 'ansible-lint'
+
+    driver_template = driver_template or os.environ.get(
+        'MOLECULE_SCENARIO_DRIVER_TEMPLATE', None
+    )
+    if driver_template:
+        command_args['driver_template'] = driver_template
 
     s = Scenario(command_args)
     s.execute()
