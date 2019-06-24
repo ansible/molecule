@@ -20,6 +20,7 @@
 
 import os
 import shutil
+import tempfile
 
 import pytest
 
@@ -108,7 +109,13 @@ def test_directory_property(molecule_scenario_directory_fixture, _instance):
 
 
 def test_ephemeral_directory_property(_instance):
-    assert os.access(_instance.ephemeral_directory, os.W_OK)
+    project_directory = os.path.basename(_instance.config.project_directory)
+    scenario_name = _instance.name
+    project_scenario_directory = os.path.join('molecule', project_directory,
+                                              scenario_name)
+    e_dir = os.path.join(tempfile.gettempdir(), project_scenario_directory)
+
+    assert e_dir == _instance.ephemeral_directory
 
 
 def test_inventory_directory_property(_instance):
@@ -228,18 +235,20 @@ def test_setup_creates_ephemeral_and_inventory_directories(_instance):
 
 
 def test_ephemeral_directory():
-    # assure we can write to ephemeral directory
-    assert os.access(scenario.ephemeral_directory('foo/bar'), os.W_OK)
+    e_dir = os.path.join(tempfile.gettempdir(), 'foo/bar')
+
+    assert e_dir == scenario.ephemeral_directory('foo/bar')
 
 
 def test_ephemeral_directory_overriden_via_env_var(monkeypatch):
     monkeypatch.setenv('MOLECULE_EPHEMERAL_DIRECTORY', 'foo/bar')
+    e_dir = os.path.join(tempfile.gettempdir(), 'foo/bar')
 
-    assert os.access(scenario.ephemeral_directory('foo/bar'), os.W_OK)
+    assert e_dir == scenario.ephemeral_directory('foo/bar')
 
 
 def test_ephemeral_directory_overriden_via_env_var_uses_absolute_path(
         monkeypatch):
-    monkeypatch.setenv('MOLECULE_EPHEMERAL_DIRECTORY', "foo/bar")
+    monkeypatch.setenv('MOLECULE_EPHEMERAL_DIRECTORY', '/foo/bar')
 
-    assert os.path.isabs(scenario.ephemeral_directory())
+    assert '/foo/bar' == scenario.ephemeral_directory('foo/bar')

@@ -24,14 +24,14 @@ import glob
 import os
 import re
 import shutil
+import tempfile
 
 import pytest
 
 from molecule import util
 from molecule import config
-from molecule.scenario import ephemeral_directory
 
-for d in glob.glob(os.path.join(ephemeral_directory('molecule'), '*')):
+for d in glob.glob(os.path.join(tempfile.gettempdir(), 'molecule', '*')):
     if re.search('[A-Z]{5}$', d):
         shutil.rmtree(d)
 
