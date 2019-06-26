@@ -175,6 +175,8 @@ class Delegated(base.Base):
                 d = self._get_instance_config(instance_name)
                 conn_dict = {}
                 conn_dict['ansible_user'] = d.get('user')
+                if d.get('password'):
+                    conn_dict['ansible_password'] = d.get('password')
                 conn_dict['ansible_host'] = d.get('address')
                 conn_dict['ansible_port'] = d.get('port')
                 conn_dict['ansible_connection'] = d.get('connection', 'smart')
