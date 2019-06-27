@@ -20,6 +20,8 @@
 
 import os
 
+from ansible import __version__ as ansible_version
+from ansible.plugins.test.core import version_compare
 from molecule import config
 from molecule import interpolation
 from molecule import util
@@ -65,6 +67,47 @@ def get_docker_networks(data):
     return network_list
 
 
+def get_docker_network_configs(data):
+    network_config_list = []
+    # docker_network module uses ipam_config starting with
+    # ansible 2.8, ipam_options for older versions
+    ipam_config_key = 'ipam_config' if version_compare(
+        ansible_version, '2.8', operator='ge') else 'ipam_options'
+    for platform in data:
+        if "networks" in platform:
+            for network in platform['networks']:
+                if "name" in network:
+                    network_config = {
+                        'name': network['name'],
+                    }
+
+                    if "ipam_config" in network or "ipam_options" in network:
+                        network_config.update({
+                            ipam_config_key: network.get(
+                                'ipam_config',
+                                network.get('ipam_options')),
+                        })
+
+                    network_config_list.append(network_config)
+    return network_config_list
+
+
+def get_docker_container_networks(platform):
+    if "networks" in platform:
+        networks = []
+        for network in platform['networks']:
+            if "name" in network:
+                if "ipam_config" in network:
+                    del network["ipam_config"]
+
+                if "ipam_options" in network:
+                    del network["ipam_options"]
+
+                networks.append(network)
+        return networks
+    return None
+
+
 class FilterModule(object):
     """ Core Molecule filter plugins. """
 
@@ -74,4 +117,7 @@ class FilterModule(object):
             'molecule_to_yaml': to_yaml,
             'molecule_header': header,
             'molecule_get_docker_networks': get_docker_networks,
+            'molecule_get_docker_network_configs': get_docker_network_configs,
+            'molecule_get_docker_container_networks':
+                get_docker_container_networks,
         }

@@ -132,7 +132,7 @@
         exposed_ports: "{{ item.exposed_ports | default(omit) }}"
         published_ports: "{{ item.published_ports | default(omit) }}"
         ulimits: "{{ item.ulimits | default(omit) }}"
-        networks: "{{ item.networks | default(omit) }}"
+        networks: "{{ (item | molecule_get_docker_container_networks) or omit }}"
         network_mode: "{{ item.network_mode | default(omit) }}"
         purge_networks: "{{ item.purge_networks | default(omit) }}"
         dns_servers: "{{ item.dns_servers | default(omit) }}"

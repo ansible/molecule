@@ -24,21 +24,15 @@
 
     - name: Create Dockerfiles from image names
       template:
-        src: "{{ molecule_scenario_directory + '/' + (item.dockerfile | default( 'Dockerfile.j2')) }}"
+        src: "{{ item.dockerfile | default('Dockerfile.j2') }}"
         dest: "{{ molecule_ephemeral_directory }}/Dockerfile_{{ item.image | regex_replace('[^a-zA-Z0-9_]', '_') }}"
       with_items: "{{ molecule_yml.platforms }}"
       when: not item.pre_build_image | default(false)
       register: platforms
-
-    - name: Determine which docker image info module to use
-      set_fact:
-        _docker_image_info_module: >-
-          {{ ansible_version.full is version_compare('2.8', '>=') |
-            ternary('docker_image_info', 'docker_image_facts') }}
+      no_log: item.failed
 
     - name: Discover local Docker images
-      action: "{{ _docker_image_info_module }}"
-      args:
+      docker_image_facts:
         name: "molecule_local/{{ item.item.name }}"
         docker_host: "{{ item.item.docker_host | default(lookup('env', 'DOCKER_HOST') or 'unix://var/run/docker.sock') }}"
         cacert_path: "{{ item.cacert_path | default((lookup('env', 'DOCKER_CERT_PATH') + '/ca.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
@@ -46,8 +40,7 @@
         key_path: "{{ item.key_path | default((lookup('env', 'DOCKER_CERT_PATH') + '/key.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
         tls_verify: "{{ item.tls_verify | default(lookup('env', 'DOCKER_TLS_VERIFY')) or false }}"
       with_items: "{{ platforms.results }}"
-      when:
-        - not item.pre_build_image | default(false)
+      when: not item.pre_build_image | default(false)
       register: docker_images
 
     - name: Build an Ansible compatible image (new)
@@ -108,8 +101,6 @@
         tls_verify: "{{ item.tls_verify | default(lookup('env', 'DOCKER_TLS_VERIFY')) or false }}"
         state: present
       with_items: "{{ molecule_yml.platforms | molecule_get_docker_network_configs }}"
-      loop_control:
-        label: "{{ item }}"
       no_log: false
 
     - name: Determine the CMD directives
@@ -152,14 +143,11 @@
         env: "{{ item.env | default(omit) }}"
         restart_policy: "{{ item.restart_policy | default(omit) }}"
         restart_retries: "{{ item.restart_retries | default(omit) }}"
-        tty: "{{ item.tty | default(omit) }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
-      loop_control:
-        label: "{{ item.name }}"
-      no_log: false
       async: 7200
       poll: 0
+      no_log: false
 
     - name: Wait for instance(s) creation to complete
       async_status:
@@ -168,3 +156,4 @@
       until: docker_jobs.finished
       retries: 300
       with_items: "{{ server.results }}"
+      no_log: item.failed
