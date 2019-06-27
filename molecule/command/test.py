@@ -23,6 +23,7 @@ import click
 from molecule import config
 from molecule import logger
 from molecule.command import base
+from molecule import util
 
 LOG = logger.get_logger(__name__)
 
@@ -71,6 +72,12 @@ class Test(base.Base):
 
         Load an env file to read variables from when rendering
         molecule.yml.
+
+    .. program:: molecule --parallel test
+
+    .. option:: molecule --parallel create
+
+       Run in parallelizable mode.
     """
 
     def execute(self):
@@ -106,19 +113,27 @@ class Test(base.Base):
     default='always',
     help=('The destroy strategy used at the conclusion of a '
           'Molecule run (always).'))
-def test(ctx, scenario_name, driver_name, __all, destroy):  # pragma: no cover
+@click.option(
+    '--parallel/--no-parallel',
+    default=False,
+    help='Enable or disable parallel mode. Default is disabled.')
+def test(ctx, scenario_name, driver_name, __all, destroy,
+         parallel):  # pragma: no cover
     """
     Test (lint, cleanup, destroy, dependency, syntax, create, prepare,
           converge, idempotence, side_effect, verify, cleanup, destroy).
     """
-
     args = ctx.obj.get('args')
+
     subcommand = base._get_subcommand(__name__)
     command_args = {
         'destroy': destroy,
+        'parallel': parallel,
         'subcommand': subcommand,
         'driver_name': driver_name,
     }
+
+    util.validate_args_with_parallel(command_args)
 
     if __all:
         scenario_name = None

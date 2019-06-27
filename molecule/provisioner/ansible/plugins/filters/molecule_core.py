@@ -65,6 +65,10 @@ def get_docker_networks(data):
     return network_list
 
 
+def parallelize_instance_name(name, parallel_run_uuid):
+    return '{}-{}'.format(name, parallel_run_uuid)
+
+
 class FilterModule(object):
     """ Core Molecule filter plugins. """
 
@@ -74,4 +78,5 @@ class FilterModule(object):
             'molecule_to_yaml': to_yaml,
             'molecule_header': header,
             'molecule_get_docker_networks': get_docker_networks,
+            'molecule_parallelize_instance_name': parallelize_instance_name,
         }

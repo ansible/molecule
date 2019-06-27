@@ -19,6 +19,7 @@
 #  DEALINGS IN THE SOFTWARE.
 
 from molecule import logger
+from molecule import util
 
 LOG = logger.get_logger(__name__)
 
@@ -72,7 +73,18 @@ class Platforms(object):
         :param config: An instance of a Molecule config.
         :return: None
         """
+        config.config['platforms'] = self._maybe_parallelize_instance_names(
+            config)
         self._config = config
+
+    def _maybe_parallelize_instance_names(self, config):
+        if not config.is_parallel_mode:
+            return config.config['platforms']
+
+        return util.parallelize_instance_names(
+            config.config['platforms'],
+            config.scenario.parallel_run_uuid,
+        )
 
     @property
     def instances(self):

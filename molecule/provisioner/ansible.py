@@ -569,7 +569,11 @@ class Ansible(base.Base):
                     "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
                     'molecule_no_log':
                     "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
-                    "molecule_yml.provisioner.log|default(False) | bool }}"
+                    "molecule_yml.provisioner.log|default(False) | bool }}",
+                    'molecule_parallel_mode':
+                    self._config.is_parallel_mode,
+                    'molecule_parallel_run_uuid':
+                    self._config.scenario.parallel_run_uuid,
                 }
 
                 # All group

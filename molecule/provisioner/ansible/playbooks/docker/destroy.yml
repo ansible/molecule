@@ -7,7 +7,7 @@
   tasks:
     - name: Destroy molecule instance(s)
       docker_container:
-        name: "{{ item.name }}"
+        name: "{{ item.name | molecule_parallelize_instance_name(molecule_parallel_run_uuid) }}"
         docker_host: "{{ item.docker_host | default(lookup('env', 'DOCKER_HOST') or 'unix://var/run/docker.sock') }}"
         cacert_path: "{{ item.cacert_path | default((lookup('env', 'DOCKER_CERT_PATH') + '/ca.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
         cert_path: "{{ item.cert_path | default((lookup('env', 'DOCKER_CERT_PATH') + '/cert.pem')  if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"

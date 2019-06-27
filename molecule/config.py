@@ -261,6 +261,10 @@ class Config(object):
     def verifiers(self):
         return molecule_verifiers()
 
+    @property
+    def is_parallel_mode(self):
+        return self.command_args.get('parallel', False)
+
     def _get_driver_name(self):
         driver_from_state_file = self.state.driver
         driver_from_cli = self.command_args.get('driver_name')

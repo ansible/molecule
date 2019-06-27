@@ -110,6 +110,8 @@ def execute_cmdline_scenarios(scenario_name,
                 execute_subcommand(scenario.config, 'destroy')
                 # always prune ephemeral dir if destroying on failure
                 scenario.prune()
+                if scenario.config.is_parallel_mode:
+                    scenario._remove_parallel_directory()
                 util.sysexit()
             else:
                 raise
@@ -143,6 +145,9 @@ def execute_scenario(scenario):
     # debugging by manually stepping through a scenario sequence
     if 'destroy' in scenario.sequence:
         scenario.prune()
+
+    if scenario.config.is_parallel_mode:
+        scenario._remove_parallel_directory()
 
 
 def get_configs(args, command_args, ansible_args=()):

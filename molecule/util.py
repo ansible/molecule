@@ -311,3 +311,17 @@ def memoize(function):
         return memo[args]
 
     return wrapper
+
+
+def validate_args_with_parallel(cmd_args):
+    if cmd_args.get('parallel') and cmd_args.get('destroy') == 'never':
+        msg = '"--parallel" and "--destroy=never" are not supported'
+        sysexit_with_message(msg)
+
+
+def parallelize_instance_names(platforms, uuid):
+    def transform(platform):
+        platform['name'] = '{}-{}'.format(platform['name'], uuid)
+        return platform
+
+    return [transform(platform) for platform in platforms]

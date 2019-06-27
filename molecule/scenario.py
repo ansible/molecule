@@ -20,6 +20,8 @@
 
 import os
 import fnmatch
+from uuid import uuid4
+import shutil
 try:
     from pathlib import Path
 except ImportError:
@@ -138,10 +140,17 @@ class Scenario(object):
     def ephemeral_directory(self):
         project_directory = os.path.basename(self.config.project_directory)
         scenario_name = self.name
-        project_scenario_directory = os.path.join(
-            'molecule', project_directory, scenario_name)
-        path = ephemeral_directory(project_scenario_directory)
 
+        if self.is_parallel_mode:
+            project_directory = '{}-{}'.format(project_directory,
+                                               self.parallel_run_uuid)
+            project_scenario_directory = os.path.join(
+                'molecule_parallel', project_directory, scenario_name)
+        else:
+            project_scenario_directory = os.path.join(
+                'molecule', project_directory, scenario_name)
+
+        path = ephemeral_directory(project_scenario_directory)
         return ephemeral_directory(path)
 
     @property
@@ -219,12 +228,30 @@ class Scenario(object):
             # TODO(retr0h): May change this handling in the future.
             return []
 
+    @property
+    def is_parallel_mode(self):
+        return self.config.is_parallel_mode
+
+    @property
+    def parallel_run_uuid(self):
+        return self._parallel_run_uuid
+
+    def _remove_parallel_directory(self):
+        msg = ('Removing ephemeral directory because '
+               'parallel execution mode has been configured')
+        LOG.info(msg)
+
+        shutil.rmtree(Path(self.ephemeral_directory).parent)
+
     def _setup(self):
         """
          Prepare the scenario for Molecule and returns None.
 
          :return: None
          """
+        if self.is_parallel_mode:
+            self._parallel_run_uuid = str(uuid4())
+
         if not os.path.isdir(self.inventory_directory):
             os.makedirs(self.inventory_directory)
 
