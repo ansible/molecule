@@ -19,6 +19,7 @@
 #  DEALINGS IN THE SOFTWARE.
 
 from molecule import logger
+from molecule import util
 
 LOG = logger.get_logger(__name__)
 
@@ -65,13 +66,16 @@ class Platforms(object):
               - child_group1
     """
 
-    def __init__(self, config):
+    def __init__(self, config, parallelize_platforms=False):
         """
         Initialize a new platform class and returns None.
 
         :param config: An instance of a Molecule config.
         :return: None
         """
+        if parallelize_platforms:
+            config.config['platforms'] = util._parallelize_platforms(
+                config.config, config._run_uuid)
         self._config = config
 
     @property

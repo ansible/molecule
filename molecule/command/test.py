@@ -18,13 +18,16 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
 import click
 
 from molecule import config
 from molecule import logger
 from molecule.command import base
+from molecule import util
 
 LOG = logger.get_logger(__name__)
+MOLECULE_PARALLEL = os.environ.get('MOLECULE_PARALLEL', False)
 
 
 class Test(base.Base):
@@ -71,6 +74,12 @@ class Test(base.Base):
 
         Load an env file to read variables from when rendering
         molecule.yml.
+
+    .. program:: molecule --parallel test
+
+    .. option:: molecule --parallel test
+
+       Run in parallelizable mode.
     """
 
     def execute(self):
@@ -106,7 +115,12 @@ class Test(base.Base):
     default='always',
     help=('The destroy strategy used at the conclusion of a '
           'Molecule run (always).'))
-def test(ctx, scenario_name, driver_name, __all, destroy):  # pragma: no cover
+@click.option(
+    '--parallel/--no-parallel',
+    default=MOLECULE_PARALLEL,
+    help='Enable or disable parallel mode. Default is disabled.')
+def test(ctx, scenario_name, driver_name, __all, destroy,
+         parallel):  # pragma: no cover
     """
     Test (lint, cleanup, destroy, dependency, syntax, create, prepare,
           converge, idempotence, side_effect, verify, cleanup, destroy).
@@ -115,6 +129,7 @@ def test(ctx, scenario_name, driver_name, __all, destroy):  # pragma: no cover
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
     command_args = {
+        'parallel': parallel,
         'destroy': destroy,
         'subcommand': subcommand,
         'driver_name': driver_name,
@@ -122,5 +137,8 @@ def test(ctx, scenario_name, driver_name, __all, destroy):  # pragma: no cover
 
     if __all:
         scenario_name = None
+
+    if parallel:
+        util.validate_parallel_cmd_args(command_args)
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
