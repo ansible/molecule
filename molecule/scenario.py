@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import shutil
 import os
 import fnmatch
 try:
@@ -98,6 +99,14 @@ class Scenario(object):
         self.config = config
         self._setup()
 
+    def _remove_scenario_state_directory(self):
+        """Remove scenario cached disk stored state.
+
+        :return: None
+        """
+        LOG.info('Removing scenario state directory from cache')
+        shutil.rmtree(Path(self.ephemeral_directory).parent)
+
     def prune(self):
         """
         Prune the scenario ephemeral directory files and returns None.
@@ -137,9 +146,14 @@ class Scenario(object):
     @property
     def ephemeral_directory(self):
         project_directory = os.path.basename(self.config.project_directory)
-        scenario_name = self.name
-        project_scenario_directory = os.path.join(
-            'molecule', project_directory, scenario_name)
+
+        if self.config.is_parallel:
+            project_directory = '{}-{}'.format(project_directory,
+                                               self.config._run_uuid)
+
+        project_scenario_directory = os.path.join(self.config.cache_directory,
+                                                  project_directory, self.name)
+
         path = ephemeral_directory(project_scenario_directory)
 
         return ephemeral_directory(path)

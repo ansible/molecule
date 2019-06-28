@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+from uuid import uuid4
 import os
 
 import anyconfig
@@ -109,10 +110,15 @@ class Config(object):
         self.ansible_args = ansible_args
         self.config = self._get_config()
         self._action = None
+        self._run_uuid = str(uuid4())
 
     def after_init(self):
         self.config = self._reget_config()
         self._validate()
+
+    @property
+    def is_parallel(self):
+        return self.command_args.get('parallel', False)
 
     @property
     def debug(self):
@@ -137,6 +143,10 @@ class Config(object):
     @property
     def project_directory(self):
         return os.getcwd()
+
+    @property
+    def cache_directory(self):
+        return 'molecule_parallel' if self.is_parallel else 'molecule'
 
     @property
     def molecule_directory(self):
@@ -198,6 +208,7 @@ class Config(object):
             'MOLECULE_DEBUG': str(self.debug),
             'MOLECULE_FILE': self.molecule_file,
             'MOLECULE_ENV_FILE': self.env_file,
+            'MOLECULE_STATE_FILE': self.state.state_file,
             'MOLECULE_INVENTORY_FILE': self.provisioner.inventory_file,
             'MOLECULE_EPHEMERAL_DIRECTORY': self.scenario.ephemeral_directory,
             'MOLECULE_SCENARIO_DIRECTORY': self.scenario.directory,
@@ -224,7 +235,8 @@ class Config(object):
     @property
     @util.memoize
     def platforms(self):
-        return platforms.Platforms(self)
+        return platforms.Platforms(
+            self, parallelize_platforms=self.is_parallel)
 
     @property
     @util.memoize
