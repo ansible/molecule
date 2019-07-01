@@ -97,11 +97,12 @@ def get_molecule_file(path):
 
 
 @pytest.helpers.register
-def molecule_ephemeral_directory():
-    project_directory = 'test-project'
+def molecule_ephemeral_directory(_fixture_uuid):
+    project_directory = 'test-project-{}'.format(_fixture_uuid)
     scenario_name = 'test-instance'
 
-    return ephemeral_directory(os.path.join(project_directory, scenario_name))
+    return ephemeral_directory(
+        os.path.join('molecule_test', project_directory, scenario_name))
 
 
 def pytest_addoption(parser):

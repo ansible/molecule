@@ -39,6 +39,10 @@ language: python
     <<: *reset-prerequisites
   - &env-functional
     TESTS_TYPE: functional
+  - &env-unit
+    TESTS_TYPE: unit
+    PYTEST_ADDOPTS: >-
+      '-n auto'
   - &env-functional-shard_1
     <<: *env-functional
     PYTEST_ADDOPTS: >-
@@ -59,7 +63,7 @@ jobs:
     - <<: *py-37
       env:
         ANSIBLE_VERSION: devel
-        TESTS_TYPE: unit
+        <<: *env-unit
     - <<: *py-37
       env:
         <<: *env-functional-shard_1
@@ -75,7 +79,7 @@ jobs:
     - <<: *py-36
       env:
         ANSIBLE_VERSION: devel
-        TESTS_TYPE: unit
+        <<: *env-unit
     - <<: *py-36
       env:
         <<: *env-functional-shard_1
@@ -91,7 +95,7 @@ jobs:
     - <<: *py-27
       env:
         ANSIBLE_VERSION: devel
-        TESTS_TYPE: unit
+        <<: *env-unit
     - <<: *py-27
       env:
         <<: *env-functional-shard_1
@@ -130,58 +134,58 @@ jobs:
     - <<: *py-37
       env:
         ANSIBLE_VERSION: "28"
-        TESTS_TYPE: unit
+        <<: *env-unit
       name: unit tests, Ansible 2.8, Python 3.7
 
     - <<: *py-37
       env:
         ANSIBLE_VERSION: "27"
-        TESTS_TYPE: unit
+        <<: *env-unit
       name: unit tests, Ansible 2.7, Python 3.7
 
     - <<: *py-37
       env:
         ANSIBLE_VERSION: "26"
-        TESTS_TYPE: unit
+        <<: *env-unit
       name: unit tests, Ansible 2.6, Python 3.7
 
     - <<: *py-36
       <<: *if-cron-or-manual-run-or-tagged
       env:
         ANSIBLE_VERSION: "28"
-        TESTS_TYPE: unit
+        <<: *env-unit
       name: unit tests, Ansible 2.8, Python 3.6
 
     - <<: *py-36
       <<: *if-cron-or-manual-run-or-tagged
       env:
         ANSIBLE_VERSION: "27"
-        TESTS_TYPE: unit
+        <<: *env-unit
       name: unit tests, Ansible 2.7, Python 3.6
 
     - <<: *py-36
       <<: *if-cron-or-manual-run-or-tagged
       env:
         ANSIBLE_VERSION: "26"
-        TESTS_TYPE: unit
+        <<: *env-unit
       name: unit tests, Ansible 2.6, Python 3.6
 
     - <<: *py-27
       env:
         ANSIBLE_VERSION: "28"
-        TESTS_TYPE: unit
+        <<: *env-unit
       name: unit tests, Ansible 2.8, Python 2.7
 
     - <<: *py-27
       env:
         ANSIBLE_VERSION: "27"
-        TESTS_TYPE: unit
+        <<: *env-unit
       name: unit tests, Ansible 2.7, Python 2.7
 
     - <<: *py-27
       env:
         ANSIBLE_VERSION: "26"
-        TESTS_TYPE: unit
+        <<: *env-unit
       name: unit tests, Ansible 2.6, Python 2.7
 
     - <<: *py-37
@@ -362,7 +366,7 @@ jobs:
       <<: *if-cron-or-manual-run-or-tagged
       env:
         ANSIBLE_VERSION: devel
-        TESTS_TYPE: unit
+        <<: *env-unit
     - <<: *py-37
       <<: *if-cron-or-manual-run-or-tagged
       env:
@@ -383,7 +387,7 @@ jobs:
       <<: *if-cron-or-manual-run-or-tagged
       env:
         ANSIBLE_VERSION: devel
-        TESTS_TYPE: unit
+        <<: *env-unit
     - <<: *py-36
       <<: *if-cron-or-manual-run-or-tagged
       env:
@@ -404,7 +408,7 @@ jobs:
       <<: *if-cron-or-manual-run-or-tagged
       env:
         ANSIBLE_VERSION: devel
-        TESTS_TYPE: unit
+        <<: *env-unit
     - <<: *py-27
       <<: *if-cron-or-manual-run-or-tagged
       env:
