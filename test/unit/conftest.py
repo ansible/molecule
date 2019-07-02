@@ -18,12 +18,17 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+from uuid import uuid4
 import copy
 import functools
 import glob
 import os
 import re
 import shutil
+try:
+    from pathlib import Path
+except ImportError:
+    from pathlib2 import Path
 
 import pytest
 
@@ -167,9 +172,11 @@ def molecule_scenario_directory_fixture(molecule_directory_fixture):
 
 @pytest.fixture
 def molecule_ephemeral_directory_fixture(molecule_scenario_directory_fixture):
-    path = pytest.helpers.molecule_ephemeral_directory()
+    path = pytest.helpers.molecule_ephemeral_directory(str(uuid4()))
     if not os.path.isdir(path):
         os.makedirs(path)
+    yield
+    shutil.rmtree(str(Path(path).parent))
 
 
 @pytest.fixture
