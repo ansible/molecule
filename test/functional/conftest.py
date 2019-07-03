@@ -214,8 +214,12 @@ def login(login_args, scenario_name='default'):
 
 
 @pytest.helpers.register
-def test(driver_name, scenario_name='default'):
-    options = {'scenario_name': scenario_name, 'all': scenario_name is None}
+def test(driver_name, scenario_name='default', parallel=False):
+    options = {
+        'scenario_name': scenario_name,
+        'all': scenario_name is None,
+        'parallel': parallel,
+    }
 
     if driver_name == 'delegated':
         options = {'scenario_name': scenario_name}
