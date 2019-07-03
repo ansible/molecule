@@ -70,6 +70,7 @@ def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
     pytest.helpers.run_command(cmd)
 
 
+@pytest.mark.parallelizable
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name', [
         ('cleanup', 'docker', 'default'),
@@ -83,6 +84,7 @@ def test_command_cleanup(scenario_to_test, with_scenario, scenario_name):
     options = {
         'driver_name': 'docker',
         'all': True,
+        'parallel': True,
     }
     cmd = sh.molecule.bake('test', **options)
     pytest.helpers.run_command(cmd)

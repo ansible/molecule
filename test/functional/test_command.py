@@ -43,6 +43,7 @@ def driver_name(request):
     return request.param
 
 
+@pytest.mark.parallelizable
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
@@ -64,7 +65,7 @@ def driver_name(request):
         'scenario_name',
     ])
 def test_command_check(scenario_to_test, with_scenario, scenario_name):
-    options = {'scenario_name': scenario_name}
+    options = {'scenario_name': scenario_name, 'parallel': True}
     cmd = sh.molecule.bake('check', **options)
     pytest.helpers.run_command(cmd)
 
@@ -704,6 +705,7 @@ def test_command_syntax(scenario_to_test, with_scenario, scenario_name):
     pytest.helpers.run_command(cmd)
 
 
+@pytest.mark.parallelizable
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
@@ -728,7 +730,7 @@ def test_command_syntax(scenario_to_test, with_scenario, scenario_name):
     ])
 def test_command_test(scenario_to_test, with_scenario, scenario_name,
                       driver_name):
-    pytest.helpers.test(driver_name, scenario_name)
+    pytest.helpers.test(driver_name, scenario_name, parallel=True)
 
 
 @pytest.mark.parametrize(
