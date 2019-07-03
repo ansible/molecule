@@ -122,10 +122,9 @@ jobs:
         TOXENV: doc
 
     - <<: *lint
-      name: checking the Python distribution package metadata consistency
-      if: repo == "ansible/molecule" AND type IN (cron, pull_request)  # Only run if PR or cron
+      name: Additional checks
       env:
-        TOXENV: metadata-validation
+        TOXENV: check
 
     - <<: *py-37
       env:
