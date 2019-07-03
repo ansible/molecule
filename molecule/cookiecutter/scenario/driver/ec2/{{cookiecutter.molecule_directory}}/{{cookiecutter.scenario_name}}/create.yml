@@ -78,12 +78,12 @@
         vpc_subnet_id: "{{ item.vpc_subnet_id }}"
         group: "{{ security_group_name }}"
         instance_tags:
-          instance: "{{ item.name }}"
+          Name: "{{ item.name }}"
         wait: true
         assign_public_ip: true
         exact_count: 1
         count_tag:
-          instance: "{{ item.name }}"
+          Name: "{{ item.name }}"
       register: server
       loop: "{{ molecule_yml.platforms }}"
       loop_control:
@@ -104,7 +104,7 @@
     - name: Populate instance config dict
       set_fact:
         instance_conf_dict: {
-          'instance': "{{ item.instances[0].tags.instance }}",
+          'instance': "{{ item.instances[0].tags.Name }}",
           'address': "{{ item.instances[0].public_ip }}",
           'user': "{{ ssh_user }}",
           'port': "{{ ssh_port }}",
