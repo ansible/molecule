@@ -78,3 +78,9 @@ Are there similar tools to Molecule?
 .. _`ansible-test`: https://github.com/nylas/ansible-test
 .. _`abandoned`: https://github.com/nylas/ansible-test/issues/14
 .. _`RoleSpec`: https://github.com/nickjj/rolespec
+
+
+Can I run Molecule processes in parallel?
+=========================================
+
+Please see :ref:`parallel-usage-example` for usage.

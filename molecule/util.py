@@ -311,3 +311,17 @@ def memoize(function):
         return memo[args]
 
     return wrapper
+
+
+def validate_parallel_cmd_args(cmd_args):
+    if cmd_args.get('parallel') and cmd_args.get('destroy') == 'never':
+        msg = 'Combining "--parallel" and "--destroy=never" is not supported'
+        sysexit_with_message(msg)
+
+
+def _parallelize_platforms(config, run_uuid):
+    def parallelize(platform):
+        platform['name'] = '{}-{}'.format(platform['name'], run_uuid)
+        return platform
+
+    return [parallelize(platform) for platform in config['platforms']]

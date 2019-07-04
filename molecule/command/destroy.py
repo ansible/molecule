@@ -18,13 +18,16 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
 import click
 
 from molecule import config
 from molecule import logger
 from molecule.command import base
+from molecule import util
 
 LOG = logger.get_logger(__name__)
+MOLECULE_PARALLEL = os.environ.get('MOLECULE_PARALLEL', False)
 
 
 class Destroy(base.Base):
@@ -71,6 +74,12 @@ class Destroy(base.Base):
 
         Load an env file to read variables from when rendering
         molecule.yml.
+
+    .. program:: molecule --parallel destroy
+
+    .. option:: molecule --parallel destroy
+
+       Run in parallelizable mode.
     """
 
     def execute(self):
@@ -112,18 +121,27 @@ class Destroy(base.Base):
 @click.option(
     '--all/--no-all',
     '__all',
-    default=False,
+    default=MOLECULE_PARALLEL,
     help='Destroy all scenarios. Default is False.')
-def destroy(ctx, scenario_name, driver_name, __all):  # pragma: no cover
+@click.option(
+    '--parallel/--no-parallel',
+    default=False,
+    help='Enable or disable parallel mode. Default is disabled.')
+def destroy(ctx, scenario_name, driver_name, __all,
+            parallel):  # pragma: no cover
     """ Use the provisioner to destroy the instances. """
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
     command_args = {
+        'parallel': parallel,
         'subcommand': subcommand,
         'driver_name': driver_name,
     }
 
     if __all:
         scenario_name = None
+
+    if parallel:
+        util.validate_parallel_cmd_args(command_args)
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
