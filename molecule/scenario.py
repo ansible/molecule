@@ -106,7 +106,7 @@ class Scenario(object):
         :return: None
         """
         LOG.info('Removing scenario state directory from cache')
-        shutil.rmtree(Path(self.ephemeral_directory).parent)
+        shutil.rmtree(str(Path(self.ephemeral_directory).parent))
 
     def prune(self):
         """
