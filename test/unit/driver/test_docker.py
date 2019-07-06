@@ -38,7 +38,7 @@ def test_config_private_member(_instance):
 def test_testinfra_options_property(_instance):
     assert {
         'connection': 'ansible',
-        'ansible-inventory': _instance._config.provisioner.inventory_file
+        'ansible-inventory': _instance._config.provisioner.inventory_file,
     } == _instance.testinfra_options
 
 
@@ -53,30 +53,26 @@ def test_options_property(_instance):
 
 
 def test_login_cmd_template_property(_instance):
-    x = ('docker exec '
-         '-e COLUMNS={columns} '
-         '-e LINES={lines} '
-         '-e TERM=bash '
-         '-e TERM=xterm '
-         '-ti {instance} bash')
+    x = (
+        'docker exec '
+        '-e COLUMNS={columns} '
+        '-e LINES={lines} '
+        '-e TERM=bash '
+        '-e TERM=xterm '
+        '-ti {instance} bash'
+    )
 
     assert x == _instance.login_cmd_template
 
 
 def test_safe_files_property(_instance):
-    x = [
-        os.path.join(_instance._config.scenario.ephemeral_directory,
-                     'Dockerfile')
-    ]
+    x = [os.path.join(_instance._config.scenario.ephemeral_directory, 'Dockerfile')]
 
     assert x == _instance.safe_files
 
 
 def test_default_safe_files_property(_instance):
-    x = [
-        os.path.join(_instance._config.scenario.ephemeral_directory,
-                     'Dockerfile')
-    ]
+    x = [os.path.join(_instance._config.scenario.ephemeral_directory, 'Dockerfile')]
 
     assert x == _instance.default_safe_files
 
@@ -104,8 +100,9 @@ def test_ansible_connection_options(_instance):
 
 
 def test_instance_config_property(_instance):
-    x = os.path.join(_instance._config.scenario.ephemeral_directory,
-                     'instance_config.yml')
+    x = os.path.join(
+        _instance._config.scenario.ephemeral_directory, 'instance_config.yml'
+    )
 
     assert x == _instance.instance_config
 

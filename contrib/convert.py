@@ -47,8 +47,7 @@ class Convert(object):
 
         self._m = migrate.Migrate(old_molecule_file)
         self._old_role_dir = os.path.join(os.path.dirname(old_molecule_file))
-        self._old_dot_molecule_dir = scenario.ephemeral_directory(
-            self._old_role_dir)
+        self._old_dot_molecule_dir = scenario.ephemeral_directory(self._old_role_dir)
         self._old_test_dir = os.path.join(self._old_role_dir, 'tests')
         self._old_playbook = os.path.join(self._old_role_dir, 'playbook.yml')
         self._molecule_dir = config.molecule_directory(self._old_role_dir)
@@ -56,8 +55,7 @@ class Convert(object):
         self._test_dir = os.path.join(self._scenario_dir, 'tests')
         self._molecule_file = config.molecule_file(self._scenario_dir)
 
-        self._role_name = os.path.basename(
-            os.path.normpath(self._old_role_dir))
+        self._role_name = os.path.basename(os.path.normpath(self._old_role_dir))
 
     def migrate(self):
         self._create_scenario()
@@ -71,8 +69,7 @@ class Convert(object):
             'scenario_name': 'default',
             'driver_name': 'vagrant',
         }
-        cmd = sh.molecule.bake(
-            'init', 'scenario', _cwd=self._old_role_dir, **options)
+        cmd = sh.molecule.bake('init', 'scenario', _cwd=self._old_role_dir, **options)
         util.run_command(cmd)
 
     def _create_new_molecule_file(self):
@@ -88,8 +85,7 @@ class Convert(object):
             shutil.copy(f, self._test_dir)
 
         if os.path.isfile(self._old_playbook):
-            msg = 'Copying {} to {}'.format(self._old_playbook,
-                                            self._scenario_dir)
+            msg = 'Copying {} to {}'.format(self._old_playbook, self._scenario_dir)
             LOG.info(msg)
             shutil.copy(self._old_playbook, self._scenario_dir)
 
@@ -119,7 +115,8 @@ class Convert(object):
     '-d',
     type=click.Choice(['vagrant']),
     default='vagrant',
-    help='Name of driver to migrate. (vagrant)')
+    help='Name of driver to migrate. (vagrant)',
+)
 def main(old_molecule_file, driver_name):  # pragma: no cover
     """ Migrate a Molecule v1 role to the v2 format. """
 

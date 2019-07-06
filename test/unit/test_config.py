@@ -107,32 +107,24 @@ def test_dependency_property(config_instance):
 
 @pytest.fixture
 def _config_dependency_gilt_section_data():
-    return {
-        'dependency': {
-            'name': 'gilt'
-        },
-    }
+    return {'dependency': {'name': 'gilt'}}
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_config_dependency_gilt_section_data'], indirect=True)
+    'config_instance', ['_config_dependency_gilt_section_data'], indirect=True
+)
 def test_dependency_property_is_gilt(config_instance):
     assert isinstance(config_instance.dependency, gilt.Gilt)
 
 
 @pytest.fixture
 def _config_dependency_shell_section_data():
-    return {
-        'dependency': {
-            'name': 'shell',
-            'command': 'bin/command',
-        },
-    }
+    return {'dependency': {'name': 'shell', 'command': 'bin/command'}}
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_config_dependency_shell_section_data'],
-    indirect=True)
+    'config_instance', ['_config_dependency_shell_section_data'], indirect=True
+)
 def test_dependency_property_is_shell(config_instance):
     assert isinstance(config_instance.dependency, shell.Shell)
 
@@ -143,144 +135,108 @@ def test_driver_property(config_instance):
 
 @pytest.fixture
 def _config_driver_azure_section_data():
-    return {
-        'driver': {
-            'name': 'azure'
-        },
-    }
+    return {'driver': {'name': 'azure'}}
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_config_driver_azure_section_data'], indirect=True)
+    'config_instance', ['_config_driver_azure_section_data'], indirect=True
+)
 def test_driver_property_is_azure(config_instance):
     assert isinstance(config_instance.driver, azure.Azure)
 
 
 @pytest.fixture
 def _config_driver_delegated_section_data():
-    return {
-        'driver': {
-            'name': 'delegated',
-            'options': {
-                'managed': False,
-            },
-        },
-    }
+    return {'driver': {'name': 'delegated', 'options': {'managed': False}}}
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_config_driver_delegated_section_data'],
-    indirect=True)
+    'config_instance', ['_config_driver_delegated_section_data'], indirect=True
+)
 def test_driver_property_is_delegated(config_instance):
     assert isinstance(config_instance.driver, delegated.Delegated)
 
 
 @pytest.fixture
 def _config_driver_digitalocean_section_data():
-    return {
-        'driver': {
-            'name': 'digitalocean'
-        },
-    }
+    return {'driver': {'name': 'digitalocean'}}
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_config_driver_digitalocean_section_data'],
-    indirect=True)
+    'config_instance', ['_config_driver_digitalocean_section_data'], indirect=True
+)
 def test_driver_property_is_digitalocean(config_instance):
     assert isinstance(config_instance.driver, digitalocean.DigitalOcean)
 
 
 @pytest.fixture
 def _config_driver_ec2_section_data():
-    return {
-        'driver': {
-            'name': 'ec2'
-        },
-    }
+    return {'driver': {'name': 'ec2'}}
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_config_driver_ec2_section_data'], indirect=True)
+    'config_instance', ['_config_driver_ec2_section_data'], indirect=True
+)
 def test_driver_property_is_ec2(config_instance):
     assert isinstance(config_instance.driver, ec2.EC2)
 
 
 @pytest.fixture
 def _config_driver_gce_section_data():
-    return {
-        'driver': {
-            'name': 'gce'
-        },
-    }
+    return {'driver': {'name': 'gce'}}
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_config_driver_gce_section_data'], indirect=True)
+    'config_instance', ['_config_driver_gce_section_data'], indirect=True
+)
 def test_driver_property_is_gce(config_instance):
     assert isinstance(config_instance.driver, gce.GCE)
 
 
 @pytest.fixture
 def _config_driver_lxc_section_data():
-    return {
-        'driver': {
-            'name': 'lxc'
-        },
-    }
+    return {'driver': {'name': 'lxc'}}
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_config_driver_lxc_section_data'], indirect=True)
+    'config_instance', ['_config_driver_lxc_section_data'], indirect=True
+)
 def test_driver_property_is_lxc(config_instance):
     assert isinstance(config_instance.driver, lxc.LXC)
 
 
 @pytest.fixture
 def _config_driver_lxd_section_data():
-    return {
-        'driver': {
-            'name': 'lxd'
-        },
-    }
+    return {'driver': {'name': 'lxd'}}
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_config_driver_lxd_section_data'], indirect=True)
+    'config_instance', ['_config_driver_lxd_section_data'], indirect=True
+)
 def test_driver_property_is_lxd(config_instance):
     assert isinstance(config_instance.driver, lxd.LXD)
 
 
 @pytest.fixture
 def _config_driver_openstack_section_data():
-    return {
-        'driver': {
-            'name': 'openstack'
-        },
-    }
+    return {'driver': {'name': 'openstack'}}
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_config_driver_openstack_section_data'],
-    indirect=True)
+    'config_instance', ['_config_driver_openstack_section_data'], indirect=True
+)
 def test_driver_property_is_openstack(config_instance):
     assert isinstance(config_instance.driver, openstack.Openstack)
 
 
 @pytest.fixture
 def _config_driver_vagrant_section_data():
-    return {
-        'driver': {
-            'name': 'vagrant',
-            'provider': {
-                'name': 'virtualbox',
-            },
-        },
-    }
+    return {'driver': {'name': 'vagrant', 'provider': {'name': 'virtualbox'}}}
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_config_driver_vagrant_section_data'], indirect=True)
+    'config_instance', ['_config_driver_vagrant_section_data'], indirect=True
+)
 def test_driver_property_is_vagrant(config_instance):
     assert isinstance(config_instance.driver, vagrant.Vagrant)
 
@@ -309,11 +265,9 @@ def test_env(config_instance):
     x = {
         'MOLECULE_DEBUG': 'False',
         'MOLECULE_FILE': config_instance.molecule_file,
-        'MOLECULE_ENV_FILE': util.abs_path(
-            config_instance.args.get('env_file')),
+        'MOLECULE_ENV_FILE': util.abs_path(config_instance.args.get('env_file')),
         'MOLECULE_INVENTORY_FILE': config_instance.provisioner.inventory_file,
-        'MOLECULE_EPHEMERAL_DIRECTORY':
-        config_instance.scenario.ephemeral_directory,
+        'MOLECULE_EPHEMERAL_DIRECTORY': config_instance.scenario.ephemeral_directory,
         'MOLECULE_SCENARIO_DIRECTORY': config_instance.scenario.directory,
         'MOLECULE_PROJECT_DIRECTORY': config_instance.project_directory,
         'MOLECULE_INSTANCE_CONFIG': config_instance.driver.instance_config,
@@ -358,55 +312,36 @@ def test_verifier_property(config_instance):
 
 @pytest.fixture
 def _config_verifier_inspec_section_data():
-    return {
-        'verifier': {
-            'name': 'inspec',
-            'lint': {
-                'name': 'rubocop',
-            },
-        },
-    }
+    return {'verifier': {'name': 'inspec', 'lint': {'name': 'rubocop'}}}
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_config_verifier_inspec_section_data'], indirect=True)
+    'config_instance', ['_config_verifier_inspec_section_data'], indirect=True
+)
 def test_verifier_property_is_inspec(config_instance):
     assert isinstance(config_instance.verifier, inspec.Inspec)
 
 
 @pytest.fixture
 def _config_verifier_goss_section_data():
-    return {
-        'verifier': {
-            'name': 'goss',
-            'lint': {
-                'name': 'yamllint',
-            },
-        },
-    }
+    return {'verifier': {'name': 'goss', 'lint': {'name': 'yamllint'}}}
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_config_verifier_goss_section_data'], indirect=True)
+    'config_instance', ['_config_verifier_goss_section_data'], indirect=True
+)
 def test_verifier_property_is_goss(config_instance):
     assert isinstance(config_instance.verifier, goss.Goss)
 
 
 @pytest.fixture
 def _config_verifier_ansible_section_data():
-    return {
-        'verifier': {
-            'name': 'ansible',
-            'lint': {
-                'name': 'ansible-lint',
-            },
-        },
-    }
+    return {'verifier': {'name': 'ansible', 'lint': {'name': 'ansible-lint'}}}
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_config_verifier_ansible_section_data'],
-    indirect=True)
+    'config_instance', ['_config_verifier_ansible_section_data'], indirect=True
+)
 def test_verifier_property_is_ansible(config_instance):
     assert isinstance(config_instance.verifier, ansible_verifier.Ansible)
 
@@ -434,7 +369,8 @@ def test_get_driver_name(config_instance):
 
 
 def test_get_driver_name_raises_when_different_driver_used(
-        patched_logger_critical, config_instance):
+    patched_logger_critical, config_instance
+):
     config_instance.state.change_state('driver', 'foo')
     config_instance.command_args = {'driver_name': 'bar'}
     with pytest.raises(SystemExit) as e:
@@ -442,8 +378,10 @@ def test_get_driver_name_raises_when_different_driver_used(
 
     assert 1 == e.value.code
 
-    msg = ("Instance(s) were created with the 'foo' driver, "
-           "but the subcommand is using 'bar' driver.")
+    msg = (
+        "Instance(s) were created with the 'foo' driver, "
+        "but the subcommand is using 'bar' driver."
+    )
 
     patched_logger_critical.assert_called_once_with(msg)
 
@@ -455,8 +393,7 @@ def test_get_config(config_instance):
 def test_get_config_with_base_config(config_instance):
     config_instance.args = {'base_config': './foo.yml'}
     contents = {'foo': 'bar'}
-    util.write_file(config_instance.args['base_config'],
-                    util.safe_dump(contents))
+    util.write_file(config_instance.args['base_config'], util.safe_dump(contents))
     result = config_instance._get_config()
 
     assert result['foo'] == 'bar'
@@ -473,8 +410,9 @@ def test_interpolate(patched_logger_critical, config_instance):
     assert x == config_instance._interpolate(string, os.environ, None)
 
 
-def test_interpolate_raises_on_failed_interpolation(patched_logger_critical,
-                                                    config_instance):
+def test_interpolate_raises_on_failed_interpolation(
+    patched_logger_critical, config_instance
+):
     string = '$6$8I5Cfmpr$kGZB'
 
     with pytest.raises(SystemExit) as e:
@@ -482,15 +420,18 @@ def test_interpolate_raises_on_failed_interpolation(patched_logger_critical,
 
     assert 1 == e.value.code
 
-    msg = ("parsing config file '{}'.\n\n"
-           'Invalid placeholder in string: line 1, col 1\n'
-           '$6$8I5Cfmpr$kGZB').format(config_instance.molecule_file)
+    msg = (
+        "parsing config file '{}'.\n\n"
+        'Invalid placeholder in string: line 1, col 1\n'
+        '$6$8I5Cfmpr$kGZB'
+    ).format(config_instance.molecule_file)
     patched_logger_critical.assert_called_once_with(msg)
 
 
 def test_get_defaults(config_instance, mocker):
-    mocker.patch.object(config_instance, 'molecule_file',
-                        '/path/to/test_scenario_name/molecule.yml')
+    mocker.patch.object(
+        config_instance, 'molecule_file', '/path/to/test_scenario_name/molecule.yml'
+    )
     defaults = config_instance._get_defaults()
     assert defaults['scenario']['name'] == 'test_scenario_name'
 
@@ -505,7 +446,8 @@ def test_preflight(mocker, config_instance, patched_logger_info):
 
 
 def test_preflight_exists_when_validation_fails(
-        mocker, patched_logger_critical, config_instance):
+    mocker, patched_logger_critical, config_instance
+):
     m = mocker.patch('molecule.model.schema_v2.pre_validate')
     m.return_value = 'validation errors'
 
@@ -518,8 +460,7 @@ def test_preflight_exists_when_validation_fails(
     patched_logger_critical.assert_called_once_with(msg)
 
 
-def test_validate(mocker, config_instance, patched_logger_info,
-                  patched_logger_success):
+def test_validate(mocker, config_instance, patched_logger_info, patched_logger_success):
     m = mocker.patch('molecule.model.schema_v2.validate')
     m.return_value = None
 
@@ -534,8 +475,9 @@ def test_validate(mocker, config_instance, patched_logger_info,
     patched_logger_success.assert_called_once_with(msg)
 
 
-def test_validate_exists_when_validation_fails(mocker, patched_logger_critical,
-                                               config_instance):
+def test_validate_exists_when_validation_fails(
+    mocker, patched_logger_critical, config_instance
+):
     m = mocker.patch('molecule.model.schema_v2.validate')
     m.return_value = 'validation errors'
 
@@ -583,10 +525,7 @@ def test_molecule_verifiers():
 
 def test_set_env_from_file(config_instance):
     config_instance.args = {'env_file': '.env'}
-    contents = {
-        'foo': 'bar',
-        'BAZ': 'zzyzx',
-    }
+    contents = {'foo': 'bar', 'BAZ': 'zzyzx'}
     env_file = config_instance.args.get('env_file')
     util.write_file(env_file, util.safe_dump(contents))
     env = config.set_env_from_file({}, env_file)
@@ -595,7 +534,8 @@ def test_set_env_from_file(config_instance):
 
 
 def test_set_env_from_file_returns_original_env_when_env_file_not_found(
-        config_instance):
+    config_instance
+):
     env = config.set_env_from_file({}, 'file-not-found')
 
     assert {} == env

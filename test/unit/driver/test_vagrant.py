@@ -31,9 +31,7 @@ def _driver_section_data():
     return {
         'driver': {
             'name': 'vagrant',
-            'provider': {
-                'name': 'virtualbox',
-            },
+            'provider': {'name': 'virtualbox'},
             'options': {},
             'ssh_connection_options': ['-o foo=bar'],
             'safe_files': ['foo'],
@@ -56,7 +54,7 @@ def test_config_private_member(_instance):
 def test_testinfra_options_property(_instance):
     x = {
         'connection': 'ansible',
-        'ansible-inventory': _instance._config.provisioner.inventory_file
+        'ansible-inventory': _instance._config.provisioner.inventory_file,
     }
 
     assert x == _instance.testinfra_options
@@ -72,30 +70,24 @@ def test_options_property(_instance):
     assert x == _instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_driver_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_driver_section_data'], indirect=True)
 def test_login_cmd_template_property(_instance):
     x = 'ssh {address} -l {user} -p {port} -i {identity_file} -o foo=bar'
 
     assert x == _instance.login_cmd_template
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_driver_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_driver_section_data'], indirect=True)
 def test_safe_files_property(_instance):
     x = [
-        os.path.join(_instance._config.scenario.ephemeral_directory,
-                     'Vagrantfile'),
-        os.path.join(_instance._config.scenario.ephemeral_directory,
-                     'vagrant.yml'),
-        os.path.join(_instance._config.scenario.ephemeral_directory,
-                     'instance_config.yml'),
-        os.path.join(_instance._config.scenario.ephemeral_directory,
-                     '.vagrant'),
-        os.path.join(_instance._config.scenario.ephemeral_directory,
-                     'vagrant-*.out'),
-        os.path.join(_instance._config.scenario.ephemeral_directory,
-                     'vagrant-*.err'),
+        os.path.join(_instance._config.scenario.ephemeral_directory, 'Vagrantfile'),
+        os.path.join(_instance._config.scenario.ephemeral_directory, 'vagrant.yml'),
+        os.path.join(
+            _instance._config.scenario.ephemeral_directory, 'instance_config.yml'
+        ),
+        os.path.join(_instance._config.scenario.ephemeral_directory, '.vagrant'),
+        os.path.join(_instance._config.scenario.ephemeral_directory, 'vagrant-*.out'),
+        os.path.join(_instance._config.scenario.ephemeral_directory, 'vagrant-*.err'),
         'foo',
     ]
 
@@ -104,18 +96,14 @@ def test_safe_files_property(_instance):
 
 def test_default_safe_files_property(_instance):
     x = [
-        os.path.join(_instance._config.scenario.ephemeral_directory,
-                     'Vagrantfile'),
-        os.path.join(_instance._config.scenario.ephemeral_directory,
-                     'vagrant.yml'),
-        os.path.join(_instance._config.scenario.ephemeral_directory,
-                     'instance_config.yml'),
-        os.path.join(_instance._config.scenario.ephemeral_directory,
-                     '.vagrant'),
-        os.path.join(_instance._config.scenario.ephemeral_directory,
-                     'vagrant-*.out'),
-        os.path.join(_instance._config.scenario.ephemeral_directory,
-                     'vagrant-*.err'),
+        os.path.join(_instance._config.scenario.ephemeral_directory, 'Vagrantfile'),
+        os.path.join(_instance._config.scenario.ephemeral_directory, 'vagrant.yml'),
+        os.path.join(
+            _instance._config.scenario.ephemeral_directory, 'instance_config.yml'
+        ),
+        os.path.join(_instance._config.scenario.ephemeral_directory, '.vagrant'),
+        os.path.join(_instance._config.scenario.ephemeral_directory, 'vagrant-*.out'),
+        os.path.join(_instance._config.scenario.ephemeral_directory, 'vagrant-*.err'),
     ]
 
     assert x == _instance.default_safe_files
@@ -156,13 +144,12 @@ def test_login_options(mocker, _instance):
         'address': '127.0.0.1',
         'user': 'vagrant',
         'port': 2222,
-        'identity_file': '/foo/bar'
+        'identity_file': '/foo/bar',
     }
     assert x == _instance.login_options('foo')
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_driver_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_driver_section_data'], indirect=True)
 def test_ansible_connection_options(mocker, _instance):
     m = mocker.patch('molecule.driver.vagrant.Vagrant._get_instance_config')
     m.return_value = {
@@ -184,16 +171,14 @@ def test_ansible_connection_options(mocker, _instance):
     assert x == _instance.ansible_connection_options('foo')
 
 
-def test_ansible_connection_options_handles_missing_instance_config(
-        mocker, _instance):
+def test_ansible_connection_options_handles_missing_instance_config(mocker, _instance):
     m = mocker.patch('molecule.util.safe_load_file')
     m.side_effect = IOError
 
     assert {} == _instance.ansible_connection_options('foo')
 
 
-def test_ansible_connection_options_handles_missing_results_key(
-        mocker, _instance):
+def test_ansible_connection_options_handles_missing_results_key(mocker, _instance):
     m = mocker.patch('molecule.util.safe_load_file')
     m.side_effect = StopIteration
 
@@ -201,28 +186,26 @@ def test_ansible_connection_options_handles_missing_results_key(
 
 
 def test_vagrantfile_property(_instance):
-    x = os.path.join(_instance._config.scenario.ephemeral_directory,
-                     'Vagrantfile')
+    x = os.path.join(_instance._config.scenario.ephemeral_directory, 'Vagrantfile')
 
     assert x == _instance.vagrantfile
 
 
 def test_vagrantfile_config_property(_instance):
-    x = os.path.join(_instance._config.scenario.ephemeral_directory,
-                     'vagrant.yml')
+    x = os.path.join(_instance._config.scenario.ephemeral_directory, 'vagrant.yml')
 
     assert x == _instance.vagrantfile_config
 
 
 def test_instance_config_property(_instance):
-    x = os.path.join(_instance._config.scenario.ephemeral_directory,
-                     'instance_config.yml')
+    x = os.path.join(
+        _instance._config.scenario.ephemeral_directory, 'instance_config.yml'
+    )
 
     assert x == _instance.instance_config
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_driver_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_driver_section_data'], indirect=True)
 def test_ssh_connection_options_property(_instance):
     x = ['-o foo=bar']
 
@@ -251,15 +234,9 @@ def test_status(mocker, _instance):
 
 def test_get_instance_config(mocker, _instance):
     m = mocker.patch('molecule.util.safe_load_file')
-    m.return_value = [{
-        'instance': 'foo',
-    }, {
-        'instance': 'bar',
-    }]
+    m.return_value = [{'instance': 'foo'}, {'instance': 'bar'}]
 
-    x = {
-        'instance': 'foo',
-    }
+    x = {'instance': 'foo'}
     assert x == _instance._get_instance_config('foo')
 
 

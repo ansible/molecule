@@ -78,11 +78,11 @@ class Base(object):
     @property
     def options(self):
         return util.merge_dicts(
-            self.default_options,
-            self._config.config['provisioner']['lint']['options'])
+            self.default_options, self._config.config['provisioner']['lint']['options']
+        )
 
     @property
     def env(self):
         return util.merge_dicts(
-            self.default_env,
-            self._config.config['provisioner']['lint']['env'])
+            self.default_env, self._config.config['provisioner']['lint']['env']
+        )

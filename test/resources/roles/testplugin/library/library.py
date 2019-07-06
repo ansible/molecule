@@ -26,13 +26,11 @@ from ansible.module_utils.basic import AnsibleModule
 
 def main():
     module = AnsibleModule(
-        argument_spec=dict(name=dict(type='str', required=False), ),
-        supports_check_mode=False)
+        argument_spec=dict(name=dict(type='str', required=False)),
+        supports_check_mode=False,
+    )
 
-    ansible_facts_dict = {
-        'changed': False,
-        'ansible_facts': {},
-    }
+    ansible_facts_dict = {'changed': False, 'ansible_facts': {}}
 
     module.exit_json(**ansible_facts_dict)
 

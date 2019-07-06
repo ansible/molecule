@@ -32,8 +32,11 @@ def test_info(capsys):
     log.info('foo')
     stdout, _ = capsys.readouterr()
 
-    print('--> {}{}{}'.format(colorama.Fore.CYAN, 'foo'.rstrip(),
-                              colorama.Style.RESET_ALL))
+    print(
+        '--> {}{}{}'.format(
+            colorama.Fore.CYAN, 'foo'.rstrip(), colorama.Style.RESET_ALL
+        )
+    )
     x, _ = capsys.readouterr()
 
     assert x == stdout
@@ -54,8 +57,9 @@ def test_warn(capsys):
 
     stdout, _ = capsys.readouterr()
 
-    print('{}{}{}'.format(colorama.Fore.YELLOW, 'foo'.rstrip(),
-                          colorama.Style.RESET_ALL))
+    print(
+        '{}{}{}'.format(colorama.Fore.YELLOW, 'foo'.rstrip(), colorama.Style.RESET_ALL)
+    )
     x, _ = capsys.readouterr()
 
     assert x == stdout
@@ -68,9 +72,9 @@ def test_error(capsys):
     _, stderr = capsys.readouterr()
 
     print(
-        '{}{}{}'.format(colorama.Fore.RED, 'foo'.rstrip(),
-                        colorama.Style.RESET_ALL),
-        file=sys.stderr)
+        '{}{}{}'.format(colorama.Fore.RED, 'foo'.rstrip(), colorama.Style.RESET_ALL),
+        file=sys.stderr,
+    )
     _, x = capsys.readouterr()
 
     assert x in stderr
@@ -83,9 +87,11 @@ def test_critical(capsys):
     _, stderr = capsys.readouterr()
 
     print(
-        '{}ERROR: {}{}'.format(colorama.Fore.RED, 'foo'.rstrip(),
-                               colorama.Style.RESET_ALL),
-        file=sys.stderr)
+        '{}ERROR: {}{}'.format(
+            colorama.Fore.RED, 'foo'.rstrip(), colorama.Style.RESET_ALL
+        ),
+        file=sys.stderr,
+    )
     _, x = capsys.readouterr()
 
     assert x in stderr
@@ -97,8 +103,9 @@ def test_success(capsys):
 
     stdout, _ = capsys.readouterr()
 
-    print('{}{}{}'.format(colorama.Fore.GREEN, 'foo'.rstrip(),
-                          colorama.Style.RESET_ALL))
+    print(
+        '{}{}{}'.format(colorama.Fore.GREEN, 'foo'.rstrip(), colorama.Style.RESET_ALL)
+    )
     x, _ = capsys.readouterr()
 
     assert x == stdout

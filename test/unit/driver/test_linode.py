@@ -38,7 +38,7 @@ def test_linode_config_gives_config_object(linode_instance):
 def test_linode_testinfra_options_property(linode_instance):
     assert {
         'connection': 'ansible',
-        'ansible-inventory': linode_instance._config.provisioner.inventory_file
+        'ansible-inventory': linode_instance._config.provisioner.inventory_file,
     } == linode_instance.testinfra_options
 
 
@@ -57,8 +57,9 @@ def test_linode_login_cmd_template_property(linode_instance):
 
 def test_linode_safe_files_property(linode_instance):
     expected_safe_files = [
-        os.path.join(linode_instance._config.scenario.ephemeral_directory,
-                     'instance_config.yml')
+        os.path.join(
+            linode_instance._config.scenario.ephemeral_directory, 'instance_config.yml'
+        )
     ]
 
     assert expected_safe_files == linode_instance.safe_files
@@ -66,8 +67,9 @@ def test_linode_safe_files_property(linode_instance):
 
 def test_linode_default_safe_files_property(linode_instance):
     expected_default_safe_files = [
-        os.path.join(linode_instance._config.scenario.ephemeral_directory,
-                     'instance_config.yml')
+        os.path.join(
+            linode_instance._config.scenario.ephemeral_directory, 'instance_config.yml'
+        )
     ]
     assert expected_default_safe_files == linode_instance.default_safe_files
 
@@ -82,9 +84,11 @@ def test_linode_managed_property(linode_instance):
 
 def test_linode_default_ssh_connection_options_property(linode_instance):
     expected_options = [
-        '-o UserKnownHostsFile=/dev/null', '-o ControlMaster=auto',
-        '-o ControlPersist=60s', '-o IdentitiesOnly=yes',
-        '-o StrictHostKeyChecking=no'
+        '-o UserKnownHostsFile=/dev/null',
+        '-o ControlMaster=auto',
+        '-o ControlPersist=60s',
+        '-o IdentitiesOnly=yes',
+        '-o StrictHostKeyChecking=no',
     ]
 
     assert expected_options == linode_instance.default_ssh_connection_options
@@ -127,23 +131,19 @@ def test_linode_ansible_connection_options(linode_instance, mocker):
     }
 
     get_instance_config_patch = {
-        'ansible_host':
-        '172.16.0.2',
-        'ansible_port':
-        22,
-        'ansible_user':
-        'linode-admin',
-        'ansible_private_key_file':
-        '/foo/bar',
-        'connection':
-        'ssh',
-        'ansible_ssh_common_args': ('-o UserKnownHostsFile=/dev/null '
-                                    '-o ControlMaster=auto '
-                                    '-o ControlPersist=60s '
-                                    '-o IdentitiesOnly=yes '
-                                    '-o StrictHostKeyChecking=no'),
-        'ansible_ssh_pass':
-        'foobar',
+        'ansible_host': '172.16.0.2',
+        'ansible_port': 22,
+        'ansible_user': 'linode-admin',
+        'ansible_private_key_file': '/foo/bar',
+        'connection': 'ssh',
+        'ansible_ssh_common_args': (
+            '-o UserKnownHostsFile=/dev/null '
+            '-o ControlMaster=auto '
+            '-o ControlPersist=60s '
+            '-o IdentitiesOnly=yes '
+            '-o StrictHostKeyChecking=no'
+        ),
+        'ansible_ssh_pass': 'foobar',
     }
 
     connection_options = linode_instance.ansible_connection_options('linode')
@@ -152,17 +152,19 @@ def test_linode_ansible_connection_options(linode_instance, mocker):
 
 def test_linode_instance_config_property(linode_instance):
     instance_config_path = os.path.join(
-        linode_instance._config.scenario.ephemeral_directory,
-        'instance_config.yml')
+        linode_instance._config.scenario.ephemeral_directory, 'instance_config.yml'
+    )
 
     assert instance_config_path == linode_instance.instance_config
 
 
 def test_linode_ssh_connection_options_property(linode_instance):
     expected_options = [
-        '-o UserKnownHostsFile=/dev/null', '-o ControlMaster=auto',
-        '-o ControlPersist=60s', '-o IdentitiesOnly=yes',
-        '-o StrictHostKeyChecking=no'
+        '-o UserKnownHostsFile=/dev/null',
+        '-o ControlMaster=auto',
+        '-o ControlPersist=60s',
+        '-o IdentitiesOnly=yes',
+        '-o StrictHostKeyChecking=no',
     ]
 
     assert expected_options == linode_instance.ssh_connection_options

@@ -78,10 +78,11 @@ class Base(object):
     @property
     def options(self):
         return util.merge_dicts(
-            self.default_options,
-            self._config.config['verifier']['lint']['options'])
+            self.default_options, self._config.config['verifier']['lint']['options']
+        )
 
     @property
     def env(self):
-        return util.merge_dicts(self.default_env,
-                                self._config.config['verifier']['lint']['env'])
+        return util.merge_dicts(
+            self.default_env, self._config.config['verifier']['lint']['env']
+        )

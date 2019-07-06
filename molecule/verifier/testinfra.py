@@ -167,7 +167,8 @@ class Testinfra(base.Base):
             _cwd=self._config.scenario.directory,
             _env=self.env,
             _out=LOG.out,
-            _err=LOG.error)
+            _err=LOG.error
+        )
 
     def execute(self):
         if not self.enabled:
@@ -183,8 +184,7 @@ class Testinfra(base.Base):
         if self._testinfra_command is None:
             self.bake()
 
-        msg = 'Executing Testinfra tests found in {}/...'.format(
-            self.directory)
+        msg = 'Executing Testinfra tests found in {}/...'.format(self.directory)
         LOG.info(msg)
 
         try:
@@ -201,6 +201,4 @@ class Testinfra(base.Base):
 
         :return: list
         """
-        return [
-            filename for filename in util.os_walk(self.directory, 'test_*.py')
-        ]
+        return [filename for filename in util.os_walk(self.directory, 'test_*.py')]

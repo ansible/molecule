@@ -98,29 +98,33 @@ class Test(base.Base):
     '-s',
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
     help='Name of the scenario to target. ({})'.format(
-        base.MOLECULE_DEFAULT_SCENARIO_NAME))
+        base.MOLECULE_DEFAULT_SCENARIO_NAME
+    ),
+)
 @click.option(
     '--driver-name',
     '-d',
     type=click.Choice(config.molecule_drivers()),
-    help='Name of driver to use. (docker)')
+    help='Name of driver to use. (docker)',
+)
 @click.option(
     '--all/--no-all',
     '__all',
     default=False,
-    help='Test all scenarios. Default is False.')
+    help='Test all scenarios. Default is False.',
+)
 @click.option(
     '--destroy',
     type=click.Choice(['always', 'never']),
     default='always',
-    help=('The destroy strategy used at the conclusion of a '
-          'Molecule run (always).'))
+    help=('The destroy strategy used at the conclusion of a ' 'Molecule run (always).'),
+)
 @click.option(
     '--parallel/--no-parallel',
     default=MOLECULE_PARALLEL,
-    help='Enable or disable parallel mode. Default is disabled.')
-def test(ctx, scenario_name, driver_name, __all, destroy,
-         parallel):  # pragma: no cover
+    help='Enable or disable parallel mode. Default is disabled.',
+)
+def test(ctx, scenario_name, driver_name, __all, destroy, parallel):  # pragma: no cover
     """
     Test (lint, cleanup, destroy, dependency, syntax, create, prepare,
           converge, idempotence, side_effect, verify, cleanup, destroy).

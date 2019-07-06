@@ -34,19 +34,12 @@ def command_driver_delegated_section_data():
             'options': {
                 'managed': False,
                 'login_cmd_template': 'docker exec -ti {instance} bash',
-                'ansible_connection_options': {
-                    'ansible_connection': 'docker'
-                }
-            }
+                'ansible_connection_options': {'ansible_connection': 'docker'},
+            },
         }
     }
 
 
 @pytest.fixture
 def command_driver_delegated_managed_section_data():
-    return {
-        'driver': {
-            'name': 'delegated',
-            'managed': True,
-        }
-    }
+    return {'driver': {'name': 'delegated', 'managed': True}}

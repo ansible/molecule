@@ -38,7 +38,7 @@ def test_config_private_member(_instance):
 def test_testinfra_options_property(_instance):
     assert {
         'connection': 'ansible',
-        'ansible-inventory': _instance._config.provisioner.inventory_file
+        'ansible-inventory': _instance._config.provisioner.inventory_file,
     } == _instance.testinfra_options
 
 
@@ -53,21 +53,24 @@ def test_options_property(_instance):
 
 
 def test_login_cmd_template_property(_instance):
-    expected_ssh_command = ('ssh {address} '
-                            '-l {user} -p {port} -i {identity_file} '
-                            '-o UserKnownHostsFile=/dev/null '
-                            '-o ControlMaster=auto '
-                            '-o ControlPersist=60s '
-                            '-o IdentitiesOnly=yes '
-                            '-o StrictHostKeyChecking=no')
+    expected_ssh_command = (
+        'ssh {address} '
+        '-l {user} -p {port} -i {identity_file} '
+        '-o UserKnownHostsFile=/dev/null '
+        '-o ControlMaster=auto '
+        '-o ControlPersist=60s '
+        '-o IdentitiesOnly=yes '
+        '-o StrictHostKeyChecking=no'
+    )
 
     assert expected_ssh_command == _instance.login_cmd_template
 
 
 def test_safe_files_property(_instance):
     expected_safe_files = [
-        os.path.join(_instance._config.scenario.ephemeral_directory,
-                     'instance_config.yml'),
+        os.path.join(
+            _instance._config.scenario.ephemeral_directory, 'instance_config.yml'
+        )
     ]
 
     assert expected_safe_files == _instance.safe_files
@@ -75,8 +78,9 @@ def test_safe_files_property(_instance):
 
 def test_default_safe_files_property(_instance):
     expected_default_safe_files = [
-        os.path.join(_instance._config.scenario.ephemeral_directory,
-                     'instance_config.yml'),
+        os.path.join(
+            _instance._config.scenario.ephemeral_directory, 'instance_config.yml'
+        )
     ]
 
     assert expected_default_safe_files == _instance.default_safe_files
@@ -103,8 +107,7 @@ def test_default_ssh_connection_options_property(_instance):
 
 
 def test_login_options(mocker, _instance):
-    m = mocker.patch(
-        'molecule.driver.digitalocean.DigitalOcean._get_instance_config')
+    m = mocker.patch('molecule.driver.digitalocean.DigitalOcean._get_instance_config')
     m.return_value = {
         'instance': 'foo',
         'address': '172.16.0.2',
@@ -124,8 +127,7 @@ def test_login_options(mocker, _instance):
 
 
 def test_ansible_connection_options(mocker, _instance):
-    m = mocker.patch(
-        'molecule.driver.digitalocean.DigitalOcean._get_instance_config')
+    m = mocker.patch('molecule.driver.digitalocean.DigitalOcean._get_instance_config')
     m.return_value = {
         'instance': 'foo',
         'address': '172.16.0.2',
@@ -135,35 +137,30 @@ def test_ansible_connection_options(mocker, _instance):
     }
 
     expected_cnx_data = {
-        'ansible_host':
-        '172.16.0.2',
-        'ansible_port':
-        22,
-        'ansible_user':
-        'cloud-user',
-        'ansible_private_key_file':
-        '/foo/bar',
-        'connection':
-        'ssh',
-        'ansible_ssh_common_args': ('-o UserKnownHostsFile=/dev/null '
-                                    '-o ControlMaster=auto '
-                                    '-o ControlPersist=60s '
-                                    '-o IdentitiesOnly=yes '
-                                    '-o StrictHostKeyChecking=no'),
+        'ansible_host': '172.16.0.2',
+        'ansible_port': 22,
+        'ansible_user': 'cloud-user',
+        'ansible_private_key_file': '/foo/bar',
+        'connection': 'ssh',
+        'ansible_ssh_common_args': (
+            '-o UserKnownHostsFile=/dev/null '
+            '-o ControlMaster=auto '
+            '-o ControlPersist=60s '
+            '-o IdentitiesOnly=yes '
+            '-o StrictHostKeyChecking=no'
+        ),
     }
     assert expected_cnx_data == _instance.ansible_connection_options('foo')
 
 
-def test_ansible_connection_options_handles_missing_instance_config(
-        mocker, _instance):
+def test_ansible_connection_options_handles_missing_instance_config(mocker, _instance):
     m = mocker.patch('molecule.util.safe_load_file')
     m.side_effect = IOError
 
     assert {} == _instance.ansible_connection_options('foo')
 
 
-def test_ansible_connection_options_handles_missing_results_key(
-        mocker, _instance):
+def test_ansible_connection_options_handles_missing_results_key(mocker, _instance):
     m = mocker.patch('molecule.util.safe_load_file')
     m.side_effect = StopIteration
 
@@ -172,7 +169,8 @@ def test_ansible_connection_options_handles_missing_results_key(
 
 def test_instance_config_property(_instance):
     expected_config_file = os.path.join(
-        _instance._config.scenario.ephemeral_directory, 'instance_config.yml')
+        _instance._config.scenario.ephemeral_directory, 'instance_config.yml'
+    )
 
     assert expected_config_file == _instance.instance_config
 
@@ -211,15 +209,9 @@ def test_status(mocker, _instance):
 
 def test_get_instance_config(mocker, _instance):
     m = mocker.patch('molecule.util.safe_load_file')
-    m.return_value = [{
-        'instance': 'foo',
-    }, {
-        'instance': 'bar',
-    }]
+    m.return_value = [{'instance': 'foo'}, {'instance': 'bar'}]
 
-    expected_instance = {
-        'instance': 'foo',
-    }
+    expected_instance = {'instance': 'foo'}
     assert expected_instance == _instance._get_instance_config('foo')
 
 

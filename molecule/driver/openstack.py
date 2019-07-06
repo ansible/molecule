@@ -90,17 +90,17 @@ class Openstack(base.Base):
     def login_cmd_template(self):
         connection_options = ' '.join(self.ssh_connection_options)
 
-        return ('ssh {{address}} '
-                '-l {{user}} '
-                '-p {{port}} '
-                '-i {{identity_file}} '
-                '{}').format(connection_options)
+        return (
+            'ssh {{address}} '
+            '-l {{user}} '
+            '-p {{port}} '
+            '-i {{identity_file}} '
+            '{}'
+        ).format(connection_options)
 
     @property
     def default_safe_files(self):
-        return [
-            self.instance_config,
-        ]
+        return [self.instance_config]
 
     @property
     def default_ssh_connection_options(self):
@@ -121,8 +121,7 @@ class Openstack(base.Base):
                 'ansible_port': d['port'],
                 'ansible_private_key_file': d['identity_file'],
                 'connection': 'ssh',
-                'ansible_ssh_common_args':
-                ' '.join(self.ssh_connection_options),
+                'ansible_ssh_common_args': ' '.join(self.ssh_connection_options),
             }
         except StopIteration:
             return {}
@@ -132,11 +131,11 @@ class Openstack(base.Base):
             return {}
 
     def _get_instance_config(self, instance_name):
-        instance_config_dict = util.safe_load_file(
-            self._config.driver.instance_config)
+        instance_config_dict = util.safe_load_file(self._config.driver.instance_config)
 
-        return next(item for item in instance_config_dict
-                    if item['instance'] == instance_name)
+        return next(
+            item for item in instance_config_dict if item['instance'] == instance_name
+        )
 
     def sanity_checks(self):
         # FIXME(decentral1se): Implement sanity checks

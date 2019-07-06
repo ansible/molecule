@@ -6,3 +6,6 @@ requires = [
   "wheel",
 ]
 build-backend = "setuptools.build_meta"
+
+[tool.black]
+skip-string-normalization = true

@@ -402,9 +402,8 @@ class VagrantClient(object):
             # or `exit_json`.
             if not self._has_error:
                 self._module.exit_json(
-                    changed=changed,
-                    log=self._get_stdout_log(),
-                    **self._conf())
+                    changed=changed, log=self._get_stdout_log(), **self._conf()
+                )
             else:
                 msg = "ERROR: See log file '{}'".format(self._get_stderr_log())
                 self._module.fail_json(msg=msg)
@@ -457,12 +456,14 @@ class VagrantClient(object):
     def _write_vagrantfile(self):
         template = molecule.util.render_template(
             VAGRANTFILE_TEMPLATE,
-            vagrantfile_config=self._config.driver.vagrantfile_config)
+            vagrantfile_config=self._config.driver.vagrantfile_config,
+        )
         molecule.util.write_file(self._vagrantfile, template)
 
     def _write_vagrantfile_config(self, data):
-        molecule.util.write_file(self._config.driver.vagrantfile_config,
-                                 molecule.util.safe_dump(data))
+        molecule.util.write_file(
+            self._config.driver.vagrantfile_config, molecule.util.safe_dump(data)
+        )
 
     def _write_configs(self):
         self._write_vagrantfile_config(self._get_vagrant_config_dict())
@@ -471,8 +472,7 @@ class VagrantClient(object):
     def _get_vagrant(self):
         env = os.environ.copy()
         env['VAGRANT_CWD'] = os.environ['MOLECULE_EPHEMERAL_DIRECTORY']
-        v = vagrant.Vagrant(
-            out_cm=self.stdout_cm, err_cm=self.stderr_cm, env=env)
+        v = vagrant.Vagrant(out_cm=self.stdout_cm, err_cm=self.stderr_cm, env=env)
 
         return v
 
@@ -497,8 +497,7 @@ class VagrantClient(object):
             'instance': {
                 'name': self._module.params['instance_name'],
                 'interfaces': self._module.params['instance_interfaces'],
-                'raw_config_args':
-                self._module.params['instance_raw_config_args'],
+                'raw_config_args': self._module.params['instance_raw_config_args'],
             },
             'provider': {
                 'name': self._module.params['provider_name'],
@@ -508,17 +507,18 @@ class VagrantClient(object):
                     'memory': self._module.params['provider_memory'],
                     'cpus': self._module.params['provider_cpus'],
                 },
-                'raw_config_args':
-                self._module.params['provider_raw_config_args'],
+                'raw_config_args': self._module.params['provider_raw_config_args'],
                 'override_args': self._module.params['provider_override_args'],
-            }
+            },
         }
 
-        molecule.util.merge_dicts(d['config']['options'],
-                                  self._module.params['config_options'])
+        molecule.util.merge_dicts(
+            d['config']['options'], self._module.params['config_options']
+        )
 
-        molecule.util.merge_dicts(d['provider']['options'],
-                                  self._module.params['provider_options'])
+        molecule.util.merge_dicts(
+            d['provider']['options'], self._module.params['provider_options']
+        )
 
         return d
 
@@ -531,8 +531,10 @@ class VagrantClient(object):
     def _get_vagrant_log(self, __type):
         instance_name = self._module.params['instance_name']
 
-        return os.path.join(self._config.scenario.ephemeral_directory,
-                            'vagrant-{}.{}'.format(instance_name, __type))
+        return os.path.join(
+            self._config.scenario.ephemeral_directory,
+            'vagrant-{}.{}'.format(instance_name, __type),
+        )
 
 
 def main():
@@ -553,9 +555,10 @@ def main():
             provider_raw_config_args=dict(type='list', default=None),
             provision=dict(type='bool', default=False),
             force_stop=dict(type='bool', default=False),
-            state=dict(
-                type='str', default='up', choices=['up', 'destroy', 'halt'])),
-        supports_check_mode=False)
+            state=dict(type='str', default='up', choices=['up', 'destroy', 'halt']),
+        ),
+        supports_check_mode=False,
+    )
 
     v = VagrantClient(module)
 
@@ -570,4 +573,5 @@ def main():
 
 
 from ansible.module_utils.basic import *  # noqa
+
 main()

@@ -93,7 +93,7 @@ class TemplateWithDefaults(string.Template):
                     var, _, default = named.partition('-')
                     return mapping.get(var, default)
                 val = mapping.get(named, '')
-                return '%s' % (val, )
+                return '%s' % (val,)
             if mo.group('escaped') is not None:
                 return self.delimiter
             if mo.group('invalid') is not None:

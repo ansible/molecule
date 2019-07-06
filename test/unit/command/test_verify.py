@@ -24,15 +24,17 @@ from molecule.command import verify
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-def test_execute(mocker, patched_logger_info, patched_testinfra,
-                 patched_config_validate, config_instance):
+def test_execute(
+    mocker,
+    patched_logger_info,
+    patched_testinfra,
+    patched_config_validate,
+    config_instance,
+):
     v = verify.Verify(config_instance)
     v.execute()
 
-    x = [
-        mocker.call("Scenario: 'default'"),
-        mocker.call("Action: 'verify'"),
-    ]
+    x = [mocker.call("Scenario: 'default'"), mocker.call("Action: 'verify'")]
     assert x == patched_logger_info.mock_calls
 
     patched_testinfra.assert_called_once_with()

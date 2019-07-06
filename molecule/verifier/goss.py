@@ -144,6 +144,4 @@ class Goss(base.Base):
 
         :return: list
         """
-        return [
-            filename for filename in util.os_walk(self.directory, 'test_*.yml')
-        ]
+        return [filename for filename in util.os_walk(self.directory, 'test_*.yml')]

@@ -83,18 +83,22 @@ class Base(object):
 
     @property
     def directory(self):
-        return os.path.join(self._config.scenario.directory,
-                            self._config.config['verifier']['directory'])
+        return os.path.join(
+            self._config.scenario.directory,
+            self._config.config['verifier']['directory'],
+        )
 
     @property
     def options(self):
-        return util.merge_dicts(self.default_options,
-                                self._config.config['verifier']['options'])
+        return util.merge_dicts(
+            self.default_options, self._config.config['verifier']['options']
+        )
 
     @property
     def env(self):
-        return util.merge_dicts(self.default_env,
-                                self._config.config['verifier']['env'])
+        return util.merge_dicts(
+            self.default_env, self._config.config['verifier']['env']
+        )
 
     @property
     @util.memoize

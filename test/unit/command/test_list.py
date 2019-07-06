@@ -31,14 +31,16 @@ def test_execute(capsys, config_instance):
             provisioner_name='ansible',
             scenario_name='default',
             created='false',
-            converged='false'),
+            converged='false',
+        ),
         base.Status(
             instance_name='instance-2',
             driver_name='docker',
             provisioner_name='ansible',
             scenario_name='default',
             created='false',
-            converged='false'),
+            converged='false',
+        ),
     ]
 
     assert x == l.execute()

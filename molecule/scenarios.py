@@ -77,14 +77,21 @@ class Scenarios(object):
         msg = 'Test matrix'
         LOG.info(msg)
 
-        tree = tuple(('', [(scenario.name, [(action, [])
-                                            for action in scenario.sequence])
-                           for scenario in self.all]))
+        tree = tuple(
+            (
+                '',
+                [
+                    (scenario.name, [(action, []) for action in scenario.sequence])
+                    for scenario in self.all
+                ],
+            )
+        )
 
         tf = tree_format.format_tree(
             tree,
             format_node=operator.itemgetter(0),
-            get_children=operator.itemgetter(1))
+            get_children=operator.itemgetter(1),
+        )
 
         LOG.out(tf)
         LOG.out('')
@@ -97,8 +104,7 @@ class Scenarios(object):
         """
         scenario_names = [c.scenario.name for c in self._configs]
         if self._scenario_name not in scenario_names:
-            msg = ("Scenario '{}' not found.  "
-                   'Exiting.').format(self._scenario_name)
+            msg = ("Scenario '{}' not found.  " 'Exiting.').format(self._scenario_name)
             util.sysexit_with_message(msg)
 
     def _filter_for_scenario(self):
@@ -109,8 +115,7 @@ class Scenarios(object):
         :return: list
         """
         return [
-            c.scenario for c in self._configs
-            if c.scenario.name == self._scenario_name
+            c.scenario for c in self._configs if c.scenario.name == self._scenario_name
         ]
 
     def _get_matrix(self):
@@ -134,21 +139,23 @@ class Scenarios(object):
 
         :returns: dict
         """
-        return dict({
-            scenario.name: {
-                'check': scenario.check_sequence,
-                'cleanup': scenario.cleanup_sequence,
-                'converge': scenario.converge_sequence,
-                'create': scenario.create_sequence,
-                'dependency': scenario.dependency_sequence,
-                'destroy': scenario.destroy_sequence,
-                'idempotence': scenario.idempotence_sequence,
-                'lint': scenario.lint_sequence,
-                'prepare': scenario.prepare_sequence,
-                'side_effect': scenario.side_effect_sequence,
-                'syntax': scenario.syntax_sequence,
-                'test': scenario.test_sequence,
-                'verify': scenario.verify_sequence,
+        return dict(
+            {
+                scenario.name: {
+                    'check': scenario.check_sequence,
+                    'cleanup': scenario.cleanup_sequence,
+                    'converge': scenario.converge_sequence,
+                    'create': scenario.create_sequence,
+                    'dependency': scenario.dependency_sequence,
+                    'destroy': scenario.destroy_sequence,
+                    'idempotence': scenario.idempotence_sequence,
+                    'lint': scenario.lint_sequence,
+                    'prepare': scenario.prepare_sequence,
+                    'side_effect': scenario.side_effect_sequence,
+                    'syntax': scenario.syntax_sequence,
+                    'test': scenario.test_sequence,
+                    'verify': scenario.verify_sequence,
+                }
+                for scenario in self.all
             }
-            for scenario in self.all
-        })
+        )

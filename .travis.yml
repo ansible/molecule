@@ -112,11 +112,6 @@ jobs:
         TOXENV: lint
 
     - <<: *lint
-      name: checking the code style
-      env:
-        TOXENV: format-check
-
-    - <<: *lint
       name: checking the docs build
       env:
         TOXENV: doc

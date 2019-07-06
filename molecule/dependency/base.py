@@ -77,10 +77,12 @@ class Base(object):
 
     @property
     def options(self):
-        return util.merge_dicts(self.default_options,
-                                self._config.config['dependency']['options'])
+        return util.merge_dicts(
+            self.default_options, self._config.config['dependency']['options']
+        )
 
     @property
     def env(self):
-        return util.merge_dicts(self.default_env,
-                                self._config.config['dependency']['env'])
+        return util.merge_dicts(
+            self.default_env, self._config.config['dependency']['env']
+        )

@@ -82,12 +82,13 @@ class AnsibleGalaxy(base.Base):
     @property
     def default_options(self):
         d = {
-            'force':
-            True,
-            'role-file':
-            os.path.join(self._config.scenario.directory, 'requirements.yml'),
-            'roles-path':
-            os.path.join(self._config.scenario.ephemeral_directory, 'roles'),
+            'force': True,
+            'role-file': os.path.join(
+                self._config.scenario.directory, 'requirements.yml'
+            ),
+            'roles-path': os.path.join(
+                self._config.scenario.ephemeral_directory, 'roles'
+            ),
         }
         if self._config.debug:
             d['vvv'] = True
@@ -127,7 +128,8 @@ class AnsibleGalaxy(base.Base):
             *verbose_flag,
             _env=self.env,
             _out=LOG.out,
-            _err=LOG.error)
+            _err=LOG.error
+        )
 
     def execute(self):
         if not self.enabled:
@@ -157,8 +159,9 @@ class AnsibleGalaxy(base.Base):
 
         :return: None
         """
-        role_directory = os.path.join(self._config.scenario.directory,
-                                      self.options['roles-path'])
+        role_directory = os.path.join(
+            self._config.scenario.directory, self.options['roles-path']
+        )
         if not os.path.isdir(role_directory):
             os.makedirs(role_directory)
 

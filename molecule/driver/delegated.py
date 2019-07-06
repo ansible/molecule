@@ -144,11 +144,13 @@ class Delegated(base.Base):
         if self.managed:
             connection_options = ' '.join(self.ssh_connection_options)
 
-            return ('ssh {{address}} '
-                    '-l {{user}} '
-                    '-p {{port}} '
-                    '-i {{identity_file}} '
-                    '{}').format(connection_options)
+            return (
+                'ssh {{address}} '
+                '-l {{user}} '
+                '-p {{port}} '
+                '-i {{identity_file}} '
+                '{}'
+            ).format(connection_options)
         return self.options['login_cmd_template']
 
     @property
@@ -165,8 +167,7 @@ class Delegated(base.Base):
         if self.managed:
             d = {'instance': instance_name}
 
-            return util.merge_dicts(d,
-                                    self._get_instance_config(instance_name))
+            return util.merge_dicts(d, self._get_instance_config(instance_name))
         return {'instance': instance_name}
 
     def ansible_connection_options(self, instance_name):
@@ -183,10 +184,10 @@ class Delegated(base.Base):
                 if d.get('become_pass'):
                     conn_dict['ansible_become_pass'] = d.get('become_pass')
                 if d.get('identity_file'):
-                    conn_dict['ansible_private_key_file'] = d.get(
-                        'identity_file')
+                    conn_dict['ansible_private_key_file'] = d.get('identity_file')
                     conn_dict['ansible_ssh_common_args'] = ' '.join(
-                        self.ssh_connection_options)
+                        self.ssh_connection_options
+                    )
 
                 return conn_dict
 
@@ -204,11 +205,11 @@ class Delegated(base.Base):
         return 'unknown'
 
     def _get_instance_config(self, instance_name):
-        instance_config_dict = util.safe_load_file(
-            self._config.driver.instance_config)
+        instance_config_dict = util.safe_load_file(self._config.driver.instance_config)
 
-        return next(item for item in instance_config_dict
-                    if item['instance'] == instance_name)
+        return next(
+            item for item in instance_config_dict if item['instance'] == instance_name
+        )
 
     def sanity_checks(self):
         # Note(decentral1se): Cannot implement driver specifics are unknown

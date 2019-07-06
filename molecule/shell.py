@@ -40,20 +40,24 @@ ENV_FILE = '.env.yml'
 @click.option(
     '--debug/--no-debug',
     default=MOLECULE_DEBUG,
-    help='Enable or disable debug mode. Default is disabled.')
+    help='Enable or disable debug mode. Default is disabled.',
+)
 @click.option(
     '--base-config',
     '-c',
     default=LOCAL_CONFIG,
-    help=('Path to a base config.  If provided Molecule will load '
-          "this config first, and deep merge each scenario's "
-          'molecule.yml on top. ({})').format(LOCAL_CONFIG))
+    help=(
+        'Path to a base config.  If provided Molecule will load '
+        "this config first, and deep merge each scenario's "
+        'molecule.yml on top. ({})'
+    ).format(LOCAL_CONFIG),
+)
 @click.option(
     '--env-file',
     '-e',
     default=ENV_FILE,
-    help=('The file to read variables from when rendering molecule.yml. '
-          '(.env.yml)'))
+    help=('The file to read variables from when rendering molecule.yml. ' '(.env.yml)'),
+)
 @click.version_option(version=molecule.__version__)
 @click.pass_context
 def main(ctx, debug, base_config, env_file):  # pragma: no cover

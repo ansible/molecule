@@ -25,6 +25,7 @@ import glob
 import os
 import re
 import shutil
+
 try:
     from pathlib import Path
 except ImportError:
@@ -50,55 +51,32 @@ def write_molecule_file(filename, data):
 def os_split(s):
     rest, tail = os.path.split(s)
     if rest in ('', os.path.sep):
-        return tail,
-    return os_split(rest) + (tail, )
+        return (tail,)
+    return os_split(rest) + (tail,)
 
 
 @pytest.fixture
 def _molecule_dependency_galaxy_section_data():
-    return {
-        'dependency': {
-            'name': 'galaxy'
-        },
-    }
+    return {'dependency': {'name': 'galaxy'}}
 
 
 @pytest.fixture
 def _molecule_driver_section_data():
-    return {
-        'driver': {
-            'name': 'docker',
-            'options': {
-                'managed': True,
-            },
-        },
-    }
+    return {'driver': {'name': 'docker', 'options': {'managed': True}}}
 
 
 @pytest.fixture
 def _molecule_lint_section_data():
-    return {
-        'lint': {
-            'name': 'yamllint'
-        },
-    }
+    return {'lint': {'name': 'yamllint'}}
 
 
 @pytest.fixture
 def _molecule_platforms_section_data():
     return {
         'platforms': [
-            {
-                'name': 'instance-1',
-                'groups': ['foo', 'bar'],
-                'children': ['child1'],
-            },
-            {
-                'name': 'instance-2',
-                'groups': ['baz', 'foo'],
-                'children': ['child2'],
-            },
-        ],
+            {'name': 'instance-1', 'groups': ['foo', 'bar'], 'children': ['child1']},
+            {'name': 'instance-2', 'groups': ['baz', 'foo'], 'children': ['child2']},
+        ]
     }
 
 
@@ -107,50 +85,42 @@ def _molecule_provisioner_section_data():
     return {
         'provisioner': {
             'name': 'ansible',
-            'options': {
-                'become': True,
-            },
-            'lint': {
-                'name': 'ansible-lint',
-            },
+            'options': {'become': True},
+            'lint': {'name': 'ansible-lint'},
             'config_options': {},
-        },
+        }
     }
 
 
 @pytest.fixture
 def _molecule_scenario_section_data():
-    return {
-        'scenario': {
-            'name': 'default'
-        },
-    }
+    return {'scenario': {'name': 'default'}}
 
 
 @pytest.fixture
 def _molecule_verifier_section_data():
-    return {
-        'verifier': {
-            'name': 'testinfra',
-            'lint': {
-                'name': 'flake8',
-            },
-        },
-    }
+    return {'verifier': {'name': 'testinfra', 'lint': {'name': 'flake8'}}}
 
 
 @pytest.fixture
 def molecule_data(
-        _molecule_dependency_galaxy_section_data,
-        _molecule_driver_section_data, _molecule_lint_section_data,
-        _molecule_platforms_section_data, _molecule_provisioner_section_data,
-        _molecule_scenario_section_data, _molecule_verifier_section_data):
+    _molecule_dependency_galaxy_section_data,
+    _molecule_driver_section_data,
+    _molecule_lint_section_data,
+    _molecule_platforms_section_data,
+    _molecule_provisioner_section_data,
+    _molecule_scenario_section_data,
+    _molecule_verifier_section_data,
+):
 
     fixtures = [
         _molecule_dependency_galaxy_section_data,
-        _molecule_driver_section_data, _molecule_lint_section_data,
-        _molecule_platforms_section_data, _molecule_provisioner_section_data,
-        _molecule_scenario_section_data, _molecule_verifier_section_data
+        _molecule_driver_section_data,
+        _molecule_lint_section_data,
+        _molecule_platforms_section_data,
+        _molecule_provisioner_section_data,
+        _molecule_scenario_section_data,
+        _molecule_verifier_section_data,
     ]
 
     return functools.reduce(lambda x, y: util.merge_dicts(x, y), fixtures)
@@ -180,8 +150,9 @@ def molecule_ephemeral_directory_fixture(molecule_scenario_directory_fixture):
 
 
 @pytest.fixture
-def molecule_file_fixture(molecule_scenario_directory_fixture,
-                          molecule_ephemeral_directory_fixture):
+def molecule_file_fixture(
+    molecule_scenario_directory_fixture, molecule_ephemeral_directory_fixture
+):
     return pytest.helpers.molecule_file()
 
 
@@ -253,8 +224,7 @@ def patched_ansible_converge(mocker):
 
 @pytest.fixture
 def patched_add_or_update_vars(mocker):
-    return mocker.patch(
-        'molecule.provisioner.ansible.Ansible._add_or_update_vars')
+    return mocker.patch('molecule.provisioner.ansible.Ansible._add_or_update_vars')
 
 
 @pytest.fixture
@@ -269,8 +239,7 @@ def patched_flake8(mocker):
 
 @pytest.fixture
 def patched_ansible_galaxy(mocker):
-    return mocker.patch(
-        'molecule.dependency.ansible_galaxy.AnsibleGalaxy.execute')
+    return mocker.patch('molecule.dependency.ansible_galaxy.AnsibleGalaxy.execute')
 
 
 @pytest.fixture

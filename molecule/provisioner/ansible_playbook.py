@@ -57,8 +57,7 @@ class AnsiblePlaybook(object):
         """
         # Pass a directory as inventory to let Ansible merge the multiple
         # inventory sources located under
-        self.add_cli_arg('inventory',
-                         self._config.provisioner.inventory_directory)
+        self.add_cli_arg('inventory', self._config.provisioner.inventory_directory)
         options = util.merge_dicts(self._config.provisioner.options, self._cli)
         verbose_flag = util.verbose_flag(options)
         if self._playbook != self._config.provisioner.playbooks.converge:
@@ -72,15 +71,16 @@ class AnsiblePlaybook(object):
             _cwd=self._config.scenario.directory,
             _env=self._env,
             _out=self._out,
-            _err=self._err)
+            _err=self._err
+        )
 
-        ansible_args = (list(self._config.provisioner.ansible_args) + list(
-            self._config.ansible_args))
+        ansible_args = list(self._config.provisioner.ansible_args) + list(
+            self._config.ansible_args
+        )
 
         if ansible_args:
             if self._config.action not in ['create', 'destroy']:
-                self._ansible_command = self._ansible_command.bake(
-                    ansible_args)
+                self._ansible_command = self._ansible_command.bake(ansible_args)
 
     def execute(self):
         """
@@ -93,8 +93,7 @@ class AnsiblePlaybook(object):
 
         try:
             self._config.driver.sanity_checks()
-            cmd = util.run_command(
-                self._ansible_command, debug=self._config.debug)
+            cmd = util.run_command(self._ansible_command, debug=self._config.debug)
             return cmd.stdout.decode('utf-8')
         except sh.ErrorReturnCode as e:
             out = e.stdout.decode('utf-8')

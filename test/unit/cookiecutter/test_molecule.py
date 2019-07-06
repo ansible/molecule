@@ -62,12 +62,12 @@ def _role_directory():
 
 @pytest.fixture
 def _molecule_file(_role_directory):
-    return os.path.join(_role_directory, 'test-role', 'molecule', 'default',
-                        'molecule.yml')
+    return os.path.join(
+        _role_directory, 'test-role', 'molecule', 'default', 'molecule.yml'
+    )
 
 
-def test_valid(temp_dir, _molecule_file, _role_directory, _command_args,
-               _instance):
+def test_valid(temp_dir, _molecule_file, _role_directory, _command_args, _instance):
     _instance._process_templates('molecule', _command_args, _role_directory)
 
     data = util.safe_load_file(_molecule_file)
@@ -78,8 +78,9 @@ def test_valid(temp_dir, _molecule_file, _role_directory, _command_args,
     pytest.helpers.run_command(cmd)
 
 
-def test_vagrant_driver(temp_dir, _molecule_file, _role_directory,
-                        _command_args, _instance):
+def test_vagrant_driver(
+    temp_dir, _molecule_file, _role_directory, _command_args, _instance
+):
     _command_args['driver_name'] = 'vagrant'
     _instance._process_templates('molecule', _command_args, _role_directory)
 
@@ -91,20 +92,24 @@ def test_vagrant_driver(temp_dir, _molecule_file, _role_directory,
     pytest.helpers.run_command(cmd)
 
 
-@pytest.mark.parametrize('driver', [
-    ('azure'),
-    ('digitalocean'),
-    ('docker'),
-    ('ec2'),
-    ('gce'),
-    ('linode'),
-    ('lxc'),
-    ('lxd'),
-    ('openstack'),
-    ('vagrant'),
-])
-def test_drivers(driver, temp_dir, _molecule_file, _role_directory,
-                 _command_args, _instance):
+@pytest.mark.parametrize(
+    'driver',
+    [
+        ('azure'),
+        ('digitalocean'),
+        ('docker'),
+        ('ec2'),
+        ('gce'),
+        ('linode'),
+        ('lxc'),
+        ('lxd'),
+        ('openstack'),
+        ('vagrant'),
+    ],
+)
+def test_drivers(
+    driver, temp_dir, _molecule_file, _role_directory, _command_args, _instance
+):
     _command_args['driver_name'] = driver
     _instance._process_templates('molecule', _command_args, _role_directory)
 
@@ -117,7 +122,8 @@ def test_drivers(driver, temp_dir, _molecule_file, _role_directory,
 
 
 def test_verifier_lint_when_verifier_inspec(
-        temp_dir, _molecule_file, _role_directory, _command_args, _instance):
+    temp_dir, _molecule_file, _role_directory, _command_args, _instance
+):
     _command_args['verifier_name'] = 'inspec'
     _command_args['verifier_lint_name'] = 'rubocop'
     _instance._process_templates('molecule', _command_args, _role_directory)
@@ -131,7 +137,8 @@ def test_verifier_lint_when_verifier_inspec(
 
 
 def test_verifier_lint_when_verifier_goss(
-        temp_dir, _molecule_file, _role_directory, _command_args, _instance):
+    temp_dir, _molecule_file, _role_directory, _command_args, _instance
+):
     _command_args['verifier_name'] = 'goss'
     _command_args['verifier_lint_name'] = 'yamllint'
     _instance._process_templates('molecule', _command_args, _role_directory)

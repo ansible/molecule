@@ -94,7 +94,7 @@ class Login(base.Base):
         :return: None
         """
         c = self._config
-        if ((not c.state.created) and c.driver.managed):
+        if (not c.state.created) and c.driver.managed:
             msg = 'Instances not created.  Please create instances first.'
             util.sysexit_with_message(msg)
 
@@ -108,28 +108,32 @@ class Login(base.Base):
             if len(hosts) == 1:
                 hostname = hosts[0]
             else:
-                msg = ('There are {} running hosts. Please specify '
-                       'which with --host.\n\n'
-                       'Available hosts:\n{}'.format(
-                           len(hosts), '\n'.join(sorted(hosts))))
+                msg = (
+                    'There are {} running hosts. Please specify '
+                    'which with --host.\n\n'
+                    'Available hosts:\n{}'.format(len(hosts), '\n'.join(sorted(hosts)))
+                )
                 util.sysexit_with_message(msg)
         match = [x for x in hosts if x.startswith(hostname)]
         if len(match) == 0:
-            msg = ("There are no hosts that match '{}'.  You "
-                   'can only login to valid hosts.').format(hostname)
+            msg = (
+                "There are no hosts that match '{}'.  You "
+                'can only login to valid hosts.'
+            ).format(hostname)
             util.sysexit_with_message(msg)
         elif len(match) != 1:
             # If there are multiple matches, but one of them is an exact string
             # match, assume this is the one they're looking for and use it.
             if hostname in match:
-                match = [
-                    hostname,
-                ]
+                match = [hostname]
             else:
-                msg = ("There are {} hosts that match '{}'. You "
-                       'can only login to one at a time.\n\n'
-                       'Available hosts:\n{}'.format(
-                           len(match), hostname, '\n'.join(sorted(hosts))))
+                msg = (
+                    "There are {} hosts that match '{}'. You "
+                    'can only login to one at a time.\n\n'
+                    'Available hosts:\n{}'.format(
+                        len(match), hostname, '\n'.join(sorted(hosts))
+                    )
+                )
                 util.sysexit_with_message(msg)
 
         return match[0]
@@ -139,8 +143,7 @@ class Login(base.Base):
         login_options = self._config.driver.login_options(hostname)
         login_options['columns'] = columns
         login_options['lines'] = lines
-        login_cmd = self._config.driver.login_cmd_template.format(
-            **login_options)
+        login_cmd = self._config.driver.login_cmd_template.format(**login_options)
 
         dimensions = (int(lines), int(columns))
         cmd = '/usr/bin/env {}'.format(login_cmd)
@@ -153,8 +156,7 @@ class Login(base.Base):
         if 'TIOCGWINSZ' in dir(termios):
             tiocgwinsz = termios.TIOCGWINSZ
         s = struct.pack('HHHH', 0, 0, 0, 0)
-        a = struct.unpack('HHHH',
-                          fcntl.ioctl(sys.stdout.fileno(), tiocgwinsz, s))
+        a = struct.unpack('HHHH', fcntl.ioctl(sys.stdout.fileno(), tiocgwinsz, s))
         self._pt.setwinsize(a[0], a[1])
 
 
@@ -166,17 +168,15 @@ class Login(base.Base):
     '-s',
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
     help='Name of the scenario to target. ({})'.format(
-        base.MOLECULE_DEFAULT_SCENARIO_NAME))
+        base.MOLECULE_DEFAULT_SCENARIO_NAME
+    ),
+)
 def login(ctx, host, scenario_name):  # pragma: no cover
     """ Log in to one instance. """
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
-    command_args = {
-        'subcommand': subcommand,
-        'host': host,
-    }
+    command_args = {'subcommand': subcommand, 'host': host}
 
-    s = scenarios.Scenarios(
-        base.get_configs(args, command_args), scenario_name)
+    s = scenarios.Scenarios(base.get_configs(args, command_args), scenario_name)
     for scenario in s.all:
         base.execute_subcommand(scenario.config, subcommand)

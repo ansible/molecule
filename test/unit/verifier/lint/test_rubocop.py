@@ -42,13 +42,9 @@ def _verifier_lint_section_data():
             'name': 'inspec',
             'lint': {
                 'name': 'rubocop',
-                'options': {
-                    'foo': 'bar',
-                },
-                'env': {
-                    'FOO': 'bar',
-                },
-            }
+                'options': {'foo': 'bar'},
+                'env': {'FOO': 'bar'},
+            },
         }
     }
 
@@ -77,13 +73,15 @@ def test_default_env_property(_instance):
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_verifier_lint_section_data'], indirect=True)
+    'config_instance', ['_verifier_lint_section_data'], indirect=True
+)
 def test_env_property(_instance):
     assert 'bar' == _instance.env['FOO']
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_verifier_lint_section_data'], indirect=True)
+    'config_instance', ['_verifier_lint_section_data'], indirect=True
+)
 def test_name_property(_instance):
     assert 'rubocop' == _instance.name
 
@@ -93,28 +91,26 @@ def test_enabled_property(_instance):
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_verifier_lint_section_data'], indirect=True)
+    'config_instance', ['_verifier_lint_section_data'], indirect=True
+)
 def test_options_property(_instance):
-    x = {
-        'foo': 'bar',
-    }
+    x = {'foo': 'bar'}
 
     assert x == _instance.options
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_verifier_lint_section_data'], indirect=True)
+    'config_instance', ['_verifier_lint_section_data'], indirect=True
+)
 def test_options_property_handles_cli_args(_instance):
     _instance._config.args = {'debug': True}
-    x = {
-        'foo': 'bar',
-        'd': True,
-    }
+    x = {'foo': 'bar', 'd': True}
     assert x == _instance.options
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_verifier_lint_section_data'], indirect=True)
+    'config_instance', ['_verifier_lint_section_data'], indirect=True
+)
 def test_bake(_instance):
     _instance._tests = ['test1', 'test2', 'test3']
     _instance.bake()
@@ -123,8 +119,9 @@ def test_bake(_instance):
     assert x == _instance._rubocop_command
 
 
-def test_execute(patched_logger_info, patched_logger_success,
-                 patched_run_command, _instance):
+def test_execute(
+    patched_logger_info, patched_logger_success, patched_run_command, _instance
+):
     _instance._tests = ['test1', 'test2', 'test3']
     _instance._rubocop_command = 'patched-command'
     _instance.execute()
@@ -132,15 +129,15 @@ def test_execute(patched_logger_info, patched_logger_success,
     patched_run_command.assert_called_once_with('patched-command', debug=False)
 
     msg = 'Executing RuboCop on files found in {}/...'.format(
-        _instance._config.verifier.directory)
+        _instance._config.verifier.directory
+    )
     patched_logger_info.assert_called_once_with(msg)
 
     msg = 'Lint completed successfully.'
     patched_logger_success.assert_called_once_with(msg)
 
 
-def test_execute_does_not_execute(patched_run_command, patched_logger_warn,
-                                  _instance):
+def test_execute_does_not_execute(patched_run_command, patched_logger_warn, _instance):
     _instance._config.config['verifier']['lint']['enabled'] = False
     _instance.execute()
 
@@ -150,8 +147,9 @@ def test_execute_does_not_execute(patched_run_command, patched_logger_warn,
     patched_logger_warn.assert_called_once_with(msg)
 
 
-def test_does_not_execute_without_tests(patched_run_command,
-                                        patched_logger_warn, _instance):
+def test_does_not_execute_without_tests(
+    patched_run_command, patched_logger_warn, _instance
+):
     _instance.execute()
 
     assert not patched_run_command.called
@@ -161,7 +159,8 @@ def test_does_not_execute_without_tests(patched_run_command,
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_verifier_lint_section_data'], indirect=True)
+    'config_instance', ['_verifier_lint_section_data'], indirect=True
+)
 def test_execute_bakes(patched_run_command, _instance):
     _instance._tests = ['test1', 'test2', 'test3']
     _instance.execute()
@@ -172,10 +171,10 @@ def test_execute_bakes(patched_run_command, _instance):
     patched_run_command.assert_called_once_with(cmd, debug=False)
 
 
-def test_executes_catches_and_exits_return_code(patched_run_command,
-                                                _patched_get_tests, _instance):
-    patched_run_command.side_effect = sh.ErrorReturnCode_1(
-        sh.rubocop, b'', b'')
+def test_executes_catches_and_exits_return_code(
+    patched_run_command, _patched_get_tests, _instance
+):
+    patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.rubocop, b'', b'')
     with pytest.raises(SystemExit) as e:
         _instance.execute()
 

@@ -139,18 +139,20 @@ class Vagrant(base.Base):
     def testinfra_options(self):
         return {
             'connection': 'ansible',
-            'ansible-inventory': self._config.provisioner.inventory_file
+            'ansible-inventory': self._config.provisioner.inventory_file,
         }
 
     @property
     def login_cmd_template(self):
         connection_options = ' '.join(self.ssh_connection_options)
 
-        return ('ssh {{address}} '
-                '-l {{user}} '
-                '-p {{port}} '
-                '-i {{identity_file}} '
-                '{}').format(connection_options)
+        return (
+            'ssh {{address}} '
+            '-l {{user}} '
+            '-p {{port}} '
+            '-i {{identity_file}} '
+            '{}'
+        ).format(connection_options)
 
     @property
     def default_safe_files(self):
@@ -158,12 +160,9 @@ class Vagrant(base.Base):
             self.vagrantfile,
             self.vagrantfile_config,
             self.instance_config,
-            os.path.join(self._config.scenario.ephemeral_directory,
-                         '.vagrant'),
-            os.path.join(self._config.scenario.ephemeral_directory,
-                         'vagrant-*.out'),
-            os.path.join(self._config.scenario.ephemeral_directory,
-                         'vagrant-*.err'),
+            os.path.join(self._config.scenario.ephemeral_directory, '.vagrant'),
+            os.path.join(self._config.scenario.ephemeral_directory, 'vagrant-*.out'),
+            os.path.join(self._config.scenario.ephemeral_directory, 'vagrant-*.err'),
         ]
 
     @property
@@ -185,8 +184,7 @@ class Vagrant(base.Base):
                 'ansible_port': d['port'],
                 'ansible_private_key_file': d['identity_file'],
                 'connection': 'ssh',
-                'ansible_ssh_common_args':
-                ' '.join(self.ssh_connection_options),
+                'ansible_ssh_common_args': ' '.join(self.ssh_connection_options),
             }
         except StopIteration:
             return {}
@@ -197,20 +195,18 @@ class Vagrant(base.Base):
 
     @property
     def vagrantfile(self):
-        return os.path.join(self._config.scenario.ephemeral_directory,
-                            'Vagrantfile')
+        return os.path.join(self._config.scenario.ephemeral_directory, 'Vagrantfile')
 
     @property
     def vagrantfile_config(self):
-        return os.path.join(self._config.scenario.ephemeral_directory,
-                            'vagrant.yml')
+        return os.path.join(self._config.scenario.ephemeral_directory, 'vagrant.yml')
 
     def _get_instance_config(self, instance_name):
-        instance_config_dict = util.safe_load_file(
-            self._config.driver.instance_config)
+        instance_config_dict = util.safe_load_file(self._config.driver.instance_config)
 
-        return next(item for item in instance_config_dict
-                    if item['instance'] == instance_name)
+        return next(
+            item for item in instance_config_dict if item['instance'] == instance_name
+        )
 
     def sanity_checks(self):
         # FIXME(decentral1se): Implement sanity checks
