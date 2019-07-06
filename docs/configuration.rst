@@ -132,6 +132,12 @@ Openstack
 .. autoclass:: molecule.driver.openstack.Openstack()
    :undoc-members:
 
+Podman
+^^^^^^
+
+.. autoclass:: molecule.driver.podman.Podman()
+    :undoc-members:
+
 Vagrant
 ^^^^^^^
 
