@@ -146,12 +146,7 @@ class AnsibleGalaxy(base.Base):
             self.bake()
 
         self._setup()
-        try:
-            util.run_command(self._sh_command, debug=self._config.debug)
-            msg = 'Dependency completed successfully.'
-            LOG.success(msg)
-        except sh.ErrorReturnCode as e:
-            util.sysexit(e.exit_code)
+        self.execute_with_retries()
 
     def _setup(self):
         """

@@ -152,10 +152,6 @@ def test_command_create(scenario_to_test, with_scenario, scenario_name):
 def test_command_dependency_ansible_galaxy(
     request, scenario_to_test, with_scenario, scenario_name
 ):
-    # FIXME(decentral1se): skipped due to failures on network access
-    if request.getfixturevalue('driver_name') != 'docker':
-        pytest.skip('Skipped to avoid network access failures')
-
     options = {'scenario_name': scenario_name}
     cmd = sh.molecule.bake('dependency', **options)
     pytest.helpers.run_command(cmd)
@@ -189,10 +185,6 @@ def test_command_dependency_ansible_galaxy(
 def test_command_dependency_gilt(
     request, scenario_to_test, with_scenario, scenario_name
 ):
-    # FIXME(decentral1se): skipped due to failures on network access
-    if request.getfixturevalue('driver_name') != 'docker':
-        pytest.skip('Skipped to avoid network access failures')
-
     options = {'scenario_name': scenario_name}
     cmd = sh.molecule.bake('dependency', **options)
     pytest.helpers.run_command(cmd)
@@ -222,10 +214,6 @@ def test_command_dependency_gilt(
 def test_command_dependency_shell(
     request, scenario_to_test, with_scenario, scenario_name
 ):
-    # FIXME(decentral1se): skipped due to failures on network access
-    if request.getfixturevalue('driver_name') != 'docker':
-        pytest.skip('Skipped to avoid network access failures')
-
     options = {'scenario_name': scenario_name}
     cmd = sh.molecule.bake('dependency', **options)
     pytest.helpers.run_command(cmd)

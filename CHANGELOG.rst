@@ -5,6 +5,7 @@ History
 Unreleased
 ==========
 
+* ``molecule dependency`` now has a retry and timed back-off by default for flaky network connections.
 * Add the `--parallel` flag to experimentally allow molecule to be run in parallel.
 * `dependency` step is now run by default before any playbook sequence step, including
   `create` and `destroy`. This allows the use of roles in all sequence step playbooks.

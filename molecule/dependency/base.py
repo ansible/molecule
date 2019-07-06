@@ -19,12 +19,22 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import abc
+import time
+import sh
 
 from molecule import util
+
+from molecule.logger import get_logger
+
+LOG = get_logger(__name__)
 
 
 class Base(object):
     __metaclass__ = abc.ABCMeta
+
+    RETRY = 3
+    SLEEP = 3
+    BACKOFF = 3
 
     def __init__(self, config):
         """
@@ -34,6 +44,37 @@ class Base(object):
         :returns: None
         """
         self._config = config
+
+    def execute_with_retries(self):
+        """Run dependency downloads with retry and timed back-off."""
+        exception = None
+
+        try:
+            util.run_command(self._sh_command, debug=self._config.debug)
+            msg = 'Dependency completed successfully.'
+            LOG.success(msg)
+            return
+        except sh.ErrorReturnCode:
+            pass
+
+        for counter in range(1, (self.RETRY + 1)):
+            msg = 'Retrying dependency ... {}/{} time(s)'.format(counter, self.RETRY)
+            LOG.warning(msg)
+
+            msg = 'Sleeping {} seconds before retrying ...'.format(self.SLEEP)
+            LOG.warning(msg)
+            time.sleep(self.SLEEP)
+            self.SLEEP += self.BACKOFF
+
+            try:
+                util.run_command(self._sh_command, debug=self._config.debug)
+                msg = 'Dependency completed successfully.'
+                LOG.success(msg)
+                return
+            except sh.ErrorReturnCode as _exception:
+                exception = _exception
+
+        util.sysexit(exception.exit_code)
 
     @abc.abstractmethod
     def execute(self):  # pragma: no cover
