@@ -75,8 +75,7 @@ def test_all_filters_on_scenario_name_property(_instance):
     assert 1 == len(_instance.all)
 
 
-def test_print_matrix(mocker, patched_logger_info, patched_logger_out,
-                      _instance):
+def test_print_matrix(mocker, patched_logger_info, patched_logger_out, _instance):
     _instance.print_matrix()
 
     msg = 'Test matrix'
@@ -122,8 +121,7 @@ def test_verify_does_not_raise_when_found(_instance):
     assert _instance._verify() is None
 
 
-def test_verify_raises_when_scenario_not_found(_instance,
-                                               patched_logger_critical):
+def test_verify_raises_when_scenario_not_found(_instance, patched_logger_critical):
     _instance._scenario_name = 'invalid'
     with pytest.raises(SystemExit) as e:
         _instance._verify()
@@ -151,12 +149,7 @@ def test_get_matrix(_instance):
             'lint': ['lint'],
             'idempotence': ['idempotence'],
             'syntax': ['syntax'],
-            'converge': [
-                'dependency',
-                'create',
-                'prepare',
-                'converge',
-            ],
+            'converge': ['dependency', 'create', 'prepare', 'converge'],
             'cleanup': ['cleanup'],
             'check': [
                 'dependency',
@@ -170,11 +163,7 @@ def test_get_matrix(_instance):
                 'destroy',
             ],
             'verify': ['verify'],
-            'create': [
-                'dependency',
-                'create',
-                'prepare',
-            ],
+            'create': ['dependency', 'create', 'prepare'],
             'prepare': ['prepare'],
             'side_effect': ['side_effect'],
             'dependency': ['dependency'],
@@ -193,18 +182,13 @@ def test_get_matrix(_instance):
                 'cleanup',
                 'destroy',
             ],
-            'destroy': ['dependency', 'cleanup', 'destroy']
+            'destroy': ['dependency', 'cleanup', 'destroy'],
         },
         'foo': {
             'lint': ['lint'],
             'idempotence': ['idempotence'],
             'syntax': ['syntax'],
-            'converge': [
-                'dependency',
-                'create',
-                'prepare',
-                'converge',
-            ],
+            'converge': ['dependency', 'create', 'prepare', 'converge'],
             'check': [
                 'dependency',
                 'cleanup',
@@ -217,11 +201,7 @@ def test_get_matrix(_instance):
                 'destroy',
             ],
             'cleanup': ['cleanup'],
-            'create': [
-                'dependency',
-                'create',
-                'prepare',
-            ],
+            'create': ['dependency', 'create', 'prepare'],
             'verify': ['verify'],
             'prepare': ['prepare'],
             'side_effect': ['side_effect'],
@@ -241,8 +221,8 @@ def test_get_matrix(_instance):
                 'cleanup',
                 'destroy',
             ],
-            'destroy': ['dependency', 'cleanup', 'destroy']
-        }
+            'destroy': ['dependency', 'cleanup', 'destroy'],
+        },
     }
 
     assert matrix == _instance._get_matrix()

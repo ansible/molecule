@@ -38,10 +38,7 @@ def _patched_ansible_verify(mocker):
 @pytest.fixture
 def _patched_goss_get_tests(mocker):
     m = mocker.patch('molecule.verifier.goss.Goss._get_tests')
-    m.return_value = [
-        'foo.py',
-        'bar.py',
-    ]
+    m.return_value = ['foo.py', 'bar.py']
 
     return m
 
@@ -51,12 +48,8 @@ def _verifier_section_data():
     return {
         'verifier': {
             'name': 'goss',
-            'env': {
-                'FOO': 'bar',
-            },
-            'lint': {
-                'name': 'yamllint',
-            },
+            'env': {'FOO': 'bar'},
+            'lint': {'name': 'yamllint'},
         }
     }
 
@@ -65,8 +58,7 @@ def _verifier_section_data():
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.fixture
-def _instance(_verifier_section_data, patched_config_validate,
-              config_instance):
+def _instance(_verifier_section_data, patched_config_validate, config_instance):
     return goss.Goss(config_instance)
 
 
@@ -85,14 +77,12 @@ def test_default_env_property(_instance):
     assert 'MOLECULE_INSTANCE_CONFIG' in _instance.default_env
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_verifier_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_verifier_section_data'], indirect=True)
 def test_env_property(_instance):
     assert 'bar' == _instance.env['FOO']
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_verifier_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_verifier_section_data'], indirect=True)
 def test_lint_property(_instance):
     assert isinstance(_instance.lint, yamllint.Yamllint)
 
@@ -111,16 +101,14 @@ def test_directory_property(_instance):
     assert 'tests' == parts[-1]
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_verifier_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_verifier_section_data'], indirect=True)
 def test_options_property(_instance):
     x = {}
 
     assert x == _instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_verifier_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_verifier_section_data'], indirect=True)
 def test_options_property_handles_cli_args(_instance):
     _instance._config.args = {'debug': True}
     x = {}
@@ -134,8 +122,13 @@ def test_bake(_instance):
     assert _instance.bake() is None
 
 
-def test_execute(patched_logger_info, _patched_ansible_verify,
-                 _patched_goss_get_tests, patched_logger_success, _instance):
+def test_execute(
+    patched_logger_info,
+    _patched_ansible_verify,
+    _patched_goss_get_tests,
+    patched_logger_success,
+    _instance,
+):
     _instance.execute()
 
     _patched_ansible_verify.assert_called_once_with()
@@ -147,8 +140,9 @@ def test_execute(patched_logger_info, _patched_ansible_verify,
     patched_logger_success.assert_called_once_with(msg)
 
 
-def test_execute_does_not_execute(patched_ansible_converge,
-                                  patched_logger_warn, _instance):
+def test_execute_does_not_execute(
+    patched_ansible_converge, patched_logger_warn, _instance
+):
     _instance._config.config['verifier']['enabled'] = False
     _instance.execute()
 
@@ -158,8 +152,9 @@ def test_execute_does_not_execute(patched_ansible_converge,
     patched_logger_warn.assert_called_once_with(msg)
 
 
-def test_does_not_execute_without_tests(patched_ansible_converge,
-                                        patched_logger_warn, _instance):
+def test_does_not_execute_without_tests(
+    patched_ansible_converge, patched_logger_warn, _instance
+):
     _instance.execute()
 
     assert not patched_ansible_converge.called

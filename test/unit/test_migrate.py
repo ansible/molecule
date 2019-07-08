@@ -29,8 +29,11 @@ from molecule import migrate
 @pytest.fixture
 def _instance():
     molecule_file = os.path.join(
-        os.path.dirname(__file__), os.path.pardir, 'resources',
-        'molecule_v1_vagrant.yml')
+        os.path.dirname(__file__),
+        os.path.pardir,
+        'resources',
+        'molecule_v1_vagrant.yml',
+    )
 
     return migrate.Migrate(molecule_file)
 
@@ -103,72 +106,45 @@ verifier:
 
 def test_convert(_instance, patched_logger_info):
     x = {
-        'scenario': {
-            'name': 'default',
-        },
-        'platforms': [{
-            'box':
-            'namespace/rhel-7',
-            'box_version':
-            '7.2.0',
-            'name':
-            'host.example.com',
-            'interfaces': [{
-                'type': 'dhcp',
-                'network_name': 'private_network',
-                'auto_config': True,
-            }],
-            'cpus':
-            2,
-            'box_url':
-            'http://example.com/pub/rhel-7.json',
-            'groups': [
-                'group1',
-                'group2',
-            ],
-            'memory':
-            4096,
-            'raw_config_args': [
-                'foo',
-                'bar',
-            ],
-        }],
-        'lint': {
-            'name': 'yamllint',
-        },
-        'driver': {
-            'name': 'vagrant',
-            'provider': {
-                'name': 'virtualbox',
-            },
-        },
-        'dependency': {
-            'name': 'galaxy',
-        },
-        'verifier': {
-            'lint': {
-                'name': 'flake8',
-            },
-            'name': 'testinfra',
-            'options': {
-                'sudo': True,
+        'scenario': {'name': 'default'},
+        'platforms': [
+            {
+                'box': 'namespace/rhel-7',
+                'box_version': '7.2.0',
+                'name': 'host.example.com',
+                'interfaces': [
+                    {
+                        'type': 'dhcp',
+                        'network_name': 'private_network',
+                        'auto_config': True,
+                    }
+                ],
+                'cpus': 2,
+                'box_url': 'http://example.com/pub/rhel-7.json',
+                'groups': ['group1', 'group2'],
+                'memory': 4096,
+                'raw_config_args': ['foo', 'bar'],
             }
+        ],
+        'lint': {'name': 'yamllint'},
+        'driver': {'name': 'vagrant', 'provider': {'name': 'virtualbox'}},
+        'dependency': {'name': 'galaxy'},
+        'verifier': {
+            'lint': {'name': 'flake8'},
+            'name': 'testinfra',
+            'options': {'sudo': True},
         },
         'provisioner': {
-            'lint': {
-                'name': 'ansible-lint',
-            },
+            'lint': {'name': 'ansible-lint'},
             'name': 'ansible',
-            'env': {
-                'FOO': 'bar',
-            },
+            'env': {'FOO': 'bar'},
             'options': {
                 'become': True,
                 'extra-vars': 'foo=bar',
                 'verbose': True,
                 'tags': 'foo,bar',
-            }
-        }
+            },
+        },
     }
 
     data = _instance._convert()
@@ -178,8 +154,7 @@ def test_convert(_instance, patched_logger_info):
     patched_logger_info.assert_called_once_with(msg)
 
 
-def test_convert_raises_on_invalid_migration_config(_instance,
-                                                    patched_logger_critical):
+def test_convert_raises_on_invalid_migration_config(_instance, patched_logger_critical):
     del _instance._v1['vagrant']
 
     with pytest.raises(SystemExit) as e:

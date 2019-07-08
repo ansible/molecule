@@ -24,16 +24,15 @@
 
 def main():
     module = AnsibleModule(  # noqa
-        argument_spec=dict(name=dict(type='str', required=False), ),
-        supports_check_mode=False)
+        argument_spec=dict(name=dict(type='str', required=False)),
+        supports_check_mode=False,
+    )
 
-    ansible_facts_dict = {
-        'changed': False,
-        'ansible_facts': {},
-    }
+    ansible_facts_dict = {'changed': False, 'ansible_facts': {}}
 
     module.exit_json(**ansible_facts_dict)
 
 
 from ansible.module_utils.basic import *  # noqa
+
 main()

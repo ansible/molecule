@@ -33,11 +33,9 @@ LOG = logger.get_logger(__name__)
 class Base(object):
     __metaclass__ = abc.ABCMeta
 
-    def _process_templates(self,
-                           template_dir,
-                           extra_context,
-                           output_dir,
-                           overwrite=True):
+    def _process_templates(
+        self, template_dir, extra_context, output_dir, overwrite=True
+    ):
         """
         Process templates as found in the named directory.
 
@@ -64,19 +62,28 @@ class Base(object):
                 no_input=True,
             )
         except cookiecutter.exceptions.NonTemplatedInputDirException:
-            util.sysexit_with_message("The specified template directory (" +
-                                      str(template_dir) +
-                                      ") is in an invalid format")
+            util.sysexit_with_message(
+                "The specified template directory ("
+                + str(template_dir)
+                + ") is in an invalid format"
+            )
 
     def _resolve_template_dir(self, template_dir):
         if not os.path.isabs(template_dir):
             template_dir = os.path.join(
-                os.path.dirname(__file__), os.path.pardir, os.path.pardir,
-                'cookiecutter', template_dir)
+                os.path.dirname(__file__),
+                os.path.pardir,
+                os.path.pardir,
+                'cookiecutter',
+                template_dir,
+            )
 
         return template_dir
 
     def _validate_template_dir(self, template_dir):
         if not os.path.isdir(template_dir):
-            util.sysexit_with_message("The specified template directory (" +
-                                      str(template_dir) + ") does not exist")
+            util.sysexit_with_message(
+                "The specified template directory ("
+                + str(template_dir)
+                + ") does not exist"
+            )

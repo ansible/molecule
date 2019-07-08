@@ -45,10 +45,10 @@ def _keep_string():
     return 'MOLECULE_'
 
 
-def test_platforms_docker(_model_platforms_docker_section_data, _env,
-                          _keep_string):
-    assert {} == schema_v2.pre_validate(_model_platforms_docker_section_data,
-                                        _env, _keep_string)
+def test_platforms_docker(_model_platforms_docker_section_data, _env, _keep_string):
+    assert {} == schema_v2.pre_validate(
+        _model_platforms_docker_section_data, _env, _keep_string
+    )
 
 
 @pytest.fixture
@@ -64,21 +64,25 @@ platforms:
 
 
 def test_platforms_docker_has_errors(
-        _model_platforms_docker_errors_section_data, _env, _keep_string):
+    _model_platforms_docker_errors_section_data, _env, _keep_string
+):
     x = {
-        'platforms': [{
-            0: [{
-                'registry': [{
-                    'credentials': [{
-                        'password': ['must be of string type']
-                    }]
-                }]
-            }]
-        }]
+        'platforms': [
+            {
+                0: [
+                    {
+                        'registry': [
+                            {'credentials': [{'password': ['must be of string type']}]}
+                        ]
+                    }
+                ]
+            }
+        ]
     }
 
     assert x == schema_v2.pre_validate(
-        _model_platforms_docker_errors_section_data, _env, _keep_string)
+        _model_platforms_docker_errors_section_data, _env, _keep_string
+    )
 
 
 @pytest.fixture
@@ -111,54 +115,76 @@ verifier:
 
 
 def test_has_errors_when_molecule_env_var_referenced_in_unallowed_sections(
-        _model_molecule_env_errors_section_data, _env, _keep_string):
+    _model_molecule_env_errors_section_data, _env, _keep_string
+):
     x = {
-        'scenario': [{
-            'name':
-            ['cannot reference $MOLECULE special variables in this section']
-        }],
-        'lint': [{
-            'name': [
-                'cannot reference $MOLECULE special variables in this section',
-                'unallowed value $MOLECULE_LINT_NAME'
-            ]
-        }],
-        'driver': [{
-            'name': [
-                'cannot reference $MOLECULE special variables in this section',
-                'unallowed value $MOLECULE_DRIVER_NAME'
-            ]
-        }],
-        'dependency': [{
-            'name': [
-                'cannot reference $MOLECULE special variables in this section',
-                'unallowed value $MOLECULE_DEPENDENCY_NAME'
-            ]
-        }],
-        'verifier': [{
-            'lint': [{
-                'name':
-                [('cannot reference $MOLECULE special variables in this '
-                  'section'), 'unallowed value $MOLECULE_VERIFIER_LINT_NAME']
-            }],
-            'name': [
-                'cannot reference $MOLECULE special variables in this section',
-                'unallowed value $MOLECULE_VERIFIER_NAME'
-            ]
-        }],
-        'provisioner': [{
-            'lint': [{
-                'name':
-                [('cannot reference $MOLECULE special variables in this '
-                  'section'),
-                 'unallowed value $MOLECULE_PROVISIONER_LINT_NAME']
-            }],
-            'name': [
-                'cannot reference $MOLECULE special variables in this section',
-                'unallowed value $MOLECULE_PROVISIONER_NAME'
-            ]
-        }]
+        'scenario': [
+            {'name': ['cannot reference $MOLECULE special variables in this section']}
+        ],
+        'lint': [
+            {
+                'name': [
+                    'cannot reference $MOLECULE special variables in this section',
+                    'unallowed value $MOLECULE_LINT_NAME',
+                ]
+            }
+        ],
+        'driver': [
+            {
+                'name': [
+                    'cannot reference $MOLECULE special variables in this section',
+                    'unallowed value $MOLECULE_DRIVER_NAME',
+                ]
+            }
+        ],
+        'dependency': [
+            {
+                'name': [
+                    'cannot reference $MOLECULE special variables in this section',
+                    'unallowed value $MOLECULE_DEPENDENCY_NAME',
+                ]
+            }
+        ],
+        'verifier': [
+            {
+                'lint': [
+                    {
+                        'name': [
+                            (
+                                'cannot reference $MOLECULE special variables in this '
+                                'section'
+                            ),
+                            'unallowed value $MOLECULE_VERIFIER_LINT_NAME',
+                        ]
+                    }
+                ],
+                'name': [
+                    'cannot reference $MOLECULE special variables in this section',
+                    'unallowed value $MOLECULE_VERIFIER_NAME',
+                ],
+            }
+        ],
+        'provisioner': [
+            {
+                'lint': [
+                    {
+                        'name': [
+                            (
+                                'cannot reference $MOLECULE special variables in this '
+                                'section'
+                            ),
+                            'unallowed value $MOLECULE_PROVISIONER_LINT_NAME',
+                        ]
+                    }
+                ],
+                'name': [
+                    'cannot reference $MOLECULE special variables in this section',
+                    'unallowed value $MOLECULE_PROVISIONER_NAME',
+                ],
+            }
+        ],
     }
 
-    assert x == schema_v2.pre_validate(_model_molecule_env_errors_section_data,
-                                       _env, _keep_string)
+    assert x == schema_v2.pre_validate(
+        _model_molecule_env_errors_section_data, _env, _keep_string
+    )

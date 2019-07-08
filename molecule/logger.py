@@ -112,7 +112,8 @@ def _get_info_handler():
     handler.setLevel(logging.INFO)
     handler.addFilter(LogFilter(logging.INFO))
     handler.setFormatter(
-        TrailingNewlineFormatter('--> {}'.format(cyan_text('%(message)s'))))
+        TrailingNewlineFormatter('--> {}'.format(cyan_text('%(message)s')))
+    )
 
     return handler
 
@@ -148,8 +149,7 @@ def _get_critical_handler():
     handler = logging.StreamHandler(sys.stderr)
     handler.setLevel(logging.CRITICAL)
     handler.addFilter(LogFilter(logging.CRITICAL))
-    handler.setFormatter(
-        TrailingNewlineFormatter(red_text('ERROR: %(message)s')))
+    handler.setFormatter(TrailingNewlineFormatter(red_text('ERROR: %(message)s')))
 
     return handler
 

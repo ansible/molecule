@@ -88,7 +88,9 @@ class Converge(base.Base):
     '-s',
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
     help='Name of the scenario to target. ({})'.format(
-        base.MOLECULE_DEFAULT_SCENARIO_NAME))
+        base.MOLECULE_DEFAULT_SCENARIO_NAME
+    ),
+)
 @click.argument('ansible_args', nargs=-1, type=click.UNPROCESSED)
 def converge(ctx, scenario_name, ansible_args):  # pragma: no cover
     """
@@ -98,9 +100,6 @@ def converge(ctx, scenario_name, ansible_args):  # pragma: no cover
 
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
-    command_args = {
-        'subcommand': subcommand,
-    }
+    command_args = {'subcommand': subcommand}
 
-    base.execute_cmdline_scenarios(scenario_name, args, command_args,
-                                   ansible_args)
+    base.execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args)

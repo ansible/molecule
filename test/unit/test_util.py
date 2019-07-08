@@ -37,15 +37,22 @@ def test_print_debug(capsys):
     util.print_debug('test_title', 'test_data')
     result, _ = capsys.readouterr()
     title = [
-        colorama.Back.WHITE, colorama.Style.BRIGHT, colorama.Fore.BLACK,
-        'DEBUG: test_title', colorama.Fore.RESET, colorama.Back.RESET,
-        colorama.Style.RESET_ALL
+        colorama.Back.WHITE,
+        colorama.Style.BRIGHT,
+        colorama.Fore.BLACK,
+        'DEBUG: test_title',
+        colorama.Fore.RESET,
+        colorama.Back.RESET,
+        colorama.Style.RESET_ALL,
     ]
     print(''.join(title))
 
     data = [
-        colorama.Fore.BLACK, colorama.Style.BRIGHT, 'test_data',
-        colorama.Style.RESET_ALL, colorama.Fore.RESET
+        colorama.Fore.BLACK,
+        colorama.Style.BRIGHT,
+        'test_data',
+        colorama.Style.RESET_ALL,
+        colorama.Fore.RESET,
     ]
     print(''.join(data))
 
@@ -60,54 +67,68 @@ def test_print_environment_vars(capsys):
         'ANSIBLE': None,
         'MOLECULE_FOO': 'foo',
         'MOLECULE_BAR': 'bar',
-        'MOLECULE': None
+        'MOLECULE': None,
     }
     util.print_environment_vars(env)
     result, _ = capsys.readouterr()
 
     # Ansible Environment
     title = [
-        colorama.Back.WHITE, colorama.Style.BRIGHT, colorama.Fore.BLACK,
-        'DEBUG: ANSIBLE ENVIRONMENT', colorama.Fore.RESET, colorama.Back.RESET,
-        colorama.Style.RESET_ALL
+        colorama.Back.WHITE,
+        colorama.Style.BRIGHT,
+        colorama.Fore.BLACK,
+        'DEBUG: ANSIBLE ENVIRONMENT',
+        colorama.Fore.RESET,
+        colorama.Back.RESET,
+        colorama.Style.RESET_ALL,
     ]
     print(''.join(title))
     data = [
-        colorama.Fore.BLACK, colorama.Style.BRIGHT,
-        util.safe_dump({
-            'ANSIBLE_FOO': 'foo',
-            'ANSIBLE_BAR': 'bar'
-        }), colorama.Style.RESET_ALL, colorama.Fore.RESET
+        colorama.Fore.BLACK,
+        colorama.Style.BRIGHT,
+        util.safe_dump({'ANSIBLE_FOO': 'foo', 'ANSIBLE_BAR': 'bar'}),
+        colorama.Style.RESET_ALL,
+        colorama.Fore.RESET,
     ]
     print(''.join(data))
 
     # Molecule Environment
     title = [
-        colorama.Back.WHITE, colorama.Style.BRIGHT, colorama.Fore.BLACK,
-        'DEBUG: MOLECULE ENVIRONMENT', colorama.Fore.RESET,
-        colorama.Back.RESET, colorama.Style.RESET_ALL
+        colorama.Back.WHITE,
+        colorama.Style.BRIGHT,
+        colorama.Fore.BLACK,
+        'DEBUG: MOLECULE ENVIRONMENT',
+        colorama.Fore.RESET,
+        colorama.Back.RESET,
+        colorama.Style.RESET_ALL,
     ]
     print(''.join(title))
     data = [
-        colorama.Fore.BLACK, colorama.Style.BRIGHT,
-        util.safe_dump({
-            'MOLECULE_FOO': 'foo',
-            'MOLECULE_BAR': 'bar'
-        }), colorama.Style.RESET_ALL, colorama.Fore.RESET
+        colorama.Fore.BLACK,
+        colorama.Style.BRIGHT,
+        util.safe_dump({'MOLECULE_FOO': 'foo', 'MOLECULE_BAR': 'bar'}),
+        colorama.Style.RESET_ALL,
+        colorama.Fore.RESET,
     ]
     print(''.join(data))
 
     # Shell Replay
     title = [
-        colorama.Back.WHITE, colorama.Style.BRIGHT, colorama.Fore.BLACK,
-        'DEBUG: SHELL REPLAY', colorama.Fore.RESET, colorama.Back.RESET,
-        colorama.Style.RESET_ALL
+        colorama.Back.WHITE,
+        colorama.Style.BRIGHT,
+        colorama.Fore.BLACK,
+        'DEBUG: SHELL REPLAY',
+        colorama.Fore.RESET,
+        colorama.Back.RESET,
+        colorama.Style.RESET_ALL,
     ]
     print(''.join(title))
     data = [
-        colorama.Fore.BLACK, colorama.Style.BRIGHT,
+        colorama.Fore.BLACK,
+        colorama.Style.BRIGHT,
         'ANSIBLE_BAR=bar ANSIBLE_FOO=foo MOLECULE_BAR=bar MOLECULE_FOO=foo',
-        colorama.Style.RESET_ALL, colorama.Fore.RESET
+        colorama.Style.RESET_ALL,
+        colorama.Fore.RESET,
     ]
     print(''.join(data))
     print()
@@ -162,7 +183,7 @@ def test_run_command_with_debug(mocker, patched_print_debug):
         mocker.call('ANSIBLE ENVIRONMENT', '---\nANSIBLE_FOO: foo\n'),
         mocker.call('MOLECULE ENVIRONMENT', '---\nMOLECULE_BAR: bar\n'),
         mocker.call('SHELL REPLAY', 'ANSIBLE_FOO=foo MOLECULE_BAR=bar'),
-        mocker.call('COMMAND', sh.which('ls'))
+        mocker.call('COMMAND', sh.which('ls')),
     ]
 
     assert x == patched_print_debug.mock_calls
@@ -175,7 +196,7 @@ def test_run_command_with_debug_handles_no_env(mocker, patched_print_debug):
         mocker.call('ANSIBLE ENVIRONMENT', '--- {}\n'),
         mocker.call('MOLECULE ENVIRONMENT', '--- {}\n'),
         mocker.call('SHELL REPLAY', ''),
-        mocker.call('COMMAND', sh.which('ls'))
+        mocker.call('COMMAND', sh.which('ls')),
     ]
 
     assert x == patched_print_debug.mock_calls
@@ -227,12 +248,7 @@ foo: bar
 
 
 def test_safe_dump_with_increase_indent():
-    data = {
-        'foo': [{
-            'foo': 'bar',
-            'baz': 'zzyzx',
-        }],
-    }
+    data = {'foo': [{'foo': 'bar', 'baz': 'zzyzx'}]}
 
     x = """
 ---
@@ -330,11 +346,7 @@ def test_filter_verbose_permutation():
         'bar': True,
     }
 
-    x = {
-        'vfoo': True,
-        'foo': True,
-        'bar': True,
-    }
+    x = {'vfoo': True, 'foo': True, 'bar': True}
     assert x == util.filter_verbose_permutation(options)
 
 
@@ -344,8 +356,7 @@ def test_title():
 
 
 def test_abs_path(temp_dir):
-    x = os.path.abspath(
-        os.path.join(os.getcwd(), os.path.pardir, 'foo', 'bar'))
+    x = os.path.abspath(os.path.join(os.getcwd(), os.path.pardir, 'foo', 'bar'))
 
     assert x == util.abs_path(os.path.join(os.path.pardir, 'foo', 'bar'))
 

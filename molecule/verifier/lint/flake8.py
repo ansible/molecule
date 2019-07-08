@@ -98,11 +98,8 @@ class Flake8(base.Base):
         :return: None
         """
         self._flake8_command = sh.flake8.bake(
-            self.options,
-            self._tests,
-            _env=self.env,
-            _out=LOG.out,
-            _err=LOG.error)
+            self.options, self._tests, _env=self.env, _out=LOG.out, _err=LOG.error
+        )
 
     def execute(self):
         if not self.enabled:
@@ -119,7 +116,8 @@ class Flake8(base.Base):
             self.bake()
 
         msg = 'Executing Flake8 on files found in {}/...'.format(
-            self._config.verifier.directory)
+            self._config.verifier.directory
+        )
         LOG.info(msg)
 
         try:
@@ -136,6 +134,6 @@ class Flake8(base.Base):
         :return: list
         """
         return [
-            filename for filename in util.os_walk(
-                self._config.verifier.directory, 'test_*.py')
+            filename
+            for filename in util.os_walk(self._config.verifier.directory, 'test_*.py')
         ]

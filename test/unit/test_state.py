@@ -32,8 +32,7 @@ def _instance(config_instance):
 
 
 def test_state_file_property(_instance):
-    x = os.path.join(_instance._config.scenario.ephemeral_directory,
-                     'state.yml')
+    x = os.path.join(_instance._config.scenario.ephemeral_directory, 'state.yml')
 
     assert x == _instance.state_file
 
@@ -106,14 +105,8 @@ def test_change_state_raises(_instance):
         _instance.change_state('invalid-state', True)
 
 
-def test_get_data_loads_existing_state_file(_instance, molecule_data,
-                                            config_instance):
-    data = {
-        'converged': False,
-        'created': True,
-        'driver': None,
-        'prepared': None,
-    }
+def test_get_data_loads_existing_state_file(_instance, molecule_data, config_instance):
+    data = {'converged': False, 'created': True, 'driver': None, 'prepared': None}
     util.write_file(_instance._state_file, util.safe_dump(data))
 
     s = state.State(config_instance)

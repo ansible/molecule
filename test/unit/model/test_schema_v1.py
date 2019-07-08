@@ -29,8 +29,12 @@ from molecule.model import schema_v1
 @pytest.fixture
 def _molecule_v1_file():
     return os.path.join(
-        os.path.dirname(__file__), os.path.pardir, os.path.pardir, 'resources',
-        'molecule_v1_vagrant.yml')
+        os.path.dirname(__file__),
+        os.path.pardir,
+        os.path.pardir,
+        'resources',
+        'molecule_v1_vagrant.yml',
+    )
 
 
 @pytest.fixture

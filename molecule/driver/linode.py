@@ -98,17 +98,17 @@ class Linode(base.Base):
     def login_cmd_template(self):
         connection_options = ' '.join(self.ssh_connection_options)
 
-        return ('ssh {{address}} '
-                '-l {{user}} '
-                '-p {{port}} '
-                '-i {{identity_file}} '
-                '{}').format(connection_options)
+        return (
+            'ssh {{address}} '
+            '-l {{user}} '
+            '-p {{port}} '
+            '-i {{identity_file}} '
+            '{}'
+        ).format(connection_options)
 
     @property
     def default_safe_files(self):
-        return [
-            self.instance_config,
-        ]
+        return [self.instance_config]
 
     @property
     def default_ssh_connection_options(self):
@@ -130,8 +130,7 @@ class Linode(base.Base):
                 'ansible_ssh_pass': d['ssh_pass'],
                 'ansible_private_key_file': d['identity_file'],
                 'connection': 'ssh',
-                'ansible_ssh_common_args':
-                ' '.join(self.ssh_connection_options),
+                'ansible_ssh_common_args': ' '.join(self.ssh_connection_options),
             }
         except StopIteration:
             return {}
@@ -141,17 +140,22 @@ class Linode(base.Base):
             return {}
 
     def _get_instance_config(self, instance_name):
-        instance_config_dict = util.safe_load_file(
-            self._config.driver.instance_config)
+        instance_config_dict = util.safe_load_file(self._config.driver.instance_config)
 
         return next(
-            item for item in instance_config_dict if any((
-                # NOTE(lwm): Handle both because of transitioning label logic
-                #            https://github.com/ansible/ansible/pull/44719
-                item['instance'] == '{}_{}'.format(item['linode_id'],
-                                                   instance_name),
-                item['instance'] == '{}-{}'.format(item['linode_id'],
-                                                   instance_name))))
+            item
+            for item in instance_config_dict
+            if any(
+                (
+                    # NOTE(lwm): Handle both because of transitioning label logic
+                    #            https://github.com/ansible/ansible/pull/44719
+                    item['instance']
+                    == '{}_{}'.format(item['linode_id'], instance_name),
+                    item['instance']
+                    == '{}-{}'.format(item['linode_id'], instance_name),
+                )
+            )
+        )
 
     def sanity_checks(self):
         # FIXME(decentral1se): Implement sanity checks

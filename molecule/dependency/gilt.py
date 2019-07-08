@@ -91,11 +91,8 @@ class Gilt(base.Base):
         """
         self._sh_command = getattr(sh, self.command)
         self._sh_command = self._sh_command.bake(
-            self.options,
-            'overlay',
-            _env=self.env,
-            _out=LOG.out,
-            _err=LOG.error)
+            self.options, 'overlay', _env=self.env, _out=LOG.out, _err=LOG.error
+        )
 
     def execute(self):
         if not self.enabled:

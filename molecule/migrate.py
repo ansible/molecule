@@ -51,15 +51,15 @@ class Migrate(object):
 
     def dump(self):
         od = self._convert()
-        yaml.add_representer(collections.OrderedDict,
-                             self._get_dict_representer)
+        yaml.add_representer(collections.OrderedDict, self._get_dict_representer)
 
         return yaml.dump(
             od,
             Dumper=MyDumper,
             default_flow_style=False,
             explicit_start=True,
-            line_break=1)
+            line_break=1,
+        )
 
     def _convert(self):
         if self._v1.get('vagrant'):
@@ -74,8 +74,7 @@ class Migrate(object):
         self._set_provisioner()
         self._set_verifier()
 
-        od = collections.OrderedDict(
-            sorted(self._v2.items(), key=lambda t: t[0]))
+        od = collections.OrderedDict(sorted(self._v2.items(), key=lambda t: t[0]))
         errors = schema_v2.validate(self._to_dict(od))
         self._check_errors(errors)
 
@@ -134,16 +133,14 @@ class Migrate(object):
         self._v2['provisioner']['env'] = collections.OrderedDict({})
 
         if ansible.get('raw_env_vars'):
-            self._v2['provisioner']['env'] = self._v1['ansible'][
-                'raw_env_vars']
+            self._v2['provisioner']['env'] = self._v1['ansible']['raw_env_vars']
 
         self._v2['provisioner']['options'] = collections.OrderedDict({})
         self._v2['provisioner']['lint'] = collections.OrderedDict({})
         self._v2['provisioner']['lint']['name'] = 'ansible-lint'
 
         if ansible.get('extra_vars'):
-            self._v2['provisioner']['options']['extra-vars'] = ansible[
-                'extra_vars']
+            self._v2['provisioner']['options']['extra-vars'] = ansible['extra_vars']
 
         if ansible.get('verbose'):
             self._v2['provisioner']['options']['verbose'] = ansible['verbose']
@@ -163,8 +160,7 @@ class Migrate(object):
         self._v2['verifier']['lint']['name'] = 'flake8'
 
         if verifier.get('options', {}).get('sudo'):
-            self._v2['verifier']['options']['sudo'] = verifier['options'][
-                'sudo']
+            self._v2['verifier']['options']['sudo'] = verifier['options']['sudo']
 
     def _get_dict_representer(self, dumper, data):
         return dumper.represent_dict(data.items())
@@ -177,24 +173,17 @@ class Migrate(object):
         return d
 
     def _get_config(self):
-        d = collections.OrderedDict({
-            'dependency': {
-                'name': 'galaxy',
-            },
-            'driver': {
-                'name': 'vagrant',
-                'provider': collections.OrderedDict({}),
-            },
-            'lint': {
-                'name': 'yamllint',
-            },
-            'provisioner': collections.OrderedDict({}),
-            'platforms': [],
-            'scenario': {
-                'name': 'default',
-            },
-            'verifier': collections.OrderedDict({}),
-        })
+        d = collections.OrderedDict(
+            {
+                'dependency': {'name': 'galaxy'},
+                'driver': {'name': 'vagrant', 'provider': collections.OrderedDict({})},
+                'lint': {'name': 'yamllint'},
+                'provisioner': collections.OrderedDict({}),
+                'platforms': [],
+                'scenario': {'name': 'default'},
+                'verifier': collections.OrderedDict({}),
+            }
+        )
 
         return d
 

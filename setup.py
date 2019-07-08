@@ -26,6 +26,7 @@ import setuptools
 HAS_DIST_INFO_CMD = False
 try:
     import setuptools.command.dist_info
+
     HAS_DIST_INFO_CMD = True
 except ImportError:
     """Setuptools version is too old."""
@@ -38,9 +39,7 @@ MIN_NATIVE_SETUPTOOLS_VERSION = 34, 4, 0
 RUNTIME_SETUPTOOLS_VERSION = tuple(map(int, setuptools.__version__.split('.')))
 """Setuptools imported now."""
 
-READ_CONFIG_SHIM_NEEDED = (
-    RUNTIME_SETUPTOOLS_VERSION < MIN_NATIVE_SETUPTOOLS_VERSION
-)
+READ_CONFIG_SHIM_NEEDED = RUNTIME_SETUPTOOLS_VERSION < MIN_NATIVE_SETUPTOOLS_VERSION
 
 
 def str_if_nested_or_str(s):
@@ -49,17 +48,14 @@ def str_if_nested_or_str(s):
         return str(s)
     if isinstance(s, (list, tuple)):
         return type(s)(map(str_if_nested_or_str, s))
-    if isinstance(s, (dict, )):
+    if isinstance(s, (dict,)):
         return stringify_dict_contents(s)
     return s
 
 
 def stringify_dict_contents(dct):
     """Turn dict keys and values into native strings."""
-    return {
-        str_if_nested_or_str(k): str_if_nested_or_str(v)
-        for k, v in dct.items()
-    }
+    return {str_if_nested_or_str(k): str_if_nested_or_str(v) for k, v in dct.items()}
 
 
 if not READ_CONFIG_SHIM_NEEDED:
@@ -102,13 +98,13 @@ else:
             def chi(self, *args, **kwargs):
                 i(self, *args, **kwargs)
                 self.sections = {
-                    s: v for s, v in self.sections.items()
-                    if s != 'packages.find'
+                    s: v for s, v in self.sections.items() if s != 'packages.find'
                 }
+
             return chi
 
         setuptools.config.ConfigHandler.__init__ = filter_out_unknown_section(
-            setuptools.config.ConfigHandler.__init__,
+            setuptools.config.ConfigHandler.__init__
         )
     except ImportError:
         pass
@@ -130,24 +126,28 @@ else:
                 return s(**attrs)
             finally:
                 warnings.resetwarnings()
+
         return sw
 
     def parse_predicates(python_requires):
         import itertools
         import operator
-        sorted_operators_map = tuple(sorted(
-            {
-                '>': operator.gt,
-                '<': operator.lt,
-                '>=': operator.ge,
-                '<=': operator.le,
-                '==': operator.eq,
-                '!=': operator.ne,
-                '': operator.eq,
-            }.items(),
-            key=lambda i: len(i[0]),
-            reverse=True,
-        ))
+
+        sorted_operators_map = tuple(
+            sorted(
+                {
+                    '>': operator.gt,
+                    '<': operator.lt,
+                    '>=': operator.ge,
+                    '<=': operator.le,
+                    '==': operator.eq,
+                    '!=': operator.ne,
+                    '': operator.eq,
+                }.items(),
+                key=lambda i: len(i[0]),
+                reverse=True,
+            )
+        )
 
         def is_decimal(s):
             return type(u'')(s).isdecimal()
@@ -158,8 +158,7 @@ else:
                 if not c.startswith(op_sign):
                     continue
                 raw_ver = itertools.takewhile(
-                    is_decimal,
-                    c[len(op_sign):].strip().split('.'),
+                    is_decimal, c[len(op_sign) :].strip().split('.')
                 )
                 ver = tuple(map(int, raw_ver))
                 yield op_func, ver
@@ -172,14 +171,12 @@ else:
         python_version = sys.version_info
         preds = parse_predicates(python_requires)
         for op, v in preds:
-            py_ver_slug = python_version[:max(len(v), 3)]
+            py_ver_slug = python_version[: max(len(v), 3)]
             condition_matches = op(py_ver_slug, v)
             if not condition_matches:
                 raise RuntimeError(
-                    "requires Python '{}' but the running Python is {}".
-                    format(
-                        python_requires,
-                        '.'.join(map(str, python_version[:3])),
+                    "requires Python '{}' but the running Python is {}".format(
+                        python_requires, '.'.join(map(str, python_version[:3]))
                     )
                 )
 
@@ -191,6 +188,7 @@ else:
             except RuntimeError as re:
                 sys.exit('{} {!s}'.format(attrs['name'], re))
             return s(**attrs)
+
         return sw
 
     setuptools.setup = ignore_unknown_options(setuptools.setup)
@@ -200,6 +198,7 @@ else:
         from configparser import ConfigParser, NoSectionError
     except ImportError:
         from ConfigParser import ConfigParser, NoSectionError
+
         ConfigParser.read_file = ConfigParser.readfp
 
     def maybe_read_files(d):
@@ -210,7 +209,7 @@ else:
         if not d.startswith(FILE_FUNC_MARKER):
             return d
         descs = []
-        for fname in map(str.strip, str(d[len(FILE_FUNC_MARKER):]).split(',')):
+        for fname in map(str.strip, str(d[len(FILE_FUNC_MARKER) :]).split(',')):
             with io.open(fname, encoding='utf-8') as f:
                 descs.append(f.read())
         return ''.join(descs)
@@ -222,8 +221,10 @@ else:
     def cfg_val_to_dict(v):
         """Turn config val to dict and filter out empty lines."""
         return dict(
-            map(lambda l: list(map(str.strip, l.split('=', 1))),
-                filter(bool, map(str.strip, str(v).strip().splitlines())))
+            map(
+                lambda l: list(map(str.strip, l.split('=', 1))),
+                filter(bool, map(str.strip, str(v).strip().splitlines())),
+            )
         )
 
     def cfg_val_to_primitive(v):
@@ -279,12 +280,10 @@ else:
         for k, v in opt_package_data.items():
             opt['package_data'][k] = cfg_val_to_list(v)
         try:
-            opt_exclude_package_data = dict(
-                cfg.items('options.exclude_package_data'),
-            )
+            opt_exclude_package_data = dict(cfg.items('options.exclude_package_data'))
             if (
-                    not opt_exclude_package_data.get('', '').strip()
-                    and '*' in opt_exclude_package_data
+                not opt_exclude_package_data.get('', '').strip()
+                and '*' in opt_exclude_package_data
             ):
                 opt_exclude_package_data[''] = opt_exclude_package_data['*']
                 del opt_exclude_package_data['*']
@@ -309,14 +308,17 @@ def cut_local_version_on_upload(version):
     """Generate a PEP440 local version if uploading to PyPI."""
     import os
     import setuptools_scm.version  # only present during setup time
+
     IS_PYPI_UPLOAD = os.getenv('PYPI_UPLOAD') == 'true'  # set in tox.ini
     return (
-        '' if IS_PYPI_UPLOAD
+        ''
+        if IS_PYPI_UPLOAD
         else setuptools_scm.version.get_local_node_and_date(version)
     )
 
 
 if HAS_DIST_INFO_CMD:
+
     class patched_dist_info(setuptools.command.dist_info.dist_info):
         def run(self):
             self.egg_base = str_if_nested_or_str(self.egg_base)
@@ -334,13 +336,9 @@ setup_params = dict(setup_params, **declarative_setup_params['metadata'])
 setup_params = dict(setup_params, **declarative_setup_params['options'])
 
 if HAS_DIST_INFO_CMD:
-    setup_params['cmdclass'] = {
-        'dist_info': patched_dist_info,
-    }
+    setup_params['cmdclass'] = {'dist_info': patched_dist_info}
 
-setup_params['use_scm_version'] = {
-    'local_scheme': cut_local_version_on_upload,
-}
+setup_params['use_scm_version'] = {'local_scheme': cut_local_version_on_upload}
 
 # Patch incorrectly decoded package_dir option
 # ``egg_info`` demands native strings failing with unicode under Python 2

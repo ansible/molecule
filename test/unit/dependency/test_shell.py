@@ -31,12 +31,8 @@ def _dependency_section_data():
         'dependency': {
             'name': 'shell',
             'command': 'ls -l -a /tmp',
-            'options': {
-                'foo': 'bar',
-            },
-            'env': {
-                'FOO': 'bar',
-            }
+            'options': {'foo': 'bar'},
+            'env': {'FOO': 'bar'},
         }
     }
 
@@ -45,8 +41,7 @@ def _dependency_section_data():
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.fixture
-def _instance(_dependency_section_data, patched_config_validate,
-              config_instance):
+def _instance(_dependency_section_data, patched_config_validate, config_instance):
     return shell.Shell(config_instance)
 
 
@@ -67,8 +62,7 @@ def test_default_env_property(_instance):
     assert 'MOLECULE_INSTANCE_CONFIG' in _instance.default_env
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
 def test_name_property(_instance):
     assert 'shell' == _instance.name
 
@@ -77,16 +71,14 @@ def test_enabled_property(_instance):
     assert _instance.enabled
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
 def test_options_property(_instance):
     x = {'foo': 'bar'}
 
     assert x == _instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
 def test_options_property_handles_cli_args(_instance):
     _instance._config.args = {}
     x = {'foo': 'bar'}
@@ -94,23 +86,16 @@ def test_options_property_handles_cli_args(_instance):
     assert x == _instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
 def test_env_property(_instance):
     assert 'bar' == _instance.env['FOO']
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
 def test_bake(_instance):
     _instance.bake()
 
-    x = [
-        str(sh.ls),
-        '-l',
-        '-a',
-        '/tmp',
-    ]
+    x = [str(sh.ls), '-l', '-a', '/tmp']
     result = str(_instance._sh_command).split()
 
     assert sorted(x) == sorted(result)
@@ -127,7 +112,8 @@ def test_execute(patched_run_command, patched_logger_success, _instance):
 
 
 def test_execute_does_not_execute_when_disabled(
-        patched_run_command, patched_logger_warn, _instance):
+    patched_run_command, patched_logger_warn, _instance
+):
     _instance._config.config['dependency']['enabled'] = False
     _instance.execute()
 
@@ -137,8 +123,7 @@ def test_execute_does_not_execute_when_disabled(
     patched_logger_warn.assert_called_once_with(msg)
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
 def test_execute_bakes(patched_run_command, _instance):
     _instance.execute()
     assert _instance._sh_command is not None
@@ -146,10 +131,8 @@ def test_execute_bakes(patched_run_command, _instance):
     assert 1 == patched_run_command.call_count
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_dependency_section_data'], indirect=True)
-def test_executes_catches_and_exits_return_code(patched_run_command,
-                                                _instance):
+@pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
+def test_executes_catches_and_exits_return_code(patched_run_command, _instance):
     patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.ls, b'', b'')
     with pytest.raises(SystemExit) as e:
         _instance.execute()

@@ -31,15 +31,17 @@ def _patched_create_setup(mocker):
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-def test_execute(mocker, patched_logger_info, command_patched_ansible_create,
-                 patched_config_validate, config_instance):
+def test_execute(
+    mocker,
+    patched_logger_info,
+    command_patched_ansible_create,
+    patched_config_validate,
+    config_instance,
+):
     c = create.Create(config_instance)
     c.execute()
 
-    x = [
-        mocker.call("Scenario: 'default'"),
-        mocker.call("Action: 'create'"),
-    ]
+    x = [mocker.call("Scenario: 'default'"), mocker.call("Action: 'create'")]
     assert x == patched_logger_info.mock_calls
 
     assert 'docker' == config_instance.state.driver
@@ -50,11 +52,14 @@ def test_execute(mocker, patched_logger_info, command_patched_ansible_create,
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['command_driver_delegated_section_data'],
-    indirect=True)
+    'config_instance', ['command_driver_delegated_section_data'], indirect=True
+)
 def test_execute_skips_when_delegated_driver(
-        _patched_create_setup, patched_logger_warn,
-        command_patched_ansible_create, config_instance):
+    _patched_create_setup,
+    patched_logger_warn,
+    command_patched_ansible_create,
+    config_instance,
+):
     c = create.Create(config_instance)
     c.execute()
 
@@ -65,7 +70,8 @@ def test_execute_skips_when_delegated_driver(
 
 
 def test_execute_skips_when_instances_already_created(
-        patched_logger_warn, command_patched_ansible_create, config_instance):
+    patched_logger_warn, command_patched_ansible_create, config_instance
+):
     config_instance.state.change_state('created', True)
     c = create.Create(config_instance)
     c.execute()

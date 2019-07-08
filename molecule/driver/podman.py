@@ -156,19 +156,18 @@ class Podman(base.Base):
 
     @property
     def login_cmd_template(self):
-        return ('podman exec '
-                '-e COLUMNS={columns} '
-                '-e LINES={lines} '
-                '-e TERM=bash '
-                '-e TERM=xterm '
-                '-ti {instance} bash')
+        return (
+            'podman exec '
+            '-e COLUMNS={columns} '
+            '-e LINES={lines} '
+            '-e TERM=bash '
+            '-e TERM=xterm '
+            '-ti {instance} bash'
+        )
 
     @property
     def default_safe_files(self):
-        return [
-            os.path.join(self._config.scenario.ephemeral_directory,
-                         'Dockerfile')
-        ]
+        return [os.path.join(self._config.scenario.ephemeral_directory, 'Dockerfile')]
 
     @property
     def default_ssh_connection_options(self):

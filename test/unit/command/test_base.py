@@ -62,8 +62,7 @@ def _patched_write_config(mocker):
 
 @pytest.fixture
 def _patched_manage_inventory(mocker):
-    return mocker.patch(
-        'molecule.provisioner.ansible.Ansible.manage_inventory')
+    return mocker.patch('molecule.provisioner.ansible.Ansible.manage_inventory')
 
 
 @pytest.fixture
@@ -101,25 +100,27 @@ def test_init_calls_setup(_patched_base_setup, _instance):
 
 def test_print_info(mocker, patched_logger_info, _instance):
     _instance.print_info()
-    x = [
-        mocker.call("Scenario: 'default'"),
-        mocker.call("Action: 'extended_base'"),
-    ]
+    x = [mocker.call("Scenario: 'default'"), mocker.call("Action: 'extended_base'")]
     assert x == patched_logger_info.mock_calls
 
 
-def test_setup(mocker, patched_add_or_update_vars, _patched_write_config,
-               _patched_manage_inventory, _instance):
+def test_setup(
+    mocker,
+    patched_add_or_update_vars,
+    _patched_write_config,
+    _patched_manage_inventory,
+    _instance,
+):
 
-    assert os.path.isdir(
-        os.path.dirname(_instance._config.provisioner.inventory_file))
+    assert os.path.isdir(os.path.dirname(_instance._config.provisioner.inventory_file))
 
     _patched_manage_inventory.assert_called_once_with()
     _patched_write_config.assert_called_once_with()
 
 
-def test_execute_cmdline_scenarios(config_instance, _patched_print_matrix,
-                                   _patched_execute_scenario):
+def test_execute_cmdline_scenarios(
+    config_instance, _patched_print_matrix, _patched_execute_scenario
+):
     # Ensure execute_cmdline_scenarios runs normally:
     # - scenarios.print_matrix is called, which also indicates Scenarios
     #   was instantiated correctly
@@ -127,10 +128,7 @@ def test_execute_cmdline_scenarios(config_instance, _patched_print_matrix,
     #   loops over Scenarios.
     scenario_name = None
     args = {}
-    command_args = {
-        'destroy': 'always',
-        'subcommand': 'test',
-    }
+    command_args = {'destroy': 'always', 'subcommand': 'test'}
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
 
     assert _patched_print_matrix.called_once_with()
@@ -138,8 +136,12 @@ def test_execute_cmdline_scenarios(config_instance, _patched_print_matrix,
 
 
 def test_execute_cmdline_scenarios_destroy(
-        config_instance, _patched_execute_scenario, _patched_prune,
-        _patched_execute_subcommand, _patched_sysexit):
+    config_instance,
+    _patched_execute_scenario,
+    _patched_prune,
+    _patched_execute_subcommand,
+    _patched_sysexit,
+):
     # Ensure execute_cmdline_scenarios handles errors correctly when 'destroy'
     # is 'always':
     # - cleanup and destroy subcommands are run when execute_scenario
@@ -147,10 +149,7 @@ def test_execute_cmdline_scenarios_destroy(
     # - scenario is pruned
     scenario_name = 'default'
     args = {}
-    command_args = {
-        'destroy': 'always',
-        'subcommand': 'test',
-    }
+    command_args = {'destroy': 'always', 'subcommand': 'test'}
     _patched_execute_scenario.side_effect = SystemExit()
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
@@ -164,9 +163,9 @@ def test_execute_cmdline_scenarios_destroy(
     assert _patched_sysexit.called
 
 
-def test_execute_cmdline_scenarios_nodestroy(config_instance,
-                                             _patched_execute_scenario,
-                                             _patched_prune, _patched_sysexit):
+def test_execute_cmdline_scenarios_nodestroy(
+    config_instance, _patched_execute_scenario, _patched_prune, _patched_sysexit
+):
     # Ensure execute_cmdline_scenarios handles errors correctly when 'destroy'
     # is 'always':
     # - destroy subcommand is not run when execute_scenario raises SystemExit
@@ -174,10 +173,7 @@ def test_execute_cmdline_scenarios_nodestroy(config_instance,
     # - caught SystemExit is reraised
     scenario_name = 'default'
     args = {}
-    command_args = {
-        'destroy': 'never',
-        'subcommand': 'test',
-    }
+    command_args = {'destroy': 'never', 'subcommand': 'test'}
 
     _patched_execute_scenario.side_effect = SystemExit()
 
@@ -257,8 +253,9 @@ def test_verify_configs_raises_with_no_configs(patched_logger_critical):
     patched_logger_critical.assert_called_once_with(msg)
 
 
-def test_verify_configs_raises_with_duplicate_configs(patched_logger_critical,
-                                                      config_instance):
+def test_verify_configs_raises_with_duplicate_configs(
+    patched_logger_critical, config_instance
+):
     with pytest.raises(SystemExit) as e:
         configs = [config_instance, config_instance]
         base._verify_configs(configs)

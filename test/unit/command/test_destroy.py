@@ -36,15 +36,17 @@ def _patched_destroy_setup(mocker):
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-def test_execute(mocker, patched_logger_info, patched_config_validate,
-                 _patched_ansible_destroy, config_instance):
+def test_execute(
+    mocker,
+    patched_logger_info,
+    patched_config_validate,
+    _patched_ansible_destroy,
+    config_instance,
+):
     d = destroy.Destroy(config_instance)
     d.execute()
 
-    x = [
-        mocker.call("Scenario: 'default'"),
-        mocker.call("Action: 'destroy'"),
-    ]
+    x = [mocker.call("Scenario: 'default'"), mocker.call("Action: 'destroy'")]
     assert x == patched_logger_info.mock_calls
 
     _patched_ansible_destroy.assert_called_once_with()
@@ -54,11 +56,14 @@ def test_execute(mocker, patched_logger_info, patched_config_validate,
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['command_driver_delegated_section_data'],
-    indirect=True)
+    'config_instance', ['command_driver_delegated_section_data'], indirect=True
+)
 def test_execute_skips_when_destroy_strategy_is_never(
-        _patched_destroy_setup, patched_logger_warn, _patched_ansible_destroy,
-        config_instance):
+    _patched_destroy_setup,
+    patched_logger_warn,
+    _patched_ansible_destroy,
+    config_instance,
+):
     config_instance.command_args = {'destroy': 'never'}
 
     d = destroy.Destroy(config_instance)
@@ -71,11 +76,14 @@ def test_execute_skips_when_destroy_strategy_is_never(
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['command_driver_delegated_section_data'],
-    indirect=True)
+    'config_instance', ['command_driver_delegated_section_data'], indirect=True
+)
 def test_execute_skips_when_delegated_driver(
-        _patched_destroy_setup, patched_logger_warn, _patched_ansible_destroy,
-        config_instance):
+    _patched_destroy_setup,
+    patched_logger_warn,
+    _patched_ansible_destroy,
+    config_instance,
+):
     d = destroy.Destroy(config_instance)
     d.execute()
 

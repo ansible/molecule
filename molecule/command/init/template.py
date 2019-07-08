@@ -59,14 +59,13 @@ class Template(base.Base):
         LOG.info(msg)
 
         if os.path.isdir(role_name):
-            msg = ('The directory {} exists. '
-                   'Cannot create new role.').format(role_name)
+            msg = ('The directory {} exists. ' 'Cannot create new role.').format(
+                role_name
+            )
             util.sysexit_with_message(msg)
 
         cookiecutter.main.cookiecutter(
-            url,
-            extra_context=self._command_args,
-            no_input=no_input,
+            url, extra_context=self._command_args, no_input=no_input
         )
 
         role_directory = os.path.join(os.getcwd(), role_name)
@@ -77,19 +76,19 @@ class Template(base.Base):
 @click.command()
 @click.pass_context
 @click.option(
-    '--url',
-    required=True,
-    help='URL to the Cookiecutter templates repository.')
+    '--url', required=True, help='URL to the Cookiecutter templates repository.'
+)
 @click.option(
     '--no-input/--input',
     default=False,
-    help=('Do not prompt for parameters and only use cookiecutter.json for '
-          'content. (false)'))
+    help=(
+        'Do not prompt for parameters and only use cookiecutter.json for '
+        'content. (false)'
+    ),
+)
 @click.option(
-    '--role-name',
-    '-r',
-    default='role_name',
-    help='Name of the role to create.')
+    '--role-name', '-r', default='role_name', help='Name of the role to create.'
+)
 def template(ctx, url, no_input, role_name):  # pragma: no cover
     """ Initialize a new role from a Cookiecutter URL. """
     command_args = {

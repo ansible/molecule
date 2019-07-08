@@ -22,11 +22,14 @@ import collections
 
 
 def get_status():
-    return collections.namedtuple('Status', [
-        'instance_name',
-        'driver_name',
-        'provisioner_name',
-        'scenario_name',
-        'created',
-        'converged',
-    ])
+    return collections.namedtuple(
+        'Status',
+        [
+            'instance_name',
+            'driver_name',
+            'provisioner_name',
+            'scenario_name',
+            'created',
+            'converged',
+        ],
+    )

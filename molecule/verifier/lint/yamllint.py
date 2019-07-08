@@ -85,9 +85,7 @@ class Yamllint(base.Base):
 
     @property
     def default_options(self):
-        return {
-            's': True,
-        }
+        return {'s': True}
 
     @property
     def default_env(self):
@@ -100,11 +98,8 @@ class Yamllint(base.Base):
         :return: None
         """
         self._yamllint_command = sh.yamllint.bake(
-            self.options,
-            self._tests,
-            _env=self.env,
-            _out=LOG.out,
-            _err=LOG.error)
+            self.options, self._tests, _env=self.env, _out=LOG.out, _err=LOG.error
+        )
 
     def execute(self):
         if not self.enabled:
@@ -121,7 +116,8 @@ class Yamllint(base.Base):
             self.bake()
 
         msg = 'Executing Yamllint on files found in {}/...'.format(
-            self._config.verifier.directory)
+            self._config.verifier.directory
+        )
         LOG.info(msg)
 
         try:
@@ -138,6 +134,6 @@ class Yamllint(base.Base):
         :return: list
         """
         return [
-            filename for filename in util.os_walk(
-                self._config.verifier.directory, 'test_*.yml')
+            filename
+            for filename in util.os_walk(self._config.verifier.directory, 'test_*.yml')
         ]

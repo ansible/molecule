@@ -20,12 +20,8 @@ def _verifier_section_data():
     return {
         'verifier': {
             'name': 'ansible',
-            'env': {
-                'FOO': 'bar',
-            },
-            'lint': {
-                'name': 'ansible-lint',
-            },
+            'env': {'FOO': 'bar'},
+            'lint': {'name': 'ansible-lint'},
         }
     }
 
@@ -34,8 +30,7 @@ def _verifier_section_data():
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.fixture
-def _instance(_verifier_section_data, patched_config_validate,
-              config_instance):
+def _instance(_verifier_section_data, patched_config_validate, config_instance):
     return ansible.Ansible(config_instance)
 
 
@@ -54,14 +49,12 @@ def test_default_env_property(_instance):
     assert 'MOLECULE_INSTANCE_CONFIG' in _instance.default_env
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_verifier_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_verifier_section_data'], indirect=True)
 def test_env_property(_instance):
     assert 'bar' == _instance.env['FOO']
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_verifier_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_verifier_section_data'], indirect=True)
 def test_lint_property(_instance):
     assert isinstance(_instance.lint, ansible_lint.AnsibleLint)
 
@@ -80,27 +73,24 @@ def test_directory_property(_instance):
     assert 'tests' == parts[-1]
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_verifier_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_verifier_section_data'], indirect=True)
 def test_options_property(_instance):
     x = {}
 
     assert x == _instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_verifier_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_verifier_section_data'], indirect=True)
 def test_options_property_handles_cli_args(_instance):
-    _instance._config.args = {
-        'debug': True,
-    }
+    _instance._config.args = {'debug': True}
     x = {}
 
     assert x == _instance.options
 
 
-def test_execute(patched_logger_info, _patched_ansible_verify,
-                 patched_logger_success, _instance):
+def test_execute(
+    patched_logger_info, _patched_ansible_verify, patched_logger_success, _instance
+):
     _instance.execute()
 
     _patched_ansible_verify.assert_called_once_with()
@@ -112,8 +102,9 @@ def test_execute(patched_logger_info, _patched_ansible_verify,
     patched_logger_success.assert_called_once_with(msg)
 
 
-def test_execute_does_not_execute(patched_ansible_converge,
-                                  patched_logger_warn, _instance):
+def test_execute_does_not_execute(
+    patched_ansible_converge, patched_logger_warn, _instance
+):
     _instance._config.config['verifier']['enabled'] = False
     _instance.execute()
 

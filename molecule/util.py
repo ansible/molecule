@@ -44,13 +44,21 @@ class SafeDumper(yaml.SafeDumper):
 def print_debug(title, data):
     title = 'DEBUG: {}'.format(title)
     title = [
-        colorama.Back.WHITE, colorama.Style.BRIGHT, colorama.Fore.BLACK, title,
-        colorama.Fore.RESET, colorama.Back.RESET, colorama.Style.RESET_ALL
+        colorama.Back.WHITE,
+        colorama.Style.BRIGHT,
+        colorama.Fore.BLACK,
+        title,
+        colorama.Fore.RESET,
+        colorama.Back.RESET,
+        colorama.Style.RESET_ALL,
     ]
     print(''.join(title))
     data = [
-        colorama.Fore.BLACK, colorama.Style.BRIGHT, data,
-        colorama.Style.RESET_ALL, colorama.Fore.RESET
+        colorama.Fore.BLACK,
+        colorama.Style.BRIGHT,
+        data,
+        colorama.Style.RESET_ALL,
+        colorama.Fore.RESET,
     ]
     print(''.join(data))
 
@@ -72,8 +80,9 @@ def print_environment_vars(env):
     combined_env = ansible_env.copy()
     combined_env.update(molecule_env)
     print_debug(
-        'SHELL REPLAY', " ".join(
-            ["{}={}".format(k, v) for (k, v) in sorted(combined_env.items())]))
+        'SHELL REPLAY',
+        " ".join(["{}={}".format(k, v) for (k, v) in sorted(combined_env.items())]),
+    )
     print()
 
 
@@ -163,7 +172,8 @@ def safe_dump(data):
     # yaml.dump(data) produces the document as a str object in both python
     # 2 and 3.
     return yaml.dump(
-        data, Dumper=SafeDumper, default_flow_style=False, explicit_start=True)
+        data, Dumper=SafeDumper, default_flow_style=False, explicit_start=True
+    )
 
 
 def safe_load(string):

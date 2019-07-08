@@ -38,7 +38,7 @@ def test_config_private_member(_instance):
 def test_testinfra_options_property(_instance):
     assert {
         'connection': 'ansible',
-        'ansible-inventory': _instance._config.provisioner.inventory_file
+        'ansible-inventory': _instance._config.provisioner.inventory_file,
     } == _instance.testinfra_options
 
 
@@ -87,8 +87,9 @@ def test_ansible_connection_options(_instance):
 
 
 def test_instance_config_property(_instance):
-    x = os.path.join(_instance._config.scenario.ephemeral_directory,
-                     'instance_config.yml')
+    x = os.path.join(
+        _instance._config.scenario.ephemeral_directory, 'instance_config.yml'
+    )
 
     assert x == _instance.instance_config
 

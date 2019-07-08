@@ -53,7 +53,8 @@ class AnsiblePlaybooks(object):
         c = self._config.config
 
         return self._config.provisioner.abs_path(
-            c['provisioner']['playbooks']['converge'])
+            c['provisioner']['playbooks']['converge']
+        )
 
     @property
     def destroy(self):
@@ -73,12 +74,12 @@ class AnsiblePlaybooks(object):
 
     def _get_playbook_directory(self):
         return util.abs_path(
-            os.path.join(self._config.provisioner.directory, 'playbooks'))
+            os.path.join(self._config.provisioner.directory, 'playbooks')
+        )
 
     def _get_playbook(self, section):
         c = self._config.config
-        driver_dict = c['provisioner']['playbooks'].get(
-            self._config.driver.name)
+        driver_dict = c['provisioner']['playbooks'].get(self._config.driver.name)
 
         playbook = c['provisioner']['playbooks'][section]
         if driver_dict:
@@ -97,5 +98,7 @@ class AnsiblePlaybooks(object):
 
     def _get_bundled_driver_playbook(self, section):
         return os.path.join(
-            self._get_playbook_directory(), self._config.driver.name,
-            self._config.config['provisioner']['playbooks'][section])
+            self._get_playbook_directory(),
+            self._config.driver.name,
+            self._config.config['provisioner']['playbooks'][section],
+        )

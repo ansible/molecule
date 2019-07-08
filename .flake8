@@ -2,4 +2,7 @@
 # do not add excludes for files in repo
 exclude = .venv/,.tox/,dist/,build/,.eggs/
 format = pylint
-ignore = E741,W503,W504,H
+# E203: https://github.com/python/black/issues/315
+ignore = E741,W503,W504,H,E501,E203
+# 88 is official black default:
+max-line-length = 88
