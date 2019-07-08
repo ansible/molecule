@@ -761,8 +761,7 @@ def test_command_syntax(scenario_to_test, with_scenario, scenario_name):
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
 )
-def test_command_test(scenario_to_test, with_scenario, scenario_name,
-                      driver_name):
+def test_command_test(scenario_to_test, with_scenario, scenario_name, driver_name):
     pytest.helpers.test(driver_name, scenario_name, parallel=True)
 
 

@@ -9,8 +9,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 
 
 def test_hostname(host):
-    assert re.search(r'delegated-instance-docker.*',
-                     host.check_output('hostname -s'))
+    assert re.search(r'delegated-instance-docker.*', host.check_output('hostname -s'))
 
 
 def test_etc_molecule_directory(host):
