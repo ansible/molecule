@@ -25,6 +25,8 @@ provisioner:
     destroy: ../../../../../resources/playbooks/docker/destroy.yml
   env:
     ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
+    # keep this here to test that we convert integers to strings:
+    SOME_VALUE_AS_INFO: 1
   lint:
     name: ansible-lint
 scenario:

@@ -492,6 +492,8 @@ class Ansible(base.Base):
     def env(self):
         default_env = self.default_env
         env = self._config.config['provisioner']['env'].copy()
+        # ensure that all keys and values are strings
+        env = {str(k): str(v) for k, v in env.items()}
 
         roles_path = default_env['ANSIBLE_ROLES_PATH']
         library_path = default_env['ANSIBLE_LIBRARY']
