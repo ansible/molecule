@@ -1,5 +1,4 @@
 ---
-# Note(decentral1se): avoid network access when local path install supported
 - name: timezone
   src: yatesr.timezone
   version: 1.1.0

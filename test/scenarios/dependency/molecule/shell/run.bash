@@ -2,7 +2,6 @@
 
 set -e
 
-# Note(decentral1se): avoid network access when local path install supported
 ansible-galaxy install \
 	-vvv \
 	--force \

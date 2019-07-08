@@ -111,12 +111,7 @@ class Shell(base.Base):
         if self._sh_command is None:
             self.bake()
 
-        try:
-            util.run_command(self._sh_command, debug=self._config.debug)
-            msg = 'Dependency completed successfully.'
-            LOG.success(msg)
-        except sh.ErrorReturnCode as e:
-            util.sysexit(e.exit_code)
+        self.execute_with_retries()
 
     def _has_command_configured(self):
         return 'command' in self._config.config['dependency']
