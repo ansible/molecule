@@ -21,9 +21,7 @@
 from uuid import uuid4
 import copy
 import functools
-import glob
 import os
-import re
 import shutil
 
 try:
@@ -35,11 +33,6 @@ import pytest
 
 from molecule import util
 from molecule import config
-from molecule.scenario import ephemeral_directory
-
-for d in glob.glob(os.path.join(ephemeral_directory('molecule'), '*')):
-    if re.search('[A-Z]{5}$', d):
-        shutil.rmtree(d)
 
 
 @pytest.helpers.register
