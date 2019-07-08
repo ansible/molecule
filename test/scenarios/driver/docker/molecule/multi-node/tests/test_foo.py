@@ -4,11 +4,12 @@ import re
 import testinfra.utils.ansible_runner
 
 testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
-    os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('foo')
+    os.environ['MOLECULE_INVENTORY_FILE']
+).get_hosts('foo')
 
 
 def test_hostname(host):
-    assert re.search(r'instance-[12]', host.check_output('hostname -s'))
+    assert re.search(r'instance-[12].*', host.check_output('hostname -s'))
 
 
 def test_etc_molecule_directory(host):

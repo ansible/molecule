@@ -29,8 +29,9 @@ from molecule.dependency import ansible_galaxy
 
 @pytest.fixture
 def _patched_ansible_galaxy_has_requirements_file(mocker):
-    m = mocker.patch(('molecule.dependency.ansible_galaxy.'
-                      'AnsibleGalaxy._has_requirements_file'))
+    m = mocker.patch(
+        ('molecule.dependency.ansible_galaxy.' 'AnsibleGalaxy._has_requirements_file')
+    )
     m.return_value = True
 
     return m
@@ -41,13 +42,8 @@ def _dependency_section_data():
     return {
         'dependency': {
             'name': 'galaxy',
-            'options': {
-                'foo': 'bar',
-                'v': True,
-            },
-            'env': {
-                'FOO': 'bar',
-            }
+            'options': {'foo': 'bar', 'v': True},
+            'env': {'FOO': 'bar'},
         }
     }
 
@@ -56,21 +52,18 @@ def _dependency_section_data():
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.fixture
-def _instance(_dependency_section_data, patched_config_validate,
-              config_instance):
+def _instance(_dependency_section_data, patched_config_validate, config_instance):
     return ansible_galaxy.AnsibleGalaxy(config_instance)
 
 
 @pytest.fixture
 def role_file(_instance):
-    return os.path.join(_instance._config.scenario.directory,
-                        'requirements.yml')
+    return os.path.join(_instance._config.scenario.directory, 'requirements.yml')
 
 
 @pytest.fixture
 def roles_path(_instance):
-    return os.path.join(_instance._config.scenario.ephemeral_directory,
-                        'roles')
+    return os.path.join(_instance._config.scenario.ephemeral_directory, 'roles')
 
 
 def test_config_private_member(_instance):
@@ -100,8 +93,7 @@ def test_enabled_property(_instance):
     assert _instance.enabled
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
 def test_options_property(_instance, role_file, roles_path):
     x = {
         'force': True,
@@ -114,8 +106,7 @@ def test_options_property(_instance, role_file, roles_path):
     assert x == _instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
 def test_options_property_handles_cli_args(role_file, roles_path, _instance):
     _instance._config.args = {'debug': True}
     x = {
@@ -129,33 +120,40 @@ def test_options_property_handles_cli_args(role_file, roles_path, _instance):
     assert x == _instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
 def test_env_property(_instance):
     assert 'bar' == _instance.env['FOO']
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
 def test_bake(_instance, role_file, roles_path):
     _instance.bake()
     x = [
-        str(sh.ansible_galaxy), 'install', '--role-file={}'.format(role_file),
-        '--roles-path={}'.format(roles_path), '--force', '--foo=bar', '-v'
+        str(sh.ansible_galaxy),
+        'install',
+        '--role-file={}'.format(role_file),
+        '--roles-path={}'.format(roles_path),
+        '--force',
+        '--foo=bar',
+        '-v',
     ]
     result = str(_instance._sh_command).split()
 
     assert sorted(x) == sorted(result)
 
 
-def test_execute(patched_run_command,
-                 _patched_ansible_galaxy_has_requirements_file,
-                 patched_logger_success, _instance):
+def test_execute(
+    patched_run_command,
+    _patched_ansible_galaxy_has_requirements_file,
+    patched_logger_success,
+    _instance,
+):
     _instance._sh_command = 'patched-command'
     _instance.execute()
 
-    role_directory = os.path.join(_instance._config.scenario.directory,
-                                  _instance.options['roles-path'])
+    role_directory = os.path.join(
+        _instance._config.scenario.directory, _instance.options['roles-path']
+    )
     assert os.path.isdir(role_directory)
 
     patched_run_command.assert_called_once_with('patched-command', debug=False)
@@ -165,7 +163,8 @@ def test_execute(patched_run_command,
 
 
 def test_execute_does_not_execute_when_disabled(
-        patched_run_command, patched_logger_warn, _instance):
+    patched_run_command, patched_logger_warn, _instance
+):
     _instance._config.config['dependency']['enabled'] = False
     _instance.execute()
 
@@ -176,8 +175,11 @@ def test_execute_does_not_execute_when_disabled(
 
 
 def test_execute_does_not_execute_when_no_requirements_file(
-        patched_run_command, _patched_ansible_galaxy_has_requirements_file,
-        patched_logger_warn, _instance):
+    patched_run_command,
+    _patched_ansible_galaxy_has_requirements_file,
+    patched_logger_warn,
+    _instance,
+):
     _patched_ansible_galaxy_has_requirements_file.return_value = False
     _instance.execute()
 
@@ -187,9 +189,13 @@ def test_execute_does_not_execute_when_no_requirements_file(
     patched_logger_warn.assert_called_once_with(msg)
 
 
-def test_execute_bakes(patched_run_command, _instance, role_file,
-                       _patched_ansible_galaxy_has_requirements_file,
-                       roles_path):
+def test_execute_bakes(
+    patched_run_command,
+    _instance,
+    role_file,
+    _patched_ansible_galaxy_has_requirements_file,
+    roles_path,
+):
     _instance.execute()
     assert _instance._sh_command is not None
 
@@ -197,10 +203,9 @@ def test_execute_bakes(patched_run_command, _instance, role_file,
 
 
 def test_executes_catches_and_exits_return_code(
-        patched_run_command, _patched_ansible_galaxy_has_requirements_file,
-        _instance):
-    patched_run_command.side_effect = sh.ErrorReturnCode_1(
-        sh.ansible_galaxy, b'', b'')
+    patched_run_command, _patched_ansible_galaxy_has_requirements_file, _instance
+):
+    patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.ansible_galaxy, b'', b'')
     with pytest.raises(SystemExit) as e:
         _instance.execute()
 
@@ -208,8 +213,9 @@ def test_executes_catches_and_exits_return_code(
 
 
 def test_setup(_instance):
-    role_directory = os.path.join(_instance._config.scenario.directory,
-                                  _instance.options['roles-path'])
+    role_directory = os.path.join(
+        _instance._config.scenario.directory, _instance.options['roles-path']
+    )
     assert not os.path.isdir(role_directory)
 
     _instance._setup()

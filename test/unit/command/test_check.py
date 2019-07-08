@@ -31,15 +31,17 @@ def _patched_ansible_check(mocker):
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-def test_execute(mocker, patched_logger_info, _patched_ansible_check,
-                 patched_config_validate, config_instance):
+def test_execute(
+    mocker,
+    patched_logger_info,
+    _patched_ansible_check,
+    patched_config_validate,
+    config_instance,
+):
     c = check.Check(config_instance)
     c.execute()
 
-    x = [
-        mocker.call("Scenario: 'default'"),
-        mocker.call("Action: 'check'"),
-    ]
+    x = [mocker.call("Scenario: 'default'"), mocker.call("Action: 'check'")]
     assert x == patched_logger_info.mock_calls
 
     _patched_ansible_check.assert_called_once_with()

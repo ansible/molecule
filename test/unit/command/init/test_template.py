@@ -40,8 +40,7 @@ def _instance(_command_args):
     return template.Template(_command_args)
 
 
-def test_execute(temp_dir, _instance, patched_logger_info,
-                 patched_logger_success):
+def test_execute(temp_dir, _instance, patched_logger_info, patched_logger_success):
 
     _instance.execute()
 
@@ -63,5 +62,5 @@ def test_execute_role_exists(temp_dir, _instance, patched_logger_critical):
 
     assert 1 == e.value.code
 
-    msg = ('The directory test-role exists. Cannot create new role.')
+    msg = 'The directory test-role exists. Cannot create new role.'
     patched_logger_critical.assert_called_once_with(msg)

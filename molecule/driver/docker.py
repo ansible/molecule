@@ -170,19 +170,18 @@ class Docker(base.Base):
 
     @property
     def login_cmd_template(self):
-        return ('docker exec '
-                '-e COLUMNS={columns} '
-                '-e LINES={lines} '
-                '-e TERM=bash '
-                '-e TERM=xterm '
-                '-ti {instance} bash')
+        return (
+            'docker exec '
+            '-e COLUMNS={columns} '
+            '-e LINES={lines} '
+            '-e TERM=bash '
+            '-e TERM=xterm '
+            '-ti {instance} bash'
+        )
 
     @property
     def default_safe_files(self):
-        return [
-            os.path.join(self._config.scenario.ephemeral_directory,
-                         'Dockerfile')
-        ]
+        return [os.path.join(self._config.scenario.ephemeral_directory, 'Dockerfile')]
 
     @property
     def default_ssh_connection_options(self):
@@ -210,20 +209,25 @@ class Docker(base.Base):
             from ansible.module_utils.docker_common import HAS_DOCKER_PY
 
         if not HAS_DOCKER_PY:
-            msg = ('Missing Docker driver dependency. Please '
-                   "install via 'molecule[docker]' or refer to "
-                   'your INSTALL.rst driver documentation file')
+            msg = (
+                'Missing Docker driver dependency. Please '
+                "install via 'molecule[docker]' or refer to "
+                'your INSTALL.rst driver documentation file'
+            )
             sysexit_with_message(msg)
 
         try:
             import docker
             import requests
+
             docker_client = docker.from_env()
             docker_client.ping()
         except requests.exceptions.ConnectionError:
-            msg = ('Unable to contact the Docker daemon. '
-                   'Please refer to https://docs.docker.com/config/daemon/ '
-                   'for managing the daemon')
+            msg = (
+                'Unable to contact the Docker daemon. '
+                'Please refer to https://docs.docker.com/config/daemon/ '
+                'for managing the daemon'
+            )
             sysexit_with_message(msg)
 
         self._config.state.change_state('sanity_checked', True)

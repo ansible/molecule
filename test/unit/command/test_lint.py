@@ -25,23 +25,25 @@ from molecule.command import lint
 
 @pytest.fixture
 def _patched_ansible_lint(mocker):
-    return mocker.patch(
-        'molecule.provisioner.lint.ansible_lint.AnsibleLint.execute')
+    return mocker.patch('molecule.provisioner.lint.ansible_lint.AnsibleLint.execute')
 
 
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-def test_execute(mocker, patched_logger_info, patched_yamllint, patched_flake8,
-                 patched_config_validate, _patched_ansible_lint,
-                 config_instance):
+def test_execute(
+    mocker,
+    patched_logger_info,
+    patched_yamllint,
+    patched_flake8,
+    patched_config_validate,
+    _patched_ansible_lint,
+    config_instance,
+):
     l = lint.Lint(config_instance)
     l.execute()
 
-    x = [
-        mocker.call("Scenario: 'default'"),
-        mocker.call("Action: 'lint'"),
-    ]
+    x = [mocker.call("Scenario: 'default'"), mocker.call("Action: 'lint'")]
     assert x == patched_logger_info.mock_calls
 
     patched_yamllint.assert_called_once_with()

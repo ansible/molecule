@@ -83,7 +83,8 @@ class AnsibleLintMixin:
             self._playbook,
             _env=self.env,
             _out=LOG.out,
-            _err=LOG.error)
+            _err=LOG.error,
+        )
 
     def execute(self):
         if not self.enabled:
@@ -98,8 +99,7 @@ class AnsibleLintMixin:
         LOG.info(msg)
 
         try:
-            util.run_command(
-                self._ansible_lint_command, debug=self._config.debug)
+            util.run_command(self._ansible_lint_command, debug=self._config.debug)
             msg = 'Lint completed successfully.'
             LOG.success(msg)
         except sh.ErrorReturnCode as e:

@@ -75,7 +75,8 @@ class Platforms(object):
         """
         if parallelize_platforms:
             config.config['platforms'] = util._parallelize_platforms(
-                config.config, config._run_uuid)
+                config.config, config._run_uuid
+            )
         self._config = config
 
     @property

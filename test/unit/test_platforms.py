@@ -30,16 +30,8 @@ def _instance(config_instance):
 
 def test_instances_property(_instance):
     x = [
-        {
-            'groups': ['foo', 'bar'],
-            'name': 'instance-1',
-            'children': ['child1'],
-        },
-        {
-            'groups': ['baz', 'foo'],
-            'name': 'instance-2',
-            'children': ['child2'],
-        },
+        {'groups': ['foo', 'bar'], 'name': 'instance-1', 'children': ['child1']},
+        {'groups': ['baz', 'foo'], 'name': 'instance-2', 'children': ['child2']},
     ]
 
     assert x == _instance.instances

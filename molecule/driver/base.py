@@ -67,7 +67,7 @@ class Base(object):
         """
         return {
             'connection': 'ansible',
-            'ansible-inventory': self._config.provisioner.inventory_file
+            'ansible-inventory': self._config.provisioner.inventory_file,
         }
 
     @abc.abstractproperty
@@ -138,8 +138,9 @@ class Base(object):
 
     @property
     def instance_config(self):
-        return os.path.join(self._config.scenario.ephemeral_directory,
-                            'instance_config.yml')
+        return os.path.join(
+            self._config.scenario.ephemeral_directory, 'instance_config.yml'
+        )
 
     @property
     def ssh_connection_options(self):
@@ -149,8 +150,7 @@ class Base(object):
 
     @property
     def safe_files(self):
-        return (self.default_safe_files +
-                self._config.config['driver']['safe_files'])
+        return self.default_safe_files + self._config.config['driver']['safe_files']
 
     @property
     def delegated(self):
@@ -199,7 +199,8 @@ class Base(object):
                     scenario_name=scenario_name,
                     created=self._created(),
                     converged=self._converged(),
-                ))
+                )
+            )
 
         return status_list
 

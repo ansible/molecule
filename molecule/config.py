@@ -86,11 +86,7 @@ class Config(object):
     :ref:`root_scenario`, and State_ references.
     """
 
-    def __init__(self,
-                 molecule_file,
-                 args={},
-                 command_args={},
-                 ansible_args=()):
+    def __init__(self, molecule_file, args={}, command_args={}, ansible_args=()):
         """
         Initialize a new config class and returns None.
 
@@ -235,8 +231,7 @@ class Config(object):
     @property
     @util.memoize
     def platforms(self):
-        return platforms.Platforms(
-            self, parallelize_platforms=self.is_parallel)
+        return platforms.Platforms(self, parallelize_platforms=self.is_parallel)
 
     @property
     @util.memoize
@@ -285,9 +280,10 @@ class Config(object):
             driver_name = self.config['driver']['name']
 
         if driver_from_cli and (driver_from_cli != driver_name):
-            msg = ("Instance(s) were created with the '{}' driver, but the "
-                   "subcommand is using '{}' driver.").format(
-                       driver_name, driver_from_cli)
+            msg = (
+                "Instance(s) were created with the '{}' driver, but the "
+                "subcommand is using '{}' driver."
+            ).format(driver_name, driver_from_cli)
             util.sysexit_with_message(msg)
 
         return driver_name
@@ -336,14 +332,14 @@ class Config(object):
                 self._preflight(s)
                 interpolated_config = self._interpolate(s, env, keep_string)
                 defaults = util.merge_dicts(
-                    defaults, util.safe_load(interpolated_config))
+                    defaults, util.safe_load(interpolated_config)
+                )
 
         with util.open_file(self.molecule_file) as stream:
             s = stream.read()
             self._preflight(s)
             interpolated_config = self._interpolate(s, env, keep_string)
-            defaults = util.merge_dicts(defaults,
-                                        util.safe_load(interpolated_config))
+            defaults = util.merge_dicts(defaults, util.safe_load(interpolated_config))
 
         return defaults
 
@@ -355,13 +351,15 @@ class Config(object):
         try:
             return i.interpolate(stream, keep_string)
         except interpolation.InvalidInterpolation as e:
-            msg = ("parsing config file '{}'.\n\n"
-                   '{}\n{}'.format(self.molecule_file, e.place, e.string))
+            msg = "parsing config file '{}'.\n\n" '{}\n{}'.format(
+                self.molecule_file, e.place, e.string
+            )
             util.sysexit_with_message(msg)
 
     def _get_defaults(self):
-        scenario_name = (os.path.basename(os.path.dirname(self.molecule_file))
-                         or 'default')
+        scenario_name = (
+            os.path.basename(os.path.dirname(self.molecule_file)) or 'default'
+        )
         return {
             'dependency': {
                 'name': 'galaxy',
@@ -372,21 +370,12 @@ class Config(object):
             },
             'driver': {
                 'name': 'docker',
-                'provider': {
-                    'name': None,
-                },
-                'options': {
-                    'managed': True,
-                },
+                'provider': {'name': None},
+                'options': {'managed': True},
                 'ssh_connection_options': [],
                 'safe_files': [],
             },
-            'lint': {
-                'name': 'yamllint',
-                'enabled': True,
-                'options': {},
-                'env': {},
-            },
+            'lint': {'name': 'yamllint', 'enabled': True, 'options': {}, 'env': {}},
             'platforms': [],
             'provisioner': {
                 'name': 'ansible',
@@ -419,8 +408,7 @@ class Config(object):
                 },
             },
             'scenario': {
-                'name':
-                scenario_name,
+                'name': scenario_name,
                 'check_sequence': [
                     'dependency',
                     'cleanup',
@@ -433,22 +421,9 @@ class Config(object):
                     'destroy',
                 ],
                 'cleanup_sequence': ['cleanup'],
-                'converge_sequence': [
-                    'dependency',
-                    'create',
-                    'prepare',
-                    'converge',
-                ],
-                'create_sequence': [
-                    'dependency',
-                    'create',
-                    'prepare',
-                ],
-                'destroy_sequence': [
-                    'dependency',
-                    'cleanup',
-                    'destroy',
-                ],
+                'converge_sequence': ['dependency', 'create', 'prepare', 'converge'],
+                'create_sequence': ['dependency', 'create', 'prepare'],
+                'destroy_sequence': ['dependency', 'cleanup', 'destroy'],
                 'test_sequence': [
                     'lint',
                     'dependency',
@@ -472,12 +447,7 @@ class Config(object):
                 'options': {},
                 'env': {},
                 'additional_files_or_dirs': [],
-                'lint': {
-                    'name': 'flake8',
-                    'enabled': True,
-                    'options': {},
-                    'env': {},
-                },
+                'lint': {'name': 'flake8', 'enabled': True, 'options': {}, 'env': {}},
             },
         }
 

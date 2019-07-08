@@ -30,33 +30,20 @@ def _model_verifier_section_data():
             'name': 'testinfra',
             'enabled': True,
             'directory': 'foo',
-            'options': {
-                'foo': 'bar'
-            },
-            'env': {
-                'FOO': 'foo',
-                'FOO_BAR': 'foo_bar',
-            },
-            'additional_files_or_dirs': [
-                'foo',
-            ],
+            'options': {'foo': 'bar'},
+            'env': {'FOO': 'foo', 'FOO_BAR': 'foo_bar'},
+            'additional_files_or_dirs': ['foo'],
             'lint': {
                 'name': 'flake8',
                 'enabled': True,
-                'options': {
-                    'foo': 'bar',
-                },
-                'env': {
-                    'FOO': 'foo',
-                    'FOO_BAR': 'foo_bar',
-                },
+                'options': {'foo': 'bar'},
+                'env': {'FOO': 'foo', 'FOO_BAR': 'foo_bar'},
             },
         }
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_verifier_section_data'], indirect=True)
+@pytest.mark.parametrize('_config', ['_model_verifier_section_data'], indirect=True)
 def test_verifier(_config):
     assert {} == schema_v2.validate(_config)
 
@@ -69,52 +56,53 @@ def _model_verifier_errors_section_data():
             'enabled': str(),
             'directory': int(),
             'options': [],
-            'env': {
-                'foo': 'foo',
-                'foo-bar': 'foo-bar',
-            },
-            'additional_files_or_dirs': [
-                int(),
-            ],
+            'env': {'foo': 'foo', 'foo-bar': 'foo-bar'},
+            'additional_files_or_dirs': [int()],
             'lint': {
                 'name': int(),
                 'enabled': str(),
                 'options': [],
-                'env': {
-                    'foo': 'foo',
-                    'foo-bar': 'foo-bar',
-                },
+                'env': {'foo': 'foo', 'foo-bar': 'foo-bar'},
             },
         }
     }
 
 
 @pytest.mark.parametrize(
-    '_config', ['_model_verifier_errors_section_data'], indirect=True)
+    '_config', ['_model_verifier_errors_section_data'], indirect=True
+)
 def test_verifier_has_errors(_config):
     x = {
-        'verifier': [{
-            'name': ['must be of string type'],
-            'lint': [{
-                'enabled': ['must be of boolean type'],
+        'verifier': [
+            {
                 'name': ['must be of string type'],
-                'env': [{
-                    'foo': ["value does not match regex '^[A-Z0-9_-]+$'"],
-                    'foo-bar': ["value does not match regex '^[A-Z0-9_-]+$'"],
-                }],
+                'lint': [
+                    {
+                        'enabled': ['must be of boolean type'],
+                        'name': ['must be of string type'],
+                        'env': [
+                            {
+                                'foo': ["value does not match regex '^[A-Z0-9_-]+$'"],
+                                'foo-bar': [
+                                    "value does not match regex '^[A-Z0-9_-]+$'"
+                                ],
+                            }
+                        ],
+                        'options': ['must be of dict type'],
+                    }
+                ],
+                'enabled': ['must be of boolean type'],
+                'env': [
+                    {
+                        'foo': ["value does not match regex '^[A-Z0-9_-]+$'"],
+                        'foo-bar': ["value does not match regex '^[A-Z0-9_-]+$'"],
+                    }
+                ],
+                'directory': ['must be of string type'],
+                'additional_files_or_dirs': [{0: ['must be of string type']}],
                 'options': ['must be of dict type'],
-            }],
-            'enabled': ['must be of boolean type'],
-            'env': [{
-                'foo': ["value does not match regex '^[A-Z0-9_-]+$'"],
-                'foo-bar': ["value does not match regex '^[A-Z0-9_-]+$'"],
-            }],
-            'directory': ['must be of string type'],
-            'additional_files_or_dirs': [{
-                0: ['must be of string type'],
-            }],
-            'options': ['must be of dict type'],
-        }]
+            }
+        ]
     }
 
     assert x == schema_v2.validate(_config)
@@ -122,60 +110,34 @@ def test_verifier_has_errors(_config):
 
 @pytest.fixture
 def _model_verifier_allows_testinfra_section_data():
-    return {
-        'verifier': {
-            'name': 'testinfra',
-            'lint': {
-                'name': 'flake8',
-            },
-        }
-    }
+    return {'verifier': {'name': 'testinfra', 'lint': {'name': 'flake8'}}}
 
 
 @pytest.fixture
 def _model_verifier_allows_inspec_section_data():
-    return {
-        'verifier': {
-            'name': 'inspec',
-            'lint': {
-                'name': 'rubocop',
-            },
-        }
-    }
+    return {'verifier': {'name': 'inspec', 'lint': {'name': 'rubocop'}}}
 
 
 @pytest.fixture
 def _model_verifier_allows_ansible_section_data():
-    return {
-        'verifier': {
-            'name': 'ansible',
-            'lint': {
-                'name': 'ansible-lint',
-            },
-        }
-    }
+    return {'verifier': {'name': 'ansible', 'lint': {'name': 'ansible-lint'}}}
 
 
 @pytest.fixture
 def _model_verifier_allows_goss_section_data():
-    return {
-        'verifier': {
-            'name': 'goss',
-            'lint': {
-                'name': 'yamllint',
-            },
-        }
-    }
+    return {'verifier': {'name': 'goss', 'lint': {'name': 'yamllint'}}}
 
 
 @pytest.mark.parametrize(
-    '_config', [
+    '_config',
+    [
         ('_model_verifier_allows_testinfra_section_data'),
         ('_model_verifier_allows_inspec_section_data'),
         ('_model_verifier_allows_goss_section_data'),
         ('_model_verifier_allows_ansible_section_data'),
     ],
-    indirect=True)
+    indirect=True,
+)
 def test_verifier_allows_name(_config):
     assert {} == schema_v2.validate(_config)
 
@@ -185,12 +147,8 @@ def _model_verifier_errors_inspec_readonly_options_section_data():
     return {
         'verifier': {
             'name': 'inspec',
-            'options': {
-                'foo': 'bar',
-            },
-            'lint': {
-                'name': 'rubocop',
-            },
+            'options': {'foo': 'bar'},
+            'lint': {'name': 'rubocop'},
         }
     }
 
@@ -200,22 +158,20 @@ def _model_verifier_errors_goss_readonly_options_section_data():
     return {
         'verifier': {
             'name': 'goss',
-            'options': {
-                'foo': 'bar',
-            },
-            'lint': {
-                'name': 'yamllint',
-            },
+            'options': {'foo': 'bar'},
+            'lint': {'name': 'yamllint'},
         }
     }
 
 
 @pytest.mark.parametrize(
-    '_config', [
+    '_config',
+    [
         ('_model_verifier_errors_inspec_readonly_options_section_data'),
         ('_model_verifier_errors_goss_readonly_options_section_data'),
     ],
-    indirect=True)
+    indirect=True,
+)
 def test_verifier_errors_readonly_options_section_data(_config):
     x = {'verifier': [{'options': [{'foo': ['field is read-only']}]}]}
 

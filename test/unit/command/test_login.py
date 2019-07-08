@@ -39,8 +39,8 @@ def test_execute(mocker, _instance):
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['command_driver_delegated_managed_section_data'],
-    indirect=True)
+    'config_instance', ['command_driver_delegated_managed_section_data'], indirect=True
+)
 def test_execute_raises_when_not_created(patched_logger_critical, _instance):
     _instance._config.state.change_state('created', False)
 
@@ -61,8 +61,10 @@ def test_get_hostname_does_not_match(patched_logger_critical, _instance):
 
     assert 1 == e.value.code
 
-    msg = ("There are no hosts that match 'invalid'.  You "
-           'can only login to valid hosts.')
+    msg = (
+        "There are no hosts that match 'invalid'.  You "
+        'can only login to valid hosts.'
+    )
     patched_logger_critical.assert_called_once_with(msg)
 
 
@@ -95,7 +97,8 @@ def test_get_hostname_partial_match_with_multiple_hosts(_instance):
 
 
 def test_get_hostname_partial_match_with_multiple_hosts_raises(
-        patched_logger_critical, _instance):
+    patched_logger_critical, _instance
+):
     _instance._config.command_args = {'host': 'inst'}
     hosts = ['instance-1', 'instance-2']
     with pytest.raises(SystemExit) as e:
@@ -103,11 +106,13 @@ def test_get_hostname_partial_match_with_multiple_hosts_raises(
 
     assert 1 == e.value.code
 
-    msg = ("There are 2 hosts that match 'inst'. "
-           'You can only login to one at a time.\n\n'
-           'Available hosts:\n'
-           'instance-1\n'
-           'instance-2')
+    msg = (
+        "There are 2 hosts that match 'inst'. "
+        'You can only login to one at a time.\n\n'
+        'Available hosts:\n'
+        'instance-1\n'
+        'instance-2'
+    )
     patched_logger_critical.assert_called_once_with(msg)
 
 
@@ -120,7 +125,8 @@ def test_get_hostname_no_host_flag_specified_on_cli(_instance):
 
 
 def test_get_hostname_no_host_flag_specified_on_cli_with_multiple_hosts_raises(
-        patched_logger_critical, _instance):
+    patched_logger_critical, _instance
+):
     _instance._config.command_args = {}
     hosts = ['instance-1', 'instance-2']
     with pytest.raises(SystemExit) as e:
@@ -128,9 +134,11 @@ def test_get_hostname_no_host_flag_specified_on_cli_with_multiple_hosts_raises(
 
     assert 1 == e.value.code
 
-    msg = ('There are 2 running hosts. Please specify '
-           'which with --host.\n\n'
-           'Available hosts:\n'
-           'instance-1\n'
-           'instance-2')
+    msg = (
+        'There are 2 running hosts. Please specify '
+        'which with --host.\n\n'
+        'Available hosts:\n'
+        'instance-1\n'
+        'instance-2'
+    )
     patched_logger_critical.assert_called_once_with(msg)

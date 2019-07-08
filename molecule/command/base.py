@@ -72,10 +72,7 @@ class Base(object):
         self._config.provisioner.manage_inventory()
 
 
-def execute_cmdline_scenarios(scenario_name,
-                              args,
-                              command_args,
-                              ansible_args=()):
+def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()):
     """
     Execute scenario sequences based on parsed command-line arguments.
 
@@ -93,7 +90,8 @@ def execute_cmdline_scenarios(scenario_name,
 
     """
     scenarios = molecule.scenarios.Scenarios(
-        get_configs(args, command_args, ansible_args), scenario_name)
+        get_configs(args, command_args, ansible_args), scenario_name
+    )
     scenarios.print_matrix()
     for scenario in scenarios:
         try:
@@ -102,9 +100,10 @@ def execute_cmdline_scenarios(scenario_name,
             # if the command has a 'destroy' arg, like test does,
             # handle that behavior here.
             if command_args.get('destroy') == 'always':
-                msg = ('An error occurred during the {} sequence action: '
-                       "'{}'. Cleaning up.").format(scenario.config.subcommand,
-                                                    scenario.config.action)
+                msg = (
+                    'An error occurred during the {} sequence action: '
+                    "'{}'. Cleaning up."
+                ).format(scenario.config.subcommand, scenario.config.action)
                 LOG.warning(msg)
                 execute_subcommand(scenario.config, 'cleanup')
                 execute_subcommand(scenario.config, 'destroy')
@@ -168,7 +167,8 @@ def get_configs(args, command_args, ansible_args=()):
             args=args,
             command_args=command_args,
             ansible_args=ansible_args,
-        ) for c in glob.glob(MOLECULE_GLOB)
+        )
+        for c in glob.glob(MOLECULE_GLOB)
     ]
     _verify_configs(configs)
 
@@ -186,8 +186,9 @@ def _verify_configs(configs):
         scenario_names = [c.scenario.name for c in configs]
         for scenario_name, n in collections.Counter(scenario_names).items():
             if n > 1:
-                msg = ("Duplicate scenario name '{}' found.  "
-                       'Exiting.').format(scenario_name)
+                msg = ("Duplicate scenario name '{}' found.  " 'Exiting.').format(
+                    scenario_name
+                )
                 util.sysexit_with_message(msg)
 
     else:

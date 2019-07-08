@@ -28,8 +28,13 @@ from molecule import util
 @pytest.fixture
 def _molecule_file():
     return os.path.join(
-        os.path.dirname(__file__), os.path.pardir, os.path.pardir,
-        os.path.pardir, 'resources', 'molecule_docker.yml')
+        os.path.dirname(__file__),
+        os.path.pardir,
+        os.path.pardir,
+        os.path.pardir,
+        'resources',
+        'molecule_docker.yml',
+    )
 
 
 @pytest.fixture

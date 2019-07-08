@@ -42,15 +42,19 @@ language: python
   - &env-functional-shard_1
     <<: *env-functional
     PYTEST_ADDOPTS: >-
-      '-m shard_1_of_3'
+      '-m shard_1_of_4 -m "not parallelizable"'
   - &env-functional-shard_2
     <<: *env-functional
     PYTEST_ADDOPTS: >-
-      '-m shard_2_of_3'
+      '-m shard_2_of_4 -m "not parallelizable"'
   - &env-functional-shard_3
     <<: *env-functional
     PYTEST_ADDOPTS: >-
-      '-m shard_3_of_3'
+      '-m shard_3_of_4 -m "not parallelizable"'
+  - &env-functional-shard_4
+    <<: *env-functional
+    PYTEST_ADDOPTS: >-
+      '-n auto -m shard_4_of_4 -m parallelizable'
 
 jobs:
   fast_finish: true
@@ -72,6 +76,10 @@ jobs:
       env:
         <<: *env-functional-shard_3
         ANSIBLE_VERSION: devel
+    - <<: *py-37
+      env:
+        <<: *env-functional-shard_4
+        ANSIBLE_VERSION: devel
     - <<: *py-36
       env:
         ANSIBLE_VERSION: devel
@@ -88,6 +96,10 @@ jobs:
       env:
         <<: *env-functional-shard_3
         ANSIBLE_VERSION: devel
+    - <<: *py-36
+      env:
+        <<: *env-functional-shard_4
+        ANSIBLE_VERSION: devel
     - <<: *py-27
       env:
         ANSIBLE_VERSION: devel
@@ -104,17 +116,16 @@ jobs:
       env:
         <<: *env-functional-shard_3
         ANSIBLE_VERSION: devel
+    - <<: *py-27
+      env:
+        <<: *env-functional-shard_4
+        ANSIBLE_VERSION: devel
 
   include:
     - <<: *lint
       name: linting the code
       env:
         TOXENV: lint
-
-    - <<: *lint
-      name: checking the code style
-      env:
-        TOXENV: format-check
 
     - <<: *lint
       name: checking the docs build
@@ -187,172 +198,229 @@ jobs:
       env:
         <<: *env-functional-shard_1
         ANSIBLE_VERSION: "28"
-      name: functional tests shard 1/3, Ansible 2.8, Python 3.7
+      name: functional tests shard 1/4, Ansible 2.8, Python 3.7
 
     - <<: *py-37
       env:
         <<: *env-functional-shard_2
         ANSIBLE_VERSION: "28"
-      name: functional tests shard 2/3, Ansible 2.8, Python 3.7
+      name: functional tests shard 2/4, Ansible 2.8, Python 3.7
 
     - <<: *py-37
       env:
         <<: *env-functional-shard_3
         ANSIBLE_VERSION: "28"
-      name: functional tests shard 3/3, Ansible 2.8, Python 3.7
+      name: functional tests shard 3/4, Ansible 2.8, Python 3.7
+
+    - <<: *py-37
+      env:
+        <<: *env-functional-shard_4
+        ANSIBLE_VERSION: "28"
+      name: functional tests shard 4/4, Ansible 2.8, Python 3.7
 
     - <<: *py-37
       env:
         <<: *env-functional-shard_1
         ANSIBLE_VERSION: "27"
-      name: functional tests shard 1/3, Ansible 2.7, Python 3.7
+      name: functional tests shard 1/4, Ansible 2.7, Python 3.7
 
     - <<: *py-37
       env:
         <<: *env-functional-shard_2
         ANSIBLE_VERSION: "27"
-      name: functional tests shard 2/3, Ansible 2.7, Python 3.7
+      name: functional tests shard 2/4, Ansible 2.7, Python 3.7
 
     - <<: *py-37
       env:
         <<: *env-functional-shard_3
         ANSIBLE_VERSION: "27"
-      name: functional tests shard 3/3, Ansible 2.7, Python 3.7
+      name: functional tests shard 3/4, Ansible 2.7, Python 3.7
+
+    - <<: *py-37
+      env:
+        <<: *env-functional-shard_4
+        ANSIBLE_VERSION: "27"
+      name: functional tests shard 4/4, Ansible 2.7, Python 3.7
 
     - <<: *py-37
       env:
         <<: *env-functional-shard_1
         ANSIBLE_VERSION: "26"
-      name: functional tests shard 1/3, Ansible 2.6, Python 3.7
+      name: functional tests shard 1/4, Ansible 2.6, Python 3.7
 
     - <<: *py-37
       env:
         <<: *env-functional-shard_2
         ANSIBLE_VERSION: "26"
-      name: functional tests shard 2/3, Ansible 2.6, Python 3.7
+      name: functional tests shard 2/4, Ansible 2.6, Python 3.7
 
     - <<: *py-37
       env:
         <<: *env-functional-shard_3
         ANSIBLE_VERSION: "26"
-      name: functional tests shard 3/3, Ansible 2.6, Python 3.7
+      name: functional tests shard 3/4, Ansible 2.6, Python 3.7
+
+    - <<: *py-37
+      env:
+        <<: *env-functional-shard_4
+        ANSIBLE_VERSION: "26"
+      name: functional tests shard 4/4, Ansible 2.6, Python 3.7
 
     - <<: *py-36
       <<: *if-cron-or-manual-run-or-tagged
       env:
         <<: *env-functional-shard_1
         ANSIBLE_VERSION: "28"
-      name: functional tests shard 1/3, Ansible 2.8, Python 3.6
+      name: functional tests shard 1/4, Ansible 2.8, Python 3.6
 
     - <<: *py-36
       <<: *if-cron-or-manual-run-or-tagged
       env:
         <<: *env-functional-shard_2
         ANSIBLE_VERSION: "28"
-      name: functional tests shard 2/3, Ansible 2.8, Python 3.6
+      name: functional tests shard 2/4, Ansible 2.8, Python 3.6
 
     - <<: *py-36
       <<: *if-cron-or-manual-run-or-tagged
       env:
         <<: *env-functional-shard_3
         ANSIBLE_VERSION: "28"
-      name: functional tests shard 3/3, Ansible 2.8, Python 3.6
+      name: functional tests shard 3/4, Ansible 2.8, Python 3.6
+
+    - <<: *py-36
+      <<: *if-cron-or-manual-run-or-tagged
+      env:
+        <<: *env-functional-shard_4
+        ANSIBLE_VERSION: "28"
+      name: functional tests shard 4/4, Ansible 2.8, Python 3.6
 
     - <<: *py-36
       <<: *if-cron-or-manual-run-or-tagged
       env:
         <<: *env-functional-shard_1
         ANSIBLE_VERSION: "27"
-      name: functional tests shard 1/3, Ansible 2.7, Python 3.6
+      name: functional tests shard 1/4, Ansible 2.7, Python 3.6
 
     - <<: *py-36
       <<: *if-cron-or-manual-run-or-tagged
       env:
         <<: *env-functional-shard_2
         ANSIBLE_VERSION: "27"
-      name: functional tests shard 2/3, Ansible 2.7, Python 3.6
+      name: functional tests shard 2/4, Ansible 2.7, Python 3.6
 
     - <<: *py-36
       <<: *if-cron-or-manual-run-or-tagged
       env:
         <<: *env-functional-shard_3
         ANSIBLE_VERSION: "27"
-      name: functional tests shard 3/3, Ansible 2.7, Python 3.6
+      name: functional tests shard 3/4, Ansible 2.7, Python 3.6
+
+    - <<: *py-36
+      <<: *if-cron-or-manual-run-or-tagged
+      env:
+        <<: *env-functional-shard_4
+        ANSIBLE_VERSION: "27"
+      name: functional tests shard 4/4, Ansible 2.7, Python 3.6
 
     - <<: *py-36
       <<: *if-cron-or-manual-run-or-tagged
       env:
         <<: *env-functional-shard_1
         ANSIBLE_VERSION: "26"
-      name: functional tests shard 1/3, Ansible 2.6, Python 3.6
+      name: functional tests shard 1/4, Ansible 2.6, Python 3.6
 
     - <<: *py-36
       <<: *if-cron-or-manual-run-or-tagged
       env:
         <<: *env-functional-shard_2
         ANSIBLE_VERSION: "26"
-      name: functional tests shard 2/3, Ansible 2.6, Python 3.6
+      name: functional tests shard 2/4, Ansible 2.6, Python 3.6
 
     - <<: *py-36
       <<: *if-cron-or-manual-run-or-tagged
       env:
         <<: *env-functional-shard_3
         ANSIBLE_VERSION: "26"
-      name: functional tests shard 3/3, Ansible 2.6, Python 3.6
+      name: functional tests shard 3/4, Ansible 2.6, Python 3.6
+
+    - <<: *py-36
+      <<: *if-cron-or-manual-run-or-tagged
+      env:
+        <<: *env-functional-shard_4
+        ANSIBLE_VERSION: "26"
+      name: functional tests shard 4/4, Ansible 2.6, Python 3.6
 
     - <<: *py-27
       env:
         <<: *env-functional-shard_1
         ANSIBLE_VERSION: "28"
-      name: functional tests shard 1/3, Ansible 2.8, Python 2.7
+      name: functional tests shard 1/4, Ansible 2.8, Python 2.7
 
     - <<: *py-27
       env:
         <<: *env-functional-shard_2
         ANSIBLE_VERSION: "28"
-      name: functional tests shard 2/3, Ansible 2.8, Python 2.7
+      name: functional tests shard 2/4, Ansible 2.8, Python 2.7
 
     - <<: *py-27
       env:
         <<: *env-functional-shard_3
         ANSIBLE_VERSION: "28"
-      name: functional tests shard 3/3, Ansible 2.8, Python 2.7
+      name: functional tests shard 3/4, Ansible 2.8, Python 2.7
+
+    - <<: *py-27
+      env:
+        <<: *env-functional-shard_4
+        ANSIBLE_VERSION: "28"
+      name: functional tests shard 4/4, Ansible 2.8, Python 2.7
 
     - <<: *py-27
       env:
         <<: *env-functional-shard_1
         ANSIBLE_VERSION: "27"
-      name: functional tests shard 1/3, Ansible 2.7, Python 2.7
+      name: functional tests shard 1/4, Ansible 2.7, Python 2.7
 
     - <<: *py-27
       env:
         <<: *env-functional-shard_2
         ANSIBLE_VERSION: "27"
-      name: functional tests shard 2/3, Ansible 2.7, Python 2.7
+      name: functional tests shard 2/4, Ansible 2.7, Python 2.7
 
     - <<: *py-27
       env:
         <<: *env-functional-shard_3
         ANSIBLE_VERSION: "27"
-      name: functional tests shard 3/3, Ansible 2.7, Python 2.7
+      name: functional tests shard 3/4, Ansible 2.7, Python 2.7
+
+    - <<: *py-27
+      env:
+        <<: *env-functional-shard_4
+        ANSIBLE_VERSION: "27"
+      name: functional tests shard 4/4, Ansible 2.7, Python 2.7
 
     - <<: *py-27
       env:
         <<: *env-functional-shard_1
         ANSIBLE_VERSION: "26"
-      name: functional tests shard 1/3, Ansible 2.6, Python 2.7
+      name: functional tests shard 1/4, Ansible 2.6, Python 2.7
 
     - <<: *py-27
       env:
         <<: *env-functional-shard_2
         ANSIBLE_VERSION: "26"
-      name: functional tests shard 2/3, Ansible 2.6, Python 2.7
+      name: functional tests shard 2/4, Ansible 2.6, Python 2.7
 
     - <<: *py-27
       env:
         <<: *env-functional-shard_3
         ANSIBLE_VERSION: "26"
-      name: functional tests shard 3/3, Ansible 2.6, Python 2.7
+      name: functional tests shard 3/4, Ansible 2.6, Python 2.7
+
+    - <<: *py-27
+      env:
+        <<: *env-functional-shard_4
+        ANSIBLE_VERSION: "26"
+      name: functional tests shard 4/4, Ansible 2.6, Python 2.7
 
     # The following set of jobs is running tests against devel branch
     # of ansible/ansible:
@@ -377,6 +445,11 @@ jobs:
       env:
         <<: *env-functional-shard_3
         ANSIBLE_VERSION: devel
+    - <<: *py-37
+      <<: *if-cron-or-manual-run-or-tagged
+      env:
+        <<: *env-functional-shard_4
+        ANSIBLE_VERSION: devel
 
     - <<: *py-36
       <<: *if-cron-or-manual-run-or-tagged
@@ -398,6 +471,11 @@ jobs:
       env:
         <<: *env-functional-shard_3
         ANSIBLE_VERSION: devel
+    - <<: *py-36
+      <<: *if-cron-or-manual-run-or-tagged
+      env:
+        <<: *env-functional-shard_4
+        ANSIBLE_VERSION: devel
 
     - <<: *py-27
       <<: *if-cron-or-manual-run-or-tagged
@@ -418,6 +496,11 @@ jobs:
       <<: *if-cron-or-manual-run-or-tagged
       env:
         <<: *env-functional-shard_3
+        ANSIBLE_VERSION: devel
+    - <<: *py-27
+      <<: *if-cron-or-manual-run-or-tagged
+      env:
+        <<: *env-functional-shard_4
         ANSIBLE_VERSION: devel
 
     - &deploy-job

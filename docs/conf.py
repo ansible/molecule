@@ -164,9 +164,7 @@ html_theme_options = {
     'codecov_button': True,
     'analytics_id': 'UA-128382387-1',
     'show_powered_by': False,
-    'extra_nav_links': {
-        'View on GitHub': github_repo_url,
-    },
+    'extra_nav_links': {'View on GitHub': github_repo_url},
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
@@ -209,13 +207,7 @@ html_static_path = ['_static']
 
 # Custom sidebar templates, maps document names to template names.
 # html_sidebars = {}
-html_sidebars = {
-    '**': [
-        'about.html',
-        'navigation.html',
-        'searchbox.html',
-    ],
-}
+html_sidebars = {'**': ['about.html', 'navigation.html', 'searchbox.html']}
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
@@ -269,13 +261,10 @@ htmlhelp_basename = 'Moleculedoc'
 latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     # 'papersize': 'letterpaper',
-
     # The font size ('10pt', '11pt' or '12pt').
     # 'pointsize': '10pt',
-
     # Additional stuff for the LaTeX preamble.
     # 'preamble': '',
-
     # Latex figure (float) alignment
     # 'figure_align': 'htbp',
 }
@@ -284,8 +273,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'Molecule.tex', u'Molecule Documentation',
-     u'AUTHORS.rst', 'manual'),
+    (master_doc, 'Molecule.tex', u'Molecule Documentation', u'AUTHORS.rst', 'manual')
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -313,10 +301,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-    (master_doc, 'molecule', u'Molecule Documentation',
-     [author], 1)
-]
+man_pages = [(master_doc, 'molecule', u'Molecule Documentation', [author], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -328,9 +313,15 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'Molecule', u'Molecule Documentation',
-     author, 'AUTHORS.rst', 'Automated Testing for Ansible roles',
-     'Miscellaneous'),
+    (
+        master_doc,
+        'Molecule',
+        u'Molecule Documentation',
+        author,
+        'AUTHORS.rst',
+        'Automated Testing for Ansible roles',
+        'Miscellaneous',
+    )
 ]
 
 # Documents to append as an appendix to all manuals.

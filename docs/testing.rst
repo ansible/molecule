@@ -101,28 +101,6 @@ Run all the functional delegated tests.
     $ ansible-playbook -i test/resources/playbooks/delegated/inventory \
       test/resources/playbooks/delegated/destroy.yml
 
-Formatting
-----------
-
-The formatting is done using `YAPF`_.
-
-Check format
-^^^^^^^^^^^^
-
-.. code-block:: bash
-
-    $ tox -e format-check
-
-Enforce format
-^^^^^^^^^^^^^^
-
-.. code-block:: bash
-
-    $ tox -e format
-
-.. _`YAPF`: https://github.com/google/yapf
-
-
 Linting
 -------
 

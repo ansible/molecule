@@ -3,7 +3,8 @@ import os
 import testinfra.utils.ansible_runner
 
 testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
-    os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('instance-2')
+    os.environ['MOLECULE_INVENTORY_FILE']
+).get_hosts('instance-2')
 
 
 def test_distro(host):
@@ -19,8 +20,7 @@ def test_cpus(host):
 
 
 def test_memory(host):
-    total_memory = host.ansible(
-        "setup")['ansible_facts']['ansible_memtotal_mb']
+    total_memory = host.ansible("setup")['ansible_facts']['ansible_memtotal_mb']
 
     assert (1024 + 1024 / 2) <= int(total_memory) <= 2048
 

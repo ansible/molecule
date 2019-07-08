@@ -102,11 +102,8 @@ class RuboCop(base.Base):
         :return: None
         """
         self._rubocop_command = sh.rubocop.bake(
-            self.options,
-            self._tests,
-            _env=self.env,
-            _out=LOG.out,
-            _err=LOG.error)
+            self.options, self._tests, _env=self.env, _out=LOG.out, _err=LOG.error
+        )
 
     def execute(self):
         if not self.enabled:
@@ -123,7 +120,8 @@ class RuboCop(base.Base):
             self.bake()
 
         msg = 'Executing RuboCop on files found in {}/...'.format(
-            self._config.verifier.directory)
+            self._config.verifier.directory
+        )
         LOG.info(msg)
 
         try:
@@ -140,6 +138,6 @@ class RuboCop(base.Base):
         :return: list
         """
         return [
-            filename for filename in util.os_walk(
-                self._config.verifier.directory, 'test_*.rb')
+            filename
+            for filename in util.os_walk(self._config.verifier.directory, 'test_*.rb')
         ]

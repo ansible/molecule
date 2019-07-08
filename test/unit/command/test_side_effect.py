@@ -31,9 +31,7 @@ def _command_provisioner_section_with_side_effect_data():
     return {
         'provisioner': {
             'name': 'ansible',
-            'playbooks': {
-                'side_effect': 'side_effect.yml',
-            },
+            'playbooks': {'side_effect': 'side_effect.yml'},
         }
     }
 
@@ -47,27 +45,32 @@ def _patched_ansible_side_effect(mocker):
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.mark.parametrize(
-    'config_instance', ['_command_provisioner_section_with_side_effect_data'],
-    indirect=True)
-def test_execute(mocker, _patched_ansible_side_effect, patched_logger_info,
-                 patched_config_validate, config_instance):
+    'config_instance',
+    ['_command_provisioner_section_with_side_effect_data'],
+    indirect=True,
+)
+def test_execute(
+    mocker,
+    _patched_ansible_side_effect,
+    patched_logger_info,
+    patched_config_validate,
+    config_instance,
+):
     pb = os.path.join(config_instance.scenario.directory, 'side_effect.yml')
     util.write_file(pb, '')
 
     se = side_effect.SideEffect(config_instance)
     se.execute()
 
-    x = [
-        mocker.call("Scenario: 'default'"),
-        mocker.call("Action: 'side_effect'"),
-    ]
+    x = [mocker.call("Scenario: 'default'"), mocker.call("Action: 'side_effect'")]
     assert x == patched_logger_info.mock_calls
 
     _patched_ansible_side_effect.assert_called_once_with()
 
 
 def test_execute_skips_when_playbook_not_configured(
-        patched_logger_warn, _patched_ansible_side_effect, config_instance):
+    patched_logger_warn, _patched_ansible_side_effect, config_instance
+):
 
     se = side_effect.SideEffect(config_instance)
     se.execute()

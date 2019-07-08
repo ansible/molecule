@@ -102,12 +102,14 @@ def molecule_ephemeral_directory(_fixture_uuid):
     scenario_name = 'test-instance'
 
     return ephemeral_directory(
-        os.path.join('molecule_test', project_directory, scenario_name))
+        os.path.join('molecule_test', project_directory, scenario_name)
+    )
 
 
 def pytest_addoption(parser):
     parser.addoption(
-        '--delegated', action='store_true', help='Run delegated driver tests.')
+        '--delegated', action='store_true', help='Run delegated driver tests.'
+    )
 
 
 def pytest_collection_modifyitems(items):
@@ -128,17 +130,14 @@ def pytest_collection_modifyitems(items):
         return
     if not (0 < shard_id <= shards_num):
         raise ValueError(
-            'shard_id must be greater than 0 and not bigger than shards_num')
+            'shard_id must be greater than 0 and not bigger than shards_num'
+        )
     for test_counter, item in enumerate(items):
         cur_shard_id = test_counter % shards_num + 1
-        marker = getattr(pytest.mark, 'shard_{}_of_{}'.format(
-            cur_shard_id,
-            shards_num,
-        ))
+        marker = getattr(pytest.mark, 'shard_{}_of_{}'.format(cur_shard_id, shards_num))
         item.add_marker(marker)
     del marker
-    print('Running sharded test group #{} out of {}'.format(
-        shard_id, shards_num))
+    print('Running sharded test group #{} out of {}'.format(shard_id, shards_num))
 
 
 @pytest.fixture(autouse=True)

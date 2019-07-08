@@ -30,8 +30,7 @@ def _mock_env():
 
 @pytest.fixture
 def _instance(_mock_env):
-    return interpolation.Interpolator(interpolation.TemplateWithDefaults,
-                                      _mock_env)
+    return interpolation.Interpolator(interpolation.TemplateWithDefaults, _mock_env)
 
 
 def test_escaped_interpolation(_instance):
@@ -69,7 +68,8 @@ def test_interpolate_missing_with_default(_instance):
     assert 'ok def' == _instance.interpolate('ok ${missing:-def}')
     assert 'ok def' == _instance.interpolate('ok ${missing-def}')
     assert 'ok /non:-alphanumeric' == _instance.interpolate(
-        'ok ${BAR:-/non:-alphanumeric}')
+        'ok ${BAR:-/non:-alphanumeric}'
+    )
 
 
 def test_interpolate_with_empty_and_default_value(_instance):
@@ -83,7 +83,8 @@ def test_interpolate_interpolates_MOLECULE_strings(_instance):
 
 def test_interpolate_does_not_interpolate_MOLECULE_strings(_instance):
     assert 'foo $MOLECULE_SCENARIO_NAME' == _instance.interpolate(
-        'foo $MOLECULE_SCENARIO_NAME', keep_string='MOLECULE_')
+        'foo $MOLECULE_SCENARIO_NAME', keep_string='MOLECULE_'
+    )
 
 
 def test_interpolate_with_molecule_yaml(_instance):

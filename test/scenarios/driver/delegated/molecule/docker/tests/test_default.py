@@ -1,13 +1,15 @@
+import re
 import os
 
 import testinfra.utils.ansible_runner
 
 testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
-    os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('all')
+    os.environ['MOLECULE_INVENTORY_FILE']
+).get_hosts('all')
 
 
 def test_hostname(host):
-    assert 'delegated-instance-docker' == host.check_output('hostname -s')
+    assert re.search(r'delegated-instance-docker.*', host.check_output('hostname -s'))
 
 
 def test_etc_molecule_directory(host):
@@ -20,7 +22,7 @@ def test_etc_molecule_directory(host):
 
 
 def test_etc_molecule_ansible_hostname_file(host):
-    f = host.file('/etc/molecule/delegated-instance-docker')
+    f = host.file('/etc/molecule/{}'.format(host.check_output('hostname -s')))
 
     assert f.is_file
     assert f.user == 'root'

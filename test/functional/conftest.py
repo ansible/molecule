@@ -43,29 +43,31 @@ def _env_vars_exposed(env_vars, env=os.environ):
 
 
 @pytest.fixture
-def with_scenario(request, scenario_to_test, driver_name, scenario_name,
-                  skip_test):
+def with_scenario(request, scenario_to_test, driver_name, scenario_name, skip_test):
     scenario_directory = os.path.join(
-        os.path.dirname(util.abs_path(__file__)), os.path.pardir, 'scenarios',
-        scenario_to_test)
+        os.path.dirname(util.abs_path(__file__)),
+        os.path.pardir,
+        'scenarios',
+        scenario_to_test,
+    )
 
     with change_dir_to(scenario_directory):
         yield
         if scenario_name:
             msg = 'CLEANUP: Destroying instances for all scenario(s)'
             LOG.out(msg)
-            options = {
-                'driver_name': driver_name,
-                'all': True,
-            }
+            options = {'driver_name': driver_name, 'all': True}
             cmd = sh.molecule.bake('destroy', **options)
             pytest.helpers.run_command(cmd)
 
 
 @pytest.fixture
 def skip_test(request, driver_name):
-    msg_tmpl = ("Ignoring '{}' tests for now" if driver_name == 'delegated'
-                else "Skipped '{}' not supported")
+    msg_tmpl = (
+        "Ignoring '{}' tests for now"
+        if driver_name == 'delegated'
+        else "Skipped '{}' not supported"
+    )
     support_checks_map = {
         'azure': supports_azure,
         'digitalocean': supports_digitalocean,
@@ -89,21 +91,15 @@ def skip_test(request, driver_name):
 
 @pytest.helpers.register
 def idempotence(scenario_name):
-    options = {
-        'scenario_name': scenario_name,
-    }
+    options = {'scenario_name': scenario_name}
     cmd = sh.molecule.bake('create', **options)
     pytest.helpers.run_command(cmd)
 
-    options = {
-        'scenario_name': scenario_name,
-    }
+    options = {'scenario_name': scenario_name}
     cmd = sh.molecule.bake('converge', **options)
     pytest.helpers.run_command(cmd)
 
-    options = {
-        'scenario_name': scenario_name,
-    }
+    options = {'scenario_name': scenario_name}
     cmd = sh.molecule.bake('idempotence', **options)
     pytest.helpers.run_command(cmd)
 
@@ -112,17 +108,14 @@ def idempotence(scenario_name):
 def init_role(temp_dir, driver_name):
     role_directory = os.path.join(temp_dir.strpath, 'test-init')
 
-    cmd = sh.molecule.bake('init', 'role', {
-        'driver-name': driver_name,
-        'role-name': 'test-init'
-    })
+    cmd = sh.molecule.bake(
+        'init', 'role', {'driver-name': driver_name, 'role-name': 'test-init'}
+    )
     pytest.helpers.run_command(cmd)
     pytest.helpers.metadata_lint_update(role_directory)
 
     with change_dir_to(role_directory):
-        options = {
-            'all': True,
-        }
+        options = {'all': True}
         cmd = sh.molecule.bake('test', **options)
         pytest.helpers.run_command(cmd)
 
@@ -131,10 +124,9 @@ def init_role(temp_dir, driver_name):
 def init_scenario(temp_dir, driver_name):
     # Create role
     role_directory = os.path.join(temp_dir.strpath, 'test-init')
-    cmd = sh.molecule.bake('init', 'role', {
-        'driver-name': driver_name,
-        'role-name': 'test-init'
-    })
+    cmd = sh.molecule.bake(
+        'init', 'role', {'driver-name': driver_name, 'role-name': 'test-init'}
+    )
     pytest.helpers.run_command(cmd)
     pytest.helpers.metadata_lint_update(role_directory)
 
@@ -143,19 +135,13 @@ def init_scenario(temp_dir, driver_name):
         molecule_directory = pytest.helpers.molecule_directory()
         scenario_directory = os.path.join(molecule_directory, 'test-scenario')
 
-        options = {
-            'scenario_name': 'test-scenario',
-            'role_name': 'test-init',
-        }
+        options = {'scenario_name': 'test-scenario', 'role_name': 'test-init'}
         cmd = sh.molecule.bake('init', 'scenario', **options)
         pytest.helpers.run_command(cmd)
 
         assert os.path.isdir(scenario_directory)
 
-        options = {
-            'scenario_name': 'test-scenario',
-            'all': True,
-        }
+        options = {'scenario_name': 'test-scenario', 'all': True}
         cmd = sh.molecule.bake('test', **options)
         pytest.helpers.run_command(cmd)
 
@@ -169,7 +155,8 @@ def metadata_lint_update(role_directory):
     # blocks the testing of 'molecule init' itself, so ansible-lint should
     # be configured to ignore these metadata lint errors.
     ansible_lint_src = os.path.join(
-        os.path.dirname(util.abs_path(__file__)), '.ansible-lint')
+        os.path.dirname(util.abs_path(__file__)), '.ansible-lint'
+    )
     shutil.copy(ansible_lint_src, role_directory)
 
     # Explicitly lint here to catch any unexpected lint errors before
@@ -205,25 +192,21 @@ def list_with_format_plain(x):
 
 @pytest.helpers.register
 def login(login_args, scenario_name='default'):
-    options = {
-        'scenario_name': scenario_name,
-    }
+    options = {'scenario_name': scenario_name}
     cmd = sh.molecule.bake('destroy', **options)
     pytest.helpers.run_command(cmd)
 
-    options = {
-        'scenario_name': scenario_name,
-    }
+    options = {'scenario_name': scenario_name}
     cmd = sh.molecule.bake('create', **options)
     pytest.helpers.run_command(cmd)
 
     for instance, regexp in login_args:
         if len(login_args) > 1:
             child_cmd = 'molecule login --host {} --scenario-name {}'.format(
-                instance, scenario_name)
+                instance, scenario_name
+            )
         else:
-            child_cmd = 'molecule login --scenario-name {}'.format(
-                scenario_name)
+            child_cmd = 'molecule login --scenario-name {}'.format(scenario_name)
         child = pexpect.spawn(child_cmd)
         child.expect(regexp)
         # If the test returns and doesn't hang it succeeded.
@@ -231,16 +214,15 @@ def login(login_args, scenario_name='default'):
 
 
 @pytest.helpers.register
-def test(driver_name, scenario_name='default'):
+def test(driver_name, scenario_name='default', parallel=False):
     options = {
         'scenario_name': scenario_name,
         'all': scenario_name is None,
+        'parallel': parallel,
     }
 
     if driver_name == 'delegated':
-        options = {
-            'scenario_name': scenario_name,
-        }
+        options = {'scenario_name': scenario_name}
 
     cmd = sh.molecule.bake('test', **options)
     pytest.helpers.run_command(cmd)
@@ -248,21 +230,15 @@ def test(driver_name, scenario_name='default'):
 
 @pytest.helpers.register
 def verify(scenario_name='default'):
-    options = {
-        'scenario_name': scenario_name,
-    }
+    options = {'scenario_name': scenario_name}
     cmd = sh.molecule.bake('create', **options)
     pytest.helpers.run_command(cmd)
 
-    options = {
-        'scenario_name': scenario_name,
-    }
+    options = {'scenario_name': scenario_name}
     cmd = sh.molecule.bake('converge', **options)
     pytest.helpers.run_command(cmd)
 
-    options = {
-        'scenario_name': scenario_name,
-    }
+    options = {'scenario_name': scenario_name}
     cmd = sh.molecule.bake('verify', **options)
     pytest.helpers.run_command(cmd)
 
@@ -296,7 +272,7 @@ def supports_docker():
 def supports_linode():
     from ansible.modules.cloud.linode.linode import HAS_LINODE
 
-    env_vars = ('LINODE_API_KEY', )
+    env_vars = ('LINODE_API_KEY',)
 
     return _env_vars_exposed(env_vars) and HAS_LINODE
 
@@ -331,7 +307,7 @@ def supports_lxd():
 
 @pytest.helpers.register
 def supports_vagrant_virtualbox():
-    return (get_vagrant_executable() or get_virtualbox_executable())
+    return get_vagrant_executable() or get_virtualbox_executable()
 
 
 @pytest.helpers.register
@@ -366,7 +342,7 @@ def supports_digitalocean():
         # ansible <2.8
         from ansible.modules.cloud.digital_ocean.digital_ocean import HAS_DOPY
 
-    env_vars = ('DO_API_KEY', )
+    env_vars = ('DO_API_KEY',)
 
     return _env_vars_exposed(env_vars) and HAS_DOPY
 
@@ -375,10 +351,7 @@ def supports_digitalocean():
 def supports_ec2():
     from ansible.module_utils.ec2 import HAS_BOTO3
 
-    env_vars = (
-        'AWS_ACCESS_KEY',
-        'AWS_SECRET_ACCESS_KEY',
-    )
+    env_vars = ('AWS_ACCESS_KEY', 'AWS_SECRET_ACCESS_KEY')
 
     return _env_vars_exposed(env_vars) and HAS_BOTO3
 
@@ -387,11 +360,7 @@ def supports_ec2():
 def supports_gce():
     from ansible.module_utils.gcp import HAS_GOOGLE_AUTH
 
-    env_vars = (
-        'GCE_SERVICE_ACCOUNT_EMAIL',
-        'GCE_CREDENTIALS_FILE',
-        'GCE_PROJECT_ID',
-    )
+    env_vars = ('GCE_SERVICE_ACCOUNT_EMAIL', 'GCE_CREDENTIALS_FILE', 'GCE_PROJECT_ID')
 
     return _env_vars_exposed(env_vars) and HAS_GOOGLE_AUTH
 
@@ -422,9 +391,9 @@ def has_rubocop():
 
 
 needs_inspec = pytest.mark.skipif(
-    not has_inspec(),
-    reason='Needs inspec to be pre-installed and available in $PATH')
+    not has_inspec(), reason='Needs inspec to be pre-installed and available in $PATH'
+)
 
 needs_rubocop = pytest.mark.skipif(
-    not has_rubocop(),
-    reason='Needs rubocop to be pre-installed and available in $PATH')
+    not has_rubocop(), reason='Needs rubocop to be pre-installed and available in $PATH'
+)

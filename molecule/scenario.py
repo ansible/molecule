@@ -21,6 +21,7 @@
 import shutil
 import os
 import fnmatch
+
 try:
     from pathlib import Path
 except ImportError:
@@ -105,7 +106,7 @@ class Scenario(object):
         :return: None
         """
         LOG.info('Removing scenario state directory from cache')
-        shutil.rmtree(Path(self.ephemeral_directory).parent)
+        shutil.rmtree(str(Path(self.ephemeral_directory).parent))
 
     def prune(self):
         """
@@ -130,8 +131,7 @@ class Scenario(object):
                 os.remove(f)
 
         # Remove empty directories.
-        for dirpath, dirs, files in os.walk(
-                self.ephemeral_directory, topdown=False):
+        for dirpath, dirs, files in os.walk(self.ephemeral_directory, topdown=False):
             if not dirs and not files:
                 os.removedirs(dirpath)
 
@@ -148,11 +148,11 @@ class Scenario(object):
         project_directory = os.path.basename(self.config.project_directory)
 
         if self.config.is_parallel:
-            project_directory = '{}-{}'.format(project_directory,
-                                               self.config._run_uuid)
+            project_directory = '{}-{}'.format(project_directory, self.config._run_uuid)
 
-        project_scenario_directory = os.path.join(self.config.cache_directory,
-                                                  project_directory, self.name)
+        project_scenario_directory = os.path.join(
+            self.config.cache_directory, project_directory, self.name
+        )
 
         path = ephemeral_directory(project_scenario_directory)
 

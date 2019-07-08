@@ -43,27 +43,13 @@ def test_prune(_instance):
     # items are created in listed order, directories first, safe before pruned
     prune_data = {
         # these files should not be pruned
-        'safe_files': [
-            'state.yml',
-            'ansible.cfg',
-            'inventory/ansible_inventory.yml',
-        ],
+        'safe_files': ['state.yml', 'ansible.cfg', 'inventory/ansible_inventory.yml'],
         # these directories should not be pruned
         'safe_dirs': ['inventory'],
         # these files should be pruned
-        'pruned_files': [
-            'foo',
-            'bar',
-            'inventory/foo',
-            'inventory/bar',
-        ],
+        'pruned_files': ['foo', 'bar', 'inventory/foo', 'inventory/bar'],
         # these directories should be pruned, including empty subdirectories
-        'pruned_dirs': [
-            'baz',
-            'roles',
-            'inventory/baz',
-            'roles/foo',
-        ],
+        'pruned_dirs': ['baz', 'roles', 'inventory/baz', 'roles/foo'],
     }
 
     for directory in prune_data['safe_dirs'] + prune_data['pruned_dirs']:
@@ -135,22 +121,13 @@ def test_check_sequence_property(_instance):
 
 
 def test_converge_sequence_property(_instance):
-    sequence = [
-        'dependency',
-        'create',
-        'prepare',
-        'converge',
-    ]
+    sequence = ['dependency', 'create', 'prepare', 'converge']
 
     assert sequence == _instance.converge_sequence
 
 
 def test_create_sequence_property(_instance):
-    sequence = [
-        'dependency',
-        'create',
-        'prepare',
-    ]
+    sequence = ['dependency', 'create', 'prepare']
 
     assert sequence == _instance.create_sequence
 
@@ -238,8 +215,7 @@ def test_ephemeral_directory_overriden_via_env_var(monkeypatch):
     assert os.access(scenario.ephemeral_directory('foo/bar'), os.W_OK)
 
 
-def test_ephemeral_directory_overriden_via_env_var_uses_absolute_path(
-        monkeypatch):
+def test_ephemeral_directory_overriden_via_env_var_uses_absolute_path(monkeypatch):
     monkeypatch.setenv('MOLECULE_EPHEMERAL_DIRECTORY', "foo/bar")
 
     assert os.path.isabs(scenario.ephemeral_directory())

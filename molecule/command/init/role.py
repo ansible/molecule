@@ -67,8 +67,9 @@ class Role(base.Base):
         LOG.info(msg)
 
         if os.path.isdir(role_name):
-            msg = ('The directory {} exists. '
-                   'Cannot create new role.').format(role_name)
+            msg = ('The directory {} exists. ' 'Cannot create new role.').format(
+                role_name
+            )
             util.sysexit_with_message(msg)
 
         template_directory = ''
@@ -76,16 +77,16 @@ class Role(base.Base):
             template_directory = self._command_args['template']
         else:
             template_directory = 'role'
-        self._process_templates(template_directory, self._command_args,
-                                role_directory)
+        self._process_templates(template_directory, self._command_args, role_directory)
         scenario_base_directory = os.path.join(role_directory, role_name)
         templates = [
             'scenario/driver/{driver_name}'.format(**self._command_args),
             'scenario/verifier/{verifier_name}'.format(**self._command_args),
         ]
         for template in templates:
-            self._process_templates(template, self._command_args,
-                                    scenario_base_directory)
+            self._process_templates(
+                template, self._command_args, scenario_base_directory
+            )
         self._process_templates('molecule', self._command_args, role_directory)
 
         role_directory = os.path.join(role_directory, role_name)
@@ -99,39 +100,51 @@ class Role(base.Base):
     '--dependency-name',
     type=click.Choice(['galaxy']),
     default='galaxy',
-    help='Name of dependency to initialize. (galaxy)')
+    help='Name of dependency to initialize. (galaxy)',
+)
 @click.option(
     '--driver-name',
     '-d',
     type=click.Choice(config.molecule_drivers()),
     default='docker',
-    help='Name of driver to initialize. (docker)')
+    help='Name of driver to initialize. (docker)',
+)
 @click.option(
     '--lint-name',
     type=click.Choice(['yamllint']),
     default='yamllint',
-    help='Name of lint to initialize. (yamllint)')
+    help='Name of lint to initialize. (yamllint)',
+)
 @click.option(
     '--provisioner-name',
     type=click.Choice(['ansible']),
     default='ansible',
-    help='Name of provisioner to initialize. (ansible)')
-@click.option(
-    '--role-name', '-r', required=True, help='Name of the role to create.')
+    help='Name of provisioner to initialize. (ansible)',
+)
+@click.option('--role-name', '-r', required=True, help='Name of the role to create.')
 @click.option(
     '--verifier-name',
     type=click.Choice(config.molecule_verifiers()),
     default='testinfra',
-    help='Name of verifier to initialize. (testinfra)')
+    help='Name of verifier to initialize. (testinfra)',
+)
 @click.option(
     '--template',
     '-t',
-    type=click.Path(
-        exists=True, dir_okay=True, readable=True, resolve_path=True),
+    type=click.Path(exists=True, dir_okay=True, readable=True, resolve_path=True),
     help="Path to a cookiecutter custom template to initialize the role. "
-    "The upstream molecule folder will be added to this template")
-def role(ctx, dependency_name, driver_name, lint_name, provisioner_name,
-         role_name, verifier_name, template):  # pragma: no cover
+    "The upstream molecule folder will be added to this template",
+)
+def role(
+    ctx,
+    dependency_name,
+    driver_name,
+    lint_name,
+    provisioner_name,
+    role_name,
+    verifier_name,
+    template,
+):  # pragma: no cover
     """ Initialize a new role for use with Molecule. """
     command_args = {
         'dependency_name': dependency_name,

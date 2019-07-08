@@ -96,19 +96,16 @@ class List(base.Base):
     '-f',
     type=click.Choice(['simple', 'plain', 'yaml']),
     default='simple',
-    help='Change output format. (simple)')
+    help='Change output format. (simple)',
+)
 def list(ctx, scenario_name, format):  # pragma: no cover
     """ Lists status of instances. """
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
-    command_args = {
-        'subcommand': subcommand,
-        'format': format,
-    }
+    command_args = {'subcommand': subcommand, 'format': format}
 
     statuses = []
-    s = scenarios.Scenarios(
-        base.get_configs(args, command_args), scenario_name)
+    s = scenarios.Scenarios(base.get_configs(args, command_args), scenario_name)
     for scenario in s:
         statuses.extend(base.execute_subcommand(scenario.config, subcommand))
 

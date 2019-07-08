@@ -72,7 +72,8 @@ def test_bake(_inventory_directory, _instance):
 
 
 def test_bake_removes_non_interactive_options_from_non_converge_playbooks(
-        _inventory_directory, _instance):
+    _inventory_directory, _instance
+):
     _instance.bake()
 
     x = [
@@ -167,8 +168,9 @@ def test_execute_bakes(_inventory_directory, patched_run_command, _instance):
     assert sorted(x) == sorted(result)
 
 
-def test_execute_bakes_with_ansible_args(_inventory_directory,
-                                         patched_run_command, _instance):
+def test_execute_bakes_with_ansible_args(
+    _inventory_directory, patched_run_command, _instance
+):
     _instance._config.ansible_args = ('--foo', '--bar')
     _instance.execute()
 
@@ -189,9 +191,11 @@ def test_execute_bakes_with_ansible_args(_inventory_directory,
 
 
 def test_executes_catches_and_exits_return_code_with_stdout(
-        patched_run_command, patched_logger_critical, _instance):
+    patched_run_command, patched_logger_critical, _instance
+):
     patched_run_command.side_effect = sh.ErrorReturnCode_1(
-        sh.ansible_playbook, b'out', b'err')
+        sh.ansible_playbook, b'out', b'err'
+    )
     with pytest.raises(SystemExit) as e:
         _instance.execute()
 

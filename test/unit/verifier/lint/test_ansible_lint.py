@@ -36,19 +36,11 @@ def _verifier_lint_section_data():
                 'options': {
                     'foo': 'bar',
                     'v': True,
-                    'exclude': [
-                        'foo',
-                        'bar',
-                    ],
-                    'x': [
-                        'foo',
-                        'bar',
-                    ],
+                    'exclude': ['foo', 'bar'],
+                    'x': ['foo', 'bar'],
                 },
-                'env': {
-                    'FOO': 'bar',
-                },
-            }
+                'env': {'FOO': 'bar'},
+            },
         }
     }
 
@@ -76,7 +68,8 @@ def test_default_options_property(_instance):
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_verifier_lint_section_data'], indirect=True)
+    'config_instance', ['_verifier_lint_section_data'], indirect=True
+)
 def test_name_property(_instance):
     assert 'ansible-lint' == _instance.name
 
@@ -86,18 +79,13 @@ def test_enabled_property(_instance):
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_verifier_lint_section_data'], indirect=True)
+    'config_instance', ['_verifier_lint_section_data'], indirect=True
+)
 def test_options_property(_instance):
     x = {
         'default_exclude': [_instance._config.scenario.ephemeral_directory],
-        'exclude': [
-            'foo',
-            'bar',
-        ],
-        'x': [
-            'foo',
-            'bar',
-        ],
+        'exclude': ['foo', 'bar'],
+        'x': ['foo', 'bar'],
         'foo': 'bar',
         'v': True,
     }
@@ -106,19 +94,14 @@ def test_options_property(_instance):
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_verifier_lint_section_data'], indirect=True)
+    'config_instance', ['_verifier_lint_section_data'], indirect=True
+)
 def test_options_property_handles_cli_args(_instance):
     _instance._config.args = {'debug': True}
     x = {
         'default_exclude': [_instance._config.scenario.ephemeral_directory],
-        'exclude': [
-            'foo',
-            'bar',
-        ],
-        'x': [
-            'foo',
-            'bar',
-        ],
+        'exclude': ['foo', 'bar'],
+        'x': ['foo', 'bar'],
         'foo': 'bar',
         'v': True,
     }
@@ -134,7 +117,8 @@ def test_default_env_property(_instance):
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_verifier_lint_section_data'], indirect=True)
+    'config_instance', ['_verifier_lint_section_data'], indirect=True
+)
 def test_env_property(_instance):
     assert 'bar' == _instance.env['FOO']
     assert 'ANSIBLE_CONFIG' in _instance.env
@@ -144,7 +128,8 @@ def test_env_property(_instance):
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_verifier_lint_section_data'], indirect=True)
+    'config_instance', ['_verifier_lint_section_data'], indirect=True
+)
 def test_bake(_instance, monkeypatch):
     monkeypatch.setattr(os.path, 'exists', lambda x: True)
     _instance.bake()
@@ -166,14 +151,21 @@ def test_bake(_instance, monkeypatch):
     assert sorted(x) == sorted(result)
 
 
-def test_execute(mocker, patched_run_command, patched_logger_info,
-                 patched_logger_success, _instance, monkeypatch):
+def test_execute(
+    mocker,
+    patched_run_command,
+    patched_logger_info,
+    patched_logger_success,
+    _instance,
+    monkeypatch,
+):
     monkeypatch.setattr(os.path, 'exists', lambda x: True)
     _instance._ansible_lint_command = 'patched-ansiblelint-command'
     _instance.execute()
 
     patched_run_command.assert_called_once_with(
-        'patched-ansiblelint-command', debug=False)
+        'patched-ansiblelint-command', debug=False
+    )
 
     msg = 'Executing Ansible Lint on {}...'.format(_instance._playbook)
     patched_logger_info.assert_called_once_with(msg)
@@ -182,8 +174,7 @@ def test_execute(mocker, patched_run_command, patched_logger_info,
     patched_logger_success.assert_called_once_with(msg)
 
 
-def test_execute_does_not_execute(patched_run_command, patched_logger_warn,
-                                  _instance):
+def test_execute_does_not_execute(patched_run_command, patched_logger_warn, _instance):
     c = _instance._config.config
     c['verifier']['lint']['enabled'] = False
     _instance.execute()
@@ -202,10 +193,10 @@ def test_execute_bakes(patched_run_command, _instance):
     assert 1 == patched_run_command.call_count
 
 
-def test_executes_catches_and_exits_return_code(patched_run_command,
-                                                patched_yamllint, _instance):
-    patched_run_command.side_effect = sh.ErrorReturnCode_1(
-        sh.ansible_lint, b'', b'')
+def test_executes_catches_and_exits_return_code(
+    patched_run_command, patched_yamllint, _instance
+):
+    patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.ansible_lint, b'', b'')
     with pytest.raises(SystemExit) as e:
         _instance.execute()
 

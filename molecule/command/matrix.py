@@ -74,10 +74,7 @@ def matrix(ctx, scenario_name, subcommand):  # pragma: no cover
     """
 
     args = ctx.obj.get('args')
-    command_args = {
-        'subcommand': subcommand,
-    }
+    command_args = {'subcommand': subcommand}
 
-    s = scenarios.Scenarios(
-        base.get_configs(args, command_args), scenario_name)
+    s = scenarios.Scenarios(base.get_configs(args, command_args), scenario_name)
     s.print_matrix()

@@ -25,6 +25,4 @@ def filter(s):
 
 class FilterModule(object):
     def filters(self):
-        return {
-            'dependency_filter': filter,
-        }
+        return {'dependency_filter': filter}

@@ -28,10 +28,7 @@ from molecule.lint import yamllint
 @pytest.fixture
 def _patched_get_files(mocker):
     m = mocker.patch('molecule.lint.yamllint.Yamllint._get_files')
-    m.return_value = [
-        'foo.yml',
-        'bar.yaml',
-    ]
+    m.return_value = ['foo.yml', 'bar.yaml']
 
     return m
 
@@ -39,15 +36,7 @@ def _patched_get_files(mocker):
 @pytest.fixture
 def _lint_section_data():
     return {
-        'lint': {
-            'name': 'yamllint',
-            'options': {
-                'foo': 'bar',
-            },
-            'env': {
-                'FOO': 'bar',
-            }
-        }
+        'lint': {'name': 'yamllint', 'options': {'foo': 'bar'}, 'env': {'FOO': 'bar'}}
     }
 
 
@@ -64,18 +53,13 @@ def test_config_private_member(_instance):
 
 
 def test_files_private_member(_patched_get_files, _instance):
-    x = [
-        'foo.yml',
-        'bar.yaml',
-    ]
+    x = ['foo.yml', 'bar.yaml']
 
     assert x == _instance._files
 
 
 def test_default_options_property(_instance):
-    x = {
-        's': True,
-    }
+    x = {'s': True}
 
     assert x == _instance.default_options
 
@@ -95,66 +79,60 @@ def test_enabled_property(_instance):
     assert _instance.enabled
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_lint_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_lint_section_data'], indirect=True)
 def test_options_property(_instance):
-    x = {
-        's': True,
-        'foo': 'bar',
-    }
+    x = {'s': True, 'foo': 'bar'}
 
     assert x == _instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_lint_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_lint_section_data'], indirect=True)
 def test_options_property_handles_cli_args(_instance):
     _instance._config.args = {'debug': True}
-    x = {
-        's': True,
-        'foo': 'bar',
-    }
+    x = {'s': True, 'foo': 'bar'}
 
     # Does nothing.  The `yamllint` command does not support
     # a `debug` flag.
     assert x == _instance.options
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_lint_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_lint_section_data'], indirect=True)
 def test_bake(_patched_get_files, _instance):
     _instance.bake()
-    x = [
-        str(sh.Command('yamllint')),
-        '-s',
-        '--foo=bar',
-        'foo.yml',
-        'bar.yaml',
-    ]
+    x = [str(sh.Command('yamllint')), '-s', '--foo=bar', 'foo.yml', 'bar.yaml']
 
     result = str(_instance._yamllint_command).split()
     assert sorted(x) == sorted(result)
 
 
-def test_execute(_patched_get_files, patched_logger_info,
-                 patched_logger_success, patched_run_command, _instance):
+def test_execute(
+    _patched_get_files,
+    patched_logger_info,
+    patched_logger_success,
+    patched_run_command,
+    _instance,
+):
     _instance._yamllint_command = 'patched-yamllint-command'
     _instance.execute()
 
-    patched_run_command.assert_called_once_with(
-        'patched-yamllint-command', debug=False)
+    patched_run_command.assert_called_once_with('patched-yamllint-command', debug=False)
 
     msg = 'Executing Yamllint on files found in {}/...'.format(
-        _instance._config.project_directory)
+        _instance._config.project_directory
+    )
     patched_logger_info.assert_called_once_with(msg)
 
     msg = 'Lint completed successfully.'
     patched_logger_success.assert_called_once_with(msg)
 
 
-def test_execute_does_not_execute(_patched_get_files, patched_logger_warn,
-                                  patched_logger_success, patched_run_command,
-                                  _instance):
+def test_execute_does_not_execute(
+    _patched_get_files,
+    patched_logger_warn,
+    patched_logger_success,
+    patched_run_command,
+    _instance,
+):
     _instance._config.config['lint']['enabled'] = False
     _instance.execute()
 
@@ -164,29 +142,20 @@ def test_execute_does_not_execute(_patched_get_files, patched_logger_warn,
     patched_logger_warn.assert_called_once_with(msg)
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_lint_section_data'], indirect=True)
+@pytest.mark.parametrize('config_instance', ['_lint_section_data'], indirect=True)
 def test_execute_bakes(_patched_get_files, patched_run_command, _instance):
     _instance.execute()
 
     assert _instance._yamllint_command is not None
 
-    x = [
-        str(sh.Command('yamllint')),
-        '-s',
-        '--foo=bar',
-        'foo.yml',
-        'bar.yaml',
-    ]
+    x = [str(sh.Command('yamllint')), '-s', '--foo=bar', 'foo.yml', 'bar.yaml']
     result = str(patched_run_command.mock_calls[0][1][0]).split()
 
     assert sorted(x) == sorted(result)
 
 
-def test_executes_catches_and_exits_return_code(patched_run_command,
-                                                _instance):
-    patched_run_command.side_effect = sh.ErrorReturnCode_1(
-        sh.yamllint, b'', b'')
+def test_executes_catches_and_exits_return_code(patched_run_command, _instance):
+    patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.yamllint, b'', b'')
     with pytest.raises(SystemExit) as e:
         _instance.execute()
 

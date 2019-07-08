@@ -39,6 +39,7 @@ class InvalidState(Exception):
     """
     Exception class raised when an error occurs in :class:`.State`.
     """
+
     pass
 
 
@@ -154,5 +155,4 @@ class State(object):
         util.write_file(self.state_file, util.safe_dump(self._data))
 
     def _get_state_file(self):
-        return os.path.join(self._config.scenario.ephemeral_directory,
-                            'state.yml')
+        return os.path.join(self._config.scenario.ephemeral_directory, 'state.yml')

@@ -29,19 +29,13 @@ def _model_lint_section_data():
         'lint': {
             'name': 'yamllint',
             'enabled': True,
-            'options': {
-                'foo': 'bar',
-            },
-            'env': {
-                'FOO': 'foo',
-                'FOO_BAR': 'foo_bar',
-            },
+            'options': {'foo': 'bar'},
+            'env': {'FOO': 'foo', 'FOO_BAR': 'foo_bar'},
         }
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_lint_section_data'], indirect=True)
+@pytest.mark.parametrize('_config', ['_model_lint_section_data'], indirect=True)
 def test_lint(_config):
     assert {} == schema_v2.validate(_config)
 
@@ -53,27 +47,27 @@ def _model_lint_errors_section_data():
             'name': int(),
             'enabled': str(),
             'options': [],
-            'env': {
-                'foo': 'foo',
-                'foo-bar': 'foo-bar',
-            },
+            'env': {'foo': 'foo', 'foo-bar': 'foo-bar'},
         }
     }
 
 
-@pytest.mark.parametrize(
-    '_config', ['_model_lint_errors_section_data'], indirect=True)
+@pytest.mark.parametrize('_config', ['_model_lint_errors_section_data'], indirect=True)
 def test_lint_has_errors(_config):
     x = {
-        'lint': [{
-            'enabled': ['must be of boolean type'],
-            'name': ['must be of string type'],
-            'env': [{
-                'foo': ["value does not match regex '^[A-Z0-9_-]+$'"],
-                'foo-bar': ["value does not match regex '^[A-Z0-9_-]+$'"],
-            }],
-            'options': ['must be of dict type'],
-        }]
+        'lint': [
+            {
+                'enabled': ['must be of boolean type'],
+                'name': ['must be of string type'],
+                'env': [
+                    {
+                        'foo': ["value does not match regex '^[A-Z0-9_-]+$'"],
+                        'foo-bar': ["value does not match regex '^[A-Z0-9_-]+$'"],
+                    }
+                ],
+                'options': ['must be of dict type'],
+            }
+        ]
     }
 
     assert x == schema_v2.validate(_config)
@@ -81,16 +75,11 @@ def test_lint_has_errors(_config):
 
 @pytest.fixture
 def _model_lint_allows_yamllint_section_data():
-    return {
-        'lint': {
-            'name': 'yamllint',
-        }
-    }
+    return {'lint': {'name': 'yamllint'}}
 
 
 @pytest.mark.parametrize(
-    '_config', [
-        ('_model_lint_allows_yamllint_section_data'),
-    ], indirect=True)
+    '_config', [('_model_lint_allows_yamllint_section_data')], indirect=True
+)
 def test_lint_allows_name(_config):
     assert {} == schema_v2.validate(_config)

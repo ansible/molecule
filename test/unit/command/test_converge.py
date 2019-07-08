@@ -27,15 +27,17 @@ from molecule.shell import main
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-def test_execute(mocker, patched_logger_info, patched_ansible_converge,
-                 patched_config_validate, config_instance):
+def test_execute(
+    mocker,
+    patched_logger_info,
+    patched_ansible_converge,
+    patched_config_validate,
+    config_instance,
+):
     c = converge.Converge(config_instance)
     c.execute()
 
-    x = [
-        mocker.call("Scenario: 'default'"),
-        mocker.call("Action: 'converge'"),
-    ]
+    x = [mocker.call("Scenario: 'default'"), mocker.call("Action: 'converge'")]
     assert x == patched_logger_info.mock_calls
 
     patched_ansible_converge.assert_called_once_with()

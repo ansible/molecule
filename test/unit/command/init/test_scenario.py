@@ -32,7 +32,7 @@ def _command_args():
         'role_name': 'test-role',
         'scenario_name': 'test-scenario',
         'subcommand': __name__,
-        'verifier_name': 'testinfra'
+        'verifier_name': 'testinfra',
     }
 
 
@@ -41,8 +41,7 @@ def _instance(_command_args):
     return scenario.Scenario(_command_args)
 
 
-def test_execute(temp_dir, _instance, patched_logger_info,
-                 patched_logger_success):
+def test_execute(temp_dir, _instance, patched_logger_info, patched_logger_success):
     _instance.execute()
 
     msg = 'Initializing new scenario test-scenario...'
@@ -51,8 +50,7 @@ def test_execute(temp_dir, _instance, patched_logger_info,
     assert os.path.isdir('./molecule/test-scenario')
     assert os.path.isdir('./molecule/test-scenario/tests')
 
-    scenario_directory = os.path.join(temp_dir.strpath, 'molecule',
-                                      'test-scenario')
+    scenario_directory = os.path.join(temp_dir.strpath, 'molecule', 'test-scenario')
     msg = 'Initialized scenario in {} successfully.'.format(scenario_directory)
     patched_logger_success.assert_called_once_with(msg)
 
@@ -65,6 +63,5 @@ def test_execute_scenario_exists(temp_dir, _instance, patched_logger_critical):
 
     assert 1 == e.value.code
 
-    msg = ('The directory molecule/test-scenario exists. '
-           'Cannot create new scenario.')
+    msg = 'The directory molecule/test-scenario exists. ' 'Cannot create new scenario.'
     patched_logger_critical.assert_called_once_with(msg)

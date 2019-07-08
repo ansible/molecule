@@ -25,41 +25,19 @@ base_schema = {
     'ansible': {
         'type': 'dict',
         'schema': {
-            'config_file': {
-                'type': 'string',
-            },
-            'playbook': {
-                'type': 'string',
-            },
+            'config_file': {'type': 'string'},
+            'playbook': {'type': 'string'},
             'raw_env_vars': {
                 'type': 'dict',
-                'keysrules': {
-                    'type': 'string',
-                    'regex': '^[A-Z0-9_-]+$',
-                },
+                'keysrules': {'type': 'string', 'regex': '^[A-Z0-9_-]+$'},
             },
-            'extra_vars': {
-                'type': 'string',
-            },
-            'verbose': {
-                'type': 'boolean',
-            },
-            'become': {
-                'type': 'boolean',
-            },
-            'tags': {
-                'type': 'string',
-            },
-        }
+            'extra_vars': {'type': 'string'},
+            'verbose': {'type': 'boolean'},
+            'become': {'type': 'boolean'},
+            'tags': {'type': 'string'},
+        },
     },
-    'driver': {
-        'type': 'dict',
-        'schema': {
-            'name': {
-                'type': 'string',
-            },
-        }
-    },
+    'driver': {'type': 'dict', 'schema': {'name': {'type': 'string'}}},
     'vagrant': {
         'type': 'dict',
         'schema': {
@@ -68,79 +46,47 @@ base_schema = {
                 'schema': {
                     'type': 'dict',
                     'schema': {
-                        'name': {
-                            'type': 'string',
-                        },
-                        'box': {
-                            'type': 'string',
-                        },
-                        'box_version': {
-                            'type': 'string',
-                        },
-                        'box_url': {
-                            'type': 'string',
-                        },
-                    }
-                }
+                        'name': {'type': 'string'},
+                        'box': {'type': 'string'},
+                        'box_version': {'type': 'string'},
+                        'box_url': {'type': 'string'},
+                    },
+                },
             },
             'providers': {
                 'type': 'list',
                 'schema': {
                     'type': 'dict',
                     'schema': {
-                        'name': {
-                            'type': 'string',
-                        },
-                        'type': {
-                            'type': 'string',
-                        },
-                        'options': {
-                            'type': 'dict',
-                        },
-                    }
-                }
+                        'name': {'type': 'string'},
+                        'type': {'type': 'string'},
+                        'options': {'type': 'dict'},
+                    },
+                },
             },
             'instances': {
                 'type': 'list',
                 'schema': {
                     'type': 'dict',
                     'schema': {
-                        'name': {
-                            'type': 'string',
-                        },
+                        'name': {'type': 'string'},
                         'ansible_groups': {
                             'type': 'list',
-                            'schema': {
-                                'type': 'string',
-                            }
+                            'schema': {'type': 'string'},
                         },
-                        'interfaces': {
-                            'type': 'list',
-                            'schema': {
-                                'type': 'dict',
-                            }
-                        },
+                        'interfaces': {'type': 'list', 'schema': {'type': 'dict'}},
                         'raw_config_args': {
                             'type': 'list',
-                            'schema': {
-                                'type': 'string',
-                            }
+                            'schema': {'type': 'string'},
                         },
-                    }
-                }
+                    },
+                },
             },
-        }
+        },
     },
     'verifier': {
         'type': 'dict',
-        'schema': {
-            'name': {
-                'type': 'string',
-            },
-            'options': {
-                'type': 'dict',
-            },
-        }
+        'schema': {'name': {'type': 'string'}, 'options': {'type': 'dict'}},
     },
 }
 

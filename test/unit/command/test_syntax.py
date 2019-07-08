@@ -31,15 +31,17 @@ def _patched_ansible_syntax(mocker):
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-def test_execute(mocker, patched_logger_info, _patched_ansible_syntax,
-                 patched_config_validate, config_instance):
+def test_execute(
+    mocker,
+    patched_logger_info,
+    _patched_ansible_syntax,
+    patched_config_validate,
+    config_instance,
+):
     s = syntax.Syntax(config_instance)
     s.execute()
 
-    x = [
-        mocker.call("Scenario: 'default'"),
-        mocker.call("Action: 'syntax'"),
-    ]
+    x = [mocker.call("Scenario: 'default'"), mocker.call("Action: 'syntax'")]
     assert x == patched_logger_info.mock_calls
 
     _patched_ansible_syntax.assert_called_once_with()

@@ -34,18 +34,20 @@ def _patched_ansible_prepare(mocker):
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-def test_execute(mocker, patched_logger_info, _patched_ansible_prepare,
-                 patched_config_validate, config_instance):
+def test_execute(
+    mocker,
+    patched_logger_info,
+    _patched_ansible_prepare,
+    patched_config_validate,
+    config_instance,
+):
     pb = os.path.join(config_instance.scenario.directory, 'prepare.yml')
     util.write_file(pb, '')
 
     p = prepare.Prepare(config_instance)
     p.execute()
 
-    x = [
-        mocker.call("Scenario: 'default'"),
-        mocker.call("Action: 'prepare'"),
-    ]
+    x = [mocker.call("Scenario: 'default'"), mocker.call("Action: 'prepare'")]
     assert x == patched_logger_info.mock_calls
 
     _patched_ansible_prepare.assert_called_once_with()
@@ -54,7 +56,8 @@ def test_execute(mocker, patched_logger_info, _patched_ansible_prepare,
 
 
 def test_execute_skips_when_instances_already_prepared(
-        patched_logger_warn, _patched_ansible_prepare, config_instance):
+    patched_logger_warn, _patched_ansible_prepare, config_instance
+):
     config_instance.state.change_state('prepared', True)
     p = prepare.Prepare(config_instance)
     p.execute()
@@ -66,7 +69,8 @@ def test_execute_skips_when_instances_already_prepared(
 
 
 def test_execute_skips_when_playbook_not_configured(
-        patched_logger_warn, _patched_ansible_prepare, config_instance):
+    patched_logger_warn, _patched_ansible_prepare, config_instance
+):
 
     p = prepare.Prepare(config_instance)
     p.execute()
@@ -78,8 +82,8 @@ def test_execute_skips_when_playbook_not_configured(
 
 
 def test_execute_when_instances_already_prepared_but_force_provided(
-        mocker, patched_logger_warn, _patched_ansible_prepare,
-        config_instance):
+    mocker, patched_logger_warn, _patched_ansible_prepare, config_instance
+):
     pb = os.path.join(config_instance.scenario.directory, 'prepare.yml')
     util.write_file(pb, '')
 
