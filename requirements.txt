@@ -16,5 +16,5 @@ PyYAML==3.13
 sh==1.12.14
 six==1.11.0
 tabulate==0.8.2
-testinfra==1.19.0
+testinfra >= 3.0.5, < 4
 tree-format==0.1.2
