@@ -145,6 +145,10 @@ class Scenario(object):
 
     @property
     def ephemeral_directory(self):
+        _ephemeral_directory = os.getenv('MOLECULE_EPHEMERAL_DIRECTORY')
+        if _ephemeral_directory:
+            return _ephemeral_directory
+
         project_directory = os.path.basename(self.config.project_directory)
 
         if self.config.is_parallel:
