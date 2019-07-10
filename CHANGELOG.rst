@@ -8,6 +8,7 @@ History
 Important Changes
 -----------------
 
+* Upgrade ``testinfra``: fix Ansible 2.8 compatibility
 * Project now maintained by the Ansible Team, see `Move to Red Hat`_ for details
 * Docker Container now hosted on `quay.io`_
 
