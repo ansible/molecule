@@ -45,25 +45,17 @@ def _instance(_command_args):
 
 
 @pytest.fixture
-def _resources_folder_path():
-    resources_folder_path = os.path.join(
-        os.path.dirname(__file__), os.pardir, os.pardir, os.pardir, 'resources'
-    )
-    return resources_folder_path
-
-
-@pytest.fixture
-def custom_template_dir(_resources_folder_path):
+def custom_template_dir(resources_folder_path):
     custom_template_dir_path = os.path.join(
-        _resources_folder_path, 'custom_role_template'
+        resources_folder_path, 'custom_role_template'
     )
     return custom_template_dir_path
 
 
 @pytest.fixture
-def invalid_template_dir(_resources_folder_path):
+def invalid_template_dir(resources_folder_path):
     invalid_role_template_path = os.path.join(
-        _resources_folder_path, 'invalid_role_template'
+        resources_folder_path, 'invalid_role_template'
     )
     return invalid_role_template_path
 
