@@ -35,7 +35,8 @@ class PreCommit(base.Base):
     Pre-commit tool verifier wrapper.
 
     This class is used to lint files by executing the pre-commit
-    command line tool for linting files.
+    command line tool for files in the test folder with a prefix
+    of ``test_``.
 
     `Pre-Commit`_ is not the default verifier linter.
 
@@ -73,6 +74,20 @@ class PreCommit(base.Base):
             name: pre-commit
             env:
               FOO: bar
+
+    Example pre-commit configuration file (``.pre-commit-config.yaml``) to run
+    flake8.
+
+    .. code-block:: yaml
+
+        repos:
+          - repo: local
+            hooks:
+              - id: flake8
+                name: flake8
+                entry: python -m flake8 --max-line-length=120
+                language: system
+                types: [python]
 
     .. _`Pre-Commit`: https://pre-commit.com/
     """
