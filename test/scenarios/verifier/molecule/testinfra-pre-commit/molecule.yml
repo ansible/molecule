@@ -1,0 +1,29 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint:
+  name: yamllint
+  options:
+    config-file: ../../resources/.yamllint
+platforms:
+  - name: instance
+    image: centos:latest
+provisioner:
+  name: ansible
+  playbooks:
+    create: ../../../../resources/playbooks/docker/create.yml
+    destroy: ../../../../resources/playbooks/docker/destroy.yml
+  lint:
+    name: ansible-lint
+scenario:
+  name: testinfra-pre-commit
+verifier:
+  name: testinfra
+  options:
+    vvv: true
+  additional_files_or_dirs:
+    - ../shared/test_*.py
+  lint:
+    name: pre-commit

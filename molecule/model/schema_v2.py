@@ -141,6 +141,7 @@ def pre_validate_base_schema(env, keep_string):
                             'molecule_env_var': True,
                             'allowed': [
                                 'flake8',
+                                'pre-commit',
                                 'rubocop',
                                 'yamllint',
                                 'ansible-lint',
@@ -591,7 +592,9 @@ verifier_testinfra_mutually_exclusive_schema = {
             'name': {'type': 'string', 'allowed': ['testinfra']},
             'lint': {
                 'type': 'dict',
-                'schema': {'name': {'type': 'string', 'allowed': ['flake8']}},
+                'schema': {
+                    'name': {'type': 'string', 'allowed': ['flake8', 'pre-commit']}
+                },
             },
         },
     }

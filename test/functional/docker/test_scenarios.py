@@ -385,6 +385,27 @@ def test_interpolation(scenario_to_test, with_scenario, scenario_name):
 
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
+    [('verifier', 'docker', 'testinfra-pre-commit')],
+    indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
+)
+def test_command_verify_testinfra_precommit(
+    scenario_to_test, with_scenario, scenario_name
+):
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('create', **options)
+    pytest.helpers.run_command(cmd)
+
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('converge', **options)
+    pytest.helpers.run_command(cmd)
+
+    options = {'scenario_name': scenario_name}
+    cmd = sh.molecule.bake('verify', **options)
+    pytest.helpers.run_command(cmd)
+
+
+@pytest.mark.parametrize(
+    'scenario_to_test, driver_name, scenario_name',
     [('verifier', 'docker', 'testinfra')],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
 )
