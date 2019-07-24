@@ -1,4 +1,6 @@
 ---
+# exclude only borrowed code that we do no own
+exclude: _vendored
 repos:
   - repo: https://github.com/python/black.git
     rev: 19.3b0

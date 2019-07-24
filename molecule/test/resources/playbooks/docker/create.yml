@@ -32,7 +32,9 @@
       no_log: item.failed
 
     - name: Discover local Docker images
-      docker_image_facts:
+      action: "{{ ansible_version.full is version_compare('2.8', '>=') |
+            ternary('docker_image_info', 'docker_image_facts') }}"
+      args:
         name: "molecule_local/{{ item.item.name }}"
         docker_host: "{{ item.item.docker_host | default(lookup('env', 'DOCKER_HOST') or 'unix://var/run/docker.sock') }}"
         cacert_path: "{{ item.cacert_path | default((lookup('env', 'DOCKER_CERT_PATH') + '/ca.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
@@ -48,11 +50,13 @@
         - ansible_version.full is version_compare('2.8', '>=')
         - platforms.changed or docker_images.results | map(attribute='images') | select('equalto', []) | list | count >= 0
         - not item.item.pre_build_image | default(false)
-      docker_image:
-        build:
+      vars:
+        _buildargs:
           path: "{{ molecule_ephemeral_directory }}"
           dockerfile: "{{ item.invocation.module_args.dest }}"
-          pull: "{{ item.item.pull | default(true) }}"
+          pull: "{{ item.item.pull|default(true) }}"
+      docker_image:
+        build: "{{ _buildargs | combine(item.item.buildargs|default({})) }}"
         name: "molecule_local/{{ item.item.image }}"
         docker_host: "{{ item.item.docker_host | default(lookup('env', 'DOCKER_HOST') or 'unix://var/run/docker.sock') }}"
         cacert_path: "{{ item.cacert_path | default((lookup('env', 'DOCKER_CERT_PATH') + '/ca.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
@@ -61,7 +65,6 @@
         tls_verify: "{{ item.tls_verify | default(lookup('env', 'DOCKER_TLS_VERIFY')) or false }}"
         force_source: "{{ item.item.force | default(true) }}"
         source: build
-        buildargs: "{{ item.item.buildargs | default(omit) }}"
       with_items: "{{ platforms.results }}"
       loop_control:
         label: "molecule_local/{{ item.item.image }}"
@@ -143,6 +146,7 @@
         published_ports: "{{ item.published_ports | default(omit) }}"
         ulimits: "{{ item.ulimits | default(omit) }}"
         networks: "{{ item.networks | default(omit) }}"
+        networks_cli_compatible: false
         network_mode: "{{ item.network_mode | default(omit) }}"
         purge_networks: "{{ item.purge_networks | default(omit) }}"
         dns_servers: "{{ item.dns_servers | default(omit) }}"

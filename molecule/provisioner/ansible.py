@@ -578,6 +578,7 @@ class Ansible(base.Base):
                     'molecule_instance_config': "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
                     'molecule_no_log': "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
                     "molecule_yml.provisioner.log|default(False) | bool }}",
+                    "molecule_vendored": "{{ lookup('env', 'MOLECULE_VENDORED') | default(False) | bool }}",
                 }
 
                 # All group
