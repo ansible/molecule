@@ -218,7 +218,7 @@ def test_os_walk(temp_dir):
 def test_render_template():
     template = "{{ foo }} = {{ bar }}"
 
-    "foo = bar" == util.render_template(template, foo='foo', bar='bar')
+    assert "foo = bar" == util.render_template(template, foo='foo', bar='bar')
 
 
 def test_write_file(temp_dir):
