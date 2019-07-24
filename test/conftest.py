@@ -118,8 +118,20 @@ def pytest_addoption(parser):
     )
 
 
-def pytest_collection_modifyitems(items):
-    marker = pytest.config.getoption('-m')
+def pytest_configure(config):
+    config.addinivalue_line(
+        "markers", "shard_1_of_3: run the first third of the tests"
+    )
+    config.addinivalue_line(
+        "markers", "shard_2_of_3: run the second third of the tests"
+    )
+    config.addinivalue_line(
+        "markers", "shard_3_of_3: run the last third of the tests"
+    )
+
+
+def pytest_collection_modifyitems(session, config, items):
+    marker = session.config.getoption('-m')
     is_sharded = False
     shard_id = 0
     shards_num = 0
