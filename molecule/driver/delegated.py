@@ -39,26 +39,31 @@ class Delegated(base.Base):
         driver:
           name: delegated
 
-    However, the developer must adhere to the instance-config API.  The
+    However, the developer must adhere to the instance-config API. The
     developer's create playbook must provide the following instance-config
     data, and the developer's destroy playbook must reset the instance-config.
-    Both `become` keys are optional and can be used independently.
 
     .. code-block:: yaml
 
         - address: ssh_endpoint
-          identity_file: ssh_identity_file
+          identity_file: ssh_identity_file  # mutually exclusive with password
           instance: instance_name
           port: ssh_port_as_string
           user: ssh_user
-          become_method: valid_ansible_become_method
-          become_pass: password_if_required
+          password: winrm_user  # mutually exclusive with identity_file
+          become_method: valid_ansible_become_method  # optional
+          become_pass: password_if_required  # optional
 
         - address: winrm_endpoint
           instance: instance_name
-          port: winrm_port
-          user: winrm_user
           connection: 'winrm'
+          port: winrm_port (5985/5986)
+          user: winrm_user
+          password: winrm_password
+          winrm_transport: ntlm/credssp/kerberos
+          winrm_cert_pem: path to the credssp public certificate key
+          winrm_cert_key_pem: path to the credssp private certificate key
+          winrm_server_cert_validation: True/False
 
     This article covers how to configure and use WinRM with Ansible:
     https://docs.ansible.com/ansible/latest/user_guide/windows_winrm.html
@@ -187,6 +192,20 @@ class Delegated(base.Base):
                     conn_dict['ansible_private_key_file'] = d.get('identity_file')
                     conn_dict['ansible_ssh_common_args'] = ' '.join(
                         self.ssh_connection_options
+                    )
+                if d.get('password'):
+                    conn_dict['ansible_password'] = d.get('password')
+                if d.get('winrm_transport'):
+                    conn_dict['ansible_winrm_transport'] = d.get('winrm_transport')
+                if d.get('winrm_cert_pem'):
+                    conn_dict['ansible_winrm_cert_pem'] = d.get('winrm_cert_pem')
+                if d.get('winrm_cert_key_pem'):
+                    conn_dict['ansible_winrm_cert_key_pem'] = d.get(
+                        'winrm_cert_key_pem'
+                    )
+                if d.get('winrm_server_cert_validation'):
+                    conn_dict['ansible_winrm_server_cert_validation'] = d.get(
+                        'winrm_server_cert_validation'
                     )
 
                 return conn_dict
