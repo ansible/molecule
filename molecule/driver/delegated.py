@@ -50,19 +50,19 @@ class Delegated(base.Base):
           instance: instance_name
           port: ssh_port_as_string
           user: ssh_user
-          password: winrm_user  # mutually exclusive with identity_file
+          password: ssh_password  # mutually exclusive with identity_file
           become_method: valid_ansible_become_method  # optional
           become_pass: password_if_required  # optional
 
         - address: winrm_endpoint
           instance: instance_name
           connection: 'winrm'
-          port: winrm_port (5985/5986)
+          port: winrm_port_as_string
           user: winrm_user
           password: winrm_password
           winrm_transport: ntlm/credssp/kerberos
-          winrm_cert_pem: path to the credssp public certificate key
-          winrm_cert_key_pem: path to the credssp private certificate key
+          winrm_cert_pem: <path to the credssp public certificate key>
+          winrm_cert_key_pem: <path to the credssp private certificate key>
           winrm_server_cert_validation: True/False
 
     This article covers how to configure and use WinRM with Ansible:
