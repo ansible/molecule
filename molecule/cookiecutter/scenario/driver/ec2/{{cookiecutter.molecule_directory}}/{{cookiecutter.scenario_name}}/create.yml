@@ -77,8 +77,9 @@
         instance_type: "{{ item.instance_type }}"
         vpc_subnet_id: "{{ item.vpc_subnet_id }}"
         group: "{{ security_group_name }}"
-        instance_tags:
-          instance: "{{ item.name }}"
+        instance_tags: "{{ item.instance_tags | combine({'instance': item.name})
+          if item.instance_tags is defined
+          else {'instance': item.name} }}"
         wait: true
         assign_public_ip: true
         exact_count: 1
