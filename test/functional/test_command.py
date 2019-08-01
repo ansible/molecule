@@ -51,6 +51,7 @@ def driver_name(request):
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
+        ('driver/hetznercloud', 'hetznercloud', 'default'),
         ('driver/linode', 'linode', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
@@ -74,6 +75,7 @@ def test_command_check(scenario_to_test, with_scenario, scenario_name):
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
+        ('driver/hetznercloud', 'hetznercloud', 'default'),
         ('driver/linode', 'linode', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
@@ -96,6 +98,7 @@ def test_command_cleanup(scenario_to_test, with_scenario, scenario_name):
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
+        ('driver/hetznercloud', 'hetznercloud', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
@@ -118,6 +121,7 @@ def test_command_converge(scenario_to_test, with_scenario, scenario_name):
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
+        ('driver/hetznercloud', 'hetznercloud', 'default'),
         ('driver/linode', 'linode', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
@@ -140,6 +144,7 @@ def test_command_create(scenario_to_test, with_scenario, scenario_name):
         ('dependency', 'digitalocean', 'ansible-galaxy'),
         ('dependency', 'docker', 'ansible-galaxy'),
         ('dependency', 'ec2', 'ansible-galaxy'),
+        ('dependency', 'hetznercloud', 'ansible-galaxy'),
         ('dependency', 'gce', 'ansible-galaxy'),
         ('dependency', 'linode', 'ansible-galaxy'),
         ('dependency', 'lxc', 'ansible-galaxy'),
@@ -174,6 +179,7 @@ def test_command_dependency_ansible_galaxy(
         ('dependency', 'docker', 'gilt'),
         ('dependency', 'ec2', 'gilt'),
         ('dependency', 'gce', 'gilt'),
+        ('dependency', 'hetznercloud', 'gilt'),
         ('dependency', 'linode', 'gilt'),
         ('dependency', 'lxc', 'gilt'),
         ('dependency', 'lxd', 'gilt'),
@@ -203,6 +209,7 @@ def test_command_dependency_gilt(
         ('dependency', 'docker', 'shell'),
         ('dependency', 'ec2', 'shell'),
         ('dependency', 'gce', 'shell'),
+        ('dependency', 'hetznercloud', 'shell'),
         ('dependency', 'linode', 'shell'),
         ('dependency', 'lxc', 'shell'),
         ('dependency', 'lxd', 'shell'),
@@ -232,6 +239,7 @@ def test_command_dependency_shell(
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
+        ('driver/hetznercloud', 'hetznercloud', 'default'),
         ('driver/linode', 'linode', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
@@ -255,6 +263,7 @@ def test_command_destroy(scenario_to_test, with_scenario, scenario_name):
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
+        ('driver/hetznercloud', 'hetznercloud', 'default'),
         ('driver/linode', 'linode', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
@@ -296,6 +305,7 @@ def test_command_init_role(temp_dir, driver_name, skip_test):
         ('docker'),
         ('ec2'),
         ('gce'),
+        ('hetznercloud'),
         ('linode'),
         ('lxc'),
         ('lxd'),
@@ -316,6 +326,7 @@ def test_command_init_scenario(temp_dir, driver_name, skip_test):
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
+        ('driver/hetznercloud', 'hetznercloud', 'default'),
         ('driver/linode', 'linode', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
@@ -389,6 +400,17 @@ Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    
 instance         gce            ansible             default          false      false
 instance-1       gce            ansible             multi-node       false      false
 instance-2       gce            ansible             multi-node       false      false
+""".strip(),
+        ),  # noqa
+        (
+            'driver/hetznercloud',
+            'hetznercloud',
+            """
+Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    Converged
+---------------  -------------  ------------------  ---------------  ---------  -----------
+instance         hetznercloud   ansible             default          false      false
+instance-1       hetznercloud   ansible             multi-node       false      false
+instance-2       hetznercloud   ansible             multi-node       false      false
 """.strip(),
         ),  # noqa
         (
@@ -512,6 +534,15 @@ instance-2  gce  ansible  multi-node  false  false
 """.strip(),
         ),
         (
+            'driver/hetznercloud',
+            'hetznercloud',
+            """
+instance    hetznercloud  ansible  default     false  false
+instance-1  hetznercloud  ansible  multi-node  false  false
+instance-2  hetznercloud  ansible  multi-node  false  false
+""".strip(),
+        ),
+        (
             'driver/linode',
             'linode',
             """
@@ -611,6 +642,12 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario, expecte
             [['instance-1', '.*instance-1.*'], ['instance-2', '.*instance-2.*']],
             'multi-node',
         ),
+        (
+            'driver/hetznercloud',
+            'hetznercloud',
+            [['instance-1', '.*instance-1.*'], ['instance-2', '.*instance-2.*']],
+            'multi-node',
+        ),
         ('driver/linode', 'linode', [['instance', '.*instance.*']], 'default'),
         (
             'driver/linode',
@@ -663,6 +700,7 @@ def test_command_login(scenario_to_test, with_scenario, login_args, scenario_nam
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
+        ('driver/hetznercloud', 'hetznercloud', 'default'),
         ('driver/linode', 'linode', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
@@ -690,6 +728,7 @@ def test_command_prepare(scenario_to_test, with_scenario, scenario_name):
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
+        ('driver/hetznercloud', 'hetznercloud', 'default'),
         ('driver/linode', 'linode', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
@@ -713,6 +752,7 @@ def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
+        ('driver/hetznercloud', 'hetznercloud', 'default'),
         ('driver/linode', 'linode', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),
@@ -738,6 +778,7 @@ def test_command_syntax(scenario_to_test, with_scenario, scenario_name):
         ('driver/docker', 'docker', 'multi-node'),
         ('driver/ec2', 'ec2', None),
         ('driver/gce', 'gce', None),
+        ('driver/hetznercloud', 'hetznercloud', None),
         ('driver/linode', 'linode', None),
         ('driver/lxc', 'lxc', None),
         ('driver/lxd', 'lxd', None),
@@ -758,6 +799,7 @@ def test_command_test(scenario_to_test, with_scenario, scenario_name, driver_nam
         ('driver/digitalocean', 'digitalocean', 'default'),
         ('driver/docker', 'docker', 'default'),
         ('driver/gce', 'gce', 'default'),
+        ('driver/hetznercloud', 'hetznercloud', 'default'),
         ('driver/linode', 'linode', 'default'),
         ('driver/lxc', 'lxc', 'default'),
         ('driver/lxd', 'lxd', 'default'),

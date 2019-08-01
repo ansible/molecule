@@ -1,0 +1,88 @@
+---
+- name: Create
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  no_log: "{{ molecule_no_log }}"
+  vars:
+    ssh_port: 22
+    ssh_user: root
+    ssh_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
+  tasks:
+    - name: Create SSH key
+      user:
+        name: "{{ lookup('env', 'USER') }}"
+        ssh_key_file: "{{ ssh_path }}"
+        generate_ssh_key: true
+        force: true
+      register: generated_ssh_key
+
+    - name: Register the SSH key name
+      set_fact:
+        ssh_key_name: "molecule-generated-{{ 12345 | random | to_uuid }}"
+
+    - name: Register SSH key for test instance(s)
+      hcloud_ssh_key:
+        name: "{{ ssh_key_name }}"
+        public_key: "{{ generated_ssh_key.ssh_public_key }}"
+        state: present
+
+    - name: Create molecule instance(s)
+      hcloud_server:
+        name: "{{ item.name }}"
+        server_type: "{{ item.server_type }}"
+        ssh_keys:
+          - "{{ ssh_key_name }}"
+        volumes: "{{ item.volumes | default(omit) }}"
+        image: "{{ item.image }}"
+        location: "{{ item.location | default(omit) }}"
+        datacenter: "{{ item.datacenter | default(omit) }}"
+        user_data: "{{ item.user_data | default(omit) }}"
+        api_token: "{{ lookup('env', 'HCLOUD_TOKEN') }}"
+        state: present
+      register: server
+      with_items: "{{ molecule_yml.platforms }}"
+      async: 7200
+      poll: 0
+
+    - name: Wait for instance(s) creation to complete
+      async_status:
+        jid: "{{ item.ansible_job_id }}"
+      register: hetzner_jobs
+      until: hetzner_jobs.finished
+      retries: 300
+      with_items: "{{ server.results }}"
+
+    # Mandatory configuration for Molecule to function.
+
+    - name: Populate instance config dict
+      set_fact:
+        instance_conf_dict: {
+          'instance': "{{ item.hcloud_server.name }}",
+          'ssh_key_name': "{{ ssh_key_name }}",
+          'address': "{{ item.hcloud_server.ipv4_address }}",
+          'user': "{{ ssh_user }}",
+          'port': "{{ ssh_port }}",
+          'identity_file': "{{ ssh_path }}", }
+      with_items: "{{ hetzner_jobs.results }}"
+      register: instance_config_dict
+      when: server.changed | bool
+
+    - name: Convert instance config dict to a list
+      set_fact:
+        instance_conf: "{{ instance_config_dict.results | map(attribute='ansible_facts.instance_conf_dict') | list }}"
+      when: server.changed | bool
+
+    - name: Dump instance config
+      copy:
+        content: "{{ instance_conf | to_json | from_json | molecule_to_yaml | molecule_header }}"
+        dest: "{{ molecule_instance_config }}"
+      when: server.changed | bool
+
+    - name: Wait for SSH
+      wait_for:
+        port: "{{ ssh_port }}"
+        host: "{{ item.address }}"
+        search_regex: SSH
+        delay: 10
+      with_items: "{{ lookup('file', molecule_instance_config) | molecule_from_yaml }}"

@@ -60,6 +60,7 @@ def pre_validate_base_schema(env, keep_string):
                         'docker',
                         'ec2',
                         'gce',
+                        'hetznercloud',
                         'linode',
                         'lxc',
                         'lxd',
@@ -531,6 +532,24 @@ platforms_lxd_schema = {
     }
 }
 
+platforms_hetznercloud_schema = {
+    'platforms': {
+        'type': 'list',
+        'schema': {
+            'type': 'dict',
+            'schema': {
+                'name': {'type': 'string', 'required': True},
+                'server_type': {'type': 'string', 'required': True},
+                'volumes': {'type': 'list', 'schema': {'type': 'string'}},
+                'image': {'type': 'string', 'required': True},
+                'location': {'type': 'string'},
+                'datacenter': {'type': 'string'},
+                'user_data': {'type': 'string'},
+            },
+        },
+    }
+}
+
 platforms_linode_schema = {
     'platforms': {
         'type': 'list',
@@ -698,6 +717,8 @@ def validate(c):
         util.merge_dicts(schema, platforms_lxd_schema)
     elif c['driver']['name'] == 'linode':
         util.merge_dicts(schema, platforms_linode_schema)
+    elif c['driver']['name'] == 'hetznercloud':
+        util.merge_dicts(schema, platforms_hetznercloud_schema)
 
     # Verifier
     if c['verifier']['name'] == 'goss':

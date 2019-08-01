@@ -37,8 +37,13 @@ language: python
   - &lint
     <<: *py-37
     <<: *reset-prerequisites
+  - &hetzner-cloud-cleanup
+    after_script:
+      - ./contrib/tokenmgmr.py remove --driver hetznercloud
   - &env-functional
     TESTS_TYPE: functional
+  - &env-hetzner-cloud
+    HCLOUD_TOKEN: "$(./contrib/tokenmgmr.py get --driver hetznercloud)"
   - &env-functional-shard_1
     <<: *env-functional
     PYTEST_ADDOPTS: >-
@@ -178,9 +183,14 @@ jobs:
         TESTS_TYPE: unit
       name: unit tests, Ansible 2.6, Python 2.7
 
+    # Note(decentral1se): we temporarily only run Hetzner Cloud functional
+    # tests on this job so that we get at least some guarantee on testing When
+    # we have more CI resources, we will migrate away from this stop-gap
+    # solution
     - <<: *py-37
       env:
         <<: *env-functional-shard_1
+        <<: *env-hetzner-cloud
         ANSIBLE_VERSION: "28"
       name: functional tests shard 1/3, Ansible 2.8, Python 3.7
 
