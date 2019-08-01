@@ -472,6 +472,7 @@ platforms_podman_schema = {
                 'volumes': {'type': 'list', 'schema': {'type': 'string'}},
                 'tmpfs': {'type': 'list', 'schema': {'type': 'string'}},
                 'capabilities': {'type': 'list', 'schema': {'type': 'string'}},
+                'sysctls': {'type': 'dict', 'schema': {'type': 'string'}},
                 'exposed_ports': {
                     'type': 'list',
                     'schema': {'type': 'string', 'coerce': 'exposed_ports'},

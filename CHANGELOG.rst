@@ -15,6 +15,7 @@ Unreleased
 * Place upper bounds on inspec and rubocop for CI testing.
 * Support pruning of docker volumes in 'destroy' phase for docker driver
 * Update Goss to 0.3.7
+* Add ``sysctls`` option to the Docker driver.
 
 2.20
 ====

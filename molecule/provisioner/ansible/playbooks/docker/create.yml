@@ -139,6 +139,7 @@
         volumes: "{{ item.volumes | default(omit) }}"
         tmpfs: "{{ item.tmpfs | default(omit) }}"
         capabilities: "{{ item.capabilities | default(omit) }}"
+        sysctls: "{{ item.sysctls | default(omit) }}"
         exposed_ports: "{{ item.exposed_ports | default(omit) }}"
         published_ports: "{{ item.published_ports | default(omit) }}"
         ulimits: "{{ item.ulimits | default(omit) }}"
