@@ -52,7 +52,7 @@ def _model_platforms_docker_section_data():
                 'keep_volumes': True,
                 'tmpfs': ['/tmp', '/run '],
                 'capabilities': ['SYS_ADMIN'],
-                'sysctls': {'net.core.somaxconn': '1024', 'net.ipv4.tcp_syncookies', '0'},
+                'sysctls': {'net.core.somaxconn': '1024', 'net.ipv4.tcp_syncookies': '0'},
                 'exposed_ports': ['53/udp', '53/tcp'],
                 'published_ports': ['0.0.0.0:8053:53/udp', '0.0.0.0:8053:53/tcp'],
                 'ulimits': ['nofile:262144:262144'],
