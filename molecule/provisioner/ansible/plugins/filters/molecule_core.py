@@ -44,13 +44,9 @@ def from_yaml(data):
     if not isinstance(data, list):
         data = [data]
     for d in data:
-        i = interpolation.Interpolator(
-            interpolation.TemplateWithDefaults,
-            env,
-        )
+        i = interpolation.Interpolator(interpolation.TemplateWithDefaults, env)
         interpolated_data = i.interpolate(d)
-        defaults = util.merge_dicts(defaults,
-                                    util.safe_load(interpolated_data))
+        defaults = util.merge_dicts(defaults, util.safe_load(interpolated_data))
     return defaults
 
 

@@ -185,8 +185,7 @@ def test_env(config_instance):
         'MOLECULE_DEBUG': 'False',
         'MOLECULE_FILE': config_instance.molecule_file,
         'MOLECULE_BASE_FILE': config_instance.molecule_base_file,
-        'MOLECULE_ENV_FILE': util.abs_path(
-            config_instance.args.get('env_file')),
+        'MOLECULE_ENV_FILE': util.abs_path(config_instance.args.get('env_file')),
         'MOLECULE_INVENTORY_FILE': config_instance.provisioner.inventory_file,
         'MOLECULE_EPHEMERAL_DIRECTORY': config_instance.scenario.ephemeral_directory,
         'MOLECULE_SCENARIO_DIRECTORY': config_instance.scenario.directory,
