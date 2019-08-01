@@ -942,7 +942,7 @@ def test_absolute_path_for(_instance):
         ]
     )
 
-    x == _instance._absolute_path_for(env, 'foo')
+    assert x == _instance._absolute_path_for(env, 'foo')
 
 
 def test_absolute_path_for_raises_with_missing_key(_instance):
