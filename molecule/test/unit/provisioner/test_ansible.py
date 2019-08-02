@@ -292,9 +292,10 @@ def test_inventory_property(_instance):
             },
             'vars': {
                 'molecule_file': "{{ lookup('env', 'MOLECULE_FILE') }}",
+                'molecule_base_file': "{{ lookup('env', 'MOLECULE_BASE_FILE') }}",
                 'molecule_ephemeral_directory': "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
                 'molecule_scenario_directory': "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
-                'molecule_yml': "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
+                'molecule_yml': "{{ [lookup('file', molecule_base_file),lookup('file', molecule_file)] | molecule_from_yaml }}",
                 'molecule_instance_config': "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
                 'molecule_no_log': "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
                 "molecule_yml.provisioner.log|default(False) | bool }}",
@@ -307,9 +308,10 @@ def test_inventory_property(_instance):
             },
             'vars': {
                 'molecule_file': "{{ lookup('env', 'MOLECULE_FILE') }}",
+                'molecule_base_file': "{{ lookup('env', 'MOLECULE_BASE_FILE') }}",
                 'molecule_ephemeral_directory': "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
                 'molecule_scenario_directory': "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
-                'molecule_yml': "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
+                'molecule_yml': "{{ [lookup('file', molecule_base_file),lookup('file', molecule_file)] | molecule_from_yaml }}",
                 'molecule_instance_config': "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
                 'molecule_no_log': "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
                 "molecule_yml.provisioner.log|default(False) | bool }}",
@@ -334,9 +336,10 @@ def test_inventory_property(_instance):
             },
             'vars': {
                 'molecule_file': "{{ lookup('env', 'MOLECULE_FILE') }}",
+                'molecule_base_file': "{{ lookup('env', 'MOLECULE_BASE_FILE') }}",
                 'molecule_ephemeral_directory': "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
                 'molecule_scenario_directory': "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
-                'molecule_yml': "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
+                'molecule_yml': "{{ [lookup('file', molecule_base_file),lookup('file', molecule_file)] | molecule_from_yaml }}",
                 'molecule_instance_config': "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
                 'molecule_no_log': "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
                 "molecule_yml.provisioner.log|default(False) | bool }}",
@@ -353,9 +356,10 @@ def test_inventory_property(_instance):
             },
             'vars': {
                 'molecule_file': "{{ lookup('env', 'MOLECULE_FILE') }}",
+                'molecule_base_file': "{{ lookup('env', 'MOLECULE_BASE_FILE') }}",
                 'molecule_ephemeral_directory': "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
                 'molecule_scenario_directory': "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
-                'molecule_yml': "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
+                'molecule_yml': "{{ [lookup('file', molecule_base_file),lookup('file', molecule_file)] | molecule_from_yaml }}",
                 'molecule_instance_config': "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
                 'molecule_no_log': "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
                 "molecule_yml.provisioner.log|default(False) | bool }}",
@@ -388,9 +392,10 @@ def test_inventory_property_handles_missing_groups(temp_dir, _instance):
             },
             'vars': {
                 'molecule_file': "{{ lookup('env', 'MOLECULE_FILE') }}",
+                'molecule_base_file': "{{ lookup('env', 'MOLECULE_BASE_FILE') }}",
                 'molecule_ephemeral_directory': "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
                 'molecule_scenario_directory': "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
-                'molecule_yml': "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
+                'molecule_yml': "{{ [lookup('file', molecule_base_file),lookup('file', molecule_file)] | molecule_from_yaml }}",
                 'molecule_instance_config': "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
                 'molecule_no_log': "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
                 "molecule_yml.provisioner.log|default(False) | bool }}",
@@ -717,9 +722,10 @@ def test_write_inventory(temp_dir, _instance):
             },
             'vars': {
                 'molecule_file': "{{ lookup('env', 'MOLECULE_FILE') }}",
+                'molecule_base_file': "{{ lookup('env', 'MOLECULE_BASE_FILE') }}",
                 'molecule_ephemeral_directory': "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
                 'molecule_scenario_directory': "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
-                'molecule_yml': "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
+                'molecule_yml': "{{ [lookup('file', molecule_base_file),lookup('file', molecule_file)] | molecule_from_yaml }}",
                 'molecule_instance_config': "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
                 'molecule_no_log': "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
                 "molecule_yml.provisioner.log|default(False) | bool }}",
@@ -732,9 +738,10 @@ def test_write_inventory(temp_dir, _instance):
             },
             'vars': {
                 'molecule_file': "{{ lookup('env', 'MOLECULE_FILE') }}",
+                'molecule_base_file': "{{ lookup('env', 'MOLECULE_BASE_FILE') }}",
                 'molecule_ephemeral_directory': "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
                 'molecule_scenario_directory': "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
-                'molecule_yml': "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
+                'molecule_yml': "{{ [lookup('file', molecule_base_file),lookup('file', molecule_file)] | molecule_from_yaml }}",
                 'molecule_instance_config': "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
                 'molecule_no_log': "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
                 "molecule_yml.provisioner.log|default(False) | bool }}",
@@ -759,9 +766,10 @@ def test_write_inventory(temp_dir, _instance):
             },
             'vars': {
                 'molecule_file': "{{ lookup('env', 'MOLECULE_FILE') }}",
+                'molecule_base_file': "{{ lookup('env', 'MOLECULE_BASE_FILE') }}",
                 'molecule_ephemeral_directory': "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
                 'molecule_scenario_directory': "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
-                'molecule_yml': "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
+                'molecule_yml': "{{ [lookup('file', molecule_base_file),lookup('file', molecule_file)] | molecule_from_yaml }}",
                 'molecule_instance_config': "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
                 'molecule_no_log': "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
                 "molecule_yml.provisioner.log|default(False) | bool }}",
@@ -778,9 +786,10 @@ def test_write_inventory(temp_dir, _instance):
             },
             'vars': {
                 'molecule_file': "{{ lookup('env', 'MOLECULE_FILE') }}",
+                'molecule_base_file': "{{ lookup('env', 'MOLECULE_BASE_FILE') }}",
                 'molecule_ephemeral_directory': "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
                 'molecule_scenario_directory': "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
-                'molecule_yml': "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
+                'molecule_yml': "{{ [lookup('file', molecule_base_file),lookup('file', molecule_file)] | molecule_from_yaml }}",
                 'molecule_instance_config': "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
                 'molecule_no_log': "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
                 "molecule_yml.provisioner.log|default(False) | bool }}",
