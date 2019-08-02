@@ -24,6 +24,7 @@ import os
 import anyconfig
 from ansible.module_utils.parsing.convert_bool import boolean
 import six
+import copy
 
 from molecule import interpolation
 from molecule import logger
@@ -177,7 +178,7 @@ class Config(object):
         """
         self.molecule_file = molecule_file
         self.args = args
-        self.molecule_base_file = self.args.get('base_config')
+        self.molecule_base_file = args.get('base_config')
         self.command_args = command_args
         self.ansible_args = ansible_args
         self.config = self._get_config()
@@ -379,9 +380,7 @@ class Config(object):
         :return: dict
         """
         defaults = self._get_defaults()
-        if self.molecule_base_file is not None and os.path.exists(
-            self.molecule_base_file
-        ):
+        if self.molecule_base_file and os.path.exists(self.molecule_base_file):
             with util.open_file(self.molecule_base_file) as stream:
                 s = stream.read()
                 self._preflight(s)
@@ -415,11 +414,12 @@ class Config(object):
             util.sysexit_with_message(msg)
 
     def _get_defaults(self):
-        scenario_name = (
-            os.path.basename(os.path.dirname(self.molecule_file)) or 'default'
-        )
-        defaults = DEFAULTS.copy()
-        defaults['scenario']['name'] = scenario_name
+        defaults = copy.deepcopy(DEFAULTS)
+        scenario_name = os.path.basename(os.path.dirname(self.molecule_file))
+
+        if scenario_name:
+            defaults['scenario']['name'] = scenario_name
+
         return defaults
 
     def _preflight(self, data):
