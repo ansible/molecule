@@ -43,6 +43,7 @@ from molecule.driver import gce
 from molecule.driver import linode
 from molecule.driver import lxc
 from molecule.driver import lxd
+from molecule.driver import hetznercloud
 from molecule.driver import openstack
 from molecule.driver import podman
 from molecule.driver import vagrant
@@ -177,6 +178,8 @@ class Config(object):
             driver = ec2.EC2(self)
         elif driver_name == 'gce':
             driver = gce.GCE(self)
+        elif driver_name == 'hetznercloud':
+            driver = hetznercloud.HetznerCloud(self)
         elif driver_name == 'linode':
             driver = linode.Linode(self)
         elif driver_name == 'lxc':
@@ -489,6 +492,7 @@ def molecule_drivers():
         docker.Docker(None).name,
         ec2.EC2(None).name,
         gce.GCE(None).name,
+        hetznercloud.HetznerCloud(None).name,
         linode.Linode(None).name,
         lxc.LXC(None).name,
         lxd.LXD(None).name,

@@ -13,7 +13,7 @@ ENV PACKAGES="\
     "
 RUN apk add --update --no-cache ${PACKAGES}
 
-ENV MOLECULE_EXTRAS="azure,docker,docs,ec2,gce,linode,lxc,openstack,vagrant,windows"
+ENV MOLECULE_EXTRAS="azure,docker,docs,ec2,gce,hetznercloud,linode,lxc,openstack,vagrant,windows"
 
 ADD . .
 RUN \
@@ -54,7 +54,7 @@ ENV GEM_PACKAGES="\
     etc \
     "
 
-ENV MOLECULE_EXTRAS="azure,docker,docs,ec2,gce,linode,lxc,openstack,vagrant,windows"
+ENV MOLECULE_EXTRAS="azure,docker,docs,ec2,gce,hetznercloud,linode,lxc,openstack,vagrant,windows"
 
 COPY --from=molecule-builder \
     /usr/src/molecule/dist \
