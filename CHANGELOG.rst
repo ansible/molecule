@@ -24,6 +24,7 @@ Unreleased
   ``foo: ${UNDEFINED_VAR:-$DEFAULT}`` and ``foo: ${UNDEFINED_VAR-$DEFAULT}``
   are now supported.
 * Add base file values to molecule_yml variable
+* Introduces new molecule_base_file variable within the playbooks and as environment variable MOLECULE_BASE_FILE
 
 2.20
 ====
