@@ -47,6 +47,8 @@ def from_yaml(data):
         i = interpolation.Interpolator(interpolation.TemplateWithDefaults, env)
         interpolated_data = i.interpolate(d)
         defaults = util.merge_dicts(defaults, util.safe_load(interpolated_data))
+
+    defaults = _parallelize_config(defaults)
     return defaults
 
 
