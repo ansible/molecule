@@ -22,8 +22,8 @@ For some tests `RuboCop`_ is required.
 
 .. code-block:: bash
 
-    # apt-get install ruby ruby-dev
-    # gem install rubocop
+    $ apt-get install ruby ruby-dev
+    $ gem install rubocop
 
 .. _`RuboCop`: http://batsov.com/rubocop/
 
@@ -80,6 +80,8 @@ Run all functional tests for all supported platforms.
 Run all functional tests for a specific version of Python and Ansible (here
 Python 3.7 and Ansible 2.7).
 
+.. code-block:: bash
+
     $ tox -e py37-ansible27-functional
 
 Run all functional tests targeting the docker driver.
@@ -104,13 +106,13 @@ Run all the functional delegated tests.
 Linting
 -------
 
-Linting is performed by `Flake8`_.
+Linting is performed by a combination of linters.
+Run all the linters (some perform changes to conform the code to the style rules).
 
 .. code-block:: bash
 
     $ tox -e lint
 
-.. _`Flake8`: http://flake8.pycqa.org/en/latest/
 
 
 Documentation
