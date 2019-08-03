@@ -15,6 +15,8 @@ Unreleased
 * Place upper bounds on inspec and rubocop for CI testing.
 * Support pruning of docker volumes in 'destroy' phase for docker driver
 * Update Goss to 0.3.7
+* Add SSH password to delegated driver instance_dict
+* Add WinRM connections options to delegated driver instance_dict
 
 2.20
 ====
