@@ -54,7 +54,7 @@ class Openstack(base.Base):
         driver:
           name: openstack
           ssh_connection_options:
-            - -o ControlPath=~/.ansible/cp/%r@%h-%p
+            - '-o ControlPath=~/.ansible/cp/%r@%h-%p'
 
     .. important::
 

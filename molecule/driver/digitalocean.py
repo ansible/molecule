@@ -54,7 +54,7 @@ class DigitalOcean(base.Base):
         driver:
           name: digitalocean
           ssh_connection_options:
-            -o ControlPath=~/.ansible/cp/%r@%h-%p
+            - '-o ControlPath=~/.ansible/cp/%r@%h-%p'
 
     .. important::
 
