@@ -1,0 +1,59 @@
+---
+{% raw -%}
+- name: Destroy
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  no_log: "{{ molecule_no_log }}"
+  tasks:
+    - name: Populate the instance config
+      block:
+        - name: Populate instance config from file
+          set_fact:
+            instance_conf: "{{ lookup('file', molecule_instance_config) | molecule_from_yaml }}"
+            skip_instances: false
+      rescue:
+        - name: Populate instance config when file missing
+          set_fact:
+            instance_conf: {}
+            skip_instances: true
+
+    - name: Destroy molecule instance(s)
+      hcloud_server:
+        name: "{{ item.instance }}"
+        api_token: "{{ lookup('env', 'HCLOUD_TOKEN') }}"
+        state: absent
+      register: server
+      with_items: "{{ instance_conf }}"
+      when: not skip_instances
+      async: 7200
+      poll: 0
+
+    - name: Wait for instance(s) deletion to complete
+      async_status:
+        jid: "{{ item.ansible_job_id }}"
+      register: hetzner_jobs
+      until: hetzner_jobs.finished
+      retries: 300
+      with_items: "{{ server.results }}"
+
+    - name: Remove registered SSH key
+      hcloud_ssh_key:
+        name: "{{ instance_conf[0].ssh_key_name }}"
+        state: absent
+      when:
+        - not skip_instances
+        - instance_conf  # must contain at least one instance
+
+    # Mandatory configuration for Molecule to function.
+
+    - name: Populate instance config
+      set_fact:
+        instance_conf: {}
+
+    - name: Dump instance config
+      copy:
+        content: "{{ instance_conf | molecule_to_yaml | molecule_header }}"
+        dest: "{{ molecule_instance_config }}"
+      when: server.changed | bool
+{%- endraw %}

@@ -1,0 +1,39 @@
+---
+dependency:
+  name: galaxy
+
+driver:
+  name: hetznercloud
+
+lint:
+  name: yamllint
+  options:
+    config-file: ../../../resources/.yamllint
+
+platforms:
+  - name: instance
+    server_type: cx11
+    image: debian-9
+
+provisioner:
+  name: ansible
+  playbooks:
+    create: ../../../../../resources/playbooks/hetznercloud/create.yml
+    destroy: ../../../../../resources/playbooks/hetznercloud/destroy.yml
+  env:
+    ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
+  lint:
+    name: ansible-lint
+  config_options:
+    defaults:
+      timeout: 100
+    ssh_connection:
+      scp_if_ssh: true
+
+scenario:
+  name: default
+
+verifier:
+  name: testinfra
+  lint:
+    name: flake8

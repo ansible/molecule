@@ -38,8 +38,11 @@ IS_TRAVIS = os.getenv('TRAVIS') and os.getenv('CI')
 
 
 def _env_vars_exposed(env_vars, env=os.environ):
-    """Check if environment variables are exposed."""
-    return all(var in env for var in env_vars)
+    """Check if environment variables are exposed and populated."""
+    for env_var in env_vars:
+        if env_var not in os.environ:
+            return False
+        return os.environ[env_var] != ''
 
 
 @pytest.fixture
@@ -74,6 +77,7 @@ def skip_test(request, driver_name):
         'docker': supports_docker,
         'ec2': supports_ec2,
         'gce': supports_gce,
+        'hetznercloud': lambda: supports_hetznercloud() and at_least_ansible_28(),
         'linode': supports_linode,
         'lxc': supports_lxc,
         'lxd': supports_lxd,
@@ -268,6 +272,18 @@ def supports_docker():
     return get_docker_executable()
 
 
+def at_least_ansible_28():
+    """Ensure current Ansible is >= 2.8."""
+    try:
+        from ansible.release import __version__
+        from distutils.version import StrictVersion
+
+        return StrictVersion(__version__) >= StrictVersion('2.8.0')
+    except ImportError as exception:
+        LOG.error('Unable to parse Ansible version', exc_info=exception)
+        return False
+
+
 @pytest.helpers.register
 def supports_linode():
     from ansible.modules.cloud.linode.linode import HAS_LINODE
@@ -363,6 +379,15 @@ def supports_gce():
     env_vars = ('GCE_SERVICE_ACCOUNT_EMAIL', 'GCE_CREDENTIALS_FILE', 'GCE_PROJECT_ID')
 
     return _env_vars_exposed(env_vars) and HAS_GOOGLE_AUTH
+
+
+@pytest.helpers.register
+def supports_hetznercloud():
+    pytest.importorskip('hcloud')
+
+    env_vars = ('HCLOUD_TOKEN',)
+
+    return _env_vars_exposed(env_vars)
 
 
 @pytest.helpers.register
