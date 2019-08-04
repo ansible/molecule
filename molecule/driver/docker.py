@@ -72,6 +72,9 @@ class Docker(base.Base):
               - /run
             capabilities:
               - SYS_ADMIN
+            sysctls:
+              net.core.somaxconn: 1024
+              net.ipv4.tcp_syncookies: 0
             exposed_ports:
               - 53/udp
               - 53/tcp

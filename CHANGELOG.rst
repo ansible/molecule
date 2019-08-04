@@ -17,6 +17,7 @@ Unreleased
 * Update Goss to 0.3.7
 * Add SSH password to delegated driver instance_dict
 * Add WinRM connections options to delegated driver instance_dict
+* Add ``sysctls`` option to the Docker driver.
 
 2.20
 ====
