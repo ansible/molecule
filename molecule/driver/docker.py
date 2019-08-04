@@ -111,7 +111,7 @@ class Docker(base.Base):
 
     When attempting to utilize a container image with `systemd`_ as your init
     system inside the container to simulate a real machine, make sure to set
-    the ``privileged``, ``volume_mounts``, ``command``, and ``environment``
+    the ``privileged``, ``volumes``, ``command``, and ``environment``
     values. An example using the ``centos:7`` image is below:
 
     .. note:: Do note that running containers in privileged mode is considerably
@@ -124,7 +124,7 @@ class Docker(base.Base):
         - name: instance
           image: centos:7
           privileged: true
-          volume_mounts:
+          volumes:
             - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
           command: "/usr/sbin/init"
           tty: True
