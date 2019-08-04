@@ -17,6 +17,7 @@ Unreleased
 * Update Goss to 0.3.7
 * Add SSH password to delegated driver instance_dict
 * Add WinRM connections options to delegated driver instance_dict
+* Update testinfra to 3.0.6 so we can use ansible verbosity
 
 2.20
 ====
