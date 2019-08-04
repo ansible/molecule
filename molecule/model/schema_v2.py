@@ -406,6 +406,7 @@ platforms_docker_schema = {
                 'keep_volumes': {'type': 'boolean'},
                 'tmpfs': {'type': 'list', 'schema': {'type': 'string'}},
                 'capabilities': {'type': 'list', 'schema': {'type': 'string'}},
+                'sysctls': {'type': 'dict', 'keysrules': {'type': 'string'}},
                 'exposed_ports': {
                     'type': 'list',
                     'schema': {'type': 'string', 'coerce': 'exposed_ports'},
@@ -415,7 +416,7 @@ platforms_docker_schema = {
                 'dns_servers': {'type': 'list', 'schema': {'type': 'string'}},
                 'etc_hosts': {
                     'type': ['string', 'dict'],
-                    'keyschema': {'type': 'string'},
+                    'keysrules': {'type': 'string'},
                 },
                 'env': {
                     'type': 'dict',
@@ -482,7 +483,7 @@ platforms_podman_schema = {
                 'dns_servers': {'type': 'list', 'schema': {'type': 'string'}},
                 'etc_hosts': {
                     'type': ['string', 'dict'],
-                    'keyschema': {'type': 'string'},
+                    'keysrules': {'type': 'string'},
                 },
                 'env': {
                     'type': 'dict',

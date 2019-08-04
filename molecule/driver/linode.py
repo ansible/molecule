@@ -62,7 +62,7 @@ class Linode(base.Base):
         driver:
           name: linode
           ssh_connection_options:
-            -o ControlPath=~/.ansible/cp/%r@%h-%p
+            - '-o ControlPath=~/.ansible/cp/%r@%h-%p'
 
     .. important::
 

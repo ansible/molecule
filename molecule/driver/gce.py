@@ -58,7 +58,7 @@ class GCE(base.Base):
         driver:
           name: gce
           ssh_connection_options:
-            -o ControlPath=~/.ansible/cp/%r@%h-%p
+            - '-o ControlPath=~/.ansible/cp/%r@%h-%p'
 
     .. important::
 
