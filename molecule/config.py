@@ -139,7 +139,7 @@ class Config(object):
 
     @property
     def project_directory(self):
-        return os.getcwd()
+        return os.getenv('MOLECULE_PROJECT_DIRECTORY', os.getcwd())
 
     @property
     def cache_directory(self):
