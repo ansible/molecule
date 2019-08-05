@@ -4,7 +4,7 @@
   tasks:
   - name: Assert that the hostname is set
     assert:
-      that: ansible_hostname | match('instance.*')
+      that: ansible_hostname is match('instance.*')
 
   - name: Stat /etc/molecule directory
     stat:
