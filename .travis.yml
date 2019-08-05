@@ -43,55 +43,6 @@ language: python
 
 jobs:
   fast_finish: true
-
-  allow_failures:
-    - <<: *py-37
-      env:
-        - TOXENV=ansibledevel-unit
-
-    - <<: *py-37
-      env:
-        - PYTEST_ADDOPTS='-m shard_1_of_3'
-        - TOXENV=ansibledevel-functional
-    - <<: *py-37
-      env:
-        - PYTEST_ADDOPTS='-m shard_2_of_3'
-        - TOXENV=ansibledevel-functional
-    - <<: *py-37
-      env:
-        - PYTEST_ADDOPTS='-m shard_3_of_3'
-        - TOXENV=ansibledevel-functional
-    - <<: *py-36
-      env:
-        - TOXENV="ansibledevel-unit"
-    - <<: *py-36
-      env:
-        - PYTEST_ADDOPTS='-m shard_1_of_3'
-        - TOXENV=ansibledevel-functional
-    - <<: *py-36
-      env:
-        - PYTEST_ADDOPTS='-m shard_2_of_3'
-        - TOXENV=ansibledevel-functional
-    - <<: *py-36
-      env:
-        - PYTEST_ADDOPTS='-m shard_3_of_3'
-        - TOXENV=ansibledevel-functional
-    - <<: *py-27
-      env:
-        - TOXENV=ansibledevel-unit
-    - <<: *py-27
-      env:
-        - PYTEST_ADDOPTS='-m shard_1_of_3'
-        - TOXENV=ansibledevel-functional
-    - <<: *py-27
-      env:
-        - PYTEST_ADDOPTS='-m shard_2_of_3'
-        - TOXENV=ansibledevel-functional
-    - <<: *py-27
-      env:
-        - PYTEST_ADDOPTS='-m shard_3_of_3'
-        - TOXENV=ansibledevel-functional
-
   include:
     - <<: *lint
       name: linting the code
@@ -336,61 +287,49 @@ jobs:
     # of ansible/ansible:
 
     - <<: *py-37
-      <<: *if-cron-or-manual-run-or-tagged
       env:
         - TOXENV=ansibledevel-unit
     - <<: *py-37
-      <<: *if-cron-or-manual-run-or-tagged
       env:
         - PYTEST_ADDOPTS='-m shard_1_of_3'
         - TOXENV=ansibledevel-functional
     - <<: *py-37
-      <<: *if-cron-or-manual-run-or-tagged
       env:
         - PYTEST_ADDOPTS='-m shard_2_of_3'
         - TOXENV=ansibledevel-functional
     - <<: *py-37
-      <<: *if-cron-or-manual-run-or-tagged
       env:
         - PYTEST_ADDOPTS='-m shard_3_of_3'
         - TOXENV=ansibledevel-functional
 
     - <<: *py-36
-      <<: *if-cron-or-manual-run-or-tagged
       env:
         - TOXENV=ansibledevel-unit
     - <<: *py-36
-      <<: *if-cron-or-manual-run-or-tagged
       env:
         - PYTEST_ADDOPTS='-m shard_1_of_3'
         - TOXENV=ansibledevel-functional
     - <<: *py-36
-      <<: *if-cron-or-manual-run-or-tagged
       env:
         - PYTEST_ADDOPTS='-m shard_2_of_3'
         - TOXENV=ansibledevel-functional
     - <<: *py-36
-      <<: *if-cron-or-manual-run-or-tagged
       env:
         - PYTEST_ADDOPTS='-m shard_3_of_3'
         - TOXENV=ansibledevel-functional
 
     - <<: *py-27
-      <<: *if-cron-or-manual-run-or-tagged
       env:
         - TOXENV=ansibledevel-unit
     - <<: *py-27
-      <<: *if-cron-or-manual-run-or-tagged
       env:
         - PYTEST_ADDOPTS='-m shard_1_of_3'
         - TOXENV=ansibledevel-functional
     - <<: *py-27
-      <<: *if-cron-or-manual-run-or-tagged
       env:
         - PYTEST_ADDOPTS='-m shard_2_of_3'
         - TOXENV=ansibledevel-functional
     - <<: *py-27
-      <<: *if-cron-or-manual-run-or-tagged
       env:
         - PYTEST_ADDOPTS='-m shard_3_of_3'
         - TOXENV=ansibledevel-functional
