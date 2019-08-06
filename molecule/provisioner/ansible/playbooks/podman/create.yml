@@ -47,6 +47,10 @@
       when:
         - platforms.changed or podman_images.results | map(attribute='images') | select('equalto', []) | list | count >= 0
         - not item.item.pre_build_image | default(false)
+      register: result
+      until: result is not failed
+      retries: 3
+      delay: 30
 
     - name: Determine the CMD directives
       set_fact:
