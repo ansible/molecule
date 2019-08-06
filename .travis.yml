@@ -402,7 +402,7 @@ jobs:
       name: Publishing current Git tagged version of dist to PyPI
       if: repo == "ansible/molecule" AND tag IS present
       env:
-        - TOXENV=metadata-validation,build-dists
+        - TOXENV=build-dists
       before_deploy:
         - echo > setup.py
       deploy: &deploy-step

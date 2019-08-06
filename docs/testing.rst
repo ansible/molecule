@@ -126,19 +126,6 @@ Generate the documentation, using `sphinx`_.
 
 .. _`sphinx`: http://www.sphinx-doc.org
 
-Metadata validation
--------------------
-
-Check if the long description of the generated package will render properly in
-Python eggs and PyPI, using `checkdocs`_ and `twine`_.
-
-.. code-block:: bash
-
-    $ tox -e metadata-validation
-
-.. _`checkdocs`: https://github.com/collective/collective.checkdocs
-
-.. _`twine`: https://twine.readthedocs.io/
 
 Build docker
 ------------
