@@ -71,7 +71,7 @@ def _parallelize_config(data):
     if 'platforms' not in data:
         return data
     state = util.safe_load_file(os.environ['MOLECULE_STATE_FILE'])
-    if state['is_parallel']:
+    if state.get('is_parallel', False):
         data['platforms'] = util._parallelize_platforms(data, state['run_uuid'])
     return data
 
