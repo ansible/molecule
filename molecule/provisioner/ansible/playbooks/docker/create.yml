@@ -73,6 +73,10 @@
       loop_control:
         label: "molecule_local/{{ item.item.image }}"
       no_log: false
+      register: result
+      until: result is not failed
+      retries: 3
+      delay: 30
 
     - name: Build an Ansible compatible image (old)
       when:
