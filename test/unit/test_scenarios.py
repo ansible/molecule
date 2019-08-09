@@ -83,8 +83,8 @@ def test_print_matrix(mocker, patched_logger_info, patched_logger_out, _instance
 
     matrix_out = u"""
 ├── default
-│   ├── lint
 │   ├── dependency
+│   ├── lint
 │   ├── cleanup
 │   ├── destroy
 │   ├── syntax
@@ -97,8 +97,8 @@ def test_print_matrix(mocker, patched_logger_info, patched_logger_out, _instance
 │   ├── cleanup
 │   └── destroy
 └── foo
-    ├── lint
     ├── dependency
+    ├── lint
     ├── cleanup
     ├── destroy
     ├── syntax
@@ -146,7 +146,7 @@ def test_filter_for_scenario(_instance):
 def test_get_matrix(_instance):
     matrix = {
         'default': {
-            'lint': ['lint'],
+            'lint': ['dependency', 'lint'],
             'idempotence': ['idempotence'],
             'syntax': ['syntax'],
             'converge': ['dependency', 'create', 'prepare', 'converge'],
@@ -168,8 +168,8 @@ def test_get_matrix(_instance):
             'side_effect': ['side_effect'],
             'dependency': ['dependency'],
             'test': [
-                'lint',
                 'dependency',
+                'lint',
                 'cleanup',
                 'destroy',
                 'syntax',
@@ -185,7 +185,7 @@ def test_get_matrix(_instance):
             'destroy': ['dependency', 'cleanup', 'destroy'],
         },
         'foo': {
-            'lint': ['lint'],
+            'lint': ['dependency', 'lint'],
             'idempotence': ['idempotence'],
             'syntax': ['syntax'],
             'converge': ['dependency', 'create', 'prepare', 'converge'],
@@ -207,8 +207,8 @@ def test_get_matrix(_instance):
             'side_effect': ['side_effect'],
             'dependency': ['dependency'],
             'test': [
-                'lint',
                 'dependency',
+                'lint',
                 'cleanup',
                 'destroy',
                 'syntax',

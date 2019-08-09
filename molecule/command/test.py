@@ -126,7 +126,7 @@ class Test(base.Base):
 )
 def test(ctx, scenario_name, driver_name, __all, destroy, parallel):  # pragma: no cover
     """
-    Test (lint, cleanup, destroy, dependency, syntax, create, prepare,
+    Test (dependency, lint, cleanup, destroy, syntax, create, prepare,
           converge, idempotence, side_effect, verify, cleanup, destroy).
     """
 

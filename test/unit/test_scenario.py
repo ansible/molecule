@@ -145,7 +145,8 @@ def test_idempotence_sequence_property(_instance):
 
 
 def test_lint_sequence_property(_instance):
-    assert ['lint'] == _instance.lint_sequence
+    assert 'lint' in _instance.lint_sequence
+    assert 'dependency' in _instance.lint_sequence
 
 
 def test_prepare_sequence_property(_instance):
@@ -162,8 +163,8 @@ def test_syntax_sequence_property(_instance):
 
 def test_test_sequence_property(_instance):
     sequence = [
-        'lint',
         'dependency',
+        'lint',
         'cleanup',
         'destroy',
         'syntax',
@@ -185,7 +186,7 @@ def test_verify_sequence_property(_instance):
 
 
 def test_sequence_property(_instance):
-    assert 'lint' == _instance.sequence[0]
+    assert 'lint' in _instance.sequence
 
 
 def test_sequence_property_with_invalid_subcommand(_instance):
