@@ -3,6 +3,7 @@
   os_server:
     name: delegated-instance-openstack
     state: absent
+    delete_fip: true
 
 - name: Cleanup temporary files file
   file:
