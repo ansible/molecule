@@ -178,3 +178,7 @@ class EC2(base.Base):
     def sanity_checks(self):
         # FIXME(decentral1se): Implement sanity checks
         pass
+
+
+def load(self):
+    return EC2(self)

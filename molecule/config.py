@@ -31,22 +31,10 @@ from molecule import platforms
 from molecule import scenario
 from molecule import state
 from molecule import util
+from molecule.api import molecule_drivers
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
 from molecule.dependency import shell
-from molecule.driver import azure
-from molecule.driver import delegated
-from molecule.driver import digitalocean
-from molecule.driver import docker
-from molecule.driver import ec2
-from molecule.driver import gce
-from molecule.driver import linode
-from molecule.driver import lxc
-from molecule.driver import lxd
-from molecule.driver import hetznercloud
-from molecule.driver import openstack
-from molecule.driver import podman
-from molecule.driver import vagrant
 from molecule.lint import yamllint
 from molecule.model import schema_v2
 from molecule.provisioner import ansible
@@ -166,33 +154,7 @@ class Config(object):
         driver_name = self._get_driver_name()
         driver = None
 
-        if driver_name == 'azure':
-            driver = azure.Azure(self)
-        elif driver_name == 'delegated':
-            driver = delegated.Delegated(self)
-        elif driver_name == 'digitalocean':
-            driver = digitalocean.DigitalOcean(self)
-        elif driver_name == 'docker':
-            driver = docker.Docker(self)
-        elif driver_name == 'ec2':
-            driver = ec2.EC2(self)
-        elif driver_name == 'gce':
-            driver = gce.GCE(self)
-        elif driver_name == 'hetznercloud':
-            driver = hetznercloud.HetznerCloud(self)
-        elif driver_name == 'linode':
-            driver = linode.Linode(self)
-        elif driver_name == 'lxc':
-            driver = lxc.LXC(self)
-        elif driver_name == 'lxd':
-            driver = lxd.LXD(self)
-        elif driver_name == 'openstack':
-            driver = openstack.Openstack(self)
-        elif driver_name == 'podman':
-            driver = podman.Podman(self)
-        elif driver_name == 'vagrant':
-            driver = vagrant.Vagrant(self)
-
+        driver = molecule_drivers(as_dict=True)[driver_name].load(self)
         driver.name = driver_name
 
         return driver
@@ -482,24 +444,6 @@ def molecule_directory(path):
 
 def molecule_file(path):
     return os.path.join(path, MOLECULE_FILE)
-
-
-def molecule_drivers():
-    return [
-        azure.Azure(None).name,
-        delegated.Delegated(None).name,
-        digitalocean.DigitalOcean(None).name,
-        docker.Docker(None).name,
-        ec2.EC2(None).name,
-        gce.GCE(None).name,
-        hetznercloud.HetznerCloud(None).name,
-        linode.Linode(None).name,
-        lxc.LXC(None).name,
-        lxd.LXD(None).name,
-        openstack.Openstack(None).name,
-        podman.Podman(None).name,
-        vagrant.Vagrant(None).name,
-    ]
 
 
 def molecule_verifiers():

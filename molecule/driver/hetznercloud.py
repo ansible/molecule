@@ -175,3 +175,7 @@ class HetznerCloud(base.Base):
             sysexit_with_message(msg)
 
         self._config.state.change_state('sanity_checked', True)
+
+
+def load(self):
+    return HetznerCloud(self)
