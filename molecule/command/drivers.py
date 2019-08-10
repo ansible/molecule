@@ -18,26 +18,45 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-# NOTE(retr0h): Importing into the ``molecule.command`` namespace, to prevent
-# collisions (e.g. ``list``).  The CLI usage may conflict with reserved words
-# or builtins.
+from __future__ import print_function
 
-from molecule.command import base  # noqa
-from molecule.command import cleanup  # noqa
-from molecule.command import check  # noqa
-from molecule.command import converge  # noqa
-from molecule.command import create  # noqa
-from molecule.command import dependency  # noqa
-from molecule.command import destroy  # noqa
-from molecule.command import drivers  # noqa
-from molecule.command import idempotence  # noqa
-from molecule.command import lint  # noqa
-from molecule.command import list  # noqa
-from molecule.command import login  # noqa
-from molecule.command import matrix  # noqa
-from molecule.command import prepare  # noqa
-from molecule.command import side_effect  # noqa
-from molecule.command import syntax  # noqa
-from molecule.command import test  # noqa
-from molecule.command import verify  # noqa
-from molecule.command.init import init  # noqa
+import click
+import tabulate
+
+from molecule import logger
+from molecule.api import molecule_drivers
+
+LOG = logger.get_logger(__name__)
+
+
+@click.command()
+@click.pass_context
+@click.option(
+    '--format',
+    '-f',
+    type=click.Choice(['simple', 'plain']),
+    default='simple',
+    help='Change output format. (simple)',
+)
+def drivers(ctx, format):  # pragma: no cover
+    """ Lists drivers. """
+
+    drivers = [[x] for x in molecule_drivers()]
+
+    headers = ['name']
+    table_format = 'simple'
+    if format == 'plain':
+        headers = []
+        table_format = format
+    _print_tabulate_data(headers, drivers, table_format)
+
+
+def _print_tabulate_data(headers, data, table_format):  # pragma: no cover
+    """
+    Shows the tabulate data on the screen and returns None.
+
+    :param headers: A list of column headers.
+    :param data:  A list of tabular data to display.
+    :returns: None
+    """
+    print(tabulate.tabulate(data, headers, tablefmt=table_format))
