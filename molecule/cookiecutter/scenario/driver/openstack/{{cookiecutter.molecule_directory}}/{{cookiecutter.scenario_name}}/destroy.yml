@@ -10,6 +10,7 @@
       os_server:
         name: "{{ item.name }}"
         state: absent
+        delete_fip: true
       register: server
       with_items: "{{ molecule_yml.platforms }}"
       async: 7200
