@@ -314,7 +314,7 @@ def test_get_config_with_base_config(tmpdir, config_instance):
     base_file = tmpdir.mkdir('config').join('foo.yml')
     config_instance.molecule_base_file = base_file
     contents = {'foo': 'bar'}
-    util.write_file(base_file, util.safe_dump(contents))
+    util.write_file(str(base_file), util.safe_dump(contents))
     result = config_instance._get_config()
 
     assert result['foo'] == 'bar'

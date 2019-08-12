@@ -46,10 +46,10 @@ def from_yaml(data):
 
     # When baseconfig exists merge the molecule.yml into this base
     if os.path.isfile(molecule_base_file):
-      base_config = util.safe_load_file(molecule_base_file)
-      loaded_data = util.merge_dicts(base_config, util.safe_load(interpolated_data))
+        base_config = util.safe_load_file(molecule_base_file)
+        loaded_data = util.merge_dicts(base_config, util.safe_load(interpolated_data))
     else:
-      loaded_data = util.safe_load(interpolated_data)
+        loaded_data = util.safe_load(interpolated_data)
 
     loaded_data = _parallelize_config(loaded_data)
     return loaded_data
