@@ -36,20 +36,23 @@ def from_yaml(data):
     :return: dict
     """
     molecule_env_file = os.environ['MOLECULE_ENV_FILE']
+    molecule_base_file = os.environ['MOLECULE_BASE_FILE']
 
     env = os.environ.copy()
     env = config.set_env_from_file(env, molecule_env_file)
 
-    defaults = config.DEFAULTS.copy()
-    if not isinstance(data, list):
-        data = [data]
-    for d in data:
-        i = interpolation.Interpolator(interpolation.TemplateWithDefaults, env)
-        interpolated_data = i.interpolate(d)
-        defaults = util.merge_dicts(defaults, util.safe_load(interpolated_data))
+    i = interpolation.Interpolator(interpolation.TemplateWithDefaults, env)
+    interpolated_data = i.interpolate(data)
 
-    defaults = _parallelize_config(defaults)
-    return defaults
+    # When baseconfig exists merge the molecule.yml into this base
+    if os.path.isfile(molecule_base_file):
+      base_config = util.safe_load_file(molecule_base_file)
+      loaded_data = util.merge_dicts(base_config, util.safe_load(interpolated_data))
+    else:
+      loaded_data = util.safe_load(interpolated_data)
+
+    loaded_data = _parallelize_config(loaded_data)
+    return loaded_data
 
 
 def to_yaml(data):
