@@ -24,7 +24,6 @@ import os
 import anyconfig
 from ansible.module_utils.parsing.convert_bool import boolean
 import six
-import copy
 
 from molecule import interpolation
 from molecule import logger
@@ -56,86 +55,6 @@ MOLECULE_DIRECTORY = 'molecule'
 MOLECULE_FILE = 'molecule.yml'
 MERGE_STRATEGY = anyconfig.MS_DICTS
 MOLECULE_KEEP_STRING = 'MOLECULE_'
-DEFAULTS = {
-    'dependency': {
-        'name': 'galaxy',
-        'command': None,
-        'enabled': True,
-        'options': {},
-        'env': {},
-    },
-    'driver': {
-        'name': 'docker',
-        'provider': {'name': None},
-        'options': {'managed': True},
-        'ssh_connection_options': [],
-        'safe_files': [],
-    },
-    'lint': {'name': 'yamllint', 'enabled': True, 'options': {}, 'env': {}},
-    'platforms': [],
-    'provisioner': {
-        'name': 'ansible',
-        'config_options': {},
-        'ansible_args': [],
-        'connection_options': {},
-        'options': {},
-        'env': {},
-        'inventory': {'hosts': {}, 'host_vars': {}, 'group_vars': {}, 'links': {}},
-        'children': {},
-        'playbooks': {
-            'cleanup': 'cleanup.yml',
-            'create': 'create.yml',
-            'converge': 'playbook.yml',
-            'destroy': 'destroy.yml',
-            'prepare': 'prepare.yml',
-            'side_effect': 'side_effect.yml',
-            'verify': 'verify.yml',
-        },
-        'lint': {'name': 'ansible-lint', 'enabled': True, 'options': {}, 'env': {}},
-    },
-    'scenario': {
-        'name': 'default',
-        'check_sequence': [
-            'dependency',
-            'cleanup',
-            'destroy',
-            'create',
-            'prepare',
-            'converge',
-            'check',
-            'cleanup',
-            'destroy',
-        ],
-        'cleanup_sequence': ['cleanup'],
-        'converge_sequence': ['dependency', 'create', 'prepare', 'converge'],
-        'create_sequence': ['dependency', 'create', 'prepare'],
-        'destroy_sequence': ['dependency', 'cleanup', 'destroy'],
-        'test_sequence': [
-            'lint',
-            'dependency',
-            'cleanup',
-            'destroy',
-            'syntax',
-            'create',
-            'prepare',
-            'converge',
-            'idempotence',
-            'side_effect',
-            'verify',
-            'cleanup',
-            'destroy',
-        ],
-    },
-    'verifier': {
-        'name': 'testinfra',
-        'enabled': True,
-        'directory': 'tests',
-        'options': {},
-        'env': {},
-        'additional_files_or_dirs': [],
-        'lint': {'name': 'flake8', 'enabled': True, 'options': {}, 'env': {}},
-    },
-}
 
 
 # https://stackoverflow.com/questions/16017397/injecting-function-call-after-init-with-decorator  # noqa
@@ -414,13 +333,103 @@ class Config(object):
             util.sysexit_with_message(msg)
 
     def _get_defaults(self):
-        defaults = copy.deepcopy(DEFAULTS)
-        scenario_name = os.path.basename(os.path.dirname(self.molecule_file))
-
-        if scenario_name:
-            defaults['scenario']['name'] = scenario_name
-
-        return defaults
+        if not self.molecule_file:
+            scenario_name = 'default'
+        else:
+            scenario_name = (
+                os.path.basename(os.path.dirname(self.molecule_file)) or 'default'
+            )
+        return {
+            'dependency': {
+                'name': 'galaxy',
+                'command': None,
+                'enabled': True,
+                'options': {},
+                'env': {},
+            },
+            'driver': {
+                'name': 'docker',
+                'provider': {'name': None},
+                'options': {'managed': True},
+                'ssh_connection_options': [],
+                'safe_files': [],
+            },
+            'lint': {'name': 'yamllint', 'enabled': True, 'options': {}, 'env': {}},
+            'platforms': [],
+            'provisioner': {
+                'name': 'ansible',
+                'config_options': {},
+                'ansible_args': [],
+                'connection_options': {},
+                'options': {},
+                'env': {},
+                'inventory': {
+                    'hosts': {},
+                    'host_vars': {},
+                    'group_vars': {},
+                    'links': {},
+                },
+                'children': {},
+                'playbooks': {
+                    'cleanup': 'cleanup.yml',
+                    'create': 'create.yml',
+                    'converge': 'playbook.yml',
+                    'destroy': 'destroy.yml',
+                    'prepare': 'prepare.yml',
+                    'side_effect': 'side_effect.yml',
+                    'verify': 'verify.yml',
+                },
+                'lint': {
+                    'name': 'ansible-lint',
+                    'enabled': True,
+                    'options': {},
+                    'env': {},
+                },
+            },
+            'scenario': {
+                'name': scenario_name,
+                'check_sequence': [
+                    'dependency',
+                    'cleanup',
+                    'destroy',
+                    'create',
+                    'prepare',
+                    'converge',
+                    'check',
+                    'cleanup',
+                    'destroy',
+                ],
+                'cleanup_sequence': ['cleanup'],
+                'converge_sequence': ['dependency', 'create', 'prepare', 'converge'],
+                'create_sequence': ['dependency', 'create', 'prepare'],
+                'destroy_sequence': ['dependency', 'cleanup', 'destroy'],
+                'test_sequence': [
+                    # dependency must be kept before lint to avoid errors
+                    'dependency',
+                    'lint',
+                    'cleanup',
+                    'destroy',
+                    'syntax',
+                    'create',
+                    'prepare',
+                    'converge',
+                    'idempotence',
+                    'side_effect',
+                    'verify',
+                    'cleanup',
+                    'destroy',
+                ],
+            },
+            'verifier': {
+                'name': 'testinfra',
+                'enabled': True,
+                'directory': 'tests',
+                'options': {},
+                'env': {},
+                'additional_files_or_dirs': [],
+                'lint': {'name': 'flake8', 'enabled': True, 'options': {}, 'env': {}},
+            },
+        }
 
     def _preflight(self, data):
         env = os.environ.copy()

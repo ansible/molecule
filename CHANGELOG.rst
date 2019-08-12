@@ -23,8 +23,9 @@ Unreleased
 * Bash style variable expension for environment variable defaults added.
   ``foo: ${UNDEFINED_VAR:-$DEFAULT}`` and ``foo: ${UNDEFINED_VAR-$DEFAULT}``
   are now supported.
-* Add base file values to molecule_yml variable
-* Introduces new molecule_base_file variable within the playbooks and as environment variable MOLECULE_BASE_FILE
+* Merge base file values to molecule_yml variable available within playbooks
+* Introduces new `molecule_base_file` variable within the playbooks and environment variable `MOLECULE_BASE_FILE`
+  pointing to the base file location.
 
 2.20
 ====
