@@ -20,6 +20,9 @@ Unreleased
 * Update testinfra to 3.0.6 so we can use ansible verbosity
 * Add ``sysctls`` option to the Docker driver.
 * dependency now runs before lint on default test and lint sequences
+* Bash style variable expension for environment variable defaults added.
+  ``foo: ${UNDEFINED_VAR:-$DEFAULT}`` and ``foo: ${UNDEFINED_VAR-$DEFAULT}``
+  are now supported.
 
 2.20
 ====
