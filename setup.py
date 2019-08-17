@@ -33,10 +33,11 @@ except ImportError:
 
 
 ALL_STRING_TYPES = tuple(map(type, ('', b'', u'')))
-MIN_NATIVE_SETUPTOOLS_VERSION = 34, 4, 0
+MIN_NATIVE_SETUPTOOLS_VERSION = 34, 4
 """Minimal setuptools having good read_configuration implementation."""
 
-RUNTIME_SETUPTOOLS_VERSION = tuple(map(int, setuptools.__version__.split('.')))
+# Patch version can be a non integer value, like 'post20190705'
+RUNTIME_SETUPTOOLS_VERSION = tuple(map(int, setuptools.__version__.split('.')[:2]))
 """Setuptools imported now."""
 
 READ_CONFIG_SHIM_NEEDED = RUNTIME_SETUPTOOLS_VERSION < MIN_NATIVE_SETUPTOOLS_VERSION
