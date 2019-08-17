@@ -20,7 +20,8 @@
     - name: Destroy molecule instance(s)
       ec2:
         state: absent
-        instance_ids: "{{ item.instance_ids }}"
+        instance_ids: "{{ item.instance_id }}"
+        region: "{{ item.region }}"
       register: server
       with_items: "{{ instance_conf }}"
       when: not skip_instances
@@ -34,6 +35,7 @@
       until: ec2_jobs.finished
       retries: 300
       with_items: "{{ server.results }}"
+      when: not skip_instances
 
     # Mandatory configuration for Molecule to function.
 
