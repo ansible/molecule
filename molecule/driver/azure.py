@@ -140,3 +140,7 @@ class Azure(base.Base):
     def sanity_checks(self):
         # FIXME(decentral1se): Implement sanity checks
         pass
+
+
+def load(self):
+    return Azure(self)

@@ -25,6 +25,7 @@ import click
 from molecule import config
 from molecule import logger
 from molecule import util
+from molecule.api import molecule_drivers
 from molecule.command import base as command_base
 from molecule.command.init import base
 
@@ -105,7 +106,7 @@ class Role(base.Base):
 @click.option(
     '--driver-name',
     '-d',
-    type=click.Choice(config.molecule_drivers()),
+    type=click.Choice(molecule_drivers()),
     default='docker',
     help='Name of driver to initialize. (docker)',
 )

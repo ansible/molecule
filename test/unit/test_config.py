@@ -27,19 +27,10 @@ from molecule import platforms
 from molecule import scenario
 from molecule import state
 from molecule import util
+from molecule.api import molecule_drivers
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
 from molecule.dependency import shell
-from molecule.driver import azure
-from molecule.driver import delegated
-from molecule.driver import digitalocean
-from molecule.driver import docker
-from molecule.driver import ec2
-from molecule.driver import gce
-from molecule.driver import lxc
-from molecule.driver import lxd
-from molecule.driver import openstack
-from molecule.driver import vagrant
 from molecule.lint import yamllint
 from molecule.provisioner import ansible
 from molecule.verifier import goss
@@ -129,20 +120,9 @@ def test_dependency_property_is_shell(config_instance):
     assert isinstance(config_instance.dependency, shell.Shell)
 
 
-def test_driver_property(config_instance):
-    assert isinstance(config_instance.driver, docker.Docker)
-
-
 @pytest.fixture
 def _config_driver_azure_section_data():
     return {'driver': {'name': 'azure'}}
-
-
-@pytest.mark.parametrize(
-    'config_instance', ['_config_driver_azure_section_data'], indirect=True
-)
-def test_driver_property_is_azure(config_instance):
-    assert isinstance(config_instance.driver, azure.Azure)
 
 
 @pytest.fixture
@@ -150,23 +130,9 @@ def _config_driver_delegated_section_data():
     return {'driver': {'name': 'delegated', 'options': {'managed': False}}}
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_config_driver_delegated_section_data'], indirect=True
-)
-def test_driver_property_is_delegated(config_instance):
-    assert isinstance(config_instance.driver, delegated.Delegated)
-
-
 @pytest.fixture
 def _config_driver_digitalocean_section_data():
     return {'driver': {'name': 'digitalocean'}}
-
-
-@pytest.mark.parametrize(
-    'config_instance', ['_config_driver_digitalocean_section_data'], indirect=True
-)
-def test_driver_property_is_digitalocean(config_instance):
-    assert isinstance(config_instance.driver, digitalocean.DigitalOcean)
 
 
 @pytest.fixture
@@ -174,23 +140,9 @@ def _config_driver_ec2_section_data():
     return {'driver': {'name': 'ec2'}}
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_config_driver_ec2_section_data'], indirect=True
-)
-def test_driver_property_is_ec2(config_instance):
-    assert isinstance(config_instance.driver, ec2.EC2)
-
-
 @pytest.fixture
 def _config_driver_gce_section_data():
     return {'driver': {'name': 'gce'}}
-
-
-@pytest.mark.parametrize(
-    'config_instance', ['_config_driver_gce_section_data'], indirect=True
-)
-def test_driver_property_is_gce(config_instance):
-    assert isinstance(config_instance.driver, gce.GCE)
 
 
 @pytest.fixture
@@ -198,23 +150,9 @@ def _config_driver_lxc_section_data():
     return {'driver': {'name': 'lxc'}}
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_config_driver_lxc_section_data'], indirect=True
-)
-def test_driver_property_is_lxc(config_instance):
-    assert isinstance(config_instance.driver, lxc.LXC)
-
-
 @pytest.fixture
 def _config_driver_lxd_section_data():
     return {'driver': {'name': 'lxd'}}
-
-
-@pytest.mark.parametrize(
-    'config_instance', ['_config_driver_lxd_section_data'], indirect=True
-)
-def test_driver_property_is_lxd(config_instance):
-    assert isinstance(config_instance.driver, lxd.LXD)
 
 
 @pytest.fixture
@@ -222,23 +160,9 @@ def _config_driver_openstack_section_data():
     return {'driver': {'name': 'openstack'}}
 
 
-@pytest.mark.parametrize(
-    'config_instance', ['_config_driver_openstack_section_data'], indirect=True
-)
-def test_driver_property_is_openstack(config_instance):
-    assert isinstance(config_instance.driver, openstack.Openstack)
-
-
 @pytest.fixture
 def _config_driver_vagrant_section_data():
     return {'driver': {'name': 'vagrant', 'provider': {'name': 'virtualbox'}}}
-
-
-@pytest.mark.parametrize(
-    'config_instance', ['_config_driver_vagrant_section_data'], indirect=True
-)
-def test_driver_property_is_vagrant(config_instance):
-    assert isinstance(config_instance.driver, vagrant.Vagrant)
 
 
 def test_drivers_property(config_instance):
@@ -258,7 +182,7 @@ def test_drivers_property(config_instance):
         'vagrant',
     ]
 
-    assert x == config_instance.drivers
+    assert x == sorted(config_instance.drivers)
 
 
 def test_env(config_instance):
@@ -516,7 +440,7 @@ def test_molecule_drivers():
         'vagrant',
     ]
 
-    assert x == config.molecule_drivers()
+    assert x == sorted(molecule_drivers())
 
 
 def test_molecule_verifiers():

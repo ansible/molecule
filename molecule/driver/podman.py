@@ -187,3 +187,7 @@ class Podman(base.Base):
 
         log.info("Sanity checks: '{}'".format(self._name))
         self._config.state.change_state('sanity_checked', True)
+
+
+def load(self):
+    return Podman(self)

@@ -233,3 +233,7 @@ class Delegated(base.Base):
     def sanity_checks(self):
         # Note(decentral1se): Cannot implement driver specifics are unknown
         pass
+
+
+def load(self):
+    return Delegated(self)

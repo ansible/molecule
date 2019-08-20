@@ -89,3 +89,7 @@ class LXC(base.Base):
     def sanity_checks(self):
         # FIXME(decentral1se): Implement sanity checks
         pass
+
+
+def load(self):
+    return LXC(self)
