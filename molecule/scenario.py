@@ -75,8 +75,8 @@ class Scenario(object):
             - cleanup
             - destroy
           test_sequence:
-            - lint
             - dependency
+            - lint
             - cleanup
             - destroy
             - syntax
@@ -197,7 +197,8 @@ class Scenario(object):
 
     @property
     def lint_sequence(self):
-        return ['lint']
+        # see https://github.com/ansible/molecule/issues/2216
+        return ['dependency', 'lint']
 
     @property
     def prepare_sequence(self):

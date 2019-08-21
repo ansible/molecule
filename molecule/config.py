@@ -390,8 +390,9 @@ class Config(object):
                 'create_sequence': ['dependency', 'create', 'prepare'],
                 'destroy_sequence': ['dependency', 'cleanup', 'destroy'],
                 'test_sequence': [
-                    'lint',
+                    # dependency must be kept before lint to avoid errors
                     'dependency',
+                    'lint',
                     'cleanup',
                     'destroy',
                     'syntax',

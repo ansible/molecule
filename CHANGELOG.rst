@@ -19,6 +19,7 @@ Unreleased
 * Add WinRM connections options to delegated driver instance_dict
 * Update testinfra to 3.0.6 so we can use ansible verbosity
 * Add ``sysctls`` option to the Docker driver.
+* dependency now runs before lint on default test and lint sequences
 
 2.20
 ====
