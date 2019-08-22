@@ -231,12 +231,12 @@ def test_command_lint(scenario_to_test, with_scenario, scenario_name):
             'driver/docker',
             'docker',
             """
-Instance Name    Driver Name    Provisioner Name    Scenario Name     Created    Converged
----------------  -------------  ------------------  ----------------  ---------  -----------
-instance         docker         ansible             ansible-verifier  false      false
-instance         docker         ansible             default           false      false
-instance-1       docker         ansible             multi-node        false      false
-instance-2       docker         ansible             multi-node        false      false
+Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    Converged
+
+---------------  -------------  ------------------  ---------------  ---------  -----------
+instance         docker         ansible             default
+instance-1       docker         ansible             multi-node
+instance-2       docker         ansible             multi-node
 """.strip(),
         ),  # noqa
         (
@@ -245,19 +245,18 @@ instance-2       docker         ansible             multi-node        false     
             """
 Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    Converged
 ---------------  -------------  ------------------  ---------------  ---------  -----------
-instance         delegated      ansible             default          false      false
+instance         delegated      ansible             default
 """.strip(),
         ),  # noqa
         (
             'driver/podman',
             'podman',
             """
-Instance Name    Driver Name    Provisioner Name    Scenario Name     Created    Converged
----------------  -------------  ------------------  ----------------  ---------  -----------
-instance         podman         ansible             ansible-verifier  false      false
-instance         podman         ansible             default           false      false
-instance-1       podman         ansible             multi-node        false      false
-instance-2       podman         ansible             multi-node        false      false
+Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    Converged
+---------------  -------------  ------------------  ---------------  ---------  -----------
+instance         podman         ansible             default
+instance-1       podman         ansible             multi-node
+instance-2       podman         ansible             multi-node
 """.strip(),
         ),  # noqa
     ],
@@ -274,27 +273,25 @@ def test_command_list(scenario_to_test, with_scenario, expected):
             'driver/docker',
             'docker',
             """
-instance    docker  ansible  ansible-verifier  false  false
-instance    docker  ansible  default           false  false
-instance-1  docker  ansible  multi-node        false  false
-instance-2  docker  ansible  multi-node        false  false
+instance    docker  ansible  default
+instance-1  docker  ansible  multi-node
+instance-2  docker  ansible  multi-node
 """.strip(),
         ),
         (
             'driver/delegated',
             'delegated',
             """
-instance  delegated  ansible  default  false  false
+instance  delegated  ansible  default
 """.strip(),
         ),
         (
             'driver/podman',
             'podman',
             """
-instance    podman  ansible  ansible-verifier  false  false
-instance    podman  ansible  default           false  false
-instance-1  podman  ansible  multi-node        false  false
-instance-2  podman  ansible  multi-node        false  false
+instance    podman  ansible  default
+instance-1  podman  ansible  multi-node
+instance-2  podman  ansible  multi-node
 """.strip(),
         ),
     ],
@@ -381,7 +378,6 @@ def test_command_syntax(scenario_to_test, with_scenario, scenario_name):
     'scenario_to_test, driver_name, scenario_name',
     [
         ('driver/docker', 'docker', 'default'),
-        ('driver/docker', 'docker', 'ansible-verifier'),
         ('driver/docker', 'docker', 'multi-node'),
         ('driver/delegated', 'delegated', 'default'),
         ('driver/podman', 'podman', 'default'),

@@ -401,9 +401,8 @@ class Config(object):
                 ],
             },
             'verifier': {
-                'name': 'testinfra',
+                'name': 'ansible',
                 'enabled': True,
-                'directory': 'tests',
                 'options': {},
                 'env': {},
                 'additional_files_or_dirs': [],

@@ -35,4 +35,4 @@ provisioner:
 scenario:
   name: multi-node
 verifier:
-  name: testinfra
+  name: ansible

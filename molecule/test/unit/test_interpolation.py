@@ -23,7 +23,7 @@ def _mock_env():
         'FOO': 'foo',
         'BAR': '',
         'DEPENDENCY_NAME': 'galaxy',
-        'VERIFIER_NAME': 'testinfra',
+        'VERIFIER_NAME': 'ansible',
         'MOLECULE_SCENARIO_NAME': 'default',
     }
 
@@ -119,7 +119,7 @@ provisioner:
 scenario:
     name: default
 verifier:
-    name: testinfra
+    name: ansible
     options:
       foo: bar
 """.strip()

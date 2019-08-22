@@ -71,6 +71,10 @@ class Verify(base.Base):
         :return: None
         """
         self.print_info()
+        if not self._config.provisioner.playbooks.verify:
+            msg = 'Skipping, verify playbook not configured.'
+            LOG.warn(msg)
+            return
         self._config.verifier.execute()
 
 

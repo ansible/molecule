@@ -86,7 +86,7 @@ def _molecule_scenario_section_data():
 
 @pytest.fixture
 def _molecule_verifier_section_data():
-    return {'verifier': {'name': 'testinfra'}}
+    return {'verifier': {'name': 'ansible'}}
 
 
 @pytest.fixture
@@ -223,8 +223,8 @@ def patched_ansible_galaxy(mocker):
 
 
 @pytest.fixture
-def patched_testinfra(mocker):
-    return mocker.patch('molecule.verifier.testinfra.Testinfra.execute')
+def patched_default_verifier(mocker):
+    return mocker.patch('molecule.verifier.ansible.Ansible.execute')
 
 
 @pytest.fixture

@@ -34,7 +34,7 @@ def _command_args():
         'role_name': 'test-role',
         'scenario_name': 'default',
         'subcommand': __name__,
-        'verifier_name': 'testinfra',
+        'verifier_name': 'ansible',
     }
 
 
@@ -51,7 +51,6 @@ def test_execute(temp_dir, _instance, patched_logger_info, patched_logger_succes
 
     assert os.path.isdir('./test-role')
     assert os.path.isdir('./test-role/molecule/default')
-    assert os.path.isdir('./test-role/molecule/default/tests')
 
     role_directory = os.path.join(temp_dir.strpath, 'test-role')
     msg = 'Initialized role in {} successfully.'.format(role_directory)

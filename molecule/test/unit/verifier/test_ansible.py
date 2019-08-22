@@ -57,8 +57,8 @@ def test_enabled_property(_instance):
 
 def test_directory_property(_instance):
     parts = _instance.directory.split(os.path.sep)
-
-    assert 'tests' == parts[-1]
+    # default verifier is ansible, which keeps tests in molecule folder.
+    assert 'molecule' == parts[-1]
 
 
 @pytest.mark.parametrize('config_instance', ['_verifier_section_data'], indirect=True)
