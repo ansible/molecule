@@ -32,8 +32,6 @@ from molecule.scenario import ephemeral_directory
 
 LOG = logger.get_logger(__name__)
 
-pytest_plugins = ['helpers_namespace']
-
 
 @pytest.helpers.register
 def run_command(cmd, env=os.environ, log=True):

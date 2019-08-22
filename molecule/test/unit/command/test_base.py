@@ -52,7 +52,7 @@ def _patched_verify_configs(mocker):
 
 @pytest.fixture
 def _patched_base_setup(mocker):
-    return mocker.patch('test.unit.command.test_base.ExtendedBase._setup')
+    return mocker.patch('molecule.test.unit.command.test_base.ExtendedBase._setup')
 
 
 @pytest.fixture
