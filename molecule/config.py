@@ -99,7 +99,8 @@ class Config(object):
 
     def after_init(self):
         self.config = self._reget_config()
-        self._validate()
+        if self.molecule_file:
+            self._validate()
 
     @property
     def is_parallel(self):
@@ -300,11 +301,14 @@ class Config(object):
                     defaults, util.safe_load(interpolated_config)
                 )
 
-        with util.open_file(self.molecule_file) as stream:
-            s = stream.read()
-            self._preflight(s)
-            interpolated_config = self._interpolate(s, env, keep_string)
-            defaults = util.merge_dicts(defaults, util.safe_load(interpolated_config))
+        if self.molecule_file:
+            with util.open_file(self.molecule_file) as stream:
+                s = stream.read()
+                self._preflight(s)
+                interpolated_config = self._interpolate(s, env, keep_string)
+                defaults = util.merge_dicts(
+                    defaults, util.safe_load(interpolated_config)
+                )
 
         return defaults
 
@@ -322,9 +326,12 @@ class Config(object):
             util.sysexit_with_message(msg)
 
     def _get_defaults(self):
-        scenario_name = (
-            os.path.basename(os.path.dirname(self.molecule_file)) or 'default'
-        )
+        if not self.molecule_file:
+            scenario_name = 'default'
+        else:
+            scenario_name = (
+                os.path.basename(os.path.dirname(self.molecule_file)) or 'default'
+            )
         return {
             'dependency': {
                 'name': 'galaxy',
