@@ -31,15 +31,12 @@ ENV PACKAGES="\
     docker \
     git \
     openssh-client \
-    ruby \
+    ruby-full \
+    ruby-dev \
     "
 
 ENV BUILD_DEPS="\
-    gcc \
-    libc-dev \
-    make \
-    ruby-dev \
-    ruby-rdoc \
+    alpine-sdk \
     "
 
 ENV PIP_INSTALL_ARGS="\
@@ -63,7 +60,7 @@ COPY --from=molecule-builder \
 RUN \
     apk add --update --no-cache ${BUILD_DEPS} ${PACKAGES} && \
     pip install ${PIP_INSTALL_ARGS} "molecule[${MOLECULE_EXTRAS}]" && \
-    gem install ${GEM_PACKAGES} && \
+    gem install --no-ri --no-doc ${GEM_PACKAGES} && \
     apk del --no-cache ${BUILD_DEPS} && \
     rm -rf /root/.cache
 
