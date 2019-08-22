@@ -32,7 +32,7 @@ def _command_args():
         'role_name': 'test-role',
         'scenario_name': 'test-scenario',
         'subcommand': __name__,
-        'verifier_name': 'testinfra',
+        'verifier_name': 'ansible',
     }
 
 

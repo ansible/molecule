@@ -203,7 +203,7 @@ def test_env(config_instance):
         'MOLECULE_PROVISIONER_LINT_NAME': 'ansible-lint',
         'MOLECULE_SCENARIO_NAME': 'default',
         'MOLECULE_STATE_FILE': config_instance.state.state_file,
-        'MOLECULE_VERIFIER_NAME': 'testinfra',
+        'MOLECULE_VERIFIER_NAME': 'ansible',
         'MOLECULE_VERIFIER_LINT_NAME': 'flake8',
         'MOLECULE_VERIFIER_TEST_DIRECTORY': config_instance.verifier.directory,
     }

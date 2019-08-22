@@ -154,7 +154,7 @@ class Migrate(object):
     def _set_verifier(self):
         verifier = self._v1['verifier']
 
-        self._v2['verifier']['name'] = 'testinfra'
+        self._v2['verifier']['name'] = 'ansible'
         self._v2['verifier']['options'] = collections.OrderedDict({})
         self._v2['verifier']['lint'] = collections.OrderedDict({})
         self._v2['verifier']['lint']['name'] = 'flake8'

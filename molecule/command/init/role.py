@@ -126,8 +126,8 @@ class Role(base.Base):
 @click.option(
     '--verifier-name',
     type=click.Choice(config.molecule_verifiers()),
-    default='testinfra',
-    help='Name of verifier to initialize. (testinfra)',
+    default='ansible',
+    help='Name of verifier to initialize. (ansible)',
 )
 @click.option(
     '--template',

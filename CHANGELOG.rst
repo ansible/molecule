@@ -2,8 +2,13 @@
 History
 *******
 
-Unreleased
-==========
+3.0 (Unreleased)
+================
+
+* Default verifier is now Ansible, testinfra is now optional and installable as an extra
+
+2.23
+====
 
 * ``molecule dependency`` now has a retry and timed back-off by default for flaky network connections.
 * Add the `--parallel` flag to experimentally allow molecule to be run in parallel.

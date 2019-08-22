@@ -31,6 +31,6 @@ provisioner:
 scenario:
   name: shell
 verifier:
-  name: testinfra
+  name: ansible
   lint:
     name: flake8

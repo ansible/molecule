@@ -35,7 +35,7 @@ def _command_args():
         'role_name': 'test-role',
         'scenario_name': 'default',
         'subcommand': __name__,
-        'verifier_name': 'testinfra',
+        'verifier_name': 'ansible',
     }
 
 

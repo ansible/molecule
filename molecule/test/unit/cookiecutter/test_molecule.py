@@ -51,7 +51,7 @@ def _command_args():
         "provisioner_name": "ansible",
         "scenario_name": "default",
         "role_name": "test-role",
-        "verifier_name": "testinfra",
+        "verifier_name": "ansible",
     }
 
 

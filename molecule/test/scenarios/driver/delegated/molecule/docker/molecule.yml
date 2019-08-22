@@ -23,6 +23,6 @@ provisioner:
 scenario:
   name: docker
 verifier:
-  name: testinfra
+  name: ansible
   lint:
     name: flake8

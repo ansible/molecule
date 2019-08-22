@@ -32,7 +32,7 @@ LOG = logger.get_logger(__name__)
 
 class Testinfra(base.Base):
     """
-    `Testinfra`_ is the default test runner.
+    `Testinfra`_ is no longer the default test verifier since version 2.23.
 
     Additional options can be passed to ``testinfra`` through the options
     dict.  Any option set in this section will override the defaults.
