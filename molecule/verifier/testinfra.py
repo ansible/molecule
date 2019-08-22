@@ -32,7 +32,7 @@ LOG = logger.get_logger(__name__)
 
 class Testinfra(Verifier):
     """
-    `Testinfra`_ is the default test runner.
+    `Testinfra`_ is no longer the default test verifier since version 2.23.
 
     Additional options can be passed to ``testinfra`` through the options
     dict.  Any option set in this section will override the defaults.
@@ -118,6 +118,13 @@ class Testinfra(Verifier):
             d['sudo'] = True
 
         return d
+
+    @property
+    def directory(self):
+        return os.path.join(
+            self._config.scenario.directory,
+            self._config.config['verifier'].get('directory', 'tests'),
+        )
 
     # NOTE(retr0h): Override the base classes' options() to handle
     # ``ansible-galaxy`` one-off.

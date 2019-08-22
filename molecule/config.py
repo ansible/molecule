@@ -399,13 +399,17 @@ class Config(object):
                 ],
             },
             'verifier': {
-                'name': 'testinfra',
+                'name': 'ansible',
                 'enabled': True,
-                'directory': 'tests',
                 'options': {},
                 'env': {},
                 'additional_files_or_dirs': [],
-                'lint': {'name': 'flake8', 'enabled': True, 'options': {}, 'env': {}},
+                'lint': {
+                    'name': 'ansible-lint',
+                    'enabled': True,
+                    'options': {},
+                    'env': {},
+                },
             },
         }
 

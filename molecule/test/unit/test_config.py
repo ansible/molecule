@@ -32,8 +32,7 @@ from molecule.dependency import gilt
 from molecule.dependency import shell
 from molecule.lint import yamllint
 from molecule.provisioner import ansible
-from molecule.verifier import testinfra
-from molecule.verifier import ansible as ansible_verifier
+from molecule.verifier.ansible import Ansible as AnsibleVerifier
 
 
 def test_molecule_file_private_member(molecule_file_fixture, config_instance):
@@ -140,8 +139,8 @@ def test_env(config_instance):
         'MOLECULE_PROVISIONER_LINT_NAME': 'ansible-lint',
         'MOLECULE_SCENARIO_NAME': 'default',
         'MOLECULE_STATE_FILE': config_instance.state.state_file,
-        'MOLECULE_VERIFIER_NAME': 'testinfra',
-        'MOLECULE_VERIFIER_LINT_NAME': 'flake8',
+        'MOLECULE_VERIFIER_NAME': 'ansible',
+        'MOLECULE_VERIFIER_LINT_NAME': 'ansible-lint',
         'MOLECULE_VERIFIER_TEST_DIRECTORY': config_instance.verifier.directory,
     }
 
@@ -168,20 +167,13 @@ def test_state_property(config_instance):
     assert isinstance(config_instance.state, state.State)
 
 
-def test_verifier_property(config_instance):
-    assert isinstance(config_instance.verifier, testinfra.Testinfra)
+def test_verifier_property_is_ansible(config_instance):
+    assert isinstance(config_instance.verifier, AnsibleVerifier)
 
 
 @pytest.fixture
 def _config_verifier_ansible_section_data():
     return {'verifier': {'name': 'ansible', 'lint': {'name': 'ansible-lint'}}}
-
-
-@pytest.mark.parametrize(
-    'config_instance', ['_config_verifier_ansible_section_data'], indirect=True
-)
-def test_verifier_property_is_ansible(config_instance):
-    assert isinstance(config_instance.verifier, ansible_verifier.Ansible)
 
 
 def test_get_driver_name_from_state_file(config_instance):

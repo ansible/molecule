@@ -27,7 +27,7 @@ from molecule.command import verify
 def test_execute(
     mocker,
     patched_logger_info,
-    patched_testinfra,
+    patched_default_verifier,
     patched_config_validate,
     config_instance,
 ):
@@ -37,4 +37,4 @@ def test_execute(
     x = [mocker.call("Scenario: 'default'"), mocker.call("Action: 'verify'")]
     assert x == patched_logger_info.mock_calls
 
-    patched_testinfra.assert_called_once_with()
+    patched_default_verifier.assert_called_once_with()

@@ -125,8 +125,8 @@ class Role(base.Base):
 @click.option(
     '--verifier-name',
     type=click.Choice([str(s) for s in api.verifiers()]),
-    default='testinfra',
-    help='Name of verifier to initialize. (testinfra)',
+    default='ansible',
+    help='Name of verifier to initialize. (ansible)',
 )
 def role(
     ctx,

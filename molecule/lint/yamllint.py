@@ -31,7 +31,7 @@ LOG = logger.get_logger(__name__)
 
 class Yamllint(base.Base):
     """
-    `yamllint`_ is the default projet linter.
+    `yamllint`_ is the default project linter.
 
     `yamllint`_ is a linter for YAML files. In addition to checking for syntax
     validity it also checks for key repetition as well as cosmetic problems
@@ -111,9 +111,10 @@ class Yamllint(base.Base):
 
         :return: None
         """
-        self._yamllint_command = sh.yamllint.bake(
-            self.options, self._files, _env=self.env, _out=LOG.out, _err=LOG.error
-        )
+        if self._files:
+            self._yamllint_command = sh.yamllint.bake(
+                self.options, self._files, _env=self.env, _out=LOG.out, _err=LOG.error
+            )
 
     def execute(self):
         if not self.enabled:
@@ -124,7 +125,7 @@ class Yamllint(base.Base):
         if self._yamllint_command is None:
             self.bake()
 
-        msg = 'Executing Yamllint on files found in {}/...'.format(
+        msg = 'Executing Yamllint on files found in {}/ ...'.format(
             self._config.project_directory
         )
         LOG.info(msg)

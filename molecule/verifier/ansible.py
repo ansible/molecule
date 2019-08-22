@@ -30,7 +30,7 @@ log = logger.get_logger(__name__)
 
 class Ansible(Verifier):
     """
-    `Ansible`_ is not the default test runner.
+    `Ansible`_ is the default test verifier.
 
     Molecule executes a playbook (`verify.yml`) located in the role's
     `scenario.directory`.
