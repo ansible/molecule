@@ -104,9 +104,9 @@ jobs:
         - TOXENV=doc
 
     - <<: *lint
-      name: Additional checks
+      name: check,build-docker
       env:
-        - TOXENV=check
+        - TOXENV=check,build-docker
 
     - <<: *py-37
       env:
@@ -402,9 +402,10 @@ jobs:
       name: Publishing current Git tagged version of dist to PyPI
       if: repo == "ansible/molecule" AND tag IS present
       env:
-        - TOXENV=build-dists
+        - TOXENV=build-dists,build-docker
       before_deploy:
         - echo > setup.py
+        - docker login -u="$QUAY_USERNAME" -p="$QUAY_PASSWORD" quay.io
       deploy: &deploy-step
         provider: pypi
         user: ansible-molecule
