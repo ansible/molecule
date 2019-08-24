@@ -22,7 +22,7 @@ import sh
 from molecule import config
 from molecule.verifier.lint import rubocop
 
-from test.functional.conftest import needs_rubocop
+from molecule.test.functional.conftest import needs_rubocop
 
 pytestmark = needs_rubocop
 
