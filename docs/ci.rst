@@ -5,6 +5,46 @@ Molecule output will use ``ANSI`` colors if stdout is an interactive TTY and
 ``TERM`` value seems to support it. You can define ``PY_COLORS=1`` to force
 use of ``ANSI`` colors, which can be handly for some CI systems.
 
+Github Actions
+^^^^^^^^^^^^^^
+
+`GitHub Actions`_ runs a CI pipeline,
+much like any others, that's built into GitHub.
+
+
+An action to clone a repo as ``molecule_demo``,
+and run ``moleule test`` in ubuntu.
+
+.. code-block:: yaml
+
+  ---
+  name: Molecule Test
+  on: [push, commit]
+  jobs:
+    build:
+      runs-on: ubuntu-latest
+      strategy:
+        max-parallel: 4
+        matrix:
+          python-version: [3.5, 3.6, 3.7]
+
+      steps:
+        - uses: actions/checkout@v1
+          with:
+            path: molecule_demo
+        - name: Set up Python ${{ matrix.python-version }}
+          uses: actions/setup-python@v1
+          with:
+            python-version: ${{ matrix.python-version }}
+        - name: Install dependencies
+          run: |
+            sudo apt install docker
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+        - name: Test with molecule
+          run: |
+            molecule test
+
 Travis CI
 ^^^^^^^^^
 
@@ -279,6 +319,7 @@ conflict.
       lint:
         name: flake8
 
+.. _`GitHub Actions`: https://github.com/features/actions
 .. _`Factors`: http://tox.readthedocs.io/en/latest/config.html#factors-and-factor-conditional-settings
 .. _`Travis`: https://travis-ci.org/
 .. _`Jenkins`: https://jenkins.io/doc/book/pipeline/jenkinsfile
