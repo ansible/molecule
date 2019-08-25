@@ -6,16 +6,16 @@
   no_log: "{{ molecule_no_log }}"
   vars:
     resource_group_name: molecule
+    virtual_network_name: molecule_vnet
+    subnet_name: molecule_subnet
+
   tasks:
     - name: Destroy molecule instance(s)
       azure_rm_virtualmachine:
         resource_group: "{{ resource_group_name }}"
         name: "{{ item.name }}"
         state: absent
-        remove_on_absent:
-          - network_interfaces
-          - virtual_storage
-          - public_ips
+        remove_on_absent: all_autocreated
       register: server
       with_items: "{{ molecule_yml.platforms }}"
       async: 7200
@@ -29,8 +29,13 @@
       retries: 300
       with_items: "{{ server.results }}"
 
-    # Mandatory configuration for Molecule to function.
+    - name: Delete virtual network
+      azure_rm_virtualnetwork:
+        resource_group: "{{ resource_group_name }}"
+        name: "{{ virtual_network_name }}"
+        state: absent
 
+    # Mandatory configuration for Molecule to function.
     - name: Populate instance config
       set_fact:
         instance_conf: {}

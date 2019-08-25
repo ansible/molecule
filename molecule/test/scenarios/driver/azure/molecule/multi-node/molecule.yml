@@ -28,7 +28,7 @@ provisioner:
     group_vars:
       all:
         resource_group_name: molecule
-        location: westus
+        location: "{{ lookup('env', 'AZURE_REGION') or 'westus' }}"
         ssh_user: molecule
         ssh_port: 22
         virtual_network_name: molecule_vnet
