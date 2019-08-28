@@ -121,11 +121,6 @@ def test_dependency_property_is_shell(config_instance):
 
 
 @pytest.fixture
-def _config_driver_azure_section_data():
-    return {'driver': {'name': 'azure'}}
-
-
-@pytest.fixture
 def _config_driver_delegated_section_data():
     return {'driver': {'name': 'delegated', 'options': {'managed': False}}}
 
@@ -167,7 +162,6 @@ def _config_driver_vagrant_section_data():
 
 def test_drivers_property(config_instance):
     x = [
-        'azure',
         'delegated',
         'digitalocean',
         'docker',
@@ -460,7 +454,6 @@ def test_molecule_file():
 
 def test_molecule_drivers():
     x = [
-        'azure',
         'delegated',
         'digitalocean',
         'docker',

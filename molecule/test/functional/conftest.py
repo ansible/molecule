@@ -72,7 +72,6 @@ def skip_test(request, driver_name):
         else "Skipped '{}' not supported"
     )
     support_checks_map = {
-        'azure': supports_azure,
         'digitalocean': supports_digitalocean,
         'docker': supports_docker,
         'ec2': supports_ec2,
@@ -329,20 +328,6 @@ def supports_vagrant_virtualbox():
 @pytest.helpers.register
 def demands_delegated():
     return pytest.config.getoption('--delegated')
-
-
-@pytest.helpers.register
-def supports_azure():
-    from ansible.module_utils.azure_rm_common import HAS_AZURE
-
-    env_vars = (
-        'AZURE_SUBSCRIPTION_ID',
-        'AZURE_CLIENT_ID',
-        'AZURE_SECRET',
-        'AZURE_TENANT',
-    )
-
-    return _env_vars_exposed(env_vars) and HAS_AZURE
 
 
 @pytest.helpers.register

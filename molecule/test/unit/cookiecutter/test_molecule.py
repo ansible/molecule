@@ -95,7 +95,6 @@ def test_vagrant_driver(
 @pytest.mark.parametrize(
     'driver',
     [
-        ('azure'),
         ('digitalocean'),
         ('docker'),
         ('ec2'),
