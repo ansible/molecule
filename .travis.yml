@@ -94,67 +94,25 @@ jobs:
 
   include:
     - <<: *lint
-      name: linting the code
+      name: lint,doc,check,build-docker
       env:
-        - TOXENV=lint
-
-    - <<: *lint
-      name: checking the docs build
-      env:
-        - TOXENV=doc
-
-    - <<: *lint
-      name: check,build-docker
-      env:
-        - TOXENV=check,build-docker
+        - TOXENV=lint,doc,check,build-docker
 
     - <<: *py-37
       env:
-        - TOXENV=ansible28-unit
-      name: unit tests, Ansible 2.8, Python 3.7
-
-    - <<: *py-37
-      env:
-        - TOXENV=ansible27-unit
-      name: unit tests, Ansible 2.7, Python 3.7
-
-    - <<: *py-37
-      env:
-        - TOXENV=ansible26-unit
-      name: unit tests, Ansible 2.6, Python 3.7
+        - TOXENV=ansible28-unit,ansible27-unit,ansible26-unit
+      name: unit tests, Python 3.7
 
     - <<: *py-36
       <<: *if-cron-or-manual-run-or-tagged
       env:
-        - TOXENV=ansible28-unit
-      name: unit tests, Ansible 2.8, Python 3.6
-
-    - <<: *py-36
-      <<: *if-cron-or-manual-run-or-tagged
-      env:
-        - TOXENV=ansible27-unit
-      name: unit tests, Ansible 2.7, Python 3.6
-
-    - <<: *py-36
-      <<: *if-cron-or-manual-run-or-tagged
-      env:
-        - TOXENV=ansible26-unit
-      name: unit tests, Ansible 2.6, Python 3.6
+        - TOXENV=ansible28-unit,ansible27-unit,ansible26-unit
+      name: unit tests, Python 3.6
 
     - <<: *py-27
       env:
-        - TOXENV=ansible28-unit
-      name: unit tests, Ansible 2.8, Python 2.7
-
-    - <<: *py-27
-      env:
-        - TOXENV=ansible27-unit
-      name: unit tests, Ansible 2.7, Python 2.7
-
-    - <<: *py-27
-      env:
-        - TOXENV=ansible26-unit
-      name: unit tests, Ansible 2.6, Python 2.7
+        - TOXENV=ansible28-unit,ansible27-unit,ansible26-unit
+      name: unit tests, Python 2.7
 
     # Note(decentral1se): we temporarily only run Hetzner Cloud functional
     # tests on this job so that we get at least some guarantee on testing When
