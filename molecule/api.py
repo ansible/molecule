@@ -1,6 +1,8 @@
 import pkg_resources
+from molecule.util import memoize
 
 
+@memoize
 def molecule_drivers(as_dict=False):
 
     plugins = {
