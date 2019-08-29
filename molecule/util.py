@@ -309,20 +309,6 @@ def merge_dicts(a, b):
     return a
 
 
-def memoize(function):
-    memo = {}
-
-    def wrapper(*args, **kwargs):
-        if args not in memo:
-            rv = function(*args, **kwargs)
-            memo[args] = rv
-
-            return rv
-        return memo[args]
-
-    return wrapper
-
-
 def validate_parallel_cmd_args(cmd_args):
     if cmd_args.get('parallel') and cmd_args.get('destroy') == 'never':
         msg = 'Combining "--parallel" and "--destroy=never" is not supported'

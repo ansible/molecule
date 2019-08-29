@@ -1,6 +1,12 @@
 import pkg_resources
 
+try:
+    from functools import lru_cache
+except ImportError:
+    from backports.functools_lru_cache import lru_cache
 
+
+@lru_cache()
 def molecule_drivers(as_dict=False):
 
     plugins = {
