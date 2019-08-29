@@ -458,7 +458,7 @@ def test_molecule_file():
     assert '/foo/bar/molecule.yml' == config.molecule_file('/foo/bar')
 
 
-def test_molecule_drivers():
+def test_molecule_drivers(caplog):
     x = [
         'azure',
         'delegated',
@@ -476,6 +476,7 @@ def test_molecule_drivers():
     ]
 
     assert x == sorted(molecule_drivers())
+    assert not caplog.records
 
 
 def test_molecule_verifiers():
