@@ -116,8 +116,9 @@ def pytest_addoption(parser):
     )
 
 
-def pytest_collection_modifyitems(items):
-    marker = pytest.config.getoption('-m')
+def pytest_collection_modifyitems(items, config):
+
+    marker = config.getoption('-m')
     is_sharded = False
     shard_id = 0
     shards_num = 0
