@@ -45,7 +45,10 @@ class Interpolator(object):
 
     Both ``$VARIABLE`` and ``${VARIABLE}`` syntax are supported. Extended
     shell-style features, such as ``${VARIABLE-default}`` and
-    ``${VARIABLE:-default}`` are also supported.
+    ``${VARIABLE:-default}`` are also supported. Even the default as another
+    environment variable is supported like ``${VARIABLE-$DEFAULT}`` or
+    ``${VARIABLE:-$DEFAULT}``. An empty string is returned when
+    both variables are undefined.
 
     If a literal dollar sign is needed in a configuration, use a double dollar
     sign (`$$`).
@@ -88,9 +91,15 @@ class TemplateWithDefaults(string.Template):
                     return '$%s' % named
                 if ':-' in named:
                     var, _, default = named.partition(':-')
+                    # If default is also a variable
+                    if default.startswith('$'):
+                        default = mapping.get(default[1:], '')
                     return mapping.get(var) or default
                 if '-' in named:
                     var, _, default = named.partition('-')
+                    # If default is also a variable
+                    if default.startswith('$'):
+                        default = mapping.get(default[1:], '')
                     return mapping.get(var, default)
                 val = mapping.get(named, '')
                 return '%s' % (val,)
