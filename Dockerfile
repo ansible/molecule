@@ -71,9 +71,11 @@ LABEL maintainer "Ansible <info@ansible.com>"
 
 ENV PACKAGES="\
     docker \
+    bash \
     git \
     openssh-client \
-    ruby \
+    ruby-full \
+    ruby-dev \
     ansible \
     ansible-lint \
     docker-py \
@@ -115,11 +117,7 @@ ENV PACKAGES="\
     "
 
 ENV BUILD_DEPS="\
-    gcc \
-    libc-dev \
-    make \
-    ruby-dev \
-    ruby-rdoc \
+    alpine-sdk \
     "
 
 ENV PIP_INSTALL_ARGS="\
@@ -136,14 +134,23 @@ ENV GEM_PACKAGES="\
 
 ENV MOLECULE_EXTRAS="azure,docker,docs,ec2,gce,hetznercloud,linode,lxc,openstack,vagrant,windows"
 
-RUN \
-    apk add --update --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ ${BUILD_DEPS} ${PACKAGES} \
-    gem install ${GEM_PACKAGES} \
-    apk del --no-cache ${BUILD_DEPS} \
-    rm -rf /root/.cache
+ENV TESTS="\
+    rubocop --version && \
+    molecule --version && \
+    ansible-lint --version && \
+    ansible --version \
+    "
+
 COPY --from=molecule-builder \
     /usr/src/molecule/dist \
     /usr/src/molecule/dist
-RUN pip3 install ${PIP_INSTALL_ARGS} "molecule[${MOLECULE_EXTRAS}]"
+
+RUN \
+    apk add --update --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ ${BUILD_DEPS} ${PACKAGES} && \
+    gem install --no-ri --no-rdoc ${GEM_PACKAGES} && \
+    apk del --no-cache ${BUILD_DEPS} && \
+    pip3 install ${PIP_INSTALL_ARGS} "molecule[${MOLECULE_EXTRAS}]" && \
+    rm -rf /root/.cache && \
+    bash -c "${TESTS}"
 
 ENV SHELL /bin/bash
