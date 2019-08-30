@@ -423,9 +423,7 @@ class Ansible(base.Base):
                             os.path.join(self._config.project_directory, os.path.pardir)
                         ),
                         util.abs_path(
-                            os.path.join(
-                                os.path.expanduser('~'), '.ansible', 'roles'
-                            )
+                            os.path.join(os.path.expanduser('~'), '.ansible', 'roles')
                         ),
                         '/usr/share/ansible/roles',
                         '/etc/ansible/roles',
@@ -444,7 +442,10 @@ class Ansible(base.Base):
                         ),
                         util.abs_path(
                             os.path.join(
-                                os.path.expanduser('~'), '.ansible', 'plugins', 'modules'
+                                os.path.expanduser('~'),
+                                '.ansible',
+                                'plugins',
+                                'modules',
                             )
                         ),
                         '/usr/share/ansible/plugins/modules',
