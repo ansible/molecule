@@ -202,11 +202,11 @@ class Ansible(base.Base):
     ::
 
         ANSIBLE_ROLES_PATH:
-          $ephemeral_directory/roles/:$project_directory/../:$HOME/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles
+          $ephemeral_directory/roles/:$project_directory/../:~/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles
         ANSIBLE_LIBRARY:
-          $ephemeral_directory/modules/:$project_directory/library/:$HOME/.ansible/plugins/modules:/usr/share/ansible/plugins/modules
+          $ephemeral_directory/modules/:$project_directory/library/:~/.ansible/plugins/modules:/usr/share/ansible/plugins/modules
         ANSIBLE_FILTER_PLUGINS:
-          $ephemeral_directory/plugins/filter/:$project_directory/filter/plugins/:$HOME/.ansible/plugins/filter:/usr/share/ansible/plugins/modules
+          $ephemeral_directory/plugins/filter/:$project_directory/filter/plugins/:~/.ansible/plugins/filter:/usr/share/ansible/plugins/modules
 
     Environment variables can be passed to the provisioner.  Variables in this
     section which match the names above will be appened to the above defaults,
