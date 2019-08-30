@@ -43,6 +43,12 @@ from molecule.verifier import goss
 from molecule.verifier import inspec
 from molecule.verifier import testinfra
 
+try:
+    from functools import lru_cache
+except ImportError:
+    from backports.functools_lru_cache import lru_cache
+
+
 LOG = logger.get_logger(__name__)
 MOLECULE_DEBUG = boolean(os.environ.get('MOLECULE_DEBUG', 'False'))
 MOLECULE_DIRECTORY = 'molecule'
@@ -139,7 +145,7 @@ class Config(object):
         return molecule_directory(self.project_directory)
 
     @property
-    @util.memoize
+    @lru_cache()
     def dependency(self):
         dependency_name = self.config['dependency']['name']
         if dependency_name == 'galaxy':
@@ -150,7 +156,7 @@ class Config(object):
             return shell.Shell(self)
 
     @property
-    @util.memoize
+    @lru_cache()
     def driver(self):
         driver_name = self._get_driver_name()
         driver = None
@@ -188,36 +194,36 @@ class Config(object):
         }
 
     @property
-    @util.memoize
+    @lru_cache()
     def lint(self):
         lint_name = self.config['lint']['name']
         if lint_name == 'yamllint':
             return yamllint.Yamllint(self)
 
     @property
-    @util.memoize
+    @lru_cache()
     def platforms(self):
         return platforms.Platforms(self, parallelize_platforms=self.is_parallel)
 
     @property
-    @util.memoize
+    @lru_cache()
     def provisioner(self):
         provisioner_name = self.config['provisioner']['name']
         if provisioner_name == 'ansible':
             return ansible.Ansible(self)
 
     @property
-    @util.memoize
+    @lru_cache()
     def scenario(self):
         return scenario.Scenario(self)
 
     @property
-    @util.memoize
+    @lru_cache()
     def state(self):
         return state.State(self)
 
     @property
-    @util.memoize
+    @lru_cache()
     def verifier(self):
         verifier_name = self.config['verifier']['name']
         if verifier_name == 'testinfra':
@@ -230,7 +236,7 @@ class Config(object):
             return ansible_verifier.Ansible(self)
 
     @property
-    @util.memoize
+    @lru_cache()
     def verifiers(self):
         return molecule_verifiers()
 
