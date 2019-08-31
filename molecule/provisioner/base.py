@@ -20,7 +20,11 @@
 
 import abc
 
-from molecule import util
+try:
+    from functools import lru_cache
+except ImportError:
+    from backports.functools_lru_cache import lru_cache
+
 from molecule.provisioner.lint import ansible_lint
 
 
@@ -65,7 +69,7 @@ class Base(object):
         pass
 
     @property
-    @util.memoize
+    @lru_cache()
     def lint(self):
         lint_name = self._config.config['provisioner']['lint']['name']
         if lint_name == 'ansible-lint':

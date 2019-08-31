@@ -22,6 +22,11 @@ import os
 
 import abc
 
+try:
+    from functools import lru_cache
+except ImportError:
+    from backports.functools_lru_cache import lru_cache
+
 from molecule import util
 from molecule.verifier.lint import flake8
 from molecule.verifier.lint import precommit
@@ -102,7 +107,7 @@ class Base(object):
         )
 
     @property
-    @util.memoize
+    @lru_cache()
     def lint(self):
         lint_name = self._config.config['verifier']['lint']['name']
         if lint_name == 'flake8':

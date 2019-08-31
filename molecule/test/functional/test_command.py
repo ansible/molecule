@@ -46,7 +46,6 @@ def driver_name(request):
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
-        ('driver/azure', 'azure', 'default'),
         ('driver/digitalocean', 'digitalocean', 'default'),
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
@@ -70,7 +69,6 @@ def test_command_check(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
-        ('driver/azure', 'azure', 'default'),
         ('driver/digitalocean', 'digitalocean', 'default'),
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
@@ -94,7 +92,6 @@ def test_command_cleanup(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
-        ('driver/azure', 'azure', 'default'),
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
@@ -116,7 +113,6 @@ def test_command_converge(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
-        ('driver/azure', 'azure', 'default'),
         ('driver/digitalocean', 'digitalocean', 'default'),
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
@@ -140,7 +136,6 @@ def test_command_create(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
-        ('dependency', 'azure', 'ansible-galaxy'),
         ('dependency', 'digitalocean', 'ansible-galaxy'),
         ('dependency', 'docker', 'ansible-galaxy'),
         ('dependency', 'ec2', 'ansible-galaxy'),
@@ -174,7 +169,6 @@ def test_command_dependency_ansible_galaxy(
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
-        ('dependency', 'azure', 'gilt'),
         ('dependency', 'digitalocean', 'gilt'),
         ('dependency', 'docker', 'gilt'),
         ('dependency', 'ec2', 'gilt'),
@@ -204,7 +198,6 @@ def test_command_dependency_gilt(
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
-        ('dependency', 'azure', 'shell'),
         ('dependency', 'digitalocean', 'shell'),
         ('dependency', 'docker', 'shell'),
         ('dependency', 'ec2', 'shell'),
@@ -234,7 +227,6 @@ def test_command_dependency_shell(
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
-        ('driver/azure', 'azure', 'default'),
         ('driver/digitalocean', 'digitalocean', 'default'),
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
@@ -258,7 +250,6 @@ def test_command_destroy(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
-        ('driver/azure', 'azure', 'default'),
         ('driver/digitalocean', 'digitalocean', 'default'),
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
@@ -280,7 +271,6 @@ def test_command_idempotence(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     'driver_name',
     [
-        ('azure'),
         ('digitalocean'),
         ('docker'),
         ('ec2'),
@@ -300,7 +290,6 @@ def test_command_init_role(temp_dir, driver_name, skip_test):
 @pytest.mark.parametrize(
     'driver_name',
     [
-        ('azure'),
         ('digitalocean'),
         ('docker'),
         ('ec2'),
@@ -321,7 +310,6 @@ def test_command_init_scenario(temp_dir, driver_name, skip_test):
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
-        ('driver/azure', 'azure', 'default'),
         ('driver/digitalocean', 'digitalocean', 'default'),
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
@@ -345,18 +333,6 @@ def test_command_lint(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, expected',
     [
-        (
-            'driver/azure',
-            'azure',
-            """
-
-Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    Converged
----------------  -------------  ------------------  ---------------  ---------  -----------
-instance         azure          ansible             default          false      false
-instance-1       azure          ansible             multi-node       false      false
-instance-2       azure          ansible             multi-node       false      false
-""".strip(),
-        ),  # noqa
         (
             'driver/digitalocean',
             'digitalocean',
@@ -488,15 +464,6 @@ def test_command_list(scenario_to_test, with_scenario, expected):
     'scenario_to_test, driver_name, expected',
     [
         (
-            'driver/azure',
-            'azure',
-            """
-instance    azure  ansible  default     false  false
-instance-1  azure  ansible  multi-node  false  false
-instance-2  azure  ansible  multi-node  false  false
-""".strip(),
-        ),
-        (
             'driver/digitalocean',
             'digitalocean',
             """
@@ -604,13 +571,6 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario, expecte
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, login_args, scenario_name',
     [
-        ('driver/azure', 'azure', [['instance', '.*instance.*']], 'default'),
-        (
-            'driver/azure',
-            'azure',
-            [['instance-1', '.*instance-1.*'], ['instance-2', '.*instance-2.*']],
-            'multi-node',
-        ),
         (
             'driver/digitalocean',
             'digitalocean',
@@ -695,7 +655,6 @@ def test_command_login(scenario_to_test, with_scenario, login_args, scenario_nam
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
-        ('driver/azure', 'azure', 'default'),
         ('driver/digitalocean', 'digitalocean', 'default'),
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
@@ -723,7 +682,6 @@ def test_command_prepare(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
-        ('driver/azure', 'azure', 'default'),
         ('driver/digitalocean', 'digitalocean', 'default'),
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
@@ -747,7 +705,6 @@ def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
-        ('driver/azure', 'azure', 'default'),
         ('driver/digitalocean', 'digitalocean', 'default'),
         ('driver/docker', 'docker', 'default'),
         ('driver/ec2', 'ec2', 'default'),
@@ -771,7 +728,6 @@ def test_command_syntax(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
-        ('driver/azure', 'azure', None),
         ('driver/digitalocean', 'digitalocean', None),
         ('driver/docker', 'docker', 'default'),
         ('driver/docker', 'docker', 'ansible-verifier'),
@@ -795,7 +751,6 @@ def test_command_test(scenario_to_test, with_scenario, scenario_name, driver_nam
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
-        ('driver/azure', 'azure', 'default'),
         ('driver/digitalocean', 'digitalocean', 'default'),
         ('driver/docker', 'docker', 'default'),
         ('driver/gce', 'gce', 'default'),

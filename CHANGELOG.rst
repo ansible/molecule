@@ -24,6 +24,9 @@ Unreleased
   ``/usr/share/ansible/<roles/filter/modules>`` and ``/etc/ansible/roles``
 * The internal Molecule plugins are moved to paths more like upstream.
   ``ansible/plugins/filters`` > ``ansible/plugins/filter`` and ``ansible/plugins/libraries`` > ``ansible/plugins/modules``
+* Bash style variable expension for environment variable defaults added.
+  ``foo: ${UNDEFINED_VAR:-$DEFAULT}`` and ``foo: ${UNDEFINED_VAR-$DEFAULT}``
+  are now supported.
 
 2.20
 ====

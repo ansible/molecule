@@ -121,11 +121,6 @@ def test_dependency_property_is_shell(config_instance):
 
 
 @pytest.fixture
-def _config_driver_azure_section_data():
-    return {'driver': {'name': 'azure'}}
-
-
-@pytest.fixture
 def _config_driver_delegated_section_data():
     return {'driver': {'name': 'delegated', 'options': {'managed': False}}}
 
@@ -167,7 +162,6 @@ def _config_driver_vagrant_section_data():
 
 def test_drivers_property(config_instance):
     x = [
-        'azure',
         'delegated',
         'digitalocean',
         'docker',
@@ -335,6 +329,41 @@ def test_interpolate(patched_logger_critical, config_instance):
     assert x == config_instance._interpolate(string, os.environ, None)
 
 
+def test_interpolate_curly(patched_logger_critical, config_instance):
+    string = 'foo: ${HOME}'
+    x = 'foo: {}'.format(os.environ['HOME'])
+
+    assert x == config_instance._interpolate(string, os.environ, None)
+
+
+def test_interpolate_default(patched_logger_critical, config_instance):
+    string = 'foo: ${NONE-default}'
+    x = 'foo: default'
+
+    assert x == config_instance._interpolate(string, os.environ, None)
+
+
+def test_interpolate_default_colon(patched_logger_critical, config_instance):
+    string = 'foo: ${NONE:-default}'
+    x = 'foo: default'
+
+    assert x == config_instance._interpolate(string, os.environ, None)
+
+
+def test_interpolate_default_variable(patched_logger_critical, config_instance):
+    string = 'foo: ${NONE:-$HOME}'
+    x = 'foo: {}'.format(os.environ['HOME'])
+
+    assert x == config_instance._interpolate(string, os.environ, None)
+
+
+def test_interpolate_curly_default_variable(patched_logger_critical, config_instance):
+    string = 'foo: ${NONE-$HOME}'
+    x = 'foo: {}'.format(os.environ['HOME'])
+
+    assert x == config_instance._interpolate(string, os.environ, None)
+
+
 def test_interpolate_raises_on_failed_interpolation(
     patched_logger_critical, config_instance
 ):
@@ -423,9 +452,8 @@ def test_molecule_file():
     assert '/foo/bar/molecule.yml' == config.molecule_file('/foo/bar')
 
 
-def test_molecule_drivers():
+def test_molecule_drivers(caplog):
     x = [
-        'azure',
         'delegated',
         'digitalocean',
         'docker',
@@ -441,6 +469,7 @@ def test_molecule_drivers():
     ]
 
     assert x == sorted(molecule_drivers())
+    assert not caplog.records
 
 
 def test_molecule_verifiers():
