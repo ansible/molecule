@@ -162,11 +162,6 @@ def test_driver_invalid_provider_name_has_errors(_config):
 
 
 @pytest.fixture
-def _model_driver_allows_azure_section_data():
-    return {'driver': {'name': 'azure'}}
-
-
-@pytest.fixture
 def _model_driver_allows_delegated_section_data():
     return {'driver': {'name': 'delegated'}}
 
@@ -215,7 +210,6 @@ def _model_driver_allows_vagrant_section_data():
 @pytest.mark.parametrize(
     '_config',
     [
-        ('_model_driver_allows_azure_section_data'),
         ('_model_driver_allows_delegated_section_data'),
         ('_model_driver_allows_digitalocean_section_data'),
         ('_model_driver_allows_docker_section_data'),

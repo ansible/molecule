@@ -10,9 +10,7 @@ driver:
 lint:
   name: {{ cookiecutter.lint_name }}
 platforms:
-{%- if cookiecutter.driver_name == 'azure' %}
-  - name: instance
-{%- elif cookiecutter.driver_name == 'digitalocean' %}
+{%- if cookiecutter.driver_name == 'digitalocean' %}
   - name: instance
     region_id: nyc3
     image_id: ubuntu-18-10-x64
@@ -53,6 +51,8 @@ platforms:
 {%- elif cookiecutter.driver_name == 'vagrant' %}
   - name: instance
     box: ubuntu/xenial64
+{%- else %}
+  - name: instance
 {%- endif %}
 provisioner:
   name: {{ cookiecutter.provisioner_name }}
