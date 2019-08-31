@@ -119,6 +119,11 @@ class Docker(base.Base):
               less secure. For details, please reference `Docker Security
               Configuration`_
 
+    .. note:: With the environment variable ``DOCKER_HOST`` the user can define
+              which `Docker`_ daemon to use. Do note that the `Docker`_ binary
+              must be installed on the machine that run Molecule even if the 
+              `Docker`_ instance is remote.
+
     .. code-block:: yaml
 
         platforms:
