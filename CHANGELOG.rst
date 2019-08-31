@@ -23,6 +23,7 @@ Unreleased
 * Bash style variable expension for environment variable defaults added.
   ``foo: ${UNDEFINED_VAR:-$DEFAULT}`` and ``foo: ${UNDEFINED_VAR-$DEFAULT}``
   are now supported.
+* Use pluggy to load plugins
 
 2.20
 ====
