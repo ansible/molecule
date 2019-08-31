@@ -51,6 +51,7 @@ class Base(object):
         :return: None
         """
         template_dir = self._resolve_template_dir(template_dir)
+        template_dir = os.path.abspath(template_dir)
         self._validate_template_dir(template_dir)
 
         try:

@@ -81,9 +81,12 @@ class Role(base.Base):
         self._process_templates(template_directory, self._command_args, role_directory)
         scenario_base_directory = os.path.join(role_directory, role_name)
         templates = [
-            'scenario/driver/{driver_name}'.format(**self._command_args),
+            molecule_drivers(as_dict=True)[
+                self._command_args['driver_name']
+            ]._get_template_path(),
             'scenario/verifier/{verifier_name}'.format(**self._command_args),
         ]
+
         for template in templates:
             self._process_templates(
                 template, self._command_args, scenario_base_directory

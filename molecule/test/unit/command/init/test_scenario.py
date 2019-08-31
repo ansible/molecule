@@ -110,9 +110,7 @@ def test_execute_with_invalid_driver(
 
     assert 1 == e.value.code
 
-    msg = (
-        'The specified template directory ({template_dir})' ' does not exist'
-    ).format(template_dir=_instance._resolve_template_dir('scenario/driver/ec3'))
+    msg = 'Driver ec3 not found'
     patched_logger_critical.assert_called_once_with(msg)
 
 

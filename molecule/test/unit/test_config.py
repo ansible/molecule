@@ -176,7 +176,8 @@ def test_drivers_property(config_instance):
         'vagrant',
     ]
 
-    assert x == sorted(config_instance.drivers)
+    # assure all expected drivers are loaded, others are allowed to exist
+    assert not (set(x) - set(config_instance.drivers))
 
 
 def test_env(config_instance):
@@ -467,8 +468,8 @@ def test_molecule_drivers(caplog):
         'podman',
         'vagrant',
     ]
-
-    assert x == sorted(molecule_drivers())
+    # assure all expected drivers are loaded, others are allowed to exist
+    assert not (set(x) - set(molecule_drivers()))
     assert not caplog.records
 
 

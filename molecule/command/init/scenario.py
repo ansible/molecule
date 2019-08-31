@@ -82,7 +82,15 @@ class Scenario(base.Base):
             ).format(scenario_name)
             util.sysexit_with_message(msg)
 
-        driver_template = 'scenario/driver/{driver_name}'.format(**self._command_args)
+        drivers = molecule_drivers(as_dict=True)
+        if self._command_args['driver_name'] not in drivers:
+            msg = "Driver %s not found" % self._command_args['driver_name']
+            util.sysexit_with_message(msg)
+
+        driver_template = drivers[
+            self._command_args['driver_name']
+        ]._get_template_path()
+
         if 'driver_template' in self._command_args:
             self._validate_template_dir(self._command_args['driver_template'])
             cli_driver_template = '{driver_template}/{driver_name}'.format(

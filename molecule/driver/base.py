@@ -218,3 +218,9 @@ class Base(object):
 
     def _converged(self):
         return str(self._config.state.converged).lower()
+
+    def _get_template_path(self):
+        """ Return path to its own cookiecutterm templates. It is used by init
+        command in order to figure out where to load the templates from.
+        """
+        return 'scenario/driver/' + self.name
