@@ -213,7 +213,7 @@ def test_env_appends_env_property(_instance):
         util.abs_path(os.path.join(os.path.expanduser('~'), '.ansible', 'roles')),
         '/usr/share/ansible/roles',
         '/etc/ansible/roles',
-        util.abs_path(os.path.join(_instance._config.scenario.directory, 'foo', 'bar'))
+        util.abs_path(os.path.join(_instance._config.scenario.directory, 'foo', 'bar')),
     ]
     assert x == _instance.env['ANSIBLE_ROLES_PATH'].split(':')
 
@@ -227,7 +227,7 @@ def test_env_appends_env_property(_instance):
             os.path.join(os.path.expanduser('~'), '.ansible', 'plugins', 'modules')
         ),
         '/usr/share/ansible/plugins/modules',
-        util.abs_path(os.path.join(_instance._config.scenario.directory, 'foo', 'bar'))
+        util.abs_path(os.path.join(_instance._config.scenario.directory, 'foo', 'bar')),
     ]
     assert x == _instance.env['ANSIBLE_LIBRARY'].split(':')
 
@@ -245,7 +245,7 @@ def test_env_appends_env_property(_instance):
             os.path.join(os.path.expanduser('~'), '.ansible', 'plugins', 'filter')
         ),
         '/usr/share/ansible/plugins/filter',
-        util.abs_path(os.path.join(_instance._config.scenario.directory, 'foo', 'bar'))
+        util.abs_path(os.path.join(_instance._config.scenario.directory, 'foo', 'bar')),
     ]
     assert x == _instance.env['ANSIBLE_FILTER_PLUGINS'].split(':')
 
