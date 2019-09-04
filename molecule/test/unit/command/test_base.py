@@ -135,7 +135,37 @@ def test_execute_cmdline_scenarios(
     assert _patched_execute_scenario.call_count == 1
 
 
-def test_execute_cmdline_scenarios_destroy(
+def test_execute_cmdline_scenarios_prune(
+    config_instance, _patched_prune, _patched_execute_subcommand
+):
+    # Subcommands should be executed and prune *should* run when
+    # destroy is 'always'
+    scenario_name = 'default'
+    args = {}
+    command_args = {'destroy': 'always', 'subcommand': 'test'}
+
+    base.execute_cmdline_scenarios(scenario_name, args, command_args)
+
+    assert _patched_execute_subcommand.called
+    assert _patched_prune.called
+
+
+def test_execute_cmdline_scenarios_no_prune(
+    config_instance, _patched_prune, _patched_execute_subcommand
+):
+    # Subcommands should be executed but prune *should not* run when
+    # destroy is 'never'
+    scenario_name = 'default'
+    args = {}
+    command_args = {'destroy': 'never', 'subcommand': 'test'}
+
+    base.execute_cmdline_scenarios(scenario_name, args, command_args)
+
+    assert _patched_execute_subcommand.called
+    assert not _patched_prune.called
+
+
+def test_execute_cmdline_scenarios_exit_destroy(
     config_instance,
     _patched_execute_scenario,
     _patched_prune,
@@ -163,7 +193,7 @@ def test_execute_cmdline_scenarios_destroy(
     assert _patched_sysexit.called
 
 
-def test_execute_cmdline_scenarios_nodestroy(
+def test_execute_cmdline_scenarios_exit_nodestroy(
     config_instance, _patched_execute_scenario, _patched_prune, _patched_sysexit
 ):
     # Ensure execute_cmdline_scenarios handles errors correctly when 'destroy'
