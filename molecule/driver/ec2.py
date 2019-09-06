@@ -113,6 +113,8 @@ class EC2(base.Base):
               sudo: False
               ansible_user: Administrator
               # Specify a password to override the automatic lookup
+              # or omit to retrieve automatically
+              # (requires boto3 & cryptography packages)
               # ansible_password: hunter2
               ansible_port: 5986
               ansible_connection: winrm
