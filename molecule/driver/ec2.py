@@ -106,7 +106,7 @@ class EC2(base.Base):
           name: ec2
         platforms:
           - name: instance
-            image: ami-06a0d33fc8d328de0)
+            image: ami-06a0d33fc8d328de0
             instance_type: t3a.medium
             vpc_subnet_id: subnet-1cb17175
             connection_options:
@@ -190,6 +190,11 @@ class EC2(base.Base):
     def ansible_connection_options(self, instance_name):
         try:
             d = self._get_instance_config(instance_name)
+            plat_conn_opts = next(
+                (item for item in self._config.config.get('platforms', [])
+                 if item['name'] == instance_name),
+                {}
+            ).get('connection_options', {})
             conn_opts = util.merge_dicts(
                 {
                     'ansible_user': d['user'],
@@ -199,9 +204,7 @@ class EC2(base.Base):
                     'connection': 'ssh',
                     'ansible_ssh_common_args': ' '.join(self.ssh_connection_options),
                 },
-                # Merge in override 'connection_options' on platform config
-                next((item for item in self._config.config.get('platforms', [])
-                      if item['name'] == instance_name), {}).get('connection_options', {})
+                plat_conn_opts
             )
             if conn_opts.get('ansible_connection') == 'winrm' and (
                     not conn_opts.get('ansible_password')):
