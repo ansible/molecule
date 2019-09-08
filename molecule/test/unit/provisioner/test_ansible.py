@@ -210,16 +210,23 @@ def test_env_appends_env_property(_instance):
         util.abs_path(
             os.path.join(_instance._config.project_directory, os.path.pardir)
         ),
+        util.abs_path(os.path.join(os.path.expanduser('~'), '.ansible', 'roles')),
+        '/usr/share/ansible/roles',
+        '/etc/ansible/roles',
         util.abs_path(os.path.join(_instance._config.scenario.directory, 'foo', 'bar')),
     ]
     assert x == _instance.env['ANSIBLE_ROLES_PATH'].split(':')
 
     x = [
-        _instance._get_libraries_directory(),
+        _instance._get_modules_directory(),
         util.abs_path(
             os.path.join(_instance._config.scenario.ephemeral_directory, 'library')
         ),
         util.abs_path(os.path.join(_instance._config.project_directory, 'library')),
+        util.abs_path(
+            os.path.join(os.path.expanduser('~'), '.ansible', 'plugins', 'modules')
+        ),
+        '/usr/share/ansible/plugins/modules',
         util.abs_path(os.path.join(_instance._config.scenario.directory, 'foo', 'bar')),
     ]
     assert x == _instance.env['ANSIBLE_LIBRARY'].split(':')
@@ -228,12 +235,16 @@ def test_env_appends_env_property(_instance):
         _instance._get_filter_plugin_directory(),
         util.abs_path(
             os.path.join(
-                _instance._config.scenario.ephemeral_directory, 'plugins', 'filters'
+                _instance._config.scenario.ephemeral_directory, 'plugins', 'filter'
             )
         ),
         util.abs_path(
-            os.path.join(_instance._config.project_directory, 'plugins', 'filters')
+            os.path.join(_instance._config.project_directory, 'plugins', 'filter')
         ),
+        util.abs_path(
+            os.path.join(os.path.expanduser('~'), '.ansible', 'plugins', 'filter')
+        ),
+        '/usr/share/ansible/plugins/filter',
         util.abs_path(os.path.join(_instance._config.scenario.directory, 'foo', 'bar')),
     ]
     assert x == _instance.env['ANSIBLE_FILTER_PLUGINS'].split(':')
@@ -917,10 +928,10 @@ def test_get_plugin_directory(_instance):
     assert ('molecule', 'provisioner', 'ansible', 'plugins') == parts[-4:]
 
 
-def test_get_libraries_directory(_instance):
-    result = _instance._get_libraries_directory()
+def test_get_modules_directory(_instance):
+    result = _instance._get_modules_directory()
     parts = pytest.helpers.os_split(result)
-    x = ('molecule', 'provisioner', 'ansible', 'plugins', 'libraries')
+    x = ('molecule', 'provisioner', 'ansible', 'plugins', 'modules')
 
     assert x == parts[-5:]
 
@@ -928,7 +939,7 @@ def test_get_libraries_directory(_instance):
 def test_get_filter_plugin_directory(_instance):
     result = _instance._get_filter_plugin_directory()
     parts = pytest.helpers.os_split(result)
-    x = ('molecule', 'provisioner', 'ansible', 'plugins', 'filters')
+    x = ('molecule', 'provisioner', 'ansible', 'plugins', 'filter')
 
     assert x == parts[-5:]
 

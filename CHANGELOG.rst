@@ -20,6 +20,10 @@ Unreleased
 * Update testinfra to 3.0.6 so we can use ansible verbosity
 * Add ``sysctls`` option to the Docker driver.
 * dependency now runs before lint on default test and lint sequences
+* ANSIBLE_ROLES_PATH, ANSIBLE_LIBRARY, ANSIBLE_FILTER_PLUGINS now include the default Ansible lookup paths
+  ``/usr/share/ansible/<roles/filter/modules>`` and ``/etc/ansible/roles``
+* The internal Molecule plugins are moved to paths more like upstream.
+  ``ansible/plugins/filters`` > ``ansible/plugins/filter`` and ``ansible/plugins/libraries`` > ``ansible/plugins/modules``
 * Bash style variable expension for environment variable defaults added.
   ``foo: ${UNDEFINED_VAR:-$DEFAULT}`` and ``foo: ${UNDEFINED_VAR-$DEFAULT}``
   are now supported.
