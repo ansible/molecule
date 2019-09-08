@@ -161,14 +161,14 @@ class Config(object):
         driver_name = self._get_driver_name()
         driver = None
 
-        driver = molecule_drivers(as_dict=True)[driver_name].load(self)
+        driver = molecule_drivers(as_dict=True, config=self)[driver_name]
         driver.name = driver_name
 
         return driver
 
     @property
     def drivers(self):
-        return molecule_drivers()
+        return molecule_drivers(config=self)
 
     @property
     def env(self):
