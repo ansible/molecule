@@ -56,7 +56,7 @@ class LXC(Driver):
     .. _`LXC`: https://linuxcontainers.org/lxc/introduction/
     """  # noqa
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         super(LXC, self).__init__(config)
         self._name = 'lxc'
 
@@ -89,7 +89,3 @@ class LXC(Driver):
     def sanity_checks(self):
         # FIXME(decentral1se): Implement sanity checks
         pass
-
-
-def load(self):
-    return LXC(self)

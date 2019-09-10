@@ -1,5 +1,5 @@
+from future.moves.collections import UserList
 import pluggy
-from importlib import import_module
 from molecule import logger
 from molecule.util import lru_cache
 from molecule.driver.base import Driver  # noqa
@@ -9,49 +9,47 @@ import traceback
 LOG = logger.get_logger(__name__)
 
 
-CORE_DRIVERS = [
-    "delegated",
-    "digitalocean",
-    "docker",
-    "ec2",
-    "gce",
-    "hetznercloud",
-    "linode",
-    "lxc",
-    "lxd",
-    "openstack",
-    "podman",
-    "vagrant",
-]
+class UserListMap(UserList):
+    """ A list where you can also access elements by their name using:
+      foo['boo']
+      foo.boo
+    """
+
+    def __getitem__(self, i):
+        if isinstance(i, int):
+            return super(UserListMap, self).__getitem__(i)
+        else:
+            return self.__dict__[i]
+
+    def append(self, element):
+        self.__dict__[str(element)] = element
+        return super(UserListMap, self).append(element)
 
 
 @lru_cache()
-def drivers(as_dict=False, config=None):
-    plugins = {}
-    pm = pluggy.PluginManager("molecule_driver")
-    for driver in CORE_DRIVERS:
-        pm.register(import_module("molecule.driver.%s" % driver), name=driver)
+def drivers(config=None):
+    # type: (object) -> UserListMap[Driver]
+    plugins = UserListMap()
+    pm = pluggy.PluginManager("molecule.driver")
     try:
-        pm.load_setuptools_entrypoints("molecule_driver")
+        pm.load_setuptools_entrypoints("molecule.driver")
     except Exception:
         # These are not fatal because a broken driver should not make the entire
         # tool unusable.
-        LOG.error("Failed to load driver entry points %s", traceback.format_exc())
+        LOG.error("Failed to load driver entry point %s", traceback.format_exc())
     for p in pm.get_plugins():
         try:
-            plugins[pm.get_name(p)] = p.load(config)
+            plugins.append(p(config))
         except Exception as e:
             LOG.error("Failed to load %s driver: %s", pm.get_name(p), str(e))
-
-    if as_dict:
-        return plugins
-    else:
-        return sorted(list(plugins.keys()))
+    plugins.sort()
+    return plugins
 
 
 @lru_cache()
 def verifiers():
-    plugins = {}
+    # type: (object) -> UserListMap[Verifier]
+    plugins = UserListMap()
     pm = pluggy.PluginManager("molecule.verifier")
     try:
         pm.load_setuptools_entrypoints("molecule.verifier")
@@ -61,8 +59,8 @@ def verifiers():
         LOG.error("Failed to load verifier entry point %s", traceback.format_exc())
     for p in pm.get_plugins():
         try:
-            plugins[pm.get_name(p)] = p()
+            plugins.append(p())
         except Exception as e:
             LOG.error("Failed to load %s driver: %s", pm.get_name(p), str(e))
-
-    return sorted(list(plugins.keys()))
+    plugins.sort()
+    return plugins

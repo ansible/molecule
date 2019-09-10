@@ -72,7 +72,7 @@ class DigitalOcean(Driver):
     .. _`DigitalOcean`: https://www.digitalocean.com
     """  # noqa
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         super(DigitalOcean, self).__init__(config)
         self._name = 'digitalocean'
 
@@ -138,7 +138,3 @@ class DigitalOcean(Driver):
     def sanity_checks(self):
         # FIXME(decentral1se): Implement sanity checks
         pass
-
-
-def load(self):
-    return DigitalOcean(self)

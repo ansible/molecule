@@ -74,7 +74,7 @@ class Openstack(Driver):
     .. _`OpenStack`: https://www.openstack.org
     """  # noqa
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         super(Openstack, self).__init__(config)
         self._name = 'openstack'
 
@@ -140,7 +140,3 @@ class Openstack(Driver):
     def sanity_checks(self):
         # FIXME(decentral1se): Implement sanity checks
         pass
-
-
-def load(self):
-    return Openstack(self)

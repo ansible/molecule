@@ -77,7 +77,7 @@ class LXD(Driver):
     .. _`LXD`: https://linuxcontainers.org/lxd/introduction/
     """  # noqa
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         super(LXD, self).__init__(config)
         self._name = 'lxd'
 
@@ -110,7 +110,3 @@ class LXD(Driver):
     def sanity_checks(self):
         # FIXME(decentral1se): Implement sanity checks
         pass
-
-
-def load(self):
-    return LXD(self)

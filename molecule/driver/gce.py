@@ -78,7 +78,7 @@ class GCE(Driver):
     .. _`GCE`: https://cloud.google.com/compute/docs/
     """  # noqa
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         super(GCE, self).__init__(config)
         self._name = 'gce'
 
@@ -144,7 +144,3 @@ class GCE(Driver):
     def sanity_checks(self):
         # FIXME(decentral1se): Implement sanity checks
         pass
-
-
-def load(self):
-    return GCE(self)

@@ -22,29 +22,19 @@
 from molecule import api
 
 
+def test_api_molecule_drivers_as_attributes():
+    results = api.drivers()
+    assert hasattr(results, 'delegated')
+    assert isinstance(results.delegated, api.Driver)
+
+
 def test_api_drivers():
     results = api.drivers()
 
-    assert isinstance(results, list)
-
     for result in results:
-        assert isinstance(result, str)
+        assert isinstance(result, api.Driver)
 
     assert 'delegated' in results
-
-
-def test_api_drivers_as_dict():
-    results = api.drivers(as_dict=True)
-
-    assert isinstance(results, dict)
-
-    for result in results:
-        assert isinstance(result, str)
-
-    assert 'delegated' in results
-
-    for driver in results.values():
-        assert isinstance(driver, api.Driver)
 
 
 def test_api_verifiers():
