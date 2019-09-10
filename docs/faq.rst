@@ -79,8 +79,16 @@ Are there similar tools to Molecule?
 .. _`abandoned`: https://github.com/nylas/ansible-test/issues/14
 .. _`RoleSpec`: https://github.com/nickjj/rolespec
 
-
 Can I run Molecule processes in parallel?
 =========================================
 
 Please see :ref:`parallel-usage-example` for usage.
+
+Can I test Ansible Collections with Molecule?
+=============================================
+
+This is not currently officially supported. Also, collections remain in "tech
+preview" status. However, you can take a look at `this blog post`_ outlining a
+workable "DIY" solution as a stop gap for now.
+
+.. _`this blog post`: https://www.jeffgeerling.com/blog/2019/how-add-integration-tests-ansible-collection-molecule
