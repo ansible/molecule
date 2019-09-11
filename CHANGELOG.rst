@@ -28,6 +28,8 @@ Unreleased
   ``foo: ${UNDEFINED_VAR:-$DEFAULT}`` and ``foo: ${UNDEFINED_VAR-$DEFAULT}``
   are now supported.
 * Use pluggy to load plugins
+* Windows & Linux EC2 instances can be tested simultaneously
+* Windows EC2 instances can be provisioned using the automatically-generated password
 
 2.20
 ====
