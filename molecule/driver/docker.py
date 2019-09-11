@@ -120,7 +120,7 @@ class Docker(base.Base):
               less secure. For details, please reference `Docker Security
               Configuration`_
 
-    .. note:: With the environment variable ``DOCKER_HOST`` the user can bind
+    .. note:: With the environment variable ``DOCKER_HOST`` the user can bind
               Molecule to a different `Docker`_ socket than the default
               ``unix:///var/run/docker.sock``. ``tcp``, ``fd`` and ``ssh``
               socket types can be configured. For details, please reference
