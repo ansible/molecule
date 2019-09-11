@@ -1,5 +1,7 @@
 ---
 - name: Converge
   hosts: all
-  roles:
-    - role: {{ cookiecutter.role_name }}
+  tasks:
+    - name: "Include {{ cookiecutter.role_name }}"
+      include_role:
+        name: "{{ cookiecutter.role_name }}"
