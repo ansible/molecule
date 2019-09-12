@@ -19,7 +19,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-from molecule.driver.base import Base
+from molecule.api import Driver
 from molecule.api import molecule_drivers
 
 
@@ -45,4 +45,4 @@ def test_api_molecule_drivers_as_dict():
     assert 'delegated' in results
 
     for driver in results.values():
-        assert isinstance(driver, Base)
+        assert isinstance(driver, Driver)

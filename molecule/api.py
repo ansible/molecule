@@ -2,6 +2,7 @@ import pluggy
 from importlib import import_module
 from molecule import logger
 from molecule.util import lru_cache
+from molecule.driver.base import Driver  # noqa
 import traceback
 
 LOG = logger.get_logger(__name__)

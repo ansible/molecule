@@ -19,14 +19,14 @@
 #  DEALINGS IN THE SOFTWARE.
 
 from molecule import logger
-from molecule.driver import base
+from molecule.api import Driver
 
 from molecule import util
 
 LOG = logger.get_logger(__name__)
 
 
-class Openstack(base.Base):
+class Openstack(Driver):
     """
     The class responsible for managing `OpenStack`_ instances.  `OpenStack`_
     is `not` the default driver used in Molecule.

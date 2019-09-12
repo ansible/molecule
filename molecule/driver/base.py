@@ -26,7 +26,7 @@ from molecule import status
 Status = status.get_status()
 
 
-class Base(object):
+class Driver(object):
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, config):

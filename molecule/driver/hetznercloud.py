@@ -21,14 +21,14 @@
 import os
 
 from molecule import logger, util
-from molecule.driver import base
+from molecule.api import Driver
 from molecule.util import lru_cache
 from molecule.util import sysexit_with_message
 
 log = logger.get_logger(__name__)
 
 
-class HetznerCloud(base.Base):
+class HetznerCloud(Driver):
     """
     The class responsible for managing `Hetzner Cloud`_ instances.
     `Hetzner Cloud`_ is **not** the default driver used in Molecule.
