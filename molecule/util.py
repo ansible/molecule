@@ -26,6 +26,11 @@ import os
 import re
 import sys
 
+try:
+    from functools import lru_cache  # noqa
+except ImportError:
+    from backports.functools_lru_cache import lru_cache  # noqa
+
 import anyconfig
 import colorama
 import yaml

@@ -24,15 +24,7 @@ from molecule import logger
 from molecule import util
 
 LOG = logger.get_logger(__name__)
-VALID_KEYS = [
-    'created',
-    'converged',
-    'driver',
-    'prepared',
-    'sanity_checked',
-    'run_uuid',
-    'is_parallel',
-]
+VALID_KEYS = ['created', 'converged', 'driver', 'prepared', 'run_uuid', 'is_parallel']
 
 
 class InvalidState(Exception):
@@ -101,10 +93,6 @@ class State(object):
         return self._data.get('prepared')
 
     @property
-    def sanity_checked(self):
-        return self._data.get('sanity_checked')
-
-    @property
     def run_uuid(self):
         return self._data.get('run_uuid')
 
@@ -143,7 +131,6 @@ class State(object):
             'created': False,
             'driver': None,
             'prepared': None,
-            'sanity_checked': False,
             'run_uuid': self._config._run_uuid,
             'is_parallel': self._config.is_parallel,
         }

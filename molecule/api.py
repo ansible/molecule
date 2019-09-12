@@ -1,13 +1,10 @@
 import pluggy
 from importlib import import_module
 from molecule import logger
+from molecule.util import lru_cache
 import traceback
 
 LOG = logger.get_logger(__name__)
-try:
-    from functools import lru_cache
-except ImportError:
-    from backports.functools_lru_cache import lru_cache
 
 
 CORE_DRIVERS = [

@@ -29,11 +29,6 @@ from molecule.provisioner import ansible_playbook
 def _instance(config_instance):
     _instance = ansible_playbook.AnsiblePlaybook('playbook', config_instance)
 
-    # FIXME(decentral1se): temporarily force the sanity checks to not run while
-    # putting the AnsiblePlaybook under test. TBD: reconsider whether invoking
-    # sanity checks within the `execute()` function makes sense.
-    _instance._config.state.change_state('sanity_checked', True)
-
     return _instance
 
 

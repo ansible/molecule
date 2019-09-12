@@ -24,6 +24,7 @@ import os
 
 from molecule import logger
 from molecule.driver import base
+from molecule.util import lru_cache
 
 log = logger.get_logger(__name__)
 
@@ -179,14 +180,11 @@ class Podman(base.Base):
     def ansible_connection_options(self, instance_name):
         return {'ansible_connection': 'podman'}
 
+    @lru_cache()
     def sanity_checks(self):
         """Implement Podman driver sanity checks."""
 
-        if self._config.state.sanity_checked:
-            return
-
         log.info("Sanity checks: '{}'".format(self._name))
-        self._config.state.change_state('sanity_checked', True)
 
 
 def load(self):
