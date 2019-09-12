@@ -4,6 +4,7 @@ about: Create a report to help us improve
 labels: bug
 ---
 <!--- Verify first that your issue is not already reported on GitHub -->
+<!--- Do not report bugs before reproducing them with code master branch! -->
 <!--- Please also check https://molecule.readthedocs.io/en/latest/faq.html --->
 <!--- Please use https://groups.google.com/forum/#!forum/molecule-users for usage questions -->
 
