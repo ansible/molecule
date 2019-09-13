@@ -25,7 +25,7 @@ CORE_DRIVERS = [
 
 
 @lru_cache()
-def molecule_drivers(as_dict=False, config=None):
+def drivers(as_dict=False, config=None):
     plugins = {}
     pm = pluggy.PluginManager("molecule_driver")
     for driver in CORE_DRIVERS:

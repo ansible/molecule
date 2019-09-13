@@ -27,7 +27,7 @@ import cerberus
 import cerberus.errors
 
 from molecule import interpolation, util
-from molecule.api import molecule_drivers
+from molecule.api import drivers
 
 
 def coerce_env(env, keep_string, v):
@@ -54,7 +54,7 @@ def pre_validate_base_schema(env, keep_string):
                 'name': {
                     'type': 'string',
                     'molecule_env_var': True,
-                    'allowed': molecule_drivers(),
+                    'allowed': drivers(),
                     # NOTE(retr0h): Some users use an environment variable to
                     # change the driver name.  May add this coercion to rest of
                     # config using allowed validation.

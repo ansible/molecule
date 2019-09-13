@@ -20,11 +20,11 @@
 #  DEALINGS IN THE SOFTWARE.
 
 from molecule.api import Driver
-from molecule.api import molecule_drivers
+from molecule.api import drivers
 
 
-def test_api_molecule_drivers():
-    results = molecule_drivers()
+def test_api_drivers():
+    results = drivers()
 
     assert isinstance(results, list)
 
@@ -34,8 +34,8 @@ def test_api_molecule_drivers():
     assert 'delegated' in results
 
 
-def test_api_molecule_drivers_as_dict():
-    results = molecule_drivers(as_dict=True)
+def test_api_drivers_as_dict():
+    results = drivers(as_dict=True)
 
     assert isinstance(results, dict)
 

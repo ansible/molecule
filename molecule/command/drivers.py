@@ -24,7 +24,7 @@ import click
 import tabulate
 
 from molecule import logger
-from molecule.api import molecule_drivers
+from molecule import api
 
 LOG = logger.get_logger(__name__)
 
@@ -41,7 +41,7 @@ LOG = logger.get_logger(__name__)
 def drivers(ctx, format):  # pragma: no cover
     """ Lists drivers. """
 
-    drivers = [[x] for x in molecule_drivers()]
+    drivers = [[x] for x in api.drivers()]
 
     headers = ['name']
     table_format = 'simple'

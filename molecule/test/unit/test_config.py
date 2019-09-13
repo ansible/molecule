@@ -27,7 +27,7 @@ from molecule import platforms
 from molecule import scenario
 from molecule import state
 from molecule import util
-from molecule.api import molecule_drivers
+from molecule.api import drivers
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
 from molecule.dependency import shell
@@ -468,7 +468,7 @@ def test_molecule_drivers(caplog):
         'vagrant',
     ]
 
-    assert x == sorted(molecule_drivers())
+    assert x == sorted(drivers())
     assert not caplog.records
 
 
