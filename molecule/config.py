@@ -31,7 +31,7 @@ from molecule import platforms
 from molecule import scenario
 from molecule import state
 from molecule import util
-from molecule.api import molecule_drivers
+from molecule.api import drivers
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
 from molecule.dependency import shell
@@ -156,14 +156,14 @@ class Config(object):
         driver_name = self._get_driver_name()
         driver = None
 
-        driver = molecule_drivers(as_dict=True, config=self)[driver_name]
+        driver = drivers(as_dict=True, config=self)[driver_name]
         driver.name = driver_name
 
         return driver
 
     @property
     def drivers(self):
-        return molecule_drivers(config=self)
+        return drivers(config=self)
 
     @property
     def env(self):

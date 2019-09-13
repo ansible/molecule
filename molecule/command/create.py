@@ -21,7 +21,7 @@
 import click
 
 from molecule import logger
-from molecule.api import molecule_drivers
+from molecule.api import drivers
 from molecule.command import base
 
 LOG = logger.get_logger(__name__)
@@ -105,7 +105,7 @@ class Create(base.Base):
 @click.option(
     '--driver-name',
     '-d',
-    type=click.Choice(molecule_drivers()),
+    type=click.Choice(drivers()),
     help='Name of driver to use. (docker)',
 )
 def create(ctx, scenario_name, driver_name):  # pragma: no cover

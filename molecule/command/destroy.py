@@ -22,7 +22,7 @@ import os
 import click
 
 from molecule import logger
-from molecule.api import molecule_drivers
+from molecule.api import drivers
 from molecule.command import base
 from molecule import util
 
@@ -118,7 +118,7 @@ class Destroy(base.Base):
 @click.option(
     '--driver-name',
     '-d',
-    type=click.Choice(molecule_drivers()),
+    type=click.Choice(drivers()),
     help='Name of driver to use. (docker)',
 )
 @click.option(
