@@ -19,12 +19,11 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-from molecule.api import Driver
-from molecule.api import drivers
+from molecule import api
 
 
 def test_api_drivers():
-    results = drivers()
+    results = api.drivers()
 
     assert isinstance(results, list)
 
@@ -35,7 +34,7 @@ def test_api_drivers():
 
 
 def test_api_drivers_as_dict():
-    results = drivers(as_dict=True)
+    results = api.drivers(as_dict=True)
 
     assert isinstance(results, dict)
 
@@ -45,4 +44,10 @@ def test_api_drivers_as_dict():
     assert 'delegated' in results
 
     for driver in results.values():
-        assert isinstance(driver, Driver)
+        assert isinstance(driver, api.Driver)
+
+
+def test_api_verifiers():
+    x = sorted(['goss', 'inspec', 'testinfra', 'ansible'])
+
+    assert x == api.verifiers()

@@ -25,12 +25,12 @@ import sh
 
 from molecule import logger
 from molecule import util
-from molecule.verifier import base
+from molecule.api import Verifier
 
 LOG = logger.get_logger(__name__)
 
 
-class Testinfra(base.Base):
+class Testinfra(Verifier):
     """
     `Testinfra`_ is the default test runner.
 
@@ -90,7 +90,7 @@ class Testinfra(base.Base):
     .. _`Testinfra`: https://testinfra.readthedocs.io
     """
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         """
         Sets up the requirements to execute ``testinfra`` and returns None.
 

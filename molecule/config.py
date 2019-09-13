@@ -230,11 +230,6 @@ class Config(object):
         elif verifier_name == 'ansible':
             return ansible_verifier.Ansible(self)
 
-    @property
-    @util.lru_cache()
-    def verifiers(self):
-        return molecule_verifiers()
-
     def _get_driver_name(self):
         driver_from_state_file = self.state.driver
         driver_from_cli = self.command_args.get('driver_name')
@@ -453,15 +448,6 @@ def molecule_directory(path):
 
 def molecule_file(path):
     return os.path.join(path, MOLECULE_FILE)
-
-
-def molecule_verifiers():
-    return [
-        goss.Goss(None).name,
-        inspec.Inspec(None).name,
-        testinfra.Testinfra(None).name,
-        ansible_verifier.Ansible(None).name,
-    ]
 
 
 def set_env_from_file(env, env_file):

@@ -22,12 +22,12 @@ import os
 
 from molecule import logger
 from molecule import util
-from molecule.verifier import base
+from molecule.api import Verifier
 
 LOG = logger.get_logger(__name__)
 
 
-class Inspec(base.Base):
+class Inspec(Verifier):
     """
     `Inspec`_ is not the default test runner.
 
@@ -79,7 +79,7 @@ class Inspec(base.Base):
     .. _`Inspec`: https://www.chef.io/inspec/
     """
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         """
         Sets up the requirements to execute ``inspec`` and returns None.
 

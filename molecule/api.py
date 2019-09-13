@@ -3,6 +3,7 @@ from importlib import import_module
 from molecule import logger
 from molecule.util import lru_cache
 from molecule.driver.base import Driver  # noqa
+from molecule.verifier.base import Verifier  # noqa
 import traceback
 
 LOG = logger.get_logger(__name__)
@@ -46,3 +47,22 @@ def drivers(as_dict=False, config=None):
         return plugins
     else:
         return sorted(list(plugins.keys()))
+
+
+@lru_cache()
+def verifiers():
+    plugins = {}
+    pm = pluggy.PluginManager("molecule.verifier")
+    try:
+        pm.load_setuptools_entrypoints("molecule.verifier")
+    except Exception:
+        # These are not fatal because a broken verifier should not make the entire
+        # tool unusable.
+        LOG.error("Failed to load verifier entry point %s", traceback.format_exc())
+    for p in pm.get_plugins():
+        try:
+            plugins[pm.get_name(p)] = p()
+        except Exception as e:
+            LOG.error("Failed to load %s driver: %s", pm.get_name(p), str(e))
+
+    return sorted(list(plugins.keys()))

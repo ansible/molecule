@@ -265,12 +265,6 @@ def test_verifier_property_is_ansible(config_instance):
     assert isinstance(config_instance.verifier, ansible_verifier.Ansible)
 
 
-def test_verifiers_property(config_instance):
-    x = ['goss', 'inspec', 'testinfra', 'ansible']
-
-    assert x == config_instance.verifiers
-
-
 def test_get_driver_name_from_state_file(config_instance):
     config_instance.state.change_state('driver', 'state-driver')
 
@@ -470,12 +464,6 @@ def test_molecule_drivers(caplog):
 
     assert x == sorted(drivers())
     assert not caplog.records
-
-
-def test_molecule_verifiers():
-    x = ['goss', 'inspec', 'testinfra', 'ansible']
-
-    assert x == config.molecule_verifiers()
 
 
 def test_set_env_from_file(config_instance):
