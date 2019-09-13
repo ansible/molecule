@@ -38,14 +38,14 @@ except ImportError:
     HAS_BOTO3 = False
 
 from molecule import logger
-from molecule.driver import base
+from molecule.api import Driver
 
 from molecule import util
 
 LOG = logger.get_logger(__name__)
 
 
-class EC2(base.Base):
+class EC2(Driver):
     """
     The class responsible for managing `EC2`_ instances.  `EC2`_
     is ``not`` the default driver used in Molecule.

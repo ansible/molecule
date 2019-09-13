@@ -23,14 +23,14 @@ from __future__ import absolute_import
 import os
 
 from molecule import logger
-from molecule.driver import base
+from molecule.api import Driver
 from molecule.util import lru_cache
 from molecule.util import sysexit_with_message
 
 log = logger.get_logger(__name__)
 
 
-class Docker(base.Base):
+class Docker(Driver):
     """
     The class responsible for managing `Docker`_ containers.  `Docker`_ is
     the default driver used in Molecule.

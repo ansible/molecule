@@ -19,12 +19,12 @@
 #  DEALINGS IN THE SOFTWARE.
 
 from molecule import logger
-from molecule.driver import base
+from molecule.api import Driver
 
 LOG = logger.get_logger(__name__)
 
 
-class LXC(base.Base):
+class LXC(Driver):
     """
     The class responsible for managing `LXC`_ containers.  `LXC`_ is `not` the
     default driver used in Molecule.

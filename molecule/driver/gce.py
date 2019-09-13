@@ -19,14 +19,14 @@
 #  DEALINGS IN THE SOFTWARE.
 
 from molecule import logger
-from molecule.driver import base
+from molecule.api import Driver
 
 from molecule import util
 
 LOG = logger.get_logger(__name__)
 
 
-class GCE(base.Base):
+class GCE(Driver):
     """
     The class responsible for managing `GCE`_ instances.  `GCE`_
     is `not` the default driver used in Molecule.

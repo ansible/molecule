@@ -18,12 +18,12 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-from molecule.driver import base
+from molecule.api import Driver
 
 from molecule import util
 
 
-class Linode(base.Base):
+class Linode(Driver):
     """
     The class responsible for managing `Linode`_ instances.  `Linode`_
     is `not` the default driver used in Molecule.

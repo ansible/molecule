@@ -22,12 +22,13 @@ import os
 
 from molecule import logger
 from molecule import util
-from molecule.driver import base
+from molecule.api import Driver
+
 
 LOG = logger.get_logger(__name__)
 
 
-class Vagrant(base.Base):
+class Vagrant(Driver):
     """
     The class responsible for managing `Vagrant`_ instances.  `Vagrant`_ is
     `not` the default driver used in Molecule.
