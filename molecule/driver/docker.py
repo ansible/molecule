@@ -24,6 +24,7 @@ import os
 
 from molecule import logger
 from molecule.driver import base
+from molecule.util import lru_cache
 from molecule.util import sysexit_with_message
 
 log = logger.get_logger(__name__)
@@ -204,11 +205,9 @@ class Docker(base.Base):
     def ansible_connection_options(self, instance_name):
         return {'ansible_connection': 'docker'}
 
+    @lru_cache()
     def sanity_checks(self):
         """Implement Docker driver sanity checks."""
-
-        if self._config.state.sanity_checked:
-            return
 
         log.info("Sanity checks: '{}'".format(self._name))
 
@@ -240,8 +239,6 @@ class Docker(base.Base):
                 'for managing the daemon'
             )
             sysexit_with_message(msg)
-
-        self._config.state.change_state('sanity_checked', True)
 
 
 def load(self):

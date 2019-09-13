@@ -23,11 +23,6 @@ import collections
 import os
 import shutil
 
-try:
-    from functools import lru_cache
-except ImportError:
-    from backports.functools_lru_cache import lru_cache
-
 from molecule import logger
 from molecule import util
 from molecule.provisioner import base
@@ -634,7 +629,7 @@ class Ansible(base.Base):
         return os.path.join(self._config.scenario.ephemeral_directory, 'ansible.cfg')
 
     @property
-    @lru_cache()
+    @util.lru_cache()
     def playbooks(self):
         return ansible_playbooks.AnsiblePlaybooks(self._config)
 

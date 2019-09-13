@@ -22,6 +22,7 @@ import os
 
 from molecule import logger, util
 from molecule.driver import base
+from molecule.util import lru_cache
 from molecule.util import sysexit_with_message
 
 log = logger.get_logger(__name__)
@@ -148,11 +149,9 @@ class HetznerCloud(base.Base):
             item for item in instance_config_dict if item['instance'] == instance_name
         )
 
+    @lru_cache()
     def sanity_checks(self):
         """Hetzner Cloud driver sanity checks."""
-
-        if self._config.state.sanity_checked:
-            return
 
         log.info("Sanity checks: '{}'".format(self._name))
 
@@ -173,8 +172,6 @@ class HetznerCloud(base.Base):
                 'account API token value'
             )
             sysexit_with_message(msg)
-
-        self._config.state.change_state('sanity_checked', True)
 
 
 def load(self):
