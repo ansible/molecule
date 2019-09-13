@@ -103,6 +103,13 @@ class Config(object):
         if self.molecule_file:
             self._validate()
 
+    def write(self):
+        util.write_file(self.config_file, util.safe_dump(self.config))
+
+    @property
+    def config_file(self):
+        return os.path.join(self.scenario.ephemeral_directory, MOLECULE_FILE)
+
     @property
     def is_parallel(self):
         return self.command_args.get('parallel', False)
@@ -169,7 +176,7 @@ class Config(object):
     def env(self):
         return {
             'MOLECULE_DEBUG': str(self.debug),
-            'MOLECULE_FILE': self.molecule_file,
+            'MOLECULE_FILE': self.config_file,
             'MOLECULE_ENV_FILE': self.env_file,
             'MOLECULE_STATE_FILE': self.state.state_file,
             'MOLECULE_INVENTORY_FILE': self.provisioner.inventory_file,

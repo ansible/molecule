@@ -68,6 +68,7 @@ class Base(object):
 
         :return: None
         """
+        self._config.write()
         self._config.provisioner.write_config()
         self._config.provisioner.manage_inventory()
 
