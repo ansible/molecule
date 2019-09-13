@@ -30,10 +30,10 @@ from molecule.verifier.lint import yamllint
 from molecule.verifier.lint import ansible_lint
 
 
-class Base(object):
+class Verifier(object):
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         """
         Base initializer for all :ref:`Verifier` classes.
 

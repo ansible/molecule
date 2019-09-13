@@ -22,12 +22,12 @@ import os
 
 from molecule import logger
 from molecule import util
-from molecule.verifier import base
+from molecule.api import Verifier
 
 LOG = logger.get_logger(__name__)
 
 
-class Goss(base.Base):
+class Goss(Verifier):
     """
     `Goss`_ is not the default test runner.
 
@@ -93,7 +93,7 @@ class Goss(base.Base):
     .. _`Goss`: https://github.com/aelsabbahy/goss
     """
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         """
         Sets up the requirements to execute ``goss`` and returns None.
 

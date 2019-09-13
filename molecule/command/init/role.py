@@ -22,10 +22,10 @@ import os
 
 import click
 
-from molecule import config
 from molecule import logger
 from molecule import util
 from molecule.api import drivers
+from molecule.api import verifiers
 from molecule.command import base as command_base
 from molecule.command.init import base
 
@@ -125,7 +125,7 @@ class Role(base.Base):
 @click.option('--role-name', '-r', required=True, help='Name of the role to create.')
 @click.option(
     '--verifier-name',
-    type=click.Choice(config.molecule_verifiers()),
+    type=click.Choice(verifiers()),
     default='testinfra',
     help='Name of verifier to initialize. (testinfra)',
 )

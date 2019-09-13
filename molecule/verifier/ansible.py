@@ -22,12 +22,13 @@ import os
 
 from molecule import logger
 from molecule import util
-from molecule.verifier import base
+from molecule.api import Verifier
+
 
 log = logger.get_logger(__name__)
 
 
-class Ansible(base.Base):
+class Ansible(Verifier):
     """
     `Ansible`_ is not the default test runner.
 
