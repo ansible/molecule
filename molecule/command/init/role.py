@@ -22,10 +22,9 @@ import os
 
 import click
 
+from molecule import api
 from molecule import logger
 from molecule import util
-from molecule.api import drivers
-from molecule.api import verifiers
 from molecule.command import base as command_base
 from molecule.command.init import base
 
@@ -106,7 +105,7 @@ class Role(base.Base):
 @click.option(
     '--driver-name',
     '-d',
-    type=click.Choice(drivers()),
+    type=click.Choice(api.drivers()),
     default='docker',
     help='Name of driver to initialize. (docker)',
 )
@@ -125,7 +124,7 @@ class Role(base.Base):
 @click.option('--role-name', '-r', required=True, help='Name of the role to create.')
 @click.option(
     '--verifier-name',
-    type=click.Choice(verifiers()),
+    type=click.Choice(api.verifiers()),
     default='testinfra',
     help='Name of verifier to initialize. (testinfra)',
 )
@@ -158,14 +157,7 @@ def role(
         'verifier_name': verifier_name,
     }
 
-    if verifier_name == 'inspec':
-        command_args['verifier_lint_name'] = 'rubocop'
-
-    if verifier_name == 'goss':
-        command_args['verifier_lint_name'] = 'yamllint'
-
-    if verifier_name == 'ansible':
-        command_args['verifier_lint_name'] = 'ansible-lint'
+    command_args['verifier_lint_name'] = api.verifiers()[verifier_name].default_linter
 
     if template is not None:
         command_args['template'] = template

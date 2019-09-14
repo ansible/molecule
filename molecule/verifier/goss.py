@@ -101,6 +101,7 @@ class Goss(Verifier):
         :return: None
         """
         super(Goss, self).__init__(config)
+        self.default_linter = 'yamllint'
         if config:
             self._tests = self._get_tests()
 

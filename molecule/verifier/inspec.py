@@ -87,6 +87,7 @@ class Inspec(Verifier):
         :return: None
         """
         super(Inspec, self).__init__(config)
+        self.default_linter = 'rubocop'
         if config:
             self._tests = self._get_tests()
 

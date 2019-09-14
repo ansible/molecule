@@ -98,6 +98,7 @@ class Testinfra(Verifier):
         :return: None
         """
         super(Testinfra, self).__init__(config)
+        self.default_linter = 'flake8'
         self._testinfra_command = None
         if config:
             self._tests = self._get_tests()

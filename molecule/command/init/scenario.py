@@ -22,11 +22,10 @@ import os
 
 import click
 
+from molecule import api
 from molecule import config
 from molecule import logger
 from molecule import util
-from molecule.api import drivers
-from molecule.api import verifiers
 from molecule.command import base as command_base
 from molecule.command.init import base
 
@@ -154,7 +153,7 @@ def _default_scenario_exists(ctx, param, value):  # pragma: no cover
 @click.option(
     '--driver-name',
     '-d',
-    type=click.Choice(drivers()),
+    type=click.Choice(api.drivers()),
     default='docker',
     help='Name of driver to initialize. (docker)',
 )
@@ -189,7 +188,7 @@ def _default_scenario_exists(ctx, param, value):  # pragma: no cover
 )
 @click.option(
     '--verifier-name',
-    type=click.Choice(verifiers()),
+    type=click.Choice(api.verifiers()),
     default='testinfra',
     help='Name of verifier to initialize. (testinfra)',
 )
@@ -223,14 +222,7 @@ def scenario(
         'verifier_name': verifier_name,
     }
 
-    if verifier_name == 'inspec':
-        command_args['verifier_lint_name'] = 'rubocop'
-
-    if verifier_name == 'goss':
-        command_args['verifier_lint_name'] = 'yamllint'
-
-    if verifier_name == 'ansible':
-        command_args['verifier_lint_name'] = 'ansible-lint'
+    command_args['verifier_lint_name'] = api.verifiers()[verifier_name].default_linter
 
     driver_template = driver_template or os.environ.get(
         'MOLECULE_SCENARIO_DRIVER_TEMPLATE', None
