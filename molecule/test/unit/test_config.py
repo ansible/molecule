@@ -183,7 +183,7 @@ def test_env(config_instance):
     config_instance.args = {'env_file': '.env'}
     x = {
         'MOLECULE_DEBUG': 'False',
-        'MOLECULE_FILE': config_instance.molecule_file,
+        'MOLECULE_FILE': config_instance.config_file,
         'MOLECULE_ENV_FILE': util.abs_path(config_instance.args.get('env_file')),
         'MOLECULE_INVENTORY_FILE': config_instance.provisioner.inventory_file,
         'MOLECULE_EPHEMERAL_DIRECTORY': config_instance.scenario.ephemeral_directory,
@@ -482,3 +482,9 @@ def test_set_env_from_file_returns_original_env_when_env_file_not_found(
     env = config.set_env_from_file({}, 'file-not-found')
 
     assert {} == env
+
+
+def test_write_config(config_instance):
+    config_instance.write()
+
+    assert os.path.isfile(config_instance.config_file)

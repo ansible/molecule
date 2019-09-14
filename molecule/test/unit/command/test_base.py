@@ -111,8 +111,8 @@ def test_setup(
     _patched_manage_inventory,
     _instance,
 ):
-
     assert os.path.isdir(os.path.dirname(_instance._config.provisioner.inventory_file))
+    assert os.path.isfile(_instance._config.config_file)
 
     _patched_manage_inventory.assert_called_once_with()
     _patched_write_config.assert_called_once_with()
