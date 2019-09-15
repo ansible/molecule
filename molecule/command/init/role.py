@@ -105,7 +105,7 @@ class Role(base.Base):
 @click.option(
     '--driver-name',
     '-d',
-    type=click.Choice(api.drivers()),
+    type=click.Choice([str(s) for s in api.drivers()]),
     default='docker',
     help='Name of driver to initialize. (docker)',
 )
@@ -124,7 +124,7 @@ class Role(base.Base):
 @click.option('--role-name', '-r', required=True, help='Name of the role to create.')
 @click.option(
     '--verifier-name',
-    type=click.Choice(api.verifiers()),
+    type=click.Choice([str(s) for s in api.verifiers()]),
     default='testinfra',
     help='Name of verifier to initialize. (testinfra)',
 )
