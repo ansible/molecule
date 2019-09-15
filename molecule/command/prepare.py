@@ -115,7 +115,7 @@ class Prepare(base.Base):
 @click.option(
     '--driver-name',
     '-d',
-    type=click.Choice(drivers()),
+    type=click.Choice([str(s) for s in drivers()]),
     help='Name of driver to use. (docker)',
 )
 @click.option(
