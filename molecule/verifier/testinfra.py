@@ -203,3 +203,22 @@ class Testinfra(Verifier):
         :return: list
         """
         return [filename for filename in util.os_walk(self.directory, 'test_*.py')]
+
+    def schema(self):
+        return {
+            'verifier': {
+                'type': 'dict',
+                'schema': {
+                    'name': {'type': 'string', 'allowed': ['testinfra']},
+                    'lint': {
+                        'type': 'dict',
+                        'schema': {
+                            'name': {
+                                'type': 'string',
+                                'allowed': ['flake8', 'pre-commit'],
+                            }
+                        },
+                    },
+                },
+            }
+        }
