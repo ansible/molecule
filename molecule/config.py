@@ -38,10 +38,6 @@ from molecule.dependency import shell
 from molecule.lint import yamllint
 from molecule.model import schema_v2
 from molecule.provisioner import ansible
-from molecule.verifier import ansible as ansible_verifier
-from molecule.verifier import goss
-from molecule.verifier import inspec
-from molecule.verifier import testinfra
 
 
 LOG = logger.get_logger(__name__)
@@ -223,15 +219,7 @@ class Config(object):
     @property
     @util.lru_cache()
     def verifier(self):
-        verifier_name = self.config['verifier']['name']
-        if verifier_name == 'testinfra':
-            return testinfra.Testinfra(self)
-        elif verifier_name == 'inspec':
-            return inspec.Inspec(self)
-        elif verifier_name == 'goss':
-            return goss.Goss(self)
-        elif verifier_name == 'ansible':
-            return ansible_verifier.Ansible(self)
+        return api.verifiers(self).get(self.config['verifier']['name'], None)
 
     def _get_driver_name(self):
         driver_from_state_file = self.state.driver

@@ -41,6 +41,7 @@ class Verifier(object):
         :returns: None
         """
         self._config = config
+        self.default_linter = 'ansible-lint'
 
     @abc.abstractproperty
     def name(self):  # pragma: no cover

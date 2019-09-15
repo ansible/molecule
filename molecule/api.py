@@ -21,6 +21,9 @@ class UserListMap(UserList):
         else:
             return self.__dict__[i]
 
+    def get(self, key, default):
+        return self.__dict__.get(key, default)
+
     def append(self, element):
         self.__dict__[str(element)] = element
         return super(UserListMap, self).append(element)
@@ -47,7 +50,7 @@ def drivers(config=None):
 
 
 @lru_cache()
-def verifiers():
+def verifiers(config=None):
     # type: (object) -> UserListMap[Verifier]
     plugins = UserListMap()
     pm = pluggy.PluginManager("molecule.verifier")
@@ -59,7 +62,7 @@ def verifiers():
         LOG.error("Failed to load verifier entry point %s", traceback.format_exc())
     for p in pm.get_plugins():
         try:
-            plugins.append(p())
+            plugins.append(p(config))
         except Exception as e:
             LOG.error("Failed to load %s driver: %s", pm.get_name(p), str(e))
     plugins.sort()
