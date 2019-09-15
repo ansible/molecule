@@ -115,3 +115,18 @@ class Verifier(object):
             return yamllint.Yamllint(self._config)
         if lint_name == 'ansible-lint':
             return ansible_lint.AnsibleLint(self._config)
+
+    def __eq__(self, other):
+        return str(self) == str(other)
+
+    def __lt__(self, other):
+        return str.__lt__(str(self), str(other))
+
+    def __hash__(self):
+        return self.name.__hash__()
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return self.name

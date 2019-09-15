@@ -154,7 +154,7 @@ class EC2(Driver):
     .. _`EC2`: https://aws.amazon.com/ec2/
     """  # noqa
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         super(EC2, self).__init__(config)
         self._name = "ec2"
 
@@ -251,7 +251,3 @@ class EC2(Driver):
     def sanity_checks(self):
         # FIXME(decentral1se): Implement sanity checks
         pass
-
-
-def load(self):
-    return EC2(self)

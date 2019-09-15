@@ -168,7 +168,7 @@ class Docker(Driver):
     .. _`CMD`: https://docs.docker.com/engine/reference/builder/#cmd
     """  # noqa
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         super(Docker, self).__init__(config)
         self._name = 'docker'
 
@@ -239,7 +239,3 @@ class Docker(Driver):
                 'for managing the daemon'
             )
             sysexit_with_message(msg)
-
-
-def load(self):
-    return Docker(self)

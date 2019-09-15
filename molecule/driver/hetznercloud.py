@@ -86,7 +86,7 @@ class HetznerCloud(Driver):
             - foo
     """  # noqa
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         super(HetznerCloud, self).__init__(config)
         self._name = 'hetznercloud'
 
@@ -172,7 +172,3 @@ class HetznerCloud(Driver):
                 'account API token value'
             )
             sysexit_with_message(msg)
-
-
-def load(self):
-    return HetznerCloud(self)

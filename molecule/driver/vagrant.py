@@ -124,7 +124,7 @@ class Vagrant(Driver):
     .. _`Vagrant`: https://www.vagrantup.com
     """  # noqa
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         super(Vagrant, self).__init__(config)
         self._name = 'vagrant'
 
@@ -212,7 +212,3 @@ class Vagrant(Driver):
     def sanity_checks(self):
         # FIXME(decentral1se): Implement sanity checks
         pass
-
-
-def load(self):
-    return Vagrant(self)

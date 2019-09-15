@@ -132,7 +132,7 @@ class Delegated(Driver):
               ansible_connection: local
     """
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         super(Delegated, self).__init__(config)
         self._name = 'delegated'
 
@@ -233,7 +233,3 @@ class Delegated(Driver):
     def sanity_checks(self):
         # Note(decentral1se): Cannot implement driver specifics are unknown
         pass
-
-
-def load(self):
-    return Delegated(self)

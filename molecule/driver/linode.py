@@ -82,7 +82,7 @@ class Linode(Driver):
     .. _`Linode`: https://www.linode.com/
     """  # noqa
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         super(Linode, self).__init__(config)
         self._name = 'linode'
 
@@ -160,7 +160,3 @@ class Linode(Driver):
     def sanity_checks(self):
         # FIXME(decentral1se): Implement sanity checks
         pass
-
-
-def load(self):
-    return Linode(self)

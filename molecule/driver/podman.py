@@ -143,7 +143,7 @@ class Podman(Driver):
     .. _`CMD`: https://docs.docker.com/engine/reference/builder/#cmd
     """  # noqa
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         super(Podman, self).__init__(config)
         self._name = 'podman'
 
@@ -185,7 +185,3 @@ class Podman(Driver):
         """Implement Podman driver sanity checks."""
 
         log.info("Sanity checks: '{}'".format(self._name))
-
-
-def load(self):
-    return Podman(self)

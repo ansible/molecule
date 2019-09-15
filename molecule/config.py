@@ -25,13 +25,13 @@ import anyconfig
 from ansible.module_utils.parsing.convert_bool import boolean
 import six
 
+from molecule import api
 from molecule import interpolation
 from molecule import logger
 from molecule import platforms
 from molecule import scenario
 from molecule import state
 from molecule import util
-from molecule.api import drivers
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
 from molecule.dependency import shell
@@ -163,14 +163,10 @@ class Config(object):
         driver_name = self._get_driver_name()
         driver = None
 
-        driver = drivers(as_dict=True, config=self)[driver_name]
+        driver = api.drivers(config=self)[driver_name]
         driver.name = driver_name
 
         return driver
-
-    @property
-    def drivers(self):
-        return drivers(config=self)
 
     @property
     def env(self):

@@ -27,7 +27,6 @@ from molecule import platforms
 from molecule import scenario
 from molecule import state
 from molecule import util
-from molecule.api import drivers
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
 from molecule.dependency import shell
@@ -158,25 +157,6 @@ def _config_driver_openstack_section_data():
 @pytest.fixture
 def _config_driver_vagrant_section_data():
     return {'driver': {'name': 'vagrant', 'provider': {'name': 'virtualbox'}}}
-
-
-def test_drivers_property(config_instance):
-    x = [
-        'delegated',
-        'digitalocean',
-        'docker',
-        'ec2',
-        'gce',
-        'hetznercloud',
-        'linode',
-        'lxc',
-        'lxd',
-        'openstack',
-        'podman',
-        'vagrant',
-    ]
-
-    assert x == sorted(config_instance.drivers)
 
 
 def test_env(config_instance):
@@ -444,26 +424,6 @@ def test_molecule_directory():
 
 def test_molecule_file():
     assert '/foo/bar/molecule.yml' == config.molecule_file('/foo/bar')
-
-
-def test_molecule_drivers(caplog):
-    x = [
-        'delegated',
-        'digitalocean',
-        'docker',
-        'ec2',
-        'gce',
-        'hetznercloud',
-        'linode',
-        'lxc',
-        'lxd',
-        'openstack',
-        'podman',
-        'vagrant',
-    ]
-
-    assert x == sorted(drivers())
-    assert not caplog.records
 
 
 def test_set_env_from_file(config_instance):
