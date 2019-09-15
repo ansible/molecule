@@ -146,3 +146,18 @@ class Goss(Verifier):
         :return: list
         """
         return [filename for filename in util.os_walk(self.directory, 'test_*.yml')]
+
+    def schema(self):
+        return {
+            'verifier': {
+                'type': 'dict',
+                'schema': {
+                    'name': {'type': 'string', 'allowed': ['goss']},
+                    'lint': {
+                        'type': 'dict',
+                        'schema': {'name': {'type': 'string', 'allowed': ['yamllint']}},
+                    },
+                    'options': {'keysrules': {'readonly': True}},
+                },
+            }
+        }

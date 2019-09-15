@@ -86,3 +86,19 @@ class Ansible(Verifier):
 
         msg = 'Verifier completed successfully.'
         log.success(msg)
+
+    def schema(self):
+        return {
+            'verifier': {
+                'type': 'dict',
+                'schema': {
+                    'name': {'type': 'string', 'allowed': ['ansible']},
+                    'lint': {
+                        'type': 'dict',
+                        'schema': {
+                            'name': {'type': 'string', 'allowed': ['ansible-lint']}
+                        },
+                    },
+                },
+            }
+        }

@@ -79,6 +79,15 @@ class Verifier(object):
         """
         pass
 
+    @abc.abstractmethod
+    def schema(self):  # pragma: no cover
+        """
+        Returns validation schema.
+
+        :return: None
+        """
+        pass
+
     @property
     def enabled(self):
         return self._config.config['verifier']['enabled']

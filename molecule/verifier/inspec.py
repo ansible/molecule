@@ -132,3 +132,18 @@ class Inspec(Verifier):
         :return: list
         """
         return [filename for filename in util.os_walk(self.directory, 'test_*.rb')]
+
+    def schema(self):
+        return {
+            'verifier': {
+                'type': 'dict',
+                'schema': {
+                    'name': {'type': 'string', 'allowed': ['inspec']},
+                    'lint': {
+                        'type': 'dict',
+                        'schema': {'name': {'type': 'string', 'allowed': ['rubocop']}},
+                    },
+                    'options': {'keysrules': {'readonly': True}},
+                },
+            }
+        }

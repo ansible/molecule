@@ -26,8 +26,8 @@ import re
 import cerberus
 import cerberus.errors
 
+from molecule import api
 from molecule import interpolation, util
-from molecule.api import drivers
 
 
 def coerce_env(env, keep_string, v):
@@ -54,7 +54,7 @@ def pre_validate_base_schema(env, keep_string):
                 'name': {
                     'type': 'string',
                     'molecule_env_var': True,
-                    'allowed': drivers(),
+                    'allowed': api.drivers(),
                     # NOTE(retr0h): Some users use an environment variable to
                     # change the driver name.  May add this coercion to rest of
                     # config using allowed validation.
@@ -561,66 +561,6 @@ dependency_command_nullable_schema = {
     }
 }
 
-verifier_options_readonly_schema = {
-    'verifier': {
-        'type': 'dict',
-        'schema': {'options': {'keysrules': {'readonly': True}}},
-    }
-}
-
-verifier_goss_mutually_exclusive_schema = {
-    'verifier': {
-        'type': 'dict',
-        'schema': {
-            'name': {'type': 'string', 'allowed': ['goss']},
-            'lint': {
-                'type': 'dict',
-                'schema': {'name': {'type': 'string', 'allowed': ['yamllint']}},
-            },
-        },
-    }
-}
-
-verifier_inspec_mutually_exclusive_schema = {
-    'verifier': {
-        'type': 'dict',
-        'schema': {
-            'name': {'type': 'string', 'allowed': ['inspec']},
-            'lint': {
-                'type': 'dict',
-                'schema': {'name': {'type': 'string', 'allowed': ['rubocop']}},
-            },
-        },
-    }
-}
-verifier_testinfra_mutually_exclusive_schema = {
-    'verifier': {
-        'type': 'dict',
-        'schema': {
-            'name': {'type': 'string', 'allowed': ['testinfra']},
-            'lint': {
-                'type': 'dict',
-                'schema': {
-                    'name': {'type': 'string', 'allowed': ['flake8', 'pre-commit']}
-                },
-            },
-        },
-    }
-}
-
-verifier_ansible_mutually_exclusive_schema = {
-    'verifier': {
-        'type': 'dict',
-        'schema': {
-            'name': {'type': 'string', 'allowed': ['ansible']},
-            'lint': {
-                'type': 'dict',
-                'schema': {'name': {'type': 'string', 'allowed': ['ansible-lint']}},
-            },
-        },
-    }
-}
-
 
 class Validator(cerberus.Validator):
     def __init__(self, *args, **kwargs):
@@ -710,16 +650,7 @@ def validate(c):
         util.merge_dicts(schema, platforms_hetznercloud_schema)
 
     # Verifier
-    if c['verifier']['name'] == 'goss':
-        util.merge_dicts(schema, verifier_options_readonly_schema)
-        util.merge_dicts(schema, verifier_goss_mutually_exclusive_schema)
-    elif c['verifier']['name'] == 'inspec':
-        util.merge_dicts(schema, verifier_options_readonly_schema)
-        util.merge_dicts(schema, verifier_inspec_mutually_exclusive_schema)
-    elif c['verifier']['name'] == 'testinfra':
-        util.merge_dicts(schema, verifier_testinfra_mutually_exclusive_schema)
-    elif c['verifier']['name'] == 'ansible':
-        util.merge_dicts(schema, verifier_ansible_mutually_exclusive_schema)
+    util.merge_dicts(schema, api.verifiers()[c['verifier']['name']].schema())
 
     v = Validator(allow_unknown=True)
     v.validate(c, schema)
