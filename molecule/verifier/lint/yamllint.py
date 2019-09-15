@@ -41,7 +41,7 @@ class Yamllint(base.Base):
     .. code-block:: yaml
 
         verifier:
-          name: goss
+          name: ...
           lint:
             name: yamllint
             options:
@@ -52,7 +52,7 @@ class Yamllint(base.Base):
     .. code-block:: yaml
 
         verifier:
-          name: goss
+          name: ...
           lint:
             name: yamllint
             enabled: False
@@ -62,7 +62,7 @@ class Yamllint(base.Base):
     .. code-block:: yaml
 
         verifier:
-          name: goss
+          name: ...
           lint:
             name: yamllint
             env:

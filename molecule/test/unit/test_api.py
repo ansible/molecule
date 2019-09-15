@@ -38,6 +38,6 @@ def test_api_drivers():
 
 
 def test_api_verifiers():
-    x = sorted(['goss', 'inspec', 'testinfra', 'ansible'])
+    x = ['inspec', 'testinfra', 'ansible']
 
-    assert x == api.verifiers()
+    assert all(elem in api.verifiers() for elem in x)

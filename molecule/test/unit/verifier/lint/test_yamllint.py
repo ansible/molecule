@@ -37,7 +37,7 @@ def _patched_get_tests(mocker):
 def _verifier_lint_section_data():
     return {
         'verifier': {
-            'name': 'goss',
+            'name': 'ansible',
             'lint': {
                 'name': 'yamllint',
                 'options': {'foo': 'bar'},

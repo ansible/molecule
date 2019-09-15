@@ -105,39 +105,6 @@ def test_command_init_scenario_inspec(temp_dir):
         assert os.path.isdir(scenario_directory)
 
 
-def test_command_init_role_goss(temp_dir):
-    role_directory = os.path.join(temp_dir.strpath, 'test-init')
-    options = {'role_name': 'test-init', 'verifier_name': 'goss'}
-    cmd = sh.molecule.bake('init', 'role', **options)
-    pytest.helpers.run_command(cmd)
-    pytest.helpers.metadata_lint_update(role_directory)
-
-    with change_dir_to(role_directory):
-        cmd = sh.molecule.bake('test')
-        pytest.helpers.run_command(cmd)
-
-
-def test_command_init_scenario_goss(temp_dir):
-    role_directory = os.path.join(temp_dir.strpath, 'test-init')
-    options = {'role_name': 'test-init'}
-    cmd = sh.molecule.bake('init', 'role', **options)
-    pytest.helpers.run_command(cmd)
-    pytest.helpers.metadata_lint_update(role_directory)
-
-    with change_dir_to(role_directory):
-        molecule_directory = pytest.helpers.molecule_directory()
-        scenario_directory = os.path.join(molecule_directory, 'test-scenario')
-        options = {
-            'scenario_name': 'test-scenario',
-            'role_name': 'test-init',
-            'verifier_name': 'goss',
-        }
-        cmd = sh.molecule.bake('init', 'scenario', **options)
-        pytest.helpers.run_command(cmd)
-
-        assert os.path.isdir(scenario_directory)
-
-
 def test_command_init_scenario_with_invalid_role_raises(temp_dir):
     role_directory = os.path.join(temp_dir.strpath, 'test-role')
     options = {'role_name': 'test-role'}
@@ -409,25 +376,6 @@ def test_command_verify_testinfra_precommit(
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
 )
 def test_command_verify_testinfra(scenario_to_test, with_scenario, scenario_name):
-    options = {'scenario_name': scenario_name}
-    cmd = sh.molecule.bake('create', **options)
-    pytest.helpers.run_command(cmd)
-
-    options = {'scenario_name': scenario_name}
-    cmd = sh.molecule.bake('converge', **options)
-    pytest.helpers.run_command(cmd)
-
-    options = {'scenario_name': scenario_name}
-    cmd = sh.molecule.bake('verify', **options)
-    pytest.helpers.run_command(cmd)
-
-
-@pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name',
-    [('verifier', 'docker', 'goss')],
-    indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
-)
-def test_command_verify_goss(scenario_to_test, with_scenario, scenario_name):
     options = {'scenario_name': scenario_name}
     cmd = sh.molecule.bake('create', **options)
     pytest.helpers.run_command(cmd)

@@ -32,7 +32,6 @@ from molecule.dependency import gilt
 from molecule.dependency import shell
 from molecule.lint import yamllint
 from molecule.provisioner import ansible
-from molecule.verifier import goss
 from molecule.verifier import inspec
 from molecule.verifier import testinfra
 from molecule.verifier import ansible as ansible_verifier
@@ -219,18 +218,6 @@ def _config_verifier_inspec_section_data():
 )
 def test_verifier_property_is_inspec(config_instance):
     assert isinstance(config_instance.verifier, inspec.Inspec)
-
-
-@pytest.fixture
-def _config_verifier_goss_section_data():
-    return {'verifier': {'name': 'goss', 'lint': {'name': 'yamllint'}}}
-
-
-@pytest.mark.parametrize(
-    'config_instance', ['_config_verifier_goss_section_data'], indirect=True
-)
-def test_verifier_property_is_goss(config_instance):
-    assert isinstance(config_instance.verifier, goss.Goss)
 
 
 @pytest.fixture
