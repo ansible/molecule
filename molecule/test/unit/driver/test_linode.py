@@ -126,7 +126,6 @@ def test_linode_ansible_connection_options(linode_instance, mocker):
         'address': '172.16.0.2',
         'user': 'linode-admin',
         'port': 22,
-        'ssh_pass': 'foobar',
         'identity_file': '/foo/bar',
     }
 
@@ -143,7 +142,6 @@ def test_linode_ansible_connection_options(linode_instance, mocker):
             '-o IdentitiesOnly=yes '
             '-o StrictHostKeyChecking=no'
         ),
-        'ansible_ssh_pass': 'foobar',
     }
 
     connection_options = linode_instance.ansible_connection_options('linode')

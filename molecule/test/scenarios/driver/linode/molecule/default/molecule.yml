@@ -12,9 +12,10 @@ lint:
 
 platforms:
   - name: instance
-    plan: 1
-    datacenter: 7
-    distribution: 129
+    type: g6-nanode-1
+    state: present
+    region: eu-west
+    image: linode/debian9
 
 provisioner:
   name: ansible

@@ -8,7 +8,6 @@
     ssh_user: root
     ssh_port: 22
     ssh_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
-    ssh_pass: "{{ lookup('password', lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') + '/ssh_pass') }}"
   tasks:
     - name: Create SSH key
       user:
@@ -18,15 +17,17 @@
       register: generated_ssh_key
 
     - name: Create molecule instance(s)
-      linode:
-        name: "{{ item.name }}"
-        api_key: "{{ lookup('env', 'LINODE_API_KEY') }}"
-        datacenter: "{{ item.datacenter }}"
-        plan: "{{ item.plan }}"
-        distribution: "{{ item.distribution }}"
-        ssh_pub_key: "{{ generated_ssh_key.ssh_public_key }}"
-        password: "{{ ssh_pass }}"
+      linode_v4:
+        label: "{{ item.name }}"
+        region: "{{ item.region }}"
+        image: "{{ item.image }}"
+        type: "{{ item.type }}"
+        group: "{{ item.group | default(omit) }}"
+        tags: "{{ item.tags | default(omit) }}"
+        authorized_keys:
+          - "{{ generated_ssh_key.ssh_public_key }}"
         state: present
+        access_token: "{{ lookup('env', 'LINODE_ACCESS_TOKEN', errors='strict') }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
       async: 7200
@@ -45,13 +46,11 @@
     - name: Populate instance config dict
       set_fact:
         instance_conf_dict: {
-          'instance': "{{ item.instance.name }}",
-          'ssh_pass': "{{ ssh_pass }}",
-          'address': "{{ item.instance.ipv4 }}",
+          'instance': "{{ item.instance.label }}",
+          'address': "{{ item.instance.ipv4[0] }}",
           'user': "{{ ssh_user }}",
           'port': "{{ ssh_port }}",
-          'identity_file': "{{ ssh_path }}",
-          'linode_id': "{{ item.instance.id }}", }
+          'identity_file': "{{ ssh_path }}", }
       with_items: "{{ linode_jobs.results }}"
       register: instance_config_dict
       when: server.changed | bool
@@ -63,7 +62,7 @@
 
     - name: Dump instance config
       copy:
-        content: "{{ instance_conf | molecule_to_yaml | molecule_header }}"
+        content: "{{ instance_conf | to_json | from_json | molecule_to_yaml | molecule_header }}"
         dest: "{{ molecule_instance_config }}"
       when: server.changed | bool
 
