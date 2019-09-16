@@ -17,10 +17,10 @@
             skip_instances: true
 
     - name: Destroy molecule instance(s)
-      linode:
-        name: "{{ item.instance }}"
-        linode_id: "{{ item.linode_id }}"
+      linode_v4:
+        label: "{{ item.instance }}"
         state: absent
+        access_token: "{{ lookup('env', 'LINODE_ACCESS_TOKEN', errors='strict') }}"
       register: server
       with_items: "{{ instance_conf }}"
       when: not skip_instances

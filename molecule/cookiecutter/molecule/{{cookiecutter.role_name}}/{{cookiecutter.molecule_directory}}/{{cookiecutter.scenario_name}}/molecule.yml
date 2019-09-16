@@ -36,9 +36,10 @@ platforms:
   - name: instance
 {%- elif cookiecutter.driver_name == 'linode' %}
   - name: instance
-    plan: 1
-    datacenter: 7
-    distribution: 129
+    type: g6-nanode-1
+    state: present
+    region: eu-west
+    image: linode/debian9
 {%- elif cookiecutter.driver_name == 'lxd' %}
   - name: instance
 {%- elif cookiecutter.driver_name == 'openstack' %}

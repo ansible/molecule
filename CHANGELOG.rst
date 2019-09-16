@@ -5,6 +5,7 @@ History
 Unreleased
 ==========
 
+* The Linode driver now uses the ``linode_v4`` module.
 * Removed goss verifier
 * ``molecule dependency`` now has a retry and timed back-off by default for flaky network connections.
 * Add the `--parallel` flag to experimentally allow molecule to be run in parallel.

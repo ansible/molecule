@@ -76,8 +76,8 @@ def skip_test(request, driver_name):
         'docker': supports_docker,
         'ec2': supports_ec2,
         'gce': supports_gce,
-        'hetznercloud': lambda: supports_hetznercloud() and at_least_ansible_28(),
-        'linode': supports_linode,
+        'hetznercloud': lambda: at_least_ansible_28() and supports_hetznercloud(),
+        'linode': lambda: at_least_ansible_28() and supports_linode(),
         'lxc': supports_lxc,
         'lxd': supports_lxd,
         'openstack': supports_openstack,
@@ -285,11 +285,11 @@ def at_least_ansible_28():
 
 @pytest.helpers.register
 def supports_linode():
-    from ansible.modules.cloud.linode.linode import HAS_LINODE
+    from ansible.modules.cloud.linode.linode_v4 import HAS_LINODE_DEPENDENCY
 
-    env_vars = ('LINODE_API_KEY',)
+    env_vars = ('LINODE_ACCESS_TOKEN',)
 
-    return _env_vars_exposed(env_vars) and HAS_LINODE
+    return _env_vars_exposed(env_vars) and HAS_LINODE_DEPENDENCY
 
 
 @pytest.helpers.register

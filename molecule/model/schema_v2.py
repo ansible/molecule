@@ -545,10 +545,11 @@ platforms_linode_schema = {
         'schema': {
             'type': 'dict',
             'schema': {
-                'name': {'type': 'string'},
-                'plan': {'type': 'integer', 'required': True},
-                'datacenter': {'type': 'integer', 'required': True},
-                'distribution': {'type': 'integer', 'required': True},
+                'region': {'type': 'string', 'required': True},
+                'image': {'type': 'string', 'required': True},
+                'type': {'type': 'string', 'required': True},
+                'group': {'type': 'string'},
+                'tags': {'type': 'list', 'schema': {'type': 'string'}},
             },
         },
     }

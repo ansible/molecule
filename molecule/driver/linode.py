@@ -18,9 +18,14 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
+
 from molecule.api import Driver
 
-from molecule import util
+from molecule import logger, util
+from molecule.util import lru_cache
+
+log = logger.get_logger(__name__)
 
 
 class Linode(Driver):
@@ -28,18 +33,8 @@ class Linode(Driver):
     The class responsible for managing `Linode`_ instances.  `Linode`_
     is `not` the default driver used in Molecule.
 
-    Molecule leverages Ansible's `linode_module`_, by mapping variables
+    Molecule leverages Ansible's `linode_v4 module`_, by mapping variables
     from ``molecule.yml`` into ``create.yml`` and ``destroy.yml``.
-
-    .. important::
-
-        Please note, the Ansible Linode module is currently using the deprecated
-        API and there are a number of outstanding usability issues with the module.
-        However, there is ongoing work to migrate to the new API (v4) and migrate
-        this driver when that time comes. In the mean time, this driver can be
-        considered at somewhat of an Alpha status quality.
-
-    .. _`linode_module`: https://docs.ansible.com/ansible/latest/modules/linode_module.html
 
     .. code-block:: yaml
 
@@ -47,9 +42,12 @@ class Linode(Driver):
           name: linode
         platforms:
           - name: instance
-            plan: 1
-            datacenter: 7
-            distribution: 129
+            type: g6-nanode-1
+            state: present
+            region: eu-west
+            image: linode/debian9
+
+    .. _`linode_v4 module`: https://docs.ansible.com/ansible/latest/modules/linode_v4_module.html
 
     .. code-block:: bash
 
@@ -127,7 +125,6 @@ class Linode(Driver):
                 'ansible_user': d['user'],
                 'ansible_host': d['address'],
                 'ansible_port': d['port'],
-                'ansible_ssh_pass': d['ssh_pass'],
                 'ansible_private_key_file': d['identity_file'],
                 'connection': 'ssh',
                 'ansible_ssh_common_args': ' '.join(self.ssh_connection_options),
@@ -143,20 +140,27 @@ class Linode(Driver):
         instance_config_dict = util.safe_load_file(self._config.driver.instance_config)
 
         return next(
-            item
-            for item in instance_config_dict
-            if any(
-                (
-                    # NOTE(lwm): Handle both because of transitioning label logic
-                    #            https://github.com/ansible/ansible/pull/44719
-                    item['instance']
-                    == '{}_{}'.format(item['linode_id'], instance_name),
-                    item['instance']
-                    == '{}-{}'.format(item['linode_id'], instance_name),
-                )
-            )
+            item for item in instance_config_dict if item['instance'] == instance_name
         )
 
+    @lru_cache()
     def sanity_checks(self):
-        # FIXME(decentral1se): Implement sanity checks
-        pass
+        log.info("Sanity checks: '{}'".format(self._name))
+
+        try:
+            from linode_api4 import LinodeClient  # noqa
+        except ImportError:
+            msg = (
+                'Missing Linode driver dependency. Please '
+                "install via 'molecule[linode]' or refer to "
+                'your INSTALL.rst driver documentation file'
+            )
+            util.sysexit_with_message(msg)
+
+        if 'LINODE_ACCESS_TOKEN' not in os.environ:
+            msg = (
+                'Missing Linode access token. Please expose '
+                'the LINODE_ACCESS_TOKEN environment variable with '
+                'your account access token value'
+            )
+            util.sysexit_with_message(msg)

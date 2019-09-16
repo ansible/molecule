@@ -456,7 +456,16 @@ def test_platforms_hetznercloud(_config):
 def _model_platform_linode_section_data():
     return {
         'driver': {'name': 'linode'},
-        'platforms': [{'name': '', 'plan': 0, 'datacenter': 0, 'distribution': 0}],
+        'platforms': [
+            {
+                'name': '',
+                'region': '',
+                'image': '',
+                'type': '',
+                'group': '',
+                'tags': [''],
+            }
+        ],
     }
 
 
@@ -471,7 +480,9 @@ def test_platforms_linode(_config):
 def _model_platforms_linode_errors_section_data():
     return {
         'driver': {'name': 'linode'},
-        'platforms': [{'name': 0, 'plan': '', 'datacenter': '', 'distribution': ''}],
+        'platforms': [
+            {'name': 0, 'region': 0, 'image': 0, 'type': 0, 'group': 0, 'tags': ''}
+        ],
     }
 
 
@@ -485,9 +496,11 @@ def test_platforms_linode_has_errors(_config):
                 0: [
                     {
                         'name': ['must be of string type'],
-                        'plan': ['must be of integer type'],
-                        'datacenter': ['must be of integer type'],
-                        'distribution': ['must be of integer type'],
+                        'region': ['must be of string type'],
+                        'group': ['must be of string type'],
+                        'type': ['must be of string type'],
+                        'image': ['must be of string type'],
+                        'tags': ['must be of list type'],
                     }
                 ]
             }
@@ -500,9 +513,7 @@ def test_platforms_linode_has_errors(_config):
 @pytest.mark.parametrize(
     '_config', ['_model_platform_linode_section_data'], indirect=True
 )
-@pytest.mark.parametrize(
-    '_required_field', ('distribution', 'plan', 'datacenter', 'distribution')
-)
+@pytest.mark.parametrize('_required_field', ('region', 'image', 'type'))
 def test_platforms_linode_fields_required(_config, _required_field):
     del _config['platforms'][0][_required_field]
     expected_config = {'platforms': [{0: [{_required_field: ['required field']}]}]}
