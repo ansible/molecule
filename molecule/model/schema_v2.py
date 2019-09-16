@@ -119,7 +119,7 @@ def pre_validate_base_schema(env, keep_string):
                 'name': {
                     'type': 'string',
                     'molecule_env_var': True,
-                    'allowed': ['testinfra', 'inspec', 'goss', 'ansible'],
+                    'allowed': api.verifiers(),
                 },
                 'lint': {
                     'type': 'dict',

@@ -123,17 +123,11 @@ def _model_verifier_allows_ansible_section_data():
     return {'verifier': {'name': 'ansible', 'lint': {'name': 'ansible-lint'}}}
 
 
-@pytest.fixture
-def _model_verifier_allows_goss_section_data():
-    return {'verifier': {'name': 'goss', 'lint': {'name': 'yamllint'}}}
-
-
 @pytest.mark.parametrize(
     '_config',
     [
         ('_model_verifier_allows_testinfra_section_data'),
         ('_model_verifier_allows_inspec_section_data'),
-        ('_model_verifier_allows_goss_section_data'),
         ('_model_verifier_allows_ansible_section_data'),
     ],
     indirect=True,
@@ -153,23 +147,9 @@ def _model_verifier_errors_inspec_readonly_options_section_data():
     }
 
 
-@pytest.fixture
-def _model_verifier_errors_goss_readonly_options_section_data():
-    return {
-        'verifier': {
-            'name': 'goss',
-            'options': {'foo': 'bar'},
-            'lint': {'name': 'yamllint'},
-        }
-    }
-
-
 @pytest.mark.parametrize(
     '_config',
-    [
-        ('_model_verifier_errors_inspec_readonly_options_section_data'),
-        ('_model_verifier_errors_goss_readonly_options_section_data'),
-    ],
+    [('_model_verifier_errors_inspec_readonly_options_section_data')],
     indirect=True,
 )
 def test_verifier_errors_readonly_options_section_data(_config):

@@ -134,15 +134,12 @@ Ansible Modules
 
 This project uses the following Ansible modules, and `Gilt`_ to manage them.
 
-- `Ansible Goss`_
-
 To bring in updated upstream modules.  Update `gilt.yml` and execute the following:
 
 .. code-block:: bash
 
   $ gilt overlay
 
-.. _`Ansible Goss`: https://github.com/indusbox/goss-ansible
 .. _`Gilt`: https://gilt.readthedocs.io
 
 Documentation

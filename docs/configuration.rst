@@ -376,17 +376,6 @@ Lint
 .. autoclass:: molecule.verifier.lint.ansible_lint.AnsibleLint()
    :undoc-members:
 
-Goss
-^^^^
-
-.. autoclass:: molecule.verifier.goss.Goss()
-   :undoc-members:
-
-Lint
-....
-
-The Goss verifier does not utilize a linter.
-
 Inspec
 ^^^^^^
 
