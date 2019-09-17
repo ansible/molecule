@@ -376,18 +376,6 @@ Lint
 .. autoclass:: molecule.verifier.lint.ansible_lint.AnsibleLint()
    :undoc-members:
 
-Inspec
-^^^^^^
-
-.. autoclass:: molecule.verifier.inspec.Inspec()
-   :undoc-members:
-
-Lint
-....
-
-.. autoclass:: molecule.verifier.lint.rubocop.RuboCop()
-   :undoc-members:
-
 Testinfra
 ^^^^^^^^^
 

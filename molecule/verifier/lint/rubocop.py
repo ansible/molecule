@@ -41,7 +41,7 @@ class RuboCop(base.Base):
     .. code-block:: yaml
 
         verifier:
-          name: inspec
+          name: ...
           lint:
             name: rubocop
             options:
@@ -52,7 +52,7 @@ class RuboCop(base.Base):
     .. code-block:: yaml
 
         verifier:
-          name: inspec
+          name: ...
           lint:
             name: rubocop
             enabled: False
@@ -62,7 +62,7 @@ class RuboCop(base.Base):
     .. code-block:: yaml
 
         verifier:
-          name: inspec
+          name: ...
           lint:
             name: rubocop
             env:

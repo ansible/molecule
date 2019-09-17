@@ -32,7 +32,6 @@ from molecule.dependency import gilt
 from molecule.dependency import shell
 from molecule.lint import yamllint
 from molecule.provisioner import ansible
-from molecule.verifier import inspec
 from molecule.verifier import testinfra
 from molecule.verifier import ansible as ansible_verifier
 
@@ -206,18 +205,6 @@ def test_state_property(config_instance):
 
 def test_verifier_property(config_instance):
     assert isinstance(config_instance.verifier, testinfra.Testinfra)
-
-
-@pytest.fixture
-def _config_verifier_inspec_section_data():
-    return {'verifier': {'name': 'inspec', 'lint': {'name': 'rubocop'}}}
-
-
-@pytest.mark.parametrize(
-    'config_instance', ['_config_verifier_inspec_section_data'], indirect=True
-)
-def test_verifier_property_is_inspec(config_instance):
-    assert isinstance(config_instance.verifier, inspec.Inspec)
 
 
 @pytest.fixture
