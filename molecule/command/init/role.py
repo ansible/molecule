@@ -81,7 +81,7 @@ class Role(base.Base):
         scenario_base_directory = os.path.join(role_directory, role_name)
         templates = [
             'scenario/driver/{driver_name}'.format(**self._command_args),
-            'scenario/verifier/{verifier_name}'.format(**self._command_args),
+            api.verifiers()[self._command_args['verifier_name']].template_dir(),
         ]
         for template in templates:
             self._process_templates(

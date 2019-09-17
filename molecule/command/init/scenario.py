@@ -82,7 +82,9 @@ class Scenario(base.Base):
             ).format(scenario_name)
             util.sysexit_with_message(msg)
 
-        driver_template = 'scenario/driver/{driver_name}'.format(**self._command_args)
+        driver_template = api.drivers()[
+            self._command_args['driver_name']
+        ].template_dir()
         if 'driver_template' in self._command_args:
             self._validate_template_dir(self._command_args['driver_template'])
             cli_driver_template = '{driver_template}/{driver_name}'.format(
@@ -98,7 +100,7 @@ class Scenario(base.Base):
         scenario_base_directory = os.path.join(role_directory, role_name)
         templates = [
             driver_template,
-            'scenario/verifier/{verifier_name}'.format(**self._command_args),
+            api.verifiers()[self._command_args['verifier_name']].template_dir(),
         ]
         for template in templates:
             self._process_templates(

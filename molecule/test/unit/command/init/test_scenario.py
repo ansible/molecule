@@ -105,15 +105,8 @@ def test_execute_with_invalid_driver(
 ):
     _command_args['driver_name'] = 'ec3'
 
-    with pytest.raises(SystemExit) as e:
+    with pytest.raises(KeyError):
         _instance.execute()
-
-    assert 1 == e.value.code
-
-    msg = (
-        'The specified template directory ({template_dir})' ' does not exist'
-    ).format(template_dir=_instance._resolve_template_dir('scenario/driver/ec3'))
-    patched_logger_critical.assert_called_once_with(msg)
 
 
 def test_execute_with_custom_template(

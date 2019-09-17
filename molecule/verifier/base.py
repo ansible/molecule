@@ -21,6 +21,7 @@
 import os
 
 import abc
+import molecule
 
 from molecule import util
 from molecule.verifier.lint import flake8
@@ -140,3 +141,15 @@ class Verifier(object):
 
     def __repr__(self):
         return self.name
+
+    def template_dir(self):
+        p = os.path.abspath(
+            os.path.join(
+                os.path.dirname(molecule.__file__),
+                "cookiecutter",
+                "scenario",
+                "verifier",
+                self.name,
+            )
+        )
+        return p
