@@ -98,6 +98,11 @@ jobs:
 
     - <<: *py-37
       env:
+        - TOXENV=ansible29-unit
+      name: unit tests, Ansible 2.9, Python 3.7
+
+    - <<: *py-37
+      env:
         - TOXENV=ansible28-unit
       name: unit tests, Ansible 2.8, Python 3.7
 
@@ -106,10 +111,11 @@ jobs:
         - TOXENV=ansible27-unit
       name: unit tests, Ansible 2.7, Python 3.7
 
-    - <<: *py-37
+    - <<: *py-36
+      <<: *if-cron-or-manual-run-or-tagged
       env:
-        - TOXENV=ansible26-unit
-      name: unit tests, Ansible 2.6, Python 3.7
+        - TOXENV=ansible29-unit
+      name: unit tests, Ansible 2.9, Python 3.6
 
     - <<: *py-36
       <<: *if-cron-or-manual-run-or-tagged
@@ -123,11 +129,10 @@ jobs:
         - TOXENV=ansible27-unit
       name: unit tests, Ansible 2.7, Python 3.6
 
-    - <<: *py-36
-      <<: *if-cron-or-manual-run-or-tagged
+    - <<: *py-27
       env:
-        - TOXENV=ansible26-unit
-      name: unit tests, Ansible 2.6, Python 3.6
+        - TOXENV=ansible29-unit
+      name: unit tests, Ansible 2.9, Python 2.7
 
     - <<: *py-27
       env:
@@ -139,11 +144,6 @@ jobs:
         - TOXENV=ansible27-unit
       name: unit tests, Ansible 2.7, Python 2.7
 
-    - <<: *py-27
-      env:
-        - TOXENV=ansible26-unit
-      name: unit tests, Ansible 2.6, Python 2.7
-
     # Note(decentral1se): we temporarily only run Hetzner Cloud functional
     # tests on this job so that we get at least some guarantee on testing When
     # we have more CI resources, we will migrate away from this stop-gap
@@ -151,6 +151,18 @@ jobs:
     - <<: *py-37
       env:
         - HCLOUD_TOKEN="$(./contrib/tokenmgmr.py get --driver hetznercloud)"
+        - PYTEST_ADDOPTS='-m shard_1_of_2'
+        - TOXENV=ansible29-functional
+      name: functional tests shard 1, Ansible 2.9, Python 3.7
+
+    - <<: *py-37
+      env:
+        - PYTEST_ADDOPTS='-m shard_2_of_2'
+        - TOXENV=ansible29-functional
+      name: functional tests shard 2, Ansible 2.9, Python 3.7
+
+    - <<: *py-37
+      env:
         - PYTEST_ADDOPTS='-m shard_1_of_2'
         - TOXENV=ansible28-functional
       name: functional tests shard 1, Ansible 2.8, Python 3.7
@@ -173,17 +185,19 @@ jobs:
         - TOXENV=ansible27-functional
       name: functional tests shard 2, Ansible 2.7, Python 3.7
 
-    - <<: *py-37
+    - <<: *py-36
+      <<: *if-cron-or-manual-run-or-tagged
       env:
         - PYTEST_ADDOPTS='-m shard_1_of_2'
-        - TOXENV=ansible26-functional
-      name: functional tests shard 1, Ansible 2.6, Python 3.7
+        - TOXENV=ansible27-functional
+      name: functional tests shard 1, Ansible 2.7, Python 3.6
 
-    - <<: *py-37
+    - <<: *py-36
+      <<: *if-cron-or-manual-run-or-tagged
       env:
         - PYTEST_ADDOPTS='-m shard_2_of_2'
-        - TOXENV=ansible26-functional
-      name: functional tests shard 2, Ansible 2.6, Python 3.7
+        - TOXENV=ansible27-functional
+      name: functional tests shard 2, Ansible 2.7, Python 3.6
 
     - <<: *py-36
       <<: *if-cron-or-manual-run-or-tagged
@@ -213,19 +227,17 @@ jobs:
         - TOXENV=ansible27-functional
       name: functional tests shard 2, Ansible 2.7, Python 3.6
 
-    - <<: *py-36
-      <<: *if-cron-or-manual-run-or-tagged
+    - <<: *py-27
       env:
         - PYTEST_ADDOPTS='-m shard_1_of_2'
-        - TOXENV=ansible26-functional
-      name: functional tests shard 1, Ansible 2.6, Python 3.6
+        - TOXENV=ansible29-functional
+      name: functional tests shard 1, Ansible 2.9, Python 2.7
 
-    - <<: *py-36
-      <<: *if-cron-or-manual-run-or-tagged
+    - <<: *py-27
       env:
         - PYTEST_ADDOPTS='-m shard_2_of_2'
-        - TOXENV=ansible26-functional
-      name: functional tests shard 2, Ansible 2.6, Python 3.6
+        - TOXENV=ansible29-functional
+      name: functional tests shard 2, Ansible 2.9, Python 2.7
 
     - <<: *py-27
       env:
@@ -250,18 +262,6 @@ jobs:
         - PYTEST_ADDOPTS='-m shard_2_of_2'
         - TOXENV=ansible27-functional
       name: functional tests shard 2, Ansible 2.7, Python 2.7
-
-    - <<: *py-27
-      env:
-        - PYTEST_ADDOPTS='-m shard_1_of_2'
-        - TOXENV=ansible26-functional
-      name: functional tests shard 1, Ansible 2.6, Python 2.7
-
-    - <<: *py-27
-      env:
-        - PYTEST_ADDOPTS='-m shard_2_of_2'
-        - TOXENV=ansible26-functional
-      name: functional tests shard 2, Ansible 2.6, Python 2.7
 
     # The following set of jobs is running tests against devel branch
     # of ansible/ansible:
