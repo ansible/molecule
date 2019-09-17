@@ -5,6 +5,7 @@ History
 Unreleased
 ==========
 
+* Supported Ansible versions are now 2.9, 2.8, 2.7
 * The Linode driver now uses the ``linode_v4`` module.
 * Removed goss verifier
 * ``molecule dependency`` now has a retry and timed back-off by default for flaky network connections.
