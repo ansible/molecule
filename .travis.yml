@@ -357,8 +357,5 @@ addons:
       - lxd-client
 before_install:
   - pip install tox-tags
-before_script:
-  - gem install inspec -v '~> 3'
-  - gem install rubocop -v '~> 0.69.0'
 script:
   - tox

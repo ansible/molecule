@@ -114,11 +114,6 @@ def _model_verifier_allows_testinfra_section_data():
 
 
 @pytest.fixture
-def _model_verifier_allows_inspec_section_data():
-    return {'verifier': {'name': 'inspec', 'lint': {'name': 'rubocop'}}}
-
-
-@pytest.fixture
 def _model_verifier_allows_ansible_section_data():
     return {'verifier': {'name': 'ansible', 'lint': {'name': 'ansible-lint'}}}
 
@@ -127,32 +122,9 @@ def _model_verifier_allows_ansible_section_data():
     '_config',
     [
         ('_model_verifier_allows_testinfra_section_data'),
-        ('_model_verifier_allows_inspec_section_data'),
         ('_model_verifier_allows_ansible_section_data'),
     ],
     indirect=True,
 )
 def test_verifier_allows_name(_config):
     assert {} == schema_v2.validate(_config)
-
-
-@pytest.fixture
-def _model_verifier_errors_inspec_readonly_options_section_data():
-    return {
-        'verifier': {
-            'name': 'inspec',
-            'options': {'foo': 'bar'},
-            'lint': {'name': 'rubocop'},
-        }
-    }
-
-
-@pytest.mark.parametrize(
-    '_config',
-    [('_model_verifier_errors_inspec_readonly_options_section_data')],
-    indirect=True,
-)
-def test_verifier_errors_readonly_options_section_data(_config):
-    x = {'verifier': [{'options': [{'foo': ['field is read-only']}]}]}
-
-    assert x == schema_v2.validate(_config)
