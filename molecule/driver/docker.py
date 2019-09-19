@@ -67,6 +67,8 @@ class Docker(Driver):
             privileged: True|False
             security_opts:
               - seccomp=unconfined
+            devices:
+              - /dev/fuse:/dev/fuse:rwm
             volumes:
               - /sys/fs/cgroup:/sys/fs/cgroup:ro
             keep_volumes: True|False
