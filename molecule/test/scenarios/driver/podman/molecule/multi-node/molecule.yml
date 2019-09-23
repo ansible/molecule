@@ -1,0 +1,46 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: podman
+lint:
+  name: yamllint
+  options:
+    config-file: ../../../resources/.yamllint
+platforms:
+  - name: instance-1
+    image: centos:latest
+    registry:
+      url: docker.io
+    groups:
+      - foo
+      - bar
+    buildargs:
+      testarg: this_is_a_test
+  - name: instance-2
+    image: centos:latest
+    registry:
+      url: docker.io
+    groups:
+      - foo
+      - baz
+    buildargs:
+      testarg: this_is_a_test
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_whitelist: profile_roles,profile_tasks,timer
+  playbooks:
+    create: ../../../../../resources/playbooks/podman/create.yml
+    destroy: ../../../../../resources/playbooks/podman/destroy.yml
+  env:
+    ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
+  lint:
+    name: ansible-lint
+scenario:
+  name: multi-node
+verifier:
+  name: testinfra
+  lint:
+    name: flake8

@@ -54,6 +54,7 @@ def driver_name(request):
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
+        ('driver/podman', 'podman', 'default'),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
 )
@@ -74,6 +75,7 @@ def test_command_check(scenario_to_test, with_scenario, scenario_name):
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
+        ('driver/podman', 'podman', 'default'),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
 )
@@ -92,6 +94,7 @@ def test_command_cleanup(scenario_to_test, with_scenario, scenario_name):
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
+        ('driver/podman', 'podman', 'default'),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
 )
@@ -112,6 +115,7 @@ def test_command_converge(scenario_to_test, with_scenario, scenario_name):
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
+        ('driver/podman', 'podman', 'default'),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
 )
@@ -134,6 +138,7 @@ def test_command_create(scenario_to_test, with_scenario, scenario_name):
         ('dependency', 'linode', 'ansible-galaxy'),
         ('dependency', 'openstack', 'ansible-galaxy'),
         ('dependency', 'vagrant', 'ansible-galaxy'),
+        ('dependency', 'podman', 'ansible-galaxy'),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
 )
@@ -164,6 +169,7 @@ def test_command_dependency_ansible_galaxy(
         ('dependency', 'linode', 'gilt'),
         ('dependency', 'openstack', 'gilt'),
         ('dependency', 'vagrant', 'gilt'),
+        ('dependency', 'podman', 'gilt'),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
 )
@@ -190,6 +196,7 @@ def test_command_dependency_gilt(
         ('dependency', 'linode', 'shell'),
         ('dependency', 'openstack', 'shell'),
         ('dependency', 'vagrant', 'shell'),
+        ('dependency', 'podman', 'shell'),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
 )
@@ -217,6 +224,7 @@ def test_command_dependency_shell(
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
+        ('driver/podman', 'podman', 'default'),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
 )
@@ -237,6 +245,7 @@ def test_command_destroy(scenario_to_test, with_scenario, scenario_name):
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
+        ('driver/podman', 'podman', 'default'),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
 )
@@ -254,6 +263,7 @@ def test_command_idempotence(scenario_to_test, with_scenario, scenario_name):
         ('linode'),
         ('openstack'),
         ('vagrant'),
+        ('podman'),
     ],
     indirect=['driver_name'],
 )
@@ -271,6 +281,7 @@ def test_command_init_role(temp_dir, driver_name, skip_test):
         ('linode'),
         ('openstack'),
         ('vagrant'),
+        ('podman'),
     ],
     indirect=['driver_name'],
 )
@@ -289,6 +300,7 @@ def test_command_init_scenario(temp_dir, driver_name, skip_test):
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
+        ('driver/podman', 'podman', 'default'),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
 )
@@ -388,6 +400,18 @@ instance-1       vagrant        ansible             multi-node       false      
 instance-2       vagrant        ansible             multi-node       false      false
 """.strip(),
         ),  # noqa
+        (
+            'driver/podman',
+            'podman',
+            """
+Instance Name    Driver Name    Provisioner Name    Scenario Name     Created    Converged
+---------------  -------------  ------------------  ----------------  ---------  -----------
+instance         podman         ansible             ansible-verifier  false      false
+instance         podman         ansible             default           false      false
+instance-1       podman         ansible             multi-node        false      false
+instance-2       podman         ansible             multi-node        false      false
+""".strip(),
+        ),  # noqa
     ],
     indirect=['scenario_to_test', 'driver_name'],
 )
@@ -469,6 +493,16 @@ instance-1  vagrant  ansible  multi-node  false  false
 instance-2  vagrant  ansible  multi-node  false  false
 """.strip(),
         ),
+        (
+            'driver/podman',
+            'podman',
+            """
+instance    podman  ansible  ansible-verifier  false  false
+instance    podman  ansible  default           false  false
+instance-1  podman  ansible  multi-node        false  false
+instance-2  podman  ansible  multi-node        false  false
+""".strip(),
+        ),
     ],
     indirect=['scenario_to_test', 'driver_name'],
 )
@@ -535,6 +569,12 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario, expecte
             [['instance-1', '.*instance-1.*'], ['instance-2', '.*instance-2.*']],
             'multi-node',
         ),
+        (
+            'driver/podman',
+            'podman',
+            [['instance-1', '.*instance-1.*'], ['instance-2', '.*instance-2.*']],
+            'multi-node',
+        ),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
 )
@@ -553,6 +593,7 @@ def test_command_login(scenario_to_test, with_scenario, login_args, scenario_nam
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
+        ('driver/podman', 'podman', 'default'),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
 )
@@ -577,6 +618,7 @@ def test_command_prepare(scenario_to_test, with_scenario, scenario_name):
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
+        ('driver/podman', 'podman', 'default'),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
 )
@@ -597,6 +639,7 @@ def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
+        ('driver/podman', 'podman', 'default'),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
 )
@@ -619,6 +662,7 @@ def test_command_syntax(scenario_to_test, with_scenario, scenario_name):
         ('driver/openstack', 'openstack', None),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', None),
+        ('driver/podman', 'podman', 'default'),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
 )
@@ -636,6 +680,7 @@ def test_command_test(scenario_to_test, with_scenario, scenario_name, driver_nam
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
+        ('driver/podman', 'podman', 'default'),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
 )

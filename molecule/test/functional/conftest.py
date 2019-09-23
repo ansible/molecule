@@ -78,7 +78,7 @@ def skip_test(request, driver_name):
         'ec2': supports_ec2,
         'gce': supports_gce,
         'linode': lambda: min_ansible("2.8") and supports_linode(),
-        'podman': lambda: min_ansible("2.9"),
+        'podman': lambda: min_ansible("2.8.6"),
         'openstack': supports_openstack,
         'vagrant': supports_vagrant_virtualbox,
         'delegated': demands_delegated,

@@ -3,9 +3,7 @@
   hosts: localhost
   connection: local
   gather_facts: false
-  no_log: "{{ molecule_no_log }}"
   tasks:
-
     - name: Log into a container registry
       command: >
         podman login
@@ -20,27 +18,11 @@
         - item.registry.credentials is defined
         - item.registry.credentials.username is defined
 
-    - name: Check presence of custom Dockerfiles
-      stat:
-        path: "{{ molecule_scenario_directory + '/' + (item.dockerfile | default( 'Dockerfile.j2')) }}"
-      loop: "{{ molecule_yml.platforms }}"
-      register: dockerfile_stats
-
     - name: Create Dockerfiles from image names
-      vars:
-        # TODO(ssbarnea): expose module dir so it can also be used by plugins
-        molecule_module_directory: "{{ playbook_dir + '/../../../..' }}"
       template:
-        src: >-
-          {%- if dockerfile_stats.results[i].stat.exists -%}
-          {{ molecule_scenario_directory + '/' + (item.dockerfile | default( 'Dockerfile.j2')) }}
-          {%- else -%}
-          {{ molecule_module_directory + '/data/Dockerfile.j2' }}
-          {%- endif -%}
+        src: "{{ item.dockerfile | default('Dockerfile.j2') }}"
         dest: "{{ molecule_ephemeral_directory }}/Dockerfile_{{ item.image | regex_replace('[^a-zA-Z0-9_]', '_') }}"
-      loop: "{{ molecule_yml.platforms }}"
-      loop_control:
-        index_var: i
+      with_items: "{{ molecule_yml.platforms }}"
       when: not item.pre_build_image | default(false)
       register: platforms
 
@@ -67,7 +49,6 @@
       until: result is not failed
       retries: 3
       delay: 30
-      no_log: false
 
     - name: Determine the CMD directives
       set_fact:
@@ -98,7 +79,7 @@
         {% if item.tty is defined %}--tty={{ item.tty }}{% endif %}
         {% if item.network is defined %}--network={{ item.network }}{% endif %}
         {% if item.etc_hosts is defined %}{% for i,k in item.etc_hosts.items() %}--add-host {{ i }}:{{ k }} {% endfor %}{% endif %}
-        {% if item.hostname is defined %}--hostname={{ item.hostname }}{% endif %}
+        {% if item.hostname is defined %}--hostname={{ item.hostname }}{% elif item.name is defined %}--hostname={{ item.name }}{% endif %}
         {{ item.pre_build_image | default(false) | ternary('', 'molecule_local/') }}{{ item.image }}
         {{ (command_directives_dict | default({}))[item.name] | default('') }}
       register: server
