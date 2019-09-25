@@ -21,6 +21,7 @@
 
 import distutils.spawn
 import os
+import pkg_resources
 import shutil
 
 import pexpect
@@ -275,9 +276,10 @@ def at_least_ansible_28():
     """Ensure current Ansible is >= 2.8."""
     try:
         from ansible.release import __version__
-        from distutils.version import StrictVersion
 
-        return StrictVersion(__version__) >= StrictVersion('2.8.0')
+        return pkg_resources.parse_version(__version__) >= pkg_resources.parse_version(
+            '2.8.0'
+        )
     except ImportError as exception:
         LOG.error('Unable to parse Ansible version', exc_info=exception)
         return False
