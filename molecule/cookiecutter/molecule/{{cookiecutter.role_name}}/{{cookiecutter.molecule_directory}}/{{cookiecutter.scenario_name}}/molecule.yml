@@ -32,16 +32,12 @@ platforms:
   - name: instance
     server_type: cx11
     image: debian-9
-{%- elif cookiecutter.driver_name == 'lxc' %}
-  - name: instance
 {%- elif cookiecutter.driver_name == 'linode' %}
   - name: instance
     type: g6-nanode-1
     state: present
     region: eu-west
     image: linode/debian9
-{%- elif cookiecutter.driver_name == 'lxd' %}
-  - name: instance
 {%- elif cookiecutter.driver_name == 'openstack' %}
   - name: instance
     image: Ubuntu-16.04

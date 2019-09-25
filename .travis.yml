@@ -348,13 +348,6 @@ jobs:
         <<: *deploy-step
         server: https://test.pypi.org/legacy/
 
-addons:
-  apt:
-    packages:
-      - lxc
-      - lxc-dev
-      - lxd
-      - lxd-client
 before_install:
   - pip install tox-tags
 script:

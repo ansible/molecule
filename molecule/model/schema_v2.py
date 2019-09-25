@@ -487,40 +487,6 @@ platforms_podman_schema = {
     }
 }
 
-platforms_lxd_schema = {
-    'platforms': {
-        'type': 'list',
-        'schema': {
-            'type': 'dict',
-            'schema': {
-                'name': {'type': 'string'},
-                'url': {'type': 'string'},
-                'cert_file': {'type': 'string'},
-                'key_file': {'type': 'string'},
-                'trust_password': {'type': 'string'},
-                'source': {
-                    'type': 'dict',
-                    'schema': {
-                        'type': {'type': 'string'},
-                        'mode': {'type': 'string', 'allowed': ['pull', 'local']},
-                        'server': {'type': 'string'},
-                        'protocol': {
-                            'type': 'string',
-                            'allowed': ['lxd', 'simplestreams'],
-                        },
-                        'alias': {'type': 'string'},
-                    },
-                },
-                'architecture': {'type': 'string', 'allowed': ['x86_64', 'i686']},
-                'config': {'type': 'dict', 'allow_unknown': True},
-                'devices': {'type': 'dict', 'allow_unknown': True},
-                'profiles': {'type': 'list', 'schema': {'type': 'string'}},
-                'force_stop': {'type': 'boolean'},
-            },
-        },
-    }
-}
-
 platforms_hetznercloud_schema = {
     'platforms': {
         'type': 'list',
@@ -643,8 +609,6 @@ def validate(c):
     elif c['driver']['name'] == 'vagrant':
         util.merge_dicts(schema, driver_vagrant_provider_section_schema)
         util.merge_dicts(schema, platforms_vagrant_schema)
-    elif c['driver']['name'] == 'lxd':
-        util.merge_dicts(schema, platforms_lxd_schema)
     elif c['driver']['name'] == 'linode':
         util.merge_dicts(schema, platforms_linode_schema)
     elif c['driver']['name'] == 'hetznercloud':
