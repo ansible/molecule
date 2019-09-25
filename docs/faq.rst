@@ -92,3 +92,28 @@ preview" status. However, you can take a look at `this blog post`_ outlining a
 workable "DIY" solution as a stop gap for now.
 
 .. _`this blog post`: https://www.jeffgeerling.com/blog/2019/how-add-integration-tests-ansible-collection-molecule
+
+Does Molecule support monorepos?
+================================
+
+Yes, roles contained in a `monorepo`_ with other roles are automatically picked
+up and ``ANSIBLE_ROLES_PATH`` is set accordingly. See `this page`_ for more
+information.
+
+.. _`monorepo`: https://en.wikipedia.org/wiki/Monorepo
+.. _`this page`: https://molecule.readthedocs.io/en/stable/examples.html#monolith-repo
+
+How can I add development/testing-only dependencies?
+=====================================================
+
+Sometimes, it's desirable to only run a dependency role when developing your
+role with molecule, but not impose a hard dependency on the role itself; for
+example when you rely on one of its side effects. This can be achieved by an
+approach like this in your role's ``meta/main.yml``:
+
+::
+
+  ---
+  dependencies:
+    - role: <your-dependee-role>
+      when: lookup('env', 'MOLECULE_FILE')
