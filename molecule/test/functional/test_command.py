@@ -52,8 +52,6 @@ def driver_name(request):
         ('driver/gce', 'gce', 'default'),
         ('driver/hetznercloud', 'hetznercloud', 'default'),
         ('driver/linode', 'linode', 'default'),
-        ('driver/lxc', 'lxc', 'default'),
-        ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
@@ -75,8 +73,6 @@ def test_command_check(scenario_to_test, with_scenario, scenario_name):
         ('driver/gce', 'gce', 'default'),
         ('driver/hetznercloud', 'hetznercloud', 'default'),
         ('driver/linode', 'linode', 'default'),
-        ('driver/lxc', 'lxc', 'default'),
-        ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
@@ -96,8 +92,6 @@ def test_command_cleanup(scenario_to_test, with_scenario, scenario_name):
         ('driver/ec2', 'ec2', 'default'),
         ('driver/gce', 'gce', 'default'),
         ('driver/hetznercloud', 'hetznercloud', 'default'),
-        ('driver/lxc', 'lxc', 'default'),
-        ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
@@ -119,8 +113,6 @@ def test_command_converge(scenario_to_test, with_scenario, scenario_name):
         ('driver/gce', 'gce', 'default'),
         ('driver/hetznercloud', 'hetznercloud', 'default'),
         ('driver/linode', 'linode', 'default'),
-        ('driver/lxc', 'lxc', 'default'),
-        ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
@@ -142,8 +134,6 @@ def test_command_create(scenario_to_test, with_scenario, scenario_name):
         ('dependency', 'hetznercloud', 'ansible-galaxy'),
         ('dependency', 'gce', 'ansible-galaxy'),
         ('dependency', 'linode', 'ansible-galaxy'),
-        ('dependency', 'lxc', 'ansible-galaxy'),
-        ('dependency', 'lxd', 'ansible-galaxy'),
         ('dependency', 'openstack', 'ansible-galaxy'),
         ('dependency', 'vagrant', 'ansible-galaxy'),
     ],
@@ -175,8 +165,6 @@ def test_command_dependency_ansible_galaxy(
         ('dependency', 'gce', 'gilt'),
         ('dependency', 'hetznercloud', 'gilt'),
         ('dependency', 'linode', 'gilt'),
-        ('dependency', 'lxc', 'gilt'),
-        ('dependency', 'lxd', 'gilt'),
         ('dependency', 'openstack', 'gilt'),
         ('dependency', 'vagrant', 'gilt'),
     ],
@@ -204,8 +192,6 @@ def test_command_dependency_gilt(
         ('dependency', 'gce', 'shell'),
         ('dependency', 'hetznercloud', 'shell'),
         ('dependency', 'linode', 'shell'),
-        ('dependency', 'lxc', 'shell'),
-        ('dependency', 'lxd', 'shell'),
         ('dependency', 'openstack', 'shell'),
         ('dependency', 'vagrant', 'shell'),
     ],
@@ -233,8 +219,6 @@ def test_command_dependency_shell(
         ('driver/gce', 'gce', 'default'),
         ('driver/hetznercloud', 'hetznercloud', 'default'),
         ('driver/linode', 'linode', 'default'),
-        ('driver/lxc', 'lxc', 'default'),
-        ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
@@ -256,8 +240,6 @@ def test_command_destroy(scenario_to_test, with_scenario, scenario_name):
         ('driver/gce', 'gce', 'default'),
         ('driver/hetznercloud', 'hetznercloud', 'default'),
         ('driver/linode', 'linode', 'default'),
-        ('driver/lxc', 'lxc', 'default'),
-        ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
@@ -276,8 +258,6 @@ def test_command_idempotence(scenario_to_test, with_scenario, scenario_name):
         ('ec2'),
         ('gce'),
         ('linode'),
-        ('lxc'),
-        ('lxd'),
         ('openstack'),
         ('vagrant'),
     ],
@@ -296,8 +276,6 @@ def test_command_init_role(temp_dir, driver_name, skip_test):
         ('gce'),
         ('hetznercloud'),
         ('linode'),
-        ('lxc'),
-        ('lxd'),
         ('openstack'),
         ('vagrant'),
     ],
@@ -316,8 +294,6 @@ def test_command_init_scenario(temp_dir, driver_name, skip_test):
         ('driver/gce', 'gce', 'default'),
         ('driver/hetznercloud', 'hetznercloud', 'default'),
         ('driver/linode', 'linode', 'default'),
-        ('driver/lxc', 'lxc', 'default'),
-        ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
@@ -398,28 +374,6 @@ Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    
 instance         linode          ansible             default          false      false
 instance-1       linode          ansible             multi-node       false      false
 instance-2       linode          ansible             multi-node       false      false
-""".strip(),
-        ),  # noqa
-        (
-            'driver/lxc',
-            'lxc',
-            """
-Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    Converged
----------------  -------------  ------------------  ---------------  ---------  -----------
-instance         lxc            ansible             default          false      false
-instance-1       lxc            ansible             multi-node       false      false
-instance-2       lxc            ansible             multi-node       false      false
-""".strip(),
-        ),  # noqa
-        (
-            'driver/lxd',
-            'lxd',
-            """
-Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    Converged
----------------  -------------  ------------------  ---------------  ---------  -----------
-instance         lxd            ansible             default          false      false
-instance-1       lxd            ansible             multi-node       false      false
-instance-2       lxd            ansible             multi-node       false      false
 """.strip(),
         ),  # noqa
         (
@@ -519,24 +473,6 @@ instance-2  linode  ansible  multi-node  false  false
 """.strip(),
         ),
         (
-            'driver/lxc',
-            'lxc',
-            """
-instance    lxc  ansible  default     false  false
-instance-1  lxc  ansible  multi-node  false  false
-instance-2  lxc  ansible  multi-node  false  false
-""".strip(),
-        ),
-        (
-            'driver/lxd',
-            'lxd',
-            """
-instance    lxd  ansible  default     false  false
-instance-1  lxd  ansible  multi-node  false  false
-instance-2  lxd  ansible  multi-node  false  false
-""".strip(),
-        ),
-        (
             'driver/openstack',
             'openstack',
             """
@@ -616,18 +552,6 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario, expecte
             'multi-node',
         ),
         (
-            'driver/lxc',
-            'lxc',
-            [['instance-1', '.*instance-1.*'], ['instance-2', '.*instance-2.*']],
-            'multi-node',
-        ),
-        (
-            'driver/lxd',
-            'lxd',
-            [['instance-1', '.*instance-1.*'], ['instance-2', '.*instance-2.*']],
-            'multi-node',
-        ),
-        (
             'driver/openstack',
             'openstack',
             [['instance-1', '.*instance-1.*'], ['instance-2', '.*instance-2.*']],
@@ -661,8 +585,6 @@ def test_command_login(scenario_to_test, with_scenario, login_args, scenario_nam
         ('driver/gce', 'gce', 'default'),
         ('driver/hetznercloud', 'hetznercloud', 'default'),
         ('driver/linode', 'linode', 'default'),
-        ('driver/lxc', 'lxc', 'default'),
-        ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
@@ -688,8 +610,6 @@ def test_command_prepare(scenario_to_test, with_scenario, scenario_name):
         ('driver/gce', 'gce', 'default'),
         ('driver/hetznercloud', 'hetznercloud', 'default'),
         ('driver/linode', 'linode', 'default'),
-        ('driver/lxc', 'lxc', 'default'),
-        ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
@@ -711,8 +631,6 @@ def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
         ('driver/gce', 'gce', 'default'),
         ('driver/hetznercloud', 'hetznercloud', 'default'),
         ('driver/linode', 'linode', 'default'),
-        ('driver/lxc', 'lxc', 'default'),
-        ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
@@ -736,8 +654,6 @@ def test_command_syntax(scenario_to_test, with_scenario, scenario_name):
         ('driver/gce', 'gce', None),
         ('driver/hetznercloud', 'hetznercloud', None),
         ('driver/linode', 'linode', None),
-        ('driver/lxc', 'lxc', None),
-        ('driver/lxd', 'lxd', None),
         ('driver/openstack', 'openstack', None),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', None),
@@ -756,8 +672,6 @@ def test_command_test(scenario_to_test, with_scenario, scenario_name, driver_nam
         ('driver/gce', 'gce', 'default'),
         ('driver/hetznercloud', 'hetznercloud', 'default'),
         ('driver/linode', 'linode', 'default'),
-        ('driver/lxc', 'lxc', 'default'),
-        ('driver/lxd', 'lxd', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),

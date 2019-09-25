@@ -101,8 +101,6 @@ def test_vagrant_driver(
         ('gce'),
         ('hetznercloud'),
         ('linode'),
-        ('lxc'),
-        ('lxd'),
         ('openstack'),
         ('vagrant'),
     ],

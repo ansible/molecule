@@ -138,16 +138,6 @@ def _config_driver_gce_section_data():
 
 
 @pytest.fixture
-def _config_driver_lxc_section_data():
-    return {'driver': {'name': 'lxc'}}
-
-
-@pytest.fixture
-def _config_driver_lxd_section_data():
-    return {'driver': {'name': 'lxd'}}
-
-
-@pytest.fixture
 def _config_driver_openstack_section_data():
     return {'driver': {'name': 'openstack'}}
 

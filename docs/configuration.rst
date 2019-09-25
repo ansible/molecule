@@ -114,18 +114,6 @@ Linode
 .. autoclass:: molecule.driver.linode.Linode()
    :undoc-members:
 
-LXC
-^^^
-
-.. autoclass:: molecule.driver.lxc.LXC()
-   :undoc-members:
-
-LXD
-^^^
-
-.. autoclass:: molecule.driver.lxd.LXD()
-   :undoc-members:
-
 Openstack
 ^^^^^^^^^
 

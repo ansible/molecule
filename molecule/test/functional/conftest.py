@@ -79,8 +79,6 @@ def skip_test(request, driver_name):
         'gce': supports_gce,
         'hetznercloud': lambda: at_least_ansible_28() and supports_hetznercloud(),
         'linode': lambda: at_least_ansible_28() and supports_linode(),
-        'lxc': supports_lxc,
-        'lxd': supports_lxd,
         'openstack': supports_openstack,
         'vagrant': supports_vagrant_virtualbox,
         'delegated': demands_delegated,
@@ -251,14 +249,6 @@ def get_docker_executable():
     return distutils.spawn.find_executable('docker')
 
 
-def get_lxc_executable():
-    return distutils.spawn.find_executable('lxc-start')
-
-
-def get_lxd_executable():
-    return distutils.spawn.find_executable('lxd')
-
-
 def get_vagrant_executable():
     return distutils.spawn.find_executable('vagrant')
 
@@ -292,34 +282,6 @@ def supports_linode():
     env_vars = ('LINODE_ACCESS_TOKEN',)
 
     return _env_vars_exposed(env_vars) and HAS_LINODE_DEPENDENCY
-
-
-@pytest.helpers.register
-def supports_lxc():
-    # noqa: E501 # FIXME: Travis CI
-    # noqa: E501 # This fixes most of the errors:
-    # noqa: E501 # $ mkdir -p ~/.config/lxc
-    # noqa: E501 # $ echo "lxc.id_map = u 0 100000 65536" > ~/.config/lxc/default.conf
-    # noqa: E501 # $ echo "lxc.id_map = g 0 100000 65536" >> ~/.config/lxc/default.conf
-    # noqa: E501 # $ echo "lxc.network.type = veth" >> ~/.config/lxc/default.conf
-    # noqa: E501 # $ echo "lxc.network.link = lxcbr0" >> ~/.config/lxc/default.conf
-    # noqa: E501 # $ echo "$USER veth lxcbr0 2" | sudo tee -a /etc/lxc/lxc-usernet
-    # noqa: E501 # travis veth lxcbr0 2
-    # noqa: E501 # But there's still one left:
-    # noqa: E501 # $ cat ~/lxc-instance.log
-    # noqa: E501 # lxc-create 1542112494.884 INFO     lxc_utils - utils.c:get_rundir:229 - XDG_RUNTIME_DIR isn't set in the environment.
-    # noqa: E501 # lxc-create 1542112494.884 WARN     lxc_log - log.c:lxc_log_init:331 - lxc_log_init called with log already initialized
-    # noqa: E501 # lxc-create 1542112494.884 INFO     lxc_confile - confile.c:config_idmap:1385 - read uid map: type u nsid 0 hostid 100000 range 65536
-    # noqa: E501 # lxc-create 1542112494.884 INFO     lxc_confile - confile.c:config_idmap:1385 - read uid map: type g nsid 0 hostid 100000 range 65536
-    # noqa: E501 # lxc-create 1542112494.887 ERROR    lxc_container - lxccontainer.c:do_create_container_dir:767 - Failed to chown container dir
-    # noqa: E501 # lxc-create 1542112494.887 ERROR    lxc_create_ui - lxc_create.c:main:274 - Error creating container instance
-    return not IS_TRAVIS and get_lxc_executable()
-
-
-@pytest.helpers.register
-def supports_lxd():
-    # FIXME: Travis CI
-    return not IS_TRAVIS and get_lxd_executable()
 
 
 @pytest.helpers.register
