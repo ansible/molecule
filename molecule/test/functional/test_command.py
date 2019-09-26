@@ -79,7 +79,9 @@ def test_command_check(scenario_to_test, with_scenario, scenario_name):
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
 )
-def test_command_cleanup(scenario_to_test, with_scenario, scenario_name):
+def test_command_cleanup(
+    patched_docker_sanity_check, scenario_to_test, with_scenario, scenario_name
+):
     options = {'scenario_name': scenario_name}
     cmd = sh.molecule.bake('cleanup', **options)
     pytest.helpers.run_command(cmd)

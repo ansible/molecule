@@ -21,6 +21,11 @@
 import pytest
 
 from molecule.model import schema_v2
+from molecule.test.conftest import has_docker
+
+
+if not has_docker():
+    pytest.skip("docker not supported", allow_module_level=True)
 
 
 @pytest.fixture

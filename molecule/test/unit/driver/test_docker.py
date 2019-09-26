@@ -24,6 +24,11 @@ import pytest
 
 from molecule import config
 from molecule.driver import docker
+from molecule.test.conftest import has_docker
+
+
+if not has_docker():
+    pytest.skip("docker not supported", allow_module_level=True)
 
 
 @pytest.fixture

@@ -33,6 +33,7 @@ import pytest
 
 from molecule import util
 from molecule import config
+from molecule.test.conftest import patched_docker_sanity_check  # noqa
 
 
 @pytest.helpers.register

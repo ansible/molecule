@@ -28,6 +28,11 @@ import shutil
 from molecule import util
 
 from ..conftest import change_dir_to
+from molecule.test.conftest import has_docker
+
+
+if not has_docker():
+    pytest.skip("docker not supported", allow_module_level=True)
 
 
 @pytest.fixture

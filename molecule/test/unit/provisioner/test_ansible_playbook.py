@@ -138,7 +138,7 @@ def test_bake_idem_does_have_skip_tag(_inventory_directory, _instance):
     assert sorted(x) == sorted(result)
 
 
-def test_execute(patched_run_command, _instance):
+def test_execute(patched_docker_sanity_check, patched_run_command, _instance):
     _instance._ansible_command = 'patched-command'
     result = _instance.execute()
 
@@ -146,7 +146,9 @@ def test_execute(patched_run_command, _instance):
     assert 'patched-run-command-stdout' == result
 
 
-def test_execute_bakes(_inventory_directory, patched_run_command, _instance):
+def test_execute_bakes(
+    patched_docker_sanity_check, _inventory_directory, patched_run_command, _instance
+):
     _instance.execute()
 
     assert _instance._ansible_command is not None
@@ -164,7 +166,7 @@ def test_execute_bakes(_inventory_directory, patched_run_command, _instance):
 
 
 def test_execute_bakes_with_ansible_args(
-    _inventory_directory, patched_run_command, _instance
+    patched_docker_sanity_check, _inventory_directory, patched_run_command, _instance
 ):
     _instance._config.ansible_args = ('--foo', '--bar')
     _instance.execute()
@@ -186,7 +188,7 @@ def test_execute_bakes_with_ansible_args(
 
 
 def test_executes_catches_and_exits_return_code_with_stdout(
-    patched_run_command, patched_logger_critical, _instance
+    patched_docker_sanity_check, patched_run_command, patched_logger_critical, _instance
 ):
     patched_run_command.side_effect = sh.ErrorReturnCode_1(
         sh.ansible_playbook, b'out', b'err'
