@@ -125,6 +125,9 @@ def test_command_create(scenario_to_test, with_scenario, scenario_name):
     pytest.helpers.run_command(cmd)
 
 
+@pytest.mark.skip(
+    reason="Disabled due to https://github.com/ansible/galaxy/issues/2030"
+)
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [
