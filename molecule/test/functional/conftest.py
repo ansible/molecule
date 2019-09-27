@@ -77,8 +77,9 @@ def skip_test(request, driver_name):
         'docker': supports_docker,
         'ec2': supports_ec2,
         'gce': supports_gce,
-        'hetznercloud': lambda: at_least_ansible_28() and supports_hetznercloud(),
-        'linode': lambda: at_least_ansible_28() and supports_linode(),
+        'hetznercloud': lambda: min_ansible("2.8") and supports_hetznercloud(),
+        'linode': lambda: min_ansible("2.8") and supports_linode(),
+        'podman': lambda: min_ansible("2.9"),
         'openstack': supports_openstack,
         'vagrant': supports_vagrant_virtualbox,
         'delegated': demands_delegated,
@@ -262,13 +263,13 @@ def supports_docker():
     return get_docker_executable()
 
 
-def at_least_ansible_28():
-    """Ensure current Ansible is >= 2.8."""
+def min_ansible(version):
+    """Ensure current Ansible is newer than a given a minimal one."""
     try:
         from ansible.release import __version__
 
         return pkg_resources.parse_version(__version__) >= pkg_resources.parse_version(
-            '2.8.0'
+            version
         )
     except ImportError as exception:
         LOG.error('Unable to parse Ansible version', exc_info=exception)
