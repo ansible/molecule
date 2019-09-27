@@ -210,13 +210,13 @@ def test_ephemeral_directory():
     assert os.access(scenario.ephemeral_directory('foo/bar'), os.W_OK)
 
 
-def test_ephemeral_directory_overriden_via_env_var(monkeypatch):
+def test_ephemeral_directory_OVERRIDDEN_via_env_var(monkeypatch):
     monkeypatch.setenv('MOLECULE_EPHEMERAL_DIRECTORY', 'foo/bar')
 
     assert os.access(scenario.ephemeral_directory('foo/bar'), os.W_OK)
 
 
-def test_ephemeral_directory_overriden_via_env_var_uses_absolute_path(monkeypatch):
+def test_ephemeral_directory_OVERRIDDEN_via_env_var_uses_absolute_path(monkeypatch):
     monkeypatch.setenv('MOLECULE_EPHEMERAL_DIRECTORY', "foo/bar")
 
     assert os.path.isabs(scenario.ephemeral_directory())

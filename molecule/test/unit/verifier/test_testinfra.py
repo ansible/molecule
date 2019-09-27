@@ -165,7 +165,7 @@ def _verifier_testinfra_directory_section_data():
 @pytest.mark.parametrize(
     'config_instance', ['_verifier_testinfra_directory_section_data'], indirect=True
 )
-def test_directory_property_overriden(_instance):
+def test_directory_property_overridden(_instance):
     assert '/tmp/foo/bar' == _instance.directory
 
 
