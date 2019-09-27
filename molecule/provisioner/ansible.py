@@ -82,7 +82,7 @@ class Ansible(base.Base):
 
     The create/destroy playbooks for Docker and Vagrant are bundled with
     Molecule.  These playbooks have a clean API from `molecule.yml`, and
-    are the most commonly used.  The bundled playbooks can still be overriden.
+    are the most commonly used.  The bundled playbooks can still be overridden.
 
     The playbook loading order is:
 
