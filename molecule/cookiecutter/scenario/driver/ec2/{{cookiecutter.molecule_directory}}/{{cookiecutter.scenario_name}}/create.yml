@@ -32,12 +32,47 @@
     keypair_path: "{{
       molecule_yml.driver.keypair_path | default(molecule_keypair_path) }}"
   tasks:
+    - name: Get current public IP
+      ipify_facts:
+
+    - name: Set allowed ingress Security Group IP from current public IP
+      set_fact:
+        allowed_ip_cidr: "{{ ipify_public_ip }}/32"
+      when: (item.auto_public_ip is defined) and (item.auto_public_ip == True)
+      loop: "{{ molecule_yml.platforms }}"
+
+    - name: Set allowed ingress Security Group IP
+      set_fact:
+        allowed_ip_cidr: "{{ item.allowed_ip_cidr }}"
+      when: item.allowed_ip_cidr is defined
+      loop: "{{ molecule_yml.platforms }}"
+
+    - name: Set Security Group Rules for allowed ingress IP
+      set_fact:
+        security_group_rules:
+          - proto: tcp
+            from_port: "{{ ssh_port }}"
+            to_port: "{{ ssh_port }}"
+            cidr_ip: "{{ allowed_ip_cidr }}"
+          - proto: icmp
+            from_port: 8
+            to_port: -1
+            cidr_ip: "{{ allowed_ip_cidr }}"
+      when: allowed_ip_cidr is defined
+
+    - name: Gather facts about VPC from vpc_subnet_id
+      ec2_vpc_subnet_facts:
+        subnet_ids: "{{ item.vpc_subnet_id }}"
+      loop: "{{ molecule_yml.platforms }}"
+      register: subnet_facts
+
     - name: Create security group
       ec2_group:
         name: "{{ security_group_name }}"
         description: "{{ security_group_name }}"
         rules: "{{ security_group_rules }}"
         rules_egress: "{{ security_group_rules_egress }}"
+        vpc_id:  "{{ subnet_facts.vpc_id }}"
 
     - name: Test for presence of local keypair
       stat:
