@@ -63,7 +63,7 @@ class Delegated(Driver):
           winrm_transport: ntlm/credssp/kerberos
           winrm_cert_pem: <path to the credssp public certificate key>
           winrm_cert_key_pem: <path to the credssp private certificate key>
-          winrm_server_cert_validation: True/False
+          winrm_server_cert_validation: validate/ignore
 
     This article covers how to configure and use WinRM with Ansible:
     https://docs.ansible.com/ansible/latest/user_guide/windows_winrm.html
