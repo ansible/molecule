@@ -19,6 +19,7 @@ provisioner:
   name: {{ cookiecutter.provisioner_name }}
   lint:
     name: {{ cookiecutter.provisioner_lint_name }}
+    enabled: false
 verifier:
   name: {{ cookiecutter.verifier_name }}
   lint:
