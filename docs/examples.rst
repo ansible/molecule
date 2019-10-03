@@ -125,7 +125,7 @@ by either giving it ``SYS_ADMIN`` capabilites or running it in ``privileged`` mo
 .. important::
 
     Use caution when using ``privileged`` mode or ``SYS_ADMIN``
-    capabilities as it `grants the container elevated access`_ to the
+    capabilities as it grants the container elevated access to the
     underlying system.
 
 To limit the scope of the extended privileges, grant ``SYS_ADMIN``
@@ -157,7 +157,6 @@ same image and command as shown in the ``non-privileged`` example.
 .. _`the one available in fedora`: https://src.fedoraproject.org/rpms/docker/raw/88fa030b904d7af200b150e10ea4a700f759cca4/f/seccomp.json
 .. _`in a non-privileged container`: https://developers.redhat.com/blog/2016/09/13/running-systemd-in-a-non-privileged-container/
 .. _`start the container with extended privileges`: https://blog.docker.com/2013/09/docker-can-now-run-within-docker/
-.. _`grants the container elevated access`: https://groups.google.com/forum/#!topic/docker-user/RWLHyzg6Z78
 
 Monolith Repo
 =============
