@@ -154,7 +154,7 @@ same image and command as shown in the ``non-privileged`` example.
         privileged: True
 
 .. _`seccomp security profile for Docker`: https://docs.docker.com/engine/security/seccomp/
-.. _`the one available in fedora`: https://src.fedoraproject.org/rpms/docker/raw/master/f/seccomp.json
+.. _`the one available in fedora`: https://src.fedoraproject.org/rpms/docker/raw/88fa030b904d7af200b150e10ea4a700f759cca4/f/seccomp.json
 .. _`in a non-privileged container`: https://developers.redhat.com/blog/2016/09/13/running-systemd-in-a-non-privileged-container/
 .. _`start the container with extended privileges`: https://blog.docker.com/2013/09/docker-can-now-run-within-docker/
 .. _`grants the container elevated access`: https://groups.google.com/forum/#!topic/docker-user/RWLHyzg6Z78
