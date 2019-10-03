@@ -4,7 +4,7 @@ Examples
 
 A good source of examples are the `scenario`_ functional tests.
 
-.. _`scenario`: https://github.com/ansible/molecule/tree/master/test/scenarios/driver
+.. _`scenario`: https://github.com/ansible/molecule/tree/master/molecule/test/scenarios/driver
 
 .. _docker-usage-example:
 
