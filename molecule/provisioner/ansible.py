@@ -407,6 +407,10 @@ class Ansible(base.Base):
 
     @property
     def default_env(self):
+        # Allow user to use ~/path/to/foo in environment variables
+        for key, value in self._config.env.items():
+            self._config.env[key] = os.path.expanduser(value)
+
         env = util.merge_dicts(os.environ.copy(), self._config.env)
         env = util.merge_dicts(
             env,
