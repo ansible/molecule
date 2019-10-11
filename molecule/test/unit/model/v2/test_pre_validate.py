@@ -97,7 +97,7 @@ lint:
   name: $MOLECULE_LINT_NAME
 platforms:
   - name: instance
-    image: centos:latest
+    image: centos:${TEST_CENTOS_VERSION}
     networks:
       - name: foo
       - name: bar

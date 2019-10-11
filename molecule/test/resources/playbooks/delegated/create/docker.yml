@@ -3,7 +3,7 @@
   docker_container:
     name: delegated-instance-docker
     hostname: delegated-instance-docker
-    image: molecule_local/centos:latest
+    image: molecule_local/centos:${TEST_CENTOS_VERSION}
     recreate: false
     log_driver: json-file
     command: sleep infinity
