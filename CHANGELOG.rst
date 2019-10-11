@@ -6,6 +6,7 @@ Unreleased
 ==========
 
 * MAJOR: Removed LXC and LXD providers
+* MAJOR: Dockerfile templates are now embedded in molecule.
 * MINOR: Fixed typo with OVERRIDDEN placeholder in templates
 * Supported Ansible versions are now 2.9, 2.8, 2.7
 * The Linode driver now uses the ``linode_v4`` module.
