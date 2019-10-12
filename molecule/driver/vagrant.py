@@ -80,6 +80,7 @@ class Vagrant(Driver):
               gui: True
             provider_raw_config_args:
               - "customize ['modifyvm', :id, '--cpuexecutioncap', '50']"
+              - "customize ['modifyvm', :id, '--uartmode1', 'disconnected']"
             provider_override_args:
               - "vm.synced_folder './', '/vagrant', disabled: true, type: 'nfs'"
             provision: True
