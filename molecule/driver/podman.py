@@ -110,8 +110,6 @@ class Podman(Driver):
         - name: instance
           image: centos:7
           privileged: true
-          volumes:
-            - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
           command: "/usr/sbin/init"
           tty: True
 
