@@ -256,7 +256,7 @@ Playbooks and tests can be shared across scenarios.
     │   │   └── molecule.yml
     │   ├── resources
     │   │   ├── playbooks
-    │   │   │   ├── Dockerfile.j2
+    │   │   │   ├── Dockerfile.j2 (optional)
     │   │   │   ├── create.yml
     │   │   │   ├── destroy.yml
     │   │   │   ├── playbook.yml
