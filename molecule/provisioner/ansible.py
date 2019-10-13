@@ -792,11 +792,7 @@ class Ansible(base.Base):
             if target == 'host_vars':
                 vars_target = copy.deepcopy(self.host_vars)
                 for instance_name, _ in self.host_vars.items():
-                    if instance_name == 'localhost':
-                        instance_key = instance_name
-                    else:
-                        instance_key = instance_name
-
+                    instance_key = instance_name
                     vars_target[instance_key] = vars_target.pop(instance_name)
 
             elif target == 'group_vars':
