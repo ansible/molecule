@@ -24,7 +24,6 @@ ENV PACKAGES="\
     py3-cryptography \
     py3-docutils \
     py3-flake8 \
-    py3-future \
     py3-idna \
     py3-jinja2 \
     py3-mccabe \
@@ -88,7 +87,6 @@ ENV PACKAGES="\
     py3-cryptography \
     py3-docutils \
     py3-flake8 \
-    py3-future \
     py3-idna \
     py3-jinja2 \
     py3-mccabe \
