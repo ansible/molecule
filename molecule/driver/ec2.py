@@ -87,6 +87,20 @@ class EC2(Driver):
             instance_type: t2.micro
             vpc_subnet_id: subnet-1cb17175
 
+    If you want to attach an IAM role to the Molecule instance:
+
+    .. code-block:: yaml
+
+        driver:
+          name: ec2
+        platforms:
+          - name: instance
+            image_owner: 099720109477
+            image_name: ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-20190320
+            instance_type: t2.micro
+            vpc_subnet_id: subnet-1cb17175
+            instance_profile_name: example-iam-role
+
     Use wildcards for getting the latest image. For example, the latest Ubuntu bionic image:
 
     .. code-block:: yaml
