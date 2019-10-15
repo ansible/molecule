@@ -73,7 +73,7 @@ def test_config_private_member(_instance):
 def test_default_options_property(_instance, role_file, roles_path):
     x = {'role-file': role_file, 'roles-path': roles_path, 'force': True}
 
-    assert x == _instance.default_options
+    assert all(item in _instance.default_options.items() for item in x.items())
 
 
 def test_default_env_property(_instance):
@@ -103,7 +103,7 @@ def test_options_property(_instance, role_file, roles_path):
         'v': True,
     }
 
-    assert x == _instance.options
+    assert all(item in _instance.options.items() for item in x.items())
 
 
 @pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
@@ -117,7 +117,7 @@ def test_options_property_handles_cli_args(role_file, roles_path, _instance):
         'vvv': True,
     }
 
-    assert x == _instance.options
+    assert all(item in _instance.options.items() for item in x.items())
 
 
 @pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
@@ -126,7 +126,8 @@ def test_env_property(_instance):
 
 
 @pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
-def test_bake(_instance, role_file, roles_path):
+def test_bake(_instance, role_file, roles_path, monkeypatch):
+    monkeypatch.setenv('MOLECULE_GALAXY_IGNORE_ERRORS', '1')
     _instance.bake()
     x = [
         str(sh.ansible_galaxy),
@@ -135,6 +136,7 @@ def test_bake(_instance, role_file, roles_path):
         '--roles-path={}'.format(roles_path),
         '--force',
         '--foo=bar',
+        '--ignore-errors',
         '-v',
     ]
     result = str(_instance._sh_command).split()

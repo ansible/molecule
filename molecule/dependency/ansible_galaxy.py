@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+from distutils.util import strtobool
 import os
 
 import sh
@@ -88,6 +89,9 @@ class AnsibleGalaxy(base.Base):
             ),
             'roles-path': os.path.join(
                 self._config.scenario.ephemeral_directory, 'roles'
+            ),
+            'ignore-errors': bool(
+                strtobool(os.environ.get('MOLECULE_GALAXY_IGNORE_ERRORS', '0'))
             ),
         }
         if self._config.debug:
