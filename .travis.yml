@@ -92,9 +92,9 @@ jobs:
         - TOXENV=doc
 
     - <<: *lint
-      name: check,build-docker
+      name: check,dockerfile,build-docker
       env:
-        - TOXENV=check,build-docker
+        - TOXENV=check,dockerfile,build-docker
 
     - <<: *py-37
       env:
