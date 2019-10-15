@@ -6,7 +6,7 @@ repos:
       - id: black
         language_version: python3
   - repo: https://github.com/pre-commit/pre-commit-hooks.git
-    rev: v2.2.3
+    rev: v2.3.0
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
@@ -24,7 +24,7 @@ repos:
           - flake8-mypy
         language_version: python3
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.16.0
+    rev: v1.18.0
     hooks:
       - id: yamllint
         files: \.(yaml|yml)$
