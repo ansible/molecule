@@ -1,4 +1,4 @@
-from future.moves.collections import UserList
+from six.moves import UserList
 import pluggy
 from molecule import logger
 from molecule.util import lru_cache
