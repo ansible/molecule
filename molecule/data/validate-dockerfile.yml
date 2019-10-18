@@ -1,0 +1,49 @@
+#!/usr/bin/env ansible-playbook
+---
+- hosts: localhost
+  vars:
+    platforms:
+      - image: centos:7
+      - image: centos:8
+      - image: ubuntu:latest
+      - image: debian:latest
+  tasks:
+
+    - name: create temporary dockerfiles
+      tempfile:
+        prefix: "molecule-dockerfile-{{ item.image }}"
+        suffix: build
+      register: temp_dockerfiles
+      with_items: "{{ platforms }}"
+      loop_control:
+        label: "{{ item.image }}"
+
+    - name: expand Dockerfile templates
+      template:
+        src: Dockerfile.j2
+        dest: "{{ temp_dockerfiles.results[index].path }}"
+      register: result
+      with_items: "{{ platforms }}"
+      loop_control:
+        index_var: index
+        label: "{{ item.image }}"
+
+    - name: Test Dockerfile template
+      docker_image:
+        name: "{{ item.item.image }}"
+        build:
+          path: "."
+          dockerfile: "{{ item.dest }}"
+          from_source: true
+          pull: true
+          nocache: true
+        source: build
+        state: present
+        debug: true
+        force_source: true
+      with_items: "{{ result.results }}"
+      loop_control:
+        label: "{{ item.item.image }}"
+      register: result
+
+    - debug: var=result
