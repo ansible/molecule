@@ -84,6 +84,31 @@ Can I run Molecule processes in parallel?
 
 Please see :ref:`parallel-usage-example` for usage.
 
+Can I specify random instance IDs in my molecule.yml?
+=====================================================
+
+This depends on the CI provider but the basic recipe is as follows.
+
+Setup your ``molecule.yml`` to look like this:
+
+.. code-block:: yaml
+
+  platforms:
+    - name: "instance-${INSTANCE_UUID}"
+
+Then in your CI provider environment, for example, Gitlab CI, setup:
+
+.. code-block:: yaml
+
+  variables:
+    INSTANCE_UUID: "$CI_JOB_ID"
+
+Where ``CI_JOB_ID`` is the random variable that Gitlab provides.
+
+Molecule will resolve the ``INSTANCE_UUID`` environment variable when creating
+and looking up the instance name. You can confirm all is in working order by
+running ``molecule list``.
+
 Can I test Ansible Collections with Molecule?
 =============================================
 
