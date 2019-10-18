@@ -43,7 +43,7 @@
         state: absent
       when:
         - not skip_instances
-        - instance_conf  # must contain at least one instance
+        - instance_conf | length  # must contain at least one instance
 
     # Mandatory configuration for Molecule to function.
 
