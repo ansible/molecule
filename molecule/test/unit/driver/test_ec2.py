@@ -217,6 +217,14 @@ def test_get_instance_config(mocker, _instance):
     assert x == _instance._get_instance_config('foo')
 
 
+def test_get_instance_profile(mocker, _instance):
+    m = mocker.patch('molecule.util.safe_load_file')
+    m.return_value = [{'instance': 'foo', 'instance_profile_name': 'instance-profile'}]
+
+    x = {'instance': 'foo', 'instance_profile_name': 'instance-profile'}
+    assert x == _instance._get_instance_config('foo')
+
+
 def test_created(_instance):
     assert 'false' == _instance._created()
 

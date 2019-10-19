@@ -12,6 +12,7 @@ platforms:
     image: ami-a5b196c0
     instance_type: t2.micro
     vpc_subnet_id: subnet-6456fd1f
+    instance_profile_name: instance-profile
 provisioner:
   name: ansible
   config_options:

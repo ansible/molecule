@@ -88,6 +88,7 @@
           instance: "{{ item.name }}"
         wait: true
         assign_public_ip: true
+        instance_profile_name: "{{ item.instance_profile_name | default(omit) }}"
         exact_count: 1
         count_tag:
           instance: "{{ item.name }}"
