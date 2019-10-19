@@ -22,7 +22,7 @@ import os
 
 import click
 
-from molecule import config
+from molecule import api
 from molecule import logger
 from molecule import util
 from molecule.command import base as command_base
@@ -81,7 +81,7 @@ class Role(base.Base):
         scenario_base_directory = os.path.join(role_directory, role_name)
         templates = [
             'scenario/driver/{driver_name}'.format(**self._command_args),
-            'scenario/verifier/{verifier_name}'.format(**self._command_args),
+            api.verifiers()[self._command_args['verifier_name']].template_dir(),
         ]
         for template in templates:
             self._process_templates(
@@ -105,7 +105,7 @@ class Role(base.Base):
 @click.option(
     '--driver-name',
     '-d',
-    type=click.Choice(config.molecule_drivers()),
+    type=click.Choice([str(s) for s in api.drivers()]),
     default='docker',
     help='Name of driver to initialize. (docker)',
 )
@@ -124,7 +124,7 @@ class Role(base.Base):
 @click.option('--role-name', '-r', required=True, help='Name of the role to create.')
 @click.option(
     '--verifier-name',
-    type=click.Choice(config.molecule_verifiers()),
+    type=click.Choice([str(s) for s in api.verifiers()]),
     default='testinfra',
     help='Name of verifier to initialize. (testinfra)',
 )
@@ -157,14 +157,7 @@ def role(
         'verifier_name': verifier_name,
     }
 
-    if verifier_name == 'inspec':
-        command_args['verifier_lint_name'] = 'rubocop'
-
-    if verifier_name == 'goss':
-        command_args['verifier_lint_name'] = 'yamllint'
-
-    if verifier_name == 'ansible':
-        command_args['verifier_lint_name'] = 'ansible-lint'
+    command_args['verifier_lint_name'] = api.verifiers()[verifier_name].default_linter
 
     if template is not None:
         command_args['template'] = template

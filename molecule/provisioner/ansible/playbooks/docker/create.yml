@@ -22,11 +22,27 @@
         - item.registry.credentials is defined
         - item.registry.credentials.username is defined
 
+    - name: Check presence of custom Dockerfiles
+      stat:
+        path: "{{ molecule_scenario_directory + '/' + (item.dockerfile | default( 'Dockerfile.j2')) }}"
+      loop: "{{ molecule_yml.platforms }}"
+      register: dockerfile_stats
+
     - name: Create Dockerfiles from image names
+      vars:
+        # TODO(ssbarnea): expose module dir so it can also be used by plugins
+        molecule_module_directory: "{{ playbook_dir + '/../../../..' }}"
       template:
-        src: "{{ molecule_scenario_directory + '/' + (item.dockerfile | default( 'Dockerfile.j2')) }}"
+        src: >-
+          {%- if dockerfile_stats.results[i].stat.exists -%}
+          {{ molecule_scenario_directory + '/' + (item.dockerfile | default( 'Dockerfile.j2')) }}
+          {%- else -%}
+          {{ molecule_module_directory + '/data/Dockerfile.j2' }}
+          {%- endif -%}
         dest: "{{ molecule_ephemeral_directory }}/Dockerfile_{{ item.image | regex_replace('[^a-zA-Z0-9_]', '_') }}"
-      with_items: "{{ molecule_yml.platforms }}"
+      loop: "{{ molecule_yml.platforms }}"
+      loop_control:
+        index_var: i
       when: not item.pre_build_image | default(false)
       register: platforms
 
@@ -60,6 +76,7 @@
           path: "{{ molecule_ephemeral_directory }}"
           dockerfile: "{{ item.invocation.module_args.dest }}"
           pull: "{{ item.item.pull | default(true) }}"
+          network: "{{ item.item.network_mode | default(omit) }}"
         name: "molecule_local/{{ item.item.image }}"
         docker_host: "{{ item.item.docker_host | default(lookup('env', 'DOCKER_HOST') or 'unix://var/run/docker.sock') }}"
         cacert_path: "{{ item.cacert_path | default((lookup('env', 'DOCKER_CERT_PATH') + '/ca.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
@@ -133,6 +150,7 @@
         tls_verify: "{{ item.tls_verify | default(lookup('env', 'DOCKER_TLS_VERIFY')) or false }}"
         hostname: "{{ item.hostname | default(item.name) }}"
         image: "{{ item.pre_build_image | default(false) | ternary('', 'molecule_local/') }}{{ item.image }}"
+        pull: "{{ item.pull | default(omit) }}"
         state: started
         recreate: false
         log_driver: json-file
@@ -141,6 +159,7 @@
         pid_mode: "{{ item.pid_mode | default(omit) }}"
         privileged: "{{ item.privileged | default(omit) }}"
         security_opts: "{{ item.security_opts | default(omit) }}"
+        devices: "{{ item.devices | default(omit) }}"
         volumes: "{{ item.volumes | default(omit) }}"
         tmpfs: "{{ item.tmpfs | default(omit) }}"
         capabilities: "{{ item.capabilities | default(omit) }}"

@@ -22,12 +22,13 @@ import os
 
 from molecule import logger
 from molecule import util
-from molecule.driver import base
+from molecule.api import Driver
+
 
 LOG = logger.get_logger(__name__)
 
 
-class Vagrant(base.Base):
+class Vagrant(Driver):
     """
     The class responsible for managing `Vagrant`_ instances.  `Vagrant`_ is
     `not` the default driver used in Molecule.
@@ -79,6 +80,7 @@ class Vagrant(base.Base):
               gui: True
             provider_raw_config_args:
               - "customize ['modifyvm', :id, '--cpuexecutioncap', '50']"
+              - "customize ['modifyvm', :id, '--uartmode1', 'disconnected']"
             provider_override_args:
               - "vm.synced_folder './', '/vagrant', disabled: true, type: 'nfs'"
             provision: True
@@ -123,7 +125,7 @@ class Vagrant(base.Base):
     .. _`Vagrant`: https://www.vagrantup.com
     """  # noqa
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         super(Vagrant, self).__init__(config)
         self._name = 'vagrant'
 

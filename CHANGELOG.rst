@@ -5,6 +5,27 @@ History
 Unreleased
 ==========
 
+* MAJOR: Removed LXC and LXD providers
+* MAJOR: Dockerfile templates are now embedded in molecule.
+* MINOR: Fixed typo with OVERRIDDEN placeholder in templates
+* Supported Ansible versions are now 2.9, 2.8, 2.7
+* The Linode driver now uses the ``linode_v4`` module.
+* Removed goss verifier
+* dependency now runs before lint on default test and lint sequences
+* ANSIBLE_ROLES_PATH, ANSIBLE_LIBRARY, ANSIBLE_FILTER_PLUGINS now include the default Ansible lookup paths
+  ``/usr/share/ansible/<roles/filter/modules>`` and ``/etc/ansible/roles``
+* The internal Molecule plugins are moved to paths more like upstream.
+  ``ansible/plugins/filters`` > ``ansible/plugins/filter`` and ``ansible/plugins/libraries`` > ``ansible/plugins/modules``
+* Bash style variable expension for environment variable defaults added.
+  ``foo: ${UNDEFINED_VAR:-$DEFAULT}`` and ``foo: ${UNDEFINED_VAR-$DEFAULT}``
+  are now supported.
+* Use pluggy to load plugins
+* Windows & Linux EC2 instances can be tested simultaneously
+* Windows EC2 instances can be provisioned using the automatically-generated password
+
+2.22
+====
+
 * ``molecule dependency`` now has a retry and timed back-off by default for flaky network connections.
 * Add the `--parallel` flag to experimentally allow molecule to be run in parallel.
 * `dependency` step is now run by default before any playbook sequence step, including

@@ -1,0 +1,35 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+  # NOTE(retr0h): Required for functional tests, since
+  # execute this as all drivers, and the schema validator
+  # requires this for `vagrant`.
+  provider:
+    name: virtualbox
+lint:
+  name: yamllint
+  options:
+    config-file: ../../resources/.yamllint
+platforms:
+  - name: instance
+    image: centos:${TEST_CENTOS_VERSION}
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_whitelist: profile_roles,profile_tasks,timer
+  env:
+    ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
+  playbooks:
+    create: ../../../../resources/playbooks/docker/create.yml
+    destroy: ../../../../resources/playbooks/docker/destroy.yml
+  lint:
+    name: ansible-lint
+scenario:
+  name: ansible-galaxy
+verifier:
+  name: testinfra
+  lint:
+    name: flake8

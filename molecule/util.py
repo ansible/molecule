@@ -26,6 +26,11 @@ import os
 import re
 import sys
 
+try:
+    from functools import lru_cache  # noqa
+except ImportError:
+    from backports.functools_lru_cache import lru_cache  # noqa
+
 import anyconfig
 import colorama
 import yaml
@@ -307,20 +312,6 @@ def merge_dicts(a, b):
     anyconfig.merge(a, b, ac_merge=MERGE_STRATEGY)
 
     return a
-
-
-def memoize(function):
-    memo = {}
-
-    def wrapper(*args, **kwargs):
-        if args not in memo:
-            rv = function(*args, **kwargs)
-            memo[args] = rv
-
-            return rv
-        return memo[args]
-
-    return wrapper
 
 
 def validate_parallel_cmd_args(cmd_args):

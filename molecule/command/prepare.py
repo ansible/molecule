@@ -20,8 +20,8 @@
 
 import click
 
-from molecule import config
 from molecule import logger
+from molecule.api import drivers
 from molecule.command import base
 
 LOG = logger.get_logger(__name__)
@@ -115,7 +115,7 @@ class Prepare(base.Base):
 @click.option(
     '--driver-name',
     '-d',
-    type=click.Choice(config.molecule_drivers()),
+    type=click.Choice([str(s) for s in drivers()]),
     help='Name of driver to use. (docker)',
 )
 @click.option(

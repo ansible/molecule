@@ -23,13 +23,14 @@ from __future__ import absolute_import
 import os
 
 from molecule import logger
-from molecule.driver import base
+from molecule.api import Driver
+from molecule.util import lru_cache
 from molecule.util import sysexit_with_message
 
 log = logger.get_logger(__name__)
 
 
-class Docker(base.Base):
+class Docker(Driver):
     """
     The class responsible for managing `Docker`_ containers.  `Docker`_ is
     the default driver used in Molecule.
@@ -39,6 +40,7 @@ class Docker(base.Base):
 
     .. _`docker_container`: https://docs.ansible.com/ansible/latest/docker_container_module.html
     .. _`Docker Security Configuration`: https://docs.docker.com/engine/reference/run/#security-configuration
+    .. _`Docker daemon socket options`: https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-socket-option
 
     .. code-block:: yaml
 
@@ -65,6 +67,8 @@ class Docker(base.Base):
             privileged: True|False
             security_opts:
               - seccomp=unconfined
+            devices:
+              - /dev/fuse:/dev/fuse:rwm
             volumes:
               - /sys/fs/cgroup:/sys/fs/cgroup:ro
             keep_volumes: True|False
@@ -119,6 +123,12 @@ class Docker(base.Base):
               less secure. For details, please reference `Docker Security
               Configuration`_
 
+    .. note:: With the environment variable ``DOCKER_HOST`` the user can bind
+              Molecule to a different `Docker`_ socket than the default
+              ``unix:///var/run/docker.sock``. ``tcp``, ``fd`` and ``ssh``
+              socket types can be configured. For details, please reference
+              `Docker daemon socket options`_.
+
     .. code-block:: yaml
 
         platforms:
@@ -160,7 +170,7 @@ class Docker(base.Base):
     .. _`CMD`: https://docs.docker.com/engine/reference/builder/#cmd
     """  # noqa
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         super(Docker, self).__init__(config)
         self._name = 'docker'
 
@@ -197,11 +207,9 @@ class Docker(base.Base):
     def ansible_connection_options(self, instance_name):
         return {'ansible_connection': 'docker'}
 
+    @lru_cache()
     def sanity_checks(self):
         """Implement Docker driver sanity checks."""
-
-        if self._config.state.sanity_checked:
-            return
 
         log.info("Sanity checks: '{}'".format(self._name))
 
@@ -233,5 +241,3 @@ class Docker(base.Base):
                 'for managing the daemon'
             )
             sysexit_with_message(msg)
-
-        self._config.state.change_state('sanity_checked', True)

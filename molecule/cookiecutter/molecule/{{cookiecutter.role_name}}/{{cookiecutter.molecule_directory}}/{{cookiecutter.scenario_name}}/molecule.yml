@@ -10,9 +10,7 @@ driver:
 lint:
   name: {{ cookiecutter.lint_name }}
 platforms:
-{%- if cookiecutter.driver_name == 'azure' %}
-  - name: instance
-{%- elif cookiecutter.driver_name == 'digitalocean' %}
+{%- if cookiecutter.driver_name == 'digitalocean' %}
   - name: instance
     region_id: nyc3
     image_id: ubuntu-18-10-x64
@@ -34,15 +32,12 @@ platforms:
   - name: instance
     server_type: cx11
     image: debian-9
-{%- elif cookiecutter.driver_name == 'lxc' %}
-  - name: instance
 {%- elif cookiecutter.driver_name == 'linode' %}
   - name: instance
-    plan: 1
-    datacenter: 7
-    distribution: 129
-{%- elif cookiecutter.driver_name == 'lxd' %}
-  - name: instance
+    type: g6-nanode-1
+    state: present
+    region: eu-west
+    image: linode/debian9
 {%- elif cookiecutter.driver_name == 'openstack' %}
   - name: instance
     image: Ubuntu-16.04
@@ -53,6 +48,8 @@ platforms:
 {%- elif cookiecutter.driver_name == 'vagrant' %}
   - name: instance
     box: ubuntu/xenial64
+{%- else %}
+  - name: instance
 {%- endif %}
 provisioner:
   name: {{ cookiecutter.provisioner_name }}

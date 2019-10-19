@@ -20,12 +20,12 @@
 
 from molecule import logger
 from molecule import util
-from molecule.driver import base
+from molecule.api import Driver
 
 LOG = logger.get_logger(__name__)
 
 
-class Delegated(base.Base):
+class Delegated(Driver):
     """
     The class responsible for managing delegated instances.  Delegated is `not`
     the default driver used in Molecule.
@@ -63,7 +63,7 @@ class Delegated(base.Base):
           winrm_transport: ntlm/credssp/kerberos
           winrm_cert_pem: <path to the credssp public certificate key>
           winrm_cert_key_pem: <path to the credssp private certificate key>
-          winrm_server_cert_validation: True/False
+          winrm_server_cert_validation: validate/ignore
 
     This article covers how to configure and use WinRM with Ansible:
     https://docs.ansible.com/ansible/latest/user_guide/windows_winrm.html
@@ -132,7 +132,7 @@ class Delegated(base.Base):
               ansible_connection: local
     """
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         super(Delegated, self).__init__(config)
         self._name = 'delegated'
 

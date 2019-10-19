@@ -1,0 +1,20 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint:
+  name: yamllint
+platforms:
+  - name: instance
+    image: centos:${TEST_CENTOS_VERSION}
+provisioner:
+  name: ansible
+  lint:
+    name: ansible-lint
+scenario:
+  name: ansible-galaxy
+verifier:
+  name: testinfra
+  lint:
+    name: flake8

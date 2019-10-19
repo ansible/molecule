@@ -22,6 +22,7 @@ import os
 
 import click
 
+from molecule import api
 from molecule import config
 from molecule import logger
 from molecule import util
@@ -81,7 +82,9 @@ class Scenario(base.Base):
             ).format(scenario_name)
             util.sysexit_with_message(msg)
 
-        driver_template = 'scenario/driver/{driver_name}'.format(**self._command_args)
+        driver_template = api.drivers()[
+            self._command_args['driver_name']
+        ].template_dir()
         if 'driver_template' in self._command_args:
             self._validate_template_dir(self._command_args['driver_template'])
             cli_driver_template = '{driver_template}/{driver_name}'.format(
@@ -97,7 +100,7 @@ class Scenario(base.Base):
         scenario_base_directory = os.path.join(role_directory, role_name)
         templates = [
             driver_template,
-            'scenario/verifier/{verifier_name}'.format(**self._command_args),
+            api.verifiers()[self._command_args['verifier_name']].template_dir(),
         ]
         for template in templates:
             self._process_templates(
@@ -152,7 +155,7 @@ def _default_scenario_exists(ctx, param, value):  # pragma: no cover
 @click.option(
     '--driver-name',
     '-d',
-    type=click.Choice(config.molecule_drivers()),
+    type=click.Choice(api.drivers()),
     default='docker',
     help='Name of driver to initialize. (docker)',
 )
@@ -187,7 +190,7 @@ def _default_scenario_exists(ctx, param, value):  # pragma: no cover
 )
 @click.option(
     '--verifier-name',
-    type=click.Choice(config.molecule_verifiers()),
+    type=click.Choice([str(s) for s in api.verifiers()]),
     default='testinfra',
     help='Name of verifier to initialize. (testinfra)',
 )
@@ -221,14 +224,7 @@ def scenario(
         'verifier_name': verifier_name,
     }
 
-    if verifier_name == 'inspec':
-        command_args['verifier_lint_name'] = 'rubocop'
-
-    if verifier_name == 'goss':
-        command_args['verifier_lint_name'] = 'yamllint'
-
-    if verifier_name == 'ansible':
-        command_args['verifier_lint_name'] = 'ansible-lint'
+    command_args['verifier_lint_name'] = api.verifiers()[verifier_name].default_linter
 
     driver_template = driver_template or os.environ.get(
         'MOLECULE_SCENARIO_DRIVER_TEMPLATE', None

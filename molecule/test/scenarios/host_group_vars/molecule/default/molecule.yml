@@ -1,0 +1,47 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint:
+  name: yamllint
+  options:
+    config-file: ../../resources/.yamllint
+platforms:
+  - name: instance
+    image: centos:${TEST_CENTOS_VERSION}
+    groups:
+      - example
+    children:
+      - example_1
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_whitelist: profile_roles,profile_tasks,timer
+  playbooks:
+    create: ../../../../resources/playbooks/docker/create.yml
+    destroy: ../../../../resources/playbooks/docker/destroy.yml
+  inventory:
+    hosts:
+      all:
+        hosts:
+          extra_host:
+            host_group_vars_extra_host_molecule_yml: true
+    host_vars:
+      instance:
+        host_group_vars_host_molecule_yml: true
+    group_vars:
+      example:
+        host_group_vars_example_group_one_molecule_yml: true
+        host_group_vars_example_group_two_molecule_yml: true
+      example_1:
+        host_group_vars_example_1_child_group_molecule_yml: true
+  lint:
+    name: ansible-lint
+scenario:
+  name: default
+verifier:
+  name: testinfra
+  lint:
+    name: flake8

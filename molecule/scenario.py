@@ -75,8 +75,8 @@ class Scenario(object):
             - cleanup
             - destroy
           test_sequence:
-            - lint
             - dependency
+            - lint
             - cleanup
             - destroy
             - syntax
@@ -142,7 +142,10 @@ class Scenario(object):
 
     @property
     def directory(self):
-        return os.path.dirname(self.config.molecule_file)
+        if self.config.molecule_file:
+            return os.path.dirname(self.config.molecule_file)
+        else:
+            return os.getcwd()
 
     @property
     def ephemeral_directory(self):
@@ -197,7 +200,8 @@ class Scenario(object):
 
     @property
     def lint_sequence(self):
-        return ['lint']
+        # see https://github.com/ansible/molecule/issues/2216
+        return ['dependency', 'lint']
 
     @property
     def prepare_sequence(self):

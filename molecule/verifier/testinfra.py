@@ -25,12 +25,12 @@ import sh
 
 from molecule import logger
 from molecule import util
-from molecule.verifier import base
+from molecule.api import Verifier
 
 LOG = logger.get_logger(__name__)
 
 
-class Testinfra(base.Base):
+class Testinfra(Verifier):
     """
     `Testinfra`_ is the default test runner.
 
@@ -90,7 +90,7 @@ class Testinfra(base.Base):
     .. _`Testinfra`: https://testinfra.readthedocs.io
     """
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         """
         Sets up the requirements to execute ``testinfra`` and returns None.
 
@@ -98,6 +98,7 @@ class Testinfra(base.Base):
         :return: None
         """
         super(Testinfra, self).__init__(config)
+        self.default_linter = 'flake8'
         self._testinfra_command = None
         if config:
             self._tests = self._get_tests()
@@ -202,3 +203,22 @@ class Testinfra(base.Base):
         :return: list
         """
         return [filename for filename in util.os_walk(self.directory, 'test_*.py')]
+
+    def schema(self):
+        return {
+            'verifier': {
+                'type': 'dict',
+                'schema': {
+                    'name': {'type': 'string', 'allowed': ['testinfra']},
+                    'lint': {
+                        'type': 'dict',
+                        'schema': {
+                            'name': {
+                                'type': 'string',
+                                'allowed': ['flake8', 'pre-commit'],
+                            }
+                        },
+                    },
+                },
+            }
+        }

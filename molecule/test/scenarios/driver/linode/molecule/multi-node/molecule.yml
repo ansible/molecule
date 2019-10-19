@@ -1,0 +1,44 @@
+---
+dependency:
+  name: galaxy
+
+driver:
+  name: linode
+
+lint:
+  name: yamllint
+  options:
+    config-file: ../../../resources/.yamllint
+
+platforms:
+  - name: instance-1
+    type: g6-nanode-1
+    state: present
+    region: eu-west
+    image: linode/debian9
+  - name: instance-2
+    type: g6-nanode-1
+    state: present
+    region: eu-west
+    image: linode/debian9
+
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_whitelist: profile_roles,profile_tasks,timer
+  playbooks:
+    create: ../../../../../resources/playbooks/linode/create.yml
+    destroy: ../../../../../resources/playbooks/linode/destroy.yml
+  env:
+    ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
+  lint:
+    name: ansible-lint
+
+scenario:
+  name: multi-node
+
+verifier:
+  name: testinfra
+  lint:
+    name: flake8

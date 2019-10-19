@@ -1,0 +1,37 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint:
+  name: yamllint
+  options:
+    config-file: ../../resources/.yamllint
+platforms:
+  - name: instance
+    image: centos:${TEST_CENTOS_VERSION}
+    groups:
+      - example
+    children:
+      - example_1
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_whitelist: profile_roles,profile_tasks,timer
+  inventory:
+    links:
+      hosts: ../../hosts
+      host_vars: ../../host_vars
+      group_vars: ../../group_vars
+  playbooks:
+    create: ../../../../resources/playbooks/docker/create.yml
+    destroy: ../../../../resources/playbooks/docker/destroy.yml
+  lint:
+    name: ansible-lint
+scenario:
+  name: links
+verifier:
+  name: testinfra
+  lint:
+    name: flake8

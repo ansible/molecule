@@ -22,12 +22,13 @@ import os
 
 from molecule import logger
 from molecule import util
-from molecule.verifier import base
+from molecule.api import Verifier
+
 
 log = logger.get_logger(__name__)
 
 
-class Ansible(base.Base):
+class Ansible(Verifier):
     """
     `Ansible`_ is not the default test runner.
 
@@ -85,3 +86,19 @@ class Ansible(base.Base):
 
         msg = 'Verifier completed successfully.'
         log.success(msg)
+
+    def schema(self):
+        return {
+            'verifier': {
+                'type': 'dict',
+                'schema': {
+                    'name': {'type': 'string', 'allowed': ['ansible']},
+                    'lint': {
+                        'type': 'dict',
+                        'schema': {
+                            'name': {'type': 'string', 'allowed': ['ansible-lint']}
+                        },
+                    },
+                },
+            }
+        }

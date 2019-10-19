@@ -93,7 +93,7 @@ class Lint(base.Base):
     ),
 )
 def lint(ctx, scenario_name):  # pragma: no cover
-    """ Lint the role. """
+    """ Lint the role (dependency, lint). """
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
     command_args = {'subcommand': subcommand}

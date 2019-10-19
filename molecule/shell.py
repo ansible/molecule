@@ -23,6 +23,8 @@ import os
 import click
 import click_completion
 import colorama
+import pkg_resources
+import sys
 
 import molecule
 from molecule import command
@@ -81,12 +83,23 @@ def main(ctx, debug, base_config, env_file):  # pragma: no cover
     ctx.obj['args']['env_file'] = env_file
 
 
+# runtime environment checks to avoid delayed failures
+if sys.version_info[0] > 2:
+    try:
+        if pkg_resources.get_distribution('futures'):
+            raise SystemExit(
+                "FATAL: futures package found, this package should not be installed in a Python 3 environment, please remove it. See https://github.com/agronholm/pythonfutures/issues/90"
+            )
+    except pkg_resources.DistributionNotFound:
+        pass
+
 main.add_command(command.cleanup.cleanup)
 main.add_command(command.check.check)
 main.add_command(command.converge.converge)
 main.add_command(command.create.create)
 main.add_command(command.dependency.dependency)
 main.add_command(command.destroy.destroy)
+main.add_command(command.drivers.drivers)
 main.add_command(command.idempotence.idempotence)
 main.add_command(command.init.init)
 main.add_command(command.lint.lint)

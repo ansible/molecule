@@ -59,6 +59,16 @@ Get Involved
 * Want to know about releases, subscribe to `ansible-announce list`_.
 * For the full list of Ansible email Lists, IRC channels see the `communication page`_.
 
+If you want to get moving fast and make a quick patch:
+
+.. code-block:: bash
+
+    $ git clone https://github.com/ansible/molecule && cd molecule
+    $ python3 -m venv .venv && source .venv/bin/activate
+    $ pip install -U setuptools pip tox
+
+And you're ready to make your changes!
+
 .. _`Freenode`: https://freenode.net
 .. _`molecule-users Forum`: https://groups.google.com/forum/#!forum/molecule-users
 .. _`wiki`: https://github.com/ansible/community/wiki/Molecule

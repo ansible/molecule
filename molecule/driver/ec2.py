@@ -18,15 +18,34 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+from base64 import b64decode
+import sys
+
+try:
+    from cryptography.hazmat.backends import default_backend
+    from cryptography.hazmat.primitives.asymmetric.padding import PKCS1v15
+    from cryptography.hazmat.primitives.serialization import load_pem_private_key
+
+    HAS_CRYPTOGRAPHY = True
+except ImportError:
+    HAS_CRYPTOGRAPHY = False
+
+try:
+    import boto3
+
+    HAS_BOTO3 = True
+except ImportError:
+    HAS_BOTO3 = False
+
 from molecule import logger
-from molecule.driver import base
+from molecule.api import Driver
 
 from molecule import util
 
 LOG = logger.get_logger(__name__)
 
 
-class EC2(base.Base):
+class EC2(Driver):
     """
     The class responsible for managing `EC2`_ instances.  `EC2`_
     is ``not`` the default driver used in Molecule.
@@ -68,6 +87,20 @@ class EC2(base.Base):
             instance_type: t2.micro
             vpc_subnet_id: subnet-1cb17175
 
+    If you want to attach an IAM role to the Molecule instance:
+
+    .. code-block:: yaml
+
+        driver:
+          name: ec2
+        platforms:
+          - name: instance
+            image_owner: 099720109477
+            image_name: ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-20190320
+            instance_type: t2.micro
+            vpc_subnet_id: subnet-1cb17175
+            instance_profile_name: example-iam-role
+
     Use wildcards for getting the latest image. For example, the latest Ubuntu bionic image:
 
     .. code-block:: yaml
@@ -80,6 +113,29 @@ class EC2(base.Base):
             image_name: ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*
             instance_type: t2.micro
             vpc_subnet_id: subnet-1cb17175
+
+    Windows EC2 instances can be used as well:
+
+    .. code-block:: yaml
+
+        driver:
+          name: ec2
+        platforms:
+          - name: instance
+            image: ami-06a0d33fc8d328de0
+            instance_type: t3a.medium
+            vpc_subnet_id: subnet-1cb17175
+            connection_options:
+              sudo: False
+              ansible_user: Administrator
+              # Specify a password to override the automatic lookup
+              # or omit to retrieve automatically
+              # (requires boto3 & cryptography packages)
+              # ansible_password: hunter2
+              ansible_port: 5986
+              ansible_connection: winrm
+              ansible_winrm_scheme: https
+              ansible_winrm_server_cert_validation: ignore
 
     .. code-block:: bash
 
@@ -112,9 +168,9 @@ class EC2(base.Base):
     .. _`EC2`: https://aws.amazon.com/ec2/
     """  # noqa
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         super(EC2, self).__init__(config)
-        self._name = 'ec2'
+        self._name = "ec2"
 
     @property
     def name(self):
@@ -126,14 +182,14 @@ class EC2(base.Base):
 
     @property
     def login_cmd_template(self):
-        connection_options = ' '.join(self.ssh_connection_options)
+        connection_options = " ".join(self.ssh_connection_options)
 
         return (
-            'ssh {{address}} '
-            '-l {{user}} '
-            '-p {{port}} '
-            '-i {{identity_file}} '
-            '{}'
+            "ssh {{address}} "
+            "-l {{user}} "
+            "-p {{port}} "
+            "-i {{identity_file}} "
+            "{}"
         ).format(connection_options)
 
     @property
@@ -145,22 +201,39 @@ class EC2(base.Base):
         return self._get_ssh_connection_options()
 
     def login_options(self, instance_name):
-        d = {'instance': instance_name}
+        d = {"instance": instance_name}
 
         return util.merge_dicts(d, self._get_instance_config(instance_name))
 
     def ansible_connection_options(self, instance_name):
         try:
             d = self._get_instance_config(instance_name)
-
-            return {
-                'ansible_user': d['user'],
-                'ansible_host': d['address'],
-                'ansible_port': d['port'],
-                'ansible_private_key_file': d['identity_file'],
-                'connection': 'ssh',
-                'ansible_ssh_common_args': ' '.join(self.ssh_connection_options),
-            }
+            plat_conn_opts = next(
+                (
+                    item
+                    for item in self._config.config.get("platforms", [])
+                    if item["name"] == instance_name
+                ),
+                {},
+            ).get("connection_options", {})
+            conn_opts = util.merge_dicts(
+                {
+                    "ansible_user": d["user"],
+                    "ansible_host": d["address"],
+                    "ansible_port": d["port"],
+                    "ansible_private_key_file": d["identity_file"],
+                    "connection": "ssh",
+                    "ansible_ssh_common_args": " ".join(self.ssh_connection_options),
+                },
+                plat_conn_opts,
+            )
+            if conn_opts.get("ansible_connection") == "winrm" and (
+                not conn_opts.get("ansible_password")
+            ):
+                conn_opts["ansible_password"] = self._get_windows_instance_pass(
+                    d["instance_ids"][0], d["identity_file"]
+                )
+            return conn_opts
         except StopIteration:
             return {}
         except IOError:
@@ -172,8 +245,22 @@ class EC2(base.Base):
         instance_config_dict = util.safe_load_file(self._config.driver.instance_config)
 
         return next(
-            item for item in instance_config_dict if item['instance'] == instance_name
+            item for item in instance_config_dict if item["instance"] == instance_name
         )
+
+    def _get_windows_instance_pass(self, instance_id, key_file):
+        if not HAS_BOTO3:
+            LOG.error("boto3 required when using Windows instances")
+            sys.exit(1)
+        if not HAS_CRYPTOGRAPHY:
+            LOG.error("cryptography package required when using Windows instances")
+            sys.exit(1)
+        ec2_client = boto3.client("ec2")
+        data_response = ec2_client.get_password_data(InstanceId=instance_id)
+        decoded = b64decode(data_response["PasswordData"])
+        with open(key_file, "rb") as f:
+            key = load_pem_private_key(f.read(), None, default_backend())
+        return key.decrypt(decoded, PKCS1v15())
 
     def sanity_checks(self):
         # FIXME(decentral1se): Implement sanity checks

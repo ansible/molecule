@@ -19,14 +19,13 @@
 #  DEALINGS IN THE SOFTWARE.
 
 from molecule import logger
-from molecule.driver import base
-
+from molecule.api import Driver
 from molecule import util
 
 log = logger.get_logger(__name__)
 
 
-class DigitalOcean(base.Base):
+class DigitalOcean(Driver):
     """
     This class is responsible for managing `DigitalOcean`_ instances.
     `DigitalOcean`_ is **not** the default driver used in Molecule.
@@ -73,7 +72,7 @@ class DigitalOcean(base.Base):
     .. _`DigitalOcean`: https://www.digitalocean.com
     """  # noqa
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         super(DigitalOcean, self).__init__(config)
         self._name = 'digitalocean'
 

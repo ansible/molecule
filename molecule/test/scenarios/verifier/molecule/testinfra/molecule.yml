@@ -1,0 +1,34 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint:
+  name: yamllint
+  options:
+    config-file: ../../resources/.yamllint
+platforms:
+  - name: instance
+    image: centos:${TEST_CENTOS_VERSION}
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      callback_whitelist: profile_roles,profile_tasks,timer
+  env:
+    ANSIBLE_ROLES_PATH: ../../../../resources/roles/
+  playbooks:
+    create: ../../../../resources/playbooks/docker/create.yml
+    destroy: ../../../../resources/playbooks/docker/destroy.yml
+  lint:
+    name: ansible-lint
+scenario:
+  name: testinfra
+verifier:
+  name: testinfra
+  options:
+    vvv: true
+  additional_files_or_dirs:
+    - ../shared/test_*.py
+  lint:
+    name: flake8

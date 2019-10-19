@@ -21,15 +21,16 @@
 import abc
 import os
 
+import molecule
 from molecule import status
 
 Status = status.get_status()
 
 
-class Base(object):
+class Driver(object):
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         """
         Base initializer for all :ref:`Driver` classes.
 
@@ -218,3 +219,33 @@ class Base(object):
 
     def _converged(self):
         return str(self._config.state.converged).lower()
+
+    def __eq__(self, other):
+        # trick that allows us to test if a driver is loaded via:
+        # if 'driver-name' in drivers()
+        return str(self) == str(other)
+
+    def __lt__(self, other):
+        return str.__lt__(str(self), str(other))
+
+    def __hash__(self):
+        return self.name.__hash__()
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return self.name
+
+    def template_dir(self):
+
+        p = os.path.abspath(
+            os.path.join(
+                os.path.dirname(molecule.__file__),
+                'cookiecutter',
+                "scenario",
+                "driver",
+                self.name,
+            )
+        )
+        return p

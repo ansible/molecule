@@ -82,7 +82,7 @@ class Ansible(base.Base):
 
     The create/destroy playbooks for Docker and Vagrant are bundled with
     Molecule.  These playbooks have a clean API from `molecule.yml`, and
-    are the most commonly used.  The bundled playbooks can still be overriden.
+    are the most commonly used.  The bundled playbooks can still be overridden.
 
     The playbook loading order is:
 
@@ -202,11 +202,11 @@ class Ansible(base.Base):
     ::
 
         ANSIBLE_ROLES_PATH:
-          $ephemeral_directory/roles/:$project_directory/../
+          $ephemeral_directory/roles/:$project_directory/../:~/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles
         ANSIBLE_LIBRARY:
-          $ephemeral_directory/library/:$project_directory/library/
+          $ephemeral_directory/modules/:$project_directory/library/:~/.ansible/plugins/modules:/usr/share/ansible/plugins/modules
         ANSIBLE_FILTER_PLUGINS:
-          $ephemeral_directory/plugins/filters/:$project_directory/filter/plugins/
+          $ephemeral_directory/plugins/filter/:$project_directory/filter/plugins/:~/.ansible/plugins/filter:/usr/share/ansible/plugins/modules
 
     Environment variables can be passed to the provisioner.  Variables in this
     section which match the names above will be appened to the above defaults,
@@ -422,11 +422,16 @@ class Ansible(base.Base):
                         util.abs_path(
                             os.path.join(self._config.project_directory, os.path.pardir)
                         ),
+                        util.abs_path(
+                            os.path.join(os.path.expanduser('~'), '.ansible', 'roles')
+                        ),
+                        '/usr/share/ansible/roles',
+                        '/etc/ansible/roles',
                     ]
                 ),
                 'ANSIBLE_LIBRARY': ':'.join(
                     [
-                        self._get_libraries_directory(),
+                        self._get_modules_directory(),
                         util.abs_path(
                             os.path.join(
                                 self._config.scenario.ephemeral_directory, 'library'
@@ -435,6 +440,15 @@ class Ansible(base.Base):
                         util.abs_path(
                             os.path.join(self._config.project_directory, 'library')
                         ),
+                        util.abs_path(
+                            os.path.join(
+                                os.path.expanduser('~'),
+                                '.ansible',
+                                'plugins',
+                                'modules',
+                            )
+                        ),
+                        '/usr/share/ansible/plugins/modules',
                     ]
                 ),
                 'ANSIBLE_FILTER_PLUGINS': ':'.join(
@@ -444,14 +458,20 @@ class Ansible(base.Base):
                             os.path.join(
                                 self._config.scenario.ephemeral_directory,
                                 'plugins',
-                                'filters',
+                                'filter',
                             )
                         ),
                         util.abs_path(
                             os.path.join(
-                                self._config.project_directory, 'plugins', 'filters'
+                                self._config.project_directory, 'plugins', 'filter'
                             )
                         ),
+                        util.abs_path(
+                            os.path.join(
+                                os.path.expanduser('~'), '.ansible', 'plugins', 'filter'
+                            )
+                        ),
+                        '/usr/share/ansible/plugins/filter',
                     ]
                 ),
             },
@@ -609,7 +629,7 @@ class Ansible(base.Base):
         return os.path.join(self._config.scenario.ephemeral_directory, 'ansible.cfg')
 
     @property
-    @util.memoize
+    @util.lru_cache()
     def playbooks(self):
         return ansible_playbooks.AnsiblePlaybooks(self._config)
 
@@ -772,11 +792,7 @@ class Ansible(base.Base):
             if target == 'host_vars':
                 vars_target = copy.deepcopy(self.host_vars)
                 for instance_name, _ in self.host_vars.items():
-                    if instance_name == 'localhost':
-                        instance_key = instance_name
-                    else:
-                        instance_key = instance_name
-
+                    instance_key = instance_name
                     vars_target[instance_key] = vars_target.pop(instance_name)
 
             elif target == 'group_vars':
@@ -886,11 +902,11 @@ class Ansible(base.Base):
     def _get_plugin_directory(self):
         return os.path.join(self.directory, 'plugins')
 
-    def _get_libraries_directory(self):
-        return util.abs_path(os.path.join(self._get_plugin_directory(), 'libraries'))
+    def _get_modules_directory(self):
+        return util.abs_path(os.path.join(self._get_plugin_directory(), 'modules'))
 
     def _get_filter_plugin_directory(self):
-        return util.abs_path(os.path.join(self._get_plugin_directory(), 'filters'))
+        return util.abs_path(os.path.join(self._get_plugin_directory(), 'filter'))
 
     def _absolute_path_for(self, env, key):
         return ':'.join([self.abs_path(p) for p in env[key].split(':')])

@@ -46,7 +46,7 @@ Driver
 Molecule uses `Ansible`_ to manage instances to operate on.  Molecule supports
 any provider `Ansible`_ supports.  This work is offloaded to the `provisioner`.
 
-The driver's name is specified in `molecule.yml`, and can be overriden on the
+The driver's name is specified in `molecule.yml`, and can be overridden on the
 command line.  Molecule will remember the last successful driver used, and
 
 continue to use the driver for all subsequent subcommands, or until the
@@ -61,14 +61,6 @@ instances are destroyed by Molecule.
 
 .. _`Ansible`: https://docs.ansible.com
 
-
-.. _azure-driver:
-
-Azure
-^^^^^
-
-.. autoclass:: molecule.driver.azure.Azure()
-   :undoc-members:
 
 Delegated
 ^^^^^^^^^
@@ -120,18 +112,6 @@ Linode
 ^^^^^^
 
 .. autoclass:: molecule.driver.linode.Linode()
-   :undoc-members:
-
-LXC
-^^^
-
-.. autoclass:: molecule.driver.lxc.LXC()
-   :undoc-members:
-
-LXD
-^^^
-
-.. autoclass:: molecule.driver.lxd.LXD()
    :undoc-members:
 
 Openstack
@@ -382,29 +362,6 @@ Lint
 ....
 
 .. autoclass:: molecule.verifier.lint.ansible_lint.AnsibleLint()
-   :undoc-members:
-
-Goss
-^^^^
-
-.. autoclass:: molecule.verifier.goss.Goss()
-   :undoc-members:
-
-Lint
-....
-
-The Goss verifier does not utilize a linter.
-
-Inspec
-^^^^^^
-
-.. autoclass:: molecule.verifier.inspec.Inspec()
-   :undoc-members:
-
-Lint
-....
-
-.. autoclass:: molecule.verifier.lint.rubocop.RuboCop()
    :undoc-members:
 
 Testinfra

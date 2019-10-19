@@ -23,12 +23,13 @@ from __future__ import absolute_import
 import os
 
 from molecule import logger
-from molecule.driver import base
+from molecule.api import Driver
+from molecule.util import lru_cache
 
 log = logger.get_logger(__name__)
 
 
-class Podman(base.Base):
+class Podman(Driver):
     """
     The class responsible for managing `Podman`_ containers.  `Podman`_ is
     not default driver used in Molecule.
@@ -109,8 +110,6 @@ class Podman(base.Base):
         - name: instance
           image: centos:7
           privileged: true
-          volumes:
-            - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
           command: "/usr/sbin/init"
           tty: True
 
@@ -142,7 +141,7 @@ class Podman(base.Base):
     .. _`CMD`: https://docs.docker.com/engine/reference/builder/#cmd
     """  # noqa
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         super(Podman, self).__init__(config)
         self._name = 'podman'
 
@@ -179,11 +178,8 @@ class Podman(base.Base):
     def ansible_connection_options(self, instance_name):
         return {'ansible_connection': 'podman'}
 
+    @lru_cache()
     def sanity_checks(self):
         """Implement Podman driver sanity checks."""
 
-        if self._config.state.sanity_checked:
-            return
-
         log.info("Sanity checks: '{}'".format(self._name))
-        self._config.state.change_state('sanity_checked', True)

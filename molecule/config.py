@@ -25,6 +25,7 @@ import anyconfig
 from ansible.module_utils.parsing.convert_bool import boolean
 import six
 
+from molecule import api
 from molecule import interpolation
 from molecule import logger
 from molecule import platforms
@@ -34,26 +35,10 @@ from molecule import util
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
 from molecule.dependency import shell
-from molecule.driver import azure
-from molecule.driver import delegated
-from molecule.driver import digitalocean
-from molecule.driver import docker
-from molecule.driver import ec2
-from molecule.driver import gce
-from molecule.driver import linode
-from molecule.driver import lxc
-from molecule.driver import lxd
-from molecule.driver import hetznercloud
-from molecule.driver import openstack
-from molecule.driver import podman
-from molecule.driver import vagrant
 from molecule.lint import yamllint
 from molecule.model import schema_v2
 from molecule.provisioner import ansible
-from molecule.verifier import ansible as ansible_verifier
-from molecule.verifier import goss
-from molecule.verifier import inspec
-from molecule.verifier import testinfra
+
 
 LOG = logger.get_logger(__name__)
 MOLECULE_DEBUG = boolean(os.environ.get('MOLECULE_DEBUG', 'False'))
@@ -111,7 +96,15 @@ class Config(object):
 
     def after_init(self):
         self.config = self._reget_config()
-        self._validate()
+        if self.molecule_file:
+            self._validate()
+
+    def write(self):
+        util.write_file(self.config_file, util.safe_dump(self.config))
+
+    @property
+    def config_file(self):
+        return os.path.join(self.scenario.ephemeral_directory, MOLECULE_FILE)
 
     @property
     def is_parallel(self):
@@ -150,7 +143,7 @@ class Config(object):
         return molecule_directory(self.project_directory)
 
     @property
-    @util.memoize
+    @util.lru_cache()
     def dependency(self):
         dependency_name = self.config['dependency']['name']
         if dependency_name == 'galaxy':
@@ -161,51 +154,21 @@ class Config(object):
             return shell.Shell(self)
 
     @property
-    @util.memoize
+    @util.lru_cache()
     def driver(self):
         driver_name = self._get_driver_name()
         driver = None
 
-        if driver_name == 'azure':
-            driver = azure.Azure(self)
-        elif driver_name == 'delegated':
-            driver = delegated.Delegated(self)
-        elif driver_name == 'digitalocean':
-            driver = digitalocean.DigitalOcean(self)
-        elif driver_name == 'docker':
-            driver = docker.Docker(self)
-        elif driver_name == 'ec2':
-            driver = ec2.EC2(self)
-        elif driver_name == 'gce':
-            driver = gce.GCE(self)
-        elif driver_name == 'hetznercloud':
-            driver = hetznercloud.HetznerCloud(self)
-        elif driver_name == 'linode':
-            driver = linode.Linode(self)
-        elif driver_name == 'lxc':
-            driver = lxc.LXC(self)
-        elif driver_name == 'lxd':
-            driver = lxd.LXD(self)
-        elif driver_name == 'openstack':
-            driver = openstack.Openstack(self)
-        elif driver_name == 'podman':
-            driver = podman.Podman(self)
-        elif driver_name == 'vagrant':
-            driver = vagrant.Vagrant(self)
-
+        driver = api.drivers(config=self)[driver_name]
         driver.name = driver_name
 
         return driver
 
     @property
-    def drivers(self):
-        return molecule_drivers()
-
-    @property
     def env(self):
         return {
             'MOLECULE_DEBUG': str(self.debug),
-            'MOLECULE_FILE': self.molecule_file,
+            'MOLECULE_FILE': self.config_file,
             'MOLECULE_ENV_FILE': self.env_file,
             'MOLECULE_STATE_FILE': self.state.state_file,
             'MOLECULE_INVENTORY_FILE': self.provisioner.inventory_file,
@@ -225,51 +188,38 @@ class Config(object):
         }
 
     @property
-    @util.memoize
+    @util.lru_cache()
     def lint(self):
         lint_name = self.config['lint']['name']
         if lint_name == 'yamllint':
             return yamllint.Yamllint(self)
 
     @property
-    @util.memoize
+    @util.lru_cache()
     def platforms(self):
         return platforms.Platforms(self, parallelize_platforms=self.is_parallel)
 
     @property
-    @util.memoize
+    @util.lru_cache()
     def provisioner(self):
         provisioner_name = self.config['provisioner']['name']
         if provisioner_name == 'ansible':
             return ansible.Ansible(self)
 
     @property
-    @util.memoize
+    @util.lru_cache()
     def scenario(self):
         return scenario.Scenario(self)
 
     @property
-    @util.memoize
+    @util.lru_cache()
     def state(self):
         return state.State(self)
 
     @property
-    @util.memoize
+    @util.lru_cache()
     def verifier(self):
-        verifier_name = self.config['verifier']['name']
-        if verifier_name == 'testinfra':
-            return testinfra.Testinfra(self)
-        elif verifier_name == 'inspec':
-            return inspec.Inspec(self)
-        elif verifier_name == 'goss':
-            return goss.Goss(self)
-        elif verifier_name == 'ansible':
-            return ansible_verifier.Ansible(self)
-
-    @property
-    @util.memoize
-    def verifiers(self):
-        return molecule_verifiers()
+        return api.verifiers(self).get(self.config['verifier']['name'], None)
 
     def _get_driver_name(self):
         driver_from_state_file = self.state.driver
@@ -338,11 +288,14 @@ class Config(object):
                     defaults, util.safe_load(interpolated_config)
                 )
 
-        with util.open_file(self.molecule_file) as stream:
-            s = stream.read()
-            self._preflight(s)
-            interpolated_config = self._interpolate(s, env, keep_string)
-            defaults = util.merge_dicts(defaults, util.safe_load(interpolated_config))
+        if self.molecule_file:
+            with util.open_file(self.molecule_file) as stream:
+                s = stream.read()
+                self._preflight(s)
+                interpolated_config = self._interpolate(s, env, keep_string)
+                defaults = util.merge_dicts(
+                    defaults, util.safe_load(interpolated_config)
+                )
 
         return defaults
 
@@ -360,9 +313,12 @@ class Config(object):
             util.sysexit_with_message(msg)
 
     def _get_defaults(self):
-        scenario_name = (
-            os.path.basename(os.path.dirname(self.molecule_file)) or 'default'
-        )
+        if not self.molecule_file:
+            scenario_name = 'default'
+        else:
+            scenario_name = (
+                os.path.basename(os.path.dirname(self.molecule_file)) or 'default'
+            )
         return {
             'dependency': {
                 'name': 'galaxy',
@@ -428,8 +384,9 @@ class Config(object):
                 'create_sequence': ['dependency', 'create', 'prepare'],
                 'destroy_sequence': ['dependency', 'cleanup', 'destroy'],
                 'test_sequence': [
-                    'lint',
+                    # dependency must be kept before lint to avoid errors
                     'dependency',
+                    'lint',
                     'cleanup',
                     'destroy',
                     'syntax',
@@ -482,33 +439,6 @@ def molecule_directory(path):
 
 def molecule_file(path):
     return os.path.join(path, MOLECULE_FILE)
-
-
-def molecule_drivers():
-    return [
-        azure.Azure(None).name,
-        delegated.Delegated(None).name,
-        digitalocean.DigitalOcean(None).name,
-        docker.Docker(None).name,
-        ec2.EC2(None).name,
-        gce.GCE(None).name,
-        hetznercloud.HetznerCloud(None).name,
-        linode.Linode(None).name,
-        lxc.LXC(None).name,
-        lxd.LXD(None).name,
-        openstack.Openstack(None).name,
-        podman.Podman(None).name,
-        vagrant.Vagrant(None).name,
-    ]
-
-
-def molecule_verifiers():
-    return [
-        goss.Goss(None).name,
-        inspec.Inspec(None).name,
-        testinfra.Testinfra(None).name,
-        ansible_verifier.Ansible(None).name,
-    ]
 
 
 def set_env_from_file(env, env_file):

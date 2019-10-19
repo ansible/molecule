@@ -21,6 +21,7 @@
 import os
 
 import abc
+import molecule
 
 from molecule import util
 from molecule.verifier.lint import flake8
@@ -30,10 +31,10 @@ from molecule.verifier.lint import yamllint
 from molecule.verifier.lint import ansible_lint
 
 
-class Base(object):
+class Verifier(object):
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, config):
+    def __init__(self, config=None):
         """
         Base initializer for all :ref:`Verifier` classes.
 
@@ -41,6 +42,7 @@ class Base(object):
         :returns: None
         """
         self._config = config
+        self.default_linter = 'ansible-lint'
 
     @abc.abstractproperty
     def name(self):  # pragma: no cover
@@ -78,6 +80,15 @@ class Base(object):
         """
         pass
 
+    @abc.abstractmethod
+    def schema(self):  # pragma: no cover
+        """
+        Returns validation schema.
+
+        :return: None
+        """
+        pass
+
     @property
     def enabled(self):
         return self._config.config['verifier']['enabled']
@@ -102,7 +113,7 @@ class Base(object):
         )
 
     @property
-    @util.memoize
+    @util.lru_cache()
     def lint(self):
         lint_name = self._config.config['verifier']['lint']['name']
         if lint_name == 'flake8':
@@ -115,3 +126,30 @@ class Base(object):
             return yamllint.Yamllint(self._config)
         if lint_name == 'ansible-lint':
             return ansible_lint.AnsibleLint(self._config)
+
+    def __eq__(self, other):
+        return str(self) == str(other)
+
+    def __lt__(self, other):
+        return str.__lt__(str(self), str(other))
+
+    def __hash__(self):
+        return self.name.__hash__()
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return self.name
+
+    def template_dir(self):
+        p = os.path.abspath(
+            os.path.join(
+                os.path.dirname(molecule.__file__),
+                "cookiecutter",
+                "scenario",
+                "verifier",
+                self.name,
+            )
+        )
+        return p

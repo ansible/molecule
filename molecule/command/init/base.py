@@ -70,12 +70,14 @@ class Base(object):
 
     def _resolve_template_dir(self, template_dir):
         if not os.path.isabs(template_dir):
-            template_dir = os.path.join(
-                os.path.dirname(__file__),
-                os.path.pardir,
-                os.path.pardir,
-                'cookiecutter',
-                template_dir,
+            template_dir = os.path.abspath(
+                os.path.join(
+                    os.path.dirname(__file__),
+                    os.path.pardir,
+                    os.path.pardir,
+                    'cookiecutter',
+                    template_dir,
+                )
             )
 
         return template_dir

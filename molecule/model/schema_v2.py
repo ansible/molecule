@@ -26,6 +26,7 @@ import re
 import cerberus
 import cerberus.errors
 
+from molecule import api
 from molecule import interpolation, util
 
 
@@ -53,21 +54,7 @@ def pre_validate_base_schema(env, keep_string):
                 'name': {
                     'type': 'string',
                     'molecule_env_var': True,
-                    'allowed': [
-                        'azure',
-                        'delegated',
-                        'digitalocean',
-                        'docker',
-                        'ec2',
-                        'gce',
-                        'hetznercloud',
-                        'linode',
-                        'lxc',
-                        'lxd',
-                        'openstack',
-                        'podman',
-                        'vagrant',
-                    ],
+                    'allowed': api.drivers(),
                     # NOTE(retr0h): Some users use an environment variable to
                     # change the driver name.  May add this coercion to rest of
                     # config using allowed validation.
@@ -132,7 +119,7 @@ def pre_validate_base_schema(env, keep_string):
                 'name': {
                     'type': 'string',
                     'molecule_env_var': True,
-                    'allowed': ['testinfra', 'inspec', 'goss', 'ansible'],
+                    'allowed': api.verifiers(),
                 },
                 'lint': {
                     'type': 'dict',
@@ -500,40 +487,6 @@ platforms_podman_schema = {
     }
 }
 
-platforms_lxd_schema = {
-    'platforms': {
-        'type': 'list',
-        'schema': {
-            'type': 'dict',
-            'schema': {
-                'name': {'type': 'string'},
-                'url': {'type': 'string'},
-                'cert_file': {'type': 'string'},
-                'key_file': {'type': 'string'},
-                'trust_password': {'type': 'string'},
-                'source': {
-                    'type': 'dict',
-                    'schema': {
-                        'type': {'type': 'string'},
-                        'mode': {'type': 'string', 'allowed': ['pull', 'local']},
-                        'server': {'type': 'string'},
-                        'protocol': {
-                            'type': 'string',
-                            'allowed': ['lxd', 'simplestreams'],
-                        },
-                        'alias': {'type': 'string'},
-                    },
-                },
-                'architecture': {'type': 'string', 'allowed': ['x86_64', 'i686']},
-                'config': {'type': 'dict', 'allow_unknown': True},
-                'devices': {'type': 'dict', 'allow_unknown': True},
-                'profiles': {'type': 'list', 'schema': {'type': 'string'}},
-                'force_stop': {'type': 'boolean'},
-            },
-        },
-    }
-}
-
 platforms_hetznercloud_schema = {
     'platforms': {
         'type': 'list',
@@ -558,10 +511,11 @@ platforms_linode_schema = {
         'schema': {
             'type': 'dict',
             'schema': {
-                'name': {'type': 'string'},
-                'plan': {'type': 'integer', 'required': True},
-                'datacenter': {'type': 'integer', 'required': True},
-                'distribution': {'type': 'integer', 'required': True},
+                'region': {'type': 'string', 'required': True},
+                'image': {'type': 'string', 'required': True},
+                'type': {'type': 'string', 'required': True},
+                'group': {'type': 'string'},
+                'tags': {'type': 'list', 'schema': {'type': 'string'}},
             },
         },
     }
@@ -571,66 +525,6 @@ dependency_command_nullable_schema = {
     'dependency': {
         'type': 'dict',
         'schema': {'command': {'type': 'string', 'nullable': False}},
-    }
-}
-
-verifier_options_readonly_schema = {
-    'verifier': {
-        'type': 'dict',
-        'schema': {'options': {'keysrules': {'readonly': True}}},
-    }
-}
-
-verifier_goss_mutually_exclusive_schema = {
-    'verifier': {
-        'type': 'dict',
-        'schema': {
-            'name': {'type': 'string', 'allowed': ['goss']},
-            'lint': {
-                'type': 'dict',
-                'schema': {'name': {'type': 'string', 'allowed': ['yamllint']}},
-            },
-        },
-    }
-}
-
-verifier_inspec_mutually_exclusive_schema = {
-    'verifier': {
-        'type': 'dict',
-        'schema': {
-            'name': {'type': 'string', 'allowed': ['inspec']},
-            'lint': {
-                'type': 'dict',
-                'schema': {'name': {'type': 'string', 'allowed': ['rubocop']}},
-            },
-        },
-    }
-}
-verifier_testinfra_mutually_exclusive_schema = {
-    'verifier': {
-        'type': 'dict',
-        'schema': {
-            'name': {'type': 'string', 'allowed': ['testinfra']},
-            'lint': {
-                'type': 'dict',
-                'schema': {
-                    'name': {'type': 'string', 'allowed': ['flake8', 'pre-commit']}
-                },
-            },
-        },
-    }
-}
-
-verifier_ansible_mutually_exclusive_schema = {
-    'verifier': {
-        'type': 'dict',
-        'schema': {
-            'name': {'type': 'string', 'allowed': ['ansible']},
-            'lint': {
-                'type': 'dict',
-                'schema': {'name': {'type': 'string', 'allowed': ['ansible-lint']}},
-            },
-        },
     }
 }
 
@@ -715,24 +609,13 @@ def validate(c):
     elif c['driver']['name'] == 'vagrant':
         util.merge_dicts(schema, driver_vagrant_provider_section_schema)
         util.merge_dicts(schema, platforms_vagrant_schema)
-    elif c['driver']['name'] == 'lxd':
-        util.merge_dicts(schema, platforms_lxd_schema)
     elif c['driver']['name'] == 'linode':
         util.merge_dicts(schema, platforms_linode_schema)
     elif c['driver']['name'] == 'hetznercloud':
         util.merge_dicts(schema, platforms_hetznercloud_schema)
 
     # Verifier
-    if c['verifier']['name'] == 'goss':
-        util.merge_dicts(schema, verifier_options_readonly_schema)
-        util.merge_dicts(schema, verifier_goss_mutually_exclusive_schema)
-    elif c['verifier']['name'] == 'inspec':
-        util.merge_dicts(schema, verifier_options_readonly_schema)
-        util.merge_dicts(schema, verifier_inspec_mutually_exclusive_schema)
-    elif c['verifier']['name'] == 'testinfra':
-        util.merge_dicts(schema, verifier_testinfra_mutually_exclusive_schema)
-    elif c['verifier']['name'] == 'ansible':
-        util.merge_dicts(schema, verifier_ansible_mutually_exclusive_schema)
+    util.merge_dicts(schema, api.verifiers()[c['verifier']['name']].schema())
 
     v = Validator(allow_unknown=True)
     v.validate(c, schema)

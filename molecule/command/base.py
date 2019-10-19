@@ -68,6 +68,7 @@ class Base(object):
 
         :return: None
         """
+        self._config.write()
         self._config.provisioner.write_config()
         self._config.provisioner.manage_inventory()
 
@@ -140,9 +141,10 @@ def execute_scenario(scenario):
     for action in scenario.sequence:
         execute_subcommand(scenario.config, action)
 
-    # pruning only if a 'destroy' step was in the sequence allows for normal
-    # debugging by manually stepping through a scenario sequence
-    if 'destroy' in scenario.sequence:
+    if (
+        'destroy' in scenario.sequence
+        and scenario.config.command_args.get('destroy') != 'never'
+    ):
         scenario.prune()
 
         if scenario.config.is_parallel:
