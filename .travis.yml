@@ -444,4 +444,7 @@ before_script:
   - gem install inspec -v '~> 3'
   - gem install rubocop -v '~> 0.69.0'
 script:
+  # keep it like this to first create env and later to run again with tests
+  # in order to avoid regressions to run twice on the same environment.
+  - tox --notest
   - tox
