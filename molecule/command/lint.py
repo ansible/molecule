@@ -72,8 +72,6 @@ class Lint(base.Base):
             l
             for l in [
                 self._config.lint,
-                self._config.verifier.lint,
-                self._config.provisioner.lint,
             ]
             if l
         ]

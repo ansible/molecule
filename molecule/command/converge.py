@@ -77,6 +77,7 @@ class Converge(base.Base):
         :return: None
         """
         self.print_info()
+        self._config.provisioner.lint.execute()
         self._config.provisioner.converge()
         self._config.state.change_state('converged', True)
 
