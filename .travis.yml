@@ -351,4 +351,7 @@ jobs:
 before_install:
   - pip install tox-tags
 script:
+  # keep it like this to first create env and later to run again with tests
+  # in order to avoid regressions to run twice on the same environment.
+  - tox --notest
   - tox
