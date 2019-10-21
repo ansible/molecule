@@ -15,11 +15,13 @@
       - proto: tcp
         from_port: "{{ ssh_port }}"
         to_port: "{{ ssh_port }}"
-        cidr_ip: '0.0.0.0/0'
+        cidr_ip: "{{ molecule_yml.driver.internal_cidr |
+          default('0.0.0.0/0') }}"
       - proto: icmp
         from_port: 8
         to_port: -1
-        cidr_ip: '0.0.0.0/0'
+        cidr_ip: "{{ molecule_yml.driver.internal_cidr |
+          default('0.0.0.0/0') }}"
     security_group_rules_egress:
       - proto: -1
         from_port: 0
@@ -107,7 +109,9 @@
       set_fact:
         instance_conf_dict: {
           'instance': "{{ item.instances[0].tags.instance }}",
-          'address': "{{ item.instances[0].public_ip }}",
+          'address': "{{ item.instances[0].private_ip
+            if molecule_yml.driver.internal_cidr is defined
+            else item.instances[0].public_ip }}",
           'user': "{{ ssh_user }}",
           'port': "{{ ssh_port }}",
           'identity_file': "{{ keypair_path }}",
