@@ -9,7 +9,7 @@ lint:
     config-file: ../../resources/.yamllint
 platforms:
   - name: instance
-    image: centos:${TEST_CENTOS_VERSION}
+    image: ${TEST_BASE_IMAGE}
 provisioner:
   name: ansible
   playbooks:
