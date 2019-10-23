@@ -28,10 +28,6 @@ platforms:
     zone: us-west1-a
     machine_type: f1-micro
     image: debian-8
-{%- elif cookiecutter.driver_name == 'hetznercloud' %}
-  - name: instance
-    server_type: cx11
-    image: debian-9
 {%- elif cookiecutter.driver_name == 'linode' %}
   - name: instance
     type: g6-nanode-1

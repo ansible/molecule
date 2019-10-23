@@ -5,6 +5,7 @@ History
 Unreleased
 ==========
 
+* Moved the Hetzner Cloud driver out to a plugin
 * MAJOR: Removed LXC and LXD providers
 * MAJOR: Dockerfile templates are now embedded in molecule.
 * MINOR: Fixed typo with OVERRIDDEN placeholder in templates
