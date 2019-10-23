@@ -27,7 +27,10 @@
         cidr_ip: '0.0.0.0/0'
 
     keypair_name: molecule_key
-    keypair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
+    molecule_keypair_path: "{{
+      lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
+    keypair_path: "{{
+      molecule_yml.driver.keypair_path | default(molecule_keypair_path) }}"
   tasks:
     - name: Create security group
       ec2_group:
@@ -47,17 +50,35 @@
         state: absent
       when: not keypair_local.stat.exists
 
+    - name: Test for presence of local keypair public key
+      stat:
+        path: "{{ keypair_path }}.pub"
+      register: keypair_public_local
+      when: keypair_local.stat.exists
+
+    - name: Upload selected keypair
+      ec2_key:
+        name: "{{ keypair_name }}"
+        key_material: "{{ lookup('file', '{{ keypair_path }}.pub') }}"
+      register: keypair
+      when:
+        - keypair_local.stat.exists
+        - keypair_public_local.stat.exists
+
     - name: Create keypair
       ec2_key:
         name: "{{ keypair_name }}"
       register: keypair
+      when: not keypair_public_local.stat.exists
 
     - name: Persist the keypair
       copy:
         dest: "{{ keypair_path }}"
         content: "{{ keypair.key.private_key }}"
         mode: 0600
-      when: keypair.changed
+      when:
+        - keypair.changed
+        - not keypair_public_local.stat.exists
 
     - name: Get the ec2 ami(s) by owner and name, if image not set
       ec2_ami_facts:
