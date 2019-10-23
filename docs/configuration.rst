@@ -98,14 +98,6 @@ GCE
 .. autoclass:: molecule.driver.gce.GCE()
    :undoc-members:
 
-.. _hetzner-cloud-driver:
-
-Hetzner Cloud
-^^^^^^^^^^^^^
-
-.. autoclass:: molecule.driver.hetznercloud.HetznerCloud()
-   :undoc-members:
-
 .. _linode-driver:
 
 Linode

@@ -99,7 +99,6 @@ def test_vagrant_driver(
         ('docker'),
         ('ec2'),
         ('gce'),
-        ('hetznercloud'),
         ('linode'),
         ('openstack'),
         ('vagrant'),

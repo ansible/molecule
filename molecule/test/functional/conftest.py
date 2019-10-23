@@ -77,7 +77,6 @@ def skip_test(request, driver_name):
         'docker': supports_docker,
         'ec2': supports_ec2,
         'gce': supports_gce,
-        'hetznercloud': lambda: min_ansible("2.8") and supports_hetznercloud(),
         'linode': lambda: min_ansible("2.8") and supports_linode(),
         'podman': lambda: min_ansible("2.9"),
         'openstack': supports_openstack,
@@ -329,15 +328,6 @@ def supports_gce():
     env_vars = ('GCE_SERVICE_ACCOUNT_EMAIL', 'GCE_CREDENTIALS_FILE', 'GCE_PROJECT_ID')
 
     return _env_vars_exposed(env_vars) and HAS_GOOGLE_AUTH
-
-
-@pytest.helpers.register
-def supports_hetznercloud():
-    pytest.importorskip('hcloud')
-
-    env_vars = ('HCLOUD_TOKEN',)
-
-    return _env_vars_exposed(env_vars)
 
 
 @pytest.helpers.register

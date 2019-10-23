@@ -37,9 +37,6 @@ language: python
   - &lint
     <<: *py-37
     <<: *reset-prerequisites
-  - &hetzner-cloud-cleanup
-    after_script:
-      - ./contrib/tokenmgmr.py remove --driver hetznercloud
 
 jobs:
   fast_finish: true
@@ -144,13 +141,8 @@ jobs:
         - TOXENV=ansible27-unit
       name: unit tests, Ansible 2.7, Python 2.7
 
-    # Note(decentral1se): we temporarily only run Hetzner Cloud functional
-    # tests on this job so that we get at least some guarantee on testing When
-    # we have more CI resources, we will migrate away from this stop-gap
-    # solution
     - <<: *py-37
       env:
-        - HCLOUD_TOKEN="$(./contrib/tokenmgmr.py get --driver hetznercloud)"
         - PYTEST_ADDOPTS='-m shard_1_of_2'
         - TOXENV=ansible29-functional
       name: functional tests shard 1, Ansible 2.9, Python 3.7
