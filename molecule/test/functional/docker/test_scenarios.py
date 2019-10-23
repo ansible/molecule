@@ -221,7 +221,7 @@ def test_command_test_builds_local_molecule_image(
     scenario_to_test, with_scenario, scenario_name, driver_name
 ):
     try:
-        image = os.environ.get('TEST_BASE_IMAGE', "pycontribs/centos:7")
+        image = os.environ.get('TEST_BASE_IMAGE', "docker.io/pycontribs/centos:7")
         cmd = sh.docker.bake('rmi', 'molecule_local/{}'.format(image), '--force')
         pytest.helpers.run_command(cmd)
     except sh.ErrorReturnCode:
