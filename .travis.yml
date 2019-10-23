@@ -28,6 +28,8 @@ language: python
     python: "3.6"
   - &py-37
     python: "3.7"
+  - &py-38
+    python: "3.8"
   - &reset-prerequisites
     addons: {}
     before_install:
@@ -95,6 +97,21 @@ jobs:
       name: check,dockerfile,build-docker
       env:
         - TOXENV=check,dockerfile,build-docker
+
+    - <<: *py-38
+      env:
+        - TOXENV=ansible29-unit
+      name: unit tests, Ansible 2.9, Python 3.8
+
+    - <<: *py-38
+      env:
+        - TOXENV=ansible28-unit
+      name: unit tests, Ansible 2.8, Python 3.8
+
+    - <<: *py-38
+      env:
+        - TOXENV=ansible27-unit
+      name: unit tests, Ansible 2.7, Python 3.8
 
     - <<: *py-37
       env:
