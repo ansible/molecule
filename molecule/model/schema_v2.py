@@ -487,21 +487,6 @@ platforms_podman_schema = {
     }
 }
 
-platforms_linode_schema = {
-    'platforms': {
-        'type': 'list',
-        'schema': {
-            'type': 'dict',
-            'schema': {
-                'region': {'type': 'string', 'required': True},
-                'image': {'type': 'string', 'required': True},
-                'type': {'type': 'string', 'required': True},
-                'group': {'type': 'string'},
-                'tags': {'type': 'list', 'schema': {'type': 'string'}},
-            },
-        },
-    }
-}
 
 dependency_command_nullable_schema = {
     'dependency': {
@@ -591,8 +576,6 @@ def validate(c):
     elif c['driver']['name'] == 'vagrant':
         util.merge_dicts(schema, driver_vagrant_provider_section_schema)
         util.merge_dicts(schema, platforms_vagrant_schema)
-    elif c['driver']['name'] == 'linode':
-        util.merge_dicts(schema, platforms_linode_schema)
 
     # Verifier
     util.merge_dicts(schema, api.verifiers()[c['verifier']['name']].schema())

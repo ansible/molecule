@@ -1,5 +1,0 @@
----
-- name: Converge
-  hosts: all
-  roles:
-    - molecule

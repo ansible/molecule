@@ -10,7 +10,6 @@ Unreleased
 * MAJOR: Dockerfile templates are now embedded in molecule.
 * MINOR: Fixed typo with OVERRIDDEN placeholder in templates
 * Supported Ansible versions are now 2.9, 2.8, 2.7
-* The Linode driver now uses the ``linode_v4`` module.
 * Removed goss verifier
 * dependency now runs before lint on default test and lint sequences
 * ANSIBLE_ROLES_PATH, ANSIBLE_LIBRARY, ANSIBLE_FILTER_PLUGINS now include the default Ansible lookup paths
