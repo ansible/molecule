@@ -93,16 +93,7 @@ def test_vagrant_driver(
 
 
 @pytest.mark.parametrize(
-    'driver',
-    [
-        ('digitalocean'),
-        ('docker'),
-        ('ec2'),
-        ('gce'),
-        ('linode'),
-        ('openstack'),
-        ('vagrant'),
-    ],
+    'driver', [('docker'), ('ec2'), ('gce'), ('linode'), ('openstack'), ('vagrant')]
 )
 def test_drivers(
     driver, temp_dir, _molecule_file, _role_directory, _command_args, _instance
