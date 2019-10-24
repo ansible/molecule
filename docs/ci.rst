@@ -13,7 +13,7 @@ much like any others, that's built into GitHub.
 
 
 An action to clone a repo as ``molecule_demo``,
-and run ``moleule test`` in ubuntu.
+and run ``molecule test`` in ubuntu.
 
 .. code-block:: yaml
 
@@ -321,7 +321,7 @@ conflict.
 
 .. _`GitHub Actions`: https://github.com/features/actions
 .. _`Factors`: http://tox.readthedocs.io/en/latest/config.html#factors-and-factor-conditional-settings
-.. _`Travis`: https://travis-ci.org/
+.. _`Travis`: https://travis-ci.com/
 .. _`Jenkins`: https://jenkins.io/doc/book/pipeline/jenkinsfile
 .. _`Gitlab`: https://gitlab.com
 .. _`Tox`: https://tox.readthedocs.io/en/latest
