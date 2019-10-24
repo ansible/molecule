@@ -73,7 +73,6 @@ def skip_test(request, driver_name):
         else "Skipped '{}' not supported"
     )
     support_checks_map = {
-        'digitalocean': supports_digitalocean,
         'docker': supports_docker,
         'ec2': supports_ec2,
         'gce': supports_gce,
@@ -292,24 +291,6 @@ def supports_vagrant_virtualbox():
 @pytest.helpers.register
 def demands_delegated():
     return pytest.config.getoption('--delegated')
-
-
-@pytest.helpers.register
-def supports_digitalocean():
-    try:
-        # ansible >=2.8
-        # The _digital_ocean module is deprecated, and will be removed in
-        # ansible 2.12. This is a temporary fix, and should be addressed
-        # based on decisions made in the related github issue:
-        # https://github.com/ansible/molecule/issues/2054
-        from ansible.modules.cloud.digital_ocean._digital_ocean import HAS_DOPY
-    except ImportError:
-        # ansible <2.8
-        from ansible.modules.cloud.digital_ocean.digital_ocean import HAS_DOPY
-
-    env_vars = ('DO_API_KEY',)
-
-    return _env_vars_exposed(env_vars) and HAS_DOPY
 
 
 @pytest.helpers.register
