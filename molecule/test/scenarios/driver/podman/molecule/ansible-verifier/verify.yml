@@ -1,0 +1,37 @@
+---
+- name: Verify
+  hosts: all
+  tasks:
+  - name: Assert that the hostname is set
+    assert:
+      that: ansible_hostname is match('instance.*')
+
+  - name: Stat /etc/molecule directory
+    stat:
+      path: /etc/molecule
+    register: molecule_dir
+
+  - name: Assert that the file is in the expected state
+    assert:
+      that:
+        - molecule_dir.stat.isdir
+        - molecule_dir.stat.pw_name == 'root'
+        - molecule_dir.stat.gr_name == 'root'
+        - molecule_dir.stat.mode == "0755"
+
+  - name: Stat created instance file
+    stat:
+      path: "/etc/molecule/{{ ansible_host }}"
+    register: instance_file
+
+  - name: Assert that the file is in the expected state
+    assert:
+      that:
+        - instance_file.stat.isreg
+        - instance_file.stat.pw_name == 'root'
+        - instance_file.stat.gr_name == 'root'
+        - instance_file.stat.mode == "0644"
+
+  - name: Assert that the envarg envvar was set
+    assert:
+      that: ansible_env.envarg == 'this_is_a_test'
