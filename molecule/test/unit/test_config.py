@@ -123,11 +123,6 @@ def _config_driver_delegated_section_data():
 
 
 @pytest.fixture
-def _config_driver_digitalocean_section_data():
-    return {'driver': {'name': 'digitalocean'}}
-
-
-@pytest.fixture
 def _config_driver_ec2_section_data():
     return {'driver': {'name': 'ec2'}}
 

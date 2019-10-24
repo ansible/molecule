@@ -69,13 +69,6 @@ Delegated
    :undoc-members:
 
 
-DigitalOcean
-^^^^^^^^^^^^
-
-.. autoclass:: molecule.driver.digitalocean.DigitalOcean()
-   :undoc-members:
-
-
 Docker
 ^^^^^^
 
