@@ -76,7 +76,6 @@ def skip_test(request, driver_name):
         'docker': supports_docker,
         'ec2': supports_ec2,
         'gce': supports_gce,
-        'linode': lambda: min_ansible("2.8") and supports_linode(),
         'podman': lambda: min_ansible("2.8.6"),
         'openstack': supports_openstack,
         'vagrant': supports_vagrant_virtualbox,
@@ -272,15 +271,6 @@ def min_ansible(version):
     except ImportError as exception:
         LOG.error('Unable to parse Ansible version', exc_info=exception)
         return False
-
-
-@pytest.helpers.register
-def supports_linode():
-    from ansible.modules.cloud.linode.linode_v4 import HAS_LINODE_DEPENDENCY
-
-    env_vars = ('LINODE_ACCESS_TOKEN',)
-
-    return _env_vars_exposed(env_vars) and HAS_LINODE_DEPENDENCY
 
 
 @pytest.helpers.register

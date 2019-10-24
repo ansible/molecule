@@ -91,14 +91,6 @@ GCE
 .. autoclass:: molecule.driver.gce.GCE()
    :undoc-members:
 
-.. _linode-driver:
-
-Linode
-^^^^^^
-
-.. autoclass:: molecule.driver.linode.Linode()
-   :undoc-members:
-
 Openstack
 ^^^^^^^^^
 
