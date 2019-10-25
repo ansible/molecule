@@ -55,65 +55,25 @@ Run all unit tests with coverage.
 
 .. code-block:: bash
 
-    $ tox -e 'py{27,35,36,37}-ansible{25,26,27}-unit'
+    $ tox -e 'py{27,35,36,37,38}-ansible{25,26,27,28}-unit'
 
 Run all unit tests for a specific version of Python and Ansible (here Python 3.7
 and Ansible 2.7).
 
-    $ tox -e py37-ansible27-unit
-
-Functional
-----------
-
-Run all functional tests for all supported platforms.
-
-.. note::
-
-    The functional tests are a work in progress. They need better structure and
-    reuse. They are also very slow and costly in terms of system resources.
-
 .. code-block:: bash
 
-    $ tox -e 'py{27,35,36,37}-ansible{25,26,27}-functional'
-
-
-Run all functional tests for a specific version of Python and Ansible (here
-Python 3.7 and Ansible 2.7).
-
-.. code-block:: bash
-
-    $ tox -e py37-ansible27-functional
-
-Run all functional tests targeting the docker driver.
-
-.. code-block:: bash
-
-    $ tox -e 'py{27,35,36,37}-ansible{25,26,27}-functional' -- -v -k docker
-
-Delegated
-^^^^^^^^^
-
-Run all the functional delegated tests.
-
-.. code-block:: bash
-
-    $ ansible-playbook -i test/resources/playbooks/delegated/inventory \
-      test/resources/playbooks/delegated/create.yml
-    $ tox -t functional -- --delegated -v -k delegated
-    $ ansible-playbook -i test/resources/playbooks/delegated/inventory \
-      test/resources/playbooks/delegated/destroy.yml
+    $ tox -e py37-ansible28-unit
 
 Linting
 -------
 
 Linting is performed by a combination of linters.
+
 Run all the linters (some perform changes to conform the code to the style rules).
 
 .. code-block:: bash
 
     $ tox -e lint
-
-
 
 Documentation
 -------------
@@ -125,7 +85,6 @@ Generate the documentation, using `sphinx`_.
     $ tox -e doc
 
 .. _`sphinx`: http://www.sphinx-doc.org
-
 
 Build docker
 ------------

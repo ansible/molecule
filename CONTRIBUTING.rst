@@ -20,7 +20,6 @@ How to get involved
 .. _community working group: https://github.com/ansible/community/wiki/molecule
 .. _Molecule Project Board: https://github.com/ansible/molecule/projects
 
-
 Update Git repo location
 ------------------------
 
