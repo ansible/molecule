@@ -83,14 +83,6 @@ EC2
 .. autoclass:: molecule.driver.ec2.EC2()
    :undoc-members:
 
-.. _gce-driver:
-
-GCE
-^^^
-
-.. autoclass:: molecule.driver.gce.GCE()
-   :undoc-members:
-
 Openstack
 ^^^^^^^^^
 
