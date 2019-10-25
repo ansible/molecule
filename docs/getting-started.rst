@@ -99,9 +99,7 @@ keys represent the high level components that Molecule provides. These are:
   dependencies.
 
 * The :ref:`driver` provider. Molecule uses `Docker`_ by default. Molecule uses
-  the driver to delegate the task of creating instances. There are many
-  providers such as :ref:`ec2-driver`. Under the hood,
-  it's all Ansible modules.
+  the driver to delegate the task of creating instances.
 
 * The :ref:`linters` provider. Molecule uses :std:doc:`Yamllint
   <yamllint:index>` by default to ensure that best practices are encouraged

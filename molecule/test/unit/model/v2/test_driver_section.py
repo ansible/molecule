@@ -172,11 +172,6 @@ def _model_driver_allows_docker_section_data():
 
 
 @pytest.fixture
-def _model_driver_allows_ec2_section_data():
-    return {'driver': {'name': 'ec2'}}
-
-
-@pytest.fixture
 def _model_driver_allows_openstack_section_data():
     return {'driver': {'name': 'openstack'}}
 
@@ -192,7 +187,6 @@ def _model_driver_allows_vagrant_section_data():
     [
         ('_model_driver_allows_delegated_section_data'),
         ('_model_driver_allows_docker_section_data'),
-        ('_model_driver_allows_ec2_section_data'),
         ('_model_driver_allows_openstack_section_data'),
         ('_model_driver_allows_vagrant_section_data'),
     ],
