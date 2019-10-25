@@ -92,7 +92,6 @@
       stat:
         path: "{{ keypair_path }}.pub"
       register: keypair_public_local
-      when: keypair_local.stat.exists
 
     - name: Upload selected keypair
       ec2_key:
