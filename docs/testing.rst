@@ -45,8 +45,9 @@ List available scenarios
 List all available scenarios. This is useful to target specific Python and
 Ansible version for the functional and unit tests.
 
-    $ tox -l
+.. code-block:: bash
 
+    $ tox -l
 
 Unit
 ----
