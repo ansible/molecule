@@ -75,7 +75,6 @@ def skip_test(request, driver_name):
     support_checks_map = {
         'docker': supports_docker,
         'ec2': supports_ec2,
-        'gce': supports_gce,
         'podman': lambda: min_ansible("2.8.6"),
         'openstack': supports_openstack,
         'vagrant': supports_vagrant_virtualbox,
@@ -290,15 +289,6 @@ def supports_ec2():
     env_vars = ('AWS_ACCESS_KEY', 'AWS_SECRET_ACCESS_KEY')
 
     return _env_vars_exposed(env_vars) and HAS_BOTO3
-
-
-@pytest.helpers.register
-def supports_gce():
-    from ansible.module_utils.gcp import HAS_GOOGLE_AUTH
-
-    env_vars = ('GCE_SERVICE_ACCOUNT_EMAIL', 'GCE_CREDENTIALS_FILE', 'GCE_PROJECT_ID')
-
-    return _env_vars_exposed(env_vars) and HAS_GOOGLE_AUTH
 
 
 @pytest.helpers.register
