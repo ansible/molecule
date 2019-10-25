@@ -74,7 +74,8 @@
         description: "{{ security_group_name }}"
         rules: "{{ security_group_rules }}"
         rules_egress: "{{ security_group_rules_egress }}"
-        vpc_id:  "{{ subnet_facts.vpc_id }}"
+        vpc_id:  "{{ item.vpc_id }}"
+      loop: "{{ subnet_facts.results.0.subnets }}"
 
     - name: Test for presence of local keypair
       stat:
