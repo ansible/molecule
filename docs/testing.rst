@@ -18,15 +18,6 @@ Install the test framework `Tox`_.
 
     $ pip install tox
 
-For some tests `RuboCop`_ is required.
-
-.. code-block:: bash
-
-    $ apt-get install ruby ruby-dev
-    $ gem install rubocop
-
-.. _`RuboCop`: http://batsov.com/rubocop/
-
 .. _full_testing:
 
 Full
