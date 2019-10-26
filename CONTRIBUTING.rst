@@ -20,7 +20,6 @@ How to get involved
 .. _community working group: https://github.com/ansible/community/wiki/molecule
 .. _Molecule Project Board: https://github.com/ansible/molecule/projects
 
-
 Update Git repo location
 ------------------------
 
@@ -118,29 +117,7 @@ Installing
 Testing
 =======
 
-There is extensive testing built into the `continuous integration`_ of this
-project and as a result, the time for successful builds is potentially quite
-long (up to and above 1 hour). This depends a lot on the Travis infrastructure
-but also on the amount of simultaneous contributions being worked on. Long
-build queues can quickly become a very demotivating factor for other
-contributors. Until such time that we improve the build speeds we must
-therefore ask that you please perform all of the :ref:`full_testing` testing
-steps prior to submitting a pull request.
-
-.. _`continuous integration`: https://travis-ci.com/ansible/molecule
-
-Ansible Modules
-===============
-
-This project uses the following Ansible modules, and `Gilt`_ to manage them.
-
-To bring in updated upstream modules.  Update `gilt.yml` and execute the following:
-
-.. code-block:: bash
-
-  $ gilt overlay
-
-.. _`Gilt`: https://gilt.readthedocs.io
+Please see :ref:`full_testing`.
 
 Documentation
 =============
