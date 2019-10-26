@@ -15,6 +15,7 @@ repos:
       - id: check-executables-have-shebangs
       - id: check-merge-conflict
       - id: debug-statements
+        language_version: python3
   - repo: https://gitlab.com/pycqa/flake8.git
     rev: 3.7.8
     hooks:
