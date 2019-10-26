@@ -92,7 +92,8 @@ def test_vagrant_driver(
     pytest.helpers.run_command(cmd)
 
 
-@pytest.mark.parametrize('driver', [('docker'), ('ec2'), ('openstack'), ('vagrant')])
+
+@pytest.mark.parametrize('driver', [('docker'), ('openstack'), ('vagrant')])
 def test_drivers(
     driver, temp_dir, _molecule_file, _role_directory, _command_args, _instance
 ):

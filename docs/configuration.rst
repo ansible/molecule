@@ -75,14 +75,6 @@ Docker
 .. autoclass:: molecule.driver.docker.Docker()
    :undoc-members:
 
-.. _ec2-driver:
-
-EC2
-^^^
-
-.. autoclass:: molecule.driver.ec2.EC2()
-   :undoc-members:
-
 Openstack
 ^^^^^^^^^
 

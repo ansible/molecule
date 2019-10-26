@@ -74,7 +74,6 @@ def skip_test(request, driver_name):
     )
     support_checks_map = {
         'docker': supports_docker,
-        'ec2': supports_ec2,
         'podman': lambda: min_ansible("2.8.6"),
         'openstack': supports_openstack,
         'vagrant': supports_vagrant_virtualbox,
@@ -280,15 +279,6 @@ def supports_vagrant_virtualbox():
 @pytest.helpers.register
 def demands_delegated():
     return pytest.config.getoption('--delegated')
-
-
-@pytest.helpers.register
-def supports_ec2():
-    from ansible.module_utils.ec2 import HAS_BOTO3
-
-    env_vars = ('AWS_ACCESS_KEY', 'AWS_SECRET_ACCESS_KEY')
-
-    return _env_vars_exposed(env_vars) and HAS_BOTO3
 
 
 @pytest.helpers.register

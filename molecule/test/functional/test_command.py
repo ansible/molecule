@@ -47,7 +47,6 @@ def driver_name(request):
     'scenario_to_test, driver_name, scenario_name',
     [
         ('driver/docker', 'docker', 'default'),
-        ('driver/ec2', 'ec2', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
@@ -65,7 +64,6 @@ def test_command_check(scenario_to_test, with_scenario, scenario_name):
     'scenario_to_test, driver_name, scenario_name',
     [
         ('driver/docker', 'docker', 'default'),
-        ('driver/ec2', 'ec2', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
@@ -83,7 +81,6 @@ def test_command_cleanup(scenario_to_test, with_scenario, scenario_name):
     'scenario_to_test, driver_name, scenario_name',
     [
         ('driver/docker', 'docker', 'default'),
-        ('driver/ec2', 'ec2', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
@@ -101,7 +98,6 @@ def test_command_converge(scenario_to_test, with_scenario, scenario_name):
     'scenario_to_test, driver_name, scenario_name',
     [
         ('driver/docker', 'docker', 'default'),
-        ('driver/ec2', 'ec2', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
@@ -122,7 +118,6 @@ def test_command_create(scenario_to_test, with_scenario, scenario_name):
     'scenario_to_test, driver_name, scenario_name',
     [
         ('dependency', 'docker', 'ansible-galaxy'),
-        ('dependency', 'ec2', 'ansible-galaxy'),
         ('dependency', 'openstack', 'ansible-galaxy'),
         ('dependency', 'vagrant', 'ansible-galaxy'),
         ('dependency', 'podman', 'ansible-galaxy'),
@@ -150,7 +145,6 @@ def test_command_dependency_ansible_galaxy(
     'scenario_to_test, driver_name, scenario_name',
     [
         ('dependency', 'docker', 'gilt'),
-        ('dependency', 'ec2', 'gilt'),
         ('dependency', 'openstack', 'gilt'),
         ('dependency', 'vagrant', 'gilt'),
         ('dependency', 'podman', 'gilt'),
@@ -174,7 +168,6 @@ def test_command_dependency_gilt(
     'scenario_to_test, driver_name, scenario_name',
     [
         ('dependency', 'docker', 'shell'),
-        ('dependency', 'ec2', 'shell'),
         ('dependency', 'openstack', 'shell'),
         ('dependency', 'vagrant', 'shell'),
         ('dependency', 'podman', 'shell'),
@@ -198,7 +191,6 @@ def test_command_dependency_shell(
     'scenario_to_test, driver_name, scenario_name',
     [
         ('driver/docker', 'docker', 'default'),
-        ('driver/ec2', 'ec2', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
@@ -216,7 +208,6 @@ def test_command_destroy(scenario_to_test, with_scenario, scenario_name):
     'scenario_to_test, driver_name, scenario_name',
     [
         ('driver/docker', 'docker', 'default'),
-        ('driver/ec2', 'ec2', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
@@ -230,7 +221,7 @@ def test_command_idempotence(scenario_to_test, with_scenario, scenario_name):
 
 @pytest.mark.parametrize(
     'driver_name',
-    [('docker'), ('ec2'), ('openstack'), ('vagrant'), ('podman')],
+    [('docker'), ('openstack'), ('vagrant'), ('podman')],
     indirect=['driver_name'],
 )
 def test_command_init_role(temp_dir, driver_name, skip_test):
@@ -239,7 +230,7 @@ def test_command_init_role(temp_dir, driver_name, skip_test):
 
 @pytest.mark.parametrize(
     'driver_name',
-    [('docker'), ('ec2'), ('openstack'), ('vagrant'), ('podman')],
+    [('docker'), ('openstack'), ('vagrant'), ('podman')],
     indirect=['driver_name'],
 )
 def test_command_init_scenario(temp_dir, driver_name, skip_test):
@@ -250,7 +241,6 @@ def test_command_init_scenario(temp_dir, driver_name, skip_test):
     'scenario_to_test, driver_name, scenario_name',
     [
         ('driver/docker', 'docker', 'default'),
-        ('driver/ec2', 'ec2', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
@@ -277,17 +267,6 @@ instance         docker         ansible             ansible-verifier  false     
 instance         docker         ansible             default           false      false
 instance-1       docker         ansible             multi-node        false      false
 instance-2       docker         ansible             multi-node        false      false
-""".strip(),
-        ),  # noqa
-        (
-            'driver/ec2',
-            'ec2',
-            """
-Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    Converged
----------------  -------------  ------------------  ---------------  ---------  -----------
-instance         ec2            ansible             default          false      false
-instance-1       ec2            ansible             multi-node       false      false
-instance-2       ec2            ansible             multi-node       false      false
 """.strip(),
         ),  # noqa
         (
@@ -354,15 +333,6 @@ instance-2  docker  ansible  multi-node        false  false
 """.strip(),
         ),
         (
-            'driver/ec2',
-            'ec2',
-            """
-instance    ec2  ansible  default     false  false
-instance-1  ec2  ansible  multi-node  false  false
-instance-2  ec2  ansible  multi-node  false  false
-""".strip(),
-        ),
-        (
             'driver/openstack',
             'openstack',
             """
@@ -415,12 +385,6 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario, expecte
             'multi-node',
         ),
         (
-            'driver/ec2',
-            'ec2',
-            [['instance-1', '.*ip-.*'], ['instance-2', '.*ip-.*']],
-            'multi-node',
-        ),
-        (
             'driver/openstack',
             'openstack',
             [['instance-1', '.*instance-1.*'], ['instance-2', '.*instance-2.*']],
@@ -455,7 +419,6 @@ def test_command_login(scenario_to_test, with_scenario, login_args, scenario_nam
     'scenario_to_test, driver_name, scenario_name',
     [
         ('driver/docker', 'docker', 'default'),
-        ('driver/ec2', 'ec2', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
@@ -477,7 +440,6 @@ def test_command_prepare(scenario_to_test, with_scenario, scenario_name):
     'scenario_to_test, driver_name, scenario_name',
     [
         ('driver/docker', 'docker', 'default'),
-        ('driver/ec2', 'ec2', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
@@ -495,7 +457,6 @@ def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
     'scenario_to_test, driver_name, scenario_name',
     [
         ('driver/docker', 'docker', 'default'),
-        ('driver/ec2', 'ec2', 'default'),
         ('driver/openstack', 'openstack', 'default'),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', 'default'),
@@ -515,7 +476,6 @@ def test_command_syntax(scenario_to_test, with_scenario, scenario_name):
         ('driver/docker', 'docker', 'default'),
         ('driver/docker', 'docker', 'ansible-verifier'),
         ('driver/docker', 'docker', 'multi-node'),
-        ('driver/ec2', 'ec2', None),
         ('driver/openstack', 'openstack', None),
         ('driver/delegated', 'delegated', 'docker'),
         ('driver/vagrant', 'vagrant', None),
