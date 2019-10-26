@@ -18,7 +18,7 @@ import sys
 
 import molecule
 
-import alabaster
+import sphinx_rtd_theme
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -40,7 +40,7 @@ extensions = [
     'sphinx.ext.extlinks',
     'sphinx.ext.intersphinx',
     'sphinx.ext.todo',
-    'alabaster',
+    'sphinx_rtd_theme',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -139,37 +139,25 @@ pygments_style = 'sphinx'
 todo_include_todos = True
 
 # List of warnings to suppress.
-suppress_warnings = ['image.nonlocal_uri']
+suppress_warnings = []
 
 # -- Options for HTML output ----------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 # html_theme_options = {}
 html_theme_options = {
-    'logo': 'logo.png',
-    'github_user': github_repo_org,
-    'github_repo': github_repo_name,
-    'github_button': True,
-    'github_banner': True,
-    'github_type': 'star',
-    'github_count': True,
-    'badge_branch': 'master',
-    'travis_button': True,
-    'codecov_button': True,
     'analytics_id': 'UA-128382387-1',
-    'show_powered_by': False,
-    'extra_nav_links': {'View on GitHub': github_repo_url},
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
 # html_theme_path = []
-html_theme_path = [alabaster.get_path()]
+html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -181,6 +169,7 @@ html_theme_path = [alabaster.get_path()]
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
 # html_logo = None
+html_logo = '_static/logo.png'
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
