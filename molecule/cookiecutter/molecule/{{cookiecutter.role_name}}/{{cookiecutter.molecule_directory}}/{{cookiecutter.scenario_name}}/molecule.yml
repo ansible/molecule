@@ -13,10 +13,6 @@ platforms:
 {%- if cookiecutter.driver_name == 'docker' %}
   - name: instance
     image: docker.io/centos:7
-{%- elif cookiecutter.driver_name == 'openstack' %}
-  - name: instance
-    image: Ubuntu-16.04
-    flavor: NO-Nano
 {%- elif cookiecutter.driver_name == 'podman' %}
   - name: instance
     image: docker.io/centos:7

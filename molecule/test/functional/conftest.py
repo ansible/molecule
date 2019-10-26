@@ -75,7 +75,6 @@ def skip_test(request, driver_name):
     support_checks_map = {
         'docker': supports_docker,
         'podman': lambda: min_ansible("2.8.6"),
-        'openstack': supports_openstack,
         'vagrant': supports_vagrant_virtualbox,
         'delegated': demands_delegated,
     }
@@ -279,18 +278,3 @@ def supports_vagrant_virtualbox():
 @pytest.helpers.register
 def demands_delegated():
     return pytest.config.getoption('--delegated')
-
-
-@pytest.helpers.register
-def supports_openstack():
-    pytest.importorskip('shade')  # Ansible provides no import
-
-    env_vars = (
-        'OS_AUTH_URL',
-        'OS_PASSWORD',
-        'OS_REGION_NAME',
-        'OS_USERNAME',
-        'OS_TENANT_NAME',
-    )
-
-    return _env_vars_exposed(env_vars)

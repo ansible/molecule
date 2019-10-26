@@ -1,12 +1,2 @@
 ---
 base_dir: /tmp
-
-openstack:
-  name: delegated-instance-openstack
-  key_name: molecule
-  key_path: "{{ base_dir }}/ssh-key-openstack"
-  ssh_config_path: "{{ base_dir }}/ssh-config-openstack"
-  ssh_user: cloud-user
-
-openstack_key_path: "{{ base_dir }}/ssh-key-openstack"
-openstack_ssh_config_path: "{{ base_dir }}/ssh-config-openstack"

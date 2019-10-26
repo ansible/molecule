@@ -5,5 +5,4 @@
   gather_facts: false
   tasks:
     - include: destroy/docker.yml
-    - include: destroy/openstack.yml
     # - include: create/vagrant.yml
