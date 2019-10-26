@@ -139,32 +139,6 @@ def test_execute_with_absent_custom_template(
     patched_logger_critical.assert_called_once()
 
 
-def test_execute_with_absent_driver_in_custom_template(
-    temp_dir, _command_args, custom_template_dir, patched_logger_warn
-):
-    _command_args['driver_name'] = 'ec2'
-    _command_args['driver_template'] = custom_template_dir
-
-    absent_driver_instance = scenario.Scenario(_command_args)
-    absent_driver_instance.execute()
-
-    patched_logger_warn.assert_called_once_with(
-        "Driver not found in custom template directory"
-        "({driver_template}/{driver_name}), "
-        "using the default template instead".format(**_command_args)
-    )
-
-    assert os.path.isdir('./molecule/test-scenario')
-    assert os.path.isdir('./molecule/test-scenario/tests')
-
-    install_file = os.path.join(
-        temp_dir.strpath, 'molecule', 'test-scenario', 'INSTALL.rst'
-    )
-    with open(install_file) as f:
-        content = f.read()
-        assert "Amazon Web Services driver installation guide" in content
-
-
 def test_execute_with_incorrect_template(
     temp_dir, invalid_template_dir, _command_args, patched_logger_critical
 ):

@@ -5,6 +5,5 @@
   gather_facts: false
   tasks:
     - include: create/docker.yml
-    - include: create/ec2.yml
     - include: create/openstack.yml
     # - include: create/vagrant.yml
