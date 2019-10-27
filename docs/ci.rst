@@ -63,7 +63,7 @@ A ``.travis.yml`` testing a role named foo1 with the Docker driver.
       - sudo apt-get -qq update
     install:
       - pip install molecule
-      # - pip install required driver (e.g. docker, python-vagrant, shade, boto, apache-libcloud)
+      # - pip install required driver (e.g. docker, shade, boto, apache-libcloud)
     script:
       - molecule test
 

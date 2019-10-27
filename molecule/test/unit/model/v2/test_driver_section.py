@@ -86,82 +86,6 @@ def test_driver_provider_name_nullable(_config):
 
 
 @pytest.fixture
-def _model_driver_provider_name_not_nullable_when_vagrant_section_data():
-    return {'driver': {'name': 'vagrant', 'provider': {'name': None}}}
-
-
-@pytest.mark.parametrize(
-    '_config',
-    ['_model_driver_provider_name_not_nullable_when_vagrant_section_data'],
-    indirect=True,
-)
-def test_driver_provider_name_not_nullable_when_vagrant_driver(_config):
-    x = {'driver': [{'provider': [{'name': ['null value not allowed']}]}]}
-
-    assert x == schema_v2.validate(_config)
-
-
-@pytest.fixture
-def _model_driver_provider_allows_virtualbox_section_data():
-    return {'driver': {'name': 'vagrant', 'provider': {'name': 'virtualbox'}}}
-
-
-@pytest.fixture
-def _model_driver_provider_allows_vmware_fusion_section_data():
-    return {'driver': {'name': 'vagrant', 'provider': {'name': 'vmware_fusion'}}}
-
-
-@pytest.fixture
-def _model_driver_provider_allows_vmware_workstation_section_data():
-    return {'driver': {'name': 'vagrant', 'provider': {'name': 'vmware_workstation'}}}
-
-
-@pytest.fixture
-def _model_driver_provider_allows_vmware_desktop_section_data():
-    return {'driver': {'name': 'vagrant', 'provider': {'name': 'vmware_desktop'}}}
-
-
-@pytest.fixture
-def _model_driver_provider_allows_parallels_section_data():
-    return {'driver': {'name': 'vagrant', 'provider': {'name': 'parallels'}}}
-
-
-@pytest.fixture
-def _model_driver_provider_allows_libvirt_section_data():
-    return {'driver': {'name': 'vagrant', 'provider': {'name': 'libvirt'}}}
-
-
-@pytest.mark.parametrize(
-    '_config',
-    [
-        ('_model_driver_provider_allows_virtualbox_section_data'),
-        ('_model_driver_provider_allows_vmware_fusion_section_data'),
-        ('_model_driver_provider_allows_vmware_workstation_section_data'),
-        ('_model_driver_provider_allows_vmware_desktop_section_data'),
-        ('_model_driver_provider_allows_parallels_section_data'),
-        ('_model_driver_provider_allows_libvirt_section_data'),
-    ],
-    indirect=True,
-)
-def test_driver_provider_allows_name(_config):
-    assert {} == schema_v2.validate(_config)
-
-
-@pytest.fixture
-def _model_driver_provider_errors_invalid_section_data():
-    return {'driver': {'name': 'vagrant', 'provider': {'name': str()}}}
-
-
-@pytest.mark.parametrize(
-    '_config', ['_model_driver_provider_errors_invalid_section_data'], indirect=True
-)
-def test_driver_invalid_provider_name_has_errors(_config):
-    x = {'driver': [{'provider': [{'name': ['unallowed value ']}]}]}
-
-    assert x == schema_v2.validate(_config)
-
-
-@pytest.fixture
 def _model_driver_allows_delegated_section_data():
     return {'driver': {'name': 'delegated'}}
 
@@ -171,18 +95,12 @@ def _model_driver_allows_docker_section_data():
     return {'driver': {'name': 'docker'}}
 
 
-@pytest.fixture
-def _model_driver_allows_vagrant_section_data():
-    return {'driver': {'name': 'vagrant'}}
-
-
 ###
 @pytest.mark.parametrize(
     '_config',
     [
         ('_model_driver_allows_delegated_section_data'),
         ('_model_driver_allows_docker_section_data'),
-        ('_model_driver_allows_vagrant_section_data'),
     ],
     indirect=True,
 )

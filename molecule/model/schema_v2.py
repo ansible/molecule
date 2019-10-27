@@ -302,61 +302,6 @@ base_schema = {
     },
 }
 
-driver_vagrant_provider_section_schema = {
-    'driver': {
-        'type': 'dict',
-        'schema': {
-            'name': {'type': 'string'},
-            'provider': {
-                'type': 'dict',
-                'schema': {
-                    'name': {
-                        'type': 'string',
-                        'nullable': False,
-                        'allowed': [
-                            'virtualbox',
-                            'vmware_fusion',
-                            'vmware_workstation',
-                            'vmware_desktop',
-                            'parallels',
-                            'libvirt',
-                        ],
-                    }
-                },
-            },
-        },
-    }
-}
-
-platforms_vagrant_schema = {
-    'platforms': {
-        'type': 'list',
-        'schema': {
-            'type': 'dict',
-            'schema': {
-                'name': {'type': 'string'},
-                'interfaces': {'type': 'list', 'schema': {'type': 'dict'}},
-                'instance_raw_config_args': {
-                    'type': 'list',
-                    'schema': {'type': 'string'},
-                },
-                'config_options': {'type': 'dict'},
-                'box': {'type': 'string'},
-                'box_version': {'type': 'string'},
-                'box_url': {'type': 'string'},
-                'memory': {'type': 'integer'},
-                'cpus': {'type': 'integer'},
-                'provider_options': {'type': 'dict'},
-                'provider_raw_config_args': {
-                    'type': 'list',
-                    'schema': {'type': 'string'},
-                },
-                'provision': {'type': 'boolean'},
-            },
-        },
-    }
-}
-
 platforms_docker_schema = {
     'platforms': {
         'type': 'list',
@@ -573,9 +518,6 @@ def validate(c):
         util.merge_dicts(schema, platforms_docker_schema)
     elif c['driver']['name'] == 'podman':
         util.merge_dicts(schema, platforms_podman_schema)
-    elif c['driver']['name'] == 'vagrant':
-        util.merge_dicts(schema, driver_vagrant_provider_section_schema)
-        util.merge_dicts(schema, platforms_vagrant_schema)
 
     # Verifier
     util.merge_dicts(schema, api.verifiers()[c['verifier']['name']].schema())

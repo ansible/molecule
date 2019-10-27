@@ -80,7 +80,7 @@ class Ansible(base.Base):
           name: ansible
           log: True
 
-    The create/destroy playbooks for Docker and Vagrant are bundled with
+    The create/destroy playbooks for Docker and Podman are bundled with
     Molecule.  These playbooks have a clean API from `molecule.yml`, and
     are the most commonly used.  The bundled playbooks can still be overridden.
 

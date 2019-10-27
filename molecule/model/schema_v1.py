@@ -38,52 +38,6 @@ base_schema = {
         },
     },
     'driver': {'type': 'dict', 'schema': {'name': {'type': 'string'}}},
-    'vagrant': {
-        'type': 'dict',
-        'schema': {
-            'platforms': {
-                'type': 'list',
-                'schema': {
-                    'type': 'dict',
-                    'schema': {
-                        'name': {'type': 'string'},
-                        'box': {'type': 'string'},
-                        'box_version': {'type': 'string'},
-                        'box_url': {'type': 'string'},
-                    },
-                },
-            },
-            'providers': {
-                'type': 'list',
-                'schema': {
-                    'type': 'dict',
-                    'schema': {
-                        'name': {'type': 'string'},
-                        'type': {'type': 'string'},
-                        'options': {'type': 'dict'},
-                    },
-                },
-            },
-            'instances': {
-                'type': 'list',
-                'schema': {
-                    'type': 'dict',
-                    'schema': {
-                        'name': {'type': 'string'},
-                        'ansible_groups': {
-                            'type': 'list',
-                            'schema': {'type': 'string'},
-                        },
-                        'interfaces': {'type': 'list', 'schema': {'type': 'dict'}},
-                        'raw_config_args': {
-                            'type': 'list',
-                            'schema': {'type': 'string'},
-                        },
-                    },
-                },
-            },
-        },
-    },
     'verifier': {
         'type': 'dict',
         'schema': {'name': {'type': 'string'}, 'options': {'type': 'dict'}},

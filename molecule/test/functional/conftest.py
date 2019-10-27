@@ -75,7 +75,6 @@ def skip_test(request, driver_name):
     support_checks_map = {
         'docker': supports_docker,
         'podman': lambda: min_ansible("2.8.6"),
-        'vagrant': supports_vagrant_virtualbox,
         'delegated': demands_delegated,
     }
     try:
@@ -244,10 +243,6 @@ def get_docker_executable():
     return distutils.spawn.find_executable('docker')
 
 
-def get_vagrant_executable():
-    return distutils.spawn.find_executable('vagrant')
-
-
 def get_virtualbox_executable():
     return distutils.spawn.find_executable('VBoxManage')
 
@@ -268,11 +263,6 @@ def min_ansible(version):
     except ImportError as exception:
         LOG.error('Unable to parse Ansible version', exc_info=exception)
         return False
-
-
-@pytest.helpers.register
-def supports_vagrant_virtualbox():
-    return get_vagrant_executable() or get_virtualbox_executable()
 
 
 @pytest.helpers.register

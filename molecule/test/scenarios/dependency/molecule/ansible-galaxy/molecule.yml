@@ -3,11 +3,6 @@ dependency:
   name: galaxy
 driver:
   name: docker
-  # NOTE(retr0h): Required for functional tests, since
-  # execute this as all drivers, and the schema validator
-  # requires this for `vagrant`.
-  provider:
-    name: virtualbox
 lint:
   name: yamllint
   options:

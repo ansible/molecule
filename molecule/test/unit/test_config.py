@@ -122,11 +122,6 @@ def _config_driver_delegated_section_data():
     return {'driver': {'name': 'delegated', 'options': {'managed': False}}}
 
 
-@pytest.fixture
-def _config_driver_vagrant_section_data():
-    return {'driver': {'name': 'vagrant', 'provider': {'name': 'virtualbox'}}}
-
-
 def test_env(config_instance):
     config_instance.args = {'env_file': '.env'}
     x = {
