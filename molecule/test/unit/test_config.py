@@ -123,11 +123,6 @@ def _config_driver_delegated_section_data():
 
 
 @pytest.fixture
-def _config_driver_openstack_section_data():
-    return {'driver': {'name': 'openstack'}}
-
-
-@pytest.fixture
 def _config_driver_vagrant_section_data():
     return {'driver': {'name': 'vagrant', 'provider': {'name': 'virtualbox'}}}
 

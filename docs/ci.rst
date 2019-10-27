@@ -286,9 +286,6 @@ we export a ``TOX_ENVNAME`` environment variable, it's the name of our tox env.
         TOX_ENVNAME={envname}
         MOLECULE_EPHEMERAL_DIRECTORY=/tmp/{envname}
 
-If you are utilizing the Openstack driver you will have to make sure that your
-``envname`` variable does not contain any invalid characters, particularly
-``-``.
 
 You also must include the ``TOX_ENVNAME`` variable in name of each platform in
 ``molecule.yml`` configuration file. This way, ther names won't create any

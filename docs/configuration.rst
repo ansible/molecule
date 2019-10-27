@@ -75,11 +75,6 @@ Docker
 .. autoclass:: molecule.driver.docker.Docker()
    :undoc-members:
 
-Openstack
-^^^^^^^^^
-
-.. autoclass:: molecule.driver.openstack.Openstack()
-   :undoc-members:
 
 Podman
 ^^^^^^
