@@ -1,6 +1,6 @@
-********
-Molecule
-********
+****************
+Ansible Molecule
+****************
 
 .. image:: https://badge.fury.io/py/molecule.svg
    :target: https://badge.fury.io/py/molecule
@@ -28,6 +28,9 @@ Molecule
 .. image:: https://img.shields.io/badge/license-MIT-brightgreen.svg
    :target: LICENSE
    :alt: Repository License
+
+About Ansible Molecule
+======================
 
 Molecule is designed to aid in the development and testing of
 `Ansible`_ roles.

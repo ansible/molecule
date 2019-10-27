@@ -1,5 +1,5 @@
-Usage
-=====
+Command Line Reference
+======================
 
 Check
 ^^^^^
