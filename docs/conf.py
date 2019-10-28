@@ -151,7 +151,12 @@ html_theme = 'sphinx_rtd_theme'
 # further.  For a list of options available for each theme, see the
 # documentation.
 # html_theme_options = {}
-html_theme_options = {'analytics_id': 'UA-128382387-1'}
+html_theme_options = {
+    'collapse_navigation': False,
+    'analytics_id': 'UA-128382387-1',
+    'style_nav_header_background': 'white',
+    'style_external_links': True,
+}
 
 # Add any paths that contain custom themes here, relative to this directory.
 # html_theme_path = []

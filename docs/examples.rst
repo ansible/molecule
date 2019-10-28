@@ -1,6 +1,6 @@
-********
-Examples
-********
+*************************
+Common Molecule Use Cases
+*************************
 
 .. _docker-usage-example:
 
