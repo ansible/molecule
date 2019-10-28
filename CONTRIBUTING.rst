@@ -80,7 +80,7 @@ Contribution Guidelines
 * Check for unnecessary whitespace with ``git diff --check`` before committing.
   Please see `formatting`_ and `linting`_ documentation for further commands.
 * Make sure you have added tests for your changes.
-* You must use ``git commit --signoff`` for any commit to be merged, and agree
+* Although not required, it is good to sign off commits using ``git commit --signoff``, and agree
   that usage of ``--signoff`` constitutes agreement with the terms of `DCO 1.1`_.
 
 * Run all the tests to ensure nothing else was accidentally broken.
