@@ -78,21 +78,7 @@ def test_valid(temp_dir, _molecule_file, _role_directory, _command_args, _instan
     pytest.helpers.run_command(cmd)
 
 
-def test_vagrant_driver(
-    temp_dir, _molecule_file, _role_directory, _command_args, _instance
-):
-    _command_args['driver_name'] = 'vagrant'
-    _instance._process_templates('molecule', _command_args, _role_directory)
-
-    data = util.safe_load_file(_molecule_file)
-
-    assert {} == schema_v2.validate(data)
-
-    cmd = sh.yamllint.bake('-s', _molecule_file)
-    pytest.helpers.run_command(cmd)
-
-
-@pytest.mark.parametrize('driver', [('docker'), ('vagrant')])
+@pytest.mark.parametrize('driver', [('docker')])
 def test_drivers(
     driver, temp_dir, _molecule_file, _role_directory, _command_args, _instance
 ):

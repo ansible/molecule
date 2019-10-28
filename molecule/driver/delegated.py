@@ -109,7 +109,7 @@ class Delegated(Driver):
               ansible_connection: ssh
               ansible_ssh_common_args: '-F /path/to/ssh-config'
         platforms:
-          - name: instance-vagrant
+          - name: instance
 
     Provide the files Molecule will preserve post ``destroy`` action.
 

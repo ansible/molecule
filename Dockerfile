@@ -51,7 +51,7 @@ ENV PACKAGES="\
     "
 RUN apk add --update --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ ${PACKAGES}
 
-ENV MOLECULE_EXTRAS="azure,docker,docs,vagrant,windows"
+ENV MOLECULE_EXTRAS="docker,docs,windows"
 
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=917006
 RUN pip3 install -U wheel
@@ -132,7 +132,7 @@ ENV GEM_PACKAGES="\
     etc \
     "
 
-ENV MOLECULE_EXTRAS="azure,docker,docs,lxc,vagrant,windows"
+ENV MOLECULE_EXTRAS="docker,docs,windows"
 
 RUN \
     apk add --update --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ ${BUILD_DEPS} ${PACKAGES} \

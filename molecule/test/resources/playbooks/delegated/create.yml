@@ -5,4 +5,3 @@
   gather_facts: false
   tasks:
     - include: create/docker.yml
-    # - include: create/vagrant.yml

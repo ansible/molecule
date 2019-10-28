@@ -2,10 +2,7 @@
 dependency:
   name: galaxy
 driver:
-  # NOTE(retr0h): Functional test overrides this on command line.
-  name: vagrant
-  provider:
-    name: virtualbox
+  name: delegated
 lint:
   name: yamllint
   options:
