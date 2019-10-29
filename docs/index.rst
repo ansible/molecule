@@ -1,15 +1,14 @@
 .. include:: ../README.rst
   :end-before: _documentation
 
-Installation, Upgrade & Porting
-===============================
+Installation and Upgrade
+========================
 
 .. toctree::
    :maxdepth: 1
 
    Installation Guide <installation>
    Upgrade Guide <upgrade>
-   Porting Guide <porting>
 
 Using Molecule
 ==============
