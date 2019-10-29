@@ -155,7 +155,7 @@ def _default_scenario_exists(ctx, param, value):  # pragma: no cover
 @click.option(
     '--driver-name',
     '-d',
-    type=click.Choice(api.drivers()),
+    type=click.Choice([str(s) for s in api.drivers()]),
     default='docker',
     help='Name of driver to initialize. (docker)',
 )
