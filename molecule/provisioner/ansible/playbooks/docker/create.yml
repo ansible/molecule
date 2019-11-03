@@ -77,6 +77,7 @@
           dockerfile: "{{ item.invocation.module_args.dest }}"
           pull: "{{ item.item.pull | default(true) }}"
           network: "{{ item.item.network_mode | default(omit) }}"
+          args: "{{ item.item.buildargs | default(omit) }}"
         name: "molecule_local/{{ item.item.image }}"
         docker_host: "{{ item.item.docker_host | default(lookup('env', 'DOCKER_HOST') or 'unix://var/run/docker.sock') }}"
         cacert_path: "{{ item.cacert_path | default((lookup('env', 'DOCKER_CERT_PATH') + '/ca.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
@@ -85,7 +86,6 @@
         tls_verify: "{{ item.tls_verify | default(lookup('env', 'DOCKER_TLS_VERIFY')) or false }}"
         force_source: "{{ item.item.force | default(true) }}"
         source: build
-        buildargs: "{{ item.item.buildargs | default(omit) }}"
       with_items: "{{ platforms.results }}"
       loop_control:
         label: "molecule_local/{{ item.item.image }}"
