@@ -24,7 +24,7 @@ basics of how to use Molecule and what it can offer.
 Creating a new role
 -------------------
 
-Molecule uses :std:doc:`reference_appendices/galaxy` under the hood to
+Molecule uses :std:doc:`galaxy <galaxy/dev_guide>` under the hood to
 generate conventional role layouts. If you've ever worked with Ansible roles
 before, you'll be right at home. If not, please review the
 :std:doc:`user_guide/playbooks_reuse_roles` guide to see what each folder is
@@ -97,7 +97,7 @@ The ``molecule.yml`` is for configuring Molecule. It is a `YAML`_ file whose
 keys represent the high level components that Molecule provides. These are:
 
 * The :ref:`dependency` manager. Molecule uses
-  :std:doc:`reference_appendices/galaxy` by default to resolve your role
+  std:doc:`galaxy <galaxy/dev_guide>` by default to resolve your role
   dependencies.
 
 * The :ref:`driver` provider. Molecule uses `Docker`_ by default. Molecule uses

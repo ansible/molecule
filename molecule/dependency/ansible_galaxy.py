@@ -31,7 +31,7 @@ LOG = logger.get_logger(__name__)
 
 class AnsibleGalaxy(base.Base):
     """
-    `Ansible Galaxy`_ is the default dependency manager.
+    :std:doc:`Galaxy <galaxy/user_guide>` is the default dependency manager.
 
     Additional options can be passed to ``ansible-galaxy install`` through the
     options dict.  Any option set in this section will override the defaults.
@@ -68,9 +68,6 @@ class AnsibleGalaxy(base.Base):
           name: galaxy
           env:
             FOO: bar
-
-    .. _`Ansible Galaxy`: https://docs.ansible.com/ansible/latest/\
-                          reference_appendices/galaxy.html
     """
 
     def __init__(self, config):
