@@ -43,9 +43,7 @@ def from_yaml(data):
     i = interpolation.Interpolator(interpolation.TemplateWithDefaults, env)
     interpolated_data = i.interpolate(data)
 
-    loaded_data = util.safe_load(interpolated_data)
-    loaded_data = _parallelize_config(loaded_data)
-    return loaded_data
+    return util.safe_load(interpolated_data)
 
 
 def to_yaml(data):
@@ -65,15 +63,6 @@ def get_docker_networks(data):
                     name = network['name']
                     network_list.append(name)
     return network_list
-
-
-def _parallelize_config(data):
-    if 'platforms' not in data:
-        return data
-    state = util.safe_load_file(os.environ['MOLECULE_STATE_FILE'])
-    if state.get('is_parallel', False):
-        data['platforms'] = util._parallelize_platforms(data, state['run_uuid'])
-    return data
 
 
 class FilterModule(object):
