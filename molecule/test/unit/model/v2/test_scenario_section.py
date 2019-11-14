@@ -20,7 +20,7 @@
 
 import pytest
 
-from molecule.model import schema_v2
+from molecule.model import schema_v3
 
 
 @pytest.fixture
@@ -39,7 +39,7 @@ def _model_scenario_section_data():
 
 @pytest.mark.parametrize('_config', ['_model_scenario_section_data'], indirect=True)
 def test_scenario(_config):
-    assert {} == schema_v2.validate(_config)
+    assert {} == schema_v3.validate(_config)
 
 
 @pytest.fixture
@@ -73,4 +73,4 @@ def test_scenario_has_errors(_config):
         ]
     }
 
-    assert x == schema_v2.validate(_config)
+    assert x == schema_v3.validate(_config)

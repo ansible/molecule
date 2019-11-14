@@ -40,8 +40,6 @@ class Ansible(Verifier):
 
         verifier:
           name: ansible
-          lint:
-            name: ansible-lint
 
     The testing can be disabled by setting ``enabled`` to False.
 
@@ -92,14 +90,6 @@ class Ansible(Verifier):
         return {
             'verifier': {
                 'type': 'dict',
-                'schema': {
-                    'name': {'type': 'string', 'allowed': ['ansible']},
-                    'lint': {
-                        'type': 'dict',
-                        'schema': {
-                            'name': {'type': 'string', 'allowed': ['ansible-lint']}
-                        },
-                    },
-                },
+                'schema': {'name': {'type': 'string', 'allowed': ['ansible']}},
             }
         }

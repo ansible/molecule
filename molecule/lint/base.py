@@ -72,18 +72,16 @@ class Base(object):
 
         :returns: str
         """
-        return self._config.config['lint']['name']
+        return self._config.config['lint']
 
     @property
     def enabled(self):
-        return self._config.config['lint']['enabled']
+        return self._config.config['lint']
 
     @property
     def options(self):
-        return util.merge_dicts(
-            self.default_options, self._config.config['lint']['options']
-        )
+        return self.default_options
 
     @property
     def env(self):
-        return util.merge_dicts(self.default_env, self._config.config['lint']['env'])
+        return util.merge_dicts(self.default_env)

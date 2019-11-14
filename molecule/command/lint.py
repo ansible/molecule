@@ -23,13 +23,19 @@ import click
 
 from molecule import logger
 from molecule.command import base
+from molecule import util
+
 
 LOG = logger.get_logger(__name__)
 
 
 class Lint(base.Base):
     """
-    Lint Command Class.
+    Lint command executes external linters.
+
+    You need to remember to install those linters. For convenience, there is a
+    package extra that installs the most common ones, use it like
+    ``pip install "molecule[lint]"``.
 
     .. program:: molecule lint
 
@@ -71,18 +77,25 @@ class Lint(base.Base):
         :return: None
         """
         self.print_info()
-        linters = [
-            l
-            for l in [
-                self._config.lint,
-                self._config.verifier.lint,
-                self._config.provisioner.lint,
-            ]
-            if l
-        ]
 
-        for l in linters:
-            l.execute()
+        # v3 migration code:
+        cmd = self._config.lint
+        if not cmd:
+            LOG.info("Lint is disabled.")
+            return
+
+        if cmd == 'yamllint':
+            msg = (
+                "Deprecated linter config found, migrate to v3 schema. "
+                "See https://github.com/ansible-community/molecule/issues/2293"
+            )
+            util.sysexit_with_message(msg)
+
+        try:
+            LOG.info("Executing: %s" % cmd)
+            util.run(cmd, shell=True, universal_newlines=True, check=True)
+        except Exception as e:
+            util.sysexit_with_message("Lint failed: %s: %s" % (e, e))
 
 
 @base.click_command_ex()

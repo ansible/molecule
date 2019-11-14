@@ -103,9 +103,8 @@ keys represent the high level components that Molecule provides. These are:
 * The :ref:`driver` provider. Molecule uses `Docker`_ by default. Molecule uses
   the driver to delegate the task of creating instances.
 
-* The :ref:`linters` provider. Molecule uses :std:doc:`Yamllint
-  <yamllint:index>` by default to ensure that best practices are encouraged
-  when writing YAML.
+* The :ref:`lint` command. Molecule can call external commands to ensure
+  that best practices are encouraged.
 
 * The :ref:`platforms` definitions. Molecule relies on this to know which
   instances to create, name and to which group each instance belongs. If you

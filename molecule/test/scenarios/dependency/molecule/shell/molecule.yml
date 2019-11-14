@@ -4,10 +4,6 @@ dependency:
   command: $MOLECULE_SCENARIO_DIRECTORY/run.bash
 driver:
   name: docker
-lint:
-  name: yamllint
-  options:
-    config-file: ../../resources/.yamllint
 platforms:
   - name: instance
     image: ${TEST_BASE_IMAGE}
@@ -21,11 +17,7 @@ provisioner:
   playbooks:
     create: ../../../../resources/playbooks/docker/create.yml
     destroy: ../../../../resources/playbooks/docker/destroy.yml
-  lint:
-    name: ansible-lint
 scenario:
   name: shell
 verifier:
   name: testinfra
-  lint:
-    name: flake8

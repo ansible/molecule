@@ -281,8 +281,6 @@ lives in a shared location and ``molecule.yml`` is points to the shared tests.
     verifier:
     name: testinfra
     directory: ../resources/tests/
-    lint:
-      name: flake8
 
 .. _parallel-usage-example:
 

@@ -20,7 +20,7 @@
 
 import pytest
 
-from molecule.model import schema_v2
+from molecule.model import schema_v3
 
 
 @pytest.fixture
@@ -38,7 +38,7 @@ def _model_driver_section_data():
 
 @pytest.mark.parametrize('_config', ['_model_driver_section_data'], indirect=True)
 def test_driver(_config):
-    assert {} == schema_v2.validate(_config)
+    assert {} == schema_v3.validate(_config)
 
 
 @pytest.fixture
@@ -70,7 +70,7 @@ def test_driver_has_errors(_config):
         ]
     }
 
-    assert x == schema_v2.validate(_config)
+    assert x == schema_v3.validate(_config)
 
 
 @pytest.fixture
@@ -82,7 +82,7 @@ def _model_driver_provider_name_nullable_section_data():
     '_config', ['_model_driver_provider_name_nullable_section_data'], indirect=True
 )
 def test_driver_provider_name_nullable(_config):
-    assert {} == schema_v2.validate(_config)
+    assert {} == schema_v3.validate(_config)
 
 
 @pytest.fixture
@@ -105,4 +105,4 @@ def _model_driver_allows_docker_section_data():
     indirect=True,
 )
 def test_driver_allows_name(_config):
-    assert {} == schema_v2.validate(_config)
+    assert {} == schema_v3.validate(_config)

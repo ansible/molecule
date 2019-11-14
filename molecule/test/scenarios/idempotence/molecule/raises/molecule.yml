@@ -3,10 +3,6 @@ dependency:
   name: galaxy
 driver:
   name: docker
-lint:
-  name: yamllint
-  options:
-    config-file: ../../resources/.yamllint
 platforms:
   - name: instance
     image: ${TEST_BASE_IMAGE}
@@ -18,12 +14,9 @@ provisioner:
   playbooks:
     create: ../../../../resources/playbooks/docker/create.yml
     destroy: ../../../../resources/playbooks/docker/destroy.yml
-  lint:
-    name: ansible-lint
-# commented on purpose to validate that molecule will inherit it from parent folder name:
+# commented on purpose to validate that molecule will inherit it from
+# parent folder name:
 # scenario:
 #   name: raises
 verifier:
   name: testinfra
-  lint:
-    name: flake8

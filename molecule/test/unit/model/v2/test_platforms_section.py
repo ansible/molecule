@@ -20,7 +20,7 @@
 
 import pytest
 
-from molecule.model import schema_v2
+from molecule.model import schema_v3
 
 
 @pytest.fixture
@@ -83,7 +83,7 @@ def _model_platforms_docker_section_data():
     '_config', ['_model_platforms_docker_section_data'], indirect=True
 )
 def test_platforms_docker(_config):
-    assert {} == schema_v2.validate(_config)
+    assert {} == schema_v3.validate(_config)
 
 
 @pytest.mark.parametrize(
@@ -102,7 +102,7 @@ def test_platforms_unique_names(_config):
         ]
     }
 
-    assert expected_validation_errors == schema_v2.validate(_config)
+    assert expected_validation_errors == schema_v3.validate(_config)
 
 
 @pytest.mark.parametrize(
@@ -110,7 +110,7 @@ def test_platforms_unique_names(_config):
 )
 def test_platforms_docker_exposed_ports_coerced(_config):
     _config['platforms'][0]['exposed_ports'] = [9904]
-    assert {} == schema_v2.validate(_config)
+    assert {} == schema_v3.validate(_config)
 
 
 @pytest.fixture
@@ -225,14 +225,14 @@ def test_platforms_docker_has_errors(_config):
         ]
     }
 
-    assert x == schema_v2.validate(_config)
+    assert x == schema_v3.validate(_config)
 
 
 def test_platforms_driver_name_required(_config):
     del _config['platforms'][0]['name']
     x = {'platforms': [{0: [{'name': ['required field']}]}]}
 
-    assert x == schema_v2.validate(_config)
+    assert x == schema_v3.validate(_config)
 
 
 @pytest.mark.parametrize(
@@ -261,4 +261,4 @@ def test_platforms_env_should_refuse_keys_with_special_char(_config):
         ]
     }
 
-    assert x == schema_v2.validate(_config)
+    assert x == schema_v3.validate(_config)

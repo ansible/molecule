@@ -64,16 +64,7 @@ def pre_validate_base_schema(env, keep_string):
                 }
             },
         },
-        'lint': {
-            'type': 'dict',
-            'schema': {
-                'name': {
-                    'type': 'string',
-                    'molecule_env_var': True,
-                    'allowed': ['yamllint'],
-                }
-            },
-        },
+        'lint': {'type': 'string'},
         'platforms': {
             'type': 'list',
             'schema': {
@@ -99,16 +90,6 @@ def pre_validate_base_schema(env, keep_string):
                     'molecule_env_var': True,
                     'allowed': ['ansible'],
                 },
-                'lint': {
-                    'type': 'dict',
-                    'schema': {
-                        'name': {
-                            'type': 'string',
-                            'molecule_env_var': True,
-                            'allowed': ['ansible-lint'],
-                        }
-                    },
-                },
             },
         },
         'scenario': {
@@ -122,22 +103,6 @@ def pre_validate_base_schema(env, keep_string):
                     'type': 'string',
                     'molecule_env_var': True,
                     'allowed': api.verifiers(),
-                },
-                'lint': {
-                    'type': 'dict',
-                    'schema': {
-                        'name': {
-                            'type': 'string',
-                            'molecule_env_var': True,
-                            'allowed': [
-                                'flake8',
-                                'pre-commit',
-                                'rubocop',
-                                'yamllint',
-                                'ansible-lint',
-                            ],
-                        }
-                    },
                 },
             },
         },
@@ -171,18 +136,7 @@ base_schema = {
             'safe_files': {'type': 'list', 'schema': {'type': 'string'}},
         },
     },
-    'lint': {
-        'type': 'dict',
-        'schema': {
-            'name': {'type': 'string'},
-            'enabled': {'type': 'boolean'},
-            'options': {'type': 'dict'},
-            'env': {
-                'type': 'dict',
-                'keysrules': {'type': 'string', 'regex': '^[A-Z0-9_-]+$'},
-            },
-        },
-    },
+    'lint': {'type': 'string'},
     'platforms': {
         'type': 'list',
         'schema': {
@@ -251,18 +205,6 @@ base_schema = {
                     'verify': {'type': 'string'},
                 },
             },
-            'lint': {
-                'type': 'dict',
-                'schema': {
-                    'name': {'type': 'string'},
-                    'enabled': {'type': 'boolean'},
-                    'options': {'type': 'dict'},
-                    'env': {
-                        'type': 'dict',
-                        'keysrules': {'type': 'string', 'regex': '^[A-Z0-9_-]+$'},
-                    },
-                },
-            },
         },
     },
     'scenario': {
@@ -288,18 +230,6 @@ base_schema = {
             },
             'directory': {'type': 'string'},
             'additional_files_or_dirs': {'type': 'list', 'schema': {'type': 'string'}},
-            'lint': {
-                'type': 'dict',
-                'schema': {
-                    'name': {'type': 'string'},
-                    'enabled': {'type': 'boolean'},
-                    'options': {'type': 'dict'},
-                    'env': {
-                        'type': 'dict',
-                        'keysrules': {'type': 'string', 'regex': '^[A-Z0-9_-]+$'},
-                    },
-                },
-            },
         },
     },
 }

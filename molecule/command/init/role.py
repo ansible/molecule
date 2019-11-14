@@ -152,7 +152,5 @@ def role(
         'verifier_name': verifier_name,
     }
 
-    command_args['verifier_lint_name'] = api.verifiers()[verifier_name].default_linter
-
     r = Role(command_args)
     r.execute()

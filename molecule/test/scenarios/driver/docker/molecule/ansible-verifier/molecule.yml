@@ -3,10 +3,6 @@ dependency:
   name: galaxy
 driver:
   name: docker
-lint:
-  name: yamllint
-  options:
-    config-file: ../../../resources/.yamllint
 platforms:
   - name: instance
     image: ${TEST_BASE_IMAGE}
@@ -21,11 +17,7 @@ provisioner:
     destroy: ../../../../../resources/playbooks/docker/destroy.yml
   env:
     ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
-  lint:
-    name: ansible-lint
 scenario:
   name: ansible-verifier
 verifier:
   name: ansible
-  lint:
-    name: ansible-lint
