@@ -4,7 +4,6 @@ import pytest
 
 from molecule import config
 from molecule.verifier import ansible
-from molecule.verifier.lint import ansible_lint
 
 
 @pytest.fixture
@@ -52,11 +51,6 @@ def test_default_env_property(_instance):
 @pytest.mark.parametrize('config_instance', ['_verifier_section_data'], indirect=True)
 def test_env_property(_instance):
     assert 'bar' == _instance.env['FOO']
-
-
-@pytest.mark.parametrize('config_instance', ['_verifier_section_data'], indirect=True)
-def test_lint_property(_instance):
-    assert isinstance(_instance.lint, ansible_lint.AnsibleLint)
 
 
 def test_name_property(_instance):

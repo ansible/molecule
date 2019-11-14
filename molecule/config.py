@@ -34,7 +34,6 @@ from molecule import util
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
 from molecule.dependency import shell
-from molecule.lint import yamllint
 from molecule.model import schema_v2
 from molecule.provisioner import ansible
 
@@ -176,12 +175,10 @@ class Config(object):
             'MOLECULE_INSTANCE_CONFIG': self.driver.instance_config,
             'MOLECULE_DEPENDENCY_NAME': self.dependency.name,
             'MOLECULE_DRIVER_NAME': self.driver.name,
-            'MOLECULE_LINT_NAME': self.lint.name,
+            'MOLECULE_LINT_NAME': self.lint,
             'MOLECULE_PROVISIONER_NAME': self.provisioner.name,
-            'MOLECULE_PROVISIONER_LINT_NAME': self.provisioner.lint.name,
             'MOLECULE_SCENARIO_NAME': self.scenario.name,
             'MOLECULE_VERIFIER_NAME': self.verifier.name,
-            'MOLECULE_VERIFIER_LINT_NAME': self.verifier.lint.name,
             'MOLECULE_VERIFIER_TEST_DIRECTORY': self.verifier.directory,
         }
 
@@ -189,8 +186,7 @@ class Config(object):
     @util.lru_cache()
     def lint(self):
         lint_name = self.config['lint']['name']
-        if lint_name == 'yamllint':
-            return yamllint.Yamllint(self)
+        return lint_name
 
     @property
     @util.lru_cache()
@@ -405,7 +401,6 @@ class Config(object):
                 'options': {},
                 'env': {},
                 'additional_files_or_dirs': [],
-                'lint': {'name': 'flake8', 'enabled': True, 'options': {}, 'env': {}},
             },
         }
 

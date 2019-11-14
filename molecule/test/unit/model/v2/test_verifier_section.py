@@ -33,12 +33,6 @@ def _model_verifier_section_data():
             'options': {'foo': 'bar'},
             'env': {'FOO': 'foo', 'FOO_BAR': 'foo_bar'},
             'additional_files_or_dirs': ['foo'],
-            'lint': {
-                'name': 'flake8',
-                'enabled': True,
-                'options': {'foo': 'bar'},
-                'env': {'FOO': 'foo', 'FOO_BAR': 'foo_bar'},
-            },
         }
     }
 
@@ -58,12 +52,6 @@ def _model_verifier_errors_section_data():
             'options': [],
             'env': {'foo': 'foo', 'foo-bar': 'foo-bar'},
             'additional_files_or_dirs': [int()],
-            'lint': {
-                'name': int(),
-                'enabled': str(),
-                'options': [],
-                'env': {'foo': 'foo', 'foo-bar': 'foo-bar'},
-            },
         }
     }
 
@@ -76,21 +64,6 @@ def test_verifier_has_errors(_config):
         'verifier': [
             {
                 'name': ['must be of string type'],
-                'lint': [
-                    {
-                        'enabled': ['must be of boolean type'],
-                        'name': ['must be of string type'],
-                        'env': [
-                            {
-                                'foo': ["value does not match regex '^[A-Z0-9_-]+$'"],
-                                'foo-bar': [
-                                    "value does not match regex '^[A-Z0-9_-]+$'"
-                                ],
-                            }
-                        ],
-                        'options': ['must be of dict type'],
-                    }
-                ],
                 'enabled': ['must be of boolean type'],
                 'env': [
                     {
@@ -110,12 +83,12 @@ def test_verifier_has_errors(_config):
 
 @pytest.fixture
 def _model_verifier_allows_testinfra_section_data():
-    return {'verifier': {'name': 'testinfra', 'lint': {'name': 'flake8'}}}
+    return {'verifier': {'name': 'testinfra'}}
 
 
 @pytest.fixture
 def _model_verifier_allows_ansible_section_data():
-    return {'verifier': {'name': 'ansible', 'lint': {'name': 'ansible-lint'}}}
+    return {'verifier': {'name': 'ansible'}}
 
 
 @pytest.mark.parametrize(

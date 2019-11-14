@@ -68,18 +68,7 @@ class Lint(base.Base):
         :return: None
         """
         self.print_info()
-        linters = [
-            l
-            for l in [
-                self._config.lint,
-                self._config.verifier.lint,
-                self._config.provisioner.lint,
-            ]
-            if l
-        ]
-
-        for l in linters:
-            l.execute()
+        # TODO: run linter
 
 
 @click.command()

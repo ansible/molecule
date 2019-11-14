@@ -26,7 +26,6 @@ import sh
 from molecule import config
 from molecule import util
 from molecule.verifier import testinfra
-from molecule.verifier.lint import flake8
 
 
 @pytest.fixture
@@ -45,7 +44,6 @@ def _verifier_section_data():
             'options': {'foo': 'bar', 'v': True, 'verbose': True},
             'additional_files_or_dirs': ['file1.py', 'file2.py', 'match*.py', 'dir/*'],
             'env': {'FOO': 'bar'},
-            'lint': {'name': 'flake8'},
         }
     }
 
@@ -137,10 +135,6 @@ def test_env_property(_instance):
     assert 'ANSIBLE_ROLES_PATH' in _instance.env
     assert 'ANSIBLE_LIBRARY' in _instance.env
     assert 'ANSIBLE_FILTER_PLUGINS' in _instance.env
-
-
-def test_lint_property(_instance):
-    assert isinstance(_instance.lint, flake8.Flake8)
 
 
 def test_name_property(_instance):

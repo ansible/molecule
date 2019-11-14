@@ -24,11 +24,6 @@ import abc
 import molecule
 
 from molecule import util
-from molecule.verifier.lint import flake8
-from molecule.verifier.lint import precommit
-from molecule.verifier.lint import rubocop
-from molecule.verifier.lint import yamllint
-from molecule.verifier.lint import ansible_lint
 
 
 class Verifier(object):
@@ -42,7 +37,6 @@ class Verifier(object):
         :returns: None
         """
         self._config = config
-        self.default_linter = 'ansible-lint'
 
     @abc.abstractproperty
     def name(self):  # pragma: no cover
@@ -111,21 +105,6 @@ class Verifier(object):
         return util.merge_dicts(
             self.default_env, self._config.config['verifier']['env']
         )
-
-    @property
-    @util.lru_cache()
-    def lint(self):
-        lint_name = self._config.config['verifier']['lint']['name']
-        if lint_name == 'flake8':
-            return flake8.Flake8(self._config)
-        if lint_name == 'pre-commit':
-            return precommit.PreCommit(self._config)
-        if lint_name == 'rubocop':
-            return rubocop.RuboCop(self._config)
-        if lint_name == 'yamllint':
-            return yamllint.Yamllint(self._config)
-        if lint_name == 'ansible-lint':
-            return ansible_lint.AnsibleLint(self._config)
 
     def __eq__(self, other):
         return str(self) == str(other)

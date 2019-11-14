@@ -5,8 +5,6 @@ driver:
   name: podman
 lint:
   name: yamllint
-  options:
-    config-file: ../../../resources/.yamllint
 platforms:
   - name: instance-1
     image: centos:latest
@@ -36,11 +34,7 @@ provisioner:
     destroy: ../../../../../resources/playbooks/podman/destroy.yml
   env:
     ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
-  lint:
-    name: ansible-lint
 scenario:
   name: multi-node
 verifier:
   name: testinfra
-  lint:
-    name: flake8

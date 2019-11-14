@@ -30,7 +30,6 @@ from molecule import util
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
 from molecule.dependency import shell
-from molecule.lint import yamllint
 from molecule.provisioner import ansible
 from molecule.verifier import testinfra
 from molecule.verifier import ansible as ansible_verifier
@@ -137,11 +136,9 @@ def test_env(config_instance):
         'MOLECULE_DRIVER_NAME': 'docker',
         'MOLECULE_LINT_NAME': 'yamllint',
         'MOLECULE_PROVISIONER_NAME': 'ansible',
-        'MOLECULE_PROVISIONER_LINT_NAME': 'ansible-lint',
         'MOLECULE_SCENARIO_NAME': 'default',
         'MOLECULE_STATE_FILE': config_instance.state.state_file,
         'MOLECULE_VERIFIER_NAME': 'testinfra',
-        'MOLECULE_VERIFIER_LINT_NAME': 'flake8',
         'MOLECULE_VERIFIER_TEST_DIRECTORY': config_instance.verifier.directory,
     }
 
@@ -149,7 +146,7 @@ def test_env(config_instance):
 
 
 def test_lint_property(config_instance):
-    assert isinstance(config_instance.lint, yamllint.Yamllint)
+    assert isinstance(config_instance.lint, str)
 
 
 def test_platforms_property(config_instance):

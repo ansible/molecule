@@ -88,13 +88,7 @@ Podman
 Lint
 ----
 
-Molecule handles project linting by invoking configurable linters.
-
-Yaml Lint
-^^^^^^^^^
-
-.. autoclass:: molecule.lint.yamllint.Yamllint()
-   :undoc-members:
+Molecule handles project linting by invoking and externa lint command.
 
 .. _platforms:
 
@@ -157,25 +151,9 @@ Ansible
 .. autoclass:: molecule.verifier.ansible.Ansible()
    :undoc-members:
 
-Lint
-....
-
-.. autoclass:: molecule.verifier.lint.ansible_lint.AnsibleLint()
-   :undoc-members:
 
 Testinfra
 ^^^^^^^^^
 
 .. autoclass:: molecule.verifier.testinfra.Testinfra()
-   :undoc-members:
-
-.. _root_lint:
-
-Lint
-....
-
-.. autoclass:: molecule.verifier.lint.flake8.Flake8()
-   :undoc-members:
-
-.. autoclass:: molecule.verifier.lint.precommit.PreCommit()
    :undoc-members:
