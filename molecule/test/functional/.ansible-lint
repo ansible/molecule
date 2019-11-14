@@ -3,7 +3,10 @@
 # pytest helper. For reference, see "E7xx - metadata" in:
 #  https://docs.ansible.com/ansible-lint/rules/default_rules.html
 skip_list:
+  # metadata/201 - Trailing whitespace
+  - '201'
   # metadata/701 - Role info should contain platforms
   - '701'
   # metadata/703 - Should change default metadata: <field>"
   - '703'
+# See https://github.com/ansible/ansible/issues/63734

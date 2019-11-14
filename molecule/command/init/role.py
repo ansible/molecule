@@ -19,14 +19,19 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import os
-
+import sys
 import click
-
 from molecule import api
 from molecule import logger
 from molecule import util
 from molecule.command import base as command_base
 from molecule.command.init import base
+
+if os.name == 'posix' and sys.version_info[0] < 3:
+    import subprocess32 as subprocess
+else:
+    import subprocess
+
 
 LOG = logger.get_logger(__name__)
 
@@ -43,10 +48,8 @@ class Role(base.Base):
 
     .. option:: molecule init role --role-name foo --template path
 
-        Initialize a new role using a local *cookiecutter* template. This
-        allows the customization of a role while still using the upstream
-        ``molecule`` folder. This is similar to an
-        ``ansible-galaxy init`` skeleton. Please refer to the ``init scenario``
+        Initialize a new role using ansible-galaxy and include default
+        molecule directory. Please refer to the ``init scenario``
         command in order to generate a custom ``molecule`` scenario.
     """
 
@@ -72,12 +75,16 @@ class Role(base.Base):
             )
             util.sysexit_with_message(msg)
 
-        template_directory = ''
-        if 'template' in self._command_args.keys():
-            template_directory = self._command_args['template']
-        else:
-            template_directory = 'role'
-        self._process_templates(template_directory, self._command_args, role_directory)
+        try:
+            cmd = ["ansible-galaxy", "init", "-v", "--offline", role_name]
+            subprocess.check_output(
+                cmd, stderr=subprocess.STDOUT, universal_newlines=True
+            )
+        except Exception as e:
+            util.sysexit_with_message(
+                "Galaxy failed to create role: %s: %s" % (e, e.output)
+            )
+
         scenario_base_directory = os.path.join(role_directory, role_name)
         templates = [
             api.drivers()[self._command_args['driver_name']].template_dir(),
@@ -128,13 +135,6 @@ class Role(base.Base):
     default='testinfra',
     help='Name of verifier to initialize. (testinfra)',
 )
-@click.option(
-    '--template',
-    '-t',
-    type=click.Path(exists=True, dir_okay=True, readable=True, resolve_path=True),
-    help="Path to a cookiecutter custom template to initialize the role. "
-    "The upstream molecule folder will be added to this template",
-)
 def role(
     ctx,
     dependency_name,
@@ -143,7 +143,6 @@ def role(
     provisioner_name,
     role_name,
     verifier_name,
-    template,
 ):  # pragma: no cover
     """ Initialize a new role for use with Molecule. """
     command_args = {
@@ -158,9 +157,6 @@ def role(
     }
 
     command_args['verifier_lint_name'] = api.verifiers()[verifier_name].default_linter
-
-    if template is not None:
-        command_args['template'] = template
 
     r = Role(command_args)
     r.execute()

@@ -218,7 +218,7 @@ def test_command_test_overrides_driver(
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
 )
 def test_command_test_builds_local_molecule_image(
-    scenario_to_test, with_scenario, scenario_name, driver_name
+    scenario_to_test, with_scenario, scenario_name, driver_name, environ
 ):
     try:
         image = os.environ['TEST_BASE_IMAGE']
