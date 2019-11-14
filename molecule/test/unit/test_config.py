@@ -376,7 +376,7 @@ def test_set_env_from_file(config_instance):
 
 
 def test_set_env_from_file_returns_original_env_when_env_file_not_found(
-    config_instance
+    config_instance,
 ):
     env = config.set_env_from_file({}, 'file-not-found')
 
