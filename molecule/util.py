@@ -289,7 +289,7 @@ def merge_dicts(a, b):
     :param b: the dictionary to import
     :return: dict
     """
-    result = a
+    result = a.copy()
 
     for k, v in b.items():
         if k in a and isinstance(a[k], Mapping) and isinstance(v, Mapping):

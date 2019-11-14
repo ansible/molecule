@@ -407,9 +407,8 @@ class Ansible(base.Base):
 
     @property
     def default_env(self):
-        env = util.merge_dicts(os.environ.copy(), self._config.env)
         env = util.merge_dicts(
-            env,
+            os.environ,
             {
                 'ANSIBLE_CONFIG': self._config.provisioner.config_file,
                 'ANSIBLE_ROLES_PATH': ':'.join(

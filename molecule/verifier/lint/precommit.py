@@ -111,7 +111,7 @@ class PreCommit(base.Base):
     @property
     def default_env(self):
         """Default environment variables for pre-commit tool runtime."""
-        return util.merge_dicts(os.environ.copy(), self._config.env)
+        return util.merge_dicts(os.environ, self._config.env)
 
     def bake(self):
         """Bake a ready to execute ``pre-commit`` command."""

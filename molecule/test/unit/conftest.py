@@ -153,7 +153,7 @@ def molecule_file_fixture(
 def config_instance(molecule_file_fixture, molecule_data, request):
     mdc = copy.deepcopy(molecule_data)
     if hasattr(request, 'param'):
-        util.merge_dicts(mdc, request.getfixturevalue(request.param))
+        mdc = util.merge_dicts(mdc, request.getfixturevalue(request.param))
     pytest.helpers.write_molecule_file(molecule_file_fixture, mdc)
     c = config.Config(molecule_file_fixture)
     c.command_args = {'subcommand': 'test'}

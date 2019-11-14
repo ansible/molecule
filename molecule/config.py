@@ -257,7 +257,7 @@ class Config(object):
 
         :return: dict
         """
-        env = util.merge_dicts(os.environ.copy(), self.env)
+        env = util.merge_dicts(os.environ, self.env)
         env = set_env_from_file(env, self.env_file)
 
         return self._combine(env=env)

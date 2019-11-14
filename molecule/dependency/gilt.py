@@ -81,7 +81,7 @@ class Gilt(base.Base):
 
     @property
     def default_env(self):
-        return util.merge_dicts(os.environ.copy(), self._config.env)
+        return util.merge_dicts(os.environ, self._config.env)
 
     def bake(self):
         """
