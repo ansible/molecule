@@ -56,7 +56,7 @@ class AnsibleLintMixin:
 
     @property
     def default_env(self):
-        env = util.merge_dicts(os.environ.copy(), self._config.env)
+        env = util.merge_dicts(os.environ, self._config.env)
         env = util.merge_dicts(env, self._action_env)
 
         return env

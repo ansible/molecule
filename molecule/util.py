@@ -27,18 +27,21 @@ import re
 import sys
 
 try:
+    from collections.abc import Mapping
+except ImportError:  # Python 2 compatibility
+    from collections import Mapping
+
+try:
     from functools import lru_cache  # noqa
 except ImportError:
     from backports.functools_lru_cache import lru_cache  # noqa
 
-import anyconfig
 import colorama
 import yaml
 
 from molecule.logger import get_logger
 
 LOG = get_logger(__name__)
-MERGE_STRATEGY = anyconfig.MS_DICTS
 
 
 class SafeDumper(yaml.SafeDumper):
@@ -279,39 +282,22 @@ def underscore(string):
 
 def merge_dicts(a, b):
     """
-    Merges the values of B into A and returns a mutated dict A.
-
-    ::
-
-        dict a
-
-        b:
-           - c: 0
-           - c: 2
-        d:
-           e: "aaa"
-           f: 3
-
-        dict b
-
-        a: 1
-        b:
-           - c: 3
-        d:
-           e: "bbb"
-
-    Will give an object such as::
-
-        {'a': 1, 'b': [{'c': 3}], 'd': {'e': "bbb", 'f': 3}}
-
+    Merges the values of b into a and returns a new dict. This function uses
+    the same algorithm as Ansible's `combine(recursive=True)` filter.
 
     :param a: the target dictionary
     :param b: the dictionary to import
     :return: dict
     """
-    anyconfig.merge(a, b, ac_merge=MERGE_STRATEGY)
+    result = a.copy()
 
-    return a
+    for k, v in b.items():
+        if k in a and isinstance(a[k], Mapping) and isinstance(v, Mapping):
+            result[k] = merge_dicts(a[k], v)
+        else:
+            result[k] = v
+
+    return result
 
 
 def validate_parallel_cmd_args(cmd_args):

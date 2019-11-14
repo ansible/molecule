@@ -19,7 +19,6 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import collections
-import copy
 import functools
 import re
 
@@ -505,22 +504,20 @@ def pre_validate(stream, env, keep_string):
 
 
 def validate(c):
-    schema = copy.deepcopy(base_schema)
-
-    util.merge_dicts(schema, base_schema)
+    schema = base_schema
 
     # Dependency
     if c['dependency']['name'] == 'shell':
-        util.merge_dicts(schema, dependency_command_nullable_schema)
+        schema = util.merge_dicts(schema, dependency_command_nullable_schema)
 
     # Driver
     if c['driver']['name'] == 'docker':
-        util.merge_dicts(schema, platforms_docker_schema)
+        schema = util.merge_dicts(schema, platforms_docker_schema)
     elif c['driver']['name'] == 'podman':
-        util.merge_dicts(schema, platforms_podman_schema)
+        schema = util.merge_dicts(schema, platforms_podman_schema)
 
     # Verifier
-    util.merge_dicts(schema, api.verifiers()[c['verifier']['name']].schema())
+    schema = util.merge_dicts(schema, api.verifiers()[c['verifier']['name']].schema())
 
     v = Validator(allow_unknown=True)
     v.validate(c, schema)

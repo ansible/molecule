@@ -21,7 +21,6 @@
 from uuid import uuid4
 import os
 
-import anyconfig
 from ansible.module_utils.parsing.convert_bool import boolean
 import six
 
@@ -44,7 +43,6 @@ LOG = logger.get_logger(__name__)
 MOLECULE_DEBUG = boolean(os.environ.get('MOLECULE_DEBUG', 'False'))
 MOLECULE_DIRECTORY = 'molecule'
 MOLECULE_FILE = 'molecule.yml'
-MERGE_STRATEGY = anyconfig.MS_DICTS
 MOLECULE_KEEP_STRING = 'MOLECULE_'
 
 
@@ -259,7 +257,7 @@ class Config(object):
 
         :return: dict
         """
-        env = util.merge_dicts(os.environ.copy(), self.env)
+        env = util.merge_dicts(os.environ, self.env)
         env = set_env_from_file(env, self.env_file)
 
         return self._combine(env=env)
