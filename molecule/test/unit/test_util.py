@@ -377,10 +377,23 @@ def test_underscore():
     assert 'foo_bar_baz' == util.underscore('FooBarBaz')
 
 
-def test_merge_dicts():
-    # example taken from python-anyconfig/anyconfig/__init__.py
-    a = {'b': [{'c': 0}, {'c': 2}], 'd': {'e': 'aaa', 'f': 3}}
-    b = {'a': 1, 'b': [{'c': 3}], 'd': {'e': 'bbb'}}
-    x = {'a': 1, 'b': [{'c': 3}], 'd': {'e': "bbb", 'f': 3}}
-
+@pytest.mark.parametrize(
+    'a,b,x',
+    [
+        # Base of recursion scenarios
+        (dict(key=1), dict(key=2), dict(key=2)),
+        (dict(key={}), dict(key=2), dict(key=2)),
+        (dict(key=1), dict(key={}), dict(key={})),
+        # Recursive scenario
+        (dict(a=dict(x=1)), dict(a=dict(x=2)), dict(a=dict(x=2))),
+        (dict(a=dict(x=1)), dict(a=dict(y=2)), dict(a=dict(x=1, y=2))),
+        # example taken from python-anyconfig/anyconfig/__init__.py
+        (
+            {'b': [{'c': 0}, {'c': 2}], 'd': {'e': 'aaa', 'f': 3}},
+            {'a': 1, 'b': [{'c': 3}], 'd': {'e': 'bbb'}},
+            {'a': 1, 'b': [{'c': 3}], 'd': {'e': "bbb", 'f': 3}},
+        ),
+    ],
+)
+def test_merge_dicts(a, b, x):
     assert x == util.merge_dicts(a, b)
