@@ -208,17 +208,6 @@ class Testinfra(Verifier):
         return {
             'verifier': {
                 'type': 'dict',
-                'schema': {
-                    'name': {'type': 'string', 'allowed': ['testinfra']},
-                    'lint': {
-                        'type': 'dict',
-                        'schema': {
-                            'name': {
-                                'type': 'string',
-                                'allowed': ['flake8', 'pre-commit'],
-                            }
-                        },
-                    },
-                },
+                'schema': {'name': {'type': 'string', 'allowed': ['testinfra']}},
             }
         }

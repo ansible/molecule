@@ -29,7 +29,6 @@ def _model_lint_section_data():
         'lint': {
             'name': 'yamllint',
             'enabled': True,
-            'options': {'foo': 'bar'},
             'env': {'FOO': 'foo', 'FOO_BAR': 'foo_bar'},
         }
     }

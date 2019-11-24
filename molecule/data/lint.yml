@@ -1,0 +1,36 @@
+#!/usr/bin/env ansible-playbook
+---
+- hosts: localhost
+  vars:
+    ansible_connection: local
+    do_lint: "{{ 'lint' in molecule_yml and molecule_yml['lint']['enabled'] | default(true) }}"
+  tasks:
+
+    - name: Lint block
+      when: do_lint
+      block:
+
+        - name: Fail if old config format is found
+          fail:
+            msg: |
+              Old linting format found in molecule.yml, please upgrade to v3
+              format using https://github.com/ansible/molecule/issues/2293
+
+              * 'name' and 'options' need to be removed
+              * if 'name' was 'yamllint' likely you want "cmd: yamllint ."
+              * replace 'enabled' with 'when'
+
+              {{ molecule_yml | to_nice_yaml(indent=2) }}
+          when: |
+              ('lint' in molecule_yml and 'name' in molecule_yml['lint'] or 'options' in molecule_yml['lint']) or
+              'lint' in molecule_yml['provisioner'] or
+              'lint' in molecule_yml['verifier']
+
+        - name: Lint inside {{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}
+          environment: "{{ molecule_yml['lint']['env'] | default(omit) }}"
+          shell: "{{ molecule_yml['lint']['cmd'] }}"
+          args:
+            chdir: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') }}"
+          ignore_errors: |
+            {{ molecule_yml['lint']['ignore_errors'] | default(omit) }}
+          when: molecule_yml['lint']['when'] | default(omit)

@@ -48,12 +48,6 @@ def _model_provisioner_section_data():
                 'side_effect': 'quux.yml',
                 'foo': {'foo': 'bar'},
             },
-            'lint': {
-                'name': 'ansible-lint',
-                'enabled': True,
-                'options': {'foo': 'bar'},
-                'env': {'FOO': 'foo', 'FOO_BAR': 'foo_bar'},
-            },
         }
     }
 
@@ -246,7 +240,7 @@ def test_provisioner_config_env_disallowed_field(_config):
 
 @pytest.fixture
 def _model_provisioner_allows_ansible_section_data():
-    return {'provisioner': {'name': 'ansible', 'lint': {'name': 'ansible-lint'}}}
+    return {'provisioner': {'name': 'ansible'}}
 
 
 @pytest.mark.parametrize(

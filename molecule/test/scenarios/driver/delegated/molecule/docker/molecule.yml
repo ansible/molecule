@@ -1,0 +1,20 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: delegated
+  options:
+    managed: false
+    login_cmd_template: 'docker exec -ti {instance} bash'
+    ansible_connection_options:
+      ansible_connection: docker
+platforms:
+  - name: delegated-instance-docker
+provisioner:
+  name: ansible
+  env:
+    ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
+scenario:
+  name: docker
+verifier:
+  name: testinfra

@@ -4,9 +4,7 @@ dependency:
 driver:
   name: docker
 lint:
-  name: yamllint
-  options:
-    config-file: ../../../resources/.yamllint
+  cmd: yamllint .
 platforms:
   - name: instance-1
     image: ${TEST_BASE_IMAGE}
@@ -32,11 +30,7 @@ provisioner:
     destroy: ../../../../../resources/playbooks/docker/destroy.yml
   env:
     ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
-  lint:
-    name: ansible-lint
 scenario:
   name: multi-node
 verifier:
   name: testinfra
-  lint:
-    name: flake8

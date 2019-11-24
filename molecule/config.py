@@ -34,7 +34,6 @@ from molecule import util
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
 from molecule.dependency import shell
-from molecule.lint import yamllint
 from molecule.model import schema_v2
 from molecule.provisioner import ansible
 
@@ -66,7 +65,7 @@ class Config(object):
     directory.  Molecule performs most functions within this directory.
 
     The :class:`.Config` object instantiates Dependency_, Driver_,
-    :ref:`root_lint`, Platforms_, Provisioner_, Verifier_,
+    Platforms_, Provisioner_, Verifier_,
     :ref:`root_scenario`, and State_ references.
     """
 
@@ -166,8 +165,8 @@ class Config(object):
     def env(self):
         return {
             'MOLECULE_DEBUG': str(self.debug),
+            'MOLECULE_ENV_FILE': self.env_file or "",
             'MOLECULE_FILE': self.config_file,
-            'MOLECULE_ENV_FILE': self.env_file,
             'MOLECULE_STATE_FILE': self.state.state_file,
             'MOLECULE_INVENTORY_FILE': self.provisioner.inventory_file,
             'MOLECULE_EPHEMERAL_DIRECTORY': self.scenario.ephemeral_directory,
@@ -176,21 +175,16 @@ class Config(object):
             'MOLECULE_INSTANCE_CONFIG': self.driver.instance_config,
             'MOLECULE_DEPENDENCY_NAME': self.dependency.name,
             'MOLECULE_DRIVER_NAME': self.driver.name,
-            'MOLECULE_LINT_NAME': self.lint.name,
             'MOLECULE_PROVISIONER_NAME': self.provisioner.name,
-            'MOLECULE_PROVISIONER_LINT_NAME': self.provisioner.lint.name,
             'MOLECULE_SCENARIO_NAME': self.scenario.name,
             'MOLECULE_VERIFIER_NAME': self.verifier.name,
-            'MOLECULE_VERIFIER_LINT_NAME': self.verifier.lint.name,
             'MOLECULE_VERIFIER_TEST_DIRECTORY': self.verifier.directory,
         }
 
     @property
     @util.lru_cache()
     def lint(self):
-        lint_name = self.config['lint']['name']
-        if lint_name == 'yamllint':
-            return yamllint.Yamllint(self)
+        return self.config['lint']
 
     @property
     @util.lru_cache()
@@ -332,7 +326,7 @@ class Config(object):
                 'ssh_connection_options': [],
                 'safe_files': [],
             },
-            'lint': {'name': 'yamllint', 'enabled': True, 'options': {}, 'env': {}},
+            'lint': {'cmd': 'yamllint .', 'enabled': True, 'env': {}},
             'platforms': [],
             'provisioner': {
                 'name': 'ansible',
@@ -356,12 +350,6 @@ class Config(object):
                     'prepare': 'prepare.yml',
                     'side_effect': 'side_effect.yml',
                     'verify': 'verify.yml',
-                },
-                'lint': {
-                    'name': 'ansible-lint',
-                    'enabled': True,
-                    'options': {},
-                    'env': {},
                 },
             },
             'scenario': {
@@ -405,7 +393,6 @@ class Config(object):
                 'options': {},
                 'env': {},
                 'additional_files_or_dirs': [],
-                'lint': {'name': 'flake8', 'enabled': True, 'options': {}, 'env': {}},
             },
         }
 

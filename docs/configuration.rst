@@ -88,13 +88,18 @@ Podman
 Lint
 ----
 
-Molecule handles project linting by invoking configurable linters.
+Molecule can call multiple external linters by invoking a configurable
+shell command. This gets translated into a simple Ansible shell task.
 
-Yaml Lint
-^^^^^^^^^
+The entire lint section is optional but this does not mean it disabled by
+default.
 
-.. autoclass:: molecule.lint.yamllint.Yamllint()
-   :undoc-members:
+.. code-block:: yaml
+
+    lint:
+      cmd: yamllint .
+      enabled: true
+      env: {}
 
 .. _platforms:
 
@@ -120,10 +125,7 @@ Ansible
 Lint
 ....
 
-Molecule handles provisioner linting by invoking configurable linters.
-
-.. autoclass:: molecule.provisioner.lint.ansible_lint.AnsibleLint()
-   :undoc-members:
+Molecule handles linting by invoking external executables.
 
 .. _root_scenario:
 
@@ -157,25 +159,8 @@ Ansible
 .. autoclass:: molecule.verifier.ansible.Ansible()
    :undoc-members:
 
-Lint
-....
-
-.. autoclass:: molecule.verifier.lint.ansible_lint.AnsibleLint()
-   :undoc-members:
-
 Testinfra
 ^^^^^^^^^
 
 .. autoclass:: molecule.verifier.testinfra.Testinfra()
-   :undoc-members:
-
-.. _root_lint:
-
-Lint
-....
-
-.. autoclass:: molecule.verifier.lint.flake8.Flake8()
-   :undoc-members:
-
-.. autoclass:: molecule.verifier.lint.precommit.PreCommit()
    :undoc-members:

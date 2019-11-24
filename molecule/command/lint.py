@@ -19,9 +19,18 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import click
+import os
+import sys
 
 from molecule import logger
 from molecule.command import base
+from molecule.provisioner.ansible_playbook import AnsiblePlaybook
+
+if os.name == 'posix' and sys.version_info[0] < 3:
+    import subprocess32 as subprocess
+else:
+    import subprocess
+
 
 LOG = logger.get_logger(__name__)
 
@@ -67,19 +76,26 @@ class Lint(base.Base):
 
         :return: None
         """
-        self.print_info()
-        linters = [
-            l
-            for l in [
-                self._config.lint,
-                self._config.verifier.lint,
-                self._config.provisioner.lint,
-            ]
-            if l
-        ]
 
-        for l in linters:
-            l.execute()
+        lint_pb = os.path.join(self._config.molecule_directory, "lint.yml")
+        if os.path.isfile(lint_pb):
+            self.print_info("Using custom linting playbook {}".format(lint_pb))
+
+            _instance = AnsiblePlaybook(playbook=lint_pb, config=self._config)
+            _instance.bake()
+            _instance.execute()
+        else:
+            self.print_info("Running: {}".format(self._config.lint['cmd']))
+            r = subprocess.run(
+                self._config.lint['cmd'],
+                cwd=os.path.join(self._config.molecule_directory, ""),
+                stderr=sys.stderr,
+                stdout=sys.stdout,
+                universal_newlines=True,
+                shell=True,
+            )
+            if r.returncode:
+                sys.exit(r.returncode)
 
 
 @click.command()
@@ -99,3 +115,9 @@ def lint(ctx, scenario_name):  # pragma: no cover
     command_args = {'subcommand': subcommand}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
+
+
+# TODO(ssbarnea): Expand this to allow multiple linter templates
+def map_lint_name_to_cmd(name):
+    if name == 'yamllint':
+        return 'yamllint .'

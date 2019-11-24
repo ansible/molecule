@@ -225,12 +225,11 @@ def test_command_test_destroy_strategy_always(
         cmd = sh.molecule.bake('test', **options)
         pytest.helpers.run_command(cmd, log=False)
 
-    msg = "An error occurred during the test sequence action: 'lint'. " 'Cleaning up.'
-    assert msg in str(e.value.stdout)
+    result = util.strip_ansi(e.value.stdout)
 
-    assert 'Action: \'cleanup\'' in str(e.value.stdout)
-    assert 'PLAY [Destroy]' in str(e.value.stdout)
-    assert 0 != e.value.exit_code
+    assert 'Action: \'cleanup\'' in result
+    assert 'PLAY [Destroy]' in result
+    assert 1 == e.value.exit_code
 
 
 @pytest.mark.parametrize(
@@ -245,9 +244,10 @@ def test_command_test_destroy_strategy_never(
     with pytest.raises(sh.ErrorReturnCode) as e:
         cmd = sh.molecule.bake('test', **options)
         pytest.helpers.run_command(cmd, log=False)
+    output = util.strip_ansi(e.value.stdout)
 
     msg = "An error occurred during the test sequence action: 'lint'. " 'Cleaning up.'
-    assert msg not in str(e.value.stdout)
+    assert msg not in output
 
     assert 0 != e.value.exit_code
 
@@ -295,27 +295,6 @@ def test_interpolation(scenario_to_test, with_scenario, scenario_name):
 
     cmd = sh.molecule.bake('test', **options)
     pytest.helpers.run_command(cmd, env=env)
-
-
-@pytest.mark.parametrize(
-    'scenario_to_test, driver_name, scenario_name',
-    [('verifier', 'docker', 'testinfra-pre-commit')],
-    indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
-)
-def test_command_verify_testinfra_precommit(
-    scenario_to_test, with_scenario, scenario_name
-):
-    options = {'scenario_name': scenario_name}
-    cmd = sh.molecule.bake('create', **options)
-    pytest.helpers.run_command(cmd)
-
-    options = {'scenario_name': scenario_name}
-    cmd = sh.molecule.bake('converge', **options)
-    pytest.helpers.run_command(cmd)
-
-    options = {'scenario_name': scenario_name}
-    cmd = sh.molecule.bake('verify', **options)
-    pytest.helpers.run_command(cmd)
 
 
 @pytest.mark.parametrize(

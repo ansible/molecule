@@ -28,7 +28,6 @@ from molecule import config
 from molecule import util
 from molecule.provisioner import ansible
 from molecule.provisioner import ansible_playbooks
-from molecule.provisioner.lint import ansible_lint
 
 
 @pytest.fixture
@@ -84,7 +83,6 @@ def _provisioner_section_data():
                     'example_group2': [{'foo': 'bar'}],
                 },
             },
-            'lint': {'name': 'ansible-lint'},
         }
     }
 
@@ -135,10 +133,6 @@ def test_default_env_property(_instance):
 
 def test_name_property(_instance):
     assert 'ansible' == _instance.name
-
-
-def test_lint_property(_instance):
-    assert isinstance(_instance.lint, ansible_lint.AnsibleLint)
 
 
 @pytest.mark.parametrize(

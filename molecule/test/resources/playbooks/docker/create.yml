@@ -53,6 +53,7 @@
           path: "{{ molecule_ephemeral_directory }}"
           dockerfile: "{{ item.invocation.module_args.dest }}"
           pull: "{{ item.item.pull | default(true) }}"
+          network: host
         name: "molecule_local/{{ item.item.image }}"
         docker_host: "{{ item.item.docker_host | default(lookup('env', 'DOCKER_HOST') or 'unix://var/run/docker.sock') }}"
         cacert_path: "{{ item.cacert_path | default((lookup('env', 'DOCKER_CERT_PATH') + '/ca.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"

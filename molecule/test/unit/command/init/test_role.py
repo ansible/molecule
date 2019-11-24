@@ -30,7 +30,7 @@ def _command_args():
     return {
         'dependency_name': 'galaxy',
         'driver_name': 'docker',
-        'lint_name': 'ansible-lint',
+        'lint_cmd': 'yamllint .',
         'provisioner_name': 'ansible',
         'role_name': 'test-role',
         'scenario_name': 'default',

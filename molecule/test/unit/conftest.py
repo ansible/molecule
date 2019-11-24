@@ -60,7 +60,7 @@ def _molecule_driver_section_data():
 
 @pytest.fixture
 def _molecule_lint_section_data():
-    return {'lint': {'name': 'yamllint'}}
+    return {'lint': {'cmd': 'yamllint .'}}
 
 
 @pytest.fixture
@@ -79,7 +79,6 @@ def _molecule_provisioner_section_data():
         'provisioner': {
             'name': 'ansible',
             'options': {'become': True},
-            'lint': {'name': 'ansible-lint'},
             'config_options': {},
         }
     }
@@ -92,7 +91,7 @@ def _molecule_scenario_section_data():
 
 @pytest.fixture
 def _molecule_verifier_section_data():
-    return {'verifier': {'name': 'testinfra', 'lint': {'name': 'flake8'}}}
+    return {'verifier': {'name': 'testinfra'}}
 
 
 @pytest.fixture
@@ -218,16 +217,6 @@ def patched_ansible_converge(mocker):
 @pytest.fixture
 def patched_add_or_update_vars(mocker):
     return mocker.patch('molecule.provisioner.ansible.Ansible._add_or_update_vars')
-
-
-@pytest.fixture
-def patched_yamllint(mocker):
-    return mocker.patch('molecule.lint.yamllint.Yamllint.execute')
-
-
-@pytest.fixture
-def patched_flake8(mocker):
-    return mocker.patch('molecule.verifier.lint.flake8.Flake8.execute')
 
 
 @pytest.fixture

@@ -63,13 +63,7 @@ def pre_validate_base_schema(env, keep_string):
         },
         'lint': {
             'type': 'dict',
-            'schema': {
-                'name': {
-                    'type': 'string',
-                    'molecule_env_var': True,
-                    'allowed': ['yamllint'],
-                }
-            },
+            'schema': {'cmd': {'type': 'string', 'molecule_env_var': True}},
         },
         'platforms': {
             'type': 'list',
@@ -96,16 +90,6 @@ def pre_validate_base_schema(env, keep_string):
                     'molecule_env_var': True,
                     'allowed': ['ansible'],
                 },
-                'lint': {
-                    'type': 'dict',
-                    'schema': {
-                        'name': {
-                            'type': 'string',
-                            'molecule_env_var': True,
-                            'allowed': ['ansible-lint'],
-                        }
-                    },
-                },
             },
         },
         'scenario': {
@@ -119,22 +103,6 @@ def pre_validate_base_schema(env, keep_string):
                     'type': 'string',
                     'molecule_env_var': True,
                     'allowed': api.verifiers(),
-                },
-                'lint': {
-                    'type': 'dict',
-                    'schema': {
-                        'name': {
-                            'type': 'string',
-                            'molecule_env_var': True,
-                            'allowed': [
-                                'flake8',
-                                'pre-commit',
-                                'rubocop',
-                                'yamllint',
-                                'ansible-lint',
-                            ],
-                        }
-                    },
                 },
             },
         },

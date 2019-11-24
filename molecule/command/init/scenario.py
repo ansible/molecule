@@ -28,6 +28,8 @@ from molecule import logger
 from molecule import util
 from molecule.command import base as command_base
 from molecule.command.init import base
+from molecule.command.lint import map_lint_name_to_cmd
+
 
 LOG = logger.get_logger(__name__)
 
@@ -163,7 +165,7 @@ def _default_scenario_exists(ctx, param, value):  # pragma: no cover
     '--lint-name',
     type=click.Choice(['yamllint']),
     default='yamllint',
-    help='Name of lint to initialize. (ansible-lint)',
+    help='Name of lint to initialize. (yamllint)',
 )
 @click.option(
     '--provisioner-name',
@@ -216,15 +218,13 @@ def scenario(
     command_args = {
         'dependency_name': dependency_name,
         'driver_name': driver_name,
-        'lint_name': lint_name,
+        'lint_cmd': map_lint_name_to_cmd(lint_name),
         'provisioner_name': provisioner_name,
         'role_name': role_name,
         'scenario_name': scenario_name,
         'subcommand': __name__,
         'verifier_name': verifier_name,
     }
-
-    command_args['verifier_lint_name'] = api.verifiers()[verifier_name].default_linter
 
     driver_template = driver_template or os.environ.get(
         'MOLECULE_SCENARIO_DRIVER_TEMPLATE', None

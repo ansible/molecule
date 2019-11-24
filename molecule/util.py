@@ -319,3 +319,13 @@ def _parallelize_platforms(config, run_uuid):
         return platform
 
     return [parallelize(platform) for platform in config['platforms']]
+
+
+def strip_ansi(content):
+    """
+    Removes ANSI from output in order be able to better parse its content.
+
+    Content can be bytestring or string.
+    """
+    ansi_escape = re.compile(r'(?:\x1B[@-_]|[\x80-\x9F])[0-?]*[ -/]*[@-~]')
+    return ansi_escape.sub('', content.decode())

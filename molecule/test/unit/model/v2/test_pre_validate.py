@@ -94,7 +94,7 @@ dependency:
 driver:
   name: $MOLECULE_DRIVER_NAME
 lint:
-  name: $MOLECULE_LINT_NAME
+  cmd: yamllint .
 platforms:
   - name: instance
     image: ${TEST_BASE_IMAGE}
@@ -103,14 +103,10 @@ platforms:
       - name: bar
 provisioner:
   name: $MOLECULE_PROVISIONER_NAME
-  lint:
-    name: $MOLECULE_PROVISIONER_LINT_NAME
 scenario:
   name: $MOLECULE_SCENARIO_NAME
 verifier:
   name: $MOLECULE_VERIFIER_NAME
-  lint:
-    name: $MOLECULE_VERIFIER_LINT_NAME
 """.strip()
 
 
@@ -120,14 +116,6 @@ def test_has_errors_when_molecule_env_var_referenced_in_unallowed_sections(
     x = {
         'scenario': [
             {'name': ['cannot reference $MOLECULE special variables in this section']}
-        ],
-        'lint': [
-            {
-                'name': [
-                    'cannot reference $MOLECULE special variables in this section',
-                    'unallowed value $MOLECULE_LINT_NAME',
-                ]
-            }
         ],
         'driver': [
             {
@@ -147,17 +135,6 @@ def test_has_errors_when_molecule_env_var_referenced_in_unallowed_sections(
         ],
         'verifier': [
             {
-                'lint': [
-                    {
-                        'name': [
-                            (
-                                'cannot reference $MOLECULE special variables in this '
-                                'section'
-                            ),
-                            'unallowed value $MOLECULE_VERIFIER_LINT_NAME',
-                        ]
-                    }
-                ],
                 'name': [
                     'cannot reference $MOLECULE special variables in this section',
                     'unallowed value $MOLECULE_VERIFIER_NAME',
@@ -166,17 +143,6 @@ def test_has_errors_when_molecule_env_var_referenced_in_unallowed_sections(
         ],
         'provisioner': [
             {
-                'lint': [
-                    {
-                        'name': [
-                            (
-                                'cannot reference $MOLECULE special variables in this '
-                                'section'
-                            ),
-                            'unallowed value $MOLECULE_PROVISIONER_LINT_NAME',
-                        ]
-                    }
-                ],
                 'name': [
                     'cannot reference $MOLECULE special variables in this section',
                     'unallowed value $MOLECULE_PROVISIONER_NAME',

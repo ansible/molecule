@@ -20,9 +20,6 @@
 
 import abc
 
-from molecule.util import lru_cache
-from molecule.provisioner.lint import ansible_lint
-
 
 class Base(object):
     __metaclass__ = abc.ABCMeta
@@ -63,10 +60,3 @@ class Base(object):
         :returns: str
         """
         pass
-
-    @property
-    @lru_cache()
-    def lint(self):
-        lint_name = self._config.config['provisioner']['lint']['name']
-        if lint_name == 'ansible-lint':
-            return ansible_lint.AnsibleLint(self._config)

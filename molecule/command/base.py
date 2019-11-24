@@ -56,11 +56,13 @@ class Base(object):
     def execute(self):  # pragma: no cover
         pass
 
-    def print_info(self):
+    def print_info(self, detail=None):
         msg = "Scenario: '{}'".format(self._config.scenario.name)
         LOG.info(msg)
         msg = "Action: '{}'".format(util.underscore(self.__class__.__name__))
         LOG.info(msg)
+        if detail:
+            LOG.info(detail)
 
     def _setup(self):
         """
