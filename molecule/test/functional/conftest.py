@@ -22,6 +22,7 @@
 import distutils.spawn
 import os
 import pkg_resources
+import platform
 import shutil
 
 import pexpect
@@ -74,7 +75,7 @@ def skip_test(request, driver_name):
     )
     support_checks_map = {
         'docker': supports_docker,
-        'podman': lambda: min_ansible("2.8.6"),
+        'podman': lambda: min_ansible("2.8.6") and platform.system() != 'Darwin',
         'delegated': demands_delegated,
     }
     try:
