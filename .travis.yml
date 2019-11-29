@@ -105,11 +105,6 @@ jobs:
         - TOXENV=ansible28-unit
       name: unit tests, Ansible 2.8, Python 3.8
 
-    - <<: *py-38
-      env:
-        - TOXENV=ansible27-unit
-      name: unit tests, Ansible 2.7, Python 3.8
-
     - <<: *py-37
       env:
         - TOXENV=ansible29-unit
