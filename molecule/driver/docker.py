@@ -205,7 +205,10 @@ class Docker(Driver):
         return {'instance': instance_name}
 
     def ansible_connection_options(self, instance_name):
-        return {'ansible_connection': 'docker'}
+        x = {'ansible_connection': 'docker'}
+        if 'DOCKER_HOST' in os.environ:
+            x['ansible_docker_extra_args'] = "-H={}".format(os.environ['DOCKER_HOST'])
+        return x
 
     @lru_cache()
     def sanity_checks(self):

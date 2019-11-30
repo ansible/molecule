@@ -17,7 +17,7 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
-
+import os
 import pytest
 
 
@@ -28,7 +28,7 @@ def command_patched_ansible_create(mocker):
 
 @pytest.fixture
 def command_driver_delegated_section_data():
-    return {
+    x = {
         'driver': {
             'name': 'delegated',
             'options': {
@@ -38,6 +38,11 @@ def command_driver_delegated_section_data():
             },
         }
     }
+    if 'DOCKER_HOST' in os.environ:
+        x['driver']['options']['ansible_docker_extra_args'] = "-H={}".format(
+            os.environ['DOCKER_HOST']
+        )
+    return x
 
 
 @pytest.fixture

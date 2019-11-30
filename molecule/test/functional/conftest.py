@@ -68,15 +68,11 @@ def with_scenario(request, scenario_to_test, driver_name, scenario_name, skip_te
 
 @pytest.fixture
 def skip_test(request, driver_name):
-    msg_tmpl = (
-        "Ignoring '{}' tests for now"
-        if driver_name == 'delegated'
-        else "Skipped '{}' not supported"
-    )
+    msg_tmpl = "Skipped '{}' not supported"
     support_checks_map = {
         'docker': supports_docker,
         'podman': lambda: min_ansible("2.8.6") and platform.system() != 'Darwin',
-        'delegated': demands_delegated,
+        'delegated': lambda: True,
     }
     try:
         check_func = support_checks_map[driver_name]
@@ -264,8 +260,3 @@ def min_ansible(version):
     except ImportError as exception:
         LOG.error('Unable to parse Ansible version', exc_info=exception)
         return False
-
-
-@pytest.helpers.register
-def demands_delegated():
-    return pytest.config.getoption('--delegated')

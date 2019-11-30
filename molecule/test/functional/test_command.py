@@ -47,7 +47,7 @@ def driver_name(request):
     'scenario_to_test, driver_name, scenario_name',
     [
         ('driver/docker', 'docker', 'default'),
-        ('driver/delegated', 'delegated', 'docker'),
+        ('driver/delegated', 'delegated', 'default'),
         ('driver/podman', 'podman', 'default'),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
@@ -62,7 +62,7 @@ def test_command_check(scenario_to_test, with_scenario, scenario_name):
     'scenario_to_test, driver_name, scenario_name',
     [
         ('driver/docker', 'docker', 'default'),
-        ('driver/delegated', 'delegated', 'docker'),
+        ('driver/delegated', 'delegated', 'default'),
         ('driver/podman', 'podman', 'default'),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
@@ -77,7 +77,7 @@ def test_command_cleanup(scenario_to_test, with_scenario, scenario_name):
     'scenario_to_test, driver_name, scenario_name',
     [
         ('driver/docker', 'docker', 'default'),
-        ('driver/delegated', 'delegated', 'docker'),
+        ('driver/delegated', 'delegated', 'default'),
         ('driver/podman', 'podman', 'default'),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
@@ -92,7 +92,7 @@ def test_command_converge(scenario_to_test, with_scenario, scenario_name):
     'scenario_to_test, driver_name, scenario_name',
     [
         ('driver/docker', 'docker', 'default'),
-        ('driver/delegated', 'delegated', 'docker'),
+        ('driver/delegated', 'delegated', 'default'),
         ('driver/podman', 'podman', 'default'),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
@@ -171,7 +171,7 @@ def test_command_dependency_shell(
     'scenario_to_test, driver_name, scenario_name',
     [
         ('driver/docker', 'docker', 'default'),
-        ('driver/delegated', 'delegated', 'docker'),
+        ('driver/delegated', 'delegated', 'default'),
         ('driver/podman', 'podman', 'default'),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
@@ -186,7 +186,7 @@ def test_command_destroy(scenario_to_test, with_scenario, scenario_name):
     'scenario_to_test, driver_name, scenario_name',
     [
         ('driver/docker', 'docker', 'default'),
-        ('driver/delegated', 'delegated', 'docker'),
+        ('driver/delegated', 'delegated', 'default'),
         ('driver/podman', 'podman', 'default'),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
@@ -213,7 +213,7 @@ def test_command_init_scenario(temp_dir, driver_name, skip_test):
     'scenario_to_test, driver_name, scenario_name',
     [
         ('driver/docker', 'docker', 'default'),
-        ('driver/delegated', 'delegated', 'docker'),
+        ('driver/delegated', 'delegated', 'default'),
         ('driver/podman', 'podman', 'default'),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
@@ -243,9 +243,9 @@ instance-2       docker         ansible             multi-node        false     
             'driver/delegated',
             'delegated',
             """
-Instance Name                 Driver Name    Provisioner Name    Scenario Name    Created    Converged
-----------------------------  -------------  ------------------  ---------------  ---------  -----------
-delegated-instance-docker     delegated      ansible             docker           unknown    true
+Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    Converged
+---------------  -------------  ------------------  ---------------  ---------  -----------
+instance         delegated      ansible             default          false      false
 """.strip(),
         ),  # noqa
         (
@@ -284,7 +284,7 @@ instance-2  docker  ansible  multi-node        false  false
             'driver/delegated',
             'delegated',
             """
-delegated-instance-docker     delegated  ansible  docker     unknown  true
+instance  delegated  ansible  default  false  false
 """.strip(),
         ),
         (
@@ -314,12 +314,7 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario, expecte
             [['instance-1', '.*instance-1.*'], ['instance-2', '.*instance-2.*']],
             'multi-node',
         ),
-        (
-            'driver/delegated',
-            'delegated',
-            [['delegated-instance-docker', '.*delegated-instance-docker.*']],
-            'docker',
-        ),
+        ('driver/delegated', 'delegated', [['instance', '.*instance.*']], 'default',),
         (
             'driver/podman',
             'podman',
@@ -337,7 +332,7 @@ def test_command_login(scenario_to_test, with_scenario, login_args, scenario_nam
     'scenario_to_test, driver_name, scenario_name',
     [
         ('driver/docker', 'docker', 'default'),
-        ('driver/delegated', 'delegated', 'docker'),
+        ('driver/delegated', 'delegated', 'default'),
         ('driver/podman', 'podman', 'default'),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
@@ -356,7 +351,7 @@ def test_command_prepare(scenario_to_test, with_scenario, scenario_name):
     'scenario_to_test, driver_name, scenario_name',
     [
         ('driver/docker', 'docker', 'default'),
-        ('driver/delegated', 'delegated', 'docker'),
+        ('driver/delegated', 'delegated', 'default'),
         ('driver/podman', 'podman', 'default'),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
@@ -371,7 +366,7 @@ def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
     'scenario_to_test, driver_name, scenario_name',
     [
         ('driver/docker', 'docker', 'default'),
-        ('driver/delegated', 'delegated', 'docker'),
+        ('driver/delegated', 'delegated', 'default'),
         ('driver/podman', 'podman', 'default'),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
@@ -388,7 +383,7 @@ def test_command_syntax(scenario_to_test, with_scenario, scenario_name):
         ('driver/docker', 'docker', 'default'),
         ('driver/docker', 'docker', 'ansible-verifier'),
         ('driver/docker', 'docker', 'multi-node'),
-        ('driver/delegated', 'delegated', 'docker'),
+        ('driver/delegated', 'delegated', 'default'),
         ('driver/podman', 'podman', 'default'),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
@@ -401,7 +396,7 @@ def test_command_test(scenario_to_test, with_scenario, scenario_name, driver_nam
     'scenario_to_test, driver_name, scenario_name',
     [
         ('driver/docker', 'docker', 'default'),
-        ('driver/delegated', 'delegated', 'docker'),
+        ('driver/delegated', 'delegated', 'default'),
         ('driver/podman', 'podman', 'default'),
     ],
     indirect=['scenario_to_test', 'driver_name', 'scenario_name'],
