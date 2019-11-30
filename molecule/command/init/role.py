@@ -19,18 +19,13 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import os
-import sys
 import click
+import subprocess
 from molecule import api
 from molecule import logger
 from molecule import util
 from molecule.command import base as command_base
 from molecule.command.init import base
-
-if os.name == 'posix' and sys.version_info[0] < 3:
-    import subprocess32 as subprocess
-else:
-    import subprocess
 
 
 LOG = logger.get_logger(__name__)
@@ -77,9 +72,7 @@ class Role(base.Base):
 
         try:
             cmd = ["ansible-galaxy", "init", "-v", "--offline", role_name]
-            subprocess.check_output(
-                cmd, stderr=subprocess.STDOUT, universal_newlines=True
-            )
+            util.check_output(cmd, stderr=subprocess.STDOUT, universal_newlines=True)
         except Exception as e:
             util.sysexit_with_message(
                 "Galaxy failed to create role: %s: %s" % (e, e.output)
