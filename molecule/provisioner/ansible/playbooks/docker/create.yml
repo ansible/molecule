@@ -142,7 +142,7 @@
 
     - name: Create molecule instance(s)
       docker_container:
-        name: "{{ item.name }}"
+        name: "{{ item.name | truncate(50, True, '', 0) }}"
         docker_host: "{{ item.docker_host | default(lookup('env', 'DOCKER_HOST') or 'unix://var/run/docker.sock') }}"
         cacert_path: "{{ item.cacert_path | default((lookup('env', 'DOCKER_CERT_PATH') + '/ca.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
         cert_path: "{{ item.cert_path | default((lookup('env', 'DOCKER_CERT_PATH') + '/cert.pem')  if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
