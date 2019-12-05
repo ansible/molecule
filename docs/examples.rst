@@ -53,15 +53,17 @@ The variable ``SUDO_GROUP`` depends on the target distribution. ``centos:7`` use
 Modify ``provisioner.inventory`` in ``molecule.yml`` as follows:
 
 .. code-block:: yaml
+
     platforms:
       - name: instance
         image: centos:7
-        …
+        # …
+
+.. code-block:: yaml
 
     provisioner:
       name: ansible
-      lint:
-        name: ansible-lint
+      # …
       inventory:
         host_vars:
           # setting for the platform instance named 'instance'
@@ -73,13 +75,17 @@ Make sure to use your **platform instance name**.  In this case ``instance``.
 An example for a different platform instance name:
 
 .. code-block:: yaml
+
     platforms:
       - name: centos7
         image: centos:7
-        …
+        # …
+
+.. code-block:: yaml
 
     provisioner:
-      …
+      name: ansible
+      # …
       inventory:
         host_vars:
           # setting for the platform instance named 'centos7'
