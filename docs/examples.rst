@@ -29,13 +29,14 @@ follows.
 Docker With Non-Privileged User
 ===============================
 
-Default Molecule Docker driver execute Ansible playbooks with root user. If your
-workflow require non-privileged user, some simple changes to ``molecule.yaml``
-and ``Dockerfile.j2`` are required.
+The default Molecule Docker driver executes Ansible playbooks as the root user.
+If your workflow requires a non-privileged user, then adapt ``molecule.yml``
+and ``Dockerfile.j2`` as follows.
 
-Append to end off ``Dockerfile.j2`` commands that are creating ``ansible``
-user with passwordless sudo privileges. Variable ``SUDO_GROUP`` depends on distribution
-``wheel`` is used on ``centos:7``.
+Append the following code block to the end of ``Dockerfile.j2``. It creates an ``ansible``
+user with passwordless sudo privileges.
+
+The variable ``SUDO_GROUP`` depends on the target distribution. ``centos:7`` uses ``wheel``.
 
 .. code-block:: docker
 
@@ -49,22 +50,54 @@ user with passwordless sudo privileges. Variable ``SUDO_GROUP`` depends on distr
       && usermod -aG ${DEPLOY_GROUP} ${ANSIBLE_USER} \
       && sed -i "/^%${SUDO_GROUP}/s/ALL\$/NOPASSWD:ALL/g" /etc/sudoers
 
-Change ``molecule.yaml`` file by modifying ``provisioner`` block and changing
-default provisioning user from root to newly created one.
+Modify ``provisioner.inventory`` in ``molecule.yml`` as follows:
+
+.. code-block:: yaml
+
+    platforms:
+      - name: instance
+        image: centos:7
+        # …
 
 .. code-block:: yaml
 
     provisioner:
       name: ansible
-      lint:
-        name: ansible-lint
+      # …
       inventory:
         host_vars:
+          # setting for the platform instance named 'instance'
           instance:
             ansible_user: ansible
 
-Now you can test new user with simple task add following TASK to ``tasks/main.yml`` it
-should fail until you uncomment ``become: yes``.
+Make sure to use your **platform instance name**.  In this case ``instance``.
+
+An example for a different platform instance name:
+
+.. code-block:: yaml
+
+    platforms:
+      - name: centos7
+        image: centos:7
+        # …
+
+.. code-block:: yaml
+
+    provisioner:
+      name: ansible
+      # …
+      inventory:
+        host_vars:
+          # setting for the platform instance named 'centos7'
+          centos7:
+            ansible_user: ansible
+
+To test it, add the following task to ``tasks/main.yml``. It fails, because the
+non-privileged user is not allowed to create a folder in ``/opt/``.
+This needs to be performed using ``sudo``.
+
+To perform the task using ``sudo``, uncomment ``become: yes``.
+Now the task will succeed.
 
 .. code-block:: yaml
 
@@ -77,7 +110,7 @@ should fail until you uncomment ``become: yes``.
         state: directory
       # become: yes
 
-Don't forget to run ``molecule destroy`` if image vas already created.
+Don't forget to run ``molecule destroy`` if image has already been created.
 
 Systemd Container
 =================
