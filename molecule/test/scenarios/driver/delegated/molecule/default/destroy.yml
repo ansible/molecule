@@ -1,0 +1,4 @@
+---
+- name: Destroy
+  hosts: all
+  gather_facts: false
