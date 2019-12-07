@@ -28,6 +28,7 @@ import shutil
 import pexpect
 import pytest
 import sh
+from subprocess import PIPE
 
 from molecule import logger
 from molecule import util
@@ -246,7 +247,22 @@ def get_virtualbox_executable():
 
 @pytest.helpers.register
 def supports_docker():
-    return get_docker_executable()
+    docker = get_docker_executable()
+    if docker:
+        result = util.run([docker, "info"], stdout=PIPE, universal_newlines=True)
+        if result.returncode != 0:
+            LOG.error(
+                "Error %s returned from `docker info`: %s",
+                result.returncode,
+                result.stdout,
+            )
+            return False
+        if "BuildahVersion" in result.stdout:
+            LOG.error(
+                "podman-docker is unsupported, see https://github.com/ansible/molecule/issues/2456"
+            )
+            return False
+    return True
 
 
 def min_ansible(version):
