@@ -13,4 +13,8 @@ def environ():
 
     # adds extra environment variables that may be needed during testing
     if not os.environ.get('TEST_BASE_IMAGE', ""):
-        os.environ['TEST_BASE_IMAGE'] = 'docker.io/pycontribs/centos:7'
+        os.environ['TEST_BASE_IMAGE'] = 'docker.io/pycontribs/alpine:latest'
+    # size of image used for testing is key for speed, especially on CI,
+    # alpine is <30MB while centos ones are >130MB. The only requirement we
+    # have is to have an image that can be managed by ansible without extra
+    # work.

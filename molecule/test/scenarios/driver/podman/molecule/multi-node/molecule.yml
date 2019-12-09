@@ -9,7 +9,7 @@ lint:
     config-file: ../../../resources/.yamllint
 platforms:
   - name: instance-1
-    image: centos:latest
+    image: docker.io/pycontribs/alpine:latest
     registry:
       url: docker.io
     groups:
@@ -18,7 +18,7 @@ platforms:
     buildargs:
       testarg: this_is_a_test
   - name: instance-2
-    image: centos:latest
+    image: docker.io/pycontribs/alpine:latest
     registry:
       url: docker.io
     groups:
