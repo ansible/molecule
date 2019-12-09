@@ -176,6 +176,7 @@
         restart_policy: "{{ item.restart_policy | default(omit) }}"
         restart_retries: "{{ item.restart_retries | default(omit) }}"
         tty: "{{ item.tty | default(omit) }}"
+        labels: "{{ item.labels | default(omit) }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
       loop_control:
