@@ -181,28 +181,6 @@ def test_command_init_scenario_custom_template_precedence(
         pytest.helpers.run_command(cmd, log=False)
 
 
-def test_command_init_role_with_template(temp_dir):
-    role_name = 'test-init'
-    role_directory = os.path.join(temp_dir.strpath, role_name)
-
-    options = {
-        'url': 'https://github.com/ansible/molecule-cookiecutter.git',
-        'no_input': True,
-        'role_name': role_name,
-    }
-    cmd = sh.molecule.bake('init', 'template', **options)
-    pytest.helpers.run_command(cmd)
-    pytest.helpers.metadata_lint_update(role_directory)
-
-    with change_dir_to(role_directory):
-        # we no longer run 'test' because:
-        # a) lint is part of test and fails for good reasons
-        # b) takes to much time to run all the entire sequence
-        # 'destroy' is better than not running any testing command.
-        cmd = sh.molecule.bake('destroy')
-        pytest.helpers.run_command(cmd)
-
-
 @pytest.mark.parametrize(
     'scenario_to_test, driver_name, scenario_name',
     [('overrride_driver', 'docker', 'default')],
