@@ -48,6 +48,24 @@ def _rebake_command(cmd, env, out=LOG.out, err=LOG.error):
     return cmd.bake(_env=env, _out=out, _err=err)
 
 
+def is_subset(subset, superset):
+    # Checks if first dict is a subset of the second one
+    if isinstance(subset, dict):
+        return all(
+            key in superset and is_subset(val, superset[key])
+            for key, val in subset.items()
+        )
+
+    if isinstance(subset, list) or isinstance(subset, set):
+        return all(
+            any(is_subset(subitem, superitem) for superitem in superset)
+            for subitem in subset
+        )
+
+    # assume that subset is a plain value if none of the above match
+    return subset == superset
+
+
 @pytest.fixture
 def random_string(l=5):
     return ''.join(random.choice(string.ascii_uppercase) for _ in range(l))

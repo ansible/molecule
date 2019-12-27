@@ -24,6 +24,7 @@ import pytest
 
 from molecule import config
 from molecule.driver import delegated
+from molecule.test.conftest import is_subset
 
 
 @pytest.fixture
@@ -190,7 +191,7 @@ def test_login_options_when_managed(mocker, _instance):
 def test_ansible_connection_options(_instance):
     x = {'ansible_connection': 'docker'}
 
-    assert x == _instance.ansible_connection_options('foo')
+    assert is_subset(x, _instance.ansible_connection_options('foo'))
 
 
 @pytest.mark.parametrize(
