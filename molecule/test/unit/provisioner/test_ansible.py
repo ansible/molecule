@@ -22,6 +22,7 @@ import collections
 import os
 
 import pytest
+from molecule.test.conftest import is_subset
 
 from molecule import config
 from molecule import util
@@ -374,7 +375,7 @@ def test_inventory_property(_instance):
         },
     }
 
-    assert x == _instance.inventory
+    assert is_subset(x, _instance.inventory)
 
 
 @pytest.mark.parametrize(
@@ -409,7 +410,7 @@ def test_inventory_property_handles_missing_groups(temp_dir, _instance):
         },
     }
 
-    assert x == _instance.inventory
+    assert is_subset(x, _instance.inventory)
 
 
 def test_inventory_directory_property(_instance):
@@ -482,7 +483,7 @@ def test_playbooks_side_effect_property(_instance):
 def test_connection_options(_instance):
     x = {'ansible_connection': 'docker', 'foo': 'bar'}
 
-    assert x == _instance.connection_options('foo')
+    assert is_subset(x, _instance.connection_options('foo'))
 
 
 def test_check(_instance, mocker, _patched_ansible_playbook):
@@ -799,7 +800,7 @@ def test_write_inventory(temp_dir, _instance):
         },
     }
 
-    assert x == data
+    assert is_subset(x, data)
 
 
 @pytest.mark.parametrize(

@@ -33,7 +33,7 @@ from subprocess import PIPE
 from molecule import logger
 from molecule import util
 
-from ..conftest import change_dir_to
+from molecule.test.conftest import change_dir_to
 
 LOG = logger.get_logger(__name__)
 

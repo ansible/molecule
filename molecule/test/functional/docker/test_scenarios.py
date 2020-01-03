@@ -27,7 +27,7 @@ import shutil
 
 from molecule import util
 
-from ..conftest import change_dir_to
+from molecule.test.conftest import change_dir_to
 
 
 @pytest.fixture

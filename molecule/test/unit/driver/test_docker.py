@@ -24,6 +24,7 @@ import pytest
 
 from molecule import config
 from molecule.driver import docker
+from molecule.test.conftest import is_subset
 
 
 @pytest.fixture
@@ -96,7 +97,7 @@ def test_login_options(_instance):
 def test_ansible_connection_options(_instance):
     x = {'ansible_connection': 'docker'}
 
-    assert x == _instance.ansible_connection_options('foo')
+    assert is_subset(x, _instance.ansible_connection_options('foo'))
 
 
 def test_instance_config_property(_instance):
