@@ -54,8 +54,6 @@ Init
 .. autoclass:: molecule.command.init.scenario.Scenario()
    :undoc-members:
 
-.. autoclass:: molecule.command.init.template.Template()
-   :undoc-members:
 
 Lint
 ^^^^

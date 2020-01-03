@@ -23,7 +23,6 @@ import click
 from molecule import logger
 from molecule.command.init import role
 from molecule.command.init import scenario
-from molecule.command.init import template
 
 LOG = logger.get_logger(__name__)
 
@@ -35,4 +34,3 @@ def init():  # pragma: no cover
 
 init.add_command(role.role)
 init.add_command(scenario.scenario)
-init.add_command(template.template)
