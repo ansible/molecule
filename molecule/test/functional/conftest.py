@@ -40,6 +40,18 @@ LOG = logger.get_logger(__name__)
 IS_TRAVIS = os.getenv('TRAVIS') and os.getenv('CI')
 
 
+@pytest.fixture(scope="session", autouse=True)
+def require_installed_package():
+    import pkg_resources
+
+    try:
+        pkg_resources.require("molecule")
+    except pkg_resources.DistributionNotFound as e:
+        pytest.fail(
+            "Functional tests require molecule package to be installed: {}".format(e)
+        )
+
+
 def _env_vars_exposed(env_vars, env=os.environ):
     """Check if environment variables are exposed and populated."""
     for env_var in env_vars:
