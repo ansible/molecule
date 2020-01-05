@@ -84,7 +84,7 @@ def skip_test(request, driver_name):
     msg_tmpl = "Skipped '{}' not supported"
     support_checks_map = {
         'docker': supports_docker,
-        'podman': lambda: min_ansible("2.8.6") and platform.system() != 'Darwin',
+        'podman': supports_podman,
         'delegated': lambda: True,
     }
     try:
@@ -253,11 +253,16 @@ def get_docker_executable():
     return distutils.spawn.find_executable('docker')
 
 
+def get_podman_executable():
+    return distutils.spawn.find_executable('podman')
+
+
 def get_virtualbox_executable():
     return distutils.spawn.find_executable('VBoxManage')
 
 
 @pytest.helpers.register
+@util.lru_cache()
 def supports_docker():
     docker = get_docker_executable()
     if docker:
@@ -274,6 +279,29 @@ def supports_docker():
                 "podman-docker is unsupported, see https://github.com/ansible/molecule/issues/2456"
             )
             return False
+    return True
+
+
+@pytest.helpers.register
+@util.lru_cache()
+def supports_podman():
+    # Returns true if podman is supported and working
+    # Returns false if podman in not supported
+    # Calls pytest.fail if podman appears to be broken
+    podman = get_podman_executable()
+    if not min_ansible("2.8.6") or platform.system() == 'Darwin' or not podman:
+        return False
+
+    result = util.run([podman, "info"], stdout=PIPE, universal_newlines=True)
+    if result.returncode != 0:
+        LOG.error(
+            "Error %s returned from `podman info`: %s",
+            result.returncode,
+            result.stdout,
+        )
+        pytest.fail("Cannot run podman tests with a broken podman installation.")
+        return False
+
     return True
 
 
