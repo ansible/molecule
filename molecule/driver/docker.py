@@ -216,12 +216,7 @@ class Docker(Driver):
 
         log.info("Sanity checks: '{}'".format(self._name))
 
-        try:
-            # ansible >= 2.8
-            from ansible.module_utils.docker.common import HAS_DOCKER_PY
-        except ImportError:
-            # ansible < 2.8
-            from ansible.module_utils.docker_common import HAS_DOCKER_PY
+        from ansible.module_utils.docker.common import HAS_DOCKER_PY
 
         if not HAS_DOCKER_PY:
             msg = (

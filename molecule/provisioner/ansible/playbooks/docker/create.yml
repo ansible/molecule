@@ -46,15 +46,8 @@
       when: not item.pre_build_image | default(false)
       register: platforms
 
-    - name: Determine which docker image info module to use
-      set_fact:
-        _docker_image_info_module: >-
-          {{ ansible_version.full is version_compare('2.8', '>=') |
-            ternary('docker_image_info', 'docker_image_facts') }}
-
     - name: Discover local Docker images
-      action: "{{ _docker_image_info_module }}"
-      args:
+      docker_image_info:
         name: "molecule_local/{{ item.item.name }}"
         docker_host: "{{ item.item.docker_host | default(lookup('env', 'DOCKER_HOST') or 'unix://var/run/docker.sock') }}"
         cacert_path: "{{ item.cacert_path | default((lookup('env', 'DOCKER_CERT_PATH') + '/ca.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
@@ -68,7 +61,6 @@
 
     - name: Build an Ansible compatible image (new)
       when:
-        - ansible_version.full is version_compare('2.8', '>=')
         - platforms.changed or docker_images.results | map(attribute='images') | select('equalto', []) | list | count >= 0
         - not item.item.pre_build_image | default(false)
       docker_image:
@@ -94,28 +86,6 @@
       until: result is not failed
       retries: 3
       delay: 30
-
-    - name: Build an Ansible compatible image (old)
-      when:
-        - ansible_version.full is not version_compare('2.8', '>=')
-        - platforms.changed or docker_images.results | map(attribute='images') | select('equalto', []) | list | count >= 0
-        - not item.item.pre_build_image | default(false)
-      docker_image:
-        path: "{{ molecule_ephemeral_directory }}"
-        dockerfile: "{{ item.invocation.module_args.dest }}"
-        pull: "{{ item.item.pull | default(true) }}"
-        name: "molecule_local/{{ item.item.image }}"
-        docker_host: "{{ item.item.docker_host | default(lookup('env', 'DOCKER_HOST') or 'unix://var/run/docker.sock') }}"
-        cacert_path: "{{ item.cacert_path | default((lookup('env', 'DOCKER_CERT_PATH') + '/ca.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
-        cert_path: "{{ item.cert_path | default((lookup('env', 'DOCKER_CERT_PATH') + '/cert.pem')  if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
-        key_path: "{{ item.key_path | default((lookup('env', 'DOCKER_CERT_PATH') + '/key.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
-        tls_verify: "{{ item.tls_verify | default(lookup('env', 'DOCKER_TLS_VERIFY')) or false }}"
-        force: "{{ item.item.force | default(true) }}"
-        buildargs: "{{ item.item.buildargs | default(omit) }}"
-      with_items: "{{ platforms.results }}"
-      loop_control:
-        label: "molecule_local/{{ item.item.image }}"
-      no_log: false
 
     - name: Create docker network(s)
       docker_network:
