@@ -115,11 +115,6 @@ jobs:
         - TOXENV=ansible28-unit
       name: unit tests, Ansible 2.8, Python 3.7
 
-    - <<: *py-37
-      env:
-        - TOXENV=ansible27-unit
-      name: unit tests, Ansible 2.7, Python 3.7
-
     - <<: *py-36
       <<: *if-cron-or-manual-run-or-tagged
       env:
@@ -132,12 +127,6 @@ jobs:
         - TOXENV=ansible28-unit
       name: unit tests, Ansible 2.8, Python 3.6
 
-    - <<: *py-36
-      <<: *if-cron-or-manual-run-or-tagged
-      env:
-        - TOXENV=ansible27-unit
-      name: unit tests, Ansible 2.7, Python 3.6
-
     - <<: *py-27
       env:
         - TOXENV=ansible29-unit
@@ -147,11 +136,6 @@ jobs:
       env:
         - TOXENV=ansible28-unit
       name: unit tests, Ansible 2.8, Python 2.7
-
-    - <<: *py-27
-      env:
-        - TOXENV=ansible27-unit
-      name: unit tests, Ansible 2.7, Python 2.7
 
     - <<: *py-37
       env:
@@ -177,32 +161,6 @@ jobs:
         - TOXENV=ansible28-functional
       name: functional tests shard 2, Ansible 2.8, Python 3.7
 
-    - <<: *py-37
-      env:
-        - PYTEST_ADDOPTS='-m shard_1_of_2'
-        - TOXENV=ansible27-functional
-      name: functional tests shard 1, Ansible 2.7, Python 3.7
-
-    - <<: *py-37
-      env:
-        - PYTEST_ADDOPTS='-m shard_2_of_2'
-        - TOXENV=ansible27-functional
-      name: functional tests shard 2, Ansible 2.7, Python 3.7
-
-    - <<: *py-36
-      <<: *if-cron-or-manual-run-or-tagged
-      env:
-        - PYTEST_ADDOPTS='-m shard_1_of_2'
-        - TOXENV=ansible27-functional
-      name: functional tests shard 1, Ansible 2.7, Python 3.6
-
-    - <<: *py-36
-      <<: *if-cron-or-manual-run-or-tagged
-      env:
-        - PYTEST_ADDOPTS='-m shard_2_of_2'
-        - TOXENV=ansible27-functional
-      name: functional tests shard 2, Ansible 2.7, Python 3.6
-
     - <<: *py-36
       <<: *if-cron-or-manual-run-or-tagged
       env:
@@ -216,20 +174,6 @@ jobs:
         - PYTEST_ADDOPTS='-m shard_2_of_2'
         - TOXENV=ansible28-functional
       name: functional tests shard 2, Ansible 2.8, Python 3.6
-
-    - <<: *py-36
-      <<: *if-cron-or-manual-run-or-tagged
-      env:
-        - PYTEST_ADDOPTS='-m shard_1_of_2'
-        - TOXENV=ansible27-functional
-      name: functional tests shard 1, Ansible 2.7, Python 3.6
-
-    - <<: *py-36
-      <<: *if-cron-or-manual-run-or-tagged
-      env:
-        - PYTEST_ADDOPTS='-m shard_2_of_2'
-        - TOXENV=ansible27-functional
-      name: functional tests shard 2, Ansible 2.7, Python 3.6
 
     - <<: *py-27
       env:
@@ -254,18 +198,6 @@ jobs:
         - PYTEST_ADDOPTS='-m shard_2_of_2'
         - TOXENV=ansible28-functional
       name: functional tests shard 2, Ansible 2.8, Python 2.7
-
-    - <<: *py-27
-      env:
-        - PYTEST_ADDOPTS='-m shard_1_of_2'
-        - TOXENV=ansible27-functional
-      name: functional tests shard 1, Ansible 2.7, Python 2.7
-
-    - <<: *py-27
-      env:
-        - PYTEST_ADDOPTS='-m shard_2_of_2'
-        - TOXENV=ansible27-functional
-      name: functional tests shard 2, Ansible 2.7, Python 2.7
 
     # The following set of jobs is running tests against devel branch
     # of ansible/ansible:
