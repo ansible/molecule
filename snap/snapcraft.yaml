@@ -1,0 +1,19 @@
+name: molecule
+base: core18  # the base snap is the execution environment for this snap
+version: git
+summary: Ansible Molecule
+description: |
+  Molecule is QA tool use for the development and testing of Ansible roles
+  and playbooks.
+
+grade: devel  # must be 'stable' to release into candidate/stable channels
+confinement: devmode  # use 'strict' once you have the right plugs and slots
+
+parts:
+  molecule:
+    # See 'snapcraft plugins'
+    plugin: python
+    python-packages:
+      - setuptools-scm
+      - setuptools-scm-git-archive
+    source: .

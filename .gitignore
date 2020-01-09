@@ -1,6 +1,7 @@
 *.egg-info/
 *.py[cod]
 *.retry
+*.snap
 .bundle/
 .cache/
 .coverage

@@ -1,0 +1,36 @@
+- hosts: all
+  become: true
+  tasks:
+
+    - name: Install snapd
+      package:
+        name: snapd
+        state: present
+
+    - name: Enable snapd service
+      service:
+        name: snapd.socket
+        state: started
+
+    - when: ansible_os_family == 'Debian'
+      name: Install snapcraft (debian)
+      package:
+        name: snapcraft
+        state: present
+
+    - when: ansible_os_family == 'RedHat'
+      block:
+
+        - name: Activate snapd
+          shell: |
+            ln -s /var/lib/snapd/snap /snap
+
+        - name: Install snapcraft (redhat)
+          shell: |
+            type snapcraft || snap install --classic snapcraft
+
+    - name: Validate snapd install
+      shell: |
+        set -e
+        snap version
+        snapcraft version

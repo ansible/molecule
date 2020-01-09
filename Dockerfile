@@ -101,6 +101,7 @@ ENV PACKAGES="\
     py3-paramiko \
     py3-pbr \
     py3-pexpect \
+    py3-pip \
     py3-pluggy \
     py3-psutil \
     py3-ptyprocess \
