@@ -72,13 +72,16 @@
 
     - name: Create docker network(s)
       docker_network:
-        name: "{{ item }}"
+        name: "{{ item.name }}"
         docker_host: "{{ item.docker_host | default(lookup('env', 'DOCKER_HOST') or 'unix://var/run/docker.sock') }}"
         cacert_path: "{{ item.cacert_path | default((lookup('env', 'DOCKER_CERT_PATH') + '/ca.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
         cert_path: "{{ item.cert_path | default((lookup('env', 'DOCKER_CERT_PATH') + '/cert.pem')  if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
         key_path: "{{ item.key_path | default((lookup('env', 'DOCKER_CERT_PATH') + '/key.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
         tls_verify: "{{ item.tls_verify | default(lookup('env', 'DOCKER_TLS_VERIFY')) or false }}"
         state: present
+        appends: "{{ item.appends | default(omit) }}"
+        enable_ipv6: "{{ item.enable_ipv6 | default(omit) }}"
+        ipam_config: "{{ item.ipam_config | default(omit) }}"
       with_items: "{{ molecule_yml.platforms | molecule_get_docker_networks }}"
 
     - name: Determine the CMD directives

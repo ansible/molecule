@@ -55,14 +55,18 @@ def header(content):
 
 
 def get_docker_networks(data):
-    network_list = []
+    networks = {}
     for platform in data:
-        if "networks" in platform:
+        if "docker_networks" in platform:
+            for network in platform['docker_networks']:
+                if network['name'] not in networks:
+                    networks[network['name']] = network
+        elif "networks" in platform:
             for network in platform['networks']:
                 if "name" in network:
-                    name = network['name']
-                    network_list.append(name)
-    return network_list
+                    if network['name'] not in networks:
+                        networks[network['name']] = {'name': name}
+    return list(networks.values())
 
 
 class FilterModule(object):
