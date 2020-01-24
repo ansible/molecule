@@ -34,7 +34,6 @@
         build:
           path: "."
           dockerfile: "{{ item.dest }}"
-          from_source: true
           pull: true
           nocache: true
         source: build
