@@ -139,6 +139,7 @@
         ulimits: "{{ item.ulimits | default(omit) }}"
         networks: "{{ item.networks | default(omit) }}"
         network_mode: "{{ item.network_mode | default(omit) }}"
+        networks_cli_compatible: "{{ item.networks_cli_compatible | default(true) }}"
         purge_networks: "{{ item.purge_networks | default(omit) }}"
         dns_servers: "{{ item.dns_servers | default(omit) }}"
         etc_hosts: "{{ item.etc_hosts | default(omit) }}"

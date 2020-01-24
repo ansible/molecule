@@ -10,3 +10,4 @@
     ulimits: "{{ item.ulimits | default(omit) }}"
     networks: "{{ item.networks | default(omit) }}"
     dns_servers: "{{ item.dns_servers | default(omit) }}"
+    networks_cli_compatible: "{{ item.networks_cli_compatible | default(true) }}"
