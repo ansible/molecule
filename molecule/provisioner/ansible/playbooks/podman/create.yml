@@ -85,6 +85,7 @@
         --name "{{ item.name }}"
         {% if item.pid_mode is defined %}--pid={{ item.pid_mode }}{% endif %}
         {% if item.privileged is defined %}--privileged={{ item.privileged }}{% endif %}
+        {% if item.systemd is defined %}--systemd={{ item.systemd }}{% endif %}
         {% if item.security_opts is defined %}{% for i in item.security_opts %}--security-opt {{ i }} {% endfor %}{% endif %}
         {% if item.volumes is defined %}{% for i in item.volumes %}--volume {{ i }} {% endfor %}{% endif %}
         {% if item.tmpfs is defined %}{% for i in item.tmpfs %}--tmpfs={{ i }} {% endfor %}{% endif %}

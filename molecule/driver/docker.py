@@ -116,7 +116,7 @@ class Docker(Driver):
 
     When attempting to utilize a container image with `systemd`_ as your init
     system inside the container to simulate a real machine, make sure to set
-    the ``privileged``, ``volumes``, ``command``, and ``environment``
+    the ``privileged`` or ``systemd``, ``volumes``, ``command``, and ``environment``
     values. An example using the ``centos:7`` image is below:
 
     .. note:: Do note that running containers in privileged mode is considerably
@@ -145,6 +145,20 @@ class Docker(Driver):
     .. code-block:: bash
 
         $ pip install molecule[docker]
+
+    Alternatively, specify ``systemd: True`` to use the Podman ``--systemd``
+    value and run ``setsebool -P container_manage_cgroup true``
+    to allow containers to configure cgroups
+    if SELinux is enabled. For example:
+
+    .. code-block:: yaml
+
+        platforms:
+        - name: instance
+          image: centos:7
+          systemd: True
+          command: "/usr/sbin/init"
+          tty: True
 
     When pulling from a private registry, it is the user's discretion to decide
     whether to use hard-code strings or environment variables for passing

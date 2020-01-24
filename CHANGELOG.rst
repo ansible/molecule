@@ -22,6 +22,8 @@ Changelog
 * Use pluggy to load plugins
 * Windows & Linux EC2 instances can be tested simultaneously
 * Windows EC2 instances can be provisioned using the automatically-generated password
+* Support the Podman ``--systemd=True`` option for running systemd in
+  containers without ``--privileged``.
 
 2.22
 ====

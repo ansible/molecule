@@ -60,6 +60,7 @@ class Podman(Driver):
             tty: True|False
             pid_mode: host
             privileged: True|False
+            systemd: False|True
             security_opts:
               - seccomp=unconfined
             volumes:
