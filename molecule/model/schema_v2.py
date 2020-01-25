@@ -459,7 +459,7 @@ class Validator(cerberus.Validator):
                     self._error(field, msg)
 
     def _validate_disallowed(self, disallowed, field, value):
-        """ Readonly but with a custom error.
+        """Readonly but with a custom error.
 
         The rule's arguments are validated against this schema:
         {'type': 'boolean'}
@@ -480,7 +480,7 @@ class Validator(cerberus.Validator):
         return value
 
     def _validate_molecule_env_var(self, molecule_env_var, field, value):
-        """ Readonly but with a custom error.
+        """Readonly but with a custom error.
 
         The rule's arguments are validated against this schema:
         {'type': 'boolean'}

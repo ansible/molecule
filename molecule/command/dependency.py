@@ -62,7 +62,7 @@ class Dependency(base.Base):
 
     def execute(self):
         """
-        Execute the actions necessary to perform a `molecule dependency` and
+        Execute the actions necessary to perform a `molecule dependency` and \
         returns None.
 
         :return: None
@@ -82,7 +82,7 @@ class Dependency(base.Base):
     ),
 )
 def dependency(ctx, scenario_name):  # pragma: no cover
-    """ Manage the role's dependencies. """
+    """Manage the role's dependencies."""
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
     command_args = {'subcommand': subcommand}

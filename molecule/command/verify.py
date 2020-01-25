@@ -62,7 +62,7 @@ class Verify(base.Base):
 
     def execute(self):
         """
-        Execute the actions necessary to perform a `molecule verify` and
+        Execute the actions necessary to perform a `molecule verify` and \
         returns None.
 
         :return: None
@@ -82,7 +82,7 @@ class Verify(base.Base):
     ),
 )
 def verify(ctx, scenario_name):  # pragma: no cover
-    """ Run automated tests against instances. """
+    """Run automated tests against instances."""
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
     command_args = {'subcommand': subcommand}

@@ -74,7 +74,7 @@ class Driver(object):
     @abc.abstractproperty
     def login_cmd_template(self):  # pragma: no cover
         """
-        The login command template to be populated by ``login_options`` and
+        The login command template to be populated by ``login_options`` and \
         returns a string.
 
         :returns: str
@@ -112,7 +112,7 @@ class Driver(object):
     @abc.abstractmethod
     def ansible_connection_options(self, instance_name):  # pragma: no cover
         """
-        Ansible specific connection options supplied to inventory and returns a
+        Ansible specific connection options supplied to inventory and returns a \
         dict.
 
         :param instance_name: A string containing the instance to login to.
@@ -123,6 +123,8 @@ class Driver(object):
     @abc.abstractmethod
     def sanity_checks(self):
         """
+        Confirms that driver is usable
+
         Sanity checks to ensure the driver can do work successfully. For
         example, when using the Docker driver, we want to know that the Docker
         daemon is running and we have the correct Docker Python dependency.

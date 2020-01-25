@@ -62,7 +62,7 @@ class Lint(base.Base):
 
     def execute(self):
         """
-        Execute the actions necessary to perform a `molecule lint` and
+        Execute the actions necessary to perform a `molecule lint` and \
         returns None.
 
         :return: None
@@ -93,7 +93,7 @@ class Lint(base.Base):
     ),
 )
 def lint(ctx, scenario_name):  # pragma: no cover
-    """ Lint the role (dependency, lint). """
+    """Lint the role (dependency, lint)."""
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
     command_args = {'subcommand': subcommand}

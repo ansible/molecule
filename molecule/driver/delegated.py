@@ -27,8 +27,9 @@ LOG = logger.get_logger(__name__)
 
 class Delegated(Driver):
     r"""
-    The class responsible for managing delegated instances.  Delegated is `not`
-    the default driver used in Molecule.
+    The class responsible for managing delegated instances.
+
+    Delegated is `not` the default driver used in Molecule.
 
     Under this driver, it is the developers responsibility to implement the
     create and destroy playbooks.  ``Managed`` is the default behaviour of all

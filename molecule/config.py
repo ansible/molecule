@@ -57,6 +57,8 @@ class NewInitCaller(type):
 @six.add_metaclass(NewInitCaller)
 class Config(object):
     """
+    Config class
+
     Molecule searches the current directory for ``molecule.yml`` files by
     globbing `molecule/*/molecule.yml`.  The files are instantiated into
     a list of Molecule :class:`.Config` objects, and each Molecule subcommand
@@ -241,8 +243,9 @@ class Config(object):
 
     def _get_config(self):
         """
-        Perform a prioritized recursive merge of config files, and returns
-        a new dict.  Prior to merging the config files are interpolated with
+        Perform a prioritized recursive merge of config files.
+
+        Returns a new dict.  Prior to merging the config files are interpolated with
         environment variables.
 
         :return: dict
@@ -251,8 +254,9 @@ class Config(object):
 
     def _reget_config(self):
         """
-        Perform the same prioritized recursive merge from `get_config`, this
-        time, interpolating the ``keep_string`` left behind in the original
+        Perform the same prioritized recursive merge from `get_config`.
+
+        Interpolates the ``keep_string`` left behind in the original
         ``get_config`` call.  This is probably __very__ bad.
 
         :return: dict
@@ -264,8 +268,9 @@ class Config(object):
 
     def _combine(self, env=os.environ, keep_string=None):
         """
-        Perform a prioritized recursive merge of config files, and returns
-        a new dict.  Prior to merging the config files are interpolated with
+        Perform a prioritized recursive merge of config files.
+
+        Returns a new dict.  Prior to merging the config files are interpolated with
         environment variables.
 
         1. Loads Molecule defaults.

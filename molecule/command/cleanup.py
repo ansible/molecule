@@ -28,6 +28,8 @@ LOG = logger.get_logger(__name__)
 
 class Cleanup(base.Base):
     """
+    Cleanup Command Class
+
     This action has cleanup and is not enabled by default.
     See the provisioner's documentation for further details.
 
@@ -65,7 +67,7 @@ class Cleanup(base.Base):
 
     def execute(self):
         """
-        Execute the actions necessary to cleanup the instances and returns
+        Execute the actions necessary to cleanup the instances and returns \
         None.
 
         :return: None
@@ -91,10 +93,8 @@ class Cleanup(base.Base):
     ),
 )
 def cleanup(ctx, scenario_name):  # pragma: no cover
-    """
-    Use the provisioner to cleanup any changes made to external systems during
-    the stages of testing.
-    """
+    """Use the provisioner to cleanup any changes made to external systems during \
+    the stages of testing."""
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
     command_args = {'subcommand': subcommand}

@@ -84,7 +84,7 @@ class Test(base.Base):
 
     def execute(self):
         """
-        Execute the actions necessary to perform a `molecule test` and
+        Execute the actions necessary to perform a `molecule test` and \
         returns None.
 
         :return: None
@@ -125,10 +125,7 @@ class Test(base.Base):
     help='Enable or disable parallel mode. Default is disabled.',
 )
 def test(ctx, scenario_name, driver_name, __all, destroy, parallel):  # pragma: no cover
-    """
-    Test (dependency, lint, cleanup, destroy, syntax, create, prepare,
-          converge, idempotence, side_effect, verify, cleanup, destroy).
-    """
+    """Test (dependency, lint, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy)."""
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
     command_args = {

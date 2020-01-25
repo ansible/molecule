@@ -53,7 +53,7 @@ class Role(base.Base):
 
     def execute(self):
         """
-        Execute the actions necessary to perform a `molecule init role` and
+        Execute the actions necessary to perform a `molecule init role` and \
         returns None.
 
         :return: None
@@ -136,7 +136,7 @@ def role(
     role_name,
     verifier_name,
 ):  # pragma: no cover
-    """ Initialize a new role for use with Molecule. """
+    """Initialize a new role for use with Molecule."""
     command_args = {
         'dependency_name': dependency_name,
         'driver_name': driver_name,

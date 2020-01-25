@@ -63,8 +63,7 @@ class AnsibleLintMixin:
 
     def bake(self):
         """
-        Bake an `ansible-lint` command so it's ready to execute and returns
-        None.
+        Bake an `ansible-lint` command so it's ready to execute and returns None.
 
         :return: None
         """

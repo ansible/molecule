@@ -39,7 +39,7 @@ LOG = logger.get_logger(__name__)
     help='Change output format. (simple)',
 )
 def drivers(ctx, format):  # pragma: no cover
-    """ Lists drivers. """
+    """Lists drivers."""
     drivers = [[x] for x in api.drivers()]
 
     headers = ['name']

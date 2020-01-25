@@ -36,7 +36,7 @@ LOG = logger.get_logger(__name__)
 
 class Scenario(object):
     """
-    A scenario allows Molecule test a role in a particular way, this is a
+    A scenario allows Molecule test a role in a particular way, this is a \
     fundamental change from Molecule v1.
 
     A scenario is a self-contained directory containing everything necessary
@@ -226,7 +226,7 @@ class Scenario(object):
     @property
     def sequence(self):
         """
-        Select the sequence based on scenario and subcommand of the provided
+        Select the sequence based on scenario and subcommand of the provided \
         scenario object and returns a list.
 
         :param scenario: A scenario object.
@@ -254,9 +254,10 @@ class Scenario(object):
 
 def ephemeral_directory(path=None):
     """
-    Returns temporary directory to be used by molecule. Molecule users should
-    not make any assumptions about its location, permissions or its content as
-    this may change in future release.
+    Returns temporary directory to be used by molecule.
+
+    Molecule users should not make any assumptions about its location,
+    permissions or its content as this may change in future release.
     """
     d = os.getenv('MOLECULE_EPHEMERAL_DIRECTORY')
     if not d:

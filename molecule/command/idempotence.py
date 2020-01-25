@@ -31,7 +31,7 @@ LOG = logger.get_logger(__name__)
 
 class Idempotence(base.Base):
     """
-    Runs the converge step a second time. If no tasks will be marked as changed
+    Runs the converge step a second time. If no tasks will be marked as changed \
     the scenario will be considered idempotent.
 
     .. program:: molecule idempotence
@@ -68,7 +68,7 @@ class Idempotence(base.Base):
 
     def execute(self):
         """
-        Execute the actions necessary to perform a `molecule idempotence` and
+        Execute the actions necessary to perform a `molecule idempotence` and \
         returns None.
 
         :return: None
@@ -147,10 +147,8 @@ class Idempotence(base.Base):
     ),
 )
 def idempotence(ctx, scenario_name):  # pragma: no cover
-    """
-    Use the provisioner to configure the instances and parse the output to
-    determine idempotence.
-    """
+    """Use the provisioner to configure the instances and parse the output to \
+    determine idempotence."""
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
     command_args = {'subcommand': subcommand}

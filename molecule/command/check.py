@@ -71,7 +71,7 @@ class Check(base.Base):
 
     def execute(self):
         """
-        Execute the actions necessary to perform a `molecule check` and
+        Execute the actions necessary to perform a `molecule check` and \
         returns None.
 
         :return: None
@@ -96,10 +96,8 @@ class Check(base.Base):
     help='Enable or disable parallel mode. Default is disabled.',
 )
 def check(ctx, scenario_name, parallel):  # pragma: no cover
-    """
-    Use the provisioner to perform a Dry-Run (destroy, dependency, create,
-    prepare, converge).
-    """
+    """Use the provisioner to perform a Dry-Run (destroy, dependency, create, \
+    prepare, converge)."""
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
     command_args = {'parallel': parallel, 'subcommand': subcommand}

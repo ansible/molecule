@@ -149,7 +149,7 @@ def execute_scenario(scenario):
 
 def get_configs(args, command_args, ansible_args=()):
     """
-    Glob the current directory for Molecule config files, instantiate config
+    Glob the current directory for Molecule config files, instantiate config \
     objects, and returns a list.
 
     :param args: A dict of options, arguments and commands from the CLI.

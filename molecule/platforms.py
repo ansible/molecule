@@ -26,7 +26,7 @@ LOG = logger.get_logger(__name__)
 
 class Platforms(object):
     """
-    Platforms define the instances to be tested, and the groups to which the
+    Platforms define the instances to be tested, and the groups to which the \
     instances belong.
 
     .. code-block:: yaml
