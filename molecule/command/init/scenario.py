@@ -34,6 +34,8 @@ LOG = logger.get_logger(__name__)
 
 class Scenario(base.Base):
     """
+    Scenario Class.
+
     .. program:: molecule init scenario --scenario-name bar --role-name foo
 
     .. option:: molecule init scenario --scenario-name bar --role-name foo

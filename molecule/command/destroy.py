@@ -32,6 +32,8 @@ MOLECULE_PARALLEL = os.environ.get('MOLECULE_PARALLEL', False)
 
 class Destroy(base.Base):
     """
+    Destroy Command Class.
+
     .. program:: molecule destroy
 
     .. option:: molecule destroy

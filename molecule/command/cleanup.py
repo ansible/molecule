@@ -28,7 +28,7 @@ LOG = logger.get_logger(__name__)
 
 class Cleanup(base.Base):
     """
-    Cleanup Command Class
+    Cleanup Command Class.
 
     This action has cleanup and is not enabled by default.
     See the provisioner's documentation for further details.

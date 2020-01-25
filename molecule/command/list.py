@@ -34,6 +34,8 @@ LOG = logger.get_logger(__name__)
 
 class List(base.Base):
     """
+    List Command Class.
+
     .. program:: molecule list
 
     .. option:: molecule list

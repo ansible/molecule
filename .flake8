@@ -3,7 +3,7 @@
 exclude = .venv/,.tox/,dist/,build/,.eggs/
 format = pylint
 # E203: https://github.com/python/black/issues/315
-ignore = E741,W503,W504,H,E501,E203,D100,D101,D102,D103,D104,D105,D107,D400,D401
+ignore = E741,W503,W504,H,E501,E203,D100,D101,D102,D103,D104,D105,D107,D401
 # TODO(ssbarnea): remove temporary skips one by one:
 # [D100] Missing docstring in public module
 # [D101] Missing docstring in public class
@@ -12,7 +12,6 @@ ignore = E741,W503,W504,H,E501,E203,D100,D101,D102,D103,D104,D105,D107,D400,D401
 # [D104] Missing docstring in public package
 # [D105] Missing docstring in magic method
 # [D107] Missing docstring in __init__
-# [D400] First line should end with a period
 # [D401] First line should be in imperative mood
 # 88 is official black default:
 max-line-length = 88

@@ -32,6 +32,8 @@ MOLECULE_PARALLEL = os.environ.get('MOLECULE_PARALLEL', False)
 
 class Test(base.Base):
     """
+    Test Command Class.
+
     .. program:: molecule test
 
     .. option:: molecule test

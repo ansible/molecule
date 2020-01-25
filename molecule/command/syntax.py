@@ -28,6 +28,8 @@ LOG = logger.get_logger(__name__)
 
 class Syntax(base.Base):
     """
+    Syntax Command Class.
+
     .. program:: molecule syntax
 
     .. option:: molecule syntax

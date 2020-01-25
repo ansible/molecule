@@ -29,6 +29,8 @@ LOG = logger.get_logger(__name__)
 
 class Create(base.Base):
     """
+    Create Command Class.
+
     .. program:: molecule create
 
     .. option:: molecule create

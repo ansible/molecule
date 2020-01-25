@@ -123,7 +123,7 @@ class Driver(object):
     @abc.abstractmethod
     def sanity_checks(self):
         """
-        Confirms that driver is usable
+        Confirms that driver is usable.
 
         Sanity checks to ensure the driver can do work successfully. For
         example, when using the Docker driver, we want to know that the Docker

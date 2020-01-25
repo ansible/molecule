@@ -38,6 +38,8 @@ LOG = logger.get_logger(__name__)
 
 class Login(base.Base):
     """
+    Login Command Class.
+
     .. program:: molecule login
 
     .. option:: molecule login

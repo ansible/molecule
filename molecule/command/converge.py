@@ -28,6 +28,8 @@ LOG = logger.get_logger(__name__)
 
 class Converge(base.Base):
     """
+    Converge Command Class.
+
     .. program:: molecule converge
 
     .. option:: molecule converge

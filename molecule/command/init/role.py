@@ -33,6 +33,8 @@ LOG = logger.get_logger(__name__)
 
 class Role(base.Base):
     """
+    Init Role Command Class.
+
     .. program:: molecule init role --role-name foo
 
     .. option:: molecule init role --role-name foo

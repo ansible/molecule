@@ -28,6 +28,8 @@ LOG = logger.get_logger(__name__)
 
 class Lint(base.Base):
     """
+    Lint Command Class.
+
     .. program:: molecule lint
 
     .. option:: molecule lint

@@ -29,6 +29,8 @@ LOG = logger.get_logger(__name__)
 
 class Matrix(base.Base):
     """
+    Matric Command Class.
+
     .. program:: molecule matrix subcommand
 
     .. option:: molecule matrix subcommand

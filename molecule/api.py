@@ -10,7 +10,7 @@ LOG = logger.get_logger(__name__)
 
 
 class UserListMap(UserList):
-    """A list where you can also access elements by their name
+    """A list where you can also access elements by their name.
 
     Example:
     foo['boo']

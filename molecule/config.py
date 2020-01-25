@@ -57,7 +57,7 @@ class NewInitCaller(type):
 @six.add_metaclass(NewInitCaller)
 class Config(object):
     """
-    Config class
+    Config Class.
 
     Molecule searches the current directory for ``molecule.yml`` files by
     globbing `molecule/*/molecule.yml`.  The files are instantiated into

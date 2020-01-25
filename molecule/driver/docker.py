@@ -32,7 +32,7 @@ log = logger.get_logger(__name__)
 
 class Docker(Driver):
     """
-    Docker Driver Class
+    Docker Driver Class.
 
     The class responsible for managing `Docker`_ containers.  `Docker`_ is
     the default driver used in Molecule.

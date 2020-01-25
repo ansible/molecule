@@ -28,6 +28,8 @@ LOG = logger.get_logger(__name__)
 
 class Verify(base.Base):
     """
+    Verify Command Class.
+
     .. program:: molecule verify
 
     .. option:: molecule verify

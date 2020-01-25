@@ -28,6 +28,8 @@ LOG = logger.get_logger(__name__)
 
 class Dependency(base.Base):
     """
+    Dependency Command Class.
+
     .. program:: molecule dependency
 
     .. option:: molecule dependency
