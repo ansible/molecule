@@ -5,24 +5,3 @@
   become: true
   roles:
     - molecule
-
-- name: Converge
-  hosts: bar
-  gather_facts: false
-  become: true
-  roles:
-    - molecule
-
-- name: Converge
-  hosts: foo
-  gather_facts: false
-  become: true
-  roles:
-    - molecule
-
-- name: Converge
-  hosts: baz
-  gather_facts: false
-  become: true
-  roles:
-    - molecule

@@ -13,8 +13,7 @@ platforms:
     networks:
       - name: foo
       - name: bar
-    buildargs:
-      testarg: this_is_a_test
+    pre_build_image: true
 provisioner:
   name: ansible
   playbooks:
