@@ -276,7 +276,7 @@ def supports_docker():
             return False
         if "BuildahVersion" in result.stdout:
             LOG.error(
-                "podman-docker is unsupported, see https://github.com/ansible/molecule/issues/2456"
+                "podman-docker is unsupported, see https://github.com/ansible-community/molecule/issues/2456"
             )
             return False
     return True

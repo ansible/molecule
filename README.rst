@@ -10,8 +10,8 @@ Ansible Molecule
    :target: https://molecule.readthedocs.io/en/stable/
    :alt: Documentation Status
 
-.. image:: https://img.shields.io/travis/com/ansible/molecule/master.svg?label=CI
-   :target: https://travis-ci.com/ansible/molecule
+.. image:: https://zuul-ci.org/gated.svg
+   :target: https://dashboard.zuul.ansible.com/t/ansible/builds?project=ansible-community/molecule
 
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/python/black
@@ -69,7 +69,7 @@ If you want to get moving fast and make a quick patch:
 
 .. code-block:: bash
 
-    $ git clone https://github.com/ansible/molecule && cd molecule
+    $ git clone https://github.com/ansible-community/molecule && cd molecule
     $ python3 -m venv .venv && source .venv/bin/activate
     $ pip install -U setuptools pip tox
 
@@ -96,7 +96,7 @@ License
 
 The `MIT`_ License.
 
-.. _`MIT`: https://github.com/ansible/molecule/blob/master/LICENSE
+.. _`MIT`: https://github.com/ansible-community/molecule/blob/master/LICENSE
 
 The logo is licensed under the `Creative Commons NoDerivatives 4.0 License`_.
 

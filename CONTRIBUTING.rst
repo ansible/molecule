@@ -18,23 +18,7 @@ How to get involved
   influence the direction of the project.
 
 .. _community working group: https://github.com/ansible/community/wiki/molecule
-.. _Molecule Project Board: https://github.com/ansible/molecule/projects
-
-Update Git repo location
-------------------------
-
-The Molecule project has moved:
-
-old location: ``https://github.com/metacloud/molecule``
-
-new location: ``https://github.com/ansible/molecule``
-
-If you have the source checked out you should use ``git remote set-url origin``
-to point to the new location.
-
-Please follow GitHub's official `changing a remote's URL`_ guide.
-
-.. _`changing a remote's URL`: https://help.github.com/articles/changing-a-remote-s-url/
+.. _Molecule Project Board: https://github.com/ansible-community/molecule/projects
 
 New Docker location
 -------------------
@@ -87,8 +71,8 @@ Contribution Guidelines
 * Reformat the code by following the formatting section below.
 * Submit a pull request.
 
-.. _`Issue`: https://github.com/ansible/molecule/issues/new/choose
-.. _`DCO 1.1`: https://github.com/ansible/molecule/blob/master/DCO_1_1.md
+.. _`Issue`: https://github.com/ansible-community/molecule/issues/new/choose
+.. _`DCO 1.1`: https://github.com/ansible-community/molecule/blob/master/DCO_1_1.md
 .. _formatting: https://molecule.readthedocs.io/en/latest/testing.html#formatting
 .. _linting: https://molecule.readthedocs.io/en/latest/testing.html#linting
 
@@ -97,7 +81,7 @@ Code Of Conduct
 
 Please see our `Code of Conduct`_ document.
 
-.. _Code of Conduct: https://github.com/ansible/molecule/blob/master/.github/CODE_OF_CONDUCT.md
+.. _Code of Conduct: https://github.com/ansible-community/molecule/blob/master/.github/CODE_OF_CONDUCT.md
 
 Pull Request Life Cycle and Governance
 ======================================

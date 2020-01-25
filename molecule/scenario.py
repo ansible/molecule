@@ -200,7 +200,7 @@ class Scenario(object):
 
     @property
     def lint_sequence(self):
-        # see https://github.com/ansible/molecule/issues/2216
+        # see https://github.com/ansible-community/molecule/issues/2216
         return ['dependency', 'lint']
 
     @property
