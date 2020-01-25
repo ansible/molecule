@@ -38,7 +38,7 @@ Ansible version for the functional and unit tests.
 
 .. code-block:: bash
 
-    $ tox -l
+    $ tox -av
 
 Unit
 ----
@@ -74,7 +74,7 @@ Generate the documentation, using `sphinx`_.
 
 .. code-block:: bash
 
-    $ tox -e doc
+    $ tox -e docs
 
 .. _`sphinx`: http://www.sphinx-doc.org
 

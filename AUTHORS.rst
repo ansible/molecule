@@ -14,5 +14,5 @@ Please see the following:
 * `Contributors listing`_
 * `Community working group members`_
 
-.. _Contributors listing: https://github.com/ansible/molecule/graphs/contributors
+.. _Contributors listing: https://github.com/ansible-community/molecule/graphs/contributors
 .. _Community working group members: https://github.com/ansible/community/wiki/Molecule

@@ -323,4 +323,4 @@ conflict.
 .. _`Gitlab`: https://gitlab.com
 .. _`Tox`: https://tox.readthedocs.io/en/latest
 .. _`--parallel functionality`: https://tox.readthedocs.io/en/latest/config.html#cmdoption-tox-p
-.. _`issue1567_comment`: https://github.com/ansible/molecule/issues/1567#issuecomment-436876722
+.. _`issue1567_comment`: https://github.com/ansible-community/molecule/issues/1567#issuecomment-436876722
