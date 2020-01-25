@@ -116,6 +116,7 @@
         published_ports: "{{ item.published_ports | default(omit) }}"
         ulimits: "{{ item.ulimits | default(omit) }}"
         networks: "{{ item.networks | default(omit) }}"
+        networks_cli_compatible: "{{ item.networks_cli_compatible | default(true) }}"
         network_mode: "{{ item.network_mode | default(omit) }}"
         purge_networks: "{{ item.purge_networks | default(omit) }}"
         dns_servers: "{{ item.dns_servers | default(omit) }}"
