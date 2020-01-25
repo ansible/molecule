@@ -213,7 +213,6 @@ class Docker(Driver):
     @lru_cache()
     def sanity_checks(self):
         """Implement Docker driver sanity checks."""
-
         log.info("Sanity checks: '{}'".format(self._name))
 
         from ansible.module_utils.docker.common import HAS_DOCKER_PY

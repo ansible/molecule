@@ -73,9 +73,7 @@ class CustomLogger(logging.getLoggerClass()):
 
 
 class TrailingNewlineFormatter(logging.Formatter):
-    """
-    A custom logging formatter which removes additional newlines from messages.
-    """
+    """A custom logging formatter which removes additional newlines from messages."""
 
     def format(self, record):
         if record.msg:

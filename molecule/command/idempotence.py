@@ -91,13 +91,11 @@ class Idempotence(base.Base):
             util.sysexit_with_message(msg)
 
     def _is_idempotent(self, output):
-        """
-        Parses the output of the provisioning for changed and returns a bool.
+        """Parses the output of the provisioning for changed and returns a bool.
 
         :param output: A string containing the output of the ansible run.
         :return: bool
         """
-
         # Remove blank lines to make regex matches easier
         output = re.sub(r'\n\s*\n*', '\n', output)
 

@@ -58,7 +58,6 @@ class Role(base.Base):
 
         :return: None
         """
-
         role_name = self._command_args['role_name']
         role_directory = os.getcwd()
         msg = 'Initializing new role {}...'.format(role_name)

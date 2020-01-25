@@ -181,5 +181,4 @@ class Podman(Driver):
     @lru_cache()
     def sanity_checks(self):
         """Implement Podman driver sanity checks."""
-
         log.info("Sanity checks: '{}'".format(self._name))

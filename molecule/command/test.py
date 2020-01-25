@@ -129,7 +129,6 @@ def test(ctx, scenario_name, driver_name, __all, destroy, parallel):  # pragma: 
     Test (dependency, lint, cleanup, destroy, syntax, create, prepare,
           converge, idempotence, side_effect, verify, cleanup, destroy).
     """
-
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
     command_args = {

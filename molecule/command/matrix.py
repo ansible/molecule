@@ -69,10 +69,7 @@ class Matrix(base.Base):
 # subclasses have not all loaded at this point.
 @click.argument('subcommand', nargs=1, type=click.UNPROCESSED)
 def matrix(ctx, scenario_name, subcommand):  # pragma: no cover
-    """
-    List matrix of steps used to test instances.
-    """
-
+    """List matrix of steps used to test instances."""
     args = ctx.obj.get('args')
     command_args = {'subcommand': subcommand}
 

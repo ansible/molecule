@@ -40,7 +40,6 @@ LOG = logger.get_logger(__name__)
 )
 def drivers(ctx, format):  # pragma: no cover
     """ Lists drivers. """
-
     drivers = [[x] for x in api.drivers()]
 
     headers = ['name']

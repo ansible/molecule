@@ -156,7 +156,6 @@ class Testinfra(Verifier):
 
         :return: None
         """
-
         options = self.options
         verbose_flag = util.verbose_flag(options)
         args = verbose_flag + self.additional_files_or_dirs

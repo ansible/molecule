@@ -28,9 +28,7 @@ VALID_KEYS = ['created', 'converged', 'driver', 'prepared', 'run_uuid', 'is_para
 
 
 class InvalidState(Exception):
-    """
-    Exception class raised when an error occurs in :class:`.State`.
-    """
+    """Exception class raised when an error occurs in :class:`.State`."""
 
     pass
 

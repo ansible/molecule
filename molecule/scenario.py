@@ -244,10 +244,10 @@ class Scenario(object):
 
     def _setup(self):
         """
-         Prepare the scenario for Molecule and returns None.
+        Prepare the scenario for Molecule and returns None.
 
-         :return: None
-         """
+        :return: None
+        """
         if not os.path.isdir(self.inventory_directory):
             os.makedirs(self.inventory_directory)
 

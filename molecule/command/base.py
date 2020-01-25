@@ -38,9 +38,7 @@ MOLECULE_DEFAULT_SCENARIO_NAME = 'default'
 
 @six.add_metaclass(abc.ABCMeta)
 class Base(object):
-    """
-    An abstract base class used to define the command interface.
-    """
+    """An abstract base class used to define the command interface."""
 
     def __init__(self, c):
         """
@@ -135,9 +133,7 @@ def execute_scenario(scenario):
 
     :param scenario: The scenario to execute.
     :returns: None
-
     """
-
     for action in scenario.sequence:
         execute_subcommand(scenario.config, action)
 
