@@ -1,25 +1,108 @@
 ---
 # zuul.d/layout.yaml
 - job:
-    name: molecule-tox-devel
-    parent: molecule-tox-py36
-    timeout: 7200
+    name: molecule-tox-py27-ansible28-unit
+    parent: molecule-tox-py27
     vars:
-      tox_envlist: ansibledevel-unit,ansibledevel-functional
+      tox_envlist: py27-ansible28-unit
 
 - job:
-    name: molecule-tox-py27-ansible28
+    name: molecule-tox-py27-ansible28-functional
     parent: molecule-tox-py27
     timeout: 7200
     vars:
-      tox_envlist: py27-ansible28-unit,py27-ansible28-functional
+      tox_envlist: py27-ansible28-functional
 
 - job:
-    name: molecule-tox-py37-ansible28
+    name: molecule-tox-py27-ansible29-unit
+    parent: molecule-tox-py27
+    vars:
+      tox_envlist: py27-ansible29-unit
+
+- job:
+    name: molecule-tox-py27-ansible29-functional
+    parent: molecule-tox-py27
+    timeout: 7200
+    vars:
+      tox_envlist: py27-ansible29-functional
+
+- job:
+    name: molecule-tox-py36-ansible29-unit
+    parent: molecule-tox-py36
+    vars:
+      tox_envlist: py36-ansible29-unit
+
+- job:
+    name: molecule-tox-py36-ansible29-functional
+    parent: molecule-tox-py36
+    timeout: 7200
+    vars:
+      tox_envlist: py36-ansible29-functional
+
+- job:
+    name: molecule-tox-py37-ansible28-unit
+    parent: molecule-tox-py37
+    vars:
+      tox_envlist: py37-ansible28-unit
+
+- job:
+    name: molecule-tox-py37-ansible28-functional
     parent: molecule-tox-py37
     timeout: 7200
     vars:
-      tox_envlist: py37-ansible28-unit,py37-ansible28-functional
+      tox_envlist: py37-ansible28-functional
+
+- job:
+    name: molecule-tox-py37-ansible29-unit
+    parent: molecule-tox-py37
+    vars:
+      tox_envlist: py37-ansible29-unit
+
+- job:
+    name: molecule-tox-py37-ansible29-functional
+    parent: molecule-tox-py37
+    timeout: 7200
+    vars:
+      tox_envlist: py37-ansible29-functional
+
+- job:
+    name: molecule-tox-devel-unit
+    parent: molecule-tox-py36
+    vars:
+      tox_envlist: ansibledevel-unit
+
+- job:
+    name: molecule-tox-devel-functional
+    parent: molecule-tox-py36
+    timeout: 7200
+    vars:
+      tox_envlist: ansibledevel-functional
+
+- job:
+    name: molecule-tox-py27-ansible28-unit
+    parent: molecule-tox-py27
+    vars:
+      tox_envlist: py27-ansible28-unit
+
+- job:
+    name: molecule-tox-py27-ansible28-functional
+    parent: molecule-tox-py27
+    timeout: 7200
+    vars:
+      tox_envlist: py27-ansible28-functional
+
+- job:
+    name: molecule-tox-py37-ansible28-unit
+    parent: molecule-tox-py37
+    vars:
+      tox_envlist: py37-ansible28-unit
+
+- job:
+    name: molecule-tox-py37-ansible28-functional
+    parent: molecule-tox-py37
+    timeout: 7200
+    vars:
+      tox_envlist: py37-ansible28-functional
 
 - job:
     name: molecule-tox-packaging
@@ -38,20 +121,29 @@
             vars:
               tox_envlist: doc
         - molecule-tox-packaging
-        - molecule-tox-py27:
-            timeout: 7200
-            vars:
-              tox_envlist: py27-ansible29-unit,py27-ansible29-functional
-        - molecule-tox-py27-ansible28
-        - molecule-tox-py36:
-            timeout: 7200
-            vars:
-              tox_envlist: py36-ansible29-unit,py36-ansible29-functional
-        - molecule-tox-py37-ansible28
-        - molecule-tox-py37:
-            timeout: 7200
-            vars:
-              tox_envlist: py37-ansible29-unit,py37-ansible29-functional
-        - molecule-tox-devel
+        - molecule-tox-py27-ansible28-unit
+        - molecule-tox-py27-ansible29-unit
+        - molecule-tox-py36-ansible29-unit
+        - molecule-tox-py37-ansible28-unit
+        - molecule-tox-py37-ansible29-unit
+        - molecule-tox-devel-unit
+        # tier2: slow functional
+        - molecule-tox-py27-ansible28-functional: &deps
+            dependencies:
+              - molecule-tox-linters
+              - molecule-tox-docs
+              - molecule-tox-packaging
+              - molecule-tox-py27-ansible28-unit
+              - molecule-tox-py27-ansible29-unit
+              - molecule-tox-py36-ansible29-unit
+              - molecule-tox-py37-ansible28-unit
+              - molecule-tox-py37-ansible29-unit
+              - molecule-tox-devel-unit
+        - molecule-tox-py27-ansible29-functional: *deps
+        - molecule-tox-py36-ansible29-functional: *deps
+        - molecule-tox-py37-ansible28-functional: *deps
+        - molecule-tox-py37-ansible29-functional: *deps
+        - molecule-tox-devel-functional: *deps
+
     gate:
       jobs: *defaults
