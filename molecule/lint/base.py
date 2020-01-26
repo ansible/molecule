@@ -24,6 +24,8 @@ from molecule import util
 
 
 class Base(object):
+    """Base Linter Class."""
+
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, config):

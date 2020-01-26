@@ -19,6 +19,8 @@ import string
 
 
 class InvalidInterpolation(Exception):
+    """InvalidInterpolation Exception."""
+
     def __init__(self, string, place):
         self.string = string
         self.place = place
@@ -78,6 +80,8 @@ class Interpolator(object):
 
 
 class TemplateWithDefaults(string.Template):
+    """TemplateWithDefaults Class."""
+
     idpattern = r'[_a-z][_a-z0-9]*(?::?-[^}]+)?'
 
     # Modified from python2.7/string.py

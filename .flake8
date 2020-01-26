@@ -3,7 +3,7 @@
 exclude = .venv/,.tox/,dist/,build/,.eggs/
 format = pylint
 # E203: https://github.com/python/black/issues/315
-ignore = E741,W503,W504,H,E501,E203,D100,D101,D102,D104,D105,D107,D401
+ignore = E741,W503,W504,H,E501,E203,D100,D102,D104,D105,D107,D401
 # TODO(ssbarnea): remove temporary skips one by one:
 # [D100] Missing docstring in public module
 # [D101] Missing docstring in public class

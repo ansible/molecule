@@ -443,6 +443,8 @@ dependency_command_nullable_schema = {
 
 
 class Validator(cerberus.Validator):
+    """Validator Class."""
+
     def __init__(self, *args, **kwargs):
         super(Validator, self).__init__(*args, **kwargs)
 

@@ -29,6 +29,8 @@ from molecule.model import schema_v2
 
 
 class CommandBase(base.Base):
+    """CommandBase Class."""
+
     pass
 
 

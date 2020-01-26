@@ -30,6 +30,8 @@ LOG = get_logger(__name__)
 
 
 class Base(object):
+    """Dependency Base Class."""
+
     __metaclass__ = abc.ABCMeta
 
     RETRY = 3

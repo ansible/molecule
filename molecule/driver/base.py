@@ -28,6 +28,8 @@ Status = status.get_status()
 
 
 class Driver(object):
+    """Driver Class."""
+
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, config=None):

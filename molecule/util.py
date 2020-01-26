@@ -52,6 +52,8 @@ LOG = get_logger(__name__)
 
 
 class SafeDumper(yaml.SafeDumper):
+    """SafeDumper YAML Class."""
+
     def increase_indent(self, flow=False, indentless=False):
         return super(SafeDumper, self).increase_indent(flow, False)
 

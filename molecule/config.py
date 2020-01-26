@@ -48,6 +48,8 @@ MOLECULE_KEEP_STRING = 'MOLECULE_'
 
 # https://stackoverflow.com/questions/16017397/injecting-function-call-after-init-with-decorator  # noqa
 class NewInitCaller(type):
+    """NewInitCaller."""
+
     def __call__(cls, *args, **kwargs):
         obj = type.__call__(cls, *args, **kwargs)
         obj.after_init()

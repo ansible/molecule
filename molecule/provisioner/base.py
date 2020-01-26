@@ -25,6 +25,8 @@ from molecule.provisioner.lint import ansible_lint
 
 
 class Base(object):
+    """Provisioner Base Class."""
+
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, config):
