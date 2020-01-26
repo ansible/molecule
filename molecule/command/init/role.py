@@ -33,6 +33,8 @@ LOG = logger.get_logger(__name__)
 
 class Role(base.Base):
     """
+    Init Role Command Class.
+
     .. program:: molecule init role --role-name foo
 
     .. option:: molecule init role --role-name foo
@@ -53,12 +55,11 @@ class Role(base.Base):
 
     def execute(self):
         """
-        Execute the actions necessary to perform a `molecule init role` and
+        Execute the actions necessary to perform a `molecule init role` and \
         returns None.
 
         :return: None
         """
-
         role_name = self._command_args['role_name']
         role_directory = os.getcwd()
         msg = 'Initializing new role {}...'.format(role_name)
@@ -137,7 +138,7 @@ def role(
     role_name,
     verifier_name,
 ):  # pragma: no cover
-    """ Initialize a new role for use with Molecule. """
+    """Initialize a new role for use with Molecule."""
     command_args = {
         'dependency_name': dependency_name,
         'driver_name': driver_name,

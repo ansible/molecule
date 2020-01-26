@@ -32,6 +32,8 @@ MOLECULE_PARALLEL = os.environ.get('MOLECULE_PARALLEL', False)
 
 class Destroy(base.Base):
     """
+    Destroy Command Class.
+
     .. program:: molecule destroy
 
     .. option:: molecule destroy
@@ -84,7 +86,7 @@ class Destroy(base.Base):
 
     def execute(self):
         """
-        Execute the actions necessary to perform a `molecule destroy` and
+        Execute the actions necessary to perform a `molecule destroy` and \
         returns None.
 
         :return: None
@@ -133,7 +135,7 @@ class Destroy(base.Base):
     help='Enable or disable parallel mode. Default is disabled.',
 )
 def destroy(ctx, scenario_name, driver_name, __all, parallel):  # pragma: no cover
-    """ Use the provisioner to destroy the instances. """
+    """Use the provisioner to destroy the instances."""
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
     command_args = {

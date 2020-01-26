@@ -110,7 +110,7 @@ class AnsibleGalaxy(base.Base):
 
     def bake(self):
         """
-        Bake an ``ansible-galaxy`` command so it's ready to execute and returns
+        Bake an ``ansible-galaxy`` command so it's ready to execute and returns \
         None.
 
         :return: None

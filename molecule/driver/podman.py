@@ -31,8 +31,9 @@ log = logger.get_logger(__name__)
 
 class Podman(Driver):
     """
-    The class responsible for managing `Podman`_ containers.  `Podman`_ is
-    not default driver used in Molecule.
+    The class responsible for managing `Podman`_ containers.
+
+    `Podman`_ is not default driver used in Molecule.
 
     Molecule uses Podman ansible connector and podman CLI while mapping
     variables from ``molecule.yml`` into ``create.yml`` and ``destroy.yml``.
@@ -181,5 +182,4 @@ class Podman(Driver):
     @lru_cache()
     def sanity_checks(self):
         """Implement Podman driver sanity checks."""
-
         log.info("Sanity checks: '{}'".format(self._name))

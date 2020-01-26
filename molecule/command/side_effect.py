@@ -28,8 +28,9 @@ LOG = logger.get_logger(__name__)
 
 class SideEffect(base.Base):
     """
-    This action has side effects and not enabled by default.   See the
-    provisioners documentation for further details.
+    This action has side effects and not enabled by default.
+
+    See the provisioners documentation for further details.
 
     .. program:: molecule side-effect
 
@@ -65,7 +66,7 @@ class SideEffect(base.Base):
 
     def execute(self):
         """
-        Execute the actions necessary to perform a `molecule side-effect` and
+        Execute the actions necessary to perform a `molecule side-effect` and \
         returns None.
 
         :return: None
@@ -90,7 +91,7 @@ class SideEffect(base.Base):
     ),
 )
 def side_effect(ctx, scenario_name):  # pragma: no cover
-    """ Use the provisioner to perform side-effects to the instances. """
+    """Use the provisioner to perform side-effects to the instances."""
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
     command_args = {'subcommand': subcommand}

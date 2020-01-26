@@ -164,7 +164,7 @@ def molecule_prepender(content):
 
 def file_prepender(filename):
     """
-    Prepend an informational header on files managed by Molecule and returns
+    Prepend an informational header on files managed by Molecule and returns \
     None.
 
     :param filename: A string containing the target filename.
@@ -289,8 +289,9 @@ def underscore(string):
 
 def merge_dicts(a, b):
     """
-    Merges the values of b into a and returns a new dict. This function uses
-    the same algorithm as Ansible's `combine(recursive=True)` filter.
+    Merges the values of b into a and returns a new dict.
+
+    This function uses the same algorithm as Ansible's `combine(recursive=True)` filter.
 
     :param a: the target dictionary
     :param b: the dictionary to import

@@ -29,8 +29,9 @@ LOG = logger.get_logger(__name__)
 
 class Prepare(base.Base):
     """
-    This action is for the purpose of preparing a molecule managed instance
+    This action is for the purpose of preparing a molecule managed instance \
     before the :py:class:`molecule.command.converge.Converge` action is run.
+
     Tasks contained within the ``prepare.yml`` playbook in the scenario
     directory will be run remotely on the managed instance. This action is run
     only once per test sequence.
@@ -81,7 +82,7 @@ class Prepare(base.Base):
 
     def execute(self):
         """
-        Execute the actions necessary to prepare the instances and returns
+        Execute the actions necessary to prepare the instances and returns \
         None.
 
         :return: None
@@ -124,10 +125,7 @@ class Prepare(base.Base):
     help='Enable or disable force mode. Default is disabled.',
 )
 def prepare(ctx, scenario_name, driver_name, force):  # pragma: no cover
-    """
-    Use the provisioner to prepare the instances into a particular starting
-    state.
-    """
+    """Use the provisioner to prepare the instances into a particular starting state."""
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
     command_args = {

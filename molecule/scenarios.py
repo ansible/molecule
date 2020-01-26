@@ -29,10 +29,8 @@ LOG = logger.get_logger(__name__)
 
 
 class Scenarios(object):
-    """
-    The Scenarios object consists of one to many scenario objects Molecule will
-    execute.
-    """
+    """The Scenarios object consists of one to many scenario objects Molecule will \
+    execute."""
 
     def __init__(self, configs, scenario_name=None):
         """
@@ -109,7 +107,7 @@ class Scenarios(object):
 
     def _filter_for_scenario(self):
         """
-        Find the scenario matching the provided scenario name and returns a
+        Find the scenario matching the provided scenario name and returns a \
         list.
 
         :return: list
@@ -120,7 +118,7 @@ class Scenarios(object):
 
     def _get_matrix(self):
         """
-        Build a matrix of scenarios with sequence to include and returns a
+        Build a matrix of scenarios with sequence to include and returns a \
         dict.
 
         {

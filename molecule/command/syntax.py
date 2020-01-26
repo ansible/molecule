@@ -28,6 +28,8 @@ LOG = logger.get_logger(__name__)
 
 class Syntax(base.Base):
     """
+    Syntax Command Class.
+
     .. program:: molecule syntax
 
     .. option:: molecule syntax
@@ -61,8 +63,7 @@ class Syntax(base.Base):
     """
 
     def execute(self):
-        """
-        Execute the actions necessary to perform a `molecule syntax` and
+        """Execute the actions necessary to perform a `molecule syntax` and \
         returns None.
 
         :return: None
@@ -82,7 +83,7 @@ class Syntax(base.Base):
     ),
 )
 def syntax(ctx, scenario_name):  # pragma: no cover
-    """ Use the provisioner to syntax check the role. """
+    """Use the provisioner to syntax check the role."""
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
     command_args = {'subcommand': subcommand}

@@ -28,20 +28,18 @@ VALID_KEYS = ['created', 'converged', 'driver', 'prepared', 'run_uuid', 'is_para
 
 
 class InvalidState(Exception):
-    """
-    Exception class raised when an error occurs in :class:`.State`.
-    """
+    """Exception class raised when an error occurs in :class:`.State`."""
 
     pass
 
 
 class State(object):
-    """
-    A class which manages the state file.  Intended to be used as a singleton
-    throughout a given Molecule config.  The initial state is serialized to
-    disk if the file does not exist, otherwise is deserialized from the
-    existing state file.  Changes made to the object are immediately
-    serialized.
+    """A class which manages the state file.
+
+    Intended to be used as a singleton throughout a given Molecule config.
+    The initial state is serialized to disk if the file does not exist,
+    otherwise is deserialized from the existing state file.  Changes made to
+    the object are immediately serialized.
 
     State is not a top level option in Molecule's config.  It's purpose is for
     bookkeeping, and each :class:`.Config` object has a reference to a State_
@@ -107,7 +105,7 @@ class State(object):
     @marshal
     def change_state(self, key, value):
         """
-        Changes the state of the instance data with the given
+        Changes the state of the instance data with the given \
         ``key`` and the provided ``value``.
 
         Wrapping with a decorator is probably not necessary.

@@ -26,9 +26,10 @@ class InvalidInterpolation(Exception):
 
 class Interpolator(object):
     """
-    Configuration options may contain environment variables.  For example,
-    suppose the shell contains ``VERIFIER_NAME=testinfra`` and the following
-    molecule.yml is supplied.
+    Configuration options may contain environment variables.
+
+    For example, suppose the shell contains ``VERIFIER_NAME=testinfra`` and
+    the following molecule.yml is supplied.
 
     .. code-block:: yaml
 

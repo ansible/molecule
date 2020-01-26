@@ -38,6 +38,8 @@ LOG = logger.get_logger(__name__)
 
 class Login(base.Base):
     """
+    Login Command Class.
+
     .. program:: molecule login
 
     .. option:: molecule login
@@ -88,7 +90,7 @@ class Login(base.Base):
 
     def execute(self):
         """
-        Execute the actions necessary to perform a `molecule login` and
+        Execute the actions necessary to perform a `molecule login` and \
         returns None.
 
         :return: None
@@ -172,7 +174,7 @@ class Login(base.Base):
     ),
 )
 def login(ctx, host, scenario_name):  # pragma: no cover
-    """ Log in to one instance. """
+    """Log in to one instance."""
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
     command_args = {'subcommand': subcommand, 'host': host}

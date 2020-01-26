@@ -34,7 +34,7 @@ LOG = logger.get_logger(__name__)
 
 class Ansible(base.Base):
     """
-    `Ansible`_ is the default provisioner.  No other provisioner will be
+    `Ansible`_ is the default provisioner.  No other provisioner will be \
     supported.
 
     Molecule's provisioner manages the instances lifecycle.  However, the user
@@ -645,7 +645,7 @@ class Ansible(base.Base):
 
     def cleanup(self):
         """
-        Executes `ansible-playbook` against the cleanup playbook and returns
+        Executes `ansible-playbook` against the cleanup playbook and returns \
         None.
 
         :return: None
@@ -662,7 +662,7 @@ class Ansible(base.Base):
 
     def check(self):
         """
-        Executes ``ansible-playbook`` against the converge playbook with the
+        Executes ``ansible-playbook`` against the converge playbook with the \
         ``--check`` flag and returns None.
 
         :return: None
@@ -673,7 +673,7 @@ class Ansible(base.Base):
 
     def converge(self, playbook=None, **kwargs):
         """
-        Executes ``ansible-playbook`` against the converge playbook unless
+        Executes ``ansible-playbook`` against the converge playbook unless \
         specified otherwise and returns a string.
 
         :param playbook: An optional string containing an absolute path to a
@@ -690,7 +690,7 @@ class Ansible(base.Base):
 
     def destroy(self):
         """
-        Executes ``ansible-playbook`` against the destroy playbook and returns
+        Executes ``ansible-playbook`` against the destroy playbook and returns \
         None.
 
         :return: None
@@ -700,7 +700,7 @@ class Ansible(base.Base):
 
     def side_effect(self):
         """
-        Executes ``ansible-playbook`` against the side_effect playbook and
+        Executes ``ansible-playbook`` against the side_effect playbook and \
         returns None.
 
         :return: None
@@ -710,7 +710,7 @@ class Ansible(base.Base):
 
     def create(self):
         """
-        Executes ``ansible-playbook`` against the create playbook and returns
+        Executes ``ansible-playbook`` against the create playbook and returns \
         None.
 
         :return: None
@@ -720,7 +720,7 @@ class Ansible(base.Base):
 
     def prepare(self):
         """
-        Executes ``ansible-playbook`` against the prepare playbook and returns
+        Executes ``ansible-playbook`` against the prepare playbook and returns \
         None.
 
         :return: None
@@ -730,7 +730,7 @@ class Ansible(base.Base):
 
     def syntax(self):
         """
-        Executes ``ansible-playbook`` against the converge playbook with the
+        Executes ``ansible-playbook`` against the converge playbook with the \
         ``-syntax-check`` flag and returns None.
 
         :return: None
@@ -741,7 +741,7 @@ class Ansible(base.Base):
 
     def verify(self):
         """
-        Executes ``ansible-playbook`` against the verify playbook and returns
+        Executes ``ansible-playbook`` against the verify playbook and returns \
         None.
 
         :return: None

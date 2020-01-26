@@ -29,6 +29,8 @@ LOG = logger.get_logger(__name__)
 
 class Matrix(base.Base):
     """
+    Matric Command Class.
+
     .. program:: molecule matrix subcommand
 
     .. option:: molecule matrix subcommand
@@ -69,10 +71,7 @@ class Matrix(base.Base):
 # subclasses have not all loaded at this point.
 @click.argument('subcommand', nargs=1, type=click.UNPROCESSED)
 def matrix(ctx, scenario_name, subcommand):  # pragma: no cover
-    """
-    List matrix of steps used to test instances.
-    """
-
+    """List matrix of steps used to test instances."""
     args = ctx.obj.get('args')
     command_args = {'subcommand': subcommand}
 

@@ -66,7 +66,7 @@ def get_docker_networks(data):
 
 
 class FilterModule(object):
-    """ Core Molecule filter plugins. """
+    """Core Molecule filter plugins."""
 
     def filters(self):
         return {

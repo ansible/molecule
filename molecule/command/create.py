@@ -29,6 +29,8 @@ LOG = logger.get_logger(__name__)
 
 class Create(base.Base):
     """
+    Create Command Class.
+
     .. program:: molecule create
 
     .. option:: molecule create
@@ -69,7 +71,7 @@ class Create(base.Base):
 
     def execute(self):
         """
-        Execute the actions necessary to perform a `molecule create` and
+        Execute the actions necessary to perform a `molecule create` and \
         returns None.
 
         :return: None
@@ -109,7 +111,7 @@ class Create(base.Base):
     help='Name of driver to use. (docker)',
 )
 def create(ctx, scenario_name, driver_name):  # pragma: no cover
-    """ Use the provisioner to start the instances. """
+    """Use the provisioner to start the instances."""
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
     command_args = {'subcommand': subcommand, 'driver_name': driver_name}

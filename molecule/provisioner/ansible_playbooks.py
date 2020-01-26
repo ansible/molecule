@@ -29,7 +29,7 @@ LOG = logger.get_logger(__name__)
 
 
 class AnsiblePlaybooks(object):
-    """ A class to act as a module to namespace playbook properties. """
+    """A class to act as a module to namespace playbook properties."""
 
     def __init__(self, config):
         """

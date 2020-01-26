@@ -26,9 +26,10 @@ LOG = logger.get_logger(__name__)
 
 
 class Delegated(Driver):
-    """
-    The class responsible for managing delegated instances.  Delegated is `not`
-    the default driver used in Molecule.
+    r"""
+    The class responsible for managing delegated instances.
+
+    Delegated is `not` the default driver used in Molecule.
 
     Under this driver, it is the developers responsibility to implement the
     create and destroy playbooks.  ``Managed`` is the default behaviour of all
@@ -86,10 +87,10 @@ class Delegated(Driver):
 
     .. code-block:: bash
 
-        $ docker run \\
-            -d \\
-            --name instance-docker \\
-            --hostname instance-docker \\
+        $ docker run \
+            -d \
+            --name instance-docker \
+            --hostname instance-docker \
             -it molecule_local/ubuntu:latest sleep infinity & wait
 
     Use Molecule with delegated instances, which are accessible over ssh.

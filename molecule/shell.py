@@ -64,12 +64,6 @@ ENV_FILE = '.env.yml'
 @click.pass_context
 def main(ctx, debug, base_config, env_file):  # pragma: no cover
     """
-    \b
-     _____     _             _
-    |     |___| |___ ___ _ _| |___
-    | | | | . | | -_|  _| | | | -_|
-    |_|_|_|___|_|___|___|___|_|___|
-
     Molecule aids in the development and testing of Ansible roles.
 
     Enable autocomplete issue:

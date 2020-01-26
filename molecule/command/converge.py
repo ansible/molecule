@@ -28,6 +28,8 @@ LOG = logger.get_logger(__name__)
 
 class Converge(base.Base):
     """
+    Converge Command Class.
+
     .. program:: molecule converge
 
     .. option:: molecule converge
@@ -71,7 +73,7 @@ class Converge(base.Base):
 
     def execute(self):
         """
-        Execute the actions necessary to perform a `molecule converge` and
+        Execute the actions necessary to perform a `molecule converge` and \
         returns None.
 
         :return: None
@@ -93,11 +95,7 @@ class Converge(base.Base):
 )
 @click.argument('ansible_args', nargs=-1, type=click.UNPROCESSED)
 def converge(ctx, scenario_name, ansible_args):  # pragma: no cover
-    """
-    Use the provisioner to configure instances (dependency, create, prepare
-    converge).
-    """
-
+    """Use the provisioner to configure instances (dependency, create, prepare converge)."""
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
     command_args = {'subcommand': subcommand}

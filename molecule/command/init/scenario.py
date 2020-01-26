@@ -34,6 +34,8 @@ LOG = logger.get_logger(__name__)
 
 class Scenario(base.Base):
     """
+    Scenario Class.
+
     .. program:: molecule init scenario --scenario-name bar --role-name foo
 
     .. option:: molecule init scenario --scenario-name bar --role-name foo
@@ -60,7 +62,7 @@ class Scenario(base.Base):
 
     def execute(self):
         """
-        Execute the actions necessary to perform a `molecule init scenario` and
+        Execute the actions necessary to perform a `molecule init scenario` and \
         returns None.
 
         :return: None
@@ -212,7 +214,7 @@ def scenario(
     verifier_name,
     driver_template,
 ):  # pragma: no cover
-    """ Initialize a new scenario for use with Molecule. """
+    """Initialize a new scenario for use with Molecule."""
     command_args = {
         'dependency_name': dependency_name,
         'driver_name': driver_name,

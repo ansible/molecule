@@ -29,7 +29,7 @@ LOG = logger.get_logger(__name__)
 
 @click.group()
 def init():  # pragma: no cover
-    """ Initialize a new role or scenario. """
+    """Initialize a new role or scenario."""
 
 
 init.add_command(role.role)

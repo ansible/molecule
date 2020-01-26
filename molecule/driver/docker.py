@@ -32,6 +32,8 @@ log = logger.get_logger(__name__)
 
 class Docker(Driver):
     """
+    Docker Driver Class.
+
     The class responsible for managing `Docker`_ containers.  `Docker`_ is
     the default driver used in Molecule.
 
@@ -213,7 +215,6 @@ class Docker(Driver):
     @lru_cache()
     def sanity_checks(self):
         """Implement Docker driver sanity checks."""
-
         log.info("Sanity checks: '{}'".format(self._name))
 
         from ansible.module_utils.docker.common import HAS_DOCKER_PY

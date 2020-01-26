@@ -34,6 +34,8 @@ LOG = logger.get_logger(__name__)
 
 class List(base.Base):
     """
+    List Command Class.
+
     .. program:: molecule list
 
     .. option:: molecule list
@@ -80,7 +82,7 @@ class List(base.Base):
 
     def execute(self):
         """
-        Execute the actions necessary to perform a `molecule list` and
+        Execute the actions necessary to perform a `molecule list` and \
         returns None.
 
         :return: None
@@ -99,7 +101,7 @@ class List(base.Base):
     help='Change output format. (simple)',
 )
 def list(ctx, scenario_name, format):  # pragma: no cover
-    """ Lists status of instances. """
+    """Lists status of instances."""
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
     command_args = {'subcommand': subcommand, 'format': format}

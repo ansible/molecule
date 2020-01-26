@@ -29,7 +29,7 @@ LOG = logger.get_logger(__name__)
 class AnsiblePlaybook(object):
     def __init__(self, playbook, config, out=LOG.out, err=LOG.error):
         """
-        Sets up the requirements to execute ``ansible-playbook`` and returns
+        Sets up the requirements to execute ``ansible-playbook`` and returns \
         None.
 
         :param playbook: A string containing the path to the playbook.
@@ -50,7 +50,7 @@ class AnsiblePlaybook(object):
 
     def bake(self):
         """
-        Bake an ``ansible-playbook`` command so it's ready to execute and
+        Bake an ``ansible-playbook`` command so it's ready to execute and \
         returns ``None``.
 
         :return: None
@@ -112,7 +112,7 @@ class AnsiblePlaybook(object):
 
     def add_env_arg(self, name, value):
         """
-        Adds argument to environment passed to ansible-playbook and returns
+        Adds argument to environment passed to ansible-playbook and returns \
         None.
 
         :param name: A string containing the name of argument to be added.

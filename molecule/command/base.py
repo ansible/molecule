@@ -38,9 +38,7 @@ MOLECULE_DEFAULT_SCENARIO_NAME = 'default'
 
 @six.add_metaclass(abc.ABCMeta)
 class Base(object):
-    """
-    An abstract base class used to define the command interface.
-    """
+    """An abstract base class used to define the command interface."""
 
     def __init__(self, c):
         """
@@ -135,9 +133,7 @@ def execute_scenario(scenario):
 
     :param scenario: The scenario to execute.
     :returns: None
-
     """
-
     for action in scenario.sequence:
         execute_subcommand(scenario.config, action)
 
@@ -153,7 +149,7 @@ def execute_scenario(scenario):
 
 def get_configs(args, command_args, ansible_args=()):
     """
-    Glob the current directory for Molecule config files, instantiate config
+    Glob the current directory for Molecule config files, instantiate config \
     objects, and returns a list.
 
     :param args: A dict of options, arguments and commands from the CLI.
