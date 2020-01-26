@@ -1,3 +1,4 @@
+"""Role testing files using testinfra."""
 import os
 
 import testinfra.utils.ansible_runner
