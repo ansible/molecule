@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+"""Docker image builder for distributing molecule as a container."""
+
 from setuptools_scm import get_version
 from packaging.version import Version
 import os

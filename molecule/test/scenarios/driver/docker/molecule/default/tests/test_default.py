@@ -1,3 +1,5 @@
+"""Testinfra tests."""
+
 import re
 import os
 

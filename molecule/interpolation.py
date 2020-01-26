@@ -14,6 +14,7 @@
 
 # Taken from Docker Compose:
 # https://github.com/docker/compose/blob/master/compose/config/interpolation.py
+"""Iterpolation Module."""
 
 import string
 

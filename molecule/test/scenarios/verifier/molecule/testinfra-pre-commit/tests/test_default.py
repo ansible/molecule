@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+"""Testinfra tests."""
 
 
 def test_ansible_hostname(host):

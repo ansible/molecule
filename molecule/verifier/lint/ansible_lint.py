@@ -17,6 +17,7 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
+"""Ansible-Lint Verifier Linter Module."""
 
 from molecule.provisioner.lint.ansible_lint import AnsibleLintMixin
 from molecule.verifier.lint import base
