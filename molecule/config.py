@@ -437,14 +437,17 @@ class Config(object):
 
 
 def molecule_directory(path):
+    """Return directory of the current scenario."""
     return os.path.join(path, MOLECULE_DIRECTORY)
 
 
 def molecule_file(path):
+    """Return file path of current scenario."""
     return os.path.join(path, MOLECULE_FILE)
 
 
 def set_env_from_file(env, env_file):
+    """Load environment from file."""
     if env_file and os.path.exists(env_file):
         env = env.copy()
         d = util.safe_load_file(env_file)

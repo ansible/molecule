@@ -20,6 +20,7 @@
 
 
 def project_filter(s):
+    """Filter project."""
     return s
 
 

@@ -47,14 +47,17 @@ def from_yaml(data):
 
 
 def to_yaml(data):
+    """Format data as YAML."""
     return str(util.safe_dump(data))
 
 
 def header(content):
+    """Return heaader to be added."""
     return util.molecule_prepender(content)
 
 
 def get_docker_networks(data):
+    """Get list of docker networks."""
     network_list = []
     for platform in data:
         if "networks" in platform:

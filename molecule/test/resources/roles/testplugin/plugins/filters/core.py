@@ -20,6 +20,7 @@
 
 
 def filter(s):
+    """Return filter."""
     return s
 
 

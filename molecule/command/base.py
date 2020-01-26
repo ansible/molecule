@@ -116,6 +116,7 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
 
 
 def execute_subcommand(config, subcommand):
+    """Execute subcommand."""
     command_module = getattr(molecule.command, subcommand)
     command = getattr(command_module, util.camelize(subcommand))
     # knowledge of the current action is used by some provisioners

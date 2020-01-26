@@ -22,6 +22,7 @@ import collections
 
 
 def get_status():
+    """Return status."""
     return collections.namedtuple(
         'Status',
         [

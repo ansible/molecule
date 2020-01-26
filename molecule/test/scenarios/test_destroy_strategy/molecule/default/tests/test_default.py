@@ -8,10 +8,12 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 
 
 def test_hostname(host):
+    """Validate hostname."""
     assert 'instance' == host.check_output('hostname -s')
 
 
 def test_etc_molecule_directory(host):
+    """Validate molecule directory."""
     f = host.file('/etc/molecule')
 
     assert f.is_directory
@@ -21,6 +23,7 @@ def test_etc_molecule_directory(host):
 
 
 def test_etc_molecule_ansible_hostname_file(host):
+    """Validate molecule instance file."""
     f = host.file('/etc/molecule/instance')
 
     assert f.is_file
