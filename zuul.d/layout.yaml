@@ -5,6 +5,8 @@
     parent: molecule-tox-py27
     vars:
       tox_envlist: py27-ansible28-unit
+      tox_environment:
+        PYTEST_REQPASS: 558
 
 - job:
     name: molecule-tox-py27-ansible28-functional
@@ -12,12 +14,16 @@
     timeout: 7200
     vars:
       tox_envlist: py27-ansible28-functional
+      tox_environment:
+        PYTEST_REQPASS: 54
 
 - job:
     name: molecule-tox-py27-ansible29-unit
     parent: molecule-tox-py27
     vars:
       tox_envlist: py27-ansible29-unit
+      tox_environment:
+        PYTEST_REQPASS: 558
 
 - job:
     name: molecule-tox-py27-ansible29-functional
@@ -25,12 +31,16 @@
     timeout: 7200
     vars:
       tox_envlist: py27-ansible29-functional
+      tox_environment:
+        PYTEST_REQPASS: 54
 
 - job:
     name: molecule-tox-py36-ansible29-unit
     parent: molecule-tox-py36
     vars:
       tox_envlist: py36-ansible29-unit
+      tox_environment:
+        PYTEST_REQPASS: 558
 
 - job:
     name: molecule-tox-py36-ansible29-functional
@@ -38,12 +48,16 @@
     timeout: 7200
     vars:
       tox_envlist: py36-ansible29-functional
+      tox_environment:
+        PYTEST_REQPASS: 54
 
 - job:
     name: molecule-tox-py37-ansible28-unit
     parent: molecule-tox-py37
     vars:
       tox_envlist: py37-ansible28-unit
+      tox_environment:
+        PYTEST_REQPASS: 558
 
 - job:
     name: molecule-tox-py37-ansible28-functional
@@ -51,12 +65,16 @@
     timeout: 7200
     vars:
       tox_envlist: py37-ansible28-functional
+      tox_environment:
+        PYTEST_REQPASS: 54
 
 - job:
     name: molecule-tox-py37-ansible29-unit
     parent: molecule-tox-py37
     vars:
       tox_envlist: py37-ansible29-unit
+      tox_environment:
+        PYTEST_REQPASS: 558
 
 - job:
     name: molecule-tox-py37-ansible29-functional
@@ -64,12 +82,16 @@
     timeout: 7200
     vars:
       tox_envlist: py37-ansible29-functional
+      tox_environment:
+        PYTEST_REQPASS: 54
 
 - job:
     name: molecule-tox-devel-unit
     parent: molecule-tox-py36
     vars:
       tox_envlist: ansibledevel-unit
+      tox_environment:
+        PYTEST_REQPASS: 558
 
 - job:
     name: molecule-tox-devel-functional
@@ -77,12 +99,16 @@
     timeout: 7200
     vars:
       tox_envlist: ansibledevel-functional
+      tox_environment:
+        PYTEST_REQPASS: 54
 
 - job:
     name: molecule-tox-py27-ansible28-unit
     parent: molecule-tox-py27
     vars:
       tox_envlist: py27-ansible28-unit
+      tox_environment:
+        PYTEST_REQPASS: 558
 
 - job:
     name: molecule-tox-py27-ansible28-functional
@@ -90,12 +116,16 @@
     timeout: 7200
     vars:
       tox_envlist: py27-ansible28-functional
+      tox_environment:
+        PYTEST_REQPASS: 54
 
 - job:
     name: molecule-tox-py37-ansible28-unit
     parent: molecule-tox-py37
     vars:
       tox_envlist: py37-ansible28-unit
+      tox_environment:
+        PYTEST_REQPASS: 558
 
 - job:
     name: molecule-tox-py37-ansible28-functional
@@ -103,6 +133,8 @@
     timeout: 7200
     vars:
       tox_envlist: py37-ansible28-functional
+      tox_environment:
+        PYTEST_REQPASS: 54
 
 - job:
     name: molecule-tox-packaging
