@@ -48,6 +48,8 @@ MOLECULE_KEEP_STRING = 'MOLECULE_'
 
 # https://stackoverflow.com/questions/16017397/injecting-function-call-after-init-with-decorator  # noqa
 class NewInitCaller(type):
+    """NewInitCaller."""
+
     def __call__(cls, *args, **kwargs):
         obj = type.__call__(cls, *args, **kwargs)
         obj.after_init()
@@ -437,14 +439,17 @@ class Config(object):
 
 
 def molecule_directory(path):
+    """Return directory of the current scenario."""
     return os.path.join(path, MOLECULE_DIRECTORY)
 
 
 def molecule_file(path):
+    """Return file path of current scenario."""
     return os.path.join(path, MOLECULE_FILE)
 
 
 def set_env_from_file(env, env_file):
+    """Load environment from file."""
     if env_file and os.path.exists(env_file):
         env = env.copy()
         d = util.safe_load_file(env_file)

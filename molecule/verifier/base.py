@@ -32,6 +32,8 @@ from molecule.verifier.lint import ansible_lint
 
 
 class Verifier(object):
+    """Verifier Base Class."""
+
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, config=None):

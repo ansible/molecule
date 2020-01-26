@@ -46,6 +46,7 @@ base_schema = {
 
 
 def validate(c):
+    """Validate v1 schema."""
     v = cerberus.Validator()
     v.validate(c, base_schema)
 

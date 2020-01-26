@@ -8,6 +8,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 
 
 def test_hosts_file(host):
+    """Validate host file."""
     f = host.file('/etc/hosts')
 
     assert f.exists

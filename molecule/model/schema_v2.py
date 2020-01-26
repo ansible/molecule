@@ -30,12 +30,14 @@ from molecule import interpolation, util
 
 
 def coerce_env(env, keep_string, v):
+    """Interpolate environment."""
     i = interpolation.Interpolator(interpolation.TemplateWithDefaults, env)
 
     return i.interpolate(v, keep_string)
 
 
 def pre_validate_base_schema(env, keep_string):
+    """Pre-validate base schema."""
     return {
         'dependency': {
             'type': 'dict',
@@ -441,6 +443,8 @@ dependency_command_nullable_schema = {
 
 
 class Validator(cerberus.Validator):
+    """Validator Class."""
+
     def __init__(self, *args, **kwargs):
         super(Validator, self).__init__(*args, **kwargs)
 
@@ -495,6 +499,7 @@ class Validator(cerberus.Validator):
 
 
 def pre_validate(stream, env, keep_string):
+    """Pre-validate stream."""
     data = util.safe_load(stream)
 
     v = Validator(allow_unknown=True)
@@ -504,6 +509,7 @@ def pre_validate(stream, env, keep_string):
 
 
 def validate(c):
+    """Perform schema validation."""
     schema = base_schema
 
     # Dependency

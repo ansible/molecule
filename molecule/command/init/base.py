@@ -31,6 +31,8 @@ LOG = logger.get_logger(__name__)
 
 
 class Base(object):
+    """Init Command Base Class."""
+
     __metaclass__ = abc.ABCMeta
 
     def _process_templates(

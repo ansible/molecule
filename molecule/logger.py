@@ -27,6 +27,7 @@ from ansible.module_utils.parsing.convert_bool import boolean as to_bool
 
 
 def should_do_markup():
+    """Decide about use of ANSI colors."""
     py_colors = os.environ.get('PY_COLORS', None)
     if py_colors is not None:
         return to_bool(py_colors, strict=False)
@@ -160,20 +161,25 @@ def _get_success_handler():
 
 
 def red_text(msg):
+    """Add red markers."""
     return color_text(colorama.Fore.RED, msg)
 
 
 def yellow_text(msg):
+    """Add yellow markers."""
     return color_text(colorama.Fore.YELLOW, msg)
 
 
 def green_text(msg):
+    """Add green markers."""
     return color_text(colorama.Fore.GREEN, msg)
 
 
 def cyan_text(msg):
+    """Add cyan markers."""
     return color_text(colorama.Fore.CYAN, msg)
 
 
 def color_text(color, msg):
+    """Add color markers."""
     return '{}{}{}'.format(color, msg, colorama.Style.RESET_ALL)

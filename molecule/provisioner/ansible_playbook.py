@@ -27,6 +27,8 @@ LOG = logger.get_logger(__name__)
 
 
 class AnsiblePlaybook(object):
+    """Privisioner Playbook."""
+
     def __init__(self, playbook, config, out=LOG.out, err=LOG.error):
         """
         Sets up the requirements to execute ``ansible-playbook`` and returns \

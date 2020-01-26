@@ -8,4 +8,5 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 
 
 def test_side_effect_removed_file(host):
+    """Validate that file was removed."""
     assert not host.file('/tmp/testfile').exists

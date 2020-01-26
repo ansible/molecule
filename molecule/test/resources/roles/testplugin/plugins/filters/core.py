@@ -20,9 +20,12 @@
 
 
 def filter(s):
+    """Return filter."""
     return s
 
 
 class FilterModule(object):
+    """FlterModule Class."""
+
     def filters(self):
         return {'dependency_filter': filter}

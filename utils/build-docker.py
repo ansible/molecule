@@ -6,6 +6,7 @@ import sys
 
 
 def run(cmd):
+    """Build docker container distribution."""
     print(cmd)
     r = os.system(cmd)
     if r:

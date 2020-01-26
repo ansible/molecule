@@ -3,15 +3,77 @@
 exclude = .venv/,.tox/,dist/,build/,.eggs/
 format = pylint
 # E203: https://github.com/python/black/issues/315
-ignore = E741,W503,W504,H,E501,E203,D100,D101,D102,D103,D104,D105,D107,D401
+ignore = E741,W503,W504,H,E501,E203,D100,D102,D104,D105,D107,D401
 # TODO(ssbarnea): remove temporary skips one by one:
 # [D100] Missing docstring in public module
 # [D101] Missing docstring in public class
 # [D102] Missing docstring in public method
-# [D103] Missing docstring in public function
 # [D104] Missing docstring in public package
 # [D105] Missing docstring in magic method
 # [D107] Missing docstring in __init__
 # [D401] First line should be in imperative mood
 # 88 is official black default:
 max-line-length = 88
+per-file-ignores =
+  molecule/test/conftest.py: D103
+  molecule/test/functional/conftest.py: D103
+  molecule/test/functional/docker/test_scenarios.py: D103
+  molecule/test/functional/test_command.py: D103
+  molecule/test/unit/command/conftest.py: D103
+  molecule/test/unit/command/init/test_role.py: D103
+  molecule/test/unit/command/init/test_scenario.py: D103
+  molecule/test/unit/command/test_base.p: D103
+  molecule/test/unit/command/test_base.py: D103
+  molecule/test/unit/command/test_check.py: D103
+  molecule/test/unit/command/test_cleanup.py: D103
+  molecule/test/unit/command/test_converge.py: D103
+  molecule/test/unit/command/test_create.py: D103
+  molecule/test/unit/command/test_dependency.py: D103
+  molecule/test/unit/command/test_destroy.py: D103
+  molecule/test/unit/command/test_idempotence.py: D103
+  molecule/test/unit/command/test_lint.py: D103
+  molecule/test/unit/command/test_list.py: D103
+  molecule/test/unit/command/test_login.py: D103
+  molecule/test/unit/command/test_prepare.py: D103
+  molecule/test/unit/command/test_side_effect.py: D103
+  molecule/test/unit/command/test_syntax.py: D103
+  molecule/test/unit/command/test_verify.py: D103
+  molecule/test/unit/conftest.py: D103
+  molecule/test/unit/cookiecutter/test_molecule.py: D103
+  molecule/test/unit/dependency/test_ansible_galaxy.py: D103
+  molecule/test/unit/dependency/test_gilt.py: D103
+  molecule/test/unit/dependency/test_shell.py: D103
+  molecule/test/unit/driver/test_delegated.py: D103
+  molecule/test/unit/driver/test_docker.py: D103
+  molecule/test/unit/lint/test_yamllint.py: D103
+  molecule/test/unit/model/v2/test_dependency_section.py: D103
+  molecule/test/unit/model/v2/test_driver_section.py: D103
+  molecule/test/unit/model/v2/test_lint_section.py: D103
+  molecule/test/unit/model/v2/test_platforms_section.py: D103
+  molecule/test/unit/model/v2/test_pre_validate.py: D103
+  molecule/test/unit/model/v2/test_provisioner_section.py: D103
+  molecule/test/unit/model/v2/test_scenario_section.py: D103
+  molecule/test/unit/model/v2/test_schema.py: D103
+  molecule/test/unit/model/v2/test_verifier_section.py: D103
+  molecule/test/unit/provisioner/lint/test_ansible_lint.py: D103
+  molecule/test/unit/provisioner/test_ansible.py: D103
+  molecule/test/unit/provisioner/test_ansible_playbook.py: D103
+  molecule/test/unit/provisioner/test_ansible_playbooks.py: D103
+  molecule/test/unit/test_api.py: D103
+  molecule/test/unit/test_config.py: D103
+  molecule/test/unit/test_interpolation.py: D103
+  molecule/test/unit/test_logger.py: D103
+  molecule/test/unit/test_platforms.py: D103
+  molecule/test/unit/test_scenario.py: D103
+  molecule/test/unit/test_scenarios.py: D103
+  molecule/test/unit/test_scenarios_ordered.py: D103
+  molecule/test/unit/test_shell.py: D103
+  molecule/test/unit/test_state.py: D103
+  molecule/test/unit/test_status.py: D103
+  molecule/test/unit/test_util.py: D103
+  molecule/test/unit/verifier/lint/test_ansible_lint.py: D103
+  molecule/test/unit/verifier/lint/test_flake8.py: D103
+  molecule/test/unit/verifier/lint/test_precommit.py: D103
+  molecule/test/unit/verifier/lint/test_yamllint.py: D103
+  molecule/test/unit/verifier/test_ansible.py: D103
+  molecule/test/unit/verifier/test_testinfra.py: D103

@@ -25,6 +25,7 @@ from ansible.module_utils.basic import AnsibleModule
 
 
 def main():
+    """Return ansible_facts_dict."""
     module = AnsibleModule(
         argument_spec=dict(name=dict(type='str', required=False)),
         supports_check_mode=False,

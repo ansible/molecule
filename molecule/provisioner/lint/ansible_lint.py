@@ -32,6 +32,8 @@ __metaclass__ = type
 
 
 class AnsibleLintMixin:
+    """AnsibleLintMixin Class."""
+
     def __init__(self, config):
         """
         Sets up the requirements to execute `ansible-lint` and returns None.

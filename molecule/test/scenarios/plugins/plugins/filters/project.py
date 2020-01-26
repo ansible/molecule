@@ -20,9 +20,12 @@
 
 
 def project_filter(s):
+    """Filter project."""
     return s
 
 
 class FilterModule(object):
+    """FilterModule Class."""
+
     def filters(self):
         return {'project_filter': project_filter}

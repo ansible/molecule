@@ -52,11 +52,14 @@ LOG = get_logger(__name__)
 
 
 class SafeDumper(yaml.SafeDumper):
+    """SafeDumper YAML Class."""
+
     def increase_indent(self, flow=False, indentless=False):
         return super(SafeDumper, self).increase_indent(flow, False)
 
 
 def print_debug(title, data):
+    """Print debug information."""
     title = 'DEBUG: {}'.format(title)
     title = [
         colorama.Back.WHITE,
@@ -102,10 +105,12 @@ def print_environment_vars(env):
 
 
 def sysexit(code=1):
+    """Performs a system exit with given code, default 1."""
     sys.exit(code)
 
 
 def sysexit_with_message(msg, code=1):
+    """Exits with an error message."""
     LOG.critical(msg)
     sysexit(code)
 
@@ -128,6 +133,7 @@ def run_command(cmd, debug=False):
 
 
 def os_walk(directory, pattern, excludes=[]):
+    """Navigate recursively and retried files based on pattern."""
     for root, dirs, files in os.walk(directory, topdown=True):
         dirs[:] = [d for d in dirs if d not in excludes]
         for basename in files:
@@ -138,6 +144,7 @@ def os_walk(directory, pattern, excludes=[]):
 
 
 def render_template(template, **kwargs):
+    """Render a jinaj2 template."""
     t = jinja2.Environment()
     t = t.from_string(template)
 
@@ -159,6 +166,7 @@ def write_file(filename, content):
 
 
 def molecule_prepender(content):
+    """Return molecule identification header."""
     return '# Molecule managed\n\n' + content
 
 
@@ -229,14 +237,17 @@ def open_file(filename, mode='r'):
 
 
 def instance_with_scenario_name(instance_name, scenario_name):
+    """Formats instance name that includes scenario."""
     return '{}-{}'.format(instance_name, scenario_name)
 
 
 def strip_ansi_escape(string):
+    """Removeall ANSI escapes from string."""
     return re.sub(r'\x1b[^m]*m', '', string)
 
 
 def strip_ansi_color(s):
+    """Removes ANSI colors from string."""
     # Taken from tabulate
     invisible_codes = re.compile(r'\x1b\[\d*m')
 
@@ -244,6 +255,7 @@ def strip_ansi_color(s):
 
 
 def verbose_flag(options):
+    """Return computed verbosity flag."""
     verbose = 'v'
     verbose_flag = []
     for i in range(0, 3):
@@ -259,25 +271,30 @@ def verbose_flag(options):
 
 
 def filter_verbose_permutation(options):
+    """Cleans verbose information."""
     return {k: options[k] for k in options if not re.match('^[v]+$', k)}
 
 
 def title(word):
+    """Formats title."""
     return ' '.join(x.capitalize() or '_' for x in word.split('_'))
 
 
 def abs_path(path):
+    """Return absolute path."""
     if path:
         return os.path.abspath(path)
 
 
 def camelize(string):
+    """Formats string as camel-case."""
     # NOTE(retr0h): Taken from jpvanhal/inflection
     # https://github.com/jpvanhal/inflection
     return re.sub(r"(?:^|_)(.)", lambda m: m.group(1).upper(), string)
 
 
 def underscore(string):
+    """Formats string to underlined notation."""
     # NOTE(retr0h): Taken from jpvanhal/inflection
     # https://github.com/jpvanhal/inflection
     string = re.sub(r"([A-Z]+)([A-Z][a-z])", r'\1_\2', string)
@@ -309,6 +326,7 @@ def merge_dicts(a, b):
 
 
 def validate_parallel_cmd_args(cmd_args):
+    """Prevents use of options incompatible with parallel mode."""
     if cmd_args.get('parallel') and cmd_args.get('destroy') == 'never':
         msg = 'Combining "--parallel" and "--destroy=never" is not supported'
         sysexit_with_message(msg)
