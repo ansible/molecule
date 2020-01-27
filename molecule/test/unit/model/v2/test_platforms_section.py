@@ -62,7 +62,7 @@ def _model_platforms_docker_section_data():
                 'user': 'root',
                 'dns_servers': ['8.8.8.8'],
                 'etc_hosts': "{'host1.example.com': '10.3.1.5'}",
-                'env': {'FOO': 'bar', 'foo': 'bar'},
+                'env': {'FOO': 'bar', 'foo-baz': 'bar', 'foo.baz': 'bar'},
                 'restart_policy': 'on-failure',
                 'restart_retries': 1,
                 'networks': [{'name': 'foo'}, {'name': 'bar'}],
@@ -231,5 +231,34 @@ def test_platforms_docker_has_errors(_config):
 def test_platforms_driver_name_required(_config):
     del _config['platforms'][0]['name']
     x = {'platforms': [{0: [{'name': ['required field']}]}]}
+
+    assert x == schema_v2.validate(_config)
+
+
+@pytest.mark.parametrize(
+    '_config', ['_model_platforms_docker_section_data'], indirect=True
+)
+def test_platforms_env_should_refuse_keys_with_special_char(_config):
+    _config['platforms'][0]['env'] = {'FOO#BAR': 'bar', 'foo/baz': 'bar'}
+    x = {
+        'platforms': [
+            {
+                0: [
+                    {
+                        'env': [
+                            {
+                                'FOO#BAR': [
+                                    'value does not match regex ' "'^[a-zA-Z0-9._-]+$'"
+                                ],
+                                'foo/baz': [
+                                    'value does not match regex ' "'^[a-zA-Z0-9._-]+$'"
+                                ],
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
 
     assert x == schema_v2.validate(_config)
