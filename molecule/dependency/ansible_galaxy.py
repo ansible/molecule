@@ -72,6 +72,7 @@ class AnsibleGalaxy(base.Base):
     """
 
     def __init__(self, config):
+        """Construct AnsibleGalaxy."""
         super(AnsibleGalaxy, self).__init__(config)
         self._sh_command = None
 

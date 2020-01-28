@@ -73,6 +73,7 @@ class Shell(base.Base):
     """
 
     def __init__(self, config):
+        """Construct Shell."""
         super(Shell, self).__init__(config)
         self._sh_command = None
 

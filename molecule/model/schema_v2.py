@@ -447,6 +447,7 @@ class Validator(cerberus.Validator):
     """Validator Class."""
 
     def __init__(self, *args, **kwargs):
+        """Construct Validator."""
         super(Validator, self).__init__(*args, **kwargs)
 
     def _validate_unique(self, unique, field, value):

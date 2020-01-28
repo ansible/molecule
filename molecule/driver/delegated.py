@@ -135,6 +135,7 @@ class Delegated(Driver):
     """
 
     def __init__(self, config=None):
+        """Construct Delegated."""
         super(Delegated, self).__init__(config)
         self._name = 'delegated'
 

@@ -59,6 +59,7 @@ class Scenario(base.Base):
     """  # noqa
 
     def __init__(self, command_args):
+        """Construct Scenario."""
         self._command_args = command_args
 
     def execute(self):
