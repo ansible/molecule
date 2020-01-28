@@ -355,7 +355,7 @@ platforms_docker_schema = {
                 },
                 'env': {
                     'type': 'dict',
-                    'keysrules': {'type': 'string', 'regex': '^[a-zA-Z0-9_-]+$'},
+                    'keysrules': {'type': 'string', 'regex': '^[a-zA-Z0-9._-]+$'},
                 },
                 'restart_policy': {'type': 'string'},
                 'restart_retries': {'type': 'integer'},
@@ -422,7 +422,7 @@ platforms_podman_schema = {
                 },
                 'env': {
                     'type': 'dict',
-                    'keysrules': {'type': 'string', 'regex': '^[a-zA-Z0-9_-]+$'},
+                    'keysrules': {'type': 'string', 'regex': '^[a-zA-Z0-9._-]+$'},
                 },
                 'restart_policy': {'type': 'string'},
                 'restart_retries': {'type': 'integer'},
