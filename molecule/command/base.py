@@ -43,7 +43,7 @@ class Base(object):
 
     def __init__(self, c):
         """
-        Base initializer for all :ref:`Command` classes.
+        Initialize code for all :ref:`Command` classes.
 
         :param c: An instance of a Molecule config.
         :returns: None

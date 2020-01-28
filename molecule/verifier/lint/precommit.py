@@ -105,12 +105,12 @@ class PreCommit(base.Base):
 
     @property
     def default_options(self):
-        """Default options for pre-commit tool runtime."""
+        """Get default options for pre-commit tool runtime."""
         return {}
 
     @property
     def default_env(self):
-        """Default environment variables for pre-commit tool runtime."""
+        """Get default environment variables for pre-commit tool runtime."""
         return util.merge_dicts(os.environ, self._config.env)
 
     def bake(self):

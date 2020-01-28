@@ -376,7 +376,7 @@ class Ansible(base.Base):
     @property
     def default_config_options(self):
         """
-        Default options provided to construct ansible.cfg and returns a dict.
+        Provide Default options to construct ansible.cfg and returns a dict.
 
         :return: dict
         """
@@ -646,7 +646,7 @@ class Ansible(base.Base):
 
     def cleanup(self):
         """
-        Executes `ansible-playbook` against the cleanup playbook and returns \
+        Execute `ansible-playbook` against the cleanup playbook and returns \
         None.
 
         :return: None
@@ -663,7 +663,7 @@ class Ansible(base.Base):
 
     def check(self):
         """
-        Executes ``ansible-playbook`` against the converge playbook with the \
+        Execute ``ansible-playbook`` against the converge playbook with the \
         ``--check`` flag and returns None.
 
         :return: None
@@ -674,7 +674,7 @@ class Ansible(base.Base):
 
     def converge(self, playbook=None, **kwargs):
         """
-        Executes ``ansible-playbook`` against the converge playbook unless \
+        Execute ``ansible-playbook`` against the converge playbook unless \
         specified otherwise and returns a string.
 
         :param playbook: An optional string containing an absolute path to a
@@ -691,7 +691,7 @@ class Ansible(base.Base):
 
     def destroy(self):
         """
-        Executes ``ansible-playbook`` against the destroy playbook and returns \
+        Execute ``ansible-playbook`` against the destroy playbook and returns \
         None.
 
         :return: None
@@ -701,7 +701,7 @@ class Ansible(base.Base):
 
     def side_effect(self):
         """
-        Executes ``ansible-playbook`` against the side_effect playbook and \
+        Execute ``ansible-playbook`` against the side_effect playbook and \
         returns None.
 
         :return: None
@@ -711,7 +711,7 @@ class Ansible(base.Base):
 
     def create(self):
         """
-        Executes ``ansible-playbook`` against the create playbook and returns \
+        Execute ``ansible-playbook`` against the create playbook and returns \
         None.
 
         :return: None
@@ -721,7 +721,7 @@ class Ansible(base.Base):
 
     def prepare(self):
         """
-        Executes ``ansible-playbook`` against the prepare playbook and returns \
+        Execute ``ansible-playbook`` against the prepare playbook and returns \
         None.
 
         :return: None
@@ -731,7 +731,7 @@ class Ansible(base.Base):
 
     def syntax(self):
         """
-        Executes ``ansible-playbook`` against the converge playbook with the \
+        Execute ``ansible-playbook`` against the converge playbook with the \
         ``-syntax-check`` flag and returns None.
 
         :return: None
@@ -742,7 +742,7 @@ class Ansible(base.Base):
 
     def verify(self):
         """
-        Executes ``ansible-playbook`` against the verify playbook and returns \
+        Execute ``ansible-playbook`` against the verify playbook and returns \
         None.
 
         :return: None
@@ -752,7 +752,7 @@ class Ansible(base.Base):
 
     def write_config(self):
         """
-        Writes the provisioner's config file to disk and returns None.
+        Write the provisioner's config file to disk and returns None.
 
         :return: None
         """
@@ -763,7 +763,7 @@ class Ansible(base.Base):
 
     def manage_inventory(self):
         """
-        Manages inventory for Ansible and returns None.
+        Manage inventory for Ansible and returns None.
 
         :returns: None
         """
@@ -779,7 +779,7 @@ class Ansible(base.Base):
 
     def _add_or_update_vars(self):
         """
-        Creates host and/or group vars and returns None.
+        Create host and/or group vars and returns None.
 
         :returns: None
         """
@@ -811,7 +811,7 @@ class Ansible(base.Base):
 
     def _write_inventory(self):
         """
-        Writes the provisioner's inventory file to disk and returns None.
+        Write the provisioner's inventory file to disk and returns None.
 
         :return: None
         """
@@ -834,7 +834,7 @@ class Ansible(base.Base):
 
     def _link_or_update_vars(self):
         """
-        Creates or updates the symlink to group_vars and returns None.
+        Create or updates the symlink to group_vars and returns None.
 
         :returns: None
         """
@@ -872,7 +872,7 @@ class Ansible(base.Base):
 
     def _get_config_template(self):
         """
-        Returns a config template string.
+        Return a config template string.
 
         :return: str
         """
@@ -887,7 +887,7 @@ class Ansible(base.Base):
 
     def _vivify(self):
         """
-        Returns an autovivification default dict.
+        Return an autovivification default dict.
 
         :return: dict
         """

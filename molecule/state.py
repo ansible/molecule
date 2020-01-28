@@ -106,7 +106,7 @@ class State(object):
     @marshal
     def change_state(self, key, value):
         """
-        Changes the state of the instance data with the given \
+        Change the state of the instance data with the given \
         ``key`` and the provided ``value``.
 
         Wrapping with a decorator is probably not necessary.

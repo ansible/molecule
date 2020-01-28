@@ -39,7 +39,7 @@ class Verifier(object):
 
     def __init__(self, config=None):
         """
-        Base initializer for all :ref:`Verifier` classes.
+        Initialize code for all :ref:`Verifier` classes.
 
         :param config: An instance of a Molecule config.
         :returns: None
@@ -59,7 +59,7 @@ class Verifier(object):
     @abc.abstractproperty
     def default_options(self):  # pragma: no cover
         """
-        Default CLI arguments provided to ``cmd`` and returns a dict.
+        Get default CLI arguments provided to ``cmd`` as a dict.
 
         :return: dict
         """
@@ -68,7 +68,7 @@ class Verifier(object):
     @abc.abstractproperty
     def default_env(self):  # pragma: no cover
         """
-        Default env variables provided to ``cmd`` and returns a dict.
+        Get default env variables provided to ``cmd`` as a dict.
 
         :return: dict
         """
@@ -77,7 +77,7 @@ class Verifier(object):
     @abc.abstractmethod
     def execute(self):  # pragma: no cover
         """
-        Executes ``cmd`` and returns None.
+        Execute ``cmd`` and returns None.
 
         :return: None
         """
@@ -86,7 +86,7 @@ class Verifier(object):
     @abc.abstractmethod
     def schema(self):  # pragma: no cover
         """
-        Returns validation schema.
+        Return validation schema.
 
         :return: None
         """

@@ -255,7 +255,7 @@ class Scenario(object):
 
 def ephemeral_directory(path=None):
     """
-    Returns temporary directory to be used by molecule.
+    Return temporary directory to be used by molecule.
 
     Molecule users should not make any assumptions about its location,
     permissions or its content as this may change in future release.

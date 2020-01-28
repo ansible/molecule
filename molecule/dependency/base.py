@@ -41,7 +41,7 @@ class Base(object):
 
     def __init__(self, config):
         """
-        Base initializer for all :ref:`Dependency` classes.
+        Initialize code for all :ref:`Dependency` classes.
 
         :param config: An instance of a Molecule config.
         :returns: None
@@ -82,7 +82,7 @@ class Base(object):
     @abc.abstractmethod
     def execute(self):  # pragma: no cover
         """
-        Executes ``cmd`` and returns None.
+        Execute ``cmd`` and returns None.
 
         :return: None
         """
@@ -91,7 +91,7 @@ class Base(object):
     @abc.abstractproperty
     def default_options(self):  # pragma: no cover
         """
-        Default CLI arguments provided to ``cmd`` and returns a dict.
+        Get default CLI arguments provided to ``cmd`` as a dict.
 
         :return: dict
         """
@@ -100,7 +100,7 @@ class Base(object):
     @abc.abstractproperty
     def default_env(self):  # pragma: no cover
         """
-        Default env variables provided to ``cmd`` and returns a dict.
+        Get default env variables provided to ``cmd`` as a dict.
 
         :return: dict
         """

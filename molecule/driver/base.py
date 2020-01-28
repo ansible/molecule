@@ -35,7 +35,7 @@ class Driver(object):
 
     def __init__(self, config=None):
         """
-        Base initializer for all :ref:`Driver` classes.
+        Initialize code for all :ref:`Driver` classes.
 
         :param config: An instance of a Molecule config.
         :returns: None
@@ -77,8 +77,8 @@ class Driver(object):
     @abc.abstractproperty
     def login_cmd_template(self):  # pragma: no cover
         """
-        The login command template to be populated by ``login_options`` and \
-        returns a string.
+        Get the login command template to be populated by ``login_options`` as \
+        a string.
 
         :returns: str
         """
@@ -96,7 +96,7 @@ class Driver(object):
     @abc.abstractproperty
     def default_safe_files(self):  # pragma: no cover
         """
-        Generated files to be preserved and returns a list.
+        Generate files to be preserved.
 
         :returns: list
         """
@@ -126,7 +126,7 @@ class Driver(object):
     @abc.abstractmethod
     def sanity_checks(self):
         """
-        Confirms that driver is usable.
+        Confirm that driver is usable.
 
         Sanity checks to ensure the driver can do work successfully. For
         example, when using the Docker driver, we want to know that the Docker
@@ -178,7 +178,7 @@ class Driver(object):
 
     def status(self):
         """
-        Collects the instances state and returns a list.
+        Collect the instances state and returns a list.
 
         .. important::
 

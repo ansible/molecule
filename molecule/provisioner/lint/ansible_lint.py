@@ -37,7 +37,7 @@ class AnsibleLintMixin:
 
     def __init__(self, config):
         """
-        Sets up the requirements to execute `ansible-lint` and returns None.
+        Set up the requirements to execute `ansible-lint` and returns None.
 
         :param config: An instance of a Molecule config.
         :return: None

@@ -106,12 +106,12 @@ def print_environment_vars(env):
 
 
 def sysexit(code=1):
-    """Performs a system exit with given code, default 1."""
+    """Perform a system exit with given code, default 1."""
     sys.exit(code)
 
 
 def sysexit_with_message(msg, code=1):
-    """Exits with an error message."""
+    """Exit with an error message."""
     LOG.critical(msg)
     sysexit(code)
 
@@ -154,7 +154,7 @@ def render_template(template, **kwargs):
 
 def write_file(filename, content):
     """
-    Writes a file with the given filename and content and returns None.
+    Write a file with the given filename and content and returns None.
 
     :param filename: A string containing the target filename.
     :param content: A string containing the data to be written.
@@ -238,7 +238,7 @@ def open_file(filename, mode='r'):
 
 
 def instance_with_scenario_name(instance_name, scenario_name):
-    """Formats instance name that includes scenario."""
+    """Format instance name that includes scenario."""
     return '{}-{}'.format(instance_name, scenario_name)
 
 
@@ -248,7 +248,7 @@ def strip_ansi_escape(string):
 
 
 def strip_ansi_color(s):
-    """Removes ANSI colors from string."""
+    """Remove ANSI colors from string."""
     # Taken from tabulate
     invisible_codes = re.compile(r'\x1b\[\d*m')
 
@@ -272,12 +272,12 @@ def verbose_flag(options):
 
 
 def filter_verbose_permutation(options):
-    """Cleans verbose information."""
+    """Clean verbose information."""
     return {k: options[k] for k in options if not re.match('^[v]+$', k)}
 
 
 def title(word):
-    """Formats title."""
+    """Format title."""
     return ' '.join(x.capitalize() or '_' for x in word.split('_'))
 
 
@@ -288,14 +288,14 @@ def abs_path(path):
 
 
 def camelize(string):
-    """Formats string as camel-case."""
+    """Format string as camel-case."""
     # NOTE(retr0h): Taken from jpvanhal/inflection
     # https://github.com/jpvanhal/inflection
     return re.sub(r"(?:^|_)(.)", lambda m: m.group(1).upper(), string)
 
 
 def underscore(string):
-    """Formats string to underlined notation."""
+    """Format string to underlined notation."""
     # NOTE(retr0h): Taken from jpvanhal/inflection
     # https://github.com/jpvanhal/inflection
     string = re.sub(r"([A-Z]+)([A-Z][a-z])", r'\1_\2', string)
@@ -307,7 +307,7 @@ def underscore(string):
 
 def merge_dicts(a, b):
     """
-    Merges the values of b into a and returns a new dict.
+    Merge the values of b into a and returns a new dict.
 
     This function uses the same algorithm as Ansible's `combine(recursive=True)` filter.
 
