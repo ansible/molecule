@@ -131,18 +131,23 @@ class Verifier(object):
             return ansible_lint.AnsibleLint(self._config)
 
     def __eq__(self, other):
+        """Implement equality comparision."""
         return str(self) == str(other)
 
     def __lt__(self, other):
+        """Implement lower than comparision."""
         return str.__lt__(str(self), str(other))
 
     def __hash__(self):
+        """Implement hashing."""
         return self.name.__hash__()
 
     def __str__(self):
+        """Return readable string representation of object."""
         return self.name
 
     def __repr__(self):
+        """Return detailed string representation of object."""
         return self.name
 
     def template_dir(self):

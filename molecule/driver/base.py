@@ -226,20 +226,25 @@ class Driver(object):
         return str(self._config.state.converged).lower()
 
     def __eq__(self, other):
+        """Implement equality comparision."""
         # trick that allows us to test if a driver is loaded via:
         # if 'driver-name' in drivers()
         return str(self) == str(other)
 
     def __lt__(self, other):
+        """Implement lower than comparison."""
         return str.__lt__(str(self), str(other))
 
     def __hash__(self):
+        """Perform object hash."""
         return self.name.__hash__()
 
     def __str__(self):
+        """Return readable string representation of object."""
         return self.name
 
     def __repr__(self):
+        """Return detailed string representation of object."""
         return self.name
 
     def template_dir(self):

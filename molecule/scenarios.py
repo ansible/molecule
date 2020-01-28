@@ -51,6 +51,7 @@ class Scenarios(object):
         return self._scenarios.pop(0)
 
     def __iter__(self):
+        """Make object iterable."""
         return self
 
     __next__ = next  # Python 3.X compatibility

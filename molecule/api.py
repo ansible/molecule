@@ -20,6 +20,7 @@ class UserListMap(UserList):
     """
 
     def __getitem__(self, i):
+        """Implement indexing."""
         if isinstance(i, int):
             return super(UserListMap, self).__getitem__(i)
         else:
