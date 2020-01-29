@@ -32,7 +32,7 @@ class AnsiblePlaybook(object):
 
     def __init__(self, playbook, config, out=LOG.out, err=LOG.error):
         """
-        Sets up the requirements to execute ``ansible-playbook`` and returns \
+        Set up the requirements to execute ``ansible-playbook`` and returns \
         None.
 
         :param playbook: A string containing the path to the playbook.
@@ -87,7 +87,7 @@ class AnsiblePlaybook(object):
 
     def execute(self):
         """
-        Executes ``ansible-playbook`` and returns a string.
+        Execute ``ansible-playbook`` and returns a string.
 
         :return: str
         """
@@ -104,7 +104,7 @@ class AnsiblePlaybook(object):
 
     def add_cli_arg(self, name, value):
         """
-        Adds argument to CLI passed to ansible-playbook and returns None.
+        Add argument to CLI passed to ansible-playbook and returns None.
 
         :param name: A string containing the name of argument to be added.
         :param value: The value of argument to be added.
@@ -115,7 +115,7 @@ class AnsiblePlaybook(object):
 
     def add_env_arg(self, name, value):
         """
-        Adds argument to environment passed to ansible-playbook and returns \
+        Add argument to environment passed to ansible-playbook and returns \
         None.
 
         :param name: A string containing the name of argument to be added.

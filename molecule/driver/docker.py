@@ -174,6 +174,7 @@ class Docker(Driver):
     """  # noqa
 
     def __init__(self, config=None):
+        """Construct Docker."""
         super(Docker, self).__init__(config)
         self._name = 'docker'
 

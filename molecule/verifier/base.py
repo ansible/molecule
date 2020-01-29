@@ -39,7 +39,7 @@ class Verifier(object):
 
     def __init__(self, config=None):
         """
-        Base initializer for all :ref:`Verifier` classes.
+        Initialize code for all :ref:`Verifier` classes.
 
         :param config: An instance of a Molecule config.
         :returns: None
@@ -59,7 +59,7 @@ class Verifier(object):
     @abc.abstractproperty
     def default_options(self):  # pragma: no cover
         """
-        Default CLI arguments provided to ``cmd`` and returns a dict.
+        Get default CLI arguments provided to ``cmd`` as a dict.
 
         :return: dict
         """
@@ -68,7 +68,7 @@ class Verifier(object):
     @abc.abstractproperty
     def default_env(self):  # pragma: no cover
         """
-        Default env variables provided to ``cmd`` and returns a dict.
+        Get default env variables provided to ``cmd`` as a dict.
 
         :return: dict
         """
@@ -77,7 +77,7 @@ class Verifier(object):
     @abc.abstractmethod
     def execute(self):  # pragma: no cover
         """
-        Executes ``cmd`` and returns None.
+        Execute ``cmd`` and returns None.
 
         :return: None
         """
@@ -86,7 +86,7 @@ class Verifier(object):
     @abc.abstractmethod
     def schema(self):  # pragma: no cover
         """
-        Returns validation schema.
+        Return validation schema.
 
         :return: None
         """
@@ -131,18 +131,23 @@ class Verifier(object):
             return ansible_lint.AnsibleLint(self._config)
 
     def __eq__(self, other):
+        """Implement equality comparision."""
         return str(self) == str(other)
 
     def __lt__(self, other):
+        """Implement lower than comparision."""
         return str.__lt__(str(self), str(other))
 
     def __hash__(self):
+        """Implement hashing."""
         return self.name.__hash__()
 
     def __str__(self):
+        """Return readable string representation of object."""
         return self.name
 
     def __repr__(self):
+        """Return detailed string representation of object."""
         return self.name
 
     def template_dir(self):

@@ -44,6 +44,7 @@ class LogFilter(object):
     """A custom log filter which excludes log messages above the logged level."""
 
     def __init__(self, level):
+        """Construct LogFilter."""
         self.__level = level
 
     def filter(self, logRecord):  # pragma: no cover
@@ -59,6 +60,7 @@ class CustomLogger(logging.getLoggerClass()):
     """
 
     def __init__(self, name, level=logging.NOTSET):
+        """Construct CustomLogger."""
         super(logging.getLoggerClass(), self).__init__(name, level)
         logging.addLevelName(SUCCESS, 'SUCCESS')
         logging.addLevelName(OUT, 'OUT')

@@ -74,7 +74,7 @@ class Flake8(base.Base):
 
     def __init__(self, config):
         """
-        Sets up the requirements to execute `flake8` and returns None.
+        Set up the requirements to execute `flake8` and returns None.
 
         :param config: An instance of a Molecule config.
         :return: None

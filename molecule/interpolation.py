@@ -23,6 +23,7 @@ class InvalidInterpolation(Exception):
     """InvalidInterpolation Exception."""
 
     def __init__(self, string, place):
+        """Construct InvalidInterpolation."""
         self.string = string
         self.place = place
 
@@ -70,6 +71,7 @@ class Interpolator(object):
     """
 
     def __init__(self, templater, mapping):
+        """Construct Interpolator."""
         self.templater = templater
         self.mapping = mapping
 

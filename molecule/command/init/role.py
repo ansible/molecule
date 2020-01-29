@@ -52,6 +52,7 @@ class Role(base.Base):
     """
 
     def __init__(self, command_args):
+        """Construct Role."""
         self._command_args = command_args
 
     def execute(self):

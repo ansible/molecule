@@ -66,6 +66,7 @@ class Gilt(base.Base):
     """
 
     def __init__(self, config):
+        """Construct Gilt."""
         super(Gilt, self).__init__(config)
         self._sh_command = None
 

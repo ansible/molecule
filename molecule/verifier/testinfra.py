@@ -93,7 +93,7 @@ class Testinfra(Verifier):
 
     def __init__(self, config=None):
         """
-        Sets up the requirements to execute ``testinfra`` and returns None.
+        Set up the requirements to execute ``testinfra`` and returns None.
 
         :param config: An instance of a Molecule config.
         :return: None

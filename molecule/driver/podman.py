@@ -144,6 +144,7 @@ class Podman(Driver):
     """  # noqa
 
     def __init__(self, config=None):
+        """Construct Podman."""
         super(Podman, self).__init__(config)
         self._name = 'podman'
 

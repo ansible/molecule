@@ -86,6 +86,7 @@ class Login(base.Base):
     """
 
     def __init__(self, c):
+        """Construct Login."""
         super(Login, self).__init__(c)
         self._pt = None
 

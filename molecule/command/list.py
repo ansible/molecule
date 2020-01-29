@@ -102,7 +102,7 @@ class List(base.Base):
     help='Change output format. (simple)',
 )
 def list(ctx, scenario_name, format):  # pragma: no cover
-    """Lists status of instances."""
+    """List status of instances."""
     args = ctx.obj.get('args')
     subcommand = base._get_subcommand(__name__)
     command_args = {'subcommand': subcommand, 'format': format}
@@ -125,7 +125,7 @@ def list(ctx, scenario_name, format):  # pragma: no cover
 
 def _print_tabulate_data(headers, data, table_format):  # pragma: no cover
     """
-    Shows the tabulate data on the screen and returns None.
+    Show the tabulate data on the screen and returns None.
 
     :param headers: A list of column headers.
     :param data:  A list of tabular data to display.

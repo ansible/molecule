@@ -92,7 +92,7 @@ class Idempotence(base.Base):
             util.sysexit_with_message(msg)
 
     def _is_idempotent(self, output):
-        """Parses the output of the provisioning for changed and returns a bool.
+        """Parse the output of the provisioning for changed and returns a bool.
 
         :param output: A string containing the output of the ansible run.
         :return: bool
@@ -111,7 +111,7 @@ class Idempotence(base.Base):
 
     def _non_idempotent_tasks(self, output):
         """
-        Parses the output to identify the non idempotent tasks.
+        Parse the output to identify the non idempotent tasks.
 
         :param (str) output: A string containing the output of the ansible run.
         :return: A list containing the names of the non idempotent tasks.
