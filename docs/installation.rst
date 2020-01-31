@@ -41,7 +41,7 @@ Keep in mind that on selinux supporting systems, if you install into a virtual
 environment, you may face :gh:`issue <ansible/ansible/issues/34340>` even
 if selinux is not enabled or is configured to be permissive.
 
-It is your reponsability to assure that soft dependencies of Ansible are
+It is your responsibility to assure that soft dependencies of Ansible are
 available on your controller or host machines.
 
 .. warning::
@@ -79,7 +79,7 @@ Install Molecule:
 
 .. code-block:: bash
 
-    $ pip install --user molecule
+    $ pip install --user "molecule[lint]"
 
 Installing molecule package also installed its main script ``molecule``,
 usually in ``PATH``. Users should know that molecule can also be called as a

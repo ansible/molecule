@@ -35,7 +35,11 @@ LOG = logger.get_logger(__name__)
 
 class List(base.Base):
     """
-    List Command Class.
+    Lint command executes external linters.
+
+    You need to remember to install those linters. For concenience, there is a
+    package extra that installs the most common ones, use it like
+    ``pip install "molecule[extra]"``.
 
     .. program:: molecule list
 
