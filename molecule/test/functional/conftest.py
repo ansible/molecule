@@ -20,10 +20,12 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import distutils.spawn
+from distutils.version import LooseVersion
 import os
 import pkg_resources
 import platform
 import shutil
+import subprocess
 
 import pexpect
 import pytest
@@ -38,6 +40,9 @@ from molecule.test.conftest import change_dir_to
 LOG = logger.get_logger(__name__)
 
 IS_TRAVIS = os.getenv('TRAVIS') and os.getenv('CI')
+# requires >=1.5.1 due to missing cp command, we tested with 1.4.2-stable3 and
+# it failed, see https://bugzilla.redhat.com/show_bug.cgi?id=1759713
+MIN_PODMAN_VERSION = "1.5.1"
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -301,6 +306,21 @@ def supports_podman():
         )
         pytest.fail("Cannot run podman tests with a broken podman installation.")
         return False
+
+    # checks for minimal version of podman
+    cmd = ["podman", "version", "-f", "{{.Version}}"]
+    podman_version = util.check_output(
+        cmd, stderr=subprocess.STDOUT, universal_newlines=True
+    )
+    # We need to use the outdated LooseVersion because podman versioning
+    # is not PEP-440 compliant, example '1.4.2-stable3' which should evaluate
+    # as newer than '1.4.2'
+    if LooseVersion(podman_version) < LooseVersion(MIN_PODMAN_VERSION):
+        pytest.fail(
+            "Podman driver requires version >={}, and you have {}".format(
+                MIN_PODMAN_VERSION, podman_version
+            )
+        )
 
     return True
 
