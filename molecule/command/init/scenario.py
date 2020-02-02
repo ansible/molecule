@@ -37,22 +37,22 @@ class Scenario(base.Base):
     """
     Scenario Class.
 
-    .. program:: molecule init scenario --scenario-name bar --role-name foo
+    .. program:: molecule init scenario bar --role-name foo
 
-    .. option:: molecule init scenario --scenario-name bar --role-name foo
+    .. option:: molecule init scenario bar --role-name foo
 
         Initialize a new scenario. In order to customise the role, please refer
         to the `init role` command.
 
-    .. program:: cd foo; molecule init scenario --scenario-name bar --role-name foo
+    .. program:: cd foo; molecule init scenario bar --role-name foo
 
-    .. option:: cd foo; molecule init scenario --scenario-name bar --role-name foo
+    .. option:: cd foo; molecule init scenario bar --role-name foo
 
         Initialize an existing role with Molecule:
 
-    .. program:: cd foo; molecule init scenario --scenario-name bar --role-name foo --driver-template path
+    .. program:: cd foo; molecule init scenario bar --role-name foo --driver-template path
 
-    .. option:: cd foo; molecule init scenario --scenario-name bar --role-name foo --driver-template path
+    .. option:: cd foo; molecule init scenario bar --role-name foo --driver-template path
 
         Initialize a new scenario using a local *cookiecutter* template for the
         driver configuration.
@@ -182,15 +182,11 @@ def _default_scenario_exists(ctx, param, value):  # pragma: no cover
     callback=_role_exists,
     help='Name of the role to create.',
 )
-@click.option(
-    '--scenario-name',
-    '-s',
+@click.argument(
+    'scenario-name',
     default=command_base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    required=True,
+    required=False,
     callback=_default_scenario_exists,
-    help='Name of the scenario to create. ({})'.format(
-        command_base.MOLECULE_DEFAULT_SCENARIO_NAME
-    ),
 )
 @click.option(
     '--verifier-name',
@@ -216,7 +212,10 @@ def scenario(
     verifier_name,
     driver_template,
 ):  # pragma: no cover
-    """Initialize a new scenario for use with Molecule."""
+    """Initialize a new scenario for use with Molecule.
+
+    If name is not specified the 'default' value will be used.
+    """
     command_args = {
         'dependency_name': dependency_name,
         'driver_name': driver_name,

@@ -73,15 +73,15 @@ def test_command_cleanup(scenario_to_test, with_scenario, scenario_name):
 
 def test_command_init_scenario_with_invalid_role_raises(temp_dir):
     role_directory = os.path.join(temp_dir.strpath, 'test-role')
-    options = {'role_name': 'test-role'}
-    cmd = sh.molecule.bake('init', 'role', **options)
+    options = {}
+    cmd = sh.molecule.bake('init', 'role', 'test-role', **options)
     pytest.helpers.run_command(cmd)
     pytest.helpers.metadata_lint_update(role_directory)
 
     with change_dir_to(role_directory):
-        options = {'scenario_name': 'default', 'role_name': 'invalid-role-name'}
+        options = {'role_name': 'invalid-role-name'}
         with pytest.raises(sh.ErrorReturnCode) as e:
-            cmd = sh.molecule.bake('init', 'scenario', **options)
+            cmd = sh.molecule.bake('init', 'scenario', 'default', **options)
             pytest.helpers.run_command(cmd, log=False)
 
         msg = (
@@ -93,8 +93,8 @@ def test_command_init_scenario_with_invalid_role_raises(temp_dir):
 
 def test_command_init_scenario_as_default_without_default_scenario(temp_dir):
     role_directory = os.path.join(temp_dir.strpath, 'test-role')
-    options = {'role_name': 'test-role'}
-    cmd = sh.molecule.bake('init', 'role', **options)
+    options = {}
+    cmd = sh.molecule.bake('init', 'role', 'test-role', **options)
     pytest.helpers.run_command(cmd)
     pytest.helpers.metadata_lint_update(role_directory)
 
@@ -103,8 +103,8 @@ def test_command_init_scenario_as_default_without_default_scenario(temp_dir):
         scenario_directory = os.path.join(molecule_directory, 'default')
         shutil.rmtree(scenario_directory)
 
-        options = {'scenario_name': 'default', 'role_name': 'test-role'}
-        cmd = sh.molecule.bake('init', 'scenario', **options)
+        options = {'role_name': 'test-role'}
+        cmd = sh.molecule.bake('init', 'scenario', 'default', **options)
         pytest.helpers.run_command(cmd)
 
         assert os.path.isdir(scenario_directory)
@@ -114,8 +114,8 @@ def test_command_init_scenario_as_default_without_default_scenario(temp_dir):
 # a default scenario.  This tests roles not created by a newer Molecule.
 def test_command_init_scenario_without_default_scenario_raises(temp_dir):
     role_directory = os.path.join(temp_dir.strpath, 'test-role')
-    options = {'role_name': 'test-role'}
-    cmd = sh.molecule.bake('init', 'role', **options)
+    options = {}
+    cmd = sh.molecule.bake('init', 'role', 'test-role', **options)
     pytest.helpers.run_command(cmd)
     pytest.helpers.metadata_lint_update(role_directory)
 
@@ -124,9 +124,9 @@ def test_command_init_scenario_without_default_scenario_raises(temp_dir):
         scenario_directory = os.path.join(molecule_directory, 'default')
         shutil.rmtree(scenario_directory)
 
-        options = {'scenario_name': 'invalid-role-name', 'role_name': 'test-role'}
+        options = {'role_name': 'test-role'}
         with pytest.raises(sh.ErrorReturnCode) as e:
-            cmd = sh.molecule.bake('init', 'scenario', **options)
+            cmd = sh.molecule.bake('init', 'scenario', 'invalid-role-name', **options)
             pytest.helpers.run_command(cmd, log=False)
 
         msg = (
@@ -156,8 +156,8 @@ def test_command_init_scenario_custom_template_precedence(
     temp_dir, resources_folder_path
 ):
     role_directory = os.path.join(temp_dir.strpath, 'test-role')
-    options = {'role_name': 'test-role'}
-    cmd = sh.molecule.bake('init', 'role', **options)
+    options = {}
+    cmd = sh.molecule.bake('init', 'role', 'test-role', **options)
     pytest.helpers.run_command(cmd)
     pytest.helpers.metadata_lint_update(role_directory)
 
@@ -172,13 +172,12 @@ def test_command_init_scenario_custom_template_precedence(
             resources_folder_path, 'custom_scenario_template'
         )
         options = {
-            'scenario_name': 'test-scenario',
             'role_name': 'test-role',
             'driver_template': custom_template_dir_path,
         }
 
         # command line argument takes precedence, or it would fail
-        cmd = sh.molecule.bake('init', 'scenario', **options)
+        cmd = sh.molecule.bake('init', 'scenario', 'test-scenario', **options)
         pytest.helpers.run_command(cmd, log=False)
 
 
