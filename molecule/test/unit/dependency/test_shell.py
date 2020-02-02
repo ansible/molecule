@@ -101,6 +101,33 @@ def test_bake(_instance):
     assert sorted(x) == sorted(result)
 
 
+@pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize(
+    'command,words',
+    {
+        'ls -l -a /tmp': ['ls', '-l', '-a', '/tmp'],
+        'sh -c "echo hello world"': ['sh', '-c', 'echo hello world'],
+        'echo "hello world"': ['echo', 'hello world'],
+        '''printf "%s\\n" foo "bar baz" 'a b' c''': [
+            'printf',
+            r'%s\n',
+            'foo',
+            'bar baz',
+            'a b',
+            'c',
+        ],
+    }.items(),
+)
+def test_bake2(_instance, command, words):
+    _instance._config.config['dependency']['command'] = command
+    _instance.bake()
+    baked_exe = _instance._sh_command._path.decode()
+    baked_args = [w.decode() for w in _instance._sh_command._partial_baked_args]
+
+    assert baked_exe.endswith(words[0])
+    assert baked_args == words[1:]
+
+
 def test_execute(patched_run_command, patched_logger_success, _instance):
     _instance._sh_command = 'patched-command'
     _instance.execute()
