@@ -262,7 +262,7 @@ def test_host_group_vars(scenario_to_test, with_scenario, scenario_name):
     options = {'all': True}
     cmd = sh.molecule.bake('test', **options)
     out = pytest.helpers.run_command(cmd, log=False)
-    out = util.strip_ansi_escape(out.stdout.decode('utf-8'))
+    out = util.strip_ansi_escape(out.stdout)
 
     assert re.search(r'\[instance\].*?ok: \[instance\]', out, re.DOTALL)
     assert re.search(r'\[example\].*?ok: \[instance\]', out, re.DOTALL)
