@@ -110,8 +110,14 @@ def sysexit(code=1):
     sys.exit(code)
 
 
-def sysexit_with_message(msg, code=1):
+def sysexit_with_message(msg, code=1, detail=None):
     """Exit with an error message."""
+    # detail is usually a multi-line string which is not suitable for normal
+    # logger.
+    if detail:
+        if isinstance(detail, dict):
+            detail = safe_dump(detail)
+        print(detail)
     LOG.critical(msg)
     sysexit(code)
 
