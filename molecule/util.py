@@ -242,17 +242,27 @@ def instance_with_scenario_name(instance_name, scenario_name):
     return '{}-{}'.format(instance_name, scenario_name)
 
 
-def strip_ansi_escape(string):
-    """Removeall ANSI escapes from string."""
-    return re.sub(r'\x1b[^m]*m', '', string)
+def strip_ansi_escape(data):
+    """Remove all ANSI escapes from string or bytes.
+
+    If bytes is passed instead of string, it will be converted to string
+    using UTF-8.
+    """
+    if isinstance(data, bytes):
+        data = data.decode('utf-8')
+
+    return re.sub(r'\x1b[^m]*m', '', data)
 
 
-def strip_ansi_color(s):
-    """Remove ANSI colors from string."""
+def strip_ansi_color(data):
+    """Remove ANSI colors from string or bytes."""
+    if isinstance(data, bytes):
+        data = data.decode('utf-8')
+
     # Taken from tabulate
     invisible_codes = re.compile(r'\x1b\[\d*m')
 
-    return re.sub(invisible_codes, '', s)
+    return re.sub(invisible_codes, '', data)
 
 
 def verbose_flag(options):
