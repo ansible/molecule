@@ -26,6 +26,7 @@ from molecule import logger
 from molecule.command import base
 from molecule import util
 
+
 LOG = logger.get_logger(__name__)
 MOLECULE_PARALLEL = os.environ.get('MOLECULE_PARALLEL', False)
 
@@ -83,7 +84,7 @@ class Check(base.Base):
         self._config.provisioner.check()
 
 
-@click.command()
+@base.click_command_ex()
 @click.pass_context
 @click.option(
     '--scenario-name',

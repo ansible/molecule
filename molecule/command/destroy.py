@@ -108,7 +108,7 @@ class Destroy(base.Base):
         self._config.state.reset()
 
 
-@click.command()
+@base.click_command_ex()
 @click.pass_context
 @click.option(
     '--scenario-name',

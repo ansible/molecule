@@ -97,7 +97,7 @@ class Role(base.Base):
         LOG.success(msg)
 
 
-@click.command()
+@command_base.click_command_ex()
 @click.pass_context
 @click.option(
     '--dependency-name',

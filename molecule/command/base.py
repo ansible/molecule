@@ -31,6 +31,9 @@ import molecule.scenarios
 from molecule import config
 from molecule import logger
 from molecule import util
+import click
+from click_help_colors import HelpColorsCommand, HelpColorsGroup
+
 
 LOG = logger.get_logger(__name__)
 MOLECULE_GLOB = os.environ.get('MOLECULE_GLOB', 'molecule/*/molecule.yml')
@@ -198,3 +201,32 @@ def _verify_configs(configs):
 
 def _get_subcommand(string):
     return string.split('.')[-1]
+
+
+def click_group_ex():
+    """Return extended version of click.group()."""
+    # Color coding used to group command types, documented only here as we may
+    # decide to change them later.
+    # green : (default) as sequence step
+    # blue : molecule own command, not dependent on scenario
+    # yellow : special commands, like full test sequence, or login
+    return click.group(
+        cls=HelpColorsGroup,
+        help_headers_color='yellow',
+        help_options_color='green',
+        help_options_custom_colors={
+            'drivers': 'blue',
+            'init': 'blue',
+            'list': 'blue',
+            'matrix': 'blue',
+            'login': 'bright_yellow',
+            'test': 'bright_yellow',
+        },
+    )
+
+
+def click_command_ex():
+    """Return extended version of click.command()."""
+    return click.command(
+        cls=HelpColorsCommand, help_headers_color='yellow', help_options_color='green'
+    )
