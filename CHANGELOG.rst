@@ -22,6 +22,7 @@ Changelog
 * Use pluggy to load plugins
 * Windows & Linux EC2 instances can be tested simultaneously
 * Windows EC2 instances can be provisioned using the automatically-generated password
+* Shell dependency manager now uses proper lexical parsing of complex command lines
 
 2.22
 ====
