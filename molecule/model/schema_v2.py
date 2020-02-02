@@ -507,7 +507,7 @@ def pre_validate(stream, env, keep_string):
     v = Validator(allow_unknown=True)
     v.validate(data, pre_validate_base_schema(env, keep_string))
 
-    return v.errors
+    return v.errors, data
 
 
 def validate(c):

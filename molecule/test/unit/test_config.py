@@ -305,7 +305,7 @@ def test_get_defaults(config_instance, mocker):
 
 def test_preflight(mocker, config_instance, patched_logger_info):
     m = mocker.patch('molecule.model.schema_v2.pre_validate')
-    m.return_value = None
+    m.return_value = (None, None)
 
     config_instance._preflight('foo')
 
@@ -316,14 +316,14 @@ def test_preflight_exists_when_validation_fails(
     mocker, patched_logger_critical, config_instance
 ):
     m = mocker.patch('molecule.model.schema_v2.pre_validate')
-    m.return_value = 'validation errors'
+    m.return_value = ('validation errors', None)
 
     with pytest.raises(SystemExit) as e:
         config_instance._preflight('invalid stream')
 
     assert 1 == e.value.code
 
-    msg = 'Failed to validate.\n\nvalidation errors'
+    msg = 'Failed to pre-validate.\n\nvalidation errors'
     patched_logger_critical.assert_called_once_with(msg)
 
 

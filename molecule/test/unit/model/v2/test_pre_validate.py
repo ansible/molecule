@@ -46,8 +46,11 @@ def _keep_string():
 
 
 def test_platforms_docker(_model_platforms_docker_section_data, _env, _keep_string):
-    assert {} == schema_v2.pre_validate(
-        _model_platforms_docker_section_data, _env, _keep_string
+    assert (
+        {}
+        == schema_v2.pre_validate(
+            _model_platforms_docker_section_data, _env, _keep_string
+        )[0]
     )
 
 
@@ -80,8 +83,11 @@ def test_platforms_docker_has_errors(
         ]
     }
 
-    assert x == schema_v2.pre_validate(
-        _model_platforms_docker_errors_section_data, _env, _keep_string
+    assert (
+        x
+        == schema_v2.pre_validate(
+            _model_platforms_docker_errors_section_data, _env, _keep_string
+        )[0]
     )
 
 
@@ -185,6 +191,9 @@ def test_has_errors_when_molecule_env_var_referenced_in_unallowed_sections(
         ],
     }
 
-    assert x == schema_v2.pre_validate(
-        _model_molecule_env_errors_section_data, _env, _keep_string
+    assert (
+        x
+        == schema_v2.pre_validate(
+            _model_molecule_env_errors_section_data, _env, _keep_string
+        )[0]
     )

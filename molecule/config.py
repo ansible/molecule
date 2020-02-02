@@ -420,11 +420,10 @@ class Config(object):
     def _preflight(self, data):
         env = os.environ.copy()
         env = set_env_from_file(env, self.env_file)
-        errors = schema_v2.pre_validate(data, env, MOLECULE_KEEP_STRING)
-
+        errors, data = schema_v2.pre_validate(data, env, MOLECULE_KEEP_STRING)
         if errors:
-            msg = "Failed to validate.\n\n{}".format(errors)
-            util.sysexit_with_message(msg)
+            msg = "Failed to pre-validate.\n\n{}".format(errors)
+            util.sysexit_with_message(msg, detail=data)
 
     def _validate(self):
         msg = 'Validating schema {}.'.format(self.molecule_file)
