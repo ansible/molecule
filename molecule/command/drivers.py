@@ -26,11 +26,12 @@ import tabulate
 
 from molecule import logger
 from molecule import api
+from molecule.command import base
 
 LOG = logger.get_logger(__name__)
 
 
-@click.command()
+@base.click_command_ex()
 @click.pass_context
 @click.option(
     '--format',

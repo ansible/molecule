@@ -74,7 +74,7 @@ class Verify(base.Base):
         self._config.verifier.execute()
 
 
-@click.command()
+@base.click_command_ex()
 @click.pass_context
 @click.option(
     '--scenario-name',

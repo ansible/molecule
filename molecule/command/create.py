@@ -95,7 +95,7 @@ class Create(base.Base):
         self._config.state.change_state('created', True)
 
 
-@click.command()
+@base.click_command_ex()
 @click.pass_context
 @click.option(
     '--scenario-name',

@@ -137,7 +137,7 @@ class Idempotence(base.Base):
         return res
 
 
-@click.command()
+@base.click_command_ex()
 @click.pass_context
 @click.option(
     '--scenario-name',

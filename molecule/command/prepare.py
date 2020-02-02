@@ -104,7 +104,7 @@ class Prepare(base.Base):
         self._config.state.change_state('prepared', True)
 
 
-@click.command()
+@base.click_command_ex()
 @click.pass_context
 @click.option(
     '--scenario-name',

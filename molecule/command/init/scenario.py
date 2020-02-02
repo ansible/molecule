@@ -148,7 +148,7 @@ def _default_scenario_exists(ctx, param, value):  # pragma: no cover
     return value
 
 
-@click.command()
+@command_base.click_command_ex()
 @click.pass_context
 @click.option(
     '--dependency-name',

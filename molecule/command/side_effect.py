@@ -81,7 +81,7 @@ class SideEffect(base.Base):
         self._config.provisioner.side_effect()
 
 
-@click.command(name='side-effect')
+@base.click_command_ex()
 @click.pass_context
 @click.option(
     '--scenario-name',

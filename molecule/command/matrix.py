@@ -65,7 +65,7 @@ class Matrix(base.Base):
     """
 
 
-@click.command()
+@base.click_command_ex()
 @click.pass_context
 @click.option('--scenario-name', '-s', help='Name of the scenario to target.')
 # NOTE(retr0h): Cannot introspect base.Base for `click.Choice`, since

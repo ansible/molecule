@@ -83,7 +83,7 @@ class Cleanup(base.Base):
         self._config.provisioner.cleanup()
 
 
-@click.command(name='cleanup')
+@base.click_command_ex()
 @click.pass_context
 @click.option(
     '--scenario-name',

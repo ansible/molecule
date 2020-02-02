@@ -19,8 +19,7 @@
 #  DEALINGS IN THE SOFTWARE.
 """Base class used by init command."""
 
-import click
-
+from molecule.command import base
 from molecule import logger
 from molecule.command.init import role
 from molecule.command.init import scenario
@@ -28,7 +27,7 @@ from molecule.command.init import scenario
 LOG = logger.get_logger(__name__)
 
 
-@click.group()
+@base.click_group_ex()
 def init():  # pragma: no cover
     """Initialize a new role or scenario."""
 

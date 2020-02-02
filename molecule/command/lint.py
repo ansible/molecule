@@ -85,7 +85,7 @@ class Lint(base.Base):
             l.execute()
 
 
-@click.command()
+@base.click_command_ex()
 @click.pass_context
 @click.option(
     '--scenario-name',

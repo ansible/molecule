@@ -164,7 +164,7 @@ class Login(base.Base):
         self._pt.setwinsize(a[0], a[1])
 
 
-@click.command()
+@base.click_command_ex()
 @click.pass_context
 @click.option('--host', '-h', help='Host to access.')
 @click.option(

@@ -95,7 +95,7 @@ class List(base.Base):
         return self._config.driver.status()
 
 
-@click.command()
+@base.click_command_ex()
 @click.pass_context
 @click.option('--scenario-name', '-s', help='Name of the scenario to target.')
 @click.option(
