@@ -36,15 +36,15 @@ class Role(base.Base):
     """
     Init Role Command Class.
 
-    .. program:: molecule init role --role-name foo
+    .. program:: molecule init role foo
 
-    .. option:: molecule init role --role-name foo
+    .. option:: molecule init role foo
 
         Initialize a new role.
 
-    .. program:: molecule init role --role-name foo --template path
+    .. program:: molecule init role foo --template path
 
-    .. option:: molecule init role --role-name foo --template path
+    .. option:: molecule init role foo --template path
 
         Initialize a new role using ansible-galaxy and include default
         molecule directory. Please refer to the ``init scenario``
@@ -124,7 +124,7 @@ class Role(base.Base):
     default='ansible',
     help='Name of provisioner to initialize. (ansible)',
 )
-@click.option('--role-name', '-r', required=True, help='Name of the role to create.')
+@click.argument('ROLE-NAME', required=True)
 @click.option(
     '--verifier-name',
     type=click.Choice([str(s) for s in api.verifiers()]),

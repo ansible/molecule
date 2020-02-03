@@ -119,9 +119,7 @@ def idempotence(scenario_name):
 def init_role(temp_dir, driver_name):
     role_directory = os.path.join(temp_dir.strpath, 'test-init')
 
-    cmd = sh.molecule.bake(
-        'init', 'role', {'driver-name': driver_name, 'role-name': 'test-init'}
-    )
+    cmd = sh.molecule.bake('init', 'role', 'test-init', {'driver-name': driver_name})
     pytest.helpers.run_command(cmd)
     pytest.helpers.metadata_lint_update(role_directory)
 
@@ -135,9 +133,7 @@ def init_role(temp_dir, driver_name):
 def init_scenario(temp_dir, driver_name):
     # Create role
     role_directory = os.path.join(temp_dir.strpath, 'test-init')
-    cmd = sh.molecule.bake(
-        'init', 'role', {'driver-name': driver_name, 'role-name': 'test-init'}
-    )
+    cmd = sh.molecule.bake('init', 'role', 'test-init', {'driver-name': driver_name})
     pytest.helpers.run_command(cmd)
     pytest.helpers.metadata_lint_update(role_directory)
 
@@ -146,8 +142,8 @@ def init_scenario(temp_dir, driver_name):
         molecule_directory = pytest.helpers.molecule_directory()
         scenario_directory = os.path.join(molecule_directory, 'test-scenario')
 
-        options = {'scenario_name': 'test-scenario', 'role_name': 'test-init'}
-        cmd = sh.molecule.bake('init', 'scenario', **options)
+        options = {'role_name': 'test-init'}
+        cmd = sh.molecule.bake('init', 'scenario', 'test-scenario', **options)
         pytest.helpers.run_command(cmd)
 
         assert os.path.isdir(scenario_directory)
