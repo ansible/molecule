@@ -2,12 +2,12 @@
 Ansible Molecule
 ****************
 
-.. image:: https://badge.fury.io/py/molecule.svg
-   :target: https://badge.fury.io/py/molecule
+.. image:: https://img.shields.io/pypi/v/molecule
+   :target: https://pypi.org/project/molecule/
    :alt: PyPI Package
 
-.. image:: https://readthedocs.org/projects/molecule/badge/?version=stable
-   :target: https://molecule.readthedocs.io/en/stable/
+.. image:: https://readthedocs.org/projects/molecule/badge/?version=latest
+   :target: https://molecule.readthedocs.io/en/latest/
    :alt: Documentation Status
 
 .. image:: https://zuul-ci.org/gated.svg
@@ -17,11 +17,11 @@ Ansible Molecule
    :target: https://github.com/python/black
    :alt: Python Black Code Style
 
-.. image:: https://img.shields.io/badge/Code%20of%20Conduct-Ansible-silver.svg
+.. image:: https://img.shields.io/badge/Code%20of%20Conduct-silver.svg
    :target: https://docs.ansible.com/ansible/latest/community/code_of_conduct.html
    :alt: Ansible Code of Conduct
 
-.. image:: https://img.shields.io/badge/Mailing%20lists-Ansible-orange.svg
+.. image:: https://img.shields.io/badge/Mailing%20lists-silver.svg
    :target: https://docs.ansible.com/ansible/latest/community/communication.html#mailing-list-information
    :alt: Ansible mailing lists
 
@@ -32,7 +32,7 @@ Ansible Molecule
 About Ansible Molecule
 ======================
 
-Molecule is designed to aid in the development and testing of
+Molecule project is designed to aid in the development and testing of
 `Ansible`_ roles.
 
 Molecule provides support for testing with multiple instances, operating
@@ -42,8 +42,9 @@ testing scenarios.
 Molecule encourages an approach that results in consistently developed roles
 that are well-written, easily understood and maintained.
 
-Molecule supports only the the latest two major versions of Ansible (N/N-1),
-meaning that if latest version is 2.9.x, we will also test our code with 2.8.x.
+Molecule supports only the latest two major versions of Ansible (N/N-1),
+meaning that if the latest version is 2.9.x, we will also test our code with
+2.8.x.
 
 .. _`Ansible`: https://ansible.com
 
@@ -63,7 +64,8 @@ Get Involved
 * Join the discussion in `molecule-users Forum`_.
 * Join the community working group by checking the `wiki`_.
 * Want to know about releases, subscribe to `ansible-announce list`_.
-* For the full list of Ansible email Lists, IRC channels see the `communication page`_.
+* For the full list of Ansible email Lists, IRC channels see the
+  `communication page`_.
 
 If you want to get moving fast and make a quick patch:
 
@@ -86,8 +88,8 @@ And you're ready to make your changes!
 Authors
 =======
 
-Molecule was created by `Retr0h <https://github.com/retr0h>`_ and is now
-maintained as part of the `Ansible`_ by Red Hat project.
+Molecule project was created by `Retr0h <https://github.com/retr0h>`_ and it is
+now community-maintained as part of the `Ansible`_ by Red Hat project.
 
 .. _license:
 
