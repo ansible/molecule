@@ -65,7 +65,7 @@ directories:
 .. code-block:: bash
 
     $ ls
-    Dockerfile.j2  INSTALL.rst  molecule.yml  playbook.yml  tests
+    Dockerfile.j2  INSTALL.rst  molecule.yml  converge.yml  tests
 
 * Since `Docker`_ is the default :ref:`driver`, we find a ``Dockerfile.j2``
   `Jinja2`_ template file in place. Molecule will use this file to build a
@@ -79,7 +79,7 @@ directories:
   this file, you can configure each tool that Molecule will employ when testing
   your role.
 
-* ``playbook.yml`` is the playbook file that contains the call site for your
+* ``converge.yml`` is the playbook file that contains the call for your
   role. Molecule will invoke this playbook with ``ansible-playbook`` and run it
   against an instance created by the driver.
 

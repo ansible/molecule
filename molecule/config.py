@@ -359,7 +359,7 @@ class Config(object):
                 'playbooks': {
                     'cleanup': 'cleanup.yml',
                     'create': 'create.yml',
-                    'converge': 'playbook.yml',
+                    'converge': 'converge.yml',
                     'destroy': 'destroy.yml',
                     'prepare': 'prepare.yml',
                     'side_effect': 'side_effect.yml',
