@@ -28,14 +28,7 @@ from molecule.provisioner import ansible_playbooks
 
 @pytest.fixture
 def _provisioner_section_data():
-    return {
-        'provisioner': {
-            'name': 'ansible',
-            'options': {},
-            'lint': {'name': 'ansible-lint'},
-            'config_options': {},
-        }
-    }
+    return {'provisioner': {'name': 'ansible', 'options': {}, 'config_options': {}}}
 
 
 @pytest.fixture

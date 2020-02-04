@@ -25,7 +25,7 @@ import sh
 
 from molecule import util
 from molecule.command.init import base
-from molecule.model import schema_v2
+from molecule.model import schema_v3
 
 
 class CommandBase(base.Base):
@@ -49,7 +49,6 @@ def _command_args():
     return {
         "dependency_name": "galaxy",
         "driver_name": "docker",
-        "lint_name": "yamllint",
         "provisioner_name": "ansible",
         "scenario_name": "default",
         "role_name": "test-role",
@@ -74,7 +73,7 @@ def test_valid(temp_dir, _molecule_file, _role_directory, _command_args, _instan
 
     data = util.safe_load_file(_molecule_file)
 
-    assert {} == schema_v2.validate(data)
+    assert {} == schema_v3.validate(data)
 
     cmd = sh.yamllint.bake('-s', _molecule_file)
     pytest.helpers.run_command(cmd)
@@ -89,7 +88,7 @@ def test_drivers(
 
     data = util.safe_load_file(_molecule_file)
 
-    assert {} == schema_v2.validate(data)
+    assert {} == schema_v3.validate(data)
 
     cmd = sh.yamllint.bake('-s', _molecule_file)
     pytest.helpers.run_command(cmd)

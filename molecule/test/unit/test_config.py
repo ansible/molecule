@@ -30,10 +30,8 @@ from molecule import util
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
 from molecule.dependency import shell
-from molecule.lint import yamllint
 from molecule.provisioner import ansible
 from molecule.verifier import testinfra
-from molecule.verifier import ansible as ansible_verifier
 
 
 def test_molecule_file_private_member(molecule_file_fixture, config_instance):
@@ -135,13 +133,10 @@ def test_env(config_instance):
         'MOLECULE_INSTANCE_CONFIG': config_instance.driver.instance_config,
         'MOLECULE_DEPENDENCY_NAME': 'galaxy',
         'MOLECULE_DRIVER_NAME': 'docker',
-        'MOLECULE_LINT_NAME': 'yamllint',
         'MOLECULE_PROVISIONER_NAME': 'ansible',
-        'MOLECULE_PROVISIONER_LINT_NAME': 'ansible-lint',
         'MOLECULE_SCENARIO_NAME': 'default',
         'MOLECULE_STATE_FILE': config_instance.state.state_file,
         'MOLECULE_VERIFIER_NAME': 'testinfra',
-        'MOLECULE_VERIFIER_LINT_NAME': 'flake8',
         'MOLECULE_VERIFIER_TEST_DIRECTORY': config_instance.verifier.directory,
     }
 
@@ -149,7 +144,7 @@ def test_env(config_instance):
 
 
 def test_lint_property(config_instance):
-    assert isinstance(config_instance.lint, yamllint.Yamllint)
+    assert isinstance(config_instance.lint, (str, bool, type(None)))
 
 
 def test_platforms_property(config_instance):
@@ -170,18 +165,6 @@ def test_state_property(config_instance):
 
 def test_verifier_property(config_instance):
     assert isinstance(config_instance.verifier, testinfra.Testinfra)
-
-
-@pytest.fixture
-def _config_verifier_ansible_section_data():
-    return {'verifier': {'name': 'ansible', 'lint': {'name': 'ansible-lint'}}}
-
-
-@pytest.mark.parametrize(
-    'config_instance', ['_config_verifier_ansible_section_data'], indirect=True
-)
-def test_verifier_property_is_ansible(config_instance):
-    assert isinstance(config_instance.verifier, ansible_verifier.Ansible)
 
 
 def test_get_driver_name_from_state_file(config_instance):
@@ -304,7 +287,7 @@ def test_get_defaults(config_instance, mocker):
 
 
 def test_preflight(mocker, config_instance, patched_logger_info):
-    m = mocker.patch('molecule.model.schema_v2.pre_validate')
+    m = mocker.patch('molecule.model.schema_v3.pre_validate')
     m.return_value = (None, None)
 
     config_instance._preflight('foo')
@@ -315,7 +298,7 @@ def test_preflight(mocker, config_instance, patched_logger_info):
 def test_preflight_exists_when_validation_fails(
     mocker, patched_logger_critical, config_instance
 ):
-    m = mocker.patch('molecule.model.schema_v2.pre_validate')
+    m = mocker.patch('molecule.model.schema_v3.pre_validate')
     m.return_value = ('validation errors', None)
 
     with pytest.raises(SystemExit) as e:
@@ -328,7 +311,7 @@ def test_preflight_exists_when_validation_fails(
 
 
 def test_validate(mocker, config_instance, patched_logger_info, patched_logger_success):
-    m = mocker.patch('molecule.model.schema_v2.validate')
+    m = mocker.patch('molecule.model.schema_v3.validate')
     m.return_value = None
 
     config_instance._validate()
@@ -345,7 +328,7 @@ def test_validate(mocker, config_instance, patched_logger_info, patched_logger_s
 def test_validate_exists_when_validation_fails(
     mocker, patched_logger_critical, config_instance
 ):
-    m = mocker.patch('molecule.model.schema_v2.validate')
+    m = mocker.patch('molecule.model.schema_v3.validate')
     m.return_value = 'validation errors'
 
     with pytest.raises(SystemExit) as e:

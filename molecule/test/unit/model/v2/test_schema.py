@@ -18,8 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-from molecule.model import schema_v2
+from molecule.model import schema_v3
 
 
 def test_base_config(_config):
-    assert {} == schema_v2.validate(_config)
+    assert {} == schema_v3.validate(_config)

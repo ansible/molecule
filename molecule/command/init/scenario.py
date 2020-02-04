@@ -227,8 +227,6 @@ def scenario(
         'verifier_name': verifier_name,
     }
 
-    command_args['verifier_lint_name'] = api.verifiers()[verifier_name].default_linter
-
     driver_template = driver_template or os.environ.get(
         'MOLECULE_SCENARIO_DRIVER_TEMPLATE', None
     )

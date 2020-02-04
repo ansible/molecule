@@ -99,7 +99,6 @@ class Testinfra(Verifier):
         :return: None
         """
         super(Testinfra, self).__init__(config)
-        self.default_linter = 'flake8'
         self._testinfra_command = None
         if config:
             self._tests = self._get_tests()
@@ -208,17 +207,6 @@ class Testinfra(Verifier):
         return {
             'verifier': {
                 'type': 'dict',
-                'schema': {
-                    'name': {'type': 'string', 'allowed': ['testinfra']},
-                    'lint': {
-                        'type': 'dict',
-                        'schema': {
-                            'name': {
-                                'type': 'string',
-                                'allowed': ['flake8', 'pre-commit'],
-                            }
-                        },
-                    },
-                },
+                'schema': {'name': {'type': 'string', 'allowed': ['testinfra']}},
             }
         }

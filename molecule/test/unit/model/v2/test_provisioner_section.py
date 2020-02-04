@@ -20,7 +20,7 @@
 
 import pytest
 
-from molecule.model import schema_v2
+from molecule.model import schema_v3
 
 
 @pytest.fixture
@@ -48,19 +48,13 @@ def _model_provisioner_section_data():
                 'side_effect': 'quux.yml',
                 'foo': {'foo': 'bar'},
             },
-            'lint': {
-                'name': 'ansible-lint',
-                'enabled': True,
-                'options': {'foo': 'bar'},
-                'env': {'FOO': 'foo', 'FOO_BAR': 'foo_bar'},
-            },
         }
     }
 
 
 @pytest.mark.parametrize('_config', ['_model_provisioner_section_data'], indirect=True)
 def test_provisioner(_config):
-    assert {} == schema_v2.validate(_config)
+    assert {} == schema_v3.validate(_config)
 
 
 @pytest.fixture
@@ -82,12 +76,6 @@ def _model_provisioner_errors_section_data():
                 'prepare': int(),
                 'side_effect': int(),
             },
-            'lint': {
-                'name': int(),
-                'enabled': str(),
-                'options': [],
-                'env': {'foo': 'foo', 'foo-bar': 'foo-bar'},
-            },
         }
     }
 
@@ -101,21 +89,6 @@ def test_provisioner_has_errors(_config):
             {
                 'config_options': ['must be of dict type'],
                 'connection_options': ['must be of dict type'],
-                'lint': [
-                    {
-                        'enabled': ['must be of boolean type'],
-                        'name': ['must be of string type'],
-                        'env': [
-                            {
-                                'foo': ["value does not match regex '^[A-Z0-9_-]+$'"],
-                                'foo-bar': [
-                                    "value does not match regex '^[A-Z0-9_-]+$'"
-                                ],
-                            }
-                        ],
-                        'options': ['must be of dict type'],
-                    }
-                ],
                 'playbooks': [
                     {
                         'destroy': ['must be of string type'],
@@ -151,7 +124,7 @@ def test_provisioner_has_errors(_config):
         ]
     }
 
-    assert x == schema_v2.validate(_config)
+    assert x == schema_v3.validate(_config)
 
 
 @pytest.fixture
@@ -203,7 +176,7 @@ def test_provisioner_config_options_disallowed_field(_config):
         ]
     }
 
-    assert x == schema_v2.validate(_config)
+    assert x == schema_v3.validate(_config)
 
 
 @pytest.fixture
@@ -241,16 +214,16 @@ def test_provisioner_config_env_disallowed_field(_config):
         ]
     }
 
-    assert x == schema_v2.validate(_config)
+    assert x == schema_v3.validate(_config)
 
 
 @pytest.fixture
 def _model_provisioner_allows_ansible_section_data():
-    return {'provisioner': {'name': 'ansible', 'lint': {'name': 'ansible-lint'}}}
+    return {'provisioner': {'name': 'ansible'}}
 
 
 @pytest.mark.parametrize(
     '_config', [('_model_provisioner_allows_ansible_section_data')], indirect=True
 )
 def test_provisioner_allows_name(_config):
-    assert {} == schema_v2.validate(_config)
+    assert {} == schema_v3.validate(_config)

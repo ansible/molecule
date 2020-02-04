@@ -298,8 +298,6 @@ conflict.
       name: galaxy
     driver:
       name: docker
-    lint:
-      name: yamllint
     platforms:
       - name: instance1-$TOX_ENVNAME
         image: mariadb
@@ -309,12 +307,8 @@ conflict.
         command: /usr/sbin/init
     provisioner:
       name: ansible
-      lint:
-        name: ansible-lint
     verifier:
       name: testinfra
-      lint:
-        name: flake8
 
 .. _`GitHub Actions`: https://github.com/features/actions
 .. _`Factors`: http://tox.readthedocs.io/en/latest/config.html#factors-and-factor-conditional-settings

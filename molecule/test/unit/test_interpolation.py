@@ -94,8 +94,6 @@ dependency:
     name: $DEPENDENCY_NAME
 driver:
     name: docker
-lint:
-    name: yamllint
 platforms:
   - name: instance-1
 provisioner:
@@ -114,8 +112,6 @@ dependency:
     name: galaxy
 driver:
     name: docker
-lint:
-    name: yamllint
 platforms:
   - name: instance-1
 provisioner:

@@ -83,18 +83,49 @@ Podman
     :undoc-members:
 
 
-.. _linters:
+.. _lint:
 
 Lint
 ----
 
-Molecule handles project linting by invoking configurable linters.
+Starting with v3, Molecule handles project linting by invoking and external
+lint commands as exemplified below.
 
-Yaml Lint
-^^^^^^^^^
+The decision to remove the complex linting support was not easily taken as we
+do find it very useful. The issue was that molecule runs on scenarios and
+linting is usually performed at repository level.
 
-.. autoclass:: molecule.lint.yamllint.Yamllint()
-   :undoc-members:
+It makes little sense to perform linting in more than one place per project.
+Molecule was able to use up to three linters and while it was aimed to flexible
+about them, it ended up creating more confusions to the users. We decided to
+maximize flexibility by just calling an external shell command.
+
+.. code-block:: yaml
+
+    lint: |
+        yamllint .
+        ansible-lint
+        flake8
+
+The older format is no longer supported and you have to update the
+``molecule.yml`` when you upgrade. If you don't want to do any linting,
+it will be enough to remove all lint related sections from the file.
+
+.. code-block:: yaml
+
+    # old v2 format, no longer supported
+    lint:
+      name: yamllint
+      enabled: true
+    provisioner:
+      lint:
+        name: ansible-lint
+      options: ...
+      env: ...
+    verifier:
+      lint:
+        name: flake8
+
 
 .. _platforms:
 
@@ -115,14 +146,6 @@ Ansible
 ^^^^^^^
 
 .. autoclass:: molecule.provisioner.ansible.Ansible()
-   :undoc-members:
-
-Lint
-....
-
-Molecule handles provisioner linting by invoking configurable linters.
-
-.. autoclass:: molecule.provisioner.lint.ansible_lint.AnsibleLint()
    :undoc-members:
 
 .. _root_scenario:
@@ -157,25 +180,9 @@ Ansible
 .. autoclass:: molecule.verifier.ansible.Ansible()
    :undoc-members:
 
-Lint
-....
-
-.. autoclass:: molecule.verifier.lint.ansible_lint.AnsibleLint()
-   :undoc-members:
 
 Testinfra
 ^^^^^^^^^
 
 .. autoclass:: molecule.verifier.testinfra.Testinfra()
-   :undoc-members:
-
-.. _root_lint:
-
-Lint
-....
-
-.. autoclass:: molecule.verifier.lint.flake8.Flake8()
-   :undoc-members:
-
-.. autoclass:: molecule.verifier.lint.precommit.PreCommit()
    :undoc-members:

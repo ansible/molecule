@@ -20,7 +20,7 @@
 
 import pytest
 
-from molecule.model import schema_v2
+from molecule.model import schema_v3
 
 
 @pytest.fixture
@@ -48,7 +48,7 @@ def _keep_string():
 def test_platforms_docker(_model_platforms_docker_section_data, _env, _keep_string):
     assert (
         {}
-        == schema_v2.pre_validate(
+        == schema_v3.pre_validate(
             _model_platforms_docker_section_data, _env, _keep_string
         )[0]
     )
@@ -85,7 +85,7 @@ def test_platforms_docker_has_errors(
 
     assert (
         x
-        == schema_v2.pre_validate(
+        == schema_v3.pre_validate(
             _model_platforms_docker_errors_section_data, _env, _keep_string
         )[0]
     )
@@ -99,8 +99,6 @@ dependency:
   name: $MOLECULE_DEPENDENCY_NAME
 driver:
   name: $MOLECULE_DRIVER_NAME
-lint:
-  name: $MOLECULE_LINT_NAME
 platforms:
   - name: instance
     image: ${TEST_BASE_IMAGE}
@@ -109,14 +107,10 @@ platforms:
       - name: bar
 provisioner:
   name: $MOLECULE_PROVISIONER_NAME
-  lint:
-    name: $MOLECULE_PROVISIONER_LINT_NAME
 scenario:
   name: $MOLECULE_SCENARIO_NAME
 verifier:
   name: $MOLECULE_VERIFIER_NAME
-  lint:
-    name: $MOLECULE_VERIFIER_LINT_NAME
 """.strip()
 
 
@@ -126,14 +120,6 @@ def test_has_errors_when_molecule_env_var_referenced_in_unallowed_sections(
     x = {
         'scenario': [
             {'name': ['cannot reference $MOLECULE special variables in this section']}
-        ],
-        'lint': [
-            {
-                'name': [
-                    'cannot reference $MOLECULE special variables in this section',
-                    'unallowed value $MOLECULE_LINT_NAME',
-                ]
-            }
         ],
         'driver': [
             {
@@ -153,17 +139,6 @@ def test_has_errors_when_molecule_env_var_referenced_in_unallowed_sections(
         ],
         'verifier': [
             {
-                'lint': [
-                    {
-                        'name': [
-                            (
-                                'cannot reference $MOLECULE special variables in this '
-                                'section'
-                            ),
-                            'unallowed value $MOLECULE_VERIFIER_LINT_NAME',
-                        ]
-                    }
-                ],
                 'name': [
                     'cannot reference $MOLECULE special variables in this section',
                     'unallowed value $MOLECULE_VERIFIER_NAME',
@@ -172,17 +147,6 @@ def test_has_errors_when_molecule_env_var_referenced_in_unallowed_sections(
         ],
         'provisioner': [
             {
-                'lint': [
-                    {
-                        'name': [
-                            (
-                                'cannot reference $MOLECULE special variables in this '
-                                'section'
-                            ),
-                            'unallowed value $MOLECULE_PROVISIONER_LINT_NAME',
-                        ]
-                    }
-                ],
                 'name': [
                     'cannot reference $MOLECULE special variables in this section',
                     'unallowed value $MOLECULE_PROVISIONER_NAME',
@@ -193,7 +157,7 @@ def test_has_errors_when_molecule_env_var_referenced_in_unallowed_sections(
 
     assert (
         x
-        == schema_v2.pre_validate(
+        == schema_v3.pre_validate(
             _model_molecule_env_errors_section_data, _env, _keep_string
         )[0]
     )

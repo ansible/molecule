@@ -35,8 +35,7 @@ from molecule import util
 from molecule.dependency import ansible_galaxy
 from molecule.dependency import gilt
 from molecule.dependency import shell
-from molecule.lint import yamllint
-from molecule.model import schema_v2
+from molecule.model import schema_v3
 from molecule.provisioner import ansible
 
 
@@ -71,7 +70,7 @@ class Config(object):
     directory.  Molecule performs most functions within this directory.
 
     The :class:`.Config` object instantiates Dependency_, Driver_,
-    :ref:`root_lint`, Platforms_, Provisioner_, Verifier_,
+    :ref:`lint`, Platforms_, Provisioner_, Verifier_,
     :ref:`root_scenario`, and State_ references.
     """
 
@@ -181,21 +180,17 @@ class Config(object):
             'MOLECULE_INSTANCE_CONFIG': self.driver.instance_config,
             'MOLECULE_DEPENDENCY_NAME': self.dependency.name,
             'MOLECULE_DRIVER_NAME': self.driver.name,
-            'MOLECULE_LINT_NAME': self.lint.name,
             'MOLECULE_PROVISIONER_NAME': self.provisioner.name,
-            'MOLECULE_PROVISIONER_LINT_NAME': self.provisioner.lint.name,
             'MOLECULE_SCENARIO_NAME': self.scenario.name,
             'MOLECULE_VERIFIER_NAME': self.verifier.name,
-            'MOLECULE_VERIFIER_LINT_NAME': self.verifier.lint.name,
             'MOLECULE_VERIFIER_TEST_DIRECTORY': self.verifier.directory,
         }
 
     @property
     @util.lru_cache()
     def lint(self):
-        lint_name = self.config['lint']['name']
-        if lint_name == 'yamllint':
-            return yamllint.Yamllint(self)
+        lint_name = self.config.get('lint', None)
+        return lint_name
 
     @property
     @util.lru_cache()
@@ -340,7 +335,6 @@ class Config(object):
                 'ssh_connection_options': [],
                 'safe_files': [],
             },
-            'lint': {'name': 'yamllint', 'enabled': True, 'options': {}, 'env': {}},
             'platforms': [],
             'provisioner': {
                 'name': 'ansible',
@@ -413,14 +407,13 @@ class Config(object):
                 'options': {},
                 'env': {},
                 'additional_files_or_dirs': [],
-                'lint': {'name': 'flake8', 'enabled': True, 'options': {}, 'env': {}},
             },
         }
 
     def _preflight(self, data):
         env = os.environ.copy()
         env = set_env_from_file(env, self.env_file)
-        errors, data = schema_v2.pre_validate(data, env, MOLECULE_KEEP_STRING)
+        errors, data = schema_v3.pre_validate(data, env, MOLECULE_KEEP_STRING)
         if errors:
             msg = "Failed to pre-validate.\n\n{}".format(errors)
             util.sysexit_with_message(msg, detail=data)
@@ -429,7 +422,7 @@ class Config(object):
         msg = 'Validating schema {}.'.format(self.molecule_file)
         LOG.info(msg)
 
-        errors = schema_v2.validate(self.config)
+        errors = schema_v3.validate(self.config)
         if errors:
             msg = "Failed to validate.\n\n{}".format(errors)
             util.sysexit_with_message(msg)

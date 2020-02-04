@@ -30,9 +30,11 @@ import sys
 try:
     from subprocess import check_output  # noqa 401
     from subprocess import run  # noqa 401
+    from subprocess import STDOUT  # noqa 401
 except ImportError:
     from subprocess32 import check_output  # noqa 401
     from subprocess32 import run  # noqa 401
+    from subprocess32 import STDOUT  # noqa 401
 
 try:
     from collections.abc import Mapping
