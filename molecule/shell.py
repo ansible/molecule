@@ -27,17 +27,37 @@ import colorama
 import pkg_resources
 import sys
 
+from ansible.release import __version__ as ansible_version
+
 import molecule
 from molecule import command
 from molecule.config import MOLECULE_DEBUG
 from molecule.logger import should_do_markup
 from molecule.command.base import click_group_ex
+from click_help_colors import _colorize
 
 click_completion.init()
 colorama.init(autoreset=True, strip=not should_do_markup())
 
 LOCAL_CONFIG = os.path.expanduser('~/.config/molecule/config.yml')
 ENV_FILE = '.env.yml'
+
+
+def _version_string():
+
+    v = pkg_resources.parse_version(molecule.__version__)
+    color = "bright_yellow" if v.is_prerelease else "green"
+    msg = 'molecule %s\n' % _colorize(molecule.__version__, color)
+    msg += _colorize(
+        '   ansible==%s python==%s.%s'
+        % (
+            pkg_resources.parse_version(ansible_version),
+            sys.version_info[0],
+            sys.version_info[1],
+        ),
+        'bright_black',
+    )
+    return msg
 
 
 @click_group_ex()
@@ -62,7 +82,9 @@ ENV_FILE = '.env.yml'
     default=ENV_FILE,
     help=('The file to read variables from when rendering molecule.yml. ' '(.env.yml)'),
 )
-@click.version_option(version=molecule.__version__)
+@click.version_option(
+    prog_name="molecule", version=molecule.__version__, message=_version_string()
+)
 @click.pass_context
 def main(ctx, debug, base_config, env_file):  # pragma: no cover
     """
