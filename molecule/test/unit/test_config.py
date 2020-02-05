@@ -310,19 +310,17 @@ def test_preflight_exists_when_validation_fails(
     patched_logger_critical.assert_called_once_with(msg)
 
 
-def test_validate(mocker, config_instance, patched_logger_info, patched_logger_success):
+def test_validate(
+    mocker, config_instance, patched_logger_debug, patched_logger_success
+):
     m = mocker.patch('molecule.model.schema_v3.validate')
     m.return_value = None
 
     config_instance._validate()
 
-    msg = 'Validating schema {}.'.format(config_instance.molecule_file)
-    patched_logger_info.assert_called_once_with(msg)
+    assert patched_logger_debug.call_count == 2
 
-    m.assert_called_once_with(config_instance.config)
-
-    msg = 'Validation completed successfully.'
-    patched_logger_success.assert_called_once_with(msg)
+    m.assert_called_with(config_instance.config)
 
 
 def test_validate_exists_when_validation_fails(
