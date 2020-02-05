@@ -99,7 +99,7 @@ class Ansible(base.Base):
             vvv: True
           playbooks:
             create: create.yml
-            converge: playbook.yml
+            converge: converge.yml
             destroy: destroy.yml
 
     Share playbooks between roles.
@@ -111,7 +111,7 @@ class Ansible(base.Base):
           playbooks:
             create: ../default/create.yml
             destroy: ../default/destroy.yml
-            converge: playbook.yml
+            converge: converge.yml
 
     Multiple driver playbooks.  In some situations a developer may choose to
     test the same role against different backends.  Molecule will choose driver
@@ -133,7 +133,7 @@ class Ansible(base.Base):
               destroy: destroy.yml
             create: create.yml
             destroy: destroy.yml
-            converge: playbook.yml
+            converge: converge.yml
 
     .. important::
 
@@ -687,7 +687,16 @@ class Ansible(base.Base):
         :return: str
         """
         if playbook is None:
-            pb = self._get_ansible_playbook(self.playbooks.converge, **kwargs)
+            p = self.playbooks.converge
+            # TODO(ssbarnea): Remove that deprecation fallback in 3.1+
+            if os.path.basename(p) == "converge.yml" and not os.path.isfile(p):
+                old_name = os.path.join(os.path.dirname(p), "playbook.yml")
+                if os.path.isfile(old_name):
+                    LOG.warning(
+                        "playbook.yml was deprecated, rename it to converge.yml"
+                    )
+                    p = old_name
+            pb = self._get_ansible_playbook(p, **kwargs)
         else:
             pb = self._get_ansible_playbook(playbook, **kwargs)
 

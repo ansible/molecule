@@ -460,7 +460,7 @@ def test_playbooks_create_property(_instance):
 
 
 def test_playbooks_converge_property(_instance):
-    x = os.path.join(_instance._config.scenario.directory, 'playbook.yml')
+    x = os.path.join(_instance._config.scenario.directory, 'converge.yml')
 
     assert x == _instance.playbooks.converge
 
