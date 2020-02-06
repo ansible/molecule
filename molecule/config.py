@@ -420,7 +420,7 @@ class Config(object):
 
     def _validate(self):
         msg = 'Validating schema {}.'.format(self.molecule_file)
-        LOG.info(msg)
+        LOG.debug(msg)
 
         errors = schema_v3.validate(self.config)
         if errors:
@@ -428,7 +428,7 @@ class Config(object):
             util.sysexit_with_message(msg)
 
         msg = 'Validation completed successfully.'
-        LOG.success(msg)
+        LOG.debug(msg)
 
 
 def molecule_directory(path):
