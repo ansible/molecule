@@ -32,7 +32,7 @@ def _command_args():
         'role_name': 'test-role',
         'scenario_name': 'test-scenario',
         'subcommand': __name__,
-        'verifier_name': 'testinfra',
+        'verifier_name': 'ansible',
     }
 
 
@@ -81,7 +81,6 @@ def test_execute(temp_dir, _instance, patched_logger_info, patched_logger_succes
     patched_logger_info.assert_called_once_with(msg)
 
     assert os.path.isdir('./molecule/test-scenario')
-    assert os.path.isdir('./molecule/test-scenario/tests')
 
     scenario_directory = os.path.join(temp_dir.strpath, 'molecule', 'test-scenario')
     msg = 'Initialized scenario in {} successfully.'.format(scenario_directory)
@@ -118,7 +117,6 @@ def test_execute_with_custom_template(
     custom_template_instance.execute()
 
     assert os.path.isdir('./molecule/test-scenario')
-    assert os.path.isdir('./molecule/test-scenario/tests')
 
     readme_path = './molecule/test-scenario/README.md'
     assert os.path.isfile(readme_path)

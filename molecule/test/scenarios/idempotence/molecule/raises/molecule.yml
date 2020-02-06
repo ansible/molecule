@@ -19,4 +19,4 @@ provisioner:
 # scenario:
 #   name: raises
 verifier:
-  name: testinfra
+  name: ansible

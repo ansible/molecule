@@ -19,4 +19,4 @@ provisioner:
 scenario:
   name: gilt
 verifier:
-  name: testinfra
+  name: ansible

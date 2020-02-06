@@ -19,4 +19,4 @@ provisioner:
 scenario:
   name: ansible-galaxy
 verifier:
-  name: testinfra
+  name: ansible

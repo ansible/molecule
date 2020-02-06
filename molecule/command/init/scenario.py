@@ -191,8 +191,8 @@ def _default_scenario_exists(ctx, param, value):  # pragma: no cover
 @click.option(
     '--verifier-name',
     type=click.Choice([str(s) for s in api.verifiers()]),
-    default='testinfra',
-    help='Name of verifier to initialize. (testinfra)',
+    default='ansible',
+    help='Name of verifier to initialize. (ansible)',
 )
 @click.option(
     '--driver-template',
