@@ -751,6 +751,10 @@ class Ansible(base.Base):
 
         :return: None
         """
+        if not self.playbooks.verify:
+            LOG.warning('Skipping, verify playbook not configured.')
+            return
+
         pb = self._get_ansible_playbook(self.playbooks.verify)
         pb.execute()
 
