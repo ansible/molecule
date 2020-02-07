@@ -73,7 +73,7 @@ class Verify(base.Base):
         self.print_info()
         if not self._config.provisioner.playbooks.verify:
             msg = 'Skipping, verify playbook not configured.'
-            LOG.warn(msg)
+            LOG.warning(msg)
             return
         self._config.verifier.execute()
 
