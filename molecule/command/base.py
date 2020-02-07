@@ -25,6 +25,7 @@ import glob
 import os
 
 import six
+import shutil
 
 import molecule.command
 import molecule.scenarios
@@ -97,6 +98,10 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
     )
     scenarios.print_matrix()
     for scenario in scenarios:
+        if command_args.get('subcommand') == 'reset':
+            LOG.info("Removing %s" % scenario.ephemeral_directory)
+            shutil.rmtree(scenario.ephemeral_directory)
+            return
         try:
             execute_scenario(scenario)
         except SystemExit:
@@ -220,6 +225,7 @@ def click_group_ex():
             'list': 'blue',
             'matrix': 'blue',
             'login': 'bright_yellow',
+            'reset': 'blue',
             'test': 'bright_yellow',
         },
     )
