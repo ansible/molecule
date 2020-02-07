@@ -51,7 +51,7 @@ ENV PACKAGES="\
     "
 RUN apk add --update --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ ${PACKAGES}
 
-ENV MOLECULE_EXTRAS="docker,docs,windows"
+ENV MOLECULE_EXTRAS="docker,docs,windows,lint"
 
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=917006
 RUN pip3 install -U wheel
@@ -59,7 +59,7 @@ ADD . .
 RUN \
     pip3 wheel \
     -w dist --no-build-isolation \
-    ".[${MOLECULE_EXTRAS}]"
+    ".[${MOLECULE_EXTRAS}]" testinfra
 RUN ls -1 dist/
 
 # ✄---------------------------------------------------------------------
