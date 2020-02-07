@@ -1,5 +1,3 @@
-# noqa D104
-#
 #  Copyright (c) 2015-2018 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,28 +17,31 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
+"""Lint Command Module."""
 
-# NOTE(retr0h): Importing into the ``molecule.command`` namespace, to prevent
-# collisions (e.g. ``list``).  The CLI usage may conflict with reserved words
-# or builtins.
+import click
 
-from molecule.command import base  # noqa
-from molecule.command import cleanup  # noqa
-from molecule.command import check  # noqa
-from molecule.command import converge  # noqa
-from molecule.command import create  # noqa
-from molecule.command import dependency  # noqa
-from molecule.command import destroy  # noqa
-from molecule.command import drivers  # noqa
-from molecule.command import idempotence  # noqa
-from molecule.command import lint  # noqa
-from molecule.command import list  # noqa
-from molecule.command import login  # noqa
-from molecule.command import matrix  # noqa
-from molecule.command import prepare  # noqa
-from molecule.command import reset  # noqa
-from molecule.command import side_effect  # noqa
-from molecule.command import syntax  # noqa
-from molecule.command import test  # noqa
-from molecule.command import verify  # noqa
-from molecule.command.init import init  # noqa
+from molecule import logger
+from molecule.command import base
+
+
+LOG = logger.get_logger(__name__)
+
+
+@base.click_command_ex()
+@click.pass_context
+@click.option(
+    '--scenario-name',
+    '-s',
+    default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
+    help='Name of the scenario to target. ({})'.format(
+        base.MOLECULE_DEFAULT_SCENARIO_NAME
+    ),
+)
+def reset(ctx, scenario_name):  # pragma: no cover
+    """Reset molecule temporary folders."""
+    args = ctx.obj.get('args')
+    subcommand = base._get_subcommand(__name__)
+    command_args = {'subcommand': subcommand}
+
+    base.execute_cmdline_scenarios(scenario_name, args, command_args)
