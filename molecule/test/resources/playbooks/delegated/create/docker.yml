@@ -11,3 +11,4 @@
     networks: "{{ item.networks | default(omit) }}"
     dns_servers: "{{ item.dns_servers | default(omit) }}"
     networks_cli_compatible: "{{ item.networks_cli_compatible | default(true) }}"
+    container_default_behavior: "{{ item.container_default_behavior | default('compatibility' if ansible_version.full is version_compare('2.10', '>=') else omit) }}"

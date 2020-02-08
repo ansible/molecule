@@ -3,3 +3,4 @@
   docker_container:
     name: delegated-instance-docker
     state: absent
+    container_default_behavior: "{{ item.container_default_behavior | default('compatibility' if ansible_version.full is version_compare('2.10', '>=') else omit) }}"
