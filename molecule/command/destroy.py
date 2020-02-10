@@ -104,6 +104,11 @@ class Destroy(base.Base):
             LOG.warn(msg)
             return
 
+        if not self._config.provisioner.playbooks.destroy:
+            msg = 'Skipping, destroy playbook not configured.'
+            LOG.warn(msg)
+            return
+
         self._config.provisioner.destroy()
         self._config.state.reset()
 

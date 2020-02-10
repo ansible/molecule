@@ -40,7 +40,10 @@ def scenario_name(request):
 
 @pytest.fixture
 def driver_name(request):
-    return request.param
+    try:
+        return request.param
+    except AttributeError:
+        return None
 
 
 @pytest.mark.parametrize(
@@ -202,11 +205,8 @@ def test_command_init_role(temp_dir, driver_name, skip_test):
     pytest.helpers.init_role(temp_dir, driver_name)
 
 
-@pytest.mark.parametrize(
-    'driver_name', [('docker'), ('podman')], indirect=['driver_name']
-)
-def test_command_init_scenario(temp_dir, driver_name, skip_test):
-    pytest.helpers.init_scenario(temp_dir, driver_name)
+def test_command_init_scenario(temp_dir, skip_test):
+    pytest.helpers.init_scenario(temp_dir, "delegated")
 
 
 @pytest.mark.parametrize(

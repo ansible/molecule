@@ -3,6 +3,12 @@ dependency:
   name: {{ cookiecutter.dependency_name }}
 driver:
   name: {{ cookiecutter.driver_name }}
+  {%- if cookiecutter.driver_name == 'delegated' %}
+  options:
+    managed: false
+    ansible_connection_options:
+      ansible_connection: local
+  {%- endif %}
 platforms:
 {%- if cookiecutter.driver_name == 'docker' %}
   - name: instance
