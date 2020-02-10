@@ -16,6 +16,7 @@
         state: absent
         force_kill: "{{ item.force_kill | default(true) }}"
         keep_volumes: "{{ item.keep_volumes | default(true) }}"
+        container_default_behavior: "{{ item.container_default_behavior | default('compatibility' if ansible_version.full is version_compare('2.10', '>=') else omit) }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
       async: 7200

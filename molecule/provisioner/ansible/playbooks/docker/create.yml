@@ -148,6 +148,7 @@
         restart_retries: "{{ item.restart_retries | default(omit) }}"
         tty: "{{ item.tty | default(omit) }}"
         labels: "{{ item.labels | default(omit) }}"
+        container_default_behavior: "{{ item.container_default_behavior | default('compatibility' if ansible_version.full is version_compare('2.10', '>=') else omit) }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
       loop_control:
