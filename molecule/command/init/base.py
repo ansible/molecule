@@ -36,7 +36,7 @@ class Base(object):
     __metaclass__ = abc.ABCMeta
 
     def _process_templates(
-        self, template_dir, extra_context, output_dir, overwrite=True
+        self, template_dir, extra_context, output_dir, overwrite=False
     ):
         """
         Process templates as found in the named directory.
@@ -49,7 +49,7 @@ class Base(object):
         :param output_dir: An string with an absolute path to a directory where
          the templates should be written to.
         :param overwrite: An optional bool whether or not to overwrite existing
-         templates.
+         templates, defaults to `False`.
         :return: None
         """
         template_dir = self._resolve_template_dir(template_dir)
