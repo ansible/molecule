@@ -51,11 +51,7 @@ class AnsiblePlaybooks(object):
 
     @property
     def converge(self):
-        c = self._config.config
-
-        return self._config.provisioner.abs_path(
-            c['provisioner']['playbooks']['converge']
-        )
+        return self._get_playbook('converge')
 
     @property
     def destroy(self):
@@ -79,6 +75,12 @@ class AnsiblePlaybooks(object):
         )
 
     def _get_playbook(self, section):
+        """
+        Return path to playbook or None if playbook is not needed.
+
+        Return None when there is no playbook configured and when action is
+        considered skippable.
+        """
         c = self._config.config
         driver_dict = c['provisioner']['playbooks'].get(self._config.driver.name)
 
@@ -91,11 +93,14 @@ class AnsiblePlaybooks(object):
 
         if playbook is not None:
             playbook = self._config.provisioner.abs_path(playbook)
+            playbook = self._normalize_playbook(playbook)
 
             if os.path.exists(playbook):
                 return playbook
             elif os.path.exists(self._get_bundled_driver_playbook(section)):
                 return self._get_bundled_driver_playbook(section)
+            elif section not in ['prepare', 'create', 'cleanup']:
+                return playbook
 
     def _get_bundled_driver_playbook(self, section):
         return os.path.join(
@@ -103,3 +108,27 @@ class AnsiblePlaybooks(object):
             self._config.driver.name,
             self._config.config['provisioner']['playbooks'][section],
         )
+
+    def _normalize_playbook(self, playbook):
+        """
+        Return current filename to use for a playook by allowing fallbacks.
+
+        Currently used to deprecate use of playbook.yml in favour of converge.yml
+        """
+        # TODO(ssbarnea): Remove that deprecation fallback in 3.1+
+        if not playbook or os.path.isfile(playbook):
+            return playbook
+
+        pb_rename_map = {"converge.yml": "playbook.yml"}
+        basename = os.path.basename(playbook)
+        if basename in pb_rename_map:
+            fb_playbook = os.path.join(
+                os.path.dirname(playbook), pb_rename_map[basename]
+            )
+            if os.path.isfile(fb_playbook):
+                LOG.warning(
+                    "%s was deprecated, rename it to %s"
+                    % (basename, pb_rename_map[basename])
+                )
+                playbook = fb_playbook
+        return playbook
