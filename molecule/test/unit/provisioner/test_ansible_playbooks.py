@@ -47,7 +47,7 @@ def test_create_property(_instance):
 
 
 def test_converge_property(_instance):
-    x = os.path.join(_instance._config.scenario.directory, 'converge.yml')
+    x = os.path.join(_instance._config.scenario.directory, 'playbook.yml')
 
     assert x == _instance._config.provisioner.playbooks.converge
 

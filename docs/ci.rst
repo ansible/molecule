@@ -215,8 +215,7 @@ The following `Jenkinsfile` uses the official 'quay.io/ansible/molecule' image.
 
 .. note::
 
-    For Jenkins to work properly using a `Multibranch Pipeline` or a `GitHub Organisation` - as used by Blue Ocean, the
-    role name in the scenario converge.yml should be changed to perform a lookup of the role root directory. For example :
+    For Jenkins to work properly using a `Multibranch Pipeline` or a `GitHub Organisation` - as used by Blue Ocean, the role name in the scenario/playbook.yml should be changed to perform a lookup of the role root directory. For example :
 
 .. code-block:: yaml
 

@@ -211,7 +211,7 @@ test roles from a monolith repo.
             └── README.md
 
 The role initialized with Molecule (baz in this case) would simply reference
-the dependant roles via it's ``converge.yml`` or meta dependencies.
+the dependant roles via it's ``playbook.yml`` or meta dependencies.
 
 Molecule can test complex scenarios leveraging this technique.
 
@@ -264,7 +264,7 @@ Playbooks and tests can be shared across scenarios.
     │   │   │   ├── Dockerfile.j2 (optional)
     │   │   │   ├── create.yml
     │   │   │   ├── destroy.yml
-    │   │   │   ├── converge.yml  # <-- previously called playbook.yml
+    │   │   │   ├── playbook.yml
     │   │   │   └── prepare.yml
     │   │   └── tests
     │   │       └── test_default.py

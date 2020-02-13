@@ -99,7 +99,7 @@ class Ansible(base.Base):
             vvv: True
           playbooks:
             create: create.yml
-            converge: converge.yml
+            converge: playbook.yml
             destroy: destroy.yml
 
     Share playbooks between roles.
@@ -111,7 +111,7 @@ class Ansible(base.Base):
           playbooks:
             create: ../default/create.yml
             destroy: ../default/destroy.yml
-            converge: converge.yml
+            converge: playbook.yml
 
     Multiple driver playbooks.  In some situations a developer may choose to
     test the same role against different backends.  Molecule will choose driver
@@ -133,7 +133,7 @@ class Ansible(base.Base):
               destroy: destroy.yml
             create: create.yml
             destroy: destroy.yml
-            converge: converge.yml
+            converge: playbook.yml
 
     .. important::
 
@@ -866,21 +866,6 @@ class Ansible(base.Base):
         :param kwargs: An optional keyword arguments.
         :return: object
         """
-        if playbook:
-            # TODO(ssbarnea): Remove that deprecation fallback in 3.1+
-            pb_rename_map = {"playbook.yml": "converge.yml"}
-            basename = os.path.basename(playbook)
-            if basename in pb_rename_map and os.path.isfile(playbook):
-                LOG.warning(
-                    "%s was deprecated, rename it to %s"
-                    % (basename, pb_rename_map[basename])
-                )
-                old_name = os.path.join(
-                    os.path.dirname(playbook), pb_rename_map[basename]
-                )
-                if os.path.isfile(old_name):
-                    playbook = old_name
-
         return ansible_playbook.AnsiblePlaybook(playbook, self._config, **kwargs)
 
     def _verify_inventory(self):
