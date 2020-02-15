@@ -91,7 +91,7 @@ def test_execute(
 
 
 def test_execute_does_not_execute(
-    patched_ansible_converge, patched_logger_warn, _instance
+    patched_ansible_converge, patched_logger_warning, _instance
 ):
     _instance._config.config['verifier']['enabled'] = False
     _instance.execute()
@@ -99,4 +99,4 @@ def test_execute_does_not_execute(
     assert not patched_ansible_converge.called
 
     msg = 'Skipping, verifier is disabled.'
-    patched_logger_warn.assert_called_once_with(msg)
+    patched_logger_warning.assert_called_once_with(msg)

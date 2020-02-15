@@ -180,12 +180,12 @@ class Testinfra(Verifier):
     def execute(self):
         if not self.enabled:
             msg = 'Skipping, verifier is disabled.'
-            LOG.warn(msg)
+            LOG.warning(msg)
             return
 
         if not len(self._tests) > 0:
             msg = 'Skipping, no tests found.'
-            LOG.warn(msg)
+            LOG.warning(msg)
             return
 
         if self._testinfra_command is None:

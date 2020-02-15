@@ -177,8 +177,8 @@ def patched_logger_out(mocker):
 
 
 @pytest.fixture
-def patched_logger_warn(mocker):
-    return mocker.patch('logging.Logger.warn')
+def patched_logger_warning(mocker):
+    return mocker.patch('logging.Logger.warning')
 
 
 @pytest.fixture

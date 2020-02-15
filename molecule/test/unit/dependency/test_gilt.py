@@ -126,7 +126,7 @@ def test_execute(
 
 
 def test_execute_does_not_execute_when_disabled(
-    patched_run_command, patched_logger_warn, _instance
+    patched_run_command, patched_logger_warning, _instance
 ):
     _instance._config.config['dependency']['enabled'] = False
     _instance.execute()
@@ -134,13 +134,13 @@ def test_execute_does_not_execute_when_disabled(
     assert not patched_run_command.called
 
     msg = 'Skipping, dependency is disabled.'
-    patched_logger_warn.assert_called_once_with(msg)
+    patched_logger_warning.assert_called_once_with(msg)
 
 
 def test_execute_does_not_execute_when_no_requirements_file(
     patched_run_command,
     _patched_gilt_has_requirements_file,
-    patched_logger_warn,
+    patched_logger_warning,
     _instance,
 ):
     _patched_gilt_has_requirements_file.return_value = False
@@ -149,7 +149,7 @@ def test_execute_does_not_execute_when_no_requirements_file(
     assert not patched_run_command.called
 
     msg = 'Skipping, missing the requirements file.'
-    patched_logger_warn.assert_called_once_with(msg)
+    patched_logger_warning.assert_called_once_with(msg)
 
 
 def test_execute_bakes(

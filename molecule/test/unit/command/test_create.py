@@ -56,7 +56,7 @@ def test_execute(
 )
 def test_execute_skips_when_delegated_driver(
     _patched_create_setup,
-    patched_logger_warn,
+    patched_logger_warning,
     command_patched_ansible_create,
     config_instance,
 ):
@@ -64,19 +64,19 @@ def test_execute_skips_when_delegated_driver(
     c.execute()
 
     msg = 'Skipping, instances are delegated.'
-    patched_logger_warn.assert_called_once_with(msg)
+    patched_logger_warning.assert_called_once_with(msg)
 
     assert not command_patched_ansible_create.called
 
 
 def test_execute_skips_when_instances_already_created(
-    patched_logger_warn, command_patched_ansible_create, config_instance
+    patched_logger_warning, command_patched_ansible_create, config_instance
 ):
     config_instance.state.change_state('created', True)
     c = create.Create(config_instance)
     c.execute()
 
     msg = 'Skipping, instances already created.'
-    patched_logger_warn.assert_called_once_with(msg)
+    patched_logger_warning.assert_called_once_with(msg)
 
     assert not command_patched_ansible_create.called

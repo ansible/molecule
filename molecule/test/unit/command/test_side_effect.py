@@ -69,13 +69,13 @@ def test_execute(
 
 
 def test_execute_skips_when_playbook_not_configured(
-    patched_logger_warn, _patched_ansible_side_effect, config_instance
+    patched_logger_warning, _patched_ansible_side_effect, config_instance
 ):
 
     se = side_effect.SideEffect(config_instance)
     se.execute()
 
     msg = 'Skipping, side effect playbook not configured.'
-    patched_logger_warn.assert_called_once_with(msg)
+    patched_logger_warning.assert_called_once_with(msg)
 
     assert not _patched_ansible_side_effect.called

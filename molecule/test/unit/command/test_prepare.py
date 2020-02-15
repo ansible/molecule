@@ -56,33 +56,33 @@ def test_execute(
 
 
 def test_execute_skips_when_instances_already_prepared(
-    patched_logger_warn, _patched_ansible_prepare, config_instance
+    patched_logger_warning, _patched_ansible_prepare, config_instance
 ):
     config_instance.state.change_state('prepared', True)
     p = prepare.Prepare(config_instance)
     p.execute()
 
     msg = 'Skipping, instances already prepared.'
-    patched_logger_warn.assert_called_once_with(msg)
+    patched_logger_warning.assert_called_once_with(msg)
 
     assert not _patched_ansible_prepare.called
 
 
 def test_execute_skips_when_playbook_not_configured(
-    patched_logger_warn, _patched_ansible_prepare, config_instance
+    patched_logger_warning, _patched_ansible_prepare, config_instance
 ):
 
     p = prepare.Prepare(config_instance)
     p.execute()
 
     msg = 'Skipping, prepare playbook not configured.'
-    patched_logger_warn.assert_called_once_with(msg)
+    patched_logger_warning.assert_called_once_with(msg)
 
     assert not _patched_ansible_prepare.called
 
 
 def test_execute_when_instances_already_prepared_but_force_provided(
-    mocker, patched_logger_warn, _patched_ansible_prepare, config_instance
+    mocker, patched_logger_warning, _patched_ansible_prepare, config_instance
 ):
     pb = os.path.join(config_instance.scenario.directory, 'prepare.yml')
     util.write_file(pb, '')

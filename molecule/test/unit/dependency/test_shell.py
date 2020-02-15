@@ -139,7 +139,7 @@ def test_execute(patched_run_command, patched_logger_success, _instance):
 
 
 def test_execute_does_not_execute_when_disabled(
-    patched_run_command, patched_logger_warn, _instance
+    patched_run_command, patched_logger_warning, _instance
 ):
     _instance._config.config['dependency']['enabled'] = False
     _instance.execute()
@@ -147,7 +147,7 @@ def test_execute_does_not_execute_when_disabled(
     assert not patched_run_command.called
 
     msg = 'Skipping, dependency is disabled.'
-    patched_logger_warn.assert_called_once_with(msg)
+    patched_logger_warning.assert_called_once_with(msg)
 
 
 @pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
