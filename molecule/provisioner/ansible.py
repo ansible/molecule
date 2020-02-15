@@ -686,10 +686,7 @@ class Ansible(base.Base):
         :param kwargs: An optional keyword arguments.
         :return: str
         """
-        if playbook is None:
-            pb = self._get_ansible_playbook(self.playbooks.converge, **kwargs)
-        else:
-            pb = self._get_ansible_playbook(playbook, **kwargs)
+        pb = self._get_ansible_playbook(playbook or self.playbooks.converge, **kwargs)
 
         return pb.execute()
 
@@ -866,21 +863,6 @@ class Ansible(base.Base):
         :param kwargs: An optional keyword arguments.
         :return: object
         """
-        if playbook:
-            # TODO(ssbarnea): Remove that deprecation fallback in 3.1+
-            pb_rename_map = {"playbook.yml": "converge.yml"}
-            basename = os.path.basename(playbook)
-            if basename in pb_rename_map and os.path.isfile(playbook):
-                LOG.warning(
-                    "%s was deprecated, rename it to %s"
-                    % (basename, pb_rename_map[basename])
-                )
-                old_name = os.path.join(
-                    os.path.dirname(playbook), pb_rename_map[basename]
-                )
-                if os.path.isfile(old_name):
-                    playbook = old_name
-
         return ansible_playbook.AnsiblePlaybook(playbook, self._config, **kwargs)
 
     def _verify_inventory(self):
