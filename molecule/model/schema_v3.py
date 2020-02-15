@@ -92,10 +92,7 @@ def pre_validate_base_schema(env, keep_string):
                 },
             },
         },
-        'scenario': {
-            'type': 'dict',
-            'schema': {'name': {'type': 'string', 'molecule_env_var': True}},
-        },
+        'scenario': {'type': 'dict', 'schema': {'name': {'molecule_env_var': True}}},
         'verifier': {
             'type': 'dict',
             'schema': {
@@ -210,7 +207,6 @@ base_schema = {
     'scenario': {
         'type': 'dict',
         'schema': {
-            'name': {'type': 'string'},
             'check_sequence': {'type': 'list', 'schema': {'type': 'string'}},
             'converge_sequence': {'type': 'list', 'schema': {'type': 'string'}},
             'create_sequence': {'type': 'list', 'schema': {'type': 'string'}},

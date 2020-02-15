@@ -64,7 +64,6 @@ def test_scenario_has_errors(_config):
         'scenario': [
             {
                 'converge_sequence': [{0: ['must be of string type']}],
-                'name': ['must be of string type'],
                 'check_sequence': [{0: ['must be of string type']}],
                 'create_sequence': [{0: ['must be of string type']}],
                 'destroy_sequence': [{0: ['must be of string type']}],

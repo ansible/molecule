@@ -107,8 +107,6 @@ platforms:
       - name: bar
 provisioner:
   name: $MOLECULE_PROVISIONER_NAME
-scenario:
-  name: $MOLECULE_SCENARIO_NAME
 verifier:
   name: $MOLECULE_VERIFIER_NAME
 """.strip()
@@ -118,9 +116,6 @@ def test_has_errors_when_molecule_env_var_referenced_in_unallowed_sections(
     _model_molecule_env_errors_section_data, _env, _keep_string
 ):
     x = {
-        'scenario': [
-            {'name': ['cannot reference $MOLECULE special variables in this section']}
-        ],
         'driver': [
             {
                 'name': [

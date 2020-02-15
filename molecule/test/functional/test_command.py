@@ -202,8 +202,11 @@ def test_command_init_role(temp_dir, driver_name, skip_test):
     pytest.helpers.init_role(temp_dir, driver_name)
 
 
-def test_command_init_scenario(temp_dir, skip_test):
-    pytest.helpers.init_scenario(temp_dir, "delegated")
+@pytest.mark.parametrize(
+    'driver_name', [('docker'), ('podman')], indirect=['driver_name']
+)
+def test_command_init_scenario(temp_dir, driver_name, skip_test):
+    pytest.helpers.init_scenario(temp_dir, driver_name)
 
 
 @pytest.mark.parametrize(

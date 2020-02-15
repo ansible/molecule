@@ -52,7 +52,6 @@ class Scenario(object):
     .. code-block:: yaml
 
         scenario:
-          name: default  # optional
           create_sequence:
             - dependency
             - create

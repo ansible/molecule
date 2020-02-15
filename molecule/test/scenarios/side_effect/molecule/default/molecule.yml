@@ -17,7 +17,5 @@ provisioner:
     create: ../../../../resources/playbooks/docker/create.yml
     destroy: ../../../../resources/playbooks/docker/destroy.yml
     side_effect: side_effect.yml
-scenario:
-  name: default
 verifier:
   name: ansible

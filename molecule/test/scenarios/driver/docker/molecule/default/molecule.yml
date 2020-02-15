@@ -22,7 +22,5 @@ provisioner:
     ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
     # keep this here to test that we convert integers to strings:
     SOME_VALUE_AS_INFO: 1
-scenario:
-  name: default
 verifier:
   name: ansible
