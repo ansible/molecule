@@ -97,7 +97,7 @@ class Scenario(base.Base):
             if os.path.isdir(cli_driver_template):
                 driver_template = cli_driver_template
             else:
-                LOG.warn(
+                LOG.warning(
                     "Driver not found in custom template directory({}), "
                     "using the default template instead".format(cli_driver_template)
                 )

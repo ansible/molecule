@@ -96,12 +96,12 @@ class Destroy(base.Base):
 
         if self._config.command_args.get('destroy') == 'never':
             msg = "Skipping, '--destroy=never' requested."
-            LOG.warn(msg)
+            LOG.warning(msg)
             return
 
         if self._config.driver.delegated and not self._config.driver.managed:
             msg = 'Skipping, instances are delegated.'
-            LOG.warn(msg)
+            LOG.warning(msg)
             return
 
         self._config.provisioner.destroy()

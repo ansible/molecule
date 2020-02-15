@@ -75,7 +75,7 @@ class Ansible(Verifier):
     def execute(self):
         if not self.enabled:
             msg = 'Skipping, verifier is disabled.'
-            log.warn(msg)
+            log.warning(msg)
             return
 
         msg = 'Running Ansible Verifier'

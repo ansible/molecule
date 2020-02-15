@@ -238,25 +238,27 @@ def test_execute(
     patched_logger_success.assert_called_once_with(msg)
 
 
-def test_execute_does_not_execute(patched_run_command, patched_logger_warn, _instance):
+def test_execute_does_not_execute(
+    patched_run_command, patched_logger_warning, _instance
+):
     _instance._config.config['verifier']['enabled'] = False
     _instance.execute()
 
     assert not patched_run_command.called
 
     msg = 'Skipping, verifier is disabled.'
-    patched_logger_warn.assert_called_once_with(msg)
+    patched_logger_warning.assert_called_once_with(msg)
 
 
 def test_does_not_execute_without_tests(
-    patched_run_command, patched_logger_warn, _instance
+    patched_run_command, patched_logger_warning, _instance
 ):
     _instance.execute()
 
     assert not patched_run_command.called
 
     msg = 'Skipping, no tests found.'
-    patched_logger_warn.assert_called_once_with(msg)
+    patched_logger_warning.assert_called_once_with(msg)
 
 
 def test_execute_bakes(patched_run_command, _patched_testinfra_get_tests, _instance):

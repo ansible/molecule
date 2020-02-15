@@ -62,13 +62,13 @@ def test_execute(
 
 
 def test_execute_skips_when_playbook_not_configured(
-    patched_logger_warn, _patched_ansible_cleanup, config_instance
+    patched_logger_warning, _patched_ansible_cleanup, config_instance
 ):
 
     cu = cleanup.Cleanup(config_instance)
     cu.execute()
 
     msg = 'Skipping, cleanup playbook not configured.'
-    patched_logger_warn.assert_called_once_with(msg)
+    patched_logger_warning.assert_called_once_with(msg)
 
     assert not _patched_ansible_cleanup.called

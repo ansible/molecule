@@ -110,7 +110,7 @@ class Shell(base.Base):
     def execute(self):
         if not self.enabled:
             msg = 'Skipping, dependency is disabled.'
-            LOG.warn(msg)
+            LOG.warning(msg)
             return
 
         if self._sh_command is None:

@@ -133,12 +133,12 @@ class AnsibleGalaxy(base.Base):
     def execute(self):
         if not self.enabled:
             msg = 'Skipping, dependency is disabled.'
-            LOG.warn(msg)
+            LOG.warning(msg)
             return
 
         if not self._has_requirements_file():
             msg = 'Skipping, missing the requirements file.'
-            LOG.warn(msg)
+            LOG.warning(msg)
             return
 
         if self._sh_command is None:

@@ -75,7 +75,7 @@ class SideEffect(base.Base):
         self.print_info()
         if not self._config.provisioner.playbooks.side_effect:
             msg = 'Skipping, side effect playbook not configured.'
-            LOG.warn(msg)
+            LOG.warning(msg)
             return
 
         self._config.provisioner.side_effect()

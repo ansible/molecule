@@ -77,7 +77,7 @@ class Cleanup(base.Base):
 
         if not self._config.provisioner.playbooks.cleanup:
             msg = 'Skipping, cleanup playbook not configured.'
-            LOG.warn(msg)
+            LOG.warning(msg)
             return
 
         self._config.provisioner.cleanup()

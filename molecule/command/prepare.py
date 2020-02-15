@@ -92,12 +92,12 @@ class Prepare(base.Base):
 
         if self._config.state.prepared and not self._config.command_args.get('force'):
             msg = 'Skipping, instances already prepared.'
-            LOG.warn(msg)
+            LOG.warning(msg)
             return
 
         if not self._config.provisioner.playbooks.prepare:
             msg = 'Skipping, prepare playbook not configured.'
-            LOG.warn(msg)
+            LOG.warning(msg)
             return
 
         self._config.provisioner.prepare()

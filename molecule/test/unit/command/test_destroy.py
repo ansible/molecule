@@ -60,7 +60,7 @@ def test_execute(
 )
 def test_execute_skips_when_destroy_strategy_is_never(
     _patched_destroy_setup,
-    patched_logger_warn,
+    patched_logger_warning,
     _patched_ansible_destroy,
     config_instance,
 ):
@@ -70,7 +70,7 @@ def test_execute_skips_when_destroy_strategy_is_never(
     d.execute()
 
     msg = "Skipping, '--destroy=never' requested."
-    patched_logger_warn.assert_called_once_with(msg)
+    patched_logger_warning.assert_called_once_with(msg)
 
     assert not _patched_ansible_destroy.called
 
@@ -80,7 +80,7 @@ def test_execute_skips_when_destroy_strategy_is_never(
 )
 def test_execute_skips_when_delegated_driver(
     _patched_destroy_setup,
-    patched_logger_warn,
+    patched_logger_warning,
     _patched_ansible_destroy,
     config_instance,
 ):
@@ -88,6 +88,6 @@ def test_execute_skips_when_delegated_driver(
     d.execute()
 
     msg = 'Skipping, instances are delegated.'
-    patched_logger_warn.assert_called_once_with(msg)
+    patched_logger_warning.assert_called_once_with(msg)
 
     assert not _patched_ansible_destroy.called
