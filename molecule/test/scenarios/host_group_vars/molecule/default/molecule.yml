@@ -33,7 +33,5 @@ provisioner:
         host_group_vars_example_group_two_molecule_yml: true
       example_1:
         host_group_vars_example_1_child_group_molecule_yml: true
-scenario:
-  name: default
 verifier:
   name: ansible

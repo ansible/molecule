@@ -98,8 +98,6 @@ platforms:
   - name: instance-1
 provisioner:
     name: ansible
-scenario:
-    name: $MOLECULE_SCENARIO_NAME
 verifier:
     name: ${VERIFIER_NAME}
     options:
@@ -116,8 +114,6 @@ platforms:
   - name: instance-1
 provisioner:
     name: ansible
-scenario:
-    name: default
 verifier:
     name: ansible
     options:
