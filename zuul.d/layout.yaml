@@ -164,7 +164,6 @@
             dependencies:
               - molecule-tox-linters
               - molecule-tox-docs
-              - molecule-tox-packaging
               - molecule-tox-py27-ansible28-unit
               - molecule-tox-py27-ansible29-unit
               - molecule-tox-py36-ansible29-unit
@@ -178,4 +177,21 @@
         - molecule-tox-devel-functional: *deps
 
     gate:
-      jobs: *defaults
+      jobs:
+        - molecule-tox-linters:
+            vars:
+              tox_envlist: lint
+        - molecule-tox-docs
+        - molecule-tox-packaging
+        - molecule-tox-py27-ansible28-unit
+        - molecule-tox-py27-ansible29-unit
+        - molecule-tox-py36-ansible29-unit
+        - molecule-tox-py37-ansible28-unit
+        - molecule-tox-py37-ansible29-unit
+        - molecule-tox-devel-unit
+        - molecule-tox-py27-ansible28-functional
+        - molecule-tox-py27-ansible29-functional
+        - molecule-tox-py36-ansible29-functional
+        - molecule-tox-py37-ansible28-functional
+        - molecule-tox-py37-ansible29-functional
+        - molecule-tox-devel-functional
