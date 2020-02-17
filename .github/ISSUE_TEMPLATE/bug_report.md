@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Do NOT raise bugs unless you already tested code from master branch.
+about: Please test the master branch before raising bugs.
 labels: bug
 ---
 <!--- Verify first that your issue is not already reported on GitHub -->
