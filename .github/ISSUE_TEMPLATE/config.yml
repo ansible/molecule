@@ -1,0 +1,38 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Ask a question on StackOverflow
+    url: https://stackoverflow.com/questions/tagged/molecule
+    about: For well defined questions and answers use StackOverflow
+  - name: Ask a question on molecule-users mailing-list
+    url: https://groups.google.com/forum/#!forum/molecule-users
+    about: Try using the classic mailing list, or `#ansible-molecule` irc channel.
+  - name: Molecule Vagrant
+    url: https://github.com/ansible-community/molecule-vagrant/
+    about: For anything related to Vagrant driver, including *VirtualBox* backend.
+  - name: Molecule Azure
+    url: https://github.com/ansible-community/molecule-azure/
+    about: For anything related to Microsoft Azure
+  - name: Molecule OpenStack
+    url: https://github.com/ansible-community/molecule-openstack/
+    about: For anything related OpenStack
+  - name: Molecule EC2 (AWS)
+    url: https://github.com/ansible-community/molecule-ec2/
+    about: For anything related to Amazon Web Services EC2
+  - name: Molecule GCE (Google Cloud Engine)
+    url: https://github.com/ansible-community/molecule-gce/
+    about: For anything related to Google Cloud
+  - name: Molecule LibVirt (planned)
+    url: https://github.com/ansible-community/molecule-libvirt/
+    about: For using libvirt driver.
+  - name: Molecule Containers (planned)
+    url: https://github.com/ansible-community/molecule-containers/
+    about: For using Docker, Podman or Kubernetes.
+  - name: Molecule HetzerCloud
+    url: https://github.com/ansible-community/molecule-hetznercloud/
+    about: For anything related to HetzerCloud
+  - name: Molecule Linode
+    url: https://github.com/ansible-community/molecule-linode/
+    about: For anything related to Linode
+  - name: Molecule DigitalOcean
+    url: https://github.com/ansible-community/molecule-digitalocean/
+    about: For anything related to DigitalOcean

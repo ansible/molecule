@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Please test the master branch before raising bugs.
 labels: bug
 ---
 <!--- Verify first that your issue is not already reported on GitHub -->
