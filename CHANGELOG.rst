@@ -2,27 +2,53 @@
 Changelog
 *********
 
-3.0 Unreleased
-==============
+This file is kept for historical reasons, visit `releases`_  page for a
+permanently updated changelog of each release and pre-release.
 
-* Supported Ansible versions are from now only N/N-1, (2.9 and 2.8)
-* Moved the Hetzner Cloud driver out to a plugin
-* MAJOR: Removed LXC and LXD providers
+3.0
+===
+
+This version contains a big number of changes made over nine months below
+there is a summary of these. For upgrading, please visit
+`v3 migration checklist`_ page.
+
+* Supported Ansible versions are from now only N/N-1, (2.9 and 2.8), our
+  ``master`` branch is also tested using ansible ``devel`` branch.
+* MAJOR: Providers are now installable drivers, python modules.
+* MAJOR: Providers removed from core: Azure_, EC2_, DigitalOcean_, GCE_,
+  HetznerCloud_, Linode_, LXD_, OpenStack_, Vagrant_.
+* MAJOR: Removed goss verifier from core
+* ``playbook.yml`` name deprecated in favour of ``converge.yml``
+* MAJOR: Default verifier is now ansible
+* MAJOR: Testinfra is not installed by default
+* MAJOR: Scenario name removed from config
+* MAJOR: Linting configuration refactored
 * MAJOR: Dockerfile templates are now embedded in molecule.
 * MINOR: Fixed typo with OVERRIDDEN placeholder in templates
-* Removed goss verifier
 * dependency now runs before lint on default test and lint sequences
-* ANSIBLE_ROLES_PATH, ANSIBLE_LIBRARY, ANSIBLE_FILTER_PLUGINS now include the default Ansible lookup paths
+* ANSIBLE_ROLES_PATH, ANSIBLE_LIBRARY, ANSIBLE_FILTER_PLUGINS now include the
+  default Ansible lookup paths
   ``/usr/share/ansible/<roles/filter/modules>`` and ``/etc/ansible/roles``
 * The internal Molecule plugins are moved to paths more like upstream.
-  ``ansible/plugins/filters`` > ``ansible/plugins/filter`` and ``ansible/plugins/libraries`` > ``ansible/plugins/modules``
+  ``ansible/plugins/filters`` > ``ansible/plugins/filter`` and
+  ``ansible/plugins/libraries`` > ``ansible/plugins/modules``
 * Bash style variable expension for environment variable defaults added.
   ``foo: ${UNDEFINED_VAR:-$DEFAULT}`` and ``foo: ${UNDEFINED_VAR-$DEFAULT}``
   are now supported.
-* Use pluggy to load plugins
-* Windows & Linux EC2 instances can be tested simultaneously
-* Windows EC2 instances can be provisioned using the automatically-generated password
-* Shell dependency manager now uses proper lexical parsing of complex command lines
+* Shell dependency manager now uses proper lexical parsing of complex command
+  lines
+
+.. _`v3 migration checklist`: https://github.com/ansible-community/molecule/issues/2560
+.. _`releases`: https://github.com/ansible-community/molecule/releases
+.. _`Azure`: https://github.com/ansible-community/molecule-azure
+.. _`EC2`: https://github.com/ansible-community/molecule-ec2
+.. _`DigitalOcean`: https://github.com/ansible-community/molecule-digitalocean
+.. _`GCE`: https://github.com/ansible-community/molecule-gce
+.. _`HetznerCloud`: https://github.com/ansible-community/molecule-hetznercloud
+.. _`Linode`: https://github.com/ansible-community/molecule-linode
+.. _`LXD`: https://github.com/ansible-community/molecule-lxd
+.. _`OpenStack`: https://github.com/ansible-community/molecule-openstack
+.. _`Vagrant`: https://github.com/ansible-community/molecule-vagrant
 
 2.22
 ====
