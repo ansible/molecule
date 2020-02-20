@@ -38,38 +38,38 @@ from click_help_colors import _colorize
 click_completion.init()
 colorama.init(autoreset=True, strip=not should_do_markup())
 
-LOCAL_CONFIG = lookup_config_file('.config/molecule/config.yml')
+LOCAL_CONFIG = lookup_config_file(".config/molecule/config.yml")
 
 
-ENV_FILE = '.env.yml'
+ENV_FILE = ".env.yml"
 
 
 def _version_string():
 
     v = pkg_resources.parse_version(molecule.__version__)
     color = "bright_yellow" if v.is_prerelease else "green"
-    msg = 'molecule %s\n' % _colorize(molecule.__version__, color)
+    msg = "molecule %s\n" % _colorize(molecule.__version__, color)
     msg += _colorize(
-        '   ansible==%s python==%s.%s'
+        "   ansible==%s python==%s.%s"
         % (
             pkg_resources.parse_version(ansible_version),
             sys.version_info[0],
             sys.version_info[1],
         ),
-        'bright_black',
+        "bright_black",
     )
     return msg
 
 
 @click_group_ex()
 @click.option(
-    '--debug/--no-debug',
+    "--debug/--no-debug",
     default=MOLECULE_DEBUG,
-    help='Enable or disable debug mode. Default is disabled.',
+    help="Enable or disable debug mode. Default is disabled.",
 )
 @click.option(
-    '--base-config',
-    '-c',
+    "--base-config",
+    "-c",
     default=LOCAL_CONFIG,
     help=(
         "Path to a base config.  If provided Molecule will load "
@@ -79,10 +79,10 @@ def _version_string():
     ).format(LOCAL_CONFIG),
 )
 @click.option(
-    '--env-file',
-    '-e',
+    "--env-file",
+    "-e",
     default=ENV_FILE,
-    help=('The file to read variables from when rendering molecule.yml. ' '(.env.yml)'),
+    help=("The file to read variables from when rendering molecule.yml. " "(.env.yml)"),
 )
 @click.version_option(
     prog_name="molecule", version=molecule.__version__, message=_version_string()
@@ -97,16 +97,16 @@ def main(ctx, debug, base_config, env_file):  # pragma: no cover
       eval "$(_MOLECULE_COMPLETE=source molecule)"
     """
     ctx.obj = {}
-    ctx.obj['args'] = {}
-    ctx.obj['args']['debug'] = debug
-    ctx.obj['args']['base_config'] = base_config
-    ctx.obj['args']['env_file'] = env_file
+    ctx.obj["args"] = {}
+    ctx.obj["args"]["debug"] = debug
+    ctx.obj["args"]["base_config"] = base_config
+    ctx.obj["args"]["env_file"] = env_file
 
 
 # runtime environment checks to avoid delayed failures
 if sys.version_info[0] > 2:
     try:
-        if pkg_resources.get_distribution('futures'):
+        if pkg_resources.get_distribution("futures"):
             raise SystemExit(
                 "FATAL: futures package found, this package should not be installed in a Python 3 environment, please remove it. See https://github.com/agronholm/pythonfutures/issues/90"
             )

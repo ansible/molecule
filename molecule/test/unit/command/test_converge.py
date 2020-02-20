@@ -48,11 +48,11 @@ def test_execute(
 def test_ansible_args_passed_to_scenarios_get_configs(mocker):
     # Scenarios patch is needed to safely invoke CliRunner
     # in the test environment and block scenario exectution
-    mocker.patch('molecule.scenarios.Scenarios')
-    patched_get_configs = mocker.patch('molecule.command.base.get_configs')
+    mocker.patch("molecule.scenarios.Scenarios")
+    patched_get_configs = mocker.patch("molecule.command.base.get_configs")
 
     runner = CliRunner()
-    args = ('converge', '--', '-e', 'testvar=testvalue')
+    args = ("converge", "--", "-e", "testvar=testvalue")
     ansible_args = args[2:]
     runner.invoke(main, args, obj={})
 

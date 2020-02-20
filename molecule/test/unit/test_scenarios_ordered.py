@@ -29,21 +29,21 @@ from molecule import scenarios
 @pytest.fixture
 def _instance(config_instance):
     config_instance_1 = copy.deepcopy(config_instance)
-    config_instance_1.config['scenario']['name'] = 'two'
+    config_instance_1.config["scenario"]["name"] = "two"
     config_instance_1.molecule_file = config_instance_1.molecule_file.replace(
-        'default', '02_foo'
+        "default", "02_foo"
     )
 
     config_instance_2 = copy.deepcopy(config_instance)
-    config_instance_2.config['scenario']['name'] = 'one'
+    config_instance_2.config["scenario"]["name"] = "one"
     config_instance_2.molecule_file = config_instance_2.molecule_file.replace(
-        'default', '01_foo'
+        "default", "01_foo"
     )
 
     config_instance_3 = copy.deepcopy(config_instance)
-    config_instance_3.config['scenario']['name'] = 'three'
+    config_instance_3.config["scenario"]["name"] = "three"
     config_instance_3.molecule_file = config_instance_3.molecule_file.replace(
-        'default', '03_foo'
+        "default", "03_foo"
     )
 
     return scenarios.Scenarios(
@@ -55,6 +55,6 @@ def test_all_ordered(_instance):
     result = _instance.all
 
     assert 3 == len(result)
-    assert 'one' == result[0].name
-    assert 'two' == result[1].name
-    assert 'three' == result[2].name
+    assert "one" == result[0].name
+    assert "two" == result[1].name
+    assert "three" == result[2].name

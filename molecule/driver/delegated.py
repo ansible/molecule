@@ -137,7 +137,7 @@ class Delegated(Driver):
     def __init__(self, config=None):
         """Construct Delegated."""
         super(Delegated, self).__init__(config)
-        self._name = 'delegated'
+        self._name = "delegated"
 
     @property
     def name(self):
@@ -150,16 +150,16 @@ class Delegated(Driver):
     @property
     def login_cmd_template(self):
         if self.managed:
-            connection_options = ' '.join(self.ssh_connection_options)
+            connection_options = " ".join(self.ssh_connection_options)
 
             return (
-                'ssh {{address}} '
-                '-l {{user}} '
-                '-p {{port}} '
-                '-i {{identity_file}} '
-                '{}'
+                "ssh {{address}} "
+                "-l {{user}} "
+                "-p {{port}} "
+                "-i {{identity_file}} "
+                "{}"
             ).format(connection_options)
-        return self.options['login_cmd_template']
+        return self.options["login_cmd_template"]
 
     @property
     def default_safe_files(self):
@@ -173,42 +173,42 @@ class Delegated(Driver):
 
     def login_options(self, instance_name):
         if self.managed:
-            d = {'instance': instance_name}
+            d = {"instance": instance_name}
 
             return util.merge_dicts(d, self._get_instance_config(instance_name))
-        return {'instance': instance_name}
+        return {"instance": instance_name}
 
     def ansible_connection_options(self, instance_name):
         if self.managed:
             try:
                 d = self._get_instance_config(instance_name)
                 conn_dict = {}
-                conn_dict['ansible_user'] = d.get('user')
-                conn_dict['ansible_host'] = d.get('address')
-                conn_dict['ansible_port'] = d.get('port')
-                conn_dict['ansible_connection'] = d.get('connection', 'smart')
-                if d.get('become_method'):
-                    conn_dict['ansible_become_method'] = d.get('become_method')
-                if d.get('become_pass'):
-                    conn_dict['ansible_become_pass'] = d.get('become_pass')
-                if d.get('identity_file'):
-                    conn_dict['ansible_private_key_file'] = d.get('identity_file')
-                    conn_dict['ansible_ssh_common_args'] = ' '.join(
+                conn_dict["ansible_user"] = d.get("user")
+                conn_dict["ansible_host"] = d.get("address")
+                conn_dict["ansible_port"] = d.get("port")
+                conn_dict["ansible_connection"] = d.get("connection", "smart")
+                if d.get("become_method"):
+                    conn_dict["ansible_become_method"] = d.get("become_method")
+                if d.get("become_pass"):
+                    conn_dict["ansible_become_pass"] = d.get("become_pass")
+                if d.get("identity_file"):
+                    conn_dict["ansible_private_key_file"] = d.get("identity_file")
+                    conn_dict["ansible_ssh_common_args"] = " ".join(
                         self.ssh_connection_options
                     )
-                if d.get('password'):
-                    conn_dict['ansible_password'] = d.get('password')
-                if d.get('winrm_transport'):
-                    conn_dict['ansible_winrm_transport'] = d.get('winrm_transport')
-                if d.get('winrm_cert_pem'):
-                    conn_dict['ansible_winrm_cert_pem'] = d.get('winrm_cert_pem')
-                if d.get('winrm_cert_key_pem'):
-                    conn_dict['ansible_winrm_cert_key_pem'] = d.get(
-                        'winrm_cert_key_pem'
+                if d.get("password"):
+                    conn_dict["ansible_password"] = d.get("password")
+                if d.get("winrm_transport"):
+                    conn_dict["ansible_winrm_transport"] = d.get("winrm_transport")
+                if d.get("winrm_cert_pem"):
+                    conn_dict["ansible_winrm_cert_pem"] = d.get("winrm_cert_pem")
+                if d.get("winrm_cert_key_pem"):
+                    conn_dict["ansible_winrm_cert_key_pem"] = d.get(
+                        "winrm_cert_key_pem"
                     )
-                if d.get('winrm_server_cert_validation'):
-                    conn_dict['ansible_winrm_server_cert_validation'] = d.get(
-                        'winrm_server_cert_validation'
+                if d.get("winrm_server_cert_validation"):
+                    conn_dict["ansible_winrm_server_cert_validation"] = d.get(
+                        "winrm_server_cert_validation"
                     )
 
                 return conn_dict
@@ -219,18 +219,18 @@ class Delegated(Driver):
                 # Instance has yet to be provisioned , therefore the
                 # instance_config is not on disk.
                 return {}
-        return self.options['ansible_connection_options']
+        return self.options["ansible_connection_options"]
 
     def _created(self):
         if self.managed:
             return super(Delegated, self)._created()
-        return 'unknown'
+        return "unknown"
 
     def _get_instance_config(self, instance_name):
         instance_config_dict = util.safe_load_file(self._config.driver.instance_config)
 
         return next(
-            item for item in instance_config_dict if item['instance'] == instance_name
+            item for item in instance_config_dict if item["instance"] == instance_name
         )
 
     def sanity_checks(self):

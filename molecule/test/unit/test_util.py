@@ -34,27 +34,27 @@ colorama.init(autoreset=True)
 
 
 def test_print_debug(capsys):
-    util.print_debug('test_title', 'test_data')
+    util.print_debug("test_title", "test_data")
     result, _ = capsys.readouterr()
     title = [
         colorama.Back.WHITE,
         colorama.Style.BRIGHT,
         colorama.Fore.BLACK,
-        'DEBUG: test_title',
+        "DEBUG: test_title",
         colorama.Fore.RESET,
         colorama.Back.RESET,
         colorama.Style.RESET_ALL,
     ]
-    print(''.join(title))
+    print("".join(title))
 
     data = [
         colorama.Fore.BLACK,
         colorama.Style.BRIGHT,
-        'test_data',
+        "test_data",
         colorama.Style.RESET_ALL,
         colorama.Fore.RESET,
     ]
-    print(''.join(data))
+    print("".join(data))
 
     x, _ = capsys.readouterr()
     assert x == result
@@ -62,12 +62,12 @@ def test_print_debug(capsys):
 
 def test_print_environment_vars(capsys):
     env = {
-        'ANSIBLE_FOO': 'foo',
-        'ANSIBLE_BAR': 'bar',
-        'ANSIBLE': None,
-        'MOLECULE_FOO': 'foo',
-        'MOLECULE_BAR': 'bar',
-        'MOLECULE': None,
+        "ANSIBLE_FOO": "foo",
+        "ANSIBLE_BAR": "bar",
+        "ANSIBLE": None,
+        "MOLECULE_FOO": "foo",
+        "MOLECULE_BAR": "bar",
+        "MOLECULE": None,
     }
     util.print_environment_vars(env)
     result, _ = capsys.readouterr()
@@ -77,60 +77,60 @@ def test_print_environment_vars(capsys):
         colorama.Back.WHITE,
         colorama.Style.BRIGHT,
         colorama.Fore.BLACK,
-        'DEBUG: ANSIBLE ENVIRONMENT',
+        "DEBUG: ANSIBLE ENVIRONMENT",
         colorama.Fore.RESET,
         colorama.Back.RESET,
         colorama.Style.RESET_ALL,
     ]
-    print(''.join(title))
+    print("".join(title))
     data = [
         colorama.Fore.BLACK,
         colorama.Style.BRIGHT,
-        util.safe_dump({'ANSIBLE_FOO': 'foo', 'ANSIBLE_BAR': 'bar'}),
+        util.safe_dump({"ANSIBLE_FOO": "foo", "ANSIBLE_BAR": "bar"}),
         colorama.Style.RESET_ALL,
         colorama.Fore.RESET,
     ]
-    print(''.join(data))
+    print("".join(data))
 
     # Molecule Environment
     title = [
         colorama.Back.WHITE,
         colorama.Style.BRIGHT,
         colorama.Fore.BLACK,
-        'DEBUG: MOLECULE ENVIRONMENT',
+        "DEBUG: MOLECULE ENVIRONMENT",
         colorama.Fore.RESET,
         colorama.Back.RESET,
         colorama.Style.RESET_ALL,
     ]
-    print(''.join(title))
+    print("".join(title))
     data = [
         colorama.Fore.BLACK,
         colorama.Style.BRIGHT,
-        util.safe_dump({'MOLECULE_FOO': 'foo', 'MOLECULE_BAR': 'bar'}),
+        util.safe_dump({"MOLECULE_FOO": "foo", "MOLECULE_BAR": "bar"}),
         colorama.Style.RESET_ALL,
         colorama.Fore.RESET,
     ]
-    print(''.join(data))
+    print("".join(data))
 
     # Shell Replay
     title = [
         colorama.Back.WHITE,
         colorama.Style.BRIGHT,
         colorama.Fore.BLACK,
-        'DEBUG: SHELL REPLAY',
+        "DEBUG: SHELL REPLAY",
         colorama.Fore.RESET,
         colorama.Back.RESET,
         colorama.Style.RESET_ALL,
     ]
-    print(''.join(title))
+    print("".join(title))
     data = [
         colorama.Fore.BLACK,
         colorama.Style.BRIGHT,
-        'ANSIBLE_BAR=bar ANSIBLE_FOO=foo MOLECULE_BAR=bar MOLECULE_FOO=foo',
+        "ANSIBLE_BAR=bar ANSIBLE_FOO=foo MOLECULE_BAR=bar MOLECULE_FOO=foo",
         colorama.Style.RESET_ALL,
         colorama.Fore.RESET,
     ]
-    print(''.join(data))
+    print("".join(data))
     print()
 
     x, _ = capsys.readouterr()
@@ -153,20 +153,20 @@ def test_sysexit_with_custom_code():
 
 def test_sysexit_with_message(patched_logger_critical):
     with pytest.raises(SystemExit) as e:
-        util.sysexit_with_message('foo')
+        util.sysexit_with_message("foo")
 
     assert 1 == e.value.code
 
-    patched_logger_critical.assert_called_once_with('foo')
+    patched_logger_critical.assert_called_once_with("foo")
 
 
 def test_sysexit_with_message_and_custom_code(patched_logger_critical):
     with pytest.raises(SystemExit) as e:
-        util.sysexit_with_message('foo', 2)
+        util.sysexit_with_message("foo", 2)
 
     assert 2 == e.value.code
 
-    patched_logger_critical.assert_called_once_with('foo')
+    patched_logger_critical.assert_called_once_with("foo")
 
 
 def test_run_command():
@@ -177,13 +177,13 @@ def test_run_command():
 
 
 def test_run_command_with_debug(mocker, patched_print_debug):
-    cmd = sh.ls.bake(_env={'ANSIBLE_FOO': 'foo', 'MOLECULE_BAR': 'bar'})
+    cmd = sh.ls.bake(_env={"ANSIBLE_FOO": "foo", "MOLECULE_BAR": "bar"})
     util.run_command(cmd, debug=True)
     x = [
-        mocker.call('ANSIBLE ENVIRONMENT', '---\nANSIBLE_FOO: foo\n'),
-        mocker.call('MOLECULE ENVIRONMENT', '---\nMOLECULE_BAR: bar\n'),
-        mocker.call('SHELL REPLAY', 'ANSIBLE_FOO=foo MOLECULE_BAR=bar'),
-        mocker.call('COMMAND', sh.which('ls')),
+        mocker.call("ANSIBLE ENVIRONMENT", "---\nANSIBLE_FOO: foo\n"),
+        mocker.call("MOLECULE ENVIRONMENT", "---\nMOLECULE_BAR: bar\n"),
+        mocker.call("SHELL REPLAY", "ANSIBLE_FOO=foo MOLECULE_BAR=bar"),
+        mocker.call("COMMAND", sh.which("ls")),
     ]
 
     assert x == patched_print_debug.mock_calls
@@ -193,49 +193,49 @@ def test_run_command_with_debug_handles_no_env(mocker, patched_print_debug):
     cmd = sh.ls.bake()
     util.run_command(cmd, debug=True)
     x = [
-        mocker.call('ANSIBLE ENVIRONMENT', '--- {}\n'),
-        mocker.call('MOLECULE ENVIRONMENT', '--- {}\n'),
-        mocker.call('SHELL REPLAY', ''),
-        mocker.call('COMMAND', sh.which('ls')),
+        mocker.call("ANSIBLE ENVIRONMENT", "--- {}\n"),
+        mocker.call("MOLECULE ENVIRONMENT", "--- {}\n"),
+        mocker.call("SHELL REPLAY", ""),
+        mocker.call("COMMAND", sh.which("ls")),
     ]
 
     assert x == patched_print_debug.mock_calls
 
 
 def test_os_walk(temp_dir):
-    scenarios = ['scenario1', 'scenario2', 'scenario3']
+    scenarios = ["scenario1", "scenario2", "scenario3"]
     molecule_directory = pytest.helpers.molecule_directory()
     for scenario in scenarios:
         scenario_directory = os.path.join(molecule_directory, scenario)
         molecule_file = pytest.helpers.get_molecule_file(scenario_directory)
         os.makedirs(scenario_directory)
-        util.write_file(molecule_file, '')
+        util.write_file(molecule_file, "")
 
-    result = [f for f in util.os_walk(molecule_directory, 'molecule.yml')]
+    result = [f for f in util.os_walk(molecule_directory, "molecule.yml")]
     assert 3 == len(result)
 
 
 def test_render_template():
     template = "{{ foo }} = {{ bar }}"
 
-    assert "foo = bar" == util.render_template(template, foo='foo', bar='bar')
+    assert "foo = bar" == util.render_template(template, foo="foo", bar="bar")
 
 
 def test_write_file(temp_dir):
-    dest_file = os.path.join(temp_dir.strpath, 'test_util_write_file.tmp')
-    contents = binascii.b2a_hex(os.urandom(15)).decode('utf-8')
+    dest_file = os.path.join(temp_dir.strpath, "test_util_write_file.tmp")
+    contents = binascii.b2a_hex(os.urandom(15)).decode("utf-8")
     util.write_file(dest_file, contents)
     with util.open_file(dest_file) as stream:
         data = stream.read()
-    x = '# Molecule managed\n\n{}'.format(contents)
+    x = "# Molecule managed\n\n{}".format(contents)
 
     assert x == data
 
 
 def molecule_prepender(content):
-    x = '# Molecule managed\n\nfoo bar'
+    x = "# Molecule managed\n\nfoo bar"
 
-    assert x == util.file_prepender('foo bar')
+    assert x == util.file_prepender("foo bar")
 
 
 def test_safe_dump():
@@ -244,11 +244,11 @@ def test_safe_dump():
 foo: bar
 """.lstrip()
 
-    assert x == util.safe_dump({'foo': 'bar'})
+    assert x == util.safe_dump({"foo": "bar"})
 
 
 def test_safe_dump_with_increase_indent():
-    data = {'foo': [{'foo': 'bar', 'baz': 'zzyzx'}]}
+    data = {"foo": [{"foo": "bar", "baz": "zzyzx"}]}
 
     x = """
 ---
@@ -260,11 +260,11 @@ foo:
 
 
 def test_safe_load():
-    assert {'foo': 'bar'} == util.safe_load('foo: bar')
+    assert {"foo": "bar"} == util.safe_load("foo: bar")
 
 
 def test_safe_load_returns_empty_dict_on_empty_string():
-    assert {} == util.safe_load('')
+    assert {} == util.safe_load("")
 
 
 def test_safe_load_exits_when_cannot_parse():
@@ -280,15 +280,15 @@ def test_safe_load_exits_when_cannot_parse():
 
 
 def test_safe_load_file(temp_dir):
-    path = os.path.join(temp_dir.strpath, 'foo')
-    util.write_file(path, 'foo: bar')
+    path = os.path.join(temp_dir.strpath, "foo")
+    util.write_file(path, "foo: bar")
 
-    assert {'foo': 'bar'} == util.safe_load_file(path)
+    assert {"foo": "bar"} == util.safe_load_file(path)
 
 
 def test_open_file(temp_dir):
-    path = os.path.join(temp_dir.strpath, 'foo')
-    util.write_file(path, 'foo: bar')
+    path = os.path.join(temp_dir.strpath, "foo")
+    util.write_file(path, "foo: bar")
 
     with util.open_file(path) as stream:
         try:
@@ -300,65 +300,65 @@ def test_open_file(temp_dir):
 
 
 def test_instance_with_scenario_name():
-    assert 'foo-bar' == util.instance_with_scenario_name('foo', 'bar')
+    assert "foo-bar" == util.instance_with_scenario_name("foo", "bar")
 
 
 def test_strip_ansi_escape():
-    string = 'ls\r\n\x1b[00m\x1b[01;31mfoo\x1b[00m\r\n\x1b[01;31m'
+    string = "ls\r\n\x1b[00m\x1b[01;31mfoo\x1b[00m\r\n\x1b[01;31m"
 
-    assert 'ls\r\nfoo\r\n' == util.strip_ansi_escape(string)
+    assert "ls\r\nfoo\r\n" == util.strip_ansi_escape(string)
 
 
 def test_strip_ansi_color():
-    s = 'foo\x1b[0m\x1b[0m\x1b[0m\n\x1b[0m\x1b[0m\x1b[0m\x1b[0m\x1b[0m'
+    s = "foo\x1b[0m\x1b[0m\x1b[0m\n\x1b[0m\x1b[0m\x1b[0m\x1b[0m\x1b[0m"
 
-    assert 'foo\n' == util.strip_ansi_color(s)
+    assert "foo\n" == util.strip_ansi_color(s)
 
 
 def test_verbose_flag():
-    options = {'verbose': True, 'v': True}
+    options = {"verbose": True, "v": True}
 
-    assert ['-v'] == util.verbose_flag(options)
+    assert ["-v"] == util.verbose_flag(options)
     assert {} == options
 
 
 def test_verbose_flag_extra_verbose():
-    options = {'verbose': True, 'vvv': True}
+    options = {"verbose": True, "vvv": True}
 
-    assert ['-vvv'] == util.verbose_flag(options)
+    assert ["-vvv"] == util.verbose_flag(options)
     assert {} == options
 
 
 def test_verbose_flag_preserves_verbose_option():
-    options = {'verbose': True}
+    options = {"verbose": True}
 
     assert [] == util.verbose_flag(options)
-    assert {'verbose': True} == options
+    assert {"verbose": True} == options
 
 
 def test_filter_verbose_permutation():
     options = {
-        'v': True,
-        'vv': True,
-        'vvv': True,
-        'vfoo': True,
-        'foo': True,
-        'bar': True,
+        "v": True,
+        "vv": True,
+        "vvv": True,
+        "vfoo": True,
+        "foo": True,
+        "bar": True,
     }
 
-    x = {'vfoo': True, 'foo': True, 'bar': True}
+    x = {"vfoo": True, "foo": True, "bar": True}
     assert x == util.filter_verbose_permutation(options)
 
 
 def test_title():
-    assert 'Foo' == util.title('foo')
-    assert 'Foo Bar' == util.title('foo_bar')
+    assert "Foo" == util.title("foo")
+    assert "Foo Bar" == util.title("foo_bar")
 
 
 def test_abs_path(temp_dir):
-    x = os.path.abspath(os.path.join(os.getcwd(), os.path.pardir, 'foo', 'bar'))
+    x = os.path.abspath(os.path.join(os.getcwd(), os.path.pardir, "foo", "bar"))
 
-    assert x == util.abs_path(os.path.join(os.path.pardir, 'foo', 'bar'))
+    assert x == util.abs_path(os.path.join(os.path.pardir, "foo", "bar"))
 
 
 def test_abs_path_with_none_path():
@@ -366,19 +366,19 @@ def test_abs_path_with_none_path():
 
 
 def test_camelize():
-    assert 'Foo' == util.camelize('foo')
-    assert 'FooBar' == util.camelize('foo_bar')
-    assert 'FooBarBaz' == util.camelize('foo_bar_baz')
+    assert "Foo" == util.camelize("foo")
+    assert "FooBar" == util.camelize("foo_bar")
+    assert "FooBarBaz" == util.camelize("foo_bar_baz")
 
 
 def test_underscore():
-    assert 'foo' == util.underscore('Foo')
-    assert 'foo_bar' == util.underscore('FooBar')
-    assert 'foo_bar_baz' == util.underscore('FooBarBaz')
+    assert "foo" == util.underscore("Foo")
+    assert "foo_bar" == util.underscore("FooBar")
+    assert "foo_bar_baz" == util.underscore("FooBarBaz")
 
 
 @pytest.mark.parametrize(
-    'a,b,x',
+    "a,b,x",
     [
         # Base of recursion scenarios
         (dict(key=1), dict(key=2), dict(key=2)),
@@ -389,9 +389,9 @@ def test_underscore():
         (dict(a=dict(x=1)), dict(a=dict(y=2)), dict(a=dict(x=1, y=2))),
         # example taken from python-anyconfig/anyconfig/__init__.py
         (
-            {'b': [{'c': 0}, {'c': 2}], 'd': {'e': 'aaa', 'f': 3}},
-            {'a': 1, 'b': [{'c': 3}], 'd': {'e': 'bbb'}},
-            {'a': 1, 'b': [{'c': 3}], 'd': {'e': "bbb", 'f': 3}},
+            {"b": [{"c": 0}, {"c": 2}], "d": {"e": "aaa", "f": 3}},
+            {"a": 1, "b": [{"c": 3}], "d": {"e": "bbb"}},
+            {"a": 1, "b": [{"c": 3}], "d": {"e": "bbb", "f": 3}},
         ),
     ],
 )

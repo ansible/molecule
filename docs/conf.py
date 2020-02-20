@@ -23,7 +23,7 @@ import sphinx_rtd_theme
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath('../..'))
+sys.path.insert(0, os.path.abspath("../.."))
 
 # -- General configuration ------------------------------------------------
 
@@ -34,55 +34,55 @@ sys.path.insert(0, os.path.abspath('../..'))
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.coverage',
-    'sphinx.ext.doctest',
-    'sphinx.ext.extlinks',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.todo',
-    'sphinx_rtd_theme',
+    "sphinx.ext.autodoc",
+    "sphinx.ext.coverage",
+    "sphinx.ext.doctest",
+    "sphinx.ext.extlinks",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.todo",
+    "sphinx_rtd_theme",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 # source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = ".rst"
 
 # The encoding of source files.
 # source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = "index"
 
 # General information about the project.
-project = u'Molecule'
-copyright = u' %s, Red Hat Inc.' % datetime.date.today().year
-author = u'AUTHORS.rst'
+project = "Molecule"
+copyright = " %s, Red Hat Inc." % datetime.date.today().year
+author = "AUTHORS.rst"
 
-github_url = 'https://github.com'
-github_repo_org = 'ansible'
-github_repo_name = 'molecule'
-github_repo_slug = f'{github_repo_org}/{github_repo_name}'
-github_repo_url = f'{github_url}/{github_repo_slug}'
+github_url = "https://github.com"
+github_repo_org = "ansible"
+github_repo_name = "molecule"
+github_repo_slug = f"{github_repo_org}/{github_repo_name}"
+github_repo_url = f"{github_url}/{github_repo_slug}"
 
 extlinks = {
-    'issue': (f'{github_repo_url}/issues/%s', '#'),
-    'pr': (f'{github_repo_url}/pull/%s', 'PR #'),
-    'commit': (f'{github_repo_url}/commit/%s', ''),
-    'gh': (f'{github_url}/%s', 'GitHub: '),
+    "issue": (f"{github_repo_url}/issues/%s", "#"),
+    "pr": (f"{github_repo_url}/pull/%s", "PR #"),
+    "commit": (f"{github_repo_url}/commit/%s", ""),
+    "gh": (f"{github_url}/%s", "GitHub: "),
 }
 
 intersphinx_mapping = {
-    'ansible': ('https://docs.ansible.com/ansible/latest/', None),
-    'pip': ('https://pip.pypa.io/en/latest/', None),
-    'python': ('https://docs.python.org/3', None),
-    'python2': ('https://docs.python.org/2', None),
-    'testinfra': ('https://testinfra.readthedocs.io/en/latest/', None),
-    'yamllint': ('http://yamllint.readthedocs.io/en/latest/', None),
-    'virtualenv': ('https://virtualenv.pypa.io/en/latest/', None),
+    "ansible": ("https://docs.ansible.com/ansible/latest/", None),
+    "pip": ("https://pip.pypa.io/en/latest/", None),
+    "python": ("https://docs.python.org/3", None),
+    "python2": ("https://docs.python.org/2", None),
+    "testinfra": ("https://testinfra.readthedocs.io/en/latest/", None),
+    "yamllint": ("http://yamllint.readthedocs.io/en/latest/", None),
+    "virtualenv": ("https://virtualenv.pypa.io/en/latest/", None),
 }
 
 # The version info for the project you're documenting, acts as replacement for
@@ -127,7 +127,7 @@ exclude_patterns = []
 # show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = "sphinx"
 
 # A list of ignored prefixes for module index sorting.
 # modindex_common_prefix = []
@@ -145,17 +145,17 @@ suppress_warnings = []
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'sphinx_rtd_theme'
+html_theme = "sphinx_rtd_theme"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 # html_theme_options = {}
 html_theme_options = {
-    'collapse_navigation': False,
-    'analytics_id': 'UA-128382387-1',
-    'style_nav_header_background': 'white',
-    'style_external_links': True,
+    "collapse_navigation": False,
+    "analytics_id": "UA-128382387-1",
+    "style_nav_header_background": "white",
+    "style_external_links": True,
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
@@ -172,7 +172,7 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
 # html_logo = None
-html_logo = '_static/logo.png'
+html_logo = "_static/logo.png"
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
@@ -182,7 +182,7 @@ html_logo = '_static/logo.png'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ["_static"]
 
 # Add any extra paths that contain custom files (such as robots.txt or
 # .htaccess) here, relative to this directory. These files are copied
@@ -199,7 +199,7 @@ html_static_path = ['_static']
 
 # Custom sidebar templates, maps document names to template names.
 # html_sidebars = {}
-html_sidebars = {'**': ['about.html', 'navigation.html', 'searchbox.html']}
+html_sidebars = {"**": ["about.html", "navigation.html", "searchbox.html"]}
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
@@ -246,7 +246,7 @@ html_show_copyright = False
 # html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'Moleculedoc'
+htmlhelp_basename = "Moleculedoc"
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -265,7 +265,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'Molecule.tex', u'Molecule Documentation', u'AUTHORS.rst', 'manual')
+    (master_doc, "Molecule.tex", "Molecule Documentation", "AUTHORS.rst", "manual")
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -293,7 +293,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, 'molecule', u'Molecule Documentation', [author], 1)]
+man_pages = [(master_doc, "molecule", "Molecule Documentation", [author], 1)]
 
 # If true, show URL addresses after external links.
 # man_show_urls = False
@@ -307,12 +307,12 @@ man_pages = [(master_doc, 'molecule', u'Molecule Documentation', [author], 1)]
 texinfo_documents = [
     (
         master_doc,
-        'Molecule',
-        u'Molecule Documentation',
+        "Molecule",
+        "Molecule Documentation",
         author,
-        'AUTHORS.rst',
-        'Automated Testing for Ansible roles',
-        'Miscellaneous',
+        "AUTHORS.rst",
+        "Automated Testing for Ansible roles",
+        "Miscellaneous",
     )
 ]
 

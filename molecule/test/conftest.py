@@ -68,7 +68,7 @@ def is_subset(subset, superset):
 
 @pytest.fixture
 def random_string(l=5):
-    return ''.join(random.choice(string.ascii_uppercase) for _ in range(l))
+    return "".join(random.choice(string.ascii_uppercase) for _ in range(l))
 
 
 @contextlib.contextmanager
@@ -89,7 +89,7 @@ def temp_dir(tmpdir, random_string, request):
 
 @pytest.fixture
 def resources_folder_path():
-    resources_folder_path = os.path.join(os.path.dirname(__file__), 'resources')
+    resources_folder_path = os.path.join(os.path.dirname(__file__), "resources")
     return resources_folder_path
 
 
@@ -105,7 +105,7 @@ def molecule_directory():
 
 @pytest.helpers.register
 def molecule_scenario_directory():
-    return os.path.join(molecule_directory(), 'default')
+    return os.path.join(molecule_directory(), "default")
 
 
 @pytest.helpers.register
@@ -120,46 +120,46 @@ def get_molecule_file(path):
 
 @pytest.helpers.register
 def molecule_ephemeral_directory(_fixture_uuid):
-    project_directory = 'test-project-{}'.format(_fixture_uuid)
-    scenario_name = 'test-instance'
+    project_directory = "test-project-{}".format(_fixture_uuid)
+    scenario_name = "test-instance"
 
     return ephemeral_directory(
-        os.path.join('molecule_test', project_directory, scenario_name)
+        os.path.join("molecule_test", project_directory, scenario_name)
     )
 
 
 def pytest_collection_modifyitems(items, config):
 
-    marker = config.getoption('-m')
+    marker = config.getoption("-m")
     is_sharded = False
     shard_id = 0
     shards_num = 0
-    if not marker.startswith('shard_'):
+    if not marker.startswith("shard_"):
         return
-    shard_id, _, shards_num = marker[6:].partition('_of_')
+    shard_id, _, shards_num = marker[6:].partition("_of_")
     if shards_num:
         shard_id = int(shard_id)
         shards_num = int(shards_num)
         is_sharded = True
     else:
-        raise ValueError('shard_{}_of_{} marker is invalid')
+        raise ValueError("shard_{}_of_{} marker is invalid")
     if not is_sharded:
         return
     if not (0 < shard_id <= shards_num):
         raise ValueError(
-            'shard_id must be greater than 0 and not bigger than shards_num'
+            "shard_id must be greater than 0 and not bigger than shards_num"
         )
     for test_counter, item in enumerate(items):
         cur_shard_id = test_counter % shards_num + 1
-        marker = getattr(pytest.mark, 'shard_{}_of_{}'.format(cur_shard_id, shards_num))
+        marker = getattr(pytest.mark, "shard_{}_of_{}".format(cur_shard_id, shards_num))
         item.add_marker(marker)
     del marker
-    print('Running sharded test group #{} out of {}'.format(shard_id, shards_num))
+    print("Running sharded test group #{} out of {}".format(shard_id, shards_num))
 
 
 @pytest.fixture(autouse=True)
 def reset_pytest_vars(monkeypatch):
     """Make PYTEST_* env vars inaccessible to subprocesses."""
     for var_name in tuple(os.environ):
-        if var_name.startswith('PYTEST_'):
+        if var_name.startswith("PYTEST_"):
             monkeypatch.delenv(var_name, raising=False)

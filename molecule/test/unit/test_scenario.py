@@ -43,37 +43,37 @@ def test_prune(_instance):
     # items are created in listed order, directories first, safe before pruned
     prune_data = {
         # these files should not be pruned
-        'safe_files': ['state.yml', 'ansible.cfg', 'inventory/ansible_inventory.yml'],
+        "safe_files": ["state.yml", "ansible.cfg", "inventory/ansible_inventory.yml"],
         # these directories should not be pruned
-        'safe_dirs': ['inventory'],
+        "safe_dirs": ["inventory"],
         # these files should be pruned
-        'pruned_files': ['foo', 'bar', 'inventory/foo', 'inventory/bar'],
+        "pruned_files": ["foo", "bar", "inventory/foo", "inventory/bar"],
         # these directories should be pruned, including empty subdirectories
-        'pruned_dirs': ['baz', 'roles', 'inventory/baz', 'roles/foo'],
+        "pruned_dirs": ["baz", "roles", "inventory/baz", "roles/foo"],
     }
 
-    for directory in prune_data['safe_dirs'] + prune_data['pruned_dirs']:
+    for directory in prune_data["safe_dirs"] + prune_data["pruned_dirs"]:
         # inventory dir should already exist, and its existence is
         # required by the assertions below.
-        if directory == 'inventory':
+        if directory == "inventory":
             continue
         os.mkdir(os.path.join(e_dir, directory))
 
-    for file in prune_data['safe_files'] + prune_data['pruned_files']:
-        util.write_file(os.path.join(e_dir, file), '')
+    for file in prune_data["safe_files"] + prune_data["pruned_files"]:
+        util.write_file(os.path.join(e_dir, file), "")
 
     _instance.prune()
 
-    for safe_file in prune_data['safe_files']:
+    for safe_file in prune_data["safe_files"]:
         assert os.path.isfile(os.path.join(e_dir, safe_file))
 
-    for safe_dir in prune_data['safe_dirs']:
+    for safe_dir in prune_data["safe_dirs"]:
         assert os.path.isdir(os.path.join(e_dir, safe_dir))
 
-    for pruned_file in prune_data['pruned_files']:
+    for pruned_file in prune_data["pruned_files"]:
         assert not os.path.isfile(os.path.join(e_dir, pruned_file))
 
-    for pruned_dir in prune_data['pruned_dirs']:
+    for pruned_dir in prune_data["pruned_dirs"]:
         assert not os.path.isdir(os.path.join(e_dir, pruned_dir))
 
 
@@ -86,7 +86,7 @@ def test_init_calls_setup(patched_scenario_setup, _instance):
 
 
 def test_name_property(_instance):
-    assert 'default' == _instance.name
+    assert "default" == _instance.name
 
 
 def test_directory_property(molecule_scenario_directory_fixture, _instance):
@@ -106,91 +106,91 @@ def test_inventory_directory_property(_instance):
 
 def test_check_sequence_property(_instance):
     sequence = [
-        'dependency',
-        'cleanup',
-        'destroy',
-        'create',
-        'prepare',
-        'converge',
-        'check',
-        'cleanup',
-        'destroy',
+        "dependency",
+        "cleanup",
+        "destroy",
+        "create",
+        "prepare",
+        "converge",
+        "check",
+        "cleanup",
+        "destroy",
     ]
 
     assert sequence == _instance.check_sequence
 
 
 def test_converge_sequence_property(_instance):
-    sequence = ['dependency', 'create', 'prepare', 'converge']
+    sequence = ["dependency", "create", "prepare", "converge"]
 
     assert sequence == _instance.converge_sequence
 
 
 def test_create_sequence_property(_instance):
-    sequence = ['dependency', 'create', 'prepare']
+    sequence = ["dependency", "create", "prepare"]
 
     assert sequence == _instance.create_sequence
 
 
 def test_dependency_sequence_property(_instance):
-    assert ['dependency'] == _instance.dependency_sequence
+    assert ["dependency"] == _instance.dependency_sequence
 
 
 def test_destroy_sequence_property(_instance):
-    assert ['dependency', 'cleanup', 'destroy'] == _instance.destroy_sequence
+    assert ["dependency", "cleanup", "destroy"] == _instance.destroy_sequence
 
 
 def test_idempotence_sequence_property(_instance):
-    assert ['idempotence'] == _instance.idempotence_sequence
+    assert ["idempotence"] == _instance.idempotence_sequence
 
 
 def test_lint_sequence_property(_instance):
-    assert 'lint' in _instance.lint_sequence
-    assert 'dependency' in _instance.lint_sequence
+    assert "lint" in _instance.lint_sequence
+    assert "dependency" in _instance.lint_sequence
 
 
 def test_prepare_sequence_property(_instance):
-    assert ['prepare'] == _instance.prepare_sequence
+    assert ["prepare"] == _instance.prepare_sequence
 
 
 def test_side_effect_sequence_property(_instance):
-    assert ['side_effect'] == _instance.side_effect_sequence
+    assert ["side_effect"] == _instance.side_effect_sequence
 
 
 def test_syntax_sequence_property(_instance):
-    assert ['syntax'] == _instance.syntax_sequence
+    assert ["syntax"] == _instance.syntax_sequence
 
 
 def test_test_sequence_property(_instance):
     sequence = [
-        'dependency',
-        'lint',
-        'cleanup',
-        'destroy',
-        'syntax',
-        'create',
-        'prepare',
-        'converge',
-        'idempotence',
-        'side_effect',
-        'verify',
-        'cleanup',
-        'destroy',
+        "dependency",
+        "lint",
+        "cleanup",
+        "destroy",
+        "syntax",
+        "create",
+        "prepare",
+        "converge",
+        "idempotence",
+        "side_effect",
+        "verify",
+        "cleanup",
+        "destroy",
     ]
 
     assert sequence == _instance.test_sequence
 
 
 def test_verify_sequence_property(_instance):
-    assert ['verify'] == _instance.verify_sequence
+    assert ["verify"] == _instance.verify_sequence
 
 
 def test_sequence_property(_instance):
-    assert 'lint' in _instance.sequence
+    assert "lint" in _instance.sequence
 
 
 def test_sequence_property_with_invalid_subcommand(_instance):
-    _instance.config.command_args = {'subcommand': 'invalid'}
+    _instance.config.command_args = {"subcommand": "invalid"}
 
     assert [] == _instance.sequence
 
@@ -207,16 +207,16 @@ def test_setup_creates_ephemeral_and_inventory_directories(_instance):
 
 def test_ephemeral_directory():
     # assure we can write to ephemeral directory
-    assert os.access(scenario.ephemeral_directory('foo/bar'), os.W_OK)
+    assert os.access(scenario.ephemeral_directory("foo/bar"), os.W_OK)
 
 
 def test_ephemeral_directory_OVERRIDDEN_via_env_var(monkeypatch):
-    monkeypatch.setenv('MOLECULE_EPHEMERAL_DIRECTORY', 'foo/bar')
+    monkeypatch.setenv("MOLECULE_EPHEMERAL_DIRECTORY", "foo/bar")
 
-    assert os.access(scenario.ephemeral_directory('foo/bar'), os.W_OK)
+    assert os.access(scenario.ephemeral_directory("foo/bar"), os.W_OK)
 
 
 def test_ephemeral_directory_OVERRIDDEN_via_env_var_uses_absolute_path(monkeypatch):
-    monkeypatch.setenv('MOLECULE_EPHEMERAL_DIRECTORY', "foo/bar")
+    monkeypatch.setenv("MOLECULE_EPHEMERAL_DIRECTORY", "foo/bar")
 
     assert os.path.isabs(scenario.ephemeral_directory())

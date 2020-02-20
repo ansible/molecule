@@ -99,30 +99,30 @@ class Login(base.Base):
         """
         c = self._config
         if (not c.state.created) and c.driver.managed:
-            msg = 'Instances not created.  Please create instances first.'
+            msg = "Instances not created.  Please create instances first."
             util.sysexit_with_message(msg)
 
-        hosts = [d['name'] for d in self._config.platforms.instances]
+        hosts = [d["name"] for d in self._config.platforms.instances]
         hostname = self._get_hostname(hosts)
         self._get_login(hostname)
 
     def _get_hostname(self, hosts):
-        hostname = self._config.command_args.get('host')
+        hostname = self._config.command_args.get("host")
         if hostname is None:
             if len(hosts) == 1:
                 hostname = hosts[0]
             else:
                 msg = (
-                    'There are {} running hosts. Please specify '
-                    'which with --host.\n\n'
-                    'Available hosts:\n{}'.format(len(hosts), '\n'.join(sorted(hosts)))
+                    "There are {} running hosts. Please specify "
+                    "which with --host.\n\n"
+                    "Available hosts:\n{}".format(len(hosts), "\n".join(sorted(hosts)))
                 )
                 util.sysexit_with_message(msg)
         match = [x for x in hosts if x.startswith(hostname)]
         if len(match) == 0:
             msg = (
                 "There are no hosts that match '{}'.  You "
-                'can only login to valid hosts.'
+                "can only login to valid hosts."
             ).format(hostname)
             util.sysexit_with_message(msg)
         elif len(match) != 1:
@@ -133,9 +133,9 @@ class Login(base.Base):
             else:
                 msg = (
                     "There are {} hosts that match '{}'. You "
-                    'can only login to one at a time.\n\n'
-                    'Available hosts:\n{}'.format(
-                        len(match), hostname, '\n'.join(sorted(hosts))
+                    "can only login to one at a time.\n\n"
+                    "Available hosts:\n{}".format(
+                        len(match), hostname, "\n".join(sorted(hosts))
                     )
                 )
                 util.sysexit_with_message(msg)
@@ -143,43 +143,43 @@ class Login(base.Base):
         return match[0]
 
     def _get_login(self, hostname):  # pragma: no cover
-        lines, columns = os.popen('stty size', 'r').read().split()
+        lines, columns = os.popen("stty size", "r").read().split()
         login_options = self._config.driver.login_options(hostname)
-        login_options['columns'] = columns
-        login_options['lines'] = lines
+        login_options["columns"] = columns
+        login_options["lines"] = lines
         login_cmd = self._config.driver.login_cmd_template.format(**login_options)
 
         dimensions = (int(lines), int(columns))
-        cmd = '/usr/bin/env {}'.format(login_cmd)
+        cmd = "/usr/bin/env {}".format(login_cmd)
         self._pt = pexpect.spawn(cmd, dimensions=dimensions)
         signal.signal(signal.SIGWINCH, self._sigwinch_passthrough)
         self._pt.interact()
 
     def _sigwinch_passthrough(self, sig, data):  # pragma: no cover
         tiocgwinsz = 1074295912  # assume
-        if 'TIOCGWINSZ' in dir(termios):
+        if "TIOCGWINSZ" in dir(termios):
             tiocgwinsz = termios.TIOCGWINSZ
-        s = struct.pack('HHHH', 0, 0, 0, 0)
-        a = struct.unpack('HHHH', fcntl.ioctl(sys.stdout.fileno(), tiocgwinsz, s))
+        s = struct.pack("HHHH", 0, 0, 0, 0)
+        a = struct.unpack("HHHH", fcntl.ioctl(sys.stdout.fileno(), tiocgwinsz, s))
         self._pt.setwinsize(a[0], a[1])
 
 
 @base.click_command_ex()
 @click.pass_context
-@click.option('--host', '-h', help='Host to access.')
+@click.option("--host", "-h", help="Host to access.")
 @click.option(
-    '--scenario-name',
-    '-s',
+    "--scenario-name",
+    "-s",
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help='Name of the scenario to target. ({})'.format(
+    help="Name of the scenario to target. ({})".format(
         base.MOLECULE_DEFAULT_SCENARIO_NAME
     ),
 )
 def login(ctx, host, scenario_name):  # pragma: no cover
     """Log in to one instance."""
-    args = ctx.obj.get('args')
+    args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)
-    command_args = {'subcommand': subcommand, 'host': host}
+    command_args = {"subcommand": subcommand, "host": host}
 
     s = scenarios.Scenarios(base.get_configs(args, command_args), scenario_name)
     for scenario in s.all:

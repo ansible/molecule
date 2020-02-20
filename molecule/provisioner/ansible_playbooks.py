@@ -43,35 +43,35 @@ class AnsiblePlaybooks(object):
 
     @property
     def cleanup(self):
-        return self._get_playbook('cleanup')
+        return self._get_playbook("cleanup")
 
     @property
     def create(self):
-        return self._get_playbook('create')
+        return self._get_playbook("create")
 
     @property
     def converge(self):
-        return self._get_playbook('converge')
+        return self._get_playbook("converge")
 
     @property
     def destroy(self):
-        return self._get_playbook('destroy')
+        return self._get_playbook("destroy")
 
     @property
     def prepare(self):
-        return self._get_playbook('prepare')
+        return self._get_playbook("prepare")
 
     @property
     def side_effect(self):
-        return self._get_playbook('side_effect')
+        return self._get_playbook("side_effect")
 
     @property
     def verify(self):
-        return self._get_playbook('verify')
+        return self._get_playbook("verify")
 
     def _get_playbook_directory(self):
         return util.abs_path(
-            os.path.join(self._config.provisioner.directory, 'playbooks')
+            os.path.join(self._config.provisioner.directory, "playbooks")
         )
 
     def _get_playbook(self, section):
@@ -82,9 +82,9 @@ class AnsiblePlaybooks(object):
         considered skippable.
         """
         c = self._config.config
-        driver_dict = c['provisioner']['playbooks'].get(self._config.driver.name)
+        driver_dict = c["provisioner"]["playbooks"].get(self._config.driver.name)
 
-        playbook = c['provisioner']['playbooks'][section]
+        playbook = c["provisioner"]["playbooks"][section]
         if driver_dict:
             try:
                 playbook = driver_dict[section]
@@ -100,11 +100,11 @@ class AnsiblePlaybooks(object):
             elif os.path.exists(self._get_bundled_driver_playbook(section)):
                 return self._get_bundled_driver_playbook(section)
             elif section not in [
-                'prepare',
-                'create',
-                'cleanup',
-                'side_effect',
-                'verify',
+                "prepare",
+                "create",
+                "cleanup",
+                "side_effect",
+                "verify",
             ]:
                 return playbook
 
@@ -112,7 +112,7 @@ class AnsiblePlaybooks(object):
         return os.path.join(
             self._get_playbook_directory(),
             self._config.driver.name,
-            self._config.config['provisioner']['playbooks'][section],
+            self._config.config["provisioner"]["playbooks"][section],
         )
 
     def _normalize_playbook(self, playbook):

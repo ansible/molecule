@@ -76,19 +76,19 @@ class Idempotence(base.Base):
         """
         self.print_info()
         if not self._config.state.converged:
-            msg = 'Instances not converged.  Please converge instances first.'
+            msg = "Instances not converged.  Please converge instances first."
             util.sysexit_with_message(msg)
 
         output = self._config.provisioner.converge(out=None, err=None)
 
         idempotent = self._is_idempotent(output)
         if idempotent:
-            msg = 'Idempotence completed successfully.'
+            msg = "Idempotence completed successfully."
             LOG.success(msg)
         else:
             msg = (
-                'Idempotence test failed because of the following tasks:\n' u'{}'
-            ).format('\n'.join(self._non_idempotent_tasks(output)))
+                "Idempotence test failed because of the following tasks:\n" u"{}"
+            ).format("\n".join(self._non_idempotent_tasks(output)))
             util.sysexit_with_message(msg)
 
     def _is_idempotent(self, output):
@@ -98,10 +98,10 @@ class Idempotence(base.Base):
         :return: bool
         """
         # Remove blank lines to make regex matches easier
-        output = re.sub(r'\n\s*\n*', '\n', output)
+        output = re.sub(r"\n\s*\n*", "\n", output)
 
         # Look for any non-zero changed lines
-        changed = re.search(r'(changed=[1-9][0-9]*)', output)
+        changed = re.search(r"(changed=[1-9][0-9]*)", output)
 
         if changed:
             # Not idempotent
@@ -117,22 +117,22 @@ class Idempotence(base.Base):
         :return: A list containing the names of the non idempotent tasks.
         """
         # Remove blank lines to make regex matches easier.
-        output = re.sub(r'\n\s*\n*', '\n', output)
+        output = re.sub(r"\n\s*\n*", "\n", output)
 
         # Remove ansi escape sequences.
         output = util.strip_ansi_escape(output)
 
         # Split the output into a list and go through it.
-        output_lines = output.split('\n')
+        output_lines = output.split("\n")
         res = []
-        task_line = ''
+        task_line = ""
         for _, line in enumerate(output_lines):
-            if line.startswith('TASK'):
+            if line.startswith("TASK"):
                 task_line = line
-            elif line.startswith('changed'):
-                host_name = re.search(r'\[(.*)\]', line).groups()[0]
-                task_name = re.search(r'\[(.*)\]', task_line).groups()[0]
-                res.append(u'* [{}] => {}'.format(host_name, task_name))
+            elif line.startswith("changed"):
+                host_name = re.search(r"\[(.*)\]", line).groups()[0]
+                task_name = re.search(r"\[(.*)\]", task_line).groups()[0]
+                res.append(u"* [{}] => {}".format(host_name, task_name))
 
         return res
 
@@ -140,18 +140,18 @@ class Idempotence(base.Base):
 @base.click_command_ex()
 @click.pass_context
 @click.option(
-    '--scenario-name',
-    '-s',
+    "--scenario-name",
+    "-s",
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help='Name of the scenario to target. ({})'.format(
+    help="Name of the scenario to target. ({})".format(
         base.MOLECULE_DEFAULT_SCENARIO_NAME
     ),
 )
 def idempotence(ctx, scenario_name):  # pragma: no cover
     """Use the provisioner to configure the instances and parse the output to \
     determine idempotence."""
-    args = ctx.obj.get('args')
+    args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)
-    command_args = {'subcommand': subcommand}
+    command_args = {"subcommand": subcommand}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)

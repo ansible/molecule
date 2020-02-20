@@ -28,11 +28,11 @@ from molecule.command.init import scenario
 @pytest.fixture
 def _command_args():
     return {
-        'driver_name': 'docker',
-        'role_name': 'test-role',
-        'scenario_name': 'test-scenario',
-        'subcommand': __name__,
-        'verifier_name': 'ansible',
+        "driver_name": "docker",
+        "role_name": "test-role",
+        "scenario_name": "test-scenario",
+        "subcommand": __name__,
+        "verifier_name": "ansible",
     }
 
 
@@ -44,7 +44,7 @@ def _instance(_command_args):
 @pytest.fixture
 def custom_template_dir(resources_folder_path):
     custom_template_dir_path = os.path.join(
-        resources_folder_path, 'custom_scenario_template'
+        resources_folder_path, "custom_scenario_template"
     )
     return custom_template_dir_path
 
@@ -52,7 +52,7 @@ def custom_template_dir(resources_folder_path):
 @pytest.fixture
 def invalid_template_dir(resources_folder_path):
     invalid_role_template_path = os.path.join(
-        resources_folder_path, 'invalid_scenario_template'
+        resources_folder_path, "invalid_scenario_template"
     )
     return invalid_role_template_path
 
@@ -61,14 +61,14 @@ def invalid_template_dir(resources_folder_path):
 def custom_readme_content(custom_template_dir, _command_args):
     readme_path = os.path.join(
         custom_template_dir,
-        _command_args['driver_name'],
-        '{{cookiecutter.molecule_directory}}',
-        '{{cookiecutter.scenario_name}}',
-        'README.md',
+        _command_args["driver_name"],
+        "{{cookiecutter.molecule_directory}}",
+        "{{cookiecutter.scenario_name}}",
+        "README.md",
     )
 
     custom_readme_content = ""
-    with open(readme_path, 'r') as readme:
+    with open(readme_path, "r") as readme:
         custom_readme_content = readme.read()
 
     return custom_readme_content
@@ -77,13 +77,13 @@ def custom_readme_content(custom_template_dir, _command_args):
 def test_execute(temp_dir, _instance, patched_logger_info, patched_logger_success):
     _instance.execute()
 
-    msg = 'Initializing new scenario test-scenario...'
+    msg = "Initializing new scenario test-scenario..."
     patched_logger_info.assert_called_once_with(msg)
 
-    assert os.path.isdir('./molecule/test-scenario')
+    assert os.path.isdir("./molecule/test-scenario")
 
-    scenario_directory = os.path.join(temp_dir.strpath, 'molecule', 'test-scenario')
-    msg = 'Initialized scenario in {} successfully.'.format(scenario_directory)
+    scenario_directory = os.path.join(temp_dir.strpath, "molecule", "test-scenario")
+    msg = "Initialized scenario in {} successfully.".format(scenario_directory)
     patched_logger_success.assert_called_once_with(msg)
 
 
@@ -95,14 +95,14 @@ def test_execute_scenario_exists(temp_dir, _instance, patched_logger_critical):
 
     assert 1 == e.value.code
 
-    msg = 'The directory molecule/test-scenario exists. ' 'Cannot create new scenario.'
+    msg = "The directory molecule/test-scenario exists. " "Cannot create new scenario."
     patched_logger_critical.assert_called_once_with(msg)
 
 
 def test_execute_with_invalid_driver(
     temp_dir, _instance, _command_args, patched_logger_critical
 ):
-    _command_args['driver_name'] = 'ec3'
+    _command_args["driver_name"] = "ec3"
 
     with pytest.raises(KeyError):
         _instance.execute()
@@ -111,23 +111,23 @@ def test_execute_with_invalid_driver(
 def test_execute_with_custom_template(
     temp_dir, custom_template_dir, custom_readme_content, _command_args
 ):
-    _command_args['driver_template'] = custom_template_dir
+    _command_args["driver_template"] = custom_template_dir
 
     custom_template_instance = scenario.Scenario(_command_args)
     custom_template_instance.execute()
 
-    assert os.path.isdir('./molecule/test-scenario')
+    assert os.path.isdir("./molecule/test-scenario")
 
-    readme_path = './molecule/test-scenario/README.md'
+    readme_path = "./molecule/test-scenario/README.md"
     assert os.path.isfile(readme_path)
-    with open(readme_path, 'r') as readme:
+    with open(readme_path, "r") as readme:
         assert readme.read() == custom_readme_content
 
 
 def test_execute_with_absent_custom_template(
     temp_dir, _command_args, patched_logger_critical
 ):
-    _command_args['driver_template'] = "absent_template_dir"
+    _command_args["driver_template"] = "absent_template_dir"
 
     absent_template_instance = scenario.Scenario(_command_args)
     with pytest.raises(SystemExit) as e:
@@ -140,7 +140,7 @@ def test_execute_with_absent_custom_template(
 def test_execute_with_incorrect_template(
     temp_dir, invalid_template_dir, _command_args, patched_logger_critical
 ):
-    _command_args['driver_template'] = invalid_template_dir
+    _command_args["driver_template"] = invalid_template_dir
 
     invalid_template_instance = scenario.Scenario(_command_args)
     with pytest.raises(SystemExit) as e:

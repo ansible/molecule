@@ -30,8 +30,8 @@ from molecule.verifier import testinfra
 
 @pytest.fixture
 def _patched_testinfra_get_tests(mocker):
-    m = mocker.patch('molecule.verifier.testinfra.Testinfra._get_tests')
-    m.return_value = ['foo.py', 'bar.py']
+    m = mocker.patch("molecule.verifier.testinfra.Testinfra._get_tests")
+    m.return_value = ["foo.py", "bar.py"]
 
     return m
 
@@ -39,11 +39,11 @@ def _patched_testinfra_get_tests(mocker):
 @pytest.fixture
 def _verifier_section_data():
     return {
-        'verifier': {
-            'name': 'testinfra',
-            'options': {'foo': 'bar', 'v': True, 'verbose': True},
-            'additional_files_or_dirs': ['file1.py', 'file2.py', 'match*.py', 'dir/*'],
-            'env': {'FOO': 'bar'},
+        "verifier": {
+            "name": "testinfra",
+            "options": {"foo": "bar", "v": True, "verbose": True},
+            "additional_files_or_dirs": ["file1.py", "file2.py", "match*.py", "dir/*"],
+            "env": {"FOO": "bar"},
         }
     }
 
@@ -67,22 +67,22 @@ def test_config_private_member(_instance):
 
 def test_default_options_property(inventory_file, _instance):
     x = {
-        'connection': 'ansible',
-        'ansible-inventory': inventory_file,
-        'p': 'no:cacheprovider',
+        "connection": "ansible",
+        "ansible-inventory": inventory_file,
+        "p": "no:cacheprovider",
     }
 
     assert x == _instance.default_options
 
 
 def test_default_options_property_updates_debug(inventory_file, _instance):
-    _instance._config.args = {'debug': True}
+    _instance._config.args = {"debug": True}
     x = {
-        'connection': 'ansible',
-        'ansible-inventory': inventory_file,
-        'debug': True,
-        'vvv': True,
-        'p': 'no:cacheprovider',
+        "connection": "ansible",
+        "ansible-inventory": inventory_file,
+        "debug": True,
+        "vvv": True,
+        "p": "no:cacheprovider",
     }
 
     assert x == _instance.default_options
@@ -91,54 +91,54 @@ def test_default_options_property_updates_debug(inventory_file, _instance):
 def test_default_options_property_updates_sudo(
     inventory_file, _instance, _patched_testinfra_get_tests
 ):
-    _instance._config.args = {'sudo': True}
+    _instance._config.args = {"sudo": True}
     x = {
-        'connection': 'ansible',
-        'ansible-inventory': inventory_file,
-        'sudo': True,
-        'p': 'no:cacheprovider',
+        "connection": "ansible",
+        "ansible-inventory": inventory_file,
+        "sudo": True,
+        "p": "no:cacheprovider",
     }
 
     assert x == _instance.default_options
 
 
 def test_default_env_property(_instance):
-    assert 'MOLECULE_FILE' in _instance.default_env
-    assert 'MOLECULE_INVENTORY_FILE' in _instance.default_env
-    assert 'MOLECULE_SCENARIO_DIRECTORY' in _instance.default_env
-    assert 'MOLECULE_INSTANCE_CONFIG' in _instance.default_env
+    assert "MOLECULE_FILE" in _instance.default_env
+    assert "MOLECULE_INVENTORY_FILE" in _instance.default_env
+    assert "MOLECULE_SCENARIO_DIRECTORY" in _instance.default_env
+    assert "MOLECULE_INSTANCE_CONFIG" in _instance.default_env
 
 
-@pytest.mark.parametrize('config_instance', ['_verifier_section_data'], indirect=True)
+@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
 def test_additional_files_or_dirs_property(_instance):
     tests_directory = _instance._config.verifier.directory
-    file1_file = os.path.join(tests_directory, 'file1.py')
-    file2_file = os.path.join(tests_directory, 'file2.py')
-    match1_file = os.path.join(tests_directory, 'match1.py')
-    match2_file = os.path.join(tests_directory, 'match2.py')
-    test_subdir = os.path.join(tests_directory, 'dir')
-    test_subdir_file = os.path.join(test_subdir, 'test_subdir_file.py')
+    file1_file = os.path.join(tests_directory, "file1.py")
+    file2_file = os.path.join(tests_directory, "file2.py")
+    match1_file = os.path.join(tests_directory, "match1.py")
+    match2_file = os.path.join(tests_directory, "match2.py")
+    test_subdir = os.path.join(tests_directory, "dir")
+    test_subdir_file = os.path.join(test_subdir, "test_subdir_file.py")
 
     os.mkdir(tests_directory)
     os.mkdir(test_subdir)
     for f in [file1_file, file2_file, match1_file, match2_file, test_subdir_file]:
-        util.write_file(f, '')
+        util.write_file(f, "")
 
     x = [file1_file, file2_file, match1_file, match2_file, test_subdir_file]
     assert sorted(x) == sorted(_instance.additional_files_or_dirs)
 
 
-@pytest.mark.parametrize('config_instance', ['_verifier_section_data'], indirect=True)
+@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
 def test_env_property(_instance):
-    assert 'bar' == _instance.env['FOO']
-    assert 'ANSIBLE_CONFIG' in _instance.env
-    assert 'ANSIBLE_ROLES_PATH' in _instance.env
-    assert 'ANSIBLE_LIBRARY' in _instance.env
-    assert 'ANSIBLE_FILTER_PLUGINS' in _instance.env
+    assert "bar" == _instance.env["FOO"]
+    assert "ANSIBLE_CONFIG" in _instance.env
+    assert "ANSIBLE_ROLES_PATH" in _instance.env
+    assert "ANSIBLE_LIBRARY" in _instance.env
+    assert "ANSIBLE_FILTER_PLUGINS" in _instance.env
 
 
 def test_name_property(_instance):
-    assert 'testinfra' == _instance.name
+    assert "testinfra" == _instance.name
 
 
 def test_enabled_property(_instance):
@@ -148,70 +148,70 @@ def test_enabled_property(_instance):
 def test_directory_property(_instance):
     parts = _instance.directory.split(os.path.sep)
 
-    assert ['molecule', 'default', 'tests'] == parts[-3:]
+    assert ["molecule", "default", "tests"] == parts[-3:]
 
 
 @pytest.fixture
 def _verifier_testinfra_directory_section_data():
-    return {'verifier': {'name': 'testinfra', 'directory': '/tmp/foo/bar'}}
+    return {"verifier": {"name": "testinfra", "directory": "/tmp/foo/bar"}}
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['_verifier_testinfra_directory_section_data'], indirect=True
+    "config_instance", ["_verifier_testinfra_directory_section_data"], indirect=True
 )
 def test_directory_property_overridden(_instance):
-    assert '/tmp/foo/bar' == _instance.directory
+    assert "/tmp/foo/bar" == _instance.directory
 
 
-@pytest.mark.parametrize('config_instance', ['_verifier_section_data'], indirect=True)
+@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
 def test_options_property(inventory_file, _instance):
     x = {
-        'connection': 'ansible',
-        'ansible-inventory': inventory_file,
-        'foo': 'bar',
-        'v': True,
-        'verbose': True,
-        'p': 'no:cacheprovider',
+        "connection": "ansible",
+        "ansible-inventory": inventory_file,
+        "foo": "bar",
+        "v": True,
+        "verbose": True,
+        "p": "no:cacheprovider",
     }
 
     assert x == _instance.options
 
 
-@pytest.mark.parametrize('config_instance', ['_verifier_section_data'], indirect=True)
+@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
 def test_options_property_handles_cli_args(inventory_file, _instance):
-    _instance._config.args = {'debug': True}
+    _instance._config.args = {"debug": True}
     x = {
-        'connection': 'ansible',
-        'ansible-inventory': inventory_file,
-        'foo': 'bar',
-        'debug': True,
-        'vvv': True,
-        'verbose': True,
-        'p': 'no:cacheprovider',
+        "connection": "ansible",
+        "ansible-inventory": inventory_file,
+        "foo": "bar",
+        "debug": True,
+        "vvv": True,
+        "verbose": True,
+        "p": "no:cacheprovider",
     }
 
     assert x == _instance.options
 
 
-@pytest.mark.parametrize('config_instance', ['_verifier_section_data'], indirect=True)
+@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
 def test_bake(_patched_testinfra_get_tests, inventory_file, _instance):
     tests_directory = _instance._config.verifier.directory
-    file1_file = os.path.join(tests_directory, 'file1.py')
+    file1_file = os.path.join(tests_directory, "file1.py")
 
     os.mkdir(tests_directory)
-    util.write_file(file1_file, '')
+    util.write_file(file1_file, "")
 
     _instance.bake()
     x = [
-        str(sh.Command('pytest')),
-        '--ansible-inventory={}'.format(inventory_file),
-        '--connection=ansible',
-        '-v',
-        '--foo=bar',
-        'foo.py',
-        'bar.py',
-        '-p',
-        'no:cacheprovider',
+        str(sh.Command("pytest")),
+        "--ansible-inventory={}".format(inventory_file),
+        "--connection=ansible",
+        "-v",
+        "--foo=bar",
+        "foo.py",
+        "bar.py",
+        "-p",
+        "no:cacheprovider",
         file1_file,
     ]
     result = str(_instance._testinfra_command).split()
@@ -226,27 +226,27 @@ def test_execute(
     patched_logger_success,
     _instance,
 ):
-    _instance._testinfra_command = 'patched-command'
+    _instance._testinfra_command = "patched-command"
     _instance.execute()
 
-    patched_run_command.assert_called_once_with('patched-command', debug=False)
+    patched_run_command.assert_called_once_with("patched-command", debug=False)
 
-    msg = 'Executing Testinfra tests found in {}/...'.format(_instance.directory)
+    msg = "Executing Testinfra tests found in {}/...".format(_instance.directory)
     patched_logger_info.assert_called_once_with(msg)
 
-    msg = 'Verifier completed successfully.'
+    msg = "Verifier completed successfully."
     patched_logger_success.assert_called_once_with(msg)
 
 
 def test_execute_does_not_execute(
     patched_run_command, patched_logger_warning, _instance
 ):
-    _instance._config.config['verifier']['enabled'] = False
+    _instance._config.config["verifier"]["enabled"] = False
     _instance.execute()
 
     assert not patched_run_command.called
 
-    msg = 'Skipping, verifier is disabled.'
+    msg = "Skipping, verifier is disabled."
     patched_logger_warning.assert_called_once_with(msg)
 
 
@@ -257,7 +257,7 @@ def test_does_not_execute_without_tests(
 
     assert not patched_run_command.called
 
-    msg = 'Skipping, no tests found.'
+    msg = "Skipping, no tests found."
     patched_logger_warning.assert_called_once_with(msg)
 
 
@@ -272,7 +272,7 @@ def test_execute_bakes(patched_run_command, _patched_testinfra_get_tests, _insta
 def test_executes_catches_and_exits_return_code(
     patched_run_command, _patched_testinfra_get_tests, _instance
 ):
-    patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.pytest, b'', b'')
+    patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.pytest, b"", b"")
     with pytest.raises(SystemExit) as e:
         _instance.execute()
 

@@ -36,7 +36,7 @@ def from_yaml(data):
 
     :return: dict
     """
-    molecule_env_file = os.environ['MOLECULE_ENV_FILE']
+    molecule_env_file = os.environ["MOLECULE_ENV_FILE"]
 
     env = os.environ.copy()
     env = config.set_env_from_file(env, molecule_env_file)
@@ -62,9 +62,9 @@ def get_docker_networks(data):
     network_list = []
     for platform in data:
         if "networks" in platform:
-            for network in platform['networks']:
+            for network in platform["networks"]:
                 if "name" in network:
-                    name = network['name']
+                    name = network["name"]
                     network_list.append(name)
     return network_list
 
@@ -74,8 +74,8 @@ class FilterModule(object):
 
     def filters(self):
         return {
-            'molecule_from_yaml': from_yaml,
-            'molecule_to_yaml': to_yaml,
-            'molecule_header': header,
-            'molecule_get_docker_networks': get_docker_networks,
+            "molecule_from_yaml": from_yaml,
+            "molecule_to_yaml": to_yaml,
+            "molecule_header": header,
+            "molecule_get_docker_networks": get_docker_networks,
         }

@@ -26,16 +26,16 @@ from molecule.model import schema_v3
 @pytest.fixture
 def _model_dependency_section_data():
     return {
-        'dependency': {
-            'name': 'galaxy',
-            'enabled': True,
-            'options': {'foo': 'bar'},
-            'env': {'FOO': 'foo', 'FOO_BAR': 'foo_bar'},
+        "dependency": {
+            "name": "galaxy",
+            "enabled": True,
+            "options": {"foo": "bar"},
+            "env": {"FOO": "foo", "FOO_BAR": "foo_bar"},
         }
     }
 
 
-@pytest.mark.parametrize('_config', ['_model_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize("_config", ["_model_dependency_section_data"], indirect=True)
 def test_dependency(_config):
     assert {} == schema_v3.validate(_config)
 
@@ -43,30 +43,30 @@ def test_dependency(_config):
 @pytest.fixture
 def _model_dependency_errors_section_data():
     return {
-        'dependency': {
-            'name': int(),
-            'command': None,
-            'enabled': str(),
-            'options': [],
-            'env': {'foo': 'foo', 'foo-bar': 'foo-bar'},
+        "dependency": {
+            "name": int(),
+            "command": None,
+            "enabled": str(),
+            "options": [],
+            "env": {"foo": "foo", "foo-bar": "foo-bar"},
         }
     }
 
 
 @pytest.mark.parametrize(
-    '_config', ['_model_dependency_errors_section_data'], indirect=True
+    "_config", ["_model_dependency_errors_section_data"], indirect=True
 )
 def test_dependency_has_errors(_config):
     x = {
-        'dependency': [
+        "dependency": [
             {
-                'name': ['must be of string type'],
-                'enabled': ['must be of boolean type'],
-                'options': ['must be of dict type'],
-                'env': [
+                "name": ["must be of string type"],
+                "enabled": ["must be of boolean type"],
+                "options": ["must be of dict type"],
+                "env": [
                     {
-                        'foo': ["value does not match regex '^[A-Z0-9_-]+$'"],
-                        'foo-bar': ["value does not match regex '^[A-Z0-9_-]+$'"],
+                        "foo": ["value does not match regex '^[A-Z0-9_-]+$'"],
+                        "foo-bar": ["value does not match regex '^[A-Z0-9_-]+$'"],
                     }
                 ],
             }
@@ -78,25 +78,25 @@ def test_dependency_has_errors(_config):
 
 @pytest.fixture
 def _model_dependency_allows_galaxy_section_data():
-    return {'dependency': {'name': 'galaxy'}}
+    return {"dependency": {"name": "galaxy"}}
 
 
 @pytest.fixture
 def _model_dependency_allows_gilt_section_data():
-    return {'dependency': {'name': 'gilt'}}
+    return {"dependency": {"name": "gilt"}}
 
 
 @pytest.fixture
 def _model_dependency_allows_shell_section_data():
-    return {'dependency': {'name': 'shell'}}
+    return {"dependency": {"name": "shell"}}
 
 
 @pytest.mark.parametrize(
-    '_config',
+    "_config",
     [
-        ('_model_dependency_allows_galaxy_section_data'),
-        ('_model_dependency_allows_gilt_section_data'),
-        ('_model_dependency_allows_shell_section_data'),
+        ("_model_dependency_allows_galaxy_section_data"),
+        ("_model_dependency_allows_gilt_section_data"),
+        ("_model_dependency_allows_shell_section_data"),
     ],
     indirect=True,
 )
@@ -106,13 +106,13 @@ def test_dependency_allows_shell_name(_config):
 
 @pytest.fixture
 def _model_dependency_shell_errors_section_data():
-    return {'dependency': {'name': 'shell', 'command': None}}
+    return {"dependency": {"name": "shell", "command": None}}
 
 
 @pytest.mark.parametrize(
-    '_config', ['_model_dependency_shell_errors_section_data'], indirect=True
+    "_config", ["_model_dependency_shell_errors_section_data"], indirect=True
 )
 def test_dependency_shell_has_errors(_config):
-    x = {'dependency': [{'command': ['null value not allowed']}]}
+    x = {"dependency": [{"command": ["null value not allowed"]}]}
 
     assert x == schema_v3.validate(_config)

@@ -93,19 +93,19 @@ class List(base.Base):
 
 @base.click_command_ex()
 @click.pass_context
-@click.option('--scenario-name', '-s', help='Name of the scenario to target.')
+@click.option("--scenario-name", "-s", help="Name of the scenario to target.")
 @click.option(
-    '--format',
-    '-f',
-    type=click.Choice(['simple', 'plain', 'yaml']),
-    default='simple',
-    help='Change output format. (simple)',
+    "--format",
+    "-f",
+    type=click.Choice(["simple", "plain", "yaml"]),
+    default="simple",
+    help="Change output format. (simple)",
 )
 def list(ctx, scenario_name, format):  # pragma: no cover
     """List status of instances."""
-    args = ctx.obj.get('args')
+    args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)
-    command_args = {'subcommand': subcommand, 'format': format}
+    command_args = {"subcommand": subcommand, "format": format}
 
     statuses = []
     s = scenarios.Scenarios(base.get_configs(args, command_args), scenario_name)
@@ -113,9 +113,9 @@ def list(ctx, scenario_name, format):  # pragma: no cover
         statuses.extend(base.execute_subcommand(scenario.config, subcommand))
 
     headers = [util.title(name) for name in status.get_status()._fields]
-    if format == 'simple' or format == 'plain':
-        table_format = 'simple'
-        if format == 'plain':
+    if format == "simple" or format == "plain":
+        table_format = "simple"
+        if format == "plain":
             headers = []
             table_format = format
         _print_tabulate_data(headers, statuses, table_format)

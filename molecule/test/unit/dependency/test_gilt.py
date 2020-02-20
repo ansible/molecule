@@ -29,7 +29,7 @@ from molecule.dependency import gilt
 
 @pytest.fixture
 def _patched_gilt_has_requirements_file(mocker):
-    m = mocker.patch('molecule.dependency.gilt.Gilt._has_requirements_file')
+    m = mocker.patch("molecule.dependency.gilt.Gilt._has_requirements_file")
     m.return_value = True
 
     return m
@@ -38,7 +38,7 @@ def _patched_gilt_has_requirements_file(mocker):
 @pytest.fixture
 def _dependency_section_data():
     return {
-        'dependency': {'name': 'gilt', 'options': {'foo': 'bar'}, 'env': {'FOO': 'bar'}}
+        "dependency": {"name": "gilt", "options": {"foo": "bar"}, "env": {"FOO": "bar"}}
     }
 
 
@@ -52,7 +52,7 @@ def _instance(_dependency_section_data, patched_config_validate, config_instance
 
 @pytest.fixture
 def gilt_config(_instance):
-    return os.path.join(_instance._config.scenario.directory, 'gilt.yml')
+    return os.path.join(_instance._config.scenario.directory, "gilt.yml")
 
 
 def test_config_private_member(_instance):
@@ -60,51 +60,51 @@ def test_config_private_member(_instance):
 
 
 def test_default_options_property(gilt_config, _instance):
-    x = {'config': gilt_config}
+    x = {"config": gilt_config}
 
     assert x == _instance.default_options
 
 
 def test_default_env_property(_instance):
-    assert 'MOLECULE_FILE' in _instance.default_env
-    assert 'MOLECULE_INVENTORY_FILE' in _instance.default_env
-    assert 'MOLECULE_SCENARIO_DIRECTORY' in _instance.default_env
-    assert 'MOLECULE_INSTANCE_CONFIG' in _instance.default_env
+    assert "MOLECULE_FILE" in _instance.default_env
+    assert "MOLECULE_INVENTORY_FILE" in _instance.default_env
+    assert "MOLECULE_SCENARIO_DIRECTORY" in _instance.default_env
+    assert "MOLECULE_INSTANCE_CONFIG" in _instance.default_env
 
 
-@pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
 def test_name_property(_instance):
-    assert 'gilt' == _instance.name
+    assert "gilt" == _instance.name
 
 
 def test_enabled_property(_instance):
     assert _instance.enabled
 
 
-@pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
 def test_options_property(gilt_config, _instance):
-    x = {'config': gilt_config, 'foo': 'bar'}
+    x = {"config": gilt_config, "foo": "bar"}
 
     assert x == _instance.options
 
 
-@pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
 def test_options_property_handles_cli_args(gilt_config, _instance):
-    _instance._config.args = {'debug': True}
-    x = {'config': gilt_config, 'foo': 'bar', 'debug': True}
+    _instance._config.args = {"debug": True}
+    x = {"config": gilt_config, "foo": "bar", "debug": True}
 
     assert x == _instance.options
 
 
-@pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
 def test_env_property(_instance):
-    assert 'bar' == _instance.env['FOO']
+    assert "bar" == _instance.env["FOO"]
 
 
-@pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
 def test_bake(gilt_config, _instance):
     _instance.bake()
-    x = [str(sh.gilt), '--foo=bar', '--config={}'.format(gilt_config), 'overlay']
+    x = [str(sh.gilt), "--foo=bar", "--config={}".format(gilt_config), "overlay"]
     result = str(_instance._sh_command).split()
 
     assert sorted(x) == sorted(result)
@@ -116,24 +116,24 @@ def test_execute(
     patched_logger_success,
     _instance,
 ):
-    _instance._sh_command = 'patched-command'
+    _instance._sh_command = "patched-command"
     _instance.execute()
 
-    patched_run_command.assert_called_once_with('patched-command', debug=False)
+    patched_run_command.assert_called_once_with("patched-command", debug=False)
 
-    msg = 'Dependency completed successfully.'
+    msg = "Dependency completed successfully."
     patched_logger_success.assert_called_once_with(msg)
 
 
 def test_execute_does_not_execute_when_disabled(
     patched_run_command, patched_logger_warning, _instance
 ):
-    _instance._config.config['dependency']['enabled'] = False
+    _instance._config.config["dependency"]["enabled"] = False
     _instance.execute()
 
     assert not patched_run_command.called
 
-    msg = 'Skipping, dependency is disabled.'
+    msg = "Skipping, dependency is disabled."
     patched_logger_warning.assert_called_once_with(msg)
 
 
@@ -148,7 +148,7 @@ def test_execute_does_not_execute_when_no_requirements_file(
 
     assert not patched_run_command.called
 
-    msg = 'Skipping, missing the requirements file.'
+    msg = "Skipping, missing the requirements file."
     patched_logger_warning.assert_called_once_with(msg)
 
 
@@ -164,7 +164,7 @@ def test_execute_bakes(
 def test_executes_catches_and_exits_return_code(
     patched_run_command, _patched_gilt_has_requirements_file, _instance
 ):
-    patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.gilt, b'', b'')
+    patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.gilt, b"", b"")
     with pytest.raises(SystemExit) as e:
         _instance.execute()
 

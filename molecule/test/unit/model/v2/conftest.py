@@ -33,15 +33,15 @@ def _molecule_file():
         os.path.pardir,
         os.path.pardir,
         os.path.pardir,
-        'resources',
-        'molecule_docker.yml',
+        "resources",
+        "molecule_docker.yml",
     )
 
 
 @pytest.fixture
 def _config(_molecule_file, request):
     d = util.safe_load(open(_molecule_file))
-    if hasattr(request, 'param'):
+    if hasattr(request, "param"):
         d = util.merge_dicts(d, request.getfixturevalue(request.param))
 
     return d

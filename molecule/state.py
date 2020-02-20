@@ -25,7 +25,7 @@ from molecule import logger
 from molecule import util
 
 LOG = logger.get_logger(__name__)
-VALID_KEYS = ['created', 'converged', 'driver', 'prepared', 'run_uuid', 'is_parallel']
+VALID_KEYS = ["created", "converged", "driver", "prepared", "run_uuid", "is_parallel"]
 
 
 class InvalidState(Exception):
@@ -77,27 +77,27 @@ class State(object):
 
     @property
     def converged(self):
-        return self._data.get('converged')
+        return self._data.get("converged")
 
     @property
     def created(self):
-        return self._data.get('created')
+        return self._data.get("created")
 
     @property
     def driver(self):
-        return self._data.get('driver')
+        return self._data.get("driver")
 
     @property
     def prepared(self):
-        return self._data.get('prepared')
+        return self._data.get("prepared")
 
     @property
     def run_uuid(self):
-        return self._data.get('run_uuid')
+        return self._data.get("run_uuid")
 
     @property
     def is_parallel(self):
-        return self._data.get('is_parallel')
+        return self._data.get("is_parallel")
 
     @marshal
     def reset(self):
@@ -126,12 +126,12 @@ class State(object):
 
     def _default_data(self):
         return {
-            'converged': False,
-            'created': False,
-            'driver': None,
-            'prepared': None,
-            'run_uuid': self._config._run_uuid,
-            'is_parallel': self._config.is_parallel,
+            "converged": False,
+            "created": False,
+            "driver": None,
+            "prepared": None,
+            "run_uuid": self._config._run_uuid,
+            "is_parallel": self._config.is_parallel,
         }
 
     def _load_file(self):
@@ -141,4 +141,4 @@ class State(object):
         util.write_file(self.state_file, util.safe_dump(self._data))
 
     def _get_state_file(self):
-        return os.path.join(self._config.scenario.ephemeral_directory, 'state.yml')
+        return os.path.join(self._config.scenario.ephemeral_directory, "state.yml")

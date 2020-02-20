@@ -25,7 +25,7 @@ from molecule.command import check
 
 @pytest.fixture
 def _patched_ansible_check(mocker):
-    return mocker.patch('molecule.provisioner.ansible.Ansible.check')
+    return mocker.patch("molecule.provisioner.ansible.Ansible.check")
 
 
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables

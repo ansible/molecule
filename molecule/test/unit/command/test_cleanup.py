@@ -28,19 +28,19 @@ from molecule.command import cleanup
 
 @pytest.fixture
 def _command_provisioner_section_with_cleanup_data():
-    return {'provisioner': {'name': 'ansible', 'playbooks': {'cleanup': 'cleanup.yml'}}}
+    return {"provisioner": {"name": "ansible", "playbooks": {"cleanup": "cleanup.yml"}}}
 
 
 @pytest.fixture
 def _patched_ansible_cleanup(mocker):
-    return mocker.patch('molecule.provisioner.ansible.Ansible.cleanup')
+    return mocker.patch("molecule.provisioner.ansible.Ansible.cleanup")
 
 
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.mark.parametrize(
-    'config_instance', ['_command_provisioner_section_with_cleanup_data'], indirect=True
+    "config_instance", ["_command_provisioner_section_with_cleanup_data"], indirect=True
 )
 def test_execute(
     mocker,
@@ -49,8 +49,8 @@ def test_execute(
     patched_config_validate,
     config_instance,
 ):
-    pb = os.path.join(config_instance.scenario.directory, 'cleanup.yml')
-    util.write_file(pb, '')
+    pb = os.path.join(config_instance.scenario.directory, "cleanup.yml")
+    util.write_file(pb, "")
 
     cu = cleanup.Cleanup(config_instance)
     cu.execute()
@@ -68,7 +68,7 @@ def test_execute_skips_when_playbook_not_configured(
     cu = cleanup.Cleanup(config_instance)
     cu.execute()
 
-    msg = 'Skipping, cleanup playbook not configured.'
+    msg = "Skipping, cleanup playbook not configured."
     patched_logger_warning.assert_called_once_with(msg)
 
     assert not _patched_ansible_cleanup.called

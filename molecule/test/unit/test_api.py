@@ -24,7 +24,7 @@ from molecule import api
 
 def test_api_molecule_drivers_as_attributes():
     results = api.drivers()
-    assert hasattr(results, 'delegated')
+    assert hasattr(results, "delegated")
     assert isinstance(results.delegated, api.Driver)
 
 
@@ -34,10 +34,10 @@ def test_api_drivers():
     for result in results:
         assert isinstance(result, api.Driver)
 
-    assert 'delegated' in results
+    assert "delegated" in results
 
 
 def test_api_verifiers():
-    x = ['testinfra', 'ansible']
+    x = ["testinfra", "ansible"]
 
     assert all(elem in api.verifiers() for elem in x)

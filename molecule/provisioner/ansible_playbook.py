@@ -60,12 +60,12 @@ class AnsiblePlaybook(object):
         """
         # Pass a directory as inventory to let Ansible merge the multiple
         # inventory sources located under
-        self.add_cli_arg('inventory', self._config.provisioner.inventory_directory)
+        self.add_cli_arg("inventory", self._config.provisioner.inventory_directory)
         options = util.merge_dicts(self._config.provisioner.options, self._cli)
         verbose_flag = util.verbose_flag(options)
         if self._playbook != self._config.provisioner.playbooks.converge:
-            if options.get('become'):
-                del options['become']
+            if options.get("become"):
+                del options["become"]
 
         self._ansible_command = sh.ansible_playbook.bake(
             options,
@@ -82,7 +82,7 @@ class AnsiblePlaybook(object):
         )
 
         if ansible_args:
-            if self._config.action not in ['create', 'destroy']:
+            if self._config.action not in ["create", "destroy"]:
                 self._ansible_command = self._ansible_command.bake(ansible_args)
 
     def execute(self):
@@ -97,9 +97,9 @@ class AnsiblePlaybook(object):
         try:
             self._config.driver.sanity_checks()
             cmd = util.run_command(self._ansible_command, debug=self._config.debug)
-            return cmd.stdout.decode('utf-8')
+            return cmd.stdout.decode("utf-8")
         except sh.ErrorReturnCode as e:
-            out = e.stdout.decode('utf-8')
+            out = e.stdout.decode("utf-8")
             util.sysexit_with_message(str(out), e.exit_code)
 
     def add_cli_arg(self, name, value):

@@ -28,11 +28,11 @@ from molecule.dependency import shell
 @pytest.fixture
 def _dependency_section_data():
     return {
-        'dependency': {
-            'name': 'shell',
-            'command': 'ls -l -a /tmp',
-            'options': {'foo': 'bar'},
-            'env': {'FOO': 'bar'},
+        "dependency": {
+            "name": "shell",
+            "command": "ls -l -a /tmp",
+            "options": {"foo": "bar"},
+            "env": {"FOO": "bar"},
         }
     }
 
@@ -56,70 +56,70 @@ def test_default_options_property(_instance):
 
 
 def test_default_env_property(_instance):
-    assert 'MOLECULE_FILE' in _instance.default_env
-    assert 'MOLECULE_INVENTORY_FILE' in _instance.default_env
-    assert 'MOLECULE_SCENARIO_DIRECTORY' in _instance.default_env
-    assert 'MOLECULE_INSTANCE_CONFIG' in _instance.default_env
+    assert "MOLECULE_FILE" in _instance.default_env
+    assert "MOLECULE_INVENTORY_FILE" in _instance.default_env
+    assert "MOLECULE_SCENARIO_DIRECTORY" in _instance.default_env
+    assert "MOLECULE_INSTANCE_CONFIG" in _instance.default_env
 
 
-@pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
 def test_name_property(_instance):
-    assert 'shell' == _instance.name
+    assert "shell" == _instance.name
 
 
 def test_enabled_property(_instance):
     assert _instance.enabled
 
 
-@pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
 def test_options_property(_instance):
-    x = {'foo': 'bar'}
+    x = {"foo": "bar"}
 
     assert x == _instance.options
 
 
-@pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
 def test_options_property_handles_cli_args(_instance):
     _instance._config.args = {}
-    x = {'foo': 'bar'}
+    x = {"foo": "bar"}
 
     assert x == _instance.options
 
 
-@pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
 def test_env_property(_instance):
-    assert 'bar' == _instance.env['FOO']
+    assert "bar" == _instance.env["FOO"]
 
 
-@pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
 def test_bake(_instance):
     _instance.bake()
 
-    x = [str(sh.ls), '-l', '-a', '/tmp']
+    x = [str(sh.ls), "-l", "-a", "/tmp"]
     result = str(_instance._sh_command).split()
 
     assert sorted(x) == sorted(result)
 
 
-@pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
 @pytest.mark.parametrize(
-    'command,words',
+    "command,words",
     {
-        'ls -l -a /tmp': ['ls', '-l', '-a', '/tmp'],
-        'sh -c "echo hello world"': ['sh', '-c', 'echo hello world'],
-        'echo "hello world"': ['echo', 'hello world'],
-        '''printf "%s\\n" foo "bar baz" 'a b' c''': [
-            'printf',
-            r'%s\n',
-            'foo',
-            'bar baz',
-            'a b',
-            'c',
+        "ls -l -a /tmp": ["ls", "-l", "-a", "/tmp"],
+        'sh -c "echo hello world"': ["sh", "-c", "echo hello world"],
+        'echo "hello world"': ["echo", "hello world"],
+        """printf "%s\\n" foo "bar baz" 'a b' c""": [
+            "printf",
+            r"%s\n",
+            "foo",
+            "bar baz",
+            "a b",
+            "c",
         ],
     }.items(),
 )
 def test_bake2(_instance, command, words):
-    _instance._config.config['dependency']['command'] = command
+    _instance._config.config["dependency"]["command"] = command
     _instance.bake()
     baked_exe = _instance._sh_command._path.decode()
     baked_args = [w.decode() for w in _instance._sh_command._partial_baked_args]
@@ -129,28 +129,28 @@ def test_bake2(_instance, command, words):
 
 
 def test_execute(patched_run_command, patched_logger_success, _instance):
-    _instance._sh_command = 'patched-command'
+    _instance._sh_command = "patched-command"
     _instance.execute()
 
-    patched_run_command.assert_called_once_with('patched-command', debug=False)
+    patched_run_command.assert_called_once_with("patched-command", debug=False)
 
-    msg = 'Dependency completed successfully.'
+    msg = "Dependency completed successfully."
     patched_logger_success.assert_called_once_with(msg)
 
 
 def test_execute_does_not_execute_when_disabled(
     patched_run_command, patched_logger_warning, _instance
 ):
-    _instance._config.config['dependency']['enabled'] = False
+    _instance._config.config["dependency"]["enabled"] = False
     _instance.execute()
 
     assert not patched_run_command.called
 
-    msg = 'Skipping, dependency is disabled.'
+    msg = "Skipping, dependency is disabled."
     patched_logger_warning.assert_called_once_with(msg)
 
 
-@pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
 def test_execute_bakes(patched_run_command, _instance):
     _instance.execute()
     assert _instance._sh_command is not None
@@ -158,9 +158,9 @@ def test_execute_bakes(patched_run_command, _instance):
     assert 1 == patched_run_command.call_count
 
 
-@pytest.mark.parametrize('config_instance', ['_dependency_section_data'], indirect=True)
+@pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
 def test_executes_catches_and_exits_return_code(patched_run_command, _instance):
-    patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.ls, b'', b'')
+    patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.ls, b"", b"")
     with pytest.raises(SystemExit) as e:
         _instance.execute()
 

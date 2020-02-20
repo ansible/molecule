@@ -34,19 +34,19 @@ LOG = logger.get_logger(__name__)
 @base.click_command_ex()
 @click.pass_context
 @click.option(
-    '--format',
-    '-f',
-    type=click.Choice(['simple', 'plain']),
-    default='simple',
-    help='Change output format. (simple)',
+    "--format",
+    "-f",
+    type=click.Choice(["simple", "plain"]),
+    default="simple",
+    help="Change output format. (simple)",
 )
 def drivers(ctx, format):  # pragma: no cover
     """List drivers."""
     drivers = [[x] for x in api.drivers()]
 
-    headers = ['name']
-    table_format = 'simple'
-    if format == 'plain':
+    headers = ["name"]
+    table_format = "simple"
+    if format == "plain":
         headers = []
         table_format = format
     _print_tabulate_data(headers, drivers, table_format)

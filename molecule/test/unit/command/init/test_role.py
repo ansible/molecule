@@ -28,13 +28,13 @@ from molecule.command.init import role
 @pytest.fixture
 def _command_args():
     return {
-        'dependency_name': 'galaxy',
-        'driver_name': 'docker',
-        'provisioner_name': 'ansible',
-        'role_name': 'test-role',
-        'scenario_name': 'default',
-        'subcommand': __name__,
-        'verifier_name': 'ansible',
+        "dependency_name": "galaxy",
+        "driver_name": "docker",
+        "provisioner_name": "ansible",
+        "role_name": "test-role",
+        "scenario_name": "default",
+        "subcommand": __name__,
+        "verifier_name": "ansible",
     }
 
 
@@ -46,14 +46,14 @@ def _instance(_command_args):
 def test_execute(temp_dir, _instance, patched_logger_info, patched_logger_success):
     _instance.execute()
 
-    msg = 'Initializing new role test-role...'
+    msg = "Initializing new role test-role..."
     patched_logger_info.assert_called_once_with(msg)
 
-    assert os.path.isdir('./test-role')
-    assert os.path.isdir('./test-role/molecule/default')
+    assert os.path.isdir("./test-role")
+    assert os.path.isdir("./test-role/molecule/default")
 
-    role_directory = os.path.join(temp_dir.strpath, 'test-role')
-    msg = 'Initialized role in {} successfully.'.format(role_directory)
+    role_directory = os.path.join(temp_dir.strpath, "test-role")
+    msg = "Initialized role in {} successfully.".format(role_directory)
     patched_logger_success.assert_called_once_with(msg)
 
 
@@ -65,5 +65,5 @@ def test_execute_role_exists(temp_dir, _instance, patched_logger_critical):
 
     assert 1 == e.value.code
 
-    msg = 'The directory test-role exists. Cannot create new role.'
+    msg = "The directory test-role exists. Cannot create new role."
     patched_logger_critical.assert_called_once_with(msg)

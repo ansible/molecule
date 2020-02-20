@@ -40,10 +40,10 @@ from molecule.provisioner import ansible
 
 
 LOG = logger.get_logger(__name__)
-MOLECULE_DEBUG = boolean(os.environ.get('MOLECULE_DEBUG', 'False'))
-MOLECULE_DIRECTORY = 'molecule'
-MOLECULE_FILE = 'molecule.yml'
-MOLECULE_KEEP_STRING = 'MOLECULE_'
+MOLECULE_DEBUG = boolean(os.environ.get("MOLECULE_DEBUG", "False"))
+MOLECULE_DIRECTORY = "molecule"
+MOLECULE_FILE = "molecule.yml"
+MOLECULE_KEEP_STRING = "MOLECULE_"
 
 
 # https://stackoverflow.com/questions/16017397/injecting-function-call-after-init-with-decorator  # noqa
@@ -110,19 +110,19 @@ class Config(object):
 
     @property
     def is_parallel(self):
-        return self.command_args.get('parallel', False)
+        return self.command_args.get("parallel", False)
 
     @property
     def debug(self):
-        return self.args.get('debug', MOLECULE_DEBUG)
+        return self.args.get("debug", MOLECULE_DEBUG)
 
     @property
     def env_file(self):
-        return util.abs_path(self.args.get('env_file'))
+        return util.abs_path(self.args.get("env_file"))
 
     @property
     def subcommand(self):
-        return self.command_args['subcommand']
+        return self.command_args["subcommand"]
 
     @property
     def action(self):
@@ -134,11 +134,11 @@ class Config(object):
 
     @property
     def project_directory(self):
-        return os.getenv('MOLECULE_PROJECT_DIRECTORY', os.getcwd())
+        return os.getenv("MOLECULE_PROJECT_DIRECTORY", os.getcwd())
 
     @property
     def cache_directory(self):
-        return 'molecule_parallel' if self.is_parallel else 'molecule'
+        return "molecule_parallel" if self.is_parallel else "molecule"
 
     @property
     def molecule_directory(self):
@@ -147,12 +147,12 @@ class Config(object):
     @property
     @util.lru_cache()
     def dependency(self):
-        dependency_name = self.config['dependency']['name']
-        if dependency_name == 'galaxy':
+        dependency_name = self.config["dependency"]["name"]
+        if dependency_name == "galaxy":
             return ansible_galaxy.AnsibleGalaxy(self)
-        elif dependency_name == 'gilt':
+        elif dependency_name == "gilt":
             return gilt.Gilt(self)
-        elif dependency_name == 'shell':
+        elif dependency_name == "shell":
             return shell.Shell(self)
 
     @property
@@ -169,27 +169,27 @@ class Config(object):
     @property
     def env(self):
         return {
-            'MOLECULE_DEBUG': str(self.debug),
-            'MOLECULE_FILE': self.config_file,
-            'MOLECULE_ENV_FILE': self.env_file,
-            'MOLECULE_STATE_FILE': self.state.state_file,
-            'MOLECULE_INVENTORY_FILE': self.provisioner.inventory_file,
-            'MOLECULE_EPHEMERAL_DIRECTORY': self.scenario.ephemeral_directory,
-            'MOLECULE_SCENARIO_DIRECTORY': self.scenario.directory,
-            'MOLECULE_PROJECT_DIRECTORY': self.project_directory,
-            'MOLECULE_INSTANCE_CONFIG': self.driver.instance_config,
-            'MOLECULE_DEPENDENCY_NAME': self.dependency.name,
-            'MOLECULE_DRIVER_NAME': self.driver.name,
-            'MOLECULE_PROVISIONER_NAME': self.provisioner.name,
-            'MOLECULE_SCENARIO_NAME': self.scenario.name,
-            'MOLECULE_VERIFIER_NAME': self.verifier.name,
-            'MOLECULE_VERIFIER_TEST_DIRECTORY': self.verifier.directory,
+            "MOLECULE_DEBUG": str(self.debug),
+            "MOLECULE_FILE": self.config_file,
+            "MOLECULE_ENV_FILE": self.env_file,
+            "MOLECULE_STATE_FILE": self.state.state_file,
+            "MOLECULE_INVENTORY_FILE": self.provisioner.inventory_file,
+            "MOLECULE_EPHEMERAL_DIRECTORY": self.scenario.ephemeral_directory,
+            "MOLECULE_SCENARIO_DIRECTORY": self.scenario.directory,
+            "MOLECULE_PROJECT_DIRECTORY": self.project_directory,
+            "MOLECULE_INSTANCE_CONFIG": self.driver.instance_config,
+            "MOLECULE_DEPENDENCY_NAME": self.dependency.name,
+            "MOLECULE_DRIVER_NAME": self.driver.name,
+            "MOLECULE_PROVISIONER_NAME": self.provisioner.name,
+            "MOLECULE_SCENARIO_NAME": self.scenario.name,
+            "MOLECULE_VERIFIER_NAME": self.verifier.name,
+            "MOLECULE_VERIFIER_TEST_DIRECTORY": self.verifier.directory,
         }
 
     @property
     @util.lru_cache()
     def lint(self):
-        lint_name = self.config.get('lint', None)
+        lint_name = self.config.get("lint", None)
         return lint_name
 
     @property
@@ -200,8 +200,8 @@ class Config(object):
     @property
     @util.lru_cache()
     def provisioner(self):
-        provisioner_name = self.config['provisioner']['name']
-        if provisioner_name == 'ansible':
+        provisioner_name = self.config["provisioner"]["name"]
+        if provisioner_name == "ansible":
             return ansible.Ansible(self)
 
     @property
@@ -217,18 +217,18 @@ class Config(object):
     @property
     @util.lru_cache()
     def verifier(self):
-        return api.verifiers(self).get(self.config['verifier']['name'], None)
+        return api.verifiers(self).get(self.config["verifier"]["name"], None)
 
     def _get_driver_name(self):
         driver_from_state_file = self.state.driver
-        driver_from_cli = self.command_args.get('driver_name')
+        driver_from_cli = self.command_args.get("driver_name")
 
         if driver_from_state_file:
             driver_name = driver_from_state_file
         elif driver_from_cli:
             driver_name = driver_from_cli
         else:
-            driver_name = self.config['driver']['name']
+            driver_name = self.config["driver"]["name"]
 
         if driver_from_cli and (driver_from_cli != driver_name):
             msg = (
@@ -279,7 +279,7 @@ class Config(object):
         :return: dict
         """
         defaults = self._get_defaults()
-        base_config = self.args.get('base_config')
+        base_config = self.args.get("base_config")
         if base_config and os.path.exists(base_config):
             with util.open_file(base_config) as stream:
                 s = stream.read()
@@ -308,104 +308,104 @@ class Config(object):
         try:
             return i.interpolate(stream, keep_string)
         except interpolation.InvalidInterpolation as e:
-            msg = "parsing config file '{}'.\n\n" '{}\n{}'.format(
+            msg = "parsing config file '{}'.\n\n" "{}\n{}".format(
                 self.molecule_file, e.place, e.string
             )
             util.sysexit_with_message(msg)
 
     def _get_defaults(self):
         if not self.molecule_file:
-            scenario_name = 'default'
+            scenario_name = "default"
         else:
             scenario_name = (
-                os.path.basename(os.path.dirname(self.molecule_file)) or 'default'
+                os.path.basename(os.path.dirname(self.molecule_file)) or "default"
             )
         return {
-            'dependency': {
-                'name': 'galaxy',
-                'command': None,
-                'enabled': True,
-                'options': {},
-                'env': {},
+            "dependency": {
+                "name": "galaxy",
+                "command": None,
+                "enabled": True,
+                "options": {},
+                "env": {},
             },
-            'driver': {
-                'name': 'docker',
-                'provider': {'name': None},
-                'options': {'managed': True},
-                'ssh_connection_options': [],
-                'safe_files': [],
+            "driver": {
+                "name": "docker",
+                "provider": {"name": None},
+                "options": {"managed": True},
+                "ssh_connection_options": [],
+                "safe_files": [],
             },
-            'platforms': [],
-            'provisioner': {
-                'name': 'ansible',
-                'config_options': {},
-                'ansible_args': [],
-                'connection_options': {},
-                'options': {},
-                'env': {},
-                'inventory': {
-                    'hosts': {},
-                    'host_vars': {},
-                    'group_vars': {},
-                    'links': {},
+            "platforms": [],
+            "provisioner": {
+                "name": "ansible",
+                "config_options": {},
+                "ansible_args": [],
+                "connection_options": {},
+                "options": {},
+                "env": {},
+                "inventory": {
+                    "hosts": {},
+                    "host_vars": {},
+                    "group_vars": {},
+                    "links": {},
                 },
-                'children': {},
-                'playbooks': {
-                    'cleanup': 'cleanup.yml',
-                    'create': 'create.yml',
-                    'converge': 'converge.yml',
-                    'destroy': 'destroy.yml',
-                    'prepare': 'prepare.yml',
-                    'side_effect': 'side_effect.yml',
-                    'verify': 'verify.yml',
+                "children": {},
+                "playbooks": {
+                    "cleanup": "cleanup.yml",
+                    "create": "create.yml",
+                    "converge": "converge.yml",
+                    "destroy": "destroy.yml",
+                    "prepare": "prepare.yml",
+                    "side_effect": "side_effect.yml",
+                    "verify": "verify.yml",
                 },
-                'lint': {
-                    'name': 'ansible-lint',
-                    'enabled': True,
-                    'options': {},
-                    'env': {},
+                "lint": {
+                    "name": "ansible-lint",
+                    "enabled": True,
+                    "options": {},
+                    "env": {},
                 },
             },
-            'scenario': {
-                'name': scenario_name,
-                'check_sequence': [
-                    'dependency',
-                    'cleanup',
-                    'destroy',
-                    'create',
-                    'prepare',
-                    'converge',
-                    'check',
-                    'cleanup',
-                    'destroy',
+            "scenario": {
+                "name": scenario_name,
+                "check_sequence": [
+                    "dependency",
+                    "cleanup",
+                    "destroy",
+                    "create",
+                    "prepare",
+                    "converge",
+                    "check",
+                    "cleanup",
+                    "destroy",
                 ],
-                'cleanup_sequence': ['cleanup'],
-                'converge_sequence': ['dependency', 'create', 'prepare', 'converge'],
-                'create_sequence': ['dependency', 'create', 'prepare'],
-                'destroy_sequence': ['dependency', 'cleanup', 'destroy'],
-                'test_sequence': [
+                "cleanup_sequence": ["cleanup"],
+                "converge_sequence": ["dependency", "create", "prepare", "converge"],
+                "create_sequence": ["dependency", "create", "prepare"],
+                "destroy_sequence": ["dependency", "cleanup", "destroy"],
+                "test_sequence": [
                     # dependency must be kept before lint to avoid errors
-                    'dependency',
-                    'lint',
-                    'cleanup',
-                    'destroy',
-                    'syntax',
-                    'create',
-                    'prepare',
-                    'converge',
-                    'idempotence',
-                    'side_effect',
-                    'verify',
-                    'cleanup',
-                    'destroy',
+                    "dependency",
+                    "lint",
+                    "cleanup",
+                    "destroy",
+                    "syntax",
+                    "create",
+                    "prepare",
+                    "converge",
+                    "idempotence",
+                    "side_effect",
+                    "verify",
+                    "cleanup",
+                    "destroy",
                 ],
             },
-            'verifier': {
-                'name': 'ansible',
-                'enabled': True,
-                'options': {},
-                'env': {},
-                'additional_files_or_dirs': [],
+            "verifier": {
+                "name": "ansible",
+                "enabled": True,
+                "options": {},
+                "env": {},
+                "additional_files_or_dirs": [],
             },
         }
 
@@ -418,7 +418,7 @@ class Config(object):
             util.sysexit_with_message(msg, detail=data)
 
     def _validate(self):
-        msg = 'Validating schema {}.'.format(self.molecule_file)
+        msg = "Validating schema {}.".format(self.molecule_file)
         LOG.debug(msg)
 
         errors = schema_v3.validate(self.config)
@@ -426,7 +426,7 @@ class Config(object):
             msg = "Failed to validate.\n\n{}".format(errors)
             util.sysexit_with_message(msg)
 
-        msg = 'Validation completed successfully.'
+        msg = "Validation completed successfully."
         LOG.debug(msg)
 
 

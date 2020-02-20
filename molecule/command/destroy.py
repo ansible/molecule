@@ -28,7 +28,7 @@ from molecule.command import base
 from molecule import util
 
 LOG = logger.get_logger(__name__)
-MOLECULE_PARALLEL = os.environ.get('MOLECULE_PARALLEL', False)
+MOLECULE_PARALLEL = os.environ.get("MOLECULE_PARALLEL", False)
 
 
 class Destroy(base.Base):
@@ -94,13 +94,13 @@ class Destroy(base.Base):
         """
         self.print_info()
 
-        if self._config.command_args.get('destroy') == 'never':
+        if self._config.command_args.get("destroy") == "never":
             msg = "Skipping, '--destroy=never' requested."
             LOG.warning(msg)
             return
 
         if self._config.driver.delegated and not self._config.driver.managed:
-            msg = 'Skipping, instances are delegated.'
+            msg = "Skipping, instances are delegated."
             LOG.warning(msg)
             return
 
@@ -111,38 +111,38 @@ class Destroy(base.Base):
 @base.click_command_ex()
 @click.pass_context
 @click.option(
-    '--scenario-name',
-    '-s',
+    "--scenario-name",
+    "-s",
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help='Name of the scenario to target. ({})'.format(
+    help="Name of the scenario to target. ({})".format(
         base.MOLECULE_DEFAULT_SCENARIO_NAME
     ),
 )
 @click.option(
-    '--driver-name',
-    '-d',
+    "--driver-name",
+    "-d",
     type=click.Choice([str(s) for s in drivers()]),
-    help='Name of driver to use. (docker)',
+    help="Name of driver to use. (docker)",
 )
 @click.option(
-    '--all/--no-all',
-    '__all',
+    "--all/--no-all",
+    "__all",
     default=MOLECULE_PARALLEL,
-    help='Destroy all scenarios. Default is False.',
+    help="Destroy all scenarios. Default is False.",
 )
 @click.option(
-    '--parallel/--no-parallel',
+    "--parallel/--no-parallel",
     default=False,
-    help='Enable or disable parallel mode. Default is disabled.',
+    help="Enable or disable parallel mode. Default is disabled.",
 )
 def destroy(ctx, scenario_name, driver_name, __all, parallel):  # pragma: no cover
     """Use the provisioner to destroy the instances."""
-    args = ctx.obj.get('args')
+    args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)
     command_args = {
-        'parallel': parallel,
-        'subcommand': subcommand,
-        'driver_name': driver_name,
+        "parallel": parallel,
+        "subcommand": subcommand,
+        "driver_name": driver_name,
     }
 
     if __all:

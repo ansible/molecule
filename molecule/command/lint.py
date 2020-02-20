@@ -84,7 +84,7 @@ class Lint(base.Base):
             LOG.info("Lint is disabled.")
             return
 
-        if cmd == 'yamllint':
+        if cmd == "yamllint":
             msg = (
                 "Deprecated linter config found, migrate to v3 schema. "
                 "See https://github.com/ansible-community/molecule/issues/2293"
@@ -101,17 +101,17 @@ class Lint(base.Base):
 @base.click_command_ex()
 @click.pass_context
 @click.option(
-    '--scenario-name',
-    '-s',
+    "--scenario-name",
+    "-s",
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help='Name of the scenario to target. ({})'.format(
+    help="Name of the scenario to target. ({})".format(
         base.MOLECULE_DEFAULT_SCENARIO_NAME
     ),
 )
 def lint(ctx, scenario_name):  # pragma: no cover
     """Lint the role (dependency, lint)."""
-    args = ctx.obj.get('args')
+    args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)
-    command_args = {'subcommand': subcommand}
+    command_args = {"subcommand": subcommand}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)

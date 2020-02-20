@@ -76,7 +76,7 @@ class Cleanup(base.Base):
         self.print_info()
 
         if not self._config.provisioner.playbooks.cleanup:
-            msg = 'Skipping, cleanup playbook not configured.'
+            msg = "Skipping, cleanup playbook not configured."
             LOG.warning(msg)
             return
 
@@ -86,18 +86,18 @@ class Cleanup(base.Base):
 @base.click_command_ex()
 @click.pass_context
 @click.option(
-    '--scenario-name',
-    '-s',
+    "--scenario-name",
+    "-s",
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help='Name of the scenario to target. ({})'.format(
+    help="Name of the scenario to target. ({})".format(
         base.MOLECULE_DEFAULT_SCENARIO_NAME
     ),
 )
 def cleanup(ctx, scenario_name):  # pragma: no cover
     """Use the provisioner to cleanup any changes made to external systems during \
     the stages of testing."""
-    args = ctx.obj.get('args')
+    args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)
-    command_args = {'subcommand': subcommand}
+    command_args = {"subcommand": subcommand}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)

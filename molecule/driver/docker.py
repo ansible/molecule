@@ -176,7 +176,7 @@ class Docker(Driver):
     def __init__(self, config=None):
         """Construct Docker."""
         super(Docker, self).__init__(config)
-        self._name = 'docker'
+        self._name = "docker"
 
     @property
     def name(self):
@@ -189,29 +189,29 @@ class Docker(Driver):
     @property
     def login_cmd_template(self):
         return (
-            'docker exec '
-            '-e COLUMNS={columns} '
-            '-e LINES={lines} '
-            '-e TERM=bash '
-            '-e TERM=xterm '
-            '-ti {instance} bash'
+            "docker exec "
+            "-e COLUMNS={columns} "
+            "-e LINES={lines} "
+            "-e TERM=bash "
+            "-e TERM=xterm "
+            "-ti {instance} bash"
         )
 
     @property
     def default_safe_files(self):
-        return [os.path.join(self._config.scenario.ephemeral_directory, 'Dockerfile')]
+        return [os.path.join(self._config.scenario.ephemeral_directory, "Dockerfile")]
 
     @property
     def default_ssh_connection_options(self):
         return []
 
     def login_options(self, instance_name):
-        return {'instance': instance_name}
+        return {"instance": instance_name}
 
     def ansible_connection_options(self, instance_name):
-        x = {'ansible_connection': 'docker'}
-        if 'DOCKER_HOST' in os.environ:
-            x['ansible_docker_extra_args'] = "-H={}".format(os.environ['DOCKER_HOST'])
+        x = {"ansible_connection": "docker"}
+        if "DOCKER_HOST" in os.environ:
+            x["ansible_docker_extra_args"] = "-H={}".format(os.environ["DOCKER_HOST"])
         return x
 
     @lru_cache()
@@ -223,9 +223,9 @@ class Docker(Driver):
 
         if not HAS_DOCKER_PY:
             msg = (
-                'Missing Docker driver dependency. Please '
+                "Missing Docker driver dependency. Please "
                 "install via 'molecule[docker]' or refer to "
-                'your INSTALL.rst driver documentation file'
+                "your INSTALL.rst driver documentation file"
             )
             sysexit_with_message(msg)
 
@@ -237,8 +237,8 @@ class Docker(Driver):
             docker_client.ping()
         except requests.exceptions.ConnectionError:
             msg = (
-                'Unable to contact the Docker daemon. '
-                'Please refer to https://docs.docker.com/config/daemon/ '
-                'for managing the daemon'
+                "Unable to contact the Docker daemon. "
+                "Please refer to https://docs.docker.com/config/daemon/ "
+                "for managing the daemon"
             )
             sysexit_with_message(msg)

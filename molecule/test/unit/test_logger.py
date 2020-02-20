@@ -29,12 +29,12 @@ from molecule import logger
 
 def test_info(capsys):
     log = logger.get_logger(__name__)
-    log.info('foo')
+    log.info("foo")
     stdout, _ = capsys.readouterr()
 
     print(
-        '--> {}{}{}'.format(
-            colorama.Fore.CYAN, 'foo'.rstrip(), colorama.Style.RESET_ALL
+        "--> {}{}{}".format(
+            colorama.Fore.CYAN, "foo".rstrip(), colorama.Style.RESET_ALL
         )
     )
     x, _ = capsys.readouterr()
@@ -44,21 +44,21 @@ def test_info(capsys):
 
 def test_out(capsys):
     log = logger.get_logger(__name__)
-    log.out('foo')
+    log.out("foo")
 
     stdout, _ = capsys.readouterr()
 
-    assert '    foo\n' == stdout
+    assert "    foo\n" == stdout
 
 
 def test_warn(capsys):
     log = logger.get_logger(__name__)
-    log.warning('foo')
+    log.warning("foo")
 
     stdout, _ = capsys.readouterr()
 
     print(
-        '{}{}{}'.format(colorama.Fore.YELLOW, 'foo'.rstrip(), colorama.Style.RESET_ALL)
+        "{}{}{}".format(colorama.Fore.YELLOW, "foo".rstrip(), colorama.Style.RESET_ALL)
     )
     x, _ = capsys.readouterr()
 
@@ -67,12 +67,12 @@ def test_warn(capsys):
 
 def test_error(capsys):
     log = logger.get_logger(__name__)
-    log.error('foo')
+    log.error("foo")
 
     _, stderr = capsys.readouterr()
 
     print(
-        '{}{}{}'.format(colorama.Fore.RED, 'foo'.rstrip(), colorama.Style.RESET_ALL),
+        "{}{}{}".format(colorama.Fore.RED, "foo".rstrip(), colorama.Style.RESET_ALL),
         file=sys.stderr,
     )
     _, x = capsys.readouterr()
@@ -82,13 +82,13 @@ def test_error(capsys):
 
 def test_critical(capsys):
     log = logger.get_logger(__name__)
-    log.critical('foo')
+    log.critical("foo")
 
     _, stderr = capsys.readouterr()
 
     print(
-        '{}ERROR: {}{}'.format(
-            colorama.Fore.RED, 'foo'.rstrip(), colorama.Style.RESET_ALL
+        "{}ERROR: {}{}".format(
+            colorama.Fore.RED, "foo".rstrip(), colorama.Style.RESET_ALL
         ),
         file=sys.stderr,
     )
@@ -99,12 +99,12 @@ def test_critical(capsys):
 
 def test_success(capsys):
     log = logger.get_logger(__name__)
-    log.success('foo')
+    log.success("foo")
 
     stdout, _ = capsys.readouterr()
 
     print(
-        '{}{}{}'.format(colorama.Fore.GREEN, 'foo'.rstrip(), colorama.Style.RESET_ALL)
+        "{}{}{}".format(colorama.Fore.GREEN, "foo".rstrip(), colorama.Style.RESET_ALL)
     )
     x, _ = capsys.readouterr()
 
@@ -112,50 +112,50 @@ def test_success(capsys):
 
 
 def test_red_text():
-    x = '{}{}{}'.format(colorama.Fore.RED, 'foo', colorama.Style.RESET_ALL)
+    x = "{}{}{}".format(colorama.Fore.RED, "foo", colorama.Style.RESET_ALL)
 
-    assert x == logger.red_text('foo')
+    assert x == logger.red_text("foo")
 
 
 def test_yellow_text():
-    x = '{}{}{}'.format(colorama.Fore.YELLOW, 'foo', colorama.Style.RESET_ALL)
+    x = "{}{}{}".format(colorama.Fore.YELLOW, "foo", colorama.Style.RESET_ALL)
 
-    assert x == logger.yellow_text('foo')
+    assert x == logger.yellow_text("foo")
 
 
 def test_green_text():
-    x = '{}{}{}'.format(colorama.Fore.GREEN, 'foo', colorama.Style.RESET_ALL)
+    x = "{}{}{}".format(colorama.Fore.GREEN, "foo", colorama.Style.RESET_ALL)
 
-    assert x == logger.green_text('foo')
+    assert x == logger.green_text("foo")
 
 
 def test_cyan_text():
-    x = '{}{}{}'.format(colorama.Fore.CYAN, 'foo', colorama.Style.RESET_ALL)
+    x = "{}{}{}".format(colorama.Fore.CYAN, "foo", colorama.Style.RESET_ALL)
 
-    assert x == logger.cyan_text('foo')
+    assert x == logger.cyan_text("foo")
 
 
 def test_markup_detection_pycolors0(monkeypatch):
-    monkeypatch.setenv('PY_COLORS', '0')
+    monkeypatch.setenv("PY_COLORS", "0")
     assert not logger.should_do_markup()
 
 
 def test_markup_detection_pycolors1(monkeypatch):
-    monkeypatch.setenv('PY_COLORS', '1')
+    monkeypatch.setenv("PY_COLORS", "1")
     assert logger.should_do_markup()
 
 
 def test_markup_detection_tty_yes(mocker):
-    mocker.patch('sys.stdout.isatty', return_value=True)
-    mocker.patch('os.environ', {'TERM': 'xterm'})
+    mocker.patch("sys.stdout.isatty", return_value=True)
+    mocker.patch("os.environ", {"TERM": "xterm"})
     assert logger.should_do_markup()
     mocker.resetall()
     mocker.stopall()
 
 
 def test_markup_detection_tty_no(mocker):
-    mocker.patch('os.environ', {})
-    mocker.patch('sys.stdout.isatty', return_value=False)
+    mocker.patch("os.environ", {})
+    mocker.patch("sys.stdout.isatty", return_value=False)
     assert not logger.should_do_markup()
     mocker.resetall()
     mocker.stopall()

@@ -25,12 +25,12 @@ from molecule.command import destroy
 
 @pytest.fixture
 def _patched_ansible_destroy(mocker):
-    return mocker.patch('molecule.provisioner.ansible.Ansible.destroy')
+    return mocker.patch("molecule.provisioner.ansible.Ansible.destroy")
 
 
 @pytest.fixture
 def _patched_destroy_setup(mocker):
-    return mocker.patch('molecule.command.destroy.Destroy._setup')
+    return mocker.patch("molecule.command.destroy.Destroy._setup")
 
 
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
@@ -56,7 +56,7 @@ def test_execute(
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['command_driver_delegated_section_data'], indirect=True
+    "config_instance", ["command_driver_delegated_section_data"], indirect=True
 )
 def test_execute_skips_when_destroy_strategy_is_never(
     _patched_destroy_setup,
@@ -64,7 +64,7 @@ def test_execute_skips_when_destroy_strategy_is_never(
     _patched_ansible_destroy,
     config_instance,
 ):
-    config_instance.command_args = {'destroy': 'never'}
+    config_instance.command_args = {"destroy": "never"}
 
     d = destroy.Destroy(config_instance)
     d.execute()
@@ -76,7 +76,7 @@ def test_execute_skips_when_destroy_strategy_is_never(
 
 
 @pytest.mark.parametrize(
-    'config_instance', ['command_driver_delegated_section_data'], indirect=True
+    "config_instance", ["command_driver_delegated_section_data"], indirect=True
 )
 def test_execute_skips_when_delegated_driver(
     _patched_destroy_setup,
@@ -87,7 +87,7 @@ def test_execute_skips_when_delegated_driver(
     d = destroy.Destroy(config_instance)
     d.execute()
 
-    msg = 'Skipping, instances are delegated.'
+    msg = "Skipping, instances are delegated."
     patched_logger_warning.assert_called_once_with(msg)
 
     assert not _patched_ansible_destroy.called

@@ -29,4 +29,4 @@ class FilterModule(object):
     """FlterModule Class."""
 
     def filters(self):
-        return {'dependency_filter': filter}
+        return {"dependency_filter": filter}

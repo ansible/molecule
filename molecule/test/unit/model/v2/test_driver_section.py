@@ -26,17 +26,17 @@ from molecule.model import schema_v3
 @pytest.fixture
 def _model_driver_section_data():
     return {
-        'driver': {
-            'name': 'docker',
-            'provider': {'name': None},
-            'options': {'managed': True, 'foo': 'bar'},
-            'ssh_connection_options': ['foo', 'bar'],
-            'safe_files': ['foo', 'bar'],
+        "driver": {
+            "name": "docker",
+            "provider": {"name": None},
+            "options": {"managed": True, "foo": "bar"},
+            "ssh_connection_options": ["foo", "bar"],
+            "safe_files": ["foo", "bar"],
         }
     }
 
 
-@pytest.mark.parametrize('_config', ['_model_driver_section_data'], indirect=True)
+@pytest.mark.parametrize("_config", ["_model_driver_section_data"], indirect=True)
 def test_driver(_config):
     assert {} == schema_v3.validate(_config)
 
@@ -44,28 +44,28 @@ def test_driver(_config):
 @pytest.fixture
 def _model_driver_errors_section_data():
     return {
-        'driver': {
-            'name': int(),
-            'provider': {'name': int(), 'foo': 'bar'},
-            'options': {'managed': str()},
-            'ssh_connection_options': [int()],
-            'safe_files': [int()],
+        "driver": {
+            "name": int(),
+            "provider": {"name": int(), "foo": "bar"},
+            "options": {"managed": str()},
+            "ssh_connection_options": [int()],
+            "safe_files": [int()],
         }
     }
 
 
 @pytest.mark.parametrize(
-    '_config', ['_model_driver_errors_section_data'], indirect=True
+    "_config", ["_model_driver_errors_section_data"], indirect=True
 )
 def test_driver_has_errors(_config):
     x = {
-        'driver': [
+        "driver": [
             {
-                'safe_files': [{0: ['must be of string type']}],
-                'options': [{'managed': ['must be of boolean type']}],
-                'ssh_connection_options': [{0: ['must be of string type']}],
-                'name': ['must be of string type'],
-                'provider': [{'name': ['must be of string type']}],
+                "safe_files": [{0: ["must be of string type"]}],
+                "options": [{"managed": ["must be of boolean type"]}],
+                "ssh_connection_options": [{0: ["must be of string type"]}],
+                "name": ["must be of string type"],
+                "provider": [{"name": ["must be of string type"]}],
             }
         ]
     }
@@ -75,11 +75,11 @@ def test_driver_has_errors(_config):
 
 @pytest.fixture
 def _model_driver_provider_name_nullable_section_data():
-    return {'driver': {'provider': {'name': None}}}
+    return {"driver": {"provider": {"name": None}}}
 
 
 @pytest.mark.parametrize(
-    '_config', ['_model_driver_provider_name_nullable_section_data'], indirect=True
+    "_config", ["_model_driver_provider_name_nullable_section_data"], indirect=True
 )
 def test_driver_provider_name_nullable(_config):
     assert {} == schema_v3.validate(_config)
@@ -87,20 +87,20 @@ def test_driver_provider_name_nullable(_config):
 
 @pytest.fixture
 def _model_driver_allows_delegated_section_data():
-    return {'driver': {'name': 'delegated'}}
+    return {"driver": {"name": "delegated"}}
 
 
 @pytest.fixture
 def _model_driver_allows_docker_section_data():
-    return {'driver': {'name': 'docker'}}
+    return {"driver": {"name": "docker"}}
 
 
 ###
 @pytest.mark.parametrize(
-    '_config',
+    "_config",
     [
-        ('_model_driver_allows_delegated_section_data'),
-        ('_model_driver_allows_docker_section_data'),
+        ("_model_driver_allows_delegated_section_data"),
+        ("_model_driver_allows_docker_section_data"),
     ],
     indirect=True,
 )

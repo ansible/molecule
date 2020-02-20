@@ -42,7 +42,7 @@ def _env():
 
 @pytest.fixture
 def _keep_string():
-    return 'MOLECULE_'
+    return "MOLECULE_"
 
 
 def test_platforms_docker(_model_platforms_docker_section_data, _env, _keep_string):
@@ -70,12 +70,12 @@ def test_platforms_docker_has_errors(
     _model_platforms_docker_errors_section_data, _env, _keep_string
 ):
     x = {
-        'platforms': [
+        "platforms": [
             {
                 0: [
                     {
-                        'registry': [
-                            {'credentials': [{'password': ['must be of string type']}]}
+                        "registry": [
+                            {"credentials": [{"password": ["must be of string type"]}]}
                         ]
                     }
                 ]
@@ -116,35 +116,35 @@ def test_has_errors_when_molecule_env_var_referenced_in_unallowed_sections(
     _model_molecule_env_errors_section_data, _env, _keep_string
 ):
     x = {
-        'driver': [
+        "driver": [
             {
-                'name': [
-                    'cannot reference $MOLECULE special variables in this section',
-                    'unallowed value $MOLECULE_DRIVER_NAME',
+                "name": [
+                    "cannot reference $MOLECULE special variables in this section",
+                    "unallowed value $MOLECULE_DRIVER_NAME",
                 ]
             }
         ],
-        'dependency': [
+        "dependency": [
             {
-                'name': [
-                    'cannot reference $MOLECULE special variables in this section',
-                    'unallowed value $MOLECULE_DEPENDENCY_NAME',
+                "name": [
+                    "cannot reference $MOLECULE special variables in this section",
+                    "unallowed value $MOLECULE_DEPENDENCY_NAME",
                 ]
             }
         ],
-        'verifier': [
+        "verifier": [
             {
-                'name': [
-                    'cannot reference $MOLECULE special variables in this section',
-                    'unallowed value $MOLECULE_VERIFIER_NAME',
+                "name": [
+                    "cannot reference $MOLECULE special variables in this section",
+                    "unallowed value $MOLECULE_VERIFIER_NAME",
                 ],
             }
         ],
-        'provisioner': [
+        "provisioner": [
             {
-                'name': [
-                    'cannot reference $MOLECULE special variables in this section',
-                    'unallowed value $MOLECULE_PROVISIONER_NAME',
+                "name": [
+                    "cannot reference $MOLECULE special variables in this section",
+                    "unallowed value $MOLECULE_PROVISIONER_NAME",
                 ],
             }
         ],
