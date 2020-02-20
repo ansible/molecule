@@ -357,3 +357,23 @@ def _parallelize_platforms(config, run_uuid):
         return platform
 
     return [parallelize(platform) for platform in config['platforms']]
+
+
+def find_vcs_root(test, dirs=(".git", ".hg", ".svn"), default=None):
+    """Return current repository root directory."""
+    prev, test = None, os.path.abspath(test)
+    while prev != test:
+        if any(os.path.isdir(os.path.join(test, d)) for d in dirs):
+            return test
+        prev, test = test, os.path.abspath(os.path.join(test, os.pardir))
+    return default
+
+
+def lookup_config_file(filename):
+    """Return config file PATH."""
+    for path in [find_vcs_root(os.getcwd(), default='~'), '~']:
+        f = os.path.expanduser('%s/%s' % (path, filename))
+        if os.path.isfile(f):
+            LOG.info("Found config file %s", f)
+            return f
+    return f
