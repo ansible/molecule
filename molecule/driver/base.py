@@ -70,8 +70,8 @@ class Driver(object):
         :returns: dict
         """
         return {
-            'connection': 'ansible',
-            'ansible-inventory': self._config.provisioner.inventory_file,
+            "connection": "ansible",
+            "ansible-inventory": self._config.provisioner.inventory_file,
         }
 
     @abc.abstractproperty
@@ -140,23 +140,23 @@ class Driver(object):
 
     @property
     def options(self):
-        return self._config.config['driver']['options']
+        return self._config.config["driver"]["options"]
 
     @property
     def instance_config(self):
         return os.path.join(
-            self._config.scenario.ephemeral_directory, 'instance_config.yml'
+            self._config.scenario.ephemeral_directory, "instance_config.yml"
         )
 
     @property
     def ssh_connection_options(self):
-        if self._config.config['driver']['ssh_connection_options']:
-            return self._config.config['driver']['ssh_connection_options']
+        if self._config.config["driver"]["ssh_connection_options"]:
+            return self._config.config["driver"]["ssh_connection_options"]
         return self.default_ssh_connection_options
 
     @property
     def safe_files(self):
-        return self.default_safe_files + self._config.config['driver']['safe_files']
+        return self.default_safe_files + self._config.config["driver"]["safe_files"]
 
     @property
     def delegated(self):
@@ -165,7 +165,7 @@ class Driver(object):
 
         :returns: bool
         """
-        return self.name == 'delegated'
+        return self.name == "delegated"
 
     @property
     def managed(self):
@@ -174,7 +174,7 @@ class Driver(object):
 
         :returns: bool
         """
-        return self.options['managed']
+        return self.options["managed"]
 
     def status(self):
         """
@@ -192,7 +192,7 @@ class Driver(object):
         """
         status_list = []
         for platform in self._config.platforms.instances:
-            instance_name = platform['name']
+            instance_name = platform["name"]
             driver_name = self.name
             provisioner_name = self._config.provisioner.name
             scenario_name = self._config.scenario.name
@@ -212,11 +212,11 @@ class Driver(object):
 
     def _get_ssh_connection_options(self):
         return [
-            '-o UserKnownHostsFile=/dev/null',
-            '-o ControlMaster=auto',
-            '-o ControlPersist=60s',
-            '-o IdentitiesOnly=yes',
-            '-o StrictHostKeyChecking=no',
+            "-o UserKnownHostsFile=/dev/null",
+            "-o ControlMaster=auto",
+            "-o ControlPersist=60s",
+            "-o IdentitiesOnly=yes",
+            "-o StrictHostKeyChecking=no",
         ]
 
     def _created(self):
@@ -252,7 +252,7 @@ class Driver(object):
         p = os.path.abspath(
             os.path.join(
                 os.path.dirname(molecule.__file__),
-                'cookiecutter',
+                "cookiecutter",
                 "scenario",
                 "driver",
                 self.name,

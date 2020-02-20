@@ -82,7 +82,7 @@ class Shell(base.Base):
 
     @property
     def command(self):
-        return self._config.config['dependency']['command']
+        return self._config.config["dependency"]["command"]
 
     @property
     def default_options(self):
@@ -109,7 +109,7 @@ class Shell(base.Base):
 
     def execute(self):
         if not self.enabled:
-            msg = 'Skipping, dependency is disabled.'
+            msg = "Skipping, dependency is disabled."
             LOG.warning(msg)
             return
 
@@ -119,4 +119,4 @@ class Shell(base.Base):
         self.execute_with_retries()
 
     def _has_command_configured(self):
-        return 'command' in self._config.config['dependency']
+        return "command" in self._config.config["dependency"]

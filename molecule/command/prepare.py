@@ -90,49 +90,49 @@ class Prepare(base.Base):
         """
         self.print_info()
 
-        if self._config.state.prepared and not self._config.command_args.get('force'):
-            msg = 'Skipping, instances already prepared.'
+        if self._config.state.prepared and not self._config.command_args.get("force"):
+            msg = "Skipping, instances already prepared."
             LOG.warning(msg)
             return
 
         if not self._config.provisioner.playbooks.prepare:
-            msg = 'Skipping, prepare playbook not configured.'
+            msg = "Skipping, prepare playbook not configured."
             LOG.warning(msg)
             return
 
         self._config.provisioner.prepare()
-        self._config.state.change_state('prepared', True)
+        self._config.state.change_state("prepared", True)
 
 
 @base.click_command_ex()
 @click.pass_context
 @click.option(
-    '--scenario-name',
-    '-s',
+    "--scenario-name",
+    "-s",
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help='Name of the scenario to target. ({})'.format(
+    help="Name of the scenario to target. ({})".format(
         base.MOLECULE_DEFAULT_SCENARIO_NAME
     ),
 )
 @click.option(
-    '--driver-name',
-    '-d',
+    "--driver-name",
+    "-d",
     type=click.Choice([str(s) for s in drivers()]),
-    help='Name of driver to use. (docker)',
+    help="Name of driver to use. (docker)",
 )
 @click.option(
-    '--force/--no-force',
+    "--force/--no-force",
     default=False,
-    help='Enable or disable force mode. Default is disabled.',
+    help="Enable or disable force mode. Default is disabled.",
 )
 def prepare(ctx, scenario_name, driver_name, force):  # pragma: no cover
     """Use the provisioner to prepare the instances into a particular starting state."""
-    args = ctx.obj.get('args')
+    args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)
     command_args = {
-        'subcommand': subcommand,
-        'driver_name': driver_name,
-        'force': force,
+        "subcommand": subcommand,
+        "driver_name": driver_name,
+        "force": force,
     }
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)

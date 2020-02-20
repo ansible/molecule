@@ -25,7 +25,7 @@ from molecule.command import syntax
 
 @pytest.fixture
 def _patched_ansible_syntax(mocker):
-    return mocker.patch('molecule.provisioner.ansible.Ansible.syntax')
+    return mocker.patch("molecule.provisioner.ansible.Ansible.syntax")
 
 
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables

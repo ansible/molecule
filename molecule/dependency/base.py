@@ -54,24 +54,24 @@ class Base(object):
 
         try:
             util.run_command(self._sh_command, debug=self._config.debug)
-            msg = 'Dependency completed successfully.'
+            msg = "Dependency completed successfully."
             LOG.success(msg)
             return
         except sh.ErrorReturnCode:
             pass
 
         for counter in range(1, (self.RETRY + 1)):
-            msg = 'Retrying dependency ... {}/{} time(s)'.format(counter, self.RETRY)
+            msg = "Retrying dependency ... {}/{} time(s)".format(counter, self.RETRY)
             LOG.warning(msg)
 
-            msg = 'Sleeping {} seconds before retrying ...'.format(self.SLEEP)
+            msg = "Sleeping {} seconds before retrying ...".format(self.SLEEP)
             LOG.warning(msg)
             time.sleep(self.SLEEP)
             self.SLEEP += self.BACKOFF
 
             try:
                 util.run_command(self._sh_command, debug=self._config.debug)
-                msg = 'Dependency completed successfully.'
+                msg = "Dependency completed successfully."
                 LOG.success(msg)
                 return
             except sh.ErrorReturnCode as _exception:
@@ -113,20 +113,20 @@ class Base(object):
 
         :returns: str
         """
-        return self._config.config['dependency']['name']
+        return self._config.config["dependency"]["name"]
 
     @property
     def enabled(self):
-        return self._config.config['dependency']['enabled']
+        return self._config.config["dependency"]["enabled"]
 
     @property
     def options(self):
         return util.merge_dicts(
-            self.default_options, self._config.config['dependency']['options']
+            self.default_options, self._config.config["dependency"]["options"]
         )
 
     @property
     def env(self):
         return util.merge_dicts(
-            self.default_env, self._config.config['dependency']['env']
+            self.default_env, self._config.config["dependency"]["env"]
         )

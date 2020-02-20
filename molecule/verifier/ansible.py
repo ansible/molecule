@@ -61,7 +61,7 @@ class Ansible(Verifier):
 
     @property
     def name(self):
-        return 'ansible'
+        return "ansible"
 
     @property
     def default_options(self):
@@ -74,22 +74,22 @@ class Ansible(Verifier):
 
     def execute(self):
         if not self.enabled:
-            msg = 'Skipping, verifier is disabled.'
+            msg = "Skipping, verifier is disabled."
             log.warning(msg)
             return
 
-        msg = 'Running Ansible Verifier'
+        msg = "Running Ansible Verifier"
         log.info(msg)
 
         self._config.provisioner.verify()
 
-        msg = 'Verifier completed successfully.'
+        msg = "Verifier completed successfully."
         log.success(msg)
 
     def schema(self):
         return {
-            'verifier': {
-                'type': 'dict',
-                'schema': {'name': {'type': 'string', 'allowed': ['ansible']}},
+            "verifier": {
+                "type": "dict",
+                "schema": {"name": {"type": "string", "allowed": ["ansible"]}},
             }
         }

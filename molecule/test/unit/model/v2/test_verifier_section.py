@@ -26,18 +26,18 @@ from molecule.model import schema_v3
 @pytest.fixture
 def _model_verifier_section_data():
     return {
-        'verifier': {
-            'name': 'testinfra',
-            'enabled': True,
-            'directory': 'foo',
-            'options': {'foo': 'bar'},
-            'env': {'FOO': 'foo', 'FOO_BAR': 'foo_bar'},
-            'additional_files_or_dirs': ['foo'],
+        "verifier": {
+            "name": "testinfra",
+            "enabled": True,
+            "directory": "foo",
+            "options": {"foo": "bar"},
+            "env": {"FOO": "foo", "FOO_BAR": "foo_bar"},
+            "additional_files_or_dirs": ["foo"],
         }
     }
 
 
-@pytest.mark.parametrize('_config', ['_model_verifier_section_data'], indirect=True)
+@pytest.mark.parametrize("_config", ["_model_verifier_section_data"], indirect=True)
 def test_verifier(_config):
     assert {} == schema_v3.validate(_config)
 
@@ -45,35 +45,35 @@ def test_verifier(_config):
 @pytest.fixture
 def _model_verifier_errors_section_data():
     return {
-        'verifier': {
-            'name': int(),
-            'enabled': str(),
-            'directory': int(),
-            'options': [],
-            'env': {'foo': 'foo', 'foo-bar': 'foo-bar'},
-            'additional_files_or_dirs': [int()],
+        "verifier": {
+            "name": int(),
+            "enabled": str(),
+            "directory": int(),
+            "options": [],
+            "env": {"foo": "foo", "foo-bar": "foo-bar"},
+            "additional_files_or_dirs": [int()],
         }
     }
 
 
 @pytest.mark.parametrize(
-    '_config', ['_model_verifier_errors_section_data'], indirect=True
+    "_config", ["_model_verifier_errors_section_data"], indirect=True
 )
 def test_verifier_has_errors(_config):
     x = {
-        'verifier': [
+        "verifier": [
             {
-                'name': ['must be of string type'],
-                'enabled': ['must be of boolean type'],
-                'env': [
+                "name": ["must be of string type"],
+                "enabled": ["must be of boolean type"],
+                "env": [
                     {
-                        'foo': ["value does not match regex '^[A-Z0-9_-]+$'"],
-                        'foo-bar': ["value does not match regex '^[A-Z0-9_-]+$'"],
+                        "foo": ["value does not match regex '^[A-Z0-9_-]+$'"],
+                        "foo-bar": ["value does not match regex '^[A-Z0-9_-]+$'"],
                     }
                 ],
-                'directory': ['must be of string type'],
-                'additional_files_or_dirs': [{0: ['must be of string type']}],
-                'options': ['must be of dict type'],
+                "directory": ["must be of string type"],
+                "additional_files_or_dirs": [{0: ["must be of string type"]}],
+                "options": ["must be of dict type"],
             }
         ]
     }
@@ -83,19 +83,19 @@ def test_verifier_has_errors(_config):
 
 @pytest.fixture
 def _model_verifier_allows_testinfra_section_data():
-    return {'verifier': {'name': 'testinfra'}}
+    return {"verifier": {"name": "testinfra"}}
 
 
 @pytest.fixture
 def _model_verifier_allows_ansible_section_data():
-    return {'verifier': {'name': 'ansible'}}
+    return {"verifier": {"name": "ansible"}}
 
 
 @pytest.mark.parametrize(
-    '_config',
+    "_config",
     [
-        ('_model_verifier_allows_testinfra_section_data'),
-        ('_model_verifier_allows_ansible_section_data'),
+        ("_model_verifier_allows_testinfra_section_data"),
+        ("_model_verifier_allows_ansible_section_data"),
     ],
     indirect=True,
 )

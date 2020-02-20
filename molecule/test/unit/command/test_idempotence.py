@@ -25,7 +25,7 @@ from molecule.command import idempotence
 
 @pytest.fixture
 def _patched_is_idempotent(mocker):
-    return mocker.patch('molecule.command.idempotence.Idempotence._is_idempotent')
+    return mocker.patch("molecule.command.idempotence.Idempotence._is_idempotent")
 
 
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
@@ -33,7 +33,7 @@ def _patched_is_idempotent(mocker):
 # throughout patched.assert_called unit tests.
 @pytest.fixture
 def _instance(patched_config_validate, config_instance):
-    config_instance.state.change_state('converged', True)
+    config_instance.state.change_state("converged", True)
 
     return idempotence.Idempotence(config_instance)
 
@@ -53,22 +53,22 @@ def test_execute(
 
     patched_ansible_converge.assert_called_once_with(out=None, err=None)
 
-    _patched_is_idempotent.assert_called_once_with('patched-ansible-converge-stdout')
+    _patched_is_idempotent.assert_called_once_with("patched-ansible-converge-stdout")
 
-    msg = 'Idempotence completed successfully.'
+    msg = "Idempotence completed successfully."
     patched_logger_success.assert_called_once_with(msg)
 
 
 def test_execute_raises_when_not_converged(
     patched_logger_critical, patched_ansible_converge, _instance
 ):
-    _instance._config.state.change_state('converged', False)
+    _instance._config.state.change_state("converged", False)
     with pytest.raises(SystemExit) as e:
         _instance.execute()
 
     assert 1 == e.value.code
 
-    msg = 'Instances not converged.  Please converge instances first.'
+    msg = "Instances not converged.  Please converge instances first."
     patched_logger_critical.assert_called_once_with(msg)
 
 
@@ -85,7 +85,7 @@ def test_execute_raises_when_fails_idempotence(
 
     assert 1 == e.value.code
 
-    msg = 'Idempotence test failed because of the following tasks:\n'
+    msg = "Idempotence test failed because of the following tasks:\n"
     patched_logger_critical.assert_called_once_with(msg)
 
 
@@ -145,6 +145,6 @@ check-command-02: ok=2    changed=1    unreachable=0    failed=0
     result = _instance._non_idempotent_tasks(output)
 
     assert result == [
-        '* [check-command-01] => Idempotence test',
-        '* [check-command-02] => Idempotence test',
+        "* [check-command-01] => Idempotence test",
+        "* [check-command-02] => Idempotence test",
     ]

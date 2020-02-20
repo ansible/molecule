@@ -62,13 +62,13 @@ class Role(base.Base):
 
         :return: None
         """
-        role_name = self._command_args['role_name']
+        role_name = self._command_args["role_name"]
         role_directory = os.getcwd()
-        msg = 'Initializing new role {}...'.format(role_name)
+        msg = "Initializing new role {}...".format(role_name)
         LOG.info(msg)
 
         if os.path.isdir(role_name):
-            msg = ('The directory {} exists. ' 'Cannot create new role.').format(
+            msg = ("The directory {} exists. " "Cannot create new role.").format(
                 role_name
             )
             util.sysexit_with_message(msg)
@@ -83,53 +83,53 @@ class Role(base.Base):
 
         scenario_base_directory = os.path.join(role_directory, role_name)
         templates = [
-            api.drivers()[self._command_args['driver_name']].template_dir(),
-            api.verifiers()[self._command_args['verifier_name']].template_dir(),
+            api.drivers()[self._command_args["driver_name"]].template_dir(),
+            api.verifiers()[self._command_args["verifier_name"]].template_dir(),
         ]
         for template in templates:
             self._process_templates(
                 template, self._command_args, scenario_base_directory
             )
-        self._process_templates('molecule', self._command_args, role_directory)
+        self._process_templates("molecule", self._command_args, role_directory)
 
         role_directory = os.path.join(role_directory, role_name)
-        msg = 'Initialized role in {} successfully.'.format(role_directory)
+        msg = "Initialized role in {} successfully.".format(role_directory)
         LOG.success(msg)
 
 
 @command_base.click_command_ex()
 @click.pass_context
 @click.option(
-    '--dependency-name',
-    type=click.Choice(['galaxy']),
-    default='galaxy',
-    help='Name of dependency to initialize. (galaxy)',
+    "--dependency-name",
+    type=click.Choice(["galaxy"]),
+    default="galaxy",
+    help="Name of dependency to initialize. (galaxy)",
 )
 @click.option(
-    '--driver-name',
-    '-d',
+    "--driver-name",
+    "-d",
     type=click.Choice([str(s) for s in api.drivers()]),
-    default='docker',
-    help='Name of driver to initialize. (docker)',
+    default="docker",
+    help="Name of driver to initialize. (docker)",
 )
 @click.option(
-    '--lint-name',
-    type=click.Choice(['yamllint']),
-    default='yamllint',
-    help='Name of lint to initialize. (yamllint)',
+    "--lint-name",
+    type=click.Choice(["yamllint"]),
+    default="yamllint",
+    help="Name of lint to initialize. (yamllint)",
 )
 @click.option(
-    '--provisioner-name',
-    type=click.Choice(['ansible']),
-    default='ansible',
-    help='Name of provisioner to initialize. (ansible)',
+    "--provisioner-name",
+    type=click.Choice(["ansible"]),
+    default="ansible",
+    help="Name of provisioner to initialize. (ansible)",
 )
-@click.argument('ROLE-NAME', required=True)
+@click.argument("ROLE-NAME", required=True)
 @click.option(
-    '--verifier-name',
+    "--verifier-name",
     type=click.Choice([str(s) for s in api.verifiers()]),
-    default='ansible',
-    help='Name of verifier to initialize. (ansible)',
+    default="ansible",
+    help="Name of verifier to initialize. (ansible)",
 )
 def role(
     ctx,
@@ -142,14 +142,14 @@ def role(
 ):  # pragma: no cover
     """Initialize a new role for use with Molecule."""
     command_args = {
-        'dependency_name': dependency_name,
-        'driver_name': driver_name,
-        'lint_name': lint_name,
-        'provisioner_name': provisioner_name,
-        'role_name': role_name,
-        'scenario_name': command_base.MOLECULE_DEFAULT_SCENARIO_NAME,
-        'subcommand': __name__,
-        'verifier_name': verifier_name,
+        "dependency_name": dependency_name,
+        "driver_name": driver_name,
+        "lint_name": lint_name,
+        "provisioner_name": provisioner_name,
+        "role_name": role_name,
+        "scenario_name": command_base.MOLECULE_DEFAULT_SCENARIO_NAME,
+        "subcommand": __name__,
+        "verifier_name": verifier_name,
     }
 
     r = Role(command_args)

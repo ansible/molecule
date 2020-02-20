@@ -78,7 +78,7 @@ class Base(object):
                     os.path.dirname(__file__),
                     os.path.pardir,
                     os.path.pardir,
-                    'cookiecutter',
+                    "cookiecutter",
                     template_dir,
                 )
             )

@@ -29,24 +29,24 @@ from molecule.command import side_effect
 @pytest.fixture
 def _command_provisioner_section_with_side_effect_data():
     return {
-        'provisioner': {
-            'name': 'ansible',
-            'playbooks': {'side_effect': 'side_effect.yml'},
+        "provisioner": {
+            "name": "ansible",
+            "playbooks": {"side_effect": "side_effect.yml"},
         }
     }
 
 
 @pytest.fixture
 def _patched_ansible_side_effect(mocker):
-    return mocker.patch('molecule.provisioner.ansible.Ansible.side_effect')
+    return mocker.patch("molecule.provisioner.ansible.Ansible.side_effect")
 
 
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.mark.parametrize(
-    'config_instance',
-    ['_command_provisioner_section_with_side_effect_data'],
+    "config_instance",
+    ["_command_provisioner_section_with_side_effect_data"],
     indirect=True,
 )
 def test_execute(
@@ -56,8 +56,8 @@ def test_execute(
     patched_config_validate,
     config_instance,
 ):
-    pb = os.path.join(config_instance.scenario.directory, 'side_effect.yml')
-    util.write_file(pb, '')
+    pb = os.path.join(config_instance.scenario.directory, "side_effect.yml")
+    util.write_file(pb, "")
 
     se = side_effect.SideEffect(config_instance)
     se.execute()
@@ -75,7 +75,7 @@ def test_execute_skips_when_playbook_not_configured(
     se = side_effect.SideEffect(config_instance)
     se.execute()
 
-    msg = 'Skipping, side effect playbook not configured.'
+    msg = "Skipping, side effect playbook not configured."
     patched_logger_warning.assert_called_once_with(msg)
 
     assert not _patched_ansible_side_effect.called

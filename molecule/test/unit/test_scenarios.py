@@ -33,7 +33,7 @@ def _instance(config_instance):
     config_instance_1 = copy.deepcopy(config_instance)
 
     config_instance_2 = copy.deepcopy(config_instance)
-    config_instance_2.config['scenario']['name'] = 'foo'
+    config_instance_2.config["scenario"]["name"] = "foo"
 
     return scenarios.Scenarios([config_instance_1, config_instance_2])
 
@@ -57,20 +57,20 @@ def test_scenarios_private_member(_instance):
 def test_scenarios_iterator(_instance):
     s = [scenario for scenario in _instance]
 
-    assert 'default' == s[0].name
-    assert 'foo' == s[1].name
+    assert "default" == s[0].name
+    assert "foo" == s[1].name
 
 
 def test_all_property(_instance):
     result = _instance.all
 
     assert 2 == len(result)
-    assert 'default' == result[0].name
-    assert 'foo' == result[1].name
+    assert "default" == result[0].name
+    assert "foo" == result[1].name
 
 
 def test_all_filters_on_scenario_name_property(_instance):
-    _instance._scenario_name = 'default'
+    _instance._scenario_name = "default"
 
     assert 1 == len(_instance.all)
 
@@ -78,7 +78,7 @@ def test_all_filters_on_scenario_name_property(_instance):
 def test_print_matrix(mocker, patched_logger_info, patched_logger_out, _instance):
     _instance.print_matrix()
 
-    msg = 'Test matrix'
+    msg = "Test matrix"
     patched_logger_info(msg)
 
     matrix_out = u"""
@@ -112,17 +112,17 @@ def test_print_matrix(mocker, patched_logger_info, patched_logger_out, _instance
     └── destroy
 """
     assert matrix_out == patched_logger_out.mock_calls[0][1][0]
-    assert mocker.call('') == patched_logger_out.mock_calls[1]
+    assert mocker.call("") == patched_logger_out.mock_calls[1]
 
 
 def test_verify_does_not_raise_when_found(_instance):
-    _instance._scenario_name = 'default'
+    _instance._scenario_name = "default"
 
     assert _instance._verify() is None
 
 
 def test_verify_raises_when_scenario_not_found(_instance, patched_logger_critical):
-    _instance._scenario_name = 'invalid'
+    _instance._scenario_name = "invalid"
     with pytest.raises(SystemExit) as e:
         _instance._verify()
 
@@ -133,95 +133,95 @@ def test_verify_raises_when_scenario_not_found(_instance, patched_logger_critica
 
 
 def test_filter_for_scenario(_instance):
-    _instance._scenario_name = 'default'
+    _instance._scenario_name = "default"
     result = _instance._filter_for_scenario()
     assert 1 == len(result)
-    assert 'default' == result[0].name
+    assert "default" == result[0].name
 
-    _instance._scenario_name = 'invalid'
+    _instance._scenario_name = "invalid"
     result = _instance._filter_for_scenario()
     assert [] == result
 
 
 def test_get_matrix(_instance):
     matrix = {
-        'default': {
-            'lint': ['dependency', 'lint'],
-            'idempotence': ['idempotence'],
-            'syntax': ['syntax'],
-            'converge': ['dependency', 'create', 'prepare', 'converge'],
-            'cleanup': ['cleanup'],
-            'check': [
-                'dependency',
-                'cleanup',
-                'destroy',
-                'create',
-                'prepare',
-                'converge',
-                'check',
-                'cleanup',
-                'destroy',
+        "default": {
+            "lint": ["dependency", "lint"],
+            "idempotence": ["idempotence"],
+            "syntax": ["syntax"],
+            "converge": ["dependency", "create", "prepare", "converge"],
+            "cleanup": ["cleanup"],
+            "check": [
+                "dependency",
+                "cleanup",
+                "destroy",
+                "create",
+                "prepare",
+                "converge",
+                "check",
+                "cleanup",
+                "destroy",
             ],
-            'verify': ['verify'],
-            'create': ['dependency', 'create', 'prepare'],
-            'prepare': ['prepare'],
-            'side_effect': ['side_effect'],
-            'dependency': ['dependency'],
-            'test': [
-                'dependency',
-                'lint',
-                'cleanup',
-                'destroy',
-                'syntax',
-                'create',
-                'prepare',
-                'converge',
-                'idempotence',
-                'side_effect',
-                'verify',
-                'cleanup',
-                'destroy',
+            "verify": ["verify"],
+            "create": ["dependency", "create", "prepare"],
+            "prepare": ["prepare"],
+            "side_effect": ["side_effect"],
+            "dependency": ["dependency"],
+            "test": [
+                "dependency",
+                "lint",
+                "cleanup",
+                "destroy",
+                "syntax",
+                "create",
+                "prepare",
+                "converge",
+                "idempotence",
+                "side_effect",
+                "verify",
+                "cleanup",
+                "destroy",
             ],
-            'destroy': ['dependency', 'cleanup', 'destroy'],
+            "destroy": ["dependency", "cleanup", "destroy"],
         },
-        'foo': {
-            'lint': ['dependency', 'lint'],
-            'idempotence': ['idempotence'],
-            'syntax': ['syntax'],
-            'converge': ['dependency', 'create', 'prepare', 'converge'],
-            'check': [
-                'dependency',
-                'cleanup',
-                'destroy',
-                'create',
-                'prepare',
-                'converge',
-                'check',
-                'cleanup',
-                'destroy',
+        "foo": {
+            "lint": ["dependency", "lint"],
+            "idempotence": ["idempotence"],
+            "syntax": ["syntax"],
+            "converge": ["dependency", "create", "prepare", "converge"],
+            "check": [
+                "dependency",
+                "cleanup",
+                "destroy",
+                "create",
+                "prepare",
+                "converge",
+                "check",
+                "cleanup",
+                "destroy",
             ],
-            'cleanup': ['cleanup'],
-            'create': ['dependency', 'create', 'prepare'],
-            'verify': ['verify'],
-            'prepare': ['prepare'],
-            'side_effect': ['side_effect'],
-            'dependency': ['dependency'],
-            'test': [
-                'dependency',
-                'lint',
-                'cleanup',
-                'destroy',
-                'syntax',
-                'create',
-                'prepare',
-                'converge',
-                'idempotence',
-                'side_effect',
-                'verify',
-                'cleanup',
-                'destroy',
+            "cleanup": ["cleanup"],
+            "create": ["dependency", "create", "prepare"],
+            "verify": ["verify"],
+            "prepare": ["prepare"],
+            "side_effect": ["side_effect"],
+            "dependency": ["dependency"],
+            "test": [
+                "dependency",
+                "lint",
+                "cleanup",
+                "destroy",
+                "syntax",
+                "create",
+                "prepare",
+                "converge",
+                "idempotence",
+                "side_effect",
+                "verify",
+                "cleanup",
+                "destroy",
             ],
-            'destroy': ['dependency', 'cleanup', 'destroy'],
+            "destroy": ["dependency", "cleanup", "destroy"],
         },
     }
 

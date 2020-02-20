@@ -70,14 +70,14 @@ class Gilt(base.Base):
         super(Gilt, self).__init__(config)
         self._sh_command = None
 
-        self.command = 'gilt'
+        self.command = "gilt"
 
     @property
     def default_options(self):
-        config = os.path.join(self._config.scenario.directory, 'gilt.yml')
-        d = {'config': config}
+        config = os.path.join(self._config.scenario.directory, "gilt.yml")
+        d = {"config": config}
         if self._config.debug:
-            d['debug'] = True
+            d["debug"] = True
 
         return d
 
@@ -93,17 +93,17 @@ class Gilt(base.Base):
         """
         self._sh_command = getattr(sh, self.command)
         self._sh_command = self._sh_command.bake(
-            self.options, 'overlay', _env=self.env, _out=LOG.out, _err=LOG.error
+            self.options, "overlay", _env=self.env, _out=LOG.out, _err=LOG.error
         )
 
     def execute(self):
         if not self.enabled:
-            msg = 'Skipping, dependency is disabled.'
+            msg = "Skipping, dependency is disabled."
             LOG.warning(msg)
             return
 
         if not self._has_requirements_file():
-            msg = 'Skipping, missing the requirements file.'
+            msg = "Skipping, missing the requirements file."
             LOG.warning(msg)
             return
 
@@ -113,7 +113,7 @@ class Gilt(base.Base):
         self.execute_with_retries()
 
     def _config_file(self):
-        return self.options.get('config')
+        return self.options.get("config")
 
     def _has_requirements_file(self):
         return os.path.isfile(self._config_file())

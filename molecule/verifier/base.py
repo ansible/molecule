@@ -88,25 +88,25 @@ class Verifier(object):
 
     @property
     def enabled(self):
-        return self._config.config['verifier']['enabled']
+        return self._config.config["verifier"]["enabled"]
 
     @property
     def directory(self):
         return os.path.join(
             self._config.scenario.directory,
-            self._config.config['verifier'].get('directory', 'molecule'),
+            self._config.config["verifier"].get("directory", "molecule"),
         )
 
     @property
     def options(self):
         return util.merge_dicts(
-            self.default_options, self._config.config['verifier']['options']
+            self.default_options, self._config.config["verifier"]["options"]
         )
 
     @property
     def env(self):
         return util.merge_dicts(
-            self.default_env, self._config.config['verifier']['env']
+            self.default_env, self._config.config["verifier"]["env"]
         )
 
     def __eq__(self, other):

@@ -72,11 +72,11 @@ class Base(object):
 
         :returns: str
         """
-        return self._config.config['lint']
+        return self._config.config["lint"]
 
     @property
     def enabled(self):
-        return self._config.config['lint']
+        return self._config.config["lint"]
 
     @property
     def options(self):

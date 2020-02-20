@@ -74,12 +74,12 @@ class Scenarios(object):
         return scenarios
 
     def print_matrix(self):
-        msg = 'Test matrix'
+        msg = "Test matrix"
         LOG.info(msg)
 
         tree = tuple(
             (
-                '',
+                "",
                 [
                     (scenario.name, [(action, []) for action in scenario.sequence])
                     for scenario in self.all
@@ -94,7 +94,7 @@ class Scenarios(object):
         )
 
         LOG.out(tf)
-        LOG.out('')
+        LOG.out("")
 
     def _verify(self):
         """
@@ -104,7 +104,7 @@ class Scenarios(object):
         """
         scenario_names = [c.scenario.name for c in self._configs]
         if self._scenario_name not in scenario_names:
-            msg = ("Scenario '{}' not found.  " 'Exiting.').format(self._scenario_name)
+            msg = ("Scenario '{}' not found.  " "Exiting.").format(self._scenario_name)
             util.sysexit_with_message(msg)
 
     def _filter_for_scenario(self):
@@ -142,19 +142,19 @@ class Scenarios(object):
         return dict(
             {
                 scenario.name: {
-                    'check': scenario.check_sequence,
-                    'cleanup': scenario.cleanup_sequence,
-                    'converge': scenario.converge_sequence,
-                    'create': scenario.create_sequence,
-                    'dependency': scenario.dependency_sequence,
-                    'destroy': scenario.destroy_sequence,
-                    'idempotence': scenario.idempotence_sequence,
-                    'lint': scenario.lint_sequence,
-                    'prepare': scenario.prepare_sequence,
-                    'side_effect': scenario.side_effect_sequence,
-                    'syntax': scenario.syntax_sequence,
-                    'test': scenario.test_sequence,
-                    'verify': scenario.verify_sequence,
+                    "check": scenario.check_sequence,
+                    "cleanup": scenario.cleanup_sequence,
+                    "converge": scenario.converge_sequence,
+                    "create": scenario.create_sequence,
+                    "dependency": scenario.dependency_sequence,
+                    "destroy": scenario.destroy_sequence,
+                    "idempotence": scenario.idempotence_sequence,
+                    "lint": scenario.lint_sequence,
+                    "prepare": scenario.prepare_sequence,
+                    "side_effect": scenario.side_effect_sequence,
+                    "syntax": scenario.syntax_sequence,
+                    "test": scenario.test_sequence,
+                    "verify": scenario.verify_sequence,
                 }
                 for scenario in self.all
             }

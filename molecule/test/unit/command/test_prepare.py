@@ -28,7 +28,7 @@ from molecule.command import prepare
 
 @pytest.fixture
 def _patched_ansible_prepare(mocker):
-    return mocker.patch('molecule.provisioner.ansible.Ansible.prepare')
+    return mocker.patch("molecule.provisioner.ansible.Ansible.prepare")
 
 
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
@@ -41,8 +41,8 @@ def test_execute(
     patched_config_validate,
     config_instance,
 ):
-    pb = os.path.join(config_instance.scenario.directory, 'prepare.yml')
-    util.write_file(pb, '')
+    pb = os.path.join(config_instance.scenario.directory, "prepare.yml")
+    util.write_file(pb, "")
 
     p = prepare.Prepare(config_instance)
     p.execute()
@@ -58,11 +58,11 @@ def test_execute(
 def test_execute_skips_when_instances_already_prepared(
     patched_logger_warning, _patched_ansible_prepare, config_instance
 ):
-    config_instance.state.change_state('prepared', True)
+    config_instance.state.change_state("prepared", True)
     p = prepare.Prepare(config_instance)
     p.execute()
 
-    msg = 'Skipping, instances already prepared.'
+    msg = "Skipping, instances already prepared."
     patched_logger_warning.assert_called_once_with(msg)
 
     assert not _patched_ansible_prepare.called
@@ -75,7 +75,7 @@ def test_execute_skips_when_playbook_not_configured(
     p = prepare.Prepare(config_instance)
     p.execute()
 
-    msg = 'Skipping, prepare playbook not configured.'
+    msg = "Skipping, prepare playbook not configured."
     patched_logger_warning.assert_called_once_with(msg)
 
     assert not _patched_ansible_prepare.called
@@ -84,11 +84,11 @@ def test_execute_skips_when_playbook_not_configured(
 def test_execute_when_instances_already_prepared_but_force_provided(
     mocker, patched_logger_warning, _patched_ansible_prepare, config_instance
 ):
-    pb = os.path.join(config_instance.scenario.directory, 'prepare.yml')
-    util.write_file(pb, '')
+    pb = os.path.join(config_instance.scenario.directory, "prepare.yml")
+    util.write_file(pb, "")
 
-    config_instance.state.change_state('prepared', True)
-    config_instance.command_args = {'force': True}
+    config_instance.state.change_state("prepared", True)
+    config_instance.command_args = {"force": True}
 
     p = prepare.Prepare(config_instance)
     p.execute()

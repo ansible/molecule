@@ -27,7 +27,7 @@ from molecule.provisioner import ansible_playbook
 
 @pytest.fixture
 def _instance(config_instance):
-    _instance = ansible_playbook.AnsiblePlaybook('playbook', config_instance)
+    _instance = ansible_playbook.AnsiblePlaybook("playbook", config_instance)
 
     return _instance
 
@@ -42,7 +42,7 @@ def test_ansible_command_private_member(_instance):
 
 
 def test_ansible_playbook_private_member(_instance):
-    assert 'playbook' == _instance._playbook
+    assert "playbook" == _instance._playbook
 
 
 def test_config_private_member(_instance):
@@ -56,9 +56,9 @@ def test_bake(_inventory_directory, _instance):
 
     x = [
         str(sh.ansible_playbook),
-        '--become',
-        '--inventory={}'.format(_inventory_directory),
-        '--skip-tags=molecule-notest,notest',
+        "--become",
+        "--inventory={}".format(_inventory_directory),
+        "--skip-tags=molecule-notest,notest",
         pb,
     ]
     result = str(_instance._ansible_command).split()
@@ -73,9 +73,9 @@ def test_bake_removes_non_interactive_options_from_non_converge_playbooks(
 
     x = [
         str(sh.ansible_playbook),
-        '--inventory={}'.format(_inventory_directory),
-        '--skip-tags=molecule-notest,notest',
-        'playbook',
+        "--inventory={}".format(_inventory_directory),
+        "--skip-tags=molecule-notest,notest",
+        "playbook",
     ]
 
     result = str(_instance._ansible_command).split()
@@ -84,19 +84,19 @@ def test_bake_removes_non_interactive_options_from_non_converge_playbooks(
 
 
 def test_bake_has_ansible_args(_inventory_directory, _instance):
-    _instance._config.ansible_args = ('foo', 'bar')
-    _instance._config.config['provisioner']['ansible_args'] = ('frob', 'nitz')
+    _instance._config.ansible_args = ("foo", "bar")
+    _instance._config.config["provisioner"]["ansible_args"] = ("frob", "nitz")
     _instance.bake()
 
     x = [
         str(sh.ansible_playbook),
-        '--inventory={}'.format(_inventory_directory),
-        '--skip-tags=molecule-notest,notest',
-        'playbook',
-        'frob',
-        'nitz',
-        'foo',
-        'bar',
+        "--inventory={}".format(_inventory_directory),
+        "--skip-tags=molecule-notest,notest",
+        "playbook",
+        "frob",
+        "nitz",
+        "foo",
+        "bar",
     ]
 
     result = str(_instance._ansible_command).split()
@@ -105,16 +105,16 @@ def test_bake_has_ansible_args(_inventory_directory, _instance):
 
 
 def test_bake_does_not_have_ansible_args(_inventory_directory, _instance):
-    for action in ['create', 'destroy']:
-        _instance._config.ansible_args = ('foo', 'bar')
+    for action in ["create", "destroy"]:
+        _instance._config.ansible_args = ("foo", "bar")
         _instance._config.action = action
         _instance.bake()
 
         x = [
             str(sh.ansible_playbook),
-            '--inventory={}'.format(_inventory_directory),
-            '--skip-tags=molecule-notest,notest',
-            'playbook',
+            "--inventory={}".format(_inventory_directory),
+            "--skip-tags=molecule-notest,notest",
+            "playbook",
         ]
 
         result = str(_instance._ansible_command).split()
@@ -123,14 +123,14 @@ def test_bake_does_not_have_ansible_args(_inventory_directory, _instance):
 
 
 def test_bake_idem_does_have_skip_tag(_inventory_directory, _instance):
-    _instance._config.action = 'idempotence'
+    _instance._config.action = "idempotence"
     _instance.bake()
 
     x = [
         str(sh.ansible_playbook),
-        '--inventory={}'.format(_inventory_directory),
-        '--skip-tags=molecule-notest,notest,molecule-idempotence-notest',
-        'playbook',
+        "--inventory={}".format(_inventory_directory),
+        "--skip-tags=molecule-notest,notest,molecule-idempotence-notest",
+        "playbook",
     ]
 
     result = str(_instance._ansible_command).split()
@@ -139,11 +139,11 @@ def test_bake_idem_does_have_skip_tag(_inventory_directory, _instance):
 
 
 def test_execute(patched_run_command, _instance):
-    _instance._ansible_command = 'patched-command'
+    _instance._ansible_command = "patched-command"
     result = _instance.execute()
 
-    patched_run_command.assert_called_once_with('patched-command', debug=False)
-    assert 'patched-run-command-stdout' == result
+    patched_run_command.assert_called_once_with("patched-command", debug=False)
+    assert "patched-run-command-stdout" == result
 
 
 def test_execute_bakes(_inventory_directory, patched_run_command, _instance):
@@ -153,9 +153,9 @@ def test_execute_bakes(_inventory_directory, patched_run_command, _instance):
 
     x = [
         str(sh.ansible_playbook),
-        '--inventory={}'.format(_inventory_directory),
-        '--skip-tags=molecule-notest,notest',
-        'playbook',
+        "--inventory={}".format(_inventory_directory),
+        "--skip-tags=molecule-notest,notest",
+        "playbook",
     ]
 
     result = str(patched_run_command.mock_calls[0][1][0]).split()
@@ -166,18 +166,18 @@ def test_execute_bakes(_inventory_directory, patched_run_command, _instance):
 def test_execute_bakes_with_ansible_args(
     _inventory_directory, patched_run_command, _instance
 ):
-    _instance._config.ansible_args = ('--foo', '--bar')
+    _instance._config.ansible_args = ("--foo", "--bar")
     _instance.execute()
 
     assert _instance._ansible_command is not None
 
     x = [
         str(sh.ansible_playbook),
-        '--inventory={}'.format(_inventory_directory),
-        '--skip-tags=molecule-notest,notest',
-        'playbook',
-        '--foo',
-        '--bar',
+        "--inventory={}".format(_inventory_directory),
+        "--skip-tags=molecule-notest,notest",
+        "playbook",
+        "--foo",
+        "--bar",
     ]
 
     result = str(patched_run_command.mock_calls[0][1][0]).split()
@@ -189,26 +189,26 @@ def test_executes_catches_and_exits_return_code_with_stdout(
     patched_run_command, patched_logger_critical, _instance
 ):
     patched_run_command.side_effect = sh.ErrorReturnCode_1(
-        sh.ansible_playbook, b'out', b'err'
+        sh.ansible_playbook, b"out", b"err"
     )
     with pytest.raises(SystemExit) as e:
         _instance.execute()
 
     assert 1 == e.value.code
 
-    msg = 'out'
+    msg = "out"
     patched_logger_critical.assert_called_once_with(msg)
 
 
 def test_add_cli_arg(_instance):
     assert {} == _instance._cli
 
-    _instance.add_cli_arg('foo', 'bar')
-    assert {'foo': 'bar'} == _instance._cli
+    _instance.add_cli_arg("foo", "bar")
+    assert {"foo": "bar"} == _instance._cli
 
 
 def test_add_env_arg(_instance):
-    assert 'foo' not in _instance._env
+    assert "foo" not in _instance._env
 
-    _instance.add_env_arg('foo', 'bar')
-    assert 'bar' == _instance._env['foo']
+    _instance.add_env_arg("foo", "bar")
+    assert "bar" == _instance._env["foo"]

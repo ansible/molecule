@@ -28,7 +28,7 @@ from molecule import util
 
 
 LOG = logger.get_logger(__name__)
-MOLECULE_PARALLEL = os.environ.get('MOLECULE_PARALLEL', False)
+MOLECULE_PARALLEL = os.environ.get("MOLECULE_PARALLEL", False)
 
 
 class Check(base.Base):
@@ -87,24 +87,24 @@ class Check(base.Base):
 @base.click_command_ex()
 @click.pass_context
 @click.option(
-    '--scenario-name',
-    '-s',
+    "--scenario-name",
+    "-s",
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help='Name of the scenario to target. ({})'.format(
+    help="Name of the scenario to target. ({})".format(
         base.MOLECULE_DEFAULT_SCENARIO_NAME
     ),
 )
 @click.option(
-    '--parallel/--no-parallel',
+    "--parallel/--no-parallel",
     default=MOLECULE_PARALLEL,
-    help='Enable or disable parallel mode. Default is disabled.',
+    help="Enable or disable parallel mode. Default is disabled.",
 )
 def check(ctx, scenario_name, parallel):  # pragma: no cover
     """Use the provisioner to perform a Dry-Run (destroy, dependency, create, \
     prepare, converge)."""
-    args = ctx.obj.get('args')
+    args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)
-    command_args = {'parallel': parallel, 'subcommand': subcommand}
+    command_args = {"parallel": parallel, "subcommand": subcommand}
 
     if parallel:
         util.validate_parallel_cmd_args(command_args)

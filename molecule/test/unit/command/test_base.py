@@ -49,47 +49,47 @@ def _instance(_base_class, config_instance):
 
 @pytest.fixture
 def _patched_verify_configs(mocker):
-    return mocker.patch('molecule.command.base._verify_configs')
+    return mocker.patch("molecule.command.base._verify_configs")
 
 
 @pytest.fixture
 def _patched_base_setup(mocker):
-    return mocker.patch('molecule.test.unit.command.test_base.ExtendedBase._setup')
+    return mocker.patch("molecule.test.unit.command.test_base.ExtendedBase._setup")
 
 
 @pytest.fixture
 def _patched_write_config(mocker):
-    return mocker.patch('molecule.provisioner.ansible.Ansible.write_config')
+    return mocker.patch("molecule.provisioner.ansible.Ansible.write_config")
 
 
 @pytest.fixture
 def _patched_manage_inventory(mocker):
-    return mocker.patch('molecule.provisioner.ansible.Ansible.manage_inventory')
+    return mocker.patch("molecule.provisioner.ansible.Ansible.manage_inventory")
 
 
 @pytest.fixture
 def _patched_execute_subcommand(mocker):
-    return mocker.patch('molecule.command.base.execute_subcommand')
+    return mocker.patch("molecule.command.base.execute_subcommand")
 
 
 @pytest.fixture
 def _patched_execute_scenario(mocker):
-    return mocker.patch('molecule.command.base.execute_scenario')
+    return mocker.patch("molecule.command.base.execute_scenario")
 
 
 @pytest.fixture
 def _patched_print_matrix(mocker):
-    return mocker.patch('molecule.scenarios.Scenarios.print_matrix')
+    return mocker.patch("molecule.scenarios.Scenarios.print_matrix")
 
 
 @pytest.fixture
 def _patched_prune(mocker):
-    return mocker.patch('molecule.scenario.Scenario.prune')
+    return mocker.patch("molecule.scenario.Scenario.prune")
 
 
 @pytest.fixture
 def _patched_sysexit(mocker):
-    return mocker.patch('molecule.util.sysexit')
+    return mocker.patch("molecule.util.sysexit")
 
 
 def test_config_private_member(_instance):
@@ -130,7 +130,7 @@ def test_execute_cmdline_scenarios(
     #   loops over Scenarios.
     scenario_name = None
     args = {}
-    command_args = {'destroy': 'always', 'subcommand': 'test'}
+    command_args = {"destroy": "always", "subcommand": "test"}
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
 
     assert _patched_print_matrix.called_once_with()
@@ -142,9 +142,9 @@ def test_execute_cmdline_scenarios_prune(
 ):
     # Subcommands should be executed and prune *should* run when
     # destroy is 'always'
-    scenario_name = 'default'
+    scenario_name = "default"
     args = {}
-    command_args = {'destroy': 'always', 'subcommand': 'test'}
+    command_args = {"destroy": "always", "subcommand": "test"}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
 
@@ -157,9 +157,9 @@ def test_execute_cmdline_scenarios_no_prune(
 ):
     # Subcommands should be executed but prune *should not* run when
     # destroy is 'never'
-    scenario_name = 'default'
+    scenario_name = "default"
     args = {}
-    command_args = {'destroy': 'never', 'subcommand': 'test'}
+    command_args = {"destroy": "never", "subcommand": "test"}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
 
@@ -179,9 +179,9 @@ def test_execute_cmdline_scenarios_exit_destroy(
     # - cleanup and destroy subcommands are run when execute_scenario
     #   raises SystemExit
     # - scenario is pruned
-    scenario_name = 'default'
+    scenario_name = "default"
     args = {}
-    command_args = {'destroy': 'always', 'subcommand': 'test'}
+    command_args = {"destroy": "always", "subcommand": "test"}
     _patched_execute_scenario.side_effect = SystemExit()
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
@@ -189,8 +189,8 @@ def test_execute_cmdline_scenarios_exit_destroy(
     assert _patched_execute_subcommand.call_count == 2
     # pull out the second positional call argument for each call,
     # which is the called subcommand. 'cleanup' and 'destroy' should be called.
-    assert _patched_execute_subcommand.call_args_list[0][0][1] == 'cleanup'
-    assert _patched_execute_subcommand.call_args_list[1][0][1] == 'destroy'
+    assert _patched_execute_subcommand.call_args_list[0][0][1] == "cleanup"
+    assert _patched_execute_subcommand.call_args_list[1][0][1] == "destroy"
     assert _patched_prune.called
     assert _patched_sysexit.called
 
@@ -203,9 +203,9 @@ def test_execute_cmdline_scenarios_exit_nodestroy(
     # - destroy subcommand is not run when execute_scenario raises SystemExit
     # - scenario is not pruned
     # - caught SystemExit is reraised
-    scenario_name = 'default'
+    scenario_name = "default"
     args = {}
-    command_args = {'destroy': 'never', 'subcommand': 'test'}
+    command_args = {"destroy": "never", "subcommand": "test"}
 
     _patched_execute_scenario.side_effect = SystemExit()
 
@@ -221,9 +221,9 @@ def test_execute_cmdline_scenarios_exit_nodestroy(
 def test_execute_subcommand(config_instance):
     # scenario's config.action is mutated in-place for every sequence action,
     # so make sure that is currently set to the executed action
-    assert config_instance.action != 'list'
-    assert base.execute_subcommand(config_instance, 'list')
-    assert config_instance.action == 'list'
+    assert config_instance.action != "list"
+    assert base.execute_subcommand(config_instance, "list")
+    assert config_instance.action == "list"
 
 
 def test_execute_scenario(mocker, _patched_execute_subcommand):
@@ -231,7 +231,7 @@ def test_execute_scenario(mocker, _patched_execute_subcommand):
     # - execute_subcommand should be called once for each sequence item
     # - prune should not be called, since the sequence has no destroy step
     scenario = mocker.Mock()
-    scenario.sequence = ('a', 'b', 'c')
+    scenario.sequence = ("a", "b", "c")
 
     base.execute_scenario(scenario)
 
@@ -244,7 +244,7 @@ def test_execute_scenario_destroy(mocker, _patched_execute_subcommand):
     # - execute_subcommand should be called once for each sequence item
     # - prune should be called, since the sequence has a destroy step
     scenario = mocker.Mock()
-    scenario.sequence = ('a', 'b', 'destroy', 'c')
+    scenario.sequence = ("a", "b", "destroy", "c")
 
     base.execute_scenario(scenario)
 
@@ -299,4 +299,4 @@ def test_verify_configs_raises_with_duplicate_configs(
 
 
 def test_get_subcommand():
-    assert 'test_base' == base._get_subcommand(__name__)
+    assert "test_base" == base._get_subcommand(__name__)

@@ -43,27 +43,27 @@ def write_molecule_file(filename, data):
 @pytest.helpers.register
 def os_split(s):
     rest, tail = os.path.split(s)
-    if rest in ('', os.path.sep):
+    if rest in ("", os.path.sep):
         return (tail,)
     return os_split(rest) + (tail,)
 
 
 @pytest.fixture
 def _molecule_dependency_galaxy_section_data():
-    return {'dependency': {'name': 'galaxy'}}
+    return {"dependency": {"name": "galaxy"}}
 
 
 @pytest.fixture
 def _molecule_driver_section_data():
-    return {'driver': {'name': 'docker', 'options': {'managed': True}}}
+    return {"driver": {"name": "docker", "options": {"managed": True}}}
 
 
 @pytest.fixture
 def _molecule_platforms_section_data():
     return {
-        'platforms': [
-            {'name': 'instance-1', 'groups': ['foo', 'bar'], 'children': ['child1']},
-            {'name': 'instance-2', 'groups': ['baz', 'foo'], 'children': ['child2']},
+        "platforms": [
+            {"name": "instance-1", "groups": ["foo", "bar"], "children": ["child1"]},
+            {"name": "instance-2", "groups": ["baz", "foo"], "children": ["child2"]},
         ]
     }
 
@@ -71,22 +71,22 @@ def _molecule_platforms_section_data():
 @pytest.fixture
 def _molecule_provisioner_section_data():
     return {
-        'provisioner': {
-            'name': 'ansible',
-            'options': {'become': True},
-            'config_options': {},
+        "provisioner": {
+            "name": "ansible",
+            "options": {"become": True},
+            "config_options": {},
         }
     }
 
 
 @pytest.fixture
 def _molecule_scenario_section_data():
-    return {'scenario': {'name': 'default'}}
+    return {"scenario": {"name": "default"}}
 
 
 @pytest.fixture
 def _molecule_verifier_section_data():
-    return {'verifier': {'name': 'ansible'}}
+    return {"verifier": {"name": "ansible"}}
 
 
 @pytest.fixture
@@ -144,11 +144,11 @@ def molecule_file_fixture(
 @pytest.fixture
 def config_instance(molecule_file_fixture, molecule_data, request):
     mdc = copy.deepcopy(molecule_data)
-    if hasattr(request, 'param'):
+    if hasattr(request, "param"):
         mdc = util.merge_dicts(mdc, request.getfixturevalue(request.param))
     pytest.helpers.write_molecule_file(molecule_file_fixture, mdc)
     c = config.Config(molecule_file_fixture)
-    c.command_args = {'subcommand': 'test'}
+    c.command_args = {"subcommand": "test"}
 
     return c
 
@@ -158,82 +158,82 @@ def config_instance(molecule_file_fixture, molecule_data, request):
 
 @pytest.fixture
 def patched_print_debug(mocker):
-    return mocker.patch('molecule.util.print_debug')
+    return mocker.patch("molecule.util.print_debug")
 
 
 @pytest.fixture
 def patched_logger_info(mocker):
-    return mocker.patch('logging.Logger.info')
+    return mocker.patch("logging.Logger.info")
 
 
 @pytest.fixture
 def patched_logger_debug(mocker):
-    return mocker.patch('logging.Logger.debug')
+    return mocker.patch("logging.Logger.debug")
 
 
 @pytest.fixture
 def patched_logger_out(mocker):
-    return mocker.patch('molecule.logger.CustomLogger.out')
+    return mocker.patch("molecule.logger.CustomLogger.out")
 
 
 @pytest.fixture
 def patched_logger_warning(mocker):
-    return mocker.patch('logging.Logger.warning')
+    return mocker.patch("logging.Logger.warning")
 
 
 @pytest.fixture
 def patched_logger_error(mocker):
-    return mocker.patch('logging.Logger.error')
+    return mocker.patch("logging.Logger.error")
 
 
 @pytest.fixture
 def patched_logger_critical(mocker):
-    return mocker.patch('logging.Logger.critical')
+    return mocker.patch("logging.Logger.critical")
 
 
 @pytest.fixture
 def patched_logger_success(mocker):
-    return mocker.patch('molecule.logger.CustomLogger.success')
+    return mocker.patch("molecule.logger.CustomLogger.success")
 
 
 @pytest.fixture
 def patched_run_command(mocker):
-    m = mocker.patch('molecule.util.run_command')
-    m.return_value = mocker.Mock(stdout=b'patched-run-command-stdout')
+    m = mocker.patch("molecule.util.run_command")
+    m.return_value = mocker.Mock(stdout=b"patched-run-command-stdout")
 
     return m
 
 
 @pytest.fixture
 def patched_ansible_converge(mocker):
-    m = mocker.patch('molecule.provisioner.ansible.Ansible.converge')
-    m.return_value = 'patched-ansible-converge-stdout'
+    m = mocker.patch("molecule.provisioner.ansible.Ansible.converge")
+    m.return_value = "patched-ansible-converge-stdout"
 
     return m
 
 
 @pytest.fixture
 def patched_add_or_update_vars(mocker):
-    return mocker.patch('molecule.provisioner.ansible.Ansible._add_or_update_vars')
+    return mocker.patch("molecule.provisioner.ansible.Ansible._add_or_update_vars")
 
 
 @pytest.fixture
 def patched_ansible_galaxy(mocker):
-    return mocker.patch('molecule.dependency.ansible_galaxy.AnsibleGalaxy.execute')
+    return mocker.patch("molecule.dependency.ansible_galaxy.AnsibleGalaxy.execute")
 
 
 @pytest.fixture
 def patched_default_verifier(mocker):
-    return mocker.patch('molecule.verifier.ansible.Ansible.execute')
+    return mocker.patch("molecule.verifier.ansible.Ansible.execute")
 
 
 @pytest.fixture
 def patched_scenario_setup(mocker):
-    mocker.patch('molecule.config.Config.env')
+    mocker.patch("molecule.config.Config.env")
 
-    return mocker.patch('molecule.scenario.Scenario._setup')
+    return mocker.patch("molecule.scenario.Scenario._setup")
 
 
 @pytest.fixture
 def patched_config_validate(mocker):
-    return mocker.patch('molecule.config.Config._validate')
+    return mocker.patch("molecule.config.Config._validate")

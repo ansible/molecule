@@ -37,8 +37,8 @@ from click_help_colors import HelpColorsCommand, HelpColorsGroup
 
 
 LOG = logger.get_logger(__name__)
-MOLECULE_GLOB = os.environ.get('MOLECULE_GLOB', 'molecule/*/molecule.yml')
-MOLECULE_DEFAULT_SCENARIO_NAME = 'default'
+MOLECULE_GLOB = os.environ.get("MOLECULE_GLOB", "molecule/*/molecule.yml")
+MOLECULE_DEFAULT_SCENARIO_NAME = "default"
 
 
 @six.add_metaclass(abc.ABCMeta)
@@ -98,7 +98,7 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
     )
     scenarios.print_matrix()
     for scenario in scenarios:
-        if command_args.get('subcommand') == 'reset':
+        if command_args.get("subcommand") == "reset":
             LOG.info("Removing %s" % scenario.ephemeral_directory)
             shutil.rmtree(scenario.ephemeral_directory)
             return
@@ -107,14 +107,14 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
         except SystemExit:
             # if the command has a 'destroy' arg, like test does,
             # handle that behavior here.
-            if command_args.get('destroy') == 'always':
+            if command_args.get("destroy") == "always":
                 msg = (
-                    'An error occurred during the {} sequence action: '
+                    "An error occurred during the {} sequence action: "
                     "'{}'. Cleaning up."
                 ).format(scenario.config.subcommand, scenario.config.action)
                 LOG.warning(msg)
-                execute_subcommand(scenario.config, 'cleanup')
-                execute_subcommand(scenario.config, 'destroy')
+                execute_subcommand(scenario.config, "cleanup")
+                execute_subcommand(scenario.config, "destroy")
                 # always prune ephemeral dir if destroying on failure
                 scenario.prune()
                 if scenario.config.is_parallel:
@@ -148,8 +148,8 @@ def execute_scenario(scenario):
         execute_subcommand(scenario.config, action)
 
     if (
-        'destroy' in scenario.sequence
-        and scenario.config.command_args.get('destroy') != 'never'
+        "destroy" in scenario.sequence
+        and scenario.config.command_args.get("destroy") != "never"
     ):
         scenario.prune()
 
@@ -194,7 +194,7 @@ def _verify_configs(configs):
         scenario_names = [c.scenario.name for c in configs]
         for scenario_name, n in collections.Counter(scenario_names).items():
             if n > 1:
-                msg = ("Duplicate scenario name '{}' found.  " 'Exiting.').format(
+                msg = ("Duplicate scenario name '{}' found.  " "Exiting.").format(
                     scenario_name
                 )
                 util.sysexit_with_message(msg)
@@ -205,7 +205,7 @@ def _verify_configs(configs):
 
 
 def _get_subcommand(string):
-    return string.split('.')[-1]
+    return string.split(".")[-1]
 
 
 def click_group_ex():
@@ -217,16 +217,16 @@ def click_group_ex():
     # yellow : special commands, like full test sequence, or login
     return click.group(
         cls=HelpColorsGroup,
-        help_headers_color='yellow',
-        help_options_color='green',
+        help_headers_color="yellow",
+        help_options_color="green",
         help_options_custom_colors={
-            'drivers': 'blue',
-            'init': 'blue',
-            'list': 'blue',
-            'matrix': 'blue',
-            'login': 'bright_yellow',
-            'reset': 'blue',
-            'test': 'bright_yellow',
+            "drivers": "blue",
+            "init": "blue",
+            "list": "blue",
+            "matrix": "blue",
+            "login": "bright_yellow",
+            "reset": "blue",
+            "test": "bright_yellow",
         },
     )
 
@@ -234,5 +234,5 @@ def click_group_ex():
 def click_command_ex():
     """Return extended version of click.command()."""
     return click.command(
-        cls=HelpColorsCommand, help_headers_color='yellow', help_options_color='green'
+        cls=HelpColorsCommand, help_headers_color="yellow", help_options_color="green"
     )

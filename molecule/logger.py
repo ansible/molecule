@@ -29,11 +29,11 @@ from ansible.module_utils.parsing.convert_bool import boolean as to_bool
 
 def should_do_markup():
     """Decide about use of ANSI colors."""
-    py_colors = os.environ.get('PY_COLORS', None)
+    py_colors = os.environ.get("PY_COLORS", None)
     if py_colors is not None:
         return to_bool(py_colors, strict=False)
 
-    return sys.stdout.isatty() and os.environ.get('TERM') != 'dumb'
+    return sys.stdout.isatty() and os.environ.get("TERM") != "dumb"
 
 
 SUCCESS = 100
@@ -62,8 +62,8 @@ class CustomLogger(logging.getLoggerClass()):
     def __init__(self, name, level=logging.NOTSET):
         """Construct CustomLogger."""
         super(logging.getLoggerClass(), self).__init__(name, level)
-        logging.addLevelName(SUCCESS, 'SUCCESS')
-        logging.addLevelName(OUT, 'OUT')
+        logging.addLevelName(SUCCESS, "SUCCESS")
+        logging.addLevelName(OUT, "OUT")
 
     def success(self, msg, *args, **kwargs):
         if self.isEnabledFor(SUCCESS):
@@ -112,7 +112,7 @@ def _get_info_handler():
     handler.setLevel(logging.INFO)
     handler.addFilter(LogFilter(logging.INFO))
     handler.setFormatter(
-        TrailingNewlineFormatter('--> {}'.format(cyan_text('%(message)s')))
+        TrailingNewlineFormatter("--> {}".format(cyan_text("%(message)s")))
     )
 
     return handler
@@ -122,7 +122,7 @@ def _get_out_handler():
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(OUT)
     handler.addFilter(LogFilter(OUT))
-    handler.setFormatter(TrailingNewlineFormatter('    %(message)s'))
+    handler.setFormatter(TrailingNewlineFormatter("    %(message)s"))
 
     return handler
 
@@ -131,7 +131,7 @@ def _get_warn_handler():
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging.WARN)
     handler.addFilter(LogFilter(logging.WARN))
-    handler.setFormatter(TrailingNewlineFormatter(yellow_text('%(message)s')))
+    handler.setFormatter(TrailingNewlineFormatter(yellow_text("%(message)s")))
 
     return handler
 
@@ -140,7 +140,7 @@ def _get_error_handler():
     handler = logging.StreamHandler(sys.stderr)
     handler.setLevel(logging.ERROR)
     handler.addFilter(LogFilter(logging.ERROR))
-    handler.setFormatter(TrailingNewlineFormatter(red_text('%(message)s')))
+    handler.setFormatter(TrailingNewlineFormatter(red_text("%(message)s")))
 
     return handler
 
@@ -149,7 +149,7 @@ def _get_critical_handler():
     handler = logging.StreamHandler(sys.stderr)
     handler.setLevel(logging.CRITICAL)
     handler.addFilter(LogFilter(logging.CRITICAL))
-    handler.setFormatter(TrailingNewlineFormatter(red_text('ERROR: %(message)s')))
+    handler.setFormatter(TrailingNewlineFormatter(red_text("ERROR: %(message)s")))
 
     return handler
 
@@ -158,7 +158,7 @@ def _get_success_handler():
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(SUCCESS)
     handler.addFilter(LogFilter(SUCCESS))
-    handler.setFormatter(TrailingNewlineFormatter(green_text('%(message)s')))
+    handler.setFormatter(TrailingNewlineFormatter(green_text("%(message)s")))
 
     return handler
 
@@ -185,4 +185,4 @@ def cyan_text(msg):
 
 def color_text(color, msg):
     """Add color markers."""
-    return '{}{}{}'.format(color, msg, colorama.Style.RESET_ALL)
+    return "{}{}{}".format(color, msg, colorama.Style.RESET_ALL)

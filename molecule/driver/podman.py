@@ -146,7 +146,7 @@ class Podman(Driver):
     def __init__(self, config=None):
         """Construct Podman."""
         super(Podman, self).__init__(config)
-        self._name = 'podman'
+        self._name = "podman"
 
     @property
     def name(self):
@@ -159,27 +159,27 @@ class Podman(Driver):
     @property
     def login_cmd_template(self):
         return (
-            'podman exec '
-            '-e COLUMNS={columns} '
-            '-e LINES={lines} '
-            '-e TERM=bash '
-            '-e TERM=xterm '
-            '-ti {instance} bash'
+            "podman exec "
+            "-e COLUMNS={columns} "
+            "-e LINES={lines} "
+            "-e TERM=bash "
+            "-e TERM=xterm "
+            "-ti {instance} bash"
         )
 
     @property
     def default_safe_files(self):
-        return [os.path.join(self._config.scenario.ephemeral_directory, 'Dockerfile')]
+        return [os.path.join(self._config.scenario.ephemeral_directory, "Dockerfile")]
 
     @property
     def default_ssh_connection_options(self):
         return []
 
     def login_options(self, instance_name):
-        return {'instance': instance_name}
+        return {"instance": instance_name}
 
     def ansible_connection_options(self, instance_name):
-        return {'ansible_connection': 'podman'}
+        return {"ansible_connection": "podman"}
 
     @lru_cache()
     def sanity_checks(self):

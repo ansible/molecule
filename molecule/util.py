@@ -63,7 +63,7 @@ class SafeDumper(yaml.SafeDumper):
 
 def print_debug(title, data):
     """Print debug information."""
-    title = 'DEBUG: {}'.format(title)
+    title = "DEBUG: {}".format(title)
     title = [
         colorama.Back.WHITE,
         colorama.Style.BRIGHT,
@@ -73,7 +73,7 @@ def print_debug(title, data):
         colorama.Back.RESET,
         colorama.Style.RESET_ALL,
     ]
-    print(''.join(title))
+    print("".join(title))
     data = [
         colorama.Fore.BLACK,
         colorama.Style.BRIGHT,
@@ -81,7 +81,7 @@ def print_debug(title, data):
         colorama.Style.RESET_ALL,
         colorama.Fore.RESET,
     ]
-    print(''.join(data))
+    print("".join(data))
 
 
 def print_environment_vars(env):
@@ -92,16 +92,16 @@ def print_environment_vars(env):
     ``os.environ``.
     :return: None
     """
-    ansible_env = {k: v for (k, v) in env.items() if 'ANSIBLE_' in k}
-    print_debug('ANSIBLE ENVIRONMENT', safe_dump(ansible_env))
+    ansible_env = {k: v for (k, v) in env.items() if "ANSIBLE_" in k}
+    print_debug("ANSIBLE ENVIRONMENT", safe_dump(ansible_env))
 
-    molecule_env = {k: v for (k, v) in env.items() if 'MOLECULE_' in k}
-    print_debug('MOLECULE ENVIRONMENT', safe_dump(molecule_env))
+    molecule_env = {k: v for (k, v) in env.items() if "MOLECULE_" in k}
+    print_debug("MOLECULE ENVIRONMENT", safe_dump(molecule_env))
 
     combined_env = ansible_env.copy()
     combined_env.update(molecule_env)
     print_debug(
-        'SHELL REPLAY',
+        "SHELL REPLAY",
         " ".join(["{}={}".format(k, v) for (k, v) in sorted(combined_env.items())]),
     )
     print()
@@ -135,8 +135,8 @@ def run_command(cmd, debug=False):
     if debug:
         # WARN(retr0h): Uses an internal ``sh`` data structure to dig
         # the environment out of the ``sh.command`` object.
-        print_environment_vars(cmd._partial_call_args.get('env', {}))
-        print_debug('COMMAND', str(cmd))
+        print_environment_vars(cmd._partial_call_args.get("env", {}))
+        print_debug("COMMAND", str(cmd))
         print()
     return cmd(_truncate_exc=False)
 
@@ -168,7 +168,7 @@ def write_file(filename, content):
     :param content: A string containing the data to be written.
     :return: None
     """
-    with open_file(filename, 'w') as f:
+    with open_file(filename, "w") as f:
         f.write(content)
 
     file_prepender(filename)
@@ -176,7 +176,7 @@ def write_file(filename, content):
 
 def molecule_prepender(content):
     """Return molecule identification header."""
-    return '# Molecule managed\n\n' + content
+    return "# Molecule managed\n\n" + content
 
 
 def file_prepender(filename):
@@ -187,7 +187,7 @@ def file_prepender(filename):
     :param filename: A string containing the target filename.
     :return: None
     """
-    with open_file(filename, 'r+') as f:
+    with open_file(filename, "r+") as f:
         content = f.read()
         f.seek(0, 0)
         f.write(molecule_prepender(content))
@@ -233,7 +233,7 @@ def safe_load_file(filename):
 
 
 @contextlib.contextmanager
-def open_file(filename, mode='r'):
+def open_file(filename, mode="r"):
     """
     Open the provide file safely and returns a file type.
 
@@ -247,7 +247,7 @@ def open_file(filename, mode='r'):
 
 def instance_with_scenario_name(instance_name, scenario_name):
     """Format instance name that includes scenario."""
-    return '{}-{}'.format(instance_name, scenario_name)
+    return "{}-{}".format(instance_name, scenario_name)
 
 
 def strip_ansi_escape(data):
@@ -257,46 +257,46 @@ def strip_ansi_escape(data):
     using UTF-8.
     """
     if isinstance(data, bytes):
-        data = data.decode('utf-8')
+        data = data.decode("utf-8")
 
-    return re.sub(r'\x1b[^m]*m', '', data)
+    return re.sub(r"\x1b[^m]*m", "", data)
 
 
 def strip_ansi_color(data):
     """Remove ANSI colors from string or bytes."""
     if isinstance(data, bytes):
-        data = data.decode('utf-8')
+        data = data.decode("utf-8")
 
     # Taken from tabulate
-    invisible_codes = re.compile(r'\x1b\[\d*m')
+    invisible_codes = re.compile(r"\x1b\[\d*m")
 
-    return re.sub(invisible_codes, '', data)
+    return re.sub(invisible_codes, "", data)
 
 
 def verbose_flag(options):
     """Return computed verbosity flag."""
-    verbose = 'v'
+    verbose = "v"
     verbose_flag = []
     for i in range(0, 3):
         if options.get(verbose):
-            verbose_flag = ['-{}'.format(verbose)]
+            verbose_flag = ["-{}".format(verbose)]
             del options[verbose]
-            if options.get('verbose'):
-                del options['verbose']
+            if options.get("verbose"):
+                del options["verbose"]
             break
-        verbose = verbose + 'v'
+        verbose = verbose + "v"
 
     return verbose_flag
 
 
 def filter_verbose_permutation(options):
     """Clean verbose information."""
-    return {k: options[k] for k in options if not re.match('^[v]+$', k)}
+    return {k: options[k] for k in options if not re.match("^[v]+$", k)}
 
 
 def title(word):
     """Format title."""
-    return ' '.join(x.capitalize() or '_' for x in word.split('_'))
+    return " ".join(x.capitalize() or "_" for x in word.split("_"))
 
 
 def abs_path(path):
@@ -316,8 +316,8 @@ def underscore(string):
     """Format string to underlined notation."""
     # NOTE(retr0h): Taken from jpvanhal/inflection
     # https://github.com/jpvanhal/inflection
-    string = re.sub(r"([A-Z]+)([A-Z][a-z])", r'\1_\2', string)
-    string = re.sub(r"([a-z\d])([A-Z])", r'\1_\2', string)
+    string = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1_\2", string)
+    string = re.sub(r"([a-z\d])([A-Z])", r"\1_\2", string)
     string = string.replace("-", "_")
 
     return string.lower()
@@ -346,17 +346,17 @@ def merge_dicts(a, b):
 
 def validate_parallel_cmd_args(cmd_args):
     """Prevents use of options incompatible with parallel mode."""
-    if cmd_args.get('parallel') and cmd_args.get('destroy') == 'never':
+    if cmd_args.get("parallel") and cmd_args.get("destroy") == "never":
         msg = 'Combining "--parallel" and "--destroy=never" is not supported'
         sysexit_with_message(msg)
 
 
 def _parallelize_platforms(config, run_uuid):
     def parallelize(platform):
-        platform['name'] = '{}-{}'.format(platform['name'], run_uuid)
+        platform["name"] = "{}-{}".format(platform["name"], run_uuid)
         return platform
 
-    return [parallelize(platform) for platform in config['platforms']]
+    return [parallelize(platform) for platform in config["platforms"]]
 
 
 def find_vcs_root(test, dirs=(".git", ".hg", ".svn"), default=None):
@@ -371,8 +371,8 @@ def find_vcs_root(test, dirs=(".git", ".hg", ".svn"), default=None):
 
 def lookup_config_file(filename):
     """Return config file PATH."""
-    for path in [find_vcs_root(os.getcwd(), default='~'), '~']:
-        f = os.path.expanduser('%s/%s' % (path, filename))
+    for path in [find_vcs_root(os.getcwd(), default="~"), "~"]:
+        f = os.path.expanduser("%s/%s" % (path, filename))
         if os.path.isfile(f):
             LOG.info("Found config file %s", f)
             return f

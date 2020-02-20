@@ -32,7 +32,7 @@ def _instance(config_instance):
 
 
 def test_state_file_property(_instance):
-    x = os.path.join(_instance._config.scenario.ephemeral_directory, 'state.yml')
+    x = os.path.join(_instance._config.scenario.ephemeral_directory, "state.yml")
 
     assert x == _instance.state_file
 
@@ -56,7 +56,7 @@ def test_prepared(_instance):
 def test_reset(_instance):
     assert not _instance.converged
 
-    _instance.change_state('converged', True)
+    _instance.change_state("converged", True)
     assert _instance.converged
 
     _instance.reset()
@@ -66,47 +66,47 @@ def test_reset(_instance):
 def test_reset_persists(_instance):
     assert not _instance.converged
 
-    _instance.change_state('converged', True)
+    _instance.change_state("converged", True)
     assert _instance.converged
 
     _instance.reset()
     assert not _instance.converged
 
     d = util.safe_load_file(_instance.state_file)
-    assert not d.get('converged')
+    assert not d.get("converged")
 
 
 def test_change_state_converged(_instance):
-    _instance.change_state('converged', True)
+    _instance.change_state("converged", True)
 
     assert _instance.converged
 
 
 def test_change_state_created(_instance):
-    _instance.change_state('created', True)
+    _instance.change_state("created", True)
 
     assert _instance.created
 
 
 def test_change_state_driver(_instance):
-    _instance.change_state('driver', 'foo')
+    _instance.change_state("driver", "foo")
 
-    assert 'foo' == _instance.driver
+    assert "foo" == _instance.driver
 
 
 def test_change_state_prepared(_instance):
-    _instance.change_state('prepared', True)
+    _instance.change_state("prepared", True)
 
     assert _instance.prepared
 
 
 def test_change_state_raises(_instance):
     with pytest.raises(state.InvalidState):
-        _instance.change_state('invalid-state', True)
+        _instance.change_state("invalid-state", True)
 
 
 def test_get_data_loads_existing_state_file(_instance, molecule_data, config_instance):
-    data = {'converged': False, 'created': True, 'driver': None, 'prepared': None}
+    data = {"converged": False, "created": True, "driver": None, "prepared": None}
     util.write_file(_instance._state_file, util.safe_dump(data))
 
     s = state.State(config_instance)

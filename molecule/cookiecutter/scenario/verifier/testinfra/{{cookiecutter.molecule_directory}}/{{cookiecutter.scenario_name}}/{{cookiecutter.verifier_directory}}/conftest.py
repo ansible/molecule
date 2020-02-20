@@ -10,10 +10,10 @@ def pytest_runtest_setup(item):
         import testinfra
     except ImportError:
         pytest.skip("Test requires testinfra", allow_module_level=True)
-    if 'MOLECULE_INVENTORY_FILE' in os.environ:
+    if "MOLECULE_INVENTORY_FILE" in os.environ:
         pytest.testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
-            os.environ['MOLECULE_INVENTORY_FILE']
-        ).get_hosts('all')
+            os.environ["MOLECULE_INVENTORY_FILE"]
+        ).get_hosts("all")
     else:
         pytest.skip(
             "Test should run only from inside molecule.", allow_module_level=True

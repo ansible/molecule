@@ -25,13 +25,13 @@ import collections
 def get_status():
     """Return status."""
     return collections.namedtuple(
-        'Status',
+        "Status",
         [
-            'instance_name',
-            'driver_name',
-            'provisioner_name',
-            'scenario_name',
-            'created',
-            'converged',
+            "instance_name",
+            "driver_name",
+            "provisioner_name",
+            "scenario_name",
+            "created",
+            "converged",
         ],
     )

@@ -106,7 +106,7 @@ class Scenario(object):
         :return: None
         """
         directory = str(Path(self.ephemeral_directory).parent)
-        LOG.info('Removing {}'.format(directory))
+        LOG.info("Removing {}".format(directory))
         shutil.rmtree(directory)
 
     def prune(self):
@@ -120,13 +120,13 @@ class Scenario(object):
 
         :return: None
         """
-        LOG.info('Pruning extra files from scenario ephemeral directory')
+        LOG.info("Pruning extra files from scenario ephemeral directory")
         safe_files = [
             self.config.provisioner.config_file,
             self.config.provisioner.inventory_file,
             self.config.state.state_file,
         ] + self.config.driver.safe_files
-        files = util.os_walk(self.ephemeral_directory, '*')
+        files = util.os_walk(self.ephemeral_directory, "*")
         for f in files:
             if not any(sf for sf in safe_files if fnmatch.fnmatch(f, sf)):
                 os.remove(f)
@@ -138,7 +138,7 @@ class Scenario(object):
 
     @property
     def name(self):
-        return self.config.config['scenario']['name']
+        return self.config.config["scenario"]["name"]
 
     @property
     def directory(self):
@@ -149,14 +149,14 @@ class Scenario(object):
 
     @property
     def ephemeral_directory(self):
-        _ephemeral_directory = os.getenv('MOLECULE_EPHEMERAL_DIRECTORY')
+        _ephemeral_directory = os.getenv("MOLECULE_EPHEMERAL_DIRECTORY")
         if _ephemeral_directory:
             return _ephemeral_directory
 
         project_directory = os.path.basename(self.config.project_directory)
 
         if self.config.is_parallel:
-            project_directory = '{}-{}'.format(project_directory, self.config._run_uuid)
+            project_directory = "{}-{}".format(project_directory, self.config._run_uuid)
 
         project_scenario_directory = os.path.join(
             self.config.cache_directory, project_directory, self.name
@@ -172,56 +172,56 @@ class Scenario(object):
 
     @property
     def check_sequence(self):
-        return self.config.config['scenario']['check_sequence']
+        return self.config.config["scenario"]["check_sequence"]
 
     @property
     def cleanup_sequence(self):
-        return self.config.config['scenario']['cleanup_sequence']
+        return self.config.config["scenario"]["cleanup_sequence"]
 
     @property
     def converge_sequence(self):
-        return self.config.config['scenario']['converge_sequence']
+        return self.config.config["scenario"]["converge_sequence"]
 
     @property
     def create_sequence(self):
-        return self.config.config['scenario']['create_sequence']
+        return self.config.config["scenario"]["create_sequence"]
 
     @property
     def dependency_sequence(self):
-        return ['dependency']
+        return ["dependency"]
 
     @property
     def destroy_sequence(self):
-        return self.config.config['scenario']['destroy_sequence']
+        return self.config.config["scenario"]["destroy_sequence"]
 
     @property
     def idempotence_sequence(self):
-        return ['idempotence']
+        return ["idempotence"]
 
     @property
     def lint_sequence(self):
         # see https://github.com/ansible-community/molecule/issues/2216
-        return ['dependency', 'lint']
+        return ["dependency", "lint"]
 
     @property
     def prepare_sequence(self):
-        return ['prepare']
+        return ["prepare"]
 
     @property
     def side_effect_sequence(self):
-        return ['side_effect']
+        return ["side_effect"]
 
     @property
     def syntax_sequence(self):
-        return ['syntax']
+        return ["syntax"]
 
     @property
     def test_sequence(self):
-        return self.config.config['scenario']['test_sequence']
+        return self.config.config["scenario"]["test_sequence"]
 
     @property
     def verify_sequence(self):
-        return ['verify']
+        return ["verify"]
 
     @property
     def sequence(self):
@@ -259,10 +259,10 @@ def ephemeral_directory(path=None):
     Molecule users should not make any assumptions about its location,
     permissions or its content as this may change in future release.
     """
-    d = os.getenv('MOLECULE_EPHEMERAL_DIRECTORY')
+    d = os.getenv("MOLECULE_EPHEMERAL_DIRECTORY")
     if not d:
         d = os.getenv("XDG_CACHE_HOME", os.path.expanduser("~/.cache"))
-    d = os.path.abspath(os.path.join(d, path if path else 'molecule'))
+    d = os.path.abspath(os.path.join(d, path if path else "molecule"))
 
     if not os.path.isdir(d):
         os.umask(0o077)

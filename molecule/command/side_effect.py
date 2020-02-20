@@ -74,7 +74,7 @@ class SideEffect(base.Base):
         """
         self.print_info()
         if not self._config.provisioner.playbooks.side_effect:
-            msg = 'Skipping, side effect playbook not configured.'
+            msg = "Skipping, side effect playbook not configured."
             LOG.warning(msg)
             return
 
@@ -84,17 +84,17 @@ class SideEffect(base.Base):
 @base.click_command_ex()
 @click.pass_context
 @click.option(
-    '--scenario-name',
-    '-s',
+    "--scenario-name",
+    "-s",
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help='Name of the scenario to target. ({})'.format(
+    help="Name of the scenario to target. ({})".format(
         base.MOLECULE_DEFAULT_SCENARIO_NAME
     ),
 )
 def side_effect(ctx, scenario_name):  # pragma: no cover
     """Use the provisioner to perform side-effects to the instances."""
-    args = ctx.obj.get('args')
+    args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)
-    command_args = {'subcommand': subcommand}
+    command_args = {"subcommand": subcommand}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)

@@ -105,17 +105,17 @@ class Testinfra(Verifier):
 
     @property
     def name(self):
-        return 'testinfra'
+        return "testinfra"
 
     @property
     def default_options(self):
         d = self._config.driver.testinfra_options
-        d['p'] = 'no:cacheprovider'
+        d["p"] = "no:cacheprovider"
         if self._config.debug:
-            d['debug'] = True
-            d['vvv'] = True
-        if self._config.args.get('sudo'):
-            d['sudo'] = True
+            d["debug"] = True
+            d["vvv"] = True
+        if self._config.args.get("sudo"):
+            d["sudo"] = True
 
         return d
 
@@ -123,14 +123,14 @@ class Testinfra(Verifier):
     def directory(self):
         return os.path.join(
             self._config.scenario.directory,
-            self._config.config['verifier'].get('directory', 'tests'),
+            self._config.config["verifier"].get("directory", "tests"),
         )
 
     # NOTE(retr0h): Override the base classes' options() to handle
     # ``ansible-galaxy`` one-off.
     @property
     def options(self):
-        o = self._config.config['verifier']['options']
+        o = self._config.config["verifier"]["options"]
         # NOTE(retr0h): Remove verbose options added by the user while in
         # debug.
         if self._config.debug:
@@ -149,7 +149,7 @@ class Testinfra(Verifier):
     def additional_files_or_dirs(self):
         files_list = []
         c = self._config.config
-        for f in c['verifier']['additional_files_or_dirs']:
+        for f in c["verifier"]["additional_files_or_dirs"]:
             glob_path = os.path.join(self._config.verifier.directory, f)
             glob_list = glob.glob(glob_path)
             if glob_list:
@@ -167,7 +167,7 @@ class Testinfra(Verifier):
         verbose_flag = util.verbose_flag(options)
         args = verbose_flag + self.additional_files_or_dirs
 
-        self._testinfra_command = sh.Command('pytest').bake(
+        self._testinfra_command = sh.Command("pytest").bake(
             options,
             self._tests,
             *args,
@@ -179,24 +179,24 @@ class Testinfra(Verifier):
 
     def execute(self):
         if not self.enabled:
-            msg = 'Skipping, verifier is disabled.'
+            msg = "Skipping, verifier is disabled."
             LOG.warning(msg)
             return
 
         if not len(self._tests) > 0:
-            msg = 'Skipping, no tests found.'
+            msg = "Skipping, no tests found."
             LOG.warning(msg)
             return
 
         if self._testinfra_command is None:
             self.bake()
 
-        msg = 'Executing Testinfra tests found in {}/...'.format(self.directory)
+        msg = "Executing Testinfra tests found in {}/...".format(self.directory)
         LOG.info(msg)
 
         try:
             util.run_command(self._testinfra_command, debug=self._config.debug)
-            msg = 'Verifier completed successfully.'
+            msg = "Verifier completed successfully."
             LOG.success(msg)
 
         except sh.ErrorReturnCode as e:
@@ -208,12 +208,12 @@ class Testinfra(Verifier):
 
         :return: list
         """
-        return [filename for filename in util.os_walk(self.directory, 'test_*.py')]
+        return [filename for filename in util.os_walk(self.directory, "test_*.py")]
 
     def schema(self):
         return {
-            'verifier': {
-                'type': 'dict',
-                'schema': {'name': {'type': 'string', 'allowed': ['testinfra']}},
+            "verifier": {
+                "type": "dict",
+                "schema": {"name": {"type": "string", "allowed": ["testinfra"]}},
             }
         }

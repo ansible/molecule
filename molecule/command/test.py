@@ -28,7 +28,7 @@ from molecule.command import base
 from molecule import util
 
 LOG = logger.get_logger(__name__)
-MOLECULE_PARALLEL = os.environ.get('MOLECULE_PARALLEL', False)
+MOLECULE_PARALLEL = os.environ.get("MOLECULE_PARALLEL", False)
 
 
 class Test(base.Base):
@@ -97,45 +97,45 @@ class Test(base.Base):
 @base.click_command_ex()
 @click.pass_context
 @click.option(
-    '--scenario-name',
-    '-s',
+    "--scenario-name",
+    "-s",
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help='Name of the scenario to target. ({})'.format(
+    help="Name of the scenario to target. ({})".format(
         base.MOLECULE_DEFAULT_SCENARIO_NAME
     ),
 )
 @click.option(
-    '--driver-name',
-    '-d',
+    "--driver-name",
+    "-d",
     type=click.Choice([str(s) for s in drivers()]),
-    help='Name of driver to use. (docker)',
+    help="Name of driver to use. (docker)",
 )
 @click.option(
-    '--all/--no-all',
-    '__all',
+    "--all/--no-all",
+    "__all",
     default=False,
-    help='Test all scenarios. Default is False.',
+    help="Test all scenarios. Default is False.",
 )
 @click.option(
-    '--destroy',
-    type=click.Choice(['always', 'never']),
-    default='always',
-    help=('The destroy strategy used at the conclusion of a ' 'Molecule run (always).'),
+    "--destroy",
+    type=click.Choice(["always", "never"]),
+    default="always",
+    help=("The destroy strategy used at the conclusion of a " "Molecule run (always)."),
 )
 @click.option(
-    '--parallel/--no-parallel',
+    "--parallel/--no-parallel",
     default=MOLECULE_PARALLEL,
-    help='Enable or disable parallel mode. Default is disabled.',
+    help="Enable or disable parallel mode. Default is disabled.",
 )
 def test(ctx, scenario_name, driver_name, __all, destroy, parallel):  # pragma: no cover
     """Test (dependency, lint, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy)."""
-    args = ctx.obj.get('args')
+    args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)
     command_args = {
-        'parallel': parallel,
-        'destroy': destroy,
-        'subcommand': subcommand,
-        'driver_name': driver_name,
+        "parallel": parallel,
+        "destroy": destroy,
+        "subcommand": subcommand,
+        "driver_name": driver_name,
     }
 
     if __all:

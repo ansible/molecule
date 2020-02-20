@@ -78,43 +78,43 @@ class Create(base.Base):
         :return: None
         """
         self.print_info()
-        self._config.state.change_state('driver', self._config.driver.name)
+        self._config.state.change_state("driver", self._config.driver.name)
 
         if self._config.driver.delegated and not self._config.driver.managed:
-            msg = 'Skipping, instances are delegated.'
+            msg = "Skipping, instances are delegated."
             LOG.warning(msg)
             return
 
         if self._config.state.created:
-            msg = 'Skipping, instances already created.'
+            msg = "Skipping, instances already created."
             LOG.warning(msg)
             return
 
         self._config.provisioner.create()
 
-        self._config.state.change_state('created', True)
+        self._config.state.change_state("created", True)
 
 
 @base.click_command_ex()
 @click.pass_context
 @click.option(
-    '--scenario-name',
-    '-s',
+    "--scenario-name",
+    "-s",
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help='Name of the scenario to target. ({})'.format(
+    help="Name of the scenario to target. ({})".format(
         base.MOLECULE_DEFAULT_SCENARIO_NAME
     ),
 )
 @click.option(
-    '--driver-name',
-    '-d',
+    "--driver-name",
+    "-d",
     type=click.Choice([str(s) for s in drivers()]),
-    help='Name of driver to use. (docker)',
+    help="Name of driver to use. (docker)",
 )
 def create(ctx, scenario_name, driver_name):  # pragma: no cover
     """Use the provisioner to start the instances."""
-    args = ctx.obj.get('args')
+    args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)
-    command_args = {'subcommand': subcommand, 'driver_name': driver_name}
+    command_args = {"subcommand": subcommand, "driver_name": driver_name}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)

@@ -76,21 +76,21 @@ class AnsibleGalaxy(base.Base):
         super(AnsibleGalaxy, self).__init__(config)
         self._sh_command = None
 
-        self.command = 'ansible-galaxy'
+        self.command = "ansible-galaxy"
 
     @property
     def default_options(self):
         d = {
-            'force': True,
-            'role-file': os.path.join(
-                self._config.scenario.directory, 'requirements.yml'
+            "force": True,
+            "role-file": os.path.join(
+                self._config.scenario.directory, "requirements.yml"
             ),
-            'roles-path': os.path.join(
-                self._config.scenario.ephemeral_directory, 'roles'
+            "roles-path": os.path.join(
+                self._config.scenario.ephemeral_directory, "roles"
             ),
         }
         if self._config.debug:
-            d['vvv'] = True
+            d["vvv"] = True
 
         return d
 
@@ -98,7 +98,7 @@ class AnsibleGalaxy(base.Base):
     # ``ansible-galaxy`` one-off.
     @property
     def options(self):
-        o = self._config.config['dependency']['options']
+        o = self._config.config["dependency"]["options"]
         # NOTE(retr0h): Remove verbose options added by the user while in
         # debug.
         if self._config.debug:
@@ -122,7 +122,7 @@ class AnsibleGalaxy(base.Base):
 
         self._sh_command = getattr(sh, self.command)
         self._sh_command = self._sh_command.bake(
-            'install',
+            "install",
             options,
             *verbose_flag,
             _env=self.env,
@@ -132,12 +132,12 @@ class AnsibleGalaxy(base.Base):
 
     def execute(self):
         if not self.enabled:
-            msg = 'Skipping, dependency is disabled.'
+            msg = "Skipping, dependency is disabled."
             LOG.warning(msg)
             return
 
         if not self._has_requirements_file():
-            msg = 'Skipping, missing the requirements file.'
+            msg = "Skipping, missing the requirements file."
             LOG.warning(msg)
             return
 
@@ -154,13 +154,13 @@ class AnsibleGalaxy(base.Base):
         :return: None
         """
         role_directory = os.path.join(
-            self._config.scenario.directory, self.options['roles-path']
+            self._config.scenario.directory, self.options["roles-path"]
         )
         if not os.path.isdir(role_directory):
             os.makedirs(role_directory)
 
     def _role_file(self):
-        return self.options.get('role-file')
+        return self.options.get("role-file")
 
     def _has_requirements_file(self):
         return os.path.isfile(self._role_file())
