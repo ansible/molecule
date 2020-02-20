@@ -19,8 +19,6 @@
 #  DEALINGS IN THE SOFTWARE.
 """Molecule Shell Module."""
 
-import os
-
 import click
 import click_completion
 import colorama
@@ -33,13 +31,16 @@ import molecule
 from molecule import command
 from molecule.config import MOLECULE_DEBUG
 from molecule.logger import should_do_markup
+from molecule.util import lookup_config_file
 from molecule.command.base import click_group_ex
 from click_help_colors import _colorize
 
 click_completion.init()
 colorama.init(autoreset=True, strip=not should_do_markup())
 
-LOCAL_CONFIG = os.path.expanduser('~/.config/molecule/config.yml')
+LOCAL_CONFIG = lookup_config_file('.config/molecule/config.yml')
+
+
 ENV_FILE = '.env.yml'
 
 
@@ -71,9 +72,10 @@ def _version_string():
     '-c',
     default=LOCAL_CONFIG,
     help=(
-        'Path to a base config.  If provided Molecule will load '
+        "Path to a base config.  If provided Molecule will load "
         "this config first, and deep merge each scenario's "
-        'molecule.yml on top. ({})'
+        "molecule.yml on top. By default is looking for config in current "
+        "VCS repository and if not found it will look on user home. ({})"
     ).format(LOCAL_CONFIG),
 )
 @click.option(
