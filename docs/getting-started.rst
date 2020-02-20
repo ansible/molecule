@@ -34,7 +34,7 @@ To generate a new role with Molecule, simply run:
 
 .. code-block:: bash
 
-    $ molecule init role my-new-role
+    $ molecule init role --role-name my-new-role
 
 You should then see a ``my-new-role`` folder in your current directory.
 
