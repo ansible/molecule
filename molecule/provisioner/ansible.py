@@ -26,6 +26,7 @@ import shutil
 
 from molecule import logger
 from molecule import util
+from molecule.api import drivers
 from molecule.provisioner import base
 from molecule.provisioner import ansible_playbook
 from molecule.provisioner import ansible_playbooks
@@ -433,28 +434,7 @@ class Ansible(base.Base):
                         "/etc/ansible/roles",
                     ]
                 ),
-                "ANSIBLE_LIBRARY": ":".join(
-                    [
-                        self._get_modules_directory(),
-                        util.abs_path(
-                            os.path.join(
-                                self._config.scenario.ephemeral_directory, "library"
-                            )
-                        ),
-                        util.abs_path(
-                            os.path.join(self._config.project_directory, "library")
-                        ),
-                        util.abs_path(
-                            os.path.join(
-                                os.path.expanduser("~"),
-                                ".ansible",
-                                "plugins",
-                                "modules",
-                            )
-                        ),
-                        "/usr/share/ansible/plugins/modules",
-                    ]
-                ),
+                "ANSIBLE_LIBRARY": ":".join(self._get_modules_directories()),
                 "ANSIBLE_FILTER_PLUGINS": ":".join(
                     [
                         self._get_filter_plugin_directory(),
@@ -907,8 +887,32 @@ class Ansible(base.Base):
     def _get_plugin_directory(self):
         return os.path.join(self.directory, "plugins")
 
-    def _get_modules_directory(self):
-        return util.abs_path(os.path.join(self._get_plugin_directory(), "modules"))
+    def _get_modules_directories(self):
+        """Return list of ansilbe module includes directories.
+
+        Adds modules directory from molecule and its plugins.
+        """
+        paths = [util.abs_path(os.path.join(self._get_plugin_directory(), "modules"))]
+
+        for d in drivers():
+            p = d.modules_dir()
+            if p:
+                paths.append(p)
+        paths.extend(
+            [
+                util.abs_path(
+                    os.path.join(self._config.scenario.ephemeral_directory, "library")
+                ),
+                util.abs_path(os.path.join(self._config.project_directory, "library")),
+                util.abs_path(
+                    os.path.join(
+                        os.path.expanduser("~"), ".ansible", "plugins", "modules",
+                    )
+                ),
+                "/usr/share/ansible/plugins/modules",
+            ]
+        )
+        return paths
 
     def _get_filter_plugin_directory(self):
         return util.abs_path(os.path.join(self._get_plugin_directory(), "filter"))

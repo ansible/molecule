@@ -20,6 +20,7 @@
 """Base Driver Module."""
 
 import abc
+import inspect
 import os
 
 import molecule
@@ -41,6 +42,7 @@ class Driver(object):
         :returns: None
         """
         self._config = config
+        self._path = os.path.abspath(os.path.dirname(inspect.getfile(self.__class__)))
 
     @property
     @abc.abstractmethod
@@ -249,13 +251,33 @@ class Driver(object):
 
     def template_dir(self):
 
-        p = os.path.abspath(
-            os.path.join(
-                os.path.dirname(molecule.__file__),
-                "cookiecutter",
-                "scenario",
-                "driver",
-                self.name,
+        p = os.path.join(self._path, "cookiecutter")
+
+        if not os.path.isdir(p):
+            p = os.path.abspath(
+                os.path.join(
+                    os.path.dirname(molecule.__file__),
+                    "cookiecutter",
+                    "scenario",
+                    "driver",
+                    self.name,
+                )
             )
-        )
         return p
+
+    def get_playbook(self, step):
+        """Return embedded playbook location or None.
+
+        The default location is relative to the file implementing the driver
+        class, allowing driver writers to define playbooks without having
+        to override this method.
+        """
+        p = os.path.join(self._path, "playbooks", step + ".yml",)
+        if os.path.isfile(p):
+            return p
+
+    def modules_dir(self):
+        """Return path to ansible modules included with driver."""
+        p = os.path.join(self._path, "modules")
+        if os.path.isdir(p):
+            return p
