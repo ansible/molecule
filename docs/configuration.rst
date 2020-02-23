@@ -103,9 +103,10 @@ maximize flexibility by just calling an external shell command.
 .. code-block:: yaml
 
     lint: |
-        yamllint .
-        ansible-lint
-        flake8
+      set -e
+      yamllint .
+      ansible-lint
+      flake8
 
 The older format is no longer supported and you have to update the
 ``molecule.yml`` when you upgrade. If you don't want to do any linting,
