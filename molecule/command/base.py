@@ -93,8 +93,11 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
     :returns: None
 
     """
+    glob_str = MOLECULE_GLOB
+    if scenario_name:
+        glob_str = glob_str.replace("*", scenario_name)
     scenarios = molecule.scenarios.Scenarios(
-        get_configs(args, command_args, ansible_args), scenario_name
+        get_configs(args, command_args, ansible_args, glob_str), scenario_name
     )
     scenarios.print_matrix()
     for scenario in scenarios:
@@ -157,7 +160,7 @@ def execute_scenario(scenario):
             scenario._remove_scenario_state_directory()
 
 
-def get_configs(args, command_args, ansible_args=()):
+def get_configs(args, command_args, ansible_args=(), glob_str=MOLECULE_GLOB):
     """
     Glob the current directory for Molecule config files, instantiate config \
     objects, and returns a list.
@@ -176,14 +179,14 @@ def get_configs(args, command_args, ansible_args=()):
             command_args=command_args,
             ansible_args=ansible_args,
         )
-        for c in glob.glob(MOLECULE_GLOB)
+        for c in glob.glob(glob_str)
     ]
-    _verify_configs(configs)
+    _verify_configs(configs, glob_str)
 
     return configs
 
 
-def _verify_configs(configs):
+def _verify_configs(configs, glob_str=MOLECULE_GLOB):
     """
     Verify a Molecule config was found and returns None.
 
@@ -200,7 +203,7 @@ def _verify_configs(configs):
                 util.sysexit_with_message(msg)
 
     else:
-        msg = "'{}' glob failed.  Exiting.".format(MOLECULE_GLOB)
+        msg = "'{}' glob failed.  Exiting.".format(glob_str)
         util.sysexit_with_message(msg)
 
 
