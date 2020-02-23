@@ -213,10 +213,14 @@ class Driver(object):
         return status_list
 
     def _get_ssh_connection_options(self):
+        # LogLevel=ERROR is needed in order to avoid warnings like:
+        # Warning: Permanently added ... to the list of known hosts.
         return [
             "-o UserKnownHostsFile=/dev/null",
             "-o ControlMaster=auto",
             "-o ControlPersist=60s",
+            "-o ForwardX11=no",
+            "-o LogLevel=ERROR",
             "-o IdentitiesOnly=yes",
             "-o StrictHostKeyChecking=no",
         ]

@@ -106,6 +106,8 @@ def test_login_cmd_template_property_when_managed(_instance):
         "-o UserKnownHostsFile=/dev/null "
         "-o ControlMaster=auto "
         "-o ControlPersist=60s "
+        "-o ForwardX11=no "
+        "-o LogLevel=ERROR "
         "-o IdentitiesOnly=yes "
         "-o StrictHostKeyChecking=no"
     )
@@ -144,6 +146,8 @@ def test_default_ssh_connection_options_property_when_managed(_instance):
         "-o UserKnownHostsFile=/dev/null",
         "-o ControlMaster=auto",
         "-o ControlPersist=60s",
+        "-o ForwardX11=no",
+        "-o LogLevel=ERROR",
         "-o IdentitiesOnly=yes",
         "-o StrictHostKeyChecking=no",
     ]
@@ -223,6 +227,8 @@ def test_ansible_connection_options_when_managed(mocker, _instance):
             "-o UserKnownHostsFile=/dev/null "
             "-o ControlMaster=auto "
             "-o ControlPersist=60s "
+            "-o ForwardX11=no "
+            "-o LogLevel=ERROR "
             "-o IdentitiesOnly=yes "
             "-o StrictHostKeyChecking=no"
         ),
