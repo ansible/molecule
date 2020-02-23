@@ -141,7 +141,7 @@
     description: Runs tests related to packaging
     parent: ansible-tox-molecule
     vars:
-      tox_envlist: packaging,dockerfile,build-docker
+      tox_envlist: packaging
 
 - project:
     templates:
@@ -152,7 +152,9 @@
             vars:
               tox_envlist: lint
         - molecule-tox-docs
-        - molecule-tox-packaging
+        - molecule-tox-packaging:
+            vars:
+              tox_envlist: packaging,dockerfile,build-docker
         - molecule-tox-py27-ansible28-unit
         - molecule-tox-py27-ansible29-unit
         - molecule-tox-py36-ansible29-unit
@@ -182,7 +184,9 @@
             vars:
               tox_envlist: lint
         - molecule-tox-docs
-        - molecule-tox-packaging
+        - molecule-tox-packaging:
+            vars:
+              tox_envlist: packaging,dockerfile,build-docker
         - molecule-tox-py27-ansible28-unit
         - molecule-tox-py27-ansible29-unit
         - molecule-tox-py36-ansible29-unit
