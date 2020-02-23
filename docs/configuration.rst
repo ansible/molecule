@@ -100,9 +100,16 @@ Molecule was able to use up to three linters and while it was aimed to flexible
 about them, it ended up creating more confusions to the users. We decided to
 maximize flexibility by just calling an external shell command.
 
+Note that by default in most shells, all declared commands will be played
+and only the latest return code will be taken into account for error handling.
+So if you plan to play several linters as in the example below, you should
+explicitely set your shell to exit on the first encountered error
+(e.g. `set -e` for sh/bash/zsh....)
+
 .. code-block:: yaml
 
     lint: |
+        set -e
         yamllint .
         ansible-lint
         flake8
