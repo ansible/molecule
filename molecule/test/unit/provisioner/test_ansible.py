@@ -220,18 +220,10 @@ def test_env_appends_env_property(_instance):
     ]
     assert x == _instance.env["ANSIBLE_ROLES_PATH"].split(":")
 
-    x = [
-        _instance._get_modules_directory(),
-        util.abs_path(
-            os.path.join(_instance._config.scenario.ephemeral_directory, "library")
-        ),
-        util.abs_path(os.path.join(_instance._config.project_directory, "library")),
-        util.abs_path(
-            os.path.join(os.path.expanduser("~"), ".ansible", "plugins", "modules")
-        ),
-        "/usr/share/ansible/plugins/modules",
-        util.abs_path(os.path.join(_instance._config.scenario.directory, "foo", "bar")),
-    ]
+    x = _instance._get_modules_directories()
+    x.append(
+        util.abs_path(os.path.join(_instance._config.scenario.directory, "foo", "bar"))
+    )
     assert x == _instance.env["ANSIBLE_LIBRARY"].split(":")
 
     x = [
@@ -932,8 +924,8 @@ def test_get_plugin_directory(_instance):
     assert ("molecule", "provisioner", "ansible", "plugins") == parts[-4:]
 
 
-def test_get_modules_directory(_instance):
-    result = _instance._get_modules_directory()
+def test_get_modules_directories(_instance):
+    result = _instance._get_modules_directories()[0]
     parts = pytest.helpers.os_split(result)
     x = ("molecule", "provisioner", "ansible", "plugins", "modules")
 

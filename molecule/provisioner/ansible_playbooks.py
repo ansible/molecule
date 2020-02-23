@@ -109,7 +109,7 @@ class AnsiblePlaybooks(object):
                 return playbook
 
     def _get_bundled_driver_playbook(self, section):
-        return os.path.join(
+        return self._config.driver.get_playbook(section) or os.path.join(
             self._get_playbook_directory(),
             self._config.driver.name,
             self._config.config["provisioner"]["playbooks"][section],
