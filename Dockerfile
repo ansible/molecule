@@ -66,7 +66,7 @@ RUN ls -1 dist/
 # This is an actual target container:
 
 FROM alpine:edge
-LABEL maintainer "Ansible <info@ansible.com>"
+LABEL maintainer="Ansible <info@ansible.com>"
 
 ENV PACKAGES="\
     docker \
@@ -132,7 +132,7 @@ ENV GEM_PACKAGES="\
     etc \
     "
 
-ENV MOLECULE_EXTRAS="docker,docs,windows"
+ENV MOLECULE_EXTRAS="docker,docs,windows,lint"
 
 RUN \
     apk add --update --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ ${BUILD_DEPS} ${PACKAGES} \
@@ -142,6 +142,9 @@ RUN \
 COPY --from=molecule-builder \
     /usr/src/molecule/dist \
     /usr/src/molecule/dist
-RUN pip3 install ${PIP_INSTALL_ARGS} "molecule[${MOLECULE_EXTRAS}]"
+RUN \
+    pip3 install \
+    ${PIP_INSTALL_ARGS} \
+    "molecule[${MOLECULE_EXTRAS}]" testinfra
 
 ENV SHELL /bin/bash
