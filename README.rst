@@ -73,7 +73,7 @@ If you want to get moving fast and make a quick patch:
 
     $ git clone https://github.com/ansible-community/molecule && cd molecule
     $ python3 -m venv .venv && source .venv/bin/activate
-    $ pip install -U setuptools pip tox
+    $ pip3 install -U setuptools pip tox
 
 And you're ready to make your changes!
 

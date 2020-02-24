@@ -35,7 +35,7 @@ class Lint(base.Base):
 
     You need to remember to install those linters. For convenience, there is a
     package extra that installs the most common ones, use it like
-    ``pip install "molecule[lint]"``.
+    ``pip3 install "molecule[lint]"``.
 
     .. program:: molecule lint
 

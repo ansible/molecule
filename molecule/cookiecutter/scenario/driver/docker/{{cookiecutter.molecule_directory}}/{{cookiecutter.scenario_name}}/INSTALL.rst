@@ -19,4 +19,4 @@ widely recommended `'--user' flag`_ when invoking ``pip``.
 
 .. code-block:: bash
 
-    $ pip install 'molecule[docker]'
+    $ pip3 install 'molecule[docker]'

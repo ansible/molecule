@@ -22,7 +22,7 @@ CentOS 7
 .. code-block:: bash
 
     $ sudo yum install -y epel-release
-    $ sudo yum install -y gcc python-pip python-devel openssl-devel libselinux-python
+    $ sudo yum install -y gcc python3-pip python3-devel openssl-devel libselinux-python
 
 Ubuntu 16.x
 -----------
@@ -30,7 +30,7 @@ Ubuntu 16.x
 .. code-block:: bash
 
     $ sudo apt-get update
-    $ sudo apt-get install -y python-pip libssl-dev
+    $ sudo apt-get install -y python3-pip libssl-dev
 
 Pip
 ===
@@ -54,7 +54,7 @@ available on your controller or host machines.
 
   .. code-block:: bash
 
-      $ pip install --upgrade --user setuptools
+      $ pip3 install --upgrade --user setuptools
 
   .. _setuptools: https://pypi.org/project/setuptools/
 
@@ -79,7 +79,7 @@ Install Molecule:
 
 .. code-block:: bash
 
-    $ pip install --user "molecule[lint]"
+    $ pip3 install --user "molecule[lint]"
 
 Installing molecule package also installed its main script ``molecule``,
 usually in ``PATH``. Users should know that molecule can also be called as a
@@ -98,7 +98,7 @@ some benefits:
 
     .. code-block:: bash
 
-        pip install \
+        pip3 install \
           --index-url https://test.pypi.org/simple \
           --extra-index-url https://pypi.org/simple \
           molecule==2.21.dev46
@@ -173,4 +173,4 @@ Install
 
 .. code-block:: bash
 
-    $ pip install -U git+https://github.com/ansible-community/molecule
+    $ pip3 install -U git+https://github.com/ansible-community/molecule
