@@ -66,7 +66,7 @@ RUN ls -1 dist/
 # This is an actual target container:
 
 FROM alpine:edge
-LABEL maintainer "Ansible <info@ansible.com>"
+LABEL maintainer="Ansible <info@ansible.com>"
 
 ENV PACKAGES="\
     docker \
