@@ -76,6 +76,7 @@ ENV PACKAGES="\
     ansible \
     ansible-lint \
     docker-py \
+    rsync \
     py3-arrow \
     py3-bcrypt \
     py3-botocore \
