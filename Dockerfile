@@ -136,9 +136,9 @@ ENV MOLECULE_EXTRAS="docker,docs,windows,lint"
 
 RUN \
     apk add --update --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ ${BUILD_DEPS} ${PACKAGES} \
-    gem install ${GEM_PACKAGES} \
-    apk del --no-cache ${BUILD_DEPS} \
-    rm -rf /root/.cache
+    && gem install ${GEM_PACKAGES} \
+    && apk del --no-cache ${BUILD_DEPS} \
+    && rm -rf /root/.cache
 COPY --from=molecule-builder \
     /usr/src/molecule/dist \
     /usr/src/molecule/dist
