@@ -54,10 +54,10 @@ RUN apk add --update --no-cache --repository http://dl-3.alpinelinux.org/alpine/
 ENV MOLECULE_EXTRAS="docker,docs,windows,lint"
 
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=917006
-RUN pip3 install -U wheel
+RUN python3 -m pip install -U wheel
 ADD . .
 RUN \
-    pip3 wheel \
+    python3 -m pip wheel \
     -w dist --no-build-isolation \
     ".[${MOLECULE_EXTRAS}]" testinfra
 RUN ls -1 dist/
@@ -143,7 +143,7 @@ COPY --from=molecule-builder \
     /usr/src/molecule/dist \
     /usr/src/molecule/dist
 RUN \
-    pip3 install \
+    python3 -m pip install \
     ${PIP_INSTALL_ARGS} \
     "molecule[${MOLECULE_EXTRAS}]" testinfra
 

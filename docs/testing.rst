@@ -16,7 +16,7 @@ Install the test framework `Tox`_.
 
 .. code-block:: bash
 
-    $ pip3 install tox
+    $ python3 -m pip install tox
 
 .. _full_testing:
 

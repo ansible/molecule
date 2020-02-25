@@ -40,7 +40,7 @@ and run ``molecule test`` in ubuntu.
           run: |
             sudo apt install docker
             python3 -m pip install --upgrade pip
-            pip3 install -r requirements.txt
+            python3 -m pip install -r requirements.txt
         - name: Test with molecule
           run: |
             molecule test
@@ -62,8 +62,8 @@ A ``.travis.yml`` testing a role named foo1 with the Docker driver.
     before_install:
       - sudo apt-get -qq update
     install:
-      - pip3 install molecule
-      # - pip3 install required driver (e.g. docker, shade, boto, apache-libcloud)
+      - python3 -m pip install molecule
+      # - python3 -m pip install required driver (e.g. docker, shade, boto, apache-libcloud)
     script:
       - molecule test
 
@@ -79,7 +79,7 @@ A ``.travis.yml`` using `Tox`_ as described below.
     before_install:
       - sudo apt-get -qq update
     install:
-      - pip3 install tox-travis
+      - python3 -m pip install tox-travis
     script:
       - tox
 
@@ -110,7 +110,7 @@ Here is an example setting up a virtualenv and testing an Ansible role via Molec
     molecule:
     stage: test
     script:
-      - pip3 install ansible molecule docker
+      - python3 -m pip install ansible molecule docker
       - ansible --version
       - cd roles/testrole && molecule test
 
@@ -149,7 +149,7 @@ Jenkins Pipeline
               pip3.6 install virtualenv
               virtualenv virtenv
               source virtenv/bin/activate
-              pip3 install --upgrade ansible molecule docker
+              python3 -m pip install --upgrade ansible molecule docker
             '''
           }
         }

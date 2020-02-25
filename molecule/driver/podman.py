@@ -117,7 +117,7 @@ class Podman(Driver):
 
     .. code-block:: bash
 
-        $ pip3 install molecule[podman]
+        $ python3 -m pip install molecule[podman]
 
     When pulling from a private registry, it is the user's discretion to decide
     whether to use hard-code strings or environment variables for passing

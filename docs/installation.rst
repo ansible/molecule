@@ -54,7 +54,7 @@ available on your controller or host machines.
 
   .. code-block:: bash
 
-      $ pip3 install --upgrade --user setuptools
+      $ python3 -m pip install --upgrade --user setuptools
 
   .. _setuptools: https://pypi.org/project/setuptools/
 
@@ -79,7 +79,7 @@ Install Molecule:
 
 .. code-block:: bash
 
-    $ pip3 install --user "molecule[lint]"
+    $ python3 -m pip install --user "molecule[lint]"
 
 Installing molecule package also installed its main script ``molecule``,
 usually in ``PATH``. Users should know that molecule can also be called as a
@@ -98,7 +98,7 @@ some benefits:
 
     .. code-block:: bash
 
-        pip3 install \
+        python3 -m pip install \
           --index-url https://test.pypi.org/simple \
           --extra-index-url https://pypi.org/simple \
           molecule==2.21.dev46
@@ -173,4 +173,4 @@ Install
 
 .. code-block:: bash
 
-    $ pip3 install -U git+https://github.com/ansible-community/molecule
+    $ python3 -m pip install -U git+https://github.com/ansible-community/molecule
