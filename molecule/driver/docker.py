@@ -147,7 +147,7 @@ class Docker(Driver):
 
     .. code-block:: bash
 
-        $ pip install molecule[docker]
+        $ python3 -m pip install molecule[docker]
 
     When pulling from a private registry, it is the user's discretion to decide
     whether to use hard-code strings or environment variables for passing
