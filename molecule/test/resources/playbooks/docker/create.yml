@@ -81,15 +81,6 @@
         state: present
       with_items: "{{ molecule_yml.platforms | molecule_get_docker_networks }}"
 
-    - name: Determine the CMD directives
-      set_fact:
-        command_directives_dict: >-
-          {{ command_directives_dict | default({}) |
-             combine({ item.name: item.command | default('bash -c "while true; do sleep 10000; done"') })
-          }}
-      with_items: "{{ molecule_yml.platforms }}"
-      when: item.override_command | default(true)
-
     - name: Create molecule instance(s)
       docker_container:
         name: "{{ item.name }}"
@@ -105,7 +96,8 @@
         recreate: false
         log_driver: json-file
         user: "{{ item.user | default(omit) }}"
-        command: "{{ (command_directives_dict | default({}))[item.name] | default(omit) }}"
+        entrypoint: "{{ item.entrypoint | default('') }}"
+        command: "{{ item.command | default('bash -c \"sleep infinity\"') }}"
         pid_mode: "{{ item.pid_mode | default(omit) }}"
         privileged: "{{ item.privileged | default(omit) }}"
         security_opts: "{{ item.security_opts | default(omit) }}"

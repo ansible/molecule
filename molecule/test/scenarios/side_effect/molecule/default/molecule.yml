@@ -6,7 +6,8 @@ driver:
 platforms:
   - name: instance
     image: ${TEST_BASE_IMAGE}
-    command: /sbin/init
+    entrypoint: init
+    command: 'bash -c "sleep infinity"'
     privileged: true
 provisioner:
   name: ansible

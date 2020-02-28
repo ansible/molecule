@@ -63,8 +63,8 @@ class Docker(Driver):
                 password: $PASSWORD
                 email: user@example.com
                 user: root
-            override_command: True|False
-            command: sleep infinity
+            entrypoint: ''
+            command: 'bash -c "sleep infinity"'
             tty: True|False
             pid_mode: host
             privileged: True|False
@@ -111,11 +111,21 @@ class Docker(Driver):
             buildargs:
                 http_proxy: http://proxy.example.com:8080/
 
-    If specifying the `CMD`_ directive in your ``Dockerfile.j2`` or consuming a
-    built image which declares a ``CMD`` directive, then you must set
-    ``override_command: False``. Otherwise, Molecule takes care to honour the
-    value of the ``command`` key or uses the default of ``bash -c "while true;
-    do sleep 10000; done"`` to run the container until it is provisioned.
+    Molecule takes care to honour the value of the ``entrypoint`` and
+    ``command`` keys, or defalt with ``''`` and ``bash -c "sleep infinity"``
+    to run the container until it is provisioned.
+
+    When attempting to utilize base image original ``ENTRYPOINT`` and ``CMD``
+    behavior, make sure to unset the ``entrypoint`` and ``command``. An
+    example using the ``mariadb:10.4`` image is below:
+
+    .. code-block:: yaml
+
+        platforms:
+          - name: instance
+            image: mariadb:10.4
+            entrypoint: ~
+            command: ~
 
     When attempting to utilize a container image with `systemd`_ as your init
     system inside the container to simulate a real machine, make sure to set
@@ -135,15 +145,16 @@ class Docker(Driver):
     .. code-block:: yaml
 
         platforms:
-        - name: instance
-          image: centos:7
-          privileged: true
-          volumes:
-            - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
-          command: "/usr/sbin/init"
-          tty: True
-          environment:
-            container: docker
+          - name: instance
+            image: centos:7
+            privileged: true
+            volumes:
+              - "/sys/fs/cgroup:/sys/fs/cgroup:rw"
+            entrypoint: init
+            command: 'bash -c "sleep infinity"'
+            tty: True
+            environment:
+              container: docker
 
     .. code-block:: bash
 

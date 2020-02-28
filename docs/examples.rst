@@ -124,7 +124,8 @@ and command as follows.
     platforms:
       - name: instance
         image: centos:7
-        command: /sbin/init
+        entrypoint: init
+        command: 'bash -c "sleep infinity"'
         tmpfs:
           - /run
           - /tmp
@@ -139,7 +140,8 @@ When needed, such security profiles can be reused (for example `the one availabl
     platforms:
       - name: instance
         image: debian:stretch
-        command: /sbin/init
+        entrypoint: init
+        command: 'bash -c "sleep infinity"'
         security_opts:
           - seccomp=path/to/seccomp.json
         tmpfs:
@@ -165,7 +167,8 @@ capabilities along with the same image, command, and volumes as shown in the ``n
     platforms:
       - name: instance
         image: centos:7
-        command: /sbin/init
+        entrypoint: init
+        command: 'bash -c "sleep infinity"'
         capabilities:
           - SYS_ADMIN
         volumes:
@@ -179,7 +182,8 @@ same image and command as shown in the ``non-privileged`` example.
     platforms:
       - name: instance
         image: centos:7
-        command: /sbin/init
+        entrypoint: init
+        command: 'bash -c "sleep infinity"'
         privileged: True
 
 .. _`seccomp security profile for Docker`: https://docs.docker.com/engine/security/seccomp/

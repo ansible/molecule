@@ -69,15 +69,6 @@
       delay: 30
       no_log: false
 
-    - name: Determine the CMD directives
-      set_fact:
-        command_directives_dict: >-
-          {{ command_directives_dict | default({}) |
-             combine({ item.name: item.command | default('bash -c "while true; do sleep 10000; done"') })
-          }}
-      with_items: "{{ molecule_yml.platforms }}"
-      when: item.override_command | default(true)
-
     - name: Create molecule instance(s)
       command: >
         podman run
@@ -99,8 +90,9 @@
         {% if item.network is defined %}--network={{ item.network }}{% endif %}
         {% if item.etc_hosts is defined %}{% for i,k in item.etc_hosts.items() %}--add-host {{ i }}:{{ k }} {% endfor %}{% endif %}
         {% if item.hostname is defined %}--hostname={{ item.hostname }}{% endif %}
+        --entrypoint={{ item.entrypoint | default('') }}
         {{ item.pre_build_image | default(false) | ternary('', 'molecule_local/') }}{{ item.image }}
-        {{ (command_directives_dict | default({}))[item.name] | default('') }}
+        {{ item.command | default('bash -c "sleep infinity"') }}
       register: server
       with_items: "{{ molecule_yml.platforms }}"
       async: 7200

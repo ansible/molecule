@@ -305,7 +305,8 @@ conflict.
       - name: instance2-$TOX_ENVNAME
         image: retr0h/centos7-systemd-ansible:latest
         privileged: True
-        command: /usr/sbin/init
+        entrypoint: init
+        command: 'bash -c "sleep infinity"'
     provisioner:
       name: ansible
     verifier:
