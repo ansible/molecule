@@ -1,5 +1,43 @@
 ---
 # zuul.d/layout.yaml
+
+# generic jobs re-used by molecule plugins, operating system include because
+# it may be critical part of the test matrix.
+- job:
+    name: molecule-tox-devel-centos-8
+    parent: molecule-tox-py36
+    vars:
+      tox_envlist: devel
+    attempts: 1
+
+- job:
+    name: molecule-tox-py27-centos-7
+    parent: molecule-tox-py27
+    attempts: 1
+
+- job:
+    name: molecule-tox-py36-centos-8
+    parent: molecule-tox-py36
+    attempts: 1
+
+- job:
+    name: molecule-tox-py36-ubuntu-bionic
+    parent: molecule-tox-py36
+    attempts: 1
+
+- job:
+    name: molecule-tox-py37-fedora-30
+    parent: molecule-tox-py37
+    attempts: 1
+
+- job:
+    name: molecule-tox-packaging
+    description: Runs tests related to packaging
+    parent: ansible-tox-molecule
+    vars:
+      tox_envlist: packaging
+
+# jobs specific to molecule itself
 - job:
     name: molecule-tox-py27-ansible28-unit
     parent: molecule-tox-py27
@@ -135,13 +173,6 @@
       tox_envlist: py37-ansible28-functional
       tox_environment:
         PYTEST_REQPASS: 53
-
-- job:
-    name: molecule-tox-packaging
-    description: Runs tests related to packaging
-    parent: ansible-tox-molecule
-    vars:
-      tox_envlist: packaging
 
 - project:
     templates:
