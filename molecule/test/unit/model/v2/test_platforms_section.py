@@ -69,11 +69,6 @@ def _model_platforms_docker_section_data():
                 "network_mode": "mode",
                 "purge_networks": True,
                 "foo": "bar",
-                "docker_host": "tcp://localhost:12376",
-                "cacert_path": "/foo/bar/ca.pem",
-                "cert_path": "/foo/bar/cert.pem",
-                "key_path": "/foo/bar/key.pem",
-                "tls_verify": True,
             }
         ],
     }
@@ -155,11 +150,6 @@ def _model_platforms_docker_errors_section_data():
                 "networks": [{"name": int()}],
                 "network_mode": int(),
                 "purge_networks": int(),
-                "docker_host": int(),
-                "cacert_path": int(),
-                "cert_path": int(),
-                "key_path": int(),
-                "tls_verify": str(),
             }
         ]
     }
@@ -214,11 +204,6 @@ def test_platforms_docker_has_errors(_config):
                         "networks": [{0: [{"name": ["must be of string type"]}]}],
                         "network_mode": ["must be of string type"],
                         "purge_networks": ["must be of boolean type"],
-                        "docker_host": ["must be of string type"],
-                        "cacert_path": ["must be of string type"],
-                        "cert_path": ["must be of string type"],
-                        "key_path": ["must be of string type"],
-                        "tls_verify": ["must be of boolean type"],
                     }
                 ]
             }

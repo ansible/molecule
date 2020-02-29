@@ -291,11 +291,6 @@ platforms_docker_schema = {
                 },
                 "network_mode": {"type": "string"},
                 "purge_networks": {"type": "boolean"},
-                "docker_host": {"type": "string"},
-                "cacert_path": {"type": "string"},
-                "cert_path": {"type": "string"},
-                "key_path": {"type": "string"},
-                "tls_verify": {"type": "boolean"},
             },
         },
     }
@@ -353,8 +348,6 @@ platforms_podman_schema = {
                 "restart_policy": {"type": "string"},
                 "restart_retries": {"type": "integer"},
                 "network": {"type": "string"},
-                "cert_path": {"type": "string"},
-                "tls_verify": {"type": "boolean"},
             },
         },
     }

@@ -67,7 +67,9 @@ def test_side_effect_property(_instance):
 
 
 def test_verify_property(_instance):
-    assert _instance._config.provisioner.playbooks.verify is None
+    x = os.path.join(_instance._get_playbook_directory(), "docker", "verify.yml")
+
+    assert x == _instance._config.provisioner.playbooks.verify
 
 
 def test_get_playbook_directory(_instance):

@@ -11,8 +11,6 @@
         podman login
         --username {{ item.registry.credentials.username }}
         --password {{ item.registry.credentials.password }}
-        --tls-verify={{ item.tls_verify | default(lookup('env', 'DOCKER_TLS_VERIFY')) or false }}
-        {% if lookup('env', 'DOCKER_CERT_PATH') %}--cert-dir {{ item.cert_path | default(lookup('env', 'DOCKER_CERT_PATH') + '/cert.pem') }}{% endif %}
         {{ item.registry.url }}
       with_items: "{{ molecule_yml.platforms }}"
       when:

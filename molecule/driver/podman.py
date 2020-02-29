@@ -83,8 +83,6 @@ class Podman(Driver):
               - 8.8.8.8
             network: host
             etc_hosts: {'host1.example.com': '10.3.1.5'}
-            cert_path: /foo/bar/cert.pem
-            tls_verify: true
             env:
               FOO: bar
             restart_policy: on-failure

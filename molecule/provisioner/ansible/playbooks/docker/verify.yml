@@ -1,0 +1,25 @@
+---
+- name: Verify
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  no_log: "{{ molecule_no_log }}"
+  tasks:
+    - name: Discover base image(s)
+      docker_image_info:
+        name: "{{ item.pre_build_image | default(false) | ternary('', 'molecule_local/') }}{{ item.image }}"
+      with_items: "{{ molecule_yml.platforms }}"
+      register: docker_images
+
+    - name: Commit result container(s) as new image(s)
+      shell: |
+        set -o pipefail
+        docker inspect {{ item.name }} && docker commit \
+          --change 'CMD ["{{ docker_images.results[index].images[0].Config.Cmd | join('", "') }}"]' \
+          --change 'ENTRYPOINT ["{{ docker_images.results[index].images[0].Config.Entrypoint | join('", "') }}"]' \
+          {{ item.name }} {{ item.name }}
+      args:
+        executable: "/bin/bash"
+      loop_control:
+        index_var: index
+      with_items: "{{ molecule_yml.platforms }}"
