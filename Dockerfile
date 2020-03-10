@@ -22,15 +22,19 @@ ENV PACKAGES="\
     py3-click \
     py3-colorama \
     py3-cryptography \
+    py3-distlib \
     py3-docutils \
     py3-flake8 \
+    py3-future \
     py3-idna \
     py3-jinja2 \
+    py3-markupsafe \
     py3-mccabe \
     py3-netifaces \
     py3-paramiko \
     py3-pbr \
     py3-pexpect \
+    py3-pip \
     py3-pluggy \
     py3-psutil \
     py3-ptyprocess \
@@ -41,11 +45,13 @@ ENV PACKAGES="\
     py3-requests \
     py3-ruamel \
     py3-setuptools \
+    py3-simplejson \
     py3-six \
     py3-tabulate \
     py3-urllib3 \
     py3-virtualenv \
     py3-websocket-client \
+    py3-yaml \
     python3 \
     python3-dev \
     "
