@@ -108,11 +108,11 @@ Here is an example setting up a virtualenv and testing an Ansible role via Molec
       - python3 --version
 
     molecule:
-    stage: test
-    script:
-      - python3 -m pip install ansible molecule docker
-      - ansible --version
-      - cd roles/testrole && molecule test
+      stage: test
+      script:
+        - python3 -m pip install ansible molecule docker
+        - ansible --version
+        - cd roles/testrole && molecule test
 
 Jenkins Pipeline
 ^^^^^^^^^^^^^^^^
