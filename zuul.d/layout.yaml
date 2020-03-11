@@ -37,6 +37,15 @@
     vars:
       tox_envlist: packaging
 
+- job:
+    name: molecule-tox-snap
+    description: Runs tests related to building a snap
+    parent: ansible-tox-molecule
+    pre-run: playbooks/snap-pre-run.yaml
+    nodeset: ubuntu-bionic-1vcpu
+    vars:
+      tox_envlist: snap
+
 # jobs specific to molecule itself
 - job:
     name: molecule-tox-py27-ansible28-unit
@@ -178,31 +187,33 @@
     templates:
       - publish-to-pypi
     check:
-      jobs: &defaults
+      jobs: &jobs
+        - molecule-tox-docs
         - molecule-tox-linters:
             vars:
               tox_envlist: lint
-        - molecule-tox-docs
         - molecule-tox-packaging:
             vars:
               tox_envlist: packaging,dockerfile,build-docker
+        - molecule-tox-devel-unit
         - molecule-tox-py27-ansible28-unit
         - molecule-tox-py27-ansible29-unit
         - molecule-tox-py36-ansible29-unit
         - molecule-tox-py37-ansible28-unit
         - molecule-tox-py37-ansible29-unit
-        - molecule-tox-devel-unit
+        - molecule-tox-snap
         # tier2: slow functional
         - molecule-tox-py27-ansible28-functional: &deps
             dependencies:
-              - molecule-tox-linters
+              - molecule-tox-devel-unit
               - molecule-tox-docs
+              - molecule-tox-linters
               - molecule-tox-py27-ansible28-unit
               - molecule-tox-py27-ansible29-unit
               - molecule-tox-py36-ansible29-unit
               - molecule-tox-py37-ansible28-unit
               - molecule-tox-py37-ansible29-unit
-              - molecule-tox-devel-unit
+              - molecule-tox-snap
         - molecule-tox-py27-ansible29-functional: *deps
         - molecule-tox-py36-ansible29-functional: *deps
         - molecule-tox-py37-ansible28-functional: *deps
@@ -210,23 +221,4 @@
         - molecule-tox-devel-functional: *deps
 
     gate:
-      jobs:
-        - molecule-tox-linters:
-            vars:
-              tox_envlist: lint
-        - molecule-tox-docs
-        - molecule-tox-packaging:
-            vars:
-              tox_envlist: packaging,dockerfile,build-docker
-        - molecule-tox-py27-ansible28-unit
-        - molecule-tox-py27-ansible29-unit
-        - molecule-tox-py36-ansible29-unit
-        - molecule-tox-py37-ansible28-unit
-        - molecule-tox-py37-ansible29-unit
-        - molecule-tox-devel-unit
-        - molecule-tox-py27-ansible28-functional
-        - molecule-tox-py27-ansible29-functional
-        - molecule-tox-py36-ansible29-functional
-        - molecule-tox-py37-ansible28-functional
-        - molecule-tox-py37-ansible29-functional
-        - molecule-tox-devel-functional
+      jobs: *jobs
