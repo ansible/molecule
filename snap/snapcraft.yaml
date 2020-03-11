@@ -1,19 +1,88 @@
+# requires snapcraft >=3 (install it using snap)
 name: molecule
 base: core18  # the base snap is the execution environment for this snap
-version: git
 summary: Ansible Molecule
 description: |
   Molecule is QA tool use for the development and testing of Ansible roles
   and playbooks.
+license: MIT
 
-grade: devel  # must be 'stable' to release into candidate/stable channels
-confinement: devmode  # use 'strict' once you have the right plugs and slots
+grade: stable  # must be 'stable' to release into candidate/stable channels
+confinement: classic  # use 'strict' once you have the right plugs and slots
+
+adopt-info: molecule-part
 
 parts:
-  molecule:
+  molecule-part:
     # See 'snapcraft plugins'
     plugin: python
+    build-packages:
+      - libffi-dev
+      - libssl-dev
+      - python3-bcrypt
+      - python3-cffi
+      - python3-cryptography
+      - python3-future
+      - python3-markupsafe
+      - python3-nacl
+      - python3-tabulate
+      - python3-yaml
     python-packages:
+      - Jinja2
+      - MarkupSafe
+      - PyYAML
+      - ansible
+      - arrow
+      - bcrypt
+      - binaryornot
+      - cerberus
+      - certifi
+      - cffi
+      - chardet
+      - click
+      - click-completion
+      - click-help-colors
+      - colorama
+      - cookiecutter
+      - cryptography
+      - fasteners
+      - future
+      - git-url-parse
+      - idna
+      - importlib-metadata
+      - jinja2-time
+      - monotonic
+      - paramiko
+      - pathspec
+      - pbr
+      - pexpect
+      - pluggy
+      - poyo
+      - ptyprocess
+      - pycparser
+      - pynacl
+      - python-dateutil
+      - python-gilt
+      - requests
       - setuptools-scm
       - setuptools-scm-git-archive
+      - sh
+      - shellingham
+      - six
+      - tabulate
+      - testinfra
+      - tree-format
+      - urllib3
+      - whichcraft
+      - yamllint
+      - zipp
     source: .
+    override-pull: |
+      snapcraftctl pull && snapcraftctl set-version "$(git describe --tags)"
+
+apps:
+  molecule-part:
+    command: bin/molecule
+    environment:
+      LC_ALL: C.UTF-8
+      LANG: C.UTF-8
