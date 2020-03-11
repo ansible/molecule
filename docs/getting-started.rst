@@ -97,7 +97,7 @@ The ``molecule.yml`` is for configuring Molecule. It is a `YAML`_ file whose
 keys represent the high level components that Molecule provides. These are:
 
 * The :ref:`dependency` manager. Molecule uses
-  std:doc:`galaxy <galaxy/dev_guide>` by default to resolve your role
+  :std:doc:`galaxy <galaxy/dev_guide>` by default to resolve your role
   dependencies.
 
 * The :ref:`driver` provider. Molecule uses `Docker`_ by default. Molecule uses
