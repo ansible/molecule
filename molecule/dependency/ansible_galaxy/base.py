@@ -19,6 +19,8 @@
 #  DEALINGS IN THE SOFTWARE.
 """Ansible-Galaxy Dependency Module."""
 
+import abc
+import copy
 import os
 
 import sh
@@ -30,7 +32,7 @@ from molecule.dependency import base
 LOG = logger.get_logger(__name__)
 
 
-class AnsibleGalaxy(base.Base):
+class AnsibleGalaxyBase(base.Base, metaclass=abc.ABCMeta):
     """
     :std:doc:`Galaxy <galaxy/user_guide>` is the default dependency manager.
 
@@ -51,7 +53,26 @@ class AnsibleGalaxy(base.Base):
             ignore-certs: True
             ignore-errors: True
             role-file: requirements.yml
+            requirements-file: collections.yml
 
+    Use "role-file" if you have roles only. Use the "requirements-file" if you
+    need to install collections. Note that, with Ansible Galaxy's collections
+    support, you can now combine the two lists into a single requirement if your
+    file looks like this
+
+    .. code-block:: yaml
+        roles:
+          - dep.role1
+          - dep.role2
+        collections:
+          - ns.collection
+          - ns2.collection2
+
+    If you want to combine them, then just point your ``role-file`` and
+    ``requirements-file`` to the same path. This is not done by default because
+    older ``role-file`` only required a list of roles, while the collections
+    must be under the ``collections:`` key within the file and pointing both to
+    the same file by default could break existing code.
 
     The dependency manager can be disabled by setting ``enabled`` to False.
 
@@ -71,28 +92,46 @@ class AnsibleGalaxy(base.Base):
             FOO: bar
     """
 
+    FILTER_OPTS = ()
+
     def __init__(self, config):
         """Construct AnsibleGalaxy."""
-        super(AnsibleGalaxy, self).__init__(config)
+        super(AnsibleGalaxyBase, self).__init__(config)
         self._sh_command = None
 
         self.command = "ansible-galaxy"
+
+    @abc.abstractproperty
+    def install_path(self):  # noqa cover
+        pass
+
+    @abc.abstractproperty
+    def requirements_file(self):  # noqa cover
+        pass
 
     @property
     def default_options(self):
         d = {
             "force": True,
-            "role-file": os.path.join(
-                self._config.scenario.directory, "requirements.yml"
-            ),
-            "roles-path": os.path.join(
-                self._config.scenario.ephemeral_directory, "roles"
-            ),
         }
         if self._config.debug:
             d["vvv"] = True
 
         return d
+
+    def filter_options(self, opts, keys):
+        """
+        Removes all the values of ``keys`` from the dictionary ``opts``, if
+        they are present. Returns the resulting dictionary. Does not modify the
+        existing one.
+
+        :return: A copy of ``opts`` without the value of keys
+        """
+        c = copy.copy(opts)
+        for key in keys:
+            if key in c.keys():
+                del c[key]
+        return c
 
     # NOTE(retr0h): Override the base classes' options() to handle
     # ``ansible-galaxy`` one-off.
@@ -104,7 +143,8 @@ class AnsibleGalaxy(base.Base):
         if self._config.debug:
             o = util.filter_verbose_permutation(o)
 
-        return util.merge_dicts(self.default_options, o)
+        o = util.merge_dicts(self.default_options, o)
+        return self.filter_options(o, self.FILTER_OPTS)
 
     @property
     def default_env(self):
@@ -122,7 +162,7 @@ class AnsibleGalaxy(base.Base):
 
         self._sh_command = getattr(sh, self.command)
         self._sh_command = self._sh_command.bake(
-            "install",
+            *self.COMMANDS,
             options,
             *verbose_flag,
             _env=self.env,
@@ -153,14 +193,8 @@ class AnsibleGalaxy(base.Base):
 
         :return: None
         """
-        role_directory = os.path.join(
-            self._config.scenario.directory, self.options["roles-path"]
-        )
-        if not os.path.isdir(role_directory):
-            os.makedirs(role_directory)
-
-    def _role_file(self):
-        return self.options.get("role-file")
+        if not os.path.isdir(self.install_path):
+            os.makedirs(self.install_path)
 
     def _has_requirements_file(self):
-        return os.path.isfile(self._role_file())
+        return os.path.isfile(self.requirements_file)

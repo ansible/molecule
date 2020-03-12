@@ -434,6 +434,23 @@ class Ansible(base.Base):
                         "/etc/ansible/roles",
                     ]
                 ),
+                "ANSIBLE_COLLECTIONS_PATHS": ":".join(
+                    [
+                        util.abs_path(
+                            os.path.join(
+                                self._config.scenario.ephemeral_directory, "collections"
+                            )
+                        ),
+                        util.abs_path(
+                            os.path.join(self._config.project_directory, os.path.pardir)
+                        ),
+                        util.abs_path(
+                            os.path.join(os.path.expanduser("~"), ".ansible")
+                        ),
+                        "/usr/share/ansible/collections",
+                        "/etc/ansible/collections",
+                    ]
+                ),
                 "ANSIBLE_LIBRARY": ":".join(self._get_modules_directories()),
                 "ANSIBLE_FILTER_PLUGINS": ":".join(
                     [
