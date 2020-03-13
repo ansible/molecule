@@ -30,7 +30,10 @@ from molecule.dependency.ansible_galaxy import collections
 @pytest.fixture
 def _patched_ansible_galaxy_has_requirements_file(mocker):
     m = mocker.patch(
-        ("molecule.dependency.ansible_galaxy.collections." "Collections._has_requirements_file")
+        (
+            "molecule.dependency.ansible_galaxy.collections."
+            "Collections._has_requirements_file"
+        )
     )
     m.return_value = True
 

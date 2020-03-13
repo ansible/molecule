@@ -1,3 +1,4 @@
+"""Base definition for Ansible Galaxy dependencies."""
 from molecule.dependency.base import Base
 from molecule.dependency.ansible_galaxy.roles import Roles
 from molecule.dependency.ansible_galaxy.collections import Collections
@@ -24,7 +25,26 @@ class AnsibleGalaxy(Base):
             ignore-certs: True
             ignore-errors: True
             role-file: requirements.yml
+            requirements-file: collections.yml
 
+    Use "role-file" if you have roles only. Use the "requirements-file" if you
+    need to install collections. Note that, with Ansible Galaxy's collections
+    support, you can now combine the two lists into a single requirement if your
+    file looks like this
+
+    .. code-block:: yaml
+        roles:
+          - dep.role1
+          - dep.role2
+        collections:
+          - ns.collection
+          - ns2.collection2
+
+    If you want to combine them, then just point your ``role-file`` and
+    ``requirements-file`` to the same path. This is not done by default because
+    older ``role-file`` only required a list of roles, while the collections
+    must be under the ``collections:`` key within the file and pointing both to
+    the same file by default could break existing code.
 
     The dependency manager can be disabled by setting ``enabled`` to False.
 
@@ -43,6 +63,7 @@ class AnsibleGalaxy(Base):
           env:
             FOO: bar
     """
+
     def __init__(self, config):
         """Construct AnsibleGalaxy."""
         super(AnsibleGalaxy, self).__init__(config)
@@ -55,5 +76,5 @@ class AnsibleGalaxy(Base):
     def _has_requirements_file(self):
         has_file = False
         for subtype in self.invocations:
-            has_file = (has_file or subtype._has_requirements_file())
+            has_file = has_file or subtype._has_requirements_file()
         return has_file

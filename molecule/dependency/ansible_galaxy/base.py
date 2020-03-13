@@ -17,7 +17,7 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
-"""Ansible-Galaxy Dependency Module."""
+"""Base Ansible Galaxy dependency module."""
 
 import abc
 import copy
@@ -33,64 +33,7 @@ LOG = logger.get_logger(__name__)
 
 
 class AnsibleGalaxyBase(base.Base, metaclass=abc.ABCMeta):
-    """
-    :std:doc:`Galaxy <galaxy/user_guide>` is the default dependency manager.
-
-    Additional options can be passed to ``ansible-galaxy install`` through the
-    options dict.  Any option set in this section will override the defaults.
-
-    .. note::
-
-        Molecule will remove any options matching '^[v]+$', and pass ``-vvv``
-        to the underlying ``ansible-galaxy`` command when executing
-        `molecule --debug`.
-
-    .. code-block:: yaml
-
-        dependency:
-          name: galaxy
-          options:
-            ignore-certs: True
-            ignore-errors: True
-            role-file: requirements.yml
-            requirements-file: collections.yml
-
-    Use "role-file" if you have roles only. Use the "requirements-file" if you
-    need to install collections. Note that, with Ansible Galaxy's collections
-    support, you can now combine the two lists into a single requirement if your
-    file looks like this
-
-    .. code-block:: yaml
-        roles:
-          - dep.role1
-          - dep.role2
-        collections:
-          - ns.collection
-          - ns2.collection2
-
-    If you want to combine them, then just point your ``role-file`` and
-    ``requirements-file`` to the same path. This is not done by default because
-    older ``role-file`` only required a list of roles, while the collections
-    must be under the ``collections:`` key within the file and pointing both to
-    the same file by default could break existing code.
-
-    The dependency manager can be disabled by setting ``enabled`` to False.
-
-    .. code-block:: yaml
-
-        dependency:
-          name: galaxy
-          enabled: False
-
-    Environment variables can be passed to the dependency.
-
-    .. code-block:: yaml
-
-        dependency:
-          name: galaxy
-          env:
-            FOO: bar
-    """
+    """Ansible Galaxy dependency base class."""
 
     FILTER_OPTS = ()
 
@@ -121,6 +64,8 @@ class AnsibleGalaxyBase(base.Base, metaclass=abc.ABCMeta):
 
     def filter_options(self, opts, keys):
         """
+        Filter certain keys from a dictionary.
+
         Removes all the values of ``keys`` from the dictionary ``opts``, if
         they are present. Returns the resulting dictionary. Does not modify the
         existing one.
