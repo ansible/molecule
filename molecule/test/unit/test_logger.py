@@ -27,7 +27,8 @@ import colorama
 from molecule import logger
 
 
-def test_info(capsys):
+def test_info(capsys, monkeypatch):
+    monkeypatch.setenv("PY_COLORS", "1")
     log = logger.get_logger(__name__)
     log.info("foo")
     stdout, _ = capsys.readouterr()
@@ -40,6 +41,7 @@ def test_info(capsys):
     x, _ = capsys.readouterr()
 
     assert x == stdout
+    monkeypatch.setenv("PY_COLORS", "0")
 
 
 def test_out(capsys):
@@ -51,7 +53,8 @@ def test_out(capsys):
     assert "    foo\n" == stdout
 
 
-def test_warn(capsys):
+def test_warn(capsys, monkeypatch):
+    monkeypatch.setenv("PY_COLORS", "1")
     log = logger.get_logger(__name__)
     log.warning("foo")
 
@@ -63,9 +66,11 @@ def test_warn(capsys):
     x, _ = capsys.readouterr()
 
     assert x == stdout
+    monkeypatch.setenv("PY_COLORS", "0")
 
 
-def test_error(capsys):
+def test_error(capsys, monkeypatch):
+    monkeypatch.setenv("PY_COLORS", "1")
     log = logger.get_logger(__name__)
     log.error("foo")
 
@@ -78,9 +83,11 @@ def test_error(capsys):
     _, x = capsys.readouterr()
 
     assert x in stderr
+    monkeypatch.setenv("PY_COLORS", "0")
 
 
-def test_critical(capsys):
+def test_critical(capsys, monkeypatch):
+    monkeypatch.setenv("PY_COLORS", "1")
     log = logger.get_logger(__name__)
     log.critical("foo")
 
@@ -95,9 +102,11 @@ def test_critical(capsys):
     _, x = capsys.readouterr()
 
     assert x in stderr
+    monkeypatch.setenv("PY_COLORS", "0")
 
 
-def test_success(capsys):
+def test_success(capsys, monkeypatch):
+    monkeypatch.setenv("PY_COLORS", "1")
     log = logger.get_logger(__name__)
     log.success("foo")
 
@@ -109,30 +118,39 @@ def test_success(capsys):
     x, _ = capsys.readouterr()
 
     assert x == stdout
+    monkeypatch.setenv("PY_COLORS", "0")
 
 
-def test_red_text():
+def test_red_text(monkeypatch):
+    monkeypatch.setenv("PY_COLORS", "1")
     x = "{}{}{}".format(colorama.Fore.RED, "foo", colorama.Style.RESET_ALL)
 
     assert x == logger.red_text("foo")
+    monkeypatch.setenv("PY_COLORS", "0")
 
 
-def test_yellow_text():
+def test_yellow_text(monkeypatch):
+    monkeypatch.setenv("PY_COLORS", "1")
     x = "{}{}{}".format(colorama.Fore.YELLOW, "foo", colorama.Style.RESET_ALL)
 
     assert x == logger.yellow_text("foo")
+    monkeypatch.setenv("PY_COLORS", "0")
 
 
-def test_green_text():
+def test_green_text(monkeypatch):
+    monkeypatch.setenv("PY_COLORS", "1")
     x = "{}{}{}".format(colorama.Fore.GREEN, "foo", colorama.Style.RESET_ALL)
 
     assert x == logger.green_text("foo")
+    monkeypatch.setenv("PY_COLORS", "0")
 
 
-def test_cyan_text():
+def test_cyan_text(monkeypatch):
+    monkeypatch.setenv("PY_COLORS", "1")
     x = "{}{}{}".format(colorama.Fore.CYAN, "foo", colorama.Style.RESET_ALL)
 
     assert x == logger.cyan_text("foo")
+    monkeypatch.setenv("PY_COLORS", "0")
 
 
 def test_markup_detection_pycolors0(monkeypatch):
