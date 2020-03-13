@@ -32,6 +32,8 @@ Ansible Molecule
 About Ansible Molecule
 ======================
 
+Do not merge me!
+
 Molecule project is designed to aid in the development and testing of
 `Ansible`_ roles.
 
