@@ -32,8 +32,10 @@ from molecule.dependency import base
 LOG = logger.get_logger(__name__)
 
 
-class AnsibleGalaxyBase(base.Base, metaclass=abc.ABCMeta):
+class AnsibleGalaxyBase(base.Base):
     """Ansible Galaxy dependency base class."""
+
+    __metaclass__ = abc.ABCMeta
 
     FILTER_OPTS = ()
 
@@ -106,13 +108,9 @@ class AnsibleGalaxyBase(base.Base, metaclass=abc.ABCMeta):
         verbose_flag = util.verbose_flag(options)
 
         self._sh_command = getattr(sh, self.command)
+        self._sh_command = self._sh_command.bake(*self.COMMANDS)
         self._sh_command = self._sh_command.bake(
-            *self.COMMANDS,
-            options,
-            *verbose_flag,
-            _env=self.env,
-            _out=LOG.out,
-            _err=LOG.error
+            options, *verbose_flag, _env=self.env, _out=LOG.out, _err=LOG.error
         )
 
     def execute(self):

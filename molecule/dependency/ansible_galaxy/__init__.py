@@ -1,4 +1,5 @@
 """Base definition for Ansible Galaxy dependencies."""
+from molecule import util
 from molecule.dependency.base import Base
 from molecule.dependency.ansible_galaxy.roles import Roles
 from molecule.dependency.ansible_galaxy.collections import Collections
@@ -75,6 +76,20 @@ class AnsibleGalaxy(Base):
 
     def _has_requirements_file(self):
         has_file = False
-        for subtype in self.invocations:
-            has_file = has_file or subtype._has_requirements_file()
+        for invoker in self.invocations:
+            has_file = has_file or invoker._has_requirements_file()
         return has_file
+
+    @property
+    def default_env(self):
+        e = {}
+        for invoker in self.invocations:
+            e = util.merge(e, invoker.default_env)
+        return e
+
+    @property
+    def default_options(self):
+        opts = {}
+        for invoker in self.invocations:
+            opts = util.merge(opts, invoker.default_opts)
+        return opts
