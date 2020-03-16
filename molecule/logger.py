@@ -185,4 +185,6 @@ def cyan_text(msg):
 
 def color_text(color, msg):
     """Add color markers."""
-    return "{}{}{}".format(color, msg, colorama.Style.RESET_ALL)
+    if should_do_markup():
+        return "{}{}{}".format(color, msg, colorama.Style.RESET_ALL)
+    return msg
