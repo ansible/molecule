@@ -34,6 +34,7 @@
     name: molecule-tox-packaging
     description: Runs tests related to packaging
     parent: ansible-tox-molecule
+    timeout: 3600
     vars:
       tox_envlist: packaging
 
