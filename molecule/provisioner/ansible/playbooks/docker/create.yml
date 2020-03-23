@@ -121,7 +121,6 @@
         hostname: "{{ item.hostname | default(item.name) }}"
         image: "{{ item.pre_build_image | default(false) | ternary('', 'molecule_local/') }}{{ item.image }}"
         pull: "{{ item.pull | default(omit) }}"
-        kernel_memory: "{{ item.kernel_memory | default(omit) }}"
         memory: "{{ item.memory | default(omit) }}"
         state: started
         recreate: false
