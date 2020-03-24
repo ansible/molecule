@@ -58,6 +58,9 @@ class AnsiblePlaybook(object):
 
         :return: None
         """
+        if not self._playbook:
+            return
+
         # Pass a directory as inventory to let Ansible merge the multiple
         # inventory sources located under
         self.add_cli_arg("inventory", self._config.provisioner.inventory_directory)
@@ -93,6 +96,10 @@ class AnsiblePlaybook(object):
         """
         if self._ansible_command is None:
             self.bake()
+
+        if not self._playbook:
+            LOG.warning("Skipping, %s action has no playbook." % self._config.action)
+            return
 
         try:
             self._config.driver.sanity_checks()
