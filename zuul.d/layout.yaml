@@ -136,6 +136,8 @@
 - job:
     name: molecule-tox-devel-unit
     parent: molecule-tox-py36
+    # until ansible-devel 2.10 changes are implemented
+    voting: false
     vars:
       tox_envlist: ansibledevel-unit
       tox_environment:
@@ -145,6 +147,8 @@
     name: molecule-tox-devel-functional
     parent: molecule-tox-py36
     timeout: 7200
+    # until nsible-devel 2.10 changes are implemented
+    voting: false
     vars:
       tox_envlist: ansibledevel-functional
       tox_environment:
