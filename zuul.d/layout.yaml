@@ -210,7 +210,6 @@
         # tier2: slow functional
         - molecule-tox-py27-ansible28-functional: &deps
             dependencies:
-              - molecule-tox-devel-unit
               - molecule-tox-docs
               - molecule-tox-linters
               - molecule-tox-py27-ansible28-unit
@@ -223,7 +222,8 @@
         - molecule-tox-py36-ansible29-functional: *deps
         - molecule-tox-py37-ansible28-functional: *deps
         - molecule-tox-py37-ansible29-functional: *deps
-        - molecule-tox-devel-functional: *deps
-
+        - molecule-tox-devel-functional:
+            dependencies:
+              - molecule-tox-devel-unit
     gate:
       jobs: *jobs
