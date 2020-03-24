@@ -86,33 +86,34 @@ A ``.travis.yml`` using `Tox`_ as described below.
 Gitlab CI
 ^^^^^^^^^
 
-`Gitlab`_ includes its own CI. Pipelines are usually defined in a ``.gitlab-ci.yml`` file in the top folder of a repository, to be ran on Gitlab Runners.
+`Gitlab`_ includes its own CI. Pipelines are usually defined in a ``.gitlab-ci.yml`` file in the top folder of a repository, to be run on Gitlab Runners.
 
-Here is an example setting up a virtualenv and testing an Ansible role via Molecule. User-level pip is cached and so is the virtual environment to save time. And this is run over a runner tagged `pip36` and `docker`, because its a minimal CentOS 7 VM installed with pip36 from IUS repository and docker.
-
+Here is an example using Docker in Docker
 
 .. code-block:: yaml
 
     ---
-    image: docker:git
+    image: docker:latest
 
     services:
       - docker:dind
 
     before_script:
-      - apk update && apk add --no-cache docker
-        python3-dev py3-pip docker gcc git curl build-base
+      - apk update && apk add --no-cache
+        python3-dev py3-pip gcc git curl build-base
         autoconf automake py3-cryptography linux-headers
         musl-dev libffi-dev openssl-dev openssh
       - docker info
       - python3 --version
+      - python3 -m pip install ansible molecule[docker]
+      - ansible --version
+      - molecule --version
 
     molecule:
       stage: test
       script:
-        - python3 -m pip install ansible molecule docker
-        - ansible --version
         - cd roles/testrole && molecule test
+
 
 Jenkins Pipeline
 ^^^^^^^^^^^^^^^^
