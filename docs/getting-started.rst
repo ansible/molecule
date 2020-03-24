@@ -65,7 +65,7 @@ directories:
 .. code-block:: bash
 
     $ ls
-    Dockerfile.j2  INSTALL.rst  molecule.yml  converge.yml  tests
+    Dockerfile.j2  INSTALL.rst  molecule.yml  converge.yml  verify.yml
 
 * Since `Docker`_ is the default :ref:`driver`, we find a ``Dockerfile.j2``
   `Jinja2`_ template file in place. Molecule will use this file to build a
@@ -83,10 +83,9 @@ directories:
   role. Molecule will invoke this playbook with ``ansible-playbook`` and run it
   against an instance created by the driver.
 
-* ``tests`` is the tests directory created because Molecule uses
-  :std:doc:`TestInfra <testinfra:index>` as the default :ref:`verifier`. This
+* ``verify.yml`` is the Ansible file used for testing as Ansible is the default :ref:`verifier`. This
   allows you to write specific tests against the state of the container after
-  your role has finished executing. Other verifier tools are available.
+  your role has finished executing. Other verifier tools are available (Note that :std:doc:`TestInfra <testinfra:index>` was the default verifier prior to molecule version 3).
 
 .. _Jinja2: http://jinja.pocoo.org/
 
@@ -117,8 +116,7 @@ keys represent the high level components that Molecule provides. These are:
 * The :ref:`root_scenario` definition. Molecule relies on this configuration
   to control the scenario sequence order.
 
-* The :ref:`verifier` framework. Molecule uses :std:doc:`TestInfra
-  <testinfra:index>` by default to provide a way to write specific state
+* The :ref:`verifier` framework. Molecule uses Ansible by default to provide a way to write specific state
   checking tests (such as deployment smoke tests) on the target instance.
 
 .. _YAML:  https://yaml.org/
