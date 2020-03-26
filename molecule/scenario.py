@@ -19,14 +19,10 @@
 #  DEALINGS IN THE SOFTWARE.
 """Molecule Scenario Module."""
 
-import shutil
-import os
+from pathlib import Path
 import fnmatch
-
-try:
-    from pathlib import Path
-except ImportError:
-    from pathlib2 import Path
+import os
+import shutil
 
 from molecule import logger
 from molecule import scenarios

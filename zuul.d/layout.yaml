@@ -12,7 +12,9 @@
 
 - job:
     name: molecule-tox-py27-centos-7
+    description: "[DEPRECATED] Please remove it from your project"
     parent: molecule-tox-py27
+    voting: false
     attempts: 1
 
 - job:
@@ -47,38 +49,20 @@
     vars:
       tox_envlist: snap
 
-# jobs specific to molecule itself
 - job:
-    name: molecule-tox-py27-ansible28-unit
-    parent: molecule-tox-py27
+    name: molecule-tox-py36-ansible28-unit
+    parent: molecule-tox-py36
     vars:
-      tox_envlist: py27-ansible28-unit
+      tox_envlist: py36-ansible28-unit
       tox_environment:
         PYTEST_REQPASS: 475
 
 - job:
-    name: molecule-tox-py27-ansible28-functional
-    parent: molecule-tox-py27
+    name: molecule-tox-py36-ansible28-functional
+    parent: molecule-tox-py36
     timeout: 7200
     vars:
-      tox_envlist: py27-ansible28-functional
-      tox_environment:
-        PYTEST_REQPASS: 53
-
-- job:
-    name: molecule-tox-py27-ansible29-unit
-    parent: molecule-tox-py27
-    vars:
-      tox_envlist: py27-ansible29-unit
-      tox_environment:
-        PYTEST_REQPASS: 475
-
-- job:
-    name: molecule-tox-py27-ansible29-functional
-    parent: molecule-tox-py27
-    timeout: 7200
-    vars:
-      tox_envlist: py27-ansible29-functional
+      tox_envlist: py36-ansible28-functional
       tox_environment:
         PYTEST_REQPASS: 53
 
@@ -155,23 +139,6 @@
         PYTEST_REQPASS: 53
 
 - job:
-    name: molecule-tox-py27-ansible28-unit
-    parent: molecule-tox-py27
-    vars:
-      tox_envlist: py27-ansible28-unit
-      tox_environment:
-        PYTEST_REQPASS: 475
-
-- job:
-    name: molecule-tox-py27-ansible28-functional
-    parent: molecule-tox-py27
-    timeout: 7200
-    vars:
-      tox_envlist: py27-ansible28-functional
-      tox_environment:
-        PYTEST_REQPASS: 53
-
-- job:
     name: molecule-tox-py37-ansible28-unit
     parent: molecule-tox-py37
     vars:
@@ -197,33 +164,19 @@
         - molecule-tox-linters:
             vars:
               tox_envlist: lint
+        - molecule-tox-devel-functional
+        - molecule-tox-devel-unit
         - molecule-tox-packaging:
             vars:
               tox_envlist: packaging,dockerfile,build-docker
-        - molecule-tox-devel-unit
-        - molecule-tox-py27-ansible28-unit
-        - molecule-tox-py27-ansible29-unit
+        - molecule-tox-py36-ansible28-functional
+        - molecule-tox-py36-ansible28-unit
+        - molecule-tox-py36-ansible29-functional
         - molecule-tox-py36-ansible29-unit
+        - molecule-tox-py37-ansible28-functional
         - molecule-tox-py37-ansible28-unit
+        - molecule-tox-py37-ansible29-functional
         - molecule-tox-py37-ansible29-unit
         - molecule-tox-snap
-        # tier2: slow functional
-        - molecule-tox-py27-ansible28-functional: &deps
-            dependencies:
-              - molecule-tox-docs
-              - molecule-tox-linters
-              - molecule-tox-py27-ansible28-unit
-              - molecule-tox-py27-ansible29-unit
-              - molecule-tox-py36-ansible29-unit
-              - molecule-tox-py37-ansible28-unit
-              - molecule-tox-py37-ansible29-unit
-              - molecule-tox-snap
-        - molecule-tox-py27-ansible29-functional: *deps
-        - molecule-tox-py36-ansible29-functional: *deps
-        - molecule-tox-py37-ansible28-functional: *deps
-        - molecule-tox-py37-ansible29-functional: *deps
-        - molecule-tox-devel-functional:
-            dependencies:
-              - molecule-tox-devel-unit
     gate:
       jobs: *jobs

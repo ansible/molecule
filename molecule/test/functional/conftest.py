@@ -34,6 +34,7 @@ from subprocess import PIPE
 
 from molecule import logger
 from molecule import util
+from subprocess import check_output
 
 from molecule.test.conftest import change_dir_to
 
@@ -267,7 +268,7 @@ def get_virtualbox_executable():
 def supports_docker():
     docker = get_docker_executable()
     if docker:
-        result = util.run([docker, "info"], stdout=PIPE, universal_newlines=True)
+        result = subprocess.run([docker, "info"], stdout=PIPE, universal_newlines=True)
         if result.returncode != 0:
             LOG.error(
                 "Error %s returned from `docker info`: %s",
@@ -293,7 +294,7 @@ def supports_podman():
     if not min_ansible("2.8.6") or platform.system() == "Darwin" or not podman:
         return False
 
-    result = util.run([podman, "info"], stdout=PIPE, universal_newlines=True)
+    result = subprocess.run([podman, "info"], stdout=PIPE, universal_newlines=True)
     if result.returncode != 0:
         LOG.error(
             "Error %s returned from `podman info`: %s",
@@ -305,7 +306,7 @@ def supports_podman():
 
     # checks for minimal version of podman
     cmd = ["podman", "version", "-f", "{{.Version}}"]
-    podman_version = util.check_output(
+    podman_version = check_output(
         cmd, stderr=subprocess.STDOUT, universal_newlines=True
     )
     # We need to use the outdated LooseVersion because podman versioning

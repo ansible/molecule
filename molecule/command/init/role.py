@@ -27,7 +27,7 @@ from molecule import logger
 from molecule import util
 from molecule.command import base as command_base
 from molecule.command.init import base
-
+from subprocess import check_output
 
 LOG = logger.get_logger(__name__)
 
@@ -75,7 +75,7 @@ class Role(base.Base):
 
         try:
             cmd = ["ansible-galaxy", "init", "-v", "--offline", role_name]
-            util.check_output(cmd, stderr=subprocess.STDOUT, universal_newlines=True)
+            check_output(cmd, stderr=subprocess.STDOUT, universal_newlines=True)
         except Exception as e:
             util.sysexit_with_message(
                 "Galaxy failed to create role: %s: %s" % (e, e.output)

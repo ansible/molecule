@@ -24,7 +24,6 @@ import collections
 import glob
 import os
 
-import six
 import shutil
 
 import molecule.command
@@ -41,8 +40,7 @@ MOLECULE_GLOB = os.environ.get("MOLECULE_GLOB", "molecule/*/molecule.yml")
 MOLECULE_DEFAULT_SCENARIO_NAME = "default"
 
 
-@six.add_metaclass(abc.ABCMeta)
-class Base(object):
+class Base(object, metaclass=abc.ABCMeta):
     """An abstract base class used to define the command interface."""
 
     def __init__(self, c):
