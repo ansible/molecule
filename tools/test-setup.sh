@@ -8,7 +8,7 @@ set -euxo pipefail
 # non-sudo mode.
 PYTHON=$(command -v python3 python | head -n1)
 
-sudo $PYTHON -m pip install -U tox "zipp<0.6.0;python_version=='2.7'"
+sudo "$PYTHON" -m pip install "tox>=3.14.6"
 
 # Workaround for a potential:
 # Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock

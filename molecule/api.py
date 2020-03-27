@@ -1,6 +1,6 @@
 """Molecule API Module."""
 
-from six.moves import UserList
+from collections import UserList
 import pluggy
 from molecule import logger
 from molecule.util import lru_cache

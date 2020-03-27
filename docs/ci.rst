@@ -26,7 +26,7 @@ and run ``molecule test`` in ubuntu.
       strategy:
         max-parallel: 4
         matrix:
-          python-version: [3.5, 3.6, 3.7]
+          python-version: [3.6, 3.7]
 
       steps:
         - uses: actions/checkout@v1
@@ -255,14 +255,7 @@ To test the role against multiple versions of Ansible.
     commands =
         molecule test
 
-To view the factor generated tox environments.
-
-.. code-block:: bash
-
-    $ tox -l
-    py27-ansible20
-    py27-ansible21
-    py27-ansible22
+To view the factor generated tox environments run `tox -l`.
 
 If using the `--parallel functionality`_ of Tox (version 3.7 onwards), Molecule
 must be made aware of the parallel testing by setting a
@@ -273,7 +266,7 @@ we export a ``TOX_ENVNAME`` environment variable, it's the name of our tox env.
 
     [tox]
     minversion = 3.7
-    envlist = py{27}_ansible{23,24}
+    envlist = py{36}_ansible{23,24}
     skipsdist = true
 
     [testenv]

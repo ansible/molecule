@@ -46,7 +46,6 @@ ENV PACKAGES="\
     py3-ruamel \
     py3-setuptools \
     py3-simplejson \
-    py3-six \
     py3-tabulate \
     py3-urllib3 \
     py3-virtualenv \
@@ -112,7 +111,6 @@ ENV PACKAGES="\
     py3-requests \
     py3-ruamel \
     py3-setuptools \
-    py3-six \
     py3-tabulate \
     py3-urllib3 \
     py3-virtualenv \
