@@ -138,11 +138,3 @@ def test_created(_instance):
 
 def test_converged(_instance):
     assert "false" == _instance._converged()
-
-
-def test_sanity_checks_missing_docker_dependency(mocker, _instance):
-    target = "ansible.module_utils.docker.common.HAS_DOCKER_PY"
-    mocker.patch(target, False)
-
-    with pytest.raises(SystemExit):
-        _instance.sanity_checks()
