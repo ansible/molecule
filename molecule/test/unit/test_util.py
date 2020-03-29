@@ -397,3 +397,23 @@ def test_underscore():
 )
 def test_merge_dicts(a, b, x):
     assert x == util.merge_dicts(a, b)
+
+
+def test_paralellize_platform_names():
+    config = dict(
+        platforms=[dict(name="pa"), dict(name="pb")],
+        provisioner=dict(
+            inventory=dict(host_vars=dict(pa=dict(x=3), pb=dict(y=4), pc=dict(z=5))),
+        ),
+    )
+
+    util.parallelize_platform_names(config, "123")
+
+    assert config == dict(
+        platforms=[dict(name="pa-123"), dict(name="pb-123")],
+        provisioner=dict(
+            inventory=dict(
+                host_vars={"pa-123": dict(x=3), "pb-123": dict(y=4), "pc": dict(z=5)}
+            ),
+        ),
+    )

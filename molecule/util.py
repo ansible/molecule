@@ -336,12 +336,24 @@ def validate_parallel_cmd_args(cmd_args):
         sysexit_with_message(msg)
 
 
-def _parallelize_platforms(config, run_uuid):
-    def parallelize(platform):
-        platform["name"] = "{}-{}".format(platform["name"], run_uuid)
-        return platform
+def parallelize_platform_names(config, run_uuid):
+    """
+    Transform the platform names in order to prevent the name clashes.
 
-    return [parallelize(platform) for platform in config["platforms"]]
+    This function also updates the host variables inventory section in order
+    to keep the platforms and variables in sync.
+    """
+    name_lut = {}
+
+    for platform in config["platforms"]:
+        new_name = "{}-{}".format(platform["name"], run_uuid)
+        name_lut[platform["name"]] = new_name
+        platform["name"] = new_name
+
+    host_vars = config["provisioner"]["inventory"]["host_vars"]
+    for host_name in host_vars:
+        if host_name in name_lut:
+            host_vars[name_lut[host_name]] = host_vars.pop(host_name)
 
 
 def find_vcs_root(test, dirs=(".git", ".hg", ".svn"), default=None):
