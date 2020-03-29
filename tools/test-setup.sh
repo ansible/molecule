@@ -9,8 +9,9 @@ set -euxo pipefail
 PYTHON=$(command -v python3 python | head -n1)
 
 sudo "$PYTHON" -m pip install "tox>=3.14.6"
-
-# Workaround for a potential:
-# Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock
-# See https://docs.docker.com/install/linux/linux-postinstall/
-newgrp docker || true
+#
+# Bootstrapping of services needed for testing, like docker or podman, is done
+# via pre.yaml playbook from ansible-tox-molecule job:
+# https://github.com/ansible/ansible-zuul-jobs/blob/master/playbooks/ansible-tox-molecule/pre.yaml
+#
+# test-setup.sh runs before that playbook.

@@ -290,8 +290,13 @@ def supports_podman():
     # Returns true if podman is supported and working
     # Returns false if podman in not supported
     # Calls pytest.fail if podman appears to be broken
+    if not min_ansible("2.8.6") or platform.system() == "Darwin":
+        LOG.warning("Podman not supported with current ansible/platform combination.")
+        return False
+
     podman = get_podman_executable()
-    if not min_ansible("2.8.6") or platform.system() == "Darwin" or not podman:
+    if not podman:
+        LOG.warning("Failed to locate podman executable.")
         return False
 
     result = subprocess.run([podman, "info"], stdout=PIPE, universal_newlines=True)

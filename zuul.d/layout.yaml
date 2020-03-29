@@ -61,11 +61,11 @@
 - job:
     name: molecule-tox-py36-ansible28-functional
     parent: molecule-tox-py36
-    timeout: 7200
+    timeout: 9000
     vars:
       tox_envlist: py36-ansible28-functional
       tox_environment:
-        PYTEST_REQPASS: 53
+        PYTEST_REQPASS: 72
 
 - job:
     name: molecule-tox-py36-ansible29-unit
@@ -78,11 +78,11 @@
 - job:
     name: molecule-tox-py36-ansible29-functional
     parent: molecule-tox-py36
-    timeout: 7200
+    timeout: 9000
     vars:
       tox_envlist: py36-ansible29-functional
       tox_environment:
-        PYTEST_REQPASS: 53
+        PYTEST_REQPASS: 72
 
 - job:
     name: molecule-tox-py37-ansible28-unit
@@ -95,11 +95,11 @@
 - job:
     name: molecule-tox-py37-ansible28-functional
     parent: molecule-tox-py37
-    timeout: 7200
+    timeout: 9000
     vars:
       tox_envlist: py37-ansible28-functional
       tox_environment:
-        PYTEST_REQPASS: 53
+        PYTEST_REQPASS: 72
 
 - job:
     name: molecule-tox-py37-ansible29-unit
@@ -112,11 +112,11 @@
 - job:
     name: molecule-tox-py37-ansible29-functional
     parent: molecule-tox-py37
-    timeout: 7200
+    timeout: 9000
     vars:
       tox_envlist: py37-ansible29-functional
       tox_environment:
-        PYTEST_REQPASS: 53
+        PYTEST_REQPASS: 72
 
 - job:
     name: molecule-tox-devel-unit
@@ -131,13 +131,13 @@
 - job:
     name: molecule-tox-devel-functional
     parent: molecule-tox-py36
-    timeout: 7200
+    timeout: 9000
     # until nsible-devel 2.10 changes are implemented
     voting: false
     vars:
       tox_envlist: ansibledevel-functional
       tox_environment:
-        PYTEST_REQPASS: 53
+        PYTEST_REQPASS: 72
 
 - job:
     name: molecule-tox-py37-ansible28-unit
@@ -154,7 +154,7 @@
     vars:
       tox_envlist: py37-ansible28-functional
       tox_environment:
-        PYTEST_REQPASS: 53
+        PYTEST_REQPASS: 72
 
 - project:
     templates:
