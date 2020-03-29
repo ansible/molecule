@@ -24,13 +24,16 @@ import pytest
 import sh
 
 from molecule import config
-from molecule.dependency import ansible_galaxy
+from molecule.dependency.ansible_galaxy import collections
 
 
 @pytest.fixture
 def _patched_ansible_galaxy_has_requirements_file(mocker):
     m = mocker.patch(
-        ("molecule.dependency.ansible_galaxy." "AnsibleGalaxy._has_requirements_file")
+        (
+            "molecule.dependency.ansible_galaxy.collections."
+            "Collections._has_requirements_file"
+        )
     )
     m.return_value = True
 
@@ -53,17 +56,17 @@ def _dependency_section_data():
 # throughout patched.assert_called unit tests.
 @pytest.fixture
 def _instance(_dependency_section_data, patched_config_validate, config_instance):
-    return ansible_galaxy.AnsibleGalaxy(config_instance)
+    return collections.Collections(config_instance)
 
 
 @pytest.fixture
 def role_file(_instance):
-    return os.path.join(_instance._config.scenario.directory, "requirements.yml")
+    return os.path.join(_instance._config.scenario.directory, "collections.yml")
 
 
 @pytest.fixture
 def roles_path(_instance):
-    return os.path.join(_instance._config.scenario.ephemeral_directory, "roles")
+    return os.path.join(_instance._config.scenario.ephemeral_directory, "collections")
 
 
 def test_config_private_member(_instance):
@@ -71,7 +74,7 @@ def test_config_private_member(_instance):
 
 
 def test_default_options_property(_instance, role_file, roles_path):
-    x = {"role-file": role_file, "roles-path": roles_path, "force": True}
+    x = {"requirements-file": role_file, "collections-path": roles_path, "force": True}
 
     assert x == _instance.default_options
 
@@ -97,8 +100,8 @@ def test_enabled_property(_instance):
 def test_options_property(_instance, role_file, roles_path):
     x = {
         "force": True,
-        "role-file": role_file,
-        "roles-path": roles_path,
+        "requirements-file": role_file,
+        "collections-path": roles_path,
         "foo": "bar",
         "v": True,
     }
@@ -111,8 +114,8 @@ def test_options_property_handles_cli_args(role_file, roles_path, _instance):
     _instance._config.args = {"debug": True}
     x = {
         "force": True,
-        "role-file": role_file,
-        "roles-path": roles_path,
+        "requirements-file": role_file,
+        "collections-path": roles_path,
         "foo": "bar",
         "vvv": True,
     }
@@ -130,9 +133,10 @@ def test_bake(_instance, role_file, roles_path):
     _instance.bake()
     x = [
         str(sh.ansible_galaxy),
+        "collection",
         "install",
-        "--role-file={}".format(role_file),
-        "--roles-path={}".format(roles_path),
+        "--requirements-file={}".format(role_file),
+        "--collections-path={}".format(roles_path),
         "--force",
         "--foo=bar",
         "-v",
@@ -152,7 +156,7 @@ def test_execute(
     _instance.execute()
 
     role_directory = os.path.join(
-        _instance._config.scenario.directory, _instance.options["roles-path"]
+        _instance._config.scenario.directory, _instance.options["collections-path"]
     )
     assert os.path.isdir(role_directory)
 
@@ -214,7 +218,7 @@ def test_executes_catches_and_exits_return_code(
 
 def test_setup(_instance):
     role_directory = os.path.join(
-        _instance._config.scenario.directory, _instance.options["roles-path"]
+        _instance._config.scenario.directory, _instance.options["collections-path"]
     )
     assert not os.path.isdir(role_directory)
 
@@ -224,7 +228,7 @@ def test_setup(_instance):
 
 
 def test_role_file(role_file, _instance):
-    assert role_file == _instance._role_file()
+    assert role_file == _instance.requirements_file
 
 
 def test_has_requirements_file(_instance):

@@ -413,6 +413,25 @@ class Ansible(base.Base):
 
     @property
     def default_env(self):
+        # Finds if the current project is part of an ansible_collections hierarchy
+        collection_indicator = "ansible_collections"
+        collections_paths_list = [
+            util.abs_path(
+                os.path.join(self._config.scenario.ephemeral_directory, "collections")
+            )
+        ]
+        if collection_indicator in self._config.project_directory:
+            collection_path, right = self._config.project_directory.split(
+                collection_indicator
+            )
+            collections_paths_list.append(util.abs_path(collection_path))
+        collections_paths_list.extend(
+            [
+                util.abs_path(os.path.join(os.path.expanduser("~"), ".ansible")),
+                "/usr/share/ansible/collections",
+                "/etc/ansible/collections",
+            ]
+        )
         env = util.merge_dicts(
             os.environ,
             {
@@ -434,6 +453,7 @@ class Ansible(base.Base):
                         "/etc/ansible/roles",
                     ]
                 ),
+                "ANSIBLE_COLLECTIONS_PATHS": ":".join(collections_paths_list),
                 "ANSIBLE_LIBRARY": ":".join(self._get_modules_directories()),
                 "ANSIBLE_FILTER_PLUGINS": ":".join(
                     [
