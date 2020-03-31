@@ -24,7 +24,7 @@ import click
 from molecule import logger
 from molecule.command import base
 from molecule import util
-
+from subprocess import run
 
 LOG = logger.get_logger(__name__)
 
@@ -93,7 +93,7 @@ class Lint(base.Base):
 
         try:
             LOG.info("Executing: %s" % cmd)
-            util.run(cmd, shell=True, universal_newlines=True, check=True)
+            run(cmd, shell=True, universal_newlines=True, check=True)
         except Exception as e:
             util.sysexit_with_message("Lint failed: %s: %s" % (e, e))
 

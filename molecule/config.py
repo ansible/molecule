@@ -23,7 +23,6 @@ from uuid import uuid4
 import os
 
 from ansible.module_utils.parsing.convert_bool import boolean
-import six
 
 from molecule import api
 from molecule import interpolation
@@ -56,8 +55,7 @@ class NewInitCaller(type):
         return obj
 
 
-@six.add_metaclass(NewInitCaller)
-class Config(object):
+class Config(object, metaclass=NewInitCaller):
     """
     Config Class.
 

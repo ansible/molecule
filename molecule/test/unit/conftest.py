@@ -19,15 +19,11 @@
 #  DEALINGS IN THE SOFTWARE.
 
 from uuid import uuid4
+from pathlib import Path
 import copy
 import functools
 import os
 import shutil
-
-try:
-    from pathlib import Path
-except ImportError:
-    from pathlib2 import Path
 
 import pytest
 

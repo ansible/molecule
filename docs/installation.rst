@@ -14,14 +14,13 @@ Requirements
 Depending on the driver chosen, you may need to install additional OS packages.
 See ``INSTALL.rst``, which is created when initializing a new scenario.
 
-* Python 2.7 or Python >= 3.5 with :std:doc:`Ansible <ansible:index>` >= 2.5
+* Python >= 3.6 with :std:doc:`Ansible <ansible:index>` >= 2.8
 
-CentOS 7
+CentOS 8
 --------
 
 .. code-block:: bash
 
-    $ sudo yum install -y epel-release
     $ sudo yum install -y gcc python3-pip python3-devel openssl-devel libselinux-python
 
 Ubuntu 16.x
@@ -154,7 +153,7 @@ certain unstable version should the need to send a bug report arise.
 Requirements
 ------------
 
-CentOS 7
+CentOS 8
 ^^^^^^^^
 
 .. code-block:: bash

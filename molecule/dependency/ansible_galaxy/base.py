@@ -17,8 +17,10 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
-"""Ansible-Galaxy Dependency Module."""
+"""Base Ansible Galaxy dependency module."""
 
+import abc
+import copy
 import os
 
 import sh
@@ -30,69 +32,53 @@ from molecule.dependency import base
 LOG = logger.get_logger(__name__)
 
 
-class AnsibleGalaxy(base.Base):
-    """
-    :std:doc:`Galaxy <galaxy/user_guide>` is the default dependency manager.
+class AnsibleGalaxyBase(base.Base):
+    """Ansible Galaxy dependency base class."""
 
-    Additional options can be passed to ``ansible-galaxy install`` through the
-    options dict.  Any option set in this section will override the defaults.
+    __metaclass__ = abc.ABCMeta
 
-    .. note::
-
-        Molecule will remove any options matching '^[v]+$', and pass ``-vvv``
-        to the underlying ``ansible-galaxy`` command when executing
-        `molecule --debug`.
-
-    .. code-block:: yaml
-
-        dependency:
-          name: galaxy
-          options:
-            ignore-certs: True
-            ignore-errors: True
-            role-file: requirements.yml
-
-
-    The dependency manager can be disabled by setting ``enabled`` to False.
-
-    .. code-block:: yaml
-
-        dependency:
-          name: galaxy
-          enabled: False
-
-    Environment variables can be passed to the dependency.
-
-    .. code-block:: yaml
-
-        dependency:
-          name: galaxy
-          env:
-            FOO: bar
-    """
+    FILTER_OPTS = ()
 
     def __init__(self, config):
         """Construct AnsibleGalaxy."""
-        super(AnsibleGalaxy, self).__init__(config)
+        super(AnsibleGalaxyBase, self).__init__(config)
         self._sh_command = None
 
         self.command = "ansible-galaxy"
+
+    @abc.abstractproperty
+    def install_path(self):  # noqa cover
+        pass
+
+    @abc.abstractproperty
+    def requirements_file(self):  # noqa cover
+        pass
 
     @property
     def default_options(self):
         d = {
             "force": True,
-            "role-file": os.path.join(
-                self._config.scenario.directory, "requirements.yml"
-            ),
-            "roles-path": os.path.join(
-                self._config.scenario.ephemeral_directory, "roles"
-            ),
         }
         if self._config.debug:
             d["vvv"] = True
 
         return d
+
+    def filter_options(self, opts, keys):
+        """
+        Filter certain keys from a dictionary.
+
+        Removes all the values of ``keys`` from the dictionary ``opts``, if
+        they are present. Returns the resulting dictionary. Does not modify the
+        existing one.
+
+        :return: A copy of ``opts`` without the value of keys
+        """
+        c = copy.copy(opts)
+        for key in keys:
+            if key in c.keys():
+                del c[key]
+        return c
 
     # NOTE(retr0h): Override the base classes' options() to handle
     # ``ansible-galaxy`` one-off.
@@ -104,7 +90,8 @@ class AnsibleGalaxy(base.Base):
         if self._config.debug:
             o = util.filter_verbose_permutation(o)
 
-        return util.merge_dicts(self.default_options, o)
+        o = util.merge_dicts(self.default_options, o)
+        return self.filter_options(o, self.FILTER_OPTS)
 
     @property
     def default_env(self):
@@ -121,13 +108,9 @@ class AnsibleGalaxy(base.Base):
         verbose_flag = util.verbose_flag(options)
 
         self._sh_command = getattr(sh, self.command)
+        self._sh_command = self._sh_command.bake(*self.COMMANDS)
         self._sh_command = self._sh_command.bake(
-            "install",
-            options,
-            *verbose_flag,
-            _env=self.env,
-            _out=LOG.out,
-            _err=LOG.error
+            options, *verbose_flag, _env=self.env, _out=LOG.out, _err=LOG.error
         )
 
     def execute(self):
@@ -153,14 +136,8 @@ class AnsibleGalaxy(base.Base):
 
         :return: None
         """
-        role_directory = os.path.join(
-            self._config.scenario.directory, self.options["roles-path"]
-        )
-        if not os.path.isdir(role_directory):
-            os.makedirs(role_directory)
-
-    def _role_file(self):
-        return self.options.get("role-file")
+        if not os.path.isdir(self.install_path):
+            os.makedirs(self.install_path)
 
     def _has_requirements_file(self):
-        return os.path.isfile(self._role_file())
+        return os.path.isfile(self.requirements_file)

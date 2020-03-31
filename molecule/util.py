@@ -20,6 +20,7 @@
 
 from __future__ import print_function
 
+from collections.abc import Mapping
 import contextlib
 import fnmatch
 import jinja2
@@ -27,24 +28,8 @@ import os
 import re
 import sys
 
-try:
-    from subprocess import check_output  # noqa 401
-    from subprocess import run  # noqa 401
-    from subprocess import STDOUT  # noqa 401
-except ImportError:
-    from subprocess32 import check_output  # noqa 401
-    from subprocess32 import run  # noqa 401
-    from subprocess32 import STDOUT  # noqa 401
 
-try:
-    from collections.abc import Mapping
-except ImportError:  # Python 2 compatibility
-    from collections import Mapping
-
-try:
-    from functools import lru_cache  # noqa
-except ImportError:
-    from backports.functools_lru_cache import lru_cache  # noqa
+from functools import lru_cache  # noqa
 
 import colorama
 import yaml

@@ -100,8 +100,10 @@ class AnsiblePlaybooks(object):
             elif os.path.exists(self._get_bundled_driver_playbook(section)):
                 return self._get_bundled_driver_playbook(section)
             elif section not in [
+                # these playbooks can be considered optional
                 "prepare",
                 "create",
+                "destroy",
                 "cleanup",
                 "side_effect",
                 "verify",

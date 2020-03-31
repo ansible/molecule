@@ -219,16 +219,6 @@ class Docker(Driver):
         """Implement Docker driver sanity checks."""
         log.info("Sanity checks: '{}'".format(self._name))
 
-        from ansible.module_utils.docker.common import HAS_DOCKER_PY
-
-        if not HAS_DOCKER_PY:
-            msg = (
-                "Missing Docker driver dependency. Please "
-                "install via 'molecule[docker]' or refer to "
-                "your INSTALL.rst driver documentation file"
-            )
-            sysexit_with_message(msg)
-
         try:
             import docker
             import requests

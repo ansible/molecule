@@ -26,7 +26,7 @@ and run ``molecule test`` in ubuntu.
       strategy:
         max-parallel: 4
         matrix:
-          python-version: [3.5, 3.6, 3.7]
+          python-version: [3.6, 3.7]
 
       steps:
         - uses: actions/checkout@v1
@@ -86,33 +86,34 @@ A ``.travis.yml`` using `Tox`_ as described below.
 Gitlab CI
 ^^^^^^^^^
 
-`Gitlab`_ includes its own CI. Pipelines are usually defined in a ``.gitlab-ci.yml`` file in the top folder of a repository, to be ran on Gitlab Runners.
+`Gitlab`_ includes its own CI. Pipelines are usually defined in a ``.gitlab-ci.yml`` file in the top folder of a repository, to be run on Gitlab Runners.
 
-Here is an example setting up a virtualenv and testing an Ansible role via Molecule. User-level pip is cached and so is the virtual environment to save time. And this is run over a runner tagged `pip36` and `docker`, because its a minimal CentOS 7 VM installed with pip36 from IUS repository and docker.
-
+Here is an example using Docker in Docker
 
 .. code-block:: yaml
 
     ---
-    image: docker:git
+    image: docker:latest
 
     services:
       - docker:dind
 
     before_script:
-      - apk update && apk add --no-cache docker
-        python3-dev py3-pip docker gcc git curl build-base
+      - apk update && apk add --no-cache
+        python3-dev py3-pip gcc git curl build-base
         autoconf automake py3-cryptography linux-headers
         musl-dev libffi-dev openssl-dev openssh
       - docker info
       - python3 --version
+      - python3 -m pip install ansible molecule[docker]
+      - ansible --version
+      - molecule --version
 
     molecule:
       stage: test
       script:
-        - python3 -m pip install ansible molecule docker
-        - ansible --version
         - cd roles/testrole && molecule test
+
 
 Jenkins Pipeline
 ^^^^^^^^^^^^^^^^
@@ -255,14 +256,7 @@ To test the role against multiple versions of Ansible.
     commands =
         molecule test
 
-To view the factor generated tox environments.
-
-.. code-block:: bash
-
-    $ tox -l
-    py27-ansible20
-    py27-ansible21
-    py27-ansible22
+To view the factor generated tox environments run `tox -l`.
 
 If using the `--parallel functionality`_ of Tox (version 3.7 onwards), Molecule
 must be made aware of the parallel testing by setting a
@@ -273,7 +267,7 @@ we export a ``TOX_ENVNAME`` environment variable, it's the name of our tox env.
 
     [tox]
     minversion = 3.7
-    envlist = py{27}_ansible{23,24}
+    envlist = py{36}_ansible{23,24}
     skipsdist = true
 
     [testenv]
