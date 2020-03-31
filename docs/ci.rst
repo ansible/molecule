@@ -114,6 +114,43 @@ Here is an example using Docker in Docker
       script:
         - cd roles/testrole && molecule test
 
+GitLab Runner is used to run your jobs and send the results back to GitLab.
+By tagging a Runner for the types of jobs it can handle, 
+you can make sure shared Runners will only run the jobs they are equipped to run.
+
+Here is another example using Docker, virtualenv and tags on Centos 7.
+
+.. code-block:: yaml
+
+    ---
+    stages:
+      - test
+    
+    variables:
+      PIP_CACHE_DIR: "$CI_PROJECT_DIR/.pip"
+      GIT_STRATEGY: clone
+    
+    cache:
+      paths:
+        - .pip/
+        - virtenv/
+    
+    before_script:
+      - python -V
+      - pip install virtualenv
+      - virtualenv virtenv
+      - source virtenv/bin/activate
+      - pip install ansible molecule docker
+      - ansible --version
+      - molecule --version
+      - docker --version
+    
+    molecule:
+      stage: test
+      tags:
+        - molecule-jobs
+    script:
+      - molecule test
 
 Jenkins Pipeline
 ^^^^^^^^^^^^^^^^
