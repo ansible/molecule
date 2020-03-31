@@ -125,16 +125,16 @@ Here is another example using Docker, virtualenv and tags on Centos 7.
     ---
     stages:
       - test
-    
+
     variables:
       PIP_CACHE_DIR: "$CI_PROJECT_DIR/.pip"
       GIT_STRATEGY: clone
-    
+
     cache:
       paths:
         - .pip/
         - virtenv/
-    
+
     before_script:
       - python -V
       - pip install virtualenv
@@ -144,7 +144,7 @@ Here is another example using Docker, virtualenv and tags on Centos 7.
       - ansible --version
       - molecule --version
       - docker --version
-    
+
     molecule:
       stage: test
       tags:
