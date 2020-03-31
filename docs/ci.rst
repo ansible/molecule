@@ -115,7 +115,7 @@ Here is an example using Docker in Docker
         - cd roles/testrole && molecule test
 
 GitLab Runner is used to run your jobs and send the results back to GitLab.
-By tagging a Runner for the types of jobs it can handle, 
+By tagging a Runner for the types of jobs it can handle,
 you can make sure shared Runners will only run the jobs they are equipped to run.
 
 Here is another example using Docker, virtualenv and tags on Centos 7.
