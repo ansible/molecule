@@ -19,12 +19,15 @@
 #  DEALINGS IN THE SOFTWARE.
 """Molecule Scenario Module."""
 
+import fcntl
 import fnmatch
 import os
 import shutil
 from pathlib import Path
+from time import sleep
 
 from molecule import logger, scenarios, util
+from molecule.constants import RC_TIMEOUT
 
 LOG = logger.get_logger(__name__)
 
@@ -91,6 +94,7 @@ class Scenario(object):
         :param config: An instance of a Molecule config.
         :return: None
         """
+        self._lock = None
         self.config = config
         self._setup()
 
@@ -143,22 +147,42 @@ class Scenario(object):
 
     @property
     def ephemeral_directory(self):
-        _ephemeral_directory = os.getenv("MOLECULE_EPHEMERAL_DIRECTORY")
-        if _ephemeral_directory:
-            return _ephemeral_directory
+        path = os.getenv("MOLECULE_EPHEMERAL_DIRECTORY", None)
+        if not path:
 
-        project_directory = os.path.basename(self.config.project_directory)
+            project_directory = os.path.basename(self.config.project_directory)
 
-        if self.config.is_parallel:
-            project_directory = "{}-{}".format(project_directory, self.config._run_uuid)
+            if self.config.is_parallel:
+                project_directory = "{}-{}".format(
+                    project_directory, self.config._run_uuid
+                )
 
-        project_scenario_directory = os.path.join(
-            self.config.cache_directory, project_directory, self.name
-        )
+            project_scenario_directory = os.path.join(
+                self.config.cache_directory, project_directory, self.name
+            )
 
-        path = ephemeral_directory(project_scenario_directory)
+            path = ephemeral_directory(project_scenario_directory)
 
-        return ephemeral_directory(path)
+        # TODO(ssbarnea): Tune or make the retry logic configurable once we have enough data
+        if not self._lock:
+            self._lock = open(os.path.join(path, ".lock"), "w")
+            for i in range(1, 5):
+                try:
+                    fcntl.lockf(self._lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    break
+                except OSError:
+                    delay = 30 * i
+                    LOG.warning(
+                        "Retrying to acquire lock on %s, waiting for %s seconds",
+                        path,
+                        delay,
+                    )
+                    sleep(delay)
+            else:
+                LOG.warning("Timedout trying to acquire lock on %s", path)
+                raise SystemExit(RC_TIMEOUT)
+
+        return path
 
     @property
     def inventory_directory(self):
@@ -246,7 +270,7 @@ class Scenario(object):
             os.makedirs(self.inventory_directory)
 
 
-def ephemeral_directory(path=None):
+def ephemeral_directory(path: str = None) -> str:
     """
     Return temporary directory to be used by molecule.
 
@@ -256,6 +280,8 @@ def ephemeral_directory(path=None):
     d = os.getenv("MOLECULE_EPHEMERAL_DIRECTORY")
     if not d:
         d = os.getenv("XDG_CACHE_HOME", os.path.expanduser("~/.cache"))
+    if not d:
+        raise RuntimeError("Unable to determine ephemeral directory to use.")
     d = os.path.abspath(os.path.join(d, path if path else "molecule"))
 
     if not os.path.isdir(d):

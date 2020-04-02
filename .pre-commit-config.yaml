@@ -57,3 +57,4 @@ repos:
       - id: pylint
         additional_dependencies:
           - ansible-base
+          - testinfra
