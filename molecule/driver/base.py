@@ -285,3 +285,12 @@ class Driver(object):
         p = os.path.join(self._path, "modules")
         if os.path.isdir(p):
             return p
+
+    def reset(self):
+        """Release all resources owned by molecule.
+
+        This is a destructive operation that would affect all resources managed
+        by molecule, regardless the scenario name.  Molecule will use metadata
+        like labels or tags to annotate resources allocated by it.
+        """
+        pass

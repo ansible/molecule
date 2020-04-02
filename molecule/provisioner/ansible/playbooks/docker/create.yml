@@ -4,6 +4,9 @@
   connection: local
   gather_facts: false
   no_log: "{{ molecule_no_log }}"
+  vars:
+    molecule_labels:
+      owner: molecule
   tasks:
     - name: Log into a Docker registry
       docker_login:
@@ -95,6 +98,7 @@
         cert_path: "{{ item.cert_path | default((lookup('env', 'DOCKER_CERT_PATH') + '/cert.pem')  if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
         key_path: "{{ item.key_path | default((lookup('env', 'DOCKER_CERT_PATH') + '/key.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
         tls_verify: "{{ item.tls_verify | default(lookup('env', 'DOCKER_TLS_VERIFY')) or false }}"
+        labels: "{{ molecule_labels | combine(item.labels | default({})) }}"
         state: present
       with_items: "{{ molecule_yml.platforms | molecule_get_docker_networks }}"
       loop_control:
@@ -148,7 +152,7 @@
         restart_policy: "{{ item.restart_policy | default(omit) }}"
         restart_retries: "{{ item.restart_retries | default(omit) }}"
         tty: "{{ item.tty | default(omit) }}"
-        labels: "{{ item.labels | default(omit) }}"
+        labels: "{{ molecule_labels | combine(item.labels | default({})) }}"
         container_default_behavior: "{{ item.container_default_behavior | default('compatibility' if ansible_version.full is version_compare('2.10', '>=') else omit) }}"
       register: server
       with_items: "{{ molecule_yml.platforms }}"
