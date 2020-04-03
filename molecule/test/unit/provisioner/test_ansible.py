@@ -109,7 +109,6 @@ def test_default_config_options_property(_instance):
         },
         "ssh_connection": {
             "control_path": "%(directory)s/%%h-%%p-%%r",
-            "pipelining": True,
             "scp_if_ssh": True,
         },
     }
@@ -156,7 +155,6 @@ def test_config_options_property(_instance):
         },
         "ssh_connection": {
             "control_path": "%(directory)s/%%h-%%p-%%r",
-            "pipelining": True,
             "scp_if_ssh": True,
         },
     }
