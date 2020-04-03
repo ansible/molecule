@@ -232,3 +232,17 @@ class Docker(Driver):
                 "for managing the daemon"
             )
             sysexit_with_message(msg)
+
+    def reset(self):
+        import docker
+
+        client = docker.from_env()
+        for c in client.containers.list(filters={"label": "owner=molecule"}):
+            log.info("Stopping docker container %s ..." % c.id)
+            c.stop(timeout=3)
+        result = client.containers.prune(filters={"label": "owner=molecule"})
+        for c in result.get("ContainersDeleted") or []:
+            log.info("Deleted container %s" % c)
+        for n in client.networks.list(filters={"label": "owner=molecule"}):
+            log.info("Removing docker network %s ...." % n.name)
+            n.remove()

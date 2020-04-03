@@ -6,9 +6,7 @@ driver:
 platforms:
   - name: instance
     image: ${TEST_BASE_IMAGE}
-    networks:
-      - name: foo
-      - name: bar
+    # do not add networks here because they prevent parallel testing
     pre_build_image: true
 provisioner:
   name: ansible

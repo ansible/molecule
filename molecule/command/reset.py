@@ -23,6 +23,7 @@ import click
 
 from molecule import logger
 from molecule.command import base
+from molecule.api import drivers
 
 
 LOG = logger.get_logger(__name__)
@@ -45,3 +46,5 @@ def reset(ctx, scenario_name):  # pragma: no cover
     command_args = {"subcommand": subcommand}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
+    for driver in drivers():
+        driver.reset()
