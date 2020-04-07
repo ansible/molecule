@@ -50,9 +50,9 @@ class Scenario(base.Base):
 
         Initialize an existing role with Molecule:
 
-    .. program:: cd foo; molecule init scenario bar --role-name foo --driver-template path
+    .. program:: cd foo; molecule init scenario bar --role-name foo
 
-    .. option:: cd foo; molecule init scenario bar --role-name foo --driver-template path
+    .. option:: cd foo; molecule init scenario bar --role-name foo
 
         Initialize a new scenario using a local *cookiecutter* template for the
         driver configuration.
@@ -194,13 +194,6 @@ def _default_scenario_exists(ctx, param, value):  # pragma: no cover
     default="ansible",
     help="Name of verifier to initialize. (ansible)",
 )
-@click.option(
-    "--driver-template",
-    type=click.Path(exists=True, dir_okay=True, readable=True, resolve_path=True),
-    help="Path to a cookiecutter custom driver template to initialize the "
-    "scenario. If the driver template is not found locally, default "
-    "template will be used instead.",
-)
 def scenario(
     ctx,
     dependency_name,
@@ -210,7 +203,6 @@ def scenario(
     role_name,
     scenario_name,
     verifier_name,
-    driver_template,
 ):  # pragma: no cover
     """Initialize a new scenario for use with Molecule.
 
@@ -226,12 +218,6 @@ def scenario(
         "subcommand": __name__,
         "verifier_name": verifier_name,
     }
-
-    driver_template = driver_template or os.environ.get(
-        "MOLECULE_SCENARIO_DRIVER_TEMPLATE", None
-    )
-    if driver_template:
-        command_args["driver_template"] = driver_template
 
     s = Scenario(command_args)
     s.execute()

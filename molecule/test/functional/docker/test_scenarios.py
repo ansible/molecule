@@ -136,51 +136,6 @@ def test_command_init_scenario_without_default_scenario_raises(temp_dir):
         assert msg in str(e.value.stderr)
 
 
-def test_command_init_scenario_with_custom_template_by_env_var(
-    temp_dir, resources_folder_path
-):
-    custom_template_dir_path = os.path.join(
-        resources_folder_path, "custom_scenario_template"
-    )
-    env = os.environ
-    env.update({"MOLECULE_SCENARIO_DRIVER_TEMPLATE": custom_template_dir_path})
-    pytest.helpers.init_scenario(temp_dir, "docker")
-    assert os.path.exists(
-        os.path.join(
-            temp_dir.strpath, "test-init", "molecule", "test-scenario", "README.md"
-        )
-    )
-
-
-def test_command_init_scenario_custom_template_precedence(
-    temp_dir, resources_folder_path
-):
-    role_directory = os.path.join(temp_dir.strpath, "test-role")
-    options = {}
-    cmd = sh.molecule.bake("init", "role", "test-role", **options)
-    pytest.helpers.run_command(cmd)
-    pytest.helpers.metadata_lint_update(role_directory)
-
-    with change_dir_to(role_directory):
-        invalid_template_dir_path = os.path.join(
-            resources_folder_path, "invalid_scenario_template"
-        )
-        env = os.environ
-        env.update({"MOLECULE_SCENARIO_DRIVER_TEMPLATE": invalid_template_dir_path})
-
-        custom_template_dir_path = os.path.join(
-            resources_folder_path, "custom_scenario_template"
-        )
-        options = {
-            "role_name": "test-role",
-            "driver_template": custom_template_dir_path,
-        }
-
-        # command line argument takes precedence, or it would fail
-        cmd = sh.molecule.bake("init", "scenario", "test-scenario", **options)
-        pytest.helpers.run_command(cmd, log=False)
-
-
 @pytest.mark.parametrize(
     "scenario_to_test, driver_name, scenario_name",
     [("overrride_driver", "docker", "default")],
