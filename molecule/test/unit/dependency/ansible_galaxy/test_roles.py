@@ -42,7 +42,7 @@ def _dependency_section_data():
     return {
         "dependency": {
             "name": "galaxy",
-            "options": {"foo": "bar", "v": True},
+            "options": {"foo": "bar", "v": True, "requirements-file": "foo.yml"},
             "env": {"FOO": "bar"},
         }
     }
