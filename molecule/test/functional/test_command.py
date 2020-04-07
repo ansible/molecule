@@ -43,6 +43,7 @@ def driver_name(request):
     return request.param
 
 
+@pytest.mark.extensive
 @pytest.mark.parametrize(
     "scenario_to_test, driver_name, scenario_name",
     [
@@ -58,6 +59,7 @@ def test_command_check(scenario_to_test, with_scenario, scenario_name):
     pytest.helpers.run_command(cmd)
 
 
+@pytest.mark.extensive
 @pytest.mark.parametrize(
     "scenario_to_test, driver_name, scenario_name",
     [
@@ -73,6 +75,7 @@ def test_command_cleanup(scenario_to_test, with_scenario, scenario_name):
     pytest.helpers.run_command(cmd)
 
 
+@pytest.mark.extensive
 @pytest.mark.parametrize(
     "scenario_to_test, driver_name, scenario_name",
     [
@@ -88,6 +91,7 @@ def test_command_converge(scenario_to_test, with_scenario, scenario_name):
     pytest.helpers.run_command(cmd)
 
 
+@pytest.mark.extensive
 @pytest.mark.parametrize(
     "scenario_to_test, driver_name, scenario_name",
     [
@@ -167,6 +171,7 @@ def test_command_dependency_shell(
     assert os.path.isdir(dependency_role)
 
 
+@pytest.mark.extensive
 @pytest.mark.parametrize(
     "scenario_to_test, driver_name, scenario_name",
     [
@@ -182,6 +187,7 @@ def test_command_destroy(scenario_to_test, with_scenario, scenario_name):
     pytest.helpers.run_command(cmd)
 
 
+@pytest.mark.extensive
 @pytest.mark.parametrize(
     "scenario_to_test, driver_name, scenario_name",
     [
@@ -209,6 +215,7 @@ def test_command_init_scenario(temp_dir, driver_name, skip_test):
     pytest.helpers.init_scenario(temp_dir, driver_name)
 
 
+@pytest.mark.extensive
 @pytest.mark.parametrize(
     "scenario_to_test, driver_name, scenario_name",
     [
@@ -325,6 +332,7 @@ def test_command_login(scenario_to_test, with_scenario, login_args, scenario_nam
     pytest.helpers.login(login_args, scenario_name)
 
 
+@pytest.mark.extensive
 @pytest.mark.parametrize(
     "scenario_to_test, driver_name, scenario_name",
     [
@@ -344,6 +352,7 @@ def test_command_prepare(scenario_to_test, with_scenario, scenario_name):
     pytest.helpers.run_command(cmd)
 
 
+@pytest.mark.extensive
 @pytest.mark.parametrize(
     "scenario_to_test, driver_name, scenario_name",
     [
@@ -359,6 +368,7 @@ def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
     pytest.helpers.run_command(cmd)
 
 
+@pytest.mark.extensive
 @pytest.mark.parametrize(
     "scenario_to_test, driver_name, scenario_name",
     [
@@ -388,6 +398,7 @@ def test_command_test(scenario_to_test, with_scenario, scenario_name, driver_nam
     pytest.helpers.test(driver_name, scenario_name)
 
 
+@pytest.mark.extensive
 @pytest.mark.parametrize(
     "scenario_to_test, driver_name, scenario_name",
     [
