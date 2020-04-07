@@ -16,7 +16,6 @@ Using Molecule
 .. toctree::
    :maxdepth: 1
 
-   Quickstart Guide <quick-start>
    Getting Started Guide <getting-started>
    Command Line Reference <usage>
    Configuration Guide <configuration>
