@@ -42,36 +42,11 @@ def _instance(_command_args):
 
 
 @pytest.fixture
-def custom_template_dir(resources_folder_path):
-    custom_template_dir_path = os.path.join(
-        resources_folder_path, "custom_scenario_template"
-    )
-    return custom_template_dir_path
-
-
-@pytest.fixture
 def invalid_template_dir(resources_folder_path):
     invalid_role_template_path = os.path.join(
         resources_folder_path, "invalid_scenario_template"
     )
     return invalid_role_template_path
-
-
-@pytest.fixture
-def custom_readme_content(custom_template_dir, _command_args):
-    readme_path = os.path.join(
-        custom_template_dir,
-        _command_args["driver_name"],
-        "{{cookiecutter.molecule_directory}}",
-        "{{cookiecutter.scenario_name}}",
-        "README.md",
-    )
-
-    custom_readme_content = ""
-    with open(readme_path, "r") as readme:
-        custom_readme_content = readme.read()
-
-    return custom_readme_content
 
 
 def test_execute(temp_dir, _instance, patched_logger_info, patched_logger_success):
@@ -106,45 +81,3 @@ def test_execute_with_invalid_driver(
 
     with pytest.raises(KeyError):
         _instance.execute()
-
-
-def test_execute_with_custom_template(
-    temp_dir, custom_template_dir, custom_readme_content, _command_args
-):
-    _command_args["driver_template"] = custom_template_dir
-
-    custom_template_instance = scenario.Scenario(_command_args)
-    custom_template_instance.execute()
-
-    assert os.path.isdir("./molecule/test-scenario")
-
-    readme_path = "./molecule/test-scenario/README.md"
-    assert os.path.isfile(readme_path)
-    with open(readme_path, "r") as readme:
-        assert readme.read() == custom_readme_content
-
-
-def test_execute_with_absent_custom_template(
-    temp_dir, _command_args, patched_logger_critical
-):
-    _command_args["driver_template"] = "absent_template_dir"
-
-    absent_template_instance = scenario.Scenario(_command_args)
-    with pytest.raises(SystemExit) as e:
-        absent_template_instance.execute()
-
-    assert e.value.code == 1
-    patched_logger_critical.assert_called_once()
-
-
-def test_execute_with_incorrect_template(
-    temp_dir, invalid_template_dir, _command_args, patched_logger_critical
-):
-    _command_args["driver_template"] = invalid_template_dir
-
-    invalid_template_instance = scenario.Scenario(_command_args)
-    with pytest.raises(SystemExit) as e:
-        invalid_template_instance.execute()
-
-    assert e.value.code == 1
-    patched_logger_critical.assert_called_once()
