@@ -102,6 +102,7 @@
         image: "{{ item.pre_build_image | default(false) | ternary('', 'molecule_local/') }}{{ item.image }}"
         pull: "{{ item.pull | default (omit) }}"
         memory: "{{ item.memory | default(omit) }}"
+        memory_swap: "{{ item.memory_swap | default(omit) }}"
         state: started
         recreate: false
         log_driver: json-file
