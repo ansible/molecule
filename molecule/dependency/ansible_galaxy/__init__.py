@@ -34,6 +34,7 @@ class AnsibleGalaxy(Base):
     file looks like this
 
     .. code-block:: yaml
+
         roles:
           - dep.role1
           - dep.role2
