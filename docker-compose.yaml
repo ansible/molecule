@@ -1,0 +1,9 @@
+version: "3.7"
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: tools/Dockerfile.dev
+    volumes:
+      - "./:/etc/molecule"
+    privileged: true
