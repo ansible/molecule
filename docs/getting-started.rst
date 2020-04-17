@@ -4,8 +4,6 @@
 Getting Started Guide
 *********************
 
-If you're looking to move a little faster, see the :ref:`quick-start`.
-
 The following guide will step through an example of developing and testing a
 new Ansible role. After reading this guide, you should be familiar with the
 basics of how to use Molecule and what it can offer.
