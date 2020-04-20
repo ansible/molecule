@@ -922,12 +922,22 @@ def test_get_plugin_directory(_instance):
     assert ("molecule", "provisioner", "ansible", "plugins") == parts[-4:]
 
 
-def test_get_modules_directories(_instance):
+def test_get_modules_directories(_instance, monkeypatch):
     result = _instance._get_modules_directories()[0]
     parts = pytest.helpers.os_split(result)
     x = ("molecule", "provisioner", "ansible", "plugins", "modules")
 
     assert x == parts[-5:]
+
+    lib_prev = os.environ.get("ANSIBLE_LIBRARY")
+    monkeypatch.setenv("ANSIBLE_LIBRARY", "/foo/bar")
+    result = _instance._get_modules_directories()[-1]
+    monkeypatch.setenv("ANSIBLE_LIBRARY", lib_prev if lib_prev else "")
+
+    env_lib_result_parts = pytest.helpers.os_split(result)
+    env_lib_expected_parts = ("foo", "bar")
+
+    assert env_lib_result_parts == env_lib_expected_parts[-2:]
 
 
 def test_get_filter_plugin_directory(_instance):
