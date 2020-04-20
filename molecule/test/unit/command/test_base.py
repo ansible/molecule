@@ -266,7 +266,7 @@ def test_get_configs(config_instance):
 def test_get_configs_calls_verify_configs(_patched_verify_configs):
     base.get_configs({}, {})
 
-    _patched_verify_configs.assert_called_once_with([], "molecule/*/molecule.yml")
+    _patched_verify_configs.assert_called_once_with([], os.getcwd() + os.path.sep + "molecule/*/molecule.yml")
 
 
 def test_verify_configs(config_instance):
