@@ -3,7 +3,8 @@ services:
   dev:
     build:
       context: .
-      dockerfile: tools/Dockerfile.dev
     volumes:
       - "./:/etc/molecule"
+      - "./tools/entrypoint.sh:/usr/local/bin/entrypoint.sh"
     privileged: true
+    entrypoint: entrypoint.sh

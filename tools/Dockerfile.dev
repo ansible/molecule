@@ -1,9 +1,0 @@
-FROM docker:dind
-
-RUN apk add --no-cache python3 python3-dev curl gcc bash libc-dev libffi-dev openssl-dev openssh make git
-RUN pip3 install --upgrade pip
-RUN pip3 install -e git+https://github.com/ansible-community/molecule#egg=molecule
-RUN pip3 install docker tox
-WORKDIR /etc/molecule/
-COPY tools/entrypoint.sh /usr/local/bin
-ENTRYPOINT ["entrypoint.sh"]
