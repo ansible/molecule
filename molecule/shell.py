@@ -24,6 +24,7 @@ import click_completion
 import colorama
 import pkg_resources
 import sys
+import os
 
 from ansible.release import __version__ as ansible_version
 
@@ -84,11 +85,17 @@ def _version_string():
     default=ENV_FILE,
     help=("The file to read variables from when rendering molecule.yml. " "(.env.yml)"),
 )
+@click.option(
+    "--project",
+    "-p",
+    default=os.getcwd(),
+    help=("Path to a molecule project."),
+)
 @click.version_option(
     prog_name="molecule", version=molecule.__version__, message=_version_string()
 )
 @click.pass_context
-def main(ctx, debug, base_config, env_file):  # pragma: no cover
+def main(ctx, debug, base_config, env_file, project):  # pragma: no cover
     """
     Molecule aids in the development and testing of Ansible roles.
 
@@ -101,6 +108,7 @@ def main(ctx, debug, base_config, env_file):  # pragma: no cover
     ctx.obj["args"]["debug"] = debug
     ctx.obj["args"]["base_config"] = base_config
     ctx.obj["args"]["env_file"] = env_file
+    ctx.obj["args"]["molecule_project"] = project
 
 
 # runtime environment checks to avoid delayed failures

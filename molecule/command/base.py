@@ -170,6 +170,10 @@ def get_configs(args, command_args, ansible_args=(), glob_str=MOLECULE_GLOB):
      `ansible-playbook` command.
     :return: list
     """
+    molecule_project = os.getcwd()
+    if args.get("molecule_project"):
+        molecule_project = args.get("molecule_project")
+    project_glob_str = molecule_project + os.path.sep + glob_str
     configs = [
         config.Config(
             molecule_file=util.abs_path(c),
@@ -177,9 +181,9 @@ def get_configs(args, command_args, ansible_args=(), glob_str=MOLECULE_GLOB):
             command_args=command_args,
             ansible_args=ansible_args,
         )
-        for c in glob.glob(glob_str)
+        for c in glob.glob(project_glob_str)
     ]
-    _verify_configs(configs, glob_str)
+    _verify_configs(configs, project_glob_str)
 
     return configs
 

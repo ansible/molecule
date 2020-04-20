@@ -71,8 +71,11 @@ class Config(object, metaclass=NewInitCaller):
     :ref:`lint`, Platforms_, Provisioner_, Verifier_,
     :ref:`root_scenario`, and State_ references.
     """
-
-    def __init__(self, molecule_file, args={}, command_args={}, ansible_args=()):
+    def __init__(self,
+                 molecule_file,
+                 args={},
+                 command_args={},
+                 ansible_args=()):
         """
         Initialize a new config class and returns None.
 
@@ -132,7 +135,7 @@ class Config(object, metaclass=NewInitCaller):
 
     @property
     def project_directory(self):
-        return os.getenv("MOLECULE_PROJECT_DIRECTORY", os.getcwd())
+        return os.getenv("MOLECULE_PROJECT_DIRECTORY", self.args.get("molecule_project"))
 
     @property
     def cache_directory(self):
