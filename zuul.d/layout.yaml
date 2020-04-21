@@ -161,7 +161,10 @@
       - publish-to-pypi
     check:
       jobs: &jobs
-        - molecule-tox-docs
+        - molecule-tox-docs:
+            vars:
+              # zuul expects a 'html' folder under this
+              sphinx_build_dir: .tox/docs
         - molecule-tox-linters:
             vars:
               tox_envlist: lint
