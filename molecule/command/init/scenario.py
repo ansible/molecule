@@ -208,6 +208,8 @@ def scenario(
 
     If name is not specified the 'default' value will be used.
     """
+    template_path = ctx.obj.get("args").get("template_path")
+
     command_args = {
         "dependency_name": dependency_name,
         "driver_name": driver_name,
@@ -217,6 +219,7 @@ def scenario(
         "scenario_name": scenario_name,
         "subcommand": __name__,
         "verifier_name": verifier_name,
+        "template_path": template_path,
     }
 
     s = Scenario(command_args)

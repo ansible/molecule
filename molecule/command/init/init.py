@@ -19,6 +19,8 @@
 #  DEALINGS IN THE SOFTWARE.
 """Base class used by init command."""
 
+import click
+
 from molecule.command import base
 from molecule import logger
 from molecule.command.init import role
@@ -28,8 +30,16 @@ LOG = logger.get_logger(__name__)
 
 
 @base.click_group_ex()
-def init():  # pragma: no cover
+@click.pass_context
+@click.option(
+    "--template-path",
+    "-t",
+    default=None,
+    help="Path to molecule cookiecutter template",
+)
+def init(ctx, template_path):  # pragma: no cover
     """Initialize a new role or scenario."""
+    ctx.obj["args"]["template_path"] = template_path
 
 
 init.add_command(role.role)

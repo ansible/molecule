@@ -90,7 +90,12 @@ class Role(base.Base):
             self._process_templates(
                 template, self._command_args, scenario_base_directory
             )
-        self._process_templates("molecule", self._command_args, role_directory)
+
+        template_dir = self._command_args.get("template_path")
+        if template_dir:
+            self._process_templates(os.path.join(template_dir, "molecule"), self._command_args, role_directory)
+        else:
+            self._process_templates("molecule", self._command_args, role_directory)
 
         role_directory = os.path.join(role_directory, role_name)
         msg = "Initialized role in {} successfully.".format(role_directory)
@@ -141,6 +146,8 @@ def role(
     verifier_name,
 ):  # pragma: no cover
     """Initialize a new role for use with Molecule."""
+
+    template_path = ctx.obj.get("args").get("template_path")
     command_args = {
         "dependency_name": dependency_name,
         "driver_name": driver_name,
@@ -150,6 +157,7 @@ def role(
         "scenario_name": command_base.MOLECULE_DEFAULT_SCENARIO_NAME,
         "subcommand": __name__,
         "verifier_name": verifier_name,
+        "template_path": template_path
     }
 
     r = Role(command_args)
