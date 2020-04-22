@@ -21,7 +21,7 @@ CentOS 8
 
 .. code-block:: bash
 
-    $ sudo yum install -y gcc python3-pip python3-devel openssl-devel libselinux-python
+    $ sudo yum install -y gcc python3-pip python3-devel openssl-devel python3-libselinux
 
 Ubuntu 16.x
 -----------
