@@ -86,11 +86,11 @@ class Role(base.Base):
             api.drivers()[self._command_args["driver_name"]].template_dir(),
             api.verifiers()[self._command_args["verifier_name"]].template_dir(),
         ]
+        self._process_templates("molecule", self._command_args, role_directory)
         for template in templates:
             self._process_templates(
                 template, self._command_args, scenario_base_directory
             )
-        self._process_templates("molecule", self._command_args, role_directory)
 
         role_directory = os.path.join(role_directory, role_name)
         msg = "Initialized role in {} successfully.".format(role_directory)

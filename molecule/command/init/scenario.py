@@ -106,11 +106,11 @@ class Scenario(base.Base):
             driver_template,
             api.verifiers()[self._command_args["verifier_name"]].template_dir(),
         ]
+        self._process_templates("molecule", self._command_args, role_directory)
         for template in templates:
             self._process_templates(
                 template, self._command_args, scenario_base_directory
             )
-        self._process_templates("molecule", self._command_args, role_directory)
 
         role_directory = os.path.join(role_directory, role_name)
         msg = "Initialized scenario in {} successfully.".format(scenario_directory)
