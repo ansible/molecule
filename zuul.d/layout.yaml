@@ -136,10 +136,8 @@
     irrelevant-files: *doc-files
 
 - job:
-    name: molecule-tox-devel-unit
-    parent: molecule-tox-py36
-    # until ansible-devel 2.10 changes are implemented
-    voting: false
+    name: molecule-tox-py38-ansibledevel-unit
+    parent: molecule-tox-py38
     vars:
       tox_envlist: ansibledevel-unit
       tox_environment:
@@ -147,11 +145,9 @@
     irrelevant-files: *doc-files
 
 - job:
-    name: molecule-tox-devel-functional
-    parent: molecule-tox-py36
+    name: molecule-tox-py38-ansibledevel-functional
+    parent: molecule-tox-devel
     timeout: 9000
-    # until nsible-devel 2.10 changes are implemented
-    voting: false
     vars:
       tox_envlist: ansibledevel-functional
       tox_environment:
