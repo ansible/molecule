@@ -1,6 +1,8 @@
 ---
 - name: Converge
   hosts: all
+  collections:
+    - community.general
   tasks:
     - name: "Include {{ cookiecutter.role_name }}"
       include_role:

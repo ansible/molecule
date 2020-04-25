@@ -261,6 +261,8 @@ The following `Jenkinsfile` uses the official 'quay.io/ansible/molecule' image.
     ---
     - name: Converge
       hosts: all
+      collections:
+        - community.general
       roles:
         - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
 

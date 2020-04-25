@@ -1,5 +1,7 @@
 ---
 - name: Converge
   hosts: all
+  collections:
+    - community.general
   gather_facts: false
   become: false

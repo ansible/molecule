@@ -1,6 +1,8 @@
 ---
 - name: Converge
   hosts: all
+  collections:
+    - community.general
   tasks:
     - name: Create /tmp/molecule
       file:

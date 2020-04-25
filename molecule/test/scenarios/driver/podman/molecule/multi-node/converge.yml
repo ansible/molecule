@@ -1,6 +1,8 @@
 ---
 - name: Converge
   hosts: all
+  collections:
+    - community.general
   gather_facts: false
   become: true
   roles:
@@ -8,6 +10,8 @@
 
 - name: Converge
   hosts: bar
+  collections:
+    - community.general
   gather_facts: false
   become: true
   roles:
@@ -15,6 +19,8 @@
 
 - name: Converge
   hosts: foo
+  collections:
+    - community.general
   gather_facts: false
   become: true
   roles:
@@ -22,6 +28,8 @@
 
 - name: Converge
   hosts: baz
+  collections:
+    - community.general
   gather_facts: false
   become: true
   roles:
