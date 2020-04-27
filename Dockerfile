@@ -56,7 +56,7 @@ ENV PACKAGES="\
     "
 RUN apk add --update --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ ${PACKAGES}
 
-ENV MOLECULE_EXTRAS="docker,docs,windows,lint"
+ENV MOLECULE_EXTRAS="docker,docs,windows,lint,hetznercloud"
 
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=917006
 RUN python3 -m pip install -U wheel
