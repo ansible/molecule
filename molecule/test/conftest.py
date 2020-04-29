@@ -45,7 +45,7 @@ def run_command(cmd, env=os.environ, log=True):
 
 
 def _rebake_command(cmd, env, out=LOG.out, err=LOG.error):
-    return cmd.bake(_env=env, _out=out, _err=err)
+    return cmd.bake(_env=dict(env), _out=out, _err=err)
 
 
 def is_subset(subset, superset):
