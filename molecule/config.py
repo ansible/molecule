@@ -169,7 +169,7 @@ class Config(object, metaclass=NewInitCaller):
         return {
             "MOLECULE_DEBUG": str(self.debug),
             "MOLECULE_FILE": self.config_file,
-            "MOLECULE_ENV_FILE": self.env_file,
+            "MOLECULE_ENV_FILE": str(self.env_file),
             "MOLECULE_STATE_FILE": self.state.state_file,
             "MOLECULE_INVENTORY_FILE": self.provisioner.inventory_file,
             "MOLECULE_EPHEMERAL_DIRECTORY": self.scenario.ephemeral_directory,
