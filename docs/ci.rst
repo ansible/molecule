@@ -5,7 +5,7 @@ Molecule output will use ``ANSI`` colors if stdout is an interactive TTY and
 ``TERM`` value seems to support it. You can define ``PY_COLORS=1`` to force
 use of ``ANSI`` colors, which can be handly for some CI systems.
 
-Github Actions
+GitHub Actions
 ^^^^^^^^^^^^^^
 
 `GitHub Actions`_ runs a CI pipeline,
@@ -44,6 +44,18 @@ and run ``molecule test`` in ubuntu.
         - name: Test with molecule
           run: |
             molecule test
+
+If you need access to requirements in private repositories, `create a token`_
+with the required privileges, then define a ``GIT_CREDENTIALS`` secret for 
+your repository with a value looking like `https://username:token@github.com/`,
+and finaly add the following step before `Test with molecule`
+
+.. code-block:: yaml
+
+        - name: Setup git credentials
+          uses: fusion-engineering/setup-git-credentials@v2
+          with:
+            credentials: ${{secrets.GIT_CREDENTIALS}}
 
 Travis CI
 ^^^^^^^^^
@@ -343,6 +355,7 @@ conflict.
       name: testinfra
 
 .. _`GitHub Actions`: https://github.com/features/actions
+.. _`create a token`: https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line
 .. _`Factors`: http://tox.readthedocs.io/en/latest/config.html#factors-and-factor-conditional-settings
 .. _`Travis`: https://travis-ci.com/
 .. _`Jenkins`: https://jenkins.io/doc/book/pipeline/jenkinsfile
