@@ -9,6 +9,9 @@
     vars:
       tox_envlist: devel
     attempts: 1
+    irrelevant-files: &doc-files
+      - ^docs/
+      - .*\.rst$
 
 - job:
     name: molecule-tox-py27-centos-7
@@ -16,22 +19,26 @@
     parent: molecule-tox-py27
     voting: false
     attempts: 1
+    irrelevant-files: *doc-files
 
 - job:
     name: molecule-tox-py36-centos-8
     parent: molecule-tox-py36
     attempts: 1
+    irrelevant-files: *doc-files
 
 - job:
     name: molecule-tox-py36-ubuntu-bionic
     parent: molecule-tox-py36
     nodeset: ubuntu-bionic-1vcpu
     attempts: 1
+    irrelevant-files: *doc-files
 
 - job:
     name: molecule-tox-py37-fedora-30
     parent: molecule-tox-py37
     attempts: 1
+    irrelevant-files: *doc-files
 
 - job:
     name: molecule-tox-packaging
@@ -40,6 +47,7 @@
     timeout: 3600
     vars:
       tox_envlist: packaging
+    irrelevant-files: *doc-files
 
 - job:
     name: molecule-tox-snap
@@ -49,6 +57,7 @@
     nodeset: ubuntu-bionic-1vcpu
     vars:
       tox_envlist: snap
+    irrelevant-files: *doc-files
 
 - job:
     name: molecule-tox-py36-ansible28-unit
@@ -57,6 +66,7 @@
       tox_envlist: py36-ansible28-unit
       tox_environment:
         PYTEST_REQPASS: 488
+    irrelevant-files: *doc-files
 
 - job:
     name: molecule-tox-py36-ansible28-functional
@@ -66,6 +76,7 @@
       tox_envlist: py36-ansible28-functional
       tox_environment:
         PYTEST_REQPASS: 37
+    irrelevant-files: *doc-files
 
 - job:
     name: molecule-tox-py36-ansible29-unit
@@ -74,6 +85,7 @@
       tox_envlist: py36-ansible29-unit
       tox_environment:
         PYTEST_REQPASS: 488
+    irrelevant-files: *doc-files
 
 - job:
     name: molecule-tox-py36-ansible29-functional
@@ -83,6 +95,7 @@
       tox_envlist: py36-ansible29-functional
       tox_environment:
         PYTEST_REQPASS: 37
+    irrelevant-files: *doc-files
 
 - job:
     name: molecule-tox-py37-ansible28-unit
@@ -91,6 +104,7 @@
       tox_envlist: py37-ansible28-unit
       tox_environment:
         PYTEST_REQPASS: 488
+    irrelevant-files: *doc-files
 
 - job:
     name: molecule-tox-py37-ansible28-functional
@@ -100,6 +114,7 @@
       tox_envlist: py37-ansible28-functional
       tox_environment:
         PYTEST_REQPASS: 37
+    irrelevant-files: *doc-files
 
 - job:
     name: molecule-tox-py37-ansible29-unit
@@ -108,6 +123,7 @@
       tox_envlist: py37-ansible29-unit
       tox_environment:
         PYTEST_REQPASS: 488
+    irrelevant-files: *doc-files
 
 - job:
     name: molecule-tox-py37-ansible29-functional
@@ -117,6 +133,7 @@
       tox_envlist: py37-ansible29-functional
       tox_environment:
         PYTEST_REQPASS: 37
+    irrelevant-files: *doc-files
 
 - job:
     name: molecule-tox-devel-unit
@@ -127,6 +144,7 @@
       tox_envlist: ansibledevel-unit
       tox_environment:
         PYTEST_REQPASS: 488
+    irrelevant-files: *doc-files
 
 - job:
     name: molecule-tox-devel-functional
@@ -138,6 +156,7 @@
       tox_envlist: ansibledevel-functional
       tox_environment:
         PYTEST_REQPASS: 37
+    irrelevant-files: *doc-files
 
 - job:
     name: molecule-tox-py37-ansible28-unit
@@ -146,6 +165,7 @@
       tox_envlist: py37-ansible28-unit
       tox_environment:
         PYTEST_REQPASS: 488
+    irrelevant-files: *doc-files
 
 - job:
     name: molecule-tox-py37-ansible28-functional
@@ -155,6 +175,7 @@
       tox_envlist: py37-ansible28-functional
       tox_environment:
         PYTEST_REQPASS: 37
+    irrelevant-files: *doc-files
 
 - project:
     templates:
