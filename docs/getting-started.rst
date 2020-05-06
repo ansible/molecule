@@ -63,11 +63,7 @@ directories:
 .. code-block:: bash
 
     $ ls
-    Dockerfile.j2  INSTALL.rst  molecule.yml  converge.yml  verify.yml
-
-* Since `Docker`_ is the default :ref:`driver`, we find a ``Dockerfile.j2``
-  `Jinja2`_ template file in place. Molecule will use this file to build a
-  docker image to test your role against.
+    INSTALL.rst  molecule.yml  converge.yml  verify.yml
 
 * ``INSTALL.rst`` contains instructions on what additional software or setup
   steps you will need to take in order to allow Molecule to successfully
