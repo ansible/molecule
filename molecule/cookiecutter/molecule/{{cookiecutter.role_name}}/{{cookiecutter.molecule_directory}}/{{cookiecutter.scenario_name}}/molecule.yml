@@ -6,11 +6,11 @@ driver:
 platforms:
 {%- if cookiecutter.driver_name == 'docker' %}
   - name: instance
-    image: docker.io/pycontribs/centos:7
+    image: docker.io/pycontribs/centos:8
     pre_build_image: true
 {%- elif cookiecutter.driver_name == 'podman' %}
   - name: instance
-    image: docker.io/pycontribs/centos:7
+    image: docker.io/pycontribs/centos:8
     pre_build_image: true
 {%- else %}
   - name: instance

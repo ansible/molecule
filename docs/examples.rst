@@ -36,7 +36,7 @@ and ``Dockerfile.j2`` as follows.
 Append the following code block to the end of ``Dockerfile.j2``. It creates an ``ansible``
 user with passwordless sudo privileges.
 
-The variable ``SUDO_GROUP`` depends on the target distribution. ``centos:7`` uses ``wheel``.
+The variable ``SUDO_GROUP`` depends on the target distribution. ``centos:8`` uses ``wheel``.
 
 .. code-block:: docker
 
@@ -56,7 +56,7 @@ Modify ``provisioner.inventory`` in ``molecule.yml`` as follows:
 
     platforms:
       - name: instance
-        image: centos:7
+        image: centos:8
         # …
 
 .. code-block:: yaml
@@ -77,8 +77,8 @@ An example for a different platform instance name:
 .. code-block:: yaml
 
     platforms:
-      - name: centos7
-        image: centos:7
+      - name: centos8
+        image: centos:8
         # …
 
 .. code-block:: yaml
@@ -88,8 +88,8 @@ An example for a different platform instance name:
       # …
       inventory:
         host_vars:
-          # setting for the platform instance named 'centos7'
-          centos7:
+          # setting for the platform instance named 'centos9'
+          centos9:
             ansible_user: ansible
 
 To test it, add the following task to ``tasks/main.yml``. It fails, because the
@@ -123,7 +123,7 @@ and command as follows.
 
     platforms:
       - name: instance
-        image: centos:7
+        image: centos:8
         command: /sbin/init
         tmpfs:
           - /run
@@ -131,7 +131,7 @@ and command as follows.
         volumes:
           - /sys/fs/cgroup:/sys/fs/cgroup:ro
 
-Note that centos:7 image contains a `seccomp security profile for Docker`_ which enables the use of systemd.
+Note that centos:8 image contains a `seccomp security profile for Docker`_ which enables the use of systemd.
 When needed, such security profiles can be reused (for example `the one available in Fedora`_):
 
 .. code-block:: yaml
@@ -164,7 +164,7 @@ capabilities along with the same image, command, and volumes as shown in the ``n
 
     platforms:
       - name: instance
-        image: centos:7
+        image: centos:8
         command: /sbin/init
         capabilities:
           - SYS_ADMIN
@@ -178,7 +178,7 @@ same image and command as shown in the ``non-privileged`` example.
 
     platforms:
       - name: instance
-        image: centos:7
+        image: centos:8
         command: /sbin/init
         privileged: True
 
