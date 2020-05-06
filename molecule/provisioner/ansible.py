@@ -426,7 +426,7 @@ class Ansible(base.Base):
             collections_paths_list.append(util.abs_path(collection_path))
         collections_paths_list.extend(
             [
-                util.abs_path(os.path.join(os.path.expanduser("~"), ".ansible")),
+                util.abs_path(os.path.join(os.path.expanduser("~"), ".ansible/collections")),
                 "/usr/share/ansible/collections",
                 "/etc/ansible/collections",
             ]
