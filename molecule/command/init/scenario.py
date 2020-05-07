@@ -110,7 +110,12 @@ class Scenario(base.Base):
             self._process_templates(
                 template, self._command_args, scenario_base_directory
             )
-        self._process_templates("molecule", self._command_args, role_directory)
+
+        template_dir = self._command_args.get("template_path")
+        if template_dir:
+            self._process_templates(os.path.join(template_dir, "molecule"), self._command_args, role_directory)
+        else:
+            self._process_templates("molecule", self._command_args, role_directory)
 
         role_directory = os.path.join(role_directory, role_name)
         msg = "Initialized scenario in {} successfully.".format(scenario_directory)
