@@ -30,7 +30,7 @@ from molecule.command import base
 class ExtendedBase(base.Base):
     """ExtendedBase Class."""
 
-    def execute():
+    def execute(self):
         pass
 
 

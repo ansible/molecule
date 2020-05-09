@@ -35,9 +35,8 @@ class UserListMap(UserList):
 
 
 @lru_cache()
-def drivers(config=None):
+def drivers(config=None) -> UserListMap:
     """Return list of active drivers."""
-    # type: (object) -> UserListMap[Driver]
     plugins = UserListMap()
     pm = pluggy.PluginManager("molecule.driver")
     try:
@@ -56,9 +55,8 @@ def drivers(config=None):
 
 
 @lru_cache()
-def verifiers(config=None):
+def verifiers(config=None) -> UserListMap:
     """Return list of active verifiers."""
-    # type: (object) -> UserListMap[Verifier]
     plugins = UserListMap()
     pm = pluggy.PluginManager("molecule.verifier")
     try:

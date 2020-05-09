@@ -99,11 +99,11 @@ class State(object):
     def is_parallel(self):
         return self._data.get("is_parallel")
 
-    @marshal
+    @marshal  # type: ignore
     def reset(self):
         self._data = self._default_data()
 
-    @marshal
+    @marshal  # type: ignore
     def change_state(self, key, value):
         """
         Change the state of the instance data with the given \
