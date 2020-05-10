@@ -41,3 +41,5 @@ repos:
         args: []
         entry: mypy molecule/
         pass_filenames: false
+        additional_dependencies:
+          - packaging

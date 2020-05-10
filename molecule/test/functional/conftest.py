@@ -19,8 +19,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import distutils.spawn
-from distutils.version import LooseVersion
+from packaging import version
 import os
 import pkg_resources
 import platform
@@ -252,15 +251,15 @@ def verify(scenario_name="default"):
 
 
 def get_docker_executable():
-    return distutils.spawn.find_executable("docker")
+    return shutil.which("docker")
 
 
 def get_podman_executable():
-    return distutils.spawn.find_executable("podman")
+    return shutil.which("podman")
 
 
 def get_virtualbox_executable():
-    return distutils.spawn.find_executable("VBoxManage")
+    return shutil.which("VBoxManage")
 
 
 @pytest.helpers.register
@@ -314,10 +313,7 @@ def supports_podman():
     podman_version = check_output(
         cmd, stderr=subprocess.STDOUT, universal_newlines=True
     )
-    # We need to use the outdated LooseVersion because podman versioning
-    # is not PEP-440 compliant, example '1.4.2-stable3' which should evaluate
-    # as newer than '1.4.2'
-    if LooseVersion(podman_version) < LooseVersion(MIN_PODMAN_VERSION):
+    if version.parse(podman_version) < version.parse(MIN_PODMAN_VERSION):
         pytest.fail(
             "Podman driver requires version >={}, and you have {}".format(
                 MIN_PODMAN_VERSION, podman_version
