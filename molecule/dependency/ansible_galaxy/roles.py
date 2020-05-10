@@ -12,7 +12,7 @@ LOG = logger.get_logger(__name__)
 class Roles(AnsibleGalaxyBase):
     """Role-specific Ansible Galaxy dependency handling."""
 
-    FILTER_OPTS = ("requirements-file", "collections-path")
+    FILTER_OPTS = ("requirements-file", "collections-path")  # type: ignore
     COMMANDS = ("install",)
 
     @property

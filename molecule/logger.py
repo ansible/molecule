@@ -52,7 +52,7 @@ class LogFilter(object):
         return logRecord.levelno <= self.__level
 
 
-class CustomLogger(logging.getLoggerClass()):
+class CustomLogger(logging.getLoggerClass()):  # type: ignore  # see https://sam.hooke.me/note/2020/03/mypy-and-verbose-logging/
     """
     A custom logging class which adds additional methods to the logger.
 

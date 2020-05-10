@@ -633,7 +633,7 @@ class Ansible(base.Base):
     def config_file(self):
         return os.path.join(self._config.scenario.ephemeral_directory, "ansible.cfg")
 
-    @property
+    @property  # type: ignore
     @util.lru_cache()
     def playbooks(self):
         return ansible_playbooks.AnsiblePlaybooks(self._config)

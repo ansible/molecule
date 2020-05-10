@@ -142,7 +142,7 @@ class Config(object, metaclass=NewInitCaller):
     def molecule_directory(self):
         return molecule_directory(self.project_directory)
 
-    @property
+    @property  # type: ignore  # see https://github.com/python/mypy/issues/1362
     @util.lru_cache()
     def dependency(self):
         dependency_name = self.config["dependency"]["name"]
@@ -153,7 +153,7 @@ class Config(object, metaclass=NewInitCaller):
         elif dependency_name == "shell":
             return shell.Shell(self)
 
-    @property
+    @property  # type: ignore
     @util.lru_cache()
     def driver(self):
         driver_name = self._get_driver_name()
@@ -164,7 +164,7 @@ class Config(object, metaclass=NewInitCaller):
 
         return driver
 
-    @property
+    @property  # type: ignore
     def env(self):
         return {
             "MOLECULE_DEBUG": str(self.debug),
@@ -184,35 +184,35 @@ class Config(object, metaclass=NewInitCaller):
             "MOLECULE_VERIFIER_TEST_DIRECTORY": self.verifier.directory,
         }
 
-    @property
+    @property  # type: ignore
     @util.lru_cache()
     def lint(self):
         lint_name = self.config.get("lint", None)
         return lint_name
 
-    @property
+    @property  # type: ignore
     @util.lru_cache()
     def platforms(self):
         return platforms.Platforms(self, parallelize_platforms=self.is_parallel)
 
-    @property
+    @property  # type: ignore
     @util.lru_cache()
     def provisioner(self):
         provisioner_name = self.config["provisioner"]["name"]
         if provisioner_name == "ansible":
             return ansible.Ansible(self)
 
-    @property
+    @property  # type: ignore
     @util.lru_cache()
     def scenario(self):
         return scenario.Scenario(self)
 
-    @property
+    @property  # type: ignore
     @util.lru_cache()
     def state(self):
         return state.State(self)
 
-    @property
+    @property  # type: ignore
     @util.lru_cache()
     def verifier(self):
         return api.verifiers(self).get(self.config["verifier"]["name"], None)
