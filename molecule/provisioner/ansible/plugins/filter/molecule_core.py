@@ -60,12 +60,19 @@ def header(content):
 def get_docker_networks(data):
     """Get list of docker networks."""
     network_list = []
+    network_names = []
     for platform in data:
+        if "docker_networks" in platform:
+            for docker_network in platform["docker_networks"]:
+                if "name" in docker_network:
+                    network_list.append(docker_network)
+                    network_names.append(docker_network["name"])
         if "networks" in platform:
             for network in platform["networks"]:
                 if "name" in network:
                     name = network["name"]
-                    network_list.append(name)
+                    if name not in network_names:
+                        network_list.append({"name": name})
     return network_list
 
 
