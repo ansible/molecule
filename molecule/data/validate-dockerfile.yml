@@ -3,6 +3,9 @@
 - hosts: localhost
   vars:
     platforms:
+      # platforms supported as being managed by molecule/ansible, this does
+      # not mean molecule itself can run on them.
+      - image: alpine:edge
       - image: centos:7
       - image: centos:8
       - image: ubuntu:latest

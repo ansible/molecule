@@ -101,7 +101,7 @@ class Podman(Driver):
     When attempting to utilize a container image with `systemd`_ as your init
     system inside the container to simulate a real machine, make sure to set
     the ``privileged``, ``volumes``, ``command``, and ``environment``
-    values. An example using the ``centos:7`` image is below:
+    values. An example using the ``centos:8`` image is below:
 
     .. note:: Do note that running containers in privileged mode is considerably
               less secure.
@@ -110,7 +110,7 @@ class Podman(Driver):
 
         platforms:
         - name: instance
-          image: centos:7
+          image: centos:8
           privileged: true
           command: "/usr/sbin/init"
           tty: True
