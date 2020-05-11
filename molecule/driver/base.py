@@ -24,9 +24,7 @@ import inspect
 import os
 
 import molecule
-from molecule import status
-
-Status = status.get_status()
+from molecule.status import Status
 
 
 class Driver(object):
@@ -44,9 +42,9 @@ class Driver(object):
         self._config = config
         self._path = os.path.abspath(os.path.dirname(inspect.getfile(self.__class__)))
 
-    @property
+    @property  # type: ignore
     @abc.abstractmethod
-    def name(self) -> str:  # pragma: no cover
+    def name(self):  # pragma: no cover
         """
         Name of the driver and returns a string.
 
@@ -55,7 +53,8 @@ class Driver(object):
         pass
 
     @name.setter  # type: ignore
-    def name(self, value: str) -> None:  # pragma: no cover
+    @abc.abstractmethod
+    def name(self, value):  # pragma: no cover
         """
         Driver name setter and returns None.
 

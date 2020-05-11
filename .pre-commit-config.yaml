@@ -32,7 +32,6 @@ repos:
           - flake8-absolute-import
           - flake8-black>=0.1.1
           - flake8-docstrings>=1.5.0
-          - flake8-mypy
         language_version: python3
   - repo: https://github.com/adrienverge/yamllint.git
     rev: v1.20.0

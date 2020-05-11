@@ -26,7 +26,7 @@ from molecule.command.init import role, scenario
 LOG = logger.get_logger(__name__)
 
 
-@base.click_group_ex()
+@base.click_group_ex()  # type: ignore
 def init():  # pragma: no cover
     """Initialize a new role or scenario."""
 

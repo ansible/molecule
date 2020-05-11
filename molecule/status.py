@@ -19,19 +19,15 @@
 #  DEALINGS IN THE SOFTWARE.
 """Status Module."""
 
-import collections
+from typing import NamedTuple
 
 
-def get_status():
-    """Return status."""
-    return collections.namedtuple(
-        "Status",
-        [
-            "instance_name",
-            "driver_name",
-            "provisioner_name",
-            "scenario_name",
-            "created",
-            "converged",
-        ],
-    )
+class Status(NamedTuple):
+    """Scenario status information."""
+
+    instance_name: str
+    driver_name: str
+    provisioner_name: str
+    scenario_name: str
+    created: bool
+    converged: bool
