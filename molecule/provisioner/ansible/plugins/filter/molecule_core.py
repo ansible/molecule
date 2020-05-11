@@ -24,6 +24,7 @@ import os
 from molecule import config
 from molecule import interpolation
 from molecule import util
+from typing import Dict
 
 
 def from_yaml(data):
@@ -57,16 +58,16 @@ def header(content):
     return util.molecule_prepender(content)
 
 
-def get_docker_networks(data):
-    """Get list of docker networks."""
-    network_list = []
+def get_docker_networks(data) -> Dict[Dict]:
+    """Get docker networks as a dictionary where network name is key."""
+    result = {}
     for platform in data:
         if "networks" in platform:
             for network in platform["networks"]:
                 if "name" in network:
                     name = network["name"]
-                    network_list.append(name)
-    return network_list
+                    result[name] = network
+    return result
 
 
 class FilterModule(object):
