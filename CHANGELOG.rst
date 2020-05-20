@@ -12,6 +12,7 @@ This version contains a big number of changes made over nine months below
 there is a summary of these. For upgrading, please visit
 `v3 migration checklist`_ page.
 
+* Add config path to gilt.yml
 * Supported Ansible versions are from now only N/N-1, (2.9 and 2.8), our
   ``master`` branch is also tested using ansible ``devel`` branch.
 * MAJOR: Providers are now installable drivers, python modules.
