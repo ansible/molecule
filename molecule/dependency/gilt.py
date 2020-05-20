@@ -53,6 +53,18 @@ class Gilt(base.Base):
           name: gilt
           enabled: False
 
+    By default, the gilt file will be searched inside the scenario folder.
+    You can use the config option to specify the path (absolute or relative) to a single gilt file for all scenarios
+    Important, the path must contain the final YML file and not a folder with it!
+
+    .. code-block:: yaml
+
+        dependency:
+          name: gilt
+          options:
+            config: ../common/gilt.yml
+
+
     Environment variables can be passed to the dependency.
 
     .. code-block:: yaml
@@ -69,17 +81,15 @@ class Gilt(base.Base):
         """Construct Gilt."""
         super(Gilt, self).__init__(config)
         self._sh_command = None
-
         self.command = "gilt"
 
     @property
     def default_options(self):
-        config = os.path.join(self._config.scenario.directory, "gilt.yml")
-        d = {"config": config}
-        if self._config.debug:
-            d["debug"] = True
-
-        return d
+      config = os.path.join(self._config.scenario.directory, "gilt.yml")
+      d = {"config": config}
+      if self._config.debug:
+          d["debug"] = True
+      return d
 
     @property
     def default_env(self):
@@ -91,9 +101,10 @@ class Gilt(base.Base):
 
         :return: None
         """
+        del self.options["config"] # remove default and replace to self.path
         self._sh_command = getattr(sh, self.command)
         self._sh_command = self._sh_command.bake(
-            self.options, "overlay", _env=self.env, _out=LOG.out, _err=LOG.error
+            util.merge_dicts(self.options, {"config": self.path}), "overlay", _env=self.env, _out=LOG.out, _err=LOG.error
         )
 
     def execute(self):
@@ -113,7 +124,12 @@ class Gilt(base.Base):
         self.execute_with_retries()
 
     def _config_file(self):
-        return self.options.get("config")
+        if "config" in self._config.config["dependency"]["options"]:
+          self.path = os.path.normpath(os.path.join(self._config.scenario.directory, self._config.config["dependency"]["options"]["config"]))
+          return self.path
+        else:
+          self.path = self.options.get("config")
+          return self.path
 
     def _has_requirements_file(self):
         return os.path.isfile(self._config_file())
