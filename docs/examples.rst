@@ -274,13 +274,13 @@ Playbooks and tests can be shared across scenarios.
     │       └── molecule.yml
 
 Tests can be shared across scenarios.  In this example the `tests` directory
-lives in a shared location and ``molecule.yml`` is points to the shared tests.
+lives in a shared location and ``molecule.yml`` points to the shared tests.
 
 .. code-block:: yaml
 
     verifier:
-    name: testinfra
-    directory: ../resources/tests/
+      name: testinfra
+      directory: ../resources/tests/
 
 .. _parallel-usage-example:
 
