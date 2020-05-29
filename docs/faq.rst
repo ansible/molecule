@@ -126,7 +126,7 @@ up and ``ANSIBLE_ROLES_PATH`` is set accordingly. See `this page`_ for more
 information.
 
 .. _`monorepo`: https://en.wikipedia.org/wiki/Monorepo
-.. _`this page`: https://molecule.readthedocs.io/en/stable/examples.html#monolith-repo
+.. _`this page`: https://molecule.readthedocs.io/en/latest/examples.html#monolith-repo
 
 How can I add development/testing-only dependencies?
 =====================================================
