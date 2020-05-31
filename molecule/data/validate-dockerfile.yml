@@ -48,4 +48,10 @@
         label: "{{ item.item.image }}"
       register: result
 
+    - name: Clean up temporary Dockerfile's
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop: "{{ temp_dockerfiles.results | map(attribute='path') | list }}"
+
     - debug: var=result
