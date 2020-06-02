@@ -147,11 +147,12 @@ class Idempotence(base.Base):
         base.MOLECULE_DEFAULT_SCENARIO_NAME
     ),
 )
-def idempotence(ctx, scenario_name):  # pragma: no cover
+@click.argument("ansible_args", nargs=-1, type=click.UNPROCESSED)
+def idempotence(ctx, scenario_name, ansible_args):  # pragma: no cover
     """Use the provisioner to configure the instances and parse the output to \
     determine idempotence."""
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)
     command_args = {"subcommand": subcommand}
 
-    base.execute_cmdline_scenarios(scenario_name, args, command_args)
+    base.execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args)
