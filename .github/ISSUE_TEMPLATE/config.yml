@@ -1,11 +1,11 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Ask a question on Discussions area (NEW!)
+    url: https://github.com/ansible-community/molecule/discussions
+    about: Recommended place for questions, debates, consultation.
   - name: Ask a question on StackOverflow
     url: https://stackoverflow.com/questions/tagged/molecule
     about: For well defined questions and answers use StackOverflow
-  - name: Ask a question on molecule-users mailing-list
-    url: https://groups.google.com/forum/#!forum/molecule-users
-    about: Try using the classic mailing list, or `#ansible-molecule` irc channel.
   - name: Molecule Vagrant
     url: https://github.com/ansible-community/molecule-vagrant/
     about: For anything related to Vagrant driver, including *VirtualBox* backend.
