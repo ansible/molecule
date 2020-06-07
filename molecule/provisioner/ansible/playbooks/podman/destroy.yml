@@ -4,6 +4,7 @@
   connection: local
   gather_facts: false
   no_log: "{{ molecule_no_log }}"
+  become: "{{ not (item.rootless|default(true)) }}"
   tasks:
     - name: Destroy molecule instance(s)
       shell: podman container exists {{ item.name }} && podman rm -f {{ item.name }} || true

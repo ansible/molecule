@@ -358,6 +358,7 @@ platforms_podman_schema = {
                 "cgroup_manager": {"type": "string"},
                 "storage_opt": {"type": "string"},
                 "storage_driver": {"type": "string"},
+                "rootless": {"type": "boolean"},
             },
         },
     }

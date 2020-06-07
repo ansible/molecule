@@ -3,6 +3,7 @@
   hosts: localhost
   connection: local
   gather_facts: false
+  become: "{{ not (item.rootless|default(true)) }}"
   tasks:
     - name: Log into a container registry
       command: >
