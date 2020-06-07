@@ -355,6 +355,9 @@ platforms_podman_schema = {
                 "network": {"type": "string"},
                 "cert_path": {"type": "string"},
                 "tls_verify": {"type": "boolean"},
+                "cgroup_manager": {"type": "string"},
+                "storage_opt": {"type": "string"},
+                "storage_driver": {"type": "string"},
             },
         },
     }
