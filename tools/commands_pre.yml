@@ -1,0 +1,10 @@
+#!/usr/bin/env ansible-playbook
+- hosts: localhost
+  connection: local
+  tasks:
+    - name: Run network tasks in a resilient mode
+      shell: |
+        ansible-galaxy install git+https://github.com/ansible-collections/community.general.git
+      register: result
+      until: result is not failed
+      retries: 3
