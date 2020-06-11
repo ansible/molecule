@@ -4,6 +4,8 @@
 from setuptools_scm import get_version
 from packaging.version import Version
 import os
+from shutil import which
+import socket
 import sys
 
 
@@ -39,14 +41,29 @@ if __name__ == "__main__":
         tagging_args += "-t " + image_name + ":master "
         tags_to_push.append("master")
 
-    print("Building version {0}".format(version_tag))
+    engine = which("podman") or which("docker")
+    engine_opts = ""
+    # hack to avoid apk fetch getting stuck on systems where host machine has ipv6 enabled
+    # as containers support for IPv6 is almost for sure not working on both docker/podman.
+    # https://github.com/gliderlabs/docker-alpine/issues/307
+    # https://stackoverflow.com/a/41497555/99834
+    if not engine:
+        raise NotImplementedError("Unsupported container engine")
+    elif engine.endswith("podman"):
+        # https://github.com/containers/libpod/issues/5403
+        ip = socket.getaddrinfo("dl-cdn.alpinelinux.org", 80, socket.AF_INET)[0][4][0]
+        engine_opts = "--add-host dl-cdn.alpinelinux.org:" + ip
+
+    print(f"Building version {version_tag} using {engine} container engine")
+    # using '--network host' may fail in some cases where not specifying the
+    # network works fine.
     run(
-        "docker build --network host --pull "
-        "-t {0}:{1} {2} {3} .".format(image_name, version_tag, tagging_args, expire)
+        f"{engine} build {engine_opts} --pull "
+        f"-t {image_name}:{version_tag} {tagging_args} {expire} ."
     )
 
     # Decide to push when all conditions below are met:
     if os.environ.get("TRAVIS_BUILD_STAGE_NAME", None) == "deploy":
-        run("docker login quay.io")
+        run(f"{engine} login quay.io")
         for tag in tags_to_push:
-            run("docker push {0}:{1}".format(image_name, tag))
+            run(f"{engine} push {image_name}:{tag}")

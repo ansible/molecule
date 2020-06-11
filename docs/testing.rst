@@ -78,13 +78,13 @@ Generate the documentation, using `sphinx`_.
 
 .. _`sphinx`: http://www.sphinx-doc.org
 
-Build docker
-------------
+Build container images
+----------------------
 
-Build the docker container.
+Build the container images with docker or podman.
 
 .. code-block:: bash
 
-    $ tox -e build-docker
+    $ tox -e build-containers
 
 .. include:: ci.rst
