@@ -44,6 +44,8 @@
     name: molecule-tox-packaging
     description: Runs tests related to packaging
     parent: ansible-tox-molecule
+    # see: https://github.com/ansible-community/molecule/issues/2723
+    nodeset: ubuntu-bionic-1vcpu
     timeout: 3600
     vars:
       tox_envlist: packaging
@@ -62,6 +64,8 @@
 - job:
     name: molecule-tox-py36-ansible28-unit
     parent: molecule-tox-py36
+    # see: https://github.com/ansible-community/molecule/issues/2723
+    nodeset: ubuntu-bionic-1vcpu
     vars:
       tox_envlist: py36-ansible28-unit
       tox_environment:
@@ -71,6 +75,8 @@
 - job:
     name: molecule-tox-py36-ansible28-functional
     parent: molecule-tox-py36
+    # see: https://github.com/ansible-community/molecule/issues/2723
+    nodeset: ubuntu-bionic-1vcpu
     timeout: 9000
     vars:
       tox_envlist: py36-ansible28-functional
@@ -119,6 +125,8 @@
 - job:
     name: molecule-tox-py37-ansible29-unit
     parent: molecule-tox-py37
+    # see: https://github.com/ansible-community/molecule/issues/2723
+    nodeset: ubuntu-bionic-1vcpu
     vars:
       tox_envlist: py37-ansible29-unit
       tox_environment:
@@ -129,6 +137,8 @@
     name: molecule-tox-py37-ansible29-functional
     parent: molecule-tox-py37
     timeout: 9000
+    # see: https://github.com/ansible-community/molecule/issues/2723
+    nodeset: ubuntu-bionic-1vcpu
     vars:
       tox_envlist: py37-ansible29-functional
       tox_environment:
@@ -138,6 +148,8 @@
 - job:
     name: molecule-tox-devel-unit
     parent: molecule-tox-py36
+    # see: https://github.com/ansible-community/molecule/issues/2723
+    nodeset: ubuntu-bionic-1vcpu
     # until ansible-devel 2.10 changes are implemented
     voting: false
     vars:
@@ -150,7 +162,9 @@
     name: molecule-tox-devel-functional
     parent: molecule-tox-py36
     timeout: 9000
-    # until nsible-devel 2.10 changes are implemented
+    # see: https://github.com/ansible-community/molecule/issues/2723
+    nodeset: ubuntu-bionic-1vcpu
+    # until ansible-devel 2.10 changes are implemented
     voting: false
     vars:
       tox_envlist: ansibledevel-functional
@@ -161,6 +175,8 @@
 - job:
     name: molecule-tox-py37-ansible28-unit
     parent: molecule-tox-py37
+    # see: https://github.com/ansible-community/molecule/issues/2723
+    nodeset: ubuntu-bionic-1vcpu
     vars:
       tox_envlist: py37-ansible28-unit
       tox_environment:
@@ -171,6 +187,8 @@
     name: molecule-tox-py37-ansible28-functional
     parent: molecule-tox-py37
     timeout: 9000
+    # see: https://github.com/ansible-community/molecule/issues/2723
+    nodeset: ubuntu-bionic-1vcpu
     vars:
       tox_envlist: py37-ansible28-functional
       tox_environment:
