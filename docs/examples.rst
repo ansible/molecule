@@ -273,14 +273,29 @@ Playbooks and tests can be shared across scenarios.
     │   └── ubuntu-upstart
     │       └── molecule.yml
 
-Tests can be shared across scenarios.  In this example the `tests` directory
-lives in a shared location and ``molecule.yml`` points to the shared tests.
+Tests and playbooks can be shared across scenarios.
+
+In this example the `tests` directory lives in a shared
+location and ``molecule.yml`` points to the shared tests.
 
 .. code-block:: yaml
 
     verifier:
       name: testinfra
       directory: ../resources/tests/
+
+In this second example the actions `create`, `destroy`,
+`converge` and `prepare` are loaded from a shared directory.
+
+.. code-block:: yaml
+
+    provisioner:
+      name: ansible
+      playbooks:
+        create: ../resources/playbooks/create.yml
+        destroy: ../resources/playbooks/destroy.yml
+        converge: ../resources/playbooks/converge.yml
+        prepare: ../resources/playbooks/prepare.yml
 
 .. _parallel-usage-example:
 
