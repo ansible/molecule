@@ -91,6 +91,9 @@ class Podman(Driver):
             restart_retries: 1
             buildargs:
               http_proxy: http://proxy.example.com:8080/
+            cgroup_manager: cgroupfs
+            storage_opt: overlay.mount_program=/usr/bin/fuse-overlayfs
+            storage_driver: overlay
 
     If specifying the `CMD`_ directive in your ``Dockerfile.j2`` or consuming a
     built image which declares a ``CMD`` directive, then you must set

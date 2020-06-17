@@ -80,6 +80,9 @@
         {% if item.network is defined %}--network={{ item.network }}{% endif %}
         {% if item.etc_hosts is defined %}{% for i,k in item.etc_hosts.items() %}--add-host {{ i }}:{{ k }} {% endfor %}{% endif %}
         {% if item.hostname is defined %}--hostname={{ item.hostname }}{% elif item.name is defined %}--hostname={{ item.name }}{% endif %}
+        {% if item.cgroup_manager is defined %}--cgroup-manager={{ item.cgroup_manager }}{% endif %}
+        {% if item.storage_opt is defined %}--storage-opt={{ item.storage_opt }}{% endif %}
+        {% if item.storage_driver is defined %}--storage-driver={{ item.storage_driver }}{% endif %}
         {{ item.pre_build_image | default(false) | ternary('', 'molecule_local/') }}{{ item.image }}
         {{ (command_directives_dict | default({}))[item.name] | default('') }}
       register: server
