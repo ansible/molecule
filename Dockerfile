@@ -1,20 +1,21 @@
 # This is a multi-stage build which requires Docker 17.05 or higher
-FROM alpine:edge as molecule-builder
+FROM docker.io/alpine:edge as molecule-builder
 
 WORKDIR /usr/src/molecule
 
-ENV PACKAGES="\
-gcc \
-git \
-libffi-dev \
-make \
-musl-dev \
-openssl-dev \
+# testing needed for: py3-arrow py3-tabulate
+RUN apk add -v --progress --update --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ \
 ansible \
 ansible-lint \
 docker-py \
+gcc \
+git \
+libffi-dev \
 libvirt \
 libvirt-dev \
+make \
+musl-dev \
+openssl-dev \
 py3-arrow \
 py3-bcrypt \
 py3-botocore \
@@ -55,9 +56,7 @@ py3-virtualenv \
 py3-websocket-client \
 py3-yaml \
 python3 \
-python3-dev \
-"
-RUN apk add --update --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ ${PACKAGES}
+python3-dev
 
 ENV MOLECULE_EXTRAS="docker,docs,windows,lint"
 
@@ -172,7 +171,7 @@ molecule-vagrant \
 "
 
 RUN \
-    apk add --update --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/testing/ ${BUILD_DEPS} ${PACKAGES} \
+    apk add --update --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/ ${BUILD_DEPS} ${PACKAGES} \
     && gem install ${GEM_PACKAGES} \
     && apk del --no-cache ${BUILD_DEPS} \
     && rm -rf /root/.cache
