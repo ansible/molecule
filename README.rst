@@ -21,9 +21,9 @@ Ansible Molecule
    :target: https://docs.ansible.com/ansible/latest/community/code_of_conduct.html
    :alt: Ansible Code of Conduct
 
-.. image:: https://img.shields.io/badge/Mailing%20lists-silver.svg
-   :target: https://docs.ansible.com/ansible/latest/community/communication.html#mailing-list-information
-   :alt: Ansible mailing lists
+.. image:: https://img.shields.io/badge/Discussions-silver.svg
+   :target: https://github.com/ansible-community/molecule/discussions
+   :alt: Discussions
 
 .. image:: https://img.shields.io/badge/license-MIT-brightgreen.svg
    :target: LICENSE
@@ -61,7 +61,7 @@ Get Involved
 ============
 
 * Join us in the ``#ansible-molecule`` channel on `Freenode`_.
-* Join the discussion in `molecule-users Forum`_.
+* Check github `discussions`_.
 * Join the community working group by checking the `wiki`_.
 * Want to know about releases, subscribe to `ansible-announce list`_.
 * For the full list of Ansible email Lists, IRC channels see the
@@ -78,7 +78,7 @@ If you want to get moving fast and make a quick patch:
 And you're ready to make your changes!
 
 .. _`Freenode`: https://freenode.net
-.. _`molecule-users Forum`: https://groups.google.com/forum/#!forum/molecule-users
+.. _`discussions`: https://github.com/ansible-community/molecule/discussions
 .. _`wiki`: https://github.com/ansible/community/wiki/Molecule
 .. _`ansible-announce list`: https://groups.google.com/group/ansible-announce
 .. _`communication page`: https://docs.ansible.com/ansible/latest/community/communication.html
