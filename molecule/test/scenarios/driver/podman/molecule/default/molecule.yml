@@ -5,19 +5,15 @@ driver:
   name: podman
 platforms:
   - name: instance
+    hostname: instance
     image: centos:latest
     registry:
       url: docker.io
-    buildargs:
-      testarg: this_is_a_test
 provisioner:
   name: ansible
   config_options:
     defaults:
       callback_whitelist: profile_roles,profile_tasks,timer
-  playbooks:
-    create: ../../../../../resources/playbooks/podman/create.yml
-    destroy: ../../../../../resources/playbooks/podman/destroy.yml
   env:
     ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
     # keep this here to test that we convert integers to strings:

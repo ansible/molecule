@@ -31,7 +31,3 @@
         - instance_file.stat.pw_name == 'root'
         - instance_file.stat.gr_name == 'root'
         - instance_file.stat.mode == "0644"
-
-  - name: Assert that the envarg envvar was set
-    assert:
-      that: ansible_env.envarg == 'this_is_a_test'
