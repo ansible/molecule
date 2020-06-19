@@ -7,8 +7,8 @@ Common Molecule Use Cases
 Docker
 ======
 
-Molecule can be executed via an Alpine Linux container by leveraging dind
-(Docker in Docker).  Currently, we only build images for the latest version
+Molecule can be executed via an Alpine Linux container by bind-mounting the
+Docker socket.  Currently, we only build images for the latest version
 of Ansible and Molecule.  In the future we may break this out into Molecule/
 Ansible versioned pairs.  The images are located on `quay.io`_.
 
