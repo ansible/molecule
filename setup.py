@@ -21,7 +21,12 @@
 #  DEALINGS IN THE SOFTWARE.
 """Molecule distribution package setuptools installer."""
 
+import site
 import setuptools
+import sys
+
+# See https://github.com/pypa/pip/issues/7953
+site.ENABLE_USER_SITE = "--user" in sys.argv[1:]
 
 
 if __name__ == "__main__":
