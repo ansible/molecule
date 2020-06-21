@@ -34,15 +34,9 @@
       with_items: "{{ server.results }}"
 
     - name: Delete docker network(s)
-      docker_network:
-        name: "{{ item }}"
-        docker_host: "{{ item.docker_host | default(lookup('env', 'DOCKER_HOST') or 'unix://var/run/docker.sock') }}"
-        cacert_path: "{{ item.cacert_path | default((lookup('env', 'DOCKER_CERT_PATH') + '/ca.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
-        cert_path: "{{ item.cert_path | default((lookup('env', 'DOCKER_CERT_PATH') + '/cert.pem')  if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
-        key_path: "{{ item.key_path | default((lookup('env', 'DOCKER_CERT_PATH') + '/key.pem') if lookup('env', 'DOCKER_CERT_PATH') else omit) }}"
-        tls_verify: "{{ item.tls_verify | default(lookup('env', 'DOCKER_TLS_VERIFY')) or false }}"
-        state: absent
-      with_items: "{{ molecule_yml.platforms | molecule_get_docker_networks }}"
+      action: docker_network
+      args: "{{ item }}"
+      with_items: "{{ molecule_yml.platforms | molecule_get_docker_networks('absent') }}"
       loop_control:
-        label: "{{ item }}"
+        label: "{{ item.name }}"
       no_log: false

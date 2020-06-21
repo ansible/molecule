@@ -41,7 +41,11 @@ class Docker(Driver):
     Molecule leverages Ansible's `docker_container`_ module, by mapping
     variables from ``molecule.yml`` into ``create.yml`` and ``destroy.yml``.
 
-    .. _`docker_container`: https://docs.ansible.com/ansible/latest/docker_container_module.html
+    Molecule leverages Ansible's `docker_network`_ module, by mapping variable
+    ``docker_networks`` into ``create.yml`` and ``destroy.yml``.
+
+    .. _`docker_container`: https://docs.ansible.com/ansible/latest/modules/docker_container_module.html
+    .. _`docker_network`: https://docs.ansible.com/ansible/latest/modules/docker_network_module.html
     .. _`Docker Security Configuration`: https://docs.docker.com/engine/reference/run/#security-configuration
     .. _`Docker daemon socket options`: https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-socket-option
 
@@ -94,6 +98,11 @@ class Docker(Driver):
             dns_servers:
               - 8.8.8.8
             etc_hosts: "{'host1.example.com': '10.3.1.5'}"
+            docker_networks:
+              - name: foo
+                ipam_config:
+                  - subnet: '10.3.1.0/24'
+                    gateway: '10.3.1.254'
             networks:
               - name: foo
               - name: bar
