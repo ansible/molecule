@@ -57,7 +57,7 @@ def test_enabled_property(_instance):
 
 def test_directory_property(_instance):
     parts = _instance.directory.split(os.path.sep)
-    # default verifier is ansible, which keeps tests in molecule folder.
+    # The ansible verifier expects directory to end in molecule
     assert "molecule" == parts[-1]
 
 
