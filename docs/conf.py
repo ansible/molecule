@@ -18,7 +18,7 @@ import sys
 
 import molecule
 
-import sphinx_rtd_theme
+import sphinx_ansible_theme
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -40,22 +40,18 @@ extensions = [
     "sphinx.ext.extlinks",
     "sphinx.ext.intersphinx",
     "sphinx.ext.todo",
-    "sphinx_rtd_theme",
+    "sphinx_ansible_theme.ext.pygments_lexer",
+    "notfound.extension",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ["_templates"]
+templates_path = ['.templates']
 
-# The suffix(es) of source filenames.
-# You can specify multiple suffix as a list of string:
-# source_suffix = ['.rst', '.md']
-source_suffix = ".rst"
-
-# The encoding of source files.
-# source_encoding = 'utf-8-sig'
+# The suffix of source filenames.
+source_suffix = '.rst'
 
 # The master toctree document.
-master_doc = "index"
+master_doc = 'index'
 
 # General information about the project.
 project = "Molecule"
@@ -73,16 +69,6 @@ extlinks = {
     "pr": (f"{github_repo_url}/pull/%s", "PR #"),
     "commit": (f"{github_repo_url}/commit/%s", ""),
     "gh": (f"{github_url}/%s", "GitHub: "),
-}
-
-intersphinx_mapping = {
-    "ansible": ("https://docs.ansible.com/ansible/latest/", None),
-    "pip": ("https://pip.pypa.io/en/latest/", None),
-    "python": ("https://docs.python.org/3", None),
-    "python2": ("https://docs.python.org/2", None),
-    "testinfra": ("https://testinfra.readthedocs.io/en/latest/", None),
-    "yamllint": ("http://yamllint.readthedocs.io/en/latest/", None),
-    "virtualenv": ("https://virtualenv.pypa.io/en/latest/", None),
 }
 
 # The version info for the project you're documenting, acts as replacement for
@@ -105,11 +91,19 @@ language = None
 # non-false value, then it is used:
 # today = ''
 # Else, today_fmt is used as the format for a strftime call.
-# today_fmt = '%B %d, %Y'
+today_fmt = '%B %d, %Y'
 
-# List of patterns, relative to source directory, that match files and
-# directories to ignore when looking for source files.
-exclude_patterns = []
+# List of documents that shouldn't be included in the build.
+# unused_docs = []
+
+# List of directories, relative to source directories, that shouldn't be
+# searched for source files.
+# exclude_dirs = []
+
+# A list of glob-style patterns that should be excluded when looking
+# for source files.
+# OBSOLETE - removing this - dharmabumstead 2018-02-06
+# exclude_patterns = ['modules']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -127,40 +121,57 @@ exclude_patterns = []
 # show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = "sphinx"
+pygments_style = 'sphinx'
 
-# A list of ignored prefixes for module index sorting.
-# modindex_common_prefix = []
+highlight_language = 'YAML+Jinja'
 
-# If true, keep warnings as "system message" paragraphs in the built documents.
-# keep_warnings = False
+# Substitutions, variables, entities, & shortcuts for text which do not need to link to anything.
+# For titles which should be a link, use the intersphinx anchors set at the index, chapter, and section levels, such as  qi_start_:
+# |br| is useful for formatting fields inside of tables
+# |_| is a nonbreaking space; similarly useful inside of tables
+rst_epilog = """
+.. |br| raw:: html
 
-# If true, `todo` and `todoList` produce output, else they produce nothing.
-todo_include_todos = True
+   <br>
+.. |_| unicode:: 0xA0
+    :trim:
+"""
 
-# List of warnings to suppress.
-suppress_warnings = []
 
-# -- Options for HTML output ----------------------------------------------
+# Options for HTML output
+# -----------------------
 
-# The theme to use for HTML and HTML Help pages.  See the documentation for
-# a list of builtin themes.
-html_theme = "sphinx_rtd_theme"
+html_theme_path = [sphinx_ansible_theme.get_html_theme_path()]
+html_theme = 'sphinx_ansible_theme'
 
-# Theme options are theme-specific and customize the look and feel of a theme
-# further.  For a list of options available for each theme, see the
-# documentation.
-# html_theme_options = {}
+html_show_sphinx = False
+html_favicon = "_static/images/favicon.ico"
+
 html_theme_options = {
     "collapse_navigation": False,
     "analytics_id": "UA-128382387-1",
-    "style_nav_header_background": "white",
+    "style_nav_header_background": "#5bbdbf",
     "style_external_links": True,
+    # 'canonical_url': "https://docs.ansible.com/ansible/latest/",
+    'vcs_pageview_mode': 'edit'
 }
 
-# Add any paths that contain custom themes here, relative to this directory.
-# html_theme_path = []
-html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+html_context = {
+    'display_github': 'True',
+    'github_user': 'ansible-community',
+    'github_repo': 'sphinx_ansible_theme',
+    'github_version': 'master/docs/',
+    'current_version': version,
+    'latest_version': 'latest',
+    # list specifically out of order to make latest work
+    'available_versions': ('latest', ),
+    'css_files': (),  # overrides to the standard theme
+}
+
+# The style sheet to use for HTML and HTML Help pages. A file of that name
+# must exist either in Sphinx' static/ path, or in one of the custom paths
+# given in html_static_path.
+# html_style = 'solar.css'
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -169,29 +180,24 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 # A shorter title for the navigation bar.  Default is the same as html_title.
 # html_short_title = None
 
-# The name of an image file (relative to this directory) to place at the top
-# of the sidebar.
-# html_logo = None
-html_logo = "_static/logo.png"
+# The name of an image file (within the static path) to place at the top of
+# the sidebar.
+# html_logo =
+# html_logo = "_static/images/logo_big.png"
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
-# html_favicon = None
+html_favicon = "_static/images/favicon.ico"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ["_static"]
-
-# Add any extra paths that contain custom files (such as robots.txt or
-# .htaccess) here, relative to this directory. These files are copied
-# directly to the root of the documentation.
-# html_extra_path = []
+html_static_path = ['_static']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
-# html_last_updated_fmt = '%b %d, %Y'
+html_last_updated_fmt = '%b %d, %Y'
 
 # If true, SmartyPants will be used to convert quotes and dashes to
 # typographically correct entities.
@@ -199,14 +205,13 @@ html_static_path = ["_static"]
 
 # Custom sidebar templates, maps document names to template names.
 # html_sidebars = {}
-html_sidebars = {"**": ["about.html", "navigation.html", "searchbox.html"]}
 
 # Additional templates that should be rendered to pages, maps page names to
 # template names.
 # html_additional_pages = {}
 
 # If false, no module index is generated.
-# html_domain_indices = True
+# html_use_modindex = True
 
 # If false, no index is generated.
 # html_use_index = True
@@ -214,56 +219,46 @@ html_sidebars = {"**": ["about.html", "navigation.html", "searchbox.html"]}
 # If true, the index is split into individual pages for each letter.
 # html_split_index = False
 
-# If true, links to the reST sources are added to the pages.
-html_show_sourcelink = False
-
-# If true, "Created using Sphinx" is shown in the HTML footer. Default is True.
-# html_show_sphinx = True
-
-# If true, "(C) Copyright ..." is shown in the HTML footer. Default is True.
-html_show_copyright = False
+# If true, the reST sources are included in the HTML build as _sources/<name>.
+html_copy_source = False
 
 # If true, an OpenSearch description file will be output, and all pages will
 # contain a <link> tag referring to it.  The value of this option must be the
 # base URL from which the finished HTML is served.
-# html_use_opensearch = ''
+# html_use_opensearch = 'https://docs.ansible.com/ansible/latest'
 
-# This is the file name suffix for HTML files (e.g. ".xhtml").
-# html_file_suffix = None
-
-# Language to be used for generating the HTML full-text search index.
-# Sphinx supports the following languages:
-#   'da', 'de', 'en', 'es', 'fi', 'fr', 'hu', 'it', 'ja'
-#   'nl', 'no', 'pt', 'ro', 'ru', 'sv', 'tr'
-# html_search_language = 'en'
-
-# A dictionary with options for the search language support, empty by default.
-# Now only 'ja' uses this config value
-# html_search_options = {'type': 'default'}
-
-# The name of a javascript file (relative to the configuration directory) that
-# implements a search results scorer. If empty, the default will be used.
-# html_search_scorer = 'scorer.js'
+# If nonempty, this is the file name suffix for HTML files (e.g. ".xhtml").
+# html_file_suffix = ''
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "Moleculedoc"
+htmlhelp_basename = 'Poseidodoc'
 
-# -- Options for LaTeX output ---------------------------------------------
+# Configuration for sphinx-notfound-pages
+# with no 'notfound_template' and no 'notfound_context' set,
+# the extension builds 404.rst into a location-agnostic 404 page
+#
+# default is `en` - using this for the sub-site:
+notfound_default_language = "ansible"
+# default is `latest`:
+# setting explicitly - docsite serves up /ansible/latest/404.html
+# so keep this set to `latest` even on the `devel` branch
+# then no maintenance is needed when we branch a new stable_x.x
+notfound_default_version = "latest"
+# makes default setting explicit:
+notfound_no_urls_prefix = False
 
-latex_elements = {
-    # The paper size ('letterpaper' or 'a4paper').
-    # 'papersize': 'letterpaper',
-    # The font size ('10pt', '11pt' or '12pt').
-    # 'pointsize': '10pt',
-    # Additional stuff for the LaTeX preamble.
-    # 'preamble': '',
-    # Latex figure (float) alignment
-    # 'figure_align': 'htbp',
-}
+# Options for LaTeX output
+# ------------------------
+
+# The paper size ('letter' or 'a4').
+# latex_paper_size = 'letter'
+
+# The font size ('10pt', '11pt' or '12pt').
+# latex_font_size = '10pt'
 
 # Grouping the document tree into LaTeX files. List of tuples
-# (source start file, target name, title,
-#  author, documentclass [howto, manual, or own class]).
+# (source start file, target name, title, author, document class
+# [howto/manual]).
 latex_documents = [
     (master_doc, "Molecule.tex", "Molecule Documentation", "AUTHORS.rst", "manual")
 ]
@@ -276,54 +271,46 @@ latex_documents = [
 # not chapters.
 # latex_use_parts = False
 
-# If true, show page references after internal links.
-# latex_show_pagerefs = False
-
-# If true, show URL addresses after external links.
-# latex_show_urls = False
+# Additional stuff for the LaTeX preamble.
+# latex_preamble = ''
 
 # Documents to append as an appendix to all manuals.
 # latex_appendices = []
 
 # If false, no module index is generated.
-# latex_domain_indices = True
+# latex_use_modindex = True
 
+autoclass_content = 'both'
 
-# -- Options for manual page output ---------------------------------------
+# Note:  Our strategy for intersphinx mappings is to have the upstream build location as the
+# canonical source and then cached copies of the mapping stored locally in case someone is building
+# when disconnected from the internet.  We then have a script to update the cached copies.
+#
+# Because of that, each entry in this mapping should have this format:
+#   name: ('http://UPSTREAM_URL', (None, 'path/to/local/cache.inv'))
+#
+# The update script depends on this format so deviating from this (for instance, adding a third
+# location for the mappning to live) will confuse it.
+intersphinx_mapping = {'python': ('https://docs.python.org/2/', (None, '../python2.inv')),
+                       'python3': ('https://docs.python.org/3/', (None, '../python3.inv')),
+                       'jinja2': ('http://jinja.palletsprojects.com/', (None, '../jinja2.inv')),
+                       'ansible_2_9': ('https://docs.ansible.com/ansible/2.9/', (None, '../ansible_2_9.inv')),
+                       'ansible_2_8': ('https://docs.ansible.com/ansible/2.8/', (None, '../ansible_2_8.inv')),
+                       'ansible_2_7': ('https://docs.ansible.com/ansible/2.7/', (None, '../ansible_2_7.inv')),
+                       'ansible_2_6': ('https://docs.ansible.com/ansible/2.6/', (None, '../ansible_2_6.inv')),
+                       'ansible_2_5': ('https://docs.ansible.com/ansible/2.5/', (None, '../ansible_2_5.inv')),
+    "ansible": ("https://docs.ansible.com/ansible/latest/", None),
+    "pip": ("https://pip.pypa.io/en/latest/", None),
+    "python": ("https://docs.python.org/3", None),
+    "python2": ("https://docs.python.org/2", None),
+    "testinfra": ("https://testinfra.readthedocs.io/en/latest/", None),
+    "yamllint": ("http://yamllint.readthedocs.io/en/latest/", None),
+    "virtualenv": ("https://virtualenv.pypa.io/en/latest/", None),
+    }
 
-# One entry per manual page. List of tuples
-# (source start file, name, description, authors, manual section).
-man_pages = [(master_doc, "molecule", "Molecule Documentation", [author], 1)]
-
-# If true, show URL addresses after external links.
-# man_show_urls = False
-
-
-# -- Options for Texinfo output -------------------------------------------
-
-# Grouping the document tree into Texinfo files. List of tuples
-# (source start file, target name, title, author,
-#  dir menu entry, description, category)
-texinfo_documents = [
-    (
-        master_doc,
-        "Molecule",
-        "Molecule Documentation",
-        author,
-        "AUTHORS.rst",
-        "Automated Testing for Ansible roles",
-        "Miscellaneous",
-    )
+# linckchecker settings
+linkcheck_ignore = [
+    r'http://irc\.freenode\.net',
 ]
-
-# Documents to append as an appendix to all manuals.
-# texinfo_appendices = []
-
-# If false, no module index is generated.
-# texinfo_domain_indices = True
-
-# How to display URL addresses: 'footnote', 'no', or 'inline'.
-# texinfo_show_urls = 'footnote'
-
-# If true, do not generate a @detailmenu in the "Top" node's menu.
-# texinfo_no_detailmenu = False
+linkcheck_workers = 25
+# linkcheck_anchors = False

@@ -193,7 +193,7 @@ Monolith Repo
 Molecule is generally used to test roles in isolation.  However, it can also
 test roles from a monolith repo.
 
-::
+.. code-block: bash
 
     $ tree monolith-repo -L 3 --prune
     monolith-repo
@@ -252,7 +252,7 @@ Sharing Across Scenarios
 
 Playbooks and tests can be shared across scenarios.
 
-::
+.. code-block:: bash
 
     $ tree shared-tests
     shared-tests
