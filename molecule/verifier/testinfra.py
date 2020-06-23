@@ -119,13 +119,6 @@ class Testinfra(Verifier):
 
         return d
 
-    @property
-    def directory(self):
-        return os.path.join(
-            self._config.scenario.directory,
-            self._config.config["verifier"].get("directory", "tests"),
-        )
-
     # NOTE(retr0h): Override the base classes' options() to handle
     # ``ansible-galaxy`` one-off.
     @property
