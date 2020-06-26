@@ -19,3 +19,4 @@ ubuntu-xenial-16.04-cloudimg-console.log
 .python-version
 coverage.xml
 pip-wheel-metadata
+docs/docstree
