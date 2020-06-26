@@ -45,7 +45,7 @@ class Base(object, metaclass=abc.ABCMeta):
 
     def __init__(self, c):
         """
-        Initialize code for all :ref:`Command` classes.
+        Initialize code for all command classes.
 
         :param c: An instance of a Molecule config.
         :returns: None
@@ -86,7 +86,7 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
 
     :param scenario_name: Name of scenario to run, or ``None`` to run all.
     :param args: ``args`` dict from ``click`` command context
-    :param command_args: dict of command argumentss, including the target
+    :param command_args: dict of command arguments, including the target
                          subcommand to execute
     :returns: None
 
