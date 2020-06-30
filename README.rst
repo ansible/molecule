@@ -46,6 +46,14 @@ Molecule supports only the latest two major versions of Ansible (N/N-1),
 meaning that if the latest version is 2.9.x, we will also test our code with
 2.8.x.
 
+Once installed, the command line can be called using any of the methods below:
+
+.. code-block:: bash
+
+    molecule ...
+    mol ...  # same as above, introduced in 3.0.5
+    python3 -m molecule ...  # python module calling method
+
 .. _`Ansible`: https://ansible.com
 
 .. _documentation:

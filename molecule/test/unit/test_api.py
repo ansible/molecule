@@ -19,6 +19,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import pytest
+import sh
 from molecule import api
 
 
@@ -41,3 +43,13 @@ def test_api_verifiers():
     x = ["testinfra", "ansible"]
 
     assert all(elem in api.verifiers() for elem in x)
+
+
+def test_cli_mol():
+    cmd_molecule = sh.molecule.bake("--version")
+    x = pytest.helpers.run_command(cmd_molecule, log=False)
+    cmd_mol = sh.mol.bake("--version")
+    y = pytest.helpers.run_command(cmd_mol, log=False)
+    assert x.exit_code == y.exit_code
+    assert x.stderr == y.stderr
+    assert x.stdout == y.stdout
