@@ -55,12 +55,6 @@ def test_enabled_property(_instance):
     assert _instance.enabled
 
 
-def test_directory_property(_instance):
-    parts = _instance.directory.split(os.path.sep)
-    # The ansible verifier expects directory to end in molecule
-    assert "molecule" == parts[-1]
-
-
 @pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
 def test_options_property(_instance):
     x = {}

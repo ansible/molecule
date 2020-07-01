@@ -72,13 +72,6 @@ class Ansible(Verifier):
         env = util.merge_dicts(os.environ, self._config.env)
         return util.merge_dicts(env, self._config.provisioner.env)
 
-    @property
-    def directory(self):
-        return os.path.join(
-            self._config.scenario.directory,
-            self._config.config["verifier"].get("directory", "molecule"),
-        )
-
     def execute(self):
         if not self.enabled:
             msg = "Skipping, verifier is disabled."
