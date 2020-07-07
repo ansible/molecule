@@ -7,9 +7,7 @@ Installation and Upgrade
 .. toctree::
    :maxdepth: 1
 
-   Installation Guide <installation>
-   Upgrade Guide <upgrade>
-   Releases and changelogs <https://github.com/ansible-community/molecule/releases>
+   Installation <installation>
 
 Using Molecule
 ==============
@@ -17,9 +15,10 @@ Using Molecule
 .. toctree::
    :maxdepth: 1
 
-   Getting Started Guide <getting-started>
+   Getting Started <getting-started>
+   CI/CD Usage <ci>
    Command Line Reference <usage>
-   Configuration Guide <configuration>
+   Configuration <configuration>
 
 Common Molecule Use Cases
 =========================
@@ -36,10 +35,8 @@ Contributing to Molecule
 .. toctree::
    :maxdepth: 1
 
-   Contribution Guide <contributing>
-   Developer Testing Guide <testing>
-   Developer Release Guide <development>
-   Credits <authors>
+   Contributing <contributing>
+
 
 References and Appendices
 =========================

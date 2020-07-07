@@ -153,13 +153,14 @@ html_theme_options = {
     "style_nav_header_background": "#5bbdbf",
     "style_external_links": True,
     # 'canonical_url': "https://docs.ansible.com/ansible/latest/",
-    'vcs_pageview_mode': 'edit'
+    'vcs_pageview_mode': 'edit',
+    "navigation_depth": 3,
 }
 
 html_context = {
     'display_github': 'True',
     'github_user': 'ansible-community',
-    'github_repo': 'sphinx_ansible_theme',
+    'github_repo': 'molecule',
     'github_version': 'master/docs/',
     'current_version': version,
     'latest_version': 'latest',
