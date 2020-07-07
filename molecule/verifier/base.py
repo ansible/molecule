@@ -94,7 +94,7 @@ class Verifier(object):
     def directory(self):
         return os.path.join(
             self._config.scenario.directory,
-            self._config.config["verifier"].get("directory", "molecule"),
+            self._config.config["verifier"].get("directory", "tests"),
         )
 
     @property
