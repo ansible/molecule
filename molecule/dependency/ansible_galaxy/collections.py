@@ -36,7 +36,7 @@ class Collections(AnsibleGalaxyBase):
     def default_env(self):
         general = super(Collections, self).default_env
         return util.merge_dicts(
-            general, {"ANSIBLE_COLLECTIONS_PATHS": self.install_path}
+            general, {self._config.ansible_collections_path: self.install_path}
         )
 
     @property

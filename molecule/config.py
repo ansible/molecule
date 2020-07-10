@@ -21,6 +21,7 @@
 
 from uuid import uuid4
 import os
+import pkg_resources
 
 from ansible.module_utils.parsing.convert_bool import boolean
 
@@ -101,6 +102,22 @@ class Config(object, metaclass=NewInitCaller):
 
     def write(self):
         util.write_file(self.config_file, util.safe_dump(self.config))
+
+    @property
+    def ansible_version(self):
+        """Return current version of ansible."""
+        return pkg_resources.parse_version(
+            pkg_resources.get_distribution("ansible").version
+        )
+
+    @property
+    def ansible_collections_path(self):
+        """Return collection path variable for current version of Ansible."""
+        # https://github.com/ansible/ansible/pull/70007
+        if self.ansible_version >= pkg_resources.parse_version("2.10.0.dev0"):
+            return "ANSIBLE_COLLECTIONS_PATH"
+        else:
+            return "ANSIBLE_COLLECTIONS_PATHS"
 
     @property
     def config_file(self):
