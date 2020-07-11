@@ -38,7 +38,8 @@ from click_help_colors import _colorize
 click_completion.init()
 colorama.init(autoreset=True, strip=not should_do_markup())
 
-LOCAL_CONFIG = lookup_config_file(".config/molecule/config.yml")
+LOCAL_CONFIG_SEARCH = ".config/molecule/config.yml"
+LOCAL_CONFIG = lookup_config_file(LOCAL_CONFIG_SEARCH)
 
 
 ENV_FILE = ".env.yml"
@@ -74,9 +75,11 @@ def _version_string():
     help=(
         "Path to a base config.  If provided Molecule will load "
         "this config first, and deep merge each scenario's "
-        "molecule.yml on top. By default is looking for config in current "
-        "VCS repository and if not found it will look on user home. ({})"
-    ).format(LOCAL_CONFIG),
+        "molecule.yml on top. By default Molecule is looking for "
+        "'{}' "
+        "in current VCS repository and if not found it will look "
+        "in user home. ({})"
+    ).format(LOCAL_CONFIG_SEARCH, LOCAL_CONFIG),
 )
 @click.option(
     "--env-file",
