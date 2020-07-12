@@ -1,12 +1,14 @@
 """Molecule API Module."""
 
-from collections import UserList
-import pluggy
-from molecule import logger
-from molecule.util import lru_cache
-from molecule.driver.base import Driver  # noqa
-from molecule.verifier.base import Verifier  # noqa
 import traceback
+from collections import UserList
+
+import pluggy
+
+from molecule import logger
+from molecule.driver.base import Driver  # noqa
+from molecule.util import lru_cache
+from molecule.verifier.base import Verifier  # noqa
 
 LOG = logger.get_logger(__name__)
 

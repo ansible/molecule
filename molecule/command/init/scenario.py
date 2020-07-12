@@ -23,10 +23,7 @@ import os
 
 import click
 
-from molecule import api
-from molecule import config
-from molecule import logger
-from molecule import util
+from molecule import api, config, logger, util
 from molecule.command import base as command_base
 from molecule.command.init import base
 

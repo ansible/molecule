@@ -21,13 +21,12 @@
 
 import os
 import re
+import shutil
 
 import pytest
 import sh
-import shutil
 
 from molecule import util
-
 from molecule.test.conftest import change_dir_to
 
 

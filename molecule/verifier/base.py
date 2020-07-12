@@ -19,11 +19,10 @@
 #  DEALINGS IN THE SOFTWARE.
 """Verifier Base Module."""
 
+import abc
 import os
 
-import abc
 import molecule
-
 from molecule import util
 
 

@@ -19,10 +19,11 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import os
-from molecule.scenario import ephemeral_directory
 
 import pytest
 import sh
+
+from molecule.scenario import ephemeral_directory
 
 
 @pytest.fixture

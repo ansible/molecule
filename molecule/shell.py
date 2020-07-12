@@ -19,19 +19,20 @@
 #  DEALINGS IN THE SOFTWARE.
 """Molecule Shell Module."""
 
+import sys
+
 import click
 import click_completion
 import colorama
 import pkg_resources
-import sys
+from click_help_colors import _colorize
 
 import molecule
 from molecule import command
+from molecule.command.base import click_group_ex
 from molecule.config import MOLECULE_DEBUG
 from molecule.logger import should_do_markup
 from molecule.util import lookup_config_file
-from molecule.command.base import click_group_ex
-from click_help_colors import _colorize
 
 click_completion.init()
 colorama.init(autoreset=True, strip=not should_do_markup())

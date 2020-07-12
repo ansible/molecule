@@ -18,17 +18,16 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-from uuid import uuid4
-from pathlib import Path
 import copy
 import functools
 import os
 import shutil
+from pathlib import Path
+from uuid import uuid4
 
 import pytest
 
-from molecule import util
-from molecule import config
+from molecule import config, util
 
 
 @pytest.helpers.register

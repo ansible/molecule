@@ -20,14 +20,14 @@
 """Base class used by init role command."""
 
 import os
-import click
 import subprocess
-from molecule import api
-from molecule import logger
-from molecule import util
+from subprocess import check_output
+
+import click
+
+from molecule import api, logger, util
 from molecule.command import base as command_base
 from molecule.command.init import base
-from subprocess import check_output
 
 LOG = logger.get_logger(__name__)
 

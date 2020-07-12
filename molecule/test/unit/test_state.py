@@ -22,8 +22,7 @@ import os
 
 import pytest
 
-from molecule import state
-from molecule import util
+from molecule import state, util
 
 
 @pytest.fixture

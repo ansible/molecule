@@ -22,8 +22,7 @@ import os
 
 import pytest
 
-from molecule import config
-from molecule import util
+from molecule import config, util
 from molecule.command import base
 
 

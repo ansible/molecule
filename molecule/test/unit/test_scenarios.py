@@ -23,9 +23,7 @@ import copy
 
 import pytest
 
-from molecule import config
-from molecule import scenario
-from molecule import scenarios
+from molecule import config, scenario, scenarios
 
 
 @pytest.fixture

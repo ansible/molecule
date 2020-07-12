@@ -22,14 +22,8 @@ import os
 
 import pytest
 
-from molecule import config
-from molecule import platforms
-from molecule import scenario
-from molecule import state
-from molecule import util
-from molecule.dependency import ansible_galaxy
-from molecule.dependency import gilt
-from molecule.dependency import shell
+from molecule import config, platforms, scenario, state, util
+from molecule.dependency import ansible_galaxy, gilt, shell
 from molecule.provisioner import ansible
 from molecule.verifier.ansible import Ansible as AnsibleVerifier
 

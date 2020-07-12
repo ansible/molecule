@@ -24,10 +24,7 @@ from __future__ import print_function
 import click
 import tabulate
 
-from molecule import logger
-from molecule import scenarios
-from molecule import status
-from molecule import util
+from molecule import logger, scenarios, status, util
 from molecule.command import base
 
 LOG = logger.get_logger(__name__)

@@ -20,12 +20,11 @@
 """Check Command Module."""
 
 import os
+
 import click
 
-from molecule import logger
+from molecule import logger, util
 from molecule.command import base
-from molecule import util
-
 
 LOG = logger.get_logger(__name__)
 MOLECULE_PARALLEL = os.environ.get("MOLECULE_PARALLEL", False)

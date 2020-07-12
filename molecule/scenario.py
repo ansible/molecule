@@ -19,14 +19,12 @@
 #  DEALINGS IN THE SOFTWARE.
 """Molecule Scenario Module."""
 
-from pathlib import Path
 import fnmatch
 import os
 import shutil
+from pathlib import Path
 
-from molecule import logger
-from molecule import scenarios
-from molecule import util
+from molecule import logger, scenarios, util
 
 LOG = logger.get_logger(__name__)
 

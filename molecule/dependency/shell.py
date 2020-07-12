@@ -24,8 +24,7 @@ import shlex
 
 import sh
 
-from molecule import logger
-from molecule import util
+from molecule import logger, util
 from molecule.dependency import base
 
 LOG = logger.get_logger(__name__)

@@ -25,8 +25,8 @@
 # or builtins.
 
 from molecule.command import base  # noqa
-from molecule.command import cleanup  # noqa
 from molecule.command import check  # noqa
+from molecule.command import cleanup  # noqa
 from molecule.command import converge  # noqa
 from molecule.command import create  # noqa
 from molecule.command import dependency  # noqa

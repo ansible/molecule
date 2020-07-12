@@ -24,8 +24,7 @@ import os
 
 import sh
 
-from molecule import logger
-from molecule import util
+from molecule import logger, util
 from molecule.api import Verifier
 
 LOG = logger.get_logger(__name__)

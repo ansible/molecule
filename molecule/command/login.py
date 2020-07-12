@@ -29,9 +29,7 @@ import termios
 import click
 import pexpect
 
-from molecule import logger
-from molecule import scenarios
-from molecule import util
+from molecule import logger, scenarios, util
 from molecule.command import base
 
 LOG = logger.get_logger(__name__)

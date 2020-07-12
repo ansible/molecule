@@ -4,6 +4,10 @@ exclude: |
         ^docs/conf.py$
     )
 repos:
+  - repo: https://github.com/pre-commit/mirrors-isort
+    rev: v5.0.8
+    hooks:
+      - id: isort
   - repo: https://github.com/python/black.git
     rev: 19.10b0
     hooks:

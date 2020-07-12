@@ -22,12 +22,10 @@ import collections
 import os
 
 import pytest
-from molecule.test.conftest import is_subset
 
-from molecule import config
-from molecule import util
-from molecule.provisioner import ansible
-from molecule.provisioner import ansible_playbooks
+from molecule import config, util
+from molecule.provisioner import ansible, ansible_playbooks
+from molecule.test.conftest import is_subset
 
 
 @pytest.fixture

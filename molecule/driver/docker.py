@@ -25,8 +25,7 @@ import os
 
 from molecule import logger
 from molecule.api import Driver
-from molecule.util import lru_cache
-from molecule.util import sysexit_with_message
+from molecule.util import lru_cache, sysexit_with_message
 
 log = logger.get_logger(__name__)
 

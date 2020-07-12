@@ -21,8 +21,7 @@
 
 import click
 
-from molecule import logger
-from molecule import scenarios
+from molecule import logger, scenarios
 from molecule.command import base
 
 LOG = logger.get_logger(__name__)

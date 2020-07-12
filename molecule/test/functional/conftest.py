@@ -19,22 +19,19 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-from packaging import version
 import os
-import pkg_resources
 import platform
 import shutil
 import subprocess
+from subprocess import PIPE, check_output
 
 import pexpect
+import pkg_resources
 import pytest
 import sh
-from subprocess import PIPE
+from packaging import version
 
-from molecule import logger
-from molecule import util
-from subprocess import check_output
-
+from molecule import logger, util
 from molecule.test.conftest import change_dir_to
 
 LOG = logger.get_logger(__name__)
