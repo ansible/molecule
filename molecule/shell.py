@@ -25,8 +25,6 @@ import colorama
 import pkg_resources
 import sys
 
-from ansible.release import __version__ as ansible_version
-
 import molecule
 from molecule import command
 from molecule.config import MOLECULE_DEBUG
@@ -52,7 +50,7 @@ def _version_string():
     msg += _colorize(
         "   ansible==%s python==%s.%s"
         % (
-            pkg_resources.parse_version(ansible_version),
+            pkg_resources.get_distribution("ansible").version,
             sys.version_info[0],
             sys.version_info[1],
         ),
