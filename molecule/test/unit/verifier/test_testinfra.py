@@ -23,8 +23,7 @@ import os
 import pytest
 import sh
 
-from molecule import config
-from molecule import util
+from molecule import config, util
 from molecule.verifier import testinfra
 
 

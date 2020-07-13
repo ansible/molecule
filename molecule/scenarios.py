@@ -23,8 +23,7 @@ import operator
 
 import tree_format
 
-from molecule import logger
-from molecule import util
+from molecule import logger, util
 
 LOG = logger.get_logger(__name__)
 

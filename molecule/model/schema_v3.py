@@ -26,8 +26,7 @@ import re
 import cerberus
 import cerberus.errors
 
-from molecule import api
-from molecule import interpolation, util
+from molecule import api, interpolation, util
 
 
 def coerce_env(env, keep_string, v):

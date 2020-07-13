@@ -21,8 +21,7 @@
 
 import os
 
-from molecule import logger
-from molecule import util
+from molecule import logger, util
 
 LOG = logger.get_logger(__name__)
 VALID_KEYS = ["created", "converged", "driver", "prepared", "run_uuid", "is_parallel"]

@@ -19,10 +19,9 @@
 #  DEALINGS IN THE SOFTWARE.
 """Base class used by init command."""
 
-from molecule.command import base
 from molecule import logger
-from molecule.command.init import role
-from molecule.command.init import scenario
+from molecule.command import base
+from molecule.command.init import role, scenario
 
 LOG = logger.get_logger(__name__)
 

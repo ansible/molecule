@@ -21,6 +21,7 @@
 
 import pytest
 import sh
+
 from molecule import api
 
 

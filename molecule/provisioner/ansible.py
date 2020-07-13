@@ -19,17 +19,14 @@
 #  DEALINGS IN THE SOFTWARE.
 """Ansible Provisioner Module."""
 
-import copy
 import collections
+import copy
 import os
 import shutil
 
-from molecule import logger
-from molecule import util
+from molecule import logger, util
 from molecule.api import drivers
-from molecule.provisioner import base
-from molecule.provisioner import ansible_playbook
-from molecule.provisioner import ansible_playbooks
+from molecule.provisioner import ansible_playbook, ansible_playbooks, base
 
 LOG = logger.get_logger(__name__)
 

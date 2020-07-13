@@ -25,9 +25,7 @@ import string
 
 import pytest
 
-from molecule import config
-from molecule import logger
-from molecule import util
+from molecule import config, logger, util
 from molecule.scenario import ephemeral_directory
 
 LOG = logger.get_logger(__name__)

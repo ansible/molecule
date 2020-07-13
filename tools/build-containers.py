@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 """Docker image builder for distributing molecule as a container."""
 
-from setuptools_scm import get_version
-from packaging.version import Version
 import os
-from shutil import which
 import socket
 import sys
+from shutil import which
+
+from packaging.version import Version
+from setuptools_scm import get_version
 
 
 def run(cmd):

@@ -1,8 +1,8 @@
 """Base definition for Ansible Galaxy dependencies."""
 from molecule import util
-from molecule.dependency.base import Base
-from molecule.dependency.ansible_galaxy.roles import Roles
 from molecule.dependency.ansible_galaxy.collections import Collections
+from molecule.dependency.ansible_galaxy.roles import Roles
+from molecule.dependency.base import Base
 
 
 class AnsibleGalaxy(Base):

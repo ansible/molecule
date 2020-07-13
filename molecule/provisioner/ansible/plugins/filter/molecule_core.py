@@ -21,9 +21,7 @@
 
 import os
 
-from molecule import config
-from molecule import interpolation
-from molecule import util
+from molecule import config, interpolation, util
 
 
 def from_yaml(data):

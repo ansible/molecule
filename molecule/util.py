@@ -20,18 +20,16 @@
 
 from __future__ import print_function
 
-from collections.abc import Mapping
 import contextlib
 import fnmatch
-import jinja2
 import os
 import re
 import sys
-
-
+from collections.abc import Mapping
 from functools import lru_cache  # noqa
 
 import colorama
+import jinja2
 import yaml
 
 from molecule.logger import get_logger

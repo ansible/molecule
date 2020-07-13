@@ -23,9 +23,7 @@ import shutil
 
 import pytest
 
-from molecule import config
-from molecule import scenario
-from molecule import util
+from molecule import config, scenario, util
 
 
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables

@@ -23,8 +23,7 @@ from __future__ import absolute_import
 
 import os
 
-from molecule import logger
-from molecule import util
+from molecule import logger, util
 
 LOG = logger.get_logger(__name__)
 

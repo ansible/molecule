@@ -23,17 +23,14 @@ import abc
 import collections
 import glob
 import os
-
 import shutil
 
-import molecule.command
-import molecule.scenarios
-from molecule import config
-from molecule import logger
-from molecule import util
 import click
 from click_help_colors import HelpColorsCommand, HelpColorsGroup
 
+import molecule.command
+import molecule.scenarios
+from molecule import config, logger, util
 
 LOG = logger.get_logger(__name__)
 MOLECULE_GLOB = os.environ.get("MOLECULE_GLOB", "molecule/*/molecule.yml")

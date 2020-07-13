@@ -1,10 +1,8 @@
 """Ansible Galaxy dependencies for lists of roles."""
 import os
 
-from molecule import logger
-from molecule import util
+from molecule import logger, util
 from molecule.dependency.ansible_galaxy.base import AnsibleGalaxyBase
-
 
 LOG = logger.get_logger(__name__)
 

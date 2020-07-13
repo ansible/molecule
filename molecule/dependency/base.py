@@ -21,10 +21,10 @@
 
 import abc
 import time
+
 import sh
 
 from molecule import util
-
 from molecule.logger import get_logger
 
 LOG = get_logger(__name__)

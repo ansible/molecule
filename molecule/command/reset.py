@@ -22,9 +22,8 @@
 import click
 
 from molecule import logger
-from molecule.command import base
 from molecule.api import drivers
-
+from molecule.command import base
 
 LOG = logger.get_logger(__name__)
 

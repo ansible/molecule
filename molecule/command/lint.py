@@ -19,12 +19,12 @@
 #  DEALINGS IN THE SOFTWARE.
 """Lint Command Module."""
 
+from subprocess import run
+
 import click
 
-from molecule import logger
+from molecule import logger, util
 from molecule.command import base
-from molecule import util
-from subprocess import run
 
 LOG = logger.get_logger(__name__)
 
