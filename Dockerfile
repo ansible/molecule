@@ -3,8 +3,12 @@ FROM docker.io/alpine:edge as molecule-builder
 
 WORKDIR /usr/src/molecule
 
-# testing needed for: py3-arrow py3-tabulate
-RUN apk add -v --progress --update --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/testing/ \
+# WARNING: Reasons not to add edge/testing:
+# * Breaks security scanning due to https://github.com/quay/clair/issues/901
+# * Unreliable builds, as alpinelinux CDN is unreliable for edge, returning 404
+#   quite often.
+# edge/testing needed for: py3-arrow py3-tabulate
+RUN apk add -v --progress --update --no-cache \
 ansible \
 ansible-lint \
 docker-py \
@@ -16,7 +20,6 @@ libvirt-dev \
 make \
 musl-dev \
 openssl-dev \
-py3-arrow \
 py3-bcrypt \
 py3-botocore \
 py3-certifi \
@@ -50,7 +53,6 @@ py3-requests \
 py3-ruamel \
 py3-setuptools \
 py3-simplejson \
-py3-tabulate \
 py3-urllib3 \
 py3-virtualenv \
 py3-websocket-client \
@@ -98,7 +100,6 @@ ansible-lint \
 docker-py \
 libvirt \
 rsync \
-py3-arrow \
 py3-bcrypt \
 py3-botocore \
 py3-certifi \
@@ -127,7 +128,6 @@ py3-pytest \
 py3-requests \
 py3-ruamel \
 py3-setuptools \
-py3-tabulate \
 py3-urllib3 \
 py3-virtualenv \
 py3-websocket-client \
@@ -171,7 +171,8 @@ molecule-vagrant \
 "
 
 RUN \
-    apk add --update --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/ ${BUILD_DEPS} ${PACKAGES} \
+    apk add --update --no-cache \
+    ${BUILD_DEPS} ${PACKAGES} \
     && gem install ${GEM_PACKAGES} \
     && apk del --no-cache ${BUILD_DEPS} \
     && rm -rf /root/.cache
