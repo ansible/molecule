@@ -44,10 +44,10 @@ LOCAL_CONFIG = lookup_config_file(LOCAL_CONFIG_SEARCH)
 ENV_FILE = ".env.yml"
 
 
-def _version_string():
+def _version_string() -> str:
 
     v = pkg_resources.parse_version(molecule.__version__)
-    color = "bright_yellow" if v.is_prerelease else "green"
+    color = "bright_yellow" if v.is_prerelease else "green"  # type: ignore
     msg = "molecule %s\n" % _colorize(molecule.__version__, color)
     msg += _colorize(
         "   ansible==%s python==%s.%s"
@@ -61,7 +61,7 @@ def _version_string():
     return msg
 
 
-@click_group_ex()
+@click_group_ex()  # type: ignore
 @click.option(
     "--debug/--no-debug",
     default=MOLECULE_DEBUG,
@@ -88,7 +88,7 @@ def _version_string():
 )
 @click.version_option(
     prog_name="molecule", version=molecule.__version__, message=_version_string()
-)
+)  # type: ignore
 @click.pass_context
 def main(ctx, debug, base_config, env_file):  # pragma: no cover
     """

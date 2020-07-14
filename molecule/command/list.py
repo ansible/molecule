@@ -24,8 +24,9 @@ from __future__ import print_function
 import click
 import tabulate
 
-from molecule import logger, scenarios, status, util
+from molecule import logger, scenarios, util
 from molecule.command import base
+from molecule.status import Status
 
 LOG = logger.get_logger(__name__)
 
@@ -109,7 +110,7 @@ def list(ctx, scenario_name, format):  # pragma: no cover
     for scenario in s:
         statuses.extend(base.execute_subcommand(scenario.config, subcommand))
 
-    headers = [util.title(name) for name in status.get_status()._fields]
+    headers = [util.title(name) for name in Status._fields]
     if format == "simple" or format == "plain":
         table_format = "simple"
         if format == "plain":

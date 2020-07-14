@@ -24,6 +24,7 @@ import collections
 import glob
 import os
 import shutil
+from typing import Any, Callable
 
 import click
 from click_help_colors import HelpColorsCommand, HelpColorsGroup
@@ -229,8 +230,8 @@ def click_group_ex():
     )
 
 
-def click_command_ex():
+def click_command_ex() -> Callable[[Callable[..., Any]], click.Command]:
     """Return extended version of click.command()."""
-    return click.command(
+    return click.command(  # type: ignore
         cls=HelpColorsCommand, help_headers_color="yellow", help_options_color="green"
     )

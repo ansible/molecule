@@ -27,7 +27,7 @@ import colorama
 from ansible.module_utils.parsing.convert_bool import boolean as to_bool
 
 
-def should_do_markup():
+def should_do_markup() -> bool:
     """Decide about use of ANSI colors."""
     py_colors = os.environ.get("PY_COLORS", None)
     if py_colors is not None:
@@ -40,7 +40,7 @@ SUCCESS = 100
 OUT = 101
 
 
-class LogFilter(object):
+class LogFilter(logging.Filter):
     """A custom log filter which excludes log messages above the logged level."""
 
     def __init__(self, level):
@@ -83,7 +83,7 @@ class TrailingNewlineFormatter(logging.Formatter):
         return super(TrailingNewlineFormatter, self).format(record)
 
 
-def get_logger(name=None):
+def get_logger(name=None) -> logging.Logger:
     """
     Build a logger with the given name and returns the logger.
 
@@ -93,7 +93,7 @@ def get_logger(name=None):
     """
     logging.setLoggerClass(CustomLogger)
 
-    logger = logging.getLogger(name)
+    logger = logging.getLogger(name)  # type: logging.Logger
     logger.setLevel(logging.DEBUG)
 
     logger.addHandler(_get_info_handler())
@@ -107,10 +107,10 @@ def get_logger(name=None):
     return logger
 
 
-def _get_info_handler():
+def _get_info_handler() -> logging.StreamHandler:
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging.INFO)
-    handler.addFilter(LogFilter(logging.INFO))
+    handler.addFilter(LogFilter(logging.INFO))  # type: ignore
     handler.setFormatter(
         TrailingNewlineFormatter("--> {}".format(cyan_text("%(message)s")))
     )
@@ -118,72 +118,72 @@ def _get_info_handler():
     return handler
 
 
-def _get_out_handler():
+def _get_out_handler() -> logging.StreamHandler:
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(OUT)
-    handler.addFilter(LogFilter(OUT))
+    handler.addFilter(LogFilter(OUT))  # type: ignore
     handler.setFormatter(TrailingNewlineFormatter("    %(message)s"))
 
     return handler
 
 
-def _get_warn_handler():
+def _get_warn_handler() -> logging.StreamHandler:
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging.WARN)
-    handler.addFilter(LogFilter(logging.WARN))
+    handler.addFilter(LogFilter(logging.WARN))  # type: ignore
     handler.setFormatter(TrailingNewlineFormatter(yellow_text("%(message)s")))
 
     return handler
 
 
-def _get_error_handler():
+def _get_error_handler() -> logging.StreamHandler:
     handler = logging.StreamHandler(sys.stderr)
     handler.setLevel(logging.ERROR)
-    handler.addFilter(LogFilter(logging.ERROR))
+    handler.addFilter(LogFilter(logging.ERROR))  # type: ignore
     handler.setFormatter(TrailingNewlineFormatter(red_text("%(message)s")))
 
     return handler
 
 
-def _get_critical_handler():
+def _get_critical_handler() -> logging.StreamHandler:
     handler = logging.StreamHandler(sys.stderr)
     handler.setLevel(logging.CRITICAL)
-    handler.addFilter(LogFilter(logging.CRITICAL))
+    handler.addFilter(LogFilter(logging.CRITICAL))  # type: ignore
     handler.setFormatter(TrailingNewlineFormatter(red_text("ERROR: %(message)s")))
 
     return handler
 
 
-def _get_success_handler():
+def _get_success_handler() -> logging.StreamHandler:
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(SUCCESS)
-    handler.addFilter(LogFilter(SUCCESS))
+    handler.addFilter(LogFilter(SUCCESS))  # type: ignore
     handler.setFormatter(TrailingNewlineFormatter(green_text("%(message)s")))
 
     return handler
 
 
-def red_text(msg):
+def red_text(msg) -> str:
     """Add red markers."""
     return color_text(colorama.Fore.RED, msg)
 
 
-def yellow_text(msg):
+def yellow_text(msg) -> str:
     """Add yellow markers."""
     return color_text(colorama.Fore.YELLOW, msg)
 
 
-def green_text(msg):
+def green_text(msg) -> str:
     """Add green markers."""
     return color_text(colorama.Fore.GREEN, msg)
 
 
-def cyan_text(msg):
+def cyan_text(msg) -> str:
     """Add cyan markers."""
     return color_text(colorama.Fore.CYAN, msg)
 
 
-def color_text(color, msg):
+def color_text(color, msg) -> str:
     """Add color markers."""
     if should_do_markup():
         return "{}{}{}".format(color, msg, colorama.Style.RESET_ALL)

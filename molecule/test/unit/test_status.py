@@ -20,19 +20,19 @@
 
 import pytest
 
-from molecule import status
+from molecule.status import Status
 
 
 @pytest.fixture
 def _instance():
-    s = status.get_status()
-
-    s.instance_name = None
-    s.driver_name = None
-    s.provisioner_name = None
-    s.scenario_name = None
-    s.created = None
-    s.converged = None
+    s = Status(
+        instance_name=None,
+        driver_name=None,
+        provisioner_name=None,
+        scenario_name=None,
+        created=None,
+        converged=None,
+    )
 
     return s
 
