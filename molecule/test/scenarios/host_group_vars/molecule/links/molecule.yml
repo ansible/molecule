@@ -20,9 +20,6 @@ provisioner:
       hosts: ../../hosts
       host_vars: ../../host_vars
       group_vars: ../../group_vars
-  playbooks:
-    create: ../../../../resources/playbooks/docker/create.yml
-    destroy: ../../../../resources/playbooks/docker/destroy.yml
 scenario:
   name: links
 verifier:
