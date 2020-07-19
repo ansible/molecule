@@ -932,13 +932,7 @@ class Ansible(base.Base):
         )
 
         if os.environ.get("ANSIBLE_LIBRARY"):
-            paths.extend(
-                [
-                    util.abs_path(
-                        os.environ.get("ANSIBLE_LIBRARY")
-                    )
-                ]
-            )
+            paths.extend([util.abs_path(os.environ.get("ANSIBLE_LIBRARY"))])
 
         return paths
 
