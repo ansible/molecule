@@ -10,9 +10,6 @@ platforms:
     privileged: true
 provisioner:
   name: ansible
-  config_options:
-    defaults:
-      callback_whitelist: profile_roles,profile_tasks,timer
   playbooks:
     cleanup: cleanup.yml
 verifier:
