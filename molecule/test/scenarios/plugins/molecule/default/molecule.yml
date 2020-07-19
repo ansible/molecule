@@ -8,9 +8,6 @@ platforms:
     image: ${TEST_BASE_IMAGE}
 provisioner:
   name: ansible
-  config_options:
-    defaults:
-      callback_whitelist: profile_roles,profile_tasks,timer
   env:
     ANSIBLE_ROLES_PATH: ../../../../resources/roles/
 verifier:

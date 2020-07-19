@@ -11,9 +11,6 @@ platforms:
       url: docker.io
 provisioner:
   name: ansible
-  config_options:
-    defaults:
-      callback_whitelist: profile_roles,profile_tasks,timer
   env:
     ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
     # keep this here to test that we convert integers to strings:

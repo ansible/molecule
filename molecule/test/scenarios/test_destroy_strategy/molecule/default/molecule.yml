@@ -8,8 +8,5 @@ platforms:
     image: ${TEST_BASE_IMAGE}
 provisioner:
   name: ansible
-  config_options:
-    defaults:
-      callback_whitelist: profile_roles,profile_tasks,timer
 verifier:
   name: ansible
