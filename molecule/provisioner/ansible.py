@@ -930,6 +930,10 @@ class Ansible(base.Base):
                 "/usr/share/ansible/plugins/modules",
             ]
         )
+
+        if os.environ.get("ANSIBLE_LIBRARY"):
+            paths.extend([util.abs_path(os.environ.get("ANSIBLE_LIBRARY"))])
+
         return paths
 
     def _get_filter_plugin_directory(self):
