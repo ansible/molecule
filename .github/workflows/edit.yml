@@ -1,0 +1,16 @@
+name: edit
+on:
+  pull_request:
+    types: [opened, labeled, unlabeled, synchronize]
+
+jobs:
+  labels:
+
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: yogevbd/enforce-label-action@2.1.0
+        with:
+          REQUIRED_LABELS_ANY: "bug,enhancement,feature,deprecated,major,skip-changelog"
+          REQUIRED_LABELS_ANY_DESCRIPTION: "Select at least one label: bug,enhancement,feature,deprecated,major,skip-changelog"
+          BANNED_LABELS: "banned"
