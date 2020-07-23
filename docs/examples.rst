@@ -88,8 +88,8 @@ An example for a different platform instance name:
       # …
       inventory:
         host_vars:
-          # setting for the platform instance named 'centos9'
-          centos9:
+          # setting for the platform instance named 'centos8'
+          centos8:
             ansible_user: ansible
 
 To test it, add the following task to ``tasks/main.yml``. It fails, because the
