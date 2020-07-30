@@ -216,6 +216,7 @@ def click_group_ex():
     # yellow : special commands, like full test sequence, or login
     return click.group(
         cls=HelpColorsGroup,
+        context_settings=dict(max_content_width=9999),
         help_headers_color="yellow",
         help_options_color="green",
         help_options_custom_colors={
