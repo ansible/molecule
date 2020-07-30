@@ -62,24 +62,24 @@
     irrelevant-files: *doc-files
 
 - job:
-    name: molecule-tox-py36-ansible28-unit
+    name: molecule-tox-py36-ansible210-unit
     parent: molecule-tox-py36
     # see: https://github.com/ansible-community/molecule/issues/2723
     nodeset: ubuntu-bionic-1vcpu
     vars:
-      tox_envlist: py36-ansible28-unit
+      tox_envlist: py36-ansible210-unit
       tox_environment:
         PYTEST_REQPASS: 489
     irrelevant-files: *doc-files
 
 - job:
-    name: molecule-tox-py36-ansible28-functional
+    name: molecule-tox-py36-ansible210-functional
     parent: molecule-tox-py36
     # see: https://github.com/ansible-community/molecule/issues/2723
     nodeset: ubuntu-bionic-1vcpu
     timeout: 9000
     vars:
-      tox_envlist: py36-ansible28-functional
+      tox_envlist: py36-ansible210-functional
       tox_environment:
         PYTEST_REQPASS: 37
     irrelevant-files: *doc-files
@@ -104,20 +104,20 @@
     irrelevant-files: *doc-files
 
 - job:
-    name: molecule-tox-py37-ansible28-unit
+    name: molecule-tox-py37-ansible210-unit
     parent: molecule-tox-py37
     vars:
-      tox_envlist: py37-ansible28-unit
+      tox_envlist: py37-ansible210-unit
       tox_environment:
         PYTEST_REQPASS: 489
     irrelevant-files: *doc-files
 
 - job:
-    name: molecule-tox-py37-ansible28-functional
+    name: molecule-tox-py37-ansible210-functional
     parent: molecule-tox-py37
     timeout: 9000
     vars:
-      tox_envlist: py37-ansible28-functional
+      tox_envlist: py37-ansible210-functional
       tox_environment:
         PYTEST_REQPASS: 37
     irrelevant-files: *doc-files
@@ -172,24 +172,24 @@
     irrelevant-files: *doc-files
 
 - job:
-    name: molecule-tox-py37-ansible28-unit
+    name: molecule-tox-py37-ansible210-unit
     parent: molecule-tox-py37
     # see: https://github.com/ansible-community/molecule/issues/2723
     nodeset: ubuntu-bionic-1vcpu
     vars:
-      tox_envlist: py37-ansible28-unit
+      tox_envlist: py37-ansible210-unit
       tox_environment:
         PYTEST_REQPASS: 489
     irrelevant-files: *doc-files
 
 - job:
-    name: molecule-tox-py37-ansible28-functional
+    name: molecule-tox-py37-ansible210-functional
     parent: molecule-tox-py37
     timeout: 9000
     # see: https://github.com/ansible-community/molecule/issues/2723
     nodeset: ubuntu-bionic-1vcpu
     vars:
-      tox_envlist: py37-ansible28-functional
+      tox_envlist: py37-ansible210-functional
       tox_environment:
         PYTEST_REQPASS: 37
     irrelevant-files: *doc-files
@@ -209,15 +209,15 @@
         - molecule-tox-packaging:
             vars:
               tox_envlist: packaging,dockerfile,build-containers
-        - molecule-tox-py36-ansible28-functional
-        - molecule-tox-py36-ansible28-unit
+        - molecule-tox-py36-ansible210-functional
+        - molecule-tox-py36-ansible210-unit
         - molecule-tox-py36-ansible29-functional
         - molecule-tox-py36-ansible29-unit
-        - molecule-tox-py37-ansible28-functional
-        - molecule-tox-py37-ansible28-unit
-        - molecule-tox-py37-ansible29-functional
-        - molecule-tox-py37-ansible29-unit
         - molecule-tox-py36-ansibledevel-functional
         - molecule-tox-py36-ansibledevel-unit
+        - molecule-tox-py37-ansible210-functional
+        - molecule-tox-py37-ansible210-unit
+        - molecule-tox-py37-ansible29-functional
+        - molecule-tox-py37-ansible29-unit
     gate:
       jobs: *jobs
