@@ -122,6 +122,7 @@ class Prepare(base.Base):
 )
 @click.option(
     "--force/--no-force",
+    "-f",
     default=False,
     help="Enable or disable force mode. Default is disabled.",
 )
