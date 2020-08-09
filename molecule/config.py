@@ -97,9 +97,12 @@ class Config(object, metaclass=NewInitCaller):
     @property
     def ansible_version(self):
         """Return current version of ansible."""
-        return pkg_resources.parse_version(
-            pkg_resources.get_distribution("ansible").version
-        )
+        try:
+            ansible_version = pkg_resources.get_distribution("ansible-base").version
+        except Exception:
+            ansible_version = pkg_resources.get_distribution("ansible").version
+
+        return pkg_resources.parse_version(ansible_version)
 
     @property
     def ansible_collections_path(self):
