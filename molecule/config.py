@@ -365,12 +365,6 @@ class Config(object, metaclass=NewInitCaller):
                     "side_effect": "side_effect.yml",
                     "verify": "verify.yml",
                 },
-                "lint": {
-                    "name": "ansible-lint",
-                    "enabled": True,
-                    "options": {},
-                    "env": {},
-                },
             },
             "scenario": {
                 "name": scenario_name,
