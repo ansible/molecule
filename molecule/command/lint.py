@@ -93,7 +93,13 @@ class Lint(base.Base):
 
         try:
             LOG.info("Executing: %s" % cmd)
-            run(cmd, shell=True, universal_newlines=True, check=True)
+            run(
+                cmd,
+                env=self._config.env,
+                shell=True,
+                universal_newlines=True,
+                check=True,
+            )
         except Exception as e:
             util.sysexit_with_message("Lint failed: %s: %s" % (e, e))
 
