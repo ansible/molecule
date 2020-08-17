@@ -49,13 +49,15 @@ def _version_string() -> str:
     v = pkg_resources.parse_version(molecule.__version__)
     color = "bright_yellow" if v.is_prerelease else "green"  # type: ignore
     msg = "molecule %s\n" % _colorize(molecule.__version__, color)
+
+    try:
+        ansible_version = pkg_resources.get_distribution("ansible-base").version
+    except Exception:
+        ansible_version = pkg_resources.get_distribution("ansible").version
+
     msg += _colorize(
         "   ansible==%s python==%s.%s"
-        % (
-            pkg_resources.get_distribution("ansible").version,
-            sys.version_info[0],
-            sys.version_info[1],
-        ),
+        % (ansible_version, sys.version_info[0], sys.version_info[1],),
         "bright_black",
     )
     return msg
