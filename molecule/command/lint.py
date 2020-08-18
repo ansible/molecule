@@ -19,6 +19,7 @@
 #  DEALINGS IN THE SOFTWARE.
 """Lint Command Module."""
 
+import os
 from subprocess import run
 
 import click
@@ -69,6 +70,10 @@ class Lint(base.Base):
         molecule.yml.
     """
 
+    @property
+    def env(self):
+        return util.merge_dicts(self._config.env, os.environ)
+
     def execute(self):
         """
         Execute the actions necessary to perform a `molecule lint` and \
@@ -94,11 +99,7 @@ class Lint(base.Base):
         try:
             LOG.info("Executing: %s" % cmd)
             run(
-                cmd,
-                env=self._config.env,
-                shell=True,
-                universal_newlines=True,
-                check=True,
+                cmd, env=self.env, shell=True, universal_newlines=True, check=True,
             )
         except Exception as e:
             util.sysexit_with_message("Lint failed: %s: %s" % (e, e))

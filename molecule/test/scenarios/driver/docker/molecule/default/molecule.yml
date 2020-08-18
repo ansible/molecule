@@ -17,3 +17,13 @@ provisioner:
     SOME_VALUE_AS_INFO: 1
 verifier:
   name: ansible
+lint: |
+  set -e
+  path_count=`env | grep -e '^PATH' | wc -l`
+  if [ x"$$path_count" == "x0" ]; then
+    exit 1
+  fi
+  molecule_count=`env | grep -e '^MOLECULE' | wc -l`
+  if [ x"$$molecule_count" == "x0" ]; then
+    exit 1
+  fi
