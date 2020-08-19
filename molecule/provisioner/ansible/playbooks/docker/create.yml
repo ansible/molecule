@@ -43,6 +43,7 @@
           {{ molecule_module_directory + '/data/Dockerfile.j2' }}
           {%- endif -%}
         dest: "{{ molecule_ephemeral_directory }}/Dockerfile_{{ item.image | regex_replace('[^a-zA-Z0-9_]', '_') }}"
+        mode: "0600"
       loop: "{{ molecule_yml.platforms }}"
       loop_control:
         index_var: i
