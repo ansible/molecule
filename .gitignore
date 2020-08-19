@@ -20,3 +20,4 @@ ubuntu-xenial-16.04-cloudimg-console.log
 coverage.xml
 pip-wheel-metadata
 docs/docstree
+.docker

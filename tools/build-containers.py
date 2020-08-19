@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """Docker image builder for distributing molecule as a container."""
-
+import logging
 import os
 import socket
 import sys
@@ -42,7 +42,12 @@ if __name__ == "__main__":
         tagging_args += "-t " + image_name + ":master "
         tags_to_push.append("master")
 
-    engine = which("podman") or which("docker")
+    if "darwin" in sys.platform:
+        logging.error("Using podman under MacOS is considered broken until https://github.com/containers/podman/issues/4511 is fixed.")
+        engine = which("docker")
+    else:
+        engine = which("podman") or which("docker")
+
     engine_opts = ""
     # hack to avoid apk fetch getting stuck on systems where host machine has ipv6 enabled
     # as containers support for IPv6 is almost for sure not working on both docker/podman.
