@@ -16,7 +16,7 @@ def run(cmd):
     r = os.system(cmd)
     if r:
         print("ERROR: command returned {0}".format(r))
-        sys.exit(r)
+        sys.exit(3)
 
 
 if __name__ == "__main__":
@@ -42,7 +42,7 @@ if __name__ == "__main__":
         tagging_args += "-t " + image_name + ":master "
         tags_to_push.append("master")
 
-    engine = which("podman") or which("docker")
+    engine = which("docker") or which("podman")
     engine_opts = ""
     # hack to avoid apk fetch getting stuck on systems where host machine has ipv6 enabled
     # as containers support for IPv6 is almost for sure not working on both docker/podman.
@@ -54,6 +54,7 @@ if __name__ == "__main__":
         # https://github.com/containers/libpod/issues/5403
         ip = socket.getaddrinfo("dl-cdn.alpinelinux.org", 80, socket.AF_INET)[0][4][0]
         engine_opts = "--add-host dl-cdn.alpinelinux.org:" + ip
+        engine += " --log-level debug"
 
     print(f"Building version {version_tag} using {engine} container engine")
     # using '--network host' may fail in some cases where not specifying the
