@@ -49,7 +49,7 @@
     timeout: 3600
     vars:
       tox_envlist: packaging
-      ensure_podman_validate:  true
+      ensure_podman_validate: true
     pre-run: playbooks/pre-run.yaml
     irrelevant-files: *doc-files
 

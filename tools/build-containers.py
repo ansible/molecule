@@ -16,7 +16,7 @@ def run(cmd):
     r = os.system(cmd)
     if r:
         print("ERROR: command returned {0}".format(r))
-        sys.exit(r)
+        sys.exit(3)
 
 
 if __name__ == "__main__":
@@ -43,7 +43,9 @@ if __name__ == "__main__":
         tags_to_push.append("master")
 
     if "darwin" in sys.platform:
-        logging.error("Using podman under MacOS is considered broken until https://github.com/containers/podman/issues/4511 is fixed.")
+        logging.error(
+            "Using podman under MacOS is considered broken until https://github.com/containers/podman/issues/4511 is fixed."
+        )
         engine = which("docker")
     else:
         engine = which("podman") or which("docker")

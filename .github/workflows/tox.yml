@@ -1,0 +1,142 @@
+name: tox
+
+on:
+  create:  # is used for publishing to PyPI and TestPyPI
+    tags:  # any tag regardless of its name, no branches
+  push:  # only publishes pushes to the main branch to TestPyPI
+    branches:  # any branch but not tag
+      - >-
+        **
+    tags-ignore:
+      - >-
+        **
+  pull_request:
+  schedule:
+    - cron: 1 0 * * *  # Run daily at 0:01 UTC
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        name: [
+          "linting",
+          "packaging",
+          "py36",
+          "py37",
+          "py38",
+          "devel",
+        ]
+        os: [
+          "ubuntu-latest",
+        ]
+
+        include:
+
+          - name: "linting"
+            python: "3.6"
+            os: ubuntu-latest
+            tox_env: "linting"
+          - name: "packaging"
+            python: "3.6"
+            os: ubuntu-latest
+            tox_env: "packaging"
+          - name: py36
+            python: "3.6"
+            os: ubuntu-latest
+            tox_env: py36
+          - name: py37
+            python: "3.7"
+            os: ubuntu-latest
+            tox_env: py37
+          - name: py38
+            python: "3.8"
+            os: ubuntu-latest
+            tox_env: py38
+          - name: devel
+            python: "3.8"
+            os: ubuntu-latest
+            tox_env: devel
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install tox
+      - name: Test
+        run: "tox -e ${{ matrix.tox_env }}"
+
+  publish:
+    name: Publish to PyPI registry
+    needs:
+      - build
+    runs-on: ubuntu-latest
+
+    env:
+      PY_COLORS: 1
+      TOXENV: packaging
+
+    steps:
+      - name: Switch to using Python 3.6 by default
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.6
+      - name: Install tox
+        run: python -m pip install --user tox
+      - name: Check out src from Git
+        uses: actions/checkout@v2
+        with:
+          # Get shallow Git history (default) for tag creation events
+          # but have a complete clone for any other workflows.
+          # Both options fetch tags but since we're going to remove
+          # one from HEAD in non-create-tag workflows, we need full
+          # history for them.
+          fetch-depth: >-
+            ${{
+              (
+                github.event_name == 'create' &&
+                github.event.ref_type == 'tag'
+              ) &&
+              1 || 0
+            }}
+      - name: Drop Git tags from HEAD for non-tag-create events
+        if: >-
+          github.event_name != 'create' ||
+          github.event.ref_type != 'tag'
+        run: >-
+          git tag --points-at HEAD
+          |
+          xargs git tag --delete
+      - name: Build dists
+        run: python -m tox
+      - name: Publish to test.pypi.org
+        if: >-
+          (
+            github.event_name == 'push' &&
+            github.ref == format(
+              'refs/heads/{0}', github.event.repository.default_branch
+            )
+          ) ||
+          (
+            github.event_name == 'create' &&
+            github.event.ref_type == 'tag'
+          )
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          password: ${{ secrets.testpypi_password }}
+          repository_url: https://test.pypi.org/legacy/
+      - name: Publish to pypi.org
+        if: >-  # "create" workflows run separately from "push" & "pull_request"
+          github.event_name == 'create' &&
+          github.event.ref_type == 'tag'
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          password: ${{ secrets.pypi_password }}
