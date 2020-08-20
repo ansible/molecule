@@ -5,71 +5,64 @@ on:
     tags:  # any tag regardless of its name, no branches
   push:  # only publishes pushes to the main branch to TestPyPI
     branches:  # any branch but not tag
-      - >-
-        **
+      - "**"
     tags-ignore:
-      - >-
-        **
+      - "**"
   pull_request:
   schedule:
     - cron: 1 0 * * *  # Run daily at 0:01 UTC
 
 jobs:
-  build:
-    name: ${{ matrix.name }}
-    runs-on: ${{ matrix.os }}
+  collect:
+    name: Gather environments to run
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.collection.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-python@v1
+      - name: Gather jobs to be done
+        id: collection
+        run: |-
+          set -e
+          sudo apt-get update
+          sudo apt-get install jq
+          python -m pip install -U pip
+          pip install tox
+          echo ::set-output name=matrix::$(tox -l | jq -R -s -c 'split("\n")[:-1]')
 
+  build:
+    name: ${{ matrix.tox_env }}
+    runs-on: ${{ matrix.os }}
+    needs: collect
     strategy:
       fail-fast: false
       matrix:
-        name: [
-          "linting",
-          "packaging",
-          "py36",
-          "py37",
-          "py38",
-          "devel",
-        ]
-        os: [
-          "ubuntu-latest",
-        ]
-
-        include:
-
-          - name: "linting"
-            python: "3.6"
-            os: ubuntu-latest
-            tox_env: "linting"
-          - name: "packaging"
-            python: "3.6"
-            os: ubuntu-latest
-            tox_env: "packaging"
-          - name: py36
-            python: "3.6"
-            os: ubuntu-latest
-            tox_env: py36
-          - name: py37
-            python: "3.7"
-            os: ubuntu-latest
-            tox_env: py37
-          - name: py38
-            python: "3.8"
-            os: ubuntu-latest
-            tox_env: py38
-          - name: devel
-            python: "3.8"
-            os: ubuntu-latest
-            tox_env: devel
-
+        tox_env: ${{ fromJson(needs.collect.outputs.matrix) }}
+        os:
+          - ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Set up Python ${{ matrix.python }}
-        uses: actions/setup-python@v1
+      - name: Find python version
+        id: py_ver
+        shell: python
+        if: ${{ contains(matrix.tox_env, 'py') }}
+        run: |
+          v = '${{ matrix.tox_env }}'.split('-')[0].lstrip('py')
+          print('::set-output name=version::{0}.{1}'.format(v[0],v[1:]))
+      # Even our lint and other envs need access to tox
+      - name: Install a default Python
+        uses: actions/setup-python@v2
+        if: ${{ ! contains(matrix.tox_env, 'py') }}
+      # Be sure to install the version of python needed by a specific test, if necessary
+      - name: Set up Python version
+        uses: actions/setup-python@v2
+        if: ${{ contains(matrix.tox_env, 'py') }}
         with:
-          python-version: ${{ matrix.python }}
+          python-version: ${{ steps.py_ver.outputs.version }}
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
+          python -m pip install -U pip
           pip install tox
       - name: Test
         run: "tox -e ${{ matrix.tox_env }}"
