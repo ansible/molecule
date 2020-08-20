@@ -105,7 +105,7 @@ Here is an example using Docker in Docker
 .. code-block:: yaml
 
     ---
-    image: docker:latest
+    image: docker:stable-dind
 
     services:
       - docker:dind
