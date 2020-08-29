@@ -139,7 +139,7 @@ def init_scenario(temp_dir, driver_name):
         molecule_directory = pytest.helpers.molecule_directory()
         scenario_directory = os.path.join(molecule_directory, "test-scenario")
 
-        options = {"role_name": "test-init"}
+        options = {"role-name": "test-init", "driver-name": driver_name}
         cmd = sh.molecule.bake("init", "scenario", "test-scenario", **options)
         pytest.helpers.run_command(cmd)
 
