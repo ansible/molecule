@@ -57,7 +57,11 @@ def _version_string() -> str:
 
     msg += _colorize(
         "   ansible==%s python==%s.%s"
-        % (ansible_version, sys.version_info[0], sys.version_info[1],),
+        % (
+            ansible_version,
+            sys.version_info[0],
+            sys.version_info[1],
+        ),
         "bright_black",
     )
     return msg

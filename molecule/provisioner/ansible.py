@@ -924,7 +924,10 @@ class Ansible(base.Base):
                 util.abs_path(os.path.join(self._config.project_directory, "library")),
                 util.abs_path(
                     os.path.join(
-                        os.path.expanduser("~"), ".ansible", "plugins", "modules",
+                        os.path.expanduser("~"),
+                        ".ansible",
+                        "plugins",
+                        "modules",
                     )
                 ),
                 "/usr/share/ansible/plugins/modules",
