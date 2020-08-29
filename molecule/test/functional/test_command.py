@@ -319,7 +319,12 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario, expecte
             [["instance-1", ".*instance-1.*"], ["instance-2", ".*instance-2.*"]],
             "multi-node",
         ),
-        ("driver/delegated", "delegated", [["instance", ".*instance.*"]], "default",),
+        (
+            "driver/delegated",
+            "delegated",
+            [["instance", ".*instance.*"]],
+            "default",
+        ),
         (
             "driver/podman",
             "podman",
