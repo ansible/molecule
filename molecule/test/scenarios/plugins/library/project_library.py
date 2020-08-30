@@ -21,6 +21,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 """testplugin role plugin library project_library."""
+from ansible.module_utils.basic import AnsibleModule
 
 
 def main():
@@ -34,7 +35,5 @@ def main():
 
     module.exit_json(**ansible_facts_dict)
 
-
-from ansible.module_utils.basic import *  # noqa
 
 main()

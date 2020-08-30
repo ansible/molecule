@@ -23,12 +23,12 @@ import os
 from uuid import uuid4
 
 import pkg_resources
-from ansible.module_utils.parsing.convert_bool import boolean
 
 from molecule import api, interpolation, logger, platforms, scenario, state, util
 from molecule.dependency import ansible_galaxy, gilt, shell
 from molecule.model import schema_v3
 from molecule.provisioner import ansible
+from molecule.util import boolean
 
 LOG = logger.get_logger(__name__)
 MOLECULE_DEBUG = boolean(os.environ.get("MOLECULE_DEBUG", "False"))
