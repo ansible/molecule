@@ -29,7 +29,6 @@ from typing import Any, Callable
 import click
 from click_help_colors import HelpColorsCommand, HelpColorsGroup
 
-import molecule.command
 import molecule.scenarios
 from molecule import config, logger, util
 

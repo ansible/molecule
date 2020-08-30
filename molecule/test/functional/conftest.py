@@ -44,8 +44,6 @@ MIN_PODMAN_VERSION = "1.5.1"
 
 @pytest.fixture(scope="session", autouse=True)
 def require_installed_package():
-    import pkg_resources
-
     try:
         pkg_resources.require("molecule")
     except pkg_resources.DistributionNotFound as e:

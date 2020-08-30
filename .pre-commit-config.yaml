@@ -29,8 +29,7 @@ repos:
     hooks:
       - id: flake8
         additional_dependencies:
-          # Pinned due to https://github.com/PyCQA/pydocstyle/pull/506
-          - pydocstyle<5.1.0
+          - pydocstyle>=5.1.1
           - flake8-absolute-import
           - flake8-black>=0.1.1
           - flake8-docstrings>=1.5.0
@@ -52,3 +51,9 @@ repos:
         pass_filenames: false
         additional_dependencies:
           - packaging
+  - repo: https://github.com/pre-commit/mirrors-pylint
+    rev: v2.6.0
+    hooks:
+      - id: pylint
+        additional_dependencies:
+          - ansible-base

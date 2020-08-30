@@ -86,7 +86,6 @@ class Base(object):
 
         :return: None
         """
-        pass
 
     @abc.abstractproperty
     def default_options(self):  # pragma: no cover
@@ -95,7 +94,6 @@ class Base(object):
 
         :return: dict
         """
-        pass
 
     @abc.abstractproperty
     def default_env(self):  # pragma: no cover
@@ -104,7 +102,6 @@ class Base(object):
 
         :return: dict
         """
-        pass
 
     @property
     def name(self):

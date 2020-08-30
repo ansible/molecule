@@ -31,8 +31,6 @@ from molecule.model import schema_v3
 class CommandBase(base.Base):
     """CommandBase Class."""
 
-    pass
-
 
 @pytest.fixture
 def _base_class():
