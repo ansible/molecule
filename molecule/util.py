@@ -27,6 +27,7 @@ import re
 import sys
 from collections.abc import Mapping
 from functools import lru_cache  # noqa
+from typing import Any
 
 import colorama
 import jinja2
@@ -360,3 +361,29 @@ def lookup_config_file(filename: str) -> str:
             LOG.info("Found config file %s", f)
             return f
     return f
+
+
+def boolean(value: Any, strict=True) -> bool:
+    """Evaluate any object as boolean matching ansible behavior."""
+    # Based on https://github.com/ansible/ansible/blob/devel/lib/ansible/module_utils/parsing/convert_bool.py
+
+    BOOLEANS_TRUE = frozenset(("y", "yes", "on", "1", "true", "t", 1, 1.0, True))
+    BOOLEANS_FALSE = frozenset(("n", "no", "off", "0", "false", "f", 0, 0.0, False))
+    BOOLEANS = BOOLEANS_TRUE.union(BOOLEANS_FALSE)
+
+    if isinstance(value, bool):
+        return value
+
+    normalized_value = value
+    if isinstance(value, (str, bytes)):
+        normalized_value = str(value).lower().strip()
+
+    if normalized_value in BOOLEANS_TRUE:
+        return True
+    elif normalized_value in BOOLEANS_FALSE or not strict:
+        return False
+
+    raise TypeError(
+        "The value '%s' is not a valid boolean.  Valid booleans include: %s"
+        % (str(value), ", ".join(repr(i) for i in BOOLEANS))
+    )

@@ -19,7 +19,9 @@
 #  DEALINGS IN THE SOFTWARE.
 """Molecule Shell Module."""
 
+import subprocess
 import sys
+from functools import lru_cache
 
 import click
 import click_completion
@@ -40,20 +42,27 @@ colorama.init(autoreset=True, strip=not should_do_markup())
 LOCAL_CONFIG_SEARCH = ".config/molecule/config.yml"
 LOCAL_CONFIG = lookup_config_file(LOCAL_CONFIG_SEARCH)
 
-
 ENV_FILE = ".env.yml"
 
 
+@lru_cache()
 def _version_string() -> str:
 
     v = pkg_resources.parse_version(molecule.__version__)
     color = "bright_yellow" if v.is_prerelease else "green"  # type: ignore
     msg = "molecule %s\n" % _colorize(molecule.__version__, color)
 
-    try:
-        ansible_version = pkg_resources.get_distribution("ansible-base").version
-    except Exception:
-        ansible_version = pkg_resources.get_distribution("ansible").version
+    # extract ansible from the command line
+    ansible_version = (
+        subprocess.run(
+            ["ansible", "--version"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            universal_newlines=True,
+        )
+        .stdout.splitlines()[0]
+        .split()[1]
+    )
 
     msg += _colorize(
         "   ansible==%s python==%s.%s"
