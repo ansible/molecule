@@ -62,85 +62,43 @@
     irrelevant-files: *doc-files
 
 - job:
-    name: molecule-tox-py36-ansible28-unit
+    name: molecule-tox-py36-unit
     parent: molecule-tox-py36
-    # see: https://github.com/ansible-community/molecule/issues/2723
-    nodeset: ubuntu-bionic-1vcpu
     vars:
-      tox_envlist: py36-ansible28-unit
+      tox_envlist: py36-unit
       tox_environment:
         PYTEST_REQPASS: 489
     irrelevant-files: *doc-files
 
 - job:
-    name: molecule-tox-py36-ansible28-functional
+    name: molecule-tox-py36-functional
     parent: molecule-tox-py36
-    # see: https://github.com/ansible-community/molecule/issues/2723
-    nodeset: ubuntu-bionic-1vcpu
     timeout: 9000
     vars:
-      tox_envlist: py36-ansible28-functional
+      tox_envlist: py36-functional
       tox_environment:
         PYTEST_REQPASS: 37
     irrelevant-files: *doc-files
 
 - job:
-    name: molecule-tox-py36-ansible29-unit
-    parent: molecule-tox-py36
-    vars:
-      tox_envlist: py36-ansible29-unit
-      tox_environment:
-        PYTEST_REQPASS: 489
-    irrelevant-files: *doc-files
-
-- job:
-    name: molecule-tox-py36-ansible29-functional
-    parent: molecule-tox-py36
-    timeout: 9000
-    vars:
-      tox_envlist: py36-ansible29-functional
-      tox_environment:
-        PYTEST_REQPASS: 37
-    irrelevant-files: *doc-files
-
-- job:
-    name: molecule-tox-py37-ansible28-unit
-    parent: molecule-tox-py37
-    vars:
-      tox_envlist: py37-ansible28-unit
-      tox_environment:
-        PYTEST_REQPASS: 489
-    irrelevant-files: *doc-files
-
-- job:
-    name: molecule-tox-py37-ansible28-functional
-    parent: molecule-tox-py37
-    timeout: 9000
-    vars:
-      tox_envlist: py37-ansible28-functional
-      tox_environment:
-        PYTEST_REQPASS: 37
-    irrelevant-files: *doc-files
-
-- job:
-    name: molecule-tox-py37-ansible29-unit
+    name: molecule-tox-py37-unit
     parent: molecule-tox-py37
     # see: https://github.com/ansible-community/molecule/issues/2723
     nodeset: ubuntu-bionic-1vcpu
     vars:
-      tox_envlist: py37-ansible29-unit
+      tox_envlist: py37-unit
       tox_environment:
         PYTEST_REQPASS: 489
     irrelevant-files: *doc-files
 
 - job:
-    name: molecule-tox-py37-ansible29-functional
+    name: molecule-tox-py37-functional
     parent: molecule-tox-py37
     timeout: 9000
     # see: https://github.com/ansible-community/molecule/issues/2723
     nodeset: ubuntu-bionic-1vcpu
     vars:
-      tox_envlist: py37-ansible29-functional
+      tox_envlist: py37-functional
       tox_environment:
         PYTEST_REQPASS: 37
     irrelevant-files: *doc-files
@@ -171,29 +129,6 @@
         PYTEST_REQPASS: 37
     irrelevant-files: *doc-files
 
-- job:
-    name: molecule-tox-py37-ansible28-unit
-    parent: molecule-tox-py37
-    # see: https://github.com/ansible-community/molecule/issues/2723
-    nodeset: ubuntu-bionic-1vcpu
-    vars:
-      tox_envlist: py37-ansible28-unit
-      tox_environment:
-        PYTEST_REQPASS: 489
-    irrelevant-files: *doc-files
-
-- job:
-    name: molecule-tox-py37-ansible28-functional
-    parent: molecule-tox-py37
-    timeout: 9000
-    # see: https://github.com/ansible-community/molecule/issues/2723
-    nodeset: ubuntu-bionic-1vcpu
-    vars:
-      tox_envlist: py37-ansible28-functional
-      tox_environment:
-        PYTEST_REQPASS: 37
-    irrelevant-files: *doc-files
-
 - project:
     templates:
       - publish-to-pypi
@@ -209,14 +144,10 @@
         - molecule-tox-packaging:
             vars:
               tox_envlist: packaging,dockerfile,build-containers
-        - molecule-tox-py36-ansible28-functional
-        - molecule-tox-py36-ansible28-unit
-        - molecule-tox-py36-ansible29-functional
-        - molecule-tox-py36-ansible29-unit
-        - molecule-tox-py37-ansible28-functional
-        - molecule-tox-py37-ansible28-unit
-        - molecule-tox-py37-ansible29-functional
-        - molecule-tox-py37-ansible29-unit
+        - molecule-tox-py36-functional
+        - molecule-tox-py36-unit
+        - molecule-tox-py37-functional
+        - molecule-tox-py37-unit
         - molecule-tox-py36-ansibledevel-functional
         - molecule-tox-py36-ansibledevel-unit
     gate:
