@@ -61,74 +61,6 @@
       tox_envlist: snap
     irrelevant-files: *doc-files
 
-- job:
-    name: molecule-tox-py36-unit
-    parent: molecule-tox-py36
-    vars:
-      tox_envlist: py36-unit
-      tox_environment:
-        PYTEST_REQPASS: 489
-    irrelevant-files: *doc-files
-
-- job:
-    name: molecule-tox-py36-functional
-    parent: molecule-tox-py36
-    timeout: 9000
-    vars:
-      tox_envlist: py36-functional
-      tox_environment:
-        PYTEST_REQPASS: 37
-    irrelevant-files: *doc-files
-
-- job:
-    name: molecule-tox-py37-unit
-    parent: molecule-tox-py37
-    # see: https://github.com/ansible-community/molecule/issues/2723
-    nodeset: ubuntu-bionic-1vcpu
-    vars:
-      tox_envlist: py37-unit
-      tox_environment:
-        PYTEST_REQPASS: 489
-    irrelevant-files: *doc-files
-
-- job:
-    name: molecule-tox-py37-functional
-    parent: molecule-tox-py37
-    timeout: 9000
-    # see: https://github.com/ansible-community/molecule/issues/2723
-    nodeset: ubuntu-bionic-1vcpu
-    vars:
-      tox_envlist: py37-functional
-      tox_environment:
-        PYTEST_REQPASS: 37
-    irrelevant-files: *doc-files
-
-- job:
-    name: molecule-tox-py36-ansibledevel-unit
-    parent: molecule-tox-py36
-    # see: https://github.com/ansible-community/molecule/issues/2723
-    nodeset: ubuntu-bionic-1vcpu
-    # until ansible-devel 2.10 changes are implemented
-    voting: false
-    vars:
-      tox_envlist: py36-ansibledevel-unit
-      tox_environment:
-        PYTEST_REQPASS: 489
-    irrelevant-files: *doc-files
-
-- job:
-    name: molecule-tox-py36-ansibledevel-functional
-    parent: molecule-tox-py36
-    timeout: 9000
-    # see: https://github.com/ansible-community/molecule/issues/2723
-    nodeset: ubuntu-bionic-1vcpu
-    voting: false
-    vars:
-      tox_envlist: py36-ansibledevel-functional
-      tox_environment:
-        PYTEST_REQPASS: 37
-    irrelevant-files: *doc-files
-
 - project:
     templates:
       - publish-to-pypi
@@ -144,11 +76,20 @@
         - molecule-tox-packaging:
             vars:
               tox_envlist: packaging,dockerfile,build-containers
-        - molecule-tox-py36-functional
-        - molecule-tox-py36-unit
-        - molecule-tox-py37-functional
-        - molecule-tox-py37-unit
-        - molecule-tox-py36-ansibledevel-functional
-        - molecule-tox-py36-ansibledevel-unit
+        - molecule-tox-py36:
+            vars:
+              PYTEST_REQPASS_UNIT: 489
+              PYTEST_REQPASS_FUNC: 37
+            irrelevant-files: *doc-files
+        - molecule-tox-py37:
+            vars:
+              PYTEST_REQPASS_UNIT: 489
+              PYTEST_REQPASS_FUNC: 37
+            irrelevant-files: *doc-files
+        - molecule-tox-py38:
+            vars:
+              PYTEST_REQPASS_UNIT: 489
+              PYTEST_REQPASS_FUNC: 37
+            irrelevant-files: *doc-files
     gate:
       jobs: *jobs
