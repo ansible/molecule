@@ -116,14 +116,13 @@ Run all unit tests with coverage.
 
 .. code-block:: bash
 
-    $ tox -e 'py{27,35,36,37,38}-ansible{25,26,27,28}-unit'
+    $ tox -e 'py{27,35,36,37,38}-unit'
 
-Run all unit tests for a specific version of Python and Ansible (here Python 3.7
-and Ansible 2.7).
+Run all unit tests for a specific version of Python .
 
 .. code-block:: bash
 
-    $ tox -e py37-ansible28-unit
+    $ tox -e py37-unit
 
 Linting
 -------
