@@ -47,7 +47,6 @@ class Verifier(object):
 
         :returns: str
         """
-        pass
 
     @abc.abstractproperty
     def default_options(self):  # pragma: no cover
@@ -56,7 +55,6 @@ class Verifier(object):
 
         :return: dict
         """
-        pass
 
     @abc.abstractproperty
     def default_env(self):  # pragma: no cover
@@ -65,7 +63,6 @@ class Verifier(object):
 
         :return: dict
         """
-        pass
 
     @abc.abstractmethod
     def execute(self):  # pragma: no cover
@@ -74,7 +71,6 @@ class Verifier(object):
 
         :return: None
         """
-        pass
 
     @abc.abstractmethod
     def schema(self):  # pragma: no cover
@@ -83,7 +79,6 @@ class Verifier(object):
 
         :return: None
         """
-        pass
 
     @property
     def enabled(self):

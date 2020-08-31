@@ -143,7 +143,7 @@ def pytest_collection_modifyitems(items, config):
         raise ValueError("shard_{}_of_{} marker is invalid")
     if not is_sharded:
         return
-    if not (0 < shard_id <= shards_num):
+    if not 0 < shard_id <= shards_num:
         raise ValueError(
             "shard_id must be greater than 0 and not bigger than shards_num"
         )

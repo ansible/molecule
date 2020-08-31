@@ -30,8 +30,6 @@ VALID_KEYS = ["created", "converged", "driver", "prepared", "run_uuid", "is_para
 class InvalidState(Exception):
     """Exception class raised when an error occurs in :class:`.State`."""
 
-    pass
-
 
 class State(object):
     """A class which manages the state file.

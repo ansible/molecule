@@ -43,7 +43,6 @@ class Base(object):
 
         :return: dict
         """
-        pass
 
     @abc.abstractproperty
     def default_env(self):  # pragma: no cover
@@ -52,7 +51,6 @@ class Base(object):
 
         :return: dict
         """
-        pass
 
     @property
     @abc.abstractmethod
@@ -62,4 +60,3 @@ class Base(object):
 
         :returns: str
         """
-        pass
