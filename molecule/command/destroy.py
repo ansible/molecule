@@ -26,6 +26,7 @@ import click
 from molecule import logger, util
 from molecule.api import drivers
 from molecule.command import base
+from molecule.config import DEFAULT_DRIVER
 
 LOG = logger.get_logger(__name__)
 MOLECULE_PARALLEL = os.environ.get("MOLECULE_PARALLEL", False)
@@ -122,7 +123,7 @@ class Destroy(base.Base):
     "--driver-name",
     "-d",
     type=click.Choice([str(s) for s in drivers()]),
-    help="Name of driver to use. (docker)",
+    help=f"Name of driver to use. ({DEFAULT_DRIVER})",
 )
 @click.option(
     "--all/--no-all",

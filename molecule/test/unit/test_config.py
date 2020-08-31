@@ -126,7 +126,7 @@ def test_env(config_instance):
         "MOLECULE_PROJECT_DIRECTORY": config_instance.project_directory,
         "MOLECULE_INSTANCE_CONFIG": config_instance.driver.instance_config,
         "MOLECULE_DEPENDENCY_NAME": "galaxy",
-        "MOLECULE_DRIVER_NAME": "docker",
+        "MOLECULE_DRIVER_NAME": "delegated",
         "MOLECULE_PROVISIONER_NAME": "ansible",
         "MOLECULE_SCENARIO_NAME": "default",
         "MOLECULE_STATE_FILE": config_instance.state.state_file,
@@ -174,7 +174,7 @@ def test_get_driver_name_from_cli(config_instance):
 
 
 def test_get_driver_name(config_instance):
-    assert "docker" == config_instance._get_driver_name()
+    assert "delegated" == config_instance._get_driver_name()
 
 
 def test_get_driver_name_raises_when_different_driver_used(

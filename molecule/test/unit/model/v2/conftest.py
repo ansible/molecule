@@ -34,14 +34,28 @@ def _molecule_file():
         os.path.pardir,
         os.path.pardir,
         "resources",
-        "molecule_docker.yml",
+        "molecule.yml",
     )
 
 
 @pytest.fixture
 def _config(_molecule_file, request):
-    d = util.safe_load(open(_molecule_file))
+    with open(_molecule_file) as f:
+        d = util.safe_load(f)
     if hasattr(request, "param"):
-        d = util.merge_dicts(d, request.getfixturevalue(request.param))
+        d2 = util.safe_load(request.getfixturevalue(request.param))
+        print(100, d)
+        print(200, d2)
+        d = util.merge_dicts(d, d2)
+        print(300, d)
 
     return d
+
+
+@pytest.fixture
+def _model_platforms_delegated_section_data():
+    return """
+---
+platforms:
+  - name: instance
+""".strip()

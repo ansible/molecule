@@ -83,7 +83,7 @@ def with_scenario(request, scenario_to_test, driver_name, scenario_name, skip_te
 def skip_test(request, driver_name):
     msg_tmpl = "Skipped '{}' not supported"
     support_checks_map = {
-        "docker": supports_docker,
+        # "docker": supports_docker,
         "podman": supports_podman,
         "delegated": lambda: True,
     }

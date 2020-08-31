@@ -24,6 +24,7 @@ import click
 from molecule import logger
 from molecule.api import drivers
 from molecule.command import base
+from molecule.config import DEFAULT_DRIVER
 
 LOG = logger.get_logger(__name__)
 
@@ -109,7 +110,7 @@ class Create(base.Base):
     "--driver-name",
     "-d",
     type=click.Choice([str(s) for s in drivers()]),
-    help="Name of driver to use. (docker)",
+    help=f"Name of driver to use. ({DEFAULT_DRIVER})",
 )
 def create(ctx, scenario_name, driver_name):  # pragma: no cover
     """Use the provisioner to start the instances."""

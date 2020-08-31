@@ -27,7 +27,7 @@ from molecule.model import schema_v3
 def _model_driver_section_data():
     return {
         "driver": {
-            "name": "docker",
+            "name": "delegated",
             "provider": {"name": None},
             "options": {"managed": True, "foo": "bar"},
             "ssh_connection_options": ["foo", "bar"],
@@ -90,17 +90,11 @@ def _model_driver_allows_delegated_section_data():
     return {"driver": {"name": "delegated"}}
 
 
-@pytest.fixture
-def _model_driver_allows_docker_section_data():
-    return {"driver": {"name": "docker"}}
-
-
 ###
 @pytest.mark.parametrize(
     "_config",
     [
         ("_model_driver_allows_delegated_section_data"),
-        ("_model_driver_allows_docker_section_data"),
     ],
     indirect=True,
 )

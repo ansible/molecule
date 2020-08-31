@@ -185,27 +185,28 @@ class Delegated(Driver):
                 conn_dict["ansible_user"] = d.get("user")
                 conn_dict["ansible_host"] = d.get("address")
                 conn_dict["ansible_port"] = d.get("port")
-                conn_dict["ansible_connection"] = d.get("connection", "smart")
-                if d.get("become_method"):
+                if d.get("ansible_connection", None):
+                    conn_dict["ansible_connection"] = d.get("connection", "smart")
+                if d.get("become_method", False):
                     conn_dict["ansible_become_method"] = d.get("become_method")
-                if d.get("become_pass"):
+                if d.get("become_pass", None):
                     conn_dict["ansible_become_pass"] = d.get("become_pass")
-                if d.get("identity_file"):
+                if d.get("identity_file", None):
                     conn_dict["ansible_private_key_file"] = d.get("identity_file")
                     conn_dict["ansible_ssh_common_args"] = " ".join(
                         self.ssh_connection_options
                     )
-                if d.get("password"):
+                if d.get("password", None):
                     conn_dict["ansible_password"] = d.get("password")
-                if d.get("winrm_transport"):
+                if d.get("winrm_transport", None):
                     conn_dict["ansible_winrm_transport"] = d.get("winrm_transport")
-                if d.get("winrm_cert_pem"):
+                if d.get("winrm_cert_pem", None):
                     conn_dict["ansible_winrm_cert_pem"] = d.get("winrm_cert_pem")
-                if d.get("winrm_cert_key_pem"):
+                if d.get("winrm_cert_key_pem", None):
                     conn_dict["ansible_winrm_cert_key_pem"] = d.get(
                         "winrm_cert_key_pem"
                     )
-                if d.get("winrm_server_cert_validation"):
+                if d.get("winrm_server_cert_validation", None):
                     conn_dict["ansible_winrm_server_cert_validation"] = d.get(
                         "winrm_server_cert_validation"
                     )
@@ -218,7 +219,7 @@ class Delegated(Driver):
                 # Instance has yet to be provisioned , therefore the
                 # instance_config is not on disk.
                 return {}
-        return self.options["ansible_connection_options"]
+        return self.options.get("ansible_connection_options", {})
 
     def _created(self):
         if self.managed:

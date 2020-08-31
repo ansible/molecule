@@ -93,7 +93,7 @@ def test_interpolate_with_molecule_yaml(_instance):
 dependency:
     name: $DEPENDENCY_NAME
 driver:
-    name: docker
+    name: delegated
 platforms:
   - name: instance-1
 provisioner:
@@ -109,7 +109,7 @@ verifier:
 dependency:
     name: galaxy
 driver:
-    name: docker
+    name: delegated
 platforms:
   - name: instance-1
 provisioner:

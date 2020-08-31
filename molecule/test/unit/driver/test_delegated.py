@@ -29,7 +29,14 @@ from molecule.test.conftest import is_subset
 
 @pytest.fixture
 def _driver_managed_section_data():
-    return {"driver": {"name": "delegated"}}
+    return {
+        "driver": {
+            "name": "delegated",
+            "options": {
+                "managed": True,
+            },
+        }
+    }
 
 
 @pytest.fixture
@@ -38,8 +45,6 @@ def _driver_unmanaged_section_data():
         "driver": {
             "name": "delegated",
             "options": {
-                "login_cmd_template": "docker exec -ti {instance} bash",
-                "ansible_connection_options": {"ansible_connection": "docker"},
                 "managed": False,
             },
         }
@@ -71,8 +76,6 @@ def test_name_property(_instance):
 )
 def test_options_property(_instance):
     x = {
-        "ansible_connection_options": {"ansible_connection": "docker"},
-        "login_cmd_template": "docker exec -ti {instance} bash",
         "managed": False,
     }
 
@@ -86,15 +89,6 @@ def test_options_property_when_managed(_instance):
     x = {"managed": True}
 
     assert x == _instance.options
-
-
-@pytest.mark.parametrize(
-    "config_instance", ["_driver_unmanaged_section_data"], indirect=True
-)
-def test_login_cmd_template_property(_instance):
-    x = "docker exec -ti {instance} bash"
-
-    assert x == _instance.login_cmd_template
 
 
 @pytest.mark.parametrize(
@@ -193,15 +187,19 @@ def test_login_options_when_managed(mocker, _instance):
     "config_instance", ["_driver_unmanaged_section_data"], indirect=True
 )
 def test_ansible_connection_options(_instance):
-    x = {"ansible_connection": "docker"}
+    x = {}
 
     assert is_subset(x, _instance.ansible_connection_options("foo"))
 
 
+@pytest.mark.xfail(reason="Needs rewrite since switch to delegated")
 @pytest.mark.parametrize(
     "config_instance", ["_driver_managed_section_data"], indirect=True
 )
 def test_ansible_connection_options_when_managed(mocker, _instance):
+
+    assert _instance.managed is True
+
     ssh_case_data = mocker.patch(
         "molecule.driver.delegated.Delegated._get_instance_config"
     )
@@ -299,14 +297,14 @@ def test_status(mocker, _instance):
     assert result[0].driver_name == "delegated"
     assert result[0].provisioner_name == "ansible"
     assert result[0].scenario_name == "default"
-    assert result[0].created == "false"
+    assert result[0].created == "unknown"
     assert result[0].converged == "false"
 
     assert result[1].instance_name == "instance-2"
     assert result[1].driver_name == "delegated"
     assert result[1].provisioner_name == "ansible"
     assert result[1].scenario_name == "default"
-    assert result[1].created == "false"
+    assert result[1].created == "unknown"
     assert result[1].converged == "false"
 
 

@@ -3,7 +3,7 @@ dependency:
   name: shell
   command: $MOLECULE_SCENARIO_DIRECTORY/run.bash
 driver:
-  name: docker
+  name: delegated
 platforms:
   - name: instance
     image: ${TEST_BASE_IMAGE}

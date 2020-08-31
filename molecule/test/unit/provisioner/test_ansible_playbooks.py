@@ -41,7 +41,7 @@ def test_cleanup_property_is_optional(_instance):
 
 
 def test_create_property(_instance):
-    x = os.path.join(_instance._get_playbook_directory(), "docker", "create.yml")
+    x = os.path.join(_instance._get_playbook_directory(), "delegated", "create.yml")
 
     assert x == _instance._config.provisioner.playbooks.create
 
@@ -53,7 +53,7 @@ def test_converge_property(_instance):
 
 
 def test_destroy_property(_instance):
-    x = os.path.join(_instance._get_playbook_directory(), "docker", "destroy.yml")
+    x = os.path.join(_instance._get_playbook_directory(), "delegated", "destroy.yml")
 
     assert x == _instance._config.provisioner.playbooks.destroy
 
@@ -88,7 +88,7 @@ def test_get_playbook(tmpdir, _instance):
 def test_get_playbook_returns_bundled_driver_playbook_when_local_not_found(
     tmpdir, _instance
 ):
-    x = os.path.join(_instance._get_playbook_directory(), "docker", "create.yml")
+    x = os.path.join(_instance._get_playbook_directory(), "delegated", "create.yml")
 
     assert x == _instance._get_playbook("create")
 
@@ -99,21 +99,10 @@ def _provisioner_driver_section_data():
         "provisioner": {
             "name": "ansible",
             "playbooks": {
-                "docker": {"create": "docker-create.yml"},
                 "create": "create.yml",
             },
         }
     }
-
-
-@pytest.mark.parametrize(
-    "config_instance", ["_provisioner_driver_section_data"], indirect=True
-)
-def test_get_ansible_playbook_with_driver_key(tmpdir, _instance):
-    x = os.path.join(_instance._config.scenario.directory, "docker-create.yml")
-    util.write_file(x, "")
-
-    assert x == _instance._get_playbook("create")
 
 
 @pytest.fixture
@@ -122,7 +111,6 @@ def _provisioner_driver_playbook_key_missing_section_data():
         "provisioner": {
             "name": "ansible",
             "playbooks": {
-                "docker": {"create": "docker-create.yml"},
                 "side_effect": "side_effect.yml",
             },
         }
@@ -146,6 +134,6 @@ def test_get_ansible_playbook_with_driver_key_when_playbook_key_missing(
 def test_get_bundled_driver_playbook(_instance):
     result = _instance._get_bundled_driver_playbook("create")
     parts = pytest.helpers.os_split(result)
-    x = ("ansible", "playbooks", "docker", "create.yml")
+    x = ("ansible", "playbooks", "delegated", "create.yml")
 
     assert x == parts[-4:]

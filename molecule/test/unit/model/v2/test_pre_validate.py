@@ -24,18 +24,6 @@ from molecule.model import schema_v3
 
 
 @pytest.fixture
-def _model_platforms_docker_section_data():
-    return """
----
-platforms:
-  - name: instance
-    registry:
-      credentials:
-        password: $BAR
-""".strip()
-
-
-@pytest.fixture
 def _env():
     return {}
 
@@ -45,50 +33,24 @@ def _keep_string():
     return "MOLECULE_"
 
 
-def test_platforms_docker(_model_platforms_docker_section_data, _env, _keep_string):
+def test_platforms_delegated(
+    _model_platforms_delegated_section_data, _env, _keep_string
+):
     assert (
         {}
         == schema_v3.pre_validate(
-            _model_platforms_docker_section_data, _env, _keep_string
+            _model_platforms_delegated_section_data, _env, _keep_string
         )[0]
     )
 
 
 @pytest.fixture
-def _model_platforms_docker_errors_section_data():
+def _model_platforms_delegated_errors_section_data():
     return """
 ---
 platforms:
   - name: instance
-    registry:
-      credentials:
-        password: 123
 """.strip()
-
-
-def test_platforms_docker_has_errors(
-    _model_platforms_docker_errors_section_data, _env, _keep_string
-):
-    x = {
-        "platforms": [
-            {
-                0: [
-                    {
-                        "registry": [
-                            {"credentials": [{"password": ["must be of string type"]}]}
-                        ]
-                    }
-                ]
-            }
-        ]
-    }
-
-    assert (
-        x
-        == schema_v3.pre_validate(
-            _model_platforms_docker_errors_section_data, _env, _keep_string
-        )[0]
-    )
 
 
 @pytest.fixture
@@ -101,10 +63,6 @@ driver:
   name: $MOLECULE_DRIVER_NAME
 platforms:
   - name: instance
-    image: ${TEST_BASE_IMAGE}
-    networks:
-      - name: foo
-      - name: bar
 provisioner:
   name: $MOLECULE_PROVISIONER_NAME
 verifier:
