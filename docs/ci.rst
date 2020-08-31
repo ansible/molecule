@@ -29,11 +29,11 @@ and run ``molecule test`` in ubuntu.
           python-version: [3.6, 3.7]
 
       steps:
-        - uses: actions/checkout@v1
+        - uses: actions/checkout@v2
           with:
             path: molecule_demo
         - name: Set up Python ${{ matrix.python-version }}
-          uses: actions/setup-python@v1
+          uses: actions/setup-python@v2
           with:
             python-version: ${{ matrix.python-version }}
         - name: Install dependencies
