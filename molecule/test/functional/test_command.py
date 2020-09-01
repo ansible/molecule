@@ -100,9 +100,6 @@ def test_command_create(scenario_to_test, with_scenario, scenario_name):
     pytest.helpers.run_command(cmd)
 
 
-@pytest.mark.skip(
-    reason="Disabled due to https://github.com/ansible/galaxy/issues/2030"
-)
 @pytest.mark.parametrize(
     "scenario_to_test, driver_name, scenario_name",
     [
@@ -117,14 +114,16 @@ def test_command_dependency_ansible_galaxy(
     cmd = sh.molecule.bake("dependency", **options)
     pytest.helpers.run_command(cmd)
 
-    dependency_role = os.path.join(
-        ephemeral_directory("molecule"),
-        "dependency",
-        "ansible-galaxy",
-        "roles",
-        "timezone",
-    )
-    assert os.path.isdir(dependency_role)
+    # Not testing the outcome because we dot effectively install any role,
+    # currently we cannot do this in offline mode.
+    # dependency_role = os.path.join(
+    #     ephemeral_directory("molecule"),
+    #     "dependency",
+    #     "ansible-galaxy",
+    #     "roles",
+    #     "timezone",
+    # )
+    # assert os.path.isdir(dependency_role)
 
 
 @pytest.mark.parametrize(
