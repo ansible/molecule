@@ -1,4 +1,2 @@
----
-- name: timezone
-  src: yatesr.timezone
-  version: 1.1.0
+# See https://docs.ansible.com/ansible/latest/galaxy/user_guide.html#installing-roles-and-collections-from-the-same-requirements-yml-file
+[]
