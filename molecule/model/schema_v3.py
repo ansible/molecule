@@ -45,7 +45,7 @@ def pre_validate_base_schema(env, keep_string):
                 "name": {
                     "type": "string",
                     "molecule_env_var": True,
-                    "allowed": ["galaxy", "gilt", "shell"],
+                    "allowed": ["galaxy", "shell"],
                 }
             },
         },

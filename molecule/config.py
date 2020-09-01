@@ -25,7 +25,7 @@ from uuid import uuid4
 import pkg_resources
 
 from molecule import api, interpolation, logger, platforms, scenario, state, util
-from molecule.dependency import ansible_galaxy, gilt, shell
+from molecule.dependency import ansible_galaxy, shell
 from molecule.model import schema_v3
 from molecule.provisioner import ansible
 from molecule.util import boolean
@@ -160,8 +160,6 @@ class Config(object, metaclass=NewInitCaller):
         dependency_name = self.config["dependency"]["name"]
         if dependency_name == "galaxy":
             return ansible_galaxy.AnsibleGalaxy(self)
-        elif dependency_name == "gilt":
-            return gilt.Gilt(self)
         elif dependency_name == "shell":
             return shell.Shell(self)
 
