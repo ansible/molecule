@@ -20,16 +20,14 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import os
-import platform
 import shutil
 import subprocess
-from subprocess import PIPE, check_output
+from subprocess import PIPE
 
 import pexpect
 import pkg_resources
 import pytest
 import sh
-from packaging import version
 
 from molecule import logger, util
 from molecule.test.conftest import change_dir_to
@@ -83,8 +81,6 @@ def with_scenario(request, scenario_to_test, driver_name, scenario_name, skip_te
 def skip_test(request, driver_name):
     msg_tmpl = "Skipped '{}' not supported"
     support_checks_map = {
-        # "docker": supports_docker,
-        "podman": supports_podman,
         "delegated": lambda: True,
     }
     try:
@@ -249,10 +245,6 @@ def get_docker_executable():
     return shutil.which("docker")
 
 
-def get_podman_executable():
-    return shutil.which("podman")
-
-
 def get_virtualbox_executable():
     return shutil.which("VBoxManage")
 
@@ -275,46 +267,6 @@ def supports_docker():
                 "podman-docker is unsupported, see https://github.com/ansible-community/molecule/issues/2456"
             )
             return False
-    return True
-
-
-@pytest.helpers.register
-@util.lru_cache()
-def supports_podman():
-    # Returns true if podman is supported and working
-    # Returns false if podman in not supported
-    # Calls pytest.fail if podman appears to be broken
-    if not min_ansible("2.8.6") or platform.system() == "Darwin":
-        LOG.warning("Podman not supported with current ansible/platform combination.")
-        return False
-
-    podman = get_podman_executable()
-    if not podman:
-        LOG.warning("Failed to locate podman executable.")
-        return False
-
-    result = subprocess.run([podman, "info"], stdout=PIPE, universal_newlines=True)
-    if result.returncode != 0:
-        LOG.error(
-            "Error %s returned from `podman info`: %s",
-            result.returncode,
-            result.stdout,
-        )
-        pytest.fail("Cannot run podman tests with a broken podman installation.")
-        return False
-
-    # checks for minimal version of podman
-    cmd = ["podman", "version", "-f", "{{.Version}}"]
-    podman_version = check_output(
-        cmd, stderr=subprocess.STDOUT, universal_newlines=True
-    )
-    if version.parse(podman_version) < version.parse(MIN_PODMAN_VERSION):
-        pytest.fail(
-            "Podman driver requires version >={}, and you have {}".format(
-                MIN_PODMAN_VERSION, podman_version
-            )
-        )
-
     return True
 
 

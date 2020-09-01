@@ -68,14 +68,6 @@ Delegated
 .. autoclass:: molecule.driver.delegated.Delegated()
    :undoc-members:
 
-
-Podman
-^^^^^^
-
-.. autoclass:: molecule.driver.podman.Podman()
-    :undoc-members:
-
-
 .. _lint:
 
 Lint
