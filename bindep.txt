@@ -11,6 +11,3 @@ python3-libselinux [test platform:rpm !platform:centos-7]
 python3-netifaces [test !platform:centos-7 platform:rpm]
 
 openssl-devel [test platform:rpm]
-
-podman [platform:rpm]
-conmon [platform:centos-8]

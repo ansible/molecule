@@ -49,7 +49,6 @@ def driver_name(request):
     "scenario_to_test, driver_name, scenario_name",
     [
         ("driver/delegated", "delegated", "default"),
-        ("driver/podman", "podman", "default"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
@@ -64,7 +63,6 @@ def test_command_check(scenario_to_test, with_scenario, scenario_name):
     "scenario_to_test, driver_name, scenario_name",
     [
         ("driver/delegated", "delegated", "default"),
-        ("driver/podman", "podman", "default"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
@@ -79,7 +77,6 @@ def test_command_cleanup(scenario_to_test, with_scenario, scenario_name):
     "scenario_to_test, driver_name, scenario_name",
     [
         ("driver/delegated", "delegated", "default"),
-        ("driver/podman", "podman", "default"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
@@ -94,7 +91,6 @@ def test_command_converge(scenario_to_test, with_scenario, scenario_name):
     "scenario_to_test, driver_name, scenario_name",
     [
         ("driver/delegated", "delegated", "default"),
-        ("driver/podman", "podman", "default"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
@@ -110,7 +106,7 @@ def test_command_create(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     "scenario_to_test, driver_name, scenario_name",
     [
-        ("dependency", "podman", "ansible-galaxy"),
+        ("dependency", "delegated", "ansible-galaxy"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
@@ -133,7 +129,7 @@ def test_command_dependency_ansible_galaxy(
 
 @pytest.mark.parametrize(
     "scenario_to_test, driver_name, scenario_name",
-    [("dependency", "delegated", "gilt"), ("dependency", "podman", "gilt")],
+    [("dependency", "delegated", "gilt")],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
 def test_command_dependency_gilt(
@@ -151,7 +147,7 @@ def test_command_dependency_gilt(
 
 @pytest.mark.parametrize(
     "scenario_to_test, driver_name, scenario_name",
-    [("dependency", "delegated", "shell"), ("dependency", "podman", "shell")],
+    [("dependency", "delegated", "shell")],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
 def test_command_dependency_shell(
@@ -170,10 +166,7 @@ def test_command_dependency_shell(
 @pytest.mark.extensive
 @pytest.mark.parametrize(
     "scenario_to_test, driver_name, scenario_name",
-    [
-        ("driver/delegated", "delegated", "default"),
-        ("driver/podman", "podman", "default"),
-    ],
+    [("driver/delegated", "delegated", "default")],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
 def test_command_destroy(scenario_to_test, with_scenario, scenario_name):
@@ -187,7 +180,6 @@ def test_command_destroy(scenario_to_test, with_scenario, scenario_name):
     "scenario_to_test, driver_name, scenario_name",
     [
         ("driver/delegated", "delegated", "default"),
-        ("driver/podman", "podman", "default"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
@@ -195,12 +187,12 @@ def test_command_idempotence(scenario_to_test, with_scenario, scenario_name):
     pytest.helpers.idempotence(scenario_name)
 
 
-@pytest.mark.parametrize("driver_name", [("podman")], indirect=["driver_name"])
+@pytest.mark.parametrize("driver_name", [("delegated")], indirect=["driver_name"])
 def test_command_init_role(temp_dir, driver_name, skip_test):
     pytest.helpers.init_role(temp_dir, driver_name)
 
 
-@pytest.mark.parametrize("driver_name", [("podman")], indirect=["driver_name"])
+@pytest.mark.parametrize("driver_name", [("delegated")], indirect=["driver_name"])
 def test_command_init_scenario(temp_dir, driver_name, skip_test):
     pytest.helpers.init_scenario(temp_dir, driver_name)
 
@@ -210,7 +202,6 @@ def test_command_init_scenario(temp_dir, driver_name, skip_test):
     "scenario_to_test, driver_name, scenario_name",
     [
         ("driver/delegated", "delegated", "default"),
-        ("driver/podman", "podman", "default"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
@@ -224,40 +215,10 @@ def test_command_lint(scenario_to_test, with_scenario, scenario_name):
     "scenario_to_test, driver_name, expected",
     [
         (
-            "driver/podman",
-            "podman",
-            """
-Instance Name    Driver Name    Provisioner Name    Scenario Name    Created    Converged
----------------  -------------  ------------------  ---------------  ---------  -----------
-instance         podman         ansible             default
-instance-1       podman         ansible             multi-node
-instance-2       podman         ansible             multi-node
-""".strip(),
-        ),  # noqa
-    ],
-    indirect=["scenario_to_test", "driver_name"],
-)
-def test_command_list(scenario_to_test, with_scenario, expected):
-    pytest.helpers.list(expected)
-
-
-@pytest.mark.parametrize(
-    "scenario_to_test, driver_name, expected",
-    [
-        (
             "driver/delegated",
             "delegated",
             """
 instance  delegated  ansible  default
-""".strip(),
-        ),
-        (
-            "driver/podman",
-            "podman",
-            """
-instance    podman  ansible  default
-instance-1  podman  ansible  multi-node
-instance-2  podman  ansible  multi-node
 """.strip(),
         ),
     ],
@@ -276,12 +237,6 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario, expecte
 #             [["instance", ".*instance.*"]],
 #             "default",
 #         ),
-#         (
-#             "driver/podman",
-#             "podman",
-#             [["instance-1", ".*instance-1.*"], ["instance-2", ".*instance-2.*"]],
-#             "multi-node",
-#         ),
 #     ],
 #     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 # )
@@ -294,7 +249,6 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario, expecte
     "scenario_to_test, driver_name, scenario_name",
     [
         ("driver/delegated", "delegated", "default"),
-        ("driver/podman", "podman", "default"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
@@ -313,7 +267,6 @@ def test_command_prepare(scenario_to_test, with_scenario, scenario_name):
     "scenario_to_test, driver_name, scenario_name",
     [
         ("driver/delegated", "delegated", "default"),
-        ("driver/podman", "podman", "default"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
@@ -328,7 +281,6 @@ def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
     "scenario_to_test, driver_name, scenario_name",
     [
         ("driver/delegated", "delegated", "default"),
-        ("driver/podman", "podman", "default"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
@@ -342,7 +294,6 @@ def test_command_syntax(scenario_to_test, with_scenario, scenario_name):
     "scenario_to_test, driver_name, scenario_name",
     [
         ("driver/delegated", "delegated", "default"),
-        ("driver/podman", "podman", "default"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
@@ -355,7 +306,6 @@ def test_command_test(scenario_to_test, with_scenario, scenario_name, driver_nam
     "scenario_to_test, driver_name, scenario_name",
     [
         ("driver/delegated", "delegated", "default"),
-        ("driver/podman", "podman", "default"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
