@@ -25,7 +25,6 @@ import pytest
 
 from molecule import config, util
 from molecule.provisioner import ansible, ansible_playbooks
-from molecule.test.conftest import is_subset
 
 
 @pytest.fixture
@@ -277,132 +276,6 @@ def test_links_property(_instance):
     assert {} == _instance.links
 
 
-@pytest.mark.parametrize(
-    "config_instance", ["_provisioner_section_data"], indirect=True
-)
-def test_inventory_property(_instance):
-    x = {
-        "ungrouped": {"vars": {}},
-        "bar": {
-            "hosts": {"instance-1": {"foo": "bar", "ansible_connection": "docker"}},
-            "children": {
-                "child1": {
-                    "hosts": {
-                        "instance-1": {"foo": "bar", "ansible_connection": "docker"}
-                    }
-                }
-            },
-            "vars": {
-                "molecule_file": "{{ lookup('env', 'MOLECULE_FILE') }}",
-                "molecule_ephemeral_directory": "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
-                "molecule_scenario_directory": "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
-                "molecule_yml": "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
-                "molecule_instance_config": "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
-                "molecule_no_log": "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
-                "molecule_yml.provisioner.log|default(False) | bool }}",
-            },
-        },
-        "all": {
-            "hosts": {
-                "instance-1": {"foo": "bar", "ansible_connection": "docker"},
-                "instance-2": {"foo": "bar", "ansible_connection": "docker"},
-            },
-            "vars": {
-                "molecule_file": "{{ lookup('env', 'MOLECULE_FILE') }}",
-                "molecule_ephemeral_directory": "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
-                "molecule_scenario_directory": "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
-                "molecule_yml": "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
-                "molecule_instance_config": "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
-                "molecule_no_log": "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
-                "molecule_yml.provisioner.log|default(False) | bool }}",
-            },
-        },
-        "foo": {
-            "hosts": {
-                "instance-1": {"foo": "bar", "ansible_connection": "docker"},
-                "instance-2": {"foo": "bar", "ansible_connection": "docker"},
-            },
-            "children": {
-                "child1": {
-                    "hosts": {
-                        "instance-1": {"foo": "bar", "ansible_connection": "docker"}
-                    }
-                },
-                "child2": {
-                    "hosts": {
-                        "instance-2": {"foo": "bar", "ansible_connection": "docker"}
-                    }
-                },
-            },
-            "vars": {
-                "molecule_file": "{{ lookup('env', 'MOLECULE_FILE') }}",
-                "molecule_ephemeral_directory": "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
-                "molecule_scenario_directory": "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
-                "molecule_yml": "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
-                "molecule_instance_config": "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
-                "molecule_no_log": "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
-                "molecule_yml.provisioner.log|default(False) | bool }}",
-            },
-        },
-        "baz": {
-            "hosts": {"instance-2": {"foo": "bar", "ansible_connection": "docker"}},
-            "children": {
-                "child2": {
-                    "hosts": {
-                        "instance-2": {"foo": "bar", "ansible_connection": "docker"}
-                    }
-                }
-            },
-            "vars": {
-                "molecule_file": "{{ lookup('env', 'MOLECULE_FILE') }}",
-                "molecule_ephemeral_directory": "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
-                "molecule_scenario_directory": "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
-                "molecule_yml": "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
-                "molecule_instance_config": "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
-                "molecule_no_log": "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
-                "molecule_yml.provisioner.log|default(False) | bool }}",
-            },
-        },
-    }
-
-    assert is_subset(x, _instance.inventory)
-
-
-@pytest.mark.parametrize(
-    "config_instance", ["_provisioner_section_data"], indirect=True
-)
-def test_inventory_property_handles_missing_groups(temp_dir, _instance):
-    platforms = [{"name": "instance-1"}, {"name": "instance-2"}]
-    _instance._config.config["platforms"] = platforms
-
-    x = {
-        "ungrouped": {
-            "hosts": {
-                "instance-1": {"foo": "bar", "ansible_connection": "docker"},
-                "instance-2": {"foo": "bar", "ansible_connection": "docker"},
-            },
-            "vars": {},
-        },
-        "all": {
-            "hosts": {
-                "instance-1": {"foo": "bar", "ansible_connection": "docker"},
-                "instance-2": {"foo": "bar", "ansible_connection": "docker"},
-            },
-            "vars": {
-                "molecule_file": "{{ lookup('env', 'MOLECULE_FILE') }}",
-                "molecule_ephemeral_directory": "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
-                "molecule_scenario_directory": "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
-                "molecule_yml": "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
-                "molecule_instance_config": "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
-                "molecule_no_log": "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
-                "molecule_yml.provisioner.log|default(False) | bool }}",
-            },
-        },
-    }
-
-    assert is_subset(x, _instance.inventory)
-
-
 def test_inventory_directory_property(_instance):
     x = os.path.join(_instance._config.scenario.ephemeral_directory, "inventory")
     assert x == _instance.inventory_directory
@@ -437,43 +310,14 @@ def test_playbooks_cleaned_property_is_optional(_instance):
     assert _instance.playbooks.cleanup is None
 
 
-def test_playbooks_create_property(_instance):
-    x = os.path.join(
-        _instance._config.provisioner.playbooks._get_playbook_directory(),
-        "docker",
-        "create.yml",
-    )
-
-    assert x == _instance.playbooks.create
-
-
 def test_playbooks_converge_property(_instance):
     x = os.path.join(_instance._config.scenario.directory, "converge.yml")
 
     assert x == _instance.playbooks.converge
 
 
-def test_playbooks_destroy_property(_instance):
-    x = os.path.join(
-        _instance._config.provisioner.playbooks._get_playbook_directory(),
-        "docker",
-        "destroy.yml",
-    )
-
-    assert x == _instance.playbooks.destroy
-
-
 def test_playbooks_side_effect_property(_instance):
     assert _instance.playbooks.side_effect is None
-
-
-@pytest.mark.parametrize(
-    "config_instance", ["_provisioner_section_data"], indirect=True
-)
-def test_connection_options(_instance):
-    x = {"ansible_connection": "docker", "foo": "bar"}
-
-    assert is_subset(x, _instance.connection_options("foo"))
 
 
 def test_check(_instance, mocker, _patched_ansible_playbook):
@@ -695,103 +539,6 @@ def test_add_or_update_vars_does_not_create_vars(_instance):
     assert not os.path.isdir(host_vars_directory)
     assert not os.path.isdir(group_vars_directory)
     assert not os.path.isfile(hosts)
-
-
-@pytest.mark.parametrize(
-    "config_instance", ["_provisioner_section_data"], indirect=True
-)
-def test_write_inventory(temp_dir, _instance):
-    _instance._write_inventory()
-
-    assert os.path.isfile(_instance.inventory_file)
-
-    data = util.safe_load_file(_instance.inventory_file)
-
-    x = {
-        "ungrouped": {"vars": {}},
-        "bar": {
-            "hosts": {"instance-1": {"foo": "bar", "ansible_connection": "docker"}},
-            "children": {
-                "child1": {
-                    "hosts": {
-                        "instance-1": {"foo": "bar", "ansible_connection": "docker"}
-                    }
-                }
-            },
-            "vars": {
-                "molecule_file": "{{ lookup('env', 'MOLECULE_FILE') }}",
-                "molecule_ephemeral_directory": "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
-                "molecule_scenario_directory": "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
-                "molecule_yml": "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
-                "molecule_instance_config": "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
-                "molecule_no_log": "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
-                "molecule_yml.provisioner.log|default(False) | bool }}",
-            },
-        },
-        "all": {
-            "hosts": {
-                "instance-1": {"foo": "bar", "ansible_connection": "docker"},
-                "instance-2": {"foo": "bar", "ansible_connection": "docker"},
-            },
-            "vars": {
-                "molecule_file": "{{ lookup('env', 'MOLECULE_FILE') }}",
-                "molecule_ephemeral_directory": "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
-                "molecule_scenario_directory": "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
-                "molecule_yml": "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
-                "molecule_instance_config": "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
-                "molecule_no_log": "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
-                "molecule_yml.provisioner.log|default(False) | bool }}",
-            },
-        },
-        "foo": {
-            "hosts": {
-                "instance-1": {"foo": "bar", "ansible_connection": "docker"},
-                "instance-2": {"foo": "bar", "ansible_connection": "docker"},
-            },
-            "children": {
-                "child1": {
-                    "hosts": {
-                        "instance-1": {"foo": "bar", "ansible_connection": "docker"}
-                    }
-                },
-                "child2": {
-                    "hosts": {
-                        "instance-2": {"foo": "bar", "ansible_connection": "docker"}
-                    }
-                },
-            },
-            "vars": {
-                "molecule_file": "{{ lookup('env', 'MOLECULE_FILE') }}",
-                "molecule_ephemeral_directory": "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
-                "molecule_scenario_directory": "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
-                "molecule_yml": "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
-                "molecule_instance_config": "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
-                "molecule_no_log": "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
-                "molecule_yml.provisioner.log|default(False) | bool }}",
-            },
-        },
-        "baz": {
-            "hosts": {"instance-2": {"foo": "bar", "ansible_connection": "docker"}},
-            "children": {
-                "child2": {
-                    "hosts": {
-                        "instance-2": {"foo": "bar", "ansible_connection": "docker"}
-                    }
-                }
-            },
-            "vars": {
-                "molecule_file": "{{ lookup('env', 'MOLECULE_FILE') }}",
-                "molecule_ephemeral_directory": "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
-                "molecule_scenario_directory": "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
-                "molecule_yml": "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
-                "molecule_instance_config": "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
-                "molecule_no_log": "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
-                "molecule_yml.provisioner.log|default(False) | bool }}",
-            },
-        },
-    }
-
-    assert is_subset(x, data)
 
 
 @pytest.mark.parametrize(

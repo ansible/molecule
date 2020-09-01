@@ -28,6 +28,7 @@ import click
 from molecule import api, logger, util
 from molecule.command import base as command_base
 from molecule.command.init import base
+from molecule.config import DEFAULT_DRIVER
 
 LOG = logger.get_logger(__name__)
 
@@ -109,8 +110,8 @@ class Role(base.Base):
     "--driver-name",
     "-d",
     type=click.Choice([str(s) for s in api.drivers()]),
-    default="docker",
-    help="Name of driver to initialize. (docker)",
+    default=DEFAULT_DRIVER,
+    help=f"Name of driver to initialize. ({DEFAULT_DRIVER})",
 )
 @click.option(
     "--lint-name",

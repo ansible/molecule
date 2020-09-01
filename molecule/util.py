@@ -27,7 +27,7 @@ import re
 import sys
 from collections.abc import Mapping
 from functools import lru_cache  # noqa
-from typing import Any
+from typing import Any, Dict, Optional
 
 import colorama
 import jinja2
@@ -91,19 +91,23 @@ def print_environment_vars(env):
     print()
 
 
-def sysexit(code=1):
+def sysexit(code: int = 1) -> None:
     """Perform a system exit with given code, default 1."""
     sys.exit(code)
 
 
-def sysexit_with_message(msg, code=1, detail=None):
+def sysexit_with_message(
+    msg: str, code: int = 1, detail: Optional[Dict] = None
+) -> None:
     """Exit with an error message."""
     # detail is usually a multi-line string which is not suitable for normal
     # logger.
     if detail:
         if isinstance(detail, dict):
-            detail = safe_dump(detail)
-        print(detail)
+            detail_str = safe_dump(detail)
+        else:
+            detail_str = str(detail)
+        print(detail_str)
     LOG.critical(msg)
     sysexit(code)
 
@@ -177,7 +181,7 @@ def file_prepender(filename):
         f.write(molecule_prepender(content))
 
 
-def safe_dump(data):
+def safe_dump(data: Any) -> str:
     """
     Dump the provided data to a YAML document and returns a string.
 
@@ -192,7 +196,7 @@ def safe_dump(data):
     )
 
 
-def safe_load(string):
+def safe_load(string) -> Dict:
     """
     Parse the provided string returns a dict.
 
@@ -203,6 +207,7 @@ def safe_load(string):
         return yaml.safe_load(string) or {}
     except yaml.scanner.ScannerError as e:
         sysexit_with_message(str(e))
+    return {}
 
 
 def safe_load_file(filename):

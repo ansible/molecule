@@ -35,6 +35,7 @@ MOLECULE_DEBUG = boolean(os.environ.get("MOLECULE_DEBUG", "False"))
 MOLECULE_DIRECTORY = "molecule"
 MOLECULE_FILE = "molecule.yml"
 MOLECULE_KEEP_STRING = "MOLECULE_"
+DEFAULT_DRIVER = "delegated"
 
 
 # https://stackoverflow.com/questions/16017397/injecting-function-call-after-init-with-decorator  # noqa
@@ -338,7 +339,7 @@ class Config(object, metaclass=NewInitCaller):
                 "env": {},
             },
             "driver": {
-                "name": "docker",
+                "name": "delegated",
                 "provider": {"name": None},
                 "options": {"managed": True},
                 "ssh_connection_options": [],

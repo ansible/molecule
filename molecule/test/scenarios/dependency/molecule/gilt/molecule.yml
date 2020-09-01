@@ -2,7 +2,7 @@
 dependency:
   name: gilt
 driver:
-  name: docker
+  name: delegated
 platforms:
   - name: instance
     image: ${TEST_BASE_IMAGE}

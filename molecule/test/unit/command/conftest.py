@@ -17,8 +17,6 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
-import os
-
 import pytest
 
 
@@ -34,15 +32,15 @@ def command_driver_delegated_section_data():
             "name": "delegated",
             "options": {
                 "managed": False,
-                "login_cmd_template": "docker exec -ti {instance} bash",
-                "ansible_connection_options": {"ansible_connection": "docker"},
+                # "login_cmd_template": "docker exec -ti {instance} bash",
+                # "ansible_connection_options": {"ansible_connection": "docker"},
             },
         }
     }
-    if "DOCKER_HOST" in os.environ:
-        x["driver"]["options"]["ansible_docker_extra_args"] = "-H={}".format(
-            os.environ["DOCKER_HOST"]
-        )
+    # if "DOCKER_HOST" in os.environ:
+    #     x["driver"]["options"]["ansible_docker_extra_args"] = "-H={}".format(
+    #         os.environ["DOCKER_HOST"]
+    #     )
     return x
 
 
