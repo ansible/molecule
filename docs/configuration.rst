@@ -69,13 +69,6 @@ Delegated
    :undoc-members:
 
 
-Docker
-^^^^^^
-
-.. autoclass:: molecule.driver.docker.Docker()
-   :undoc-members:
-
-
 Podman
 ^^^^^^
 

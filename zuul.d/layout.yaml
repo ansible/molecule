@@ -60,36 +60,3 @@
     vars:
       tox_envlist: snap
     irrelevant-files: *doc-files
-
-- project:
-    templates:
-      - publish-to-pypi
-    check:
-      jobs: &jobs
-        - molecule-tox-docs:
-            vars:
-              # zuul expects a 'html' folder under this
-              sphinx_build_dir: docs/docstree
-        - molecule-tox-linters:
-            vars:
-              tox_envlist: lint
-        - molecule-tox-packaging:
-            vars:
-              tox_envlist: packaging,dockerfile,build-containers
-        - molecule-tox-py36:
-            vars:
-              PYTEST_REQPASS_UNIT: 489
-              PYTEST_REQPASS_FUNC: 37
-            irrelevant-files: *doc-files
-        - molecule-tox-py37:
-            vars:
-              PYTEST_REQPASS_UNIT: 489
-              PYTEST_REQPASS_FUNC: 37
-            irrelevant-files: *doc-files
-        - molecule-tox-py38:
-            vars:
-              PYTEST_REQPASS_UNIT: 489
-              PYTEST_REQPASS_FUNC: 37
-            irrelevant-files: *doc-files
-    gate:
-      jobs: *jobs

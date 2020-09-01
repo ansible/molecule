@@ -1,0 +1,127 @@
+name: tox
+
+on:
+  create:  # is used for publishing to PyPI and TestPyPI
+    tags:  # any tag regardless of its name, no branches
+  push:  # only publishes pushes to the main branch to TestPyPI
+    branches:  # any integration branch but not tag
+      - "master"
+    tags-ignore:
+      - "**"
+  pull_request:
+  schedule:
+    - cron: 1 0 * * *  # Run daily at 0:01 UTC
+
+jobs:
+  build:
+    name: ${{ matrix.tox_env }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - tox_env: lint
+          - tox_env: docs
+          - tox_env: py36
+            PREFIX: PYTEST_REQPASS=450
+          - tox_env: py37
+            PREFIX: PYTEST_REQPASS=450
+          - tox_env: py38
+            PREFIX: PYTEST_REQPASS=450
+          - tox_env: packaging
+          - tox_env: dockerfile
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Find python version
+        id: py_ver
+        shell: python
+        if: ${{ contains(matrix.tox_env, 'py') }}
+        run: |
+          v = '${{ matrix.tox_env }}'.split('-')[0].lstrip('py')
+          print('::set-output name=version::{0}.{1}'.format(v[0],v[1:]))
+      # Even our lint and other envs need access to tox
+      - name: Install a default Python
+        uses: actions/setup-python@v2
+        if: ${{ ! contains(matrix.tox_env, 'py') }}
+      # Be sure to install the version of python needed by a specific test, if necessary
+      - name: Set up Python version
+        uses: actions/setup-python@v2
+        if: ${{ contains(matrix.tox_env, 'py') }}
+        with:
+          python-version: ${{ steps.py_ver.outputs.version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install -U pip
+          pip install tox
+      - name: Run tox -e ${{ matrix.tox_env }}
+        run: |
+          echo "${{ matrix.PREFIX }} tox -e ${{ matrix.tox_env }}"
+          ${{ matrix.PREFIX }} tox -e ${{ matrix.tox_env }}
+
+  publish:
+    name: Publish to PyPI registry
+    needs:
+      - build
+    runs-on: ubuntu-latest
+
+    env:
+      PY_COLORS: 1
+      TOXENV: packaging
+
+    steps:
+      - name: Switch to using Python 3.6 by default
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.6
+      - name: Install tox
+        run: python -m pip install --user tox
+      - name: Check out src from Git
+        uses: actions/checkout@v2
+        with:
+          # Get shallow Git history (default) for tag creation events
+          # but have a complete clone for any other workflows.
+          # Both options fetch tags but since we're going to remove
+          # one from HEAD in non-create-tag workflows, we need full
+          # history for them.
+          fetch-depth: >-
+            ${{
+              (
+                github.event_name == 'create' &&
+                github.event.ref_type == 'tag'
+              ) &&
+              1 || 0
+            }}
+      - name: Drop Git tags from HEAD for non-tag-create events
+        if: >-
+          github.event_name != 'create' ||
+          github.event.ref_type != 'tag'
+        run: >-
+          git tag --points-at HEAD
+          |
+          xargs git tag --delete
+      - name: Build dists
+        run: python -m tox
+      - name: Publish to test.pypi.org
+        if: >-
+          (
+            github.event_name == 'push' &&
+            github.ref == format(
+              'refs/heads/{0}', github.event.repository.default_branch
+            )
+          ) ||
+          (
+            github.event_name == 'create' &&
+            github.event.ref_type == 'tag'
+          )
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          password: ${{ secrets.testpypi_password }}
+          repository_url: https://test.pypi.org/legacy/
+      - name: Publish to pypi.org
+        if: >-  # "create" workflows run separately from "push" & "pull_request"
+          github.event_name == 'create' &&
+          github.event.ref_type == 'tag'
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          password: ${{ secrets.pypi_password }}
