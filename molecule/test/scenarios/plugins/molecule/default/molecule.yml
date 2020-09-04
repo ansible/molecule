@@ -1,6 +1,6 @@
 ---
 dependency:
-  name: gilt
+  name: galaxy
 driver:
   name: delegated
 platforms:

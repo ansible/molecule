@@ -128,24 +128,6 @@ def test_command_dependency_ansible_galaxy(
 
 @pytest.mark.parametrize(
     "scenario_to_test, driver_name, scenario_name",
-    [("dependency", "delegated", "gilt")],
-    indirect=["scenario_to_test", "driver_name", "scenario_name"],
-)
-def test_command_dependency_gilt(
-    request, scenario_to_test, with_scenario, scenario_name
-):
-    options = {"scenario_name": scenario_name}
-    cmd = sh.molecule.bake("dependency", **options)
-    pytest.helpers.run_command(cmd)
-
-    dependency_role = os.path.join(
-        ephemeral_directory("molecule"), "dependency", "gilt", "roles", "timezone"
-    )
-    assert os.path.isdir(dependency_role)
-
-
-@pytest.mark.parametrize(
-    "scenario_to_test, driver_name, scenario_name",
     [("dependency", "delegated", "shell")],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )

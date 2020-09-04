@@ -23,7 +23,7 @@ import os
 import pytest
 
 from molecule import config, platforms, scenario, state, util
-from molecule.dependency import ansible_galaxy, gilt, shell
+from molecule.dependency import ansible_galaxy, shell
 from molecule.provisioner import ansible
 from molecule.verifier.ansible import Ansible as AnsibleVerifier
 
@@ -83,18 +83,6 @@ def test_molecule_directory_property(config_instance):
 
 def test_dependency_property(config_instance):
     assert isinstance(config_instance.dependency, ansible_galaxy.AnsibleGalaxy)
-
-
-@pytest.fixture
-def _config_dependency_gilt_section_data():
-    return {"dependency": {"name": "gilt"}}
-
-
-@pytest.mark.parametrize(
-    "config_instance", ["_config_dependency_gilt_section_data"], indirect=True
-)
-def test_dependency_property_is_gilt(config_instance):
-    assert isinstance(config_instance.dependency, gilt.Gilt)
 
 
 @pytest.fixture

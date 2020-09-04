@@ -34,8 +34,8 @@ class Shell(base.Base):
     """
     ``Shell`` is an alternate dependency manager.
 
-    It is intended to run a command in situations where `Ansible Galaxy`_ and
-    `Gilt`_ don't suffice.
+    It is intended to run a command in situations where `Ansible Galaxy`_
+    don't suffice.
 
     The ``command`` to execute is required, and is relative to Molecule's
     project directory when referencing a script not in $PATH.
