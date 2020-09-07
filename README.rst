@@ -10,8 +10,8 @@ Ansible Molecule
    :target: https://molecule.readthedocs.io/en/latest/
    :alt: Documentation Status
 
-.. image:: https://zuul-ci.org/gated.svg
-   :target: https://dashboard.zuul.ansible.com/t/ansible/builds?project=ansible-community/molecule
+.. image:: https://github.com/ansible-community/molecule/workflows/tox/badge.svg
+   :target: https://github.com/ansible-community/molecule/actions
 
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/python/black

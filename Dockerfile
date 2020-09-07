@@ -60,17 +60,19 @@ py3-yaml \
 python3 \
 python3-dev
 
-ENV MOLECULE_EXTRAS="docker,docs,windows,lint"
+ENV MOLECULE_EXTRAS="docker,docs,podman,windows,lint"
 
 ENV MOLECULE_PLUGINS="\
 molecule-azure \
 molecule-containers \
+molecule-docker \
 molecule-digitalocean \
 molecule-ec2 \
 molecule-gce \
 molecule-hetznercloud \
 molecule-libvirt \
 molecule-lxd \
+molecule-podman \
 molecule-openstack \
 molecule-vagrant \
 "
@@ -155,11 +157,12 @@ json \
 etc \
 "
 
-ENV MOLECULE_EXTRAS="docker,docs,windows,lint"
+ENV MOLECULE_EXTRAS="docker,docs,podman,windows,lint"
 
 ENV MOLECULE_PLUGINS="\
 molecule-azure \
 molecule-containers \
+molecule-docker \
 molecule-digitalocean \
 molecule-ec2 \
 molecule-gce \
@@ -167,6 +170,7 @@ molecule-hetznercloud \
 molecule-libvirt \
 molecule-lxd \
 molecule-openstack \
+molecule-podman \
 molecule-vagrant \
 "
 
