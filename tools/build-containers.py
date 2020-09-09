@@ -24,6 +24,7 @@ if __name__ == "__main__":
     version = get_version()
     version_tag = version.replace("+", "-")
     image_name = os.environ.get("QUAY_REPO", "quay.io/ansible/molecule")
+    publish = os.environ.get("PUBLISH", None) == "1"
 
     expire = ""
     tagging_args = ""
@@ -38,7 +39,7 @@ if __name__ == "__main__":
         tagging_args += "-t " + image_name + ":latest "
         tags_to_push.append("latest")
     # if on master, we want to also move the master tag
-    if os.environ.get("TRAVIS_BRANCH", None) == "master":
+    if publish:
         tagging_args += "-t " + image_name + ":master "
         tags_to_push.append("master")
 
@@ -65,7 +66,7 @@ if __name__ == "__main__":
     )
 
     # Decide to push when all conditions below are met:
-    if os.environ.get("TRAVIS_BUILD_STAGE_NAME", None) == "deploy":
+    if publish:
         run(f"{engine} login quay.io")
         for tag in tags_to_push:
             run(f"{engine} push {image_name}:{tag}")
