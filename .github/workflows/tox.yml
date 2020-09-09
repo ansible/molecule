@@ -125,3 +125,9 @@ jobs:
         uses: pypa/gh-action-pypi-publish@master
         with:
           password: ${{ secrets.pypi_password }}
+      - name: Publish containers
+        if: >-  # "create" workflows run separately from "push" & "pull_request"
+          github.event_name == 'create' &&
+          github.event.ref_type == 'tag'
+        run: python -m tox -e build-containers
+
