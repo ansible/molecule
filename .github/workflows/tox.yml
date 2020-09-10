@@ -30,6 +30,15 @@ jobs:
             PREFIX: PYTEST_REQPASS=432
           - tox_env: packaging
           - tox_env: dockerfile
+          - tox_env: build-containers
+            needs:
+              - dockerfile
+              - docs
+              - lint
+              - packaging
+              - py36
+              - py37
+              - py38
 
     steps:
       - uses: actions/checkout@v1
@@ -125,3 +134,5 @@ jobs:
         uses: pypa/gh-action-pypi-publish@master
         with:
           password: ${{ secrets.pypi_password }}
+# No need to publish to quay.io from here as they do it when a new tag
+# is pushed on git.
