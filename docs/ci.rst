@@ -19,7 +19,7 @@ and run ``molecule test`` in ubuntu.
 
   ---
   name: Molecule Test
-  on: [push, commit]
+  on: [push, pull_request]
   jobs:
     build:
       runs-on: ubuntu-latest
