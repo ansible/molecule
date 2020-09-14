@@ -91,8 +91,8 @@ class FilterModule(object):
 
     def filters(self):
         return {
-            "molecule_from_yaml": from_yaml,
-            "molecule_to_yaml": to_yaml,
-            "molecule_header": header,
+            # "molecule_from_yaml": from_yaml,
+            # "molecule_to_yaml": to_yaml,
+            # "molecule_header": header,
             "molecule_get_docker_networks": get_docker_networks,
         }
