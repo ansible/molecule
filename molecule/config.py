@@ -425,7 +425,7 @@ class Config(object, metaclass=NewInitCaller):
 
         errors = schema_v3.validate(self.config)
         if errors:
-            msg = "Failed to validate.\n\n{}".format(errors)
+            msg = f"Failed to validate {self.molecule_file}\n\n{errors}"
             util.sysexit_with_message(msg)
 
         msg = "Validation completed successfully."
