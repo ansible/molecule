@@ -43,10 +43,6 @@ class Role(base.Base):
 
         Initialize a new role.
 
-    .. program:: molecule init role foo --template path
-
-    .. option:: molecule init role foo --template path
-
         Initialize a new role using ansible-galaxy and include default
         molecule directory. Please refer to the ``init scenario``
         command in order to generate a custom ``molecule`` scenario.
