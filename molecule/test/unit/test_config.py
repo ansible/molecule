@@ -316,7 +316,7 @@ def test_validate_exists_when_validation_fails(
 
     assert 1 == e.value.code
 
-    msg = "Failed to validate.\n\nvalidation errors"
+    msg = f"Failed to validate {config_instance.molecule_file}\n\nvalidation errors"
     patched_logger_critical.assert_called_once_with(msg)
 
 
