@@ -7,7 +7,7 @@ My Molecule
    :alt: PyPI Package
 
 .. image:: https://readthedocs.org/projects/molecule/badge/?version=latest
-   :target: https://molecule.readthedocs.io/en/latest/
+   :target: https://molecule-1.readthedocs.io/en/latest/
    :alt: Documentation Status
 
 .. image:: https://github.com/ansible-community/molecule/workflows/tox/badge.svg
@@ -21,8 +21,8 @@ My Molecule
    :target: https://docs.ansible.com/ansible/latest/community/code_of_conduct.html
    :alt: Ansible Code of Conduct
 
-.. image:: https://img.shields.io/badge/Discussions-silver.svg
-   :target: https://github.com/ansible-community/molecule/discussions
+.. image:: https://img.shields.io/badge/Discuss-silver.svg
+   :target: https://github.com/corserp/molecule-1/discuss
    :alt: Discussions
 
 .. image:: https://img.shields.io/badge/license-MIT-brightgreen.svg
@@ -79,17 +79,17 @@ If you want to get moving fast and make a quick patch:
 
 .. code-block:: bash
 
-    $ git clone https://github.com/ansible-community/molecule && cd molecule
+    $ git clone https://github.com/corserp/molecule && cd molecule
     $ python3 -m venv .venv && source .venv/bin/activate
     $ python3 -m pip install -U setuptools pip tox
 
 And you're ready to make your changes!
 
 .. _`Freenode`: https://freenode.net:6697
-.. _`discussions`: https://github.com/ansible-community/molecule/discussions
-.. _`wiki`: https://github.com/ansible/community/wiki/Molecule
+.. _`discuss`: https://github.com/corserp/molecule/discuss
+.. _`wiki`: https://github.com/discuss/community/wiki/Molecule
 .. _`ansible-announce list`: https://groups.google.com/group/ansible-announce
-.. _`communication page`: https://docs.ansible.com/ansible/latest/community/communication.html
+.. _`communication page`: https://docs.discuss.com/ansible/latest/community/communication.html
 
 .. _authors:
 
