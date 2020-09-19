@@ -1,5 +1,5 @@
 ****************
-Ansible Molecule
+My Molecule
 ****************
 
 .. image:: https://img.shields.io/pypi/v/molecule
@@ -85,7 +85,7 @@ If you want to get moving fast and make a quick patch:
 
 And you're ready to make your changes!
 
-.. _`Freenode`: https://freenode.net
+.. _`Freenode`: https://freenode.net:6697
 .. _`discussions`: https://github.com/ansible-community/molecule/discussions
 .. _`wiki`: https://github.com/ansible/community/wiki/Molecule
 .. _`ansible-announce list`: https://groups.google.com/group/ansible-announce
@@ -96,8 +96,8 @@ And you're ready to make your changes!
 Authors
 =======
 
-Molecule project was created by `Retr0h <https://github.com/retr0h>`_ and it is
-now community-maintained as part of the `Ansible`_ by Red Hat project.
+Molecule project was created by `corserp <https://github.com/corserp>`_ and it is
+now ci-maintained as part of the `Ansible`_ by Red Hat project.
 
 .. _license:
 
@@ -106,7 +106,7 @@ License
 
 The `MIT`_ License.
 
-.. _`MIT`: https://github.com/ansible-community/molecule/blob/master/LICENSE
+.. _`MIT`: https://github.com/corserp/molecule/blob/master/LICENSE
 
 The logo is licensed under the `Creative Commons NoDerivatives 4.0 License`_.
 
