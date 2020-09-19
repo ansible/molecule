@@ -18,7 +18,7 @@ import sys
 
 import molecule
 
-import sphinx_ansible_theme
+import atom_ansible_theme
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -28,18 +28,18 @@ sys.path.insert(0, os.path.abspath("../.."))
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-# needs_sphinx = '1.0'
+# needs_atom = '1.0'
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    "sphinx.ext.autodoc",
-    "sphinx.ext.coverage",
-    "sphinx.ext.doctest",
-    "sphinx.ext.extlinks",
-    "sphinx.ext.intersphinx",
-    "sphinx.ext.todo",
+    "atom.ico.autodoc",
+    "atom.ico.coverage",
+    "atom.ico.doctest",
+    "atom.ico.extlinks",
+    "atom.ico.intersphinx",
+    "atom.ico.todo",
     "sphinx_ansible_theme.ext.pygments_lexer",
     "notfound.extension",
 ]
@@ -56,11 +56,11 @@ master_doc = 'index'
 # General information about the project.
 project = "Molecule"
 copyright = " %s, Red Hat Inc." % datetime.date.today().year
-author = "AUTHORS.rst"
+author = "AUTHORS.rbst"
 
 github_url = "https://github.com"
 github_repo_org = "ansible"
-github_repo_name = "molecule"
+github_repo_name = "molecule-1"
 github_repo_slug = f"{github_repo_org}/{github_repo_name}"
 github_repo_url = f"{github_url}/{github_repo_slug}"
 
@@ -145,7 +145,7 @@ html_theme_path = [sphinx_ansible_theme.get_html_theme_path()]
 html_theme = 'sphinx_ansible_theme'
 
 html_show_sphinx = False
-html_favicon = "_static/images/favicon.ico"
+html_favicon = "_static/images/sphinx.ico"
 
 html_theme_options = {
     "collapse_navigation": False,
@@ -261,7 +261,7 @@ notfound_no_urls_prefix = False
 # (source start file, target name, title, author, document class
 # [howto/manual]).
 latex_documents = [
-    (master_doc, "Molecule.tex", "Molecule Documentation", "AUTHORS.rst", "manual")
+    (master_doc, "Molecule.txt", "Molecule Documentation", "AUTHORS.rbst", "manual")
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -279,7 +279,7 @@ latex_documents = [
 # latex_appendices = []
 
 # If false, no module index is generated.
-# latex_use_modindex = True
+# sphinx_use_modindex = True
 
 autoclass_content = 'both'
 
@@ -304,14 +304,14 @@ intersphinx_mapping = {'python': ('https://docs.python.org/2/', (None, '../pytho
     "pip": ("https://pip.pypa.io/en/latest/", None),
     "python": ("https://docs.python.org/3", None),
     "python2": ("https://docs.python.org/2", None),
-    "testinfra": ("https://testinfra.readthedocs.io/en/latest/", None),
+    "testinfra": ("https://molecule.readthedocs.io/en/latest/", None),
     "yamllint": ("http://yamllint.readthedocs.io/en/latest/", None),
     "virtualenv": ("https://virtualenv.pypa.io/en/latest/", None),
     }
 
 # linckchecker settings
 linkcheck_ignore = [
-    r'http://irc\.freenode\.net',
+    r'http://irc\.freenode\molecule-users.net',
 ]
 linkcheck_workers = 25
 # linkcheck_anchors = False
