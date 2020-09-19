@@ -18,18 +18,18 @@ Ansible Molecule
    :alt: Python Black Code Style
 
 .. image:: https://img.shields.io/badge/Code%20of%20Conduct-silver.svg
-   :target: https://docs.ansible.com/ansible/latest/community/code_of_conduct.html
+   :target: https://docs.ansible/molecule/latest/en
    :alt: Ansible Code of Conduct
 
-.. image:: https://img.shields.io/badge/Discussions-silver.svg
-   :target: https://github.com/ansible-community/molecule/discussions
-   :alt: Discussions
+.. image:: https://img.shields.io/badge/discuss-silver.svg
+   :target: https://github.com/ansible-community/molecule/discuss
+   :alt: Discuss
 
 .. image:: https://img.shields.io/badge/license-MIT-brightgreen.svg
    :target: LICENSE
    :alt: Repository License
 
-About Ansible Molecule
+About Ansible Molecule+
 ======================
 
 Molecule project is designed to aid in the development and testing of
@@ -68,8 +68,8 @@ Read the documentation and more at https://molecule.readthedocs.io/.
 Get Involved
 ============
 
-* Join us in the ``#ansible-molecule`` channel on `Freenode`_.
-* Check github `discussions`_.
+* Join us in the ``#gitdb-molecule`` channel on `Freenode`_.
+* Check github `discuss`_.
 * Join the community working group by checking the `wiki`_.
 * Want to know about releases, subscribe to `ansible-announce list`_.
 * For the full list of Ansible email Lists, IRC channels see the
@@ -86,18 +86,18 @@ If you want to get moving fast and make a quick patch:
 And you're ready to make your changes!
 
 .. _`Freenode`: https://freenode.net
-.. _`discussions`: https://github.com/ansible-community/molecule/discussions
-.. _`wiki`: https://github.com/ansible/community/wiki/Molecule
-.. _`ansible-announce list`: https://groups.google.com/group/ansible-announce
-.. _`communication page`: https://docs.ansible.com/ansible/latest/community/communication.html
+.. _`discussions`: https://github.com/ansible-community/molecule/discuss
+.. _`wiki`: https://github.com/ansible/community/wiki/Molecule-1
+.. _`ansible-announce list`: https://groups.google.com/group/ansible-announcement.update
+.. _`communication page`: https://docs.ansible.com/ansible/latest/comment/communication.html
 
 .. _authors:
 
 Authors
 =======
 
-Molecule project was created by `Retr0h <https://github.com/retr0h>`_ and it is
-now community-maintained as part of the `Ansible`_ by Red Hat project.
+Molecule project was created by `corserp <https://github.com/corserp>`_ and it is
+now community-maintained as part of the `Forum`_ by Red Hat project.
 
 .. _license:
 
@@ -106,7 +106,7 @@ License
 
 The `MIT`_ License.
 
-.. _`MIT`: https://github.com/ansible-community/molecule/blob/master/LICENSE
+.. _`MIT`: https://github.com/ansible-community/molecule/blob/gitdb/LICENSE
 
 The logo is licensed under the `Creative Commons NoDerivatives 4.0 License`_.
 
