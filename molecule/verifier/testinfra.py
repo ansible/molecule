@@ -200,7 +200,7 @@ class Testinfra(Verifier):
 
         :return: list
         """
-        return [filename for filename in util.os_walk(self.directory, "test_*.py")]
+        return sorted([filename for filename in util.os_walk(self.directory, "test_*.py")])
 
     def schema(self):
         return {
