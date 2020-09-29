@@ -86,8 +86,6 @@ A ``.travis.yml`` using `Tox`_ as described below.
     language: python
     services:
       - docker
-    before_install:
-      - sudo apt-get -qq update
     install:
       - python3 -m pip install tox-travis
     script:
