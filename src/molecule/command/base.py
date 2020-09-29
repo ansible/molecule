@@ -21,12 +21,14 @@
 
 import abc
 import collections
+import functools
 import glob
 import os
 import shutil
 from typing import Any, Callable
 
 import click
+import colorama
 from click_help_colors import HelpColorsCommand, HelpColorsGroup
 
 import molecule.scenarios
@@ -131,6 +133,33 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
                 raise
 
 
+def _output_for_ci(func):
+    is_travis = os.getenv("TRAVIS") and os.getenv("CI")
+    if not is_travis:
+        return func
+
+    @functools.wraps(func)
+    def travis_wrapper(config, subcommand):
+        print(
+            (
+                "travis_fold:start:{0}.{1}"
+                "{2}Molecule --> Scenario: '{0}' --> Action: '{1}'{3}"
+            ).format(
+                config.scenario.name,
+                subcommand,
+                colorama.Style.BRIGHT + colorama.Fore.CYAN,
+                colorama.Style.RESET_ALL,
+            )
+        )
+        try:
+            return func(config, subcommand)
+        finally:
+            print("travis_fold:end:{}.{}".format(config.scenario.name, subcommand))
+
+    return travis_wrapper
+
+
+@_output_for_ci
 def execute_subcommand(config, subcommand):
     """Execute subcommand."""
     command_module = getattr(molecule.command, subcommand)
