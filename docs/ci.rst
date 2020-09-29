@@ -71,8 +71,6 @@ A ``.travis.yml`` testing a role named foo1 with the Docker driver.
     language: python
     services:
       - docker
-    before_install:
-      - sudo apt-get -qq update
     install:
       - python3 -m pip install molecule
       # - python3 -m pip install required driver (e.g. docker, shade, boto, apache-libcloud)
