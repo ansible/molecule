@@ -107,7 +107,7 @@ Here is an example using Docker in Docker
       - docker:dind
 
     before_script:
-      - apk update && apk add --no-cache
+      - apk add --no-cache
         python3 python3-dev py3-pip gcc git curl build-base
         autoconf automake py3-cryptography linux-headers
         musl-dev libffi-dev openssl-dev openssh
