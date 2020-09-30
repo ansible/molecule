@@ -9,8 +9,6 @@ WORKDIR /usr/src/molecule
 #   quite often.
 # edge/testing needed for: py3-arrow py3-tabulate
 RUN apk add -v --progress --update --no-cache \
-ansible \
-ansible-lint \
 docker-py \
 gcc \
 git \
@@ -101,8 +99,6 @@ docker \
 git \
 openssh-client \
 ruby \
-ansible \
-ansible-lint \
 docker-py \
 libvirt \
 rsync \
