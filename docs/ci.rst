@@ -71,8 +71,6 @@ A ``.travis.yml`` testing a role named foo1 with the Docker driver.
     language: python
     services:
       - docker
-    before_install:
-      - sudo apt-get -qq update
     install:
       - python3 -m pip install molecule
       # - python3 -m pip install required driver (e.g. docker, shade, boto, apache-libcloud)
@@ -88,8 +86,6 @@ A ``.travis.yml`` using `Tox`_ as described below.
     language: python
     services:
       - docker
-    before_install:
-      - sudo apt-get -qq update
     install:
       - python3 -m pip install tox-travis
     script:
@@ -111,7 +107,7 @@ Here is an example using Docker in Docker
       - docker:dind
 
     before_script:
-      - apk update && apk add --no-cache
+      - apk add --no-cache
         python3 python3-dev py3-pip gcc git curl build-base
         autoconf automake py3-cryptography linux-headers
         musl-dev libffi-dev openssl-dev openssh
