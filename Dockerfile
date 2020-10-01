@@ -24,7 +24,6 @@ py3-certifi \
 py3-cffi \
 py3-chardet \
 py3-click \
-py3-colorama \
 py3-cryptography \
 py3-distlib \
 py3-docutils \
@@ -108,7 +107,6 @@ py3-certifi \
 py3-cffi \
 py3-chardet \
 py3-click \
-py3-colorama \
 py3-cryptography \
 py3-docutils \
 py3-flake8 \

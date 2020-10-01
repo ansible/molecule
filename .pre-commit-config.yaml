@@ -51,6 +51,7 @@ repos:
         pass_filenames: false
         additional_dependencies:
           - packaging
+          - rich
   - repo: https://github.com/pre-commit/mirrors-pylint
     rev: v2.6.0
     hooks:

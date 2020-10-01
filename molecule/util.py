@@ -29,10 +29,10 @@ from collections.abc import Mapping
 from functools import lru_cache  # noqa
 from typing import Any, Dict, Optional
 
-import colorama
 import jinja2
 import yaml
 
+from molecule.console import console
 from molecule.logger import get_logger
 
 LOG = get_logger(__name__)
@@ -45,29 +45,6 @@ class SafeDumper(yaml.SafeDumper):
         return super(SafeDumper, self).increase_indent(flow, False)
 
 
-def print_debug(title, data):
-    """Print debug information."""
-    title = "DEBUG: {}".format(title)
-    title = [
-        colorama.Back.WHITE,
-        colorama.Style.BRIGHT,
-        colorama.Fore.BLACK,
-        title,
-        colorama.Fore.RESET,
-        colorama.Back.RESET,
-        colorama.Style.RESET_ALL,
-    ]
-    print("".join(title))
-    data = [
-        colorama.Fore.BLACK,
-        colorama.Style.BRIGHT,
-        data,
-        colorama.Style.RESET_ALL,
-        colorama.Fore.RESET,
-    ]
-    print("".join(data))
-
-
 def print_environment_vars(env):
     """
     Print ``Ansible`` and ``Molecule`` environment variables and returns None.
@@ -77,18 +54,17 @@ def print_environment_vars(env):
     :return: None
     """
     ansible_env = {k: v for (k, v) in env.items() if "ANSIBLE_" in k}
-    print_debug("ANSIBLE ENVIRONMENT", safe_dump(ansible_env))
+    LOG.debug("ANSIBLE ENVIRONMENT: %s", ansible_env)
 
     molecule_env = {k: v for (k, v) in env.items() if "MOLECULE_" in k}
-    print_debug("MOLECULE ENVIRONMENT", safe_dump(molecule_env))
+    LOG.debug("MOLECULE ENVIRONMENT: %s", molecule_env)
 
     combined_env = ansible_env.copy()
     combined_env.update(molecule_env)
-    print_debug(
-        "SHELL REPLAY",
+    LOG.debug(
+        "SHELL REPLAY: %s",
         " ".join(["{}={}".format(k, v) for (k, v) in sorted(combined_env.items())]),
     )
-    print()
 
 
 def sysexit(code: int = 1) -> None:
@@ -107,8 +83,9 @@ def sysexit_with_message(
             detail_str = safe_dump(detail)
         else:
             detail_str = str(detail)
-        print(detail_str)
-    LOG.critical(msg)
+        console.print(detail_str)
+    if msg:
+        LOG.critical(msg)
     sysexit(code)
 
 
@@ -124,8 +101,7 @@ def run_command(cmd, debug=False):
         # WARN(retr0h): Uses an internal ``sh`` data structure to dig
         # the environment out of the ``sh.command`` object.
         print_environment_vars(cmd._partial_call_args.get("env", {}))
-        print_debug("COMMAND", str(cmd))
-        print()
+        LOG.debug("COMMAND: %s", str(cmd))
     return cmd(_truncate_exc=False)
 
 

@@ -1,5 +1,6 @@
 """Ansible Galaxy dependencies for lists of roles."""
 import os
+from pathlib import Path
 
 from molecule import logger, util
 from molecule.dependency.ansible_galaxy.base import AnsibleGalaxyBase
@@ -35,4 +36,6 @@ class Roles(AnsibleGalaxyBase):
 
     @property
     def requirements_file(self):
-        return self.options["role-file"]
+        return Path(self.options["role-file"]).relative_to(
+            self._config.scenario.directory
+        )

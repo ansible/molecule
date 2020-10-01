@@ -23,11 +23,11 @@ jobs:
           - tox_env: lint
           - tox_env: docs
           - tox_env: py36
-            PREFIX: PYTEST_REQPASS=433
+            PREFIX: PYTEST_REQPASS=418
           - tox_env: py37
-            PREFIX: PYTEST_REQPASS=433
+            PREFIX: PYTEST_REQPASS=418
           - tox_env: py38
-            PREFIX: PYTEST_REQPASS=433
+            PREFIX: PYTEST_REQPASS=418
           - tox_env: packaging
           - tox_env: dockerfile
           - tox_env: build-containers

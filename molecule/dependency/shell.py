@@ -21,6 +21,7 @@
 
 import os
 import shlex
+import sys
 
 import sh
 
@@ -103,7 +104,7 @@ class Shell(base.Base):
         self._sh_command = getattr(sh, command)
         # Reconstruct command with remaining args.
         self._sh_command = self._sh_command.bake(
-            args, _env=self.env, _out=LOG.out, _err=LOG.error
+            args, _env=self.env, _out=LOG.out, _err=sys.stderr
         )
 
     def execute(self):

@@ -189,8 +189,9 @@ def test_execute_does_not_execute_when_no_requirements_file(
 
     assert not patched_run_command.called
 
-    msg = "Skipping, missing the requirements file."
-    patched_logger_warning.assert_called_once_with(msg)
+    msg = "Skipped missing requirements file %s"
+    assert patched_logger_warning.call_count == 1
+    assert patched_logger_warning.call_args[0][0] == msg
 
 
 def test_execute_bakes(

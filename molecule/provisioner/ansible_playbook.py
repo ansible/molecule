@@ -29,7 +29,7 @@ LOG = logger.get_logger(__name__)
 class AnsiblePlaybook(object):
     """Privisioner Playbook."""
 
-    def __init__(self, playbook, config, out=LOG.out, err=LOG.error):
+    def __init__(self, playbook, config, out=LOG.out, err=LOG.out):
         """
         Set up the requirements to execute ``ansible-playbook`` and returns \
         None.
@@ -76,7 +76,7 @@ class AnsiblePlaybook(object):
             _cwd=self._config.scenario.directory,
             _env=self._env,
             _out=self._out,
-            _err=self._err
+            _err=self._err,
         )
 
         ansible_args = list(self._config.provisioner.ansible_args) + list(
@@ -106,6 +106,7 @@ class AnsiblePlaybook(object):
             return cmd.stdout.decode("utf-8")
         except sh.ErrorReturnCode as e:
             out = e.stdout.decode("utf-8")
+            LOG.error("Command returned exit code %s: %s", e.exit_code, e)
             util.sysexit_with_message(str(out), e.exit_code)
 
     def add_cli_arg(self, name, value):

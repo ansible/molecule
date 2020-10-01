@@ -22,6 +22,7 @@ import contextlib
 import os
 import random
 import string
+import sys
 
 import pytest
 
@@ -42,7 +43,7 @@ def run_command(cmd, env=os.environ, log=True):
     return util.run_command(cmd)
 
 
-def _rebake_command(cmd, env, out=LOG.out, err=LOG.error):
+def _rebake_command(cmd, env, out=LOG.out, err=sys.stderr):
     return cmd.bake(_env=dict(env), _out=out, _err=err)
 
 

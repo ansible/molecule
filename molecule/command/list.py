@@ -26,6 +26,7 @@ import tabulate
 
 from molecule import logger, scenarios, util
 from molecule.command import base
+from molecule.console import console
 from molecule.status import Status
 
 LOG = logger.get_logger(__name__)
@@ -129,7 +130,7 @@ def _print_tabulate_data(headers, data, table_format):  # pragma: no cover
     :param data:  A list of tabular data to display.
     :returns: None
     """
-    print(tabulate.tabulate(data, headers, tablefmt=table_format))
+    console.print(tabulate.tabulate(data, headers, tablefmt=table_format))
 
 
 def _print_yaml_data(headers, data):  # pragma: no cover

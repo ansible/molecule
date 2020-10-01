@@ -22,6 +22,7 @@
 import abc
 import copy
 import os
+import sys
 
 import sh
 
@@ -109,7 +110,7 @@ class AnsibleGalaxyBase(base.Base):
         self._sh_command = getattr(sh, self.command)
         self._sh_command = self._sh_command.bake(*self.COMMANDS)
         self._sh_command = self._sh_command.bake(
-            options, *verbose_flag, _env=self.env, _out=LOG.out, _err=LOG.error
+            options, *verbose_flag, _env=self.env, _out=LOG.out, _err=sys.stderr
         )
 
     def execute(self):
@@ -119,8 +120,8 @@ class AnsibleGalaxyBase(base.Base):
             return
 
         if not self._has_requirements_file():
-            msg = "Skipping, missing the requirements file."
-            LOG.warning(msg)
+            msg = "Skipped missing requirements file %s"
+            LOG.warning(msg, self.requirements_file)
             return
 
         if self._sh_command is None:

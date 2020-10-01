@@ -25,7 +25,6 @@ from functools import lru_cache
 
 import click
 import click_completion
-import colorama
 import pkg_resources
 from click_help_colors import _colorize
 
@@ -33,11 +32,9 @@ import molecule
 from molecule import command
 from molecule.command.base import click_group_ex
 from molecule.config import MOLECULE_DEBUG
-from molecule.logger import should_do_markup
 from molecule.util import lookup_config_file
 
 click_completion.init()
-colorama.init(autoreset=True, strip=not should_do_markup())
 
 LOCAL_CONFIG_SEARCH = ".config/molecule/config.yml"
 LOCAL_CONFIG = lookup_config_file(LOCAL_CONFIG_SEARCH)

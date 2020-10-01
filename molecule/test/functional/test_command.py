@@ -18,12 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import os
-
 import pytest
 import sh
-
-from molecule.scenario import ephemeral_directory
 
 
 @pytest.fixture
@@ -138,10 +134,11 @@ def test_command_dependency_shell(
     cmd = sh.molecule.bake("dependency", **options)
     pytest.helpers.run_command(cmd)
 
-    dependency_role = os.path.join(
-        ephemeral_directory("molecule"), "dependency", "shell", "roles", "timezone"
-    )
-    assert os.path.isdir(dependency_role)
+    # Commented because we no longer install timezone
+    # dependency_role = os.path.join(
+    #     ephemeral_directory("molecule"), "dependency", "shell", "roles", "timezone"
+    # )
+    # assert os.path.isdir(dependency_role), f"{dependency_role} not a directory"
 
 
 @pytest.mark.extensive
