@@ -73,7 +73,7 @@ class CustomLogger(logging.getLoggerClass()):  # type: ignore  # see https://sam
 
     def __init__(self, name, level=logging.NOTSET):
         """Construct CustomLogger."""
-        super(logging.getLoggerClass(), self).__init__(name, level)
+        super(CustomLogger, self).__init__(name, level)
         logging.addLevelName(SUCCESS, "SUCCESS")
         logging.addLevelName(OUT, "OUT")
 
