@@ -20,10 +20,14 @@
 """Logging Module."""
 
 import logging
+import sys
+from functools import lru_cache
 
-from rich.logging import RichHandler
+from enrich.console import Console
+from enrich.logging import RichHandler
 
 from molecule.console import console
+from molecule.text import chomp
 
 SUCCESS = 100
 OUT = 101
@@ -50,7 +54,7 @@ class CustomLogger(logging.getLoggerClass()):  # type: ignore  # see https://sam
 
     def __init__(self, name, level=logging.NOTSET):
         """Construct CustomLogger."""
-        super(CustomLogger, self).__init__(name, level)
+        super(CustomLogger, self).__init__(name, level=level)
         logging.addLevelName(SUCCESS, "SUCCESS")
         logging.addLevelName(OUT, "OUT")
 
@@ -59,8 +63,9 @@ class CustomLogger(logging.getLoggerClass()):  # type: ignore  # see https://sam
             self._log(SUCCESS, msg, args, **kwargs)
 
     def out(self, msg, *args, **kwargs):
+        msg = chomp(msg)
         if self.isEnabledFor(OUT):
-            self._log(OUT, msg, args, **kwargs)
+            console.print(msg, args, **kwargs)
 
 
 class TrailingNewlineFormatter(logging.Formatter):
@@ -72,6 +77,7 @@ class TrailingNewlineFormatter(logging.Formatter):
         return super(TrailingNewlineFormatter, self).format(record)
 
 
+@lru_cache()
 def get_logger(name=None) -> logging.Logger:
     """
     Build a logger with the given name and returns the logger.
@@ -86,9 +92,12 @@ def get_logger(name=None) -> logging.Logger:
     logger.setLevel(logging.DEBUG)
 
     handler = RichHandler(
-        console=console, show_time=False, show_path=False, rich_tracebacks=True
-    )
+        console=LOGGING_CONSOLE, show_time=False, show_path=False, markup=True
+    )  # type: ignore
     logger.addHandler(handler)
     logger.propagate = False
 
     return logger
+
+
+LOGGING_CONSOLE = Console(file=sys.stderr, force_terminal=True)
