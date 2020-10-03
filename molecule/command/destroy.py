@@ -79,9 +79,9 @@ class Destroy(base.Base):
         Load an env file to read variables from when rendering
         molecule.yml.
 
-    .. program:: molecule --parallel destroy
+    .. program:: molecule destroy --parallel
 
-    .. option:: molecule --parallel destroy
+    .. option:: molecule destroy --parallel
 
        Run in parallelizable mode.
     """
