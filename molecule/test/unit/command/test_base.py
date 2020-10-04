@@ -91,6 +91,16 @@ def _patched_sysexit(mocker):
     return mocker.patch("molecule.util.sysexit")
 
 
+@pytest.fixture
+def _patched_ci_env(request, monkeypatch):
+    """Parametrize tests with and without CI env vars."""
+    for envvar, value in request.param.items():
+        if value is None:
+            monkeypatch.delenv(envvar, raising=False)
+        else:
+            monkeypatch.setenv(envvar, value)
+
+
 def test_config_private_member(_instance):
     assert isinstance(_instance._config, config.Config)
 
@@ -217,7 +227,12 @@ def test_execute_cmdline_scenarios_exit_nodestroy(
     assert not _patched_sysexit.called
 
 
-def test_execute_subcommand(config_instance):
+@pytest.mark.parametrize(
+    "_patched_ci_env",
+    [{"TRAVIS": None, "CI": None}, {"TRAVIS": "true", "CI": "true"}],
+    indirect=True,
+)
+def test_execute_subcommand(config_instance, _patched_ci_env):
     # scenario's config.action is mutated in-place for every sequence action,
     # so make sure that is currently set to the executed action
     assert config_instance.action != "list"
