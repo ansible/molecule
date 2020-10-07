@@ -1,9 +1,9 @@
 ****************
-Ansible Molecule
+My Molecule
 ****************
 
 .. image:: https://img.shields.io/pypi/v/molecule
-   :target: https://pypi.org/project/molecule/
+   :target: https://pypi.org/project/molecule-1/
    :alt: PyPI Package
 
 .. image:: https://readthedocs.org/projects/molecule/badge/?version=latest
@@ -26,7 +26,7 @@ Ansible Molecule
    :alt: Discussions
 
 .. image:: https://img.shields.io/badge/license-MIT-brightgreen.svg
-   :target: LICENSE
+   :target: CORSERP
    :alt: Repository License
 
 About Ansible Molecule
