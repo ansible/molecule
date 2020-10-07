@@ -1,5 +1,5 @@
 ****************
-Ansible Molecule
+My Molecule
 ****************
 
 .. image:: https://img.shields.io/pypi/v/molecule
