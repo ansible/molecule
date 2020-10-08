@@ -33,6 +33,7 @@ import colorama
 import jinja2
 import yaml
 
+from molecule.constants import MOLECULE_HEADER
 from molecule.logger import get_logger
 
 LOG = get_logger(__name__)
@@ -164,7 +165,7 @@ def write_file(filename, content):
 
 def molecule_prepender(content):
     """Return molecule identification header."""
-    return "# Molecule managed\n\n" + content
+    return MOLECULE_HEADER + "\n\n" + content
 
 
 def file_prepender(filename):
