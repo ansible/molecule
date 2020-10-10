@@ -29,6 +29,7 @@ import pytest
 import sh
 
 from molecule import util
+from molecule.constants import MOLECULE_HEADER
 
 colorama.init(autoreset=True)
 
@@ -233,7 +234,7 @@ def test_write_file(temp_dir):
 
 
 def molecule_prepender(content):
-    x = "# Molecule managed\n\nfoo bar"
+    x = f"{MOLECULE_HEADER}\nfoo bar"
 
     assert x == util.file_prepender("foo bar")
 
