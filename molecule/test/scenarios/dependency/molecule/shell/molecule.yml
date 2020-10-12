@@ -2,7 +2,10 @@
 dependency:
   name: shell
   command: >
-    ansible-galaxy collection install -p "${MOLECULE_EPHEMERAL_DIRECTORY}/collections" community.molecule
+    bash -c "
+    ansible-galaxy collection install -p '${MOLECULE_EPHEMERAL_DIRECTORY}/collections' community.molecule &&
+    ansible-galaxy role install -p '${MOLECULE_EPHEMERAL_DIRECTORY}/roles' ssbarnea.ansible_role_helloworld
+    "
 driver:
   name: delegated
 platforms:
@@ -10,8 +13,6 @@ platforms:
     image: ${TEST_BASE_IMAGE}
 provisioner:
   name: ansible
-  env:
-    ANSIBLE_ROLES_PATH: ../../../../../resources/roles/
 scenario:
   name: shell
 verifier:
