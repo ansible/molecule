@@ -18,12 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import os
-
 import pytest
 import sh
-
-from molecule.scenario import ephemeral_directory
 
 
 @pytest.fixture
@@ -103,45 +99,21 @@ def test_command_create(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     "scenario_to_test, driver_name, scenario_name",
     [
-        ("dependency", "delegated", "ansible-galaxy"),
+        pytest.param("dependency", "delegated", "shell", id="shell"),
+        pytest.param("dependency", "delegated", "ansible-galaxy", id="galaxy"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
-def test_command_dependency_ansible_galaxy(
-    request, scenario_to_test, with_scenario, scenario_name
-):
+def test_command_dependency(request, scenario_to_test, with_scenario, scenario_name):
     options = {"scenario_name": scenario_name}
     cmd = sh.molecule.bake("dependency", **options)
-    pytest.helpers.run_command(cmd)
+    result = pytest.helpers.run_command(cmd, log=False)
+    assert result.exit_code == 0
 
-    # Not testing the outcome because we dot effectively install any role,
-    # currently we cannot do this in offline mode.
-    # dependency_role = os.path.join(
-    #     ephemeral_directory("molecule"),
-    #     "dependency",
-    #     "ansible-galaxy",
-    #     "roles",
-    #     "timezone",
-    # )
-    # assert os.path.isdir(dependency_role)
-
-
-@pytest.mark.parametrize(
-    "scenario_to_test, driver_name, scenario_name",
-    [("dependency", "delegated", "shell")],
-    indirect=["scenario_to_test", "driver_name", "scenario_name"],
-)
-def test_command_dependency_shell(
-    request, scenario_to_test, with_scenario, scenario_name
-):
-    options = {"scenario_name": scenario_name}
-    cmd = sh.molecule.bake("dependency", **options)
-    pytest.helpers.run_command(cmd)
-
-    dependency_role = os.path.join(
-        ephemeral_directory("molecule"), "dependency", "shell", "roles", "timezone"
-    )
-    assert os.path.isdir(dependency_role)
+    # Validate that depdendency worked by running converge, which make use
+    cmd = sh.molecule.bake("converge", **options)
+    result = pytest.helpers.run_command(cmd, log=False)
+    assert result.exit_code == 0
 
 
 @pytest.mark.extensive
