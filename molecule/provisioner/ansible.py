@@ -411,6 +411,9 @@ class Ansible(base.Base):
     def default_env(self):
         # Finds if the current project is part of an ansible_collections hierarchy
         collection_indicator = "ansible_collections"
+        # isolating test environment by injects ephemeral scenario directory on
+        # top of the collection_path_list. This prevents dependency commands
+        # from installing dependencies to user list of collections.
         collections_path_list = [
             util.abs_path(
                 os.path.join(self._config.scenario.ephemeral_directory, "collections")

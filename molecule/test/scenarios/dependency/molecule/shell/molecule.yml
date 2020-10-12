@@ -1,7 +1,8 @@
 ---
 dependency:
   name: shell
-  command: $MOLECULE_SCENARIO_DIRECTORY/run.bash
+  command: >
+    ansible-galaxy collection install -p "${MOLECULE_EPHEMERAL_DIRECTORY}/collections" community.molecule
 driver:
   name: delegated
 platforms:
