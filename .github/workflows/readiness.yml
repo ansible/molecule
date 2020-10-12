@@ -3,8 +3,6 @@ name: readiness
 on:
   pull_request_target:
     types: [opened, labeled, unlabeled, synchronize]
-  pull_request:
-    types: [opened, labeled, unlabeled, synchronize]
 jobs:
   labels:
     name: labels
@@ -15,3 +13,4 @@ jobs:
         with:
           github-token: '${{ secrets.GITHUB_TOKEN }}'
           valid-labels: 'bug, enhancement, feature, skip-changelog, deprecated, major'
+          pull-request-number: '${{ github.event.pull_request.number }}'
