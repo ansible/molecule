@@ -137,6 +137,6 @@ def test_get_ansible_playbook_with_driver_key_when_playbook_key_missing(
 def test_get_bundled_driver_playbook(_instance):
     result = _instance._get_bundled_driver_playbook("create")
     parts = pytest.helpers.os_split(result)
-    x = ("ansible", "playbooks", "delegated", "create.yml")
+    x = ("molecule", "driver", "playbooks", "create.yml")
 
     assert x == parts[-4:]

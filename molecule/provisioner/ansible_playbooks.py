@@ -110,11 +110,22 @@ class AnsiblePlaybooks(object):
                 return playbook
 
     def _get_bundled_driver_playbook(self, section):
-        return self._config.driver.get_playbook(section) or os.path.join(
+        path = self._config.driver.get_playbook(section)
+        if path:
+            return path
+        path = os.path.join(
             self._get_playbook_directory(),
             self._config.driver.name,
             self._config.config["provisioner"]["playbooks"][section],
         )
+        if os.path.exists(path):
+            return path
+        path = os.path.join(
+            self._config.driver._path,
+            "playbooks",
+            self._config.config["provisioner"]["playbooks"][section],
+        )
+        return path
 
     def _normalize_playbook(self, playbook):
         """
