@@ -36,6 +36,18 @@ Pip
 
 :std:doc:`pip <pip:usage>` is the only supported installation method.
 
+.. warning::
+
+  Ansible is not listed as a direct dependency of molecule package because
+  we only call it as a command line tool. You may want to install it
+  using your distribution package installer. If you want to also install a
+  compatible  version of ansible, make use of provided ``ansible`` or
+  ``ansible-base`` extras:
+
+  .. code-block:: bash
+
+      $ python3 -m pip install "molecule[ansible]"  # or molecule[ansible-base]
+
 Keep in mind that on selinux supporting systems, if you install into a virtual
 environment, you may face :gh:`issue <ansible/ansible/issues/34340>` even
 if selinux is not enabled or is configured to be permissive.

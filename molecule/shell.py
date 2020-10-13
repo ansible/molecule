@@ -19,7 +19,6 @@
 #  DEALINGS IN THE SOFTWARE.
 """Molecule Shell Module."""
 
-import subprocess
 import sys
 from functools import lru_cache
 
@@ -32,7 +31,7 @@ from click_help_colors import _colorize
 import molecule
 from molecule import command
 from molecule.command.base import click_group_ex
-from molecule.config import MOLECULE_DEBUG
+from molecule.config import MOLECULE_DEBUG, ansible_version
 from molecule.logger import should_do_markup
 from molecule.util import lookup_config_file
 
@@ -52,22 +51,10 @@ def _version_string() -> str:
     color = "bright_yellow" if v.is_prerelease else "green"  # type: ignore
     msg = "molecule %s\n" % _colorize(molecule.__version__, color)
 
-    # extract ansible from the command line
-    ansible_version = (
-        subprocess.run(
-            ["ansible", "--version"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            universal_newlines=True,
-        )
-        .stdout.splitlines()[0]
-        .split()[1]
-    )
-
     msg += _colorize(
         "   ansible==%s python==%s.%s"
         % (
-            ansible_version,
+            ansible_version(),
             sys.version_info[0],
             sys.version_info[1],
         ),
