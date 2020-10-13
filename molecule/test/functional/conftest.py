@@ -30,6 +30,7 @@ import pytest
 import sh
 
 from molecule import logger, util
+from molecule.config import ansible_version
 from molecule.test.conftest import change_dir_to
 
 LOG = logger.get_logger(__name__)
@@ -270,14 +271,6 @@ def supports_docker():
     return True
 
 
-def min_ansible(version):
+def min_ansible(version: str) -> bool:
     """Ensure current Ansible is newer than a given a minimal one."""
-    try:
-        from ansible.release import __version__
-
-        return pkg_resources.parse_version(__version__) >= pkg_resources.parse_version(
-            version
-        )
-    except ImportError as exception:
-        LOG.error("Unable to parse Ansible version", exc_info=exception)
-        return False
+    return ansible_version() >= ansible_version(version)
