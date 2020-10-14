@@ -19,12 +19,11 @@
 #  DEALINGS IN THE SOFTWARE.
 """Shell Dependency Module."""
 
-import os
 import shlex
 
 import sh
 
-from molecule import logger, util
+from molecule import logger
 from molecule.dependency import base
 
 LOG = logger.get_logger(__name__)
@@ -34,8 +33,8 @@ class Shell(base.Base):
     """
     ``Shell`` is an alternate dependency manager.
 
-    It is intended to run a command in situations where `Ansible Galaxy`_ and
-    `Gilt`_ don't suffice.
+    It is intended to run a command in situations where `Ansible Galaxy`_
+    don't suffice.
 
     The ``command`` to execute is required, and is relative to Molecule's
     project directory when referencing a script not in $PATH.
@@ -86,10 +85,6 @@ class Shell(base.Base):
     @property
     def default_options(self):
         return {}
-
-    @property
-    def default_env(self):
-        return util.merge_dicts(os.environ, self._config.env)
 
     def bake(self):
         """

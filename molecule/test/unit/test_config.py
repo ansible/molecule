@@ -23,7 +23,7 @@ import os
 import pytest
 
 from molecule import config, platforms, scenario, state, util
-from molecule.dependency import ansible_galaxy, gilt, shell
+from molecule.dependency import ansible_galaxy, shell
 from molecule.provisioner import ansible
 from molecule.verifier.ansible import Ansible as AnsibleVerifier
 
@@ -86,18 +86,6 @@ def test_dependency_property(config_instance):
 
 
 @pytest.fixture
-def _config_dependency_gilt_section_data():
-    return {"dependency": {"name": "gilt"}}
-
-
-@pytest.mark.parametrize(
-    "config_instance", ["_config_dependency_gilt_section_data"], indirect=True
-)
-def test_dependency_property_is_gilt(config_instance):
-    assert isinstance(config_instance.dependency, gilt.Gilt)
-
-
-@pytest.fixture
 def _config_dependency_shell_section_data():
     return {"dependency": {"name": "shell", "command": "bin/command"}}
 
@@ -126,7 +114,7 @@ def test_env(config_instance):
         "MOLECULE_PROJECT_DIRECTORY": config_instance.project_directory,
         "MOLECULE_INSTANCE_CONFIG": config_instance.driver.instance_config,
         "MOLECULE_DEPENDENCY_NAME": "galaxy",
-        "MOLECULE_DRIVER_NAME": "docker",
+        "MOLECULE_DRIVER_NAME": "delegated",
         "MOLECULE_PROVISIONER_NAME": "ansible",
         "MOLECULE_SCENARIO_NAME": "default",
         "MOLECULE_STATE_FILE": config_instance.state.state_file,
@@ -174,7 +162,7 @@ def test_get_driver_name_from_cli(config_instance):
 
 
 def test_get_driver_name(config_instance):
-    assert "docker" == config_instance._get_driver_name()
+    assert "delegated" == config_instance._get_driver_name()
 
 
 def test_get_driver_name_raises_when_different_driver_used(
@@ -328,7 +316,7 @@ def test_validate_exists_when_validation_fails(
 
     assert 1 == e.value.code
 
-    msg = "Failed to validate.\n\nvalidation errors"
+    msg = f"Failed to validate {config_instance.molecule_file}\n\nvalidation errors"
     patched_logger_critical.assert_called_once_with(msg)
 
 

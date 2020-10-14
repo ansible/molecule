@@ -50,7 +50,7 @@ def _molecule_dependency_galaxy_section_data():
 
 @pytest.fixture
 def _molecule_driver_section_data():
-    return {"driver": {"name": "docker", "options": {"managed": True}}}
+    return {"driver": {"name": "delegated", "options": {"managed": True}}}
 
 
 @pytest.fixture

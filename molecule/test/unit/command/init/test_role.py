@@ -29,7 +29,7 @@ from molecule.command.init import role
 def _command_args():
     return {
         "dependency_name": "galaxy",
-        "driver_name": "docker",
+        "driver_name": "delegated",
         "provisioner_name": "ansible",
         "role_name": "test-role",
         "scenario_name": "default",

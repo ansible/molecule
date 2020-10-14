@@ -411,6 +411,9 @@ class Ansible(base.Base):
     def default_env(self):
         # Finds if the current project is part of an ansible_collections hierarchy
         collection_indicator = "ansible_collections"
+        # isolating test environment by injects ephemeral scenario directory on
+        # top of the collection_path_list. This prevents dependency commands
+        # from installing dependencies to user list of collections.
         collections_path_list = [
             util.abs_path(
                 os.path.join(self._config.scenario.ephemeral_directory, "collections")
@@ -596,7 +599,7 @@ class Ansible(base.Base):
                     "molecule_file": "{{ lookup('env', 'MOLECULE_FILE') }}",
                     "molecule_ephemeral_directory": "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}",
                     "molecule_scenario_directory": "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}",
-                    "molecule_yml": "{{ lookup('file', molecule_file) | molecule_from_yaml }}",
+                    "molecule_yml": "{{ lookup('file', molecule_file) | from_yaml }}",
                     "molecule_instance_config": "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}",
                     "molecule_no_log": "{{ lookup('env', 'MOLECULE_NO_LOG') or not "
                     "molecule_yml.provisioner.log|default(False) | bool }}",
@@ -924,7 +927,10 @@ class Ansible(base.Base):
                 util.abs_path(os.path.join(self._config.project_directory, "library")),
                 util.abs_path(
                     os.path.join(
-                        os.path.expanduser("~"), ".ansible", "plugins", "modules",
+                        os.path.expanduser("~"),
+                        ".ansible",
+                        "plugins",
+                        "modules",
                     )
                 ),
                 "/usr/share/ansible/plugins/modules",

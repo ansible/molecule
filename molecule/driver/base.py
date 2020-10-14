@@ -50,7 +50,6 @@ class Driver(object):
 
         :returns: str
         """
-        pass
 
     @name.setter  # type: ignore
     @abc.abstractmethod
@@ -60,7 +59,6 @@ class Driver(object):
 
         :returns: None
         """
-        pass
 
     @property
     def testinfra_options(self):
@@ -82,7 +80,6 @@ class Driver(object):
 
         :returns: str
         """
-        pass
 
     @abc.abstractproperty
     def default_ssh_connection_options(self):  # pragma: no cover
@@ -91,7 +88,6 @@ class Driver(object):
 
         :returns: list
         """
-        pass
 
     @abc.abstractproperty
     def default_safe_files(self):  # pragma: no cover
@@ -100,7 +96,6 @@ class Driver(object):
 
         :returns: list
         """
-        pass
 
     @abc.abstractmethod
     def login_options(self, instance_name):  # pragma: no cover
@@ -110,7 +105,6 @@ class Driver(object):
         :param instance_name: A string containing the instance to login to.
         :returns: dict
         """
-        pass
 
     @abc.abstractmethod
     def ansible_connection_options(self, instance_name):  # pragma: no cover
@@ -121,7 +115,6 @@ class Driver(object):
         :param instance_name: A string containing the instance to login to.
         :returns: dict
         """
-        pass
 
     @abc.abstractmethod
     def sanity_checks(self):
@@ -136,7 +129,6 @@ class Driver(object):
 
         :returns: None
         """
-        pass
 
     @property
     def options(self):
@@ -274,7 +266,11 @@ class Driver(object):
         class, allowing driver writers to define playbooks without having
         to override this method.
         """
-        p = os.path.join(self._path, "playbooks", step + ".yml",)
+        p = os.path.join(
+            self._path,
+            "playbooks",
+            step + ".yml",
+        )
         if os.path.isfile(p):
             return p
 
@@ -291,4 +287,3 @@ class Driver(object):
         by molecule, regardless the scenario name.  Molecule will use metadata
         like labels or tags to annotate resources allocated by it.
         """
-        pass

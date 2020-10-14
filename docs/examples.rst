@@ -21,7 +21,7 @@ follows.
         -v "$(pwd)":/tmp/$(basename "${PWD}"):ro \
         -v /var/run/docker.sock:/var/run/docker.sock \
         -w /tmp/$(basename "${PWD}") \
-        quay.io/ansible/molecule:2.20 \
+        quay.io/ansible/molecule:3.0.8 \
         molecule test
 
 .. _`quay.io`: https://quay.io/repository/ansible/molecule

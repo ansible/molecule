@@ -82,11 +82,6 @@ def _model_dependency_allows_galaxy_section_data():
 
 
 @pytest.fixture
-def _model_dependency_allows_gilt_section_data():
-    return {"dependency": {"name": "gilt"}}
-
-
-@pytest.fixture
 def _model_dependency_allows_shell_section_data():
     return {"dependency": {"name": "shell"}}
 
@@ -95,7 +90,6 @@ def _model_dependency_allows_shell_section_data():
     "_config",
     [
         ("_model_dependency_allows_galaxy_section_data"),
-        ("_model_dependency_allows_gilt_section_data"),
         ("_model_dependency_allows_shell_section_data"),
     ],
     indirect=True,

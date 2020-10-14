@@ -40,7 +40,8 @@ You should then see a ``my-new-role`` folder in your current directory.
 
     For future reference, if you want to initialize Molecule within an
     existing role, you would use the ``molecule init scenario -r
-    my-role-name`` command.
+    my-role-name`` command from within the role's directory (e.g.
+    ``my-role-name/``).
 
 Molecule Scenarios
 ------------------

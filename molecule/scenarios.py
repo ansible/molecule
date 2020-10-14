@@ -29,8 +29,7 @@ LOG = logger.get_logger(__name__)
 
 
 class Scenarios(object):
-    """The Scenarios object consists of one to many scenario objects Molecule will \
-    execute."""
+    """The Scenarios groups one or more scenario objects Molecule will execute."""
 
     def __init__(self, configs, scenario_name=None):
         """

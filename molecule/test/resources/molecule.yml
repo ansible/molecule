@@ -2,10 +2,7 @@
 dependency:
   name: galaxy
 driver:
-  name: docker
-platforms:
-  - name: instance
-    image: ${TEST_BASE_IMAGE}
+  name: delegated
 provisioner:
   name: ansible
 scenario:

@@ -19,7 +19,7 @@ and run ``molecule test`` in ubuntu.
 
   ---
   name: Molecule Test
-  on: [push, commit]
+  on: [push, pull_request]
   jobs:
     build:
       runs-on: ubuntu-latest
@@ -29,11 +29,11 @@ and run ``molecule test`` in ubuntu.
           python-version: [3.6, 3.7]
 
       steps:
-        - uses: actions/checkout@v1
+        - uses: actions/checkout@v2
           with:
             path: molecule_demo
         - name: Set up Python ${{ matrix.python-version }}
-          uses: actions/setup-python@v1
+          uses: actions/setup-python@v2
           with:
             python-version: ${{ matrix.python-version }}
         - name: Install dependencies
@@ -71,8 +71,6 @@ A ``.travis.yml`` testing a role named foo1 with the Docker driver.
     language: python
     services:
       - docker
-    before_install:
-      - sudo apt-get -qq update
     install:
       - python3 -m pip install molecule
       # - python3 -m pip install required driver (e.g. docker, shade, boto, apache-libcloud)
@@ -88,8 +86,6 @@ A ``.travis.yml`` using `Tox`_ as described below.
     language: python
     services:
       - docker
-    before_install:
-      - sudo apt-get -qq update
     install:
       - python3 -m pip install tox-travis
     script:
@@ -111,8 +107,8 @@ Here is an example using Docker in Docker
       - docker:dind
 
     before_script:
-      - apk update && apk add --no-cache
-        python3-dev py3-pip gcc git curl build-base
+      - apk add --no-cache
+        python3 python3-dev py3-pip gcc git curl build-base
         autoconf automake py3-cryptography linux-headers
         musl-dev libffi-dev openssl-dev openssh
       - docker info

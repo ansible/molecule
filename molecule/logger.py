@@ -22,16 +22,28 @@
 import logging
 import os
 import sys
+from typing import Any
 
 import colorama
-from ansible.module_utils.parsing.convert_bool import boolean as to_bool
+
+
+# Based on Ansible implementation
+def to_bool(a: Any) -> bool:
+    """Return a bool for the arg."""
+    if a is None or isinstance(a, bool):
+        return bool(a)
+    if isinstance(a, str):
+        a = a.lower()
+    if a in ("yes", "on", "1", "true", 1):
+        return True
+    return False
 
 
 def should_do_markup() -> bool:
     """Decide about use of ANSI colors."""
     py_colors = os.environ.get("PY_COLORS", None)
     if py_colors is not None:
-        return to_bool(py_colors, strict=False)
+        return to_bool(py_colors)
 
     return sys.stdout.isatty() and os.environ.get("TERM") != "dumb"
 
@@ -61,7 +73,7 @@ class CustomLogger(logging.getLoggerClass()):  # type: ignore  # see https://sam
 
     def __init__(self, name, level=logging.NOTSET):
         """Construct CustomLogger."""
-        super(logging.getLoggerClass(), self).__init__(name, level)
+        super(CustomLogger, self).__init__(name, level)
         logging.addLevelName(SUCCESS, "SUCCESS")
         logging.addLevelName(OUT, "OUT")
 

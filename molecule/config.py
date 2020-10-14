@@ -20,21 +20,25 @@
 """Config Module."""
 
 import os
+import subprocess
+import sys
 from uuid import uuid4
 
-import pkg_resources
-from ansible.module_utils.parsing.convert_bool import boolean
+from packaging.version import Version
 
 from molecule import api, interpolation, logger, platforms, scenario, state, util
-from molecule.dependency import ansible_galaxy, gilt, shell
+from molecule.constants import RC_SETUP_ERROR
+from molecule.dependency import ansible_galaxy, shell
 from molecule.model import schema_v3
 from molecule.provisioner import ansible
+from molecule.util import boolean, lru_cache
 
 LOG = logger.get_logger(__name__)
 MOLECULE_DEBUG = boolean(os.environ.get("MOLECULE_DEBUG", "False"))
 MOLECULE_DIRECTORY = "molecule"
 MOLECULE_FILE = "molecule.yml"
 MOLECULE_KEEP_STRING = "MOLECULE_"
+DEFAULT_DRIVER = "delegated"
 
 
 # https://stackoverflow.com/questions/16017397/injecting-function-call-after-init-with-decorator  # noqa
@@ -95,20 +99,10 @@ class Config(object, metaclass=NewInitCaller):
         util.write_file(self.config_file, util.safe_dump(self.config))
 
     @property
-    def ansible_version(self):
-        """Return current version of ansible."""
-        try:
-            ansible_version = pkg_resources.get_distribution("ansible-base").version
-        except Exception:
-            ansible_version = pkg_resources.get_distribution("ansible").version
-
-        return pkg_resources.parse_version(ansible_version)
-
-    @property
     def ansible_collections_path(self):
         """Return collection path variable for current version of Ansible."""
         # https://github.com/ansible/ansible/pull/70007
-        if self.ansible_version >= pkg_resources.parse_version("2.10.0.dev0"):
+        if ansible_version() >= ansible_version("2.10.0.dev0"):
             return "ANSIBLE_COLLECTIONS_PATH"
         else:
             return "ANSIBLE_COLLECTIONS_PATHS"
@@ -159,8 +153,6 @@ class Config(object, metaclass=NewInitCaller):
         dependency_name = self.config["dependency"]["name"]
         if dependency_name == "galaxy":
             return ansible_galaxy.AnsibleGalaxy(self)
-        elif dependency_name == "gilt":
-            return gilt.Gilt(self)
         elif dependency_name == "shell":
             return shell.Shell(self)
 
@@ -338,7 +330,7 @@ class Config(object, metaclass=NewInitCaller):
                 "env": {},
             },
             "driver": {
-                "name": "docker",
+                "name": "delegated",
                 "provider": {"name": None},
                 "options": {"managed": True},
                 "ssh_connection_options": [],
@@ -426,7 +418,7 @@ class Config(object, metaclass=NewInitCaller):
 
         errors = schema_v3.validate(self.config)
         if errors:
-            msg = "Failed to validate.\n\n{}".format(errors)
+            msg = f"Failed to validate {self.molecule_file}\n\n{errors}"
             util.sysexit_with_message(msg)
 
         msg = "Validation completed successfully."
@@ -454,3 +446,31 @@ def set_env_from_file(env, env_file):
         return env
 
     return env
+
+
+@lru_cache()
+def ansible_version(version: str = None) -> Version:
+    """Return current Version object for Ansible.
+
+    If version is not mentioned, it returns current version as detected.
+    When version argument is mentioned, it return converts the version string
+    to Version object in order to make it usable in comparisons.
+    """
+    if not version:
+        try:
+            version = (
+                subprocess.run(
+                    ["ansible", "--version"],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    universal_newlines=True,
+                )
+                .stdout.splitlines()[0]
+                .split()[1]
+            )
+        except FileNotFoundError:
+            LOG.fatal(
+                "Unable to find ansible executable. Read https://molecule.readthedocs.io/en/latest/installation.html"
+            )
+            sys.exit(RC_SETUP_ERROR)
+    return Version(version)

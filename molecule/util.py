@@ -27,11 +27,13 @@ import re
 import sys
 from collections.abc import Mapping
 from functools import lru_cache  # noqa
+from typing import Any, Dict, Optional
 
 import colorama
 import jinja2
 import yaml
 
+from molecule.constants import MOLECULE_HEADER
 from molecule.logger import get_logger
 
 LOG = get_logger(__name__)
@@ -90,19 +92,23 @@ def print_environment_vars(env):
     print()
 
 
-def sysexit(code=1):
+def sysexit(code: int = 1) -> None:
     """Perform a system exit with given code, default 1."""
     sys.exit(code)
 
 
-def sysexit_with_message(msg, code=1, detail=None):
+def sysexit_with_message(
+    msg: str, code: int = 1, detail: Optional[Dict] = None
+) -> None:
     """Exit with an error message."""
     # detail is usually a multi-line string which is not suitable for normal
     # logger.
     if detail:
         if isinstance(detail, dict):
-            detail = safe_dump(detail)
-        print(detail)
+            detail_str = safe_dump(detail)
+        else:
+            detail_str = str(detail)
+        print(detail_str)
     LOG.critical(msg)
     sysexit(code)
 
@@ -159,7 +165,7 @@ def write_file(filename, content):
 
 def molecule_prepender(content):
     """Return molecule identification header."""
-    return "# Molecule managed\n\n" + content
+    return MOLECULE_HEADER + "\n\n" + content
 
 
 def file_prepender(filename):
@@ -176,7 +182,7 @@ def file_prepender(filename):
         f.write(molecule_prepender(content))
 
 
-def safe_dump(data):
+def safe_dump(data: Any) -> str:
     """
     Dump the provided data to a YAML document and returns a string.
 
@@ -191,7 +197,7 @@ def safe_dump(data):
     )
 
 
-def safe_load(string):
+def safe_load(string) -> Dict:
     """
     Parse the provided string returns a dict.
 
@@ -202,6 +208,7 @@ def safe_load(string):
         return yaml.safe_load(string) or {}
     except yaml.scanner.ScannerError as e:
         sysexit_with_message(str(e))
+    return {}
 
 
 def safe_load_file(filename):
@@ -360,3 +367,29 @@ def lookup_config_file(filename: str) -> str:
             LOG.info("Found config file %s", f)
             return f
     return f
+
+
+def boolean(value: Any, strict=True) -> bool:
+    """Evaluate any object as boolean matching ansible behavior."""
+    # Based on https://github.com/ansible/ansible/blob/devel/lib/ansible/module_utils/parsing/convert_bool.py
+
+    BOOLEANS_TRUE = frozenset(("y", "yes", "on", "1", "true", "t", 1, 1.0, True))
+    BOOLEANS_FALSE = frozenset(("n", "no", "off", "0", "false", "f", 0, 0.0, False))
+    BOOLEANS = BOOLEANS_TRUE.union(BOOLEANS_FALSE)
+
+    if isinstance(value, bool):
+        return value
+
+    normalized_value = value
+    if isinstance(value, (str, bytes)):
+        normalized_value = str(value).lower().strip()
+
+    if normalized_value in BOOLEANS_TRUE:
+        return True
+    elif normalized_value in BOOLEANS_FALSE or not strict:
+        return False
+
+    raise TypeError(
+        "The value '%s' is not a valid boolean.  Valid booleans include: %s"
+        % (str(value), ", ".join(repr(i) for i in BOOLEANS))
+    )

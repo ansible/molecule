@@ -26,12 +26,6 @@ Ansible Galaxy
 .. autoclass:: molecule.dependency.ansible_galaxy.AnsibleGalaxy()
    :undoc-members:
 
-Gilt
-^^^^
-
-.. autoclass:: molecule.dependency.gilt.Gilt()
-   :undoc-members:
-
 Shell
 ^^^^^
 
@@ -67,21 +61,6 @@ Delegated
 
 .. autoclass:: molecule.driver.delegated.Delegated()
    :undoc-members:
-
-
-Docker
-^^^^^^
-
-.. autoclass:: molecule.driver.docker.Docker()
-   :undoc-members:
-
-
-Podman
-^^^^^^
-
-.. autoclass:: molecule.driver.podman.Podman()
-    :undoc-members:
-
 
 .. _lint:
 

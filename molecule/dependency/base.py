@@ -20,6 +20,7 @@
 """Base Dependency Module."""
 
 import abc
+import os
 import time
 
 import sh
@@ -86,7 +87,6 @@ class Base(object):
 
         :return: None
         """
-        pass
 
     @abc.abstractproperty
     def default_options(self):  # pragma: no cover
@@ -95,16 +95,20 @@ class Base(object):
 
         :return: dict
         """
-        pass
 
-    @abc.abstractproperty
+    @property
     def default_env(self):  # pragma: no cover
         """
         Get default env variables provided to ``cmd`` as a dict.
 
         :return: dict
         """
-        pass
+        env = util.merge_dicts(os.environ, self._config.env)
+        # inject ephemeral_directory on top of path
+        env[self._config.ansible_collections_path] = os.path.join(
+            self._config.scenario.ephemeral_directory, "collections"
+        )
+        return env
 
     @property
     def name(self):

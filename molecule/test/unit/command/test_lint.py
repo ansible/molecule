@@ -24,7 +24,10 @@ from molecule.command import lint
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 def test_execute(
-    mocker, patched_logger_info, patched_config_validate, config_instance,
+    mocker,
+    patched_logger_info,
+    patched_config_validate,
+    config_instance,
 ):
     l = lint.Lint(config_instance)
     l.execute()

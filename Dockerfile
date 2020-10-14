@@ -9,8 +9,6 @@ WORKDIR /usr/src/molecule
 #   quite often.
 # edge/testing needed for: py3-arrow py3-tabulate
 RUN apk add -v --progress --update --no-cache \
-ansible \
-ansible-lint \
 docker-py \
 gcc \
 git \
@@ -60,28 +58,34 @@ py3-yaml \
 python3 \
 python3-dev
 
-ENV MOLECULE_EXTRAS="docker,docs,windows,lint"
+ENV MOLECULE_EXTRAS="docker,docs,podman,windows,lint"
 
 ENV MOLECULE_PLUGINS="\
 molecule-azure \
 molecule-containers \
+molecule-docker \
 molecule-digitalocean \
 molecule-ec2 \
 molecule-gce \
 molecule-hetznercloud \
 molecule-libvirt \
 molecule-lxd \
+molecule-podman \
 molecule-openstack \
 molecule-vagrant \
 "
 
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=917006
-RUN python3 -m pip install -U wheel
+RUN PIP_USE_FEATURE=2020-resolver python3 -m pip install -U wheel
+
 ADD . .
+
 RUN \
-    python3 -m pip wheel \
-    -w dist --no-build-isolation \
-    ".[${MOLECULE_EXTRAS}]" testinfra ${MOLECULE_PLUGINS}
+PIP_USE_FEATURE=2020-resolver \
+python3 -m pip wheel \
+-w dist --no-build-isolation \
+".[${MOLECULE_EXTRAS}]" testinfra ${MOLECULE_PLUGINS}
+
 RUN ls -1 dist/
 
 # ✄---------------------------------------------------------------------
@@ -95,8 +99,6 @@ docker \
 git \
 openssh-client \
 ruby \
-ansible \
-ansible-lint \
 docker-py \
 libvirt \
 rsync \
@@ -155,11 +157,12 @@ json \
 etc \
 "
 
-ENV MOLECULE_EXTRAS="docker,docs,windows,lint"
+ENV MOLECULE_EXTRAS="docker,docs,podman,windows,lint"
 
 ENV MOLECULE_PLUGINS="\
 molecule-azure \
 molecule-containers \
+molecule-docker \
 molecule-digitalocean \
 molecule-ec2 \
 molecule-gce \
@@ -167,24 +170,28 @@ molecule-hetznercloud \
 molecule-libvirt \
 molecule-lxd \
 molecule-openstack \
+molecule-podman \
 molecule-vagrant \
 "
 
 RUN \
-    apk add --update --no-cache \
-    ${BUILD_DEPS} ${PACKAGES} \
-    && gem install ${GEM_PACKAGES} \
-    && apk del --no-cache ${BUILD_DEPS} \
-    && rm -rf /root/.cache
+apk add --update --no-cache \
+${BUILD_DEPS} ${PACKAGES} \
+&& gem install ${GEM_PACKAGES} \
+&& apk del --no-cache ${BUILD_DEPS} \
+&& rm -rf /root/.cache
+
 COPY --from=molecule-builder \
-    /usr/src/molecule/dist \
-    /usr/src/molecule/dist
+/usr/src/molecule/dist \
+/usr/src/molecule/dist
+
 RUN \
-    python3 -m pip install \
-    ${PIP_INSTALL_ARGS} \
-    "molecule[${MOLECULE_EXTRAS}]" testinfra ${MOLECULE_PLUGINS} && \
-    molecule --version && \
-    molecule drivers
+PIP_USE_FEATURE=2020-resolver \
+python3 -m pip install \
+${PIP_INSTALL_ARGS} \
+"molecule[${MOLECULE_EXTRAS}]" testinfra ${MOLECULE_PLUGINS} && \
+molecule --version && \
+molecule drivers
 # running molecule commands adds a minimal level fail-safe about build success
 
 ENV SHELL /bin/bash

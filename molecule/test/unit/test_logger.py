@@ -20,6 +20,7 @@
 
 from __future__ import print_function
 
+import logging
 import sys
 
 import colorama
@@ -177,3 +178,13 @@ def test_markup_detection_tty_no(mocker):
     assert not logger.should_do_markup()
     mocker.resetall()
     mocker.stopall()
+
+
+def test_logger_class():
+    class FooLogger(logging.getLoggerClass()):
+        """stub logger that subclasses logging.getLoggerClass()."""
+
+    logging.setLoggerClass(FooLogger)
+
+    # this test throws RecursionError prior to bugfix
+    assert FooLogger("foo")

@@ -1,4 +1,0 @@
----
-- git: https://github.com/yatesr/ansible-timezone.git
-  version: master
-  dst: $MOLECULE_EPHEMERAL_DIRECTORY/roles/timezone/
