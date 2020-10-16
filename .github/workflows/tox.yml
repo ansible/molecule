@@ -30,6 +30,10 @@ jobs:
             PREFIX: PYTEST_REQPASS=433
           - tox_env: py39
             PREFIX: PYTEST_REQPASS=433
+          - tox_env: py36-devel
+            PREFIX: PYTEST_REQPASS=433
+          - tox_env: py39-devel
+            PREFIX: PYTEST_REQPASS=433
           - tox_env: packaging
           - tox_env: dockerfile
           - tox_env: build-containers
