@@ -34,8 +34,6 @@ Guidelines
   please feel free to raise an `Issue`_ if you would like to work on something
   major to ensure efficient collaboration and avoid duplicate effort.
 * Create a topic branch from where you want to base your work.
-* Check for unnecessary whitespace with ``git diff --check`` before committing.
-  Please see `formatting`_ and `linting`_ documentation for further commands.
 * Make sure you have added tests for your changes.
 * Although not required, it is good to sign off commits using ``git commit --signoff``, and agree
   that usage of ``--signoff`` constitutes agreement with the terms of `DCO 1.1`_.
@@ -46,8 +44,6 @@ Guidelines
 
 .. _`Issue`: https://github.com/ansible-community/molecule/issues/new/choose
 .. _`DCO 1.1`: https://github.com/ansible-community/molecule/blob/master/DCO_1_1.md
-.. _formatting: https://molecule.readthedocs.io/en/latest/testing.html#formatting
-.. _linting: https://molecule.readthedocs.io/en/latest/testing.html#linting
 
 Code Of Conduct
 ===============
