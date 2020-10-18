@@ -65,9 +65,9 @@ class Check(base.Base):
         Load an env file to read variables from when rendering
         molecule.yml.
 
-    .. program:: molecule --parallel check
+    .. program:: molecule check --parallel
 
-    .. option:: molecule --parallel check
+    .. option:: molecule check --parallel
 
        Run in parallelizable mode.
     """

@@ -216,7 +216,7 @@ When needed, such security profiles can be reused (for example `the one availabl
           - /sys/fs/cgroup:/sys/fs/cgroup:ro
 
 The developer can also opt to `start the container with extended privileges`_,
-by either giving it ``SYS_ADMIN`` capabilites or running it in ``privileged`` mode.
+by either giving it ``SYS_ADMIN`` capabilities or running it in ``privileged`` mode.
 
 .. important::
 
@@ -385,9 +385,6 @@ Running Molecule processes in parallel mode
 
     It is currently only available for use with the Docker driver.
 
-It is possible to run Molecule processes in parallel using another tool to
-orchestrate the parallelization (such as `GNU Parallel`_ or `Pytest`_).
-
 When Molecule receives the ``--parallel`` flag it will generate a `UUID`_ for
 the duration of the testing sequence and will use that unique identifier to
 cache the run-time state for that process. The parallel Molecule processes
@@ -397,6 +394,12 @@ other.
 Molecule uses a new and separate caching folder for this in the
 ``$HOME/.cache/molecule_parallel`` location. Molecule exposes a new environment
 variable ``MOLECULE_PARALLEL`` which can enable this functionality.
+
+It is possible to run Molecule processes in parallel using another tool to
+orchestrate the parallelization (such as `GNU Parallel`_ or `Pytest`_).
+If you do so, make sure Molecule knows it is running in parallel mode by
+specifying the ``--parallel`` flag to your command(s) to avoid concurrency
+issues.
 
 .. _GNU Parallel: https://www.gnu.org/software/parallel/
 .. _Pytest: https://docs.pytest.org/en/latest/
