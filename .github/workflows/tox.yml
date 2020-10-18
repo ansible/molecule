@@ -30,6 +30,10 @@ jobs:
             PREFIX: PYTEST_REQPASS=433
           - tox_env: py39
             PREFIX: PYTEST_REQPASS=433
+          - tox_env: py36-devel
+            PREFIX: PYTEST_REQPASS=433
+          - tox_env: py39-devel
+            PREFIX: PYTEST_REQPASS=433
           - tox_env: packaging
           - tox_env: dockerfile
           - tox_env: build-containers
@@ -54,6 +58,9 @@ jobs:
       # Even our lint and other envs need access to tox
       - name: Install a default Python
         uses: actions/setup-python@v2
+        # workaround to avoid getting 3.9 in:
+        with:
+          python-version: '3.8'
         if: ${{ ! contains(matrix.tox_env, 'py') }}
       # Be sure to install the version of python needed by a specific test, if necessary
       - name: Set up Python version

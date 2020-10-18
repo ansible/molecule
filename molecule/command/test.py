@@ -79,9 +79,9 @@ class Test(base.Base):
         Load an env file to read variables from when rendering
         molecule.yml.
 
-    .. program:: molecule --parallel test
+    .. program:: molecule test --parallel
 
-    .. option:: molecule --parallel test
+    .. option:: molecule test --parallel
 
        Run in parallelizable mode.
     """

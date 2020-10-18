@@ -328,7 +328,7 @@ we export a ``TOX_ENVNAME`` environment variable, it's the name of our tox env.
 
 
 You also must include the ``TOX_ENVNAME`` variable in name of each platform in
-``molecule.yml`` configuration file. This way, ther names won't create any
+``molecule.yml`` configuration file. This way, their names won't create any
 conflict.
 
 .. code-block:: yaml
