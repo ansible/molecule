@@ -1,8 +1,6 @@
 name: readiness
 # see https://github.com/jesusvasquez333/verify-pr-label-action/issues/9#issuecomment-706639627
 on:
-  pull_request_target:
-    types: [opened, labeled, unlabeled, synchronize]
   pull_request:
     types: [opened, labeled, unlabeled, synchronize]
 jobs:
