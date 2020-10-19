@@ -76,7 +76,7 @@ molecule-vagrant \
 "
 
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=917006
-RUN PIP_USE_FEATURE=2020-resolver python3 -m pip install -U wheel
+RUN PIP_USE_FEATURE=2020-resolver python3 -m pip install -U wheel pip setuptools
 
 ADD . .
 
@@ -191,7 +191,19 @@ python3 -m pip install \
 ${PIP_INSTALL_ARGS} \
 "molecule[${MOLECULE_EXTRAS}]" testinfra ${MOLECULE_PLUGINS} && \
 molecule --version && \
-molecule drivers
+molecule drivers | grep azure && \
+molecule drivers | grep containers && \
+molecule drivers | grep digitalocean && \
+molecule drivers | grep docker && \
+molecule drivers | grep ec2 && \
+molecule drivers | grep gce && \
+molecule drivers | grep hetznercloud && \
+molecule drivers | grep libvirt && \
+molecule drivers | grep lxd && \
+molecule drivers | grep openstack && \
+molecule drivers | grep podman && \
+molecule drivers | grep vagrant && \
+true
 # running molecule commands adds a minimal level fail-safe about build success
 
 ENV SHELL /bin/bash
