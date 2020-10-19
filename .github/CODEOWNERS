@@ -1,5 +1,3 @@
-.github/ @gundalow
-
 .pre-commit-config.yaml @ssbarnea
 .pre-commit-hooks.yaml @ssbarnea
 .travis.yml @ssbarnea
