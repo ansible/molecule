@@ -30,6 +30,7 @@ from click_help_colors import _colorize
 
 import molecule
 from molecule import command
+from molecule.api import drivers
 from molecule.command.base import click_group_ex
 from molecule.config import MOLECULE_DEBUG, ansible_version
 from molecule.logger import should_do_markup
@@ -51,15 +52,10 @@ def _version_string() -> str:
     color = "bright_yellow" if v.is_prerelease else "green"  # type: ignore
     msg = "molecule %s\n" % _colorize(molecule.__version__, color)
 
-    msg += _colorize(
-        "   ansible==%s python==%s.%s"
-        % (
-            ansible_version(),
-            sys.version_info[0],
-            sys.version_info[1],
-        ),
-        "bright_black",
-    )
+    details = f"    ansible:{ansible_version()} python:{sys.version_info[0]}.{sys.version_info[1]}"
+    for driver in drivers():
+        details += f"\n    {driver}:{driver.version} from {driver.module}"
+    msg += _colorize(details, "bright_black")
     return msg
 
 

@@ -23,6 +23,8 @@ import abc
 import inspect
 import os
 
+import pkg_resources
+
 import molecule
 from molecule.status import Status
 
@@ -41,6 +43,8 @@ class Driver(object):
         """
         self._config = config
         self._path = os.path.abspath(os.path.dirname(inspect.getfile(self.__class__)))
+        self.module = self.__module__.split(".")[0]
+        self.version = pkg_resources.get_distribution(self.module).version
 
     @property  # type: ignore
     @abc.abstractmethod

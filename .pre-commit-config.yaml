@@ -47,7 +47,7 @@ repos:
       - id: mypy
         # empty args needed in order to match mypy cli behavior
         args: []
-        entry: mypy molecule/
+        entry: mypy lib/
         pass_filenames: false
         additional_dependencies:
           - packaging
