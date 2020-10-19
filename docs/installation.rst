@@ -92,6 +92,18 @@ Install Molecule:
 
     $ python3 -m pip install --user "molecule[lint]"
 
+Molecule uses the "delegated" driver by default. Other drivers can
+be installed seperately from PyPI, such as the molecule-docker driver.
+If you would like to use docker as the molecule driver, the installation
+command would look like this:
+
+.. code-block:: bash
+
+    $ python3 -m pip install --user "molecule[docker,lint]"
+
+Other drivers, such as ``molecule-podman``, ``molecule-vagrant``,
+``molecule-azure`` or ``molecule-hetzner`` are also available.
+
 Installing molecule package also installed its main script ``molecule``,
 usually in ``PATH``. Users should know that molecule can also be called as a
 python module, using ``python -m molecule ...``. This alternative method has
