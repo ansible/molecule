@@ -46,11 +46,7 @@ Pip
 
   .. code-block:: bash
 
-      $ python3 -m pip install "molecule[ansible]" molecule-docker # or other molecule driver
-
-  (See Driver for more Drivers)
-
-  .. _Driver: https://molecule.readthedocs.io/en/latest/configuration.html#driver
+      $ python3 -m pip install "molecule[ansible]"  # or molecule[ansible-base]
 
 Keep in mind that on selinux supporting systems, if you install into a virtual
 environment, you may face :gh:`issue <ansible/ansible/issues/34340>` even
