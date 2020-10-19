@@ -16,6 +16,8 @@ jobs:
   build:
     name: ${{ matrix.tox_env }}
     runs-on: ubuntu-latest
+    # limit potential endless looks like we had with build-containers
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
