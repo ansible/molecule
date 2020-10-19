@@ -76,12 +76,11 @@ molecule-vagrant \
 "
 
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=917006
-RUN PIP_USE_FEATURE=2020-resolver python3 -m pip install -U wheel pip setuptools
+RUN python3 -m pip install -U wheel pip setuptools
 
 ADD . .
 
 RUN \
-PIP_USE_FEATURE=2020-resolver \
 python3 -m pip wheel \
 -w dist --no-build-isolation \
 ".[${MOLECULE_EXTRAS}]" testinfra ${MOLECULE_PLUGINS}
@@ -186,7 +185,6 @@ COPY --from=molecule-builder \
 /usr/src/molecule/dist
 
 RUN \
-PIP_USE_FEATURE=2020-resolver \
 python3 -m pip install \
 ${PIP_INSTALL_ARGS} \
 "molecule[${MOLECULE_EXTRAS}]" testinfra ${MOLECULE_PLUGINS} && \
