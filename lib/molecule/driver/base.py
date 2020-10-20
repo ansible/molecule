@@ -247,6 +247,10 @@ class Driver(object):
         """Return detailed string representation of object."""
         return self.name
 
+    def __rich__(self):
+        """Return rich representation of object."""
+        return self.__str__()
+
     def template_dir(self):
 
         p = os.path.join(self._path, "cookiecutter")

@@ -22,10 +22,13 @@
 from __future__ import print_function
 
 import click
-import tabulate
+from rich import box
+from rich.syntax import Syntax
+from rich.table import Table
 
 from molecule import logger, scenarios, util
 from molecule.command import base
+from molecule.console import console
 from molecule.status import Status
 
 LOG = logger.get_logger(__name__)
@@ -129,7 +132,16 @@ def _print_tabulate_data(headers, data, table_format):  # pragma: no cover
     :param data:  A list of tabular data to display.
     :returns: None
     """
-    print(tabulate.tabulate(data, headers, tablefmt=table_format))
+    t = Table(box=box.MINIMAL)
+    for header in headers:
+        t.add_column(header)
+    for line in data:
+        console.print(line)
+        t.add_row(*line)
+    # console.print(headers)
+    # console.print(data)
+    # print(tabulate.tabulate(data, headers, tablefmt=table_format))
+    console.print(t)
 
 
 def _print_yaml_data(headers, data):  # pragma: no cover
@@ -138,4 +150,5 @@ def _print_yaml_data(headers, data):  # pragma: no cover
         for datum in data
     ]
 
-    print(util.safe_dump(l))
+    syntax = Syntax(util.safe_dump(l), "yaml")
+    console.print(syntax)
