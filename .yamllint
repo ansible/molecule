@@ -1,10 +1,9 @@
+---
+# Based on ansible-lint config
 extends: default
+
 ignore: |
-  *.molecule/
-  lib/molecule/cookiecutter/
-  .tox
-  # HACK: https://github.com/pyupio/pyup/issues/346
-  .pyup.yml
+  *{{cookiecutter**
 
 rules:
   braces:
@@ -13,7 +12,25 @@ rules:
   brackets:
     max-spaces-inside: 1
     level: error
+  colons:
+    max-spaces-after: -1
+    level: error
+  commas:
+    max-spaces-after: -1
+    level: error
+  comments: disable
+  comments-indentation: disable
   document-start: disable
+  empty-lines:
+    max: 3
+    level: error
+  hyphens:
+    level: error
+  indentation: disable
+  key-duplicates: enable
   line-length: disable
-  truthy:
-    allowed-values: ['true', 'false', 'on']
+  new-line-at-end-of-file: disable
+  new-lines:
+    type: unix
+  trailing-spaces: disable
+  truthy: disable

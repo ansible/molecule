@@ -7,7 +7,7 @@ WORKDIR /usr/src/molecule
 # * Breaks security scanning due to https://github.com/quay/clair/issues/901
 # * Unreliable builds, as alpinelinux CDN is unreliable for edge, returning 404
 #   quite often.
-# edge/testing needed for: py3-arrow py3-tabulate
+# edge/testing needed for: py3-arrow
 RUN apk add -v --progress --update --no-cache \
 docker-py \
 gcc \

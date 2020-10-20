@@ -22,10 +22,12 @@
 from __future__ import print_function
 
 import click
-import tabulate
+from rich import box
+from rich.table import Table
 
 from molecule import api, logger
 from molecule.command import base
+from molecule.console import console
 
 LOG = logger.get_logger(__name__)
 
@@ -46,9 +48,12 @@ def drivers(ctx, format):  # pragma: no cover
     headers = ["name"]
     table_format = "simple"
     if format == "plain":
+        for driver in drivers:
+            console.print(*driver)
+    else:
         headers = []
         table_format = format
-    _print_tabulate_data(headers, drivers, table_format)
+        _print_tabulate_data(headers, drivers, table_format)
 
 
 def _print_tabulate_data(headers, data, table_format):  # pragma: no cover
@@ -59,4 +64,9 @@ def _print_tabulate_data(headers, data, table_format):  # pragma: no cover
     :param data:  A list of tabular data to display.
     :returns: None
     """
-    print(tabulate.tabulate(data, headers, tablefmt=table_format))
+    t = Table(box=box.MINIMAL)
+    for header in headers:
+        t.add_column(header)
+    for line in data:
+        t.add_row(*line)
+    console.print(t)
