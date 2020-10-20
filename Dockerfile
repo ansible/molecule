@@ -82,7 +82,7 @@ ADD . .
 
 RUN \
 python3 -m pip wheel \
--w dist --no-build-isolation \
+-w dist \
 ".[${MOLECULE_EXTRAS}]" testinfra ${MOLECULE_PLUGINS}
 
 RUN ls -1 dist/
