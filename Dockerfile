@@ -67,7 +67,6 @@ molecule-docker \
 molecule-digitalocean \
 molecule-ec2 \
 molecule-gce \
-molecule-hetznercloud \
 molecule-libvirt \
 molecule-lxd \
 molecule-podman \
@@ -165,7 +164,6 @@ molecule-docker \
 molecule-digitalocean \
 molecule-ec2 \
 molecule-gce \
-molecule-hetznercloud \
 molecule-libvirt \
 molecule-lxd \
 molecule-openstack \
@@ -195,7 +193,6 @@ molecule drivers | grep digitalocean && \
 molecule drivers | grep docker && \
 molecule drivers | grep ec2 && \
 molecule drivers | grep gce && \
-molecule drivers | grep hetznercloud && \
 molecule drivers | grep libvirt && \
 molecule drivers | grep lxd && \
 molecule drivers | grep openstack && \
