@@ -21,3 +21,4 @@ coverage.xml
 pip-wheel-metadata
 docs/docstree
 .docker
+molecule/
