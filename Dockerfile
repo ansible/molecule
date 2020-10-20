@@ -187,18 +187,8 @@ python3 -m pip install \
 ${PIP_INSTALL_ARGS} \
 "molecule[${MOLECULE_EXTRAS}]" testinfra ${MOLECULE_PLUGINS} && \
 molecule --version && \
-molecule drivers | grep azure && \
-molecule drivers | grep containers && \
-molecule drivers | grep digitalocean && \
-molecule drivers | grep docker && \
-molecule drivers | grep ec2 && \
-molecule drivers | grep gce && \
-molecule drivers | grep libvirt && \
-molecule drivers | grep lxd && \
-molecule drivers | grep openstack && \
-molecule drivers | grep podman && \
-molecule drivers | grep vagrant && \
-true
+molecule drivers && \
+pip check
 # running molecule commands adds a minimal level fail-safe about build success
 
 ENV SHELL /bin/bash
