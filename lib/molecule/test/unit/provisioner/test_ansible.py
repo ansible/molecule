@@ -100,7 +100,8 @@ def test_default_config_options_property(_instance):
             "display_failed_stderr": True,
             "forks": 50,
             "host_key_checking": False,
-            "interpreter_python": "auto",
+            # https://docs.ansible.com/ansible/devel/reference_appendices/interpreter_discovery.html
+            "interpreter_python": "auto_silent",
             "nocows": 1,
             "retry_files_enabled": False,
         },
@@ -146,7 +147,7 @@ def test_config_options_property(_instance):
             "foo": "bar",
             "forks": 50,
             "host_key_checking": False,
-            "interpreter_python": "auto",
+            "interpreter_python": "auto_silent",
             "nocows": 1,
             "retry_files_enabled": False,
         },

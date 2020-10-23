@@ -386,7 +386,7 @@ class Ansible(base.Base):
                 "retry_files_enabled": False,
                 "host_key_checking": False,
                 "nocows": 1,
-                "interpreter_python": "auto",
+                "interpreter_python": "auto_silent",
             },
             "ssh_connection": {
                 "scp_if_ssh": True,
