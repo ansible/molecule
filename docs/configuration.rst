@@ -12,8 +12,6 @@ Variable Substitution
 .. autoclass:: molecule.interpolation.Interpolator()
    :undoc-members:
 
-.. _dependency:
-
 There are following environment variables available in ``molecule.yml``:
 
 ================================  ===========================================================
@@ -36,6 +34,8 @@ MOLECULE_SCENARIO_NAME            Name of the scenario
 MOLECULE_VERIFIER_NAME            Name of the verifier tool (usually 'ansible')
 MOLECULE_VERIFIER_TEST_DIRECTORY  ?
 ================================  ===========================================================
+
+.. _dependency:
 
 Dependency
 ----------
