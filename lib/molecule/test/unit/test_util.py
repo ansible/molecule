@@ -26,7 +26,6 @@ import os
 
 import colorama
 import pytest
-import sh
 
 from molecule import util
 from molecule.constants import MOLECULE_HEADER
@@ -171,34 +170,29 @@ def test_sysexit_with_message_and_custom_code(patched_logger_critical):
 
 
 def test_run_command():
-    cmd = sh.ls.bake()
+    cmd = ["ls"]
     x = util.run_command(cmd)
 
-    assert 0 == x.exit_code
+    assert 0 == x.returncode
 
 
 def test_run_command_with_debug(mocker, patched_print_debug):
-    cmd = sh.ls.bake(_env={"ANSIBLE_FOO": "foo", "MOLECULE_BAR": "bar"})
-    util.run_command(cmd, debug=True)
+    env = {"ANSIBLE_FOO": "foo", "MOLECULE_BAR": "bar"}
+    util.run_command(["ls"], debug=True, env=env)
     x = [
         mocker.call("ANSIBLE ENVIRONMENT", "---\nANSIBLE_FOO: foo\n"),
         mocker.call("MOLECULE ENVIRONMENT", "---\nMOLECULE_BAR: bar\n"),
         mocker.call("SHELL REPLAY", "ANSIBLE_FOO=foo MOLECULE_BAR=bar"),
-        mocker.call("COMMAND", sh.which("ls")),
     ]
 
     assert x == patched_print_debug.mock_calls
 
 
 def test_run_command_with_debug_handles_no_env(mocker, patched_print_debug):
-    cmd = sh.ls.bake()
+    cmd = "ls"
     util.run_command(cmd, debug=True)
-    x = [
-        mocker.call("ANSIBLE ENVIRONMENT", "--- {}\n"),
-        mocker.call("MOLECULE ENVIRONMENT", "--- {}\n"),
-        mocker.call("SHELL REPLAY", ""),
-        mocker.call("COMMAND", sh.which("ls")),
-    ]
+    # when env is empty we expect not to print anything
+    x = []
 
     assert x == patched_print_debug.mock_calls
 

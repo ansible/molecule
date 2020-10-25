@@ -21,7 +21,6 @@
 import os
 
 import pytest
-import sh
 
 from molecule import config, util
 from molecule.verifier import testinfra
@@ -201,21 +200,23 @@ def test_bake(_patched_testinfra_get_tests, inventory_file, _instance):
     util.write_file(file1_file, "")
 
     _instance.bake()
-    x = [
-        str(sh.Command("pytest")),
-        "--ansible-inventory={}".format(inventory_file),
-        "--connection=ansible",
-        "-v",
-        "--foo=bar",
-        "foo.py",
-        "bar.py",
+    args = [
+        "pytest",
+        "--ansible-inventory",
+        inventory_file,
+        "--connection",
+        "ansible",
+        "--foo",
+        "bar",
         "-p",
         "no:cacheprovider",
+        "foo.py",
+        "bar.py",
+        "-v",
         file1_file,
     ]
-    result = str(_instance._testinfra_command).split()
 
-    assert sorted(x) == sorted(result)
+    assert _instance._testinfra_command.cmd == args
 
 
 def test_execute(
@@ -268,10 +269,10 @@ def test_execute_bakes(patched_run_command, _patched_testinfra_get_tests, _insta
     assert 1 == patched_run_command.call_count
 
 
-def test_executes_catches_and_exits_return_code(
+def test_testinfra_executes_catches_and_exits_return_code(
     patched_run_command, _patched_testinfra_get_tests, _instance
 ):
-    patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.pytest, b"", b"")
+    patched_run_command.side_effect = SystemExit(1)
     with pytest.raises(SystemExit) as e:
         _instance.execute()
 

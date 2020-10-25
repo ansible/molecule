@@ -19,7 +19,8 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import pytest
-import sh
+
+from molecule import util
 
 
 @pytest.fixture
@@ -49,8 +50,7 @@ def driver_name(request):
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
 def test_command_check(scenario_to_test, with_scenario, scenario_name):
-    options = {"scenario_name": scenario_name}
-    cmd = sh.molecule.bake("check", **options)
+    cmd = ["molecule", "check", "--scenario-name", scenario_name]
     pytest.helpers.run_command(cmd)
 
 
@@ -63,8 +63,7 @@ def test_command_check(scenario_to_test, with_scenario, scenario_name):
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
 def test_command_cleanup(scenario_to_test, with_scenario, scenario_name):
-    options = {"scenario_name": scenario_name}
-    cmd = sh.molecule.bake("cleanup", **options)
+    cmd = ["molecule", "cleanup", "--scenario-name", scenario_name]
     pytest.helpers.run_command(cmd)
 
 
@@ -77,8 +76,7 @@ def test_command_cleanup(scenario_to_test, with_scenario, scenario_name):
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
 def test_command_converge(scenario_to_test, with_scenario, scenario_name):
-    options = {"scenario_name": scenario_name}
-    cmd = sh.molecule.bake("converge", **options)
+    cmd = ["molecule", "converge", "--scenario-name", scenario_name]
     pytest.helpers.run_command(cmd)
 
 
@@ -91,8 +89,7 @@ def test_command_converge(scenario_to_test, with_scenario, scenario_name):
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
 def test_command_create(scenario_to_test, with_scenario, scenario_name):
-    options = {"scenario_name": scenario_name}
-    cmd = sh.molecule.bake("create", **options)
+    cmd = ["molecule", "create", "--scenario-name", scenario_name]
     pytest.helpers.run_command(cmd)
 
 
@@ -105,15 +102,14 @@ def test_command_create(scenario_to_test, with_scenario, scenario_name):
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
 def test_command_dependency(request, scenario_to_test, with_scenario, scenario_name):
-    options = {"scenario_name": scenario_name}
-    cmd = sh.molecule.bake("dependency", **options)
-    result = pytest.helpers.run_command(cmd, log=False)
-    assert result.exit_code == 0
+    cmd = ["molecule", "dependency", "--scenario-name", scenario_name]
+    result = util.run_command(cmd, echo=True)
+    assert result.returncode == 0
 
-    # Validate that depdendency worked by running converge, which make use
-    cmd = sh.molecule.bake("converge", **options)
-    result = pytest.helpers.run_command(cmd, log=False)
-    assert result.exit_code == 0
+    # Validate that dependency worked by running converge, which make use
+    cmd = ["molecule", "converge", "--scenario-name", scenario_name]
+    result = util.run_command(cmd, echo=True)
+    assert result.returncode == 0
 
 
 @pytest.mark.extensive
@@ -123,8 +119,7 @@ def test_command_dependency(request, scenario_to_test, with_scenario, scenario_n
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
 def test_command_destroy(scenario_to_test, with_scenario, scenario_name):
-    options = {"scenario_name": scenario_name}
-    cmd = sh.molecule.bake("destroy", **options)
+    cmd = ["molecule", "destroy", "--scenario-name", scenario_name]
     pytest.helpers.run_command(cmd)
 
 
@@ -159,8 +154,7 @@ def test_command_init_scenario(temp_dir, driver_name, skip_test):
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
 def test_command_lint(scenario_to_test, with_scenario, scenario_name):
-    options = {"scenario_name": scenario_name}
-    cmd = sh.molecule.bake("lint", **options)
+    cmd = ["molecule", "lint", "--scenario-name", scenario_name]
     pytest.helpers.run_command(cmd)
 
 
@@ -204,12 +198,10 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario, expecte
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
 def test_command_prepare(scenario_to_test, with_scenario, scenario_name):
-    options = {"scenario_name": scenario_name}
-
-    cmd = sh.molecule.bake("create", **options)
+    cmd = ["molecule", "create", "--scenario-name", scenario_name]
     pytest.helpers.run_command(cmd)
 
-    cmd = sh.molecule.bake("prepare", **options)
+    cmd = ["molecule", "prepare", "--scenario-name", scenario_name]
     pytest.helpers.run_command(cmd)
 
 
@@ -222,8 +214,7 @@ def test_command_prepare(scenario_to_test, with_scenario, scenario_name):
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
 def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
-    options = {"scenario_name": scenario_name}
-    cmd = sh.molecule.bake("side-effect", **options)
+    cmd = ["molecule", "side-effect", "--scenario-name", scenario_name]
     pytest.helpers.run_command(cmd)
 
 
@@ -236,8 +227,7 @@ def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
 def test_command_syntax(scenario_to_test, with_scenario, scenario_name):
-    options = {"scenario_name": scenario_name}
-    cmd = sh.molecule.bake("syntax", **options)
+    cmd = ["molecule", "syntax", "--scenario-name", scenario_name]
     pytest.helpers.run_command(cmd)
 
 

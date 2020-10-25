@@ -22,8 +22,6 @@
 import glob
 import os
 
-import sh
-
 from molecule import logger, util
 from molecule.api import Verifier
 
@@ -159,15 +157,14 @@ class Testinfra(Verifier):
         verbose_flag = util.verbose_flag(options)
         args = verbose_flag + self.additional_files_or_dirs
 
-        self._testinfra_command = sh.Command("pytest").bake(
-            options,
-            self._tests,
-            *args,
-            _cwd=self._config.scenario.directory,
-            _env=self.env,
-            _out=LOG.out,
-            _err=LOG.error
+        self._testinfra_command = util.BakedCommand(
+            cmd=["pytest", *util.dict2args(options), *self._tests, *args],
+            cwd=self._config.scenario.directory,
+            env=self.env,
+            stdout=LOG.out,
+            stderr=LOG.error,
         )
+        # print(self._testinfra_command.cmd)
 
     def execute(self):
         if not self.enabled:
@@ -186,13 +183,12 @@ class Testinfra(Verifier):
         msg = "Executing Testinfra tests found in {}/...".format(self.directory)
         LOG.info(msg)
 
-        try:
-            util.run_command(self._testinfra_command, debug=self._config.debug)
+        result = util.run_command(self._testinfra_command, debug=self._config.debug)
+        if result.returncode == 0:
             msg = "Verifier completed successfully."
             LOG.success(msg)
-
-        except sh.ErrorReturnCode as e:
-            util.sysexit(e.exit_code)
+        else:
+            util.sysexit(result.returncode)
 
     def _get_tests(self):
         """

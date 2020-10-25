@@ -26,12 +26,15 @@ import os
 import re
 import sys
 from collections.abc import Mapping
+from dataclasses import dataclass
 from functools import lru_cache  # noqa
-from typing import Any, Dict, Optional
+from subprocess import CompletedProcess
+from typing import Any, Dict, List, Optional, Union
 
 import colorama
 import jinja2
 import yaml
+from subprocess_tee import run
 
 from molecule.constants import MOLECULE_HEADER
 from molecule.logger import get_logger
@@ -46,10 +49,10 @@ class SafeDumper(yaml.SafeDumper):
         return super(SafeDumper, self).increase_indent(flow, False)
 
 
-def print_debug(title, data):
+def print_debug(title: str, data: str) -> None:
     """Print debug information."""
     title = "DEBUG: {}".format(title)
-    title = [
+    title_list = [
         colorama.Back.WHITE,
         colorama.Style.BRIGHT,
         colorama.Fore.BLACK,
@@ -58,18 +61,18 @@ def print_debug(title, data):
         colorama.Back.RESET,
         colorama.Style.RESET_ALL,
     ]
-    print("".join(title))
-    data = [
+    print("".join(title_list))
+    data_list = [
         colorama.Fore.BLACK,
         colorama.Style.BRIGHT,
         data,
         colorama.Style.RESET_ALL,
         colorama.Fore.RESET,
     ]
-    print("".join(data))
+    print("".join(data_list))
 
 
-def print_environment_vars(env):
+def print_environment_vars(env: Optional[Dict[str, str]]) -> None:
     """
     Print ``Ansible`` and ``Molecule`` environment variables and returns None.
 
@@ -77,19 +80,20 @@ def print_environment_vars(env):
     ``os.environ``.
     :return: None
     """
-    ansible_env = {k: v for (k, v) in env.items() if "ANSIBLE_" in k}
-    print_debug("ANSIBLE ENVIRONMENT", safe_dump(ansible_env))
+    if env:
+        ansible_env = {k: v for (k, v) in env.items() if "ANSIBLE_" in k}
+        print_debug("ANSIBLE ENVIRONMENT", safe_dump(ansible_env))
 
-    molecule_env = {k: v for (k, v) in env.items() if "MOLECULE_" in k}
-    print_debug("MOLECULE ENVIRONMENT", safe_dump(molecule_env))
+        molecule_env = {k: v for (k, v) in env.items() if "MOLECULE_" in k}
+        print_debug("MOLECULE ENVIRONMENT", safe_dump(molecule_env))
 
-    combined_env = ansible_env.copy()
-    combined_env.update(molecule_env)
-    print_debug(
-        "SHELL REPLAY",
-        " ".join(["{}={}".format(k, v) for (k, v) in sorted(combined_env.items())]),
-    )
-    print()
+        combined_env = ansible_env.copy()
+        combined_env.update(molecule_env)
+        print_debug(
+            "SHELL REPLAY",
+            " ".join(["{}={}".format(k, v) for (k, v) in sorted(combined_env.items())]),
+        )
+        print()
 
 
 def sysexit(code: int = 1) -> None:
@@ -113,21 +117,36 @@ def sysexit_with_message(
     sysexit(code)
 
 
-def run_command(cmd, debug=False):
+def run_command(cmd, env=None, debug=False, echo=False) -> CompletedProcess:
     """
     Execute the given command and returns None.
 
-    :param cmd: A ``sh.Command`` object to execute.
+    :param cmd: :
+        - a string or list of strings (similar to subprocess.run)
+        - a BakedCommand object (
     :param debug: An optional bool to toggle debug output.
     :return: ``sh`` object
     """
+    args = []
+    stdout = None
+    stderr = None
+    if cmd.__class__.__name__ == "Command":
+        raise RuntimeError(
+            "Molecule 3.2.0 dropped use of sh library, update plugin code to use new API. "
+            "See https://github.com/ansible-community/molecule/issues/2678"
+        )
+    elif cmd.__class__.__name__ == "BakedCommand":
+        env = cmd.env if not env else cmd.env.copy().update(env)
+        args = cmd.cmd
+        stdout = cmd.stdout
+        stderr = cmd.stderr
+    else:
+        args = cmd
+
     if debug:
-        # WARN(retr0h): Uses an internal ``sh`` data structure to dig
-        # the environment out of the ``sh.command`` object.
-        print_environment_vars(cmd._partial_call_args.get("env", {}))
-        print_debug("COMMAND", str(cmd))
-        print()
-    return cmd(_truncate_exc=False)
+        print_environment_vars(env)
+
+    return run(args, env=env, stdout=stdout, stderr=stderr, echo=echo or debug)
 
 
 def os_walk(directory, pattern, excludes=[]):
@@ -393,3 +412,33 @@ def boolean(value: Any, strict=True) -> bool:
         "The value '%s' is not a valid boolean.  Valid booleans include: %s"
         % (str(value), ", ".join(repr(i) for i in BOOLEANS))
     )
+
+
+@dataclass
+class BakedCommand:
+    """Define a subprocess command to be executed."""
+
+    cmd: Union[str, List[str]]
+    env: Optional[Dict]
+    cwd: Optional[str] = None
+    stdout: Any = None
+    stderr: Any = None
+
+
+def dict2args(data: Dict) -> List[str]:
+    """Convert a dictionary of options to command like arguments."""
+    result = []
+    # keep sorting in order to achieve a predictable behavior
+    for k, v in sorted(data.items()):
+        if v is not False:
+            prefix = "-" if len(k) == 1 else "--"
+            result.append(f"{prefix}{k}".replace("_", "-"))
+            if v is not True:
+                # { foo: True } should produce --foo without any values
+                result.append(v)
+    return result
+
+
+def bool2args(data: bool) -> List[str]:
+    """Convert a boolean value to command line argument (flag)."""
+    return []

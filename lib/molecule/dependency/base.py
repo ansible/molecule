@@ -23,9 +23,7 @@ import abc
 import os
 import time
 
-import sh
-
-from molecule import util
+from molecule import constants, util
 from molecule.logger import get_logger
 
 LOG = get_logger(__name__)
@@ -54,11 +52,12 @@ class Base(object):
         exception = None
 
         try:
+            # print(555, self._sh_command)
             util.run_command(self._sh_command, debug=self._config.debug)
             msg = "Dependency completed successfully."
             LOG.success(msg)
             return
-        except sh.ErrorReturnCode:
+        except Exception:
             pass
 
         for counter in range(1, (self.RETRY + 1)):
@@ -75,10 +74,11 @@ class Base(object):
                 msg = "Dependency completed successfully."
                 LOG.success(msg)
                 return
-            except sh.ErrorReturnCode as _exception:
+            except Exception as _exception:
                 exception = _exception
 
-        util.sysexit(exception.exit_code)
+        LOG.error(str(exception), self._sh_command)
+        util.sysexit(getattr(exception, "exit_code", constants.RC_UNKNOWN_ERROR))
 
     @abc.abstractmethod
     def execute(self):  # pragma: no cover

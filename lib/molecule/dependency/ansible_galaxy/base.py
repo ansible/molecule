@@ -23,8 +23,6 @@ import abc
 import copy
 import os
 
-import sh
-
 from molecule import logger, util
 from molecule.dependency import base
 
@@ -106,10 +104,11 @@ class AnsibleGalaxyBase(base.Base):
         options = self.options
         verbose_flag = util.verbose_flag(options)
 
-        self._sh_command = getattr(sh, self.command)
-        self._sh_command = self._sh_command.bake(*self.COMMANDS)
-        self._sh_command = self._sh_command.bake(
-            options, *verbose_flag, _env=self.env, _out=LOG.out, _err=LOG.error
+        self._sh_command = util.BakedCommand(
+            cmd=[self.command, *self.COMMANDS, *util.dict2args(options), *verbose_flag],
+            env=self.env,
+            stdout=LOG.out,
+            stderr=LOG.error,
         )
 
     def execute(self):

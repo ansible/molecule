@@ -19,8 +19,6 @@
 #  DEALINGS IN THE SOFTWARE.
 """Ansible-Playbook Provisioner Module."""
 
-import sh
-
 from molecule import logger, util
 
 LOG = logger.get_logger(__name__)
@@ -69,23 +67,28 @@ class AnsiblePlaybook(object):
             if options.get("become"):
                 del options["become"]
 
-        self._ansible_command = sh.ansible_playbook.bake(
-            options,
-            self._playbook,
-            *verbose_flag,
-            _cwd=self._config.scenario.directory,
-            _env=self._env,
-            _out=self._out,
-            _err=self._err
-        )
-
         ansible_args = list(self._config.provisioner.ansible_args) + list(
             self._config.ansible_args
         )
 
-        if ansible_args:
-            if self._config.action not in ["create", "destroy"]:
-                self._ansible_command = self._ansible_command.bake(ansible_args)
+        # if ansible_args:
+        #     if self._config.action not in ["create", "destroy"]:
+        #         # inserts ansible_args at index 1
+        #         self._ansible_command.cmd.extend(ansible_args)
+
+        self._ansible_command = util.BakedCommand(
+            cmd=[
+                "ansible-playbook",
+                *util.dict2args(options),
+                *util.bool2args(verbose_flag),
+                *ansible_args,
+                self._playbook,  # must always go last
+            ],
+            cwd=self._config.scenario.directory,
+            env=self._env,
+            stdout=self._out,
+            stderr=self._err,
+        )
 
     def execute(self):
         """
@@ -100,13 +103,12 @@ class AnsiblePlaybook(object):
             LOG.warning("Skipping, %s action has no playbook." % self._config.action)
             return
 
-        try:
-            self._config.driver.sanity_checks()
-            cmd = util.run_command(self._ansible_command, debug=self._config.debug)
-            return cmd.stdout.decode("utf-8")
-        except sh.ErrorReturnCode as e:
-            out = e.stdout.decode("utf-8")
-            util.sysexit_with_message(str(out), e.exit_code)
+        self._config.driver.sanity_checks()
+        result = util.run_command(self._ansible_command, debug=self._config.debug)
+        if result.returncode != 0:
+            util.sysexit_with_message(result.stdout, result.returncode)
+
+        return result.stdout
 
     def add_cli_arg(self, name, value):
         """

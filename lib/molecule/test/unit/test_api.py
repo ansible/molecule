@@ -19,10 +19,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import pytest
-import sh
-
-from molecule import api
+from molecule import api, util
 
 
 def test_api_molecule_drivers_as_attributes():
@@ -47,10 +44,10 @@ def test_api_verifiers():
 
 
 def test_cli_mol():
-    cmd_molecule = sh.molecule.bake("--version")
-    x = pytest.helpers.run_command(cmd_molecule, log=False)
-    cmd_mol = sh.mol.bake("--version")
-    y = pytest.helpers.run_command(cmd_mol, log=False)
-    assert x.exit_code == y.exit_code
+    cmd_molecule = ["molecule", "--version"]
+    x = util.run_command(cmd_molecule)
+    cmd_mol = ["mol", "--version"]
+    y = util.run_command(cmd_mol)
+    assert x.returncode == y.returncode
     assert x.stderr == y.stderr
     assert x.stdout == y.stdout
