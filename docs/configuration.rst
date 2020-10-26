@@ -12,6 +12,29 @@ Variable Substitution
 .. autoclass:: molecule.interpolation.Interpolator()
    :undoc-members:
 
+There are following environment variables available in ``molecule.yml``:
+
+================================  ===========================================================
+  Variable                          Description
+================================  ===========================================================
+MOLECULE_DEBUG                    If debug is turned on or off
+MOLECULE_FILE                     Path to molecule config file
+MOLECULE_ENV_FILE                 Path to molecule environment file
+MOLECULE_STATE_FILE               ?
+MOLECULE_INVENTORY_FILE           Path to generated inventory file
+MOLECULE_EPHEMERAL_DIRECTORY      Path to generated directory, usually
+                                  ``~/.cache/molecule/<scenario-name>``
+MOLECULE_SCENARIO_DIRECTORY       Path to scenario directory
+MOLECULE_PROJECT_DIRECTORY        Path to your project directory
+MOLECULE_INSTANCE_CONFIG          ?
+MOLECULE_DEPENDENCY_NAME          Dependency type name, usually 'galaxy'
+MOLECULE_DRIVER_NAME              Name of the molecule scenario driver
+MOLECULE_PROVISIONER_NAME         Name of the provisioner tool (usually 'ansible')
+MOLECULE_SCENARIO_NAME            Name of the scenario
+MOLECULE_VERIFIER_NAME            Name of the verifier tool (usually 'ansible')
+MOLECULE_VERIFIER_TEST_DIRECTORY  ?
+================================  ===========================================================
+
 .. _dependency:
 
 Dependency
