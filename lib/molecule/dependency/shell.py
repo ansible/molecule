@@ -19,12 +19,9 @@
 #  DEALINGS IN THE SOFTWARE.
 """Shell Dependency Module."""
 
-import shlex
-
-import sh
-
 from molecule import logger
 from molecule.dependency import base
+from molecule.util import BakedCommand
 
 LOG = logger.get_logger(__name__)
 
@@ -86,20 +83,9 @@ class Shell(base.Base):
     def default_options(self):
         return {}
 
-    def bake(self):
-        """
-        Bake a ``shell`` command so it's ready to execute and returns None.
-
-        :return: None
-        """
-        command_list = shlex.split(self.command)
-        command, args = command_list[0], command_list[1:]
-
-        self._sh_command = getattr(sh, command)
-        # Reconstruct command with remaining args.
-        self._sh_command = self._sh_command.bake(
-            args, _env=self.env, _out=LOG.out, _err=LOG.error
-        )
+    def bake(self) -> None:
+        """Bake a ``shell`` command so it's ready to execute."""
+        self._sh_command = BakedCommand(cmd=self.command, env=self.env)
 
     def execute(self):
         if not self.enabled:

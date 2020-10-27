@@ -19,7 +19,6 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import pytest
-import sh
 
 from molecule import config
 from molecule.dependency import shell
@@ -91,43 +90,6 @@ def test_env_property(_instance):
     assert "bar" == _instance.env["FOO"]
 
 
-@pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
-def test_bake(_instance):
-    _instance.bake()
-
-    x = [str(sh.ls), "-l", "-a", "/tmp"]
-    result = str(_instance._sh_command).split()
-
-    assert sorted(x) == sorted(result)
-
-
-@pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
-@pytest.mark.parametrize(
-    "command,words",
-    {
-        "ls -l -a /tmp": ["ls", "-l", "-a", "/tmp"],
-        'sh -c "echo hello world"': ["sh", "-c", "echo hello world"],
-        'echo "hello world"': ["echo", "hello world"],
-        """printf "%s\\n" foo "bar baz" 'a b' c""": [
-            "printf",
-            r"%s\n",
-            "foo",
-            "bar baz",
-            "a b",
-            "c",
-        ],
-    }.items(),
-)
-def test_bake2(_instance, command, words):
-    _instance._config.config["dependency"]["command"] = command
-    _instance.bake()
-    baked_exe = _instance._sh_command._path.decode()
-    baked_args = [w.decode() for w in _instance._sh_command._partial_baked_args]
-
-    assert baked_exe.endswith(words[0])
-    assert baked_args == words[1:]
-
-
 def test_execute(patched_run_command, patched_logger_success, _instance):
     _instance._sh_command = "patched-command"
     _instance.execute()
@@ -159,12 +121,11 @@ def test_execute_bakes(patched_run_command, _instance):
 
 
 @pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
-def test_executes_catches_and_exits_return_code(patched_run_command, _instance):
-    patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.ls, b"", b"")
+def test_dep_executes_catches_and_exits_return_code(patched_run_command, _instance):
+    patched_run_command.side_effect = SystemExit(1)
     with pytest.raises(SystemExit) as e:
         _instance.execute()
-
-    assert 1 == e.value.code
+    assert e.value.code == 1
 
 
 def test_has_command_configured(_instance):

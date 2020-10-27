@@ -47,11 +47,6 @@ def _instance(_base_class, config_instance):
 
 
 @pytest.fixture
-def _patched_verify_configs(mocker):
-    return mocker.patch("molecule.command.base._verify_configs")
-
-
-@pytest.fixture
 def _patched_base_setup(mocker):
     return mocker.patch("molecule.test.unit.command.test_base.ExtendedBase._setup")
 
@@ -260,12 +255,6 @@ def test_get_configs(config_instance):
     assert 1 == len(result)
     assert isinstance(result, list)
     assert isinstance(result[0], config.Config)
-
-
-def test_get_configs_calls_verify_configs(_patched_verify_configs):
-    base.get_configs({}, {})
-
-    _patched_verify_configs.assert_called_once_with([], "molecule/*/molecule.yml")
 
 
 def test_verify_configs(config_instance):

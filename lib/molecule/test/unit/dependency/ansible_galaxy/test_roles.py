@@ -21,7 +21,6 @@
 import os
 
 import pytest
-import sh
 
 from molecule import config
 from molecule.dependency.ansible_galaxy import roles
@@ -126,20 +125,21 @@ def test_env_property(_instance):
 
 
 @pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
-def test_bake(_instance, role_file, roles_path):
+def test_galaxy_bake(_instance, role_file, roles_path):
     _instance.bake()
-    x = [
-        str(sh.ansible_galaxy),
+    args = [
+        "ansible-galaxy",
         "install",
-        "--role-file={}".format(role_file),
-        "--roles-path={}".format(roles_path),
+        "--foo",
+        "bar",
         "--force",
-        "--foo=bar",
+        "--role-file",
+        role_file,
+        "--roles-path",
+        roles_path,
         "-v",
     ]
-    result = str(_instance._sh_command).split()
-
-    assert sorted(x) == sorted(result)
+    assert _instance._sh_command.cmd == args
 
 
 def test_execute(
@@ -202,10 +202,10 @@ def test_execute_bakes(
     assert 1 == patched_run_command.call_count
 
 
-def test_executes_catches_and_exits_return_code(
+def test_galaxy_executes_catches_and_exits_return_code(
     patched_run_command, _patched_ansible_galaxy_has_requirements_file, _instance
 ):
-    patched_run_command.side_effect = sh.ErrorReturnCode_1(sh.ansible_galaxy, b"", b"")
+    patched_run_command.side_effect = SystemExit(1)
     with pytest.raises(SystemExit) as e:
         _instance.execute()
 

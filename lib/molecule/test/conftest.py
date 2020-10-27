@@ -33,13 +33,14 @@ LOG = logger.get_logger(__name__)
 
 @pytest.helpers.register
 def run_command(cmd, env=os.environ, log=True):
-    if log:
-        cmd = _rebake_command(cmd, env)
+    if cmd.__class__.__name__ == "Command":
+        if log:
+            cmd = _rebake_command(cmd, env)
 
-    # Never let sh truncate exceptions in testing
-    cmd = cmd.bake(_truncate_exc=False)
+        # Never let sh truncate exceptions in testing
+        cmd = cmd.bake(_truncate_exc=False)
 
-    return util.run_command(cmd)
+    return util.run_command(cmd, env=env)
 
 
 def _rebake_command(cmd, env, out=LOG.out, err=LOG.error):

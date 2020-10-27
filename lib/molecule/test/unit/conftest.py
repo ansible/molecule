@@ -23,6 +23,7 @@ import functools
 import os
 import shutil
 from pathlib import Path
+from subprocess import CompletedProcess
 from uuid import uuid4
 
 import pytest
@@ -194,7 +195,9 @@ def patched_logger_success(mocker):
 @pytest.fixture
 def patched_run_command(mocker):
     m = mocker.patch("molecule.util.run_command")
-    m.return_value = mocker.Mock(stdout=b"patched-run-command-stdout")
+    m.return_value = CompletedProcess(
+        args="foo", returncode=0, stdout="patched-run-command-stdout", stderr=""
+    )
 
     return m
 
