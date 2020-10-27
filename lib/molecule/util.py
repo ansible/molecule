@@ -34,8 +34,10 @@ from typing import Any, Dict, List, Optional, Union
 import colorama
 import jinja2
 import yaml
+from rich.syntax import Syntax
 from subprocess_tee import run
 
+from molecule.console import console
 from molecule.constants import MOLECULE_HEADER
 from molecule.logger import get_logger
 
@@ -442,3 +444,14 @@ def dict2args(data: Dict) -> List[str]:
 def bool2args(data: bool) -> List[str]:
     """Convert a boolean value to command line argument (flag)."""
     return []
+
+
+def print_as_yaml(data: Any) -> None:
+    """Render python object as yaml on console."""
+    result = Syntax(safe_dump(data), "yaml")
+    console.print(result)
+
+
+def chomp(text: str) -> str:
+    """Remove any training spaces from string."""
+    return "\n".join([x.rstrip() for x in text.splitlines()])
