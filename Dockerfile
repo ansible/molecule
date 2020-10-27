@@ -38,7 +38,6 @@ py3-mccabe \
 py3-netifaces \
 py3-paramiko \
 py3-pbr \
-py3-pexpect \
 py3-pip \
 py3-pluggy \
 py3-psutil \
@@ -116,7 +115,6 @@ py3-mccabe \
 py3-netifaces \
 py3-paramiko \
 py3-pbr \
-py3-pexpect \
 py3-pip \
 py3-pluggy \
 py3-psutil \
