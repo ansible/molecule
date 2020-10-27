@@ -18,11 +18,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 """Scenarios Module."""
-
-import operator
-
-import tree_format
-
 from molecule import logger, util
 
 LOG = logger.get_logger(__name__)
@@ -75,24 +70,10 @@ class Scenarios(object):
         msg = "Test matrix"
         LOG.info(msg)
 
-        tree = tuple(
-            (
-                "",
-                [
-                    (scenario.name, [(action, []) for action in scenario.sequence])
-                    for scenario in self.all
-                ],
-            )
-        )
-
-        tf = tree_format.format_tree(
-            tree,
-            format_node=operator.itemgetter(0),
-            get_children=operator.itemgetter(1),
-        )
-
-        LOG.out(tf)
-        LOG.out("")
+        tree = {}
+        for scenario in self.all:
+            tree[scenario.name] = [action for action in scenario.sequence]
+        util.print_as_yaml(tree)
 
     def _verify(self):
         """

@@ -23,7 +23,8 @@ import copy
 
 import pytest
 
-from molecule import config, scenario, scenarios
+from molecule import config, scenario, scenarios, util
+from molecule.console import console
 
 
 @pytest.fixture
@@ -73,44 +74,41 @@ def test_all_filters_on_scenario_name_property(_instance):
     assert 1 == len(_instance.all)
 
 
-def test_print_matrix(mocker, patched_logger_info, patched_logger_out, _instance):
-    _instance.print_matrix()
+def test_print_matrix(capsys, _instance):
+    with console.capture() as capture:
+        _instance.print_matrix()
+    result = util.chomp(util.strip_ansi_escape(capture.get()))
 
-    msg = "Test matrix"
-    patched_logger_info(msg)
-
-    matrix_out = u"""
-├── default
-│   ├── dependency
-│   ├── lint
-│   ├── cleanup
-│   ├── destroy
-│   ├── syntax
-│   ├── create
-│   ├── prepare
-│   ├── converge
-│   ├── idempotence
-│   ├── side_effect
-│   ├── verify
-│   ├── cleanup
-│   └── destroy
-└── foo
-    ├── dependency
-    ├── lint
-    ├── cleanup
-    ├── destroy
-    ├── syntax
-    ├── create
-    ├── prepare
-    ├── converge
-    ├── idempotence
-    ├── side_effect
-    ├── verify
-    ├── cleanup
-    └── destroy
-"""
-    assert matrix_out == patched_logger_out.mock_calls[0][1][0]
-    assert mocker.call("") == patched_logger_out.mock_calls[1]
+    matrix_out = u"""---
+default:
+  - dependency
+  - lint
+  - cleanup
+  - destroy
+  - syntax
+  - create
+  - prepare
+  - converge
+  - idempotence
+  - side_effect
+  - verify
+  - cleanup
+  - destroy
+foo:
+  - dependency
+  - lint
+  - cleanup
+  - destroy
+  - syntax
+  - create
+  - prepare
+  - converge
+  - idempotence
+  - side_effect
+  - verify
+  - cleanup
+  - destroy"""
+    assert matrix_out in result
 
 
 def test_verify_does_not_raise_when_found(_instance):
