@@ -115,7 +115,8 @@ def list(ctx, scenario_name, format):  # pragma: no cover
 
     headers = [util.title(name) for name in Status._fields]
     if format == "simple" or format == "plain":
-        table_format = "simple"
+        table_format = format  # "simple"
+
         if format == "plain":
             headers = []
             table_format = format
@@ -132,16 +133,16 @@ def _print_tabulate_data(headers, data, table_format):  # pragma: no cover
     :param data:  A list of tabular data to display.
     :returns: None
     """
-    t = Table(box=box.MINIMAL)
-    for header in headers:
-        t.add_column(header)
-    for line in data:
-        console.print(line)
-        t.add_row(*line)
-    # console.print(headers)
-    # console.print(data)
-    # print(tabulate.tabulate(data, headers, tablefmt=table_format))
-    console.print(t)
+    if table_format == "plain":
+        for line in data:
+            console.print("\t".join(line))
+    else:
+        t = Table(box=box.MINIMAL)
+        for header in headers:
+            t.add_column(header)
+        for line in data:
+            t.add_row(*line)
+        console.print(t)
 
 
 def _print_yaml_data(headers, data):  # pragma: no cover
