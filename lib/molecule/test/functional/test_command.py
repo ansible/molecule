@@ -170,9 +170,7 @@ def test_command_lint(scenario_to_test, with_scenario, scenario_name):
         (
             "driver/delegated",
             "delegated",
-            """
-instance  delegated  ansible  default
-""".strip(),
+            "instance        delegated       ansible default",
         ),
     ],
     indirect=["scenario_to_test", "driver_name"],
