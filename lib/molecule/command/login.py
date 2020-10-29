@@ -19,15 +19,10 @@
 #  DEALINGS IN THE SOFTWARE.
 """Login Command Module."""
 
-import fcntl
 import os
-import signal
-import struct
-import sys
-import termios
+from subprocess import run
 
 import click
-import pexpect
 
 from molecule import logger, scenarios, util
 from molecule.command import base
@@ -147,19 +142,8 @@ class Login(base.Base):
         login_options["lines"] = lines
         login_cmd = self._config.driver.login_cmd_template.format(**login_options)
 
-        dimensions = (int(lines), int(columns))
         cmd = "/usr/bin/env {}".format(login_cmd)
-        self._pt = pexpect.spawn(cmd, dimensions=dimensions)
-        signal.signal(signal.SIGWINCH, self._sigwinch_passthrough)
-        self._pt.interact()
-
-    def _sigwinch_passthrough(self, sig, data):  # pragma: no cover
-        tiocgwinsz = 1074295912  # assume
-        if "TIOCGWINSZ" in dir(termios):
-            tiocgwinsz = termios.TIOCGWINSZ
-        s = struct.pack("HHHH", 0, 0, 0, 0)
-        a = struct.unpack("HHHH", fcntl.ioctl(sys.stdout.fileno(), tiocgwinsz, s))
-        self._pt.setwinsize(a[0], a[1])
+        run(cmd, shell=True)
 
 
 @base.click_command_ex()
