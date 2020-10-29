@@ -73,4 +73,5 @@ def test_valid(temp_dir, _molecule_file, _role_directory, _command_args, _instan
     assert {} == schema_v3.validate(data)
 
     cmd = ["yamllint", "-s", _molecule_file]
-    pytest.helpers.run_command(cmd)
+    result = util.run_command(cmd)
+    assert result.returncode == 0

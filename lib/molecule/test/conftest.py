@@ -25,26 +25,10 @@ import string
 
 import pytest
 
-from molecule import config, logger, util
+from molecule import config, logger
 from molecule.scenario import ephemeral_directory
 
 LOG = logger.get_logger(__name__)
-
-
-@pytest.helpers.register
-def run_command(cmd, env=os.environ, log=True):
-    if cmd.__class__.__name__ == "Command":
-        if log:
-            cmd = _rebake_command(cmd, env)
-
-        # Never let sh truncate exceptions in testing
-        cmd = cmd.bake(_truncate_exc=False)
-
-    return util.run_command(cmd, env=env)
-
-
-def _rebake_command(cmd, env, out=LOG.out, err=LOG.error):
-    return cmd.bake(_env=dict(env), _out=out, _err=err)
 
 
 def is_subset(subset, superset):
