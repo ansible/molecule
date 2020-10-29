@@ -198,6 +198,7 @@ class Delegated(Driver):
                     )
                 if d.get("password", None):
                     conn_dict["ansible_password"] = d.get("password")
+                    conn_dict["ansible_ssh_pass"] = d.get("password")
                 if d.get("winrm_transport", None):
                     conn_dict["ansible_winrm_transport"] = d.get("winrm_transport")
                 if d.get("winrm_cert_pem", None):
