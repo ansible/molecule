@@ -37,6 +37,7 @@ jobs:
           - tox_env: py39-devel
             PREFIX: PYTEST_REQPASS=427
           - tox_env: packaging
+          - tox_env: eco
           - tox_env: dockerfile
           - tox_env: build-containers
             needs:
@@ -50,6 +51,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v1
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update \
+          && sudo apt-get install -y libvirt-dev
       - name: Find python version
         id: py_ver
         shell: python
