@@ -20,7 +20,7 @@
 
 import pytest
 
-from molecule import util
+from molecule.util import run_command
 
 
 @pytest.fixture
@@ -51,7 +51,7 @@ def driver_name(request):
 )
 def test_command_check(scenario_to_test, with_scenario, scenario_name):
     cmd = ["molecule", "check", "--scenario-name", scenario_name]
-    pytest.helpers.run_command(cmd)
+    assert run_command(cmd).returncode == 0
 
 
 @pytest.mark.extensive
@@ -64,7 +64,7 @@ def test_command_check(scenario_to_test, with_scenario, scenario_name):
 )
 def test_command_cleanup(scenario_to_test, with_scenario, scenario_name):
     cmd = ["molecule", "cleanup", "--scenario-name", scenario_name]
-    pytest.helpers.run_command(cmd)
+    assert run_command(cmd).returncode == 0
 
 
 @pytest.mark.extensive
@@ -77,7 +77,7 @@ def test_command_cleanup(scenario_to_test, with_scenario, scenario_name):
 )
 def test_command_converge(scenario_to_test, with_scenario, scenario_name):
     cmd = ["molecule", "converge", "--scenario-name", scenario_name]
-    pytest.helpers.run_command(cmd)
+    assert run_command(cmd).returncode == 0
 
 
 @pytest.mark.extensive
@@ -90,7 +90,7 @@ def test_command_converge(scenario_to_test, with_scenario, scenario_name):
 )
 def test_command_create(scenario_to_test, with_scenario, scenario_name):
     cmd = ["molecule", "create", "--scenario-name", scenario_name]
-    pytest.helpers.run_command(cmd)
+    assert run_command(cmd).returncode == 0
 
 
 @pytest.mark.parametrize(
@@ -103,13 +103,11 @@ def test_command_create(scenario_to_test, with_scenario, scenario_name):
 )
 def test_command_dependency(request, scenario_to_test, with_scenario, scenario_name):
     cmd = ["molecule", "dependency", "--scenario-name", scenario_name]
-    result = util.run_command(cmd, echo=True)
-    assert result.returncode == 0
+    assert run_command(cmd, echo=True).returncode == 0
 
     # Validate that dependency worked by running converge, which make use
     cmd = ["molecule", "converge", "--scenario-name", scenario_name]
-    result = util.run_command(cmd, echo=True)
-    assert result.returncode == 0
+    assert run_command(cmd, echo=True).returncode == 0
 
 
 @pytest.mark.extensive
@@ -120,7 +118,7 @@ def test_command_dependency(request, scenario_to_test, with_scenario, scenario_n
 )
 def test_command_destroy(scenario_to_test, with_scenario, scenario_name):
     cmd = ["molecule", "destroy", "--scenario-name", scenario_name]
-    pytest.helpers.run_command(cmd)
+    assert run_command(cmd).returncode == 0
 
 
 @pytest.mark.extensive
@@ -155,7 +153,7 @@ def test_command_init_scenario(temp_dir, driver_name, skip_test):
 )
 def test_command_lint(scenario_to_test, with_scenario, scenario_name):
     cmd = ["molecule", "lint", "--scenario-name", scenario_name]
-    pytest.helpers.run_command(cmd)
+    assert run_command(cmd).returncode == 0
 
 
 @pytest.mark.parametrize(
@@ -199,10 +197,10 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario, expecte
 )
 def test_command_prepare(scenario_to_test, with_scenario, scenario_name):
     cmd = ["molecule", "create", "--scenario-name", scenario_name]
-    pytest.helpers.run_command(cmd)
+    assert run_command(cmd).returncode == 0
 
     cmd = ["molecule", "prepare", "--scenario-name", scenario_name]
-    pytest.helpers.run_command(cmd)
+    assert run_command(cmd).returncode == 0
 
 
 @pytest.mark.extensive
@@ -215,7 +213,7 @@ def test_command_prepare(scenario_to_test, with_scenario, scenario_name):
 )
 def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
     cmd = ["molecule", "side-effect", "--scenario-name", scenario_name]
-    pytest.helpers.run_command(cmd)
+    assert run_command(cmd).returncode == 0
 
 
 @pytest.mark.extensive
@@ -228,7 +226,7 @@ def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
 )
 def test_command_syntax(scenario_to_test, with_scenario, scenario_name):
     cmd = ["molecule", "syntax", "--scenario-name", scenario_name]
-    pytest.helpers.run_command(cmd)
+    assert run_command(cmd).returncode == 0
 
 
 @pytest.mark.parametrize(

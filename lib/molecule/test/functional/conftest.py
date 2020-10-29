@@ -31,6 +31,7 @@ import pytest
 from molecule import logger, util
 from molecule.config import ansible_version
 from molecule.test.conftest import change_dir_to
+from molecule.util import run_command
 
 LOG = logger.get_logger(__name__)
 
@@ -73,7 +74,7 @@ def with_scenario(request, scenario_to_test, driver_name, scenario_name, skip_te
             msg = "CLEANUP: Destroying instances for all scenario(s)"
             LOG.out(msg)
             cmd = ["molecule", "destroy", "--driver-name", driver_name, "--all"]
-            pytest.helpers.run_command(cmd)
+            assert run_command(cmd).returncode == 0
 
 
 @pytest.fixture
@@ -93,13 +94,13 @@ def skip_test(request, driver_name):
 @pytest.helpers.register
 def idempotence(scenario_name):
     cmd = ["molecule", "create", "--scenario-name", scenario_name]
-    pytest.helpers.run_command(cmd)
+    assert run_command(cmd).returncode == 0
 
     cmd = ["molecule", "converge", "--scenario-name", scenario_name]
-    pytest.helpers.run_command(cmd)
+    assert run_command(cmd).returncode == 0
 
     cmd = ["molecule", "idempotence", "--scenario-name", scenario_name]
-    pytest.helpers.run_command(cmd)
+    assert run_command(cmd).returncode == 0
 
 
 @pytest.helpers.register
@@ -107,12 +108,12 @@ def init_role(temp_dir, driver_name):
     role_directory = os.path.join(temp_dir.strpath, "test-init")
 
     cmd = ["molecule", "init", "role", "test-init", "--driver-name", driver_name]
-    pytest.helpers.run_command(cmd)
+    assert run_command(cmd).returncode == 0
     pytest.helpers.metadata_lint_update(role_directory)
 
     with change_dir_to(role_directory):
         cmd = ["molecule", "test", "--all"]
-        pytest.helpers.run_command(cmd)
+        assert run_command(cmd).returncode == 0
 
 
 @pytest.helpers.register
@@ -120,7 +121,7 @@ def init_scenario(temp_dir, driver_name):
     # Create role
     role_directory = os.path.join(temp_dir.strpath, "test-init")
     cmd = ["molecule", "init", "role", "test-init", "--driver-name", driver_name]
-    pytest.helpers.run_command(cmd)
+    assert run_command(cmd).returncode == 0
     pytest.helpers.metadata_lint_update(role_directory)
 
     with change_dir_to(role_directory):
@@ -138,12 +139,12 @@ def init_scenario(temp_dir, driver_name):
             "--driver-name",
             driver_name,
         ]
-        pytest.helpers.run_command(cmd)
+        assert run_command(cmd).returncode == 0
 
         assert os.path.isdir(scenario_directory)
 
         cmd = ["molecule", "test", "--scenario-name", "test-scenario", "--all"]
-        pytest.helpers.run_command(cmd)
+        assert run_command(cmd).returncode == 0
 
 
 @pytest.helpers.register
@@ -165,15 +166,15 @@ def metadata_lint_update(role_directory):
     # the customize ansible-lint config is used.
     with change_dir_to(role_directory):
         cmd = ["ansible-lint", "."]
-    pytest.helpers.run_command(cmd)
+    assert run_command(cmd).returncode == 0
 
 
 @pytest.helpers.register
 def list(x):
     cmd = ["molecule", "list"]
-    out = pytest.helpers.run_command(cmd, log=False)
-    out = out.stdout.decode("utf-8")
-    out = util.strip_ansi_color(out)
+    result = run_command(cmd)
+    assert result.returncode == 0
+    out = util.strip_ansi_color(result.stdout)
 
     for l in x.splitlines():
         assert l in out
@@ -192,10 +193,10 @@ def list_with_format_plain(x):
 @pytest.helpers.register
 def login(login_args, scenario_name="default"):
     cmd = ["molecule", "destroy", "--scenario-name", scenario_name]
-    pytest.helpers.run_command(cmd)
+    assert run_command(cmd).returncode == 0
 
     cmd = ["molecule", "create", "--scenario-name", scenario_name]
-    pytest.helpers.run_command(cmd)
+    assert run_command(cmd).returncode == 0
 
     for instance, regexp in login_args:
         if len(login_args) > 1:
@@ -219,19 +220,19 @@ def test(driver_name, scenario_name="default", parallel=False):
         if parallel:
             cmd.append("--parallel")
 
-    pytest.helpers.run_command(cmd)
+    assert run_command(cmd).returncode == 0
 
 
 @pytest.helpers.register
 def verify(scenario_name="default"):
     cmd = ["molecule", "create", "--scenario-name", scenario_name]
-    pytest.helpers.run_command(cmd)
+    assert run_command(cmd).returncode == 0
 
     cmd = ["molecule", "converge", "--scenario-name", scenario_name]
-    pytest.helpers.run_command(cmd)
+    assert run_command(cmd).returncode == 0
 
     cmd = ["molecule", "verify", "--scenario-name", scenario_name]
-    pytest.helpers.run_command(cmd)
+    assert run_command(cmd).returncode == 0
 
 
 def get_docker_executable():
