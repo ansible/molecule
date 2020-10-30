@@ -35,6 +35,7 @@ from molecule.util import boolean, lru_cache
 
 LOG = logger.get_logger(__name__)
 MOLECULE_DEBUG = boolean(os.environ.get("MOLECULE_DEBUG", "False"))
+MOLECULE_VERBOSITY = int(os.environ.get("MOLECULE_VERBOSITY", 0))
 MOLECULE_DIRECTORY = "molecule"
 MOLECULE_FILE = "molecule.yml"
 MOLECULE_KEEP_STRING = "MOLECULE_"

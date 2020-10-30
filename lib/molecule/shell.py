@@ -18,7 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 """Molecule Shell Module."""
-
+import os
 import sys
 from functools import lru_cache
 
@@ -31,7 +31,7 @@ import molecule
 from molecule import command
 from molecule.api import drivers
 from molecule.command.base import click_group_ex
-from molecule.config import MOLECULE_DEBUG, ansible_version
+from molecule.config import MOLECULE_DEBUG, MOLECULE_VERBOSITY, ansible_version
 from molecule.util import lookup_config_file
 
 click_completion.init()
@@ -63,6 +63,13 @@ def _version_string() -> str:
     help="Enable or disable debug mode. Default is disabled.",
 )
 @click.option(
+    "-v",
+    "--verbose",
+    count=True,
+    default=MOLECULE_VERBOSITY,
+    help="Increase Ansible verbosity level. Default is 0.",
+)
+@click.option(
     "--base-config",
     "-c",
     default=LOCAL_CONFIG,
@@ -85,7 +92,7 @@ def _version_string() -> str:
     prog_name="molecule", version=molecule.__version__, message=_version_string()
 )  # type: ignore
 @click.pass_context
-def main(ctx, debug, base_config, env_file):  # pragma: no cover
+def main(ctx, debug, verbose, base_config, env_file):  # pragma: no cover
     """
     Molecule aids in the development and testing of Ansible roles.
 
@@ -96,8 +103,12 @@ def main(ctx, debug, base_config, env_file):  # pragma: no cover
     ctx.obj = {}
     ctx.obj["args"] = {}
     ctx.obj["args"]["debug"] = debug
+    ctx.obj["args"]["verbose"] = verbose
     ctx.obj["args"]["base_config"] = base_config
     ctx.obj["args"]["env_file"] = env_file
+
+    if verbose:
+        os.environ["ANSIBLE_VERBOSITY"] = str(verbose)
 
 
 # runtime environment checks to avoid delayed failures
