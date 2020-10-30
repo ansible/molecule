@@ -193,7 +193,7 @@ def test_execute_bakes_with_ansible_args(
     assert _instance._ansible_command.cmd == args
 
 
-def test_executes_catches_and_exits_return_code_with_stdout(
+def test_executes_catches_and_exits_return_code(
     patched_run_command, patched_logger_critical, _instance
 ):
     patched_run_command.side_effect = [
@@ -205,9 +205,6 @@ def test_executes_catches_and_exits_return_code_with_stdout(
         _instance.execute()
 
     assert 1 == e.value.code
-
-    msg = "out"
-    patched_logger_critical.assert_called_once_with(msg)
 
 
 def test_add_cli_arg(_instance):
