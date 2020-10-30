@@ -31,7 +31,6 @@ from functools import lru_cache  # noqa
 from subprocess import CompletedProcess
 from typing import Any, Dict, List, Optional, Union
 
-import colorama
 import jinja2
 import yaml
 from rich.syntax import Syntax
@@ -53,25 +52,7 @@ class SafeDumper(yaml.SafeDumper):
 
 def print_debug(title: str, data: str) -> None:
     """Print debug information."""
-    title = "DEBUG: {}".format(title)
-    title_list = [
-        colorama.Back.WHITE,
-        colorama.Style.BRIGHT,
-        colorama.Fore.BLACK,
-        title,
-        colorama.Fore.RESET,
-        colorama.Back.RESET,
-        colorama.Style.RESET_ALL,
-    ]
-    print("".join(title_list))
-    data_list = [
-        colorama.Fore.BLACK,
-        colorama.Style.BRIGHT,
-        data,
-        colorama.Style.RESET_ALL,
-        colorama.Fore.RESET,
-    ]
-    print("".join(data_list))
+    console.print(f"DEBUG: {title}:\n{data}")
 
 
 def print_environment_vars(env: Optional[Dict[str, str]]) -> None:
@@ -84,10 +65,12 @@ def print_environment_vars(env: Optional[Dict[str, str]]) -> None:
     """
     if env:
         ansible_env = {k: v for (k, v) in env.items() if "ANSIBLE_" in k}
-        print_debug("ANSIBLE ENVIRONMENT", safe_dump(ansible_env))
+        print_debug("ANSIBLE ENVIRONMENT", safe_dump(ansible_env, explicit_start=False))
 
         molecule_env = {k: v for (k, v) in env.items() if "MOLECULE_" in k}
-        print_debug("MOLECULE ENVIRONMENT", safe_dump(molecule_env))
+        print_debug(
+            "MOLECULE ENVIRONMENT", safe_dump(molecule_env, explicit_start=False)
+        )
 
         combined_env = ansible_env.copy()
         combined_env.update(molecule_env)
@@ -203,18 +186,15 @@ def file_prepender(filename):
         f.write(molecule_prepender(content))
 
 
-def safe_dump(data: Any) -> str:
+def safe_dump(data: Any, explicit_start=True) -> str:
     """
     Dump the provided data to a YAML document and returns a string.
 
     :param data: A string containing an absolute path to the file to parse.
     :return: str
     """
-    # TODO(retr0h): Do we need to encode?
-    # yaml.dump(data) produces the document as a str object in both python
-    # 2 and 3.
     return yaml.dump(
-        data, Dumper=SafeDumper, default_flow_style=False, explicit_start=True
+        data, Dumper=SafeDumper, default_flow_style=False, explicit_start=explicit_start
     )
 
 
