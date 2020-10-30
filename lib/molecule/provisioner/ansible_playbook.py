@@ -106,7 +106,10 @@ class AnsiblePlaybook(object):
         self._config.driver.sanity_checks()
         result = util.run_command(self._ansible_command, debug=self._config.debug)
         if result.returncode != 0:
-            util.sysexit_with_message(result.stdout, result.returncode)
+            util.sysexit_with_message(
+                f"Ansible return code was {result.returncode}, command was: {result.args}",
+                result.returncode,
+            )
 
         return result.stdout
 
