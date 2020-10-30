@@ -22,23 +22,23 @@ from __future__ import print_function
 
 import logging
 
-from molecule import logger
+from molecule.console import should_do_markup
 
 
 def test_markup_detection_pycolors0(monkeypatch):
     monkeypatch.setenv("PY_COLORS", "0")
-    assert not logger.should_do_markup()
+    assert not should_do_markup()
 
 
 def test_markup_detection_pycolors1(monkeypatch):
     monkeypatch.setenv("PY_COLORS", "1")
-    assert logger.should_do_markup()
+    assert should_do_markup()
 
 
 def test_markup_detection_tty_yes(mocker):
     mocker.patch("sys.stdout.isatty", return_value=True)
     mocker.patch("os.environ", {"TERM": "xterm"})
-    assert logger.should_do_markup()
+    assert should_do_markup()
     mocker.resetall()
     mocker.stopall()
 
@@ -46,7 +46,7 @@ def test_markup_detection_tty_yes(mocker):
 def test_markup_detection_tty_no(mocker):
     mocker.patch("os.environ", {})
     mocker.patch("sys.stdout.isatty", return_value=False)
-    assert not logger.should_do_markup()
+    assert not should_do_markup()
     mocker.resetall()
     mocker.stopall()
 
