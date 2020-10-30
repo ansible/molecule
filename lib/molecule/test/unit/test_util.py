@@ -24,40 +24,21 @@ import binascii
 import io
 import os
 
-import colorama
 import pytest
 
 from molecule import util
+from molecule.console import console
 from molecule.constants import MOLECULE_HEADER
 
-colorama.init(autoreset=True)
 
+def test_print_debug():
 
-def test_print_debug(capsys):
-    util.print_debug("test_title", "test_data")
-    result, _ = capsys.readouterr()
-    title = [
-        colorama.Back.WHITE,
-        colorama.Style.BRIGHT,
-        colorama.Fore.BLACK,
-        "DEBUG: test_title",
-        colorama.Fore.RESET,
-        colorama.Back.RESET,
-        colorama.Style.RESET_ALL,
-    ]
-    print("".join(title))
+    expected = "DEBUG: test_title:\ntest_data\n"
+    with console.capture() as capture:
+        util.print_debug("test_title", "test_data")
 
-    data = [
-        colorama.Fore.BLACK,
-        colorama.Style.BRIGHT,
-        "test_data",
-        colorama.Style.RESET_ALL,
-        colorama.Fore.RESET,
-    ]
-    print("".join(data))
-
-    x, _ = capsys.readouterr()
-    assert x == result
+    result = util.strip_ansi_escape(capture.get())
+    assert result == expected
 
 
 def test_print_environment_vars(capsys):
@@ -69,72 +50,22 @@ def test_print_environment_vars(capsys):
         "MOLECULE_BAR": "bar",
         "MOLECULE": None,
     }
-    util.print_environment_vars(env)
-    result, _ = capsys.readouterr()
+    expected = """DEBUG: ANSIBLE ENVIRONMENT:
+ANSIBLE_BAR: bar
+ANSIBLE_FOO: foo
 
-    # Ansible Environment
-    title = [
-        colorama.Back.WHITE,
-        colorama.Style.BRIGHT,
-        colorama.Fore.BLACK,
-        "DEBUG: ANSIBLE ENVIRONMENT",
-        colorama.Fore.RESET,
-        colorama.Back.RESET,
-        colorama.Style.RESET_ALL,
-    ]
-    print("".join(title))
-    data = [
-        colorama.Fore.BLACK,
-        colorama.Style.BRIGHT,
-        util.safe_dump({"ANSIBLE_FOO": "foo", "ANSIBLE_BAR": "bar"}),
-        colorama.Style.RESET_ALL,
-        colorama.Fore.RESET,
-    ]
-    print("".join(data))
+DEBUG: MOLECULE ENVIRONMENT:
+MOLECULE_BAR: bar
+MOLECULE_FOO: foo
 
-    # Molecule Environment
-    title = [
-        colorama.Back.WHITE,
-        colorama.Style.BRIGHT,
-        colorama.Fore.BLACK,
-        "DEBUG: MOLECULE ENVIRONMENT",
-        colorama.Fore.RESET,
-        colorama.Back.RESET,
-        colorama.Style.RESET_ALL,
-    ]
-    print("".join(title))
-    data = [
-        colorama.Fore.BLACK,
-        colorama.Style.BRIGHT,
-        util.safe_dump({"MOLECULE_FOO": "foo", "MOLECULE_BAR": "bar"}),
-        colorama.Style.RESET_ALL,
-        colorama.Fore.RESET,
-    ]
-    print("".join(data))
+DEBUG: SHELL REPLAY:
+ANSIBLE_BAR=bar ANSIBLE_FOO=foo MOLECULE_BAR=bar MOLECULE_FOO=foo
+"""
 
-    # Shell Replay
-    title = [
-        colorama.Back.WHITE,
-        colorama.Style.BRIGHT,
-        colorama.Fore.BLACK,
-        "DEBUG: SHELL REPLAY",
-        colorama.Fore.RESET,
-        colorama.Back.RESET,
-        colorama.Style.RESET_ALL,
-    ]
-    print("".join(title))
-    data = [
-        colorama.Fore.BLACK,
-        colorama.Style.BRIGHT,
-        "ANSIBLE_BAR=bar ANSIBLE_FOO=foo MOLECULE_BAR=bar MOLECULE_FOO=foo",
-        colorama.Style.RESET_ALL,
-        colorama.Fore.RESET,
-    ]
-    print("".join(data))
-    print()
-
-    x, _ = capsys.readouterr()
-    assert x == result
+    with console.capture() as capture:
+        util.print_environment_vars(env)
+    result = util.strip_ansi_escape(capture.get())
+    assert result == expected
 
 
 def test_sysexit():
@@ -180,8 +111,8 @@ def test_run_command_with_debug(mocker, patched_print_debug):
     env = {"ANSIBLE_FOO": "foo", "MOLECULE_BAR": "bar"}
     util.run_command(["ls"], debug=True, env=env)
     x = [
-        mocker.call("ANSIBLE ENVIRONMENT", "---\nANSIBLE_FOO: foo\n"),
-        mocker.call("MOLECULE ENVIRONMENT", "---\nMOLECULE_BAR: bar\n"),
+        mocker.call("ANSIBLE ENVIRONMENT", "ANSIBLE_FOO: foo\n"),
+        mocker.call("MOLECULE ENVIRONMENT", "MOLECULE_BAR: bar\n"),
         mocker.call("SHELL REPLAY", "ANSIBLE_FOO=foo MOLECULE_BAR=bar"),
     ]
 
