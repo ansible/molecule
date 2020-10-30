@@ -24,7 +24,7 @@ import os
 import sys
 from typing import Any
 
-import colorama
+from rich.logging import RichHandler
 
 
 # Based on Ansible implementation
@@ -108,95 +108,8 @@ def get_logger(name=None) -> logging.Logger:
     logger = logging.getLogger(name)  # type: logging.Logger
     logger.setLevel(logging.DEBUG)
 
-    logger.addHandler(_get_info_handler())
-    logger.addHandler(_get_out_handler())
-    logger.addHandler(_get_warn_handler())
-    logger.addHandler(_get_error_handler())
-    logger.addHandler(_get_critical_handler())
-    logger.addHandler(_get_success_handler())
+    handler = RichHandler(show_time=False, show_path=False, rich_tracebacks=True)
+    logger.addHandler(handler)
     logger.propagate = False
 
     return logger
-
-
-def _get_info_handler() -> logging.StreamHandler:
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setLevel(logging.INFO)
-    handler.addFilter(LogFilter(logging.INFO))  # type: ignore
-    handler.setFormatter(
-        TrailingNewlineFormatter("--> {}".format(cyan_text("%(message)s")))
-    )
-
-    return handler
-
-
-def _get_out_handler() -> logging.StreamHandler:
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setLevel(OUT)
-    handler.addFilter(LogFilter(OUT))  # type: ignore
-    handler.setFormatter(TrailingNewlineFormatter("    %(message)s"))
-
-    return handler
-
-
-def _get_warn_handler() -> logging.StreamHandler:
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setLevel(logging.WARN)
-    handler.addFilter(LogFilter(logging.WARN))  # type: ignore
-    handler.setFormatter(TrailingNewlineFormatter(yellow_text("%(message)s")))
-
-    return handler
-
-
-def _get_error_handler() -> logging.StreamHandler:
-    handler = logging.StreamHandler(sys.stderr)
-    handler.setLevel(logging.ERROR)
-    handler.addFilter(LogFilter(logging.ERROR))  # type: ignore
-    handler.setFormatter(TrailingNewlineFormatter(red_text("%(message)s")))
-
-    return handler
-
-
-def _get_critical_handler() -> logging.StreamHandler:
-    handler = logging.StreamHandler(sys.stderr)
-    handler.setLevel(logging.CRITICAL)
-    handler.addFilter(LogFilter(logging.CRITICAL))  # type: ignore
-    handler.setFormatter(TrailingNewlineFormatter(red_text("ERROR: %(message)s")))
-
-    return handler
-
-
-def _get_success_handler() -> logging.StreamHandler:
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setLevel(SUCCESS)
-    handler.addFilter(LogFilter(SUCCESS))  # type: ignore
-    handler.setFormatter(TrailingNewlineFormatter(green_text("%(message)s")))
-
-    return handler
-
-
-def red_text(msg) -> str:
-    """Add red markers."""
-    return color_text(colorama.Fore.RED, msg)
-
-
-def yellow_text(msg) -> str:
-    """Add yellow markers."""
-    return color_text(colorama.Fore.YELLOW, msg)
-
-
-def green_text(msg) -> str:
-    """Add green markers."""
-    return color_text(colorama.Fore.GREEN, msg)
-
-
-def cyan_text(msg) -> str:
-    """Add cyan markers."""
-    return color_text(colorama.Fore.CYAN, msg)
-
-
-def color_text(color, msg) -> str:
-    """Add color markers."""
-    if should_do_markup():
-        return "{}{}{}".format(color, msg, colorama.Style.RESET_ALL)
-    return msg
