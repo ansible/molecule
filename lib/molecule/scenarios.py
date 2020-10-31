@@ -18,6 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 """Scenarios Module."""
+from typing import List
+
 from molecule import logger, util
 
 LOG = logger.get_logger(__name__)
@@ -74,6 +76,12 @@ class Scenarios(object):
         for scenario in self.all:
             tree[scenario.name] = [action for action in scenario.sequence]
         util.print_as_yaml(tree)
+
+    def sequence(self, scenario_name: str) -> List[str]:
+        for scenario in self.all:
+            if scenario.name == scenario_name:
+                return [action for action in scenario.sequence]
+        raise RuntimeError("Unable to find sequence for {scenario_name} scenario.")
 
     def _verify(self):
         """
