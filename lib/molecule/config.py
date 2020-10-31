@@ -421,9 +421,6 @@ class Config(object, metaclass=NewInitCaller):
             msg = f"Failed to validate {self.molecule_file}\n\n{errors}"
             util.sysexit_with_message(msg)
 
-        msg = "Validation completed successfully."
-        LOG.debug(msg)
-
 
 def molecule_directory(path):
     """Return directory of the current scenario."""
