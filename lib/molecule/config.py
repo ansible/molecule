@@ -21,7 +21,6 @@
 
 import os
 import subprocess
-import sys
 from uuid import uuid4
 
 from packaging.version import Version
@@ -31,7 +30,7 @@ from molecule.constants import RC_SETUP_ERROR
 from molecule.dependency import ansible_galaxy, shell
 from molecule.model import schema_v3
 from molecule.provisioner import ansible
-from molecule.util import boolean, lru_cache
+from molecule.util import boolean, lru_cache, sysexit
 
 LOG = logger.get_logger(__name__)
 MOLECULE_DEBUG = boolean(os.environ.get("MOLECULE_DEBUG", "False"))
@@ -473,5 +472,5 @@ def ansible_version(version: str = None) -> Version:
             LOG.fatal(
                 "Unable to find ansible executable. Read https://molecule.readthedocs.io/en/latest/installation.html"
             )
-            sys.exit(RC_SETUP_ERROR)
+            sysexit(RC_SETUP_ERROR)
     return Version(version)

@@ -20,8 +20,6 @@
 """Base class used by init role command."""
 
 import os
-import subprocess
-from subprocess import check_output
 
 import click
 
@@ -70,12 +68,12 @@ class Role(base.Base):
             )
             util.sysexit_with_message(msg)
 
-        try:
-            cmd = ["ansible-galaxy", "init", "-v", "--offline", role_name]
-            check_output(cmd, stderr=subprocess.STDOUT, universal_newlines=True)
-        except Exception as e:
+        cmd = ["ansible-galaxy", "init", "-v", "--offline", role_name]
+        result = util.run_command(cmd)
+
+        if result.returncode != 0:
             util.sysexit_with_message(
-                "Galaxy failed to create role: %s: %s" % (e, e.output)
+                "Galaxy failed to create role, returned %s" % result.returncode
             )
 
         scenario_base_directory = os.path.join(role_directory, role_name)

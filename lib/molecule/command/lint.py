@@ -20,7 +20,6 @@
 """Lint Command Module."""
 
 import os
-from subprocess import run
 
 import click
 
@@ -96,17 +95,11 @@ class Lint(base.Base):
             )
             util.sysexit_with_message(msg)
 
-        try:
-            LOG.info("Executing: %s" % cmd)
-            run(
-                cmd,
-                env=self.env,
-                shell=True,
-                universal_newlines=True,
-                check=True,
+        result = util.run_command(cmd, env=self.env, echo=True)
+        if result.returncode != 0:
+            util.sysexit_with_message(
+                "Lint failed with error code %s" % result.returncode
             )
-        except Exception as e:
-            util.sysexit_with_message("Lint failed: %s: %s" % (e, e))
 
 
 @base.click_command_ex()
