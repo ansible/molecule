@@ -4,6 +4,7 @@ import sys
 from typing import Any
 
 from rich.console import Console
+from rich.style import Style
 from rich.theme import Theme
 
 theme = Theme(
@@ -13,6 +14,13 @@ theme = Theme(
         "danger": "bold red",
         "scenario": "green",
         "action": "green",
+        "logging.level.notset": Style(dim=True),
+        "logging.level.debug": Style(color="white", dim=True),
+        "logging.level.info": Style(color="blue"),
+        "logging.level.warning": Style(color="red"),
+        "logging.level.error": Style(color="red", bold=True),
+        "logging.level.critical": Style(color="red", bold=True),
+        "logging.level.success": Style(color="green", bold=True),
     }
 )
 
