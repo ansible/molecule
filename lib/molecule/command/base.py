@@ -96,7 +96,14 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
     scenarios = molecule.scenarios.Scenarios(
         get_configs(args, command_args, ansible_args, glob_str), scenario_name
     )
-    scenarios.print_matrix()
+
+    if scenario_name and scenarios:
+        LOG.info(
+            "%s scenario test matrix: %s",
+            scenario_name,
+            ", ".join(scenarios.sequence(scenario_name)),
+        )
+
     for scenario in scenarios:
         if command_args.get("subcommand") == "reset":
             LOG.info("Removing %s" % scenario.ephemeral_directory)
