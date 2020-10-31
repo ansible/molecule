@@ -95,7 +95,6 @@ ENV PACKAGES="\
 docker \
 git \
 openssh-client \
-ruby \
 docker-py \
 libvirt \
 rsync \
@@ -137,20 +136,12 @@ gcc \
 libc-dev \
 libvirt-dev \
 make \
-ruby-dev \
-ruby-rdoc \
 "
 
 ENV PIP_INSTALL_ARGS="\
 --only-binary :all: \
 --no-index \
 -f /usr/src/molecule/dist \
-"
-
-ENV GEM_PACKAGES="\
-rubocop \
-json \
-etc \
 "
 
 ENV MOLECULE_EXTRAS="docker,docs,podman,windows,lint"
@@ -172,7 +163,6 @@ molecule-vagrant \
 RUN \
 apk add --update --no-cache \
 ${BUILD_DEPS} ${PACKAGES} \
-&& gem install ${GEM_PACKAGES} \
 && apk del --no-cache ${BUILD_DEPS} \
 && rm -rf /root/.cache
 
