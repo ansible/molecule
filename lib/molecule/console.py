@@ -4,6 +4,17 @@ import sys
 from typing import Any
 
 from rich.console import Console
+from rich.theme import Theme
+
+theme = Theme(
+    {
+        "info": "dim cyan",
+        "warning": "magenta",
+        "danger": "bold red",
+        "scenario": "green",
+        "action": "green",
+    }
+)
 
 
 # Based on Ansible implementation
@@ -41,4 +52,4 @@ def should_do_markup() -> bool:
     return sys.stdout.isatty() and os.environ.get("TERM") != "dumb"
 
 
-console = Console(force_terminal=should_do_markup())
+console = Console(force_terminal=should_do_markup(), theme=theme)

@@ -48,8 +48,10 @@ def test_execute(
 ):
     _instance.execute()
 
-    x = [mocker.call("Scenario: 'default'"), mocker.call("Action: 'idempotence'")]
-    assert x == patched_logger_info.mock_calls
+    assert len(patched_logger_info.mock_calls) == 1
+    name, args, kwargs = patched_logger_info.mock_calls[0]
+    assert "default" in args
+    assert "idempotence" in args
 
     patched_ansible_converge.assert_called_once_with(out=None, err=None)
 

@@ -47,8 +47,10 @@ def test_execute(
     p = prepare.Prepare(config_instance)
     p.execute()
 
-    x = [mocker.call("Scenario: 'default'"), mocker.call("Action: 'prepare'")]
-    assert x == patched_logger_info.mock_calls
+    assert len(patched_logger_info.mock_calls) == 1
+    name, args, kwargs = patched_logger_info.mock_calls[0]
+    assert "default" in args
+    assert "prepare" in args
 
     _patched_ansible_prepare.assert_called_once_with()
 

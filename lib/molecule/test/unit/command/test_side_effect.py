@@ -62,8 +62,10 @@ def test_execute(
     se = side_effect.SideEffect(config_instance)
     se.execute()
 
-    x = [mocker.call("Scenario: 'default'"), mocker.call("Action: 'side_effect'")]
-    assert x == patched_logger_info.mock_calls
+    assert len(patched_logger_info.mock_calls) == 1
+    name, args, kwargs = patched_logger_info.mock_calls[0]
+    assert "default" in args
+    assert "side_effect" in args
 
     _patched_ansible_side_effect.assert_called_once_with()
 

@@ -34,5 +34,7 @@ def test_execute(
     v = verify.Verify(config_instance)
     v.execute()
 
-    x = [mocker.call("Scenario: 'default'"), mocker.call("Action: 'verify'")]
-    assert x == patched_logger_info.mock_calls
+    assert len(patched_logger_info.mock_calls) == 1
+    name, args, kwargs = patched_logger_info.mock_calls[0]
+    assert "default" in args
+    assert "verify" in args

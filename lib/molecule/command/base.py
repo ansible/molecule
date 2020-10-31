@@ -55,10 +55,12 @@ class Base(object, metaclass=abc.ABCMeta):
         pass
 
     def print_info(self):
-        msg = "Scenario: '{}'".format(self._config.scenario.name)
-        LOG.info(msg)
-        msg = "Action: '{}'".format(util.underscore(self.__class__.__name__))
-        LOG.info(msg)
+        LOG.info(
+            "Running [scenario]%s[/] > [action]%s[/]",
+            self._config.scenario.name,
+            util.underscore(self.__class__.__name__),
+            extra={"markup": True},
+        )
 
     def _setup(self):
         """

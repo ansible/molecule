@@ -47,8 +47,11 @@ def test_execute(
     d = destroy.Destroy(config_instance)
     d.execute()
 
-    x = [mocker.call("Scenario: 'default'"), mocker.call("Action: 'destroy'")]
-    assert x == patched_logger_info.mock_calls
+    assert len(patched_logger_info.mock_calls) == 1
+    name, args, kwargs = patched_logger_info.mock_calls[0]
+    assert "destroy" in args
+
+    assert "verify" in args
 
     _patched_ansible_destroy.assert_called_once_with()
 

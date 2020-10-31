@@ -34,7 +34,9 @@ def test_execute(
     d = dependency.Dependency(config_instance)
     d.execute()
 
-    x = [mocker.call("Scenario: 'default'"), mocker.call("Action: 'dependency'")]
-    assert x == patched_logger_info.mock_calls
-
     patched_ansible_galaxy.assert_called_once_with()
+
+    assert len(patched_logger_info.mock_calls) == 1
+    name, args, kwargs = patched_logger_info.mock_calls[0]
+    assert "default" in args
+    assert "dependency" in args

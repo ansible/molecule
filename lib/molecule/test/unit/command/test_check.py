@@ -41,7 +41,7 @@ def test_execute(
     c = check.Check(config_instance)
     c.execute()
 
-    x = [mocker.call("Scenario: 'default'"), mocker.call("Action: 'check'")]
-    assert x == patched_logger_info.mock_calls
-
-    _patched_ansible_check.assert_called_once_with()
+    assert len(patched_logger_info.mock_calls) == 1
+    name, args, kwargs = patched_logger_info.mock_calls[0]
+    assert "default" in args
+    assert "check" in args
