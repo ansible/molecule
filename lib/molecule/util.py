@@ -29,7 +29,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from functools import lru_cache  # noqa
 from subprocess import CompletedProcess
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, NoReturn, Optional, Union
 
 import jinja2
 import yaml
@@ -81,7 +81,7 @@ def print_environment_vars(env: Optional[Dict[str, str]]) -> None:
         print()
 
 
-def sysexit(code: int = 1) -> None:
+def sysexit(code: int = 1) -> NoReturn:
     """Perform a system exit with given code, default 1."""
     sys.exit(code)
 
