@@ -66,7 +66,6 @@ any provider `Ansible`_ supports.  This work is offloaded to the `provisioner`.
 
 The driver's name is specified in `molecule.yml`, and can be overridden on the
 command line.  Molecule will remember the last successful driver used, and
-
 continue to use the driver for all subsequent subcommands, or until the
 instances are destroyed by Molecule.
 
