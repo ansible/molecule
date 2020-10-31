@@ -300,7 +300,7 @@ def test_validate(
 
     config_instance._validate()
 
-    assert patched_logger_debug.call_count == 2
+    assert patched_logger_debug.call_count == 1
 
     m.assert_called_with(config_instance.config)
 
