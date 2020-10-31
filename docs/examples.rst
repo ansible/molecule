@@ -4,27 +4,15 @@ Common Molecule Use Cases
 
 .. _docker-usage-example:
 
-Docker
-======
+Running inside a container
+==========================
 
-Molecule can be executed via an Alpine Linux container by bind-mounting the
-Docker socket.  Currently, we only build images for the latest version
-of Ansible and Molecule.  In the future we may break this out into Molecule/
-Ansible versioned pairs.  The images are located on `quay.io`_.
+The building of Molecule container is taken care of by molecule-dist_ project.
 
-To test a role, change directory into the role to test, and execute Molecule as
-follows.
+Any questions or bugs related to use of molecule, from within a container,
+should be addressed by that standalone project.
 
-.. code-block:: bash
-
-    docker run --rm -it \
-        -v "$(pwd)":/tmp/$(basename "${PWD}"):ro \
-        -v /var/run/docker.sock:/var/run/docker.sock \
-        -w /tmp/$(basename "${PWD}") \
-        quay.io/ansible/molecule:3.0.8 \
-        molecule test
-
-.. _`quay.io`: https://quay.io/repository/ansible/molecule
+.. _`molecule-dist`: https://github.com/ansible-community/molecule-dist
 
 Docker With Non-Privileged User
 ===============================

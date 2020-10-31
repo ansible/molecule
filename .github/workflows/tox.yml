@@ -39,15 +39,6 @@ jobs:
           - tox_env: packaging
           - tox_env: eco
           - tox_env: dockerfile
-          - tox_env: build-containers
-            needs:
-              - dockerfile
-              - docs
-              - lint
-              - packaging
-              - py36
-              - py37
-              - py38
 
     steps:
       - uses: actions/checkout@v1
