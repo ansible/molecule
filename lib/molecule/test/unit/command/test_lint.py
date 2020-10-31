@@ -32,5 +32,6 @@ def test_execute(
     l = lint.Lint(config_instance)
     l.execute()
 
-    x = [mocker.call("Scenario: 'default'"), mocker.call("Action: 'lint'")]
-    assert x in patched_logger_info.mock_calls
+    name, args, kwargs = patched_logger_info.mock_calls[0]
+    assert "default" in args
+    assert "lint" in args

@@ -41,7 +41,9 @@ def test_execute(
     s = syntax.Syntax(config_instance)
     s.execute()
 
-    x = [mocker.call("Scenario: 'default'"), mocker.call("Action: 'syntax'")]
-    assert x == patched_logger_info.mock_calls
+    assert len(patched_logger_info.mock_calls) == 1
+    name, args, kwargs = patched_logger_info.mock_calls[0]
+    assert "default" in args
+    assert "syntax" in args
 
     _patched_ansible_syntax.assert_called_once_with()

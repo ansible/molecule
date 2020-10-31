@@ -55,8 +55,9 @@ def test_execute(
     cu = cleanup.Cleanup(config_instance)
     cu.execute()
 
-    x = [mocker.call("Scenario: 'default'"), mocker.call("Action: 'cleanup'")]
-    assert x == patched_logger_info.mock_calls
+    assert len(patched_logger_info.mock_calls) == 1
+    name, args, kwargs = patched_logger_info.mock_calls[0]
+    assert "cleanup" in args
 
     _patched_ansible_cleanup.assert_called_once_with()
 

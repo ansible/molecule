@@ -42,8 +42,10 @@ def test_execute(
     c = create.Create(config_instance)
     c.execute()
 
-    x = [mocker.call("Scenario: 'default'"), mocker.call("Action: 'create'")]
-    assert x == patched_logger_info.mock_calls
+    assert len(patched_logger_info.mock_calls) == 1
+    name, args, kwargs = patched_logger_info.mock_calls[0]
+    assert "default" in args
+    assert "converge" in args
 
     assert "delegated" == config_instance.state.driver
 

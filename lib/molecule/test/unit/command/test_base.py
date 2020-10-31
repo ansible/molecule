@@ -96,8 +96,10 @@ def test_init_calls_setup(_patched_base_setup, _instance):
 
 def test_print_info(mocker, patched_logger_info, _instance):
     _instance.print_info()
-    x = [mocker.call("Scenario: 'default'"), mocker.call("Action: 'extended_base'")]
-    assert x == patched_logger_info.mock_calls
+    assert len(patched_logger_info.mock_calls) == 1
+    name, args, kwargs = patched_logger_info.mock_calls[0]
+    assert "default" in args
+    assert "extended_base" in args
 
 
 def test_setup(
