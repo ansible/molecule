@@ -52,7 +52,7 @@ repos:
         additional_dependencies:
           - packaging
           - rich
-          - subprocess-tee>=0.1.4
+          - subprocess-tee>=0.1.5
   - repo: https://github.com/pre-commit/mirrors-pylint
     rev: v2.6.0
     hooks:
@@ -60,5 +60,5 @@ repos:
         additional_dependencies:
           - ansible-base
           - rich
-          - subprocess-tee>=0.1.4
+          - subprocess-tee>=0.1.5
           - testinfra
