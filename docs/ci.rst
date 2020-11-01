@@ -157,8 +157,8 @@ Here is another example using Docker, virtualenv and tags on Centos 7.
       stage: test
       tags:
         - molecule-jobs
-    script:
-      - molecule test
+      script:
+        - molecule test
 
 Jenkins Pipeline
 ^^^^^^^^^^^^^^^^
