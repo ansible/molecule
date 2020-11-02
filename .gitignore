@@ -7,12 +7,13 @@
 .coverage
 .coverage.*
 .eggs/
+.mypy_cache/
 .tox/
 .vagrant/
 .pytest_cache/
 build/
 dist/
-doc/build/
+docs/docstree/html/
 htmlcov/
 pytestdebug.log
 ubuntu-xenial-16.04-cloudimg-console.log
