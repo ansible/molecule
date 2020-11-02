@@ -14,7 +14,7 @@ repos:
       - id: black
         language_version: python3
   - repo: https://github.com/pre-commit/pre-commit-hooks.git
-    rev: v3.2.0
+    rev: v3.3.0
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
@@ -52,7 +52,7 @@ repos:
         additional_dependencies:
           - packaging
           - rich
-          - subprocess-tee
+          - subprocess-tee>=0.1.4
   - repo: https://github.com/pre-commit/mirrors-pylint
     rev: v2.6.0
     hooks:
@@ -60,5 +60,5 @@ repos:
         additional_dependencies:
           - ansible-base
           - rich
-          - subprocess-tee
+          - subprocess-tee>=0.1.4
           - testinfra
