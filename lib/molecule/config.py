@@ -461,10 +461,18 @@ def ansible_version(version: str = None) -> Version:
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     universal_newlines=True,
+                    check=True,
                 )
                 .stdout.splitlines()[0]
                 .split()[1]
             )
+        except subprocess.CalledProcessError as exc:
+            LOG.fatal(
+                "Could not determine Ansible version. "
+                "Command `ansible --version` returned exit status %d.",
+                exc.returncode,
+            )
+            sysexit(RC_SETUP_ERROR)
         except FileNotFoundError:
             LOG.fatal(
                 "Unable to find ansible executable. Read https://molecule.readthedocs.io/en/latest/installation.html"
