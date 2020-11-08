@@ -11,55 +11,11 @@ GitHub Actions
 `GitHub Actions`_ runs a CI pipeline,
 much like any others, that's built into GitHub.
 
+The CI of molecule-docker project would obviously make use of docker.
 
-An action to clone a repo as ``molecule_demo``,
-and run ``molecule test`` in ubuntu.
+https://github.com/ansible-community/molecule-docker/blob/master/.github/workflows/tox.yml#L67-L68
 
-.. code-block:: yaml
 
-  ---
-  name: Molecule Test
-  on: [push, pull_request]
-  jobs:
-    build:
-      runs-on: ubuntu-latest
-      strategy:
-        max-parallel: 4
-        matrix:
-          python-version: [3.6, 3.7]
-
-      steps:
-        - uses: actions/checkout@v2
-          with:
-            path: molecule_demo
-        - name: Set up Python ${{ matrix.python-version }}
-          uses: actions/setup-python@v2
-          with:
-            python-version: ${{ matrix.python-version }}
-        - name: Install dependencies
-          run: |
-            sudo apt install apt-transport-https ca-certificates curl gnupg-agent software-properties-common
-            curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-            sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-            sudo apt-get update
-            sudo apt-get install docker-ce docker-ce-cli containerd.io
-            python3 -m pip install --upgrade pip
-            python3 -m pip install -r requirements.txt
-        - name: Test with molecule
-          run: |
-            molecule test
-
-If you need access to requirements in private repositories, `create a token`_
-with the required privileges, then define a ``GIT_CREDENTIALS`` secret for
-your repository with a value looking like `https://username:token@github.com/`,
-and finaly add the following step before `Test with molecule`
-
-.. code-block:: yaml
-
-        - name: Setup git credentials
-          uses: fusion-engineering/setup-git-credentials@v2
-          with:
-            credentials: ${{secrets.GIT_CREDENTIALS}}
 
 Travis CI
 ^^^^^^^^^
