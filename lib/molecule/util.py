@@ -102,7 +102,9 @@ def sysexit_with_message(
     sysexit(code)
 
 
-def run_command(cmd, env=None, debug=False, echo=False) -> CompletedProcess:
+def run_command(
+    cmd, env=None, debug=False, echo=False, quiet=False
+) -> CompletedProcess:
     """
     Execute the given command and returns None.
 
@@ -131,7 +133,9 @@ def run_command(cmd, env=None, debug=False, echo=False) -> CompletedProcess:
     if debug:
         print_environment_vars(env)
 
-    return run(args, env=env, stdout=stdout, stderr=stderr, echo=echo or debug)
+    return run(
+        args, env=env, stdout=stdout, stderr=stderr, echo=echo or debug, quiet=quiet
+    )
 
 
 def os_walk(directory, pattern, excludes=[]):

@@ -20,7 +20,6 @@
 """Config Module."""
 
 import os
-import subprocess
 from uuid import uuid4
 
 from packaging.version import Version
@@ -30,7 +29,7 @@ from molecule.constants import RC_SETUP_ERROR
 from molecule.dependency import ansible_galaxy, shell
 from molecule.model import schema_v3
 from molecule.provisioner import ansible
-from molecule.util import boolean, lru_cache, sysexit
+from molecule.util import boolean, lru_cache, run_command, sysexit
 
 LOG = logger.get_logger(__name__)
 MOLECULE_DEBUG = boolean(os.environ.get("MOLECULE_DEBUG", "False"))
@@ -446,7 +445,7 @@ def set_env_from_file(env, env_file):
 
 
 @lru_cache()
-def ansible_version(version: str = None) -> Version:
+def ansible_version(version: str = "") -> Version:
     """Return current Version object for Ansible.
 
     If version is not mentioned, it returns current version as detected.
@@ -454,20 +453,13 @@ def ansible_version(version: str = None) -> Version:
     to Version object in order to make it usable in comparisons.
     """
     if not version:
-        try:
-            version = (
-                subprocess.run(
-                    ["ansible", "--version"],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    universal_newlines=True,
-                )
-                .stdout.splitlines()[0]
-                .split()[1]
-            )
-        except FileNotFoundError:
+        proc = run_command(["ansible", "--version"], quiet=True)
+        if proc.returncode == 0:
+            version = proc.stdout.splitlines()[0].split()[1]
+        else:
             LOG.fatal(
-                "Unable to find ansible executable. Read https://molecule.readthedocs.io/en/latest/installation.html"
+                "Unable to find a working copy of ansible executable. Read https://molecule.readthedocs.io/en/latest/installation.html\n%s",
+                proc,
             )
             sysexit(RC_SETUP_ERROR)
     return Version(version)
