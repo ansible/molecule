@@ -30,6 +30,7 @@ MOLECULE_INSTANCE_CONFIG          ?
 MOLECULE_DEPENDENCY_NAME          Dependency type name, usually 'galaxy'
 MOLECULE_DRIVER_NAME              Name of the molecule scenario driver
 MOLECULE_PROVISIONER_NAME         Name of the provisioner tool (usually 'ansible')
+MOLECULE_REPORT                   Name of HTML file where to dump execution report.
 MOLECULE_SCENARIO_NAME            Name of the scenario
 MOLECULE_VERBOSITY                Determine Ansible verbosity level.
 MOLECULE_VERIFIER_NAME            Name of the verifier tool (usually 'ansible')

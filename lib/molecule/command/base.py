@@ -238,6 +238,7 @@ def click_group_ex():
             "reset": "blue",
             "test": "bright_yellow",
         },
+        result_callback=result_callback,
     )
 
 
@@ -246,3 +247,10 @@ def click_command_ex() -> Callable[[Callable[..., Any]], click.Command]:
     return click.command(  # type: ignore
         cls=HelpColorsCommand, help_headers_color="yellow", help_options_color="green"
     )
+
+
+def result_callback(*args, **kwargs):
+    """Click natural exit callback."""
+    # We want to be used we run out custom exit code, regardless if run was
+    # a success or failure.
+    util.sysexit(0)
