@@ -63,7 +63,7 @@ def test_config_private_member(_instance):
 def test_testinfra_options_property(_instance):
     assert {
         "connection": "ansible",
-        "ansible-inventory": _instance._config.provisioner.inventory_file,
+        "ansible-inventory": _instance._config.provisioner.inventory_directory,
     } == _instance.testinfra_options
 
 
