@@ -7,12 +7,13 @@ Common Molecule Use Cases
 Running inside a container
 ==========================
 
-The building of Molecule container is taken care of by molecule-dist_ project.
+While molecule project itself does not build a container, we do recommend
+you to use the `toolset`_ container, which also contains molecule.
 
-Any questions or bugs related to use of molecule, from within a container,
-should be addressed by that standalone project.
+Any questions or bugs related to use of molecule from within a container,
+should be addressed by the toolset project.
 
-.. _`molecule-dist`: https://github.com/ansible-community/molecule-dist
+.. _`toolset`: https://github.com/ansible-community/toolset
 
 Docker With Non-Privileged User
 ===============================
