@@ -28,11 +28,11 @@ import shutil
 from typing import Any, Callable
 
 import click
-import colorama
 from click_help_colors import HelpColorsCommand, HelpColorsGroup
 
 import molecule.scenarios
 from molecule import config, logger, util
+from molecule.console import console
 
 LOG = logger.get_logger(__name__)
 MOLECULE_GLOB = os.environ.get("MOLECULE_GLOB", "molecule/*/molecule.yml")
@@ -134,29 +134,35 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
 
 
 def _output_for_ci(func):
-    is_travis = os.getenv("TRAVIS") and os.getenv("CI")
+    if not os.getenv("CI"):
+        return func
+
+    is_travis = os.getenv("TRAVIS")
     if not is_travis:
         return func
 
     @functools.wraps(func)
-    def travis_wrapper(config, subcommand):
-        print(
-            (
-                "travis_fold:start:{0}.{1}"
-                "{2}Molecule --> Scenario: '{0}' --> Action: '{1}'{3}"
-            ).format(
-                config.scenario.name,
-                subcommand,
-                colorama.Style.BRIGHT + colorama.Fore.CYAN,
-                colorama.Style.RESET_ALL,
-            )
+    def ci_wrapper(config, subcommand):
+        scenario = config.scenario.name
+        console.print(
+            f"travis_fold:start:{scenario}.{subcommand}",
+            f"[ci_info]Molecule[/] [scenario]{scenario}[/] > [action]{subcommand}[/]",
+            sep="",
+            markup=True,
+            emoji=False,
+            highlight=False,
         )
         try:
             return func(config, subcommand)
         finally:
-            print("travis_fold:end:{}.{}".format(config.scenario.name, subcommand))
+            console.print(
+                f"travis_fold:end:{scenario}.{subcommand}",
+                markup=False,
+                emoji=False,
+                highlight=False,
+            )
 
-    return travis_wrapper
+    return ci_wrapper
 
 
 @_output_for_ci

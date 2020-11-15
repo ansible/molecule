@@ -10,6 +10,7 @@ from subprocess_tee.rich import ConsoleEx
 theme = Theme(
     {
         "info": "dim cyan",
+        "ci_info": "bold cyan",
         "warning": "magenta",
         "danger": "bold red",
         "scenario": "green",
