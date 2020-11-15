@@ -21,7 +21,6 @@
 
 import abc
 import collections
-import functools
 import glob
 import os
 import shutil
@@ -32,7 +31,6 @@ from click_help_colors import HelpColorsCommand, HelpColorsGroup
 
 import molecule.scenarios
 from molecule import config, logger, util
-from molecule.console import console
 
 LOG = logger.get_logger(__name__)
 MOLECULE_GLOB = os.environ.get("MOLECULE_GLOB", "molecule/*/molecule.yml")
@@ -137,30 +135,9 @@ def _output_for_ci(func):
     if not os.getenv("CI"):
         return func
 
-    is_travis = os.getenv("TRAVIS")
-    if not is_travis:
-        return func
+    from molecule.command.ci import wrap_for_ci
 
-    @functools.wraps(func)
-    def ci_wrapper(config, subcommand):
-        scenario = config.scenario.name
-        console.print(
-            f"travis_fold:start:{scenario}.{subcommand}",
-            f"[ci_info]Molecule[/] [scenario]{scenario}[/] > [action]{subcommand}[/]",
-            sep="",
-            markup=True,
-            emoji=False,
-            highlight=False,
-        )
-        try:
-            return func(config, subcommand)
-        finally:
-            console.print(
-                f"travis_fold:end:{scenario}.{subcommand}",
-                markup=False,
-                emoji=False,
-                highlight=False,
-            )
+    ci_wrapper = wrap_for_ci(func)
 
     return ci_wrapper
 
