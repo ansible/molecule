@@ -59,25 +59,30 @@ def inventory_file(_instance):
     return _instance._config.provisioner.inventory_file
 
 
+@pytest.fixture
+def inventory_directory(_instance):
+    return _instance._config.provisioner.inventory_directory
+
+
 def test_config_private_member(_instance):
     assert isinstance(_instance._config, config.Config)
 
 
-def test_default_options_property(inventory_file, _instance):
+def test_default_options_property(inventory_directory, _instance):
     x = {
         "connection": "ansible",
-        "ansible-inventory": inventory_file,
+        "ansible-inventory": inventory_directory,
         "p": "no:cacheprovider",
     }
 
     assert x == _instance.default_options
 
 
-def test_default_options_property_updates_debug(inventory_file, _instance):
+def test_default_options_property_updates_debug(inventory_directory, _instance):
     _instance._config.args = {"debug": True}
     x = {
         "connection": "ansible",
-        "ansible-inventory": inventory_file,
+        "ansible-inventory": inventory_directory,
         "debug": True,
         "vvv": True,
         "p": "no:cacheprovider",
@@ -87,12 +92,12 @@ def test_default_options_property_updates_debug(inventory_file, _instance):
 
 
 def test_default_options_property_updates_sudo(
-    inventory_file, _instance, _patched_testinfra_get_tests
+    inventory_directory, _instance, _patched_testinfra_get_tests
 ):
     _instance._config.args = {"sudo": True}
     x = {
         "connection": "ansible",
-        "ansible-inventory": inventory_file,
+        "ansible-inventory": inventory_directory,
         "sudo": True,
         "p": "no:cacheprovider",
     }
@@ -162,10 +167,10 @@ def test_directory_property_overridden(_instance):
 
 
 @pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
-def test_options_property(inventory_file, _instance):
+def test_options_property(inventory_directory, _instance):
     x = {
         "connection": "ansible",
-        "ansible-inventory": inventory_file,
+        "ansible-inventory": inventory_directory,
         "foo": "bar",
         "v": True,
         "verbose": True,
@@ -176,11 +181,11 @@ def test_options_property(inventory_file, _instance):
 
 
 @pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
-def test_options_property_handles_cli_args(inventory_file, _instance):
+def test_options_property_handles_cli_args(inventory_directory, _instance):
     _instance._config.args = {"debug": True}
     x = {
         "connection": "ansible",
-        "ansible-inventory": inventory_file,
+        "ansible-inventory": inventory_directory,
         "foo": "bar",
         "debug": True,
         "vvv": True,
@@ -192,7 +197,7 @@ def test_options_property_handles_cli_args(inventory_file, _instance):
 
 
 @pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
-def test_bake(_patched_testinfra_get_tests, inventory_file, _instance):
+def test_bake(_patched_testinfra_get_tests, inventory_directory, _instance):
     tests_directory = _instance._config.verifier.directory
     file1_file = os.path.join(tests_directory, "file1.py")
 
@@ -203,7 +208,7 @@ def test_bake(_patched_testinfra_get_tests, inventory_file, _instance):
     args = [
         "pytest",
         "--ansible-inventory",
-        inventory_file,
+        inventory_directory,
         "--connection",
         "ansible",
         "--foo",

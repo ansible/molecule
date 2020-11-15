@@ -73,7 +73,7 @@ class Driver(object):
         """
         return {
             "connection": "ansible",
-            "ansible-inventory": self._config.provisioner.inventory_file,
+            "ansible-inventory": self._config.provisioner.inventory_directory,
         }
 
     @abc.abstractproperty
