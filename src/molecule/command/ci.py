@@ -19,6 +19,7 @@
 
 import functools
 import os
+import time
 
 from molecule.console import console
 
@@ -27,7 +28,8 @@ def wrap_for_ci(func):
     """Wrap the execute_subcommand to provide log folding when running in CI services."""
     is_travis = os.getenv("TRAVIS")
     is_github_actions = os.getenv("GITHUB_ACTIONS")
-    if not is_travis and not is_github_actions:
+    is_gitlab_ci = os.getenv("GITLAB_CI")
+    if not is_travis and not is_github_actions and not is_gitlab_ci:
         return func
 
     if is_travis:
@@ -70,5 +72,40 @@ def wrap_for_ci(func):
                 return func(config, subcommand)
             finally:
                 console.print("::endgroup::", markup=True, emoji=False, highlight=False)
+
+    elif is_gitlab_ci:
+
+        @functools.wraps(func)
+        def ci_wrapper(config, subcommand):
+            scenario = config.scenario.name
+            # GitLab requres:
+            #  - \r (carriage return)
+            #  - \e[0K (clear line ANSI escape code. We use \033 for the \e escape char)
+            clear_line = "\r\033[0K"
+            console.print(
+                f"section_start:{int(time.time())}:{scenario}.{subcommand}",
+                end=clear_line,
+                markup=False,
+                emoji=False,
+                highlight=False,
+            )
+            console.print(
+                # must be one color for the whole line or gitlab sets odd widths to each word.
+                f"[ci_info]Molecule {scenario} > {subcommand}[/]",
+                end="\n",
+                markup=True,
+                emoji=False,
+                highlight=False,
+            )
+            try:
+                return func(config, subcommand)
+            finally:
+                console.print(
+                    f"section_end:{int(time.time())}:{scenario}.{subcommand}",
+                    end=f"{clear_line}\n",
+                    markup=False,
+                    emoji=False,
+                    highlight=False,
+                )
 
     return ci_wrapper
