@@ -26,7 +26,8 @@ from molecule.console import console
 def wrap_for_ci(func):
     """Wrap the execute_subcommand to provide log folding when running in CI services."""
     is_travis = os.getenv("TRAVIS")
-    if not is_travis:
+    is_github_actions = os.getenv("GITHUB_ACTIONS")
+    if not is_travis and not is_github_actions:
         return func
 
     if is_travis:
@@ -51,5 +52,23 @@ def wrap_for_ci(func):
                     emoji=False,
                     highlight=False,
                 )
+
+    elif is_github_actions:
+
+        @functools.wraps(func)
+        def ci_wrapper(config, subcommand):
+            scenario = config.scenario.name
+            console.print(
+                "::group::",
+                f"[ci_info]Molecule[/] [scenario]{scenario}[/] > [action]{subcommand}[/]",
+                sep="",
+                markup=True,
+                emoji=False,
+                highlight=False,
+            )
+            try:
+                return func(config, subcommand)
+            finally:
+                console.print("::endgroup::", markup=True, emoji=False, highlight=False)
 
     return ci_wrapper
