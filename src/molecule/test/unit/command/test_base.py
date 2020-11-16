@@ -89,7 +89,9 @@ def _patched_sysexit(mocker):
 @pytest.fixture
 def _patched_ci_env(request, monkeypatch):
     """Parametrize tests with and without CI env vars."""
-    for envvar, value in request.param.items():
+    envvars = {"CI": None, "TRAVIS": None, "GITHUB_ACTIONS": None, "GITLAB_CI": None}
+    envvars.update(request.param)
+    for envvar, value in envvars.items():
         if value is None:
             monkeypatch.delenv(envvar, raising=False)
         else:
@@ -226,7 +228,12 @@ def test_execute_cmdline_scenarios_exit_nodestroy(
 
 @pytest.mark.parametrize(
     "_patched_ci_env",
-    [{"TRAVIS": None, "CI": None}, {"TRAVIS": "true", "CI": "true"}],
+    [
+        {},
+        {"CI": "true", "TRAVIS": "true"},
+        {"CI": "true", "GITHUB_ACTIONS": "true"},
+        {"CI": "true", "GITLAB_CI": "true"},
+    ],
     indirect=True,
 )
 def test_execute_subcommand(config_instance, _patched_ci_env):
