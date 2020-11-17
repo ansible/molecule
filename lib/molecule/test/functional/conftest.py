@@ -31,6 +31,7 @@ import pytest
 from molecule import logger, util
 from molecule.config import ansible_version
 from molecule.test.conftest import change_dir_to
+from molecule.text import strip_ansi_color
 from molecule.util import run_command
 
 LOG = logger.get_logger(__name__)
@@ -184,7 +185,7 @@ def list(x):
 def list_with_format_plain(x):
     cmd = ["molecule", "list", "--format", "plain"]
     result = util.run_command(cmd)
-    out = util.strip_ansi_color(result.stdout)
+    out = strip_ansi_color(result.stdout)
 
     for l in x.splitlines():
         assert l in out

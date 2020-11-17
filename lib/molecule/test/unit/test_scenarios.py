@@ -23,8 +23,9 @@ import copy
 
 import pytest
 
-from molecule import config, scenario, scenarios, util
+from molecule import config, scenario, scenarios
 from molecule.console import console
+from molecule.text import chomp, strip_ansi_escape
 
 
 @pytest.fixture
@@ -77,7 +78,7 @@ def test_all_filters_on_scenario_name_property(_instance):
 def test_print_matrix(capsys, _instance):
     with console.capture() as capture:
         _instance.print_matrix()
-    result = util.chomp(util.strip_ansi_escape(capture.get()))
+    result = chomp(strip_ansi_escape(capture.get()))
 
     matrix_out = u"""---
 default:
