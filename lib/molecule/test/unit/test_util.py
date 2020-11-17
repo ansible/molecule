@@ -29,6 +29,7 @@ import pytest
 from molecule import util
 from molecule.console import console
 from molecule.constants import MOLECULE_HEADER
+from molecule.text import strip_ansi_escape
 
 
 def test_print_debug():
@@ -37,7 +38,7 @@ def test_print_debug():
     with console.capture() as capture:
         util.print_debug("test_title", "test_data")
 
-    result = util.strip_ansi_escape(capture.get())
+    result = strip_ansi_escape(capture.get())
     assert result == expected
 
 
@@ -64,7 +65,7 @@ ANSIBLE_BAR=bar ANSIBLE_FOO=foo MOLECULE_BAR=bar MOLECULE_FOO=foo
 
     with console.capture() as capture:
         util.print_environment_vars(env)
-    result = util.strip_ansi_escape(capture.get())
+    result = strip_ansi_escape(capture.get())
     assert result == expected
 
 
@@ -227,18 +228,6 @@ def test_open_file(temp_dir):
 
 def test_instance_with_scenario_name():
     assert "foo-bar" == util.instance_with_scenario_name("foo", "bar")
-
-
-def test_strip_ansi_escape():
-    string = "ls\r\n\x1b[00m\x1b[01;31mfoo\x1b[00m\r\n\x1b[01;31m"
-
-    assert "ls\r\nfoo\r\n" == util.strip_ansi_escape(string)
-
-
-def test_strip_ansi_color():
-    s = "foo\x1b[0m\x1b[0m\x1b[0m\n\x1b[0m\x1b[0m\x1b[0m\x1b[0m\x1b[0m"
-
-    assert "foo\n" == util.strip_ansi_color(s)
 
 
 def test_verbose_flag():

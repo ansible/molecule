@@ -25,6 +25,7 @@ import click
 
 from molecule import logger, util
 from molecule.command import base
+from molecule.text import strip_ansi_escape
 
 LOG = logger.get_logger(__name__)
 
@@ -119,7 +120,7 @@ class Idempotence(base.Base):
         output = re.sub(r"\n\s*\n*", "\n", output)
 
         # Remove ansi escape sequences.
-        output = util.strip_ansi_escape(output)
+        output = strip_ansi_escape(output)
 
         # Split the output into a list and go through it.
         output_lines = output.split("\n")
