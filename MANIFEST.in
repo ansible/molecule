@@ -10,27 +10,27 @@ include .pylintrc
 include .yamllint
 include mypy.ini
 include tox.ini
-include lib/molecule/test/functional/.ansible-lint
+include src/molecule/test/functional/.ansible-lint
 include .config/molecule/config.yml
 recursive-include docs *.ico
 recursive-include docs *.png
 recursive-include docs *.py
 recursive-include docs *.rst
-recursive-include lib *.flake8
-recursive-include lib *.j2
-recursive-include lib *.json
-recursive-include lib *.md
-recursive-include lib *.py
-recursive-include lib *.rst
-recursive-include lib *.typed
-recursive-include lib *.yaml
-recursive-include lib *.yamllint
-recursive-include lib *.yml
+recursive-include src *.flake8
+recursive-include src *.j2
+recursive-include src *.json
+recursive-include src *.md
+recursive-include src *.py
+recursive-include src *.rst
+recursive-include src *.typed
+recursive-include src *.yaml
+recursive-include src *.yamllint
+recursive-include src *.yml
 recursive-include playbooks *.yaml
 recursive-include snap *.yaml
 recursive-include tools *.sh
-recursive-include lib/molecule/test/scenarios extra-host
-recursive-include lib/molecule/test/scenarios hosts
+recursive-include src/molecule/test/scenarios extra-host
+recursive-include src/molecule/test/scenarios hosts
 recursive-exclude .github *.*
 recursive-exclude .mypy_cache *.*
 recursive-exclude docs/docstree/html *.*
