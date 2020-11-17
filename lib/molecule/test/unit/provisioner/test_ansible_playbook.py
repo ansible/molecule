@@ -118,8 +118,6 @@ def test_bake_does_not_have_ansible_args(_inventory_directory, _instance):
             _inventory_directory,
             "--skip-tags",
             "molecule-notest,notest",
-            "foo",
-            "bar",
             "playbook",
         ]
 

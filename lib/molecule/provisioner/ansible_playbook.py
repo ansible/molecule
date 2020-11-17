@@ -67,14 +67,20 @@ class AnsiblePlaybook(object):
             if options.get("become"):
                 del options["become"]
 
-        ansible_args = list(self._config.provisioner.ansible_args) + list(
-            self._config.ansible_args
-        )
-
-        # if ansible_args:
-        #     if self._config.action not in ["create", "destroy"]:
-        #         # inserts ansible_args at index 1
-        #         self._ansible_command.cmd.extend(ansible_args)
+        # We do not pass user-specified Ansible arguments to the create and
+        # destroy invocations because playbooks involved in those two
+        # operations are not always provided by end users. And in those cases,
+        # custom Ansible arguments can break the creation and destruction
+        # processes.
+        #
+        # If users need to modify the creation of deletion, they can supply
+        # custom playbooks and specify them in the scenario configuration.
+        if self._config.action not in ["create", "destroy"]:
+            ansible_args = list(self._config.provisioner.ansible_args) + list(
+                self._config.ansible_args
+            )
+        else:
+            ansible_args = []
 
         self._ansible_command = util.BakedCommand(
             cmd=[
