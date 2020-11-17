@@ -93,8 +93,6 @@ class Destroy(base.Base):
 
         :return: None
         """
-        self.print_info()
-
         if self._config.command_args.get("destroy") == "never":
             msg = "Skipping, '--destroy=never' requested."
             LOG.warning(msg)

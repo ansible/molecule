@@ -72,7 +72,6 @@ class SideEffect(base.Base):
 
         :return: None
         """
-        self.print_info()
         if not self._config.provisioner.playbooks.side_effect:
             msg = "Skipping, side effect playbook not configured."
             LOG.warning(msg)
