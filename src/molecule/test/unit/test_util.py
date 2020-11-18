@@ -265,11 +265,6 @@ def test_filter_verbose_permutation():
     assert x == util.filter_verbose_permutation(options)
 
 
-def test_title():
-    assert "Foo" == util.title("foo")
-    assert "Foo Bar" == util.title("foo_bar")
-
-
 def test_abs_path(temp_dir):
     x = os.path.abspath(os.path.join(os.getcwd(), os.path.pardir, "foo", "bar"))
 
@@ -278,18 +273,6 @@ def test_abs_path(temp_dir):
 
 def test_abs_path_with_none_path():
     assert util.abs_path(None) is None
-
-
-def test_camelize():
-    assert "Foo" == util.camelize("foo")
-    assert "FooBar" == util.camelize("foo_bar")
-    assert "FooBarBaz" == util.camelize("foo_bar_baz")
-
-
-def test_underscore():
-    assert "foo" == util.underscore("Foo")
-    assert "foo_bar" == util.underscore("FooBar")
-    assert "foo_bar_baz" == util.underscore("FooBarBaz")
 
 
 @pytest.mark.parametrize(
