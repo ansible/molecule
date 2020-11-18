@@ -3,9 +3,9 @@ import os
 import sys
 from typing import Any
 
+from enrich.console import Console
 from rich.style import Style
 from rich.theme import Theme
-from subprocess_tee.rich import ConsoleEx
 
 theme = Theme(
     {
@@ -60,6 +60,6 @@ def should_do_markup() -> bool:
     return sys.stdout.isatty() and os.environ.get("TERM") != "dumb"
 
 
-console = ConsoleEx(
+console = Console(
     force_terminal=should_do_markup(), theme=theme, record=True, redirect=True
 )

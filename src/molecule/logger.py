@@ -26,7 +26,7 @@ from functools import lru_cache
 from enrich.console import Console
 from enrich.logging import RichHandler
 
-from molecule.console import console
+from molecule.console import console, should_do_markup, theme
 from molecule.text import chomp
 
 SUCCESS = 100
@@ -100,4 +100,6 @@ def get_logger(name=None) -> logging.Logger:
     return logger
 
 
-LOGGING_CONSOLE = Console(file=sys.stderr, force_terminal=True)
+LOGGING_CONSOLE = Console(
+    file=sys.stderr, force_terminal=should_do_markup(), theme=theme
+)
