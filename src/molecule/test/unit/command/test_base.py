@@ -94,14 +94,6 @@ def test_init_calls_setup(_patched_base_setup, _instance):
     _patched_base_setup.assert_called_once_with()
 
 
-def test_print_info(mocker, patched_logger_info, _instance):
-    _instance.print_info()
-    assert len(patched_logger_info.mock_calls) == 1
-    name, args, kwargs = patched_logger_info.mock_calls[0]
-    assert "default" in args
-    assert "extended_base" in args
-
-
 def test_setup(
     mocker,
     patched_add_or_update_vars,

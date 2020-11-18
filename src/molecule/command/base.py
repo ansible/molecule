@@ -42,7 +42,13 @@ def section_logger(func: Callable) -> Callable:
     """Wrap effective execution of a method."""
 
     def wrapper(*args, **kwargs):
-        args[0].print_info()
+        self = args[0]
+        LOG.info(
+            "[info]Running [scenario]%s[/] > [action]%s[/][/]",
+            self._config.scenario.name,
+            util.underscore(self.__class__.__name__),
+            extra={"markup": True},
+        )
         rt = func(*args, **kwargs)
         # section close code goes here
         return rt
@@ -71,14 +77,6 @@ class Base(object, metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def execute(self):  # pragma: no cover
         pass
-
-    def print_info(self):
-        LOG.info(
-            "Running [scenario]%s[/] > [action]%s[/]",
-            self._config.scenario.name,
-            util.underscore(self.__class__.__name__),
-            extra={"markup": True},
-        )
 
     def _setup(self):
         """
