@@ -22,11 +22,13 @@
 import logging
 import sys
 from functools import lru_cache
+from typing import Callable, Iterable
 
 from enrich.console import Console
 from enrich.logging import RichHandler
 
 from molecule.console import should_do_markup, theme
+from molecule.text import underscore
 
 SUCCESS = 100
 OUT = 101
@@ -72,6 +74,29 @@ def get_logger(name=None) -> logging.Logger:
     logger.propagate = False
 
     return logger
+
+
+def section_logger(func: Callable) -> Callable:
+    """Wrap effective execution of a method."""
+
+    def wrapper(*args, **kwargs):
+        self = args[0]
+        get_logger().info(
+            "[info]Running [scenario]%s[/] > [action]%s[/][/]",
+            self._config.scenario.name,
+            underscore(self.__class__.__name__),
+            extra={"markup": True},
+        )
+        rt = func(*args, **kwargs)
+        # section close code goes here
+        return rt
+
+    return wrapper
+
+
+def get_section_loggers() -> Iterable[Callable]:
+    """Return a list of section wrappers to be added."""
+    return [section_logger]
 
 
 LOGGING_CONSOLE = Console(
