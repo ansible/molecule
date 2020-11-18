@@ -55,7 +55,7 @@ class Base(object):
             # print(555, self._sh_command)
             util.run_command(self._sh_command, debug=self._config.debug)
             msg = "Dependency completed successfully."
-            LOG.success(msg)
+            LOG.info(msg)
             return
         except Exception:
             pass
@@ -72,7 +72,7 @@ class Base(object):
             try:
                 util.run_command(self._sh_command, debug=self._config.debug)
                 msg = "Dependency completed successfully."
-                LOG.success(msg)
+                LOG.info(msg)
                 return
             except Exception as _exception:
                 exception = _exception

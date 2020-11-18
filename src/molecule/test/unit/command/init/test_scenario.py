@@ -49,17 +49,17 @@ def invalid_template_dir(resources_folder_path):
     return invalid_role_template_path
 
 
-def test_execute(temp_dir, _instance, patched_logger_info, patched_logger_success):
+def test_execute(temp_dir, _instance, patched_logger_info):
     _instance.execute()
 
     msg = "Initializing new scenario test-scenario..."
-    patched_logger_info.assert_called_once_with(msg)
+    patched_logger_info.assert_any_call(msg)
 
     assert os.path.isdir("./molecule/test-scenario")
 
     scenario_directory = os.path.join(temp_dir.strpath, "molecule", "test-scenario")
     msg = "Initialized scenario in {} successfully.".format(scenario_directory)
-    patched_logger_success.assert_called_once_with(msg)
+    patched_logger_info.assert_any_call(msg)
 
 
 def test_execute_scenario_exists(temp_dir, _instance, patched_logger_critical):

@@ -18,7 +18,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 """Ansible-Playbook Provisioner Module."""
-
 from molecule import logger, util
 
 LOG = logger.get_logger(__name__)
@@ -27,24 +26,18 @@ LOG = logger.get_logger(__name__)
 class AnsiblePlaybook(object):
     """Privisioner Playbook."""
 
-    def __init__(self, playbook, config, out=LOG.out, err=LOG.error):
+    def __init__(self, playbook, config):
         """
         Set up the requirements to execute ``ansible-playbook`` and returns \
         None.
 
         :param playbook: A string containing the path to the playbook.
         :param config: An instance of a Molecule config.
-        :param out: An optional function to process STDOUT for underlying
-         :func:``sh`` call.
-        :param err: An optional function to process STDERR for underlying
-         :func:``sh`` call.
         :returns: None
         """
         self._ansible_command = None
         self._playbook = playbook
         self._config = config
-        self._out = out
-        self._err = err
         self._cli = {}
         self._env = self._config.provisioner.env
 
@@ -92,8 +85,6 @@ class AnsiblePlaybook(object):
             ],
             cwd=self._config.scenario.directory,
             env=self._env,
-            stdout=self._out,
-            stderr=self._err,
         )
 
     def execute(self):

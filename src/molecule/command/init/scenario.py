@@ -112,7 +112,7 @@ class Scenario(base.Base):
 
         role_directory = os.path.join(role_directory, role_name)
         msg = "Initialized scenario in {} successfully.".format(scenario_directory)
-        LOG.success(msg)
+        LOG.info(msg)
 
 
 def _role_exists(ctx, param, value):  # pragma: no cover
