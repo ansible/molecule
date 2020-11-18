@@ -21,6 +21,7 @@
 import os
 
 import pytest
+from mock import call
 
 from molecule import config, util
 from molecule.verifier import testinfra
@@ -228,7 +229,6 @@ def test_execute(
     patched_logger_info,
     patched_run_command,
     _patched_testinfra_get_tests,
-    patched_logger_success,
     _instance,
 ):
     _instance._testinfra_command = "patched-command"
@@ -237,10 +237,9 @@ def test_execute(
     patched_run_command.assert_called_once_with("patched-command", debug=False)
 
     msg = "Executing Testinfra tests found in {}/...".format(_instance.directory)
-    patched_logger_info.assert_called_once_with(msg)
-
-    msg = "Verifier completed successfully."
-    patched_logger_success.assert_called_once_with(msg)
+    msg2 = "Verifier completed successfully."
+    calls = [call(msg), call(msg2)]
+    patched_logger_info.assert_has_calls(calls)
 
 
 def test_execute_does_not_execute(

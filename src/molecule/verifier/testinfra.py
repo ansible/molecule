@@ -161,8 +161,6 @@ class Testinfra(Verifier):
             cmd=["pytest", *util.dict2args(options), *self._tests, *args],
             cwd=self._config.scenario.directory,
             env=self.env,
-            stdout=LOG.out,
-            stderr=LOG.error,
         )
         # print(self._testinfra_command.cmd)
 
@@ -186,7 +184,7 @@ class Testinfra(Verifier):
         result = util.run_command(self._testinfra_command, debug=self._config.debug)
         if result.returncode == 0:
             msg = "Verifier completed successfully."
-            LOG.success(msg)
+            LOG.info(msg)
         else:
             util.sysexit(result.returncode)
 

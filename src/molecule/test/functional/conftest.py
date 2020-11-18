@@ -73,7 +73,7 @@ def with_scenario(request, scenario_to_test, driver_name, scenario_name, skip_te
         yield
         if scenario_name:
             msg = "CLEANUP: Destroying instances for all scenario(s)"
-            LOG.out(msg)
+            LOG.info(msg)
             cmd = ["molecule", "destroy", "--driver-name", driver_name, "--all"]
             assert run_command(cmd).returncode == 0
 

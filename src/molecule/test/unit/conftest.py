@@ -168,11 +168,6 @@ def patched_logger_debug(mocker):
 
 
 @pytest.fixture
-def patched_logger_out(mocker):
-    return mocker.patch("molecule.logger.CustomLogger.out")
-
-
-@pytest.fixture
 def patched_logger_warning(mocker):
     return mocker.patch("logging.Logger.warning")
 
@@ -185,11 +180,6 @@ def patched_logger_error(mocker):
 @pytest.fixture
 def patched_logger_critical(mocker):
     return mocker.patch("logging.Logger.critical")
-
-
-@pytest.fixture
-def patched_logger_success(mocker):
-    return mocker.patch("molecule.logger.CustomLogger.success")
 
 
 @pytest.fixture

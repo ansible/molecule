@@ -76,18 +76,16 @@ def test_options_property_handles_cli_args(_instance):
     assert x == _instance.options
 
 
-def test_execute(
-    patched_logger_info, _patched_ansible_verify, patched_logger_success, _instance
-):
+def test_execute(patched_logger_info, _patched_ansible_verify, _instance):
     _instance.execute()
 
     _patched_ansible_verify.assert_called_once_with()
 
     msg = "Running Ansible Verifier"
-    patched_logger_info.assert_called_once_with(msg)
+    patched_logger_info.assert_any_call(msg)
 
     msg = "Verifier completed successfully."
-    patched_logger_success.assert_called_once_with(msg)
+    patched_logger_info.assert_any_call(msg)
 
 
 def test_execute_does_not_execute(

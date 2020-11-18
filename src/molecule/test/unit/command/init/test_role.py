@@ -43,18 +43,18 @@ def _instance(_command_args):
     return role.Role(_command_args)
 
 
-def test_execute(temp_dir, _instance, patched_logger_info, patched_logger_success):
+def test_execute(temp_dir, _instance, patched_logger_info):
     _instance.execute()
 
     msg = "Initializing new role test-role..."
-    patched_logger_info.assert_called_once_with(msg)
+    patched_logger_info.assert_any_call(msg)
 
     assert os.path.isdir("./test-role")
     assert os.path.isdir("./test-role/molecule/default")
 
     role_directory = os.path.join(temp_dir.strpath, "test-role")
     msg = "Initialized role in {} successfully.".format(role_directory)
-    patched_logger_success.assert_called_once_with(msg)
+    patched_logger_info.assert_any_call(msg)
 
 
 def test_execute_role_exists(temp_dir, _instance, patched_logger_critical):

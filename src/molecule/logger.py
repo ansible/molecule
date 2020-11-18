@@ -26,8 +26,7 @@ from functools import lru_cache
 from enrich.console import Console
 from enrich.logging import RichHandler
 
-from molecule.console import console, should_do_markup, theme
-from molecule.text import chomp
+from molecule.console import should_do_markup, theme
 
 SUCCESS = 100
 OUT = 101
@@ -43,29 +42,6 @@ class LogFilter(logging.Filter):
     def filter(self, logRecord):  # pragma: no cover
         # https://docs.python.org/3/library/logging.html#logrecord-attributes
         return logRecord.levelno <= self.__level
-
-
-class CustomLogger(logging.getLoggerClass()):  # type: ignore  # see https://sam.hooke.me/note/2020/03/mypy-and-verbose-logging/
-    """
-    A custom logging class which adds additional methods to the logger.
-
-    These methods serve as syntactic sugar for formatting log messages.
-    """
-
-    def __init__(self, name, level=logging.NOTSET):
-        """Construct CustomLogger."""
-        super(CustomLogger, self).__init__(name, level=level)
-        logging.addLevelName(SUCCESS, "SUCCESS")
-        logging.addLevelName(OUT, "OUT")
-
-    def success(self, msg, *args, **kwargs):
-        if self.isEnabledFor(SUCCESS):
-            self._log(SUCCESS, msg, args, **kwargs)
-
-    def out(self, msg, *args, **kwargs):
-        msg = chomp(msg)
-        if self.isEnabledFor(OUT):
-            console.print(msg, args, **kwargs)
 
 
 class TrailingNewlineFormatter(logging.Formatter):
@@ -86,8 +62,6 @@ def get_logger(name=None) -> logging.Logger:
                  name, ``__name__``.
     :return: logger object
     """
-    logging.setLoggerClass(CustomLogger)
-
     logger = logging.getLogger(name)  # type: logging.Logger
     logger.setLevel(logging.DEBUG)
 

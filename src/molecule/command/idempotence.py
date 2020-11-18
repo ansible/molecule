@@ -78,12 +78,12 @@ class Idempotence(base.Base):
             msg = "Instances not converged.  Please converge instances first."
             util.sysexit_with_message(msg)
 
-        output = self._config.provisioner.converge(out=None, err=None)
+        output = self._config.provisioner.converge()
 
         idempotent = self._is_idempotent(output)
         if idempotent:
             msg = "Idempotence completed successfully."
-            LOG.success(msg)
+            LOG.info(msg)
         else:
             msg = (
                 "Idempotence test failed because of the following tasks:\n" u"{}"

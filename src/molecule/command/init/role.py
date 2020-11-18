@@ -89,7 +89,7 @@ class Role(base.Base):
 
         role_directory = os.path.join(role_directory, role_name)
         msg = "Initialized role in {} successfully.".format(role_directory)
-        LOG.success(msg)
+        LOG.info(msg)
 
 
 @command_base.click_command_ex()

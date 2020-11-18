@@ -145,7 +145,7 @@ def test_galaxy_bake(_instance, role_file, roles_path):
 def test_execute(
     patched_run_command,
     _patched_ansible_galaxy_has_requirements_file,
-    patched_logger_success,
+    patched_logger_info,
     _instance,
 ):
     _instance._sh_command = "patched-command"
@@ -159,7 +159,7 @@ def test_execute(
     patched_run_command.assert_called_once_with("patched-command", debug=False)
 
     msg = "Dependency completed successfully."
-    patched_logger_success.assert_called_once_with(msg)
+    patched_logger_info.assert_called_once_with(msg)
 
 
 def test_execute_does_not_execute_when_disabled(

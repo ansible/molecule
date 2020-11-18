@@ -82,7 +82,7 @@ class Ansible(Verifier):
         self._config.provisioner.verify()
 
         msg = "Verifier completed successfully."
-        log.success(msg)
+        log.info(msg)
 
     def schema(self):
         return {

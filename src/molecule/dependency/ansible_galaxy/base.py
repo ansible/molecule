@@ -107,8 +107,6 @@ class AnsibleGalaxyBase(base.Base):
         self._sh_command = util.BakedCommand(
             cmd=[self.command, *self.COMMANDS, *util.dict2args(options), *verbose_flag],
             env=self.env,
-            stdout=LOG.out,
-            stderr=LOG.error,
         )
 
     def execute(self):

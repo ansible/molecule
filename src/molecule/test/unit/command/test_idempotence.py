@@ -17,7 +17,6 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
-
 import pytest
 
 from molecule.command import idempotence
@@ -43,22 +42,21 @@ def test_execute(
     patched_logger_info,
     patched_ansible_converge,
     _patched_is_idempotent,
-    patched_logger_success,
     _instance,
 ):
     _instance.execute()
 
-    assert len(patched_logger_info.mock_calls) == 1
+    assert len(patched_logger_info.mock_calls) == 2
     name, args, kwargs = patched_logger_info.mock_calls[0]
     assert "default" in args
     assert "idempotence" in args
 
-    patched_ansible_converge.assert_called_once_with(out=None, err=None)
+    patched_ansible_converge.assert_called_once_with()
 
     _patched_is_idempotent.assert_called_once_with("patched-ansible-converge-stdout")
 
     msg = "Idempotence completed successfully."
-    patched_logger_success.assert_called_once_with(msg)
+    patched_logger_info.assert_any_call(msg)
 
 
 def test_execute_raises_when_not_converged(
