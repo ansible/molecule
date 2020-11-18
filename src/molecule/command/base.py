@@ -31,6 +31,7 @@ from click_help_colors import HelpColorsCommand, HelpColorsGroup
 
 import molecule.scenarios
 from molecule import config, logger, util
+from molecule.console import should_do_markup
 
 LOG = logger.get_logger(__name__)
 MOLECULE_GLOB = os.environ.get("MOLECULE_GLOB", "molecule/*/molecule.yml")
@@ -243,7 +244,7 @@ def click_group_ex():
         cls=HelpColorsGroup,
         # Workaround to disable click help line truncation to ~80 chars
         # https://github.com/pallets/click/issues/486
-        context_settings=dict(max_content_width=9999),
+        context_settings=dict(max_content_width=9999, color=should_do_markup()),
         help_headers_color="yellow",
         help_options_color="green",
         help_options_custom_colors={
