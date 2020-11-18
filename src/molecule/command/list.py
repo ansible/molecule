@@ -26,7 +26,7 @@ from rich import box
 from rich.syntax import Syntax
 from rich.table import Table
 
-from molecule import logger, scenarios, util
+from molecule import logger, scenarios, text, util
 from molecule.command import base
 from molecule.console import console
 from molecule.status import Status
@@ -113,7 +113,7 @@ def list(ctx, scenario_name, format):  # pragma: no cover
     for scenario in s:
         statuses.extend(base.execute_subcommand(scenario.config, subcommand))
 
-    headers = [util.title(name) for name in Status._fields]
+    headers = [text.title(name) for name in Status._fields]
     if format == "simple" or format == "plain":
         table_format = format  # "simple"
 

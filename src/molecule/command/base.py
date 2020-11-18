@@ -30,7 +30,7 @@ import click
 from click_help_colors import HelpColorsCommand, HelpColorsGroup
 
 import molecule.scenarios
-from molecule import config, logger, util
+from molecule import config, logger, text, util
 from molecule.console import should_do_markup
 
 LOG = logger.get_logger(__name__)
@@ -46,7 +46,7 @@ def section_logger(func: Callable) -> Callable:
         LOG.info(
             "[info]Running [scenario]%s[/] > [action]%s[/][/]",
             self._config.scenario.name,
-            util.underscore(self.__class__.__name__),
+            text.underscore(self.__class__.__name__),
             extra={"markup": True},
         )
         rt = func(*args, **kwargs)
@@ -150,7 +150,7 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
 def execute_subcommand(config, subcommand):
     """Execute subcommand."""
     command_module = getattr(molecule.command, subcommand)
-    command = getattr(command_module, util.camelize(subcommand))
+    command = getattr(command_module, text.camelize(subcommand))
     # knowledge of the current action is used by some provisioners
     # to ensure they behave correctly during certain sequence steps,
     # particulary the setting of ansible options in create/destroy,

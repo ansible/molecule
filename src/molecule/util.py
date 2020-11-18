@@ -272,33 +272,10 @@ def filter_verbose_permutation(options):
     return {k: options[k] for k in options if not re.match("^[v]+$", k)}
 
 
-def title(word):
-    """Format title."""
-    return " ".join(x.capitalize() or "_" for x in word.split("_"))
-
-
 def abs_path(path):
     """Return absolute path."""
     if path:
         return os.path.abspath(path)
-
-
-def camelize(string):
-    """Format string as camel-case."""
-    # NOTE(retr0h): Taken from jpvanhal/inflection
-    # https://github.com/jpvanhal/inflection
-    return re.sub(r"(?:^|_)(.)", lambda m: m.group(1).upper(), string)
-
-
-def underscore(string):
-    """Format string to underlined notation."""
-    # NOTE(retr0h): Taken from jpvanhal/inflection
-    # https://github.com/jpvanhal/inflection
-    string = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1_\2", string)
-    string = re.sub(r"([a-z\d])([A-Z])", r"\1_\2", string)
-    string = string.replace("-", "_")
-
-    return string.lower()
 
 
 def merge_dicts(a, b):
