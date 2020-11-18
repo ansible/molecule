@@ -70,7 +70,6 @@ class Dependency(base.Base):
 
         :return: None
         """
-        self.print_info()
         self._config.dependency.execute()
 
 

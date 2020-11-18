@@ -69,7 +69,6 @@ class Syntax(base.Base):
 
         :return: None
         """
-        self.print_info()
         self._config.provisioner.syntax()
 
 

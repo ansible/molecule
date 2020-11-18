@@ -73,8 +73,6 @@ class Cleanup(base.Base):
 
         :return: None
         """
-        self.print_info()
-
         if not self._config.provisioner.playbooks.cleanup:
             msg = "Skipping, cleanup playbook not configured."
             LOG.warning(msg)

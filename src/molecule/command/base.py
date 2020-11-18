@@ -37,6 +37,18 @@ MOLECULE_GLOB = os.environ.get("MOLECULE_GLOB", "molecule/*/molecule.yml")
 MOLECULE_DEFAULT_SCENARIO_NAME = "default"
 
 
+def section_logger(func: Callable) -> Callable:
+    """Wrap effective execution of a method."""
+
+    def wrapper(*args, **kwargs):
+        args[0].print_info()
+        rt = func(*args, **kwargs)
+        # section close code goes here
+        return rt
+
+    return wrapper
+
+
 class Base(object, metaclass=abc.ABCMeta):
     """An abstract base class used to define the command interface."""
 
@@ -49,6 +61,11 @@ class Base(object, metaclass=abc.ABCMeta):
         """
         self._config = c
         self._setup()
+
+    def __init_subclass__(cls) -> None:
+        """Decorate execute from all subclasses."""
+        super().__init_subclass__()
+        setattr(cls, "execute", section_logger(cls.execute))
 
     @abc.abstractmethod
     def execute(self):  # pragma: no cover

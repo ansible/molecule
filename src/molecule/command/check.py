@@ -79,7 +79,6 @@ class Check(base.Base):
 
         :return: None
         """
-        self.print_info()
         self._config.provisioner.check()
 
 

@@ -80,8 +80,6 @@ class Lint(base.Base):
 
         :return: None
         """
-        self.print_info()
-
         # v3 migration code:
         cmd = self._config.lint
         if not cmd:

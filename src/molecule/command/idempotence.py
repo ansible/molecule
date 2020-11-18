@@ -74,7 +74,6 @@ class Idempotence(base.Base):
 
         :return: None
         """
-        self.print_info()
         if not self._config.state.converged:
             msg = "Instances not converged.  Please converge instances first."
             util.sysexit_with_message(msg)

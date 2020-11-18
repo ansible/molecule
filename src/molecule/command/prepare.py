@@ -89,8 +89,6 @@ class Prepare(base.Base):
 
         :return: None
         """
-        self.print_info()
-
         if self._config.state.prepared and not self._config.command_args.get("force"):
             msg = "Skipping, instances already prepared."
             LOG.warning(msg)

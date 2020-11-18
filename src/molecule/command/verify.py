@@ -70,7 +70,6 @@ class Verify(base.Base):
 
         :return: None
         """
-        self.print_info()
         self._config.verifier.execute()
 
 

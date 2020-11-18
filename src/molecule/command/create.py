@@ -78,7 +78,6 @@ class Create(base.Base):
 
         :return: None
         """
-        self.print_info()
         self._config.state.change_state("driver", self._config.driver.name)
 
         if self._config.driver.delegated and not self._config.driver.managed:
