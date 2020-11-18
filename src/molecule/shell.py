@@ -20,18 +20,17 @@
 """Molecule Shell Module."""
 import os
 import sys
-from functools import lru_cache
 
 import click
 import click_completion
 import pkg_resources
-from click_help_colors import _colorize
 
 import molecule
 from molecule import command
 from molecule.api import drivers
 from molecule.command.base import click_group_ex
 from molecule.config import MOLECULE_DEBUG, MOLECULE_VERBOSITY, ansible_version
+from molecule.console import console
 from molecule.util import lookup_config_file
 
 click_completion.init()
@@ -42,18 +41,23 @@ LOCAL_CONFIG = lookup_config_file(LOCAL_CONFIG_SEARCH)
 ENV_FILE = ".env.yml"
 
 
-@lru_cache()
-def _version_string() -> str:
+def print_version(ctx, param, value):
+    """Print version information."""
+    if not value or ctx.resilient_parsing:
+        return
 
     v = pkg_resources.parse_version(molecule.__version__)
-    color = "bright_yellow" if v.is_prerelease else "green"  # type: ignore
-    msg = "molecule %s\n" % _colorize(molecule.__version__, color)
+    color = "bright_yellow" if v.is_prerelease else "green"
+    msg = f"molecule [{color}]{v}[/] using python [repr.number]{sys.version_info[0]}.{sys.version_info[1]}[/] \n"
 
-    details = f"    ansible:{ansible_version()} python:{sys.version_info[0]}.{sys.version_info[1]}"
+    msg += (
+        f"    [repr.attrib_name]ansible[/][dim]:[/][repr.number]{ansible_version()}[/]"
+    )
     for driver in drivers():
-        details += f"\n    {driver}:{driver.version} from {driver.module}"
-    msg += _colorize(details, "bright_black")
-    return msg
+        msg += f"\n    [repr.attrib_name]{str(driver)}[/][dim]:[/][repr.number]{driver.version}[/][dim] from {driver.module}[/]"
+    console.print(msg)
+
+    ctx.exit()
 
 
 @click_group_ex()  # type: ignore
@@ -88,9 +92,9 @@ def _version_string() -> str:
     default=ENV_FILE,
     help=("The file to read variables from when rendering molecule.yml. " "(.env.yml)"),
 )
-@click.version_option(
-    prog_name="molecule", version=molecule.__version__, message=_version_string()
-)  # type: ignore
+@click.option(
+    "--version", is_flag=True, callback=print_version, expose_value=False, is_eager=True
+)
 @click.pass_context
 def main(ctx, debug, verbose, base_config, env_file):  # pragma: no cover
     """
