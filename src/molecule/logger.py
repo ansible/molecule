@@ -20,8 +20,10 @@
 """Logging Module."""
 
 import logging
+import os
 import sys
-from functools import lru_cache
+import time
+from functools import lru_cache, wraps
 from typing import Callable, Iterable
 
 from enrich.console import Console
@@ -76,9 +78,104 @@ def get_logger(name=None) -> logging.Logger:
     return logger
 
 
+def github_actions_groups(func: Callable) -> Callable:
+    """Print group indicators before/after execution of a method."""
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        self = args[0]
+        scenario = self._config.scenario.name
+        subcommand = underscore(self.__class__.__name__)
+        console.print(
+            "::group::",
+            f"[ci_info]Molecule[/] [scenario]{scenario}[/] > [action]{subcommand}[/]",
+            sep="",
+            markup=True,
+            emoji=False,
+            highlight=False,
+        )
+        try:
+            return func(*args, **kwargs)
+        finally:
+            console.print("::endgroup::", markup=True, emoji=False, highlight=False)
+
+    return wrapper
+
+
+def gitlab_ci_sections(func: Callable) -> Callable:
+    """Print group indicators before/after execution of a method."""
+    # GitLab requres:
+    #  - \r (carriage return)
+    #  - \e[0K (clear line ANSI escape code. We use \033 for the \e escape char)
+    clear_line = "\r\033[0K"
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        self = args[0]
+        scenario = self._config.scenario.name
+        subcommand = underscore(self.__class__.__name__)
+        console.print(
+            f"section_start:{int(time.time())}:{scenario}.{subcommand}",
+            end=clear_line,
+            markup=False,
+            emoji=False,
+            highlight=False,
+        )
+        console.print(
+            # must be one color for the whole line or gitlab sets odd widths to each word.
+            f"[ci_info]Molecule {scenario} > {subcommand}[/]",
+            end="\n",
+            markup=True,
+            emoji=False,
+            highlight=False,
+        )
+        try:
+            return func(*args, **kwargs)
+        finally:
+            console.print(
+                f"section_end:{int(time.time())}:{scenario}.{subcommand}",
+                end=f"{clear_line}\n",
+                markup=False,
+                emoji=False,
+                highlight=False,
+            )
+
+    return wrapper
+
+
+def travis_ci_folds(func: Callable) -> Callable:
+    """Print group indicators before/after execution of a method."""
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        self = args[0]
+        scenario = self._config.scenario.name
+        subcommand = underscore(self.__class__.__name__)
+        console.print(
+            f"travis_fold:start:{scenario}.{subcommand}",
+            f"[ci_info]Molecule[/] [scenario]{scenario}[/] > [action]{subcommand}[/]",
+            sep="",
+            markup=True,
+            emoji=False,
+            highlight=False,
+        )
+        try:
+            return func(*args, **kwargs)
+        finally:
+            console.print(
+                f"travis_fold:end:{scenario}.{subcommand}",
+                markup=False,
+                emoji=False,
+                highlight=False,
+            )
+
+    return wrapper
+
+
 def section_logger(func: Callable) -> Callable:
     """Wrap effective execution of a method."""
 
+    @wraps(func)
     def wrapper(*args, **kwargs):
         self = args[0]
         get_logger().info(
@@ -94,9 +191,18 @@ def section_logger(func: Callable) -> Callable:
     return wrapper
 
 
+@lru_cache()
 def get_section_loggers() -> Iterable[Callable]:
     """Return a list of section wrappers to be added."""
-    return [section_logger]
+    default_section_loggers = [section_logger]
+    if not os.getenv("CI"):
+        return default_section_loggers
+    elif os.getenv("GITHUB_ACTIONS"):
+        return [github_actions_groups] + default_section_loggers
+    elif os.getenv("GITLAB_CI"):
+        return [gitlab_ci_sections] + default_section_loggers
+    elif os.getenv("TRAVIS"):
+        return [travis_ci_folds] + default_section_loggers
 
 
 LOGGING_CONSOLE = Console(
