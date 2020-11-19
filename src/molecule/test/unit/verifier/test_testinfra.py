@@ -21,7 +21,7 @@
 import os
 
 import pytest
-from mock import call
+from unittest.mock import call
 
 from molecule import config, util
 from molecule.verifier import testinfra
