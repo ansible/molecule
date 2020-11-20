@@ -19,9 +19,9 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import os
+from unittest.mock import call
 
 import pytest
-from mock import call
 
 from molecule import config, util
 from molecule.verifier import testinfra
