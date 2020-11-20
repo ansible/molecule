@@ -185,7 +185,7 @@ class Delegated(Driver):
                 conn_dict["ansible_user"] = d.get("user")
                 conn_dict["ansible_host"] = d.get("address")
                 conn_dict["ansible_port"] = d.get("port")
-                if d.get("ansible_connection", None):
+                if d.get("connection", None):
                     conn_dict["ansible_connection"] = d.get("connection", "smart")
                 if d.get("become_method", False):
                     conn_dict["ansible_become_method"] = d.get("become_method")
