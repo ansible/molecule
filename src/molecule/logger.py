@@ -203,6 +203,8 @@ def get_section_loggers() -> Iterable[Callable]:
         return [gitlab_ci_sections] + default_section_loggers
     elif os.getenv("TRAVIS"):
         return [travis_ci_folds] + default_section_loggers
+    # CI is set but no extra section_loggers apply.
+    return default_section_loggers
 
 
 LOGGING_CONSOLE = Console(
