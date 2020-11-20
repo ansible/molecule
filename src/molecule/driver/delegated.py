@@ -148,6 +148,9 @@ class Delegated(Driver):
 
     @property
     def login_cmd_template(self):
+        if "login_cmd_template" in self.options:
+            return self.options["login_cmd_template"]
+
         if self.managed:
             connection_options = " ".join(self.ssh_connection_options)
 
@@ -158,7 +161,6 @@ class Delegated(Driver):
                 "-i {{identity_file}} "
                 "{}"
             ).format(connection_options)
-        return self.options["login_cmd_template"]
 
     @property
     def default_safe_files(self):
