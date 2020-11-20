@@ -22,7 +22,75 @@ from __future__ import print_function
 
 import logging
 
+import pytest
+
+from molecule.command.base import Base
 from molecule.console import should_do_markup
+from molecule.logger import get_section_loggers
+
+
+# the dummy/instance fixtures are based on fixtures in test.unit.command.test_base
+class Dummy(Base):
+    """ExtendedBase Class."""
+
+    def execute(self):
+        return True
+
+
+@pytest.fixture
+def _dummy_class(patched_config_validate, config_instance):
+    return Dummy
+
+
+@pytest.fixture
+def _instance(_dummy_class, config_instance):
+    return _dummy_class(config_instance)
+
+
+@pytest.fixture
+def _patched_logger_env(request, monkeypatch):
+    """Parametrize tests with and without CI env vars."""
+    envvars = {"CI": None, "GITHUB_ACTIONS": None, "GITLAB_CI": None, "TRAVIS": None}
+    envvars.update(request.param[1])
+    for envvar, value in envvars.items():
+        if value is None:
+            monkeypatch.delenv(envvar, raising=False)
+        else:
+            monkeypatch.setenv(envvar, value)
+    get_section_loggers.cache_clear()
+    yield request.param[0]
+    get_section_loggers.cache_clear()
+
+
+get_section_logger_tests = [
+    # (expected # of section_loggers, envvars)
+    (1, {}),
+    (2, {"CI": "true", "GITHUB_ACTIONS": "true"}),
+    (2, {"CI": "true", "GITLAB_CI": "true"}),
+    (2, {"CI": "true", "TRAVIS": "true"}),
+    (1, {"CI": "true", "RANDOM_CI": "true"}),
+]
+
+
+@pytest.mark.parametrize(
+    "_patched_logger_env",
+    get_section_logger_tests,
+    indirect=True,
+)
+def test_get_section_loggers(_patched_logger_env):
+    expected_section_loggers = _patched_logger_env
+    section_loggers = get_section_loggers()
+    assert len(section_loggers) == expected_section_loggers
+
+
+@pytest.mark.parametrize(
+    "_patched_logger_env",
+    get_section_logger_tests,
+    indirect=True,
+)
+def test_section_loggers_do_not_change_behavior(_patched_logger_env, _instance):
+    dummy_return = _instance.execute()
+    assert dummy_return is True
 
 
 def test_markup_detection_pycolors0(monkeypatch):
