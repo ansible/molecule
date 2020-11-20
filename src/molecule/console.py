@@ -14,6 +14,7 @@ theme = Theme(
         "danger": "bold red",
         "scenario": "green",
         "action": "green",
+        "section_title": "bold cyan",
         "logging.level.notset": Style(dim=True),
         "logging.level.debug": Style(color="white", dim=True),
         "logging.level.info": Style(color="blue"),
