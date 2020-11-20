@@ -29,7 +29,7 @@ from typing import Callable, Iterable
 from enrich.console import Console
 from enrich.logging import RichHandler
 
-from molecule.console import should_do_markup, theme
+from molecule.console import console, should_do_markup, theme
 from molecule.text import underscore
 
 SUCCESS = 100
