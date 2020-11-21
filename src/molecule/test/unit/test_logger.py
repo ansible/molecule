@@ -43,7 +43,9 @@ def _dummy_class(patched_config_validate, config_instance):
 
 
 @pytest.fixture
-def _instance(_dummy_class, config_instance):
+def _instance(_dummy_class, config_instance, _patched_logger_env):
+    # _patched_logger_env included here to ensure pytest runs it first
+    get_section_loggers.cache_clear()
     return _dummy_class(config_instance)
 
 
@@ -57,9 +59,7 @@ def _patched_logger_env(request, monkeypatch):
             monkeypatch.delenv(envvar, raising=False)
         else:
             monkeypatch.setenv(envvar, value)
-    get_section_loggers.cache_clear()
-    yield request.param[0]
-    get_section_loggers.cache_clear()
+    return request.param[0]
 
 
 get_section_logger_tests = [
@@ -79,6 +79,7 @@ get_section_logger_tests = [
 )
 def test_get_section_loggers(_patched_logger_env):
     expected_section_loggers = _patched_logger_env
+    get_section_loggers.cache_clear()
     section_loggers = get_section_loggers()
     assert len(section_loggers) == expected_section_loggers
 
