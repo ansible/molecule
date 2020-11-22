@@ -57,10 +57,25 @@ def should_do_markup() -> bool:
     if py_colors is not None:
         return to_bool(py_colors)
 
-    # Using tty detection logic
-    return sys.stdout.isatty() and os.environ.get("TERM") != "dumb"
+    term = os.environ.get("TERM", "")
+    if "xterm" in term:
+        return True
+
+    if term != "dumb":
+        return False
+
+    # Use tty detection logic as last resort because there are numerous
+    # factors that can make isatty return a misleading value, including:
+    # - stdin.isatty() is the only one returning true, even on a real terminal
+    # - stderr returting false if user user uses a error stream coloring solution
+    return sys.stdout.isatty()
 
 
 console = Console(
     force_terminal=should_do_markup(), theme=theme, record=True, redirect=True
 )
+# Define ANSIBLE_FORCE_COLOR if markup is enabled and another value is not
+# already given. This assures that Ansible subprocesses are still colored,
+# even if they do not run with a real TTY.
+if should_do_markup():
+    os.environ["ANSIBLE_FORCE_COLOR"] = os.environ.get("ANSIBLE_FORCE_COLOR", "1")
