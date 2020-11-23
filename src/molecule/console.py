@@ -72,7 +72,11 @@ def should_do_markup() -> bool:
 
 
 console = Console(
-    force_terminal=should_do_markup(), theme=theme, record=True, redirect=True
+    force_terminal=should_do_markup(),
+    theme=theme,
+    record=True,
+    redirect=True,
+    soft_wrap=should_do_markup(),
 )
 # Define ANSIBLE_FORCE_COLOR if markup is enabled and another value is not
 # already given. This assures that Ansible subprocesses are still colored,
