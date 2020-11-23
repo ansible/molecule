@@ -61,7 +61,7 @@ def should_do_markup() -> bool:
     if "xterm" in term:
         return True
 
-    if term != "dumb":
+    if term == "dumb":
         return False
 
     # Use tty detection logic as last resort because there are numerous
