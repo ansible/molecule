@@ -359,6 +359,7 @@ class Config(object, metaclass=NewInitCaller):
                     "side_effect": "side_effect.yml",
                     "verify": "verify.yml",
                 },
+                "log": True,
             },
             "scenario": {
                 "name": scenario_name,
