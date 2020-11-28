@@ -32,30 +32,6 @@ from enrich.logging import RichHandler
 from molecule.console import console, should_do_markup, theme
 from molecule.text import underscore
 
-SUCCESS = 100
-OUT = 101
-
-
-class LogFilter(logging.Filter):
-    """A custom log filter which excludes log messages above the logged level."""
-
-    def __init__(self, level):
-        """Construct LogFilter."""
-        self.__level = level
-
-    def filter(self, logRecord):  # pragma: no cover
-        # https://docs.python.org/3/library/logging.html#logrecord-attributes
-        return logRecord.levelno <= self.__level
-
-
-class TrailingNewlineFormatter(logging.Formatter):
-    """A custom logging formatter which removes additional newlines from messages."""
-
-    def format(self, record):
-        if record.msg:
-            record.msg = record.msg.rstrip()
-        return super(TrailingNewlineFormatter, self).format(record)
-
 
 @lru_cache()
 def get_logger(name=None) -> logging.Logger:
