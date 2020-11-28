@@ -19,11 +19,12 @@
 #  DEALINGS IN THE SOFTWARE.
 """State Module."""
 
+import logging
 import os
 
-from molecule import logger, util
+from molecule import util
 
-LOG = logger.get_logger(__name__)
+LOG = logging.getLogger(__name__)
 VALID_KEYS = ["created", "converged", "driver", "prepared", "run_uuid", "is_parallel"]
 
 

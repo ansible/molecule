@@ -21,11 +21,12 @@
 
 from __future__ import absolute_import
 
+import logging
 import os
 
-from molecule import logger, util
+from molecule import util
 
-LOG = logger.get_logger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class AnsiblePlaybooks(object):

@@ -19,14 +19,15 @@
 #  DEALINGS IN THE SOFTWARE.
 """Create Command Module."""
 
+import logging
+
 import click
 
-from molecule import logger
 from molecule.api import drivers
 from molecule.command import base
 from molecule.config import DEFAULT_DRIVER
 
-LOG = logger.get_logger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class Create(base.Base):

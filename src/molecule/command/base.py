@@ -22,6 +22,7 @@
 import abc
 import collections
 import glob
+import logging
 import os
 import shutil
 from typing import Any, Callable
@@ -33,7 +34,7 @@ import molecule.scenarios
 from molecule import config, logger, text, util
 from molecule.console import should_do_markup
 
-LOG = logger.get_logger(__name__)
+LOG = logging.getLogger(__name__)
 MOLECULE_GLOB = os.environ.get("MOLECULE_GLOB", "molecule/*/molecule.yml")
 MOLECULE_DEFAULT_SCENARIO_NAME = "default"
 

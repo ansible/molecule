@@ -21,15 +21,17 @@
 
 from __future__ import print_function
 
+import logging
+
 import click
 from rich import box
 from rich.table import Table
 
-from molecule import api, logger
+from molecule import api
 from molecule.command import base
 from molecule.console import console
 
-LOG = logger.get_logger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 @base.click_command_ex()

@@ -35,6 +35,17 @@ from molecule.util import lookup_config_file
 
 click_completion.init()
 
+# Setup logging. This location of initialization is not ideal, but the code
+# structure does not give us much choice because config file lookup down below
+# uses logging facilities. Do note that verbosity level set by the
+# command-line flags does not affect the things that execute before the main
+# method in this file that parses the command line arguments.
+#
+# It would be ideal if we could get a chance at parsing CLI args before any of
+# the real code executes, but this is really hard to do while using click for
+# constructing out CLI API.
+logger.configure()
+
 LOCAL_CONFIG_SEARCH = ".config/molecule/config.yml"
 LOCAL_CONFIG = lookup_config_file(LOCAL_CONFIG_SEARCH)
 

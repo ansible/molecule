@@ -21,17 +21,19 @@
 
 from __future__ import print_function
 
+import logging
+
 import click
 from rich import box
 from rich.syntax import Syntax
 from rich.table import Table
 
-from molecule import logger, scenarios, text, util
+from molecule import scenarios, text, util
 from molecule.command import base
 from molecule.console import console
 from molecule.status import Status
 
-LOG = logger.get_logger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class List(base.Base):

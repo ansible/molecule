@@ -25,10 +25,8 @@ import string
 
 import pytest
 
-from molecule import config, logger
+from molecule import config
 from molecule.scenario import ephemeral_directory
-
-LOG = logger.get_logger(__name__)
 
 
 def is_subset(subset, superset):

@@ -20,14 +20,15 @@
 """Base class used by init command."""
 
 import abc
+import logging
 import os
 
 import cookiecutter
 import cookiecutter.main
 
-from molecule import logger, util
+from molecule import util
 
-LOG = logger.get_logger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class Base(object):

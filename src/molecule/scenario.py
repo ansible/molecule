@@ -21,16 +21,17 @@
 
 import fcntl
 import fnmatch
+import logging
 import os
 import shutil
 from pathlib import Path
 from time import sleep
 from typing import Optional
 
-from molecule import logger, scenarios, util
+from molecule import scenarios, util
 from molecule.constants import RC_TIMEOUT
 
-LOG = logger.get_logger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class Scenario(object):

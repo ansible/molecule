@@ -32,26 +32,36 @@ from enrich.logging import RichHandler
 from molecule.console import console, should_do_markup, theme
 from molecule.text import underscore
 
+LOG = logging.getLogger(__name__)
 
-@lru_cache()
-def get_logger(name=None) -> logging.Logger:
+LOG_LEVEL_LUT = {
+    0: logging.INFO,
+    1: logging.DEBUG,
+}
+
+
+def configure() -> None:
     """
-    Build a logger with the given name and returns the logger.
+    Configure a molecule root logger.
 
-    :param name: The name for the logger. This is usually the module
-                 name, ``__name__``.
-    :return: logger object
+    All other loggers will inherit the configuration we set here.
     """
-    logger = logging.getLogger(name)  # type: logging.Logger
-    logger.setLevel(logging.DEBUG)
-
+    logger = logging.getLogger("molecule")
     handler = RichHandler(
         console=LOGGING_CONSOLE, show_time=False, show_path=False, markup=True
     )  # type: ignore
     logger.addHandler(handler)
     logger.propagate = False
+    logger.setLevel(logging.INFO)
 
-    return logger
+
+def get_logger(name: str) -> logging.Logger:
+    """
+    Return a child logger.
+
+    Returned logger inherits configuration from the molecule logger.
+    """
+    return logging.getLogger("molecule." + name)
 
 
 def github_actions_groups(func: Callable) -> Callable:
@@ -154,7 +164,7 @@ def section_logger(func: Callable) -> Callable:
     @wraps(func)
     def wrapper(*args, **kwargs):
         self = args[0]
-        get_logger().info(
+        LOG.info(
             "[info]Running [scenario]%s[/] > [action]%s[/][/]",
             self._config.scenario.name,
             underscore(self.__class__.__name__),

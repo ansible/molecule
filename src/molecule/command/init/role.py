@@ -19,16 +19,17 @@
 #  DEALINGS IN THE SOFTWARE.
 """Base class used by init role command."""
 
+import logging
 import os
 
 import click
 
-from molecule import api, logger, util
+from molecule import api, util
 from molecule.command import base as command_base
 from molecule.command.init import base
 from molecule.config import DEFAULT_DRIVER
 
-LOG = logger.get_logger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class Role(base.Base):

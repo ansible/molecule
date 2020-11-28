@@ -19,9 +19,11 @@
 #  DEALINGS IN THE SOFTWARE.
 """PLatforms Module."""
 
-from molecule import logger, util
+import logging
 
-LOG = logger.get_logger(__name__)
+from molecule import util
+
+LOG = logging.getLogger(__name__)
 
 
 class Platforms(object):

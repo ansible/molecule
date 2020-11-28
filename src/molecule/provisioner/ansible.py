@@ -21,14 +21,15 @@
 
 import collections
 import copy
+import logging
 import os
 import shutil
 
-from molecule import logger, util
+from molecule import util
 from molecule.api import drivers
 from molecule.provisioner import ansible_playbook, ansible_playbooks, base
 
-LOG = logger.get_logger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class Ansible(base.Base):
