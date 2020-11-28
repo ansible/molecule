@@ -1,0 +1,25 @@
+# Molecule is not really a collection but this file is use for testing molecule
+# ability to detect and install a local collection.
+namespace: _test
+name: molecule
+version: 0.0.1
+readme: README.rst
+authors:
+  - Ansible
+build_ignore:
+  - "**/*.egg-info"
+  - "**/.mypy_cache"
+  - .cache
+  - .coverage
+  - .eggs
+  - .github
+  - .gitignore
+  - .pytest_cache
+  - .vscode
+  - asset
+  - build
+  - coverage.xml
+  - dist
+  - docs/docstree/html
+  - pip-wheel-metadata
+  - tox.ini

@@ -72,6 +72,7 @@ class AnsibleGalaxy(Base):
         self.invocations = [Roles(config), Collections(config)]
 
     def execute(self):
+        super().execute()
         for invoker in self.invocations:
             invoker.execute()
 
@@ -85,7 +86,7 @@ class AnsibleGalaxy(Base):
     def default_env(self):
         e = {}
         for invoker in self.invocations:
-            e = util.merge(e, invoker.default_env)
+            e = util.merge_dicts(e, invoker.default_env)
         return e
 
     @property

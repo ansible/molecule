@@ -22,7 +22,10 @@
 import abc
 import logging
 import os
+import re
 import time
+from pathlib import Path
+from subprocess import CalledProcessError
 
 from molecule import constants, util
 
@@ -80,13 +83,41 @@ class Base(object):
         LOG.error(str(exception), self._sh_command)
         util.sysexit(getattr(exception, "exit_code", constants.RC_UNKNOWN_ERROR))
 
-    @abc.abstractmethod
-    def execute(self):  # pragma: no cover
+    def execute(self):
         """
         Execute ``cmd`` and returns None.
 
         :return: None
         """
+        workdir = util.find_vcs_root(self._config.project_directory)
+        collection_marker = os.path.join(workdir, "galaxy.yml")
+        if os.path.isfile(collection_marker):
+            try:
+                LOG.info("Collection detected at %s", collection_marker)
+
+                dist = Path(self._config.scenario.ephemeral_directory) / "dist"
+                dist.mkdir(parents=True, exist_ok=True)
+                LOG.info("Running inside %s", workdir)
+                LOG.debug(self.default_env)
+                result = util.run_command(
+                    f"pwd && ansible-galaxy collection build -v -f --output-path {dist}",
+                    env=self.default_env,
+                    check=True,
+                    echo=True,
+                    cwd=workdir,
+                )
+                archive = re.search(r"([^\s]+\.tar\.gz)$", result.stdout).groups()[0]
+                # no need to specify destination path because Molecule already defines
+                # custom isolated ANSIBLE_COLLECTIONS_PATH for each scenario
+                result = util.run_command(
+                    f"ansible-galaxy collection install -f {archive}",
+                    env=self.default_env,
+                    check=True,
+                    echo=True,
+                    cwd=workdir,
+                )
+            except CalledProcessError as e:
+                util.sysexit_with_message(e, e.returncode)
 
     @abc.abstractproperty
     def default_options(self):  # pragma: no cover
