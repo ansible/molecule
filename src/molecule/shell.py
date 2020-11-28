@@ -26,7 +26,7 @@ import click_completion
 import pkg_resources
 
 import molecule
-from molecule import command
+from molecule import command, logger
 from molecule.api import drivers
 from molecule.command.base import click_group_ex
 from molecule.config import MOLECULE_DEBUG, MOLECULE_VERBOSITY, ansible_version
@@ -122,6 +122,7 @@ def main(ctx, debug, verbose, base_config, env_file):  # pragma: no cover
     ctx.obj["args"]["base_config"] = base_config
     ctx.obj["args"]["env_file"] = env_file
 
+    logger.set_log_level(verbose, debug)
     if verbose:
         os.environ["ANSIBLE_VERBOSITY"] = str(verbose)
 

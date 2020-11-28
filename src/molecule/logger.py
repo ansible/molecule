@@ -55,6 +55,20 @@ def configure() -> None:
     logger.setLevel(logging.INFO)
 
 
+def set_log_level(log_level: int, debug: bool) -> None:
+    """
+    Set logging level.
+
+    :param log_level: verbosity control (0 - INFO, 1 - DEBUG)
+    :param debug: debug mode indicator
+    """
+    # If we get verbosity level > 1, we just use debug because this is the
+    # most detailed log level we have.
+    if debug:
+        log_level = 1  # DEBUG from the LOG_LEVEL_LUT
+    logging.getLogger("molecule").setLevel(LOG_LEVEL_LUT.get(log_level, logging.DEBUG))
+
+
 def get_logger(name: str) -> logging.Logger:
     """
     Return a child logger.
