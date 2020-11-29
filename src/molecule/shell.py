@@ -126,16 +126,6 @@ def main(ctx, debug, verbose, base_config, env_file):  # pragma: no cover
         os.environ["ANSIBLE_VERBOSITY"] = str(verbose)
 
 
-# runtime environment checks to avoid delayed failures
-if sys.version_info[0] > 2:
-    try:
-        if pkg_resources.get_distribution("futures"):
-            raise SystemExit(
-                "FATAL: futures package found, this package should not be installed in a Python 3 environment, please remove it. See https://github.com/agronholm/pythonfutures/issues/90"
-            )
-    except pkg_resources.DistributionNotFound:
-        pass
-
 main.add_command(command.cleanup.cleanup)
 main.add_command(command.check.check)
 main.add_command(command.converge.converge)
