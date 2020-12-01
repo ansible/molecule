@@ -314,24 +314,27 @@ def _parallelize_platforms(config, run_uuid):
     return [parallelize(platform) for platform in config["platforms"]]
 
 
-def find_vcs_root(test, dirs=(".git", ".hg", ".svn"), default=None) -> str:
+@lru_cache()
+def find_vcs_root(location="", dirs=(".git", ".hg", ".svn"), default=None) -> str:
     """Return current repository root directory."""
-    prev, test = None, os.path.abspath(test)
-    while prev != test:
-        if any(os.path.isdir(os.path.join(test, d)) for d in dirs):
-            return test
-        prev, test = test, os.path.abspath(os.path.join(test, os.pardir))
+    if not location:
+        location = os.getcwd()
+    prev, location = None, os.path.abspath(location)
+    while prev != location:
+        if any(os.path.isdir(os.path.join(location, d)) for d in dirs):
+            return location
+        prev, location = location, os.path.abspath(os.path.join(location, os.pardir))
     return default
 
 
-def lookup_config_file(filename: str) -> str:
+def lookup_config_file(filename: str) -> Optional[str]:
     """Return config file PATH."""
-    for path in [find_vcs_root(os.getcwd(), default="~"), "~"]:
+    for path in [find_vcs_root(default="~"), "~"]:
         f = os.path.expanduser("%s/%s" % (path, filename))
         if os.path.isfile(f):
             LOG.info("Found config file %s", f)
             return f
-    return f
+    return None
 
 
 def boolean(value: Any, strict=True) -> bool:
