@@ -17,12 +17,13 @@
 """Iterpolation Module."""
 
 import string
+from typing import MutableMapping, Type
 
 
 class InvalidInterpolation(Exception):
     """InvalidInterpolation Exception."""
 
-    def __init__(self, string, place):
+    def __init__(self, string: str, place: Exception):
         """Construct InvalidInterpolation."""
         self.string = string
         self.place = place
@@ -70,14 +71,16 @@ class Interpolator(object):
     will read variables when rendering `molecule.yml`.  See command usage.
     """
 
-    def __init__(self, templater, mapping):
+    def __init__(
+        self, templater: Type["TemplateWithDefaults"], mapping: MutableMapping
+    ):
         """Construct Interpolator."""
         self.templater = templater
         self.mapping = mapping
 
-    def interpolate(self, string, keep_string=None):
+    def interpolate(self, string: str, keep_string=None) -> str:
         try:
-            return self.templater(string).substitute(self.mapping, keep_string)
+            return self.templater(string).substitute(self.mapping, keep_string)  # type: ignore
         except ValueError as e:
             raise InvalidInterpolation(string, e)
 
@@ -89,6 +92,7 @@ class TemplateWithDefaults(string.Template):
 
     # Modified from python2.7/string.py
     def substitute(self, mapping, keep_string):
+
         # Helper function for .sub()
         def convert(mo):
             # Check the most common path first.

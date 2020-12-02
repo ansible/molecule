@@ -20,6 +20,7 @@
 """Base class used by init scenario command."""
 
 import os
+from typing import Dict
 
 import click
 
@@ -56,7 +57,7 @@ class Scenario(base.Base):
         driver configuration.
     """  # noqa
 
-    def __init__(self, command_args):
+    def __init__(self, command_args: Dict[str, str]):
         """Construct Scenario."""
         self._command_args = command_args
 
@@ -115,7 +116,7 @@ class Scenario(base.Base):
         LOG.info(msg)
 
 
-def _role_exists(ctx, param, value):  # pragma: no cover
+def _role_exists(ctx, param, value: str):  # pragma: no cover
     # if role name was not mentioned we assume that current directory is the
     # one hosting the role and determining the role name.
     if not value:
@@ -130,7 +131,7 @@ def _role_exists(ctx, param, value):  # pragma: no cover
     return value
 
 
-def _default_scenario_exists(ctx, param, value):  # pragma: no cover
+def _default_scenario_exists(ctx, param, value: str):  # pragma: no cover
     if value == command_base.MOLECULE_DEFAULT_SCENARIO_NAME:
         return value
 

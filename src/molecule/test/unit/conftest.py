@@ -138,7 +138,9 @@ def molecule_file_fixture(
 
 
 @pytest.fixture
-def config_instance(molecule_file_fixture, molecule_data, request):
+def config_instance(
+    molecule_file_fixture: str, molecule_data, request
+) -> config.Config:
     mdc = copy.deepcopy(molecule_data)
     if hasattr(request, "param"):
         mdc = util.merge_dicts(mdc, request.getfixturevalue(request.param))

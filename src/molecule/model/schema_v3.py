@@ -22,6 +22,7 @@
 import collections
 import functools
 import re
+from typing import Any, MutableMapping
 
 import cerberus
 import cerberus.errors
@@ -36,7 +37,7 @@ def coerce_env(env, keep_string, v):
     return i.interpolate(v, keep_string)
 
 
-def pre_validate_base_schema(env, keep_string):
+def pre_validate_base_schema(env: MutableMapping, keep_string: str):
     """Pre-validate base schema."""
     return {
         "dependency": {
@@ -312,7 +313,7 @@ dependency_command_nullable_schema = {
 class Validator(cerberus.Validator):
     """Validator Class."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any):
         """Construct Validator."""
         super(Validator, self).__init__(*args, **kwargs)
 
@@ -366,7 +367,7 @@ class Validator(cerberus.Validator):
                 self._error(field, msg)
 
 
-def pre_validate(stream, env, keep_string):
+def pre_validate(stream, env: MutableMapping, keep_string: str):
     """Pre-validate stream."""
     data = util.safe_load(stream)
 
