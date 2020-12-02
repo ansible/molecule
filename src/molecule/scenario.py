@@ -25,6 +25,7 @@ import os
 import shutil
 from pathlib import Path
 from time import sleep
+from typing import Optional
 
 from molecule import logger, scenarios, util
 from molecule.constants import RC_TIMEOUT
@@ -270,7 +271,7 @@ class Scenario(object):
             os.makedirs(self.inventory_directory)
 
 
-def ephemeral_directory(path: str = None) -> str:
+def ephemeral_directory(path: Optional[str] = None) -> str:
     """
     Return temporary directory to be used by molecule.
 

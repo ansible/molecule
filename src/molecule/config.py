@@ -19,7 +19,10 @@
 #  DEALINGS IN THE SOFTWARE.
 """Config Module."""
 
+import copy
+import functools
 import os
+from typing import Callable, MutableMapping, TypeVar
 from uuid import uuid4
 
 from packaging.version import Version
@@ -38,6 +41,14 @@ MOLECULE_DIRECTORY = "molecule"
 MOLECULE_FILE = "molecule.yml"
 MOLECULE_KEEP_STRING = "MOLECULE_"
 DEFAULT_DRIVER = "delegated"
+
+T = TypeVar("T")
+
+
+# see https://github.com/python/mypy/issues/5858
+def cache(func: Callable[..., T]) -> T:
+    """Decorate properties to cache them."""
+    return functools.lru_cache()(func)  # type: ignore
 
 
 # https://stackoverflow.com/questions/16017397/injecting-function-call-after-init-with-decorator  # noqa
@@ -67,7 +78,7 @@ class Config(object, metaclass=NewInitCaller):
     :ref:`root_scenario`, and State_ references.
     """
 
-    def __init__(self, molecule_file, args={}, command_args={}, ansible_args=()):
+    def __init__(self, molecule_file: str, args={}, command_args={}, ansible_args=()):
         """
         Initialize a new config class and returns None.
 
@@ -94,7 +105,7 @@ class Config(object, metaclass=NewInitCaller):
         if self.molecule_file:
             self._validate()
 
-    def write(self):
+    def write(self) -> None:
         util.write_file(self.config_file, util.safe_dump(self.config))
 
     @property
@@ -198,7 +209,7 @@ class Config(object, metaclass=NewInitCaller):
         return platforms.Platforms(self, parallelize_platforms=self.is_parallel)
 
     @property  # type: ignore
-    @util.lru_cache()
+    @cache
     def provisioner(self):
         provisioner_name = self.config["provisioner"]["name"]
         if provisioner_name == "ansible":
@@ -239,7 +250,7 @@ class Config(object, metaclass=NewInitCaller):
 
         return driver_name
 
-    def _get_config(self):
+    def _get_config(self) -> MutableMapping:
         """
         Perform a prioritized recursive merge of config files.
 
@@ -264,7 +275,7 @@ class Config(object, metaclass=NewInitCaller):
 
         return self._combine(env=env)
 
-    def _combine(self, env=os.environ, keep_string=None):
+    def _combine(self, env=os.environ, keep_string=None) -> MutableMapping:
         """
         Perform a prioritized recursive merge of config files.
 
@@ -300,7 +311,7 @@ class Config(object, metaclass=NewInitCaller):
 
         return defaults
 
-    def _interpolate(self, stream, env, keep_string):
+    def _interpolate(self, stream: str, env: MutableMapping, keep_string: str) -> str:
         env = set_env_from_file(env, self.env_file)
 
         i = interpolation.Interpolator(interpolation.TemplateWithDefaults, env)
@@ -312,8 +323,9 @@ class Config(object, metaclass=NewInitCaller):
                 self.molecule_file, e.place, e.string
             )
             util.sysexit_with_message(msg)
+        return ""
 
-    def _get_defaults(self):
+    def _get_defaults(self) -> MutableMapping:
         if not self.molecule_file:
             scenario_name = "default"
         else:
@@ -404,9 +416,8 @@ class Config(object, metaclass=NewInitCaller):
             },
         }
 
-    def _preflight(self, data):
-        env = os.environ.copy()
-        env = set_env_from_file(env, self.env_file)
+    def _preflight(self, data: MutableMapping):
+        env = set_env_from_file(os.environ.copy(), self.env_file)
         errors, data = schema_v3.pre_validate(data, env, MOLECULE_KEEP_STRING)
         if errors:
             msg = "Failed to pre-validate.\n\n{}".format(errors)
@@ -432,10 +443,10 @@ def molecule_file(path):
     return os.path.join(path, MOLECULE_FILE)
 
 
-def set_env_from_file(env, env_file):
+def set_env_from_file(env: MutableMapping[str, str], env_file: str) -> MutableMapping:
     """Load environment from file."""
     if env_file and os.path.exists(env_file):
-        env = env.copy()
+        env = copy.copy(env)
         d = util.safe_load_file(env_file)
         for k, v in d.items():
             env[k] = v

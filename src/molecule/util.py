@@ -21,15 +21,15 @@
 from __future__ import print_function
 
 import contextlib
+import copy
 import fnmatch
 import os
 import re
 import sys
-from collections.abc import Mapping
 from dataclasses import dataclass
 from functools import lru_cache  # noqa
 from subprocess import CompletedProcess
-from typing import Any, Dict, List, NoReturn, Optional, Union
+from typing import Any, Dict, List, MutableMapping, NoReturn, Optional, Union
 
 import jinja2
 import yaml
@@ -93,7 +93,7 @@ def sysexit(code: int = 1) -> NoReturn:
 
 
 def sysexit_with_message(
-    msg: str, code: int = 1, detail: Optional[Dict] = None
+    msg: str, code: int = 1, detail: Optional[MutableMapping] = None
 ) -> None:
     """Exit with an error message."""
     # detail is usually a multi-line string which is not suitable for normal
@@ -163,7 +163,7 @@ def render_template(template, **kwargs):
     return t.render(kwargs)
 
 
-def write_file(filename, content):
+def write_file(filename: str, content: str):
     """
     Write a file with the given filename and content and returns None.
 
@@ -177,12 +177,12 @@ def write_file(filename, content):
     file_prepender(filename)
 
 
-def molecule_prepender(content):
+def molecule_prepender(content: str):
     """Return molecule identification header."""
     return MOLECULE_HEADER + "\n\n" + content
 
 
-def file_prepender(filename):
+def file_prepender(filename: str):
     """
     Prepend an informational header on files managed by Molecule and returns \
     None.
@@ -222,7 +222,7 @@ def safe_load(string) -> Dict:
     return {}
 
 
-def safe_load_file(filename):
+def safe_load_file(filename: str):
     """
     Parse the provided YAML file and returns a dict.
 
@@ -278,7 +278,7 @@ def abs_path(path):
         return os.path.abspath(path)
 
 
-def merge_dicts(a, b):
+def merge_dicts(a: MutableMapping, b: MutableMapping) -> MutableMapping:
     """
     Merge the values of b into a and returns a new dict.
 
@@ -288,10 +288,10 @@ def merge_dicts(a, b):
     :param b: the dictionary to import
     :return: dict
     """
-    result = a.copy()
+    result = copy.deepcopy(a)
 
     for k, v in b.items():
-        if k in a and isinstance(a[k], Mapping) and isinstance(v, Mapping):
+        if k in a and isinstance(a[k], dict) and isinstance(v, dict):
             result[k] = merge_dicts(a[k], v)
         else:
             result[k] = v

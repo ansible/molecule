@@ -41,7 +41,7 @@ MOLECULE_DEFAULT_SCENARIO_NAME = "default"
 class Base(object, metaclass=abc.ABCMeta):
     """An abstract base class used to define the command interface."""
 
-    def __init__(self, c):
+    def __init__(self, c: config.Config):
         """
         Initialize code for all command classes.
 
@@ -61,7 +61,7 @@ class Base(object, metaclass=abc.ABCMeta):
     def execute(self):  # pragma: no cover
         pass
 
-    def _setup(self):
+    def _setup(self) -> None:
         """
         Prepare Molecule's provisioner and returns None.
 
