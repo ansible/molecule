@@ -29,7 +29,7 @@ import re
 import sys
 from dataclasses import dataclass
 from functools import lru_cache  # noqa
-from subprocess import CompletedProcess
+from subprocess import CalledProcessError, CompletedProcess
 from typing import Any, Dict, List, MutableMapping, NoReturn, Optional, Union
 
 import jinja2
@@ -109,7 +109,7 @@ def sysexit_with_message(
 
 
 def run_command(
-    cmd, env=None, debug=False, echo=False, quiet=False
+    cmd, env=None, debug=False, echo=False, quiet=False, check=False, cwd=None
 ) -> CompletedProcess:
     """
     Execute the given command and returns None.
@@ -118,7 +118,6 @@ def run_command(
         - a string or list of strings (similar to subprocess.run)
         - a BakedCommand object (
     :param debug: An optional bool to toggle debug output.
-    :return: ``sh`` object
     """
     args = []
     stdout = None
@@ -139,9 +138,23 @@ def run_command(
     if debug:
         print_environment_vars(env)
 
-    return run(
-        args, env=env, stdout=stdout, stderr=stderr, echo=echo or debug, quiet=quiet
+    result = run(
+        args,
+        env=env,
+        stdout=stdout,
+        stderr=stderr,
+        echo=echo or debug,
+        quiet=quiet,
+        cwd=cwd,
     )
+    if result.returncode != 0 and check:
+        raise CalledProcessError(
+            returncode=result.returncode,
+            cmd=result.args,
+            output=result.stdout,
+            stderr=result.stderr,
+        )
+    return result
 
 
 def os_walk(directory, pattern, excludes=[]):
