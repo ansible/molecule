@@ -78,6 +78,8 @@ class Config(object, metaclass=NewInitCaller):
     :ref:`root_scenario`, and State_ references.
     """
 
+    # pylint: disable=too-many-instance-attributes
+    # Config objects should be allowed to have any number of attributes
     def __init__(self, molecule_file: str, args={}, command_args={}, ansible_args=()):
         """
         Initialize a new config class and returns None.
@@ -99,6 +101,7 @@ class Config(object, metaclass=NewInitCaller):
         self.config = self._get_config()
         self._action = None
         self._run_uuid = str(uuid4())
+        self.project_directory = os.getenv("MOLECULE_PROJECT_DIRECTORY", os.getcwd())
 
     def after_init(self):
         self.config = self._reget_config()
@@ -144,10 +147,6 @@ class Config(object, metaclass=NewInitCaller):
     @action.setter
     def action(self, value):
         self._action = value
-
-    @property
-    def project_directory(self):
-        return os.getenv("MOLECULE_PROJECT_DIRECTORY", os.getcwd())
 
     @property
     def cache_directory(self):
