@@ -21,12 +21,13 @@
 
 import abc
 import copy
+import logging
 import os
 
-from molecule import logger, util
+from molecule import util
 from molecule.dependency import base
 
-LOG = logger.get_logger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class AnsibleGalaxyBase(base.Base):

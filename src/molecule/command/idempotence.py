@@ -19,15 +19,16 @@
 #  DEALINGS IN THE SOFTWARE.
 """Idempotence Command Module."""
 
+import logging
 import re
 
 import click
 
-from molecule import logger, util
+from molecule import util
 from molecule.command import base
 from molecule.text import strip_ansi_escape
 
-LOG = logger.get_logger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class Idempotence(base.Base):

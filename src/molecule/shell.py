@@ -26,7 +26,7 @@ import click_completion
 import pkg_resources
 
 import molecule
-from molecule import command
+from molecule import command, logger
 from molecule.api import drivers
 from molecule.command.base import click_group_ex
 from molecule.config import MOLECULE_DEBUG, MOLECULE_VERBOSITY, ansible_version
@@ -34,6 +34,17 @@ from molecule.console import console
 from molecule.util import lookup_config_file
 
 click_completion.init()
+
+# Setup logging. This location of initialization is not ideal, but the code
+# structure does not give us much choice because config file lookup down below
+# uses logging facilities. Do note that verbosity level set by the
+# command-line flags does not affect the things that execute before the main
+# method in this file that parses the command line arguments.
+#
+# It would be ideal if we could get a chance at parsing CLI args before any of
+# the real code executes, but this is really hard to do while using click for
+# constructing out CLI API.
+logger.configure()
 
 LOCAL_CONFIG_SEARCH = ".config/molecule/config.yml"
 LOCAL_CONFIG = lookup_config_file(LOCAL_CONFIG_SEARCH)
@@ -111,19 +122,10 @@ def main(ctx, debug, verbose, base_config, env_file):  # pragma: no cover
     ctx.obj["args"]["base_config"] = base_config
     ctx.obj["args"]["env_file"] = env_file
 
+    logger.set_log_level(verbose, debug)
     if verbose:
         os.environ["ANSIBLE_VERBOSITY"] = str(verbose)
 
-
-# runtime environment checks to avoid delayed failures
-if sys.version_info[0] > 2:
-    try:
-        if pkg_resources.get_distribution("futures"):
-            raise SystemExit(
-                "FATAL: futures package found, this package should not be installed in a Python 3 environment, please remove it. See https://github.com/agronholm/pythonfutures/issues/90"
-            )
-    except pkg_resources.DistributionNotFound:
-        pass
 
 main.add_command(command.cleanup.cleanup)
 main.add_command(command.check.check)

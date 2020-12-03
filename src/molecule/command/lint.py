@@ -19,14 +19,15 @@
 #  DEALINGS IN THE SOFTWARE.
 """Lint Command Module."""
 
+import logging
 import os
 
 import click
 
-from molecule import logger, util
+from molecule import util
 from molecule.command import base
 
-LOG = logger.get_logger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class Lint(base.Base):

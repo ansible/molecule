@@ -19,16 +19,17 @@
 #  DEALINGS IN THE SOFTWARE.
 """Test Command Module."""
 
+import logging
 import os
 
 import click
 
-from molecule import logger, util
+from molecule import util
 from molecule.api import drivers
 from molecule.command import base
 from molecule.config import DEFAULT_DRIVER
 
-LOG = logger.get_logger(__name__)
+LOG = logging.getLogger(__name__)
 MOLECULE_PARALLEL = os.environ.get("MOLECULE_PARALLEL", False)
 
 

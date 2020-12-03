@@ -19,11 +19,12 @@
 #  DEALINGS IN THE SOFTWARE.
 """Shell Dependency Module."""
 
-from molecule import logger
+import logging
+
 from molecule.dependency import base
 from molecule.util import BakedCommand
 
-LOG = logger.get_logger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class Shell(base.Base):

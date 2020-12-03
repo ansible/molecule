@@ -18,11 +18,12 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 """Scenarios Module."""
+import logging
 from typing import List
 
-from molecule import logger, util
+from molecule import util
 
-LOG = logger.get_logger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class Scenarios(object):

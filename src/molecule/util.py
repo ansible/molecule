@@ -23,6 +23,7 @@ from __future__ import print_function
 import contextlib
 import copy
 import fnmatch
+import logging
 import os
 import re
 import sys
@@ -38,9 +39,8 @@ from subprocess_tee import run
 
 from molecule.console import console
 from molecule.constants import MOLECULE_HEADER
-from molecule.logger import get_logger
 
-LOG = get_logger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class SafeDumper(yaml.SafeDumper):

@@ -19,12 +19,14 @@
 #  DEALINGS IN THE SOFTWARE.
 """Matrix Command Module."""
 
+import logging
+
 import click
 
-from molecule import logger, scenarios
+from molecule import scenarios
 from molecule.command import base
 
-LOG = logger.get_logger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class Matrix(base.Base):

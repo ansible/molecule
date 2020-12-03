@@ -19,12 +19,13 @@
 #  DEALINGS IN THE SOFTWARE.
 """Converge Command Module."""
 
+import logging
+
 import click
 
-from molecule import logger
 from molecule.command import base
 
-LOG = logger.get_logger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class Converge(base.Base):

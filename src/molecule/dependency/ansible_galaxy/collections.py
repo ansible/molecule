@@ -1,10 +1,11 @@
 """Ansible Galaxy dependencies for lists of collections."""
+import logging
 import os
 
-from molecule import logger, util
+from molecule import util
 from molecule.dependency.ansible_galaxy.base import AnsibleGalaxyBase
 
-LOG = logger.get_logger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class Collections(AnsibleGalaxyBase):

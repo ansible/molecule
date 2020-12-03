@@ -19,17 +19,18 @@
 #  DEALINGS IN THE SOFTWARE.
 """Base class used by init scenario command."""
 
+import logging
 import os
 from typing import Dict
 
 import click
 
-from molecule import api, config, logger, util
+from molecule import api, config, util
 from molecule.command import base as command_base
 from molecule.command.init import base
 from molecule.config import DEFAULT_DRIVER
 
-LOG = logger.get_logger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class Scenario(base.Base):

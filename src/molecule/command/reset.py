@@ -19,13 +19,14 @@
 #  DEALINGS IN THE SOFTWARE.
 """Lint Command Module."""
 
+import logging
+
 import click
 
-from molecule import logger
 from molecule.api import drivers
 from molecule.command import base
 
-LOG = logger.get_logger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 @base.click_command_ex()

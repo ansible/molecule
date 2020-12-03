@@ -20,13 +20,13 @@
 """Base Dependency Module."""
 
 import abc
+import logging
 import os
 import time
 
 from molecule import constants, util
-from molecule.logger import get_logger
 
-LOG = get_logger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class Base(object):

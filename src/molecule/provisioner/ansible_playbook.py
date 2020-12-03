@@ -18,9 +18,12 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 """Ansible-Playbook Provisioner Module."""
-from molecule import logger, util
 
-LOG = logger.get_logger(__name__)
+import logging
+
+from molecule import util
+
+LOG = logging.getLogger(__name__)
 
 
 class AnsiblePlaybook(object):

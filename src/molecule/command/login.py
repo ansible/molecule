@@ -19,15 +19,16 @@
 #  DEALINGS IN THE SOFTWARE.
 """Login Command Module."""
 
+import logging
 import os
 from subprocess import run
 
 import click
 
-from molecule import logger, scenarios, util
+from molecule import scenarios, util
 from molecule.command import base
 
-LOG = logger.get_logger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class Login(base.Base):

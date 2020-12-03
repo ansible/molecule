@@ -20,12 +20,13 @@
 """Testinfra Verifier Module."""
 
 import glob
+import logging
 import os
 
-from molecule import logger, util
+from molecule import util
 from molecule.api import Verifier
 
-LOG = logger.get_logger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 class Testinfra(Verifier):

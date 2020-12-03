@@ -19,12 +19,13 @@
 #  DEALINGS IN THE SOFTWARE.
 """Ansible Verifier Module."""
 
+import logging
 import os
 
-from molecule import logger, util
+from molecule import util
 from molecule.api import Verifier
 
-log = logger.get_logger(__name__)
+log = logging.getLogger(__name__)
 
 
 class Ansible(Verifier):

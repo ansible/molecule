@@ -32,50 +32,50 @@ from enrich.logging import RichHandler
 from molecule.console import console, should_do_markup, theme
 from molecule.text import underscore
 
-SUCCESS = 100
-OUT = 101
+LOG = logging.getLogger(__name__)
+
+LOG_LEVEL_LUT = {
+    0: logging.INFO,
+    1: logging.DEBUG,
+}
 
 
-class LogFilter(logging.Filter):
-    """A custom log filter which excludes log messages above the logged level."""
-
-    def __init__(self, level):
-        """Construct LogFilter."""
-        self.__level = level
-
-    def filter(self, logRecord):  # pragma: no cover
-        # https://docs.python.org/3/library/logging.html#logrecord-attributes
-        return logRecord.levelno <= self.__level
-
-
-class TrailingNewlineFormatter(logging.Formatter):
-    """A custom logging formatter which removes additional newlines from messages."""
-
-    def format(self, record):
-        if record.msg:
-            record.msg = record.msg.rstrip()
-        return super(TrailingNewlineFormatter, self).format(record)
-
-
-@lru_cache()
-def get_logger(name=None) -> logging.Logger:
+def configure() -> None:
     """
-    Build a logger with the given name and returns the logger.
+    Configure a molecule root logger.
 
-    :param name: The name for the logger. This is usually the module
-                 name, ``__name__``.
-    :return: logger object
+    All other loggers will inherit the configuration we set here.
     """
-    logger = logging.getLogger(name)  # type: logging.Logger
-    logger.setLevel(logging.DEBUG)
-
+    logger = logging.getLogger("molecule")
     handler = RichHandler(
         console=LOGGING_CONSOLE, show_time=False, show_path=False, markup=True
     )  # type: ignore
     logger.addHandler(handler)
     logger.propagate = False
+    logger.setLevel(logging.INFO)
 
-    return logger
+
+def set_log_level(log_level: int, debug: bool) -> None:
+    """
+    Set logging level.
+
+    :param log_level: verbosity control (0 - INFO, 1 - DEBUG)
+    :param debug: debug mode indicator
+    """
+    # If we get verbosity level > 1, we just use debug because this is the
+    # most detailed log level we have.
+    if debug:
+        log_level = 1  # DEBUG from the LOG_LEVEL_LUT
+    logging.getLogger("molecule").setLevel(LOG_LEVEL_LUT.get(log_level, logging.DEBUG))
+
+
+def get_logger(name: str) -> logging.Logger:
+    """
+    Return a child logger.
+
+    Returned logger inherits configuration from the molecule logger.
+    """
+    return logging.getLogger("molecule." + name)
 
 
 def github_actions_groups(func: Callable) -> Callable:
@@ -178,7 +178,7 @@ def section_logger(func: Callable) -> Callable:
     @wraps(func)
     def wrapper(*args, **kwargs):
         self = args[0]
-        get_logger().info(
+        LOG.info(
             "[info]Running [scenario]%s[/] > [action]%s[/][/]",
             self._config.scenario.name,
             underscore(self.__class__.__name__),

@@ -19,11 +19,12 @@
 #  DEALINGS IN THE SOFTWARE.
 """Base class used by init command."""
 
-from molecule import logger
+import logging
+
 from molecule.command import base
 from molecule.command.init import role, scenario
 
-LOG = logger.get_logger(__name__)
+LOG = logging.getLogger(__name__)
 
 
 @base.click_group_ex()  # type: ignore
