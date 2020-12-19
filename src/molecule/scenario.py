@@ -165,8 +165,7 @@ class Scenario(object):
 
             path = ephemeral_directory(project_scenario_directory)
 
-        # TODO(ssbarnea): Tune or make the retry logic configurable once we have enough data
-        if not self._lock:
+        if os.environ.get("MOLECULE_PARALLEL", False) and not self._lock:
             self._lock = open(os.path.join(path, ".lock"), "w")
             for i in range(1, 5):
                 try:
