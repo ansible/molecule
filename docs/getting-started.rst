@@ -175,7 +175,7 @@ Finally, we can exit the instance and destroy it with:
 Run a full test sequence
 ------------------------
 
-Molecule provides commands for manually managing the lifecyle of the instance,
+Molecule provides commands for manually managing the lifecycle of the instance,
 scenario, development and testing tools. However, we can also tell Molecule to
 manage this automatically within a :ref:`root_scenario` sequence.
 
