@@ -48,7 +48,7 @@ and run ``molecule test`` in ubuntu.
 If you need access to requirements in private repositories, `create a token`_
 with the required privileges, then define a ``GIT_CREDENTIALS`` secret for
 your repository with a value looking like `https://username:token@github.com/`,
-and finaly add the following step before `Test with molecule`
+and finally add the following step before `Test with molecule`
 
 .. code-block:: yaml
 
