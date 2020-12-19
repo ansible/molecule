@@ -21,15 +21,13 @@
 
 import logging
 import os
-import sys
 import time
 from functools import lru_cache, wraps
 from typing import Callable, Iterable
 
-from enrich.console import Console
 from enrich.logging import RichHandler
 
-from molecule.console import console, should_do_markup, theme
+from molecule.console import console
 from molecule.text import underscore
 
 LOG = logging.getLogger(__name__)
@@ -48,7 +46,7 @@ def configure() -> None:
     """
     logger = logging.getLogger("molecule")
     handler = RichHandler(
-        console=LOGGING_CONSOLE, show_time=False, show_path=False, markup=True
+        console=console, show_time=False, show_path=False, markup=True
     )  # type: ignore
     logger.addHandler(handler)
     logger.propagate = False
@@ -205,8 +203,3 @@ def get_section_loggers() -> Iterable[Callable]:
         return [travis_ci_folds] + default_section_loggers
     # CI is set but no extra section_loggers apply.
     return default_section_loggers
-
-
-LOGGING_CONSOLE = Console(
-    file=sys.stderr, force_terminal=should_do_markup(), theme=theme
-)

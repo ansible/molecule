@@ -81,14 +81,17 @@ def print_environment_vars(env: Optional[Dict[str, str]]) -> None:
         print()
 
 
+def do_report() -> None:
+    """Dump html report atexit."""
+    report_file = os.environ["MOLECULE_REPORT"]
+    LOG.info("Writing %s report.", report_file)
+    with open(report_file, "w") as f:
+        f.write(console.export_html())
+        f.close()
+
+
 def sysexit(code: int = 1) -> NoReturn:
     """Perform a system exit with given code, default 1."""
-    if "MOLECULE_REPORT" in os.environ:
-        report_file = os.environ["MOLECULE_REPORT"]
-        LOG.info("Writing %s report.", report_file)
-        with open(report_file, "w") as f:
-            f.write(console.export_html())
-
     sys.exit(code)
 
 

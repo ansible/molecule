@@ -51,14 +51,14 @@ repos:
         pass_filenames: false
         additional_dependencies:
           - packaging
-          - enrich>=1.2
-          - subprocess-tee>=0.1.5
+          - enrich>=1.2.5
+          - subprocess-tee>=0.2.0
   - repo: https://github.com/pre-commit/mirrors-pylint
     rev: v2.6.0
     hooks:
       - id: pylint
         additional_dependencies:
           - ansible-base
-          - enrich>=1.2
-          - subprocess-tee>=0.1.5
+          - enrich>=1.2.5
+          - subprocess-tee>=0.2.0
           - testinfra

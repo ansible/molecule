@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 """Molecule Shell Module."""
+import atexit
 import os
 import sys
 
@@ -31,7 +32,7 @@ from molecule.api import drivers
 from molecule.command.base import click_group_ex
 from molecule.config import MOLECULE_DEBUG, MOLECULE_VERBOSITY, ansible_version
 from molecule.console import console
-from molecule.util import lookup_config_file
+from molecule.util import do_report, lookup_config_file
 
 click_completion.init()
 
@@ -125,6 +126,9 @@ def main(ctx, debug, verbose, base_config, env_file):  # pragma: no cover
     logger.set_log_level(verbose, debug)
     if verbose:
         os.environ["ANSIBLE_VERBOSITY"] = str(verbose)
+
+    if "MOLECULE_REPORT" in os.environ:
+        atexit.register(do_report)
 
 
 main.add_command(command.cleanup.cleanup)
