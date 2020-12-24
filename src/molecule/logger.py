@@ -102,7 +102,7 @@ def github_actions_groups(func: Callable) -> Callable:
 
 def gitlab_ci_sections(func: Callable) -> Callable:
     """Print group indicators before/after execution of a method."""
-    # GitLab requres:
+    # GitLab requires:
     #  - \r (carriage return)
     #  - \e[0K (clear line ANSI escape code. We use \033 for the \e escape char)
     clear_line = "\r\033[0K"
