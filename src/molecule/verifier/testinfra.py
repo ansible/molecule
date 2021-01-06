@@ -196,7 +196,12 @@ class Testinfra(Verifier):
         :return: list
         """
         return sorted(
-            [filename for filename in util.os_walk(self.directory, "test_*.py")]
+            [
+                filename
+                for filename in util.os_walk(
+                    self.directory, "test_*.py", followlinks=True
+                )
+            ]
         )
 
     def schema(self):
