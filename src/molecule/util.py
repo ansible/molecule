@@ -160,9 +160,9 @@ def run_command(
     return result
 
 
-def os_walk(directory, pattern, excludes=[]):
+def os_walk(directory, pattern, excludes=[], followlinks=False):
     """Navigate recursively and retried files based on pattern."""
-    for root, dirs, files in os.walk(directory, topdown=True):
+    for root, dirs, files in os.walk(directory, topdown=True, followlinks=followlinks):
         dirs[:] = [d for d in dirs if d not in excludes]
         for basename in files:
             if fnmatch.fnmatch(basename, pattern):
