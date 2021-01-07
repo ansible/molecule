@@ -290,8 +290,8 @@ class Config(object, metaclass=NewInitCaller):
         :return: dict
         """
         defaults = self._get_defaults()
-        base_config = self.args.get("base_config")
-        if base_config and os.path.exists(base_config):
+        base_configs = filter(os.path.exists, self.args.get("base_config", []))
+        for base_config in base_configs:
             with util.open_file(base_config) as stream:
                 s = stream.read()
                 self._preflight(s)

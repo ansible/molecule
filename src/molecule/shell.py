@@ -88,14 +88,17 @@ def print_version(ctx, param, value):
 @click.option(
     "--base-config",
     "-c",
-    default=LOCAL_CONFIG,
+    multiple=True,
+    default=[LOCAL_CONFIG],
     help=(
-        "Path to a base config.  If provided Molecule will load "
-        "this config first, and deep merge each scenario's "
+        "Path to a base config (can be specified multiple times)."
+        " If provided, Molecule will first load and deep merge the"
+        " configurations in the specified order,"
+        " and deep merge each scenario's "
         "molecule.yml on top. By default Molecule is looking for "
         "'{}' "
         "in current VCS repository and if not found it will look "
-        "in user home. ({})"
+        "in user home. ({})."
     ).format(LOCAL_CONFIG_SEARCH, LOCAL_CONFIG),
 )
 @click.option(

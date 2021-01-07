@@ -188,12 +188,24 @@ def test_get_config(config_instance):
 
 
 def test_get_config_with_base_config(config_instance):
-    config_instance.args = {"base_config": "./foo.yml"}
+    config_instance.args = {"base_config": ["./foo.yml"]}
     contents = {"foo": "bar"}
-    util.write_file(config_instance.args["base_config"], util.safe_dump(contents))
+    util.write_file(config_instance.args["base_config"][0], util.safe_dump(contents))
     result = config_instance._get_config()
 
     assert result["foo"] == "bar"
+
+
+def test_get_config_with_multiple_base_configs(config_instance):
+    config_instance.args = {"base_config": ["./foo.yml", "./foo2.yml"]}
+    contents = {"foo": "bar", "foo2": "bar"}
+    util.write_file(config_instance.args["base_config"][0], util.safe_dump(contents))
+    contents = {"foo2": "bar2"}
+    util.write_file(config_instance.args["base_config"][1], util.safe_dump(contents))
+    result = config_instance._get_config()
+
+    assert result["foo"] == "bar"
+    assert result["foo2"] == "bar2"
 
 
 def test_reget_config(config_instance):
