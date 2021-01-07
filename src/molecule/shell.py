@@ -89,7 +89,7 @@ def print_version(ctx, param, value):
     "--base-config",
     "-c",
     multiple=True,
-    default=[LOCAL_CONFIG],
+    default=[LOCAL_CONFIG] if LOCAL_CONFIG else [],
     help=(
         "Path to a base config (can be specified multiple times)."
         " If provided, Molecule will first load and deep merge the"
