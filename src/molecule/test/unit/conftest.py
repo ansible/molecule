@@ -55,11 +55,18 @@ def _molecule_driver_section_data():
 
 
 @pytest.fixture
+def platforms_data():
+    return {"name": "instance-2", "groups": ["baz", "foo"], "children": ["child2"]}
+
+
+@pytest.fixture
 def _molecule_platforms_section_data():
+    include_tag = util.IncludeTag()
+    include_tag.file_name = pytest.helpers.platforms_include_file()
     return {
         "platforms": [
             {"name": "instance-1", "groups": ["foo", "bar"], "children": ["child1"]},
-            {"name": "instance-2", "groups": ["baz", "foo"], "children": ["child2"]},
+            include_tag,
         ]
     }
 
@@ -138,13 +145,25 @@ def molecule_file_fixture(
 
 
 @pytest.fixture
+def molecule_include_file_fixture(
+    molecule_scenario_directory_fixture, molecule_ephemeral_directory_fixture
+):
+    return pytest.helpers.platforms_include_file()
+
+
+@pytest.fixture
 def config_instance(
-    molecule_file_fixture: str, molecule_data, request
+    molecule_file_fixture: str,
+    molecule_data,
+    molecule_include_file_fixture: str,
+    platforms_data,
+    request,
 ) -> config.Config:
     mdc = copy.deepcopy(molecule_data)
     if hasattr(request, "param"):
         mdc = util.merge_dicts(mdc, request.getfixturevalue(request.param))
     pytest.helpers.write_molecule_file(molecule_file_fixture, mdc)
+    pytest.helpers.write_molecule_file(molecule_include_file_fixture, platforms_data)
     c = config.Config(molecule_file_fixture)
     c.command_args = {"subcommand": "test"}
 

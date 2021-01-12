@@ -21,8 +21,9 @@
 
 import collections
 import functools
+import pathlib
 import re
-from typing import Any, MutableMapping
+from typing import Any, MutableMapping, Optional
 
 import cerberus
 import cerberus.errors
@@ -367,9 +368,14 @@ class Validator(cerberus.Validator):
                 self._error(field, msg)
 
 
-def pre_validate(stream, env: MutableMapping, keep_string: str):
+def pre_validate(
+    stream,
+    env: MutableMapping,
+    keep_string: str,
+    include_path: Optional[pathlib.Path] = None,
+):
     """Pre-validate stream."""
-    data = util.safe_load(stream)
+    data = util.safe_load(stream, include_path=include_path)
 
     v = Validator(allow_unknown=True)
     v.validate(data, pre_validate_base_schema(env, keep_string))

@@ -97,11 +97,6 @@ def test_dependency_property_is_shell(config_instance):
     assert isinstance(config_instance.dependency, shell.Shell)
 
 
-@pytest.fixture
-def _config_driver_delegated_section_data():
-    return {"driver": {"name": "delegated", "options": {"managed": False}}}
-
-
 def test_env(config_instance):
     config_instance.args = {"env_file": ".env"}
     x = {
@@ -286,7 +281,9 @@ def test_preflight(mocker, config_instance, patched_logger_info):
 
     config_instance._preflight("foo")
 
-    m.assert_called_once_with("foo", os.environ, config.MOLECULE_KEEP_STRING)
+    m.assert_called_once_with(
+        "foo", os.environ, config.MOLECULE_KEEP_STRING, include_path=None
+    )
 
 
 def test_preflight_exists_when_validation_fails(

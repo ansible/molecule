@@ -23,7 +23,8 @@ import copy
 import functools
 import logging
 import os
-from typing import Callable, MutableMapping, TypeVar
+import pathlib
+from typing import Callable, MutableMapping, Optional, TypeVar
 from uuid import uuid4
 
 from packaging.version import Version
@@ -294,7 +295,8 @@ class Config(object, metaclass=NewInitCaller):
         for base_config in base_configs:
             with util.open_file(base_config) as stream:
                 s = stream.read()
-                self._preflight(s)
+                include_path = pathlib.Path(os.path.dirname(base_config))
+                self._preflight(s, include_path=include_path)
                 interpolated_config = self._interpolate(s, env, keep_string)
                 defaults = util.merge_dicts(
                     defaults, util.safe_load(interpolated_config)
@@ -303,10 +305,11 @@ class Config(object, metaclass=NewInitCaller):
         if self.molecule_file:
             with util.open_file(self.molecule_file) as stream:
                 s = stream.read()
-                self._preflight(s)
+                include_path = pathlib.Path(os.path.dirname(self.molecule_file))
+                self._preflight(s, include_path=include_path)
                 interpolated_config = self._interpolate(s, env, keep_string)
                 defaults = util.merge_dicts(
-                    defaults, util.safe_load(interpolated_config)
+                    defaults, util.safe_load(interpolated_config, include_path)
                 )
 
         return defaults
@@ -416,9 +419,13 @@ class Config(object, metaclass=NewInitCaller):
             },
         }
 
-    def _preflight(self, data: MutableMapping):
+    def _preflight(
+        self, data: MutableMapping, include_path: Optional[pathlib.Path] = None
+    ):
         env = set_env_from_file(os.environ.copy(), self.env_file)
-        errors, data = schema_v3.pre_validate(data, env, MOLECULE_KEEP_STRING)
+        errors, data = schema_v3.pre_validate(
+            data, env, MOLECULE_KEEP_STRING, include_path=include_path
+        )
         if errors:
             msg = "Failed to pre-validate.\n\n{}".format(errors)
             util.sysexit_with_message(msg, detail=data)

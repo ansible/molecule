@@ -100,6 +100,11 @@ def get_molecule_file(path):
 
 
 @pytest.helpers.register
+def platforms_include_file():
+    return os.path.join(molecule_scenario_directory(), "platforms.yml")
+
+
+@pytest.helpers.register
 def molecule_ephemeral_directory(_fixture_uuid):
     project_directory = "test-project-{}".format(_fixture_uuid)
     scenario_name = "test-instance"

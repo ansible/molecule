@@ -25,6 +25,7 @@ import copy
 import fnmatch
 import logging
 import os
+import pathlib
 import re
 import sys
 from dataclasses import dataclass
@@ -43,11 +44,42 @@ from molecule.constants import MOLECULE_HEADER
 LOG = logging.getLogger(__name__)
 
 
+class IncludeTag(dict):
+    """
+    Include Class.
+
+    Implements the !include YAML tag.
+    """
+
+    yaml_tag = "!include"
+    file_name = pathlib.Path(os.getcwd())
+
+    def __init__(self, *args, **kwargs):
+        """Initialize a new IncludeTag."""
+        for k, v in dict(*args, **kwargs).items():
+            self[k] = v
+
+    @classmethod
+    def from_yaml(cls, loader, node):
+        file_name = os.path.join(loader._import_path, node.value)
+        value = safe_load_file(file_name, include_path=os.path.dirname(file_name))
+        tag = IncludeTag(value)
+        tag.file_name = file_name
+        return tag
+
+    @classmethod
+    def to_yaml(cls, dumper, data):
+        return dumper.represent_scalar(cls.yaml_tag, data.file_name)
+
+
 class SafeDumper(yaml.SafeDumper):
     """SafeDumper YAML Class."""
 
     def increase_indent(self, flow=False, indentless=False):
         return super(SafeDumper, self).increase_indent(flow, False)
+
+
+SafeDumper.add_multi_representer(IncludeTag, IncludeTag.to_yaml)  # type: ignore
 
 
 def print_debug(title: str, data: str) -> None:
@@ -224,7 +256,25 @@ def safe_dump(data: Any, explicit_start=True) -> str:
     )
 
 
-def safe_load(string) -> Dict:
+def safe_loader_with_include(import_path: pathlib.Path):
+    """
+    Instantiate a safe YAML loader that supports the !include macro.
+
+    :param import_path: A string containing a directory to look for files.
+    :return: a YAML loader
+    """
+
+    class SafeIncludeLoader(yaml.SafeLoader):
+        """YAML safe loader with support for includes."""
+
+        _import_path = import_path
+
+    klass = SafeIncludeLoader
+    klass.add_constructor(IncludeTag.yaml_tag, IncludeTag.from_yaml)  # type: ignore
+    return klass
+
+
+def safe_load(string, include_path="") -> Dict:
     """
     Parse the provided string returns a dict.
 
@@ -232,13 +282,16 @@ def safe_load(string) -> Dict:
     :return: dict
     """
     try:
-        return yaml.safe_load(string) or {}
+        loader = yaml.SafeLoader
+        if include_path:
+            loader = safe_loader_with_include(include_path)
+        return yaml.load(string, Loader=loader) or {}
     except yaml.scanner.ScannerError as e:
         sysexit_with_message(str(e))
     return {}
 
 
-def safe_load_file(filename: str):
+def safe_load_file(filename: str, include_path=""):
     """
     Parse the provided YAML file and returns a dict.
 
@@ -246,7 +299,7 @@ def safe_load_file(filename: str):
     :return: dict
     """
     with open_file(filename) as stream:
-        return safe_load(stream)
+        return safe_load(stream, include_path=include_path)
 
 
 @contextlib.contextmanager

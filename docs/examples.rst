@@ -306,6 +306,9 @@ project.
 Sharing Across Scenarios
 ========================
 
+Sharing whole files
+-------------------
+
 Playbooks and tests can be shared across scenarios.
 
 .. code-block:: bash
@@ -354,6 +357,30 @@ In this second example the actions `create`, `destroy`,
         prepare: ../resources/playbooks/prepare.yml
 
 .. _parallel-usage-example:
+
+Sharing YAML sections
+---------------------
+
+Portions of YAML files can be isolated and included in
+other files. For instance, you can create a file ``provisioner.yml``:
+
+.. code-block:: yaml
+
+    name: ansible
+    playbooks:
+      create: ../resources/playbooks/create.yml
+      destroy: ../resources/playbooks/destroy.yml
+      converge: ../resources/playbooks/converge.yml
+      prepare: ../resources/playbooks/prepare.yml
+
+The file can therefore be used in a scenario using:
+
+.. code-block:: yaml
+
+    provisioner: !include provisioner.yml
+
+Molecule will look for files relatively to the directory
+of the file that is currently being loaded.
 
 Running Molecule processes in parallel mode
 ===========================================
