@@ -4,16 +4,10 @@ dependency:
 driver:
   name: {{ cookiecutter.driver_name }}
 platforms:
-{%- if cookiecutter.driver_name == 'docker' %}
   - name: instance
+{%- if cookiecutter.driver_name in ['containers', 'docker', 'podman'] %}
     image: docker.io/pycontribs/centos:8
     pre_build_image: true
-{%- elif cookiecutter.driver_name == 'podman' %}
-  - name: instance
-    image: docker.io/pycontribs/centos:8
-    pre_build_image: true
-{%- else %}
-  - name: instance
 {%- endif %}
 provisioner:
   name: {{ cookiecutter.provisioner_name }}
