@@ -38,7 +38,6 @@ and run ``molecule test`` in ubuntu.
             python-version: ${{ matrix.python-version }}
         - name: Install dependencies
           run: |
-            sudo apt install docker
             python3 -m pip install --upgrade pip
             python3 -m pip install -r requirements.txt
         - name: Test with molecule
