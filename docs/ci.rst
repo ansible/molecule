@@ -225,14 +225,14 @@ Jenkins Pipeline
 
     }
 
-The following `Jenkinsfile` uses the official 'quay.io/ansible/molecule' image.
+The following `Jenkinsfile` uses the Toolset image.
 
 .. code-block:: groovy
 
     pipeline {
       agent {
         docker {
-          image 'quay.io/ansible/molecule'
+          image 'quay.io/ansible/toolset'
           args '-v /var/run/docker.sock:/var/run/docker.sock'
         }
       }

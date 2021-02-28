@@ -135,18 +135,12 @@ some benefits:
 Docker
 ======
 
-We publish molecule images via `quay.io`_ where the following tags are available:
+Molecule is built into a Docker image by the `Toolset`_ project.
 
-  * ``latest``: latest master branch build, which should be viewed as unstable
-  * ``2.20``: Git based tags
-  * ``2.20a1``: Pre-releases tags
+Any questions or bugs related to use of Molecule from within a container
+should be addressed by the Toolset project.
 
-Please see the `tags listing`_ for available tags.
-
-Please see :ref:`docker-usage-example` for usage.
-
-.. _`quay.io`: https://quay.io/repository/ansible/molecule
-.. _tags listing: https://quay.io/repository/ansible/molecule?tab=tags
+.. _`Toolset`: https://github.com/ansible-community/toolset
 
 Source
 ======

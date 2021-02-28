@@ -7,13 +7,12 @@ Common Molecule Use Cases
 Running inside a container
 ==========================
 
-While molecule project itself does not build a container, we do recommend
-you to use the `toolset`_ container, which also contains molecule.
+Molecule is built into a Docker image by the `Toolset`_ project.
 
-Any questions or bugs related to use of molecule from within a container,
-should be addressed by the toolset project.
+Any questions or bugs related to use of Molecule from within a container
+should be addressed by the Toolset project.
 
-.. _`toolset`: https://github.com/ansible-community/toolset
+.. _`Toolset`: https://github.com/ansible-community/toolset
 
 Docker With Non-Privileged User
 ===============================
