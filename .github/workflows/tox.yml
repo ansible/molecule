@@ -141,5 +141,3 @@ jobs:
         uses: pypa/gh-action-pypi-publish@master
         with:
           password: ${{ secrets.pypi_password }}
-# No need to publish to quay.io from here as they do it when a new tag
-# is pushed on git.
