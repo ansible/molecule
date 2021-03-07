@@ -360,3 +360,22 @@ def test_write_config(config_instance):
     config_instance.write()
 
     assert os.path.isfile(config_instance.config_file)
+
+
+@pytest.mark.parametrize(
+    "input,output",
+    [
+        ("ansible 2.9.18", "2.9.18"),  # ansible < 2.10 and ansible-base
+        ("ansible [core 2.11.0b1.post0]", "2.11.0b1.post0"),  # ansible-core
+    ],
+)
+def test_ansible_version_parsing(mocker, input, output):
+    run_command = mocker.patch.object(config, "run_command")
+    run_command.return_value.returncode = 0
+    run_command.return_value.stdout = input + "\nother stuff\n  here\n"
+
+    # Results from ansible_version are cached, so we need to kill the cache before each
+    # test so that we can actually test parsing of different strings.
+    config.ansible_version.cache_clear()
+
+    assert output == str(config.ansible_version())

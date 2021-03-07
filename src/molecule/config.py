@@ -466,12 +466,20 @@ def ansible_version(version: str = "") -> Version:
     """
     if not version:
         proc = run_command(["ansible", "--version"], quiet=True)
-        if proc.returncode == 0:
-            version = proc.stdout.splitlines()[0].split()[1]
-        else:
+        if proc.returncode != 0:
             LOG.fatal(
                 "Unable to find a working copy of ansible executable. Read https://molecule.readthedocs.io/en/latest/installation.html\n%s",
                 proc,
             )
             sysexit(RC_SETUP_ERROR)
+
+        # First line of the `ansible --version` output is:
+        #
+        #  1. `ansible <version>` on ansible < 2.10 and on ansible-base.
+        #  2. `ansible [core <version>]` on ansible-core.
+        #
+        # The code below grabs the last component in that line and strips trailing ] if
+        # present.
+        version = proc.stdout.splitlines()[0].split()[-1].rstrip("]")
+
     return Version(version)
