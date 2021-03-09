@@ -164,6 +164,8 @@ Azure Pipelines
 `Azure Pipelines`_ projects rely on the `azure-pipelines.yml` file within the root folder of a repository. There are a number of pre-requisites for running CI/CD within Azure on self-hosted runners if you intend on using the `UsePythonVersion` task. Details of this can be found in the `Use Python Version Task`_ documentation.
 
 .. code-block:: yaml
+
+  ---
   trigger:
   - master
 
