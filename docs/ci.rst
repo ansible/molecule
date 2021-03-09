@@ -161,7 +161,7 @@ Here is another example using Docker, virtualenv and tags on Centos 7.
         
 Azure Pipelines
 ^^^^^^^^^^^^^^^
-`Azure Pipelines`_ projects rely on the `azure-pipelines.yml` file within the root folder of a repository. There are a number of pre-requisites for running CI/CD within Azure on self-hosted runners if you intend on using the `UsePythonVersion` task. Details of this can be found in the `Use Python Version Task`_ documentation.
+`Azure Pipelines`_ projects rely on the ``azure-pipelines.yml`` file within the root folder of a repository. There are a number of pre-requisites for running CI/CD within Azure on self-hosted runners if you intend on using the ``UsePythonVersion`` task. Details of this can be found in the `Use Python Version Task`_ documentation.
 
 .. code-block:: yaml
 
@@ -193,9 +193,9 @@ Azure Pipelines
       molecule test
     displayName: Test relevant platforms
     
-Whilst the pipeline checks out your code initially as part of the pipeline task, by default, it checks it out into a directory named "s" within `$(Agent.BuildDirectory)`. If you checkout one other repository, the `s` is substituted with the path provided in that checkout. If you checkout multiple roles (e.g. some private roles within your Azure organisation) then the "s" convention is used, hence the importance of the `cd $(Agent.BuildDirectory)/role-name` which ensures you are in the correct directory. Check the `Azure Build Variables`_ documentation for more detailed information on these.
+Whilst the pipeline checks out your code initially as part of the pipeline task, by default, it checks it out into a directory named ``s`` within ``$(Agent.BuildDirectory)``. If you checkout one other repository, the ``s`` is substituted with the path provided in that checkout. If you checkout multiple roles (e.g. some private roles within your Azure organisation) then the ``s`` structure is used, hence the importance of the ``cd $(Agent.BuildDirectory)/role-name`` which ensures you are in the correct directory regardless of format. Check the `Azure Build Variables`_ documentation for more detailed information on these.
 
-The `export PATH` is required to ensure you can use the `molecule`/`ansible` shell scripts. Azure doesn't add these by default.
+The ``export PATH`` is required to ensure you can use the ``molecule``/``ansible`` shell scripts. Azure doesn't add these by default.
 
 
 Jenkins Pipeline
