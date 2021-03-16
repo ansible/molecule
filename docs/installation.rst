@@ -183,7 +183,7 @@ Ubuntu 16.x
 
 .. code-block:: bash
 
-    $ sudo aptinstall -y libffi-dev git
+    $ sudo apt install -y libffi-dev git
 
 Install
 -------
