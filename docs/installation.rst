@@ -21,15 +21,15 @@ CentOS 8
 
 .. code-block:: bash
 
-    $ sudo yum install -y gcc python3-pip python3-devel openssl-devel python3-libselinux
+    $ sudo dnf install -y gcc python3-pip python3-devel openssl-devel python3-libselinux
 
 Ubuntu 16.x
 -----------
 
 .. code-block:: bash
 
-    $ sudo apt-get update
-    $ sudo apt-get install -y python3-pip libssl-dev
+    $ sudo apt update
+    $ sudo apt install -y python3-pip libssl-dev
 
 Pip
 ===
