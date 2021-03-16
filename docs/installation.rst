@@ -176,14 +176,14 @@ CentOS 8
 
 .. code-block:: bash
 
-    $ sudo yum install -y libffi-devel git
+    $ sudo dnf install -y libffi-devel git
 
 Ubuntu 16.x
 ^^^^^^^^^^^
 
 .. code-block:: bash
 
-    $ sudo apt-get install -y libffi-dev git
+    $ sudo aptinstall -y libffi-dev git
 
 Install
 -------
