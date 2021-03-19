@@ -348,6 +348,7 @@ class Config(object, metaclass=NewInitCaller):
                 "safe_files": [],
             },
             "platforms": [],
+            "prerun": True,
             "provisioner": {
                 "name": "ansible",
                 "config_options": {},

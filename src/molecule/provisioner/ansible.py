@@ -453,6 +453,7 @@ class Ansible(base.Base):
                         ),
                         "/usr/share/ansible/roles",
                         "/etc/ansible/roles",
+                        *os.environ.get("ANSIBLE_ROLES_PATH", "").split(":"),
                     ]
                 ),
                 self._config.ansible_collections_path: ":".join(collections_path_list),

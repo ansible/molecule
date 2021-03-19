@@ -12,4 +12,5 @@ python:
     - method: pip
       path: .
       extra_requirements:
+        - ansible-base
         - docs

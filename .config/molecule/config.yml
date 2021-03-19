@@ -1,1 +1,2 @@
 # This is loaded by default
+prerun: true

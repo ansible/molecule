@@ -1,6 +1,8 @@
 #!/usr/bin/env ansible-playbook
 ---
 - hosts: localhost
+  collections:
+    - community.docker
   vars:
     platforms:
       # platforms supported as being managed by molecule/ansible, this does
