@@ -43,9 +43,21 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Install system dependencies
+        # remove broken .deb ansible and replace with pip version:
+        # https://github.com/actions/virtual-environments/issues/3001
         run: |
-          sudo apt-get update \
-          && sudo apt-get install -y libvirt-dev
+          sudo apt-get remove -y ansible \
+          && sudo apt-get update \
+          && sudo apt-get install -y libvirt-dev python3-cryptography python3-jinja2 python3-yaml virtualenv \
+          && pip3 install --user ansible-base \
+          && echo "$HOME/.local/bin" >> $GITHUB_PATH
+        # https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#adding-a-system-path
+      - name: Validate that ansible works
+        run: |
+          ansible --version \
+          && virtualenv foo \
+          && source foo/bin/activate \
+          && ansible --version
       - name: Find python version
         id: py_ver
         shell: python
