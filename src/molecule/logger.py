@@ -44,7 +44,9 @@ def configure() -> None:
 
     All other loggers will inherit the configuration we set here.
     """
-    logger = logging.getLogger("molecule")
+    # Keep using root logger because we do want to process messages from other
+    # libraries.
+    logger = logging.getLogger()
     handler = RichHandler(
         console=console, show_time=False, show_path=False, markup=True
     )  # type: ignore
