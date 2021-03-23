@@ -104,11 +104,11 @@ class Verifier(object):
         )
 
     def __eq__(self, other):
-        """Implement equality comparision."""
+        """Implement equality comparison."""
         return str(self) == str(other)
 
     def __lt__(self, other):
-        """Implement lower than comparision."""
+        """Implement lower than comparison."""
         return str.__lt__(str(self), str(other))
 
     def __hash__(self):

@@ -53,7 +53,7 @@ class Ansible(base.Base):
         between Ansible and Molecule, it is best to perform these tasks in the
         prepare or converge playbooks.
 
-        It is the developers responsiblity to properly map the modules's fact
+        It is the developers responsibility to properly map the modules' fact
         data into the instance_conf_dict fact in the create playbook.  This
         allows Molecule to properly configure Ansible inventory.
 
@@ -209,7 +209,7 @@ class Ansible(base.Base):
           $ephemeral_directory/plugins/filter/:$project_directory/filter/plugins/:~/.ansible/plugins/filter:/usr/share/ansible/plugins/modules
 
     Environment variables can be passed to the provisioner.  Variables in this
-    section which match the names above will be appened to the above defaults,
+    section which match the names above will be appended to the above defaults,
     and converted to absolute paths, where the relative parent is the
     $scenario_directory.
 
@@ -301,7 +301,7 @@ class Ansible(base.Base):
         The extra hosts added to the inventory using this key won't be
         created/destroyed by Molecule. It is the developers responsibility
         to target the proper hosts in the playbook. Only the hosts defined
-        under `Platforms`_ should be targetted instead of ``all``.
+        under `Platforms`_ should be targeted instead of ``all``.
 
 
     An alternative to the above is symlinking.  Molecule creates symlinks to
@@ -319,7 +319,7 @@ class Ansible(base.Base):
 
         Again, it is the developers responsibility to target the proper hosts
         in the playbook. Only the hosts defined under
-        `Platforms`_ should be targetted instead of ``all``.
+        `Platforms`_ should be targeted instead of ``all``.
 
     .. note::
 

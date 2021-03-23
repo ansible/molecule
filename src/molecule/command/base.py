@@ -137,7 +137,7 @@ def execute_subcommand(config, subcommand):
     command = getattr(command_module, text.camelize(subcommand))
     # knowledge of the current action is used by some provisioners
     # to ensure they behave correctly during certain sequence steps,
-    # particulary the setting of ansible options in create/destroy,
+    # particularly the setting of ansible options in create/destroy,
     # and is also used for reporting in execute_cmdline_scenarios
     config.action = subcommand
 

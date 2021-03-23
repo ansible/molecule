@@ -61,7 +61,7 @@ class Prepare(base.Base):
 
     .. option:: molecule prepare --force
 
-        Force the execution fo the prepare playbook.
+        Force the execution for the prepare playbook.
 
     .. program:: molecule --debug prepare
 

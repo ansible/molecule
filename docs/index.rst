@@ -55,5 +55,5 @@ being listed first:
 - `How to test Ansible and don’t go nuts <https://www.goncharov.xyz/it/ansible-testing-en.html>`_ `@ultral`
 
 .. When updating the list remember to remove broken links or outdated content
-   that is no longer appliable to current versions. If older articles are
+   that is no longer applicable to current versions. If older articles are
    updated to match latest versions move them up.
