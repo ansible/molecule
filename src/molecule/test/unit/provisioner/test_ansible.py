@@ -202,7 +202,11 @@ def test_env_property(_instance):
     "config_instance", ["_provisioner_section_data"], indirect=True
 )
 def test_env_appends_env_property(_instance):
-    x = [
+
+    # molecule could decide to add extra paths, so we only want to check
+    # that those that we need are kept inside the list
+    roles_path_list = _instance.env["ANSIBLE_ROLES_PATH"].split(":")
+    for x in [
         util.abs_path(
             os.path.join(_instance._config.scenario.ephemeral_directory, "roles")
         ),
@@ -213,8 +217,8 @@ def test_env_appends_env_property(_instance):
         "/usr/share/ansible/roles",
         "/etc/ansible/roles",
         util.abs_path(os.path.join(_instance._config.scenario.directory, "foo", "bar")),
-    ]
-    assert x == _instance.env["ANSIBLE_ROLES_PATH"].split(":")
+    ]:
+        assert x in roles_path_list
 
     x = _instance._get_modules_directories()
     x.append(

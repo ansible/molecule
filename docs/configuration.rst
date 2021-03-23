@@ -6,6 +6,27 @@ Configuration
 
 .. _variable substitution:
 
+
+Prerun
+------
+
+In order to help Ansible find used modules and roles, molecule will perform
+a prerun set of actions. These involve installing dependencies from
+``requirements.yml`` specified at project level, install a standalone role
+or a collection. The destination is ``project_dir/.cache`` and the code itself
+is reused from ansible-lint, which has to do the same actions.
+
+This assures that when you include a role inside molecule playbooks, Ansible
+will be able to find that role, and that the include is exactly the same as
+the one you are expecting to use in production.
+
+If for some reason the prerun action does not suits your needs, you can still
+disable it by adding `prerun: false` inside the configuration file.
+
+Keep in mind that you can add this value to ``.config/molecule/config.yml``
+file in order to avoid adding it to each scenario.
+
+
 Variable Substitution
 ---------------------
 
