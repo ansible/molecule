@@ -49,7 +49,7 @@ def test_execute(
 
 def test_ansible_args_passed_to_scenarios_get_configs(mocker):
     # Scenarios patch is needed to safely invoke CliRunner
-    # in the test environment and block scenario exectution
+    # in the test environment and block scenario execution
     mocker.patch("molecule.scenarios.Scenarios")
     patched_get_configs = mocker.patch("molecule.command.base.get_configs")
 
@@ -58,6 +58,6 @@ def test_ansible_args_passed_to_scenarios_get_configs(mocker):
     ansible_args = args[2:]
     runner.invoke(main, args, obj={})
 
-    # call index [0][2] is the 3rd positional arguement to get_configs,
+    # call index [0][2] is the 3rd positional argument to get_configs,
     # which should be the tuple of parsed ansible_args from the CLI
     assert patched_get_configs.call_args[0][2] == ansible_args

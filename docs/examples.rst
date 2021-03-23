@@ -266,7 +266,7 @@ test roles from a monolith repo.
             └── README.md
 
 The role initialized with Molecule (baz in this case) would simply reference
-the dependant roles via it's ``converge.yml`` or meta dependencies.
+the dependent roles via it's ``converge.yml`` or meta dependencies.
 
 Molecule can test complex scenarios leveraging this technique.
 

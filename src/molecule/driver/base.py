@@ -226,7 +226,7 @@ class Driver(object):
         return str(self._config.state.converged).lower()
 
     def __eq__(self, other):
-        """Implement equality comparision."""
+        """Implement equality comparison."""
         # trick that allows us to test if a driver is loaded via:
         # if 'driver-name' in drivers()
         return str(self) == str(other)
