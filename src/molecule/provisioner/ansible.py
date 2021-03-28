@@ -421,8 +421,8 @@ class Ansible(base.Base):
             )
         ]
         if collection_indicator in self._config.project_directory:
-            collection_path, right = self._config.project_directory.split(
-                collection_indicator
+            collection_path, right = self._config.project_directory.rsplit(
+                collection_indicator, 1
             )
             collections_path_list.append(util.abs_path(collection_path))
         collections_path_list.extend(
