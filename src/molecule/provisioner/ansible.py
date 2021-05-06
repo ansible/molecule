@@ -207,6 +207,9 @@ class Ansible(base.Base):
           $ephemeral_directory/modules/:$project_directory/library/:~/.ansible/plugins/modules:/usr/share/ansible/plugins/modules
         ANSIBLE_FILTER_PLUGINS:
           $ephemeral_directory/plugins/filter/:$project_directory/filter/plugins/:~/.ansible/plugins/filter:/usr/share/ansible/plugins/modules
+        ANSIBLE_MODULE_UTILS:
+          $ephemeral_directory/plugins/module_utils:$project_directory/module_utils:~/.ansible/plugins/module_utils:/usr/share/ansible/plugins/module_utils
+
 
     Environment variables can be passed to the provisioner.  Variables in this
     section which match the names above will be appended to the above defaults,
@@ -481,6 +484,29 @@ class Ansible(base.Base):
                         "/usr/share/ansible/plugins/filter",
                     ]
                 ),
+                "ANSIBLE_MODULE_UTILS": ":".join(
+                    [
+                        util.abs_path(
+                            os.path.join(
+                                self._config.scenario.ephemeral_directory,
+                                "plugins",
+                                "module_utils",
+                            )
+                        ),
+                        util.abs_path(
+                            os.path.join(self._config.project_directory, "module_utils")
+                        ),
+                        util.abs_path(
+                            os.path.join(
+                                os.path.expanduser("~"),
+                                ".ansible",
+                                "plugins",
+                                "module_utils",
+                            )
+                        ),
+                        "/usr/share/ansible/plugins/module_utils",
+                    ]
+                ),
             },
         )
         env = util.merge_dicts(env, self._config.env)
@@ -525,6 +551,7 @@ class Ansible(base.Base):
         roles_path = default_env["ANSIBLE_ROLES_PATH"]
         library_path = default_env["ANSIBLE_LIBRARY"]
         filter_plugins_path = default_env["ANSIBLE_FILTER_PLUGINS"]
+        module_utils_path = default_env["ANSIBLE_MODULE_UTILS"]
 
         try:
             path = self._absolute_path_for(env, "ANSIBLE_ROLES_PATH")
@@ -544,9 +571,16 @@ class Ansible(base.Base):
         except KeyError:
             pass
 
+        try:
+            path = self._absolute_path_for(env, "ANSIBLE_MODULE_UTILS")
+            module_utils_path = "{}:{}".format(module_utils_path, path)
+        except KeyError:
+            pass
+
         env["ANSIBLE_ROLES_PATH"] = roles_path
         env["ANSIBLE_LIBRARY"] = library_path
         env["ANSIBLE_FILTER_PLUGINS"] = filter_plugins_path
+        env["ANSIBLE_MODULE_UTILS"] = module_utils_path
 
         return util.merge_dicts(default_env, env)
 
@@ -911,7 +945,7 @@ class Ansible(base.Base):
         return os.path.join(self.directory, "plugins")
 
     def _get_modules_directories(self):
-        """Return list of ansilbe module includes directories.
+        """Return list of ansible module includes directories.
 
         Adds modules directory from molecule and its plugins.
         """
