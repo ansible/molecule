@@ -120,6 +120,39 @@ def test_run_command_with_debug(mocker, patched_print_debug):
     assert x == patched_print_debug.mock_calls
 
 
+def test_run_command_baked_env(mocker):
+    run_mock = mocker.patch.object(util, "run")
+    run_mock.return_value = mocker.Mock(returncode=0)
+    cmd = util.BakedCommand(cmd=["ls"], env=None)
+
+    util.run_command(cmd, env=dict(myvar="myrealvalue"))
+
+    # call_args[1] contains kwargs
+    assert run_mock.call_args[1]["env"] == dict(myvar="myrealvalue")
+
+
+def test_run_command_baked_cmd_env(mocker):
+    run_mock = mocker.patch.object(util, "run")
+    run_mock.return_value = mocker.Mock(returncode=0)
+    cmd = util.BakedCommand(cmd=["ls"], env=dict(myvar="myvalue"))
+
+    util.run_command(cmd)
+
+    # call_args[1] contains kwargs
+    assert run_mock.call_args[1]["env"] == dict(myvar="myvalue")
+
+
+def test_run_command_baked_both_envs(mocker):
+    run_mock = mocker.patch.object(util, "run")
+    run_mock.return_value = mocker.Mock(returncode=0)
+    cmd = util.BakedCommand(cmd=["ls"], env=dict(myvar="myvalue"))
+
+    util.run_command(cmd, env=dict(myvar="myrealvalue"))
+
+    # call_args[1] contains kwargs
+    assert run_mock.call_args[1]["env"] == dict(myvar="myrealvalue")
+
+
 def test_run_command_with_debug_handles_no_env(mocker, patched_print_debug):
     cmd = "ls"
     util.run_command(cmd, debug=True)
