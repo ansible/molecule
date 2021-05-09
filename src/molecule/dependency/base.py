@@ -23,8 +23,9 @@ import abc
 import logging
 import os
 import time
+from subprocess import CalledProcessError
 
-from molecule import constants, util
+from molecule import util
 
 LOG = logging.getLogger(__name__)
 
@@ -53,11 +54,11 @@ class Base(object):
 
         try:
             # print(555, self._sh_command)
-            util.run_command(self._sh_command, debug=self._config.debug)
+            util.run_command(self._sh_command, debug=self._config.debug, check=True)
             msg = "Dependency completed successfully."
             LOG.info(msg)
             return
-        except Exception:
+        except CalledProcessError:
             pass
 
         for counter in range(1, (self.RETRY + 1)):
@@ -70,15 +71,15 @@ class Base(object):
             self.SLEEP += self.BACKOFF
 
             try:
-                util.run_command(self._sh_command, debug=self._config.debug)
+                util.run_command(self._sh_command, debug=self._config.debug, check=True)
                 msg = "Dependency completed successfully."
                 LOG.info(msg)
                 return
-            except Exception as _exception:
+            except CalledProcessError as _exception:
                 exception = _exception
 
-        LOG.error(str(exception), self._sh_command)
-        util.sysexit(getattr(exception, "exit_code", constants.RC_UNKNOWN_ERROR))
+        LOG.error(str(exception))
+        util.sysexit(exception.returncode)
 
     @abc.abstractmethod
     def execute(self):  # pragma: no cover
