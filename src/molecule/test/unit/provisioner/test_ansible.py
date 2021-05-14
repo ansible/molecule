@@ -20,6 +20,7 @@
 
 import collections
 import os
+import re
 
 import pytest
 
@@ -684,22 +685,36 @@ def test_get_plugin_directory(_instance):
     assert ("molecule", "provisioner", "ansible", "plugins") == parts[-4:]
 
 
-def test_get_modules_directories(_instance, monkeypatch):
-    result = _instance._get_modules_directories()[0]
-    parts = pytest.helpers.os_split(result)
-    x = ("molecule", "provisioner", "ansible", "plugins", "modules")
+def test_get_modules_directories_default(_instance, monkeypatch):
+    monkeypatch.delenv("ANSIBLE_LIBRARY", raising=False)
 
-    assert x == parts[-5:]
+    paths = _instance._get_modules_directories()
 
-    lib_prev = os.environ.get("ANSIBLE_LIBRARY")
-    monkeypatch.setenv("ANSIBLE_LIBRARY", "/foo/bar")
-    result = _instance._get_modules_directories()[-1]
-    monkeypatch.setenv("ANSIBLE_LIBRARY", lib_prev if lib_prev else "")
+    assert len(paths) == 5
+    assert re.search(r"molecule/provisioner/ansible/plugins/modules$", paths[0])
+    assert re.search(r"\.cache/molecule/[^/]+/default/library$", paths[1])
+    assert re.search(r"/library$", paths[2])
+    assert re.search(r"\.ansible/plugins/modules$", paths[3])
+    assert re.search(r"/usr/share/ansible/plugins/modules$", paths[4])
 
-    env_lib_result_parts = pytest.helpers.os_split(result)
-    env_lib_expected_parts = ("foo", "bar")
 
-    assert env_lib_result_parts == env_lib_expected_parts[-2:]
+def test_get_modules_directories_single_ansible_library(_instance, monkeypatch):
+    monkeypatch.setenv("ANSIBLE_LIBRARY", "/abs/path/lib")
+
+    paths = _instance._get_modules_directories()
+
+    assert len(paths) == 6
+    assert paths[-1] == "/abs/path/lib"
+
+
+def test_get_modules_directories_multi_ansible_library(_instance, monkeypatch):
+    monkeypatch.setenv("ANSIBLE_LIBRARY", "relpath/lib:/abs/path/lib")
+
+    paths = _instance._get_modules_directories()
+
+    assert len(paths) == 7
+    assert paths[-2].endswith("relpath/lib")
+    assert paths[-1] == "/abs/path/lib"
 
 
 def test_get_filter_plugin_directory(_instance):
