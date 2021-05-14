@@ -94,7 +94,9 @@ def test_execute(patched_run_command, patched_logger_info, _instance):
     _instance._sh_command = "patched-command"
     _instance.execute()
 
-    patched_run_command.assert_called_once_with("patched-command", debug=False)
+    patched_run_command.assert_called_once_with(
+        "patched-command", debug=False, check=True
+    )
 
     msg = "Dependency completed successfully."
     patched_logger_info.assert_called_once_with(msg)

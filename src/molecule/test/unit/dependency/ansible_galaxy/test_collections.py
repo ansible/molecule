@@ -160,7 +160,9 @@ def test_execute(
     )
     assert os.path.isdir(role_directory)
 
-    patched_run_command.assert_called_once_with("patched-command", debug=False)
+    patched_run_command.assert_called_once_with(
+        "patched-command", debug=False, check=True
+    )
 
     msg = "Dependency completed successfully."
     patched_logger_info.assert_called_once_with(msg)
