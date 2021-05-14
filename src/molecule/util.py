@@ -131,7 +131,10 @@ def run_command(
             "See https://github.com/ansible-community/molecule/issues/2678"
         )
     elif cmd.__class__.__name__ == "BakedCommand":
-        env = cmd.env if not env else cmd.env.copy().update(env)
+        if cmd.env and env:
+            env = dict(cmd.env, **env)
+        else:
+            env = cmd.env or env
         args = cmd.cmd
         stdout = cmd.stdout
         stderr = cmd.stderr
