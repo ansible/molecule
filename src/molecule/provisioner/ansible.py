@@ -940,7 +940,7 @@ class Ansible(base.Base):
         )
 
         if os.environ.get("ANSIBLE_LIBRARY"):
-            paths.extend(map(util.abs_path, os.environ["ANSIBLE_LIBRARY"].split(":")))
+            paths.extend(map(util.abs_path, os.environ["ANSIBLE_LIBRARY"].strip(":").split(":")))
 
         return paths
 
