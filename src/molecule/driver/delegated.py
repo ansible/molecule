@@ -171,7 +171,10 @@ class Delegated(Driver):
     @property
     def default_ssh_connection_options(self):
         if self.managed:
-            return self._get_ssh_connection_options()
+            ssh_connopts = self._get_ssh_connection_options()
+            if self.options.get("ansible_connection_options", {}).get("ansible_ssh_common_args", None):
+                ssh_connopts.append(self.options.get("ansible_connection_options").get("ansible_ssh_common_args"))
+            return ssh_connopts
         return []
 
     def login_options(self, instance_name):
