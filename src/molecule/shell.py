@@ -23,7 +23,6 @@ import os
 import sys
 
 import click
-import click_completion
 import pkg_resources
 
 import molecule
@@ -33,8 +32,6 @@ from molecule.command.base import click_group_ex
 from molecule.config import MOLECULE_DEBUG, MOLECULE_VERBOSITY, ansible_version
 from molecule.console import console
 from molecule.util import do_report, lookup_config_file
-
-click_completion.init()
 
 # Setup logging. This location of initialization is not ideal, but the code
 # structure does not give us much choice because config file lookup down below
@@ -115,9 +112,10 @@ def main(ctx, debug, verbose, base_config, env_file):  # pragma: no cover
     """
     Molecule aids in the development and testing of Ansible roles.
 
-    Enable autocomplete issue:
+    To enable autocomplete for a supported shell execute command below after
+    replacing SHELL with either bash, bash or fish:
 
-      eval "$(_MOLECULE_COMPLETE=source molecule)"
+        eval "$(_MOLECULE_COMPLETE=SHELL_source molecule)"
     """
     ctx.obj = {}
     ctx.obj["args"] = {}

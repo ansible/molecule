@@ -282,3 +282,20 @@ def test_verify_configs_raises_with_duplicate_configs(
 
 def test_get_subcommand():
     assert "test_base" == base._get_subcommand(__name__)
+
+
+@pytest.mark.parametrize(
+    "shell",
+    [
+        "bash",
+        "zsh",
+        "fish",
+    ],
+)
+def test_command_completion(shell: str) -> None:
+    env = os.environ.copy()
+    env["_MOLECULE_COMPLETE"] = f"{shell}_source"
+
+    result = util.run_command(["molecule"], env=env)
+    assert result.returncode == 0
+    assert "Found config file" not in result.stdout

@@ -1,7 +1,7 @@
 """Console and terminal utilities."""
 import os
 import sys
-from typing import Any
+from typing import Any, Dict
 
 from enrich.console import Console
 from rich.style import Style
@@ -71,9 +71,15 @@ def should_do_markup() -> bool:
     return sys.stdout.isatty()
 
 
+console_options: Dict[str, Any] = {"emoji": False, "theme": theme, "soft_wrap": True}
+
 console = Console(
     force_terminal=should_do_markup(), theme=theme, record=True, redirect=True
 )
+console_options_stderr = console_options.copy()
+console_options_stderr["stderr"] = True
+console_stderr: Console = Console(**console_options_stderr)
+
 # Define ANSIBLE_FORCE_COLOR if markup is enabled and another value is not
 # already given. This assures that Ansible subprocesses are still colored,
 # even if they do not run with a real TTY.
