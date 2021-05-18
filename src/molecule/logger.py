@@ -27,7 +27,7 @@ from typing import Callable, Iterable
 
 from enrich.logging import RichHandler
 
-from molecule.console import console
+from molecule.console import console, console_stderr
 from molecule.text import underscore
 
 LOG = logging.getLogger(__name__)
@@ -48,7 +48,7 @@ def configure() -> None:
     # libraries.
     logger = logging.getLogger()
     handler = RichHandler(
-        console=console, show_time=False, show_path=False, markup=True
+        console=console_stderr, show_time=False, show_path=False, markup=True
     )  # type: ignore
     logger.addHandler(handler)
     logger.propagate = False
