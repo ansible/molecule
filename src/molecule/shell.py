@@ -113,7 +113,7 @@ def main(ctx, debug, verbose, base_config, env_file):  # pragma: no cover
     Molecule aids in the development and testing of Ansible roles.
 
     To enable autocomplete for a supported shell execute command below after
-    replacing SHELL with either bash, bash or fish:
+    replacing SHELL with either bash, zsh, or fish:
 
         eval "$(_MOLECULE_COMPLETE=SHELL_source molecule)"
     """
