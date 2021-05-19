@@ -54,7 +54,7 @@ repos:
         entry: mypy src/
         pass_filenames: false
         additional_dependencies:
-          - ansible-lint>=5.0.5
+          - ansible-lint>=5.0.9
           - packaging
           - enrich>=1.2.5
           - subprocess-tee>=0.2.0
@@ -63,7 +63,7 @@ repos:
     hooks:
       - id: pylint
         additional_dependencies:
-          - ansible-lint>=5.0.5
+          - ansible-lint>=5.0.9
           - enrich>=1.2.5
           - subprocess-tee>=0.2.0
           - testinfra
