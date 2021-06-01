@@ -309,9 +309,5 @@ intersphinx_mapping = {'python': ('https://docs.python.org/2/', (None, '../pytho
     "virtualenv": ("https://virtualenv.pypa.io/en/latest/", None),
     }
 
-# linckchecker settings
-linkcheck_ignore = [
-    r'http://irc\.freenode\.net',
-]
 linkcheck_workers = 25
 # linkcheck_anchors = False
