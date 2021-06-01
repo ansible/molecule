@@ -19,11 +19,11 @@ Contributing
 Talk to us
 ----------
 
-Join us in ``#ansible-molecule`` on `freenode`_, or `molecule-users Forum`_.
+Join us in ``#ansible-molecule`` on `libera.chat`_ irc, or `molecule-users Forum`_.
 
 The full list of Ansible email lists and IRC channels can be found in the `communication page`_.
 
-.. _`freenode`: https://freenode.net
+.. _`libera.chat`: https://web.libera.chat/?channel=#ansible-molecule
 .. _`molecule-users Forum`: https://groups.google.com/forum/#!forum/molecule-users
 .. _`communication page`: https://docs.ansible.com/ansible/latest/community/communication.html
 
