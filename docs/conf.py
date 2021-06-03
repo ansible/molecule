@@ -40,7 +40,7 @@ extensions = [
     "sphinx.ext.extlinks",
     "sphinx.ext.intersphinx",
     "sphinx.ext.todo",
-    "sphinx_ansible_theme.ext.pygments_lexer",
+    "sphinx_ansible_theme",
     "notfound.extension",
 ]
 
