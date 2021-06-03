@@ -915,7 +915,13 @@ class Ansible(base.Base):
 
         Adds modules directory from molecule and its plugins.
         """
-        paths = [util.abs_path(os.path.join(self._get_plugin_directory(), "modules"))]
+        paths = list()
+        if os.environ.get("ANSIBLE_LIBRARY"):
+            paths = list(map(util.abs_path, os.environ["ANSIBLE_LIBRARY"].split(":")))
+
+        paths.append(
+            util.abs_path(os.path.join(self._get_plugin_directory(), "modules"))
+        )
 
         for d in drivers():
             p = d.modules_dir()
@@ -938,9 +944,6 @@ class Ansible(base.Base):
                 "/usr/share/ansible/plugins/modules",
             ]
         )
-
-        if os.environ.get("ANSIBLE_LIBRARY"):
-            paths.extend(map(util.abs_path, os.environ["ANSIBLE_LIBRARY"].split(":")))
 
         return paths
 

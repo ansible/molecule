@@ -704,7 +704,7 @@ def test_get_modules_directories_single_ansible_library(_instance, monkeypatch):
     paths = _instance._get_modules_directories()
 
     assert len(paths) == 6
-    assert paths[-1] == "/abs/path/lib"
+    assert paths[0] == "/abs/path/lib"
 
 
 def test_get_modules_directories_multi_ansible_library(_instance, monkeypatch):
@@ -713,8 +713,8 @@ def test_get_modules_directories_multi_ansible_library(_instance, monkeypatch):
     paths = _instance._get_modules_directories()
 
     assert len(paths) == 7
-    assert paths[-2].endswith("relpath/lib")
-    assert paths[-1] == "/abs/path/lib"
+    assert paths[0].endswith("relpath/lib")
+    assert paths[1] == "/abs/path/lib"
 
 
 def test_get_filter_plugin_directory(_instance):
