@@ -1,6 +1,9 @@
 blank_issues_enabled: false
 contact_links:
-  - name: Ask a question on Discussions area (NEW!)
+  - name: Propose a new feature or behavior change
+    url: https://github.com/ansible-community/molecule/discussions/categories/ideas
+    about: Always check for existing threads before adding a new one
+  - name: Ask a question on Discussions area
     url: https://github.com/ansible-community/molecule/discussions
     about: Recommended place for questions, debates, consultation.
   - name: Ask a question on StackOverflow
@@ -21,10 +24,10 @@ contact_links:
   - name: Molecule GCE (Google Cloud Engine)
     url: https://github.com/ansible-community/molecule-gce/
     about: For anything related to Google Cloud
-  - name: Molecule LibVirt (planned)
+  - name: Molecule LibVirt
     url: https://github.com/ansible-community/molecule-libvirt/
     about: For using libvirt driver.
-  - name: Molecule Containers (planned)
+  - name: Molecule Containers
     url: https://github.com/ansible-community/molecule-containers/
     about: For using Docker, Podman or Kubernetes.
   - name: Molecule HetzerCloud
