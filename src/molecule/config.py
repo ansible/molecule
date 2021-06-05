@@ -26,14 +26,13 @@ import os
 from typing import Callable, MutableMapping, TypeVar
 from uuid import uuid4
 
-from packaging.version import Version
+from ansiblelint.config import ansible_version
 
 from molecule import api, interpolation, platforms, scenario, state, util
-from molecule.constants import RC_SETUP_ERROR
 from molecule.dependency import ansible_galaxy, shell
 from molecule.model import schema_v3
 from molecule.provisioner import ansible
-from molecule.util import boolean, lru_cache, run_command, sysexit
+from molecule.util import boolean
 
 LOG = logging.getLogger(__name__)
 MOLECULE_DEBUG = boolean(os.environ.get("MOLECULE_DEBUG", "False"))
@@ -455,32 +454,3 @@ def set_env_from_file(env: MutableMapping[str, str], env_file: str) -> MutableMa
         return env
 
     return env
-
-
-@lru_cache()
-def ansible_version(version: str = "") -> Version:
-    """Return current Version object for Ansible.
-
-    If version is not mentioned, it returns current version as detected.
-    When version argument is mentioned, it return converts the version string
-    to Version object in order to make it usable in comparisons.
-    """
-    if not version:
-        proc = run_command(["ansible", "--version"], quiet=True)
-        if proc.returncode != 0:
-            LOG.fatal(
-                "Unable to find a working copy of ansible executable. Read https://molecule.readthedocs.io/en/latest/installation.html\n%s",
-                proc,
-            )
-            sysexit(RC_SETUP_ERROR)
-
-        # First line of the `ansible --version` output is:
-        #
-        #  1. `ansible <version>` on ansible < 2.10 and on ansible-base.
-        #  2. `ansible [core <version>]` on ansible-core.
-        #
-        # The code below grabs the last component in that line and strips trailing ] if
-        # present.
-        version = proc.stdout.splitlines()[0].split()[-1].rstrip("]")
-
-    return Version(version)
