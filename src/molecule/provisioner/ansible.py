@@ -24,6 +24,7 @@ import copy
 import logging
 import os
 import shutil
+from typing import List, Optional
 
 from molecule import util
 from molecule.api import drivers
@@ -782,7 +783,7 @@ class Ansible(base.Base):
         else:
             self._link_or_update_vars()
 
-    def abs_path(self, path):
+    def abs_path(self, path: str) -> Optional[str]:
         return util.abs_path(os.path.join(self._config.scenario.directory, path))
 
     def _add_or_update_vars(self):
@@ -907,15 +908,15 @@ class Ansible(base.Base):
 
         return d
 
-    def _get_plugin_directory(self):
+    def _get_plugin_directory(self) -> str:
         return os.path.join(self.directory, "plugins")
 
-    def _get_modules_directories(self):
+    def _get_modules_directories(self) -> List[str]:
         """Return list of ansilbe module includes directories.
 
         Adds modules directory from molecule and its plugins.
         """
-        paths = list()
+        paths: List[Optional[str]] = list()
         if os.environ.get("ANSIBLE_LIBRARY"):
             paths = list(map(util.abs_path, os.environ["ANSIBLE_LIBRARY"].split(":")))
 
@@ -945,7 +946,7 @@ class Ansible(base.Base):
             ]
         )
 
-        return paths
+        return [path for path in paths if path is not None]
 
     def _get_filter_plugin_directory(self):
         return util.abs_path(os.path.join(self._get_plugin_directory(), "filter"))
