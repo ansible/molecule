@@ -432,6 +432,8 @@ class Ansible(base.Base):
                 ),
                 "/usr/share/ansible/collections",
                 "/etc/ansible/collections",
+                *os.environ.get("ANSIBLE_COLECTIONS_PATH", "").split(":"),
+                *os.environ.get("ANSIBLE_COLECTIONS_PATHS", "").split(":"),
             ]
         )
         env = util.merge_dicts(
