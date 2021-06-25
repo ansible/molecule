@@ -59,7 +59,7 @@ class Test(base.Base):
 
         Providing additional command line arguments to the `ansible-playbook`
         command.  Use this option with care, as there is no sanitation or
-        validation of input.  Options passed on the CLI override options
+        validation of input.  Options passed on the CLI are combined with options
         provided in provisioner's `options` section of `molecule.yml`.
 
     .. program:: molecule test --destroy=always
