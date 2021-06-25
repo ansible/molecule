@@ -28,7 +28,6 @@ import shutil
 from typing import Any, Callable
 
 import click
-from ansiblelint.prerun import prepare_environment
 from click_help_colors import HelpColorsCommand, HelpColorsGroup
 
 import molecule.scenarios
@@ -109,7 +108,7 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
 
         if scenario.config.config["prerun"]:
             LOG.info("Performing prerun...")
-            prepare_environment()
+            scenario.config.runtime.prepare_environment()
 
         if command_args.get("subcommand") == "reset":
             LOG.info("Removing %s" % scenario.ephemeral_directory)

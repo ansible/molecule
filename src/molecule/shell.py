@@ -24,12 +24,13 @@ import sys
 
 import click
 import pkg_resources
+from ansible_compat.runtime import Runtime
 
 import molecule
 from molecule import command, logger
 from molecule.api import drivers
 from molecule.command.base import click_group_ex
-from molecule.config import MOLECULE_DEBUG, MOLECULE_VERBOSITY, ansible_version
+from molecule.config import MOLECULE_DEBUG, MOLECULE_VERBOSITY
 from molecule.console import console
 from molecule.util import do_report, lookup_config_file
 
@@ -59,9 +60,8 @@ def print_version(ctx, param, value):
     color = "bright_yellow" if v.is_prerelease else "green"
     msg = f"molecule [{color}]{v}[/] using python [repr.number]{sys.version_info[0]}.{sys.version_info[1]}[/] \n"
 
-    msg += (
-        f"    [repr.attrib_name]ansible[/][dim]:[/][repr.number]{ansible_version()}[/]"
-    )
+    runtime = Runtime()
+    msg += f"    [repr.attrib_name]ansible[/][dim]:[/][repr.number]{runtime.version}[/]"
     for driver in drivers():
         msg += f"\n    [repr.attrib_name]{str(driver)}[/][dim]:[/][repr.number]{driver.version}[/][dim] from {driver.module}[/]"
         if driver.required_collections:

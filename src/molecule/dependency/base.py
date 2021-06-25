@@ -25,8 +25,6 @@ import os
 import time
 from subprocess import CalledProcessError
 
-from ansiblelint.prerun import require_collection
-
 from molecule import util
 
 LOG = logging.getLogger(__name__)
@@ -91,7 +89,7 @@ class Base(object):
         :return: None
         """
         for name, version in self._config.driver.required_collections.items():
-            require_collection(name, version)
+            self._config.runtime.require_collection(name, version)
 
     @property
     @abc.abstractmethod
@@ -110,10 +108,6 @@ class Base(object):
         :return: dict
         """
         env = util.merge_dicts(os.environ, self._config.env)
-        # inject ephemeral_directory on top of path
-        env[self._config.ansible_collections_path] = os.path.join(
-            self._config.scenario.ephemeral_directory, "collections"
-        )
         return env
 
     @property
