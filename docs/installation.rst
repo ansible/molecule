@@ -34,7 +34,7 @@ Ubuntu 16.x
 Pip
 ===
 
-:std:doc:`pip <pip:usage>` is the only supported installation method.
+:std:doc:`pip <pip:getting-started>` is the only supported installation method.
 
 .. warning::
 
