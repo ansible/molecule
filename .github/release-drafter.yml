@@ -1,4 +1,6 @@
 # Format and labels used aim to match those used by Ansible project
+name-template: '$RESOLVED_VERSION'
+tag-template: '$RESOLVED_VERSION'
 categories:
   - title: 'Major Changes'
     labels:
@@ -7,21 +9,43 @@ categories:
     labels:
       - 'feature'  # 006b75
       - 'enhancement'  # ededed
-      - 'performance'  # 555555
+      - 'refactoring'
   - title: 'Bugfixes'
     labels:
-      - 'fix'
-      - 'bugfix'
       - 'bug'  # fbca04
-      - 'docs'  # 4071a5
-      - 'packaging'  # 4071a5
-      - 'test'  # #0e8a16
   - title: 'Deprecations'
     labels:
       - 'deprecated'  # fef2c0
 exclude-labels:
   - 'skip-changelog'
+version-resolver:
+  major:
+    labels:
+      - 'major'
+  minor:
+    labels:
+      - 'minor'
+      - 'feature'
+      - 'enhancement'
+      - 'refactoring'
+  patch:
+    labels:
+      - 'patch'
+      - 'bug'
+      - 'deprecated'
+  default: patch
+autolabeler:
+  - label: 'skip-changelog'
+    title: '/chore/i'
+  - label: 'bug'
+    title: '/fix/i'
+  - label: 'enhancement'
+    title: '/(enhance|improve)/i'
+  - label: 'feature'
+    title: '/feature/i'
+  - label: 'dreprecated'
+    title: '/deprecat/i'
 template: |
-  ## Changes
-
   $CHANGES
+
+  Kudos goes to: $CONTRIBUTORS
