@@ -55,6 +55,13 @@ class Test(base.Base):
 
         Target all scenarios.
 
+    .. option:: molecule test -- -vvv --tags foo,bar
+
+        Providing additional command line arguments to the `ansible-playbook`
+        command.  Use this option with care, as there is no sanitation or
+        validation of input.  Options passed on the CLI are combined with options
+        provided in provisioner's `options` section of `molecule.yml`.
+
     .. program:: molecule test --destroy=always
 
     .. option:: molecule test --destroy=always
@@ -129,7 +136,10 @@ class Test(base.Base):
     default=MOLECULE_PARALLEL,
     help="Enable or disable parallel mode. Default is disabled.",
 )
-def test(ctx, scenario_name, driver_name, __all, destroy, parallel):  # pragma: no cover
+@click.argument("ansible_args", nargs=-1, type=click.UNPROCESSED)
+def test(
+    ctx, scenario_name, driver_name, __all, destroy, parallel, ansible_args
+):  # pragma: no cover
     """Test (dependency, lint, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy)."""
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)
@@ -146,4 +156,4 @@ def test(ctx, scenario_name, driver_name, __all, destroy, parallel):  # pragma: 
     if parallel:
         util.validate_parallel_cmd_args(command_args)
 
-    base.execute_cmdline_scenarios(scenario_name, args, command_args)
+    base.execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args)
