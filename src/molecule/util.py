@@ -291,10 +291,11 @@ def filter_verbose_permutation(options):
     return {k: options[k] for k in options if not re.match("^[v]+$", k)}
 
 
-def abs_path(path):
+def abs_path(path: str) -> Optional[str]:
     """Return absolute path."""
     if path:
         return os.path.abspath(path)
+    return None
 
 
 def merge_dicts(a: MutableMapping, b: MutableMapping) -> MutableMapping:
