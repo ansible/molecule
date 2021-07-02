@@ -96,8 +96,24 @@ def test_command_create(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     "scenario_to_test, driver_name, scenario_name",
     [
-        pytest.param("dependency", "delegated", "shell", id="shell"),
-        pytest.param("dependency", "delegated", "ansible-galaxy", id="galaxy"),
+        pytest.param(
+            "dependency",
+            "delegated",
+            "shell",
+            id="shell",
+            marks=pytest.mark.xfail(
+                reason="https://github.com/ansible-community/molecule/issues/3171"
+            ),
+        ),
+        pytest.param(
+            "dependency",
+            "delegated",
+            "ansible-galaxy",
+            id="galaxy",
+            marks=pytest.mark.xfail(
+                reason="https://github.com/ansible-community/molecule/issues/3171"
+            ),
+        ),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
@@ -134,11 +150,13 @@ def test_command_idempotence(scenario_to_test, with_scenario, scenario_name):
 
 
 @pytest.mark.parametrize("driver_name", [("delegated")], indirect=["driver_name"])
+@pytest.mark.xfail(reason="https://github.com/ansible-community/molecule/issues/3171")
 def test_command_init_role(temp_dir, driver_name, skip_test):
     pytest.helpers.init_role(temp_dir, driver_name)
 
 
 @pytest.mark.parametrize("driver_name", [("delegated")], indirect=["driver_name"])
+@pytest.mark.xfail(reason="https://github.com/ansible-community/molecule/issues/3171")
 def test_command_init_scenario(temp_dir, driver_name, skip_test):
     pytest.helpers.init_scenario(temp_dir, driver_name)
 
