@@ -96,24 +96,8 @@ def test_command_create(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     "scenario_to_test, driver_name, scenario_name",
     [
-        pytest.param(
-            "dependency",
-            "delegated",
-            "shell",
-            id="shell",
-            marks=pytest.mark.xfail(
-                reason="https://github.com/ansible-community/molecule/issues/3171"
-            ),
-        ),
-        pytest.param(
-            "dependency",
-            "delegated",
-            "ansible-galaxy",
-            id="galaxy",
-            marks=pytest.mark.xfail(
-                reason="https://github.com/ansible-community/molecule/issues/3171"
-            ),
-        ),
+        pytest.param("dependency", "delegated", "shell", id="shell"),
+        pytest.param("dependency", "delegated", "ansible-galaxy", id="galaxy"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )

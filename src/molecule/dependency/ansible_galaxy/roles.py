@@ -11,8 +11,11 @@ LOG = logging.getLogger(__name__)
 class Roles(AnsibleGalaxyBase):
     """Role-specific Ansible Galaxy dependency handling."""
 
-    FILTER_OPTS = ("requirements-file", "collections-path")  # type: ignore
-    COMMANDS = ("install",)
+    FILTER_OPTS = "requirements-file"  # type: ignore
+    COMMANDS = (
+        "role",
+        "install",
+    )
 
     @property
     def default_options(self):
@@ -23,16 +26,9 @@ class Roles(AnsibleGalaxyBase):
                 "role-file": os.path.join(
                     self._config.scenario.directory, "requirements.yml"
                 ),
-                "roles-path": os.path.join(
-                    self._config.scenario.ephemeral_directory, "roles"
-                ),
             },
         )
         return specific
-
-    @property
-    def install_path(self):
-        return os.path.join(self._config.scenario.directory, self.options["roles-path"])
 
     @property
     def requirements_file(self):

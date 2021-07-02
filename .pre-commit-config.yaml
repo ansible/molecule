@@ -50,11 +50,11 @@ repos:
     hooks:
       - id: mypy
         # empty args needed in order to match mypy cli behavior
-        args: []
+        args: ['--no-incremental']
         entry: mypy src/
         pass_filenames: false
         additional_dependencies:
-          - ansible-lint>=5.0.10
+          - ansible-compat>=0.2.0
           - packaging
           - enrich>=1.2.5
           - subprocess-tee>=0.2.0

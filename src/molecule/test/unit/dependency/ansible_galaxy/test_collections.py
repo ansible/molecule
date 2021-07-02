@@ -59,7 +59,7 @@ def _instance(_dependency_section_data, patched_config_validate, config_instance
 
 
 @pytest.fixture
-def role_file(_instance):
+def collections_file(_instance):
     return os.path.join(_instance._config.scenario.directory, "collections.yml")
 
 
@@ -72,8 +72,8 @@ def test_config_private_member(_instance):
     assert isinstance(_instance._config, config.Config)
 
 
-def test_default_options_property(_instance, role_file, roles_path):
-    x = {"requirements-file": role_file, "collections-path": roles_path, "force": True}
+def test_default_options_property(_instance, collections_file):
+    x = {"requirements-file": collections_file, "force": True}
 
     assert x == _instance.default_options
 
@@ -96,12 +96,12 @@ def test_enabled_property(_instance):
 
 
 @pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
-def test_options_property(_instance, role_file, roles_path):
+def test_options_property(_instance, collections_file):
     x = {
         "force": True,
-        "requirements-file": role_file,
-        "collections-path": roles_path,
+        "requirements-file": collections_file,
         "foo": "bar",
+        "role-file": "bar.yml",
         "v": True,
     }
 
@@ -109,13 +109,13 @@ def test_options_property(_instance, role_file, roles_path):
 
 
 @pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
-def test_options_property_handles_cli_args(role_file, roles_path, _instance):
+def test_options_property_handles_cli_args(collections_file, _instance):
     _instance._config.args = {"debug": True}
     x = {
         "force": True,
-        "requirements-file": role_file,
-        "collections-path": roles_path,
+        "requirements-file": collections_file,
         "foo": "bar",
+        "role-file": "bar.yml",
         "vvv": True,
     }
 
@@ -128,19 +128,19 @@ def test_env_property(_instance):
 
 
 @pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
-def test_collections_bake(_instance, role_file, roles_path):
+def test_collections_bake(_instance, collections_file):
     _instance.bake()
     args = [
         "ansible-galaxy",
         "collection",
         "install",
-        "--collections-path",
-        roles_path,
         "--foo",
         "bar",
         "--force",
         "--requirements-file",
-        role_file,
+        collections_file,
+        "--role-file",
+        "bar.yml",
         "-v",
     ]
     assert _instance._sh_command.cmd == args
@@ -154,11 +154,6 @@ def test_execute(
 ):
     _instance._sh_command = "patched-command"
     _instance.execute()
-
-    role_directory = os.path.join(
-        _instance._config.scenario.directory, _instance.options["collections-path"]
-    )
-    assert os.path.isdir(role_directory)
 
     patched_run_command.assert_called_once_with(
         "patched-command", debug=False, check=True
@@ -198,7 +193,7 @@ def test_execute_does_not_execute_when_no_requirements_file(
 def test_execute_bakes(
     patched_run_command,
     _instance,
-    role_file,
+    collections_file,
     _patched_ansible_galaxy_has_requirements_file,
     roles_path,
 ):
@@ -219,18 +214,11 @@ def test_collections_executes_catches_and_exits_return_code(
 
 
 def test_setup(_instance):
-    role_directory = os.path.join(
-        _instance._config.scenario.directory, _instance.options["collections-path"]
-    )
-    assert not os.path.isdir(role_directory)
-
     _instance._setup()
 
-    assert os.path.isdir(role_directory)
 
-
-def test_role_file(role_file, _instance):
-    assert role_file == _instance.requirements_file
+def test_collections_file(collections_file, _instance):
+    assert collections_file == _instance.requirements_file
 
 
 def test_has_requirements_file(_instance):

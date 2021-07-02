@@ -202,8 +202,6 @@ class Ansible(base.Base):
 
     ::
 
-        ANSIBLE_ROLES_PATH:
-          $ephemeral_directory/roles/:$project_directory/../:~/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles
         ANSIBLE_LIBRARY:
           $ephemeral_directory/modules/:$project_directory/library/:~/.ansible/plugins/modules:/usr/share/ansible/plugins/modules
         ANSIBLE_FILTER_PLUGINS:
@@ -412,52 +410,10 @@ class Ansible(base.Base):
     @property
     def default_env(self):
         # Finds if the current project is part of an ansible_collections hierarchy
-        collection_indicator = "ansible_collections"
-        # isolating test environment by injects ephemeral scenario directory on
-        # top of the collection_path_list. This prevents dependency commands
-        # from installing dependencies to user list of collections.
-        collections_path_list = [
-            util.abs_path(
-                os.path.join(self._config.scenario.ephemeral_directory, "collections")
-            )
-        ]
-        if collection_indicator in self._config.project_directory:
-            collection_path, right = self._config.project_directory.rsplit(
-                collection_indicator, 1
-            )
-            collections_path_list.append(util.abs_path(collection_path))
-        collections_path_list.extend(
-            [
-                util.abs_path(
-                    os.path.join(os.path.expanduser("~"), ".ansible/collections")
-                ),
-                "/usr/share/ansible/collections",
-                "/etc/ansible/collections",
-            ]
-        )
         env = util.merge_dicts(
             os.environ,
             {
                 "ANSIBLE_CONFIG": self._config.provisioner.config_file,
-                "ANSIBLE_ROLES_PATH": ":".join(
-                    [
-                        util.abs_path(
-                            os.path.join(
-                                self._config.scenario.ephemeral_directory, "roles"
-                            )
-                        ),
-                        util.abs_path(
-                            os.path.join(self._config.project_directory, os.path.pardir)
-                        ),
-                        util.abs_path(
-                            os.path.join(os.path.expanduser("~"), ".ansible", "roles")
-                        ),
-                        "/usr/share/ansible/roles",
-                        "/etc/ansible/roles",
-                        *os.environ.get("ANSIBLE_ROLES_PATH", "").split(":"),
-                    ]
-                ),
-                self._config.ansible_collections_path: ":".join(collections_path_list),
                 "ANSIBLE_LIBRARY": ":".join(self._get_modules_directories()),
                 "ANSIBLE_FILTER_PLUGINS": ":".join(
                     [
@@ -523,15 +479,8 @@ class Ansible(base.Base):
         # ensure that all keys and values are strings
         env = {str(k): str(v) for k, v in env.items()}
 
-        roles_path = default_env["ANSIBLE_ROLES_PATH"]
         library_path = default_env["ANSIBLE_LIBRARY"]
         filter_plugins_path = default_env["ANSIBLE_FILTER_PLUGINS"]
-
-        try:
-            path = self._absolute_path_for(env, "ANSIBLE_ROLES_PATH")
-            roles_path = "{}:{}".format(roles_path, path)
-        except KeyError:
-            pass
 
         try:
             path = self._absolute_path_for(env, "ANSIBLE_LIBRARY")
@@ -545,7 +494,6 @@ class Ansible(base.Base):
         except KeyError:
             pass
 
-        env["ANSIBLE_ROLES_PATH"] = roles_path
         env["ANSIBLE_LIBRARY"] = library_path
         env["ANSIBLE_FILTER_PLUGINS"] = filter_plugins_path
 

@@ -136,7 +136,6 @@ def test_additional_files_or_dirs_property(_instance):
 def test_env_property(_instance):
     assert "bar" == _instance.env["FOO"]
     assert "ANSIBLE_CONFIG" in _instance.env
-    assert "ANSIBLE_ROLES_PATH" in _instance.env
     assert "ANSIBLE_LIBRARY" in _instance.env
     assert "ANSIBLE_FILTER_PLUGINS" in _instance.env
 

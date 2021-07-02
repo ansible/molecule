@@ -128,21 +128,8 @@ def test_default_env_property(_instance):
     assert "MOLECULE_SCENARIO_DIRECTORY" in _instance.default_env
     assert "MOLECULE_INSTANCE_CONFIG" in _instance.default_env
     assert "ANSIBLE_CONFIG" in _instance.env
-    assert "ANSIBLE_ROLES_PATH" in _instance.env
     assert "ANSIBLE_LIBRARY" in _instance.env
     assert "ANSIBLE_FILTER_PLUGINS" in _instance.env
-
-
-def test_default_env_property_collections_path(config_instance):
-    config_instance.project_directory = (
-        "/some/path/ansible_collections/namespace/collection/but/not/really"
-        "/ansible_collections/other_ns/other_name/and/some/more/segments"
-    )
-
-    env = ansible.Ansible(config_instance).default_env
-
-    paths = env[config_instance.ansible_collections_path].split(":")
-    assert "/some/path/ansible_collections/namespace/collection/but/not/really" in paths
 
 
 def test_name_property(_instance):
@@ -215,23 +202,6 @@ def test_env_property(_instance):
     "config_instance", ["_provisioner_section_data"], indirect=True
 )
 def test_env_appends_env_property(_instance):
-
-    # molecule could decide to add extra paths, so we only want to check
-    # that those that we need are kept inside the list
-    roles_path_list = _instance.env["ANSIBLE_ROLES_PATH"].split(":")
-    for x in [
-        util.abs_path(
-            os.path.join(_instance._config.scenario.ephemeral_directory, "roles")
-        ),
-        util.abs_path(
-            os.path.join(_instance._config.project_directory, os.path.pardir)
-        ),
-        util.abs_path(os.path.join(os.path.expanduser("~"), ".ansible", "roles")),
-        "/usr/share/ansible/roles",
-        "/etc/ansible/roles",
-        util.abs_path(os.path.join(_instance._config.scenario.directory, "foo", "bar")),
-    ]:
-        assert x in roles_path_list
 
     x = _instance._get_modules_directories()
     x.append(
@@ -690,7 +660,6 @@ def test_get_modules_directories_default(_instance, monkeypatch):
 
     paths = _instance._get_modules_directories()
 
-    assert len(paths) == 5
     assert re.search(r"molecule/provisioner/ansible/plugins/modules$", paths[0])
     assert re.search(r"\.cache/molecule/[^/]+/default/library$", paths[1])
     assert re.search(r"/library$", paths[2])
@@ -703,7 +672,6 @@ def test_get_modules_directories_single_ansible_library(_instance, monkeypatch):
 
     paths = _instance._get_modules_directories()
 
-    assert len(paths) == 6
     assert paths[0] == "/abs/path/lib"
 
 
@@ -712,7 +680,6 @@ def test_get_modules_directories_multi_ansible_library(_instance, monkeypatch):
 
     paths = _instance._get_modules_directories()
 
-    assert len(paths) == 7
     assert paths[0].endswith("relpath/lib")
     assert paths[1] == "/abs/path/lib"
 

@@ -45,10 +45,6 @@ class AnsibleGalaxyBase(base.Base):
         self.command = "ansible-galaxy"
 
     @abc.abstractproperty
-    def install_path(self):  # noqa cover
-        pass
-
-    @abc.abstractproperty
     def requirements_file(self):  # noqa cover
         pass
 
@@ -133,8 +129,6 @@ class AnsibleGalaxyBase(base.Base):
 
         :return: None
         """
-        if not os.path.isdir(self.install_path):
-            os.makedirs(self.install_path)
 
     def _has_requirements_file(self):
         return os.path.isfile(self.requirements_file)

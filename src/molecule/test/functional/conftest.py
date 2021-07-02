@@ -27,12 +27,13 @@ from subprocess import PIPE
 import pexpect
 import pkg_resources
 import pytest
+from ansible_compat.runtime import Runtime
+from packaging.version import Version
 
 from molecule import logger, util
-from molecule.config import ansible_version
 from molecule.test.conftest import change_dir_to
 from molecule.text import strip_ansi_color
-from molecule.util import run_command
+from molecule.util import lru_cache, run_command
 
 LOG = logger.get_logger(__name__)
 
@@ -265,6 +266,7 @@ def supports_docker():
     return True
 
 
+@lru_cache()
 def min_ansible(version: str) -> bool:
     """Ensure current Ansible is newer than a given a minimal one."""
-    return ansible_version() >= ansible_version(version)
+    return bool(Runtime().version >= Version(version))

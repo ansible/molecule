@@ -105,10 +105,6 @@ class Base(object):
         :return: dict
         """
         env = util.merge_dicts(os.environ, self._config.env)
-        # inject ephemeral_directory on top of path
-        env[self._config.ansible_collections_path] = os.path.join(
-            self._config.scenario.ephemeral_directory, "collections"
-        )
         return env
 
     @property

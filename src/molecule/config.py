@@ -23,10 +23,11 @@ import copy
 import functools
 import logging
 import os
+import warnings
 from typing import Callable, MutableMapping, TypeVar
 from uuid import uuid4
 
-from ansiblelint.config import ansible_version
+from ansible_compat.runtime import Runtime
 
 from molecule import api, interpolation, platforms, scenario, state, util
 from molecule.dependency import ansible_galaxy, shell
@@ -43,6 +44,16 @@ MOLECULE_KEEP_STRING = "MOLECULE_"
 DEFAULT_DRIVER = "delegated"
 
 T = TypeVar("T")
+
+
+def ansible_version():
+    """Return Ansible version."""
+    warnings.warn(
+        "molecule.config.ansible_version is deprecated in favour "
+        "of ansible_compat.runtime",
+        category=DeprecationWarning,
+    )
+    return Runtime().version
 
 
 # see https://github.com/python/mypy/issues/5858
@@ -102,6 +113,7 @@ class Config(object, metaclass=NewInitCaller):
         self._action = None
         self._run_uuid = str(uuid4())
         self.project_directory = os.getenv("MOLECULE_PROJECT_DIRECTORY", os.getcwd())
+        self.runtime = Runtime(isolated=True)
 
     def after_init(self):
         self.config = self._reget_config()
@@ -110,15 +122,6 @@ class Config(object, metaclass=NewInitCaller):
 
     def write(self) -> None:
         util.write_file(self.config_file, util.safe_dump(self.config))
-
-    @property
-    def ansible_collections_path(self):
-        """Return collection path variable for current version of Ansible."""
-        # https://github.com/ansible/ansible/pull/70007
-        if ansible_version() >= ansible_version("2.10.0.dev0"):
-            return "ANSIBLE_COLLECTIONS_PATH"
-        else:
-            return "ANSIBLE_COLLECTIONS_PATHS"
 
     @property
     def config_file(self):
