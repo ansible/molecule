@@ -75,6 +75,7 @@ repos:
           - tenacity
           - types-PyYAML
           - types-dataclasses
+          - types-filelock
           - types-setuptools
   - repo: https://github.com/PyCQA/pylint
     rev: v2.11.1
