@@ -27,6 +27,7 @@ from typing import Optional
 
 import pexpect
 import pytest
+from ansible_compat.ports import cache
 from ansible_compat.runtime import Runtime
 from packaging.version import Version
 
@@ -236,7 +237,7 @@ def get_virtualbox_executable():
     return shutil.which("VBoxManage")
 
 
-@util.lru_cache()
+@cache
 def supports_docker() -> bool:
     docker = get_docker_executable()
     if docker:
