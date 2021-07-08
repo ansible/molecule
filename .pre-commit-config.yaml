@@ -58,8 +58,8 @@ repos:
           - packaging
           - enrich>=1.2.5
           - subprocess-tee>=0.2.0
-  - repo: https://github.com/pre-commit/mirrors-pylint
-    rev: v2.7.2
+  - repo: https://github.com/PyCQA/pylint
+    rev: pylint-2.7.2
     hooks:
       - id: pylint
         additional_dependencies:
