@@ -187,6 +187,7 @@ class Config(object, metaclass=NewInitCaller):
             "MOLECULE_EPHEMERAL_DIRECTORY": self.scenario.ephemeral_directory,
             "MOLECULE_SCENARIO_DIRECTORY": self.scenario.directory,
             "MOLECULE_PROJECT_DIRECTORY": self.project_directory,
+            "MOLECULE_PROJECT_BASE_DIRECTORY": os.path.basename(self.project_directory),
             "MOLECULE_INSTANCE_CONFIG": self.driver.instance_config,
             "MOLECULE_DEPENDENCY_NAME": self.dependency.name,
             "MOLECULE_DRIVER_NAME": self.driver.name,

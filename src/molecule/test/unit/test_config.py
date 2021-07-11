@@ -112,6 +112,9 @@ def test_env(config_instance):
         "MOLECULE_EPHEMERAL_DIRECTORY": config_instance.scenario.ephemeral_directory,
         "MOLECULE_SCENARIO_DIRECTORY": config_instance.scenario.directory,
         "MOLECULE_PROJECT_DIRECTORY": config_instance.project_directory,
+        "MOLECULE_PROJECT_BASE_DIRECTORY": os.path.basename(
+            config_instance.project_directory
+        ),
         "MOLECULE_INSTANCE_CONFIG": config_instance.driver.instance_config,
         "MOLECULE_DEPENDENCY_NAME": "galaxy",
         "MOLECULE_DRIVER_NAME": "delegated",

@@ -47,6 +47,8 @@ MOLECULE_EPHEMERAL_DIRECTORY      Path to generated directory, usually
                                   ``~/.cache/molecule/<scenario-name>``
 MOLECULE_SCENARIO_DIRECTORY       Path to scenario directory
 MOLECULE_PROJECT_DIRECTORY        Path to your project directory
+MOLECULE_PROJECT_BASE_DIRECTORY   Base project directory name, i.e. the latest
+                                  directory name in the project path.
 MOLECULE_INSTANCE_CONFIG          ?
 MOLECULE_DEPENDENCY_NAME          Dependency type name, usually 'galaxy'
 MOLECULE_DRIVER_NAME              Name of the molecule scenario driver
