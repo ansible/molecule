@@ -106,9 +106,9 @@ def idempotence(scenario_name):
 
 @pytest.helpers.register
 def init_role(temp_dir, driver_name):
-    role_directory = os.path.join(temp_dir.strpath, "test-init")
+    role_directory = os.path.join(temp_dir.strpath, "myorg.myrole")
 
-    cmd = ["molecule", "init", "role", "test-init", "--driver-name", driver_name]
+    cmd = ["molecule", "init", "role", "myorg.myrole", "--driver-name", driver_name]
     assert run_command(cmd).returncode == 0
     pytest.helpers.metadata_lint_update(role_directory)
 
