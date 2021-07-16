@@ -89,6 +89,7 @@ class Shell(base.Base):
         self._sh_command = BakedCommand(cmd=self.command, env=self.env)
 
     def execute(self):
+        super().execute()
         if not self.enabled:
             msg = "Skipping, dependency is disabled."
             LOG.warning(msg)
