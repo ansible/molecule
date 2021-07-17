@@ -50,7 +50,8 @@ def scenario_name(request):
 @pytest.fixture
 def driver_name(request: FixtureRequest) -> Optional[str]:
     try:
-        return request.param
+        # https://stackoverflow.com/q/65334215/99834
+        return request.param  # type: ignore
     except AttributeError:
         return None
 
