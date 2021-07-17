@@ -31,9 +31,9 @@ class UserListMap(UserList):
     def get(self, key, default):
         return self.__dict__.get(key, default)
 
-    def append(self, element) -> None:
-        self.__dict__[str(element)] = element
-        super(UserListMap, self).append(element)
+    def append(self, item) -> None:
+        self.__dict__[str(item)] = item
+        super(UserListMap, self).append(item)
 
 
 @lru_cache()

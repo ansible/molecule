@@ -282,8 +282,8 @@ class Config(object, metaclass=NewInitCaller):
         environment variables.
 
         1. Loads Molecule defaults.
-        2. Loads a base config (if provided) and merges ontop of defaults.
-        3. Loads the scenario's ``molecule file`` and merges ontop of previous
+        2. Loads a base config (if provided) and merges on top of defaults.
+        3. Loads the scenario's ``molecule file`` and merges on top of previous
            merge.
 
         :return: dict

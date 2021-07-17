@@ -621,7 +621,7 @@ def test_link_vars(_instance):
     source_host_vars = os.path.join(scenario_dir, os.path.pardir, "host_vars")
     target_host_vars = os.path.join(inventory_dir, "host_vars")
 
-    open(source_hosts, "w").close()
+    open(source_hosts, "w").close()  # pylint: disable=consider-using-with
     os.mkdir(source_group_vars)
     os.mkdir(source_host_vars)
 
