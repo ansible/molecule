@@ -38,7 +38,8 @@ class Base(object):
         """
         self._config = config
 
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def default_options(self):  # pragma: no cover
         """
         Provide Default CLI arguments to ``cmd`` and returns a dict.
@@ -46,7 +47,8 @@ class Base(object):
         :return: dict
         """
 
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def default_env(self):  # pragma: no cover
         """
         Provide default env variables to ``cmd`` and returns a dict.

@@ -44,11 +44,13 @@ class AnsibleGalaxyBase(base.Base):
 
         self.command = "ansible-galaxy"
 
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def install_path(self):  # noqa cover
         pass
 
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def requirements_file(self):  # noqa cover
         pass
 

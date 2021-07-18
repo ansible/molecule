@@ -40,7 +40,8 @@ class Verifier(object):
         """
         self._config = config
 
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def name(self):  # pragma: no cover
         """
         Name of the verifier and returns a string.
@@ -48,7 +49,8 @@ class Verifier(object):
         :returns: str
         """
 
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def default_options(self):  # pragma: no cover
         """
         Get default CLI arguments provided to ``cmd`` as a dict.
@@ -56,7 +58,8 @@ class Verifier(object):
         :return: dict
         """
 
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def default_env(self):  # pragma: no cover
         """
         Get default env variables provided to ``cmd`` as a dict.

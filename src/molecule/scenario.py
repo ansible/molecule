@@ -166,22 +166,22 @@ class Scenario(object):
             path = ephemeral_directory(project_scenario_directory)
 
         if os.environ.get("MOLECULE_PARALLEL", False) and not self._lock:
-            self._lock = open(os.path.join(path, ".lock"), "w")
-            for i in range(1, 5):
-                try:
-                    fcntl.lockf(self._lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-                    break
-                except OSError:
-                    delay = 30 * i
-                    LOG.warning(
-                        "Retrying to acquire lock on %s, waiting for %s seconds",
-                        path,
-                        delay,
-                    )
-                    sleep(delay)
-            else:
-                LOG.warning("Timedout trying to acquire lock on %s", path)
-                raise SystemExit(RC_TIMEOUT)
+            with open(os.path.join(path, ".lock"), "w") as self._lock:
+                for i in range(1, 5):
+                    try:
+                        fcntl.lockf(self._lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                        break
+                    except OSError:
+                        delay = 30 * i
+                        LOG.warning(
+                            "Retrying to acquire lock on %s, waiting for %s seconds",
+                            path,
+                            delay,
+                        )
+                        sleep(delay)
+                else:
+                    LOG.warning("Timedout trying to acquire lock on %s", path)
+                    raise SystemExit(RC_TIMEOUT)
 
         return path
 

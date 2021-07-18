@@ -19,9 +19,9 @@
 #  DEALINGS IN THE SOFTWARE.
 """Base Driver Module."""
 
-import abc
 import inspect
 import os
+from abc import ABCMeta, abstractmethod
 
 import pkg_resources
 
@@ -32,7 +32,7 @@ from molecule.status import Status
 class Driver(object):
     """Driver Class."""
 
-    __metaclass__ = abc.ABCMeta
+    __metaclass__ = ABCMeta
 
     def __init__(self, config=None):
         """
@@ -43,12 +43,12 @@ class Driver(object):
         """
         self._config = config
         self._path = os.path.abspath(os.path.dirname(inspect.getfile(self.__class__)))
-        self.module = self.__module__.split(".")[0]
+        self.module = self.__module__.split(".", maxsplit=1)[0]
         self.version = pkg_resources.get_distribution(self.module).version
 
-    @property  # type: ignore
-    @abc.abstractmethod
-    def name(self):  # pragma: no cover
+    @property
+    @abstractmethod
+    def name(self) -> str:  # pragma: no cover
         """
         Name of the driver and returns a string.
 
@@ -56,7 +56,6 @@ class Driver(object):
         """
 
     @name.setter  # type: ignore
-    @abc.abstractmethod
     def name(self, value):  # pragma: no cover
         """
         Driver name setter and returns None.
@@ -76,7 +75,8 @@ class Driver(object):
             "ansible-inventory": self._config.provisioner.inventory_directory,
         }
 
-    @abc.abstractproperty
+    @property
+    @abstractmethod
     def login_cmd_template(self):  # pragma: no cover
         """
         Get the login command template to be populated by ``login_options`` as \
@@ -85,7 +85,8 @@ class Driver(object):
         :returns: str
         """
 
-    @abc.abstractproperty
+    @property
+    @abstractmethod
     def default_ssh_connection_options(self):  # pragma: no cover
         """
         SSH client options and returns a list.
@@ -93,7 +94,8 @@ class Driver(object):
         :returns: list
         """
 
-    @abc.abstractproperty
+    @property
+    @abstractmethod
     def default_safe_files(self):  # pragma: no cover
         """
         Generate files to be preserved.
@@ -101,7 +103,7 @@ class Driver(object):
         :returns: list
         """
 
-    @abc.abstractmethod
+    @abstractmethod
     def login_options(self, instance_name):  # pragma: no cover
         """
         Options used in the login command and returns a dict.
@@ -110,7 +112,7 @@ class Driver(object):
         :returns: dict
         """
 
-    @abc.abstractmethod
+    @abstractmethod
     def ansible_connection_options(self, instance_name):  # pragma: no cover
         """
         Ansible specific connection options supplied to inventory and returns a \
@@ -120,7 +122,7 @@ class Driver(object):
         :returns: dict
         """
 
-    @abc.abstractmethod
+    @abstractmethod
     def sanity_checks(self):
         """
         Confirm that driver is usable.

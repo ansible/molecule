@@ -89,7 +89,8 @@ class Base(object):
         :return: None
         """
 
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def default_options(self):  # pragma: no cover
         """
         Get default CLI arguments provided to ``cmd`` as a dict.
