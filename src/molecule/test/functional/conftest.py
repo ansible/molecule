@@ -23,6 +23,7 @@ import os
 import shutil
 import subprocess
 from subprocess import PIPE
+from typing import Optional
 
 import pexpect
 import pkg_resources
@@ -30,7 +31,7 @@ import pytest
 
 from molecule import logger, util
 from molecule.config import ansible_version
-from molecule.test.conftest import change_dir_to
+from molecule.test.conftest import change_dir_to, molecule_directory
 from molecule.text import strip_ansi_color
 from molecule.util import run_command
 
@@ -92,7 +93,6 @@ def skip_test(request, driver_name):
         pass
 
 
-@pytest.helpers.register
 def idempotence(scenario_name):
     cmd = ["molecule", "create", "--scenario-name", scenario_name]
     assert run_command(cmd).returncode == 0
@@ -104,31 +104,29 @@ def idempotence(scenario_name):
     assert run_command(cmd).returncode == 0
 
 
-@pytest.helpers.register
 def init_role(temp_dir, driver_name):
     role_directory = os.path.join(temp_dir.strpath, "myorg.myrole")
 
     cmd = ["molecule", "init", "role", "myorg.myrole", "--driver-name", driver_name]
     assert run_command(cmd).returncode == 0
-    pytest.helpers.metadata_lint_update(role_directory)
+    metadata_lint_update(role_directory)
 
     with change_dir_to(role_directory):
         cmd = ["molecule", "test", "--all"]
         assert run_command(cmd).returncode == 0
 
 
-@pytest.helpers.register
 def init_scenario(temp_dir, driver_name):
     # Create role
     role_directory = os.path.join(temp_dir.strpath, "test-init")
     cmd = ["molecule", "init", "role", "test-init", "--driver-name", driver_name]
     assert run_command(cmd).returncode == 0
-    pytest.helpers.metadata_lint_update(role_directory)
+    metadata_lint_update(role_directory)
 
     with change_dir_to(role_directory):
         # Create scenario
-        molecule_directory = pytest.helpers.molecule_directory()
-        scenario_directory = os.path.join(molecule_directory, "test-scenario")
+        molecule_dir = molecule_directory()
+        scenario_directory = os.path.join(molecule_dir, "test-scenario")
 
         cmd = [
             "molecule",
@@ -148,17 +146,15 @@ def init_scenario(temp_dir, driver_name):
         assert run_command(cmd).returncode == 0
 
 
-@pytest.helpers.register
-def metadata_lint_update(role_directory):
+def metadata_lint_update(role_directory: str) -> None:
     # By default, ansible-lint will fail on newly-created roles because the
     # fields in this file have not been changed from their defaults. This is
     # good because molecule should create this file using the defaults, and
     # users should receive feedback to change these defaults. However, this
     # blocks the testing of 'molecule init' itself, so ansible-lint should
     # be configured to ignore these metadata lint errors.
-    ansible_lint_src = os.path.join(
-        os.path.dirname(util.abs_path(__file__)), ".ansible-lint"
-    )
+    dirname = os.path.dirname(os.path.abspath(__file__))
+    ansible_lint_src = os.path.join(dirname, ".ansible-lint")
     shutil.copy(ansible_lint_src, role_directory)
 
     # Explicitly lint here to catch any unexpected lint errors before
@@ -170,8 +166,7 @@ def metadata_lint_update(role_directory):
     assert run_command(cmd).returncode == 0
 
 
-@pytest.helpers.register
-def list(x):
+def list_cmd(x):
     cmd = ["molecule", "list"]
     result = run_command(cmd)
     assert result.returncode == 0
@@ -181,7 +176,6 @@ def list(x):
         assert l in out
 
 
-@pytest.helpers.register
 def list_with_format_plain(x):
     cmd = ["molecule", "list", "--format", "plain"]
     result = util.run_command(cmd)
@@ -191,7 +185,6 @@ def list_with_format_plain(x):
         assert l in out
 
 
-@pytest.helpers.register
 def login(login_args, scenario_name="default"):
     cmd = ["molecule", "destroy", "--scenario-name", scenario_name]
     assert run_command(cmd).returncode == 0
@@ -212,8 +205,7 @@ def login(login_args, scenario_name="default"):
         child.sendline("exit")
 
 
-@pytest.helpers.register
-def test(driver_name, scenario_name="default", parallel=False):
+def run_test(driver_name, scenario_name="default", parallel=False):
     cmd = ["molecule", "test", "--scenario-name", scenario_name]
     if driver_name != "delegated":
         if scenario_name is None:
@@ -224,7 +216,6 @@ def test(driver_name, scenario_name="default", parallel=False):
     assert run_command(cmd).returncode == 0
 
 
-@pytest.helpers.register
 def verify(scenario_name="default"):
     cmd = ["molecule", "create", "--scenario-name", scenario_name]
     assert run_command(cmd).returncode == 0
@@ -236,7 +227,7 @@ def verify(scenario_name="default"):
     assert run_command(cmd).returncode == 0
 
 
-def get_docker_executable():
+def get_docker_executable() -> Optional[str]:
     return shutil.which("docker")
 
 
@@ -244,9 +235,8 @@ def get_virtualbox_executable():
     return shutil.which("VBoxManage")
 
 
-@pytest.helpers.register
 @util.lru_cache()
-def supports_docker():
+def supports_docker() -> bool:
     docker = get_docker_executable()
     if docker:
         result = subprocess.run([docker, "info"], stdout=PIPE, universal_newlines=True)

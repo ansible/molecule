@@ -433,12 +433,12 @@ class Config(object, metaclass=NewInitCaller):
             util.sysexit_with_message(msg)
 
 
-def molecule_directory(path):
+def molecule_directory(path: str) -> str:
     """Return directory of the current scenario."""
     return os.path.join(path, MOLECULE_DIRECTORY)
 
 
-def molecule_file(path):
+def molecule_file(path: str) -> str:
     """Return file path of current scenario."""
     return os.path.join(path, MOLECULE_FILE)
 

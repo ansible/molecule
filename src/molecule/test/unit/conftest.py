@@ -24,20 +24,25 @@ import os
 import shutil
 from pathlib import Path
 from subprocess import CompletedProcess
+from typing import Any, Tuple
 from uuid import uuid4
 
 import pytest
 
 from molecule import config, util
+from molecule.test.conftest import (
+    molecule_directory,
+    molecule_ephemeral_directory,
+    molecule_file,
+    molecule_scenario_directory,
+)
 
 
-@pytest.helpers.register
-def write_molecule_file(filename, data):
+def write_molecule_file(filename: str, data: Any) -> None:
     util.write_file(filename, util.safe_dump(data))
 
 
-@pytest.helpers.register
-def os_split(s):
+def os_split(s: str) -> Tuple[str, ...]:
     rest, tail = os.path.split(s)
     if rest in ("", os.path.sep):
         return (tail,)
@@ -109,12 +114,12 @@ def molecule_data(
 
 @pytest.fixture
 def molecule_directory_fixture(temp_dir):
-    return pytest.helpers.molecule_directory()
+    return molecule_directory()
 
 
 @pytest.fixture
 def molecule_scenario_directory_fixture(molecule_directory_fixture):
-    path = pytest.helpers.molecule_scenario_directory()
+    path = molecule_scenario_directory()
     if not os.path.isdir(path):
         os.makedirs(path)
 
@@ -123,7 +128,7 @@ def molecule_scenario_directory_fixture(molecule_directory_fixture):
 
 @pytest.fixture
 def molecule_ephemeral_directory_fixture(molecule_scenario_directory_fixture):
-    path = pytest.helpers.molecule_ephemeral_directory(str(uuid4()))
+    path = molecule_ephemeral_directory(str(uuid4()))
     if not os.path.isdir(path):
         os.makedirs(path)
     yield
@@ -134,7 +139,7 @@ def molecule_ephemeral_directory_fixture(molecule_scenario_directory_fixture):
 def molecule_file_fixture(
     molecule_scenario_directory_fixture, molecule_ephemeral_directory_fixture
 ):
-    return pytest.helpers.molecule_file()
+    return molecule_file()
 
 
 @pytest.fixture
@@ -144,7 +149,7 @@ def config_instance(
     mdc = copy.deepcopy(molecule_data)
     if hasattr(request, "param"):
         mdc = util.merge_dicts(mdc, request.getfixturevalue(request.param))
-    pytest.helpers.write_molecule_file(molecule_file_fixture, mdc)
+    write_molecule_file(molecule_file_fixture, mdc)
     c = config.Config(molecule_file_fixture)
     c.command_args = {"subcommand": "test"}
 

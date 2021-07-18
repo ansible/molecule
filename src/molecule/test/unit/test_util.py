@@ -29,6 +29,7 @@ import pytest
 from molecule import util
 from molecule.console import console
 from molecule.constants import MOLECULE_HEADER
+from molecule.test.conftest import get_molecule_file, molecule_directory
 from molecule.text import strip_ansi_escape
 
 
@@ -164,14 +165,14 @@ def test_run_command_with_debug_handles_no_env(mocker, patched_print_debug):
 
 def test_os_walk(temp_dir):
     scenarios = ["scenario1", "scenario2", "scenario3"]
-    molecule_directory = pytest.helpers.molecule_directory()
+    mol_dir = molecule_directory()
     for scenario in scenarios:
-        scenario_directory = os.path.join(molecule_directory, scenario)
-        molecule_file = pytest.helpers.get_molecule_file(scenario_directory)
+        scenario_directory = os.path.join(mol_dir, scenario)
+        molecule_file = get_molecule_file(scenario_directory)
         os.makedirs(scenario_directory)
         util.write_file(molecule_file, "")
 
-    result = [f for f in util.os_walk(molecule_directory, "molecule.yml")]
+    result = [f for f in util.os_walk(mol_dir, "molecule.yml")]
     assert 3 == len(result)
 
 

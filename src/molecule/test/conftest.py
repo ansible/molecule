@@ -74,33 +74,27 @@ def resources_folder_path():
     return resources_folder_path
 
 
-@pytest.helpers.register
-def molecule_project_directory():
+def molecule_project_directory() -> str:
     return os.getcwd()
 
 
-@pytest.helpers.register
-def molecule_directory():
+def molecule_directory() -> str:
     return config.molecule_directory(molecule_project_directory())
 
 
-@pytest.helpers.register
-def molecule_scenario_directory():
+def molecule_scenario_directory() -> str:
     return os.path.join(molecule_directory(), "default")
 
 
-@pytest.helpers.register
-def molecule_file():
+def molecule_file() -> str:
     return get_molecule_file(molecule_scenario_directory())
 
 
-@pytest.helpers.register
-def get_molecule_file(path):
+def get_molecule_file(path: str) -> str:
     return config.molecule_file(path)
 
 
-@pytest.helpers.register
-def molecule_ephemeral_directory(_fixture_uuid):
+def molecule_ephemeral_directory(_fixture_uuid) -> str:
     project_directory = "test-project-{}".format(_fixture_uuid)
     scenario_name = "test-instance"
 

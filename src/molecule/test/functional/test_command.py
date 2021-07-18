@@ -18,8 +18,19 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-import pytest
+from typing import Optional
 
+import pytest
+from pytest import FixtureRequest
+
+from molecule.test.functional.conftest import (
+    idempotence,
+    init_role,
+    init_scenario,
+    list_with_format_plain,
+    run_test,
+    verify,
+)
 from molecule.util import run_command
 
 
@@ -37,8 +48,11 @@ def scenario_name(request):
 
 
 @pytest.fixture
-def driver_name(request):
-    return request.param
+def driver_name(request: FixtureRequest) -> Optional[str]:
+    try:
+        return request.param
+    except AttributeError:
+        return None
 
 
 @pytest.mark.extensive
@@ -146,19 +160,19 @@ def test_command_destroy(scenario_to_test, with_scenario, scenario_name):
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
 def test_command_idempotence(scenario_to_test, with_scenario, scenario_name):
-    pytest.helpers.idempotence(scenario_name)
+    idempotence(scenario_name)
 
 
 @pytest.mark.parametrize("driver_name", [("delegated")], indirect=["driver_name"])
 @pytest.mark.xfail(reason="https://github.com/ansible-community/molecule/issues/3171")
 def test_command_init_role(temp_dir, driver_name, skip_test):
-    pytest.helpers.init_role(temp_dir, driver_name)
+    init_role(temp_dir, driver_name)
 
 
 @pytest.mark.parametrize("driver_name", [("delegated")], indirect=["driver_name"])
 @pytest.mark.xfail(reason="https://github.com/ansible-community/molecule/issues/3171")
 def test_command_init_scenario(temp_dir, driver_name, skip_test):
-    pytest.helpers.init_scenario(temp_dir, driver_name)
+    init_scenario(temp_dir, driver_name)
 
 
 @pytest.mark.extensive
@@ -186,7 +200,7 @@ def test_command_lint(scenario_to_test, with_scenario, scenario_name):
     indirect=["scenario_to_test", "driver_name"],
 )
 def test_command_list_with_format_plain(scenario_to_test, with_scenario, expected):
-    pytest.helpers.list_with_format_plain(expected)
+    list_with_format_plain(expected)
 
 
 # @pytest.mark.parametrize(
@@ -202,7 +216,7 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario, expecte
 #     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 # )
 # def test_command_login(scenario_to_test, with_scenario, login_args, scenario_name):
-#     pytest.helpers.login(login_args, scenario_name)
+#     login(login_args, scenario_name)
 
 
 @pytest.mark.extensive
@@ -255,7 +269,7 @@ def test_command_syntax(scenario_to_test, with_scenario, scenario_name):
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
 def test_command_test(scenario_to_test, with_scenario, scenario_name, driver_name):
-    pytest.helpers.test(driver_name, scenario_name)
+    run_test(driver_name, scenario_name)
 
 
 @pytest.mark.extensive
@@ -267,4 +281,4 @@ def test_command_test(scenario_to_test, with_scenario, scenario_name, driver_nam
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
 def test_command_verify(scenario_to_test, with_scenario, scenario_name):
-    pytest.helpers.verify(scenario_name)
+    verify(scenario_name)
