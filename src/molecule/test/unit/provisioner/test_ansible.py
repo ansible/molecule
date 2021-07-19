@@ -26,6 +26,7 @@ import pytest
 
 from molecule import config, util
 from molecule.provisioner import ansible, ansible_playbooks
+from molecule.test.unit.conftest import os_split
 
 
 @pytest.fixture
@@ -319,7 +320,7 @@ def test_playbooks_property(_instance):
 
 def test_directory_property(_instance):
     result = _instance.directory
-    parts = pytest.helpers.os_split(result)
+    parts = os_split(result)
 
     assert ("molecule", "provisioner", "ansible") == parts[-3:]
 
@@ -680,7 +681,7 @@ def test_default_to_regular(_instance):
 
 def test_get_plugin_directory(_instance):
     result = _instance._get_plugin_directory()
-    parts = pytest.helpers.os_split(result)
+    parts = os_split(result)
 
     assert ("molecule", "provisioner", "ansible", "plugins") == parts[-4:]
 
@@ -719,7 +720,7 @@ def test_get_modules_directories_multi_ansible_library(_instance, monkeypatch):
 
 def test_get_filter_plugin_directory(_instance):
     result = _instance._get_filter_plugin_directory()
-    parts = pytest.helpers.os_split(result)
+    parts = os_split(result)
     x = ("molecule", "provisioner", "ansible", "plugins", "filter")
 
     assert x == parts[-5:]

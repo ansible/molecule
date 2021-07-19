@@ -24,6 +24,7 @@ import pytest
 
 from molecule import util
 from molecule.provisioner import ansible_playbooks
+from molecule.test.unit.conftest import os_split
 
 
 @pytest.fixture
@@ -74,7 +75,7 @@ def test_verify_property(_instance):
 
 def test_get_playbook_directory(_instance):
     result = _instance._get_playbook_directory()
-    parts = pytest.helpers.os_split(result)
+    parts = os_split(result)
     x = ("molecule", "provisioner", "ansible", "playbooks")
 
     assert x == parts[-4:]
@@ -136,7 +137,7 @@ def test_get_ansible_playbook_with_driver_key_when_playbook_key_missing(
 
 def test_get_bundled_driver_playbook(_instance):
     result = _instance._get_bundled_driver_playbook("create")
-    parts = pytest.helpers.os_split(result)
+    parts = os_split(result)
     x = ("molecule", "driver", "playbooks", "create.yml")
 
     assert x == parts[-4:]

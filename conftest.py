@@ -6,8 +6,6 @@ import os
 
 import pytest
 
-pytest_plugins = ["helpers_namespace"]
-
 
 @pytest.fixture(scope="session", autouse=True)
 def environ():
