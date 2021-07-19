@@ -128,13 +128,19 @@ class Scenario(object):
         ] + self.config.driver.safe_files
         files = util.os_walk(self.ephemeral_directory, "*")
         for f in files:
-            if not any(sf for sf in safe_files if fnmatch.fnmatch(f, sf)):
-                os.remove(f)
+            try:
+                if not any(sf for sf in safe_files if fnmatch.fnmatch(f, sf)):
+                    os.remove(f)
+            except FileNotFoundError:
+                pass
 
         # Remove empty directories.
         for dirpath, dirs, files in os.walk(self.ephemeral_directory, topdown=False):
             if not dirs and not files:
-                os.removedirs(dirpath)
+                try:
+                    os.removedirs(dirpath)
+                except OSError as exc:
+                    LOG.info("Failed to remove directory: %s", exc)
 
     @property
     def name(self):
