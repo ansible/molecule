@@ -22,6 +22,7 @@
 import inspect
 import os
 from abc import ABCMeta, abstractmethod
+from typing import Dict
 
 import pkg_resources
 
@@ -297,3 +298,8 @@ class Driver(object):
         by molecule, regardless the scenario name.  Molecule will use metadata
         like labels or tags to annotate resources allocated by it.
         """
+
+    @property
+    def required_collections(self) -> Dict[str, str]:
+        """Return collections dict containing names and versions required."""
+        return {}
