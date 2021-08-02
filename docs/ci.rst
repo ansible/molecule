@@ -167,7 +167,7 @@ Azure Pipelines
 
   ---
   trigger:
-  - master
+  - main
 
   pool:
     vmImage: ubuntu-16.04

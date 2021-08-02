@@ -1,10 +1,10 @@
 ---
 name: Bug report
-about: Please test the master branch before raising bugs.
+about: Please test the main branch before raising bugs.
 labels: bug
 ---
 <!--- Verify first that your issue is not already reported on GitHub -->
-<!--- Do not report bugs before reproducing them with the code of the master branch! -->
+<!--- Do not report bugs before reproducing them with the code of the main branch! -->
 <!--- Please also check https://molecule.readthedocs.io/en/latest/faq.html --->
 <!--- Please use https://groups.google.com/forum/#!forum/molecule-users for usage questions -->
 
