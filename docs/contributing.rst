@@ -43,20 +43,20 @@ Guidelines
 * Submit a pull request.
 
 .. _`Issue`: https://github.com/ansible-community/molecule/issues/new/choose
-.. _`DCO 1.1`: https://github.com/ansible-community/molecule/blob/master/DCO_1_1.md
+.. _`DCO 1.1`: https://github.com/ansible-community/molecule/blob/main/DCO_1_1.md
 
 Code Of Conduct
 ===============
 
 Please see our `Code of Conduct`_ document.
 
-.. _Code of Conduct: https://github.com/ansible-community/molecule/blob/master/.github/CODE_OF_CONDUCT.md
+.. _Code of Conduct: https://github.com/ansible-community/molecule/blob/main/.github/CODE_OF_CONDUCT.md
 
 Pull Request Life Cycle and Governance
 ======================================
 
 * If your PRs get stuck `join us on IRC`_ or add to the `working group agenda`_.
-* The code style is what is enforced by CI, everything else is off topic.
+* The code style is what is enforced by CI, everything else is off-topic.
 * All PRs must be reviewed by one other person. This is enforced by GitHub. Larger changes require +2.
 
 .. _working group agenda: https://github.com/ansible/community/wiki/Molecule#meetings
