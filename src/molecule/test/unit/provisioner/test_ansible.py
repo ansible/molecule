@@ -134,18 +134,6 @@ def test_default_env_property(_instance):
     assert "ANSIBLE_FILTER_PLUGINS" in _instance.env
 
 
-def test_default_env_property_collections_path(config_instance):
-    config_instance.project_directory = (
-        "/some/path/ansible_collections/namespace/collection/but/not/really"
-        "/ansible_collections/other_ns/other_name/and/some/more/segments"
-    )
-
-    env = ansible.Ansible(config_instance).default_env
-
-    paths = env[config_instance.ansible_collections_path].split(":")
-    assert "/some/path/ansible_collections/namespace/collection/but/not/really" in paths
-
-
 def test_name_property(_instance):
     assert "ansible" == _instance.name
 

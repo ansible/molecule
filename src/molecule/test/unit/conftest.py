@@ -24,7 +24,7 @@ import os
 import shutil
 from pathlib import Path
 from subprocess import CompletedProcess
-from typing import Any, Tuple
+from typing import Any, Generator, Tuple
 from uuid import uuid4
 
 import pytest
@@ -145,15 +145,19 @@ def molecule_file_fixture(
 @pytest.fixture
 def config_instance(
     molecule_file_fixture: str, molecule_data, request
-) -> config.Config:
+) -> Generator[config.Config, None, None]:
     mdc = copy.deepcopy(molecule_data)
     if hasattr(request, "param"):
         mdc = util.merge_dicts(mdc, request.getfixturevalue(request.param))
     write_molecule_file(molecule_file_fixture, mdc)
+
+    _environ = dict(os.environ)
     c = config.Config(molecule_file_fixture)
     c.command_args = {"subcommand": "test"}
-
-    return c
+    yield c
+    # restore environ which can be modified by Config()
+    os.environ.clear()
+    os.environ.update(_environ)
 
 
 # Mocks

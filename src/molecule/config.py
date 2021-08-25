@@ -23,10 +23,12 @@ import copy
 import functools
 import logging
 import os
+import warnings
 from typing import Callable, MutableMapping, TypeVar
 from uuid import uuid4
 
-from ansiblelint.config import ansible_version
+from ansible_compat.runtime import Runtime
+from packaging.version import Version
 
 from molecule import api, interpolation, platforms, scenario, state, util
 from molecule.dependency import ansible_galaxy, shell
@@ -49,6 +51,16 @@ T = TypeVar("T")
 def cache(func: Callable[..., T]) -> T:
     """Decorate properties to cache them."""
     return functools.lru_cache()(func)  # type: ignore
+
+
+@cache
+def ansible_version() -> Version:
+    """Retrieve Ansible version."""
+    warnings.warn(
+        "molecule.config.ansible_version is deprecated, will be removed in the future.",
+        category=DeprecationWarning,
+    )
+    return Runtime().version
 
 
 # https://stackoverflow.com/questions/16017397/injecting-function-call-after-init-with-decorator  # noqa
@@ -102,6 +114,7 @@ class Config(object, metaclass=NewInitCaller):
         self._action = None
         self._run_uuid = str(uuid4())
         self.project_directory = os.getenv("MOLECULE_PROJECT_DIRECTORY", os.getcwd())
+        self.runtime = Runtime(isolated=True)
 
     def after_init(self):
         self.config = self._reget_config()
@@ -115,7 +128,7 @@ class Config(object, metaclass=NewInitCaller):
     def ansible_collections_path(self):
         """Return collection path variable for current version of Ansible."""
         # https://github.com/ansible/ansible/pull/70007
-        if ansible_version() >= ansible_version("2.10.0.dev0"):
+        if self.runtime.version >= Version("2.10.0.dev0"):
             return "ANSIBLE_COLLECTIONS_PATH"
         else:
             return "ANSIBLE_COLLECTIONS_PATHS"
