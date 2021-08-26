@@ -1,0 +1,3 @@
+- name: "some task inside foo.bar collection"
+  debug:
+    msg: "hello world!"
