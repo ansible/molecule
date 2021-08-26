@@ -109,6 +109,10 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
         if scenario.config.config["prerun"]:
             LOG.info("Performing prerun...")
             scenario.config.runtime.prepare_environment()
+            # if we are inside a collection we should also install it
+            if os.path.exists("galaxy.yml"):
+                LOG.info("Installing local collection...")
+                scenario.config.runtime.install_collection(".")
 
         if command_args.get("subcommand") == "reset":
             LOG.info("Removing %s" % scenario.ephemeral_directory)
