@@ -75,3 +75,19 @@ repos:
           - enrich>=1.2.5
           - subprocess-tee>=0.2.0
           - testinfra
+  - # keep at bottom as these are slower
+    repo: local
+    hooks:
+    - id: pip-compile
+      name: pip-compile
+      entry: pip-compile --no-annotate --output-file=constraints.txt setup.py setup.cfg --extra test --extra yamllint
+      language: system
+      files: ^(setup\.cfg|=constraints\.txt)$
+      pass_filenames: false
+    - id: pip-compile-upgrade
+      name: pip-compile-upgrade
+      entry: pip-compile -q --upgrade --no-annotate --output-file=constraints.txt setup.py setup.cfg --extra test --extra yamllint
+      language: system
+      files: ^(setup\.cfg|=constraints\.txt)$
+      pass_filenames: false
+      stages: [manual]
