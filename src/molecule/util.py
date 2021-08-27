@@ -30,7 +30,8 @@ import sys
 from dataclasses import dataclass
 from functools import lru_cache  # noqa
 from subprocess import CalledProcessError, CompletedProcess
-from typing import Any, Dict, List, MutableMapping, NoReturn, Optional, Union
+from typing import Any, Dict, Iterable, List, MutableMapping, NoReturn, Optional, Union
+from warnings import WarningMessage
 
 import jinja2
 import yaml
@@ -96,7 +97,10 @@ def sysexit(code: int = 1) -> NoReturn:
 
 
 def sysexit_with_message(
-    msg: str, code: int = 1, detail: Optional[MutableMapping] = None
+    msg: str,
+    code: int = 1,
+    detail: Optional[MutableMapping] = None,
+    warns: Iterable[WarningMessage] = (),
 ) -> None:
     """Exit with an error message."""
     # detail is usually a multi-line string which is not suitable for normal
@@ -108,6 +112,9 @@ def sysexit_with_message(
             detail_str = str(detail)
         print(detail_str)
     LOG.critical(msg)
+
+    for warn in warns:
+        LOG.warning(warn.__dict__["message"].args[0])
     sysexit(code)
 
 
