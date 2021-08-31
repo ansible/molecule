@@ -26,11 +26,11 @@ from subprocess import PIPE
 from typing import Optional
 
 import pexpect
-import pkg_resources
 import pytest
 from ansible_compat.runtime import Runtime
 from packaging.version import Version
 
+import molecule
 from molecule import logger, util
 from molecule.test.conftest import change_dir_to, molecule_directory
 from molecule.text import strip_ansi_color
@@ -47,8 +47,8 @@ MIN_PODMAN_VERSION = "1.5.1"
 @pytest.fixture(scope="session", autouse=True)
 def require_installed_package():
     try:
-        pkg_resources.require("molecule")
-    except pkg_resources.DistributionNotFound as e:
+        molecule.version("molecule")
+    except Exception as e:
         pytest.fail(
             "Functional tests require molecule package to be installed: {}".format(e)
         )

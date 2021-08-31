@@ -23,7 +23,7 @@ import os
 import sys
 
 import click
-import pkg_resources
+import packaging
 from ansible_compat.runtime import Runtime
 
 import molecule
@@ -56,7 +56,7 @@ def print_version(ctx, param, value):
     if not value or ctx.resilient_parsing:
         return
 
-    v = pkg_resources.parse_version(molecule.__version__)
+    v = packaging.version.Version(molecule.__version__)
     color = "bright_yellow" if v.is_prerelease else "green"
     msg = f"molecule [{color}]{v}[/] using python [repr.number]{sys.version_info[0]}.{sys.version_info[1]}[/] \n"
 
