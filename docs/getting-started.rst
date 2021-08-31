@@ -81,27 +81,26 @@ directories:
 * ``verify.yml`` is the Ansible file used for testing as Ansible is the default :ref:`verifier`. This
   allows you to write specific tests against the state of the container after
   your role has finished executing. Other verifier tools are available (Note that :std:doc:`TestInfra <testinfra:index>` was the default verifier prior to molecule version 3).
-  
+
 .. note::
 
-    If the `verify.yml` playbook does not explicitly `include_role` your role, the `library` and `module_utils`
+    If the ``verify.yml`` playbook does not explicitly ``include_role`` your role, the ``library`` and ``module_utils``
     provided by your role are not available in the playbook by default.
     If you need those for testing but would like to avoid re-running your role, consider adding
-    an empty task file `init.yml` to your role and use `tasks_from` to include your role in the `verify.yml` playbook::
+    an empty task file ``init.yml`` to your role and use ``tasks_from`` to include your role in the ``verify.yml`` playbook:
 
     .. code-block:: yaml
 
         - name: Verify
           hosts: all
           become: true
-
           tasks:
-          - name: Initialize role library, ... without actually running the role
+          - name: Initialize role without actually running it
             include_role:
               name: my_role
               tasks_from: init
 
-          # Start testing: can now use role library
+          # Start testing: can use role library now
 
 
 .. _Jinja2: http://jinja.pocoo.org/
