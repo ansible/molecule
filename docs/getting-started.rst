@@ -84,7 +84,7 @@ directories:
   
 .. note::
 
-  Since the `verify.yml` playbook does not call your role, the `library` and `module_utils` 
+  If the `verify.yml` playbook does not explicitly `include_role` your role, the `library` and `module_utils` 
   provided by your role are not available in the playbook by default.
   If you need those for testing but would like to avoid re-running your role, consider adding 
   an empty task file `init.yml` to your role and use `tasks_from` to include your role in the `verify.yml` playbook::
