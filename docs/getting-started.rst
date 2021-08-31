@@ -84,24 +84,25 @@ directories:
   
 .. note::
 
-  If the `verify.yml` playbook does not explicitly `include_role` your role, the `library` and `module_utils` 
-  provided by your role are not available in the playbook by default.
-  If you need those for testing but would like to avoid re-running your role, consider adding 
-  an empty task file `init.yml` to your role and use `tasks_from` to include your role in the `verify.yml` playbook::
-  
-  .. code-block:: yaml
+    If the `verify.yml` playbook does not explicitly `include_role` your role, the `library` and `module_utils`
+    provided by your role are not available in the playbook by default.
+    If you need those for testing but would like to avoid re-running your role, consider adding
+    an empty task file `init.yml` to your role and use `tasks_from` to include your role in the `verify.yml` playbook::
 
-    - name: Verify
-      hosts: all
-      become: true
+    .. code-block:: yaml
 
-      tasks:
-      - name: Initialize role library, ... without actually running the role
-        include_role:
-          name: my_role
-          tasks_from: init
+        - name: Verify
+          hosts: all
+          become: true
 
-      # Start testing; can now use role library
+          tasks:
+          - name: Initialize role library, ... without actually running the role
+            include_role:
+              name: my_role
+              tasks_from: init
+
+          # Start testing: can now use role library
+
 
 .. _Jinja2: http://jinja.pocoo.org/
 
