@@ -20,8 +20,10 @@
 """Ansible-Playbook Provisioner Module."""
 
 import logging
+import warnings
 
 from molecule import util
+from molecule.api import MoleculeRuntimeWarning
 
 LOG = logging.getLogger(__name__)
 
@@ -103,12 +105,16 @@ class AnsiblePlaybook(object):
             LOG.warning("Skipping, %s action has no playbook." % self._config.action)
             return
 
-        self._config.driver.sanity_checks()
-        result = util.run_command(self._ansible_command, debug=self._config.debug)
+        with warnings.catch_warnings(record=True) as warns:
+            warnings.filterwarnings("default", category=MoleculeRuntimeWarning)
+            self._config.driver.sanity_checks()
+            result = util.run_command(self._ansible_command, debug=self._config.debug)
+
         if result.returncode != 0:
             util.sysexit_with_message(
                 f"Ansible return code was {result.returncode}, command was: {result.args}",
                 result.returncode,
+                warns=warns,
             )
 
         return result.stdout

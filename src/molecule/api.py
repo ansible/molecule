@@ -36,6 +36,14 @@ class UserListMap(UserList):
         super(UserListMap, self).append(item)
 
 
+class MoleculeRuntimeWarning(RuntimeWarning):
+    """A runtime warning used by Molecule and its plugins."""
+
+
+class IncompatibleMoleculeRuntimeWarning(MoleculeRuntimeWarning):
+    """A warning noting an unsupported runtime environment."""
+
+
 @lru_cache()
 def drivers(config=None) -> UserListMap:
     """Return list of active drivers."""

@@ -23,10 +23,12 @@ from __future__ import print_function
 import binascii
 import io
 import os
+import warnings
 
 import pytest
 
 from molecule import util
+from molecule.api import IncompatibleMoleculeRuntimeWarning, MoleculeRuntimeWarning
 from molecule.console import console
 from molecule.constants import MOLECULE_HEADER
 from molecule.test.conftest import get_molecule_file, molecule_directory
@@ -91,6 +93,21 @@ def test_sysexit_with_message(patched_logger_critical):
     assert 1 == e.value.code
 
     patched_logger_critical.assert_called_once_with("foo")
+
+
+def test_sysexit_with_warns(patched_logger_critical, patched_logger_warning):
+    with pytest.raises(SystemExit) as e:
+
+        with warnings.catch_warnings(record=True) as warns:
+            warnings.filterwarnings("default", category=MoleculeRuntimeWarning)
+            warnings.warn("xxx", category=IncompatibleMoleculeRuntimeWarning)
+
+        util.sysexit_with_message("foo", warns=warns)
+
+    assert 1 == e.value.code
+
+    patched_logger_critical.assert_called_once_with("foo")
+    patched_logger_warning.assert_called_once_with("xxx")
 
 
 def test_sysexit_with_message_and_custom_code(patched_logger_critical):
