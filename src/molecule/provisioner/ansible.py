@@ -26,6 +26,8 @@ import os
 import shutil
 from typing import List, Optional
 
+from ansible_compat.ports import cached_property
+
 from molecule import util
 from molecule.api import drivers
 from molecule.provisioner import ansible_playbook, ansible_playbooks, base
@@ -635,8 +637,7 @@ class Ansible(base.Base):
     def config_file(self):
         return os.path.join(self._config.scenario.ephemeral_directory, "ansible.cfg")
 
-    @property  # type: ignore
-    @util.lru_cache()
+    @cached_property
     def playbooks(self):
         return ansible_playbooks.AnsiblePlaybooks(self._config)
 

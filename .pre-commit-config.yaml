@@ -54,7 +54,7 @@ repos:
         entry: mypy src/
         pass_filenames: false
         additional_dependencies:
-          - ansible-compat>=0.4.0
+          - ansible-compat>=0.5.0
           - click>=8.0.1
           - enrich>=1.2.5
           - importlib-metadata>=4.6.1

@@ -5,9 +5,9 @@ import traceback
 from collections import UserList
 
 import pluggy
+from ansible_compat.ports import cache
 
 from molecule.driver.base import Driver  # noqa
-from molecule.util import lru_cache
 from molecule.verifier.base import Verifier  # noqa
 
 LOG = logging.getLogger(__name__)
@@ -44,7 +44,7 @@ class IncompatibleMoleculeRuntimeWarning(MoleculeRuntimeWarning):
     """A warning noting an unsupported runtime environment."""
 
 
-@lru_cache()
+@cache
 def drivers(config=None) -> UserListMap:
     """Return list of active drivers."""
     plugins = UserListMap()
@@ -64,7 +64,7 @@ def drivers(config=None) -> UserListMap:
     return plugins
 
 
-@lru_cache()
+@cache
 def verifiers(config=None) -> UserListMap:
     """Return list of active verifiers."""
     plugins = UserListMap()

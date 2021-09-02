@@ -28,13 +28,13 @@ import os
 import re
 import sys
 from dataclasses import dataclass
-from functools import lru_cache  # noqa
 from subprocess import CalledProcessError, CompletedProcess
 from typing import Any, Dict, Iterable, List, MutableMapping, NoReturn, Optional, Union
 from warnings import WarningMessage
 
 import jinja2
 import yaml
+from ansible_compat.ports import cache
 from rich.syntax import Syntax
 from subprocess_tee import run
 
@@ -341,7 +341,7 @@ def _parallelize_platforms(config, run_uuid):
     return [parallelize(platform) for platform in config["platforms"]]
 
 
-@lru_cache()
+@cache
 def find_vcs_root(location="", dirs=(".git", ".hg", ".svn"), default=None) -> str:
     """Return current repository root directory."""
     if not location:
