@@ -23,10 +23,11 @@
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
-
 try:
-    import pkg_resources
+    # py38+
+    from importlib.metadata import version  # type: ignore
+except ImportError:
+    # py36-py37
+    from importlib_metadata import version
 
-    __version__ = pkg_resources.get_distribution("molecule").version
-except Exception:
-    __version__ = "unknown"
+__version__ = version("molecule")
