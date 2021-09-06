@@ -51,14 +51,14 @@ def drivers(config=None) -> UserListMap:
     pm = pluggy.PluginManager("molecule.driver")
     try:
         pm.load_setuptools_entrypoints("molecule.driver")
-    except Exception:
+    except (Exception, SystemExit):
         # These are not fatal because a broken driver should not make the entire
         # tool unusable.
         LOG.error("Failed to load driver entry point %s", traceback.format_exc())
     for p in pm.get_plugins():
         try:
             plugins.append(p(config))
-        except Exception as e:
+        except (Exception, SystemExit) as e:
             LOG.error("Failed to load %s driver: %s", pm.get_name(p), str(e))
     plugins.sort()
     return plugins
