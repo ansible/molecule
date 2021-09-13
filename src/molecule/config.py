@@ -27,10 +27,10 @@ from typing import MutableMapping
 from uuid import uuid4
 
 from ansible_compat.ports import cache, cached_property
-from ansible_compat.runtime import Runtime
 from packaging.version import Version
 
 from molecule import api, interpolation, platforms, scenario, state, util
+from molecule.app import app
 from molecule.dependency import ansible_galaxy, shell
 from molecule.model import schema_v3
 from molecule.provisioner import ansible
@@ -52,7 +52,7 @@ def ansible_version() -> Version:
         "molecule.config.ansible_version is deprecated, will be removed in the future.",
         category=DeprecationWarning,
     )
-    return Runtime().version
+    return app.runtime.version
 
 
 # https://stackoverflow.com/questions/16017397/injecting-function-call-after-init-with-decorator  # noqa
@@ -106,7 +106,7 @@ class Config(object, metaclass=NewInitCaller):
         self._action = None
         self._run_uuid = str(uuid4())
         self.project_directory = os.getenv("MOLECULE_PROJECT_DIRECTORY", os.getcwd())
-        self.runtime = Runtime(isolated=True)
+        self.runtime = app.runtime
 
     def after_init(self):
         self.config = self._reget_config()
