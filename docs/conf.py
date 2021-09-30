@@ -11,19 +11,12 @@
 #
 # All configuration values have a default; values that are commented out
 # serve to show the default.
+"""Documentation Configuration."""
 
 import datetime
-import os
-import sys
 
 import molecule
 
-import sphinx_ansible_theme
-
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath("../.."))
 
 # -- General configuration ------------------------------------------------
 
@@ -40,7 +33,6 @@ extensions = [
     "sphinx.ext.extlinks",
     "sphinx.ext.intersphinx",
     "sphinx.ext.todo",
-    "sphinx_ansible_theme",
     "notfound.extension",
 ]
 
@@ -121,7 +113,7 @@ today_fmt = '%B %d, %Y'
 # show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = 'ansible'
 
 highlight_language = 'YAML+Jinja'
 
@@ -141,7 +133,6 @@ rst_epilog = """
 # Options for HTML output
 # -----------------------
 
-html_theme_path = [sphinx_ansible_theme.get_html_theme_path()]
 html_theme = 'sphinx_ansible_theme'
 
 html_show_sphinx = False
@@ -155,6 +146,13 @@ html_theme_options = {
     # 'canonical_url': "https://docs.ansible.com/ansible/latest/",
     'vcs_pageview_mode': 'edit',
     "navigation_depth": 3,
+    'topbar_links': {
+        'AnsibleFest': 'https://www.ansible.com/ansiblefest',
+        'Products': 'https://www.ansible.com/tower',
+        'Community': 'https://www.ansible.com/community',
+        'Webinars & Training': 'https://www.ansible.com/webinars-training',
+        'Blog': 'https://www.ansible.com/blog',
+    },
 }
 
 html_context = {
@@ -166,20 +164,19 @@ html_context = {
     'latest_version': 'latest',
     # list specifically out of order to make latest work
     'available_versions': ('latest', ),
-    'css_files': (),  # overrides to the standard theme
 }
 
-# The style sheet to use for HTML and HTML Help pages. A file of that name
-# must exist either in Sphinx' static/ path, or in one of the custom paths
-# given in html_static_path.
-# html_style = 'solar.css'
+# Add extra CSS styles to the resulting HTML pages
+# html_css_files = [
+#     'css/color-scheme.css',
+# ]
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-# html_title = None
+html_title = f'{project} Documentation'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
-# html_short_title = None
+html_short_title = 'Documentation'
 
 # The name of an image file (within the static path) to place at the top of
 # the sidebar.
