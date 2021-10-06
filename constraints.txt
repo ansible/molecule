@@ -50,7 +50,6 @@ pytest-metadata==1.11.0
 pytest-mock==3.6.1
 pytest-plus==0.2
 pytest-testinfra==6.4.0
-pytest-verbose-parametrize==1.7.0
 pytest-xdist==2.3.0
 python-dateutil==2.8.2
 python-slugify==5.0.2
