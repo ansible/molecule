@@ -1,0 +1,9 @@
+# See https://github.com/ansible-community/devtools/blob/main/.github/workflows/ack.yml
+name: ack
+on:
+  pull_request_target:
+    types: [opened, labeled, unlabeled, synchronize]
+
+jobs:
+  ack:
+    uses: ansible-community/devtools/.github/workflows/ack.yml@main
