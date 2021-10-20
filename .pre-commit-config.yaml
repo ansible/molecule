@@ -1,4 +1,9 @@
 ---
+ci:
+  skip:
+  # https://github.com/pre-commit-ci/issues/issues/55
+  - pip-compile
+  - pip-compile-upgrade
 exclude: |
     (?x)(
         ^docs/conf.py$
