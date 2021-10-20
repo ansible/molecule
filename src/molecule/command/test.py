@@ -68,6 +68,10 @@ class Test(base.Base):
 
         Always destroy instances at the conclusion of a Molecule run.
 
+    .. option:: molecule test --destroy=never
+
+        Never destroy instances at the conclusion of a Molecule run.
+
     .. program:: molecule --debug test
 
     .. option:: molecule --debug test
