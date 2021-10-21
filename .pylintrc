@@ -7,6 +7,7 @@ disable =
     bad-continuation,
     broad-except,
     consider-merging-isinstance,
+    consider-using-f-string,
     consider-using-in,
     dangerous-default-value,
     duplicate-code,
