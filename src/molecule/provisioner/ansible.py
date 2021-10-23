@@ -916,7 +916,7 @@ class Ansible(base.Base):
 
         Adds modules directory from molecule and its plugins.
         """
-        paths: List[Optional[str]] = list()
+        paths: List[Optional[str]] = []
         if os.environ.get("ANSIBLE_LIBRARY"):
             paths = list(map(util.abs_path, os.environ["ANSIBLE_LIBRARY"].split(":")))
 
