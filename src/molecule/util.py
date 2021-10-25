@@ -385,7 +385,7 @@ def boolean(value: Any, strict=True) -> bool:
         return False
 
     raise TypeError(
-        f"The value '{str(value)}' is not a valid boolean.  Valid booleans include: {', '.join(repr(i) for i in BOOLEANS)}"
+        f"The value '{value!s}' is not a valid boolean.  Valid booleans include: {', '.join(repr(i) for i in BOOLEANS)!s}"
     )
 
 
