@@ -64,7 +64,7 @@ class Role(base.Base):
         LOG.info(msg)
 
         if os.path.isdir(role_name):
-            msg = f"The directory {role_name} exists. " "Cannot create new role."
+            msg = f"The directory {role_name} exists. Cannot create new role."
             util.sysexit_with_message(msg)
 
         cmd = ["ansible-galaxy", "init", "-v", "--offline", role_name]
