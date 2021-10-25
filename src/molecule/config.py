@@ -239,9 +239,9 @@ class Config(object, metaclass=NewInitCaller):
 
         if driver_from_cli and (driver_from_cli != driver_name):
             msg = (
-                "Instance(s) were created with the '{}' driver, but the "
-                "subcommand is using '{}' driver."
-            ).format(driver_name, driver_from_cli)
+                f"Instance(s) were created with the '{driver_name}' driver, but the "
+                f"subcommand is using '{driver_from_cli}' driver."
+            )
             util.sysexit_with_message(msg)
 
         return driver_name
@@ -315,8 +315,8 @@ class Config(object, metaclass=NewInitCaller):
         try:
             return i.interpolate(stream, keep_string)
         except interpolation.InvalidInterpolation as e:
-            msg = "parsing config file '{}'.\n\n" "{}\n{}".format(
-                self.molecule_file, e.place, e.string
+            msg = (
+                f"parsing config file '{self.molecule_file}'.\n\n{e.place}\n{e.string}"
             )
             util.sysexit_with_message(msg)
         return ""
@@ -417,11 +417,11 @@ class Config(object, metaclass=NewInitCaller):
         env = set_env_from_file(os.environ.copy(), self.env_file)
         errors, data = schema_v3.pre_validate(data, env, MOLECULE_KEEP_STRING)
         if errors:
-            msg = "Failed to pre-validate.\n\n{}".format(errors)
+            msg = f"Failed to pre-validate.\n\n{errors}"
             util.sysexit_with_message(msg, detail=data)
 
     def _validate(self):
-        msg = "Validating schema {}.".format(self.molecule_file)
+        msg = f"Validating schema {self.molecule_file}."
         LOG.debug(msg)
 
         errors = schema_v3.validate(self.config)

@@ -60,13 +60,11 @@ class Role(base.Base):
         """
         role_name = self._command_args["role_name"]
         role_directory = os.getcwd()
-        msg = "Initializing new role {}...".format(role_name)
+        msg = f"Initializing new role {role_name}..."
         LOG.info(msg)
 
         if os.path.isdir(role_name):
-            msg = ("The directory {} exists. " "Cannot create new role.").format(
-                role_name
-            )
+            msg = f"The directory {role_name} exists. Cannot create new role."
             util.sysexit_with_message(msg)
 
         cmd = ["ansible-galaxy", "init", "-v", "--offline", role_name]
@@ -74,7 +72,7 @@ class Role(base.Base):
 
         if result.returncode != 0:
             util.sysexit_with_message(
-                "Galaxy failed to create role, returned %s" % result.returncode
+                f"Galaxy failed to create role, returned {result.returncode!s}"
             )
 
         scenario_base_directory = os.path.join(role_directory, role_name)
@@ -89,7 +87,7 @@ class Role(base.Base):
             )
 
         role_directory = os.path.join(role_directory, role_name)
-        msg = "Initialized role in {} successfully.".format(role_directory)
+        msg = f"Initialized role in {role_directory} successfully."
         LOG.info(msg)
 
 

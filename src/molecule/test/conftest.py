@@ -95,7 +95,7 @@ def get_molecule_file(path: str) -> str:
 
 
 def molecule_ephemeral_directory(_fixture_uuid) -> str:
-    project_directory = "test-project-{}".format(_fixture_uuid)
+    project_directory = f"test-project-{_fixture_uuid}"
     scenario_name = "test-instance"
 
     return ephemeral_directory(
@@ -126,10 +126,10 @@ def pytest_collection_modifyitems(items, config):
         )
     for test_counter, item in enumerate(items):
         cur_shard_id = test_counter % shards_num + 1
-        marker = getattr(pytest.mark, "shard_{}_of_{}".format(cur_shard_id, shards_num))
+        marker = getattr(pytest.mark, f"shard_{cur_shard_id}_of_{shards_num}")
         item.add_marker(marker)
     del marker
-    print("Running sharded test group #{} out of {}".format(shard_id, shards_num))
+    print(f"Running sharded test group #{shard_id} out of {shards_num}")
 
 
 @pytest.fixture(autouse=True)

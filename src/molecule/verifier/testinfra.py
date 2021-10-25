@@ -179,7 +179,7 @@ class Testinfra(Verifier):
         if self._testinfra_command is None:
             self.bake()
 
-        msg = "Executing Testinfra tests found in {}/...".format(self.directory)
+        msg = f"Executing Testinfra tests found in {self.directory}/..."
         LOG.info(msg)
 
         result = util.run_command(self._testinfra_command, debug=self._config.debug)

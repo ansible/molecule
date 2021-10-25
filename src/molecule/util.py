@@ -77,7 +77,7 @@ def print_environment_vars(env: Optional[Dict[str, str]]) -> None:
         combined_env.update(molecule_env)
         print_debug(
             "SHELL REPLAY",
-            " ".join(["{}={}".format(k, v) for (k, v) in sorted(combined_env.items())]),
+            " ".join([f"{k}={v}" for (k, v) in sorted(combined_env.items())]),
         )
         print()
 
@@ -274,7 +274,7 @@ def open_file(filename, mode="r"):
 
 def instance_with_scenario_name(instance_name, scenario_name):
     """Format instance name that includes scenario."""
-    return "{}-{}".format(instance_name, scenario_name)
+    return f"{instance_name}-{scenario_name}"
 
 
 def verbose_flag(options):
@@ -283,7 +283,7 @@ def verbose_flag(options):
     verbose_flag = []
     for i in range(0, 3):
         if options.get(verbose):
-            verbose_flag = ["-{}".format(verbose)]
+            verbose_flag = [f"-{verbose}"]
             del options[verbose]
             if options.get("verbose"):
                 del options["verbose"]
@@ -335,7 +335,7 @@ def validate_parallel_cmd_args(cmd_args):
 
 def _parallelize_platforms(config, run_uuid):
     def parallelize(platform):
-        platform["name"] = "{}-{}".format(platform["name"], run_uuid)
+        platform["name"] = f"{platform['name']}-{run_uuid}"
         return platform
 
     return [parallelize(platform) for platform in config["platforms"]]
@@ -357,7 +357,7 @@ def find_vcs_root(location="", dirs=(".git", ".hg", ".svn"), default=None) -> st
 def lookup_config_file(filename: str) -> Optional[str]:
     """Return config file PATH."""
     for path in [find_vcs_root(default="~"), "~"]:
-        f = os.path.expanduser("%s/%s" % (path, filename))
+        f = os.path.expanduser(f"{path}/{filename}")
         if os.path.isfile(f):
             LOG.info("Found config file %s", f)
             return f
@@ -385,8 +385,7 @@ def boolean(value: Any, strict=True) -> bool:
         return False
 
     raise TypeError(
-        "The value '%s' is not a valid boolean.  Valid booleans include: %s"
-        % (str(value), ", ".join(repr(i) for i in BOOLEANS))
+        f"The value '{value!s}' is not a valid boolean.  Valid booleans include: {', '.join(repr(i) for i in BOOLEANS)!s}"
     )
 
 

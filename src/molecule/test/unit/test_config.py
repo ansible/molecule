@@ -214,14 +214,14 @@ def test_reget_config(config_instance):
 
 def test_interpolate(patched_logger_critical, config_instance):
     string = "foo: $HOME"
-    x = "foo: {}".format(os.environ["HOME"])
+    x = f"foo: {os.environ['HOME']}"
 
     assert x == config_instance._interpolate(string, os.environ, None)
 
 
 def test_interpolate_curly(patched_logger_critical, config_instance):
     string = "foo: ${HOME}"
-    x = "foo: {}".format(os.environ["HOME"])
+    x = f"foo: {os.environ['HOME']}"
 
     assert x == config_instance._interpolate(string, os.environ, None)
 
@@ -242,14 +242,14 @@ def test_interpolate_default_colon(patched_logger_critical, config_instance):
 
 def test_interpolate_default_variable(patched_logger_critical, config_instance):
     string = "foo: ${NONE:-$HOME}"
-    x = "foo: {}".format(os.environ["HOME"])
+    x = f"foo: {os.environ['HOME']}"
 
     assert x == config_instance._interpolate(string, os.environ, None)
 
 
 def test_interpolate_curly_default_variable(patched_logger_critical, config_instance):
     string = "foo: ${NONE-$HOME}"
-    x = "foo: {}".format(os.environ["HOME"])
+    x = f"foo: {os.environ['HOME']}"
 
     assert x == config_instance._interpolate(string, os.environ, None)
 
@@ -265,10 +265,10 @@ def test_interpolate_raises_on_failed_interpolation(
     assert 1 == e.value.code
 
     msg = (
-        "parsing config file '{}'.\n\n"
+        f"parsing config file '{config_instance.molecule_file}'.\n\n"
         "Invalid placeholder in string: line 1, col 1\n"
         "$6$8I5Cfmpr$kGZB"
-    ).format(config_instance.molecule_file)
+    )
     patched_logger_critical.assert_called_once_with(msg)
 
 
