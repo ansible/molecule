@@ -121,7 +121,7 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
             # handle that behavior here.
             if command_args.get("destroy") == "always":
                 msg = (
-                    f"An error occurred during the scenario.config.subcommand sequence action: "
+                    f"An error occurred during the {scenario.config.subcommand} sequence action: "
                     f"'{scenario.config.action}'. Cleaning up."
                 )
                 LOG.warning(msg)
