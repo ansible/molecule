@@ -31,7 +31,7 @@ def _command_args():
         "dependency_name": "galaxy",
         "driver_name": "delegated",
         "provisioner_name": "ansible",
-        "role_name": "test-role",
+        "role_name": "acme.test_role",
         "scenario_name": "default",
         "subcommand": __name__,
         "verifier_name": "ansible",
@@ -46,13 +46,13 @@ def _instance(_command_args):
 def test_execute(temp_dir, _instance, patched_logger_info):
     _instance.execute()
 
-    msg = "Initializing new role test-role..."
+    msg = "Initializing new role test_role..."
     patched_logger_info.assert_any_call(msg)
 
-    assert os.path.isdir("./test-role")
-    assert os.path.isdir("./test-role/molecule/default")
+    assert os.path.isdir("./test_role")
+    assert os.path.isdir("./test_role/molecule/default")
 
-    role_directory = os.path.join(temp_dir.strpath, "test-role")
+    role_directory = os.path.join(temp_dir.strpath, "test_role")
     msg = f"Initialized role in {role_directory} successfully."
     patched_logger_info.assert_any_call(msg)
 
@@ -65,5 +65,5 @@ def test_execute_role_exists(temp_dir, _instance, patched_logger_critical):
 
     assert 1 == e.value.code
 
-    msg = "The directory test-role exists. Cannot create new role."
+    msg = "The directory test_role exists. Cannot create new role."
     patched_logger_critical.assert_called_once_with(msg)
