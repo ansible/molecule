@@ -236,7 +236,7 @@ def test_execute(
 
     patched_run_command.assert_called_once_with("patched-command", debug=False)
 
-    msg = "Executing Testinfra tests found in {}/...".format(_instance.directory)
+    msg = f"Executing Testinfra tests found in {_instance.directory}/..."
     msg2 = "Verifier completed successfully."
     calls = [call(msg), call(msg2)]
     patched_logger_info.assert_has_calls(calls)

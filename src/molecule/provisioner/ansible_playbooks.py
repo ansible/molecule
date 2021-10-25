@@ -146,8 +146,9 @@ class AnsiblePlaybooks(object):
             )
             if os.path.isfile(fb_playbook):
                 LOG.warning(
-                    "%s was deprecated, rename it to %s"
-                    % (pb_rename_map[basename], basename)
+                    "%s was deprecated, rename it to %s",
+                    pb_rename_map[basename],
+                    basename,
                 )
                 playbook = fb_playbook
         return playbook

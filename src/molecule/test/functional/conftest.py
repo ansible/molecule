@@ -50,9 +50,7 @@ def require_installed_package():
     try:
         molecule.version("molecule")
     except Exception as e:
-        pytest.fail(
-            "Functional tests require molecule package to be installed: {}".format(e)
-        )
+        pytest.fail(f"Functional tests require molecule package to be installed: {e}")
 
 
 def _env_vars_exposed(env_vars, env=os.environ):
@@ -196,11 +194,11 @@ def login(login_args, scenario_name="default"):
 
     for instance, regexp in login_args:
         if len(login_args) > 1:
-            child_cmd = "molecule login --host {} --scenario-name {}".format(
-                instance, scenario_name
+            child_cmd = (
+                f"molecule login --host {instance} --scenario-name {scenario_name}"
             )
         else:
-            child_cmd = "molecule login --scenario-name {}".format(scenario_name)
+            child_cmd = f"molecule login --scenario-name {scenario_name}"
         child = pexpect.spawn(child_cmd)
         child.expect(regexp)
         # If the test returns and doesn't hang it succeeded.

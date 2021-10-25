@@ -157,12 +157,12 @@ class Delegated(Driver):
             connection_options = " ".join(self.ssh_connection_options)
 
             return (
-                "ssh {{address}} "
-                "-l {{user}} "
-                "-p {{port}} "
-                "-i {{identity_file}} "
-                "{}"
-            ).format(connection_options)
+                "ssh {address} "
+                "-l {user} "
+                "-p {port} "
+                "-i {identity_file} "
+                f"{connection_options}"
+            )
 
     @property
     def default_safe_files(self):

@@ -102,7 +102,7 @@ class AnsiblePlaybook(object):
             self.bake()
 
         if not self._playbook:
-            LOG.warning("Skipping, %s action has no playbook." % self._config.action)
+            LOG.warning("Skipping, %s action has no playbook.", self._config.action)
             return
 
         with warnings.catch_warnings(record=True) as warns:

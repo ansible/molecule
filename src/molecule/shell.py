@@ -97,10 +97,10 @@ def print_version(ctx, param, value):
         " configurations in the specified order,"
         " and deep merge each scenario's "
         "molecule.yml on top. By default Molecule is looking for "
-        "'{}' "
+        f"'{LOCAL_CONFIG_SEARCH}' "
         "in current VCS repository and if not found it will look "
-        "in user home. ({})."
-    ).format(LOCAL_CONFIG_SEARCH, LOCAL_CONFIG),
+        f"in user home. ({LOCAL_CONFIG})."
+    ),
 )
 @click.option(
     "--env-file",

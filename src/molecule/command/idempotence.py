@@ -86,9 +86,8 @@ class Idempotence(base.Base):
             msg = "Idempotence completed successfully."
             LOG.info(msg)
         else:
-            msg = (
-                "Idempotence test failed because of the following tasks:\n{}"
-            ).format("\n".join(self._non_idempotent_tasks(output)))
+            details = "\n".join(self._non_idempotent_tasks(output))
+            msg = f"Idempotence test failed because of the following tasks:\n{details}"
             util.sysexit_with_message(msg)
 
     def _is_idempotent(self, output):
@@ -132,7 +131,7 @@ class Idempotence(base.Base):
             elif line.startswith("changed"):
                 host_name = re.search(r"\[(.*)\]", line).groups()[0]
                 task_name = re.search(r"\[(.*)\]", task_line).groups()[0]
-                res.append("* [{}] => {}".format(host_name, task_name))
+                res.append(f"* [{host_name}] => {task_name}")
 
         return res
 
@@ -143,9 +142,7 @@ class Idempotence(base.Base):
     "--scenario-name",
     "-s",
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help="Name of the scenario to target. ({})".format(
-        base.MOLECULE_DEFAULT_SCENARIO_NAME
-    ),
+    help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
 @click.argument("ansible_args", nargs=-1, type=click.UNPROCESSED)
 def idempotence(ctx, scenario_name, ansible_args):  # pragma: no cover

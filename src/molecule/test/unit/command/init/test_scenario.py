@@ -58,7 +58,7 @@ def test_execute(temp_dir, _instance, patched_logger_info):
     assert os.path.isdir("./molecule/test-scenario")
 
     scenario_directory = os.path.join(temp_dir.strpath, "molecule", "test-scenario")
-    msg = "Initialized scenario in {} successfully.".format(scenario_directory)
+    msg = f"Initialized scenario in {scenario_directory} successfully."
     patched_logger_info.assert_any_call(msg)
 
 
