@@ -53,7 +53,7 @@ def test_execute(temp_dir, _instance, patched_logger_info):
     assert os.path.isdir("./test-role/molecule/default")
 
     role_directory = os.path.join(temp_dir.strpath, "test-role")
-    msg = "Initialized role in {} successfully.".format(role_directory)
+    msg = f"Initialized role in {role_directory} successfully."
     patched_logger_info.assert_any_call(msg)
 
 

@@ -102,22 +102,23 @@ class Login(base.Base):
 
     def _get_hostname(self, hosts):
         hostname = self._config.command_args.get("host")
+        host_list = "\n".join(sorted(hosts))
         if hostname is None:
             if len(hosts) == 1:
                 hostname = hosts[0]
             else:
                 msg = (
-                    "There are {} running hosts. Please specify "
+                    f"There are {len(hosts)} running hosts. Please specify "
                     "which with --host.\n\n"
-                    "Available hosts:\n{}".format(len(hosts), "\n".join(sorted(hosts)))
+                    f"Available hosts:\n{host_list}"
                 )
                 util.sysexit_with_message(msg)
         match = [x for x in hosts if x.startswith(hostname)]
         if len(match) == 0:
             msg = (
-                "There are no hosts that match '{}'.  You "
+                f"There are no hosts that match '{hostname}'.  You "
                 "can only login to valid hosts."
-            ).format(hostname)
+            )
             util.sysexit_with_message(msg)
         elif len(match) != 1:
             # If there are multiple matches, but one of them is an exact string
@@ -126,11 +127,9 @@ class Login(base.Base):
                 match = [hostname]
             else:
                 msg = (
-                    "There are {} hosts that match '{}'. You "
+                    f"There are {len(match)} hosts that match '{hostname}'. You "
                     "can only login to one at a time.\n\n"
-                    "Available hosts:\n{}".format(
-                        len(match), hostname, "\n".join(sorted(hosts))
-                    )
+                    f"Available hosts:\n{host_list}"
                 )
                 util.sysexit_with_message(msg)
 
@@ -143,7 +142,7 @@ class Login(base.Base):
         login_options["lines"] = lines
         login_cmd = self._config.driver.login_cmd_template.format(**login_options)
 
-        cmd = "/usr/bin/env {}".format(login_cmd)
+        cmd = f"/usr/bin/env {login_cmd}"
         run(cmd, shell=True)
 
 
@@ -154,9 +153,7 @@ class Login(base.Base):
     "--scenario-name",
     "-s",
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    help="Name of the scenario to target. ({})".format(
-        base.MOLECULE_DEFAULT_SCENARIO_NAME
-    ),
+    help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
 def login(ctx, host, scenario_name):  # pragma: no cover
     """Log in to one instance."""
