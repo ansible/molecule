@@ -92,7 +92,7 @@ class Scenarios(object):
         """
         scenario_names = [c.scenario.name for c in self._configs]
         if self._scenario_name not in scenario_names:
-            msg = ("Scenario '{}' not found.  " "Exiting.").format(self._scenario_name)
+            msg = f"Scenario '{self._scenario_name}' not found.  Exiting."
             util.sysexit_with_message(msg)
 
     def _filter_for_scenario(self):

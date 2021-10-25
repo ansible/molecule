@@ -328,7 +328,7 @@ class Validator(cerberus.Validator):
             data = (doc[field] for doc in self.root_document[root_key])
             for key, count in collections.Counter(data).items():
                 if count > 1:
-                    msg = "'{}' is not unique".format(key)
+                    msg = f"'{key}' is not unique"
                     self._error(field, msg)
 
     def _validate_disallowed(self, disallowed, field, value):

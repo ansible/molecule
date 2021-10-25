@@ -100,7 +100,7 @@ class TemplateWithDefaults(string.Template):
             if named is not None:
                 # TODO(retr0h): This needs to be better handled.
                 if keep_string and named.startswith(keep_string):
-                    return "$%s" % named
+                    return f"${named}"
                 if ":-" in named:
                     var, _, default = named.partition(":-")
                     # If default is also a variable
@@ -114,7 +114,7 @@ class TemplateWithDefaults(string.Template):
                         default = mapping.get(default[1:], "")
                     return mapping.get(var, default)
                 val = mapping.get(named, "")
-                return "%s" % (val,)
+                return f"{val}"
             if mo.group("escaped") is not None:
                 return self.delimiter
             if mo.group("invalid") is not None:

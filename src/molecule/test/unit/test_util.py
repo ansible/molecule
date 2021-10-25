@@ -205,7 +205,7 @@ def test_write_file(temp_dir):
     util.write_file(dest_file, contents)
     with util.open_file(dest_file) as stream:
         data = stream.read()
-    x = "# Molecule managed\n\n{}".format(contents)
+    x = f"# Molecule managed\n\n{contents}"
 
     assert x == data
 

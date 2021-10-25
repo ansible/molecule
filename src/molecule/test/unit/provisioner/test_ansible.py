@@ -631,7 +631,7 @@ def test_link_vars_raises_when_source_not_found(_instance, patched_logger_critic
     assert 1 == e.value.code
 
     source = os.path.join(_instance._config.scenario.directory, os.path.pardir, "bar")
-    msg = "The source path '{}' does not exist.".format(source)
+    msg = f"The source path '{source}' does not exist."
     patched_logger_critical.assert_called_once_with(msg)
 
 
