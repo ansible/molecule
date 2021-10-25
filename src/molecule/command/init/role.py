@@ -72,7 +72,7 @@ class Role(base.Base):
 
         if result.returncode != 0:
             util.sysexit_with_message(
-                f"Galaxy failed to create role, returned {result.returncode}"
+                f"Galaxy failed to create role, returned {result.returncode!s}"
             )
 
         scenario_base_directory = os.path.join(role_directory, role_name)
