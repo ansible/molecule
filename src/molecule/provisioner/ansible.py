@@ -459,6 +459,7 @@ class Ansible(base.Base):
                         *os.environ.get("ANSIBLE_ROLES_PATH", "").split(":"),
                     ]
                 ),
+                self._config.ansible_collections_path: ":".join(collections_path_list),
                 "ANSIBLE_LIBRARY": ":".join(self._get_modules_directories()),
                 "ANSIBLE_FILTER_PLUGINS": ":".join(
                     [
