@@ -38,7 +38,12 @@ from ansible_compat.ports import cache
 from rich.syntax import Syntax
 from subprocess_tee import run
 
+# This must be BEFORE molecule.console is imported below.
+SYS_STDOUT = sys.stdout
 from molecule.console import console
+
+CONSOLE_STDOUT = sys.stdout
+
 from molecule.constants import MOLECULE_HEADER
 
 LOG = logging.getLogger(__name__)
@@ -151,6 +156,7 @@ def run_command(
     if debug:
         print_environment_vars(env)
 
+    sys.stdout = SYS_STDOUT
     result = run(
         args,
         env=env,
@@ -160,6 +166,8 @@ def run_command(
         quiet=quiet,
         cwd=cwd,
     )
+    sys.stdout = CONSOLE_STDOUT
+
     if result.returncode != 0 and check:
         raise CalledProcessError(
             returncode=result.returncode,
