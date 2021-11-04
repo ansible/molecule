@@ -42,7 +42,8 @@ from molecule.constants import MOLECULE_HEADER
 
 # This must be BEFORE molecule.console is imported below.
 SYS_STDOUT = sys.stdout
-from molecule.console import console  # pylint: disable=wrong-import-position
+# pylint: disable=wrong-import-position
+from molecule.console import console  # noqa: E402
 
 CONSOLE_STDOUT = sys.stdout
 
