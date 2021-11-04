@@ -38,13 +38,13 @@ from ansible_compat.ports import cache
 from rich.syntax import Syntax
 from subprocess_tee import run
 
+from molecule.constants import MOLECULE_HEADER
+
 # This must be BEFORE molecule.console is imported below.
 SYS_STDOUT = sys.stdout
-from molecule.console import console
+from molecule.console import console  # pylint: disable=wrong-import-position
 
 CONSOLE_STDOUT = sys.stdout
-
-from molecule.constants import MOLECULE_HEADER
 
 LOG = logging.getLogger(__name__)
 
