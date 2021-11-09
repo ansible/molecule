@@ -38,9 +38,9 @@ jobs:
           - tox_env: py39
             PREFIX: PYTEST_REQPASS=449
             python-version: 3.9
-          - tox_env: py36-devel
+          - tox_env: py38-devel
             PREFIX: PYTEST_REQPASS=449
-            python-version: 3.6
+            python-version: 3.8
           - tox_env: py39-devel
             PREFIX: PYTEST_REQPASS=449
             python-version: 3.9
