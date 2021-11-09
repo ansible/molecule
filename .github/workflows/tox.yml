@@ -47,6 +47,8 @@ jobs:
           - tox_env: py310-devel
             PREFIX: PYTEST_REQPASS=449
             python-version: "3.10"
+            # see https://github.com/ansible-community/molecule/issues/3291
+            experimental: true
           - tox_env: packaging
             python-version: 3.9
           - tox_env: eco
@@ -84,3 +86,14 @@ jobs:
         run: |
           echo "${{ matrix.PREFIX }} tox -e ${{ matrix.tox_env }}"
           ${{ matrix.PREFIX }} tox -e ${{ matrix.tox_env }}
+        continue-on-error: ${{ matrix.experimental }}
+
+  check:
+    needs:
+      - build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report success of the test matrix
+        run: >-
+          print("All's good")
+        shell: python
