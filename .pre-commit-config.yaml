@@ -9,6 +9,10 @@ exclude: |
         ^docs/conf.py$
     )
 repos:
+  - repo: https://github.com/PyCQA/doc8
+    rev: '0.10.1'
+    hooks:
+      - id: doc8
   - repo: https://github.com/codespell-project/codespell
     rev: v2.1.0
     hooks:
@@ -85,13 +89,13 @@ repos:
     hooks:
     - id: pip-compile
       name: pip-compile
-      entry: pip-compile --no-annotate --output-file=constraints.txt setup.cfg --extra test --extra yamllint
+      entry: pip-compile --strip-extras --no-annotate --output-file=constraints.txt setup.cfg --extra test --extra yamllint
       language: system
       files: ^(setup\.cfg|=constraints\.txt)$
       pass_filenames: false
     - id: pip-compile-upgrade
       name: pip-compile-upgrade
-      entry: pip-compile -q --upgrade --no-annotate --output-file=constraints.txt setup.cfg --extra test --extra yamllint
+      entry: pip-compile --strip-extras -q --upgrade --no-annotate --output-file=constraints.txt setup.cfg --extra test --extra yamllint
       language: system
       files: ^(setup\.cfg|=constraints\.txt)$
       pass_filenames: false

@@ -38,12 +38,15 @@ jobs:
           - tox_env: py39
             PREFIX: PYTEST_REQPASS=449
             python-version: 3.9
-          - tox_env: py36-devel
+          - tox_env: py310
             PREFIX: PYTEST_REQPASS=449
-            python-version: 3.6
-          - tox_env: py39-devel
+            python-version: "3.10"
+          - tox_env: py38-devel
             PREFIX: PYTEST_REQPASS=449
-            python-version: 3.9
+            python-version: 3.8
+          - tox_env: py310-devel
+            PREFIX: PYTEST_REQPASS=449
+            python-version: "3.10"
           - tox_env: packaging
             python-version: 3.9
           - tox_env: eco
@@ -60,7 +63,7 @@ jobs:
           sudo apt-get remove -y ansible \
           && sudo apt-get update \
           && sudo apt-get install -y libvirt-dev python3-cryptography python3-jinja2 python3-yaml virtualenv \
-          && pip3 install --user ansible-base \
+          && pip3 install --user ansible-core \
           && echo "$HOME/.local/bin" >> $GITHUB_PATH
         # https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#adding-a-system-path
       - name: Validate that ansible works

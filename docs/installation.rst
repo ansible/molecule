@@ -40,13 +40,17 @@ Pip
 
   Ansible is not listed as a direct dependency of molecule package because
   we only call it as a command line tool. You may want to install it
-  using your distribution package installer. If you want to also install a
-  compatible  version of ansible, make use of provided ``ansible`` or
-  ``ansible-base`` extras:
+  using your distribution package installer.
 
   .. code-block:: bash
 
-      $ python3 -m pip install "molecule[ansible]"  # or molecule[ansible-base]
+      $ python3 -m pip install molecule ansible-core
+
+.. warning::
+
+  The old ``ansible`` and ``ansible-base`` pip extras are now deprecated and will
+  be removed in molecule 3.6.0. If you use them, please switch to explicit
+  package mention to avoid problem with newer versions of molecule.
 
 Keep in mind that on selinux supporting systems, if you install into a virtual
 environment, you may face :gh:`issue <ansible/ansible/issues/34340>` even
