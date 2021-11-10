@@ -21,10 +21,11 @@ The default Molecule Docker driver executes Ansible playbooks as the root user.
 If your workflow requires a non-privileged user, then adapt ``molecule.yml``
 and ``Dockerfile.j2`` as follows.
 
-Append the following code block to the end of ``Dockerfile.j2``. It creates an ``ansible``
-user with passwordless sudo privileges.
+Append the following code block to the end of ``Dockerfile.j2``. It creates an
+``ansible`` user with passwordless sudo privileges.
 
-The variable ``SUDO_GROUP`` depends on the target distribution. ``centos:8`` uses ``wheel``.
+The variable ``SUDO_GROUP`` depends on the target distribution. ``centos:8``
+uses ``wheel``.
 
 .. code-block:: docker
 
@@ -149,8 +150,8 @@ a privileged Docker host by adding some required settings:
             mode: a=r,u+w
             owner: root
 
-Another option is to configure the same settings directly into the ``molecule.yml``
-definition:
+Another option is to configure the same settings directly into the
+``molecule.yml`` definition:
 
 .. code-block:: yaml
 
@@ -186,8 +187,9 @@ and command as follows.
         volumes:
           - /sys/fs/cgroup:/sys/fs/cgroup:ro
 
-Note that centos:8 image contains a `seccomp security profile for Docker`_ which enables the use of systemd.
-When needed, such security profiles can be reused (for example `the one available in Fedora`_):
+Note that centos:8 image contains a `seccomp security profile for Docker`_
+which enables the use of systemd. When needed, such security profiles can be
+reused (for example `the one available in Fedora`_):
 
 .. code-block:: yaml
 
@@ -204,7 +206,8 @@ When needed, such security profiles can be reused (for example `the one availabl
           - /sys/fs/cgroup:/sys/fs/cgroup:ro
 
 The developer can also opt to `start the container with extended privileges`_,
-by either giving it ``SYS_ADMIN`` capabilities or running it in ``privileged`` mode.
+by either giving it ``SYS_ADMIN`` capabilities or running it in ``privileged``
+mode.
 
 .. important::
 
@@ -213,7 +216,8 @@ by either giving it ``SYS_ADMIN`` capabilities or running it in ``privileged`` m
     underlying system.
 
 To limit the scope of the extended privileges, grant ``SYS_ADMIN``
-capabilities along with the same image, command, and volumes as shown in the ``non-privileged`` example.
+capabilities along with the same image, command, and volumes as shown in the
+``non-privileged`` example.
 
 .. code-block:: yaml
 
@@ -226,8 +230,8 @@ capabilities along with the same image, command, and volumes as shown in the ``n
         volumes:
           - /sys/fs/cgroup:/sys/fs/cgroup:ro
 
-To start the container in ``privileged`` mode, set the privileged flag along with the
-same image and command as shown in the ``non-privileged`` example.
+To start the container in ``privileged`` mode, set the privileged flag along
+with the same image and command as shown in the ``non-privileged`` example.
 
 .. code-block:: yaml
 
@@ -275,9 +279,9 @@ Molecule can test complex scenarios leveraging this technique.
     $ cd monolith-repo/roles/baz
     $ molecule test
 
-Molecule is simply setting the ``ANSIBLE_*`` environment variables.  To view the
-environment variables set during a Molecule operation pass the ``--debug``
-flag.
+Molecule is simply setting the ``ANSIBLE_*`` environment variables.
+To view the environment variables set during a Molecule operation pass the
+``--debug`` flag.
 
 .. code-block:: bash
 
