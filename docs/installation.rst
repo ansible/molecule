@@ -48,7 +48,7 @@ Pip
 
 .. warning::
 
-  The old `ansible` and `ansible-base` pip extras are now deprecated and will
+  The old ``ansible`` and ``ansible-base`` pip extras are now deprecated and will
   be removed in molecule 3.6.0. If you use them, please switch to explicit
   package mention to avoid problem with newer versions of molecule.
 
