@@ -217,7 +217,7 @@ Jenkins Pipeline
 ^^^^^^^^^^^^^^^^
 
 `Jenkins`_ projects can also be defined in a file, by default named
-`Jenkinsfile` in the top folder of a repository. Two syntax are available,
+``Jenkinsfile`` in the top folder of a repository. Two syntax are available,
 Declarative and Scripted. Here is an example using the declarative syntax,
 setting up a virtualenv and testing an Ansible role via Molecule.
 
