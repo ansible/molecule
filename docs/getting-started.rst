@@ -32,16 +32,16 @@ To generate a new role with Molecule, simply run:
 
 .. code-block:: bash
 
-    $ molecule init role my-new-role --driver-name docker
+    $ molecule init role my_new_role --driver-name docker
 
-You should then see a ``my-new-role`` folder in your current directory.
+You should then see a ``my_new_role`` folder in your current directory.
 
 .. note::
 
     For future reference, if you want to initialize Molecule within an
     existing role, you would use the ``molecule init scenario -r
-    my-role-name`` command from within the role's directory (e.g.
-    ``my-role-name/``).
+    my_role_name`` command from within the role's directory (e.g.
+    ``my_role_name/``).
 
 Molecule Scenarios
 ------------------
