@@ -296,6 +296,14 @@ def test_command_completion(shell: str) -> None:
     env = os.environ.copy()
     env["_MOLECULE_COMPLETE"] = f"{shell}_source"
 
+    if "bash" in shell:
+        bash_version = util.run_command(["bash", "--version"]).stdout.split()[3][0:3]
+
     result = util.run_command(["molecule"], env=env)
-    assert result.returncode == 0
-    assert "Found config file" not in result.stdout
+
+    if "bash" in shell and (float(bash_version) < 4.4):
+        assert result.returncode == 1
+        assert "Found config file" not in result.stdout
+    else:
+        assert result.returncode == 0
+        assert "Found config file" not in result.stdout
