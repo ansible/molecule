@@ -143,6 +143,7 @@ def run_command(
         else:
             env = cmd.env or env
         args = cmd.cmd
+        cwd = cmd.cwd
         stdout = cmd.stdout
         stderr = cmd.stderr
     else:
