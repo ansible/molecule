@@ -1,24 +1,29 @@
+prune .github
 prune asset
-include *.md
-include *.py
-include *.txt
-include *.yaml
-include *.yml
+prune playbooks
+prune snap
+prune zuul.d
+prune docs/docstree
+include .config/molecule/config.yml
 include .ansible.cfg
 include .coveragerc
+include .git_archival.txt
+include .pre-commit-config.yaml
 include .pylintrc
+include .pyup.yml
+include .readthedocs.yml
 include .yamllint
+include DCO_1_1.md
+include bindep.txt
+include conftest.py
+include constraints.txt
 include mypy.ini
 include tox.ini
-include src/molecule/test/functional/.ansible-lint
-include .config/molecule/config.yml
-recursive-include docs *.ico
-recursive-include docs *.png
-recursive-include docs *.py
-recursive-include docs *.rst
+include docs/_static/images/*.*
+include docs/*.*
+recursive-include src .ansible-lint
 recursive-include src *.flake8
 recursive-include src *.j2
-recursive-include src *.json
 recursive-include src *.md
 recursive-include src *.py
 recursive-include src *.rst
@@ -26,12 +31,7 @@ recursive-include src *.typed
 recursive-include src *.yaml
 recursive-include src *.yamllint
 recursive-include src *.yml
-recursive-include playbooks *.yaml
-recursive-include snap *.yaml
-recursive-include tools *.sh
+recursive-include src cookiecutter.json
 recursive-include src/molecule/test/scenarios extra-host
 recursive-include src/molecule/test/scenarios hosts
-recursive-exclude .github *.*
-recursive-exclude .mypy_cache *.*
-recursive-exclude docs/docstree/html *.*
-recursive-exclude zuul.d *.*
+recursive-include tools *.sh
