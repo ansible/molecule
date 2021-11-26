@@ -146,6 +146,7 @@ def block_on_serial_mark(request):
     # https://github.com/pytest-dev/pytest-xdist/issues/385
     os.makedirs(".tox", exist_ok=True)
     if request.node.get_closest_marker("serial"):
+        # pylint: disable=abstract-class-instantiated
         with FileLock(".tox/semaphore.lock"):
             yield
     else:
