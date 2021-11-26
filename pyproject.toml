@@ -15,5 +15,34 @@ skip-string-normalization = false
 profile = "black"
 known_first_party = "molecule"
 
+[tool.pytest.ini_options]
+markers = [
+    "serial: Run this test serially via filelock.",
+    "extensive: marks tests that we want to skip by default, as they are indirectly covered by other tests"
+]
+norecursedirs = [
+  ".eggs",
+  ".tox",
+  "build",
+  "dist",
+  "doc",
+  "src/molecule/cookiecutter/scenario",
+  "src/molecule/test/resources",
+  "src/molecule/test/scenarios",
+]
+
+addopts = "--doctest-modules --durations 10 --color=yes"
+doctest_optionflags = [
+  "ALLOW_UNICODE",
+  "ELLIPSIS"
+]
+junit_suite_name = "molecule_test_suite"
+testpaths = "src/molecule/test/"
+filterwarnings = [
+    # treat warnings as errors unless we add them below
+    "error"
+    # ignore::UserWarning
+]
+
 [tool.setuptools_scm]
 local_scheme = "no-local-version"
