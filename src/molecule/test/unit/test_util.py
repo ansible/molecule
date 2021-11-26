@@ -285,6 +285,7 @@ def test_verbose_flag():
     options = {"verbose": True, "v": True}
 
     assert ["-v"] == util.verbose_flag(options)
+    # pylint: disable=use-implicit-booleaness-not-comparison
     assert {} == options
 
 
@@ -292,12 +293,14 @@ def test_verbose_flag_extra_verbose():
     options = {"verbose": True, "vvv": True}
 
     assert ["-vvv"] == util.verbose_flag(options)
+    # pylint: disable=use-implicit-booleaness-not-comparison
     assert {} == options
 
 
 def test_verbose_flag_preserves_verbose_option():
     options = {"verbose": True}
 
+    # pylint: disable=use-implicit-booleaness-not-comparison
     assert [] == util.verbose_flag(options)
     assert {"verbose": True} == options
 
