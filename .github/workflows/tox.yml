@@ -86,7 +86,7 @@ jobs:
         run: |
           echo "${{ matrix.PREFIX }} tox -e ${{ matrix.tox_env }}"
           ${{ matrix.PREFIX }} tox -e ${{ matrix.tox_env }}
-        continue-on-error: ${{ matrix.experimental }}
+        continue-on-error: ${{ matrix.experimental || false }}
 
   check:
     needs:
