@@ -21,6 +21,7 @@
 
 import logging
 import os
+import re
 
 import click
 
@@ -58,8 +59,22 @@ class Role(base.Base):
 
         :return: None
         """
+        namespace = None
         role_name = self._command_args["role_name"]
         role_directory = os.getcwd()
+
+        # outside collections our tooling needs a namespace.
+        if not os.path.isfile("../galaxy.yml"):
+            name_re = re.compile(r"^[a-z][a-z0-9_]+\.[a-z][a-z0-9_]+$")
+
+            if not name_re.match(role_name):
+                util.sysexit_with_message(
+                    "Outside collections you must mention role "
+                    "namespace like: molecule init role 'acme.myrole'. Be sure "
+                    "you use only lowercase characters and underlines. See https://galaxy.ansible.com/docs/contributing/creating_role.html"
+                )
+            namespace, role_name = role_name.split(".")
+
         msg = f"Initializing new role {role_name}..."
         LOG.info(msg)
 
@@ -75,12 +90,27 @@ class Role(base.Base):
                 f"Galaxy failed to create role, returned {result.returncode!s}"
             )
 
+        if namespace:
+            # we need to inject namespace info into meta/main.yml
+            cmd = [
+                "ansible",
+                "localhost",
+                "-o",  # one line output
+                "-m",
+                "lineinfile",
+                "-a",
+                f'path={role_name}/meta/main.yml line="  namespace: {namespace}" insertafter="  author: your name"',
+            ]
+            util.run_command(cmd, check=True)
+
         scenario_base_directory = os.path.join(role_directory, role_name)
         templates = [
             api.drivers()[self._command_args["driver_name"]].template_dir(),
             api.verifiers()[self._command_args["verifier_name"]].template_dir(),
         ]
-        self._process_templates("molecule", self._command_args, role_directory)
+        self._process_templates(
+            "molecule", {**self._command_args, "role_name": role_name}, role_directory
+        )
         for template in templates:
             self._process_templates(
                 template, self._command_args, scenario_base_directory
@@ -134,7 +164,7 @@ def role(
     role_name,
     verifier_name,
 ):  # pragma: no cover
-    """Initialize a new role for use with Molecule."""
+    """Initialize a new role for use with Molecule, namespace is required outside collections, like acme.myrole."""
     command_args = {
         "dependency_name": dependency_name,
         "driver_name": driver_name,

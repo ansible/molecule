@@ -9,16 +9,20 @@ exclude: |
         ^docs/conf.py$
     )
 repos:
+  - repo: https://github.com/PyCQA/doc8
+    rev: '0.10.1'
+    hooks:
+      - id: doc8
   - repo: https://github.com/codespell-project/codespell
     rev: v2.1.0
     hooks:
       - id: codespell
   - repo: https://github.com/PyCQA/isort
-    rev: 5.9.3
+    rev: 5.10.1
     hooks:
       - id: isort
   - repo: https://github.com/psf/black
-    rev: 21.10b0
+    rev: 21.11b1
     hooks:
       - id: black
         language_version: python3
@@ -71,13 +75,21 @@ repos:
           - tenacity
           - types-PyYAML
           - types-dataclasses
+          - types-filelock
           - types-setuptools
   - repo: https://github.com/PyCQA/pylint
-    rev: v2.11.1
+    rev: v2.12.1
     hooks:
       - id: pylint
         additional_dependencies:
+          - ansible-compat
+          - cerberus
+          - click
+          - click-help-colors
+          - cookiecutter
           - enrich>=1.2.5
+          - filelock
+          - pexpect
           - subprocess-tee>=0.2.0
           - testinfra
   - # keep at bottom as these are slower
@@ -85,13 +97,13 @@ repos:
     hooks:
     - id: pip-compile
       name: pip-compile
-      entry: pip-compile --no-annotate --output-file=constraints.txt setup.cfg --extra test --extra yamllint
+      entry: pip-compile --strip-extras --no-annotate --output-file=constraints.txt setup.cfg --extra test --extra yamllint
       language: system
       files: ^(setup\.cfg|=constraints\.txt)$
       pass_filenames: false
     - id: pip-compile-upgrade
       name: pip-compile-upgrade
-      entry: pip-compile -q --upgrade --no-annotate --output-file=constraints.txt setup.cfg --extra test --extra yamllint
+      entry: pip-compile --strip-extras -q --upgrade --no-annotate --output-file=constraints.txt setup.cfg --extra test --extra yamllint
       language: system
       files: ^(setup\.cfg|=constraints\.txt)$
       pass_filenames: false

@@ -32,16 +32,16 @@ To generate a new role with Molecule, simply run:
 
 .. code-block:: bash
 
-    $ molecule init role my-new-role --driver-name docker
+    $ molecule init role my_new_role --driver-name docker
 
-You should then see a ``my-new-role`` folder in your current directory.
+You should then see a ``my_new_role`` folder in your current directory.
 
 .. note::
 
     For future reference, if you want to initialize Molecule within an
     existing role, you would use the ``molecule init scenario -r
-    my-role-name`` command from within the role's directory (e.g.
-    ``my-role-name/``).
+    my_role_name`` command from within the role's directory (e.g.
+    ``my_role_name/``).
 
 Molecule Scenarios
 ------------------
@@ -78,9 +78,12 @@ directories:
   role. Molecule will invoke this playbook with ``ansible-playbook`` and run it
   against an instance created by the driver.
 
-* ``verify.yml`` is the Ansible file used for testing as Ansible is the default :ref:`verifier`. This
-  allows you to write specific tests against the state of the container after
-  your role has finished executing. Other verifier tools are available (Note that :std:doc:`TestInfra <testinfra:index>` was the default verifier prior to molecule version 3).
+* ``verify.yml`` is the Ansible file used for testing as Ansible is the
+  default :ref:`verifier`. This allows you to write specific tests against the
+  state of the container after your role has finished executing. Other
+  verifier tools are available (Note that
+  :std:doc:`TestInfra <testinfra:index>` was the default verifier prior to
+  molecule version 3).
 
 .. note::
 
@@ -132,8 +135,9 @@ keys represent the high level components that Molecule provides. These are:
 * The :ref:`root_scenario` definition. Molecule relies on this configuration
   to control the scenario sequence order.
 
-* The :ref:`verifier` framework. Molecule uses Ansible by default to provide a way to write specific state
-  checking tests (such as deployment smoke tests) on the target instance.
+* The :ref:`verifier` framework. Molecule uses Ansible by default to provide a
+  way to write specific state checking tests (such as deployment smoke tests)
+  on the target instance.
 
 .. _YAML:  https://yaml.org/
 
@@ -154,7 +158,8 @@ Now, we can tell Molecule to create an instance with:
 
     $ molecule create
 
-We can verify that Molecule has created the instance and they're up and running with:
+We can verify that Molecule has created the instance and they're up and running
+with:
 
 .. code-block:: bash
 

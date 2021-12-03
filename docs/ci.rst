@@ -93,7 +93,9 @@ A ``.travis.yml`` using `Tox`_ as described below.
 Gitlab CI
 ^^^^^^^^^
 
-`Gitlab`_ includes its own CI. Pipelines are usually defined in a ``.gitlab-ci.yml`` file in the top folder of a repository, to be run on Gitlab Runners.
+`Gitlab`_ includes its own CI. Pipelines are usually defined in
+``.gitlab-ci.yml`` file in the top folder of a repository, to be run on Gitlab
+Runners.
 
 Here is an example using Docker in Docker
 
@@ -161,7 +163,11 @@ Here is another example using Docker, virtualenv and tags on Centos 7.
 
 Azure Pipelines
 ^^^^^^^^^^^^^^^
-`Azure Pipelines`_ projects rely on the ``azure-pipelines.yml`` file within the root folder of a repository. There are a number of pre-requisites for running CI/CD within Azure on self-hosted runners if you intend on using the ``UsePythonVersion`` task. Details of this can be found in the `Use Python Version Task`_ documentation.
+`Azure Pipelines`_ projects rely on the ``azure-pipelines.yml`` file within
+the root folder of a repository. There are a number of pre-requisites for
+running CI/CD within Azure on self-hosted runners if you intend on using the
+``UsePythonVersion`` task. Details of this can be found in the `Use Python
+Version Task`_ documentation.
 
 .. code-block:: yaml
 
@@ -193,15 +199,27 @@ Azure Pipelines
       molecule test
     displayName: Test relevant platforms
 
-Whilst the pipeline checks out your code initially as part of the pipeline task, by default, it checks it out into a directory named ``s`` within ``$(Agent.BuildDirectory)``. If you checkout one other repository, the ``s`` is substituted with the path provided in that checkout. If you checkout multiple roles (e.g. some private roles within your Azure organisation) then the ``s`` structure is used, hence the importance of the ``cd $(Agent.BuildDirectory)/role-name`` which ensures you are in the correct directory regardless of format. Check the `Azure Build Variables`_ documentation for more detailed information on these.
+Whilst the pipeline checks out your code initially as part of the pipeline
+task, by default, it checks it out into a directory named ``s`` within
+``$(Agent.BuildDirectory)``. If you checkout one other repository, the ``s``
+is substituted with the path provided in that checkout. If you checkout
+multiple roles (e.g. some private roles within your Azure organisation) then
+the ``s`` structure is used, hence the importance of the
+``cd $(Agent.BuildDirectory)/role-name`` which ensures you are in the correct
+directory regardless of format. Check the `Azure Build Variables`_
+documentation for more detailed information on these.
 
-The ``export PATH`` is required to ensure you can use the ``molecule``/``ansible`` shell scripts. Azure doesn't add these by default.
+The ``export PATH`` is required to ensure you can use the
+``molecule``/``ansible`` shell scripts. Azure doesn't add these by default.
 
 
 Jenkins Pipeline
 ^^^^^^^^^^^^^^^^
 
-`Jenkins`_ projects can also be defined in a file, by default named `Jenkinsfile` in the top folder of a repository. Two syntax are available, Declarative and Scripted. Here is an example using the declarative syntax, setting up a virtualenv and testing an Ansible role via Molecule.
+`Jenkins`_ projects can also be defined in a file, by default named
+``Jenkinsfile`` in the top folder of a repository. Two syntax are available,
+Declarative and Scripted. Here is an example using the declarative syntax,
+setting up a virtualenv and testing an Ansible role via Molecule.
 
 .. code-block:: groovy
 
@@ -311,7 +329,8 @@ The following `Jenkinsfile` uses the Toolset image.
         - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
 
 
-This is the cleaner of the current choices. See `issue1567_comment`_ for additional detail.
+This is the cleaner of the current choices. See `issue1567_comment`_ for
+additional detail.
 
 Tox
 ^^^

@@ -65,7 +65,7 @@ jobs:
           sudo apt-get remove -y ansible \
           && sudo apt-get update \
           && sudo apt-get install -y libvirt-dev python3-cryptography python3-jinja2 python3-yaml virtualenv \
-          && pip3 install --user ansible-base \
+          && pip3 install --user ansible-core \
           && echo "$HOME/.local/bin" >> $GITHUB_PATH
         # https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#adding-a-system-path
       - name: Validate that ansible works

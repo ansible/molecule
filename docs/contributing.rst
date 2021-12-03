@@ -19,9 +19,11 @@ Contributing
 Talk to us
 ----------
 
-Join us in ``#ansible-molecule`` on `libera.chat`_ irc, or `molecule-users Forum`_.
+Join us in ``#ansible-molecule`` on `libera.chat`_ irc, or
+`molecule-users Forum`_.
 
-The full list of Ansible email lists and IRC channels can be found in the `communication page`_.
+The full list of Ansible email lists and IRC channels can be found in the
+`communication page`_.
 
 .. _`libera.chat`: https://web.libera.chat/?channel=#ansible-molecule
 .. _`molecule-users Forum`: https://groups.google.com/forum/#!forum/molecule-users
@@ -35,8 +37,9 @@ Guidelines
   major to ensure efficient collaboration and avoid duplicate effort.
 * Create a topic branch from where you want to base your work.
 * Make sure you have added tests for your changes.
-* Although not required, it is good to sign off commits using ``git commit --signoff``, and agree
-  that usage of ``--signoff`` constitutes agreement with the terms of `DCO 1.1`_.
+* Although not required, it is good to sign off commits using
+  ``git commit --signoff``, and agree that usage of ``--signoff`` constitutes
+  agreement with the terms of `DCO 1.1`_.
 
 * Run all the tests to ensure nothing else was accidentally broken.
 * Reformat the code by following the formatting section below.
@@ -55,9 +58,11 @@ Please see our `Code of Conduct`_ document.
 Pull Request Life Cycle and Governance
 ======================================
 
-* If your PRs get stuck `join us on IRC`_ or add to the `working group agenda`_.
+* If your PRs get stuck `join us on IRC`_ or add to the
+  `working group agenda`_.
 * The code style is what is enforced by CI, everything else is off-topic.
-* All PRs must be reviewed by one other person. This is enforced by GitHub. Larger changes require +2.
+* All PRs must be reviewed by one other person. This is enforced by GitHub.
+  Larger changes require +2.
 
 .. _working group agenda: https://github.com/ansible/community/wiki/Molecule#meetings
 .. _join us on IRC: https://github.com/ansible/community/wiki/Molecule#join-the-discussion
@@ -125,7 +130,8 @@ Linting
 
 Linting is performed by a combination of linters.
 
-Run all the linters (some perform changes to conform the code to the style rules).
+Run all the linters (some perform changes to conform the code to the style
+rules).
 
 .. code-block:: bash
 

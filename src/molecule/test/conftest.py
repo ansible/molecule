@@ -24,6 +24,7 @@ import random
 import string
 
 import pytest
+from filelock import FileLock
 
 from molecule import config
 from molecule.scenario import ephemeral_directory
@@ -138,3 +139,15 @@ def reset_pytest_vars(monkeypatch):
     for var_name in tuple(os.environ):
         if var_name.startswith("PYTEST_"):
             monkeypatch.delenv(var_name, raising=False)
+
+
+@pytest.fixture(autouse=True)
+def block_on_serial_mark(request):
+    # https://github.com/pytest-dev/pytest-xdist/issues/385
+    os.makedirs(".tox", exist_ok=True)
+    if request.node.get_closest_marker("serial"):
+        # pylint: disable=abstract-class-instantiated
+        with FileLock(".tox/semaphore.lock"):
+            yield
+    else:
+        yield

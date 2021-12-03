@@ -13,7 +13,6 @@ disable =
     duplicate-code,
     fixme,
     implicit-str-concat,
-    import-error,
     import-outside-toplevel,
     inconsistent-return-statements,
     invalid-name,
