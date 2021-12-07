@@ -1,0 +1,16 @@
+.ansible-test
+.benchmarks
+.coverage
+.eggs
+.github
+.mypy_cache
+.pytest_cache
+.tox
+.vscode
+__pycache__
+build
+dist
+pip-wheel-metadata
+report.html
+snap
+zuul.d

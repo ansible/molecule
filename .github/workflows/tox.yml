@@ -22,39 +22,41 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - tox_env: lint
+          # - tox_env: lint
+          #   python-version: 3.9
+          # - tox_env: docs
+          #   python-version: 3.9
+          # - tox_env: py36
+          #   PREFIX: PYTEST_REQPASS=449
+          #   python-version: 3.6
+          # - tox_env: py37
+          #   PREFIX: PYTEST_REQPASS=449
+          #   python-version: 3.7
+          # - tox_env: py38
+          #   PREFIX: PYTEST_REQPASS=449
+          #   python-version: 3.8
+          # - tox_env: py39
+          #   PREFIX: PYTEST_REQPASS=449
+          #   python-version: 3.9
+          # - tox_env: py310
+          #   PREFIX: PYTEST_REQPASS=449
+          #   python-version: "3.10"
+          # - tox_env: py38-devel
+          #   PREFIX: PYTEST_REQPASS=449
+          #   python-version: 3.8
+          # - tox_env: py310-devel
+          #   PREFIX: PYTEST_REQPASS=449
+          #   python-version: "3.10"
+          #   # see https://github.com/ansible-community/molecule/issues/3291
+          #   experimental: true
+          # - tox_env: packaging
+          #   python-version: 3.9
+          - tox_env: packit
             python-version: 3.9
-          - tox_env: docs
-            python-version: 3.9
-          - tox_env: py36
-            PREFIX: PYTEST_REQPASS=449
-            python-version: 3.6
-          - tox_env: py37
-            PREFIX: PYTEST_REQPASS=449
-            python-version: 3.7
-          - tox_env: py38
-            PREFIX: PYTEST_REQPASS=449
-            python-version: 3.8
-          - tox_env: py39
-            PREFIX: PYTEST_REQPASS=449
-            python-version: 3.9
-          - tox_env: py310
-            PREFIX: PYTEST_REQPASS=449
-            python-version: "3.10"
-          - tox_env: py38-devel
-            PREFIX: PYTEST_REQPASS=449
-            python-version: 3.8
-          - tox_env: py310-devel
-            PREFIX: PYTEST_REQPASS=449
-            python-version: "3.10"
-            # see https://github.com/ansible-community/molecule/issues/3291
-            experimental: true
-          - tox_env: packaging
-            python-version: 3.9
-          - tox_env: eco
-            python-version: 3.9
-          - tox_env: dockerfile
-            python-version: 3.9
+          # - tox_env: eco
+          #   python-version: 3.9
+          # - tox_env: dockerfile
+          #   python-version: 3.9
 
     steps:
       - uses: actions/checkout@v1

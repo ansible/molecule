@@ -1,0 +1,49 @@
+actions:
+  post-upstream-clone:
+    - python3 -m pip install --user setuptools_scm tox build
+    - ./tools/update-spec.sh
+  create-archive:
+    - >-
+      bash -c '
+      spectool
+      --define "upstream_version ${PACKIT_PROJECT_VERSION}"
+      --all --get-files
+      --sourcedir tools/molecule.spec
+      '
+    - "python3 -m build --sdist --outdir tools"
+    - bash -c "ls tools/molecule-*.tar.gz"
+  get-current-version:
+    - >-
+      sh -c "python3 -m setuptools_scm | awk '{print $3}'"
+archive_root_dir_template: "{upstream_pkg_name}-{version}"
+copy_upstream_release_description: false
+create_pr: true  # in dist-git
+dist_git_base_url: https://src.fedoraproject.org/
+dist_git_namespace: rpms
+downstream_package_name: python3-molecule
+jobs:
+  - job: copr_build
+    metadata:
+      targets:
+        # Unable to build centos-stream due to missing python3-setuptools_scm_git_archive
+        # which is part of EPEL.
+        # - centos-stream-x86_64
+        # - epel-8-x86_64
+        - fedora-stable
+    trigger: pull_request
+  # - job: tests
+  #   trigger: pull_request
+  #   metadata:
+  #     targets:
+  #     - fedora-all
+  # - job: propose_downstream
+  #   trigger: release
+  #   metadata:
+  #     dist-git-branch: master
+notifications:
+  pull_request:
+    successful_build: true
+specfile_path: tools/molecule.spec
+upstream_package_name: molecule
+upstream_project_url: https://github.com/ansible-community/molecule
+upstream_tag_template: v{version}
