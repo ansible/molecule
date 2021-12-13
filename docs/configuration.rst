@@ -23,8 +23,9 @@ the one you are expecting to use in production.
 If for some reason the prerun action does not suits your needs, you can still
 disable it by adding `prerun: false` inside the configuration file.
 
-Keep in mind that you can add this value to ``.config/molecule/config.yml``
-file in order to avoid adding it to each scenario.
+Keep in mind that you can add this value to the ``.config/molecule/config.yml``
+file, in your ``$HOME`` or at the root of your project, in order to avoid
+adding it to each scenario.
 
 
 Variable Substitution
