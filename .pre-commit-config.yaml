@@ -97,13 +97,20 @@ repos:
     hooks:
     - id: pip-compile
       name: pip-compile
-      entry: pip-compile -q --strip-extras --no-annotate --output-file=constraints.txt setup.cfg --extra test --extra yamllint
+      entry: >
+        pip-compile -q --strip-extras --no-annotate
+        --unsafe-packages selinux --unsafe-packages distros
+        --output-file=constraints.txt setup.cfg --extra test --extra yamllint
       language: system
       files: ^(setup\.cfg|=constraints\.txt)$
       pass_filenames: false
     - id: pip-compile-upgrade
       name: pip-compile-upgrade
-      entry: pip-compile -q --strip-extras -q --upgrade --no-annotate --output-file=constraints.txt setup.cfg --extra test --extra yamllint
+      entry: >
+        pip-compile -q --strip-extras --no-annotate
+        --unsafe-packages=selinux --unsafe-packages=distros
+        --upgrade
+        --output-file=constraints.txt setup.cfg --extra test --extra yamllint
       language: system
       files: ^(setup\.cfg|=constraints\.txt)$
       pass_filenames: false
