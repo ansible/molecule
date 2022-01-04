@@ -24,6 +24,7 @@ import binascii
 import io
 import os
 import warnings
+from pathlib import Path
 
 import pytest
 
@@ -210,10 +211,12 @@ def test_write_file(temp_dir):
     assert x == data
 
 
-def molecule_prepender(content):
-    x = f"{MOLECULE_HEADER}\nfoo bar"
-
-    assert x == util.file_prepender("foo bar")
+def test_molecule_prepender(tmp_path: Path) -> None:
+    fname = tmp_path / "some.txt"
+    fname.write_text("foo bar")
+    x = f"{MOLECULE_HEADER}\n\nfoo bar"
+    util.file_prepender(str(fname))
+    assert x == fname.read_text()
 
 
 def test_safe_dump():
