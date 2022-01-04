@@ -190,18 +190,20 @@ def render_template(template, **kwargs):
     return t.render(kwargs)
 
 
-def write_file(filename: str, content: str):
+def write_file(filename: str, content: str, header: Optional[str] = None) -> None:
     """
     Write a file with the given filename and content and returns None.
 
     :param filename: A string containing the target filename.
     :param content: A string containing the data to be written.
+    :param header: A header, if None it will use default header.
     :return: None
     """
+    if header is None:
+        content = MOLECULE_HEADER + "\n\n" + content
+
     with open_file(filename, "w") as f:
         f.write(content)
-
-    file_prepender(filename)
 
 
 def molecule_prepender(content: str) -> str:
