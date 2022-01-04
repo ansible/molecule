@@ -137,7 +137,7 @@ class AnsibleGalaxyBase(base.Base):
         :return: None
         """
         if not os.path.isdir(self.install_path):
-            os.makedirs(self.install_path)
+            os.makedirs(self.install_path, exist_ok=True)
 
     def _has_requirements_file(self):
         return os.path.isfile(self.requirements_file)
