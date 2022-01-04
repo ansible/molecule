@@ -204,12 +204,12 @@ def write_file(filename: str, content: str):
     file_prepender(filename)
 
 
-def molecule_prepender(content: str):
+def molecule_prepender(content: str) -> str:
     """Return molecule identification header."""
     return MOLECULE_HEADER + "\n\n" + content
 
 
-def file_prepender(filename: str):
+def file_prepender(filename: str) -> None:
     """
     Prepend an informational header on files managed by Molecule and returns \
     None.
