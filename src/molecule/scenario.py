@@ -271,7 +271,7 @@ class Scenario(object):
         :return: None
         """
         if not os.path.isdir(self.inventory_directory):
-            os.makedirs(self.inventory_directory)
+            os.makedirs(self.inventory_directory, exist_ok=True)
 
 
 def ephemeral_directory(path: Optional[str] = None) -> str:

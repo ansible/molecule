@@ -186,7 +186,7 @@ def test_os_walk(temp_dir):
     for scenario in scenarios:
         scenario_directory = os.path.join(mol_dir, scenario)
         molecule_file = get_molecule_file(scenario_directory)
-        os.makedirs(scenario_directory)
+        os.makedirs(scenario_directory, exist_ok=True)
         util.write_file(molecule_file, "")
 
     result = [f for f in util.os_walk(mol_dir, "molecule.yml")]
