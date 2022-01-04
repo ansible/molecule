@@ -19,6 +19,7 @@
 #  DEALINGS IN THE SOFTWARE.
 """Molecule Scenario Module."""
 
+import errno
 import fcntl
 import fnmatch
 import logging
@@ -129,7 +130,11 @@ class Scenario(object):
         files = util.os_walk(self.ephemeral_directory, "*")
         for f in files:
             if not any(sf for sf in safe_files if fnmatch.fnmatch(f, sf)):
-                os.remove(f)
+                try:
+                    os.remove(f)
+                except OSError as e:
+                    if e.errno != errno.ENOENT:
+                        raise
 
         # Remove empty directories.
         for dirpath, dirs, files in os.walk(self.ephemeral_directory, topdown=False):
