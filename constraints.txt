@@ -5,7 +5,7 @@
 #    pip-compile --extra=test --extra=yamllint --no-annotate --output-file=constraints.txt --strip-extras setup.cfg
 #
 ansi2html==1.6.0
-ansible-compat==0.5.0
+ansible-compat==1.0.0a0
 arrow==1.2.1
 attrs==21.2.0
 bcrypt==3.2.0
