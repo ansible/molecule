@@ -121,7 +121,7 @@ def molecule_directory_fixture(temp_dir):
 def molecule_scenario_directory_fixture(molecule_directory_fixture):
     path = molecule_scenario_directory()
     if not os.path.isdir(path):
-        os.makedirs(path)
+        os.makedirs(path, exist_ok=True)
 
     return path
 
@@ -130,7 +130,7 @@ def molecule_scenario_directory_fixture(molecule_directory_fixture):
 def molecule_ephemeral_directory_fixture(molecule_scenario_directory_fixture):
     path = molecule_ephemeral_directory(str(uuid4()))
     if not os.path.isdir(path):
-        os.makedirs(path)
+        os.makedirs(path, exist_ok=True)
     yield
     shutil.rmtree(str(Path(path).parent))
 
