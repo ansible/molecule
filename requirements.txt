@@ -55,7 +55,7 @@ pytest-xdist==2.4.0
 python-dateutil==2.8.2
 python-slugify==5.0.2
 pyyaml==6.0
-requests==2.26.0
+requests==2.27.0
 rich==10.14.0
 selinux==0.2.1 ; sys_platform == "linux"
 six==1.16.0
