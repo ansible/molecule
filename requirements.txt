@@ -25,7 +25,7 @@ cryptography==36.0.1
 distro==1.6.0
 enrich==1.2.6
 execnet==1.9.0
-filelock==3.4.0
+filelock==3.4.1
 idna==3.3
 iniconfig==1.1.1
 jinja2==3.0.3
