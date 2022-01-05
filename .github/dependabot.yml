@@ -9,3 +9,4 @@ updates:
       - dependencies
       # as dependabot bumps only the pinned test dependencies, is safe to:
       - skip-changelog
+    open-pull-requests-limit: 3
