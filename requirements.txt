@@ -21,7 +21,7 @@ colorama==0.4.4
 commonmark==0.9.1
 cookiecutter==1.7.3
 coverage==6.1.2
-cryptography==36.0.0
+cryptography==36.0.1
 distro==1.6.0
 enrich==1.2.6
 execnet==1.9.0
