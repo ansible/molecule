@@ -40,7 +40,7 @@ poyo==0.5.0
 ptyprocess==0.7.0
 py==1.11.0
 pycparser==2.21
-pygments==2.11.1
+pygments==2.11.2
 pynacl==1.4.0
 pyparsing==3.0.6
 pytest==6.2.5
