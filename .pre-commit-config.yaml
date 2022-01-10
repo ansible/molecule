@@ -65,7 +65,7 @@ repos:
         additional_dependencies:
           - ansible-compat>=0.5.0
           - click>=8.0.1
-          - enrich>=1.2.5
+          - enrich>=1.2.7
           - importlib-metadata>=4.6.1
           - jinja2
           - packaging
@@ -87,7 +87,7 @@ repos:
           - click
           - click-help-colors
           - cookiecutter
-          - enrich>=1.2.5
+          - enrich>=1.2.7
           - filelock
           - pexpect
           - subprocess-tee>=0.2.0
