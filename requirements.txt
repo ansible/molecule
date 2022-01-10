@@ -60,7 +60,7 @@ python-slugify==5.0.2
 pyyaml==6.0
 requests==2.27.1
 rich==11.0.0
-selinux==0.2.1 ; "linux" in sys_platform
+selinux==0.2.1
 six==1.16.0
 subprocess-tee==0.3.5
 text-unidecode==1.3
