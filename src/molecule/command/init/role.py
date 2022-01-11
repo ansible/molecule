@@ -37,9 +37,9 @@ class Role(base.Base):
     """
     Init Role Command Class.
 
-    .. program:: molecule init role foo
+    .. program:: molecule init role acme.foo
 
-    .. option:: molecule init role foo
+    .. option:: molecule init role acme.foo
 
         Initialize a new role.
 
