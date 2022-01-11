@@ -73,7 +73,6 @@ repos:
           - rich
           - ruamel.yaml>=0.17.10
           - subprocess-tee>=0.2.0
-          - tenacity
           - types-PyYAML
           - types-dataclasses
           - types-filelock
