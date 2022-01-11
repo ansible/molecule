@@ -48,9 +48,9 @@ Pip
 
 .. warning::
 
-  The old ``ansible`` and ``ansible-base`` pip extras are now deprecated and will
-  be removed in molecule 3.6.0. If you use them, please switch to explicit
-  package mention to avoid problem with newer versions of molecule.
+  ``ansible`` and ``ansible-base`` pip **extras** were removed in molecule
+  ``4.0.0``. If you used them, please switch to explicit package mention to
+  avoid problem with newer versions of molecule.
 
 Keep in mind that on selinux supporting systems, if you install into a virtual
 environment, you may face :gh:`issue <ansible/ansible/issues/34340>` even
