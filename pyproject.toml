@@ -8,6 +8,16 @@ requires = [
 ]
 build-backend = "setuptools.build_meta"
 
+[tool.coverage.run]
+source = ["src"]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:"
+]
+
 [tool.black]
 skip-string-normalization = false
 
