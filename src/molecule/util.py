@@ -36,8 +36,8 @@ import jinja2
 import yaml
 from ansible_compat.ports import cache
 from rich.syntax import Syntax
-from subprocess_tee import run
 
+from molecule.app import app
 from molecule.console import console
 from molecule.constants import MOLECULE_HEADER
 
@@ -130,8 +130,6 @@ def run_command(
     :param debug: An optional bool to toggle debug output.
     """
     args = []
-    stdout = None
-    stderr = None
     if cmd.__class__.__name__ == "Command":
         raise RuntimeError(
             "Molecule 3.2.0 dropped use of sh library, update plugin code to use new API. "
@@ -143,23 +141,17 @@ def run_command(
         else:
             env = cmd.env or env
         args = cmd.cmd
-        cwd = cmd.cwd
-        stdout = cmd.stdout
-        stderr = cmd.stderr
     else:
         args = cmd
 
     if debug:
         print_environment_vars(env)
 
-    result = run(
-        args,
+    result = app.runtime.exec(
+        args=args,
         env=env,
-        stdout=stdout,
-        stderr=stderr,
-        echo=echo or debug,
-        quiet=quiet,
         cwd=cwd,
+        tee=True,
     )
     if result.returncode != 0 and check:
         raise CalledProcessError(

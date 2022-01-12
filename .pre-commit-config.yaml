@@ -72,7 +72,6 @@ repos:
           - packaging
           - rich
           - ruamel.yaml>=0.17.10
-          - subprocess-tee>=0.2.0
           - types-PyYAML
           - types-dataclasses
           - types-filelock
@@ -82,7 +81,7 @@ repos:
     hooks:
       - id: pylint
         additional_dependencies:
-          - ansible-compat
+          - ansible-compat>=1.0.0
           - cerberus
           - click
           - click-help-colors
@@ -90,7 +89,6 @@ repos:
           - enrich>=1.2.7
           - filelock
           - pexpect
-          - subprocess-tee>=0.2.0
           - testinfra
   - repo: https://github.com/jazzband/pip-tools
     rev: 6.4.0
