@@ -142,3 +142,12 @@ approach like this in your role's ``meta/main.yml``:
   dependencies:
     - role: <your-dependee-role>
       when: lookup('env', 'MOLECULE_FILE')
+
+Can I use ASK_VAULT_PASS with molecule?
+=======================================
+
+No, molecule does not support interactive password prompts. If you need to
+unlock a vault, you must supply the password non-interactively (e.g., via
+a password file.) 
+
+See: https://github.com/ansible-community/molecule/issues/478
