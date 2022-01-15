@@ -29,26 +29,33 @@ jobs:
           - tox_env: py36
             PREFIX: PYTEST_REQPASS=448
             python-version: 3.6
+            cover: true
           - tox_env: py37
             PREFIX: PYTEST_REQPASS=448
             python-version: 3.7
+            cover: true
           - tox_env: py38
             PREFIX: PYTEST_REQPASS=448
             python-version: 3.8
+            cover: true
           - tox_env: py39
             PREFIX: PYTEST_REQPASS=448
             python-version: 3.9
+            cover: true
           - tox_env: py310
             PREFIX: PYTEST_REQPASS=448
             python-version: "3.10"
+            cover: true
           - tox_env: py38-devel
             PREFIX: PYTEST_REQPASS=448
             python-version: 3.8
+            cover: true
           - tox_env: py310-devel
             PREFIX: PYTEST_REQPASS=448
             python-version: "3.10"
             # see https://github.com/ansible-community/molecule/issues/3291
             experimental: true
+            cover: true
           - tox_env: packaging
             python-version: 3.9
           - tox_env: eco
@@ -80,14 +87,24 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
-          python -m pip install -U pip
+          python -m pip install -U pip 'coverage[toml]'
           pip install tox
       - name: Run tox -e ${{ matrix.tox_env }}
         run: |
           echo "${{ matrix.PREFIX }} tox -e ${{ matrix.tox_env }}"
           ${{ matrix.PREFIX }} tox -e ${{ matrix.tox_env }}
         continue-on-error: ${{ matrix.experimental || false }}
-
+      - name: Combine coverage data
+        # produce a single .coverage file at repo root
+        run: coverage combine .tox/.coverage.*
+        if:  ${{ matrix.cover == true }}
+      - name: Upload coverage data
+        if:  ${{ matrix.cover == true }}
+        uses: codecov/codecov-action@v1
+        with:
+          name: ${{ matrix.tox_env }}
+          fail_ci_if_error: true  # optional (default = false)
+          verbose: true  # optional (default = false)
   check:
     if: always()
 
