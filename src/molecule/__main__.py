@@ -20,6 +20,14 @@
 """Molecule CLI main entry point."""
 
 from molecule.shell import main
+import warnings
+
+def mol_deprecation_notice():
+    warnings.warn(
+        "The `mol` command is deprecated and will be removed in a future version of Molecule. If you wish to continue using it, please create an alias that calls `molecule`.",
+        category=UserWarning,
+    )
+    main()
 
 if __name__ == "__main__":
     main()
