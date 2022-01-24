@@ -136,6 +136,12 @@ some benefits:
     .. _test.pypi.org/project/molecule: https://test.pypi.org/project/molecule/
     .. _release history: https://test.pypi.org/project/molecule/#history
 
+Install ``community.docker`` collection:
+
+.. code-block:: bash
+
+    $ ansible-galaxy collection install community.docker
+
 Docker
 ======
 
