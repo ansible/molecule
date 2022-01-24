@@ -28,7 +28,7 @@ coverage==6.2
 cryptography==36.0.1
 dataclasses==0.8 ; python_version < "3.7"
 distro==1.6.0
-docutils==0.17.1
+docutils==0.18.1
 enrich==1.2.7
 execnet==1.9.0
 filelock==3.4.1
