@@ -19,8 +19,10 @@
 #  DEALINGS IN THE SOFTWARE.
 """Molecule CLI main entry point."""
 
-from molecule.shell import main
 import warnings
+
+from molecule.shell import main
+
 
 def mol_deprecation_notice():
     warnings.warn(
@@ -28,6 +30,7 @@ def mol_deprecation_notice():
         category=UserWarning,
     )
     main()
+
 
 if __name__ == "__main__":
     main()
