@@ -68,13 +68,19 @@ class Platforms(object):
               - child_group1
     """
 
-    def __init__(self, config, parallelize_platforms=False):
+    def __init__(self, config, parallelize_platforms=False, platform_name=None):
         """
         Initialize a new platform class and returns None.
 
         :param config: An instance of a Molecule config.
+        :param parallelize_platforms: Parallel mode. Default is False.
+        :param platform_name: One platform to target only, defaults to None.
         :return: None
         """
+        if platform_name:
+            config.config["platforms"] = util._filter_platforms(
+                config.config, platform_name
+            )
         if parallelize_platforms:
             config.config["platforms"] = util._parallelize_platforms(
                 config.config, config._run_uuid
