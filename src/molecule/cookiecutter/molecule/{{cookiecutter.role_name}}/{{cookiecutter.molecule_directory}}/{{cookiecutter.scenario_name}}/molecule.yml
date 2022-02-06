@@ -6,7 +6,7 @@ driver:
 platforms:
   - name: instance
 {%- if cookiecutter.driver_name in ['containers', 'docker', 'podman'] %}
-    image: docker.io/pycontribs/centos:8
+    image: quay.io/centos/centos:stream8
     pre_build_image: true
 {%- endif %}
 provisioner:
