@@ -49,5 +49,6 @@ def test_cli_mol():
     cmd_mol = ["mol", "--version"]
     y = util.run_command(cmd_mol)
     assert x.returncode == y.returncode
-    assert x.stderr == y.stderr
-    assert x.stdout == y.stdout
+    assert x.stderr in y.stderr
+    assert x.stdout in y.stdout
+    assert "UserWarning" in y.stdout
