@@ -230,7 +230,7 @@ class Config(object, metaclass=NewInitCaller):
         driver_from_state_file = self.state.driver
         driver_from_cli = self.command_args.get("driver_name")
 
-        if driver_from_state_file:
+        if driver_from_state_file and driver_from_state_file in api.drivers():
             driver_name = driver_from_state_file
         elif driver_from_cli:
             driver_name = driver_from_cli
