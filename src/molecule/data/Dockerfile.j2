@@ -1,6 +1,6 @@
 # Molecule managed
 
-{% if item.registry is defined %}
+{% if item.registry is defined and '/' not in item.image %}
 FROM {{ item.registry.url }}/{{ item.image }}
 {% else %}
 FROM {{ item.image }}
