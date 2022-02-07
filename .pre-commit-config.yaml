@@ -4,7 +4,7 @@ ci:
   # https://github.com/pre-commit-ci/issues/issues/55
   - pip-compile
 default_language_version:
-  python: python3.6
+  python: python3.8
 exclude: |
     (?x)(
         ^docs/conf.py$
@@ -91,7 +91,7 @@ repos:
           - pexpect
           - testinfra
   - repo: https://github.com/jazzband/pip-tools
-    rev: 6.4.0
+    rev: 6.5.1
     hooks:
       - id: pip-compile
         entry: pip-compile -q --strip-extras --no-annotate --output-file=requirements.txt tools/opts.txt setup.cfg --extra docs --extra test --extra yamllint

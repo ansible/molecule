@@ -21,13 +21,6 @@
 """Molecule version information."""
 
 from __future__ import absolute_import, division, print_function
-
-__metaclass__ = type
-try:
-    # py38+
-    from importlib.metadata import version  # type: ignore
-except ImportError:
-    # py36-py37
-    from importlib_metadata import version
+from importlib.metadata import version
 
 __version__ = version("molecule")
