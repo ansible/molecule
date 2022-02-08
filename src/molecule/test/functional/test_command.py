@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import os
 from typing import Optional
 
 import pytest
@@ -106,9 +107,14 @@ def test_command_converge(scenario_to_test, with_scenario, scenario_name):
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
 @pytest.mark.serial
-def test_command_create(scenario_to_test, with_scenario, scenario_name):
+def test_command_create(scenario_to_test, with_scenario, scenario_name, tmp_path):
+    os.environ["ANSIBLE_ROLES_PATH"] = str(tmp_path)
     cmd = ["molecule", "create", "--scenario-name", scenario_name]
-    assert run_command(cmd).returncode == 0
+    assert run_command(cmd, env=os.environ).returncode == 0
+
+    # Validate that ansible-compat created a symlink in the roles path
+    role_path = tmp_path / "molecule.delegated_test"
+    assert role_path.is_symlink()
 
 
 @pytest.mark.parametrize(
