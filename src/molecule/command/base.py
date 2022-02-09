@@ -108,7 +108,7 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
 
         if scenario.config.config["prerun"]:
             LOG.info("Performing prerun...")
-            scenario.config.runtime.prepare_environment()
+            scenario.config.runtime.prepare_environment(install_local=True)
 
         if command_args.get("subcommand") == "reset":
             LOG.info("Removing %s", scenario.ephemeral_directory)
