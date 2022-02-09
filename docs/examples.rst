@@ -24,8 +24,7 @@ and ``Dockerfile.j2`` as follows.
 Append the following code block to the end of ``Dockerfile.j2``. It creates an
 ``ansible`` user with passwordless sudo privileges.
 
-The variable ``SUDO_GROUP`` depends on the target distribution. ``centos:8``
-uses ``wheel``.
+The variable ``SUDO_GROUP`` depends on the target distribution.
 
 .. code-block:: docker
 
@@ -45,7 +44,7 @@ Modify ``provisioner.inventory`` in ``molecule.yml`` as follows:
 
     platforms:
       - name: instance
-        image: centos:8
+        image: quay.io/centos/centos:stream8
         # …
 
 .. code-block:: yaml
@@ -67,7 +66,7 @@ An example for a different platform instance name:
 
     platforms:
       - name: centos8
-        image: centos:8
+        image: quay.io/centos/centos:stream8
         # …
 
 .. code-block:: yaml
@@ -179,7 +178,7 @@ and command as follows.
 
     platforms:
       - name: instance
-        image: centos:8
+        image: quay.io/centos/centos:stream8
         command: /sbin/init
         tmpfs:
           - /run
@@ -187,9 +186,8 @@ and command as follows.
         volumes:
           - /sys/fs/cgroup:/sys/fs/cgroup:ro
 
-Note that centos:8 image contains a `seccomp security profile for Docker`_
-which enables the use of systemd. When needed, such security profiles can be
-reused (for example `the one available in Fedora`_):
+When needed, such security profiles can be reused (for example
+`the one available in Fedora`_):
 
 .. code-block:: yaml
 
@@ -223,7 +221,7 @@ capabilities along with the same image, command, and volumes as shown in the
 
     platforms:
       - name: instance
-        image: centos:8
+        image: quay.io/centos/centos:stream8
         command: /sbin/init
         capabilities:
           - SYS_ADMIN
@@ -237,11 +235,10 @@ with the same image and command as shown in the ``non-privileged`` example.
 
     platforms:
       - name: instance
-        image: centos:8
+        image: quay.io/centos/centos:stream8
         command: /sbin/init
         privileged: True
 
-.. _`seccomp security profile for Docker`: https://docs.docker.com/engine/security/seccomp/
 .. _`the one available in fedora`: https://src.fedoraproject.org/rpms/docker/raw/88fa030b904d7af200b150e10ea4a700f759cca4/f/seccomp.json
 .. _`in a non-privileged container`: https://developers.redhat.com/blog/2016/09/13/running-systemd-in-a-non-privileged-container/
 .. _`start the container with extended privileges`: https://blog.docker.com/2013/09/docker-can-now-run-within-docker/

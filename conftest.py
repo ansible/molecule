@@ -17,4 +17,4 @@ def environ():
 
     # adds extra environment variables that may be needed during testing
     if not os.environ.get("TEST_BASE_IMAGE", ""):
-        os.environ["TEST_BASE_IMAGE"] = "docker.io/pycontribs/centos:8"
+        os.environ["TEST_BASE_IMAGE"] = "quay.io/centos/centos:stream8"
