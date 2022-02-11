@@ -244,7 +244,7 @@ class Config(object, metaclass=NewInitCaller):
             )
             util.sysexit_with_message(msg)
 
-        if driver_from_state_file and not driver_name in api.drivers():
+        if driver_from_state_file and driver_name not in api.drivers():
             msg = (
                 f"Driver '{driver_name}' from state-file "
                 f"'{self.state.state_file}' is not available."
