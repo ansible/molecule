@@ -230,7 +230,7 @@ class Config(object, metaclass=NewInitCaller):
         driver_from_state_file = self.state.driver
         driver_from_cli = self.command_args.get("driver_name")
 
-        if driver_from_state_file and driver_from_state_file in api.drivers():
+        if driver_from_state_file:
             driver_name = driver_from_state_file
         elif driver_from_cli:
             driver_name = driver_from_cli
@@ -241,6 +241,13 @@ class Config(object, metaclass=NewInitCaller):
             msg = (
                 f"Instance(s) were created with the '{driver_name}' driver, but the "
                 f"subcommand is using '{driver_from_cli}' driver."
+            )
+            util.sysexit_with_message(msg)
+
+        if driver_from_state_file and not driver_name in api.drivers():
+            msg = (
+                f"Driver '{driver_name}' from state-file "
+                f"'{self.state.state_file}' is not available."
             )
             util.sysexit_with_message(msg)
 
