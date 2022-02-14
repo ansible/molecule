@@ -162,7 +162,7 @@ def _default_scenario_exists(ctx, param, value: str):  # pragma: no cover
     "--lint-name",
     type=click.Choice(["yamllint"]),
     default="yamllint",
-    help="Name of lint to initialize. (ansible-lint)",
+    help="Name of lint to initialize. (yamllint)",
 )
 @click.option(
     "--provisioner-name",

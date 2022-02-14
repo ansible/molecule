@@ -96,6 +96,13 @@ Install Molecule:
 
     $ python3 -m pip install --user "molecule[lint]"
 
+Molecule does not include ansible-lint (nor does the lint extra), but
+is easily installed separately:
+
+.. code-block:: bash
+
+    $ python3 -m pip install --user "molecule[lint] ansible-lint"
+
 Molecule uses the "delegated" driver by default. Other drivers can
 be installed separately from PyPI, such as the molecule-docker driver.
 If you would like to use docker as the molecule driver, the installation
