@@ -26,7 +26,7 @@ and run ``molecule test`` in ubuntu.
       strategy:
         max-parallel: 4
         matrix:
-          python-version: [3.6, 3.7]
+          python-version: [3.8, 3.9]
 
       steps:
         - uses: actions/checkout@v2
@@ -248,7 +248,7 @@ setting up a virtualenv and testing an Ansible role via Molecule.
             sh '''
               export HTTP_PROXY=http://10.123.123.123:8080
               export HTTPS_PROXY=http://10.123.123.123:8080
-              pip3.6 install virtualenv
+              python3 -m pip install virtualenv
               virtualenv virtenv
               source virtenv/bin/activate
               python3 -m pip install --upgrade ansible molecule docker

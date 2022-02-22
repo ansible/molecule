@@ -23,17 +23,9 @@ jobs:
       matrix:
         include:
           - tox_env: lint
-            python-version: 3.6
+            python-version: 3.8
           - tox_env: docs
             python-version: 3.9
-          - tox_env: py36
-            PREFIX: PYTEST_REQPASS=448
-            python-version: 3.6
-            cover: true
-          - tox_env: py37
-            PREFIX: PYTEST_REQPASS=448
-            python-version: 3.7
-            cover: true
           - tox_env: py38
             PREFIX: PYTEST_REQPASS=448
             python-version: 3.8
