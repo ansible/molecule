@@ -1,0 +1,8 @@
+---
+dependencies: []
+
+galaxy_info:
+  author: Molecule Developer
+  description: Role to test ansible_compat installation of role
+  namespace: molecule
+  role_name: delegated_test
