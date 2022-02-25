@@ -1,7 +1,6 @@
 - hosts: all
   become: true
   tasks:
-
     - name: Install snapd
       package:
         name: snapd
@@ -20,7 +19,6 @@
 
     - when: ansible_os_family == 'RedHat'
       block:
-
         - name: Activate snapd
           shell: |
             ln -s /var/lib/snapd/snap /snap

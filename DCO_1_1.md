@@ -1,5 +1,4 @@
-DCO
-===
+# DCO
 
 All contributors must use `git commit --signoff` for any
 commit to be merged, and agree that usage of --signoff constitutes
