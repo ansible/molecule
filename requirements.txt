@@ -62,7 +62,7 @@ python-slugify==5.0.2
 pytz==2021.3
 pyyaml==6.0
 requests==2.27.1
-rich==11.1.0
+rich==11.2.0
 simplejson==3.17.6
 six==1.16.0
 snowballstemmer==2.2.0
