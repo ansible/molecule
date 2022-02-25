@@ -1,17 +1,31 @@
 ---
 ci:
   skip:
-  # https://github.com/pre-commit-ci/issues/issues/55
-  - pip-compile
+    # https://github.com/pre-commit-ci/issues/issues/55
+    - pip-compile
 default_language_version:
   python: python3.8
 exclude: |
-    (?x)(
-        ^docs/conf.py$
-    )
+  (?x)(
+      ^docs/conf.py$
+  )
 repos:
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    # keep it before yamllint
+    rev: "v2.5.1"
+    hooks:
+      - id: prettier
+        # Temporary excludes so we can gradually normalize the formatting
+        exclude: >
+          (?x)^(
+            src/molecule/cookiecutter/.*|
+            src/molecule/test/resources/templates/.*
+          )$
+        additional_dependencies:
+          - prettier
+          - prettier-plugin-toml
   - repo: https://github.com/PyCQA/doc8
-    rev: '0.10.1'
+    rev: "0.10.1"
     hooks:
       - id: doc8
   - repo: https://github.com/codespell-project/codespell

@@ -26,16 +26,16 @@ search: True
 # default: empty
 # allowed: list
 requirements:
-# Add extra deps lookup location
-- tox.ini:
-    # update all dependencies and pin them
-    update: all
-    pin: True
-# Override defaults for dist metadata deps
-- setup.cfg:
-    # update insecure only, don't pin
-    update: insecure
-    pin: False
+  # Add extra deps lookup location
+  - tox.ini:
+      # update all dependencies and pin them
+      update: all
+      pin: True
+  # Override defaults for dist metadata deps
+  - setup.cfg:
+      # update insecure only, don't pin
+      update: insecure
+      pin: False
 
 # add a label to pull requests, default is not set
 # requires private repo permissions, even on public repos
@@ -46,9 +46,9 @@ label_prs: deps-update
 # requires private repo permissions, even on public repos
 # default: empty
 assignees:
-- themr0c
-- decentral1se
-- ssbarnea
+  - themr0c
+  - decentral1se
+  - ssbarnea
 
 # configure the branch prefix the bot is using
 # default: pyup-
