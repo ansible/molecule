@@ -13,7 +13,6 @@
       - image: ubuntu:latest
       - image: debian:latest
   tasks:
-
     - name: create temporary dockerfiles
       tempfile:
         # sanitize image name to be filename safe

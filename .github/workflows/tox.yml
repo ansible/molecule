@@ -1,16 +1,16 @@
 name: tox
 
 on:
-  create:  # is used for publishing to PyPI and TestPyPI
-    tags:  # any tag regardless of its name, no branches
-  push:  # only publishes pushes to the main branch to TestPyPI
-    branches:  # any integration branch but not tag
+  create: # is used for publishing to PyPI and TestPyPI
+    tags: # any tag regardless of its name, no branches
+  push: # only publishes pushes to the main branch to TestPyPI
+    branches: # any integration branch but not tag
       - "main"
     tags-ignore:
       - "**"
   pull_request:
   schedule:
-    - cron: 1 0 * * *  # Run daily at 0:01 UTC
+    - cron: 1 0 * * * # Run daily at 0:01 UTC
 
 jobs:
   build:
@@ -23,17 +23,9 @@ jobs:
       matrix:
         include:
           - tox_env: lint
-            python-version: 3.6
+            python-version: 3.8
           - tox_env: docs
             python-version: 3.9
-          - tox_env: py36
-            PREFIX: PYTEST_REQPASS=448
-            python-version: 3.6
-            cover: true
-          - tox_env: py37
-            PREFIX: PYTEST_REQPASS=448
-            python-version: 3.7
-            cover: true
           - tox_env: py38
             PREFIX: PYTEST_REQPASS=448
             python-version: 3.8
@@ -97,24 +89,24 @@ jobs:
       - name: Combine coverage data
         # produce a single .coverage file at repo root
         run: coverage combine .tox/.coverage.*
-        if:  ${{ matrix.cover == true }}
+        if: ${{ matrix.cover == true }}
       - name: Upload coverage data
-        if:  ${{ matrix.cover == true }}
+        if: ${{ matrix.cover == true }}
         uses: codecov/codecov-action@v1
         with:
           name: ${{ matrix.tox_env }}
-          fail_ci_if_error: true  # optional (default = false)
-          verbose: true  # optional (default = false)
+          fail_ci_if_error: true # optional (default = false)
+          verbose: true # optional (default = false)
   check:
     if: always()
 
     needs:
-    - build
+      - build
 
     runs-on: Ubuntu-latest
 
     steps:
-    - name: Decide whether the needed jobs succeeded or failed
-      uses: re-actors/alls-green@release/v1
-      with:
-        jobs: ${{ toJSON(needs) }}
+      - name: Decide whether the needed jobs succeeded or failed
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}
