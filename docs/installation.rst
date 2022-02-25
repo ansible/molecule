@@ -94,14 +94,14 @@ Install Molecule:
 
 .. code-block:: bash
 
-    $ python3 -m pip install --user "molecule[lint]"
+    $ python3 -m pip install --user "molecule"
 
 Molecule does not include ansible-lint (nor does the lint extra), but
 is easily installed separately:
 
 .. code-block:: bash
 
-    $ python3 -m pip install --user "molecule[lint] ansible-lint"
+    $ python3 -m pip install --user "molecule ansible-lint"
 
 Molecule uses the "delegated" driver by default. Other drivers can
 be installed separately from PyPI, such as the molecule-docker driver.
@@ -110,7 +110,7 @@ command would look like this:
 
 .. code-block:: bash
 
-    $ python3 -m pip install --user "molecule[docker,lint]"
+    $ python3 -m pip install --user "molecule[docker]"
 
 Other drivers, such as ``molecule-podman``, ``molecule-vagrant``,
 ``molecule-azure`` or ``molecule-hetzner`` are also available.
