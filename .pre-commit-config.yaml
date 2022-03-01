@@ -78,7 +78,7 @@ repos:
         entry: mypy src/
         pass_filenames: false
         additional_dependencies:
-          - ansible-compat>=1.0.0
+          - ansible-compat>=2.0.0
           - click>=8.0.1
           - enrich>=1.2.7
           - importlib-metadata>=4.6.1
@@ -95,7 +95,7 @@ repos:
     hooks:
       - id: pylint
         additional_dependencies:
-          - ansible-compat>=1.0.0
+          - ansible-compat>=2.0.0
           - cerberus
           - click
           - click-help-colors
