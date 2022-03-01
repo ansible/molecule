@@ -19,22 +19,7 @@
 #  DEALINGS IN THE SOFTWARE.
 """Molecule CLI main entry point."""
 
-import warnings
-
 from molecule.shell import main
-
-
-def mol_deprecation_notice():
-    """Display a deprecation notice about mol command."""
-    try:
-        main()
-    except BaseException:
-        warnings.warn(
-            "The `mol` command is deprecated and will be removed in a future version of Molecule. If you wish to continue using it, please create an alias that calls `molecule`.",
-            category=UserWarning,
-        )
-        raise
-
 
 if __name__ == "__main__":
     main()
