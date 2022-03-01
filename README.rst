@@ -51,7 +51,6 @@ Once installed, the command line can be called using any of the methods below:
 .. code-block:: bash
 
     molecule ...
-    mol ...  # same as above, introduced in 3.0.5
     python3 -m molecule ...  # python module calling method
 
 .. _`Ansible`: https://ansible.com
