@@ -149,9 +149,13 @@ def test_verifier_property_is_ansible(config_instance):
     assert isinstance(config_instance.verifier, AnsibleVerifier)
 
 
-def test_get_driver_name_from_state_file(config_instance):
+def test_get_driver_name_from_state_file(config_instance, mocker):
     config_instance.state.change_state("driver", "state-driver")
 
+    with pytest.raises(SystemExit):
+        config_instance._get_driver_name()
+
+    mocker.patch('molecule.api.drivers', return_value=["state-driver"])
     assert "state-driver" == config_instance._get_driver_name()
 
 
