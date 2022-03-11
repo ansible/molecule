@@ -155,7 +155,7 @@ def test_get_driver_name_from_state_file(config_instance, mocker):
     with pytest.raises(SystemExit):
         config_instance._get_driver_name()
 
-    mocker.patch('molecule.api.drivers', return_value=["state-driver"])
+    mocker.patch("molecule.api.drivers", return_value=["state-driver"])
     assert "state-driver" == config_instance._get_driver_name()
 
 
