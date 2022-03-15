@@ -73,7 +73,7 @@ class Converge(base.Base):
         molecule.yml.
     """
 
-    def execute(self):
+    def execute(self, action_args=None):
         """
         Execute the actions necessary to perform a `molecule converge` and \
         returns None.

@@ -71,7 +71,7 @@ class Ansible(Verifier):
         env = util.merge_dicts(os.environ, self._config.env)
         return util.merge_dicts(env, self._config.provisioner.env)
 
-    def execute(self):
+    def execute(self, action_args=None):
         if not self.enabled:
             msg = "Skipping, verifier is disabled."
             log.warning(msg)
@@ -80,7 +80,7 @@ class Ansible(Verifier):
         msg = "Running Ansible Verifier"
         log.info(msg)
 
-        self._config.provisioner.verify()
+        self._config.provisioner.verify(action_args)
 
         msg = "Verifier completed successfully."
         log.info(msg)
