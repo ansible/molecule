@@ -21,6 +21,7 @@
 
 import logging
 import os
+import subprocess
 
 import click
 
@@ -142,8 +143,8 @@ class Login(base.Base):
         login_options["lines"] = lines
         login_cmd = self._config.driver.login_cmd_template.format(**login_options)
 
-        cmd = f"/usr/bin/env {login_cmd}"
-        app.runtime.exec(cmd)
+        cmd = f"/usr/bin/env {login_cmd}".split(" ")
+        subprocess.run(cmd)
 
 
 @base.click_command_ex()
