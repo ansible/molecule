@@ -26,7 +26,6 @@ import subprocess
 import click
 
 from molecule import scenarios, util
-from molecule.app import app
 from molecule.command import base
 
 LOG = logging.getLogger(__name__)
