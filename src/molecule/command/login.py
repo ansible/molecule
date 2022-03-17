@@ -21,6 +21,7 @@
 
 import logging
 import os
+import shlex
 import subprocess
 
 import click
@@ -142,7 +143,7 @@ class Login(base.Base):
         login_options["lines"] = lines
         login_cmd = self._config.driver.login_cmd_template.format(**login_options)
 
-        cmd = f"/usr/bin/env {login_cmd}".split(" ")
+        cmd = shlex.split(f"/usr/bin/env {login_cmd}")
         subprocess.run(cmd)
 
 
