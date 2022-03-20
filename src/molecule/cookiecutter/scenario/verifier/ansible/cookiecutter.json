@@ -1,6 +1,6 @@
 {
-    "molecule_directory": "molecule",
+  "molecule_directory": "molecule",
 
-    "role_name": "OVERRIDDEN",
-    "scenario_name": "default"
+  "role_name": "OVERRIDDEN",
+  "scenario_name": "default"
 }

@@ -14,7 +14,7 @@ Requirements
 Depending on the driver chosen, you may need to install additional OS packages.
 See ``INSTALL.rst``, which is created when initializing a new scenario.
 
-* Python >= 3.6 with :std:doc:`Ansible <ansible:index>` >= 2.8
+* Python >= 3.8 with :std:doc:`Ansible <ansible:index>` >= 2.8
 
 CentOS 8
 --------
@@ -48,9 +48,9 @@ Pip
 
 .. warning::
 
-  The old ``ansible`` and ``ansible-base`` pip extras are now deprecated and will
-  be removed in molecule 3.6.0. If you use them, please switch to explicit
-  package mention to avoid problem with newer versions of molecule.
+  ``ansible`` and ``ansible-base`` pip **extras** were removed in molecule
+  ``4.0.0``. If you used them, please switch to explicit package mention to
+  avoid problem with newer versions of molecule.
 
 Keep in mind that on selinux supporting systems, if you install into a virtual
 environment, you may face :gh:`issue <ansible/ansible/issues/34340>` even
@@ -94,7 +94,14 @@ Install Molecule:
 
 .. code-block:: bash
 
-    $ python3 -m pip install --user "molecule[lint]"
+    $ python3 -m pip install --user "molecule"
+
+Molecule does not include ansible-lint (nor does the lint extra), but
+is easily installed separately:
+
+.. code-block:: bash
+
+    $ python3 -m pip install --user "molecule ansible-lint"
 
 Molecule uses the "delegated" driver by default. Other drivers can
 be installed separately from PyPI, such as the molecule-docker driver.
@@ -103,7 +110,7 @@ command would look like this:
 
 .. code-block:: bash
 
-    $ python3 -m pip install --user "molecule[docker,lint]"
+    $ python3 -m pip install --user "molecule[docker]"
 
 Other drivers, such as ``molecule-podman``, ``molecule-vagrant``,
 ``molecule-azure`` or ``molecule-hetzner`` are also available.

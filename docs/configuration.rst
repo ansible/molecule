@@ -14,7 +14,8 @@ In order to help Ansible find used modules and roles, molecule will perform
 a prerun set of actions. These involve installing dependencies from
 ``requirements.yml`` specified at project level, install a standalone role
 or a collection. The destination is ``project_dir/.cache`` and the code itself
-is reused from ansible-lint, which has to do the same actions.
+was reused from ansible-lint, which has to do the same actions.
+(Note: ansible-lint is not included with molecule.)
 
 This assures that when you include a role inside molecule playbooks, Ansible
 will be able to find that role, and that the include is exactly the same as
@@ -137,6 +138,9 @@ It makes little sense to perform linting in more than one place per project.
 Molecule was able to use up to three linters and while it was aimed to flexible
 about them, it ended up creating more confusions to the users. We decided to
 maximize flexibility by just calling an external shell command.
+
+Note: ansible-lint is not included with molecule. The ``molecule[lint]`` extra
+does not install ansible-lint.
 
 .. code-block:: yaml
 

@@ -8,15 +8,15 @@
       # platforms supported as being managed by molecule/ansible, this does
       # not mean molecule itself can run on them.
       - image: alpine:edge
-      - image: centos:7
-      - image: centos:8
+      - image: quay.io/centos/centos:7
+      - image: quay.io/centos/centos:stream8
       - image: ubuntu:latest
       - image: debian:latest
   tasks:
-
     - name: create temporary dockerfiles
       tempfile:
-        prefix: "molecule-dockerfile-{{ item.image }}"
+        # sanitize image name to be filename safe
+        prefix: "molecule-dockerfile-{{ item.image | regex_replace('\/', '-') }}"
         suffix: build
       register: temp_dockerfiles
       with_items: "{{ platforms }}"

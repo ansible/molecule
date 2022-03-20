@@ -19,7 +19,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-from molecule import api, util
+from molecule import api
 
 
 def test_api_molecule_drivers_as_attributes():
@@ -41,13 +41,3 @@ def test_api_verifiers():
     x = ["testinfra", "ansible"]
 
     assert all(elem in api.verifiers() for elem in x)
-
-
-def test_cli_mol():
-    cmd_molecule = ["molecule", "--version"]
-    x = util.run_command(cmd_molecule)
-    cmd_mol = ["mol", "--version"]
-    y = util.run_command(cmd_mol)
-    assert x.returncode == y.returncode
-    assert x.stderr == y.stderr
-    assert x.stdout == y.stdout
