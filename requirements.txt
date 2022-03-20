@@ -18,7 +18,6 @@ chardet==4.0.0
 charset-normalizer==2.0.12
 click==8.0.4
 click-help-colors==0.9.1
-colorama==0.4.4
 commonmark==0.9.1
 cookiecutter==1.7.3
 coverage==6.3.2
