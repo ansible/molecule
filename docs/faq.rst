@@ -54,7 +54,7 @@ This was `evaluated`_ early on.  It was a toss up.  It would provide simplicity
 in some situations and complexity in others.  Developers know and understand
 playbooks.  Decided against a more elegant and sexy solution.
 
-.. _`evaluated`: https://github.com/kireledan/molecule/tree/playbook_proto
+.. _`evaluated`: :gh:`kireledan/molecule/tree/playbook_proto`
 
 Why are there multiple scenario directories and molecule.yml files?
 ===================================================================
@@ -75,9 +75,9 @@ Are there similar tools to Molecule?
 * `RoleSpec`_
 
 .. _`Testing Strategies`: https://docs.ansible.com/ansible/latest/reference_appendices/test_strategies.html
-.. _`ansible-test`: https://github.com/nylas/ansible-test
-.. _`abandoned`: https://github.com/nylas/ansible-test/issues/14
-.. _`RoleSpec`: https://github.com/nickjj/rolespec
+.. _`ansible-test`: :gh:`nylas/ansible-test`
+.. _`abandoned`: :gh:`nylas/ansible-test/issues/14`
+.. _`RoleSpec`: :gh:`nickjj/rolespec`
 
 Can I run Molecule processes in parallel?
 =========================================

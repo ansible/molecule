@@ -407,7 +407,7 @@ conflict.
     verifier:
       name: testinfra
 
-.. _`GitHub Actions`: https://github.com/features/actions
+.. _`GitHub Actions`: :gh:`features/actions`
 .. _`create a token`: https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line
 .. _`Factors`: http://tox.readthedocs.io/en/latest/config.html#factors-and-factor-conditional-settings
 .. _`Travis`: https://travis-ci.com/
@@ -416,6 +416,6 @@ conflict.
 .. _`Tox`: https://tox.readthedocs.io/en/latest
 .. _`Azure Pipelines`: https://azure.microsoft.com/en-gb/services/devops/pipelines/
 .. _`--parallel functionality`: https://tox.readthedocs.io/en/latest/config.html#cmdoption-tox-p
-.. _`issue1567_comment`: https://github.com/ansible-community/molecule/issues/1567#issuecomment-436876722
+.. _`issue1567_comment`: :gh:`ansible-community/molecule/issues/1567#issuecomment-436876722`
 .. _`Use Python Version Task`: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/tool/use-python-version?view=azure-devops
 .. _`Azure Build Variables`: https://docs.microsoft.com/en-us/azure/devops/pipelines/build/variables?view=azure-devops&tabs=yaml#build-variables-devops-services

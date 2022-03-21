@@ -151,7 +151,7 @@ Molecule is built into a Docker image by the `Toolset`_ project.
 Any questions or bugs related to use of Molecule from within a container
 should be addressed by the Toolset project.
 
-.. _`Toolset`: https://github.com/ansible-community/toolset
+.. _`Toolset`: :gh:`ansible-community/toolset`
 
 Source
 ======

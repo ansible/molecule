@@ -12,8 +12,8 @@ Contributing
 * Join the Molecule `community working group`_ if you would like to
   influence the direction of the project.
 
-.. _community working group: https://github.com/ansible/community/wiki/molecule
-.. _Molecule Project Board: https://github.com/ansible-community/molecule/projects
+.. _community working group: :gh:`ansible/community/wiki/molecule`
+.. _Molecule Project Board: :gh:`ansible-community/molecule/projects`
 
 
 Talk to us
@@ -45,15 +45,15 @@ Guidelines
 * Reformat the code by following the formatting section below.
 * Submit a pull request.
 
-.. _`Issue`: https://github.com/ansible-community/molecule/issues/new/choose
-.. _`DCO 1.1`: https://github.com/ansible-community/molecule/blob/main/DCO_1_1.md
+.. _`Issue`: :gh:`ansible-community/molecule/issues/new/choose`
+.. _`DCO 1.1`: :gh:`ansible-community/molecule/blob/main/DCO_1_1.md`
 
 Code Of Conduct
 ===============
 
 Please see our `Code of Conduct`_ document.
 
-.. _Code of Conduct: https://github.com/ansible-community/molecule/blob/main/.github/CODE_OF_CONDUCT.md
+.. _Code of Conduct: :gh:`ansible-community/molecule/blob/main/.github/CODE_OF_CONDUCT.md`
 
 Pull Request Life Cycle and Governance
 ======================================
@@ -64,8 +64,8 @@ Pull Request Life Cycle and Governance
 * All PRs must be reviewed by one other person. This is enforced by GitHub.
   Larger changes require +2.
 
-.. _working group agenda: https://github.com/ansible/community/wiki/Molecule#meetings
-.. _join us on IRC: https://github.com/ansible/community/wiki/Molecule#join-the-discussion
+.. _working group agenda: :gh:`ansible/community/wiki/Molecule#meetings`
+.. _join us on IRC: :gh:`ansible/community/wiki/Molecule#join-the-discussion`
 
 .. _testing:
 
@@ -188,6 +188,6 @@ Credits
 Based on the good work of John Dewey (`@retr0h`_) and other contributors_.
 Active member list can be seen at `Molecule working group`_.
 
-.. _@retr0h: https://github.com/retr0h
-.. _contributors: https://github.com/ansible-community/molecule/graphs/contributors
-.. _Molecule working group: https://github.com/ansible/community/wiki/Molecule
+.. _@retr0h: :gh:`retr0h`
+.. _contributors: :gh:`ansible-community/molecule/graphs/contributors`
+.. _Molecule working group: :gh:`ansible/community/wiki/Molecule`
