@@ -72,7 +72,7 @@ sphinxcontrib-serializinghtml==1.1.5
 subprocess-tee==0.3.5
 text-unidecode==1.3
 tomli==2.0.1
-urllib3==1.26.8
+urllib3==1.26.9
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
