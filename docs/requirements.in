@@ -1,0 +1,5 @@
+ansible-core>=2.12.3  # needed by autodoc
+sphinx >= 4.3.2, < 4.4.0  # https://github.com/sphinx-doc/sphinx/issues/10112
+simplejson >= 3.17.2
+sphinx-ansible-theme >= 0.8.0, < 0.10.0
+sphinx-notfound-page >= 0.7.1

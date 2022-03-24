@@ -1,4 +1,9 @@
+# Read the Docs configuration file
+# See https://docs.readthedocs.io/en/stable/config-file/v2.html
+# for details
+
 ---
+# Required
 version: 2
 
 formats: all
@@ -6,11 +11,16 @@ formats: all
 build:
   image: latest
 
+# Build documentation in the docs/ directory with Sphinx
+sphinx:
+  fail_on_warning: true
+
+# Optionally set the version of Python and requirements required
+# to build docs
 python:
   version: 3.8
   install:
     - method: pip
       path: .
-      extra_requirements:
-        - ansible-core
-        - docs
+    - requirements: docs/requirements.txt
+  system_packages: false

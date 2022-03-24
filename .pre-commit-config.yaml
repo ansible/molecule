@@ -3,6 +3,9 @@ ci:
   skip:
     # https://github.com/pre-commit-ci/issues/issues/55
     - pip-compile
+    - pip-compile-docs
+    - pip-compile-upgrade
+    - pip-compile-docs-upgrade
 default_language_version:
   python: python3.8
 exclude: |
@@ -104,13 +107,33 @@ repos:
           - filelock
           - pexpect
           - testinfra
-  - repo: https://github.com/jazzband/pip-tools
-    rev: 6.5.1
+  - repo: local
     hooks:
       - id: pip-compile
-        entry: pip-compile -q --strip-extras --no-annotate --output-file=requirements.txt tools/opts.txt setup.cfg --extra docs --extra test --extra yamllint
-      - id: pip-compile
+        name: pip-compile
+        entry: python3.8 -m piptools compile -q --strip-extras --no-annotate --output-file=requirements.txt tools/opts.txt setup.cfg --extra test --extra yamllint
+        language: system
+        files: ^(setup\.cfg|=constraints\.txt)$
+        pass_filenames: false
+        stages: [manual]
+      - id: pip-compile-docs
+        name: pip-compile-docs
+        entry: python3.8 -m piptools compile -q --strip-extras --no-annotate --output-file=docs/requirements.txt docs/requirements.in setup.cfg
+        language: system
+        files: ^(setup\.cfg|docs\/requirements\.(txt|in)|=constraints\.txt)$
+        pass_filenames: false
+        stages: [manual]
+      - id: pip-compile-upgrade
         name: pip-compile-upgrade
-        entry: pip-compile -q --strip-extras -q --upgrade --no-annotate --output-file=requirements.txt setup.cfg --extra docs --extra test --extra yamllint
-        files: ^(setup\.cfg|requirements.txt|constraints\.txt)$
+        entry: python3.8 -m piptools compile -q --strip-extras --upgrade --no-annotate --output-file=requirements.txt tools/opts.txt setup.cfg --extra test --extra yamllint
+        language: system
+        files: ^(setup\.cfg|requirements\.txt|=constraints\.txt)$
+        pass_filenames: false
+        stages: [manual]
+      - id: pip-compile-docs-upgrade
+        name: pip-compile-docs-upgrade
+        entry: python3.8 -m piptools compile -q --strip-extras --upgrade --no-annotate --output-file=docs/requirements.txt docs/requirements.in setup.cfg
+        language: system
+        files: ^(setup\.cfg|docs\/requirements\.(txt|in)|=constraints\.txt)$
+        pass_filenames: false
         stages: [manual]
