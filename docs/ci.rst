@@ -281,14 +281,15 @@ setting up a virtualenv and testing an Ansible role via Molecule.
 
     }
 
-The following `Jenkinsfile` uses the Toolset image.
+The following `Jenkinsfile` uses the
+`Ansible Creator Execution Environment`_ image.
 
 .. code-block:: groovy
 
     pipeline {
       agent {
         docker {
-          image 'quay.io/ansible/toolset'
+          image 'quay.io/ansible/creator-ee'
           args '-v /var/run/docker.sock:/var/run/docker.sock'
         }
       }
@@ -419,3 +420,4 @@ conflict.
 .. _`issue1567_comment`: https://github.com/ansible-community/molecule/issues/1567#issuecomment-436876722
 .. _`Use Python Version Task`: https://docs.microsoft.com/en-us/azure/devops/pipelines/tasks/tool/use-python-version?view=azure-devops
 .. _`Azure Build Variables`: https://docs.microsoft.com/en-us/azure/devops/pipelines/build/variables?view=azure-devops&tabs=yaml#build-variables-devops-services
+.. _`Ansible Creator Execution Environment`: https://github.com/ansible/creator-ee
