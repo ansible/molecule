@@ -146,12 +146,13 @@ some benefits:
 Docker
 ======
 
-Molecule is built into a Docker image by the `Toolset`_ project.
+Molecule is built into a Docker image by the
+`Ansible Creator Execution Environment`_ project.
 
 Any questions or bugs related to use of Molecule from within a container
-should be addressed by the Toolset project.
+should be addressed by the Ansible Creator Execution Environment project.
 
-.. _`Toolset`: https://github.com/ansible-community/toolset
+.. _`Ansible Creator Execution Environment`: https://github.com/ansible/creator-ee
 
 Source
 ======
