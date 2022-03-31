@@ -7,7 +7,7 @@
 alabaster==0.7.12
 ansi2html==1.7.0
 ansible-compat==2.0.2
-ansible-core==2.12.3
+ansible-core==2.12.4
 ansible-pygments==0.1.1
 arrow==1.2.2
 attrs==21.4.0
@@ -50,7 +50,7 @@ pytest==7.1.1
 pytest-cov==3.0.0
 pytest-forked==1.4.0
 pytest-html==3.1.1
-pytest-metadata==2.0.0
+pytest-metadata==2.0.1
 pytest-mock==3.7.0
 pytest-plus==0.2
 pytest-testinfra==6.6.0
