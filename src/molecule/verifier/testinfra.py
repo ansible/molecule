@@ -171,7 +171,7 @@ class Testinfra(Verifier):
             LOG.warning(msg)
             return
 
-        if not len(self._tests) > 0:
+        if not (len(self._tests) + len(self.additional_files_or_dirs)) > 0:
             msg = "Skipping, no tests found."
             LOG.warning(msg)
             return

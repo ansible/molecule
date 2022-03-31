@@ -21,11 +21,12 @@
 
 import logging
 import os
+import shlex
+import subprocess
 
 import click
 
 from molecule import scenarios, util
-from molecule.app import app
 from molecule.command import base
 
 LOG = logging.getLogger(__name__)
@@ -142,8 +143,8 @@ class Login(base.Base):
         login_options["lines"] = lines
         login_cmd = self._config.driver.login_cmd_template.format(**login_options)
 
-        cmd = f"/usr/bin/env {login_cmd}"
-        app.runtime.exec(cmd)
+        cmd = shlex.split(f"/usr/bin/env {login_cmd}")
+        subprocess.run(cmd)
 
 
 @base.click_command_ex()

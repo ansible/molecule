@@ -252,6 +252,13 @@ class Config(object, metaclass=NewInitCaller):
             )
             util.sysexit_with_message(msg)
 
+        if driver_from_state_file and driver_name not in api.drivers():
+            msg = (
+                f"Driver '{driver_name}' from state-file "
+                f"'{self.state.state_file}' is not available."
+            )
+            util.sysexit_with_message(msg)
+
         return driver_name
 
     def _get_config(self) -> MutableMapping:
