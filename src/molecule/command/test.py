@@ -98,7 +98,7 @@ class Test(base.Base):
        Run in parallelizable mode.
     """
 
-    def execute(self):
+    def execute(self, action_args=None):
         """
         Execute the actions necessary to perform a `molecule test` and \
         returns None.

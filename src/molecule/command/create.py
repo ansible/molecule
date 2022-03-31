@@ -72,7 +72,7 @@ class Create(base.Base):
         molecule.yml.
     """
 
-    def execute(self):
+    def execute(self, action_args=None):
         """
         Execute the actions necessary to perform a `molecule create` and \
         returns None.

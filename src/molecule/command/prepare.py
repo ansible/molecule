@@ -83,7 +83,7 @@ class Prepare(base.Base):
         molecule.yml.
     """
 
-    def execute(self):
+    def execute(self, action_args=None):
         """
         Execute the actions necessary to prepare the instances and returns \
         None.

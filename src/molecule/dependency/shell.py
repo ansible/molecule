@@ -88,7 +88,7 @@ class Shell(base.Base):
         """Bake a ``shell`` command so it's ready to execute."""
         self._sh_command = BakedCommand(cmd=self.command, env=self.env)
 
-    def execute(self):
+    def execute(self, action_args=None):
         if not self.enabled:
             msg = "Skipping, dependency is disabled."
             LOG.warning(msg)

@@ -79,7 +79,7 @@ def test_options_property_handles_cli_args(_instance):
 def test_execute(patched_logger_info, _patched_ansible_verify, _instance):
     _instance.execute()
 
-    _patched_ansible_verify.assert_called_once_with()
+    _patched_ansible_verify.assert_called_once_with(None)
 
     msg = "Running Ansible Verifier"
     patched_logger_info.assert_any_call(msg)

@@ -64,14 +64,14 @@ class Verify(base.Base):
         molecule.yml.
     """
 
-    def execute(self):
+    def execute(self, action_args=None):
         """
         Execute the actions necessary to perform a `molecule verify` and \
         returns None.
 
         :return: None
         """
-        self._config.verifier.execute()
+        self._config.verifier.execute(action_args)
 
 
 @base.click_command_ex()

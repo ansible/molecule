@@ -92,7 +92,7 @@ class AnsiblePlaybook(object):
             env=self._env,
         )
 
-    def execute(self):
+    def execute(self, action_args=None):
         """
         Execute ``ansible-playbook`` and returns a string.
 

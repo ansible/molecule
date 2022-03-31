@@ -90,7 +90,6 @@ class AnsiblePlaybooks(object):
                 playbook = driver_dict[section]
             except Exception:
                 pass
-
         if playbook is not None:
             playbook = self._config.provisioner.abs_path(playbook)
             playbook = self._normalize_playbook(playbook)
@@ -114,6 +113,7 @@ class AnsiblePlaybooks(object):
         path = self._config.driver.get_playbook(section)
         if path:
             return path
+
         path = os.path.join(
             self._get_playbook_directory(),
             self._config.driver.name,
