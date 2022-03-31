@@ -286,7 +286,7 @@ intersphinx_mapping = {
     "python": ("https://docs.python.org/3", None),
     "testinfra": ("https://testinfra.readthedocs.io/en/latest/", None),
     "virtualenv": ("https://virtualenv.pypa.io/en/latest/", None),
-    "yamllint": ("http://yamllint.readthedocs.io/en/latest/", None),
+    "yamllint": ("https://yamllint.readthedocs.io/en/latest/", None),
 }
 
 linkcheck_workers = 25
