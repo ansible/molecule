@@ -7,7 +7,7 @@
 alabaster==0.7.12
 ansi2html==1.7.0
 ansible-compat==2.0.2
-ansible-core==2.12.3
+ansible-core==2.12.4
 ansible-pygments==0.1.1
 arrow==1.2.2
 attrs==21.4.0
@@ -18,7 +18,7 @@ certifi==2021.10.8
 cffi==1.15.0
 chardet==4.0.0
 charset-normalizer==2.0.12
-click==8.0.4
+click==8.1.1
 click-help-colors==0.9.1
 commonmark==0.9.1
 cookiecutter==1.7.3
