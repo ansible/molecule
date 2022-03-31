@@ -33,7 +33,7 @@ from molecule.logger import get_section_loggers
 class Dummy(Base):
     """ExtendedBase Class."""
 
-    def execute(self):
+    def execute(self, action_args=None):
         return True
 
 

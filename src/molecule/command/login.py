@@ -85,7 +85,7 @@ class Login(base.Base):
         super(Login, self).__init__(c)
         self._pt = None
 
-    def execute(self):
+    def execute(self, action_args=None):
         """
         Execute the actions necessary to perform a `molecule login` and \
         returns None.

@@ -74,7 +74,7 @@ class Lint(base.Base):
     def env(self):
         return util.merge_dicts(self._config.env, os.environ)
 
-    def execute(self):
+    def execute(self, action_args=None):
         """
         Execute the actions necessary to perform a `molecule lint` and \
         returns None.

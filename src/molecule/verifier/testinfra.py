@@ -98,8 +98,7 @@ class Testinfra(Verifier):
         """
         super(Testinfra, self).__init__(config)
         self._testinfra_command = None
-        if config:
-            self._tests = self._get_tests()
+        self._tests = []
 
     @property
     def name(self):
@@ -156,28 +155,30 @@ class Testinfra(Verifier):
         """
         options = self.options
         verbose_flag = util.verbose_flag(options)
-        args = verbose_flag + self.additional_files_or_dirs
+        args = verbose_flag
 
         self._testinfra_command = util.BakedCommand(
             cmd=["pytest", *util.dict2args(options), *self._tests, *args],
             cwd=self._config.scenario.directory,
             env=self.env,
         )
-        # print(self._testinfra_command.cmd)
 
-    def execute(self):
+    def execute(self, action_args=None):
         if not self.enabled:
             msg = "Skipping, verifier is disabled."
             LOG.warning(msg)
             return
 
-        if not (len(self._tests) + len(self.additional_files_or_dirs)) > 0:
+        if self._config:
+            self._tests = self._get_tests(action_args)
+        else:
+            self._tests = []
+        if not len(self._tests) > 0:
             msg = "Skipping, no tests found."
             LOG.warning(msg)
             return
 
-        if self._testinfra_command is None:
-            self.bake()
+        self.bake()
 
         msg = f"Executing Testinfra tests found in {self.directory}/..."
         LOG.info(msg)
@@ -189,20 +190,35 @@ class Testinfra(Verifier):
         else:
             util.sysexit(result.returncode)
 
-    def _get_tests(self):
+    def _get_tests(self, action_args=None):
         """
         Walk the verifier's directory for tests and returns a list.
 
         :return: list
         """
-        return sorted(
-            [
-                filename
-                for filename in util.os_walk(
-                    self.directory, "test_*.py", followlinks=True
-                )
-            ]
-        )
+        if action_args:
+            tests = []
+            for arg in action_args:
+                args_tests = [
+                    filename
+                    for filename in util.os_walk(
+                        os.path.join(self._config.scenario.directory, arg),
+                        "test_*.py",
+                        followlinks=True,
+                    )
+                ]
+                tests.extend(args_tests)
+            return sorted(tests)
+        else:
+            return sorted(
+                [
+                    filename
+                    for filename in util.os_walk(
+                        self.directory, "test_*.py", followlinks=True
+                    )
+                ]
+                + self.additional_files_or_dirs
+            )
 
     def schema(self):
         return {

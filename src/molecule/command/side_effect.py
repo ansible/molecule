@@ -66,7 +66,7 @@ class SideEffect(base.Base):
         molecule.yml.
     """
 
-    def execute(self):
+    def execute(self, action_args=None):
         """
         Execute the actions necessary to perform a `molecule side-effect` and \
         returns None.
@@ -78,7 +78,7 @@ class SideEffect(base.Base):
             LOG.warning(msg)
             return
 
-        self._config.provisioner.side_effect()
+        self._config.provisioner.side_effect(action_args)
 
 
 @base.click_command_ex()

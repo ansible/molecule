@@ -71,7 +71,7 @@ class AnsibleGalaxy(Base):
         super(AnsibleGalaxy, self).__init__(config)
         self.invocations = [Roles(config), Collections(config)]
 
-    def execute(self):
+    def execute(self, action_args=None):
         for invoker in self.invocations:
             invoker.execute()
 

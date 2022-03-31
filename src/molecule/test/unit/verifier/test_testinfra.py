@@ -199,12 +199,7 @@ def test_options_property_handles_cli_args(inventory_directory, _instance):
 
 @pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
 def test_bake(_patched_testinfra_get_tests, inventory_directory, _instance):
-    tests_directory = _instance._config.verifier.directory
-    file1_file = os.path.join(tests_directory, "file1.py")
-
-    os.mkdir(tests_directory)
-    util.write_file(file1_file, "")
-
+    _instance._tests = ["foo.py", "bar.py"]
     _instance.bake()
     args = [
         "pytest",
@@ -219,7 +214,6 @@ def test_bake(_patched_testinfra_get_tests, inventory_directory, _instance):
         "foo.py",
         "bar.py",
         "-v",
-        file1_file,
     ]
 
     assert _instance._testinfra_command.cmd == args
@@ -231,15 +225,16 @@ def test_execute(
     _patched_testinfra_get_tests,
     _instance,
 ):
-    _instance._testinfra_command = "patched-command"
     _instance.execute()
 
-    patched_run_command.assert_called_once_with("patched-command", debug=False)
+    patched_run_command.assert_called_once()
 
     msg = f"Executing Testinfra tests found in {_instance.directory}/..."
     msg2 = "Verifier completed successfully."
     calls = [call(msg), call(msg2)]
     patched_logger_info.assert_has_calls(calls)
+
+    assert "pytest" in patched_run_command.call_args[0][0].cmd
 
 
 def test_execute_does_not_execute(
