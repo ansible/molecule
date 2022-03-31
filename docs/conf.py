@@ -46,8 +46,8 @@ master_doc = "index"
 
 # General information about the project.
 project = "Molecule"
-copyright = f" {datetime.date.today().year}, Red Hat Inc."
-author = "AUTHORS.rst"
+author = "Red Hat Inc"
+copyright = f" {datetime.date.today().year}, {author}"
 
 github_url = "https://github.com"
 github_repo_org = "ansible"
@@ -256,9 +256,7 @@ notfound_no_urls_prefix = False
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, document class
 # [howto/manual]).
-latex_documents = [
-    (master_doc, "Molecule.tex", "Molecule Documentation", "AUTHORS.rst", "manual")
-]
+latex_documents = [(master_doc, "Molecule.tex", "Molecule Documentation", "manual")]
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
@@ -281,7 +279,7 @@ autoclass_content = "both"
 
 intersphinx_mapping = {
     "ansible": ("https://docs.ansible.com/ansible/latest/", None),
-    "jinja2": ("http://jinja.palletsprojects.com/", None),
+    "jinja2": ("https://jinja.palletsprojects.com/", None),
     "pip": ("https://pip.pypa.io/en/latest/", None),
     "python": ("https://docs.python.org/3", None),
     "testinfra": ("https://testinfra.readthedocs.io/en/latest/", None),
