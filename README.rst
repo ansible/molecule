@@ -67,7 +67,7 @@ Read the documentation and more at https://molecule.readthedocs.io/.
 Get Involved
 ============
 
-* Join us in the ``#ansible-molecule`` irc channel on `libera.chat`_.
+* Join us in the ``#ansible-devtools`` irc channel on `libera.chat`_.
 * Check github `discussions`_.
 * Join the community working group by checking the `wiki`_.
 * Want to know about releases, subscribe to `ansible-announce list`_.
@@ -84,7 +84,7 @@ If you want to get moving fast and make a quick patch:
 
 And you're ready to make your changes!
 
-.. _`libera.chat`: https://web.libera.chat/?channel=#ansible-molecule
+.. _`libera.chat`: https://web.libera.chat/?channel=#ansible-devtools
 .. _`discussions`: https://github.com/ansible-community/molecule/discussions
 .. _`wiki`: https://github.com/ansible/community/wiki/Molecule
 .. _`ansible-announce list`: https://groups.google.com/group/ansible-announce
