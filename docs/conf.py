@@ -17,7 +17,6 @@ import datetime
 
 import molecule
 
-
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -37,17 +36,17 @@ extensions = [
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['.templates']
+templates_path = [".templates"]
 
 # The suffix of source filenames.
-source_suffix = '.rst'
+source_suffix = ".rst"
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = "index"
 
 # General information about the project.
 project = "Molecule"
-copyright = " %s, Red Hat Inc." % datetime.date.today().year
+copyright = f" {datetime.date.today().year}, Red Hat Inc."
 author = "AUTHORS.rst"
 
 github_url = "https://github.com"
@@ -83,7 +82,7 @@ language = None
 # non-false value, then it is used:
 # today = ''
 # Else, today_fmt is used as the format for a strftime call.
-today_fmt = '%B %d, %Y'
+today_fmt = "%B %d, %Y"
 
 # List of documents that shouldn't be included in the build.
 # unused_docs = []
@@ -113,9 +112,9 @@ today_fmt = '%B %d, %Y'
 # show_authors = False
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'ansible'
+pygments_style = "ansible"
 
-highlight_language = 'YAML+Jinja'
+highlight_language = "YAML+Jinja"
 
 # Substitutions, variables, entities, & shortcuts for text which do not need to link to anything.
 # For titles which should be a link, use the intersphinx anchors set at the index, chapter, and section levels, such as  qi_start_:
@@ -133,7 +132,7 @@ rst_epilog = """
 # Options for HTML output
 # -----------------------
 
-html_theme = 'sphinx_ansible_theme'
+html_theme = "sphinx_ansible_theme"
 
 html_show_sphinx = False
 html_favicon = "_static/images/favicon.ico"
@@ -144,26 +143,26 @@ html_theme_options = {
     "style_nav_header_background": "#5bbdbf",
     "style_external_links": True,
     # 'canonical_url': "https://docs.ansible.com/ansible/latest/",
-    'vcs_pageview_mode': 'edit',
+    "vcs_pageview_mode": "edit",
     "navigation_depth": 3,
-    'topbar_links': {
-        'AnsibleFest': 'https://www.ansible.com/ansiblefest',
-        'Products': 'https://www.ansible.com/tower',
-        'Community': 'https://www.ansible.com/community',
-        'Webinars & Training': 'https://www.ansible.com/webinars-training',
-        'Blog': 'https://www.ansible.com/blog',
+    "topbar_links": {
+        "AnsibleFest": "https://www.ansible.com/ansiblefest",
+        "Products": "https://www.ansible.com/tower",
+        "Community": "https://www.ansible.com/community",
+        "Webinars & Training": "https://www.ansible.com/webinars-training",
+        "Blog": "https://www.ansible.com/blog",
     },
 }
 
 html_context = {
-    'display_github': 'True',
-    'github_user': 'ansible-community',
-    'github_repo': 'molecule',
-    'github_version': 'main/docs/',
-    'current_version': version,
-    'latest_version': 'latest',
+    "display_github": "True",
+    "github_user": "ansible-community",
+    "github_repo": "molecule",
+    "github_version": "main/docs/",
+    "current_version": version,
+    "latest_version": "latest",
     # list specifically out of order to make latest work
-    'available_versions': ('latest', ),
+    "available_versions": ("latest",),
 }
 
 # Add extra CSS styles to the resulting HTML pages
@@ -173,10 +172,10 @@ html_context = {
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-html_title = f'{project} Documentation'
+html_title = f"{project} Documentation"
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
-html_short_title = 'Documentation'
+html_short_title = "Documentation"
 
 # The name of an image file (within the static path) to place at the top of
 # the sidebar.
@@ -191,11 +190,11 @@ html_favicon = "_static/images/favicon.ico"
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ["_static"]
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
-html_last_updated_fmt = '%b %d, %Y'
+html_last_updated_fmt = "%b %d, %Y"
 
 # If true, SmartyPants will be used to convert quotes and dashes to
 # typographically correct entities.
@@ -229,7 +228,7 @@ html_copy_source = False
 # html_file_suffix = ''
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'Poseidodoc'
+htmlhelp_basename = "Poseidodoc"
 
 # Configuration for sphinx-notfound-pages
 # with no 'notfound_template' and no 'notfound_context' set,
@@ -278,33 +277,17 @@ latex_documents = [
 # If false, no module index is generated.
 # latex_use_modindex = True
 
-autoclass_content = 'both'
+autoclass_content = "both"
 
-# Note:  Our strategy for intersphinx mappings is to have the upstream build location as the
-# canonical source and then cached copies of the mapping stored locally in case someone is building
-# when disconnected from the internet.  We then have a script to update the cached copies.
-#
-# Because of that, each entry in this mapping should have this format:
-#   name: ('http://UPSTREAM_URL', (None, 'path/to/local/cache.inv'))
-#
-# The update script depends on this format so deviating from this (for instance, adding a third
-# location for the mappning to live) will confuse it.
-intersphinx_mapping = {'python': ('https://docs.python.org/2/', (None, '../python2.inv')),
-                       'python3': ('https://docs.python.org/3/', (None, '../python3.inv')),
-                       'jinja2': ('http://jinja.palletsprojects.com/', (None, '../jinja2.inv')),
-                       'ansible_2_9': ('https://docs.ansible.com/ansible/2.9/', (None, '../ansible_2_9.inv')),
-                       'ansible_2_8': ('https://docs.ansible.com/ansible/2.8/', (None, '../ansible_2_8.inv')),
-                       'ansible_2_7': ('https://docs.ansible.com/ansible/2.7/', (None, '../ansible_2_7.inv')),
-                       'ansible_2_6': ('https://docs.ansible.com/ansible/2.6/', (None, '../ansible_2_6.inv')),
-                       'ansible_2_5': ('https://docs.ansible.com/ansible/2.5/', (None, '../ansible_2_5.inv')),
+intersphinx_mapping = {
     "ansible": ("https://docs.ansible.com/ansible/latest/", None),
+    "jinja2": ("http://jinja.palletsprojects.com/", None),
     "pip": ("https://pip.pypa.io/en/latest/", None),
     "python": ("https://docs.python.org/3", None),
-    "python2": ("https://docs.python.org/2", None),
     "testinfra": ("https://testinfra.readthedocs.io/en/latest/", None),
-    "yamllint": ("http://yamllint.readthedocs.io/en/latest/", None),
     "virtualenv": ("https://virtualenv.pypa.io/en/latest/", None),
-    }
+    "yamllint": ("http://yamllint.readthedocs.io/en/latest/", None),
+}
 
 linkcheck_workers = 25
 # linkcheck_anchors = False
