@@ -35,3 +35,26 @@ def test_instances_property(_instance):
     ]
 
     assert x == _instance.instances
+
+
+@pytest.fixture
+def platform_name(request, config_instance):
+    return platforms.Platforms(config_instance, platform_name=request.param)
+
+
+@pytest.mark.parametrize("platform_name", ["instance-1"], indirect=True)
+def test_instances_property_with_platform_name_instance_1(platform_name):
+    x = [
+        {"groups": ["foo", "bar"], "name": "instance-1", "children": ["child1"]},
+    ]
+
+    assert x == platform_name.instances
+
+
+@pytest.mark.parametrize("platform_name", ["instance-2"], indirect=True)
+def test_instances_property_with_platform_name_instance_2(platform_name):
+    x = [
+        {"groups": ["baz", "foo"], "name": "instance-2", "children": ["child2"]},
+    ]
+
+    assert x == platform_name.instances

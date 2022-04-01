@@ -336,6 +336,14 @@ def _parallelize_platforms(config, run_uuid):
     return [parallelize(platform) for platform in config["platforms"]]
 
 
+def _filter_platforms(config, platform_name):
+    for platform in config["platforms"]:
+        if platform["name"] == platform_name:
+            return [platform]
+
+    return []
+
+
 @cache
 def find_vcs_root(location="", dirs=(".git", ".hg", ".svn"), default=None) -> str:
     """Return current repository root directory."""

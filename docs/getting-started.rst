@@ -217,3 +217,8 @@ The full lifecycle sequence can be invoked with:
     It can be particularly useful to pass the ``--destroy=never`` flag when
     invoking ``molecule test`` so that you can tell Molecule to run the full
     sequence but not destroy the instance if one step fails.
+
+    If the ``--platform-name=[PLATFORM_NAME]`` flag is passed or the
+    environment variable ``MOLECULE_PLATFORM_NAME`` is exposed when invoking
+    ``molecule test``, it can tell Molecule to run the test in one platform
+    only. It is useful if you want to test one platform docker image.
