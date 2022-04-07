@@ -792,15 +792,21 @@ class Ansible(base.Base):
         """
         self._write_inventory()
         self._remove_vars()
-        if not self.links:
-            self._add_or_update_vars()
-        else:
+        if "group_vars" in self.links and "host_vars" in self.links:
             self._link_or_update_vars()
+        elif "group_vars" in self.links:
+            self._link_or_update_vars()
+            self._add_or_update_vars(["host_vars"])
+        elif "host_vars" in self.links:
+            self._link_or_update_vars()
+            self._add_or_update_vars(["group_vars"])
+        else:
+            self._add_or_update_vars(["host_vars", "group_vars"])
 
     def abs_path(self, path: str) -> Optional[str]:
         return util.abs_path(os.path.join(self._config.scenario.directory, path))
 
-    def _add_or_update_vars(self):
+    def _add_or_update_vars(self, targets):
         """
         Create host and/or group vars and returns None.
 
@@ -811,7 +817,7 @@ class Ansible(base.Base):
         if self.hosts:
             util.write_file(hosts_file, util.safe_dump(self.hosts))
         # Create the host_vars and group_vars directories
-        for target in ["host_vars", "group_vars"]:
+        for target in targets:
             if target == "host_vars":
                 vars_target = copy.deepcopy(self.host_vars)
                 for instance_name, _ in self.host_vars.items():
