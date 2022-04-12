@@ -67,7 +67,7 @@ def test_execute(
     assert "default" in args
     assert "side_effect" in args
 
-    _patched_ansible_side_effect.assert_called_once_with()
+    _patched_ansible_side_effect.assert_called_once_with(None)
 
 
 def test_execute_skips_when_playbook_not_configured(

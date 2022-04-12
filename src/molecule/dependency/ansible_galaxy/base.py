@@ -112,7 +112,7 @@ class AnsibleGalaxyBase(base.Base):
             env=self.env,
         )
 
-    def execute(self):
+    def execute(self, action_args=None):
         if not self.enabled:
             msg = "Skipping, dependency is disabled."
             LOG.warning(msg)

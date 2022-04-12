@@ -705,15 +705,22 @@ class Ansible(base.Base):
         pb = self._get_ansible_playbook(self.playbooks.destroy)
         pb.execute()
 
-    def side_effect(self):
+    def side_effect(self, action_args=None):
         """
         Execute ``ansible-playbook`` against the side_effect playbook and \
         returns None.
 
         :return: None
         """
-        pb = self._get_ansible_playbook(self.playbooks.side_effect)
-        pb.execute()
+        if action_args:
+            playbooks = [
+                self._get_ansible_playbook(self._config.provisioner.abs_path(playbook))
+                for playbook in action_args
+            ]
+        else:
+            playbooks = [self._get_ansible_playbook(self.playbooks.side_effect)]
+        for pb in playbooks:
+            pb.execute()
 
     def create(self):
         """
@@ -746,19 +753,25 @@ class Ansible(base.Base):
         pb.add_cli_arg("syntax-check", True)
         pb.execute()
 
-    def verify(self):
+    def verify(self, action_args=None):
         """
         Execute ``ansible-playbook`` against the verify playbook and returns \
         None.
 
         :return: None
         """
-        if not self.playbooks.verify:
+        if action_args:
+            playbooks = [
+                self._config.provisioner.abs_path(playbook) for playbook in action_args
+            ]
+        else:
+            playbooks = [self.playbooks.verify]
+        if not playbooks:
             LOG.warning("Skipping, verify playbook not configured.")
             return
-
-        pb = self._get_ansible_playbook(self.playbooks.verify)
-        pb.execute()
+        for playbook in playbooks:
+            pb = self._get_ansible_playbook(playbook)
+            pb.execute()
 
     def write_config(self):
         """

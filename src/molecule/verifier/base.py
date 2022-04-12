@@ -68,7 +68,7 @@ class Verifier(object):
         """
 
     @abc.abstractmethod
-    def execute(self):  # pragma: no cover
+    def execute(self, action_args=None):  # pragma: no cover
         """
         Execute ``cmd`` and returns None.
 

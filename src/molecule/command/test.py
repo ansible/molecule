@@ -31,6 +31,7 @@ from molecule.config import DEFAULT_DRIVER
 
 LOG = logging.getLogger(__name__)
 MOLECULE_PARALLEL = os.environ.get("MOLECULE_PARALLEL", False)
+MOLECULE_PLATFORM_NAME = os.environ.get("MOLECULE_PLATFORM_NAME", None)
 
 
 class Test(base.Base):
@@ -98,7 +99,7 @@ class Test(base.Base):
        Run in parallelizable mode.
     """
 
-    def execute(self):
+    def execute(self, action_args=None):
         """
         Execute the actions necessary to perform a `molecule test` and \
         returns None.
@@ -114,6 +115,12 @@ class Test(base.Base):
     "-s",
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
     help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
+)
+@click.option(
+    "--platform-name",
+    "-p",
+    default=MOLECULE_PLATFORM_NAME,
+    help="Name of the platform to target only. Default is None",
 )
 @click.option(
     "--driver-name",
@@ -140,7 +147,14 @@ class Test(base.Base):
 )
 @click.argument("ansible_args", nargs=-1, type=click.UNPROCESSED)
 def test(
-    ctx, scenario_name, driver_name, __all, destroy, parallel, ansible_args
+    ctx,
+    scenario_name,
+    driver_name,
+    __all,
+    destroy,
+    parallel,
+    ansible_args,
+    platform_name,
 ):  # pragma: no cover
     """Test (dependency, lint, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy)."""
     args = ctx.obj.get("args")
@@ -150,6 +164,7 @@ def test(
         "destroy": destroy,
         "subcommand": subcommand,
         "driver_name": driver_name,
+        "platform_name": platform_name,
     }
 
     if __all:

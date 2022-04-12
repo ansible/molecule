@@ -59,7 +59,7 @@ class Base(object, metaclass=abc.ABCMeta):
             setattr(cls, "execute", wrapper(cls.execute))
 
     @abc.abstractmethod
-    def execute(self):  # pragma: no cover
+    def execute(self, action_args=None):  # pragma: no cover
         pass
 
     def _setup(self) -> None:
@@ -136,17 +136,19 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
                 raise
 
 
-def execute_subcommand(config, subcommand):
+def execute_subcommand(config, subcommand_and_args):
     """Execute subcommand."""
+    (subcommand, *args) = subcommand_and_args.split(" ")
     command_module = getattr(molecule.command, subcommand)
     command = getattr(command_module, text.camelize(subcommand))
+
     # knowledge of the current action is used by some provisioners
     # to ensure they behave correctly during certain sequence steps,
     # particularly the setting of ansible options in create/destroy,
     # and is also used for reporting in execute_cmdline_scenarios
     config.action = subcommand
 
-    return command(config).execute()
+    return command(config).execute(args)
 
 
 def execute_scenario(scenario):

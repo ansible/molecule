@@ -134,6 +134,10 @@ class Config(object, metaclass=NewInitCaller):
         return self.command_args.get("parallel", False)
 
     @property
+    def platform_name(self):
+        return self.command_args.get("platform_name", None)
+
+    @property
     def debug(self):
         return self.args.get("debug", MOLECULE_DEBUG)
 
@@ -206,7 +210,11 @@ class Config(object, metaclass=NewInitCaller):
 
     @cached_property
     def platforms(self):
-        return platforms.Platforms(self, parallelize_platforms=self.is_parallel)
+        return platforms.Platforms(
+            self,
+            parallelize_platforms=self.is_parallel,
+            platform_name=self.platform_name,
+        )
 
     @cached_property
     def provisioner(self):
