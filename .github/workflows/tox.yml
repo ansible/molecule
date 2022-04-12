@@ -56,7 +56,10 @@ jobs:
             python-version: 3.9
 
     steps:
-      - uses: actions/checkout@v1
+      - name: Check out src from Git
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # needed by setuptools-scm
       - name: Install system dependencies
         # remove broken .deb ansible and replace with pip version:
         # https://github.com/actions/virtual-environments/issues/3001
