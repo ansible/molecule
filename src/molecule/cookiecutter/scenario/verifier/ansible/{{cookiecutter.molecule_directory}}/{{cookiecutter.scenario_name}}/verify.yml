@@ -7,6 +7,6 @@
   gather_facts: false
   tasks:
   - name: Example assertion
-    assert:
+    ansible.builtin.assert:
       that: true
 {% endraw -%}
