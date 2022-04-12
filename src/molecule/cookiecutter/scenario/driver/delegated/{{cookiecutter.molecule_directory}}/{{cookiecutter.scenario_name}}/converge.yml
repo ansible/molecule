@@ -3,5 +3,5 @@
   hosts: all
   tasks:
     - name: "Include {{ cookiecutter.role_name }}"
-      include_role:
+      ansible.builtin.include_role:
         name: "{{ cookiecutter.role_name }}"
