@@ -12,8 +12,8 @@ repos:
     rev: 5.9.2
     hooks:
       - id: isort
-  - repo: https://github.com/python/black.git
-    rev: 21.7b0
+  - repo: https://github.com/psf/black
+    rev: 22.3.0
     hooks:
       - id: black
         language_version: python3
