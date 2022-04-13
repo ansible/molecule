@@ -1,7 +1,7 @@
 ---
 version: 2
 
-formats: all
+formats: []
 
 build:
   image: latest
