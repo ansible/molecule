@@ -80,7 +80,7 @@ def test_print_matrix(capsys, _instance):
         _instance.print_matrix()
     result = chomp(strip_ansi_escape(capture.get()))
 
-    matrix_out = u"""---
+    matrix_out = """---
 default:
   - dependency
   - lint
