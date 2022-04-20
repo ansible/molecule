@@ -44,7 +44,9 @@ class AnsiblePlaybook(object):
         self._playbook = playbook
         self._config = config
         self._cli = {}
-        self._env = util.merge_dicts(self._config.provisioner.env, self._config.runtime.environ)
+        self._env = util.merge_dicts(
+            self._config.provisioner.env, self._config.runtime.environ
+        )
 
     def bake(self):
         """
