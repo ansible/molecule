@@ -82,7 +82,7 @@ class Scenarios(object):
         for scenario in self.all:
             if scenario.name == scenario_name:
                 return [action for action in scenario.sequence]
-        raise RuntimeError("Unable to find sequence for {scenario_name} scenario.")
+        raise RuntimeError(f"Unable to find sequence for {scenario_name} scenario.")
 
     def _verify(self):
         """
