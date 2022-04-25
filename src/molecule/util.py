@@ -26,6 +26,8 @@ import fnmatch
 import logging
 import os
 import re
+import shutil
+import stat
 import sys
 from dataclasses import dataclass
 from subprocess import CalledProcessError, CompletedProcess
@@ -40,6 +42,7 @@ from rich.syntax import Syntax
 from molecule.app import app
 from molecule.console import console
 from molecule.constants import MOLECULE_HEADER
+from molecule.exceptions import NonTemplatedInputDirException
 
 LOG = logging.getLogger(__name__)
 
@@ -426,3 +429,43 @@ def print_as_yaml(data: Any) -> None:
     """Render python object as yaml on console."""
     result = Syntax(safe_dump(data), "yaml")
     console.print(result)
+
+
+def find_template(repo_dir):
+    """Determine which child directory of `repo_dir` is the project template.
+
+    :param repo_dir: Local directory of newly cloned repo.
+    :returns project_template: Relative path to project template.
+    """
+    repo_dir_contents = os.listdir(repo_dir)
+
+    project_template = None
+    for item in repo_dir_contents:
+        if "cookiecutter" in item and "{{" in item and "}}" in item:
+            project_template = item
+            break
+
+    if project_template:
+        project_template = os.path.join(repo_dir, project_template)
+        LOG.debug("The project template appears to be %s", project_template)
+        return project_template
+    else:
+        raise NonTemplatedInputDirException
+
+
+def force_delete(func, path, _):
+    """Error handler for `shutil.rmtree()` equivalent to `rm -rf`.
+
+    Usage: `shutil.rmtree(path, onerror=force_delete)`
+    From https://docs.python.org/3/library/shutil.html#rmtree-example
+    """
+    os.chmod(path, stat.S_IWRITE)
+    func(path)
+
+
+def rmtree(path):
+    """Remove a directory and all its contents. Like rm -rf on Unix.
+
+    :param path: A directory path.
+    """
+    shutil.rmtree(path, onerror=force_delete)

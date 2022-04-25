@@ -23,10 +23,9 @@ import abc
 import logging
 import os
 
-import cookiecutter
-import cookiecutter.main
-
 from molecule import util
+from molecule.cookiecutter import cookiecutter
+from molecule.exceptions import NonTemplatedInputDirException
 
 LOG = logging.getLogger(__name__)
 
@@ -36,9 +35,7 @@ class Base(object):
 
     __metaclass__ = abc.ABCMeta
 
-    def _process_templates(
-        self, template_dir, extra_context, output_dir, overwrite=True
-    ):
+    def _process_templates(self, template_dir, extra_context, output_dir):
         """
         Process templates as found in the named directory.
 
@@ -49,22 +46,18 @@ class Base(object):
          default or user specified values.
         :param output_dir: An string with an absolute path to a directory where
          the templates should be written to.
-        :param overwrite: An optional bool whether or not to overwrite existing
-         templates.
         :return: None
         """
         template_dir = self._resolve_template_dir(template_dir)
         self._validate_template_dir(template_dir)
 
         try:
-            cookiecutter.main.cookiecutter(
+            cookiecutter(
                 template_dir,
                 extra_context=extra_context,
                 output_dir=output_dir,
-                overwrite_if_exists=overwrite,
-                no_input=True,
             )
-        except cookiecutter.exceptions.NonTemplatedInputDirException:
+        except NonTemplatedInputDirException:
             util.sysexit_with_message(
                 "The specified template directory ("
                 + str(template_dir)
