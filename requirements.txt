@@ -11,7 +11,7 @@ ansible-core==2.12.4
 ansible-pygments==0.1.1
 arrow==1.2.2
 attrs==21.4.0
-babel==2.9.1
+babel==2.10.1
 binaryornot==0.4.4
 cerberus==1.3.2
 certifi==2021.10.8
@@ -44,16 +44,16 @@ poyo==0.5.0
 ptyprocess==0.7.0
 py==1.11.0
 pycparser==2.21
-pygments==2.11.2
-pyparsing==3.0.7
-pytest==7.1.1
+pygments==2.12.0
+pyparsing==3.0.8
+pytest==7.1.2
 pytest-cov==3.0.0
 pytest-forked==1.4.0
 pytest-html==3.1.1
 pytest-metadata==2.0.1
 pytest-mock==3.7.0
 pytest-plus==0.2
-pytest-testinfra==6.6.0
+pytest-testinfra==6.7.0
 pytest-xdist==2.5.0
 python-dateutil==2.8.2
 python-slugify==6.1.1
@@ -61,7 +61,7 @@ pytz==2022.1
 pyyaml==6.0
 requests==2.27.1
 resolvelib==0.5.4
-rich==12.0.1
+rich==12.2.0
 simplejson==3.17.6
 six==1.16.0
 snowballstemmer==2.2.0
@@ -78,6 +78,7 @@ sphinxcontrib-serializinghtml==1.1.5
 subprocess-tee==0.3.5
 text-unidecode==1.3
 tomli==2.0.1
+typing-extensions==4.2.0
 urllib3==1.26.9
 zipp==3.8.0
 
