@@ -10,3 +10,11 @@ updates:
       # as dependabot bumps only the pinned test dependencies, is safe to:
       - skip-changelog
     open-pull-requests-limit: 3
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule: 
+      interval: weekly
+    open-pull-requests-limit: 3
+    labels: 
+     - "dependencies"
+     - "skip-changelog"
