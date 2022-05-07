@@ -70,7 +70,7 @@ def generate_context(context_file="cookiecutter.json", extra_context=None):
 
     # Add the Python object to the context dictionary
     file_name = os.path.basename(context_file)
-    file_stem = file_name.split(".")[0]
+    file_stem = os.path.splitext(file_name)[0]
     context[file_stem] = obj
 
     if extra_context:
