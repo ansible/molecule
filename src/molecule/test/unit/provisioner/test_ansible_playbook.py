@@ -34,6 +34,27 @@ def _instance(config_instance):
 
 
 @pytest.fixture
+def _provisioner_verifier_section_data():
+    return {
+        "provisioner": {"name": "ansible", "env": {"FOO": "baz"}},
+        "verifier": {"name": "ansible", "env": {"FOO": "bar"}},
+    }
+
+
+@pytest.fixture
+def _instance_for_verify(_provisioner_verifier_section_data, config_instance):
+    _instance = ansible_playbook.AnsiblePlaybook("playbook", config_instance, True)
+    return _instance
+
+
+@pytest.mark.parametrize(
+    "config_instance", ["_provisioner_verifier_section_data"], indirect=True
+)
+def test_env_in_verify_override_provision(_instance_for_verify):
+    assert "bar" == _instance_for_verify._env["FOO"]
+
+
+@pytest.fixture
 def _inventory_directory(_instance):
     return _instance._config.provisioner.inventory_directory
 
