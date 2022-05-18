@@ -64,9 +64,7 @@ def test_env_in_provision(_instance_for_verifier_env):
     assert "bar" == _instance_for_verifier_env._env["FOO"]
 
 
-@pytest.mark.parametrize(
-    "config_instance", ["_verifier_section_data"], indirect=True
-)
+@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
 def test_env_in_verifier(_instance_for_verifier_env):
     assert "bar" == _instance_for_verifier_env._env["FOO"]
 
