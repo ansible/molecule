@@ -34,24 +34,48 @@ def _instance(config_instance):
 
 
 @pytest.fixture
+def _provisioner_section_data():
+    return {"provisioner": {"name": "ansible", "env": {"FOO": "bar"}}}
+
+
+@pytest.fixture
+def _verifier_section_data():
+    return {"verifier": {"name": "ansible", "env": {"FOO": "bar"}}}
+
+
+@pytest.fixture
 def _provisioner_verifier_section_data():
     return {
-        "provisioner": {"name": "ansible", "env": {"FOO": "baz"}},
-        "verifier": {"name": "ansible", "env": {"FOO": "bar"}},
+        "provisioner": {"name": "ansible", "env": {"FOO": "bar"}},
+        "verifier": {"name": "ansible", "env": {"FOO": "baz"}},
     }
 
 
 @pytest.fixture
-def _instance_for_verify(_provisioner_verifier_section_data, config_instance):
+def _instance_for_verifier_env(config_instance):
     _instance = ansible_playbook.AnsiblePlaybook("playbook", config_instance, True)
     return _instance
 
 
 @pytest.mark.parametrize(
+    "config_instance", ["_provisioner_section_data"], indirect=True
+)
+def test_env_in_provision(_instance_for_verifier_env):
+    assert "bar" == _instance_for_verifier_env._env["FOO"]
+
+
+@pytest.mark.parametrize(
+    "config_instance", ["_verifier_section_data"], indirect=True
+)
+def test_env_in_verifier(_instance_for_verifier_env):
+    assert "bar" == _instance_for_verifier_env._env["FOO"]
+
+
+@pytest.mark.parametrize(
     "config_instance", ["_provisioner_verifier_section_data"], indirect=True
 )
-def test_env_in_verify_override_provision(_instance_for_verify):
-    assert "bar" == _instance_for_verify._env["FOO"]
+def test_env_in_verify_override_provision(_instance_for_verifier_env):
+    assert "baz" == _instance_for_verifier_env._env["FOO"]
 
 
 @pytest.fixture
