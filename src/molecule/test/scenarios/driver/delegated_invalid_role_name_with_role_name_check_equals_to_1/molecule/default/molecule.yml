@@ -1,0 +1,22 @@
+---
+role_name_check: 1
+driver:
+  name: delegated
+platforms:
+  - name: instance
+provisioner:
+  name: ansible
+  inventory:
+    hosts:
+      all:
+        hosts:
+          instance:
+            ansible_host: localhost
+  default_sequence:
+    - converge
+  test_sequence:
+    # - prepare
+    - converge
+    # - verify
+  verify_sequence:
+    - converge
