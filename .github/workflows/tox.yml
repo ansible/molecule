@@ -77,7 +77,7 @@ jobs:
           && source foo/bin/activate \
           && ansible --version
       - name: Install a default Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
