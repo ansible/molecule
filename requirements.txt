@@ -45,7 +45,7 @@ ptyprocess==0.7.0
 py==1.11.0
 pycparser==2.21
 pygments==2.12.0
-pyparsing==3.0.8
+pyparsing==3.0.9
 pytest==7.1.2
 pytest-cov==3.0.0
 pytest-forked==1.4.0
