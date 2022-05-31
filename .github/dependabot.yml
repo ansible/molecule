@@ -12,9 +12,9 @@ updates:
     open-pull-requests-limit: 3
   - package-ecosystem: "github-actions"
     directory: "/"
-    schedule: 
+    schedule:
       interval: weekly
     open-pull-requests-limit: 3
-    labels: 
-     - "dependencies"
-     - "skip-changelog"
+    labels:
+      - "dependencies"
+      - "skip-changelog"
