@@ -28,7 +28,7 @@ jobs:
           --user
           tox
       - name: Check out src from Git
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0 # needed by setuptools-scm
       - name: Build dists
