@@ -87,7 +87,7 @@ repos:
           - types-filelock
           - types-setuptools
   - repo: https://github.com/PyCQA/pylint
-    rev: v2.13.8
+    rev: v2.14.0-b1
     hooks:
       - id: pylint
         additional_dependencies:
@@ -101,7 +101,7 @@ repos:
           - pexpect
           - testinfra
   - repo: https://github.com/jazzband/pip-tools
-    rev: 6.6.0
+    rev: 6.6.1
     hooks:
       - id: pip-compile
         entry: pip-compile -q --strip-extras --no-annotate --output-file=requirements.txt tools/opts.txt setup.cfg --extra docs --extra test --extra yamllint
