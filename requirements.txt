@@ -61,7 +61,7 @@ pytz==2022.1
 pyyaml==6.0
 requests==2.27.1
 resolvelib==0.5.4
-rich==12.3.0
+rich==12.4.4
 simplejson==3.17.6
 six==1.16.0
 snowballstemmer==2.2.0
