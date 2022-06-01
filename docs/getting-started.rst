@@ -122,7 +122,8 @@ keys represent the high level components that Molecule provides. These are:
   the driver to delegate the task of creating instances.
 
 * The :ref:`lint` command. Molecule can call external commands to ensure
-  that best practices are encouraged.
+  that best practices are encouraged. Note: `ansible-lint` is not included with
+  molecule or molecule[lint].
 
 * The :ref:`platforms` definitions. Molecule relies on this to know which
   instances to create, name and to which group each instance belongs. If you
@@ -216,3 +217,8 @@ The full lifecycle sequence can be invoked with:
     It can be particularly useful to pass the ``--destroy=never`` flag when
     invoking ``molecule test`` so that you can tell Molecule to run the full
     sequence but not destroy the instance if one step fails.
+
+    If the ``--platform-name=[PLATFORM_NAME]`` flag is passed or the
+    environment variable ``MOLECULE_PLATFORM_NAME`` is exposed when invoking
+    ``molecule test``, it can tell Molecule to run the test in one platform
+    only. It is useful if you want to test one platform docker image.

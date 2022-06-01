@@ -14,7 +14,7 @@ Requirements
 Depending on the driver chosen, you may need to install additional OS packages.
 See ``INSTALL.rst``, which is created when initializing a new scenario.
 
-* Python >= 3.6 with :std:doc:`Ansible <ansible:index>` >= 2.8
+* Python >= 3.8 with :std:doc:`Ansible <ansible:index>` >= 2.8
 
 CentOS 8
 --------
@@ -48,12 +48,12 @@ Pip
 
 .. warning::
 
-  The old ``ansible`` and ``ansible-base`` pip extras are now deprecated and will
-  be removed in molecule 3.6.0. If you use them, please switch to explicit
-  package mention to avoid problem with newer versions of molecule.
+  ``ansible`` and ``ansible-base`` pip **extras** were removed in molecule
+  ``4.0.0``. If you used them, please switch to explicit package mention to
+  avoid problem with newer versions of molecule.
 
 Keep in mind that on selinux supporting systems, if you install into a virtual
-environment, you may face :gh:`issue <ansible/ansible/issues/34340>` even
+environment, you may face `issue <https://github.com/ansible/ansible/issues/34340>` even
 if selinux is not enabled or is configured to be permissive.
 
 It is your responsibility to assure that soft dependencies of Ansible are
@@ -75,7 +75,7 @@ available on your controller or host machines.
 
 .. warning::
 
-  Pip v19 series has an :gh:`isolation bug <pypa/pip/issues/6264>` of
+  Pip v19 series has an `isolation bug <https://github.com/pypa/pip/issues/6264>` of
   setuptools being exposed to the package build env. That is why it's
   highly recommended to upgrade user setuptools even when using a proper
   virtualenv as shown above.
@@ -94,7 +94,14 @@ Install Molecule:
 
 .. code-block:: bash
 
-    $ python3 -m pip install --user "molecule[lint]"
+    $ python3 -m pip install --user "molecule"
+
+Molecule does not include ansible-lint (nor does the lint extra), but
+is easily installed separately:
+
+.. code-block:: bash
+
+    $ python3 -m pip install --user "molecule ansible-lint"
 
 Molecule uses the "delegated" driver by default. Other drivers can
 be installed separately from PyPI, such as the molecule-docker driver.
@@ -103,7 +110,7 @@ command would look like this:
 
 .. code-block:: bash
 
-    $ python3 -m pip install --user "molecule[docker,lint]"
+    $ python3 -m pip install --user "molecule[docker]"
 
 Other drivers, such as ``molecule-podman``, ``molecule-vagrant``,
 ``molecule-azure`` or ``molecule-hetzner`` are also available.
@@ -139,12 +146,13 @@ some benefits:
 Docker
 ======
 
-Molecule is built into a Docker image by the `Toolset`_ project.
+Molecule is built into a Docker image by the
+`Ansible Creator Execution Environment`_ project.
 
 Any questions or bugs related to use of Molecule from within a container
-should be addressed by the Toolset project.
+should be addressed by the Ansible Creator Execution Environment project.
 
-.. _`Toolset`: https://github.com/ansible-community/toolset
+.. _`Ansible Creator Execution Environment`: https://github.com/ansible/creator-ee
 
 Source
 ======

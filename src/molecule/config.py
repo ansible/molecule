@@ -134,6 +134,10 @@ class Config(object, metaclass=NewInitCaller):
         return self.command_args.get("parallel", False)
 
     @property
+    def platform_name(self):
+        return self.command_args.get("platform_name", None)
+
+    @property
     def debug(self):
         return self.args.get("debug", MOLECULE_DEBUG)
 
@@ -206,7 +210,11 @@ class Config(object, metaclass=NewInitCaller):
 
     @cached_property
     def platforms(self):
-        return platforms.Platforms(self, parallelize_platforms=self.is_parallel)
+        return platforms.Platforms(
+            self,
+            parallelize_platforms=self.is_parallel,
+            platform_name=self.platform_name,
+        )
 
     @cached_property
     def provisioner(self):
@@ -241,6 +249,13 @@ class Config(object, metaclass=NewInitCaller):
             msg = (
                 f"Instance(s) were created with the '{driver_name}' driver, but the "
                 f"subcommand is using '{driver_from_cli}' driver."
+            )
+            util.sysexit_with_message(msg)
+
+        if driver_from_state_file and driver_name not in api.drivers():
+            msg = (
+                f"Driver '{driver_name}' from state-file "
+                f"'{self.state.state_file}' is not available."
             )
             util.sysexit_with_message(msg)
 

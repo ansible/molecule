@@ -3,6 +3,7 @@ name: Bug report
 about: Please test the main branch before raising bugs.
 labels: bug
 ---
+
 <!--- Verify first that your issue is not already reported on GitHub -->
 <!--- Do not report bugs before reproducing them with the code of the main branch! -->
 <!--- Please also check https://molecule.readthedocs.io/en/latest/faq.html --->

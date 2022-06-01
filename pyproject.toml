@@ -13,10 +13,7 @@ source = ["src"]
 branch = true
 
 [tool.coverage.report]
-exclude_lines = [
-    "pragma: no cover",
-    "if TYPE_CHECKING:"
-]
+exclude_lines = ["pragma: no cover", "if TYPE_CHECKING:"]
 
 [tool.black]
 skip-string-normalization = false
@@ -27,8 +24,8 @@ known_first_party = "molecule"
 
 [tool.pytest.ini_options]
 markers = [
-    "serial: Run this test serially via filelock.",
-    "extensive: marks tests that we want to skip by default, as they are indirectly covered by other tests"
+  "serial: Run this test serially via filelock.",
+  "extensive: marks tests that we want to skip by default, as they are indirectly covered by other tests"
 ]
 norecursedirs = [
   ".eggs",
@@ -40,18 +37,14 @@ norecursedirs = [
   "src/molecule/test/resources",
   "src/molecule/test/scenarios",
 ]
-
 addopts = "--doctest-modules --durations 10 --color=yes"
-doctest_optionflags = [
-  "ALLOW_UNICODE",
-  "ELLIPSIS"
-]
+doctest_optionflags = ["ALLOW_UNICODE", "ELLIPSIS"]
 junit_suite_name = "molecule_test_suite"
 testpaths = "src/molecule/test/"
 filterwarnings = [
-    # treat warnings as errors unless we add them below
-    "error"
-    # ignore::UserWarning
+  # treat warnings as errors unless we add them below
+  "error"
+  # ignore::UserWarning
 ]
 
 [tool.setuptools_scm]

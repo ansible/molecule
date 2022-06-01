@@ -52,7 +52,7 @@ class Role(base.Base):
         """Construct Role."""
         self._command_args = command_args
 
-    def execute(self):
+    def execute(self, action_args=None):
         """
         Execute the actions necessary to perform a `molecule init role` and \
         returns None.

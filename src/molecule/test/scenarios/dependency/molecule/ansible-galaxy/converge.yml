@@ -3,7 +3,6 @@
   hosts: all
   gather_facts: false
   tasks:
-
     - name: Validate that collection was installed
       debug:
         msg: "{{ 'foo' | community.molecule.header }}"

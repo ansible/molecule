@@ -62,7 +62,7 @@ class Scenario(base.Base):
         """Construct Scenario."""
         self._command_args = command_args
 
-    def execute(self):
+    def execute(self, action_args=None):
         """
         Execute the actions necessary to perform a `molecule init scenario` and \
         returns None.
@@ -162,7 +162,7 @@ def _default_scenario_exists(ctx, param, value: str):  # pragma: no cover
     "--lint-name",
     type=click.Choice(["yamllint"]),
     default="yamllint",
-    help="Name of lint to initialize. (ansible-lint)",
+    help="Name of lint to initialize. (yamllint)",
 )
 @click.option(
     "--provisioner-name",

@@ -1,16 +1,18 @@
 ---
 version: 2
 
-formats: all
+formats: []
 
 build:
   image: latest
 
 python:
-  version: 3.7
+  version: "3.8"
   install:
+    # One https://readthedocs.org/dashboard/molecule/environmentvariables/ we
+    # do have PIP_CONSTRAINTS=requirements.txt which ensures we install only
+    # pinned requirements that that we know to be working.
     - method: pip
       path: .
       extra_requirements:
-        - ansible-core
         - docs

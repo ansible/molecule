@@ -1,2 +1,2 @@
 # See https://github.com/dependabot/dependabot-core/issues/4062
-python-3.6.15
+python-3.8.12

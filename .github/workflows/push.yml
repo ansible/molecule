@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - main
-      - 'releases/**'
-      - 'stable/**'
+      - "releases/**"
+      - "stable/**"
 
 jobs:
   ack:
