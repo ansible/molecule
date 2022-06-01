@@ -770,7 +770,8 @@ class Ansible(base.Base):
             LOG.warning("Skipping, verify playbook not configured.")
             return
         for playbook in playbooks:
-            pb = self._get_ansible_playbook(playbook)
+            # Get ansible playbooks for `verify` instead of `provision`
+            pb = self._get_ansible_playbook(playbook, verify=True)
             pb.execute()
 
     def write_config(self):
@@ -878,16 +879,20 @@ class Ansible(base.Base):
             LOG.info(msg)
             os.symlink(source, target)
 
-    def _get_ansible_playbook(self, playbook, **kwargs):
+    def _get_ansible_playbook(self, playbook, verify=False, **kwargs):
         """
         Get an instance of AnsiblePlaybook and returns it.
 
         :param playbook: A string containing an absolute path to a
          provisioner's playbook.
+        :param verify: An optional bool to toggle the Plabook mode between
+         provision and verify. False: provision; True: verify. Default is False.
         :param kwargs: An optional keyword arguments.
         :return: object
         """
-        return ansible_playbook.AnsiblePlaybook(playbook, self._config, **kwargs)
+        return ansible_playbook.AnsiblePlaybook(
+            playbook, self._config, verify, **kwargs
+        )
 
     def _verify_inventory(self):
         """

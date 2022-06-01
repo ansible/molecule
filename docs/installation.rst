@@ -53,7 +53,7 @@ Pip
   avoid problem with newer versions of molecule.
 
 Keep in mind that on selinux supporting systems, if you install into a virtual
-environment, you may face :gh:`issue <ansible/ansible/issues/34340>` even
+environment, you may face `issue <https://github.com/ansible/ansible/issues/34340>` even
 if selinux is not enabled or is configured to be permissive.
 
 It is your responsibility to assure that soft dependencies of Ansible are
@@ -75,7 +75,7 @@ available on your controller or host machines.
 
 .. warning::
 
-  Pip v19 series has an :gh:`isolation bug <pypa/pip/issues/6264>` of
+  Pip v19 series has an `isolation bug <https://github.com/pypa/pip/issues/6264>` of
   setuptools being exposed to the package build env. That is why it's
   highly recommended to upgrade user setuptools even when using a proper
   virtualenv as shown above.

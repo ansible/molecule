@@ -31,22 +31,29 @@ LOG = logging.getLogger(__name__)
 class AnsiblePlaybook(object):
     """Privisioner Playbook."""
 
-    def __init__(self, playbook, config):
+    def __init__(self, playbook, config, verify=False):
         """
         Set up the requirements to execute ``ansible-playbook`` and returns \
         None.
 
         :param playbook: A string containing the path to the playbook.
         :param config: An instance of a Molecule config.
+        :param verify: An optional bool to toggle the Plabook mode between
+         provision and verify. False: provision; True: verify. Default is False.
         :returns: None
         """
         self._ansible_command = None
         self._playbook = playbook
         self._config = config
         self._cli = {}
-        self._env = util.merge_dicts(
-            self._config.provisioner.env, self._config.runtime.environ
-        )
+        if verify:
+            self._env = util.merge_dicts(
+                self._config.verifier.env, self._config.config["verifier"]["env"]
+            )
+        else:
+            self._env = util.merge_dicts(
+                self._config.provisioner.env, self._config.runtime.environ
+            )
 
     def bake(self):
         """
