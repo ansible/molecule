@@ -14,6 +14,7 @@
 """Documentation Configuration."""
 
 import datetime
+from typing import List
 
 import molecule
 
@@ -56,10 +57,9 @@ github_repo_slug = f"{github_repo_org}/{github_repo_name}"
 github_repo_url = f"{github_url}/{github_repo_slug}"
 
 extlinks = {
-    "issue": (f"{github_repo_url}/issues/%s", "#"),
-    "pr": (f"{github_repo_url}/pull/%s", "PR #"),
-    "commit": (f"{github_repo_url}/commit/%s", ""),
-    "gh": (f"{github_url}/%s", "GitHub: "),
+    "issue": (f"{github_repo_url}/issues/%s", "#%s"),
+    "pr": (f"{github_repo_url}/pull/%s", "PR #%s"),
+    "commit": (f"{github_repo_url}/commit/%s", "%s"),
 }
 
 # The version info for the project you're documenting, acts as replacement for
@@ -76,7 +76,7 @@ release = version
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = "en"
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
@@ -255,6 +255,7 @@ intersphinx_mapping = {
     "virtualenv": ("https://virtualenv.pypa.io/en/latest/", None),
     "yamllint": ("https://yamllint.readthedocs.io/en/latest/", None),
 }
+intersphinx_disabled_reftypes: List[str] = []
 
 linkcheck_workers = 25
 # linkcheck_anchors = False
