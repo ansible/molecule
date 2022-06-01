@@ -10,6 +10,9 @@ Configuration
 Prerun
 ------
 
+Prerun
+^^^^^^
+
 In order to help Ansible find used modules and roles, molecule will perform
 a prerun set of actions. These involve installing dependencies from
 ``requirements.yml`` specified at project level, install a standalone role
@@ -28,6 +31,21 @@ Keep in mind that you can add this value to the ``.config/molecule/config.yml``
 file, in your ``$HOME`` or at the root of your project, in order to avoid
 adding it to each scenario.
 
+Role name check
+^^^^^^^^^^^^^^^
+
+By default, ``Molecule`` will check whether the role name follows the name
+standard. If not, it will raise an error.
+
+If computed fully qualified role name does not follow current galaxy
+requirements, you can ignore it by adding `role_name_check: 1` inside the
+configuration file.
+
+It is strongly recommended to follow the name standard of `namespace`_ and
+`role`_.
+
+.. _`namespace`: https://galaxy.ansible.com/docs/contributing/namespaces.html#galaxy-namespace-limitations
+.. _`role`: https://galaxy.ansible.com/docs/contributing/creating_role.html#role-names
 
 Variable Substitution
 ---------------------
