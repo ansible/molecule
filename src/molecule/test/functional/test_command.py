@@ -348,3 +348,12 @@ def test_command_test_with_platform_name(
 )
 def test_command_verify(scenario_to_test, with_scenario, scenario_name):
     verify(scenario_name)
+
+
+def test_sample_collection():
+    assert (
+        run_command(
+            ["molecule", "test"], cwd="src/molecule/test/resources/sample-collection"
+        ).returncode
+        == 0
+    )

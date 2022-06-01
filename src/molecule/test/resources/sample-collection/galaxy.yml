@@ -1,0 +1,31 @@
+name: goodies
+namespace: acme
+version: 1.0.0
+readme: README.md
+authors:
+  - Red Hat
+description: Acme Goodies Collection
+build_ignore:
+  - "*.egg-info"
+  - .DS_Store
+  - .eggs
+  - .gitignore
+  - .mypy_cache
+  - .pytest_cache
+  - .stestr
+  - .stestr.conf
+  - .tox
+  - .vscode
+  - MANIFEST.in
+  - build
+  - dist
+  - doc
+  - report.html
+  - setup.cfg
+  - setup.py
+  - "tests/unit/*.*"
+  - README.rst
+  - tox.ini
+
+repository: https://opendev.org/openstack/tripleo-repos
+license_file: LICENSE
