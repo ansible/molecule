@@ -19,6 +19,7 @@
 #  DEALINGS IN THE SOFTWARE.
 """Ansible Provisioner Module."""
 
+# pylint: disable=too-many-lines
 import collections
 import copy
 import logging
@@ -296,8 +297,9 @@ class Ansible(base.Base):
           inventory:
             hosts:
               all:
-                extra_host:
-                  foo: hello
+                hosts:
+                  extra_host:
+                    foo: hello
 
     .. important::
 
@@ -332,6 +334,7 @@ class Ansible(base.Base):
         The only valid keys are ``hosts``, ``group_vars`` and ``host_vars``.  Molecule's
         schema validator will enforce this.
 
+
     .. code-block:: yaml
 
         provisioner:
@@ -341,6 +344,25 @@ class Ansible(base.Base):
               hosts: ../../../inventory/hosts
               group_vars: ../../../inventory/group_vars/
               host_vars: ../../../inventory/host_vars/
+
+    .. important::
+
+        You can use either `hosts`/`group_vars`/`host_vars` sections of inventory OR `links`.
+        If you use both, links will win.
+
+    .. code-block:: yaml
+
+        provisioner:
+          name: ansible
+          hosts:
+            all:
+              hosts:
+                ignored:
+                   important: this host is ignored
+          inventory:
+            links:
+              hosts: ../../../inventory/hosts
+
 
     Override connection options:
 
