@@ -4,7 +4,6 @@ disable =
     # TODO(ssbarnea): remove temporary skips adding during initial adoption:
     abstract-method,
     arguments-differ,
-    bad-continuation,
     broad-except,
     consider-merging-isinstance,
     # We will clean this up in a dedicated refactoring commit
@@ -19,14 +18,12 @@ disable =
     line-too-long,
     logging-format-interpolation,
     logging-not-lazy,
-    misplaced-comparison-constant,
     missing-function-docstring,
     missing-module-docstring,
     no-else-raise,
     no-else-return,
     no-member,
     no-self-argument,
-    no-self-use,
     no-value-for-parameter,
     not-callable,
     protected-access,
