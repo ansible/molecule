@@ -29,7 +29,7 @@ LOG = logging.getLogger(__name__)
 
 
 class AnsiblePlaybook(object):
-    """Privisioner Playbook."""
+    """Provisioner Playbook."""
 
     def __init__(self, playbook, config, verify=False):
         """
