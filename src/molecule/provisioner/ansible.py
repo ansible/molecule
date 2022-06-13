@@ -19,6 +19,7 @@
 #  DEALINGS IN THE SOFTWARE.
 """Ansible Provisioner Module."""
 
+# pylint: disable=too-many-lines
 import collections
 import copy
 import logging
