@@ -29,7 +29,7 @@ LOG = logging.getLogger(__name__)
 
 
 class AnsiblePlaybook(object):
-    """Privisioner Playbook."""
+    """Provisioner Playbook."""
 
     def __init__(self, playbook, config, verify=False):
         """
@@ -51,9 +51,7 @@ class AnsiblePlaybook(object):
                 self._config.verifier.env, self._config.config["verifier"]["env"]
             )
         else:
-            self._env = util.merge_dicts(
-                self._config.provisioner.env, self._config.runtime.environ
-            )
+            self._env = self._config.provisioner.env
 
     def bake(self):
         """

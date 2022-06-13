@@ -360,6 +360,7 @@ class Config(object, metaclass=NewInitCaller):
             },
             "platforms": [],
             "prerun": True,
+            "role_name_check": 0,
             "provisioner": {
                 "name": "ansible",
                 "config_options": {},
