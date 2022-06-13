@@ -206,6 +206,43 @@ def test_execute_cmdline_scenarios_exit_nodestroy(
     assert not _patched_sysexit.called
 
 
+def test_runtime_paths(config_instance, _patched_sysexit):
+    # the ansible_collections_path and ansible_roles_path from the runtime
+    # should be added to the provisioner's paths
+    scenario_name = None
+    args = {}
+    command_args = {"destroy": "never", "subcommand": "verify"}
+
+    base.result_callback()
+    base.execute_cmdline_scenarios(scenario_name, args, command_args)
+
+    home = os.path.expanduser("~")
+    cache_dir = config_instance.runtime.cache_dir
+    runtime_roles_path = config_instance.runtime.environ.get("ANSIBLE_ROLES_PATH")
+    provisioner_roles_path = config_instance.provisioner.env.get("ANSIBLE_ROLES_PATH")
+    runtime_collections_path = config_instance.runtime.environ.get(
+        config_instance.ansible_collections_path
+    )
+    provisioner_collections_path = config_instance.provisioner.env.get(
+        config_instance.ansible_collections_path
+    )
+
+    assert runtime_roles_path.startswith(
+        f"{cache_dir}/roles:"
+        f"{home}/.ansible/roles:"
+        f"/usr/share/ansible/roles:"
+        f"/etc/ansible/roles"
+    )
+
+    assert runtime_collections_path.startswith(
+        f"{cache_dir}/collections:" f"{home}/.ansible/collections"
+    )
+
+    assert provisioner_roles_path.startswith(f"{cache_dir}/roles")
+
+    assert provisioner_collections_path.startswith(f"{cache_dir}/collections")
+
+
 def test_execute_subcommand(config_instance):
     # scenario's config.action is mutated in-place for every sequence action,
     # so make sure that is currently set to the executed action

@@ -338,6 +338,24 @@ def test_command_test_with_platform_name(
 
 
 @pytest.mark.serial
+@pytest.mark.parametrize(
+    ("scenario_to_test", "driver_name", "scenario_name"),
+    [
+        (
+            "driver/delegated_invalid_role_name_with_role_name_check_equals_to_1",
+            "delegated",
+            "default",
+        ),
+    ],
+    indirect=["scenario_to_test", "driver_name", "scenario_name"],
+)
+def test_command_test_with_role_name_check_equals_to_1(
+    scenario_to_test, with_scenario, scenario_name, driver_name
+):
+    run_test(driver_name, scenario_name)
+
+
+@pytest.mark.serial
 @pytest.mark.extensive
 @pytest.mark.parametrize(
     "scenario_to_test, driver_name, scenario_name",
@@ -348,3 +366,12 @@ def test_command_test_with_platform_name(
 )
 def test_command_verify(scenario_to_test, with_scenario, scenario_name):
     verify(scenario_name)
+
+
+def test_sample_collection():
+    assert (
+        run_command(
+            ["molecule", "test"], cwd="src/molecule/test/resources/sample-collection"
+        ).returncode
+        == 0
+    )
