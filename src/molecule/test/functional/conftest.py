@@ -105,7 +105,7 @@ def idempotence(scenario_name):
 
 
 def init_role(temp_dir, driver_name):
-    role_directory = os.path.join(temp_dir.strpath, "myorg.myrole")
+    role_directory = os.path.join(temp_dir.strpath, "myrole")
 
     cmd = ["molecule", "init", "role", "myorg.myrole", "--driver-name", driver_name]
     assert run_command(cmd).returncode == 0
@@ -118,8 +118,8 @@ def init_role(temp_dir, driver_name):
 
 def init_scenario(temp_dir, driver_name):
     # Create role
-    role_directory = os.path.join(temp_dir.strpath, "test-init")
-    cmd = ["molecule", "init", "role", "test-init", "--driver-name", driver_name]
+    role_directory = os.path.join(temp_dir.strpath, "test_init")
+    cmd = ["molecule", "init", "role", "myorg.test_init", "--driver-name", driver_name]
     assert run_command(cmd).returncode == 0
     metadata_lint_update(role_directory)
 
@@ -134,7 +134,7 @@ def init_scenario(temp_dir, driver_name):
             "scenario",
             "test-scenario",
             "--role-name",
-            "test-init",
+            "test_init",
             "--driver-name",
             driver_name,
         ]
