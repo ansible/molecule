@@ -186,15 +186,13 @@ def test_command_idempotence(scenario_to_test, with_scenario, scenario_name):
 
 @pytest.mark.serial
 @pytest.mark.parametrize("driver_name", [("delegated")], indirect=["driver_name"])
-@pytest.mark.xfail(reason="https://github.com/ansible-community/molecule/issues/3171")
-def test_command_init_role(temp_dir, driver_name, skip_test):
+def test_command_init_role(temp_dir, driver_name):
     init_role(temp_dir, driver_name)
 
 
 @pytest.mark.serial
 @pytest.mark.parametrize("driver_name", [("delegated")], indirect=["driver_name"])
-@pytest.mark.xfail(reason="https://github.com/ansible-community/molecule/issues/3171")
-def test_command_init_scenario(temp_dir, driver_name, skip_test):
+def test_command_init_scenario(temp_dir, driver_name):
     init_scenario(temp_dir, driver_name)
 
 

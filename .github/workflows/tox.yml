@@ -27,23 +27,23 @@ jobs:
           - tox_env: docs
             python-version: 3.9
           - tox_env: py38
-            PREFIX: PYTEST_REQPASS=457
+            PREFIX: PYTEST_REQPASS=459
             python-version: 3.8
             cover: true
           - tox_env: py39
-            PREFIX: PYTEST_REQPASS=457
+            PREFIX: PYTEST_REQPASS=459
             python-version: 3.9
             cover: true
           - tox_env: py310
-            PREFIX: PYTEST_REQPASS=457
+            PREFIX: PYTEST_REQPASS=459
             python-version: "3.10"
             cover: true
           - tox_env: py38-devel
-            PREFIX: PYTEST_REQPASS=457
+            PREFIX: PYTEST_REQPASS=459
             python-version: 3.8
             cover: true
           - tox_env: py310-devel
-            PREFIX: PYTEST_REQPASS=457
+            PREFIX: PYTEST_REQPASS=459
             python-version: "3.10"
             # see https://github.com/ansible-community/molecule/issues/3291
             experimental: true
@@ -67,7 +67,7 @@ jobs:
           sudo apt-get remove -y ansible \
           && sudo apt-get update \
           && sudo apt-get install -y libvirt-dev python3-cryptography python3-jinja2 python3-yaml virtualenv \
-          && pip3 install --user ansible-core \
+          && pip3 install --user ansible-core ansible-lint\
           && echo "$HOME/.local/bin" >> $GITHUB_PATH
         # https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#adding-a-system-path
       - name: Validate that ansible works
