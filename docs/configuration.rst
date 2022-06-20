@@ -89,7 +89,7 @@ MOLECULE_VERBOSITY
 MOLECULE_VERIFIER_NAME
    Name of the verifier tool (usually 'ansible')
 MOLECULE_VERIFIER_TEST_DIRECTORY
-  ?
+   Path of the directory that contains verifier tests, usually ``<role_path>/<scenario-name>/<verifier-name>``
 
 
 .. _dependency:
