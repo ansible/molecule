@@ -68,7 +68,7 @@ MOLECULE_INVENTORY_FILE
 MOLECULE_EPHEMERAL_DIRECTORY
    Path to generated directory, usually ``~/.cache/molecule/<role-name>/<scenario-name>``
 MOLECULE_SCENARIO_DIRECTORY
-   Path to scenario directory
+   Path to scenario directory, usually ``<role_path>/molecule/<scenario-name>``
 MOLECULE_PROJECT_DIRECTORY
    Path to your project directory
 MOLECULE_INSTANCE_CONFIG
