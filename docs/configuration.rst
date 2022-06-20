@@ -58,7 +58,7 @@ There are following environment variables available in ``molecule.yml``:
 MOLECULE_DEBUG
    If debug is turned on or off
 MOLECULE_FILE
-   Path to molecule config file
+   Path to molecule config file, usually ``~/.cache/molecule/<role-name>/<scenario-name>/molecule.yml``
 MOLECULE_ENV_FILE
    Path to molecule environment file
 MOLECULE_STATE_FILE
