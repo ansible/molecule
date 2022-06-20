@@ -10,6 +10,19 @@ updates:
       # as dependabot bumps only the pinned test dependencies, is safe to:
       - skip-changelog
     open-pull-requests-limit: 3
+    # With 80+ dependencies we only use dependabot to upgrade important ones,
+    # for all the rest we do it manually via `tox -e deps`.
+    allow:
+      - dependency-name: ansible-compat
+      - dependency-name: ansible-core
+      - dependency-name: click
+      - dependency-name: cookiecutter
+      - dependency-name: enrich
+      - dependency-name: jinja2
+      - dependency-name: jsonschema
+      - dependency-name: pluggy
+      - dependency-name: pyyaml
+      - dependency-name: rich
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
