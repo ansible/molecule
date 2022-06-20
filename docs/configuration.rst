@@ -64,7 +64,7 @@ MOLECULE_ENV_FILE
 MOLECULE_STATE_FILE
    Path to molecule state file, contains state of the instances (created, converged, etc.), usually ``~/.cache/molecule/<role-name>/<scenario-name>/state.yml``
 MOLECULE_INVENTORY_FILE
-   Path to generated inventory file
+   Path to generated inventory file, usually ``~/.cache/molecule/<role-name>/<scenario-name>/inventory/ansible_inventory.yml``
 MOLECULE_EPHEMERAL_DIRECTORY
    Path to generated directory, usually ``~/.cache/molecule/<role-name>/<scenario-name>``
 MOLECULE_SCENARIO_DIRECTORY
