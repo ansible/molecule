@@ -70,7 +70,7 @@ MOLECULE_EPHEMERAL_DIRECTORY
 MOLECULE_SCENARIO_DIRECTORY
    Path to scenario directory, usually ``<role_path>/molecule/<scenario-name>``
 MOLECULE_PROJECT_DIRECTORY
-   Path to your project directory
+   Path to your project (role) directory, usually ``<role_path>``
 MOLECULE_INSTANCE_CONFIG
    Path to the instance config file, contains instance name, connection, user, port, etc. (populated from driver), 
    usually ``~/.cache/molecule/<role-name>/<scenario-name>/instance_config.yml``
