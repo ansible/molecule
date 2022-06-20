@@ -60,7 +60,7 @@ MOLECULE_DEBUG
 MOLECULE_FILE
    Path to molecule config file, usually ``~/.cache/molecule/<role-name>/<scenario-name>/molecule.yml``
 MOLECULE_ENV_FILE
-   Path to molecule environment file
+   Path to molecule environment file, usually ``<role_path>/.env.yml``
 MOLECULE_STATE_FILE
    Path to molecule state file, contains state of the instances (created, converged, etc.), usually ``~/.cache/molecule/<role-name>/<scenario-name>/state.yml``
 MOLECULE_INVENTORY_FILE
