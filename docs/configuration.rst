@@ -62,7 +62,7 @@ MOLECULE_FILE
 MOLECULE_ENV_FILE
    Path to molecule environment file
 MOLECULE_STATE_FILE
-   ?
+   Path to molecule state file, contains state of the instances (created, converged, etc.) usually ``~/.cache/molecule/<role-name>/<scenario-name>/state.yml``
 MOLECULE_INVENTORY_FILE
    Path to generated inventory file
 MOLECULE_EPHEMERAL_DIRECTORY
