@@ -72,7 +72,7 @@ MOLECULE_SCENARIO_DIRECTORY
 MOLECULE_PROJECT_DIRECTORY
    Path to your project (role) directory, usually ``<role_path>``
 MOLECULE_INSTANCE_CONFIG
-   Path to the instance config file, contains instance name, connection, user, port, etc. (populated from driver), 
+   Path to the instance config file, contains instance name, connection, user, port, etc. (populated from driver),
    usually ``~/.cache/molecule/<role-name>/<scenario-name>/instance_config.yml``
 MOLECULE_DEPENDENCY_NAME
    Dependency type name, usually 'galaxy'
