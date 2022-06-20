@@ -62,7 +62,7 @@ MOLECULE_FILE
 MOLECULE_ENV_FILE
    Path to molecule environment file
 MOLECULE_STATE_FILE
-   Path to molecule state file, contains state of the instances (created, converged, etc.) usually ``~/.cache/molecule/<role-name>/<scenario-name>/state.yml``
+   Path to molecule state file, contains state of the instances (created, converged, etc.), usually ``~/.cache/molecule/<role-name>/<scenario-name>/state.yml``
 MOLECULE_INVENTORY_FILE
    Path to generated inventory file
 MOLECULE_EPHEMERAL_DIRECTORY
@@ -72,7 +72,8 @@ MOLECULE_SCENARIO_DIRECTORY
 MOLECULE_PROJECT_DIRECTORY
    Path to your project directory
 MOLECULE_INSTANCE_CONFIG
-   ?
+   Path to the instance config file, contains instance name, connection, user, port, etc. (populated from driver), 
+   usually ``~/.cache/molecule/<role-name>/<scenario-name>/instance_config.yml``
 MOLECULE_DEPENDENCY_NAME
    Dependency type name, usually 'galaxy'
 MOLECULE_DRIVER_NAME
