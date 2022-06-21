@@ -28,7 +28,7 @@ scenario is governed by the following configuration items:
     * When ``true``, use the specified ``platform[].image`` as-is.
     * When ``false``, exec ``docker build`` to customize base image using
       either:
-    
+
         * Dockerfile specified by ``platforms[*].dockerfile`` or
         * Dockerfile rendered from ``Dockerfile.j2`` template (in scenario dir)
 
@@ -43,11 +43,11 @@ Docker With Non-Privileged User
 ===============================
 
 The default Molecule Docker driver executes Ansible playbooks as the root user.
-If your workflow requires adding support for running as a non-privileged user, 
+If your workflow requires adding support for running as a non-privileged user,
 then adapt ``molecule.yml`` and ``Dockerfile.j2`` as follows.
 
-Note: The ``Dockerfile`` templating and image building processes are only done 
-for scenarios with ``pre_build_image = False``, which is not the default 
+Note: The ``Dockerfile`` templating and image building processes are only done
+for scenarios with ``pre_build_image = False``, which is not the default
 setting in generated `molecule.yml` files.
 
 To modify the Docker image to support running as normal user:
