@@ -25,6 +25,7 @@ scenario is governed by the following configuration items:
 1. ``platforms[*].image``: Docker image name:tag to use as base image.
 2. ``platforms[*].pre_build_image``: Whether to customize base image or use
    as-is[^1].
+   
     * When ``true``, use the specified ``platform[].image`` as-is.
     * When ``false``, exec ``docker build`` to customize base image using
       either:
