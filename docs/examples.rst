@@ -18,8 +18,8 @@ should be addressed by the Ansible Creator Execution Environment project.
 Customizing the Docker Image Used by a Scenario/Platform
 ========================================================
 
-The docker driver supports using pre-built images and ``docker build`` -ing 
-local customizations for each scenario's platform. The Docker image used by a 
+The docker driver supports using pre-built images and ``docker build`` -ing
+local customizations for each scenario's platform. The Docker image used by a
 scenario is governed by the following configuration items:
 
 1. ``platforms[*].image``: Docker image name:tag to use as base image.
@@ -31,8 +31,8 @@ scenario is governed by the following configuration items:
         * Dockerfile rendered from ``Dockerfile.j2`` template (located in
         scenario dir).
 
-The ``Dockerfile.j2`` template is generated at ``molecule init scenario``-time 
-when ``--driver-name`` is ``docker``. The template can be customized as needed 
+The ``Dockerfile.j2`` template is generated at ``molecule init scenario``-time
+when ``--driver-name`` is ``docker``. The template can be customized as needed
 to create he desired modifications to the Docker image used in the scenario.
 
 Note: ``platforms[*].pre_build_image`` defaults to ``true`` in each scenario's
