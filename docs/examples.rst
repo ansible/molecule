@@ -427,4 +427,3 @@ issues.
 
 [^1]: [Implementation in molecule-docker](https://github.com/ansible-community/molecule-docker/blob/f4efce3c4fda226c8ca5f10976927fff7daa8e69/src/molecule_docker/playbooks/create.yml#L35)
 [^2]: e.g. [Debian uses `sudo` instead of `wheel` group.](https://wiki.debian.org/sudo/)
-
