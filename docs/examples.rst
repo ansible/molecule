@@ -56,15 +56,18 @@ Append the following code block to the end of ``Dockerfile.j2``. It creates an
 
 .. code-block:: docker
 
-    # Create `ansible` user with sudo permissions and membership in `DEPLOY_GROUP`
-    ENV ANSIBLE_USER=ansible SUDO_GROUP=wheel DEPLOY_GROUP=deployer
-    RUN set -xe \
-      && groupadd -r ${ANSIBLE_USER} \
-      && groupadd -r ${DEPLOY_GROUP} \
-      && useradd -m -g ${ANSIBLE_USER} ${ANSIBLE_USER} \
-      && usermod -aG ${SUDO_GROUP} ${ANSIBLE_USER} \
-      && usermod -aG ${DEPLOY_GROUP} ${ANSIBLE_USER} \
-      && sed -i "/^%${SUDO_GROUP}/s/ALL\$/NOPASSWD:ALL/g" /etc/sudoers
+   # Create `ansible` user with sudo permissions and membership in `DEPLOY_GROUP`
+   # This template gets rendered using `loop: "{{ molecule_yml.platforms }}"`, so
+   # each `item` is an element of platforms list from the molecule.yml file for this scenario.
+   ENV ANSIBLE_USER=ansible DEPLOY_GROUP=deployer
+   ENV SUDO_GROUP={{'sudo' if 'debian' in item.image else 'wheel' }}
+   RUN set -xe \
+     && groupadd -r ${ANSIBLE_USER} \
+     && groupadd -r ${DEPLOY_GROUP} \
+     && useradd -m -g ${ANSIBLE_USER} ${ANSIBLE_USER} \
+     && usermod -aG ${SUDO_GROUP} ${ANSIBLE_USER} \
+     && usermod -aG ${DEPLOY_GROUP} ${ANSIBLE_USER} \
+     && sed -i "/^%${SUDO_GROUP}/s/ALL\$/NOPASSWD:ALL/g" /etc/sudoers
 
 Modify ``provisioner.inventory`` in ``molecule.yml`` as follows:
 
