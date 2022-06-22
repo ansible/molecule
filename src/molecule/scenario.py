@@ -91,7 +91,7 @@ class Scenario(object):
 
     :Advanced testing
 
-    If needed, molecule can support multiple side effects and tests are executed in order.
+    If needed, Molecule can run multiple side effects and tests within a scenario.
     This allows to perform advanced testing for stateful software under role/playbook
     management. Actions `side_effect` and `verify` can take optional arguments to change
     the playbook/test they execute.
@@ -128,7 +128,7 @@ class Scenario(object):
     `verify` actions in the scenario.
 
     The path to tests is relative to the molecule.yml file location. The `additional_files_or_dirs`
-    setting for verifier is ignore if the `verify` action has an argument.
+    setting for verifier is ignored if the `verify` action has an argument.
 
     Multiple `side_effect` and `verify` actions can be used to a create a combination
     of playbooks and tests, for example, for end-to-end playbook testing.
