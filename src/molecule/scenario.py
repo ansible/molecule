@@ -88,6 +88,70 @@ class Scenario(object):
             - verify
             - cleanup
             - destroy
+
+    :Advanced testing
+
+    If needed, Molecule can run multiple side effects and tests within a scenario.
+    This allows to perform advanced testing for stateful software under role/playbook
+    management. Actions `side_effect` and `verify` can take optional arguments to change
+    the playbook/test they execute.
+
+    Example of test sequence with multiple side effects and tests:
+
+    .. code-block:: yaml
+
+         test_sequence:
+           - converge
+           - side_effect reboot.yaml
+           - verify after_reboot/
+           - side_effect alter_configs.yaml
+           - converge
+           - verify other_test1.py other_test2.py
+           - side_effect
+           - verify
+
+    ``side_effect`` without an argument is executing the usual `side_effect` configured in
+      `provisioner.playbooks` section of molecule.yml.
+
+    ``side_effect`` can have one or more arguments (separated by spaces) which is
+    a playbook (plabyooks) to execute. If the argument for ``side_effect`` is present,
+    it's executed instead. The path to the playbook is relative to the molecule.yml location.
+    Normal side effect settings (from `provisioner.playbooks`) are ignored for action with
+    argument.
+
+    ``verify`` without an argument is executing usual tests configured in the verifier section
+    of molecule.yml.
+
+    If one or more arguments (separated by spaces) are present, each argument is treated
+    as a test name (file or directory) to pass to the verifier (either Ansible or Testinfra).
+    The kind of verifier is set in the `verifier` section of molecule.yml and is applied to all
+    `verify` actions in the scenario.
+
+    The path to tests is relative to the molecule.yml file location. The `additional_files_or_dirs`
+    setting for verifier is ignored if the `verify` action has an argument.
+
+    Multiple `side_effect` and `verify` actions can be used to a create a combination
+    of playbooks and tests, for example, for end-to-end playbook testing.
+
+    Additional `converge` and `idempotence` actions can be used multiple times:
+
+    .. code-block:: yaml
+
+         test_sequence:
+           - converge
+           - idempotence
+           - side_effect
+           - verify
+           - converge
+           - idempotence
+           - side_effect effect2.yml
+           - converge
+           - idempotence
+           - verify test2/
+           - side_effect effect3.yml
+           - verify test3/
+           - idempotence
+
     """  # noqa
 
     def __init__(self, config):
