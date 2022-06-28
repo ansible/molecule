@@ -35,7 +35,7 @@ scenario is governed by the following configuration items:
 
 The ``Dockerfile.j2`` template is generated at ``molecule init scenario``-time
 when ``--driver-name`` is ``docker``. The template can be customized as needed
-to create he desired modifications to the Docker image used in the scenario.
+to create the desired modifications to the Docker image used in the scenario.
 
 Note: ``platforms[*].pre_build_image`` defaults to ``true`` in each scenario's
 generated `molecule.yml` file.
