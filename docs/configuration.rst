@@ -58,21 +58,30 @@ There are following environment variables available in ``molecule.yml``:
 MOLECULE_DEBUG
    If debug is turned on or off
 MOLECULE_FILE
-   Path to molecule config file
+   Path to molecule config file, usually
+   ``~/.cache/molecule/<role-name>/<scenario-name>/molecule.yml``
 MOLECULE_ENV_FILE
-   Path to molecule environment file
+   Path to molecule environment file, usually ``<role_path>/.env.yml``
 MOLECULE_STATE_FILE
-   ?
+   Path to molecule state file, contains state of the instances
+   (created, converged, etc.). Usually
+   ``~/.cache/molecule/<role-name>/<scenario-name>/state.yml``
 MOLECULE_INVENTORY_FILE
-   Path to generated inventory file
+   Path to generated inventory file, usually
+   ``~/.cache/molecule/<role-name>/<scenario-name>/inventory/ansible_inventory.yml``
 MOLECULE_EPHEMERAL_DIRECTORY
-   Path to generated directory, usually ``~/.cache/molecule/<scenario-name>``
+   Path to generated directory,
+   usually ``~/.cache/molecule/<role-name>/<scenario-name>``
 MOLECULE_SCENARIO_DIRECTORY
-   Path to scenario directory
+   Path to scenario directory,
+   usually ``<role_path>/molecule/<scenario-name>``
 MOLECULE_PROJECT_DIRECTORY
-   Path to your project directory
+   Path to your project (role) directory, usually ``<role_path>``
 MOLECULE_INSTANCE_CONFIG
-   ?
+   Path to the instance config file,
+   contains instance name, connection, user, port, etc.
+   (populated from driver). Usually
+   ``~/.cache/molecule/<role-name>/<scenario-name>/instance_config.yml``
 MOLECULE_DEPENDENCY_NAME
    Dependency type name, usually 'galaxy'
 MOLECULE_DRIVER_NAME
@@ -88,7 +97,8 @@ MOLECULE_VERBOSITY
 MOLECULE_VERIFIER_NAME
    Name of the verifier tool (usually 'ansible')
 MOLECULE_VERIFIER_TEST_DIRECTORY
-  ?
+   Path of the directory that contains verifier tests,
+   usually ``<role_path>/<scenario-name>/<verifier-name>``
 
 
 .. _dependency:
