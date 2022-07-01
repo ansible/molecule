@@ -8,7 +8,7 @@ default_language_version:
 repos:
   - repo: https://github.com/pre-commit/mirrors-prettier
     # keep it before yamllint
-    rev: "v2.6.2"
+    rev: "v2.7.1"
     hooks:
       - id: prettier
         # Temporary excludes so we can gradually normalize the formatting
@@ -87,7 +87,7 @@ repos:
           - types-filelock
           - types-setuptools
   - repo: https://github.com/PyCQA/pylint
-    rev: v2.14.1
+    rev: v2.14.3
     hooks:
       - id: pylint
         additional_dependencies:
