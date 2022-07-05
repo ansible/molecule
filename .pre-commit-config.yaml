@@ -33,7 +33,7 @@ repos:
     hooks:
       - id: isort
   - repo: https://github.com/psf/black
-    rev: 22.3.0
+    rev: 22.6.0
     hooks:
       - id: black
         language_version: python3
@@ -87,7 +87,7 @@ repos:
           - types-filelock
           - types-setuptools
   - repo: https://github.com/PyCQA/pylint
-    rev: v2.14.3
+    rev: v2.14.4
     hooks:
       - id: pylint
         additional_dependencies:
@@ -101,7 +101,7 @@ repos:
           - pexpect
           - testinfra
   - repo: https://github.com/jazzband/pip-tools
-    rev: 6.6.2
+    rev: 6.8.0
     hooks:
       - id: pip-compile
         entry: pip-compile -q --strip-extras --no-annotate --output-file=requirements.txt tools/opts.txt setup.cfg --extra docs --extra test --extra yamllint
