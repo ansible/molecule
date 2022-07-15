@@ -43,7 +43,9 @@ junit_suite_name = "molecule_test_suite"
 testpaths = "src/molecule/test/"
 filterwarnings = [
   # treat warnings as errors unless we add them below
-  "error"
+  "error",
+  # https://github.com/certifi/python-certifi/pull/193
+  "ignore:path is deprecated.*:DeprecationWarning",
   # ignore::UserWarning
 ]
 
