@@ -47,6 +47,7 @@ filterwarnings = [
   # https://github.com/certifi/python-certifi/pull/193
   "ignore:path is deprecated.*:DeprecationWarning",
   # ignore::UserWarning
+
 ]
 
 [tool.setuptools_scm]
