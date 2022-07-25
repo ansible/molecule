@@ -42,9 +42,9 @@ jobs:
             os: ubuntu-20.04
             python-version: "~3.11.0-0" # see https://github.com/actions/setup-python/issues/213#issuecomment-1146676713
             cover: true
-          - tox_env: py38-devel
+          - tox_env: py39-devel
             PREFIX: PYTEST_REQPASS=461
-            python-version: 3.8
+            python-version: 3.9
             cover: true
           - tox_env: py310-devel
             PREFIX: PYTEST_REQPASS=461
