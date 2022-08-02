@@ -21,7 +21,7 @@ repos:
           - prettier
           - prettier-plugin-toml
   - repo: https://github.com/PyCQA/doc8
-    rev: "0.11.2"
+    rev: "v1.0.0"
     hooks:
       - id: doc8
   - repo: https://github.com/codespell-project/codespell
@@ -49,7 +49,7 @@ repos:
       - id: debug-statements
         language_version: python3
   - repo: https://github.com/PyCQA/flake8
-    rev: 4.0.1
+    rev: 5.0.2
     hooks:
       - id: flake8
         additional_dependencies:
