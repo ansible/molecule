@@ -27,15 +27,15 @@ jobs:
           - tox_env: docs
             python-version: 3.9
           - tox_env: py38
-            PREFIX: PYTEST_REQPASS=461
+            PREFIX: PYTEST_REQPASS=453
             python-version: 3.8
             cover: true
           - tox_env: py39
-            PREFIX: PYTEST_REQPASS=461
+            PREFIX: PYTEST_REQPASS=453
             python-version: 3.9
             cover: true
           - tox_env: py310
-            PREFIX: PYTEST_REQPASS=461
+            PREFIX: PYTEST_REQPASS=453
             python-version: "3.10"
             cover: true
           - tox_env: py311
@@ -43,11 +43,11 @@ jobs:
             python-version: "~3.11.0-0" # see https://github.com/actions/setup-python/issues/213#issuecomment-1146676713
             cover: true
           - tox_env: py39-devel
-            PREFIX: PYTEST_REQPASS=461
+            PREFIX: PYTEST_REQPASS=453
             python-version: 3.9
             cover: true
           - tox_env: py310-devel
-            PREFIX: PYTEST_REQPASS=461
+            PREFIX: PYTEST_REQPASS=453
             python-version: "3.10"
             # see https://github.com/ansible-community/molecule/issues/3291
             experimental: true

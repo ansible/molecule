@@ -37,41 +37,19 @@ def _model_dependency_section_data():
 
 @pytest.mark.parametrize("_config", ["_model_dependency_section_data"], indirect=True)
 def test_dependency(_config):
-    assert {} == schema_v3.validate(_config)
+    assert not schema_v3.validate(_config)
 
 
 @pytest.fixture
 def _model_dependency_errors_section_data():
-    return {
-        "dependency": {
-            "name": int(),
-            "command": None,
-            "enabled": str(),
-            "options": [],
-            "env": {"foo": "foo", "foo-bar": "foo-bar"},
-        }
-    }
+    return {"dependency": {"name": 0}}
 
 
 @pytest.mark.parametrize(
     "_config", ["_model_dependency_errors_section_data"], indirect=True
 )
 def test_dependency_has_errors(_config):
-    x = {
-        "dependency": [
-            {
-                "name": ["must be of string type"],
-                "enabled": ["must be of boolean type"],
-                "options": ["must be of dict type"],
-                "env": [
-                    {
-                        "foo": ["value does not match regex '^[A-Z0-9_-]+$'"],
-                        "foo-bar": ["value does not match regex '^[A-Z0-9_-]+$'"],
-                    }
-                ],
-            }
-        ]
-    }
+    x = ["Unevaluated properties are not allowed ('name' was unexpected)"]
 
     assert x == schema_v3.validate(_config)
 
@@ -95,7 +73,7 @@ def _model_dependency_allows_shell_section_data():
     indirect=True,
 )
 def test_dependency_allows_shell_name(_config):
-    assert {} == schema_v3.validate(_config)
+    assert not schema_v3.validate(_config)
 
 
 @pytest.fixture
@@ -107,6 +85,6 @@ def _model_dependency_shell_errors_section_data():
     "_config", ["_model_dependency_shell_errors_section_data"], indirect=True
 )
 def test_dependency_shell_has_errors(_config):
-    x = {"dependency": [{"command": ["null value not allowed"]}]}
+    x = ["Unevaluated properties are not allowed ('command' was unexpected)"]
 
     assert x == schema_v3.validate(_config)

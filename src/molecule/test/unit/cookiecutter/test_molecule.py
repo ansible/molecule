@@ -70,7 +70,7 @@ def test_valid(temp_dir, _molecule_file, _role_directory, _command_args, _instan
 
     data = util.safe_load_file(_molecule_file)
 
-    assert {} == schema_v3.validate(data)
+    assert not schema_v3.validate(data)
 
     cmd = ["yamllint", "-s", _molecule_file]
     result = util.run_command(cmd)

@@ -305,7 +305,6 @@ class Config(object, metaclass=NewInitCaller):
         for base_config in base_configs:
             with util.open_file(base_config) as stream:
                 s = stream.read()
-                self._preflight(s)
                 interpolated_config = self._interpolate(s, env, keep_string)
                 defaults = util.merge_dicts(
                     defaults, util.safe_load(interpolated_config)
@@ -314,7 +313,6 @@ class Config(object, metaclass=NewInitCaller):
         if self.molecule_file:
             with util.open_file(self.molecule_file) as stream:
                 s = stream.read()
-                self._preflight(s)
                 interpolated_config = self._interpolate(s, env, keep_string)
                 defaults = util.merge_dicts(
                     defaults, util.safe_load(interpolated_config)
@@ -428,13 +426,6 @@ class Config(object, metaclass=NewInitCaller):
                 "additional_files_or_dirs": [],
             },
         }
-
-    def _preflight(self, data: MutableMapping):
-        env = set_env_from_file(os.environ.copy(), self.env_file)
-        errors, data = schema_v3.pre_validate(data, env, MOLECULE_KEEP_STRING)
-        if errors:
-            msg = f"Failed to pre-validate.\n\n{errors}"
-            util.sysexit_with_message(msg, detail=data)
 
     def _validate(self):
         msg = f"Validating schema {self.molecule_file}."

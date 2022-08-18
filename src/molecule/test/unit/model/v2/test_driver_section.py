@@ -29,7 +29,7 @@ def _model_driver_section_data():
         "driver": {
             "name": "delegated",
             "provider": {"name": None},
-            "options": {"managed": True, "foo": "bar"},
+            "options": {"managed": True},
             "ssh_connection_options": ["foo", "bar"],
             "safe_files": ["foo", "bar"],
         }
@@ -38,18 +38,14 @@ def _model_driver_section_data():
 
 @pytest.mark.parametrize("_config", ["_model_driver_section_data"], indirect=True)
 def test_driver(_config):
-    assert {} == schema_v3.validate(_config)
+    assert not schema_v3.validate(_config)
 
 
 @pytest.fixture
 def _model_driver_errors_section_data():
     return {
         "driver": {
-            "name": int(),
-            "provider": {"name": int(), "foo": "bar"},
-            "options": {"managed": str()},
-            "ssh_connection_options": [int()],
-            "safe_files": [int()],
+            "name": 0,
         }
     }
 
@@ -58,17 +54,9 @@ def _model_driver_errors_section_data():
     "_config", ["_model_driver_errors_section_data"], indirect=True
 )
 def test_driver_has_errors(_config):
-    x = {
-        "driver": [
-            {
-                "safe_files": [{0: ["must be of string type"]}],
-                "options": [{"managed": ["must be of boolean type"]}],
-                "ssh_connection_options": [{0: ["must be of string type"]}],
-                "name": ["must be of string type"],
-                "provider": [{"name": ["must be of string type"]}],
-            }
-        ]
-    }
+    x = [
+        "0 is not one of ['azure', 'ec2', 'delegated', 'docker', 'containers', 'openstack', 'podman', 'vagrant', 'digitalocean', 'gce', 'libvirt', 'lxd']"
+    ]
 
     assert x == schema_v3.validate(_config)
 
@@ -82,7 +70,7 @@ def _model_driver_provider_name_nullable_section_data():
     "_config", ["_model_driver_provider_name_nullable_section_data"], indirect=True
 )
 def test_driver_provider_name_nullable(_config):
-    assert {} == schema_v3.validate(_config)
+    assert not schema_v3.validate(_config)
 
 
 @pytest.fixture
@@ -99,4 +87,4 @@ def _model_driver_allows_delegated_section_data():
     indirect=True,
 )
 def test_driver_allows_name(_config):
-    assert {} == schema_v3.validate(_config)
+    assert not schema_v3.validate(_config)
