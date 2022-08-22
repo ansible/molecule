@@ -8,7 +8,7 @@ default_language_version:
 repos:
   - repo: https://github.com/pre-commit/mirrors-prettier
     # keep it before yamllint
-    rev: "v2.7.1"
+    rev: "v3.0.0-alpha.0"
     hooks:
       - id: prettier
         # Temporary excludes so we can gradually normalize the formatting
@@ -25,7 +25,7 @@ repos:
     hooks:
       - id: doc8
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.1.0
+    rev: v2.2.1
     hooks:
       - id: codespell
   - repo: https://github.com/PyCQA/isort
