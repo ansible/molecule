@@ -1,0 +1,5 @@
+---
+dictionaryDefinitions:
+  - name: words
+    path: .config/dictionary.txt
+    addWords: true
