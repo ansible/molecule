@@ -899,7 +899,7 @@ class Ansible(base.Base):
                 msg = f"The source path '{source}' does not exist."
                 util.sysexit_with_message(msg)
             msg = f"Inventory {source} linked to {target}"
-            LOG.info(msg)
+            LOG.debug(msg)
             os.symlink(source, target)
 
     def _get_ansible_playbook(self, playbook, verify=False, **kwargs):
