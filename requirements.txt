@@ -7,7 +7,7 @@
 alabaster==0.7.12
 ansi2html==1.7.0
 ansible-compat==2.2.0
-ansible-core==2.13.2
+ansible-core==2.13.3
 ansible-pygments==0.1.1
 arrow==1.2.2
 attrs==21.4.0
@@ -35,7 +35,7 @@ importlib-resources==5.8.0
 iniconfig==1.1.1
 jinja2==3.1.2
 jinja2-time==0.2.0
-jsonschema==4.9.1
+jsonschema==4.14.0
 markupsafe==2.1.1
 more-itertools==8.13.0
 packaging==21.3
