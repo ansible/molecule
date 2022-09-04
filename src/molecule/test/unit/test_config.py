@@ -284,30 +284,6 @@ def test_get_defaults(config_instance, mocker):
     assert defaults["scenario"]["name"] == "test_scenario_name"
 
 
-def test_preflight(mocker, config_instance, patched_logger_info):
-    m = mocker.patch("molecule.model.schema_v3.pre_validate")
-    m.return_value = (None, None)
-
-    config_instance._preflight("foo")
-
-    m.assert_called_once_with("foo", os.environ, config.MOLECULE_KEEP_STRING)
-
-
-def test_preflight_exists_when_validation_fails(
-    mocker, patched_logger_critical, config_instance
-):
-    m = mocker.patch("molecule.model.schema_v3.pre_validate")
-    m.return_value = ("validation errors", None)
-
-    with pytest.raises(SystemExit) as e:
-        config_instance._preflight("invalid stream")
-
-    assert 1 == e.value.code
-
-    msg = "Failed to pre-validate.\n\nvalidation errors"
-    patched_logger_critical.assert_called_once_with(msg)
-
-
 def test_validate(mocker, config_instance, patched_logger_debug):
     m = mocker.patch("molecule.model.schema_v3.validate")
     m.return_value = None

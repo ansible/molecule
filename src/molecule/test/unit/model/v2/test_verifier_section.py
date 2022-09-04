@@ -29,7 +29,6 @@ def _model_verifier_section_data():
         "verifier": {
             "name": "testinfra",
             "enabled": True,
-            "directory": "foo",
             "options": {"foo": "bar"},
             "env": {"FOO": "foo", "FOO_BAR": "foo_bar"},
             "additional_files_or_dirs": ["foo"],
@@ -39,19 +38,14 @@ def _model_verifier_section_data():
 
 @pytest.mark.parametrize("_config", ["_model_verifier_section_data"], indirect=True)
 def test_verifier(_config):
-    assert {} == schema_v3.validate(_config)
+    assert not schema_v3.validate(_config)
 
 
 @pytest.fixture
 def _model_verifier_errors_section_data():
     return {
         "verifier": {
-            "name": int(),
-            "enabled": str(),
-            "directory": int(),
-            "options": [],
-            "env": {"foo": "foo", "foo-bar": "foo-bar"},
-            "additional_files_or_dirs": [int()],
+            "name": 0,
         }
     }
 
@@ -60,23 +54,7 @@ def _model_verifier_errors_section_data():
     "_config", ["_model_verifier_errors_section_data"], indirect=True
 )
 def test_verifier_has_errors(_config):
-    x = {
-        "verifier": [
-            {
-                "name": ["must be of string type"],
-                "enabled": ["must be of boolean type"],
-                "env": [
-                    {
-                        "foo": ["value does not match regex '^[A-Z0-9_-]+$'"],
-                        "foo-bar": ["value does not match regex '^[A-Z0-9_-]+$'"],
-                    }
-                ],
-                "directory": ["must be of string type"],
-                "additional_files_or_dirs": [{0: ["must be of string type"]}],
-                "options": ["must be of dict type"],
-            }
-        ]
-    }
+    x = ["0 is not one of ['ansible', 'goss', 'inspec', 'testinfra']"]
 
     assert x == schema_v3.validate(_config)
 
@@ -100,4 +78,4 @@ def _model_verifier_allows_ansible_section_data():
     indirect=True,
 )
 def test_verifier_allows_name(_config):
-    assert {} == schema_v3.validate(_config)
+    assert not schema_v3.validate(_config)

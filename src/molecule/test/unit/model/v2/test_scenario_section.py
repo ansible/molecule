@@ -28,48 +28,29 @@ def _model_scenario_section_data():
     return {
         "scenario": {
             "name": "foo",
-            "check_sequence": ["foo"],
-            "converge_sequence": ["foo"],
-            "create_sequence": ["foo"],
-            "destroy_sequence": ["foo"],
-            "test_sequence": ["foo"],
+            "check_sequence": ["check"],
+            "converge_sequence": ["converge"],
+            "create_sequence": ["create"],
+            "destroy_sequence": ["destroy"],
+            "test_sequence": ["test"],
         }
     }
 
 
 @pytest.mark.parametrize("_config", ["_model_scenario_section_data"], indirect=True)
 def test_scenario(_config):
-    assert {} == schema_v3.validate(_config)
+    assert not schema_v3.validate(_config)
 
 
 @pytest.fixture
 def _model_scenario_errors_section_data():
-    return {
-        "scenario": {
-            "name": int(),
-            "check_sequence": [int()],
-            "converge_sequence": [int()],
-            "create_sequence": [int()],
-            "destroy_sequence": [int()],
-            "test_sequence": [int()],
-        }
-    }
+    return {"scenario": {"name": 0}}
 
 
 @pytest.mark.parametrize(
     "_config", ["_model_scenario_errors_section_data"], indirect=True
 )
 def test_scenario_has_errors(_config):
-    x = {
-        "scenario": [
-            {
-                "converge_sequence": [{0: ["must be of string type"]}],
-                "check_sequence": [{0: ["must be of string type"]}],
-                "create_sequence": [{0: ["must be of string type"]}],
-                "destroy_sequence": [{0: ["must be of string type"]}],
-                "test_sequence": [{0: ["must be of string type"]}],
-            }
-        ]
-    }
+    x = ["0 is not of type 'string'"]
 
     assert x == schema_v3.validate(_config)

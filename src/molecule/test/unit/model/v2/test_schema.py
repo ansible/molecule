@@ -22,4 +22,4 @@ from molecule.model import schema_v3
 
 
 def test_base_config(_config):
-    assert {} == schema_v3.validate(_config)
+    assert not schema_v3.validate(_config)
