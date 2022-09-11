@@ -468,6 +468,13 @@
     "VerifierModel": {
       "additionalProperties": false,
       "properties": {
+        "directory": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Directory",
+          "type": "string"
+        },
         "additional_files_or_dirs": {
           "items": {
             "type": "string"
