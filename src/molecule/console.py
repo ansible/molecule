@@ -3,7 +3,7 @@ import os
 import sys
 from typing import Any, Dict
 
-from enrich.console import Console
+from rich.console import Console
 from rich.style import Style
 from rich.theme import Theme
 
@@ -74,7 +74,7 @@ def should_do_markup() -> bool:
 console_options: Dict[str, Any] = {"emoji": False, "theme": theme, "soft_wrap": True}
 
 console = Console(
-    force_terminal=should_do_markup(), theme=theme, record=True, redirect=True
+    force_terminal=should_do_markup(), theme=theme, record=True,
 )
 console_options_stderr = console_options.copy()
 console_options_stderr["stderr"] = True
