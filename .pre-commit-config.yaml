@@ -87,7 +87,7 @@ repos:
           - types-filelock
           - types-setuptools
   - repo: https://github.com/PyCQA/pylint
-    rev: v2.15.2
+    rev: v2.15.3
     hooks:
       - id: pylint
         additional_dependencies:
