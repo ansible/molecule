@@ -212,6 +212,10 @@
           "title": "Pre Build Image",
           "type": "boolean"
         },
+        "cgroupns_mode": {
+          "title": "Cgroupns_mode",
+          "type": "string"
+        },
         "privileged": {
           "title": "Privileged",
           "type": "boolean"
