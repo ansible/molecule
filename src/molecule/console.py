@@ -74,7 +74,9 @@ def should_do_markup() -> bool:
 console_options: Dict[str, Any] = {"emoji": False, "theme": theme, "soft_wrap": True}
 
 console = Console(
-    force_terminal=should_do_markup(), theme=theme, record=True,
+    force_terminal=should_do_markup(),
+    theme=theme,
+    record=True,
 )
 console_options_stderr = console_options.copy()
 console_options_stderr["stderr"] = True
