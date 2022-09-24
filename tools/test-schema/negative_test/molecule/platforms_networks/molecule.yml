@@ -1,0 +1,7 @@
+driver:
+  name: docker
+platforms:
+  - name: docker
+    networks: # invalid, must be list of dictionaries
+      - foo
+      - bar

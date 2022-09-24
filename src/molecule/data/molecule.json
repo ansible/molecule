@@ -1,0 +1,561 @@
+{
+  "$defs": {
+    "ContainerRegistryModel": {
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "title": "Url",
+          "type": "string"
+        }
+      },
+      "required": ["url"],
+      "title": "ContainerRegistryModel",
+      "type": "object"
+    },
+    "MoleculeDependencyModel": {
+      "additionalProperties": false,
+      "properties": {
+        "command": {
+          "title": "Command",
+          "type": ["string", "null"]
+        },
+        "enabled": {
+          "default": true,
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "env": {
+          "title": "Env",
+          "type": "object"
+        },
+        "name": {
+          "enum": ["galaxy", "shell"],
+          "title": "Name",
+          "type": "string"
+        },
+        "options": {
+          "title": "Options",
+          "type": "object"
+        }
+      },
+      "required": ["name"],
+      "title": "MoleculeDependencyModel",
+      "type": "object"
+    },
+    "MoleculeDriverModel": {
+      "additionalProperties": false,
+      "properties": {
+        "cachier": {
+          "title": "Cachier",
+          "type": "string"
+        },
+        "default_box": {
+          "title": "DefaultBox",
+          "type": "string"
+        },
+        "name": {
+          "enum": [
+            "azure",
+            "ec2",
+            "delegated",
+            "docker",
+            "containers",
+            "openstack",
+            "podman",
+            "vagrant",
+            "digitalocean",
+            "gce",
+            "libvirt",
+            "lxd"
+          ],
+          "title": "Name",
+          "type": "string"
+        },
+        "options": {
+          "$ref": "#/$defs/MoleculeDriverOptionsModel"
+        },
+        "parallel": {
+          "title": "Parallel",
+          "type": "boolean"
+        },
+        "provider": {
+          "title": "Provider",
+          "type": "object"
+        },
+        "provision": {
+          "title": "Provision",
+          "type": "boolean"
+        },
+        "safe_files": {
+          "items": {
+            "type": "string"
+          },
+          "title": "SafeFiles",
+          "type": "array"
+        },
+        "ssh_connection_options": {
+          "items": {
+            "type": "string"
+          },
+          "title": "SshConnectionOptions",
+          "type": "array"
+        }
+      },
+      "title": "MoleculeDriverModel",
+      "type": "object"
+    },
+    "MoleculeDriverOptionsModel": {
+      "additionalProperties": false,
+      "properties": {
+        "ansible_connection_options": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Ansible Connection Options",
+          "type": "object"
+        },
+        "login_cmd_template": {
+          "title": "Login Cmd Template",
+          "type": "string"
+        },
+        "managed": {
+          "title": "Managed",
+          "type": "boolean"
+        }
+      },
+      "title": "MoleculeDriverOptionsModel",
+      "type": "object"
+    },
+    "MoleculePlatformModel": {
+      "additionalProperties": true,
+      "properties": {
+        "box": {
+          "title": "Box",
+          "type": "string"
+        },
+        "cgroupns": {
+          "title": "Cgroupns",
+          "type": "string"
+        },
+        "children": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "command": {
+          "title": "Command",
+          "type": "string"
+        },
+        "cpus": {
+          "title": "Cpus",
+          "type": "integer"
+        },
+        "dockerfile": {
+          "title": "Dockerfile",
+          "type": "string"
+        },
+        "env": {
+          "items": {
+            "type": "object"
+          },
+          "title": "Platform Environment Variables",
+          "type": "array"
+        },
+        "environment": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Environment",
+          "type": "object"
+        },
+        "groups": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Groups",
+          "type": "array"
+        },
+        "hostname": {
+          "title": "Hostname",
+          "type": ["string", "boolean"]
+        },
+        "image": {
+          "title": "Image",
+          "type": ["string", "null"]
+        },
+        "interfaces": {
+          "title": "Interfaces",
+          "type": "array"
+        },
+        "memory": {
+          "title": "Memory",
+          "type": "integer"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "network_mode": {
+          "anyOf": [
+            {
+              "enum": ["bridge", "host", "none"],
+              "type": "string"
+            },
+            {
+              "pattern": "^service:[a-zA-Z0-9:_.\\\\-]+$",
+              "type": "string"
+            },
+            {
+              "pattern": "^container:[a-zA-Z0-9][a-zA-Z0-9_.-]+$",
+              "type": "string"
+            }
+          ],
+          "title": "Network Mode"
+        },
+        "networks": {
+          "items": {
+            "$ref": "#/$defs/platform-network"
+          },
+          "markdownDescription": "Used by docker and podman drivers.",
+          "title": "Networks",
+          "type": "array"
+        },
+        "pkg_extras": {
+          "title": "Pkg Extras",
+          "type": "string"
+        },
+        "pre_build_image": {
+          "title": "Pre Build Image",
+          "type": "boolean"
+        },
+        "privileged": {
+          "title": "Privileged",
+          "type": "boolean"
+        },
+        "provider_options": {
+          "title": "Provider options",
+          "type": "object"
+        },
+        "provider_raw_config_args": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Provider Raw Config Args",
+          "type": "array"
+        },
+        "registry": {
+          "$ref": "#/$defs/ContainerRegistryModel"
+        },
+        "tmpfs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Tmpfs",
+          "type": "array"
+        },
+        "ulimits": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Ulimits",
+          "type": "array"
+        },
+        "volumes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Volumes",
+          "type": "array"
+        }
+      },
+      "required": ["name"],
+      "title": "MoleculePlatformModel",
+      "type": "object"
+    },
+    "MoleculeScenarioModel": {
+      "additionalProperties": false,
+      "properties": {
+        "check_sequence": {
+          "$ref": "#/$defs/ScenarioSequence"
+        },
+        "cleanup_sequence": {
+          "$ref": "#/$defs/ScenarioSequence"
+        },
+        "converge_sequence": {
+          "$ref": "#/$defs/ScenarioSequence"
+        },
+        "create_sequence": {
+          "$ref": "#/$defs/ScenarioSequence"
+        },
+        "dependency_sequence": {
+          "$ref": "#/$defs/ScenarioSequence"
+        },
+        "destroy_sequence": {
+          "$ref": "#/$defs/ScenarioSequence"
+        },
+        "idempotence_sequence": {
+          "$ref": "#/$defs/ScenarioSequence"
+        },
+        "lint_sequence": {
+          "$ref": "#/$defs/ScenarioSequence"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "prepare_sequence": {
+          "$ref": "#/$defs/ScenarioSequence"
+        },
+        "side_effect_sequence": {
+          "$ref": "#/$defs/ScenarioSequence"
+        },
+        "syntax_sequence": {
+          "$ref": "#/$defs/ScenarioSequence"
+        },
+        "test_sequence": {
+          "$ref": "#/$defs/ScenarioSequence"
+        },
+        "verify_sequence": {
+          "$ref": "#/$defs/ScenarioSequence"
+        }
+      },
+      "title": "MoleculeScenarioModel",
+      "type": "object"
+    },
+    "ProvisionerConfigOptionsDefaultsModel": {
+      "additionalProperties": true,
+      "properties": {
+        "ansible_managed": {
+          "default": "Ansible managed: Do NOT edit this file manually!",
+          "title": "Ansible Managed",
+          "type": "string"
+        },
+        "display_failed_stderr": {
+          "default": true,
+          "title": "Display Failed Stderr",
+          "type": "boolean"
+        },
+        "fact_caching": {
+          "title": "Fact Caching",
+          "type": "string"
+        },
+        "fact_caching_connection": {
+          "title": "Fact Caching Connection",
+          "type": "string"
+        },
+        "forks": {
+          "default": 50,
+          "title": "Forks",
+          "type": "integer"
+        },
+        "host_key_checking": {
+          "default": false,
+          "title": "Host Key Checking",
+          "type": "boolean"
+        },
+        "interpreter_python": {
+          "default": "auto_silent",
+          "description": "See https://docs.ansible.com/ansible/devel/reference_appendices/interpreter_discovery.html",
+          "title": "Interpreter Python",
+          "type": "string"
+        },
+        "nocows": {
+          "default": 1,
+          "title": "Nocows",
+          "type": "integer"
+        },
+        "retry_files_enabled": {
+          "default": false,
+          "title": "Retry Files Enabled",
+          "type": "boolean"
+        }
+      },
+      "title": "ProvisionerConfigOptionsDefaultsModel",
+      "type": "object"
+    },
+    "ProvisionerConfigOptionsModel": {
+      "additionalProperties": true,
+      "properties": {
+        "defaults": {
+          "$ref": "#/$defs/ProvisionerConfigOptionsDefaultsModel"
+        },
+        "ssh_connection": {
+          "$ref": "#/$defs/ProvisionerConfigOptionsSshConnectionModel"
+        }
+      },
+      "title": "ProvisionerConfigOptionsModel",
+      "type": "object"
+    },
+    "ProvisionerConfigOptionsSshConnectionModel": {
+      "additionalProperties": false,
+      "properties": {
+        "control_path": {
+          "default": "%(directory)s/%%h-%%p-%%r",
+          "title": "Control Path",
+          "type": "string"
+        },
+        "scp_if_ssh": {
+          "default": true,
+          "title": "Scp If Ssh",
+          "type": "boolean"
+        }
+      },
+      "title": "ProvisionerConfigOptionsSshConnectionModel",
+      "type": "object"
+    },
+    "ProvisionerModel": {
+      "additionalProperties": true,
+      "properties": {
+        "config_options": {
+          "$ref": "#/$defs/ProvisionerConfigOptionsModel"
+        },
+        "env": {
+          "title": "Env",
+          "type": "object"
+        },
+        "inventory": {
+          "title": "Inventory",
+          "type": "object"
+        },
+        "log": {
+          "title": "Log",
+          "type": "boolean"
+        },
+        "name": {
+          "enum": ["ansible"],
+          "title": "Name",
+          "type": "string"
+        },
+        "playbooks": {
+          "title": "Playbooks",
+          "type": "object"
+        }
+      },
+      "title": "ProvisionerModel",
+      "type": "object"
+    },
+    "ScenarioSequence": {
+      "additionalProperties": false,
+      "items": {
+        "enum": [
+          "check",
+          "cleanup",
+          "converge",
+          "create",
+          "dependency",
+          "destroy",
+          "idempotence",
+          "lint",
+          "prepare",
+          "side_effect",
+          "syntax",
+          "test",
+          "verify"
+        ],
+        "type": "string"
+      },
+      "title": "ScenarioSequence",
+      "type": "array"
+    },
+    "VerifierModel": {
+      "additionalProperties": false,
+      "properties": {
+        "additional_files_or_dirs": {
+          "items": {
+            "type": "string"
+          },
+          "title": "AdditionalFilesOrDirs",
+          "type": "array"
+        },
+        "enabled": {
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "env": {
+          "title": "Env",
+          "type": "object"
+        },
+        "name": {
+          "default": "ansible",
+          "enum": ["ansible", "goss", "inspec", "testinfra"],
+          "title": "Name",
+          "type": "string"
+        },
+        "options": {
+          "title": "Options",
+          "type": "object"
+        }
+      },
+      "title": "VerifierModel",
+      "type": "object"
+    },
+    "platform-network": {
+      "properties": {
+        "aliases": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "ipv4_address": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": ["name"],
+      "type": "object"
+    }
+  },
+  "$id": "https://raw.githubusercontent.com/ansible/schemas/main/f/molecule.json",
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "additionalProperties": false,
+  "examples": ["molecule/*/molecule.yml"],
+  "properties": {
+    "dependency": {
+      "$ref": "#/$defs/MoleculeDependencyModel"
+    },
+    "driver": {
+      "$ref": "#/$defs/MoleculeDriverModel"
+    },
+    "lint": {
+      "title": "Lint",
+      "type": "string"
+    },
+    "log": {
+      "default": true,
+      "title": "Log",
+      "type": "boolean"
+    },
+    "platforms": {
+      "items": {
+        "$ref": "#/$defs/MoleculePlatformModel"
+      },
+      "title": "Platforms",
+      "type": "array"
+    },
+    "prerun": {
+      "title": "Prerun",
+      "type": "boolean"
+    },
+    "provisioner": {
+      "$ref": "#/$defs/ProvisionerModel"
+    },
+    "role_name_check": {
+      "enum": [0, 1, 2],
+      "title": "RoleNameCheck",
+      "type": "integer"
+    },
+    "scenario": {
+      "$ref": "#/$defs/MoleculeScenarioModel"
+    },
+    "verifier": {
+      "$ref": "#/$defs/VerifierModel"
+    }
+  },
+  "required": ["driver", "platforms"],
+  "title": "Molecule Scenario Schema",
+  "type": "object"
+}
