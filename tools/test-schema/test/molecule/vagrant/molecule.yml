@@ -1,0 +1,47 @@
+---
+dependency:
+  name: shell
+  enabled: false
+
+lint: |
+  set -e
+  yamllint .
+  ansible-lint
+  flake8
+
+driver:
+  name: vagrant
+  provider:
+    name: libvirt
+  provision: false
+  cachier: machine
+  parallel: true
+  default_box: "generic/alpine310"
+platforms:
+  - name: instance
+    hostname: foo.bar.com
+    interfaces:
+      - auto_config: true
+        network_name: private_network
+        type: dhcp
+    instance_raw_config_args:
+      - 'vm.synced_folder ".", "/vagrant", type: "rsync"'
+      - 'vm.provision :shell, inline: "uname"'
+    config_options:
+      ssh.keep_alive: true
+      ssh.remote_user: "vagrant"
+      synced_folder: true
+    box: fedora/32-cloud-base
+    box_version: 32.20200422.0
+    box_url: "http://127.0.0.1/box.img"
+    memory: 512
+    cpus: 1
+    provider_options:
+      video_type: "vga"
+    provider_raw_config_args:
+      - cpuset = '1-4,^3,6'
+  - name: instance2
+    hostname: false
+
+provisioner:
+  name: ansible

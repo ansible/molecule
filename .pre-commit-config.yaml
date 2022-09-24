@@ -3,9 +3,18 @@ ci:
   skip:
     # https://github.com/pre-commit-ci/issues/issues/55
     - pip-compile
+    - schema
 default_language_version:
   python: python3.8
 repos:
+  - repo: local
+    hooks:
+      - id: schema
+        name: schema
+        entry: bash -c "cd tools/test-schema && npm install && npm test"
+        pass_filenames: false
+        always_run: true
+        language: node
   - repo: https://github.com/pre-commit/mirrors-prettier
     # keep it before yamllint
     rev: "v3.0.0-alpha.0"
@@ -15,7 +24,8 @@ repos:
         exclude: >
           (?x)^(
             src/molecule/cookiecutter/.*|
-            src/molecule/test/resources/templates/.*
+            src/molecule/test/resources/templates/.*|
+            tools/test-schema/(negative_test|test)/.*|
           )$
         additional_dependencies:
           - prettier
@@ -28,6 +38,10 @@ repos:
     rev: v2.2.1
     hooks:
       - id: codespell
+        exclude: >
+          (?x)^(
+            tools/test-schema/package-lock.json
+          )$
   - repo: https://github.com/PyCQA/isort
     rev: 5.10.1
     hooks:
@@ -104,9 +118,9 @@ repos:
     rev: 6.8.0
     hooks:
       - id: pip-compile
-        entry: pip-compile -q --strip-extras --no-annotate --output-file=requirements.txt tools/opts.txt setup.cfg --extra docs --extra test --extra yamllint
+        entry: pip-compile -q --strip-extras --no-annotate --output-file=requirements.txt tools/opts.txt setup.cfg --extra docs --extra test --extra lint
       - id: pip-compile
         name: pip-compile-upgrade
-        entry: pip-compile -q --strip-extras -q --upgrade --no-annotate --output-file=requirements.txt tools/opts.txt setup.cfg --extra docs --extra test --extra yamllint
+        entry: pip-compile -q --strip-extras -q --upgrade --no-annotate --output-file=requirements.txt tools/opts.txt setup.cfg --extra docs --extra test --extra lint
         files: ^(setup\.cfg|requirements.txt|constraints\.txt)$
         stages: [manual]

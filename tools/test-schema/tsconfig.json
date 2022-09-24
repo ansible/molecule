@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "declaration": true,
+    "esModuleInterop": true,
+    "lib": ["es5", "es2015.promise"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "../lib/umd",
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "strict": true,
+    "stripInternal": true,
+    "target": "es5"
+  },
+  "exclude": ["node_modules"],
+  "include": ["src/**/*"]
+}

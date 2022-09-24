@@ -1,0 +1,118 @@
+---
+dependency:
+  name: shell
+  enabled: true
+  command: path/to/command --flag1 subcommand --flag2
+  options:
+    ignore-certs: true
+    ignore-errors: true
+  env:
+    FOO: bar
+
+lint: |
+  set -e
+  yamllint .
+  ansible-lint
+  flake8
+
+driver:
+  name: podman
+  options:
+    managed: false
+    login_cmd_template: ...
+    ansible_connection_options:
+      ansible_connection: ssh
+  # vagrant options:
+  provider:
+    name: virtualbox
+
+log: true
+
+platforms:
+  - name: ubi8
+    hostname: ubi8
+    children: [] # list of strings
+    unknown_property_foo: bar # unknown properties should be allowed for drivers
+    groups:
+      - ubi8
+    image: ubi8/ubi-init
+    pre_build_image: true
+    registry:
+      url: registry.access.redhat.com
+    dockerfile: Dockerfile
+    pkg_extras: python*setuptools
+    volumes:
+      - /etc/ci/mirror_info.sh:/etc/ci/mirror_info.sh:ro
+      - /etc/pki/rpm-gpg:/etc/pki/rpm-gpg
+    privileged: true
+    environment: &env
+      http_proxy: "{{ lookup('env', 'http_proxy') }}"
+      https_proxy: "{{ lookup('env', 'https_proxy') }}"
+    ulimits: &ulimit
+      - host
+    # vagrant ones
+    box: foo/bar
+    memory: 1024
+    cpus: 2
+    provider_raw_config_args: []
+    networks: # used by docker/podman
+      - name: foo
+
+  - name: ubi7
+    hostname: ubi7
+    children: ["ubi8"]
+    groups:
+      - ubi7
+    image: ubi7/ubi-init
+    registry:
+      url: registry.access.redhat.com
+    command: /sbin/init
+    tmpfs:
+      - /run
+      - /tmp
+    volumes:
+      - /etc/ci/mirror_info.sh:/etc/ci/mirror_info.sh:ro
+      - /etc/pki/rpm-gpg:/etc/pki/rpm-gpg
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    network_mode: service:vpn
+    privileged: true
+    environment: &env
+      http_proxy: "{{ lookup('env', 'http_proxy') }}"
+      https_proxy: "{{ lookup('env', 'https_proxy') }}"
+    ulimits: &ulimit
+      - host
+
+provisioner:
+  playbooks:
+    prepare: prepare.yml
+  inventory:
+    hosts:
+      all:
+        hosts:
+          ubi8:
+            ansible_python_interpreter: /usr/bin/python3
+      ubi7:
+        selinux: permissive
+      ubi8:
+        selinux: enforced
+  name: ansible
+  log: true
+  env:
+    ANSIBLE_STDOUT_CALLBACK: yaml
+  config_options:
+    defaults:
+      fact_caching: jsonfile
+      fact_caching_connection: /tmp/molecule/facts
+
+scenario:
+  test_sequence:
+    - destroy
+    - create
+    - prepare
+    - converge
+    - check
+    - verify
+    - destroy
+
+verifier:
+  name: testinfra

@@ -1,0 +1,77 @@
+---
+dependency:
+  name: galaxy
+
+driver:
+  name: docker
+
+lint: |
+  set -e
+  yamllint -c molecule/yaml-lint.yml .
+  ansible-lint
+  flake8
+
+platforms:
+  - name: instance-1
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-centos7}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: true
+    groups:
+      - zookeeper
+    env:
+      - Hello: world!
+
+  - name: instance-2
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-centos7}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: true
+    groups:
+      - zookeeper
+    env:
+      - Hello: world!
+
+  - name: instance-3
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-centos7}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: true
+    groups:
+      - zookeeper
+    env:
+      - Hello: world!
+
+provisioner:
+  name: ansible
+  log: false
+  playbooks:
+    converge: ${MOLECULE_PLAYBOOK:-converge.yml}
+  inventory:
+    host_vars:
+      instance-1:
+        zookeeper_id: 0
+      instance-2:
+        zookeeper_id: 1
+      instance-3:
+        zookeeper_id: 2
+
+scenario:
+  name: cluster
+  test_sequence:
+    - destroy
+    - create
+    - prepare
+    - converge
+    - check
+    - verify
+    - destroy
+
+verifier:
+  name: ansible
