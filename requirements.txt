@@ -6,7 +6,7 @@
 #
 alabaster==0.7.12
 ansi2html==1.8.0
-ansible-compat==2.2.0
+ansible-compat==2.2.1
 ansible-core==2.13.4
 ansible-pygments==0.1.1
 arrow==1.2.3
