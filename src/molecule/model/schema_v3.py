@@ -25,13 +25,13 @@ import os
 from jsonschema import validate as jsonschema_validate
 from jsonschema.exceptions import ValidationError
 
-from molecule.schemas import __file__ as schemas_module
+from molecule.data import __file__ as data_module
 
 
 def validate(c):
     """Perform schema validation."""
     result = []
-    schema_file = os.path.dirname(schemas_module) + "/molecule.json"
+    schema_file = os.path.dirname(data_module) + "/molecule.json"
     with open(schema_file, encoding="utf-8") as f:
         schema = json.load(f)
 

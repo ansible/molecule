@@ -13,12 +13,8 @@
       "type": "object"
     },
     "MoleculeDependencyModel": {
-      "additionalProperties": false,
+      "unevaluatedProperties": false,
       "properties": {
-        "command": {
-          "title": "Command",
-          "type": ["string", "null"]
-        },
         "enabled": {
           "default": true,
           "title": "Enabled",
@@ -37,6 +33,17 @@
           "title": "Options",
           "type": "object"
         }
+      },
+      "if": {
+        "properties": { "name": { "const": "galaxy" } }
+      },
+      "then": {
+        "properties": {
+          "command": { "title": "Command", "type": ["string", "null"] }
+        }
+      },
+      "else": {
+        "properties": { "command": { "title": "Command", "type": "string" } }
       },
       "required": ["name"],
       "title": "MoleculeDependencyModel",
@@ -509,7 +516,7 @@
       "type": "object"
     }
   },
-  "$id": "https://raw.githubusercontent.com/ansible/schemas/main/f/molecule.json",
+  "$id": "https://raw.githubusercontent.com/ansible-community/molecule/main/src/molecule/data/molecule.json",
   "$schema": "http://json-schema.org/draft-07/schema",
   "additionalProperties": false,
   "examples": ["molecule/*/molecule.yml"],
