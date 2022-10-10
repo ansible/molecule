@@ -17,7 +17,7 @@ repos:
         language: node
   - repo: https://github.com/pre-commit/mirrors-prettier
     # keep it before yamllint
-    rev: "v3.0.0-alpha.0"
+    rev: "v3.0.0-alpha.1"
     hooks:
       - id: prettier
         # Temporary excludes so we can gradually normalize the formatting
@@ -47,7 +47,7 @@ repos:
     hooks:
       - id: isort
   - repo: https://github.com/psf/black
-    rev: 22.8.0
+    rev: 22.10.0
     hooks:
       - id: black
         language_version: python3
@@ -80,7 +80,7 @@ repos:
         types: [file, yaml]
         entry: yamllint --strict
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v0.981
+    rev: v0.982
     hooks:
       - id: mypy
         # empty args needed in order to match mypy cli behavior
@@ -101,7 +101,7 @@ repos:
           - types-filelock
           - types-setuptools
   - repo: https://github.com/PyCQA/pylint
-    rev: v2.15.3
+    rev: v2.15.4
     hooks:
       - id: pylint
         additional_dependencies:
@@ -115,7 +115,7 @@ repos:
           - pexpect
           - testinfra
   - repo: https://github.com/jazzband/pip-tools
-    rev: 6.8.0
+    rev: 6.9.0
     hooks:
       - id: pip-compile
         entry: pip-compile -q --strip-extras --no-annotate --output-file=requirements.txt tools/opts.txt setup.cfg --extra docs --extra test --extra lint
