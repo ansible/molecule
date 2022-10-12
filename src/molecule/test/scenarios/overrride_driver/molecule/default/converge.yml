@@ -4,5 +4,5 @@
   gather_facts: false
   tasks:
     - name: Dummy task
-      command: /bin/true
+      ansible.builtin.command: /bin/true
       changed_when: false

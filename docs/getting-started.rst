@@ -99,7 +99,7 @@ directories:
           become: true
           tasks:
           - name: Initialize role without actually running it
-            include_role:
+            ansible.builtin.include_role:
               name: my_role
               tasks_from: init
 
@@ -171,7 +171,7 @@ Now, let's add a task to our ``tasks/main.yml`` like so:
 .. code-block:: yaml
 
     - name: Molecule Hello World!
-      debug:
+      ansible.builtin.debug:
         msg: Hello, World!
 
 We can then tell Molecule to test our role against our instance with:

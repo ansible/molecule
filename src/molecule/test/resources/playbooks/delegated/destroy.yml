@@ -4,4 +4,4 @@
   connection: local
   gather_facts: false
   tasks:
-    - include: destroy/docker.yml
+    - ansible.builtin.include: destroy/docker.yml

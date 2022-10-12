@@ -5,6 +5,6 @@
   no_log: "{{ molecule_no_log }}"
   tasks:
     - name: Delete the test file as a planned side effect
-      file:
+      ansible.builtin.file:
         path: /tmp/testfile
         state: absent
