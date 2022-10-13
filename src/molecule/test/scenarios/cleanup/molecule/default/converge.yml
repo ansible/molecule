@@ -4,6 +4,6 @@
   gather_facts: false
   tasks:
     - name: Touch a file
-      command: touch /tmp/cleanup
+      ansible.builtin.command: touch /tmp/cleanup
       args:
         creates: /tmp/cleanup

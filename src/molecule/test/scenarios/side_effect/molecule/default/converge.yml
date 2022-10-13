@@ -4,12 +4,12 @@
   gather_facts: false
   tasks:
     - name: Check for test file
-      stat:
+      ansible.builtin.stat:
         path: /tmp/testfile
       register: test_file
 
     - name: Create the test file
-      file:
+      ansible.builtin.file:
         path: /tmp/testfile
         state: touch
       when: not test_file.stat.exists

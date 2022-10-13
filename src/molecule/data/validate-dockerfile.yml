@@ -14,7 +14,7 @@
       - image: debian:latest
   tasks:
     - name: create temporary dockerfiles
-      tempfile:
+      ansible.builtin.tempfile:
         # sanitize image name to be filename safe
         prefix: "molecule-dockerfile-{{ item.image | regex_replace('\/', '-') }}"
         suffix: build
@@ -24,7 +24,7 @@
         label: "{{ item.image }}"
 
     - name: expand Dockerfile templates
-      template:
+      ansible.builtin.template:
         src: Dockerfile.j2
         dest: "{{ temp_dockerfiles.results[index].path }}"
       register: result
@@ -51,7 +51,7 @@
       register: result
 
     - name: Clean up temporary Dockerfile's
-      file:
+      ansible.builtin.file:
         path: "{{ item }}"
         state: absent
       loop: "{{ temp_dockerfiles.results | map(attribute='path') | list }}"

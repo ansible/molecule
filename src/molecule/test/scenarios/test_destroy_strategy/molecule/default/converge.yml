@@ -5,4 +5,4 @@
   become: true
   tasks:
     - name: Force a converge failure
-      command: /bin/false
+      ansible.builtin.command: /bin/false
