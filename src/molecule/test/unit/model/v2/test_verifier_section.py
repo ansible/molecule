@@ -29,6 +29,7 @@ def _model_verifier_section_data():
         "verifier": {
             "name": "testinfra",
             "enabled": True,
+            "directory": "foo",
             "options": {"foo": "bar"},
             "env": {"FOO": "foo", "FOO_BAR": "foo_bar"},
             "additional_files_or_dirs": ["foo"],
