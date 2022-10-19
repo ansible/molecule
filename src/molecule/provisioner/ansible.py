@@ -465,6 +465,15 @@ class Ansible(base.Base):
             ]
         )
 
+        if os.environ.get("ANSIBLE_COLLECTIONS_PATH", ""):
+            collections_path_list.extend(
+                list(
+                    map(
+                        util.abs_path, os.environ["ANSIBLE_COLLECTIONS_PATH"].split(":")
+                    )
+                )
+            )
+
         roles_path_list = [
             util.abs_path(
                 os.path.join(self._config.scenario.config.runtime.cache_dir, "roles")
