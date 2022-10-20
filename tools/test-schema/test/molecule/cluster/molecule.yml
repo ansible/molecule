@@ -22,7 +22,7 @@ platforms:
     groups:
       - zookeeper
     env:
-      - Hello: world!
+      Hello: world!
 
   - name: instance-2
     image: "geerlingguy/docker-${MOLECULE_DISTRO:-centos7}-ansible:latest"
@@ -34,7 +34,7 @@ platforms:
     groups:
       - zookeeper
     env:
-      - Hello: world!
+      Hello: world!
 
   - name: instance-3
     image: "geerlingguy/docker-${MOLECULE_DISTRO:-centos7}-ansible:latest"
@@ -46,7 +46,7 @@ platforms:
     groups:
       - zookeeper
     env:
-      - Hello: world!
+      Hello: world!
 
 provisioner:
   name: ansible
