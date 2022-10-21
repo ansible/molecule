@@ -163,11 +163,11 @@
           "type": "string"
         },
         "env": {
-          "items": {
-            "type": "object"
+          "additionalProperties": {
+            "type": "string"
           },
           "title": "Platform Environment Variables",
-          "type": "array"
+          "type": "object"
         },
         "environment": {
           "additionalProperties": {
