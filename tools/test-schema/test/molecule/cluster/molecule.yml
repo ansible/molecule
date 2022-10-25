@@ -18,6 +18,7 @@ platforms:
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     privileged: true
+    cgroupns_mode: private
     pre_build_image: true
     groups:
       - zookeeper
@@ -30,6 +31,7 @@ platforms:
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     privileged: true
+    cgroupns_mode: private
     pre_build_image: true
     groups:
       - zookeeper
@@ -42,6 +44,7 @@ platforms:
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     privileged: true
+    cgroupns_mode: private
     pre_build_image: true
     groups:
       - zookeeper

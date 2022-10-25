@@ -140,8 +140,9 @@
           "title": "Box",
           "type": "string"
         },
-        "cgroupns": {
-          "title": "Cgroupns",
+        "cgroupns_mode": {
+          "enum": ["host", "private"],
+          "title": "Cgroup namespace mode",
           "type": "string"
         },
         "children": {
