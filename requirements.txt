@@ -65,7 +65,7 @@ pytest-cov==3.0.0
 pytest-forked==1.4.0
 pytest-html==3.1.1
 pytest-metadata==2.0.2
-pytest-mock==3.8.2
+pytest-mock==3.10.0
 pytest-plus==0.2
 pytest-testinfra==6.8.0
 pytest-xdist==2.5.0
