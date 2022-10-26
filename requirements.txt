@@ -32,7 +32,7 @@ enrich==1.2.7
 execnet==1.9.0
 filelock==3.8.0
 flake8==5.0.4
-identify==2.5.5
+identify==2.5.7
 idna==3.3
 imagesize==1.4.1
 importlib-metadata==4.12.0
