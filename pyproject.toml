@@ -46,6 +46,8 @@ filterwarnings = [
   "error",
   # https://github.com/certifi/python-certifi/pull/193
   "ignore:path is deprecated.*:DeprecationWarning",
+  # https://github.com/pytest-dev/pytest-cov/issues/557
+  "ignore:The --rsyncdir command line argument and rsyncdirs config variable are deprecated.:DeprecationWarning",
   # ignore::UserWarning
 
 ]
