@@ -257,7 +257,7 @@ class Config(object, metaclass=NewInitCaller):
         elif driver_from_cli:
             driver_name = driver_from_cli
         else:
-            driver_name = self.config["driver"]["name"]
+            driver_name = driver_from_scenario
 
         if driver_from_cli and (driver_from_cli != driver_name):
             msg = (
