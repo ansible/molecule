@@ -6,6 +6,24 @@
         "url": {
           "title": "Url",
           "type": "string"
+        },
+        "credentials": {
+          "properties": {
+            "username": {
+              "title": "Username",
+              "type": "string"
+            },
+            "password": {
+              "title": "Password",
+              "type": "string"
+            },
+            "email": {
+              "title": "Email",
+              "type": "string"
+            }
+          },
+          "title": "Credentials",
+          "type": "object"
         }
       },
       "required": ["url"],
