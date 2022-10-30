@@ -233,11 +233,13 @@ class Config(object, metaclass=NewInitCaller):
         if self.molecule_file and os.path.isfile(self.molecule_file):
             modTime = os.path.getmtime(self.molecule_file)
             if myState.molecule_yml_date_modified is None:
-                myState.change_state('molecule_yml_date_modified', modTime)
+                myState.change_state("molecule_yml_date_modified", modTime)
             elif myState.molecule_yml_date_modified != modTime:
-                LOG.warning(f"The scenario config file ('{self.molecule_file}') has been modified since the scenario was created. " +
-                            "If recent changes are important, reset the scenario with 'molecule destroy' to clean up created items or " +
-                            "'molecule reset' to clear current configuration.")
+                LOG.warning(
+                    f"The scenario config file ('{self.molecule_file}') has been modified since the scenario was created. "
+                    + "If recent changes are important, reset the scenario with 'molecule destroy' to clean up created items or "
+                    + "'molecule reset' to clear current configuration."
+                )
         return state.State(self)
 
     @cached_property
