@@ -236,8 +236,8 @@ class Config(object, metaclass=NewInitCaller):
                 myState.change_state('molecule_yml_date_modified', modTime)
             elif myState.molecule_yml_date_modified != modTime:
                 LOG.warning(f"The scenario config file ('{self.molecule_file}') has been modified since the scenario was created. " +
-                "If recent changes are important, reset the scenario with 'molecule destroy' to clean up created items or 'molecule reset' "+
-                "to clear current configuration.")
+                            "If recent changes are important, reset the scenario with 'molecule destroy' to clean up created items or " +
+                            "'molecule reset' to clear current configuration.")
         return state.State(self)
 
     @cached_property
@@ -280,7 +280,6 @@ class Config(object, metaclass=NewInitCaller):
                 "To change drivers, run 'molecule destroy' for converged scenarios or 'molecule reset' otherwise."
             )
             LOG.warning(msg)
-        
 
         return driver_name
 
