@@ -232,14 +232,12 @@ class Config(object, metaclass=NewInitCaller):
         # look at state file for molecule.yml date modified and warn if they do not match
         if self.molecule_file and os.path.isfile(self.molecule_file):
             modTime = os.path.getmtime(self.molecule_file)
-            if myState.molecule_yml_date_modified == None:
-                myState.change_state("molecule_yml_date_modified", modTime)
+            if myState.molecule_yml_date_modified is None:
+                myState.change_state('molecule_yml_date_modified', modTime)
             elif myState.molecule_yml_date_modified != modTime:
-                LOG.warning(
-                    f"The scenario config file ('{self.molecule_file}') has been modified since the scenario was created. "
-                    + f"If recent changes are important, reset the scenario with 'molecule destroy' to clean up created items or 'molecule reset' "
-                    + f"to clear current configuration."
-                )
+                LOG.warning(f"The scenario config file ('{self.molecule_file}') has been modified since the scenario was created. " +
+                "If recent changes are important, reset the scenario with 'molecule destroy' to clean up created items or 'molecule reset' "+
+                "to clear current configuration.")
         return state.State(self)
 
     @cached_property
@@ -279,9 +277,10 @@ class Config(object, metaclass=NewInitCaller):
             msg = (
                 f"Driver '{driver_name}' is currently in use but the scenario config "
                 f"has changed and now defines '{driver_from_scenario}'. "
-                f"To change drivers, run 'molecule destroy' for converged scenarios or 'molecule reset' otherwise."
+                "To change drivers, run 'molecule destroy' for converged scenarios or 'molecule reset' otherwise."
             )
             LOG.warning(msg)
+        
 
         return driver_name
 
