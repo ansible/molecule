@@ -233,11 +233,13 @@ class Config(object, metaclass=NewInitCaller):
         if self.molecule_file and os.path.isfile(self.molecule_file):
             modTime = os.path.getmtime(self.molecule_file)
             if myState.molecule_yml_date_modified == None:
-                myState.change_state('molecule_yml_date_modified', modTime)
+                myState.change_state("molecule_yml_date_modified", modTime)
             elif myState.molecule_yml_date_modified != modTime:
-                LOG.warning(f"The scenario config file ('{self.molecule_file}') has been modified since the scenario was created. " +
-                f"If recent changes are important, reset the scenario with 'molecule destroy' to clean up created items or 'molecule reset' "+
-                f"to clear current configuration.")
+                LOG.warning(
+                    f"The scenario config file ('{self.molecule_file}') has been modified since the scenario was created. "
+                    + f"If recent changes are important, reset the scenario with 'molecule destroy' to clean up created items or 'molecule reset' "
+                    + f"to clear current configuration."
+                )
         return state.State(self)
 
     @cached_property
@@ -245,13 +247,12 @@ class Config(object, metaclass=NewInitCaller):
         return api.verifiers(self).get(self.config["verifier"]["name"], None)
 
     def _get_driver_name(self):
-        #the state file contains the driver from the last run
+        # the state file contains the driver from the last run
         driver_from_state_file = self.state.driver
-        #the user may supply a driver on the command line
+        # the user may supply a driver on the command line
         driver_from_cli = self.command_args.get("driver_name")
-        #the driver may also be edited in the scenario
+        # the driver may also be edited in the scenario
         driver_from_scenario = self.config["driver"]["name"]
-
 
         if driver_from_state_file:
             driver_name = driver_from_state_file
@@ -281,7 +282,6 @@ class Config(object, metaclass=NewInitCaller):
                 f"To change drivers, run 'molecule destroy' for converged scenarios or 'molecule reset' otherwise."
             )
             LOG.warning(msg)
-        
 
         return driver_name
 
@@ -341,8 +341,6 @@ class Config(object, metaclass=NewInitCaller):
                 defaults = util.merge_dicts(
                     defaults, util.safe_load(interpolated_config)
                 )
-            
-           
 
         return defaults
 

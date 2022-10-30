@@ -25,7 +25,15 @@ import os
 from molecule import util
 
 LOG = logging.getLogger(__name__)
-VALID_KEYS = ["created", "converged", "driver", "prepared", "run_uuid", "is_parallel","molecule_yml_date_modified"]
+VALID_KEYS = [
+    "created",
+    "converged",
+    "driver",
+    "prepared",
+    "run_uuid",
+    "is_parallel",
+    "molecule_yml_date_modified",
+]
 
 
 class InvalidState(Exception):
@@ -97,7 +105,7 @@ class State(object):
     def is_parallel(self):
         return self._data.get("is_parallel")
 
-    @property 
+    @property
     def molecule_yml_date_modified(self):
         return self._data.get("molecule_yml_date_modified")
 
