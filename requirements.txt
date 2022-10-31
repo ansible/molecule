@@ -27,7 +27,7 @@ coverage==6.5.0
 cryptography==38.0.1
 distlib==0.3.6
 distro==1.8.0
-docutils==0.17.1
+docutils==0.19
 enrich==1.2.7
 exceptiongroup==1.0.0
 execnet==1.9.0
