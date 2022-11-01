@@ -414,7 +414,7 @@
       "type": "object"
     },
     "ProvisionerConfigOptionsSshConnectionModel": {
-      "additionalProperties": false,
+      "additionalProperties": true,
       "properties": {
         "control_path": {
           "default": "%(directory)s/%%h-%%p-%%r",
