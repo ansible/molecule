@@ -24,7 +24,7 @@ click-help-colors==0.9.1
 commonmark==0.9.1
 cookiecutter==2.1.1
 coverage==6.5.0
-cryptography==38.0.1
+cryptography==38.0.3
 distlib==0.3.6
 distro==1.8.0
 docutils==0.17.1
