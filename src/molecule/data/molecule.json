@@ -223,21 +223,8 @@
           "type": "string"
         },
         "network_mode": {
-          "anyOf": [
-            {
-              "enum": ["bridge", "host", "none"],
-              "type": "string"
-            },
-            {
-              "pattern": "^service:[a-zA-Z0-9:_.\\\\-]+$",
-              "type": "string"
-            },
-            {
-              "pattern": "^container:[a-zA-Z0-9][a-zA-Z0-9_.-]+$",
-              "type": "string"
-            }
-          ],
-          "title": "Network Mode"
+          "title": "Network Mode",
+          "type": "string"
         },
         "networks": {
           "items": {
