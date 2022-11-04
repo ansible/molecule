@@ -225,7 +225,7 @@
         "network_mode": {
           "anyOf": [
             {
-              "enum": ["bridge", "default", "host", "none"],
+              "enum": ["bridge", "host", "none"],
               "type": "string"
             },
             {
