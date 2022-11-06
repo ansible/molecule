@@ -229,11 +229,6 @@
               "type": "string"
             },
             {
-              "pattern": "^service:[a-zA-Z0-9:_.\\\\-]+$",
-              "type": "string"
-            },
-            {
-              "pattern": "^container:[a-zA-Z0-9][a-zA-Z0-9_.-]+$",
               "type": "string"
             }
           ],
