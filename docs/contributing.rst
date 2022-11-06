@@ -19,7 +19,7 @@ Contributing
 Talk to us
 ----------
 
-Join us in ``#ansible-molecule`` on `libera.chat`_ irc, or
+Join us in ``#ansible-devtools`` on `libera.chat`_ irc, or
 `molecule-users Forum`_.
 
 The full list of Ansible email lists and IRC channels can be found in the
