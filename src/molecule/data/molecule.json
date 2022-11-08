@@ -457,24 +457,9 @@
       "type": "object"
     },
     "ScenarioSequence": {
-      "additionalProperties": false,
       "items": {
-        "enum": [
-          "check",
-          "cleanup",
-          "converge",
-          "create",
-          "dependency",
-          "destroy",
-          "idempotence",
-          "lint",
-          "prepare",
-          "side_effect",
-          "syntax",
-          "test",
-          "verify"
-        ],
-        "type": "string"
+        "type": "string",
+        "pattern": "(^check$)|(^cleanup$)|(^converge$)|(^create$)|(^dependency$)|(^destroy$)|(^idempotence$)|(^lint$)|(^prepare$)|(^side_effect *.*$)|(^syntax$)|(^test$)|(^verify *.*$)"
       },
       "title": "ScenarioSequence",
       "type": "array"
