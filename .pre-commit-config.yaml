@@ -80,7 +80,7 @@ repos:
         types: [file, yaml]
         entry: yamllint --strict
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v0.982
+    rev: v0.990
     hooks:
       - id: mypy
         # empty args needed in order to match mypy cli behavior
@@ -115,7 +115,7 @@ repos:
           - pexpect
           - testinfra
   - repo: https://github.com/jazzband/pip-tools
-    rev: 6.9.0
+    rev: 6.10.0
     hooks:
       - id: pip-compile
         entry: pip-compile -q --strip-extras --no-annotate --output-file=requirements.txt tools/opts.txt setup.cfg --extra docs --extra test --extra lint
