@@ -23,11 +23,16 @@ from __future__ import print_function
 import contextlib
 import copy
 import fnmatch
+import glob
+import json
 import logging
 import os
 import re
+import signal
+import subprocess
 import sys
 from dataclasses import dataclass
+from datetime import datetime
 from subprocess import CalledProcessError, CompletedProcess
 from typing import Any, Dict, Iterable, List, MutableMapping, NoReturn, Optional, Union
 from warnings import WarningMessage
@@ -161,6 +166,93 @@ def run_command(
             stderr=result.stderr,
         )
     return result
+
+
+def get_tty_fg():
+    """Generate a tty emulation."""
+    # make a new process group within the same session as the parent. we
+    # do this so that if the user hits ctrl-c, etc in the curses program
+    # that's about to be exec'd, the SIGINT and friends won't be sent to
+    # the parent.
+    os.setpgrp()
+
+    # don't stop the process when we get SIGTTOU. since this is now in a
+    # background process group, SIGTTOU will be sent to this process when
+    # we call tcsetpgrp(), below. the default action when receiving that
+    # signal is to stop (process mode T).
+    hdlr = signal.signal(signal.SIGTTOU, signal.SIG_IGN)
+
+    # open a file handle to the current tty
+    tty = os.open("/dev/tty", os.O_RDWR)
+
+    # ask for our new process group to be the foreground one on the
+    # controlling tty.
+    os.tcsetpgrp(tty, os.getpgrp())
+
+    # replace the old signal handler to minimize the chance of the child
+    # getting confused by a non-standard starting signal table.
+    signal.signal(signal.SIGTTOU, hdlr)
+
+
+def run_command_navigator(
+    cmd,
+    env=None,
+    debug=False,
+    echo=False,
+    quiet=False,
+    check=False,
+    cwd=None,
+    stdout_path=None,
+) -> CompletedProcess:
+    """
+    Execute the given command and returns None.
+
+    :param cmd: :
+        - a string or list of strings (similar to subprocess.run)
+        - a BakedCommand object (
+    :param debug: An optional bool to toggle debug output.
+    """
+    args = []
+    if cmd.__class__.__name__ == "Command":
+        raise RuntimeError(
+            "Molecule 3.2.0 dropped use of sh library, update plugin code to use new API. "
+            "See https://github.com/ansible-community/molecule/issues/2678"
+        )
+    elif cmd.__class__.__name__ == "BakedCommand":
+        if cmd.env and env:
+            env = dict(cmd.env, **env)
+        else:
+            env = cmd.env or env
+        args = cmd.cmd
+    else:
+        args = cmd
+
+    if debug:
+        print_environment_vars(env)
+
+    start_time = datetime.now()
+
+    child = subprocess.run(args=args, env=env, cwd=cwd, preexec_fn=get_tty_fg)
+
+    list_of_files = glob.glob(stdout_path + "/*.json")
+    if len(list_of_files) > 0:
+        latest_file = max(list_of_files, key=os.path.getctime)
+        # get Result from jobs artifacts
+        if datetime.fromtimestamp(os.path.getctime(latest_file)) >= start_time:
+            with open(latest_file) as json_file:
+                data = json.load(json_file)
+                child.stdout = "\n".join(data["stdout"]).encode("utf-8")
+    else:
+        child.stdout = "".encode("utf-8")
+
+    if child.returncode != 0 and check:
+        raise CalledProcessError(
+            returncode=child.returncode,
+            cmd=child.args,
+            output=child.stdout.decode("utf-8"),
+            stderr=child.stderr,
+        )
+    return child
 
 
 def os_walk(directory, pattern, excludes=[], followlinks=False):

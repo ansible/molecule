@@ -444,7 +444,7 @@
           "type": "boolean"
         },
         "name": {
-          "enum": ["ansible"],
+          "enum": ["ansible", "ansible-navigator"],
           "title": "Name",
           "type": "string"
         },

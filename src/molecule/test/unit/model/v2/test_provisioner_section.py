@@ -70,7 +70,7 @@ def _model_provisioner_errors_section_data():
     "_config", ["_model_provisioner_errors_section_data"], indirect=True
 )
 def test_provisioner_has_errors(_config):
-    x = ["0 is not one of ['ansible']"]
+    x = ["0 is not one of ['ansible', 'ansible-navigator']"]
 
     assert x == schema_v3.validate(_config)
 

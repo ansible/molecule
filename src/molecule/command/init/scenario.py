@@ -166,9 +166,9 @@ def _default_scenario_exists(ctx, param, value: str):  # pragma: no cover
 )
 @click.option(
     "--provisioner-name",
-    type=click.Choice(["ansible"]),
+    type=click.Choice(["ansible", "ansible-navigator"]),
     default="ansible",
-    help="Name of provisioner to initialize. (ansible)",
+    help="Name of provisioner to initialize. (ansible, ansible-navigator)",
 )
 @click.option(
     "--role-name",

@@ -144,9 +144,9 @@ class Role(base.Base):
 )
 @click.option(
     "--provisioner-name",
-    type=click.Choice(["ansible"]),
+    type=click.Choice(["ansible", "ansible-navigator"]),
     default="ansible",
-    help="Name of provisioner to initialize. (ansible)",
+    help="Name of provisioner to initialize. (ansible, ansible-navigator)",
 )
 @click.argument("ROLE-NAME", required=True)
 @click.option(

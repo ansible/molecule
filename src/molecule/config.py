@@ -33,7 +33,7 @@ from molecule import api, interpolation, platforms, scenario, state, util
 from molecule.app import app
 from molecule.dependency import ansible_galaxy, shell
 from molecule.model import schema_v3
-from molecule.provisioner import ansible
+from molecule.provisioner import ansible, ansible_navigator
 from molecule.util import boolean
 
 LOG = logging.getLogger(__name__)
@@ -221,6 +221,8 @@ class Config(object, metaclass=NewInitCaller):
         provisioner_name = self.config["provisioner"]["name"]
         if provisioner_name == "ansible":
             return ansible.Ansible(self)
+        elif provisioner_name == "ansible-navigator":
+            return ansible_navigator.Ansible_Navigator(self)
 
     @cached_property
     def scenario(self):
