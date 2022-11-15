@@ -29,7 +29,7 @@ distlib==0.3.6
 distro==1.8.0
 docutils==0.17.1
 enrich==1.2.7
-exceptiongroup==1.0.0
+exceptiongroup==1.0.3
 execnet==1.9.0
 filelock==3.8.0
 flake8==5.0.4
