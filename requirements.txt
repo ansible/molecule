@@ -60,7 +60,7 @@ pycparser==2.21
 pyflakes==2.5.0
 pygments==2.13.0
 pyparsing==3.0.9
-pyrsistent==0.19.1
+pyrsistent==0.19.2
 pytest==7.2.0
 pytest-cov==4.0.0
 pytest-html==3.2.0
