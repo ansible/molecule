@@ -50,7 +50,7 @@ packaging==21.3
 pathspec==0.10.1
 pexpect==4.8.0
 pkgutil-resolve-name==1.3.10
-platformdirs==2.5.2
+platformdirs==2.5.4
 pluggy==1.0.0
 pre-commit==2.20.0
 ptyprocess==0.7.0
