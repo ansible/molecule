@@ -81,6 +81,9 @@ class Idempotence(base.Base):
 
         output = self._config.provisioner.converge()
 
+        if type(output) is bytes:
+            output = output.decode("utf-8")
+
         idempotent = self._is_idempotent(output)
         if idempotent:
             msg = "Idempotence completed successfully."
