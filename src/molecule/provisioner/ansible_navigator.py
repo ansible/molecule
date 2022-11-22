@@ -48,7 +48,7 @@ def quoted_scalar(dumper, data):
     return dumper.represent_scalar("tag:yaml.org,2002:str", data, style='"')
 
 
-class Ansible_Navigator(ansible.Ansible):
+class AnsibleNavigator(ansible.Ansible):
     """
     Molecule's provisioner manages the instances lifecycle.  However, the user
     must provide the create, destroy, and converge playbooks.  Molecule's
@@ -255,7 +255,7 @@ class Ansible_Navigator(ansible.Ansible):
         :param config: An instance of a Molecule config.
         :return: None
         """
-        super(Ansible_Navigator, self).__init__(config)
+        super(AnsibleNavigator, self).__init__(config)
 
     @property
     def default_config_options_navigator(self):

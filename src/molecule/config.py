@@ -222,7 +222,7 @@ class Config(object, metaclass=NewInitCaller):
         if provisioner_name == "ansible":
             return ansible.Ansible(self)
         elif provisioner_name == "ansible-navigator":
-            return ansible_navigator.Ansible_Navigator(self)
+            return ansible_navigator.AnsibleNavigator(self)
 
     @cached_property
     def scenario(self):
