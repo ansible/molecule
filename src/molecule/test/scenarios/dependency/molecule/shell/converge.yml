@@ -4,14 +4,14 @@
   gather_facts: false
   tasks:
     - name: Install requirements for collection community.molecule
-      pip:
+      ansible.builtin.pip:
         name: molecule
       delegate_to: localhost
 
     - name: Validate that collection was installed
-      debug:
+      ansible.builtin.debug:
         msg: "{{ 'foo' | community.molecule.header }}"
 
     - name: test installed role
-      include_role:
+      ansible.builtin.include_role:
         name: ssbarnea.ansible_role_helloworld
