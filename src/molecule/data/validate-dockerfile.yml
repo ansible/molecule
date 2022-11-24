@@ -34,7 +34,7 @@
         label: "{{ item.image }}"
 
     - name: Test Dockerfile template
-      docker_image:
+      community.docker.docker_image:
         name: "{{ item.item.image }}"
         build:
           path: "."
