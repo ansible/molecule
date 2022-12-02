@@ -1,0 +1,105 @@
+{
+  "$defs": {
+    "MoleculeDriverModel": {
+      "properties": {
+        "name": {
+          "enum": ["delegated"],
+          "title": "Name",
+          "type": "string"
+        },
+        "options": {
+          "$ref": "#/$defs/MoleculeDriverOptionsModel"
+        },
+        "safe_files": {
+          "items": {
+            "type": "string"
+          },
+          "title": "SafeFiles",
+          "type": "array"
+        },
+        "ssh_connection_options": {
+          "items": {
+            "type": "string"
+          },
+          "title": "SshConnectionOptions",
+          "type": "array"
+        }
+      },
+      "title": "MoleculeDriverModel",
+      "type": "object"
+    },
+    "MoleculeDriverOptionsModel": {
+      "additionalProperties": false,
+      "properties": {
+        "ansible_connection_options": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Ansible Connection Options",
+          "type": "object"
+        },
+        "login_cmd_template": {
+          "title": "Login Cmd Template",
+          "type": "string"
+        },
+        "managed": {
+          "title": "Managed",
+          "type": "boolean"
+        }
+      },
+      "title": "MoleculeDriverOptionsModel",
+      "type": "object"
+    },
+    "MoleculePlatformModel": {
+      "additionalProperties": true,
+      "properties": {
+        "box": {
+          "title": "Box",
+          "type": "string"
+        },
+        "children": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "groups": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Groups",
+          "type": "array"
+        },
+        "hostname": {
+          "title": "Hostname",
+          "type": ["string", "boolean"]
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": ["name"],
+      "title": "MoleculePlatformModel",
+      "type": "object"
+    }
+  },
+  "$id": "https://raw.githubusercontent.com/ansible-community/molecule/main/src/molecule/driver/driver.json",
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "examples": ["molecule/*/molecule.yml"],
+  "properties": {
+    "driver": {
+      "$ref": "#/$defs/MoleculeDriverModel"
+    },
+    "platforms": {
+      "items": {
+        "$ref": "#/$defs/MoleculePlatformModel"
+      },
+      "title": "Platforms",
+      "type": "array"
+    }
+  },
+  "required": ["driver"],
+  "title": "Molecule Delegated Driver Schema",
+  "type": "object"
+}

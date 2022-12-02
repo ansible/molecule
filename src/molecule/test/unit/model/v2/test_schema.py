@@ -19,7 +19,28 @@
 #  DEALINGS IN THE SOFTWARE.
 
 from molecule.model import schema_v3
+from molecule.util import run_command
 
 
 def test_base_config(_config):
     assert not schema_v3.validate(_config)
+
+
+def test_molecule_schema():
+    cmd = [
+        "check-jsonschema",
+        "-v",
+        "--schemafile",
+        "src/molecule/data/molecule.json",
+        "src/molecule/test/resources/schema_instance_files/valid/molecule.yml",
+    ]
+    assert run_command(cmd).returncode == 0
+
+    cmd = [
+        "check-jsonschema",
+        "-v",
+        "--schemafile",
+        "src/molecule/data/driver.json",
+        "src/molecule/test/resources/schema_instance_files/invalid/molecule_delegated.yml",
+    ]
+    assert run_command(cmd).returncode != 0
