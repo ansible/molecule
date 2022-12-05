@@ -101,7 +101,7 @@ repos:
           - types-filelock
           - types-setuptools
   - repo: https://github.com/PyCQA/pylint
-    rev: v2.15.6
+    rev: v2.15.8
     hooks:
       - id: pylint
         additional_dependencies:
@@ -115,7 +115,7 @@ repos:
           - pexpect
           - testinfra
   - repo: https://github.com/jazzband/pip-tools
-    rev: 6.10.0
+    rev: 6.11.0
     hooks:
       - id: pip-compile
         entry: pip-compile -q --resolver=backtracking --strip-extras --no-annotate --output-file=requirements.txt tools/opts.txt pyproject.toml --extra docs --extra test --extra lint
