@@ -17,10 +17,10 @@ jobs:
       TOX_PARALLEL_NO_SPINNER: 1
 
     steps:
-      - name: Switch to using Python 3.8 by default
+      - name: Switch to using Python 3.9 by default
         uses: actions/setup-python@v4
         with:
-          python-version: 3.8
+          python-version: 3.9
       - name: Install tox
         run: >-
           python3 -m

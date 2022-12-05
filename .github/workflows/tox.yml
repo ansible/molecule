@@ -23,13 +23,9 @@ jobs:
       matrix:
         include:
           - tox_env: lint
-            python-version: 3.8
+            python-version: 3.9
           - tox_env: docs
             python-version: 3.9
-          - tox_env: py38
-            PREFIX: PYTEST_REQPASS=453
-            python-version: 3.8
-            cover: true
           - tox_env: py39
             PREFIX: PYTEST_REQPASS=453
             python-version: 3.9
@@ -87,7 +83,7 @@ jobs:
       - name: Install dependencies
         run: |
           python3 -m pip install -U pip 'coverage[toml]'
-          python3 -m pip install 'tox>=4.0.0rc'
+          python3 -m pip install 'tox>=4.0.0rc2'
       - name: Run tox -e ${{ matrix.tox_env }}
         run: |
           echo "${{ matrix.PREFIX }} tox -e ${{ matrix.tox_env }}"
@@ -103,6 +99,7 @@ jobs:
         with:
           name: ${{ matrix.tox_env }}
           fail_ci_if_error: true # optional (default = false)
+          token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true # optional (default = false)
   check:
     if: always()
