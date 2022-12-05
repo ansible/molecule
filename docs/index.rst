@@ -1,5 +1,28 @@
-.. include:: ../README.rst
-  :end-before: _documentation
+About Ansible Molecule
+======================
+
+Molecule project is designed to aid in the development and testing of
+`Ansible`_ roles.
+
+Molecule provides support for testing with multiple instances, operating
+systems and distributions, virtualization providers, test frameworks and
+testing scenarios.
+
+Molecule encourages an approach that results in consistently developed roles
+that are well-written, easily understood and maintained.
+
+Molecule supports only the latest two major versions of Ansible (N/N-1),
+meaning that if the latest version is 2.9.x, we will also test our code with
+2.8.x.
+
+Once installed, the command line can be called using any of the methods below:
+
+.. code-block:: bash
+
+    molecule ...
+    python3 -m molecule ...  # python module calling method
+
+.. _`Ansible`: https://ansible.com
 
 Installation and Upgrade
 ========================
