@@ -31,7 +31,7 @@ repos:
           - prettier
           - prettier-plugin-toml
   - repo: https://github.com/PyCQA/doc8
-    rev: "v1.0.0"
+    rev: "v1.1.1"
     hooks:
       - id: doc8
   - repo: https://github.com/codespell-project/codespell
@@ -43,11 +43,11 @@ repos:
             tools/test-schema/package-lock.json
           )$
   - repo: https://github.com/PyCQA/isort
-    rev: 5.10.1
+    rev: 5.11.4
     hooks:
       - id: isort
   - repo: https://github.com/psf/black
-    rev: 22.10.0
+    rev: 22.12.0
     hooks:
       - id: black
         language_version: python3
@@ -101,7 +101,7 @@ repos:
           - types-filelock
           - types-setuptools
   - repo: https://github.com/PyCQA/pylint
-    rev: v2.15.6
+    rev: v2.15.9
     hooks:
       - id: pylint
         additional_dependencies:
@@ -115,7 +115,7 @@ repos:
           - pexpect
           - testinfra
   - repo: https://github.com/jazzband/pip-tools
-    rev: 6.10.0
+    rev: 6.12.1
     hooks:
       - id: pip-compile
         entry: pip-compile -q --resolver=backtracking --strip-extras --no-annotate --output-file=requirements.txt tools/opts.txt pyproject.toml --extra docs --extra test --extra lint

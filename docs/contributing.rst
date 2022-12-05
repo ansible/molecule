@@ -117,13 +117,13 @@ Run all unit tests with coverage.
 
 .. code-block:: bash
 
-    $ tox -e 'py{27,35,36,37,38}-unit'
+    $ tox -e py
 
 Run all unit tests for a specific version of Python .
 
 .. code-block:: bash
 
-    $ tox -e py37-unit
+    $ tox -e py311
 
 Linting
 -------

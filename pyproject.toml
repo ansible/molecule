@@ -65,11 +65,11 @@ docs = [
   "sphinx-notfound-page >= 0.7.1",
 ]
 lint = [
-  "check-jsonschema >= 0.19.2",
-  "flake8 >= 3.8.4",
+  "check-jsonschema >= 0.20.0",
+  "flake8 >= 6.0.0",
   "jsonschema >= 4.17.3",
-  "pre-commit >= 2.10.1",
-  "yamllint",
+  "pre-commit >= 2.21.0",
+  "yamllint >= 1.28.0",
 ]
 test = [
   # Do not include ansible or any package that would drag ansible in here
@@ -105,7 +105,7 @@ branch = true
 [tool.coverage.report]
 exclude_lines = ["pragma: no cover", "if TYPE_CHECKING:"]
 
-[tools.doc8]
+[tool.doc8]
 # see https://github.com/PyCQA/doc8/issues/75
 ignore-path = [
   ".eggs",
