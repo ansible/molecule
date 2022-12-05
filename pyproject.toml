@@ -1,6 +1,103 @@
 [build-system]
-requires = ["setuptools >= 45", "setuptools_scm[toml] >= 7.0.0"]
+requires = [
+  "setuptools >= 61.0", # PEP-621
+  "setuptools_scm[toml] >= 7.0.0",
+]
 build-backend = "setuptools.build_meta"
+
+[project]
+# https://peps.python.org/pep-0621/#readme
+requires-python = ">=3.8"
+dynamic = ["version"]
+name = "molecule"
+description = "Molecule aids in the development and testing of Ansible roles"
+readme = "README.md"
+authors = [{ "name" = "Ansible by Red Hat", "email" = "info@ansible.com" }]
+maintainers = [{ "name" = "Ansible by Red Hat", "email" = "info@ansible.com" }]
+license = { text = "MIT" }
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Information Technology",
+  "Intended Audience :: System Administrators",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python",
+  "Topic :: System :: Systems Administration",
+  "Topic :: Software Development :: Bug Tracking",
+  "Topic :: Software Development :: Quality Assurance",
+  "Topic :: Software Development :: Testing",
+  "Topic :: Utilities",
+]
+keywords = ["ansible", "roles", "testing", "molecule"]
+dependencies = [
+  "ansible-compat >= 2.2.0",
+  "click >= 8.0, < 9",
+  "click-help-colors >= 0.9",
+  "cookiecutter >= 1.7.3", # dependency issues in older versions
+  "enrich >= 1.2.7",
+  "jsonschema >= 4.9.1",
+  "Jinja2 >= 2.11.3",
+  "packaging",
+  "pluggy >= 0.7.1, < 2.0",
+  "PyYAML >= 5.1",
+  "rich >= 9.5.1",
+]
+
+[project.urls]
+homepage = "https://github.com/ansible-community/molecule"
+documentation = "https://molecule.readthedocs.io/"
+repository = "https://github.com/ansible-community/molecule"
+changelog = "https://github.com/ansible-community/molecule/releases"
+
+[project.optional-dependencies]
+docs = [
+  "ansible-core >= 2.12.0",
+  "jinja2<3.2.0", # https://twitter.com/readthedocs/status/1507388916013314048
+  "Sphinx >= 5.0.0, < 6.0.0", # https://github.com/sphinx-doc/sphinx/issues/10112
+  "simplejson >= 3.17.2",
+  "sphinx-ansible-theme >= 0.8.0, < 0.10.0",
+  "sphinx-notfound-page >= 0.7.1",
+]
+lint = [
+  "check-jsonschema >= 0.19.2",
+  "flake8 >= 3.8.4",
+  "jsonschema >= 4.17.3",
+  "pre-commit >= 2.10.1",
+  "yamllint",
+]
+test = [
+  # Do not include ansible or any package that would drag ansible in here
+  # We want to assure test extra provides tools to test molecule and its
+  # related tools/plugins but w/o ansible, which can be installed separated.
+  "ansi2html >= 1.6.0",
+  "coverage >= 6.2",
+  "filelock",
+  "pexpect >= 4.8.0, < 5",
+  "pytest-cov >= 2.10.1",
+  "pytest-html >= 3.0.0",
+  "pytest-mock >= 3.3.1",
+  "pytest-plus >= 0.2",
+  "pytest-testinfra >= 6.1.0",
+  "pytest-xdist >= 2.1.0",
+  "pytest >= 6.1.2",
+]
+
+[project.scripts]
+molecule = "molecule.__main__:main"
+
+[project.entry-points."molecule.driver"]
+delegated = "molecule.driver.delegated:Delegated"
+
+[project.entry-points."molecule.verifier"]
+testinfra = "molecule.verifier.testinfra:Testinfra"
+ansible = "molecule.verifier.ansible:Ansible"
 
 [tool.coverage.run]
 source = ["src"]
@@ -8,6 +105,17 @@ branch = true
 
 [tool.coverage.report]
 exclude_lines = ["pragma: no cover", "if TYPE_CHECKING:"]
+
+[tools.doc8]
+# see https://github.com/PyCQA/doc8/issues/75
+ignore-path = [
+  ".eggs",
+  ".tox",
+  "requirements.txt",
+  "build",
+  "molecule.egg-info",
+  "src/molecule.egg-info"
+]
 
 [tool.black]
 skip-string-normalization = false

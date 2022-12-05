@@ -52,7 +52,7 @@ jobs:
             # see https://github.com/ansible-community/molecule/issues/3291
             experimental: true
             cover: true
-          - tox_env: packaging
+          - tox_env: pkg
             python-version: 3.9
           - tox_env: eco
             python-version: 3.9
@@ -86,8 +86,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
-          python -m pip install -U pip 'coverage[toml]'
-          pip install tox
+          python3 -m pip install -U pip 'coverage[toml]'
+          python3 -m pip install 'tox>=4.0.0rc'
       - name: Run tox -e ${{ matrix.tox_env }}
         run: |
           echo "${{ matrix.PREFIX }} tox -e ${{ matrix.tox_env }}"
@@ -110,7 +110,7 @@ jobs:
     needs:
       - build
 
-    runs-on: Ubuntu-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Decide whether the needed jobs succeeded or failed
