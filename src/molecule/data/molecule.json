@@ -457,24 +457,30 @@
       "type": "object"
     },
     "ScenarioSequence": {
-      "additionalProperties": false,
       "items": {
-        "enum": [
-          "check",
-          "cleanup",
-          "converge",
-          "create",
-          "dependency",
-          "destroy",
-          "idempotence",
-          "lint",
-          "prepare",
-          "side_effect",
-          "syntax",
-          "test",
-          "verify"
-        ],
-        "type": "string"
+        "anyOf": [
+          {
+            "enum": [
+              "check",
+              "cleanup",
+              "converge",
+              "create",
+              "dependency",
+              "destroy",
+              "idempotence",
+              "lint",
+              "prepare",
+              "side_effect",
+              "syntax",
+              "test",
+              "verify"
+            ],
+            "type": "string"
+          },
+          {
+            "type": "string"
+          }
+        ]
       },
       "title": "ScenarioSequence",
       "type": "array"
