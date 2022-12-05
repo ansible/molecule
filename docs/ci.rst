@@ -26,7 +26,7 @@ and run ``molecule test`` in ubuntu.
       strategy:
         max-parallel: 4
         matrix:
-          python-version: [3.8, 3.9]
+          python-version: ["3.9", "3.10"]
 
       steps:
         - uses: actions/checkout@v2
@@ -185,7 +185,7 @@ Version Task`_ documentation.
 
   - task: UsePythonVersion@0
     inputs:
-      versionSpec: '3.8'
+      versionSpec: '3.9'
 
   - script: python -m pip install "molecule[lint]" "python-vagrant" "molecule-vagrant" "ansible"
     displayName: Install dependencies

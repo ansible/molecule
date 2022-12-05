@@ -1,13 +1,13 @@
 ---
 version: 2
-
 formats: []
 
 build:
-  image: latest
+  os: "ubuntu-22.04"
+  tools:
+    python: "3.11"
 
 python:
-  version: "3.8"
   install:
     # One https://readthedocs.org/dashboard/molecule/environmentvariables/ we
     # do have PIP_CONSTRAINTS=requirements.txt which ensures we install only

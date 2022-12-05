@@ -20,7 +20,7 @@ jobs:
         # - epel-8-x86_64
         # Unable to build fedora-stable as it includes both 34 and 35 and on first one we do not have python3-setuptools_scm
         # - fedora-stable
-        - fedora-35
+        - fedora-rawhide-x86_64
     trigger: pull_request
   # - job: tests
   #   trigger: pull_request
