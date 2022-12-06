@@ -62,7 +62,7 @@ pyrsistent==0.19.2
 pytest==7.2.0
 pytest-cov==4.0.0
 pytest-html==3.2.0
-pytest-metadata==2.0.3
+pytest-metadata==2.0.4
 pytest-mock==3.10.0
 pytest-plus==0.2
 pytest-testinfra==6.8.0
