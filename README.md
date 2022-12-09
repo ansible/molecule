@@ -1,18 +1,12 @@
-[![PyPI Package](https://img.shields.io/pypi/v/molecule)](https://pypi.org/project/molecule/)
-
-[![Documentation Status](https://readthedocs.org/projects/molecule/badge/?version=latest)](https://molecule.readthedocs.io/en/latest/)
-
-[![image](https://github.com/ansible-community/molecule/workflows/tox/badge.svg)](https://github.com/ansible-community/molecule/actions)
-
-[![Python Black Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/python/black)
-
-[![Ansible Code of Conduct](https://img.shields.io/badge/Code%20of%20Conduct-silver.svg)](https://docs.ansible.com/ansible/latest/community/code_of_conduct.html)
-
-[![Discussions](https://img.shields.io/badge/Discussions-silver.svg)](https://github.com/ansible-community/molecule/discussions)
-
-[![Repository License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
-
 # About Ansible Molecule
+
+[![PyPI Package](https://img.shields.io/pypi/v/molecule)](https://pypi.org/project/molecule/)
+[![Documentation Status](https://readthedocs.org/projects/molecule/badge/?version=latest)](https://molecule.readthedocs.io/en/latest/)
+[![image](https://github.com/ansible-community/molecule/workflows/tox/badge.svg)](https://github.com/ansible-community/molecule/actions)
+[![Python Black Code Style](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/python/black)
+[![Ansible Code of Conduct](https://img.shields.io/badge/Code%20of%20Conduct-silver.svg)](https://docs.ansible.com/ansible/latest/community/code_of_conduct.html)
+[![Discussions](https://img.shields.io/badge/Discussions-silver.svg)](https://github.com/ansible-community/molecule/discussions)
+[![Repository License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 
 Molecule project is designed to aid in the development and testing of
 [Ansible](https://ansible.com) roles.
