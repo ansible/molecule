@@ -49,6 +49,7 @@ def _model_driver_errors_section_data():
         }
     }
 
+
 @pytest.fixture
 def _model_driver_errors_section_data_no_prefix():
     return {
@@ -57,24 +58,26 @@ def _model_driver_errors_section_data_no_prefix():
         }
     }
 
+
 @pytest.mark.parametrize(
     "_config",
     [
         "_model_driver_errors_section_data",
-        "_model_driver_errors_section_data_no_prefix"
+        "_model_driver_errors_section_data_no_prefix",
     ],
-    indirect=True
+    indirect=True,
 )
 def test_driver_has_errors(_config):
-    base_error_msg = "is not one of ['azure', 'ec2', 'delegated', 'docker', 'containers', 'openstack', 'podman', 'vagrant', 'digitalocean', 'gce', 'libvirt', 'lxd', 'molecule_*', 'custom_*']"
+    base_error_msg = "is not one of ['azure', 'ec2', 'delegated', 'docker', 'containers', 'openstack', 'podman', 'vagrant', 'digitalocean', 'gce', 'libvirt', 'lxd', 'molecule-*', 'molecule_*', 'custom-*', 'custom_*']"
 
     driver_name = str(_config["driver"]["name"])
-    if(type(_config["driver"]["name"]) is str):
+    if type(_config["driver"]["name"]) is str:
         # add single quotes for string
         driver_name = f"'{driver_name}'"
 
-    error_msg = [' '.join((driver_name, base_error_msg))]
+    error_msg = [" ".join((driver_name, base_error_msg))]
     assert error_msg == schema_v3.validate(_config)
+
 
 @pytest.fixture
 def _model_driver_provider_name_nullable_section_data():
@@ -93,11 +96,35 @@ def _model_driver_allows_delegated_section_data():
     return {"driver": {"name": "delegated"}}
 
 
+@pytest.fixture
+def _model_driver_allows_molecule_section_data1():
+    return {"driver": {"name": "molecule-test_driver.name"}}
+
+
+@pytest.fixture
+def _model_driver_allows_molecule_section_data2():
+    return {"driver": {"name": "molecule_test_driver.name"}}
+
+
+@pytest.fixture
+def _model_driver_allows_custom_section_data1():
+    return {"driver": {"name": "custom-test_driver.name"}}
+
+
+@pytest.fixture
+def _model_driver_allows_custom_section_data2():
+    return {"driver": {"name": "custom_test_driver.name"}}
+
+
 ###
 @pytest.mark.parametrize(
     "_config",
     [
         ("_model_driver_allows_delegated_section_data"),
+        ("_model_driver_allows_molecule_section_data1"),
+        ("_model_driver_allows_molecule_section_data2"),
+        ("_model_driver_allows_custom_section_data2"),
+        ("_model_driver_allows_custom_section_data1"),
     ],
     indirect=True,
 )
