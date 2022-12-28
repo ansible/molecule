@@ -38,6 +38,14 @@ def validate(c):
     try:
         jsonschema_validate(c, schema)
     except ValidationError as exc:
-        result.append(exc.message)
+        # handle validation error for driver name
+        if exc.json_path == "$.driver.name" and exc.message.endswith(
+            ("is not of type 'string'", "is not valid under any of the given schemas")
+        ):
+            wrong_driver_name = str(exc.message.split()[0])
+            driver_name_err_msg = exc.schema["messages"]["anyOf"]
+            result.append(" ".join((wrong_driver_name, driver_name_err_msg)))
+        else:
+            result.append(exc.message)
 
     return result

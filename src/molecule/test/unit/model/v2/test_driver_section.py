@@ -49,17 +49,32 @@ def _model_driver_errors_section_data():
         }
     }
 
+@pytest.fixture
+def _model_driver_errors_section_data_no_prefix():
+    return {
+        "driver": {
+            "name": "random_name",
+        }
+    }
 
 @pytest.mark.parametrize(
-    "_config", ["_model_driver_errors_section_data"], indirect=True
+    "_config",
+    [
+        "_model_driver_errors_section_data",
+        "_model_driver_errors_section_data_no_prefix"
+    ],
+    indirect=True
 )
 def test_driver_has_errors(_config):
-    x = [
-        "0 is not one of ['azure', 'ec2', 'delegated', 'docker', 'containers', 'openstack', 'podman', 'vagrant', 'digitalocean', 'gce', 'libvirt', 'lxd']"
-    ]
+    base_error_msg = "is not one of ['azure', 'ec2', 'delegated', 'docker', 'containers', 'openstack', 'podman', 'vagrant', 'digitalocean', 'gce', 'libvirt', 'lxd', 'molecule_*', 'custom_*']"
 
-    assert x == schema_v3.validate(_config)
+    driver_name = str(_config["driver"]["name"])
+    if(type(_config["driver"]["name"]) is str):
+        # add single quotes for string
+        driver_name = f"'{driver_name}'"
 
+    error_msg = [' '.join((driver_name, base_error_msg))]
+    assert error_msg == schema_v3.validate(_config)
 
 @pytest.fixture
 def _model_driver_provider_name_nullable_section_data():
