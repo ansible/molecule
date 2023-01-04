@@ -1,5 +1,13 @@
 # spell-checker:ignore packit specfile copr epel
 specfile_path: dist/molecule.spec
+srpm_build_deps:
+  - bash
+  - git
+  - python3-build
+  - python3-pip
+  - python3-setuptools
+  - python3-setuptools_scm+toml
+  - python3-wheel
 actions:
   create-archive:
     # packit.dev service does have these module pre-installed:
