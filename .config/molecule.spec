@@ -79,7 +79,7 @@ PYTHONPATH=%{buildroot}%{python3_sitelib} \
 %{python3_sitelib}/molecule-*.dist-info/
 %{_bindir}/molecule
 %license LICENSE
-%doc docs/* README.rst
+%doc docs/* README.md
 
 %changelog
 Available at https://github.com/ansible-community/molecule/releases

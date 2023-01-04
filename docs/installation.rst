@@ -14,7 +14,7 @@ Requirements
 Depending on the driver chosen, you may need to install additional OS packages.
 See ``INSTALL.rst``, which is created when initializing a new scenario.
 
-* Python >= 3.8 with :std:doc:`Ansible <ansible:index>` >= 2.8
+* Python >= 3.9 with :std:doc:`Ansible <ansible:index>` >= 2.8
 
 CentOS 8
 --------
