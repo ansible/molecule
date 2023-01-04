@@ -3,7 +3,7 @@ Continuous integration
 
 Molecule output will use ``ANSI`` colors if stdout is an interactive TTY and
 ``TERM`` value seems to support it. You can define ``PY_COLORS=1`` to force
-use of ``ANSI`` colors, which can be handly for some CI systems.
+use of ``ANSI`` colors, which can be handy for some CI systems.
 
 GitHub Actions
 ^^^^^^^^^^^^^^
