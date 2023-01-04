@@ -13,14 +13,14 @@ jobs:
     env:
       FORCE_COLOR: 1
       PY_COLORS: 1
-      TOXENV: packaging
+      TOXENV: pkg
       TOX_PARALLEL_NO_SPINNER: 1
 
     steps:
-      - name: Switch to using Python 3.8 by default
+      - name: Switch to using Python 3.9 by default
         uses: actions/setup-python@v4
         with:
-          python-version: 3.8
+          python-version: 3.9
       - name: Install tox
         run: >-
           python3 -m

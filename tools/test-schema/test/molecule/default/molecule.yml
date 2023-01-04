@@ -74,7 +74,7 @@ platforms:
       - /etc/ci/mirror_info.sh:/etc/ci/mirror_info.sh:ro
       - /etc/pki/rpm-gpg:/etc/pki/rpm-gpg
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
-    network_mode: service:vpn
+    network_mode: foo
     privileged: true
     environment: &env
       http_proxy: "{{ lookup('env', 'http_proxy') }}"

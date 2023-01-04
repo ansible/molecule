@@ -228,6 +228,18 @@ class Config(object, metaclass=NewInitCaller):
 
     @cached_property
     def state(self):
+        myState = state.State(self)
+        # look at state file for molecule.yml date modified and warn if they do not match
+        if self.molecule_file and os.path.isfile(self.molecule_file):
+            modTime = os.path.getmtime(self.molecule_file)
+            if myState.molecule_yml_date_modified is None:
+                myState.change_state("molecule_yml_date_modified", modTime)
+            elif myState.molecule_yml_date_modified != modTime:
+                LOG.warning(
+                    f"The scenario config file ('{self.molecule_file}') has been modified since the scenario was created. "
+                    + "If recent changes are important, reset the scenario with 'molecule destroy' to clean up created items or "
+                    + "'molecule reset' to clear current configuration."
+                )
         return state.State(self)
 
     @cached_property
@@ -235,15 +247,19 @@ class Config(object, metaclass=NewInitCaller):
         return api.verifiers(self).get(self.config["verifier"]["name"], None)
 
     def _get_driver_name(self):
+        # the state file contains the driver from the last run
         driver_from_state_file = self.state.driver
+        # the user may supply a driver on the command line
         driver_from_cli = self.command_args.get("driver_name")
+        # the driver may also be edited in the scenario
+        driver_from_scenario = self.config["driver"]["name"]
 
         if driver_from_state_file:
             driver_name = driver_from_state_file
         elif driver_from_cli:
             driver_name = driver_from_cli
         else:
-            driver_name = self.config["driver"]["name"]
+            driver_name = driver_from_scenario
 
         if driver_from_cli and (driver_from_cli != driver_name):
             msg = (
@@ -258,6 +274,14 @@ class Config(object, metaclass=NewInitCaller):
                 f"'{self.state.state_file}' is not available."
             )
             util.sysexit_with_message(msg)
+
+        if driver_from_scenario != driver_name:
+            msg = (
+                f"Driver '{driver_name}' is currently in use but the scenario config "
+                f"has changed and now defines '{driver_from_scenario}'. "
+                "To change drivers, run 'molecule destroy' for converged scenarios or 'molecule reset' otherwise."
+            )
+            LOG.warning(msg)
 
         return driver_name
 

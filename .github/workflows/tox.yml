@@ -23,13 +23,9 @@ jobs:
       matrix:
         include:
           - tox_env: lint
-            python-version: 3.8
+            python-version: 3.9
           - tox_env: docs
             python-version: 3.9
-          - tox_env: py38
-            PREFIX: PYTEST_REQPASS=453
-            python-version: 3.8
-            cover: true
           - tox_env: py39
             PREFIX: PYTEST_REQPASS=453
             python-version: 3.9
@@ -52,7 +48,7 @@ jobs:
             # see https://github.com/ansible-community/molecule/issues/3291
             experimental: true
             cover: true
-          - tox_env: packaging
+          - tox_env: pkg
             python-version: 3.9
           - tox_env: eco
             python-version: 3.9
@@ -86,11 +82,10 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
-          python -m pip install -U pip 'coverage[toml]'
-          pip install tox
+          python3 -m pip install -U pip 'coverage[toml]'
+          python3 -m pip install 'tox>=4.0.0'
       - name: Run tox -e ${{ matrix.tox_env }}
         run: |
-          echo "${{ matrix.PREFIX }} tox -e ${{ matrix.tox_env }}"
           ${{ matrix.PREFIX }} tox -e ${{ matrix.tox_env }}
         continue-on-error: ${{ matrix.experimental || false }}
       - name: Combine coverage data
@@ -103,6 +98,7 @@ jobs:
         with:
           name: ${{ matrix.tox_env }}
           fail_ci_if_error: true # optional (default = false)
+          token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true # optional (default = false)
   check:
     if: always()
@@ -110,7 +106,7 @@ jobs:
     needs:
       - build
 
-    runs-on: Ubuntu-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Decide whether the needed jobs succeeded or failed

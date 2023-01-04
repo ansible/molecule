@@ -225,15 +225,10 @@
         "network_mode": {
           "anyOf": [
             {
-              "enum": ["bridge", "host", "none"],
+              "enum": ["bridge", "default", "host", "none"],
               "type": "string"
             },
             {
-              "pattern": "^service:[a-zA-Z0-9:_.\\\\-]+$",
-              "type": "string"
-            },
-            {
-              "pattern": "^container:[a-zA-Z0-9][a-zA-Z0-9_.-]+$",
               "type": "string"
             }
           ],
@@ -414,7 +409,7 @@
       "type": "object"
     },
     "ProvisionerConfigOptionsSshConnectionModel": {
-      "additionalProperties": false,
+      "additionalProperties": true,
       "properties": {
         "control_path": {
           "default": "%(directory)s/%%h-%%p-%%r",
@@ -462,24 +457,30 @@
       "type": "object"
     },
     "ScenarioSequence": {
-      "additionalProperties": false,
       "items": {
-        "enum": [
-          "check",
-          "cleanup",
-          "converge",
-          "create",
-          "dependency",
-          "destroy",
-          "idempotence",
-          "lint",
-          "prepare",
-          "side_effect",
-          "syntax",
-          "test",
-          "verify"
-        ],
-        "type": "string"
+        "anyOf": [
+          {
+            "enum": [
+              "check",
+              "cleanup",
+              "converge",
+              "create",
+              "dependency",
+              "destroy",
+              "idempotence",
+              "lint",
+              "prepare",
+              "side_effect",
+              "syntax",
+              "test",
+              "verify"
+            ],
+            "type": "string"
+          },
+          {
+            "type": "string"
+          }
+        ]
       },
       "title": "ScenarioSequence",
       "type": "array"

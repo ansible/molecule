@@ -19,7 +19,7 @@ Contributing
 Talk to us
 ----------
 
-Join us in ``#ansible-molecule`` on `libera.chat`_ irc, or
+Join us in ``#ansible-devtools`` on `libera.chat`_ irc, or
 `molecule-users Forum`_.
 
 The full list of Ansible email lists and IRC channels can be found in the
@@ -117,13 +117,13 @@ Run all unit tests with coverage.
 
 .. code-block:: bash
 
-    $ tox -e 'py{27,35,36,37,38}-unit'
+    $ tox -e py
 
 Run all unit tests for a specific version of Python .
 
 .. code-block:: bash
 
-    $ tox -e py37-unit
+    $ tox -e py311
 
 Linting
 -------
