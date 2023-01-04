@@ -27,6 +27,21 @@ function stripAnsi(data: string) {
   return data.replace(ansiRegex(), "");
 }
 
+function sanitize_python_check_json(str: string) {
+  // See https://github.com/python-jsonschema/check-jsonschema/issues/218
+  let json = JSON.parse(str);
+  if (json) {
+    if (
+      json.hasOwnProperty("parse_errors") &&
+      json["parse_errors"].length === 0
+    ) {
+      delete json["parse_errors"];
+    }
+    return JSON.stringify(json, null, 2) + "\n";
+  }
+  return "";
+}
+
 const ajv = new Ajv({
   strictTypes: false,
   strict: false,
@@ -80,7 +95,9 @@ describe("schemas under f/", function () {
             if (proc.status != 0) {
               // real errors are sent to stderr due to https://github.com/python-jsonschema/check-jsonschema/issues/88
               errors_md += "# check-jsonschema\n\nstdout:\n\n```json\n";
-              errors_md += stripAnsi(proc.output[1]);
+              errors_md += sanitize_python_check_json(
+                stripAnsi(proc.output[1])
+              );
               errors_md += "```\n";
               if (proc.output[2]) {
                 errors_md += "\nstderr:\n\n```\n";
