@@ -13,7 +13,7 @@ jobs:
     env:
       FORCE_COLOR: 1
       PY_COLORS: 1
-      TOXENV: packaging
+      TOXENV: pkg
       TOX_PARALLEL_NO_SPINNER: 1
 
     steps:

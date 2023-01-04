@@ -83,10 +83,9 @@ jobs:
       - name: Install dependencies
         run: |
           python3 -m pip install -U pip 'coverage[toml]'
-          python3 -m pip install 'tox>=4.0.0rc2'
+          python3 -m pip install 'tox>=4.0.0'
       - name: Run tox -e ${{ matrix.tox_env }}
         run: |
-          echo "${{ matrix.PREFIX }} tox -e ${{ matrix.tox_env }}"
           ${{ matrix.PREFIX }} tox -e ${{ matrix.tox_env }}
         continue-on-error: ${{ matrix.experimental || false }}
       - name: Combine coverage data
