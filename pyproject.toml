@@ -37,6 +37,7 @@ classifiers = [
 keywords = ["ansible", "roles", "testing", "molecule"]
 dependencies = [
   "ansible-compat >= 2.2.0",
+  "ansible-core >= 2.12.10",
   "click >= 8.0, < 9",
   "click-help-colors >= 0.9",
   "cookiecutter >= 1.7.3", # dependency issues in older versions
