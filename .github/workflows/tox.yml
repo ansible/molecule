@@ -88,18 +88,21 @@ jobs:
         run: |
           ${{ matrix.PREFIX }} tox -e ${{ matrix.tox_env }}
         continue-on-error: ${{ matrix.experimental || false }}
+
       - name: Combine coverage data
+        if: ${{ startsWith(matrix.tox_env, 'py') }}
         # produce a single .coverage file at repo root
-        run: coverage combine .tox/.coverage.*
-        if: ${{ matrix.cover == true }}
+        run: tox -e coverage
+
       - name: Upload coverage data
-        if: ${{ matrix.cover == true }}
+        if: ${{ startsWith(matrix.tox_env, 'py') }}
         uses: codecov/codecov-action@v3
         with:
           name: ${{ matrix.tox_env }}
-          fail_ci_if_error: true # optional (default = false)
+          fail_ci_if_error: false # see https://github.com/codecov/codecov-action/issues/598
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true # optional (default = false)
+
   check:
     if: always()
 
