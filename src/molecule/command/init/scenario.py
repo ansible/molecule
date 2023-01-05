@@ -159,12 +159,6 @@ def _default_scenario_exists(ctx, param, value: str):  # pragma: no cover
     help=f"Name of driver to initialize. ({DEFAULT_DRIVER})",
 )
 @click.option(
-    "--lint-name",
-    type=click.Choice(["yamllint"]),
-    default="yamllint",
-    help="Name of lint to initialize. (yamllint)",
-)
-@click.option(
     "--provisioner-name",
     type=click.Choice(["ansible"]),
     default="ansible",
@@ -193,7 +187,6 @@ def scenario(
     ctx,
     dependency_name,
     driver_name,
-    lint_name,
     provisioner_name,
     role_name,
     scenario_name,
@@ -206,7 +199,6 @@ def scenario(
     command_args = {
         "dependency_name": dependency_name,
         "driver_name": driver_name,
-        "lint_name": lint_name,
         "provisioner_name": provisioner_name,
         "role_name": role_name,
         "scenario_name": scenario_name,

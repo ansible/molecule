@@ -76,7 +76,6 @@ class Scenario(object):
             - destroy
           test_sequence:
             - dependency
-            - lint
             - cleanup
             - destroy
             - syntax
@@ -283,11 +282,6 @@ class Scenario(object):
     @property
     def idempotence_sequence(self):
         return ["idempotence"]
-
-    @property
-    def lint_sequence(self):
-        # see https://github.com/ansible-community/molecule/issues/2216
-        return ["dependency", "lint"]
 
     @property
     def prepare_sequence(self):

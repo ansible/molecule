@@ -156,7 +156,7 @@ def test(
     ansible_args,
     platform_name,
 ):  # pragma: no cover
-    """Test (dependency, lint, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy)."""
+    """Test (dependency, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy)."""
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)
     command_args = {

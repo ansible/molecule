@@ -150,54 +150,6 @@ Delegated
 .. autoclass:: molecule.driver.delegated.Delegated()
    :undoc-members:
 
-.. _lint:
-
-Lint
-----
-
-Starting with v3, Molecule handles project linting by invoking and external
-lint commands as exemplified below.
-
-The decision to remove the complex linting support was not easily taken as we
-do find it very useful. The issue was that molecule runs on scenarios and
-linting is usually performed at repository level.
-
-It makes little sense to perform linting in more than one place per project.
-Molecule was able to use up to three linters and while it was aimed to flexible
-about them, it ended up creating more confusions to the users. We decided to
-maximize flexibility by just calling an external shell command.
-
-Note: ansible-lint is not included with molecule. The ``molecule[lint]`` extra
-does not install ansible-lint.
-
-.. code-block:: yaml
-
-    lint: |
-      set -e
-      yamllint .
-      ansible-lint
-      flake8
-
-The older format is no longer supported and you have to update the
-``molecule.yml`` when you upgrade. If you don't want to do any linting,
-it will be enough to remove all lint related sections from the file.
-
-.. code-block:: yaml
-
-    # old v2 format, no longer supported
-    lint:
-      name: yamllint
-      enabled: true
-    provisioner:
-      lint:
-        name: ansible-lint
-      options: ...
-      env: ...
-    verifier:
-      lint:
-        name: flake8
-
-
 .. _platforms:
 
 Platforms

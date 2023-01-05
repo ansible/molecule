@@ -55,12 +55,6 @@ Init
    :undoc-members:
 
 
-Lint
-^^^^
-
-.. autoclass:: molecule.command.lint.Lint()
-   :undoc-members:
-
 List
 ^^^^
 

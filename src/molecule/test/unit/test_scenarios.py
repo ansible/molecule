@@ -83,7 +83,6 @@ def test_print_matrix(capsys, _instance):
     matrix_out = """---
 default:
   - dependency
-  - lint
   - cleanup
   - destroy
   - syntax
@@ -97,7 +96,6 @@ default:
   - destroy
 foo:
   - dependency
-  - lint
   - cleanup
   - destroy
   - syntax
@@ -143,7 +141,6 @@ def test_filter_for_scenario(_instance):
 def test_get_matrix(_instance):
     matrix = {
         "default": {
-            "lint": ["dependency", "lint"],
             "idempotence": ["idempotence"],
             "syntax": ["syntax"],
             "converge": ["dependency", "create", "prepare", "converge"],
@@ -166,7 +163,6 @@ def test_get_matrix(_instance):
             "dependency": ["dependency"],
             "test": [
                 "dependency",
-                "lint",
                 "cleanup",
                 "destroy",
                 "syntax",
@@ -182,7 +178,6 @@ def test_get_matrix(_instance):
             "destroy": ["dependency", "cleanup", "destroy"],
         },
         "foo": {
-            "lint": ["dependency", "lint"],
             "idempotence": ["idempotence"],
             "syntax": ["syntax"],
             "converge": ["dependency", "create", "prepare", "converge"],
@@ -205,7 +200,6 @@ def test_get_matrix(_instance):
             "dependency": ["dependency"],
             "test": [
                 "dependency",
-                "lint",
                 "cleanup",
                 "destroy",
                 "syntax",

@@ -78,7 +78,7 @@ class Config(object, metaclass=NewInitCaller):
     directory.  Molecule performs most functions within this directory.
 
     The :class:`.Config` object instantiates Dependency_, Driver_,
-    :ref:`lint`, Platforms_, Provisioner_, Verifier_,
+    Platforms_, Provisioner_, Verifier_,
     :ref:`root_scenario`, and State_ references.
     """
 
@@ -202,11 +202,6 @@ class Config(object, metaclass=NewInitCaller):
             "MOLECULE_VERIFIER_NAME": self.verifier.name,
             "MOLECULE_VERIFIER_TEST_DIRECTORY": self.verifier.directory,
         }
-
-    @cached_property
-    def lint(self):
-        lint_name = self.config.get("lint", None)
-        return lint_name
 
     @cached_property
     def platforms(self):
@@ -428,7 +423,6 @@ class Config(object, metaclass=NewInitCaller):
                 "test_sequence": [
                     # dependency must be kept before lint to avoid errors
                     "dependency",
-                    "lint",
                     "cleanup",
                     "destroy",
                     "syntax",

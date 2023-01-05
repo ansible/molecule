@@ -137,12 +137,6 @@ class Role(base.Base):
     help=f"Name of driver to initialize. ({DEFAULT_DRIVER})",
 )
 @click.option(
-    "--lint-name",
-    type=click.Choice(["yamllint"]),
-    default="yamllint",
-    help="Name of lint to initialize. (yamllint)",
-)
-@click.option(
     "--provisioner-name",
     type=click.Choice(["ansible"]),
     default="ansible",
@@ -159,7 +153,6 @@ def role(
     ctx,
     dependency_name,
     driver_name,
-    lint_name,
     provisioner_name,
     role_name,
     verifier_name,
@@ -168,7 +161,6 @@ def role(
     command_args = {
         "dependency_name": dependency_name,
         "driver_name": driver_name,
-        "lint_name": lint_name,
         "provisioner_name": provisioner_name,
         "role_name": role_name,
         "scenario_name": command_base.MOLECULE_DEFAULT_SCENARIO_NAME,
