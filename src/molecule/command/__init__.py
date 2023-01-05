@@ -33,7 +33,6 @@ from molecule.command import dependency  # noqa
 from molecule.command import destroy  # noqa
 from molecule.command import drivers  # noqa
 from molecule.command import idempotence  # noqa
-from molecule.command import lint  # noqa
 from molecule.command import list  # noqa
 from molecule.command import login  # noqa
 from molecule.command import matrix  # noqa

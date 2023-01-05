@@ -191,20 +191,6 @@ def test_command_init_scenario(temp_dir, driver_name):
 
 
 @pytest.mark.serial
-@pytest.mark.extensive
-@pytest.mark.parametrize(
-    "scenario_to_test, driver_name, scenario_name",
-    [
-        ("driver/delegated", "delegated", "default"),
-    ],
-    indirect=["scenario_to_test", "driver_name", "scenario_name"],
-)
-def test_command_lint(scenario_to_test, with_scenario, scenario_name):
-    cmd = ["molecule", "lint", "--scenario-name", scenario_name]
-    assert run_command(cmd).returncode == 0
-
-
-@pytest.mark.serial
 @pytest.mark.parametrize(
     "scenario_to_test, driver_name, expected",
     [

@@ -319,7 +319,8 @@
           "$ref": "#/$defs/ScenarioSequence"
         },
         "lint_sequence": {
-          "$ref": "#/$defs/ScenarioSequence"
+          "$ref": "#/$defs/ScenarioSequence",
+          "deprecated": true
         },
         "name": {
           "title": "Name",
@@ -556,7 +557,8 @@
     },
     "lint": {
       "title": "Lint",
-      "type": "string"
+      "type": "string",
+      "deprecated": true
     },
     "log": {
       "default": true,
