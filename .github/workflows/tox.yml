@@ -13,47 +13,37 @@ on:
     - cron: 1 0 * * * # Run daily at 0:01 UTC
 
 jobs:
+  pre:
+    name: pre
+    runs-on: ubuntu-22.04
+    outputs:
+      matrix: ${{ steps.generate_matrix.outputs.matrix }}
+    steps:
+      - name: Determine matrix
+        id: generate_matrix
+        uses: coactions/dynamic-matrix@v1
+        with:
+          min_python: "3.9"
+          max_python: "3.11"
+          default_python: "3.9" # used by jobs in other_names
+          other_names: |
+            lint
+            docs
+            pkg
+            eco
+            dockerfile
+            py39-devel
+            py310-devel
+
   build:
-    name: ${{ matrix.tox_env }}
+    name: ${{ matrix.name }}
     runs-on: ubuntu-latest
+    needs: pre
     # limit potential endless looks like we had with build-containers
     timeout-minutes: 20
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - tox_env: lint
-            python-version: 3.9
-          - tox_env: docs
-            python-version: 3.9
-          - tox_env: py39
-            PREFIX: PYTEST_REQPASS=448
-            python-version: 3.9
-            cover: true
-          - tox_env: py310
-            PREFIX: PYTEST_REQPASS=448
-            python-version: "3.10"
-            cover: true
-          - tox_env: py311
-            os: ubuntu-20.04
-            python-version: "~3.11.0-0" # see https://github.com/actions/setup-python/issues/213#issuecomment-1146676713
-            cover: true
-          - tox_env: py39-devel
-            PREFIX: PYTEST_REQPASS=448
-            python-version: 3.9
-            cover: true
-          - tox_env: py310-devel
-            PREFIX: PYTEST_REQPASS=448
-            python-version: "3.10"
-            # see https://github.com/ansible-community/molecule/issues/3291
-            experimental: true
-            cover: true
-          - tox_env: pkg
-            python-version: 3.9
-          - tox_env: eco
-            python-version: 3.9
-          - tox_env: dockerfile
-            python-version: 3.9
+      matrix: ${{ fromJson(needs.pre.outputs.matrix) }}
 
     steps:
       - name: Check out src from Git
@@ -79,26 +69,26 @@ jobs:
       - name: Install a default Python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: ${{ matrix.python_version }}
       - name: Install dependencies
         run: |
           python3 -m pip install -U pip 'coverage[toml]'
           python3 -m pip install 'tox>=4.0.0'
-      - name: Run tox -e ${{ matrix.tox_env }}
+      - name: Run tox -e ${{ matrix.passed_name }}
         run: |
-          ${{ matrix.PREFIX }} tox -e ${{ matrix.tox_env }}
+          ${{ matrix.PREFIX }} tox -e ${{ matrix.passed_name }}
         continue-on-error: ${{ matrix.experimental || false }}
 
       - name: Combine coverage data
-        if: ${{ startsWith(matrix.tox_env, 'py') }}
+        if: ${{ startsWith(matrix.passed_name, 'py') }}
         # produce a single .coverage file at repo root
         run: tox -e coverage
 
       - name: Upload coverage data
-        if: ${{ startsWith(matrix.tox_env, 'py') }}
+        if: ${{ startsWith(matrix.passed_name, 'py') }}
         uses: codecov/codecov-action@v3
         with:
-          name: ${{ matrix.tox_env }}
+          name: ${{ matrix.passed_name }}
           fail_ci_if_error: false # see https://github.com/codecov/codecov-action/issues/598
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true # optional (default = false)
