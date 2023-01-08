@@ -104,16 +104,15 @@ is easily installed separately:
     $ python3 -m pip install --user "molecule ansible-lint"
 
 Molecule uses the "delegated" driver by default. Other drivers can
-be installed separately from PyPI, such as the molecule-docker driver.
-If you would like to use docker as the molecule driver, the installation
+be installed separately from PyPI, most of them being included in
+[molecule-plugins](https://github.com/ansible-community/molecule-plugins)
+package.
+If you would like to use podman as the molecule driver, the installation
 command would look like this:
 
 .. code-block:: bash
 
-    $ python3 -m pip install --user "molecule[docker]"
-
-Other drivers, such as ``molecule-podman``, ``molecule-vagrant``,
-``molecule-azure`` or ``molecule-hetzner`` are also available.
+    $ python3 -m pip install --user "molecule-plugins[podman]"
 
 Installing molecule package also installed its main script ``molecule``,
 usually in ``PATH``. Users should know that molecule can also be called as a

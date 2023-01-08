@@ -428,5 +428,5 @@ issues.
 .. _Pytest: https://docs.pytest.org/en/latest/
 .. _UUID: https://en.wikipedia.org/wiki/Universally_unique_identifier
 
-[^1]: [Implementation in molecule-docker](https://github.com/ansible-community/molecule-docker/blob/f4efce3c4fda226c8ca5f10976927fff7daa8e69/src/molecule_docker/playbooks/create.yml#L35)
+[^1]: [Implementation in molecule docker driver](https://github.com/ansible-community/molecule-plugins/blob/main/src/molecule_plugins/docker/playbooks/create.yml)
 [^2]: e.g. [Debian uses `sudo` instead of `wheel` group.](https://wiki.debian.org/sudo/)
