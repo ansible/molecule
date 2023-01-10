@@ -25,7 +25,6 @@ jobs:
         with:
           min_python: "3.9"
           max_python: "3.11"
-          default_python: "3.9" # used by jobs in other_names
           other_names: |
             lint
             docs
@@ -39,6 +38,8 @@ jobs:
     name: ${{ matrix.name }}
     runs-on: ubuntu-latest
     needs: pre
+    env:
+      PYTEST_REQPASS: 448
     # limit potential endless looks like we had with build-containers
     timeout-minutes: 20
     strategy:
