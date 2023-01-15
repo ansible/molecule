@@ -37,52 +37,7 @@ LOG = logging.getLogger(__name__)
 
 
 class List(base.Base):
-    """
-    List command shows information about current scenarios.
-
-    .. program:: molecule list
-
-    .. option:: molecule list
-
-        Target the default scenario.
-
-    .. program:: molecule list --scenario-name foo
-
-    .. option:: molecule list --scenario-name foo
-
-        Targeting a specific scenario.
-
-    .. program:: molecule list --format plain
-
-    .. option:: molecule list  --format plain
-
-        Machine readable plain text output.
-
-    .. program:: molecule list --format yaml
-
-    .. option:: molecule list  --format yaml
-
-        Machine readable yaml output.
-
-    .. program:: molecule --debug list
-
-    .. option:: molecule --debug list
-
-        Executing with `debug`.
-
-    .. program:: molecule --base-config base.yml list
-
-    .. option:: molecule --base-config base.yml list
-
-        Executing with a `base-config`.
-
-    .. program:: molecule --env-file foo.yml list
-
-    .. option:: molecule --env-file foo.yml list
-
-        Load an env file to read variables from when rendering
-        molecule.yml.
-    """
+    """List command shows information about current scenarios."""
 
     def execute(self, action_args=None):
         """

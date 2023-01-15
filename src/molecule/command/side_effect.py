@@ -33,37 +33,6 @@ class SideEffect(base.Base):
     This action has side effects and not enabled by default.
 
     See the provisioners documentation for further details.
-
-    .. program:: molecule side-effect
-
-    .. option:: molecule side-effect
-
-        Target the default scenario.
-
-    .. program:: molecule side-effect --scenario-name foo
-
-    .. option:: molecule side-effect --scenario-name foo
-
-        Targeting a specific scenario.
-
-    .. program:: molecule --debug side-effect
-
-    .. option:: molecule --debug side-effect
-
-        Executing with `debug`.
-
-    .. program:: molecule --base-config base.yml side-effect
-
-    .. option:: molecule --base-config base.yml side-effect
-
-        Executing with a `base-config`.
-
-    .. program:: molecule --env-file foo.yml side-effect
-
-    .. option:: molecule --env-file foo.yml side-effect
-
-        Load an env file to read variables from when rendering
-        molecule.yml.
     """
 
     def execute(self, action_args=None):

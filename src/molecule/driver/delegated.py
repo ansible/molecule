@@ -37,16 +37,16 @@ class Delegated(Driver):
     create and destroy playbooks.  ``Managed`` is the default behaviour of all
     drivers.
 
-    .. code-block:: yaml
-
+    ``` yaml
         driver:
           name: delegated
+    ```
 
     However, the developer must adhere to the instance-config API. The
     developer's create playbook must provide the following instance-config
     data, and the developer's destroy playbook must reset the instance-config.
 
-    .. code-block:: yaml
+    ``` yaml
 
         - address: ssh_endpoint
           identity_file: ssh_identity_file  # mutually exclusive with password
@@ -67,6 +67,7 @@ class Delegated(Driver):
           winrm_cert_pem: <path to the credssp public certificate key>
           winrm_cert_key_pem: <path to the credssp private certificate key>
           winrm_server_cert_validation: validate/ignore
+    ```
 
     This article covers how to configure and use WinRM with Ansible:
     https://docs.ansible.com/ansible/latest/user_guide/windows_winrm.html
@@ -75,8 +76,7 @@ class Delegated(Driver):
     developers responsibility to manage the instances, and properly configure
     Molecule to connect to said instances.
 
-    .. code-block:: yaml
-
+    ``` yaml
         driver:
           name: delegated
           options:
@@ -86,23 +86,23 @@ class Delegated(Driver):
               ansible_connection: docker
         platforms:
           - name: instance-docker
+    ```
 
-    .. code-block:: bash
-
+    ``` bash
         $ docker run \
             -d \
             --name instance-docker \
             --hostname instance-docker \
             -it molecule_local/ubuntu:latest sleep infinity & wait
+    ```
 
     Use Molecule with delegated instances, which are accessible over ssh.
 
-    .. important::
+    !!! note
 
         It is the developer's responsibility to configure the ssh config file.
 
-    .. code-block:: yaml
-
+    ``` yaml
         driver:
           name: delegated
           options:
@@ -113,26 +113,26 @@ class Delegated(Driver):
               ansible_ssh_common_args: '-F /path/to/ssh-config'
         platforms:
           - name: instance
+    ```
 
     Provide the files Molecule will preserve post ``destroy`` action.
 
-    .. code-block:: yaml
-
+    ``` yaml
         driver:
           name: delegated
           safe_files:
             - foo
-
+    ```
     And in order to use localhost as molecule's target:
 
-    .. code-block:: yaml
-
+    ``` yaml
         driver:
           name: delegated
           options:
             managed: False
             ansible_connection_options:
               ansible_connection: local
+    ```
     """
 
     def __init__(self, config=None):

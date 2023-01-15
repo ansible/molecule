@@ -177,7 +177,7 @@ class Driver(object):
         """
         Collect the instances state and returns a list.
 
-        .. important::
+        !!! note
 
             Molecule assumes all instances were created successfully by
             Ansible, otherwise Ansible would return an error on create.  This

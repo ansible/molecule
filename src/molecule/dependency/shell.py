@@ -37,36 +37,35 @@ class Shell(base.Base):
     The ``command`` to execute is required, and is relative to Molecule's
     project directory when referencing a script not in $PATH.
 
-    .. note::
+    !!! note
 
         Unlike the other dependency managers, ``options`` are ignored and not
         passed to `shell`.  Additional flags/subcommands should simply be added
         to the `command`.
 
-    .. code-block:: yaml
-
+    ``` yaml
         dependency:
           name: shell
           command: path/to/command --flag1 subcommand --flag2
+    ```
 
     The dependency manager can be disabled by setting ``enabled`` to False.
 
-    .. code-block:: yaml
-
+    ``` yaml
         dependency:
           name: shell
           command: path/to/command --flag1 subcommand --flag2
           enabled: False
-
+    ```
     Environment variables can be passed to the dependency.
 
-    .. code-block:: yaml
-
+    ``` yaml
         dependency:
           name: shell
           command: path/to/command --flag1 subcommand --flag2
           env:
             FOO: bar
+    ```
     """
 
     def __init__(self, config):

@@ -58,12 +58,17 @@ changelog = "https://github.com/ansible-community/molecule/releases"
 
 [project.optional-dependencies]
 docs = [
-  "ansible-core >= 2.12.0",
-  "jinja2<3.2.0", # https://twitter.com/readthedocs/status/1507388916013314048
-  "Sphinx >= 5.0.0, < 6.0.0", # https://github.com/sphinx-doc/sphinx/issues/10112
-  "simplejson >= 3.17.2",
-  "sphinx-ansible-theme >= 0.8.0, < 0.10.0",
-  "sphinx-notfound-page >= 0.7.1",
+  "argparse-manpage",
+  "cairosvg",
+  "markdown-include",
+  "mkdocs",
+  "mkdocs-git-revision-date-localized-plugin",
+  "mkdocs-material",
+  "mkdocs-material-extensions",
+  "mkdocs-multirepo-plugin",
+  "mkdocstrings[python]",
+  "pillow",
+  "pymdown-extensions",
 ]
 lint = [
   "check-jsonschema >= 0.20.0",
