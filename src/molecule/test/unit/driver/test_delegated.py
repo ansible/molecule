@@ -197,7 +197,6 @@ def test_ansible_connection_options(_instance):
     "config_instance", ["_driver_managed_section_data"], indirect=True
 )
 def test_ansible_connection_options_when_managed(mocker, _instance):
-
     assert _instance.managed is True
 
     ssh_case_data = mocker.patch(

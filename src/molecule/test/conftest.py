@@ -105,7 +105,6 @@ def molecule_ephemeral_directory(_fixture_uuid) -> str:
 
 
 def pytest_collection_modifyitems(items, config):
-
     marker = config.getoption("-m")
     is_sharded = False
     shard_id = 0

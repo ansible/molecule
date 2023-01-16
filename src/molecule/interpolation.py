@@ -92,7 +92,6 @@ class TemplateWithDefaults(string.Template):
 
     # Modified from python2.7/string.py
     def substitute(self, mapping, keep_string):
-
         # Helper function for .sub()
         def convert(mo):
             # Check the most common path first.

@@ -37,7 +37,6 @@ from molecule.text import strip_ansi_escape
 
 
 def test_print_debug():
-
     expected = "DEBUG: test_title:\ntest_data\n"
     with console.capture() as capture:
         util.print_debug("test_title", "test_data")
@@ -98,7 +97,6 @@ def test_sysexit_with_message(patched_logger_critical):
 
 def test_sysexit_with_warns(patched_logger_critical, patched_logger_warning):
     with pytest.raises(SystemExit) as e:
-
         with warnings.catch_warnings(record=True) as warns:
             warnings.filterwarnings("default", category=MoleculeRuntimeWarning)
             warnings.warn("xxx", category=IncompatibleMoleculeRuntimeWarning)

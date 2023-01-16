@@ -105,7 +105,6 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
         )
 
     for scenario in scenarios:
-
         if scenario.config.config["prerun"]:
             role_name_check = scenario.config.config["role_name_check"]
             LOG.info("Performing prerun with role_name_check=%s...", role_name_check)

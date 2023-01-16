@@ -253,7 +253,6 @@ class Driver(object):
         return self.__str__()
 
     def template_dir(self):
-
         p = os.path.join(self._path, "cookiecutter")
 
         if not os.path.isdir(p):

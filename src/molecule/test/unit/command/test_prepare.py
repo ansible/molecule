@@ -73,7 +73,6 @@ def test_execute_skips_when_instances_already_prepared(
 def test_execute_skips_when_playbook_not_configured(
     patched_logger_warning, _patched_ansible_prepare, config_instance
 ):
-
     p = prepare.Prepare(config_instance)
     p.execute()
 
