@@ -268,15 +268,17 @@ class Ansible(base.Base):
           name: ansible
           inventory:
             group_vars:
-              foo1:
+              all:
+                bar: foo
+              group1:
                 foo: bar
-              foo2:
+              group2:
                 foo: bar
                 baz:
                   qux: zzyzx
             host_vars:
-              foo1-01:
-                foo: bar
+              group1-01:
+                foo: baz
 
     Molecule automatically generates the inventory based on the hosts defined
     under `Platforms`_. Using the ``hosts`` key allows to add extra hosts to
