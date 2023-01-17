@@ -101,7 +101,7 @@ is easily installed separately:
 
 .. code-block:: bash
 
-    $ python3 -m pip install --user "molecule ansible-lint"
+    $ python3 -m pip install --user "ansible-lint"
 
 Molecule uses the "delegated" driver by default. Other drivers can
 be installed separately from PyPI, most of them being included in
