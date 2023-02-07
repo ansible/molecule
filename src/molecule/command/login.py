@@ -33,52 +33,7 @@ LOG = logging.getLogger(__name__)
 
 
 class Login(base.Base):
-    """
-    Login Command Class.
-
-    .. program:: molecule login
-
-    .. option:: molecule login
-
-        Target the default scenario.
-
-    .. program:: molecule login --scenario-name foo
-
-    .. option:: molecule login --scenario-name foo
-
-        Targeting a specific scenario.
-
-    .. program:: molecule login --host hostname
-
-    .. option:: molecule login --host hostname
-
-        Targeting a specific running host.
-
-    .. program:: molecule login --host hostname --scenario-name foo
-
-    .. option:: molecule login --host hostname --scenario-name foo
-
-        Targeting a specific running host and scenario.
-
-    .. program:: molecule --debug login
-
-    .. option:: molecule --debug login
-
-        Executing with `debug`.
-
-    .. program:: molecule --base-config base.yml login
-
-    .. option:: molecule --base-config base.yml login
-
-        Executing with a `base-config`.
-
-    .. program:: molecule --env-file foo.yml login
-
-    .. option:: molecule --env-file foo.yml login
-
-        Load an env file to read variables from when rendering
-        molecule.yml.
-    """
+    """Login Command Class."""
 
     def __init__(self, c):
         """Construct Login."""

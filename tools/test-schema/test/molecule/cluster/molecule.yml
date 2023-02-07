@@ -5,12 +5,6 @@ dependency:
 driver:
   name: docker
 
-lint: |
-  set -e
-  yamllint -c molecule/yaml-lint.yml .
-  ansible-lint
-  flake8
-
 platforms:
   - name: instance-1
     image: "geerlingguy/docker-${MOLECULE_DISTRO:-centos7}-ansible:latest"

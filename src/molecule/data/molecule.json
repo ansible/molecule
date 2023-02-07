@@ -79,22 +79,37 @@
           "type": "string"
         },
         "name": {
-          "enum": [
-            "azure",
-            "ec2",
-            "delegated",
-            "docker",
-            "containers",
-            "openstack",
-            "podman",
-            "vagrant",
-            "digitalocean",
-            "gce",
-            "libvirt",
-            "lxd"
+          "anyOf": [
+            {
+              "enum": [
+                "azure",
+                "ec2",
+                "delegated",
+                "docker",
+                "containers",
+                "openstack",
+                "podman",
+                "vagrant",
+                "digitalocean",
+                "gce",
+                "libvirt",
+                "lxd"
+              ]
+            },
+            {
+              "pattern": "^molecule[_\\-][a-zA-Z0-9:_.\\-]+$",
+              "type": "string"
+            },
+            {
+              "pattern": "^custom[_\\-][a-zA-Z0-9:_.\\-]+$",
+              "type": "string"
+            }
           ],
           "title": "Name",
-          "type": "string"
+          "type": "string",
+          "messages": {
+            "anyOf": "is not one of ['azure', 'ec2', 'delegated', 'docker', 'containers', 'openstack', 'podman', 'vagrant', 'digitalocean', 'gce', 'libvirt', 'lxd', 'molecule-*', 'molecule_*', 'custom-*', 'custom_*']"
+          }
         },
         "options": {
           "$ref": "#/$defs/MoleculeDriverOptionsModel"
@@ -319,7 +334,8 @@
           "$ref": "#/$defs/ScenarioSequence"
         },
         "lint_sequence": {
-          "$ref": "#/$defs/ScenarioSequence"
+          "$ref": "#/$defs/ScenarioSequence",
+          "deprecated": true
         },
         "name": {
           "title": "Name",
@@ -556,7 +572,8 @@
     },
     "lint": {
       "title": "Lint",
-      "type": "string"
+      "type": "string",
+      "deprecated": true
     },
     "log": {
       "default": true,

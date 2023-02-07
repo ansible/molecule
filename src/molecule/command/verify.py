@@ -29,40 +29,7 @@ LOG = logging.getLogger(__name__)
 
 
 class Verify(base.Base):
-    """
-    Verify Command Class.
-
-    .. program:: molecule verify
-
-    .. option:: molecule verify
-
-        Target the default scenario.
-
-    .. program:: molecule verify --scenario-name foo
-
-    .. option:: molecule verify --scenario-name foo
-
-        Targeting a specific scenario.
-
-    .. program:: molecule --debug verify
-
-    .. option:: molecule --debug verify
-
-        Executing with `debug`.
-
-    .. program:: molecule --base-config base.yml verify
-
-    .. option:: molecule --base-config base.yml verify
-
-        Executing with a `base-config`.
-
-    .. program:: molecule --env-file foo.yml verify
-
-    .. option:: molecule --env-file foo.yml verify
-
-        Load an env file to read variables from when rendering
-        molecule.yml.
-    """
+    """Verify Command Class."""
 
     def execute(self, action_args=None):
         """

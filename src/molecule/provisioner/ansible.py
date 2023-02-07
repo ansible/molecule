@@ -25,7 +25,7 @@ import copy
 import logging
 import os
 import shutil
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from ansible_compat.ports import cached_property
 
@@ -49,7 +49,7 @@ class Ansible(base.Base):
     `notest`. With the tag `molecule-idempotence-notest` tasks are only
     skipped during the idempotence action step.
 
-    .. important::
+    !!! warning
 
         Reserve the create and destroy playbooks for provisioning.  Do not
         attempt to gather facts or perform operations on the provisioned nodes
@@ -64,11 +64,11 @@ class Ansible(base.Base):
     Additional options can be passed to ``ansible-playbook`` through the options
     dict.  Any option set in this section will override the defaults.
 
-    .. important::
+    !!! note
 
         Options do not affect the create and destroy actions.
 
-    .. note::
+    !!! note
 
         Molecule will remove any options matching '^[v]+$', and pass ``-vvv``
         to the underlying ``ansible-playbook`` command when executing
@@ -78,11 +78,11 @@ class Ansible(base.Base):
     However, this results in quite a bit of output.  To enable Ansible log
     output, add the following to the ``provisioner`` section of ``molecule.yml``.
 
-    .. code-block:: yaml
-
+    ``` yaml
         provisioner:
           name: ansible
           log: True
+    ```
 
     The create/destroy playbooks for Docker and Podman are bundled with
     Molecule.  These playbooks have a clean API from `molecule.yml`, and
@@ -94,8 +94,7 @@ class Ansible(base.Base):
     2. provisioner.playbooks.$action
     3. bundled_playbook.$driver_name.$action
 
-    .. code-block:: yaml
-
+    ``` yaml
         provisioner:
           name: ansible
           options:
@@ -104,30 +103,30 @@ class Ansible(base.Base):
             create: create.yml
             converge: converge.yml
             destroy: destroy.yml
+    ```
 
     Share playbooks between roles.
 
-    .. code-block:: yaml
-
+    ``` yaml
         provisioner:
           name: ansible
           playbooks:
             create: ../default/create.yml
             destroy: ../default/destroy.yml
             converge: converge.yml
+    ```
 
     Multiple driver playbooks.  In some situations a developer may choose to
     test the same role against different backends.  Molecule will choose driver
     specific create/destroy playbooks, if the determined driver has a key in
     the playbooks section of the provisioner's dict.
 
-    .. important::
+    !!! note
 
         If the determined driver has a key in the playbooks dict, Molecule will
         use this dict to resolve all provisioning playbooks (create/destroy).
 
-    .. code-block:: yaml
-
+    ``` yaml
         provisioner:
           name: ansible
           playbooks:
@@ -137,8 +136,9 @@ class Ansible(base.Base):
             create: create.yml
             destroy: destroy.yml
             converge: converge.yml
+    ```
 
-    .. important::
+    !!! note
 
         Paths in this section are converted to absolute paths, where the
         relative parent is the $scenario_directory.
@@ -148,14 +148,14 @@ class Ansible(base.Base):
     not enabled by default.  Add the following to the provisioner's ``playbooks``
     section to enable.
 
-    .. code-block:: yaml
-
+    ``` yaml
         provisioner:
           name: ansible
           playbooks:
             side_effect: side_effect.yml
+    ```
 
-    .. important::
+    !!! note
 
         This feature should be considered experimental.
 
@@ -166,12 +166,12 @@ class Ansible(base.Base):
     This can be used to bring instances into a particular state, prior to
     testing.
 
-    .. code-block:: yaml
-
+    ``` yaml
         provisioner:
           name: ansible
           playbooks:
             prepare: prepare.yml
+    ```
 
     The cleanup playbook is for cleaning up test infrastructure that may not
     be present on the instance that will be destroyed. The primary use-case
@@ -189,14 +189,14 @@ class Ansible(base.Base):
     Add the following to the provisioner's `playbooks` section
     to enable.
 
-    .. code-block:: yaml
-
+    ``` yaml
         provisioner:
           name: ansible
           playbooks:
             cleanup: cleanup.yml
+    ```
 
-    .. important::
+    !!! note
 
         This feature should be considered experimental.
 
@@ -217,22 +217,21 @@ class Ansible(base.Base):
     and converted to absolute paths, where the relative parent is the
     $scenario_directory.
 
-    .. important::
+    !!! note
 
         Paths in this section are converted to absolute paths, where the
         relative parent is the $scenario_directory.
 
-    .. code-block:: yaml
-
+    ``` yaml
         provisioner:
           name: ansible
           env:
             FOO: bar
+    ```
 
     Modifying ansible.cfg.
 
-    .. code-block:: yaml
-
+    ``` yaml
         provisioner:
           name: ansible
           config_options:
@@ -240,16 +239,16 @@ class Ansible(base.Base):
               fact_caching: jsonfile
             ssh_connection:
               scp_if_ssh: True
+    ```
 
-    .. important::
+    !!! note
 
         The following keys are disallowed to prevent Molecule from
         improperly functioning.  They can be specified through the
         provisioner's env setting described above, with the exception
         of the `privilege_escalation`.
 
-    .. code-block:: yaml
-
+    ``` yaml
         provisioner:
           name: ansible
           config_options:
@@ -258,12 +257,12 @@ class Ansible(base.Base):
               library: /path/to/library
               filter_plugins: /path/to/filter_plugins
             privilege_escalation: {}
+    ```
 
     Roles which require host/groups to have certain variables set.  Molecule
     uses the same `variables defined in a playbook`_ syntax as `Ansible`_.
 
-    .. code-block:: yaml
-
+    ``` yaml
         provisioner:
           name: ansible
           inventory:
@@ -277,6 +276,7 @@ class Ansible(base.Base):
             host_vars:
               foo1-01:
                 foo: bar
+    ```
 
     Molecule automatically generates the inventory based on the hosts defined
     under `Platforms`_. Using the ``hosts`` key allows to add extra hosts to
@@ -285,13 +285,12 @@ class Ansible(base.Base):
     A typical use case is if you want to access some variables from another
     host in the inventory (using hostvars) without creating it.
 
-    .. note::
+    !!! note
 
         The content of ``hosts`` should follow the YAML based inventory syntax:
         start with the ``all`` group and have hosts/vars/children entries.
 
-    .. code-block:: yaml
-
+    ``` yaml
         provisioner:
           name: ansible
           inventory:
@@ -300,8 +299,9 @@ class Ansible(base.Base):
                 hosts:
                   extra_host:
                     foo: hello
+    ```
 
-    .. important::
+    !!! note
 
         The extra hosts added to the inventory using this key won't be
         created/destroyed by Molecule. It is the developers responsibility
@@ -320,13 +320,13 @@ class Ansible(base.Base):
     This can be useful if you want to define extra hosts that are not managed
     by Molecule.
 
-    .. important::
+    !!! note
 
         Again, it is the developers responsibility to target the proper hosts
         in the playbook. Only the hosts defined under
         `Platforms`_ should be targeted instead of ``all``.
 
-    .. note::
+    !!! note
 
         The source directory linking is relative to the scenario's
         directory.
@@ -335,8 +335,7 @@ class Ansible(base.Base):
         schema validator will enforce this.
 
 
-    .. code-block:: yaml
-
+    ``` yaml
         provisioner:
           name: ansible
           inventory:
@@ -344,14 +343,14 @@ class Ansible(base.Base):
               hosts: ../../../inventory/hosts
               group_vars: ../../../inventory/group_vars/
               host_vars: ../../../inventory/host_vars/
+    ```
 
-    .. important::
+    !!! note
 
         You can use either `hosts`/`group_vars`/`host_vars` sections of inventory OR `links`.
         If you use both, links will win.
 
-    .. code-block:: yaml
-
+    ``` yaml
         provisioner:
           name: ansible
           hosts:
@@ -362,30 +361,29 @@ class Ansible(base.Base):
           inventory:
             links:
               hosts: ../../../inventory/hosts
-
+    ```
 
     Override connection options:
 
-    .. code-block:: yaml
-
+    ``` yaml
         provisioner:
           name: ansible
           connection_options:
             ansible_ssh_user: foo
             ansible_ssh_common_args: -o IdentitiesOnly=no
+    ```
 
     .. _`variables defined in a playbook`: https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#defining-variables-in-a-playbook
 
     Add arguments to ansible-playbook when running converge:
 
-    .. code-block:: yaml
-
+    ``` yaml
         provisioner:
           name: ansible
           ansible_args:
             - --inventory=mygroups.yml
             - --limit=host1,host2
-
+    ```
     """  # noqa
 
     def __init__(self, config):
@@ -398,12 +396,8 @@ class Ansible(base.Base):
         super(Ansible, self).__init__(config)
 
     @property
-    def default_config_options(self):
-        """
-        Provide Default options to construct ansible.cfg and returns a dict.
-
-        :return: dict
-        """
+    def default_config_options(self) -> dict[str, Any]:
+        """Provide Default options to construct ansible.cfg and returns a dict."""
         return {
             "defaults": {
                 "ansible_managed": "Ansible managed: Do NOT edit this file manually!",
@@ -612,7 +606,7 @@ class Ansible(base.Base):
         """
         Create an inventory structure and returns a dict.
 
-        .. code-block:: yaml
+        ``` yaml
             ungrouped:
               vars:
                 foo: bar
@@ -630,8 +624,7 @@ class Ansible(base.Base):
                   ansible_connection: docker
                 instance-2:
                   ansible_connection: docker
-
-        :return: str
+        ```
         """
         dd = self._vivify()
         for platform in self._config.platforms.instances:

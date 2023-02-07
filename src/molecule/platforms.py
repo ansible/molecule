@@ -31,34 +31,34 @@ class Platforms(object):
     Platforms define the instances to be tested, and the groups to which the \
     instances belong.
 
-    .. code-block:: yaml
+    ``` yaml
 
         platforms:
           - name: instance-1
+    ```
 
     Multiple instances can be provided.
 
-    .. code-block:: yaml
-
+    ``` yaml
         platforms:
           - name: instance-1
           - name: instance-2
+    ```
 
     Mapping instances to groups.  These groups will be used by the Provisioner_
     for orchestration purposes.
 
-    .. code-block:: yaml
-
+    ``` yaml
         platforms:
           - name: instance-1
             groups:
               - group1
               - group2
+    ```
 
     Children allow the creation of groups of groups.
 
-    .. code-block:: yaml
-
+    ``` yaml
         platforms:
           - name: instance-1
             groups:
@@ -66,6 +66,7 @@ class Platforms(object):
               - group2
             children:
               - child_group1
+    ```
     """
 
     def __init__(self, config, parallelize_platforms=False, platform_name=None):

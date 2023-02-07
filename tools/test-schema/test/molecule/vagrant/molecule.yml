@@ -3,12 +3,6 @@ dependency:
   name: shell
   enabled: false
 
-lint: |
-  set -e
-  yamllint .
-  ansible-lint
-  flake8
-
 driver:
   name: vagrant
   provider:

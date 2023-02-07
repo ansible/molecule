@@ -105,7 +105,6 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
         )
 
     for scenario in scenarios:
-
         if scenario.config.config["prerun"]:
             role_name_check = scenario.config.config["role_name_check"]
             LOG.info("Performing prerun with role_name_check=%s...", role_name_check)
@@ -234,7 +233,7 @@ def click_group_ex():
         cls=HelpColorsGroup,
         # Workaround to disable click help line truncation to ~80 chars
         # https://github.com/pallets/click/issues/486
-        context_settings=dict(max_content_width=9999, color=should_do_markup()),
+        context_settings={"max_content_width": 9999, "color": should_do_markup()},
         help_headers_color="yellow",
         help_options_color="green",
         help_options_custom_colors={

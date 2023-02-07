@@ -9,12 +9,6 @@ dependency:
   env:
     FOO: bar
 
-lint: |
-  set -e
-  yamllint .
-  ansible-lint
-  flake8
-
 driver:
   name: podman
   options:

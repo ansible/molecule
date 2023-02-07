@@ -125,10 +125,6 @@ def test_env(config_instance):
     assert x == config_instance.env
 
 
-def test_lint_property(config_instance):
-    assert isinstance(config_instance.lint, (str, bool, type(None)))
-
-
 def test_platforms_property(config_instance):
     assert isinstance(config_instance.platforms, platforms.Platforms)
 

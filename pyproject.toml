@@ -37,6 +37,7 @@ classifiers = [
 keywords = ["ansible", "roles", "testing", "molecule"]
 dependencies = [
   "ansible-compat >= 2.2.0",
+  "ansible-core >= 2.12.10",
   "click >= 8.0, < 9",
   "click-help-colors >= 0.9",
   "cookiecutter >= 1.7.3", # dependency issues in older versions
@@ -57,12 +58,17 @@ changelog = "https://github.com/ansible-community/molecule/releases"
 
 [project.optional-dependencies]
 docs = [
-  "ansible-core >= 2.12.0",
-  "jinja2<3.2.0", # https://twitter.com/readthedocs/status/1507388916013314048
-  "Sphinx >= 5.0.0, < 6.0.0", # https://github.com/sphinx-doc/sphinx/issues/10112
-  "simplejson >= 3.17.2",
-  "sphinx-ansible-theme >= 0.8.0, < 0.10.0",
-  "sphinx-notfound-page >= 0.7.1",
+  "argparse-manpage",
+  "cairosvg",
+  "markdown-include",
+  "mkdocs",
+  "mkdocs-git-revision-date-localized-plugin",
+  "mkdocs-material",
+  "mkdocs-material-extensions",
+  "mkdocs-multirepo-plugin",
+  "mkdocstrings[python]",
+  "pillow",
+  "pymdown-extensions",
 ]
 lint = [
   "check-jsonschema >= 0.20.0",
@@ -75,17 +81,16 @@ test = [
   # Do not include ansible or any package that would drag ansible in here
   # We want to assure test extra provides tools to test molecule and its
   # related tools/plugins but w/o ansible, which can be installed separated.
-  "ansi2html >= 1.6.0",
-  "coverage >= 6.2",
-  "filelock",
+  "ansible-lint >= 6.12.1",
+  "ansi2html >= 1.8.0",
+  "coverage >= 7.0.3",
+  "filelock >= 3.9.0",
   "pexpect >= 4.8.0, < 5",
-  "pytest-cov >= 2.10.1",
-  "pytest-html >= 3.0.0",
-  "pytest-mock >= 3.3.1",
-  "pytest-plus >= 0.2",
-  "pytest-testinfra >= 6.1.0",
-  "pytest-xdist >= 2.1.0",
-  "pytest >= 6.1.2",
+  "pytest-mock >= 3.10.0",
+  "pytest-plus >= 0.4.0",
+  "pytest-testinfra >= 7.0.0",
+  "pytest-xdist >= 3.1.0",
+  "pytest >= 7.2.0",
 ]
 
 [project.scripts]
@@ -100,11 +105,19 @@ ansible = "molecule.verifier.ansible:Ansible"
 
 [tool.coverage.run]
 source = ["src"]
-branch = true
+# branch = true
+parallel = true
+concurrency = ["multiprocessing", "thread"]
+data_file = ".tox/.coverage"
+relative_files = true
 
 [tool.coverage.report]
 exclude_lines = ["pragma: no cover", "if TYPE_CHECKING:"]
+omit = ["test/*"]
+fail_under = 88
+skip_covered = true
 
+# skip_empty = true
 [tool.doc8]
 # see https://github.com/PyCQA/doc8/issues/75
 ignore-path = [

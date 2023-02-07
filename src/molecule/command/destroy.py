@@ -34,58 +34,7 @@ MOLECULE_PARALLEL = os.environ.get("MOLECULE_PARALLEL", False)
 
 
 class Destroy(base.Base):
-    """
-    Destroy Command Class.
-
-    .. program:: molecule destroy
-
-    .. option:: molecule destroy
-
-        Target the default scenario.
-
-    .. program:: molecule destroy --scenario-name foo
-
-    .. option:: molecule destroy --scenario-name foo
-
-        Targeting a specific scenario.
-
-    .. program:: molecule destroy --all
-
-    .. option:: molecule destroy --all
-
-        Target all scenarios.
-
-    .. program:: molecule destroy --driver-name foo
-
-    .. option:: molecule destroy --driver-name foo
-
-        Targeting a specific driver.
-
-    .. program:: molecule --debug destroy
-
-    .. option:: molecule --debug destroy
-
-        Executing with `debug`.
-
-    .. program:: molecule --base-config base.yml destroy
-
-    .. option:: molecule --base-config base.yml destroy
-
-        Executing with a `base-config`.
-
-    .. program:: molecule --env-file foo.yml destroy
-
-    .. option:: molecule --env-file foo.yml destroy
-
-        Load an env file to read variables from when rendering
-        molecule.yml.
-
-    .. program:: molecule destroy --parallel
-
-    .. option:: molecule destroy --parallel
-
-       Run in parallelizable mode.
-    """
+    """Destroy Command Class."""
 
     def execute(self, action_args=None):
         """

@@ -36,15 +36,15 @@ class Interpolator(object):
     For example, suppose the shell contains ``VERIFIER_NAME=testinfra`` and
     the following molecule.yml is supplied.
 
-    .. code-block:: yaml
-
+    ```yaml
         verifier:
           - name: ${VERIFIER_NAME}
+    ```
 
     Molecule will substitute ``$VERIFIER_NAME`` with the value of the
     ``VERIFIER_NAME`` environment variable.
 
-    .. warning::
+    !!! warning
 
         If an environment variable is not set, Molecule substitutes with an
         empty string.
@@ -62,7 +62,7 @@ class Interpolator(object):
     Molecule will substitute special ``MOLECULE_`` environment variables
     defined in `molecule.yml`.
 
-    .. important::
+    !!! note
 
         Remember, the ``MOLECULE_`` namespace is reserved for Molecule.  Do not
         prefix your own variables with `MOLECULE_`.
@@ -92,7 +92,6 @@ class TemplateWithDefaults(string.Template):
 
     # Modified from python2.7/string.py
     def substitute(self, mapping, keep_string):
-
         # Helper function for .sub()
         def convert(mo):
             # Check the most common path first.

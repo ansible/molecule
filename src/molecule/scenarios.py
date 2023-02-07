@@ -137,7 +137,6 @@ class Scenarios(object):
                     "dependency": scenario.dependency_sequence,
                     "destroy": scenario.destroy_sequence,
                     "idempotence": scenario.idempotence_sequence,
-                    "lint": scenario.lint_sequence,
                     "prepare": scenario.prepare_sequence,
                     "side_effect": scenario.side_effect_sequence,
                     "syntax": scenario.syntax_sequence,
