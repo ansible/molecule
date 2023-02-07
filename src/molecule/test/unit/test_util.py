@@ -138,12 +138,12 @@ def test_run_command_with_debug(mocker, patched_print_debug):
 
 
 def test_run_command_baked_cmd_env():
-    cmd = util.BakedCommand(cmd=["printenv", "myvar"], env=dict(myvar="myvalue"))
-    result = util.run_command(cmd, env=dict(myvar2="value2"))
+    cmd = util.BakedCommand(cmd=["printenv", "myvar"], env={"myvar": "myvalue"})
+    result = util.run_command(cmd, env={"myvar2": "value2"})
     assert result.returncode == 0
 
-    cmd = util.BakedCommand(cmd=["printenv", "myvar2"], env=dict(myvar="myvalue"))
-    result = util.run_command(cmd, env=dict(myvar2="value2"))
+    cmd = util.BakedCommand(cmd=["printenv", "myvar2"], env={"myvar": "myvalue"})
+    result = util.run_command(cmd, env={"myvar2": "value2"})
     assert result.returncode == 0
 
     # negative test
@@ -312,6 +312,7 @@ def test_abs_path_with_none_path():
     assert util.abs_path(None) is None
 
 
+# pylint: disable=use-dict-literal
 @pytest.mark.parametrize(
     "a,b,x",
     [
