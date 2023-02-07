@@ -76,6 +76,7 @@ test = [
   # Do not include ansible or any package that would drag ansible in here
   # We want to assure test extra provides tools to test molecule and its
   # related tools/plugins but w/o ansible, which can be installed separated.
+  "ansible-lint >= 6.12.1",
   "ansi2html >= 1.8.0",
   "coverage >= 7.0.3",
   "filelock >= 3.9.0",
