@@ -56,15 +56,12 @@ platformdirs==2.6.2
 pluggy==1.0.0
 pre-commit==3.0.4
 ptyprocess==0.7.0
-py==1.11.0
 pycodestyle==2.10.0
 pycparser==2.21
 pyflakes==3.0.1
 pygments==2.14.0
 pyrsistent==0.19.3
 pytest==7.2.1
-pytest-html==3.2.0
-pytest-metadata==2.0.4
 pytest-mock==3.10.0
 pytest-plus==0.4.0
 pytest-testinfra==7.0.0

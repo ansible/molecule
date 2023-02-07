@@ -81,7 +81,6 @@ test = [
   "coverage >= 7.0.3",
   "filelock >= 3.9.0",
   "pexpect >= 4.8.0, < 5",
-  "pytest-html >= 3.2.0",
   "pytest-mock >= 3.10.0",
   "pytest-plus >= 0.4.0",
   "pytest-testinfra >= 7.0.0",
