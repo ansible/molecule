@@ -30,7 +30,6 @@ jobs:
             docs
             pkg
             eco
-            dockerfile
             py39-devel
             py310-devel
 
