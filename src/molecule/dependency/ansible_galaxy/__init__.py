@@ -7,19 +7,18 @@ from molecule.dependency.base import Base
 
 class AnsibleGalaxy(Base):
     """
-    :std:doc:`Galaxy <galaxy/user_guide>` is the default dependency manager.
+    Galaxy is the default dependency manager.
 
     Additional options can be passed to ``ansible-galaxy install`` through the
     options dict.  Any option set in this section will override the defaults.
 
-    .. note::
+    !!! note
 
         Molecule will remove any options matching '^[v]+$', and pass ``-vvv``
         to the underlying ``ansible-galaxy`` command when executing
         `molecule --debug`.
 
-    .. code-block:: yaml
-
+    ``` yaml
         dependency:
           name: galaxy
           options:
@@ -27,20 +26,21 @@ class AnsibleGalaxy(Base):
             ignore-errors: True
             role-file: requirements.yml
             requirements-file: collections.yml
+    ```
 
     Use "role-file" if you have roles only. Use the "requirements-file" if you
     need to install collections. Note that, with Ansible Galaxy's collections
     support, you can now combine the two lists into a single requirement if your
     file looks like this
 
-    .. code-block:: yaml
-
+    ``` yaml
         roles:
           - dep.role1
           - dep.role2
         collections:
           - ns.collection
           - ns2.collection2
+    ```
 
     If you want to combine them, then just point your ``role-file`` and
     ``requirements-file`` to the same path. This is not done by default because
@@ -50,16 +50,15 @@ class AnsibleGalaxy(Base):
 
     The dependency manager can be disabled by setting ``enabled`` to False.
 
-    .. code-block:: yaml
-
+    ``` yaml
         dependency:
           name: galaxy
           enabled: False
+    ```
 
     Environment variables can be passed to the dependency.
 
-    .. code-block:: yaml
-
+    ``` yaml
         dependency:
           name: galaxy
           env:

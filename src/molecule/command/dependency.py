@@ -29,40 +29,7 @@ LOG = logging.getLogger(__name__)
 
 
 class Dependency(base.Base):
-    """
-    Dependency Command Class.
-
-    .. program:: molecule dependency
-
-    .. option:: molecule dependency
-
-        Target the default scenario.
-
-    .. program:: molecule dependency --scenario-name foo
-
-    .. option:: molecule dependency --scenario-name foo
-
-        Targeting a specific scenario.
-
-    .. program:: molecule --debug dependency
-
-    .. option:: molecule --debug dependency
-
-        Executing with `debug`.
-
-    .. program:: molecule --base-config base.yml dependency
-
-    .. option:: molecule --base-config base.yml dependency
-
-        Executing with a `base-config`.
-
-    .. program:: molecule --env-file foo.yml dependency
-
-    .. option:: molecule --env-file foo.yml dependency
-
-        Load an env file to read variables from when rendering
-        molecule.yml.
-    """
+    """Dependency Command Class."""
 
     def execute(self, action_args=None):
         """

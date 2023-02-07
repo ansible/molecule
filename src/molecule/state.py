@@ -52,7 +52,7 @@ class State(object):
     bookkeeping, and each :class:`.Config` object has a reference to a State_
     object.
 
-    .. note::
+    !!! note
 
         Currently, it's use is significantly smaller than it was in v1 of
         Molecule.

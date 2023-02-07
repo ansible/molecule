@@ -71,15 +71,15 @@ class Config(object, metaclass=NewInitCaller):
 
     Molecule searches the current directory for ``molecule.yml`` files by
     globbing `molecule/*/molecule.yml`.  The files are instantiated into
-    a list of Molecule :class:`.Config` objects, and each Molecule subcommand
+    a list of Molecule [molecule.config.Config][] objects, and each Molecule subcommand
     operates on this list.
 
     The directory in which the ``molecule.yml`` resides is the Scenario's
     directory.  Molecule performs most functions within this directory.
 
-    The :class:`.Config` object instantiates Dependency_, Driver_,
-    Platforms_, Provisioner_, Verifier_,
-    :ref:`root_scenario`, and State_ references.
+    The [molecule.config.Config][] object instantiates Dependency, Driver,
+    Platforms, Provisioner, Verifier_,
+    [scenario][], and State_ references.
     """
 
     # pylint: disable=too-many-instance-attributes

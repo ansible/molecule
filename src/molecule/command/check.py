@@ -32,46 +32,7 @@ MOLECULE_PARALLEL = os.environ.get("MOLECULE_PARALLEL", False)
 
 
 class Check(base.Base):
-    """
-    Check Command Class.
-
-    .. program:: molecule check
-
-    .. option:: molecule check
-
-        Target the default scenario.
-
-    .. program:: molecule check --scenario-name foo
-
-    .. option:: molecule check --scenario-name foo
-
-        Targeting a specific scenario.
-
-    .. program:: molecule --debug check
-
-    .. option:: molecule --debug check
-
-        Executing with `debug`.
-
-    .. program:: molecule --base-config base.yml check
-
-    .. option:: molecule --base-config base.yml check
-
-        Executing with a `base-config`.
-
-    .. program:: molecule --env-file foo.yml check
-
-    .. option:: molecule --env-file foo.yml check
-
-        Load an env file to read variables from when rendering
-        molecule.yml.
-
-    .. program:: molecule check --parallel
-
-    .. option:: molecule check --parallel
-
-       Run in parallelizable mode.
-    """
+    """Check Command Class."""
 
     def execute(self, action_args=None):
         """

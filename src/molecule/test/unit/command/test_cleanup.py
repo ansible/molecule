@@ -65,7 +65,6 @@ def test_execute(
 def test_execute_skips_when_playbook_not_configured(
     patched_logger_warning, _patched_ansible_cleanup, config_instance
 ):
-
     cu = cleanup.Cleanup(config_instance)
     cu.execute()
 

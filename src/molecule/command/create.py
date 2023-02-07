@@ -31,46 +31,7 @@ LOG = logging.getLogger(__name__)
 
 
 class Create(base.Base):
-    """
-    Create Command Class.
-
-    .. program:: molecule create
-
-    .. option:: molecule create
-
-        Target the default scenario.
-
-    .. program:: molecule create --scenario-name foo
-
-    .. option:: molecule create --scenario-name foo
-
-        Targeting a specific scenario.
-
-    .. program:: molecule create --driver-name foo
-
-    .. option:: molecule create --driver-name foo
-
-        Targeting a specific driver.
-
-    .. program:: molecule --debug create
-
-    .. option:: molecule --debug create
-
-        Executing with `debug`.
-
-    .. program:: molecule --base-config base.yml create
-
-    .. option:: molecule --base-config base.yml create
-
-        Executing with a `base-config`.
-
-    .. program:: molecule --env-file foo.yml create
-
-    .. option:: molecule --env-file foo.yml create
-
-        Load an env file to read variables from when rendering
-        molecule.yml.
-    """
+    """Create Command Class."""
 
     def execute(self, action_args=None):
         """

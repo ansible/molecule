@@ -33,39 +33,10 @@ LOG = logging.getLogger(__name__)
 
 class Idempotence(base.Base):
     """
-    Runs the converge step a second time. If no tasks will be marked as changed \
+    Runs the converge step a second time.
+
+    If no tasks will be marked as changed \
     the scenario will be considered idempotent.
-
-    .. program:: molecule idempotence
-
-    .. option:: molecule idempotence
-
-        Target the default scenario.
-
-    .. program:: molecule idempotence --scenario-name foo
-
-    .. option:: molecule idempotence --scenario-name foo
-
-        Targeting a specific scenario.
-
-    .. program:: molecule --debug idempotence
-
-    .. option:: molecule --debug idempotence
-
-        Executing with `debug`.
-
-    .. program:: molecule --base-config base.yml idempotence
-
-    .. option:: molecule --base-config base.yml idempotence
-
-        Executing with a `base-config`.
-
-    .. program:: molecule --env-file foo.yml idempotence
-
-    .. option:: molecule --env-file foo.yml idempotence
-
-        Load an env file to read variables from when rendering
-        molecule.yml.
     """
 
     def execute(self, action_args=None):
