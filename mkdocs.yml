@@ -1,0 +1,121 @@
+site_name: Ansible Molecule
+site_url: https://molecule.readthedocs.io/
+repo_url: https://github.com/ansible-community/molecule
+edit_uri: blob/main/docs/
+copyright: Copyright © 2023 Red Hat, Inc.
+strict: true
+
+theme:
+  name: "material"
+  logo: images/logo.svg
+  favicon: images/favicon.ico
+  features:
+    - content.code.copy
+    - content.action.edit
+    - navigation.expand
+    - navigation.sections
+    - navigation.instant
+    - navigation.indexes
+    - navigation.tracking
+    - toc.integrate
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      primary: teal
+      accent: blue
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+extra:
+  social:
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/molecule/
+      name: PyPI
+    - icon: fontawesome/solid/scroll
+      link: https://github.com/ansible-community/molecule/releases
+      name: Releases
+    - icon: simple/matrix
+      link: https://matrix.to/#/#devtools:ansible.com
+      name: Matrix
+    - icon: fontawesome/solid/comments
+      link: https://github.com/ansible-community/molecule/discussions
+      name: Discussions
+    - icon: fontawesome/brands/github-alt
+      link: https://github.com/ansible-community/molecule
+
+nav:
+  - home: index.md
+  - installation.md
+  - using:
+      - getting-started.md
+      - usage.md
+      - configuration.md
+      - ci.md
+  - examples.md
+  - faq.md
+  - contributing.md
+
+plugins:
+  - autorefs
+  - search
+  - social
+
+  - mkdocstrings:
+      enable_inventory: true
+      default_handler: python
+      handlers:
+        python:
+          paths: [src]
+          options:
+            # Sphinx is for historical reasons, but we could consider switching if needed
+            # https://mkdocstrings.github.io/griffe/docstrings/
+            docstring_style: sphinx
+            merge_init_into_class: yes
+            show_submodules: yes
+          import:
+            - url: https://docs.ansible.com/ansible/latest/objects.inv
+              domains: [py, std, "std:doc", "std:label"]
+            # - https://virtualenv.pypa.io/en/latest/objects.inv
+            # - https://yamllint.readthedocs.io/en/latest/objects.inv
+            # - https://jinja.palletsprojects.com/objects.inv
+            - url: https://pip.pypa.io/en/latest/objects.inv
+              domains: [py, std]
+            # - https://docs.python.org/3/objects.inv
+            # - https://testinfra.readthedocs.io/en/latest/objects.inv
+
+markdown_extensions:
+  - admonition
+  - def_list
+  - footnotes
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets:
+      check_paths: true
+  - pymdownx.superfences
+  - pymdownx.magiclink:
+      repo_url_shortener: true
+      repo_url_shorthand: true
+      social_url_shorthand: true
+      social_url_shortener: true
+      user: facelessuser
+      repo: pymdown-extensions
+      normalize_issue_symbols: true
+  - pymdownx.tabbed:
+      alternate_style: true
+  - toc:
+      # reduced to keep TOC nice under Changelog page
+      toc_depth: 2
+      permalink: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format

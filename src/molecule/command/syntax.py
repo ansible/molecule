@@ -29,40 +29,7 @@ LOG = logging.getLogger(__name__)
 
 
 class Syntax(base.Base):
-    """
-    Syntax Command Class.
-
-    .. program:: molecule syntax
-
-    .. option:: molecule syntax
-
-        Target the default scenario.
-
-    .. program:: molecule syntax --scenario-name foo
-
-    .. option:: molecule syntax --scenario-name foo
-
-        Targeting a specific scenario.
-
-    .. program:: molecule --debug syntax
-
-    .. option:: molecule --debug syntax
-
-        Executing with `debug`.
-
-    .. program:: molecule --base-config base.yml syntax
-
-    .. option:: molecule --base-config base.yml syntax
-
-        Executing with a `base-config`.
-
-    .. program:: molecule --env-file foo.yml syntax
-
-    .. option:: molecule --env-file foo.yml syntax
-
-        Load an env file to read variables from when rendering
-        molecule.yml.
-    """
+    """Syntax Command Class."""
 
     def execute(self, action_args=None):
         """Execute the actions necessary to perform a `molecule syntax` and \

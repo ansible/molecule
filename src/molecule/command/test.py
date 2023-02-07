@@ -35,69 +35,7 @@ MOLECULE_PLATFORM_NAME = os.environ.get("MOLECULE_PLATFORM_NAME", None)
 
 
 class Test(base.Base):
-    """
-    Test Command Class.
-
-    .. program:: molecule test
-
-    .. option:: molecule test
-
-        Target the default scenario.
-
-    .. program:: molecule test --scenario-name foo
-
-    .. option:: molecule test --scenario-name foo
-
-        Targeting a specific scenario.
-
-    .. program:: molecule test --all
-
-    .. option:: molecule test --all
-
-        Target all scenarios.
-
-    .. option:: molecule test -- -vvv --tags foo,bar
-
-        Providing additional command line arguments to the `ansible-playbook`
-        command.  Use this option with care, as there is no sanitation or
-        validation of input.  Options passed on the CLI are combined with options
-        provided in provisioner's `options` section of `molecule.yml`.
-
-    .. program:: molecule test --destroy=always
-
-    .. option:: molecule test --destroy=always
-
-        Always destroy instances at the conclusion of a Molecule run.
-
-    .. option:: molecule test --destroy=never
-
-        Never destroy instances at the conclusion of a Molecule run.
-
-    .. program:: molecule --debug test
-
-    .. option:: molecule --debug test
-
-        Executing with `debug`.
-
-    .. program:: molecule --base-config base.yml test
-
-    .. option:: molecule --base-config base.yml test
-
-        Executing with a `base-config`.
-
-    .. program:: molecule --env-file foo.yml test
-
-    .. option:: molecule --env-file foo.yml test
-
-        Load an env file to read variables from when rendering
-        molecule.yml.
-
-    .. program:: molecule test --parallel
-
-    .. option:: molecule test --parallel
-
-       Run in parallelizable mode.
-    """
+    """Test Command Class."""
 
     def execute(self, action_args=None):
         """

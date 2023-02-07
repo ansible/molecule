@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 256 256" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g id="ansible-aap">
+        <path d="M128,0C198.645,0 256,57.355 256,128C256,198.645 198.645,256 128,256C57.355,256 0,198.645 0,128C0,57.355 57.355,0 128,0ZM189.094,178.686L138.002,55.958C136.786,52.714 133.677,50.416 130.163,50.551C126.513,50.416 123.269,52.714 122.053,55.958L66.23,190.446L85.423,190.446L107.455,135.029L173.55,188.418C175.442,190.31 178.011,191.392 180.579,191.527C185.58,191.662 189.77,187.742 189.905,182.606L189.905,182.336C189.77,181.119 189.499,179.903 189.094,178.686ZM130.298,78.125L163.413,159.899L113.402,120.431L130.298,78.125Z" style="fill:white;"/>
+    </g>
+</svg>

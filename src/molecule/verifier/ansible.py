@@ -35,27 +35,28 @@ class Ansible(Verifier):
     Molecule executes a playbook (`verify.yml`) located in the role's
     `scenario.directory`.
 
-    .. code-block:: yaml
-
+    ``` yaml
         verifier:
           name: ansible
+    ```
 
     The testing can be disabled by setting ``enabled`` to False.
 
-    .. code-block:: yaml
-
+    ``` yaml
         verifier:
           name: ansible
           enabled: False
+    ```
 
     Environment variables can be passed to the verifier.
 
-    .. code-block:: yaml
+    ``` yaml
 
         verifier:
           name: ansible
           env:
             FOO: bar
+    ```
     """
 
     @property
