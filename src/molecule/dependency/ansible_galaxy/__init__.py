@@ -63,6 +63,7 @@ class AnsibleGalaxy(Base):
           name: galaxy
           env:
             FOO: bar
+    ```
     """
 
     def __init__(self, config):
