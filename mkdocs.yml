@@ -1,3 +1,4 @@
+---
 site_name: Ansible Molecule
 site_url: https://molecule.readthedocs.io/
 repo_url: https://github.com/ansible-community/molecule
@@ -99,14 +100,11 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets:
       check_paths: true
-  - pymdownx.superfences
   - pymdownx.magiclink:
       repo_url_shortener: true
       repo_url_shorthand: true
       social_url_shorthand: true
       social_url_shortener: true
-      user: facelessuser
-      repo: pymdown-extensions
       normalize_issue_symbols: true
   - pymdownx.tabbed:
       alternate_style: true
