@@ -36,7 +36,7 @@ template can be customized as needed to create the desired modifications
 to the Docker image used in the scenario.
 
 Note: `platforms[*].pre_build_image` defaults to `true` in each
-scenario's generated [molecule.yml]{.title-ref} file.
+scenario's generated `molecule.yml` file.
 
 ## Docker With Non-Privileged User
 
@@ -47,7 +47,7 @@ follows.
 
 Note: The `Dockerfile` templating and image building processes are only
 done for scenarios with `pre_build_image = False`, which is not the
-default setting in generated [molecule.yml]{.title-ref} files.
+default setting in generated `molecule.yml` files.
 
 To modify the Docker image to support running as normal user:
 
@@ -347,7 +347,7 @@ shared-tests
 
 Tests and playbooks can be shared across scenarios.
 
-In this example the [tests]{.title-ref} directory lives in a shared
+In this example the `tests` directory lives in a shared
 location and `molecule.yml` points to the shared tests.
 
 ```yaml
@@ -356,8 +356,8 @@ verifier:
   directory: ../resources/tests/
 ```
 
-In this second example the actions [create]{.title-ref},
-[destroy]{.title-ref}, [converge]{.title-ref} and [prepare]{.title-ref}
+In this second example the actions `create`,
+`destroy`, `converge` and `prepare`
 are loaded from a shared directory.
 
 ```yaml
