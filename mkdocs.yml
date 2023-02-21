@@ -51,9 +51,9 @@ extra:
       link: https://github.com/ansible-community/molecule
 
 nav:
-  - home: index.md
+  - Home: index.md
   - installation.md
-  - using:
+  - Using:
       - getting-started.md
       - usage.md
       - configuration.md
