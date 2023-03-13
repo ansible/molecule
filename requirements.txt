@@ -107,7 +107,7 @@ tomli==2.0.1
 typing-extensions==4.4.0
 typing-inspect==0.8.0
 urllib3==1.26.14
-virtualenv==20.18.0
+virtualenv==20.21.0
 watchdog==2.2.1
 wcmatch==8.4.1
 webencodings==0.5.1
