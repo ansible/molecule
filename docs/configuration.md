@@ -29,8 +29,7 @@ By default, `Molecule` will check whether the role name follows the name
 standard. If not, it will raise an error.
 
 If computed fully qualified role name does not follow current galaxy
-requirements, you can ignore it by adding [role_name_check:
-1]{.title-ref} inside the configuration file.
+requirements, you can ignore it by adding `role_name_check:1` inside the configuration file.
 
 It is strongly recommended to follow the name standard of
 [namespace](https://galaxy.ansible.com/docs/contributing/namespaces.html#galaxy-namespace-limitations)
@@ -138,9 +137,9 @@ managers.
 
 Molecule uses [Ansible](#ansible-1) to manage instances to operate on.
 Molecule supports any provider [Ansible](#ansible-1) supports. This work
-is offloaded to the [provisioner]{.title-ref}.
+is offloaded to the `provisioner`.
 
-The driver's name is specified in [molecule.yml]{.title-ref}, and can
+The driver's name is specified in `molecule.yml`, and can
 be overridden on the command line. Molecule will remember the last
 successful driver used, and continue to use the driver for all
 subsequent subcommands, or until the instances are destroyed by

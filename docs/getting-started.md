@@ -115,7 +115,7 @@ components that Molecule provides. These are:
 - The [scenario][] definition.
   Molecule relies on this configuration to control the scenario
   sequence order.
-- The [verifier](/configuration/#verifier)` framework. Molecule
+- The [verifier](/configuration/#verifier) framework. Molecule
   uses Ansible by default to provide a way to write specific state
   checking tests (such as deployment smoke tests) on the target
   instance.

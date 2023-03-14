@@ -38,7 +38,7 @@ LOG = logging.getLogger(__name__)
 
 class Ansible(base.Base):
     """
-    `Ansible`_ is the default provisioner.  No other provisioner will be \
+    `Ansible` is the default provisioner.  No other provisioner will be \
     supported.
 
     Molecule's provisioner manages the instances lifecycle.  However, the user
@@ -70,7 +70,7 @@ class Ansible(base.Base):
 
     !!! note
 
-        Molecule will remove any options matching '^[v]+$', and pass ``-vvv``
+        Molecule will remove any options matching `^[v]+$`, and pass ``-vvv``
         to the underlying ``ansible-playbook`` command when executing
         `molecule --debug`.
 
