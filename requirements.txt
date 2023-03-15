@@ -108,7 +108,7 @@ typing-extensions==4.5.0
 typing-inspect==0.8.0
 urllib3==1.26.14
 virtualenv==20.21.0
-watchdog==2.2.1
+watchdog==2.3.1
 wcmatch==8.4.1
 webencodings==0.5.1
 yamllint==1.29.0
