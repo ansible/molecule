@@ -69,7 +69,7 @@ mkdocstrings-python==0.8.3
 mypy-extensions==1.0.0
 nodeenv==1.7.0
 packaging==23.0
-pathspec==0.11.0
+pathspec==0.11.1
 pexpect==4.8.0
 pillow==9.4.0
 platformdirs==2.6.2
