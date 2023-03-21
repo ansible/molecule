@@ -106,7 +106,7 @@ tinycss2==1.2.1
 tomli==2.0.1
 typing-extensions==4.5.0
 typing-inspect==0.8.0
-urllib3==1.26.14
+urllib3==1.26.15
 virtualenv==20.21.0
 watchdog==2.3.1
 wcmatch==8.4.1
