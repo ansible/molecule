@@ -375,6 +375,31 @@ class Ansible(base.Base):
             ansible_ssh_common_args: -o IdentitiesOnly=no
     ```
 
+    Override tags:
+
+    ``` yaml
+        provisioner:
+        name: ansible
+        config_options:
+          tags:
+            run: tag1,tag2,tag3
+    ```
+
+    A typical use case is if you want to use tags within a scenario.
+    Don't forget to add a tag `always` in `converge.yml` as below.
+
+    ``` yaml
+        ---
+        - name: Converge
+          hosts: all
+          tasks:
+            - name: "Include acme.my_role_name"
+              ansible.builtin.include_role:
+                name: "acme.my_role_name"
+              tags:
+                - always
+    ```
+
     .. _`variables defined in a playbook`: https://docs.ansible.com/ansible/latest/user_guide/playbooks_variables.html#defining-variables-in-a-playbook
 
     Add arguments to ansible-playbook when running converge:
