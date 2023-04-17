@@ -14,7 +14,7 @@ asyncio==3.4.3
 attrs==22.2.0
 babel==2.11.0
 binaryornot==0.4.4
-black==23.1.0
+black==23.3.0
 bracex==2.3.post1
 cairocffi==1.4.0
 cairosvg==2.7.0
