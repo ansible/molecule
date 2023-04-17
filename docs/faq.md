@@ -97,7 +97,7 @@ Yes, roles contained in a
 [monorepo](https://en.wikipedia.org/wiki/Monorepo) with other roles are
 automatically picked up and `ANSIBLE_ROLES_PATH` is set accordingly. See
 [this
-page](https://molecule.readthedocs.io/en/latest/examples.html#monolith-repo)
+page](https://molecule.readthedocs.io/en/latest/examples/#monolith-repo)
 for more information.
 
 ## How can I add development/testing-only dependencies?
