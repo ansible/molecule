@@ -112,7 +112,7 @@ watchdog==2.3.1
 wcmatch==8.4.1
 webencodings==0.5.1
 yamllint==1.29.0
-zipp==3.12.1
+zipp==3.15.0
 
 # The following packages are considered to be unsafe in a requirements file:
 # setuptools
