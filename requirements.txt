@@ -43,7 +43,7 @@ flake8==6.0.0
 ghp-import==2.1.0
 gitdb==4.0.10
 gitpython==3.1.30
-griffe==0.25.4
+griffe==0.27.0
 identify==2.5.21
 idna==3.4
 importlib-metadata==6.0.0
