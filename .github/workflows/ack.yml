@@ -1,4 +1,5 @@
-# See https://github.com/ansible-community/devtools/blob/main/.github/workflows/ack.yml
+---
+# See https://github.com/ansible/devtools/blob/main/.github/workflows/ack.yml
 name: ack
 on:
   pull_request_target:
@@ -6,4 +7,4 @@ on:
 
 jobs:
   ack:
-    uses: ansible-community/devtools/.github/workflows/ack.yml@main
+    uses: ansible/devtools/.github/workflows/ack.yml@main

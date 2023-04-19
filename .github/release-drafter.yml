@@ -1,2 +1,2 @@
-# see https://github.com/ansible-community/devtools
-_extends: ansible-community/devtools
+# see https://github.com/ansible/devtools
+_extends: ansible/devtools
