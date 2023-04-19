@@ -1,21 +1,21 @@
 # https://docs.github.com/en/code-security/supply-chain-security/keeping-your-dependencies-updated-automatically/enabling-and-disabling-dependabot-version-updates
 version: 2
+enable-beta-ecosystems: true
 updates:
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: daily
     labels:
       - dependencies
       - skip-changelog
-    open-pull-requests-limit: 3
     allow:
-      - dependency-type: all
+      - dependency-name: "ansible*"
+      - dependency-name: pyyaml
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: daily
-    open-pull-requests-limit: 3
     labels:
-      - "dependencies"
-      - "skip-changelog"
+      - dependencies
+      - skip-changelog
