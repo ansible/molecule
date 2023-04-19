@@ -38,7 +38,7 @@ distro==1.8.0
 enrich==1.2.7
 exceptiongroup==1.1.0
 execnet==1.9.0
-filelock==3.9.0
+filelock==3.12.0
 flake8==6.0.0
 ghp-import==2.1.0
 gitdb==4.0.10
