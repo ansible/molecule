@@ -19,7 +19,9 @@
 #  DEALINGS IN THE SOFTWARE.
 """Schema v3 Validation Module."""
 
+import importlib.resources as pkg_resources
 import json
+import logging
 import os
 
 from jsonschema import validate as jsonschema_validate
@@ -27,25 +29,54 @@ from jsonschema.exceptions import ValidationError
 
 from molecule.data import __file__ as data_module
 
+LOG = logging.getLogger(__name__)
+
 
 def validate(c):
     """Perform schema validation."""
     result = []
-    schema_file = os.path.dirname(data_module) + "/molecule.json"
-    with open(schema_file, encoding="utf-8") as f:
-        schema = json.load(f)
+    schemas = []
 
-    try:
-        jsonschema_validate(c, schema)
-    except ValidationError as exc:
-        # handle validation error for driver name
-        if exc.json_path == "$.driver.name" and exc.message.endswith(
-            ("is not of type 'string'", "is not valid under any of the given schemas"),
-        ):
-            wrong_driver_name = str(exc.message.split()[0])
-            driver_name_err_msg = exc.schema["messages"]["anyOf"]
-            result.append(" ".join((wrong_driver_name, driver_name_err_msg)))
-        else:
-            result.append(exc.message)
+    schema_files = [os.path.dirname(data_module) + "/molecule.json"]
+    driver_name = c["driver"]["name"]
+    driver_schema_file = None
+
+    if driver_name == "delegated":
+        driver_schema_file = os.path.dirname(data_module) + "/driver.json"
+    else:
+        try:
+            with pkg_resources.path(f"molecule_{driver_name}", "driver.json") as p:
+                driver_schema_file = p.as_posix()
+        except FileNotFoundError:
+            msg = f"No schema found in {driver_name} driver."
+            LOG.warning(msg)
+        except ModuleNotFoundError:
+            msg = f"{driver_name} driver is not installed."
+            LOG.warning(msg)
+
+    if driver_schema_file:
+        schema_files.append(driver_schema_file)
+
+    for schema_file in schema_files:
+        with open(schema_file, encoding="utf-8") as f:
+            schema = json.load(f)
+        schemas.append(schema)
+
+    for schema in schemas:
+        try:
+            jsonschema_validate(c, schema)
+        except ValidationError as exc:
+            # handle validation error for driver name
+            if exc.json_path == "$.driver.name" and exc.message.endswith(
+                (
+                    "is not of type 'string'",
+                    "is not valid under any of the given schemas",
+                ),
+            ):
+                wrong_driver_name = str(exc.message.split()[0])
+                driver_name_err_msg = exc.schema["messages"]["anyOf"]
+                result.append(" ".join((wrong_driver_name, driver_name_err_msg)))
+            else:
+                result.append(exc.message)
 
     return result

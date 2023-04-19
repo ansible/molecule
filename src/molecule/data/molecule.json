@@ -68,16 +68,8 @@
       "type": "object"
     },
     "MoleculeDriverModel": {
-      "additionalProperties": false,
+      "additionalProperties": true,
       "properties": {
-        "cachier": {
-          "title": "Cachier",
-          "type": "string"
-        },
-        "default_box": {
-          "title": "DefaultBox",
-          "type": "string"
-        },
         "name": {
           "anyOf": [
             {
@@ -110,35 +102,6 @@
           "messages": {
             "anyOf": "is not one of ['azure', 'ec2', 'delegated', 'docker', 'containers', 'openstack', 'podman', 'vagrant', 'digitalocean', 'gce', 'libvirt', 'lxd', 'molecule-*', 'molecule_*', 'custom-*', 'custom_*']"
           }
-        },
-        "options": {
-          "$ref": "#/$defs/MoleculeDriverOptionsModel"
-        },
-        "parallel": {
-          "title": "Parallel",
-          "type": "boolean"
-        },
-        "provider": {
-          "title": "Provider",
-          "type": "object"
-        },
-        "provision": {
-          "title": "Provision",
-          "type": "boolean"
-        },
-        "safe_files": {
-          "items": {
-            "type": "string"
-          },
-          "title": "SafeFiles",
-          "type": "array"
-        },
-        "ssh_connection_options": {
-          "items": {
-            "type": "string"
-          },
-          "title": "SshConnectionOptions",
-          "type": "array"
         }
       },
       "title": "MoleculeDriverModel",
@@ -582,7 +545,7 @@
     },
     "platforms": {
       "items": {
-        "$ref": "#/$defs/MoleculePlatformModel"
+        "type": "object"
       },
       "title": "Platforms",
       "type": "array"
