@@ -136,6 +136,63 @@ skip-string-normalization = false
 profile = "black"
 known_first_party = "molecule"
 
+[tool.pylint."MESSAGES CONTROL"]
+disable = [
+  # TODO(ssbarnea): remove temporary skips adding during initial adoption:
+  "abstract-method",
+  "arguments-differ",
+  "broad-except",
+  "consider-merging-isinstance",
+  # We will clean this up in a dedicated refactoring commit
+  "consider-using-in",
+  "dangerous-default-value",
+  "duplicate-code",
+  "fixme",
+  "implicit-str-concat",
+  "import-outside-toplevel",
+  "inconsistent-return-statements",
+  "invalid-name",
+  "line-too-long",
+  "logging-format-interpolation",
+  "logging-not-lazy",
+  "missing-function-docstring",
+  "missing-module-docstring",
+  "no-else-raise",
+  "no-else-return",
+  "no-member",
+  "no-self-argument",
+  "no-value-for-parameter",
+  "not-callable",
+  "protected-access",
+  "raise-missing-from",
+  "redefined-builtin",
+  "redefined-outer-name",
+  "subprocess-run-check",
+  "super-init-not-called",
+  "super-with-arguments",
+  "too-few-public-methods",
+  "too-many-ancestors",
+  "too-many-arguments",
+  "too-many-public-methods",
+  "unidiomatic-typecheck",
+  "unnecessary-comprehension",
+  "unnecessary-lambda",
+  # Next rule was added because we cannot adjust the open calls during minor
+  # releases since there is no guarantee that this will not break existing
+  # scenarios (right now, we have no idea what encoding files that molecule
+  # wrote to disk have).
+  "unspecified-encoding",
+  "unused-argument",
+  "unused-import",
+  "unused-variable",
+  "useless-object-inheritance",
+  "useless-super-delegation",
+]
+
+[tool.pylint.SUMMARY]
+# We don't need the score spamming console, as we either pass or fail
+score = "n"
+
 [tool.pytest.ini_options]
 markers = [
   "serial: Run this test serially via filelock.",
