@@ -20,7 +20,6 @@
 #  DEALINGS IN THE SOFTWARE.
 """Molecule version information."""
 
-from __future__ import absolute_import, division, print_function
 
 from importlib.metadata import version
 

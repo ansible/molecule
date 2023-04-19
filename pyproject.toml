@@ -126,7 +126,7 @@ ignore-path = [
   "requirements.txt",
   "build",
   "molecule.egg-info",
-  "src/molecule.egg-info"
+  "src/molecule.egg-info",
 ]
 
 [tool.black]
@@ -196,7 +196,7 @@ score = "n"
 [tool.pytest.ini_options]
 markers = [
   "serial: Run this test serially via filelock.",
-  "extensive: marks tests that we want to skip by default, as they are indirectly covered by other tests"
+  "extensive: marks tests that we want to skip by default, as they are indirectly covered by other tests",
 ]
 norecursedirs = [
   ".eggs",
@@ -222,6 +222,48 @@ filterwarnings = [
   # ignore::UserWarning
 
 ]
+
+[tool.ruff]
+ignore = [
+  "E501", # we use black
+  # temporary disabled until we fix them:
+  "A",
+  "ANN",
+  "ARG",
+  "B",
+  "BLE001",
+  "C901",
+  "D",
+  "E741",
+  "EM",
+  "EXE",
+  "FBT",
+  "INP",
+  "ISC",
+  "N",
+  "PGH",
+  "PLC",
+  "PLR",
+  "PLW",
+  "PT",
+  "PTH",
+  "RET",
+  "S",
+  "SIM",
+  "SLF",
+  "T",
+  "TRY",
+]
+select = ["ALL"]
+target-version = "py39"
+# Same as Black.
+line-length = 88
+
+[tool.ruff.flake8-pytest-style]
+parametrize-values-type = "tuple"
+
+[tool.ruff.isort]
+known-first-party = ["ansiblelint"]
 
 [tool.setuptools_scm]
 local_scheme = "no-local-version"

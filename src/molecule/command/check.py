@@ -35,8 +35,7 @@ class Check(base.Base):
     """Check Command Class."""
 
     def execute(self, action_args=None):
-        """
-        Execute the actions necessary to perform a `molecule check` and \
+        """Execute the actions necessary to perform a `molecule check` and \
         returns None.
 
         :return: None
@@ -59,7 +58,8 @@ class Check(base.Base):
 )
 def check(ctx, scenario_name, parallel):  # pragma: no cover
     """Use the provisioner to perform a Dry-Run (destroy, dependency, create, \
-    prepare, converge)."""
+    prepare, converge).
+    """
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)
     command_args = {"parallel": parallel, "subcommand": subcommand}

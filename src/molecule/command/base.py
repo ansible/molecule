@@ -39,12 +39,11 @@ MOLECULE_GLOB = os.environ.get("MOLECULE_GLOB", "molecule/*/molecule.yml")
 MOLECULE_DEFAULT_SCENARIO_NAME = "default"
 
 
-class Base(object, metaclass=abc.ABCMeta):
+class Base(metaclass=abc.ABCMeta):
     """An abstract base class used to define the command interface."""
 
-    def __init__(self, c: config.Config):
-        """
-        Initialize code for all command classes.
+    def __init__(self, c: config.Config) -> None:
+        """Initialize code for all command classes.
 
         :param c: An instance of a Molecule config.
         :returns: None
@@ -56,15 +55,14 @@ class Base(object, metaclass=abc.ABCMeta):
         """Decorate execute from all subclasses."""
         super().__init_subclass__()
         for wrapper in logger.get_section_loggers():
-            setattr(cls, "execute", wrapper(cls.execute))
+            cls.execute = wrapper(cls.execute)  # type: ignore
 
     @abc.abstractmethod
     def execute(self, action_args=None):  # pragma: no cover
         pass
 
     def _setup(self) -> None:
-        """
-        Prepare Molecule's provisioner and returns None.
+        """Prepare Molecule's provisioner and returns None.
 
         :return: None
         """
@@ -74,8 +72,7 @@ class Base(object, metaclass=abc.ABCMeta):
 
 
 def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()):
-    """
-    Execute scenario sequences based on parsed command-line arguments.
+    """Execute scenario sequences based on parsed command-line arguments.
 
     This is useful for subcommands that run scenario sequences, which
     excludes subcommands such as ``list``, ``login``, and ``matrix``.
@@ -94,7 +91,8 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
     if scenario_name:
         glob_str = glob_str.replace("*", scenario_name)
     scenarios = molecule.scenarios.Scenarios(
-        get_configs(args, command_args, ansible_args, glob_str), scenario_name
+        get_configs(args, command_args, ansible_args, glob_str),
+        scenario_name,
     )
 
     if scenario_name and scenarios:
@@ -109,7 +107,8 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
             role_name_check = scenario.config.config["role_name_check"]
             LOG.info("Performing prerun with role_name_check=%s...", role_name_check)
             scenario.config.runtime.prepare_environment(
-                install_local=True, role_name_check=role_name_check
+                install_local=True,
+                role_name_check=role_name_check,
             )
 
         if command_args.get("subcommand") == "reset":
@@ -154,8 +153,7 @@ def execute_subcommand(config, subcommand_and_args):
 
 
 def execute_scenario(scenario):
-    """
-    Execute each command in the given scenario's configured sequence.
+    """Execute each command in the given scenario's configured sequence.
 
     :param scenario: The scenario to execute.
     :returns: None
@@ -174,8 +172,7 @@ def execute_scenario(scenario):
 
 
 def get_configs(args, command_args, ansible_args=(), glob_str=MOLECULE_GLOB):
-    """
-    Glob the current directory for Molecule config files, instantiate config \
+    """Glob the current directory for Molecule config files, instantiate config \
     objects, and returns a list.
 
     :param args: A dict of options, arguments and commands from the CLI.
@@ -200,8 +197,7 @@ def get_configs(args, command_args, ansible_args=(), glob_str=MOLECULE_GLOB):
 
 
 def _verify_configs(configs, glob_str=MOLECULE_GLOB):
-    """
-    Verify a Molecule config was found and returns None.
+    """Verify a Molecule config was found and returns None.
 
     :param configs: A list containing absolute paths to Molecule config files.
     :return: None
@@ -252,7 +248,9 @@ def click_group_ex():
 def click_command_ex() -> Callable[[Callable[..., Any]], click.Command]:
     """Return extended version of click.command()."""
     return click.command(  # type: ignore
-        cls=HelpColorsCommand, help_headers_color="yellow", help_options_color="green"
+        cls=HelpColorsCommand,
+        help_headers_color="yellow",
+        help_options_color="green",
     )
 
 

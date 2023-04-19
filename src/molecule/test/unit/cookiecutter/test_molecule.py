@@ -31,22 +31,22 @@ class CommandBase(base.Base):
     """CommandBase Class."""
 
 
-@pytest.fixture
+@pytest.fixture()
 def _base_class():
     return CommandBase
 
 
-@pytest.fixture
+@pytest.fixture()
 def _instance(_base_class):
     return _base_class()
 
 
-@pytest.fixture
+@pytest.fixture()
 def _role_directory():
     return "."
 
 
-@pytest.fixture
+@pytest.fixture()
 def _command_args():
     return {
         "dependency_name": "galaxy",
@@ -58,10 +58,14 @@ def _command_args():
     }
 
 
-@pytest.fixture
+@pytest.fixture()
 def _molecule_file(_role_directory):
     return os.path.join(
-        _role_directory, "test-role", "molecule", "default", "molecule.yml"
+        _role_directory,
+        "test-role",
+        "molecule",
+        "default",
+        "molecule.yml",
     )
 
 

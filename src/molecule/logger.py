@@ -22,8 +22,9 @@
 import logging
 import os
 import time
+from collections.abc import Iterable
 from functools import wraps
-from typing import Callable, Iterable
+from typing import Callable
 
 from ansible_compat.ports import cache
 from enrich.logging import RichHandler
@@ -40,8 +41,7 @@ LOG_LEVEL_LUT = {
 
 
 def configure() -> None:
-    """
-    Configure a molecule root logger.
+    """Configure a molecule root logger.
 
     All other loggers will inherit the configuration we set here.
     """
@@ -49,7 +49,10 @@ def configure() -> None:
     # libraries.
     logger = logging.getLogger()
     handler = RichHandler(
-        console=console_stderr, show_time=False, show_path=False, markup=True
+        console=console_stderr,
+        show_time=False,
+        show_path=False,
+        markup=True,
     )  # type: ignore
     logger.addHandler(handler)
     logger.propagate = False
@@ -57,8 +60,7 @@ def configure() -> None:
 
 
 def set_log_level(log_level: int, debug: bool) -> None:
-    """
-    Set logging level.
+    """Set logging level.
 
     :param log_level: verbosity control (0 - INFO, 1 - DEBUG)
     :param debug: debug mode indicator
@@ -71,8 +73,7 @@ def set_log_level(log_level: int, debug: bool) -> None:
 
 
 def get_logger(name: str) -> logging.Logger:
-    """
-    Return a child logger.
+    """Return a child logger.
 
     Returned logger inherits configuration from the molecule logger.
     """
@@ -199,10 +200,10 @@ def get_section_loggers() -> Iterable[Callable]:
     if not os.getenv("CI"):
         return default_section_loggers
     elif os.getenv("GITHUB_ACTIONS"):
-        return [github_actions_groups] + default_section_loggers
+        return [github_actions_groups, *default_section_loggers]
     elif os.getenv("GITLAB_CI"):
-        return [gitlab_ci_sections] + default_section_loggers
+        return [gitlab_ci_sections, *default_section_loggers]
     elif os.getenv("TRAVIS"):
-        return [travis_ci_folds] + default_section_loggers
+        return [travis_ci_folds, *default_section_loggers]
     # CI is set but no extra section_loggers apply.
     return default_section_loggers

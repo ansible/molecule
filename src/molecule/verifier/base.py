@@ -26,14 +26,13 @@ import molecule
 from molecule import util
 
 
-class Verifier(object):
+class Verifier:
     """Verifier Base Class."""
 
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, config=None):
-        """
-        Initialize code for all :ref:`Verifier` classes.
+    def __init__(self, config=None) -> None:
+        """Initialize code for all :ref:`Verifier` classes.
 
         :param config: An instance of a Molecule config.
         :returns: None
@@ -43,8 +42,7 @@ class Verifier(object):
     @property
     @abc.abstractmethod
     def name(self):  # pragma: no cover
-        """
-        Name of the verifier and returns a string.
+        """Name of the verifier and returns a string.
 
         :returns: str
         """
@@ -52,8 +50,7 @@ class Verifier(object):
     @property
     @abc.abstractmethod
     def default_options(self):  # pragma: no cover
-        """
-        Get default CLI arguments provided to ``cmd`` as a dict.
+        """Get default CLI arguments provided to ``cmd`` as a dict.
 
         :return: dict
         """
@@ -61,24 +58,21 @@ class Verifier(object):
     @property
     @abc.abstractmethod
     def default_env(self):  # pragma: no cover
-        """
-        Get default env variables provided to ``cmd`` as a dict.
+        """Get default env variables provided to ``cmd`` as a dict.
 
         :return: dict
         """
 
     @abc.abstractmethod
     def execute(self, action_args=None):  # pragma: no cover
-        """
-        Execute ``cmd`` and returns None.
+        """Execute ``cmd`` and returns None.
 
         :return: None
         """
 
     @abc.abstractmethod
     def schema(self):  # pragma: no cover
-        """
-        Return validation schema.
+        """Return validation schema.
 
         :return: None
         """
@@ -97,13 +91,15 @@ class Verifier(object):
     @property
     def options(self):
         return util.merge_dicts(
-            self.default_options, self._config.config["verifier"]["options"]
+            self.default_options,
+            self._config.config["verifier"]["options"],
         )
 
     @property
     def env(self):
         return util.merge_dicts(
-            self.default_env, self._config.config["verifier"]["env"]
+            self.default_env,
+            self._config.config["verifier"]["env"],
         )
 
     def __eq__(self, other):
@@ -118,11 +114,11 @@ class Verifier(object):
         """Implement hashing."""
         return self.name.__hash__()
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return readable string representation of object."""
         return self.name
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Return detailed string representation of object."""
         return self.name
 
@@ -134,6 +130,6 @@ class Verifier(object):
                 "scenario",
                 "verifier",
                 self.name,
-            )
+            ),
         )
         return p

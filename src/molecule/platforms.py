@@ -26,9 +26,8 @@ from molecule import util
 LOG = logging.getLogger(__name__)
 
 
-class Platforms(object):
-    """
-    Platforms define the instances to be tested, and the groups to which the \
+class Platforms:
+    """Platforms define the instances to be tested, and the groups to which the \
     instances belong.
 
     ``` yaml
@@ -69,9 +68,8 @@ class Platforms(object):
     ```
     """
 
-    def __init__(self, config, parallelize_platforms=False, platform_name=None):
-        """
-        Initialize a new platform class and returns None.
+    def __init__(self, config, parallelize_platforms=False, platform_name=None) -> None:
+        """Initialize a new platform class and returns None.
 
         :param config: An instance of a Molecule config.
         :param parallelize_platforms: Parallel mode. Default is False.
@@ -80,12 +78,14 @@ class Platforms(object):
         """
         if platform_name:
             config.config["platforms"] = util._filter_platforms(
-                config.config, platform_name
-            )
+                config.config,
+                platform_name,
+            )  # type: ignore
         if parallelize_platforms:
             config.config["platforms"] = util._parallelize_platforms(
-                config.config, config._run_uuid
-            )
+                config.config,
+                config._run_uuid,
+            )  # type: ignore
         self._config = config
 
     @property

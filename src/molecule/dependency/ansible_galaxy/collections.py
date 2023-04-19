@@ -16,15 +16,17 @@ class Collections(AnsibleGalaxyBase):
 
     @property
     def default_options(self):
-        general = super(Collections, self).default_options
+        general = super().default_options
         specific = util.merge_dicts(
             general,
             {
                 "requirements-file": os.path.join(
-                    self._config.scenario.directory, "collections.yml"
+                    self._config.scenario.directory,
+                    "collections.yml",
                 ),
                 "collections-path": os.path.join(
-                    self._config.scenario.ephemeral_directory, "collections"
+                    self._config.scenario.ephemeral_directory,
+                    "collections",
                 ),
             },
         )
@@ -33,9 +35,10 @@ class Collections(AnsibleGalaxyBase):
 
     @property
     def default_env(self):
-        general = super(Collections, self).default_env
+        general = super().default_env
         return util.merge_dicts(
-            general, {self._config.ansible_collections_path: self.install_path}
+            general,
+            {self._config.ansible_collections_path: self.install_path},
         )
 
     @property

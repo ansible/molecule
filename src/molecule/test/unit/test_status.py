@@ -23,7 +23,7 @@ import pytest
 from molecule.status import Status
 
 
-@pytest.fixture
+@pytest.fixture()
 def _instance():
     s = Status(
         instance_name=None,

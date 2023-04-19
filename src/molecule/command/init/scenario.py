@@ -21,7 +21,6 @@
 
 import logging
 import os
-from typing import Dict
 
 import click
 
@@ -56,15 +55,14 @@ class Scenario(base.Base):
 
         Initialize a new scenario using a local *cookiecutter* template for the
         driver configuration.
-    """  # noqa
+    """
 
-    def __init__(self, command_args: Dict[str, str]):
+    def __init__(self, command_args: dict[str, str]) -> None:
         """Construct Scenario."""
         self._command_args = command_args
 
     def execute(self, action_args=None):
-        """
-        Execute the actions necessary to perform a `molecule init scenario` and \
+        """Execute the actions necessary to perform a `molecule init scenario` and \
         returns None.
 
         :return: None
@@ -76,7 +74,7 @@ class Scenario(base.Base):
         msg = f"Initializing new scenario {scenario_name}..."
         LOG.info(msg)
         molecule_directory = config.molecule_directory(
-            os.path.join(role_directory, role_name)
+            os.path.join(role_directory, role_name),
         )
         scenario_directory = os.path.join(molecule_directory, scenario_name)
 
@@ -109,7 +107,9 @@ class Scenario(base.Base):
         self._process_templates("molecule", self._command_args, role_directory)
         for template in templates:
             self._process_templates(
-                template, self._command_args, scenario_base_directory
+                template,
+                self._command_args,
+                scenario_base_directory,
             )
 
         role_directory = os.path.join(role_directory, role_name)
@@ -135,7 +135,8 @@ def _default_scenario_exists(ctx, param, value: str):  # pragma: no cover
         return value
 
     default_scenario_directory = os.path.join(
-        "molecule", command_base.MOLECULE_DEFAULT_SCENARIO_NAME
+        "molecule",
+        command_base.MOLECULE_DEFAULT_SCENARIO_NAME,
     )
     if not os.path.exists(default_scenario_directory):
         msg = f"The default scenario not found.  Please create a scenario named '{command_base.MOLECULE_DEFAULT_SCENARIO_NAME}' first."

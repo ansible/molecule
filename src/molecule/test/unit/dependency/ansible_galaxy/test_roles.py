@@ -26,41 +26,41 @@ from molecule import config
 from molecule.dependency.ansible_galaxy import roles
 
 
-@pytest.fixture
+@pytest.fixture()
 def _patched_ansible_galaxy_has_requirements_file(mocker):
     m = mocker.patch(
-        ("molecule.dependency.ansible_galaxy.roles." "Roles._has_requirements_file")
+        "molecule.dependency.ansible_galaxy.roles." "Roles._has_requirements_file",
     )
     m.return_value = True
 
     return m
 
 
-@pytest.fixture
+@pytest.fixture()
 def _dependency_section_data():
     return {
         "dependency": {
             "name": "galaxy",
             "options": {"foo": "bar", "v": True, "requirements-file": "foo.yml"},
             "env": {"FOO": "bar"},
-        }
+        },
     }
 
 
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-@pytest.fixture
+@pytest.fixture()
 def _instance(_dependency_section_data, patched_config_validate, config_instance):
     return roles.Roles(config_instance)
 
 
-@pytest.fixture
+@pytest.fixture()
 def role_file(_instance):
     return os.path.join(_instance._config.scenario.directory, "requirements.yml")
 
 
-@pytest.fixture
+@pytest.fixture()
 def roles_path(_instance):
     return os.path.join(_instance._config.scenario.ephemeral_directory, "roles")
 
@@ -85,7 +85,7 @@ def test_default_env_property(_instance):
 
 
 def test_name_property(_instance):
-    assert "galaxy" == _instance.name
+    assert _instance.name == "galaxy"
 
 
 def test_enabled_property(_instance):
@@ -121,7 +121,7 @@ def test_options_property_handles_cli_args(role_file, roles_path, _instance):
 
 @pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
 def test_env_property(_instance):
-    assert "bar" == _instance.env["FOO"]
+    assert _instance.env["FOO"] == "bar"
 
 
 @pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
@@ -152,12 +152,15 @@ def test_execute(
     _instance.execute()
 
     role_directory = os.path.join(
-        _instance._config.scenario.directory, _instance.options["roles-path"]
+        _instance._config.scenario.directory,
+        _instance.options["roles-path"],
     )
     assert os.path.isdir(role_directory)
 
     patched_run_command.assert_called_once_with(
-        "patched-command", debug=False, check=True
+        "patched-command",
+        debug=False,
+        check=True,
     )
 
     msg = "Dependency completed successfully."
@@ -165,7 +168,9 @@ def test_execute(
 
 
 def test_execute_does_not_execute_when_disabled(
-    patched_run_command, patched_logger_warning, _instance
+    patched_run_command,
+    patched_logger_warning,
+    _instance,
 ):
     _instance._config.config["dependency"]["enabled"] = False
     _instance.execute()
@@ -201,22 +206,25 @@ def test_execute_bakes(
     _instance.execute()
     assert _instance._sh_command is not None
 
-    assert 1 == patched_run_command.call_count
+    assert patched_run_command.call_count == 1
 
 
 def test_galaxy_executes_catches_and_exits_return_code(
-    patched_run_command, _patched_ansible_galaxy_has_requirements_file, _instance
+    patched_run_command,
+    _patched_ansible_galaxy_has_requirements_file,
+    _instance,
 ):
     patched_run_command.side_effect = SystemExit(1)
     with pytest.raises(SystemExit) as e:
         _instance.execute()
 
-    assert 1 == e.value.code
+    assert e.value.code == 1
 
 
 def test_setup(_instance):
     role_directory = os.path.join(
-        _instance._config.scenario.directory, _instance.options["roles-path"]
+        _instance._config.scenario.directory,
+        _instance.options["roles-path"],
     )
     assert not os.path.isdir(role_directory)
 

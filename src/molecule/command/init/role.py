@@ -34,8 +34,7 @@ LOG = logging.getLogger(__name__)
 
 
 class Role(base.Base):
-    """
-    Init Role Command Class.
+    """Init Role Command Class.
 
     .. program:: molecule init role acme.foo
 
@@ -48,13 +47,12 @@ class Role(base.Base):
         command in order to generate a custom ``molecule`` scenario.
     """
 
-    def __init__(self, command_args):
+    def __init__(self, command_args) -> None:
         """Construct Role."""
         self._command_args = command_args
 
     def execute(self, action_args=None):
-        """
-        Execute the actions necessary to perform a `molecule init role` and \
+        """Execute the actions necessary to perform a `molecule init role` and \
         returns None.
 
         :return: None
@@ -71,7 +69,7 @@ class Role(base.Base):
                 util.sysexit_with_message(
                     "Outside collections you must mention role "
                     "namespace like: molecule init role 'acme.myrole'. Be sure "
-                    "you use only lowercase characters and underlines. See https://galaxy.ansible.com/docs/contributing/creating_role.html"
+                    "you use only lowercase characters and underlines. See https://galaxy.ansible.com/docs/contributing/creating_role.html",
                 )
             namespace, role_name = role_name.split(".")
 
@@ -87,7 +85,7 @@ class Role(base.Base):
 
         if result.returncode != 0:
             util.sysexit_with_message(
-                f"Galaxy failed to create role, returned {result.returncode!s}"
+                f"Galaxy failed to create role, returned {result.returncode!s}",
             )
 
         if namespace:
@@ -109,11 +107,15 @@ class Role(base.Base):
             api.verifiers()[self._command_args["verifier_name"]].template_dir(),
         ]
         self._process_templates(
-            "molecule", {**self._command_args, "role_name": role_name}, role_directory
+            "molecule",
+            {**self._command_args, "role_name": role_name},
+            role_directory,
         )
         for template in templates:
             self._process_templates(
-                template, self._command_args, scenario_base_directory
+                template,
+                self._command_args,
+                scenario_base_directory,
             )
 
         role_directory = os.path.join(role_directory, role_name)

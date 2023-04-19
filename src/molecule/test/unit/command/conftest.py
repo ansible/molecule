@@ -20,30 +20,26 @@
 import pytest
 
 
-@pytest.fixture
+@pytest.fixture()
 def command_patched_ansible_create(mocker):
     return mocker.patch("molecule.provisioner.ansible.Ansible.create")
 
 
-@pytest.fixture
+@pytest.fixture()
 def command_driver_delegated_section_data():
     x = {
         "driver": {
             "name": "delegated",
             "options": {
                 "managed": False,
-                # "login_cmd_template": "docker exec -ti {instance} bash",
-                # "ansible_connection_options": {"ansible_connection": "docker"},
             },
-        }
+        },
     }
     # if "DOCKER_HOST" in os.environ:
     #     x["driver"]["options"]["ansible_docker_extra_args"] = "-H={}".format(
-    #         os.environ["DOCKER_HOST"]
-    #     )
     return x
 
 
-@pytest.fixture
+@pytest.fixture()
 def command_driver_delegated_managed_section_data():
     return {"driver": {"name": "delegated", "managed": True}}

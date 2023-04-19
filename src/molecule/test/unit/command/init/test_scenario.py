@@ -25,7 +25,7 @@ import pytest
 from molecule.command.init import scenario
 
 
-@pytest.fixture
+@pytest.fixture()
 def _command_args():
     return {
         "driver_name": "delegated",
@@ -36,15 +36,16 @@ def _command_args():
     }
 
 
-@pytest.fixture
+@pytest.fixture()
 def _instance(_command_args):
     return scenario.Scenario(_command_args)
 
 
-@pytest.fixture
+@pytest.fixture()
 def invalid_template_dir(resources_folder_path):
     invalid_role_template_path = os.path.join(
-        resources_folder_path, "invalid_scenario_template"
+        resources_folder_path,
+        "invalid_scenario_template",
     )
     return invalid_role_template_path
 
@@ -68,14 +69,17 @@ def test_execute_scenario_exists(temp_dir, _instance, patched_logger_critical):
     with pytest.raises(SystemExit) as e:
         _instance.execute()
 
-    assert 1 == e.value.code
+    assert e.value.code == 1
 
     msg = "The directory molecule/test-scenario exists. " "Cannot create new scenario."
     patched_logger_critical.assert_called_once_with(msg)
 
 
 def test_execute_with_invalid_driver(
-    temp_dir, _instance, _command_args, patched_logger_critical
+    temp_dir,
+    _instance,
+    _command_args,
+    patched_logger_critical,
 ):
     _command_args["driver_name"] = "ec3"
 

@@ -22,14 +22,13 @@
 import abc
 
 
-class Base(object):
+class Base:
     """Provisioner Base Class."""
 
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, config):
-        """
-        Initialize code for all :ref:`Provisioner` classes.
+    def __init__(self, config) -> None:
+        """Initialize code for all :ref:`Provisioner` classes.
 
         :param config: An instance of a Molecule config.
         :returns: None
@@ -39,8 +38,7 @@ class Base(object):
     @property
     @abc.abstractmethod
     def default_options(self):  # pragma: no cover
-        """
-        Get default CLI arguments provided to ``cmd`` as a dict.
+        """Get default CLI arguments provided to ``cmd`` as a dict.
 
         :return: dict
         """
@@ -48,8 +46,7 @@ class Base(object):
     @property
     @abc.abstractmethod
     def default_env(self):  # pragma: no cover
-        """
-        Get default env variables provided to ``cmd`` as a dict.
+        """Get default env variables provided to ``cmd`` as a dict.
 
         :return: dict
         """
@@ -57,8 +54,7 @@ class Base(object):
     @property
     @abc.abstractmethod
     def name(self):  # pragma: no cover
-        """
-        Name of the provisioner and returns a string.
+        """Name of the provisioner and returns a string.
 
         :returns: str
         """

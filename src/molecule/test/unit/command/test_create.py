@@ -23,7 +23,7 @@ import pytest
 from molecule.command import create
 
 
-@pytest.fixture
+@pytest.fixture()
 def _patched_create_setup(mocker):
     return mocker.patch("molecule.command.create.Create._setup")
 
@@ -47,7 +47,7 @@ def test_execute(
     assert "default" in args
     assert "converge" in args
 
-    assert "delegated" == config_instance.state.driver
+    assert config_instance.state.driver == "delegated"
 
     command_patched_ansible_create.assert_called_once_with()
 
@@ -55,7 +55,9 @@ def test_execute(
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["command_driver_delegated_section_data"], indirect=True
+    "config_instance",
+    ["command_driver_delegated_section_data"],
+    indirect=True,
 )
 def test_execute_skips_when_delegated_driver(
     _patched_create_setup,
@@ -74,7 +76,9 @@ def test_execute_skips_when_delegated_driver(
 
 @pytest.mark.skip(reason="create not running for delegated")
 def test_execute_skips_when_instances_already_created(
-    patched_logger_warning, command_patched_ansible_create, config_instance
+    patched_logger_warning,
+    command_patched_ansible_create,
+    config_instance,
 ):
     config_instance.state.change_state("created", True)
     c = create.Create(config_instance)

@@ -23,7 +23,7 @@ import pytest
 from molecule.command import syntax
 
 
-@pytest.fixture
+@pytest.fixture()
 def _patched_ansible_syntax(mocker):
     return mocker.patch("molecule.provisioner.ansible.Ansible.syntax")
 

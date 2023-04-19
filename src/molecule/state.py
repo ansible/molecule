@@ -40,7 +40,7 @@ class InvalidState(Exception):
     """Exception class raised when an error occurs in :class:`.State`."""
 
 
-class State(object):
+class State:
     """A class which manages the state file.
 
     Intended to be used as a singleton throughout a given Molecule config.
@@ -58,17 +58,16 @@ class State(object):
         Molecule.
     """
 
-    def __init__(self, config):
-        """
-        Initialize a new state class and returns None.
+    def __init__(self, config) -> None:
+        """Initialize a new state class and returns None.
 
         :param config: An instance of a Molecule config.
         :returns: None
         """
         self._config = config
-        self._state_file = self._get_state_file()
-        self._data = self._get_data()
-        self._write_state_file()
+        self._state_file = self._get_state_file()  # type: ignore
+        self._data = self._get_data()  # type: ignore
+        self._write_state_file()  # type: ignore
 
     def marshal(func):
         def wrapper(self, *args, **kwargs):
@@ -115,8 +114,7 @@ class State(object):
 
     @marshal  # type: ignore
     def change_state(self, key, value):
-        """
-        Change the state of the instance data with the given \
+        """Change the state of the instance data with the given \
         ``key`` and the provided ``value``.
 
         Wrapping with a decorator is probably not necessary.

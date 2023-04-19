@@ -16,15 +16,17 @@ class Roles(AnsibleGalaxyBase):
 
     @property
     def default_options(self):
-        general = super(Roles, self).default_options
+        general = super().default_options
         specific = util.merge_dicts(
             general,
             {
                 "role-file": os.path.join(
-                    self._config.scenario.directory, "requirements.yml"
+                    self._config.scenario.directory,
+                    "requirements.yml",
                 ),
                 "roles-path": os.path.join(
-                    self._config.scenario.ephemeral_directory, "roles"
+                    self._config.scenario.ephemeral_directory,
+                    "roles",
                 ),
             },
         )

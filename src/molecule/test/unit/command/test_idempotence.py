@@ -22,7 +22,7 @@ import pytest
 from molecule.command import idempotence
 
 
-@pytest.fixture
+@pytest.fixture()
 def _patched_is_idempotent(mocker):
     return mocker.patch("molecule.command.idempotence.Idempotence._is_idempotent")
 
@@ -30,7 +30,7 @@ def _patched_is_idempotent(mocker):
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-@pytest.fixture
+@pytest.fixture()
 def _instance(patched_config_validate, config_instance):
     config_instance.state.change_state("converged", True)
 
@@ -60,13 +60,15 @@ def test_execute(
 
 
 def test_execute_raises_when_not_converged(
-    patched_logger_critical, patched_ansible_converge, _instance
+    patched_logger_critical,
+    patched_ansible_converge,
+    _instance,
 ):
     _instance._config.state.change_state("converged", False)
     with pytest.raises(SystemExit) as e:
         _instance.execute()
 
-    assert 1 == e.value.code
+    assert e.value.code == 1
 
     msg = "Instances not converged.  Please converge instances first."
     patched_logger_critical.assert_called_once_with(msg)
@@ -83,7 +85,7 @@ def test_execute_raises_when_fails_idempotence(
     with pytest.raises(SystemExit) as e:
         _instance.execute()
 
-    assert 1 == e.value.code
+    assert e.value.code == 1
 
     msg = "Idempotence test failed because of the following tasks:\n"
     patched_logger_critical.assert_called_once_with(msg)

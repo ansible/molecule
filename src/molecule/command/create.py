@@ -34,8 +34,7 @@ class Create(base.Base):
     """Create Command Class."""
 
     def execute(self, action_args=None):
-        """
-        Execute the actions necessary to perform a `molecule create` and \
+        """Execute the actions necessary to perform a `molecule create` and \
         returns None.
 
         :return: None

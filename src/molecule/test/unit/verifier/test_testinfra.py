@@ -27,7 +27,7 @@ from molecule import config, util
 from molecule.verifier import testinfra
 
 
-@pytest.fixture
+@pytest.fixture()
 def _patched_testinfra_get_tests(mocker):
     m = mocker.patch("molecule.verifier.testinfra.Testinfra._get_tests")
     m.return_value = ["foo.py", "bar.py"]
@@ -35,7 +35,7 @@ def _patched_testinfra_get_tests(mocker):
     return m
 
 
-@pytest.fixture
+@pytest.fixture()
 def _verifier_section_data():
     return {
         "verifier": {
@@ -43,24 +43,24 @@ def _verifier_section_data():
             "options": {"foo": "bar", "v": True, "verbose": True},
             "additional_files_or_dirs": ["file1.py", "file2.py", "match*.py", "dir/*"],
             "env": {"FOO": "bar"},
-        }
+        },
     }
 
 
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-@pytest.fixture
+@pytest.fixture()
 def _instance(patched_config_validate, config_instance):
     return testinfra.Testinfra(config_instance)
 
 
-@pytest.fixture
+@pytest.fixture()
 def inventory_file(_instance):
     return _instance._config.provisioner.inventory_file
 
 
-@pytest.fixture
+@pytest.fixture()
 def inventory_directory(_instance):
     return _instance._config.provisioner.inventory_directory
 
@@ -93,7 +93,9 @@ def test_default_options_property_updates_debug(inventory_directory, _instance):
 
 
 def test_default_options_property_updates_sudo(
-    inventory_directory, _instance, _patched_testinfra_get_tests
+    inventory_directory,
+    _instance,
+    _patched_testinfra_get_tests,
 ):
     _instance._config.args = {"sudo": True}
     x = {
@@ -134,7 +136,7 @@ def test_additional_files_or_dirs_property(_instance):
 
 @pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
 def test_env_property(_instance):
-    assert "bar" == _instance.env["FOO"]
+    assert _instance.env["FOO"] == "bar"
     assert "ANSIBLE_CONFIG" in _instance.env
     assert "ANSIBLE_ROLES_PATH" in _instance.env
     assert "ANSIBLE_LIBRARY" in _instance.env
@@ -142,7 +144,7 @@ def test_env_property(_instance):
 
 
 def test_name_property(_instance):
-    assert "testinfra" == _instance.name
+    assert _instance.name == "testinfra"
 
 
 def test_enabled_property(_instance):
@@ -155,16 +157,18 @@ def test_directory_property(_instance):
     assert ["molecule", "default", "tests"] == parts[-3:]
 
 
-@pytest.fixture
+@pytest.fixture()
 def _verifier_testinfra_directory_section_data():
     return {"verifier": {"name": "testinfra", "directory": "/tmp/foo/bar"}}
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["_verifier_testinfra_directory_section_data"], indirect=True
+    "config_instance",
+    ["_verifier_testinfra_directory_section_data"],
+    indirect=True,
 )
 def test_directory_property_overridden(_instance):
-    assert "/tmp/foo/bar" == _instance.directory
+    assert _instance.directory == "/tmp/foo/bar"
 
 
 @pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
@@ -238,7 +242,9 @@ def test_execute(
 
 
 def test_execute_does_not_execute(
-    patched_run_command, patched_logger_warning, _instance
+    patched_run_command,
+    patched_logger_warning,
+    _instance,
 ):
     _instance._config.config["verifier"]["enabled"] = False
     _instance.execute()
@@ -250,7 +256,9 @@ def test_execute_does_not_execute(
 
 
 def test_does_not_execute_without_tests(
-    patched_run_command, patched_logger_warning, _instance
+    patched_run_command,
+    patched_logger_warning,
+    _instance,
 ):
     _instance.execute()
 
@@ -265,14 +273,16 @@ def test_execute_bakes(patched_run_command, _patched_testinfra_get_tests, _insta
 
     assert _instance._testinfra_command is not None
 
-    assert 1 == patched_run_command.call_count
+    assert patched_run_command.call_count == 1
 
 
 def test_testinfra_executes_catches_and_exits_return_code(
-    patched_run_command, _patched_testinfra_get_tests, _instance
+    patched_run_command,
+    _patched_testinfra_get_tests,
+    _instance,
 ):
     patched_run_command.side_effect = SystemExit(1)
     with pytest.raises(SystemExit) as e:
         _instance.execute()
 
-    assert 1 == e.value.code
+    assert e.value.code == 1

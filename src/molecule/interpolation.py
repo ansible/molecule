@@ -17,21 +17,20 @@
 """Iterpolation Module."""
 
 import string
-from typing import MutableMapping, Type
+from collections.abc import MutableMapping
 
 
 class InvalidInterpolation(Exception):
     """InvalidInterpolation Exception."""
 
-    def __init__(self, string: str, place: Exception):
+    def __init__(self, string: str, place: Exception) -> None:
         """Construct InvalidInterpolation."""
         self.string = string
         self.place = place
 
 
-class Interpolator(object):
-    """
-    Configuration options may contain environment variables.
+class Interpolator:
+    """Configuration options may contain environment variables.
 
     For example, suppose the shell contains ``VERIFIER_NAME=testinfra`` and
     the following molecule.yml is supplied.
@@ -72,8 +71,10 @@ class Interpolator(object):
     """
 
     def __init__(
-        self, templater: Type["TemplateWithDefaults"], mapping: MutableMapping
-    ):
+        self,
+        templater: type["TemplateWithDefaults"],
+        mapping: MutableMapping,
+    ) -> None:
         """Construct Interpolator."""
         self.templater = templater
         self.mapping = mapping
@@ -90,7 +91,7 @@ class TemplateWithDefaults(string.Template):
 
     idpattern = r"[_a-z][_a-z0-9]*(?::?-[^}]+)?"
 
-    # Modified from python2.7/string.py
+    # pylint: disable=too-many-return-statements
     def substitute(self, mapping, keep_string):
         # Helper function for .sub()
         def convert(mo):
@@ -118,5 +119,7 @@ class TemplateWithDefaults(string.Template):
                 return self.delimiter
             if mo.group("invalid") is not None:
                 self._invalid(mo)
+                return None
+            return None
 
         return self.pattern.sub(convert, self.template)

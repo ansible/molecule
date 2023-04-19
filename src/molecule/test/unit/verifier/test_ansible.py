@@ -6,7 +6,7 @@ from molecule import config
 from molecule.verifier import ansible
 
 
-@pytest.fixture
+@pytest.fixture()
 def _patched_ansible_verify(mocker):
     m = mocker.patch("molecule.provisioner.ansible.Ansible.verify")
     m.return_value = "patched-ansible-verify-stdout"
@@ -14,7 +14,7 @@ def _patched_ansible_verify(mocker):
     return m
 
 
-@pytest.fixture
+@pytest.fixture()
 def _verifier_section_data():
     return {"verifier": {"name": "ansible", "env": {"FOO": "bar"}}}
 
@@ -22,7 +22,7 @@ def _verifier_section_data():
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-@pytest.fixture
+@pytest.fixture()
 def _instance(_verifier_section_data, patched_config_validate, config_instance):
     return ansible.Ansible(config_instance)
 
@@ -44,11 +44,11 @@ def test_default_env_property(_instance):
 
 @pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
 def test_env_property(_instance):
-    assert "bar" == _instance.env["FOO"]
+    assert _instance.env["FOO"] == "bar"
 
 
 def test_name_property(_instance):
-    assert "ansible" == _instance.name
+    assert _instance.name == "ansible"
 
 
 def test_enabled_property(_instance):
@@ -89,7 +89,9 @@ def test_execute(patched_logger_info, _patched_ansible_verify, _instance):
 
 
 def test_execute_does_not_execute(
-    patched_ansible_converge, patched_logger_warning, _instance
+    patched_ansible_converge,
+    patched_logger_warning,
+    _instance,
 ):
     _instance._config.config["verifier"]["enabled"] = False
     _instance.execute()

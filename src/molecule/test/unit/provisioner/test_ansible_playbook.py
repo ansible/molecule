@@ -26,24 +26,24 @@ from molecule import config
 from molecule.provisioner import ansible_playbook
 
 
-@pytest.fixture
+@pytest.fixture()
 def _instance(config_instance):
     _instance = ansible_playbook.AnsiblePlaybook("playbook", config_instance)
 
     return _instance
 
 
-@pytest.fixture
+@pytest.fixture()
 def _provisioner_section_data():
     return {"provisioner": {"name": "ansible", "env": {"FOO": "bar"}}}
 
 
-@pytest.fixture
+@pytest.fixture()
 def _verifier_section_data():
     return {"verifier": {"name": "ansible", "env": {"FOO": "bar"}}}
 
 
-@pytest.fixture
+@pytest.fixture()
 def _provisioner_verifier_section_data():
     return {
         "provisioner": {"name": "ansible", "env": {"FOO": "bar"}},
@@ -51,32 +51,36 @@ def _provisioner_verifier_section_data():
     }
 
 
-@pytest.fixture
+@pytest.fixture()
 def _instance_for_verifier_env(config_instance):
     _instance = ansible_playbook.AnsiblePlaybook("playbook", config_instance, True)
     return _instance
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["_provisioner_section_data"], indirect=True
+    "config_instance",
+    ["_provisioner_section_data"],
+    indirect=True,
 )
 def test_env_in_provision(_instance_for_verifier_env):
-    assert "bar" == _instance_for_verifier_env._env["FOO"]
+    assert _instance_for_verifier_env._env["FOO"] == "bar"
 
 
 @pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
 def test_env_in_verifier(_instance_for_verifier_env):
-    assert "bar" == _instance_for_verifier_env._env["FOO"]
+    assert _instance_for_verifier_env._env["FOO"] == "bar"
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["_provisioner_verifier_section_data"], indirect=True
+    "config_instance",
+    ["_provisioner_verifier_section_data"],
+    indirect=True,
 )
 def test_env_in_verify_override_provision(_instance_for_verifier_env):
-    assert "baz" == _instance_for_verifier_env._env["FOO"]
+    assert _instance_for_verifier_env._env["FOO"] == "baz"
 
 
-@pytest.fixture
+@pytest.fixture()
 def _inventory_directory(_instance):
     return _instance._config.provisioner.inventory_directory
 
@@ -86,7 +90,7 @@ def test_ansible_command_private_member(_instance):
 
 
 def test_ansible_playbook_private_member(_instance):
-    assert "playbook" == _instance._playbook
+    assert _instance._playbook == "playbook"
 
 
 def test_config_private_member(_instance):
@@ -112,7 +116,8 @@ def test_bake(_inventory_directory, _instance):
 
 
 def test_bake_removes_non_interactive_options_from_non_converge_playbooks(
-    _inventory_directory, _instance
+    _inventory_directory,
+    _instance,
 ):
     _instance.bake()
 
@@ -188,7 +193,7 @@ def test_execute(patched_run_command, _instance):
     result = _instance.execute()
 
     patched_run_command.assert_called_once_with("patched-command", debug=False)
-    assert "patched-run-command-stdout" == result
+    assert result == "patched-run-command-stdout"
 
 
 def test_execute_bakes(_inventory_directory, patched_run_command, _instance):
@@ -205,13 +210,13 @@ def test_execute_bakes(_inventory_directory, patched_run_command, _instance):
         "playbook",
     ]
 
-    # result = str(patched_run_command.mock_calls[0][1][0]).split()
-
     assert _instance._ansible_command.cmd == args
 
 
 def test_execute_bakes_with_ansible_args(
-    _inventory_directory, patched_run_command, _instance
+    _inventory_directory,
+    patched_run_command,
+    _instance,
 ):
     _instance._config.ansible_args = ("-o", "--syntax-check")
     _instance.execute()
@@ -235,17 +240,22 @@ def test_execute_bakes_with_ansible_args(
 
 
 def test_executes_catches_and_exits_return_code(
-    patched_run_command, patched_logger_critical, _instance
+    patched_run_command,
+    patched_logger_critical,
+    _instance,
 ):
     patched_run_command.side_effect = [
         CompletedProcess(
-            args="ansible-playbook", returncode=1, stdout="out", stderr="err"
-        )
+            args="ansible-playbook",
+            returncode=1,
+            stdout="out",
+            stderr="err",
+        ),
     ]
     with pytest.raises(SystemExit) as e:
         _instance.execute()
 
-    assert 1 == e.value.code
+    assert e.value.code == 1
 
 
 def test_add_cli_arg(_instance):
@@ -259,4 +269,4 @@ def test_add_env_arg(_instance):
     assert "foo" not in _instance._env
 
     _instance.add_env_arg("foo", "bar")
-    assert "bar" == _instance._env["foo"]
+    assert _instance._env["foo"] == "bar"

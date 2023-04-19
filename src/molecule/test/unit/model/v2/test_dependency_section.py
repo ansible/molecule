@@ -23,7 +23,7 @@ import pytest
 from molecule.model import schema_v3
 
 
-@pytest.fixture
+@pytest.fixture()
 def _model_dependency_section_data():
     return {
         "dependency": {
@@ -31,7 +31,7 @@ def _model_dependency_section_data():
             "enabled": True,
             "options": {"foo": "bar"},
             "env": {"FOO": "foo", "FOO_BAR": "foo_bar"},
-        }
+        },
     }
 
 
@@ -40,13 +40,15 @@ def test_dependency(_config):
     assert not schema_v3.validate(_config)
 
 
-@pytest.fixture
+@pytest.fixture()
 def _model_dependency_errors_section_data():
     return {"dependency": {"name": 0}}
 
 
 @pytest.mark.parametrize(
-    "_config", ["_model_dependency_errors_section_data"], indirect=True
+    "_config",
+    ["_model_dependency_errors_section_data"],
+    indirect=True,
 )
 def test_dependency_has_errors(_config):
     x = ["0 is not one of ['galaxy', 'shell']"]
@@ -54,12 +56,12 @@ def test_dependency_has_errors(_config):
     assert x == schema_v3.validate(_config)
 
 
-@pytest.fixture
+@pytest.fixture()
 def _model_dependency_allows_galaxy_section_data():
     return {"dependency": {"name": "galaxy"}}
 
 
-@pytest.fixture
+@pytest.fixture()
 def _model_dependency_allows_shell_section_data():
     return {"dependency": {"name": "shell"}}
 
@@ -76,13 +78,15 @@ def test_dependency_allows_shell_name(_config):
     assert not schema_v3.validate(_config)
 
 
-@pytest.fixture
+@pytest.fixture()
 def _model_dependency_shell_errors_section_data():
     return {"dependency": {"name": "shell", "command": None}}
 
 
 @pytest.mark.parametrize(
-    "_config", ["_model_dependency_shell_errors_section_data"], indirect=True
+    "_config",
+    ["_model_dependency_shell_errors_section_data"],
+    indirect=True,
 )
 def test_dependency_shell_has_errors(_config):
     x = ["None is not of type 'string'"]

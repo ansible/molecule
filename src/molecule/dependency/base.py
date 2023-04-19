@@ -30,7 +30,7 @@ from molecule import util
 LOG = logging.getLogger(__name__)
 
 
-class Base(object):
+class Base:
     """Dependency Base Class."""
 
     __metaclass__ = abc.ABCMeta
@@ -39,9 +39,8 @@ class Base(object):
     SLEEP = 3
     BACKOFF = 3
 
-    def __init__(self, config):
-        """
-        Initialize code for all :ref:`Dependency` classes.
+    def __init__(self, config) -> None:
+        """Initialize code for all :ref:`Dependency` classes.
 
         :param config: An instance of a Molecule config.
         :returns: None
@@ -53,7 +52,6 @@ class Base(object):
         exception = None
 
         try:
-            # print(555, self._sh_command)
             util.run_command(self._sh_command, debug=self._config.debug, check=True)
             msg = "Dependency completed successfully."
             LOG.info(msg)
@@ -83,8 +81,7 @@ class Base(object):
 
     @abc.abstractmethod
     def execute(self, action_args=None):  # pragma: no cover
-        """
-        Execute ``cmd`` and returns None.
+        """Execute ``cmd`` and returns None.
 
         :return: None
         """
@@ -94,16 +91,14 @@ class Base(object):
     @property
     @abc.abstractmethod
     def default_options(self):  # pragma: no cover
-        """
-        Get default CLI arguments provided to ``cmd`` as a dict.
+        """Get default CLI arguments provided to ``cmd`` as a dict.
 
         :return: dict
         """
 
     @property
     def default_env(self):  # pragma: no cover
-        """
-        Get default env variables provided to ``cmd`` as a dict.
+        """Get default env variables provided to ``cmd`` as a dict.
 
         :return: dict
         """
@@ -112,8 +107,7 @@ class Base(object):
 
     @property
     def name(self):
-        """
-        Name of the dependency and returns a string.
+        """Name of the dependency and returns a string.
 
         :returns: str
         """
@@ -126,11 +120,13 @@ class Base(object):
     @property
     def options(self):
         return util.merge_dicts(
-            self.default_options, self._config.config["dependency"]["options"]
+            self.default_options,
+            self._config.config["dependency"]["options"],
         )
 
     @property
     def env(self):
         return util.merge_dicts(
-            self.default_env, self._config.config["dependency"]["env"]
+            self.default_env,
+            self._config.config["dependency"]["env"],
         )

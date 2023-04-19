@@ -19,19 +19,17 @@
 #  DEALINGS IN THE SOFTWARE.
 """Scenarios Module."""
 import logging
-from typing import List
 
 from molecule import util
 
 LOG = logging.getLogger(__name__)
 
 
-class Scenarios(object):
+class Scenarios:
     """The Scenarios groups one or more scenario objects Molecule will execute."""
 
-    def __init__(self, configs, scenario_name=None):
-        """
-        Initialize a new scenarios class and returns None.
+    def __init__(self, configs, scenario_name=None) -> None:
+        """Initialize a new scenarios class and returns None.
 
         :param configs: A list containing Molecule config instances.
         :param scenario_name: A string containing the name of the scenario.
@@ -54,8 +52,7 @@ class Scenarios(object):
 
     @property
     def all(self):
-        """
-        Return a list containing all scenario objects.
+        """Return a list containing all scenario objects.
 
         :return: list
         """
@@ -75,18 +72,17 @@ class Scenarios(object):
 
         tree = {}
         for scenario in self.all:
-            tree[scenario.name] = [action for action in scenario.sequence]
+            tree[scenario.name] = list(scenario.sequence)
         util.print_as_yaml(tree)
 
-    def sequence(self, scenario_name: str) -> List[str]:
+    def sequence(self, scenario_name: str) -> list[str]:
         for scenario in self.all:
             if scenario.name == scenario_name:
-                return [action for action in scenario.sequence]
+                return list(scenario.sequence)
         raise RuntimeError(f"Unable to find sequence for {scenario_name} scenario.")
 
     def _verify(self):
-        """
-        Verify the specified scenario was found and returns None.
+        """Verify the specified scenario was found and returns None.
 
         :return: None
         """
@@ -96,8 +92,7 @@ class Scenarios(object):
             util.sysexit_with_message(msg)
 
     def _filter_for_scenario(self):
-        """
-        Find the scenario matching the provided scenario name and returns a \
+        """Find the scenario matching the provided scenario name and returns a \
         list.
 
         :return: list
@@ -107,8 +102,7 @@ class Scenarios(object):
         ]
 
     def _get_matrix(self):
-        """
-        Build a matrix of scenarios with sequence to include and returns a \
+        """Build a matrix of scenarios with sequence to include and returns a \
         dict.
 
         {
@@ -144,5 +138,5 @@ class Scenarios(object):
                     "verify": scenario.verify_sequence,
                 }
                 for scenario in self.all
-            }
+            },
         )

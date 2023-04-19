@@ -22,20 +22,18 @@
 import inspect
 import os
 from abc import ABCMeta, abstractmethod
-from typing import Dict
 
 import molecule
 from molecule.status import Status
 
 
-class Driver(object):
+class Driver:
     """Driver Class."""
 
     __metaclass__ = ABCMeta
 
-    def __init__(self, config=None):
-        """
-        Initialize code for all :ref:`Driver` classes.
+    def __init__(self, config=None) -> None:
+        """Initialize code for all :ref:`Driver` classes.
 
         :param config: An instance of a Molecule config.
         :returns: None
@@ -48,24 +46,21 @@ class Driver(object):
     @property
     @abstractmethod
     def name(self) -> str:  # pragma: no cover
-        """
-        Name of the driver and returns a string.
+        """Name of the driver and returns a string.
 
         :returns: str
         """
 
     @name.setter  # type: ignore
     def name(self, value):  # pragma: no cover
-        """
-        Driver name setter and returns None.
+        """Driver name setter and returns None.
 
         :returns: None
         """
 
     @property
     def testinfra_options(self):
-        """
-        Testinfra specific options and returns a dict.
+        """Testinfra specific options and returns a dict.
 
         :returns: dict
         """
@@ -77,8 +72,7 @@ class Driver(object):
     @property
     @abstractmethod
     def login_cmd_template(self):  # pragma: no cover
-        """
-        Get the login command template to be populated by ``login_options`` as \
+        """Get the login command template to be populated by ``login_options`` as \
         a string.
 
         :returns: str
@@ -87,8 +81,7 @@ class Driver(object):
     @property
     @abstractmethod
     def default_ssh_connection_options(self):  # pragma: no cover
-        """
-        SSH client options and returns a list.
+        """SSH client options and returns a list.
 
         :returns: list
         """
@@ -96,16 +89,14 @@ class Driver(object):
     @property
     @abstractmethod
     def default_safe_files(self):  # pragma: no cover
-        """
-        Generate files to be preserved.
+        """Generate files to be preserved.
 
         :returns: list
         """
 
     @abstractmethod
     def login_options(self, instance_name):  # pragma: no cover
-        """
-        Options used in the login command and returns a dict.
+        """Options used in the login command and returns a dict.
 
         :param instance_name: A string containing the instance to login to.
         :returns: dict
@@ -113,8 +104,7 @@ class Driver(object):
 
     @abstractmethod
     def ansible_connection_options(self, instance_name):  # pragma: no cover
-        """
-        Ansible specific connection options supplied to inventory and returns a \
+        """Ansible specific connection options supplied to inventory and returns a \
         dict.
 
         :param instance_name: A string containing the instance to login to.
@@ -123,8 +113,7 @@ class Driver(object):
 
     @abstractmethod
     def sanity_checks(self):
-        """
-        Confirm that driver is usable.
+        """Confirm that driver is usable.
 
         Sanity checks to ensure the driver can do work successfully. For
         example, when using the Docker driver, we want to know that the Docker
@@ -142,7 +131,8 @@ class Driver(object):
     @property
     def instance_config(self):
         return os.path.join(
-            self._config.scenario.ephemeral_directory, "instance_config.yml"
+            self._config.scenario.ephemeral_directory,
+            "instance_config.yml",
         )
 
     @property
@@ -157,8 +147,7 @@ class Driver(object):
 
     @property
     def delegated(self):
-        """
-        Is the driver delegated and returns a bool.
+        """Is the driver delegated and returns a bool.
 
         :returns: bool
         """
@@ -166,16 +155,14 @@ class Driver(object):
 
     @property
     def managed(self):
-        """
-        Is the driver is managed and returns a bool.
+        """Is the driver is managed and returns a bool.
 
         :returns: bool
         """
         return self.options["managed"]
 
     def status(self):
-        """
-        Collect the instances state and returns a list.
+        """Collect the instances state and returns a list.
 
         !!! note
 
@@ -202,7 +189,7 @@ class Driver(object):
                     scenario_name=scenario_name,
                     created=self._created(),
                     converged=self._converged(),
-                )
+                ),
             )
 
         return status_list
@@ -240,11 +227,11 @@ class Driver(object):
         """Perform object hash."""
         return self.name.__hash__()
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Return readable string representation of object."""
         return self.name
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """Return detailed string representation of object."""
         return self.name
 
@@ -263,7 +250,7 @@ class Driver(object):
                     "scenario",
                     "driver",
                     self.name,
-                )
+                ),
             )
         return p
 
@@ -281,12 +268,14 @@ class Driver(object):
         )
         if os.path.isfile(p):
             return p
+        return None
 
     def modules_dir(self):
         """Return path to ansible modules included with driver."""
         p = os.path.join(self._path, "modules")
         if os.path.isdir(p):
             return p
+        return None
 
     def reset(self):
         """Release all resources owned by molecule.
@@ -297,6 +286,6 @@ class Driver(object):
         """
 
     @property
-    def required_collections(self) -> Dict[str, str]:
+    def required_collections(self) -> dict[str, str]:
         """Return collections dict containing names and versions required."""
         return {}

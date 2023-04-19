@@ -17,6 +17,7 @@ class UserListMap(UserList):
     """A list where you can also access elements by their name.
 
     Example:
+    -------
     foo['boo']
     foo.boo
     """
@@ -24,7 +25,7 @@ class UserListMap(UserList):
     def __getitem__(self, i):
         """Implement indexing."""
         if isinstance(i, int):
-            return super(UserListMap, self).__getitem__(i)
+            return super().__getitem__(i)
         else:
             return self.__dict__[i]
 
@@ -33,7 +34,7 @@ class UserListMap(UserList):
 
     def append(self, item) -> None:
         self.__dict__[str(item)] = item
-        super(UserListMap, self).append(item)
+        super().append(item)
 
 
 class MoleculeRuntimeWarning(RuntimeWarning):

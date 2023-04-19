@@ -30,8 +30,7 @@ LOG = logging.getLogger(__name__)
 
 
 class Testinfra(Verifier):
-    """
-    `Testinfra`_ is no longer the default test verifier since version 3.0.
+    """`Testinfra`_ is no longer the default test verifier since version 3.0.
 
     Additional options can be passed to ``testinfra`` through the options
     dict.  Any option set in this section will override the defaults.
@@ -88,16 +87,15 @@ class Testinfra(Verifier):
     .. _`Testinfra`: https://testinfra.readthedocs.io
     """
 
-    def __init__(self, config=None):
-        """
-        Set up the requirements to execute ``testinfra`` and returns None.
+    def __init__(self, config=None) -> None:
+        """Set up the requirements to execute ``testinfra`` and returns None.
 
         :param config: An instance of a Molecule config.
         :return: None
         """
-        super(Testinfra, self).__init__(config)
+        super().__init__(config)
         self._testinfra_command = None
-        self._tests = []
+        self._tests = []  # type: ignore
 
     @property
     def name(self):
@@ -147,8 +145,7 @@ class Testinfra(Verifier):
         return files_list
 
     def bake(self):
-        """
-        Bake a ``testinfra`` command so it's ready to execute and returns None.
+        """Bake a ``testinfra`` command so it's ready to execute and returns None.
 
         :return: None
         """
@@ -190,33 +187,32 @@ class Testinfra(Verifier):
             util.sysexit(result.returncode)
 
     def _get_tests(self, action_args=None):
-        """
-        Walk the verifier's directory for tests and returns a list.
+        """Walk the verifier's directory for tests and returns a list.
 
         :return: list
         """
         if action_args:
             tests = []
             for arg in action_args:
-                args_tests = [
-                    filename
-                    for filename in util.os_walk(
+                args_tests = list(
+                    util.os_walk(
                         os.path.join(self._config.scenario.directory, arg),
                         "test_*.py",
                         followlinks=True,
-                    )
-                ]
+                    ),
+                )
                 tests.extend(args_tests)
             return sorted(tests)
         else:
             return sorted(
-                [
-                    filename
-                    for filename in util.os_walk(
-                        self.directory, "test_*.py", followlinks=True
-                    )
-                ]
-                + self.additional_files_or_dirs
+                list(
+                    util.os_walk(
+                        self.directory,
+                        "test_*.py",
+                        followlinks=True,
+                    ),
+                )
+                + self.additional_files_or_dirs,
             )
 
     def schema(self):
@@ -224,5 +220,5 @@ class Testinfra(Verifier):
             "verifier": {
                 "type": "dict",
                 "schema": {"name": {"type": "string", "allowed": ["testinfra"]}},
-            }
+            },
         }

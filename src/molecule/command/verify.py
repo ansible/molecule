@@ -32,8 +32,7 @@ class Verify(base.Base):
     """Verify Command Class."""
 
     def execute(self, action_args=None):
-        """
-        Execute the actions necessary to perform a `molecule verify` and \
+        """Execute the actions necessary to perform a `molecule verify` and \
         returns None.
 
         :return: None

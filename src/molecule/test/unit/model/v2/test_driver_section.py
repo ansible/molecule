@@ -23,7 +23,7 @@ import pytest
 from molecule.model import schema_v3
 
 
-@pytest.fixture
+@pytest.fixture()
 def _model_driver_section_data():
     return {
         "driver": {
@@ -32,7 +32,7 @@ def _model_driver_section_data():
             "options": {"managed": True},
             "ssh_connection_options": ["foo", "bar"],
             "safe_files": ["foo", "bar"],
-        }
+        },
     }
 
 
@@ -41,21 +41,21 @@ def test_driver(_config):
     assert not schema_v3.validate(_config)
 
 
-@pytest.fixture
+@pytest.fixture()
 def _model_driver_errors_section_data():
     return {
         "driver": {
             "name": 0,
-        }
+        },
     }
 
 
-@pytest.fixture
+@pytest.fixture()
 def _model_driver_errors_section_data_no_prefix():
     return {
         "driver": {
             "name": "random_name",
-        }
+        },
     }
 
 
@@ -79,39 +79,41 @@ def test_driver_has_errors(_config):
     assert error_msg == schema_v3.validate(_config)
 
 
-@pytest.fixture
+@pytest.fixture()
 def _model_driver_provider_name_nullable_section_data():
     return {"driver": {"provider": {"name": None}}}
 
 
 @pytest.mark.parametrize(
-    "_config", ["_model_driver_provider_name_nullable_section_data"], indirect=True
+    "_config",
+    ["_model_driver_provider_name_nullable_section_data"],
+    indirect=True,
 )
 def test_driver_provider_name_nullable(_config):
     assert not schema_v3.validate(_config)
 
 
-@pytest.fixture
+@pytest.fixture()
 def _model_driver_allows_delegated_section_data():
     return {"driver": {"name": "delegated"}}
 
 
-@pytest.fixture
+@pytest.fixture()
 def _model_driver_allows_molecule_section_data1():
     return {"driver": {"name": "molecule-test_driver.name"}}
 
 
-@pytest.fixture
+@pytest.fixture()
 def _model_driver_allows_molecule_section_data2():
     return {"driver": {"name": "molecule_test_driver.name"}}
 
 
-@pytest.fixture
+@pytest.fixture()
 def _model_driver_allows_custom_section_data1():
     return {"driver": {"name": "custom-test_driver.name"}}
 
 
-@pytest.fixture
+@pytest.fixture()
 def _model_driver_allows_custom_section_data2():
     return {"driver": {"name": "custom_test_driver.name"}}
 

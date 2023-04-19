@@ -36,52 +36,52 @@ class ExtendedBase(base.Base):
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-@pytest.fixture
+@pytest.fixture()
 def _base_class(patched_config_validate, config_instance):
     return ExtendedBase
 
 
-@pytest.fixture
+@pytest.fixture()
 def _instance(_base_class, config_instance):
     return _base_class(config_instance)
 
 
-@pytest.fixture
+@pytest.fixture()
 def _patched_base_setup(mocker):
     return mocker.patch("molecule.test.unit.command.test_base.ExtendedBase._setup")
 
 
-@pytest.fixture
+@pytest.fixture()
 def _patched_write_config(mocker):
     return mocker.patch("molecule.provisioner.ansible.Ansible.write_config")
 
 
-@pytest.fixture
+@pytest.fixture()
 def _patched_manage_inventory(mocker):
     return mocker.patch("molecule.provisioner.ansible.Ansible.manage_inventory")
 
 
-@pytest.fixture
+@pytest.fixture()
 def _patched_execute_subcommand(mocker):
     return mocker.patch("molecule.command.base.execute_subcommand")
 
 
-@pytest.fixture
+@pytest.fixture()
 def _patched_execute_scenario(mocker):
     return mocker.patch("molecule.command.base.execute_scenario")
 
 
-@pytest.fixture
+@pytest.fixture()
 def _patched_print_matrix(mocker):
     return mocker.patch("molecule.scenarios.Scenarios.print_matrix")
 
 
-@pytest.fixture
+@pytest.fixture()
 def _patched_prune(mocker):
     return mocker.patch("molecule.scenario.Scenario.prune")
 
 
-@pytest.fixture
+@pytest.fixture()
 def _patched_sysexit(mocker):
     return mocker.patch("molecule.util.sysexit")
 
@@ -109,7 +109,9 @@ def test_setup(
 
 
 def test_execute_cmdline_scenarios(
-    config_instance, _patched_print_matrix, _patched_execute_scenario
+    config_instance,
+    _patched_print_matrix,
+    _patched_execute_scenario,
 ):
     # Ensure execute_cmdline_scenarios runs normally:
     # - scenarios.print_matrix is called, which also indicates Scenarios
@@ -126,7 +128,9 @@ def test_execute_cmdline_scenarios(
 
 
 def test_execute_cmdline_scenarios_prune(
-    config_instance, _patched_prune, _patched_execute_subcommand
+    config_instance,
+    _patched_prune,
+    _patched_execute_subcommand,
 ):
     # Subcommands should be executed and prune *should* run when
     # destroy is 'always'
@@ -141,7 +145,9 @@ def test_execute_cmdline_scenarios_prune(
 
 
 def test_execute_cmdline_scenarios_no_prune(
-    config_instance, _patched_prune, _patched_execute_subcommand
+    config_instance,
+    _patched_prune,
+    _patched_execute_subcommand,
 ):
     # Subcommands should be executed but prune *should not* run when
     # destroy is 'never'
@@ -184,7 +190,10 @@ def test_execute_cmdline_scenarios_exit_destroy(
 
 
 def test_execute_cmdline_scenarios_exit_nodestroy(
-    config_instance, _patched_execute_scenario, _patched_prune, _patched_sysexit
+    config_instance,
+    _patched_execute_scenario,
+    _patched_prune,
+    _patched_sysexit,
 ):
     # Ensure execute_cmdline_scenarios handles errors correctly when 'destroy'
     # is 'always':
@@ -221,21 +230,21 @@ def test_runtime_paths(config_instance, _patched_sysexit):
     runtime_roles_path = config_instance.runtime.environ.get("ANSIBLE_ROLES_PATH")
     provisioner_roles_path = config_instance.provisioner.env.get("ANSIBLE_ROLES_PATH")
     runtime_collections_path = config_instance.runtime.environ.get(
-        config_instance.ansible_collections_path
+        config_instance.ansible_collections_path,
     )
     provisioner_collections_path = config_instance.provisioner.env.get(
-        config_instance.ansible_collections_path
+        config_instance.ansible_collections_path,
     )
 
     assert runtime_roles_path.startswith(
         f"{cache_dir}/roles:"
         f"{home}/.ansible/roles:"
         f"/usr/share/ansible/roles:"
-        f"/etc/ansible/roles"
+        f"/etc/ansible/roles",
     )
 
     assert runtime_collections_path.startswith(
-        f"{cache_dir}/collections:" f"{home}/.ansible/collections"
+        f"{cache_dir}/collections:" f"{home}/.ansible/collections",
     )
 
     assert provisioner_roles_path.startswith(f"{cache_dir}/roles")
@@ -283,7 +292,7 @@ def test_get_configs(config_instance):
     util.write_file(molecule_file, util.safe_dump(data))
 
     result = base.get_configs({}, {})
-    assert 1 == len(result)
+    assert len(result) == 1
     assert isinstance(result, list)
     assert isinstance(result[0], config.Config)
 
@@ -298,27 +307,28 @@ def test_verify_configs_raises_with_no_configs(patched_logger_critical):
     with pytest.raises(SystemExit) as e:
         base._verify_configs([])
 
-    assert 1 == e.value.code
+    assert e.value.code == 1
 
     msg = "'molecule/*/molecule.yml' glob failed.  Exiting."
     patched_logger_critical.assert_called_once_with(msg)
 
 
 def test_verify_configs_raises_with_duplicate_configs(
-    patched_logger_critical, config_instance
+    patched_logger_critical,
+    config_instance,
 ):
     with pytest.raises(SystemExit) as e:
         configs = [config_instance, config_instance]
         base._verify_configs(configs)
 
-    assert 1 == e.value.code
+    assert e.value.code == 1
 
     msg = "Duplicate scenario name 'default' found.  Exiting."
     patched_logger_critical.assert_called_once_with(msg)
 
 
 def test_get_subcommand():
-    assert "test_base" == base._get_subcommand(__name__)
+    assert base._get_subcommand(__name__) == "test_base"
 
 
 @pytest.mark.parametrize(

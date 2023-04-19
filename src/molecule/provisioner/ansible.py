@@ -25,7 +25,7 @@ import copy
 import logging
 import os
 import shutil
-from typing import Any, List, Optional
+from typing import Any, Optional
 
 from ansible_compat.ports import cached_property
 
@@ -411,16 +411,15 @@ class Ansible(base.Base):
             - --inventory=mygroups.yml
             - --limit=host1,host2
     ```
-    """  # noqa
+    """
 
-    def __init__(self, config):
-        """
-        Initialize a new ansible class and returns None.
+    def __init__(self, config) -> None:
+        """Initialize a new ansible class and returns None.
 
         :param config: An instance of a Molecule config.
         :return: None
         """
-        super(Ansible, self).__init__(config)
+        super().__init__(config)
 
     @property
     def default_config_options(self) -> dict[str, Any]:
@@ -464,43 +463,46 @@ class Ansible(base.Base):
         collections_path_list = [
             util.abs_path(
                 os.path.join(
-                    self._config.scenario.config.runtime.cache_dir, "collections"
-                )
+                    self._config.scenario.config.runtime.cache_dir,
+                    "collections",
+                ),
             ),
             util.abs_path(
-                os.path.join(self._config.scenario.ephemeral_directory, "collections")
+                os.path.join(self._config.scenario.ephemeral_directory, "collections"),
             ),
         ]
         if collection_indicator in self._config.project_directory:
             collection_path, right = self._config.project_directory.rsplit(
-                collection_indicator, 1
+                collection_indicator,
+                1,
             )
             collections_path_list.append(util.abs_path(collection_path))
         collections_path_list.extend(
             [
                 util.abs_path(
-                    os.path.join(os.path.expanduser("~"), ".ansible/collections")
+                    os.path.join(os.path.expanduser("~"), ".ansible/collections"),
                 ),
                 "/usr/share/ansible/collections",
                 "/etc/ansible/collections",
-            ]
+            ],
         )
 
         if os.environ.get("ANSIBLE_COLLECTIONS_PATH", ""):
             collections_path_list.extend(
                 list(
                     map(
-                        util.abs_path, os.environ["ANSIBLE_COLLECTIONS_PATH"].split(":")
-                    )
-                )
+                        util.abs_path,
+                        os.environ["ANSIBLE_COLLECTIONS_PATH"].split(":"),
+                    ),
+                ),
             )
 
         roles_path_list = [
             util.abs_path(
-                os.path.join(self._config.scenario.config.runtime.cache_dir, "roles")
+                os.path.join(self._config.scenario.config.runtime.cache_dir, "roles"),
             ),
             util.abs_path(
-                os.path.join(self._config.scenario.ephemeral_directory, "roles")
+                os.path.join(self._config.scenario.ephemeral_directory, "roles"),
             ),
             util.abs_path(os.path.join(self._config.project_directory, os.path.pardir)),
             util.abs_path(os.path.join(os.path.expanduser("~"), ".ansible", "roles")),
@@ -510,7 +512,7 @@ class Ansible(base.Base):
 
         if os.environ.get("ANSIBLE_ROLES_PATH", ""):
             roles_path_list.extend(
-                list(map(util.abs_path, os.environ["ANSIBLE_ROLES_PATH"].split(":")))
+                list(map(util.abs_path, os.environ["ANSIBLE_ROLES_PATH"].split(":"))),
             )
 
         env = util.merge_dicts(
@@ -528,20 +530,25 @@ class Ansible(base.Base):
                                 self._config.scenario.ephemeral_directory,
                                 "plugins",
                                 "filter",
-                            )
+                            ),
                         ),
                         util.abs_path(
                             os.path.join(
-                                self._config.project_directory, "plugins", "filter"
-                            )
+                                self._config.project_directory,
+                                "plugins",
+                                "filter",
+                            ),
                         ),
                         util.abs_path(
                             os.path.join(
-                                os.path.expanduser("~"), ".ansible", "plugins", "filter"
-                            )
+                                os.path.expanduser("~"),
+                                ".ansible",
+                                "plugins",
+                                "filter",
+                            ),
                         ),
                         "/usr/share/ansible/plugins/filter",
-                    ]
+                    ],
                 ),
             },
         )
@@ -630,8 +637,7 @@ class Ansible(base.Base):
 
     @property
     def inventory(self):
-        """
-        Create an inventory structure and returns a dict.
+        """Create an inventory structure and returns a dict.
 
         ``` yaml
             ungrouped:
@@ -712,8 +718,7 @@ class Ansible(base.Base):
         )
 
     def cleanup(self):
-        """
-        Execute `ansible-playbook` against the cleanup playbook and returns \
+        """Execute `ansible-playbook` against the cleanup playbook and returns \
         None.
 
         :return: None
@@ -725,12 +730,12 @@ class Ansible(base.Base):
         d = self._config.driver.ansible_connection_options(instance_name)
 
         return util.merge_dicts(
-            d, self._config.config["provisioner"]["connection_options"]
+            d,
+            self._config.config["provisioner"]["connection_options"],
         )
 
     def check(self):
-        """
-        Execute ``ansible-playbook`` against the converge playbook with the \
+        """Execute ``ansible-playbook`` against the converge playbook with the \
         ``--check`` flag and returns None.
 
         :return: None
@@ -740,8 +745,7 @@ class Ansible(base.Base):
         pb.execute()
 
     def converge(self, playbook=None, **kwargs):
-        """
-        Execute ``ansible-playbook`` against the converge playbook unless \
+        """Execute ``ansible-playbook`` against the converge playbook unless \
         specified otherwise and returns a string.
 
         :param playbook: An optional string containing an absolute path to a
@@ -754,8 +758,7 @@ class Ansible(base.Base):
         return pb.execute()
 
     def destroy(self):
-        """
-        Execute ``ansible-playbook`` against the destroy playbook and returns \
+        """Execute ``ansible-playbook`` against the destroy playbook and returns \
         None.
 
         :return: None
@@ -764,8 +767,7 @@ class Ansible(base.Base):
         pb.execute()
 
     def side_effect(self, action_args=None):
-        """
-        Execute ``ansible-playbook`` against the side_effect playbook and \
+        """Execute ``ansible-playbook`` against the side_effect playbook and \
         returns None.
 
         :return: None
@@ -781,8 +783,7 @@ class Ansible(base.Base):
             pb.execute()
 
     def create(self):
-        """
-        Execute ``ansible-playbook`` against the create playbook and returns \
+        """Execute ``ansible-playbook`` against the create playbook and returns \
         None.
 
         :return: None
@@ -791,8 +792,7 @@ class Ansible(base.Base):
         pb.execute()
 
     def prepare(self):
-        """
-        Execute ``ansible-playbook`` against the prepare playbook and returns \
+        """Execute ``ansible-playbook`` against the prepare playbook and returns \
         None.
 
         :return: None
@@ -801,8 +801,7 @@ class Ansible(base.Base):
         pb.execute()
 
     def syntax(self):
-        """
-        Execute ``ansible-playbook`` against the converge playbook with the \
+        """Execute ``ansible-playbook`` against the converge playbook with the \
         ``-syntax-check`` flag and returns None.
 
         :return: None
@@ -812,8 +811,7 @@ class Ansible(base.Base):
         pb.execute()
 
     def verify(self, action_args=None):
-        """
-        Execute ``ansible-playbook`` against the verify playbook and returns \
+        """Execute ``ansible-playbook`` against the verify playbook and returns \
         None.
 
         :return: None
@@ -833,19 +831,18 @@ class Ansible(base.Base):
             pb.execute()
 
     def write_config(self):
-        """
-        Write the provisioner's config file to disk and returns None.
+        """Write the provisioner's config file to disk and returns None.
 
         :return: None
         """
         template = util.render_template(
-            self._get_config_template(), config_options=self.config_options
+            self._get_config_template(),
+            config_options=self.config_options,
         )
         util.write_file(self.config_file, template)
 
     def manage_inventory(self):
-        """
-        Manage inventory for Ansible and returns None.
+        """Manage inventory for Ansible and returns None.
 
         :returns: None
         """
@@ -860,8 +857,7 @@ class Ansible(base.Base):
         return util.abs_path(os.path.join(self._config.scenario.directory, path))
 
     def _add_or_update_vars(self):
-        """
-        Create host and/or group vars and returns None.
+        """Create host and/or group vars and returns None.
 
         :returns: None
         """
@@ -886,14 +882,13 @@ class Ansible(base.Base):
                 if not os.path.isdir(util.abs_path(target_vars_directory)):
                     os.mkdir(util.abs_path(target_vars_directory))
 
-                for target in vars_target.keys():
+                for target in vars_target:
                     target_var_content = vars_target[target]
                     path = os.path.join(util.abs_path(target_vars_directory), target)
                     util.write_file(path, util.safe_dump(target_var_content))
 
     def _write_inventory(self):
-        """
-        Write the provisioner's inventory file to disk and returns None.
+        """Write the provisioner's inventory file to disk and returns None.
 
         :return: None
         """
@@ -902,8 +897,7 @@ class Ansible(base.Base):
         util.write_file(self.inventory_file, util.safe_dump(self.inventory))
 
     def _remove_vars(self):
-        """
-        Remove hosts/host_vars/group_vars and returns None.
+        """Remove hosts/host_vars/group_vars and returns None.
 
         :returns: None
         """
@@ -915,8 +909,7 @@ class Ansible(base.Base):
                 shutil.rmtree(d)
 
     def _link_or_update_vars(self):
-        """
-        Create or updates the symlink to group_vars and returns None.
+        """Create or updates the symlink to group_vars and returns None.
 
         :returns: None
         """
@@ -932,8 +925,7 @@ class Ansible(base.Base):
             os.symlink(source, target)
 
     def _get_ansible_playbook(self, playbook, verify=False, **kwargs):
-        """
-        Get an instance of AnsiblePlaybook and returns it.
+        """Get an instance of AnsiblePlaybook and returns it.
 
         :param playbook: A string containing an absolute path to a
          provisioner's playbook.
@@ -943,12 +935,14 @@ class Ansible(base.Base):
         :return: object
         """
         return ansible_playbook.AnsiblePlaybook(
-            playbook, self._config, verify, **kwargs
+            playbook,
+            self._config,
+            verify,
+            **kwargs,
         )
 
     def _verify_inventory(self):
-        """
-        Verify the inventory is valid and returns None.
+        """Verify the inventory is valid and returns None.
 
         :return: None
         """
@@ -957,8 +951,7 @@ class Ansible(base.Base):
             util.sysexit_with_message(msg)
 
     def _get_config_template(self):
-        """
-        Return a config template string.
+        """Return a config template string.
 
         :return: str
         """
@@ -972,8 +965,7 @@ class Ansible(base.Base):
 """.strip()
 
     def _vivify(self):
-        """
-        Return an autovivification default dict.
+        """Return an autovivification default dict.
 
         :return: dict
         """
@@ -988,17 +980,17 @@ class Ansible(base.Base):
     def _get_plugin_directory(self) -> str:
         return os.path.join(self.directory, "plugins")
 
-    def _get_modules_directories(self) -> List[str]:
+    def _get_modules_directories(self) -> list[str]:
         """Return list of ansilbe module includes directories.
 
         Adds modules directory from molecule and its plugins.
         """
-        paths: List[Optional[str]] = []
+        paths: list[Optional[str]] = []
         if os.environ.get("ANSIBLE_LIBRARY"):
             paths = list(map(util.abs_path, os.environ["ANSIBLE_LIBRARY"].split(":")))
 
         paths.append(
-            util.abs_path(os.path.join(self._get_plugin_directory(), "modules"))
+            util.abs_path(os.path.join(self._get_plugin_directory(), "modules")),
         )
 
         for d in drivers():
@@ -1008,7 +1000,7 @@ class Ansible(base.Base):
         paths.extend(
             [
                 util.abs_path(
-                    os.path.join(self._config.scenario.ephemeral_directory, "library")
+                    os.path.join(self._config.scenario.ephemeral_directory, "library"),
                 ),
                 util.abs_path(os.path.join(self._config.project_directory, "library")),
                 util.abs_path(
@@ -1017,10 +1009,10 @@ class Ansible(base.Base):
                         ".ansible",
                         "plugins",
                         "modules",
-                    )
+                    ),
                 ),
                 "/usr/share/ansible/plugins/modules",
-            ]
+            ],
         )
 
         return [path for path in paths if path is not None]

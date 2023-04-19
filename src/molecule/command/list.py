@@ -19,7 +19,6 @@
 #  DEALINGS IN THE SOFTWARE.
 """List Command Module."""
 
-from __future__ import print_function
 
 import logging
 
@@ -40,8 +39,7 @@ class List(base.Base):
     """List command shows information about current scenarios."""
 
     def execute(self, action_args=None):
-        """
-        Execute the actions necessary to perform a `molecule list` and \
+        """Execute the actions necessary to perform a `molecule list` and \
         returns None.
 
         :return: None
@@ -83,8 +81,7 @@ def list(ctx, scenario_name, format):  # pragma: no cover
 
 
 def _print_tabulate_data(headers, data, table_format):  # pragma: no cover
-    """
-    Show the tabulate data on the screen and returns None.
+    """Show the tabulate data on the screen and returns None.
 
     :param headers: A list of column headers.
     :param data:  A list of tabular data to display.

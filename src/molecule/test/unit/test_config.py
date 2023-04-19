@@ -54,7 +54,7 @@ def test_env_file_property(config_instance):
 
 
 def test_subcommand_property(config_instance):
-    assert "test" == config_instance.subcommand
+    assert config_instance.subcommand == "test"
 
 
 def test_action_property(config_instance):
@@ -64,7 +64,7 @@ def test_action_property(config_instance):
 def test_action_setter(config_instance):
     config_instance.action = "foo"
 
-    assert "foo" == config_instance.action
+    assert config_instance.action == "foo"
 
 
 def test_init_calls_validate(patched_config_validate, config_instance):
@@ -85,19 +85,21 @@ def test_dependency_property(config_instance):
     assert isinstance(config_instance.dependency, ansible_galaxy.AnsibleGalaxy)
 
 
-@pytest.fixture
+@pytest.fixture()
 def _config_dependency_shell_section_data():
     return {"dependency": {"name": "shell", "command": "bin/command"}}
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["_config_dependency_shell_section_data"], indirect=True
+    "config_instance",
+    ["_config_dependency_shell_section_data"],
+    indirect=True,
 )
 def test_dependency_property_is_shell(config_instance):
     assert isinstance(config_instance.dependency, shell.Shell)
 
 
-@pytest.fixture
+@pytest.fixture()
 def _config_driver_delegated_section_data():
     return {"driver": {"name": "delegated", "options": {"managed": False}}}
 
@@ -152,28 +154,29 @@ def test_get_driver_name_from_state_file(config_instance, mocker):
         config_instance._get_driver_name()
 
     mocker.patch("molecule.api.drivers", return_value=["state-driver"])
-    assert "state-driver" == config_instance._get_driver_name()
+    assert config_instance._get_driver_name() == "state-driver"
 
 
 def test_get_driver_name_from_cli(config_instance):
     config_instance.command_args = {"driver_name": "cli-driver"}
 
-    assert "cli-driver" == config_instance._get_driver_name()
+    assert config_instance._get_driver_name() == "cli-driver"
 
 
 def test_get_driver_name(config_instance):
-    assert "delegated" == config_instance._get_driver_name()
+    assert config_instance._get_driver_name() == "delegated"
 
 
 def test_get_driver_name_raises_when_different_driver_used(
-    patched_logger_critical, config_instance
+    patched_logger_critical,
+    config_instance,
 ):
     config_instance.state.change_state("driver", "foo")
     config_instance.command_args = {"driver_name": "bar"}
     with pytest.raises(SystemExit) as e:
         config_instance._get_driver_name()
 
-    assert 1 == e.value.code
+    assert e.value.code == 1
 
     msg = (
         "Instance(s) were created with the 'foo' driver, "
@@ -255,14 +258,15 @@ def test_interpolate_curly_default_variable(patched_logger_critical, config_inst
 
 
 def test_interpolate_raises_on_failed_interpolation(
-    patched_logger_critical, config_instance
+    patched_logger_critical,
+    config_instance,
 ):
     string = "$6$8I5Cfmpr$kGZB"
 
     with pytest.raises(SystemExit) as e:
         config_instance._interpolate(string, os.environ, None)
 
-    assert 1 == e.value.code
+    assert e.value.code == 1
 
     msg = (
         f"parsing config file '{config_instance.molecule_file}'.\n\n"
@@ -274,7 +278,9 @@ def test_interpolate_raises_on_failed_interpolation(
 
 def test_get_defaults(config_instance, mocker):
     mocker.patch.object(
-        config_instance, "molecule_file", "/path/to/test_scenario_name/molecule.yml"
+        config_instance,
+        "molecule_file",
+        "/path/to/test_scenario_name/molecule.yml",
     )
     defaults = config_instance._get_defaults()
     assert defaults["scenario"]["name"] == "test_scenario_name"
@@ -292,7 +298,9 @@ def test_validate(mocker, config_instance, patched_logger_debug):
 
 
 def test_validate_exists_when_validation_fails(
-    mocker, patched_logger_critical, config_instance
+    mocker,
+    patched_logger_critical,
+    config_instance,
 ):
     m = mocker.patch("molecule.model.schema_v3.validate")
     m.return_value = "validation errors"
@@ -300,18 +308,18 @@ def test_validate_exists_when_validation_fails(
     with pytest.raises(SystemExit) as e:
         config_instance._validate()
 
-    assert 1 == e.value.code
+    assert e.value.code == 1
 
     msg = f"Failed to validate {config_instance.molecule_file}\n\nvalidation errors"
     patched_logger_critical.assert_called_once_with(msg)
 
 
 def test_molecule_directory():
-    assert "/foo/bar/molecule" == config.molecule_directory("/foo/bar")
+    assert config.molecule_directory("/foo/bar") == "/foo/bar/molecule"
 
 
 def test_molecule_file():
-    assert "/foo/bar/molecule.yml" == config.molecule_file("/foo/bar")
+    assert config.molecule_file("/foo/bar") == "/foo/bar/molecule.yml"
 
 
 def test_set_env_from_file(config_instance):

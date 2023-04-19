@@ -6,8 +6,7 @@ from molecule.dependency.base import Base
 
 
 class AnsibleGalaxy(Base):
-    """
-    Galaxy is the default dependency manager.
+    """Galaxy is the default dependency manager.
 
     Additional options can be passed to ``ansible-galaxy install`` through the
     options dict.  Any option set in this section will override the defaults.
@@ -66,9 +65,9 @@ class AnsibleGalaxy(Base):
     ```
     """
 
-    def __init__(self, config):
+    def __init__(self, config) -> None:
         """Construct AnsibleGalaxy."""
-        super(AnsibleGalaxy, self).__init__(config)
+        super().__init__(config)
         self.invocations = [Roles(config), Collections(config)]
 
     def execute(self, action_args=None):

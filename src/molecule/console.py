@@ -1,7 +1,7 @@
 """Console and terminal utilities."""
 import os
 import sys
-from typing import Any, Dict
+from typing import Any
 
 from enrich.console import Console
 from rich.style import Style
@@ -22,7 +22,7 @@ theme = Theme(
         "logging.level.error": Style(color="red", bold=True),
         "logging.level.critical": Style(color="red", bold=True),
         "logging.level.success": Style(color="green", bold=True),
-    }
+    },
 )
 
 
@@ -71,10 +71,13 @@ def should_do_markup() -> bool:
     return sys.stdout.isatty()
 
 
-console_options: Dict[str, Any] = {"emoji": False, "theme": theme, "soft_wrap": True}
+console_options: dict[str, Any] = {"emoji": False, "theme": theme, "soft_wrap": True}
 
 console = Console(
-    force_terminal=should_do_markup(), theme=theme, record=True, redirect=True
+    force_terminal=should_do_markup(),
+    theme=theme,
+    record=True,
+    redirect=True,
 )
 console_options_stderr = console_options.copy()
 console_options_stderr["stderr"] = True

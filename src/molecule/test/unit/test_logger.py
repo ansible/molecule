@@ -18,7 +18,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
 
 import logging
 
@@ -37,19 +36,19 @@ class Dummy(Base):
         return True
 
 
-@pytest.fixture
+@pytest.fixture()
 def _dummy_class(patched_config_validate, config_instance):
     return Dummy
 
 
-@pytest.fixture
+@pytest.fixture()
 def _instance(_dummy_class, config_instance, _patched_logger_env):
     # _patched_logger_env included here to ensure pytest runs it first
     get_section_loggers.cache_clear()
     return _dummy_class(config_instance)
 
 
-@pytest.fixture
+@pytest.fixture()
 def _patched_logger_env(request, monkeypatch):
     """Parametrize tests with and without CI env vars."""
     envvars = {"CI": None, "GITHUB_ACTIONS": None, "GITLAB_CI": None, "TRAVIS": None}

@@ -40,7 +40,7 @@ def validate(c):
     except ValidationError as exc:
         # handle validation error for driver name
         if exc.json_path == "$.driver.name" and exc.message.endswith(
-            ("is not of type 'string'", "is not valid under any of the given schemas")
+            ("is not of type 'string'", "is not valid under any of the given schemas"),
         ):
             wrong_driver_name = str(exc.message.split()[0])
             driver_name_err_msg = exc.schema["messages"]["anyOf"]

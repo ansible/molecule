@@ -19,7 +19,6 @@
 #  DEALINGS IN THE SOFTWARE.
 """Ansible-Playbooks Provisioner Module."""
 
-from __future__ import absolute_import
 
 import logging
 import os
@@ -29,12 +28,11 @@ from molecule import util
 LOG = logging.getLogger(__name__)
 
 
-class AnsiblePlaybooks(object):
+class AnsiblePlaybooks:
     """A class to act as a module to namespace playbook properties."""
 
-    def __init__(self, config):
-        """
-        Initialize a new namespace class and returns None.
+    def __init__(self, config) -> None:
+        """Initialize a new namespace class and returns None.
 
         :param config: An instance of a Molecule config.
         :return: None
@@ -71,12 +69,11 @@ class AnsiblePlaybooks(object):
 
     def _get_playbook_directory(self):
         return util.abs_path(
-            os.path.join(self._config.provisioner.directory, "playbooks")
+            os.path.join(self._config.provisioner.directory, "playbooks"),
         )
 
     def _get_playbook(self, section):
-        """
-        Return path to playbook or None if playbook is not needed.
+        """Return path to playbook or None if playbook is not needed.
 
         Return None when there is no playbook configured and when action is
         considered skippable.
@@ -129,8 +126,7 @@ class AnsiblePlaybooks(object):
         return path
 
     def _normalize_playbook(self, playbook):
-        """
-        Return current filename to use for a playook by allowing fallbacks.
+        """Return current filename to use for a playook by allowing fallbacks.
 
         Currently used to deprecate use of playbook.yml in favour of converge.yml
         """
@@ -142,7 +138,8 @@ class AnsiblePlaybooks(object):
         basename = os.path.basename(playbook)
         if basename in pb_rename_map:
             fb_playbook = os.path.join(
-                os.path.dirname(playbook), pb_rename_map[basename]
+                os.path.dirname(playbook),
+                pb_rename_map[basename],
             )
             if os.path.isfile(fb_playbook):
                 LOG.warning(

@@ -18,7 +18,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 """Molecule Utils Module."""
 
-from __future__ import print_function
 
 import contextlib
 import copy
@@ -27,9 +26,10 @@ import logging
 import os
 import re
 import sys
+from collections.abc import Iterable, MutableMapping
 from dataclasses import dataclass
 from subprocess import CalledProcessError, CompletedProcess
-from typing import Any, Dict, Iterable, List, MutableMapping, NoReturn, Optional, Union
+from typing import Any, NoReturn, Optional, Union
 from warnings import WarningMessage
 
 import jinja2
@@ -48,7 +48,7 @@ class SafeDumper(yaml.SafeDumper):
     """SafeDumper YAML Class."""
 
     def increase_indent(self, flow=False, indentless=False):
-        return super(SafeDumper, self).increase_indent(flow, False)
+        return super().increase_indent(flow, False)
 
 
 def print_debug(title: str, data: str) -> None:
@@ -56,9 +56,8 @@ def print_debug(title: str, data: str) -> None:
     console.print(f"DEBUG: {title}:\n{data}")
 
 
-def print_environment_vars(env: Optional[Dict[str, str]]) -> None:
-    """
-    Print ``Ansible`` and ``Molecule`` environment variables and returns None.
+def print_environment_vars(env: Optional[dict[str, str]]) -> None:
+    """Print ``Ansible`` and ``Molecule`` environment variables and returns None.
 
     :param env: A dict containing the shell's environment as collected by
     ``os.environ``.
@@ -70,7 +69,8 @@ def print_environment_vars(env: Optional[Dict[str, str]]) -> None:
 
         molecule_env = {k: v for (k, v) in env.items() if "MOLECULE_" in k}
         print_debug(
-            "MOLECULE ENVIRONMENT", safe_dump(molecule_env, explicit_start=False)
+            "MOLECULE ENVIRONMENT",
+            safe_dump(molecule_env, explicit_start=False),
         )
 
         combined_env = ansible_env.copy()
@@ -106,10 +106,7 @@ def sysexit_with_message(
     # detail is usually a multi-line string which is not suitable for normal
     # logger.
     if detail:
-        if isinstance(detail, dict):
-            detail_str = safe_dump(detail)
-        else:
-            detail_str = str(detail)
+        detail_str = safe_dump(detail) if isinstance(detail, dict) else str(detail)
         print(detail_str)
     LOG.critical(msg)
 
@@ -119,10 +116,15 @@ def sysexit_with_message(
 
 
 def run_command(
-    cmd, env=None, debug=False, echo=False, quiet=False, check=False, cwd=None
+    cmd,
+    env=None,
+    debug=False,
+    echo=False,
+    quiet=False,
+    check=False,
+    cwd=None,
 ) -> CompletedProcess:
-    """
-    Execute the given command and returns None.
+    """Execute the given command and returns None.
 
     :param cmd: :
         - a string or list of strings (similar to subprocess.run)
@@ -133,13 +135,10 @@ def run_command(
     if cmd.__class__.__name__ == "Command":
         raise RuntimeError(
             "Molecule 3.2.0 dropped use of sh library, update plugin code to use new API. "
-            "See https://github.com/ansible-community/molecule/issues/2678"
+            "See https://github.com/ansible-community/molecule/issues/2678",
         )
     elif cmd.__class__.__name__ == "BakedCommand":
-        if cmd.env and env:
-            env = dict(cmd.env, **env)
-        else:
-            env = cmd.env or env
+        env = dict(cmd.env, **env) if cmd.env and env else cmd.env or env
         args = cmd.cmd
     else:
         args = cmd
@@ -183,8 +182,7 @@ def render_template(template, **kwargs):
 
 
 def write_file(filename: str, content: str, header: Optional[str] = None) -> None:
-    """
-    Write a file with the given filename and content and returns None.
+    """Write a file with the given filename and content and returns None.
 
     :param filename: A string containing the target filename.
     :param content: A string containing the data to be written.
@@ -204,8 +202,7 @@ def molecule_prepender(content: str) -> str:
 
 
 def file_prepender(filename: str) -> None:
-    """
-    Prepend an informational header on files managed by Molecule and returns \
+    """Prepend an informational header on files managed by Molecule and returns \
     None.
 
     :param filename: A string containing the target filename.
@@ -218,20 +215,21 @@ def file_prepender(filename: str) -> None:
 
 
 def safe_dump(data: Any, explicit_start=True) -> str:
-    """
-    Dump the provided data to a YAML document and returns a string.
+    """Dump the provided data to a YAML document and returns a string.
 
     :param data: A string containing an absolute path to the file to parse.
     :return: str
     """
     return yaml.dump(
-        data, Dumper=SafeDumper, default_flow_style=False, explicit_start=explicit_start
+        data,
+        Dumper=SafeDumper,
+        default_flow_style=False,
+        explicit_start=explicit_start,
     )
 
 
-def safe_load(string) -> Dict:
-    """
-    Parse the provided string returns a dict.
+def safe_load(string) -> dict:
+    """Parse the provided string returns a dict.
 
     :param string: A string to be parsed.
     :return: dict
@@ -244,8 +242,7 @@ def safe_load(string) -> Dict:
 
 
 def safe_load_file(filename: str):
-    """
-    Parse the provided YAML file and returns a dict.
+    """Parse the provided YAML file and returns a dict.
 
     :param filename: A string containing an absolute path to the file to parse.
     :return: dict
@@ -256,8 +253,7 @@ def safe_load_file(filename: str):
 
 @contextlib.contextmanager
 def open_file(filename, mode="r"):
-    """
-    Open the provide file safely and returns a file type.
+    """Open the provide file safely and returns a file type.
 
     :param filename: A string containing an absolute path to the file to open.
     :param mode: A string describing the way in which the file will be used.
@@ -276,7 +272,7 @@ def verbose_flag(options):
     """Return computed verbosity flag."""
     verbose = "v"
     verbose_flag = []
-    for i in range(0, 3):
+    for _i in range(0, 3):
         if options.get(verbose):
             verbose_flag = [f"-{verbose}"]
             del options[verbose]
@@ -301,8 +297,7 @@ def abs_path(path: str) -> Optional[str]:
 
 
 def merge_dicts(a: MutableMapping, b: MutableMapping) -> MutableMapping:
-    """
-    Merge the values of b into a and returns a new dict.
+    """Merge the values of b into a and returns a new dict.
 
     This function uses the same algorithm as Ansible's `combine(recursive=True)` filter.
 
@@ -388,7 +383,7 @@ def boolean(value: Any, strict=True) -> bool:
         return False
 
     raise TypeError(
-        f"The value '{value!s}' is not a valid boolean.  Valid booleans include: {', '.join(repr(i) for i in BOOLEANS)!s}"
+        f"The value '{value!s}' is not a valid boolean.  Valid booleans include: {', '.join(repr(i) for i in BOOLEANS)!s}",
     )
 
 
@@ -396,14 +391,14 @@ def boolean(value: Any, strict=True) -> bool:
 class BakedCommand:
     """Define a subprocess command to be executed."""
 
-    cmd: Union[str, List[str]]
-    env: Optional[Dict]
+    cmd: Union[str, list[str]]
+    env: Optional[dict]
     cwd: Optional[str] = None
     stdout: Any = None
     stderr: Any = None
 
 
-def dict2args(data: Dict) -> List[str]:
+def dict2args(data: dict) -> list[str]:
     """Convert a dictionary of options to command like arguments."""
     result = []
     # keep sorting in order to achieve a predictable behavior
@@ -417,7 +412,7 @@ def dict2args(data: Dict) -> List[str]:
     return result
 
 
-def bool2args(data: bool) -> List[str]:
+def bool2args(data: bool) -> list[str]:
     """Convert a boolean value to command line argument (flag)."""
     return []
 
