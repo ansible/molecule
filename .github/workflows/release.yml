@@ -1,3 +1,5 @@
+---
+# cspell:ignore mislav
 name: release
 
 on:
@@ -8,41 +10,34 @@ jobs:
   pypi:
     name: Publish to PyPI registry
     environment: release
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     env:
       FORCE_COLOR: 1
       PY_COLORS: 1
       TOXENV: pkg
-      TOX_PARALLEL_NO_SPINNER: 1
 
     steps:
       - name: Switch to using Python 3.9 by default
         uses: actions/setup-python@v4
         with:
           python-version: 3.9
+
       - name: Install tox
-        run: >-
-          python3 -m
-          pip install
-          --user
-          tox
+        run: python3 -m pip install --user "tox>=4.0.0"
+
       - name: Check out src from Git
         uses: actions/checkout@v3
         with:
           fetch-depth: 0 # needed by setuptools-scm
+          submodules: true
+
       - name: Build dists
         run: python -m tox
-      - name: Publish to test.pypi.org
-        if: >- # "create" workflows run separately from "push" & "pull_request"
-          github.event_name == 'release'
-        uses: pypa/gh-action-pypi-publish@master
-        with:
-          password: ${{ secrets.testpypi_password }}
-          repository_url: https://test.pypi.org/legacy/
+
       - name: Publish to pypi.org
         if: >- # "create" workflows run separately from "push" & "pull_request"
           github.event_name == 'release'
-        uses: pypa/gh-action-pypi-publish@master
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
           password: ${{ secrets.pypi_password }}

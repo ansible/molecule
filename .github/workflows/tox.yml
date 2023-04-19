@@ -1,16 +1,21 @@
+---
 name: tox
 
 on:
-  create: # is used for publishing to PyPI and TestPyPI
-    tags: # any tag regardless of its name, no branches
   push: # only publishes pushes to the main branch to TestPyPI
     branches: # any integration branch but not tag
       - "main"
-    tags-ignore:
-      - "**"
   pull_request:
-  schedule:
-    - cron: 1 0 * * * # Run daily at 0:01 UTC
+    branches:
+      - "main"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+env:
+  FORCE_COLOR: 1 # tox, pytest, ansible-lint
+  PY_COLORS: 1
 
 jobs:
   pre:
@@ -30,26 +35,36 @@ jobs:
             docs
             pkg
             eco
-            py39-devel
-            py310-devel
+            py311-devel
 
   build:
     name: ${{ matrix.name }}
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os || 'ubuntu-22.04' }}
     needs: pre
-    env:
-      PYTEST_REQPASS: 454
+    defaults:
+      run:
+        shell: ${{ matrix.shell || 'bash'}}
     # limit potential endless looks like we had with build-containers
     timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.pre.outputs.matrix) }}
 
+    env:
+      PYTEST_REQPASS: 454
     steps:
-      - name: Check out src from Git
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0 # needed by setuptools-scm
+          submodules: true
+
+      - name: Set pre-commit cache
+        uses: actions/cache@v3
+        if: ${{ matrix.passed_name == 'lint' }}
+        with:
+          path: |
+            ~/.cache/pre-commit
+          key: pre-commit-${{ matrix.name || matrix.passed_name }}-${{ hashFiles('.pre-commit-config.yaml') }}
       - name: Install system dependencies
         # remove broken .deb ansible and replace with pip version:
         # https://github.com/actions/virtual-environments/issues/3001
@@ -66,18 +81,28 @@ jobs:
           && virtualenv foo \
           && source foo/bin/activate \
           && ansible --version
-      - name: Install a default Python
+      - name: Set up Python ${{ matrix.python_version || '3.9' }}
+        if: "!contains(matrix.shell, 'wsl')"
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python_version }}
-      - name: Install dependencies
+          cache: pip
+          python-version: ${{ matrix.python_version || '3.9' }}
+
+      - name: Install tox
         run: |
-          python3 -m pip install -U pip 'coverage[toml]'
-          python3 -m pip install 'tox>=4.0.0'
-      - name: Run tox -e ${{ matrix.passed_name }}
-        run: |
-          ${{ matrix.PREFIX }} tox -e ${{ matrix.passed_name }}
-        continue-on-error: ${{ matrix.experimental || false }}
+          python3 -m pip install --upgrade pip
+          python3 -m pip install --upgrade "tox>=4.0.0"
+
+      - name: Log installed dists
+        run: python3 -m pip freeze --all
+
+      - name: Initialize tox envs ${{ matrix.passed_name }}
+        run: python3 -m tox --notest --skip-missing-interpreters false -vv -e ${{ matrix.passed_name }}
+        timeout-minutes: 5 # average is under 1, but macos can be over 3
+
+      # sequential run improves browsing experience (almost no speed impact)
+      - name: tox -e ${{ matrix.passed_name }}
+        run: python3 -m tox -e ${{ matrix.passed_name }}
 
       - name: Combine coverage data
         if: ${{ startsWith(matrix.passed_name, 'py') }}
@@ -93,6 +118,15 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true # optional (default = false)
 
+      - name: Report failure if git reports dirty status
+        run: |
+          if [[ -n $(git status -s) ]]; then
+            # shellcheck disable=SC2016
+            echo -n '::error file=git-status::'
+            printf '### Failed as git reported modified and/or untracked files\n```\n%s\n```\n' "$(git status -s)" | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 99
+          fi
+        # https://github.com/actions/toolkit/issues/193
   check:
     if: always()
 
