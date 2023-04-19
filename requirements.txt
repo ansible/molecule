@@ -12,7 +12,7 @@ argparse-manpage==4
 arrow==1.2.3
 asyncio==3.4.3
 attrs==22.2.0
-babel==2.11.0
+babel==2.12.1
 binaryornot==0.4.4
 black==23.3.0
 bracex==2.3.post1
