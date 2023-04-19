@@ -32,8 +32,7 @@ class Dependency(base.Base):
     """Dependency Command Class."""
 
     def execute(self, action_args=None):
-        """
-        Execute the actions necessary to perform a `molecule dependency` and \
+        """Execute the actions necessary to perform a `molecule dependency` and \
         returns None.
 
         :return: None

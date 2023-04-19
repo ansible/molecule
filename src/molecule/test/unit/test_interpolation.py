@@ -17,7 +17,7 @@ import pytest
 from molecule import interpolation
 
 
-@pytest.fixture
+@pytest.fixture()
 def _mock_env():
     return {
         "FOO": "foo",
@@ -28,13 +28,13 @@ def _mock_env():
     }
 
 
-@pytest.fixture
+@pytest.fixture()
 def _instance(_mock_env):
     return interpolation.Interpolator(interpolation.TemplateWithDefaults, _mock_env)
 
 
 def test_escaped_interpolation(_instance):
-    assert "${foo}" == _instance.interpolate("$${foo}")
+    assert _instance.interpolate("$${foo}") == "${foo}"
 
 
 def test_invalid_interpolation(_instance):
@@ -55,35 +55,42 @@ def test_invalid_interpolation(_instance):
 
 
 def test_interpolate_missing_no_default(_instance):
-    assert "This  var" == _instance.interpolate("This ${missing} var")
-    assert "This  var" == _instance.interpolate("This ${BAR} var")
+    assert _instance.interpolate("This ${missing} var") == "This  var"
+    assert _instance.interpolate("This ${BAR} var") == "This  var"
 
 
 def test_interpolate_with_value(_instance):
-    assert "This foo var" == _instance.interpolate("This $FOO var")
-    assert "This foo var" == _instance.interpolate("This ${FOO} var")
+    assert _instance.interpolate("This $FOO var") == "This foo var"
+    assert _instance.interpolate("This ${FOO} var") == "This foo var"
 
 
 def test_interpolate_missing_with_default(_instance):
-    assert "ok def" == _instance.interpolate("ok ${missing:-def}")
-    assert "ok def" == _instance.interpolate("ok ${missing-def}")
-    assert "ok /non:-alphanumeric" == _instance.interpolate(
-        "ok ${BAR:-/non:-alphanumeric}"
+    assert _instance.interpolate("ok ${missing:-def}") == "ok def"
+    assert _instance.interpolate("ok ${missing-def}") == "ok def"
+    assert (
+        _instance.interpolate(
+            "ok ${BAR:-/non:-alphanumeric}",
+        )
+        == "ok /non:-alphanumeric"
     )
 
 
 def test_interpolate_with_empty_and_default_value(_instance):
-    assert "ok def" == _instance.interpolate("ok ${BAR:-def}")
-    assert "ok " == _instance.interpolate("ok ${BAR-def}")
+    assert _instance.interpolate("ok ${BAR:-def}") == "ok def"
+    assert _instance.interpolate("ok ${BAR-def}") == "ok "
 
 
 def test_interpolate_interpolates_MOLECULE_strings(_instance):
-    assert "default" == _instance.interpolate("$MOLECULE_SCENARIO_NAME")
+    assert _instance.interpolate("$MOLECULE_SCENARIO_NAME") == "default"
 
 
 def test_interpolate_does_not_interpolate_MOLECULE_strings(_instance):
-    assert "foo $MOLECULE_SCENARIO_NAME" == _instance.interpolate(
-        "foo $MOLECULE_SCENARIO_NAME", keep_string="MOLECULE_"
+    assert (
+        _instance.interpolate(
+            "foo $MOLECULE_SCENARIO_NAME",
+            keep_string="MOLECULE_",
+        )
+        == "foo $MOLECULE_SCENARIO_NAME"
     )
 
 

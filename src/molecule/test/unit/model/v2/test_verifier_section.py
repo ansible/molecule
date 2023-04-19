@@ -23,7 +23,7 @@ import pytest
 from molecule.model import schema_v3
 
 
-@pytest.fixture
+@pytest.fixture()
 def _model_verifier_section_data():
     return {
         "verifier": {
@@ -33,7 +33,7 @@ def _model_verifier_section_data():
             "options": {"foo": "bar"},
             "env": {"FOO": "foo", "FOO_BAR": "foo_bar"},
             "additional_files_or_dirs": ["foo"],
-        }
+        },
     }
 
 
@@ -42,17 +42,19 @@ def test_verifier(_config):
     assert not schema_v3.validate(_config)
 
 
-@pytest.fixture
+@pytest.fixture()
 def _model_verifier_errors_section_data():
     return {
         "verifier": {
             "name": 0,
-        }
+        },
     }
 
 
 @pytest.mark.parametrize(
-    "_config", ["_model_verifier_errors_section_data"], indirect=True
+    "_config",
+    ["_model_verifier_errors_section_data"],
+    indirect=True,
 )
 def test_verifier_has_errors(_config):
     x = ["0 is not one of ['ansible', 'goss', 'inspec', 'testinfra']"]
@@ -60,12 +62,12 @@ def test_verifier_has_errors(_config):
     assert x == schema_v3.validate(_config)
 
 
-@pytest.fixture
+@pytest.fixture()
 def _model_verifier_allows_testinfra_section_data():
     return {"verifier": {"name": "testinfra"}}
 
 
-@pytest.fixture
+@pytest.fixture()
 def _model_verifier_allows_ansible_section_data():
     return {"verifier": {"name": "ansible"}}
 

@@ -23,7 +23,7 @@ import pytest
 from molecule.model import schema_v3
 
 
-@pytest.fixture
+@pytest.fixture()
 def _model_provisioner_section_data():
     return {
         "provisioner": {
@@ -48,7 +48,7 @@ def _model_provisioner_section_data():
                 "side_effect": "quux.yml",
                 "foo": {"foo": "bar"},
             },
-        }
+        },
     }
 
 
@@ -57,17 +57,19 @@ def test_provisioner(_config):
     assert not schema_v3.validate(_config)
 
 
-@pytest.fixture
+@pytest.fixture()
 def _model_provisioner_errors_section_data():
     return {
         "provisioner": {
             "name": 0,
-        }
+        },
     }
 
 
 @pytest.mark.parametrize(
-    "_config", ["_model_provisioner_errors_section_data"], indirect=True
+    "_config",
+    ["_model_provisioner_errors_section_data"],
+    indirect=True,
 )
 def test_provisioner_has_errors(_config):
     x = ["0 is not one of ['ansible']"]
@@ -75,13 +77,15 @@ def test_provisioner_has_errors(_config):
     assert x == schema_v3.validate(_config)
 
 
-@pytest.fixture
+@pytest.fixture()
 def _model_provisioner_allows_ansible_section_data():
     return {"provisioner": {"name": "ansible"}}
 
 
 @pytest.mark.parametrize(
-    "_config", [("_model_provisioner_allows_ansible_section_data")], indirect=True
+    "_config",
+    [("_model_provisioner_allows_ansible_section_data")],
+    indirect=True,
 )
 def test_provisioner_allows_name(_config):
     assert not schema_v3.validate(_config)

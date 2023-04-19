@@ -28,8 +28,7 @@ LOG = logging.getLogger(__name__)
 
 
 class Shell(base.Base):
-    """
-    ``Shell`` is an alternate dependency manager.
+    """``Shell`` is an alternate dependency manager.
 
     It is intended to run a command in situations where `Ansible Galaxy`_
     don't suffice.
@@ -68,9 +67,9 @@ class Shell(base.Base):
     ```
     """
 
-    def __init__(self, config):
+    def __init__(self, config) -> None:
         """Construct Shell."""
-        super(Shell, self).__init__(config)
+        super().__init__(config)
         self._sh_command = None
 
         # self.command = config..config['dependency']['command']
@@ -85,7 +84,7 @@ class Shell(base.Base):
 
     def bake(self) -> None:
         """Bake a ``shell`` command so it's ready to execute."""
-        self._sh_command = BakedCommand(cmd=self.command, env=self.env)
+        self._sh_command = BakedCommand(cmd=self.command, env=self.env)  # type: ignore
 
     def execute(self, action_args=None):
         if not self.enabled:

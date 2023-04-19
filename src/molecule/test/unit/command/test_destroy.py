@@ -23,12 +23,12 @@ import pytest
 from molecule.command import destroy
 
 
-@pytest.fixture
+@pytest.fixture()
 def _patched_ansible_destroy(mocker):
     return mocker.patch("molecule.provisioner.ansible.Ansible.destroy")
 
 
-@pytest.fixture
+@pytest.fixture()
 def _patched_destroy_setup(mocker):
     return mocker.patch("molecule.command.destroy.Destroy._setup")
 
@@ -60,7 +60,9 @@ def test_execute(
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["command_driver_delegated_section_data"], indirect=True
+    "config_instance",
+    ["command_driver_delegated_section_data"],
+    indirect=True,
 )
 def test_execute_skips_when_destroy_strategy_is_never(
     _patched_destroy_setup,
@@ -80,7 +82,9 @@ def test_execute_skips_when_destroy_strategy_is_never(
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["command_driver_delegated_section_data"], indirect=True
+    "config_instance",
+    ["command_driver_delegated_section_data"],
+    indirect=True,
 )
 def test_execute_skips_when_delegated_driver(
     _patched_destroy_setup,

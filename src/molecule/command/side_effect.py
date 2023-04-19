@@ -29,15 +29,13 @@ LOG = logging.getLogger(__name__)
 
 
 class SideEffect(base.Base):
-    """
-    This action has side effects and not enabled by default.
+    """This action has side effects and not enabled by default.
 
     See the provisioners documentation for further details.
     """
 
     def execute(self, action_args=None):
-        """
-        Execute the actions necessary to perform a `molecule side-effect` and \
+        """Execute the actions necessary to perform a `molecule side-effect` and \
         returns None.
 
         :return: None

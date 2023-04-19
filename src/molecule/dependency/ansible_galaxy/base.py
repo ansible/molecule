@@ -37,21 +37,21 @@ class AnsibleGalaxyBase(base.Base):
 
     FILTER_OPTS = ()
 
-    def __init__(self, config):
+    def __init__(self, config) -> None:
         """Construct AnsibleGalaxy."""
-        super(AnsibleGalaxyBase, self).__init__(config)
+        super().__init__(config)
         self._sh_command = None
 
         self.command = "ansible-galaxy"
 
     @property
     @abc.abstractmethod
-    def install_path(self):  # noqa cover
+    def install_path(self):  # cover
         pass
 
     @property
     @abc.abstractmethod
-    def requirements_file(self):  # noqa cover
+    def requirements_file(self):  # cover
         pass
 
     @property
@@ -65,8 +65,7 @@ class AnsibleGalaxyBase(base.Base):
         return d
 
     def filter_options(self, opts, keys):
-        """
-        Filter certain keys from a dictionary.
+        """Filter certain keys from a dictionary.
 
         Removes all the values of ``keys`` from the dictionary ``opts``, if
         they are present. Returns the resulting dictionary. Does not modify the
@@ -76,7 +75,7 @@ class AnsibleGalaxyBase(base.Base):
         """
         c = copy.copy(opts)
         for key in keys:
-            if key in c.keys():
+            if key in c:
                 del c[key]
         return c
 
@@ -98,8 +97,7 @@ class AnsibleGalaxyBase(base.Base):
         return util.merge_dicts(os.environ, self._config.env)
 
     def bake(self):
-        """
-        Bake an ``ansible-galaxy`` command so it's ready to execute and returns \
+        """Bake an ``ansible-galaxy`` command so it's ready to execute and returns \
         None.
 
         :return: None
@@ -131,8 +129,7 @@ class AnsibleGalaxyBase(base.Base):
         self.execute_with_retries()
 
     def _setup(self):
-        """
-        Prepare the system for using ``ansible-galaxy`` and returns None.
+        """Prepare the system for using ``ansible-galaxy`` and returns None.
 
         :return: None
         """

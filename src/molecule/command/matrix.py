@@ -30,8 +30,7 @@ LOG = logging.getLogger(__name__)
 
 
 class Matrix(base.Base):
-    """
-    Matric Command Class.
+    """Matric Command Class.
 
     .. program:: molecule matrix subcommand
 

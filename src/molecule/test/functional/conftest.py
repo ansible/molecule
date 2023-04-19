@@ -59,9 +59,10 @@ def _env_vars_exposed(env_vars, env=os.environ):
         if env_var not in os.environ:
             return False
         return os.environ[env_var] != ""
+    return None
 
 
-@pytest.fixture
+@pytest.fixture()
 def with_scenario(request, scenario_to_test, driver_name, scenario_name, skip_test):
     scenario_directory = os.path.join(
         os.path.dirname(util.abs_path(__file__)),
@@ -79,7 +80,7 @@ def with_scenario(request, scenario_to_test, driver_name, scenario_name, skip_te
             assert run_command(cmd).returncode == 0
 
 
-@pytest.fixture
+@pytest.fixture()
 def skip_test(request, driver_name):
     msg_tmpl = "Skipped '{}' not supported"
     support_checks_map = {
@@ -239,7 +240,7 @@ def get_virtualbox_executable():
 def supports_docker() -> bool:
     docker = get_docker_executable()
     if docker:
-        result = subprocess.run([docker, "info"], stdout=PIPE, universal_newlines=True)
+        result = subprocess.run([docker, "info"], stdout=PIPE, text=True)
         if result.returncode != 0:
             LOG.error(
                 "Error %s returned from `docker info`: %s",
@@ -249,7 +250,7 @@ def supports_docker() -> bool:
             return False
         if "BuildahVersion" in result.stdout:
             LOG.error(
-                "podman-docker is unsupported, see https://github.com/ansible-community/molecule/issues/2456"
+                "podman-docker is unsupported, see https://github.com/ansible-community/molecule/issues/2456",
             )
             return False
     return True

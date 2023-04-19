@@ -25,7 +25,7 @@ import pytest
 from molecule.command.init import role
 
 
-@pytest.fixture
+@pytest.fixture()
 def _command_args():
     return {
         "dependency_name": "galaxy",
@@ -38,7 +38,7 @@ def _command_args():
     }
 
 
-@pytest.fixture
+@pytest.fixture()
 def _instance(_command_args):
     return role.Role(_command_args)
 
@@ -63,7 +63,7 @@ def test_execute_role_exists(temp_dir, _instance, patched_logger_critical):
     with pytest.raises(SystemExit) as e:
         _instance.execute()
 
-    assert 1 == e.value.code
+    assert e.value.code == 1
 
     msg = "The directory test_role exists. Cannot create new role."
     patched_logger_critical.assert_called_once_with(msg)

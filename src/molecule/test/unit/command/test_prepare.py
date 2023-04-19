@@ -26,7 +26,7 @@ from molecule import util
 from molecule.command import prepare
 
 
-@pytest.fixture
+@pytest.fixture()
 def _patched_ansible_prepare(mocker):
     return mocker.patch("molecule.provisioner.ansible.Ansible.prepare")
 
@@ -58,7 +58,9 @@ def test_execute(
 
 
 def test_execute_skips_when_instances_already_prepared(
-    patched_logger_warning, _patched_ansible_prepare, config_instance
+    patched_logger_warning,
+    _patched_ansible_prepare,
+    config_instance,
 ):
     config_instance.state.change_state("prepared", True)
     p = prepare.Prepare(config_instance)
@@ -71,7 +73,9 @@ def test_execute_skips_when_instances_already_prepared(
 
 
 def test_execute_skips_when_playbook_not_configured(
-    patched_logger_warning, _patched_ansible_prepare, config_instance
+    patched_logger_warning,
+    _patched_ansible_prepare,
+    config_instance,
 ):
     p = prepare.Prepare(config_instance)
     p.execute()
@@ -83,7 +87,10 @@ def test_execute_skips_when_playbook_not_configured(
 
 
 def test_execute_when_instances_already_prepared_but_force_provided(
-    mocker, patched_logger_warning, _patched_ansible_prepare, config_instance
+    mocker,
+    patched_logger_warning,
+    _patched_ansible_prepare,
+    config_instance,
 ):
     pb = os.path.join(config_instance.scenario.directory, "prepare.yml")
     util.write_file(pb, "")

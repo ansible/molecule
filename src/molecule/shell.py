@@ -108,12 +108,15 @@ def print_version(ctx, param, value):
     help=("The file to read variables from when rendering molecule.yml. " "(.env.yml)"),
 )
 @click.option(
-    "--version", is_flag=True, callback=print_version, expose_value=False, is_eager=True
+    "--version",
+    is_flag=True,
+    callback=print_version,
+    expose_value=False,
+    is_eager=True,
 )
 @click.pass_context
 def main(ctx, debug, verbose, base_config, env_file):  # pragma: no cover
-    """
-    Molecule aids in the development and testing of Ansible roles.
+    """Molecule aids in the development and testing of Ansible roles.
 
     To enable autocomplete for a supported shell execute command below after
     replacing SHELL with either bash, zsh, or fish:

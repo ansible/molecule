@@ -28,12 +28,11 @@ from molecule.api import MoleculeRuntimeWarning
 LOG = logging.getLogger(__name__)
 
 
-class AnsiblePlaybook(object):
+class AnsiblePlaybook:
     """Provisioner Playbook."""
 
-    def __init__(self, playbook, config, verify=False):
-        """
-        Set up the requirements to execute ``ansible-playbook`` and returns \
+    def __init__(self, playbook, config, verify=False) -> None:
+        """Set up the requirements to execute ``ansible-playbook`` and returns \
         None.
 
         :param playbook: A string containing the path to the playbook.
@@ -45,17 +44,17 @@ class AnsiblePlaybook(object):
         self._ansible_command = None
         self._playbook = playbook
         self._config = config
-        self._cli = {}
+        self._cli = {}  # type: ignore
         if verify:
             self._env = util.merge_dicts(
-                self._config.verifier.env, self._config.config["verifier"]["env"]
+                self._config.verifier.env,
+                self._config.config["verifier"]["env"],
             )
         else:
             self._env = self._config.provisioner.env
 
     def bake(self):
-        """
-        Bake an ``ansible-playbook`` command so it's ready to execute and \
+        """Bake an ``ansible-playbook`` command so it's ready to execute and \
         returns ``None``.
 
         :return: None
@@ -82,7 +81,7 @@ class AnsiblePlaybook(object):
         # custom playbooks and specify them in the scenario configuration.
         if self._config.action not in ["create", "destroy"]:
             ansible_args = list(self._config.provisioner.ansible_args) + list(
-                self._config.ansible_args
+                self._config.ansible_args,
             )
         else:
             ansible_args = []
@@ -100,8 +99,7 @@ class AnsiblePlaybook(object):
         )
 
     def execute(self, action_args=None):
-        """
-        Execute ``ansible-playbook`` and returns a string.
+        """Execute ``ansible-playbook`` and returns a string.
 
         :return: str
         """
@@ -110,7 +108,7 @@ class AnsiblePlaybook(object):
 
         if not self._playbook:
             LOG.warning("Skipping, %s action has no playbook.", self._config.action)
-            return
+            return None
 
         with warnings.catch_warnings(record=True) as warns:
             warnings.filterwarnings("default", category=MoleculeRuntimeWarning)
@@ -127,8 +125,7 @@ class AnsiblePlaybook(object):
         return result.stdout
 
     def add_cli_arg(self, name, value):
-        """
-        Add argument to CLI passed to ansible-playbook and returns None.
+        """Add argument to CLI passed to ansible-playbook and returns None.
 
         :param name: A string containing the name of argument to be added.
         :param value: The value of argument to be added.
@@ -138,8 +135,7 @@ class AnsiblePlaybook(object):
             self._cli[name] = value
 
     def add_env_arg(self, name, value):
-        """
-        Add argument to environment passed to ansible-playbook and returns \
+        """Add argument to environment passed to ansible-playbook and returns \
         None.
 
         :param name: A string containing the name of argument to be added.

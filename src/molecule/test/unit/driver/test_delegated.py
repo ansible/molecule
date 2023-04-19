@@ -27,7 +27,7 @@ from molecule.driver import delegated
 from molecule.test.conftest import is_subset
 
 
-@pytest.fixture
+@pytest.fixture()
 def _driver_managed_section_data():
     return {
         "driver": {
@@ -35,11 +35,11 @@ def _driver_managed_section_data():
             "options": {
                 "managed": True,
             },
-        }
+        },
     }
 
 
-@pytest.fixture
+@pytest.fixture()
 def _driver_unmanaged_section_data():
     return {
         "driver": {
@@ -47,11 +47,11 @@ def _driver_unmanaged_section_data():
             "options": {
                 "managed": False,
             },
-        }
+        },
     }
 
 
-@pytest.fixture
+@pytest.fixture()
 def _instance(config_instance):
     return delegated.Delegated(config_instance)
 
@@ -68,11 +68,13 @@ def test_testinfra_options_property(_instance):
 
 
 def test_name_property(_instance):
-    assert "delegated" == _instance.name
+    assert _instance.name == "delegated"
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["_driver_unmanaged_section_data"], indirect=True
+    "config_instance",
+    ["_driver_unmanaged_section_data"],
+    indirect=True,
 )
 def test_options_property(_instance):
     x = {
@@ -83,7 +85,9 @@ def test_options_property(_instance):
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["_driver_managed_section_data"], indirect=True
+    "config_instance",
+    ["_driver_managed_section_data"],
+    indirect=True,
 )
 def test_options_property_when_managed(_instance):
     x = {"managed": True}
@@ -92,7 +96,9 @@ def test_options_property_when_managed(_instance):
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["_driver_managed_section_data"], indirect=True
+    "config_instance",
+    ["_driver_managed_section_data"],
+    indirect=True,
 )
 def test_login_cmd_template_property_when_managed(_instance):
     x = (
@@ -126,14 +132,18 @@ def test_managed_property(_instance):
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["_driver_unmanaged_section_data"], indirect=True
+    "config_instance",
+    ["_driver_unmanaged_section_data"],
+    indirect=True,
 )
 def test_default_ssh_connection_options_property(_instance):
     assert [] == _instance.default_ssh_connection_options
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["_driver_managed_section_data"], indirect=True
+    "config_instance",
+    ["_driver_managed_section_data"],
+    indirect=True,
 )
 def test_default_ssh_connection_options_property_when_managed(_instance):
     x = [
@@ -150,14 +160,18 @@ def test_default_ssh_connection_options_property_when_managed(_instance):
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["_driver_unmanaged_section_data"], indirect=True
+    "config_instance",
+    ["_driver_unmanaged_section_data"],
+    indirect=True,
 )
 def test_login_options(_instance):
     assert {"instance": "foo"} == _instance.login_options("foo")
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["_driver_managed_section_data"], indirect=True
+    "config_instance",
+    ["_driver_managed_section_data"],
+    indirect=True,
 )
 def test_login_options_when_managed(mocker, _instance):
     m = mocker.patch("molecule.driver.delegated.Delegated._get_instance_config")
@@ -184,7 +198,9 @@ def test_login_options_when_managed(mocker, _instance):
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["_driver_unmanaged_section_data"], indirect=True
+    "config_instance",
+    ["_driver_unmanaged_section_data"],
+    indirect=True,
 )
 def test_ansible_connection_options(_instance):
     x = {}
@@ -194,13 +210,15 @@ def test_ansible_connection_options(_instance):
 
 @pytest.mark.xfail(reason="Needs rewrite since switch to delegated")
 @pytest.mark.parametrize(
-    "config_instance", ["_driver_managed_section_data"], indirect=True
+    "config_instance",
+    ["_driver_managed_section_data"],
+    indirect=True,
 )
 def test_ansible_connection_options_when_managed(mocker, _instance):
     assert _instance.managed is True
 
     ssh_case_data = mocker.patch(
-        "molecule.driver.delegated.Delegated._get_instance_config"
+        "molecule.driver.delegated.Delegated._get_instance_config",
     )
     ssh_case_data.return_value = {
         "instance": "foo",
@@ -234,7 +252,7 @@ def test_ansible_connection_options_when_managed(mocker, _instance):
     assert ssh_expected_data == _instance.ansible_connection_options("foo")
 
     winrm_case_data = mocker.patch(
-        "molecule.driver.delegated.Delegated._get_instance_config"
+        "molecule.driver.delegated.Delegated._get_instance_config",
     )
     winrm_case_data.return_value = {
         "instance": "foo",
@@ -255,7 +273,8 @@ def test_ansible_connection_options_when_managed(mocker, _instance):
 
 
 def test_ansible_connection_options_handles_missing_instance_config_managed(
-    mocker, _instance
+    mocker,
+    _instance,
 ):
     m = mocker.patch("molecule.util.safe_load_file")
     m.side_effect = IOError
@@ -264,7 +283,8 @@ def test_ansible_connection_options_handles_missing_instance_config_managed(
 
 
 def test_ansible_connection_options_handles_missing_results_key_when_managed(
-    mocker, _instance
+    mocker,
+    _instance,
 ):
     m = mocker.patch("molecule.util.safe_load_file")
     m.side_effect = StopIteration
@@ -274,14 +294,17 @@ def test_ansible_connection_options_handles_missing_results_key_when_managed(
 
 def test_instance_config_property(_instance):
     x = os.path.join(
-        _instance._config.scenario.ephemeral_directory, "instance_config.yml"
+        _instance._config.scenario.ephemeral_directory,
+        "instance_config.yml",
     )
 
     assert x == _instance.instance_config
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["_driver_unmanaged_section_data"], indirect=True
+    "config_instance",
+    ["_driver_unmanaged_section_data"],
+    indirect=True,
 )
 def test_ssh_connection_options_property(_instance):
     assert [] == _instance.ssh_connection_options
@@ -290,7 +313,7 @@ def test_ssh_connection_options_property(_instance):
 def test_status(mocker, _instance):
     result = _instance.status()
 
-    assert 2 == len(result)
+    assert len(result) == 2
 
     assert result[0].instance_name == "instance-1"
     assert result[0].driver_name == "delegated"
@@ -308,25 +331,28 @@ def test_status(mocker, _instance):
 
 
 def test_created(_instance):
-    assert "false" == _instance._created()
+    assert _instance._created() == "false"
 
 
-@pytest.fixture
+@pytest.fixture()
 def _driver_options_managed_section_data():
     return {"driver": {"options": {"managed": False}}}
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["_driver_options_managed_section_data"], indirect=True
+    "config_instance",
+    ["_driver_options_managed_section_data"],
+    indirect=True,
 )
 def test_created_unknown_when_managed_false(
-    _driver_options_managed_section_data, _instance
+    _driver_options_managed_section_data,
+    _instance,
 ):
-    assert "unknown" == _instance._created()
+    assert _instance._created() == "unknown"
 
 
 def test_property(_instance):
-    assert "false" == _instance._converged()
+    assert _instance._converged() == "false"
 
 
 def test_get_instance_config(mocker, _instance):

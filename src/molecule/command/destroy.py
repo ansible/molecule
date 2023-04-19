@@ -37,8 +37,7 @@ class Destroy(base.Base):
     """Destroy Command Class."""
 
     def execute(self, action_args=None):
-        """
-        Execute the actions necessary to perform a `molecule destroy` and \
+        """Execute the actions necessary to perform a `molecule destroy` and \
         returns None.
 
         :return: None

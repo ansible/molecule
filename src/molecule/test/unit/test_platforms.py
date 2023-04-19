@@ -23,7 +23,7 @@ import pytest
 from molecule import platforms
 
 
-@pytest.fixture
+@pytest.fixture()
 def _instance(config_instance):
     return platforms.Platforms(config_instance)
 
@@ -37,7 +37,7 @@ def test_instances_property(_instance):
     assert x == _instance.instances
 
 
-@pytest.fixture
+@pytest.fixture()
 def platform_name(request, config_instance):
     return platforms.Platforms(config_instance, platform_name=request.param)
 

@@ -62,16 +62,7 @@ repos:
       - id: check-merge-conflict
       - id: debug-statements
         language_version: python3
-  - repo: https://github.com/PyCQA/flake8
-    rev: 6.0.0
-    hooks:
-      - id: flake8
-        additional_dependencies:
-          - pydocstyle>=5.1.1
-          - flake8-absolute-import
-          - flake8-black>=0.1.1
-          - flake8-docstrings>=1.5.0
-        language_version: python3
+
   - repo: https://github.com/adrienverge/yamllint.git
     rev: v1.30.0
     hooks:
@@ -79,6 +70,11 @@ repos:
         files: \.(yaml|yml)$
         types: [file, yaml]
         entry: yamllint --strict
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: "v0.0.261"
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.2.0
     hooks:
@@ -100,10 +96,12 @@ repos:
           - types-dataclasses
           - types-filelock
           - types-setuptools
-  - repo: https://github.com/PyCQA/pylint
+  - repo: https://github.com/pycqa/pylint
     rev: v3.0.0a6
     hooks:
       - id: pylint
+        args:
+          - --output-format=colorized
         additional_dependencies:
           - ansible-compat>=2.2.0
           - click

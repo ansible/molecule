@@ -28,8 +28,7 @@ LOG = logging.getLogger(__name__)
 
 
 class Delegated(Driver):
-    r"""
-    The class responsible for managing delegated instances.
+    r"""The class responsible for managing delegated instances.
 
     Delegated is `not` the default driver used in Molecule.
 
@@ -135,9 +134,9 @@ class Delegated(Driver):
     ```
     """
 
-    def __init__(self, config=None):
+    def __init__(self, config=None) -> None:
         """Construct Delegated."""
-        super(Delegated, self).__init__(config)
+        super().__init__(config)
         self._name = "delegated"
 
     @property
@@ -163,6 +162,7 @@ class Delegated(Driver):
                 "-i {identity_file} "
                 f"{connection_options}"
             )
+        return None
 
     @property
     def default_safe_files(self):
@@ -173,12 +173,13 @@ class Delegated(Driver):
         if self.managed:
             ssh_connopts = self._get_ssh_connection_options()
             if self.options.get("ansible_connection_options", {}).get(
-                "ansible_ssh_common_args", None
+                "ansible_ssh_common_args",
+                None,
             ):
                 ssh_connopts.append(
                     self.options.get("ansible_connection_options").get(
-                        "ansible_ssh_common_args"
-                    )
+                        "ansible_ssh_common_args",
+                    ),
                 )
             return ssh_connopts
         return []
@@ -207,7 +208,7 @@ class Delegated(Driver):
                 if d.get("identity_file", None):
                     conn_dict["ansible_private_key_file"] = d.get("identity_file")
                     conn_dict["ansible_ssh_common_args"] = " ".join(
-                        self.ssh_connection_options
+                        self.ssh_connection_options,
                     )
                 if d.get("password", None):
                     conn_dict["ansible_password"] = d.get("password")
@@ -220,18 +221,18 @@ class Delegated(Driver):
                     conn_dict["ansible_winrm_cert_pem"] = d.get("winrm_cert_pem")
                 if d.get("winrm_cert_key_pem", None):
                     conn_dict["ansible_winrm_cert_key_pem"] = d.get(
-                        "winrm_cert_key_pem"
+                        "winrm_cert_key_pem",
                     )
                 if d.get("winrm_server_cert_validation", None):
                     conn_dict["ansible_winrm_server_cert_validation"] = d.get(
-                        "winrm_server_cert_validation"
+                        "winrm_server_cert_validation",
                     )
 
                 return conn_dict
 
             except StopIteration:
                 return {}
-            except IOError:
+            except OSError:
                 # Instance has yet to be provisioned , therefore the
                 # instance_config is not on disk.
                 return {}
@@ -239,7 +240,7 @@ class Delegated(Driver):
 
     def _created(self):
         if self.managed:
-            return super(Delegated, self)._created()
+            return super()._created()
         return "unknown"
 
     def _get_instance_config(self, instance_name):

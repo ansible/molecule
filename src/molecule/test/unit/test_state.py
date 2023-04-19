@@ -25,7 +25,7 @@ import pytest
 from molecule import state, util
 
 
-@pytest.fixture
+@pytest.fixture()
 def _instance(config_instance):
     return state.State(config_instance)
 
@@ -90,7 +90,7 @@ def test_change_state_created(_instance):
 def test_change_state_driver(_instance):
     _instance.change_state("driver", "foo")
 
-    assert "foo" == _instance.driver
+    assert _instance.driver == "foo"
 
 
 def test_change_state_prepared(_instance):

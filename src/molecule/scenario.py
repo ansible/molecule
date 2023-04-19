@@ -35,19 +35,18 @@ from molecule.constants import RC_TIMEOUT
 LOG = logging.getLogger(__name__)
 
 
-class Scenario(object):
+class Scenario:
     """A Molecule scenario."""
 
-    def __init__(self, config):
-        """
-        Initialize a new scenario class and returns None.
+    def __init__(self, config) -> None:
+        """Initialize a new scenario class and returns None.
 
         :param config: An instance of a Molecule config.
         :return: None
         """
         self._lock = None
         self.config = config
-        self._setup()
+        self._setup()  # type: ignore
 
     def _remove_scenario_state_directory(self):
         """Remove scenario cached disk stored state.
@@ -59,8 +58,7 @@ class Scenario(object):
         shutil.rmtree(directory)
 
     def prune(self):
-        """
-        Prune the scenario ephemeral directory files and returns None.
+        """Prune the scenario ephemeral directory files and returns None.
 
         "safe files" will not be pruned, including the ansible configuration
         and inventory used by this scenario, the scenario state file, and
@@ -74,7 +72,8 @@ class Scenario(object):
             self.config.provisioner.config_file,
             self.config.provisioner.inventory_file,
             self.config.state.state_file,
-        ] + self.config.driver.safe_files
+            *self.config.driver.safe_files,
+        ]
         files = util.os_walk(self.ephemeral_directory, "*")
         for f in files:
             if not any(sf for sf in safe_files if fnmatch.fnmatch(f, sf)):
@@ -110,7 +109,9 @@ class Scenario(object):
                 project_directory = f"{project_directory}-{self.config._run_uuid}"
 
             project_scenario_directory = os.path.join(
-                self.config.cache_directory, project_directory, self.name
+                self.config.cache_directory,
+                project_directory,
+                self.name,
             )
 
             path = ephemeral_directory(project_scenario_directory)
@@ -204,8 +205,7 @@ class Scenario(object):
         return result
 
     def _setup(self):
-        """
-        Prepare the scenario for Molecule and returns None.
+        """Prepare the scenario for Molecule and returns None.
 
         :return: None
         """
@@ -214,8 +214,7 @@ class Scenario(object):
 
 
 def ephemeral_directory(path: Optional[str] = None) -> str:
-    """
-    Return temporary directory to be used by molecule.
+    """Return temporary directory to be used by molecule.
 
     Molecule users should not make any assumptions about its location,
     permissions or its content as this may change in future release.

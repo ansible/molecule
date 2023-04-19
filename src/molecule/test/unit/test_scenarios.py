@@ -1,5 +1,4 @@
 #  Copyright (c) 2015-2018 Cisco Systems, Inc.
-# -*- coding: utf-8 -*-
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to
@@ -28,7 +27,7 @@ from molecule.console import console
 from molecule.text import chomp, strip_ansi_escape
 
 
-@pytest.fixture
+@pytest.fixture()
 def _instance(config_instance):
     config_instance_1 = copy.deepcopy(config_instance)
 
@@ -39,7 +38,7 @@ def _instance(config_instance):
 
 
 def test_configs_private_member(_instance):
-    assert 2 == len(_instance._configs)
+    assert len(_instance._configs) == 2
     assert isinstance(_instance._configs[0], config.Config)
     assert isinstance(_instance._configs[1], config.Config)
 
@@ -49,30 +48,30 @@ def test_scenario_name_private_member(_instance):
 
 
 def test_scenarios_private_member(_instance):
-    assert 2 == len(_instance._scenarios)
+    assert len(_instance._scenarios) == 2
     assert isinstance(_instance._scenarios[0], scenario.Scenario)
     assert isinstance(_instance._scenarios[1], scenario.Scenario)
 
 
 def test_scenarios_iterator(_instance):
-    s = [scenario for scenario in _instance]
+    s = list(_instance)
 
-    assert "default" == s[0].name
-    assert "foo" == s[1].name
+    assert s[0].name == "default"
+    assert s[1].name == "foo"
 
 
 def test_all_property(_instance):
     result = _instance.all
 
-    assert 2 == len(result)
-    assert "default" == result[0].name
-    assert "foo" == result[1].name
+    assert len(result) == 2
+    assert result[0].name == "default"
+    assert result[1].name == "foo"
 
 
 def test_all_filters_on_scenario_name_property(_instance):
     _instance._scenario_name = "default"
 
-    assert 1 == len(_instance.all)
+    assert len(_instance.all) == 1
 
 
 def test_print_matrix(capsys, _instance):
@@ -121,7 +120,7 @@ def test_verify_raises_when_scenario_not_found(_instance, patched_logger_critica
     with pytest.raises(SystemExit) as e:
         _instance._verify()
 
-    assert 1 == e.value.code
+    assert e.value.code == 1
 
     msg = "Scenario 'invalid' not found.  Exiting."
     patched_logger_critical.assert_called_once_with(msg)
@@ -130,8 +129,8 @@ def test_verify_raises_when_scenario_not_found(_instance, patched_logger_critica
 def test_filter_for_scenario(_instance):
     _instance._scenario_name = "default"
     result = _instance._filter_for_scenario()
-    assert 1 == len(result)
-    assert "default" == result[0].name
+    assert len(result) == 1
+    assert result[0].name == "default"
 
     _instance._scenario_name = "invalid"
     result = _instance._filter_for_scenario()

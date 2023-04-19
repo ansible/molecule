@@ -35,14 +35,13 @@ LOG = logging.getLogger(__name__)
 class Login(base.Base):
     """Login Command Class."""
 
-    def __init__(self, c):
+    def __init__(self, c) -> None:
         """Construct Login."""
-        super(Login, self).__init__(c)
+        super().__init__(c)
         self._pt = None
 
     def execute(self, action_args=None):
-        """
-        Execute the actions necessary to perform a `molecule login` and \
+        """Execute the actions necessary to perform a `molecule login` and \
         returns None.
 
         :return: None

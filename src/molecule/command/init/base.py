@@ -31,16 +31,19 @@ from molecule import util
 LOG = logging.getLogger(__name__)
 
 
-class Base(object):
+class Base:
     """Init Command Base Class."""
 
     __metaclass__ = abc.ABCMeta
 
     def _process_templates(
-        self, template_dir, extra_context, output_dir, overwrite=True
+        self,
+        template_dir,
+        extra_context,
+        output_dir,
+        overwrite=True,
     ):
-        """
-        Process templates as found in the named directory.
+        """Process templates as found in the named directory.
 
         :param template_dir: A string containing an absolute or relative path
          to a directory where the templates are located. If the provided
@@ -68,7 +71,7 @@ class Base(object):
             util.sysexit_with_message(
                 "The specified template directory ("
                 + str(template_dir)
-                + ") is in an invalid format"
+                + ") is in an invalid format",
             )
 
     def _resolve_template_dir(self, template_dir):
@@ -80,7 +83,7 @@ class Base(object):
                     os.path.pardir,
                     "cookiecutter",
                     template_dir,
-                )
+                ),
             )
 
         return template_dir
@@ -90,5 +93,5 @@ class Base(object):
             util.sysexit_with_message(
                 "The specified template directory ("
                 + str(template_dir)
-                + ") does not exist"
+                + ") does not exist",
             )

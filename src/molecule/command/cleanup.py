@@ -32,8 +32,7 @@ class Cleanup(base.Base):
     """Cleanup Command Class."""
 
     def execute(self, action_args=None):
-        """
-        Execute the actions necessary to cleanup the instances and returns \
+        """Execute the actions necessary to cleanup the instances and returns \
         None.
 
         :return: None
@@ -56,7 +55,8 @@ class Cleanup(base.Base):
 )
 def cleanup(ctx, scenario_name):  # pragma: no cover
     """Use the provisioner to cleanup any changes made to external systems during \
-    the stages of testing."""
+    the stages of testing.
+    """
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)
     command_args = {"subcommand": subcommand}

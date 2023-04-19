@@ -38,7 +38,7 @@ def is_subset(subset, superset):
             for key, val in subset.items()
         )
 
-    if isinstance(subset, list) or isinstance(subset, set):
+    if isinstance(subset, (list, set)):
         return all(
             any(is_subset(subitem, superitem) for superitem in superset)
             for subitem in subset
@@ -48,7 +48,7 @@ def is_subset(subset, superset):
     return subset == superset
 
 
-@pytest.fixture
+@pytest.fixture()
 def random_string(l=5):
     return "".join(random.choice(string.ascii_uppercase) for _ in range(l))
 
@@ -61,7 +61,7 @@ def change_dir_to(dir_name):
     os.chdir(cwd)
 
 
-@pytest.fixture
+@pytest.fixture()
 def temp_dir(tmpdir, random_string, request):
     directory = tmpdir.mkdir(random_string)
 
@@ -69,7 +69,7 @@ def temp_dir(tmpdir, random_string, request):
         yield directory
 
 
-@pytest.fixture
+@pytest.fixture()
 def resources_folder_path():
     resources_folder_path = os.path.join(os.path.dirname(__file__), "resources")
     return resources_folder_path
@@ -100,7 +100,7 @@ def molecule_ephemeral_directory(_fixture_uuid) -> str:
     scenario_name = "test-instance"
 
     return ephemeral_directory(
-        os.path.join("molecule_test", project_directory, scenario_name)
+        os.path.join("molecule_test", project_directory, scenario_name),
     )
 
 
@@ -122,7 +122,7 @@ def pytest_collection_modifyitems(items, config):
         return
     if not 0 < shard_id <= shards_num:
         raise ValueError(
-            "shard_id must be greater than 0 and not bigger than shards_num"
+            "shard_id must be greater than 0 and not bigger than shards_num",
         )
     for test_counter, item in enumerate(items):
         cur_shard_id = test_counter % shards_num + 1

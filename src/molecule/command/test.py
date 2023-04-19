@@ -38,8 +38,7 @@ class Test(base.Base):
     """Test Command Class."""
 
     def execute(self, action_args=None):
-        """
-        Execute the actions necessary to perform a `molecule test` and \
+        """Execute the actions necessary to perform a `molecule test` and \
         returns None.
 
         :return: None

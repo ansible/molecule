@@ -26,12 +26,12 @@ from molecule import util
 from molecule.command import cleanup
 
 
-@pytest.fixture
+@pytest.fixture()
 def _command_provisioner_section_with_cleanup_data():
     return {"provisioner": {"name": "ansible", "playbooks": {"cleanup": "cleanup.yml"}}}
 
 
-@pytest.fixture
+@pytest.fixture()
 def _patched_ansible_cleanup(mocker):
     return mocker.patch("molecule.provisioner.ansible.Ansible.cleanup")
 
@@ -40,7 +40,9 @@ def _patched_ansible_cleanup(mocker):
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.mark.parametrize(
-    "config_instance", ["_command_provisioner_section_with_cleanup_data"], indirect=True
+    "config_instance",
+    ["_command_provisioner_section_with_cleanup_data"],
+    indirect=True,
 )
 def test_execute(
     mocker,
@@ -63,7 +65,9 @@ def test_execute(
 
 
 def test_execute_skips_when_playbook_not_configured(
-    patched_logger_warning, _patched_ansible_cleanup, config_instance
+    patched_logger_warning,
+    _patched_ansible_cleanup,
+    config_instance,
 ):
     cu = cleanup.Cleanup(config_instance)
     cu.execute()

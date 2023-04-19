@@ -31,8 +31,7 @@ LOG = logging.getLogger(__name__)
 
 
 class Prepare(base.Base):
-    """
-    This action is for the purpose of preparing a molecule managed instance \
+    """This action is for the purpose of preparing a molecule managed instance \
     before the :py:class:`molecule.command.converge.Converge` action is run.
 
     Tasks contained within the ``prepare.yml`` playbook in the scenario
@@ -84,8 +83,7 @@ class Prepare(base.Base):
     """
 
     def execute(self, action_args=None):
-        """
-        Execute the actions necessary to prepare the instances and returns \
+        """Execute the actions necessary to prepare the instances and returns \
         None.
 
         :return: None

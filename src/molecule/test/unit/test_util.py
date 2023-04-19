@@ -18,7 +18,6 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-from __future__ import print_function
 
 import binascii
 import io
@@ -76,21 +75,21 @@ def test_sysexit():
     with pytest.raises(SystemExit) as e:
         util.sysexit()
 
-    assert 1 == e.value.code
+    assert e.value.code == 1
 
 
 def test_sysexit_with_custom_code():
     with pytest.raises(SystemExit) as e:
         util.sysexit(2)
 
-    assert 2 == e.value.code
+    assert e.value.code == 2
 
 
 def test_sysexit_with_message(patched_logger_critical):
     with pytest.raises(SystemExit) as e:
         util.sysexit_with_message("foo")
 
-    assert 1 == e.value.code
+    assert e.value.code == 1
 
     patched_logger_critical.assert_called_once_with("foo")
 
@@ -103,7 +102,7 @@ def test_sysexit_with_warns(patched_logger_critical, patched_logger_warning):
 
         util.sysexit_with_message("foo", warns=warns)
 
-    assert 1 == e.value.code
+    assert e.value.code == 1
 
     patched_logger_critical.assert_called_once_with("foo")
     patched_logger_warning.assert_called_once_with("xxx")
@@ -113,7 +112,7 @@ def test_sysexit_with_message_and_custom_code(patched_logger_critical):
     with pytest.raises(SystemExit) as e:
         util.sysexit_with_message("foo", 2)
 
-    assert 2 == e.value.code
+    assert e.value.code == 2
 
     patched_logger_critical.assert_called_once_with("foo")
 
@@ -122,7 +121,7 @@ def test_run_command():
     cmd = ["ls"]
     x = util.run_command(cmd)
 
-    assert 0 == x.returncode
+    assert x.returncode == 0
 
 
 def test_run_command_with_debug(mocker, patched_print_debug):
@@ -170,14 +169,14 @@ def test_os_walk(temp_dir):
         os.makedirs(scenario_directory, exist_ok=True)
         util.write_file(molecule_file, "")
 
-    result = [f for f in util.os_walk(mol_dir, "molecule.yml")]
-    assert 3 == len(result)
+    result = list(util.os_walk(mol_dir, "molecule.yml"))
+    assert len(result) == 3
 
 
 def test_render_template():
     template = "{{ foo }} = {{ bar }}"
 
-    assert "foo = bar" == util.render_template(template, foo="foo", bar="bar")
+    assert util.render_template(template, foo="foo", bar="bar") == "foo = bar"
 
 
 def test_write_file(temp_dir):
@@ -237,7 +236,7 @@ def test_safe_load_exits_when_cannot_parse():
     with pytest.raises(SystemExit) as e:
         util.safe_load(data)
 
-    assert 1 == e.value.code
+    assert e.value.code == 1
 
 
 def test_safe_load_file(temp_dir):
@@ -261,7 +260,7 @@ def test_open_file(temp_dir):
 
 
 def test_instance_with_scenario_name():
-    assert "foo-bar" == util.instance_with_scenario_name("foo", "bar")
+    assert util.instance_with_scenario_name("foo", "bar") == "foo-bar"
 
 
 def test_verbose_flag():
@@ -314,15 +313,15 @@ def test_abs_path_with_none_path():
 
 # pylint: disable=use-dict-literal
 @pytest.mark.parametrize(
-    "a,b,x",
+    ("a", "b", "x"),
     [
         # Base of recursion scenarios
-        (dict(key=1), dict(key=2), dict(key=2)),
-        (dict(key={}), dict(key=2), dict(key=2)),
-        (dict(key=1), dict(key={}), dict(key={})),
+        ({"key": 1}, {"key": 2}, {"key": 2}),
+        ({"key": {}}, {"key": 2}, {"key": 2}),
+        ({"key": 1}, {"key": {}}, {"key": {}}),
         # Recursive scenario
-        (dict(a=dict(x=1)), dict(a=dict(x=2)), dict(a=dict(x=2))),
-        (dict(a=dict(x=1)), dict(a=dict(y=2)), dict(a=dict(x=1, y=2))),
+        ({"a": {"x": 1}}, {"a": {"x": 2}}, {"a": {"x": 2}}),
+        ({"a": {"x": 1}}, {"a": {"y": 2}}, {"a": {"x": 1, "y": 2}}),
         # example taken from python-anyconfig/anyconfig/__init__.py
         (
             {"b": [{"c": 0}, {"c": 2}], "d": {"e": "aaa", "f": 3}},

@@ -29,7 +29,7 @@ from molecule import config, scenario, util
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-@pytest.fixture
+@pytest.fixture()
 def _instance(patched_config_validate, config_instance):
     return scenario.Scenario(config_instance)
 
@@ -84,7 +84,7 @@ def test_init_calls_setup(patched_scenario_setup, _instance):
 
 
 def test_name_property(_instance):
-    assert "default" == _instance.name
+    assert _instance.name == "default"
 
 
 def test_directory_property(molecule_scenario_directory_fixture, _instance):

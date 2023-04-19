@@ -29,8 +29,7 @@ log = logging.getLogger(__name__)
 
 
 class Ansible(Verifier):
-    """
-    `Ansible`_ is the default test verifier.
+    """`Ansible`_ is the default test verifier.
 
     Molecule executes a playbook (`verify.yml`) located in the role's
     `scenario.directory`.
@@ -91,5 +90,5 @@ class Ansible(Verifier):
             "verifier": {
                 "type": "dict",
                 "schema": {"name": {"type": "string", "allowed": ["ansible"]}},
-            }
+            },
         }

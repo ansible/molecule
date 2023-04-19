@@ -19,7 +19,6 @@
 #  DEALINGS IN THE SOFTWARE.
 """Create Command Module."""
 
-from __future__ import print_function
 
 import logging
 
@@ -59,8 +58,7 @@ def drivers(ctx, format):  # pragma: no cover
 
 
 def _print_tabulate_data(headers, data, table_format):  # pragma: no cover
-    """
-    Show the tabulate data on the screen and returns None.
+    """Show the tabulate data on the screen and returns None.
 
     :param headers: A list of column headers.
     :param data:  A list of tabular data to display.

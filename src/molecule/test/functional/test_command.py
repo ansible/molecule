@@ -35,12 +35,12 @@ from molecule.test.functional.conftest import (
 from molecule.util import run_command
 
 
-@pytest.fixture
+@pytest.fixture()
 def scenario_to_test(request):
     return request.param
 
 
-@pytest.fixture
+@pytest.fixture()
 def scenario_name(request):
     try:
         return request.param
@@ -48,7 +48,7 @@ def scenario_name(request):
         return None
 
 
-@pytest.fixture
+@pytest.fixture()
 def driver_name(request: FixtureRequest) -> Optional[str]:
     try:
         # https://stackoverflow.com/q/65334215/99834
@@ -57,7 +57,7 @@ def driver_name(request: FixtureRequest) -> Optional[str]:
         return None
 
 
-@pytest.fixture
+@pytest.fixture()
 def platform_name(request):
     try:
         return request.param
@@ -65,9 +65,9 @@ def platform_name(request):
         return None
 
 
-@pytest.mark.extensive
+@pytest.mark.extensive()
 @pytest.mark.parametrize(
-    "scenario_to_test, driver_name, scenario_name",
+    ("scenario_to_test", "driver_name", "scenario_name"),
     [
         ("driver/delegated", "delegated", "default"),
     ],
@@ -78,55 +78,52 @@ def test_command_check(scenario_to_test, with_scenario, scenario_name):
     assert run_command(cmd).returncode == 0
 
 
-@pytest.mark.extensive
+@pytest.mark.extensive()
 @pytest.mark.parametrize(
-    "scenario_to_test, driver_name, scenario_name",
+    ("scenario_to_test", "driver_name", "scenario_name"),
     [
         ("driver/delegated", "delegated", "default"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
-@pytest.mark.serial
+@pytest.mark.serial()
 def test_command_cleanup(scenario_to_test, with_scenario, scenario_name):
     cmd = ["molecule", "cleanup", "--scenario-name", scenario_name]
     assert run_command(cmd).returncode == 0
 
 
-@pytest.mark.extensive
+@pytest.mark.extensive()
 @pytest.mark.parametrize(
-    "scenario_to_test, driver_name, scenario_name",
+    ("scenario_to_test", "driver_name", "scenario_name"),
     [
         ("driver/delegated", "delegated", "default"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
-@pytest.mark.serial
+@pytest.mark.serial()
 def test_command_converge(scenario_to_test, with_scenario, scenario_name):
     cmd = ["molecule", "converge", "--scenario-name", scenario_name]
     assert run_command(cmd).returncode == 0
 
 
-@pytest.mark.extensive
+@pytest.mark.extensive()
 @pytest.mark.parametrize(
-    "scenario_to_test, driver_name, scenario_name",
+    ("scenario_to_test", "driver_name", "scenario_name"),
     [
         ("driver/delegated", "delegated", "default"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
-@pytest.mark.serial
+@pytest.mark.serial()
 def test_command_create(scenario_to_test, with_scenario, scenario_name, tmp_path):
     cmd = ["molecule", "create", "--scenario-name", scenario_name]
     assert run_command(cmd, env=os.environ).returncode == 0
 
     # TODO(ssbarnea): Include these additional checks
-    # role_list = run_command(["ansible-galaxy", "role", "list"], env=os.environ)
-    # assert role_list.returncode == 0, role_list
-    # assert "- molecule.delegated_test, (unknown version)" in role_list.stdout
 
 
 @pytest.mark.parametrize(
-    "scenario_to_test, driver_name, scenario_name",
+    ("scenario_to_test", "driver_name", "scenario_name"),
     [
         pytest.param(
             "dependency",
@@ -143,7 +140,7 @@ def test_command_create(scenario_to_test, with_scenario, scenario_name, tmp_path
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
-@pytest.mark.serial
+@pytest.mark.serial()
 def test_command_dependency(request, scenario_to_test, with_scenario, scenario_name):
     cmd = ["molecule", "dependency", "--scenario-name", scenario_name]
     assert run_command(cmd, echo=True).returncode == 0
@@ -153,10 +150,10 @@ def test_command_dependency(request, scenario_to_test, with_scenario, scenario_n
     assert run_command(cmd, echo=True).returncode == 0
 
 
-@pytest.mark.serial
-@pytest.mark.extensive
+@pytest.mark.serial()
+@pytest.mark.extensive()
 @pytest.mark.parametrize(
-    "scenario_to_test, driver_name, scenario_name",
+    ("scenario_to_test", "driver_name", "scenario_name"),
     [("driver/delegated", "delegated", "default")],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
@@ -165,10 +162,10 @@ def test_command_destroy(scenario_to_test, with_scenario, scenario_name):
     assert run_command(cmd).returncode == 0
 
 
-@pytest.mark.serial
-@pytest.mark.extensive
+@pytest.mark.serial()
+@pytest.mark.extensive()
 @pytest.mark.parametrize(
-    "scenario_to_test, driver_name, scenario_name",
+    ("scenario_to_test", "driver_name", "scenario_name"),
     [
         ("driver/delegated", "delegated", "default"),
     ],
@@ -178,21 +175,21 @@ def test_command_idempotence(scenario_to_test, with_scenario, scenario_name):
     idempotence(scenario_name)
 
 
-@pytest.mark.serial
+@pytest.mark.serial()
 @pytest.mark.parametrize("driver_name", [("delegated")], indirect=["driver_name"])
 def test_command_init_role(temp_dir, driver_name):
     init_role(temp_dir, driver_name)
 
 
-@pytest.mark.serial
+@pytest.mark.serial()
 @pytest.mark.parametrize("driver_name", [("delegated")], indirect=["driver_name"])
 def test_command_init_scenario(temp_dir, driver_name):
     init_scenario(temp_dir, driver_name)
 
 
-@pytest.mark.serial
+@pytest.mark.serial()
 @pytest.mark.parametrize(
-    "scenario_to_test, driver_name, expected",
+    ("scenario_to_test", "driver_name", "expected"),
     [
         (
             "driver/delegated",
@@ -208,24 +205,18 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario, expecte
 
 # @pytest.mark.parametrize(
 #     "scenario_to_test, driver_name, login_args, scenario_name",
-#     [
-#         (
 #             "driver/delegated",
 #             "delegated",
-#             [["instance", ".*instance.*"]],
 #             "default",
 #         ),
 #     ],
-#     indirect=["scenario_to_test", "driver_name", "scenario_name"],
-# )
 # def test_command_login(scenario_to_test, with_scenario, login_args, scenario_name):
-#     login(login_args, scenario_name)
 
 
-@pytest.mark.serial
-@pytest.mark.extensive
+@pytest.mark.serial()
+@pytest.mark.extensive()
 @pytest.mark.parametrize(
-    "scenario_to_test, driver_name, scenario_name",
+    ("scenario_to_test", "driver_name", "scenario_name"),
     [
         ("driver/delegated", "delegated", "default"),
     ],
@@ -239,10 +230,10 @@ def test_command_prepare(scenario_to_test, with_scenario, scenario_name):
     assert run_command(cmd).returncode == 0
 
 
-@pytest.mark.serial
-@pytest.mark.extensive
+@pytest.mark.serial()
+@pytest.mark.extensive()
 @pytest.mark.parametrize(
-    "scenario_to_test, driver_name, scenario_name",
+    ("scenario_to_test", "driver_name", "scenario_name"),
     [
         ("driver/delegated", "delegated", "default"),
     ],
@@ -253,10 +244,10 @@ def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
     assert run_command(cmd).returncode == 0
 
 
-@pytest.mark.serial
-@pytest.mark.extensive
+@pytest.mark.serial()
+@pytest.mark.extensive()
 @pytest.mark.parametrize(
-    "scenario_to_test, driver_name, scenario_name",
+    ("scenario_to_test", "driver_name", "scenario_name"),
     [
         ("driver/delegated", "delegated", "default"),
     ],
@@ -267,9 +258,9 @@ def test_command_syntax(scenario_to_test, with_scenario, scenario_name):
     assert run_command(cmd).returncode == 0
 
 
-@pytest.mark.serial
+@pytest.mark.serial()
 @pytest.mark.parametrize(
-    "scenario_to_test, driver_name, scenario_name",
+    ("scenario_to_test", "driver_name", "scenario_name"),
     [
         ("driver/delegated", "delegated", "default"),
     ],
@@ -280,7 +271,10 @@ def test_command_test(scenario_to_test, with_scenario, scenario_name, driver_nam
 
 
 def run_test_with_platform_name(
-    driver_name, platform_name, scenario_name="default", parallel=False
+    driver_name,
+    platform_name,
+    scenario_name="default",
+    parallel=False,
 ):
     cmd = [
         "molecule",
@@ -301,7 +295,7 @@ def run_test_with_platform_name(
     assert run_command(cmd).returncode == 0
 
 
-@pytest.mark.serial
+@pytest.mark.serial()
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name", "platform_name"),
     [
@@ -310,12 +304,16 @@ def run_test_with_platform_name(
     indirect=["scenario_to_test", "driver_name", "scenario_name", "platform_name"],
 )
 def test_command_test_with_platform_name(
-    scenario_to_test, with_scenario, scenario_name, driver_name, platform_name
+    scenario_to_test,
+    with_scenario,
+    scenario_name,
+    driver_name,
+    platform_name,
 ):
     run_test_with_platform_name(driver_name, platform_name, scenario_name)
 
 
-@pytest.mark.serial
+@pytest.mark.serial()
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name"),
     [
@@ -328,15 +326,18 @@ def test_command_test_with_platform_name(
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
 def test_command_test_with_role_name_check_equals_to_1(
-    scenario_to_test, with_scenario, scenario_name, driver_name
+    scenario_to_test,
+    with_scenario,
+    scenario_name,
+    driver_name,
 ):
     run_test(driver_name, scenario_name)
 
 
-@pytest.mark.serial
-@pytest.mark.extensive
+@pytest.mark.serial()
+@pytest.mark.extensive()
 @pytest.mark.parametrize(
-    "scenario_to_test, driver_name, scenario_name",
+    ("scenario_to_test", "driver_name", "scenario_name"),
     [
         ("driver/delegated", "delegated", "default"),
     ],
@@ -349,7 +350,8 @@ def test_command_verify(scenario_to_test, with_scenario, scenario_name):
 def test_sample_collection():
     assert (
         run_command(
-            ["molecule", "test"], cwd="src/molecule/test/resources/sample-collection"
+            ["molecule", "test"],
+            cwd="src/molecule/test/resources/sample-collection",
         ).returncode
         == 0
     )

@@ -29,7 +29,7 @@ from molecule.provisioner import ansible, ansible_playbooks
 from molecule.test.unit.conftest import os_split
 
 
-@pytest.fixture
+@pytest.fixture()
 def _patched_ansible_playbook(mocker):
     m = mocker.patch("molecule.provisioner.ansible_playbook.AnsiblePlaybook")
     m.return_value.execute.return_value = b"patched-ansible-playbook-stdout"
@@ -37,22 +37,22 @@ def _patched_ansible_playbook(mocker):
     return m
 
 
-@pytest.fixture
+@pytest.fixture()
 def _patched_write_inventory(mocker):
     return mocker.patch("molecule.provisioner.ansible.Ansible._write_inventory")
 
 
-@pytest.fixture
+@pytest.fixture()
 def _patched_remove_vars(mocker):
     return mocker.patch("molecule.provisioner.ansible.Ansible._remove_vars")
 
 
-@pytest.fixture
+@pytest.fixture()
 def _patched_link_or_update_vars(mocker):
     return mocker.patch("molecule.provisioner.ansible.Ansible._link_or_update_vars")
 
 
-@pytest.fixture
+@pytest.fixture()
 def _provisioner_section_data():
     return {
         "provisioner": {
@@ -71,7 +71,7 @@ def _provisioner_section_data():
                     "all": {
                         "hosts": {"extra-host-01": {}},
                         "children": {"extra-group": {"hosts": ["extra-host-01"]}},
-                    }
+                    },
                 },
                 "host_vars": {
                     "instance-1": [{"foo": "bar"}],
@@ -82,11 +82,11 @@ def _provisioner_section_data():
                     "example_group2": [{"foo": "bar"}],
                 },
             },
-        }
+        },
     }
 
 
-@pytest.fixture
+@pytest.fixture()
 def _instance(_provisioner_section_data, config_instance):
     return ansible.Ansible(config_instance)
 
@@ -135,11 +135,13 @@ def test_default_env_property(_instance):
 
 
 def test_name_property(_instance):
-    assert "ansible" == _instance.name
+    assert _instance.name == "ansible"
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["_provisioner_section_data"], indirect=True
+    "config_instance",
+    ["_provisioner_section_data"],
+    indirect=True,
 )
 def test_config_options_property(_instance):
     x = {
@@ -163,7 +165,9 @@ def test_config_options_property(_instance):
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["_provisioner_section_data"], indirect=True
+    "config_instance",
+    ["_provisioner_section_data"],
+    indirect=True,
 )
 def test_options_property(_instance):
     x = {"become": True, "foo": "bar", "v": True, "skip-tags": "molecule-notest,notest"}
@@ -191,17 +195,21 @@ def test_options_property_handles_cli_args(_instance):
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["_provisioner_section_data"], indirect=True
+    "config_instance",
+    ["_provisioner_section_data"],
+    indirect=True,
 )
 def test_env_property(_instance):
     x = _instance._config.provisioner.config_file
 
     assert x == _instance.env["ANSIBLE_CONFIG"]
-    assert "bar" == _instance.env["FOO"]
+    assert _instance.env["FOO"] == "bar"
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["_provisioner_section_data"], indirect=True
+    "config_instance",
+    ["_provisioner_section_data"],
+    indirect=True,
 )
 def test_env_appends_env_property(_instance):
     os.environ["ANSIBLE_ROLES_PATH"] = ""
@@ -209,10 +217,10 @@ def test_env_appends_env_property(_instance):
     expected = [
         util.abs_path(os.path.join(_instance._config.runtime.cache_dir, "roles")),
         util.abs_path(
-            os.path.join(_instance._config.scenario.ephemeral_directory, "roles")
+            os.path.join(_instance._config.scenario.ephemeral_directory, "roles"),
         ),
         util.abs_path(
-            os.path.join(_instance._config.project_directory, os.path.pardir)
+            os.path.join(_instance._config.project_directory, os.path.pardir),
         ),
         util.abs_path(os.path.join(os.path.expanduser("~"), ".ansible", "roles")),
         "/usr/share/ansible/roles",
@@ -229,7 +237,7 @@ def test_env_appends_env_property(_instance):
 
     x = _instance._get_modules_directories()
     x.append(
-        util.abs_path(os.path.join(_instance._config.scenario.directory, "foo", "bar"))
+        util.abs_path(os.path.join(_instance._config.scenario.directory, "foo", "bar")),
     )
     assert x == _instance.env["ANSIBLE_LIBRARY"].split(":")
 
@@ -237,14 +245,16 @@ def test_env_appends_env_property(_instance):
         _instance._get_filter_plugin_directory(),
         util.abs_path(
             os.path.join(
-                _instance._config.scenario.ephemeral_directory, "plugins", "filter"
-            )
+                _instance._config.scenario.ephemeral_directory,
+                "plugins",
+                "filter",
+            ),
         ),
         util.abs_path(
-            os.path.join(_instance._config.project_directory, "plugins", "filter")
+            os.path.join(_instance._config.project_directory, "plugins", "filter"),
         ),
         util.abs_path(
-            os.path.join(os.path.expanduser("~"), ".ansible", "plugins", "filter")
+            os.path.join(os.path.expanduser("~"), ".ansible", "plugins", "filter"),
         ),
         "/usr/share/ansible/plugins/filter",
         util.abs_path(os.path.join(_instance._config.scenario.directory, "foo", "bar")),
@@ -253,7 +263,9 @@ def test_env_appends_env_property(_instance):
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["_provisioner_section_data"], indirect=True
+    "config_instance",
+    ["_provisioner_section_data"],
+    indirect=True,
 )
 def test_env_appends_env_property_with_os_env(_instance):
     os.environ["ANSIBLE_ROLES_PATH"] = "/foo/bar:/foo/baz"
@@ -261,10 +273,10 @@ def test_env_appends_env_property_with_os_env(_instance):
     expected = [
         util.abs_path(os.path.join(_instance._config.runtime.cache_dir, "roles")),
         util.abs_path(
-            os.path.join(_instance._config.scenario.ephemeral_directory, "roles")
+            os.path.join(_instance._config.scenario.ephemeral_directory, "roles"),
         ),
         util.abs_path(
-            os.path.join(_instance._config.project_directory, os.path.pardir)
+            os.path.join(_instance._config.project_directory, os.path.pardir),
         ),
         util.abs_path(os.path.join(os.path.expanduser("~"), ".ansible", "roles")),
         "/usr/share/ansible/roles",
@@ -283,7 +295,9 @@ def test_env_appends_env_property_with_os_env(_instance):
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["_provisioner_section_data"], indirect=True
+    "config_instance",
+    ["_provisioner_section_data"],
+    indirect=True,
 )
 def test_host_vars_property(_instance):
     x = {"instance-1": [{"foo": "bar"}], "localhost": [{"foo": "baz"}]}
@@ -292,7 +306,9 @@ def test_host_vars_property(_instance):
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["_provisioner_section_data"], indirect=True
+    "config_instance",
+    ["_provisioner_section_data"],
+    indirect=True,
 )
 def test_group_vars_property(_instance):
     x = {"example_group1": [{"foo": "bar"}], "example_group2": [{"foo": "bar"}]}
@@ -301,14 +317,16 @@ def test_group_vars_property(_instance):
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["_provisioner_section_data"], indirect=True
+    "config_instance",
+    ["_provisioner_section_data"],
+    indirect=True,
 )
 def test_hosts_property(_instance):
     hosts = {
         "all": {
             "hosts": {"extra-host-01": {}},
             "children": {"extra-group": {"hosts": ["extra-host-01"]}},
-        }
+        },
     }
 
     assert hosts == _instance.hosts
@@ -325,7 +343,8 @@ def test_inventory_directory_property(_instance):
 
 def test_inventory_file_property(_instance):
     x = os.path.join(
-        _instance._config.scenario.inventory_directory, "ansible_inventory.yml"
+        _instance._config.scenario.inventory_directory,
+        "ansible_inventory.yml",
     )
 
     assert x == _instance.inventory_file
@@ -345,7 +364,7 @@ def test_directory_property(_instance):
     result = _instance.directory
     parts = os_split(result)
 
-    assert ("molecule", "provisioner", "ansible") == parts[-3:]
+    assert parts[-3:] == ("molecule", "provisioner", "ansible")
 
 
 def test_playbooks_cleaned_property_is_optional(_instance):
@@ -366,10 +385,13 @@ def test_check(_instance, mocker, _patched_ansible_playbook):
     _instance.check()
 
     _patched_ansible_playbook.assert_called_once_with(
-        _instance._config.provisioner.playbooks.converge, _instance._config, False
+        _instance._config.provisioner.playbooks.converge,
+        _instance._config,
+        False,
     )
     _patched_ansible_playbook.return_value.add_cli_arg.assert_called_once_with(
-        "check", True
+        "check",
+        True,
     )
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
@@ -378,7 +400,9 @@ def test_converge(_instance, mocker, _patched_ansible_playbook):
     result = _instance.converge()
 
     _patched_ansible_playbook.assert_called_once_with(
-        _instance._config.provisioner.playbooks.converge, _instance._config, False
+        _instance._config.provisioner.playbooks.converge,
+        _instance._config,
+        False,
     )
     # NOTE(retr0h): This is not the true return type.  This is a mock return
     #               which didn't go through str.decode().
@@ -391,7 +415,9 @@ def test_converge_with_playbook(_instance, mocker, _patched_ansible_playbook):
     result = _instance.converge("playbook")
 
     _patched_ansible_playbook.assert_called_once_with(
-        "playbook", _instance._config, False
+        "playbook",
+        _instance._config,
+        False,
     )
     # NOTE(retr0h): This is not the true return type.  This is a mock return
     #               which didn't go through str.decode().
@@ -404,7 +430,9 @@ def test_cleanup(_instance, mocker, _patched_ansible_playbook):
     _instance.cleanup()
 
     _patched_ansible_playbook.assert_called_once_with(
-        _instance._config.provisioner.playbooks.cleanup, _instance._config, False
+        _instance._config.provisioner.playbooks.cleanup,
+        _instance._config,
+        False,
     )
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
@@ -413,7 +441,9 @@ def test_destroy(_instance, mocker, _patched_ansible_playbook):
     _instance.destroy()
 
     _patched_ansible_playbook.assert_called_once_with(
-        _instance._config.provisioner.playbooks.destroy, _instance._config, False
+        _instance._config.provisioner.playbooks.destroy,
+        _instance._config,
+        False,
     )
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
@@ -422,7 +452,9 @@ def test_side_effect(_instance, mocker, _patched_ansible_playbook):
     _instance.side_effect()
 
     _patched_ansible_playbook.assert_called_once_with(
-        _instance._config.provisioner.playbooks.side_effect, _instance._config, False
+        _instance._config.provisioner.playbooks.side_effect,
+        _instance._config,
+        False,
     )
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
@@ -431,7 +463,9 @@ def test_create(_instance, mocker, _patched_ansible_playbook):
     _instance.create()
 
     _patched_ansible_playbook.assert_called_once_with(
-        _instance._config.provisioner.playbooks.create, _instance._config, False
+        _instance._config.provisioner.playbooks.create,
+        _instance._config,
+        False,
     )
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
@@ -440,7 +474,9 @@ def test_prepare(_instance, mocker, _patched_ansible_playbook):
     _instance.prepare()
 
     _patched_ansible_playbook.assert_called_once_with(
-        _instance._config.provisioner.playbooks.prepare, _instance._config, False
+        _instance._config.provisioner.playbooks.prepare,
+        _instance._config,
+        False,
     )
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
@@ -449,10 +485,13 @@ def test_syntax(_instance, mocker, _patched_ansible_playbook):
     _instance.syntax()
 
     _patched_ansible_playbook.assert_called_once_with(
-        _instance._config.provisioner.playbooks.converge, _instance._config, False
+        _instance._config.provisioner.playbooks.converge,
+        _instance._config,
+        False,
     )
     _patched_ansible_playbook.return_value.add_cli_arg.assert_called_once_with(
-        "syntax-check", True
+        "syntax-check",
+        True,
     )
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
@@ -462,7 +501,8 @@ def test_verify(_instance, mocker, _patched_ansible_playbook):
 
     if _instance._config.provisioner.playbooks.verify:
         _patched_ansible_playbook.assert_called_once_with(
-            _instance._config.provisioner.playbooks.verify, _instance._config
+            _instance._config.provisioner.playbooks.verify,
+            _instance._config,
         )
         _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
@@ -506,7 +546,9 @@ def test_manage_inventory_with_links(
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["_provisioner_section_data"], indirect=True
+    "config_instance",
+    ["_provisioner_section_data"],
+    indirect=True,
 )
 def test_add_or_update_vars(_instance):
     inventory_dir = _instance._config.scenario.inventory_directory
@@ -536,7 +578,9 @@ def test_add_or_update_vars(_instance):
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["_provisioner_section_data"], indirect=True
+    "config_instance",
+    ["_provisioner_section_data"],
+    indirect=True,
 )
 def test_add_or_update_vars_without_host_vars(_instance):
     c = _instance._config.config
@@ -586,7 +630,9 @@ def test_add_or_update_vars_does_not_create_vars(_instance):
 
 
 @pytest.mark.parametrize(
-    "config_instance", ["_provisioner_section_data"], indirect=True
+    "config_instance",
+    ["_provisioner_section_data"],
+    indirect=True,
 )
 def test_remove_vars(_instance):
     inventory_dir = _instance._config.scenario.inventory_directory
@@ -665,7 +711,7 @@ def test_link_vars_raises_when_source_not_found(_instance, patched_logger_critic
     with pytest.raises(SystemExit) as e:
         _instance._link_or_update_vars()
 
-    assert 1 == e.value.code
+    assert e.value.code == 1
 
     source = os.path.join(_instance._config.scenario.directory, os.path.pardir, "bar")
     msg = f"The source path '{source}' does not exist."
@@ -677,13 +723,15 @@ def test_verify_inventory(_instance):
 
 
 def test_verify_inventory_raises_when_missing_hosts(
-    temp_dir, patched_logger_critical, _instance
+    temp_dir,
+    patched_logger_critical,
+    _instance,
 ):
     _instance._config.config["platforms"] = []
     with pytest.raises(SystemExit) as e:
         _instance._verify_inventory()
 
-    assert 1 == e.value.code
+    assert e.value.code == 1
 
     msg = "Instances missing from the 'platform' section of molecule.yml."
     patched_logger_critical.assert_called_once_with(msg)
@@ -693,7 +741,7 @@ def test_vivify(_instance):
     d = _instance._vivify()
     d["bar"]["baz"] = "qux"
 
-    assert "qux" == str(d["bar"]["baz"])
+    assert str(d["bar"]["baz"]) == "qux"
 
 
 def test_default_to_regular(_instance):
@@ -708,7 +756,7 @@ def test_get_plugin_directory(_instance):
     result = _instance._get_plugin_directory()
     parts = os_split(result)
 
-    assert ("molecule", "provisioner", "ansible", "plugins") == parts[-4:]
+    assert parts[-4:] == ("molecule", "provisioner", "ansible", "plugins")
 
 
 def test_get_modules_directories_default(_instance, monkeypatch):
@@ -757,7 +805,7 @@ def test_absolute_path_for(_instance):
         [
             os.path.join(_instance._config.scenario.directory, "foo"),
             os.path.join(_instance._config.scenario.directory, "bar"),
-        ]
+        ],
     )
 
     assert x == _instance._absolute_path_for(env, "foo")

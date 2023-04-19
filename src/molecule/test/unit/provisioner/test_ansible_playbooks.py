@@ -27,12 +27,12 @@ from molecule.provisioner import ansible_playbooks
 from molecule.test.unit.conftest import os_split
 
 
-@pytest.fixture
+@pytest.fixture()
 def _provisioner_section_data():
     return {"provisioner": {"name": "ansible", "options": {}, "config_options": {}}}
 
 
-@pytest.fixture
+@pytest.fixture()
 def _instance(_provisioner_section_data, config_instance):
     return ansible_playbooks.AnsiblePlaybooks(config_instance)
 
@@ -90,14 +90,15 @@ def test_get_playbook(tmpdir, _instance):
 
 @pytest.mark.skip(reason="create not running for delegated")
 def test_get_playbook_returns_bundled_driver_playbook_when_local_not_found(
-    tmpdir, _instance
+    tmpdir,
+    _instance,
 ):
     x = os.path.join(_instance._get_playbook_directory(), "delegated", "create.yml")
 
     assert x == _instance._get_playbook("create")
 
 
-@pytest.fixture
+@pytest.fixture()
 def _provisioner_driver_section_data():
     return {
         "provisioner": {
@@ -105,11 +106,11 @@ def _provisioner_driver_section_data():
             "playbooks": {
                 "create": "create.yml",
             },
-        }
+        },
     }
 
 
-@pytest.fixture
+@pytest.fixture()
 def _provisioner_driver_playbook_key_missing_section_data():
     return {
         "provisioner": {
@@ -117,7 +118,7 @@ def _provisioner_driver_playbook_key_missing_section_data():
             "playbooks": {
                 "side_effect": "side_effect.yml",
             },
-        }
+        },
     }
 
 
@@ -127,7 +128,8 @@ def _provisioner_driver_playbook_key_missing_section_data():
     indirect=True,
 )
 def test_get_ansible_playbook_with_driver_key_when_playbook_key_missing(
-    tmpdir, _instance
+    tmpdir,
+    _instance,
 ):
     x = os.path.join(_instance._config.scenario.directory, "side_effect.yml")
     util.write_file(x, "")

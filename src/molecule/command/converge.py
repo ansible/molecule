@@ -32,8 +32,7 @@ class Converge(base.Base):
     """Converge Command Class."""
 
     def execute(self, action_args=None):
-        """
-        Execute the actions necessary to perform a `molecule converge` and \
+        """Execute the actions necessary to perform a `molecule converge` and \
         returns None.
 
         :return: None

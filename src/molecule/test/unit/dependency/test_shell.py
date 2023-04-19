@@ -24,7 +24,7 @@ from molecule import config
 from molecule.dependency import shell
 
 
-@pytest.fixture
+@pytest.fixture()
 def _dependency_section_data():
     return {
         "dependency": {
@@ -32,14 +32,14 @@ def _dependency_section_data():
             "command": "ls -l -a /tmp",
             "options": {"foo": "bar"},
             "env": {"FOO": "bar"},
-        }
+        },
     }
 
 
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-@pytest.fixture
+@pytest.fixture()
 def _instance(_dependency_section_data, patched_config_validate, config_instance):
     return shell.Shell(config_instance)
 
@@ -63,7 +63,7 @@ def test_default_env_property(_instance):
 
 @pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
 def test_name_property(_instance):
-    assert "shell" == _instance.name
+    assert _instance.name == "shell"
 
 
 def test_enabled_property(_instance):
@@ -87,7 +87,7 @@ def test_options_property_handles_cli_args(_instance):
 
 @pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
 def test_env_property(_instance):
-    assert "bar" == _instance.env["FOO"]
+    assert _instance.env["FOO"] == "bar"
 
 
 def test_execute(patched_run_command, patched_logger_info, _instance):
@@ -95,7 +95,9 @@ def test_execute(patched_run_command, patched_logger_info, _instance):
     _instance.execute()
 
     patched_run_command.assert_called_once_with(
-        "patched-command", debug=False, check=True
+        "patched-command",
+        debug=False,
+        check=True,
     )
 
     msg = "Dependency completed successfully."
@@ -103,7 +105,9 @@ def test_execute(patched_run_command, patched_logger_info, _instance):
 
 
 def test_execute_does_not_execute_when_disabled(
-    patched_run_command, patched_logger_warning, _instance
+    patched_run_command,
+    patched_logger_warning,
+    _instance,
 ):
     _instance._config.config["dependency"]["enabled"] = False
     _instance.execute()
@@ -119,7 +123,7 @@ def test_execute_bakes(patched_run_command, _instance):
     _instance.execute()
     assert _instance._sh_command is not None
 
-    assert 1 == patched_run_command.call_count
+    assert patched_run_command.call_count == 1
 
 
 @pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)

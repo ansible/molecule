@@ -23,7 +23,7 @@ import copy
 import logging
 import os
 import warnings
-from typing import MutableMapping
+from collections.abc import MutableMapping
 from uuid import uuid4
 
 from ansible_compat.ports import cache, cached_property
@@ -55,7 +55,7 @@ def ansible_version() -> Version:
     return app.runtime.version
 
 
-# https://stackoverflow.com/questions/16017397/injecting-function-call-after-init-with-decorator  # noqa
+# https://stackoverflow.com/questions/16017397/injecting-function-call-after-init-with-decorator
 class NewInitCaller(type):
     """NewInitCaller."""
 
@@ -65,9 +65,8 @@ class NewInitCaller(type):
         return obj
 
 
-class Config(object, metaclass=NewInitCaller):
-    """
-    Config Class.
+class Config(metaclass=NewInitCaller):
+    """Config Class.
 
     Molecule searches the current directory for ``molecule.yml`` files by
     globbing `molecule/*/molecule.yml`.  The files are instantiated into
@@ -84,9 +83,14 @@ class Config(object, metaclass=NewInitCaller):
 
     # pylint: disable=too-many-instance-attributes
     # Config objects should be allowed to have any number of attributes
-    def __init__(self, molecule_file: str, args={}, command_args={}, ansible_args=()):
-        """
-        Initialize a new config class and returns None.
+    def __init__(
+        self,
+        molecule_file: str,
+        args={},
+        command_args={},
+        ansible_args=(),
+    ) -> None:
+        """Initialize a new config class and returns None.
 
         :param molecule_file: A string containing the path to the Molecule file
          to be parsed.
@@ -216,6 +220,7 @@ class Config(object, metaclass=NewInitCaller):
         provisioner_name = self.config["provisioner"]["name"]
         if provisioner_name == "ansible":
             return ansible.Ansible(self)
+        return None
 
     @cached_property
     def scenario(self):
@@ -233,7 +238,7 @@ class Config(object, metaclass=NewInitCaller):
                 LOG.warning(
                     f"The scenario config file ('{self.molecule_file}') has been modified since the scenario was created. "
                     + "If recent changes are important, reset the scenario with 'molecule destroy' to clean up created items or "
-                    + "'molecule reset' to clear current configuration."
+                    + "'molecule reset' to clear current configuration.",
                 )
         return state.State(self)
 
@@ -281,8 +286,7 @@ class Config(object, metaclass=NewInitCaller):
         return driver_name
 
     def _get_config(self) -> MutableMapping:
-        """
-        Perform a prioritized recursive merge of config files.
+        """Perform a prioritized recursive merge of config files.
 
         Returns a new dict.  Prior to merging the config files are interpolated with
         environment variables.
@@ -292,8 +296,7 @@ class Config(object, metaclass=NewInitCaller):
         return self._combine(keep_string=MOLECULE_KEEP_STRING)
 
     def _reget_config(self):
-        """
-        Perform the same prioritized recursive merge from `get_config`.
+        """Perform the same prioritized recursive merge from `get_config`.
 
         Interpolates the ``keep_string`` left behind in the original
         ``get_config`` call.  This is probably __very__ bad.
@@ -306,8 +309,7 @@ class Config(object, metaclass=NewInitCaller):
         return self._combine(env=env)
 
     def _combine(self, env=os.environ, keep_string=None) -> MutableMapping:
-        """
-        Perform a prioritized recursive merge of config files.
+        """Perform a prioritized recursive merge of config files.
 
         Returns a new dict.  Prior to merging the config files are interpolated with
         environment variables.
@@ -326,7 +328,8 @@ class Config(object, metaclass=NewInitCaller):
                 s = stream.read()
                 interpolated_config = self._interpolate(s, env, keep_string)
                 defaults = util.merge_dicts(
-                    defaults, util.safe_load(interpolated_config)
+                    defaults,
+                    util.safe_load(interpolated_config),
                 )
 
         if self.molecule_file:
@@ -334,7 +337,8 @@ class Config(object, metaclass=NewInitCaller):
                 s = stream.read()
                 interpolated_config = self._interpolate(s, env, keep_string)
                 defaults = util.merge_dicts(
-                    defaults, util.safe_load(interpolated_config)
+                    defaults,
+                    util.safe_load(interpolated_config),
                 )
 
         return defaults
