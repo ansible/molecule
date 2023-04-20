@@ -144,7 +144,6 @@ disable = [
   "broad-except",
   "consider-merging-isinstance",
   # We will clean this up in a dedicated refactoring commit
-  "consider-using-in",
   "dangerous-default-value",
   "duplicate-code",
   "fixme",
