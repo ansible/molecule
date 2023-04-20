@@ -121,22 +121,20 @@ class Scenarios:
 
         :returns: dict
         """
-        return dict(
-            {
-                scenario.name: {
-                    "check": scenario.check_sequence,
-                    "cleanup": scenario.cleanup_sequence,
-                    "converge": scenario.converge_sequence,
-                    "create": scenario.create_sequence,
-                    "dependency": scenario.dependency_sequence,
-                    "destroy": scenario.destroy_sequence,
-                    "idempotence": scenario.idempotence_sequence,
-                    "prepare": scenario.prepare_sequence,
-                    "side_effect": scenario.side_effect_sequence,
-                    "syntax": scenario.syntax_sequence,
-                    "test": scenario.test_sequence,
-                    "verify": scenario.verify_sequence,
-                }
-                for scenario in self.all
-            },
-        )
+        return {
+            scenario.name: {
+                "check": scenario.check_sequence,
+                "cleanup": scenario.cleanup_sequence,
+                "converge": scenario.converge_sequence,
+                "create": scenario.create_sequence,
+                "dependency": scenario.dependency_sequence,
+                "destroy": scenario.destroy_sequence,
+                "idempotence": scenario.idempotence_sequence,
+                "prepare": scenario.prepare_sequence,
+                "side_effect": scenario.side_effect_sequence,
+                "syntax": scenario.syntax_sequence,
+                "test": scenario.test_sequence,
+                "verify": scenario.verify_sequence,
+            }
+            for scenario in self.all
+        }

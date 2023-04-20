@@ -20,10 +20,6 @@ repos:
         additional_dependencies:
           - prettier
           - prettier-plugin-toml
-  - repo: https://github.com/PyCQA/doc8
-    rev: "v1.1.1"
-    hooks:
-      - id: doc8
   - repo: https://github.com/codespell-project/codespell
     rev: v2.2.4
     hooks:
@@ -57,7 +53,7 @@ repos:
         types: [file, yaml]
         entry: yamllint --strict
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.0.261"
+    rev: "v0.0.262"
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
@@ -102,10 +98,23 @@ repos:
     rev: 6.13.0
     hooks:
       - id: pip-compile
-        entry: pip-compile -q --resolver=backtracking --strip-extras --no-annotate --output-file=requirements.txt tools/opts.txt pyproject.toml --extra docs --extra test --extra lint
-        files: ^(pyproject\.toml|requirements.txt|constraints\.txt)$
+        entry: pip-compile -q --resolver=backtracking --strip-extras --no-annotate --output-file=.config/requirements.txt pyproject.toml --extra docs --extra test
+        files: ^(pyproject\.toml|\.config\/.*)$
       - id: pip-compile
         name: pip-compile-upgrade
-        entry: pip-compile -q  --resolver=backtracking --strip-extras -q --upgrade --no-annotate --output-file=requirements.txt tools/opts.txt pyproject.toml --extra docs --extra test --extra lint
-        files: ^(pyproject\.toml|requirements.txt|constraints\.txt)$
+        alias: up
+        entry: pip-compile -q  --resolver=backtracking --strip-extras -q --upgrade --no-annotate --output-file=.config/requirements.txt pyproject.toml --extra docs --extra test
+        files: ^(pyproject\.toml|\.config\/.*)$
         stages: [manual]
+      - id: pip-compile
+        name: lock
+        alias: lock
+        always_run: true
+        entry: pip-compile --upgrade --resolver=backtracking --no-annotate --output-file=.config/requirements-lock.txt pyproject.toml --strip-extras --unsafe-package ruamel-yaml-clib
+        files: ^.config\/requirements.*$
+        language: python
+        language_version: "3.9" # minimal we support officially
+        pass_filenames: false
+        stages: [manual]
+        additional_dependencies:
+          - pip>=22.3.1

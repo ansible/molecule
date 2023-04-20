@@ -19,8 +19,10 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 """Molecule version information."""
+try:
+    from ._version import __version__, version  # type: ignore
+except ImportError:  # pragma: no cover
+    __version__ = "0.1.dev1"
+    version = __version__
 
-
-from importlib.metadata import version
-
-__version__ = version("molecule")
+__all__ = ("__version__", "version")
