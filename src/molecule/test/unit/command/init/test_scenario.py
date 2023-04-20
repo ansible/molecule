@@ -71,7 +71,7 @@ def test_execute_scenario_exists(temp_dir, _instance, patched_logger_critical):
 
     assert e.value.code == 1
 
-    msg = "The directory molecule/test-scenario exists. " "Cannot create new scenario."
+    msg = "The directory molecule/test-scenario exists. Cannot create new scenario."
     patched_logger_critical.assert_called_once_with(msg)
 
 

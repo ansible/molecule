@@ -105,6 +105,7 @@ class AnsiblePlaybooks:
                 "verify",
             ]:
                 return playbook
+        return None
 
     def _get_bundled_driver_playbook(self, section):
         path = self._config.driver.get_playbook(section)

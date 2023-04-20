@@ -176,6 +176,8 @@ class Config(metaclass=NewInitCaller):
             return ansible_galaxy.AnsibleGalaxy(self)
         elif dependency_name == "shell":
             return shell.Shell(self)
+        else:
+            return None
 
     @cached_property
     def driver(self):
