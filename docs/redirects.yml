@@ -1,0 +1,13 @@
+# Authoritative list of redirects we have configured in RTD,
+# https://pypi.org/project/readthedocs-cli/
+---
+- type: page
+  from_url: /en/latest/
+  to_url: /
+- type: page
+  from_url: /en/latest/getting-started/
+  to_url: /getting-started/
+# Keep this last or it will match all the other rules
+- type: sphinx_htmldir
+  from_url: ""
+  to_url: ""

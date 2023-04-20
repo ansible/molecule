@@ -1,0 +1,33 @@
+---
+# Sync RTD redirects
+name: redirects
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - docs/redirects.yml
+      - .github/workflows/redirects.yml
+
+  # Manually triggered using GitHub's UI
+  workflow_dispatch:
+
+jobs:
+  docs:
+    environment: release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+
+      - name: Upgrade Python toolchain
+        run: python3 -m pip install --upgrade pip setuptools wheel
+
+      - name: Install readthedocs-cli
+        run: python3 -m pip install readthedocs-cli
+
+      - name: Sync redirects
+        run: rtd projects ansible-lint redirects sync -f docs/redirects.yml --wet-run
+        env:
+          RTD_TOKEN: ${{ secrets.RTD_TOKEN }}

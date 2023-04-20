@@ -263,7 +263,7 @@ line-length = 88
 parametrize-values-type = "tuple"
 
 [tool.ruff.isort]
-known-first-party = ["ansiblelint"]
+known-first-party = ["molecule"]
 
 [tool.setuptools_scm]
 local_scheme = "no-local-version"
