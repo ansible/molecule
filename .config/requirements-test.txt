@@ -1,0 +1,14 @@
+# Do not include ansible or any package that would drag ansible in here
+# We want to assure test extra provides tools to test molecule and its
+# related tools/plugins but w/o ansible, which can be installed separated.
+ansible-lint >= 6.12.1
+ansi2html >= 1.8.0
+coverage >= 7.0.3
+filelock >= 3.9.0
+pexpect >= 4.8.0, < 5
+pytest-mock >= 3.10.0
+pytest-plus >= 0.4.0
+pytest-testinfra >= 7.0.0
+pytest-xdist >= 3.1.0
+pytest >= 7.2.0
+check-jsonschema

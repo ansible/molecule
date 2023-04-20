@@ -22,6 +22,7 @@
 import inspect
 import os
 from abc import ABCMeta, abstractmethod
+from importlib.metadata import version
 
 import molecule
 from molecule.status import Status
@@ -41,7 +42,7 @@ class Driver:
         self._config = config
         self._path = os.path.abspath(os.path.dirname(inspect.getfile(self.__class__)))
         self.module = self.__module__.split(".", maxsplit=1)[0]
-        self.version = molecule.version(self.module)
+        self.version = version(self.module)
 
     @property
     @abstractmethod

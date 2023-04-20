@@ -48,7 +48,7 @@ MIN_PODMAN_VERSION = "1.5.1"
 @pytest.fixture(scope="session", autouse=True)
 def require_installed_package():
     try:
-        molecule.version("molecule")
+        molecule.__version__
     except Exception as e:
         pytest.fail(f"Functional tests require molecule package to be installed: {e}")
 
