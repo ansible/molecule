@@ -173,7 +173,7 @@ Molecule handles provisioning and converging the role.
 Molecule treats scenarios as a first-class citizens, with a top-level
 configuration syntax.
 
-A scenario allows Molecule test a role in a particular way, this is a \
+A scenario allows Molecule to test a role in a particular way, this is a
 fundamental change from Molecule v1.
 
 A scenario is a self-contained directory containing everything necessary
