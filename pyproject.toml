@@ -1,14 +1,15 @@
 [build-system]
 requires = [
-  "setuptools >= 61.0", # PEP-621
-  "setuptools_scm[toml] >= 7.0.0",
+  "setuptools >= 63.0.0", # required by pyproject+setuptools_scm integration
+  "setuptools_scm[toml] >= 7.0.5", # required for "no-local-version" scheme
+
 ]
 build-backend = "setuptools.build_meta"
 
 [project]
 # https://peps.python.org/pep-0621/#readme
 requires-python = ">=3.9"
-dynamic = ["version"]
+dynamic = ["version", "dependencies", "optional-dependencies"]
 name = "molecule"
 description = "Molecule aids in the development and testing of Ansible roles"
 readme = "README.md"
@@ -22,7 +23,8 @@ classifiers = [
   "Intended Audience :: Information Technology",
   "Intended Audience :: System Administrators",
   "License :: OSI Approved :: MIT License",
-  "Operating System :: OS Independent",
+  "Operating System :: MacOS",
+  "Operating System :: POSIX",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
@@ -35,63 +37,12 @@ classifiers = [
   "Topic :: Utilities",
 ]
 keywords = ["ansible", "roles", "testing", "molecule"]
-dependencies = [
-  "ansible-compat >= 2.2.0",
-  "ansible-core >= 2.12.10",
-  "click >= 8.0, < 9",
-  "click-help-colors >= 0.9",
-  "cookiecutter >= 1.7.3", # dependency issues in older versions
-  "enrich >= 1.2.7",
-  "jsonschema >= 4.9.1",
-  "Jinja2 >= 2.11.3",
-  "packaging",
-  "pluggy >= 0.7.1, < 2.0",
-  "PyYAML >= 5.1",
-  "rich >= 9.5.1",
-]
 
 [project.urls]
 homepage = "https://github.com/ansible-community/molecule"
 documentation = "https://molecule.readthedocs.io/"
 repository = "https://github.com/ansible-community/molecule"
 changelog = "https://github.com/ansible-community/molecule/releases"
-
-[project.optional-dependencies]
-docs = [
-  "argparse-manpage",
-  "cairosvg",
-  "markdown-include",
-  "mkdocs",
-  "mkdocs-git-revision-date-localized-plugin",
-  "mkdocs-material",
-  "mkdocs-material-extensions",
-  "mkdocs-multirepo-plugin",
-  "mkdocstrings[python]",
-  "pillow",
-  "pymdown-extensions",
-]
-lint = [
-  "check-jsonschema >= 0.20.0",
-  "flake8 >= 6.0.0",
-  "jsonschema >= 4.17.3",
-  "pre-commit >= 2.21.0",
-  "yamllint >= 1.28.0",
-]
-test = [
-  # Do not include ansible or any package that would drag ansible in here
-  # We want to assure test extra provides tools to test molecule and its
-  # related tools/plugins but w/o ansible, which can be installed separated.
-  "ansible-lint >= 6.12.1",
-  "ansi2html >= 1.8.0",
-  "coverage >= 7.0.3",
-  "filelock >= 3.9.0",
-  "pexpect >= 4.8.0, < 5",
-  "pytest-mock >= 3.10.0",
-  "pytest-plus >= 0.4.0",
-  "pytest-testinfra >= 7.0.0",
-  "pytest-xdist >= 3.1.0",
-  "pytest >= 7.2.0",
-]
 
 [project.scripts]
 molecule = "molecule.__main__:main"
@@ -116,18 +67,6 @@ exclude_lines = ["pragma: no cover", "if TYPE_CHECKING:"]
 omit = ["test/*"]
 fail_under = 88
 skip_covered = true
-
-# skip_empty = true
-[tool.doc8]
-# see https://github.com/PyCQA/doc8/issues/75
-ignore-path = [
-  ".eggs",
-  ".tox",
-  "requirements.txt",
-  "build",
-  "molecule.egg-info",
-  "src/molecule.egg-info",
-]
 
 [tool.black]
 skip-string-normalization = false
@@ -262,5 +201,12 @@ parametrize-values-type = "tuple"
 [tool.ruff.isort]
 known-first-party = ["molecule"]
 
+[tool.setuptools.dynamic]
+optional-dependencies.docs = { file = [".config/requirements-docs.txt"] }
+optional-dependencies.test = { file = [".config/requirements-test.txt"] }
+optional-dependencies.lock = { file = [".config/requirements-lock.txt"] }
+dependencies = { file = [".config/requirements.in"] }
+
 [tool.setuptools_scm]
 local_scheme = "no-local-version"
+write_to = "src/molecule/_version.py"
