@@ -24,10 +24,6 @@ repos:
     rev: v2.2.4
     hooks:
       - id: codespell
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.12.0
-    hooks:
-      - id: isort
   - repo: https://github.com/psf/black
     rev: 23.3.0
     hooks:
