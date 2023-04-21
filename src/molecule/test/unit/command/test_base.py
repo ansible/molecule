@@ -244,7 +244,7 @@ def test_runtime_paths(config_instance, _patched_sysexit):
     )
 
     assert runtime_collections_path.startswith(
-        f"{cache_dir}/collections:" f"{home}/.ansible/collections",
+        f"{cache_dir}/collections:{home}/.ansible/collections",
     )
 
     assert provisioner_roles_path.startswith(f"{cache_dir}/roles")
