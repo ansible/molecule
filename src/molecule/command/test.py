@@ -75,7 +75,7 @@ class Test(base.Base):
     "--destroy",
     type=click.Choice(["always", "never"]),
     default="always",
-    help=("The destroy strategy used at the conclusion of a " "Molecule run (always)."),
+    help=("The destroy strategy used at the conclusion of a Molecule run (always)."),
 )
 @click.option(
     "--parallel/--no-parallel",

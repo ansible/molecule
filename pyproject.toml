@@ -161,7 +161,7 @@ ignore = [
   "FBT", # Boolean positional value in function call
   # Temporary disabled until we fix them:
   "A",
-  "ANN",
+  "ANN", # Annotations
   "ARG",
   "B",
   "BLE001",
@@ -169,9 +169,7 @@ ignore = [
   "D",
   "E741",
   "EM",
-  "EXE",
   "INP",
-  "ISC",
   "N",
   "PGH",
   "PLR",

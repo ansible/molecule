@@ -106,7 +106,7 @@ def print_version(ctx, param, value):
     "--env-file",
     "-e",
     default=ENV_FILE,
-    help=("The file to read variables from when rendering molecule.yml. " "(.env.yml)"),
+    help=("The file to read variables from when rendering molecule.yml. (.env.yml)"),
 )
 @click.option(
     "--version",

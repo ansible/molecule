@@ -125,7 +125,7 @@ def _role_exists(ctx, param, value: str):  # pragma: no cover
 
     role_directory = os.path.join(os.pardir, value)
     if not os.path.exists(role_directory):
-        msg = f"The role '{value}' not found. " "Please choose the proper role name."
+        msg = f"The role '{value}' not found. Please choose the proper role name."
         util.sysexit_with_message(msg)
     return value
 
