@@ -26,8 +26,7 @@ class UserListMap(UserList):
         """Implement indexing."""
         if isinstance(i, int):
             return super().__getitem__(i)
-        else:
-            return self.__dict__[i]
+        return self.__dict__[i]
 
     def get(self, key, default):
         return self.__dict__.get(key, default)

@@ -203,17 +203,16 @@ class Testinfra(Verifier):
                 )
                 tests.extend(args_tests)
             return sorted(tests)
-        else:
-            return sorted(
-                list(
-                    util.os_walk(
-                        self.directory,
-                        "test_*.py",
-                        followlinks=True,
-                    ),
-                )
-                + self.additional_files_or_dirs,
+        return sorted(
+            list(
+                util.os_walk(
+                    self.directory,
+                    "test_*.py",
+                    followlinks=True,
+                ),
             )
+            + self.additional_files_or_dirs,
+        )
 
     def schema(self):
         return {

@@ -126,8 +126,7 @@ class Config(metaclass=NewInitCaller):
         # https://github.com/ansible/ansible/pull/70007
         if self.runtime.version >= Version("2.10.0.dev0"):
             return "ANSIBLE_COLLECTIONS_PATH"
-        else:
-            return "ANSIBLE_COLLECTIONS_PATHS"
+        return "ANSIBLE_COLLECTIONS_PATHS"
 
     @property
     def config_file(self):
@@ -174,10 +173,9 @@ class Config(metaclass=NewInitCaller):
         dependency_name = self.config["dependency"]["name"]
         if dependency_name == "galaxy":
             return ansible_galaxy.AnsibleGalaxy(self)
-        elif dependency_name == "shell":
+        if dependency_name == "shell":
             return shell.Shell(self)
-        else:
-            return None
+        return None
 
     @cached_property
     def driver(self):
@@ -238,10 +236,12 @@ class Config(metaclass=NewInitCaller):
                 myState.change_state("molecule_yml_date_modified", modTime)
             elif myState.molecule_yml_date_modified != modTime:
                 LOG.warning(
-                    f"The scenario config file ('{self.molecule_file}') has been modified since the scenario was created. "
-                    + "If recent changes are important, reset the scenario with 'molecule destroy' to clean up created items or "
-                    + "'molecule reset' to clear current configuration.",
+                    "The scenario config file ('%s') has been modified since the scenario was created. "
+                    "If recent changes are important, reset the scenario with 'molecule destroy' to clean up created items or "
+                    "'molecule reset' to clear current configuration.",
+                    self.molecule_file,
                 )
+
         return state.State(self)
 
     @cached_property
