@@ -83,7 +83,7 @@ class Interpolator:
         try:
             return self.templater(string).substitute(self.mapping, keep_string)  # type: ignore
         except ValueError as e:
-            raise InvalidInterpolation(string, e)
+            raise InvalidInterpolation(string, e) from e
 
 
 class TemplateWithDefaults(string.Template):
