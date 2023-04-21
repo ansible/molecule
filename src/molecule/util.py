@@ -137,7 +137,7 @@ def run_command(
             "Molecule 3.2.0 dropped use of sh library, update plugin code to use new API. "
             "See https://github.com/ansible-community/molecule/issues/2678",
         )
-    elif cmd.__class__.__name__ == "BakedCommand":
+    if cmd.__class__.__name__ == "BakedCommand":
         env = dict(cmd.env, **env) if cmd.env and env else cmd.env or env
         args = cmd.cmd
     else:
@@ -379,7 +379,7 @@ def boolean(value: Any, strict=True) -> bool:
 
     if normalized_value in BOOLEANS_TRUE:
         return True
-    elif normalized_value in BOOLEANS_FALSE or not strict:
+    if normalized_value in BOOLEANS_FALSE or not strict:
         return False
 
     raise TypeError(

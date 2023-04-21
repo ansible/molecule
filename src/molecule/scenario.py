@@ -96,8 +96,7 @@ class Scenario:
     def directory(self):
         if self.config.molecule_file:
             return os.path.dirname(self.config.molecule_file)
-        else:
-            return os.getcwd()
+        return os.getcwd()
 
     @property
     def ephemeral_directory(self):

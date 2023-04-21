@@ -199,11 +199,11 @@ def get_section_loggers() -> Iterable[Callable]:
     default_section_loggers = [section_logger]
     if not os.getenv("CI"):
         return default_section_loggers
-    elif os.getenv("GITHUB_ACTIONS"):
+    if os.getenv("GITHUB_ACTIONS"):
         return [github_actions_groups, *default_section_loggers]
-    elif os.getenv("GITLAB_CI"):
+    if os.getenv("GITLAB_CI"):
         return [gitlab_ci_sections, *default_section_loggers]
-    elif os.getenv("TRAVIS"):
+    if os.getenv("TRAVIS"):
         return [travis_ci_folds, *default_section_loggers]
     # CI is set but no extra section_loggers apply.
     return default_section_loggers

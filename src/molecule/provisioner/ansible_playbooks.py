@@ -93,9 +93,9 @@ class AnsiblePlaybooks:
 
             if os.path.exists(playbook):
                 return playbook
-            elif os.path.exists(self._get_bundled_driver_playbook(section)):
+            if os.path.exists(self._get_bundled_driver_playbook(section)):
                 return self._get_bundled_driver_playbook(section)
-            elif section not in [
+            if section not in [
                 # these playbooks can be considered optional
                 "prepare",
                 "create",
