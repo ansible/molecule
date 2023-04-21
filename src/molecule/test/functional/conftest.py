@@ -58,7 +58,7 @@ def _env_vars_exposed(env_vars, env=os.environ):
     for env_var in env_vars:
         if env_var not in os.environ:
             return False
-        return os.environ[env_var] != ""
+        return bool(os.environ[env_var])
     return None
 
 

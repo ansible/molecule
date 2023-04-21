@@ -85,8 +85,8 @@ class AnsiblePlaybooks:
         if driver_dict:
             try:
                 playbook = driver_dict[section]
-            except Exception:
-                pass
+            except Exception as exc:
+                LOG.exception(exc)
         if playbook is not None:
             playbook = self._config.provisioner.abs_path(playbook)
             playbook = self._normalize_playbook(playbook)
