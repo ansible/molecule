@@ -148,5 +148,5 @@ class AnsiblePlaybooks:
                     pb_rename_map[basename],
                     basename,
                 )
-                playbook = fb_playbook
+                return fb_playbook
         return playbook

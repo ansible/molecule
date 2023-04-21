@@ -186,9 +186,7 @@ def section_logger(func: Callable) -> Callable:
             underscore(self.__class__.__name__),
             extra={"markup": True},
         )
-        rt = func(*args, **kwargs)
-        # section close code goes here
-        return rt
+        return func(*args, **kwargs)
 
     return wrapper
 

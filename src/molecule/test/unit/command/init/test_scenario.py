@@ -43,11 +43,10 @@ def _instance(_command_args):
 
 @pytest.fixture()
 def invalid_template_dir(resources_folder_path):
-    invalid_role_template_path = os.path.join(
+    return os.path.join(
         resources_folder_path,
         "invalid_scenario_template",
     )
-    return invalid_role_template_path
 
 
 def test_execute(temp_dir, _instance, patched_logger_info):

@@ -28,9 +28,7 @@ from molecule.provisioner import ansible_playbook
 
 @pytest.fixture()
 def _instance(config_instance):
-    _instance = ansible_playbook.AnsiblePlaybook("playbook", config_instance)
-
-    return _instance
+    return ansible_playbook.AnsiblePlaybook("playbook", config_instance)
 
 
 @pytest.fixture()
@@ -53,8 +51,7 @@ def _provisioner_verifier_section_data():
 
 @pytest.fixture()
 def _instance_for_verifier_env(config_instance):
-    _instance = ansible_playbook.AnsiblePlaybook("playbook", config_instance, True)
-    return _instance
+    return ansible_playbook.AnsiblePlaybook("playbook", config_instance, True)
 
 
 @pytest.mark.parametrize(

@@ -71,8 +71,7 @@ def temp_dir(tmpdir, random_string, request):
 
 @pytest.fixture()
 def resources_folder_path():
-    resources_folder_path = os.path.join(os.path.dirname(__file__), "resources")
-    return resources_folder_path
+    return os.path.join(os.path.dirname(__file__), "resources")
 
 
 def molecule_project_directory() -> str:

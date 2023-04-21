@@ -102,8 +102,7 @@ class Base:
 
         :return: dict
         """
-        env = util.merge_dicts(os.environ, self._config.env)
-        return env
+        return util.merge_dicts(os.environ, self._config.env)
 
     @property
     def name(self):

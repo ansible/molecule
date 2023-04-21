@@ -27,7 +27,7 @@ def command_patched_ansible_create(mocker):
 
 @pytest.fixture()
 def command_driver_delegated_section_data():
-    x = {
+    return {
         "driver": {
             "name": "delegated",
             "options": {
@@ -35,9 +35,6 @@ def command_driver_delegated_section_data():
             },
         },
     }
-    # if "DOCKER_HOST" in os.environ:
-    #     x["driver"]["options"]["ansible_docker_extra_args"] = "-H={}".format(
-    return x
 
 
 @pytest.fixture()

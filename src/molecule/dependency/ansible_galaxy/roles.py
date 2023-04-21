@@ -17,7 +17,7 @@ class Roles(AnsibleGalaxyBase):
     @property
     def default_options(self):
         general = super().default_options
-        specific = util.merge_dicts(
+        return util.merge_dicts(
             general,
             {
                 "role-file": os.path.join(
@@ -30,7 +30,6 @@ class Roles(AnsibleGalaxyBase):
                 ),
             },
         )
-        return specific
 
     @property
     def install_path(self):

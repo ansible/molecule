@@ -25,7 +25,7 @@ from molecule.status import Status
 
 @pytest.fixture()
 def _instance():
-    s = Status(
+    return Status(
         instance_name=None,
         driver_name=None,
         provisioner_name=None,
@@ -33,8 +33,6 @@ def _instance():
         created=None,
         converged=None,
     )
-
-    return s
 
 
 def test__instance_name_attribute(_instance):

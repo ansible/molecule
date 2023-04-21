@@ -123,7 +123,7 @@ class Verifier:
         return self.name
 
     def template_dir(self):
-        p = os.path.abspath(
+        return os.path.abspath(
             os.path.join(
                 os.path.dirname(molecule.__file__),
                 "cookiecutter",
@@ -132,4 +132,3 @@ class Verifier:
                 self.name,
             ),
         )
-        return p

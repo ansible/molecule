@@ -973,9 +973,8 @@ class Ansible(base.Base):
 
     def _default_to_regular(self, d):
         if isinstance(d, collections.defaultdict):
-            d = {k: self._default_to_regular(v) for k, v in d.items()}
-
-        return d
+            return {k: self._default_to_regular(v) for k, v in d.items()}
+        return None
 
     def _get_plugin_directory(self) -> str:
         return os.path.join(self.directory, "plugins")

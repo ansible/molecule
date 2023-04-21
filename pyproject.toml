@@ -165,12 +165,11 @@ ignore = [
   "EM",
   "INP",
   "N",
-  "PGH",
+  "PGH", # Type hints
   "PLR",
   "PLW",
   "PT",
   "PTH",
-  "RET",
   "SIM",
   "SLF",
   "T",
