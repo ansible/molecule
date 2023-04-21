@@ -96,7 +96,6 @@ disable = [
   "no-value-for-parameter",
   "not-callable",
   "protected-access",
-  "raise-missing-from",
   "redefined-builtin",
   "redefined-outer-name",
   "subprocess-run-check",
