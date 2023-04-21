@@ -27,7 +27,7 @@ from molecule import shell
 def test_shell():
     with pytest.raises(SystemExit):
         # Creating a click context object
-        ctx = click.Context()
+        ctx = click.Context(command=None)
         # Providing values for the required arguments when calling main() function
         shell.main(
             command=None,

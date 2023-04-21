@@ -23,9 +23,19 @@ import click
 from molecule.shell import main
 
 
-def main(ctx):
-    if __name__ == "__main__":
-        # Creating a click context object
-        ctx = click.Context()
-        # Providing values for the required arguments when calling main() function
-        main(ctx=ctx, debug=True, verbose=False, base_config=None, env_file=None)
+def func(ctx: click.Context) -> None:
+    # Creating a click context object
+    click_ctx = click.Context(command=None)
+    # Providing values for the required arguments when calling main() function
+    main(
+        command=None,
+        ctx=click_ctx,
+        debug=True,
+        verbose=False,
+        base_config=None,
+        env_file=None,
+    )
+
+
+if __name__ == "__main__":
+    func(click.Context(command=None))
