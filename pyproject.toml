@@ -93,7 +93,6 @@ disable = [
   "missing-module-docstring",
   "no-member",
   "no-self-argument",
-  "no-value-for-parameter",
   "not-callable",
   "protected-access",
   "redefined-builtin",

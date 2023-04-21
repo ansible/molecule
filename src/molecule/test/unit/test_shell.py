@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+import click
 import pytest
 
 from molecule import shell
@@ -25,4 +26,14 @@ from molecule import shell
 
 def test_shell():
     with pytest.raises(SystemExit):
-        shell.main()
+        # Creating a click context object
+        ctx = click.Context()
+        # Providing values for the required arguments when calling main() function
+        shell.main(
+            command=None,
+            ctx=ctx,
+            debug=True,
+            verbose=False,
+            base_config=None,
+            env_file=None,
+        )

@@ -18,8 +18,14 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 """Molecule CLI main entry point."""
+import click
 
 from molecule.shell import main
 
-if __name__ == "__main__":
-    main()
+
+def main(ctx):
+    if __name__ == "__main__":
+        # Creating a click context object
+        ctx = click.Context()
+        # Providing values for the required arguments when calling main() function
+        main(ctx=ctx, debug=True, verbose=False, base_config=None, env_file=None)
