@@ -105,8 +105,6 @@ disable = [
   "too-many-ancestors",
   "too-many-arguments",
   "too-many-public-methods",
-  "unidiomatic-typecheck",
-  "unnecessary-comprehension",
   # Next rule was added because we cannot adjust the open calls during minor
   # releases since there is no guarantee that this will not break existing
   # scenarios (right now, we have no idea what encoding files that molecule
