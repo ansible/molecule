@@ -284,15 +284,15 @@ $ tree monolith-repo -L 3 --prune
 monolith-repo
  ├── library
  │   └── foo.py
- ├── plugins 
+ ├── plugins
  │   └── filters
  │       └── foo.py
- └── roles 
+ └── roles
      ├── bar
-     │   └── README.md 
-     ├── baz 
-     │   └── README.md 
-     └── foo 
+     │   └── README.md
+     ├── baz
+     │   └── README.md
+     └── foo
          └── README.md
 ```
 
