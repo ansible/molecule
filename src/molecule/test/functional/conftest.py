@@ -240,7 +240,12 @@ def get_virtualbox_executable():
 def supports_docker() -> bool:
     docker = get_docker_executable()
     if docker:
-        result = subprocess.run([docker, "info"], stdout=PIPE, text=True)
+        result = subprocess.run(
+            [docker, "info"],
+            stdout=PIPE,
+            text=True,
+            check=True,
+        )  # Explicitly set check=True
         if result.returncode != 0:
             LOG.error(
                 "Error %s returned from `docker info`: %s",
