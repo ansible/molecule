@@ -100,7 +100,7 @@ class Login(base.Base):
 
         cmd = shlex.split(f"/usr/bin/env {login_cmd}")
         # ruff: noqa: S603
-        subprocess.run(cmd)
+        subprocess.run(cmd, check=False)
 
 
 @base.click_command_ex()
