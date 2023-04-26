@@ -271,6 +271,9 @@ class Driver:
             return p
         return None
 
+    def schema_file(self):
+        return None
+
     def modules_dir(self):
         """Return path to ansible modules included with driver."""
         p = os.path.join(self._path, "modules")
