@@ -179,6 +179,14 @@ def test_render_template():
     assert util.render_template(template, foo="foo", bar="bar") == "foo = bar"
 
 
+def test_render_template_quoted():
+    template = """
+    {{ 'url = "quoted_str"' }}
+    """.strip()
+
+    assert util.render_template(template) == 'url = "quoted_str"'
+
+
 def test_write_file(temp_dir):
     dest_file = os.path.join(temp_dir.strpath, "test_util_write_file.tmp")
     contents = binascii.b2a_hex(os.urandom(15)).decode("utf-8")
