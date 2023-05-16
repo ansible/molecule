@@ -11,6 +11,17 @@ class AnsibleGalaxy(Base):
     Additional options can be passed to ``ansible-galaxy install`` through the
     options dict.  Any option set in this section will override the defaults.
 
+    The `role-file` and `requirements-file` search path is `<role-name>`
+    directory. The default value for `role-file` is `requirements.yml` and the
+    default value for `requirements-file` is `collections.yml`.
+
+    1. If they are not defined in `options`, `molecule` will find them from
+    `<role-name>` directory, e.g. `<role-name>/requirements.yml` and
+    `<role-name>/collections.yml`
+    2. If they are defined in `options`, `molecule` will find them from
+    `<role-name>/<the-value-of-role-file>` and
+    `<role-name>/<the-value-of-requirements-file>`.
+
     !!! note
 
         Molecule will remove any options matching '^[v]+$', and pass ``-vvv``
