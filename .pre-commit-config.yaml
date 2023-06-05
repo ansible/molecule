@@ -81,7 +81,7 @@ repos:
         args:
           - --output-format=colorized
         additional_dependencies:
-          - ansible-compat>=4.0.1
+          - ansible-compat>=4.1.2
           - click
           - click-help-colors
           - cookiecutter
