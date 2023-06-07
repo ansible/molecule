@@ -91,6 +91,7 @@ class Login(base.Base):
         return match[0]
 
     def _get_login(self, hostname):  # pragma: no cover
+        # ruff: noqa: S605,S607
         lines, columns = os.popen("stty size", "r").read().split()
         login_options = self._config.driver.login_options(hostname)
         login_options["columns"] = columns
@@ -98,7 +99,8 @@ class Login(base.Base):
         login_cmd = self._config.driver.login_cmd_template.format(**login_options)
 
         cmd = shlex.split(f"/usr/bin/env {login_cmd}")
-        subprocess.run(cmd)
+        # ruff: noqa: S603
+        subprocess.run(cmd, check=False)
 
 
 @base.click_command_ex()

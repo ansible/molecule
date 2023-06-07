@@ -9,7 +9,7 @@ familiar with the basics of how to use Molecule and what it can offer.
     In order to complete this guide by hand, you will need to additionally
     install [Docker](https://docs.docker.com/). Molecule requires an
     external Python dependency for the Docker driver which is provided when
-    installing Molecule using `pip install 'molecule[docker]'`.
+    installing Molecule using `pip install 'molecule-plugins[docker]'`.
 
 ## Creating a new role
 

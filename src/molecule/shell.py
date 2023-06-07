@@ -62,12 +62,13 @@ def print_version(ctx, param, value):
 
     msg += f"    [repr.attrib_name]ansible[/][dim]:[/][repr.number]{app.runtime.version}[/]"
     for driver in drivers():
-        msg += f"\n    [repr.attrib_name]{str(driver)}[/][dim]:[/][repr.number]{driver.version}[/][dim] from {driver.module}[/]"
+        msg += f"\n    [repr.attrib_name]{str(driver)}[/][dim]:[/][repr.number]{driver.version}[/][dim] from {driver.module}"
         if driver.required_collections:
             msg += " requiring collections:"
             for name, version in driver.required_collections.items():
-                msg += f" {name}>={version}"
-    console.print(msg)
+                msg += f" [repr.attrib_name]{name}[/]>=[repr.number]{version}[/]"
+        msg += "[/]"
+    console.print(msg, highlight=False)
 
     ctx.exit()
 
@@ -105,7 +106,7 @@ def print_version(ctx, param, value):
     "--env-file",
     "-e",
     default=ENV_FILE,
-    help=("The file to read variables from when rendering molecule.yml. " "(.env.yml)"),
+    help=("The file to read variables from when rendering molecule.yml. (.env.yml)"),
 )
 @click.option(
     "--version",

@@ -24,10 +24,6 @@ repos:
     rev: v2.2.4
     hooks:
       - id: codespell
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.12.0
-    hooks:
-      - id: isort
   - repo: https://github.com/psf/black
     rev: 23.3.0
     hooks:
@@ -66,7 +62,7 @@ repos:
         entry: mypy src/
         pass_filenames: false
         additional_dependencies:
-          - ansible-compat>=2.2.0
+          - ansible-compat>=4.1.2
           - click>=8.0.1
           - enrich>=1.2.7
           - importlib-metadata>=4.6.1
@@ -85,7 +81,7 @@ repos:
         args:
           - --output-format=colorized
         additional_dependencies:
-          - ansible-compat>=2.2.0
+          - ansible-compat>=4.1.2
           - click
           - click-help-colors
           - cookiecutter

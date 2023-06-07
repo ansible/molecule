@@ -58,7 +58,7 @@ def _env_vars_exposed(env_vars, env=os.environ):
     for env_var in env_vars:
         if env_var not in os.environ:
             return False
-        return os.environ[env_var] != ""
+        return bool(os.environ[env_var])
     return None
 
 
@@ -164,7 +164,8 @@ def metadata_lint_update(role_directory: str) -> None:
     # the customize ansible-lint config is used.
     with change_dir_to(role_directory):
         cmd = ["ansible-lint", "."]
-    assert run_command(cmd).returncode == 0
+        result = run_command(cmd)
+    assert result.returncode == 0
 
 
 def list_cmd(x):
@@ -240,7 +241,12 @@ def get_virtualbox_executable():
 def supports_docker() -> bool:
     docker = get_docker_executable()
     if docker:
-        result = subprocess.run([docker, "info"], stdout=PIPE, text=True)
+        result = subprocess.run(
+            [docker, "info"],
+            stdout=PIPE,
+            text=True,
+            check=True,
+        )  # Explicitly set check=True
         if result.returncode != 0:
             LOG.error(
                 "Error %s returned from `docker info`: %s",

@@ -146,7 +146,7 @@ def run_command(
     if debug:
         print_environment_vars(env)
 
-    result = app.runtime.exec(
+    result = app.runtime.run(
         args=args,
         env=env,
         cwd=cwd,
@@ -175,7 +175,7 @@ def os_walk(directory, pattern, excludes=[], followlinks=False):
 
 def render_template(template, **kwargs):
     """Render a jinaj2 template."""
-    t = jinja2.Environment()
+    t = jinja2.Environment(autoescape=True)
     t = t.from_string(template)
 
     return t.render(kwargs)

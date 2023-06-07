@@ -97,16 +97,10 @@ disable = [
   "protected-access",
   "redefined-builtin",
   "redefined-outer-name",
-  "subprocess-run-check",
-  "super-init-not-called",
-  "super-with-arguments",
   "too-few-public-methods",
   "too-many-ancestors",
   "too-many-arguments",
   "too-many-public-methods",
-  "unidiomatic-typecheck",
-  "unnecessary-comprehension",
-  "unnecessary-lambda",
   # Next rule was added because we cannot adjust the open calls during minor
   # releases since there is no guarantee that this will not break existing
   # scenarios (right now, we have no idea what encoding files that molecule
@@ -155,10 +149,12 @@ filterwarnings = [
 
 [tool.ruff]
 ignore = [
+  # Disabled on purpose:
   "E501", # we use black
-  # temporary disabled until we fix them:
+  "FBT", # Boolean positional value in function call
+  # Temporary disabled until we fix them:
   "A",
-  "ANN",
+  "ANN", # Annotations
   "ARG",
   "B",
   "BLE001",
@@ -166,19 +162,14 @@ ignore = [
   "D",
   "E741",
   "EM",
-  "EXE",
-  "FBT",
   "INP",
-  "ISC",
   "N",
   "PGH",
-  "PLC",
   "PLR",
   "PLW",
   "PT",
   "PTH",
   "RET",
-  "S",
   "SIM",
   "SLF",
   "T",
@@ -194,6 +185,10 @@ parametrize-values-type = "tuple"
 
 [tool.ruff.isort]
 known-first-party = ["molecule"]
+
+[tool.ruff.per-file-ignores]
+"src/molecule/test/**.py" = ["S"]
+"src/molecule/*/\\{\\{*/**.py" = ["S"]
 
 [tool.setuptools.dynamic]
 optional-dependencies.docs = { file = [".config/requirements-docs.txt"] }

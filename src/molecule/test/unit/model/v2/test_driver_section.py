@@ -71,9 +71,9 @@ def test_driver_has_errors(_config):
     base_error_msg = "is not one of ['azure', 'ec2', 'delegated', 'docker', 'containers', 'openstack', 'podman', 'vagrant', 'digitalocean', 'gce', 'libvirt', 'lxd', 'molecule-*', 'molecule_*', 'custom-*', 'custom_*']"
 
     driver_name = str(_config["driver"]["name"])
-    if type(_config["driver"]["name"]) is str:
+    if isinstance(_config["driver"]["name"], str):
         # add single quotes for string
-        driver_name = f"'{driver_name}'"
+        driver_name = f"'{_config['driver']['name']}'"
 
     error_msg = [" ".join((driver_name, base_error_msg))]
     assert error_msg == schema_v3.validate(_config)

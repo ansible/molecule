@@ -1,4 +1,4 @@
-ansible-compat >= 2.2.0
+ansible-compat >= 4.1.2
 ansible-core >= 2.12.10
 click >= 8.0, < 9
 click-help-colors >= 0.9

@@ -19,7 +19,6 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import copy
-import functools
 import os
 import shutil
 from collections.abc import Generator
@@ -109,7 +108,11 @@ def molecule_data(
         _molecule_verifier_section_data,
     ]
 
-    return functools.reduce(lambda x, y: util.merge_dicts(x, y), fixtures)
+    merged_dict = {}
+    for fixture in fixtures:
+        merged_dict.update(fixture)
+
+    return merged_dict
 
 
 @pytest.fixture()
