@@ -20,9 +20,11 @@
 """Delegated Driver Module."""
 
 import logging
+import os
 
 from molecule import util
 from molecule.api import Driver
+from molecule.data import __file__ as data_module
 
 LOG = logging.getLogger(__name__)
 
@@ -253,3 +255,6 @@ class Delegated(Driver):
     def sanity_checks(self):
         # Note(decentral1se): Cannot implement driver specifics are unknown
         pass
+
+    def schema_file(self):
+        return os.path.join(os.path.dirname(data_module), "driver.json")

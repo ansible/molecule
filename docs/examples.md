@@ -279,9 +279,22 @@ platforms:
 Molecule is generally used to test roles in isolation. However, it can
 also test roles from a monolith repo.
 
-> \$ tree monolith-repo -L 3 \--prune monolith-repo ├── library │   └──
-> foo.py ├── plugins │   └── filters │   └── foo.py └── roles ├── bar
-> │   └── README.md ├── baz │   └── README.md └── foo └── README.md
+```bash
+$ tree monolith-repo -L 3 --prune
+monolith-repo
+ ├── library
+ │   └── foo.py
+ ├── plugins
+ │   └── filters
+ │       └── foo.py
+ └── roles
+     ├── bar
+     │   └── README.md
+     ├── baz
+     │   └── README.md
+     └── foo
+         └── README.md
+```
 
 The role initialized with Molecule (baz in this case) would simply
 reference the dependent roles via it's `converge.yml` or meta
