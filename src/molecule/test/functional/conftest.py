@@ -164,7 +164,8 @@ def metadata_lint_update(role_directory: str) -> None:
     # the customize ansible-lint config is used.
     with change_dir_to(role_directory):
         cmd = ["ansible-lint", "."]
-    assert run_command(cmd).returncode == 0
+        result = run_command(cmd)
+    assert result.returncode == 0
 
 
 def list_cmd(x):
