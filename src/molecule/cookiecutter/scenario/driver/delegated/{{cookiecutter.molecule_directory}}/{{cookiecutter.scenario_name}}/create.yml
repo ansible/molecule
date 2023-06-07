@@ -9,9 +9,10 @@
 
     # TODO: Developer must implement and populate 'server' variable
 
-    - when: server.changed | default(false) | bool
+    - name: Create instance config
+      when: server.changed | default(false) | bool  # noqa no-handler
       block:
-        - name: Populate instance config dict
+        - name: Populate instance config dict  # noqa jinja
           ansible.builtin.set_fact:
             instance_conf_dict: {
               'instance': "{{ }}",
