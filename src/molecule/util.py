@@ -146,7 +146,7 @@ def run_command(
     if debug:
         print_environment_vars(env)
 
-    result = app.runtime.exec(
+    result = app.runtime.run(
         args=args,
         env=env,
         cwd=cwd,
