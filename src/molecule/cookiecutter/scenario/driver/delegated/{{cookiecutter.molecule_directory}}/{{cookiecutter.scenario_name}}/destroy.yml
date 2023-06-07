@@ -22,5 +22,5 @@
           {{ instance_conf | to_json | from_json | to_yaml }}
         dest: "{{ molecule_instance_config }}"
         mode: 0600
-      when: server.changed | default(false) | bool
+      when: server.changed | default(false) | bool  # noqa no-handler
 {%- endraw %}

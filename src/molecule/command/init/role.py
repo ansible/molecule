@@ -90,7 +90,7 @@ class Role(base.Base):
 
         if namespace:
             # we need to inject namespace info into meta/main.yml
-            cmd = [
+            cmd_meta = [
                 "ansible",
                 "localhost",
                 "-o",  # one line output
@@ -99,7 +99,18 @@ class Role(base.Base):
                 "-a",
                 f'path={role_name}/meta/main.yml line="  namespace: {namespace}" insertafter="  author: your name"',
             ]
-            util.run_command(cmd, check=True)
+            util.run_command(cmd_meta, check=True)
+            # we need to inject namespace info into tests/test.yml
+            cmd_tests = [
+                "ansible",
+                "localhost",
+                "-o",  # one line output
+                "-m",
+                "lineinfile",
+                "-a",
+                f'path={role_name}/tests/test.yml line="    - {namespace}.{role_name}" regex="^(.*)  - {role_name}"',
+            ]
+            util.run_command(cmd_tests, check=True)
 
         scenario_base_directory = os.path.join(role_directory, role_name)
         templates = [
