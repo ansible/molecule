@@ -15,7 +15,7 @@ class AnsibleGalaxy(Base):
     directory. The default value for `role-file` is `requirements.yml`, and the
     default value for `requirements-file` is `collections.yml`.
 
-    1. If they are not defined in `options`, `molecule` will find them from
+    1. If they are not defined in `options`, `molecule` will find them from the
     `<role-name>` directory, e.g. `<role-name>/requirements.yml` and
     `<role-name>/collections.yml`
     2. If they are defined in `options`, `molecule` will find them from
