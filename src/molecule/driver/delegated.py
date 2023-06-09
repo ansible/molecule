@@ -196,44 +196,40 @@ class Delegated(Driver):
         return {"instance": instance_name}
 
     def ansible_connection_options(self, instance_name):
+        # list of tuples describing mapable instance params and default values
+        instance_params = [
+            ("become_pass", None),
+            ("become_method", False),
+            ("winrm_transport", None),
+            ("winrm_cert_pem", None),
+            ("winrm_cert_key_pem", None),
+            ("winrm_server_cert_validation", None),
+            ("shell_type", None),
+            ("connection", "smart"),
+        ]
         if self.managed:
             try:
                 d = self._get_instance_config(instance_name)
                 conn_dict = {}
+                # Check if optional mapable params are in the instance config
+                for i in instance_params:
+                    if d.get(i[0], i[1]):
+                        conn_dict["ansible_" + i[0]] = d.get(i[0])
+
                 conn_dict["ansible_user"] = d.get("user")
                 conn_dict["ansible_host"] = d.get("address")
                 conn_dict["ansible_port"] = d.get("port")
-                if d.get("connection", None):
-                    conn_dict["ansible_connection"] = d.get("connection", "smart")
-                if d.get("become_method", False):
-                    conn_dict["ansible_become_method"] = d.get("become_method")
-                if d.get("become_pass", None):
-                    conn_dict["ansible_become_pass"] = d.get("become_pass")
+
                 if d.get("identity_file", None):
                     conn_dict["ansible_private_key_file"] = d.get("identity_file")
                     conn_dict["ansible_ssh_common_args"] = " ".join(
                         self.ssh_connection_options,
                     )
-                if d.get("shell_type", None):
-                    conn_dict["ansible_shell_type"] = d.get("shell_type")
-
                 if d.get("password", None):
                     conn_dict["ansible_password"] = d.get("password")
                     # Based on testinfra documentation, ansible password must be passed via ansible_ssh_pass
                     # issue to fix this can be found https://github.com/pytest-dev/pytest-testinfra/issues/580
                     conn_dict["ansible_ssh_pass"] = d.get("password")
-                if d.get("winrm_transport", None):
-                    conn_dict["ansible_winrm_transport"] = d.get("winrm_transport")
-                if d.get("winrm_cert_pem", None):
-                    conn_dict["ansible_winrm_cert_pem"] = d.get("winrm_cert_pem")
-                if d.get("winrm_cert_key_pem", None):
-                    conn_dict["ansible_winrm_cert_key_pem"] = d.get(
-                        "winrm_cert_key_pem",
-                    )
-                if d.get("winrm_server_cert_validation", None):
-                    conn_dict["ansible_winrm_server_cert_validation"] = d.get(
-                        "winrm_server_cert_validation",
-                    )
 
                 return conn_dict
 
