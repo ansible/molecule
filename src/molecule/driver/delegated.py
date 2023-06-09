@@ -196,7 +196,7 @@ class Delegated(Driver):
         return {"instance": instance_name}
 
     def ansible_connection_options(self, instance_name):
-        # list of tuples describing mapable instance params and default values
+        # list of tuples describing mappable instance params and default values
         instance_params = [
             ("become_pass", None),
             ("become_method", False),
@@ -211,7 +211,7 @@ class Delegated(Driver):
             try:
                 d = self._get_instance_config(instance_name)
                 conn_dict = {}
-                # Check if optional mapable params are in the instance config
+                # Check if optional mappable params are in the instance config
                 for i in instance_params:
                     if d.get(i[0], i[1]):
                         conn_dict["ansible_" + i[0]] = d.get(i[0])
