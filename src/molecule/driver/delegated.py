@@ -54,6 +54,7 @@ class Delegated(Driver):
           instance: instance_name
           port: ssh_port_as_string
           user: ssh_user
+          shell_type: sh
           password: ssh_password  # mutually exclusive with identity_file
           become_method: valid_ansible_become_method  # optional
           become_pass: password_if_required  # optional
@@ -64,6 +65,7 @@ class Delegated(Driver):
           port: winrm_port_as_string
           user: winrm_user
           password: winrm_password
+          shell_type: powershell
           winrm_transport: ntlm/credssp/kerberos
           winrm_cert_pem: <path to the credssp public certificate key>
           winrm_cert_key_pem: <path to the credssp private certificate key>
@@ -212,6 +214,11 @@ class Delegated(Driver):
                     conn_dict["ansible_ssh_common_args"] = " ".join(
                         self.ssh_connection_options,
                     )
+                if d.get("shell_type", None):
+                    conn_dict["ansible_shell_type"] = d.get(
+                        "shell_type",
+                    )
+
                 if d.get("password", None):
                     conn_dict["ansible_password"] = d.get("password")
                     # Based on testinfra documentation, ansible password must be passed via ansible_ssh_pass
