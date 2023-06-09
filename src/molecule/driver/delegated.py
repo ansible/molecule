@@ -215,9 +215,7 @@ class Delegated(Driver):
                         self.ssh_connection_options,
                     )
                 if d.get("shell_type", None):
-                    conn_dict["ansible_shell_type"] = d.get(
-                        "shell_type",
-                    )
+                    conn_dict["ansible_shell_type"] = d.get("shell_type")
 
                 if d.get("password", None):
                     conn_dict["ansible_password"] = d.get("password")
