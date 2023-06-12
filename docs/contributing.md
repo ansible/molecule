@@ -1,7 +1,7 @@
 # Contributing
 
-- To see what's planned see the [Molecule Project
-  Board](https://github.com/ansible-community/molecule/projects).
+- To see what's discussed see the [discussions
+  ](https://github.com/ansible-community/molecule/discussions).
 - Join the Molecule [community working
   group](https://github.com/ansible/community/wiki/molecule) if you
   would like to influence the direction of the project.
