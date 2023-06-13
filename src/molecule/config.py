@@ -182,7 +182,12 @@ class Config(metaclass=NewInitCaller):
         driver_name = self._get_driver_name()
         driver = None
 
-        driver = api.drivers(config=self)[driver_name]
+        api_drivers = api.drivers(config=self)
+        if driver_name not in api_drivers:
+            msg = f"Failed to find driver {driver_name}. Please ensure that the driver is correctly installed."
+            util.sysexit_with_message(msg)
+
+        driver = api_drivers[driver_name]
         driver.name = driver_name
 
         return driver
