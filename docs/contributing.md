@@ -1,7 +1,7 @@
 # Contributing
 
-- To see what's planned see the [Molecule Project
-  Board](https://github.com/ansible-community/molecule/projects).
+- To see what's discussed see the [discussions
+  ](https://github.com/ansible-community/molecule/discussions).
 - Join the Molecule [community working
   group](https://github.com/ansible/community/wiki/molecule) if you
   would like to influence the direction of the project.
@@ -114,6 +114,18 @@ Generate the documentation, using [mkdocs](https://www.mkdocs.org/).
 ```bash
 $ tox -e docs
 ```
+
+### Updating Dependencies
+
+Dependencies need to be updated by hand in:
+
+- `.config/requirements.in`
+- `.pre-commit-config.yaml` (2 places)
+
+Afterwards, you will need to generate changes to `requirements.lock.txt`
+and `requirement.txt`, by running the commands listed at the top of those files.
+
+Please note that CI will attempt to regenerate those changes, and if there is any diff, CI will fail.
 
 ## Credits
 
