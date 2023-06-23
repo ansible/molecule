@@ -175,7 +175,12 @@ def os_walk(directory, pattern, excludes=[], followlinks=False):
 
 def render_template(template, **kwargs):
     """Render a jinaj2 template."""
-    t = jinja2.Environment(autoescape=True)
+    t = jinja2.Environment(
+        autoescape=jinja2.select_autoescape(
+            default_for_string=False,
+            default=False,
+        ),
+    )
     t = t.from_string(template)
 
     return t.render(kwargs)
