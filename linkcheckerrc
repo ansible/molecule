@@ -1,0 +1,9 @@
+[filtering]
+checkextern=1
+ignore=
+  xml.gz$
+  404.html
+
+[checking]
+robotstxt=0
+localwebroot=./

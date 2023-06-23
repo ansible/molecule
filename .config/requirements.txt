@@ -30,6 +30,7 @@ cryptography==40.0.2
 csscompressor==0.9.5
 cssselect2==0.7.0
 defusedxml==0.7.1
+dnspython==2.3.0
 enrich==1.2.7
 exceptiongroup==1.1.1
 execnet==1.9.0
@@ -44,6 +45,7 @@ jinja2==3.1.2
 jinja2-time==0.2.0
 jsmin==3.0.1
 jsonschema==4.17.3
+linkchecker==10.2.1
 markdown==3.3.7
 markdown-exec==1.4.0
 markdown-include==0.8.1

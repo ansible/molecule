@@ -67,5 +67,5 @@ molecule list
 
 Matrix will display the subcommand's ordered list of actions, which can
 be changed in
-[scenario](https://molecule.readthedocs.io/en/latest/configuration.html#scenario)
+[scenario](configuration.md#scenario)
 configuration.
