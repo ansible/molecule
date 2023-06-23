@@ -75,7 +75,7 @@ def test_driver_has_errors(_config):
         # add single quotes for string
         driver_name = f"'{_config['driver']['name']}'"
 
-    error_msg = [" ".join((driver_name, base_error_msg))]
+    error_msg = [f"{driver_name} {base_error_msg}"]
     assert error_msg == schema_v3.validate(_config)
 
 

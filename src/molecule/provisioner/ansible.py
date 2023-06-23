@@ -20,12 +20,14 @@
 """Ansible Provisioner Module."""
 
 # pylint: disable=too-many-lines
+from __future__ import annotations
+
 import collections
 import copy
 import logging
 import os
 import shutil
-from typing import Any, Optional
+from typing import Any
 
 from ansible_compat.ports import cached_property
 
@@ -853,7 +855,7 @@ class Ansible(base.Base):
         else:
             self._link_or_update_vars()
 
-    def abs_path(self, path: str) -> Optional[str]:
+    def abs_path(self, path: str) -> str | None:
         return util.abs_path(os.path.join(self._config.scenario.directory, path))
 
     def _add_or_update_vars(self):
@@ -869,7 +871,7 @@ class Ansible(base.Base):
         for target in ["host_vars", "group_vars"]:
             if target == "host_vars":
                 vars_target = copy.deepcopy(self.host_vars)
-                for instance_name, _ in self.host_vars.items():
+                for instance_name in self.host_vars.keys():
                     instance_key = instance_name
                     vars_target[instance_key] = vars_target.pop(instance_name)
 
@@ -985,7 +987,7 @@ class Ansible(base.Base):
 
         Adds modules directory from molecule and its plugins.
         """
-        paths: list[Optional[str]] = []
+        paths: list[str | None] = []
         if os.environ.get("ANSIBLE_LIBRARY"):
             paths = list(map(util.abs_path, os.environ["ANSIBLE_LIBRARY"].split(":")))
 

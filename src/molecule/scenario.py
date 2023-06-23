@@ -199,7 +199,6 @@ class Scenario:
             if not isinstance(result, list):
                 raise RuntimeError("Unexpected sequence type {result}.")
         except KeyError:
-            # TODO(retr0h): May change this handling in the future.
             pass
         return result
 

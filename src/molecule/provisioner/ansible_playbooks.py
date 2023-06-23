@@ -131,7 +131,6 @@ class AnsiblePlaybooks:
 
         Currently used to deprecate use of playbook.yml in favour of converge.yml
         """
-        # TODO(ssbarnea): Remove that deprecation fallback in 3.1+
         if not playbook or os.path.isfile(playbook):
             return playbook
 
