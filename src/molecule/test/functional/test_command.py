@@ -119,8 +119,6 @@ def test_command_create(scenario_to_test, with_scenario, scenario_name, tmp_path
     cmd = ["molecule", "create", "--scenario-name", scenario_name]
     assert run_command(cmd, env=os.environ).returncode == 0
 
-    # TODO(ssbarnea): Include these additional checks
-
 
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name"),

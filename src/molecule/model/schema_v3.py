@@ -71,7 +71,7 @@ def validate(c):
             ):
                 wrong_driver_name = str(exc.message.split()[0])
                 driver_name_err_msg = exc.schema["messages"]["anyOf"]
-                result.append(" ".join((wrong_driver_name, driver_name_err_msg)))
+                result.append(f"{wrong_driver_name} {driver_name_err_msg}")
             else:
                 result.append(exc.message)
 

@@ -98,7 +98,6 @@ class TemplateWithDefaults(string.Template):
             # Check the most common path first.
             named = mo.group("named") or mo.group("braced")
             if named is not None:
-                # TODO(retr0h): This needs to be better handled.
                 if keep_string and named.startswith(keep_string):
                     return f"${named}"
                 if ":-" in named:

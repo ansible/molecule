@@ -30,16 +30,3 @@ from molecule.model import schema_v3
 )
 def test_platforms_delegated(_config):
     assert not schema_v3.validate(_config)
-
-
-# todo: https://github.com/json-schema-org/json-schema-vocabularies/issues/22
-# @pytest.mark.parametrize(
-# def test_platforms_unique_names(_config):
-
-#         "platforms": [
-#                 0: [{"name": [f"'{instance_name}' is not unique"]}],
-#                 1: [{"name": [f"'{instance_name}' is not unique"]}],
-
-
-# def test_platforms_driver_name_required(_config):
-#     if "platforms" in _config:
