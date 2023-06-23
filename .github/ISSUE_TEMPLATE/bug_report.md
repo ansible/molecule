@@ -6,8 +6,8 @@ labels: bug
 
 <!--- Verify first that your issue is not already reported on GitHub -->
 <!--- Do not report bugs before reproducing them with the code of the main branch! -->
-<!--- Please also check https://molecule.readthedocs.io/en/latest/faq.html --->
-<!--- Please use https://groups.google.com/forum/#!forum/molecule-users for usage questions -->
+<!--- Please also check https://ansible.readthedocs.io/projects/molecule/faq/ --->
+<!--- Please use https://github.com/ansible-community/molecule/discussions for usage questions -->
 
 # Issue Type
 

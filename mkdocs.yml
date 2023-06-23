@@ -1,6 +1,6 @@
 ---
 site_name: Ansible Molecule
-site_url: https://molecule.readthedocs.io/
+site_url: https://ansible.readthedocs.io/projects/molecule/
 repo_url: https://github.com/ansible-community/molecule
 edit_uri: blob/main/docs/
 copyright: Copyright © 2023 Red Hat, Inc.
@@ -83,13 +83,8 @@ plugins:
           import:
             - url: https://docs.ansible.com/ansible/latest/objects.inv
               domains: [py, std, "std:doc", "std:label"]
-            # - https://virtualenv.pypa.io/en/latest/objects.inv
-            # - https://yamllint.readthedocs.io/en/latest/objects.inv
-            # - https://jinja.palletsprojects.com/objects.inv
             - url: https://pip.pypa.io/en/latest/objects.inv
               domains: [py, std]
-            # - https://docs.python.org/3/objects.inv
-            # - https://testinfra.readthedocs.io/en/latest/objects.inv
 
 markdown_extensions:
   - admonition

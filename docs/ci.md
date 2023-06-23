@@ -340,11 +340,11 @@ pipeline {
 
 ## Tox
 
-[Tox](https://tox.readthedocs.io/en/latest) is a generic virtualenv
+[Tox](https://tox.wiki/en/latest/) is a generic virtualenv
 management, and test command line tool.
-[Tox](https://tox.readthedocs.io/en/latest) can be used in conjunction
+[Tox](https://tox.wiki/en/latest/) can be used in conjunction
 with
-[Factors](http://tox.readthedocs.io/en/latest/config.html#factors-and-factor-conditional-settings)
+[Factors](https://tox.wiki/en/latest/config.html#factors-and-factor-conditional-settings)
 and Molecule, to perform scenario tests.
 
 To test the role against multiple versions of Ansible.
@@ -369,7 +369,7 @@ commands =
 To view the factor generated tox environments run `tox -l`.
 
 If using the [\--parallel
-functionality](https://tox.readthedocs.io/en/latest/config.html#cmdoption-tox-p)
+functionality](https://tox.wiki/en/latest/config.html#cmdoption-tox-p)
 of Tox (version 3.7 onwards), Molecule must be made aware of the
 parallel testing by setting a `MOLECULE_EPHEMERAL_DIRECTORY` environment
 variable per environment. In addition, we export a `TOX_ENVNAME`

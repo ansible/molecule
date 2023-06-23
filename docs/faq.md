@@ -57,7 +57,7 @@ the scenario's molecule.yml.
 
 ## Can I run Molecule processes in parallel?
 
-Please see [parallel-usage-example](/examples.md/#docker-with-non-privileged-user) for
+Please see [parallel-usage-example](examples.md#docker-with-non-privileged-user) for
 usage.
 
 ## Can I specify random instance IDs in my molecule.yml?
@@ -97,7 +97,7 @@ Yes, roles contained in a
 [monorepo](https://en.wikipedia.org/wiki/Monorepo) with other roles are
 automatically picked up and `ANSIBLE_ROLES_PATH` is set accordingly. See
 [this
-page](https://molecule.readthedocs.io/en/latest/examples/#monolith-repo)
+page](examples.md#monolith-repo)
 for more information.
 
 ## How can I add development/testing-only dependencies?

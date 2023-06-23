@@ -65,7 +65,7 @@ INSTALL.rst  molecule.yml  converge.yml  verify.yml
   role. Molecule will invoke this playbook with `ansible-playbook` and
   run it against an instance created by the driver.
 - `verify.yml` is the Ansible file used for testing as Ansible is the
-  default [verifier](/configuration/#verifier). This allows you to
+  default [verifier](configuration.md#verifier). This allows you to
   write specific tests against the state of the container after your
   role has finished executing. Other verifier tools are available
   Note that [testinfra](https://testinfra.readthedocs.io/en/latest/) was the default verifier prior to molecule version 3.
@@ -98,24 +98,24 @@ The `molecule.yml` is for configuring Molecule. It is a
 [YAML](https://yaml.org/) file whose keys represent the high level
 components that Molecule provides. These are:
 
-- The [dependency](/configuration/#dependency) manager. Molecule
+- The [dependency](configuration.md#dependency) manager. Molecule
   uses [galaxy development guide]
   by default to resolve your role dependencies.
-- The [driver](/configuration/#driver) provider. Molecule uses
+- The [driver](configuration.md#driver) provider. Molecule uses
   [Docker](https://docs.docker.com/) by default. Molecule uses the
   driver to delegate the task of creating instances.
-- The [platforms](/configuration/#platforms) definitions. Molecule
+- The [platforms](configuration.md#platforms) definitions. Molecule
   relies on this to know which instances to create, name and to which
   group each instance belongs. If you need to test your role against
   multiple popular distributions (CentOS, Fedora, Debian), you can
   specify that in this section.
-- The [provisioner](/configuration/#provisioner). Molecule only
+- The [provisioner](configuration.md#provisioner). Molecule only
   provides an Ansible provisioner. Ansible manages the life cycle of
   the instance based on this configuration.
 - The [scenario][] definition.
   Molecule relies on this configuration to control the scenario
   sequence order.
-- The [verifier](/configuration/#verifier) framework. Molecule
+- The [verifier](configuration.md#verifier) framework. Molecule
   uses Ansible by default to provide a way to write specific state
   checking tests (such as deployment smoke tests) on the target
   instance.
