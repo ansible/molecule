@@ -569,7 +569,7 @@
       "$ref": "#/$defs/VerifierModel"
     }
   },
-  "required": ["driver", "platforms"],
+  "required": ["platforms"],
   "title": "Molecule Scenario Schema",
   "type": "object"
 }
