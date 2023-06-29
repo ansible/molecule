@@ -60,6 +60,8 @@ nav:
       - next.md
       - configuration.md
       - ci.md
+  - Examples:
+      - podman.md
   - examples.md
   - faq.md
   - contributing.md
@@ -88,6 +90,8 @@ plugins:
               domains: [py, std]
 
 markdown_extensions:
+  - markdown_include.include:
+      base_path: docs
   - admonition
   - def_list
   - footnotes

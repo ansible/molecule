@@ -22,7 +22,6 @@ coverage.xml
 pip-wheel-metadata
 docs/docstree
 .docker
-molecule/**
 tools/test-schema/node_modules
 site
 .DS_Store
