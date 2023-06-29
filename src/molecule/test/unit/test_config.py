@@ -168,7 +168,7 @@ def test_get_driver_name(config_instance):
 
 
 def test_get_driver_name_raises_when_different_driver_used(
-    patched_logger_critical,
+    caplog,
     config_instance,
 ):
     config_instance.state.change_state("driver", "foo")
@@ -183,7 +183,7 @@ def test_get_driver_name_raises_when_different_driver_used(
         "but the subcommand is using 'bar' driver."
     )
 
-    patched_logger_critical.assert_called_once_with(msg)
+    assert msg in caplog.text
 
 
 def test_get_config(config_instance):
@@ -215,42 +215,42 @@ def test_reget_config(config_instance):
     assert isinstance(config_instance._reget_config(), dict)
 
 
-def test_interpolate(patched_logger_critical, config_instance):
+def test_interpolate(config_instance):
     string = "foo: $HOME"
     x = f"foo: {os.environ['HOME']}"
 
     assert x == config_instance._interpolate(string, os.environ, None)
 
 
-def test_interpolate_curly(patched_logger_critical, config_instance):
+def test_interpolate_curly(config_instance):
     string = "foo: ${HOME}"
     x = f"foo: {os.environ['HOME']}"
 
     assert x == config_instance._interpolate(string, os.environ, None)
 
 
-def test_interpolate_default(patched_logger_critical, config_instance):
+def test_interpolate_default(config_instance):
     string = "foo: ${NONE-default}"
     x = "foo: default"
 
     assert x == config_instance._interpolate(string, os.environ, None)
 
 
-def test_interpolate_default_colon(patched_logger_critical, config_instance):
+def test_interpolate_default_colon(config_instance):
     string = "foo: ${NONE:-default}"
     x = "foo: default"
 
     assert x == config_instance._interpolate(string, os.environ, None)
 
 
-def test_interpolate_default_variable(patched_logger_critical, config_instance):
+def test_interpolate_default_variable(config_instance):
     string = "foo: ${NONE:-$HOME}"
     x = f"foo: {os.environ['HOME']}"
 
     assert x == config_instance._interpolate(string, os.environ, None)
 
 
-def test_interpolate_curly_default_variable(patched_logger_critical, config_instance):
+def test_interpolate_curly_default_variable(config_instance):
     string = "foo: ${NONE-$HOME}"
     x = f"foo: {os.environ['HOME']}"
 
@@ -258,7 +258,7 @@ def test_interpolate_curly_default_variable(patched_logger_critical, config_inst
 
 
 def test_interpolate_raises_on_failed_interpolation(
-    patched_logger_critical,
+    caplog,
     config_instance,
 ):
     string = "$6$8I5Cfmpr$kGZB"
@@ -273,7 +273,7 @@ def test_interpolate_raises_on_failed_interpolation(
         "Invalid placeholder in string: line 1, col 1\n"
         "$6$8I5Cfmpr$kGZB"
     )
-    patched_logger_critical.assert_called_once_with(msg)
+    assert msg in caplog.text
 
 
 def test_get_defaults(config_instance, mocker):
@@ -299,7 +299,7 @@ def test_validate(mocker, config_instance, patched_logger_debug):
 
 def test_validate_exists_when_validation_fails(
     mocker,
-    patched_logger_critical,
+    caplog,
     config_instance,
 ):
     m = mocker.patch("molecule.model.schema_v3.validate")
@@ -311,7 +311,7 @@ def test_validate_exists_when_validation_fails(
     assert e.value.code == 1
 
     msg = f"Failed to validate {config_instance.molecule_file}\n\nvalidation errors"
-    patched_logger_critical.assert_called_once_with(msg)
+    assert msg in caplog.text
 
 
 def test_molecule_directory():

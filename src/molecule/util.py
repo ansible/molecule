@@ -108,7 +108,7 @@ def sysexit_with_message(
     if detail:
         detail_str = safe_dump(detail) if isinstance(detail, dict) else str(detail)
         print(detail_str)
-    LOG.critical(msg)
+    LOG.critical(msg, extra={"highlighter": False})
 
     for warn in warns:
         LOG.warning(warn.__dict__["message"].args[0])

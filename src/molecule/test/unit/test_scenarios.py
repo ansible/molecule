@@ -115,7 +115,7 @@ def test_verify_does_not_raise_when_found(_instance):
     assert _instance._verify() is None
 
 
-def test_verify_raises_when_scenario_not_found(_instance, patched_logger_critical):
+def test_verify_raises_when_scenario_not_found(_instance, caplog):
     _instance._scenario_name = "invalid"
     with pytest.raises(SystemExit) as e:
         _instance._verify()
@@ -123,7 +123,7 @@ def test_verify_raises_when_scenario_not_found(_instance, patched_logger_critica
     assert e.value.code == 1
 
     msg = "Scenario 'invalid' not found.  Exiting."
-    patched_logger_critical.assert_called_once_with(msg)
+    assert msg in caplog.text
 
 
 def test_filter_for_scenario(_instance):

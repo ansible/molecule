@@ -63,7 +63,7 @@ def test_execute(temp_dir, _instance, patched_logger_info):
     patched_logger_info.assert_any_call(msg)
 
 
-def test_execute_scenario_exists(temp_dir, _instance, patched_logger_critical):
+def test_execute_scenario_exists(temp_dir, _instance, caplog):
     _instance.execute()
 
     with pytest.raises(SystemExit) as e:
@@ -72,14 +72,14 @@ def test_execute_scenario_exists(temp_dir, _instance, patched_logger_critical):
     assert e.value.code == 1
 
     msg = "The directory molecule/test-scenario exists. Cannot create new scenario."
-    patched_logger_critical.assert_called_once_with(msg)
+    assert msg in caplog.text
 
 
 def test_execute_with_invalid_driver(
     temp_dir,
     _instance,
     _command_args,
-    patched_logger_critical,
+    caplog,
 ):
     _command_args["driver_name"] = "ec3"
 

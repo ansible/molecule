@@ -57,7 +57,7 @@ def test_execute(temp_dir, _instance, patched_logger_info):
     patched_logger_info.assert_any_call(msg)
 
 
-def test_execute_role_exists(temp_dir, _instance, patched_logger_critical):
+def test_execute_role_exists(temp_dir, _instance, caplog):
     _instance.execute()
 
     with pytest.raises(SystemExit) as e:
@@ -66,4 +66,4 @@ def test_execute_role_exists(temp_dir, _instance, patched_logger_critical):
     assert e.value.code == 1
 
     msg = "The directory test_role exists. Cannot create new role."
-    patched_logger_critical.assert_called_once_with(msg)
+    assert msg in caplog.text

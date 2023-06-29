@@ -26,7 +26,7 @@ from molecule.command import dependency
 # throughout patched.assert_called unit tests.
 def test_execute(
     mocker,
-    patched_logger_info,
+    caplog,
     patched_ansible_galaxy,
     patched_config_validate,
     config_instance,
@@ -36,7 +36,5 @@ def test_execute(
 
     patched_ansible_galaxy.assert_called_once_with()
 
-    assert len(patched_logger_info.mock_calls) == 1
-    name, args, kwargs = patched_logger_info.mock_calls[0]
-    assert "default" in args
-    assert "dependency" in args
+    assert "default" in caplog.text
+    assert "dependency" in caplog.text

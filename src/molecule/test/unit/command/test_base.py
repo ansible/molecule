@@ -303,18 +303,18 @@ def test_verify_configs(config_instance):
     assert base._verify_configs(configs) is None
 
 
-def test_verify_configs_raises_with_no_configs(patched_logger_critical):
+def test_verify_configs_raises_with_no_configs(caplog):
     with pytest.raises(SystemExit) as e:
         base._verify_configs([])
 
     assert e.value.code == 1
 
     msg = "'molecule/*/molecule.yml' glob failed.  Exiting."
-    patched_logger_critical.assert_called_once_with(msg)
+    assert msg in caplog.text
 
 
 def test_verify_configs_raises_with_duplicate_configs(
-    patched_logger_critical,
+    caplog,
     config_instance,
 ):
     with pytest.raises(SystemExit) as e:
@@ -324,7 +324,7 @@ def test_verify_configs_raises_with_duplicate_configs(
     assert e.value.code == 1
 
     msg = "Duplicate scenario name 'default' found.  Exiting."
-    patched_logger_critical.assert_called_once_with(msg)
+    assert msg in caplog.text
 
 
 def test_get_subcommand():

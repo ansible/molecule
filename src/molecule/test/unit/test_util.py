@@ -85,16 +85,16 @@ def test_sysexit_with_custom_code():
     assert e.value.code == 2
 
 
-def test_sysexit_with_message(patched_logger_critical):
+def test_sysexit_with_message(caplog):
     with pytest.raises(SystemExit) as e:
         util.sysexit_with_message("foo")
 
     assert e.value.code == 1
 
-    patched_logger_critical.assert_called_once_with("foo")
+    assert "foo" in caplog.text
 
 
-def test_sysexit_with_warns(patched_logger_critical, patched_logger_warning):
+def test_sysexit_with_warns(caplog):
     with pytest.raises(SystemExit) as e:
         with warnings.catch_warnings(record=True) as warns:
             warnings.filterwarnings("default", category=MoleculeRuntimeWarning)
@@ -104,17 +104,17 @@ def test_sysexit_with_warns(patched_logger_critical, patched_logger_warning):
 
     assert e.value.code == 1
 
-    patched_logger_critical.assert_called_once_with("foo")
-    patched_logger_warning.assert_called_once_with("xxx")
+    assert "foo" in caplog.text
+    assert "xxx" in caplog.text
 
 
-def test_sysexit_with_message_and_custom_code(patched_logger_critical):
+def test_sysexit_with_message_and_custom_code(caplog):
     with pytest.raises(SystemExit) as e:
         util.sysexit_with_message("foo", 2)
 
     assert e.value.code == 2
 
-    patched_logger_critical.assert_called_once_with("foo")
+    assert "foo" in caplog.text
 
 
 def test_run_command():

@@ -29,7 +29,7 @@ from molecule.shell import main
 # throughout patched.assert_called unit tests.
 def test_execute(
     mocker,
-    patched_logger_info,
+    caplog,
     patched_ansible_converge,
     patched_config_validate,
     config_instance,
@@ -37,10 +37,8 @@ def test_execute(
     c = converge.Converge(config_instance)
     c.execute()
 
-    assert len(patched_logger_info.mock_calls) == 1
-    name, args, kwargs = patched_logger_info.mock_calls[0]
-    assert "default" in args
-    assert "converge" in args
+    assert "default" in caplog.text
+    assert "converge" in caplog.text
 
     patched_ansible_converge.assert_called_once_with()
 

@@ -52,7 +52,7 @@ def _patched_ansible_side_effect(mocker):
 def test_execute(
     mocker,
     _patched_ansible_side_effect,
-    patched_logger_info,
+    caplog,
     patched_config_validate,
     config_instance,
 ):
@@ -62,16 +62,14 @@ def test_execute(
     se = side_effect.SideEffect(config_instance)
     se.execute()
 
-    assert len(patched_logger_info.mock_calls) == 1
-    name, args, kwargs = patched_logger_info.mock_calls[0]
-    assert "default" in args
-    assert "side_effect" in args
+    assert "default" in caplog.text
+    assert "side_effect" in caplog.text
 
     _patched_ansible_side_effect.assert_called_once_with(None)
 
 
 def test_execute_skips_when_playbook_not_configured(
-    patched_logger_warning,
+    caplog,
     _patched_ansible_side_effect,
     config_instance,
 ):
@@ -79,6 +77,6 @@ def test_execute_skips_when_playbook_not_configured(
     se.execute()
 
     msg = "Skipping, side effect playbook not configured."
-    patched_logger_warning.assert_called_once_with(msg)
+    assert msg in caplog.text
 
     assert not _patched_ansible_side_effect.called

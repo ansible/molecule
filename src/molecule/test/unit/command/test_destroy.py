@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+
 import pytest
 
 from molecule.command import destroy
@@ -39,7 +40,7 @@ def _patched_destroy_setup(mocker):
 @pytest.mark.skip(reason="destroy not running for delegated")
 def test_execute(
     mocker,
-    patched_logger_info,
+    caplog,
     patched_config_validate,
     _patched_ansible_destroy,
     config_instance,
@@ -47,11 +48,9 @@ def test_execute(
     d = destroy.Destroy(config_instance)
     d.execute()
 
-    assert len(patched_logger_info.mock_calls) == 1
-    name, args, kwargs = patched_logger_info.mock_calls[0]
-    assert "destroy" in args
+    assert "destroy" in caplog.text
 
-    assert "verify" in args
+    assert "verify" in caplog.text
 
     _patched_ansible_destroy.assert_called_once_with()
 
@@ -66,7 +65,7 @@ def test_execute(
 )
 def test_execute_skips_when_destroy_strategy_is_never(
     _patched_destroy_setup,
-    patched_logger_warning,
+    caplog,
     _patched_ansible_destroy,
     config_instance,
 ):
@@ -76,7 +75,7 @@ def test_execute_skips_when_destroy_strategy_is_never(
     d.execute()
 
     msg = "Skipping, '--destroy=never' requested."
-    patched_logger_warning.assert_called_once_with(msg)
+    assert msg in caplog.text
 
     assert not _patched_ansible_destroy.called
 
@@ -88,7 +87,7 @@ def test_execute_skips_when_destroy_strategy_is_never(
 )
 def test_execute_skips_when_delegated_driver(
     _patched_destroy_setup,
-    patched_logger_warning,
+    caplog,
     _patched_ansible_destroy,
     config_instance,
 ):
@@ -96,6 +95,6 @@ def test_execute_skips_when_delegated_driver(
     d.execute()
 
     msg = "Skipping, instances are delegated."
-    patched_logger_warning.assert_called_once_with(msg)
+    assert msg in caplog.text
 
     assert not _patched_ansible_destroy.called

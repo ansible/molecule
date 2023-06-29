@@ -76,21 +76,21 @@ def test_options_property_handles_cli_args(_instance):
     assert x == _instance.options
 
 
-def test_execute(patched_logger_info, _patched_ansible_verify, _instance):
+def test_execute(caplog, _patched_ansible_verify, _instance):
     _instance.execute()
 
     _patched_ansible_verify.assert_called_once_with(None)
 
     msg = "Running Ansible Verifier"
-    patched_logger_info.assert_any_call(msg)
+    assert msg in caplog.text
 
     msg = "Verifier completed successfully."
-    patched_logger_info.assert_any_call(msg)
+    assert msg in caplog.text
 
 
 def test_execute_does_not_execute(
     patched_ansible_converge,
-    patched_logger_warning,
+    caplog,
     _instance,
 ):
     _instance._config.config["verifier"]["enabled"] = False
@@ -99,4 +99,4 @@ def test_execute_does_not_execute(
     assert not patched_ansible_converge.called
 
     msg = "Skipping, verifier is disabled."
-    patched_logger_warning.assert_called_once_with(msg)
+    assert msg in caplog.text
