@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+
 import pytest
 
 from molecule import config
@@ -90,7 +91,7 @@ def test_env_property(_instance):
     assert _instance.env["FOO"] == "bar"
 
 
-def test_execute(patched_run_command, patched_logger_info, _instance):
+def test_execute(patched_run_command, caplog, _instance):
     _instance._sh_command = "patched-command"
     _instance.execute()
 
@@ -101,12 +102,12 @@ def test_execute(patched_run_command, patched_logger_info, _instance):
     )
 
     msg = "Dependency completed successfully."
-    patched_logger_info.assert_called_once_with(msg)
+    assert msg in caplog.text
 
 
 def test_execute_does_not_execute_when_disabled(
     patched_run_command,
-    patched_logger_warning,
+    caplog,
     _instance,
 ):
     _instance._config.config["dependency"]["enabled"] = False
@@ -115,7 +116,7 @@ def test_execute_does_not_execute_when_disabled(
     assert not patched_run_command.called
 
     msg = "Skipping, dependency is disabled."
-    patched_logger_warning.assert_called_once_with(msg)
+    assert msg in caplog.text
 
 
 @pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)

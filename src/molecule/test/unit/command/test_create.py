@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+
 import pytest
 
 from molecule.command import create
@@ -34,7 +35,7 @@ def _patched_create_setup(mocker):
 @pytest.mark.skip(reason="create not running for delegated")
 def test_execute(
     mocker,
-    patched_logger_info,
+    caplog,
     command_patched_ansible_create,
     patched_config_validate,
     config_instance,
@@ -42,10 +43,8 @@ def test_execute(
     c = create.Create(config_instance)
     c.execute()
 
-    assert len(patched_logger_info.mock_calls) == 1
-    name, args, kwargs = patched_logger_info.mock_calls[0]
-    assert "default" in args
-    assert "converge" in args
+    assert "default" in caplog.text
+    assert "converge" in caplog.text
 
     assert config_instance.state.driver == "delegated"
 
@@ -61,7 +60,7 @@ def test_execute(
 )
 def test_execute_skips_when_delegated_driver(
     _patched_create_setup,
-    patched_logger_warning,
+    caplog,
     command_patched_ansible_create,
     config_instance,
 ):
@@ -69,14 +68,14 @@ def test_execute_skips_when_delegated_driver(
     c.execute()
 
     msg = "Skipping, instances are delegated."
-    patched_logger_warning.assert_called_once_with(msg)
+    assert msg in caplog.text
 
     assert not command_patched_ansible_create.called
 
 
 @pytest.mark.skip(reason="create not running for delegated")
 def test_execute_skips_when_instances_already_created(
-    patched_logger_warning,
+    caplog,
     command_patched_ansible_create,
     config_instance,
 ):
@@ -85,6 +84,6 @@ def test_execute_skips_when_instances_already_created(
     c.execute()
 
     msg = "Skipping, instances already created."
-    patched_logger_warning.assert_called_once_with(msg)
+    assert msg in caplog.text
 
     assert not command_patched_ansible_create.called

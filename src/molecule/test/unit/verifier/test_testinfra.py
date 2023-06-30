@@ -19,7 +19,6 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import os
-from unittest.mock import call
 
 import pytest
 
@@ -224,7 +223,7 @@ def test_bake(_patched_testinfra_get_tests, inventory_directory, _instance):
 
 
 def test_execute(
-    patched_logger_info,
+    caplog,
     patched_run_command,
     _patched_testinfra_get_tests,
     _instance,
@@ -235,15 +234,14 @@ def test_execute(
 
     msg = f"Executing Testinfra tests found in {_instance.directory}/..."
     msg2 = "Verifier completed successfully."
-    calls = [call(msg), call(msg2)]
-    patched_logger_info.assert_has_calls(calls)
-
+    assert msg in caplog.text
+    assert msg2 in caplog.text
     assert "pytest" in patched_run_command.call_args[0][0].cmd
 
 
 def test_execute_does_not_execute(
     patched_run_command,
-    patched_logger_warning,
+    caplog,
     _instance,
 ):
     _instance._config.config["verifier"]["enabled"] = False
@@ -252,12 +250,12 @@ def test_execute_does_not_execute(
     assert not patched_run_command.called
 
     msg = "Skipping, verifier is disabled."
-    patched_logger_warning.assert_called_once_with(msg)
+    assert msg in caplog.text
 
 
 def test_does_not_execute_without_tests(
     patched_run_command,
-    patched_logger_warning,
+    caplog,
     _instance,
 ):
     _instance.execute()
@@ -265,7 +263,7 @@ def test_does_not_execute_without_tests(
     assert not patched_run_command.called
 
     msg = "Skipping, no tests found."
-    patched_logger_warning.assert_called_once_with(msg)
+    assert msg in caplog.text
 
 
 def test_execute_bakes(patched_run_command, _patched_testinfra_get_tests, _instance):

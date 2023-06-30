@@ -20,6 +20,7 @@
 """Ansible-Playbook Provisioner Module."""
 
 import logging
+import shlex
 import warnings
 
 from molecule import util
@@ -116,8 +117,10 @@ class AnsiblePlaybook:
             result = util.run_command(self._ansible_command, debug=self._config.debug)
 
         if result.returncode != 0:
+            from rich.markup import escape
+
             util.sysexit_with_message(
-                f"Ansible return code was {result.returncode}, command was: {result.args}",
+                f"Ansible return code was {result.returncode}, command was: [dim]{escape(shlex.join(result.args))}[/dim]",
                 result.returncode,
                 warns=warns,
             )

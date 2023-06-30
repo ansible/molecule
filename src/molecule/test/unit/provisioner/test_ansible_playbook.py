@@ -241,7 +241,6 @@ def test_execute_bakes_with_ansible_args(
 
 def test_executes_catches_and_exits_return_code(
     patched_run_command,
-    patched_logger_critical,
     _instance,
 ):
     patched_run_command.side_effect = [

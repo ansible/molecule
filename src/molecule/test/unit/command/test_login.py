@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+
 import pytest
 
 from molecule.command import login
@@ -44,7 +45,7 @@ def test_execute(mocker, _instance):
     ["command_driver_delegated_managed_section_data"],
     indirect=True,
 )
-def test_execute_raises_when_not_created(patched_logger_critical, _instance):
+def test_execute_raises_when_not_created(caplog, _instance):
     _instance._config.state.change_state("created", False)
 
     with pytest.raises(SystemExit) as e:
@@ -53,10 +54,10 @@ def test_execute_raises_when_not_created(patched_logger_critical, _instance):
     assert e.value.code == 1
 
     msg = "Instances not created.  Please create instances first."
-    patched_logger_critical.assert_called_once_with(msg)
+    assert msg in caplog.text
 
 
-def test_get_hostname_does_not_match(patched_logger_critical, _instance):
+def test_get_hostname_does_not_match(caplog, _instance):
     _instance._config.command_args = {"host": "invalid"}
     hosts = ["instance-1"]
     with pytest.raises(SystemExit) as e:
@@ -68,7 +69,7 @@ def test_get_hostname_does_not_match(patched_logger_critical, _instance):
         "There are no hosts that match 'invalid'.  You "
         "can only login to valid hosts."
     )
-    patched_logger_critical.assert_called_once_with(msg)
+    assert msg in caplog.text
 
 
 def test_get_hostname_exact_match_with_one_host(_instance):
@@ -100,7 +101,7 @@ def test_get_hostname_partial_match_with_multiple_hosts(_instance):
 
 
 def test_get_hostname_partial_match_with_multiple_hosts_raises(
-    patched_logger_critical,
+    caplog,
     _instance,
 ):
     _instance._config.command_args = {"host": "inst"}
@@ -117,7 +118,7 @@ def test_get_hostname_partial_match_with_multiple_hosts_raises(
         "instance-1\n"
         "instance-2"
     )
-    patched_logger_critical.assert_called_once_with(msg)
+    assert msg in caplog.text
 
 
 def test_get_hostname_no_host_flag_specified_on_cli(_instance):
@@ -129,7 +130,7 @@ def test_get_hostname_no_host_flag_specified_on_cli(_instance):
 
 
 def test_get_hostname_no_host_flag_specified_on_cli_with_multiple_hosts_raises(
-    patched_logger_critical,
+    caplog,
     _instance,
 ):
     _instance._config.command_args = {}
@@ -146,4 +147,4 @@ def test_get_hostname_no_host_flag_specified_on_cli_with_multiple_hosts_raises(
         "instance-1\n"
         "instance-2"
     )
-    patched_logger_critical.assert_called_once_with(msg)
+    assert msg in caplog.text

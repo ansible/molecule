@@ -33,7 +33,7 @@ def _patched_ansible_check(mocker):
 # throughout patched.assert_called unit tests.
 def test_execute(
     mocker,
-    patched_logger_info,
+    caplog,
     _patched_ansible_check,
     patched_config_validate,
     config_instance,
@@ -41,7 +41,5 @@ def test_execute(
     c = check.Check(config_instance)
     c.execute()
 
-    assert len(patched_logger_info.mock_calls) == 1
-    name, args, kwargs = patched_logger_info.mock_calls[0]
-    assert "default" in args
-    assert "check" in args
+    assert "default" in caplog.text
+    assert "check" in caplog.text

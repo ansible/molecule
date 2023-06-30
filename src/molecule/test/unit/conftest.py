@@ -185,18 +185,8 @@ def patched_logger_debug(mocker):
 
 
 @pytest.fixture()
-def patched_logger_warning(mocker):
-    return mocker.patch("logging.Logger.warning")
-
-
-@pytest.fixture()
 def patched_logger_error(mocker):
     return mocker.patch("logging.Logger.error")
-
-
-@pytest.fixture()
-def patched_logger_critical(mocker):
-    return mocker.patch("logging.Logger.critical")
 
 
 @pytest.fixture()

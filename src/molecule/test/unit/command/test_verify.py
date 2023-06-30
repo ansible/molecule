@@ -26,7 +26,7 @@ from molecule.command import verify
 # throughout patched.assert_called unit tests.
 def test_execute(
     mocker,
-    patched_logger_info,
+    caplog,
     patched_default_verifier,
     patched_config_validate,
     config_instance,
@@ -34,7 +34,5 @@ def test_execute(
     v = verify.Verify(config_instance)
     v.execute()
 
-    assert len(patched_logger_info.mock_calls) == 1
-    name, args, kwargs = patched_logger_info.mock_calls[0]
-    assert "default" in args
-    assert "verify" in args
+    assert "default" in caplog.text
+    assert "verify" in caplog.text

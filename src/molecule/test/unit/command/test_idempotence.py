@@ -17,6 +17,7 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
+
 import pytest
 
 from molecule.command import idempotence
@@ -39,28 +40,26 @@ def _instance(patched_config_validate, config_instance):
 
 def test_execute(
     mocker,
-    patched_logger_info,
+    caplog,
     patched_ansible_converge,
     _patched_is_idempotent,
     _instance,
 ):
     _instance.execute()
 
-    assert len(patched_logger_info.mock_calls) == 2
-    name, args, kwargs = patched_logger_info.mock_calls[0]
-    assert "default" in args
-    assert "idempotence" in args
+    assert "default" in caplog.text
+    assert "idempotence" in caplog.text
 
     patched_ansible_converge.assert_called_once_with()
 
     _patched_is_idempotent.assert_called_once_with("patched-ansible-converge-stdout")
 
     msg = "Idempotence completed successfully."
-    patched_logger_info.assert_any_call(msg)
+    assert msg in caplog.text
 
 
 def test_execute_raises_when_not_converged(
-    patched_logger_critical,
+    caplog,
     patched_ansible_converge,
     _instance,
 ):
@@ -71,12 +70,12 @@ def test_execute_raises_when_not_converged(
     assert e.value.code == 1
 
     msg = "Instances not converged.  Please converge instances first."
-    patched_logger_critical.assert_called_once_with(msg)
+    assert msg in caplog.text
 
 
 def test_execute_raises_when_fails_idempotence(
     mocker,
-    patched_logger_critical,
+    caplog,
     patched_ansible_converge,
     _patched_is_idempotent,
     _instance,
@@ -88,7 +87,7 @@ def test_execute_raises_when_fails_idempotence(
     assert e.value.code == 1
 
     msg = "Idempotence test failed because of the following tasks:\n"
-    patched_logger_critical.assert_called_once_with(msg)
+    assert msg in caplog.text
 
 
 def test_is_idempotent(_instance):

@@ -47,7 +47,7 @@ def _patched_ansible_cleanup(mocker):
 def test_execute(
     mocker,
     _patched_ansible_cleanup,
-    patched_logger_info,
+    caplog,
     patched_config_validate,
     config_instance,
 ):
@@ -57,15 +57,13 @@ def test_execute(
     cu = cleanup.Cleanup(config_instance)
     cu.execute()
 
-    assert len(patched_logger_info.mock_calls) == 1
-    name, args, kwargs = patched_logger_info.mock_calls[0]
-    assert "cleanup" in args
+    assert "cleanup" in caplog.text
 
     _patched_ansible_cleanup.assert_called_once_with()
 
 
 def test_execute_skips_when_playbook_not_configured(
-    patched_logger_warning,
+    caplog,
     _patched_ansible_cleanup,
     config_instance,
 ):
@@ -73,6 +71,6 @@ def test_execute_skips_when_playbook_not_configured(
     cu.execute()
 
     msg = "Skipping, cleanup playbook not configured."
-    patched_logger_warning.assert_called_once_with(msg)
+    assert msg in caplog.text
 
     assert not _patched_ansible_cleanup.called

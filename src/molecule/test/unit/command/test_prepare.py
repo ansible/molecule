@@ -36,7 +36,7 @@ def _patched_ansible_prepare(mocker):
 # throughout patched.assert_called unit tests.
 def test_execute(
     mocker,
-    patched_logger_info,
+    caplog,
     _patched_ansible_prepare,
     patched_config_validate,
     config_instance,
@@ -47,10 +47,8 @@ def test_execute(
     p = prepare.Prepare(config_instance)
     p.execute()
 
-    assert len(patched_logger_info.mock_calls) == 1
-    name, args, kwargs = patched_logger_info.mock_calls[0]
-    assert "default" in args
-    assert "prepare" in args
+    assert "default" in caplog.text
+    assert "prepare" in caplog.text
 
     _patched_ansible_prepare.assert_called_once_with()
 
@@ -58,7 +56,7 @@ def test_execute(
 
 
 def test_execute_skips_when_instances_already_prepared(
-    patched_logger_warning,
+    caplog,
     _patched_ansible_prepare,
     config_instance,
 ):
@@ -67,13 +65,13 @@ def test_execute_skips_when_instances_already_prepared(
     p.execute()
 
     msg = "Skipping, instances already prepared."
-    patched_logger_warning.assert_called_once_with(msg)
+    assert msg in caplog.text
 
     assert not _patched_ansible_prepare.called
 
 
 def test_execute_skips_when_playbook_not_configured(
-    patched_logger_warning,
+    caplog,
     _patched_ansible_prepare,
     config_instance,
 ):
@@ -81,14 +79,14 @@ def test_execute_skips_when_playbook_not_configured(
     p.execute()
 
     msg = "Skipping, prepare playbook not configured."
-    patched_logger_warning.assert_called_once_with(msg)
+    assert msg in caplog.text
 
     assert not _patched_ansible_prepare.called
 
 
 def test_execute_when_instances_already_prepared_but_force_provided(
     mocker,
-    patched_logger_warning,
+    caplog,
     _patched_ansible_prepare,
     config_instance,
 ):

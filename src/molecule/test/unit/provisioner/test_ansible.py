@@ -704,7 +704,7 @@ def test_link_vars(_instance):
     assert os.path.lexists(target_host_vars)
 
 
-def test_link_vars_raises_when_source_not_found(_instance, patched_logger_critical):
+def test_link_vars_raises_when_source_not_found(_instance, caplog):
     c = _instance._config.config
     c["provisioner"]["inventory"]["links"] = {"foo": "../bar"}
 
@@ -715,7 +715,7 @@ def test_link_vars_raises_when_source_not_found(_instance, patched_logger_critic
 
     source = os.path.join(_instance._config.scenario.directory, os.path.pardir, "bar")
     msg = f"The source path '{source}' does not exist."
-    patched_logger_critical.assert_called_once_with(msg)
+    assert msg in caplog.text
 
 
 def test_verify_inventory(_instance):
@@ -724,7 +724,7 @@ def test_verify_inventory(_instance):
 
 def test_verify_inventory_raises_when_missing_hosts(
     temp_dir,
-    patched_logger_critical,
+    caplog,
     _instance,
 ):
     _instance._config.config["platforms"] = []
@@ -734,7 +734,7 @@ def test_verify_inventory_raises_when_missing_hosts(
     assert e.value.code == 1
 
     msg = "Instances missing from the 'platform' section of molecule.yml."
-    patched_logger_critical.assert_called_once_with(msg)
+    assert msg in caplog.text
 
 
 def test_vivify(_instance):

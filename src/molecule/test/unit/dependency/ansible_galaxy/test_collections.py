@@ -147,7 +147,7 @@ def test_collections_bake(_instance, role_file, roles_path):
 def test_execute(
     patched_run_command,
     _patched_ansible_galaxy_has_requirements_file,
-    patched_logger_info,
+    caplog,
     _instance,
 ):
     _instance._sh_command = "patched-command"
@@ -166,12 +166,12 @@ def test_execute(
     )
 
     msg = "Dependency completed successfully."
-    patched_logger_info.assert_called_once_with(msg)
+    assert msg in caplog.text
 
 
 def test_execute_does_not_execute_when_disabled(
     patched_run_command,
-    patched_logger_warning,
+    caplog,
     _instance,
 ):
     _instance._config.config["dependency"]["enabled"] = False
@@ -180,13 +180,13 @@ def test_execute_does_not_execute_when_disabled(
     assert not patched_run_command.called
 
     msg = "Skipping, dependency is disabled."
-    patched_logger_warning.assert_called_once_with(msg)
+    assert msg in caplog.text
 
 
 def test_execute_does_not_execute_when_no_requirements_file(
     patched_run_command,
     _patched_ansible_galaxy_has_requirements_file,
-    patched_logger_warning,
+    caplog,
     _instance,
 ):
     _patched_ansible_galaxy_has_requirements_file.return_value = False
@@ -195,7 +195,7 @@ def test_execute_does_not_execute_when_no_requirements_file(
     assert not patched_run_command.called
 
     msg = "Skipping, missing the requirements file."
-    patched_logger_warning.assert_called_once_with(msg)
+    assert msg in caplog.text
 
 
 def test_execute_bakes(
