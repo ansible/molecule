@@ -41,16 +41,6 @@ class Create(base.Base):
         """
         self._config.state.change_state("driver", self._config.driver.name)
 
-        if self._config.driver.delegated and not self._config.driver.managed:
-            msg = "Skipping, instances are delegated."
-            LOG.warning(msg)
-            return
-
-        if self._config.state.created:
-            msg = "Skipping, instances already created."
-            LOG.warning(msg)
-            return
-
         self._config.provisioner.create()
 
         self._config.state.change_state("created", True)

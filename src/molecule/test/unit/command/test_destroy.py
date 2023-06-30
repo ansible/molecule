@@ -78,23 +78,3 @@ def test_execute_skips_when_destroy_strategy_is_never(
     assert msg in caplog.text
 
     assert not _patched_ansible_destroy.called
-
-
-@pytest.mark.parametrize(
-    "config_instance",
-    ["command_driver_delegated_section_data"],
-    indirect=True,
-)
-def test_execute_skips_when_delegated_driver(
-    _patched_destroy_setup,
-    caplog,
-    _patched_ansible_destroy,
-    config_instance,
-):
-    d = destroy.Destroy(config_instance)
-    d.execute()
-
-    msg = "Skipping, instances are delegated."
-    assert msg in caplog.text
-
-    assert not _patched_ansible_destroy.called

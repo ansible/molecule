@@ -47,11 +47,6 @@ class Destroy(base.Base):
             LOG.warning(msg)
             return
 
-        if self._config.driver.delegated and not self._config.driver.managed:
-            msg = "Skipping, instances are delegated."
-            LOG.warning(msg)
-            return
-
         self._config.provisioner.destroy()
         self._config.state.reset()
 
