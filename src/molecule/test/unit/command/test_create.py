@@ -53,26 +53,6 @@ def test_execute(
     assert config_instance.state.created
 
 
-@pytest.mark.parametrize(
-    "config_instance",
-    ["command_driver_delegated_section_data"],
-    indirect=True,
-)
-def test_execute_skips_when_delegated_driver(
-    _patched_create_setup,
-    caplog,
-    command_patched_ansible_create,
-    config_instance,
-):
-    c = create.Create(config_instance)
-    c.execute()
-
-    msg = "Skipping, instances are delegated."
-    assert msg in caplog.text
-
-    assert not command_patched_ansible_create.called
-
-
 @pytest.mark.skip(reason="create not running for delegated")
 def test_execute_skips_when_instances_already_created(
     caplog,
