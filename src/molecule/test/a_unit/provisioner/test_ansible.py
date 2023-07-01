@@ -26,7 +26,7 @@ import pytest
 
 from molecule import config, util
 from molecule.provisioner import ansible, ansible_playbooks
-from molecule.test.unit.conftest import os_split
+from molecule.test.a_unit.conftest import os_split
 
 
 @pytest.fixture()

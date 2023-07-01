@@ -24,7 +24,7 @@ from typing import Optional
 import pytest
 from pytest import FixtureRequest
 
-from molecule.test.functional.conftest import (
+from molecule.test.b_functional.conftest import (
     idempotence,
     init_role,
     init_scenario,
