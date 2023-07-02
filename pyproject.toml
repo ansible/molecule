@@ -75,6 +75,35 @@ skip-string-normalization = false
 profile = "black"
 known_first_party = "molecule"
 
+[tool.mypy]
+python_version = 3.9
+# strict = true
+color_output = true
+error_summary = true
+# disallow_untyped_calls = true
+# disallow_untyped_defs = true
+# disallow_any_generics = true
+# disallow_any_unimported = True
+# warn_redundant_casts = True
+# warn_return_any = True
+# warn_unused_configs = True
+# site-packages is here to help vscode mypy integration getting confused
+exclude = "(build|dist|test/local-content|site-packages|~/.pyenv|examples/playbooks/collections|plugins/modules)"
+# https://github.com/python/mypy/issues/12664
+no_incremental = true
+
+[[tool.mypy.overrides]]
+module = [
+  "click_help_colors", # https://github.com/click-contrib/click-help-colors/issues/20
+  "cookiecutter.*", # https://github.com/cookiecutter/cookiecutter/issues/1878
+  "pexpect", # https://github.com/pexpect/pexpect/issues/759
+  "pluggy", # https://github.com/pytest-dev/pluggy/pull/414
+  "testinfra.*", # https://github.com/pytest-dev/pytest-testinfra/issues/619
+
+]
+ignore_missing_imports = true
+ignore_errors = true
+
 [tool.pylint."MESSAGES CONTROL"]
 disable = [
   # TODO(ssbarnea): remove temporary skips adding during initial adoption:

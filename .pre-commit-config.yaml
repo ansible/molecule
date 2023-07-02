@@ -54,7 +54,7 @@ repos:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.4.0
+    rev: v1.4.1
     hooks:
       - id: mypy
         # empty args needed in order to match mypy cli behavior
@@ -68,11 +68,13 @@ repos:
           - importlib-metadata>=4.6.1
           - jinja2
           - packaging
+          - pytest
           - rich
           - ruamel.yaml>=0.17.10
           - types-PyYAML
           - types-dataclasses
           - types-filelock
+          - types-jsonschema
           - types-setuptools
   - repo: https://github.com/pycqa/pylint
     rev: v3.0.0a6
@@ -91,7 +93,7 @@ repos:
           - pexpect
           - testinfra
   - repo: https://github.com/jazzband/pip-tools
-    rev: 6.13.0
+    rev: 6.14.0
     hooks:
       - id: pip-compile
         entry: pip-compile -q --resolver=backtracking --strip-extras --no-annotate --output-file=.config/requirements.txt pyproject.toml --extra docs --extra test
