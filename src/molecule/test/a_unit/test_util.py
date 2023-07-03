@@ -20,7 +20,6 @@
 
 
 import binascii
-import io
 import os
 import warnings
 from pathlib import Path
@@ -191,7 +190,7 @@ def test_write_file(temp_dir):
     dest_file = os.path.join(temp_dir.strpath, "test_util_write_file.tmp")
     contents = binascii.b2a_hex(os.urandom(15)).decode("utf-8")
     util.write_file(dest_file, contents)
-    with util.open_file(dest_file) as stream:
+    with open(dest_file) as stream:
         data = stream.read()
     x = f"# Molecule managed\n\n{contents}"
 
@@ -227,15 +226,15 @@ foo:
     assert x == util.safe_dump(data)
 
 
-def test_safe_load():
+def test_safe_load() -> None:
     assert {"foo": "bar"} == util.safe_load("foo: bar")
 
 
-def test_safe_load_returns_empty_dict_on_empty_string():
+def test_safe_load_returns_empty_dict_on_empty_string() -> None:
     assert {} == util.safe_load("")
 
 
-def test_safe_load_exits_when_cannot_parse():
+def test_safe_load_exits_when_cannot_parse() -> None:
     data = """
 ---
 %foo:
@@ -247,31 +246,18 @@ def test_safe_load_exits_when_cannot_parse():
     assert e.value.code == 1
 
 
-def test_safe_load_file(temp_dir):
+def test_safe_load_file(temp_dir) -> None:
     path = os.path.join(temp_dir.strpath, "foo")
     util.write_file(path, "foo: bar")
 
     assert {"foo": "bar"} == util.safe_load_file(path)
 
 
-def test_open_file(temp_dir):
-    path = os.path.join(temp_dir.strpath, "foo")
-    util.write_file(path, "foo: bar")
-
-    with util.open_file(path) as stream:
-        try:
-            file_types = (file, io.IOBase)
-        except NameError:
-            file_types = io.IOBase
-
-        assert isinstance(stream, file_types)
-
-
-def test_instance_with_scenario_name():
+def test_instance_with_scenario_name() -> None:
     assert util.instance_with_scenario_name("foo", "bar") == "foo-bar"
 
 
-def test_verbose_flag():
+def test_verbose_flag() -> None:
     options = {"verbose": True, "v": True}
 
     assert ["-v"] == util.verbose_flag(options)
@@ -279,7 +265,7 @@ def test_verbose_flag():
     assert {} == options
 
 
-def test_verbose_flag_extra_verbose():
+def test_verbose_flag_extra_verbose() -> None:
     options = {"verbose": True, "vvv": True}
 
     assert ["-vvv"] == util.verbose_flag(options)
@@ -287,7 +273,7 @@ def test_verbose_flag_extra_verbose():
     assert {} == options
 
 
-def test_verbose_flag_preserves_verbose_option():
+def test_verbose_flag_preserves_verbose_option() -> None:
     options = {"verbose": True}
 
     # pylint: disable=use-implicit-booleaness-not-comparison
@@ -295,7 +281,7 @@ def test_verbose_flag_preserves_verbose_option():
     assert {"verbose": True} == options
 
 
-def test_filter_verbose_permutation():
+def test_filter_verbose_permutation() -> None:
     options = {
         "v": True,
         "vv": True,
@@ -309,14 +295,14 @@ def test_filter_verbose_permutation():
     assert x == util.filter_verbose_permutation(options)
 
 
-def test_abs_path(temp_dir):
+def test_abs_path(temp_dir) -> None:
     x = os.path.abspath(os.path.join(os.getcwd(), os.path.pardir, "foo", "bar"))
 
     assert x == util.abs_path(os.path.join(os.path.pardir, "foo", "bar"))
 
 
-def test_abs_path_with_none_path():
-    assert util.abs_path(None) is None
+def test_abs_path_with_none_path() -> None:
+    assert util.abs_path(None) is None  # type: ignore
 
 
 # pylint: disable=use-dict-literal
@@ -338,5 +324,5 @@ def test_abs_path_with_none_path():
         ),
     ],
 )
-def test_merge_dicts(a, b, x):
+def test_merge_dicts(a, b, x) -> None:
     assert x == util.merge_dicts(a, b)

@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 """Converge Command Module."""
+from __future__ import annotations
 
 import logging
 
@@ -31,7 +32,7 @@ LOG = logging.getLogger(__name__)
 class Converge(base.Base):
     """Converge Command Class."""
 
-    def execute(self, action_args=None):
+    def execute(self, action_args: list[str] | None = None) -> None:
         """Execute the actions necessary to perform a `molecule converge` and \
         returns None.
 

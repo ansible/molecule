@@ -113,7 +113,7 @@ class Driver:
         """
 
     @abstractmethod
-    def sanity_checks(self):
+    def sanity_checks(self) -> None:
         """Confirm that driver is usable.
 
         Sanity checks to ensure the driver can do work successfully. For

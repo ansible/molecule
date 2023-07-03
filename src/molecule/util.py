@@ -19,7 +19,6 @@
 """Molecule Utils Module."""
 
 
-import contextlib
 import copy
 import fnmatch
 import logging
@@ -197,7 +196,7 @@ def write_file(filename: str, content: str, header: Optional[str] = None) -> Non
     if header is None:
         content = MOLECULE_HEADER + "\n\n" + content
 
-    with open_file(filename, "w") as f:
+    with open(filename, "w") as f:
         f.write(content)
 
 
@@ -213,7 +212,7 @@ def file_prepender(filename: str) -> None:
     :param filename: A string containing the target filename.
     :return: None
     """
-    with open_file(filename, "r+") as f:
+    with open(filename, "r+") as f:
         content = f.read()
         f.seek(0, 0)
         f.write(molecule_prepender(content))
@@ -252,20 +251,8 @@ def safe_load_file(filename: str):
     :param filename: A string containing an absolute path to the file to parse.
     :return: dict
     """
-    with open_file(filename) as stream:
+    with open(filename) as stream:
         return safe_load(stream)
-
-
-@contextlib.contextmanager
-def open_file(filename, mode="r"):
-    """Open the provide file safely and returns a file type.
-
-    :param filename: A string containing an absolute path to the file to open.
-    :param mode: A string describing the way in which the file will be used.
-    :return: file type
-    """
-    with open(filename, mode) as stream:
-        yield stream
 
 
 def instance_with_scenario_name(instance_name, scenario_name):

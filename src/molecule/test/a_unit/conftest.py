@@ -25,9 +25,11 @@ from collections.abc import Generator
 from pathlib import Path
 from subprocess import CompletedProcess
 from typing import Any
+from unittest.mock import Mock
 from uuid import uuid4
 
 import pytest
+from pytest_mock import MockerFixture
 
 from molecule import config, util
 from molecule.test.conftest import (
@@ -203,7 +205,7 @@ def patched_run_command(mocker):
 
 
 @pytest.fixture()
-def patched_ansible_converge(mocker):
+def patched_ansible_converge(mocker: MockerFixture) -> Mock:
     m = mocker.patch("molecule.provisioner.ansible.Ansible.converge")
     m.return_value = "patched-ansible-converge-stdout"
 

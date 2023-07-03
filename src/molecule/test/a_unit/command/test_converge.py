@@ -18,8 +18,14 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-from click.testing import CliRunner
+from typing import Any
+from unittest.mock import Mock
 
+from click.testing import CliRunner
+from pytest import LogCaptureFixture
+from pytest_mock import MockerFixture
+
+from molecule import config
 from molecule.command import converge
 from molecule.shell import main
 
@@ -28,12 +34,12 @@ from molecule.shell import main
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 def test_execute(
-    mocker,
-    caplog,
-    patched_ansible_converge,
-    patched_config_validate,
-    config_instance,
-):
+    mocker: MockerFixture,
+    caplog: LogCaptureFixture,
+    patched_ansible_converge: Mock,
+    patched_config_validate: Any,
+    config_instance: config.Config,
+) -> None:
     c = converge.Converge(config_instance)
     c.execute()
 
@@ -45,7 +51,7 @@ def test_execute(
     assert config_instance.state.converged
 
 
-def test_ansible_args_passed_to_scenarios_get_configs(mocker):
+def test_ansible_args_passed_to_scenarios_get_configs(mocker: MockerFixture) -> None:
     # Scenarios patch is needed to safely invoke CliRunner
     # in the test environment and block scenario execution
     mocker.patch("molecule.scenarios.Scenarios")

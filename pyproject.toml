@@ -99,7 +99,7 @@ module = [
   "pexpect", # https://github.com/pexpect/pexpect/issues/759
   "pluggy", # https://github.com/pytest-dev/pluggy/pull/414
   "testinfra.*", # https://github.com/pytest-dev/pytest-testinfra/issues/619
-
+  "pytest_mock",
 ]
 ignore_missing_imports = true
 ignore_errors = true
