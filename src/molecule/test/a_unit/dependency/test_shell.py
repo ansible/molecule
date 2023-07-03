@@ -95,7 +95,7 @@ def test_env_property(_instance):
     assert _instance.env["FOO"] == "bar"
 
 
-def test_execute(patched_run_command, caplog, _instance):
+def test_execute(patched_run_command, caplog: pytest.LogCaptureFixture, _instance):
     _instance._sh_command = "patched-command"
     _instance.execute()
 
@@ -111,7 +111,7 @@ def test_execute(patched_run_command, caplog, _instance):
 
 def test_execute_does_not_execute_when_disabled(
     patched_run_command,
-    caplog,
+    caplog: pytest.LogCaptureFixture,
     _instance,
 ):
     _instance._config.config["dependency"]["enabled"] = False

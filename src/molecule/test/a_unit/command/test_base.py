@@ -317,7 +317,7 @@ def test_verify_configs_raises_with_no_configs(caplog):
 
 
 def test_verify_configs_raises_with_duplicate_configs(
-    caplog,
+    caplog: pytest.LogCaptureFixture,
     config_instance: config.Config,
 ):
     with pytest.raises(SystemExit) as e:

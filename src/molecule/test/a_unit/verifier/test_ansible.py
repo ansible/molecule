@@ -94,7 +94,7 @@ def test_execute(caplog, _patched_ansible_verify, _instance):
 
 def test_execute_does_not_execute(
     patched_ansible_converge,
-    caplog,
+    caplog: pytest.LogCaptureFixture,
     _instance,
 ):
     _instance._config.config["verifier"]["enabled"] = False

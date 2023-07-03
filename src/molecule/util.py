@@ -55,7 +55,7 @@ def print_debug(title: str, data: str) -> None:
     console.print(f"DEBUG: {title}:\n{data}")
 
 
-def print_environment_vars(env: Optional[dict[str, str]]) -> None:
+def print_environment_vars(env: Optional[dict[str, Optional[str]]]) -> None:
     """Print ``Ansible`` and ``Molecule`` environment variables and returns None.
 
     :param env: A dict containing the shell's environment as collected by
