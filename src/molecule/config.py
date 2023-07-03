@@ -331,7 +331,7 @@ class Config(metaclass=NewInitCaller):
         defaults = self._get_defaults()
         base_configs = filter(os.path.exists, self.args.get("base_config", []))
         for base_config in base_configs:
-            with util.open_file(base_config) as stream:
+            with open(base_config) as stream:
                 s = stream.read()
                 interpolated_config = self._interpolate(s, env, keep_string)
                 defaults = util.merge_dicts(
@@ -340,7 +340,7 @@ class Config(metaclass=NewInitCaller):
                 )
 
         if self.molecule_file:
-            with util.open_file(self.molecule_file) as stream:
+            with open(self.molecule_file) as stream:
                 s = stream.read()
                 interpolated_config = self._interpolate(s, env, keep_string)
                 defaults = util.merge_dicts(

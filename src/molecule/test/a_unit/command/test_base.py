@@ -327,7 +327,7 @@ def test_verify_configs_raises_with_duplicate_configs(
     assert msg in caplog.text
 
 
-def test_get_subcommand():
+def test_get_subcommand() -> None:
     assert base._get_subcommand(__name__) == "test_base"
 
 

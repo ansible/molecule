@@ -345,7 +345,7 @@ def test_command_verify(scenario_to_test, with_scenario, scenario_name):
     verify(scenario_name)
 
 
-def test_sample_collection():
+def test_sample_collection() -> None:
     assert (
         run_command(
             ["molecule", "test"],

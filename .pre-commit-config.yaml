@@ -69,6 +69,7 @@ repos:
           - jinja2
           - packaging
           - pytest
+          - pytest-mock
           - rich
           - ruamel.yaml>=0.17.10
           - types-PyYAML
@@ -91,7 +92,8 @@ repos:
           - filelock
           - jsonschema
           - pexpect
-          - testinfra
+          - pytest-mock
+          - pytest-testinfra
   - repo: https://github.com/jazzband/pip-tools
     rev: 6.14.0
     hooks:

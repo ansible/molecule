@@ -23,6 +23,6 @@ import pytest
 from molecule import shell
 
 
-def test_shell():
+def test_shell() -> None:
     with pytest.raises(SystemExit):
         shell.main()
