@@ -45,7 +45,7 @@ def test_print_debug():
     assert result == expected
 
 
-def test_print_environment_vars(capsys):
+def test_print_environment_vars(capsys: pytest.CaptureFixture[str]) -> None:
     env = {
         "ANSIBLE_FOO": "foo",
         "ANSIBLE_BAR": "bar",
@@ -86,7 +86,7 @@ def test_sysexit_with_custom_code():
     assert e.value.code == 2
 
 
-def test_sysexit_with_message(caplog):
+def test_sysexit_with_message(caplog: pytest.LogCaptureFixture):
     with pytest.raises(SystemExit) as e:
         util.sysexit_with_message("foo")
 
@@ -95,7 +95,7 @@ def test_sysexit_with_message(caplog):
     assert "foo" in caplog.text
 
 
-def test_sysexit_with_warns(caplog):
+def test_sysexit_with_warns(caplog: pytest.LogCaptureFixture):
     with pytest.raises(SystemExit) as e:
         with warnings.catch_warnings(record=True) as warns:
             warnings.filterwarnings("default", category=MoleculeRuntimeWarning)
@@ -109,7 +109,7 @@ def test_sysexit_with_warns(caplog):
     assert "xxx" in caplog.text
 
 
-def test_sysexit_with_message_and_custom_code(caplog):
+def test_sysexit_with_message_and_custom_code(caplog: pytest.LogCaptureFixture):
     with pytest.raises(SystemExit) as e:
         util.sysexit_with_message("foo", 2)
 

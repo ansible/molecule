@@ -18,6 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+from unittest.mock import Mock
+
 import pytest
 from pytest_mock import MockerFixture
 
@@ -26,7 +28,7 @@ from molecule.command import idempotence
 
 
 @pytest.fixture()
-def _patched_is_idempotent(mocker):
+def _patched_is_idempotent(mocker: MockerFixture) -> Mock:
     return mocker.patch("molecule.command.idempotence.Idempotence._is_idempotent")
 
 
@@ -42,9 +44,9 @@ def _instance(patched_config_validate, config_instance: config.Config):
 
 def test_execute(
     mocker: MockerFixture,
-    caplog,
+    caplog: pytest.LogCaptureFixture,
     patched_ansible_converge,
-    _patched_is_idempotent,
+    _patched_is_idempotent: Mock,
     _instance,
 ):
     _instance.execute()
@@ -61,7 +63,7 @@ def test_execute(
 
 
 def test_execute_raises_when_not_converged(
-    caplog,
+    caplog: pytest.LogCaptureFixture,
     patched_ansible_converge,
     _instance,
 ):
@@ -77,9 +79,9 @@ def test_execute_raises_when_not_converged(
 
 def test_execute_raises_when_fails_idempotence(
     mocker: MockerFixture,
-    caplog,
+    caplog: pytest.LogCaptureFixture,
     patched_ansible_converge,
-    _patched_is_idempotent,
+    _patched_is_idempotent: Mock,
     _instance,
 ):
     _patched_is_idempotent.return_value = False

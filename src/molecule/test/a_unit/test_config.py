@@ -176,7 +176,7 @@ def test_get_driver_name(config_instance: config.Config):
 
 
 def test_get_driver_name_raises_when_different_driver_used(
-    caplog,
+    caplog: pytest.LogCaptureFixture,
     config_instance: config.Config,
 ):
     config_instance.state.change_state("driver", "foo")
@@ -266,7 +266,7 @@ def test_interpolate_curly_default_variable(config_instance: config.Config):
 
 
 def test_interpolate_raises_on_failed_interpolation(
-    caplog,
+    caplog: pytest.LogCaptureFixture,
     config_instance: config.Config,
 ):
     string = "$6$8I5Cfmpr$kGZB"
@@ -311,7 +311,7 @@ def test_validate(
 
 def test_validate_exists_when_validation_fails(
     mocker: MockerFixture,
-    caplog,
+    caplog: pytest.LogCaptureFixture,
     config_instance: config.Config,
 ):
     m = mocker.patch("molecule.model.schema_v3.validate")
