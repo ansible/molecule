@@ -27,7 +27,7 @@ from molecule.provisioner import ansible_playbook
 
 
 @pytest.fixture()
-def _instance(config_instance):
+def _instance(config_instance: config.Config):
     _instance = ansible_playbook.AnsiblePlaybook("playbook", config_instance)
 
     return _instance

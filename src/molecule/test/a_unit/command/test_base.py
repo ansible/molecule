@@ -252,7 +252,7 @@ def test_runtime_paths(config_instance, _patched_sysexit):
     assert provisioner_collections_path.startswith(f"{cache_dir}/collections")
 
 
-def test_execute_subcommand(config_instance):
+def test_execute_subcommand(config_instance: config.Config):
     # scenario's config.action is mutated in-place for every sequence action,
     # so make sure that is currently set to the executed action
     assert config_instance.action != "list"
@@ -286,7 +286,7 @@ def test_execute_scenario_destroy(mocker, _patched_execute_subcommand):
     assert scenario.prune.called
 
 
-def test_get_configs(config_instance):
+def test_get_configs(config_instance: config.Config):
     molecule_file = config_instance.molecule_file
     data = config_instance.config
     util.write_file(molecule_file, util.safe_dump(data))
@@ -297,7 +297,7 @@ def test_get_configs(config_instance):
     assert isinstance(result[0], config.Config)
 
 
-def test_verify_configs(config_instance):
+def test_verify_configs(config_instance: config.Config):
     configs = [config_instance]
 
     assert base._verify_configs(configs) is None

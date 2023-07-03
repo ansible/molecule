@@ -22,11 +22,11 @@ import os
 
 import pytest
 
-from molecule import state, util
+from molecule import config, state, util
 
 
 @pytest.fixture()
-def _instance(config_instance):
+def _instance(config_instance: config.Config):
     return state.State(config_instance)
 
 

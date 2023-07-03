@@ -20,11 +20,11 @@
 
 import pytest
 
-from molecule import platforms
+from molecule import config, platforms
 
 
 @pytest.fixture()
-def _instance(config_instance):
+def _instance(config_instance: config.Config):
     return platforms.Platforms(config_instance)
 
 
