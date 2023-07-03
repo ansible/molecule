@@ -20,7 +20,9 @@
 
 
 import pytest
+from pytest_mock import MockerFixture
 
+from molecule import config
 from molecule.command import create
 
 
@@ -34,11 +36,11 @@ def _patched_create_setup(mocker):
 # throughout patched.assert_called unit tests.
 @pytest.mark.skip(reason="create not running for delegated")
 def test_execute(
-    mocker,
+    mocker: MockerFixture,
     caplog,
     command_patched_ansible_create,
     patched_config_validate,
-    config_instance,
+    config_instance: config.Config,
 ):
     c = create.Create(config_instance)
     c.execute()
@@ -57,7 +59,7 @@ def test_execute(
 def test_execute_skips_when_instances_already_created(
     caplog,
     command_patched_ansible_create,
-    config_instance,
+    config_instance: config.Config,
 ):
     config_instance.state.change_state("created", True)
     c = create.Create(config_instance)

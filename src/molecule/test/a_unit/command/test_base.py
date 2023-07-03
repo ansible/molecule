@@ -21,6 +21,7 @@
 import os
 
 import pytest
+from pytest_mock import MockerFixture
 
 from molecule import config, util
 from molecule.command import base
@@ -37,12 +38,12 @@ class ExtendedBase(base.Base):
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.fixture()
-def _base_class(patched_config_validate, config_instance):
+def _base_class(patched_config_validate, config_instance: config.Config):
     return ExtendedBase
 
 
 @pytest.fixture()
-def _instance(_base_class, config_instance):
+def _instance(_base_class, config_instance: config.Config):
     return _base_class(config_instance)
 
 
@@ -95,7 +96,7 @@ def test_init_calls_setup(_patched_base_setup, _instance):
 
 
 def test_setup(
-    mocker,
+    mocker: MockerFixture,
     patched_add_or_update_vars,
     _patched_write_config,
     _patched_manage_inventory,
@@ -109,7 +110,7 @@ def test_setup(
 
 
 def test_execute_cmdline_scenarios(
-    config_instance,
+    config_instance: config.Config,
     _patched_print_matrix,
     _patched_execute_scenario,
 ):
@@ -119,7 +120,7 @@ def test_execute_cmdline_scenarios(
     # - execute_scenario is called once, indicating the function correctly
     #   loops over Scenarios.
     scenario_name = None
-    args = {}
+    args: dict[str, str] = {}
     command_args = {"destroy": "always", "subcommand": "test"}
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
 
@@ -128,14 +129,14 @@ def test_execute_cmdline_scenarios(
 
 
 def test_execute_cmdline_scenarios_prune(
-    config_instance,
+    config_instance: config.Config,
     _patched_prune,
     _patched_execute_subcommand,
 ):
     # Subcommands should be executed and prune *should* run when
     # destroy is 'always'
     scenario_name = "default"
-    args = {}
+    args: dict[str, str] = {}
     command_args = {"destroy": "always", "subcommand": "test"}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
@@ -145,14 +146,14 @@ def test_execute_cmdline_scenarios_prune(
 
 
 def test_execute_cmdline_scenarios_no_prune(
-    config_instance,
+    config_instance: config.Config,
     _patched_prune,
     _patched_execute_subcommand,
 ):
     # Subcommands should be executed but prune *should not* run when
     # destroy is 'never'
     scenario_name = "default"
-    args = {}
+    args: dict[str, str] = {}
     command_args = {"destroy": "never", "subcommand": "test"}
 
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
@@ -162,7 +163,7 @@ def test_execute_cmdline_scenarios_no_prune(
 
 
 def test_execute_cmdline_scenarios_exit_destroy(
-    config_instance,
+    config_instance: config.Config,
     _patched_execute_scenario,
     _patched_prune,
     _patched_execute_subcommand,
@@ -174,7 +175,7 @@ def test_execute_cmdline_scenarios_exit_destroy(
     #   raises SystemExit
     # - scenario is pruned
     scenario_name = "default"
-    args = {}
+    args: dict[str, str] = {}
     command_args = {"destroy": "always", "subcommand": "test"}
     _patched_execute_scenario.side_effect = SystemExit()
 
@@ -190,7 +191,7 @@ def test_execute_cmdline_scenarios_exit_destroy(
 
 
 def test_execute_cmdline_scenarios_exit_nodestroy(
-    config_instance,
+    config_instance: config.Config,
     _patched_execute_scenario,
     _patched_prune,
     _patched_sysexit,
@@ -201,7 +202,7 @@ def test_execute_cmdline_scenarios_exit_nodestroy(
     # - scenario is not pruned
     # - caught SystemExit is reraised
     scenario_name = "default"
-    args = {}
+    args: dict[str, str] = {}
     command_args = {"destroy": "never", "subcommand": "test"}
 
     _patched_execute_scenario.side_effect = SystemExit()
@@ -215,11 +216,11 @@ def test_execute_cmdline_scenarios_exit_nodestroy(
     assert not _patched_sysexit.called
 
 
-def test_runtime_paths(config_instance, _patched_sysexit):
+def test_runtime_paths(config_instance: config.Config, _patched_sysexit):
     # the ansible_collections_path and ansible_roles_path from the runtime
     # should be added to the provisioner's paths
     scenario_name = None
-    args = {}
+    args: dict[str, str] = {}
     command_args = {"destroy": "never", "subcommand": "verify"}
 
     base.result_callback()
@@ -228,10 +229,12 @@ def test_runtime_paths(config_instance, _patched_sysexit):
     home = os.path.expanduser("~")
     cache_dir = config_instance.runtime.cache_dir
     runtime_roles_path = config_instance.runtime.environ.get("ANSIBLE_ROLES_PATH")
+    assert isinstance(runtime_roles_path, str)
     provisioner_roles_path = config_instance.provisioner.env.get("ANSIBLE_ROLES_PATH")
     runtime_collections_path = config_instance.runtime.environ.get(
         config_instance.ansible_collections_path,
     )
+    assert isinstance(runtime_collections_path, str)
     provisioner_collections_path = config_instance.provisioner.env.get(
         config_instance.ansible_collections_path,
     )
@@ -260,7 +263,7 @@ def test_execute_subcommand(config_instance: config.Config):
     assert config_instance.action == "list"
 
 
-def test_execute_scenario(mocker, _patched_execute_subcommand):
+def test_execute_scenario(mocker: MockerFixture, _patched_execute_subcommand):
     # call a spoofed scenario with a sequence that does not include destroy:
     # - execute_subcommand should be called once for each sequence item
     # - prune should not be called, since the sequence has no destroy step
@@ -273,7 +276,7 @@ def test_execute_scenario(mocker, _patched_execute_subcommand):
     assert not scenario.prune.called
 
 
-def test_execute_scenario_destroy(mocker, _patched_execute_subcommand):
+def test_execute_scenario_destroy(mocker: MockerFixture, _patched_execute_subcommand):
     # call a spoofed scenario with a sequence that includes destroy:
     # - execute_subcommand should be called once for each sequence item
     # - prune should be called, since the sequence has a destroy step
@@ -315,7 +318,7 @@ def test_verify_configs_raises_with_no_configs(caplog):
 
 def test_verify_configs_raises_with_duplicate_configs(
     caplog,
-    config_instance,
+    config_instance: config.Config,
 ):
     with pytest.raises(SystemExit) as e:
         configs = [config_instance, config_instance]

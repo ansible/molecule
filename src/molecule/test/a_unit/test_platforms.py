@@ -38,7 +38,7 @@ def test_instances_property(_instance):
 
 
 @pytest.fixture()
-def platform_name(request, config_instance):
+def platform_name(request, config_instance: config.Config):
     return platforms.Platforms(config_instance, platform_name=request.param)
 
 

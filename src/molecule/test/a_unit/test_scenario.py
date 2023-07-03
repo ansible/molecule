@@ -30,7 +30,7 @@ from molecule import config, scenario, util
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.fixture()
-def _instance(patched_config_validate, config_instance):
+def _instance(patched_config_validate, config_instance: config.Config):
     return scenario.Scenario(config_instance)
 
 

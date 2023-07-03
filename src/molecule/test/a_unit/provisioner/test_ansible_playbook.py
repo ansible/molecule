@@ -52,7 +52,7 @@ def _provisioner_verifier_section_data():
 
 
 @pytest.fixture()
-def _instance_for_verifier_env(config_instance):
+def _instance_for_verifier_env(config_instance: config.Config):
     _instance = ansible_playbook.AnsiblePlaybook("playbook", config_instance, True)
     return _instance
 

@@ -21,8 +21,9 @@
 import os
 
 import pytest
+from pytest_mock import MockerFixture
 
-from molecule import util
+from molecule import config, util
 from molecule.command import cleanup
 
 
@@ -45,11 +46,11 @@ def _patched_ansible_cleanup(mocker):
     indirect=True,
 )
 def test_execute(
-    mocker,
+    mocker: MockerFixture,
     _patched_ansible_cleanup,
     caplog,
     patched_config_validate,
-    config_instance,
+    config_instance: config.Config,
 ):
     pb = os.path.join(config_instance.scenario.directory, "cleanup.yml")
     util.write_file(pb, "")
@@ -65,7 +66,7 @@ def test_execute(
 def test_execute_skips_when_playbook_not_configured(
     caplog,
     _patched_ansible_cleanup,
-    config_instance,
+    config_instance: config.Config,
 ):
     cu = cleanup.Cleanup(config_instance)
     cu.execute()

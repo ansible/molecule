@@ -28,7 +28,7 @@ from molecule.text import chomp, strip_ansi_escape
 
 
 @pytest.fixture()
-def _instance(config_instance):
+def _instance(config_instance: config.Config):
     config_instance_1 = copy.deepcopy(config_instance)
 
     config_instance_2 = copy.deepcopy(config_instance)

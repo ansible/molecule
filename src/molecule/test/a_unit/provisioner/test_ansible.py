@@ -23,6 +23,7 @@ import os
 import re
 
 import pytest
+from pytest_mock import MockerFixture
 
 from molecule import config, util
 from molecule.provisioner import ansible, ansible_playbooks
@@ -87,7 +88,7 @@ def _provisioner_section_data():
 
 
 @pytest.fixture()
-def _instance(_provisioner_section_data, config_instance):
+def _instance(_provisioner_section_data, config_instance: config.Config):
     return ansible.Ansible(config_instance)
 
 
@@ -381,7 +382,7 @@ def test_playbooks_side_effect_property(_instance):
     assert _instance.playbooks.side_effect is None
 
 
-def test_check(_instance, mocker, _patched_ansible_playbook):
+def test_check(_instance, mocker: MockerFixture, _patched_ansible_playbook):
     _instance.check()
 
     _patched_ansible_playbook.assert_called_once_with(
@@ -396,7 +397,7 @@ def test_check(_instance, mocker, _patched_ansible_playbook):
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_converge(_instance, mocker, _patched_ansible_playbook):
+def test_converge(_instance, mocker: MockerFixture, _patched_ansible_playbook):
     result = _instance.converge()
 
     _patched_ansible_playbook.assert_called_once_with(
@@ -411,7 +412,11 @@ def test_converge(_instance, mocker, _patched_ansible_playbook):
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_converge_with_playbook(_instance, mocker, _patched_ansible_playbook):
+def test_converge_with_playbook(
+    _instance,
+    mocker: MockerFixture,
+    _patched_ansible_playbook,
+):
     result = _instance.converge("playbook")
 
     _patched_ansible_playbook.assert_called_once_with(
@@ -426,7 +431,7 @@ def test_converge_with_playbook(_instance, mocker, _patched_ansible_playbook):
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_cleanup(_instance, mocker, _patched_ansible_playbook):
+def test_cleanup(_instance, mocker: MockerFixture, _patched_ansible_playbook):
     _instance.cleanup()
 
     _patched_ansible_playbook.assert_called_once_with(
@@ -437,7 +442,7 @@ def test_cleanup(_instance, mocker, _patched_ansible_playbook):
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_destroy(_instance, mocker, _patched_ansible_playbook):
+def test_destroy(_instance, mocker: MockerFixture, _patched_ansible_playbook):
     _instance.destroy()
 
     _patched_ansible_playbook.assert_called_once_with(
@@ -448,7 +453,7 @@ def test_destroy(_instance, mocker, _patched_ansible_playbook):
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_side_effect(_instance, mocker, _patched_ansible_playbook):
+def test_side_effect(_instance, mocker: MockerFixture, _patched_ansible_playbook):
     _instance.side_effect()
 
     _patched_ansible_playbook.assert_called_once_with(
@@ -459,7 +464,7 @@ def test_side_effect(_instance, mocker, _patched_ansible_playbook):
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_create(_instance, mocker, _patched_ansible_playbook):
+def test_create(_instance, mocker: MockerFixture, _patched_ansible_playbook):
     _instance.create()
 
     _patched_ansible_playbook.assert_called_once_with(
@@ -470,7 +475,7 @@ def test_create(_instance, mocker, _patched_ansible_playbook):
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_prepare(_instance, mocker, _patched_ansible_playbook):
+def test_prepare(_instance, mocker: MockerFixture, _patched_ansible_playbook):
     _instance.prepare()
 
     _patched_ansible_playbook.assert_called_once_with(
@@ -481,7 +486,7 @@ def test_prepare(_instance, mocker, _patched_ansible_playbook):
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_syntax(_instance, mocker, _patched_ansible_playbook):
+def test_syntax(_instance, mocker: MockerFixture, _patched_ansible_playbook):
     _instance.syntax()
 
     _patched_ansible_playbook.assert_called_once_with(
@@ -496,7 +501,7 @@ def test_syntax(_instance, mocker, _patched_ansible_playbook):
     _patched_ansible_playbook.return_value.execute.assert_called_once_with()
 
 
-def test_verify(_instance, mocker, _patched_ansible_playbook):
+def test_verify(_instance, mocker: MockerFixture, _patched_ansible_playbook):
     _instance.verify()
 
     if _instance._config.provisioner.playbooks.verify:

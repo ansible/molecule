@@ -23,7 +23,11 @@ def _verifier_section_data():
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.fixture()
-def _instance(_verifier_section_data, patched_config_validate, config_instance):
+def _instance(
+    _verifier_section_data,
+    patched_config_validate,
+    config_instance: config.Config,
+):
     return ansible.Ansible(config_instance)
 
 

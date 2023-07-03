@@ -18,11 +18,12 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+from molecule import config
 from molecule.command import list
 from molecule.driver import base
 
 
-def test_execute(capsys, config_instance):
+def test_execute(capsys, config_instance: config.Config):
     l = list.List(config_instance)
     x = [
         base.Status(

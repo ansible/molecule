@@ -52,7 +52,11 @@ def _dependency_section_data():
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.fixture()
-def _instance(_dependency_section_data, patched_config_validate, config_instance):
+def _instance(
+    _dependency_section_data,
+    patched_config_validate,
+    config_instance: config.Config,
+):
     return collections.Collections(config_instance)
 
 
