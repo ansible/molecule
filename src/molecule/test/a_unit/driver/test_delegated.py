@@ -21,6 +21,7 @@
 import os
 
 import pytest
+from pytest_mock import MockerFixture
 
 from molecule import config
 from molecule.driver import delegated
@@ -173,7 +174,7 @@ def test_login_options(_instance):
     ["_driver_managed_section_data"],
     indirect=True,
 )
-def test_login_options_when_managed(mocker, _instance):
+def test_login_options_when_managed(mocker: MockerFixture, _instance):
     m = mocker.patch("molecule.driver.delegated.Delegated._get_instance_config")
     m.return_value = {
         "instance": "foo",
@@ -214,7 +215,7 @@ def test_ansible_connection_options(_instance):
     ["_driver_managed_section_data"],
     indirect=True,
 )
-def test_ansible_connection_options_when_managed(mocker, _instance):
+def test_ansible_connection_options_when_managed(mocker: MockerFixture, _instance):
     assert _instance.managed is True
 
     ssh_case_data = mocker.patch(
@@ -273,7 +274,7 @@ def test_ansible_connection_options_when_managed(mocker, _instance):
 
 
 def test_ansible_connection_options_handles_missing_instance_config_managed(
-    mocker,
+    mocker: MockerFixture,
     _instance,
 ):
     m = mocker.patch("molecule.util.safe_load_file")
@@ -283,7 +284,7 @@ def test_ansible_connection_options_handles_missing_instance_config_managed(
 
 
 def test_ansible_connection_options_handles_missing_results_key_when_managed(
-    mocker,
+    mocker: MockerFixture,
     _instance,
 ):
     m = mocker.patch("molecule.util.safe_load_file")
@@ -310,7 +311,7 @@ def test_ssh_connection_options_property(_instance):
     assert [] == _instance.ssh_connection_options
 
 
-def test_status(mocker, _instance):
+def test_status(mocker: MockerFixture, _instance):
     result = _instance.status()
 
     assert len(result) == 2
@@ -355,7 +356,7 @@ def test_property(_instance):
     assert _instance._converged() == "false"
 
 
-def test_get_instance_config(mocker, _instance):
+def test_get_instance_config(mocker: MockerFixture, _instance):
     m = mocker.patch("molecule.util.safe_load_file")
     m.return_value = [{"instance": "foo"}, {"instance": "bar"}]
 

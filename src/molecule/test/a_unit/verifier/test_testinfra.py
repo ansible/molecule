@@ -50,7 +50,7 @@ def _verifier_section_data():
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.fixture()
-def _instance(patched_config_validate, config_instance):
+def _instance(patched_config_validate, config_instance: config.Config):
     return testinfra.Testinfra(config_instance)
 
 

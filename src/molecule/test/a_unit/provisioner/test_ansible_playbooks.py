@@ -22,7 +22,7 @@ import os
 
 import pytest
 
-from molecule import util
+from molecule import config, util
 from molecule.provisioner import ansible_playbooks
 from molecule.test.a_unit.conftest import os_split
 
@@ -33,7 +33,7 @@ def _provisioner_section_data():
 
 
 @pytest.fixture()
-def _instance(_provisioner_section_data, config_instance):
+def _instance(_provisioner_section_data, config_instance: config.Config):
     return ansible_playbooks.AnsiblePlaybooks(config_instance)
 
 

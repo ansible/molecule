@@ -19,7 +19,9 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import pytest
+from pytest_mock import MockerFixture
 
+from molecule import config
 from molecule.command import idempotence
 
 
@@ -32,14 +34,14 @@ def _patched_is_idempotent(mocker):
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.fixture()
-def _instance(patched_config_validate, config_instance):
+def _instance(patched_config_validate, config_instance: config.Config):
     config_instance.state.change_state("converged", True)
 
     return idempotence.Idempotence(config_instance)
 
 
 def test_execute(
-    mocker,
+    mocker: MockerFixture,
     caplog,
     patched_ansible_converge,
     _patched_is_idempotent,
@@ -74,7 +76,7 @@ def test_execute_raises_when_not_converged(
 
 
 def test_execute_raises_when_fails_idempotence(
-    mocker,
+    mocker: MockerFixture,
     caplog,
     patched_ansible_converge,
     _patched_is_idempotent,

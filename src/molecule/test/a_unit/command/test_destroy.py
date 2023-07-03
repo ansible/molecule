@@ -20,7 +20,9 @@
 
 
 import pytest
+from pytest_mock import MockerFixture
 
+from molecule import config
 from molecule.command import destroy
 
 
@@ -39,11 +41,11 @@ def _patched_destroy_setup(mocker):
 # throughout patched.assert_called unit tests.
 @pytest.mark.skip(reason="destroy not running for delegated")
 def test_execute(
-    mocker,
+    mocker: MockerFixture,
     caplog,
     patched_config_validate,
     _patched_ansible_destroy,
-    config_instance,
+    config_instance: config.Config,
 ):
     d = destroy.Destroy(config_instance)
     d.execute()
@@ -67,7 +69,7 @@ def test_execute_skips_when_destroy_strategy_is_never(
     _patched_destroy_setup,
     caplog,
     _patched_ansible_destroy,
-    config_instance,
+    config_instance: config.Config,
 ):
     config_instance.command_args = {"destroy": "never"}
 

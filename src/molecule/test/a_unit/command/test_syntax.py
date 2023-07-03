@@ -19,7 +19,9 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import pytest
+from pytest_mock import MockerFixture
 
+from molecule import config
 from molecule.command import syntax
 
 
@@ -32,11 +34,11 @@ def _patched_ansible_syntax(mocker):
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 def test_execute(
-    mocker,
+    mocker: MockerFixture,
     caplog,
     _patched_ansible_syntax,
     patched_config_validate,
-    config_instance,
+    config_instance: config.Config,
 ):
     s = syntax.Syntax(config_instance)
     s.execute()

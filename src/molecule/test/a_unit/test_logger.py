@@ -23,6 +23,7 @@ import logging
 
 import pytest
 
+from molecule import config
 from molecule.command.base import Base
 from molecule.console import should_do_markup
 from molecule.logger import get_section_loggers
@@ -37,7 +38,7 @@ class Dummy(Base):
 
 
 @pytest.fixture()
-def _dummy_class(patched_config_validate, config_instance):
+def _dummy_class(patched_config_validate, config_instance: config.Config):
     return Dummy
 
 

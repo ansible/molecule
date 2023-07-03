@@ -18,6 +18,8 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+from pytest_mock import MockerFixture
+
 from molecule import config
 from molecule.command import dependency
 
@@ -26,7 +28,7 @@ from molecule.command import dependency
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 def test_execute(
-    mocker,
+    mocker: MockerFixture,
     caplog,
     patched_ansible_galaxy,
     patched_config_validate,

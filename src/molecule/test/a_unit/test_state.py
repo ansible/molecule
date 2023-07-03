@@ -104,7 +104,11 @@ def test_change_state_raises(_instance):
         _instance.change_state("invalid-state", True)
 
 
-def test_get_data_loads_existing_state_file(_instance, molecule_data, config_instance):
+def test_get_data_loads_existing_state_file(
+    _instance,
+    molecule_data,
+    config_instance: config.Config,
+):
     data = {"converged": False, "created": True, "driver": None, "prepared": None}
     util.write_file(_instance._state_file, util.safe_dump(data))
 

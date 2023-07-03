@@ -20,6 +20,7 @@
 
 
 import pytest
+from pytest_mock import MockerFixture
 
 from molecule import config
 from molecule.command import login
@@ -32,7 +33,7 @@ def _instance(config_instance: config.Config):
     return login.Login(config_instance)
 
 
-def test_execute(mocker, _instance):
+def test_execute(mocker: MockerFixture, _instance):
     _instance._config.command_args = {"host": "instance-1"}
     m = mocker.patch("molecule.command.login.Login._get_login")
     _instance.execute()

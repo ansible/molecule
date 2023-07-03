@@ -21,6 +21,7 @@
 import os
 
 import pytest
+from pytest_mock import MockerFixture
 
 from molecule import config, platforms, scenario, state, util
 from molecule.dependency import ansible_galaxy, shell
@@ -293,7 +294,11 @@ def test_get_defaults(config_instance: config.Config, mocker):
     assert defaults["scenario"]["name"] == "test_scenario_name"
 
 
-def test_validate(mocker, config_instance: config.Config, patched_logger_debug):
+def test_validate(
+    mocker: MockerFixture,
+    config_instance: config.Config,
+    patched_logger_debug,
+):
     m = mocker.patch("molecule.model.schema_v3.validate")
     m.return_value = None
 
@@ -305,7 +310,7 @@ def test_validate(mocker, config_instance: config.Config, patched_logger_debug):
 
 
 def test_validate_exists_when_validation_fails(
-    mocker,
+    mocker: MockerFixture,
     caplog,
     config_instance: config.Config,
 ):

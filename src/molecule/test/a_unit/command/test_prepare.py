@@ -21,6 +21,7 @@
 import os
 
 import pytest
+from pytest_mock import MockerFixture
 
 from molecule import config, util
 from molecule.command import prepare
@@ -35,7 +36,7 @@ def _patched_ansible_prepare(mocker):
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 def test_execute(
-    mocker,
+    mocker: MockerFixture,
     caplog,
     _patched_ansible_prepare,
     patched_config_validate,
@@ -58,7 +59,7 @@ def test_execute(
 def test_execute_skips_when_instances_already_prepared(
     caplog,
     _patched_ansible_prepare,
-    config_instance,
+    config_instance: config.Config,
 ):
     config_instance.state.change_state("prepared", True)
     p = prepare.Prepare(config_instance)
@@ -73,7 +74,7 @@ def test_execute_skips_when_instances_already_prepared(
 def test_execute_skips_when_playbook_not_configured(
     caplog,
     _patched_ansible_prepare,
-    config_instance,
+    config_instance: config.Config,
 ):
     p = prepare.Prepare(config_instance)
     p.execute()
@@ -85,7 +86,7 @@ def test_execute_skips_when_playbook_not_configured(
 
 
 def test_execute_when_instances_already_prepared_but_force_provided(
-    mocker,
+    mocker: MockerFixture,
     caplog,
     _patched_ansible_prepare,
     config_instance: config.Config,

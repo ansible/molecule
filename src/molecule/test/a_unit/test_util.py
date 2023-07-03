@@ -23,8 +23,10 @@ import binascii
 import os
 import warnings
 from pathlib import Path
+from typing import Any
 
 import pytest
+from pytest_mock import MockerFixture
 
 from molecule import util
 from molecule.api import IncompatibleMoleculeRuntimeWarning, MoleculeRuntimeWarning
@@ -123,7 +125,7 @@ def test_run_command():
     assert x.returncode == 0
 
 
-def test_run_command_with_debug(mocker, patched_print_debug):
+def test_run_command_with_debug(mocker: MockerFixture, patched_print_debug):
     env = {"ANSIBLE_FOO": "foo", "MOLECULE_BAR": "bar"}
     util.run_command(["ls"], debug=True, env=env)
     x = [
@@ -150,13 +152,16 @@ def test_run_command_baked_cmd_env():
     assert result.returncode == 1
 
 
-def test_run_command_with_debug_handles_no_env(mocker, patched_print_debug):
+def test_run_command_with_debug_handles_no_env(
+    mocker: MockerFixture,
+    patched_print_debug,
+):
     cmd = "ls"
     util.run_command(cmd, debug=True)
     # when env is empty we expect not to print anything
-    x = []
+    empty_list: list[Any] = []
 
-    assert x == patched_print_debug.mock_calls
+    assert empty_list == patched_print_debug.mock_calls
 
 
 def test_os_walk(temp_dir):

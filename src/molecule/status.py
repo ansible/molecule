@@ -29,5 +29,5 @@ class Status(NamedTuple):
     driver_name: str
     provisioner_name: str
     scenario_name: str
-    created: bool
-    converged: bool
+    created: str
+    converged: str
