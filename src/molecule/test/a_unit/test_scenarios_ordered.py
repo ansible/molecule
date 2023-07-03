@@ -22,11 +22,11 @@ import copy
 
 import pytest
 
-from molecule import scenarios
+from molecule import config, scenarios
 
 
 @pytest.fixture()
-def _instance(config_instance):
+def _instance(config_instance: config.Config):
     config_instance_1 = copy.deepcopy(config_instance)
     config_instance_1.config["scenario"]["name"] = "two"
     config_instance_1.molecule_file = config_instance_1.molecule_file.replace(

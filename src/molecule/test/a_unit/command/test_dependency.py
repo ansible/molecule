@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
+from molecule import config
 from molecule.command import dependency
 
 
@@ -29,7 +30,7 @@ def test_execute(
     caplog,
     patched_ansible_galaxy,
     patched_config_validate,
-    config_instance,
+    config_instance: config.Config,
 ):
     d = dependency.Dependency(config_instance)
     d.execute()

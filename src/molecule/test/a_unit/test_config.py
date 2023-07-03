@@ -28,60 +28,65 @@ from molecule.provisioner import ansible
 from molecule.verifier.ansible import Ansible as AnsibleVerifier
 
 
-def test_molecule_file_private_member(molecule_file_fixture, config_instance):
+def test_molecule_file_private_member(
+    molecule_file_fixture,
+    config_instance: config.Config,
+):
     assert molecule_file_fixture == config_instance.molecule_file
 
 
-def test_args_member(config_instance):
+def test_args_member(config_instance: config.Config):
     assert {} == config_instance.args
 
 
-def test_command_args_member(config_instance):
+def test_command_args_member(config_instance: config.Config):
     x = {"subcommand": "test"}
 
     assert x == config_instance.command_args
 
 
-def test_debug_property(config_instance):
+def test_debug_property(config_instance: config.Config):
     assert not config_instance.debug
 
 
-def test_env_file_property(config_instance):
+def test_env_file_property(config_instance: config.Config):
     config_instance.args = {"env_file": ".env"}
     result = config_instance.env_file
 
-    assert util.abs_path(config_instance.args.get("env_file")) == result
+    x = config_instance.args.get("env_file")
+    assert isinstance(x, str)
+    assert util.abs_path(x) == result
 
 
-def test_subcommand_property(config_instance):
+def test_subcommand_property(config_instance: config.Config):
     assert config_instance.subcommand == "test"
 
 
-def test_action_property(config_instance):
+def test_action_property(config_instance: config.Config):
     assert config_instance.action is None
 
 
-def test_action_setter(config_instance):
+def test_action_setter(config_instance: config.Config):
     config_instance.action = "foo"
 
     assert config_instance.action == "foo"
 
 
-def test_init_calls_validate(patched_config_validate, config_instance):
+def test_init_calls_validate(patched_config_validate, config_instance: config.Config):
     patched_config_validate.assert_called_once_with()
 
 
-def test_project_directory_property(config_instance):
+def test_project_directory_property(config_instance: config.Config):
     assert os.getcwd() == config_instance.project_directory
 
 
-def test_molecule_directory_property(config_instance):
+def test_molecule_directory_property(config_instance: config.Config):
     x = os.path.join(os.getcwd(), "molecule")
 
     assert x == config_instance.molecule_directory
 
 
-def test_dependency_property(config_instance):
+def test_dependency_property(config_instance: config.Config):
     assert isinstance(config_instance.dependency, ansible_galaxy.AnsibleGalaxy)
 
 
@@ -95,7 +100,7 @@ def _config_dependency_shell_section_data():
     ["_config_dependency_shell_section_data"],
     indirect=True,
 )
-def test_dependency_property_is_shell(config_instance):
+def test_dependency_property_is_shell(config_instance: config.Config):
     assert isinstance(config_instance.dependency, shell.Shell)
 
 
@@ -104,12 +109,14 @@ def _config_driver_delegated_section_data():
     return {"driver": {"name": "delegated", "options": {"managed": False}}}
 
 
-def test_env(config_instance):
+def test_env(config_instance: config.Config):
     config_instance.args = {"env_file": ".env"}
+    env_file = config_instance.args.get("env_file")
+    assert isinstance(env_file, str)
     x = {
         "MOLECULE_DEBUG": "False",
         "MOLECULE_FILE": config_instance.config_file,
-        "MOLECULE_ENV_FILE": util.abs_path(config_instance.args.get("env_file")),
+        "MOLECULE_ENV_FILE": util.abs_path(env_file),
         "MOLECULE_INVENTORY_FILE": config_instance.provisioner.inventory_file,
         "MOLECULE_EPHEMERAL_DIRECTORY": config_instance.scenario.ephemeral_directory,
         "MOLECULE_SCENARIO_DIRECTORY": config_instance.scenario.directory,
@@ -127,27 +134,27 @@ def test_env(config_instance):
     assert x == config_instance.env
 
 
-def test_platforms_property(config_instance):
+def test_platforms_property(config_instance: config.Config):
     assert isinstance(config_instance.platforms, platforms.Platforms)
 
 
-def test_provisioner_property(config_instance):
+def test_provisioner_property(config_instance: config.Config):
     assert isinstance(config_instance.provisioner, ansible.Ansible)
 
 
-def test_scenario_property(config_instance):
+def test_scenario_property(config_instance: config.Config):
     assert isinstance(config_instance.scenario, scenario.Scenario)
 
 
-def test_state_property(config_instance):
+def test_state_property(config_instance: config.Config):
     assert isinstance(config_instance.state, state.State)
 
 
-def test_verifier_property_is_ansible(config_instance):
+def test_verifier_property_is_ansible(config_instance: config.Config):
     assert isinstance(config_instance.verifier, AnsibleVerifier)
 
 
-def test_get_driver_name_from_state_file(config_instance, mocker):
+def test_get_driver_name_from_state_file(config_instance: config.Config, mocker):
     config_instance.state.change_state("driver", "state-driver")
 
     with pytest.raises(SystemExit):
@@ -157,19 +164,19 @@ def test_get_driver_name_from_state_file(config_instance, mocker):
     assert config_instance._get_driver_name() == "state-driver"
 
 
-def test_get_driver_name_from_cli(config_instance):
+def test_get_driver_name_from_cli(config_instance: config.Config):
     config_instance.command_args = {"driver_name": "cli-driver"}
 
     assert config_instance._get_driver_name() == "cli-driver"
 
 
-def test_get_driver_name(config_instance):
+def test_get_driver_name(config_instance: config.Config):
     assert config_instance._get_driver_name() == "delegated"
 
 
 def test_get_driver_name_raises_when_different_driver_used(
     caplog,
-    config_instance,
+    config_instance: config.Config,
 ):
     config_instance.state.change_state("driver", "foo")
     config_instance.command_args = {"driver_name": "bar"}
@@ -186,11 +193,11 @@ def test_get_driver_name_raises_when_different_driver_used(
     assert msg in caplog.text
 
 
-def test_get_config(config_instance):
+def test_get_config(config_instance: config.Config):
     assert isinstance(config_instance._get_config(), dict)
 
 
-def test_get_config_with_base_config(config_instance):
+def test_get_config_with_base_config(config_instance: config.Config):
     config_instance.args = {"base_config": ["./foo.yml"]}
     contents = {"foo": "bar"}
     util.write_file(config_instance.args["base_config"][0], util.safe_dump(contents))
@@ -199,7 +206,7 @@ def test_get_config_with_base_config(config_instance):
     assert result["foo"] == "bar"
 
 
-def test_get_config_with_multiple_base_configs(config_instance):
+def test_get_config_with_multiple_base_configs(config_instance: config.Config):
     config_instance.args = {"base_config": ["./foo.yml", "./foo2.yml"]}
     contents = {"foo": "bar", "foo2": "bar"}
     util.write_file(config_instance.args["base_config"][0], util.safe_dump(contents))
@@ -211,60 +218,60 @@ def test_get_config_with_multiple_base_configs(config_instance):
     assert result["foo2"] == "bar2"
 
 
-def test_reget_config(config_instance):
+def test_reget_config(config_instance: config.Config):
     assert isinstance(config_instance._reget_config(), dict)
 
 
-def test_interpolate(config_instance):
+def test_interpolate(config_instance: config.Config):
     string = "foo: $HOME"
     x = f"foo: {os.environ['HOME']}"
 
-    assert x == config_instance._interpolate(string, os.environ, None)
+    assert x == config_instance._interpolate(string, os.environ, "")
 
 
-def test_interpolate_curly(config_instance):
+def test_interpolate_curly(config_instance: config.Config):
     string = "foo: ${HOME}"
     x = f"foo: {os.environ['HOME']}"
 
-    assert x == config_instance._interpolate(string, os.environ, None)
+    assert x == config_instance._interpolate(string, os.environ, "")
 
 
-def test_interpolate_default(config_instance):
+def test_interpolate_default(config_instance: config.Config):
     string = "foo: ${NONE-default}"
     x = "foo: default"
 
-    assert x == config_instance._interpolate(string, os.environ, None)
+    assert x == config_instance._interpolate(string, os.environ, "")
 
 
-def test_interpolate_default_colon(config_instance):
+def test_interpolate_default_colon(config_instance: config.Config):
     string = "foo: ${NONE:-default}"
     x = "foo: default"
 
-    assert x == config_instance._interpolate(string, os.environ, None)
+    assert x == config_instance._interpolate(string, os.environ, "")
 
 
-def test_interpolate_default_variable(config_instance):
+def test_interpolate_default_variable(config_instance: config.Config):
     string = "foo: ${NONE:-$HOME}"
     x = f"foo: {os.environ['HOME']}"
 
-    assert x == config_instance._interpolate(string, os.environ, None)
+    assert x == config_instance._interpolate(string, os.environ, "")
 
 
-def test_interpolate_curly_default_variable(config_instance):
+def test_interpolate_curly_default_variable(config_instance: config.Config):
     string = "foo: ${NONE-$HOME}"
     x = f"foo: {os.environ['HOME']}"
 
-    assert x == config_instance._interpolate(string, os.environ, None)
+    assert x == config_instance._interpolate(string, os.environ, "")
 
 
 def test_interpolate_raises_on_failed_interpolation(
     caplog,
-    config_instance,
+    config_instance: config.Config,
 ):
     string = "$6$8I5Cfmpr$kGZB"
 
     with pytest.raises(SystemExit) as e:
-        config_instance._interpolate(string, os.environ, None)
+        config_instance._interpolate(string, os.environ, "")
 
     assert e.value.code == 1
 
@@ -276,7 +283,7 @@ def test_interpolate_raises_on_failed_interpolation(
     assert msg in caplog.text
 
 
-def test_get_defaults(config_instance, mocker):
+def test_get_defaults(config_instance: config.Config, mocker):
     mocker.patch.object(
         config_instance,
         "molecule_file",
@@ -286,7 +293,7 @@ def test_get_defaults(config_instance, mocker):
     assert defaults["scenario"]["name"] == "test_scenario_name"
 
 
-def test_validate(mocker, config_instance, patched_logger_debug):
+def test_validate(mocker, config_instance: config.Config, patched_logger_debug):
     m = mocker.patch("molecule.model.schema_v3.validate")
     m.return_value = None
 
@@ -300,7 +307,7 @@ def test_validate(mocker, config_instance, patched_logger_debug):
 def test_validate_exists_when_validation_fails(
     mocker,
     caplog,
-    config_instance,
+    config_instance: config.Config,
 ):
     m = mocker.patch("molecule.model.schema_v3.validate")
     m.return_value = "validation errors"
@@ -322,10 +329,11 @@ def test_molecule_file():
     assert config.molecule_file("/foo/bar") == "/foo/bar/molecule.yml"
 
 
-def test_set_env_from_file(config_instance):
+def test_set_env_from_file(config_instance: config.Config):
     config_instance.args = {"env_file": ".env"}
     contents = {"foo": "bar", "BAZ": "zzyzx"}
     env_file = config_instance.args.get("env_file")
+    assert isinstance(env_file, str)
     util.write_file(env_file, util.safe_dump(contents))
     env = config.set_env_from_file({}, env_file)
 
@@ -333,14 +341,14 @@ def test_set_env_from_file(config_instance):
 
 
 def test_set_env_from_file_returns_original_env_when_env_file_not_found(
-    config_instance,
+    config_instance: config.Config,
 ):
     env = config.set_env_from_file({}, "file-not-found")
 
     assert {} == env
 
 
-def test_write_config(config_instance):
+def test_write_config(config_instance: config.Config):
     config_instance.write()
 
     assert os.path.isfile(config_instance.config_file)

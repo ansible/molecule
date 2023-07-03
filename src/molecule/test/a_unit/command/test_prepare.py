@@ -22,7 +22,7 @@ import os
 
 import pytest
 
-from molecule import util
+from molecule import config, util
 from molecule.command import prepare
 
 
@@ -39,7 +39,7 @@ def test_execute(
     caplog,
     _patched_ansible_prepare,
     patched_config_validate,
-    config_instance,
+    config_instance: config.Config,
 ):
     pb = os.path.join(config_instance.scenario.directory, "prepare.yml")
     util.write_file(pb, "")
@@ -88,7 +88,7 @@ def test_execute_when_instances_already_prepared_but_force_provided(
     mocker,
     caplog,
     _patched_ansible_prepare,
-    config_instance,
+    config_instance: config.Config,
 ):
     pb = os.path.join(config_instance.scenario.directory, "prepare.yml")
     util.write_file(pb, "")

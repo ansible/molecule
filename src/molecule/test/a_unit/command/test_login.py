@@ -21,11 +21,12 @@
 
 import pytest
 
+from molecule import config
 from molecule.command import login
 
 
 @pytest.fixture()
-def _instance(config_instance):
+def _instance(config_instance: config.Config):
     config_instance.state.change_state("created", True)
 
     return login.Login(config_instance)

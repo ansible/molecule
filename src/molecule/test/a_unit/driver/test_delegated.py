@@ -52,7 +52,7 @@ def _driver_unmanaged_section_data():
 
 
 @pytest.fixture()
-def _instance(config_instance):
+def _instance(config_instance: config.Config):
     return delegated.Delegated(config_instance)
 
 
