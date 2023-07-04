@@ -4,7 +4,7 @@
   hosts: localhost
   connection: local
   gather_facts: false
-  no_log: "{{ molecule_no_log }}"
+  # no_log: "{{ molecule_no_log }}"
   tasks:
 
     # TODO: Developer must implement and populate 'server' variable
@@ -14,12 +14,12 @@
       block:
         - name: Populate instance config dict  # noqa jinja
           ansible.builtin.set_fact:
-            instance_conf_dict: {
-              'instance': "{{ }}",
-              'address': "{{ }}",
-              'user': "{{ }}",
-              'port': "{{ }}",
-              'identity_file': "{{ }}", }
+            instance_conf_dict: {}
+            # instance': "{{ }}",
+            # address': "{{ }}",
+            # user': "{{ }}",
+            # port': "{{ }}",
+            # 'identity_file': "{{ }}", }
           with_items: "{{ server.results }}"
           register: instance_config_dict
 

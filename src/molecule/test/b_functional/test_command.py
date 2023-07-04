@@ -126,7 +126,6 @@ def test_command_create(scenario_to_test, with_scenario, scenario_name, tmp_path
             "dependency",
             "default",
             "shell",
-            id="shell",
         ),
         pytest.param(
             "dependency",

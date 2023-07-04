@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 """Base Dependency Module."""
+from __future__ import annotations
 
 import abc
 import logging
@@ -46,6 +47,7 @@ class Base:
         :returns: None
         """
         self._config = config
+        self._sh_command: list[str] | None = None
 
     def execute_with_retries(self):
         """Run dependency downloads with retry and timed back-off."""

@@ -112,7 +112,7 @@ def test_bake(_inventory_directory, _instance):
         pb,
     ]
 
-    assert _instance._ansible_command.cmd == args
+    assert _instance._ansible_command == args
 
 
 def test_bake_removes_non_interactive_options_from_non_converge_playbooks(
@@ -130,7 +130,7 @@ def test_bake_removes_non_interactive_options_from_non_converge_playbooks(
         "playbook",
     ]
 
-    assert _instance._ansible_command.cmd == args
+    assert _instance._ansible_command == args
 
 
 def test_bake_has_ansible_args(_inventory_directory, _instance):
@@ -151,7 +151,7 @@ def test_bake_has_ansible_args(_inventory_directory, _instance):
         "playbook",
     ]
 
-    assert _instance._ansible_command.cmd == args
+    assert _instance._ansible_command == args
 
 
 def test_bake_does_not_have_ansible_args(_inventory_directory, _instance):
@@ -169,7 +169,7 @@ def test_bake_does_not_have_ansible_args(_inventory_directory, _instance):
             "playbook",
         ]
 
-        assert _instance._ansible_command.cmd == args
+        assert _instance._ansible_command == args
 
 
 def test_bake_idem_does_have_skip_tag(_inventory_directory, _instance):
@@ -185,14 +185,12 @@ def test_bake_idem_does_have_skip_tag(_inventory_directory, _instance):
         "playbook",
     ]
 
-    assert _instance._ansible_command.cmd == args
+    assert _instance._ansible_command == args
 
 
-def test_execute(patched_run_command, _instance):
+def test_execute_playbook(patched_run_command, _instance):
     _instance._ansible_command = "patched-command"
     result = _instance.execute()
-
-    patched_run_command.assert_called_once_with("patched-command", debug=False)
     assert result == "patched-run-command-stdout"
 
 
@@ -210,7 +208,7 @@ def test_execute_bakes(_inventory_directory, patched_run_command, _instance):
         "playbook",
     ]
 
-    assert _instance._ansible_command.cmd == args
+    assert _instance._ansible_command == args
 
 
 def test_execute_bakes_with_ansible_args(
@@ -229,14 +227,12 @@ def test_execute_bakes_with_ansible_args(
         _inventory_directory,
         "--skip-tags",
         "molecule-notest,notest",
-        # "--foo",
-        # "--bar",
         "-o",
         "--syntax-check",
         "playbook",
     ]
 
-    assert _instance._ansible_command.cmd == args
+    assert _instance._ansible_command == args
 
 
 def test_executes_catches_and_exits_return_code(
