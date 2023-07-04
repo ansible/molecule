@@ -46,11 +46,6 @@ class AnsibleGalaxyBase(base.Base):
 
     @property
     @abc.abstractmethod
-    def install_path(self):  # cover
-        pass
-
-    @property
-    @abc.abstractmethod
     def requirements_file(self):  # cover
         pass
 
@@ -133,8 +128,6 @@ class AnsibleGalaxyBase(base.Base):
 
         :return: None
         """
-        if not os.path.isdir(self.install_path):
-            os.makedirs(self.install_path, exist_ok=True)
 
     def _has_requirements_file(self):
         return os.path.isfile(self.requirements_file)

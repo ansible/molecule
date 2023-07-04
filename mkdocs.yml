@@ -57,6 +57,7 @@ nav:
   - Using:
       - getting-started.md
       - usage.md
+      - next.md
       - configuration.md
       - ci.md
   - examples.md
