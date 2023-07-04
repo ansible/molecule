@@ -213,29 +213,6 @@ def test_env_property(_instance):
     indirect=True,
 )
 def test_env_appends_env_property(_instance):
-    os.environ["ANSIBLE_ROLES_PATH"] = ""
-
-    expected = [
-        util.abs_path(os.path.join(_instance._config.runtime.cache_dir, "roles")),
-        util.abs_path(
-            os.path.join(_instance._config.scenario.ephemeral_directory, "roles"),
-        ),
-        util.abs_path(
-            os.path.join(_instance._config.project_directory, os.path.pardir),
-        ),
-        util.abs_path(os.path.join(os.path.expanduser("~"), ".ansible", "roles")),
-        "/usr/share/ansible/roles",
-        "/etc/ansible/roles",
-        util.abs_path(os.path.join(_instance._config.scenario.directory, "foo", "bar")),
-    ]
-
-    # molecule could decide to add extra paths, so we only want to check
-    # that those that we need are kept inside the list with exact order
-
-    roles_path_list = _instance.env["ANSIBLE_ROLES_PATH"].split(":")
-
-    assert roles_path_list == expected
-
     x = _instance._get_modules_directories()
     x.append(
         util.abs_path(os.path.join(_instance._config.scenario.directory, "foo", "bar")),
@@ -261,38 +238,6 @@ def test_env_appends_env_property(_instance):
         util.abs_path(os.path.join(_instance._config.scenario.directory, "foo", "bar")),
     ]
     assert x == _instance.env["ANSIBLE_FILTER_PLUGINS"].split(":")
-
-
-@pytest.mark.parametrize(
-    "config_instance",
-    ["_provisioner_section_data"],
-    indirect=True,
-)
-def test_env_appends_env_property_with_os_env(_instance):
-    os.environ["ANSIBLE_ROLES_PATH"] = "/foo/bar:/foo/baz"
-
-    expected = [
-        util.abs_path(os.path.join(_instance._config.runtime.cache_dir, "roles")),
-        util.abs_path(
-            os.path.join(_instance._config.scenario.ephemeral_directory, "roles"),
-        ),
-        util.abs_path(
-            os.path.join(_instance._config.project_directory, os.path.pardir),
-        ),
-        util.abs_path(os.path.join(os.path.expanduser("~"), ".ansible", "roles")),
-        "/usr/share/ansible/roles",
-        "/etc/ansible/roles",
-        "/foo/bar",
-        "/foo/baz",
-        util.abs_path(os.path.join(_instance._config.scenario.directory, "foo", "bar")),
-    ]
-
-    # molecule could decide to add extra paths, so we only want to check
-    # that those that we need are kept inside the list
-
-    roles_path_list = _instance.env["ANSIBLE_ROLES_PATH"].split(":")
-
-    assert roles_path_list == expected
 
 
 @pytest.mark.parametrize(

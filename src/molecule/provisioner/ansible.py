@@ -255,7 +255,6 @@ class Ansible(base.Base):
           name: ansible
           config_options:
             defaults:
-              roles_path: /path/to/roles_path
               library: /path/to/library
               filter_plugins: /path/to/filter_plugins
             privilege_escalation: {}
@@ -593,15 +592,8 @@ class Ansible(base.Base):
         # ensure that all keys and values are strings
         env = {str(k): str(v) for k, v in env.items()}
 
-        roles_path = default_env["ANSIBLE_ROLES_PATH"]
         library_path = default_env["ANSIBLE_LIBRARY"]
         filter_plugins_path = default_env["ANSIBLE_FILTER_PLUGINS"]
-
-        try:
-            path = self._absolute_path_for(env, "ANSIBLE_ROLES_PATH")
-            roles_path = f"{roles_path}:{path}"
-        except KeyError:
-            pass
 
         try:
             path = self._absolute_path_for(env, "ANSIBLE_LIBRARY")
@@ -615,7 +607,6 @@ class Ansible(base.Base):
         except KeyError:
             pass
 
-        env["ANSIBLE_ROLES_PATH"] = roles_path
         env["ANSIBLE_LIBRARY"] = library_path
         env["ANSIBLE_FILTER_PLUGINS"] = filter_plugins_path
 
