@@ -214,7 +214,7 @@ class Delegated(Driver):
                 # Check if optional mappable params are in the instance config
                 for i in instance_params:
                     if d.get(i[0], i[1]):
-                        conn_dict["ansible_" + i[0]] = d.get(i[0])
+                        conn_dict["ansible_" + i[0]] = d.get(i[0], i[1])
 
                 conn_dict["ansible_user"] = d.get("user")
                 conn_dict["ansible_host"] = d.get("address")
