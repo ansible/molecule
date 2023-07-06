@@ -22,9 +22,7 @@ import os
 
 import pytest
 
-from molecule import util
 from molecule.command.init import base
-from molecule.model import schema_v3
 
 
 class CommandBase(base.Base):
@@ -67,15 +65,3 @@ def _molecule_file(_role_directory):
         "default",
         "molecule.yml",
     )
-
-
-def test_valid(temp_dir, _molecule_file, _role_directory, _command_args, _instance):
-    _instance._process_templates("molecule", _command_args, _role_directory)
-
-    data = util.safe_load_file(_molecule_file)
-
-    assert not schema_v3.validate(data)
-
-    cmd = ["yamllint", "-s", _molecule_file]
-    result = util.run_command(cmd)
-    assert result.returncode == 0

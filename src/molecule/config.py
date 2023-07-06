@@ -31,6 +31,7 @@ from packaging.version import Version
 
 from molecule import api, interpolation, platforms, scenario, state, util
 from molecule.app import app
+from molecule.data import __file__ as data_module
 from molecule.dependency import ansible_galaxy, shell
 from molecule.model import schema_v3
 from molecule.provisioner import ansible
@@ -43,6 +44,8 @@ MOLECULE_DIRECTORY = "molecule"
 MOLECULE_FILE = "molecule.yml"
 MOLECULE_KEEP_STRING = "MOLECULE_"
 DEFAULT_DRIVER = "delegated"
+
+MOLECULE_EMBEDDED_DATA_DIR = os.path.dirname(data_module)
 
 
 @cache

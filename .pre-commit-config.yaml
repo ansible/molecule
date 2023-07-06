@@ -14,7 +14,6 @@ repos:
         # Temporary excludes so we can gradually normalize the formatting
         exclude: >
           (?x)^(
-            src/molecule/cookiecutter/.*|
             src/molecule/test/resources/templates/.*|
           )$
         additional_dependencies:
@@ -63,7 +62,7 @@ repos:
         pass_filenames: false
         additional_dependencies:
           - ansible-compat>=4.1.2
-          - click>=8.0.1
+          - click>=8.0.1,<8.1.4 # https://github.com/pallets/click/issues/2558
           - enrich>=1.2.7
           - importlib-metadata>=4.6.1
           - jinja2
@@ -87,7 +86,6 @@ repos:
           - ansible-compat>=4.1.2
           - click
           - click-help-colors
-          - cookiecutter
           - enrich>=1.2.7
           - filelock
           - jsonschema

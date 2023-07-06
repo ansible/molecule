@@ -11,29 +11,6 @@ familiar with the basics of how to use Molecule and what it can offer.
     external Python dependency for the Docker driver which is provided when
     installing Molecule using `pip install 'molecule-plugins[docker]'`.
 
-## Creating a new role
-
-Molecule uses [ansible-galaxy](https://docs.ansible.com/ansible/latest/cli/ansible-galaxy.html) under the hood to generate conventional role layouts. If
-you've ever worked with Ansible roles before, you'll be right at home.
-If not, please review the
-[role directory structure](https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_reuse_roles.html#role-directory-structure)
-guide to see what each folder is responsible for.
-
-To generate a new role with Molecule, simply run:
-
-```shell
-$ molecule init role acme.my_new_role --driver-name docker
-```
-
-You should then see a `my_new_role` folder in your current directory.
-
-!!! note
-
-    For future reference, if you want to initialize Molecule within an
-    existing role, you would use the
-    `molecule init scenario -r my_role_name` command from within the role's
-    directory (e.g. `my_role_name/`).
-
 ## Molecule Scenarios
 
 You will notice one new folder which is the `molecule` folder.

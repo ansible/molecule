@@ -45,12 +45,6 @@
 
 ## molecule init
 
-### molecule init role
-
-Initialize a new role using ansible-galaxy and include default
-molecule directory. Please refer to the `init scenario`
-command in order to generate a custom `molecule` scenario.
-
 ### molecule init scenario
 
 ## molecule list

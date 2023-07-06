@@ -1,10 +1,6 @@
 ---
 # Based on ansible-lint config
 extends: default
-ignore: |
-  src/molecule/cookiecutter/scenario/driver/delegated/{{cookiecutter.molecule_directory}}
-  src/molecule/cookiecutter/molecule/{{cookiecutter.role_name}}
-  src/molecule/cookiecutter/scenario/verifier/ansible/{{cookiecutter.molecule_directory}}
 rules:
   braces:
     max-spaces-inside: 1

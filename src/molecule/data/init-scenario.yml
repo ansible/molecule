@@ -1,0 +1,33 @@
+- name: Create a new molecule scenario
+  hosts: localhost
+  gather_facts: false
+  vars_prompt:
+    - name: scenario_name
+      prompt: What is the scenario name?
+  vars:
+    dest: "{{ ('molecule/' + (scenario_name | default('default'))) | realpath }}"
+  tasks:
+    - name: Check if destination folder exists
+      ansible.builtin.file:
+        path: "{{ dest }}"
+        state: directory
+        mode: "0700"
+    - name: Check if destination folder is empty
+      ansible.builtin.find:
+        paths: "{{ dest }}"
+      register: dest_content
+    - name: Fail if destination folder is not empty
+      when: dest_content.matched > 0
+      ansible.builtin.fail:
+        msg: Refused to expand templates as destination folder '{{ dest }}' as it already has content in it.
+    - name: Expand templates
+      vars:
+        dest_file: "{{ dest }}/{{ item | basename | regex_replace('\\.j2$', '') }}"
+      ansible.builtin.template:
+        src: "{{ item }}"
+        dest: "{{ dest_file }}"
+        mode: "0644"
+      with_fileglob:
+        - templates/scenario/*.j2
+      loop_control:
+        label: "{{ dest_file | relpath }}"
