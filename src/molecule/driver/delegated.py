@@ -30,7 +30,7 @@ LOG = logging.getLogger(__name__)
 
 
 class Delegated(Driver):
-    r"""The class responsible for managing delegated instances.
+    r"""The class responsible for managing default instances.
 
     Delegated is `not` the default driver used in Molecule.
 
@@ -40,7 +40,7 @@ class Delegated(Driver):
 
     ``` yaml
         driver:
-          name: delegated
+          name: de
     ```
 
     However, the developer must adhere to the instance-config API. The
@@ -81,7 +81,7 @@ class Delegated(Driver):
 
     ``` yaml
         driver:
-          name: delegated
+          name: default
           options:
             managed: False
             login_cmd_template: 'docker exec -ti {instance} bash'
@@ -107,7 +107,7 @@ class Delegated(Driver):
 
     ``` yaml
         driver:
-          name: delegated
+          name: default
           options:
             managed: False
             login_cmd_template: 'ssh {instance} -F /tmp/ssh-config'
@@ -122,7 +122,7 @@ class Delegated(Driver):
 
     ``` yaml
         driver:
-          name: delegated
+          name: default
           safe_files:
             - foo
     ```
@@ -130,7 +130,7 @@ class Delegated(Driver):
 
     ``` yaml
         driver:
-          name: delegated
+          name: default
           options:
             managed: False
             ansible_connection_options:
@@ -141,7 +141,7 @@ class Delegated(Driver):
     def __init__(self, config=None) -> None:
         """Construct Delegated."""
         super().__init__(config)
-        self._name = "delegated"
+        self._name = "default"
 
     @property
     def name(self):

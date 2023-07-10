@@ -29,7 +29,7 @@ def command_patched_ansible_create(mocker):
 def command_driver_delegated_section_data():
     x = {
         "driver": {
-            "name": "delegated",
+            "name": "default",
             "options": {
                 "managed": False,
             },
@@ -42,4 +42,4 @@ def command_driver_delegated_section_data():
 
 @pytest.fixture()
 def command_driver_delegated_managed_section_data():
-    return {"driver": {"name": "delegated", "managed": True}}
+    return {"driver": {"name": "default", "managed": True}}

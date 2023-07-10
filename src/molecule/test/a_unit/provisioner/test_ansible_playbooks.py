@@ -43,7 +43,7 @@ def test_cleanup_property_is_optional(_instance):
 
 @pytest.mark.skip(reason="create not running for delegated")
 def test_create_property(_instance):
-    x = os.path.join(_instance._get_playbook_directory(), "delegated", "create.yml")
+    x = os.path.join(_instance._get_playbook_directory(), "default", "create.yml")
 
     assert x == _instance._config.provisioner.playbooks.create
 
@@ -56,7 +56,7 @@ def test_converge_property(_instance):
 
 @pytest.mark.skip(reason="destroy not running for delegated")
 def test_destroy_property(_instance):
-    x = os.path.join(_instance._get_playbook_directory(), "delegated", "destroy.yml")
+    x = os.path.join(_instance._get_playbook_directory(), "default", "destroy.yml")
 
     assert x == _instance._config.provisioner.playbooks.destroy
 
@@ -93,7 +93,7 @@ def test_get_playbook_returns_bundled_driver_playbook_when_local_not_found(
     tmpdir,
     _instance,
 ):
-    x = os.path.join(_instance._get_playbook_directory(), "delegated", "create.yml")
+    x = os.path.join(_instance._get_playbook_directory(), "default", "create.yml")
 
     assert x == _instance._get_playbook("create")
 

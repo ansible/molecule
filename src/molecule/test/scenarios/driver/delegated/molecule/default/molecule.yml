@@ -1,6 +1,6 @@
 ---
 driver:
-  name: delegated
+  name: default
 platforms:
   - name: instance
 provisioner:

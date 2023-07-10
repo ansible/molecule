@@ -147,11 +147,11 @@ class Driver:
 
     @property
     def delegated(self):
-        """Is the driver delegated and returns a bool.
+        """Is the dedriver delegated and returns a bool.
 
         :returns: bool
         """
-        return self.name == "delegated"
+        return self.name == "default"
 
     @property
     def managed(self):

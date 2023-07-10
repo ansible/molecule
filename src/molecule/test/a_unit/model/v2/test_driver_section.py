@@ -27,7 +27,7 @@ from molecule.model import schema_v3
 def _model_driver_section_data():
     return {
         "driver": {
-            "name": "delegated",
+            "name": "default",
             "provider": {"name": None},
             "options": {"managed": True},
             "ssh_connection_options": ["foo", "bar"],
@@ -95,7 +95,7 @@ def test_driver_provider_name_nullable(_config):
 
 @pytest.fixture()
 def _model_driver_allows_delegated_section_data():
-    return {"driver": {"name": "delegated"}}
+    return {"driver": {"name": "default"}}
 
 
 @pytest.fixture()

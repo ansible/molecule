@@ -28,7 +28,7 @@ from molecule.command.init import scenario
 @pytest.fixture()
 def _command_args():
     return {
-        "driver_name": "delegated",
+        "driver_name": "default",
         "role_name": "test-role",
         "scenario_name": "test-scenario",
         "subcommand": __name__,

@@ -28,7 +28,7 @@ def test_execute(capsys, config_instance: config.Config):
     x = [
         base.Status(
             instance_name="instance-1",
-            driver_name="delegated",
+            driver_name="default",
             provisioner_name="ansible",
             scenario_name="default",
             created="false",
@@ -36,7 +36,7 @@ def test_execute(capsys, config_instance: config.Config):
         ),
         base.Status(
             instance_name="instance-2",
-            driver_name="delegated",
+            driver_name="default",
             provisioner_name="ansible",
             scenario_name="default",
             created="false",

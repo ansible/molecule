@@ -3,7 +3,7 @@
     "MoleculeDriverModel": {
       "properties": {
         "name": {
-          "enum": ["delegated"],
+          "enum": ["delegated", "default"],
           "title": "Name",
           "type": "string"
         },
