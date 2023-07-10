@@ -47,10 +47,10 @@ changelog = "https://github.com/ansible-community/molecule/releases"
 [project.scripts]
 molecule = "molecule.__main__:main"
 
-[project.entry-points."molecule.driver"]
+[project.entry-points."molecule.driver.next"]
 delegated = "molecule.driver.delegated:Delegated"
 
-[project.entry-points."molecule.verifier"]
+[project.entry-points."molecule.verifier.next"]
 testinfra = "molecule.verifier.testinfra:Testinfra"
 ansible = "molecule.verifier.ansible:Ansible"
 
