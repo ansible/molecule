@@ -335,3 +335,12 @@ def test_sample_collection() -> None:
         ).returncode
         == 0
     )
+
+
+def test_podman() -> None:
+    assert (
+        run_command(
+            ["molecule", "test", "--scenario-name", "podman"],
+        ).returncode
+        == 0
+    )
