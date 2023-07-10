@@ -1,5 +1,5 @@
 driver:
-  name: delegated
+  name: default
 platforms:
   - name: foo
     children: 2 # invalid, must be list of strings

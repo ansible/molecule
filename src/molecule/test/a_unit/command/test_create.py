@@ -48,7 +48,7 @@ def test_execute(
     assert "default" in caplog.text
     assert "converge" in caplog.text
 
-    assert config_instance.state.driver == "delegated"
+    assert config_instance.state.driver == "default"
 
     command_patched_ansible_create.assert_called_once_with()
 

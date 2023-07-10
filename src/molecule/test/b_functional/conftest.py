@@ -84,7 +84,7 @@ def with_scenario(request, scenario_to_test, driver_name, scenario_name, skip_te
 def skip_test(request, driver_name):
     msg_tmpl = "Skipped '{}' not supported"
     support_checks_map = {
-        "delegated": lambda: True,
+        "default": lambda: True,
     }
     try:
         check_func = support_checks_map[driver_name]
@@ -189,7 +189,7 @@ def login(login_args, scenario_name="default"):
 
 def run_test(driver_name, scenario_name="default", parallel=False):
     cmd = ["molecule", "test", "--scenario-name", scenario_name]
-    if driver_name != "delegated":
+    if driver_name != "default":
         if scenario_name is None:
             cmd.append("--all")
         if parallel:

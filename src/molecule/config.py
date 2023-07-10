@@ -43,7 +43,7 @@ MOLECULE_VERBOSITY = int(os.environ.get("MOLECULE_VERBOSITY", 0))
 MOLECULE_DIRECTORY = "molecule"
 MOLECULE_FILE = "molecule.yml"
 MOLECULE_KEEP_STRING = "MOLECULE_"
-DEFAULT_DRIVER = "delegated"
+DEFAULT_DRIVER = "default"
 
 MOLECULE_EMBEDDED_DATA_DIR = os.path.dirname(data_module)
 
@@ -383,7 +383,7 @@ class Config(metaclass=NewInitCaller):
                 "env": {},
             },
             "driver": {
-                "name": "delegated",
+                "name": "default",
                 "provider": {"name": None},
                 "options": {"managed": True},
                 "ssh_connection_options": [],

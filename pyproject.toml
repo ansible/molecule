@@ -48,7 +48,7 @@ changelog = "https://github.com/ansible-community/molecule/releases"
 molecule = "molecule.__main__:main"
 
 [project.entry-points."molecule.driver.next"]
-delegated = "molecule.driver.delegated:Delegated"
+default = "molecule.driver.delegated:Delegated"
 
 [project.entry-points."molecule.verifier.next"]
 testinfra = "molecule.verifier.testinfra:Testinfra"

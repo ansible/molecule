@@ -5,7 +5,7 @@ dependency:
     role-file: molecule/ansible-galaxy/requirements.yml
     requirements-file: molecule/ansible-galaxy/requirements.yml
 driver:
-  name: delegated
+  name: default
 platforms:
   - name: instance
     image: ${TEST_BASE_IMAGE}

@@ -68,7 +68,7 @@ def platform_name(request):
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name"),
     [
-        ("driver/delegated", "delegated", "default"),
+        ("driver/delegated", "default", "default"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
@@ -81,7 +81,7 @@ def test_command_check(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name"),
     [
-        ("driver/delegated", "delegated", "default"),
+        ("driver/delegated", "default", "default"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
@@ -95,7 +95,7 @@ def test_command_cleanup(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name"),
     [
-        ("driver/delegated", "delegated", "default"),
+        ("driver/delegated", "default", "default"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
@@ -109,7 +109,7 @@ def test_command_converge(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name"),
     [
-        ("driver/delegated", "delegated", "default"),
+        ("driver/delegated", "default", "default"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
@@ -124,13 +124,13 @@ def test_command_create(scenario_to_test, with_scenario, scenario_name, tmp_path
     [
         pytest.param(
             "dependency",
-            "delegated",
+            "default",
             "shell",
             id="shell",
         ),
         pytest.param(
             "dependency",
-            "delegated",
+            "default",
             "ansible-galaxy",
             id="galaxy",
         ),
@@ -151,7 +151,7 @@ def test_command_dependency(request, scenario_to_test, with_scenario, scenario_n
 @pytest.mark.extensive()
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name"),
-    [("driver/delegated", "delegated", "default")],
+    [("driver/delegated", "default", "default")],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
 def test_command_destroy(scenario_to_test, with_scenario, scenario_name):
@@ -164,7 +164,7 @@ def test_command_destroy(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name"),
     [
-        ("driver/delegated", "delegated", "default"),
+        ("driver/delegated", "default", "default"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
@@ -174,7 +174,7 @@ def test_command_idempotence(scenario_to_test, with_scenario, scenario_name):
 
 @pytest.mark.serial()
 def test_command_init_scenario(temp_dir):
-    init_scenario(temp_dir, "delegated")
+    init_scenario(temp_dir, "default")
 
 
 @pytest.mark.serial()
@@ -183,8 +183,8 @@ def test_command_init_scenario(temp_dir):
     [
         (
             "driver/delegated",
-            "delegated",
-            "instance        delegated       ansible default",
+            "default",
+            "instance        default ansible default",
         ),
     ],
     indirect=["scenario_to_test", "driver_name"],
@@ -193,22 +193,12 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario, expecte
     list_with_format_plain(expected)
 
 
-# @pytest.mark.parametrize(
-#     "scenario_to_test, driver_name, login_args, scenario_name",
-#             "driver/delegated",
-#             "delegated",
-#             "default",
-#         ),
-#     ],
-# def test_command_login(scenario_to_test, with_scenario, login_args, scenario_name):
-
-
 @pytest.mark.serial()
 @pytest.mark.extensive()
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name"),
     [
-        ("driver/delegated", "delegated", "default"),
+        ("driver/delegated", "default", "default"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
@@ -225,7 +215,7 @@ def test_command_prepare(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name"),
     [
-        ("driver/delegated", "delegated", "default"),
+        ("driver/delegated", "default", "default"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
@@ -239,7 +229,7 @@ def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name"),
     [
-        ("driver/delegated", "delegated", "default"),
+        ("driver/delegated", "default", "default"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
@@ -252,7 +242,7 @@ def test_command_syntax(scenario_to_test, with_scenario, scenario_name):
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name"),
     [
-        ("driver/delegated", "delegated", "default"),
+        ("driver/delegated", "default", "default"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
@@ -276,7 +266,7 @@ def run_test_with_platform_name(
         "--platform-name",
         platform_name,
     ]
-    if driver_name != "delegated":
+    if driver_name != "default":
         if scenario_name is None:
             cmd.append("--all")
         if parallel:
@@ -289,7 +279,7 @@ def run_test_with_platform_name(
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name", "platform_name"),
     [
-        ("driver/delegated", "delegated", "default", "instance"),
+        ("driver/delegated", "default", "default", "instance"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name", "platform_name"],
 )
@@ -309,7 +299,7 @@ def test_command_test_with_platform_name(
     [
         (
             "driver/delegated_invalid_role_name_with_role_name_check_equals_to_1",
-            "delegated",
+            "default",
             "default",
         ),
     ],
@@ -329,7 +319,7 @@ def test_command_test_with_role_name_check_equals_to_1(
 @pytest.mark.parametrize(
     ("scenario_to_test", "driver_name", "scenario_name"),
     [
-        ("driver/delegated", "delegated", "default"),
+        ("driver/delegated", "default", "default"),
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
