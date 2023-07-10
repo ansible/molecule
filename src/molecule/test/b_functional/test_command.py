@@ -26,7 +26,6 @@ from pytest import FixtureRequest
 
 from molecule.test.b_functional.conftest import (
     idempotence,
-    init_role,
     init_scenario,
     list_with_format_plain,
     run_test,
@@ -174,15 +173,8 @@ def test_command_idempotence(scenario_to_test, with_scenario, scenario_name):
 
 
 @pytest.mark.serial()
-@pytest.mark.parametrize("driver_name", [("delegated")], indirect=["driver_name"])
-def test_command_init_role(temp_dir, driver_name):
-    init_role(temp_dir, driver_name)
-
-
-@pytest.mark.serial()
-@pytest.mark.parametrize("driver_name", [("delegated")], indirect=["driver_name"])
-def test_command_init_scenario(temp_dir, driver_name):
-    init_scenario(temp_dir, driver_name)
+def test_command_init_scenario(temp_dir):
+    init_scenario(temp_dir, "delegated")
 
 
 @pytest.mark.serial()

@@ -1,9 +1,0 @@
-{
-  "molecule_directory": "molecule",
-  "dependency_name": "OVERRIDDEN",
-  "driver_name": "OVERRIDDEN",
-  "provisioner_name": "OVERRIDDEN",
-  "scenario_name": "OVERRIDDEN",
-  "role_name": "OVERRIDDEN",
-  "verifier_name": "OVERRIDDEN"
-}

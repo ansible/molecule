@@ -22,7 +22,7 @@
 import logging
 
 from molecule.command import base
-from molecule.command.init import role, scenario
+from molecule.command.init import scenario
 
 LOG = logging.getLogger(__name__)
 
@@ -32,5 +32,4 @@ def init():  # pragma: no cover
     """Initialize a new role or scenario."""
 
 
-init.add_command(role.role)
 init.add_command(scenario.scenario)

@@ -95,7 +95,6 @@ no_incremental = true
 [[tool.mypy.overrides]]
 module = [
   "click_help_colors", # https://github.com/click-contrib/click-help-colors/issues/20
-  "cookiecutter.*", # https://github.com/cookiecutter/cookiecutter/issues/1878
   "pexpect", # https://github.com/pexpect/pexpect/issues/759
   "pluggy", # https://github.com/pytest-dev/pluggy/pull/414
   "testinfra.*", # https://github.com/pytest-dev/pytest-testinfra/issues/619
@@ -158,7 +157,6 @@ norecursedirs = [
   "build",
   "dist",
   "doc",
-  "src/molecule/cookiecutter/scenario",
   "src/molecule/test/resources",
   "src/molecule/test/scenarios",
 ]

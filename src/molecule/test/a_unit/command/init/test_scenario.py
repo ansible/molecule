@@ -41,15 +41,6 @@ def _instance(_command_args):
     return scenario.Scenario(_command_args)
 
 
-@pytest.fixture()
-def invalid_template_dir(resources_folder_path):
-    invalid_role_template_path = os.path.join(
-        resources_folder_path,
-        "invalid_scenario_template",
-    )
-    return invalid_role_template_path
-
-
 def test_execute(temp_dir, _instance, patched_logger_info):
     _instance.execute()
 
@@ -73,15 +64,3 @@ def test_execute_scenario_exists(temp_dir, _instance, caplog):
 
     msg = "The directory molecule/test-scenario exists. Cannot create new scenario."
     assert msg in caplog.text
-
-
-def test_execute_with_invalid_driver(
-    temp_dir,
-    _instance,
-    _command_args,
-    caplog,
-):
-    _command_args["driver_name"] = "ec3"
-
-    with pytest.raises(KeyError):
-        _instance.execute()

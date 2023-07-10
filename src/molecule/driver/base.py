@@ -24,7 +24,6 @@ import os
 from abc import ABCMeta, abstractmethod
 from importlib.metadata import version
 
-import molecule
 from molecule.status import Status
 
 
@@ -239,21 +238,6 @@ class Driver:
     def __rich__(self):
         """Return rich representation of object."""
         return self.__str__()
-
-    def template_dir(self):
-        p = os.path.join(self._path, "cookiecutter")
-
-        if not os.path.isdir(p):
-            p = os.path.abspath(
-                os.path.join(
-                    os.path.dirname(molecule.__file__),
-                    "cookiecutter",
-                    "scenario",
-                    "driver",
-                    self.name,
-                ),
-            )
-        return p
 
     def get_playbook(self, step):
         """Return embedded playbook location or None.

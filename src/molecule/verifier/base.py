@@ -22,7 +22,6 @@
 import abc
 import os
 
-import molecule
 from molecule import util
 
 
@@ -121,15 +120,3 @@ class Verifier:
     def __repr__(self) -> str:
         """Return detailed string representation of object."""
         return self.name
-
-    def template_dir(self):
-        p = os.path.abspath(
-            os.path.join(
-                os.path.dirname(molecule.__file__),
-                "cookiecutter",
-                "scenario",
-                "verifier",
-                self.name,
-            ),
-        )
-        return p
