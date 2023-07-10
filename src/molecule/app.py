@@ -7,7 +7,7 @@ class App:
 
     def __init__(self) -> None:
         """Create a new app instance."""
-        self.runtime = Runtime(isolated=True)
+        self.runtime = Runtime(isolated=False)
 
 
 app = App()

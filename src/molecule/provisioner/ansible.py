@@ -463,12 +463,6 @@ class Ansible(base.Base):
         # from installing dependencies to user list of collections.
         collections_path_list = [
             util.abs_path(
-                os.path.join(
-                    self._config.scenario.config.runtime.cache_dir,
-                    "collections",
-                ),
-            ),
-            util.abs_path(
                 os.path.join(self._config.scenario.ephemeral_directory, "collections"),
             ),
         ]
@@ -499,9 +493,6 @@ class Ansible(base.Base):
             )
 
         roles_path_list = [
-            util.abs_path(
-                os.path.join(self._config.scenario.config.runtime.cache_dir, "roles"),
-            ),
             util.abs_path(
                 os.path.join(self._config.scenario.ephemeral_directory, "roles"),
             ),
