@@ -153,11 +153,12 @@ class Testinfra(Verifier):
         verbose_flag = util.verbose_flag(options)
         args = verbose_flag
 
-        self._testinfra_command = util.BakedCommand(
-            cmd=["pytest", *util.dict2args(options), *self._tests, *args],
-            cwd=self._config.scenario.directory,
-            env=self.env,
-        )
+        self._testinfra_command = [
+            "pytest",
+            *util.dict2args(options),
+            *self._tests,
+            *args,
+        ]
 
     def execute(self, action_args=None):
         if not self.enabled:

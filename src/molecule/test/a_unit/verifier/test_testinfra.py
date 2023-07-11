@@ -219,7 +219,7 @@ def test_bake(_patched_testinfra_get_tests, inventory_directory, _instance):
         "-v",
     ]
 
-    assert _instance._testinfra_command.cmd == args
+    assert _instance._testinfra_command == args
 
 
 def test_execute(
@@ -236,7 +236,7 @@ def test_execute(
     msg2 = "Verifier completed successfully."
     assert msg in caplog.text
     assert msg2 in caplog.text
-    assert "pytest" in patched_run_command.call_args[0][0].cmd
+    assert "pytest" == patched_run_command.call_args[0][0][0]
 
 
 def test_execute_does_not_execute(

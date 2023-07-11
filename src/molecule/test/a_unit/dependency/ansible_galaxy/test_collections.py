@@ -136,7 +136,7 @@ def test_collections_bake(_instance, role_file):
         role_file,
         "-v",
     ]
-    assert _instance._sh_command.cmd == args
+    assert _instance._sh_command == args
 
 
 def test_execute(
@@ -194,7 +194,6 @@ def test_execute_bakes(
     _patched_ansible_galaxy_has_requirements_file,
 ):
     _instance.execute()
-    assert _instance._sh_command is not None
 
     assert patched_run_command.call_count == 1
 

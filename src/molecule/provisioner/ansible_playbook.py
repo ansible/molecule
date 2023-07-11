@@ -87,17 +87,13 @@ class AnsiblePlaybook:
         else:
             ansible_args = []
 
-        self._ansible_command = util.BakedCommand(
-            cmd=[
-                "ansible-playbook",
-                *util.dict2args(options),
-                *util.bool2args(verbose_flag),
-                *ansible_args,
-                self._playbook,  # must always go last
-            ],
-            cwd=self._config.scenario.directory,
-            env=self._env,
-        )
+        self._ansible_command = [
+            "ansible-playbook",
+            *util.dict2args(options),
+            *util.bool2args(verbose_flag),
+            *ansible_args,
+            self._playbook,  # must always go last
+        ]
 
     def execute(self, action_args=None):
         """Execute ``ansible-playbook`` and returns a string.
@@ -114,7 +110,11 @@ class AnsiblePlaybook:
         with warnings.catch_warnings(record=True) as warns:
             warnings.filterwarnings("default", category=MoleculeRuntimeWarning)
             self._config.driver.sanity_checks()
-            result = util.run_command(self._ansible_command, debug=self._config.debug)
+            result = util.run_command(
+                cmd=self._ansible_command,
+                env=self._env,
+                debug=self._config.debug,
+            )
 
         if result.returncode != 0:
             from rich.markup import escape

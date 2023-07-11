@@ -138,16 +138,16 @@ def test_run_command_with_debug(mocker: MockerFixture, patched_print_debug):
 
 
 def test_run_command_baked_cmd_env():
-    cmd = util.BakedCommand(cmd=["printenv", "myvar"], env={"myvar": "myvalue"})
-    result = util.run_command(cmd, env={"myvar2": "value2"})
+    cmd = ["printenv", "myvar"]
+    result = util.run_command(cmd, env={"myvar": "value2"})
     assert result.returncode == 0
 
-    cmd = util.BakedCommand(cmd=["printenv", "myvar2"], env={"myvar": "myvalue"})
+    cmd = ["printenv", "myvar2"]
     result = util.run_command(cmd, env={"myvar2": "value2"})
     assert result.returncode == 0
 
     # negative test
-    cmd = util.BakedCommand(cmd=["printenv", "myvar"], env={})
+    cmd = ["printenv", "myvar"]
     result = util.run_command(cmd)
     assert result.returncode == 1
 
@@ -156,7 +156,7 @@ def test_run_command_with_debug_handles_no_env(
     mocker: MockerFixture,
     patched_print_debug,
 ):
-    cmd = "ls"
+    cmd = ["ls"]
     util.run_command(cmd, debug=True)
     # when env is empty we expect not to print anything
     empty_list: list[Any] = []

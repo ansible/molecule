@@ -100,10 +100,12 @@ class AnsibleGalaxyBase(base.Base):
         options = self.options
         verbose_flag = util.verbose_flag(options)
 
-        self._sh_command = util.BakedCommand(
-            cmd=[self.command, *self.COMMANDS, *util.dict2args(options), *verbose_flag],
-            env=self.env,
-        )
+        self._sh_command = [
+            self.command,
+            *self.COMMANDS,
+            *util.dict2args(options),
+            *verbose_flag,
+        ]
 
     def execute(self, action_args=None):
         if not self.enabled:
