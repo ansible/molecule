@@ -134,7 +134,7 @@ def test_galaxy_bake(_instance, role_file):
         role_file,
         "-v",
     ]
-    assert _instance._sh_command.cmd == args
+    assert _instance._sh_command == args
 
 
 def test_execute(

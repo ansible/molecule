@@ -22,7 +22,6 @@
 import logging
 
 from molecule.dependency import base
-from molecule.util import BakedCommand
 
 LOG = logging.getLogger(__name__)
 
@@ -84,7 +83,7 @@ class Shell(base.Base):
 
     def bake(self) -> None:
         """Bake a ``shell`` command so it's ready to execute."""
-        self._sh_command = BakedCommand(cmd=self.command, env=self.env)  # type: ignore
+        self._sh_command = self.command
 
     def execute(self, action_args=None):
         if not self.enabled:
@@ -95,7 +94,6 @@ class Shell(base.Base):
 
         if self._sh_command is None:
             self.bake()
-
         self.execute_with_retries()
 
     def _has_command_configured(self):

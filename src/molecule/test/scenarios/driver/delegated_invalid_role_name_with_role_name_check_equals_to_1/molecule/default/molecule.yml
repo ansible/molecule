@@ -1,7 +1,7 @@
 ---
 role_name_check: 1
 driver:
-  name: delegated
+  name: default
 platforms:
   - name: instance
 provisioner:

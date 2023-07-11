@@ -84,7 +84,7 @@ def with_scenario(request, scenario_to_test, driver_name, scenario_name, skip_te
 def skip_test(request, driver_name):
     msg_tmpl = "Skipped '{}' not supported"
     support_checks_map = {
-        "delegated": lambda: True,
+        "default": lambda: True,
     }
     try:
         check_func = support_checks_map[driver_name]
@@ -105,26 +105,8 @@ def idempotence(scenario_name):
     assert run_command(cmd).returncode == 0
 
 
-def init_role(temp_dir, driver_name):
-    role_directory = os.path.join(temp_dir.strpath, "myrole")
-
-    cmd = ["molecule", "init", "role", "myorg.myrole", "--driver-name", driver_name]
-    assert run_command(cmd).returncode == 0
-    metadata_lint_update(role_directory)
-
-    with change_dir_to(role_directory):
-        cmd = ["molecule", "test", "--all"]
-        assert run_command(cmd).returncode == 0
-
-
 def init_scenario(temp_dir, driver_name):
-    # Create role
-    role_directory = os.path.join(temp_dir.strpath, "test_init")
-    cmd = ["molecule", "init", "role", "myorg.test_init", "--driver-name", driver_name]
-    assert run_command(cmd).returncode == 0
-    metadata_lint_update(role_directory)
-
-    with change_dir_to(role_directory):
+    with change_dir_to(temp_dir.strpath):
         # Create scenario
         molecule_dir = molecule_directory()
         scenario_directory = os.path.join(molecule_dir, "test-scenario")
@@ -134,8 +116,6 @@ def init_scenario(temp_dir, driver_name):
             "init",
             "scenario",
             "test-scenario",
-            "--role-name",
-            "test_init",
             "--driver-name",
             driver_name,
         ]
@@ -209,7 +189,7 @@ def login(login_args, scenario_name="default"):
 
 def run_test(driver_name, scenario_name="default", parallel=False):
     cmd = ["molecule", "test", "--scenario-name", scenario_name]
-    if driver_name != "delegated":
+    if driver_name != "default":
         if scenario_name is None:
             cmd.append("--all")
         if parallel:

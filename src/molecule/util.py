@@ -26,9 +26,8 @@ import os
 import re
 import sys
 from collections.abc import Iterable, MutableMapping
-from dataclasses import dataclass
 from subprocess import CalledProcessError, CompletedProcess
-from typing import Any, NoReturn, Optional, Union
+from typing import Any, NoReturn, Optional
 from warnings import WarningMessage
 
 import jinja2
@@ -115,7 +114,7 @@ def sysexit_with_message(
 
 
 def run_command(
-    cmd,
+    cmd: list[str],
     env=None,
     debug=False,
     echo=False,
@@ -127,20 +126,9 @@ def run_command(
 
     :param cmd: :
         - a string or list of strings (similar to subprocess.run)
-        - a BakedCommand object (
     :param debug: An optional bool to toggle debug output.
     """
-    args = []
-    if cmd.__class__.__name__ == "Command":
-        raise RuntimeError(
-            "Molecule 3.2.0 dropped use of sh library, update plugin code to use new API. "
-            "See https://github.com/ansible-community/molecule/issues/2678",
-        )
-    if cmd.__class__.__name__ == "BakedCommand":
-        env = dict(cmd.env, **env) if cmd.env and env else cmd.env or env
-        args = cmd.cmd
-    else:
-        args = cmd
+    args = cmd
 
     if debug:
         print_environment_vars(env)
@@ -377,17 +365,6 @@ def boolean(value: Any, strict=True) -> bool:
     raise TypeError(
         f"The value '{value!s}' is not a valid boolean.  Valid booleans include: {', '.join(repr(i) for i in BOOLEANS)!s}",
     )
-
-
-@dataclass
-class BakedCommand:
-    """Define a subprocess command to be executed."""
-
-    cmd: Union[str, list[str]]
-    env: Optional[dict]
-    cwd: Optional[str] = None
-    stdout: Any = None
-    stderr: Any = None
 
 
 def dict2args(data: dict) -> list[str]:

@@ -126,8 +126,6 @@ def test_execute_does_not_execute_when_disabled(
 @pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
 def test_execute_bakes(patched_run_command, _instance):
     _instance.execute()
-    assert _instance._sh_command is not None
-
     assert patched_run_command.call_count == 1
 
 

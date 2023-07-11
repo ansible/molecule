@@ -10,7 +10,7 @@ dependency:
     FOO: bar
 
 driver:
-  name: delegated
+  name: default
   options:
     managed: false
     login_cmd_template: ...

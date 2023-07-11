@@ -107,7 +107,7 @@ def test_dependency_property_is_shell(config_instance: config.Config):
 
 @pytest.fixture()
 def _config_driver_delegated_section_data():
-    return {"driver": {"name": "delegated", "options": {"managed": False}}}
+    return {"driver": {"name": "default", "options": {"managed": False}}}
 
 
 def test_env(config_instance: config.Config):
@@ -124,7 +124,7 @@ def test_env(config_instance: config.Config):
         "MOLECULE_PROJECT_DIRECTORY": config_instance.project_directory,
         "MOLECULE_INSTANCE_CONFIG": config_instance.driver.instance_config,
         "MOLECULE_DEPENDENCY_NAME": "galaxy",
-        "MOLECULE_DRIVER_NAME": "delegated",
+        "MOLECULE_DRIVER_NAME": "default",
         "MOLECULE_PROVISIONER_NAME": "ansible",
         "MOLECULE_SCENARIO_NAME": "default",
         "MOLECULE_STATE_FILE": config_instance.state.state_file,
@@ -172,7 +172,7 @@ def test_get_driver_name_from_cli(config_instance: config.Config):
 
 
 def test_get_driver_name(config_instance: config.Config):
-    assert config_instance._get_driver_name() == "delegated"
+    assert config_instance._get_driver_name() == "default"
 
 
 def test_get_driver_name_raises_when_different_driver_used(

@@ -22,7 +22,6 @@ items:
     use as-is[^1].
 
     > - When `true`, use the specified `platform[].image` as-is.
-    >
     > - When `false`, exec `docker build` to customize base image
     >   using either:
     >

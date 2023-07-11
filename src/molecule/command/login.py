@@ -96,6 +96,12 @@ class Login(base.Base):
         login_options = self._config.driver.login_options(hostname)
         login_options["columns"] = columns
         login_options["lines"] = lines
+        if not self._config.driver.login_cmd_template:
+            LOG.warning(
+                "Login command is not supported for [dim]%s[/] host because 'login_cmd_template' was not defined in driver options.",
+                login_options["instance"],
+            )
+            return
         login_cmd = self._config.driver.login_cmd_template.format(**login_options)
 
         cmd = shlex.split(f"/usr/bin/env {login_cmd}")

@@ -48,7 +48,7 @@ class Verify(base.Base):
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
     help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
-def verify(ctx, scenario_name):  # pragma: no cover
+def verify(ctx, scenario_name="default"):  # pragma: no cover
     """Run automated tests against instances."""
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)

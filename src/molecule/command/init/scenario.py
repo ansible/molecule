@@ -19,6 +19,7 @@
 #  DEALINGS IN THE SOFTWARE.
 """Base class used by init scenario command."""
 
+import json
 import logging
 import os
 
@@ -27,7 +28,7 @@ import click
 from molecule import api, config, util
 from molecule.command import base as command_base
 from molecule.command.init import base
-from molecule.config import DEFAULT_DRIVER
+from molecule.config import DEFAULT_DRIVER, MOLECULE_EMBEDDED_DATA_DIR
 
 LOG = logging.getLogger(__name__)
 
@@ -53,8 +54,7 @@ class Scenario(base.Base):
 
     .. option:: cd foo; molecule init scenario bar --role-name foo
 
-        Initialize a new scenario using a local *cookiecutter* template for the
-        driver configuration.
+        Initialize a new scenario using a embedded template.
     """
 
     def __init__(self, command_args: dict[str, str]) -> None:
@@ -68,14 +68,10 @@ class Scenario(base.Base):
         :return: None
         """
         scenario_name = self._command_args["scenario_name"]
-        role_name = os.getcwd().split(os.sep)[-1]
-        role_directory = util.abs_path(os.path.join(os.getcwd(), os.pardir))
 
         msg = f"Initializing new scenario {scenario_name}..."
         LOG.info(msg)
-        molecule_directory = config.molecule_directory(
-            os.path.join(role_directory, role_name),
-        )
+        molecule_directory = config.molecule_directory(os.getcwd())
         scenario_directory = os.path.join(molecule_directory, scenario_name)
 
         if os.path.isdir(scenario_directory):
@@ -85,34 +81,23 @@ class Scenario(base.Base):
             )
             util.sysexit_with_message(msg)
 
-        driver_template = api.drivers()[
-            self._command_args["driver_name"]
-        ].template_dir()
-        if "driver_template" in self._command_args:
-            self._validate_template_dir(self._command_args["driver_template"])
-            cli_driver_template = f"{self._command_args['driver_template']}/{self._command_args['driver_name']}"
-            if os.path.isdir(cli_driver_template):
-                driver_template = cli_driver_template
-            else:
-                LOG.warning(
-                    "Driver not found in custom template directory(%s), "
-                    "using the default template instead",
-                    cli_driver_template,
-                )
-        scenario_base_directory = os.path.join(role_directory, role_name)
-        templates = [
-            driver_template,
-            api.verifiers()[self._command_args["verifier_name"]].template_dir(),
+        extra_vars = json.dumps(self._command_args)
+        cmd = [
+            "ansible-playbook",
+            "-i",
+            "localhost,",
+            "--connection=local",
+            "--extra-vars",
+            extra_vars,
+            f"{MOLECULE_EMBEDDED_DATA_DIR}/init-scenario.yml",
         ]
-        self._process_templates("molecule", self._command_args, role_directory)
-        for template in templates:
-            self._process_templates(
-                template,
-                self._command_args,
-                scenario_base_directory,
-            )
+        env = os.environ.copy()
+        # As ansible fails to find a terminal when run by molecule, we force
+        # it to use colors.
+        env["ANSIBLE_FORCE_COLOR"] = "1"
+        env["ANSIBLE_PYTHON_INTERPRETER"] = "auto_silent"
+        util.run_command(cmd, env=env, check=True)
 
-        role_directory = os.path.join(role_directory, role_name)
         msg = f"Initialized scenario in {scenario_directory} successfully."
         LOG.info(msg)
 
@@ -126,20 +111,6 @@ def _role_exists(ctx, param, value: str):  # pragma: no cover
     role_directory = os.path.join(os.pardir, value)
     if not os.path.exists(role_directory):
         msg = f"The role '{value}' not found. Please choose the proper role name."
-        util.sysexit_with_message(msg)
-    return value
-
-
-def _default_scenario_exists(ctx, param, value: str):  # pragma: no cover
-    if value == command_base.MOLECULE_DEFAULT_SCENARIO_NAME:
-        return value
-
-    default_scenario_directory = os.path.join(
-        "molecule",
-        command_base.MOLECULE_DEFAULT_SCENARIO_NAME,
-    )
-    if not os.path.exists(default_scenario_directory):
-        msg = f"The default scenario not found.  Please create a scenario named '{command_base.MOLECULE_DEFAULT_SCENARIO_NAME}' first."
         util.sysexit_with_message(msg)
     return value
 
@@ -165,33 +136,17 @@ def _default_scenario_exists(ctx, param, value: str):  # pragma: no cover
     default="ansible",
     help="Name of provisioner to initialize. (ansible)",
 )
-@click.option(
-    "--role-name",
-    "-r",
-    required=False,
-    callback=_role_exists,
-    help="Name of the role to create.",
-)
 @click.argument(
     "scenario-name",
     default=command_base.MOLECULE_DEFAULT_SCENARIO_NAME,
     required=False,
-    callback=_default_scenario_exists,
-)
-@click.option(
-    "--verifier-name",
-    type=click.Choice([str(s) for s in api.verifiers()]),
-    default="ansible",
-    help="Name of verifier to initialize. (ansible)",
 )
 def scenario(
     ctx,
     dependency_name,
     driver_name,
     provisioner_name,
-    role_name,
     scenario_name,
-    verifier_name,
 ):  # pragma: no cover
     """Initialize a new scenario for use with Molecule.
 
@@ -201,10 +156,8 @@ def scenario(
         "dependency_name": dependency_name,
         "driver_name": driver_name,
         "provisioner_name": provisioner_name,
-        "role_name": role_name,
         "scenario_name": scenario_name,
         "subcommand": __name__,
-        "verifier_name": verifier_name,
     }
 
     s = Scenario(command_args)

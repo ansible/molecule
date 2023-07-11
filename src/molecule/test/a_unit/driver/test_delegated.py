@@ -32,7 +32,7 @@ from molecule.test.conftest import is_subset
 def _driver_managed_section_data():
     return {
         "driver": {
-            "name": "delegated",
+            "name": "default",
             "options": {
                 "managed": True,
             },
@@ -44,7 +44,7 @@ def _driver_managed_section_data():
 def _driver_unmanaged_section_data():
     return {
         "driver": {
-            "name": "delegated",
+            "name": "default",
             "options": {
                 "managed": False,
             },
@@ -69,7 +69,7 @@ def test_testinfra_options_property(_instance):
 
 
 def test_name_property(_instance):
-    assert _instance.name == "delegated"
+    assert _instance.name == "default"
 
 
 @pytest.mark.parametrize(
@@ -317,14 +317,14 @@ def test_status(mocker: MockerFixture, _instance):
     assert len(result) == 2
 
     assert result[0].instance_name == "instance-1"
-    assert result[0].driver_name == "delegated"
+    assert result[0].driver_name == "default"
     assert result[0].provisioner_name == "ansible"
     assert result[0].scenario_name == "default"
     assert result[0].created == "false"
     assert result[0].converged == "false"
 
     assert result[1].instance_name == "instance-2"
-    assert result[1].driver_name == "delegated"
+    assert result[1].driver_name == "default"
     assert result[1].provisioner_name == "ansible"
     assert result[1].scenario_name == "default"
     assert result[1].created == "false"

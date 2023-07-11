@@ -7,7 +7,7 @@ dependency:
     ansible-galaxy role install -p '${MOLECULE_EPHEMERAL_DIRECTORY}/roles' ssbarnea.ansible_role_helloworld
     "
 driver:
-  name: delegated
+  name: default
 platforms:
   - name: instance
     image: ${TEST_BASE_IMAGE}

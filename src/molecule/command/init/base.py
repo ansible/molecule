@@ -23,9 +23,6 @@ import abc
 import logging
 import os
 
-import cookiecutter
-import cookiecutter.main
-
 from molecule import util
 
 LOG = logging.getLogger(__name__)
@@ -35,58 +32,6 @@ class Base:
     """Init Command Base Class."""
 
     __metaclass__ = abc.ABCMeta
-
-    def _process_templates(
-        self,
-        template_dir,
-        extra_context,
-        output_dir,
-        overwrite=True,
-    ):
-        """Process templates as found in the named directory.
-
-        :param template_dir: A string containing an absolute or relative path
-         to a directory where the templates are located. If the provided
-         directory is a relative path, it is resolved using a known location.
-        :param extra_context: A dict of values that are used to override
-         default or user specified values.
-        :param output_dir: An string with an absolute path to a directory where
-         the templates should be written to.
-        :param overwrite: An optional bool whether or not to overwrite existing
-         templates.
-        :return: None
-        """
-        template_dir = self._resolve_template_dir(template_dir)
-        self._validate_template_dir(template_dir)
-
-        try:
-            cookiecutter.main.cookiecutter(
-                template_dir,
-                extra_context=extra_context,
-                output_dir=output_dir,
-                overwrite_if_exists=overwrite,
-                no_input=True,
-            )
-        except cookiecutter.exceptions.NonTemplatedInputDirException:
-            util.sysexit_with_message(
-                "The specified template directory ("
-                + str(template_dir)
-                + ") is in an invalid format",
-            )
-
-    def _resolve_template_dir(self, template_dir):
-        if not os.path.isabs(template_dir):
-            template_dir = os.path.abspath(
-                os.path.join(
-                    os.path.dirname(__file__),
-                    os.path.pardir,
-                    os.path.pardir,
-                    "cookiecutter",
-                    template_dir,
-                ),
-            )
-
-        return template_dir
 
     def _validate_template_dir(self, template_dir):
         if not os.path.isdir(template_dir):

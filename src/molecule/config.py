@@ -31,6 +31,7 @@ from packaging.version import Version
 
 from molecule import api, interpolation, platforms, scenario, state, util
 from molecule.app import app
+from molecule.data import __file__ as data_module
 from molecule.dependency import ansible_galaxy, shell
 from molecule.model import schema_v3
 from molecule.provisioner import ansible
@@ -42,7 +43,9 @@ MOLECULE_VERBOSITY = int(os.environ.get("MOLECULE_VERBOSITY", 0))
 MOLECULE_DIRECTORY = "molecule"
 MOLECULE_FILE = "molecule.yml"
 MOLECULE_KEEP_STRING = "MOLECULE_"
-DEFAULT_DRIVER = "delegated"
+DEFAULT_DRIVER = "default"
+
+MOLECULE_EMBEDDED_DATA_DIR = os.path.dirname(data_module)
 
 
 @cache
@@ -380,7 +383,7 @@ class Config(metaclass=NewInitCaller):
                 "env": {},
             },
             "driver": {
-                "name": "delegated",
+                "name": "default",
                 "provider": {"name": None},
                 "options": {"managed": True},
                 "ssh_connection_options": [],
