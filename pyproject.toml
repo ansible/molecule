@@ -51,7 +51,6 @@ molecule = "molecule.__main__:main"
 default = "molecule.driver.delegated:Delegated"
 
 [project.entry-points."molecule.verifier.next"]
-testinfra = "molecule.verifier.testinfra:Testinfra"
 ansible = "molecule.verifier.ansible:Ansible"
 
 [tool.coverage.run]
@@ -97,7 +96,6 @@ module = [
   "click_help_colors", # https://github.com/click-contrib/click-help-colors/issues/20
   "pexpect", # https://github.com/pexpect/pexpect/issues/759
   "pluggy", # https://github.com/pytest-dev/pluggy/pull/414
-  "testinfra.*", # https://github.com/pytest-dev/pytest-testinfra/issues/619
   "pytest_mock",
 ]
 ignore_missing_imports = true

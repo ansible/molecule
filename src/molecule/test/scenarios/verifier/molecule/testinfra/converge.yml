@@ -1,6 +1,0 @@
----
-- name: Converge
-  gather_facts: false
-  hosts: all
-  roles:
-    - molecule

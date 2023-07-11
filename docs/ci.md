@@ -401,8 +401,6 @@ won't create any conflict.
 ---
 dependency:
   name: galaxy
-driver:
-  name: docker
 platforms:
   - name: instance1-$TOX_ENVNAME
     image: mariadb
@@ -412,6 +410,4 @@ platforms:
     command: /usr/sbin/init
 provisioner:
   name: ansible
-verifier:
-  name: testinfra
 ```

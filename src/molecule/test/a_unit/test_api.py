@@ -38,6 +38,6 @@ def test_api_drivers():
 
 
 def test_api_verifiers():
-    x = ["testinfra", "ansible"]
+    x = ["ansible"]
 
     assert all(elem in api.verifiers() for elem in x)
