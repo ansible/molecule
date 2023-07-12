@@ -343,3 +343,13 @@ def test_podman() -> None:
         ).returncode
         == 0
     )
+
+
+def test_smoke() -> None:
+    """Execute smoke-test scenario that should spot potentially breaking changes."""
+    assert (
+        run_command(
+            ["molecule", "test", "--scenario-name", "smoke"],
+        ).returncode
+        == 0
+    )

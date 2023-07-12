@@ -110,10 +110,12 @@ class AnsiblePlaybook:
         with warnings.catch_warnings(record=True) as warns:
             warnings.filterwarnings("default", category=MoleculeRuntimeWarning)
             self._config.driver.sanity_checks()
+            cwd = self._config.scenario_path
             result = util.run_command(
                 cmd=self._ansible_command,
                 env=self._env,
                 debug=self._config.debug,
+                cwd=cwd,
             )
 
         if result.returncode != 0:
