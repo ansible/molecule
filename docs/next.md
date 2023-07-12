@@ -9,11 +9,13 @@ reduce the amount of magic and just rely on ansible core features.
 - `roles-path` and `collections-paths` are no longer configurable for
   dependencies. Users are expected to make use of `ansible.cfg` file to
   alter them when needed.
+- testinfra verifier driver was removed but current users should be able to
+  keep calling their testinfra tests by using `command` or `shell` ansible
+  modules from within `verify.yml` playbook.
 
 # Planned changes
 
 - Removal of provisioning drivers support and documenting, with examples, how to easily migrate to a self-provisioning approach.
-- Removal of testinfra verifier driver and documenting how to call testinfra from inside the converge playbook to keep using the tool.
 - Refactoring how dependencies are installed
 - Bringing ephemeral directory under scenario folder instead of the current
   inconvenient location under `~/.cache/molecule/...`

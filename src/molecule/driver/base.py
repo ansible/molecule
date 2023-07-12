@@ -59,17 +59,6 @@ class Driver:
         """
 
     @property
-    def testinfra_options(self):
-        """Testinfra specific options and returns a dict.
-
-        :returns: dict
-        """
-        return {
-            "connection": "ansible",
-            "ansible-inventory": self._config.provisioner.inventory_directory,
-        }
-
-    @property
     @abstractmethod
     def login_cmd_template(self):  # pragma: no cover
         """Get the login command template to be populated by ``login_options`` as \

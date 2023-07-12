@@ -61,13 +61,6 @@ def test_config_private_member(_instance):
     assert isinstance(_instance._config, config.Config)
 
 
-def test_testinfra_options_property(_instance):
-    assert {
-        "connection": "ansible",
-        "ansible-inventory": _instance._config.provisioner.inventory_directory,
-    } == _instance.testinfra_options
-
-
 def test_name_property(_instance):
     assert _instance.name == "default"
 

@@ -23,21 +23,6 @@ import pytest
 from molecule.model import schema_v3
 
 
-@pytest.fixture()
-def _model_verifier_section_data():
-    return {
-        "verifier": {
-            "name": "testinfra",
-            "enabled": True,
-            "directory": "foo",
-            "options": {"foo": "bar"},
-            "env": {"FOO": "foo", "FOO_BAR": "foo_bar"},
-            "additional_files_or_dirs": ["foo"],
-        },
-    }
-
-
-@pytest.mark.parametrize("_config", ["_model_verifier_section_data"], indirect=True)
 def test_verifier(_config):
     assert not schema_v3.validate(_config)
 
@@ -63,11 +48,6 @@ def test_verifier_has_errors(_config):
 
 
 @pytest.fixture()
-def _model_verifier_allows_testinfra_section_data():
-    return {"verifier": {"name": "testinfra"}}
-
-
-@pytest.fixture()
 def _model_verifier_allows_ansible_section_data():
     return {"verifier": {"name": "ansible"}}
 
@@ -75,7 +55,6 @@ def _model_verifier_allows_ansible_section_data():
 @pytest.mark.parametrize(
     "_config",
     [
-        ("_model_verifier_allows_testinfra_section_data"),
         ("_model_verifier_allows_ansible_section_data"),
     ],
     indirect=True,
