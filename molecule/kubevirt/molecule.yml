@@ -1,0 +1,45 @@
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: requirements.yml
+    role-file: requirements.yml
+platforms:
+  - name: rhel9
+    image: registry.redhat.io/rhel9/rhel-guest-image
+    namespace: <Kubernetes VM Namespace>
+    ssh_service:
+      type: NodePort
+      nodeport_host: <Kubernetes Node FQDN>
+    ansible_user: cloud-user
+    memory: 1Gi
+  - name: rhel8
+    image: registry.redhat.io/rhel8/rhel-guest-image
+    namespace: <Kubernetes VM Namespace>
+    ssh_service:
+      type: NodePort
+      nodeport_host: <Kubernetes Node FQDN>
+    ansible_user: cloud-user
+    memory: 1Gi
+provisioner:
+  name: ansible
+  config_options:
+    defaults:
+      interpreter_python: auto_silent
+      callback_whitelist: profile_tasks, timer, yaml
+    ssh_connection:
+      pipelining: false
+  log: true
+verifier:
+  name: ansible
+scenario:
+  test_sequence:
+    - dependency
+    - destroy
+    - syntax
+    - create
+    - converge
+    - idempotence
+    - side_effect
+    - verify
+    - destroy
