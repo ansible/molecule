@@ -6,5 +6,5 @@
         that:
           - playbook_dir == lookup('env', 'PWD')
         msg: >
-          Molecule should automaticaly chdir to scenario directory {{ playbook_dir }}
+          Molecule should automatically chdir to scenario directory {{ playbook_dir }}
           but we found that it runs from {{ lookup('env', 'PWD') }} instead."
