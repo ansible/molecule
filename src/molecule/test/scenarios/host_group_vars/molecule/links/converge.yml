@@ -1,0 +1,15 @@
+---
+- hosts: example
+  gather_facts: false
+  tasks:
+    - name: Host vars from host_vars links
+      ansible.builtin.debug:
+        var: host_group_vars_host_vars_linked
+
+    - name: Group vars from group_vars links
+      ansible.builtin.debug:
+        var: host_group_vars_group_vars_linked
+
+    - name: Variable from extra inventory link
+      ansible.builtin.debug:
+        var: hostvars['extra-host']['host_group_vars_extra_host_linked']

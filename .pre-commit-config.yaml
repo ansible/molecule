@@ -91,6 +91,7 @@ repos:
           - jsonschema
           - pexpect
           - pytest-mock
+          - pytest-testinfra
   - repo: https://github.com/jazzband/pip-tools
     rev: 6.14.0
     hooks:

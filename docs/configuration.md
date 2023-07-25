@@ -294,3 +294,7 @@ Molecule handles role testing by invoking configurable verifiers.
 ### Ansible
 
 ::: molecule.verifier.ansible.Ansible
+
+### Testinfra
+
+::: molecule.verifier.testinfra.Testinfra
