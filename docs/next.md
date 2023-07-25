@@ -7,18 +7,21 @@ reduce the amount of magic and just rely on ansible core features.
 # Implemented changes
 
 - `roles-path` and `collections-paths` are no longer configurable for
-  dependencies. Users are expected to make use of `ansible.cfg` file to
+  dependencies. Users are expected to make use of [`ansible.cfg`](https://docs.ansible.com/ansible/latest/reference_appendices/config.html) file to
   alter them when needed.
+
+- `molecule init` command is now only available to create a scenario
+  using `molecule init scenario`.
+  Users will no longer be able to create a role.
+  Instead, users can make use of [`ansible-galaxy`](https://docs.ansible.com/ansible/latest/galaxy/dev_guide.html#) to [create a role](https://docs.ansible.com/ansible/latest/galaxy/dev_guide.html#creating-roles-for-galaxy).
 
 # Planned changes
 
-- Removal of provisioning drivers support and documenting, with examples, how to easily migrate to a self-provisioning approach.
-- Removal of testinfra verifier driver and documenting how to call testinfra from inside the converge playbook to keep using the tool.
 - Refactoring how dependencies are installed
 - Bringing ephemeral directory under scenario folder instead of the current
   inconvenient location under `~/.cache/molecule/...`
-- Addition of a minimal `ansible.cfg` file under scenario folder that can
-  be used to tell ansible from where to load testing content. This is to replace
+- Addition of a minimal `ansible.cfg` file under the scenario folder that can
+  be used to tell Ansible from where to load testing content. This is to replace
   current Molecule magic around roles, collections and library paths and
-  test inventory location. Once done you will be able to run molecule playbooks with ansible directly without
+  test inventory location. Once done you will be able to run molecule playbooks with Ansible directly without
   having to define these folders.
