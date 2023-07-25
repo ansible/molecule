@@ -1,0 +1,23 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: default
+platforms:
+  - name: instance
+    image: ${TEST_BASE_IMAGE}
+    groups:
+      - example
+    children:
+      - example_1
+provisioner:
+  name: ansible
+  inventory:
+    links:
+      hosts: ../../hosts
+      host_vars: ../../host_vars
+      group_vars: ../../group_vars
+scenario:
+  name: links
+verifier:
+  name: testinfra

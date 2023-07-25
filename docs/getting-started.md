@@ -44,7 +44,8 @@ INSTALL.rst  molecule.yml  converge.yml  verify.yml
 - `verify.yml` is the Ansible file used for testing as Ansible is the
   default [verifier](configuration.md#verifier). This allows you to
   write specific tests against the state of the container after your
-  role has finished executing.
+  role has finished executing. Other verifier tools are available
+  Note that [testinfra](https://testinfra.readthedocs.io/en/latest/) was the default verifier prior to molecule version 3.
 
 !!! note
 

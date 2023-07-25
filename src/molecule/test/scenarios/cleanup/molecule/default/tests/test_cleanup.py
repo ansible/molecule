@@ -9,6 +9,10 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 ).get_hosts("all")
 
 
-def test_side_effect_removed_file(host):
-    """Validate that file was removed."""
-    assert not host.file("/tmp/testfile").exists
+def test_hosts_file(host):
+    """Validate host file."""
+    f = host.file("/etc/hosts")
+
+    assert f.exists
+    assert f.user == "root"
+    assert f.group == "root"

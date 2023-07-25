@@ -32,6 +32,22 @@ class InvalidInterpolation(Exception):
 class Interpolator:
     """Configuration options may contain environment variables.
 
+    For example, suppose the shell contains ``VERIFIER_NAME=testinfra`` and
+    the following molecule.yml is supplied.
+
+    ```yaml
+        verifier:
+          - name: ${VERIFIER_NAME}
+    ```
+
+    Molecule will substitute ``$VERIFIER_NAME`` with the value of the
+    ``VERIFIER_NAME`` environment variable.
+
+    !!! warning
+
+        If an environment variable is not set, Molecule substitutes with an
+        empty string.
+
     Both ``$VARIABLE`` and ``${VARIABLE}`` syntax are supported. Extended
     shell-style features, such as ``${VARIABLE-default}`` and
     ``${VARIABLE:-default}`` are also supported. Even the default as another

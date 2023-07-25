@@ -1,4 +1,3 @@
-#  Copyright (c) 2019 Red Hat, Inc.
 #  Copyright (c) 2015-2018 Cisco Systems, Inc.
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,25 +18,50 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 
-from molecule import api
+import os
+
+import pytest
+
+from molecule.command.init import base
 
 
-def test_api_molecule_drivers_as_attributes():
-    results = api.drivers()
-    assert hasattr(results, "default")
-    assert isinstance(results.default, api.Driver)
+class CommandBase(base.Base):
+    """CommandBase Class."""
 
 
-def test_api_drivers():
-    results = api.drivers()
-
-    for result in results:
-        assert isinstance(result, api.Driver)
-
-    assert "default" in results
+@pytest.fixture()
+def _base_class():
+    return CommandBase
 
 
-def test_api_verifiers():
-    x = ["testinfra", "ansible"]
+@pytest.fixture()
+def _instance(_base_class):
+    return _base_class()
 
-    assert all(elem in api.verifiers() for elem in x)
+
+@pytest.fixture()
+def _role_directory():
+    return "."
+
+
+@pytest.fixture()
+def _command_args():
+    return {
+        "dependency_name": "galaxy",
+        "driver_name": "default",
+        "provisioner_name": "ansible",
+        "scenario_name": "default",
+        "role_name": "test-role",
+        "verifier_name": "ansible",
+    }
+
+
+@pytest.fixture()
+def _molecule_file(_role_directory):
+    return os.path.join(
+        _role_directory,
+        "test-role",
+        "molecule",
+        "default",
+        "molecule.yml",
+    )
