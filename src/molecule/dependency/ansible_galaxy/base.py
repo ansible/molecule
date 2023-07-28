@@ -52,7 +52,7 @@ class AnsibleGalaxyBase(base.Base):
     @property
     def default_options(self):
         d = {
-            "force": True,
+            "force": False,
         }
         if self._config.debug:
             d["vvv"] = True
