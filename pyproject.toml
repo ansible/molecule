@@ -221,7 +221,6 @@ known-first-party = ["molecule"]
 [tool.setuptools.dynamic]
 optional-dependencies.docs = { file = [".config/requirements-docs.txt"] }
 optional-dependencies.test = { file = [".config/requirements-test.txt"] }
-optional-dependencies.lock = { file = [".config/requirements-lock.txt"] }
 dependencies = { file = [".config/requirements.in"] }
 
 [tool.setuptools_scm]

@@ -1,8 +1,4 @@
 ---
-ci:
-  skip:
-    # https://github.com/pre-commit-ci/issues/issues/55
-    - pip-compile
 default_language_version:
   python: python3.9
 repos:
@@ -92,27 +88,3 @@ repos:
           - pexpect
           - pytest-mock
           - pytest-testinfra
-  - repo: https://github.com/jazzband/pip-tools
-    rev: 6.14.0
-    hooks:
-      - id: pip-compile
-        entry: pip-compile -q --resolver=backtracking --strip-extras --no-annotate --output-file=.config/requirements.txt pyproject.toml --extra docs --extra test
-        files: ^(pyproject\.toml|\.config\/.*)$
-      - id: pip-compile
-        name: pip-compile-upgrade
-        alias: up
-        entry: pip-compile -q  --resolver=backtracking --strip-extras -q --upgrade --no-annotate --output-file=.config/requirements.txt pyproject.toml --extra docs --extra test
-        files: ^(pyproject\.toml|\.config\/.*)$
-        stages: [manual]
-      - id: pip-compile
-        name: lock
-        alias: lock
-        always_run: true
-        entry: pip-compile --upgrade --resolver=backtracking --no-annotate --output-file=.config/requirements-lock.txt pyproject.toml --strip-extras --unsafe-package ruamel-yaml-clib
-        files: ^.config\/requirements.*$
-        language: python
-        language_version: "3.9" # minimal we support officially
-        pass_filenames: false
-        stages: [manual]
-        additional_dependencies:
-          - pip>=22.3.1

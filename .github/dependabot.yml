@@ -2,16 +2,6 @@
 version: 2
 enable-beta-ecosystems: true
 updates:
-  - package-ecosystem: "pip"
-    directory: "/"
-    schedule:
-      interval: daily
-    labels:
-      - dependencies
-      - skip-changelog
-    allow:
-      - dependency-name: "ansible*"
-      - dependency-name: pyyaml
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
