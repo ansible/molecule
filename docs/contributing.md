@@ -121,11 +121,6 @@ Dependencies need to be updated by hand in:
 - `.config/requirements.in`
 - `.pre-commit-config.yaml` (2 places)
 
-Afterwards, you will need to generate changes to `requirements.lock.txt`
-and `requirement.txt`, by running the commands listed at the top of those files.
-
-Please note that CI will attempt to regenerate those changes, and if there is any diff, CI will fail.
-
 ## Credits
 
 Based on the good work of John Dewey
