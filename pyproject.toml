@@ -192,6 +192,7 @@ ignore = [
   "EM",
   "INP",
   "N",
+  "PERF203",
   "PGH",
   "PLR",
   "PLW",

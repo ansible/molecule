@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 """Molecule Utils Module."""
 
+from __future__ import annotations
 
 import copy
 import fnmatch
@@ -25,10 +26,8 @@ import logging
 import os
 import re
 import sys
-from collections.abc import Iterable, MutableMapping
 from subprocess import CalledProcessError, CompletedProcess
-from typing import Any, NoReturn, Optional
-from warnings import WarningMessage
+from typing import TYPE_CHECKING, Any, NoReturn
 
 import jinja2
 import yaml
@@ -38,6 +37,10 @@ from rich.syntax import Syntax
 from molecule.app import app
 from molecule.console import console
 from molecule.constants import MOLECULE_HEADER
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable, MutableMapping
+    from warnings import WarningMessage
 
 LOG = logging.getLogger(__name__)
 
@@ -54,7 +57,7 @@ def print_debug(title: str, data: str) -> None:
     console.print(f"DEBUG: {title}:\n{data}")
 
 
-def print_environment_vars(env: Optional[dict[str, Optional[str]]]) -> None:
+def print_environment_vars(env: dict[str, str | None] | None) -> None:
     """Print ``Ansible`` and ``Molecule`` environment variables and returns None.
 
     :param env: A dict containing the shell's environment as collected by
@@ -97,7 +100,7 @@ def sysexit(code: int = 1) -> NoReturn:
 def sysexit_with_message(
     msg: str,
     code: int = 1,
-    detail: Optional[MutableMapping] = None,
+    detail: MutableMapping | None = None,
     warns: Iterable[WarningMessage] = (),
 ) -> None:
     """Exit with an error message."""
@@ -173,7 +176,7 @@ def render_template(template, **kwargs):
     return t.render(kwargs)
 
 
-def write_file(filename: str, content: str, header: Optional[str] = None) -> None:
+def write_file(filename: str, content: str, header: str | None = None) -> None:
     """Write a file with the given filename and content and returns None.
 
     :param filename: A string containing the target filename.
@@ -269,7 +272,7 @@ def filter_verbose_permutation(options):
     return {k: options[k] for k in options if not re.match("^[v]+$", k)}
 
 
-def abs_path(path: str) -> Optional[str]:
+def abs_path(path: str) -> str | None:
     """Return absolute path."""
     if path:
         return os.path.abspath(path)
@@ -332,7 +335,7 @@ def find_vcs_root(location="", dirs=(".git", ".hg", ".svn"), default=None) -> st
     return default
 
 
-def lookup_config_file(filename: str) -> Optional[str]:
+def lookup_config_file(filename: str) -> str | None:
     """Return config file PATH."""
     for path in [find_vcs_root(default="~"), "~"]:
         f = os.path.expanduser(f"{path}/{filename}")
