@@ -18,12 +18,12 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
+from __future__ import annotations
 
 import os
 import shutil
 import subprocess
 from subprocess import PIPE
-from typing import Optional
 
 import pexpect
 import pytest
@@ -209,7 +209,7 @@ def verify(scenario_name="default"):
     assert run_command(cmd).returncode == 0
 
 
-def get_docker_executable() -> Optional[str]:
+def get_docker_executable() -> str | None:
     return shutil.which("docker")
 
 
