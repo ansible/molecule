@@ -1,0 +1,59 @@
+---
+- name: Create VM in KubeVirt
+  kubernetes.core.k8s: # Uses the k8s module from the kubernetes.core Ansible collection
+    state: present # Ensures the VM exists. If it doesn't, it will be created.
+    definition:
+      apiVersion: kubevirt.io/v1 # KubeVirt's API version
+      kind: VirtualMachine # The type of Kubernetes resource to create
+      metadata:
+        labels:
+          kubevirt.io/domain: "{{ vm.name }}" # Labels for the VM
+        name: "{{ vm.name }}" # Name of the VM
+        namespace: "{{ vm.namespace }}" # Namespace where the VM will be created
+      spec:
+        running: true # Starts the VM after creation
+        template:
+          metadata:
+            labels:
+              kubevirt.io/domain: "{{ vm.name }}" # Labels for the VM's template
+          spec:
+            domain:
+              devices:
+                disks:
+                  - disk:
+                      bus: virtio # Type of disk bus
+                    name: containerdisk # Name of the container disk
+                  - disk:
+                      bus: virtio # Type of disk bus
+                    name: cloudinitdisk # Name of the cloud-init disk
+                  - name: emptydisk # Name of the empty disk
+                    disk:
+                      bus: virtio # Type of disk bus
+              resources:
+                requests:
+                  memory: "{{ vm.memory | default('1Gi') }}" # Amount of memory requested for the VM
+            volumes:
+              - name: emptydisk
+                emptyDisk:
+                  capacity: "{{ vm.capacity | default('2Gi') }}" # Capacity of the empty ephemeral disk
+              - containerDisk:
+                  image: "{{ vm.image }}" # The image used for the container disk
+                name: containerdisk
+              - cloudInitNoCloud: # Cloud-init configuration
+                  userData: | # User-data script
+                    #cloud-config
+                    preserve_hostname: true
+                    hostname: "{{ vm.name }}"  # Sets the hostname
+                    fqdn: "{{ vm.name }}"      # Fully Qualified Domain Name
+                    prefer_fqdn_over_hostname: true
+                    users:
+                      - default
+                      - name: {{ vm.ansible_user }}
+                        lock_passwd: true   # Locks the password
+                        ssh_authorized_keys:
+                          - "{{ temporary_ssh_public_key }}"  # SSH public key
+                    runcmd:
+                      - [ sh, -c, "hostnamectl set-hostname {{ vm.name }}" ]  # Sets the hostname
+                      - [ sudo, yum, install, -y, qemu-guest-agent ]  # Installs qemu-guest-agent
+                      - [ sudo, systemctl, start, qemu-guest-agent ]  # Starts qemu-guest-agent
+                name: cloudinitdisk
