@@ -63,6 +63,7 @@ nav:
   - Examples:
       - docker.md
       - podman.md
+      - kubevirt.md
   - examples.md
   - faq.md
   - contributing.md
