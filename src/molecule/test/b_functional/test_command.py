@@ -352,12 +352,3 @@ def test_docker() -> None:
         ).returncode
         == 0
     )
-
-
-def test_kubevirt() -> None:
-    assert (
-        run_command(
-            ["molecule", "test", "--scenario-name", "kubevirt"],
-        ).returncode
-        == 0
-    )
