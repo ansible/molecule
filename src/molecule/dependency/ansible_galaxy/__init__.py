@@ -8,6 +8,12 @@ from molecule.dependency.base import Base
 class AnsibleGalaxy(Base):
     """Galaxy is the default dependency manager.
 
+    From v6.0.0, the dependencies are installed in the directory that defined
+    in ansible configuration. The default installation directory is
+    [DEFAULT_ROLES_PATH][]([ANSIBLE_HOME][]). If two versions of the same
+    dependency is required, there is a conflict if the default installation
+    directory is used because both are tried to be installed in one directory.
+
     Additional options can be passed to ``ansible-galaxy install`` through the
     options dict.  Any option set in this section will override the defaults.
 
@@ -74,6 +80,9 @@ class AnsibleGalaxy(Base):
           env:
             FOO: bar
     ```
+
+    [DEFAULT_ROLES_PATH]: https://docs.ansible.com/ansible/latest/cli/ansible-galaxy.html#cmdoption-ansible-galaxy-role-remove-p
+    [ANSIBLE_HOME]: https://docs.ansible.com/ansible/latest/reference_appendices/config.html#ansible-home
     """
 
     def __init__(self, config) -> None:

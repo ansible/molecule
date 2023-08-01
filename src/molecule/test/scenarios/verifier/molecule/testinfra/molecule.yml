@@ -1,0 +1,20 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: default
+platforms:
+  - name: instance
+    image: ${TEST_BASE_IMAGE}
+provisioner:
+  name: ansible
+  env:
+    ANSIBLE_ROLES_PATH: ../../../../resources/roles/
+scenario:
+  name: testinfra
+verifier:
+  name: testinfra
+  options:
+    vvv: true
+  additional_files_or_dirs:
+    - ../shared/test_*.py

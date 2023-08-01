@@ -1,0 +1,18 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: default
+platforms:
+  - name: instance
+    image: ${TEST_BASE_IMAGE}
+provisioner:
+  name: ansible
+scenario:
+  name: testinfra-pre-commit
+verifier:
+  name: testinfra
+  options:
+    vvv: true
+  additional_files_or_dirs:
+    - ../shared/test_*.py

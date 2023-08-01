@@ -343,3 +343,12 @@ def test_podman() -> None:
         ).returncode
         == 0
     )
+
+
+def test_docker() -> None:
+    assert (
+        run_command(
+            ["molecule", "test", "--scenario-name", "docker"],
+        ).returncode
+        == 0
+    )

@@ -48,9 +48,9 @@ class IncompatibleMoleculeRuntimeWarning(MoleculeRuntimeWarning):
 def drivers(config=None) -> UserListMap:
     """Return list of active drivers."""
     plugins = UserListMap()
-    pm = pluggy.PluginManager("molecule.driver.next")
+    pm = pluggy.PluginManager("molecule.driver")
     try:
-        pm.load_setuptools_entrypoints("molecule.driver.next")
+        pm.load_setuptools_entrypoints("molecule.driver")
     except (Exception, SystemExit):
         # These are not fatal because a broken driver should not make the entire
         # tool unusable.
@@ -68,9 +68,9 @@ def drivers(config=None) -> UserListMap:
 def verifiers(config=None) -> UserListMap:
     """Return list of active verifiers."""
     plugins = UserListMap()
-    pm = pluggy.PluginManager("molecule.verifier.next")
+    pm = pluggy.PluginManager("molecule.verifier")
     try:
-        pm.load_setuptools_entrypoints("molecule.verifier.next")
+        pm.load_setuptools_entrypoints("molecule.verifier")
     except Exception:
         # These are not fatal because a broken verifier should not make the entire
         # tool unusable.
