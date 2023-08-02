@@ -1,14 +1,10 @@
 ---
-ci:
-  skip:
-    # https://github.com/pre-commit-ci/issues/issues/55
-    - pip-compile
 default_language_version:
   python: python3.9
 repos:
   - repo: https://github.com/pre-commit/mirrors-prettier
     # keep it before yamllint
-    rev: "v3.0.0-alpha.9-for-vscode"
+    rev: "v3.0.0"
     hooks:
       - id: prettier
         # Temporary excludes so we can gradually normalize the formatting
@@ -24,7 +20,7 @@ repos:
     hooks:
       - id: codespell
   - repo: https://github.com/psf/black
-    rev: 23.3.0
+    rev: 23.7.0
     hooks:
       - id: black
         language_version: python3
@@ -47,8 +43,8 @@ repos:
         files: \.(yaml|yml)$
         types: [file, yaml]
         entry: yamllint --strict
-  - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "v0.0.275"
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: "v0.0.281"
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
@@ -92,27 +88,3 @@ repos:
           - pexpect
           - pytest-mock
           - pytest-testinfra
-  - repo: https://github.com/jazzband/pip-tools
-    rev: 6.14.0
-    hooks:
-      - id: pip-compile
-        entry: pip-compile -q --resolver=backtracking --strip-extras --no-annotate --output-file=.config/requirements.txt pyproject.toml --extra docs --extra test
-        files: ^(pyproject\.toml|\.config\/.*)$
-      - id: pip-compile
-        name: pip-compile-upgrade
-        alias: up
-        entry: pip-compile -q  --resolver=backtracking --strip-extras -q --upgrade --no-annotate --output-file=.config/requirements.txt pyproject.toml --extra docs --extra test
-        files: ^(pyproject\.toml|\.config\/.*)$
-        stages: [manual]
-      - id: pip-compile
-        name: lock
-        alias: lock
-        always_run: true
-        entry: pip-compile --upgrade --resolver=backtracking --no-annotate --output-file=.config/requirements-lock.txt pyproject.toml --strip-extras --unsafe-package ruamel-yaml-clib
-        files: ^.config\/requirements.*$
-        language: python
-        language_version: "3.9" # minimal we support officially
-        pass_filenames: false
-        stages: [manual]
-        additional_dependencies:
-          - pip>=22.3.1

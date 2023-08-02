@@ -69,7 +69,7 @@ def test_config_private_member(_instance):
 
 
 def test_default_options_property(_instance, role_file):
-    x = {"role-file": role_file, "force": True}
+    x = {"role-file": role_file, "force": False}
 
     assert x == _instance.default_options
 
@@ -94,7 +94,7 @@ def test_enabled_property(_instance):
 @pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
 def test_options_property(_instance, role_file):
     x = {
-        "force": True,
+        "force": False,
         "role-file": role_file,
         "foo": "bar",
         "v": True,
@@ -107,7 +107,7 @@ def test_options_property(_instance, role_file):
 def test_options_property_handles_cli_args(role_file, _instance):
     _instance._config.args = {"debug": True}
     x = {
-        "force": True,
+        "force": False,
         "role-file": role_file,
         "foo": "bar",
         "vvv": True,
@@ -129,7 +129,6 @@ def test_galaxy_bake(_instance, role_file):
         "install",
         "--foo",
         "bar",
-        "--force",
         "--role-file",
         role_file,
         "-v",

@@ -84,12 +84,10 @@ Molecule will resolve the `INSTANCE_UUID` environment variable when
 creating and looking up the instance name. You can confirm all is in
 working order by running `molecule list`.
 
-## Can I test Ansible Collections with Molecule?
+## Where can I configure my `roles-path` and `collections-paths`?
 
-This is not currently officially supported. Also, collections remain in
-"tech preview" status. However, you can take a look at [this blog
-post](https://www.jeffgeerling.com/blog/2019/how-add-integration-tests-ansible-collection-molecule)
-outlining a workable DIY solution as a stop gap for now.
+As of molecule v6, users are expected to make use of [`ansible.cfg`](https://docs.ansible.com/ansible/latest/reference_appendices/config.html) file to
+alter them when needed.
 
 ## Does Molecule support monorepos?
 

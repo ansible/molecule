@@ -18,6 +18,7 @@
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
 """Molecule Scenario Module."""
+from __future__ import annotations
 
 import errno
 import fcntl
@@ -27,7 +28,6 @@ import os
 import shutil
 from pathlib import Path
 from time import sleep
-from typing import Optional
 
 from molecule import scenarios, util
 from molecule.constants import RC_TIMEOUT
@@ -211,7 +211,7 @@ class Scenario:
             os.makedirs(self.inventory_directory, exist_ok=True)
 
 
-def ephemeral_directory(path: Optional[str] = None) -> str:
+def ephemeral_directory(path: str | None = None) -> str:
     """Return temporary directory to be used by molecule.
 
     Molecule users should not make any assumptions about its location,

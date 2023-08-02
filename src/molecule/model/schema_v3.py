@@ -58,21 +58,21 @@ def validate(c):
             schema = json.load(f)
         schemas.append(schema)
 
-    for schema in schemas:
-        try:
+    try:
+        for schema in schemas:
             jsonschema_validate(c, schema)
-        except ValidationError as exc:
-            # handle validation error for driver name
-            if exc.json_path == "$.driver.name" and exc.message.endswith(
-                (
-                    "is not of type 'string'",
-                    "is not valid under any of the given schemas",
-                ),
-            ):
-                wrong_driver_name = str(exc.message.split()[0])
-                driver_name_err_msg = exc.schema["messages"]["anyOf"]
-                result.append(f"{wrong_driver_name} {driver_name_err_msg}")
-            else:
-                result.append(exc.message)
+    except ValidationError as exc:
+        # handle validation error for driver name
+        if exc.json_path == "$.driver.name" and exc.message.endswith(
+            (
+                "is not of type 'string'",
+                "is not valid under any of the given schemas",
+            ),
+        ):
+            wrong_driver_name = str(exc.message.split()[0])
+            driver_name_err_msg = exc.schema["messages"]["anyOf"]
+            result.append(f"{wrong_driver_name} {driver_name_err_msg}")
+        else:
+            result.append(exc.message)
 
     return result

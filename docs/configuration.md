@@ -4,18 +4,18 @@
 
 ## Prerun
 
-In order to help Ansible find used modules and roles, molecule will
+To help Ansible find used modules and roles, molecule will
 perform a prerun set of actions. These involve installing dependencies
-from `requirements.yml` specified at project level, install a standalone
+from `requirements.yml` specified at the project level, installing a standalone
 role or a collection. The destination is `project_dir/.cache` and the
 code itself was reused from ansible-lint, which has to do the same
 actions. (Note: ansible-lint is not included with molecule.)
 
 This assures that when you include a role inside molecule playbooks,
-Ansible will be able to find that role, and that the include is exactly
+Ansible will be able to find that role and that the include is exactly
 the same as the one you are expecting to use in production.
 
-If for some reason the prerun action does not suits your needs, you can
+If for some reason the prerun action does not suit your needs, you can
 still disable it by adding `prerun: false` inside the
 configuration file.
 
@@ -28,7 +28,7 @@ your project, in order to avoid adding it to each scenario.
 By default, `Molecule` will check whether the role name follows the name
 standard. If not, it will raise an error.
 
-If computed fully qualified role name does not follow current galaxy
+If the computed fully qualified role name does not follow current galaxy
 requirements, you can ignore it by adding `role_name_check:1` inside the configuration file.
 
 It is strongly recommended to follow the name standard of
@@ -40,7 +40,7 @@ and
 
 ::: molecule.interpolation.Interpolator
 
-There are following environment variables available in `molecule.yml`:
+Following are the environment variables available in `molecule.yml`:
 
 MOLECULE_DEBUG
 
@@ -57,7 +57,7 @@ MOLECULE_ENV_FILE
 
 MOLECULE_STATE_FILE
 
-: Path to molecule state file, contains state of the instances
+: The path to molecule state file contains the state of the instances
 (created, converged, etc.). Usually
 `~/.cache/molecule/<role-name>/<scenario-name>/state.yml`
 
@@ -249,12 +249,12 @@ test_sequence:
 `provisioner.playbooks` section of molecule.yml.
 
 `side_effect` can have one or more arguments (separated by spaces) which is
-a playbook (plabyooks) to execute. If the argument for `side_effect` is present,
+a playbook (playbooks) to execute. If the argument for `side_effect` is present,
 it's executed instead. The path to the playbook is relative to the molecule.yml location.
 Normal side effect settings (from `provisioner.playbooks`) are ignored for action with
 argument.
 
-`verify` without an argument is executing usual tests configured in the verifier section
+`verify` without an argument is executing the usual tests configured in the verifier section
 of molecule.yml.
 
 If one or more arguments (separated by spaces) are present, each argument is treated
@@ -263,9 +263,9 @@ The kind of verifier is set in the `verifier` section of molecule.yml and is app
 `verify` actions in the scenario.
 
 The path to tests is relative to the molecule.yml file location. The `additional_files_or_dirs`
-setting for verifier is ignored if the `verify` action has an argument.
+setting for the verifier is ignored if the `verify` action is provided with an argument.
 
-Multiple `side_effect` and `verify` actions can be used to a create a combination
+Multiple `side_effect` and `verify` actions can be used to create a combination
 of playbooks and tests, for example, for end-to-end playbook testing.
 
 Additional `converge` and `idempotence` actions can be used multiple times:

@@ -17,9 +17,9 @@
 #  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 #  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 #  DEALINGS IN THE SOFTWARE.
+from __future__ import annotations
 
 import os
-from typing import Optional
 
 import pytest
 from pytest import FixtureRequest
@@ -48,7 +48,7 @@ def scenario_name(request):
 
 
 @pytest.fixture()
-def driver_name(request: FixtureRequest) -> Optional[str]:
+def driver_name(request: FixtureRequest) -> str | None:
     try:
         # https://stackoverflow.com/q/65334215/99834
         return request.param  # type: ignore
@@ -345,11 +345,17 @@ def test_podman() -> None:
     )
 
 
+def test_docker() -> None:
+    assert (
+        run_command(
+            ["molecule", "test", "--scenario-name", "docker"],
+        ).returncode
+        == 0
+    )
+
+
 def test_smoke() -> None:
     """Execute smoke-test scenario that should spot potentially breaking changes."""
     assert (
         run_command(
             ["molecule", "test", "--scenario-name", "smoke"],
-        ).returncode
-        == 0
-    )
