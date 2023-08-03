@@ -24,6 +24,7 @@ import logging
 import os
 import warnings
 from collections.abc import MutableMapping
+from pathlib import Path
 from uuid import uuid4
 
 from ansible_compat.ports import cache, cached_property
@@ -114,6 +115,7 @@ class Config(metaclass=NewInitCaller):
         self._run_uuid = str(uuid4())
         self.project_directory = os.getenv("MOLECULE_PROJECT_DIRECTORY", os.getcwd())
         self.runtime = app.runtime
+        self.scenario_path = Path(molecule_file).parent
 
     def after_init(self):
         self.config = self._reget_config()
