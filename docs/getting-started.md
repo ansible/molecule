@@ -1,21 +1,45 @@
 # Getting Started Guide
 
 The following guide will step through an example of developing and
-testing a new Ansible role. After reading this guide, you should be
+testing a new Ansible collection. After reading this guide, you should be
 familiar with the basics of how to use Molecule and what it can offer.
 
 !!! note
 
-    In order to complete this guide by hand, you will need to additionally
+    To complete this guide by hand, you will need to additionally
     install [Docker](https://docs.docker.com/). Molecule requires an
     external Python dependency for the Docker driver which is provided when
     installing Molecule using `pip install 'molecule-plugins[docker]'`.
+
+## Create a collection and test with molecule
+
+One of the recommended ways to create a collection is to place it
+under the `collections/ansible_collections` directory.
+
+To create a collection, use the `ansible-galaxy` tool.
+`ansible-galaxy collection init <namespace>.<collection_name>`
+Example: `ansible-galaxy collection init foo.bar`
+
+After a collection is created, it would be under
+`collections/ansible_collections/<namespace>/<collection_name>`
+See [Collection structure](https://docs.ansible.com/ansible/5/dev_guide/developing_collections_structure.html#collection-structure) for details on the collection directory structure.
+
+Inside the collection, create a directory named `extensions`
+and initialize `molecule scenario` under this directory using
+the command: `molecule init scenario <scenario_name>`
+`scenario_name` is optional, if not provided, will create
+a `default` scenario.
+
+Also, create an ansible configuration `ansible.cfg` file under the `extensions` directory.
+Add the `collections_path` to this configuration file.
+
+![Collection Structure and ansible config file collections path](images/collection_structure_and_ansible_cfg.png)
 
 ## Molecule Scenarios
 
 You will notice one new folder which is the `molecule` folder.
 
-In this folder there is a single `root_scenario` called `default`.
+In this folder, there is a single `root_scenario` called `default`.
 
 Scenarios are the starting point for a lot of powerful functionality
 that Molecule offers. For now, we can think of a scenario as a test
@@ -29,23 +53,19 @@ directories:
 
 ```bash
 $ ls
-INSTALL.rst  molecule.yml  converge.yml  verify.yml
+create.yml  destroy.yml  molecule.yml  converge.yml  verify.yml
 ```
 
-- `INSTALL.rst` contains instructions on what additional software or
-  setup steps you will need to take in order to allow Molecule to
-  successfully interface with the driver.
-- `molecule.yml` is the central configuration entrypoint for Molecule.
+- `create.yml` is a playbook file used for creating the instances
+  and storing data in instance-config
+- `destroy.yml` has the Ansible code for destroying the instances
+  and removing them from instance-config
+- `molecule.yml` is the central configuration entry point for Molecule.
   With this file, you can configure each tool that Molecule will
   employ when testing your role.
 - `converge.yml` is the playbook file that contains the call for your
   role. Molecule will invoke this playbook with `ansible-playbook` and
   run it against an instance created by the driver.
-- `verify.yml` is the Ansible file used for testing as Ansible is the
-  default [verifier](configuration.md#verifier). This allows you to
-  write specific tests against the state of the container after your
-  role has finished executing. Other verifier tools are available
-  Note that [testinfra](https://testinfra.readthedocs.io/en/latest/) was the default verifier prior to molecule version 3.
 
 !!! note
 
@@ -166,6 +186,23 @@ The full lifecycle sequence can be invoked with:
 
 ```bash
 $ molecule test
+```
+
+```
+Molecule full lifecycle sequence
+└── default
+    ├── dependency
+    ├── cleanup
+    ├── destroy
+    ├── syntax
+    ├── create
+    ├── prepare
+    ├── converge
+    ├── idempotence
+    ├── side_effect
+    ├── verify
+    ├── cleanup
+    └── destroy
 ```
 
 !!! note
