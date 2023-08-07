@@ -9,3 +9,4 @@ packaging
 pluggy >= 0.7.1, < 2.0
 PyYAML >= 5.1
 rich >= 9.5.1
+wcmatch>=8.1.2 # MIT
