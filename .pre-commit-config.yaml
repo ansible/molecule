@@ -72,6 +72,7 @@ repos:
           - types-filelock
           - types-jsonschema
           - types-setuptools
+          - wcmatch
   - repo: https://github.com/pycqa/pylint
     rev: v3.0.0a6
     hooks:
@@ -88,3 +89,4 @@ repos:
           - pexpect
           - pytest-mock
           - pytest-testinfra
+          - wcmatch

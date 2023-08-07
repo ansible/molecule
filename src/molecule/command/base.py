@@ -25,12 +25,12 @@ import logging
 import os
 import shutil
 from typing import Any, Callable
-import wcmatch.pathlib
-import wcmatch.wcmatch
-from wcmatch import glob
 
 import click
+import wcmatch.pathlib
+import wcmatch.wcmatch
 from click_help_colors import HelpColorsCommand, HelpColorsGroup
+from wcmatch import glob
 
 import molecule.scenarios
 from molecule import config, logger, text, util
