@@ -64,7 +64,10 @@ def list(ctx, scenario_name, format):  # pragma: no cover
     command_args = {"subcommand": subcommand, "format": format}
 
     statuses = []
-    s = scenarios.Scenarios(base.get_configs(args, command_args), scenario_name)
+    s = scenarios.Scenarios(
+        base.get_configs(args, command_args, glob_str="**/molecule/*/molecule.yml"),
+        scenario_name,
+    )
     for scenario in s:
         statuses.extend(base.execute_subcommand(scenario.config, subcommand))
 

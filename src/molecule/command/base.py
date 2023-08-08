@@ -21,14 +21,16 @@
 
 import abc
 import collections
-import glob
 import logging
 import os
 import shutil
 from typing import Any, Callable
 
 import click
+import wcmatch.pathlib
+import wcmatch.wcmatch
 from click_help_colors import HelpColorsCommand, HelpColorsGroup
+from wcmatch import glob
 
 import molecule.scenarios
 from molecule import config, logger, text, util
@@ -189,7 +191,12 @@ def get_configs(args, command_args, ansible_args=(), glob_str=MOLECULE_GLOB):
             command_args=command_args,
             ansible_args=ansible_args,
         )
-        for c in glob.glob(glob_str)
+        for c in glob.glob(
+            glob_str,
+            flags=wcmatch.pathlib.GLOBSTAR
+            | wcmatch.pathlib.BRACE
+            | wcmatch.pathlib.DOTGLOB,
+        )
     ]
     _verify_configs(configs, glob_str)
 
