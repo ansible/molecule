@@ -63,3 +63,51 @@ Matrix will display the subcommand's ordered list of actions, which can
 be changed in
 [scenario](configuration.md#scenario)
 configuration.
+
+## Test sequence commands
+
+We can tell Molecule to create an instance with:
+
+```bash
+molecule create
+```
+
+We can verify that Molecule has created the instance and they're up and
+running with:
+
+```bash
+molecule list
+```
+
+Now, let's add a task to our role under `tasks/main.yml` file like so:
+
+```yaml
+- name: Molecule Hello World!
+  ansible.builtin.debug:
+    msg: Hello, World!
+```
+
+We can then tell Molecule to test our role against our instance with:
+
+```bash
+molecule converge
+```
+
+If we want to manually inspect the instance afterward, we can run:
+
+```bash
+molecule login
+```
+
+We now have a free hand to experiment with the instance state.
+
+Finally, we can exit the instance and destroy it with:
+
+```bash
+molecule destroy
+```
+
+!!! note
+
+    If Molecule reports any errors, it can be useful to pass the `--debug`
+    option to get more verbose output.

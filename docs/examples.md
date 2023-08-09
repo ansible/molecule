@@ -275,8 +275,8 @@ platforms:
 
 ## Monolith Repo
 
-Molecule is generally used to test roles in isolation. However, it can
-also test roles from a monolith repo.
+Molecule is generally used to test playbooks or roles in isolation.
+However, it can also test them from a monolith repo.
 
 ```bash
 $ tree monolith-repo -L 3 --prune
@@ -296,7 +296,7 @@ monolith-repo
 ```
 
 The role initialized with Molecule (baz in this case) would simply
-reference the dependent roles via it's `converge.yml` or meta
+reference the dependent roles via its `converge.yml` or meta
 dependencies.
 
 Molecule can test complex scenarios leveraging this technique.
