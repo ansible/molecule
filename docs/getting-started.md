@@ -1,51 +1,39 @@
-# Getting Started Guide
+# Getting Started With Molecule
 
-The following guide will step through an example of developing and
-testing a new Ansible role. After reading this guide, you should be
-familiar with the basics of how to use Molecule and what it can offer.
+Molecule is a testing framework built specifically to test Ansible roles and playbooks within a collection.
 
-!!! note
+Molecule aims to test your Ansible roles and playbooks in isolation
+as it launches an environment to run your playbook and then performs tests over it.
+You can then run your playbook over different instance types and versions to verify if it still runs.
 
-    In order to complete this guide by hand, you will need to additionally
-    install [Docker](https://docs.docker.com/). Molecule requires an
-    external Python dependency for the Docker driver which is provided when
-    installing Molecule using `pip install 'molecule-plugins[docker]'`.
+Before moving to test the playbooks or roles, the sections below provide information related to Scenarios.
 
 ## Molecule Scenarios
 
-You will notice one new folder which is the `molecule` folder.
-
-In this folder there is a single `root_scenario` called `default`.
-
-Scenarios are the starting point for a lot of powerful functionality
-that Molecule offers. For now, we can think of a scenario as a test
-suite for your newly created role. You can have as many scenarios as you
-like and Molecule will run one after the other.
+Scenarios are the starting point for a lot of powerful functionality that Molecule offers.
+For now, we can think of a scenario as a test suite for roles or playbooks within a collection.
+You can have as many scenarios as you like and Molecule will run one after the other.
 
 ## The Scenario Layout
 
-Within the `molecule/default` folder, we find a number of files and
+Within the `molecule/default` folder, we find several files and
 directories:
 
 ```bash
 $ ls
-INSTALL.rst  molecule.yml  converge.yml  verify.yml
+create.yml  destroy.yml  molecule.yml  converge.yml
 ```
 
-- `INSTALL.rst` contains instructions on what additional software or
-  setup steps you will need to take in order to allow Molecule to
-  successfully interface with the driver.
-- `molecule.yml` is the central configuration entrypoint for Molecule.
+- `create.yml` is a playbook file used for creating the instances
+  and storing data in instance-config
+- `destroy.yml` has the Ansible code for destroying the instances
+  and removing them from instance-config
+- `molecule.yml` is the central configuration entry point for Molecule per scenario.
   With this file, you can configure each tool that Molecule will
   employ when testing your role.
 - `converge.yml` is the playbook file that contains the call for your
   role. Molecule will invoke this playbook with `ansible-playbook` and
   run it against an instance created by the driver.
-- `verify.yml` is the Ansible file used for testing as Ansible is the
-  default [verifier](configuration.md#verifier). This allows you to
-  write specific tests against the state of the container after your
-  role has finished executing. Other verifier tools are available
-  Note that [testinfra](https://testinfra.readthedocs.io/en/latest/) was the default verifier prior to molecule version 3.
 
 !!! note
 
@@ -72,7 +60,7 @@ INSTALL.rst  molecule.yml  converge.yml  verify.yml
 ## Inspecting the `molecule.yml`
 
 The `molecule.yml` is for configuring Molecule. It is a
-[YAML](https://yaml.org/) file whose keys represent the high level
+[YAML](https://yaml.org/) file whose keys represent the high-level
 components that Molecule provides. These are:
 
 - The [dependency](configuration.md#dependency) manager. Molecule
@@ -97,75 +85,98 @@ components that Molecule provides. These are:
   checking tests (such as deployment smoke tests) on the target
   instance.
 
-## Run test sequence commands
+The following guide will step through an example of developing and
+testing a new Ansible collection. After reading this guide, you should be
+familiar with the basics of how to use Molecule and what it can offer.
 
-Let's create the first Molecule managed instance with the Docker
-driver.
+## Create a collection
 
-First, ensure that [Docker](https://docs.docker.com/) is running with
-the typical sanity check:
+One of the recommended ways to create a collection is to place it
+under the `collections/ansible_collections` directory.
 
-```bash
-$ docker run hello-world
+To create a collection, use the `ansible-galaxy` tool.
+`ansible-galaxy collection init <namespace>.<collection_name>`
+Example: `ansible-galaxy collection init foo.bar`
+
+After a collection is created, it would be under
+`collections/ansible_collections/<namespace>/<collection_name>`
+See [Collection structure](https://docs.ansible.com/ansible/5/dev_guide/developing_collections_structure.html#collection-structure) for details on the collection directory structure.
+
+## Create a role inside the collection
+
+To initialize a role inside a collection we can again use `ansible-galaxy` tool under the `roles` directory.
+`ansible-galaxy role init <namespace>.<collection_name>`
+Example: `ansible-galaxy collection init my_role`
+
+Once the role is created, add a task under `my_role/tasks/main.yml`.
+
 ```
-
-Now, we can tell Molecule to create an instance with:
-
-```bash
-$ molecule create
-```
-
-We can verify that Molecule has created the instance and they're up and
-running with:
-
-```bash
-$ molecule list
-```
-
-Now, let's add a task to our `tasks/main.yml` like so:
-
-```yaml
-- name: Molecule Hello World!
+---
+- name: Task is running from within the role
   ansible.builtin.debug:
-    msg: Hello, World!
+    msg: "This is a task from my_role."
 ```
 
-We can then tell Molecule to test our role against our instance with:
+## Create a playbook inside the collection
 
-```bash
-$ molecule converge
+Under the collection, we can create a directory named `playbooks`
+and create a new playbook file under it.
+Example: `my_playbook.yml`
+
+```
+---
+- name: Test new role from within this playbook
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Testing role
+      ansible.builtin.include_role:
+        name: foo.bar.my_role
+        tasks_from: main.yml
+
 ```
 
-If we want to manually inspect the instance afterwards, we can run:
+## Adding Molecule to the Collection
 
-```bash
-$ molecule login
-```
+Inside the collection, create a directory named `extensions`
+and initialize `molecule scenario` under this directory using
+the command: `molecule init scenario <scenario_name>`
+`scenario_name` is optional, if not provided, will create
+a `default` scenario.
 
-We now have a free hand to experiment with the instance state.
+Also, create an ansible configuration `ansible.cfg` file under the `extensions` directory.
+Add the `collections_path` to this configuration file.
 
-Finally, we can exit the instance and destroy it with:
-
-```bash
-$ molecule destroy
-```
-
-!!! note
-
-    If Molecule reports any errors, it can be useful to pass the `--debug`
-    option to get more verbose output.
+![Collection Structure and ansible config file collections path](images/collection_structure_and_ansible_cfg.png)
 
 ## Run a full test sequence
 
 Molecule provides commands for manually managing the lifecycle of the
 instance, scenario, development and testing tools. However, we can also
 tell Molecule to manage this automatically within a
-`root_scenario` sequence.
+scenario sequence.
 
 The full lifecycle sequence can be invoked with:
 
 ```bash
-$ molecule test
+molecule test
+```
+
+```
+Molecule full lifecycle sequence
+└── default
+    ├── dependency
+    ├── cleanup
+    ├── destroy
+    ├── syntax
+    ├── create
+    ├── prepare
+    ├── converge
+    ├── idempotence
+    ├── side_effect
+    ├── verify
+    ├── cleanup
+    └── destroy
 ```
 
 !!! note
@@ -180,3 +191,44 @@ $ molecule test
     only. It is useful if you want to test one platform docker image.
 
 [galaxy development guide]: https://docs.ansible.com/ansible/latest/galaxy/dev_guide.html
+
+## Test the collection playbook or role
+
+So you now have an isolated test environment, and can also use it for live development, by running `molecule converge`.
+It will run through the same steps as above but will stop after the converge action.
+Then you can make changes to your collection or the Converge play, and then run molecule converge again (and again) until you're done with your development work.
+
+One of the default files created as part of the initialization is the `converge.yml` file.
+This file is a playbook created to run your role from start to finish.
+This can be modified if needed but is a good place to start if you have never used Molecule before.
+
+To test the playbook from a collection,
+let's add a task to our role under `tasks/main.yml` file like so:
+
+```
+---
+- name: Include a playbook from a collection
+  ansible.builtin.import_playbook: foo.bar.my_playbook
+
+```
+
+Similarly, if we want to test only the role instead of a playbook in `converge.yml` file:
+
+```
+---
+- name: Include a role from a collection
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Testing role
+      ansible.builtin.include_role:
+        name: foo.bar.my_role
+        tasks_from: main.yml
+
+```
+
+```bash
+molecule converge
+```
+
+The above command will run this specific playbook for us.
