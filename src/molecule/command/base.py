@@ -21,9 +21,11 @@
 
 import abc
 import collections
+import contextlib
 import logging
 import os
 import shutil
+import subprocess
 from typing import Any, Callable
 
 import click
@@ -184,6 +186,31 @@ def get_configs(args, command_args, ansible_args=(), glob_str=MOLECULE_GLOB):
      `ansible-playbook` command.
     :return: list
     """
+    scenario_paths = glob.glob(
+        glob_str,
+        flags=wcmatch.pathlib.GLOBSTAR
+        | wcmatch.pathlib.BRACE
+        | wcmatch.pathlib.DOTGLOB,
+    )
+    command = ["git", "check-ignore", *scenario_paths]
+
+    with contextlib.suppress(subprocess.CalledProcessError, FileNotFoundError):
+        proc = subprocess.run(
+            args=command,
+            capture_output=True,
+            check=True,
+            text=True,
+            shell=False,
+        )
+
+    try:
+        ignored = proc.stdout.splitlines()
+        paths = [
+            candidate for candidate in scenario_paths if str(candidate) not in ignored
+        ]
+    except NameError:
+        paths = scenario_paths
+
     configs = [
         config.Config(
             molecule_file=util.abs_path(c),
@@ -191,12 +218,7 @@ def get_configs(args, command_args, ansible_args=(), glob_str=MOLECULE_GLOB):
             command_args=command_args,
             ansible_args=ansible_args,
         )
-        for c in glob.glob(
-            glob_str,
-            flags=wcmatch.pathlib.GLOBSTAR
-            | wcmatch.pathlib.BRACE
-            | wcmatch.pathlib.DOTGLOB,
-        )
+        for c in paths
     ]
     _verify_configs(configs, glob_str)
 
