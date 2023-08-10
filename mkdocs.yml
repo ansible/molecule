@@ -68,13 +68,11 @@ nav:
   - faq.md
   - contributing.md
   - Future documentation (WIP):
-      - Introduction:
-          - working/introduction/about.md
+      - Introduction: working/introduction/introduction.md
       - Installation:
           - working/installation/install.md
           - working/installation/upgrade.md
-      - Getting Started:
-          - working/getting_started/quick_start.md
+      - Getting Started: working/getting_started/getting_started.md
       - User Guide:
           - working/user_guide/understanding.md
           - working/user_guide/creating_testing_collection.md
@@ -91,8 +89,7 @@ nav:
           - working/examples/example_1.md
           - working/examples/example_2.md
           - working/examples/example_3.md
-      - Frequently asked questions:
-          - working/faq/faq.md
+      - Frequently asked questions: working/faq/faq.md
       - Contributor Guide:
           - working/contributor_guide/code_of_conduct.md
           - working/contributor_guide/developer_contact.md
