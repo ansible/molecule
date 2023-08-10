@@ -340,7 +340,7 @@ def test_sample_collection() -> None:
 def test_sample_collection_venv_with_gitignore() -> None:
     op = subprocess.run(
         "python -m venv venv \
-        && . venv/bin/activate \
+        && . venv/bin/activate  \
         && pip install ../../../../../ \
         && molecule list \
         && deactivate \
