@@ -67,6 +67,37 @@ nav:
   - examples.md
   - faq.md
   - contributing.md
+  - Future documentation (WIP):
+      - Introduction:
+          - working/introduction/about.md
+      - Installation:
+          - working/installation/install.md
+          - working/installation/upgrade.md
+      - Getting Started:
+          - working/getting_started/quick_start.md
+      - User Guide:
+          - working/user_guide/understanding.md
+          - working/user_guide/creating_testing_collection.md
+          - working/user_guide/testing_existing_collection.md
+          - working/user_guide/testing_existing_roles.md
+          - working/user_guid/ci_integration.md
+          - working/user_guid/using_tox-ansible.md
+      - References:
+          - working/references/cli.md
+          - working/references/configuration.md
+          - working/references/porting_change_log.md
+          - working/references/road_map.md
+      - Examples:
+          - working/examples/example_1.md
+          - working/examples/example_2.md
+          - working/examples/example_3.md
+      - Frequently asked questions:
+          - working/faq/faq.md
+      - Contributor Guide:
+          - working/contributor_guide/code_of_conduct.md
+          - working/contributor_guide/developer_contact.md
+          - working/contributor_guide/environment_setup.md
+          - working/contributor_guide/contribution_requirements.md
 
 plugins:
   - autorefs
