@@ -20,6 +20,7 @@
 from __future__ import annotations
 
 import os
+import subprocess
 
 import pytest
 from pytest import FixtureRequest
@@ -334,6 +335,39 @@ def test_sample_collection() -> None:
         ).returncode
         == 0
     )
+
+
+def test_sample_collection_venv_with_gitignore() -> None:
+    op = subprocess.run(
+        "python -m venv venv \
+        && . venv/bin/activate \
+        && pip install ../../../../../ \
+        && molecule list \
+        && deactivate \
+        && rm -rf source venv",
+        shell=True,
+        cwd="src/molecule/test/resources/sample-collection-venv-with-gitignore",
+        check=False,
+    )
+    assert op.returncode == 0
+
+
+def test_sample_collection_venv_without_gitignore() -> None:
+    with pytest.raises(subprocess.CalledProcessError) as e:
+        subprocess.run(
+            "python -m venv venv \
+            && source venv/bin/activate \
+            && pip install ../../../../../ \
+            && molecule list \
+            && deactivate \
+            && rm -rf source venv",
+            shell=True,
+            cwd="src/molecule/test/resources/sample-collection-venv-without-gitignore",
+            check=True,
+        )
+        assert e.value.returncode == 1
+        assert "The scenario config file" in e.value.stderr
+        assert "has been modified since the scenario was created" in e.value.stderr
 
 
 def test_podman() -> None:

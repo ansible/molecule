@@ -1,0 +1,7 @@
+---
+- name: Converge
+  hosts: localhost
+  tasks:
+    - name: "Include sample role from current collection"
+      ansible.builtin.include_role:
+        name: acme.goodies.get_rich
