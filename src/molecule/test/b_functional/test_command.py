@@ -346,7 +346,8 @@ def test_sample_collection() -> None:
     ],
 )
 def test_with_and_without_gitignore(
-    monkeypatch: pytest.MonkeyPatch, scenario_name: str,
+    monkeypatch: pytest.MonkeyPatch,
+    scenario_name: str,
 ) -> None:
     if scenario_name == "test_wo_gitignore":
 
@@ -354,7 +355,8 @@ def test_with_and_without_gitignore(
             return scenario_paths
 
         monkeypatch.setattr(
-            "molecule.command.base.filter_ignored_scenarios", mock_return,
+            "molecule.command.base.filter_ignored_scenarios",
+            mock_return,
         )
 
     resource_path = pathlib.Path(__file__).parent.parent / "resources"
@@ -362,7 +364,8 @@ def test_with_and_without_gitignore(
     monkeypatch.chdir(resource_path)
 
     pathlib.Path(resource_path / f".extensions/molecule/{scenario_name}").mkdir(
-        parents=True, exist_ok=True,
+        parents=True,
+        exist_ok=True,
     )
 
     pathlib.Path(f".extensions/molecule/{scenario_name}/molecule.yml").touch()
