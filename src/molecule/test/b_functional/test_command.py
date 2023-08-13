@@ -20,10 +20,12 @@
 from __future__ import annotations
 
 import os
+import pathlib
 
 import pytest
 from pytest import FixtureRequest
 
+from molecule.command import base
 from molecule.test.b_functional.conftest import (
     idempotence,
     init_scenario,
@@ -334,6 +336,47 @@ def test_sample_collection() -> None:
         ).returncode
         == 0
     )
+
+
+@pytest.mark.parametrize(
+    ("scenario_name"),
+    [
+        ("test_w_gitignore"),
+        ("test_wo_gitignore"),
+    ],
+)
+def test_with_and_without_gitignore(
+    monkeypatch: pytest.MonkeyPatch,
+    scenario_name: str,
+) -> None:
+    if scenario_name == "test_wo_gitignore":
+
+        def mock_return(scenario_paths) -> list[str]:
+            return scenario_paths
+
+        monkeypatch.setattr(
+            "molecule.command.base.filter_ignored_scenarios",
+            mock_return,
+        )
+
+    resource_path = pathlib.Path(__file__).parent.parent / "resources"
+
+    monkeypatch.chdir(resource_path)
+
+    pathlib.Path(resource_path / f".extensions/molecule/{scenario_name}").mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
+    pathlib.Path(f".extensions/molecule/{scenario_name}/molecule.yml").touch()
+
+    op = base.get_configs({}, {}, glob_str="**/molecule/*/molecule.yml")
+
+    names = [config.scenario.name for config in op]
+    if scenario_name == "test_w_gitignore":
+        assert scenario_name not in names
+    elif scenario_name == "test_wo_gitignore":
+        assert scenario_name in names
 
 
 def test_podman() -> None:

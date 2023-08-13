@@ -21,9 +21,11 @@
 
 import abc
 import collections
+import contextlib
 import logging
 import os
 import shutil
+import subprocess
 from typing import Any, Callable
 
 import click
@@ -173,6 +175,29 @@ def execute_scenario(scenario):
             scenario._remove_scenario_state_directory()
 
 
+def filter_ignored_scenarios(scenario_paths) -> list[str]:
+    command = ["git", "check-ignore", *scenario_paths]
+
+    with contextlib.suppress(subprocess.CalledProcessError, FileNotFoundError):
+        proc = subprocess.run(
+            args=command,
+            capture_output=True,
+            check=True,
+            text=True,
+            shell=False,
+        )
+
+    try:
+        ignored = proc.stdout.splitlines()
+        paths = [
+            candidate for candidate in scenario_paths if str(candidate) not in ignored
+        ]
+    except NameError:
+        paths = scenario_paths
+
+    return paths
+
+
 def get_configs(args, command_args, ansible_args=(), glob_str=MOLECULE_GLOB):
     """Glob the current directory for Molecule config files, instantiate config \
     objects, and returns a list.
@@ -184,6 +209,14 @@ def get_configs(args, command_args, ansible_args=(), glob_str=MOLECULE_GLOB):
      `ansible-playbook` command.
     :return: list
     """
+    scenario_paths = glob.glob(
+        glob_str,
+        flags=wcmatch.pathlib.GLOBSTAR
+        | wcmatch.pathlib.BRACE
+        | wcmatch.pathlib.DOTGLOB,
+    )
+
+    scenario_paths = filter_ignored_scenarios(scenario_paths)
     configs = [
         config.Config(
             molecule_file=util.abs_path(c),
@@ -191,12 +224,7 @@ def get_configs(args, command_args, ansible_args=(), glob_str=MOLECULE_GLOB):
             command_args=command_args,
             ansible_args=ansible_args,
         )
-        for c in glob.glob(
-            glob_str,
-            flags=wcmatch.pathlib.GLOBSTAR
-            | wcmatch.pathlib.BRACE
-            | wcmatch.pathlib.DOTGLOB,
-        )
+        for c in scenario_paths
     ]
     _verify_configs(configs, glob_str)
 

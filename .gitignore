@@ -26,4 +26,5 @@ tools/test-schema/node_modules
 site
 .DS_Store
 src/molecule/_version.py
-venv
+.vscode
+src/molecule/test/resources/.extensions/
