@@ -175,23 +175,7 @@ def execute_scenario(scenario):
             scenario._remove_scenario_state_directory()
 
 
-def get_configs(args, command_args, ansible_args=(), glob_str=MOLECULE_GLOB):
-    """Glob the current directory for Molecule config files, instantiate config \
-    objects, and returns a list.
-
-    :param args: A dict of options, arguments and commands from the CLI.
-    :param command_args: A dict of options passed to the subcommand from
-     the CLI.
-    :param ansible_args: An optional tuple of arguments provided to the
-     `ansible-playbook` command.
-    :return: list
-    """
-    scenario_paths = glob.glob(
-        glob_str,
-        flags=wcmatch.pathlib.GLOBSTAR
-        | wcmatch.pathlib.BRACE
-        | wcmatch.pathlib.DOTGLOB,
-    )
+def filter_ignored_scenarios(scenario_paths) -> list[str]:
     command = ["git", "check-ignore", *scenario_paths]
 
     with contextlib.suppress(subprocess.CalledProcessError, FileNotFoundError):
@@ -211,6 +195,28 @@ def get_configs(args, command_args, ansible_args=(), glob_str=MOLECULE_GLOB):
     except NameError:
         paths = scenario_paths
 
+    return paths
+
+
+def get_configs(args, command_args, ansible_args=(), glob_str=MOLECULE_GLOB):
+    """Glob the current directory for Molecule config files, instantiate config \
+    objects, and returns a list.
+
+    :param args: A dict of options, arguments and commands from the CLI.
+    :param command_args: A dict of options passed to the subcommand from
+     the CLI.
+    :param ansible_args: An optional tuple of arguments provided to the
+     `ansible-playbook` command.
+    :return: list
+    """
+    scenario_paths = glob.glob(
+        glob_str,
+        flags=wcmatch.pathlib.GLOBSTAR
+        | wcmatch.pathlib.BRACE
+        | wcmatch.pathlib.DOTGLOB,
+    )
+
+    scenario_paths = filter_ignored_scenarios(scenario_paths)
     configs = [
         config.Config(
             molecule_file=util.abs_path(c),
@@ -218,7 +224,7 @@ def get_configs(args, command_args, ansible_args=(), glob_str=MOLECULE_GLOB):
             command_args=command_args,
             ansible_args=ansible_args,
         )
-        for c in paths
+        for c in scenario_paths
     ]
     _verify_configs(configs, glob_str)
 
