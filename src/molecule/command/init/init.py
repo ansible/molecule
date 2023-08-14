@@ -29,7 +29,6 @@ LOG = logging.getLogger(__name__)
 
 @base.click_group_ex()  # type: ignore
 def init():  # pragma: no cover
-    """Initialize a new role or scenario."""
-
+    """Initialize a new scenario."""
 
 init.add_command(scenario.scenario)
