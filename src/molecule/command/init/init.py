@@ -31,4 +31,5 @@ LOG = logging.getLogger(__name__)
 def init():  # pragma: no cover
     """Initialize a new scenario."""
 
+
 init.add_command(scenario.scenario)
