@@ -274,6 +274,18 @@ def test_execute_bakes(patched_run_command, _patched_testinfra_get_tests, _insta
     assert patched_run_command.call_count == 1
 
 
+@pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
+def test_execute_bakes_env(
+    patched_run_command,
+    _patched_testinfra_get_tests,
+    inventory_directory,
+    _instance,
+):
+    _instance.execute()
+
+    assert patched_run_command.call_args[1]["env"]["FOO"] == "bar"
+
+
 def test_testinfra_executes_catches_and_exits_return_code(
     patched_run_command,
     _patched_testinfra_get_tests,
