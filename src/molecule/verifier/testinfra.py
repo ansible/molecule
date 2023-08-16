@@ -180,7 +180,12 @@ class Testinfra(Verifier):
         msg = f"Executing Testinfra tests found in {self.directory}/..."
         LOG.info(msg)
 
-        result = util.run_command(self._testinfra_command, debug=self._config.debug)
+        result = util.run_command(
+            self._testinfra_command,
+            env=self.env,
+            debug=self._config.debug,
+            cwd=self._config.scenario.directory,
+        )
         if result.returncode == 0:
             msg = "Verifier completed successfully."
             LOG.info(msg)
