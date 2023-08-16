@@ -276,7 +276,10 @@ def test_execute_bakes(patched_run_command, _patched_testinfra_get_tests, _insta
 
 @pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
 def test_execute_bakes_env(
-    patched_run_command, _patched_testinfra_get_tests, inventory_directory, _instance,
+    patched_run_command,
+    _patched_testinfra_get_tests,
+    inventory_directory,
+    _instance,
 ):
     _instance.execute()
 
