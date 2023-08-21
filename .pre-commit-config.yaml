@@ -4,7 +4,7 @@ default_language_version:
 repos:
   - repo: https://github.com/pre-commit/mirrors-prettier
     # keep it before yamllint
-    rev: "v3.0.1"
+    rev: "v3.0.2"
     hooks:
       - id: prettier
         # Temporary excludes so we can gradually normalize the formatting
@@ -44,12 +44,12 @@ repos:
         types: [file, yaml]
         entry: yamllint --strict
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.0.284"
+    rev: "v0.0.285"
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.5.0
+    rev: v1.5.1
     hooks:
       - id: mypy
         # empty args needed in order to match mypy cli behavior
@@ -74,7 +74,7 @@ repos:
           - types-setuptools
           - wcmatch
   - repo: https://github.com/pycqa/pylint
-    rev: v3.0.0a6
+    rev: v3.0.0a7
     hooks:
       - id: pylint
         args:
