@@ -4,61 +4,63 @@ The following guide will step through an example of developing and
 testing a new Ansible collection. After reading this guide, you should be
 familiar with the basics of how to use Molecule and what it can offer.
 
-Ready to start using Molecule? Complete the following steps to get up and running:
+1.  Create a collection
 
-1. Create a collection
+    !!! note
 
-   !!! note
+        One of the recommended ways to create a collection is to place it
+        under the `collections/ansible_collections` directory.
 
-   One of the recommended ways to create a collection is to place it
-   under the `collections/ansible_collections` directory.
+    ```bash
+      ansible-galaxy collection init foo.bar
+    ```
 
-   ```bash
-   ansible-galaxy collection init foo.bar
-   ```
+- cd to the `roles` directory in your new collection.
 
-2. cd to the roles directory in your new collection.
-3. Initialize a new role for this collection.
+- Initialize a new role for this collection.
 
-   ```bash
-    ansible-galaxy role init my_role
-   ```
+      ```bash
+        ansible-galaxy role init my_role
+      ```
 
-4. Add a task under `my_role/tasks/main.yml`.
+- Add a task under `my_role/tasks/main.yml`.
 
-   ```yml
-   ---
-   - name: Task is running from within the role
-     ansible.builtin.debug:
-       msg: "This is a task from my_role."
-   ```
+      ```yml
+      ---
+      - name: Task is running from within the role
+        ansible.builtin.debug:
+          msg: "This is a task from my_role."
+      ```
 
-5. Create a directory named `playbooks`.
-6. Create a new playbook in this directory called `my_playbook.yml`
+- Create a directory named `playbooks`.
 
-   ```yml
-   ---
-   - name: Test new role from within this playbook
-     hosts: localhost
-     gather_facts: false
-     tasks:
-       - name: Testing role
-         ansible.builtin.include_role:
-           name: foo.bar.my_role
-           tasks_from: main.yml
-   ```
+- Create a new playbook in this directory called `my_playbook.yml`
 
-7. Adding Molecule to the Collection
+      ```yml
+      ---
+      - name: Test new role from within this playbook
+        hosts: localhost
+        gather_facts: false
+        tasks:
+          - name: Testing role
+            ansible.builtin.include_role:
+            name: foo.bar.my_role
+            tasks_from: main.yml
+      ```
 
-   I. Create a new directory in your collection called `extensions`.
-   II. Initialize a new default molecule scenario in this directory.
+- Adding Molecule to the Collection
 
-   ```bash
-     molecule init scenario
-   ```
+      1. Create a new directory in your collection called `extensions`.
 
-   III. Create an ansible configuration `ansible.cfg` file under this directory.
-   IV. Add the `collections_path` to this configuration file.
+      2. Initialize a new default molecule scenario in this directory.
+
+          ```bash
+             molecule init scenario
+          ```
+
+      1. Create an ansible configuration `ansible.cfg` file under this directory.
+
+      2. Add the `collections_path` to this configuration file.
 
 ![Collection Structure and ansible config file collections path](images/collection_structure_and_ansible_cfg.png)
 
