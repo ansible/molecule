@@ -834,7 +834,6 @@ class Ansible(base.Base):
         self._remove_vars()
         self._link_or_update_vars()
         self._add_or_update_vars()
-            
 
     def abs_path(self, path: str) -> str | None:
         return util.abs_path(os.path.join(self._config.scenario.directory, path))
