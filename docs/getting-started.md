@@ -6,10 +6,7 @@ familiar with the basics of how to use Molecule and what it can offer.
 
 1.  Create a collection
 
-    !!! note
-
-        One of the recommended ways to create a collection is to place it
-        under the `collections/ansible_collections` directory.
+    One of the recommended ways to create a collection is to place it under the `collections/ansible_collections` directory.
 
     ```bash
       ansible-galaxy collection init foo.bar
@@ -32,9 +29,9 @@ familiar with the basics of how to use Molecule and what it can offer.
           msg: "This is a task from my_role."
       ```
 
-- Create a directory named `playbooks`.
+- At the root of your new collection, create a directory named `playbooks`.
 
-- Create a new playbook in this directory called `my_playbook.yml`
+- cd to the `playbooks` directory and create a new playbook called `my_playbook.yml`
 
       ```yml
       ---
@@ -52,15 +49,11 @@ familiar with the basics of how to use Molecule and what it can offer.
 
       1. Create a new directory in your collection called `extensions`.
 
-      2. Initialize a new default molecule scenario in this directory.
+      2. cd to the `extensions` directory and initialize a new default molecule scenario.
 
           ```bash
              molecule init scenario
           ```
-
-      1. Create an ansible configuration `ansible.cfg` file under this directory.
-
-      2. Add the `collections_path` to this configuration file.
 
 ![Collection Structure and ansible config file collections path](images/collection_structure_and_ansible_cfg.png)
 
@@ -150,6 +143,8 @@ instance, scenario, development and testing tools. However, we can also
 tell Molecule to manage this automatically within a
 scenario sequence.
 
+cd to the `extensions` directory.
+
 The full lifecycle sequence can be invoked with:
 
 ```bash
@@ -218,8 +213,10 @@ Similarly, if we want to test only the role instead of a playbook in `converge.y
         tasks_from: main.yml
 ```
 
+cd to the `extensions` directory.
+
 ```bash
 molecule converge
 ```
 
-The above command runs the same steps as `molecule test`, but will stop after the `converge` action.
+The above command runs the same steps as `molecule test` for the `default` scenario, but will stop after the `converge` action.
