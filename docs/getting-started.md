@@ -1,10 +1,61 @@
 # Getting Started With Molecule
 
-Molecule is a testing framework built specifically to test Ansible roles and playbooks within a collection.
+The following guide will step through an example of developing and
+testing a new Ansible collection. After reading this guide, you should be
+familiar with the basics of how to use Molecule and what it can offer.
 
-Molecule aims to test your Ansible roles and playbooks in isolation
-as it launches an environment to run your playbook and then performs tests over it.
-You can then run your playbook over different instance types and versions to verify if it still runs.
+1.  Create a collection
+
+    One of the recommended ways to create a collection is to place it under the `collections/ansible_collections` directory.
+
+    ```bash
+      ansible-galaxy collection init foo.bar
+    ```
+
+- cd to the `roles` directory in your new collection.
+
+- Initialize a new role for this collection.
+
+      ```bash
+        ansible-galaxy role init my_role
+      ```
+
+- Add a task under `my_role/tasks/main.yml`.
+
+      ```yml
+      ---
+      - name: Task is running from within the role
+        ansible.builtin.debug:
+          msg: "This is a task from my_role."
+      ```
+
+- At the root of your new collection, create a directory named `playbooks`.
+
+- cd to the `playbooks` directory and create a new playbook called `my_playbook.yml`
+
+      ```yml
+      ---
+      - name: Test new role from within this playbook
+        hosts: localhost
+        gather_facts: false
+        tasks:
+          - name: Testing role
+            ansible.builtin.include_role:
+            name: foo.bar.my_role
+            tasks_from: main.yml
+      ```
+
+- Adding Molecule to the Collection
+
+      1. Create a new directory in your collection called `extensions`.
+
+      2. cd to the `extensions` directory and initialize a new default molecule scenario.
+
+          ```bash
+             molecule init scenario
+          ```
+
+![Collection Structure and ansible config file collections path](images/collection_structure_and_ansible_cfg.png)
 
 Before moving to test the playbooks or roles, the sections below provide information related to Scenarios.
 
@@ -85,76 +136,14 @@ components that Molecule provides. These are:
   checking tests (such as deployment smoke tests) on the target
   instance.
 
-The following guide will step through an example of developing and
-testing a new Ansible collection. After reading this guide, you should be
-familiar with the basics of how to use Molecule and what it can offer.
-
-## Create a collection
-
-One of the recommended ways to create a collection is to place it
-under the `collections/ansible_collections` directory.
-
-To create a collection, use the `ansible-galaxy` tool.
-`ansible-galaxy collection init <namespace>.<collection_name>`
-Example: `ansible-galaxy collection init foo.bar`
-
-After a collection is created, it would be under
-`collections/ansible_collections/<namespace>/<collection_name>`
-See [Collection structure](https://docs.ansible.com/ansible/5/dev_guide/developing_collections_structure.html#collection-structure) for details on the collection directory structure.
-
-## Create a role inside the collection
-
-To initialize a role inside a collection we can again use `ansible-galaxy` tool under the `roles` directory.
-`ansible-galaxy role init <namespace>.<collection_name>`
-Example: `ansible-galaxy collection init my_role`
-
-Once the role is created, add a task under `my_role/tasks/main.yml`.
-
-```
----
-- name: Task is running from within the role
-  ansible.builtin.debug:
-    msg: "This is a task from my_role."
-```
-
-## Create a playbook inside the collection
-
-Under the collection, we can create a directory named `playbooks`
-and create a new playbook file under it.
-Example: `my_playbook.yml`
-
-```
----
-- name: Test new role from within this playbook
-  hosts: localhost
-  gather_facts: false
-  tasks:
-    - name: Testing role
-      ansible.builtin.include_role:
-        name: foo.bar.my_role
-        tasks_from: main.yml
-
-```
-
-## Adding Molecule to the Collection
-
-Inside the collection, create a directory named `extensions`
-and initialize `molecule scenario` under this directory using
-the command: `molecule init scenario <scenario_name>`
-`scenario_name` is optional, if not provided, will create
-a `default` scenario.
-
-Also, create an ansible configuration `ansible.cfg` file under the `extensions` directory.
-Add the `collections_path` to this configuration file.
-
-![Collection Structure and ansible config file collections path](images/collection_structure_and_ansible_cfg.png)
-
 ## Run a full test sequence
 
 Molecule provides commands for manually managing the lifecycle of the
 instance, scenario, development and testing tools. However, we can also
 tell Molecule to manage this automatically within a
 scenario sequence.
+
+cd to the `extensions` directory.
 
 The full lifecycle sequence can be invoked with:
 
@@ -195,26 +184,24 @@ Molecule full lifecycle sequence
 ## Test the collection playbook or role
 
 So you now have an isolated test environment, and can also use it for live development, by running `molecule converge`.
-It will run through the same steps as above but will stop after the converge action.
+It will run through the same steps as above but will stop after the `converge` action.
 Then you can make changes to your collection or the Converge play, and then run molecule converge again (and again) until you're done with your development work.
 
 One of the default files created as part of the initialization is the `converge.yml` file.
 This file is a playbook created to run your role from start to finish.
 This can be modified if needed but is a good place to start if you have never used Molecule before.
 
-To test the playbook from a collection,
-let's add a task to our role under `tasks/main.yml` file like so:
+To test the playbook, we update `converge.yml`:
 
-```
+```yml
 ---
 - name: Include a playbook from a collection
   ansible.builtin.import_playbook: foo.bar.my_playbook
-
 ```
 
 Similarly, if we want to test only the role instead of a playbook in `converge.yml` file:
 
-```
+```yml
 ---
 - name: Include a role from a collection
   hosts: localhost
@@ -224,11 +211,12 @@ Similarly, if we want to test only the role instead of a playbook in `converge.y
       ansible.builtin.include_role:
         name: foo.bar.my_role
         tasks_from: main.yml
-
 ```
+
+cd to the `extensions` directory.
 
 ```bash
 molecule converge
 ```
 
-The above command will run this specific playbook for us.
+The above command runs the same steps as `molecule test` for the `default` scenario, but will stop after the `converge` action.

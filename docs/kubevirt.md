@@ -1,7 +1,7 @@
 # Using Kubevirt
 
 Below you can see a scenario that is using [Kubevirt VMs](https://kubevirt.io/user-guide/) as test hosts. For Ansible to connect with the SSH in the KubeVirt VMs, it will be made accessible through the Service NodePort.
-When you run `molecule test --scenario kubevirt` the `create`, `converge` and
+When you run `molecule test --scenario-name kubevirt` the `create`, `converge` and
 `destroy` steps will be run one after another.
 
 This example is using Ansible playbooks and it does not need any molecule
