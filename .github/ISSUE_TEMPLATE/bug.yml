@@ -1,0 +1,58 @@
+---
+name: Bug Report
+description: Please test the master branch before raising bugs.
+# title: "[Bug]: "
+labels: ["new"]
+projects: ["ansible/86"]
+# assignees:
+#   - octocat
+body:
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: version
+      description: Create new issues only if all checks were made
+      options:
+        - label: I checked that is not a duplicate
+          required: true
+        - label: I was able to reproduce it with code from main branch (latest unreleased version)
+          required: true
+        - label: I include a minimal example for reproducing the bug
+          required: true
+        - label: The bug is not trivial, as for those a direct pull-request is preferred
+          required: true
+        - label: Running `pip check` does not report any conflicts
+          required: true
+        - label: I was able to reproduce the issue on a different machine
+          required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        Also check [FAQ](https://ansible.readthedocs.io/projects/molecule/faq/) and the
+        [discussions forum](https://github.com/ansible/molecule/discussions) before creating a new issue.
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Desired Behavior
+      description: |
+        Include at least output of `ansible --version && molecule --version` and
+        anything else that might be relevant, such operating system, if `pip check`
+
+  - type: textarea
+    id: desired_behavior
+    attributes:
+      label: Desired Behavior
+      description: |
+        Please give some details of the feature being requested or what
+        should happen if providing a bug report.
+
+  - type: textarea
+    id: actual_behavior
+    attributes:
+      label: Actual Behaviour
+      description: |
+        Please give some details of what is actually happening.
+        Include a [minimum complete verifiable example](https://stackoverflow.com/help/mcve) with
+        output of running `molecule --debug`.
