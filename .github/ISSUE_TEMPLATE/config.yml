@@ -1,41 +1,15 @@
 blank_issues_enabled: false
 contact_links:
   - name: Propose a new feature or behavior change
-    url: https://github.com/ansible-community/molecule/discussions/categories/ideas
+    url: https://github.com/ansible/molecule/discussions/categories/ideas
     about: Always check for existing threads before adding a new one
   - name: Ask a question on Discussions area
-    url: https://github.com/ansible-community/molecule/discussions
+    url: https://github.com/ansible/molecule/discussions
     about: Recommended place for questions, debates, consultation.
   - name: Ask a question on StackOverflow
     url: https://stackoverflow.com/questions/tagged/molecule
     about: For well defined questions and answers use StackOverflow
-  - name: Molecule Vagrant
-    url: https://github.com/ansible-community/molecule-vagrant/
-    about: For anything related to Vagrant driver, including *VirtualBox* backend.
-  - name: Molecule Azure
-    url: https://github.com/ansible-community/molecule-azure/
-    about: For anything related to Microsoft Azure
-  - name: Molecule OpenStack
-    url: https://github.com/ansible-community/molecule-openstack/
-    about: For anything related OpenStack
-  - name: Molecule EC2 (AWS)
-    url: https://github.com/ansible-community/molecule-ec2/
-    about: For anything related to Amazon Web Services EC2
-  - name: Molecule GCE (Google Cloud Engine)
-    url: https://github.com/ansible-community/molecule-gce/
-    about: For anything related to Google Cloud
-  - name: Molecule LibVirt
-    url: https://github.com/ansible-community/molecule-libvirt/
-    about: For using libvirt driver.
-  - name: Molecule Containers
-    url: https://github.com/ansible-community/molecule-containers/
-    about: For using Docker, Podman or Kubernetes.
-  - name: Molecule HetzerCloud
-    url: https://github.com/ansible-community/molecule-hetznercloud/
-    about: For anything related to HetzerCloud
-  - name: Molecule Linode
-    url: https://github.com/ansible-community/molecule-linode/
-    about: For anything related to Linode
-  - name: Molecule DigitalOcean
-    url: https://github.com/ansible-community/molecule-digitalocean/
-    about: For anything related to DigitalOcean
+  - name: Molecule Plugins (drivers)
+    about: This includes some drivers such azure, docker, ec2, gce, podman and vagrant
+    url: https://github.com/ansible-community/molecule-plugins/
+
