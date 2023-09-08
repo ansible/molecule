@@ -12,4 +12,3 @@ contact_links:
   - name: Molecule Plugins (drivers)
     about: This includes some drivers such azure, docker, ec2, gce, podman and vagrant
     url: https://github.com/ansible-community/molecule-plugins/
-
