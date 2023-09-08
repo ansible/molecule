@@ -4,12 +4,13 @@ mkdocs:
   fail_on_warning: true
 
 build:
+  apt_packages:
+    - libkrb5-dev # <- krb5-config <- pyspnego[kerberos]
   os: ubuntu-22.04
   tools:
     python: "3.11"
 
 python:
-  system_packages: false
   install:
     - method: pip
       path: .

@@ -1,0 +1,72 @@
+---
+# https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-githubs-form-schema
+name: Bug Report
+description: >
+  Please test the main branch before creating new issues. Do not use this
+  form to ask for support.
+# title: "[Bug]: "
+labels: ["new"]
+projects: ["ansible/86"]
+# assignees:
+#   - octocat
+body:
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Prerequisites
+      description: >
+        Create new issues only if all checks were made and you checked [FAQ](https://ansible.readthedocs.io/projects/molecule/faq/) and the
+        [discussions forum](https://github.com/ansible/molecule/discussions).
+      options:
+        - label: This was not already reported in the past (duplicate check)
+          required: true
+        - label: It does reproduce it with code from main branch (latest unreleased version)
+          required: true
+        - label: I include a minimal example for reproducing the bug
+          required: true
+        - label: The bug is not trivial, as for those a direct pull-request is preferred
+          required: true
+        - label: Running `pip check` does not report any conflicts
+          required: true
+        - label: I was able to reproduce the issue on a different machine
+          required: true
+        - label: The issue is not specific to any driver other than 'default' one
+          required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        Also check [FAQ](https://ansible.readthedocs.io/projects/molecule/faq/) and the
+        [discussions forum](https://github.com/ansible/molecule/discussions) before creating a new issue.
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: >
+        Include all output of `molecule --version` and
+        anything else that might be relevant, such **operating system**.
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: >
+        Also tell us, what did you **expect** to happen?
+        Please give some details of the feature being requested or what
+        should happen if providing a bug report.
+      placeholder: Tell us what you see!
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproducer
+    attributes:
+      label: Reproducing example
+      render: yml
+      description: >
+        Please write a [minimum complete verifiable YAML example](https://stackoverflow.com/help/mcve) that is reproduces the issue without
+        causing other side effects. If the issue cannot be reproduce with a single
+        YAML file, please paste a link to [gist](https://gist.github.com/) or to a full git repository that contain this example.

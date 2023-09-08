@@ -34,7 +34,7 @@ updated being listed first:
   @ssbarnea.
 - [Testing your Ansible roles with
   Molecule](https://www.jeffgeerling.com/blog/2018/testing-your-ansible-roles-molecule)
-  @geerlinguy
+  @geerlingguy
 - [How to test Ansible and don't go
   nuts](https://www.goncharov.xyz/it/ansible-testing-en.html)
   @ultral
