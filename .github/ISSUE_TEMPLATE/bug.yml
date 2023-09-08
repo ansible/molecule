@@ -33,6 +33,12 @@ body:
         - label: The issue is not specific to any driver other than 'default' one
           required: true
 
+  - type: markdown
+    attributes:
+      value: |
+        Also check [FAQ](https://ansible.readthedocs.io/projects/molecule/faq/) and the
+        [discussions forum](https://github.com/ansible/molecule/discussions) before creating a new issue.
+
   - type: textarea
     id: environment
     attributes:
@@ -64,4 +70,3 @@ body:
         Please write a [minimum complete verifiable YAML example](https://stackoverflow.com/help/mcve) that is reproduces the issue without
         causing other side effects. If the issue cannot be reproduce with a single
         YAML file, please paste a link to [gist](https://gist.github.com/) or to a full git repository that contain this example.
-
