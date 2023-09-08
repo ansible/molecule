@@ -41,8 +41,8 @@ familiar with the basics of how to use Molecule and what it can offer.
         tasks:
           - name: Testing role
             ansible.builtin.include_role:
-            name: foo.bar.my_role
-            tasks_from: main.yml
+              name: foo.bar.my_role
+              tasks_from: main.yml
       ```
 
 - Adding Molecule to the Collection
@@ -101,7 +101,7 @@ create.yml  destroy.yml  molecule.yml  converge.yml
         become: true
         tasks:
         - name: Initialize role without actually running it
-            ansible.builtin.include_role:
+          ansible.builtin.include_role:
             name: my_role
             tasks_from: init
 
