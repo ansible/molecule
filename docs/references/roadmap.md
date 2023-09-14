@@ -1,6 +1,6 @@
-# Molecule Next
+# Molecule Roadmap
 
-Molecule "next" is the future major version of molecule, one that is currently
+The Molecule roadmap is the future major version of molecule, one that is currently
 available from the main branch. One of the main goals of the new version is to
 reduce the amount of magic and just rely on ansible core features.
 

@@ -114,24 +114,24 @@ The `molecule.yml` is for configuring Molecule. It is a
 [YAML](https://yaml.org/) file whose keys represent the high-level
 components that Molecule provides. These are:
 
-- The [dependency](configuration.md#dependency) manager. Molecule
+- The [dependency](references/configuration.md#dependency) manager. Molecule
   uses [galaxy development guide]
   by default to resolve your role dependencies.
-- The [driver](configuration.md#driver) provider. Molecule uses
-  the [Delegated](configuration.md#delegated) driver by default.
+- The [driver](references/configuration.md#driver) provider. Molecule uses
+  the [Delegated](references/configuration.md#delegated) driver by default.
   Molecule uses the driver to delegate the task of creating instances.
-- The [platforms](configuration.md#platforms) definitions. Molecule
+- The [platforms](references/configuration.md#platforms) definitions. Molecule
   relies on this to know which instances to create, name and to which
   group each instance belongs. If you need to test your role against
   multiple popular distributions (CentOS, Fedora, Debian), you can
   specify that in this section.
-- The [provisioner](configuration.md#provisioner). Molecule only
+- The [provisioner](references/configuration.md#provisioner). Molecule only
   provides an Ansible provisioner. Ansible manages the life cycle of
   the instance based on this configuration.
 - The [scenario][] definition.
   Molecule relies on this configuration to control the scenario
   sequence order.
-- The [verifier](configuration.md#verifier) framework. Molecule
+- The [verifier](references/configuration.md#verifier) framework. Molecule
   uses Ansible by default to provide a way to write specific state
   checking tests (such as deployment smoke tests) on the target
   instance.

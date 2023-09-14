@@ -1,16 +1,11 @@
-# Contributing
+# Contributor Guide
 
-- To see what's discussed see the [discussions
-  ](https://github.com/ansible-community/molecule/discussions).
-- Join the Molecule [community working
-  group](https://github.com/ansible/community/wiki/molecule) if you
-  would like to influence the direction of the project.
-- Join us in `#ansible-devtools` on
-  [libera.chat](https://web.libera.chat/?channel=#ansible-molecule) matrix/irc,
-  or [molecule discussions](https://github.com/ansible-community/molecule/discussions).
-- The full list of Ansible email lists and IRC channels can be found in
-  the [communication
-  page](https://docs.ansible.com/ansible/latest/community/communication.html).
+## Code Of Conduct
+
+Please see our [Code of
+Conduct](https://github.com/ansible-community/molecule/blob/main/.github/CODE_OF_CONDUCT.md)
+document.
+
 
 ## Guidelines
 
@@ -29,11 +24,7 @@
 - Reformat the code by following the formatting section below.
 - Submit a pull request.
 
-## Code Of Conduct
 
-Please see our [Code of
-Conduct](https://github.com/ansible-community/molecule/blob/main/.github/CODE_OF_CONDUCT.md)
-document.
 
 ## Pull Request and Governance
 
