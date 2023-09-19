@@ -54,7 +54,7 @@ class Base:
         exception = None
 
         try:
-            util.run_command(self._sh_command, debug=self._config.debug, check=True)
+            util.run_command(self._sh_command, debug=self._config.debug, check=True, env=self.env)
             msg = "Dependency completed successfully."
             LOG.info(msg)
             return
@@ -71,7 +71,7 @@ class Base:
             self.SLEEP += self.BACKOFF
 
             try:
-                util.run_command(self._sh_command, debug=self._config.debug, check=True)
+                util.run_command(self._sh_command, debug=self._config.debug, check=True, env=self.env)
                 msg = "Dependency completed successfully."
                 LOG.info(msg)
                 return
