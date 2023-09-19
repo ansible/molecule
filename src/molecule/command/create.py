@@ -41,6 +41,11 @@ class Create(base.Base):
         """
         self._config.state.change_state("driver", self._config.driver.name)
 
+        if self._config.state.created:
+            msg = "Skipping, instances already created."
+            LOG.warning(msg)
+            return
+
         self._config.provisioner.create()
 
         self._config.state.change_state("created", True)
