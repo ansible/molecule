@@ -42,7 +42,7 @@
                     ansible_connection: community.docker.docker
       ansible.builtin.set_fact:
         molecule_inventory: >
-          {{ molecule_inventory | combine(inventory_partial_yaml | from_yaml) }}
+          {{ molecule_inventory | combine(inventory_partial_yaml | from_yaml, recursive=true) }}
       loop: "{{ molecule_yml.platforms }}"
       loop_control:
         label: "{{ item.name }}"
