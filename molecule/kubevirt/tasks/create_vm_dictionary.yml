@@ -7,9 +7,9 @@
     ssh_service_address: >-
       {%- set svc_type = vm.ssh_service.type | default(None) -%}
       {%- if svc_type == 'NodePort' -%}
-        {{(node_port_services.results | selectattr('vm.name','==',vm.name) | first)['resources'][0]['spec']['ports'][0]['nodePort']  }}
+        {{ (node_port_services.results | selectattr('vm.name', '==', vm.name) | first)['resources'][0]['spec']['ports'][0]['nodePort'] }}
       {%- endif -%}
-  set_fact:
+  ansible.builtin.set_fact:
     # Here, the task is updating the `molecule_systems` dictionary with new VM information.
     # If `molecule_systems` doesn't exist, it is created as an empty dictionary.
     # Then it is combined with a new dictionary for the current VM, containing ansible connection details.
