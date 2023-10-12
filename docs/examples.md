@@ -39,7 +39,7 @@ scenario's generated `molecule.yml` file.
 
 ## Docker With Non-Privileged User
 
-The default Molecule Docker driver executes Ansible playbooks as the
+The Molecule Docker driver executes Ansible playbooks as the
 root user. If your workflow requires adding support for running as a
 non-privileged user, then adapt `molecule.yml` and `Dockerfile.j2` as
 follows.
