@@ -16,7 +16,7 @@ repos:
           - prettier
           - prettier-plugin-toml
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.2.5
+    rev: v2.2.6
     hooks:
       - id: codespell
   - repo: https://github.com/psf/black
@@ -25,7 +25,7 @@ repos:
       - id: black
         language_version: python3
   - repo: https://github.com/pre-commit/pre-commit-hooks.git
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
@@ -44,12 +44,12 @@ repos:
         types: [file, yaml]
         entry: yamllint --strict
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.0.287"
+    rev: "v0.0.292"
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.5.1
+    rev: v1.6.0
     hooks:
       - id: mypy
         # empty args needed in order to match mypy cli behavior
@@ -74,7 +74,7 @@ repos:
           - types-setuptools
           - wcmatch
   - repo: https://github.com/pycqa/pylint
-    rev: v3.0.0a7
+    rev: v3.0.1
     hooks:
       - id: pylint
         args:

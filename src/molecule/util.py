@@ -255,7 +255,7 @@ def verbose_flag(options):
     """Return computed verbosity flag."""
     verbose = "v"
     verbose_flag = []
-    for _i in range(0, 3):
+    for _i in range(3):
         if options.get(verbose):
             verbose_flag = [f"-{verbose}"]
             del options[verbose]

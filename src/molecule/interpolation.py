@@ -14,7 +14,7 @@
 
 # Taken from Docker Compose:
 # https://github.com/docker/compose/blob/master/compose/config/interpolation.py
-"""Iterpolation Module."""
+"""Interpolation Module."""
 
 import string
 from collections.abc import MutableMapping
