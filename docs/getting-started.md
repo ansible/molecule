@@ -118,8 +118,8 @@ components that Molecule provides. These are:
   uses [galaxy development guide]
   by default to resolve your role dependencies.
 - The [driver](configuration.md#driver) provider. Molecule uses
-  [Docker](https://docs.docker.com/) by default. Molecule uses the
-  driver to delegate the task of creating instances.
+  the [Delegated](configuration.md#delegated) driver by default.
+  Molecule uses the driver to delegate the task of creating instances.
 - The [platforms](configuration.md#platforms) definitions. Molecule
   relies on this to know which instances to create, name and to which
   group each instance belongs. If you need to test your role against
