@@ -76,8 +76,9 @@ class Destroy(base.Base):
     default=False,
     help="Enable or disable parallel mode. Default is disabled.",
 )
+@base.click_expand_help
 def destroy(ctx, scenario_name, driver_name, __all, parallel):  # pragma: no cover
-    """Use the provisioner to destroy the instances."""
+    """Use the provisioner to destroy the instances"""
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)
     command_args = {

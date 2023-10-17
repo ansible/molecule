@@ -56,10 +56,9 @@ class Check(base.Base):
     default=MOLECULE_PARALLEL,
     help="Enable or disable parallel mode. Default is disabled.",
 )
+@base.click_expand_help
 def check(ctx, scenario_name, parallel):  # pragma: no cover
-    """Use the provisioner to perform a Dry-Run (destroy, dependency, create, \
-    prepare, converge).
-    """
+    """Use the provisioner to perform a Dry-Run"""
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)
     command_args = {"parallel": parallel, "subcommand": subcommand}

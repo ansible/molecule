@@ -289,6 +289,23 @@ def click_command_ex() -> Callable[[Callable[..., Any]], click.Command]:
     )
 
 
+def click_expand_help(f) -> Callable[[Callable[..., Any]], click.Command]:
+    """This decorator add sequence to help message."""
+    # Ask: How to get the scenario name (if help is called) or which scenario name to choose ?
+    s = molecule.scenarios.Scenarios(get_configs({}, {}), None)
+    for scenario in s.all:
+        if scenario.name == "default":
+            #print(scenario.side_effect_sequence)
+            #print(scenario.test_sequence)
+            try:
+                default_sequence = getattr(scenario, f.__name__ + "_sequence")
+            except AttributeError as e:
+                raise RuntimeError(f"Unable to find property {f.__name__}_sequence in class {type(scenario)}.\n"
+                                    "You might consider adding it with default action for this command.")
+    f.__doc__ += " (" + ", ".join(default_sequence) + ")." #print("self.all[0]:", type(next(iter(s.all))))
+    return f
+
+
 def result_callback(*args, **kwargs):
     """Click natural exit callback."""
     # We want to be used we run out custom exit code, regardless if run was

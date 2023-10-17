@@ -60,8 +60,9 @@ class Create(base.Base):
     type=click.Choice([str(s) for s in drivers()]),
     help=f"Name of driver to use. ({DEFAULT_DRIVER})",
 )
+@base.click_expand_help
 def create(ctx, scenario_name, driver_name):  # pragma: no cover
-    """Use the provisioner to start the instances."""
+    """Use the provisioner to start the instances"""
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)
     command_args = {"subcommand": subcommand, "driver_name": driver_name}
