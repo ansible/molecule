@@ -6,7 +6,7 @@ familiar with the basics of how to use Molecule and what it can offer.
 
 1.  Create a collection
 
-    One of the recommended ways to create a collection is to place it under the `collections/ansible_collections` directory.
+    One of the recommended ways to create a collection is to place it under a `collections/ansible_collections` directory. If you don't put your collection into a directory named `ansible_collections`, _molecule won't be able to find your role_.
 
     ```bash
       ansible-galaxy collection init foo.bar
