@@ -1,4 +1,5 @@
-- hosts: all
+- name: Snap-pre-run
+  hosts: all
   become: true
   tasks:
     - name: Install snapd
@@ -11,13 +12,14 @@
         name: snapd.socket
         state: started
 
-    - when: ansible_os_family == 'Debian'
-      name: Install snapcraft (debian)
+    - name: Install snapcraft (debian)
+      when: ansible_os_family == 'Debian'
       ansible.builtin.package:
         name: snapcraft
         state: present
 
-    - when: ansible_os_family == 'RedHat'
+    - name: Install snapcraft (RedHat)
+      when: ansible_os_family == 'RedHat'
       block:
         - name: Activate snapd
           ansible.builtin.shell: |

@@ -42,7 +42,7 @@
                     ansible_connection: community.docker.docker
       ansible.builtin.set_fact:
         molecule_inventory: >
-          {{ molecule_inventory | combine(inventory_partial_yaml | from_yaml) }}
+          {{ molecule_inventory | combine(inventory_partial_yaml | from_yaml, recursive=true) }}
       loop: "{{ molecule_yml.platforms }}"
       loop_control:
         label: "{{ item.name }}"
@@ -52,7 +52,7 @@
         content: |
           {{ molecule_inventory | to_yaml }}
         dest: "{{ molecule_ephemeral_directory }}/inventory/molecule_inventory.yml"
-        mode: 0600
+        mode: "0600"
 
     - name: Force inventory refresh
       ansible.builtin.meta: refresh_inventory
