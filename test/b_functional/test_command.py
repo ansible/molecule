@@ -21,18 +21,18 @@ from __future__ import annotations
 
 import os
 import pathlib
-
-import pytest
-from pytest import FixtureRequest
-
-from molecule.command import base
-from molecule.test.b_functional.conftest import (
+from test.b_functional.conftest import (
     idempotence,
     init_scenario,
     list_with_format_plain,
     run_test,
     verify,
 )
+
+import pytest
+from pytest import FixtureRequest
+
+from molecule.command import base
 from molecule.util import run_command
 
 
@@ -334,7 +334,7 @@ def test_sample_collection() -> None:
     assert (
         run_command(
             ["molecule", "test"],
-            cwd="src/molecule/test/resources/sample-collection",
+            cwd="test/resources/sample-collection",
         ).returncode
         == 0
     )

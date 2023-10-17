@@ -49,7 +49,7 @@ def _instance(_base_class, config_instance: config.Config):
 
 @pytest.fixture()
 def _patched_base_setup(mocker):
-    return mocker.patch("molecule.test.a_unit.command.test_base.ExtendedBase._setup")
+    return mocker.patch("test.a_unit.command.test_base.ExtendedBase._setup")
 
 
 @pytest.fixture()

@@ -24,6 +24,7 @@ import os
 import shutil
 import subprocess
 from subprocess import PIPE
+from test.conftest import change_dir_to, molecule_directory
 
 import pexpect
 import pytest
@@ -33,7 +34,6 @@ from packaging.version import Version
 import molecule
 from molecule import logger, util
 from molecule.app import app
-from molecule.test.conftest import change_dir_to, molecule_directory
 from molecule.text import strip_ansi_color
 from molecule.util import run_command
 

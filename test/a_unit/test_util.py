@@ -23,6 +23,7 @@ import binascii
 import os
 import warnings
 from pathlib import Path
+from test.conftest import get_molecule_file, molecule_directory
 from typing import Any
 
 import pytest
@@ -32,7 +33,6 @@ from molecule import util
 from molecule.api import IncompatibleMoleculeRuntimeWarning, MoleculeRuntimeWarning
 from molecule.console import console
 from molecule.constants import MOLECULE_HEADER
-from molecule.test.conftest import get_molecule_file, molecule_directory
 from molecule.text import strip_ansi_escape
 
 
