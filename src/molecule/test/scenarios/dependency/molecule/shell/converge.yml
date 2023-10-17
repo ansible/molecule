@@ -12,6 +12,6 @@
       ansible.builtin.debug:
         msg: "{{ 'foo' | community.molecule.header }}"
 
-    - name: test installed role
+    - name: Test installed role
       ansible.builtin.include_role:
         name: ssbarnea.ansible_role_helloworld

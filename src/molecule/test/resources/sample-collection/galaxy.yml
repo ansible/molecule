@@ -29,3 +29,5 @@ build_ignore:
 
 repository: https://opendev.org/openstack/tripleo-repos
 license_file: LICENSE
+tags:
+  - tools

@@ -12,4 +12,5 @@
       ansible.builtin.file:
         path: /tmp/testfile
         state: touch
+        mode: "0644"
       when: not test_file.stat.exists

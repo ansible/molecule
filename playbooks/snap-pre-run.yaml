@@ -24,13 +24,16 @@
         - name: Activate snapd
           ansible.builtin.shell: |
             ln -s /var/lib/snapd/snap /snap
+          changed_when: true
 
         - name: Install snapcraft (redhat)
           ansible.builtin.shell: |
             type snapcraft || snap install --classic snapcraft
+          changed_when: true
 
     - name: Validate snapd install
       ansible.builtin.shell: |
         set -e
         snap version
         snapcraft version
+      changed_when: false

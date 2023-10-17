@@ -1,5 +1,6 @@
 ---
-- hosts: example
+- name: Molecule test fixture
+  hosts: example
   gather_facts: false
   tasks:
     - name: Host vars from host_vars links
