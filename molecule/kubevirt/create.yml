@@ -6,7 +6,7 @@
     temporary_ssh_key_size: 2048 # Variable for the size of the SSH key
   tasks:
     - name: Set default SSH key path # Sets the path of the SSH key
-      set_fact:
+      ansible.builtin.set_fact:
         tempoary_ssh_key_path: "{{ molecule_ephemeral_directory }}/identity_file"
 
     - name: Generate SSH key pair # Generates a new SSH key pair
@@ -16,16 +16,17 @@
       register: temporary_ssh_keypair # Stores the output of this task in a variable
 
     - name: Set SSH public key # Sets the SSH public key from the key pair
-      set_fact:
+      ansible.builtin.set_fact:
         temporary_ssh_public_key: "{{ temporary_ssh_keypair.public_key }}"
 
     - name: Create VM in KubeVirt # Calls another file to create the VM in KubeVirt
-      include_tasks: tasks/create_vm.yml
+      ansible.builtin.include_tasks: tasks/create_vm.yml
       loop: "{{ molecule_yml.platforms }}" # Loops over all platforms defined in molecule_yml
       loop_control:
         loop_var: vm # Sets the variable for the current item in the loop
 
     - name: Create Nodeport service if ssh_type is set to NodePort # Conditional block, executes if vm.ssh_service.type is NodePort
+      when: "vm.ssh_service.type == 'NodePort'" # The block is executed when this condition is met
       block:
         - name: Create ssh NodePort Kubernetes Services # Creates a new NodePort service in Kubernetes
           kubernetes.core.k8s:
@@ -58,10 +59,9 @@
           loop_control:
             loop_var: vm # Sets the variable for the current item in the loop
           register: node_port_services # Stores the output of this task in a variable
-      when: "vm.ssh_service.type == 'NodePort'" # The block is executed when this condition is met
 
     - name: Create VM dictionary # Calls another file to create a dictionary with information about the VM
-      include_tasks: tasks/create_vm_dictionary.yml
+      ansible.builtin.include_tasks: tasks/create_vm_dictionary.yml
       loop: "{{ molecule_yml.platforms }}" # Loops over all platforms defined in molecule_yml
       loop_control:
         loop_var: vm # Sets the variable for the current item in the loop
@@ -76,7 +76,7 @@
       ansible.builtin.copy:
         content: "{{ molecule_inventory | to_nice_yaml }}"
         dest: "{{ molecule_ephemeral_directory }}/inventory/molecule_inventory.yml"
-        mode: 0600 # Sets the permissions of the file to -rw-------
+        mode: "0600" # Sets the permissions of the file to -rw-------
 
     - name: Refresh inventory # Refreshes the inventory
       ansible.builtin.meta: refresh_inventory
