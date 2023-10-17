@@ -198,5 +198,5 @@ Procfile    text
 # ``shelve``, ``marshal``, ``anydbm``, & ``bsddb``
 # (among others).
 
-# Needed for setuptools-scm-git-archive:
+# Needed for setuptools-scm>=7.0
 .git_archival.txt  export-subst
