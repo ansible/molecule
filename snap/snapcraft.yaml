@@ -15,5 +15,4 @@ parts:
     plugin: python
     python-packages:
       - setuptools-scm
-      - setuptools-scm-git-archive
     source: .
