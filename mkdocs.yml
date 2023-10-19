@@ -7,9 +7,7 @@ copyright: Copyright © 2023 Red Hat, Inc.
 strict: true
 
 theme:
-  name: "material"
-  logo: images/logo.svg
-  favicon: images/favicon.ico
+  name: ansible
   features:
     - content.code.copy
     - content.action.edit
@@ -19,21 +17,6 @@ theme:
     - navigation.indexes
     - navigation.tracking
     - toc.integrate
-  palette:
-    - media: "(prefers-color-scheme: light)"
-      primary: teal
-      accent: blue
-      scheme: default
-      toggle:
-        icon: material/brightness-7
-        name: Switch to dark mode
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
-      primary: teal
-      accent: blue
-      toggle:
-        icon: material/brightness-4
-        name: Switch to light mode
 extra:
   social:
     - icon: fontawesome/brands/python
@@ -99,7 +82,7 @@ nav:
 plugins:
   - autorefs
   - search
-  - social
+  - material/social
 
   - mkdocstrings:
       enable_inventory: true
