@@ -41,7 +41,7 @@ def _instance(_command_args):
     return scenario.Scenario(_command_args)
 
 
-def test_execute(temp_dir, _instance, patched_logger_info):
+def test_scenario_execute(temp_dir, _instance, patched_logger_info):
     _instance.execute()
 
     msg = "Initializing new scenario test-scenario..."

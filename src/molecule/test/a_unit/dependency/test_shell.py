@@ -49,17 +49,17 @@ def _instance(
     return shell.Shell(config_instance)
 
 
-def test_config_private_member(_instance):
+def test_shell_config_private_member(_instance):
     assert isinstance(_instance._config, config.Config)
 
 
-def test_default_options_property(_instance):
+def test_shell_default_options_property(_instance):
     x = {}
 
     assert x == _instance.default_options
 
 
-def test_default_env_property(_instance):
+def test_shell_default_env_property(_instance):
     assert "MOLECULE_FILE" in _instance.default_env
     assert "MOLECULE_INVENTORY_FILE" in _instance.default_env
     assert "MOLECULE_SCENARIO_DIRECTORY" in _instance.default_env
@@ -67,23 +67,23 @@ def test_default_env_property(_instance):
 
 
 @pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
-def test_name_property(_instance):
+def test_shell_name_property(_instance):
     assert _instance.name == "shell"
 
 
-def test_enabled_property(_instance):
+def test_shell_enabled_property(_instance):
     assert _instance.enabled
 
 
 @pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
-def test_options_property(_instance):
+def test_shell_options_property(_instance):
     x = {"foo": "bar"}
 
     assert x == _instance.options
 
 
 @pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
-def test_options_property_handles_cli_args(_instance):
+def test_shell_options_property_handles_cli_args(_instance):
     _instance._config.args = {}
     x = {"foo": "bar"}
 
@@ -91,11 +91,15 @@ def test_options_property_handles_cli_args(_instance):
 
 
 @pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
-def test_env_property(_instance):
+def test_shell_env_property(_instance):
     assert _instance.env["FOO"] == "bar"
 
 
-def test_execute(patched_run_command, caplog: pytest.LogCaptureFixture, _instance):
+def test_shell_execute(
+    patched_run_command,
+    caplog: pytest.LogCaptureFixture,
+    _instance,
+):
     _instance._sh_command = "patched-command"
     _instance.execute()
 
@@ -109,7 +113,7 @@ def test_execute(patched_run_command, caplog: pytest.LogCaptureFixture, _instanc
     assert msg in caplog.text
 
 
-def test_execute_does_not_execute_when_disabled(
+def test_shell_execute_does_not_execute_when_disabled(
     patched_run_command,
     caplog: pytest.LogCaptureFixture,
     _instance,
@@ -124,7 +128,7 @@ def test_execute_does_not_execute_when_disabled(
 
 
 @pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
-def test_execute_bakes(patched_run_command, _instance):
+def test_dependency_execute_bakes(patched_run_command, _instance):
     _instance.execute()
     assert patched_run_command.call_count == 1
 

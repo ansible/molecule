@@ -45,7 +45,7 @@ def _patched_ansible_cleanup(mocker):
     ["_command_provisioner_section_with_cleanup_data"],
     indirect=True,
 )
-def test_execute(
+def test_cleanup_execute(
     mocker: MockerFixture,
     _patched_ansible_cleanup,
     caplog,
@@ -63,7 +63,7 @@ def test_execute(
     _patched_ansible_cleanup.assert_called_once_with()
 
 
-def test_execute_skips_when_playbook_not_configured(
+def test_cleanup_execute_skips_when_playbook_not_configured(
     caplog,
     _patched_ansible_cleanup,
     config_instance: config.Config,
