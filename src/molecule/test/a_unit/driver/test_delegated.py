@@ -57,18 +57,18 @@ def _instance(config_instance: config.Config):
     return delegated.Delegated(config_instance)
 
 
-def test_config_private_member(_instance):
+def test_delegated_config_private_member(_instance):
     assert isinstance(_instance._config, config.Config)
 
 
-def test_testinfra_options_property(_instance):
+def test_delegated_options_property2(_instance):
     assert {
         "connection": "ansible",
         "ansible-inventory": _instance._config.provisioner.inventory_directory,
     } == _instance.testinfra_options
 
 
-def test_name_property(_instance):
+def test_delegated_name_property(_instance):
     assert _instance.name == "default"
 
 
@@ -77,7 +77,7 @@ def test_name_property(_instance):
     ["_driver_unmanaged_section_data"],
     indirect=True,
 )
-def test_options_property(_instance):
+def test_delegated_options_property(_instance):
     x = {
         "managed": False,
     }
@@ -90,7 +90,7 @@ def test_options_property(_instance):
     ["_driver_managed_section_data"],
     indirect=True,
 )
-def test_options_property_when_managed(_instance):
+def test_delegated_options_property_when_managed(_instance):
     x = {"managed": True}
 
     assert x == _instance.options
@@ -331,7 +331,7 @@ def test_status(mocker: MockerFixture, _instance):
     assert result[1].converged == "false"
 
 
-def test_created(_instance):
+def test_delegated_created(_instance):
     assert _instance._created() == "false"
 
 

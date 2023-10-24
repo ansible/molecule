@@ -40,7 +40,7 @@ def _patched_destroy_setup(mocker):
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.mark.skip(reason="destroy not running for delegated")
-def test_execute(
+def test_destroy_execute(
     mocker: MockerFixture,
     caplog,
     patched_config_validate,
