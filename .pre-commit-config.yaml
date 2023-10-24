@@ -1,4 +1,7 @@
 ---
+ci:
+  skip:
+    - ansible-lint
 default_language_version:
   python: python3.9
 repos:
@@ -90,3 +93,7 @@ repos:
           - pytest-mock
           - pytest-testinfra
           - wcmatch
+  - repo: https://github.com/ansible/ansible-lint
+    rev: v6.21.1
+    hooks:
+      - id: ansible-lint

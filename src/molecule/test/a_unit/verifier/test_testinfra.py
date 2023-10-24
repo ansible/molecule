@@ -64,11 +64,11 @@ def inventory_directory(_instance):
     return _instance._config.provisioner.inventory_directory
 
 
-def test_config_private_member(_instance):
+def test_testinfra_config_private_member(_instance):
     assert isinstance(_instance._config, config.Config)
 
 
-def test_default_options_property(inventory_directory, _instance):
+def test_testinfra_default_options_property(inventory_directory, _instance):
     x = {
         "connection": "ansible",
         "ansible-inventory": inventory_directory,
@@ -107,7 +107,7 @@ def test_default_options_property_updates_sudo(
     assert x == _instance.default_options
 
 
-def test_default_env_property(_instance):
+def test_testinfra_default_env_property(_instance):
     assert "MOLECULE_FILE" in _instance.default_env
     assert "MOLECULE_INVENTORY_FILE" in _instance.default_env
     assert "MOLECULE_SCENARIO_DIRECTORY" in _instance.default_env
@@ -134,7 +134,7 @@ def test_additional_files_or_dirs_property(_instance):
 
 
 @pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
-def test_env_property(_instance):
+def test_testinfra_env_property(_instance):
     assert _instance.env["FOO"] == "bar"
     assert "ANSIBLE_CONFIG" in _instance.env
     assert "ANSIBLE_ROLES_PATH" in _instance.env
@@ -142,15 +142,15 @@ def test_env_property(_instance):
     assert "ANSIBLE_FILTER_PLUGINS" in _instance.env
 
 
-def test_name_property(_instance):
+def test_testinfra_name_property(_instance):
     assert _instance.name == "testinfra"
 
 
-def test_enabled_property(_instance):
+def test_testinfra_enabled_property(_instance):
     assert _instance.enabled
 
 
-def test_directory_property(_instance):
+def test_testinfra_directory_property(_instance):
     parts = _instance.directory.split(os.path.sep)
 
     assert ["molecule", "default", "tests"] == parts[-3:]
@@ -171,7 +171,7 @@ def test_directory_property_overridden(_instance):
 
 
 @pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
-def test_options_property(inventory_directory, _instance):
+def test_testinfra_options_property(inventory_directory, _instance):
     x = {
         "connection": "ansible",
         "ansible-inventory": inventory_directory,
@@ -185,7 +185,7 @@ def test_options_property(inventory_directory, _instance):
 
 
 @pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
-def test_options_property_handles_cli_args(inventory_directory, _instance):
+def test_tesinfra_options_property_handles_cli_args(inventory_directory, _instance):
     _instance._config.args = {"debug": True}
     x = {
         "connection": "ansible",
@@ -201,7 +201,7 @@ def test_options_property_handles_cli_args(inventory_directory, _instance):
 
 
 @pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
-def test_bake(_patched_testinfra_get_tests, inventory_directory, _instance):
+def test_testinfra_bake(_patched_testinfra_get_tests, inventory_directory, _instance):
     _instance._tests = ["foo.py", "bar.py"]
     _instance.bake()
     args = [
@@ -222,7 +222,7 @@ def test_bake(_patched_testinfra_get_tests, inventory_directory, _instance):
     assert _instance._testinfra_command == args
 
 
-def test_execute(
+def test_testinfra_execute(
     caplog,
     patched_run_command,
     _patched_testinfra_get_tests,
@@ -239,7 +239,7 @@ def test_execute(
     assert "pytest" == patched_run_command.call_args[0][0][0]
 
 
-def test_execute_does_not_execute(
+def test_testinfra_execute_does_not_execute(
     patched_run_command,
     caplog,
     _instance,
@@ -266,7 +266,11 @@ def test_does_not_execute_without_tests(
     assert msg in caplog.text
 
 
-def test_execute_bakes(patched_run_command, _patched_testinfra_get_tests, _instance):
+def test_testinfra_execute_bakes(
+    patched_run_command,
+    _patched_testinfra_get_tests,
+    _instance,
+):
     _instance.execute()
 
     assert _instance._testinfra_command is not None

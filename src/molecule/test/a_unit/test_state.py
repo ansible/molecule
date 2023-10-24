@@ -44,7 +44,7 @@ def test_created(_instance):
     assert not _instance.created
 
 
-def test_driver(_instance):
+def test_state_driver(_instance):
     assert not _instance.driver
 
 

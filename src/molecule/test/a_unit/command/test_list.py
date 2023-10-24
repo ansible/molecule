@@ -23,7 +23,7 @@ from molecule.command import list
 from molecule.driver import base
 
 
-def test_execute(capsys, config_instance: config.Config):
+def test_list_execute(capsys, config_instance: config.Config):
     l = list.List(config_instance)
     x = [
         base.Status(

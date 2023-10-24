@@ -3,5 +3,4 @@
   hosts: localhost
   connection: local
   gather_facts: false
-  tasks:
-    - ansible.builtin.include: destroy/docker.yml
+  tasks: []

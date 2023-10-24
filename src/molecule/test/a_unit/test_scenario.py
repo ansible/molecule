@@ -79,15 +79,15 @@ def test_config_member(_instance):
     assert isinstance(_instance.config, config.Config)
 
 
-def test_init_calls_setup(patched_scenario_setup, _instance):
+def test_scenario_init_calls_setup(patched_scenario_setup, _instance):
     patched_scenario_setup.assert_called_once_with()
 
 
-def test_name_property(_instance):
+def test_scenario_name_property(_instance):
     assert _instance.name == "default"
 
 
-def test_directory_property(molecule_scenario_directory_fixture, _instance):
+def test_scenario_directory_property(molecule_scenario_directory_fixture, _instance):
     assert molecule_scenario_directory_fixture == _instance.directory
 
 
@@ -95,7 +95,7 @@ def test_ephemeral_directory_property(_instance):
     assert os.access(_instance.ephemeral_directory, os.W_OK)
 
 
-def test_inventory_directory_property(_instance):
+def test_scenario_inventory_directory_property(_instance):
     ephemeral_directory = _instance.config.scenario.ephemeral_directory
     e_dir = os.path.join(ephemeral_directory, "inventory")
 

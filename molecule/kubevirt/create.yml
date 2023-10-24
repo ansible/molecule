@@ -7,11 +7,11 @@
   tasks:
     - name: Set default SSH key path # Sets the path of the SSH key
       ansible.builtin.set_fact:
-        tempoary_ssh_key_path: "{{ molecule_ephemeral_directory }}/identity_file"
+        temporary_ssh_key_path: "{{ molecule_ephemeral_directory }}/identity_file"
 
     - name: Generate SSH key pair # Generates a new SSH key pair
       community.crypto.openssh_keypair:
-        path: "{{ tempoary_ssh_key_path }}"
+        path: "{{ temporary_ssh_key_path }}"
         size: "{{ temporary_ssh_key_size }}"
       register: temporary_ssh_keypair # Stores the output of this task in a variable
 
@@ -85,7 +85,7 @@
       ansible.builtin.assert:
         that: "'molecule' in groups"
         fail_msg: "Molecule group was not found in inventory groups: {{ groups }}"
-      run_once: true # Ensures this task is only run once, not on every host in 'hosts'
+      run_once: true # noqa: run-once
 
 - name: Validate that inventory was refreshed # New playbook to validate the inventory
   hosts: molecule # Runs on hosts in the 'molecule' group

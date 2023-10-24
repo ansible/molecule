@@ -35,7 +35,7 @@ def _patched_create_setup(mocker):
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.mark.skip(reason="create not running for delegated")
-def test_execute(
+def test_create_execute(
     mocker: MockerFixture,
     caplog,
     command_patched_ansible_create,

@@ -194,7 +194,7 @@ def test_execute_playbook(patched_run_command, _instance):
     assert result == "patched-run-command-stdout"
 
 
-def test_execute_bakes(_inventory_directory, patched_run_command, _instance):
+def test_ansible_execute_bakes(_inventory_directory, patched_run_command, _instance):
     _instance.execute()
 
     assert _instance._ansible_command is not None
