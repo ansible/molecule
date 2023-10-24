@@ -2,4 +2,4 @@
 collections:
   - community.molecule
 roles:
-  - ssbarnea.ansible_role_helloworld
+  - name: ssbarnea.ansible_role_helloworld

@@ -1,5 +1,6 @@
 ---
-- hosts: instance
+- name: Molecule test fixture
+  hosts: instance
   gather_facts: false
   tasks:
     - name: Host vars host_var for host host-group-vars from molecule.yml
@@ -28,14 +29,16 @@
       ansible.builtin.debug:
         var: hostvars['extra_host']['host_group_vars_extra_host_molecule_yml']
 
-- hosts: example
+- name: Molecule test fixture
+  hosts: example
   gather_facts: false
   tasks:
     - name: Dummy converge of example group
       ansible.builtin.debug:
         var: ansible_host
 
-- hosts: example_1
+- name: Molecule test fixture
+  hosts: example_1
   gather_facts: false
   tasks:
     - name: Dummy converge of child example_1 group
