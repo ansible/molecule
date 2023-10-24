@@ -87,7 +87,7 @@ def _patched_sysexit(mocker):
     return mocker.patch("molecule.util.sysexit")
 
 
-def test_config_private_member(_instance):
+def test_command_config_private_member(_instance):
     assert isinstance(_instance._config, config.Config)
 
 
@@ -95,7 +95,7 @@ def test_init_calls_setup(_patched_base_setup, _instance):
     _patched_base_setup.assert_called_once_with()
 
 
-def test_setup(
+def test_command_setup(
     mocker: MockerFixture,
     patched_add_or_update_vars,
     _patched_write_config,

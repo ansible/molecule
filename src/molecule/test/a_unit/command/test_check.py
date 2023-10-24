@@ -33,7 +33,7 @@ def _patched_ansible_check(mocker):
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-def test_execute(
+def test_check_execute(
     mocker: MockerFixture,
     caplog,
     _patched_ansible_check,

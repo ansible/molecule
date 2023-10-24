@@ -1,0 +1,3 @@
+# This file contains ignores rule violations for ansible-lint
+src/molecule/test/scenarios/driver/delegated_invalid_role_name_with_role_name_check_equals_to_1/meta/main.yml role-name
+src/molecule/test/scenarios/driver/delegated_invalid_role_name_with_role_name_check_equals_to_1/meta/main.yml schema[meta]

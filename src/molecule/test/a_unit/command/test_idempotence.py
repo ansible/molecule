@@ -42,7 +42,7 @@ def _instance(patched_config_validate, config_instance: config.Config):
     return idempotence.Idempotence(config_instance)
 
 
-def test_execute(
+def test_idempotence_execute(
     mocker: MockerFixture,
     caplog: pytest.LogCaptureFixture,
     patched_ansible_converge,

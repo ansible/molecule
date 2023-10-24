@@ -35,7 +35,7 @@ def _patched_ansible_prepare(mocker):
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-def test_execute(
+def test_prepare_execute(
     mocker: MockerFixture,
     caplog,
     _patched_ansible_prepare,
@@ -71,7 +71,7 @@ def test_execute_skips_when_instances_already_prepared(
     assert not _patched_ansible_prepare.called
 
 
-def test_execute_skips_when_playbook_not_configured(
+def test_prepare_execute_skips_when_playbook_not_configured(
     caplog,
     _patched_ansible_prepare,
     config_instance: config.Config,

@@ -31,15 +31,15 @@ def _instance(
     return ansible.Ansible(config_instance)
 
 
-def test_config_private_member(_instance):
+def test_verifier_config_private_member(_instance):
     assert isinstance(_instance._config, config.Config)
 
 
-def test_default_options_property(_instance):
+def test_verifier_default_options_property(_instance):
     assert {} == _instance.default_options
 
 
-def test_default_env_property(_instance):
+def test_verifier_ansible_default_env_property(_instance):
     assert "MOLECULE_FILE" in _instance.default_env
     assert "MOLECULE_INVENTORY_FILE" in _instance.default_env
     assert "MOLECULE_SCENARIO_DIRECTORY" in _instance.default_env
@@ -47,40 +47,40 @@ def test_default_env_property(_instance):
 
 
 @pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
-def test_env_property(_instance):
+def test_verifier_env_property(_instance):
     assert _instance.env["FOO"] == "bar"
 
 
-def test_name_property(_instance):
+def test_verifier_name_property(_instance):
     assert _instance.name == "ansible"
 
 
-def test_enabled_property(_instance):
+def test_ansible_enabled_property(_instance):
     assert _instance.enabled
 
 
-def test_directory_property(_instance):
+def test_verifier_directory_property(_instance):
     parts = _instance.directory.split(os.path.sep)
     # Unused by Ansible verifier
     assert ["molecule", "default", "tests"] == parts[-3:]
 
 
 @pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
-def test_options_property(_instance):
+def test_verifier_ansible_options_property(_instance):
     x = {}
 
     assert x == _instance.options
 
 
 @pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
-def test_options_property_handles_cli_args(_instance):
+def test_verifier_ansible_options_property_handles_cli_args(_instance):
     _instance._config.args = {"debug": True}
     x = {}
 
     assert x == _instance.options
 
 
-def test_execute(caplog, _patched_ansible_verify, _instance):
+def test_ansible_execute(caplog, _patched_ansible_verify, _instance):
     _instance.execute()
 
     _patched_ansible_verify.assert_called_once_with(None)

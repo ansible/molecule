@@ -50,7 +50,7 @@ def _patched_ansible_side_effect(mocker):
     ["_command_provisioner_section_with_side_effect_data"],
     indirect=True,
 )
-def test_execute(
+def test_side_effect_execute(
     mocker: MockerFixture,
     _patched_ansible_side_effect,
     caplog,
@@ -69,7 +69,7 @@ def test_execute(
     _patched_ansible_side_effect.assert_called_once_with(None)
 
 
-def test_execute_skips_when_playbook_not_configured(
+def test_side_effect_execute_skips_when_playbook_not_configured(
     caplog,
     _patched_ansible_side_effect,
     config_instance: config.Config,

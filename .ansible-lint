@@ -1,0 +1,11 @@
+exclude_paths:
+  - mkdocs.yml # using tags
+  # not really playbooks:
+kinds:
+  - "yaml": "**/docs/*.yml"
+  - "yaml": "**/snap/*.yaml"
+  - "yaml": "**/.github/*.yml"
+  - "yaml": "**/.packit.yaml"
+  - "yaml": "**/.pre-commit-config.yaml"
+  - "yaml": "**/.readthedocs.yml"
+  - "yaml": "**/codecov.yml"
