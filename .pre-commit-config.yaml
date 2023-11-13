@@ -47,7 +47,7 @@ repos:
         types: [file, yaml]
         entry: yamllint --strict
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.1.3"
+    rev: "v0.1.4"
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
@@ -94,6 +94,6 @@ repos:
           - pytest-testinfra
           - wcmatch
   - repo: https://github.com/ansible/ansible-lint
-    rev: v6.21.1
+    rev: v6.22.0
     hooks:
       - id: ansible-lint
