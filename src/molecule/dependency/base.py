@@ -55,7 +55,10 @@ class Base:
 
         try:
             util.run_command(
-                self._sh_command, debug=self._config.debug, check=True, env=self.env,
+                self._sh_command,
+                debug=self._config.debug,
+                check=True,
+                env=self.env,
             )
             msg = "Dependency completed successfully."
             LOG.info(msg)
@@ -74,7 +77,10 @@ class Base:
 
             try:
                 util.run_command(
-                    self._sh_command, debug=self._config.debug, check=True, env=self.env,
+                    self._sh_command,
+                    debug=self._config.debug,
+                    check=True,
+                    env=self.env,
                 )
                 msg = "Dependency completed successfully."
                 LOG.info(msg)
