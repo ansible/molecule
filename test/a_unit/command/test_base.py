@@ -73,11 +73,6 @@ def _patched_execute_scenario(mocker):
 
 
 @pytest.fixture()
-def _patched_print_matrix(mocker):
-    return mocker.patch("molecule.scenarios.Scenarios.print_matrix")
-
-
-@pytest.fixture()
 def _patched_prune(mocker):
     return mocker.patch("molecule.scenario.Scenario.prune")
 
@@ -111,12 +106,9 @@ def test_command_setup(
 
 def test_execute_cmdline_scenarios(
     config_instance: config.Config,
-    _patched_print_matrix,
     _patched_execute_scenario,
 ):
     # Ensure execute_cmdline_scenarios runs normally:
-    # - scenarios.print_matrix is called, which also indicates Scenarios
-    #   was instantiated correctly
     # - execute_scenario is called once, indicating the function correctly
     #   loops over Scenarios.
     scenario_name = None
@@ -124,7 +116,6 @@ def test_execute_cmdline_scenarios(
     command_args = {"destroy": "always", "subcommand": "test"}
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
 
-    assert _patched_print_matrix.called_once_with()
     assert _patched_execute_scenario.call_count == 1
 
 
