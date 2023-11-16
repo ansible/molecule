@@ -27,4 +27,4 @@ site
 .DS_Store
 src/molecule/_version.py
 .vscode
-src/molecule/test/resources/.extensions/
+test/resources/.extensions/

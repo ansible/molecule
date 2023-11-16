@@ -13,7 +13,7 @@ repos:
         # Temporary excludes so we can gradually normalize the formatting
         exclude: >
           (?x)^(
-            src/molecule/test/resources/templates/.*|
+            test/resources/templates/.*|
           )$
         additional_dependencies:
           - prettier
@@ -57,7 +57,7 @@ repos:
       - id: mypy
         # empty args needed in order to match mypy cli behavior
         args: []
-        entry: mypy src/
+        entry: mypy src/ test/
         pass_filenames: false
         additional_dependencies:
           - ansible-compat>=4.1.8
