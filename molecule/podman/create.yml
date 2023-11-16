@@ -8,6 +8,7 @@
         children:
           molecule:
             hosts: {}
+
   tasks:
     - name: Create a container
       containers.podman.podman_container:
