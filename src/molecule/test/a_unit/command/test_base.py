@@ -124,8 +124,8 @@ def test_execute_cmdline_scenarios(
     command_args = {"destroy": "always", "subcommand": "test"}
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
 
-    assert _patched_print_matrix.called_once_with()
-    assert _patched_execute_scenario.call_count == 1
+    _patched_print_matrix.assert_called_once()
+    _patched_execute_scenario.assert_called_once()
 
 
 def test_execute_cmdline_scenarios_prune(
