@@ -6,7 +6,6 @@ Please see our [Code of
 Conduct](https://github.com/ansible-community/molecule/blob/main/.github/CODE_OF_CONDUCT.md)
 document.
 
-
 ## Guidelines
 
 - We are interested in various different kinds of improvement for
@@ -23,8 +22,6 @@ document.
 - Run all the tests to ensure nothing else was accidentally broken.
 - Reformat the code by following the formatting section below.
 - Submit a pull request.
-
-
 
 ## Pull Request and Governance
 
