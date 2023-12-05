@@ -7,7 +7,7 @@ default_language_version:
 repos:
   - repo: https://github.com/pre-commit/mirrors-prettier
     # keep it before yamllint
-    rev: "v3.1.0"
+    rev: "v4.0.0-alpha.3"
     hooks:
       - id: prettier
         # Temporary excludes so we can gradually normalize the formatting
@@ -94,6 +94,6 @@ repos:
           - pytest-testinfra
           - wcmatch
   - repo: https://github.com/ansible/ansible-lint
-    rev: v6.22.0
+    rev: v6.22.1
     hooks:
       - id: ansible-lint
