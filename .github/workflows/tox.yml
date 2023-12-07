@@ -83,7 +83,7 @@ jobs:
           && ansible --version
       - name: Set up Python ${{ matrix.python_version || '3.9' }}
         if: "!contains(matrix.shell, 'wsl')"
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           cache: pip
           python-version: ${{ matrix.python_version || '3.9' }}
