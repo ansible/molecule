@@ -7,7 +7,7 @@ default_language_version:
 repos:
   - repo: https://github.com/pre-commit/mirrors-prettier
     # keep it before yamllint
-    rev: "v4.0.0-alpha.3"
+    rev: "v4.0.0-alpha.4"
     hooks:
       - id: prettier
         # Temporary excludes so we can gradually normalize the formatting
@@ -47,7 +47,7 @@ repos:
         types: [file, yaml]
         entry: yamllint --strict
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.1.6"
+    rev: "v0.1.7"
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
