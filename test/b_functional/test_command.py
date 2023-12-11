@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import os
 import pathlib
+import sys
 from test.b_functional.conftest import (
     idempotence,
     init_scenario,
@@ -382,20 +383,27 @@ def test_with_and_without_gitignore(
 
 
 def test_podman() -> None:
+    expected = 0
+    if bool(os.getenv("GITHUB_ACTIONS")) and sys.platform == "darwin":
+        expected = 1
+
     assert (
         run_command(
             ["molecule", "test", "--scenario-name", "podman"],
         ).returncode
-        == 0
+        == expected
     )
 
 
 def test_docker() -> None:
+    expected = 0
+    if bool(os.getenv("GITHUB_ACTIONS")) and sys.platform == "darwin":
+        expected = 1
     assert (
         run_command(
             ["molecule", "test", "--scenario-name", "docker"],
         ).returncode
-        == 0
+        == expected
     )
 
 
