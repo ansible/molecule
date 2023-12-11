@@ -3,7 +3,7 @@ ci:
   skip:
     - ansible-lint
 default_language_version:
-  python: python3.9
+  python: python3.10
 repos:
   - repo: https://github.com/pre-commit/mirrors-prettier
     # keep it before yamllint

@@ -22,7 +22,7 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        python-version: ["3.9", "3.10"]
+        python-version: ["3.10", "3.11"]
 
     steps:
       - uses: actions/checkout@v2
@@ -187,7 +187,7 @@ steps:
 
   - task: UsePythonVersion@0
     inputs:
-      versionSpec: "3.9"
+      versionSpec: "3.10"
 
   - script: python -m pip install "molecule[lint]" "python-vagrant" "molecule-vagrant" "ansible"
     displayName: Install dependencies
