@@ -176,7 +176,7 @@ filterwarnings = [
 ]
 
 [tool.ruff]
-ignore = [
+lint.ignore = [
   # Disabled on purpose:
   "E501", # we use black
   "FBT", # Boolean positional value in function call
@@ -204,27 +204,25 @@ ignore = [
   "T",
   "TRY",
 ]
-select = ["ALL"]
+lint.select = ["ALL"]
 target-version = "py310"
 # Same as Black.
 line-length = 88
 
-[tool.ruff.flake8-pytest-style]
+[tool.ruff.lint.flake8-pytest-style]
 parametrize-values-type = "tuple"
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["molecule"]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "test/**.py" = ["S"]
 "src/molecule/*/\\{\\{*/**.py" = ["S"]
 
 [tool.setuptools.dynamic]
 optional-dependencies.docs = { file = [".config/requirements-docs.txt"] }
 optional-dependencies.test = { file = [".config/requirements-test.txt"] }
-optional-dependencies.testinfra = { file = [
-  ".config/requirements-testinfra.txt",
-] }
+optional-dependencies.testinfra = { file = [".config/requirements-testinfra.txt"] }
 dependencies = { file = [".config/requirements.in"] }
 
 [tool.setuptools_scm]

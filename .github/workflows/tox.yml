@@ -32,6 +32,7 @@ jobs:
             pkg
             eco
             py311-devel
+          platforms: linux,macos
 
   build:
     name: ${{ matrix.name }}
@@ -47,7 +48,7 @@ jobs:
       matrix: ${{ fromJson(needs.pre.outputs.matrix) }}
 
     env:
-      PYTEST_REQPASS: 450
+      PYTEST_REQPASS: 451
     environment: test
     steps:
       - uses: actions/checkout@v4
@@ -62,24 +63,25 @@ jobs:
           path: |
             ~/.cache/pre-commit
           key: pre-commit-${{ matrix.name || matrix.passed_name }}-${{ hashFiles('.pre-commit-config.yaml') }}
-      - name: Install system dependencies
+
+      - name: Install system dependencies on Linux
+        if: ${{ runner.os == 'Linux' }}
         # remove broken .deb ansible and replace with pip version:
         # https://github.com/actions/virtual-environments/issues/3001
         run: |
           sudo apt-get remove -y ansible \
           && sudo apt-get update \
-          && sudo apt-get install -y libvirt-dev python3-cryptography python3-jinja2 python3-yaml virtualenv \
+          && sudo apt-get install -y libvirt-dev python3-cryptography python3-jinja2 python3-yaml virtualenv fish zsh \
           && pip3 install --user ansible-core ansible-lint\
           && echo "$HOME/.local/bin" >> $GITHUB_PATH
         # https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#adding-a-system-path
-      - name: Validate that ansible works
+
+      - name: Install system dependencies on macOS
+        if: ${{ runner.os == 'macOS' }}
         run: |
-          ansible --version \
-          && virtualenv foo \
-          && source foo/bin/activate \
-          && ansible --version
+          brew install bash fish
+
       - name: Set up Python ${{ matrix.python_version || '3.10' }}
-        if: "!contains(matrix.shell, 'wsl')"
         uses: actions/setup-python@v5
         with:
           cache: pip
