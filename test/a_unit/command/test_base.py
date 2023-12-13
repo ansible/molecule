@@ -49,7 +49,7 @@ def _instance(_base_class, config_instance: config.Config):
 
 @pytest.fixture()
 def _patched_base_setup(mocker):
-    return mocker.patch("molecule.test.a_unit.command.test_base.ExtendedBase._setup")
+    return mocker.patch("test.a_unit.command.test_base.ExtendedBase._setup")
 
 
 @pytest.fixture()
@@ -70,11 +70,6 @@ def _patched_execute_subcommand(mocker):
 @pytest.fixture()
 def _patched_execute_scenario(mocker):
     return mocker.patch("molecule.command.base.execute_scenario")
-
-
-@pytest.fixture()
-def _patched_print_matrix(mocker):
-    return mocker.patch("molecule.scenarios.Scenarios.print_matrix")
 
 
 @pytest.fixture()
@@ -111,12 +106,9 @@ def test_command_setup(
 
 def test_execute_cmdline_scenarios(
     config_instance: config.Config,
-    _patched_print_matrix,
     _patched_execute_scenario,
 ):
     # Ensure execute_cmdline_scenarios runs normally:
-    # - scenarios.print_matrix is called, which also indicates Scenarios
-    #   was instantiated correctly
     # - execute_scenario is called once, indicating the function correctly
     #   loops over Scenarios.
     scenario_name = None
@@ -124,7 +116,6 @@ def test_execute_cmdline_scenarios(
     command_args = {"destroy": "always", "subcommand": "test"}
     base.execute_cmdline_scenarios(scenario_name, args, command_args)
 
-    assert _patched_print_matrix.called_once_with()
     assert _patched_execute_scenario.call_count == 1
 
 

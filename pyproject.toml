@@ -29,6 +29,7 @@ classifiers = [
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
   "Programming Language :: Python",
   "Topic :: System :: Systems Administration",
   "Topic :: Software Development :: Bug Tracking",
@@ -157,13 +158,13 @@ norecursedirs = [
   "build",
   "dist",
   "doc",
-  "src/molecule/test/resources",
-  "src/molecule/test/scenarios",
+  "test/resources",
+  "test/scenarios",
 ]
 addopts = "--doctest-modules --durations 10 --color=yes"
 doctest_optionflags = ["ALLOW_UNICODE", "ELLIPSIS"]
 junit_suite_name = "molecule_test_suite"
-testpaths = "src/molecule/test/"
+testpaths = "test/"
 filterwarnings = [
   # treat warnings as errors unless we add them below
   "error",
@@ -216,7 +217,7 @@ parametrize-values-type = "tuple"
 known-first-party = ["molecule"]
 
 [tool.ruff.per-file-ignores]
-"src/molecule/test/**.py" = ["S"]
+"test/**.py" = ["S"]
 "src/molecule/*/\\{\\{*/**.py" = ["S"]
 
 [tool.setuptools.dynamic]
