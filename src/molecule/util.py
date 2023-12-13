@@ -357,7 +357,7 @@ def boolean(value: Any, strict=True) -> bool:
         return value
 
     normalized_value = value
-    if isinstance(value, (str, bytes)):
+    if isinstance(value, str | bytes):
         normalized_value = str(value).lower().strip()
 
     if normalized_value in BOOLEANS_TRUE:

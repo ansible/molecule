@@ -38,7 +38,7 @@ def is_subset(subset, superset):
             for key, val in subset.items()
         )
 
-    if isinstance(subset, (list, set)):
+    if isinstance(subset, list | set):
         return all(
             any(is_subset(subitem, superitem) for superitem in superset)
             for subitem in subset
