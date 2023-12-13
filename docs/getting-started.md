@@ -55,7 +55,7 @@ familiar with the basics of how to use Molecule and what it can offer.
              molecule init scenario
           ```
 
-![Collection Structure and ansible config file collections path](images/collection_structure_and_ansible_cfg.png)
+![Collection Structure and ansible config file collections path](images/collection_structure.png)
 
 Before moving to test the playbooks or roles, the sections below provide information related to Scenarios.
 
