@@ -1,1 +1,0 @@
-# Testing an existing collection

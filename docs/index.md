@@ -1,3 +1,9 @@
+---
+hide:
+  - navigation
+  - toc
+---
+
 # About Ansible Molecule
 
 Molecule project is designed to aid in the development and testing of
