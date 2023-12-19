@@ -97,9 +97,9 @@ create.yml  destroy.yml  molecule.yml  converge.yml
 
     ``` yaml
     - name: Verify
-        hosts: all
-        become: true
-        tasks:
+      hosts: all
+      become: true
+      tasks:
         - name: Initialize role without actually running it
           ansible.builtin.include_role:
             name: my_role
