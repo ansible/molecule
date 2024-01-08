@@ -31,6 +31,7 @@ class Driver:
     """Driver Class."""
 
     __metaclass__ = ABCMeta
+    title = ""  # Short description of the driver.
 
     def __init__(self, config=None) -> None:
         """Initialize code for all :ref:`Driver` classes.
