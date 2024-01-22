@@ -137,6 +137,7 @@ class Delegated(Driver):
               ansible_connection: local
     ```
     """
+    title = "Default driver, user is expected to manage provisioning of test resources."
 
     def __init__(self, config=None) -> None:
         """Construct Delegated."""
