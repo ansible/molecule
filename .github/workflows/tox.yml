@@ -60,7 +60,7 @@ jobs:
           submodules: true
 
       - name: Set pre-commit cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         if: ${{ matrix.passed_name == 'lint' }}
         with:
           path: |
