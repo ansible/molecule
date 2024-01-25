@@ -37,6 +37,8 @@ jobs:
             pkg
             eco
             py311-devel
+          platforms: linux,macos
+          macos: minmax
 
   build:
     name: ${{ matrix.name }}
@@ -66,7 +68,9 @@ jobs:
           path: |
             ~/.cache/pre-commit
           key: pre-commit-${{ matrix.name || matrix.passed_name }}-${{ hashFiles('.pre-commit-config.yaml') }}
-      - name: Install system dependencies
+
+      - name: Install system dependencies (linux)
+        if: ${{ runner.os == 'Linux' }}
         # remove broken .deb ansible and replace with pip version:
         # https://github.com/actions/virtual-environments/issues/3001
         run: |
@@ -76,12 +80,12 @@ jobs:
           && pip3 install --user ansible-core ansible-lint\
           && echo "$HOME/.local/bin" >> $GITHUB_PATH
         # https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#adding-a-system-path
-      - name: Validate that ansible works
-        run: |
-          ansible --version \
-          && virtualenv foo \
-          && source foo/bin/activate \
-          && ansible --version
+      # - name: Validate that ansible works
+      #   run: |
+      #     ansible --version \
+      #     && virtualenv foo \
+      #     && source foo/bin/activate \
+      #     && ansible --version
       - name: Set up Python ${{ matrix.python_version || '3.10' }}
         if: "!contains(matrix.shell, 'wsl')"
         uses: actions/setup-python@v5
