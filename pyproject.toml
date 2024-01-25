@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 # https://peps.python.org/pep-0621/#readme
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dynamic = ["version", "dependencies", "optional-dependencies"]
 name = "molecule"
 description = "Molecule aids in the development and testing of Ansible roles"
@@ -26,7 +26,6 @@ classifiers = [
   "Operating System :: MacOS",
   "Operating System :: POSIX",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
@@ -77,7 +76,7 @@ profile = "black"
 known_first_party = "molecule"
 
 [tool.mypy]
-python_version = 3.9
+python_version = 3.10
 # strict = true
 color_output = true
 error_summary = true
@@ -206,7 +205,7 @@ ignore = [
   "TRY",
 ]
 select = ["ALL"]
-target-version = "py39"
+target-version = "py310"
 # Same as Black.
 line-length = 88
 

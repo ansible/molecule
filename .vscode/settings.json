@@ -4,7 +4,7 @@
   },
   "[python]": {
     "editor.codeActionsOnSave": {
-      "source.fixAll": true
+      "source.fixAll": "explicit"
     },
     "editor.formatOnSave": true
   },
@@ -20,13 +20,20 @@
   },
   "git.ignoreLimitWarning": true,
   "grammarly.domain": "technical",
-  "grammarly.files.include": ["**/*.txt", "**/*.md"],
+  "grammarly.files.include": [
+    "**/*.txt",
+    "**/*.md"
+  ],
   "grammarly.hideUnavailablePremiumAlerts": true,
   "grammarly.showExamples": true,
   "prettier.enable": true,
-  "python.analysis.exclude": ["build"],
+  "python.analysis.exclude": [
+    "build"
+  ],
   "python.formatting.provider": "black",
-  "python.linting.flake8Args": ["--ignore=E501,W503"],
+  "python.linting.flake8Args": [
+    "--ignore=E501,W503"
+  ],
   "python.linting.flake8Enabled": false,
   "python.linting.mypyCategorySeverity.error": "Warning",
   "python.linting.mypyEnabled": true,
@@ -36,7 +43,10 @@
   "python.testing.unittestEnabled": false,
   "sortLines.filterBlankLines": true,
   "yaml.completion": true,
-  "yaml.customTags": ["!encrypted/pkcs1-oaep scalar", "!vault scalar"],
+  "yaml.customTags": [
+    "!encrypted/pkcs1-oaep scalar",
+    "!vault scalar"
+  ],
   "yaml.format.enable": false,
   "yaml.validate": true
 }

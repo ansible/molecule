@@ -3,11 +3,11 @@ ci:
   skip:
     - ansible-lint
 default_language_version:
-  python: python3.9
+  python: python3.10
 repos:
   - repo: https://github.com/pre-commit/mirrors-prettier
     # keep it before yamllint
-    rev: "v4.0.0-alpha.4"
+    rev: "v4.0.0-alpha.8"
     hooks:
       - id: prettier
         # Temporary excludes so we can gradually normalize the formatting
@@ -23,7 +23,7 @@ repos:
     hooks:
       - id: codespell
   - repo: https://github.com/psf/black
-    rev: 23.11.0
+    rev: 23.12.1
     hooks:
       - id: black
         language_version: python3
@@ -47,12 +47,12 @@ repos:
         types: [file, yaml]
         entry: yamllint --strict
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.1.7"
+    rev: "v0.1.13"
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.7.1
+    rev: v1.8.0
     hooks:
       - id: mypy
         # empty args needed in order to match mypy cli behavior
@@ -77,7 +77,7 @@ repos:
           - types-setuptools
           - wcmatch
   - repo: https://github.com/pycqa/pylint
-    rev: v3.0.1
+    rev: v3.0.3
     hooks:
       - id: pylint
         args:
