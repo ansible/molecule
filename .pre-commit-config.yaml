@@ -23,7 +23,7 @@ repos:
     hooks:
       - id: codespell
   - repo: https://github.com/psf/black
-    rev: 23.12.1
+    rev: 24.1.1
     hooks:
       - id: black
         language_version: python3
@@ -47,7 +47,7 @@ repos:
         types: [file, yaml]
         entry: yamllint --strict
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.1.13"
+    rev: "v0.1.14"
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
@@ -94,6 +94,6 @@ repos:
           - pytest-testinfra
           - wcmatch
   - repo: https://github.com/ansible/ansible-lint
-    rev: v6.22.1
+    rev: v6.22.2
     hooks:
       - id: ansible-lint
