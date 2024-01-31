@@ -31,3 +31,7 @@
         - templates/scenario/*.j2
       loop_control:
         label: "{{ dest_file | relpath }}"
+      when:
+        - ((driver_name in ['containers', 'docker', 'podman']) and
+          (item | regex_search('create|destroy') is none) or
+          (driver_name not in ['containers', 'docker', 'podman']))
