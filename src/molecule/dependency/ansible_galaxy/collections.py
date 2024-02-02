@@ -1,4 +1,5 @@
 """Ansible Galaxy dependencies for lists of collections."""
+
 import logging
 import os
 
