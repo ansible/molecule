@@ -1,6 +1,5 @@
 """PyTest Config File."""
 
-
 import os
 
 import pytest

@@ -1,4 +1,5 @@
 """Ansible Galaxy dependencies for lists of roles."""
+
 import logging
 import os
 
