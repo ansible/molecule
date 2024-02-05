@@ -1,4 +1,5 @@
 """Console and terminal utilities."""
+
 import os
 import sys
 from typing import Any
