@@ -118,6 +118,7 @@ jobs:
           name: ${{ matrix.passed_name }}
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true # optional (default = false)
+          fail_ci_if_error: true
 
       - name: Report failure if git reports dirty status
         run: |
