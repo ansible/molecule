@@ -3,7 +3,7 @@ site_name: Ansible Molecule
 site_url: https://ansible.readthedocs.io/projects/molecule/
 repo_url: https://github.com/ansible/molecule
 edit_uri: blob/main/docs/
-copyright: Copyright © 2023 Red Hat, Inc.
+copyright: Copyright © 2024 Red Hat, Inc.
 docs_dir: docs
 strict: true
 
@@ -32,6 +32,7 @@ theme:
     - search.highlight
     - search.share
     - search.suggest
+    - toc.follow
     - toc.integrate
 extra:
   generator: false
@@ -80,9 +81,10 @@ nav:
 
 plugins:
   - autorefs
-  - search
+  - material/search:
+      separator: '[\s\-,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
   - material/social
-
+  - material/tags
   - mkdocstrings:
       enable_inventory: true
       default_handler: python
