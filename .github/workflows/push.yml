@@ -1,5 +1,4 @@
----
-# See https://github.com/ansible/devtools/blob/main/.github/workflows/push.yml
+# See https://github.com/ansible/team-devtools/blob/main/.github/workflows/push.yml
 name: push
 on:
   push:
@@ -10,4 +9,4 @@ on:
 
 jobs:
   ack:
-    uses: ansible/devtools/.github/workflows/push.yml@main
+    uses: ansible/team-devtools/.github/workflows/push.yml@main
