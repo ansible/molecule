@@ -1,21 +1,16 @@
 ---
 name: tox
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 on:
   push: # only publishes pushes to the main branch to TestPyPI
     branches: # any integration branch but not tag
       - "main"
   pull_request:
-    branches:
-      - "main"
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
-  cancel-in-progress: true
-
-env:
-  FORCE_COLOR: 1 # tox, pytest, ansible-lint
-  PY_COLORS: 1
+  workflow_call:
 
 jobs:
   pre:
@@ -111,13 +106,19 @@ jobs:
         # produce a single .coverage file at repo root
         run: tox -e coverage
 
+      - name: Archive logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-${{ matrix.name }}.zip
+          path: .tox/**/log/
+
       - name: Upload coverage data
         if: ${{ startsWith(matrix.passed_name, 'py') }}
         uses: codecov/codecov-action@v4
         with:
-          name: ${{ matrix.passed_name }}
+          name: ${{ matrix.name }}
           token: ${{ secrets.CODECOV_TOKEN }}
-          verbose: true # optional (default = false)
+          verbose: true
           fail_ci_if_error: true
 
       - name: Report failure if git reports dirty status
@@ -134,10 +135,14 @@ jobs:
 
     needs:
       - build
-
     runs-on: ubuntu-latest
-
     steps:
+      - name: Merge logs into a single archive
+        uses: actions/upload-artifact/merge@v4
+        with:
+          name: logs.zip
+          pattern: logs-*.zip
+          delete-merged: true
       - name: Decide whether the needed jobs succeeded or failed
         uses: re-actors/alls-green@release/v1
         with:
