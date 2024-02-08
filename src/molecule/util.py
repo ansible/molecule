@@ -391,5 +391,6 @@ def bool2args(data: bool) -> list[str]:
 
 def print_as_yaml(data: Any) -> None:
     """Render python object as yaml on console."""
-    result = Syntax(safe_dump(data), "yaml")
+    # https://github.com/Textualize/rich/discussions/990#discussioncomment-342217
+    result = Syntax(code=safe_dump(data), lexer="yaml", background_color="default")
     console.print(result)
