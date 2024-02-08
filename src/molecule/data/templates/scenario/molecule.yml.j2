@@ -1,6 +1,13 @@
 ---
+driver:
+  name: {{ driver_name }}
 platforms:
   - name: instance
+{% if driver_name in ['containers', 'docker', 'podman'] %}
+    image: quay.io/centos/centos:stream8
+    pre_build_image: true
+{% else %}
     # you might want to add your own variables here based on what provisioning
     # you are doing like:
     # image: quay.io/centos/centos:stream8
+{% endif %}
