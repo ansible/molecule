@@ -535,9 +535,10 @@ class Ansible(base.Base):
         ]
         if os.environ.get("ANSIBLE_FILTER_PLUGINS", ""):
             filter_plugins_path_list.extend(
-                list(map(util.abs_path, os.environ["ANSIBLE_FILTER_PLUGINS"].split(":"))),
+                list(
+                    map(util.abs_path, os.environ["ANSIBLE_FILTER_PLUGINS"].split(":")),
+                ),
             )
-
 
         env = util.merge_dicts(
             os.environ,
