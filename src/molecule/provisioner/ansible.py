@@ -514,7 +514,9 @@ class Ansible(base.Base):
                 "ANSIBLE_ROLES_PATH": ":".join(roles_path_list),
                 self._config.ansible_collections_path: ":".join(collections_path_list),
                 "ANSIBLE_LIBRARY": ":".join(self._get_modules_directories()),
-                "ANSIBLE_FILTER_PLUGINS": ":".join(self._get_filter_plugins_directories()),
+                "ANSIBLE_FILTER_PLUGINS": ":".join(
+                    self._get_filter_plugins_directories(),
+                ),
             },
         )
         env = util.merge_dicts(env, self._config.env)
@@ -978,11 +980,12 @@ class Ansible(base.Base):
         return util.abs_path(os.path.join(self._get_plugin_directory(), "filter"))
 
     def _get_filter_plugins_directories(self) -> list[str]:
-        """Return list of ansilbe filter plugins includes directories.
-        """
+        """Return list of ansilbe filter plugins includes directories."""
         paths: list[str | None] = []
         if os.environ.get("ANSIBLE_FILTER_PLUGINS"):
-            paths = list(map(util.abs_path, os.environ["ANSIBLE_FILTER_PLUGINS"].split(":")))
+            paths = list(
+                map(util.abs_path, os.environ["ANSIBLE_FILTER_PLUGINS"].split(":")),
+            )
 
         paths.extend(
             [

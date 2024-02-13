@@ -762,7 +762,9 @@ def test_get_filter_plugins_directories_default(_instance, monkeypatch):
     assert re.search(r"/usr/share/ansible/plugins/filter$", paths[4])
 
 
-def tes_get_filter_plugins_directories_single_ansible_filter_plugins(_instance, monkeypatch):
+def tes_get_filter_plugins_directories_single_ansible_filter_plugins(
+    _instance, monkeypatch,
+):
     monkeypatch.setenv("ANSIBLE_FILTER_PLUGINS", "/abs/path/plugins/filter")
 
     paths = _instance._get_filter_plugins_directories()
@@ -771,8 +773,12 @@ def tes_get_filter_plugins_directories_single_ansible_filter_plugins(_instance, 
     assert paths[0] == "/abs/path/plugins/filter"
 
 
-def test_get_filter_plugins_directories_multi_ansible_filter_plugins(_instance, monkeypatch):
-    monkeypatch.setenv("ANSIBLE_FILTER_PLUGINS", "relpath/plugins/filter:/abs/path/plugins/filter")
+def test_get_filter_plugins_directories_multi_ansible_filter_plugins(
+    _instance, monkeypatch,
+):
+    monkeypatch.setenv(
+        "ANSIBLE_FILTER_PLUGINS", "relpath/plugins/filter:/abs/path/plugins/filter",
+    )
 
     paths = _instance._get_filter_plugins_directories()
 
