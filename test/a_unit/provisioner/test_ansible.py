@@ -749,6 +749,38 @@ def test_get_filter_plugin_directory(_instance):
     assert x == parts[-5:]
 
 
+def test_get_filter_plugins_directories_default(_instance, monkeypatch):
+    monkeypatch.delenv("ANSIBLE_FILTER_PLUGINS", raising=False)
+
+    paths = _instance._get_filter_plugins_directories()
+
+    assert len(paths) == 5
+    assert re.search(r"molecule/provisioner/ansible/plugins/filter$", paths[0])
+    assert re.search(r"\.cache/molecule/[^/]+/default/filter$", paths[1])
+    assert re.search(r"/filter$", paths[2])
+    assert re.search(r"\.ansible/plugins/filter$", paths[3])
+    assert re.search(r"/usr/share/ansible/plugins/filter$", paths[4])
+
+
+def tes_get_filter_plugins_directories_single_ansible_filter_plugins(_instance, monkeypatch):
+    monkeypatch.setenv("ANSIBLE_FILTER_PLUGINS", "/abs/path/plugins/filter")
+
+    paths = _instance._get_filter_plugins_directories()
+
+    assert len(paths) == 6
+    assert paths[0] == "/abs/path/plugins/filter"
+
+
+def test_get_filter_plugins_directories_multi_ansible_filter_plugins(_instance, monkeypatch):
+    monkeypatch.setenv("ANSIBLE_FILTER_PLUGINS", "relpath/plugins/filter:/abs/path/plugins/filter")
+
+    paths = _instance._get_filter_plugins_directories()
+
+    assert len(paths) == 7
+    assert paths[0].endswith("relpath/plugins/filter")
+    assert paths[1] == "/abs/path/plugins/filter"
+
+
 def test_absolute_path_for(_instance):
     env = {"foo": "foo:bar"}
     x = ":".join(

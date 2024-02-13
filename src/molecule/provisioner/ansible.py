@@ -507,39 +507,6 @@ class Ansible(base.Base):
                 list(map(util.abs_path, os.environ["ANSIBLE_ROLES_PATH"].split(":"))),
             )
 
-        filter_plugins_path_list = [
-            self._get_filter_plugin_directory(),
-            util.abs_path(
-                os.path.join(
-                    self._config.scenario.ephemeral_directory,
-                    "plugins",
-                    "filter",
-                ),
-            ),
-            util.abs_path(
-                os.path.join(
-                    self._config.project_directory,
-                    "plugins",
-                    "filter",
-                ),
-            ),
-            util.abs_path(
-                os.path.join(
-                    os.path.expanduser("~"),
-                    ".ansible",
-                    "plugins",
-                    "filter",
-                ),
-            ),
-            "/usr/share/ansible/plugins/filter",
-        ]
-        if os.environ.get("ANSIBLE_FILTER_PLUGINS", ""):
-            filter_plugins_path_list.extend(
-                list(
-                    map(util.abs_path, os.environ["ANSIBLE_FILTER_PLUGINS"].split(":")),
-                ),
-            )
-
         env = util.merge_dicts(
             os.environ,
             {
@@ -547,7 +514,7 @@ class Ansible(base.Base):
                 "ANSIBLE_ROLES_PATH": ":".join(roles_path_list),
                 self._config.ansible_collections_path: ":".join(collections_path_list),
                 "ANSIBLE_LIBRARY": ":".join(self._get_modules_directories()),
-                "ANSIBLE_FILTER_PLUGINS": ":".join(filter_plugins_path_list),
+                "ANSIBLE_FILTER_PLUGINS": ":".join(self._get_filter_plugins_directories()),
             },
         )
         env = util.merge_dicts(env, self._config.env)
@@ -1009,6 +976,44 @@ class Ansible(base.Base):
 
     def _get_filter_plugin_directory(self):
         return util.abs_path(os.path.join(self._get_plugin_directory(), "filter"))
+
+    def _get_filter_plugins_directories(self) -> list[str]:
+        """Return list of ansilbe filter plugins includes directories.
+        """
+        paths: list[str | None] = []
+        if os.environ.get("ANSIBLE_FILTER_PLUGINS"):
+            paths = list(map(util.abs_path, os.environ["ANSIBLE_FILTER_PLUGINS"].split(":")))
+
+        paths.extend(
+            [
+                self._get_filter_plugin_directory(),
+                util.abs_path(
+                    os.path.join(
+                        self._config.scenario.ephemeral_directory,
+                        "plugins",
+                        "filter",
+                    ),
+                ),
+                util.abs_path(
+                    os.path.join(
+                        self._config.project_directory,
+                        "plugins",
+                        "filter",
+                    ),
+                ),
+                util.abs_path(
+                    os.path.join(
+                        os.path.expanduser("~"),
+                        ".ansible",
+                        "plugins",
+                        "filter",
+                    ),
+                ),
+                "/usr/share/ansible/plugins/filter",
+            ],
+        )
+
+        return [path for path in paths if path is not None]
 
     def _absolute_path_for(self, env, key):
         return ":".join([self.abs_path(p) for p in env[key].split(":")])
