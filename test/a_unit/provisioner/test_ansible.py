@@ -756,7 +756,7 @@ def test_get_filter_plugins_directories_default(_instance, monkeypatch):
 
     assert len(paths) == 5
     assert re.search(r"molecule/provisioner/ansible/plugins/filter$", paths[0])
-    assert re.search(r"\.cache/molecule/[^/]+/default/filter$", paths[1])
+    assert re.search(r"\.cache/molecule/[^/]+/default/plugins/filter$", paths[1])
     assert re.search(r"/filter$", paths[2])
     assert re.search(r"\.ansible/plugins/filter$", paths[3])
     assert re.search(r"/usr/share/ansible/plugins/filter$", paths[4])
