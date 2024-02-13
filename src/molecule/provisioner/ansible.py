@@ -904,6 +904,14 @@ class Ansible(base.Base):
             if not os.path.exists(source):
                 msg = f"The source path '{source}' does not exist."
                 util.sysexit_with_message(msg)
+            if os.path.exists(target):
+                if os.path.realpath(target) == os.path.realpath(source):
+                    msg = f"Required symlink {target} to {source} exist, skip creation"
+                    LOG.debug(msg)
+                    continue
+                msg = f"Required symlink {target} exist with another source"
+                LOG.debug(msg)
+                os.remove(target)
             msg = f"Inventory {source} linked to {target}"
             LOG.debug(msg)
             os.symlink(source, target)
