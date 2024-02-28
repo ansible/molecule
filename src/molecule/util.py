@@ -324,7 +324,9 @@ def _filter_platforms(config, platform_name):
 
 @cache
 def find_vcs_root(
-    location="", dirs=(".git", ".hg", ".svn", ".config"), default=None,
+    location="",
+    dirs=(".git", ".hg", ".svn", ".config"),
+    default=None,
 ) -> str:
     """Return current repository root directory."""
     if not location:
