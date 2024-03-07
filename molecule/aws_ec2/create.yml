@@ -39,13 +39,13 @@
     #    msg: "{{ caller_info.account }}"
 
     - name: Find the vpc for the subnet
-      ec2_vpc_subnet_info:
+      amazon.aws.ec2_vpc_subnet_info:
         subnet_ids: "{{ item.vpc_subnet_id }}"
       loop: "{{ molecule_yml.platforms }}"
       register: subnet_info
 
     - name: Create security groups
-      ec2_group:
+      amazon.aws.ec2_security_group:
         vpc_id: "{{ item.subnets[0].vpc_id }}"
         name: "{{ security_group_name }}"
         description: "{{ security_group_name }}"
@@ -54,30 +54,30 @@
       loop: "{{ subnet_info.results }}"
 
     - name: Test for presence of local key pair
-      stat:
+      ansible.builtin.stat:
         path: "{{ key_pair_path }}"
       register: key_pair_local
 
     - name: Delete remote key pair
-      ec2_key:
+      amazon.aws.ec2_key:
         name: "{{ key_pair_name }}"
         state: absent
       when: not key_pair_local.stat.exists
 
     - name: Create key pair
-      ec2_key:
+      amazon.aws.ec2_key:
         name: "{{ key_pair_name }}"
       register: key_pair
 
     - name: Persist the key pair
-      copy:
+      ansible.builtin.copy:
         dest: "{{ key_pair_path }}"
         content: "{{ key_pair.key.private_key }}"
         mode: 0600
       when: key_pair.changed
 
     - name: Get the ec2 ami(s) by owner and name, if image not set
-      ec2_ami_info:
+      amazon.aws.ec2_ami_info:
         owners: "{{ item.image_owner }}"
         filters:
           name: "{{ item.image_name }}"
@@ -91,7 +91,7 @@
         name: molecule-unit-test-ec2-role
         state: present
         create_instance_profile: true
-        assume_role_policy_document: "{{ lookup('file','templates/iam_trust_policy.json') }}"
+        assume_role_policy_document: "{{ lookup('file', 'templates/iam_role_ec2_trust_policy.json.j2') }}"
         path: "/"
         description: this role is used by molecule to test ansible playbooks on ec2 instances. This role provides the necessary permissions to run the certain playbook actions.
         managed_policy:
@@ -124,11 +124,11 @@
       loop: "{{ molecule_yml.platforms }}"
       loop_control:
         index_var: index
-      async: 7200
+      async: 7200 # noqa: fqcn[action-core]
       poll: 0
 
     - name: Wait for instance(s) creation to complete
-      async_status:
+      ansible.builtin.async_status:
         jid: "{{ item.ansible_job_id }}"
       register: ec2_jobs
       until: ec2_jobs.finished
@@ -142,7 +142,7 @@
 
     # Mandatory configuration for Molecule to function. - DO NO MODIFY
     - name: Populate instance config dict
-      set_fact:
+      ansible.builtin.set_fact:
         instance_conf_dict:
           {
             "instance": "{{ item.instances[0].tags.instance }}",
@@ -157,18 +157,18 @@
       when: server.changed | bool
 
     - name: Convert instance config dict to a list
-      set_fact:
+      ansible.builtin.set_fact:
         instance_conf: "{{ instance_config_dict.results | map(attribute='ansible_facts.instance_conf_dict') | list }}"
       when: server.changed | bool
 
     - name: Dump instance config
-      copy:
+      ansible.builtin.copy:
         content: "{{ instance_conf | to_json | from_json | to_yaml }}"
         dest: "{{ molecule_instance_config }}"
       when: server.changed | bool
 
     - name: Wait for SSH
-      wait_for:
+      ansible.builtin.wait_for:
         port: "{{ ssh_port }}"
         host: "{{ item.address }}"
         search_regex: SSH
@@ -177,5 +177,5 @@
       with_items: "{{ lookup('file', molecule_instance_config) | from_yaml }}"
 
     - name: Wait for boot process to finish
-      pause:
+      ansible.builtin.pause:
         minutes: 1

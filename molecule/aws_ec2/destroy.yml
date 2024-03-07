@@ -4,6 +4,7 @@
   connection: local
   gather_facts: false
   no_log: "{{ molecule_no_log }}"
+
   tasks:
     - block:
         - name: Populate instance config
@@ -27,7 +28,7 @@
       register: server
 
     - name: Wait for instance(s) deletion to complete
-      async_status:
+      ansible.builtin.async_status:
         jid: "{{ item.ansible_job_id }}"
       register: ec2_jobs
       until: ec2_jobs.finished
@@ -40,16 +41,16 @@
         state: absent
         delete_instance_profile: true
         name: molecule-unit-test-ec2-role
-        assume_role_policy_document: "{{ lookup('file','templates/iam_trust_policy.json') }}"
+        assume_role_policy_document: "{{ lookup('file', 'templates/iam_role_ec2_trust_policy.json.j2') }}"
 
     # Mandatory configuration for Molecule to function.
 
     - name: Populate instance config
-      set_fact:
+      ansible.builtin.set_fact:
         instance_conf: {}
 
     - name: Dump instance config
-      copy:
+      ansible.builtin.copy:
         content: "{{ instance_conf | to_json | from_json | to_yaml }}"
         dest: "{{ molecule_instance_config }}"
       when: server.changed | bool

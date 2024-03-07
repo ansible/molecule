@@ -65,7 +65,7 @@ a IAM Role that will be attached to the instance (as per AWS Best Practices) The
 
     By default this role attaches the `AmazonSSMManagedInstanceCore` policy to the role. This will
     allow you to use SSM to access the instance via the AWS console if required. Refer to
-    [AWS Systems Manager - Session Manager Documenation](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html)
+    [AWS SSM - Session Manager Documentation](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager.html)
     for more information
 
 Update the `create.yml` file with the codeblock below. When molecule runs the create step the following actions will occur.

@@ -3,8 +3,8 @@
   hosts: all
   gather_facts: true
   become: yes
-  become_method: sudo
+  become_method: ansible.builtin.sudo
   tasks:
     - name: Deploy Ansible Role
-      include_role:
+      ansible.builtin.include_role:
         name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
