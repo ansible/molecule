@@ -3,7 +3,7 @@
   gather_facts: false
   tasks:
     - name: Make sure python3 is installed
-      package:
+      ansible.builtin.package:
         name: "{{ item }}"
         state: present
       with_items:

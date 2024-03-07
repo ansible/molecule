@@ -6,14 +6,14 @@
   no_log: "{{ molecule_no_log }}"
 
   tasks:
-    - block:
+    - block: ## noqa: name[missing]
         - name: Populate instance config
-          set_fact:
+          ansible.builtin.set_fact:
             instance_conf: "{{ lookup('file', molecule_instance_config) | from_yaml }}"
             skip_instances: false
       rescue:
         - name: Populate instance config when file missing
-          set_fact:
+          ansible.builtin.set_fact:
             instance_conf: {}
             skip_instances: true
 
@@ -53,4 +53,5 @@
       ansible.builtin.copy:
         content: "{{ instance_conf | to_json | from_json | to_yaml }}"
         dest: "{{ molecule_instance_config }}"
+        mode: 0600
       when: server.changed | bool
