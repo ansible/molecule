@@ -24,7 +24,7 @@ platforms:
     vpc_subnet_id: subnet-111aaa444aaaa111d
     ssh_user: ubuntu
 
-# Point molecule to the converge.yml playbook file to apply the configuration to the test environment.    
+# Point molecule to the converge.yml playbook file to apply the configuration to the test environment.
 provisioner:
   playbooks:
     converge: converge.yml
