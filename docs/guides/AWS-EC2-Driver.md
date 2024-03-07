@@ -12,19 +12,19 @@ This guide will show you how to use molecule with AWS EC2 instances to test your
 Utilise [pip](https://pip.pypa.io/en/stable/installation/) to install boto3 and botocore packages.
 
 ```bash
-    pip install boto3 botocore
+pip install boto3 botocore
 ```
 Utilise [pip](https://pip.pypa.io/en/stable/installation/) to install the molecule ec2 drivers.
     
 ```bash
-    pip install molecule molecule-drivers[ec2]
+pip install molecule molecule-drivers[ec2]
 ```
 
 ### Molecule EC2 Guide
 Create a new role with molecule specifying the ec2 driver.
 
 ```bash
-    molecule init scenario -d ec2
+molecule init scenario -d ec2
 ```
 
 This will create a stock standard molecule scenario, but you will still need to add and update other files within the molecule directory
@@ -86,10 +86,10 @@ which vpc and subnet's to use etc. The codeblock below shows a working example t
 Utilise the normal molecule commands to test your role.
 
 ```bash
-    molecule create
-    molecule converge
-    molecule verify
-    molecule destroy
+molecule create
+molecule converge
+molecule verify
+molecule destroy
 ```
 If you check the AWS EC2 Console you will see the instance that molecule created with the naming convention `molecule-unit-test-<%OS%>`
 ![EC2Console](../images/ec2_instance_console.png)
