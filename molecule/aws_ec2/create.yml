@@ -1,0 +1,181 @@
+---
+- name: Create
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  no_log: "{{ molecule_no_log }}"
+  vars:
+
+    ssh_port: 22
+
+    security_group_name: molecule
+    security_group_description: Security group for testing Molecule
+    security_group_rules:
+      - proto: tcp
+        from_port: "{{ ssh_port }}"
+        to_port: "{{ ssh_port }}"
+        cidr_ip: '0.0.0.0/0'
+      - proto: icmp
+        from_port: 8
+        to_port: -1
+        cidr_ip: '0.0.0.0/0'
+    security_group_rules_egress:
+      - proto: -1
+        from_port: 0
+        to_port: 0
+        cidr_ip: '0.0.0.0/0'
+
+    key_pair_name: molecule_key
+    key_pair_path: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}/ssh_key"
+
+  tasks:
+
+    # Retrieve the AWS account ID which can be used in future tasks in the playbook
+    - name: Retrieve AWS account ID
+      amazon.aws.aws_caller_info:
+      register: caller_info
+
+    # Debug option - Uncomment to use
+    #- name: Show AWS Account ID
+    #  debug:
+    #    msg: "{{ caller_info.account }}"
+
+    - name: Find the vpc for the subnet
+      ec2_vpc_subnet_info:
+        subnet_ids: "{{ item.vpc_subnet_id }}"
+      loop: "{{ molecule_yml.platforms }}"
+      register: subnet_info
+
+    - name: Create security groups
+      ec2_group:
+        vpc_id: "{{ item.subnets[0].vpc_id }}"
+        name: "{{ security_group_name }}"
+        description: "{{ security_group_name }}"
+        rules: "{{ security_group_rules }}"
+        rules_egress: "{{ security_group_rules_egress }}"
+      loop: "{{ subnet_info.results }}"
+
+    - name: Test for presence of local key pair
+      stat:
+        path: "{{ key_pair_path }}"
+      register: key_pair_local
+
+    - name: Delete remote key pair
+      ec2_key:
+        name: "{{ key_pair_name }}"
+        state: absent
+      when: not key_pair_local.stat.exists
+
+    - name: Create key pair
+      ec2_key:
+        name: "{{ key_pair_name }}"
+      register: key_pair
+
+    - name: Persist the key pair
+      copy:
+        dest: "{{ key_pair_path }}"
+        content: "{{ key_pair.key.private_key }}"
+        mode: 0600
+      when: key_pair.changed
+
+    - name: Get the ec2 ami(s) by owner and name, if image not set
+      ec2_ami_info:
+        owners: "{{ item.image_owner }}"
+        filters:
+          name: "{{ item.image_name }}"
+      loop: "{{ molecule_yml.platforms }}"
+      when: item.image is not defined
+      register: ami_info
+
+    # TODO: RESOLVE DEPRECATION WARNINGS
+    - name: Create IAM role for molecule unit test instance(s)
+      amazon.aws.iam_role:
+        name: molecule-unit-test-ec2-role
+        state: present
+        create_instance_profile: true
+        assume_role_policy_document: "{{ lookup('file','templates/iam_trust_policy.json') }}"
+        path: "/"
+        description: this role is used by molecule to test ansible playbooks on ec2 instances. This role provides the necessary permissions to run the certain playbook actions.
+        managed_policy:
+          - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+      register: role
+
+    - name: Attach the molecule IAM role to instance profile 
+      amazon.aws.iam_instance_profile:
+        state: present
+        name: molecule-unit-test-ec2-role
+        role: molecule-unit-test-ec2-role
+
+    - name: Create molecule instance(s)
+      amazon.aws.ec2_instance:
+        name: "molecule-unit-test-{{ item.name }}"
+        iam_instance_profile: molecule-unit-test-ec2-role
+        key_name: "{{ key_pair_name }}"
+        image_id: "{{ item.image if item.image is defined else (ami_info.results[index].images | sort(attribute='creation_date', reverse=True))[0].image_id }}"
+        instance_type: "{{ item.instance_type }}"
+        vpc_subnet_id: "{{ item.vpc_subnet_id }}"
+        security_group: "{{ security_group_name }}"
+        # This tags line below is a bit a of hack to get dynamically populate the instance's username (if there are multiple in use or multiple Operating Systems in use)
+        # this allows the rest the Ansible playbook to add the correct username to the inventory file that is created when molecule runs the create step
+        tags: "{{ item.instance_tags | combine({'instance': item.name, 'ssh_user': item.ssh_user}) if item.instance_tags is defined else {'instance': item.name, 'ssh_user': item.ssh_user} }}"
+        wait: true
+        network:
+          assign_public_ip: true
+        count: 1
+      register: server
+      loop: "{{ molecule_yml.platforms }}"
+      loop_control:
+        index_var: index
+      async: 7200
+      poll: 0
+
+    - name: Wait for instance(s) creation to complete
+      async_status:
+        jid: "{{ item.ansible_job_id }}"
+      register: ec2_jobs
+      until: ec2_jobs.finished
+      retries: 300
+      with_items: "{{ server.results }}"
+
+    # DEBUG OPTION - Uncomment to use
+    #- name: print ec2_jobs.results
+    #  debug:
+    #    msg: "{{ ec2_jobs.results }}"
+
+    # Mandatory configuration for Molecule to function. - DO NO MODIFY
+    - name: Populate instance config dict
+      set_fact:
+        instance_conf_dict: {
+          'instance': "{{ item.instances[0].tags.instance }}",
+          'address': "{{ item.instances[0].public_ip_address }}",
+          'user':  "{{ item.instances[0].tags['ssh_user'] }}",
+          'port': "{{ ssh_port }}",
+          'identity_file': "{{ key_pair_path }}",
+          'instance_ids': "{{ item.instance_ids }}", }
+      with_items: "{{ ec2_jobs.results }}"
+      register: instance_config_dict
+      when: server.changed | bool
+
+    - name: Convert instance config dict to a list
+      set_fact:
+        instance_conf: "{{ instance_config_dict.results | map(attribute='ansible_facts.instance_conf_dict') | list }}"
+      when: server.changed | bool
+
+    - name: Dump instance config
+      copy:
+        content: "{{ instance_conf | to_json | from_json | to_yaml }}"
+        dest: "{{ molecule_instance_config }}"
+      when: server.changed | bool
+
+    - name: Wait for SSH
+      wait_for:
+        port: "{{ ssh_port }}"
+        host: "{{ item.address }}"
+        search_regex: SSH
+        delay: 10
+        timeout: 320
+      with_items: "{{ lookup('file', molecule_instance_config) | from_yaml }}"
+
+    - name: Wait for boot process to finish
+      pause:
+        minutes: 1

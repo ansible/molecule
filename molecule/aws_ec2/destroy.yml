@@ -1,0 +1,55 @@
+---
+- name: Destroy
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  no_log: "{{ molecule_no_log }}"
+  tasks:
+    - block:
+        - name: Populate instance config
+          set_fact:
+            instance_conf: "{{ lookup('file', molecule_instance_config) | from_yaml }}"
+            skip_instances: false
+      rescue:
+        - name: Populate instance config when file missing
+          set_fact:
+            instance_conf: {}
+            skip_instances: true
+
+    - name: Destroy molecule instance(s)
+      amazon.aws.ec2_instance:
+        state: absent
+        instance_ids: "{{ item.instance_ids }}"
+      loop: "{{ instance_conf }}"
+      when: not skip_instances
+      async: 7200
+      poll: 0
+      register: server
+
+    - name: Wait for instance(s) deletion to complete
+      async_status:
+        jid: "{{ item.ansible_job_id }}"
+      register: ec2_jobs
+      until: ec2_jobs.finished
+      retries: 300
+      with_items: "{{ server.results }}"
+
+    # TODO: RESOLVE DEPRECATION WARNINGS
+    - name: Delete IAM role used by molecule instance(s)
+      amazon.aws.iam_role:
+        state: absent
+        delete_instance_profile: true
+        name: molecule-unit-test-ec2-role
+        assume_role_policy_document: "{{ lookup('file','templates/iam_trust_policy.json') }}"
+
+    # Mandatory configuration for Molecule to function.
+
+    - name: Populate instance config
+      set_fact:
+        instance_conf: {}
+
+    - name: Dump instance config
+      copy:
+        content: "{{ instance_conf | to_json | from_json | to_yaml }}"
+        dest: "{{ molecule_instance_config }}"
+      when: server.changed | bool

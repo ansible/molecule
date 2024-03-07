@@ -69,6 +69,7 @@ nav:
       - examples/podman.md
       - examples/kubevirt.md
   - Guides:
+      - guides/AWS-EC2-Driver.md
       - guides/custom-image.md
       - guides/docker-rootless.md
       - guides/monolith.md

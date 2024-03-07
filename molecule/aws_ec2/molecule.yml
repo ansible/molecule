@@ -1,0 +1,54 @@
+#
+# This YAML file is the configuration file for molecule testing. It defines the platforms, provisioner, and test sequence for the default scenario.
+#
+
+role_name_check: 1
+driver:
+  name: ec2
+# This YAML file defines the platforms for molecule testing.
+# It specifies the operating systems, images, instance types, VPC subnet IDs, and SSH users for each platform.
+
+# TODO: Need to lookup the subnet id. Might need to look into creating the vpc within the molecule process.
+platforms:
+  # AmazonLinux2 OS
+  - name: AmazonLinux2
+    image: ami-06fdec94cc3067ad1
+    instance_type: t2.micro
+    vpc_subnet_id: subnet-111aaa444aaaa111d
+    ssh_user: ec2-user
+
+  # Ubuntu 20.04 LTS OS
+  - name: Ubuntu2004
+    image: ami-0f2967bce46537146
+    instance_type: t2.micro
+    vpc_subnet_id: subnet-111aaa444aaaa111d
+    ssh_user: ubuntu
+
+# Point molecule to the converge.yml playbook file to apply the configuration to the test environment.    
+provisioner:
+  playbooks:
+    converge: converge.yml
+
+# Specify Lint Settings
+lint: |
+  set -e
+  yamllint .
+  ansible-lint
+
+# This YAML file defines the test sequence for the default scenario in the molecule testing framework.
+# The test sequence includes the following steps:
+# 1. dependency: Checks for any dependencies required by the scenario.
+# 2. syntax: Validates the syntax of the configuration files.
+# 3. create: Creates the test environment in AWS.
+# 4. converge: Applies the configuration to the test environment.
+# 5. idempotence: Verifies if the configuration is idempotent.
+# 6. verify: Performs additional verification tests.
+# 7. destroy: Cleans up and destroys the test environment.
+scenario:
+  test_sequence:
+    - syntax
+    - create
+    - prepare
+    - converge
+    - idempotence
+    - destroy

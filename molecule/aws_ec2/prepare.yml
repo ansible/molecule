@@ -1,0 +1,11 @@
+- name: Prepare
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Make sure python3 is installed
+      package:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - python3
+      become: true
