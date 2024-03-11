@@ -72,6 +72,12 @@ def should_do_markup() -> bool:
     return sys.stdout.isatty()
 
 
+# Define ANSIBLE_FORCE_COLOR if markup is enabled and another value is not
+# already given. This assures that Ansible subprocesses are still colored,
+# even if they do not run with a real TTY.
+if should_do_markup():
+    os.environ["ANSIBLE_FORCE_COLOR"] = os.environ.get("ANSIBLE_FORCE_COLOR", "1")
+
 console_options: dict[str, Any] = {"emoji": False, "theme": theme, "soft_wrap": True}
 
 console = Console(
@@ -83,9 +89,3 @@ console = Console(
 console_options_stderr = console_options.copy()
 console_options_stderr["stderr"] = True
 console_stderr: Console = Console(**console_options_stderr)
-
-# Define ANSIBLE_FORCE_COLOR if markup is enabled and another value is not
-# already given. This assures that Ansible subprocesses are still colored,
-# even if they do not run with a real TTY.
-if should_do_markup():
-    os.environ["ANSIBLE_FORCE_COLOR"] = os.environ.get("ANSIBLE_FORCE_COLOR", "1")
