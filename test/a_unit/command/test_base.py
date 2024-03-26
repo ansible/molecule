@@ -19,6 +19,7 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import os
+import shutil
 
 import pytest
 from pytest_mock import MockerFixture
@@ -287,25 +288,30 @@ def test_get_subcommand() -> None:
 
 
 @pytest.mark.parametrize(
-    "shell",
+    ("shell", "rc", "prepare_cmd"),
     [
-        "bash",
-        "zsh",
-        "fish",
+        pytest.param("bash", 0, "", id="bash"),
+        pytest.param("zsh", 0, "autoload -Uz compinit;compinit;", id="zsh"),
+        pytest.param("fish", 0, "", id="fish"),
+        pytest.param("foo", 127, "", id="foo"),
     ],
 )
-def test_command_completion(shell: str) -> None:
+def test_command_completion(shell: str, rc: int, prepare_cmd: str) -> None:
     env = os.environ.copy()
     env["_MOLECULE_COMPLETE"] = f"{shell}_source"
 
-    if "bash" in shell:
-        bash_version = util.run_command(["bash", "--version"]).stdout.split()[3][0:3]
+    if not shutil.which(shell) and rc == 0:
+        pytest.skip(f"Skipped test due to missing {shell} executable.")
 
-    result = util.run_command(["molecule"], env=env)
+    cmd = [
+        shell,
+        "-c",
+        f'{prepare_cmd}eval "$(_MOLECULE_COMPLETE={shell}_source molecule)"',
+    ]
+    result = util.run_command(cmd, env=env)
 
-    if "bash" in shell and (float(bash_version) < 4.4):
-        assert result.returncode == 1
-        assert "Found config file" not in result.stdout
+    if "completion is not supported for Bash versions older than 4.4" in result.stderr:
+        assert result.returncode == 2
     else:
-        assert result.returncode == 0
+        assert result.returncode == rc
         assert "Found config file" not in result.stdout
