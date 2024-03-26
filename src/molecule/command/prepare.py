@@ -122,8 +122,9 @@ class Prepare(base.Base):
     default=False,
     help="Enable or disable force mode. Default is disabled.",
 )
+@base.click_expand_help
 def prepare(ctx, scenario_name, driver_name, force):  # pragma: no cover
-    """Use the provisioner to prepare the instances into a particular starting state."""
+    """Use the provisioner to prepare the instances into a particular starting state"""
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)
     command_args = {
