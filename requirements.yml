@@ -5,3 +5,4 @@ collections:
   - community.docker
   - containers.podman
   - kubernetes.core
+  - amazon.aws

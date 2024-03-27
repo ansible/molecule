@@ -1,3 +1,7 @@
 # This file contains ignores rule violations for ansible-lint
 src/molecule/test/scenarios/driver/delegated_invalid_role_name_with_role_name_check_equals_to_1/meta/main.yml role-name
 src/molecule/test/scenarios/driver/delegated_invalid_role_name_with_role_name_check_equals_to_1/meta/main.yml schema[meta]
+
+# Added no-handler exclusions the tasks the ansible-lint refers to need to be run this way and connect be run as handlers
+molecule/aws_ec2/create.yml no-handler
+molecule/aws_ec2/destroy.yml no-handler
