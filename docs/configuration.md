@@ -32,9 +32,10 @@ If the computed fully qualified role name does not follow current galaxy
 requirements, you can ignore it by adding `role_name_check:1` inside the configuration file.
 
 It is strongly recommended to follow the name standard of
-[namespace](https://galaxy.ansible.com/docs/contributing/namespaces.html#galaxy-namespace-limitations)
+[namespace](https://docs.ansible.com/ansible/latest/dev_guide/collections_galaxy_meta.html#structure)
 and
-[role](https://galaxy.ansible.com/docs/contributing/creating_role.html#role-names).
+[role](https://ansible.readthedocs.io/projects/lint/rules/role-name/#role-name).
+A `computed fully qualified role name` may further contain the dot character.
 
 ## Variable Substitution
 
