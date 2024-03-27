@@ -4,6 +4,6 @@ repos:
     hooks:
       - id: flake8
         name: flake8
-        entry: python -m flake8 --max-line-length=120
+        entry: python3 -m flake8 --max-line-length=120
         language: system
         types: [python]

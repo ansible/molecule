@@ -93,7 +93,7 @@ $ python3 -m pip install --user "molecule-plugins[podman]"
 
 Installing molecule package also installed its main script `molecule`,
 usually in `PATH`. Users should know that molecule can also be called as
-a python module, using `python -m molecule ...`. This alternative method
+a python module, using `python3 -m molecule ...`. This alternative method
 has some benefits:
 
 - allows to explicitly control which Python interpreter is used by

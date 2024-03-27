@@ -29,6 +29,6 @@ jobs:
         with:
           fetch-depth: 0 # needed by setuptools-scm
       - name: Build dists
-        run: python -m tox -e pkg
+        run: python3 -m tox -e pkg
       - name: Publish to pypi.org
         uses: pypa/gh-action-pypi-publish@release/v1
