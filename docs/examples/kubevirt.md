@@ -40,6 +40,9 @@ rules:
   - apiGroups: [""]
     resources: ["services"]
     verbs: ["get", "list", "watch", "create", "delete", "patch", "edit"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -67,6 +70,7 @@ You will need to substitute the following placeholders:
 
 - This example is using ephemeral VMs, which enhance the speed of VM creation and cleanup. However, it is important to note that any data in the system will not be retained if the VM is rebooted.
 - You don't need to worry about setting up SSH keys. The `create.yml` Ansible playbook takes care of configuring a temporary SSH key.
+- The hostname for SSH connection to the VM is fetched dynamically, which is the K8S node where the VM is running.
 
 ## Config playbook
 
@@ -74,10 +78,9 @@ You will need to substitute the following placeholders:
 {!../molecule/kubevirt/molecule.yml!}
 ```
 
-Please, replace the following parameters:
+Please, replace the following parameter:
 
 - `<Kubernetes VM Namespace>`: This should be replaced with the namespace in Kubernetes where you intend to create the KubeVirt VMs.
-- `<Kubernetes Node FQDN>`: Change this to the fully qualified domain name (FQDN) of the Kubernetes node that Ansible will attempt to SSH into via the Service NodePort.
 
 ```yaml title="requirements.yml"
 {!../molecule/kubevirt/requirements.yml!}
