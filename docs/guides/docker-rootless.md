@@ -17,6 +17,7 @@ variable `SUDO_GROUP` depends on the target distribution as Debian uses `sudo`
 instead of `wheel` group.
 
 ```docker
+{% raw %}
 # Create `ansible` user with sudo permissions and membership in `DEPLOY_GROUP`
 # This template gets rendered using `loop: "{{ molecule_yml.platforms }}"`, so
 # each `item` is an element of platforms list from the molecule.yml file for this scenario.
@@ -29,6 +30,7 @@ RUN set -xe \
   && usermod -aG ${SUDO_GROUP} ${ANSIBLE_USER} \
   && usermod -aG ${DEPLOY_GROUP} ${ANSIBLE_USER} \
   && sed -i "/^%${SUDO_GROUP}/s/ALL\$/NOPASSWD:ALL/g" /etc/sudoers
+{% endraw %}
 ```
 
 Modify `provisioner.inventory` in `molecule.yml` as follows:
