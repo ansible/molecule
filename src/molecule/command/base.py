@@ -26,7 +26,8 @@ import logging
 import os
 import shutil
 import subprocess
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 import click
 import wcmatch.pathlib

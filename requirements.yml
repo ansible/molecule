@@ -1,0 +1,7 @@
+# This file is only used for testing purposes as it helps ansible-lint to
+# install dependencies when these are missing.
+collections:
+  - community.crypto
+  - community.docker
+  - containers.podman
+  - kubernetes.core

@@ -357,7 +357,7 @@ def boolean(value: Any, strict=True) -> bool:
         return value
 
     normalized_value = value
-    if isinstance(value, (str, bytes)):
+    if isinstance(value, str | bytes):
         normalized_value = str(value).lower().strip()
 
     if normalized_value in BOOLEANS_TRUE:
@@ -391,5 +391,6 @@ def bool2args(data: bool) -> list[str]:
 
 def print_as_yaml(data: Any) -> None:
     """Render python object as yaml on console."""
-    result = Syntax(safe_dump(data), "yaml")
+    # https://github.com/Textualize/rich/discussions/990#discussioncomment-342217
+    result = Syntax(code=safe_dump(data), lexer="yaml", background_color="default")
     console.print(result)

@@ -23,8 +23,6 @@
 import logging
 
 import click
-from rich import box
-from rich.table import Table
 
 from molecule import api
 from molecule.command import base
@@ -44,29 +42,12 @@ LOG = logging.getLogger(__name__)
 )
 def drivers(ctx, format):  # pragma: no cover
     """List drivers."""
-    drivers = [[x] for x in api.drivers()]
-
-    headers = ["name"]
-    table_format = "simple"
-    if format == "plain":
-        for driver in drivers:
-            console.print(*driver)
-    else:
-        headers = []
-        table_format = format
-        _print_tabulate_data(headers, drivers, table_format)
-
-
-def _print_tabulate_data(headers, data, table_format):  # pragma: no cover
-    """Show the tabulate data on the screen and returns None.
-
-    :param headers: A list of column headers.
-    :param data:  A list of tabular data to display.
-    :returns: None
-    """
-    t = Table(box=box.MINIMAL)
-    for header in headers:
-        t.add_column(header)
-    for line in data:
-        t.add_row(*line)
-    console.print(t)
+    drivers = []
+    for driver in api.drivers():
+        description = driver
+        if format != "plain":
+            description = driver
+        else:
+            description = f"{driver!s:16s}[logging.level.notset] {driver.title} Version {driver.version} from {driver.module} python module.)[/logging.level.notset]"
+        drivers.append([driver, description])
+        console.print(description)

@@ -1,55 +1,59 @@
 ---
 site_name: Ansible Molecule
 site_url: https://ansible.readthedocs.io/projects/molecule/
-repo_url: https://github.com/ansible-community/molecule
+repo_url: https://github.com/ansible/molecule
 edit_uri: blob/main/docs/
-copyright: Copyright © 2023 Red Hat, Inc.
+copyright: Copyright © 2024 Red Hat, Inc.
+docs_dir: docs
 strict: true
 
 theme:
-  name: "material"
-  logo: images/logo.svg
-  favicon: images/favicon.ico
+  name: ansible
   features:
-    - content.code.copy
+    - announce.dismiss
     - content.action.edit
+    - content.action.view
+    - content.code.annotate
+    - content.code.copy
+    - content.tabs.link
+    - content.tooltips
+    - header.autohide
     - navigation.expand
-    - navigation.sections
-    - navigation.instant
+    - navigation.footer
     - navigation.indexes
+    - navigation.instant
+    - navigation.path
+    - navigation.prune
+    - navigation.sections
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
     - navigation.tracking
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
     - toc.integrate
-  palette:
-    - media: "(prefers-color-scheme: light)"
-      primary: teal
-      accent: blue
-      scheme: default
-      toggle:
-        icon: material/brightness-7
-        name: Switch to dark mode
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
-      primary: teal
-      accent: blue
-      toggle:
-        icon: material/brightness-4
-        name: Switch to light mode
 extra:
+  generator: false
   social:
     - icon: fontawesome/brands/python
       link: https://pypi.org/project/molecule/
       name: PyPI
     - icon: fontawesome/solid/scroll
-      link: https://github.com/ansible-community/molecule/releases
+      link: https://github.com/ansible/molecule/releases
       name: Releases
+    - icon: simple/mastodon
+      link: https://fosstodon.org/@ansible
+      name: Mastodon
     - icon: simple/matrix
       link: https://matrix.to/#/#devtools:ansible.com
       name: Matrix
     - icon: fontawesome/solid/comments
-      link: https://github.com/ansible-community/molecule/discussions
+      link: https://github.com/ansible/molecule/discussions
       name: Discussions
     - icon: fontawesome/brands/github-alt
-      link: https://github.com/ansible-community/molecule
+      link: https://github.com/ansible/molecule
 
 nav:
   - Home: index.md
@@ -61,46 +65,29 @@ nav:
       - configuration.md
       - ci.md
   - Examples:
-      - docker.md
-      - podman.md
-      - kubevirt.md
-  - examples.md
+      - examples/docker.md
+      - examples/podman.md
+      - examples/kubevirt.md
+  - Guides:
+      - guides/custom-image.md
+      - guides/docker-rootless.md
+      - guides/monolith.md
+      - guides/inside-a-container.md
+      - guides/parallel.md
+      - guides/podman-inside-docker.md
+      - guides/sharing.md
+      - guides/systemd-container.md
   - faq.md
   - contributing.md
-  - Future documentation (WIP):
-      - Introduction: working/introduction/introduction.md
-      - Installation:
-          - working/installation/install.md
-          - working/installation/upgrade.md
-      - Getting Started: working/getting_started/getting_started.md
-      - User Guide:
-          - working/user_guide/understanding.md
-          - working/user_guide/creating_testing_collection.md
-          - working/user_guide/testing_existing_collection.md
-          - working/user_guide/testing_existing_roles.md
-          - working/user_guide/ci_integration.md
-          - working/user_guide/using_tox-ansible.md
-      - References:
-          - working/references/cli.md
-          - working/references/configuration.md
-          - working/references/porting_change_log.md
-          - working/references/road_map.md
-      - Examples:
-          - working/examples/example_1.md
-          - working/examples/example_2.md
-          - working/examples/example_3.md
-      - Frequently asked questions: working/faq/faq.md
-      - Contributor Guide:
-          - working/contributor_guide/code_of_conduct.md
-          - working/contributor_guide/developer_contact.md
-          - working/contributor_guide/environment_setup.md
-          - working/contributor_guide/contribution_requirements.md
 
 plugins:
   - autorefs
-  - search
-  - social
-
+  - macros:
+      modules: [mkdocs-ansible:mkdocs_ansible]
+  - material/search:
+      separator: '[\s\-,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
+  - material/social
+  - material/tags
   - mkdocstrings:
       enable_inventory: true
       default_handler: python

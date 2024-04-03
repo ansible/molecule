@@ -1,0 +1,46 @@
+---
+- name: Molecule test fixture
+  hosts: instance
+  gather_facts: false
+  tasks:
+    - name: Host vars host_var for host host-group-vars from molecule.yml
+      ansible.builtin.debug:
+        var: host_group_vars_host_molecule_yml
+
+    - name: Host vars from host_vars existing directory
+      ansible.builtin.debug:
+        var: host_group_vars_host_vars_dir
+
+    - name: Group vars group_var for group example from molecule.yml
+      ansible.builtin.debug:
+        var:
+          - host_group_vars_example_group_one_molecule_yml
+          - host_group_vars_example_group_two_molecule_yml
+
+    - name: Group vars from group_vars existing directory
+      ansible.builtin.debug:
+        var: host_group_vars_group_vars_dir
+
+    - name: Group vars group_var from child group example_1 from molecule.yml
+      ansible.builtin.debug:
+        var: host_group_vars_example_1_child_group_molecule_yml
+
+    - name: Variable from extra_host from molecule.yml
+      ansible.builtin.debug:
+        var: hostvars['extra_host']['host_group_vars_extra_host_molecule_yml']
+
+- name: Molecule test fixture
+  hosts: example
+  gather_facts: false
+  tasks:
+    - name: Dummy converge of example group
+      ansible.builtin.debug:
+        var: ansible_host
+
+- name: Molecule test fixture
+  hosts: example_1
+  gather_facts: false
+  tasks:
+    - name: Dummy converge of child example_1 group
+      ansible.builtin.debug:
+        var: ansible_host

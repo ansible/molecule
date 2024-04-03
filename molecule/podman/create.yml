@@ -5,7 +5,10 @@
     molecule_inventory:
       all:
         hosts: {}
-        molecule: {}
+        children:
+          molecule:
+            hosts: {}
+
   tasks:
     - name: Create a container
       containers.podman.podman_container:

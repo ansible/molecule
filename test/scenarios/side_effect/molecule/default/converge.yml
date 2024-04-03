@@ -1,0 +1,16 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Check for test file
+      ansible.builtin.stat:
+        path: /tmp/testfile
+      register: test_file
+
+    - name: Create the test file
+      ansible.builtin.file:
+        path: /tmp/testfile
+        state: touch
+        mode: "0644"
+      when: not test_file.stat.exists

@@ -1,4 +1,5 @@
 """Molecule Application Module."""
+
 from ansible_compat.runtime import Runtime
 
 

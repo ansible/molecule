@@ -1,0 +1,23 @@
+---
+# Steps provided by @saez0pub
+# Taken from https://github.com/ansible-community/molecule/issues/835
+
+- name: Create /tmp/test1
+  ansible.builtin.file:
+    name: /tmp/test1
+    state: directory
+    mode: "0600"
+
+- name: Replace /tmp/test1 by /tmp/test2
+  ansible.builtin.shell: |
+    set -euxo pipefail
+    ls -ld /tmp/test1 | grep root
+  changed_when: false
+
+- name: Fix /tmp/test1 perms
+  ansible.builtin.file:
+    name: /tmp/test1
+    state: directory
+    owner: lp
+    group: lp
+    mode: "0600"

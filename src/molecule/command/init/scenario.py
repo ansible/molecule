@@ -22,6 +22,7 @@
 import json
 import logging
 import os
+import sys
 
 import click
 
@@ -95,7 +96,7 @@ class Scenario(base.Base):
         # As ansible fails to find a terminal when run by molecule, we force
         # it to use colors.
         env["ANSIBLE_FORCE_COLOR"] = "1"
-        env["ANSIBLE_PYTHON_INTERPRETER"] = "auto_silent"
+        env["ANSIBLE_PYTHON_INTERPRETER"] = sys.executable
         util.run_command(cmd, env=env, check=True)
 
         msg = f"Initialized scenario in {scenario_directory} successfully."

@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 # https://peps.python.org/pep-0621/#readme
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dynamic = ["version", "dependencies", "optional-dependencies"]
 name = "molecule"
 description = "Molecule aids in the development and testing of Ansible roles"
@@ -26,9 +26,9 @@ classifiers = [
   "Operating System :: MacOS",
   "Operating System :: POSIX",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
   "Programming Language :: Python",
   "Topic :: System :: Systems Administration",
   "Topic :: Software Development :: Bug Tracking",
@@ -76,7 +76,7 @@ profile = "black"
 known_first_party = "molecule"
 
 [tool.mypy]
-python_version = 3.9
+python_version = "3.10"
 # strict = true
 color_output = true
 error_summary = true
@@ -157,13 +157,13 @@ norecursedirs = [
   "build",
   "dist",
   "doc",
-  "src/molecule/test/resources",
-  "src/molecule/test/scenarios",
+  "test/resources",
+  "test/scenarios",
 ]
 addopts = "--doctest-modules --durations 10 --color=yes"
 doctest_optionflags = ["ALLOW_UNICODE", "ELLIPSIS"]
 junit_suite_name = "molecule_test_suite"
-testpaths = "src/molecule/test/"
+testpaths = "test/"
 filterwarnings = [
   # treat warnings as errors unless we add them below
   "error",
@@ -205,7 +205,7 @@ ignore = [
   "TRY",
 ]
 select = ["ALL"]
-target-version = "py39"
+target-version = "py310"
 # Same as Black.
 line-length = 88
 
@@ -216,15 +216,13 @@ parametrize-values-type = "tuple"
 known-first-party = ["molecule"]
 
 [tool.ruff.per-file-ignores]
-"src/molecule/test/**.py" = ["S"]
+"test/**.py" = ["S"]
 "src/molecule/*/\\{\\{*/**.py" = ["S"]
 
 [tool.setuptools.dynamic]
 optional-dependencies.docs = { file = [".config/requirements-docs.txt"] }
 optional-dependencies.test = { file = [".config/requirements-test.txt"] }
-optional-dependencies.testinfra = { file = [
-  ".config/requirements-testinfra.txt",
-] }
+optional-dependencies.testinfra = { file = [".config/requirements-testinfra.txt"] }
 dependencies = { file = [".config/requirements.in"] }
 
 [tool.setuptools_scm]

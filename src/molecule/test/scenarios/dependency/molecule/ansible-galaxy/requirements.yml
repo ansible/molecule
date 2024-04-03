@@ -1,5 +1,0 @@
-# See https://docs.ansible.com/ansible/latest/galaxy/user_guide.html#installing-roles-and-collections-from-the-same-requirements-yml-file
-collections:
-  - community.molecule
-roles:
-  - ssbarnea.ansible_role_helloworld

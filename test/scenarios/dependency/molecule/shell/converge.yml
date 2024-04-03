@@ -1,0 +1,17 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Install requirements for collection community.molecule
+      ansible.builtin.pip:
+        name: molecule
+      delegate_to: localhost
+
+    - name: Validate that collection was installed
+      ansible.builtin.debug:
+        msg: "{{ 'foo' | community.molecule.header }}"
+
+    - name: Test installed role
+      ansible.builtin.include_role:
+        name: ssbarnea.ansible_role_helloworld

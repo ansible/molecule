@@ -1,0 +1,9 @@
+---
+- name: Converge
+  hosts: all
+  gather_facts: false
+  become: true
+  tasks:
+    - name: Force a converge failure
+      ansible.builtin.command: /bin/false
+      changed_when: false

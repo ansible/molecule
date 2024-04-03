@@ -6,7 +6,7 @@ familiar with the basics of how to use Molecule and what it can offer.
 
 1.  Create a collection
 
-    One of the recommended ways to create a collection is to place it under the `collections/ansible_collections` directory.
+    One of the recommended ways to create a collection is to place it under a `collections/ansible_collections` directory. If you don't put your collection into a directory named `ansible_collections`, _molecule won't be able to find your role_.
 
     ```bash
       ansible-galaxy collection init foo.bar
@@ -55,7 +55,7 @@ familiar with the basics of how to use Molecule and what it can offer.
              molecule init scenario
           ```
 
-![Collection Structure and ansible config file collections path](images/collection_structure_and_ansible_cfg.png)
+![Collection Structure and ansible config file collections path](images/collection_structure.png)
 
 Before moving to test the playbooks or roles, the sections below provide information related to Scenarios.
 
@@ -97,9 +97,9 @@ create.yml  destroy.yml  molecule.yml  converge.yml
 
     ``` yaml
     - name: Verify
-        hosts: all
-        become: true
-        tasks:
+      hosts: all
+      become: true
+      tasks:
         - name: Initialize role without actually running it
           ansible.builtin.include_role:
             name: my_role

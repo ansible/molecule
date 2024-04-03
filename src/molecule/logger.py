@@ -22,9 +22,8 @@
 import logging
 import os
 import time
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from functools import wraps
-from typing import Callable
 
 from ansible_compat.ports import cache
 from enrich.logging import RichHandler
