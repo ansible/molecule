@@ -6,6 +6,7 @@ platforms:
   - name: molecule-ubuntu
     image: ubuntu:18.04
 driver:
+  name: podman
   options:
     managed: False
     login_cmd_template: "podman exec -ti {instance} bash"
