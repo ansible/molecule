@@ -72,6 +72,7 @@ nav:
       - guides/custom-image.md
       - guides/docker-rootless.md
       - guides/monolith.md
+      - guides/inside-a-container.md
       - guides/parallel.md
       - guides/podman-inside-docker.md
       - guides/sharing.md
@@ -81,6 +82,8 @@ nav:
 
 plugins:
   - autorefs
+  - macros:
+      modules: [mkdocs-ansible:mkdocs_ansible]
   - material/search:
       separator: '[\s\-,:!=\[\]()"`/]+|\.(?!\d)|&[lg]t;|(?!\b)(?=[A-Z][a-z])'
   - material/social
