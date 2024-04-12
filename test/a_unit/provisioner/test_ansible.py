@@ -762,7 +762,7 @@ def test_get_filter_plugins_directories_default(_instance, monkeypatch):
     assert re.search(r"/usr/share/ansible/plugins/filter$", paths[4])
 
 
-def tes_get_filter_plugins_directories_single_ansible_filter_plugins(
+def test_get_filter_plugins_directories_single_ansible_filter_plugins(
     _instance,
     monkeypatch,
 ):
