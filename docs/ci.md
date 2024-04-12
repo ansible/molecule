@@ -12,6 +12,8 @@ pipeline, much like any others, that's built into GitHub.
 An action to clone a repo as `molecule_demo`, and run `molecule test` in
 ubuntu.
 
+{% raw %}
+
 ```yaml
 ---
 name: Molecule Test
@@ -41,6 +43,8 @@ jobs:
           molecule test
 ```
 
+{% endraw %}
+
 If you need access to requirements in private repositories, [create a
 token](https://help.github.com/en/github/authenticating-to-github/creating-a-personal-access-token-for-the-command-line)
 with the required privileges, then define a `GIT_CREDENTIALS` secret for
@@ -48,12 +52,16 @@ your repository with a value looking like
 `https://username:token@github.com/`, and finally add the
 following step before "Test with molecule".
 
+{% raw %}
+
 ```yaml
 - name: Setup git credentials
   uses: fusion-engineering/setup-git-credentials@v2
   with:
-    credentials: ${{secrets.GIT_CREDENTIALS}}
+    credentials: ${{ secrets.GIT_CREDENTIALS }}
 ```
+
+{% endraw %}
 
 ## Travis CI
 
@@ -189,10 +197,10 @@ steps:
     inputs:
       versionSpec: "3.10"
 
-  - script: python -m pip install "molecule[lint]" "python-vagrant" "molecule-vagrant" "ansible"
+  - script: python3 -m pip install "molecule[lint]" "python-vagrant" "molecule-vagrant" "ansible"
     displayName: Install dependencies
 
-  - script: python -m pip install "python-tss-sdk"
+  - script: python3 -m pip install "python-tss-sdk"
     displayName: Role-specific dependencies
 
   - script: |
@@ -327,11 +335,13 @@ pipeline {
     of the role root directory. For example :
 
     ``` yaml
+    {% raw %}
     ---
     - name: Converge
       hosts: all
       roles:
         - role: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+    {% endraw %}
     ```
 
     This is the cleaner of the current choices. See

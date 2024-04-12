@@ -76,7 +76,7 @@ profile = "black"
 known_first_party = "molecule"
 
 [tool.mypy]
-python_version = 3.10
+python_version = "3.10"
 # strict = true
 color_output = true
 error_summary = true
