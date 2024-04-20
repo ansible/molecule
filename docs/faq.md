@@ -57,7 +57,7 @@ the scenario's molecule.yml.
 
 ## Can I run Molecule processes in parallel?
 
-Please see [parallel-usage-example](guides/docker-rootless.md) for
+Please see [parallel-usage-example](guides/parallel.md) for
 usage.
 
 ## Can I specify random instance IDs in my molecule.yml?
