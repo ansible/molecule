@@ -14,8 +14,12 @@
       containers.podman.podman_container:
         name: "{{ item.name }}"
         image: "{{ item.image }}"
+        privileged: "{{ item.privileged | default(omit) }}"
+        volumes: "{{ item.volumes | default(omit) }}"
+        capabilities: "{{ item.capabilities | default(omit) }}"
+        systemd: "{{ item.systemd | default(omit) }}"
         state: started
-        command: sleep 1d
+        command: "{{ item.command | default('sleep 1d') }}"
         # bash -c "while true; do sleep 10000; done"
         log_driver: json-file
       register: result
