@@ -224,14 +224,15 @@ class Delegated(Driver):
 
                 if d.get("identity_file", None):
                     conn_dict["ansible_private_key_file"] = d.get("identity_file")
-                    conn_dict["ansible_ssh_common_args"] = " ".join(
-                        self.ssh_connection_options,
-                    )
                 if d.get("password", None):
                     conn_dict["ansible_password"] = d.get("password")
                     # Based on testinfra documentation, ansible password must be passed via ansible_ssh_pass
                     # issue to fix this can be found https://github.com/pytest-dev/pytest-testinfra/issues/580
                     conn_dict["ansible_ssh_pass"] = d.get("password")
+
+                conn_dict["ansible_ssh_common_args"] = " ".join(
+                    self.ssh_connection_options,
+                )
 
                 return conn_dict
 

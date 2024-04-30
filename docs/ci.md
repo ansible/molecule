@@ -197,10 +197,10 @@ steps:
     inputs:
       versionSpec: "3.10"
 
-  - script: python -m pip install "molecule[lint]" "python-vagrant" "molecule-vagrant" "ansible"
+  - script: python3 -m pip install "molecule[lint]" "python-vagrant" "molecule-vagrant" "ansible"
     displayName: Install dependencies
 
-  - script: python -m pip install "python-tss-sdk"
+  - script: python3 -m pip install "python-tss-sdk"
     displayName: Role-specific dependencies
 
   - script: |

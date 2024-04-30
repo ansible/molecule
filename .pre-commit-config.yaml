@@ -23,12 +23,12 @@ repos:
     hooks:
       - id: codespell
   - repo: https://github.com/psf/black
-    rev: 24.3.0
+    rev: 24.4.2
     hooks:
       - id: black
         language_version: python3
   - repo: https://github.com/pre-commit/pre-commit-hooks.git
-    rev: v4.5.0
+    rev: v4.6.0
     hooks:
       - id: end-of-file-fixer
       - id: trailing-whitespace
@@ -47,12 +47,12 @@ repos:
         types: [file, yaml]
         entry: yamllint --strict
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.3.4"
+    rev: "v0.4.2"
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.9.0
+    rev: v1.10.0
     hooks:
       - id: mypy
         # empty args needed in order to match mypy cli behavior
@@ -94,6 +94,6 @@ repos:
           - pytest-testinfra
           - wcmatch
   - repo: https://github.com/ansible/ansible-lint
-    rev: v24.2.1
+    rev: v24.2.2
     hooks:
       - id: ansible-lint
