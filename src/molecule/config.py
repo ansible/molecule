@@ -73,7 +73,7 @@ class Config(metaclass=NewInitCaller):
     """Config Class.
 
     Molecule searches the current directory for ``molecule.yml`` files by
-    globbing `molecule/*/molecule.yml`.  The files are instantiated into
+    globbing `**/molecule/*/molecule.yml`.  The files are instantiated into
     a list of Molecule [molecule.config.Config][] objects, and each Molecule subcommand
     operates on this list.
 

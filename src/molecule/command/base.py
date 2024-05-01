@@ -40,7 +40,7 @@ from molecule import config, logger, text, util
 from molecule.console import should_do_markup
 
 LOG = logging.getLogger(__name__)
-MOLECULE_GLOB = os.environ.get("MOLECULE_GLOB", "molecule/*/molecule.yml")
+MOLECULE_GLOB = os.environ.get("MOLECULE_GLOB", "**/molecule/*/molecule.yml")
 MOLECULE_DEFAULT_SCENARIO_NAME = "default"
 
 
@@ -94,7 +94,7 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
     """
     glob_str = MOLECULE_GLOB
     if scenario_name:
-        glob_str = glob_str.replace("*", scenario_name)
+        glob_str = glob_str.replace("/*/", f"/{scenario_name}/")
     scenarios = molecule.scenarios.Scenarios(
         get_configs(args, command_args, ansible_args, glob_str),
         scenario_name,
