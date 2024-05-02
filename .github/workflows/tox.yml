@@ -47,7 +47,7 @@ jobs:
       matrix: ${{ fromJson(needs.pre.outputs.matrix) }}
 
     env:
-      PYTEST_REQPASS: 453
+      PYTEST_REQPASS: 454
     environment: test
     steps:
       - uses: actions/checkout@v4
