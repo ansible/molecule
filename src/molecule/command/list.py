@@ -65,7 +65,7 @@ def list(ctx, scenario_name, format):  # pragma: no cover
 
     statuses = []
     s = scenarios.Scenarios(
-        base.get_configs(args, command_args, glob_str="**/molecule/*/molecule.yml"),
+        base.get_configs(args, command_args, glob_str=os.environ.get("MOLECULE_GLOB", "molecule/*/molecule.yml")),
         scenario_name,
     )
     for scenario in s:
