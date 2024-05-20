@@ -297,6 +297,7 @@ def test_get_subcommand() -> None:
 def test_command_completion(shell: str) -> None:
     env = os.environ.copy()
     env["_MOLECULE_COMPLETE"] = f"{shell}_source"
+    bash_version = "0.0"
 
     if "bash" in shell:
         bash_version = util.run_command(["bash", "--version"]).stdout.split()[3][0:3]

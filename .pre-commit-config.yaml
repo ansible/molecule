@@ -77,7 +77,7 @@ repos:
           - types-setuptools
           - wcmatch
   - repo: https://github.com/pycqa/pylint
-    rev: v3.1.0
+    rev: v3.2.2
     hooks:
       - id: pylint
         args:
@@ -94,6 +94,6 @@ repos:
           - pytest-testinfra
           - wcmatch
   - repo: https://github.com/ansible/ansible-lint
-    rev: v24.2.3
+    rev: v24.5.0
     hooks:
       - id: ansible-lint
