@@ -264,7 +264,7 @@ def test_verify_configs_raises_with_no_configs(caplog):
 
     assert e.value.code == 1
 
-    msg = "'molecule/*/molecule.yml' glob failed.  Exiting."
+    msg = "'**/molecule/*/molecule.yml' glob failed.  Exiting."
     assert msg in caplog.text
 
 

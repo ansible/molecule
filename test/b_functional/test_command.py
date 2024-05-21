@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import os
 import pathlib
+import shutil
 from test.b_functional.conftest import (
     idempotence,
     init_scenario,
@@ -330,14 +331,44 @@ def test_command_verify(scenario_to_test, with_scenario, scenario_name):
     verify(scenario_name)
 
 
-def test_sample_collection() -> None:
-    assert (
-        run_command(
-            ["molecule", "test"],
-            cwd="test/resources/sample-collection",
-        ).returncode
-        == 0
-    )
+@pytest.mark.serial()
+@pytest.mark.parametrize(
+    ("scenario_name", "collection_name"),
+    [
+        pytest.param("default", "sample-collection"),
+        pytest.param("default", "sample-collection-nested"),
+    ],
+)
+def test_sample_collection(
+    resources_folder_path,
+    tmp_path,
+    scenario_name,
+    collection_name,
+):
+    collection_dir = tmp_path / "ansible_collections"
+    molecule_ephemeral_dir = tmp_path / "cache/molecule"
+    test_dir = tmp_path / f"{collection_name}"
+    verify_dir = pathlib.Path(f"{collection_dir}/acme/goodies/molecule")
+
+    shutil.copytree(f"{resources_folder_path}/sample-collection", test_dir)
+
+    if collection_name == "sample-collection-nested":
+        verify_dir = pathlib.Path(
+            f"{collection_dir}/acme/goodies/extensions/molecule",
+        )
+        # create collection with nested molecule directory
+        shutil.move(f"{test_dir}/molecule", f"{test_dir}/extensions/molecule")
+
+    cmd = [
+        f"ANSIBLE_COLLECTIONS_PATH={collection_dir}",
+        f"MOLECULE_EPHEMERAL_DIRECTORY={molecule_ephemeral_dir}",
+        "molecule",
+        "test",
+        "--scenario-name",
+        scenario_name,
+    ]
+    assert run_command(cmd, cwd=test_dir).returncode == 0
+    assert verify_dir.is_dir()
 
 
 @pytest.mark.parametrize(
