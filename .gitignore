@@ -10,6 +10,7 @@
 .mypy_cache/
 .tox/
 .vagrant/
+.venv/
 .pytest_cache/
 build/
 dist/
