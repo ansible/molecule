@@ -29,6 +29,7 @@ from rich.table import Table
 
 from molecule import scenarios, text, util
 from molecule.command import base
+from molecule.command.base import MOLECULE_GLOB
 from molecule.console import console
 from molecule.status import Status
 
@@ -65,7 +66,7 @@ def list(ctx, scenario_name, format):  # pragma: no cover
 
     statuses = []
     s = scenarios.Scenarios(
-        base.get_configs(args, command_args, glob_str="**/molecule/*/molecule.yml"),
+        base.get_configs(args, command_args, glob_str=MOLECULE_GLOB),
         scenario_name,
     )
     for scenario in s:
