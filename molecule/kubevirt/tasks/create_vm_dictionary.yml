@@ -17,8 +17,8 @@
       {{
         molecule_systems | default({}) | combine({
           vm.name: {
-            'ansible_user': 'cloud-user',
-            'ansible_host': vm.ssh_service.nodeport_host,
+            'ansible_user': vm.ansible_user,
+            'ansible_host': nodeport_host,
             'ansible_ssh_port': ssh_service_address,
             'ansible_ssh_private_key_file': tempoary_ssh_key_path
           }

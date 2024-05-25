@@ -10,7 +10,6 @@ platforms:
     namespace: <Kubernetes VM Namespace>
     ssh_service:
       type: NodePort
-      nodeport_host: <Kubernetes Node FQDN>
     ansible_user: cloud-user
     memory: 1Gi
   - name: rhel8
@@ -18,7 +17,6 @@ platforms:
     namespace: <Kubernetes VM Namespace>
     ssh_service:
       type: NodePort
-      nodeport_host: <Kubernetes Node FQDN>
     ansible_user: cloud-user
     memory: 1Gi
 provisioner:
