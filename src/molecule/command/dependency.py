@@ -48,8 +48,9 @@ class Dependency(base.Base):
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
     help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
+@base.click_expand_help
 def dependency(ctx, scenario_name):  # pragma: no cover
-    """Manage the role's dependencies."""
+    """Manage the role's dependencies"""
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)
     command_args = {"subcommand": subcommand}

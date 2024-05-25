@@ -53,9 +53,10 @@ class Cleanup(base.Base):
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
     help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
+@base.click_expand_help
 def cleanup(ctx, scenario_name="default"):  # pragma: no cover
     """Use the provisioner to cleanup any changes made to external systems during \
-    the stages of testing.
+    the stages of testing
     """
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)

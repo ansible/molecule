@@ -56,8 +56,9 @@ class SideEffect(base.Base):
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
     help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
+@base.click_expand_help
 def side_effect(ctx, scenario_name):  # pragma: no cover
-    """Use the provisioner to perform side-effects to the instances."""
+    """Use the provisioner to perform side-effects to the instances"""
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)
     command_args = {"subcommand": subcommand}

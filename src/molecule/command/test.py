@@ -83,6 +83,7 @@ class Test(base.Base):
     help="Enable or disable parallel mode. Default is disabled.",
 )
 @click.argument("ansible_args", nargs=-1, type=click.UNPROCESSED)
+@base.click_expand_help
 def test(
     ctx,
     scenario_name,
@@ -93,7 +94,7 @@ def test(
     ansible_args,
     platform_name,
 ):  # pragma: no cover
-    """Test (dependency, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy)."""
+    """Test"""
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)
     command_args = {

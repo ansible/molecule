@@ -48,8 +48,9 @@ class Syntax(base.Base):
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
     help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
+@base.click_expand_help
 def syntax(ctx, scenario_name):  # pragma: no cover
-    """Use the provisioner to syntax check the role."""
+    """Use the provisioner to syntax check the role"""
     args = ctx.obj.get("args")
     subcommand = base._get_subcommand(__name__)
     command_args = {"subcommand": subcommand}
