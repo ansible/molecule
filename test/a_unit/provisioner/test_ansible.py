@@ -21,13 +21,13 @@
 import collections
 import os
 import re
-from test.a_unit.conftest import os_split
 
 import pytest
 from pytest_mock import MockerFixture
 
 from molecule import config, util
 from molecule.provisioner import ansible, ansible_playbooks
+from test.a_unit.conftest import os_split
 
 
 @pytest.fixture()

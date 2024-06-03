@@ -19,13 +19,13 @@
 #  DEALINGS IN THE SOFTWARE.
 
 import os
-from test.conftest import is_subset
 
 import pytest
 from pytest_mock import MockerFixture
 
 from molecule import config
 from molecule.driver import delegated
+from test.conftest import is_subset
 
 
 @pytest.fixture()

@@ -24,12 +24,6 @@ import shutil
 from collections.abc import Generator
 from pathlib import Path
 from subprocess import CompletedProcess
-from test.conftest import (
-    molecule_directory,
-    molecule_ephemeral_directory,
-    molecule_file,
-    molecule_scenario_directory,
-)
 from typing import Any
 from unittest.mock import Mock
 from uuid import uuid4
@@ -38,6 +32,12 @@ import pytest
 from pytest_mock import MockerFixture
 
 from molecule import config, util
+from test.conftest import (
+    molecule_directory,
+    molecule_ephemeral_directory,
+    molecule_file,
+    molecule_scenario_directory,
+)
 
 
 def write_molecule_file(filename: str, data: Any) -> None:

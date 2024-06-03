@@ -21,6 +21,12 @@ from __future__ import annotations
 
 import os
 import pathlib
+
+import pytest
+from pytest import FixtureRequest
+
+from molecule.command import base
+from molecule.util import run_command
 from test.b_functional.conftest import (
     idempotence,
     init_scenario,
@@ -28,12 +34,6 @@ from test.b_functional.conftest import (
     run_test,
     verify,
 )
-
-import pytest
-from pytest import FixtureRequest
-
-from molecule.command import base
-from molecule.util import run_command
 
 
 @pytest.fixture()
