@@ -8,6 +8,14 @@
         name: molecule
       delegate_to: localhost
 
+    - name: Print the envars
+      ansible.builtin.debug:
+        msg: "{{ lookup('pipe', 'env') | split('\n') | sort }}"
+
+    - name: Dump the ansible configuration
+      ansible.builtin.debug:
+        msg: "{{ lookup('pipe', 'ANSIBLE_FORCE_COLOR=0;NO_COLOR=1 ansible-config dump') | split('\n') }}"
+
     - name: Validate that collection was installed
       ansible.builtin.debug:
         msg: "{{ 'foo' | community.molecule.header }}"

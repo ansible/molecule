@@ -15,7 +15,7 @@ provisioner:
   name: ansible
   config_options:
     defaults:
-      collections_path: ${MOLECULE_EPHEMERAL_DIRECTORY}/collections
+      collections_paths: ${MOLECULE_EPHEMERAL_DIRECTORY}/collections
 scenario:
   name: shell
 verifier:
