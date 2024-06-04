@@ -148,33 +148,15 @@ disable = [
 score = "n"
 
 [tool.pytest.ini_options]
+addopts = "-ra --showlocals --durations=10"
 markers = [
   "serial: Run this test serially via filelock.",
   "extensive: marks tests that we want to skip by default, as they are indirectly covered by other tests",
 ]
-norecursedirs = [
-  ".eggs",
-  ".tox",
-  "build",
-  "dist",
-  "doc",
-  "test/resources",
-  "test/scenarios",
-]
-addopts = "--doctest-modules --durations 10 --color=yes"
-doctest_optionflags = ["ALLOW_UNICODE", "ELLIPSIS"]
-junit_suite_name = "molecule_test_suite"
-testpaths = "test/"
-filterwarnings = [
-  # treat warnings as errors unless we add them below
-  "error",
-  # https://github.com/certifi/python-certifi/pull/193
-  "ignore:path is deprecated.*:DeprecationWarning",
-  # https://github.com/pytest-dev/pytest-cov/issues/557
-  "ignore:The --rsyncdir command line argument and rsyncdirs config variable are deprecated.:DeprecationWarning",
-  # ignore::UserWarning
-
-]
+norecursedirs = ["scenarios"]
+testpaths = "test"
+tmp_path_retention_policy = "failed"
+verbosity_assertions = 2
 
 [tool.ruff]
 ignore = [
