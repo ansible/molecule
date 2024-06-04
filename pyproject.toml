@@ -54,19 +54,20 @@ default = "molecule.driver.delegated:Delegated"
 testinfra = "molecule.verifier.testinfra:Testinfra"
 ansible = "molecule.verifier.ansible:Ansible"
 
-[tool.coverage.run]
-source = ["src"]
-# branch = true
-parallel = true
-concurrency = ["multiprocessing", "thread"]
-data_file = ".tox/.coverage"
-relative_files = true
-
 [tool.coverage.report]
-exclude_lines = ["pragma: no cover", "if TYPE_CHECKING:"]
-omit = ["test/*"]
+exclude_also = ["if TYPE_CHECKING:", "pragma: no cover"]
 fail_under = 88
+ignore_errors = true
+show_missing = true
 skip_covered = true
+skip_empty = true
+sort = "Cover"
+
+[tool.coverage.run]
+branch = false # https://github.com/nedbat/coveragepy/issues/605
+concurrency = ["multiprocessing", "thread"]
+parallel = true
+source_pkgs = ["molecule"]
 
 [tool.black]
 skip-string-normalization = false
