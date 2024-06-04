@@ -30,7 +30,6 @@ jobs:
             docs
             pkg
             eco
-            py311-devel
 
   build:
     name: ${{ matrix.name }}
