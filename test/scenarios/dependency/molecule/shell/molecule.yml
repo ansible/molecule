@@ -13,6 +13,9 @@ platforms:
     image: ${TEST_BASE_IMAGE}
 provisioner:
   name: ansible
+  config_options:
+    defaults:
+      collections_path: ${MOLECULE_EPHEMERAL_DIRECTORY}/collections
 scenario:
   name: shell
 verifier:
