@@ -155,7 +155,6 @@ markers = [
 ]
 norecursedirs = ["scenarios"]
 testpaths = "test"
-tmp_path_retention_policy = "failed"
 verbosity_assertions = 2
 
 [tool.ruff]
