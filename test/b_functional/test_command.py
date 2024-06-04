@@ -35,6 +35,8 @@ from test.b_functional.conftest import (  # pylint:disable=C0411
     verify,
 )
 
+from ..conftest import mac_on_gh  # noqa: TID252
+
 
 @pytest.fixture()
 def scenario_to_test(request):
@@ -381,6 +383,7 @@ def test_with_and_without_gitignore(
         assert scenario_name in names
 
 
+@mac_on_gh
 def test_podman() -> None:
     assert (
         run_command(
@@ -390,6 +393,7 @@ def test_podman() -> None:
     )
 
 
+@mac_on_gh
 def test_docker() -> None:
     assert (
         run_command(
