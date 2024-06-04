@@ -2,181 +2,20 @@
 name: tox
 
 on:
-  push: # only publishes pushes to the main branch to TestPyPI
-    branches: # any integration branch but not tag
+  push:
+    branches:
       - "main"
   pull_request:
+    branches:
+      - "main"
   workflow_call:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
   cancel-in-progress: true
+
 jobs:
-  pre:
-    name: pre
-    runs-on: ubuntu-22.04
-    outputs:
-      matrix: ${{ steps.generate_matrix.outputs.matrix }}
-    steps:
-      - name: Determine matrix
-        id: generate_matrix
-        uses: coactions/dynamic-matrix@v1
-        with:
-          min_python: "3.10"
-          max_python: "3.12"
-          default_python: "3.10" # used by jobs in other_names
-          other_names: |
-            lint
-            docs
-            pkg
-            eco
-
-  build:
-    name: ${{ matrix.name }}
-    runs-on: ${{ matrix.os || 'ubuntu-22.04' }}
-    needs: pre
-    defaults:
-      run:
-        shell: ${{ matrix.shell || 'bash'}}
-    # limit potential endless looks like we had with build-containers
-    timeout-minutes: 20
-    strategy:
-      fail-fast: false
-      matrix: ${{ fromJson(needs.pre.outputs.matrix) }}
-
-    env:
-      PYTEST_REQPASS: 453
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # needed by setuptools-scm
-          submodules: true
-
-      - name: Set pre-commit cache
-        uses: actions/cache@v4
-        if: ${{ matrix.passed_name == 'lint' }}
-        with:
-          path: |
-            ~/.cache/pre-commit
-          key: pre-commit-${{ matrix.name || matrix.passed_name }}-${{ hashFiles('.pre-commit-config.yaml') }}
-      - name: Install system dependencies
-        # remove broken .deb ansible and replace with pip version:
-        # https://github.com/actions/virtual-environments/issues/3001
-        run: |
-          sudo apt-get remove -y ansible \
-          && sudo apt-get update \
-          && sudo apt-get install -y libvirt-dev python3-cryptography python3-jinja2 python3-yaml virtualenv \
-          && pip3 install --user ansible-core ansible-lint\
-          && echo "$HOME/.local/bin" >> $GITHUB_PATH
-        # https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#adding-a-system-path
-      - name: Validate that ansible works
-        run: |
-          ansible --version \
-          && virtualenv foo \
-          && source foo/bin/activate \
-          && ansible --version
-      - name: Set up Python ${{ matrix.python_version || '3.10' }}
-        if: "!contains(matrix.shell, 'wsl')"
-        uses: actions/setup-python@v5
-        with:
-          cache: pip
-          python-version: ${{ matrix.python_version || '3.10' }}
-
-      - name: Install tox
-        run: |
-          python3 -m pip install --upgrade pip
-          python3 -m pip install --upgrade "tox>=4.0.0"
-
-      - name: Log installed dists
-        run: python3 -m pip freeze --all
-
-      - name: Initialize tox envs ${{ matrix.passed_name }}
-        run: python3 -m tox --notest --skip-missing-interpreters false -vv -e ${{ matrix.passed_name }}
-        timeout-minutes: 5 # average is under 1, but macos can be over 3
-
-      # sequential run improves browsing experience (almost no speed impact)
-      - name: tox -e ${{ matrix.passed_name }}
-        run: python3 -m tox -e ${{ matrix.passed_name }}
-
-      - name: Archive logs
-        uses: actions/upload-artifact@v4
-        with:
-          name: logs-${{ matrix.name }}.zip
-          path: |
-            .tox/**/log/
-            .tox/**/.coverage*
-            .tox/**/coverage.xml
-
-      - name: Report failure if git reports dirty status
-        run: |
-          if [[ -n $(git status -s) ]]; then
-            # shellcheck disable=SC2016
-            echo -n '::error file=git-status::'
-            printf '### Failed as git reported modified and/or untracked files\n```\n%s\n```\n' "$(git status -s)" | tee -a "$GITHUB_STEP_SUMMARY"
-            exit 99
-          fi
-        # https://github.com/actions/toolkit/issues/193
-
-  check:
-    if: always()
-    permissions:
-      id-token: write
-      checks: read
-
-    needs:
-      - build
-    runs-on: ubuntu-latest
-
-    steps:
-      # checkout needed for codecov action which needs codecov.yml file
-      - uses: actions/checkout@v4
-
-      - name: Set up Python # likely needed for coverage
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - run: pip3 install 'coverage>=7.5.1'
-
-      - name: Merge logs into a single archive
-        uses: actions/upload-artifact/merge@v4
-        with:
-          name: logs.zip
-          pattern: logs-*.zip
-          # artifacts like py312.zip and py312-macos do have overlapping files
-          separate-directories: true
-
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: logs.zip
-          path: .
-
-      - name: Check for expected number of coverage.xml reports
-        run: |
-          JOBS_PRODUCING_COVERAGE=3
-          if [ "$(find . -name coverage.xml | wc -l | bc)" -ne "${JOBS_PRODUCING_COVERAGE}" ]; then
-            echo "::error::Number of coverage.xml files was not the expected one (${JOBS_PRODUCING_COVERAGE}): $(find . -name coverage.xml |xargs echo)"
-            exit 1
-          fi
-
-      - name: Upload coverage data
-        uses: codecov/codecov-action@v4
-        with:
-          name: ${{ matrix.passed_name }}
-          fail_ci_if_error: true
-          use_oidc: true # cspell:ignore oidc
-
-      - name: Check codecov.io status
-        if: github.event_name == 'pull_request'
-        uses: coactions/codecov-status@main
-
-      - name: Decide whether the needed jobs succeeded or failed
-        uses: re-actors/alls-green@release/v1
-        with:
-          jobs: ${{ toJSON(needs) }}
-
-      - name: Delete Merged Artifacts
-        uses: actions/upload-artifact/merge@v4
-        with:
-          delete-merged: true
+  tox:
+    uses: ansible/team-devtools/.github/workflows/tox.yml@main
+    with:
+      other_names_also: "eco"
