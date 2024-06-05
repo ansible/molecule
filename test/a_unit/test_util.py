@@ -23,7 +23,6 @@ import binascii
 import os
 import warnings
 from pathlib import Path
-from test.conftest import get_molecule_file, molecule_directory
 from typing import Any
 
 import pytest
@@ -34,6 +33,10 @@ from molecule.api import IncompatibleMoleculeRuntimeWarning, MoleculeRuntimeWarn
 from molecule.console import console
 from molecule.constants import MOLECULE_HEADER
 from molecule.text import strip_ansi_escape
+from test.conftest import (  # pylint:disable = C0411
+    get_molecule_file,
+    molecule_directory,
+)
 
 
 def test_print_debug():

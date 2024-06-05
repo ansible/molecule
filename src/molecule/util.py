@@ -141,6 +141,7 @@ def run_command(
         env=env,
         cwd=cwd,
         tee=True,
+        set_acp=False,
     )
     if result.returncode != 0 and check:
         raise CalledProcessError(
