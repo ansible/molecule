@@ -85,7 +85,7 @@ repos:
         args:
           - --output-format=colorized
         additional_dependencies:
-          - ansible-compat>=4.1.8
+          - ansible-compat>=24.6.1
           - click
           - click-help-colors
           - enrich>=1.2.7
