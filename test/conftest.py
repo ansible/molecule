@@ -20,6 +20,7 @@
 
 import contextlib
 import os
+import platform
 import random
 import string
 
@@ -28,6 +29,12 @@ from filelock import FileLock
 
 from molecule import config
 from molecule.scenario import ephemeral_directory
+
+# Marker to skip tests on macos when running on GH
+mac_on_gh = pytest.mark.skipif(
+    platform.system() == "Darwin" and "CI" in os.environ,
+    reason="Podman and docker not currently available for macOS on Github",
+)
 
 
 def is_subset(subset, superset):

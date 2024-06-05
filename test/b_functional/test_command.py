@@ -34,6 +34,7 @@ from test.b_functional.conftest import (  # pylint:disable=C0411
     run_test,
     verify,
 )
+from test.conftest import mac_on_gh  # pylint:disable=C0411
 
 
 @pytest.fixture()
@@ -381,6 +382,7 @@ def test_with_and_without_gitignore(
         assert scenario_name in names
 
 
+@mac_on_gh
 def test_podman() -> None:
     assert (
         run_command(
@@ -390,6 +392,7 @@ def test_podman() -> None:
     )
 
 
+@mac_on_gh
 def test_docker() -> None:
     assert (
         run_command(

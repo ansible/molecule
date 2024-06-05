@@ -305,8 +305,8 @@ def test_command_completion(shell: str) -> None:
     result = util.run_command(["molecule"], env=env)
 
     if "bash" in shell and (float(bash_version) < 4.4):
-        assert result.returncode == 1
-        assert "Found config file" not in result.stdout
+        string = "Shell completion is not supported for Bash versions older than 4.4"
+        assert string not in result.stdout
     else:
         assert result.returncode == 0
         assert "Found config file" not in result.stdout

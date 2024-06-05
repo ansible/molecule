@@ -3,7 +3,7 @@ dependency:
   name: shell
   command: >
     bash -c "
-    ansible-galaxy collection install -p '${MOLECULE_EPHEMERAL_DIRECTORY}/collections' community.molecule &&
+    ansible-galaxy collection install -p '${MOLECULE_EPHEMERAL_DIRECTORY}/collections' community.molecule --force &&
     ansible-galaxy role install -p '${MOLECULE_EPHEMERAL_DIRECTORY}/roles' ssbarnea.ansible_role_helloworld
     "
 driver:
