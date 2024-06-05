@@ -34,8 +34,7 @@ from test.b_functional.conftest import (  # pylint:disable=C0411
     run_test,
     verify,
 )
-
-from ..conftest import mac_on_gh  # noqa: TID252
+from test.conftest import mac_on_gh  # pylint:disable=C0411
 
 
 @pytest.fixture()
