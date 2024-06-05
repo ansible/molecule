@@ -162,6 +162,8 @@ norecursedirs = [
   "test/scenarios",
 ]
 addopts = "--doctest-modules --durations 10 --color=yes"
+known_first_party= "test"
+
 doctest_optionflags = ["ALLOW_UNICODE", "ELLIPSIS"]
 junit_suite_name = "molecule_test_suite"
 testpaths = "test/"
