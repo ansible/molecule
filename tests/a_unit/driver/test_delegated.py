@@ -25,7 +25,7 @@ from pytest_mock import MockerFixture
 
 from molecule import config
 from molecule.driver import delegated
-from test.conftest import is_subset  # pylint:disable=C0411
+from tests.conftest import is_subset  # pylint:disable=C0411
 
 
 @pytest.fixture()

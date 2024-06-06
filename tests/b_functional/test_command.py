@@ -27,14 +27,14 @@ from pytest import FixtureRequest
 
 from molecule.command import base
 from molecule.util import run_command
-from test.b_functional.conftest import (  # pylint:disable=C0411
+from tests.b_functional.conftest import (  # pylint:disable=C0411
     idempotence,
     init_scenario,
     list_with_format_plain,
     run_test,
     verify,
 )
-from test.conftest import mac_on_gh  # pylint:disable=C0411
+from tests.conftest import mac_on_gh  # pylint:disable=C0411
 
 
 @pytest.fixture()
@@ -335,7 +335,7 @@ def test_sample_collection() -> None:
     assert (
         run_command(
             ["molecule", "test"],
-            cwd="test/resources/sample-collection",
+            cwd="tests/resources/sample-collection",
         ).returncode
         == 0
     )

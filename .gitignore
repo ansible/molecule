@@ -173,5 +173,5 @@ cython_debug/
 node_modules/
 
 # There is a test for this, otherwise unknown
-# test/b_functional/test_command.py test_w_gitignore
-test/resources/.extensions/
+# tests/b_functional/test_command.py test_w_gitignore
+tests/resources/.extensions/

@@ -24,7 +24,7 @@ import pytest
 
 from molecule import config, util
 from molecule.provisioner import ansible_playbooks
-from test.a_unit.conftest import os_split  # pylint:disable=C0411
+from tests.a_unit.conftest import os_split  # pylint:disable=C0411
 
 
 @pytest.fixture()
