@@ -24,8 +24,10 @@ class InvalidInterpolation(Exception):
     """InvalidInterpolation Exception."""
 
     def __init__(
-        self, string: str, place: Exception,
-    ) -> None:  # pylint: disable=redefined-outer-name
+        self,
+        string: str,  # pylint: disable=redefined-outer-name
+        place: Exception,
+    ) -> None:
         """Construct InvalidInterpolation."""
         self.string = string
         self.place = place
