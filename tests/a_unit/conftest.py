@@ -92,8 +92,8 @@ def _molecule_verifier_section_data():  # type: ignore[no-untyped-def]
     return {"verifier": {"name": "ansible"}}
 
 
-@pytest.fixture()
-def molecule_data(  # type: ignore[no-untyped-def]
+@pytest.fixture(name="molecule_data")
+def fixture_molecule_data(  # type: ignore[no-untyped-def]
     _molecule_dependency_galaxy_section_data,
     _molecule_driver_section_data,
     _molecule_platforms_section_data,
@@ -117,13 +117,13 @@ def molecule_data(  # type: ignore[no-untyped-def]
     return merged_dict
 
 
-@pytest.fixture()
-def molecule_directory_fixture(temp_dir):  # type: ignore[no-untyped-def]
+@pytest.fixture(name="molecule_directory_fixture")
+def fixture_molecule_directory_fixture(temp_dir):  # type: ignore[no-untyped-def]
     return molecule_directory()
 
 
-@pytest.fixture()
-def molecule_scenario_directory_fixture(molecule_directory_fixture):  # type: ignore[no-untyped-def]
+@pytest.fixture(name="molecule_scenario_directory_fixture")
+def fixture_molecule_scenario_directory_fixture(molecule_directory_fixture):  # type: ignore[no-untyped-def]
     path = molecule_scenario_directory()
     if not os.path.isdir(path):
         os.makedirs(path, exist_ok=True)
@@ -131,8 +131,8 @@ def molecule_scenario_directory_fixture(molecule_directory_fixture):  # type: ig
     return path
 
 
-@pytest.fixture()
-def molecule_ephemeral_directory_fixture(molecule_scenario_directory_fixture):  # type: ignore[no-untyped-def]
+@pytest.fixture(name="molecule_ephemeral_directory_fixture")
+def fixture_molecule_ephemeral_directory_fixture(molecule_scenario_directory_fixture):  # type: ignore[no-untyped-def]
     path = molecule_ephemeral_directory(str(uuid4()))
     if not os.path.isdir(path):
         os.makedirs(path, exist_ok=True)
@@ -140,8 +140,8 @@ def molecule_ephemeral_directory_fixture(molecule_scenario_directory_fixture):  
     shutil.rmtree(str(Path(path).parent))
 
 
-@pytest.fixture()
-def molecule_file_fixture(  # type: ignore[no-untyped-def]
+@pytest.fixture(name="molecule_file_fixture")
+def fixture_molecule_file_fixture(  # type: ignore[no-untyped-def]
     molecule_scenario_directory_fixture,
     molecule_ephemeral_directory_fixture,
 ):

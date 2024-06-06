@@ -89,7 +89,7 @@ class Config(metaclass=NewInitCaller):
     # Config objects should be allowed to have any number of attributes
     def __init__(  # type: ignore[no-untyped-def]
         self,
-        molecule_file: str,
+        molecule_file: str,  # pylint: disable=redefined-outer-name
         args={},
         command_args={},
         ansible_args=(),

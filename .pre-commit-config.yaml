@@ -20,15 +20,13 @@ repos:
         additional_dependencies:
           - prettier
           - prettier-plugin-toml
-  - repo: https://github.com/codespell-project/codespell
-    rev: v2.3.0
-    hooks:
-      - id: codespell
+
   - repo: https://github.com/psf/black
     rev: 24.4.2
     hooks:
       - id: black
         language_version: python3
+
   - repo: https://github.com/pre-commit/pre-commit-hooks.git
     rev: v4.6.0
     hooks:
@@ -49,7 +47,7 @@ repos:
         types: [file, yaml]
         entry: yamllint --strict
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.4.7"
+    rev: "v0.4.8"
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
@@ -74,8 +72,8 @@ repos:
         # Override default pre-commit '--ignore-missing-imports'
         args: [--strict]
 
-  - repo: https://github.com/pycqa/pylint
-    rev: v3.2.2
+  - repo: https://github.com/pycqa/pylint.git
+    rev: v3.2.3
     hooks:
       - id: pylint
         args:
@@ -91,6 +89,7 @@ repos:
           - pytest-mock
           - pytest-testinfra
           - wcmatch
+
   - repo: https://github.com/ansible/ansible-lint
     rev: v24.6.0
     hooks:

@@ -27,7 +27,7 @@ import string
 import pytest
 from filelock import FileLock
 
-from molecule import config
+from molecule import config as molecule_config
 from molecule.scenario import ephemeral_directory
 
 # Marker to skip tests on macos when running on GH
@@ -55,8 +55,8 @@ def is_subset(subset, superset):  # type: ignore[no-untyped-def]
     return subset == superset
 
 
-@pytest.fixture()
-def random_string(l=5):  # type: ignore[no-untyped-def]
+@pytest.fixture(name="random_string")
+def fixture_random_string(l=5):  # type: ignore[no-untyped-def]
     return "".join(random.choice(string.ascii_uppercase) for _ in range(l))
 
 
@@ -78,8 +78,8 @@ def temp_dir(tmpdir, random_string, request):  # type: ignore[no-untyped-def]
 
 @pytest.fixture()
 def resources_folder_path():  # type: ignore[no-untyped-def]
-    resources_folder_path = os.path.join(os.path.dirname(__file__), "resources")
-    return resources_folder_path
+    _resources_folder_path = os.path.join(os.path.dirname(__file__), "resources")
+    return _resources_folder_path
 
 
 def molecule_project_directory() -> str:
@@ -87,7 +87,7 @@ def molecule_project_directory() -> str:
 
 
 def molecule_directory() -> str:
-    return config.molecule_directory(molecule_project_directory())
+    return molecule_config.molecule_directory(molecule_project_directory())
 
 
 def molecule_scenario_directory() -> str:
@@ -99,7 +99,7 @@ def molecule_file() -> str:
 
 
 def get_molecule_file(path: str) -> str:
-    return config.molecule_file(path)
+    return molecule_config.molecule_file(path)
 
 
 def molecule_ephemeral_directory(_fixture_uuid) -> str:  # type: ignore[no-untyped-def]
@@ -152,7 +152,6 @@ def block_on_serial_mark(request):  # type: ignore[no-untyped-def]
     # https://github.com/pytest-dev/pytest-xdist/issues/385
     os.makedirs(".tox", exist_ok=True)
     if request.node.get_closest_marker("serial"):
-        # pylint: disable=abstract-class-instantiated
         with FileLock(".tox/semaphore.lock"):
             yield
     else:

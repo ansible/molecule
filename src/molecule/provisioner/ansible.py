@@ -414,7 +414,7 @@ class Ansible(base.Base):
     ```
     """
 
-    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]
+    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # pylint: disable=useless-parent-delegation
         """Initialize a new ansible class and returns None.
 
         :param config: An instance of a Molecule config.

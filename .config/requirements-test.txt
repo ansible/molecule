@@ -9,6 +9,7 @@ filelock >= 3.9.0
 mypy
 pexpect >= 4.8.0, < 5
 pre-commit
+pylint
 pytest >= 7.2.0
 pytest-mock >= 3.10.0
 pytest-plus >= 0.4.0

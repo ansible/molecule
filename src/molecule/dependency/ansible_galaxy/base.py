@@ -102,7 +102,7 @@ class AnsibleGalaxyBase(base.Base):
 
         self._sh_command = [
             self.command,
-            *self.COMMANDS,  # type: ignore[attr-defined]
+            *self.COMMANDS,  # type: ignore[attr-defined]  # pylint: disable=no-member
             *util.dict2args(options),
             *verbose_flag,
         ]

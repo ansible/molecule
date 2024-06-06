@@ -80,8 +80,8 @@ def with_scenario(request, scenario_to_test, driver_name, scenario_name, skip_te
             assert run_command(cmd).returncode == 0
 
 
-@pytest.fixture()
-def skip_test(request, driver_name):  # type: ignore[no-untyped-def]
+@pytest.fixture(name="skip_test")
+def fixture_skip_test(request, driver_name):  # type: ignore[no-untyped-def]
     msg_tmpl = "Skipped '{}' not supported"
     support_checks_map = {
         "default": lambda: True,
@@ -152,7 +152,7 @@ def list_cmd(x):  # type: ignore[no-untyped-def]
     cmd = ["molecule", "list"]
     result = run_command(cmd)
     assert result.returncode == 0
-    out = util.strip_ansi_color(result.stdout)  # type: ignore[attr-defined]
+    out = util.strip_ansi_color(result.stdout)  # type: ignore[attr-defined] # pylint:disable=no-member
 
     for l in x.splitlines():
         assert l in out

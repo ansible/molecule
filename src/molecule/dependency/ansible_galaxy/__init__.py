@@ -105,12 +105,12 @@ class AnsibleGalaxy(Base):
     def default_env(self):  # type: ignore[no-untyped-def]
         e = {}  # type: ignore[var-annotated]
         for invoker in self.invocations:
-            e = util.merge(e, invoker.default_env)  # type: ignore[attr-defined]
+            e = util.merge(e, invoker.default_env)  # type: ignore[attr-defined]  # pylint: disable=no-member
         return e
 
     @property
     def default_options(self):  # type: ignore[no-untyped-def]
         opts = {}  # type: ignore[var-annotated]
         for invoker in self.invocations:
-            opts = util.merge(opts, invoker.default_opts)  # type: ignore[attr-defined]
+            opts = util.merge(opts, invoker.default_opts)  # type: ignore[attr-defined]  # pylint: disable=no-member
         return opts

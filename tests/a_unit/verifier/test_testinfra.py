@@ -59,8 +59,8 @@ def inventory_file(_instance):  # type: ignore[no-untyped-def]
     return _instance._config.provisioner.inventory_file
 
 
-@pytest.fixture()
-def inventory_directory(_instance):  # type: ignore[no-untyped-def]
+@pytest.fixture(name="inventory_directory")
+def fixture_inventory_directory(_instance):  # type: ignore[no-untyped-def]
     return _instance._config.provisioner.inventory_directory
 
 

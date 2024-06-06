@@ -25,4 +25,4 @@ from molecule import shell
 
 def test_shell() -> None:
     with pytest.raises(SystemExit):
-        shell.main()
+        shell.main()  # pylint: disable=no-value-for-parameter

@@ -71,7 +71,7 @@ class State:
 
     def marshal(func):  # type: ignore[no-untyped-def]
         def wrapper(self, *args, **kwargs):  # type: ignore[no-untyped-def]
-            func(self, *args, **kwargs)  # type: ignore[operator]
+            func(self, *args, **kwargs)  # type: ignore[operator]  # pylint: disable=not-callable
             self._write_state_file()
 
         return wrapper
