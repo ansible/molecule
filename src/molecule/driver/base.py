@@ -37,8 +37,8 @@ class Driver:
     def __init__(self, config=None) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101
         """Initialize code for all :ref:`Driver` classes.
 
-        :param config: An instance of a Molecule config.
-        :returns: None
+        Args:
+            config: An instance of a Molecule config.
         """
         self._config = config
         self._path = os.path.abspath(  # noqa: PTH100
@@ -76,11 +76,11 @@ class Driver:
     @property
     @abstractmethod
     def login_cmd_template(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN101, ANN201
-        """Get the login command template to be populated by ``login_options`` as \
-        a string.
+        """Get the login command template to be populated by ``login_options`` as a string.
 
-        :returns: str
-        """  # noqa: D205
+        Returns:
+            str
+        """
 
     @property
     @abstractmethod
@@ -102,18 +102,23 @@ class Driver:
     def login_options(self, instance_name):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN101, ANN201
         """Options used in the login command and returns a dict.
 
-        :param instance_name: A string containing the instance to login to.
-        :returns: dict
+        Args:
+            instance_name: A string containing the instance to login to.
+
+        Returns:
+            dict
         """
 
     @abstractmethod
     def ansible_connection_options(self, instance_name):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN101, ANN201
-        """Ansible specific connection options supplied to inventory and returns a \
-        dict.
+        """Ansible specific connection options supplied to inventory and returns a dict.
 
-        :param instance_name: A string containing the instance to login to.
-        :returns: dict
-        """  # noqa: D205
+        Args:
+            instance_name: A string containing the instance to login to.
+
+        Returns:
+            dict
+        """
 
     @abstractmethod
     def sanity_checks(self) -> None:  # noqa: ANN101

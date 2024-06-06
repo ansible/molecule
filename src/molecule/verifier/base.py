@@ -33,8 +33,8 @@ class Verifier:
     def __init__(self, config=None) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101
         """Initialize code for all :ref:`Verifier` classes.
 
-        :param config: An instance of a Molecule config.
-        :returns: None
+        Args:
+            config: An instance of a Molecule config.
         """
         self._config = config
 
@@ -51,7 +51,8 @@ class Verifier:
     def default_options(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN101, ANN201
         """Get default CLI arguments provided to ``cmd`` as a dict.
 
-        :return: dict
+        Return:
+            dict
         """
 
     @property
@@ -59,22 +60,17 @@ class Verifier:
     def default_env(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN101, ANN201
         """Get default env variables provided to ``cmd`` as a dict.
 
-        :return: dict
+        Return:
+            dict
         """
 
     @abc.abstractmethod
     def execute(self, action_args=None):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN101, ANN201
-        """Execute ``cmd`` and returns None.
-
-        :return: None
-        """
+        """Execute ``cmd`` and returns None."""
 
     @abc.abstractmethod
     def schema(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN101, ANN201
-        """Return validation schema.
-
-        :return: None
-        """
+        """Return validation schema."""
 
     @property
     def enabled(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201, D102

@@ -41,11 +41,7 @@ class List(base.Base):
     """List command shows information about current scenarios."""
 
     def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, ARG002
-        """Execute the actions necessary to perform a `molecule list` and \
-        returns None.
-
-        :return: None
-        """  # noqa: D205
+        """Execute the actions necessary to perform a `molecule list` and returns None."""
         return self._config.driver.status()
 
 
@@ -88,9 +84,10 @@ def list(ctx, scenario_name, format):  # type: ignore[no-untyped-def] # pragma: 
 def _print_tabulate_data(headers, data, table_format):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN001, ANN202
     """Show the tabulate data on the screen and returns None.
 
-    :param headers: A list of column headers.
-    :param data:  A list of tabular data to display.
-    :returns: None
+    Args:
+        headers: A list of column headers.
+        data: A list of tabular data to display.
+        table_format: A string containing the table format.
     """
     if table_format == "plain":
         for line in data:

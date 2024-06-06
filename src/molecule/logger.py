@@ -63,8 +63,9 @@ def configure() -> None:
 def set_log_level(log_level: int, debug: bool) -> None:  # noqa: FBT001
     """Set logging level.
 
-    :param log_level: verbosity control (0 - INFO, 1 - DEBUG)
-    :param debug: debug mode indicator
+    Args:
+        log_level: verbosity control (0 - INFO, 1 - DEBUG)
+        debug: debug mode indicator
     """
     # If we get verbosity level > 1, we just use debug because this is the
     # most detailed log level we have.

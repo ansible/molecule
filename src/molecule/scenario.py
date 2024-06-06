@@ -43,18 +43,15 @@ class Scenario:
     def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101
         """Initialize a new scenario class and returns None.
 
-        :param config: An instance of a Molecule config.
-        :return: None
+        Args:
+            config: An instance of a Molecule config.
         """
         self._lock = None
         self.config = config
         self._setup()  # type: ignore[no-untyped-call]
 
     def _remove_scenario_state_directory(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
-        """Remove scenario cached disk stored state.
-
-        :return: None
-        """
+        """Remove scenario cached disk stored state."""
         directory = str(Path(self.ephemeral_directory).parent)
         LOG.info("Removing %s", directory)
         shutil.rmtree(directory)
@@ -67,7 +64,6 @@ class Scenario:
         files declared as "safe_files" in the ``driver`` configuration
         declared in ``molecule.yml``.
 
-        :return: None
         """
         LOG.info("Pruning extra files from scenario ephemeral directory")
         safe_files = [
@@ -207,10 +203,7 @@ class Scenario:
         return result
 
     def _setup(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
-        """Prepare the scenario for Molecule and returns None.
-
-        :return: None
-        """
+        """Prepare the scenario for Molecule and returns None."""
         if not os.path.isdir(self.inventory_directory):  # noqa: PTH112
             os.makedirs(self.inventory_directory, exist_ok=True)  # noqa: PTH103
 

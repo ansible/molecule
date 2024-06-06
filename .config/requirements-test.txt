@@ -7,9 +7,11 @@ black
 check-jsonschema
 coverage >= 7.0.3
 filelock >= 3.9.0
+flake8
 mypy
 pexpect >= 4.8.0, < 5
 pre-commit
+pydoclint[flake8]
 pylint
 pytest >= 7.2.0
 pytest-mock >= 3.10.0

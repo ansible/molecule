@@ -57,6 +57,14 @@ repos:
       - id: cspell
         name: Spell check with cspell
 
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.0.0
+    hooks:
+      - id: flake8
+        name: flake8(pydoclint)
+        additional_dependencies:
+          - pydoclint[flake8]
+
   - repo: https://github.com/pre-commit/mirrors-mypy.git
     rev: v1.10.0
     hooks:

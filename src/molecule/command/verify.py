@@ -33,11 +33,7 @@ class Verify(base.Base):
     """Verify Command Class."""
 
     def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201
-        """Execute the actions necessary to perform a `molecule verify` and \
-        returns None.
-
-        :return: None
-        """  # noqa: D205
+        """Execute the actions necessary to perform a `molecule verify` and returns None."""
         self._config.verifier.execute(action_args)
 
 

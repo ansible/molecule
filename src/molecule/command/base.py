@@ -54,8 +54,11 @@ class Base(metaclass=abc.ABCMeta):
     def __init__(self, c: config.Config) -> None:  # noqa: ANN101
         """Initialize code for all command classes.
 
-        :param c: An instance of a Molecule config.
-        :returns: None
+        Args:
+            c: An instance of a Molecule config.
+
+        Returns:
+            None
         """
         self._config = c
         self._setup()
@@ -71,10 +74,7 @@ class Base(metaclass=abc.ABCMeta):
         pass
 
     def _setup(self) -> None:  # noqa: ANN101
-        """Prepare Molecule's provisioner and returns None.
-
-        :return: None
-        """
+        """Prepare Molecule's provisioner and returns None."""
         self._config.write()
         self._config.provisioner.write_config()
         self._config.provisioner.manage_inventory()
@@ -89,12 +89,11 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
     ``args`` and ``command_args`` are combined using :func:`get_configs`
     to generate the scenario(s) configuration.
 
-    :param scenario_name: Name of scenario to run, or ``None`` to run all.
-    :param args: ``args`` dict from ``click`` command context
-    :param command_args: dict of command arguments, including the target
-                         subcommand to execute
-    :returns: None
-
+    Args:
+        scenario_name: Name of scenario to run, or ``None`` to run all.
+        args: ``args`` dict from ``click`` command context
+        command_args: dict of command arguments, including the target
+        ansible_args: Optional tuple of arguments to pass to the `ansible-playbook` command
     """
     glob_str = MOLECULE_GLOB
     if scenario_name:
@@ -164,8 +163,8 @@ def execute_subcommand(config, subcommand_and_args):  # type: ignore[no-untyped-
 def execute_scenario(scenario):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
     """Execute each command in the given scenario's configured sequence.
 
-    :param scenario: The scenario to execute.
-    :returns: None
+    Args:
+        scenario: The scenario to execute.
     """
     for action in scenario.sequence:
         execute_subcommand(scenario.config, action)  # type: ignore[no-untyped-call]
@@ -199,16 +198,19 @@ def filter_ignored_scenarios(scenario_paths) -> list[str]:  # type: ignore[no-un
 
 
 def get_configs(args, command_args, ansible_args=(), glob_str=MOLECULE_GLOB):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN201
-    """Glob the current directory for Molecule config files, instantiate config \
-    objects, and returns a list.
+    """Glob the current directory for Molecule config files.
 
-    :param args: A dict of options, arguments and commands from the CLI.
-    :param command_args: A dict of options passed to the subcommand from
-     the CLI.
-    :param ansible_args: An optional tuple of arguments provided to the
-     `ansible-playbook` command.
-    :return: list
-    """  # noqa: D205
+    Instantiate config objects, and returns a list.
+
+    Args:
+        args: A dict of options, arguments and commands from the CLI.
+        command_args: A dict of options passed to the subcommand from the CLI.
+        ansible_args: An optional tuple of arguments provided to the `ansible-playbook` command.
+        glob_str: A string representing the glob used to find Molecule config files.
+
+    Returns:
+        A list of Config objects.
+    """
     scenario_paths = glob.glob(
         glob_str,
         flags=wcmatch.pathlib.GLOBSTAR | wcmatch.pathlib.BRACE | wcmatch.pathlib.DOTGLOB,
@@ -232,8 +234,9 @@ def get_configs(args, command_args, ansible_args=(), glob_str=MOLECULE_GLOB):  #
 def _verify_configs(configs, glob_str=MOLECULE_GLOB):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN202
     """Verify a Molecule config was found and returns None.
 
-    :param configs: A list containing absolute paths to Molecule config files.
-    :return: None
+    Args:
+        configs: A list containing absolute paths to Molecule config files.
+        glob_str: A string representing the glob used to find Molecule config files.
     """
     if configs:
         scenario_names = [c.scenario.name for c in configs]

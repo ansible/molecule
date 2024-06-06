@@ -30,8 +30,8 @@ class Base:
     def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101
         """Initialize code for all :ref:`Provisioner` classes.
 
-        :param config: An instance of a Molecule config.
-        :returns: None
+        Args:
+            config: An instance of a Molecule config.
         """
         self._config = config
 
@@ -40,7 +40,8 @@ class Base:
     def default_options(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN101, ANN201
         """Get default CLI arguments provided to ``cmd`` as a dict.
 
-        :return: dict
+        Return:
+            dict
         """
 
     @property
@@ -48,7 +49,8 @@ class Base:
     def default_env(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN101, ANN201
         """Get default env variables provided to ``cmd`` as a dict.
 
-        :return: dict
+        Return:
+            dict
         """
 
     @property
@@ -56,5 +58,6 @@ class Base:
     def name(self):  # type: ignore[no-untyped-def] # pragma: no cover  # noqa: ANN101, ANN201
         """Name of the provisioner and returns a string.
 
-        :returns: str
+        Returns:
+            str
         """

@@ -32,10 +32,12 @@ defusedxml==0.7.1
 dill==0.3.8
 distlib==0.3.8
 dnspython==2.6.1
+docstring-parser-fork==0.0.5
 enrich==1.2.7
 exceptiongroup==1.2.1
 execnet==2.1.1
 filelock==3.14.0
+flake8==7.0.0
 ghp-import==2.1.0
 griffe==0.45.1
 htmlmin2==0.1.13
@@ -84,7 +86,10 @@ platformdirs==4.2.2
 pluggy==1.5.0
 pre-commit==3.7.1
 ptyprocess==0.7.0
+pycodestyle==2.11.1
 pycparser==2.22
+pydoclint==0.4.1
+pyflakes==3.2.0
 pygments==2.18.0
 pylint==3.2.3
 pymdown-extensions==10.8.1

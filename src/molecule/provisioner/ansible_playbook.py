@@ -34,15 +34,14 @@ class AnsiblePlaybook:
     """Provisioner Playbook."""
 
     def __init__(self, playbook, config, verify=False) -> None:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, FBT002
-        """Set up the requirements to execute ``ansible-playbook`` and returns \
-        None.
+        """Set up the requirements to execute ``ansible-playbook`` and returns None.
 
-        :param playbook: A string containing the path to the playbook.
-        :param config: An instance of a Molecule config.
-        :param verify: An optional bool to toggle the Playbook mode between
-         provision and verify. False: provision; True: verify. Default is False.
-        :returns: None
-        """  # noqa: D205
+        Args:
+            playbook: A string containing the path to the playbook.
+            config: An instance of a Molecule config.
+            verify: An optional bool to toggle the Playbook mode between provision and verify.
+                False provision; True: verify. Default is False.
+        """
         self._ansible_command = None
         self._playbook = playbook
         self._config = config
@@ -56,11 +55,7 @@ class AnsiblePlaybook:
             self._env = self._config.provisioner.env
 
     def bake(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
-        """Bake an ``ansible-playbook`` command so it's ready to execute and \
-        returns ``None``.
-
-        :return: None
-        """  # noqa: D205
+        """Bake an ``ansible-playbook`` command so it's ready to execute and returns ``None``."""
         if not self._playbook:
             return
 
@@ -99,7 +94,8 @@ class AnsiblePlaybook:
     def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, ARG002
         """Execute ``ansible-playbook`` and returns a string.
 
-        :return: str
+        Returns:
+            str
         """
         if self._ansible_command is None:
             self.bake()  # type: ignore[no-untyped-call]
@@ -133,19 +129,18 @@ class AnsiblePlaybook:
     def add_cli_arg(self, name, value):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201
         """Add argument to CLI passed to ansible-playbook and returns None.
 
-        :param name: A string containing the name of argument to be added.
-        :param value: The value of argument to be added.
-        :return: None
+        Args:
+            name: A string containing the name of argument to be added.
+            value: The value of argument to be added.
         """
         if value:
             self._cli[name] = value
 
     def add_env_arg(self, name, value):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201
-        """Add argument to environment passed to ansible-playbook and returns \
-        None.
+        """Add argument to environment passed to ansible-playbook and returns None.
 
-        :param name: A string containing the name of argument to be added.
-        :param value: The value of argument to be added.
-        :return: None
-        """  # noqa: D205
+        Args:
+            name: A string containing the name of argument to be added.
+            value: The value of argument to be added.
+        """
         self._env[name] = value

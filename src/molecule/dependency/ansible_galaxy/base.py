@@ -67,7 +67,8 @@ class AnsibleGalaxyBase(base.Base):
         they are present. Returns the resulting dictionary. Does not modify the
         existing one.
 
-        :return: A copy of ``opts`` without the value of keys
+        Returns:
+            A copy of ``opts`` without the value of keys
         """
         c = copy.copy(opts)
         for key in keys:
@@ -93,11 +94,7 @@ class AnsibleGalaxyBase(base.Base):
         return util.merge_dicts(os.environ, self._config.env)
 
     def bake(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
-        """Bake an ``ansible-galaxy`` command so it's ready to execute and returns \
-        None.
-
-        :return: None
-        """  # noqa: D205
+        """Bake an ``ansible-galaxy`` command so it's ready to execute and returns None."""
         options = self.options
         verbose_flag = util.verbose_flag(options)  # type: ignore[no-untyped-call]
 
@@ -127,10 +124,7 @@ class AnsibleGalaxyBase(base.Base):
         self.execute_with_retries()  # type: ignore[no-untyped-call]
 
     def _setup(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
-        """Prepare the system for using ``ansible-galaxy`` and returns None.
-
-        :return: None
-        """
+        """Prepare the system for using ``ansible-galaxy`` and returns None."""
 
     def _has_requirements_file(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
         return os.path.isfile(self.requirements_file)  # noqa: PTH113

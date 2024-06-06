@@ -98,15 +98,11 @@ class Config(metaclass=NewInitCaller):
     ) -> None:
         """Initialize a new config class and returns None.
 
-        :param molecule_file: A string containing the path to the Molecule file
-         to be parsed.
-        :param args: An optional dict of options, arguments and commands from
-         the CLI.
-        :param command_args: An optional dict of options passed to the
-         subcommand from the CLI.
-        :param ansible_args: An optional tuple of arguments provided to the
-         ``ansible-playbook`` command.
-        :returns: None
+        Args:
+            molecule_file: A string containing the path to the Molecule file to be parsed.
+            args: An optional dict of options, arguments and commands from the CLI.
+            command_args: An optional dict of options passed to the subcommand from the CLI.
+            ansible_args: An optional tuple of arguments provided to the `ansible-playbook` command.
         """
         self.molecule_file = molecule_file
         self.args = args
@@ -308,7 +304,8 @@ class Config(metaclass=NewInitCaller):
         Returns a new dict.  Prior to merging the config files are interpolated with
         environment variables.
 
-        :return: dict
+        Returns:
+            dict: The merged config.
         """
         return self._combine(keep_string=MOLECULE_KEEP_STRING)
 
@@ -318,7 +315,8 @@ class Config(metaclass=NewInitCaller):
         Interpolates the ``keep_string`` left behind in the original
         ``get_config`` call.  This is probably __very__ bad.
 
-        :return: dict
+        Returns:
+            dict: The merged config.
         """
         env = util.merge_dicts(os.environ, self.env)
         env = set_env_from_file(env, self.env_file)
@@ -336,7 +334,8 @@ class Config(metaclass=NewInitCaller):
         3. Loads the scenario's ``molecule file`` and merges on top of previous
            merge.
 
-        :return: dict
+        Returns:
+            dict: The merged config.
         """
         defaults = self._get_defaults()
         base_configs = filter(os.path.exists, self.args.get("base_config", []))

@@ -35,11 +35,7 @@ class Create(base.Base):
     """Create Command Class."""
 
     def execute(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201, ARG002
-        """Execute the actions necessary to perform a `molecule create` and \
-        returns None.
-
-        :return: None
-        """  # noqa: D205
+        """Execute the actions necessary to perform a `molecule create` and returns None."""
         self._config.state.change_state("driver", self._config.driver.name)
 
         if self._config.state.created:

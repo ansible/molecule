@@ -63,9 +63,9 @@ def print_debug(title: str, data: str) -> None:
 def print_environment_vars(env: dict[str, str | None] | None) -> None:
     """Print ``Ansible`` and ``Molecule`` environment variables and returns None.
 
-    :param env: A dict containing the shell's environment as collected by
-    ``os.environ``.
-    :return: None
+    Args:
+        env: A dict containing the shell's environment as collected by
+        ``os.environ``.
     """
     if env:
         ansible_env = {k: v for (k, v) in env.items() if "ANSIBLE_" in k}
@@ -130,9 +130,17 @@ def run_command(  # type: ignore[no-untyped-def]  # noqa: PLR0913
 ) -> CompletedProcess:  # type: ignore[type-arg]
     """Execute the given command and returns None.
 
-    :param cmd: :
-        - a string or list of strings (similar to subprocess.run)
-    :param debug: An optional bool to toggle debug output.
+    Args:
+        cmd: A list of strings containing the command to run.
+        env: A dict containing the shell's environment.
+        debug: An optional bool to toggle debug output.
+        echo: An optional bool to toggle command echo.
+        quiet: An optional bool to toggle command output.
+        check: An optional bool to toggle command error checking.
+        cwd: An optional string to define the working directory.
+
+    Returns:
+        A completed process object.
     """
     args = cmd
 
@@ -183,10 +191,10 @@ def render_template(template, **kwargs):  # type: ignore[no-untyped-def]  # noqa
 def write_file(filename: str, content: str, header: str | None = None) -> None:
     """Write a file with the given filename and content and returns None.
 
-    :param filename: A string containing the target filename.
-    :param content: A string containing the data to be written.
-    :param header: A header, if None it will use default header.
-    :return: None
+    Args:
+        filename: A string containing the target filename.
+        content: A string containing the data to be written.
+        header: A header, if None it will use default header.
     """
     if header is None:
         content = MOLECULE_HEADER + "\n\n" + content
@@ -201,12 +209,11 @@ def molecule_prepender(content: str) -> str:
 
 
 def file_prepender(filename: str) -> None:
-    """Prepend an informational header on files managed by Molecule and returns \
-    None.
+    """Prepend an informational header on files managed by Molecule and returns None.
 
-    :param filename: A string containing the target filename.
-    :return: None
-    """  # noqa: D205
+    Args:
+        filename: A string containing the target filename.
+    """
     with open(filename, "r+") as f:  # noqa: PTH123
         content = f.read()
         f.seek(0, 0)
@@ -216,8 +223,12 @@ def file_prepender(filename: str) -> None:
 def safe_dump(data: Any, explicit_start=True) -> str:  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN401, FBT002
     """Dump the provided data to a YAML document and returns a string.
 
-    :param data: A string containing an absolute path to the file to parse.
-    :return: str
+    Args:
+        data: A string containing the data to dump.
+        explicit_start: An optional bool to toggle explicit document start.
+
+    Returns:
+        str
     """
     return yaml.dump(
         data,
@@ -230,8 +241,11 @@ def safe_dump(data: Any, explicit_start=True) -> str:  # type: ignore[no-untyped
 def safe_load(string) -> dict:  # type: ignore[no-untyped-def, type-arg]  # noqa: ANN001
     """Parse the provided string returns a dict.
 
-    :param string: A string to be parsed.
-    :return: dict
+    Args:
+        string: A string to be parsed.
+
+    Returns:
+        dict
     """
     try:
         return yaml.safe_load(string) or {}
@@ -243,8 +257,11 @@ def safe_load(string) -> dict:  # type: ignore[no-untyped-def, type-arg]  # noqa
 def safe_load_file(filename: str):  # type: ignore[no-untyped-def]  # noqa: ANN201
     """Parse the provided YAML file and returns a dict.
 
-    :param filename: A string containing an absolute path to the file to parse.
-    :return: dict
+    Args:
+        filename: A string containing an absolute path to the file to parse.
+
+    Returns:
+        dict
     """
     with open(filename) as stream:  # noqa: PTH123
         return safe_load(stream)
@@ -288,9 +305,12 @@ def merge_dicts(a: MutableMapping, b: MutableMapping) -> MutableMapping:  # type
 
     This function uses the same algorithm as Ansible's `combine(recursive=True)` filter.
 
-    :param a: the target dictionary
-    :param b: the dictionary to import
-    :return: dict
+    Args:
+        a: the target dictionary
+        b: the dictionary to import
+
+    Returns:
+        dict
     """
     result = copy.deepcopy(a)
 

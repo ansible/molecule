@@ -19,7 +19,6 @@
 #  DEALINGS IN THE SOFTWARE.
 """Ansible Provisioner Module."""
 
-# pylint: disable=too-many-lines
 from __future__ import annotations
 
 import collections
@@ -41,9 +40,7 @@ LOG = logging.getLogger(__name__)
 
 
 class Ansible(base.Base):
-    """
-    `Ansible` is the default provisioner.  No other provisioner will be \
-    supported.
+    """`Ansible` is the default provisioner.  No other provisioner will be supported.
 
     Molecule's provisioner manages the instances lifecycle.  However, the user
     must provide the create, destroy, and converge playbooks.  Molecule's
@@ -414,13 +411,13 @@ class Ansible(base.Base):
             - --inventory=mygroups.yml
             - --limit=host1,host2
     ```
-    """  # noqa: D205
+    """
 
     def __init__(self, config) -> None:  # type: ignore[no-untyped-def]  # pylint: disable=useless-parent-delegation  # noqa: ANN001, ANN101
         """Initialize a new ansible class and returns None.
 
-        :param config: An instance of a Molecule config.
-        :return: None
+        Args:
+            config: An instance of a Molecule config.
         """
         super().__init__(config)
 
@@ -690,11 +687,7 @@ class Ansible(base.Base):
         )
 
     def cleanup(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
-        """Execute `ansible-playbook` against the cleanup playbook and returns \
-        None.
-
-        :return: None
-        """  # noqa: D205
+        """Execute `ansible-playbook` against the cleanup playbook and returns None."""
         pb = self._get_ansible_playbook(self.playbooks.cleanup)  # type: ignore[no-untyped-call]
         pb.execute()
 
@@ -707,43 +700,32 @@ class Ansible(base.Base):
         )
 
     def check(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
-        """Execute ``ansible-playbook`` against the converge playbook with the \
-        ``--check`` flag and returns None.
-
-        :return: None
-        """  # noqa: D205
+        """Execute ``ansible-playbook`` against the converge playbook with the ``--check`` flag."""
         pb = self._get_ansible_playbook(self.playbooks.converge)  # type: ignore[no-untyped-call]
         pb.add_cli_arg("check", True)  # noqa: FBT003
         pb.execute()
 
     def converge(self, playbook=None, **kwargs):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN003, ANN101, ANN201
-        """Execute ``ansible-playbook`` against the converge playbook unless \
-        specified otherwise and returns a string.
+        """Execute ``ansible-playbook`` against the converge playbook. unless specified otherwise.
 
-        :param playbook: An optional string containing an absolute path to a
-         playbook.
-        :param kwargs: An optional keyword arguments.
-        :return: str
-        """  # noqa: D205
+        Args:
+            playbook: An optional string containing an absolute path to a playbook.
+            kwargs: An optional keyword arguments.
+
+        Returns:
+            str: The output from the ``ansible-playbook`` command.
+        """
         pb = self._get_ansible_playbook(playbook or self.playbooks.converge, **kwargs)  # type: ignore[no-untyped-call]
 
         return pb.execute()
 
     def destroy(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
-        """Execute ``ansible-playbook`` against the destroy playbook and returns \
-        None.
-
-        :return: None
-        """  # noqa: D205
+        """Execute ``ansible-playbook`` against the destroy playbook and returns None."""
         pb = self._get_ansible_playbook(self.playbooks.destroy)  # type: ignore[no-untyped-call]
         pb.execute()
 
     def side_effect(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201
-        """Execute ``ansible-playbook`` against the side_effect playbook and \
-        returns None.
-
-        :return: None
-        """  # noqa: D205
+        """Execute ``ansible-playbook`` against the side_effect playbook and returns None."""
         if action_args:
             playbooks = [
                 self._get_ansible_playbook(self._config.provisioner.abs_path(playbook))  # type: ignore[no-untyped-call]
@@ -755,39 +737,23 @@ class Ansible(base.Base):
             pb.execute()
 
     def create(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
-        """Execute ``ansible-playbook`` against the create playbook and returns \
-        None.
-
-        :return: None
-        """  # noqa: D205
+        """Execute ``ansible-playbook`` against the create playbook and returns None."""
         pb = self._get_ansible_playbook(self.playbooks.create)  # type: ignore[no-untyped-call]
         pb.execute()
 
     def prepare(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
-        """Execute ``ansible-playbook`` against the prepare playbook and returns \
-        None.
-
-        :return: None
-        """  # noqa: D205
+        """Execute ``ansible-playbook`` against the prepare playbook and returns None."""
         pb = self._get_ansible_playbook(self.playbooks.prepare)  # type: ignore[no-untyped-call]
         pb.execute()
 
     def syntax(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
-        """Execute ``ansible-playbook`` against the converge playbook with the \
-        ``-syntax-check`` flag and returns None.
-
-        :return: None
-        """  # noqa: D205
+        """Execute `ansible-playbook` against the converge playbook with the -syntax-check flag."""
         pb = self._get_ansible_playbook(self.playbooks.converge)  # type: ignore[no-untyped-call]
         pb.add_cli_arg("syntax-check", True)  # noqa: FBT003
         pb.execute()
 
     def verify(self, action_args=None):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN101, ANN201
-        """Execute ``ansible-playbook`` against the verify playbook and returns \
-        None.
-
-        :return: None
-        """  # noqa: D205
+        """Execute ``ansible-playbook`` against the verify playbook and returns None."""
         if action_args:
             playbooks = [self._config.provisioner.abs_path(playbook) for playbook in action_args]
         else:
@@ -801,10 +767,7 @@ class Ansible(base.Base):
             pb.execute()
 
     def write_config(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
-        """Write the provisioner's config file to disk and returns None.
-
-        :return: None
-        """
+        """Write the provisioner's config file to disk and returns None."""
         template = util.render_template(  # type: ignore[no-untyped-call]
             self._get_config_template(),  # type: ignore[no-untyped-call]
             config_options=self.config_options,
@@ -812,10 +775,7 @@ class Ansible(base.Base):
         util.write_file(self.config_file, template)
 
     def manage_inventory(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN201
-        """Manage inventory for Ansible and returns None.
-
-        :returns: None
-        """
+        """Manage inventory for Ansible and returns None."""
         self._write_inventory()  # type: ignore[no-untyped-call]
         self._remove_vars()  # type: ignore[no-untyped-call]
         if not self.links:
@@ -827,10 +787,7 @@ class Ansible(base.Base):
         return util.abs_path(os.path.join(self._config.scenario.directory, path))  # noqa: PTH118
 
     def _add_or_update_vars(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
-        """Create host and/or group vars and returns None.
-
-        :returns: None
-        """
+        """Create host and/or group vars and returns None."""
         # Create the hosts extra inventory source (only if not empty)
         hosts_file = os.path.join(self.inventory_directory, "hosts")  # noqa: PTH118
         if self.hosts:
@@ -861,19 +818,13 @@ class Ansible(base.Base):
                     util.write_file(path, util.safe_dump(target_var_content))
 
     def _write_inventory(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
-        """Write the provisioner's inventory file to disk and returns None.
-
-        :return: None
-        """
+        """Write the provisioner's inventory file to disk and returns None."""
         self._verify_inventory()  # type: ignore[no-untyped-call]
 
         util.write_file(self.inventory_file, util.safe_dump(self.inventory))
 
     def _remove_vars(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
-        """Remove hosts/host_vars/group_vars and returns None.
-
-        :returns: None
-        """
+        """Remove hosts/host_vars/group_vars and returns None."""
         for name in ("hosts", "group_vars", "host_vars"):
             d = os.path.join(self.inventory_directory, name)  # noqa: PTH118
             if os.path.islink(d) or os.path.isfile(d):  # noqa: PTH113, PTH114
@@ -882,10 +833,7 @@ class Ansible(base.Base):
                 shutil.rmtree(d)
 
     def _link_or_update_vars(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
-        """Create or updates the symlink to group_vars and returns None.
-
-        :returns: None
-        """
+        """Create or updates the symlink to group_vars and returns None."""
         for d, source in self.links.items():
             target = os.path.join(self.inventory_directory, d)  # noqa: PTH118
             source = os.path.join(self._config.scenario.directory, source)  # noqa: PTH118, PLW2901
@@ -908,12 +856,11 @@ class Ansible(base.Base):
     def _get_ansible_playbook(self, playbook, verify=False, **kwargs):  # type: ignore[no-untyped-def]  # noqa: ANN001, ANN003, ANN101, ANN202, FBT002
         """Get an instance of AnsiblePlaybook and returns it.
 
-        :param playbook: A string containing an absolute path to a
-         provisioner's playbook.
-        :param verify: An optional bool to toggle the Playbook mode between
-         provision and verify. False: provision; True: verify. Default is False.
-        :param kwargs: An optional keyword arguments.
-        :return: object
+        Args:
+            playbook: A string containing an absolute path to a provisioner's playbook.
+            verify: An optional bool to toggle the Playbook mode between provision and verify.
+                False: provision; True: verify. Default is False.
+            kwargs: An optional keyword arguments.
         """
         return ansible_playbook.AnsiblePlaybook(
             playbook,
@@ -923,10 +870,7 @@ class Ansible(base.Base):
         )
 
     def _verify_inventory(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
-        """Verify the inventory is valid and returns None.
-
-        :return: None
-        """
+        """Verify the inventory is valid and returns None."""
         if not self.inventory:
             msg = "Instances missing from the 'platform' section of molecule.yml."
             util.sysexit_with_message(msg)
@@ -934,7 +878,8 @@ class Ansible(base.Base):
     def _get_config_template(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
         """Return a config template string.
 
-        :return: str
+        Returns:
+            str
         """
         return """
 {% for section, section_dict in config_options.items() -%}
@@ -948,7 +893,8 @@ class Ansible(base.Base):
     def _vivify(self):  # type: ignore[no-untyped-def]  # noqa: ANN101, ANN202
         """Return an autovivification default dict.
 
-        :return: dict
+        Return:
+            dict
         """
         return collections.defaultdict(self._vivify)
 
