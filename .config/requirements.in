@@ -1,7 +1,7 @@
 ansible-compat >= 24.6.1
 ansible-core >= 2.12.10
 click >= 8.0, < 9
-click-help-colors >= 0.9.4
+click-help-colors
 enrich >= 1.2.7
 jsonschema >= 4.9.1
 Jinja2 >= 2.11.3
