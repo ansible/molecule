@@ -892,7 +892,7 @@ class Ansible(base.Base):
 
         :param playbook: A string containing an absolute path to a
          provisioner's playbook.
-        :param verify: An optional bool to toggle the Plabook mode between
+        :param verify: An optional bool to toggle the Playbook mode between
          provision and verify. False: provision; True: verify. Default is False.
         :param kwargs: An optional keyword arguments.
         :return: object
@@ -944,7 +944,7 @@ class Ansible(base.Base):
         return os.path.join(self.directory, "plugins")
 
     def _get_modules_directories(self) -> list[str]:
-        """Return list of ansilbe module includes directories.
+        """Return list of ansible module includes directories.
 
         Adds modules directory from molecule and its plugins.
         """
@@ -984,7 +984,7 @@ class Ansible(base.Base):
         return util.abs_path(os.path.join(self._get_plugin_directory(), "filter"))
 
     def _get_filter_plugins_directories(self) -> list[str]:
-        """Return list of ansilbe filter plugins includes directories."""
+        """Return list of ansible filter plugins includes directories."""
         paths: list[str | None] = []
         if os.environ.get("ANSIBLE_FILTER_PLUGINS"):
             paths = list(

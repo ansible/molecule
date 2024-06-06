@@ -35,7 +35,7 @@ class Delegated(Driver):
     Delegated is the default driver used in Molecule.
 
     Under this driver, it is the developers responsibility to implement the
-    create and destroy playbooks.  ``Managed`` is the default behaviour of all
+    create and destroy playbooks.  ``Managed`` is the default behavior of all
     drivers.
 
     ``` yaml

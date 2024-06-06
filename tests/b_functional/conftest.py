@@ -139,7 +139,7 @@ def metadata_lint_update(role_directory: str) -> None:
     shutil.copy(ansible_lint_src, role_directory)
 
     # Explicitly lint here to catch any unexpected lint errors before
-    # continuining functional testing. Ansible lint is run at the root
+    # continuing functional testing. Ansible lint is run at the root
     # of the role directory and pointed at the role directory to ensure
     # the customize ansible-lint config is used.
     with change_dir_to(role_directory):

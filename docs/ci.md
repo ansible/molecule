@@ -215,7 +215,7 @@ pipeline task, by default, it checks it out into a directory named `s`
 within `$(Agent.BuildDirectory)`. If you checkout one other repository,
 the `s` is substituted with the path provided in that checkout. If you
 checkout multiple roles (e.g. some private roles within your Azure
-organisation) then the `s` structure is used, hence the importance of
+organization) then the `s` structure is used, hence the importance of
 the `cd $(Agent.BuildDirectory)/role-name` which ensures you are in the
 correct directory regardless of format. Check the [Azure Build
 Variables](https://docs.microsoft.com/en-us/azure/devops/pipelines/build/variables?view=azure-devops&tabs=yaml#build-variables-devops-services)
@@ -330,7 +330,7 @@ pipeline {
 !!! note
 
     For Jenkins to work properly using a Multibranch Pipeline
-    or a GitHub Organisation - as used by Blue Ocean, the role
+    or a GitHub Organization - as used by Blue Ocean, the role
     name in the scenario converge.yml should be changed to perform a lookup
     of the role root directory. For example :
 
@@ -368,7 +368,7 @@ skipsdist = true
 [testenv]
 passenv = *
 deps =
-    -rrequirements.txt
+    -r requirements.txt
     ansible20: ansible==2.0.2.0
     ansible21: ansible==2.1.2.0
     ansible22: ansible==2.2.0.0

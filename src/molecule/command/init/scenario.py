@@ -42,7 +42,7 @@ class Scenario(base.Base):
 
     .. option:: molecule init scenario bar --role-name foo
 
-        Initialize a new scenario. In order to customise the role, please refer
+        Initialize a new scenario. In order to customize the role, please refer
         to the `init role` command.
 
     .. program:: cd foo; molecule init scenario bar --role-name foo

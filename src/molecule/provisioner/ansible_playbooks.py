@@ -127,7 +127,7 @@ class AnsiblePlaybooks:
         return path
 
     def _normalize_playbook(self, playbook):  # type: ignore[no-untyped-def]
-        """Return current filename to use for a playook by allowing fallbacks.
+        """Return current filename to use for a playbook by allowing fallbacks.
 
         Currently used to deprecate use of playbook.yml in favour of converge.yml
         """

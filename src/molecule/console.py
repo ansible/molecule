@@ -50,7 +50,7 @@ def should_do_markup() -> bool:
             py_colors = to_bool(value)
             break
 
-    # If deliverately disabled colors
+    # If deliberately disabled colors
     if os.environ.get("NO_COLOR", None):
         return False
 
@@ -68,7 +68,7 @@ def should_do_markup() -> bool:
     # Use tty detection logic as last resort because there are numerous
     # factors that can make isatty return a misleading value, including:
     # - stdin.isatty() is the only one returning true, even on a real terminal
-    # - stderr returting false if user user uses a error stream coloring solution
+    # - stderr returning false if user user uses a error stream coloring solution
     return sys.stdout.isatty()
 
 
