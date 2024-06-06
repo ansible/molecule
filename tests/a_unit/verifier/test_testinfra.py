@@ -185,7 +185,7 @@ def test_testinfra_options_property(inventory_directory, _instance):  # type: ig
 
 
 @pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
-def test_tesinfra_options_property_handles_cli_args(inventory_directory, _instance):  # type: ignore[no-untyped-def]
+def test_testinfra_options_property_handles_cli_args(inventory_directory, _instance):  # type: ignore[no-untyped-def]
     _instance._config.args = {"debug": True}
     x = {
         "connection": "ansible",
