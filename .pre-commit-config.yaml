@@ -64,7 +64,6 @@ repos:
           - enrich
           - pytest
           - pytest-mock
-          - pytest-testinfra
           - rich
           - types-pyyaml
           - types-filelock

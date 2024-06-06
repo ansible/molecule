@@ -85,7 +85,7 @@ module = [
   "click_help_colors", # https://github.com/click-contrib/click-help-colors/issues/20
   "testinfra.*", # https://github.com/pytest-dev/pytest-testinfra/issues/619
 ]
-
+ignore_missing_imports = true
 
 [tool.pylint]
 
