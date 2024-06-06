@@ -97,9 +97,7 @@ class Scenarios:
 
         :return: list
         """
-        return [
-            c.scenario for c in self._configs if c.scenario.name == self._scenario_name
-        ]
+        return [c.scenario for c in self._configs if c.scenario.name == self._scenario_name]
 
     def _get_matrix(self):  # type: ignore[no-untyped-def]
         """Build a matrix of scenarios with sequence to include and returns a \

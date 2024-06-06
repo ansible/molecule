@@ -176,9 +176,7 @@ def login(login_args, scenario_name="default"):  # type: ignore[no-untyped-def]
 
     for instance, regexp in login_args:
         if len(login_args) > 1:
-            child_cmd = (
-                f"molecule login --host {instance} --scenario-name {scenario_name}"
-            )
+            child_cmd = f"molecule login --host {instance} --scenario-name {scenario_name}"
         else:
             child_cmd = f"molecule login --scenario-name {scenario_name}"
         child = pexpect.spawn(child_cmd)

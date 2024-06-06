@@ -252,9 +252,7 @@ class Delegated(Driver):
     def _get_instance_config(self, instance_name):  # type: ignore[no-untyped-def]
         instance_config_dict = util.safe_load_file(self._config.driver.instance_config)
 
-        return next(
-            item for item in instance_config_dict if item["instance"] == instance_name
-        )
+        return next(item for item in instance_config_dict if item["instance"] == instance_name)
 
     def sanity_checks(self):  # type: ignore[no-untyped-def]
         # Note(decentral1se): Cannot implement driver specifics are unknown

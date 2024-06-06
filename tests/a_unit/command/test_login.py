@@ -67,10 +67,7 @@ def test_get_hostname_does_not_match(caplog, _instance):  # type: ignore[no-unty
 
     assert e.value.code == 1
 
-    msg = (
-        "There are no hosts that match 'invalid'.  You "
-        "can only login to valid hosts."
-    )
+    msg = "There are no hosts that match 'invalid'.  You can only login to valid hosts."
     assert msg in caplog.text
 
 

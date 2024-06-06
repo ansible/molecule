@@ -363,9 +363,7 @@ class Config(metaclass=NewInitCaller):
         try:
             return i.interpolate(stream, keep_string)
         except interpolation.InvalidInterpolation as e:
-            msg = (
-                f"parsing config file '{self.molecule_file}'.\n\n{e.place}\n{e.string}"
-            )
+            msg = f"parsing config file '{self.molecule_file}'.\n\n{e.place}\n{e.string}"
             util.sysexit_with_message(msg)
         return ""
 
@@ -373,9 +371,7 @@ class Config(metaclass=NewInitCaller):
         if not self.molecule_file:
             scenario_name = "default"
         else:
-            scenario_name = (
-                os.path.basename(os.path.dirname(self.molecule_file)) or "default"
-            )
+            scenario_name = os.path.basename(os.path.dirname(self.molecule_file)) or "default"
         return {
             "dependency": {
                 "name": "galaxy",

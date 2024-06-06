@@ -643,9 +643,7 @@ class Ansible(base.Base):
                 dd["ungrouped"]["vars"] = {}
                 # Children
                 for child_group in platform.get("children", []):
-                    dd[group]["children"][child_group]["hosts"][
-                        instance_name
-                    ] = connection_options
+                    dd[group]["children"][child_group]["hosts"][instance_name] = connection_options
 
         return self._default_to_regular(dd)  # type: ignore[no-untyped-call]
 
@@ -776,9 +774,7 @@ class Ansible(base.Base):
         :return: None
         """
         if action_args:
-            playbooks = [
-                self._config.provisioner.abs_path(playbook) for playbook in action_args
-            ]
+            playbooks = [self._config.provisioner.abs_path(playbook) for playbook in action_args]
         else:
             playbooks = [self.playbooks.verify]
         if not playbooks:
