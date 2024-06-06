@@ -1,52 +1,22 @@
 {
-  "[markdown]": {
+  "[jsonc]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[python]": {
     "editor.codeActionsOnSave": {
-      "source.fixAll": "explicit"
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
     },
+    "editor.defaultFormatter": "ms-python.black-formatter",
     "editor.formatOnSave": true
   },
-  "editor.formatOnSave": true,
-  "evenBetterToml.formatter.alignComments": false,
-  "evenBetterToml.formatter.allowedBlankLines": 2,
-  "files.exclude": {
-    "*.egg-info": true,
-    ".pytest_cache": true,
-    ".tox": true,
-    "__pycache__": true,
-    "build": true
-  },
-  "git.ignoreLimitWarning": true,
-  "grammarly.domain": "technical",
-  "grammarly.files.include": [
-    "**/*.txt",
-    "**/*.md"
-  ],
-  "grammarly.hideUnavailablePremiumAlerts": true,
-  "grammarly.showExamples": true,
-  "prettier.enable": true,
-  "python.analysis.exclude": [
-    "build"
-  ],
-  "python.formatting.provider": "black",
-  "python.linting.flake8Args": [
-    "--ignore=E501,W503"
-  ],
-  "python.linting.flake8Enabled": false,
-  "python.linting.mypyCategorySeverity.error": "Warning",
-  "python.linting.mypyEnabled": true,
-  "python.linting.pylintEnabled": true,
-  "python.terminal.activateEnvironment": true,
+  "flake8.importStrategy": "fromEnvironment",
+  "markiscodecoverage.searchCriteria": ".coverage/lcov.info",
+  "mypy-type-checker.args": ["--config-file=${workspaceFolder}/pyproject.toml"],
+  "mypy-type-checker.importStrategy": "fromEnvironment",
+  "mypy-type-checker.reportingScope": "workspace",
+  "pylint.importStrategy": "fromEnvironment",
+  "python.testing.pytestArgs": ["test"],
   "python.testing.pytestEnabled": true,
-  "python.testing.unittestEnabled": false,
-  "sortLines.filterBlankLines": true,
-  "yaml.completion": true,
-  "yaml.customTags": [
-    "!encrypted/pkcs1-oaep scalar",
-    "!vault scalar"
-  ],
-  "yaml.format.enable": false,
-  "yaml.validate": true
+  "python.testing.unittestEnabled": false
 }
