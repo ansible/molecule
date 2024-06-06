@@ -20,7 +20,10 @@
 #  DEALINGS IN THE SOFTWARE.
 """Molecule version information."""
 try:
-    from ._version import __version__, version  # type: ignore
+    from ._version import (  # type: ignore[import-not-found, unused-ignore]
+        __version__,
+        version,
+    )
 except ImportError:  # pragma: no cover
     __version__ = "0.1.dev1"
     version = __version__

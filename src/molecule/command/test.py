@@ -37,7 +37,7 @@ MOLECULE_PLATFORM_NAME = os.environ.get("MOLECULE_PLATFORM_NAME", None)
 class Test(base.Base):
     """Test Command Class."""
 
-    def execute(self, action_args=None):
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]
         """Execute the actions necessary to perform a `molecule test` and \
         returns None.
 
@@ -83,7 +83,7 @@ class Test(base.Base):
     help="Enable or disable parallel mode. Default is disabled.",
 )
 @click.argument("ansible_args", nargs=-1, type=click.UNPROCESSED)
-def test(
+def test(  # type: ignore[no-untyped-def]
     ctx,
     scenario_name,
     driver_name,
@@ -95,7 +95,7 @@ def test(
 ):  # pragma: no cover
     """Test (dependency, cleanup, destroy, syntax, create, prepare, converge, idempotence, side_effect, verify, cleanup, destroy)."""
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)
+    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]
     command_args = {
         "parallel": parallel,
         "destroy": destroy,
@@ -108,6 +108,6 @@ def test(
         scenario_name = None
 
     if parallel:
-        util.validate_parallel_cmd_args(command_args)
+        util.validate_parallel_cmd_args(command_args)  # type: ignore[no-untyped-call]
 
-    base.execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args)
+    base.execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args)  # type: ignore[no-untyped-call]

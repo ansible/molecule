@@ -18,7 +18,7 @@ from molecule import interpolation
 
 
 @pytest.fixture()
-def _mock_env():
+def _mock_env():  # type: ignore[no-untyped-def]
     return {
         "FOO": "foo",
         "BAR": "",
@@ -29,15 +29,15 @@ def _mock_env():
 
 
 @pytest.fixture()
-def _instance(_mock_env):
+def _instance(_mock_env):  # type: ignore[no-untyped-def]
     return interpolation.Interpolator(interpolation.TemplateWithDefaults, _mock_env)
 
 
-def test_escaped_interpolation(_instance):
+def test_escaped_interpolation(_instance):  # type: ignore[no-untyped-def]
     assert _instance.interpolate("$${foo}") == "${foo}"
 
 
-def test_invalid_interpolation(_instance):
+def test_invalid_interpolation(_instance):  # type: ignore[no-untyped-def]
     with pytest.raises(interpolation.InvalidInterpolation):
         _instance.interpolate("${")
     with pytest.raises(interpolation.InvalidInterpolation):
@@ -54,17 +54,17 @@ def test_invalid_interpolation(_instance):
         _instance.interpolate("${foo!}")
 
 
-def test_interpolate_missing_no_default(_instance):
+def test_interpolate_missing_no_default(_instance):  # type: ignore[no-untyped-def]
     assert _instance.interpolate("This ${missing} var") == "This  var"
     assert _instance.interpolate("This ${BAR} var") == "This  var"
 
 
-def test_interpolate_with_value(_instance):
+def test_interpolate_with_value(_instance):  # type: ignore[no-untyped-def]
     assert _instance.interpolate("This $FOO var") == "This foo var"
     assert _instance.interpolate("This ${FOO} var") == "This foo var"
 
 
-def test_interpolate_missing_with_default(_instance):
+def test_interpolate_missing_with_default(_instance):  # type: ignore[no-untyped-def]
     assert _instance.interpolate("ok ${missing:-def}") == "ok def"
     assert _instance.interpolate("ok ${missing-def}") == "ok def"
     assert (
@@ -75,16 +75,16 @@ def test_interpolate_missing_with_default(_instance):
     )
 
 
-def test_interpolate_with_empty_and_default_value(_instance):
+def test_interpolate_with_empty_and_default_value(_instance):  # type: ignore[no-untyped-def]
     assert _instance.interpolate("ok ${BAR:-def}") == "ok def"
     assert _instance.interpolate("ok ${BAR-def}") == "ok "
 
 
-def test_interpolate_interpolates_MOLECULE_strings(_instance):
+def test_interpolate_interpolates_MOLECULE_strings(_instance):  # type: ignore[no-untyped-def]
     assert _instance.interpolate("$MOLECULE_SCENARIO_NAME") == "default"
 
 
-def test_interpolate_does_not_interpolate_MOLECULE_strings(_instance):
+def test_interpolate_does_not_interpolate_MOLECULE_strings(_instance):  # type: ignore[no-untyped-def]
     assert (
         _instance.interpolate(
             "foo $MOLECULE_SCENARIO_NAME",
@@ -94,7 +94,7 @@ def test_interpolate_does_not_interpolate_MOLECULE_strings(_instance):
     )
 
 
-def test_interpolate_with_molecule_yaml(_instance):
+def test_interpolate_with_molecule_yaml(_instance):  # type: ignore[no-untyped-def]
     data = """
 ---
 dependency:

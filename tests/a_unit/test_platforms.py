@@ -24,11 +24,11 @@ from molecule import config, platforms
 
 
 @pytest.fixture()
-def _instance(config_instance: config.Config):
+def _instance(config_instance: config.Config):  # type: ignore[no-untyped-def]
     return platforms.Platforms(config_instance)
 
 
-def test_instances_property(_instance):
+def test_instances_property(_instance):  # type: ignore[no-untyped-def]
     x = [
         {"groups": ["foo", "bar"], "name": "instance-1", "children": ["child1"]},
         {"groups": ["baz", "foo"], "name": "instance-2", "children": ["child2"]},
@@ -38,12 +38,12 @@ def test_instances_property(_instance):
 
 
 @pytest.fixture()
-def platform_name(request, config_instance: config.Config):
+def platform_name(request, config_instance: config.Config):  # type: ignore[no-untyped-def]
     return platforms.Platforms(config_instance, platform_name=request.param)
 
 
 @pytest.mark.parametrize("platform_name", ["instance-1"], indirect=True)
-def test_instances_property_with_platform_name_instance_1(platform_name):
+def test_instances_property_with_platform_name_instance_1(platform_name):  # type: ignore[no-untyped-def]
     x = [
         {"groups": ["foo", "bar"], "name": "instance-1", "children": ["child1"]},
     ]
@@ -52,7 +52,7 @@ def test_instances_property_with_platform_name_instance_1(platform_name):
 
 
 @pytest.mark.parametrize("platform_name", ["instance-2"], indirect=True)
-def test_instances_property_with_platform_name_instance_2(platform_name):
+def test_instances_property_with_platform_name_instance_2(platform_name):  # type: ignore[no-untyped-def]
     x = [
         {"groups": ["baz", "foo"], "name": "instance-2", "children": ["child2"]},
     ]

@@ -33,7 +33,7 @@ class Base:
 
     __metaclass__ = abc.ABCMeta
 
-    def _validate_template_dir(self, template_dir):
+    def _validate_template_dir(self, template_dir):  # type: ignore[no-untyped-def]
         if not os.path.isdir(template_dir):
             util.sysexit_with_message(
                 "The specified template directory ("

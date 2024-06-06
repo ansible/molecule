@@ -27,24 +27,24 @@ from molecule.provisioner import ansible_playbook
 
 
 @pytest.fixture()
-def _instance(config_instance: config.Config):
+def _instance(config_instance: config.Config):  # type: ignore[no-untyped-def]
     _instance = ansible_playbook.AnsiblePlaybook("playbook", config_instance)
 
     return _instance
 
 
 @pytest.fixture()
-def _provisioner_section_data():
+def _provisioner_section_data():  # type: ignore[no-untyped-def]
     return {"provisioner": {"name": "ansible", "env": {"FOO": "bar"}}}
 
 
 @pytest.fixture()
-def _verifier_section_data():
+def _verifier_section_data():  # type: ignore[no-untyped-def]
     return {"verifier": {"name": "ansible", "env": {"FOO": "bar"}}}
 
 
 @pytest.fixture()
-def _provisioner_verifier_section_data():
+def _provisioner_verifier_section_data():  # type: ignore[no-untyped-def]
     return {
         "provisioner": {"name": "ansible", "env": {"FOO": "bar"}},
         "verifier": {"name": "ansible", "env": {"FOO": "baz"}},
@@ -52,7 +52,7 @@ def _provisioner_verifier_section_data():
 
 
 @pytest.fixture()
-def _instance_for_verifier_env(config_instance: config.Config):
+def _instance_for_verifier_env(config_instance: config.Config):  # type: ignore[no-untyped-def]
     _instance = ansible_playbook.AnsiblePlaybook("playbook", config_instance, True)
     return _instance
 
@@ -62,12 +62,12 @@ def _instance_for_verifier_env(config_instance: config.Config):
     ["_provisioner_section_data"],
     indirect=True,
 )
-def test_env_in_provision(_instance_for_verifier_env):
+def test_env_in_provision(_instance_for_verifier_env):  # type: ignore[no-untyped-def]
     assert _instance_for_verifier_env._env["FOO"] == "bar"
 
 
 @pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
-def test_env_in_verifier(_instance_for_verifier_env):
+def test_env_in_verifier(_instance_for_verifier_env):  # type: ignore[no-untyped-def]
     assert _instance_for_verifier_env._env["FOO"] == "bar"
 
 
@@ -76,28 +76,28 @@ def test_env_in_verifier(_instance_for_verifier_env):
     ["_provisioner_verifier_section_data"],
     indirect=True,
 )
-def test_env_in_verify_override_provision(_instance_for_verifier_env):
+def test_env_in_verify_override_provision(_instance_for_verifier_env):  # type: ignore[no-untyped-def]
     assert _instance_for_verifier_env._env["FOO"] == "baz"
 
 
 @pytest.fixture()
-def _inventory_directory(_instance):
+def _inventory_directory(_instance):  # type: ignore[no-untyped-def]
     return _instance._config.provisioner.inventory_directory
 
 
-def test_ansible_command_private_member(_instance):
+def test_ansible_command_private_member(_instance):  # type: ignore[no-untyped-def]
     assert _instance._ansible_command is None
 
 
-def test_ansible_playbook_private_member(_instance):
+def test_ansible_playbook_private_member(_instance):  # type: ignore[no-untyped-def]
     assert _instance._playbook == "playbook"
 
 
-def test_config_private_member(_instance):
+def test_config_private_member(_instance):  # type: ignore[no-untyped-def]
     assert isinstance(_instance._config, config.Config)
 
 
-def test_bake(_inventory_directory, _instance):
+def test_bake(_inventory_directory, _instance):  # type: ignore[no-untyped-def]
     pb = _instance._config.provisioner.playbooks.converge
     _instance._playbook = pb
     _instance.bake()
@@ -115,7 +115,7 @@ def test_bake(_inventory_directory, _instance):
     assert _instance._ansible_command == args
 
 
-def test_bake_removes_non_interactive_options_from_non_converge_playbooks(
+def test_bake_removes_non_interactive_options_from_non_converge_playbooks(  # type: ignore[no-untyped-def]
     _inventory_directory,
     _instance,
 ):
@@ -133,7 +133,7 @@ def test_bake_removes_non_interactive_options_from_non_converge_playbooks(
     assert _instance._ansible_command == args
 
 
-def test_bake_has_ansible_args(_inventory_directory, _instance):
+def test_bake_has_ansible_args(_inventory_directory, _instance):  # type: ignore[no-untyped-def]
     _instance._config.ansible_args = ("foo", "bar")
     _instance._config.config["provisioner"]["ansible_args"] = ("frob", "nitz")
     _instance.bake()
@@ -154,7 +154,7 @@ def test_bake_has_ansible_args(_inventory_directory, _instance):
     assert _instance._ansible_command == args
 
 
-def test_bake_does_not_have_ansible_args(_inventory_directory, _instance):
+def test_bake_does_not_have_ansible_args(_inventory_directory, _instance):  # type: ignore[no-untyped-def]
     for action in ["create", "destroy"]:
         _instance._config.ansible_args = ("foo", "bar")
         _instance._config.action = action
@@ -172,7 +172,7 @@ def test_bake_does_not_have_ansible_args(_inventory_directory, _instance):
         assert _instance._ansible_command == args
 
 
-def test_bake_idem_does_have_skip_tag(_inventory_directory, _instance):
+def test_bake_idem_does_have_skip_tag(_inventory_directory, _instance):  # type: ignore[no-untyped-def]
     _instance._config.action = "idempotence"
     _instance.bake()
 
@@ -188,13 +188,13 @@ def test_bake_idem_does_have_skip_tag(_inventory_directory, _instance):
     assert _instance._ansible_command == args
 
 
-def test_execute_playbook(patched_run_command, _instance):
+def test_execute_playbook(patched_run_command, _instance):  # type: ignore[no-untyped-def]
     _instance._ansible_command = "patched-command"
     result = _instance.execute()
     assert result == "patched-run-command-stdout"
 
 
-def test_ansible_execute_bakes(_inventory_directory, patched_run_command, _instance):
+def test_ansible_execute_bakes(_inventory_directory, patched_run_command, _instance):  # type: ignore[no-untyped-def]
     _instance.execute()
 
     assert _instance._ansible_command is not None
@@ -211,7 +211,7 @@ def test_ansible_execute_bakes(_inventory_directory, patched_run_command, _insta
     assert _instance._ansible_command == args
 
 
-def test_execute_bakes_with_ansible_args(
+def test_execute_bakes_with_ansible_args(  # type: ignore[no-untyped-def]
     _inventory_directory,
     patched_run_command,
     _instance,
@@ -235,7 +235,7 @@ def test_execute_bakes_with_ansible_args(
     assert _instance._ansible_command == args
 
 
-def test_executes_catches_and_exits_return_code(
+def test_executes_catches_and_exits_return_code(  # type: ignore[no-untyped-def]
     patched_run_command,
     _instance,
 ):
@@ -253,14 +253,14 @@ def test_executes_catches_and_exits_return_code(
     assert e.value.code == 1
 
 
-def test_add_cli_arg(_instance):
+def test_add_cli_arg(_instance):  # type: ignore[no-untyped-def]
     assert {} == _instance._cli
 
     _instance.add_cli_arg("foo", "bar")
     assert {"foo": "bar"} == _instance._cli
 
 
-def test_add_env_arg(_instance):
+def test_add_env_arg(_instance):  # type: ignore[no-untyped-def]
     assert "foo" not in _instance._env
 
     _instance.add_env_arg("foo", "bar")

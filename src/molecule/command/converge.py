@@ -51,10 +51,10 @@ class Converge(base.Base):
     help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
 @click.argument("ansible_args", nargs=-1, type=click.UNPROCESSED)
-def converge(ctx, scenario_name, ansible_args):  # pragma: no cover
+def converge(ctx, scenario_name, ansible_args):  # type: ignore[no-untyped-def] # pragma: no cover
     """Use the provisioner to configure instances (dependency, create, prepare converge)."""
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)
+    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]
     command_args = {"subcommand": subcommand}
 
-    base.execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args)
+    base.execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args)  # type: ignore[no-untyped-call]

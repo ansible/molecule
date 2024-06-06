@@ -66,7 +66,7 @@ class Shell(base.Base):
     ```
     """
 
-    def __init__(self, config) -> None:
+    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]
         """Construct Shell."""
         super().__init__(config)
         self._sh_command = None
@@ -74,27 +74,27 @@ class Shell(base.Base):
         # self.command = config..config['dependency']['command']
 
     @property
-    def command(self):
+    def command(self):  # type: ignore[no-untyped-def]
         return self._config.config["dependency"]["command"]
 
     @property
-    def default_options(self):
+    def default_options(self):  # type: ignore[no-untyped-def]
         return {}
 
     def bake(self) -> None:
         """Bake a ``shell`` command so it's ready to execute."""
         self._sh_command = self.command
 
-    def execute(self, action_args=None):
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]
         if not self.enabled:
             msg = "Skipping, dependency is disabled."
             LOG.warning(msg)
             return
-        super().execute()
+        super().execute()  # type: ignore[no-untyped-call]
 
         if self._sh_command is None:
             self.bake()
-        self.execute_with_retries()
+        self.execute_with_retries()  # type: ignore[no-untyped-call]
 
-    def _has_command_configured(self):
+    def _has_command_configured(self):  # type: ignore[no-untyped-def]
         return "command" in self._config.config["dependency"]

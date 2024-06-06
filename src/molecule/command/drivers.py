@@ -40,7 +40,7 @@ LOG = logging.getLogger(__name__)
     default="simple",
     help="Change output format. (simple)",
 )
-def drivers(ctx, format):  # pragma: no cover
+def drivers(ctx, format):  # type: ignore[no-untyped-def] # pragma: no cover
     """List drivers."""
     drivers = []
     for driver in api.drivers():

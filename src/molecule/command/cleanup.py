@@ -31,7 +31,7 @@ LOG = logging.getLogger(__name__)
 class Cleanup(base.Base):
     """Cleanup Command Class."""
 
-    def execute(self, action_args=None):
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]
         """Execute the actions necessary to cleanup the instances and returns \
         None.
 
@@ -53,12 +53,12 @@ class Cleanup(base.Base):
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
     help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
-def cleanup(ctx, scenario_name="default"):  # pragma: no cover
+def cleanup(ctx, scenario_name="default"):  # type: ignore[no-untyped-def] # pragma: no cover
     """Use the provisioner to cleanup any changes made to external systems during \
     the stages of testing.
     """
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)
+    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]
     command_args = {"subcommand": subcommand}
 
-    base.execute_cmdline_scenarios(scenario_name, args, command_args)
+    base.execute_cmdline_scenarios(scenario_name, args, command_args)  # type: ignore[no-untyped-call]

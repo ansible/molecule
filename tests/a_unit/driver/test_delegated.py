@@ -29,7 +29,7 @@ from tests.conftest import is_subset  # pylint:disable=C0411
 
 
 @pytest.fixture()
-def _driver_managed_section_data():
+def _driver_managed_section_data():  # type: ignore[no-untyped-def]
     return {
         "driver": {
             "name": "default",
@@ -41,7 +41,7 @@ def _driver_managed_section_data():
 
 
 @pytest.fixture()
-def _driver_unmanaged_section_data():
+def _driver_unmanaged_section_data():  # type: ignore[no-untyped-def]
     return {
         "driver": {
             "name": "default",
@@ -53,22 +53,22 @@ def _driver_unmanaged_section_data():
 
 
 @pytest.fixture()
-def _instance(config_instance: config.Config):
+def _instance(config_instance: config.Config):  # type: ignore[no-untyped-def]
     return delegated.Delegated(config_instance)
 
 
-def test_delegated_config_private_member(_instance):
+def test_delegated_config_private_member(_instance):  # type: ignore[no-untyped-def]
     assert isinstance(_instance._config, config.Config)
 
 
-def test_delegated_options_property2(_instance):
+def test_delegated_options_property2(_instance):  # type: ignore[no-untyped-def]
     assert {
         "connection": "ansible",
         "ansible-inventory": _instance._config.provisioner.inventory_directory,
     } == _instance.testinfra_options
 
 
-def test_delegated_name_property(_instance):
+def test_delegated_name_property(_instance):  # type: ignore[no-untyped-def]
     assert _instance.name == "default"
 
 
@@ -77,7 +77,7 @@ def test_delegated_name_property(_instance):
     ["_driver_unmanaged_section_data"],
     indirect=True,
 )
-def test_delegated_options_property(_instance):
+def test_delegated_options_property(_instance):  # type: ignore[no-untyped-def]
     x = {
         "managed": False,
     }
@@ -90,7 +90,7 @@ def test_delegated_options_property(_instance):
     ["_driver_managed_section_data"],
     indirect=True,
 )
-def test_delegated_options_property_when_managed(_instance):
+def test_delegated_options_property_when_managed(_instance):  # type: ignore[no-untyped-def]
     x = {"managed": True}
 
     assert x == _instance.options
@@ -101,7 +101,7 @@ def test_delegated_options_property_when_managed(_instance):
     ["_driver_managed_section_data"],
     indirect=True,
 )
-def test_login_cmd_template_property_when_managed(_instance):
+def test_login_cmd_template_property_when_managed(_instance):  # type: ignore[no-untyped-def]
     x = (
         "ssh {address} -l {user} -p {port} -i {identity_file} "
         "-o UserKnownHostsFile=/dev/null "
@@ -116,19 +116,19 @@ def test_login_cmd_template_property_when_managed(_instance):
     assert x == _instance.login_cmd_template
 
 
-def test_safe_files_property(_instance):
+def test_safe_files_property(_instance):  # type: ignore[no-untyped-def]
     assert [] == _instance.safe_files
 
 
-def test_default_safe_files_property(_instance):
+def test_default_safe_files_property(_instance):  # type: ignore[no-untyped-def]
     assert [] == _instance.default_safe_files
 
 
-def test_delegated_property(_instance):
+def test_delegated_property(_instance):  # type: ignore[no-untyped-def]
     assert _instance.delegated
 
 
-def test_managed_property(_instance):
+def test_managed_property(_instance):  # type: ignore[no-untyped-def]
     assert _instance.managed
 
 
@@ -137,7 +137,7 @@ def test_managed_property(_instance):
     ["_driver_unmanaged_section_data"],
     indirect=True,
 )
-def test_default_ssh_connection_options_property(_instance):
+def test_default_ssh_connection_options_property(_instance):  # type: ignore[no-untyped-def]
     assert [] == _instance.default_ssh_connection_options
 
 
@@ -146,7 +146,7 @@ def test_default_ssh_connection_options_property(_instance):
     ["_driver_managed_section_data"],
     indirect=True,
 )
-def test_default_ssh_connection_options_property_when_managed(_instance):
+def test_default_ssh_connection_options_property_when_managed(_instance):  # type: ignore[no-untyped-def]
     x = [
         "-o UserKnownHostsFile=/dev/null",
         "-o ControlMaster=auto",
@@ -165,7 +165,7 @@ def test_default_ssh_connection_options_property_when_managed(_instance):
     ["_driver_unmanaged_section_data"],
     indirect=True,
 )
-def test_login_options(_instance):
+def test_login_options(_instance):  # type: ignore[no-untyped-def]
     assert {"instance": "foo"} == _instance.login_options("foo")
 
 
@@ -174,7 +174,7 @@ def test_login_options(_instance):
     ["_driver_managed_section_data"],
     indirect=True,
 )
-def test_login_options_when_managed(mocker: MockerFixture, _instance):
+def test_login_options_when_managed(mocker: MockerFixture, _instance):  # type: ignore[no-untyped-def]
     m = mocker.patch("molecule.driver.delegated.Delegated._get_instance_config")
     m.return_value = {
         "instance": "foo",
@@ -203,10 +203,10 @@ def test_login_options_when_managed(mocker: MockerFixture, _instance):
     ["_driver_unmanaged_section_data"],
     indirect=True,
 )
-def test_ansible_connection_options(_instance):
-    x = {}
+def test_ansible_connection_options(_instance):  # type: ignore[no-untyped-def]
+    x = {}  # type: ignore[var-annotated]
 
-    assert is_subset(x, _instance.ansible_connection_options("foo"))
+    assert is_subset(x, _instance.ansible_connection_options("foo"))  # type: ignore[no-untyped-call]
 
 
 @pytest.mark.xfail(reason="Needs rewrite since switch to delegated")
@@ -215,7 +215,7 @@ def test_ansible_connection_options(_instance):
     ["_driver_managed_section_data"],
     indirect=True,
 )
-def test_ansible_connection_options_when_managed(mocker: MockerFixture, _instance):
+def test_ansible_connection_options_when_managed(mocker: MockerFixture, _instance):  # type: ignore[no-untyped-def]
     assert _instance.managed is True
 
     ssh_case_data = mocker.patch(
@@ -273,7 +273,7 @@ def test_ansible_connection_options_when_managed(mocker: MockerFixture, _instanc
     assert winrm_expected_data == _instance.ansible_connection_options("foo")
 
 
-def test_ansible_connection_options_handles_missing_instance_config_managed(
+def test_ansible_connection_options_handles_missing_instance_config_managed(  # type: ignore[no-untyped-def]
     mocker: MockerFixture,
     _instance,
 ):
@@ -283,7 +283,7 @@ def test_ansible_connection_options_handles_missing_instance_config_managed(
     assert {} == _instance.ansible_connection_options("foo")
 
 
-def test_ansible_connection_options_handles_missing_results_key_when_managed(
+def test_ansible_connection_options_handles_missing_results_key_when_managed(  # type: ignore[no-untyped-def]
     mocker: MockerFixture,
     _instance,
 ):
@@ -293,7 +293,7 @@ def test_ansible_connection_options_handles_missing_results_key_when_managed(
     assert {} == _instance.ansible_connection_options("foo")
 
 
-def test_instance_config_property(_instance):
+def test_instance_config_property(_instance):  # type: ignore[no-untyped-def]
     x = os.path.join(
         _instance._config.scenario.ephemeral_directory,
         "instance_config.yml",
@@ -307,11 +307,11 @@ def test_instance_config_property(_instance):
     ["_driver_unmanaged_section_data"],
     indirect=True,
 )
-def test_ssh_connection_options_property(_instance):
+def test_ssh_connection_options_property(_instance):  # type: ignore[no-untyped-def]
     assert [] == _instance.ssh_connection_options
 
 
-def test_status(mocker: MockerFixture, _instance):
+def test_status(mocker: MockerFixture, _instance):  # type: ignore[no-untyped-def]
     result = _instance.status()
 
     assert len(result) == 2
@@ -331,12 +331,12 @@ def test_status(mocker: MockerFixture, _instance):
     assert result[1].converged == "false"
 
 
-def test_delegated_created(_instance):
+def test_delegated_created(_instance):  # type: ignore[no-untyped-def]
     assert _instance._created() == "false"
 
 
 @pytest.fixture()
-def _driver_options_managed_section_data():
+def _driver_options_managed_section_data():  # type: ignore[no-untyped-def]
     return {"driver": {"options": {"managed": False}}}
 
 
@@ -345,18 +345,18 @@ def _driver_options_managed_section_data():
     ["_driver_options_managed_section_data"],
     indirect=True,
 )
-def test_created_unknown_when_managed_false(
+def test_created_unknown_when_managed_false(  # type: ignore[no-untyped-def]
     _driver_options_managed_section_data,
     _instance,
 ):
     assert _instance._created() == "unknown"
 
 
-def test_property(_instance):
+def test_property(_instance):  # type: ignore[no-untyped-def]
     assert _instance._converged() == "false"
 
 
-def test_get_instance_config(mocker: MockerFixture, _instance):
+def test_get_instance_config(mocker: MockerFixture, _instance):  # type: ignore[no-untyped-def]
     m = mocker.patch("molecule.util.safe_load_file")
     m.return_value = [{"instance": "foo"}, {"instance": "bar"}]
 

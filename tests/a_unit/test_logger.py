@@ -33,24 +33,24 @@ from molecule.logger import get_section_loggers
 class Dummy(Base):
     """ExtendedBase Class."""
 
-    def execute(self, action_args=None):
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]
         return True
 
 
 @pytest.fixture()
-def _dummy_class(patched_config_validate, config_instance: config.Config):
+def _dummy_class(patched_config_validate, config_instance: config.Config):  # type: ignore[no-untyped-def]
     return Dummy
 
 
 @pytest.fixture()
-def _instance(_dummy_class, config_instance, _patched_logger_env):
+def _instance(_dummy_class, config_instance, _patched_logger_env):  # type: ignore[no-untyped-def]
     # _patched_logger_env included here to ensure pytest runs it first
     get_section_loggers.cache_clear()
     return _dummy_class(config_instance)
 
 
 @pytest.fixture()
-def _patched_logger_env(request, monkeypatch):
+def _patched_logger_env(request, monkeypatch):  # type: ignore[no-untyped-def]
     """Parametrize tests with and without CI env vars."""
     envvars = {"CI": None, "GITHUB_ACTIONS": None, "GITLAB_CI": None, "TRAVIS": None}
     envvars.update(request.param[1])
@@ -77,11 +77,11 @@ get_section_logger_tests = [
     get_section_logger_tests,
     indirect=True,
 )
-def test_get_section_loggers(_patched_logger_env):
+def test_get_section_loggers(_patched_logger_env):  # type: ignore[no-untyped-def]
     expected_section_loggers = _patched_logger_env
     get_section_loggers.cache_clear()
     section_loggers = get_section_loggers()
-    assert len(section_loggers) == expected_section_loggers
+    assert len(section_loggers) == expected_section_loggers  # type: ignore[arg-type]
 
 
 @pytest.mark.parametrize(
@@ -89,22 +89,22 @@ def test_get_section_loggers(_patched_logger_env):
     get_section_logger_tests,
     indirect=True,
 )
-def test_section_loggers_do_not_change_behavior(_patched_logger_env, _instance):
+def test_section_loggers_do_not_change_behavior(_patched_logger_env, _instance):  # type: ignore[no-untyped-def]
     dummy_return = _instance.execute()
     assert dummy_return is True
 
 
-def test_markup_detection_pycolors0(monkeypatch):
+def test_markup_detection_pycolors0(monkeypatch):  # type: ignore[no-untyped-def]
     monkeypatch.setenv("PY_COLORS", "0")
     assert not should_do_markup()
 
 
-def test_markup_detection_pycolors1(monkeypatch):
+def test_markup_detection_pycolors1(monkeypatch):  # type: ignore[no-untyped-def]
     monkeypatch.setenv("PY_COLORS", "1")
     assert should_do_markup()
 
 
-def test_markup_detection_tty_yes(mocker):
+def test_markup_detection_tty_yes(mocker):  # type: ignore[no-untyped-def]
     mocker.patch("sys.stdout.isatty", return_value=True)
     mocker.patch("os.environ", {"TERM": "xterm"})
     assert should_do_markup()
@@ -112,7 +112,7 @@ def test_markup_detection_tty_yes(mocker):
     mocker.stopall()
 
 
-def test_markup_detection_tty_no(mocker):
+def test_markup_detection_tty_no(mocker):  # type: ignore[no-untyped-def]
     mocker.patch("os.environ", {})
     mocker.patch("sys.stdout.isatty", return_value=False)
     assert not should_do_markup()
@@ -120,8 +120,8 @@ def test_markup_detection_tty_no(mocker):
     mocker.stopall()
 
 
-def test_logger_class():
-    class FooLogger(logging.getLoggerClass()):
+def test_logger_class():  # type: ignore[no-untyped-def]
+    class FooLogger(logging.getLoggerClass()):  # type: ignore[misc]
         """stub logger that subclasses logging.getLoggerClass()."""
 
     logging.setLoggerClass(FooLogger)

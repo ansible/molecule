@@ -27,7 +27,7 @@ from molecule.verifier import testinfra
 
 
 @pytest.fixture()
-def _patched_testinfra_get_tests(mocker):
+def _patched_testinfra_get_tests(mocker):  # type: ignore[no-untyped-def]
     m = mocker.patch("molecule.verifier.testinfra.Testinfra._get_tests")
     m.return_value = ["foo.py", "bar.py"]
 
@@ -35,7 +35,7 @@ def _patched_testinfra_get_tests(mocker):
 
 
 @pytest.fixture()
-def _verifier_section_data():
+def _verifier_section_data():  # type: ignore[no-untyped-def]
     return {
         "verifier": {
             "name": "testinfra",
@@ -50,25 +50,25 @@ def _verifier_section_data():
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.fixture()
-def _instance(patched_config_validate, config_instance: config.Config):
+def _instance(patched_config_validate, config_instance: config.Config):  # type: ignore[no-untyped-def]
     return testinfra.Testinfra(config_instance)
 
 
 @pytest.fixture()
-def inventory_file(_instance):
+def inventory_file(_instance):  # type: ignore[no-untyped-def]
     return _instance._config.provisioner.inventory_file
 
 
 @pytest.fixture()
-def inventory_directory(_instance):
+def inventory_directory(_instance):  # type: ignore[no-untyped-def]
     return _instance._config.provisioner.inventory_directory
 
 
-def test_testinfra_config_private_member(_instance):
+def test_testinfra_config_private_member(_instance):  # type: ignore[no-untyped-def]
     assert isinstance(_instance._config, config.Config)
 
 
-def test_testinfra_default_options_property(inventory_directory, _instance):
+def test_testinfra_default_options_property(inventory_directory, _instance):  # type: ignore[no-untyped-def]
     x = {
         "connection": "ansible",
         "ansible-inventory": inventory_directory,
@@ -78,7 +78,7 @@ def test_testinfra_default_options_property(inventory_directory, _instance):
     assert x == _instance.default_options
 
 
-def test_default_options_property_updates_debug(inventory_directory, _instance):
+def test_default_options_property_updates_debug(inventory_directory, _instance):  # type: ignore[no-untyped-def]
     _instance._config.args = {"debug": True}
     x = {
         "connection": "ansible",
@@ -91,7 +91,7 @@ def test_default_options_property_updates_debug(inventory_directory, _instance):
     assert x == _instance.default_options
 
 
-def test_default_options_property_updates_sudo(
+def test_default_options_property_updates_sudo(  # type: ignore[no-untyped-def]
     inventory_directory,
     _instance,
     _patched_testinfra_get_tests,
@@ -107,7 +107,7 @@ def test_default_options_property_updates_sudo(
     assert x == _instance.default_options
 
 
-def test_testinfra_default_env_property(_instance):
+def test_testinfra_default_env_property(_instance):  # type: ignore[no-untyped-def]
     assert "MOLECULE_FILE" in _instance.default_env
     assert "MOLECULE_INVENTORY_FILE" in _instance.default_env
     assert "MOLECULE_SCENARIO_DIRECTORY" in _instance.default_env
@@ -115,7 +115,7 @@ def test_testinfra_default_env_property(_instance):
 
 
 @pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
-def test_additional_files_or_dirs_property(_instance):
+def test_additional_files_or_dirs_property(_instance):  # type: ignore[no-untyped-def]
     tests_directory = _instance._config.verifier.directory
     file1_file = os.path.join(tests_directory, "file1.py")
     file2_file = os.path.join(tests_directory, "file2.py")
@@ -134,7 +134,7 @@ def test_additional_files_or_dirs_property(_instance):
 
 
 @pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
-def test_testinfra_env_property(_instance):
+def test_testinfra_env_property(_instance):  # type: ignore[no-untyped-def]
     assert _instance.env["FOO"] == "bar"
     assert "ANSIBLE_CONFIG" in _instance.env
     assert "ANSIBLE_ROLES_PATH" in _instance.env
@@ -142,22 +142,22 @@ def test_testinfra_env_property(_instance):
     assert "ANSIBLE_FILTER_PLUGINS" in _instance.env
 
 
-def test_testinfra_name_property(_instance):
+def test_testinfra_name_property(_instance):  # type: ignore[no-untyped-def]
     assert _instance.name == "testinfra"
 
 
-def test_testinfra_enabled_property(_instance):
+def test_testinfra_enabled_property(_instance):  # type: ignore[no-untyped-def]
     assert _instance.enabled
 
 
-def test_testinfra_directory_property(_instance):
+def test_testinfra_directory_property(_instance):  # type: ignore[no-untyped-def]
     parts = _instance.directory.split(os.path.sep)
 
     assert ["molecule", "default", "tests"] == parts[-3:]
 
 
 @pytest.fixture()
-def _verifier_testinfra_directory_section_data():
+def _verifier_testinfra_directory_section_data():  # type: ignore[no-untyped-def]
     return {"verifier": {"name": "testinfra", "directory": "/tmp/foo/bar"}}
 
 
@@ -166,12 +166,12 @@ def _verifier_testinfra_directory_section_data():
     ["_verifier_testinfra_directory_section_data"],
     indirect=True,
 )
-def test_directory_property_overridden(_instance):
+def test_directory_property_overridden(_instance):  # type: ignore[no-untyped-def]
     assert _instance.directory == "/tmp/foo/bar"
 
 
 @pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
-def test_testinfra_options_property(inventory_directory, _instance):
+def test_testinfra_options_property(inventory_directory, _instance):  # type: ignore[no-untyped-def]
     x = {
         "connection": "ansible",
         "ansible-inventory": inventory_directory,
@@ -185,7 +185,7 @@ def test_testinfra_options_property(inventory_directory, _instance):
 
 
 @pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
-def test_tesinfra_options_property_handles_cli_args(inventory_directory, _instance):
+def test_tesinfra_options_property_handles_cli_args(inventory_directory, _instance):  # type: ignore[no-untyped-def]
     _instance._config.args = {"debug": True}
     x = {
         "connection": "ansible",
@@ -201,7 +201,7 @@ def test_tesinfra_options_property_handles_cli_args(inventory_directory, _instan
 
 
 @pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
-def test_testinfra_bake(_patched_testinfra_get_tests, inventory_directory, _instance):
+def test_testinfra_bake(_patched_testinfra_get_tests, inventory_directory, _instance):  # type: ignore[no-untyped-def]
     _instance._tests = ["foo.py", "bar.py"]
     _instance.bake()
     args = [
@@ -222,7 +222,7 @@ def test_testinfra_bake(_patched_testinfra_get_tests, inventory_directory, _inst
     assert _instance._testinfra_command == args
 
 
-def test_testinfra_execute(
+def test_testinfra_execute(  # type: ignore[no-untyped-def]
     caplog,
     patched_run_command,
     _patched_testinfra_get_tests,
@@ -239,7 +239,7 @@ def test_testinfra_execute(
     assert "pytest" == patched_run_command.call_args[0][0][0]
 
 
-def test_testinfra_execute_does_not_execute(
+def test_testinfra_execute_does_not_execute(  # type: ignore[no-untyped-def]
     patched_run_command,
     caplog,
     _instance,
@@ -253,7 +253,7 @@ def test_testinfra_execute_does_not_execute(
     assert msg in caplog.text
 
 
-def test_does_not_execute_without_tests(
+def test_does_not_execute_without_tests(  # type: ignore[no-untyped-def]
     patched_run_command,
     caplog,
     _instance,
@@ -266,7 +266,7 @@ def test_does_not_execute_without_tests(
     assert msg in caplog.text
 
 
-def test_testinfra_execute_bakes(
+def test_testinfra_execute_bakes(  # type: ignore[no-untyped-def]
     patched_run_command,
     _patched_testinfra_get_tests,
     _instance,
@@ -279,7 +279,7 @@ def test_testinfra_execute_bakes(
 
 
 @pytest.mark.parametrize("config_instance", ["_verifier_section_data"], indirect=True)
-def test_execute_bakes_env(
+def test_execute_bakes_env(  # type: ignore[no-untyped-def]
     patched_run_command,
     _patched_testinfra_get_tests,
     inventory_directory,
@@ -290,7 +290,7 @@ def test_execute_bakes_env(
     assert patched_run_command.call_args[1]["env"]["FOO"] == "bar"
 
 
-def test_testinfra_executes_catches_and_exits_return_code(
+def test_testinfra_executes_catches_and_exits_return_code(  # type: ignore[no-untyped-def]
     patched_run_command,
     _patched_testinfra_get_tests,
     _instance,

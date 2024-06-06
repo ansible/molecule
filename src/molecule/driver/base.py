@@ -33,7 +33,7 @@ class Driver:
     __metaclass__ = ABCMeta
     title = ""  # Short description of the driver.
 
-    def __init__(self, config=None) -> None:
+    def __init__(self, config=None) -> None:  # type: ignore[no-untyped-def]
         """Initialize code for all :ref:`Driver` classes.
 
         :param config: An instance of a Molecule config.
@@ -52,15 +52,15 @@ class Driver:
         :returns: str
         """
 
-    @name.setter  # type: ignore
-    def name(self, value):  # pragma: no cover
+    @name.setter
+    def name(self, value):  # type: ignore[no-untyped-def] # pragma: no cover
         """Driver name setter and returns None.
 
         :returns: None
         """
 
     @property
-    def testinfra_options(self):
+    def testinfra_options(self):  # type: ignore[no-untyped-def]
         """Testinfra specific options and returns a dict.
 
         :returns: dict
@@ -72,7 +72,7 @@ class Driver:
 
     @property
     @abstractmethod
-    def login_cmd_template(self):  # pragma: no cover
+    def login_cmd_template(self):  # type: ignore[no-untyped-def] # pragma: no cover
         """Get the login command template to be populated by ``login_options`` as \
         a string.
 
@@ -81,7 +81,7 @@ class Driver:
 
     @property
     @abstractmethod
-    def default_ssh_connection_options(self):  # pragma: no cover
+    def default_ssh_connection_options(self):  # type: ignore[no-untyped-def] # pragma: no cover
         """SSH client options and returns a list.
 
         :returns: list
@@ -89,14 +89,14 @@ class Driver:
 
     @property
     @abstractmethod
-    def default_safe_files(self):  # pragma: no cover
+    def default_safe_files(self):  # type: ignore[no-untyped-def] # pragma: no cover
         """Generate files to be preserved.
 
         :returns: list
         """
 
     @abstractmethod
-    def login_options(self, instance_name):  # pragma: no cover
+    def login_options(self, instance_name):  # type: ignore[no-untyped-def] # pragma: no cover
         """Options used in the login command and returns a dict.
 
         :param instance_name: A string containing the instance to login to.
@@ -104,7 +104,7 @@ class Driver:
         """
 
     @abstractmethod
-    def ansible_connection_options(self, instance_name):  # pragma: no cover
+    def ansible_connection_options(self, instance_name):  # type: ignore[no-untyped-def] # pragma: no cover
         """Ansible specific connection options supplied to inventory and returns a \
         dict.
 
@@ -126,28 +126,28 @@ class Driver:
         """
 
     @property
-    def options(self):
+    def options(self):  # type: ignore[no-untyped-def]
         return self._config.config["driver"]["options"]
 
     @property
-    def instance_config(self):
+    def instance_config(self):  # type: ignore[no-untyped-def]
         return os.path.join(
             self._config.scenario.ephemeral_directory,
             "instance_config.yml",
         )
 
     @property
-    def ssh_connection_options(self):
+    def ssh_connection_options(self):  # type: ignore[no-untyped-def]
         if self._config.config["driver"]["ssh_connection_options"]:
             return self._config.config["driver"]["ssh_connection_options"]
         return self.default_ssh_connection_options
 
     @property
-    def safe_files(self):
+    def safe_files(self):  # type: ignore[no-untyped-def]
         return self.default_safe_files + self._config.config["driver"]["safe_files"]
 
     @property
-    def delegated(self):
+    def delegated(self):  # type: ignore[no-untyped-def]
         """Is the dedriver delegated and returns a bool.
 
         :returns: bool
@@ -155,14 +155,14 @@ class Driver:
         return self.name == "default"
 
     @property
-    def managed(self):
+    def managed(self):  # type: ignore[no-untyped-def]
         """Is the driver is managed and returns a bool.
 
         :returns: bool
         """
         return self.options["managed"]
 
-    def status(self):
+    def status(self):  # type: ignore[no-untyped-def]
         """Collect the instances state and returns a list.
 
         !!! note
@@ -188,14 +188,14 @@ class Driver:
                     driver_name=driver_name,
                     provisioner_name=provisioner_name,
                     scenario_name=scenario_name,
-                    created=self._created(),
-                    converged=self._converged(),
+                    created=self._created(),  # type: ignore[no-untyped-call]
+                    converged=self._converged(),  # type: ignore[no-untyped-call]
                 ),
             )
 
         return status_list
 
-    def _get_ssh_connection_options(self):
+    def _get_ssh_connection_options(self):  # type: ignore[no-untyped-def]
         # LogLevel=ERROR is needed in order to avoid warnings like:
         # Warning: Permanently added ... to the list of known hosts.
         return [
@@ -208,23 +208,23 @@ class Driver:
             "-o StrictHostKeyChecking=no",
         ]
 
-    def _created(self):
+    def _created(self):  # type: ignore[no-untyped-def]
         return str(self._config.state.created).lower()
 
-    def _converged(self):
+    def _converged(self):  # type: ignore[no-untyped-def]
         return str(self._config.state.converged).lower()
 
-    def __eq__(self, other):
+    def __eq__(self, other):  # type: ignore[no-untyped-def]
         """Implement equality comparison."""
         # trick that allows us to test if a driver is loaded via:
         # if 'driver-name' in drivers()
         return str(self) == str(other)
 
-    def __lt__(self, other):
+    def __lt__(self, other):  # type: ignore[no-untyped-def]
         """Implement lower than comparison."""
         return str.__lt__(str(self), str(other))
 
-    def __hash__(self):
+    def __hash__(self):  # type: ignore[no-untyped-def]
         """Perform object hash."""
         return self.name.__hash__()
 
@@ -236,11 +236,11 @@ class Driver:
         """Return detailed string representation of object."""
         return self.name
 
-    def __rich__(self):
+    def __rich__(self):  # type: ignore[no-untyped-def]
         """Return rich representation of object."""
         return self.__str__()
 
-    def get_playbook(self, step):
+    def get_playbook(self, step):  # type: ignore[no-untyped-def]
         """Return embedded playbook location or None.
 
         The default location is relative to the file implementing the driver
@@ -256,17 +256,17 @@ class Driver:
             return p
         return None
 
-    def schema_file(self):
+    def schema_file(self):  # type: ignore[no-untyped-def]
         return None
 
-    def modules_dir(self):
+    def modules_dir(self):  # type: ignore[no-untyped-def]
         """Return path to ansible modules included with driver."""
         p = os.path.join(self._path, "modules")
         if os.path.isdir(p):
             return p
         return None
 
-    def reset(self):
+    def reset(self):  # type: ignore[no-untyped-def]
         """Release all resources owned by molecule.
 
         This is a destructive operation that would affect all resources managed

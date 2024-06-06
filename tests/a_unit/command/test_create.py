@@ -27,7 +27,7 @@ from molecule.command import create
 
 
 @pytest.fixture()
-def _patched_create_setup(mocker):
+def _patched_create_setup(mocker):  # type: ignore[no-untyped-def]
     return mocker.patch("molecule.command.create.Create._setup")
 
 
@@ -35,7 +35,7 @@ def _patched_create_setup(mocker):
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.mark.skip(reason="create not running for delegated")
-def test_create_execute(
+def test_create_execute(  # type: ignore[no-untyped-def]
     mocker: MockerFixture,
     caplog,
     command_patched_ansible_create,
@@ -43,7 +43,7 @@ def test_create_execute(
     config_instance: config.Config,
 ):
     c = create.Create(config_instance)
-    c.execute()
+    c.execute()  # type: ignore[no-untyped-call]
 
     assert "default" in caplog.text
     assert "converge" in caplog.text
@@ -56,14 +56,14 @@ def test_create_execute(
 
 
 @pytest.mark.skip(reason="create not running for delegated")
-def test_execute_skips_when_instances_already_created(
+def test_execute_skips_when_instances_already_created(  # type: ignore[no-untyped-def]
     caplog,
     command_patched_ansible_create,
     config_instance: config.Config,
 ):
     config_instance.state.change_state("created", True)
     c = create.Create(config_instance)
-    c.execute()
+    c.execute()  # type: ignore[no-untyped-call]
 
     msg = "Skipping, instances already created."
     assert msg in caplog.text

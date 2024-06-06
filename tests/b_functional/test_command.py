@@ -38,12 +38,12 @@ from tests.conftest import mac_on_gh  # pylint:disable=C0411
 
 
 @pytest.fixture()
-def scenario_to_test(request):
+def scenario_to_test(request):  # type: ignore[no-untyped-def]
     return request.param
 
 
 @pytest.fixture()
-def scenario_name(request):
+def scenario_name(request):  # type: ignore[no-untyped-def]
     try:
         return request.param
     except AttributeError:
@@ -60,7 +60,7 @@ def driver_name(request: FixtureRequest) -> str | None:
 
 
 @pytest.fixture()
-def platform_name(request):
+def platform_name(request):  # type: ignore[no-untyped-def]
     try:
         return request.param
     except AttributeError:
@@ -75,7 +75,7 @@ def platform_name(request):
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
-def test_command_check(scenario_to_test, with_scenario, scenario_name):
+def test_command_check(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]
     cmd = ["molecule", "check", "--scenario-name", scenario_name]
     assert run_command(cmd).returncode == 0
 
@@ -89,7 +89,7 @@ def test_command_check(scenario_to_test, with_scenario, scenario_name):
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
 @pytest.mark.serial()
-def test_command_cleanup(scenario_to_test, with_scenario, scenario_name):
+def test_command_cleanup(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]
     cmd = ["molecule", "cleanup", "--scenario-name", scenario_name]
     assert run_command(cmd).returncode == 0
 
@@ -103,7 +103,7 @@ def test_command_cleanup(scenario_to_test, with_scenario, scenario_name):
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
 @pytest.mark.serial()
-def test_command_converge(scenario_to_test, with_scenario, scenario_name):
+def test_command_converge(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]
     cmd = ["molecule", "converge", "--scenario-name", scenario_name]
     assert run_command(cmd).returncode == 0
 
@@ -117,7 +117,7 @@ def test_command_converge(scenario_to_test, with_scenario, scenario_name):
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
 @pytest.mark.serial()
-def test_command_create(scenario_to_test, with_scenario, scenario_name, tmp_path):
+def test_command_create(scenario_to_test, with_scenario, scenario_name, tmp_path):  # type: ignore[no-untyped-def]
     cmd = ["molecule", "create", "--scenario-name", scenario_name]
     assert run_command(cmd, env=os.environ).returncode == 0
 
@@ -140,7 +140,7 @@ def test_command_create(scenario_to_test, with_scenario, scenario_name, tmp_path
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
 @pytest.mark.serial()
-def test_command_dependency(request, scenario_to_test, with_scenario, scenario_name):
+def test_command_dependency(request, scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]
     cmd = ["molecule", "dependency", "--scenario-name", scenario_name]
     assert run_command(cmd, echo=True).returncode == 0
 
@@ -156,7 +156,7 @@ def test_command_dependency(request, scenario_to_test, with_scenario, scenario_n
     [pytest.param("driver/delegated", "default", "default", id="0")],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
-def test_command_destroy(scenario_to_test, with_scenario, scenario_name):
+def test_command_destroy(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]
     cmd = ["molecule", "destroy", "--scenario-name", scenario_name]
     assert run_command(cmd).returncode == 0
 
@@ -170,13 +170,13 @@ def test_command_destroy(scenario_to_test, with_scenario, scenario_name):
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
-def test_command_idempotence(scenario_to_test, with_scenario, scenario_name):
-    idempotence(scenario_name)
+def test_command_idempotence(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]
+    idempotence(scenario_name)  # type: ignore[no-untyped-call]
 
 
 @pytest.mark.serial()
-def test_command_init_scenario(temp_dir):
-    init_scenario(temp_dir, "default")
+def test_command_init_scenario(temp_dir):  # type: ignore[no-untyped-def]
+    init_scenario(temp_dir, "default")  # type: ignore[no-untyped-call]
 
 
 @pytest.mark.serial()
@@ -192,8 +192,8 @@ def test_command_init_scenario(temp_dir):
     ],
     indirect=["scenario_to_test", "driver_name"],
 )
-def test_command_list_with_format_plain(scenario_to_test, with_scenario, expected):
-    list_with_format_plain(expected)
+def test_command_list_with_format_plain(scenario_to_test, with_scenario, expected):  # type: ignore[no-untyped-def]
+    list_with_format_plain(expected)  # type: ignore[no-untyped-call]
 
 
 @pytest.mark.serial()
@@ -205,7 +205,7 @@ def test_command_list_with_format_plain(scenario_to_test, with_scenario, expecte
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
-def test_command_prepare(scenario_to_test, with_scenario, scenario_name):
+def test_command_prepare(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]
     cmd = ["molecule", "create", "--scenario-name", scenario_name]
     assert run_command(cmd).returncode == 0
 
@@ -222,7 +222,7 @@ def test_command_prepare(scenario_to_test, with_scenario, scenario_name):
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
-def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
+def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]
     cmd = ["molecule", "side-effect", "--scenario-name", scenario_name]
     assert run_command(cmd).returncode == 0
 
@@ -236,7 +236,7 @@ def test_command_side_effect(scenario_to_test, with_scenario, scenario_name):
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
-def test_command_syntax(scenario_to_test, with_scenario, scenario_name):
+def test_command_syntax(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]
     cmd = ["molecule", "syntax", "--scenario-name", scenario_name]
     assert run_command(cmd).returncode == 0
 
@@ -249,11 +249,11 @@ def test_command_syntax(scenario_to_test, with_scenario, scenario_name):
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
-def test_command_test(scenario_to_test, with_scenario, scenario_name, driver_name):
-    run_test(driver_name, scenario_name)
+def test_command_test(scenario_to_test, with_scenario, scenario_name, driver_name):  # type: ignore[no-untyped-def]
+    run_test(driver_name, scenario_name)  # type: ignore[no-untyped-call]
 
 
-def run_test_with_platform_name(
+def run_test_with_platform_name(  # type: ignore[no-untyped-def]
     driver_name,
     platform_name,
     scenario_name="default",
@@ -286,14 +286,14 @@ def run_test_with_platform_name(
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name", "platform_name"],
 )
-def test_command_test_with_platform_name(
+def test_command_test_with_platform_name(  # type: ignore[no-untyped-def]
     scenario_to_test,
     with_scenario,
     scenario_name,
     driver_name,
     platform_name,
 ):
-    run_test_with_platform_name(driver_name, platform_name, scenario_name)
+    run_test_with_platform_name(driver_name, platform_name, scenario_name)  # type: ignore[no-untyped-call]
 
 
 @pytest.mark.serial()
@@ -309,13 +309,13 @@ def test_command_test_with_platform_name(
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
-def test_command_test_with_role_name_check_equals_to_1(
+def test_command_test_with_role_name_check_equals_to_1(  # type: ignore[no-untyped-def]
     scenario_to_test,
     with_scenario,
     scenario_name,
     driver_name,
 ):
-    run_test(driver_name, scenario_name)
+    run_test(driver_name, scenario_name)  # type: ignore[no-untyped-call]
 
 
 @pytest.mark.serial()
@@ -327,8 +327,8 @@ def test_command_test_with_role_name_check_equals_to_1(
     ],
     indirect=["scenario_to_test", "driver_name", "scenario_name"],
 )
-def test_command_verify(scenario_to_test, with_scenario, scenario_name):
-    verify(scenario_name)
+def test_command_verify(scenario_to_test, with_scenario, scenario_name):  # type: ignore[no-untyped-def]
+    verify(scenario_name)  # type: ignore[no-untyped-call]
 
 
 def test_sample_collection() -> None:
@@ -354,8 +354,8 @@ def test_with_and_without_gitignore(
 ) -> None:
     if scenario_name == "test_wo_gitignore":
 
-        def mock_return(scenario_paths) -> list[str]:
-            return scenario_paths
+        def mock_return(scenario_paths) -> list[str]:  # type: ignore[no-untyped-def]
+            return scenario_paths  # type: ignore[no-any-return]
 
         monkeypatch.setattr(
             "molecule.command.base.filter_ignored_scenarios",
@@ -373,7 +373,7 @@ def test_with_and_without_gitignore(
 
     pathlib.Path(f".extensions/molecule/{scenario_name}/molecule.yml").touch()
 
-    op = base.get_configs({}, {}, glob_str="**/molecule/*/molecule.yml")
+    op = base.get_configs({}, {}, glob_str="**/molecule/*/molecule.yml")  # type: ignore[no-untyped-call]
 
     names = [config.scenario.name for config in op]
     if scenario_name == "test_w_gitignore":

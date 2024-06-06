@@ -9,7 +9,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 ).get_hosts("all")
 
 
-def test_ansible_hostname(host):
+def test_ansible_hostname(host):  # type: ignore[no-untyped-def]
     """Validate hostname."""
     f = host.file("/tmp/molecule/instance-1")
 

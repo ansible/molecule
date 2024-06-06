@@ -40,7 +40,7 @@ class Base:
     SLEEP = 3
     BACKOFF = 3
 
-    def __init__(self, config) -> None:
+    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]
         """Initialize code for all :ref:`Dependency` classes.
 
         :param config: An instance of a Molecule config.
@@ -49,12 +49,12 @@ class Base:
         self._config = config
         self._sh_command: list[str] | None = None
 
-    def execute_with_retries(self):
+    def execute_with_retries(self):  # type: ignore[no-untyped-def]
         """Run dependency downloads with retry and timed back-off."""
         exception = None
 
         try:
-            util.run_command(self._sh_command, debug=self._config.debug, check=True)
+            util.run_command(self._sh_command, debug=self._config.debug, check=True)  # type: ignore[arg-type]
             msg = "Dependency completed successfully."
             LOG.info(msg)
             return
@@ -71,7 +71,7 @@ class Base:
             self.SLEEP += self.BACKOFF
 
             try:
-                util.run_command(self._sh_command, debug=self._config.debug, check=True)
+                util.run_command(self._sh_command, debug=self._config.debug, check=True)  # type: ignore[arg-type]
                 msg = "Dependency completed successfully."
                 LOG.info(msg)
                 return
@@ -79,10 +79,10 @@ class Base:
                 exception = _exception
 
         LOG.error(str(exception))
-        util.sysexit(exception.returncode)
+        util.sysexit(exception.returncode)  # type: ignore[union-attr]
 
     @abc.abstractmethod
-    def execute(self, action_args=None):  # pragma: no cover
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def] # pragma: no cover
         """Execute ``cmd`` and returns None.
 
         :return: None
@@ -92,14 +92,14 @@ class Base:
 
     @property
     @abc.abstractmethod
-    def default_options(self):  # pragma: no cover
+    def default_options(self):  # type: ignore[no-untyped-def] # pragma: no cover
         """Get default CLI arguments provided to ``cmd`` as a dict.
 
         :return: dict
         """
 
     @property
-    def default_env(self):  # pragma: no cover
+    def default_env(self):  # type: ignore[no-untyped-def] # pragma: no cover
         """Get default env variables provided to ``cmd`` as a dict.
 
         :return: dict
@@ -108,7 +108,7 @@ class Base:
         return env
 
     @property
-    def name(self):
+    def name(self):  # type: ignore[no-untyped-def]
         """Name of the dependency and returns a string.
 
         :returns: str
@@ -116,18 +116,18 @@ class Base:
         return self._config.config["dependency"]["name"]
 
     @property
-    def enabled(self):
+    def enabled(self):  # type: ignore[no-untyped-def]
         return self._config.config["dependency"]["enabled"]
 
     @property
-    def options(self):
+    def options(self):  # type: ignore[no-untyped-def]
         return util.merge_dicts(
             self.default_options,
             self._config.config["dependency"]["options"],
         )
 
     @property
-    def env(self):
+    def env(self):  # type: ignore[no-untyped-def]
         return util.merge_dicts(
             self.default_env,
             self._config.config["dependency"]["env"],

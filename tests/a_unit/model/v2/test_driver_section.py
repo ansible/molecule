@@ -24,7 +24,7 @@ from molecule.model import schema_v3
 
 
 @pytest.fixture()
-def _model_driver_section_data():
+def _model_driver_section_data():  # type: ignore[no-untyped-def]
     return {
         "driver": {
             "name": "default",
@@ -37,12 +37,12 @@ def _model_driver_section_data():
 
 
 @pytest.mark.parametrize("_config", ["_model_driver_section_data"], indirect=True)
-def test_driver(_config):
-    assert not schema_v3.validate(_config)
+def test_driver(_config):  # type: ignore[no-untyped-def]
+    assert not schema_v3.validate(_config)  # type: ignore[no-untyped-call]
 
 
 @pytest.fixture()
-def _model_driver_errors_section_data():
+def _model_driver_errors_section_data():  # type: ignore[no-untyped-def]
     return {
         "driver": {
             "name": 0,
@@ -51,7 +51,7 @@ def _model_driver_errors_section_data():
 
 
 @pytest.fixture()
-def _model_driver_errors_section_data_no_prefix():
+def _model_driver_errors_section_data_no_prefix():  # type: ignore[no-untyped-def]
     return {
         "driver": {
             "name": "random_name",
@@ -67,7 +67,7 @@ def _model_driver_errors_section_data_no_prefix():
     ],
     indirect=True,
 )
-def test_driver_has_errors(_config):
+def test_driver_has_errors(_config):  # type: ignore[no-untyped-def]
     base_error_msg = "is not one of ['azure', 'ec2', 'delegated', 'docker', 'containers', 'openstack', 'podman', 'vagrant', 'digitalocean', 'gce', 'libvirt', 'lxd', 'molecule-*', 'molecule_*', 'custom-*', 'custom_*']"
 
     driver_name = str(_config["driver"]["name"])
@@ -76,11 +76,11 @@ def test_driver_has_errors(_config):
         driver_name = f"'{_config['driver']['name']}'"
 
     error_msg = [f"{driver_name} {base_error_msg}"]
-    assert error_msg == schema_v3.validate(_config)
+    assert error_msg == schema_v3.validate(_config)  # type: ignore[no-untyped-call]
 
 
 @pytest.fixture()
-def _model_driver_provider_name_nullable_section_data():
+def _model_driver_provider_name_nullable_section_data():  # type: ignore[no-untyped-def]
     return {"driver": {"provider": {"name": None}}}
 
 
@@ -89,32 +89,32 @@ def _model_driver_provider_name_nullable_section_data():
     ["_model_driver_provider_name_nullable_section_data"],
     indirect=True,
 )
-def test_driver_provider_name_nullable(_config):
-    assert not schema_v3.validate(_config)
+def test_driver_provider_name_nullable(_config):  # type: ignore[no-untyped-def]
+    assert not schema_v3.validate(_config)  # type: ignore[no-untyped-call]
 
 
 @pytest.fixture()
-def _model_driver_allows_delegated_section_data():
+def _model_driver_allows_delegated_section_data():  # type: ignore[no-untyped-def]
     return {"driver": {"name": "default"}}
 
 
 @pytest.fixture()
-def _model_driver_allows_molecule_section_data1():
+def _model_driver_allows_molecule_section_data1():  # type: ignore[no-untyped-def]
     return {"driver": {"name": "molecule-test_driver.name"}}
 
 
 @pytest.fixture()
-def _model_driver_allows_molecule_section_data2():
+def _model_driver_allows_molecule_section_data2():  # type: ignore[no-untyped-def]
     return {"driver": {"name": "molecule_test_driver.name"}}
 
 
 @pytest.fixture()
-def _model_driver_allows_custom_section_data1():
+def _model_driver_allows_custom_section_data1():  # type: ignore[no-untyped-def]
     return {"driver": {"name": "custom-test_driver.name"}}
 
 
 @pytest.fixture()
-def _model_driver_allows_custom_section_data2():
+def _model_driver_allows_custom_section_data2():  # type: ignore[no-untyped-def]
     return {"driver": {"name": "custom_test_driver.name"}}
 
 
@@ -130,5 +130,5 @@ def _model_driver_allows_custom_section_data2():
     ],
     indirect=True,
 )
-def test_driver_allows_name(_config):
-    assert not schema_v3.validate(_config)
+def test_driver_allows_name(_config):  # type: ignore[no-untyped-def]
+    assert not schema_v3.validate(_config)  # type: ignore[no-untyped-call]

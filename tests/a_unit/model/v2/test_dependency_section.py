@@ -24,7 +24,7 @@ from molecule.model import schema_v3
 
 
 @pytest.fixture()
-def _model_dependency_section_data():
+def _model_dependency_section_data():  # type: ignore[no-untyped-def]
     return {
         "dependency": {
             "name": "galaxy",
@@ -36,12 +36,12 @@ def _model_dependency_section_data():
 
 
 @pytest.mark.parametrize("_config", ["_model_dependency_section_data"], indirect=True)
-def test_dependency(_config):
-    assert not schema_v3.validate(_config)
+def test_dependency(_config):  # type: ignore[no-untyped-def]
+    assert not schema_v3.validate(_config)  # type: ignore[no-untyped-call]
 
 
 @pytest.fixture()
-def _model_dependency_errors_section_data():
+def _model_dependency_errors_section_data():  # type: ignore[no-untyped-def]
     return {"dependency": {"name": 0}}
 
 
@@ -50,19 +50,19 @@ def _model_dependency_errors_section_data():
     ["_model_dependency_errors_section_data"],
     indirect=True,
 )
-def test_dependency_has_errors(_config):
+def test_dependency_has_errors(_config):  # type: ignore[no-untyped-def]
     x = ["0 is not one of ['galaxy', 'shell']"]
 
-    assert x == schema_v3.validate(_config)
+    assert x == schema_v3.validate(_config)  # type: ignore[no-untyped-call]
 
 
 @pytest.fixture()
-def _model_dependency_allows_galaxy_section_data():
+def _model_dependency_allows_galaxy_section_data():  # type: ignore[no-untyped-def]
     return {"dependency": {"name": "galaxy"}}
 
 
 @pytest.fixture()
-def _model_dependency_allows_shell_section_data():
+def _model_dependency_allows_shell_section_data():  # type: ignore[no-untyped-def]
     return {"dependency": {"name": "shell"}}
 
 
@@ -74,12 +74,12 @@ def _model_dependency_allows_shell_section_data():
     ],
     indirect=True,
 )
-def test_dependency_allows_shell_name(_config):
-    assert not schema_v3.validate(_config)
+def test_dependency_allows_shell_name(_config):  # type: ignore[no-untyped-def]
+    assert not schema_v3.validate(_config)  # type: ignore[no-untyped-call]
 
 
 @pytest.fixture()
-def _model_dependency_shell_errors_section_data():
+def _model_dependency_shell_errors_section_data():  # type: ignore[no-untyped-def]
     return {"dependency": {"name": "shell", "command": None}}
 
 
@@ -88,7 +88,7 @@ def _model_dependency_shell_errors_section_data():
     ["_model_dependency_shell_errors_section_data"],
     indirect=True,
 )
-def test_dependency_shell_has_errors(_config):
+def test_dependency_shell_has_errors(_config):  # type: ignore[no-untyped-def]
     x = ["None is not of type 'string'"]
 
-    assert x == schema_v3.validate(_config)
+    assert x == schema_v3.validate(_config)  # type: ignore[no-untyped-call]

@@ -23,10 +23,10 @@ from molecule.command import list
 from molecule.driver import base
 
 
-def test_list_execute(capsys, config_instance: config.Config):
+def test_list_execute(capsys, config_instance: config.Config):  # type: ignore[no-untyped-def]
     l = list.List(config_instance)
     x = [
-        base.Status(
+        base.Status(  # type: ignore[attr-defined]
             instance_name="instance-1",
             driver_name="default",
             provisioner_name="ansible",
@@ -34,7 +34,7 @@ def test_list_execute(capsys, config_instance: config.Config):
             created="false",
             converged="false",
         ),
-        base.Status(
+        base.Status(  # type: ignore[attr-defined]
             instance_name="instance-2",
             driver_name="default",
             provisioner_name="ansible",
@@ -44,4 +44,4 @@ def test_list_execute(capsys, config_instance: config.Config):
         ),
     ]
 
-    assert x == l.execute()
+    assert x == l.execute()  # type: ignore[no-untyped-call]

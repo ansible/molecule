@@ -9,6 +9,6 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 ).get_hosts("all")
 
 
-def test_side_effect_removed_file(host):
+def test_side_effect_removed_file(host):  # type: ignore[no-untyped-def]
     """Validate that file was removed."""
     assert not host.file("/tmp/testfile").exists

@@ -27,12 +27,12 @@ from molecule.command import destroy
 
 
 @pytest.fixture()
-def _patched_ansible_destroy(mocker):
+def _patched_ansible_destroy(mocker):  # type: ignore[no-untyped-def]
     return mocker.patch("molecule.provisioner.ansible.Ansible.destroy")
 
 
 @pytest.fixture()
-def _patched_destroy_setup(mocker):
+def _patched_destroy_setup(mocker):  # type: ignore[no-untyped-def]
     return mocker.patch("molecule.command.destroy.Destroy._setup")
 
 
@@ -40,7 +40,7 @@ def _patched_destroy_setup(mocker):
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.mark.skip(reason="destroy not running for delegated")
-def test_destroy_execute(
+def test_destroy_execute(  # type: ignore[no-untyped-def]
     mocker: MockerFixture,
     caplog,
     patched_config_validate,
@@ -48,7 +48,7 @@ def test_destroy_execute(
     config_instance: config.Config,
 ):
     d = destroy.Destroy(config_instance)
-    d.execute()
+    d.execute()  # type: ignore[no-untyped-call]
 
     assert "destroy" in caplog.text
 
@@ -65,7 +65,7 @@ def test_destroy_execute(
     ["command_driver_delegated_section_data"],
     indirect=True,
 )
-def test_execute_skips_when_destroy_strategy_is_never(
+def test_execute_skips_when_destroy_strategy_is_never(  # type: ignore[no-untyped-def]
     _patched_destroy_setup,
     caplog,
     _patched_ansible_destroy,
@@ -74,7 +74,7 @@ def test_execute_skips_when_destroy_strategy_is_never(
     config_instance.command_args = {"destroy": "never"}
 
     d = destroy.Destroy(config_instance)
-    d.execute()
+    d.execute()  # type: ignore[no-untyped-call]
 
     msg = "Skipping, '--destroy=never' requested."
     assert msg in caplog.text

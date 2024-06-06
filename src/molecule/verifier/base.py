@@ -30,7 +30,7 @@ class Verifier:
 
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, config=None) -> None:
+    def __init__(self, config=None) -> None:  # type: ignore[no-untyped-def]
         """Initialize code for all :ref:`Verifier` classes.
 
         :param config: An instance of a Molecule config.
@@ -40,7 +40,7 @@ class Verifier:
 
     @property
     @abc.abstractmethod
-    def name(self):  # pragma: no cover
+    def name(self):  # type: ignore[no-untyped-def] # pragma: no cover
         """Name of the verifier and returns a string.
 
         :returns: str
@@ -48,7 +48,7 @@ class Verifier:
 
     @property
     @abc.abstractmethod
-    def default_options(self):  # pragma: no cover
+    def default_options(self):  # type: ignore[no-untyped-def] # pragma: no cover
         """Get default CLI arguments provided to ``cmd`` as a dict.
 
         :return: dict
@@ -56,67 +56,67 @@ class Verifier:
 
     @property
     @abc.abstractmethod
-    def default_env(self):  # pragma: no cover
+    def default_env(self):  # type: ignore[no-untyped-def] # pragma: no cover
         """Get default env variables provided to ``cmd`` as a dict.
 
         :return: dict
         """
 
     @abc.abstractmethod
-    def execute(self, action_args=None):  # pragma: no cover
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def] # pragma: no cover
         """Execute ``cmd`` and returns None.
 
         :return: None
         """
 
     @abc.abstractmethod
-    def schema(self):  # pragma: no cover
+    def schema(self):  # type: ignore[no-untyped-def] # pragma: no cover
         """Return validation schema.
 
         :return: None
         """
 
     @property
-    def enabled(self):
+    def enabled(self):  # type: ignore[no-untyped-def]
         return self._config.config["verifier"]["enabled"]
 
     @property
-    def directory(self):
+    def directory(self):  # type: ignore[no-untyped-def]
         return os.path.join(
             self._config.scenario.directory,
             self._config.config["verifier"].get("directory", "tests"),
         )
 
     @property
-    def options(self):
+    def options(self):  # type: ignore[no-untyped-def]
         return util.merge_dicts(
             self.default_options,
             self._config.config["verifier"]["options"],
         )
 
     @property
-    def env(self):
+    def env(self):  # type: ignore[no-untyped-def]
         return util.merge_dicts(
             self.default_env,
             self._config.config["verifier"]["env"],
         )
 
-    def __eq__(self, other):
+    def __eq__(self, other):  # type: ignore[no-untyped-def]
         """Implement equality comparison."""
         return str(self) == str(other)
 
-    def __lt__(self, other):
+    def __lt__(self, other):  # type: ignore[no-untyped-def]
         """Implement lower than comparison."""
         return str.__lt__(str(self), str(other))
 
-    def __hash__(self):
+    def __hash__(self):  # type: ignore[no-untyped-def]
         """Implement hashing."""
         return self.name.__hash__()
 
     def __str__(self) -> str:
         """Return readable string representation of object."""
-        return self.name
+        return self.name  # type: ignore[no-any-return]
 
     def __repr__(self) -> str:
         """Return detailed string representation of object."""
-        return self.name
+        return self.name  # type: ignore[no-any-return]

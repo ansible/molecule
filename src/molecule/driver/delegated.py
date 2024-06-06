@@ -23,7 +23,7 @@ import logging
 import os
 
 from molecule import util
-from molecule.api import Driver
+from molecule.api import Driver  # type: ignore[attr-defined]
 from molecule.data import __file__ as data_module
 
 LOG = logging.getLogger(__name__)
@@ -140,21 +140,21 @@ class Delegated(Driver):
 
     title = "Default driver, user is expected to manage provisioning of test resources."
 
-    def __init__(self, config=None) -> None:
+    def __init__(self, config=None) -> None:  # type: ignore[no-untyped-def]
         """Construct Delegated."""
         super().__init__(config)
         self._name = "default"
 
     @property
-    def name(self):
+    def name(self):  # type: ignore[no-untyped-def]
         return self._name
 
     @name.setter
-    def name(self, value):
+    def name(self, value):  # type: ignore[no-untyped-def]
         self._name = value
 
     @property
-    def login_cmd_template(self):
+    def login_cmd_template(self):  # type: ignore[no-untyped-def]
         if "login_cmd_template" in self.options:
             return self.options["login_cmd_template"]
 
@@ -171,13 +171,13 @@ class Delegated(Driver):
         return None
 
     @property
-    def default_safe_files(self):
+    def default_safe_files(self):  # type: ignore[no-untyped-def]
         return []
 
     @property
-    def default_ssh_connection_options(self):
+    def default_ssh_connection_options(self):  # type: ignore[no-untyped-def]
         if self.managed:
-            ssh_connopts = self._get_ssh_connection_options()
+            ssh_connopts = self._get_ssh_connection_options()  # type: ignore[no-untyped-call]
             if self.options.get("ansible_connection_options", {}).get(
                 "ansible_ssh_common_args",
                 None,
@@ -190,14 +190,14 @@ class Delegated(Driver):
             return ssh_connopts
         return []
 
-    def login_options(self, instance_name):
+    def login_options(self, instance_name):  # type: ignore[no-untyped-def]
         if self.managed:
             d = {"instance": instance_name}
 
-            return util.merge_dicts(d, self._get_instance_config(instance_name))
+            return util.merge_dicts(d, self._get_instance_config(instance_name))  # type: ignore[no-untyped-call]
         return {"instance": instance_name}
 
-    def ansible_connection_options(self, instance_name):
+    def ansible_connection_options(self, instance_name):  # type: ignore[no-untyped-def]
         # list of tuples describing mappable instance params and default values
         instance_params = [
             ("become_pass", None),
@@ -211,7 +211,7 @@ class Delegated(Driver):
         ]
         if self.managed:
             try:
-                d = self._get_instance_config(instance_name)
+                d = self._get_instance_config(instance_name)  # type: ignore[no-untyped-call]
                 conn_dict = {}
                 # Check if optional mappable params are in the instance config
                 for i in instance_params:
@@ -244,21 +244,21 @@ class Delegated(Driver):
                 return {}
         return self.options.get("ansible_connection_options", {})
 
-    def _created(self):
+    def _created(self):  # type: ignore[no-untyped-def]
         if self.managed:
-            return super()._created()
+            return super()._created()  # type: ignore[no-untyped-call]
         return "unknown"
 
-    def _get_instance_config(self, instance_name):
+    def _get_instance_config(self, instance_name):  # type: ignore[no-untyped-def]
         instance_config_dict = util.safe_load_file(self._config.driver.instance_config)
 
         return next(
             item for item in instance_config_dict if item["instance"] == instance_name
         )
 
-    def sanity_checks(self):
+    def sanity_checks(self):  # type: ignore[no-untyped-def]
         # Note(decentral1se): Cannot implement driver specifics are unknown
         pass
 
-    def schema_file(self):
+    def schema_file(self):  # type: ignore[no-untyped-def]
         return os.path.join(os.path.dirname(data_module), "driver.json")

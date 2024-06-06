@@ -31,7 +31,7 @@ LOG = logging.getLogger(__name__)
 class Dependency(base.Base):
     """Dependency Command Class."""
 
-    def execute(self, action_args=None):
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]
         """Execute the actions necessary to perform a `molecule dependency` and \
         returns None.
 
@@ -48,10 +48,10 @@ class Dependency(base.Base):
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
     help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
-def dependency(ctx, scenario_name):  # pragma: no cover
+def dependency(ctx, scenario_name):  # type: ignore[no-untyped-def] # pragma: no cover
     """Manage the role's dependencies."""
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)
+    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]
     command_args = {"subcommand": subcommand}
 
-    base.execute_cmdline_scenarios(scenario_name, args, command_args)
+    base.execute_cmdline_scenarios(scenario_name, args, command_args)  # type: ignore[no-untyped-call]

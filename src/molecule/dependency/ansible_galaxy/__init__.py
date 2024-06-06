@@ -86,31 +86,31 @@ class AnsibleGalaxy(Base):
     [ANSIBLE_HOME]: https://docs.ansible.com/ansible/latest/reference_appendices/config.html#ansible-home
     """
 
-    def __init__(self, config) -> None:
+    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]
         """Construct AnsibleGalaxy."""
         super().__init__(config)
         self.invocations = [Roles(config), Collections(config)]
 
-    def execute(self, action_args=None):
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]
         for invoker in self.invocations:
-            invoker.execute()
+            invoker.execute()  # type: ignore[no-untyped-call]
 
-    def _has_requirements_file(self):
+    def _has_requirements_file(self):  # type: ignore[no-untyped-def]
         has_file = False
         for invoker in self.invocations:
-            has_file = has_file or invoker._has_requirements_file()
+            has_file = has_file or invoker._has_requirements_file()  # type: ignore[no-untyped-call]
         return has_file
 
     @property
-    def default_env(self):
-        e = {}
+    def default_env(self):  # type: ignore[no-untyped-def]
+        e = {}  # type: ignore[var-annotated]
         for invoker in self.invocations:
-            e = util.merge(e, invoker.default_env)
+            e = util.merge(e, invoker.default_env)  # type: ignore[attr-defined]
         return e
 
     @property
-    def default_options(self):
-        opts = {}
+    def default_options(self):  # type: ignore[no-untyped-def]
+        opts = {}  # type: ignore[var-annotated]
         for invoker in self.invocations:
-            opts = util.merge(opts, invoker.default_opts)
+            opts = util.merge(opts, invoker.default_opts)  # type: ignore[attr-defined]
         return opts

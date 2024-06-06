@@ -82,7 +82,7 @@ class Prepare(base.Base):
         molecule.yml.
     """
 
-    def execute(self, action_args=None):
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]
         """Execute the actions necessary to prepare the instances and returns \
         None.
 
@@ -122,14 +122,14 @@ class Prepare(base.Base):
     default=False,
     help="Enable or disable force mode. Default is disabled.",
 )
-def prepare(ctx, scenario_name, driver_name, force):  # pragma: no cover
+def prepare(ctx, scenario_name, driver_name, force):  # type: ignore[no-untyped-def] # pragma: no cover
     """Use the provisioner to prepare the instances into a particular starting state."""
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)
+    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]
     command_args = {
         "subcommand": subcommand,
         "driver_name": driver_name,
         "force": force,
     }
 
-    base.execute_cmdline_scenarios(scenario_name, args, command_args)
+    base.execute_cmdline_scenarios(scenario_name, args, command_args)  # type: ignore[no-untyped-call]

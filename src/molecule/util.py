@@ -48,7 +48,7 @@ LOG = logging.getLogger(__name__)
 class SafeDumper(yaml.SafeDumper):
     """SafeDumper YAML Class."""
 
-    def increase_indent(self, flow=False, indentless=False):
+    def increase_indent(self, flow=False, indentless=False):  # type: ignore[no-untyped-def]
         return super().increase_indent(flow, False)
 
 
@@ -100,7 +100,7 @@ def sysexit(code: int = 1) -> NoReturn:
 def sysexit_with_message(
     msg: str,
     code: int = 1,
-    detail: MutableMapping | None = None,
+    detail: MutableMapping | None = None,  # type: ignore[type-arg]
     warns: Iterable[WarningMessage] = (),
 ) -> None:
     """Exit with an error message."""
@@ -116,7 +116,7 @@ def sysexit_with_message(
     sysexit(code)
 
 
-def run_command(
+def run_command(  # type: ignore[no-untyped-def]
     cmd: list[str],
     env=None,
     debug=False,
@@ -124,7 +124,7 @@ def run_command(
     quiet=False,
     check=False,
     cwd=None,
-) -> CompletedProcess:
+) -> CompletedProcess:  # type: ignore[type-arg]
     """Execute the given command and returns None.
 
     :param cmd: :
@@ -153,7 +153,7 @@ def run_command(
     return result
 
 
-def os_walk(directory, pattern, excludes=[], followlinks=False):
+def os_walk(directory, pattern, excludes=[], followlinks=False):  # type: ignore[no-untyped-def]
     """Navigate recursively and retried files based on pattern."""
     for root, dirs, files in os.walk(directory, topdown=True, followlinks=followlinks):
         dirs[:] = [d for d in dirs if d not in excludes]
@@ -164,7 +164,7 @@ def os_walk(directory, pattern, excludes=[], followlinks=False):
                 yield filename
 
 
-def render_template(template, **kwargs):
+def render_template(template, **kwargs):  # type: ignore[no-untyped-def]
     """Render a jinaj2 template."""
     t = jinja2.Environment(
         autoescape=jinja2.select_autoescape(
@@ -172,9 +172,9 @@ def render_template(template, **kwargs):
             default=False,
         ),
     )
-    t = t.from_string(template)
+    t = t.from_string(template)  # type: ignore[assignment]
 
-    return t.render(kwargs)
+    return t.render(kwargs)  # type: ignore[attr-defined]
 
 
 def write_file(filename: str, content: str, header: str | None = None) -> None:
@@ -210,7 +210,7 @@ def file_prepender(filename: str) -> None:
         f.write(molecule_prepender(content))
 
 
-def safe_dump(data: Any, explicit_start=True) -> str:
+def safe_dump(data: Any, explicit_start=True) -> str:  # type: ignore[no-untyped-def]
     """Dump the provided data to a YAML document and returns a string.
 
     :param data: A string containing an absolute path to the file to parse.
@@ -224,7 +224,7 @@ def safe_dump(data: Any, explicit_start=True) -> str:
     )
 
 
-def safe_load(string) -> dict:
+def safe_load(string) -> dict:  # type: ignore[no-untyped-def, type-arg]
     """Parse the provided string returns a dict.
 
     :param string: A string to be parsed.
@@ -237,7 +237,7 @@ def safe_load(string) -> dict:
     return {}
 
 
-def safe_load_file(filename: str):
+def safe_load_file(filename: str):  # type: ignore[no-untyped-def]
     """Parse the provided YAML file and returns a dict.
 
     :param filename: A string containing an absolute path to the file to parse.
@@ -247,12 +247,12 @@ def safe_load_file(filename: str):
         return safe_load(stream)
 
 
-def instance_with_scenario_name(instance_name, scenario_name):
+def instance_with_scenario_name(instance_name, scenario_name):  # type: ignore[no-untyped-def]
     """Format instance name that includes scenario."""
     return f"{instance_name}-{scenario_name}"
 
 
-def verbose_flag(options):
+def verbose_flag(options):  # type: ignore[no-untyped-def]
     """Return computed verbosity flag."""
     verbose = "v"
     verbose_flag = []
@@ -268,7 +268,7 @@ def verbose_flag(options):
     return verbose_flag
 
 
-def filter_verbose_permutation(options):
+def filter_verbose_permutation(options):  # type: ignore[no-untyped-def]
     """Clean verbose information."""
     return {k: options[k] for k in options if not re.match("^[v]+$", k)}
 
@@ -280,7 +280,7 @@ def abs_path(path: str) -> str | None:
     return None
 
 
-def merge_dicts(a: MutableMapping, b: MutableMapping) -> MutableMapping:
+def merge_dicts(a: MutableMapping, b: MutableMapping) -> MutableMapping:  # type: ignore[type-arg]
     """Merge the values of b into a and returns a new dict.
 
     This function uses the same algorithm as Ansible's `combine(recursive=True)` filter.
@@ -300,22 +300,22 @@ def merge_dicts(a: MutableMapping, b: MutableMapping) -> MutableMapping:
     return result
 
 
-def validate_parallel_cmd_args(cmd_args):
+def validate_parallel_cmd_args(cmd_args):  # type: ignore[no-untyped-def]
     """Prevents use of options incompatible with parallel mode."""
     if cmd_args.get("parallel") and cmd_args.get("destroy") == "never":
         msg = 'Combining "--parallel" and "--destroy=never" is not supported'
         sysexit_with_message(msg)
 
 
-def _parallelize_platforms(config, run_uuid):
-    def parallelize(platform):
+def _parallelize_platforms(config, run_uuid):  # type: ignore[no-untyped-def]
+    def parallelize(platform):  # type: ignore[no-untyped-def]
         platform["name"] = f"{platform['name']}-{run_uuid}"
         return platform
 
-    return [parallelize(platform) for platform in config["platforms"]]
+    return [parallelize(platform) for platform in config["platforms"]]  # type: ignore[no-untyped-call]
 
 
-def _filter_platforms(config, platform_name):
+def _filter_platforms(config, platform_name):  # type: ignore[no-untyped-def]
     for platform in config["platforms"]:
         if platform["name"] == platform_name:
             return [platform]
@@ -324,16 +324,16 @@ def _filter_platforms(config, platform_name):
 
 
 @cache
-def find_vcs_root(location="", dirs=(".git", ".hg", ".svn"), default=None) -> str:
+def find_vcs_root(location="", dirs=(".git", ".hg", ".svn"), default=None) -> str:  # type: ignore[no-untyped-def]
     """Return current repository root directory."""
     if not location:
         location = os.getcwd()
     prev, location = None, os.path.abspath(location)
     while prev != location:
         if any(os.path.isdir(os.path.join(location, d)) for d in dirs):
-            return location
+            return location  # type: ignore[no-any-return]
         prev, location = location, os.path.abspath(os.path.join(location, os.pardir))
-    return default
+    return default  # type: ignore[no-any-return]
 
 
 def lookup_config_file(filename: str) -> str | None:
@@ -346,7 +346,7 @@ def lookup_config_file(filename: str) -> str | None:
     return None
 
 
-def boolean(value: Any, strict=True) -> bool:
+def boolean(value: Any, strict=True) -> bool:  # type: ignore[no-untyped-def]
     """Evaluate any object as boolean matching ansible behavior."""
     # Based on https://github.com/ansible/ansible/blob/devel/lib/ansible/module_utils/parsing/convert_bool.py
 
@@ -371,7 +371,7 @@ def boolean(value: Any, strict=True) -> bool:
     )
 
 
-def dict2args(data: dict) -> list[str]:
+def dict2args(data: dict) -> list[str]:  # type: ignore[type-arg]
     """Convert a dictionary of options to command like arguments."""
     result = []
     # keep sorting in order to achieve a predictable behavior

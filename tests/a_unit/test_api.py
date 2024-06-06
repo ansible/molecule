@@ -22,22 +22,22 @@
 from molecule import api
 
 
-def test_api_molecule_drivers_as_attributes():
+def test_api_molecule_drivers_as_attributes():  # type: ignore[no-untyped-def]
     results = api.drivers()
     assert hasattr(results, "default")
-    assert isinstance(results.default, api.Driver)
+    assert isinstance(results.default, api.Driver)  # type: ignore[attr-defined]
 
 
-def test_api_drivers():
+def test_api_drivers():  # type: ignore[no-untyped-def]
     results = api.drivers()
 
     for result in results:
-        assert isinstance(result, api.Driver)
+        assert isinstance(result, api.Driver)  # type: ignore[attr-defined]
 
     assert "default" in results
 
 
-def test_api_verifiers():
+def test_api_verifiers():  # type: ignore[no-untyped-def]
     x = ["testinfra", "ansible"]
 
     assert all(elem in api.verifiers() for elem in x)

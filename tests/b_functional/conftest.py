@@ -46,14 +46,14 @@ MIN_PODMAN_VERSION = "1.5.1"
 
 
 @pytest.fixture(scope="session", autouse=True)
-def require_installed_package():
+def require_installed_package():  # type: ignore[no-untyped-def]
     try:
         molecule.__version__
     except Exception as e:
         pytest.fail(f"Functional tests require molecule package to be installed: {e}")
 
 
-def _env_vars_exposed(env_vars, env=os.environ):
+def _env_vars_exposed(env_vars, env=os.environ):  # type: ignore[no-untyped-def]
     """Check if environment variables are exposed and populated."""
     for env_var in env_vars:
         if env_var not in os.environ:
@@ -63,9 +63,9 @@ def _env_vars_exposed(env_vars, env=os.environ):
 
 
 @pytest.fixture()
-def with_scenario(request, scenario_to_test, driver_name, scenario_name, skip_test):
+def with_scenario(request, scenario_to_test, driver_name, scenario_name, skip_test):  # type: ignore[no-untyped-def]
     scenario_directory = os.path.join(
-        os.path.dirname(util.abs_path(__file__)),
+        os.path.dirname(util.abs_path(__file__)),  # type: ignore[arg-type, type-var]
         os.path.pardir,
         "scenarios",
         scenario_to_test,
@@ -81,20 +81,20 @@ def with_scenario(request, scenario_to_test, driver_name, scenario_name, skip_te
 
 
 @pytest.fixture()
-def skip_test(request, driver_name):
+def skip_test(request, driver_name):  # type: ignore[no-untyped-def]
     msg_tmpl = "Skipped '{}' not supported"
     support_checks_map = {
         "default": lambda: True,
     }
     try:
         check_func = support_checks_map[driver_name]
-        if not check_func():
+        if not check_func():  # type: ignore[no-untyped-call]
             pytest.skip(msg_tmpl.format(driver_name))
     except KeyError:
         pass
 
 
-def idempotence(scenario_name):
+def idempotence(scenario_name):  # type: ignore[no-untyped-def]
     cmd = ["molecule", "create", "--scenario-name", scenario_name]
     assert run_command(cmd).returncode == 0
 
@@ -105,7 +105,7 @@ def idempotence(scenario_name):
     assert run_command(cmd).returncode == 0
 
 
-def init_scenario(temp_dir, driver_name):
+def init_scenario(temp_dir, driver_name):  # type: ignore[no-untyped-def]
     with change_dir_to(temp_dir.strpath):
         # Create scenario
         molecule_dir = molecule_directory()
@@ -148,26 +148,26 @@ def metadata_lint_update(role_directory: str) -> None:
     assert result.returncode == 0
 
 
-def list_cmd(x):
+def list_cmd(x):  # type: ignore[no-untyped-def]
     cmd = ["molecule", "list"]
     result = run_command(cmd)
     assert result.returncode == 0
-    out = util.strip_ansi_color(result.stdout)
+    out = util.strip_ansi_color(result.stdout)  # type: ignore[attr-defined]
 
     for l in x.splitlines():
         assert l in out
 
 
-def list_with_format_plain(x):
+def list_with_format_plain(x):  # type: ignore[no-untyped-def]
     cmd = ["molecule", "list", "--format", "plain"]
     result = util.run_command(cmd)
-    out = strip_ansi_color(result.stdout)
+    out = strip_ansi_color(result.stdout)  # type: ignore[no-untyped-call]
 
     for l in x.splitlines():
         assert l in out
 
 
-def login(login_args, scenario_name="default"):
+def login(login_args, scenario_name="default"):  # type: ignore[no-untyped-def]
     cmd = ["molecule", "destroy", "--scenario-name", scenario_name]
     assert run_command(cmd).returncode == 0
 
@@ -187,7 +187,7 @@ def login(login_args, scenario_name="default"):
         child.sendline("exit")
 
 
-def run_test(driver_name, scenario_name="default", parallel=False):
+def run_test(driver_name, scenario_name="default", parallel=False):  # type: ignore[no-untyped-def]
     cmd = ["molecule", "test", "--scenario-name", scenario_name]
     if driver_name != "default":
         if scenario_name is None:
@@ -198,7 +198,7 @@ def run_test(driver_name, scenario_name="default", parallel=False):
     assert run_command(cmd).returncode == 0
 
 
-def verify(scenario_name="default"):
+def verify(scenario_name="default"):  # type: ignore[no-untyped-def]
     cmd = ["molecule", "create", "--scenario-name", scenario_name]
     assert run_command(cmd).returncode == 0
 
@@ -213,7 +213,7 @@ def get_docker_executable() -> str | None:
     return shutil.which("docker")
 
 
-def get_virtualbox_executable():
+def get_virtualbox_executable():  # type: ignore[no-untyped-def]
     return shutil.which("VBoxManage")
 
 

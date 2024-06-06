@@ -27,7 +27,7 @@ from molecule.command import verify
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-def test_verify_execute(
+def test_verify_execute(  # type: ignore[no-untyped-def]
     mocker: MockerFixture,
     caplog,
     patched_default_verifier,
@@ -35,7 +35,7 @@ def test_verify_execute(
     config_instance: config.Config,
 ):
     v = verify.Verify(config_instance)
-    v.execute()
+    v.execute()  # type: ignore[no-untyped-call]
 
     assert "default" in caplog.text
     assert "verify" in caplog.text

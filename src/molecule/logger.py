@@ -52,7 +52,7 @@ def configure() -> None:
         show_time=False,
         show_path=False,
         markup=True,
-    )  # type: ignore
+    )
     logger.addHandler(handler)
     logger.propagate = False
     logger.setLevel(logging.INFO)
@@ -79,14 +79,14 @@ def get_logger(name: str) -> logging.Logger:
     return logging.getLogger("molecule." + name)
 
 
-def github_actions_groups(func: Callable) -> Callable:
+def github_actions_groups(func: Callable) -> Callable:  # type: ignore[type-arg]
     """Print group indicators before/after execution of a method."""
 
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]
         self = args[0]
         scenario = self._config.scenario.name
-        subcommand = underscore(self.__class__.__name__)
+        subcommand = underscore(self.__class__.__name__)  # type: ignore[no-untyped-call]
         console.print(
             "::group::",
             f"[ci_info]Molecule[/] [scenario]{scenario}[/] > [action]{subcommand}[/]",
@@ -103,7 +103,7 @@ def github_actions_groups(func: Callable) -> Callable:
     return wrapper
 
 
-def gitlab_ci_sections(func: Callable) -> Callable:
+def gitlab_ci_sections(func: Callable) -> Callable:  # type: ignore[type-arg]
     """Print group indicators before/after execution of a method."""
     # GitLab requires:
     #  - \r (carriage return)
@@ -111,10 +111,10 @@ def gitlab_ci_sections(func: Callable) -> Callable:
     clear_line = "\r\033[0K"
 
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]
         self = args[0]
         scenario = self._config.scenario.name
-        subcommand = underscore(self.__class__.__name__)
+        subcommand = underscore(self.__class__.__name__)  # type: ignore[no-untyped-call]
         console.print(
             f"section_start:{int(time.time())}:{scenario}.{subcommand}",
             end=clear_line,
@@ -144,14 +144,14 @@ def gitlab_ci_sections(func: Callable) -> Callable:
     return wrapper
 
 
-def travis_ci_folds(func: Callable) -> Callable:
+def travis_ci_folds(func: Callable) -> Callable:  # type: ignore[type-arg]
     """Print group indicators before/after execution of a method."""
 
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]
         self = args[0]
         scenario = self._config.scenario.name
-        subcommand = underscore(self.__class__.__name__)
+        subcommand = underscore(self.__class__.__name__)  # type: ignore[no-untyped-call]
         console.print(
             f"travis_fold:start:{scenario}.{subcommand}",
             f"[ci_info]Molecule[/] [scenario]{scenario}[/] > [action]{subcommand}[/]",
@@ -173,16 +173,16 @@ def travis_ci_folds(func: Callable) -> Callable:
     return wrapper
 
 
-def section_logger(func: Callable) -> Callable:
+def section_logger(func: Callable) -> Callable:  # type: ignore[type-arg]
     """Wrap effective execution of a method."""
 
     @wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args, **kwargs):  # type: ignore[no-untyped-def]
         self = args[0]
         LOG.info(
             "[info]Running [scenario]%s[/] > [action]%s[/][/]",
             self._config.scenario.name,
-            underscore(self.__class__.__name__),
+            underscore(self.__class__.__name__),  # type: ignore[no-untyped-call]
             extra={"markup": True},
         )
         rt = func(*args, **kwargs)
@@ -193,7 +193,7 @@ def section_logger(func: Callable) -> Callable:
 
 
 @cache
-def get_section_loggers() -> Iterable[Callable]:
+def get_section_loggers() -> Iterable[Callable]:  # type: ignore[type-arg]
     """Return a list of section wrappers to be added."""
     default_section_loggers = [section_logger]
     if not os.getenv("CI"):

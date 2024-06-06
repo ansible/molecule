@@ -35,12 +35,12 @@ LOG = logging.getLogger(__name__)
 class Login(base.Base):
     """Login Command Class."""
 
-    def __init__(self, c) -> None:
+    def __init__(self, c) -> None:  # type: ignore[no-untyped-def]
         """Construct Login."""
         super().__init__(c)
         self._pt = None
 
-    def execute(self, action_args=None):
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]
         """Execute the actions necessary to perform a `molecule login` and \
         returns None.
 
@@ -52,10 +52,10 @@ class Login(base.Base):
             util.sysexit_with_message(msg)
 
         hosts = [d["name"] for d in self._config.platforms.instances]
-        hostname = self._get_hostname(hosts)
-        self._get_login(hostname)
+        hostname = self._get_hostname(hosts)  # type: ignore[no-untyped-call]
+        self._get_login(hostname)  # type: ignore[no-untyped-call]
 
-    def _get_hostname(self, hosts):
+    def _get_hostname(self, hosts):  # type: ignore[no-untyped-def]
         hostname = self._config.command_args.get("host")
         host_list = "\n".join(sorted(hosts))
         if hostname is None:
@@ -90,7 +90,7 @@ class Login(base.Base):
 
         return match[0]
 
-    def _get_login(self, hostname):  # pragma: no cover
+    def _get_login(self, hostname):  # type: ignore[no-untyped-def] # pragma: no cover
         # ruff: noqa: S605,S607
         lines, columns = os.popen("stty size", "r").read().split()
         login_options = self._config.driver.login_options(hostname)
@@ -118,12 +118,12 @@ class Login(base.Base):
     default=base.MOLECULE_DEFAULT_SCENARIO_NAME,
     help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
-def login(ctx, host, scenario_name):  # pragma: no cover
+def login(ctx, host, scenario_name):  # type: ignore[no-untyped-def] # pragma: no cover
     """Log in to one instance."""
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)
+    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]
     command_args = {"subcommand": subcommand, "host": host}
 
-    s = scenarios.Scenarios(base.get_configs(args, command_args), scenario_name)
+    s = scenarios.Scenarios(base.get_configs(args, command_args), scenario_name)  # type: ignore[no-untyped-call]
     for scenario in s.all:
-        base.execute_subcommand(scenario.config, subcommand)
+        base.execute_subcommand(scenario.config, subcommand)  # type: ignore[no-untyped-call]

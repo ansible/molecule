@@ -73,15 +73,15 @@ class Interpolator:
     def __init__(
         self,
         templater: type["TemplateWithDefaults"],
-        mapping: MutableMapping,
+        mapping: MutableMapping,  # type: ignore[type-arg]
     ) -> None:
         """Construct Interpolator."""
         self.templater = templater
         self.mapping = mapping
 
-    def interpolate(self, string: str, keep_string=None) -> str:
+    def interpolate(self, string: str, keep_string=None) -> str:  # type: ignore[no-untyped-def]
         try:
-            return self.templater(string).substitute(self.mapping, keep_string)  # type: ignore
+            return self.templater(string).substitute(self.mapping, keep_string)  # type: ignore[no-any-return, no-untyped-call]
         except ValueError as e:
             raise InvalidInterpolation(string, e) from e
 
@@ -92,9 +92,9 @@ class TemplateWithDefaults(string.Template):
     idpattern = r"[_a-z][_a-z0-9]*(?::?-[^}]+)?"
 
     # pylint: disable=too-many-return-statements
-    def substitute(self, mapping, keep_string):
+    def substitute(self, mapping, keep_string):  # type: ignore[no-untyped-def]
         # Helper function for .sub()
-        def convert(mo):
+        def convert(mo):  # type: ignore[no-untyped-def]
             # Check the most common path first.
             named = mo.group("named") or mo.group("braced")
             if named is not None:
@@ -117,7 +117,7 @@ class TemplateWithDefaults(string.Template):
             if mo.group("escaped") is not None:
                 return self.delimiter
             if mo.group("invalid") is not None:
-                self._invalid(mo)
+                self._invalid(mo)  # type: ignore[attr-defined]
                 return None
             return None
 

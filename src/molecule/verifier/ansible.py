@@ -23,7 +23,7 @@ import logging
 import os
 
 from molecule import util
-from molecule.api import Verifier
+from molecule.api import Verifier  # type: ignore[attr-defined]
 
 log = logging.getLogger(__name__)
 
@@ -59,19 +59,19 @@ class Ansible(Verifier):
     """
 
     @property
-    def name(self):
+    def name(self):  # type: ignore[no-untyped-def]
         return "ansible"
 
     @property
-    def default_options(self):
+    def default_options(self):  # type: ignore[no-untyped-def]
         return {}
 
     @property
-    def default_env(self):
+    def default_env(self):  # type: ignore[no-untyped-def]
         env = util.merge_dicts(os.environ, self._config.env)
         return util.merge_dicts(env, self._config.provisioner.env)
 
-    def execute(self, action_args=None):
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]
         if not self.enabled:
             msg = "Skipping, verifier is disabled."
             log.warning(msg)
@@ -85,7 +85,7 @@ class Ansible(Verifier):
         msg = "Verifier completed successfully."
         log.info(msg)
 
-    def schema(self):
+    def schema(self):  # type: ignore[no-untyped-def]
         return {
             "verifier": {
                 "type": "dict",

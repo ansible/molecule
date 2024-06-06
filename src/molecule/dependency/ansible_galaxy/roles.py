@@ -16,7 +16,7 @@ class Roles(AnsibleGalaxyBase):
     COMMANDS = ("install",)
 
     @property
-    def default_options(self):
+    def default_options(self):  # type: ignore[no-untyped-def]
         general = super().default_options
         specific = util.merge_dicts(
             general,
@@ -30,5 +30,5 @@ class Roles(AnsibleGalaxyBase):
         return specific
 
     @property
-    def requirements_file(self):
+    def requirements_file(self):  # type: ignore[no-untyped-def]
         return self.options["role-file"]

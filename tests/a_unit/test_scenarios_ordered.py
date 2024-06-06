@@ -26,7 +26,7 @@ from molecule import config, scenarios
 
 
 @pytest.fixture()
-def _instance(config_instance: config.Config):
+def _instance(config_instance: config.Config):  # type: ignore[no-untyped-def]
     config_instance_1 = copy.deepcopy(config_instance)
     config_instance_1.config["scenario"]["name"] = "two"
     config_instance_1.molecule_file = config_instance_1.molecule_file.replace(
@@ -53,7 +53,7 @@ def _instance(config_instance: config.Config):
     )
 
 
-def test_all_ordered(_instance):
+def test_all_ordered(_instance):  # type: ignore[no-untyped-def]
     result = _instance.all
 
     assert len(result) == 3

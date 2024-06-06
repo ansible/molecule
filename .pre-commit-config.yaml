@@ -53,31 +53,27 @@ repos:
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
-  - repo: https://github.com/pre-commit/mirrors-mypy
+  - repo: https://github.com/pre-commit/mirrors-mypy.git
     rev: v1.10.0
     hooks:
       - id: mypy
-        # empty args needed in order to match mypy cli behavior
-        args: []
-        entry: mypy src/ tests/
-        pass_filenames: false
         additional_dependencies:
           - ansible-compat>=24.6.1
-          - click>=8.0.1,<8.1.4 # https://github.com/pallets/click/issues/2558
-          - enrich>=1.2.7
-          - importlib-metadata>=4.6.1
-          - jinja2
-          - packaging
+          - click
+          - click-help-colors
+          - enrich
           - pytest
           - pytest-mock
           - rich
-          - ruamel.yaml>=0.17.10
-          - types-PyYAML
-          - types-dataclasses
+          - types-pyyaml
           - types-filelock
           - types-jsonschema
+          - types-pexpect
           - types-setuptools
           - wcmatch
+        # Override default pre-commit '--ignore-missing-imports'
+        args: [--strict]
+
   - repo: https://github.com/pycqa/pylint
     rev: v3.2.2
     hooks:

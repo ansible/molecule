@@ -24,7 +24,7 @@ from molecule.model import schema_v3
 
 
 @pytest.fixture()
-def _model_scenario_section_data():
+def _model_scenario_section_data():  # type: ignore[no-untyped-def]
     return {
         "scenario": {
             "name": "foo",
@@ -38,12 +38,12 @@ def _model_scenario_section_data():
 
 
 @pytest.mark.parametrize("_config", ["_model_scenario_section_data"], indirect=True)
-def test_scenario(_config):
-    assert not schema_v3.validate(_config)
+def test_scenario(_config):  # type: ignore[no-untyped-def]
+    assert not schema_v3.validate(_config)  # type: ignore[no-untyped-call]
 
 
 @pytest.fixture()
-def _model_scenario_errors_section_data():
+def _model_scenario_errors_section_data():  # type: ignore[no-untyped-def]
     return {"scenario": {"name": 0}}
 
 
@@ -52,7 +52,7 @@ def _model_scenario_errors_section_data():
     ["_model_scenario_errors_section_data"],
     indirect=True,
 )
-def test_scenario_has_errors(_config):
+def test_scenario_has_errors(_config):  # type: ignore[no-untyped-def]
     x = ["0 is not of type 'string'"]
 
-    assert x == schema_v3.validate(_config)
+    assert x == schema_v3.validate(_config)  # type: ignore[no-untyped-call]

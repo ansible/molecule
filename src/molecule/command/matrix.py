@@ -71,10 +71,10 @@ class Matrix(base.Base):
 # NOTE(retr0h): Cannot introspect base.Base for `click.Choice`, since
 # subclasses have not all loaded at this point.
 @click.argument("subcommand", nargs=1, type=click.UNPROCESSED)
-def matrix(ctx, scenario_name, subcommand):  # pragma: no cover
+def matrix(ctx, scenario_name, subcommand):  # type: ignore[no-untyped-def] # pragma: no cover
     """List matrix of steps used to test instances."""
     args = ctx.obj.get("args")
     command_args = {"subcommand": subcommand}
 
-    s = scenarios.Scenarios(base.get_configs(args, command_args), scenario_name)
-    s.print_matrix()
+    s = scenarios.Scenarios(base.get_configs(args, command_args), scenario_name)  # type: ignore[no-untyped-call]
+    s.print_matrix()  # type: ignore[no-untyped-call]

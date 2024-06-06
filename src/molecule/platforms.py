@@ -68,7 +68,7 @@ class Platforms:
     ```
     """
 
-    def __init__(self, config, parallelize_platforms=False, platform_name=None) -> None:
+    def __init__(self, config, parallelize_platforms=False, platform_name=None) -> None:  # type: ignore[no-untyped-def]
         """Initialize a new platform class and returns None.
 
         :param config: An instance of a Molecule config.
@@ -77,17 +77,17 @@ class Platforms:
         :return: None
         """
         if platform_name:
-            config.config["platforms"] = util._filter_platforms(
+            config.config["platforms"] = util._filter_platforms(  # type: ignore[no-untyped-call]
                 config.config,
                 platform_name,
-            )  # type: ignore
+            )
         if parallelize_platforms:
-            config.config["platforms"] = util._parallelize_platforms(
+            config.config["platforms"] = util._parallelize_platforms(  # type: ignore[no-untyped-call]
                 config.config,
                 config._run_uuid,
-            )  # type: ignore
+            )
         self._config = config
 
     @property
-    def instances(self):
+    def instances(self):  # type: ignore[no-untyped-def]
         return self._config.config["platforms"]

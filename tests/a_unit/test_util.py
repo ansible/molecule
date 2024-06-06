@@ -39,12 +39,12 @@ from tests.conftest import (  # pylint:disable = C0411
 )
 
 
-def test_print_debug():
+def test_print_debug():  # type: ignore[no-untyped-def]
     expected = "DEBUG: test_title:\ntest_data\n"
     with console.capture() as capture:
         util.print_debug("test_title", "test_data")
 
-    result = strip_ansi_escape(capture.get())
+    result = strip_ansi_escape(capture.get())  # type: ignore[no-untyped-call]
     assert result == expected
 
 
@@ -71,25 +71,25 @@ ANSIBLE_BAR=bar ANSIBLE_FOO=foo MOLECULE_BAR=bar MOLECULE_FOO=foo
 
     with console.capture() as capture:
         util.print_environment_vars(env)
-    result = strip_ansi_escape(capture.get())
+    result = strip_ansi_escape(capture.get())  # type: ignore[no-untyped-call]
     assert result == expected
 
 
-def test_sysexit():
+def test_sysexit():  # type: ignore[no-untyped-def]
     with pytest.raises(SystemExit) as e:
         util.sysexit()
 
     assert e.value.code == 1
 
 
-def test_sysexit_with_custom_code():
+def test_sysexit_with_custom_code():  # type: ignore[no-untyped-def]
     with pytest.raises(SystemExit) as e:
         util.sysexit(2)
 
     assert e.value.code == 2
 
 
-def test_sysexit_with_message(caplog: pytest.LogCaptureFixture):
+def test_sysexit_with_message(caplog: pytest.LogCaptureFixture):  # type: ignore[no-untyped-def]
     with pytest.raises(SystemExit) as e:
         util.sysexit_with_message("foo")
 
@@ -98,7 +98,7 @@ def test_sysexit_with_message(caplog: pytest.LogCaptureFixture):
     assert "foo" in caplog.text
 
 
-def test_sysexit_with_warns(caplog: pytest.LogCaptureFixture):
+def test_sysexit_with_warns(caplog: pytest.LogCaptureFixture):  # type: ignore[no-untyped-def]
     with pytest.raises(SystemExit) as e:
         with warnings.catch_warnings(record=True) as warns:
             warnings.filterwarnings("default", category=MoleculeRuntimeWarning)
@@ -112,7 +112,7 @@ def test_sysexit_with_warns(caplog: pytest.LogCaptureFixture):
     assert "xxx" in caplog.text
 
 
-def test_sysexit_with_message_and_custom_code(caplog: pytest.LogCaptureFixture):
+def test_sysexit_with_message_and_custom_code(caplog: pytest.LogCaptureFixture):  # type: ignore[no-untyped-def]
     with pytest.raises(SystemExit) as e:
         util.sysexit_with_message("foo", 2)
 
@@ -121,14 +121,14 @@ def test_sysexit_with_message_and_custom_code(caplog: pytest.LogCaptureFixture):
     assert "foo" in caplog.text
 
 
-def test_run_command():
+def test_run_command():  # type: ignore[no-untyped-def]
     cmd = ["ls"]
     x = util.run_command(cmd)
 
     assert x.returncode == 0
 
 
-def test_run_command_with_debug(mocker: MockerFixture, patched_print_debug):
+def test_run_command_with_debug(mocker: MockerFixture, patched_print_debug):  # type: ignore[no-untyped-def]
     env = {"ANSIBLE_FOO": "foo", "MOLECULE_BAR": "bar"}
     util.run_command(["ls"], debug=True, env=env)
     x = [
@@ -140,7 +140,7 @@ def test_run_command_with_debug(mocker: MockerFixture, patched_print_debug):
     assert x == patched_print_debug.mock_calls
 
 
-def test_run_command_baked_cmd_env():
+def test_run_command_baked_cmd_env():  # type: ignore[no-untyped-def]
     cmd = ["printenv", "myvar"]
     result = util.run_command(cmd, env={"myvar": "value2"})
     assert result.returncode == 0
@@ -155,7 +155,7 @@ def test_run_command_baked_cmd_env():
     assert result.returncode == 1
 
 
-def test_run_command_with_debug_handles_no_env(
+def test_run_command_with_debug_handles_no_env(  # type: ignore[no-untyped-def]
     mocker: MockerFixture,
     patched_print_debug,
 ):
@@ -167,7 +167,7 @@ def test_run_command_with_debug_handles_no_env(
     assert empty_list == patched_print_debug.mock_calls
 
 
-def test_os_walk(temp_dir):
+def test_os_walk(temp_dir):  # type: ignore[no-untyped-def]
     scenarios = ["scenario1", "scenario2", "scenario3"]
     mol_dir = molecule_directory()
     for scenario in scenarios:
@@ -176,25 +176,25 @@ def test_os_walk(temp_dir):
         os.makedirs(scenario_directory, exist_ok=True)
         util.write_file(molecule_file, "")
 
-    result = list(util.os_walk(mol_dir, "molecule.yml"))
+    result = list(util.os_walk(mol_dir, "molecule.yml"))  # type: ignore[no-untyped-call]
     assert len(result) == 3
 
 
-def test_render_template():
+def test_render_template():  # type: ignore[no-untyped-def]
     template = "{{ foo }} = {{ bar }}"
 
-    assert util.render_template(template, foo="foo", bar="bar") == "foo = bar"
+    assert util.render_template(template, foo="foo", bar="bar") == "foo = bar"  # type: ignore[no-untyped-call]
 
 
-def test_render_template_quoted():
+def test_render_template_quoted():  # type: ignore[no-untyped-def]
     template = """
     {{ 'url = "quoted_str"' }}
     """.strip()
 
-    assert util.render_template(template) == 'url = "quoted_str"'
+    assert util.render_template(template) == 'url = "quoted_str"'  # type: ignore[no-untyped-call]
 
 
-def test_write_file(temp_dir):
+def test_write_file(temp_dir):  # type: ignore[no-untyped-def]
     dest_file = os.path.join(temp_dir.strpath, "test_util_write_file.tmp")
     contents = binascii.b2a_hex(os.urandom(15)).decode("utf-8")
     util.write_file(dest_file, contents)
@@ -213,7 +213,7 @@ def test_molecule_prepender(tmp_path: Path) -> None:
     assert x == fname.read_text()
 
 
-def test_safe_dump():
+def test_safe_dump():  # type: ignore[no-untyped-def]
     x = """
 ---
 foo: bar
@@ -222,7 +222,7 @@ foo: bar
     assert x == util.safe_dump({"foo": "bar"})
 
 
-def test_safe_dump_with_increase_indent():
+def test_safe_dump_with_increase_indent():  # type: ignore[no-untyped-def]
     data = {"foo": [{"foo": "bar", "baz": "zzyzx"}]}
 
     x = """
@@ -254,7 +254,7 @@ def test_safe_load_exits_when_cannot_parse() -> None:
     assert e.value.code == 1
 
 
-def test_safe_load_file(temp_dir) -> None:
+def test_safe_load_file(temp_dir) -> None:  # type: ignore[no-untyped-def]
     path = os.path.join(temp_dir.strpath, "foo")
     util.write_file(path, "foo: bar")
 
@@ -262,13 +262,13 @@ def test_safe_load_file(temp_dir) -> None:
 
 
 def test_instance_with_scenario_name() -> None:
-    assert util.instance_with_scenario_name("foo", "bar") == "foo-bar"
+    assert util.instance_with_scenario_name("foo", "bar") == "foo-bar"  # type: ignore[no-untyped-call]
 
 
 def test_verbose_flag() -> None:
     options = {"verbose": True, "v": True}
 
-    assert ["-v"] == util.verbose_flag(options)
+    assert ["-v"] == util.verbose_flag(options)  # type: ignore[no-untyped-call]
     # pylint: disable=use-implicit-booleaness-not-comparison
     assert {} == options
 
@@ -276,7 +276,7 @@ def test_verbose_flag() -> None:
 def test_verbose_flag_extra_verbose() -> None:
     options = {"verbose": True, "vvv": True}
 
-    assert ["-vvv"] == util.verbose_flag(options)
+    assert ["-vvv"] == util.verbose_flag(options)  # type: ignore[no-untyped-call]
     # pylint: disable=use-implicit-booleaness-not-comparison
     assert {} == options
 
@@ -285,7 +285,7 @@ def test_verbose_flag_preserves_verbose_option() -> None:
     options = {"verbose": True}
 
     # pylint: disable=use-implicit-booleaness-not-comparison
-    assert [] == util.verbose_flag(options)
+    assert [] == util.verbose_flag(options)  # type: ignore[no-untyped-call]
     assert {"verbose": True} == options
 
 
@@ -300,10 +300,10 @@ def test_filter_verbose_permutation() -> None:
     }
 
     x = {"vfoo": True, "foo": True, "bar": True}
-    assert x == util.filter_verbose_permutation(options)
+    assert x == util.filter_verbose_permutation(options)  # type: ignore[no-untyped-call]
 
 
-def test_abs_path(temp_dir) -> None:
+def test_abs_path(temp_dir) -> None:  # type: ignore[no-untyped-def]
     x = os.path.abspath(os.path.join(os.getcwd(), os.path.pardir, "foo", "bar"))
 
     assert x == util.abs_path(os.path.join(os.path.pardir, "foo", "bar"))
@@ -332,5 +332,5 @@ def test_abs_path_with_none_path() -> None:
         ),
     ],
 )
-def test_merge_dicts(a, b, x) -> None:
+def test_merge_dicts(a, b, x) -> None:  # type: ignore[no-untyped-def]
     assert x == util.merge_dicts(a, b)

@@ -28,12 +28,12 @@ from molecule.command import cleanup
 
 
 @pytest.fixture()
-def _command_provisioner_section_with_cleanup_data():
+def _command_provisioner_section_with_cleanup_data():  # type: ignore[no-untyped-def]
     return {"provisioner": {"name": "ansible", "playbooks": {"cleanup": "cleanup.yml"}}}
 
 
 @pytest.fixture()
-def _patched_ansible_cleanup(mocker):
+def _patched_ansible_cleanup(mocker):  # type: ignore[no-untyped-def]
     return mocker.patch("molecule.provisioner.ansible.Ansible.cleanup")
 
 
@@ -45,7 +45,7 @@ def _patched_ansible_cleanup(mocker):
     ["_command_provisioner_section_with_cleanup_data"],
     indirect=True,
 )
-def test_cleanup_execute(
+def test_cleanup_execute(  # type: ignore[no-untyped-def]
     mocker: MockerFixture,
     _patched_ansible_cleanup,
     caplog,
@@ -56,20 +56,20 @@ def test_cleanup_execute(
     util.write_file(pb, "")
 
     cu = cleanup.Cleanup(config_instance)
-    cu.execute()
+    cu.execute()  # type: ignore[no-untyped-call]
 
     assert "cleanup" in caplog.text
 
     _patched_ansible_cleanup.assert_called_once_with()
 
 
-def test_cleanup_execute_skips_when_playbook_not_configured(
+def test_cleanup_execute_skips_when_playbook_not_configured(  # type: ignore[no-untyped-def]
     caplog,
     _patched_ansible_cleanup,
     config_instance: config.Config,
 ):
     cu = cleanup.Cleanup(config_instance)
-    cu.execute()
+    cu.execute()  # type: ignore[no-untyped-call]
 
     msg = "Skipping, cleanup playbook not configured."
     assert msg in caplog.text
