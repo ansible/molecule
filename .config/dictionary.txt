@@ -2,6 +2,7 @@ anyconfig
 autouse
 autovivification
 booleaness
+boto
 buildah
 cacheprovider
 caplog
@@ -34,6 +35,7 @@ ericsysmin
 euxo
 failover
 fileglob
+filelock
 followlinks
 fooo
 frob
@@ -48,6 +50,7 @@ jinaj
 jodewey
 jpvanhal
 jsonfile
+jsonschema
 keypair
 kubevirt
 libcloud
@@ -60,10 +63,12 @@ maxsplit
 metacopy
 mfoo
 minversion
+mkdocs
 modifyitems
 mountopt
 multibranch
 mygroups
+netifaces
 nitz
 nocows
 nodestroy
@@ -75,6 +80,8 @@ overlayfs
 parallelizable
 passenv
 passwordless
+pipdeptree
+pluggy
 prepender
 prerun
 printenv
@@ -95,6 +102,7 @@ selectattr
 sendline
 serviceaccount
 setenv
+setuptools
 signoff
 skipsdist
 snapcraft
@@ -123,4 +131,5 @@ virt
 virt's
 virtenv
 virtualmachines
+wcmatch
 zzyzx
