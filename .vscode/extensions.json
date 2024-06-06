@@ -1,19 +1,14 @@
 {
   "recommendations": [
-    "Tyriar.sort-lines",
     "charliermarsh.ruff",
     "esbenp.prettier-vscode",
-    "hbenl.vscode-test-explorer",
-    "ms-python.isort",
+    "markis.code-coverage",
+    "ms-python.black-formatter",
+    "ms-python.debugpy",
+    "ms-python.flake8",
+    "ms-python.mypy-type-checker",
+    "ms-python.pylint",
     "ms-python.python",
-    "ms-python.vscode-pylance",
-    "ms-vscode.live-server",
-    "redhat.ansible",
-    "redhat.vscode-yaml",
-    "ryanluker.vscode-coverage-gutters",
-    "shardulm94.trailing-spaces",
-    "tamasfe.even-better-toml",
-    "timonwong.shellcheck",
-    "znck.grammarly"
+    "streetsidesoftware.code-spell-checker"
   ]
 }
