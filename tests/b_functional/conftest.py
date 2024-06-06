@@ -35,7 +35,7 @@ from molecule import logger, util
 from molecule.app import app
 from molecule.text import strip_ansi_color
 from molecule.util import run_command
-from test.conftest import change_dir_to, molecule_directory  # pylint:disable=C0411
+from tests.conftest import change_dir_to, molecule_directory  # pylint:disable=C0411
 
 LOG = logger.get_logger(__name__)
 

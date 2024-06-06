@@ -59,7 +59,7 @@ repos:
       - id: mypy
         # empty args needed in order to match mypy cli behavior
         args: []
-        entry: mypy src/ test/
+        entry: mypy src/ tests/
         pass_filenames: false
         additional_dependencies:
           - ansible-compat>=24.6.1

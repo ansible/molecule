@@ -32,7 +32,7 @@ import pytest
 from pytest_mock import MockerFixture
 
 from molecule import config, util
-from test.conftest import (  # pylint:disable=C0411
+from tests.conftest import (  # pylint:disable=C0411
     molecule_directory,
     molecule_ephemeral_directory,
     molecule_file,

@@ -198,7 +198,7 @@ parametrize-values-type = "tuple"
 known-first-party = ["molecule"]
 
 [tool.ruff.per-file-ignores]
-"test/**.py" = ["S"]
+"tests/**.py" = ["S"]
 "src/molecule/*/\\{\\{*/**.py" = ["S"]
 
 [tool.setuptools.dynamic]

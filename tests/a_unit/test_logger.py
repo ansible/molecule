@@ -29,7 +29,7 @@ from molecule.console import should_do_markup
 from molecule.logger import get_section_loggers
 
 
-# the dummy/instance fixtures are based on fixtures in test.unit.command.test_base
+# the dummy/instance fixtures are based on fixtures in tests.unit.command.test_base
 class Dummy(Base):
     """ExtendedBase Class."""
 

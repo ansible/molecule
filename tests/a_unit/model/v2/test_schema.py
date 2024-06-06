@@ -32,7 +32,7 @@ def test_molecule_schema():
         "-v",
         "--schemafile",
         "src/molecule/data/molecule.json",
-        "test/resources/schema_instance_files/valid/molecule.yml",
+        "tests/resources/schema_instance_files/valid/molecule.yml",
     ]
     assert run_command(cmd).returncode == 0
 
@@ -41,6 +41,6 @@ def test_molecule_schema():
         "-v",
         "--schemafile",
         "src/molecule/data/driver.json",
-        "test/resources/schema_instance_files/invalid/molecule_delegated.yml",
+        "tests/resources/schema_instance_files/invalid/molecule_delegated.yml",
     ]
     assert run_command(cmd).returncode != 0
