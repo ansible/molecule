@@ -31,7 +31,7 @@ LOG = logging.getLogger(__name__)
 class AnsiblePlaybooks:
     """A class to act as a module to namespace playbook properties."""
 
-    def __init__(self, config) -> None:
+    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]
         """Initialize a new namespace class and returns None.
 
         :param config: An instance of a Molecule config.
@@ -40,39 +40,39 @@ class AnsiblePlaybooks:
         self._config = config
 
     @property
-    def cleanup(self):
-        return self._get_playbook("cleanup")
+    def cleanup(self):  # type: ignore[no-untyped-def]
+        return self._get_playbook("cleanup")  # type: ignore[no-untyped-call]
 
     @property
-    def create(self):
-        return self._get_playbook("create")
+    def create(self):  # type: ignore[no-untyped-def]
+        return self._get_playbook("create")  # type: ignore[no-untyped-call]
 
     @property
-    def converge(self):
-        return self._get_playbook("converge")
+    def converge(self):  # type: ignore[no-untyped-def]
+        return self._get_playbook("converge")  # type: ignore[no-untyped-call]
 
     @property
-    def destroy(self):
-        return self._get_playbook("destroy")
+    def destroy(self):  # type: ignore[no-untyped-def]
+        return self._get_playbook("destroy")  # type: ignore[no-untyped-call]
 
     @property
-    def prepare(self):
-        return self._get_playbook("prepare")
+    def prepare(self):  # type: ignore[no-untyped-def]
+        return self._get_playbook("prepare")  # type: ignore[no-untyped-call]
 
     @property
-    def side_effect(self):
-        return self._get_playbook("side_effect")
+    def side_effect(self):  # type: ignore[no-untyped-def]
+        return self._get_playbook("side_effect")  # type: ignore[no-untyped-call]
 
     @property
-    def verify(self):
-        return self._get_playbook("verify")
+    def verify(self):  # type: ignore[no-untyped-def]
+        return self._get_playbook("verify")  # type: ignore[no-untyped-call]
 
-    def _get_playbook_directory(self):
+    def _get_playbook_directory(self):  # type: ignore[no-untyped-def]
         return util.abs_path(
             os.path.join(self._config.provisioner.directory, "playbooks"),
         )
 
-    def _get_playbook(self, section):
+    def _get_playbook(self, section):  # type: ignore[no-untyped-def]
         """Return path to playbook or None if playbook is not needed.
 
         Return None when there is no playbook configured and when action is
@@ -89,12 +89,12 @@ class AnsiblePlaybooks:
                 LOG.exception(exc)
         if playbook is not None:
             playbook = self._config.provisioner.abs_path(playbook)
-            playbook = self._normalize_playbook(playbook)
+            playbook = self._normalize_playbook(playbook)  # type: ignore[no-untyped-call]
 
             if os.path.exists(playbook):
                 return playbook
-            if os.path.exists(self._get_bundled_driver_playbook(section)):
-                return self._get_bundled_driver_playbook(section)
+            if os.path.exists(self._get_bundled_driver_playbook(section)):  # type: ignore[no-untyped-call]
+                return self._get_bundled_driver_playbook(section)  # type: ignore[no-untyped-call]
             if section not in [
                 # these playbooks can be considered optional
                 "prepare",
@@ -107,13 +107,13 @@ class AnsiblePlaybooks:
                 return playbook
         return None
 
-    def _get_bundled_driver_playbook(self, section):
+    def _get_bundled_driver_playbook(self, section):  # type: ignore[no-untyped-def]
         path = self._config.driver.get_playbook(section)
         if path:
             return path
 
         path = os.path.join(
-            self._get_playbook_directory(),
+            self._get_playbook_directory(),  # type: ignore[no-untyped-call]
             self._config.driver.name,
             self._config.config["provisioner"]["playbooks"][section],
         )
@@ -126,7 +126,7 @@ class AnsiblePlaybooks:
         )
         return path
 
-    def _normalize_playbook(self, playbook):
+    def _normalize_playbook(self, playbook):  # type: ignore[no-untyped-def]
         """Return current filename to use for a playook by allowing fallbacks.
 
         Currently used to deprecate use of playbook.yml in favour of converge.yml

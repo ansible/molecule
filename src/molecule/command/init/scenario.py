@@ -62,7 +62,7 @@ class Scenario(base.Base):
         """Construct Scenario."""
         self._command_args = command_args
 
-    def execute(self, action_args=None):
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]
         """Execute the actions necessary to perform a `molecule init scenario` and \
         returns None.
 
@@ -103,7 +103,7 @@ class Scenario(base.Base):
         LOG.info(msg)
 
 
-def _role_exists(ctx, param, value: str):  # pragma: no cover
+def _role_exists(ctx, param, value: str):  # type: ignore[no-untyped-def] # pragma: no cover
     # if role name was not mentioned we assume that current directory is the
     # one hosting the role and determining the role name.
     if not value:
@@ -142,7 +142,7 @@ def _role_exists(ctx, param, value: str):  # pragma: no cover
     default=command_base.MOLECULE_DEFAULT_SCENARIO_NAME,
     required=False,
 )
-def scenario(
+def scenario(  # type: ignore[no-untyped-def]
     ctx,
     dependency_name,
     driver_name,
@@ -162,4 +162,4 @@ def scenario(
     }
 
     s = Scenario(command_args)
-    s.execute()
+    s.execute()  # type: ignore[no-untyped-call]

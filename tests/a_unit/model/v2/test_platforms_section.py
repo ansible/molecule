@@ -28,5 +28,5 @@ from molecule.model import schema_v3
     ["_model_platforms_delegated_section_data"],
     indirect=True,
 )
-def test_platforms_delegated(_config):
-    assert not schema_v3.validate(_config)
+def test_platforms_delegated(_config):  # type: ignore[no-untyped-def]
+    assert not schema_v3.validate(_config)  # type: ignore[no-untyped-call]

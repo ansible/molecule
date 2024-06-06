@@ -28,14 +28,14 @@ from molecule.command import prepare
 
 
 @pytest.fixture()
-def _patched_ansible_prepare(mocker):
+def _patched_ansible_prepare(mocker):  # type: ignore[no-untyped-def]
     return mocker.patch("molecule.provisioner.ansible.Ansible.prepare")
 
 
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-def test_prepare_execute(
+def test_prepare_execute(  # type: ignore[no-untyped-def]
     mocker: MockerFixture,
     caplog,
     _patched_ansible_prepare,
@@ -46,7 +46,7 @@ def test_prepare_execute(
     util.write_file(pb, "")
 
     p = prepare.Prepare(config_instance)
-    p.execute()
+    p.execute()  # type: ignore[no-untyped-call]
 
     assert "default" in caplog.text
     assert "prepare" in caplog.text
@@ -56,14 +56,14 @@ def test_prepare_execute(
     assert config_instance.state.prepared
 
 
-def test_execute_skips_when_instances_already_prepared(
+def test_execute_skips_when_instances_already_prepared(  # type: ignore[no-untyped-def]
     caplog,
     _patched_ansible_prepare,
     config_instance: config.Config,
 ):
     config_instance.state.change_state("prepared", True)
     p = prepare.Prepare(config_instance)
-    p.execute()
+    p.execute()  # type: ignore[no-untyped-call]
 
     msg = "Skipping, instances already prepared."
     assert msg in caplog.text
@@ -71,13 +71,13 @@ def test_execute_skips_when_instances_already_prepared(
     assert not _patched_ansible_prepare.called
 
 
-def test_prepare_execute_skips_when_playbook_not_configured(
+def test_prepare_execute_skips_when_playbook_not_configured(  # type: ignore[no-untyped-def]
     caplog,
     _patched_ansible_prepare,
     config_instance: config.Config,
 ):
     p = prepare.Prepare(config_instance)
-    p.execute()
+    p.execute()  # type: ignore[no-untyped-call]
 
     msg = "Skipping, prepare playbook not configured."
     assert msg in caplog.text
@@ -85,7 +85,7 @@ def test_prepare_execute_skips_when_playbook_not_configured(
     assert not _patched_ansible_prepare.called
 
 
-def test_execute_when_instances_already_prepared_but_force_provided(
+def test_execute_when_instances_already_prepared_but_force_provided(  # type: ignore[no-untyped-def]
     mocker: MockerFixture,
     caplog,
     _patched_ansible_prepare,
@@ -98,6 +98,6 @@ def test_execute_when_instances_already_prepared_but_force_provided(
     config_instance.command_args = {"force": True}
 
     p = prepare.Prepare(config_instance)
-    p.execute()
+    p.execute()  # type: ignore[no-untyped-call]
 
     _patched_ansible_prepare.assert_called_once_with()

@@ -36,13 +36,13 @@ def _patched_is_idempotent(mocker: MockerFixture) -> Mock:
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.fixture()
-def _instance(patched_config_validate, config_instance: config.Config):
+def _instance(patched_config_validate, config_instance: config.Config):  # type: ignore[no-untyped-def]
     config_instance.state.change_state("converged", True)
 
     return idempotence.Idempotence(config_instance)
 
 
-def test_idempotence_execute(
+def test_idempotence_execute(  # type: ignore[no-untyped-def]
     mocker: MockerFixture,
     caplog: pytest.LogCaptureFixture,
     patched_ansible_converge,
@@ -62,7 +62,7 @@ def test_idempotence_execute(
     assert msg in caplog.text
 
 
-def test_execute_raises_when_not_converged(
+def test_execute_raises_when_not_converged(  # type: ignore[no-untyped-def]
     caplog: pytest.LogCaptureFixture,
     patched_ansible_converge,
     _instance,
@@ -77,7 +77,7 @@ def test_execute_raises_when_not_converged(
     assert msg in caplog.text
 
 
-def test_execute_raises_when_fails_idempotence(
+def test_execute_raises_when_fails_idempotence(  # type: ignore[no-untyped-def]
     mocker: MockerFixture,
     caplog: pytest.LogCaptureFixture,
     patched_ansible_converge,
@@ -94,7 +94,7 @@ def test_execute_raises_when_fails_idempotence(
     assert msg in caplog.text
 
 
-def test_is_idempotent(_instance):
+def test_is_idempotent(_instance):  # type: ignore[no-untyped-def]
     output = """
 PLAY RECAP ***********************************************************
 check-command-01: ok=3    changed=0    unreachable=0    failed=0
@@ -103,7 +103,7 @@ check-command-01: ok=3    changed=0    unreachable=0    failed=0
     assert _instance._is_idempotent(output)
 
 
-def test_is_idempotent_not_idempotent(_instance):
+def test_is_idempotent_not_idempotent(_instance):  # type: ignore[no-untyped-def]
     output = """
 PLAY RECAP ***********************************************************
 check-command-01: ok=2    changed=1    unreachable=0    failed=0
@@ -113,7 +113,7 @@ check-command-02: ok=2    changed=1    unreachable=0    failed=0
     assert not _instance._is_idempotent(output)
 
 
-def test_non_idempotent_tasks_idempotent(_instance):
+def test_non_idempotent_tasks_idempotent(_instance):  # type: ignore[no-untyped-def]
     output = """
 PLAY [all] ***********************************************************
 
@@ -131,7 +131,7 @@ check-command-01: ok=3    changed=0    unreachable=0    failed=0
     assert result == []
 
 
-def test_non_idempotent_tasks_not_idempotent(_instance):
+def test_non_idempotent_tasks_not_idempotent(_instance):  # type: ignore[no-untyped-def]
     output = """
 PLAY [all] ***********************************************************
 

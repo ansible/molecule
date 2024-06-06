@@ -38,7 +38,7 @@ class Idempotence(base.Base):
     the scenario will be considered idempotent.
     """
 
-    def execute(self, action_args=None):
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]
         """Execute the actions necessary to perform a `molecule idempotence` and \
         returns None.
 
@@ -50,16 +50,16 @@ class Idempotence(base.Base):
 
         output = self._config.provisioner.converge()
 
-        idempotent = self._is_idempotent(output)
+        idempotent = self._is_idempotent(output)  # type: ignore[no-untyped-call]
         if idempotent:
             msg = "Idempotence completed successfully."
             LOG.info(msg)
         else:
-            details = "\n".join(self._non_idempotent_tasks(output))
+            details = "\n".join(self._non_idempotent_tasks(output))  # type: ignore[no-untyped-call]
             msg = f"Idempotence test failed because of the following tasks:\n{details}"
             util.sysexit_with_message(msg)
 
-    def _is_idempotent(self, output):
+    def _is_idempotent(self, output):  # type: ignore[no-untyped-def]
         """Parse the output of the provisioning for changed and returns a bool.
 
         :param output: A string containing the output of the ansible run.
@@ -77,7 +77,7 @@ class Idempotence(base.Base):
 
         return True
 
-    def _non_idempotent_tasks(self, output):
+    def _non_idempotent_tasks(self, output):  # type: ignore[no-untyped-def]
         """Parse the output to identify the non idempotent tasks.
 
         :param (str) output: A string containing the output of the ansible run.
@@ -87,7 +87,7 @@ class Idempotence(base.Base):
         output = re.sub(r"\n\s*\n*", "\n", output)
 
         # Remove ansi escape sequences.
-        output = strip_ansi_escape(output)
+        output = strip_ansi_escape(output)  # type: ignore[no-untyped-call]
 
         # Split the output into a list and go through it.
         output_lines = output.split("\n")
@@ -97,8 +97,8 @@ class Idempotence(base.Base):
             if line.startswith("TASK"):
                 task_line = line
             elif line.startswith("changed"):
-                host_name = re.search(r"\[(.*)\]", line).groups()[0]
-                task_name = re.search(r"\[(.*)\]", task_line).groups()[0]
+                host_name = re.search(r"\[(.*)\]", line).groups()[0]  # type: ignore[union-attr]
+                task_name = re.search(r"\[(.*)\]", task_line).groups()[0]  # type: ignore[union-attr]
                 res.append(f"* [{host_name}] => {task_name}")
 
         return res
@@ -113,12 +113,12 @@ class Idempotence(base.Base):
     help=f"Name of the scenario to target. ({base.MOLECULE_DEFAULT_SCENARIO_NAME})",
 )
 @click.argument("ansible_args", nargs=-1, type=click.UNPROCESSED)
-def idempotence(ctx, scenario_name, ansible_args):  # pragma: no cover
+def idempotence(ctx, scenario_name, ansible_args):  # type: ignore[no-untyped-def] # pragma: no cover
     """Use the provisioner to configure the instances and parse the output to \
     determine idempotence.
     """
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)
+    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]
     command_args = {"subcommand": subcommand}
 
-    base.execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args)
+    base.execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args)  # type: ignore[no-untyped-call]

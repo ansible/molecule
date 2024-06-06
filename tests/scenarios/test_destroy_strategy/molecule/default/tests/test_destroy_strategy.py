@@ -9,12 +9,12 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 ).get_hosts("all")
 
 
-def test_hostname(host):
+def test_hostname(host):  # type: ignore[no-untyped-def]
     """Validate hostname."""
     assert host.check_output("hostname -s") == "instance"
 
 
-def test_etc_molecule_directory(host):
+def test_etc_molecule_directory(host):  # type: ignore[no-untyped-def]
     """Validate molecule directory."""
     f = host.file("/etc/molecule")
 
@@ -24,7 +24,7 @@ def test_etc_molecule_directory(host):
     assert f.mode == 0o755
 
 
-def test_etc_molecule_ansible_hostname_file(host):
+def test_etc_molecule_ansible_hostname_file(host):  # type: ignore[no-untyped-def]
     """Validate molecule instance file."""
     f = host.file("/etc/molecule/instance")
 

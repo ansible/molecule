@@ -32,7 +32,7 @@ LOG = logging.getLogger(__name__)
 class AnsiblePlaybook:
     """Provisioner Playbook."""
 
-    def __init__(self, playbook, config, verify=False) -> None:
+    def __init__(self, playbook, config, verify=False) -> None:  # type: ignore[no-untyped-def]
         """Set up the requirements to execute ``ansible-playbook`` and returns \
         None.
 
@@ -45,7 +45,7 @@ class AnsiblePlaybook:
         self._ansible_command = None
         self._playbook = playbook
         self._config = config
-        self._cli = {}  # type: ignore
+        self._cli = {}  # type: ignore[var-annotated]
         if verify:
             self._env = util.merge_dicts(
                 self._config.verifier.env,
@@ -54,7 +54,7 @@ class AnsiblePlaybook:
         else:
             self._env = self._config.provisioner.env
 
-    def bake(self):
+    def bake(self):  # type: ignore[no-untyped-def]
         """Bake an ``ansible-playbook`` command so it's ready to execute and \
         returns ``None``.
 
@@ -65,9 +65,9 @@ class AnsiblePlaybook:
 
         # Pass a directory as inventory to let Ansible merge the multiple
         # inventory sources located under
-        self.add_cli_arg("inventory", self._config.provisioner.inventory_directory)
+        self.add_cli_arg("inventory", self._config.provisioner.inventory_directory)  # type: ignore[no-untyped-call]
         options = util.merge_dicts(self._config.provisioner.options, self._cli)
-        verbose_flag = util.verbose_flag(options)
+        verbose_flag = util.verbose_flag(options)  # type: ignore[no-untyped-call]
         if self._playbook != self._config.provisioner.playbooks.converge:
             if options.get("become"):
                 del options["become"]
@@ -87,21 +87,21 @@ class AnsiblePlaybook:
         else:
             ansible_args = []
 
-        self._ansible_command = [
+        self._ansible_command = [  # type: ignore[assignment]
             "ansible-playbook",
-            *util.dict2args(options),
+            *util.dict2args(options),  # type: ignore[arg-type]
             *util.bool2args(verbose_flag),
             *ansible_args,
             self._playbook,  # must always go last
         ]
 
-    def execute(self, action_args=None):
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]
         """Execute ``ansible-playbook`` and returns a string.
 
         :return: str
         """
         if self._ansible_command is None:
-            self.bake()
+            self.bake()  # type: ignore[no-untyped-call]
 
         if not self._playbook:
             LOG.warning("Skipping, %s action has no playbook.", self._config.action)
@@ -112,7 +112,7 @@ class AnsiblePlaybook:
             self._config.driver.sanity_checks()
             cwd = self._config.scenario_path
             result = util.run_command(
-                cmd=self._ansible_command,
+                cmd=self._ansible_command,  # type: ignore[arg-type]
                 env=self._env,
                 debug=self._config.debug,
                 cwd=cwd,
@@ -129,7 +129,7 @@ class AnsiblePlaybook:
 
         return result.stdout
 
-    def add_cli_arg(self, name, value):
+    def add_cli_arg(self, name, value):  # type: ignore[no-untyped-def]
         """Add argument to CLI passed to ansible-playbook and returns None.
 
         :param name: A string containing the name of argument to be added.
@@ -139,7 +139,7 @@ class AnsiblePlaybook:
         if value:
             self._cli[name] = value
 
-    def add_env_arg(self, name, value):
+    def add_env_arg(self, name, value):  # type: ignore[no-untyped-def]
         """Add argument to environment passed to ansible-playbook and returns \
         None.
 

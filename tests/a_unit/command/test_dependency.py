@@ -27,7 +27,7 @@ from molecule.command import dependency
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-def test_dependency_execute(
+def test_dependency_execute(  # type: ignore[no-untyped-def]
     mocker: MockerFixture,
     caplog,
     patched_ansible_galaxy,
@@ -35,7 +35,7 @@ def test_dependency_execute(
     config_instance: config.Config,
 ):
     d = dependency.Dependency(config_instance)
-    d.execute()
+    d.execute()  # type: ignore[no-untyped-call]
 
     patched_ansible_galaxy.assert_called_once_with()
 

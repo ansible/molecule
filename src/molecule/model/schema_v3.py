@@ -32,7 +32,7 @@ from molecule.data import __file__ as data_module
 LOG = logging.getLogger(__name__)
 
 
-def validate(c):
+def validate(c):  # type: ignore[no-untyped-def]
     """Perform schema validation."""
     result = []
     schemas = []

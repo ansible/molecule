@@ -28,7 +28,7 @@ LOG = logging.getLogger(__name__)
 class Scenarios:
     """The Scenarios groups one or more scenario objects Molecule will execute."""
 
-    def __init__(self, configs, scenario_name=None) -> None:
+    def __init__(self, configs, scenario_name=None) -> None:  # type: ignore[no-untyped-def]
         """Initialize a new scenarios class and returns None.
 
         :param configs: A list containing Molecule config instances.
@@ -39,26 +39,26 @@ class Scenarios:
         self._scenario_name = scenario_name
         self._scenarios = self.all
 
-    def next(self):
+    def next(self):  # type: ignore[no-untyped-def]
         if not self._scenarios:
             raise StopIteration
         return self._scenarios.pop(0)
 
-    def __iter__(self):
+    def __iter__(self):  # type: ignore[no-untyped-def]
         """Make object iterable."""
         return self
 
     __next__ = next  # Python 3.X compatibility
 
     @property
-    def all(self):
+    def all(self):  # type: ignore[no-untyped-def]
         """Return a list containing all scenario objects.
 
         :return: list
         """
         if self._scenario_name:
-            scenarios = self._filter_for_scenario()
-            self._verify()
+            scenarios = self._filter_for_scenario()  # type: ignore[no-untyped-call]
+            self._verify()  # type: ignore[no-untyped-call]
 
             return scenarios
 
@@ -66,7 +66,7 @@ class Scenarios:
         scenarios.sort(key=lambda x: x.directory)
         return scenarios
 
-    def print_matrix(self):
+    def print_matrix(self):  # type: ignore[no-untyped-def]
         msg = "Test matrix"
         LOG.info(msg)
 
@@ -81,7 +81,7 @@ class Scenarios:
                 return list(scenario.sequence)
         raise RuntimeError(f"Unable to find sequence for {scenario_name} scenario.")
 
-    def _verify(self):
+    def _verify(self):  # type: ignore[no-untyped-def]
         """Verify the specified scenario was found and returns None.
 
         :return: None
@@ -91,7 +91,7 @@ class Scenarios:
             msg = f"Scenario '{self._scenario_name}' not found.  Exiting."
             util.sysexit_with_message(msg)
 
-    def _filter_for_scenario(self):
+    def _filter_for_scenario(self):  # type: ignore[no-untyped-def]
         """Find the scenario matching the provided scenario name and returns a \
         list.
 
@@ -101,7 +101,7 @@ class Scenarios:
             c.scenario for c in self._configs if c.scenario.name == self._scenario_name
         ]
 
-    def _get_matrix(self):
+    def _get_matrix(self):  # type: ignore[no-untyped-def]
         """Build a matrix of scenarios with sequence to include and returns a \
         dict.
 

@@ -63,7 +63,7 @@ class Base(metaclass=abc.ABCMeta):
             cls.execute = wrapper(cls.execute)  # type: ignore
 
     @abc.abstractmethod
-    def execute(self, action_args=None):  # pragma: no cover
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def] # pragma: no cover
         pass
 
     def _setup(self) -> None:
@@ -76,7 +76,7 @@ class Base(metaclass=abc.ABCMeta):
         self._config.provisioner.manage_inventory()
 
 
-def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()):
+def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()):  # type: ignore[no-untyped-def]
     """Execute scenario sequences based on parsed command-line arguments.
 
     This is useful for subcommands that run scenario sequences, which
@@ -96,7 +96,7 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
     if scenario_name:
         glob_str = glob_str.replace("*", scenario_name)
     scenarios = molecule.scenarios.Scenarios(
-        get_configs(args, command_args, ansible_args, glob_str),
+        get_configs(args, command_args, ansible_args, glob_str),  # type: ignore[no-untyped-call]
         scenario_name,
     )
 
@@ -121,7 +121,7 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
             shutil.rmtree(scenario.ephemeral_directory)
             return
         try:
-            execute_scenario(scenario)
+            execute_scenario(scenario)  # type: ignore[no-untyped-call]
         except SystemExit:
             # if the command has a 'destroy' arg, like test does,
             # handle that behavior here.
@@ -131,8 +131,8 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
                     f"'{scenario.config.action}'. Cleaning up."
                 )
                 LOG.warning(msg)
-                execute_subcommand(scenario.config, "cleanup")
-                execute_subcommand(scenario.config, "destroy")
+                execute_subcommand(scenario.config, "cleanup")  # type: ignore[no-untyped-call]
+                execute_subcommand(scenario.config, "destroy")  # type: ignore[no-untyped-call]
                 # always prune ephemeral dir if destroying on failure
                 scenario.prune()
                 if scenario.config.is_parallel:
@@ -142,11 +142,11 @@ def execute_cmdline_scenarios(scenario_name, args, command_args, ansible_args=()
                 raise
 
 
-def execute_subcommand(config, subcommand_and_args):
+def execute_subcommand(config, subcommand_and_args):  # type: ignore[no-untyped-def]
     """Execute subcommand."""
     (subcommand, *args) = subcommand_and_args.split(" ")
     command_module = getattr(molecule.command, subcommand)
-    command = getattr(command_module, text.camelize(subcommand))
+    command = getattr(command_module, text.camelize(subcommand))  # type: ignore[no-untyped-call]
 
     # knowledge of the current action is used by some provisioners
     # to ensure they behave correctly during certain sequence steps,
@@ -157,14 +157,14 @@ def execute_subcommand(config, subcommand_and_args):
     return command(config).execute(args)
 
 
-def execute_scenario(scenario):
+def execute_scenario(scenario):  # type: ignore[no-untyped-def]
     """Execute each command in the given scenario's configured sequence.
 
     :param scenario: The scenario to execute.
     :returns: None
     """
     for action in scenario.sequence:
-        execute_subcommand(scenario.config, action)
+        execute_subcommand(scenario.config, action)  # type: ignore[no-untyped-call]
 
     if (
         "destroy" in scenario.sequence
@@ -176,7 +176,7 @@ def execute_scenario(scenario):
             scenario._remove_scenario_state_directory()
 
 
-def filter_ignored_scenarios(scenario_paths) -> list[str]:
+def filter_ignored_scenarios(scenario_paths) -> list[str]:  # type: ignore[no-untyped-def]
     command = ["git", "check-ignore", *scenario_paths]
 
     with contextlib.suppress(subprocess.CalledProcessError, FileNotFoundError):
@@ -199,7 +199,7 @@ def filter_ignored_scenarios(scenario_paths) -> list[str]:
     return paths
 
 
-def get_configs(args, command_args, ansible_args=(), glob_str=MOLECULE_GLOB):
+def get_configs(args, command_args, ansible_args=(), glob_str=MOLECULE_GLOB):  # type: ignore[no-untyped-def]
     """Glob the current directory for Molecule config files, instantiate config \
     objects, and returns a list.
 
@@ -220,19 +220,19 @@ def get_configs(args, command_args, ansible_args=(), glob_str=MOLECULE_GLOB):
     scenario_paths = filter_ignored_scenarios(scenario_paths)
     configs = [
         config.Config(
-            molecule_file=util.abs_path(c),
+            molecule_file=util.abs_path(c),  # type: ignore[arg-type]
             args=args,
             command_args=command_args,
             ansible_args=ansible_args,
         )
         for c in scenario_paths
     ]
-    _verify_configs(configs, glob_str)
+    _verify_configs(configs, glob_str)  # type: ignore[no-untyped-call]
 
     return configs
 
 
-def _verify_configs(configs, glob_str=MOLECULE_GLOB):
+def _verify_configs(configs, glob_str=MOLECULE_GLOB):  # type: ignore[no-untyped-def]
     """Verify a Molecule config was found and returns None.
 
     :param configs: A list containing absolute paths to Molecule config files.
@@ -250,11 +250,11 @@ def _verify_configs(configs, glob_str=MOLECULE_GLOB):
         util.sysexit_with_message(msg)
 
 
-def _get_subcommand(string):
+def _get_subcommand(string):  # type: ignore[no-untyped-def]
     return string.split(".")[-1]
 
 
-def click_group_ex():
+def click_group_ex():  # type: ignore[no-untyped-def]
     """Return extended version of click.group()."""
     # Color coding used to group command types, documented only here as we may
     # decide to change them later.
@@ -283,14 +283,14 @@ def click_group_ex():
 
 def click_command_ex() -> Callable[[Callable[..., Any]], click.Command]:
     """Return extended version of click.command()."""
-    return click.command(  # type: ignore
+    return click.command(
         cls=HelpColorsCommand,
         help_headers_color="yellow",
         help_options_color="green",
     )
 
 
-def result_callback(*args, **kwargs):
+def result_callback(*args, **kwargs):  # type: ignore[no-untyped-def]
     """Click natural exit callback."""
     # We want to be used we run out custom exit code, regardless if run was
     # a success or failure.

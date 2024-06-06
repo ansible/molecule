@@ -58,62 +58,62 @@ class State:
         Molecule.
     """
 
-    def __init__(self, config) -> None:
+    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]
         """Initialize a new state class and returns None.
 
         :param config: An instance of a Molecule config.
         :returns: None
         """
         self._config = config
-        self._state_file = self._get_state_file()  # type: ignore
-        self._data = self._get_data()  # type: ignore
-        self._write_state_file()  # type: ignore
+        self._state_file = self._get_state_file()  # type: ignore[no-untyped-call]
+        self._data = self._get_data()  # type: ignore[no-untyped-call]
+        self._write_state_file()  # type: ignore[no-untyped-call]
 
-    def marshal(func):
-        def wrapper(self, *args, **kwargs):
-            func(self, *args, **kwargs)
+    def marshal(func):  # type: ignore[no-untyped-def]
+        def wrapper(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+            func(self, *args, **kwargs)  # type: ignore[operator]
             self._write_state_file()
 
         return wrapper
 
     @property
-    def state_file(self):
+    def state_file(self):  # type: ignore[no-untyped-def]
         return self._state_file
 
     @property
-    def converged(self):
+    def converged(self):  # type: ignore[no-untyped-def]
         return self._data.get("converged")
 
     @property
-    def created(self):
+    def created(self):  # type: ignore[no-untyped-def]
         return self._data.get("created")
 
     @property
-    def driver(self):
+    def driver(self):  # type: ignore[no-untyped-def]
         return self._data.get("driver")
 
     @property
-    def prepared(self):
+    def prepared(self):  # type: ignore[no-untyped-def]
         return self._data.get("prepared")
 
     @property
-    def run_uuid(self):
+    def run_uuid(self):  # type: ignore[no-untyped-def]
         return self._data.get("run_uuid")
 
     @property
-    def is_parallel(self):
+    def is_parallel(self):  # type: ignore[no-untyped-def]
         return self._data.get("is_parallel")
 
     @property
-    def molecule_yml_date_modified(self):
+    def molecule_yml_date_modified(self):  # type: ignore[no-untyped-def]
         return self._data.get("molecule_yml_date_modified")
 
-    @marshal  # type: ignore
-    def reset(self):
-        self._data = self._default_data()
+    @marshal  # type: ignore[arg-type]
+    def reset(self):  # type: ignore[no-untyped-def]
+        self._data = self._default_data()  # type: ignore[no-untyped-call]
 
-    @marshal  # type: ignore
-    def change_state(self, key, value):
+    @marshal  # type: ignore[arg-type]
+    def change_state(self, key, value):  # type: ignore[no-untyped-def]
         """Change the state of the instance data with the given \
         ``key`` and the provided ``value``.
 
@@ -127,12 +127,12 @@ class State:
             raise InvalidState
         self._data[key] = value
 
-    def _get_data(self):
+    def _get_data(self):  # type: ignore[no-untyped-def]
         if os.path.isfile(self.state_file):
-            return self._load_file()
-        return self._default_data()
+            return self._load_file()  # type: ignore[no-untyped-call]
+        return self._default_data()  # type: ignore[no-untyped-call]
 
-    def _default_data(self):
+    def _default_data(self):  # type: ignore[no-untyped-def]
         return {
             "converged": False,
             "created": False,
@@ -143,11 +143,11 @@ class State:
             "is_parallel": self._config.is_parallel,
         }
 
-    def _load_file(self):
+    def _load_file(self):  # type: ignore[no-untyped-def]
         return util.safe_load_file(self.state_file)
 
-    def _write_state_file(self):
+    def _write_state_file(self):  # type: ignore[no-untyped-def]
         util.write_file(self.state_file, util.safe_dump(self._data))
 
-    def _get_state_file(self):
+    def _get_state_file(self):  # type: ignore[no-untyped-def]
         return os.path.join(self._config.scenario.ephemeral_directory, "state.yml")

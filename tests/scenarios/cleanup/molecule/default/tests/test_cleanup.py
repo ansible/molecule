@@ -9,7 +9,7 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 ).get_hosts("all")
 
 
-def test_hosts_file(host):
+def test_hosts_file(host):  # type: ignore[no-untyped-def]
     """Validate host file."""
     f = host.file("/etc/hosts")
 

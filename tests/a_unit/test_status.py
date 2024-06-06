@@ -24,38 +24,38 @@ from molecule.status import Status
 
 
 @pytest.fixture()
-def _instance():
+def _instance():  # type: ignore[no-untyped-def]
     s = Status(
-        instance_name=None,
-        driver_name=None,
-        provisioner_name=None,
-        scenario_name=None,
-        created=None,
-        converged=None,
+        instance_name=None,  # type: ignore[arg-type]
+        driver_name=None,  # type: ignore[arg-type]
+        provisioner_name=None,  # type: ignore[arg-type]
+        scenario_name=None,  # type: ignore[arg-type]
+        created=None,  # type: ignore[arg-type]
+        converged=None,  # type: ignore[arg-type]
     )
 
     return s
 
 
-def test__instance_name_attribute(_instance):
+def test__instance_name_attribute(_instance):  # type: ignore[no-untyped-def]
     assert _instance.instance_name is None
 
 
-def test_status_driver_name_attribute(_instance):
+def test_status_driver_name_attribute(_instance):  # type: ignore[no-untyped-def]
     assert _instance.driver_name is None
 
 
-def test_status_provisioner_name_attribute(_instance):
+def test_status_provisioner_name_attribute(_instance):  # type: ignore[no-untyped-def]
     assert _instance.provisioner_name is None
 
 
-def test_status_scenario_name_attribute(_instance):
+def test_status_scenario_name_attribute(_instance):  # type: ignore[no-untyped-def]
     assert _instance.scenario_name is None
 
 
-def test_status_created_attribute(_instance):
+def test_status_created_attribute(_instance):  # type: ignore[no-untyped-def]
     assert _instance.created is None
 
 
-def test_status_converged_attribute(_instance):
+def test_status_converged_attribute(_instance):  # type: ignore[no-untyped-def]
     assert _instance.converged is None

@@ -26,14 +26,14 @@ from molecule.command import check
 
 
 @pytest.fixture()
-def _patched_ansible_check(mocker):
+def _patched_ansible_check(mocker):  # type: ignore[no-untyped-def]
     return mocker.patch("molecule.provisioner.ansible.Ansible.check")
 
 
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-def test_check_execute(
+def test_check_execute(  # type: ignore[no-untyped-def]
     mocker: MockerFixture,
     caplog,
     _patched_ansible_check,
@@ -41,7 +41,7 @@ def test_check_execute(
     config_instance: config.Config,
 ):
     c = check.Check(config_instance)
-    c.execute()
+    c.execute()  # type: ignore[no-untyped-call]
 
     assert "default" in caplog.text
     assert "check" in caplog.text

@@ -26,7 +26,7 @@ from molecule.command.init import scenario
 
 
 @pytest.fixture()
-def _command_args():
+def _command_args():  # type: ignore[no-untyped-def]
     return {
         "driver_name": "default",
         "role_name": "test-role",
@@ -37,11 +37,11 @@ def _command_args():
 
 
 @pytest.fixture()
-def _instance(_command_args):
+def _instance(_command_args):  # type: ignore[no-untyped-def]
     return scenario.Scenario(_command_args)
 
 
-def test_scenario_execute(temp_dir, _instance, patched_logger_info):
+def test_scenario_execute(temp_dir, _instance, patched_logger_info):  # type: ignore[no-untyped-def]
     _instance.execute()
 
     msg = "Initializing new scenario test-scenario..."
@@ -54,7 +54,7 @@ def test_scenario_execute(temp_dir, _instance, patched_logger_info):
     patched_logger_info.assert_any_call(msg)
 
 
-def test_execute_scenario_exists(temp_dir, _instance, caplog):
+def test_execute_scenario_exists(temp_dir, _instance, caplog):  # type: ignore[no-untyped-def]
     _instance.execute()
 
     with pytest.raises(SystemExit) as e:

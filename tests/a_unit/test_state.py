@@ -26,33 +26,33 @@ from molecule import config, state, util
 
 
 @pytest.fixture()
-def _instance(config_instance: config.Config):
+def _instance(config_instance: config.Config):  # type: ignore[no-untyped-def]
     return state.State(config_instance)
 
 
-def test_state_file_property(_instance):
+def test_state_file_property(_instance):  # type: ignore[no-untyped-def]
     x = os.path.join(_instance._config.scenario.ephemeral_directory, "state.yml")
 
     assert x == _instance.state_file
 
 
-def test_converged(_instance):
+def test_converged(_instance):  # type: ignore[no-untyped-def]
     assert not _instance.converged
 
 
-def test_created(_instance):
+def test_created(_instance):  # type: ignore[no-untyped-def]
     assert not _instance.created
 
 
-def test_state_driver(_instance):
+def test_state_driver(_instance):  # type: ignore[no-untyped-def]
     assert not _instance.driver
 
 
-def test_prepared(_instance):
+def test_prepared(_instance):  # type: ignore[no-untyped-def]
     assert not _instance.prepared
 
 
-def test_reset(_instance):
+def test_reset(_instance):  # type: ignore[no-untyped-def]
     assert not _instance.converged
 
     _instance.change_state("converged", True)
@@ -62,7 +62,7 @@ def test_reset(_instance):
     assert not _instance.converged
 
 
-def test_reset_persists(_instance):
+def test_reset_persists(_instance):  # type: ignore[no-untyped-def]
     assert not _instance.converged
 
     _instance.change_state("converged", True)
@@ -75,36 +75,36 @@ def test_reset_persists(_instance):
     assert not d.get("converged")
 
 
-def test_change_state_converged(_instance):
+def test_change_state_converged(_instance):  # type: ignore[no-untyped-def]
     _instance.change_state("converged", True)
 
     assert _instance.converged
 
 
-def test_change_state_created(_instance):
+def test_change_state_created(_instance):  # type: ignore[no-untyped-def]
     _instance.change_state("created", True)
 
     assert _instance.created
 
 
-def test_change_state_driver(_instance):
+def test_change_state_driver(_instance):  # type: ignore[no-untyped-def]
     _instance.change_state("driver", "foo")
 
     assert _instance.driver == "foo"
 
 
-def test_change_state_prepared(_instance):
+def test_change_state_prepared(_instance):  # type: ignore[no-untyped-def]
     _instance.change_state("prepared", True)
 
     assert _instance.prepared
 
 
-def test_change_state_raises(_instance):
+def test_change_state_raises(_instance):  # type: ignore[no-untyped-def]
     with pytest.raises(state.InvalidState):
         _instance.change_state("invalid-state", True)
 
 
-def test_get_data_loads_existing_state_file(
+def test_get_data_loads_existing_state_file(  # type: ignore[no-untyped-def]
     _instance,
     molecule_data,
     config_instance: config.Config,

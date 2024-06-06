@@ -51,7 +51,7 @@ LOCAL_CONFIG = lookup_config_file(LOCAL_CONFIG_SEARCH)
 ENV_FILE = ".env.yml"
 
 
-def print_version(ctx, param, value):
+def print_version(ctx, param, value):  # type: ignore[no-untyped-def]
     """Print version information."""
     if not value or ctx.resilient_parsing:
         return
@@ -73,7 +73,7 @@ def print_version(ctx, param, value):
     ctx.exit()
 
 
-@click_group_ex()  # type: ignore
+@click_group_ex()  # type: ignore[no-untyped-call]
 @click.option(
     "--debug/--no-debug",
     default=MOLECULE_DEBUG,
@@ -116,7 +116,7 @@ def print_version(ctx, param, value):
     is_eager=True,
 )
 @click.pass_context
-def main(ctx, debug, verbose, base_config, env_file):  # pragma: no cover
+def main(ctx, debug, verbose, base_config, env_file):  # type: ignore[no-untyped-def] # pragma: no cover
     """Molecule aids in the development and testing of Ansible roles.
 
     To enable autocomplete for a supported shell execute command below after

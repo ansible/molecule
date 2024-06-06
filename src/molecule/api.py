@@ -13,7 +13,7 @@ from molecule.verifier.base import Verifier  # noqa
 LOG = logging.getLogger(__name__)
 
 
-class UserListMap(UserList):
+class UserListMap(UserList):  # type: ignore[type-arg]
     """A list where you can also access elements by their name.
 
     Example:
@@ -22,16 +22,16 @@ class UserListMap(UserList):
     foo.boo
     """
 
-    def __getitem__(self, i):
+    def __getitem__(self, i):  # type: ignore[no-untyped-def]
         """Implement indexing."""
         if isinstance(i, int):
             return super().__getitem__(i)
         return self.__dict__[i]
 
-    def get(self, key, default):
+    def get(self, key, default):  # type: ignore[no-untyped-def]
         return self.__dict__.get(key, default)
 
-    def append(self, item) -> None:
+    def append(self, item) -> None:  # type: ignore[no-untyped-def]
         self.__dict__[str(item)] = item
         super().append(item)
 
@@ -45,7 +45,7 @@ class IncompatibleMoleculeRuntimeWarning(MoleculeRuntimeWarning):
 
 
 @cache
-def drivers(config=None) -> UserListMap:
+def drivers(config=None) -> UserListMap:  # type: ignore[no-untyped-def]
     """Return list of active drivers."""
     plugins = UserListMap()
     pm = pluggy.PluginManager("molecule.driver")
@@ -65,7 +65,7 @@ def drivers(config=None) -> UserListMap:
 
 
 @cache
-def verifiers(config=None) -> UserListMap:
+def verifiers(config=None) -> UserListMap:  # type: ignore[no-untyped-def]
     """Return list of active verifiers."""
     plugins = UserListMap()
     pm = pluggy.PluginManager("molecule.verifier")

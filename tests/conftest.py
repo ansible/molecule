@@ -37,17 +37,17 @@ mac_on_gh = pytest.mark.skipif(
 )
 
 
-def is_subset(subset, superset):
+def is_subset(subset, superset):  # type: ignore[no-untyped-def]
     # Checks if first dict is a subset of the second one
     if isinstance(subset, dict):
         return all(
-            key in superset and is_subset(val, superset[key])
+            key in superset and is_subset(val, superset[key])  # type: ignore[no-untyped-call]
             for key, val in subset.items()
         )
 
     if isinstance(subset, list | set):
         return all(
-            any(is_subset(subitem, superitem) for superitem in superset)
+            any(is_subset(subitem, superitem) for superitem in superset)  # type: ignore[no-untyped-call]
             for subitem in subset
         )
 
@@ -56,12 +56,12 @@ def is_subset(subset, superset):
 
 
 @pytest.fixture()
-def random_string(l=5):
+def random_string(l=5):  # type: ignore[no-untyped-def]
     return "".join(random.choice(string.ascii_uppercase) for _ in range(l))
 
 
 @contextlib.contextmanager
-def change_dir_to(dir_name):
+def change_dir_to(dir_name):  # type: ignore[no-untyped-def]
     cwd = os.getcwd()
     os.chdir(dir_name)
     yield
@@ -69,7 +69,7 @@ def change_dir_to(dir_name):
 
 
 @pytest.fixture()
-def temp_dir(tmpdir, random_string, request):
+def temp_dir(tmpdir, random_string, request):  # type: ignore[no-untyped-def]
     directory = tmpdir.mkdir(random_string)
 
     with change_dir_to(directory.strpath):
@@ -77,7 +77,7 @@ def temp_dir(tmpdir, random_string, request):
 
 
 @pytest.fixture()
-def resources_folder_path():
+def resources_folder_path():  # type: ignore[no-untyped-def]
     resources_folder_path = os.path.join(os.path.dirname(__file__), "resources")
     return resources_folder_path
 
@@ -102,7 +102,7 @@ def get_molecule_file(path: str) -> str:
     return config.molecule_file(path)
 
 
-def molecule_ephemeral_directory(_fixture_uuid) -> str:
+def molecule_ephemeral_directory(_fixture_uuid) -> str:  # type: ignore[no-untyped-def]
     project_directory = f"test-project-{_fixture_uuid}"
     scenario_name = "test-instance"
 
@@ -111,7 +111,7 @@ def molecule_ephemeral_directory(_fixture_uuid) -> str:
     )
 
 
-def pytest_collection_modifyitems(items, config):
+def pytest_collection_modifyitems(items, config):  # type: ignore[no-untyped-def]
     marker = config.getoption("-m")
     is_sharded = False
     shard_id = 0
@@ -140,7 +140,7 @@ def pytest_collection_modifyitems(items, config):
 
 
 @pytest.fixture(autouse=True)
-def reset_pytest_vars(monkeypatch):
+def reset_pytest_vars(monkeypatch):  # type: ignore[no-untyped-def]
     """Make PYTEST_* env vars inaccessible to subprocesses."""
     for var_name in tuple(os.environ):
         if var_name.startswith("PYTEST_"):
@@ -148,7 +148,7 @@ def reset_pytest_vars(monkeypatch):
 
 
 @pytest.fixture(autouse=True)
-def block_on_serial_mark(request):
+def block_on_serial_mark(request):  # type: ignore[no-untyped-def]
     # https://github.com/pytest-dev/pytest-xdist/issues/385
     os.makedirs(".tox", exist_ok=True)
     if request.node.get_closest_marker("serial"):

@@ -24,7 +24,7 @@ from molecule.model import schema_v3
 
 
 @pytest.fixture()
-def _model_provisioner_section_data():
+def _model_provisioner_section_data():  # type: ignore[no-untyped-def]
     return {
         "provisioner": {
             "name": "ansible",
@@ -53,12 +53,12 @@ def _model_provisioner_section_data():
 
 
 @pytest.mark.parametrize("_config", ["_model_provisioner_section_data"], indirect=True)
-def test_provisioner(_config):
-    assert not schema_v3.validate(_config)
+def test_provisioner(_config):  # type: ignore[no-untyped-def]
+    assert not schema_v3.validate(_config)  # type: ignore[no-untyped-call]
 
 
 @pytest.fixture()
-def _model_provisioner_errors_section_data():
+def _model_provisioner_errors_section_data():  # type: ignore[no-untyped-def]
     return {
         "provisioner": {
             "name": 0,
@@ -71,14 +71,14 @@ def _model_provisioner_errors_section_data():
     ["_model_provisioner_errors_section_data"],
     indirect=True,
 )
-def test_provisioner_has_errors(_config):
+def test_provisioner_has_errors(_config):  # type: ignore[no-untyped-def]
     x = ["0 is not one of ['ansible']"]
 
-    assert x == schema_v3.validate(_config)
+    assert x == schema_v3.validate(_config)  # type: ignore[no-untyped-call]
 
 
 @pytest.fixture()
-def _model_provisioner_allows_ansible_section_data():
+def _model_provisioner_allows_ansible_section_data():  # type: ignore[no-untyped-def]
     return {"provisioner": {"name": "ansible"}}
 
 
@@ -87,5 +87,5 @@ def _model_provisioner_allows_ansible_section_data():
     [("_model_provisioner_allows_ansible_section_data")],
     indirect=True,
 )
-def test_provisioner_allows_name(_config):
-    assert not schema_v3.validate(_config)
+def test_provisioner_allows_name(_config):  # type: ignore[no-untyped-def]
+    assert not schema_v3.validate(_config)  # type: ignore[no-untyped-call]

@@ -6,7 +6,7 @@ import pytest
 
 
 @pytest.fixture(scope="session", autouse=True)
-def environ():
+def environ():  # type: ignore[no-untyped-def]
     """Configure default environment for tests."""
     # disable use of .netrc file to avoid galaxy-install errors with:
     # [ERROR]: failed to download the file: HTTP Error 401: Unauthorized

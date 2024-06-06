@@ -26,14 +26,14 @@ from molecule.command import syntax
 
 
 @pytest.fixture()
-def _patched_ansible_syntax(mocker):
+def _patched_ansible_syntax(mocker):  # type: ignore[no-untyped-def]
     return mocker.patch("molecule.provisioner.ansible.Ansible.syntax")
 
 
 # NOTE(retr0h): The use of the `patched_config_validate` fixture, disables
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
-def test_syntax_execute(
+def test_syntax_execute(  # type: ignore[no-untyped-def]
     mocker: MockerFixture,
     caplog,
     _patched_ansible_syntax,
@@ -41,7 +41,7 @@ def test_syntax_execute(
     config_instance: config.Config,
 ):
     s = syntax.Syntax(config_instance)
-    s.execute()
+    s.execute()  # type: ignore[no-untyped-call]
 
     assert "default" in caplog.text
     assert "syntax" in caplog.text

@@ -30,22 +30,22 @@ class CommandBase(base.Base):
 
 
 @pytest.fixture()
-def _base_class():
+def _base_class():  # type: ignore[no-untyped-def]
     return CommandBase
 
 
 @pytest.fixture()
-def _instance(_base_class):
+def _instance(_base_class):  # type: ignore[no-untyped-def]
     return _base_class()
 
 
 @pytest.fixture()
-def _role_directory():
+def _role_directory():  # type: ignore[no-untyped-def]
     return "."
 
 
 @pytest.fixture()
-def _command_args():
+def _command_args():  # type: ignore[no-untyped-def]
     return {
         "dependency_name": "galaxy",
         "driver_name": "default",
@@ -57,7 +57,7 @@ def _command_args():
 
 
 @pytest.fixture()
-def _molecule_file(_role_directory):
+def _molecule_file(_role_directory):  # type: ignore[no-untyped-def]
     return os.path.join(
         _role_directory,
         "test-role",

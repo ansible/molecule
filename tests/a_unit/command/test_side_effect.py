@@ -28,7 +28,7 @@ from molecule.command import side_effect
 
 
 @pytest.fixture()
-def _command_provisioner_section_with_side_effect_data():
+def _command_provisioner_section_with_side_effect_data():  # type: ignore[no-untyped-def]
     return {
         "provisioner": {
             "name": "ansible",
@@ -38,7 +38,7 @@ def _command_provisioner_section_with_side_effect_data():
 
 
 @pytest.fixture()
-def _patched_ansible_side_effect(mocker):
+def _patched_ansible_side_effect(mocker):  # type: ignore[no-untyped-def]
     return mocker.patch("molecule.provisioner.ansible.Ansible.side_effect")
 
 
@@ -50,7 +50,7 @@ def _patched_ansible_side_effect(mocker):
     ["_command_provisioner_section_with_side_effect_data"],
     indirect=True,
 )
-def test_side_effect_execute(
+def test_side_effect_execute(  # type: ignore[no-untyped-def]
     mocker: MockerFixture,
     _patched_ansible_side_effect,
     caplog,
@@ -61,7 +61,7 @@ def test_side_effect_execute(
     util.write_file(pb, "")
 
     se = side_effect.SideEffect(config_instance)
-    se.execute()
+    se.execute()  # type: ignore[no-untyped-call]
 
     assert "default" in caplog.text
     assert "side_effect" in caplog.text
@@ -69,13 +69,13 @@ def test_side_effect_execute(
     _patched_ansible_side_effect.assert_called_once_with(None)
 
 
-def test_side_effect_execute_skips_when_playbook_not_configured(
+def test_side_effect_execute_skips_when_playbook_not_configured(  # type: ignore[no-untyped-def]
     caplog,
     _patched_ansible_side_effect,
     config_instance: config.Config,
 ):
     se = side_effect.SideEffect(config_instance)
-    se.execute()
+    se.execute()  # type: ignore[no-untyped-call]
 
     msg = "Skipping, side effect playbook not configured."
     assert msg in caplog.text

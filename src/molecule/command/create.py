@@ -33,7 +33,7 @@ LOG = logging.getLogger(__name__)
 class Create(base.Base):
     """Create Command Class."""
 
-    def execute(self, action_args=None):
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]
         """Execute the actions necessary to perform a `molecule create` and \
         returns None.
 
@@ -65,10 +65,10 @@ class Create(base.Base):
     type=click.Choice([str(s) for s in drivers()]),
     help=f"Name of driver to use. ({DEFAULT_DRIVER})",
 )
-def create(ctx, scenario_name, driver_name):  # pragma: no cover
+def create(ctx, scenario_name, driver_name):  # type: ignore[no-untyped-def] # pragma: no cover
     """Use the provisioner to start the instances."""
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)
+    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]
     command_args = {"subcommand": subcommand, "driver_name": driver_name}
 
-    base.execute_cmdline_scenarios(scenario_name, args, command_args)
+    base.execute_cmdline_scenarios(scenario_name, args, command_args)  # type: ignore[no-untyped-call]

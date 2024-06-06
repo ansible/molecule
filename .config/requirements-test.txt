@@ -1,14 +1,19 @@
 # Do not include ansible or any package that would drag ansible in here
 # We want to assure test extra provides tools to test molecule and its
 # related tools/plugins but w/o ansible, which can be installed separated.
-ansible-lint >= 6.12.1
 ansi2html >= 1.8.0
+ansible-lint >= 6.12.1
+check-jsonschema
 coverage >= 7.0.3
 filelock >= 3.9.0
+mypy
 pexpect >= 4.8.0, < 5
+pre-commit
+pytest >= 7.2.0
 pytest-mock >= 3.10.0
 pytest-plus >= 0.4.0
 pytest-xdist >= 3.1.0
-pytest >= 7.2.0
-check-jsonschema
 requests != 2.32.0 # https://github.com/docker/docker-py/issues/3256
+types-jsonschema
+types-pexpect
+types-pyyaml

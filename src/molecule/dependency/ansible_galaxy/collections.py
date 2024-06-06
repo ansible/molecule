@@ -16,7 +16,7 @@ class Collections(AnsibleGalaxyBase):
     COMMANDS = ("collection", "install")
 
     @property
-    def default_options(self):
+    def default_options(self):  # type: ignore[no-untyped-def]
         general = super().default_options
         specific = util.merge_dicts(
             general,
@@ -31,9 +31,9 @@ class Collections(AnsibleGalaxyBase):
         return specific
 
     @property
-    def default_env(self):
+    def default_env(self):  # type: ignore[no-untyped-def]
         return super().default_env
 
     @property
-    def requirements_file(self):
+    def requirements_file(self):  # type: ignore[no-untyped-def]
         return self.options["requirements-file"]

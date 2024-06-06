@@ -38,7 +38,7 @@ LOG = logging.getLogger(__name__)
 class Scenario:
     """A Molecule scenario."""
 
-    def __init__(self, config) -> None:
+    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]
         """Initialize a new scenario class and returns None.
 
         :param config: An instance of a Molecule config.
@@ -46,9 +46,9 @@ class Scenario:
         """
         self._lock = None
         self.config = config
-        self._setup()  # type: ignore
+        self._setup()  # type: ignore[no-untyped-call]
 
-    def _remove_scenario_state_directory(self):
+    def _remove_scenario_state_directory(self):  # type: ignore[no-untyped-def]
         """Remove scenario cached disk stored state.
 
         :return: None
@@ -57,7 +57,7 @@ class Scenario:
         LOG.info("Removing %s", directory)
         shutil.rmtree(directory)
 
-    def prune(self):
+    def prune(self):  # type: ignore[no-untyped-def]
         """Prune the scenario ephemeral directory files and returns None.
 
         "safe files" will not be pruned, including the ansible configuration
@@ -74,7 +74,7 @@ class Scenario:
             self.config.state.state_file,
             *self.config.driver.safe_files,
         ]
-        files = util.os_walk(self.ephemeral_directory, "*")
+        files = util.os_walk(self.ephemeral_directory, "*")  # type: ignore[no-untyped-call]
         for f in files:
             if not any(sf for sf in safe_files if fnmatch.fnmatch(f, sf)):
                 try:
@@ -89,17 +89,17 @@ class Scenario:
                 os.removedirs(dirpath)
 
     @property
-    def name(self):
+    def name(self):  # type: ignore[no-untyped-def]
         return self.config.config["scenario"]["name"]
 
     @property
-    def directory(self):
+    def directory(self):  # type: ignore[no-untyped-def]
         if self.config.molecule_file:
             return os.path.dirname(self.config.molecule_file)
         return os.getcwd()
 
     @property
-    def ephemeral_directory(self):
+    def ephemeral_directory(self):  # type: ignore[no-untyped-def]
         path = os.getenv("MOLECULE_EPHEMERAL_DIRECTORY", None)
         if not path:
             project_directory = os.path.basename(self.config.project_directory)
@@ -116,10 +116,10 @@ class Scenario:
             path = ephemeral_directory(project_scenario_directory)
 
         if os.environ.get("MOLECULE_PARALLEL", False) and not self._lock:
-            with open(os.path.join(path, ".lock"), "w") as self._lock:
+            with open(os.path.join(path, ".lock"), "w") as self._lock:  # type: ignore[assignment]
                 for i in range(1, 5):
                     try:
-                        fcntl.lockf(self._lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                        fcntl.lockf(self._lock, fcntl.LOCK_EX | fcntl.LOCK_NB)  # type: ignore[arg-type]
                         break
                     except OSError:
                         delay = 30 * i
@@ -136,63 +136,63 @@ class Scenario:
         return path
 
     @property
-    def inventory_directory(self):
+    def inventory_directory(self):  # type: ignore[no-untyped-def]
         return os.path.join(self.ephemeral_directory, "inventory")
 
     @property
-    def check_sequence(self):
+    def check_sequence(self):  # type: ignore[no-untyped-def]
         return self.config.config["scenario"]["check_sequence"]
 
     @property
-    def cleanup_sequence(self):
+    def cleanup_sequence(self):  # type: ignore[no-untyped-def]
         return self.config.config["scenario"]["cleanup_sequence"]
 
     @property
-    def converge_sequence(self):
+    def converge_sequence(self):  # type: ignore[no-untyped-def]
         return self.config.config["scenario"]["converge_sequence"]
 
     @property
-    def create_sequence(self):
+    def create_sequence(self):  # type: ignore[no-untyped-def]
         return self.config.config["scenario"]["create_sequence"]
 
     @property
-    def dependency_sequence(self):
+    def dependency_sequence(self):  # type: ignore[no-untyped-def]
         return ["dependency"]
 
     @property
-    def destroy_sequence(self):
+    def destroy_sequence(self):  # type: ignore[no-untyped-def]
         return self.config.config["scenario"]["destroy_sequence"]
 
     @property
-    def idempotence_sequence(self):
+    def idempotence_sequence(self):  # type: ignore[no-untyped-def]
         return ["idempotence"]
 
     @property
-    def prepare_sequence(self):
+    def prepare_sequence(self):  # type: ignore[no-untyped-def]
         return ["prepare"]
 
     @property
-    def side_effect_sequence(self):
+    def side_effect_sequence(self):  # type: ignore[no-untyped-def]
         return ["side_effect"]
 
     @property
-    def syntax_sequence(self):
+    def syntax_sequence(self):  # type: ignore[no-untyped-def]
         return ["syntax"]
 
     @property
-    def test_sequence(self):
+    def test_sequence(self):  # type: ignore[no-untyped-def]
         return self.config.config["scenario"]["test_sequence"]
 
     @property
-    def verify_sequence(self):
+    def verify_sequence(self):  # type: ignore[no-untyped-def]
         return ["verify"]
 
     @property
     def sequence(self) -> list[str]:
         """Select the sequence based on scenario and subcommand of the provided scenario object and returns a list."""
         result = []
-        our_scenarios = scenarios.Scenarios([self.config])  # type: ignore
-        matrix = our_scenarios._get_matrix()  # type: ignore
+        our_scenarios = scenarios.Scenarios([self.config])
+        matrix = our_scenarios._get_matrix()  # type: ignore[no-untyped-call]
 
         try:
             result = matrix[self.name][self.config.subcommand]
@@ -202,7 +202,7 @@ class Scenario:
             pass
         return result
 
-    def _setup(self):
+    def _setup(self):  # type: ignore[no-untyped-def]
         """Prepare the scenario for Molecule and returns None.
 
         :return: None

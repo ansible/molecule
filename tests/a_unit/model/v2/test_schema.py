@@ -22,11 +22,11 @@ from molecule.model import schema_v3
 from molecule.util import run_command
 
 
-def test_base_config(_config):
-    assert not schema_v3.validate(_config)
+def test_base_config(_config):  # type: ignore[no-untyped-def]
+    assert not schema_v3.validate(_config)  # type: ignore[no-untyped-call]
 
 
-def test_molecule_schema():
+def test_molecule_schema():  # type: ignore[no-untyped-def]
     cmd = [
         "check-jsonschema",
         "-v",

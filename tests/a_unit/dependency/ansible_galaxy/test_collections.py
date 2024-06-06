@@ -27,7 +27,7 @@ from molecule.dependency.ansible_galaxy import collections
 
 
 @pytest.fixture()
-def _patched_ansible_galaxy_has_requirements_file(mocker):
+def _patched_ansible_galaxy_has_requirements_file(mocker):  # type: ignore[no-untyped-def]
     m = mocker.patch(
         "molecule.dependency.ansible_galaxy.collections."
         "Collections._has_requirements_file",
@@ -38,7 +38,7 @@ def _patched_ansible_galaxy_has_requirements_file(mocker):
 
 
 @pytest.fixture()
-def _dependency_section_data():
+def _dependency_section_data():  # type: ignore[no-untyped-def]
     return {
         "dependency": {
             "name": "galaxy",
@@ -52,7 +52,7 @@ def _dependency_section_data():
 # config.Config._validate from executing.  Thus preventing odd side-effects
 # throughout patched.assert_called unit tests.
 @pytest.fixture()
-def _instance(
+def _instance(  # type: ignore[no-untyped-def]
     _dependency_section_data,
     patched_config_validate,
     config_instance: config.Config,
@@ -61,21 +61,21 @@ def _instance(
 
 
 @pytest.fixture()
-def role_file(_instance):
+def role_file(_instance):  # type: ignore[no-untyped-def]
     return os.path.join(_instance._config.scenario.directory, "collections.yml")
 
 
-def test_collections_config_private_member(_instance):
+def test_collections_config_private_member(_instance):  # type: ignore[no-untyped-def]
     assert isinstance(_instance._config, config.Config)
 
 
-def test_collections_default_options_property(_instance, role_file):
+def test_collections_default_options_property(_instance, role_file):  # type: ignore[no-untyped-def]
     x = {"requirements-file": role_file, "force": False}
 
     assert x == _instance.default_options
 
 
-def test_collections_default_env_property(_instance):
+def test_collections_default_env_property(_instance):  # type: ignore[no-untyped-def]
     env = _instance.default_env
 
     assert "MOLECULE_FILE" in env
@@ -84,16 +84,16 @@ def test_collections_default_env_property(_instance):
     assert "MOLECULE_INSTANCE_CONFIG" in env
 
 
-def test_collections_name_property(_instance):
+def test_collections_name_property(_instance):  # type: ignore[no-untyped-def]
     assert _instance.name == "galaxy"
 
 
-def test_collections_enabled_property(_instance):
+def test_collections_enabled_property(_instance):  # type: ignore[no-untyped-def]
     assert _instance.enabled
 
 
 @pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
-def test_collections_options_property(_instance, role_file):
+def test_collections_options_property(_instance, role_file):  # type: ignore[no-untyped-def]
     x = {
         "force": False,
         "requirements-file": role_file,
@@ -105,7 +105,7 @@ def test_collections_options_property(_instance, role_file):
 
 
 @pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
-def test_collections_options_property_handles_cli_args(role_file, _instance):
+def test_collections_options_property_handles_cli_args(role_file, _instance):  # type: ignore[no-untyped-def]
     _instance._config.args = {"debug": True}
     x = {
         "force": False,
@@ -118,12 +118,12 @@ def test_collections_options_property_handles_cli_args(role_file, _instance):
 
 
 @pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
-def test_collections_env_property(_instance):
+def test_collections_env_property(_instance):  # type: ignore[no-untyped-def]
     assert _instance.env["FOO"] == "bar"
 
 
 @pytest.mark.parametrize("config_instance", ["_dependency_section_data"], indirect=True)
-def test_collections_bake(_instance, role_file):
+def test_collections_bake(_instance, role_file):  # type: ignore[no-untyped-def]
     _instance.bake()
     args = [
         "ansible-galaxy",
@@ -138,7 +138,7 @@ def test_collections_bake(_instance, role_file):
     assert _instance._sh_command == args
 
 
-def test_collections_execute(
+def test_collections_execute(  # type: ignore[no-untyped-def]
     patched_run_command,
     _patched_ansible_galaxy_has_requirements_file,
     caplog,
@@ -157,7 +157,7 @@ def test_collections_execute(
     assert msg in caplog.text
 
 
-def test_collections_execute_does_not_execute_when_disabled(
+def test_collections_execute_does_not_execute_when_disabled(  # type: ignore[no-untyped-def]
     patched_run_command,
     caplog,
     _instance,
@@ -171,7 +171,7 @@ def test_collections_execute_does_not_execute_when_disabled(
     assert msg in caplog.text
 
 
-def test_collections_execute_does_not_execute_when_no_requirements_file(
+def test_collections_execute_does_not_execute_when_no_requirements_file(  # type: ignore[no-untyped-def]
     patched_run_command,
     _patched_ansible_galaxy_has_requirements_file,
     caplog,
@@ -186,7 +186,7 @@ def test_collections_execute_does_not_execute_when_no_requirements_file(
     assert msg in caplog.text
 
 
-def test_collections_execute_bakes(
+def test_collections_execute_bakes(  # type: ignore[no-untyped-def]
     patched_run_command,
     _instance,
     role_file,
@@ -197,7 +197,7 @@ def test_collections_execute_bakes(
     assert patched_run_command.call_count == 1
 
 
-def test_collections_executes_catches_and_exits_return_code(
+def test_collections_executes_catches_and_exits_return_code(  # type: ignore[no-untyped-def]
     patched_run_command,
     _patched_ansible_galaxy_has_requirements_file,
     _instance,
@@ -209,13 +209,13 @@ def test_collections_executes_catches_and_exits_return_code(
     assert e.value.code == 1
 
 
-def test_collections_setup(_instance):
+def test_collections_setup(_instance):  # type: ignore[no-untyped-def]
     _instance._setup()
 
 
-def test_collections_role_file(role_file, _instance):
+def test_collections_role_file(role_file, _instance):  # type: ignore[no-untyped-def]
     assert role_file == _instance.requirements_file
 
 
-def test_collections_has_requirements_file(_instance):
+def test_collections_has_requirements_file(_instance):  # type: ignore[no-untyped-def]
     assert not _instance._has_requirements_file()

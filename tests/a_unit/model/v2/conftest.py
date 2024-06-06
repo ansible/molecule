@@ -27,7 +27,7 @@ from molecule import util
 
 
 @pytest.fixture()
-def _molecule_file():
+def _molecule_file():  # type: ignore[no-untyped-def]
     return os.path.join(
         os.path.dirname(__file__),
         os.path.pardir,
@@ -39,7 +39,7 @@ def _molecule_file():
 
 
 @pytest.fixture()
-def _config(_molecule_file, request):
+def _config(_molecule_file, request):  # type: ignore[no-untyped-def]
     with open(_molecule_file) as f:
         d = util.safe_load(f)
     if hasattr(request, "param"):
@@ -47,13 +47,13 @@ def _config(_molecule_file, request):
             d2 = util.safe_load(request.getfixturevalue(request.param))
         else:
             d2 = request.getfixturevalue(request.param)
-        d = util.merge_dicts(d, d2)
+        d = util.merge_dicts(d, d2)  # type: ignore[assignment]
 
     return d
 
 
 @pytest.fixture()
-def _model_platforms_delegated_section_data():
+def _model_platforms_delegated_section_data():  # type: ignore[no-untyped-def]
     return """
 ---
 platforms:

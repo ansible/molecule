@@ -27,7 +27,7 @@ class Base:
 
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, config) -> None:
+    def __init__(self, config) -> None:  # type: ignore[no-untyped-def]
         """Initialize code for all :ref:`Provisioner` classes.
 
         :param config: An instance of a Molecule config.
@@ -37,7 +37,7 @@ class Base:
 
     @property
     @abc.abstractmethod
-    def default_options(self):  # pragma: no cover
+    def default_options(self):  # type: ignore[no-untyped-def] # pragma: no cover
         """Get default CLI arguments provided to ``cmd`` as a dict.
 
         :return: dict
@@ -45,7 +45,7 @@ class Base:
 
     @property
     @abc.abstractmethod
-    def default_env(self):  # pragma: no cover
+    def default_env(self):  # type: ignore[no-untyped-def] # pragma: no cover
         """Get default env variables provided to ``cmd`` as a dict.
 
         :return: dict
@@ -53,7 +53,7 @@ class Base:
 
     @property
     @abc.abstractmethod
-    def name(self):  # pragma: no cover
+    def name(self):  # type: ignore[no-untyped-def] # pragma: no cover
         """Name of the provisioner and returns a string.
 
         :returns: str

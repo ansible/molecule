@@ -3,7 +3,7 @@
 import re
 
 
-def camelize(string):
+def camelize(string):  # type: ignore[no-untyped-def]
     """Format string as camel-case."""
     # NOTE(retr0h): Taken from jpvanhal/inflection
     # https://github.com/jpvanhal/inflection
@@ -15,7 +15,7 @@ def chomp(text: str) -> str:
     return "\n".join([x.rstrip() for x in text.splitlines()])
 
 
-def strip_ansi_escape(data):
+def strip_ansi_escape(data):  # type: ignore[no-untyped-def]
     """Remove all ANSI escapes from string or bytes.
 
     If bytes is passed instead of string, it will be converted to string
@@ -27,7 +27,7 @@ def strip_ansi_escape(data):
     return re.sub(r"\x1b[^m]*m", "", data)
 
 
-def strip_ansi_color(data):
+def strip_ansi_color(data):  # type: ignore[no-untyped-def]
     """Remove ANSI colors from string or bytes."""
     if isinstance(data, bytes):
         data = data.decode("utf-8")
@@ -38,7 +38,7 @@ def strip_ansi_color(data):
     return re.sub(invisible_codes, "", data)
 
 
-def underscore(string):
+def underscore(string):  # type: ignore[no-untyped-def]
     """Format string to underlined notation."""
     # NOTE(retr0h): Taken from jpvanhal/inflection
     # https://github.com/jpvanhal/inflection

@@ -24,7 +24,7 @@ from molecule.model import schema_v3
 
 
 @pytest.fixture()
-def _model_verifier_section_data():
+def _model_verifier_section_data():  # type: ignore[no-untyped-def]
     return {
         "verifier": {
             "name": "testinfra",
@@ -38,12 +38,12 @@ def _model_verifier_section_data():
 
 
 @pytest.mark.parametrize("_config", ["_model_verifier_section_data"], indirect=True)
-def test_verifier(_config):
-    assert not schema_v3.validate(_config)
+def test_verifier(_config):  # type: ignore[no-untyped-def]
+    assert not schema_v3.validate(_config)  # type: ignore[no-untyped-call]
 
 
 @pytest.fixture()
-def _model_verifier_errors_section_data():
+def _model_verifier_errors_section_data():  # type: ignore[no-untyped-def]
     return {
         "verifier": {
             "name": 0,
@@ -56,19 +56,19 @@ def _model_verifier_errors_section_data():
     ["_model_verifier_errors_section_data"],
     indirect=True,
 )
-def test_verifier_has_errors(_config):
+def test_verifier_has_errors(_config):  # type: ignore[no-untyped-def]
     x = ["0 is not one of ['ansible', 'goss', 'inspec', 'testinfra']"]
 
-    assert x == schema_v3.validate(_config)
+    assert x == schema_v3.validate(_config)  # type: ignore[no-untyped-call]
 
 
 @pytest.fixture()
-def _model_verifier_allows_testinfra_section_data():
+def _model_verifier_allows_testinfra_section_data():  # type: ignore[no-untyped-def]
     return {"verifier": {"name": "testinfra"}}
 
 
 @pytest.fixture()
-def _model_verifier_allows_ansible_section_data():
+def _model_verifier_allows_ansible_section_data():  # type: ignore[no-untyped-def]
     return {"verifier": {"name": "ansible"}}
 
 
@@ -80,5 +80,5 @@ def _model_verifier_allows_ansible_section_data():
     ],
     indirect=True,
 )
-def test_verifier_allows_name(_config):
-    assert not schema_v3.validate(_config)
+def test_verifier_allows_name(_config):  # type: ignore[no-untyped-def]
+    assert not schema_v3.validate(_config)  # type: ignore[no-untyped-call]

@@ -38,7 +38,7 @@ LOG = logging.getLogger(__name__)
 class List(base.Base):
     """List command shows information about current scenarios."""
 
-    def execute(self, action_args=None):
+    def execute(self, action_args=None):  # type: ignore[no-untyped-def]
         """Execute the actions necessary to perform a `molecule list` and \
         returns None.
 
@@ -57,19 +57,19 @@ class List(base.Base):
     default="simple",
     help="Change output format. (simple)",
 )
-def list(ctx, scenario_name, format):  # pragma: no cover
+def list(ctx, scenario_name, format):  # type: ignore[no-untyped-def] # pragma: no cover
     """List status of instances."""
     args = ctx.obj.get("args")
-    subcommand = base._get_subcommand(__name__)
+    subcommand = base._get_subcommand(__name__)  # type: ignore[no-untyped-call]
     command_args = {"subcommand": subcommand, "format": format}
 
     statuses = []
     s = scenarios.Scenarios(
-        base.get_configs(args, command_args, glob_str="**/molecule/*/molecule.yml"),
+        base.get_configs(args, command_args, glob_str="**/molecule/*/molecule.yml"),  # type: ignore[no-untyped-call]
         scenario_name,
     )
     for scenario in s:
-        statuses.extend(base.execute_subcommand(scenario.config, subcommand))
+        statuses.extend(base.execute_subcommand(scenario.config, subcommand))  # type: ignore[no-untyped-call]
 
     headers = [text.title(name) for name in Status._fields]
     if format in ["simple", "plain"]:
@@ -78,12 +78,12 @@ def list(ctx, scenario_name, format):  # pragma: no cover
         if format == "plain":
             headers = []
             table_format = format
-        _print_tabulate_data(headers, statuses, table_format)
+        _print_tabulate_data(headers, statuses, table_format)  # type: ignore[no-untyped-call]
     else:
-        _print_yaml_data(headers, statuses)
+        _print_yaml_data(headers, statuses)  # type: ignore[no-untyped-call]
 
 
-def _print_tabulate_data(headers, data, table_format):  # pragma: no cover
+def _print_tabulate_data(headers, data, table_format):  # type: ignore[no-untyped-def] # pragma: no cover
     """Show the tabulate data on the screen and returns None.
 
     :param headers: A list of column headers.
@@ -102,7 +102,7 @@ def _print_tabulate_data(headers, data, table_format):  # pragma: no cover
         console.print(t)
 
 
-def _print_yaml_data(headers, data):  # pragma: no cover
+def _print_yaml_data(headers, data):  # type: ignore[no-untyped-def] # pragma: no cover
     l = [
         dict(zip(headers, [getattr(datum, field) for field in datum._fields]))
         for datum in data
