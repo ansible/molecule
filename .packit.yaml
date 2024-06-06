@@ -1,4 +1,3 @@
-# spell-checker:ignore packit specfile copr epel
 specfile_path: dist/molecule.spec
 srpm_build_deps:
   - bash

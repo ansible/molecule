@@ -38,7 +38,7 @@ class AnsiblePlaybook:
 
         :param playbook: A string containing the path to the playbook.
         :param config: An instance of a Molecule config.
-        :param verify: An optional bool to toggle the Plabook mode between
+        :param verify: An optional bool to toggle the Playbook mode between
          provision and verify. False: provision; True: verify. Default is False.
         :returns: None
         """
